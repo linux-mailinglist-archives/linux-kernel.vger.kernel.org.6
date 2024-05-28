@@ -1,158 +1,124 @@
-Return-Path: <linux-kernel+bounces-193012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8393D8D2592
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:15:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A84A8D2599
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55AF1C23D44
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB252837B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD074178CCD;
-	Tue, 28 May 2024 20:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9078C1327E5;
+	Tue, 28 May 2024 20:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Udwr7C96"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UDgGz4cm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859E54436E;
-	Tue, 28 May 2024 20:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFDB2FB2;
+	Tue, 28 May 2024 20:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716927305; cv=none; b=qdHw9LKq1w+yrQwrRK+5QW1LkN12sR9BI+ck+aKwmXzffqJqXDwaKmfi/tlbz5eK7fbHDC0bE4pc9UCxxotKS8H4XG9Up46By5Ig93kk7hBq9wgcTZT0Ggri0BC4p9CnrPrgGvXpVUJHG9qYe3hZJMMUeEZKP7jiYg8gvyHuSc8=
+	t=1716927383; cv=none; b=Prh3HzzDn2R8aDz7BN53U74SjQZ5uF8Fh2k3/D89tnYmWkIGMTnOVn9FP/cXreBFqXQrOm2aNZ5W6VVSz8LZS3c9hKDeU6jgNtY2DLtLtmcYQX8hik+j6KXr+LI2NxxGtxEGNYsAaklyVakprzG6Q/lzucQXlD0oAfsCMjY2n0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716927305; c=relaxed/simple;
-	bh=Ww63LNVa/9EgcImn2nPJnwWoRot9McIJIb3F+xFHf6Q=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=AK4M3/Pk7J6RnC1/R6P4X+ZuoJu/VKguwgpdTf7wN5sby8xYDypXgngBiGmHyijKbOhS/YQgloo2fAM03qUepZlnA6gnzvAHyjoS/ID9/poyohUz7Cx9jb0WVZsMWt5vgF7FbPwjbhAa3x/QHP7VjITwPSeiVesNHPt6PUI0lwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Udwr7C96; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7930531494aso77386485a.0;
-        Tue, 28 May 2024 13:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716927302; x=1717532102; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CH0wQ9r97BfdF2raB0yjdWqZJVerj3rir1vzaUG1Zw0=;
-        b=Udwr7C96D/mwQIX5+6NKMJRD4uEjyGnbgD83Ck1BjGKKFpXlh4reemn8sNeAWvbra9
-         nsiqXQ6xCOyUhU/rGmlKC9wMHMAjiRd2879dLrXAPxL+vmKAuzVrI1KsNWdTjvmUOksb
-         lr5tNGXORXisJpwFTLLJ4NlBKWzTTYKTLwZFu/eM2Bds4VR/xnKN47YN1jhmKPXj1Dqf
-         TFpkRS0OMr28MpJT6Ynd9GX3Xr3FzeC2VhHo5r7JzMAXGvwCeh40ryP9M4t9/l1CLc8g
-         YPPi/jaNeTVGbtJNahRJ3TRPCFddEK1rBtQnb+w2TBrzVVcGFnS/t6jjgYMARrNWLSye
-         7wUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716927302; x=1717532102;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CH0wQ9r97BfdF2raB0yjdWqZJVerj3rir1vzaUG1Zw0=;
-        b=mlXrDVh+I1mf2RWlktyA+URcDZFrhFK4t7bSF2nGXe6SB3ad0JNw2ka26TGBwRcqgk
-         RFYKeOmxGRdcvD5msu2Q6FTviCOByAyKIRIFeCXUNdaXnDApXGYXssONhh+5SbZykRcZ
-         HGhOBN08augGVEd24RjkgFZKs82vT8OtR/kUHSAdnC8pDSwmvlUF7mNOCw4f68lxH3S+
-         Lzh+d0dohgXr7NPUyGq44+QxQ/yj21D1nf3PNi5YbVI/iSaLcPhufHjIsuHsP+shwXhn
-         h4+1+RL2uiMV3yefMw94edv0JwEEy6PPPkzyJkWbSiV8d6MuDVBe0ZVlf+YyLPBlKYdG
-         d6tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcHKLXsjDye6SqB9baJhruhp7CvIdhqn2DFlM/G6gRe+L6lgvG8Xy4GlFuZ97t4SZD4pURSuKJ4FJRGCcmSdqfhr/C6fYl2DGXGS3gPXEiPRcdXDwl3ZMQ0nm5JoMYyDjCu43ifTm2DICPPSrEqtICJZHUtYn9ujWC
-X-Gm-Message-State: AOJu0Yxj8kXp0O5uw5L1RvgjF/G00Ph3MDcc8bD/EMolVqQ5wxfUfMYz
-	uif+4bT+5q+nnpvq31X7LsftGz+AXo3jjZgIsQbrxKyzZStWm4qB
-X-Google-Smtp-Source: AGHT+IHeQanWgf4ig45uY5skreuulB1NOG86mOTKFIcZpBR6Brl5hBeAxPuofmYXZwVvDsMiX9USdw==
-X-Received: by 2002:a05:6214:4413:b0:6ad:835f:940c with SMTP id 6a1803df08f44-6ad835f9555mr54075486d6.50.1716927302391;
-        Tue, 28 May 2024 13:15:02 -0700 (PDT)
-Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac071048a3sm47017696d6.69.2024.05.28.13.15.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 13:15:01 -0700 (PDT)
-Date: Tue, 28 May 2024 16:15:01 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Martin KaFai Lau <martin.lau@linux.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: kernel@quicinc.com, 
- Willem de Bruijn <willemb@google.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Andrew Halaney <ahalaney@redhat.com>, 
- Martin KaFai Lau <martin.lau@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- bpf <bpf@vger.kernel.org>
-Message-ID: <66563b459e5de_2a7f7e2949d@willemb.c.googlers.com.notmuch>
-In-Reply-To: <d1c18889-ef48-4cb8-8b81-474b3b7ddd81@linux.dev>
-References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
- <20240509211834.3235191-2-quic_abchauha@quicinc.com>
- <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
- <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
- <d1c18889-ef48-4cb8-8b81-474b3b7ddd81@linux.dev>
-Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
- tstamp_type for scalabilty
+	s=arc-20240116; t=1716927383; c=relaxed/simple;
+	bh=SDM3T88aKtVS+Ug/fU9kGhfpCs3h4GTd1KHJIR+20Jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SPb76G8xeXvYdEBj5xpEfM2VGsmunw8AKaC0ge4a63xMjijvcpVPIP8Ahi9yQKlr0qJnmHr1X5a6txJEVEIAofi6vSlhvUQaTYsaBSBj7KFkSf7X8us1Z6NAgRRXz0p7DIJUvmdAnELtag4U0uiD+5aKY5gKUKELpLsQQZXgfSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UDgGz4cm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBNawN025892;
+	Tue, 28 May 2024 20:16:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aAxBwMD0lZhhNbg0upNk5vseG8fs7A2eLML6WG5ZKxM=; b=UDgGz4cmCE0OGa76
+	lUSM8a7Ft9KsCD46Gw7KTpBVsyTX/OAy98fwKbQaQaTy+FwdjqKa0R9HMir8rrta
+	L3YHuJiL6NKPN/0Wssto6xy+8LsSxlyr+G8qpVcSYca24qe10PGa9SqSLQAnPDXx
+	jbLqe01zeYUcB5lIpqVcXEbar7tdoZdXH92gLgm0Ll51QQaegkxUGUuKDMSpXXLh
+	t398zMGAyKz0kGDtUhgaB2IjjeRzyXWoIChj0dIc92U4Fc0pdGVYw42qlfeF8V5Q
+	Tjfr4BdszBqAkJCknZ5PFwUVPTLnp4jtrtj+tYXcY98m6QdfpufTOhE7eDkt22Ju
+	oQN77Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0x76hf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 20:16:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SKGCgP016550
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 20:16:12 GMT
+Received: from [10.110.122.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 13:16:11 -0700
+Message-ID: <1d256e7d-2b39-42ce-ab19-94b8a48b90cc@quicinc.com>
+Date: Tue, 28 May 2024 13:16:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/ww_mutex/test: add MODULE_DESCRIPTION()
+Content-Language: en-US
+To: Boqun Feng <boqun.feng@gmail.com>
+CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240524-md-test-ww_mutex-v1-1-4fb8c106fe21@quicinc.com>
+ <ZlYbst1xppRKBxwm@boqun-archlinux>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <ZlYbst1xppRKBxwm@boqun-archlinux>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4dyoSxBmA7tYAMpall_vAwoI1VprRk-8
+X-Proofpoint-ORIG-GUID: 4dyoSxBmA7tYAMpall_vAwoI1VprRk-8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 priorityscore=1501 clxscore=1015 bulkscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2405280151
 
-Martin KaFai Lau wrote:
-> On 5/28/24 10:24 AM, Willem de Bruijn wrote:
-> > Abhishek Chauhan (ABC) wrote:
-> > 
-> >>> +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
-> >>> +						    ktime_t kt, clockid_t clockid)
-> >>> +{
-> >>> +	u8 tstamp_type = SKB_CLOCK_REALTIME;
-> >>> +
-> >>> +	switch (clockid) {
-> >>> +	case CLOCK_REALTIME:
-> >>> +		break;
-> >>> +	case CLOCK_MONOTONIC:
-> >>> +		tstamp_type = SKB_CLOCK_MONOTONIC;
-> >>> +		break;
-> >>> +	default:
-> >>
-> >> Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn.
-> >> So i think this might result in unnecessary crashes.
-> >>
-> >> Let me know what you think.
-> >>
-> >> Logs which are complaining.
-> >> https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
-> > 
-> > I received reports too. Agreed that we need to fix these reports.
-> > 
-> > The alternative is to limit sk_clockid to supported ones, by failing
-> > setsockopt SO_TXTIME on an unsupported clock.
-> > 
-> > That changes established ABI behavior. But I don't see how another
-> > clock can be used in any realistic way anyway.
-> > 
-> > Putting it out there as an option. It's riskier, but in the end I
-> > believe a better fix than just allowing this state to continue.
+On 5/28/2024 11:00 AM, Boqun Feng wrote:
+> On Fri, May 24, 2024 at 05:18:11PM -0700, Jeff Johnson wrote:
+>> Fix the 'make W=1' warning:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>  kernel/locking/test-ww_mutex.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+>> index 78719e1ef1b1..0fab96137ddb 100644
+>> --- a/kernel/locking/test-ww_mutex.c
+>> +++ b/kernel/locking/test-ww_mutex.c
+>> @@ -695,5 +695,6 @@ static void __exit test_ww_mutex_exit(void)
+>>  module_init(test_ww_mutex_init);
+>>  module_exit(test_ww_mutex_exit);
+>>  
+>> +MODULE_DESCRIPTION("API test facility for ww_mutexes");
 > 
-> Failing early would be my preference also. The current ABI is arguably at least 
-> confusing (if not broken) considering other clockid is silently ignored by the 
-> kernel.
->
-> > 
-> > A third option would be to not fail the system call, but silently
-> > fall back to CLOCK_REALTIME. Essentially what happens in the datapath
-> > in skb_set_delivery_type_by_clockid now. That is surprising behavior,
-> > we should not do that.
 > 
-> Not sure if it makes sense to go back to this option only after there is 
-> breakage report with a legit usage?
+> This looks good to me, but seems to me MODULE_DESCRIPTION() is usually
+> placed after MODULE_AUTHOR(), could you reorder it a bit? Thanks!
 
-Agreed. We cannot break users. But I don't see how there are real
-users for the current permissive API.
+Sure, no problem. v2 coming up.
 
+(I had automated placing an empty MODULE_DESCRIPTION() before MODULE_LICENSE()
+since every module has a license but not all have authors).
 
+/jeff
 
