@@ -1,194 +1,184 @@
-Return-Path: <linux-kernel+bounces-192146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6018D1916
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:02:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE368D1918
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7931287BDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE8E1C24B85
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F3313E3F6;
-	Tue, 28 May 2024 11:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7089216C45C;
+	Tue, 28 May 2024 11:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="nSkeKr6x"
-Received: from MRZP264CU002.outbound.protection.outlook.com (mail-francesouthazon11020002.outbound.protection.outlook.com [52.101.165.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJy9AHS2"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C331D53C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.165.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716894162; cv=fail; b=N4kBr9y0zyLdv4HdNIusbsVk/Z7Mpq8lzArkY3YTYml2GJtQsC2Zd0iOMZHS2voFVVIPJjLJjqqE8b7u5oI9tKVy2b1UqEbRSGTHv2+0/Q710s7/mi6NkBVPVsv7F8S1SZ2nByJeTPBykdJKrNazX4llmuhFfLtlH2lv7T+Zreg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716894162; c=relaxed/simple;
-	bh=HzpMf22gT858BXqU20qJQT06xyXyjcRTSzycTNqkGWQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HRcCctd2Kamzt4TEAelXU2YY20+Qz8txNdLeds3r2Z+nO0klcBZYPGsgxzJgbSJRoY6PyUBzRWfqAs0YXS0QClDEnKiGGkLRjbEuUM69X0IAiUTDr/AY2hyf6KRo/397xdVT6/e3fteLAbxHQXmLXP2IviKsa+ylD2SgRhA9+dA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=nSkeKr6x; arc=fail smtp.client-ip=52.101.165.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KXP2q+lJQgvFwil9EAcYmWLwLldsDaMw4Vl0Q0MP4sUAntYNB77b6NTtLSaLUnizmV8tH3ssTssuBmaQaL1I0G+fBC8R2DnpPKBXPwoP2qjOtYS/TYcAIkw+9EdhHctRHT4f9AZdGdMVWjPHftvyXm75q4LcW42uRufjUCDdQE3RPcWR+uXewwiwxZ/n1Bs4DVuXmCqZ4wIBXDC2Mk/Xbs/S7MOAVQ7R5Qje0Kaq4NQl5zldRkl37neSAMzaOWEY0ABF45qvfFwSB9tU4t9kZD1A7ksjvJ2i41yj827KSOne688K+5C1Tv0jwxa8xYaw6CRDhKakb7ZD2IEMQ8MaOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HzpMf22gT858BXqU20qJQT06xyXyjcRTSzycTNqkGWQ=;
- b=DNUj1GME2kk6Rs8503+ky/4HsiKQZ3/7tHdpmAnJiLDwuPYbzVGoiAMDR7tMI4bQwiJW03dD0vO0gplPoQIqmXtxywWh2OyKkXtzzvXvitmN65ZX2jP6zkqF4CsycwlCkZMa9QLXGlfNZddQehaBok3SVpHLaW9Gf+bQ9ZggNLj4wq4/FgQ3MslXiF74vYZL5CxUCXpT9w8rvDbEZMQMaCjj5ouJCPUw5GucJUzBms3wFcCtQOT2oDW3511YpqelANGqdGRp4Hxe/FPJaWDOCNL4qEBE0J5JeR5f3VkjK6gIJesBK43SFTByxIGaB8yrtmYlvSl2foKPXUZLyKq2Qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
- dkim=pass header.d=csgroup.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HzpMf22gT858BXqU20qJQT06xyXyjcRTSzycTNqkGWQ=;
- b=nSkeKr6x+AKH98ct0kebkzJgtyWcWliptTG3/vn3YEOHKQ6COz0KaYz6l6pQzt62n+gAtTxNH2lSfIS4o7p/2Flbk5x1zOVcE0E9PpetYhZA6e9EHNhsRZmCv4oQwaPc/HW0rVZxXxC39cdiEgJhvitaZ+NelieudprRXTidV0Yw6CeUgWQUdj93NoQRZpQWkxFJyLQswOauLDcD5cDHKywks6Eppv9BwQ8Fv37xl27gF4j8upyJJUYfappKteKWjrcx9mrqMqpCEfzKEZM3zHHtGeLf7iLWaPgJJqldYjjz8I5xm+BaPfWkeOwsFc/tijLBfZFt1VvWp9BwRWPhJg==
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
- by PATP264MB4812.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:429::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
- 2024 11:02:37 +0000
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a%4]) with mapi id 15.20.7611.030; Tue, 28 May 2024
- 11:02:37 +0000
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Oscar Salvador <osalvador@suse.de>
-CC: Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe
-	<jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, Michael Ellerman
-	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [RFC PATCH v4 03/16] mm: Provide mm_struct and address to
- huge_ptep_get()
-Thread-Topic: [RFC PATCH v4 03/16] mm: Provide mm_struct and address to
- huge_ptep_get()
-Thread-Index: AQHasDoM1rVBenI81UiOOsc2qzDoP7GsItMAgABZz4A=
-Date: Tue, 28 May 2024 11:02:37 +0000
-Message-ID: <a2dfa9ac-f83b-4e76-9010-56d64860526c@csgroup.eu>
-References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
- <941ae68c7813cafc7aee3f34131f895fb7599636.1716815901.git.christophe.leroy@csgroup.eu>
- <ZlVudE37ENlFhTo4@localhost.localdomain>
-In-Reply-To: <ZlVudE37ENlFhTo4@localhost.localdomain>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=csgroup.eu;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MRZP264MB2988:EE_|PATP264MB4812:EE_
-x-ms-office365-filtering-correlation-id: a190af6d-7fe2-4124-59f1-08dc7f05af43
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|376005|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UXVlS0o2b1VMWm1RaEdoeS9CQXN0V0ZFZlRVWXVHWUdieVh5cStuRnlDZ0Ra?=
- =?utf-8?B?by93b1YwelE5QmlzREk3SmU4aW84NGsvb3l5OXZWOUZRbWRnU0ZHSG1rWDI4?=
- =?utf-8?B?RzhjMW9DbkFGdG9MYndhU21BTTlCNnZROWRDNHgrZS9JaWFsenlydk5ReHh4?=
- =?utf-8?B?UmNiNVhmOWZFS2twNHdJSmN5RHVsQ0luN3RiZ091VzFSb1pZTGdNNWJaeHdy?=
- =?utf-8?B?OGF4Rm5kcWE1R3BJVE5zaEROakl5RjY2UjlRbzFCUVBVNWo0eFN5NkNGTmdi?=
- =?utf-8?B?OHFWVWYrbW1uWTdwMEdsWm9DeDZIY0pzSm9PUk1Ka1Jzd1RJR3lTVTNObmx5?=
- =?utf-8?B?SHp2UFBPN3JSMnN4bG1NZ0UzNUo2TjZZRjVXTWxnVURMTDNFbzJTaGQva1U2?=
- =?utf-8?B?bXYyY2Y2RVZQeG9UR2w4SUFleStMaERQZDEyRE9KMU4yTXRWb1dWYTg4UHJ0?=
- =?utf-8?B?Vmphc0VNaG5BSWp5VHFMbUR2TDVpTU56enpReHlWMGxsenNYRHBUcEtyMXJQ?=
- =?utf-8?B?Y2w2QWZyNTRueGZTaGpSMThOWUFaU2puVWZEbExnSHAvRExTejljM2tQWk43?=
- =?utf-8?B?Vm5BUlkvZFFMR2k3bDhtbWFqZC9OTllkMU1jRm1kUFl1Q2RHNStHN3k3cXBC?=
- =?utf-8?B?NEQwWkFRM2U5cUVhRGcvL1R2Ylk4bUw5b29KUjVUNkJNRmZ2MGY0WVh6U2Nz?=
- =?utf-8?B?bDVNSmRpeE95MDZlaGxCR1Q4dHM3aXNVWTlWNzdKazFmVEloTUt0VVFYOC83?=
- =?utf-8?B?TFRBRDJwMUYrUzVwcEFOSXFiVkpnZmZUOStXQ2Y2Yk51YUdwWmdJRVFjY3hm?=
- =?utf-8?B?UHJEaE9xc252RHlsL2Z5L2xQeEtWLzVjS1I4NDNleTQrMG91YkdSRmt6emli?=
- =?utf-8?B?UkN3TnY5b1MweklrRDdTNVlydWNqY3lmMVE5MVEyaWxrSEFoVFI1U1RyZkZG?=
- =?utf-8?B?bkpSZzZXL3VwdlJRdjlVQmRHMXlNTHV4aEppTGlmaW5iOWhyVTZwTGI2eSsy?=
- =?utf-8?B?NThtTkREbXhkdkJjMzZXOFBTNGNyVFQyTW50Qyt1Q3pQbnFoYWp1Z011eGlR?=
- =?utf-8?B?Z2lOUW54QnBSMm1DLzRoeG5GR2pLNVEyYlVSTnh5Z1hzWHAzN0F6WEM5Q2Y3?=
- =?utf-8?B?ekI4OGFyY2pWdFFVeWJMK3I2NC93ZnVHTjRDRnBuaW5pY0JEaDgxK0hkZk4w?=
- =?utf-8?B?Ym9ReDNzdy9heEVBZjIrdmFaVHdQZ2NzTDlJNFhGV2NpWDF4TXdnYmxxeVlp?=
- =?utf-8?B?TWJFanZqVEMzY09xb3Q3cktGSTRaa3FzaGZxSVdMRlFsRzJPY2FIVnFrcW10?=
- =?utf-8?B?cGZTWUI3TFgzdFhKZ1VFbGlLOWdpdWtEWUxRendHTlBkWVNWUk9tclUxdHA3?=
- =?utf-8?B?L1hjdmcvSEpBYWVoUGc1Rno2TTRPOFlJa1B1OFQvMjRqRURyWTVZdy82YkRw?=
- =?utf-8?B?b3NYTUtrM3hma21ZYythMExuNHJhSWNiNlhJQitzZGhWdEpXTzJsc2EzSWJq?=
- =?utf-8?B?ZFRuNHpZeUdJazRYY09ERDJ5THRlUUdHTnFodUNIOFlrUm1hV3N3QXZDMkdT?=
- =?utf-8?B?bWs2V00zRERUelNjNllGVENUeVhOOTNZbE1mY1QyUXpHa1hTMTRQUzBWVW5E?=
- =?utf-8?B?V1BxaXNHdDg2ZVdOUFAwSGRkOFBhdjY1UEk2aVl0dlUwYnNPdUJpTzFvYzN6?=
- =?utf-8?B?V2p6Y25rRHBoVlRqcUtsSk0wMERzb2c2WmtiQlp6MU5aSHE2T08yNGtwTGdS?=
- =?utf-8?B?eFhJOUN4WDlreVlySitLR0dvZ0dydHVoaGxQQVJmcThiNXdWVzhRMENXVjdl?=
- =?utf-8?B?WEJEZkVOVktLcFJ4V0oxUT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aXFCKy8zcWM3MUhVWkVLMDR2UVBCOEsyRHZRdW5pdlZNbGFkajN6RDNPTDVq?=
- =?utf-8?B?YWlDRFRkaHJ5T0JpbDdDanp1UkJtczgwSTFwVTVRV0JuOE9SS2FKREJuditn?=
- =?utf-8?B?THZmSGd0ZkQ4d1FRK3lwdDlkOXZ1N3RJSHF1a2duT1hPMVdkWlRwTlBPN0E5?=
- =?utf-8?B?YjkvZ3h2aDFsVzFFZnJsbnBOekFvMStNWlYxWEpkLzc0d1ZKUmRjeVhhTHRs?=
- =?utf-8?B?OUJtQ2lWaE1UK0k1Y0krQm1vdGQxa0lQZjVkOTQxMVhTcEg5RUh6a3FOK1hB?=
- =?utf-8?B?cHR5aEw0YUZzUTZqdnJ3dWxoWHdQamtVbnByVUpTY0RuTWlxSGtFTkY3L1cx?=
- =?utf-8?B?NUc4VkVNY3BLNkdaY0VOb0JlMk54QzlJQ2RsUHdDcnVPOUxWSjVVb3dUbFVp?=
- =?utf-8?B?S1IrOVdiR0FWKzFvek5ITnpmZml5eUV4WjhMSkF6dkZZa3VGcTJLUjJ0MTdH?=
- =?utf-8?B?OWs0M2dTWGRNcDRZQW9jS1Q1RmVOdUFnTUFYd3dBZ3Z2M3BPMnRWOU9aUkFp?=
- =?utf-8?B?N2NvdjV3N2JUUXRPNWNmTFN4ejFqRUtzVEhwdyt6QVh4RUcvbFZhWFRlN3M0?=
- =?utf-8?B?VVpRMFN5ZjA1NlB2bEtBLys4TjhUdExDSVVIREZRem41amdqLzRkdDZtWUxy?=
- =?utf-8?B?amRka2J5YWkybXM3NGphM2dQVnpjTkNtUDZMTjZwSm5abXZSalIyZnpZVVM4?=
- =?utf-8?B?VHRhNjIybSt4blNJSlJHS0IzVzk1bFp5K1ZJbjRITGpoSVBEMVhNZlhsUFh2?=
- =?utf-8?B?N250VnoyRWNhbVlyY21MS2tGWTV3M0tvditQeWJjbWVxYUZGY0l5VlpqclFD?=
- =?utf-8?B?ZHBIeUZzZElRb2I0MEp0WlFENmk3aEZVa0VsM2dPV1FIcHYvWSt4TzNGNUl1?=
- =?utf-8?B?bzVlVDNNU2pPM2c1V2Z6UTMvSks4cGQvdjV2Mk5Xc3luV2kwZ21Tbk14SVk5?=
- =?utf-8?B?bndjUW93VzZFTzVhOWx2NG1CL0tvWjRpektvUzhkem9YajRkNmo4RkI3K2pV?=
- =?utf-8?B?cEJTWG9tMkFhaVhXcXYzdEY3SVN2RzhDN3BBaGh4Tzk5cFZXRVJ1Z0JvbUF6?=
- =?utf-8?B?YkRkWndKSlVjMWpkdElOenNkRXVsQmk0QlQ5QXJHcnkrZ0xJdVlHNjBMbC9Q?=
- =?utf-8?B?RnZEMWFTLzNDd0dmcnl1VzBEa2RIY1cxZXNsTEc3N1Y2U0pBVit6eDVCTDRW?=
- =?utf-8?B?OWNkbmV0QmdwNjV6L3JzUHNVY3JlamtNa1B1a1ErU0lFT0d5T1k0SlU4emxX?=
- =?utf-8?B?Y1k4eVkvQ2FBMTNxSTd3Y0lZdURhSEZUL05WVFV2b2E5TE9uYzFqTEloWExx?=
- =?utf-8?B?czdHbDlsMmF1NnJwZ1VvN3FBZ05jRys0N2lXcWQwZTd5VmhSa1AzdzBvM3Bs?=
- =?utf-8?B?dW85N1d5cmY4cFMvdlM5YVZ0Zi9VUHYyaFE1L3hnSlFvQUlJaXpDRkdwYnAx?=
- =?utf-8?B?OUFxc1RYbGFFRWVqelpVTFpha01JcVRvNnlEMFlIRFcrb3dwVTBoN3VtbUhE?=
- =?utf-8?B?YkxFZ0ZBTUZ2NXBpV0M3bnN6cERIck1BVDVJQkVSWDg5SE84a2VZMXlBbGs1?=
- =?utf-8?B?bEFOaFQydUtveHgzTE5obXpHWHVQc3dWWUxWZWdIMHc5aVdtTFVDVVUzSkR3?=
- =?utf-8?B?UDV1YVM2YUNETHVKc3MrWm1HK3ZJSGpGQ3hsbkFKTk1FZFRweTBWeHpiNzU5?=
- =?utf-8?B?MU9Oam9CN25rN3hlNGxPRUhITElkZ1plMTd4aldielhFcHl6UUg1YlJhSk4z?=
- =?utf-8?B?THRzR3RzVXBtTm1ONm9UU0Y2eGhpMTRadDZNSXB6T25mcnA0R202SFZRNkVw?=
- =?utf-8?B?OFdreSt0ZnBqNWJBa1pHNFR0MFp1VmdOZTRFcW1WaUxpSUQyWjk0dzVlMWhM?=
- =?utf-8?B?dUphVzFaZDdMZmhvWW1yakNHeGR5dGtWUmR0cmZMODJReHZOMDFiOGZLOHYv?=
- =?utf-8?B?NEJpbC9OMkJweTRiaXZFelhnQmdlQWdPYmJmZ3JZemo3UE53eHRkaUU0LzJP?=
- =?utf-8?B?MGphM01SK25jVEtQekh0NEhmcm1lTkJBZnFJSWRPblJuSUpDais5SjR5NlVJ?=
- =?utf-8?B?RmNWcXhyUlI5akU5NCs3Mk8xbE9xd2hNMDk3YnVDUE85bENZeGFXa0xzcHF0?=
- =?utf-8?B?TEVLRzhVNnZOM252VDRNY3pnL3pXaVRpV0dvaVNvSHJBMTZtdlFOSFlYYitM?=
- =?utf-8?B?Q3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <71FF34FB7977684B82586179BDF735A9@FRAP264.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B981D53C;
+	Tue, 28 May 2024 11:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716894186; cv=none; b=c4w2+pn/W8FSjpDkRy2BOb49O0uXYn/78aBv8rF9EdTaEqQ2bhakOyUY+tlMqgM7w4KLSchMEBD77nsxLaZa+318x41Z3WY1IHEtOBnXv6Hq3DzlSOkFPLEU8cMF+hAu+eSrIKFHk/xorLCYbE21ZgNDDmOlQWKyx0J2NgA8GMI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716894186; c=relaxed/simple;
+	bh=Jz9DQ0A0ysEyx5ZFSqtxWV1Sz5lFahtNRCaIsOIGEQ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DJVo0Bw8gp3vhpUH8yy4CGkPsese/0aRM4L6d8dDER7N7NflyXUOifUPmZYK0OFOEfcxHUqmdyuVJY6akwVcEx9n5AHAV3WLRn6XjLHnmscZVU+2dRmoZpFs/0Ip8jb6/q5WZWvBFiWvsrcWevR4mVprIl+4RAU5m/5QtNoRmYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HJy9AHS2; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5755fafa5a7so874780a12.1;
+        Tue, 28 May 2024 04:03:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716894183; x=1717498983; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nDHBV4PBNxCVOs2tfUKZlVoZ23JQ58NVsz0DV0+bTVw=;
+        b=HJy9AHS2CM5h59lTp+oFR8pfOeFNT93JLuYNu4+Q2495RcSoFgt47l/U+NpJzCKSxm
+         I2cha9KMI4Zq4G5uHuMrENHB3ISvANhmzbJi1ql2mbdvF8iYowsY3v9MrSSZb/fqWCwP
+         y6VJcdKCQY4eqvxFyD1OEdpA5kQf79wMlGBRXhJ3doJJe832yZiiZLUZzv5e/cJRtmFY
+         ho7gl78cwtOeHNyAwwr0oApnh9UQT46EN95DIiJpr8BbBXoyXFKOYBqGnsZZtXIdMns+
+         V08n8bDcdpj/a6Ylgrbg92gTv8CcAdDiXGpo4zSbP4P5r1IgEarPf6gAIDYERCY4cwr5
+         g8vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716894183; x=1717498983;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nDHBV4PBNxCVOs2tfUKZlVoZ23JQ58NVsz0DV0+bTVw=;
+        b=eC5hEMrgksfnzxxkQO8RGfL7rfX/4yozFnjfJROTds1LQ7nrOVDg8hhhgMOTgQxx32
+         TFSrDmLaSjHheK2QSoFZni48+Xnum8KjMuXpgKEoAu5kTj3V/DDUpdvJD7CY44EctB0h
+         v0bHgfxboeoPQFU4AldHhbz7iqjtO0kfrO65YqoVPyEI59TGo+bSmAugLtnR0ZeIh8dr
+         FxbRLlF0Ti3meVUV2OLQCJFTsh+bufjbANXcrXV1BAcOuWow52aEshoGARiO/nYA3lXA
+         AVJf1j2yIokzdFLoEM2fa6qd8Dt9jwlEIpmTb0IbPZg1p1SKyzBwDjBxhV+sto4uDz/J
+         rU3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXBDrsO88Pr5XaOgpSXHDkIx20kPh9sRXo+uXgWQZpl9CzSONMym3CE2tzonN1lxpWfn+0pIE9ODIlm/9LdODnjOJPvmVgwOp5RX/oy
+X-Gm-Message-State: AOJu0YxVn9SLtQ+UiVaz1boP4FH0+HsRQ8K8Di44ZPAEA8/WAb48pH4n
+	BFHMpzw00l5ns6/IXoR/Q25yvc+kSPX1C68C4CujwJwjPjU1SskhtNj2HJhO
+X-Google-Smtp-Source: AGHT+IEs8A4GNA8a+Krzg1KRMCiQXCwDo/GSKeTC215xCUOuOLuMPnINMonu6zDEa3YxJIDbASNd9Q==
+X-Received: by 2002:a50:955e:0:b0:579:bf5d:ac01 with SMTP id 4fb4d7f45d1cf-579bf5daca3mr5720838a12.15.1716894182709;
+        Tue, 28 May 2024 04:03:02 -0700 (PDT)
+Received: from mslusarz-hyperv.mshome.net (078088142095.jeleniagora.vectranet.pl. [78.88.142.95])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d5e3f995sm2515081a12.64.2024.05.28.04.03.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 04:03:02 -0700 (PDT)
+From: =?UTF-8?q?Marcin=20=C5=9Alusarz?= <marcin.slusarz@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: =?UTF-8?q?Marcin=20=C5=9Alusarz?= <mslusarz@renau.com>,
+	Tim K <tpkuester@gmail.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Larry Finger <Larry.Finger@lwfinger.net>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: rtw88: schedule rx work after everything is set up
+Date: Tue, 28 May 2024 13:02:46 +0200
+Message-Id: <20240528110246.477321-1-marcin.slusarz@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <13e848c1544245e6aef4b89c3f38daf0@realtek.com>
+References: <13e848c1544245e6aef4b89c3f38daf0@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: csgroup.eu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: a190af6d-7fe2-4124-59f1-08dc7f05af43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2024 11:02:37.1496
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tL16PyUuymMdzfsowan/q/9/8LjOaBME9VhFUS1fryGdhRI0dFiKSHJhZeMY320MnmMCnFMUiXE3bz4CEBrBPDMfCZjoxVaUwkAfFXXY0m8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PATP264MB4812
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-DQoNCkxlIDI4LzA1LzIwMjQgw6AgMDc6NDEsIE9zY2FyIFNhbHZhZG9yIGEgw6ljcml0wqA6DQo+
-IE9uIE1vbiwgTWF5IDI3LCAyMDI0IGF0IDAzOjMwOjAxUE0gKzAyMDAsIENocmlzdG9waGUgTGVy
-b3kgd3JvdGU6DQo+PiAtLS0gYS9tbS9ndXAuYw0KPj4gKysrIGIvbW0vZ3VwLmMNCj4+IEBAIC01
-NDcsNyArNTQ3LDcgQEAgc3RhdGljIGludCBndXBfaHVnZXB0ZShzdHJ1Y3Qgdm1fYXJlYV9zdHJ1
-Y3QgKnZtYSwgcHRlX3QgKnB0ZXAsIHVuc2lnbmVkIGxvbmcgc3oNCj4+ICAgCWlmIChwdGVfZW5k
-IDwgZW5kKQ0KPj4gICAJCWVuZCA9IHB0ZV9lbmQ7DQo+PiAgIA0KPj4gLQlwdGUgPSBodWdlX3B0
-ZXBfZ2V0KHB0ZXApOw0KPj4gKwlwdGUgPSBodWdlX3B0ZXBfZ2V0KHZtYS0+bW0sIGFkZHIsIHB0
-ZXApOw0KPiANCj4gSSBsb29rZWQgYWdhaW4gYW5kIEkgc3R1bWJsZWQgdXBvbiB0aGlzLg0KPiBJ
-dCBzaG91bGQgaGF2ZSBiZWVuICJ2bWEtPnZtX21tIi4NCg0KT29wcyAuLi4gVGhhbmtzIGZvciBz
-ZWVpbmcgdGhhdC4gQXMgaXQgZ29lcyBhd2F5IGF0IHRoZSBlbmQgaXQgd2VudCANCnVubm90aWNl
-ZCBieSBidWlsZHMuDQoNCkNocmlzdG9waGUNCg==
+From: Marcin Ślusarz <mslusarz@renau.com>
+
+Right now it's possible to hit NULL pointer dereference in
+rtw_rx_fill_rx_status on hw object and/or its fields because
+initialization routine can start getting USB replies before
+rtw_dev is fully setup.
+
+The stack trace looks like this:
+
+rtw_rx_fill_rx_status
+rtw8821c_query_rx_desc
+rtw_usb_rx_handler
+..
+queue_work
+rtw_usb_read_port_complete
+..
+usb_submit_urb
+rtw_usb_rx_resubmit
+rtw_usb_init_rx
+rtw_usb_probe
+
+So while we do the async stuff rtw_usb_probe continues and calls
+rtw_register_hw, which does all kinds of initialization (e.g.
+via ieee80211_register_hw) that rtw_rx_fill_rx_status relies on.
+
+Fix this by moving the first usb_submit_urb after everything
+is set up.
+
+For me, this bug manifested as:
+[    8.893177] rtw_8821cu 1-1:1.2: band wrong, packet dropped
+[    8.910904] rtw_8821cu 1-1:1.2: hw->conf.chandef.chan NULL in rtw_rx_fill_rx_status
+because I'm using Larry's backport of rtw88 driver with the NULL
+checks in rtw_rx_fill_rx_status.
+
+Reported-by: Tim K <tpkuester@gmail.com>
+Closes: https://lore.kernel.org/linux-wireless/CA+shoWQ7P49jhQasofDcTdQhiuarPTjYEDa--NiVVx494WcuQw@mail.gmail.com/
+Signed-off-by: Marcin Ślusarz <mslusarz@renau.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/net/wireless/realtek/rtw88/usb.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw88/usb.c b/drivers/net/wireless/realtek/rtw88/usb.c
+index a0188511099a..98f81e3ae13e 100644
+--- a/drivers/net/wireless/realtek/rtw88/usb.c
++++ b/drivers/net/wireless/realtek/rtw88/usb.c
+@@ -740,7 +740,6 @@ static struct rtw_hci_ops rtw_usb_ops = {
+ static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
+ {
+ 	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
+-	int i;
+ 
+ 	rtwusb->rxwq = create_singlethread_workqueue("rtw88_usb: rx wq");
+ 	if (!rtwusb->rxwq) {
+@@ -752,13 +751,19 @@ static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
+ 
+ 	INIT_WORK(&rtwusb->rx_work, rtw_usb_rx_handler);
+ 
++	return 0;
++}
++
++static void rtw_usb_setup_rx(struct rtw_dev *rtwdev)
++{
++	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++	int i;
++
+ 	for (i = 0; i < RTW_USB_RXCB_NUM; i++) {
+ 		struct rx_usb_ctrl_block *rxcb = &rtwusb->rx_cb[i];
+ 
+ 		rtw_usb_rx_resubmit(rtwusb, rxcb);
+ 	}
+-
+-	return 0;
+ }
+ 
+ static void rtw_usb_deinit_rx(struct rtw_dev *rtwdev)
+@@ -895,6 +900,8 @@ int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ 		goto err_destroy_rxwq;
+ 	}
+ 
++	rtw_usb_setup_rx(rtwdev);
++
+ 	return 0;
+ 
+ err_destroy_rxwq:
+-- 
+2.25.1
+
 
