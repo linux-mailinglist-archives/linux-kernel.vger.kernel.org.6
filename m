@@ -1,106 +1,146 @@
-Return-Path: <linux-kernel+bounces-193128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B068D2735
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:42:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0208D2737
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05991F2312C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2391F25DDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B3117BB2E;
-	Tue, 28 May 2024 21:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0DA17BB2A;
+	Tue, 28 May 2024 21:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qo7rPQiW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="pZrBqKdL";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="pZrBqKdL"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3806F06E;
-	Tue, 28 May 2024 21:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F256E6F06E;
+	Tue, 28 May 2024 21:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716932534; cv=none; b=RvDPs43Cu0d6X1+WlTXR99BT+fA7I3JzwKsdVJ+/7Zsd9WUM9zmjB0RjESpJSMNyFYuInQag7qCnKbQcBqLmZL6AmUXl1nvIUuE+mcoEpIbjqIwhZUwHIUA4Jqd9wMsIdUnTXL1QIFm9ZP9HA7oIhq1Ias6nBIoHzCFnNk9Ro18=
+	t=1716932544; cv=none; b=aBQ2d2f2q4IHnrdtEqPirOxU36QWoU/bp2w1WrBxdI/cCNqFC7tkBOjIdQzlMKSIayK31tbc3DiYheYZamhqmyNdqEjrBkxUMwAo0aaE7JUggccI4j6YaoiIiRNQi1fwRB1eWCCB2edGvlnsjILew2RkkfYObGCtXmQlXyV4r0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716932534; c=relaxed/simple;
-	bh=fT1XyUb8dOaA5u2tXh9YwMja9Vme8HOQuPXfz4rV3/Q=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=VeWJc0osdgGJ0yiCK0287REcKdiyQubns6/uNBXnral1n6WDlHWXFfFopGp9wjeGT1qbMWENQDjC6dqy1eeT/lqS+A0mzVEahDCupwIrivvDx4n5fuN3CjJnOnaxPPOLbM2NBqWA2bkatY9rYMXCvYLP+ILOVnxjiYz60w1YGDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qo7rPQiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F9AC3277B;
-	Tue, 28 May 2024 21:42:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716932534;
-	bh=fT1XyUb8dOaA5u2tXh9YwMja9Vme8HOQuPXfz4rV3/Q=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=qo7rPQiW11ANRpMxlP9+Jz8jxcpnSm8ARaYhzF/M5MkXEk+VzgxYag3CEQRv+a2TR
-	 HNYB5zdBaimW9VOZHkmcscYMFY/KxkNzZUC8soVNlOWHgP5cPUxet+Ajo0GIFM9wbz
-	 1cV3lK4Y6gYimZStjVR+/uUkDagUavbh1nFjk0Fdsurousy8g+8oh58jL2pKFSHukB
-	 Es6mNxZD/ohFjhrirfgqVMP1k6cw6k+2leBrjv4dSjK4JnzrbrhQf6uGHGwJDCCNLy
-	 NINmyEsVs8tV0/pIb5DhBAB01e6iP5scHMSLfnXwM7VP0w69xaol+N7d67Wrbal1jj
-	 8p0EJwTZUXvvg==
+	s=arc-20240116; t=1716932544; c=relaxed/simple;
+	bh=M/jOs5D9CCgKcL0wiVUa68UgjVFEE9AtxSDsnpVWCbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q/ull7pc+Ugvgn4UuNbJ4V2liLEI2hIAksNmvq+m/rPCb/qu6Fl7hr5AnCoQAg7++YCILxfW6FLssrw0J3dMuUDaedbE1LaQ9gfflZfWaMpdftYh2ZsAG5pTs0rVwcgHJO8RTjrf3YGRAlDQhFgL/jQ5M3FmShK/SMJOY81d/UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=pZrBqKdL; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=pZrBqKdL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0498C2045D;
+	Tue, 28 May 2024 21:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716932539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M/jOs5D9CCgKcL0wiVUa68UgjVFEE9AtxSDsnpVWCbM=;
+	b=pZrBqKdLobnlLzXt1Ue17In4Bo+OxK2WS2QYe0EY3eKlLeuBIK0IewAbb5KoSkqfpnvwc9
+	TfvW4obzlw1X2I3QES6V9M+Hq26eQpki46AyYcXxTRC3t2q9Fnh0qkYkAKzpCS2SE1yaDr
+	3PCb3GYYAkNITEPB9ag8YZOjgk0Ibhc=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=pZrBqKdL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716932539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M/jOs5D9CCgKcL0wiVUa68UgjVFEE9AtxSDsnpVWCbM=;
+	b=pZrBqKdLobnlLzXt1Ue17In4Bo+OxK2WS2QYe0EY3eKlLeuBIK0IewAbb5KoSkqfpnvwc9
+	TfvW4obzlw1X2I3QES6V9M+Hq26eQpki46AyYcXxTRC3t2q9Fnh0qkYkAKzpCS2SE1yaDr
+	3PCb3GYYAkNITEPB9ag8YZOjgk0Ibhc=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D793113A5D;
+	Tue, 28 May 2024 21:42:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KZDtM7pPVmYBfgAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Tue, 28 May 2024 21:42:18 +0000
+Date: Tue, 28 May 2024 23:42:13 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: "T.J. Mercier" <tjmercier@google.com>, 
+	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] cgroup: Fix /proc/cgroups count for v2
+Message-ID: <zrvsmkowongdaqcy3yqb6abh76utimen5ejrnkczd4uq3etesl@jv3xb4uso4yk>
+References: <20240528163713.2024887-1-tjmercier@google.com>
+ <ZlYzzFYd0KgUnlso@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 May 2024 00:42:08 +0300
-Message-Id: <D1LLSAS0YN47.18EIHL1KRF2UR@kernel.org>
-Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
- "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
- <ebiggers@kernel.org>, "James Bottomley"
- <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
- "Stefan Berger" <stefanb@linux.ibm.com>, "Lennart Poettering"
- <lennart@poettering.net>, "David S. Miller" <davem@davemloft.net>, "open
- list" <linux-kernel@vger.kernel.org>, "David Howells"
- <dhowells@redhat.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe"
- <jgg@ziepe.ca>, "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Ard Biesheuvel" <ardb@kernel.org>, "Mario Limonciello"
- <mario.limonciello@amd.com>
-Subject: Re: [PATCH v7 5/5] keys: asymmetric: Add tpm2_key_ecdsa
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
- <herbert@gondor.apana.org.au>
-X-Mailer: aerc 0.17.0
-References: <20240528210823.28798-1-jarkko@kernel.org>
- <20240528210823.28798-6-jarkko@kernel.org>
-In-Reply-To: <20240528210823.28798-6-jarkko@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlYzzFYd0KgUnlso@slm.duckdns.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.91 / 50.00];
+	BAYES_HAM(-2.90)[99.56%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 0498C2045D
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -3.91
 
-On Wed May 29, 2024 at 12:08 AM EEST, Jarkko Sakkinen wrote:
-> +	/* Encode the ASN.1 signature: */
-> +#define TPM2_KEY_ECDSA_SIG_SIZE		(2 + 2 * (2 + SHA256_DIGEST_SIZE) + r_0=
- + s_0)
-> +	pr_info("sig_size=3D%d\n", TPM2_KEY_ECDSA_SIG_SIZE);
-> +	ptr[0] =3D 0x30; /* SEQUENCE */
-> +	ptr[1] =3D TPM2_KEY_ECDSA_SIG_SIZE - 2;
-> +#define TPM2_KEY_ECDSA_SIG_R_TAG	2
-> +#define TPM2_KEY_ECDSA_SIG_R_SIZE	3
-> +#define TPM2_KEY_ECDSA_SIG_R_BODY	4
-> +	ptr[TPM2_KEY_ECDSA_SIG_R_TAG] =3D 0x02; /* INTEGER */
-> +	ptr[TPM2_KEY_ECDSA_SIG_R_SIZE] =3D SHA256_DIGEST_SIZE + r_0;
-> +	ptr[TPM2_KEY_ECDSA_SIG_R_BODY] =3D 0x00; /* maybe dummy write */
-> +	memcpy(&ptr[TPM2_KEY_ECDSA_SIG_R_BODY + r_0], r, SHA256_DIGEST_SIZE);
-> +#define TPM2_KEY_ECDSA_SIG_S_TAG	(4 + r_0 + SHA256_DIGEST_SIZE)
-> +#define TPM2_KEY_ECDSA_SIG_S_SIZE	(5 + r_0 + SHA256_DIGEST_SIZE)
-> +#define TPM2_KEY_ECDSA_SIG_S_BODY	(6 + r_0 + SHA256_DIGEST_SIZE)
-> +	ptr[TPM2_KEY_ECDSA_SIG_S_TAG] =3D 0x02; /* INTEGER */
-> +	ptr[TPM2_KEY_ECDSA_SIG_S_SIZE] =3D SHA256_DIGEST_SIZE + s_0;
-> +	ptr[TPM2_KEY_ECDSA_SIG_S_BODY] =3D 0x00; /* maybe dummy write */
-> +	memcpy(&ptr[TPM2_KEY_ECDSA_SIG_S_BODY + s_0], s, SHA256_DIGEST_SIZE);
-> +	ret =3D TPM2_KEY_ECDSA_SIG_SIZE;
+On Tue, May 28, 2024 at 09:43:08AM GMT, Tejun Heo <tj@kernel.org> wrote:
+> I agree that this can be a useful metric but am not sure /proc/cgroups is
+> the right place to put it. Its use of v1 controller names, listing of
+> controllers that don't exist in v2 and the unnecessary column are rather
+> ugly and unnecessary.
 
-Stefan, so this how I realized the signature encoding, thanks to
-your earlier remarks [1]! I found out based on that a few glitches
-and ended up with this better structured ECDSA signature encoder,
-so thank you for doing that.
+At the same time, the info provided currently is incorrect or at least
+misleading (when only v2 hierarchy is mounted, it mixes the counts) --
+that's what T.J.'s patch attempts to rectify in my understanding.
 
-[1] https://lore.kernel.org/linux-crypto/b5ff9003-065f-437f-bf6b-7f1ae0a036=
-4a@linux.ibm.com/
+> In v2, cgroup.controllers and cgroup.subtree_control govern which
+> controllers are available and enabled in the subtree.
 
-BR, Jarkko
+Yes, users could sum up cgroup.controllers contents for true v2
+fingerprint.
+
+> I think it would make sense to introduce something in a similar
+> fashion. Can't think of a good name off the top of my head but add a
+> cgroup. file which lists the controllers in the subtree along with the
+> number of css's.
+
+BTW, there is the 'debug' subsys that has (almost) exactly that:
+'debug.csses' -- it's in v1 fashion though so it won't show hierarchical
+sums.
+
+Michal
 
