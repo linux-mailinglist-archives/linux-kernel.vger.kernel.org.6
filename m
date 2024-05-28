@@ -1,212 +1,141 @@
-Return-Path: <linux-kernel+bounces-193041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3349A8D25F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:34:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0BB8D25FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69C5DB271C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45AC429152A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B9A178CF6;
-	Tue, 28 May 2024 20:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B7B1791ED;
+	Tue, 28 May 2024 20:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FA8PMqcO"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2087.outbound.protection.outlook.com [40.107.95.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bthHckIe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC12E75809;
-	Tue, 28 May 2024 20:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716928432; cv=fail; b=D04/qLvRjBslJBFiS8vsnNn9JrNMyIMX3FJ1cjOgmSbPOqib2mZcERWwZP10QtiZ5CVGpoBeM6XMTlU5mIZvJFgUTeqmZnJ4e3dg1U0FRaaQFgJ9gNN7uXwuTWYNDStUQt1qcY0BoJZw0voj01mEFkIF69uvb9Glz4nWi9cdVbs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716928432; c=relaxed/simple;
-	bh=yPSHtDPWg6CSgHGt0phVasuFXzajnYcsOhqyLxFH5y4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6aDNYsAKhC2UcJLHxcaWOyrYK1zsFCU8NFlGMgUlmdKxtSha58kWWhNeNWqYNC2Au7IXJGvBpxjtpp/jPjziGyWyZS2TbJ4Gy9AxpqhgtAVg9sdKmQ3FqdHX1VGyXmUXt+hh0cu66k3tFD9lz83yNR6O76fY9auf+DLBzpBq50=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FA8PMqcO; arc=fail smtp.client-ip=40.107.95.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OOMZMmSpAu4saLvE8uavdjdmbYg66De9SczSKAHzeyGa8DBvcP9v6EDs0L5lFgvYmWB/WxPGzozckjWoZ58nxkLT79ALKOIBaz93dfVR7AJINE0ABWXLomQ4lS99fxbYBIqPivHqGaiWOvZhsRuma3TAutePcpNhGn9SGLNV/DHHToF5e3QljmMdZk561YoogMrJlksMqeQfkS7SSQQiwug+hV9Kixbdt8UrRP8JsCLs23l3+coquutlChzRFAV9FSaJtvvHjAKEqu339juL5plmNW4MLuID5OqYkb1pw9ZK9e89GwSJv3GTu9rP5HtGmYJTdfBWVLEIVvXSOLvGxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xmOiQMApXYtCBODx6nUJUQOMZ+RqsfTdu+mjq54iFPM=;
- b=gk5IK3fUWnuySmclJLs0DowHuEgkZl+MtWkOltrzWK+ur2cF4xYtd59dbY3eMIDyIM0Emxq78k93A33MpY8x5uhwYkBGkmUgFfYMrvclIAN+MSsTqrBjbO6Yr8UM9ry88VLl+3peO5rqIqlHYc7ZOlPlL3lL7unND0ZIei5iI5Pc/uj8oP5WzZfCgnc6//ZmL+8wb/bZQu249nJ2uTu0VuUe0fUSowAfpI6zdqiG490tAtGmyGkGQI7kkbuYDRHWn4EoMMSQWT8MQj5IZrOjxdOMEtv80xmdtAGMIIqhW5KhIJ4cns64Z1DRQmtYDc9Qj5gw95B37pNN4AIQSduA1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xmOiQMApXYtCBODx6nUJUQOMZ+RqsfTdu+mjq54iFPM=;
- b=FA8PMqcO3qtsM2+Ye23MvGtA5Upz8kZ4OWNJgShq/xzPM6dStgkCf0QMoYvmHm3fBzrdBd27G9n5oOEvkDG7ahhO/0UEFTRYPBqSBD19lzg1Hi2CRN4taCBJeAfisotlAn8/RPCmnlKygRHTrTBhsPtsN5pQQOQRrFp1FG6zGjoKHuJx5YAp4V6ErT66liA0WBQojHW27NoyWUitzXYpo9KQX6qWp2/yUkHUfeavn7Y2XHjhKT+vz+vQuiNpPadpCYafiIomg5bVDCnWHGf19ZV5ic/JJFdAACycV5eG9BDFzdBTL/bnac2pp+MKqdiezRZHe/RlMj/fm0iERQCM0A==
-Received: from BN8PR04CA0009.namprd04.prod.outlook.com (2603:10b6:408:70::22)
- by DM4PR12MB6253.namprd12.prod.outlook.com (2603:10b6:8:a6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
- 2024 20:33:45 +0000
-Received: from BN1PEPF00004689.namprd05.prod.outlook.com
- (2603:10b6:408:70:cafe::46) by BN8PR04CA0009.outlook.office365.com
- (2603:10b6:408:70::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
- Transport; Tue, 28 May 2024 20:33:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN1PEPF00004689.mail.protection.outlook.com (10.167.243.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.15 via Frontend Transport; Tue, 28 May 2024 20:33:44 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
- 2024 13:33:25 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 28 May 2024 13:33:25 -0700
-Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 28 May 2024 13:33:24 -0700
-Date: Tue, 28 May 2024 13:33:23 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <ZlY/kxg0VJf7olXr@Asurada-Nvidia>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <c97a98a72ee3498c587e5898d6b899553ccd9b27.1712978212.git.nicolinc@nvidia.com>
- <BN9PR11MB5276A897A5386DFAC9A35F9D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlAoN3s96HL7ROth@nvidia.com>
- <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240524131912.GT20229@nvidia.com>
- <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlY886FT3HHLC8Cf@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C67375809;
+	Tue, 28 May 2024 20:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716928518; cv=none; b=iRza74zfZ1+gJ5UOZG+opODXA/QRo1DfNajjKArjcBYjZ8xg1Daxm3ruax2W4x5rjgGU47w75XW8r43X+SBpaLZKxALdNuyK0uVxoVK+TjomY4Q5OxUPqDhMmCkFXjRgbPMQDKdL2rxBVLwHSS0eF+NloFQ0l5cNsurle/WQEYA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716928518; c=relaxed/simple;
+	bh=EIMQ4tqK+JUU2Shu+ELX594M9kOVv7GUsWW4DjYy5ZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gkp2/dfw+pOM5v116s9qNKtHxuZLpAJC5IdTYPfBy0B0Uj5/SpuU9FGkEsRPCZskFgcFqadmLIvEw1RhvXU4TLv3iRBWHKTAyV7428eoOb4B12ppnWhzAoQEeDRizgNJAiwVWAbfTebUv98uNUCEwdobpBcYmuFNCmJtKdIIn5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bthHckIe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BDEC3277B;
+	Tue, 28 May 2024 20:35:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716928517;
+	bh=EIMQ4tqK+JUU2Shu+ELX594M9kOVv7GUsWW4DjYy5ZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bthHckIefXTrydQ+Od1NMHOUDAjgTr85lC4GSo1iKOeL+R3ZEOH5boePap3u1VuLJ
+	 j4HWCfTkQmzMCBk2B7MPh2hO14ToRjVk+cevDNN47JMCIflNhu2cppwm/uwYPvwm30
+	 zAbr33Hsx+ciQhC3yI0x1Xz8frw78AzARotnpVB3jEOePD6eX5eJn6e3Zl42LeZIun
+	 auTgRXrdAydoEU0hxpTbj01UzQVkvH2qD+78ZjvfZBOHTx6T0Wpb3Opt8JDKZchXA1
+	 SSyT03N2k4A0L5PJYx/t8slls5bATvdOF38EwHamK/Yqze1eFeQYHp19PhFfu5DGXy
+	 86KRA3yTgRA0w==
+Date: Tue, 28 May 2024 13:35:15 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mark Brown <broonie@kernel.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	sunliming <sunliming@kylinos.cn>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kselftest@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] selftests/user_events: silence a clang warning:
+ address of packed member
+Message-ID: <20240528203515.GC2680415@thelio-3990X>
+References: <20240527214704.300444-1-jhubbard@nvidia.com>
+ <20240528202833.GB2680415@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZlY886FT3HHLC8Cf@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004689:EE_|DM4PR12MB6253:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46085eae-35e1-4cb0-193e-08dc7f55787d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|82310400017|7416005|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SGWGt1w6bTQWFU6M0g2E6noE+2cDqymP6JBKm1aonXoWLF9Zvd+RmJ3kuOCq?=
- =?us-ascii?Q?DW6zPDVfRtlWTiHHrCnDgpcQ+B/2LX621AJUftOSyOuQXgWakemD5ymYiFb5?=
- =?us-ascii?Q?uhD2kKuLHm8fzuwhKdc2x8o3OI1mP/GWhGecP5JXxgG79uyonvKGgY0Am7s/?=
- =?us-ascii?Q?Bv99kXbNgAJq7IBO29BBS5uq2TEE0DvwkV0cDhQ6oG6X+IchUpmIKzZHoozz?=
- =?us-ascii?Q?9xnBZ/8fbOppahdvu077ix6VuCzRZUQXAqGxjEsJV7HWxv1gkRhGJDWRr0hA?=
- =?us-ascii?Q?m4QrLpoaP4oUsT5gbssC6mPC0MU5o87eTuAz1IuNhCTBpP8F26sFJU6gJNir?=
- =?us-ascii?Q?cFIKCNwzX8/EVpLld0m2tNgkMY1Q76lq9U+KhEw5As3o9YuahraMSPlAgs9L?=
- =?us-ascii?Q?wrPYFoHE1DNl2VtGU1uAuth0a9FXNJ6QNiIQy5nUxEadpEj8Q1OP/uHjUcm7?=
- =?us-ascii?Q?tpB5OxDVbliUAmez2s79EWNhiyuAAou1uPHs/8t1IoPKl/w1j8jmUsO4zhWJ?=
- =?us-ascii?Q?/gWcjLkeGowpsnJmg03zTUq0n3thUBQvilAzhsqLpxnh3D7J5WNJLcAwPmPk?=
- =?us-ascii?Q?eD1glWSbnF+h4Wdf3MPd57PJOxgBKfCqWisCzIR8eXRQGZW1O+RPXSj+zc+q?=
- =?us-ascii?Q?t5STT6FXXAxqI1CTdsOarvwy55WdL1Hgf5ZOwfQgqmotD1P7/djkYrHAmFW7?=
- =?us-ascii?Q?JdcEyrNSCGb1lpJmu544xcT0b8TqBYj3LXOn+jIebNL+7sy2FSNmRzefSNv4?=
- =?us-ascii?Q?Y3mx/EBUZF9NneKBuqKxHp1l1IeznJiz+2r9maXFe9dAtWTD4PRktyR0J1/R?=
- =?us-ascii?Q?1aDDvs1997+9toCxCp2Y+TBgVndTPcsjqUdZ9kTB1vKpi97uEiKWjdEiRMtD?=
- =?us-ascii?Q?bEyHi+fnXm+2ObOzg5Hg9Rvek7Cnv9o/PkbxDIFzNEeCwILh6KZZKBsVHYFj?=
- =?us-ascii?Q?Mr1C1qRwnxOazppm+WQ3JfnaqAGB4aFIg1zaCXWHM9x6DYXy5gzt8T6+A3kx?=
- =?us-ascii?Q?cI+KJkrpglZ83wb5wONPHTiROsA2sHoBLp6GjxOxDVrIDVoHr5Dp4UpbQRA4?=
- =?us-ascii?Q?Xg174mjq/6ZZ6azSqmK1Iik0yiw66Ckr8JgjGr4ec+obCGy8jwbe8fYAi5gm?=
- =?us-ascii?Q?A0E8yLWmwEAcNVN2vpzMXKBgCtV2SIVBlylpxtVGYw4dO1EloUiixkIkFDY3?=
- =?us-ascii?Q?IDtJ72Xj/wcWkSCUqyY5REqDy3CPmSbLzDgg5JuRo1LYy/H1sHNlvosJZXfO?=
- =?us-ascii?Q?zcLNgAXfYnV1/e9K/wjIAXA1wYgiN2KYdYtYgnuDmXZfKifW6uvcWPdl0XNj?=
- =?us-ascii?Q?/Xrl8zX94sNuOB+ndxFWM6D3d91zAEEJWSorO22IZXVuvpjuYDIGl34//bfm?=
- =?us-ascii?Q?3c2jPmY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(82310400017)(7416005)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 20:33:44.8305
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46085eae-35e1-4cb0-193e-08dc7f55787d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004689.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6253
+In-Reply-To: <20240528202833.GB2680415@thelio-3990X>
 
-On Tue, May 28, 2024 at 01:22:46PM -0700, Nicolin Chen wrote:
-> On Mon, May 27, 2024 at 01:08:43AM +0000, Tian, Kevin wrote:
-> > > From: Jason Gunthorpe <jgg@nvidia.com>
-> > > Sent: Friday, May 24, 2024 9:19 PM
-> > >
-> > > On Fri, May 24, 2024 at 07:13:23AM +0000, Tian, Kevin wrote:
-> > > > I'm curious to learn the real reason of that design. Is it because you
-> > > > want to do certain load-balance between viommu's or due to other
-> > > > reasons in the kernel smmuv3 driver which e.g. cannot support a
-> > > > viommu spanning multiple pSMMU?
-> > >
-> > > Yeah, there is no concept of support for a SMMUv3 instance where it's
-> > > command Q's can only work on a subset of devices.
-> > >
-> > > My expectation was that VIOMMU would be 1:1 with physical iommu
-> > > instances, I think AMD needs this too??
-> > >
-> >
-> > Yes this part is clear now regarding to VCMDQ.
-> >
-> > But Nicoline said:
-> >
-> > "
-> > One step back, even without VCMDQ feature, a multi-pSMMU setup
-> > will have multiple viommus (with our latest design) being added
-> > to a viommu list of a single vSMMU's. Yet, vSMMU in this case
-> > always traps regular SMMU CMDQ, so it can do viommu selection
-> > or even broadcast (if it has to).
-> > "
-> >
-> > I don't think there is an arch limitation mandating that?
+On Tue, May 28, 2024 at 01:28:33PM -0700, Nathan Chancellor wrote:
+> Hi John,
 > 
-> What I mean is for regular vSMMU. Without VCMDQ, a regular vSMMU
-> on a multi-pSMMU setup will look like (e.g. three devices behind
-> different SMMUs):
-> |<------ VMM ------->|<------ kernel ------>|
->        |-- viommu0 --|-- pSMMU0 --|
-> vSMMU--|-- viommu1 --|-- pSMMU1 --|--s2_hwpt
->        |-- viommu2 --|-- pSMMU2 --|
+> On Mon, May 27, 2024 at 02:47:04PM -0700, John Hubbard wrote:
+> > When building with clang, via:
+> > 
+> >     make LLVM=1 -C tools/testing/selftest
+> > 
+> > ...clang warns about "taking address of packed member 'write_index' ".
+> > This is not particularly helpful, because the test code really wants to
+> > write to exactly this location, and if it ends up being unaligned, then
+> > the test won't work (and may segfault, depending on the CPU type).
+> > 
+> > If that ever comes up, it will be obvious and can be fixed. But all it's
+> > doing now is prevent a clean clang build, so disable the warning.
+> > 
+> > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> > ---
+> > 
+> > Changes since the first version:
+> > 
+> > 1) Rebased onto Linux 6.10-rc1
+> > 
+> > 
+> > thanks,
+> > John Hubbard
+> > 
+> > 
+> >  tools/testing/selftests/user_events/Makefile | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/tools/testing/selftests/user_events/Makefile b/tools/testing/selftests/user_events/Makefile
+> > index 10fcd0066203..617e94344711 100644
+> > --- a/tools/testing/selftests/user_events/Makefile
+> > +++ b/tools/testing/selftests/user_events/Makefile
+> > @@ -1,5 +1,10 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  CFLAGS += -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
+> > +
+> > +ifneq ($(LLVM),)
 > 
-> And device would attach to:
-> |<---- guest ---->|<--- VMM --->|<- kernel ->|
->        |-- dev0 --|-- viommu0 --|-- pSMMU0 --|
-> vSMMU--|-- dev1 --|-- viommu1 --|-- pSMMU1 --|
->        |-- dev2 --|-- viommu2 --|-- pSMMU2 --|
+> Perhaps it would be better if this were
+> 
+>   ifeq ($(CC),clang)
+> 
+> as that would catch both CC=clang and LLVM=1 users? I haven't tested
+> this though.
 
-I accidentally sent a duplicated one.. Please ignore this reply
-and check the other one. Thanks!
+Hmmm, now that I am actually looking at tools/testing/selftests/lib.mk,
+it seems like CC is only set to clang when $(LLVM) is set, so keeping it
+the way it is now is probably best. Sorry about that, I am not too
+familiar with the tools build system.
+
+> Additionally, I think it would be good to mention that
+> -Wno-address-of-packed-member is GCC's default, whereas Clang enables
+> -Waddress-of-packed-member by default.
+> 
+> > +    CFLAGS += -Wno-address-of-packed-member
+> > +endif
+> > +
+> >  LDLIBS += -lrt -lpthread -lm
+> >  
+> >  TEST_GEN_PROGS = ftrace_test dyn_test perf_test abi_test
+> > 
+> > base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> > -- 
+> > 2.45.1
+> > 
+> > 
+> 
 
