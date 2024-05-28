@@ -1,103 +1,134 @@
-Return-Path: <linux-kernel+bounces-192642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B840F8D2010
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:16:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2598D200C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E90AB1C2306C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C4E282D11
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC73172BCE;
-	Tue, 28 May 2024 15:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFB2171E68;
+	Tue, 28 May 2024 15:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DBY9wQdL"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC586170855
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OS5NSDMt"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05C91DFEB;
+	Tue, 28 May 2024 15:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909287; cv=none; b=pJPMdorw1i1Fa1X4FUhkLpcIqT1fT/OsBIMb9l7I1iRJuXHWFRobjDV8tCru5JyTehD5yk5R1nLC4shRAUHhchQ1cdBRwK3GXWeiMJhleVKxkurfOzy+wVJ34eKvWy3KDYB1WUe2MDHjKzDVPiqRu75dXCLy9OAhUfMZsFEMQ34=
+	t=1716909257; cv=none; b=EdXWM8/Bvc4n8bru97mdLWVjVhMkH/drNlVBNb8Kn0CJVwAE/fG9u/YPg2v17jRpPS80iwIgGJ51SA71wnIdD500X0DeJqCUquDS8QkaHe14y3T4/8ytXK27zGRU8RIe5VKh8hxM6BlBfgBbJc04ylljRb3TrqmHq4BllXofz8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909287; c=relaxed/simple;
-	bh=bXkg/CgxYBXiILs6UFR7oH6OBkmjVLVOD25GL20hsao=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J6fzk6C6J/CDwgKibi3KZKtkUs/1fP8FJqDaPYX9qQh3mZm6O8/MaBDxcr4sM99+zqUir60z53Vsk+npf0wg2PE1fZZyX4gVmOCiyvjea+UOCF+EB7r3jEs8FPaFYIKOA0sr3/e2mO4e7p/tsqJVxcFaxpIydv0iOuh2WHpFnHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DBY9wQdL; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=AuM0r
-	CbJ0hWZ3V+vajoUI/lChlXnydV2UEWmf0D1iXQ=; b=DBY9wQdL30Y1DDfpylrwy
-	K3J0skFmoD/lClkwpeCm8fs6DfCo8mGospFS10UsFgNx95p2du3ermckS3b/t7T3
-	FjY0byc92tQ6UVEWfOwa9znyBKKWC/jdJCJxBdl5npng//iVCFKQGSM4SV7onQrl
-	lRNZrCnYSeFYfUEH4vYZ/E=
-Received: from localhost.localdomain (unknown [111.35.185.173])
-	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wDXj7ek9FVmILt8Ag--.50944S4;
-	Tue, 28 May 2024 23:13:45 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: yjnworkstation@gmail.com
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	willy@infradead.org
-Subject: [BUG] 6.10.0-rc1: segfault at 0 when reboot with kernel config INIT_MLOCKED_ON_FREE_DEFAULT_ON=y
-Date: Tue, 28 May 2024 23:13:40 +0800
-Message-Id: <20240528151340.4282-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716909257; c=relaxed/simple;
+	bh=L3+8/gNXDQi/RFa1Yjb445E/6YHPArHC5sNDeBkVjx4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZNdDNY+lQQH3mdEH7C8n8Se3nWeKl0TBrPgpuEXRZtiafPm0aVuE1mKEf8L9z93snY9hf6UiZCxxxZFTj4721dIc/KsG3Gy7zfHGoLrgbJSIjY7GSE3PmFZNlqTr4/0B08qU7viPqOlF1EP4eYOiPGXiBosI0ewlvbXUdY8ZTSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OS5NSDMt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SEfHR9031950;
+	Tue, 28 May 2024 15:14:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=NI8swxaVE12wOFBr8WuIz5f+Yy1rjMYIj9AuE66Nz6Y=;
+ b=OS5NSDMtrqu3RToU5J7qE40yRaCxlGO7YHomExjTl/EbCF1I5JYYh4YZkvGiB7aD/Lp9
+ Gr88cnhahQ+H1PKjTkgHBcqpjilj11v0OEuxPoMb+LkgqeRzNIDVc+pWgw9U61ybzoOb
+ pcmIyMMGYdernlPHG9UMz3whAi7J9OoJD4uQHcSN4/bsZn7Gy7YoJyzotdNQtND82Lwk
+ Vs3LbH/oALchAwxhGeUxkDOPg1HbznhJvXSGuOnn8ZLZ4sa+JSbGRXJgkLJIwuCDavK5
+ PCfAwzG+jMmsmgu7C4VH9JKzRPLt56FzAxJ2mgN1ADtp0eOWuHRW6z8AQDBvRd7z2Chw hw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydh46r3ta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 15:14:14 +0000
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SFDFSD032535;
+	Tue, 28 May 2024 15:14:13 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydh46r3t5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 15:14:13 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SEVnvH027260;
+	Tue, 28 May 2024 15:14:13 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ybvhkq5gv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 15:14:12 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SFE9JQ23921318
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 15:14:12 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D37A75805E;
+	Tue, 28 May 2024 15:14:09 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6FED258045;
+	Tue, 28 May 2024 15:14:08 +0000 (GMT)
+Received: from [9.61.37.147] (unknown [9.61.37.147])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 28 May 2024 15:14:08 +0000 (GMT)
+Message-ID: <d80eec0d-6e84-41e6-b4fb-bbea06d0d6bc@linux.ibm.com>
+Date: Tue, 28 May 2024 11:14:07 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] vfio/pci: Enable PCI resource mmap() on s390 and
+ remove VFIO_PCI_MMAP
+To: Niklas Schnelle <schnelle@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <20240523-vfio_pci_mmap-v2-0-0dc6c139a4f1@linux.ibm.com>
+ <20240523-vfio_pci_mmap-v2-3-0dc6c139a4f1@linux.ibm.com>
+Content-Language: en-US
+From: Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <20240523-vfio_pci_mmap-v2-3-0dc6c139a4f1@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: IFvwoo8vCj9ej9WmLFwgVJO6BULiZRmE
+X-Proofpoint-GUID: B35FC2cMf25FukWBCjiAhmahQ5cQez-5
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXj7ek9FVmILt8Ag--.50944S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tF4fXF45GF4Utw18Cr4UArb_yoW8Kr4fpr
-	1j9F15Cr4vg34UAF18Jr43tF18t3yqka47Xr4DGryDXF1q9F15Jw17K3y5trWDGF45u3W7
-	J3WkXa18Kr1UXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joGQDUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0g3sqmWXyBCpagAAsw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_11,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=769 phishscore=0 adultscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405280113
 
-Hi,
+On 5/23/24 7:10 AM, Niklas Schnelle wrote:
+> With the introduction of memory I/O (MIO) instructions enbaled in commit
+> 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
+> gained support for direct user-space access to mapped PCI resources.
+> Even without those however user-space can access mapped PCI resources
+> via the s390 specific MMIO syscalls. Thus mmap() can and should be
+> supported on all s390 systems with native PCI. Since VFIO_PCI_MMAP
+> enablement for s390 would make it unconditionally true and thus
+> pointless just remove it entirely.
+> 
+> Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
-My kernel is 6.10.0-rc1 with CONFIG_INIT_MLOCKED_ON_FREE_DEFAULT_ON=y, and 
-I got following screen when I execute `systemctl reboot` on my system.
-(The text was extracted from a console image, there may be some parse error. And my kernel was tainted mostly because of nvidia driver)
+Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
 
-	42.855067] watchdog: watchdog0: watchdog did not stop!
-	42.905871] show_signal_msg: 14 callbacks suppressed
-	42.905874) systemd-shutdow[1]: segfault at 0 ip 0000000000000000 sp 00007ffcc8af7318 error 14 likely on CPU 6 (core 4, socke 42.906017] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-	42.906080] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b 
-	42.906143] CPU: 6 PID: 1 Comm: systemd-shutdow Tainted: P OE 6.10.0-rc1-linan-0 #244
-	42.906220] Hardware name: Micro-Star International Co., Ltd. MS-7889/B450M MORTAR MAX (MS-7889), BIOS 2.80 06/10/2020 42.906308] Call Trace:
-	42.906329] <TASK>
-	42.906346] panic+0x31d/0x350
-	42.906375) ? srso_return_thunk+0x5/0x5f
-	42.906411] do_exit+0x968/0xad0
-	42.906441] do_group_exit+0x2c/0x80
-	42.906472] get_signal+0x876/0x8a0
-	42.906502] arch_do_signal_or_restart+0x2a/0x240
-	42.906544] irgentry_exit_to_user_mode+0xc2/0x160
-	42.906585] asm_exc_page_fault+0x22/0x30
-	42.906619] RIP: 0033:0x0
-	42.906640] Code: Unable to access opcode bytes at 0xfffft fffffffd6. 
-	42.906693] RSP: 002b:00007ffcc8af7318 EFLAGS: 00010206
-	42.906736] RAX: 0000000000000011 RBX: 000000000328adea RCX: 0000000000000005 
-	42.906794] RDX: 00007ffcc8af73b0 RSI: 0000000000000ea8 RDI: 0000000000000001 
-	42.906852] RBP: 00007ffcc8af73be R08: 003b459fca9238c4 R09: 0000000000000069 
-	42.906910] R10: 0000000000000008 R11: 0000000000000202 R12: 00007ffcc8af7330 
-	42.906968] R13: 0000000000000ea8 R14: 0000000000000000 R15: 0000000000000000 
-	42.907029] </TASK>
-	42.907328] Kernel Offset: 0x21a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff) 
-	43.081928) --- [ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
-
-
-I rebuild the kernel with `CONFIG_INIT_MLOCKED_ON_FREE_DEFAULT_ON not set`, the system can reboot normally.
-My guess, some memory is zeroed unproperly when reboot?
-
-
-David
-
+Also sanity tested on s390 with mlx, nvme, ISM over vfio-pci (the latter of which triggers the patch 2 scenario).
 
