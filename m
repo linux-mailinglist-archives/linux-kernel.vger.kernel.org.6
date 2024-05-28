@@ -1,230 +1,82 @@
-Return-Path: <linux-kernel+bounces-192772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954988D21DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:45:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40DF8D21DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2717E1F227A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0CC286986
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887AC16C6A0;
-	Tue, 28 May 2024 16:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6FD173320;
+	Tue, 28 May 2024 16:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="XfZPCvB0"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZI98vM1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F55216F84B;
-	Tue, 28 May 2024 16:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810991DA4C;
+	Tue, 28 May 2024 16:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716914734; cv=none; b=BOqmpUFjdUQw1t0NI4HZ0joR+9srV3U6AnSJvEEsYHruYsHrSmK+cQwADVsrcjc4Pt4G+amulvTSjjU0rHhgGKNnVRqkcLZQCHkDR0cWjMRR9U3hWObWdpRcYJzgQhNEMys/uSe6PuuX9mUJeox9BJTaF6ZFKqUsj/1Ayf1erFQ=
+	t=1716914778; cv=none; b=IKwpU2O5+dAclPxcxIzcQX3n8NbBdnf0Xm9UKB4U47pMuRPZ2Shtqbub8PlLLcM3wYsepoo9BItHnNuOccjVCHksyZU3Gb4a/oCk4RyZXalAuF5aPkzCPpjBIDZblnuFsUAynhY5TDf69xpzbJBrqp5X7ccHhCnz7sgXvMSf+ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716914734; c=relaxed/simple;
-	bh=RNENPMUVOErEihV9VpMUSVtosnCNGIbMtiITHws7HUY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p8vD/0CTAcoc8SDlS4DhX+hJxELLONZA1aM1ZR/6akCK9tMV5nU9I0vtEBXd9tdvyxYtYQRinpdNrHNTlOl/htEbLfm5l0Chailxqg1iPkQfpgksVrOhHgNZqf0NdlM2lDzOIeayJFRAMa92hOkuHJu64RoCob/f1M3pDBtFHMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=XfZPCvB0; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1716914728;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qU/m0pT2o1BSovPlePC2ZNxt37n/l0bBu7fGFNu7dK0=;
-	b=XfZPCvB0bXqtMHUryeAAoL0CvQLeuJS+DTZoFoAftSDqxbakJ9WDlesZuhNotj5JaaSUHQ
-	hoOfdNOOFctLehFvlfTtez69Tojn3kefLHVVidhSNoPzrZBq6rK427PE9g3AuGwLDB5z12
-	E4hJtPGLvXL6ZUT/xBl42KAT6l5lw+UOarIuxSnJ0JyjgavzP7ERwKlQthsoBOEHCUfTDh
-	WdtQcBQ4x2MgkH55Z/7mwv9cbyDONDL34SF79kRjfc1hV52djTnWIrjHaVdeznYBZyQ7Ue
-	3HgvOaqwLgC9Tb3hXcBOpzSNA19yshZzcorjEvs5A+ruRGEQZaJxaE1ds2sYnQ==
-To: linux-sunxi@lists.linux.dev
-Cc: wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2] arm64: dts: allwinner: Add cache information to the SoC dtsi for H616
-Date: Tue, 28 May 2024 18:45:16 +0200
-Message-Id: <e4b9cc3e3d366a571e552c31dafa5de847bc1c12.1716914537.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1716914778; c=relaxed/simple;
+	bh=TBDbSkYjUyl2imYhMy6xaeLQMRP0gJiFNyUlwCfZ240=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AVyEpLiO540INqUdU1sbcu/HQPAD+TwJ2mbokR2DC05+pq0DVKKKT7Vu39bFU/afIDWuOlirIBbSkXh4ZIht7qgPrCxF7QGn7GYoFYHKwFyZa44NCP8p2QGyQDRNlIxRCw3Gjhw1HWKvO8cg10rRl69NLocLtqbVuR78xlhz06M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZI98vM1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81368C3277B;
+	Tue, 28 May 2024 16:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716914778;
+	bh=TBDbSkYjUyl2imYhMy6xaeLQMRP0gJiFNyUlwCfZ240=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kZI98vM1bOWvEdMkNd8NbsCBpuWkqoxDAMKRXwMT/1FT5Eda5GPIiYwce+6WigkVo
+	 fyfIeq9NsgGRSfV95t9QvKmfK0XQnSr2xDgg0+jGQH+d/683cc9orhAtHO7Iw47DEq
+	 pSB5KK8kXrrA2yLm5Lk5lAS8NCRlaqkzMZWd1lnV6j5gWEYRANkP85N2SrmicwPnzD
+	 ouRQwPmLfqzpj61QQxVG0+zpbF0GnNRri/5C8k99dUlofbdW87mn9EE6j3SGRNyRWQ
+	 bCG8YO+q85qDaPvXm001cpSDnEI6S+zTPd6l5mriFmiBmqo3r77PKfDrfu/ljMUxd+
+	 iN0amIJWSt7Eg==
+Date: Tue, 28 May 2024 22:16:14 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	linux-sound@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Bard Liao <bard.liao@intel.com>
+Subject: Re: soundwire: fix usages of device_get_named_child_node()
+Message-ID: <ZlYKVtymA3zNe7VQ@matsya>
+References: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
+ <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
+ <9d5f2625-f3e7-4212-8c9a-c22f137f39d9@linux.intel.com>
+ <a2036c46-0527-4ac3-a40b-c9c2cd3e185e@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2036c46-0527-4ac3-a40b-c9c2cd3e185e@web.de>
 
-Add missing cache information to the Allwinner H616 SoC dtsi, to allow
-the userspace, which includes lscpu(1) that uses the virtual files provided
-by the kernel under the /sys/devices/system/cpu directory, to display the
-proper H616 cache information.
+On 28-05-24, 18:22, Markus Elfring wrote:
+> >>> Add fwnode_handle_put() to avoid leaked references.
+> >>
+> >> Are you going to respond also to my previous patch review
+> >> in more constructive ways?
+> >> https://lore.kernel.org/lkml/eb15ab0a-e416-4ae9-98bb-610fdc04492c@web.de/
+> >> https://lkml.org/lkml/2024/4/29/493
+> >
+> > Sorry about that, both Bard and I missed your comments.
+> 
+> How could this happen?
 
-Adding the cache information to the H616 SoC dtsi also makes the following
-warning message in the kernel log go away:
+Becuase your emails go to dev/null for most of people!
 
-  cacheinfo: Unable to detect cache hierarchy for CPU 0
-
-Rather conspicuously, almost no cache-related information is available in
-the publicly available Allwinner H616 datasheet (version 1.0) and H616 user
-manual (version 1.0).  Thus, the cache parameters for the H616 SoC dtsi were
-obtained and derived by hand from the cache size and layout specifications
-found in the following technical reference manual, and from the cache size
-and die revision hints available from the following community-provided data
-and memory subsystem benchmarks:
-
-  - ARM Cortex-A53 revision r0p4 TRM, version J
-  - Summary of the two available H616 die revisions and their differences
-    in cache sizes observed from the CSSIDR_EL1 register readouts, provided
-    by Andre Przywara [1][2]
-  - Tinymembench benchmark results of the H616-based OrangePi Zero 2 SBC,
-    provided by Thomas Kaiser [3]
-
-For future reference, here's a brief summary of the available documentation
-and the community-provided data and memory subsystem benchmarks:
-
-  - All caches employ the 64-byte cache line length
-  - Each Cortex-A53 core has 32 KB of L1 2-way, set-associative instruction
-    cache and 32 KB of L1 4-way, set-associative data cache
-  - The size of the L2 cache depends on the actual H616 die revision (there
-    are two die revisions), so the entire SoC can have either 256 KB or 1 MB
-    of unified L2 16-way, set-associative cache [1]
-
-Also for future reference, here's the relevant excerpt from the community-
-provided H616 memory subsystem benchmark, [3] which confirms that 32 KB and
-256 KB are the L1 data and L2 cache sizes, respectively:
-
-    block size : single random read / dual random read
-          1024 :    0.0 ns          /     0.0 ns
-          2048 :    0.0 ns          /     0.0 ns
-          4096 :    0.0 ns          /     0.0 ns
-          8192 :    0.0 ns          /     0.0 ns
-         16384 :    0.0 ns          /     0.0 ns
-         32768 :    0.0 ns          /     0.0 ns
-         65536 :    4.3 ns          /     7.3 ns
-        131072 :    6.6 ns          /    10.5 ns
-        262144 :    9.8 ns          /    15.2 ns
-        524288 :   91.8 ns          /   142.9 ns
-       1048576 :  138.6 ns          /   188.3 ns
-       2097152 :  163.0 ns          /   204.8 ns
-       4194304 :  178.8 ns          /   213.5 ns
-       8388608 :  187.1 ns          /   217.9 ns
-      16777216 :  192.2 ns          /   220.9 ns
-      33554432 :  196.5 ns          /   224.0 ns
-      67108864 :  215.7 ns          /   259.5 ns
-
-The changes introduced to the H616 SoC dtsi by this patch specify 256 KB as
-the L2 cache size.  As outlined by Andre Przywara, [2] a follow-up TF-A patch
-will perform runtime adjustment of the device tree data, making the correct
-L2 cache size of 1 MB present in the device tree for the boards based on the
-revision of H616 that actually provides 1 MB of L2 cache.
-
-[1] https://lore.kernel.org/linux-sunxi/20240430114627.0cfcd14a@donnerap.manchester.arm.com/
-[2] https://lore.kernel.org/linux-sunxi/20240501103059.10a8f7de@donnerap.manchester.arm.com/
-[3] https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/results/4knM.txt
-
-Suggested-by: Andre Przywara <andre.przywara@arm.com>
-Helped-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
-
-Notes:
-    Link to v1: https://lore.kernel.org/linux-sunxi/9d52e6d338a059618d894abb0764015043330c2b.1714727227.git.dsimic@manjaro.org/T/#u
-    
-    Changes in v2:
-      - Collected one Reviewed-by tag
-      - Rebased the patch to 6.10-rc1, as requested by Chen-Yu, [4] with
-        no functional changes introduced
-    
-    [4] https://lore.kernel.org/linux-sunxi/CAGb2v67_4MHEZned0X1sFxisySahemHYo6sjn9sttQY+RO=VQw@mail.gmail.com/
-
- .../arm64/boot/dts/allwinner/sun50i-h616.dtsi | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-index 921d5f61d8d6..6595e0406b6d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-@@ -27,33 +27,70 @@ cpu0: cpu@0 {
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&l2_cache>;
- 		};
- 
- 		cpu1: cpu@1 {
- 			compatible = "arm,cortex-a53";
- 			device_type = "cpu";
- 			reg = <1>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&l2_cache>;
- 		};
- 
- 		cpu2: cpu@2 {
- 			compatible = "arm,cortex-a53";
- 			device_type = "cpu";
- 			reg = <2>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&l2_cache>;
- 		};
- 
- 		cpu3: cpu@3 {
- 			compatible = "arm,cortex-a53";
- 			device_type = "cpu";
- 			reg = <3>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&l2_cache>;
-+		};
-+
-+		l2_cache: l2-cache {
-+			compatible = "cache";
-+			cache-level = <2>;
-+			cache-unified;
-+			cache-size = <0x40000>;
-+			cache-line-size = <64>;
-+			cache-sets = <256>;
- 		};
- 	};
- 
+-- 
+~Vinod
 
