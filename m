@@ -1,133 +1,182 @@
-Return-Path: <linux-kernel+bounces-193034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4791B8D25D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:28:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABD18D25D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D895E1F24665
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783F71F245D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DB2178CFD;
-	Tue, 28 May 2024 20:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC36179211;
+	Tue, 28 May 2024 20:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSagSTgc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vQEgrJ5o"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDFF2FB2;
-	Tue, 28 May 2024 20:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100D2FB2
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716928115; cv=none; b=arhpYxAFHLPlJy1WBExr0Ac5yPa31Yy4tyiAmakShxqb9ucNH0fjRVI5PH0rhiZry9Y8/aRfJOdMyU1kfyEx/klumi26THBLL7fWYCHGsTqltLAIPJndG3Qmd6k0/LK1BfaAXV/1a1EBl3NNdrmjNFlZ+IYerSKnH90sxNEFakw=
+	t=1716928160; cv=none; b=nfFP0S32EEu/kJqbLcS8lBGqEbjqKVLTetQsLIBOVu7BGs4B3nlOJgu766BRSckJTwi+ZShC3alJaUhNfbqCbouSvdkLUcniKEkBadFhHDmAjDK87+roDh7KI+y+AS3KRMB7KcZ1TyapHc8rHw5CbhamIZfb/tbItgn5lj4bXIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716928115; c=relaxed/simple;
-	bh=tvqtyxszXM8jDckKY+3E2CdFN/rc+uOT4+I2rD70XSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQAjcy33tHDTK9Gb8PIRqGsBD+zBhvwcX//bsZDb+E072ikkG3vIBgkmYl/Nk+0DqHrcExEtJ9EkeyrYPnXonqmMZ7hFjC5YOL8Chd3YI6P0atJFgHzLqCTa0M56Twbf+L3Cl6h7QMxzY7r4k4XdYMABf8FYGN9NUowoaq2fpIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSagSTgc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8327C3277B;
-	Tue, 28 May 2024 20:28:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716928115;
-	bh=tvqtyxszXM8jDckKY+3E2CdFN/rc+uOT4+I2rD70XSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FSagSTgcCe2BF3D778iaB7O6jZupz2oWfXX6aVkdKYp9UtJAfx6AS7Taq1pRR+Cna
-	 8+7JUyyCC7PxNSP5frvuVg+/t/TGdKo8qZMDhfRm6UurFPKoXufbH8CA1MIztVhPNj
-	 d+nK0cQB6exOG37UGUijO7dekHrjsNBkjW20xxcKQ5QtCK8V3yvgWOIyf+/bnJZsGu
-	 zZ1lVewf5+OGdz1NXBt5JAKDdakbQFXBjQU/VvXkigvM4pagHmE+GDAxYKAoOA0xvF
-	 SJbda8NIulJwQUvSg36c7dLkDij8GPYTIt4dfLhH6vI3OV338Sa/EUCpCU4r3iXASv
-	 ZYe+rxcP+GAKw==
-Date: Tue, 28 May 2024 13:28:33 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mark Brown <broonie@kernel.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	sunliming <sunliming@kylinos.cn>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kselftest@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] selftests/user_events: silence a clang warning:
- address of packed member
-Message-ID: <20240528202833.GB2680415@thelio-3990X>
-References: <20240527214704.300444-1-jhubbard@nvidia.com>
+	s=arc-20240116; t=1716928160; c=relaxed/simple;
+	bh=6mb+AyKCcY2yNuBAEwVmrS9m/hjPvJbxv0Y2vkU0eXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aGSoG69d6f0vu69524sWjNWEH3jlIODUtB3gk+ScsiycRfJBD+Iqc6RawnzZ7pPW6WMJJDkO41WMk0w/Cd7idXNhgNsPVzlgufDFR4Kt3ONut9XUfF/MPeViOl4kte7fMFPGQfOv7iI2R7cSECfg5BHsT+vRO+jsI3Jg0NBRoCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vQEgrJ5o; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35b447d78f1so119448f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716928157; x=1717532957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xWLV/WrhUMfC/WxnYGeBUOyuFt9nvr3SPEDSWekunHA=;
+        b=vQEgrJ5oro4nmI9+hjVPG2UIZHvHzAEHnkjdRD7NxzL05rtGwVliFSIlHdykElMQ61
+         iEh+Wchf4k3cKU+3JQiirH8AJW8dBSUwtYahL2hgM0xqLu30U1lxlPzwAXJJrM+6xl4K
+         uUmqmFRUvRfcnQko/6VH1hg9VbZBei1P5MCit0FExIWnXz1a00RWEzRsmPqDudDNcRYD
+         yuBdPLyRf0I7XnvW90Ov+kOYefP+LgHEhPh6Y8IQezaZhjnRLy0bZ+paaulByUYH8CrU
+         1eMNwW4y0FhPieEAFi+SmYsNZVhWO8+AFLCoPJCeWe7l98wL32jd5tnklvw3Y9Zo1fGg
+         wsFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716928157; x=1717532957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xWLV/WrhUMfC/WxnYGeBUOyuFt9nvr3SPEDSWekunHA=;
+        b=CS3XSva3N2pgkpuN5damm/hSH8XgxM87MP5GwLsROD1dnTG8ZVpSjRlG0tKHfrIzse
+         FNEROlmcWGZlh1M5XkiVOxsZCwFLjIsjuwUHKMb13zlZfANDio53LGEAYbwQGbSfDSmg
+         AQTiEJFG4wzC5olFFoydV8gbufFuEUe0/MCnU++KtOMsh2D3MXSCVcajwHw7010tEFaA
+         YWwiS5uO96grLy+DmkUNk1Uo+m37wrvJ0XpTs1sJhiUv5PGjSxL6mQXa2ZD/aIcgsPv7
+         v/yZhmntA+USdN/0AA2Kkz8eG9sVeUaQKnZs1/9d0mLuJZgWquuJREHgI+6TMoqX9b6B
+         Ow1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUHCEjPD1XJ+UjmPugreaNTTKJUEpK+mw5y6cIYxl28rI5+f0hST/uO24FpWBosfol1QLvYwEVRMAD4vXnGRvhlhvg4CpkWBf+hEDbK
+X-Gm-Message-State: AOJu0Yx79Wl9mhHxFwp+1fNrtqV8/VXq0xZPsEVeN/yd8gJ2z+9Bf1fq
+	WPsZI+dUlaThyYCwTxeP+ODYgB4TOSuUXzZC8swmPNHnI1tdeITFJNXDlKwmlznkjksojohRmBD
+	0/RCimGUtTWV1P8OV+reG2VO0WvzEQj07AiEt
+X-Google-Smtp-Source: AGHT+IEGxKcuSL6tu+YpaC13+aXQYCbazR2E3yf3HXMyqQoskNTQuhpwbnAmxzVmJsQhaAH7f1bayXZQoH5qexT1beA=
+X-Received: by 2002:a5d:68d0:0:b0:34d:b0bf:f1b5 with SMTP id
+ ffacd0b85a97d-35c7c6988c7mr88083f8f.35.1716928156588; Tue, 28 May 2024
+ 13:29:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527214704.300444-1-jhubbard@nvidia.com>
+References: <20240524213245.GT2118490@ZenIV> <20240527160356.3909000-1-aliceryhl@google.com>
+ <20240528193624.GH2118490@ZenIV>
+In-Reply-To: <20240528193624.GH2118490@ZenIV>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 28 May 2024 22:29:03 +0200
+Message-ID: <CAH5fLgiD_x3OVSc_JVK43BoNY4SeFt01siT32w2gQy_Ae_awrA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	brauner@kernel.org, cmllamas@google.com, dan.j.williams@intel.com, 
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
+	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, wedsonaf@gmail.com, 
+	willy@infradead.org, yakoyoku@gmail.com, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+On Tue, May 28, 2024 at 9:36=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Mon, May 27, 2024 at 04:03:56PM +0000, Alice Ryhl wrote:
+>
+> > > In other words, if current->files->count is equal to 1 at fdget() tim=
+e
+> > > we can skip incrementing refcount.  Matching fdput() would need to
+> > > skip decrement, of course.  Note that we must record that (borrowed
+> > > vs. cloned) in struct fd - the condition cannot be rechecked at fdput=
+()
+> > > time, since the table that had been shared at fdget() time might no l=
+onger
+> > > be shared by the time of fdput().
+> >
+> > This is great! It matches my understanding. I didn't know the details
+> > about current->files and task->files.
+> >
+> > You should copy this to the kernel documentation somewhere. :)
+>
+> Probably, after it's turned into something more coherent - and after
+> the description of struct fd scope rules is corrected ;-/
+>
+> Correction in question: you _are_ allowed to move reference from
+> descriptor table while in scope of struct fd; what you are not allowed
+> is dropping that reference until the end of scope.
 
-On Mon, May 27, 2024 at 02:47:04PM -0700, John Hubbard wrote:
-> When building with clang, via:
-> 
->     make LLVM=1 -C tools/testing/selftest
-> 
-> ...clang warns about "taking address of packed member 'write_index' ".
-> This is not particularly helpful, because the test code really wants to
-> write to exactly this location, and if it ends up being unaligned, then
-> the test won't work (and may segfault, depending on the CPU type).
-> 
-> If that ever comes up, it will be obvious and can be fixed. But all it's
-> doing now is prevent a clean clang build, so disable the warning.
-> 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
-> 
-> Changes since the first version:
-> 
-> 1) Rebased onto Linux 6.10-rc1
-> 
-> 
-> thanks,
-> John Hubbard
-> 
-> 
->  tools/testing/selftests/user_events/Makefile | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/user_events/Makefile b/tools/testing/selftests/user_events/Makefile
-> index 10fcd0066203..617e94344711 100644
-> --- a/tools/testing/selftests/user_events/Makefile
-> +++ b/tools/testing/selftests/user_events/Makefile
-> @@ -1,5 +1,10 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS += -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
-> +
-> +ifneq ($(LLVM),)
+The patch you are commenting on contains a change to fs/file.c with
+exactly that correction. I'm not sure if you noticed it - I should
+probably have put it in its own commit to make it more obvious.
 
-Perhaps it would be better if this were
+> That's what binder_do_fd_close() is about - binder_deferred_fd_close()
+> is called in a struct fd scope (anything called from ->unlocked_ioctl()
+> instances is).  It *does* remove a struct file reference from
+> descriptor table:
+>         twcb->file =3D file_close_fd(fd);
+> moves that reference to twcb->file, and subsequent
+>                 get_file(twcb->file);
+>                 filp_close(twcb->file, current->files);
+> completes detaching it from the table[*] and the reference itself
+> is dropped via task_work, which is going to be executed on the
+> way out to userland, definitely after we leave the scope of
+> struct fd.
 
-  ifeq ($(CC),clang)
+Yeah. If you look at previous versions of this patchset, it contains
+Rust code for performing exactly that dance. I was asked to drop it
+from the patch series, though.
 
-as that would catch both CC=clang and LLVM=1 users? I haven't tested
-this though.
+> Incidentally, I'm very tempted to unexport close_fd(); in addition to
+> being a source of bugs when called from ioctl on user-supplied descriptor
+> it encourages racy crap - just look at e.g. 1819200166ce
+> "drm/amdkfd: Export DMABufs from KFD using GEM handles", where we
+> call drm_gem_prime_handle_to_fd(), immediately followed by
+>                 dmabuf =3D dma_buf_get(fd);
+>                 close_fd(fd);
+> dup2() from another thread with guessed descriptor number as target and
+> you've got a problem...  It's not a violation of fdget() use rules
+> (it is called from ioctl, but descriptor is guaranteed to be different
+> from the one passed to ioctl(2)), but it's still wrong.  Would take
+> some work, though...
 
-Additionally, I think it would be good to mention that
--Wno-address-of-packed-member is GCC's default, whereas Clang enables
--Waddress-of-packed-member by default.
+Wait, what's going on there? It adds the fd and then immediately
+removes it again, or?
 
-> +    CFLAGS += -Wno-address-of-packed-member
-> +endif
-> +
->  LDLIBS += -lrt -lpthread -lm
->  
->  TEST_GEN_PROGS = ftrace_test dyn_test perf_test abi_test
-> 
-> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-> -- 
-> 2.45.1
-> 
-> 
+> "Detaching from the table" bit also needs documenting, BTW.  If you look
+> at that thing, you'll see that current->files is converted to fl_owner_t,
+> which is an opaque pointer.  What happens is that dnotify and POSIX lock
+> use current->files as opaque tags (->dn_owner and ->flc_owner resp.) and
+> filp_close() (well, filp_flush() these days) needs to be called to
+> purge all of those associated with given struct file and given tag value.
+
+Ah, yes, fl_owner_t being a void pointer rather than having a proper
+type caused a bug in an early version of Rust Binder ...
+
+Alice
+
+> That needs to be done between removal of file reference from table and
+> destruction of the table itself and it guarantees that those opaque refer=
+ences
+> won't outlive the table (more importantly, don't survive until a differen=
+t
+> files_struct instance is allocated at the same address).
+>
+> [*] NB: might make sense to export filp_flush(), since that's what this
+> sequence boils down to.  We really need a better identifier, though -
+> "filp" part is a leftover from OSDI, AFAICT; that's a hungarism for
+> "file pointer" and it makes no sense.  file_flush() would be better,
+> IMO - or flush_file(), for that matter.
 
