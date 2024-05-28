@@ -1,122 +1,256 @@
-Return-Path: <linux-kernel+bounces-193020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CEE8D25B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:21:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E532D8D25C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082AE1C20BE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D7A1C23116
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB9E179658;
-	Tue, 28 May 2024 20:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1KK6qtsy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="onkV9rr1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F02178CF2;
+	Tue, 28 May 2024 20:22:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9446C1327E5;
-	Tue, 28 May 2024 20:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0682FB2
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716927695; cv=none; b=TvCje1adDESTwDIkKrmDbJcFTrsqxg+gEomgTKd76UPHUYr5Fmqsk1WLa6nItW2bk2AvWo7xCY5vFP8nJFiLCO3PaiB6jH/mTbzyMKnCccpVgplMgIcuHy69e/D8WhNVJXMX5Xb2vbKV2RhTOEUf4ICb8TkMRFw76gl9uoON/sA=
+	t=1716927743; cv=none; b=JblxUQLRGdxVrLrWpu9BiRhI3Y7kwD3REMh+qaPpu6BGyzlN7HzhbFrv5OrRWwwpDrG4XTEx3ofuEfr/SNVE48sTMnVo8ZvZCHeieoMIbBTRlD4NIJMNn0HU3hvdGWCryLv0J5I3cKVBPBWz4Q7JBqgBvO7rHROOwoqBQS/8/YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716927695; c=relaxed/simple;
-	bh=4FCBurm5/GQckynXeIquujhqJWTZpUak7MuyxMQJ6j0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nXqTbew9u39yaMUAJk1TBUlur8CIQbarOx8xMV3lvunbxdk24jXIMTU/3wnTvmnGHM/EkahlphV4BsiInkfRwArCTQbgct72nHnQeEgUQMzt4SnQoBk0EacbVr4cgU4hr6FSC2f0Dp4RhJpLjuPwijheVC7BOLZjqJrHYpwm0yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1KK6qtsy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=onkV9rr1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716927692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mPuiTTglKo245MRT1O0rauosEqwWPFYkeow/Wj3djDI=;
-	b=1KK6qtsycWyZWGYpIomFB0szOY8nGoEB5Ho2mCbA55fKgFaSs7RGX7qObRS4Vr34H2NNL4
-	dTwHaRTjwRAbT0K+qmfcYYSQZpB+bqLPieRrry5oZF/ioD/3tCkzpqeJ5bdd8LKSNmQYcJ
-	lVUTg785uzh3QYihRvdMb4wCcU1ZRclkHfXho+rO7iTqZhoygmvPpQwfSzAI4ge6eQtbB3
-	6ijCTEommEj3xsH0wYBjzH6OBeQA/IY314vhiUTDsTdEkoE0cY3XdFPrr9XWMmjtqHRCSM
-	KYrcPKFN0IN/79Gc1nT/L6YiSu818F1V7SGe8bdc6jNyGjNwUd0R8YhHMtbyqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716927692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mPuiTTglKo245MRT1O0rauosEqwWPFYkeow/Wj3djDI=;
-	b=onkV9rr1RYQxxpwZ1a6f5K/ty3kcZzvXUY/KzPXc+FfHSSIyW8BLZEm05H8keZCjPhNA5Z
-	RSv5pSbMZXKyOYBg==
-To: Tim Teichmann <teichmanntim@outlook.de>
-Cc: Christian Heusel <christian@heusel.eu>, regressions@lists.linux.dev,
- x86@kernel.org, stable@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>
-Subject: [PATCH Resend] x86/topology/amd: Evaluate SMT in CPUID leaf 0x8000001e
- only on family 0x17 and greater
-In-Reply-To: <87bk4pbve8.ffs@tglx>
-References: <7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw6g2jduf6c@7b5pvomauugk>
- <87r0dqdf0r.ffs@tglx>
- <gtgsklvltu5pzeiqn7fwaktdsywk2re75unapgbcarlmqkya5a@mt7pi4j2f7b3>
- <87h6ejd0wt.ffs@tglx>
- <PR3PR02MB6012CB03006F1EEE8E8B5D69B3F02@PR3PR02MB6012.eurprd02.prod.outlook.com>
- <874jajcn9r.ffs@tglx>
- <PR3PR02MB6012EDF7EBA8045FBB03C434B3F02@PR3PR02MB6012.eurprd02.prod.outlook.com>
- <87msobb2dp.ffs@tglx>
- <PR3PR02MB6012D4B2D513F6FA9D29BE5EB3F12@PR3PR02MB6012.eurprd02.prod.outlook.com>
- <87bk4pbve8.ffs@tglx>
-Date: Tue, 28 May 2024 22:21:31 +0200
-Message-ID: <8734q1bsc4.ffs@tglx>
+	s=arc-20240116; t=1716927743; c=relaxed/simple;
+	bh=foz55xSb6MbyEbShSXhvbOWfI0jZsQ4O3qOoukESY3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nAOJmyRMGYkSzb95oCLiuZBGOsg4N+nC/mV+rRK4O8jciABU7c0gVsuyFpfcHFv0puGDtyZR7EGtkc9Rya1+xpyC4EmOspOwIS987udJjnsXQnQldOLFMYRGHvlXzDDlID+s+pLWCJo9ZulHnauahnEka9A0JOC8stT2pKLSNj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sC3Kj-0006kY-Hs; Tue, 28 May 2024 22:22:09 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sC3Ki-003N8c-7X; Tue, 28 May 2024 22:22:08 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sC3Ki-001SGY-0S;
+	Tue, 28 May 2024 22:22:08 +0200
+Date: Tue, 28 May 2024 22:22:08 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Avichal Rakesh <arakesh@google.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jayant Chowdhary <jchowdhary@google.com>,
+	"etalvala@google.com" <etalvala@google.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Subject: Re: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
+ interval length and buffersize
+Message-ID: <ZlY88BebTEZs6urD@pengutronix.de>
+References: <17192e0f-7f18-49ae-96fc-71054d46f74a@google.com>
+ <20240424022806.uo73nwpeg63vexiv@synopsys.com>
+ <ZkE-O0yJ33T9hWa0@pengutronix.de>
+ <20240517014359.p2s44ypl4bix4odm@synopsys.com>
+ <Zk03Ys1rA0I5yiZy@pengutronix.de>
+ <20240522014132.xlf7azgq2urfff2d@synopsys.com>
+ <3f404a27-50e8-42c5-a497-b46751154613@rowland.harvard.edu>
+ <20240522171640.iuol4672rnklc35g@synopsys.com>
+ <Zk4td_0RR0cMJKro@pengutronix.de>
+ <f4f0b38a-1f8e-4cf5-8cf1-6da337a1c3c0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MrAzwjbS8yyZ58K2"
+Content-Disposition: inline
+In-Reply-To: <f4f0b38a-1f8e-4cf5-8cf1-6da337a1c3c0@google.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The new AMD/HYGON topology parser evaluates the SMT information in CPUID
-leaf 0x8000001e unconditionally while the original code restricted it to
-CPUs with family 0x17 and greater.
 
-This breaks family 0x15 CPUs which advertise that leaf and have a non-zero
-value in the SMT section. The machine boots, but the scheduler complains
-loudly about the mismatch of the core IDs:
+--MrAzwjbS8yyZ58K2
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  WARNING: CPU: 1 PID: 0 at kernel/sched/core.c:6482 sched_cpu_starting+0x183/0x250
-  WARNING: CPU: 0 PID: 1 at kernel/sched/topology.c:2408 build_sched_domains+0x76b/0x12b0
+On Tue, May 28, 2024 at 10:30:30AM -0700, Avichal Rakesh wrote:
+>
+>
+>On 5/22/24 10:37, Michael Grzeschik wrote:
+>> On Wed, May 22, 2024 at 05:17:02PM +0000, Thinh Nguyen wrote:
+>>> On Wed, May 22, 2024, Alan Stern wrote:
+>>>> On Wed, May 22, 2024 at 01:41:42AM +0000, Thinh Nguyen wrote:
+>>>> > On Wed, May 22, 2024, Michael Grzeschik wrote:
+>>>> > > On Fri, May 17, 2024 at 01:44:05AM +0000, Thinh Nguyen wrote:
+>>>> > > > For isoc endpoint IN, yes. If the host requests for isoc data IN=
+ while
+>>>> > > > no TRB is prepared, then the controller will automatically send =
+0-length
+>>>> > > > packet respond.
+>>>> > >
+>>>> > > Perfect! This will help a lot and will make active queueing of own
+>>>> > > zero-length requests run unnecessary.
+>>>> >
+>>>> > Yes, if we rely on the current start/stop isoc transfer scheme for U=
+VC,
+>>>> > then this will work.
+>>>>
+>>>> You shouldn't rely on this behavior.=A0 Other device controllers might=
+ not
+>>>> behave this way; they might send no packet at all to the host (causing=
+ a
+>>>> USB protocol error) instead of sending a zero-length packet.
+>>>
+>>> I agree. The dwc3 driver has this workaround to somewhat work with the
+>>> UVC. This behavior is not something the controller expected, and this
+>>> workaround should not be a common behavior for different function
+>>> driver/protocol. Since this behavior was added a long time ago, it will
+>>> remain the default behavior in dwc3 to avoid regression with UVC (at
+>>> least until the UVC is changed). However, it would be nice for UVC to
+>>> not rely on this.
+>>
+>> With "this" you mean exactly the following commit, right?
+>>
+>> (f5e46aa4 usb: dwc3: gadget: when the started list is empty stop the act=
+ive xfer)
+>>
+>> When we start questioning this, then lets dig deeper here.
+>>
+>> With the fast datarate of at least usb superspeed shouldn't they not all
+>> completely work asynchronous with their in flight trbs?
+>>
+>> In my understanding this validates that, with at least superspeed we are
+>> unlikely to react fast enough to maintain a steady isoc dataflow, since
+>> the driver above has to react to errors in the processing context.
+>>
+>> This runs the above patch (f5e46aa4) a gadget independent solution
+>> which has nothing to do with uvc in particular IMHO.
+>>
+>> How do other controllers and their drivers work?
+>>
+>>> Side note, when the dwc3 driver reschedules/starts isoc transfer again,
+>>> the first transfer will be scheduled go out at some future interval and
+>>> not the next immediate microframe. For UVC, it probably won't be a
+>>> problem since it doesn't seem to need data going out every interval.
+>>
+>> It should not make a difference. [TM]
+>>
+>
+>
+>Sorry for being absent for a lot of this discussion.
+>
+>I want to take a step back from the details of how we're
+>solving the problem to what problems we're trying to solve.
+>
+>So, question(s) for Michael, because I don't see an explicit
+>answer in this thread (and my sincerest apologies if they've
+>been answered already and I missed it):
+>
+>What exactly is the bug (or bugs) we're trying to solve here?
+>
+>So far, it looks like there are two main problems being
+>discussed:
+>
+>1. Reducing the bandwidth usage of individual usb_requests
+>2. Error handling for when transmission over the wire fails.
+>
+>Is that correct, or are there other issues at play here?
 
-Add the condition back to cure it.
+That is correct.
 
-Fixes: f7fb3b2dd92c ("x86/cpu: Provide an AMD/HYGON specific topology parser")
-Reported-by: Tim Teichmann <teichmanntim@outlook.de>
-Bisected-by: Christian Heusel <christian@heusel.eu>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tim Teichmann <teichmanntim@outlook.de>
-Cc: regressions@lists.linux.dev
-Cc: stable@vger.kernel.org
-Closes: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/56
----
-Resend with LKML in Cc. Sorry for the noise.
----
- arch/x86/kernel/cpu/topology_amd.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>(1) in isolation should be relatively easy to solve: Just
+>smear the encoded frame across some percentage
+>(prefereably < 100%) of the usb_requests in one
+>video frame interval.
 
---- a/arch/x86/kernel/cpu/topology_amd.c
-+++ b/arch/x86/kernel/cpu/topology_amd.c
-@@ -84,9 +84,9 @@ static bool parse_8000_001e(struct topo_
- 
- 	/*
- 	 * If leaf 0xb is available, then the domain shifts are set
--	 * already and nothing to do here.
-+	 * already and nothing to do here. Only valid for family >= 0x17.
- 	 */
--	if (!has_topoext) {
-+	if (!has_topoext && c->x86 >= 0x17) {
- 		/*
- 		 * Leaf 0x80000008 set the CORE domain shift already.
- 		 * Update the SMT domain, but do not propagate it.
+Right.
+
+>(2) is more complicated, and your suggestion is to have a
+>sentinel request between two video frames that tells the
+>host if the transmission of "current" video frame was
+>successful or not. (Is that correct?)
+
+Right.
+
+>Assuming my understanding of (2) is correct, how should
+>the host behave if the transmission of the sentinel
+>request fails after the video frame was sent
+>successfully (isoc is best effort so transmission is
+>never guaranteed)?
+
+If we have transmitted all requests of the frame but would only miss the
+sentinel request to the host that includes the EOF, the host could
+rather show it or drop it. The drop would not be necessary since the
+host did see all data of the frame. The user would not see any
+distortion in both cases.
+
+If we have transmitted only partial data of the frame it would be
+preferred if the host would drop the frame that did not finish with an
+proper EOF tag.
+
+AFAIK the linux kernel would still show the frame if the FID of the
+currently handled request would change and would take this as the end of
+frame indication. But I am not totally sure if this is by spec or
+optional.
+
+One option to be totally sure would be to resend the sentinel request to
+be properly transmitted before starting the next frame. This resend
+polling would probably include some extra zero-length requests. But also
+if this resend keeps failing for n times, the driver should doubt there
+is anything sane going on with the USB connection and bail out somehow.
+
+Since we try to tackle case (1) to avoid transmit errors and also avoid
+creating late enqueued requests in the running isoc transfer, the over
+all chance to trigger missed transfers should be minimal.
+
+Regards,
+Michael
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--MrAzwjbS8yyZ58K2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmZWPOwACgkQC+njFXoe
+LGTvhBAAy9AMYMKC2c7DAvrCWYPZmgN9LGzTAIDAl74Q8Y0o0hXnjNCu39aUhHHi
+2eTBrhONO8fL5yxo+g2UyPLvGo2alitUjeNtVTW7A7cjI6T9yw/fyeDabI5R5ZR2
+s99M6MsqebgtoyYN2qE2/YyXGZ5evu89OMIUpTUg2a0fwhP41A18s345XQvoKvCA
+dRYLOAcZsyFxACQrsEsBJ1v5nn/ik5x96AP2xwxxw12MgMYWhIeeAc6rm7fWLfsZ
+GVTMPNQmGv1NM2RYpGEHu3gohxP/vAQM0c992cOd3PjcBZpJ4GRRP8JWowbGzMLo
+NkNBsorwOvorPyZn0ZCiZAJXgWV3wXW8YXwNkM8RVrYyfl0S3syE7K65JJAnJEiA
+CAAk35AWyqWFx6rYA32eno7L0EjO0onpqjZCylwWOv2IKGs8tBrmFLiJHOhrXeal
+BWRrapEFkRItE0VSVeg2zuZXwZhK5c87xC8AD3P9YmNm4JaM1n+3FCBr/Fts+fWN
+P7LFIgmmzCMf2wilVecdZEZWYWXdD0WugUcC+9XOcjxNKgVBItYTEuzE+F4wYKDm
+gPfyRVG7PHvFS7MPVFSRgCz0KhJ/7JKB7zylD5391aAxKxjkhzBEZulJjKuMo2tE
+aV4uKpKmxjwf00gnWqv2Nwj0nxEP7fkxRgA62w1kbuXGi/ZJHxc=
+=IBV5
+-----END PGP SIGNATURE-----
+
+--MrAzwjbS8yyZ58K2--
 
