@@ -1,137 +1,139 @@
-Return-Path: <linux-kernel+bounces-192314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28CE8D1B6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:38:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1108D1B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 613871F2233E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C3A1C21A98
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4855C16D4EB;
-	Tue, 28 May 2024 12:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EE116D9D1;
+	Tue, 28 May 2024 12:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="liblJAFs"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="XAdJd7vj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EhutbxSO"
+Received: from wfhigh7-smtp.messagingengine.com (wfhigh7-smtp.messagingengine.com [64.147.123.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14008502B9
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA47C502B9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716899928; cv=none; b=Lbq8rM0MMwNeCl2CBoFgvd7sfXXDrYikrMfMq/BqkmuhiwI2pIn5IIujjicqgF88nPSsCdOzEbjb0laGZ9B+TKCyhn2XqY5Usk7HSlQLPnfRWm5hTvGUfj6RAN1etigXlObEBW7EGYzsWTl98/RW8NxwBI88V8egO/OKfD8+jZc=
+	t=1716899934; cv=none; b=aI2F01aJjFrvCnfCiGtpuHIpIKzhQxDagpAoc2ZHhOjgzHPV+wRH6/+51R2SsWc/+Kjt7cijHKZaHIi6Z74X7z2nC5qUJPBg9jUM178BIRldYkEFcLK4/zGnKmNWDVZA/RQAFOCuKK9t9LKGRZBgPPiDZPh0F1o071IBVOHVRBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716899928; c=relaxed/simple;
-	bh=T0smRcebK1ec2lSC1dD+4TfYLvoGkMzOKr4xJ8hxjEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EVSNL9xoLFoJwaAjg77WQJ/d5mID4PSiTi/YeRigFNSNbpMZaCGvve04UZALldFRgw0huiIvwRr6lTl6a/mozclWFtZSolp1985yiIVa/lx6G6ZWve0Aiet9aXUunlKxiB5zR/z9M990eFoJ+8W/int/GGsLuWOe0Bo7UklqDwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=liblJAFs; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4e1c721c040so321150e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:38:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716899926; x=1717504726; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2yOu7S394kYY/a0W/YaDXm8nhL73Hm/MC9DzzKzcks=;
-        b=liblJAFsthmtOwtLC59DdUMNySRMHpCMLsqUTjVHJJzrb+s3+eQVPbSDYZ6HI6Zil5
-         pxUeDoL3wiAeK73BWL7/SiR/+2cbeMuBglWp2ASywNKvpmnhmH3OQqenE1rjw6EASwRT
-         77+2SzY7Q1UBHXm4U+bNZfh0UQZnLIQDdnH+6DVPzkMnohqcrmx7GVsbLNfgIZz1jAKm
-         ruqyqwzcnaIkLHponnhVIhY+R1UB/JrYOib5b3BKZ+WREQf3J9JZHyJLFPkatrrDFT0y
-         +0eLyi/wBzCyyLIpye6gz+wjJ9UfMsUPIt+cOuDdw31cfDAs8WXXUtZjpMyBrL/4d2sv
-         gEuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716899926; x=1717504726;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K2yOu7S394kYY/a0W/YaDXm8nhL73Hm/MC9DzzKzcks=;
-        b=PvJ31KI4ZcqlAybduHKyFtjfpBbx9NhmxWRYt1fEkzZIru5dyDtO1joNXzSjhNDNmv
-         kILh+SAWw7tbe9P8E003A9H5Ye4faONAqyiT/jMnilWMMmurzsAk+QqoXNQeve5Qt0Tc
-         dhXlJSj/RKGpplhxxZ4k/12oivABDwyTDY0a6zoDk0L5nA4iMQmHA84Dw3sg1so6yDxa
-         V2FsQ3Rhhv6oJFXWLAcOXwBbGYtmEexL/xE6zADTFFApSNxCxxDkSaiEVHjuNAEQCnvZ
-         4JGoX9oqypo0tQp+TJqCUip2CmfpBUohsHBT7npTRbg35SEuGZtfhH40SOcwdzM4GDJ/
-         aMJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpRwF6cAr6o2tLWGPc+3c0diiIbiKhn9NFViTCfSAMtTScp9Wz8c0NXFcFc50gOHmZb+Frz88mz12oea1PIl/9ByTiQJ00e14Yvzms
-X-Gm-Message-State: AOJu0YwYzoi0pZUsFfeKNA0c8ya33eLci687WTDv7Ut7KchAXA3viZNn
-	lqfONexVhudAvCutYaoEDQNQo8NTlvboABKZti32IDjvynl3B0FdM5kfczGz+SKBtBoBwgqt2fs
-	ROCdoDUyuNzLCN5iz0yGrmsWmzg3hx19HMYqM
-X-Google-Smtp-Source: AGHT+IHhpCFC2ppGca+Q9ly9BhuExXpqJYQW66tPB8V/Y8sevhG9hHDhtb3sA3mSYn+eXFk4goUGUDSRFcvz2TMJoE4=
-X-Received: by 2002:a05:6122:3c91:b0:4dc:d7b4:5f7d with SMTP id
- 71dfb90a1353d-4e4f0283c61mr11666919e0c.8.1716899924298; Tue, 28 May 2024
- 05:38:44 -0700 (PDT)
+	s=arc-20240116; t=1716899934; c=relaxed/simple;
+	bh=dZXLjy8YgB1ZnNuK0/l9LMejKe3f6bEG1QoK9hx4eEU=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=V5xtwVIEUiAOsM91sCo1Vt9Ta0640o2f1EDmmXCnhUpMqRaBJwE9hYIIsRZghIjMzzfycROI6WkMTz/tAfT1PbLSXyTAIt0shgCpSmZ1U/qQLDprv1kEWa9ePCRWZfHywUv8Y4XsASLeCximq7aujICXRyspYwKmqMq8RvgzRA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=XAdJd7vj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EhutbxSO; arc=none smtp.client-ip=64.147.123.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 8A1261800186;
+	Tue, 28 May 2024 08:38:51 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 28 May 2024 08:38:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716899931; x=1716986331; bh=n14BlgCwO/
+	WHEr03j0wHCbykXhEI5vzMH7WTcucsq9I=; b=XAdJd7vjsSJLycXtD0gc3k/1Ar
+	3HHQa80OHdyk4Ft0d/I3GvVxSgcKZ8uZvB3Zm1kREuc6KXdUvTB0inHsDGl+Mq92
+	fekE+KTM5Pc2EUfnxd+jSzn+nk9CpYuKY4vqW/FlMH9aI8W3OvsubVBDhDKJpTkK
+	Q16WbD5JZ01fa6luVDd/j7TEaeDyyMqtRwDxS5DFlcfvJcKB0JbyeWiV9ekNOLQP
+	rgh7q3jlPgHAIP2PdEFICQBziyLenST5sGS7pqUqxyVhrvtV3loYpIFA5ms5d0U0
+	BDWETZqNIM018cVGvhs13hwoLabnk2DnIC7zsijiI6rZdLI68Ikb4QmYJX9w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716899931; x=1716986331; bh=n14BlgCwO/WHEr03j0wHCbykXhEI
+	5vzMH7WTcucsq9I=; b=EhutbxSOpqlXxba0MLpUC+IriAhLgutepvjA3vwnvJnw
+	doiEUQg6y7SHiNZdN+VZSpm7lZG8wRs0h3mKHTKK7hULTLbmtUsjeXe8gfcwtBCr
+	RPR6plWygh9JRExU4h7189UQPc6naFppM63oXSpIUoow0ePK0QpX6dnCECzjA175
+	j/qUCZU9AdvA3yApIxBcaeqJtYnh/vUyeotO2GnWfipMpk/UucAVfCvRBPJNnstM
+	WN2j2eD2N7dLuKWlD3UYgIQwQW34wgn7eo7e5DdKsa3I8hBGOS835dqPYlBhfc7D
+	QGIuj4kjSksDgNDB6k5GvyT+pcAudywvIHj04gGj5Q==
+X-ME-Sender: <xms:WtBVZqeQqeyYbVSWtq17NxeF9UHyJ8oN4jkj4QjrHyI2dnSlzOsrNg>
+    <xme:WtBVZkO9EpA7OEBgc3j8pxxl3HeLNzv9C_efLDdS8YIsPVfuuyP6tRo1LzZDd-BPX
+    47R7B4BqwVjcaHu1Ng>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedgvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:WtBVZrgfKbmFa6vVeFLCj_7KeHGdSviicWJbu3MxinZ2j8j7VuILoA>
+    <xmx:WtBVZn89hduQw9PRUP-i-rK3RYPdbiHnykgmj5NH752HFLoOoonL7Q>
+    <xmx:WtBVZmsNUzzuXaUEhQre_Fly-dMjkGmVkFVlTrFARA9skALZMsZSIA>
+    <xmx:WtBVZuF09fZb1Jy5DUYaCWsWnMzpEQWzMcG5-X8s4gyqoQMoJq3gGw>
+    <xmx:W9BVZoVm13sVDpxtvz_tjQJQpYRh6vCU0NgiGsLmk-gtHSd9gXZKPsu0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 62E0DB6008F; Tue, 28 May 2024 08:38:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528104807.738758-1-glider@google.com>
-In-Reply-To: <20240528104807.738758-1-glider@google.com>
-From: Marco Elver <elver@google.com>
-Date: Tue, 28 May 2024 14:38:05 +0200
-Message-ID: <CANpmjNP=GFdp49Cqa+n3GEC5sb3EWkBaYeMWqwLH7vA=NJyNbA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kmsan: do not wipe out origin when doing partial unpoisoning
-To: Alexander Potapenko <glider@google.com>
-Cc: dvyukov@google.com, akpm@linux-foundation.org, bjohannesmeyer@gmail.com, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <7391d6a4-0c0b-456f-a2ca-cf3dafa67c5a@app.fastmail.com>
+In-Reply-To: <70125571-5add-47d2-b127-c57e67c59df9@sirena.org.uk>
+References: <20240528121222.3675312-1-arnd@kernel.org>
+ <70125571-5add-47d2-b127-c57e67c59df9@sirena.org.uk>
+Date: Tue, 28 May 2024 14:38:30 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mark Brown" <broonie@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Alina Yu" <alina_yu@richtek.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: rtq2208: remove unused rtq2208_regulator_ldo_ops
+Content-Type: text/plain
 
-On Tue, 28 May 2024 at 12:48, Alexander Potapenko <glider@google.com> wrote:
+On Tue, May 28, 2024, at 14:25, Mark Brown wrote:
+> On Tue, May 28, 2024 at 02:12:13PM +0200, Arnd Bergmann wrote:
 >
-> As noticed by Brian, KMSAN should not be zeroing the origin when
-> unpoisoning parts of a four-byte uninitialized value, e.g.:
+>> I did not analyze the change to see if this is the only required change
+>> or if there should still have been a reference instead. Please review
+>> and confirm, or provide a different fix.
 >
->     char a[4];
->     kmsan_unpoison_memory(a, 1);
->
-> This led to false negatives, as certain poisoned values could receive zero
-> origins, preventing those values from being reported.
->
-> To fix the problem, check that kmsan_internal_set_shadow_origin() writes
-> zero origins only to slots which have zero shadow.
->
-> Reported-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-> Link: https://lore.kernel.org/lkml/20240524232804.1984355-1-bjohannesmeyer@gmail.com/T/
-> Fixes: f80be4571b19 ("kmsan: add KMSAN runtime core")
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> ---
->  mm/kmsan/core.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/kmsan/core.c b/mm/kmsan/core.c
-> index cf2d70e9c9a5f..95f859e38c533 100644
-> --- a/mm/kmsan/core.c
-> +++ b/mm/kmsan/core.c
-> @@ -196,8 +196,7 @@ void kmsan_internal_set_shadow_origin(void *addr, size_t size, int b,
->                                       u32 origin, bool checked)
->  {
->         u64 address = (u64)addr;
-> -       void *shadow_start;
-> -       u32 *origin_start;
-> +       u32 *shadow_start, *origin_start;
->         size_t pad = 0;
->
->         KMSAN_WARN_ON(!kmsan_metadata_is_contiguous(addr, size));
-> @@ -225,8 +224,16 @@ void kmsan_internal_set_shadow_origin(void *addr, size_t size, int b,
->         origin_start =
->                 (u32 *)kmsan_get_metadata((void *)address, KMSAN_META_ORIGIN);
->
-> -       for (int i = 0; i < size / KMSAN_ORIGIN_SIZE; i++)
-> -               origin_start[i] = origin;
-> +       /*
-> +        * If the new origin is non-zero, assume that the shadow byte is also non-zero,
-> +        * and unconditionally overwrite the old origin slot.
-> +        * If the new origin is zero, overwrite the old origin slot iff the
-> +        * corresponding shadow slot is zero.
-> +        */
-> +       for (int i = 0; i < size / KMSAN_ORIGIN_SIZE; i++) {
-> +               if (origin || !shadow_start[i])
-> +                       origin_start[i] = origin;
-> +       }
+> Fairly sure there should be a reference in _init_regulator_desc().
 
-Reviewed-by: Marco Elver <elver@google.com>
+This is how 38bcec0e7cbb ("regulator: rtq2208: Fix
+LDO discharge register and add vsel setting")] changed
+the lines:
+
+@@ -427,14 +448,11 @@ static void rtq2208_init_regulator_desc(struct rtq2208_regulator_desc *rdesc, in
+                rdesc->suspend_mode_mask = RTQ2208_BUCK_STRMODE_MASK;
+        } else {
+                /* init ldo desc */
+-               desc->enable_reg = curr_info->base;
+-               desc->ops = &rtq2208_regulator_ldo_ops;
+-               desc->n_voltages = 1;
+-               desc->active_discharge_reg = LDO_RG_SHIFT(curr_info->base, 2);
+-
+-               rtq2208_ldo_match[*ldo_idx].name = desc->name;
+-               rtq2208_ldo_match[*ldo_idx].driver_data = rdesc;
+-               rtq2208_ldo_match[(*ldo_idx)++].desc = desc;
++               desc->active_discharge_reg = RTQ2208_REG_LDO_DVS_CTRL;
++               desc->active_discharge_on = curr_info->dis_on;
++               desc->active_discharge_mask = curr_info->dis_mask;
++               desc->vsel_reg = RTQ2208_REG_LDO_DVS_CTRL;
++               desc->vsel_mask = curr_info->vsel_mask;
+ 
+                rdesc->suspend_config_reg = curr_info->base;
+                rdesc->suspend_enable_mask = RTQ2208_LDO_EN_STR_MASK;
+
+If the desc->ops was removed by accident, it seems
+likely that desc->n_voltages also needs to be reverted.
+
+     Arnd
 
