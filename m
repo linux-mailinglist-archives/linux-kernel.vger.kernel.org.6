@@ -1,314 +1,153 @@
-Return-Path: <linux-kernel+bounces-192133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B194F8D18E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:50:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E718D18EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660962860A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FD91C227C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393E716B75E;
-	Tue, 28 May 2024 10:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E1016C444;
+	Tue, 28 May 2024 10:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nUoSGQ9B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kp+nwqTp"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0AE16B737
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA38E4D59B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716893397; cv=none; b=nffZA6Epns+pVa4/pALjzR3vrVrChf1oBd0k/69KqQY+4MU46hJ3ZOQtvMat9PhJjP8fhB0QuIs9UTylDJD2YPHudiNIcCPOkgaMktnvsAIWM1z0J493Qs7HoLa0qRj4U873wcnhx8hMpn0l2jAIkTQrd1IJvw21hex5erNZb0M=
+	t=1716893525; cv=none; b=L3RD2t6fvDSKTGMVnWEPB6rM4Fu0oObYM6MLu0Q15VjY2tBYPIz83DW5nBQtPzgjYPIVBmk/P81WTqhJllgJ+oHwtbq3UnZpj9kLC+SHTBCb4wZ9JVdG1NteiuzswKO5cVNlqmMjHTlzfueNdodnq5WlkxPJbzEU6IZwHDFotOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716893397; c=relaxed/simple;
-	bh=NQVyfvT3+xs9K7aV7Kae69b9wNOZIjylKNJp7S42FZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8RbFj3auOit+3wIi/sRbHfzWhFnIkAtuCO/Y78RzzJjt3FmGq+HNv7s3wAfnnyD+lkTyRRWBO/FPHaox1GdDOn4gT7iNE24Iy60kfGafGdYAhOS4agRxAdPRKFbvcVkgRJK4zraln7gsJWBjxiDBTQnNcAQqY6jX9Dmdf+Ya1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nUoSGQ9B; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716893395; x=1748429395;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=NQVyfvT3+xs9K7aV7Kae69b9wNOZIjylKNJp7S42FZI=;
-  b=nUoSGQ9BXqkSSwcRIogsydBjm98evyoFuh2p+Lel9saaFuSyZUJ1fbSg
-   10GxeHkaK2crnu7NVv7Y82vbMQabklmVe9W0ZC0R8BSGGRpgO4b+I8E5G
-   DPmXc8cxFkkhZmd3pJ+VzC/84giEzoQlrpdDhTobfqycwebkvG0fuH/Ky
-   z5RxKI/q5PpPBsSnhKnvzx5qvd6P9IAzNxlCnNjUcDSWIY1OelpBm/RV9
-   hKdWo/Pb2vtbRlhUfLQcS+d242a1hjcQXmeZ2rTuljGBcCHfa+ewqdRL2
-   Z3XJgT7jMomC14Z/Ci+2EVPG7qvORfmAbHbOvz9Gb8v/OqkAP6z0v73Zj
-   Q==;
-X-CSE-ConnectionGUID: Gky2+p1/QkWd72zlzRT41g==
-X-CSE-MsgGUID: yiUxvu/KRNiwMpawqOWmHg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="11725378"
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="11725378"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 03:49:53 -0700
-X-CSE-ConnectionGUID: 14RiTfsJTm+8sEamLaprsg==
-X-CSE-MsgGUID: FXrMOLJTSli166LS5KVPDw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="39999188"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 28 May 2024 03:49:49 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sBuOo-000C4Z-0d;
-	Tue, 28 May 2024 10:49:46 +0000
-Date: Tue, 28 May 2024 18:49:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Li zeming <zeming@nfschina.com>, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Li zeming <zeming@nfschina.com>
-Subject: Re: [PATCH] sched: core: =?utf-8?Q?Remove_?=
- =?utf-8?B?dW5uZWNlc3Nhcnkg4oCYTlVMTOKAmQ==?= values from core_rq
-Message-ID: <202405281844.8oxr5i5s-lkp@intel.com>
-References: <20240528071446.59197-1-zeming@nfschina.com>
+	s=arc-20240116; t=1716893525; c=relaxed/simple;
+	bh=TmVoJ8k8+1NvLcyEGmN7TBX/Tn9cChjQwnla6WWr3HA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C/rS+RwOei+4xfr0LIOkflJQTsgC9kZ3J9BgeyCh+FkyXVmJ0HEcSL8S4oMHJl4rH0tlwbA+q1tnrBKndTrh+HOtRFbiFqcuvjM/f79BpOMPCWkKPOd/inw3YAA8kOT6k3K751sn3YbbrbAB/7zPQHL0bJMu6CZeVwx+WA0hWzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kp+nwqTp; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-529644ec0ebso1057062e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716893521; x=1717498321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8x1NlguGcuKzotHRknd3C5aGKKIyU7+P8r/J0xN4tR8=;
+        b=kp+nwqTpFgQER7RW8OuvW8JdGHotjFJNupf0Mpx6dqct2WqSUixGlqpc2FTpQtXfgA
+         /C1gPj05ShAij4czFQGKI9vhix+elncfB+j+yPQLzGWDoLohfWR8nItIP0XWhNm3yrmC
+         QZc/B/7YvmjTOHZznz2BH5FCCVDXcg1I4J+iBgmkMzPzdkgeYah/wIUNtaPe+dppBAhC
+         Yh7iBwUMPkNnp5eV9N6fbODT+y+KwkBbBVppFS690uUAITvbTRMj7N+26Z5uzdcg1MRT
+         +oFdtlogxddMrVhyJMifRmLWWb83/jtiILr0gVby+xdwuA3VTP7vE+vTjdHndV06UNDb
+         V7Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716893521; x=1717498321;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8x1NlguGcuKzotHRknd3C5aGKKIyU7+P8r/J0xN4tR8=;
+        b=cbymLuKAeu++j+0zcxjSODh8LFY5++3PLu4QPXGCEPwtROwHaaN+yKfjTiTrFiumBv
+         C/6w2nFv/f0+bOW+2r4JXyD8YYmDSe/0V6K1VPNvlma3Nx2KED24haIRM8lW3jeWU89r
+         S7O4GUOS1Ik3Of+hCqaR0CMPl2y52tTm0n5LCHhLDvjA/cqgvFnGLPVfnxBNnVR5237P
+         UiJnXCEr6K947UqPNCs8Yu8p4j+dQYpc0q6V9tL86Xd66QdkUOuXQi+Izrrd+Aq++s+c
+         DftiQh1pNnGTXK4To79t6D29PLjbW6/kBAkcz7qE//ruEMk2VpDv82LhrRzSfV3Rt4Om
+         DTgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9WwChmy2IFAQBzEf5BvoRwRIW55Xx6OKyzoIaGNix0XezfB3rl+VLWDCLkRO7brnSirH7wM0kz4ySJ7F3D58KECddjtrIPdx5WS11
+X-Gm-Message-State: AOJu0Yxj6+TBvSkHjCO9USopqmDSEpnq411nRR/YxZ/wR4jNLnlbT6Uz
+	GLMkS8OghQB4jZ+qBSOaiqe2+rnRgCNbfFsia86FsiUrEmlLhRs+lOsLvb8PQJI=
+X-Google-Smtp-Source: AGHT+IHzuzSXp9V8RD5v0u/RhB0Sptdv9vPyfjDGrEHkGNl1acEZ3+yOY9ZkK3EWudn20cI33WsNhw==
+X-Received: by 2002:a05:6512:3e19:b0:529:b718:8d00 with SMTP id 2adb3069b0e04-529b7188dc4mr2905634e87.8.1716893521023;
+        Tue, 28 May 2024 03:52:01 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817afcsm600268466b.22.2024.05.28.03.51.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 03:52:00 -0700 (PDT)
+Message-ID: <15eac4b8-4652-4b58-96d8-b68a5fc2a13b@linaro.org>
+Date: Tue, 28 May 2024 12:51:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240528071446.59197-1-zeming@nfschina.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: gpio: lsi,zevio-gpio: convert to dtschema
+To: Pratik Farkase <pratik.farkase@wsisweden.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Pratik Farkase <pratikfarkase94@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240522151616.27397-1-pratik.farkase@wsisweden.com>
+ <171682157627.156531.2134241472358951863.b4-ty@linaro.org>
+ <GVZP280MB0821C4746C5D27F84A8B9F8684F12@GVZP280MB0821.SWEP280.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <GVZP280MB0821C4746C5D27F84A8B9F8684F12@GVZP280MB0821.SWEP280.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Li,
+On 28/05/2024 11:57, Pratik Farkase wrote:
+> Hi Bartosz,
+> 
+> May i know, which kernel tree have you applied the patch to? I am aware of Greg's tree hosted here: kernel/git/gregkh/tty.git<https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/>
 
-kernel test robot noticed the following build warnings:
+See MAINTAINERS file in kernel repo.
 
-[auto build test WARNING on tip/sched/core]
-[also build test WARNING on peterz-queue/sched/core linus/master v6.10-rc1 next-20240528]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Best regards,
+Krzysztof
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Li-zeming/sched-core-Remove-unnecessary-NULL-values-from-core_rq/20240528-152109
-base:   tip/sched/core
-patch link:    https://lore.kernel.org/r/20240528071446.59197-1-zeming%40nfschina.com
-patch subject: [PATCH] sched: core: Remove unnecessary ‘NULL’ values from core_rq
-config: s390-defconfig (https://download.01.org/0day-ci/archive/20240528/202405281844.8oxr5i5s-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240528/202405281844.8oxr5i5s-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405281844.8oxr5i5s-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from kernel/sched/core.c:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     501 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     508 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     520 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     529 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from kernel/sched/core.c:34:
-   In file included from include/linux/sched/isolation.h:7:
-   In file included from include/linux/tick.h:8:
-   In file included from include/linux/clockchips.h:14:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from kernel/sched/core.c:34:
-   In file included from include/linux/sched/isolation.h:7:
-   In file included from include/linux/tick.h:8:
-   In file included from include/linux/clockchips.h:14:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from kernel/sched/core.c:34:
-   In file included from include/linux/sched/isolation.h:7:
-   In file included from include/linux/tick.h:8:
-   In file included from include/linux/clockchips.h:14:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> kernel/sched/core.c:6288:2: warning: variable 'core_rq' is used uninitialized whenever 'for' loop exits because its condition is false [-Wsometimes-uninitialized]
-    6288 |         for_each_cpu(t, smt_mask) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/cpumask.h:300:2: note: expanded from macro 'for_each_cpu'
-     300 |         for_each_set_bit(cpu, cpumask_bits(mask), small_cpumask_bits)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/find.h:586:18: note: expanded from macro 'for_each_set_bit'
-     586 |         for ((bit) = 0; (bit) = find_next_bit((addr), (size), (bit)), (bit) < (size); (bit)++)
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   kernel/sched/core.c:6295:20: note: uninitialized use occurs here
-    6295 |         if (WARN_ON_ONCE(!core_rq)) /* impossible */
-         |                           ^~~~~~~
-   include/asm-generic/bug.h:111:25: note: expanded from macro 'WARN_ON_ONCE'
-     111 |         int __ret_warn_on = !!(condition);                      \
-         |                                ^~~~~~~~~
-   kernel/sched/core.c:6288:2: note: remove the condition if it is always true
-    6288 |         for_each_cpu(t, smt_mask) {
-         |         ^
-   include/linux/cpumask.h:300:2: note: expanded from macro 'for_each_cpu'
-     300 |         for_each_set_bit(cpu, cpumask_bits(mask), small_cpumask_bits)
-         |         ^
-   include/linux/find.h:586:18: note: expanded from macro 'for_each_set_bit'
-     586 |         for ((bit) = 0; (bit) = find_next_bit((addr), (size), (bit)), (bit) < (size); (bit)++)
-         |                         ^
-   kernel/sched/core.c:6272:39: note: initialize the variable 'core_rq' to silence this warning
-    6272 |         struct rq *rq = cpu_rq(cpu), *core_rq;
-         |                                              ^
-         |                                               = NULL
-   kernel/sched/core.c:6225:1: warning: unused function 'class_core_lock_lock_ptr' [-Wunused-function]
-    6225 | DEFINE_LOCK_GUARD_1(core_lock, int,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    6226 |                     sched_core_lock(*_T->lock, &_T->flags),
-         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    6227 |                     sched_core_unlock(*_T->lock, &_T->flags),
-         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    6228 |                     unsigned long flags)
-         |                     ~~~~~~~~~~~~~~~~~~~~
-   include/linux/cleanup.h:232:65: note: expanded from macro 'DEFINE_LOCK_GUARD_1'
-     232 | #define DEFINE_LOCK_GUARD_1(_name, _type, _lock, _unlock, ...)          \
-         |                                                                         ^
-     233 | __DEFINE_UNLOCK_GUARD(_name, _type, _unlock, __VA_ARGS__)               \
-         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/cleanup.h:209:21: note: expanded from macro '\
-   __DEFINE_UNLOCK_GUARD'
-     209 | static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)     \
-         |                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   <scratch space>:76:1: note: expanded from here
-      76 | class_core_lock_lock_ptr
-         | ^~~~~~~~~~~~~~~~~~~~~~~~
-   19 warnings generated.
-
-
-vim +6288 kernel/sched/core.c
-
-3c474b3239f12f Peter Zijlstra 2021-08-19  6268  
-3c474b3239f12f Peter Zijlstra 2021-08-19  6269  static void sched_core_cpu_deactivate(unsigned int cpu)
-3c474b3239f12f Peter Zijlstra 2021-08-19  6270  {
-3c474b3239f12f Peter Zijlstra 2021-08-19  6271  	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
-ca27ccef75e13e Li zeming      2024-05-28  6272  	struct rq *rq = cpu_rq(cpu), *core_rq;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6273  	int t;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6274  
-7170509cadbb76 Peter Zijlstra 2023-08-01  6275  	guard(core_lock)(&cpu);
-3c474b3239f12f Peter Zijlstra 2021-08-19  6276  
-3c474b3239f12f Peter Zijlstra 2021-08-19  6277  	/* if we're the last man standing, nothing to do */
-3c474b3239f12f Peter Zijlstra 2021-08-19  6278  	if (cpumask_weight(smt_mask) == 1) {
-3c474b3239f12f Peter Zijlstra 2021-08-19  6279  		WARN_ON_ONCE(rq->core != rq);
-7170509cadbb76 Peter Zijlstra 2023-08-01  6280  		return;
-9edeaea1bc4523 Peter Zijlstra 2020-11-17  6281  	}
-3c474b3239f12f Peter Zijlstra 2021-08-19  6282  
-3c474b3239f12f Peter Zijlstra 2021-08-19  6283  	/* if we're not the leader, nothing to do */
-3c474b3239f12f Peter Zijlstra 2021-08-19  6284  	if (rq->core != rq)
-7170509cadbb76 Peter Zijlstra 2023-08-01  6285  		return;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6286  
-3c474b3239f12f Peter Zijlstra 2021-08-19  6287  	/* find a new leader */
-3c474b3239f12f Peter Zijlstra 2021-08-19 @6288  	for_each_cpu(t, smt_mask) {
-3c474b3239f12f Peter Zijlstra 2021-08-19  6289  		if (t == cpu)
-3c474b3239f12f Peter Zijlstra 2021-08-19  6290  			continue;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6291  		core_rq = cpu_rq(t);
-3c474b3239f12f Peter Zijlstra 2021-08-19  6292  		break;
-9edeaea1bc4523 Peter Zijlstra 2020-11-17  6293  	}
-3c474b3239f12f Peter Zijlstra 2021-08-19  6294  
-3c474b3239f12f Peter Zijlstra 2021-08-19  6295  	if (WARN_ON_ONCE(!core_rq)) /* impossible */
-7170509cadbb76 Peter Zijlstra 2023-08-01  6296  		return;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6297  
-3c474b3239f12f Peter Zijlstra 2021-08-19  6298  	/* copy the shared state to the new leader */
-3c474b3239f12f Peter Zijlstra 2021-08-19  6299  	core_rq->core_task_seq             = rq->core_task_seq;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6300  	core_rq->core_pick_seq             = rq->core_pick_seq;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6301  	core_rq->core_cookie               = rq->core_cookie;
-4feee7d12603de Josh Don       2021-10-18  6302  	core_rq->core_forceidle_count      = rq->core_forceidle_count;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6303  	core_rq->core_forceidle_seq        = rq->core_forceidle_seq;
-4feee7d12603de Josh Don       2021-10-18  6304  	core_rq->core_forceidle_occupation = rq->core_forceidle_occupation;
-4feee7d12603de Josh Don       2021-10-18  6305  
-4feee7d12603de Josh Don       2021-10-18  6306  	/*
-4feee7d12603de Josh Don       2021-10-18  6307  	 * Accounting edge for forced idle is handled in pick_next_task().
-4feee7d12603de Josh Don       2021-10-18  6308  	 * Don't need another one here, since the hotplug thread shouldn't
-4feee7d12603de Josh Don       2021-10-18  6309  	 * have a cookie.
-4feee7d12603de Josh Don       2021-10-18  6310  	 */
-4feee7d12603de Josh Don       2021-10-18  6311  	core_rq->core_forceidle_start = 0;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6312  
-3c474b3239f12f Peter Zijlstra 2021-08-19  6313  	/* install new leader */
-3c474b3239f12f Peter Zijlstra 2021-08-19  6314  	for_each_cpu(t, smt_mask) {
-3c474b3239f12f Peter Zijlstra 2021-08-19  6315  		rq = cpu_rq(t);
-3c474b3239f12f Peter Zijlstra 2021-08-19  6316  		rq->core = core_rq;
-3c474b3239f12f Peter Zijlstra 2021-08-19  6317  	}
-3c474b3239f12f Peter Zijlstra 2021-08-19  6318  }
-3c474b3239f12f Peter Zijlstra 2021-08-19  6319  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
