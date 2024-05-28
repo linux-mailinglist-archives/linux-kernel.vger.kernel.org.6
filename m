@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-192990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C398D255D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:02:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800F18D2553
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50D77B27D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06FC1C2628A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE6C17838E;
-	Tue, 28 May 2024 19:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E0417838A;
+	Tue, 28 May 2024 20:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+OAbSM0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cruORaZp"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C640D178372;
-	Tue, 28 May 2024 19:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B35551012
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926283; cv=none; b=qJv4HWFguycOCsXUaV1t7PVRtwh3/cZKK8hZ+My0hZMl0Res1w8LmGh2BVYnSFgoNNX9a6bBzvfSOrCUziJ9pUfQuFIgLIt4SrRyojV7xez4WHYBTltPYqnwg5Fkjw3HET+/4jBXpJ+po0x1UO0sNTc/Atva81Eseokd93x+3uo=
+	t=1716926433; cv=none; b=KZCb1UGn66zlv4qWZA8Ex7iM1bJmNTalGlsMU9JI1z31EyJlJGrp/eVOTNrXsPUAdSZowaBekMqLp6LoLQyP8db7uMywcppbtNOxiU9hugFpzu55ngxX94YbzV2qHvf3g9zydrRbfxb5iB/dmmucz1qv53ru5DceeYMECUU5a8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926283; c=relaxed/simple;
-	bh=BZlSwuttDPw9S9+xlwtc5/DNO6T6WU/rzwVlBiGJZJY=;
+	s=arc-20240116; t=1716926433; c=relaxed/simple;
+	bh=8YWp68qxwuKrMQMapx0pKX2xFIRrKqbrwhPkeTh8yQQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ShGq6ZyUExZAmVeO0226HWEYf8pMOsu9f2l2Yu3V4QZ15hqrQawre/e1tCURGVcYIs6qsh/wNSVeui8e6lFCVCSIyHz5O9aVynU39VWiW19y0ZK1d3Ldau8UoafartWBG4fAac3fTMj52eEeSINlUDaTkovzDspDkf6gtmGeILs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+OAbSM0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC8AC32786;
-	Tue, 28 May 2024 19:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716926283;
-	bh=BZlSwuttDPw9S9+xlwtc5/DNO6T6WU/rzwVlBiGJZJY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=W+OAbSM0A/BaV3StQPVI1WdF2UWFKuReytJe3cR/rVYbeVX5pTYv1sUodh8WAjSac
-	 VTqwOu7uYLtO/MfClEvTFskJoPIZWxbetOMyVaV9aZ/gQOttZJ6Hc0k59F6nsUwNc3
-	 bfRwG4N/8+4N1AHKKlTkXOEKZ5IpCvf3AKDXnVeyA0zRLv00PByTXustEVm7s7X8Nv
-	 3uLtEyBEd4SSk85AMKQDjw7ulj6cBfOi9lDyWqH69TFFBrjnmQmirO+EQpCUYnigrz
-	 z9BDbe5PFQ8XaxFA8dE6Dd3JtVOrNtjYouQCWxF34HR6JbIByX5bh4FsCJ7IR64Y5G
-	 USw2t+bDMboaQ==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-24ffb6ee0f4so33807fac.0;
-        Tue, 28 May 2024 12:58:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkTXyWD3+MX679GIohMb62YdYTiD7XsG9nBVRsjMx9rXcd+5kNLySG/V6kLOCdP23PD2zINRkPAkmQr/BahixKqkaOA9kyx85xNyc8Nbejhqbj9vxNwP4hxbYWDkA9QBB+npU98KdOMGu3EMEZF44fgrcHw+UzvWqZwgpzSm/jy822
-X-Gm-Message-State: AOJu0YyTv2qRgPGm/j2bbOYNB5+bV7IXlpTPwwE1CJ5KTYIwaaxOczhA
-	fgFo5dLIBNp6hT6lCj0dbH16D5zcyviU3YKbwlghs8OullzyGgpj5++WMIA19DImRlrA61z/09W
-	a1RfUPm8cfE04ZY9HiIS7OV3TGo8=
-X-Google-Smtp-Source: AGHT+IHhJdeeDpS76IDj68NZSHlaeZBVsNJkwgWvAhU1PNPDrzgrgarPIYTNLvW7O8ElosU15zALYFfGTD9297NASQM=
-X-Received: by 2002:a05:6870:d888:b0:24c:b2d0:bfff with SMTP id
- 586e51a60fabf-24cb2d0c0camr12861111fac.2.1716926282655; Tue, 28 May 2024
- 12:58:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=enREGNtX851CMDfP7jDxe1w0Okz1OesMcWpgF+Hi6NUNOhbRJMTT1HzxCAqQHoXYTfr59aD16UAzXKkmZDLp0Zm9MK8JitxnCsg8h2JEKi5luNlNd3qjvFmS1+MZt7C67zCqtYIGHPlyVyOM9Z/8kj8btuWWsZAQDeDfvhjCExg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cruORaZp; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a626776cc50so142334166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1716926430; x=1717531230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dEtRoS1f3BiXfOOkD6/RyfWg8b94KE276J+eEUHXYvQ=;
+        b=cruORaZp1fEO6fHUqPBS/o+IA89Ds76muFezCuPcc1yD32X4wURefx7j2UslKpxIuM
+         E8ZHy+eRdPb8qiPDndDVgKbBWxU/8v9yeN3ti2vUqk8XX/B3r3cyDYKePjo4m0/iGSDm
+         9Nn6NncLu2zlDqy6RohIo84rh/TEiD0FCvBzM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716926430; x=1717531230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dEtRoS1f3BiXfOOkD6/RyfWg8b94KE276J+eEUHXYvQ=;
+        b=tXDs/hRszqemS73BbXRdK/Wn7nYibWQt1g+mqXsxWCyji4ZjQolF4kFptV0q8+nlle
+         eqbQxhwpx1zRxNMJh/eI6/SwigN1QGUSmVIqg2N6U04tLGm9o81k5SxPBagCALOWJtr5
+         qNm4DZXuqnVs/YhgtWqUbmk6PBZ/qEFTpE0CSnHc0N+FdfXZl0FMENbVmA5LSEAOISIc
+         R9FG+i+7QPObtuG8karQD9aL7uDC5EkdEQe1wLheEeQIKyCVeD1e6PSqw000CMJr9PZl
+         AlI035dZVN4yic/KEtHC+P3kVWS9V3yr+HZCstIclN15lwF5rPiOMWFYKEzX9pzJKn24
+         hBXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP8BbVJpHD9KRjaxk+4knvBnp43Za9mTpXqYCaMig8iuKgr9Z32biYCT7iE+UhHku53ZcG3DDiwr82klMs5mHZhstqlh4LUlyqHota
+X-Gm-Message-State: AOJu0Yzojba80RvuS3eFkx3tGHz0sNwL/7ylsZNE118RF0rP2oh2l0hd
+	byZzBCNo3VUS9B0rgPQCnuamCF/DyymHN8lkJHZpAImCPBY0xGB+FJXDA+oi3l3YA0EcX3xFFks
+	SB5GfnA==
+X-Google-Smtp-Source: AGHT+IG2h0bWo70+yLps81BXFCT3dUeWnme6S9w7/5h1y4ejw1FuNLWJLvGlp+lQeuNX21US7xWjAA==
+X-Received: by 2002:a17:907:7743:b0:a59:aff8:c713 with SMTP id a640c23a62f3a-a62641a69a5mr790388766b.10.1716926429788;
+        Tue, 28 May 2024 13:00:29 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc523d1sm640917666b.134.2024.05.28.13.00.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 13:00:29 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5785c1e7448so1285759a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:00:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnAC+O9qmY4S1UalwZaKaT21ErCy+bqFFvtDJ1lkSWMVwS4HF6yrHcq/Z+RJNXY7KdU5/UvuqnZJSd1vulYro4VGox/Y54Q66vbYQ9
+X-Received: by 2002:a17:906:c088:b0:a59:db0f:6bd7 with SMTP id
+ a640c23a62f3a-a6265116365mr793210666b.71.1716926428911; Tue, 28 May 2024
+ 13:00:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240526-acpi-ac-changed-v1-1-f4b5997753bb@weissschuh.net> <r5x24fxz5cbyd4laoteq577toqfblfmy4btn4c6o6rrl7godeu@4fgsimcubzrd>
-In-Reply-To: <r5x24fxz5cbyd4laoteq577toqfblfmy4btn4c6o6rrl7godeu@4fgsimcubzrd>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 28 May 2024 21:57:51 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hNs5vSMuPgtg=tbu=4Y1UHeGUnGM7Fo_LgjZmP1SqkZg@mail.gmail.com>
-Message-ID: <CAJZ5v0hNs5vSMuPgtg=tbu=4Y1UHeGUnGM7Fo_LgjZmP1SqkZg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: AC: Properly notify powermanagement core about changes
-To: Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Rajas Paranjpe <paranjperajas@gmail.com>
+References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
+ <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
+ <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
+ <ZlY0F_lmB37g10OK@x1>
+In-Reply-To: <ZlY0F_lmB37g10OK@x1>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 28 May 2024 13:00:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg3TciVzg7To1KVueCmwJoDEZZSurGPb+a7Dn7Dij=4YQ@mail.gmail.com>
+Message-ID: <CAHk-=wg3TciVzg7To1KVueCmwJoDEZZSurGPb+a7Dn7Dij=4YQ@mail.gmail.com>
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Leo Yan <leo.yan@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 11:43=E2=80=AFPM Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
+On Tue, 28 May 2024 at 12:44, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 >
-> Hi,
->
-> On Sun, May 26, 2024 at 11:40:01PM +0200, Thomas Wei=C3=9Fschuh wrote:
-> > The powermanagement core does various actions when a power-supply chang=
-es.
-> > It calls into notifiers, LED triggers, other power supplies and emits a=
-n uevent.
-> >
-> > To make sure that all these actions happen properly call power_supply_c=
-hanged().
-> >
-> > Reported-by: Rajas Paranjpe <paranjperajas@gmail.com>
-> > Closes: https://github.com/MrChromebox/firmware/issues/420#issuecomment=
--2132251318
-> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> > ---
->
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->
-> -- Sebastian
->
-> >  drivers/acpi/ac.c  | 4 ++--
-> >  drivers/acpi/sbs.c | 4 ++--
-> >  2 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
-> > index 2d4a35e6dd18..09a87fa222c7 100644
-> > --- a/drivers/acpi/ac.c
-> > +++ b/drivers/acpi/ac.c
-> > @@ -145,7 +145,7 @@ static void acpi_ac_notify(acpi_handle handle, u32 =
-event, void *data)
-> >                                                 dev_name(&adev->dev), e=
-vent,
-> >                                                 (u32) ac->state);
-> >               acpi_notifier_call_chain(adev, event, (u32) ac->state);
-> > -             kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
-> > +             power_supply_changed(ac->charger);
-> >       }
-> >  }
-> >
-> > @@ -268,7 +268,7 @@ static int acpi_ac_resume(struct device *dev)
-> >       if (acpi_ac_get_state(ac))
-> >               return 0;
-> >       if (old_state !=3D ac->state)
-> > -             kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
-> > +             power_supply_changed(ac->charger);
-> >
-> >       return 0;
-> >  }
-> > diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
-> > index 94e3c000df2e..dc8164b182dc 100644
-> > --- a/drivers/acpi/sbs.c
-> > +++ b/drivers/acpi/sbs.c
-> > @@ -610,7 +610,7 @@ static void acpi_sbs_callback(void *context)
-> >       if (sbs->charger_exists) {
-> >               acpi_ac_get_present(sbs);
-> >               if (sbs->charger_present !=3D saved_charger_state)
-> > -                     kobject_uevent(&sbs->charger->dev.kobj, KOBJ_CHAN=
-GE);
-> > +                     power_supply_changed(sbs->charger);
-> >       }
-> >
-> >       if (sbs->manager_present) {
-> > @@ -622,7 +622,7 @@ static void acpi_sbs_callback(void *context)
-> >                       acpi_battery_read(bat);
-> >                       if (saved_battery_state =3D=3D bat->present)
-> >                               continue;
-> > -                     kobject_uevent(&bat->bat->dev.kobj, KOBJ_CHANGE);
-> > +                     power_supply_changed(bat->bat);
-> >               }
-> >       }
-> >  }
-> >
-> > ---
+> For 'perf record' we're asking for sampling, if the event has the name
+> specified and can't be sampled, skip it, warn the user and even so
+> only if verbose mode is asked, something like:
 
-Applied as 6.10-rc material, thanks!
+Yes. I think that's the right rule in general.
+
+However, the more I have looked at this case, the more I am also
+convinced that "cycles" as a name is special.
+
+It's literally documented to be an alias for cpu-cycles, both in
+examples and in "perf list" output, and that's what the usage is.
+
+So even if you were to have some other PMU in the system that had a
+"cycles" thing, if it's not a core event but some other cycles
+("uncore", bus cycles, bicycles, whatever), it shouldn't be used even
+if it could be used for profiling.
+
+You'd have to use the full PMU name and actually list it out if you
+want to use a non-core counter named "cycles".
+
+And yes, we even have some documentation that says exactly that:
+
+  "e.g usage::
+
+        perf stat -a -e arm_dsu_0/cycles/"
+
+So this isn't even anything new or ambiguous. This is just how things
+*ARE*, and absolutely have to be.
+
+                 Linus
 
