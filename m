@@ -1,73 +1,91 @@
-Return-Path: <linux-kernel+bounces-192289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF368D1B1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:24:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E4D8D1B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4ED1C20BB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B0CA1C226B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FEC16D9BE;
-	Tue, 28 May 2024 12:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D54916D9A7;
+	Tue, 28 May 2024 12:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MrVEGPT3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XiWP9to7"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD7F16D4ED
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A013E74409;
+	Tue, 28 May 2024 12:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716899050; cv=none; b=fVC1FF8/SNaXspWLNDYLUpoFHup/Dz2X9Yrb86T7akxk40Tp3Av9ZhLKEHMvYeUV86EQyMrOY5SIr4woGXwixHN5io05LSdVfTlMLjirqfUbH8fyVyPRlH93pBiaR2SvU2bJHtFgwcOsm41tEfhXoF4ggfUVFMoN/FDe6cU++pU=
+	t=1716898967; cv=none; b=mdFuct3OPkXk8hu5OBKAcGmCWymaS67GRkTw9ruA+QLmugpPINe4QiFxA3Sz53O2tfpfxfkdYf2wPxVd+Nu7muZYBNo4X+y0aWyTarQlkA+/VwZw4ejw0/jDAnLkQ3OEC7FDBUF8ZqXqNzR66j3dpkj8wartGs6xwhCd99Azctc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716899050; c=relaxed/simple;
-	bh=/MJqfAee7OGT7xTNKJA57WCoB+d01NTLAU8YZ2IFO0k=;
+	s=arc-20240116; t=1716898967; c=relaxed/simple;
+	bh=1bxpJkJTAuic/fEmME52PUTrYmhkNBSpSDXr2ojsc7M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmIqeXw7tIpfYNoyFR3AkLoEKKfuzUp/WWV09Pihp2bXSgDC5vDIBzfIgXpEOIP4IzyFNbpCtAbFdexNEWvl+7p2JhNGH7k1BnSiwAKwPlqdTMdR2XnJ9HZruYU315SGjDeEOTV+mY7QXImKV4lAioADvCnaMoRwMXraOHMiWxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MrVEGPT3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716899048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U5hXCAyCRLskJTU1cugcsSNJSbjQozoJ0z0zbajvdQU=;
-	b=MrVEGPT3pfJ1foCpVG3EjG9ueXkHp+0WKjlkaSNOdt2UHA0ZAXBDWf/bVSUHSAA/+7QLy/
-	9dsKUTWcBymVDerW1EMF7NQiYGxFjEZk/CT73QL79ugCpeGyCxqYdlexm3JCpXcRdvspMh
-	1G2WessU1hZ8rHJZHE/tynzVUrp+QkY=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-414-7AT-4PBFNam1O4vlP9KA1A-1; Tue,
- 28 May 2024 08:24:05 -0400
-X-MC-Unique: 7AT-4PBFNam1O4vlP9KA1A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A936A29AA382;
-	Tue, 28 May 2024 12:24:04 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.131])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 4E2C02026D68;
-	Tue, 28 May 2024 12:24:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 28 May 2024 14:22:36 +0200 (CEST)
-Date: Tue, 28 May 2024 14:22:33 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Chris von Recklinghausen <crecklin@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tick/nohz_full: don't abuse smp_call_function_single()
- in tick_setup_device()
-Message-ID: <20240528122233.GB28794@redhat.com>
-References: <20240522151742.GA10400@redhat.com>
- <20240528122019.GA28794@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mnTPmw8YojPaamICGBVj9NOcTwy7RhzUEWNkLbgoiZlLdNj2YWj5IReuik3tvkr6BFYKg/qFmTYG9MaP1hLnBUmhN6AbZYKZqIOrASj1WjcuO5Z9FuwZZCOD3qWGcsMCQ47ef0poJav78bwOVf/u1znA/pmsJiTN+5K3PJqdXCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XiWP9to7; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-529661f2552so969003e87.2;
+        Tue, 28 May 2024 05:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716898964; x=1717503764; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=30d0TTe0qu/2T+a0CP2Ht/sekYc/5hfNw/7/ZEtYxu8=;
+        b=XiWP9to7IFMPMEwMVWyuNamCW2AhljULMH0OE+mg44H7qr4kpYnUL08Tp+FXTE8Lbp
+         B+1Y4SEEG+UlBlUORgIf7onkSfpLIjQrGPh8HHjmfmM0dNefHmQvnZH3nwji55WaLBAf
+         +Oipm+gNzKC6c503rRe1C96Y4EfpHJ5OqCAcdlpF/mEuFmTv8UKNZodz4u0BZ2xfecfq
+         8eaEGHh8RQrC0hRXRJgGbZx3YdBVnKhdxr1HUuTuJ+y1wpzyGm0ex1llAMqh669qJqhF
+         //MbFxY4EgNUEoQ8LuFoVHPBBrNdKQTrGsvEGnk8gxnG6+AvRNiTJj6Me+S4e9tpv7c9
+         zI0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716898964; x=1717503764;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30d0TTe0qu/2T+a0CP2Ht/sekYc/5hfNw/7/ZEtYxu8=;
+        b=gmNgGZ7wZRvi6A+m+m9CGZWDd9n+TcY21SWNWLyD/oQC03M9oL5AEHjVvDAhAsWPUu
+         8MXJjXn5/PtIF+kLVI70I9G7+PsbYAM7f4Euq+5vkWAmHAbEGvCnnOeSuzjVA4n7ML7N
+         kSlMTIcP4eWDhRBZUMhLqxqhtxZaP6X2Netm9wBJBlT8dSdtSaVStLaYfdvPE8ZjIU9q
+         mSrWpUsuqL7Eb+FmCZWu2vVIVVE4Yo4ZZf6PmsMvpUm7KgmQtQ1l5EVim6jgFArlMcZg
+         BMfcpXnqkQ87G0QYbQ1K8FI2vUyDe+4MO9fojwQ+pipsX9TU7zLdPHLj8OOq11yI9ymf
+         9iyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXn3zJE10QsQoGBesvH4wriei/+TDF/3AsG6hSSeZ9Hda3CBaGW8egTjkixFtpCa+VRERTnYGTBOfFfxjiP6wnKYacETDi2Llwv0n/PfLMUO/5TuYF+zfVKYhiKGzcgBwRrWmM+ORXE1EG+eYWdNSC+nPq/znfZxint
+X-Gm-Message-State: AOJu0YwI3+frBebg8wUClyNI3SCs/7LNl8JM0KNKTLB8O+etbD2+Fn6u
+	G5AryOLLA3Rt25I4leysEZ6WsT88ndDGbOC6S4ZxGMvs0vd+R3tO
+X-Google-Smtp-Source: AGHT+IEFpxm72+ZufBEpOzTdYaIOWqK1qFRYEzUeMkVy/VVpK/unVesitw9GPmLNPR4IWW5XCaPpGg==
+X-Received: by 2002:a19:5e04:0:b0:51a:f84d:1188 with SMTP id 2adb3069b0e04-52964e93a0dmr7396162e87.19.1716898963461;
+        Tue, 28 May 2024 05:22:43 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e888b33sm920102e87.8.2024.05.28.05.22.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 05:22:43 -0700 (PDT)
+Date: Tue, 28 May 2024 15:22:40 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Byungho An <bh74.an@samsung.com>, Giuseppe CAVALLARO <peppe.cavallaro@st.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next 2/3] net: stmmac: Activate Inband/PCS flag
+ based on the selected iface
+Message-ID: <mflda2pvhiilceh4qkyq43jedgx3fxeo7mbs2cfa5c44veygg2@muhwd4gj5mth>
+References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
+ <20240524210304.9164-1-fancer.lancer@gmail.com>
+ <20240524210304.9164-2-fancer.lancer@gmail.com>
+ <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
+ <fvjrnunu4lriegq3z7xkefsts6ybn2vkxmve6xzi73krjgvcj6@bhf4b4xx3x72>
+ <ZlWwMzMZrwb5fscN@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,99 +94,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528122019.GA28794@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+In-Reply-To: <ZlWwMzMZrwb5fscN@shell.armlinux.org.uk>
 
-If this patch/changelog/comment is fine, I'll send another trivial
-one which turns tick_do_timer_boot_cpu into "bool boot_cpu_is_nohz_full".
+On Tue, May 28, 2024 at 11:21:39AM +0100, Russell King (Oracle) wrote:
+> On Mon, May 27, 2024 at 12:57:02AM +0300, Serge Semin wrote:
+> > On Sun, May 26, 2024 at 05:49:48PM +0100, Russell King (Oracle) wrote:
+> > > On Sat, May 25, 2024 at 12:02:58AM +0300, Serge Semin wrote:
+> > > > The HWFEATURE.PCSSEL flag is set if the PCS block has been synthesized
+> > > > into the DW GMAC controller. It's always done if the controller supports
+> > > > at least one of the SGMII, TBI, RTBI PHY interfaces. If none of these
+> > > > interfaces support was activated during the IP-core synthesize the PCS
+> > > > block won't be activated either and the HWFEATURE.PCSSEL flag won't be
+> > > > set. Based on that the RGMII in-band status detection procedure
+> > > > implemented in the driver hasn't been working for the devices with the
+> > > > RGMII interface support and with none of the SGMII, TBI, RTBI PHY
+> > > > interfaces available in the device.
+> > > > 
+> > > > Fix that just by dropping the dma_cap.pcs flag check from the conditional
+> > > > statement responsible for the In-band/PCS functionality activation. If the
+> > > > RGMII interface is supported by the device then the in-band link status
+> > > > detection will be also supported automatically (it's always embedded into
+> > > > the RGMII RTL code). If the SGMII interface is supported by the device
+> > > > then the PCS block will be supported too (it's unconditionally synthesized
+> > > > into the controller). The later is also correct for the TBI/RTBI PHY
+> > > > interfaces.
+> > > > 
+> > > > Note while at it drop the netdev_dbg() calls since at the moment of the
+> > > > stmmac_check_pcs_mode() invocation the network device isn't registered. So
+> > > > the debug prints will be for the unknown/NULL device.
+> > > 
+> > 
+> > > Thanks. As this is a fix, shouldn't it be submitted for the net tree as
+> > > it seems to be fixing a bug in the driver as it stands today?
+> > 
+> > From one point of view it could be submitted for the net tree indeed,
+> > but on the second thought are you sure we should be doing that seeing
+> > it will activate the RGMII-inband detection and the code with the
+> > netif-carrier toggling behind the phylink back? Who knows what new
+> > regressions the activated PCS-code can cause?..
+> 
+> If it's not a fix that is suitable without the remainder of the patch
+> set, this should be stated in the commit description and it shouldn't
+> have a Fixes: tag.
+> 
+> The reason is because it wouldn't be stable kernel material without the
+> other patches - if stable picks it up without the other patches then
+> it could end up being applied without the other patches resulting in
+> the situation you mention above.
+> 
+> Shall I remove the Fixes: tag?
 
-On 05/28, Oleg Nesterov wrote:
->
-> After the recent commit 5097cbcb38e6 ("sched/isolation: Prevent boot
-> crash when the boot CPU is nohz_full") the kernel no longer crashes, but
-> there is another problem.
+Let's drop it then, so not to cause confusion for the maintainers.
+
+-Serge(y)
+
 > 
-> In this case tick_setup_device() calls tick_take_do_timer_from_boot() to
-> update tick_do_timer_cpu and this triggers the WARN_ON_ONCE(irqs_disabled)
-> in smp_call_function_single().
-> 
-> Kill tick_take_do_timer_from_boot() and just use WRITE_ONCE(), the new
-> comment tries to explain why this is safe (thanks Thomas!).
-> 
-> Fixes: 08ae95f4fd3b ("nohz_full: Allow the boot CPU to be nohz_full")
-> Link: https://lore.kernel.org/all/20240522151742.GA10400@redhat.com
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> ---
->  kernel/time/tick-common.c | 39 +++++++++++++--------------------------
->  1 file changed, 13 insertions(+), 26 deletions(-)
-> 
-> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-> index d88b13076b79..27d0018c8b05 100644
-> --- a/kernel/time/tick-common.c
-> +++ b/kernel/time/tick-common.c
-> @@ -178,26 +178,6 @@ void tick_setup_periodic(struct clock_event_device *dev, int broadcast)
->  	}
->  }
->  
-> -#ifdef CONFIG_NO_HZ_FULL
-> -static void giveup_do_timer(void *info)
-> -{
-> -	int cpu = *(unsigned int *)info;
-> -
-> -	WARN_ON(tick_do_timer_cpu != smp_processor_id());
-> -
-> -	tick_do_timer_cpu = cpu;
-> -}
-> -
-> -static void tick_take_do_timer_from_boot(void)
-> -{
-> -	int cpu = smp_processor_id();
-> -	int from = tick_do_timer_boot_cpu;
-> -
-> -	if (from >= 0 && from != cpu)
-> -		smp_call_function_single(from, giveup_do_timer, &cpu, 1);
-> -}
-> -#endif
-> -
->  /*
->   * Setup the tick device
->   */
-> @@ -221,19 +201,26 @@ static void tick_setup_device(struct tick_device *td,
->  			tick_next_period = ktime_get();
->  #ifdef CONFIG_NO_HZ_FULL
->  			/*
-> -			 * The boot CPU may be nohz_full, in which case set
-> -			 * tick_do_timer_boot_cpu so the first housekeeping
-> -			 * secondary that comes up will take do_timer from
-> -			 * us.
-> +			 * The boot CPU may be nohz_full, in which case the
-> +			 * first housekeeping secondary will take do_timer()
-> +			 * from us.
->  			 */
->  			if (tick_nohz_full_cpu(cpu))
->  				tick_do_timer_boot_cpu = cpu;
->  
->  		} else if (tick_do_timer_boot_cpu != -1 &&
->  						!tick_nohz_full_cpu(cpu)) {
-> -			tick_take_do_timer_from_boot();
->  			tick_do_timer_boot_cpu = -1;
-> -			WARN_ON(READ_ONCE(tick_do_timer_cpu) != cpu);
-> +			/*
-> +			 * The boot CPU will stay in periodic (NOHZ disabled)
-> +			 * mode until clocksource_done_booting() called after
-> +			 * smp_init() selects a high resolution clocksource and
-> +			 * timekeeping_notify() kicks the NOHZ stuff alive.
-> +			 *
-> +			 * So this WRITE_ONCE can only race with the READ_ONCE
-> +			 * check in tick_periodic() but this race is harmless.
-> +			 */
-> +			WRITE_ONCE(tick_do_timer_cpu, cpu);
->  #endif
->  		}
->  
 > -- 
-> 2.25.1.362.g51ebf55
-> 
-
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
