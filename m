@@ -1,122 +1,121 @@
-Return-Path: <linux-kernel+bounces-192617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E415F8D1FC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB0B8D1FBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067C91C22FD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:10:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5550A1C20FB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75656F9D6;
-	Tue, 28 May 2024 15:08:08 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A158C172786;
+	Tue, 28 May 2024 15:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJCFrejZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28F6173334
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4741E880;
+	Tue, 28 May 2024 15:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716908888; cv=none; b=nQGKVIjjX/138EEPe7ifuNWJOzya49njSbstlcc2JuSBcos6/Yb/Xm/W2b/9tpdC76890hj04OzPuirYfUNLqyNJ/F/0bJdOye0A77g3xMBpiX5xhx0H9XWflwSemgtRXh9ij/XarPIga1hO03TgSSb0if3NZlw1CdrhsnP/5w0=
+	t=1716908797; cv=none; b=MRkAhaOh2WBXc9WO5VBKA4t0o7dfik4Aq2xbjey+0owwdHPlEspfyhWqO/blciHp3uXqbxWEBOO5+wgW8+qTozxOIxeqgrUb7BnKQA2Io5Gj3b9Xj3WOaXQ0lwbbKJir2VcZaFcSFCH9lyQ6MpM5412DRrQH/VU5npjnuyLl5gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716908888; c=relaxed/simple;
-	bh=I+IpNMECOJXL+vdv5iTJxoyXJAP5asFI6LVgsSUqkd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FFJBv6Lxkhs49IusSJCFO9QjcMOI8J8YYzDTPqNko2bmm+CwGXjyIeiHPkhlyKHj0qiTBFg76t6Aoufyr1GoDHte9w7R4qnkaIChlWyOSs3ANEHiq+P9eEKRBrD3wGb3cm9dqVwpkK/zANDbGSDMfrAVb0LiCYLow2fi8NJHpuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44SF6o8a089649;
-	Wed, 29 May 2024 00:06:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
- Wed, 29 May 2024 00:06:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44SF5urw089523
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 29 May 2024 00:05:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d775ae2d-a2ac-439e-8e2b-134749f60f30@I-love.SAKURA.ne.jp>
-Date: Wed, 29 May 2024 00:05:53 +0900
+	s=arc-20240116; t=1716908797; c=relaxed/simple;
+	bh=WW8C6Bc9G0Yfb3CfuxmEdX54sinQDMOYusd6wezRaW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZCLWAE1EFnrwEfUscDNHmcD6F2rmKSxpL8tvJj1PHC1fgtKW3448F9X233Kd25Ra0jgzU+PXmUVoY110/Rv/twtymj60Tn0wVTvfMdr3sL1G0br6/oIeXmwsa0OuljL9PyVuU880A716qSfyenSBEj8VewkwIYH47v6OvdcPCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJCFrejZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0864BC32782;
+	Tue, 28 May 2024 15:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716908796;
+	bh=WW8C6Bc9G0Yfb3CfuxmEdX54sinQDMOYusd6wezRaW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rJCFrejZ8h7jn7LQBqsHSkoosHWCqAdx9SAEEq26xBbw8w1j/qr8vwinxz/VhupPS
+	 aBLKEFm7aN/N47MatW0jKAJZhZDKT3Ah4dFSI+ZqIkDMPsej3xS6TRZgaflQ1C9u4g
+	 uE8HcoBYSSXI//rquJlBhTjBeF5UIrnIUnOv/Laai5LFY3DzKTpB46j5lsgljrErTl
+	 DsJOQlowXN7Z5yUHQ8TaLfthwG32J/zqo9beR4leCqRCC9LNWsN1/Om2+3rYh1/VFN
+	 1sF2YhxnnsFsnlzUm5XjEdfeQEmEqTbvFi5sXs/phTLfKR9vuOtGDQ3a3WvtDtK9jg
+	 KCzoZKJyez3AQ==
+Date: Tue, 28 May 2024 10:06:33 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH v3 6/6] arm64: dts: qcom: c630: Add Embedded Controller
+ node
+Message-ID: <bbsdvqjo2ikljnuvupolpdfstsaegfqyg2ct7bt24evcorcfjt@3fw5eicxxuik>
+References: <20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org>
+ <20240527-yoga-ec-driver-v3-6-327a9851dad5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] serial: drop debugging WARN_ON_ONCE() from uart_write()
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, gregkh@linuxfoundation.org
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Al Cooper <alcooperx@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Vineet Gupta <vgupta@kernel.org>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Baruch Siach <baruch@tkos.co.il>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Neil Armstrong <neil.armstrong@linar.smtp.subspace.kernel.org>
-References: <20240405060826.2521-1-jirislaby@kernel.org>
- <20240405060826.2521-13-jirislaby@kernel.org>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20240405060826.2521-13-jirislaby@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527-yoga-ec-driver-v3-6-327a9851dad5@linaro.org>
 
-syzbot is reporting lockdep warning upon
+On Mon, May 27, 2024 at 01:03:51PM GMT, Dmitry Baryshkov wrote:
+> From: Bjorn Andersson <andersson@kernel.org>
 
-  int disc = 7;
-  ioctl(open("/dev/ttyS3", O_RDONLY), TIOCSETD, &disc);
+Please align this with the S-o-b - feel free to use either form.
 
-sequence. Do like what commit 5f1149d2f4bf ("serial: drop debugging
-WARN_ON_ONCE() from uart_put_char()") does.
+> 
+> The Embedded Controller in the Lenovo Yoga C630 is accessible on &i2c1
+> and provides battery and adapter status, as well as altmode
+> notifications for the second USB Type-C port.
+> 
+> Add a definition for the EC.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      | 76 ++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+> index 47dc42f6e936..d975f78eb3ab 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+> @@ -370,6 +370,66 @@ zap-shader {
+>  &i2c1 {
+>  	status = "okay";
+>  	clock-frequency = <400000>;
+> +
+> +	embedded-controller@70 {
+> +		compatible = "lenovo,yoga-c630-ec";
+> +		reg = <0x70>;
+> +
+> +		interrupts-extended = <&tlmm 20 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&ec_int_state>;
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		connector@0 {
+> +			compatible = "usb-c-connector";
+> +			reg = <0>;
+> +			power-role = "dual";
+> +			data-role = "host";
 
-Reported-by: syzbot+f78380e4eae53c64125c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f78380e4eae53c64125c
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-Example is https://syzkaller.appspot.com/text?tag=CrashReport&x=100271ec980000 .
-But not using this example, for this link will disappear eventually.
+I was under the impression that this port is wired directly to the SoC
+and as such this would support data role switching as well.
 
-By the way, do we want to also guard uart_port_lock'ed section using
-printk_deferred_enter()/printk_deferred_exit(), for trying to use e.g.
-WARN_ON() inside such section will result in the same lockdep warning?
+No concern with that, but just out of curiosity, is this not the case?
 
- drivers/tty/serial/serial_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 2c1a0254d3f4..0c4d60976663 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -622,7 +622,7 @@ static ssize_t uart_write(struct tty_struct *tty, const u8 *buf, size_t count)
- 		return -EL3HLT;
- 
- 	port = uart_port_lock(state, flags);
--	if (WARN_ON_ONCE(!state->port.xmit_buf)) {
-+	if (!state->port.xmit_buf) {
- 		uart_port_unlock(port, flags);
- 		return 0;
- 	}
--- 
-2.18.4
-
-
+Regards,
+Bjorn
 
