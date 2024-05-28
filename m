@@ -1,156 +1,162 @@
-Return-Path: <linux-kernel+bounces-193148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113F28D27C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9003E8D27CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1201F25245
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C09287964
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2BC13DDC5;
-	Tue, 28 May 2024 22:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C600313DDAE;
+	Tue, 28 May 2024 22:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="GM8b6H/N"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K7aDK4mk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620631DFD2
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A025E13DBA8;
+	Tue, 28 May 2024 22:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716934296; cv=none; b=CrCiu4pNoSiOS1mIhEvOW9UH8RVHl/cNfSUg17attoYvcHmu9beBH68qMsoPveHob6wOjqdRcRfYaRSrdPzlOCtF3cpEuFNWtN+JtatVze2UerSjBiCushQ4aGDNdVKjOYISEtpPTVmoOWUhG8xQ5t8f+bDMMos9uqTcg7woMXo=
+	t=1716934376; cv=none; b=UPpZWHDkdyFHhjxoAEu8wy/A92PeeZQ3cugWQwe5qMuT9hxEN9XvdQ8aVgX4pYCJCJIt/Yx/tnMuK5QhNukw5baJTIQbqEKxRoi2iTHldeV74qAwwvSQpqrw4c1rX8oDJUm5UhwcNpFiP9UfEpbUhJLWLxR06CRfBCXRowSzrwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716934296; c=relaxed/simple;
-	bh=s6gGGoGa28fqfAB8/9ayz7igSKloxSfHhA3lG6vLIng=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=uryCYJ+8pBChyJensoQp+XG7dF2g+77zaFSfVWta56POOPVNU8Dipr9XGrLP/dgHlu53YGtem6p7slu6aw69TgZ6fJT0FAw+Rf7GrL5chiNwQY5eWq5DU50GPn5jVlBaYaBYidG26lIrooDgJFvjECHBoheDU9ORNrypmi8gefo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=GM8b6H/N; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f44b51b367so10323785ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:11:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1716934294; x=1717539094; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/EZSjBSMpKdz0TS6eS7VGV2URZV9D9zcT9BZtnUab0=;
-        b=GM8b6H/NI/J4Qf9kM2wuhid9bqfPp8E5toF/bXilsxb6fd1ucDnvHhFIG6rlrXHKHj
-         7lSWnUYoIoBYChzDyl1SOPrh2aEUFSyLGGjn8keuFlHwG8xNe2Z/HJyIC9pBvkCw9DR4
-         ExDIJuoVDAt2FwfYKLgXzh8Jg2RqrKxDwy0iQED8OUTYJ7YGH9CZP/tyspDgDNNfDKNx
-         jj12Tio7nhH7DbmtucCRpea3IjT6KZ6mQEdAZIimzILqwGkC1pjTaUoY9k6WgZ9VgUNs
-         qjg0/+PA13xi3YFTNgzMUj4C/nmI28WUyreMQ24epQw8GWORAnga+LrAcF5bxk98HjyF
-         zLDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716934294; x=1717539094;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/EZSjBSMpKdz0TS6eS7VGV2URZV9D9zcT9BZtnUab0=;
-        b=AOZGXkHU4ozQKMDnSUDmnLvdSnRs8CAnbVKS6pJKpaI+wROaVmTGNqGMmz29xebn5B
-         98GIvoJrROqDejBXVEdu7PJ4LfZEwfIENqzWcwzanweDZIESW/L/9J+cACq0oQPojJR9
-         JCSJeaBgBhosCPgUl72O8pqbWht7jiCsk/8HX44TkUr8BAI0kMQ4aBiXMxBbFCmiKH8K
-         rdpVaaXV7K1XPwU8Gkn5BeQJHYlWoakQqeWa8TJN3w0tki4HfRZRkE9YhSLmgpMwIonY
-         E9LSdgwctIlDvIHmHxTKtSmFBSK1mIP0VR1Km6BFx2vLWSEy1WZq6FjC7rkQkpEc88bT
-         huXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKFn9D5agdIdQuM1tkuj94fc6uXZqwnJUJ83LYXidvJ38weYqjpv11sUbd5cxQc23OL5F5nAJUCCJ+hfZh0aj3+z4uzfzU7nQXeA/e
-X-Gm-Message-State: AOJu0YxZYhiG4VidKUejtv0YO1coEjdDWCNNQRxl9NT0+xCgLps/D6IC
-	p7qjHtOyZkSy1zOgDmT73l0++M70FVD/du4/QotQ/JV8K1NDDmHOSyo+knQk5Ug=
-X-Google-Smtp-Source: AGHT+IHTQU8PmmECMD1h64ue4/AGFuh/+UzLJOnETMdIzBo20vXZf/4EqQUrQxxJsMIbVfq9H8iR4w==
-X-Received: by 2002:a17:903:186:b0:1f3:3a05:1adf with SMTP id d9443c01a7336-1f4499092d7mr162326705ad.66.1716934293612;
-        Tue, 28 May 2024 15:11:33 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822198909bsm8028841a12.25.2024.05.28.15.11.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2024 15:11:32 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <24829B5A-5F68-4B3A-AD4E-1AD9EFDE1D0E@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_5446AB5F-C01D-4F26-BF4D-BD52D8E1B75D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+	s=arc-20240116; t=1716934376; c=relaxed/simple;
+	bh=Cl7YjgiBUrI4hoTZZ8GJ2TR8R1rSgwEHpLwRgTljrUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Px2xvlvPPs8GHJ6k+cedm5F7laV1xdiKC8DVIlNAXbtzMaCnsscFmG/n9MIteS4UbLNOLZ575J4LekjAmDuosAwFbBgtdVJuoGEIsLI7w+Xm4Qaytlc4y/YqNFLbtXeX4gLBovWbXX6P+nWGnU7VfeWjQneDIHh82d+jAGrRFfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K7aDK4mk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SLaJd2018733;
+	Tue, 28 May 2024 22:12:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VAtV6BHt5M29s80gmR+qVaH0AyzW3a+g/mKm1YvmP/I=; b=K7aDK4mknviY0MnT
+	W2cbvGlU0J3ZnAm/SYvsCJ6kGlSF5LaPR7u50owiKCavpIHZE8tIAOuBJMCJ+OTT
+	EYCXQPMCMcvmoMQVI0angIM+IULmwQuqdWf2OtpYFnAupO5SSPjTWdBvkAIQh88k
+	zg1uj5fFA35q8AiIaPlyiMibW/N/8hgeatS6Ynvx+XpKspRBMV3ApKSd8qmPxFH2
+	4qctEHZ/Y27q9ssCreO/LPWM2CnsjPl1Lax46WJ7dJKt1ekWz3mwLbJN6XXsgs9D
+	uJvunf4PtDJ65ptTBCFc+UgWIZgOq1nZ6W8H83uL6z8KGhfutfDflCQxwXXgcoJc
+	b3lQTw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0x7cmx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 22:12:37 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SMCZ00013232
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 22:12:35 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 15:12:35 -0700
+Message-ID: <d7ffd990-9b58-4baa-a667-15feaf895572@quicinc.com>
+Date: Tue, 28 May 2024 15:12:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v2] statx: stx_subvol
-Date: Tue, 28 May 2024 16:11:28 -0600
-In-Reply-To: <b3b02658-ffc4-4bd9-b77a-af65ae359474@oracle.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-bcachefs@vger.kernel.org,
- linux-btrfs <linux-btrfs@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Josef Bacik <josef@toxicpanda.com>,
- Miklos Szeredi <mszeredi@redhat.com>,
- Christian Brauner <brauner@kernel.org>,
- David Howells <dhowells@redhat.com>
-To: John Garry <john.g.garry@oracle.com>
-References: <20240308022914.196982-1-kent.overstreet@linux.dev>
- <20240312021308.GA1182@sol.localdomain>
- <b3b02658-ffc4-4bd9-b77a-af65ae359474@oracle.com>
-X-Mailer: Apple Mail (2.3273)
-
-
---Apple-Mail=_5446AB5F-C01D-4F26-BF4D-BD52D8E1B75D
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/6] drm/msm/dsi: set VIDEO_COMPRESSION_MODE_CTRL_WC
+Content-Language: en-US
+To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Vinod Koul <vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Jonathan
+ Marek" <jonathan@marek.ca>
+References: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
+ <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-5-f797ffba4682@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-5-f797ffba4682@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TkiTtbWYL5GyVWDPFl3C4HfIUuAaHVJh
+X-Proofpoint-ORIG-GUID: TkiTtbWYL5GyVWDPFl3C4HfIUuAaHVJh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 priorityscore=1501 clxscore=1015 bulkscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2405280165
 
 
-> On May 28, 2024, at 6:46 AM, John Garry <john.g.garry@oracle.com> wrote:
+
+On 5/27/2024 7:21 AM, Jun Nie wrote:
+> From: Jonathan Marek <jonathan@marek.ca>
 > 
-> On 12/03/2024 02:13, Eric Biggers wrote:
->> On Thu, Mar 07, 2024 at 09:29:12PM -0500, Kent Overstreet wrote:
->>>  	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
->>>  	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
->>> +	__u64	stx_subvol;	/* Subvolume identifier */
->>>  	/* 0xa0 */
->>> -	__u64	__spare3[12];	/* Spare space for future expansion */
->>> +	__u64	__spare3[11];	/* Spare space for future expansion */
->>>  	/* 0x100 */
->> The /* 0xa0 */ comment needs to be updated (or deleted).
+> Video mode DSC won't work if this field is not set correctly. Set it to fix
+> video mode DSC (for slice_per_pkt==1 cases at least).
 > 
-> I would tend to agree. Was this intentionally not updated (or deleted)?
+> Fixes: 08802f515c3c ("drm/msm/dsi: Add support for DSC configuration")
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
 
-More correct would be to add the new stx_subvol field after the "0xa0"
-comment so that it is clear at what offset in the struct this field is.
+Hi Jun,
 
-Cheers, Andreas
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
+Thanks,
 
+Jessica Zhang
 
-
-
-
---Apple-Mail=_5446AB5F-C01D-4F26-BF4D-BD52D8E1B75D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmZWVpAACgkQcqXauRfM
-H+A4QQ/+IFC+ipn32WPm2mM14CNmiYmrhv5RCNPU8Ectk5pHJQGow3HzwXGSGKRv
-M4tj97Xw5Au3K9qP9s3QSNLpDrc3+KumXrr8vzg33XpnRXcSzNMxtcXdht3/DGYO
-zqltGBq7u+Wm2S1yoRZwORU1YS/dq90ec0m6IBhszI3FAvLCH/tMj7dlTrTE3gSu
-xWen9XZBYiTbj3m81J5nlppuqEsr3tF7LtJRyHUw5xqgpe47kv0GFohyCp3pv8et
-r5fbv5I8uCNx6iSBk/o5ORLr8VVZJ4K5/0t96u0sPDLN9wOCV8NpYPXLeSUqPVr7
-KGxIcTSFAUkUMQXi2NGkpkHm5aAGmpXH2QQSdKbQbXrKXEbo4rAe+4jJjNtiYMK4
-vU7R0/6YGT+KBmL9J0/yvfshZNNb5l7ghzAq3x2Wt3TCPFGg0N6em1QKSb67IdbS
-nCmsQ38n589juroHPFs4yEq2Lad+g05CT5Lml7UNVCj5Fg4Wq+2sL0/6tnrx9/Xu
-Sh/knYTEPZy3Yevg0t4eol4TzLVzKm5PlKIVzctm4pAm5mNMXsS0OygEgpV57LXY
-84UCpWL80GT7PHpeo8KzNuN14oYS2BW1aZdBgfSnyxhhSuKGbFDCLcr/N+leNeZr
-M3rRe35/SHqXbzs2kpSz/mlf1m98bHjjsyRMKmPj2/a1tevPQg0=
-=vnHt
------END PGP SIGNATURE-----
-
---Apple-Mail=_5446AB5F-C01D-4F26-BF4D-BD52D8E1B75D--
+> ---
+>   drivers/gpu/drm/msm/dsi/dsi_host.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index 47f5858334f6..7252d36687e6 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -857,6 +857,7 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
+>   	u32 slice_per_intf, total_bytes_per_intf;
+>   	u32 pkt_per_line;
+>   	u32 eol_byte_num;
+> +	u32 bytes_per_pkt;
+>   
+>   	/* first calculate dsc parameters and then program
+>   	 * compress mode registers
+> @@ -864,6 +865,7 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
+>   	slice_per_intf = msm_dsc_get_slices_per_intf(dsc, hdisplay);
+>   
+>   	total_bytes_per_intf = dsc->slice_chunk_size * slice_per_intf;
+> +	bytes_per_pkt = dsc->slice_chunk_size; /* * slice_per_pkt; */
+>   
+>   	eol_byte_num = total_bytes_per_intf % 3;
+>   
+> @@ -901,6 +903,7 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
+>   		dsi_write(msm_host, REG_DSI_COMMAND_COMPRESSION_MODE_CTRL, reg_ctrl);
+>   		dsi_write(msm_host, REG_DSI_COMMAND_COMPRESSION_MODE_CTRL2, reg_ctrl2);
+>   	} else {
+> +		reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_WC(bytes_per_pkt);
+>   		dsi_write(msm_host, REG_DSI_VIDEO_COMPRESSION_MODE_CTRL, reg);
+>   	}
+>   }
+> 
+> -- 
+> 2.34.1
+> 
 
