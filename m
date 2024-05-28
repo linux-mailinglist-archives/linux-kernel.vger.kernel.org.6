@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-192787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653F68D2214
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3BB8D2218
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F591C22506
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F2B31C2299D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05D2173345;
-	Tue, 28 May 2024 16:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BAD173339;
+	Tue, 28 May 2024 16:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FMaIWg8Z"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jNGhh00L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B370172BAE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F8F172BCE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716915454; cv=none; b=Ajr+ckIr+ylFy2eXLT4awhPh7LwKLrqDHnm9IDZKzDNEq4zUjaSv/5oWbO9Tg4cmPXLXb6ER5W4QUQAw9PJQCAiBHwbGRBZ5gnUHuEpmMJ4x2hQbChEMnt5rsT6BlqVK7+T+iPlPPveUJaecu8T+itdyPbsYZ3WF172L8eCmyhw=
+	t=1716915590; cv=none; b=feoJwZ4Ib92e7itjNsscGpvKhXeJlIoGWKaYMhgfNeV8WImKW6IJ4yn++g0S39ON/jnAwtaein3IV2gAYRtkDElM/pXgEAKmrwUXCr6/TlxoBsKT+qTu8ZxH9rRkOQcGprvO+D6rCf9mppyAtupmCN2Q+hQm8vCu8iYou/29z5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716915454; c=relaxed/simple;
-	bh=20lWxuyncauYpRPdcIP2qeiyq8Pn90Gk/tUHOS/51sw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=A5296ofB4zzW8OUGFuT9DOhYGiQ+nEUNmTjYBA1uU1c86K3o+68yY2dGmQtT1zz2OiaWdm+NgoQlKF+lIZDNQTFwM2PABuVTJ/AEmuHON2qZnLeb3d82yyYZYWH2N9uRhZbHwVvVQxdPnBkDeqxgPoYQgQ/xiEit9zIU05ZfBnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FMaIWg8Z; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: andrew@lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716915449;
+	s=arc-20240116; t=1716915590; c=relaxed/simple;
+	bh=aKqxiLnJn6Gis+JFsRxwOmnGd7SWBjOA7+Tkb7ACtA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iqxt0nmRHe2F5a/Oqb6dXOlKKM0OOC+ACj5pgOxFiNrb5GWJqrgP6z1cgy+xSbNAkanideIk6xNW1Tx0eRmV8euN8e45RB/Ip46RTf8So10/kJmR7rIdZccG87m5mnwlxpy2/yaZCjPlUfzgXq/9aTUCkIDqMSsE1LHGKGN7C48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jNGhh00L; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716915587;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jNceAp37GB1si/9T0wIzhGZuQRX1PlheHnoihJOZ330=;
-	b=FMaIWg8ZBt2go1CkaZdykQtMyRQWLzUq8vG5dX1s/BuhqoUK8kYWDN//VMNuJzplplQ8KU
-	UotCwJMPUUHD+HUaf9QEb2kc1h/ThDL6i7kDh6wJxiHjxpl2L3ogNkU2MsEjKKGVo61l9D
-	gfJpYBIKAlfY//vWE3msD2JkVLYGo3c=
-X-Envelope-To: linux@armlinux.org.uk
-X-Envelope-To: andi.shyti@kernel.org
-X-Envelope-To: netdev@vger.kernel.org
-X-Envelope-To: linux-i2c@vger.kernel.org
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: hkallweit1@gmail.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
-Date: Tue, 28 May 2024 12:57:25 -0400
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UJwNJ7Iz4hN26y4XjDoNm7RTYYMRCtwNho8/txcFc8s=;
+	b=jNGhh00LTCj5/vSzYAeH2gu6IUr8iWdi1sJGF04GJ4zdE442VCkrESrcOzuRhzYBZH92Mp
+	Y+/5vcTd3l914vk/v2irhcpc9JUzlSb4Fz0UmCraulbeMLfq5quE6BRa4hiSlDIZK/XvPR
+	Qy+pgG1hW0Xwp8am1qLkwobRxk1cUJQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-483-s1nYL9B9NsGSJN2xBEdo-Q-1; Tue, 28 May 2024 12:59:46 -0400
+X-MC-Unique: s1nYL9B9NsGSJN2xBEdo-Q-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42111702b3bso7158155e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:59:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716915584; x=1717520384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UJwNJ7Iz4hN26y4XjDoNm7RTYYMRCtwNho8/txcFc8s=;
+        b=PCLqXQt0mGRzvzjoUkF69LhC3G8T7WmgUZirBvPJlrz0UzABRXZX6YKNx1oXfpFUh1
+         Pk8d55OCHIwDaheVqv1Uch5T+rNuBB5ed5s9P4W9NzqyCTXCl/nBOLTKW7d53MFWHemg
+         oJQUSiatpsiZL4FIXoqsWBNvDn2Q5eLTJxit0u/V2KVOyZlbFUbYXo3HpZ3Y8/UTl1o1
+         VX8YEkQ6OyL//dptJZktReTRjyEQHqNalsUHKO0+pFS8IE2XsqzhYcQbVjhBcncht/E/
+         +zOhaS+YxRoz3P5YteqLHyBi+s4cWyZIR4ER7Y1yURMhkvgxLNYKBINMmO03lNve6qzC
+         N84w==
+X-Forwarded-Encrypted: i=1; AJvYcCWPCgOQZeSDTTtBC2qNNEzCp6axO25et/j03a2PWvdL8Z7XT1xTdceCaYvOu2V1zb0qN5s9IGbptkEpw6J02B2+3yBFYQNReqWCNCZz
+X-Gm-Message-State: AOJu0Yyqlppw+el5iZ3QsUj3n6d1mFZyfVTvraqTmuw4c2lvQpX1rjKR
+	9Vx96rNNoo2sG7SCMxKf3mPSlXsdgtfyV8nr/3nsoKEWVb5lgqGEsFSax2IvrdDHsqv7QpvfvmQ
+	XW1PKRB6UlLH7Bz0HqYN901KExgFSBTMrXoXKnrc9sE6YyRFRZOq0O1msmCwFgJ+nQnmMYakXDe
+	lqgRvULlcPJcC8yxT/9116OqgTb8f8BVOZ2+Q6
+X-Received: by 2002:a05:600c:56d6:b0:41f:f144:5623 with SMTP id 5b1f17b1804b1-421089cd2a7mr87129105e9.14.1716915584499;
+        Tue, 28 May 2024 09:59:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENDkUt7a9n5FDj0leqZ1a4dve3iLZ9ui1mbXwQB/hi6rgdH3IEVR3zfNxFeYH9jdtjpkKEg2SNdQe6F4yTyQE=
+X-Received: by 2002:a05:600c:56d6:b0:41f:f144:5623 with SMTP id
+ 5b1f17b1804b1-421089cd2a7mr87128885e9.14.1716915584113; Tue, 28 May 2024
+ 09:59:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-Subject: [BUG] SFP I2C timeout forces link down with PHY_ERROR
-To: Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
- Andi Shyti <andi.shyti@kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-i2c@vger.kernel.org
-Cc: Michal Simek <michal.simek@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-11-rick.p.edgecombe@intel.com> <12afae41-906c-4bb7-956a-d73734c68010@intel.com>
+ <20240516014803.GI168153@ls.amr.corp.intel.com> <c8fe14f6c3b4a7330c3dc26f82c679334cf70994.camel@intel.com>
+ <b6e8f705-e4ab-4709-bf18-c8767f63f92e@intel.com>
+In-Reply-To: <b6e8f705-e4ab-4709-bf18-c8767f63f92e@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 28 May 2024 18:59:32 +0200
+Message-ID: <CABgObfacywzF45FMM+ei=ei36CJDmfFvhWR-bzpqtqjjPWeF+Q@mail.gmail.com>
+Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"seanjc@google.com" <seanjc@google.com>, "sagis@google.com" <sagis@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
+	"Aktas, Erdem" <erdemaktas@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, May 16, 2024 at 4:11=E2=80=AFAM Huang, Kai <kai.huang@intel.com> wr=
+ote:
+>
+>
+> >>>> +       gfn_t raw_gfn;
+> >>>> +       bool is_private =3D fault->is_private && kvm_gfn_shared_mask=
+(kvm);
+> >>>
+> >>> Ditto.  I wish we can have 'has_mirrored_private_pt'.
+> >>
+> >> Which name do you prefer? has_mirrored_pt or has_mirrored_private_pt?
+> >
+> > Why not helpers that wrap vm_type like:
+> > https://lore.kernel.org/kvm/d4c96caffd2633a70a140861d91794cdb54c7655.ca=
+mel@intel.com/
+>
+> I am fine with any of them -- boolean (with either name) or helper.
 
-I saw the following warning [1] twice when testing 1000Base-T SFP
-modules:
+Helpers are fine.
 
-[ 1481.682501] cdns-i2c ff030000.i2c: timeout waiting on completion
-[ 1481.692010] Marvell 88E1111 i2c:sfp-ge3:16: Master/Slave resolution failed
-[ 1481.699910] ------------[ cut here ]------------
-[ 1481.705459] phy_check_link_status+0x0/0xe8: returned: -67
-[ 1481.711448] WARNING: CPU: 2 PID: 67 at drivers/net/phy/phy.c:1233 phy_state_machine+0xac/0x2ec
-<snip>
-[ 1481.904544] macb ff0c0000.ethernet net1: Link is Down
+Paolo
 
-and a second time with some other errors too:
-
-[   64.972751] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
-[   64.979478] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
-[   65.998108] cdns-i2c ff030000.i2c: timeout waiting on completion
-[   66.010558] Marvell 88E1111 i2c:sfp-ge3:16: Master/Slave resolution failed
-[   66.017856] ------------[ cut here ]------------
-[   66.022786] phy_check_link_status+0x0/0xcc: returned: -67
-[   66.028255] WARNING: CPU: 0 PID: 70 at drivers/net/phy/phy.c:1233 phy_state_machine+0xa4/0x2b8
-<snip>
-[   66.339533] macb ff0c0000.ethernet net1: Link is Down
-
-The chain of events is:
-
-- The I2C transaction times out for some reason (in the latter case due
-  to a known hardware bug).
-- mdio-i2c converts the error response to a 0xffff return value
-- genphy_read_lpa sees that LPA_1000MSFAIL is set in MII_STAT1000 and
-  returns -ENOLINK. This propagates up the calls stack.
-- phy_check_link_status returns -ENOLINK
-- phy_error_precise forces the link down with state = PHY_ERROR.
-
-The problem with this is that although the register read fails due to a
-temporary condition, the link goes down permanently (or at least until
-the admin cycles the interface state).
-
-I think some part of the stack should implement a retry mechanism, but
-I'm not sure which part. One idea could be to have mdio-i2c propagate
-negative errors instead of converting them to successful reads of
-0xffff. But we would still need to handle that in the phy driver or in
-phy_state_machine.
-
-- Are I2C bus drivers supposed to be flaky like this? That is, are callers of
-  i2c_transfer expected to handle the occasional spurious error?
-- Similarly, are MDIO bus drivers allowed to be flaky?
-- Is ETIMEDOUT even supposed to be recoverable? Maybe we should have
-  cdns-i2c return EAGAIN instead so it gets retried by the bus
-  arbitration logic in __i2c_transfer.
-- ENOLINK really seems like something which we could recover from by
-  resetting the phy (or even just waiting a bit). Maybe we should have
-  the phy state machine just switch to PHY_NOLINK?
-
-Of course, the best option would be to fix cdns-i2c to not be buggy, but
-the hardware itself is buggy in at least one of the above cases so that
-may not be practical.
-
---Sean
 
