@@ -1,228 +1,243 @@
-Return-Path: <linux-kernel+bounces-193010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FE58D258E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8268D2595
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0181B26A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83F0C282980
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F034178CF5;
-	Tue, 28 May 2024 20:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA21B4436E;
+	Tue, 28 May 2024 20:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="hnO7mWuA"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11022010.outbound.protection.outlook.com [52.101.56.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mS71ZKlz"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF10810A3E;
-	Tue, 28 May 2024 20:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716927268; cv=fail; b=ZjT5sqNB0ERweEKnqUt8rEomd55Fzd29wQVrbeThwk6tjYLcrpFPDKJfnZzE08SMPxSeUe0Kqup35jS6PVhrMmFEcDclwjNpOhefBxfhwbe+AI6I6flUH1oBnxc/EHYnkPbLNOupo1S2wEfupJfAgyZOy39RrE0Vr3/xBuMZC90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716927268; c=relaxed/simple;
-	bh=KDpCHfyldYylrBd3UsuZui5aG3ZUr+HrOUYRobD++/c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LVDCdMyVZ+Xqc2R4Pm8jnkjy7DPe6nTavCtQCSRPLMG957vix5n/gq4iPzT2CAHlf1QjCaHIYT29JLVOlxxOMeDTldfYJXkMTpgiKQDjLa6K2ZCYY2dzD9X6Z7IP7UUJly6yOYkNN+0G2260hEKcvDNAgJuif0ymq/W2XTijy08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=hnO7mWuA; arc=fail smtp.client-ip=52.101.56.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NUmUdJYpWG2eB/WCSlyFD8H+jmXY7dmK8mjoce9t21Qmbg3KtECPLnu2ZH5ubzfmHPmMic8q0DFashnOVJexO0G40oeKBTz/nDEmfbxuhZZ3MhElQD+RBTULZSy+0hzkIDoLUABmEFmbFJJ/Cd+x3OyM65J2e1PdJBRRkBDHi0Oh2NdiDY4l+B6plg5fsoo582iDQXziqC+0gdVI03GBZEBvgmvnU1AfR4/2zuifCaGFm2QiZIXse5On31ysMyMic0Yacjw2TJxp52jsMDL3N3+6lyyZsNUe3u6docmGFomtZNMj14A+2+YFz0Eig2iBVaR56d7ssanwYEmOVysF0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O3k6nSeqNHP5zp2F4zSjjk2AKYbuHiW6IWh9HDAnnQ0=;
- b=cbeKqIwdmRB0zP0PGk7s4KemrcJiI+yYU/NyIZ2+EwYhJiOUi1q/BFJmRQTcRGt3S8E7O8dOHX4HY0d+DmroVgF/OKNK2thfU7U4bUpN6jQpb+e+vYTHN5F4xRIJFwLccg3lgLvQr3ySGjH0mpvyJPjxPnet3PA29i8NAE7l0w/LW19A3HIH2g4N/jYpwh33mQFWbPr+zoPMPk1F+g4GjIYH7vStWH2CBcPUWoBGWhkiKiEGbJw+vIaxcQYWdDm4QSacua6jIFi8y85kfUJVnryqa3fztom7rJEDT0lLR70W5B0kIxsom3bnjKMmn1TdlYVNfapyiFgYGSAS7XxiLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O3k6nSeqNHP5zp2F4zSjjk2AKYbuHiW6IWh9HDAnnQ0=;
- b=hnO7mWuAeCrwChCW3si7CSuZ5jZXsgyi+c4caJuisVfxJuC+hZktUzXq/XNtpuAK784rbXM3cKpZNOM5mlQO8/QQuTcmn8HUPm4WNSc5PCVBt72nHa/ajF6hAETAfcrgIRaO93x50peZlG8mpl2hBAsw3bubrYX1Z7pFZ5PFfCY=
-Received: from PH7PR21MB3071.namprd21.prod.outlook.com (2603:10b6:510:1d0::12)
- by DM6PR21MB1434.namprd21.prod.outlook.com (2603:10b6:5:25a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.0; Tue, 28 May
- 2024 20:14:23 +0000
-Received: from PH7PR21MB3071.namprd21.prod.outlook.com
- ([fe80::204c:c88b:65d2:7d3a]) by PH7PR21MB3071.namprd21.prod.outlook.com
- ([fe80::204c:c88b:65d2:7d3a%3]) with mapi id 15.20.7656.000; Tue, 28 May 2024
- 20:14:22 +0000
-From: Long Li <longli@microsoft.com>
-To: Konstantin Taranov <kotaranov@linux.microsoft.com>, Konstantin Taranov
-	<kotaranov@microsoft.com>, "sharmaajay@microsoft.com"
-	<sharmaajay@microsoft.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "leon@kernel.org"
-	<leon@kernel.org>
-CC: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH rdma-next 2/2] RDMA/mana_ib: extend query device
-Thread-Topic: [PATCH rdma-next 2/2] RDMA/mana_ib: extend query device
-Thread-Index: AQHarREBjrgSbvhcc0GDjv4whEc0obGtHKsQ
-Date: Tue, 28 May 2024 20:14:22 +0000
-Message-ID:
- <PH7PR21MB30711A6DBAAD7D8863735CBECEF12@PH7PR21MB3071.namprd21.prod.outlook.com>
-References: <1716469137-16844-1-git-send-email-kotaranov@linux.microsoft.com>
- <1716469137-16844-3-git-send-email-kotaranov@linux.microsoft.com>
-In-Reply-To: <1716469137-16844-3-git-send-email-kotaranov@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=39a8e2db-5319-458d-b4f3-cd2fa6fc7747;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-05-28T20:12:44Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR21MB3071:EE_|DM6PR21MB1434:EE_
-x-ms-office365-filtering-correlation-id: 28fd4baf-83d8-4b49-db84-08dc7f52c38e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|366007|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?l4nzFGRkWE6C95g/HRmv5XBEXo+qp5NNNzPyVJgOz00M0beDNee4xK9FeAvp?=
- =?us-ascii?Q?ozY8sw0IhYYKOSvjCq4QfxoDVcGGXxhSWq62+/0p3LoFQ6+Sz11bjYiL1V+O?=
- =?us-ascii?Q?mxL/C1x36UJSvDhOHL8EJDbAc0tzhCtS8CDfPhYOh5B+rAqTtff4uCRDt9t9?=
- =?us-ascii?Q?mYmUfdkgw0ckHJsdobPwfGqClksq0naP4P5RFaDGU3JchYx1Z3nM/ZX7kKMz?=
- =?us-ascii?Q?yMj8StjldY8j7Jc4zOm7OOovASFYhWVpxtUeL4TYr7IinmzXCrcJyRnjQoRw?=
- =?us-ascii?Q?XehmeE86thbuOEDmEJHJ2wh5PxhiH3xcv4J9NWaKchhGtC1/0GsC0MY+yKp7?=
- =?us-ascii?Q?oCLO3D1at26whXvshN6shDaMJlnUAoMtEuH4tb+lu4pVtFID8bkQhV+23r6/?=
- =?us-ascii?Q?PtFrimgnimDYvSDapW12hmt3Pmrre6p38XTQ3izM2TQ1CHGOugbO46Z0s/AI?=
- =?us-ascii?Q?+wqyq9PYbTe+uXXm/NNyGUUL8NPAhro03Abhwcllt6X/y5YwMPhiYkdlPsaT?=
- =?us-ascii?Q?aXeIh6mTZlbg77w9x9ypMwU9cBJhHmBCda4TDNza6c/H28HxvkVAJkHAB+6i?=
- =?us-ascii?Q?OVMXss2oBMOAhOG4p5YOfv0d30ZUF17eyTgXh6knNhdfwAYulHrFmbpbX83t?=
- =?us-ascii?Q?4tPKpwN7dsfquYJhYnHTytWo7v9YlFT7QCXv0YHPHFfHwOqLt+SyjHDNtNex?=
- =?us-ascii?Q?0yYCnM1NgM4mJprDiw212zBomlcXPEvV2aJrvMl53ufMLdDAVcje2QQplVGh?=
- =?us-ascii?Q?VcTxZFKL/u+CXmGWK47PoiN0cHNaroaeYHv1xD4U1esUyDSsdm/I7+wuPq3L?=
- =?us-ascii?Q?rsTL/Pf4jKl5K0AyaBHDYhhG8MnuZXPBj1oK+LOPP+W3zycE9B8E2UT8KBqZ?=
- =?us-ascii?Q?02prcN8CgkiqsBOdmfq53fmC0PcZS2bLt6cDDcdoWWGImqCgeH0aQKZkeWSP?=
- =?us-ascii?Q?ck3EYigaNrz5olfxt2tJHyXZgnt4rrVlrJo6CCP/RMiCAWsynquuAWwn0BVl?=
- =?us-ascii?Q?O/a/FzdWbD62VcOeMqwaOFGpS7VhS/Y3mPSlZmVT7328hd3hB36EE9Y6YjOM?=
- =?us-ascii?Q?VHtSWTVb+DIImQ71lxE5yPlcEoyeR4wMBqVDfQqdtGk84c9fmUJukpkTrIz+?=
- =?us-ascii?Q?PrfzHUETprnaas2k21NAXEcT3sJgMnpfHjgK/FP9unR0uASgvLwmksXrytev?=
- =?us-ascii?Q?ICJ4gfQcrpzwuhoTHqiSue7CiriQ5UPOtewYMaagUUD8u5orr8zlxOmC+ckg?=
- =?us-ascii?Q?aYWYvgMrs8kr7kxKSXBHjBuDMOpFgFcyw4FCOc1CqWf4PCv739EIgx8dLlQu?=
- =?us-ascii?Q?9HCKr199OSCPIxjv3y9LXdYAixrsIOgMSZa+B0B9prihBQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR21MB3071.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?XYVLs8M9oNsQ1Xx+6AojmhCGJ8erR7ikN2c1JvyAi2OLANBw6Ue7k5rYDmyH?=
- =?us-ascii?Q?HeuCGpqZig9Oj1yyAvzLq1uPDEjvuoeKAgxBueG3BvqZXONYrdnpNU4uGj/S?=
- =?us-ascii?Q?m4IwCz1LzhJFRpwVsrUPUP9EU1j2ZIJKpIlaDNkw1pVk5DF5ZwKg8L6aV1/i?=
- =?us-ascii?Q?SxqQ/XH1BbAgTDyZdq/gjf1GrtqUR8DnDQGI6e3EZlGpZAdyeLlZB0+SApYe?=
- =?us-ascii?Q?VlK7YZvdhJeWeT6S9fgVZNeLw2PFF8g3mgjMTHICVN3DCUdAuL00jpyTGNeQ?=
- =?us-ascii?Q?uavJGqGFaTJXb0T2e0lMLx+lmJXuSkJ/wxVMVnPRSJjDhriPwRl7Cq3GjVYx?=
- =?us-ascii?Q?YFcQMcRCH2yK9p9z4nKYmEcUa2W/2JTyONT+ucITBMq7pXhQCcOpiT1LxXc+?=
- =?us-ascii?Q?ov1k4DqJE+Q46ig+tB0YyYYpvbOoH3vgwEDI7av87fkOnl3uXy1kK7BnSKek?=
- =?us-ascii?Q?tirpH2rfQXkpjyc3T5BG70fxjFBLRkENaEAfIZH3q3/RpS28rCXwyc5IXpCo?=
- =?us-ascii?Q?8mH1a1AsTtV6ngSUublo13rRO6ks0jfWXaapf4ONnwBhF/VG5l+TADEactBv?=
- =?us-ascii?Q?MrxBfxN9AiCtF6Y3g03RVZY4gb8OPH+48peuuLp2FRzpfZ/OoDIvOKxSS6jS?=
- =?us-ascii?Q?k4f2mOMytCd+hTlDgF54Bp0J8Jqy62TWB4gf7I7tBNwB+CfRPNlXOaihoU/p?=
- =?us-ascii?Q?LKB0B2AFXuLlUscQku1isOdDCccx2OdXpZGQuYc4qHMvSTzGPrCMQyxjw4w9?=
- =?us-ascii?Q?ZDukRZ+F35YsNqeW5CfXd22PMP3pA9URagPGbpBR1DKfgZ8DJl9acyIyATCX?=
- =?us-ascii?Q?tmsYrFltJ+zUTTkd+0JzQOoEXMxEGnZAr15XWF0DYzQYjj+Kmj41Zh+R6c4+?=
- =?us-ascii?Q?PWiEj67EtwnuBoUPafyrSaN1WACUhFw6Ln+DJXDPAiqBPta9oOjgu9muVDAX?=
- =?us-ascii?Q?gXLXSFkvOyo12FH8az1EPN6FjgIhhG3IWzdvgL04w1suc6+hNaZKMNOOUGyv?=
- =?us-ascii?Q?Cir/5+e6aElXyZ/z2eTs2gt/3GlXjIDExrwB+vqPV2/zsjYmjBXtjrX88NQu?=
- =?us-ascii?Q?0p8+4V7pVtlt3IujB6CswHz9TyyNJvASvv5uM8jeWPLSHwz+NrWhH1XYbL8S?=
- =?us-ascii?Q?sEHvhz0hXel4Pq5VTwFXsdUZTxf/kveplwOw8KeiNNy+zFmUCMoNIdxH0JT/?=
- =?us-ascii?Q?nJGfNEtVcs825dbSEo3FRiUko49cF+mXC9FEYQfudK5e7asQ+yIRujfbdF8x?=
- =?us-ascii?Q?0VdDV1oC1Yg/OY54xClHTpLHuDK9D9pWXW10/fbMN07lBBZ0N2aHOWf1PdD+?=
- =?us-ascii?Q?58/fT2us9X2R5+/ujd69hbpGD4GFPz6XBEVGCQKel0gXb7lr+pckBuMhaN/7?=
- =?us-ascii?Q?8+OyiQx/yHj42b9dGDXZj1lSPu4MMqJKhEXzpZl3Y4U3J3OfDW91dLgCgUyU?=
- =?us-ascii?Q?+DYORXpC1gSK1NBnpT67rfJZKP+DV8HYgsxY7fdRlyPL4Q5EfV6QB8YKW0ct?=
- =?us-ascii?Q?AwiuXqTEjezl2MiqJNJ+pr7CFeZtzUxg6+xNy2RSPk/q7y6RbUXVIZOTLmVj?=
- =?us-ascii?Q?gIKtLPPrNpylmichISRIaXwk8u1BB46qqrI9khHN?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC50179202
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716927309; cv=none; b=uc8f4Qc9oNTOmsqFiTZdbWZ/waYh2g+bQ7qcsvw4TfitJefxomNPwgKF5AkXKBwv8AXV1cFVFpLkNahv6SK0JsizyEwoC9A3m19nY3IPsjEfXCJSkTib1qGVFhZCeDcDEjRPChHi5JG/WR3+F+nl9XiNrS9ygU2qB9CrlQVeuRY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716927309; c=relaxed/simple;
+	bh=en2TGRjkuW3PBRpbSQahu96oV+wObSIdrbE7VcLSSN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fW/Ovj+jt2tZH1141jEL45zwII6h8ymE6iLu67HhPCLtGKynuHTUJsw4GlsGLXaebgKjVbeFIoMzWxZS1ILhByVUgRlqBFyFthSliTpR9iUyqAOyuSNomTPpxXlNiCiEYa4dluc3JLEwmYrUSmy5n9iYC7mubrQ0Ly6dihZCFgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mS71ZKlz; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f8eba8f25eso1071943b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716927306; x=1717532106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qSEByr0cVqm4o+EKl2XQRiChKteOLXLt82vx/Q7ni4=;
+        b=mS71ZKlzkWqlq9IGZrt0QCLTul+8diwSr19T3kR9NEK2ctSClN3nWYEmsOutvnyqdb
+         1kUr7KAEt+9wOcGImFAsZ3b0TMI+6WD/Mb/6kfkM/AcFrTZ1ZKxPwgP+8yhvm4JSRHDw
+         owjuxPY2/4ONZ5IMOrAE7gzM2Dg7qM6Ozysck=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716927306; x=1717532106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7qSEByr0cVqm4o+EKl2XQRiChKteOLXLt82vx/Q7ni4=;
+        b=LzdfsAr7CBWmKyp/prtXYQtKyT45WFO4w1WFoBbDI2XKQshdRe9tjgbohxouTudivM
+         kGR28XhFL6BjT+rbrbtgJPZWRdm2VmygJh1ZdW+/vX5chmCpWydRrFaDn4Mz6B9qgJCp
+         k3q/kj93g+bdVm0iSmdofEoLe4plbI6KdxtPOXqQEiupVGwHhuQrPjBUY5nWZiCUl7rH
+         cfR3Pprfg04cBTSmWMd1CwNC/Iw4iy/GBQ7OSveoGH6h6MVBE/vKxZ7xYS7eZiBxDieV
+         1BV5A9+C/IoHjcGqeikumqdZ8AdEo4lU+G8RQAnoZ4I2z8wxhVqCwHy5oIgArszNhDf1
+         0wBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWquCa1pKy+i2iZmq4Ps7DNWoArv4IVHT5e1krL5r25O7doq8wSaOKf2W6+nu4pIHm0jaI0nIa3voiM1TyWYhBkEkimrJ2/8EofGQx4
+X-Gm-Message-State: AOJu0Yym27thNtRYpifWd/R2Z0i6gfMmh20QXvMaYDm4AwsY4F08LjQO
+	kEjHaHndnQPseic4Nf63CXibfVPp5DPVdKxcPIKu8yg/Y64dbhSG+DJgJo/KTovyHNcIIIc1JlM
+	=
+X-Google-Smtp-Source: AGHT+IFW3ROIopbHp4FmwDjcXwLPL8ji7h5EmnLD6C5bTtiuJq1rdjG5bfZSSd8bZPyyZwxXle1n4A==
+X-Received: by 2002:a05:6a00:2c94:b0:6e8:f57d:f1ec with SMTP id d2e1a72fcca58-6f8f34ca8b9mr16497014b3a.17.1716927305818;
+        Tue, 28 May 2024 13:15:05 -0700 (PDT)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com. [209.85.214.179])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fbd3eaeesm6801773b3a.43.2024.05.28.13.15.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 13:15:05 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f339d61e78so42015ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:15:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURdZq0A+FD8t/KiNOFVeuoZCDfijky7MG7yVNWHMFQZG7peC22yJiFz3NxTjW8PYgpvjZkfQUsXxSiTPC271O1U44OA1NQsKsFUqI9
+X-Received: by 2002:a05:622a:1e17:b0:43f:e034:724f with SMTP id
+ d75a77b69052e-43fe1103588mr257971cf.15.1716927283572; Tue, 28 May 2024
+ 13:14:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR21MB3071.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28fd4baf-83d8-4b49-db84-08dc7f52c38e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2024 20:14:22.4272
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sZIpYfPDBNai1WTZj4GjlfV9YUSaa/n+yxCZDrteOaS8B+xiqwalirgA9iGJ3nj6lYU+0MKpNVvMrLMUDS200g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR21MB1434
+References: <20240503213441.177109-1-dianders@chromium.org>
+ <CACRpkdYbtfE9RLsDewV2UwnJknCp_sFEgc+cq=OF+Qd3tkTcwA@mail.gmail.com> <CAD=FV=WoYm43SzrdrSZ1Np58iQ4nMwF0u6uamOAnZc4pqmBpsg@mail.gmail.com>
+In-Reply-To: <CAD=FV=WoYm43SzrdrSZ1Np58iQ4nMwF0u6uamOAnZc4pqmBpsg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 28 May 2024 13:14:27 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V-4CnU7k0W3zwPAf_aeddykmHPN6=wMnjKAzQcbwHeNA@mail.gmail.com>
+Message-ID: <CAD=FV=V-4CnU7k0W3zwPAf_aeddykmHPN6=wMnjKAzQcbwHeNA@mail.gmail.com>
+Subject: Re: [RFT PATCH v2 00/48] drm/panel: Remove most store/double-check of
+ prepared/enabled state
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+	Chris Morgan <macromorgan@hotmail.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Ondrej Jirman <megi@xff.cz>, 
+	Purism Kernel Team <kernel@puri.sm>, Robert Chiras <robert.chiras@nxp.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Subject: [PATCH rdma-next 2/2] RDMA/mana_ib: extend query device
->=20
-> From: Konstantin Taranov <kotaranov@microsoft.com>
->=20
-> Fill in properties of the ib device.
-> Order the assignment in the order of fields in the struct ib_device_attr.
->=20
-> Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
-> ---
->  drivers/infiniband/hw/mana/main.c    | 19 ++++++++++++++++---
->  drivers/infiniband/hw/mana/mana_ib.h |  5 +++++
->  2 files changed, 21 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/infiniband/hw/mana/main.c
-> b/drivers/infiniband/hw/mana/main.c
-> index 2a41135..814a61e 100644
-> --- a/drivers/infiniband/hw/mana/main.c
-> +++ b/drivers/infiniband/hw/mana/main.c
-> @@ -547,14 +547,27 @@ int mana_ib_query_device(struct ib_device *ibdev,
-> struct ib_device_attr *props,
->  	struct mana_ib_dev *dev =3D container_of(ibdev,
->  			struct mana_ib_dev, ib_dev);
->=20
-> +	memset(props, 0, sizeof(*props));
-> +	props->max_mr_size =3D MANA_IB_MAX_MR_SIZE;
-> +	props->page_size_cap =3D PAGE_SZ_BM;
->  	props->max_qp =3D dev->adapter_caps.max_qp_count;
->  	props->max_qp_wr =3D dev->adapter_caps.max_qp_wr;
-> +	props->device_cap_flags =3D IB_DEVICE_RC_RNR_NAK_GEN;
-> +	props->max_send_sge =3D dev->adapter_caps.max_send_sge_count;
-> +	props->max_recv_sge =3D dev->adapter_caps.max_recv_sge_count;
-> +	props->max_sge_rd =3D dev->adapter_caps.max_recv_sge_count;
->  	props->max_cq =3D dev->adapter_caps.max_cq_count;
->  	props->max_cqe =3D dev->adapter_caps.max_qp_wr;
->  	props->max_mr =3D dev->adapter_caps.max_mr_count;
-> -	props->max_mr_size =3D MANA_IB_MAX_MR_SIZE;
-> -	props->max_send_sge =3D dev->adapter_caps.max_send_sge_count;
-> -	props->max_recv_sge =3D dev->adapter_caps.max_recv_sge_count;
-> +	props->max_pd =3D dev->adapter_caps.max_pd_count;
-> +	props->max_qp_rd_atom =3D dev->adapter_caps.max_inbound_read_limit;
-> +	props->max_res_rd_atom =3D props->max_qp_rd_atom * props->max_qp;
-> +	props->max_qp_init_rd_atom =3D dev-
-> >adapter_caps.max_outbound_read_limit;
-> +	props->atomic_cap =3D IB_ATOMIC_NONE;
-> +	props->masked_atomic_cap =3D IB_ATOMIC_NONE;
-> +	props->max_ah =3D INT_MAX;
-> +	props->max_pkeys =3D 1;
-> +	props->local_ca_ack_delay =3D MANA_CA_ACK_DELAY;
->=20
->  	return 0;
->  }
-> diff --git a/drivers/infiniband/hw/mana/mana_ib.h
-> b/drivers/infiniband/hw/mana/mana_ib.h
-> index 68c3b4f..1348bfb 100644
-> --- a/drivers/infiniband/hw/mana/mana_ib.h
-> +++ b/drivers/infiniband/hw/mana/mana_ib.h
-> @@ -27,6 +27,11 @@
->   */
->  #define MANA_IB_MAX_MR		0xFFFFFFu
->=20
-> +/*
-> + * The CA timeout is approx. 260ms
-> + */
-> +#define MANA_CA_ACK_DELAY	16
+Hi,
 
-Looks good. But can you add a comment on where 16 is coming from 260ms?
+On Wed, May 8, 2024 at 2:14=E2=80=AFPM Doug Anderson <dianders@chromium.org=
+> wrote:
+>
+> > This is the right thing to do, thanks for looking into this!
+> >
+> > As for the behaviour of .remove() I doubt whether in many cases
+> > the original driver authors have even tested this themselves.
+>
+> Yeah, I'd tend to agree.
+>
+>
+> > I would say we should just apply the series as soon as it's non-RFC
+>
+> It's not actually RFC now, but "RFT" (request for testing). I don't
+> _think_ there's any need to send a version without the RFT tag before
+> landing unless someone really feels strongly about it.
+>
+>
+> > after the next merge window
+>
+> With drm-misc there's not really any specific reason to wait for the
+> merge window to open/close as we can land in drm-misc-next at any time
+> regardless of the merge window. drm-misc-next will simply stop feeding
+> linuxnext for a while.
+>
+> That all being said, I'm happy to delay landing this until after the
+> next -rc1 comes out if people would prefer that. If I don't hear
+> anything, I guess I'll just wait until -rc1 before landing any of
+> these.
+>
+>
+> > and see what happens. I doubt it
+> > will cause much trouble.
+>
+> I can land the whole series if that's what everyone agrees on. As I
+> mentioned above, I'm at least slightly worried that I did something
+> stupid _somewhere_ in this series since no automation was possible and
+> with repetitive tasks like this it's super easy to flub something up.
+> It's _probably_ fine, but I guess I still have the worry in the back
+> of my mind.
+>
+> If folks think I should just apply the whole series then I'm happy to
+> do that. If folks think I should just land parts of the series as they
+> are reviewed/tested I can do that as well. Let me know. If I don't
+> hear anything I'd tend to just land patches that are reviewed/tested.
+> Then after a month or so (hopefully) I'd send out a v2 with anything
+> left.
+
+Nobody said anything, so I did what I indicated above:
+
+1. I've applied all patches that someone responded to with Linus +
+Maxime's Acks + any given tags. This includes the st7703 panels which
+Ond=C5=99ej replied to the cover letter about but didn't officially get any
+tags.
+
+2. I also applied patches for panels that I was personally involved
+with. This includes panel-edp, panel-simple, samsung-atna33xc20,
+boe-tv101wum-nl6.
+
+Anything totally unresponded to I've left unapplied. I'll wait a
+little while (at least a week) and then plan to send a v2 with
+anything still outstanding. If someone sends Tested-by/Reviewed-by for
+some panels in the meantime I'll apply them.
+
+Here are the 25 patches applied to drm-misc-next:
+
+[01/48] drm/panel: raydium-rm692e5: Stop tracking prepared
+        commit: 598dc42f25cc3060fd350db0f52af1075af3f500
+
+[04/48] drm/panel: boe-tv101wum-nl6: Stop tracking prepared
+        commit: 3c24e31c908eb12e99420ff33b74c01f045253fe
+[05/48] drm/panel: boe-tv101wum-nl6: Don't call unprepare+disable at
+shutdown/remove
+        commit: 1985e3512b5a3777f6a18c36e40f3926037120bb
+[06/48] drm/panel: edp: Stop tracking prepared/enabled
+        commit: 3904f317fd977533f6d7d3c4bfd75e0ac6169bb7
+[07/48] drm/panel: edp: Add a comment about unprepare+disable at shutdown/r=
+emove
+        commit: ec7629859331fb67dbfb6bcd47f887a402e390ff
+[08/48] drm/panel: innolux-p079zca: Stop tracking prepared/enabled
+        commit: f9055051292442d52092f17e191cf0a58d23d4ed
+[09/48] drm/panel: innolux-p079zca: Don't call unprepare+disable at
+shutdown/remove
+        commit: eeb133ff78476eb1e6e88154dfb75a741e8a034a
+
+[12/48] drm/panel: kingdisplay-kd097d04: Stop tracking prepared/enabled
+        commit: 157c1381780a453e06430f8b35bb8c5d439eb8c6
+[13/48] drm/panel: kingdisplay-kd097d04: Don't call unprepare+disable
+at shutdown/remove
+        commit: 68c205ef3c39edce4a3346b8a53fd2b700394a0c
+[14/48] drm/panel: ltk050h3146w: Stop tracking prepared
+        commit: f124478dd18c519544489caddce78e7c5796a758
+[15/48] drm/panel: ltk050h3146w: Don't call unprepare+disable at shutdown/r=
+emove
+        commit: b7ca446ecb53205944968617b158f073bcacaedc
+[16/48] drm/panel: ltk500hd1829: Stop tracking prepared
+        commit: 2b8c19b9d7bc9d03e8c44bd391d21e95c07a2c83
+[17/48] drm/panel: ltk500hd1829: Don't call unprepare+disable at shutdown/r=
+emove
+        commit: 3357f6f465e62c0bc5e906365063734740c9f6d4
+[18/48] drm/panel: novatek-nt36672a: Stop tracking prepared
+        commit: b605f257f386b7f4b6fc9c0f82b86b75d0579287
+[19/48] drm/panel: novatek-nt36672a: Don't call unprepare+disable at
+shutdown/remove
+        commit: 2a9487b5aa55753993fde80e4841128c8da4df71
+
+[24/48] drm/panel: samsung-atna33xc20: Stop tracking prepared/enabled
+        commit: 5a847750aac8454a1604070ab99d689c0a6e4290
+[25/48] drm/panel: samsung-atna33xc20: Don't call unprepare+disable at
+shutdown/remove
+        commit: 49869668ff0e3f380858b4c20b8d0cb02b933f48
+[26/48] drm/panel: simple: Stop tracking prepared/enabled
+        commit: 2a1c99d7159b798288bfb20a76c1e665e2344126
+[27/48] drm/panel: simple: Add a comment about unprepare+disable at
+shutdown/remove
+        commit: bc62654df3c888dec735343f5db9907ac93aea60
+
+[30/48] drm/panel: xinpeng-xpp055c272: Stop tracking prepared
+        commit: 4e5e6fa77a9d40cdf85ade7f86d07dc8929941c9
+[31/48] drm/panel: xinpeng-xpp055c272: Don't call unprepare+disable at
+shutdown/remove
+        commit: ac9e1786271f771ff1f774742602330be2d57a12
+
+[42/48] drm/panel: sitronix-st7703: Stop tracking prepared
+        commit: 3004d2e9cca5d59d25dff670a03a005d40601ded
+[43/48] drm/panel: sitronix-st7703: Don't call disable at shutdown/remove
+        commit: 718bd8a1a5ee873778a72523c06da054a89108b4
+
+[46/48] drm/panel: sony-acx565akm: Don't double-check enabled state in disa=
+ble
+        commit: e28df86aeeff0b84c13e676f641ea879abbdb809
+[47/48] drm/panel: sony-acx565akm: Don't call disable at remove
+        commit: 6afebd850d1ab5518c273b32532f0b2086cc633a
+
+
+-Doug
 
