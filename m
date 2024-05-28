@@ -1,126 +1,189 @@
-Return-Path: <linux-kernel+bounces-192554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBFD8D1F13
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E988D1F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7BF1F2369C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ECD3284234
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCE616FF39;
-	Tue, 28 May 2024 14:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4CA170822;
+	Tue, 28 May 2024 14:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ML3Ccw8Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Sb9Z29gB"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF23316F27E;
-	Tue, 28 May 2024 14:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F1716FF47
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716907415; cv=none; b=OltXzjqPaiz5VDcXdK1tYeDdZlC+tPQdJXYNL/4+Tf/zQQsRVIOT3yG3DO2AFLFlELOghP37FqeArelgbSAHNNOZSzdy7JhV0kcZ1CUX8LXa/OzYhJ+7zjhyq9OAurBognOfQOQbewGoopLKLRh6C2sk2ueDjeTKipHrhbre0Is=
+	t=1716907503; cv=none; b=qpqjfZYf3n/YE9ncf2M1Azr2eke8xjqBM1hL4leUQoHgH7PDLyrrY/R3zVyYhoMD5loJgFUdGxDnSwvzATQ2tpSYVZhaPfImqnfjz7ce182nCIKVF0eYXgK7tS3mk6CnLBNOyHv4RAPxNf6XxDieyyBDnEZBkfeWCmJV5kSz0Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716907415; c=relaxed/simple;
-	bh=rBOsmkJf6TERqc6dB5o9t0xQJxVujKORYddvFjHhnYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxeuzN3BmZDNCTBu4rAqjpDC43gPAd1kx00Kn94qF3t4A/fA8nPHveMetHNXxy2pTF1xjKDzG5oQUuItdmghUpUTec/bi1FVCIDUAVCtsqZXcONaafCjxX8X+yD/7pRE2Y4qKAner863LuS6QLkaQ9XkFtYuM29gj5uXIG5pAXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ML3Ccw8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DB0C3277B;
-	Tue, 28 May 2024 14:43:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716907414;
-	bh=rBOsmkJf6TERqc6dB5o9t0xQJxVujKORYddvFjHhnYs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ML3Ccw8QMmd+lYanHo+WyyIg5yFrlmTv+x/7gbkj89Iv8JVtcK3yioGRH9BucIBVK
-	 XGZL2KHMd6KYzcglnGr38vUH94fbffhqnfglhRuDBz7OUvxJc52lEOGw0s37fYbV65
-	 i47YOSapHt4YpJF/YAbBgPz6YxC7tAB9ZW06+djHuNEHoewpfYXNMGqlYsGjMIwyGj
-	 U1CDHPtZGLgEQ6b/j+tL7QkuX3quBtBHHdcDyuXHZ843h2A9SfchfHLxvJHLxHQaUH
-	 XoFiio3McaEErz1QpeTPzZwzTp3fXfPbhGHhH3MdTL8dasL+0hnlwoKw0jhDGUVI7f
-	 p+EM93tNXsD5Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0CF27CE0F8F; Tue, 28 May 2024 07:43:34 -0700 (PDT)
-Date: Tue, 28 May 2024 07:43:34 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Marc Zyngier <maz@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Michael Cree <mcree@orcon.net.nz>,
-	Frank Scheiner <frank.scheiner@web.de>
-Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
-Message-ID: <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240503081125.67990-1-arnd@kernel.org>
- <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de>
- <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk>
+	s=arc-20240116; t=1716907503; c=relaxed/simple;
+	bh=u5DGMExmMELV1xy8yLiiNHEKToOQqClZz2C5kQWXUNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L7cnHxjzkRMpknwaHJ4S1/NfaZGjcYtKiVjMMGthm1fDmmuWI8X93RJwRShMPqCHsThabdvji22gtWxvsM99UMx4h3u3O+oQ4nH6mBzr99s6RfSisMPF8hpQUi6i2Te64nJ0z1Dqm5kERD4pvZUNbFXgwk20A1fcDdJC/Yw20cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Sb9Z29gB; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a63359aaacaso117179466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1716907499; x=1717512299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TG5W+RrKzluwPnH1A1A5fDJr2fjufgKg3mZALw2M2DI=;
+        b=Sb9Z29gBBZ7RGKeiwA20b4Mhka0/qQLlA/CeZB0gmndIMDAy1KvAePcvWh7wqXBt05
+         4IISI44NyrAjto96wx5YHBGA/h1rHfwQ20dishr5RmR6A3nlNkV1Wv2acU/CJLB155TX
+         W1V5Imfh+Z0QPgGYpflG56Vhbg6w03XmliM/lmUJiiMTzNH2Gc6JyH0cdRpsLywoDkxY
+         eUo5F3ERMMtosqCFjMXAI0+YtA9ep4uS2B6h9gwdjg974KpHm8YkfoG2mEqCICJxIfoP
+         yTLJBRCQ/QePlNHHypun4fgoBbqva4TQClsEcDMZkWxbBucVmsxaSQXH3ZrCjJTYRwmN
+         5rjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716907499; x=1717512299;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TG5W+RrKzluwPnH1A1A5fDJr2fjufgKg3mZALw2M2DI=;
+        b=j35cAD5jvKlDx9Xiu0Xy4vLFb+FcxCu2iXaVLrn98qS3NvDbHslCdccWIZccE8QpFi
+         gqOeeKofCsINKrryw9S+dtvqmT+RvAuboK2hoEGwB8MnHwNvB4Xv5GtwyQeNP4ek/+2+
+         kAMaxFCfRXIqsQJ6hUmXUWp9a1foUynKy85MsiAWmey5+w8TD8G8zZJiZ/IyGatqunms
+         uumgqNFsqdL5MjwX0jbNnTPaZZgM9V/Sd5WlQ/YRo1wYGA7Wkvz0E/O24GHDDewZRPYZ
+         GcZmPEqypmMCJv31iyG6m6bzMCRCrvvFfW+3CLcdYhTB0nLizKdSikWIxjk4VukkGIcE
+         ukZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfTFvdCGmveJfn6Ih8KYzKc+JkDXd/B4wP1mfXwc/bD1X5iSb35Xat/ghUDkWbr2ODLdexkUa7zKyrm77ZjFURSaNRpWZa9ADgVDFh
+X-Gm-Message-State: AOJu0YySjuEDdpc0Z8Qi7mp9yEQGglwRERF25mzkFssOWNq5V+NVUvCs
+	2puekJ3hfgqHOxrn08QA11OM13HwlABVdi2BZx2QKtPcDB1fQfuXJ0aKqMWX+6U=
+X-Google-Smtp-Source: AGHT+IGcfIH5RPh4OnyVqTq4ATc6SBA5sJNh2KrF2k5/BA6AVB02Dz6lBLYJ9g6apMqOwqcdLBUyzg==
+X-Received: by 2002:a17:906:4453:b0:a59:9b75:b84 with SMTP id a640c23a62f3a-a62646cd4bfmr828803266b.35.1716907498607;
+        Tue, 28 May 2024 07:44:58 -0700 (PDT)
+Received: from raven.blarg.de (p200300dc6f06e100023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f06:e100:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817bffsm623787766b.32.2024.05.28.07.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 07:44:58 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: dhowells@redhat.com,
+	jlayton@kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] fs/netfs/fscache_cookie: add missing "n_accesses" check
+Date: Tue, 28 May 2024 16:44:45 +0200
+Message-Id: <20240528144445.3268304-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 28, 2024 at 12:49:16AM +0100, Maciej W. Rozycki wrote:
-> On Fri, 3 May 2024, John Paul Adrian Glaubitz wrote:
-> 
-> > > I had investigated dropping support for alpha EV5 and earlier a while
-> > > ago after noticing that this is the only supported CPU family
-> > > in the kernel without native byte access and that Debian has already
-> > > dropped support for this generation last year [1] after it turned
-> > > out to be broken.
-> > 
-> > That's not quite correct. Support for older Alphas is not broken and
-> > always worked when I tested it. It's just that some people wanted to
-> > raise the baseline in order to improve code performance on newer machines
-> > with the hope to fix some minor issues we saw on Alpha here and there.
-> 
->  I'm not quite happy to see pre-EV5 support go as EV45 is all the Alpha 
-> hardware I have and it's only owing to issues with the firmware of my 
-> console manager hardware that I haven't deployed it at my lab yet for 
-> Linux and GNU toolchain verification.  I'd rather I wasn't stuck with an 
-> obsolete version of Linux.
-> 
-> > > This topic came up again when Paul E. McKenney noticed that
-> > > parts of the RCU code already rely on byte access and do not
-> > > work on alpha EV5 reliably, so I refreshed my series now for
-> > > inclusion into the next merge window.
-> > 
-> > Hrrrm? That sounds like like Paul ran tests on EV5, did he?
-> 
->  What exactly is required to make it work?
+This fixes a NULL pointer dereference bug due to a data race which
+looks like this:
 
-Whatever changes are needed to prevent the data corruption that can
-currently result in code generated by single-byte stores.  For but one
-example, consider a pair of tasks (or one task and an interrupt handler
-in the CONFIG_SMP=n case) do a single-byte store to a pair of bytes
-in the same machine word.  As I understand it, in code generated for
-older Alphas, both "stores" will load the word containing that byte,
-update their own byte, and store the updated word.
+  BUG: kernel NULL pointer dereference, address: 0000000000000008
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 33 PID: 16573 Comm: kworker/u97:799 Not tainted 6.8.7-cm4all1-hp+ #43
+  Hardware name: HP ProLiant DL380 Gen9/ProLiant DL380 Gen9, BIOS P89 10/17/2018
+  Workqueue: events_unbound netfs_rreq_write_to_cache_work
+  RIP: 0010:cachefiles_prepare_write+0x30/0xa0
+  Code: 57 41 56 45 89 ce 41 55 49 89 cd 41 54 49 89 d4 55 53 48 89 fb 48 83 ec 08 48 8b 47 08 48 83 7f 10 00 48 89 34 24 48 8b 68 20 <48> 8b 45 08 4c 8b 38 74 45 49 8b 7f 50 e8 4e a9 b0 ff 48 8b 73 10
+  RSP: 0018:ffffb4e78113bde0 EFLAGS: 00010286
+  RAX: ffff976126be6d10 RBX: ffff97615cdb8438 RCX: 0000000000020000
+  RDX: ffff97605e6c4c68 RSI: ffff97605e6c4c60 RDI: ffff97615cdb8438
+  RBP: 0000000000000000 R08: 0000000000278333 R09: 0000000000000001
+  R10: ffff97605e6c4600 R11: 0000000000000001 R12: ffff97605e6c4c68
+  R13: 0000000000020000 R14: 0000000000000001 R15: ffff976064fe2c00
+  FS:  0000000000000000(0000) GS:ffff9776dfd40000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000008 CR3: 000000005942c002 CR4: 00000000001706f0
+  Call Trace:
+   <TASK>
+   ? __die+0x1f/0x70
+   ? page_fault_oops+0x15d/0x440
+   ? search_module_extables+0xe/0x40
+   ? fixup_exception+0x22/0x2f0
+   ? exc_page_fault+0x5f/0x100
+   ? asm_exc_page_fault+0x22/0x30
+   ? cachefiles_prepare_write+0x30/0xa0
+   netfs_rreq_write_to_cache_work+0x135/0x2e0
+   process_one_work+0x137/0x2c0
+   worker_thread+0x2e9/0x400
+   ? __pfx_worker_thread+0x10/0x10
+   kthread+0xcc/0x100
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork+0x30/0x50
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork_asm+0x1b/0x30
+   </TASK>
+  Modules linked in:
+  CR2: 0000000000000008
+  ---[ end trace 0000000000000000 ]---
 
-If two such single-byte stores run concurrently, one or the other of those
-two stores will be lost, as in overwritten by the other.  This is a bug,
-even in kernels built for single-CPU systems.  And a rare bug at that, one
-that tends to disappear as you add debug code in an attempt to find it.
+This happened because fscache_cookie_state_machine() was slow and was
+still running while another process invoked fscache_unuse_cookie();
+this led to a fscache_cookie_lru_do_one() call, setting the
+FSCACHE_COOKIE_DO_LRU_DISCARD flag, which was picked up by
+fscache_cookie_state_machine(), withdrawing the cookie via
+cachefiles_withdraw_cookie(), clearing cookie->cache_priv.
 
-So if you want to run current kernels on old Alphas, you will need to
-do something to fix this.
+At the same time, yet another process invoked
+cachefiles_prepare_write(), which found a NULL pointer in this code
+line:
 
-There might well be other things in need of fixing, for but one example,
-it might be that the same issue will soon need to be addressed for
-two-byte stores.  You will therefore need to carefully investigate this
-issue to determine the full extent of work required to solve it.
+  struct cachefiles_object *object = cachefiles_cres_object(cres);
 
-							Thanx, Paul
+The next line crashes, obviously:
+
+  struct cachefiles_cache *cache = object->volume->cache;
+
+During cachefiles_prepare_write(), the "n_accesses" counter is
+non-zero (via fscache_begin_operation()).  The cookie must not be
+withdrawn until it drops to zero.
+
+The counter is checked by fscache_cookie_state_machine() before
+switching to FSCACHE_COOKIE_STATE_RELINQUISHING and
+FSCACHE_COOKIE_STATE_WITHDRAWING (in "case
+FSCACHE_COOKIE_STATE_FAILED"), but not for
+FSCACHE_COOKIES_TATE_LRU_DISCARDING ("case
+FSCACHE_COOKIE_STATE_ACTIVE").
+
+This patch adds the missing check.  With a non-zero access counter,
+the function returns and the next fscache_end_cookie_access() call
+will queue another fscache_cookie_state_machine() call to handle the
+still-pending FSCACHE_COOKIE_DO_LRU_DISCARD.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/netfs/fscache_cookie.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/netfs/fscache_cookie.c b/fs/netfs/fscache_cookie.c
+index bce2492186d0..d4d4b3a8b106 100644
+--- a/fs/netfs/fscache_cookie.c
++++ b/fs/netfs/fscache_cookie.c
+@@ -741,6 +741,10 @@ static void fscache_cookie_state_machine(struct fscache_cookie *cookie)
+ 			spin_lock(&cookie->lock);
+ 		}
+ 		if (test_bit(FSCACHE_COOKIE_DO_LRU_DISCARD, &cookie->flags)) {
++			if (atomic_read(&cookie->n_accesses) != 0)
++				/* still being accessed: postpone it */
++				break;
++
+ 			__fscache_set_cookie_state(cookie,
+ 						   FSCACHE_COOKIE_STATE_LRU_DISCARDING);
+ 			wake = true;
+-- 
+2.39.2
+
 
