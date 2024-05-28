@@ -1,98 +1,250 @@
-Return-Path: <linux-kernel+bounces-193140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDA88D2752
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:57:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647388D27A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A5B1F25928
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:57:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC1EDB23CDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18F373474;
-	Tue, 28 May 2024 21:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9101D13DB92;
+	Tue, 28 May 2024 22:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Rgc1OEeV"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GZQtokq7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cVgAbUAI";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GZQtokq7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cVgAbUAI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20B513AD0E;
-	Tue, 28 May 2024 21:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2FD22089;
+	Tue, 28 May 2024 22:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716933422; cv=none; b=E/KJpwgIS25y+lKM8/I7U3LmRbAv+ziSoxc5ZTtIIdorR4JHedK1njC4hlzoz0V30l3075W1Xqe+IheTcCL8tXpbIMHo7VKg+K5OHm1g8KIti0Z5/6bpvaGbUYDj2/3j77V/w9nPpIxYf8jbCZBylRmmEN/DD/oXEQ5fufkyBrQ=
+	t=1716933681; cv=none; b=G5c1zwiQAoqx6k4KNYG5DgGc2MxtSOuUeORYQk1HudcsC94gQes+ONn++cHImmYHDZ3gtzIiyT4nDE/MMPUHlFQzXasV2Sv7wceEPHuhWApuMHQi506DcjonX3ITqjnoDJiiOfIBYXb34x6IZEkX1TzDzvtDxPFYt4HKe4ho8kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716933422; c=relaxed/simple;
-	bh=ohEurSGig2qE42glJYdmj/T6mbwtgrXzuwprHjyXuO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E8hFJ16x/QLUjnfw2FPnbsQKHXm9AE49MvLg2qMalBgWNvVMwEXmQaNm9qFppwxoHSo8/dZgO6K4KeMQQ8FtVXgZ4OtEELQ5Ard09PdDEMh0eRgbJ+d2ekv2eD2lrvpQAePY02vDlndS+KAJuD/e0ORTRPv8SfOo2evnvSrCPG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Rgc1OEeV; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=WbJJ4Mwx5sika0WW/PColmV60EevJ2qmfZcxLyzIi1Y=; b=Rgc1OEeVx/XGV7Xc
-	ppIdYp6lNvmF2dPgpWNYD/fYZrXxEVfWQ9ai+LEHfiZiro2g+XcVVnpSkLmhktd5F6zspY6bbljzR
-	HMPlIFF9CPe5FK8RC+dUw1ahoZ8HDcU3eOn27eeb3/NiMkwq1ByyXdKDYb8qkHumnaZ2KqOQGZ66Z
-	u+BmH8Pj/UhW/ljU0wRGBCZqsOVO7jpIzH4oUWesxwTX2UQLZmTG4YInD0MoyrvAhansqBBuld/0T
-	CXwBKFS9IFOrEN0GCxqGreEnFsR35bHuMr62csWRucGU4Nw2JVkHIF4dkAp72+7Sw8VQUi6cpxzdJ
-	fGkzhM1l4xU21yMrOA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sC4oI-0033Ie-1M;
-	Tue, 28 May 2024 21:56:46 +0000
-From: linux@treblig.org
-To: njavali@marvell.com,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] scsi: qla2xxx: remove unused struct 'scsi_dif_tuple'
-Date: Tue, 28 May 2024 22:56:40 +0100
-Message-ID: <20240528215640.91771-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716933681; c=relaxed/simple;
+	bh=WI31Zz1Kfrefr37hCh9djoc5/qTCeMavpwA/4HPS+48=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=cn7f4VzogMHw6eQ2isfuatsMAf2/aWIjMAtef+tJqDfqXReXHyUUuJqf0kWNRQLiOsJhBfD43J7bGnj9iO+oZloOlzqqwQs8qUMm6yzKjXdww+M4urYgRIoXtiLGfjp2dvhEOjWf26YpJtWy3hUPahh4qwq1kKjb9WMxI31cxGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GZQtokq7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cVgAbUAI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GZQtokq7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cVgAbUAI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4626C2046E;
+	Tue, 28 May 2024 22:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716933678; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zfSGWDgr33/9sxMd3r5XOziIsBx80sOwhjsqJXrqAts=;
+	b=GZQtokq7I254BGmODnsmDw0fQZQuk39s7GPrLkFkgQ8rO6gzPyirpHPlAiV4FV7xHi01d9
+	4iLU1kSowAfeOPrSFZviFs91PKzj8R2WRJUAQZVEK2+biBivW8wc7Y+hgeXiaBEdU/6VDB
+	NR7HA529sAU1aOS2lydWADM9d6s2bI0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716933678;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zfSGWDgr33/9sxMd3r5XOziIsBx80sOwhjsqJXrqAts=;
+	b=cVgAbUAI4i9soi0gbihIuzDCfJPZ/9wFVwwaWwJV4SZdBB4M/hhMUwxf3LHJEcY5ND9KvR
+	PCf5ityAY/o1gdBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716933678; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zfSGWDgr33/9sxMd3r5XOziIsBx80sOwhjsqJXrqAts=;
+	b=GZQtokq7I254BGmODnsmDw0fQZQuk39s7GPrLkFkgQ8rO6gzPyirpHPlAiV4FV7xHi01d9
+	4iLU1kSowAfeOPrSFZviFs91PKzj8R2WRJUAQZVEK2+biBivW8wc7Y+hgeXiaBEdU/6VDB
+	NR7HA529sAU1aOS2lydWADM9d6s2bI0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716933678;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zfSGWDgr33/9sxMd3r5XOziIsBx80sOwhjsqJXrqAts=;
+	b=cVgAbUAI4i9soi0gbihIuzDCfJPZ/9wFVwwaWwJV4SZdBB4M/hhMUwxf3LHJEcY5ND9KvR
+	PCf5ityAY/o1gdBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A654E13A5D;
+	Tue, 28 May 2024 22:01:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GYtxEiVUVmaDXgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 28 May 2024 22:01:09 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Chuck Lever III" <chuck.lever@oracle.com>
+Cc: "Jon Hunter" <jonathanh@nvidia.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Chris Packham" <Chris.Packham@alliedtelesis.co.nz>,
+ "linux-stable" <stable@vger.kernel.org>,
+ "patches@lists.linux.dev" <patches@lists.linux.dev>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Guenter Roeck" <linux@roeck-us.net>, "shuah@kernel.org" <shuah@kernel.org>,
+ "patches@kernelci.org" <patches@kernelci.org>,
+ "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+ "pavel@denx.de" <pavel@denx.de>,
+ "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+ "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
+ "srw@sladewatkins.net" <srw@sladewatkins.net>,
+ "rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
+ "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
+In-reply-to: <0377C58A-6E28-4007-9C90-273DE234BC44@oracle.com>
+References: <>, <0377C58A-6E28-4007-9C90-273DE234BC44@oracle.com>
+Date: Wed, 29 May 2024 08:01:01 +1000
+Message-id: <171693366194.27191.14418409153038406865@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[nvidia.com,linuxfoundation.org,alliedtelesis.co.nz,vger.kernel.org,lists.linux.dev,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,gmail.com,sladewatkins.net,gmx.de];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, 29 May 2024, Chuck Lever III wrote:
+>=20
+>=20
+> > On May 28, 2024, at 10:18=E2=80=AFAM, Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+> >=20
+> >=20
+> > On 28/05/2024 14:14, Chuck Lever III wrote:
+> >>> On May 28, 2024, at 5:04=E2=80=AFAM, Jon Hunter <jonathanh@nvidia.com> =
+wrote:
+> >>>=20
+> >>>=20
+> >>> On 25/05/2024 15:20, Greg Kroah-Hartman wrote:
+> >>>> On Sat, May 25, 2024 at 12:13:28AM +0100, Jon Hunter wrote:
+> >>>>> Hi Greg,
+> >>>>>=20
+> >>>>> On 23/05/2024 14:12, Greg Kroah-Hartman wrote:
+> >>>>>> This is the start of the stable review cycle for the 5.15.160 releas=
+e.
+> >>>>>> There are 23 patches in this series, all will be posted as a response
+> >>>>>> to this one.  If anyone has any issues with these being applied, ple=
+ase
+> >>>>>> let me know.
+> >>>>>>=20
+> >>>>>> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> >>>>>> Anything received after that time might be too late.
+> >>>>>>=20
+> >>>>>> The whole patch series can be found in one patch at:
+> >>>>>> https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1=
+5.160-rc1.gz
+> >>>>>> or in the git tree and branch at:
+> >>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+git linux-5.15.y
+> >>>>>> and the diffstat can be found below.
+> >>>>>>=20
+> >>>>>> thanks,
+> >>>>>>=20
+> >>>>>> greg k-h
+> >>>>>>=20
+> >>>>>> -------------
+> >>>>>> Pseudo-Shortlog of commits:
+> >>>>>=20
+> >>>>> ...
+> >>>>>=20
+> >>>>>> NeilBrown <neilb@suse.de>
+> >>>>>>      nfsd: don't allow nfsd threads to be signalled.
+> >>>>>=20
+> >>>>>=20
+> >>>>> I am seeing a suspend regression on a couple boards and bisect is poi=
+nting
+> >>>>> to the above commit. Reverting this commit does fix the issue.
+> >>>> Ugh, that fixes the report from others.  Can you cc: everyone on that
+> >>>> and figure out what is going on, as this keeps going back and forth...
+> >>>=20
+> >>>=20
+> >>> Adding Chuck, Neil and Chris from the bug report here [0].
+> >>>=20
+> >>> With the above applied to v5.15.y, I am seeing suspend on 2 of our boar=
+ds fail. These boards are using NFS and on entry to suspend I am now seeing .=
+.
+> >>>=20
+> >>> Freezing of tasks failed after 20.002 seconds (1 tasks refusing to
+> >>> freeze, wq_busy=3D0):
+> >>>=20
+> >>> The boards appear to hang at that point. So may be something else missi=
+ng?
+> >> Note that we don't have access to hardware like this, so
+> >> we haven't tested that patch (even the upstream version)
+> >> with suspend on that hardware.
+> >=20
+> >=20
+> > No problem, I would not expect you to have this particular hardware :-)
+> >=20
+> >> So, it could be something missing, or it could be that
+> >> patch has a problem.
+> >> It would help us to know if you observe the same issue
+> >> with an upstream kernel, if that is possible.
+> >=20
+> >=20
+> > I don't observe this with either mainline, -next or any other stable bran=
+ch. So that would suggest that something else is missing from linux-5.15.y.
+>=20
+> That helps. It would be very helpful to have a reproducer I can
+> use to confirm we have a fix. I'm sure this will be a process
+> that involves a non-trivial number of iterations.
 
-'scsi_dif_tuple' is unused since
-commit 8cb2049c7448 ("[SCSI] qla2xxx: T10 DIF - Handle uninitalized
-sectors.").
+Missing upstream patch is
 
-Remove it.
+Commit 9bd4161c5917 ("SUNRPC: change service idle list to be an llist")
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/scsi/qla2xxx/qla_isr.c | 6 ------
- 1 file changed, 6 deletions(-)
+This contains some freezer-related changes which probably should
+have been a separate patch.
 
-diff --git a/drivers/scsi/qla2xxx/qla_isr.c b/drivers/scsi/qla2xxx/qla_isr.c
-index d48007e18288..fe98c76e9be3 100644
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -3014,12 +3014,6 @@ qla2x00_handle_sense(srb_t *sp, uint8_t *sense_data, uint32_t par_sense_len,
- 	}
- }
- 
--struct scsi_dif_tuple {
--	__be16 guard;       /* Checksum */
--	__be16 app_tag;         /* APPL identifier */
--	__be32 ref_tag;         /* Target LBA or indirect LBA */
--};
--
- /*
-  * Checks the guard or meta-data for the type of error
-  * detected by the HBA. In case of errors, we set the
--- 
-2.45.1
+We probably just need to add "| TASK_FREEZABLE" in one or two places.
+I'll post a patch for testing in a little while.
 
+NeilBrown
 
