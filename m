@@ -1,108 +1,101 @@
-Return-Path: <linux-kernel+bounces-192363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4680E8D1C21
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:05:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2168D1C1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2001F24209
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:05:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D97287718
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F9C16EBF8;
-	Tue, 28 May 2024 13:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE4C16F838;
+	Tue, 28 May 2024 13:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuxyHWTp"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMyk3/ER"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A071616ABC2;
-	Tue, 28 May 2024 13:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21F717E8F0
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716901449; cv=none; b=F0dB6Yke/TtWdSuW73MhLy5RL6XWfSqlvJVatvUz1l2MhRxii2eRlmofhEcpYePuaAqmvExRPnrXEyiPbWcwTTr4jr3EKUGbgthgqpe633x+yxgBeb0675gY85l84j03eyOesK3ENFDgEzbyXajoZhr3IO0Iumt+DPeEQBSYlHk=
+	t=1716901410; cv=none; b=URLUCD1AFD5a82KQyIcsNcGlUyk1nSS+FgeSK6OKQ9mBMWAAN1IxBlq6SmPqeTMbW0nMn4Q1DH1O9nMHUTlDLLns9ZEBj7g5oSH/Xicwvaem7rX2ZvHp+vhJ//k9/vpfAK1TvCX5Lu4gh5+EWeciiqPspFfuIY9o803NGDF+Zno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716901449; c=relaxed/simple;
-	bh=gAEKf8Z+F5p2sZQPDJyxTDvSbnaMUp24oyvKsHM14oQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lfSJCOk1deY66dVAJI1jZQXhxjC/bLXZwxM9Hn6Z4SxlRJiqa8y9eN4AGKBUyAK4wXYGEoc4uw87bWaOGWK54z768yyN7rgpex5tGsQhFDDI9qcrrDafon5X0maH6qkkNdUmtMoZOp/qMJKspPPYlYLhAIPxWvpxlQa7BIuri28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuxyHWTp; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-578972defb3so981771a12.2;
-        Tue, 28 May 2024 06:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716901446; x=1717506246; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dXOIV4+qVuK991jOKcYp0npCSTU6GZlvpKHpXDNtUgc=;
-        b=KuxyHWTpsCFWMz4HVl2j3J9qxfpiYqc/N/U1IJmn8XnhtFEnKcBonSbRgu3Tk1xqis
-         xF+77MtOsIsEYaCepVgtJm0L2WOEPobxArHcqJ9HqXgN7nc9SFyC9V/UAHoPZpgULFhg
-         EI+gNLMnQBcrNJf7VU4X/Dr/+crkgOY8VZM1nITMe1vFwCaw30YZSht4lUomLldRGZJH
-         tD2NRxMei/bl8o0vuwlEpNHoxL9nGTtvp6Y3J261+ROGCQCZdoNz7fEM74Ebqqb+87bO
-         AOOYc7ovaBkIqNr/f8sMv0duesCkcXSY4rbATB7T0N8vq5mNNDhOdHGDbKjmduz+EK9E
-         pEnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716901446; x=1717506246;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dXOIV4+qVuK991jOKcYp0npCSTU6GZlvpKHpXDNtUgc=;
-        b=o7xpDczlwTU/CHTMAP4x6zix6eG29pN25pDzWt3hswtlYn4mhCMuj8uHi6CipzChC1
-         w8zy8cDuj1s5yR7u/l53NJzMxD196jcJK0r7WFblmGtQhfffFGC1/x2rCrTzf9SRYMg3
-         irasEo93IgjIeS/0hk22huyPssGiZyH/LVbAEONK/d8q/xGfAiRkaEYkVvi3bDWoy7+8
-         z56uw5lKhw9s8rA+pQJoUIW4FDWvz3KjlR2svVpEi9o2gUIsODf86U1y4ALxcJ0hQgBZ
-         9YXMCOcSUsSYhWJE+qcNyOTDln5SecvPYu9owfIU5Jw8e26LCKokkCBxWdsfTT4361NE
-         pmvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWp7dYumSD9L0jvWZG6uNMjwp7BVrhzlMfd+3TzPypAds5O0C6ZJIDKFzeY4FAXVoS2AujaN4KaN8ltIVlytFpVvKsPxmDL6Fc4CZs2UaJ0DtiygMt9euR15iMmAQRmhon0ldDW
-X-Gm-Message-State: AOJu0Yxpt17qOH+J/12EFL7c8KFwo2YXWQIawa4+p4q9zBH1anu+CnUt
-	zR88hdfX7BtrffKCOgCOqPb77850pVwmxMguMyOK3jiGuvTTDWr/
-X-Google-Smtp-Source: AGHT+IESrdIhLtzVi/G2Tg9eE5yLlAyPb2ZszMAvl2LCkGOLnB/QQlFURAPT0PzaWcJARBUchF9oew==
-X-Received: by 2002:a50:ccd3:0:b0:573:4f61:ca9c with SMTP id 4fb4d7f45d1cf-57862e12a13mr6381459a12.4.1716901445833;
-        Tue, 28 May 2024 06:04:05 -0700 (PDT)
-Received: from LPPLJK6X5M3.. (dynamic-78-8-96-206.ssp.dialog.net.pl. [78.8.96.206])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57997181419sm4708805a12.54.2024.05.28.06.04.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 06:04:05 -0700 (PDT)
-From: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>
-To: vladimir.oltean@nxp.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	radoslaw.zielonek@gmail.com,
-	syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	vinicius.gomes@intel.com,
-	willemdebruijn.kernel@gmail.com
-Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
-Date: Tue, 28 May 2024 15:03:25 +0200
-Message-ID: <20240528130331.21904-2-radoslaw.zielonek@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240528125526.qwskv756uya3zaqb@skbuf>
-References: <20240528125526.qwskv756uya3zaqb@skbuf>
+	s=arc-20240116; t=1716901410; c=relaxed/simple;
+	bh=9v4W6iOSUjtGZaBCccF+kLlyiZYLVuG5P+57Ga/1odQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9Qh+QceAY/HRmBqaT0xCo3XOxweTrIUWxxd+fTc3pB5At+uLIoki5U1meFsnVZE3zSR/2vx+3kpw0Bxu0Rxq1pHxI6lUr+cGj3kvTM2H/Pzu4raIdYiSOHH9wwCJOInB9KgM7a7b5f6EnvtSF2NNfnsSoepENgOwqc2LqhzyR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMyk3/ER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B9AC32782;
+	Tue, 28 May 2024 13:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716901410;
+	bh=9v4W6iOSUjtGZaBCccF+kLlyiZYLVuG5P+57Ga/1odQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cMyk3/ERiSHEgU0VZs0WGbWEaoNlPMX74d/mMZrBLgxcpB5wc3XcMtwFiVJZW5fh+
+	 f7gNDIEwQ2B1kRoJR8DW7p0QhwmZ8pBVSozHTprp2fXNLJQTKQOJNzLACaPaasV7fh
+	 B8dzEQoypqqE5+utX+o5HgQySc8TuJPsuPNdojl978DYs9TpUbL3XWyUYVq0+uAwgl
+	 ulIyR4if5KcWn8FeWFjzKbBGGQt0q2x3HHIXA6GCyOWV/hje+JQL7E1b2RT3p2dAcz
+	 uvc2dv/kTKgcIDR9O193xpTFduVJyWzXOZj6rLUW9xRgXyqAe4iSvHi9FfbAMheO8x
+	 p6TRHUIIUeuPQ==
+Date: Tue, 28 May 2024 14:03:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Alina Yu <alina_yu@richtek.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: rtq2208: remove unused
+ rtq2208_regulator_ldo_ops
+Message-ID: <56b9bccf-b9fc-494a-97f1-40b5bb0f6767@sirena.org.uk>
+References: <20240528121222.3675312-1-arnd@kernel.org>
+ <70125571-5add-47d2-b127-c57e67c59df9@sirena.org.uk>
+ <7391d6a4-0c0b-456f-a2ca-cf3dafa67c5a@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nULyeNePWk0eNBQy"
+Content-Disposition: inline
+In-Reply-To: <7391d6a4-0c0b-456f-a2ca-cf3dafa67c5a@app.fastmail.com>
+X-Cookie: How do I get HOME?
 
-Hello,
 
-Ah, sorry. I didn't notice that.
-The PoC has been tested by syzbot
-	[https://syzkaller.appspot.com/bug?extid=c4c6c3dc10cc96bcf723]
-	
-The full link:
-	[https://lore.kernel.org/all/00000000000089427c0614c18cf4@google.com/T/]
+--nULyeNePWk0eNBQy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Radosław.
+On Tue, May 28, 2024 at 02:38:30PM +0200, Arnd Bergmann wrote:
+> On Tue, May 28, 2024, at 14:25, Mark Brown wrote:
 
+> > Fairly sure there should be a reference in _init_regulator_desc().
+
+> This is how 38bcec0e7cbb ("regulator: rtq2208: Fix
+> LDO discharge register and add vsel setting")] changed
+> the lines:
+
+In fact there's a series in flight which adds support for fixed voltage
+mode and fixes this, though we'll need a separate fix for v6.10.
+
+--nULyeNePWk0eNBQy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZV1h0ACgkQJNaLcl1U
+h9BkWAf+JPFSscJ/OSF/r2NYE1MrG5Kkyepxht/TlcWy01ETWuAU4oKScrCcZREj
+KP7Oyf0KzVp+x8ZfS7KNA25gcIvfuJ8bKWT7FoCbgrIu02LsrZhvTCyiQeO1nSKb
+7wMORHV0qSzW85zngupDxGFr6/J9YxWfhadELkAEXWuGOSDt5XDQZymxbVeIbWTk
+yZGOri9kaX8+lntjx9ng8A8B0jmAGKA8ZHhe0NmWz3fIeTbPJej+HlcqPZHh/kOw
+sw6YeSY+pkCXz8GFrFNvPQAiVwKNPkOE+eqZ2LPVJR21PnHHI692OKHdlx+NqjCQ
+hqiQ+yPzO2BUkmJLBX9mWMAeOLa05w==
+=kfwu
+-----END PGP SIGNATURE-----
+
+--nULyeNePWk0eNBQy--
 
