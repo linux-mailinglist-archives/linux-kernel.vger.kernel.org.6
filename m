@@ -1,283 +1,181 @@
-Return-Path: <linux-kernel+bounces-193236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E2F8D28D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A74C8D28D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37AC1F2386A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44681F22D76
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE2513F459;
-	Tue, 28 May 2024 23:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BAF13F454;
+	Tue, 28 May 2024 23:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yEsA78q0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B/LO9JQR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yEsA78q0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B/LO9JQR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RB+thYHk"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF8213F442;
-	Tue, 28 May 2024 23:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED4422089;
+	Tue, 28 May 2024 23:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716939877; cv=none; b=SNCavPdrgA+y2Al5rO+bc8BbdYL7hL+Qn7xuCCalaqllblgeDopsEbXU6QmqH2MI9TTYzJ4peXmeMpFgDB8R3eFrLNo3C1z9qg4UVdaJHuEP3KE0ibYwGZiqCmf6Wox6e/+r3GaEqgvb+afhV+vlcQEf7Wpx+7czG4lIbmGibuo=
+	t=1716939980; cv=none; b=O43dxqFS6gnVWl9hqd8MKeo4HK2vvlgXkzzAicpnT6b4Yn1A2wIsqwx5+/C4lp7A6DI/7/ND5Rozf3azQbeerchI0TkevVwu+z2QyfMIMDTCFIJLdA1Dxm0asYQd4M3MkFXga1HXe/guhNgdQeyzh0odvtumy5rSV3uuzj/vqE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716939877; c=relaxed/simple;
-	bh=4RG8O4KFL7A+9GDRIzVUE5Fr01NIAg06/MUAeCg9VL8=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=MZydylwrQ3LJ5jmcJvFIl+64tEPlE5OJJRw7Wdh37rLU6dlaR5KRzSlO/+FYJd5SUe4Fajb2gQG0/ImQSU1W3xq3v/yu2LZRxcZtWfQrIk0K+jX1togSrpYYuu3+69Abx8Md9t1hp41BVHe+wERnL3HssicK1HcbbMEUDtgUgrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yEsA78q0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B/LO9JQR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yEsA78q0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B/LO9JQR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AC25822BF4;
-	Tue, 28 May 2024 23:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716939872; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jX5firiJloApZrThlVyeMsTJKY9B4fj87fex6dOIBvY=;
-	b=yEsA78q0q9Bg9xn1zus9LMLRi3n+gqD9dmbyLuvUJSG0A2yyu9A/MGeV/mX2tolqY+fg3T
-	+UU+zz8zR8MgvLf2PJQiaACHiA/7i4QofqkbbhT9L18pG4qPUPb16Fp23IpvZBTJGahomb
-	QwM6SWSMigL1e4DSqYdXfJ7WMEk3rvc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716939872;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jX5firiJloApZrThlVyeMsTJKY9B4fj87fex6dOIBvY=;
-	b=B/LO9JQRAXdRgrM4bQCquZyxF9+900H4vOuLzaL3t96VmBOIkrdHpz7WQXX3mwTIjH/1Ct
-	H4vuYGHEMLtOEdAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716939872; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jX5firiJloApZrThlVyeMsTJKY9B4fj87fex6dOIBvY=;
-	b=yEsA78q0q9Bg9xn1zus9LMLRi3n+gqD9dmbyLuvUJSG0A2yyu9A/MGeV/mX2tolqY+fg3T
-	+UU+zz8zR8MgvLf2PJQiaACHiA/7i4QofqkbbhT9L18pG4qPUPb16Fp23IpvZBTJGahomb
-	QwM6SWSMigL1e4DSqYdXfJ7WMEk3rvc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716939872;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jX5firiJloApZrThlVyeMsTJKY9B4fj87fex6dOIBvY=;
-	b=B/LO9JQRAXdRgrM4bQCquZyxF9+900H4vOuLzaL3t96VmBOIkrdHpz7WQXX3mwTIjH/1Ct
-	H4vuYGHEMLtOEdAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 256EE13A5D;
-	Tue, 28 May 2024 23:44:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2TDJLldsVmbeXwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 28 May 2024 23:44:23 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1716939980; c=relaxed/simple;
+	bh=YLqkXKeVVXIKaRanTO4nqmtbsAC4ZBl7oQ9qvXWYfpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYPbfqqXa4vK8I8Nx469n2yYfxPPvrbtb2K4Yk2MfiNwIKjwrVni2a5gU2tOmBvTktMuVDItw3IJvM5dTayqONtR2BZGGpZU7ryYQfNXcnHJM6n7o9swsgYrbjH8eVR6/PXNfyi/zTbpWje2xeRcGBCG46reCAg7xiwT/tCfhkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RB+thYHk; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f8eaa14512so1160948b3a.3;
+        Tue, 28 May 2024 16:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716939978; x=1717544778; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6rGifC2Ni1u+HmrCMWiv1iMCtdV6Wvnc9UrGi2Lwz2U=;
+        b=RB+thYHku6Qa40JpgoUq8h+k99G+ULWZ3vBGw3Gosse1Wsrp+MmVHnhh1LcF0Bc0ah
+         46FxOvVKNPRLoHziMnIvBZdxu1rcsSbf5BM7BgakIz2vDXwYZYNKt4GBD6XqjO5pkMyl
+         BgplIHCfsCA25vMj9/ks1ny2F17HPSu6sW6TJjxbSDW6DZHSuiu4KlkYDc+KFgbGkhoO
+         hjcfKgNtahy/Aa/ec83Ml7F7FYStI0nBtHI9xirxrGDGi72+KdsD/nj85XfO1aLgapYj
+         GCEBVunUxMgC1kEJG84UbvQgLK1hAQyysqmJEwg7RdEy7DcoyLIu5vNTn4VWedi4xck5
+         QODg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716939978; x=1717544778;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6rGifC2Ni1u+HmrCMWiv1iMCtdV6Wvnc9UrGi2Lwz2U=;
+        b=biIyb93kTSmSbgXQXE8rY7aMZionfXI8vA0n+7GySoy26lyz0I6nrKjLLT8TSeauLJ
+         +QsyABQv8m/FaBkOIAwpMN181GxYjpjbVu5taZ9bI0OSjJrcN/B5Lbk+05xiajLW8l6s
+         95FRCagHax0Z5bZuVDWv2+3bpysz0FhqRnvGgyTpArvHItJV97lL6wVB9/9eYMiPPGTC
+         iEcxTTHW7VfIkbTGM0beSQd2+xmRPHos2b0DhWQWK3it1hyLUoxBP1kqfb1/hB3jySnS
+         IWHuDn/B491SV29NOxqIUoMikRVLf/o8hSkrhU5gAg/L8fwLUD3sJUHjOiMYle/EBfUK
+         0meA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFfR4PDC7w2Pbk0jY1tnv2ZQKuF8tpAU4hAvXurWrMmf1aL4/7+UOv7TSeVXVEe6vL08IE8Xf7I+JBNVDAS4oeC0kwUfNjYWCu3FvezJLCDzmsXhYXF9c3X2ZVpUyL265J
+X-Gm-Message-State: AOJu0Yydb2qHFDt6dqz/qEF+hBkbWPXq+1kkJNC3/bquvzM3DIiJG2Ug
+	Si2ZljfJXrpcphR95MQniHdPR4/OJsLbbPiqHvS8a9vKYH/jz0zq
+X-Google-Smtp-Source: AGHT+IGzHwXatJazufht+aUX1oiyytAppXaUsbzFl/OP5WP3nWqHHoFPkIdSzo7EHXl7K/yFpxk+xg==
+X-Received: by 2002:a05:6a20:f3b0:b0:1b1:f7a1:dfa6 with SMTP id adf61e73a8af0-1b212dfe653mr12291813637.38.1716939977891;
+        Tue, 28 May 2024 16:46:17 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-701cdd8fb27sm1591942b3a.7.2024.05.28.16.46.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 16:46:17 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 28 May 2024 13:46:16 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: David Vernet <void@manifault.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	torvalds@linux-foundation.org, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+Message-ID: <ZlZsyFl79Zk074eK@slm.duckdns.org>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240502084800.GY30852@noisy.programming.kicks-ass.net>
+ <ZjPnb1vdt80FrksA@slm.duckdns.org>
+ <20240503085232.GC30852@noisy.programming.kicks-ass.net>
+ <ZjgWzhruwo8euPC0@slm.duckdns.org>
+ <20240513080359.GI30852@noisy.programming.kicks-ass.net>
+ <20240513142646.4dc5484d@rorschach.local.home>
+ <20240514000715.4765jfpwi5ovlizj@airbuntu>
+ <20240514213402.GB295811@maniforge>
+ <20240527212540.u66l3svj3iigj7ig@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever III" <chuck.lever@oracle.com>
-Cc: "Jon Hunter" <jonathanh@nvidia.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Chris Packham" <Chris.Packham@alliedtelesis.co.nz>,
- "linux-stable" <stable@vger.kernel.org>,
- "patches@lists.linux.dev" <patches@lists.linux.dev>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Guenter Roeck" <linux@roeck-us.net>, "shuah@kernel.org" <shuah@kernel.org>,
- "patches@kernelci.org" <patches@kernelci.org>,
- "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
- "pavel@denx.de" <pavel@denx.de>,
- "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
- "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
- "srw@sladewatkins.net" <srw@sladewatkins.net>,
- "rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
- "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
-In-reply-to: <9C1A047C-C8C2-413F-98EA-F8C537535D92@oracle.com>
-References: <>, <9C1A047C-C8C2-413F-98EA-F8C537535D92@oracle.com>
-Date: Wed, 29 May 2024 09:44:16 +1000
-Message-id: <171693985607.27191.15010728056026409099@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[nvidia.com,linuxfoundation.org,alliedtelesis.co.nz,vger.kernel.org,lists.linux.dev,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,gmail.com,sladewatkins.net,gmx.de];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527212540.u66l3svj3iigj7ig@airbuntu>
 
-On Wed, 29 May 2024, Chuck Lever III wrote:
->=20
->=20
-> > On May 28, 2024, at 6:01=E2=80=AFPM, NeilBrown <neilb@suse.de> wrote:
-> >=20
-> > On Wed, 29 May 2024, Chuck Lever III wrote:
-> >>=20
-> >>=20
-> >>> On May 28, 2024, at 10:18=E2=80=AFAM, Jon Hunter <jonathanh@nvidia.com>=
- wrote:
-> >>>=20
-> >>>=20
-> >>> On 28/05/2024 14:14, Chuck Lever III wrote:
-> >>>>> On May 28, 2024, at 5:04=E2=80=AFAM, Jon Hunter <jonathanh@nvidia.com=
-> wrote:
-> >>>>>=20
-> >>>>>=20
-> >>>>> On 25/05/2024 15:20, Greg Kroah-Hartman wrote:
-> >>>>>> On Sat, May 25, 2024 at 12:13:28AM +0100, Jon Hunter wrote:
-> >>>>>>> Hi Greg,
-> >>>>>>>=20
-> >>>>>>> On 23/05/2024 14:12, Greg Kroah-Hartman wrote:
-> >>>>>>>> This is the start of the stable review cycle for the 5.15.160 rele=
-ase.
-> >>>>>>>> There are 23 patches in this series, all will be posted as a respo=
-nse
-> >>>>>>>> to this one.  If anyone has any issues with these being applied, p=
-lease
-> >>>>>>>> let me know.
-> >>>>>>>>=20
-> >>>>>>>> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> >>>>>>>> Anything received after that time might be too late.
-> >>>>>>>>=20
-> >>>>>>>> The whole patch series can be found in one patch at:
-> >>>>>>>> https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5=
-15.160-rc1.gz
-> >>>>>>>> or in the git tree and branch at:
-> >>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git linux-5.15.y
-> >>>>>>>> and the diffstat can be found below.
-> >>>>>>>>=20
-> >>>>>>>> thanks,
-> >>>>>>>>=20
-> >>>>>>>> greg k-h
-> >>>>>>>>=20
-> >>>>>>>> -------------
-> >>>>>>>> Pseudo-Shortlog of commits:
-> >>>>>>>=20
-> >>>>>>> ...
-> >>>>>>>=20
-> >>>>>>>> NeilBrown <neilb@suse.de>
-> >>>>>>>>     nfsd: don't allow nfsd threads to be signalled.
-> >>>>>>>=20
-> >>>>>>>=20
-> >>>>>>> I am seeing a suspend regression on a couple boards and bisect is p=
-ointing
-> >>>>>>> to the above commit. Reverting this commit does fix the issue.
-> >>>>>> Ugh, that fixes the report from others.  Can you cc: everyone on that
-> >>>>>> and figure out what is going on, as this keeps going back and forth.=
-.
-> >>>>>=20
-> >>>>>=20
-> >>>>> Adding Chuck, Neil and Chris from the bug report here [0].
-> >>>>>=20
-> >>>>> With the above applied to v5.15.y, I am seeing suspend on 2 of our bo=
-ards fail. These boards are using NFS and on entry to suspend I am now seeing=
- ...
-> >>>>>=20
-> >>>>> Freezing of tasks failed after 20.002 seconds (1 tasks refusing to
-> >>>>> freeze, wq_busy=3D0):
-> >>>>>=20
-> >>>>> The boards appear to hang at that point. So may be something else mis=
-sing?
-> >>>> Note that we don't have access to hardware like this, so
-> >>>> we haven't tested that patch (even the upstream version)
-> >>>> with suspend on that hardware.
-> >>>=20
-> >>>=20
-> >>> No problem, I would not expect you to have this particular hardware :-)
-> >>>=20
-> >>>> So, it could be something missing, or it could be that
-> >>>> patch has a problem.
-> >>>> It would help us to know if you observe the same issue
-> >>>> with an upstream kernel, if that is possible.
-> >>>=20
-> >>>=20
-> >>> I don't observe this with either mainline, -next or any other stable br=
-anch. So that would suggest that something else is missing from linux-5.15.y.
-> >>=20
-> >> That helps. It would be very helpful to have a reproducer I can
-> >> use to confirm we have a fix. I'm sure this will be a process
-> >> that involves a non-trivial number of iterations.
-> >=20
-> > Missing upstream patch is
-> >=20
-> > Commit 9bd4161c5917 ("SUNRPC: change service idle list to be an llist")
-> >=20
-> > This contains some freezer-related changes which probably should
-> > have been a separate patch.
->=20
-> Thanks for tracking that down.
->=20
->=20
-> > We probably just need to add "| TASK_FREEZABLE" in one or two places.
-> > I'll post a patch for testing in a little while.
->=20
-> My understanding is that the stable maintainers prefer a backport
-> of a patch (or patches) that are already applied to Linus' tree.
+Hello,
 
-They also preferred a full backport of fs/nfsd/..  That hasn't gone so
-well :-)
+BTW, David is off for the week and might be a bit slow to respond. I just
+want to comment on one part.
 
-In this case we would need=20
+On Mon, May 27, 2024 at 10:25:40PM +0100, Qais Yousef wrote:
+..
+> And I can only share my experience, I don't think the algorithm itself is the
+> bottleneck here. The devil is in the corner cases. And these are hard to deal
+> with without explicit hints.
 
-Commit f5d39b020809 ("freezer,sched: Rewrite core freezer logic")
+Our perceptions of the scope of the problem space seem very different. To
+me, it seems pretty unexplored. Here's just one area: Constantly increasing
+number of cores and popularization of more complex cache hierarchies.
 
-to get TASK_FREEZABLE.
-I doubt that would be a good choice.
+Over a hundred CPUs in a system is fairly normal now with a couple layers of
+cache hierarchy. Once we have so many, things can look a bit different from
+the days when we had a few. Flipping the approach so that we can dynamically
+assign close-by CPUs to related groups of threads becomes attractive.
 
-NeilBrown
+e.g. If you have a bunch of services which aren't latency critical but are
+needed to maintain system integrity (updates, monitoring, security and so
+on), soft-affining them to a number of CPUs while allowing some CPU headroom
+can give you noticeable gain both in performance (partly from cleaner
+caches) and power consumption while not adding that much to latency. This is
+something the scheduler can and, I believe, should do transparently.
 
+It's not obvious how to do it though. It doesn't quite fit the current LB
+model. cgroup hierarchy seems to provide some hints on how threads can be
+grouped but the boundaries might not match that well. Even if we figure out
+how to define these groups, figuring out group-vs-group competition isn't
+trivial (naive load-sums don't work when comparing across groups spanning
+multiple CPUs).
 
->=20
->=20
-> --
-> Chuck Lever
->=20
->=20
->=20
+Also, what about the threads with oddball cpumasks? Should we begin to treat
+CPUs more like other resources, e.g., memory? We don't generally allow
+applications to specify which specific physical pages they get because that
+doesn't buy anything while adding a lot of constraints. If we have dozens
+and hundreds of CPUs, are there fundamental reason to view them differently
+from other resources which are treated fungible?
 
+The claim that the current scheduler has the fundamentals all figured out
+and it's mostly about handling edge cases and educating users seems wildly
+off mark to me.
+
+Maybe we can develop all that in the current framework in a gradual fashion,
+but when the problem space is so wide open, that is not a good approach to
+take. The cost of constricting is likely significantly higher than the
+benefits of having a single code base. Imagine having to develop all the
+features of btrfs in the ext2 code base. It's probably doable, at least
+theoretically, but that would have been massively stifling, maybe to the
+point of most of it not happening.
+
+To the above particular problem of soft-affinity, scx_layered has something
+really simple and dumb implemented and we're testing and deploying it in the
+fleet with noticeable perf gains, and there are early efforts to see whether
+we can automatically figure out grouping based on the cgroup hierarchy and
+possibly minimal xattr hints on them.
+
+I don't yet know what generic form soft-affinity should take eventually,
+but, with sched_ext, we have a way to try out different ideas in production
+and iterate on them learning each step of the way. Given how generic both
+the problem and benefits from solving it are, we'll have to reach some
+generic solution at one point. Maybe it will come from sched_ext or maybe it
+will come from people working on fair like yourself. Either way, sched_ext
+is already showing us what can be achieved and prodding people towards
+solving it.
+
+Thanks.
+
+-- 
+tejun
 
