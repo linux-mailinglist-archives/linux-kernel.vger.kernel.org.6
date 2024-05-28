@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-193133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451BA8D273E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFEF8D273F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02A41B27BFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A4EE1C229A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1281658AB4;
-	Tue, 28 May 2024 21:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2302C13DB9F;
+	Tue, 28 May 2024 21:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z43bJfGX"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hrL47g/m"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05D917165C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062BF762DE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716932705; cv=none; b=VUMtYkr3ZNpxaoBSuuyzzjBJS49J+pdvlLgivBX+eG7v4K3zKO5TclHsV6GQmqour4j8Nyqx4v2Dwj7+D4JJpXSvQ/HpKt30opPiY72G/jhDr25CRA7gOXC3Sx2ZqWJ2nwoo7qB7uFbo0maUgoY+BuQ4BSth7iaX53KBhANJm48=
+	t=1716932706; cv=none; b=OlquslXj0P0esjpM6IodLwkqhuUnQIOKTDaLfLQmR/AGOs5AyKPPg25LvQo8k2VENDMquwvt3AwpdFelA4vxbuj2OKOPo6Ds3GQdWEwWIP/0HmRPn2Dwl8wCnq3kwveLGDQsNf2SXINOKSuC58tT9deJ/b5QJKXGw+rKuqrPFzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716932705; c=relaxed/simple;
-	bh=jzbz5CMAqbjHONlmDaQSGjbS6xOp6mKYDXih1pYtLBU=;
+	s=arc-20240116; t=1716932706; c=relaxed/simple;
+	bh=aGd15yeuSS0/vauBjqe2SQ55pNL9V75UvMvUC0azOPI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=slVY1ceiBL5y//bJahgsaoheFKfvDpMxIYbqchmWZ33pK1zd8dc8pF0wrBzqt6flOaMw1SzblKNLBRoU6Po/H8MsKUAhWGaQcqN5eT9319o42I1oXJBwIKbPEGLrwZKi2mBaBiXTTTadWd1z1eQxH2BYDr5X9iM/eCcOENFbOEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z43bJfGX; arc=none smtp.client-ip=95.215.58.179
+	 MIME-Version; b=dxT4xZpukDm8PIw1foCWdQezg9KD7yfku3VmjMU4NFjTNXLkPkpH1GjfNJc25dZ8SlI/OuVY+IdzKKMWXnFsB1DSxw666VUPFFkGZ1w6HAChtD/oBealIzwcaXi6E9lya1ZP0kxkPEqhgilEHcCC0nOoA1I6y+VU8JbXg5gd74U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hrL47g/m; arc=none smtp.client-ip=95.215.58.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: akpm@linux-foundation.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716932700;
+	t=1716932702;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gWiY2lI1QItCOH2GFi55k4QyY7Ks3qNYQGCerCKa1hI=;
-	b=Z43bJfGX9tj4fp4sLBslNA7ukMkHICWqSxxE6paIJtPF/8oH76Oc1PGvo4XZ2ate4kJX2B
-	ZiroGJsEm1BHip9HQ7ftUU0XHpvfRhnJPH0IRyQ9cD+U6ljjkRlB7/1caoMkQomqBkTHNt
-	JF3gmM/jp/vL8hiwr9ukamXz8JWnl1k=
+	bh=l2pLA/RqNoqlbvbC4p4fDwpEqhgLufpxOxGhK7S1G2o=;
+	b=hrL47g/mD1SQrSO2YhcIljWTdeJXZtuP+O7Sspx8GuL8CyR5bK0pB33DFF/Flum7NaPBcj
+	wuqXxuVDRjfVR4Hq70V1K0YhgI/IldHzP4IpGe0FW+30xwSnmKy8X5nPUvW2IVWvuTOWSK
+	y7K++vRfFd0kmbxOqcAuKddTyqUJAUo=
 X-Envelope-To: muchun.song@linux.dev
 X-Envelope-To: hannes@cmpxchg.org
 X-Envelope-To: mhocko@kernel.org
@@ -60,9 +60,9 @@ Cc: Muchun Song <muchun.song@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH v1 12/14] mm: memcg: group cgroup v1 memcg related declarations
-Date: Tue, 28 May 2024 14:44:33 -0700
-Message-ID: <20240528214435.3125304-3-roman.gushchin@linux.dev>
+Subject: [PATCH v1 13/14] mm: memcg: put cgroup v1-related members of task_struct under config option
+Date: Tue, 28 May 2024 14:44:34 -0700
+Message-ID: <20240528214435.3125304-4-roman.gushchin@linux.dev>
 In-Reply-To: <20240528214435.3125304-1-roman.gushchin@linux.dev>
 References: <20240528202101.3099300-1-roman.gushchin@linux.dev>
  <20240528214435.3125304-1-roman.gushchin@linux.dev>
@@ -75,342 +75,141 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Group all cgroup v1-related declarations at the end of memcontrol.h
-and mm/memcontrol-v1.h with an intention to put them all together
-under a config option later on. It should make things easier to
-follow and maintain too.
+Guard cgroup v1-related members of task_struct under the CONFIG_MEMCG_V1
+config option, so that users who adopted cgroup v2 don't have to waste
+the memory for fields which are never accessed.
 
 Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- include/linux/memcontrol.h | 144 +++++++++++++++++++------------------
- mm/memcontrol-v1.h         |  89 ++++++++++++-----------
- 2 files changed, 123 insertions(+), 110 deletions(-)
+ include/linux/memcontrol.h |  2 +-
+ init/Kconfig               |  9 +++++++++
+ mm/Makefile                |  3 ++-
+ mm/memcontrol-v1.h         | 21 ++++++++++++++++++++-
+ mm/memcontrol.c            | 10 +++++++---
+ 5 files changed, 39 insertions(+), 6 deletions(-)
 
 diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 394b92b620d9c..7474b20a5d3f5 100644
+index 7474b20a5d3f5..aaa97ec0634f7 100644
 --- a/include/linux/memcontrol.h
 +++ b/include/linux/memcontrol.h
-@@ -944,39 +944,13 @@ static inline void mem_cgroup_exit_user_fault(void)
- 	current->in_user_fault = 0;
- }
+@@ -1845,7 +1845,7 @@ static inline bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
  
--static inline bool task_in_memcg_oom(struct task_struct *p)
--{
--	return p->memcg_in_oom;
--}
--
--bool mem_cgroup_oom_synchronize(bool wait);
- struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
- 					    struct mem_cgroup *oom_domain);
- void mem_cgroup_print_oom_group(struct mem_cgroup *memcg);
+ /* Cgroup v1-related declarations */
  
--void folio_memcg_lock(struct folio *folio);
--void folio_memcg_unlock(struct folio *folio);
--
- void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
- 		       int val);
+-#ifdef CONFIG_MEMCG
++#ifdef CONFIG_MEMCG_V1
+ unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
+ 					gfp_t gfp_mask,
+ 					unsigned long *total_scanned);
+diff --git a/init/Kconfig b/init/Kconfig
+index febdea2afc3be..5191b6435b4e7 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -969,6 +969,15 @@ config MEMCG
+ 	help
+ 	  Provides control over the memory footprint of tasks in a cgroup.
  
--/* try to stablize folio_memcg() for all the pages in a memcg */
--static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
--{
--	rcu_read_lock();
--
--	if (mem_cgroup_disabled() || !atomic_read(&memcg->moving_account))
--		return true;
--
--	rcu_read_unlock();
--	return false;
--}
--
--static inline void mem_cgroup_unlock_pages(void)
--{
--	rcu_read_unlock();
--}
--
- /* idx can be of type enum memcg_stat_item or node_stat_item */
- static inline void mod_memcg_state(struct mem_cgroup *memcg,
- 				   enum memcg_stat_item idx, int val)
-@@ -1103,10 +1077,6 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
- 
- void split_page_memcg(struct page *head, int old_order, int new_order);
- 
--unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
--					gfp_t gfp_mask,
--					unsigned long *total_scanned);
--
- #else /* CONFIG_MEMCG */
- 
- #define MEM_CGROUP_ID_SHIFT	0
-@@ -1417,26 +1387,6 @@ mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
- {
- }
- 
--static inline void folio_memcg_lock(struct folio *folio)
--{
--}
--
--static inline void folio_memcg_unlock(struct folio *folio)
--{
--}
--
--static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
--{
--	/* to match folio_memcg_rcu() */
--	rcu_read_lock();
--	return true;
--}
--
--static inline void mem_cgroup_unlock_pages(void)
--{
--	rcu_read_unlock();
--}
--
- static inline void mem_cgroup_handle_over_high(gfp_t gfp_mask)
- {
- }
-@@ -1449,16 +1399,6 @@ static inline void mem_cgroup_exit_user_fault(void)
- {
- }
- 
--static inline bool task_in_memcg_oom(struct task_struct *p)
--{
--	return false;
--}
--
--static inline bool mem_cgroup_oom_synchronize(bool wait)
--{
--	return false;
--}
--
- static inline struct mem_cgroup *mem_cgroup_get_oom_group(
- 	struct task_struct *victim, struct mem_cgroup *oom_domain)
- {
-@@ -1552,14 +1492,6 @@ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
- static inline void split_page_memcg(struct page *head, int old_order, int new_order)
- {
- }
--
--static inline
--unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
--					gfp_t gfp_mask,
--					unsigned long *total_scanned)
--{
--	return 0;
--}
- #endif /* CONFIG_MEMCG */
- 
- /*
-@@ -1910,4 +1842,80 @@ static inline bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
- }
- #endif
- 
++config MEMCG_V1
++	bool "Legacy memory controller"
++	depends on MEMCG
++	default n
++	help
++	  Legacy cgroup v1 memory controller.
 +
-+/* Cgroup v1-related declarations */
++	  San N is unsure.
 +
-+#ifdef CONFIG_MEMCG
-+unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
-+					gfp_t gfp_mask,
-+					unsigned long *total_scanned);
-+
-+bool mem_cgroup_oom_synchronize(bool wait);
-+
-+static inline bool task_in_memcg_oom(struct task_struct *p)
-+{
-+	return p->memcg_in_oom;
-+}
-+
-+void folio_memcg_lock(struct folio *folio);
-+void folio_memcg_unlock(struct folio *folio);
-+
-+/* try to stablize folio_memcg() for all the pages in a memcg */
-+static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
-+{
-+	rcu_read_lock();
-+
-+	if (mem_cgroup_disabled() || !atomic_read(&memcg->moving_account))
-+		return true;
-+
-+	rcu_read_unlock();
-+	return false;
-+}
-+
-+static inline void mem_cgroup_unlock_pages(void)
-+{
-+	rcu_read_unlock();
-+}
-+
-+#else /* CONFIG_MEMCG */
-+static inline
-+unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
-+					gfp_t gfp_mask,
-+					unsigned long *total_scanned)
-+{
-+	return 0;
-+}
-+
-+static inline void folio_memcg_lock(struct folio *folio)
-+{
-+}
-+
-+static inline void folio_memcg_unlock(struct folio *folio)
-+{
-+}
-+
-+static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
-+{
-+	/* to match folio_memcg_rcu() */
-+	rcu_read_lock();
-+	return true;
-+}
-+
-+static inline void mem_cgroup_unlock_pages(void)
-+{
-+	rcu_read_unlock();
-+}
-+
-+static inline bool task_in_memcg_oom(struct task_struct *p)
-+{
-+	return false;
-+}
-+
-+static inline bool mem_cgroup_oom_synchronize(bool wait)
-+{
-+	return false;
-+}
-+
-+#endif /* CONFIG_MEMCG */
-+
- #endif /* _LINUX_MEMCONTROL_H */
+ config MEMCG_KMEM
+ 	bool
+ 	depends on MEMCG
+diff --git a/mm/Makefile b/mm/Makefile
+index 124d4dea20351..d2915f8c9dc01 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -96,7 +96,8 @@ obj-$(CONFIG_NUMA) += memory-tiers.o
+ obj-$(CONFIG_DEVICE_MIGRATION) += migrate_device.o
+ obj-$(CONFIG_TRANSPARENT_HUGEPAGE) += huge_memory.o khugepaged.o
+ obj-$(CONFIG_PAGE_COUNTER) += page_counter.o
+-obj-$(CONFIG_MEMCG) += memcontrol.o memcontrol-v1.o vmpressure.o
++obj-$(CONFIG_MEMCG_V1) += memcontrol-v1.o
++obj-$(CONFIG_MEMCG) += memcontrol.o vmpressure.o
+ ifdef CONFIG_SWAP
+ obj-$(CONFIG_MEMCG) += swap_cgroup.o
+ endif
 diff --git a/mm/memcontrol-v1.h b/mm/memcontrol-v1.h
-index 7d6ac4a4fb36d..89d4207930481 100644
+index 89d4207930481..64b053d7f131e 100644
 --- a/mm/memcontrol-v1.h
 +++ b/mm/memcontrol-v1.h
-@@ -5,15 +5,9 @@
- 
- #include <linux/cgroup-defs.h>
- 
--void memcg1_remove_from_trees(struct mem_cgroup *memcg);
--
--static inline void memcg1_soft_limit_reset(struct mem_cgroup *memcg)
--{
--	WRITE_ONCE(memcg->soft_limit, PAGE_COUNTER_MAX);
--}
-+/* Cgroup v1 and v2 common declarations */
- 
- void mem_cgroup_charge_statistics(struct mem_cgroup *memcg, int nr_pages);
--void memcg1_check_events(struct mem_cgroup *memcg, int nid);
- int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 		     unsigned int nr_pages);
- 
-@@ -29,30 +23,6 @@ static inline int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n);
- void mem_cgroup_id_put_many(struct mem_cgroup *memcg, unsigned int n);
- 
--bool memcg1_wait_acct_move(struct mem_cgroup *memcg);
--struct cgroup_taskset;
--int memcg1_can_attach(struct cgroup_taskset *tset);
--void memcg1_cancel_attach(struct cgroup_taskset *tset);
--void memcg1_move_task(void);
--
--/*
-- * Per memcg event counter is incremented at every pagein/pageout. With THP,
-- * it will be incremented by the number of pages. This counter is used
-- * to trigger some periodic events. This is straightforward and better
-- * than using jiffies etc. to handle periodic memcg event.
-- */
--enum mem_cgroup_events_target {
--	MEM_CGROUP_TARGET_THRESH,
--	MEM_CGROUP_TARGET_SOFTLIMIT,
--	MEM_CGROUP_NTARGETS,
--};
--
--/* Whether legacy memory+swap accounting is active */
--static bool do_memsw_account(void)
--{
--	return !cgroup_subsys_on_dfl(memory_cgrp_subsys);
--}
--
- /*
-  * Iteration constructs for visiting all cgroups (under a tree).  If
-  * loops are exited prematurely (break), mem_cgroup_iter_break() must
-@@ -68,24 +38,28 @@ static bool do_memsw_account(void)
- 	     iter != NULL;				\
- 	     iter = mem_cgroup_iter(NULL, iter, NULL))
- 
--void memcg1_css_offline(struct mem_cgroup *memcg);
-+/* Whether legacy memory+swap accounting is active */
-+static bool do_memsw_account(void)
-+{
-+	return !cgroup_subsys_on_dfl(memory_cgrp_subsys);
-+}
- 
--/* for encoding cft->private value on file */
--enum res_type {
--	_MEM,
--	_MEMSWAP,
--	_KMEM,
--	_TCP,
-+/*
-+ * Per memcg event counter is incremented at every pagein/pageout. With THP,
-+ * it will be incremented by the number of pages. This counter is used
-+ * to trigger some periodic events. This is straightforward and better
-+ * than using jiffies etc. to handle periodic memcg event.
-+ */
-+enum mem_cgroup_events_target {
-+	MEM_CGROUP_TARGET_THRESH,
-+	MEM_CGROUP_TARGET_SOFTLIMIT,
-+	MEM_CGROUP_NTARGETS,
- };
- 
- bool mem_cgroup_event_ratelimit(struct mem_cgroup *memcg,
- 				enum mem_cgroup_events_target target);
- unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
- 
--bool memcg1_oom_prepare(struct mem_cgroup *memcg, bool *locked);
--void memcg1_oom_finish(struct mem_cgroup *memcg, bool locked);
--void memcg1_oom_recover(struct mem_cgroup *memcg);
--
- void drain_all_stock(struct mem_cgroup *root_memcg);
- unsigned long mem_cgroup_nr_lru_pages(struct mem_cgroup *memcg,
- 				      unsigned int lru_mask, bool tree);
-@@ -100,6 +74,37 @@ unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
- unsigned long memcg_page_state_local_output(struct mem_cgroup *memcg, int item);
+@@ -75,7 +75,7 @@ unsigned long memcg_page_state_local_output(struct mem_cgroup *memcg, int item);
  int memory_stat_show(struct seq_file *m, void *v);
  
-+/* Cgroup v1-specific declarations */
-+
-+void memcg1_remove_from_trees(struct mem_cgroup *memcg);
-+
-+static inline void memcg1_soft_limit_reset(struct mem_cgroup *memcg)
-+{
-+	WRITE_ONCE(memcg->soft_limit, PAGE_COUNTER_MAX);
-+}
-+
-+bool memcg1_wait_acct_move(struct mem_cgroup *memcg);
-+
-+struct cgroup_taskset;
-+int memcg1_can_attach(struct cgroup_taskset *tset);
-+void memcg1_cancel_attach(struct cgroup_taskset *tset);
-+void memcg1_move_task(void);
-+void memcg1_css_offline(struct mem_cgroup *memcg);
-+
-+/* for encoding cft->private value on file */
-+enum res_type {
-+	_MEM,
-+	_MEMSWAP,
-+	_KMEM,
-+	_TCP,
-+};
-+
-+bool memcg1_oom_prepare(struct mem_cgroup *memcg, bool *locked);
-+void memcg1_oom_finish(struct mem_cgroup *memcg, bool locked);
-+void memcg1_oom_recover(struct mem_cgroup *memcg);
-+
-+void memcg1_check_events(struct mem_cgroup *memcg, int nid);
-+
- void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
+ /* Cgroup v1-specific declarations */
+-
++#ifdef CONFIG_MEMCG_V1
+ void memcg1_remove_from_trees(struct mem_cgroup *memcg);
  
+ static inline void memcg1_soft_limit_reset(struct mem_cgroup *memcg)
+@@ -110,4 +110,23 @@ void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
  extern struct cftype memsw_files[];
+ extern struct cftype mem_cgroup_legacy_files[];
+ 
++#else	/* CONFIG_MEMCG_V1 */
++
++static inline void memcg1_remove_from_trees(struct mem_cgroup *memcg) {}
++static inline void memcg1_soft_limit_reset(struct mem_cgroup *memcg) {}
++static inline bool memcg1_wait_acct_move(struct mem_cgroup *memcg) { return false; }
++static inline void memcg1_css_offline(struct mem_cgroup *memcg) {}
++
++static inline bool memcg1_oom_prepare(struct mem_cgroup *memcg, bool *locked) { return true; }
++static inline void memcg1_oom_finish(struct mem_cgroup *memcg, bool locked) {}
++static inline void memcg1_oom_recover(struct mem_cgroup *memcg) {}
++
++static inline void memcg1_check_events(struct mem_cgroup *memcg, int nid) {}
++
++static inline void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s) {}
++
++extern struct cftype memsw_files[];
++extern struct cftype mem_cgroup_legacy_files[];
++#endif	/* CONFIG_MEMCG_V1 */
++
+ #endif	/* __MM_MEMCONTROL_V1_H */
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 8a28ba4ca93ea..8cbceeb9c7ac4 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4473,18 +4473,20 @@ struct cgroup_subsys memory_cgrp_subsys = {
+ 	.css_free = mem_cgroup_css_free,
+ 	.css_reset = mem_cgroup_css_reset,
+ 	.css_rstat_flush = mem_cgroup_css_rstat_flush,
+-	.can_attach = memcg1_can_attach,
+ #if defined(CONFIG_LRU_GEN) || defined(CONFIG_MEMCG_KMEM)
+ 	.attach = mem_cgroup_attach,
+ #endif
+-	.cancel_attach = memcg1_cancel_attach,
+-	.post_attach = memcg1_move_task,
+ #ifdef CONFIG_MEMCG_KMEM
+ 	.fork = mem_cgroup_fork,
+ 	.exit = mem_cgroup_exit,
+ #endif
+ 	.dfl_cftypes = memory_files,
++#ifdef CONFIG_MEMCG_V1
++	.can_attach = memcg1_can_attach,
++	.cancel_attach = memcg1_cancel_attach,
++	.post_attach = memcg1_move_task,
+ 	.legacy_cftypes = mem_cgroup_legacy_files,
++#endif
+ 	.early_init = 0,
+ };
+ 
+@@ -5655,7 +5657,9 @@ static int __init mem_cgroup_swap_init(void)
+ 		return 0;
+ 
+ 	WARN_ON(cgroup_add_dfl_cftypes(&memory_cgrp_subsys, swap_files));
++#ifdef CONFIG_MEMCG_V1
+ 	WARN_ON(cgroup_add_legacy_cftypes(&memory_cgrp_subsys, memsw_files));
++#endif
+ #if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_ZSWAP)
+ 	WARN_ON(cgroup_add_dfl_cftypes(&memory_cgrp_subsys, zswap_files));
+ #endif
 -- 
 2.45.1
 
