@@ -1,109 +1,110 @@
-Return-Path: <linux-kernel+bounces-192510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5798B8D1E4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:17:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB86B8D1E52
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88FA81C230DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:17:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3581EB22576
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1CA16F8F1;
-	Tue, 28 May 2024 14:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B1816F82C;
+	Tue, 28 May 2024 14:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="riv68m70"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RW9bYQCG"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DB6140E37;
-	Tue, 28 May 2024 14:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B4C6A8A3;
+	Tue, 28 May 2024 14:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905820; cv=none; b=RdPDWJkrnKLsHietHQsGeyWWl+4VOUGxhfHxeApCUUvmhDgJrGsmzR4/ec+gDSJeE1Jk2bxCSveYd92L6Ps1OgiNGiKtqEZUxaPHxg4u6G7sTqbq6ee4C+msguzhyqgvox0TGmXNOzuWljyWbj88S+gexBAXsW7fShiqQbVjzH4=
+	t=1716905879; cv=none; b=nhDcVEop5+UwN7O9gghDTuS//mrc9IYfZOMdYOjU/MIitnhYmjk0YwLBd4XMhPVLG3O6YPZex88pRTKCO3VB6Dph5/2AvIQyyq2ypEeEQjpWeRUIhhv36tMDomeasGCHnuAzXPU9pS6Q90n02isZFFGilt9dr4WqYWKxmrOMvZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905820; c=relaxed/simple;
-	bh=nnq1HNup0g0KUjYWTDaNiDizX9ovR2foxA+ZttZXqp8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q65FJ02hqskJhXZHqRqZs8GFeMNfba9NkY3Tkqrzvv2dix+1ihrBjffPKI80teg1rjgUSUiwGWfR31AuzJQMtn0NF2rxF0C2Qzoxv0D5UihA1xwH9bztk6q5E2QwdlyeUmvWHeSvgmPiJRJ3e9AF9HSf70+WKcbh0DgCedX+hoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=riv68m70; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1716905801; x=1717510601; i=wahrenst@gmx.net;
-	bh=nnq1HNup0g0KUjYWTDaNiDizX9ovR2foxA+ZttZXqp8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=riv68m70zSzcz5IxJgvPP3NgFTYWoEnZI5gJsU/lo57OMQ/TPoa4hF6SOrq6elWY
-	 aNOayLfsq44OSuWmquct3/iotf45XQ+lEXue9Y8WepUwuSag1MN2qm0mwH4KWHN2f
-	 sUKNubTmvdFJ3uiWlpEqm9R9Ur5MDx0+XbDaSMDE02J7oLVirajPaZOjhlMz+m0Mb
-	 Ys2K1S17PsQIpVDDgCsL4p6/fP6k2oHck8HVA7W4r6uF7TrOZJ7Sq6UvGlWY1A185
-	 dZj+aoWQA8ZGaxu6OcYpVN/LlJ/m6rKEDFMGj4+5jBQTZYdtqPGsSRF/q4E+HEGWT
-	 Uu7m6SSbw7PI75iJ+w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1My32L-1sQLaQ2pLD-00zaby; Tue, 28
- May 2024 16:16:41 +0200
-Message-ID: <cad7b5c5-3a18-44ba-a377-f7aed1eba0e9@gmx.net>
-Date: Tue, 28 May 2024 16:16:40 +0200
+	s=arc-20240116; t=1716905879; c=relaxed/simple;
+	bh=Iox2EDln7HBj3b/gSLop1jVV31ag+ghsDlqUSLDSUtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dryUiqbApIV3x/SMWJLv/NBlNJVN7OQYPQ9dUlwQt9WWlAOCCr29+o6QbcTeCNCx9UpFXd+zmYhiHKURMdUU5JbzLk3+c+s1l/zFudWiIWDq16pf4hsI4ya6UHyM10GP7NmOxTMKXDsdSLxlEd2tcz0YmEYIskvEqDuXt9WwHDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RW9bYQCG; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D1DDD40E0244;
+	Tue, 28 May 2024 14:17:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MZKy1R-kMzk1; Tue, 28 May 2024 14:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716905871; bh=DKjnDDIBN6O1ywAjUsxFEsKHA8yyvh3NmgpdAdDAjjw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RW9bYQCGYqlYSFF24TVEzxOe6S3knLjI5zOxOYv9fhaY7aLUL1NlvbhsegL+ylPXU
+	 pzSPWQJy1x9C28CInw8CXFkI6iGopPnED6qOhMKQbCjQHAqCW15ThWIP1abUhzFweY
+	 ajOpcgddnR1mwQepWpDP/cS3vhoLuhW13nTs8auJO4txDX4mFnxHBXyeqv8IWCQTOU
+	 cvRtjR3GA7WilMN6vrvbM9eB0u8UEqDZlXDt3zVVv6MkUc9h3Kh69ukfmNt4sv9pDi
+	 orahRo5uZyGiL7fjhOKujXCjM/vlZJ2tcpMvssTnsJuCyhUxEEDOczvhmDDHwwae2/
+	 5XB/xBpnp4Fblv8/DvwVuw/HPd12Zj9LETPFfjrFC00UYoL9sWm43VL8rKChN8IMNF
+	 vzcFSw9ahr2quC4yycyAUOfIlA+LVt7f22usCfJADaAFkoXr3yv5ZvQNlsLiAvDKrU
+	 73Uhrk36zF6ATi09iew0j0cv+JaTGsnjLC7KWbUyN/sOxBCOyjrYSo601Gt1ByOiYt
+	 DZi/qcqedk/78BIZj2+JeqmUgsunz1C0v4+hUqmgKZoB3OL558yxB01GaAgIPZVbiV
+	 HM2OSqxY25ELXsY1qRX2qFwS84UCTcBcZ7vfHp1oM0OsS0Vfra60ATC47DAotXsIax
+	 Z3kNhBqfMBVRphPrWRUC/emA=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1620540E01E8;
+	Tue, 28 May 2024 14:17:46 +0000 (UTC)
+Date: Tue, 28 May 2024 16:17:40 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Vasyl Gomonovych <gomonovych@gmail.com>
+Cc: Yazen.Ghannam@amd.com, tony.luck@intel.com, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RAS: Add missing newlines to pr_info
+Message-ID: <20240528141740.GDZlXnhIzcMbsAHYVa@fat_crate.local>
+References: <20240517215452.2020680-1-gomonovych@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] mmc: sdhci-brcmstb: Add BCM2712 support
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <cover.1716899600.git.andrea.porta@suse.com>
- <4e8fc54e87447bae7db58636a1c87e5d8baeb012.1716899600.git.andrea.porta@suse.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <4e8fc54e87447bae7db58636a1c87e5d8baeb012.1716899600.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:etJIBGHhBTcuA5xOTz9exBNpjUjaiNcilgxin9SPEWrTzJKVZib
- aP6VLSOxVwQYtO7ErY3bEmP6KphaXtFmG15AFYTywpPChW8hSbQDKUMZ2Bx6n16nKCs28C+
- 5be5ftC3L40tZe6YT2WJzYswi2HYYjITFfJIrR/3eYiFPXh/I3kYetzE4GMXFMCos3Hm5sn
- Ymc0rB7gfSyA5f497lc9g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:npDpGTgrOeA=;weWOGvnzbKBV6LhR00Ym/FnVcbl
- TRGWIKc3h0f+AiCtdJ9VWUSR1xTT6pigWSX3m6FB4Olq5j+CVxBqC0g5fVJdt8b7wLMcJj66Q
- c389FR5qyn7tFgP/DEBTd0Tz2MN8TPMHGgxQs1Fs1hIFFs8yrhBx9zKnkTPa3VXQQ6qdv7xkY
- kyt5SapW7Sv0DSeLHHx/iWhiGfWwuvn5QLYO/ooT7rofhV4G1QbnerpjottriWl3GvbYfmJck
- 6GmwRhff/M4PwccIwFQsHu8ASsGicswNBjFri7aCDaJPcEhKYjp2332wLyu5ajDJY/qrgGt0u
- Fff+SSi3UEUhvrTAvG7QBkFs3klg2K1Hrj9xyBuqDvruwhnsLVLd7QRWdzBuFpKMTsFnKVuM7
- UwvDW3axP+SYYYGicoFgSekUa6qlZB5gsxIQGulS1tixt54wABIn2KvThqHmPc3CtbU/gS1rQ
- vPfJAW4g0HnrU8Pi/WuNB3uZGpULgabyZsIY+d4+4LUhtyri0pGi1ZG48OnF8DzPx1MzS5zXe
- AQuVBeB1pT3AGOmYTr0HpjlyjsV5mm/5MLjPdMGgnI0MbVebmYSWLdG5zJto6pHRfV27nvFnI
- dtQd10vUgIcXu2xRc5KpNLHhlB2pKnVvp7CVybeaIwIzgGhC0wLohP2BXOBpev3+Vcwj0HKuS
- D4XNYc5eknETnozZeKKsrDTbNNsAXdiVzfAY8n1ck8uSOkCUkbMVaZUVXPPFusyR1oCqFkJGW
- UMJ3Hb9YaMJWUt9vlovDsBEPss8IC58hXskalpkZPfdU3JcHfB1AjmRV/jkovIO6r8DIs3z9f
- ARf3oDhycAKKU+IsyvcPRSeK4ecHU26oNsrF+qZ5etP2A=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240517215452.2020680-1-gomonovych@gmail.com>
 
-Am 28.05.24 um 15:32 schrieb Andrea della Porta:
-> Broadcom BCM2712 SoC has an SDHCI card controller using the SDIO CFG
-> register block present on other STB chips. Add support for BCM2712
-> SD capabilities of this chipset.
-> The silicon is SD Express capable but this driver port does not currently
-> include that feature yet.
-> Based on downstream driver by raspberry foundation maintained kernel.
->
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+On Fri, May 17, 2024 at 02:54:37PM -0700, Vasyl Gomonovych wrote:
+> Fix RAS log statement by adding missing newline character
+> 
+> Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+> ---
+>  drivers/ras/amd/atl/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ras/amd/atl/core.c b/drivers/ras/amd/atl/core.c
+> index 6dc4e06305f7..f9f760d780c4 100644
+> --- a/drivers/ras/amd/atl/core.c
+> +++ b/drivers/ras/amd/atl/core.c
+> @@ -206,7 +206,7 @@ static int __init amd_atl_init(void)
+>  	__module_get(THIS_MODULE);
+>  	amd_atl_register_decoder(convert_umc_mca_addr_to_sys_addr);
+>  
+> -	pr_info("AMD Address Translation Library initialized");
+> +	pr_info("AMD Address Translation Library initialized\n");
+>  	return 0;
+>  }
+>  
+> -- 
+
+Both applied, thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
