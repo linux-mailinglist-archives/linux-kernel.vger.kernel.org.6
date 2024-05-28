@@ -1,147 +1,127 @@
-Return-Path: <linux-kernel+bounces-191957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9431A8D1694
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD5D8D1698
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E806DB22B67
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDC31C21D0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFB213CABA;
-	Tue, 28 May 2024 08:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFB613D2A0;
+	Tue, 28 May 2024 08:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="N8N7Yyz+"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D+oxbp/z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8966913C8E9
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDE113CA8C;
+	Tue, 28 May 2024 08:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716885842; cv=none; b=GOwugIfkafzw0LiK+8MiOZIet8fkwi2HJwi49lt7g9Lr89KD0DlCvsmsLTjDPcvbWmfmmKLZv9fawjdJ0SezhV87aBstTLoxEFWl+bzousW9cIlDp0rTjtDmAhCQbcGDpkWkBZ+TbhOXqsQCmEq4EZ/L6z5XW6+b87EfLoQ2BZg=
+	t=1716885870; cv=none; b=ojAPFEjDepgovGwKxN+GR8gdkOMrwZ9CDi/CusASpBZ6CfrvgvvU+TynWp2oElqBVQccL8f2VubF/qjK4gkOaa/JovIrObThDvrXoNSD7xHfEErBbmNGQ9U82S/+GAStVAax+CCfD90CuWRpf60LeUR4sZ3K5b7KKV1K3WCn5hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716885842; c=relaxed/simple;
-	bh=8HvIGKRSxVSzXwS7Na7UKkF6X7VsSrmut2KntrLmI1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HSY0iPj4u99v21co4MejSJA1+OnDJuKICCs3sEsUtwnKdqh2cioYDLAQaVGDxyN7XuAptFpALjkQufNK618ESpJ9ypp7gSKCiK9qElCxwiNM26AOaRqk5bI+bb4LtzfhXizC98zo22hiHvMJsY4MmKdTfUJ9kksVBwnjjj175o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=N8N7Yyz+; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1716885834;
- bh=GQr2PqTVIib2CwbHMvN8Y3i6rh0ebN+xNoUL7A1dzos=;
- b=N8N7Yyz+XiVCGNY/9/+kwTe/Hs4dGQZnp9pqovP0A4/X0wvlSWCA3WXoXPq7hO9GbwjliZ4Wc
- +ZAFkHevpm2adPN3/0NDo+2TNNiXhxQu79xqiaDmmdcVtXPcCwVcG0HCJzXzTV92mSt/eELqhl0
- 09dYX/FGx46v84g+fzMSdJj5Nnkn2vhaPN3XIGbXQE1Fn6nKCw2jD4Ka90mrJ/WIT2DL/M1BBUI
- PqAKbOFCrn7wyD5cxzi22HwZiHCks/HBwJv30mIk9Jg6wkPf0gRqz7rg9WRPl6XKyI4WEG/kc91
- uTOMYKBRYsa2MRxTruUOl0/zjJm9/RSGfyy0lxhldv8w==
-Message-ID: <82435177-1a4a-46c0-9a12-c056647d587f@kwiboo.se>
-Date: Tue, 28 May 2024 10:43:43 +0200
+	s=arc-20240116; t=1716885870; c=relaxed/simple;
+	bh=ydSlw6qJhZ+PMwAN+v0YFHLkW9KgfIeaM/bmXs0fKWE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PE2Ip1IEGADOCUdUM21FfBU0FqeKALN2tp+maY/CUmJmea5+WdYC79ZNW8nadf/YiQFuxgsDagrqU1QaqCNE42EaP4l4KBk6cesIhszEzjaqj7sp5m4LYYst5duex1wQ0z5kZ923R9ZP4O4CExYosRbe4Bka29Pl4gyE9ntYxlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D+oxbp/z; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716885869; x=1748421869;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ydSlw6qJhZ+PMwAN+v0YFHLkW9KgfIeaM/bmXs0fKWE=;
+  b=D+oxbp/zHSNaCcW/G14acQ3Vx04kHUY7j0AnmJp1E28tr075PwSpy/MJ
+   3ycn0z6xmKJQLVJwG5OKo1I+1B47W3FO2+Sn1vuGM1UTG13xQlTbcvIqi
+   0YEMy6Bx8ipsbvjHAZPnFR7vqxq3XOAL+Ooq2KMufLPP2xHpCNibORoMV
+   M8q8UO6cXAD3xWMJTSdUe/paOWpB6uFyyO1G93wcJdBi8MqDWax5XbUNV
+   HAdf3OLAttFW4+v+Nh3QS3eOnWJ/D/2c5IcSvRikgfYUfJNhI1l785qf/
+   KyJrYOlxj6KpQivxBOlNmRgFvRoxw/dri4YP8YjNJ1cafilrdFcLWT+aB
+   g==;
+X-CSE-ConnectionGUID: 5iPirMN+QqWPz7VXtcrGlg==
+X-CSE-MsgGUID: Y4FuMvhdShWVeXC43CLkjw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24630021"
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="24630021"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 01:44:28 -0700
+X-CSE-ConnectionGUID: mk3Ky/zHTI6B2ny+YzcUzw==
+X-CSE-MsgGUID: Kya+lZSxRjWVQEMQoEJsDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="35059195"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 01:44:27 -0700
+Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 13F9111FA4A;
+	Tue, 28 May 2024 11:44:24 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1sBsRT-00B0jn-3C;
+	Tue, 28 May 2024 11:44:23 +0300
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Genes Lists <lists@sapience.com>
+Cc: linux-kernel@vger.kernel.org,
+	mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl,
+	laurent.pinchart@ideasonboard.com,
+	wentong.wu@intel.com,
+	linux-media@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
+Date: Tue, 28 May 2024 11:44:13 +0300
+Message-Id: <20240528084413.2624435-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
+References: <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] pinctrl: rockchip: add rk3308b SoC support
-To: "=?UTF-8?Q?Heiko_St=C3=BCbner?=" <heiko@sntech.de>, Dmitry Yashin
- <dmt.yashin@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Rob Herring
- <robh@kernel.org>, Jianqun Xu <jay.xu@rock-chips.com>,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240515121634.23945-1-dmt.yashin@gmail.com>
- <81aa0e4e-a3c7-41d1-8cd2-4d060730b37a@gmail.com>
- <20240517085832.365ac878@booty> <4771649.rnE6jSC6OK@diego>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <4771649.rnE6jSC6OK@diego>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 665599456a993415841a589f
 
-On 2024-05-28 10:17, Heiko Stübner wrote:
-> Am Freitag, 17. Mai 2024, 08:58:32 CEST schrieb Luca Ceresoli:
->> Hello Dmitry,
->>
->> On Thu, 16 May 2024 17:06:46 +0500
->> Dmitry Yashin <dmt.yashin@gmail.com> wrote:
->>
->>> Hi Luca,
->>>
->>> On 15.05.24 21:29, Luca Ceresoli wrote:
->>>> I'm skeptical about this being bound to a new DT compatible. As far as I
->>>> know the RK3308 and RK3308B are mostly equivalent, so it looks as the
->>>> pinctrl implementation could be detected at runtime. This would let
->>>> products to be built with either chip version and work on any without
->>>> any DT change.  
->>>
->>>
->>> Thanks for your feedback.
->>>
->>> Indeed, these SoC's have a lot in common, but as I can see the rk3308b
->>> has more blocks, like extra PWM's (rk3308 datasheet 1.5 [0] shows only
->>> 1x PWM 4ch, when rk3308b and rk3308b-s have 3x PWM 4ch), 1-wire and
->>> CAN controller (mentioned in the TRM, but dropped from rk3308b
->>> datasheet for some reason).
->>>
->>> So, in my view, it really makes sense to add rk3308b.dtsi, where extra
->>> PWM's, pinctrl compatible and its pin functions can be moved. And if
->>> its not worth it, then I will try to adapt the entire series to runtime
->>> config based on cpuid like you suggested.
->>
->> Having a rk3308b.dtsi would probably make sense, yes, as there are
->> several differences as you described. However for the pinctrl it seems
->> probably not necessary.
->>
->> I've seen actual products being manufactured with two different RK3308
->> variants in different lots of production, but with the same DT that has
->> rockchip,rk3308-pinctrl in it. Those would need a _selective_ DT
->> upgrade in order to benefit from your changes.
->>
->> And even if a product had always used the B variant, it would need DT
->> upgrade when upgrading to a kernel with your changes. Otherwise with
->> patch 1/3 of this series the pictrl driver would lose many routes after
->> upgrading the kernel (but not the DT): can this lead to
->> previously-working devices to stop working? I think this is a
->> fundamental question to reply.
-> 
-> If things can be runtime-detectable, they should be detected at runtime.
-> So yes, while we need to know that it is a rk3308-something before
-> via the dt, if we can distinguish between the rk3308 variants at runtime
-> we should definitly do so.
+Ignore camera related graph port nodes on Dell XPS 9320. They data in BIOS
+is buggy, just like it is for Dell XPS 9315. The corresponding software
+nodes are created by the ipu-bridge.
 
-The GRF_CHIP_ID reg (0xFF000800) can be used to identify what model is
-used at runtime:
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+Hi,
 
-RK3308: 0xCEA (errata: chip id value is 32'h0cea (32'd3306))
-RK3308B: 0x3308
-RK3308BS: 0x3308C
+Could you test this and see whether it fixes the warning?
 
-Vendor U-Boot make use of this reg to identify what model is running:
-https://github.com/rockchip-linux/u-boot/blob/next-dev/arch/arm/include/asm/arch-rockchip/cpu.h#L68-L82
+The camera might work with this change, too.
 
-I can only validate on real hw that the reg value is 0x3308 for RK3308B.
+- Sakari
 
-Regards,
-Jonas
+ drivers/acpi/mipi-disco-img.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> 
-> Heiko
-> 
+diff --git a/drivers/acpi/mipi-disco-img.c b/drivers/acpi/mipi-disco-img.c
+index d05413a0672a..bf9a5cee32ac 100644
+--- a/drivers/acpi/mipi-disco-img.c
++++ b/drivers/acpi/mipi-disco-img.c
+@@ -732,6 +732,12 @@ static const struct dmi_system_id dmi_ignore_port_nodes[] = {
+ 			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS 9315"),
+ 		},
+ 	},
++	{
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS 9320"),
++		},
++	},
+ 	{ }
+ };
+ 
+-- 
+2.39.2
 
 
