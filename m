@@ -1,250 +1,179 @@
-Return-Path: <linux-kernel+bounces-192898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE29F8D23B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:03:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E152B8D23EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2CB1F245F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE901C24044
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCD0174EC7;
-	Tue, 28 May 2024 19:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C99817B510;
+	Tue, 28 May 2024 19:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dgJpPFWs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GD6cdrQ5"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F03661FFC;
-	Tue, 28 May 2024 19:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A64E178393
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716923012; cv=none; b=sU+xKJvnqsY6xBqKUPXCr+Gar2fwowc58BOmkh9UJnc6NpA4U0RWNcozLIQFChXbC5WU2whAw8IQ72v69UW9uqspkMRF0Yr6W8H7yr4EgdEheRUi7NcGAgpaNj30lUdcbyx2p0NkQNgo540gxhrdav6KClqHk74PngcemTTCvrc=
+	t=1716923037; cv=none; b=SR/cC5uVIJRC2Huz0kYMB9CqX4BH/uA3kBq35KvEufLFKhgnmsKgxkwPY/hq0sbEOoZ1180fQZcixScvX3TnQTyXkO75a7v2WBtCww7h0P5pevi2mgOxL2GLRWDuyW7ZBLGD2dSIJZsDvwVYWs0bizJEAGtUYS2hv2ZiEwpk+VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716923012; c=relaxed/simple;
-	bh=7FWOC9fazDE+VR26EOkpeh2sBHUe3GR4qdzLY785R8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DKglWOGwZhmD4U+bmCoqWePtz1pa9HJIqR4J30MlAmIivjVDj2KpFVbep6ACWYaI/U6Px6kpGzvZQ/VBFHhS3+kCOOZHTxth2NjXoxxpx7V7Grh6A1zb1lrCCGd6DcWk5Ee3mUAt8LqBUr0u+yEhuEdt4UznjS5MamHexkdfO9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dgJpPFWs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7B9781495;
-	Tue, 28 May 2024 21:03:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716923005;
-	bh=7FWOC9fazDE+VR26EOkpeh2sBHUe3GR4qdzLY785R8E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dgJpPFWsKqHZSnN47rx9dSUf9/3AF0nXCiC654JCx/a+JvOiBFqv4nNdgRqBqcFQg
-	 mHLNvCOjm9qyRoLVCJOzOMh7IzAmgvsIn67go3qYQHnUc96MNJxzAbsAJCarNbxxmW
-	 SbZ4BkHUIdOBKDmkeBE51xZEzjxeU+9ypRbXxBjs=
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Cc: Alexandru Ardelean <alexandru.ardelean@analog.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: [PATCH v2 1/4] dt-bindings: Add bindings for the Analog Devices ADP5585
-Date: Tue, 28 May 2024 22:03:11 +0300
-Message-ID: <20240528190315.3865-2-laurent.pinchart@ideasonboard.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
-References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
+	s=arc-20240116; t=1716923037; c=relaxed/simple;
+	bh=oRemnPOX+Y4y6DXbFK5HOZntLeOPfGF7GbKdePpA9zM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bwiUg1zG72QBZ+sGEP35ygIazVVHookuYOAg4KlHmjJRvYRhGnhEysJkbPL4Ege8Wglg2wbCnebTAOQEFrPi5p4xZh24ETMusD17TME9gr5yrFlcFZ7MAy2wc7LQwHw81GuBA+jFox1IDQadHlZKpOUDLlpoAfnrJ3Ph1hx2CXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GD6cdrQ5; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4211e42e362so10012895e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716923031; x=1717527831; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PcKhaZF/3m76T8k+V6gAZs7oJGtFN6fcRMmIkblBf4U=;
+        b=GD6cdrQ5pjCcjQJqedR3bws6y9/Dy5jGuQLY9Io1enNIIDjVnd1qs1qwxAsqJPYLvT
+         mPfdsSXNVz34tM1J7ET9s0tIztkzOaGmhspf8caS62NeQ3SHuaUl0iVBtSl7KcvYnUMS
+         rqBAcm/8wzQQD5NWi6POtW+Q11kUrqcXK4KNzqXu/ZVlNLTLnjFtnWixQ3lbw2cA4NkO
+         C9vu1lWSzr3jM0zNZkpxjX1bua/FVRWYG+5aLSMR87UAOEdWjQg7SUtBENZZNiHGUgb0
+         pHT87nZbEZqzwMJXh1mdq1RnnxkVnzPUgFnNTA+oiLVOWgTxMtkNkJDzzcDRzHMlS5YP
+         2dEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716923031; x=1717527831;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PcKhaZF/3m76T8k+V6gAZs7oJGtFN6fcRMmIkblBf4U=;
+        b=Xkr0/xCFUd47dksWiAURFr3KNt5C6/YalLrF4b2VYXqKNoWIUGn++EnLR/7dEmPsfb
+         nkRaV1vg/NUi7+twmNpeFXZZSlXbGk5voXGpnfKY2GC1diLMmncXIWOgia/JKglDTffv
+         +KefhybXyP1EU0C+ILgjZMXcyjExvlxYGNsIdkbVHLGosrshqYcAwBAHMXTgDP8hU+1q
+         fYgdQxF9wmYdv6cSsoOEdgIIeM2aNhWb1SXptUHqo98M4APAN1Q4MMkm8ct9YCn1VF86
+         4KaWHc6sbEbcjNke7LOm/UgwNnH4s92dj9svlttbP5eDrz5Ec9ger90bHJ/Twu/hsBKk
+         fx4g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9xu1OdlEO3U2xuWkr+HWX6qNkdxVQig0As+QelhRa2nArrL92ZvRdXPzSoGD50HQrhRNaBs0tvY/7/EOjVtEpTwIvdvImCntBeAke
+X-Gm-Message-State: AOJu0YxL+qskvgjD+pHHV5FKhsY857IMeSaMyzxk95DqMd3f1bzniUMY
+	CM8dK88Fo39KiX4aKM/ue3WLdit48vo7ov9ZJ/hNYvkQo8Nw594+eiVl9iso19c=
+X-Google-Smtp-Source: AGHT+IF/dKVBXTZg7FRNE2nApY7BnYC/zWCFxSOBmiuzEJpp4OoVNhdMhJz26eWOi6yugTJBEg9vIQ==
+X-Received: by 2002:a05:600c:1381:b0:41f:b0e7:f299 with SMTP id 5b1f17b1804b1-42108a59292mr87164795e9.9.1716923031568;
+        Tue, 28 May 2024 12:03:51 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:93eb:927a:e851:8a2f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee954bsm183895415e9.4.2024.05.28.12.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 12:03:51 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 28 May 2024 21:03:11 +0200
+Subject: [PATCH v8 03/17] dt-bindings: net: bluetooth: qualcomm: describe
+ regulators for QCA6390
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240528-pwrseq-v8-3-d354d52b763c@linaro.org>
+References: <20240528-pwrseq-v8-0-d354d52b763c@linaro.org>
+In-Reply-To: <20240528-pwrseq-v8-0-d354d52b763c@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, 
+ Rocky Liao <quic_rjliao@quicinc.com>, Kalle Valo <kvalo@kernel.org>, 
+ Jeff Johnson <jjohnson@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Elliot Berman <quic_eberman@quicinc.com>, 
+ Caleb Connolly <caleb.connolly@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Alex Elder <elder@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ ath11k@lists.infradead.org, Jeff Johnson <quic_jjohnson@quicinc.com>, 
+ ath12k@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-pci@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1539;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=hux33j/WCCoK4y0/gy30fq+au9a8XJPG6iF4mQD3wuY=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmViqMAIW27hbwtUHKtDlPKtGzwQfx8XB4FdKGP
+ UwHo+RxVieJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlYqjAAKCRARpy6gFHHX
+ cqJ6EACvM49sa2TtM8BCIBqDJ8xsKyv9TAVs0UGYuVEvXoITLzjg3SFZmBLQipM4vrsnINwSrp0
+ ggtbDdNjk/cV5MtOkioi25AkPss61r6G8TLGZbbweugEKxzAkgzuqIOUF46FKVjcuIDh9/WDZNg
+ f9SzmUHw0TtIxRR+Yigj/atgNMCxESXAUegJ/IIcIWwGR4tUBE5bPbH9epEblv400NMIFqf/X4Q
+ oR+X7Gg9Hf0cWY00tODNlEckxN/9DRl0EsA3ZNPFjBmkedks65/F48uX3nfAj3HpSiZ0RDm2cKm
+ sXLxqXP4b61rPKTcf9SQ5eqEP1bOWY0jJOEoIc6y/SjH+o0Btx9pKO8cCvL69Eapx7Fzs9D8Pr+
+ NdLfzvmslXYNfc8PGPFXGDs/Pb8qcBjr2p6nqL/wRSAEyRaS2MPjmZ6sTtMTlAl8iQXW9yHUcTz
+ fnRWy4apTTWT9HFN8K5B0Lrpi41cNiXWFYWDtU4SEV0uRsOw3ydCA3rd1ernAkCRVWHjaCqTO8s
+ jwSUpAKYUVSnvNrcAAsyLN2EtxpfdOXBDLejdFtuiVZYow1zb+wGnLGV3vbbUfTy4FSfkY/pfcC
+ qCnjp9eTFegybj3kI/PfnfBTRgUnC0dgsYw9aF0W9bcxZhVGyAGQONdqntO90LRZa40f4yhwpEK
+ 50NWrd07iIfsQkg==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-The ADP5585 is a 10/11 input/output port expander with a built in keypad
-matrix decoder, programmable logic, reset generator, and PWM generator.
-These bindings model the device as an MFD, and support the GPIO expander
-and PWM functions.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-These bindings support the GPIO and PWM functions.
+QCA6390 has a compatible listed in the bindings but is missing the
+regulators description. Add the missing supply property and list the
+required ones in the allOf section.
 
-Drop the existing adi,adp5585 and adi,adp5585-02 compatible strings from
-trivial-devices.yaml. They have been added there by mistake as the
-driver that was submitted at the same time used different compatible
-strings. We can take them over safely.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-I've limited the bindings to GPIO and PWM as I lack hardware to design,
-implement and test the rest of the features the chip supports.
+ .../bindings/net/bluetooth/qualcomm-bluetooth.yaml      | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Changes since v1:
-
-- Squash "dt-bindings: trivial-devices: Drop adi,adp5585 and
-  adi,adp5585-02" into this patch
-- Merge child nodes into parent node
----
- .../devicetree/bindings/mfd/adi,adp5585.yaml  | 107 ++++++++++++++++++
- .../devicetree/bindings/trivial-devices.yaml  |   4 -
- MAINTAINERS                                   |   7 ++
- 3 files changed, 114 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-
-diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-new file mode 100644
-index 000000000000..45bbfadbb9d0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-@@ -0,0 +1,107 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+index 055a3351880b..48ac9f10ef05 100644
+--- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
++++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+@@ -62,6 +62,9 @@ properties:
+   vdddig-supply:
+     description: VDD_DIG supply regulator handle
+ 
++  vddbtcmx-supply:
++    description: VDD_BT_CMX supply regulator handle
 +
-+title: Analog Devices ADP5585 Keypad Decoder and I/O Expansion
-+
-+maintainers:
-+  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+
-+description:
-+  The ADP5585 is a 10/11 input/output port expander with a built in keypad
-+  matrix decoder, programmable logic, reset generator, and PWM generator.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - adi,adp5585-00  # Default
-+          - adi,adp5585-01  # 11 GPIOs
-+          - adi,adp5585-02  # No pull-up resistors by default on special pins
-+          - adi,adp5585-03  # Alternate I2C address
-+          - adi,adp5585-04  # Pull-down resistors on all pins by default
-+      - const: adi,adp5585
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  vdd-supply: true
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  gpio-reserved-ranges: true
-+
-+  "#pwm-cells":
-+    const: 3
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - "#pwm-cells"
-+
-+allOf:
+   vddbtcxmx-supply:
+     description: VDD_BT_CXMX supply regulator handle
+ 
+@@ -184,6 +187,20 @@ allOf:
+         - vddrfa0p8-supply
+         - vddrfa1p2-supply
+         - vddrfa1p9-supply
 +  - if:
 +      properties:
 +        compatible:
 +          contains:
-+            const: adi,adp5585-01
++            enum:
++              - qcom,qca6390-bt
 +    then:
-+      properties:
-+        gpio-reserved-ranges: false
-+    else:
-+      properties:
-+        gpio-reserved-ranges:
-+          items:
-+            - const: 5
-+            - const: 1
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        mfd@34 {
-+            compatible = "adi,adp5585-00", "adi,adp5585";
-+            reg = <0x34>;
-+
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-reserved-ranges = <5 1>;
-+
-+            #pwm-cells = <3>;
-+        };
-+    };
-+
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        mfd@34 {
-+            compatible = "adi,adp5585-01", "adi,adp5585";
-+            reg = <0x34>;
-+
-+            vdd-supply = <&reg_3v3>;
-+
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+
-+            #pwm-cells = <3>;
-+        };
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 0a419453d183..91e62df4b296 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -39,10 +39,6 @@ properties:
-             # AD5110 - Nonvolatile Digital Potentiometer
-           - adi,ad5110
-             # Analog Devices ADP5585 Keypad Decoder and I/O Expansion
--          - adi,adp5585
--            # Analog Devices ADP5585 Keypad Decoder and I/O Expansion with support for Row5
--          - adi,adp5585-02
--            # Analog Devices ADP5589 Keypad Decoder and I/O Expansion
-           - adi,adp5589
-             # Analog Devices LT7182S Dual Channel 6A, 20V PolyPhase Step-Down Silent Switcher
-           - adi,lt7182s
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..3016b003ead3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -526,6 +526,13 @@ F:	drivers/leds/leds-adp5520.c
- F:	drivers/mfd/adp5520.c
- F:	drivers/video/backlight/adp5520_bl.c
++      required:
++        - vddrfacmn-supply
++        - vddaon-supply
++        - vddbtcmx-supply
++        - vddrfa0p8-supply
++        - vddrfa1p2-supply
++        - vddrfa1p7-supply
  
-+ADP5585 GPIO EXPANDER, PWM AND KEYPAD CONTROLLER DRIVER
-+M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+L:	linux-gpio@vger.kernel.org
-+L:	linux-pwm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/*/adi,adp5585*.yaml
-+
- ADP5588 QWERTY KEYPAD AND IO EXPANDER DRIVER (ADP5588/ADP5587)
- M:	Michael Hennerich <michael.hennerich@analog.com>
- S:	Supported
--- 
-Regards,
+ examples:
+   - |
 
-Laurent Pinchart
+-- 
+2.43.0
 
 
