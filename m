@@ -1,145 +1,92 @@
-Return-Path: <linux-kernel+bounces-192437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027ED8D1D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F78E8D1D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8888F1F22AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:39:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0371C21802
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCDA16F274;
-	Tue, 28 May 2024 13:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA62C16F289;
+	Tue, 28 May 2024 13:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c59oImeF"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vlybEr0m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dTyxuErG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9C817C7F;
-	Tue, 28 May 2024 13:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C183B17C7F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903560; cv=none; b=amMSD0SDAW5zOPBv7uoCJLqYNg8uiRVVb0mfyZXHJVME+2YsEC/3I15pCrCaunSZ2EWkFbWU6A9herUzj30sKApX4CaEhFf/IjYcOVQs9zt6YwtcG9Sp06G+If6U53PaLrBnQajBFwg2wf5CHeir/lBxplwwfuQlkeen/u/om1M=
+	t=1716903633; cv=none; b=p1zJC4rc9nO9zCe5OQBxd69yxMOioWv5OjXzVLrJWr10+7sbqKtwVoSmJQ7Kcy6iX2k7W6kLyv+yZdlbU52JviQn4zsl94gK4J3evIAiQBieaFhKos2u9CBdGRS0utanmInSvEDtNTPAMe9hdbNW0uGiRZmWlUG6xbvNgLnGzf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903560; c=relaxed/simple;
-	bh=2jNHHISgzmmu0HWBMmKiL9K/6wMcr5DAtI7972qMwHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KID8YL1uBp3KRHk+rrR9BnkVSuDmpkFA32ZRUx23P0nRm+nj4mNiZaPv6QDEnCLwf8PKxU4SJdUd+bAYW2NIC8R1iszIAn3zczL5whUpkEoDSEuR2ZwqV+rkLTHbckvJy3hAycPlZI4Sbk/hBGDcsikZ/+XOnc2aOaNhugK3ZaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c59oImeF; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2bfdae0b0e0so668098a91.0;
-        Tue, 28 May 2024 06:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716903559; x=1717508359; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=bj3R4EjF1QBZQsUr1Xs3RRu1us8jqj+uTGgy2dREVMs=;
-        b=c59oImeFm2OlURsNR5ffl5RUcsr0cP1HIGX763RVsD69lZElnVbio13JMCqAJMWeRv
-         UeIF6eWOyu8TIAUBVY+6VmIsc2Bpq+khsI+vtPYc5gjLvvVMAANVVO6zrk3R0gqjhbNF
-         7nmWnnuWiHb2rBtwH8zag7kq9iitLeErmt7yl4LvLsraEbTPIpWI0hxIKRysA8B3oWtg
-         F0wz3gERux5QftYmmfxqmsCN6bdFul5scWG57DQfizRU9QqhJNfGpSO31coUbPPSjI1s
-         m+DWhvMVK88FI0kqja5yumQGivA/0xQOsxmBqumnQHyF5ufYG1m3tgQEMzeL6VF3Q/db
-         CsMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716903559; x=1717508359;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bj3R4EjF1QBZQsUr1Xs3RRu1us8jqj+uTGgy2dREVMs=;
-        b=KZ0LcfXVpAywTcrL2Zel704IXpZZ0AqshNKB+ihzO2EpZFcj4jpSXFrwE55Ij2Fc4A
-         OeR61cw3F4IKFANMUghY9y+4EV+hKkmZ5jD8GwdixATTB/ku2otPw2OlRZdFEi9+Rfs1
-         uTZu4RRqQVzXx5crWPPR4GaSWDB5fmeiRnlvCFFmvAZ+IcjFb1QrCdKFYUhwtmnDQs5Z
-         CSTmpvy8QFBZt48VwZVz67eoKSjYprzmjEcFcoyZB87+iX7QiqXErzdoYPkGbCqCPFik
-         ZR6UYfcRIW7IIINthKiSu8YcZNV2KmEFQLHy8EASBHdezSI3HPLuuTS42huOJEvCQPml
-         V4xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvcu+CabCU8pEvqKaDTuVZoEihbNaDjSsGYWgWHRJi25QgUT93q7PLnEclJuN5v/IBDZmAH5DreNAh59qTOQA7RB2o3Fe8cRhdJMJ0YH+1kWa23JidtEx6PAF++Sy0kMnd0336Rgnmyg==
-X-Gm-Message-State: AOJu0YxS032zTEzcTnee7Di8hZP7hfAY4h3gagpw5rabAQRI2+zcpCf7
-	h82ln5DrwxBzeO8bsLZLsSCJTX8w+sZQXIgYOzyzKNNzSC7OQrsL
-X-Google-Smtp-Source: AGHT+IE8o+1r68USlRRObYRtI5TudUiQHWTg1gXqG5SSOD67c8BUFUq+LpehdJeJzxBj605tSHyDUg==
-X-Received: by 2002:a17:90a:e00e:b0:2bd:d42a:fef7 with SMTP id 98e67ed59e1d1-2bf5f74e008mr10542755a91.35.1716903558546;
-        Tue, 28 May 2024 06:39:18 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bfb0d2e35fsm4635348a91.15.2024.05.28.06.39.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 06:39:18 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <729e0b91-b7f3-4adc-8621-29a4b14bea1e@roeck-us.net>
-Date: Tue, 28 May 2024 06:39:16 -0700
+	s=arc-20240116; t=1716903633; c=relaxed/simple;
+	bh=jCsWH/d8W7fB3e1UAVqtUFoeOTBe4TZO8l/pIk2nA4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jADJ7XXntD7uEEoFQ8bIGqsNF1F3l5PsWStA/TmZIyo8Wm10sAYhKVFtsXc/Hhjxl5JTXi2p3u1CIUJE06zfs3sJb7v1/Mf7KFq6pv3ZHPtFPF5IYxhbXkEkok4OTuaFQ0SealnztzrR13j54AVd0oufqckDcLm702cGOSzfDxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vlybEr0m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dTyxuErG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 28 May 2024 15:40:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716903628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AAVkJCXJ4dkn+VlJdVdki+iHlel2IgcpuHOJvEpfZzg=;
+	b=vlybEr0mhOc2+ZEjIFHVBhIOrIA9J0OSOvh7I69CVsMFLfXDR43kB82+V3m5RNAwnwKqvD
+	36srCUHqDfoIJGt6PHbUrB2MCLU/o3miqCWr6GUzHhtFUUk8iTF+hJ16Mngnod1X/Wz+0y
+	ldkRBtgs1GmlHQPzbvg2BDt7u/H3Sa1JVAXB3f4nnobJEnRHpPXO0b9cL6VDelUidNxJoA
+	tsQa7mrOOvnCojzK85mgPnqIgoL/05JsKSfgMP2r6m5j74xstw2jmaUF2E4AOIFEnWTJeK
+	rDPNZM1mfboBQDzpBuZHBkUIdhOnBpfmg86gGkVYw3jnO0JiVcZMxQs6y2GGcg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716903628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AAVkJCXJ4dkn+VlJdVdki+iHlel2IgcpuHOJvEpfZzg=;
+	b=dTyxuErG1eKdw5YDua9/Tanb4X6kCsKzP391CYzeNj2f4YmUdOKv4ExWTvhdVBzwgfpkCt
+	TFrGd6BDWgp638CQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] memcg: Remove the lockdep assert from
+ __mod_objcg_mlstate().
+Message-ID: <20240528134027.OxDASsS3@linutronix.de>
+References: <20240528121928.i-Gu7Jvg@linutronix.de>
+ <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: watchdog: img,pdc-wdt: Convert to
- dtschema
-To: Shresth Prasad <shresthprasad7@gmail.com>, wim@linux-watchdog.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- javier.carrasco.cruz@gmail.com, Shresth Prasad <shrestprasad7@gmail.com>
-References: <20240527195811.7897-2-shresthprasad7@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240527195811.7897-2-shresthprasad7@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
 
-On 5/27/24 12:58, Shresth Prasad wrote:
-> Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
-> for validation.
+On 2024-05-28 14:34:55 [+0200], Vlastimil Babka (SUSE) wrote:
+> > The safety of the counter update is already ensured by
+> > VM_WARN_ON_IRQS_ENABLED() which is part of memcg_stats_lock() and does
+> > not require yet another check.
 > 
-> Signed-off-by: Shresth Prasad <shrestprasad7@gmail.com>
+> I think here it's __mod_memcg_lruvec_state() doing the VM_WARN_ON_ as we
+> don't go through memcg_stats_lock()?
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+It is either VM_WARN_ON_IRQS_ENABLED() directly as in
+__mod_memcg_lruvec_state() (which is special) or memcg_stats_lock().
 
+Do you want me to rephrase this part?
+
+Sebastian
 
