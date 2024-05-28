@@ -1,140 +1,117 @@
-Return-Path: <linux-kernel+bounces-192499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D43A8D1E19
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CB58D1E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CEB31C22C52
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C216D28539F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DDD16F83D;
-	Tue, 28 May 2024 14:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C287C16F82F;
+	Tue, 28 May 2024 14:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GgmwOqsT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CwEh34Lk"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3A316F277;
-	Tue, 28 May 2024 14:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA7B16F277
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905490; cv=none; b=RYIIH7Ox+IPOqtmZiInOcwh6tbTOLA/gfn3T/s+Df73YaVYnefrxPKh/XcGUX9n9OiGJT6D6OdDqoBdgvgEGmLWMe9wnOkmyMoAmOPG4Eor8YqY6KfdWcz+X3kzPIezuFD5iG7U5OnktHxo4f5oR2ZMgxwqtVSQIFtBigpmnCf4=
+	t=1716905548; cv=none; b=G6SrV52afrPw36IcG+DsdAOxW9P+5tTAWDwMyXcq17Jv8whIlMmEx2g0f9V/VucskXHBnXnYwqOpkcmMKsxnEW4zXB85+Yv4jH3+io5nUFVKpTezuVMZaXPbPXyBzY0HBf6G6N+lN37OAAiuyueeTBEwL6xQ1QMK6nShiDrMeLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905490; c=relaxed/simple;
-	bh=Wh4U9HaJpeOcnxWvaHFBS0Mk9WgABPGCjn/FVN+gqy8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mU8YD/kTm8DozVqt4rKkERPeEZLad6i4FfhtpjompJFyHB8tZZJWIgiPyChOQOIvQg73ZAHqShifxHfMjH4aHz4jZol5SNF/cK3NR4oUrv2ZAIvE8P7CDHa8wYz//IRmti9jXjHOvssCPGedWlBliMx/CncJnlj+tGhmYazuD6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GgmwOqsT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBG8ub006307;
-	Tue, 28 May 2024 14:11:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xt8AOuLuReTHWwWuia3CRpLS
-	kbzClAGe5UmAniUT+PY=; b=GgmwOqsT++6fSlvaARvQKpNblyp+80muxPNq2WnJ
-	4jhxJm0N8yVA7w2vXQXKE7mUXgLzsPjm3P7Pbi/W2WdbWTevFLK3D1Fc6zhtjOd3
-	4BaWNQPQx64DTuWRgjehm8WmkV7f7Gm8gF8AWWabl7e2VsTunq9854HBL6t6OFHM
-	0pqeHe8qxPJvwB5pZhvKy8Km63AVZjxLYaooK4g43fwNf/8ZWK0AUbgXzi35YMVp
-	x4WAxHs6INZZbiBRGYC055eCqPA6uS6y4//u2y21tg31TWZPHaWz0SIh4V0zk2GS
-	tl8ufHPPN6dqDqakgyTVccY4wC1s6mW383l6WIrL7yi5pA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0pp76h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 14:11:22 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SEBLmx009088
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 14:11:21 GMT
-Received: from hu-vvalluru-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 28 May 2024 07:11:17 -0700
-Date: Tue, 28 May 2024 19:41:13 +0530
-From: Prahlad Valluru <quic_vvalluru@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: "Rob Herring (Arm)" <robh@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nankam@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <quic_abhinavk@quicinc.com>,
-        <konrad.dybcio@linaro.org>, <conor+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
-Message-ID: <20240528141113.GA6631@hu-vvalluru-hyd.qualcomm.com>
-References: <171405653305.2527744.3813895380659072690.robh@kernel.org>
- <20240426142442.7769-1-quic_vvalluru@quicinc.com>
- <jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc>
- <171517823376.1753082.4070659246393696781.robh@kernel.org>
- <20240515150459.GA32547@hu-vvalluru-hyd.qualcomm.com>
- <CAA8EJpo=Q4_=JU83-9ooSqiSr=xUeHh2awDhzq9q3Xd56h83zw@mail.gmail.com>
+	s=arc-20240116; t=1716905548; c=relaxed/simple;
+	bh=L7ojHEkPpJXwIpmwABRLu3WqdrWNoFsIlzOc1775n4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IHwNDttDcnoDtav9ghps0IGe1V8t2MG0ieuOjo1IN5LanohTiIvT8oXVQ9pYU42K+CRYC27lQopViw+G+1dCFL1jKwRQCgJMeaSzQkuct9/R6lqCmLQZTPK20Vj3D/RHmhHXLWk9yYcLwL+Wh6g9jwW/d7WXM44tnWNchpAQzCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CwEh34Lk; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f4a52b94c3so7850145ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716905546; x=1717510346; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nzuk/A/LDTekVmucccKhiVtGzJSwoK5rWUuC5nM9gSY=;
+        b=CwEh34LkV1Q3f8YlKSohhQM9TBQfQGJok/BhPsGKRGtI48EapiKMgaY4quT/79J+DQ
+         V56OWmn9cmSuDhIBgkD3sT/Jch8Hr3N+wh93YHvb2yHJScFBExeUgnJxUVFDb/2vhbQI
+         OZhx0wnvO51sRC9/7jckOCCnmYgAa5KvfvoI4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716905546; x=1717510346;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nzuk/A/LDTekVmucccKhiVtGzJSwoK5rWUuC5nM9gSY=;
+        b=IDWQCW+e6z+OyohAnR2JPf/B3r0cQLYFxLX+EOt0/EKwUHFyVXfDLGo2rGgvpdvm6B
+         zmc8V9XJZv+bXuGVG6RrkTYr5knvf+88xLdVMIgaMCzTMWiQwHhfr4FpCwpEAZrL5AXL
+         oSf3QiPhgG4VkuxGBcUvywJy4HZrBrX0o7Nd6Urr/Wugq5nGLAaaT4EyHASdk4jd1f9u
+         chPEKH0TBN6laXUZ1rvxdcxbnktphoaHawlhcUxMUh/ONkrRr+wtIquvB/hWdFEUo+R+
+         BxSiP5MPiuxoOjngkeszjq3BGuzOnrYGM+rEmZPbgxALgUEjywmDxBumubRQk53JWBo4
+         oMoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgIhfgKm7HQiVnjNFgOGUhN0Rntc637FVtg7gA27vJxSBaoLEhcQZ1se0HWs/yzykUrdagr6tgesl3DgmJjRVmGkXDdYVb3VLyJK3K
+X-Gm-Message-State: AOJu0Yxv6nXh39g7nPR8TVJVx+91LvXH0+XIRmBgwCxTAmxudnbOUpBb
+	3VitU63qPjB8NEyHdwlUJ7FoL5+zzqBgbneL0xnjaXiOdm1d+Mjs9GmTt5T30g==
+X-Google-Smtp-Source: AGHT+IGq2Ds3m0hTxoYo8DC9tg/dA1K51TXxuSsGl6i4q1RywM8QvwUmEyVSYF/f1J6pen3F1Uf0fQ==
+X-Received: by 2002:a17:902:ce92:b0:1f4:9308:2ddb with SMTP id d9443c01a7336-1f493083073mr67439795ad.59.1716905545979;
+        Tue, 28 May 2024 07:12:25 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:95f4:6142:6041:6962])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9dd375sm80461445ad.288.2024.05.28.07.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 07:12:25 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Justin Stitt <justinstitt@google.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	kgdb-bugreport@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kdb: Use the passed prompt in kdb_position_cursor()
+Date: Tue, 28 May 2024 07:11:48 -0700
+Message-ID: <20240528071144.1.I0feb49839c6b6f4f2c4bf34764f5e95de3f55a66@changeid>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpo=Q4_=JU83-9ooSqiSr=xUeHh2awDhzq9q3Xd56h83zw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tHUTAAmDNPkyw3QWt4vZhox7tg88BLeY
-X-Proofpoint-GUID: tHUTAAmDNPkyw3QWt4vZhox7tg88BLeY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- suspectscore=0 clxscore=1011 lowpriorityscore=0 priorityscore=1501
- mlxscore=0 spamscore=0 adultscore=0 phishscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280107
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 15, 2024 at 05:28:24PM +0200, Dmitry Baryshkov wrote:
-> On Wed, 15 May 2024 at 17:05, Prahlad Valluru <quic_vvalluru@quicinc.com> wrote:
-> >
-> > On Wed, May 08, 2024 at 09:31:24AM -0500, Rob Herring (Arm) wrote:
-> > >
-> > > On Mon, 06 May 2024 18:14:10 -0500, Bjorn Andersson wrote:
-> > > > On Fri, Apr 26, 2024 at 07:54:42PM GMT, Prahlad Valluru wrote:
-> > > > > From: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
-> > > > >
-> > > >
-> > > > Please don't thread new versions off existing version. b4 helps you with
-> > > > getting these things right, please check go/upstream for more details.
-> > > >
-> > > > > Enable lt9611uxc bridge for qcs6490 rb3 gen2 platform.
-> > > > >
-> > > >
-> > > > Even if it's clear what this is, I would prefer if you described the
-> > > > hardware a little bit in your commit message.
-> > > > "Rb3Gen2 has a HDMI connector, connected to DSI via a LT on i2cX.... reset and
-> > > > irq pins comes from x and y. Describe this."
-> > > >
-> > > > > Signed-off-by: Prahlad Valluru <quic_vvalluru@quicinc.com>
-> > > > > ---
-> > > > > v2: Addressed dtschema errors
-> > > > >   - Fixed lt9611-irq
-> > > > >   - vdd-supply error to be ignored, as it is connected to
-> > > > >     input supply directly, on rb3gen2
-> > >
-> > > The choice is either fix the dts or fix the binding.
-> >
-> > vdd-supply is mandatory for lt9611. Only in case of rb3gen2, we are seeing this
-> > error, since it is connected to supply directly. Will add dummy vreg to address this.
-> 
-> s/add dummy vreg/describe fixed hardware register/
-True, will define a fixed regulator for vdd.
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
+The function kdb_position_cursor() takes in a "prompt" parameter but
+never uses it. This doesn't _really_ matter since all current callers
+of the function pass the same value and it's a global variable, but
+it's a bit ugly. Let's clean it up.
+
+Found by code inspection. This patch is expected to functionally be a
+no-op.
+
+Fixes: 09b35989421d ("kdb: Use format-strings rather than '\0' injection in kdb_read()")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+ kernel/debug/kdb/kdb_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+index 3131334d7a81..8e98446564a9 100644
+--- a/kernel/debug/kdb/kdb_io.c
++++ b/kernel/debug/kdb/kdb_io.c
+@@ -206,7 +206,7 @@ char kdb_getchar(void)
+  */
+ static void kdb_position_cursor(char *prompt, char *buffer, char *cp)
+ {
+-	kdb_printf("\r%s", kdb_prompt_str);
++	kdb_printf("\r%s", prompt);
+ 	if (cp > buffer)
+ 		kdb_printf("%.*s", (int)(cp - buffer), buffer);
+ }
+-- 
+2.45.1.288.g0e0cd299f1-goog
+
 
