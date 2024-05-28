@@ -1,195 +1,171 @@
-Return-Path: <linux-kernel+bounces-192971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E8C8D2514
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:46:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F428D2518
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E70284B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:46:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5920D1C2350E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4F9179654;
-	Tue, 28 May 2024 19:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD93D176FB8;
+	Tue, 28 May 2024 19:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUH3YT0r"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPBpC5w/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC3C2E639;
-	Tue, 28 May 2024 19:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C22176FB3;
+	Tue, 28 May 2024 19:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716925420; cv=none; b=hZvDsGo1QDK9WpI0Q1e0C6rPu34KYxoNaXCY5pHFRx21TOa2u4Kl+esD/HhKT6F++O1id7jMrh3kqtBuxQHTtl1Eaffc0ZDrzGyTxnelYD9ySPd0miuvW2qCMM9VjhYnXLEIEBBcFqvI4jw03gm22nvu2GTqQbp944QNFv8pRDA=
+	t=1716925468; cv=none; b=VAW+w7IHS1xnBX0Rc5l2XsLAr38Jijiwhi4Fh2X96MSB5NrnBOAdLix+NCMAEMbdrOjddCEhM5+a1QDBouxXz0Vah11DbAXOFefMiBXqg2lvsUCkx0VwhB+2q11JkIIwXe7WEXfGkAUA5Ax1FRm/l1FAQLpREFYGRU8Eqnnj52E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716925420; c=relaxed/simple;
-	bh=vMgVK30cNI3c6myI3dh/lKotl174su6ZxGyEzgBQDMU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p1JFWh4kMeXCMVd6ffvudI7ZzuI+0n2muvd1krkhCxj2TPzLJqdmQfTQjq+gcSEb+IzkC4YauiwIam5WGhUT5RY1TM2j4masoD1gEdMk2gZWzYPdUyAqNOgUJP45OxoOVc23uE4ogujdPqq1ttQ3/13Pyq7jLGzBQGAab3SU+TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUH3YT0r; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4211245e889so9812885e9.2;
-        Tue, 28 May 2024 12:43:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716925417; x=1717530217; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOgU5Pv9vLAMtMzfb5HowXi9zg9SbrF3W9s32WW+p8M=;
-        b=lUH3YT0ra3bgsk3/+kcZYnutDziZInGnWMzBT0z3Sz5DKf1fF/kETEmOnCvFJqlmDZ
-         ak53rZJ1AWhkTYC1e1RTejCifgkw7a4Dmvf+2enYbx6kh8gyqcdilwhuwZe/iKqkLeyh
-         VhFL68Qw1YEv8Xrvs4ywnZ6e+zVtCSDo7fEbC18NgrPtsD8y97wrhT++sXZ8PtrJkawG
-         R5ccJ9vdWxHudg0cncvMtl0gABh9l1NPwEbC94QEoxnUUNtNSFebyg35RUjhbeerkRVA
-         xZA3Ab6F5Cfe/uiUaEVRzzIF2PjGePQ6xLMZHsgWkXYwxbF+n9ml1bgGOj7pD7zH366Z
-         Tzug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716925417; x=1717530217;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gOgU5Pv9vLAMtMzfb5HowXi9zg9SbrF3W9s32WW+p8M=;
-        b=JBVuEH6PDOehtX5KeTpHC3/GpaJp8MLSO4Fi4VxVE8Uz1cyfxiQQcY29QGSWGTrPUb
-         gCpV/WYMI6mhV4Gd66Dr2QzpSso7w09HGZHa7wbVjIWacon8rknRlL2ventzWWMMu8wY
-         ICKbdcRNrpAoAg8adhURMMZXl9QBJGygxU+e5qOkGNFo+uOlAXyhnblAWFixQQZ6nuGY
-         VMUg9l2lnUMZwVdY59vYELZQ8kAiOI4UOVQV3DN3V8vPS7UYn93wmsVFTLgb9jh9PVDr
-         Rmyt8bpyo6KJmZqmh1LXOGVuysJa3O7lt01qg37Z2LHohBuG/1i2M6jqpNw03h8f83Tf
-         SOHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrlU2oKRvsfzDnhsBNsS/8E/zUQLbxQCzCe0Pbik6uKJ7otfnzf4kL5Hf/Nf+LAjAUHZ4f7gWzvY+SqC5L8JkDYFf6IO6ArMSx9Tar
-X-Gm-Message-State: AOJu0YzrPAoyoWj63Nwu5uYXYOIABZMyjrBGqmWpNVZxZe4y9AatMJt/
-	XkcqtYtZuta/ZdJYVnD0zLc0d1MdEV4JQ2yjHXE+4F+YXXTjLHnr
-X-Google-Smtp-Source: AGHT+IGKbSgiilhOSBJxmKHEzGKuWzqlCk3N/VsqD/9S1jtOwU/1lBz6xW1FQ1871m5BxQiTTa4Fng==
-X-Received: by 2002:a7b:ce18:0:b0:420:18e9:86d5 with SMTP id 5b1f17b1804b1-421089f8242mr107646795e9.10.1716925416880;
-        Tue, 28 May 2024 12:43:36 -0700 (PDT)
-Received: from [192.168.1.130] (BC249212.unconfigured.pool.telekom.hu. [188.36.146.18])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f134cesm183709915e9.18.2024.05.28.12.43.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 12:43:36 -0700 (PDT)
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Date: Tue, 28 May 2024 21:43:30 +0200
-Subject: [PATCH] drm/msm/adreno: Add A306A support
+	s=arc-20240116; t=1716925468; c=relaxed/simple;
+	bh=Zfpe/d8xujPU7oFPiM38uFfQeSG19WZQPyurGbXN1iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vejc04JFb2GmoFv36x3rjDA9rCyyQK8FAMqDjTHdqqYCb+6qkt7BGZ6gWvW3aXkmRNUcQhdisr1mu9ItQB2GsvaOZ7c2WpSBYXPukMknhMPURnlO1F58fxYX1d4/Vz5XSE1zo+hzhuITrvAzungJUgI5GVSAn6dEnUpqnDQOYuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPBpC5w/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EB8C3277B;
+	Tue, 28 May 2024 19:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716925467;
+	bh=Zfpe/d8xujPU7oFPiM38uFfQeSG19WZQPyurGbXN1iw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GPBpC5w/6VJV4uYhhO3Dc+esqjymfBN15mZb2EoVmTruGX5nh08bBw083PiCe/TZ6
+	 LUL6jaSOp4QbmQqdJkQwlL9lVDgilYZPNyj9Hfa/h8yM/wAO0LC+JTRbhF5JuFsPzv
+	 eEqSh95iFGbhLzxLxcijieemySz2dVsZDnbpC+IV582KjcT/lmZFZciCbCJZO6+8j1
+	 fEbjk+2wBuvSkxQOGQiOCcceR/7pKVeKc/ixtwBI1CcwfQS0V83rnw40u2d0D0vRlE
+	 MtoF6Ddth0YeAyoUomKVNYmKvGuTkB8wHyPXm1MLQqy9muV0X0w5my3J5wePfBKmW5
+	 vgR1uG/y0eUqg==
+Date: Tue, 28 May 2024 16:44:23 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Leo Yan <leo.yan@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
+ PMUs
+Message-ID: <ZlY0F_lmB37g10OK@x1>
+References: <20240525152927.665498-1-irogers@google.com>
+ <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
+ <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
+ <20240527105842.GB33806@debian-dev>
+ <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240528-a306a-v1-1-03a66dacd8c7@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAOEzVmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUyML3URjA7NEXROLVENzY3MjkxSzZCWg2oKi1LTMCrA50bG1tQDHRkq
- pVwAAAA==
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-X-Mailer: b4 0.13.0
+In-Reply-To: <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
 
-From: Otto Pflüger <otto.pflueger@abscue.de>
+On Mon, May 27, 2024 at 10:36:45PM -0700, Ian Rogers wrote:
+> On Mon, May 27, 2024 at 3:58 AM Leo Yan <leo.yan@linux.dev> wrote:
+> > On Sat, May 25, 2024 at 02:14:26PM -0700, Linus Torvalds wrote:
+> > > On Sat, 25 May 2024 at 09:43, Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Add support for Adreno 306A GPU what is found in MSM8917 SoC.
-This GPU marketing name is Adreno 308.
+> > > > This makes 'perf record' work for me again.
 
-Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-[use internal name of the GPU, reword the commit message]
-Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
----
- drivers/gpu/drm/msm/adreno/a3xx_gpu.c      | 14 +++++++++++---
- drivers/gpu/drm/msm/adreno/adreno_device.c | 11 +++++++++++
- drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  6 ++++++
- 3 files changed, 28 insertions(+), 3 deletions(-)
+> > > Oh, wait, no it doesn't.
 
-diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-index 5273dc849838..b46ff49f47cf 100644
---- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-@@ -145,6 +145,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
- 		gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003);
- 		gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x0000000a);
- 		gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x0000000a);
-+	} else if (adreno_is_a306a(adreno_gpu)) {
-+		gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003);
-+		gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x00000010);
-+		gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x00000010);
- 	} else if (adreno_is_a320(adreno_gpu)) {
- 		/* Set up 16 deep read/write request queues: */
- 		gpu_write(gpu, REG_A3XX_VBIF_IN_RD_LIM_CONF0, 0x10101010);
-@@ -237,7 +241,9 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
- 	gpu_write(gpu, REG_A3XX_UCHE_CACHE_MODE_CONTROL_REG, 0x00000001);
+> > > It makes just the plain "perf record" without any arguments work,
+> > > which was what I was testing because I was lazy.
+
+> > > So now
+
+> > >     $ perf record sleep 1
+
+> > > works fine. But
+
+> > >     $ perf record -e cycles:pp sleep 1
+
+> > > is still completely broken (with or without ":p" and ":pp").
+
+> > Seems to me that this patch fails to check if a PMU is a core-attached
+> > PMU that can support common hardware events. Therefore, we should
+> > consider adding the following check.
+
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -1594,6 +1594,9 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+> >         while ((pmu = perf_pmus__scan(pmu)) != NULL) {
+> >                 bool auto_merge_stats;
+> >
+> > +               if (hw_config != PERF_COUNT_HW_MAX && !pmu->is_core)
+> > +                       continue;
+> > +
+> >                 if (parse_events__filter_pmu(parse_state, pmu))
+> >                         continue;
+
+> > To be clear, I only compiled this change but I have no chance to test
+> > it. @Ian, could you confirm this?
  
- 	/* Enable Clock gating: */
--	if (adreno_is_a305b(adreno_gpu) || adreno_is_a306(adreno_gpu))
-+	if (adreno_is_a305b(adreno_gpu) ||
-+	    adreno_is_a306(adreno_gpu) ||
-+	    adreno_is_a306a(adreno_gpu))
- 		gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xaaaaaaaa);
- 	else if (adreno_is_a320(adreno_gpu))
- 		gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xbfffffff);
-@@ -334,8 +340,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
- 		gpu_write(gpu, REG_A3XX_CP_PFP_UCODE_DATA, ptr[i]);
+> Hi Leo,
  
- 	/* CP ROQ queue sizes (bytes) - RB:16, ST:16, IB1:32, IB2:64 */
--	if (adreno_is_a305(adreno_gpu) || adreno_is_a306(adreno_gpu) ||
--			adreno_is_a320(adreno_gpu)) {
-+	if (adreno_is_a305(adreno_gpu) ||
-+	    adreno_is_a306(adreno_gpu) ||
-+	    adreno_is_a306a(adreno_gpu) ||
-+	    adreno_is_a320(adreno_gpu)) {
- 		gpu_write(gpu, REG_AXXX_CP_QUEUE_THRESHOLDS,
- 				AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB1_START(2) |
- 				AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB2_START(6) |
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-index c3703a51287b..198b2b5b67fb 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-@@ -86,6 +86,17 @@ static const struct adreno_info gpulist[] = {
- 		.gmem  = SZ_128K,
- 		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
- 		.init  = a3xx_gpu_init,
-+	}, {
-+		.chip_ids = ADRENO_CHIP_IDS(0x03000620),
-+		.family = ADRENO_3XX,
-+		.revn  = 308,
-+		.fw = {
-+			[ADRENO_FW_PM4] = "a300_pm4.fw",
-+			[ADRENO_FW_PFP] = "a300_pfp.fw",
-+		},
-+		.gmem  = SZ_128K,
-+		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-+		.init  = a3xx_gpu_init,
- 	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(
- 			0x03020000,
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-index 77526892eb8c..2645f6f4ad83 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-@@ -268,6 +268,12 @@ static inline bool adreno_is_a306(const struct adreno_gpu *gpu)
- 	return adreno_is_revn(gpu, 307);
- }
+> so the code is working as intended. I believe it also agrees with what
+> Arnaldo thinks.
  
-+static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
-+{
-+	/* a306a marketing name is a308 */
-+	return adreno_is_revn(gpu, 308);
-+}
-+
- static inline bool adreno_is_a320(const struct adreno_gpu *gpu)
- {
- 	return adreno_is_revn(gpu, 320);
+> If you do:
+ 
+> $ perf stat -e cycles ...
+ 
+> and you have
+ 
+> /sys/devices/pmu1/events/cycles
+> /sys/devices/pmu2/events/cycles
+ 
+> The output of perf stat should contain counts for pmu1 and pmu2. Were
+> the event 'data_read' or 'inst_retired.any' we wouldn't be having the
 
----
-base-commit: 6dc544b66971c7f9909ff038b62149105272d26a
-change-id: 20240528-a306a-48e173724d6c
+Sure, what is being asked is to count events and if those two events in
+those two PMUs can count, then do what the user asked.
 
-Best regards,
--- 
-Barnabás Czémán <trabarni@gmail.com>
+For 'perf record' we're asking for sampling, if the event has the name
+specified and can't be sampled, skip it, warn the user and even so
+only if verbose mode is asked, something like:
 
+  root@x1:~# perf record -e cycles -a sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
+  root@x1:~# perf evlist
+  cpu_atom/cycles/
+  cpu_core/cycles/
+  dummy:u
+  root@x1:~#
+
+Cool, there are two 'cycles' events, one in a PMU named 'cpu_atom',
+another in a 'cpu_core' one, both can be sampled, my workload may
+run/use resources on then, I'm interested, sample both.
+
+But if we had some other PMU, to use a name Jiri uses in tests/fake
+PMUs, the 'krava' PMU and it has a 'cycles' event, so 'krava/cycles/'
+and for some reason it doesn't support sampling, skip it, then the
+result should be the same as above.
+
+If the user finds it strange after looking at sysfs that 'krava/cycles/'
+isn't being sampled, the usual workflow is to ask perf for more
+verbosity, using -v (or multiple 'v' letters to get increasing levels of
+verbosity), in which case the user would see:
+
+  root@x1:~# perf record -v -e cycles -a sleep 1
+  WARNING: skipping 'krava/cycles/' event, it doesn't support sampling.
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
+  root@x1:~# perf evlist
+
+- Arnaldo
 
