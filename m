@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-192283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E4D8D1B0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:23:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C588D1B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B0CA1C226B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5EDE1F24AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D54916D9A7;
-	Tue, 28 May 2024 12:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2AE16D4E1;
+	Tue, 28 May 2024 12:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XiWP9to7"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1YwINKK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A013E74409;
-	Tue, 28 May 2024 12:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E47A13AD30;
+	Tue, 28 May 2024 12:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716898967; cv=none; b=mdFuct3OPkXk8hu5OBKAcGmCWymaS67GRkTw9ruA+QLmugpPINe4QiFxA3Sz53O2tfpfxfkdYf2wPxVd+Nu7muZYBNo4X+y0aWyTarQlkA+/VwZw4ejw0/jDAnLkQ3OEC7FDBUF8ZqXqNzR66j3dpkj8wartGs6xwhCd99Azctc=
+	t=1716899018; cv=none; b=gDmSDw6ERYV7Yy8w8WjgVE8cJx4q5d49hZKPQcgekYxPiiYu/84ZStxE7vBsljlbYeF58tcKbJVXraMJVtxDaBi1S8SeUKyIJaf4YfHVfEBKHtZq9UCT+7vhZDQ790wyV8bux+O/T4mzmh3hudtgJpY0e7S/vleSVu4svLS2aUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716898967; c=relaxed/simple;
-	bh=1bxpJkJTAuic/fEmME52PUTrYmhkNBSpSDXr2ojsc7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnTPmw8YojPaamICGBVj9NOcTwy7RhzUEWNkLbgoiZlLdNj2YWj5IReuik3tvkr6BFYKg/qFmTYG9MaP1hLnBUmhN6AbZYKZqIOrASj1WjcuO5Z9FuwZZCOD3qWGcsMCQ47ef0poJav78bwOVf/u1znA/pmsJiTN+5K3PJqdXCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XiWP9to7; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-529661f2552so969003e87.2;
-        Tue, 28 May 2024 05:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716898964; x=1717503764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=30d0TTe0qu/2T+a0CP2Ht/sekYc/5hfNw/7/ZEtYxu8=;
-        b=XiWP9to7IFMPMEwMVWyuNamCW2AhljULMH0OE+mg44H7qr4kpYnUL08Tp+FXTE8Lbp
-         B+1Y4SEEG+UlBlUORgIf7onkSfpLIjQrGPh8HHjmfmM0dNefHmQvnZH3nwji55WaLBAf
-         +Oipm+gNzKC6c503rRe1C96Y4EfpHJ5OqCAcdlpF/mEuFmTv8UKNZodz4u0BZ2xfecfq
-         8eaEGHh8RQrC0hRXRJgGbZx3YdBVnKhdxr1HUuTuJ+y1wpzyGm0ex1llAMqh669qJqhF
-         //MbFxY4EgNUEoQ8LuFoVHPBBrNdKQTrGsvEGnk8gxnG6+AvRNiTJj6Me+S4e9tpv7c9
-         zI0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716898964; x=1717503764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=30d0TTe0qu/2T+a0CP2Ht/sekYc/5hfNw/7/ZEtYxu8=;
-        b=gmNgGZ7wZRvi6A+m+m9CGZWDd9n+TcY21SWNWLyD/oQC03M9oL5AEHjVvDAhAsWPUu
-         8MXJjXn5/PtIF+kLVI70I9G7+PsbYAM7f4Euq+5vkWAmHAbEGvCnnOeSuzjVA4n7ML7N
-         kSlMTIcP4eWDhRBZUMhLqxqhtxZaP6X2Netm9wBJBlT8dSdtSaVStLaYfdvPE8ZjIU9q
-         mSrWpUsuqL7Eb+FmCZWu2vVIVVE4Yo4ZZf6PmsMvpUm7KgmQtQ1l5EVim6jgFArlMcZg
-         BMfcpXnqkQ87G0QYbQ1K8FI2vUyDe+4MO9fojwQ+pipsX9TU7zLdPHLj8OOq11yI9ymf
-         9iyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXn3zJE10QsQoGBesvH4wriei/+TDF/3AsG6hSSeZ9Hda3CBaGW8egTjkixFtpCa+VRERTnYGTBOfFfxjiP6wnKYacETDi2Llwv0n/PfLMUO/5TuYF+zfVKYhiKGzcgBwRrWmM+ORXE1EG+eYWdNSC+nPq/znfZxint
-X-Gm-Message-State: AOJu0YwI3+frBebg8wUClyNI3SCs/7LNl8JM0KNKTLB8O+etbD2+Fn6u
-	G5AryOLLA3Rt25I4leysEZ6WsT88ndDGbOC6S4ZxGMvs0vd+R3tO
-X-Google-Smtp-Source: AGHT+IEFpxm72+ZufBEpOzTdYaIOWqK1qFRYEzUeMkVy/VVpK/unVesitw9GPmLNPR4IWW5XCaPpGg==
-X-Received: by 2002:a19:5e04:0:b0:51a:f84d:1188 with SMTP id 2adb3069b0e04-52964e93a0dmr7396162e87.19.1716898963461;
-        Tue, 28 May 2024 05:22:43 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e888b33sm920102e87.8.2024.05.28.05.22.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 05:22:43 -0700 (PDT)
-Date: Tue, 28 May 2024 15:22:40 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Byungho An <bh74.an@samsung.com>, Giuseppe CAVALLARO <peppe.cavallaro@st.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net-next 2/3] net: stmmac: Activate Inband/PCS flag
- based on the selected iface
-Message-ID: <mflda2pvhiilceh4qkyq43jedgx3fxeo7mbs2cfa5c44veygg2@muhwd4gj5mth>
-References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
- <20240524210304.9164-1-fancer.lancer@gmail.com>
- <20240524210304.9164-2-fancer.lancer@gmail.com>
- <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
- <fvjrnunu4lriegq3z7xkefsts6ybn2vkxmve6xzi73krjgvcj6@bhf4b4xx3x72>
- <ZlWwMzMZrwb5fscN@shell.armlinux.org.uk>
+	s=arc-20240116; t=1716899018; c=relaxed/simple;
+	bh=JWqqFhT6BMoU6aedUh2YxiyaeH9WHnDepgBZgI6tTls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c18EEVoFr2HUES+Dpr5m4daGZ6yogwphQ9J79XRixUX3msF7MS1RSOxzcdJ0Z2rNB7Ui0+G7KbZZO6yXJm3jB+//fXtN0lD88bpMGEldQ/b7tUk4kOKoWooYPMfJCvT44BqobKJ7rkeEsAJlMvJZNDzY82Xzrw0ycqzSEe7rgAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1YwINKK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC32C3277B;
+	Tue, 28 May 2024 12:23:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716899017;
+	bh=JWqqFhT6BMoU6aedUh2YxiyaeH9WHnDepgBZgI6tTls=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l1YwINKKJVGJhcVsF7GsL/Vfr1KNYTo13apnp4s2e5bRB4uFIJ9owNDw6Oa1d8Gks
+	 AmktQMpxqKQSrjGpIwK2c1oMW6qZQJo0eRbAmLqBuvC0i5Xxzl1YfnNbi8gBOUhSOj
+	 NSYtKsV43kXLgdYi+l2ViIT1y+VWRTw/OWHTNLQ9Vc6L5AyININOczUzdJAk6s/Gbf
+	 JDGov47zltypH79lOblHSo1vWAoThOF1Tkew9cKxAnE73Pcnva5y8o2W3sD6OiQ+tt
+	 1gSBZCvUXzVzn+EJpYFHd4NU+Ghg5zY+XZd72+Bv3YZZoDKXQhGbbG03abPyc9MwMZ
+	 uP9S6w0rSldwA==
+Message-ID: <1e6242a1-2dc5-4f88-9cbb-eb14a27cccc4@kernel.org>
+Date: Tue, 28 May 2024 15:23:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlWwMzMZrwb5fscN@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/7] arm64: dts: ti: k3-j722s: Add lane mux for Serdes1
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, nm@ti.com, vigneshr@ti.com,
+ afd@ti.com, kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, danishanwar@ti.com,
+ srk@ti.com
+References: <20240524090514.152727-1-s-vadapalli@ti.com>
+ <20240524090514.152727-6-s-vadapalli@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240524090514.152727-6-s-vadapalli@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 28, 2024 at 11:21:39AM +0100, Russell King (Oracle) wrote:
-> On Mon, May 27, 2024 at 12:57:02AM +0300, Serge Semin wrote:
-> > On Sun, May 26, 2024 at 05:49:48PM +0100, Russell King (Oracle) wrote:
-> > > On Sat, May 25, 2024 at 12:02:58AM +0300, Serge Semin wrote:
-> > > > The HWFEATURE.PCSSEL flag is set if the PCS block has been synthesized
-> > > > into the DW GMAC controller. It's always done if the controller supports
-> > > > at least one of the SGMII, TBI, RTBI PHY interfaces. If none of these
-> > > > interfaces support was activated during the IP-core synthesize the PCS
-> > > > block won't be activated either and the HWFEATURE.PCSSEL flag won't be
-> > > > set. Based on that the RGMII in-band status detection procedure
-> > > > implemented in the driver hasn't been working for the devices with the
-> > > > RGMII interface support and with none of the SGMII, TBI, RTBI PHY
-> > > > interfaces available in the device.
-> > > > 
-> > > > Fix that just by dropping the dma_cap.pcs flag check from the conditional
-> > > > statement responsible for the In-band/PCS functionality activation. If the
-> > > > RGMII interface is supported by the device then the in-band link status
-> > > > detection will be also supported automatically (it's always embedded into
-> > > > the RGMII RTL code). If the SGMII interface is supported by the device
-> > > > then the PCS block will be supported too (it's unconditionally synthesized
-> > > > into the controller). The later is also correct for the TBI/RTBI PHY
-> > > > interfaces.
-> > > > 
-> > > > Note while at it drop the netdev_dbg() calls since at the moment of the
-> > > > stmmac_check_pcs_mode() invocation the network device isn't registered. So
-> > > > the debug prints will be for the unknown/NULL device.
-> > > 
-> > 
-> > > Thanks. As this is a fix, shouldn't it be submitted for the net tree as
-> > > it seems to be fixing a bug in the driver as it stands today?
-> > 
-> > From one point of view it could be submitted for the net tree indeed,
-> > but on the second thought are you sure we should be doing that seeing
-> > it will activate the RGMII-inband detection and the code with the
-> > netif-carrier toggling behind the phylink back? Who knows what new
-> > regressions the activated PCS-code can cause?..
-> 
-> If it's not a fix that is suitable without the remainder of the patch
-> set, this should be stated in the commit description and it shouldn't
-> have a Fixes: tag.
-> 
-> The reason is because it wouldn't be stable kernel material without the
-> other patches - if stable picks it up without the other patches then
-> it could end up being applied without the other patches resulting in
-> the situation you mention above.
-> 
-> Shall I remove the Fixes: tag?
 
-Let's drop it then, so not to cause confusion for the maintainers.
 
--Serge(y)
+On 24/05/2024 12:05, Siddharth Vadapalli wrote:
+> The Serdes1 instance of Serdes on J722S SoC can be muxed between PCIe0
 
+Please use SERDES insted of Serdes or serdes as it is an abbreviation.
+
+> and SGMII1. Update the "serdes_ln_ctrl" node adding support for the lane
+> mux of Serdes1. Additionally, set the default muxing for Serdes1 Lane0 to
+> PCIe0.
 > 
-> -- 
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> Current patch is v1. No changelog.
+> 
+>  arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 3 ++-
+>  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 5 +++--
+>  2 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> index a3bda39cc223..16c6ab8ee07e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> @@ -401,7 +401,8 @@ &sdhci1 {
+>  };
+>  
+>  &serdes_ln_ctrl {
+> -	idle-states = <J722S_SERDES0_LANE0_USB>;
+> +	idle-states = <J722S_SERDES0_LANE0_USB>,
+> +		      <J722S_SERDES1_LANE0_PCIE0_LANE0>;
+>  };
+>  
+>  &serdes0 {
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> index b069cecebfd9..48b77e476c77 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> @@ -96,8 +96,9 @@ usb1: usb@31200000{
+>  &main_conf {
+>  	serdes_ln_ctrl: mux-controller@4080 {
+>  		compatible = "reg-mux";
+> -		reg = <0x4080 0x4>;
+> +		reg = <0x4080 0x14>;
+>  		#mux-control-cells = <1>;
+> -		mux-reg-masks = <0x0 0x3>; /* SERDES0 lane0 select */
+> +		mux-reg-masks = <0x0 0x3>, /* SERDES0 lane0 select */
+> +				<0x10 0x3>; /* SERDES1 lane0 select */
+
+Why not introduce this right in the patch where you add serdes_ln_ctrl mux node?
+
+>  	};
+>  };
+
+-- 
+cheers,
+-roger
 
