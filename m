@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-193208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DBA8D284B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:52:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329508D284D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5BF1F27C62
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:52:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771FBB26BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9B513FD80;
-	Tue, 28 May 2024 22:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A70914037C;
+	Tue, 28 May 2024 22:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="fqam31vn"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2139.outbound.protection.outlook.com [40.107.223.139])
+	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="B3eC454D"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2131.outbound.protection.outlook.com [40.107.93.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588B013E881;
-	Tue, 28 May 2024 22:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBCA13F437;
+	Tue, 28 May 2024 22:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716936717; cv=fail; b=IUL1Ieq8qtJPxO+0rxqhBCVZqf7GlsH096wUqRUFKID9OSvOdI7MnxOiaocLVBv83nFRnC9bnNoLdsTpdRDwOKFpdY+2OtVTybCdB69QdNmPYvCviF84Igywml1oUyFMPF1kiYHw99bpX3SuEgOHSSHq4wj3//IC5QHY5Ub+2Ys=
+	t=1716936718; cv=fail; b=bmadAu8aVz/XiZj5v90m04FW3aSy+5Z98EcQAeL2j++d2FNP3RuBI5EqJ8vRWS60PaQW/3mKtpTxpVWrloMosHOz9iDlk/n5PYBIrFVO8xPdxRXDGiL+yDaZzQZYQAAj7ELc0SnXEHxpu/JJHGSupcMHXsM09GibOd5mY3Mh9iA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716936717; c=relaxed/simple;
-	bh=5dELTEQ5KHcNjGU7GJVwinhbFySfooHq08lcXwO4TyE=;
+	s=arc-20240116; t=1716936718; c=relaxed/simple;
+	bh=l5o8zIEntCSGDeBLYmrVsY5MScN4P8uCDt0Lf87vWDM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mgrITratTqCM/qGnvmUpAA65NhVT6pR+phiX77NOrMU0GvfHOzwQZHfjR26ScPxY/S+Y1mPravalNEL5hY22GwfjPUjKTSfICCWCeq602la4WL7+sJp2VrclPgxgbO5JrSpMY0wOqL1SserBvL/vm0Tt/mfCQOJVhOvOOdfmOes=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=fqam31vn; arc=fail smtp.client-ip=40.107.223.139
+	 Content-Type:MIME-Version; b=r9LcOMwbaGC0cxAe6KeUqT2ZvsOkxtq9J0wc5qjrgTuqnS7TjgEzmYPbdkAO5zlpz8jvO15s7mxti/hIXX0meBWOlM7X9t/EU287NrpQjj/HpN+jzNM67WelVslQykCwK30EFvzMkkieS50wuDLGG6Bpt9Xgzke8R189HEG7mas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=B3eC454D; arc=fail smtp.client-ip=40.107.93.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eXJx2vEUZqiBwEfpAS03bq7RtRVBRndaX1hE98xoXyT6bRzEh96yf1eeir7RJcMF8cA8HX8pG0NiKtSi53e1CCSaTEQopBs/34WluLVQTnr8y7WemFXsw9w0J4ki06YX6qddXb7YSY/eY0l9OC+p351/upy54xn45eSrVjSagahstkZPiyNawsaHWUi4NqaQWwoEtswrjc2RaiTsjualRdmNeZNLBUvi8fZLJ2SUz2/0RD68PraMK5fqyC+s1O8HakjjyV1eNEy1N3CwMCGFvBXoI5xfRTJvL8jNReNMyzta7TegAu5c6CmhHFb7DqojlNoSrrKCMP114WeyBHBe/Q==
+ b=knkojL9Ie7VIWpDPiHF9jNJWC+jp5ocetbLZeCvS2fe9JPgCLKvr5q7nSbwRyC6eBLTDS70GQWLrXD9WzfyA22cjakLoUWZ92ioSBXrOamqIp6givoPGJv4SxHWDJViFsiQJdizkUxrxnumc1sAGG3hO4NpNJgnDYnxxjaUiTkUR9nEknRxbL6gUUIIxVvJ2MCqG7uYCeBhzQ5C+vZCo/ZsilEa0gJJP0a/TD9ETjHAasfPTWqOoqf/3RU7xCVAjwGud9MqlUqXPBUMs1zKl9p2aBeDOhXbUt9yIf2U7NqluhGChdfYlIVR76O3ar2u9nhKVMKsPbOJNsz+7o0vOQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XmJv2cSKgnpJLJznkdzVORDIGGwlz/8i5+s3hxBkNrk=;
- b=OovSpumd2wJyztJP+xiDzQ7eh1ZrBFPVfKZojhLLP9FFa7Me/dY+xlEBUbWwT/aqKSYQk+b00H2r+nzI5CvfYoH1mB0ErcKMU9ZEg6YlM+Ei9kWHpOWX0zJ1fogZFm/9RNwtrmuS8V0+I7x2KRCfGE6B+6ofy2ag7ftRxIvMbgUI4HDSF3nkyg1jKWff5gZDqrEuuZPkT1DKiKkRIrCZdkmM0zp3J2qyWSlNXNnecbVaLeilMaSE+FiXuwZM5HfVq4KSqFgxLWSx7EYMN/69x5i1hENdbxEafgd/+oDla7MwBPIdignk6Ed1dikBwDAE6Vf9pU9Qv/bmCTxOP2jm3g==
+ bh=A2DsaPv5lqwpCDJqvV8EC5dpqT4CBz9E3rLbei0+HL4=;
+ b=Fp/OxfVubLfPPVY4bigOojRxAulFv0R9FP8G1lQmdZ2WJtPBZfZaJXuVGUPbJqJD5b4w0sZcS+mX5ZaTII/7XIxA7NbqvnZWAC6LhwfIKdi8XxowbG5vrOAfZhoXNkxrU11b5CcSjdZ6pcpfrZ3ZlV3nQLaF0MugoG+r7r34q1c+5JBpIMGnOxq3csua0t3eUWMJhQzTWtqLegPnxZixxosbWve9DMQY8lDVtwtOnE6n5cdpw5xW9ffLwW9zmS66lKWHUQ0FytU1mAxqEWhpaS3syzbZHVhx9lICa1I75LYePoyecA93agL0xV9BXT9l3o969S1vb4xSW7w6CbCaUQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=phytec.com; dmarc=pass action=none header.from=phytec.com;
  dkim=pass header.d=phytec.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XmJv2cSKgnpJLJznkdzVORDIGGwlz/8i5+s3hxBkNrk=;
- b=fqam31vntL2CZSknLUc+Ywr7V+ymU8qWVJV/eJ98ptwSCWl9e6W+bakLzolJpuj8GNPlPJP5B5a09vc5x9MksH6I6RQEo3k8bs2kB5qlcTwzqxUTENDuESyYhr/A1nM2XviaYWDhtOs7nPfOI96lZBMX6GrYd3xaM8MpayJEFyM=
+ bh=A2DsaPv5lqwpCDJqvV8EC5dpqT4CBz9E3rLbei0+HL4=;
+ b=B3eC454DARiVj+rN7PMg5Ycy0OCGnFbb2qOliEZYizgOWs8Xnhw/PON45K2DowV48Cl8uF3H259R95Sobp/XVG2qQw7CmEhOOPhwS088AI6+bT98rHdKvipLiYtJ3VsOyzORPr470Qi8zoilDzQAFn9u2yk7C4jt76kjg4S4a9c=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=phytec.com;
 Received: from SA1PR22MB5636.namprd22.prod.outlook.com (2603:10b6:806:3e2::15)
- by LV8PR22MB5026.namprd22.prod.outlook.com (2603:10b6:408:1cb::11) with
+ by EA2PR22MB5065.namprd22.prod.outlook.com (2603:10b6:303:258::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
- 2024 22:51:52 +0000
+ 2024 22:51:54 +0000
 Received: from SA1PR22MB5636.namprd22.prod.outlook.com
  ([fe80::aaeb:2d53:9f16:db45]) by SA1PR22MB5636.namprd22.prod.outlook.com
  ([fe80::aaeb:2d53:9f16:db45%5]) with mapi id 15.20.7611.025; Tue, 28 May 2024
- 22:51:52 +0000
+ 22:51:54 +0000
 From: Nathan Morrisson <nmorrisson@phytec.com>
 To: nm@ti.com,
 	vigneshr@ti.com,
@@ -68,9 +68,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de,
 	w.egorov@phytec.de
-Subject: [PATCH v2 3/4] arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable rtc
-Date: Tue, 28 May 2024 15:51:36 -0700
-Message-Id: <20240528225137.3629698-4-nmorrisson@phytec.com>
+Subject: [PATCH v2 4/4] arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disabl spi nor
+Date: Tue, 28 May 2024 15:51:37 -0700
+Message-Id: <20240528225137.3629698-5-nmorrisson@phytec.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240528225137.3629698-1-nmorrisson@phytec.com>
 References: <20240528225137.3629698-1-nmorrisson@phytec.com>
@@ -86,80 +86,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR22MB5636:EE_|LV8PR22MB5026:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8979ab5-bbe3-4c20-4ae6-08dc7f68c430
+X-MS-TrafficTypeDiagnostic: SA1PR22MB5636:EE_|EA2PR22MB5065:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9ebd197-067c-4dd4-f824-08dc7f68c504
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|52116005|7416005|376005|1800799015|38350700005;
+	BCL:0;ARA:13230031|376005|7416005|366007|1800799015|52116005|38350700005;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1eWimk2K5At91TupCRG6H0q5pjOuZnA2dYxaZQDM2nX7KRgOU8ad7n2299AI?=
- =?us-ascii?Q?vaeKE6ooQYutspplsfkwMP/HgCkFbY8B0nHTCsrEgm2PsMQyYc41FTl9D0LL?=
- =?us-ascii?Q?zGVTysYeXpxIp/vjMlJQCTuaTHK2vIXA7fTK4/TyRDupB8bROSSDU6ZUyseQ?=
- =?us-ascii?Q?gpzPD4+ni1wfDelzNeVksMuT8au7ZCxahl6xNVw12OmFvXbDFdQYQRqLyU15?=
- =?us-ascii?Q?8BAY0RM0QWyegm2Eks2ShbR1hrhAJ/2Huboo2cs3kejKhCiUy12xX68nEynv?=
- =?us-ascii?Q?+fzX95gi6Cvq12abg3tXITyHGLSL6jHszRRAHi+iWD4w59ZQehdQbBIy1gAS?=
- =?us-ascii?Q?wtOASiOoh3pPnQZoIKftkbPdDfXOST/qtfIMWn3F5J03axrZzSxTFZ9vDabK?=
- =?us-ascii?Q?Fa9Z+ptuvi825OFVRbmzMj1BcMeIri5G447iWgQvZ9jxQdVu59ZbZtGJt6kr?=
- =?us-ascii?Q?GHHfJf1CTLHc5JUrOijyAsoTKMEqap1BxhXP2ddRXCK5sjD48y/kEq1k/86V?=
- =?us-ascii?Q?ftpRVo8MSWkDrU/xzpK5YsRewojnBbugr1G9e6bEehpr+WxKc/s/i43+8IOr?=
- =?us-ascii?Q?86F6M8f9bTcREkmbT4eHiCp3/NneQFZIqTAwM7xBJ02/D1QAaJU+nz9hFyf2?=
- =?us-ascii?Q?H5Dk3IllrfwSJzgbJq1pM/5Oa39Xj12OjVng4XFoQt8BvpODtVah7kDr3xPi?=
- =?us-ascii?Q?x0IAnHFKTKJVvhTFzEx8IMy3wQUkS3G1mHZG5eWPF6QmbyzOwNEoQAkWeDrm?=
- =?us-ascii?Q?tJMNvFRcdP7AyVIBTKZ6M8tK6mRi+RtQk9t2ejcQxUTWa6jHGfUd9EHASxKO?=
- =?us-ascii?Q?FhtzC9676Rb+OjBDhYftGDgE6OuUU+RnVduvahRbc75QFXxhduD1zLuhTkNM?=
- =?us-ascii?Q?4YEvJPnnCiFgzAvQlS5sMGOUQjXYoVX1DW2S2qn2gAGt2jnZUlhaVR1QW0Gl?=
- =?us-ascii?Q?5dEGLisBG6Dyl3FOX/w+4yicC7iuAR0dQrjL/78ynOERzu3YzKjaLHL7nUj5?=
- =?us-ascii?Q?6zafsWDl/AXLJhc2QHBkupCh2GpRHSUF+lGqt6vR0R37UdK0vyB76md1uB55?=
- =?us-ascii?Q?zov+SvLoUCweI8l0z8P1WASnorZnZpef8BsppBlCP9JLAZvrZEWFvaG/byBN?=
- =?us-ascii?Q?sEWJBwYY2rTdLw9mOJIEYm0I6yRqbfCU/0DxRdwLkvy04HyZTkCElI52jWdj?=
- =?us-ascii?Q?kPRlhGTKfDRTpffN28+9jdCu8C5yXqfbj/hStw7kMjaYROnYjjpVt8VBE5GF?=
- =?us-ascii?Q?PREMgiqSxJj+S7Rg2tk+WFSQySQn/N6W8ftm86fp0X8JlLtpW2sNPvNqtPIo?=
- =?us-ascii?Q?1GkGmBq5r2NXj2W1zazANF/eppP1kc79OUCbLUvz4P6r8w=3D=3D?=
+	=?us-ascii?Q?dZd7QurRtTcuS/9j25HelnSVsY32ZCpL7u5IHLUj0XAQFE1076B9qKT8ICQa?=
+ =?us-ascii?Q?RzsbV157A3bdBHS4TzdUhlUhIF8eDwWS7eOUtr7ePUH9n2TDs9Bavm1Ql7uQ?=
+ =?us-ascii?Q?w9nNfChNBTeOomfSEiCwiWLTIxXCOJkweJ4cXDbNU+dmZKpB9xV8zvnKBlUp?=
+ =?us-ascii?Q?A6B7MMcduSEP3hi87HMu6QQbQeLJqm8ek7ZImx4edIjFz9PSeUZ8HfwcCdNH?=
+ =?us-ascii?Q?QjZJFAK7fsn7OIMf8J3Wn1J9XEr/a0vdgVzZRk1daq6mBNbe7/+ijGoTRuNW?=
+ =?us-ascii?Q?OrPiu5w88dyGrJPR8o86EuADcHvWL/mOvhlOO9hHdXGNt1IXB8ND4E6caExy?=
+ =?us-ascii?Q?TfKmMY+vPleYWdoLwzY9zX+PPuCHTJZfmGVzQl2Kau79Segsh+VybxfXn6+H?=
+ =?us-ascii?Q?iFmyFb1vja+efxkTibMfmICkzqJWcR/DT26bWMlTgL/sCzA7HcqL03f0Os9L?=
+ =?us-ascii?Q?zdy04LKRLCoSJaNfUgqe2FKroLzW3n4uqq1Nr0GilIE+bnpvsbxSlSG+tAfV?=
+ =?us-ascii?Q?2SIiuuIK5wvPr9redZPU3Yq9DPAGY4qAm4lckhreDm46tiXjHGQs4nZzZdLn?=
+ =?us-ascii?Q?/hF/0Z1+rkmbm4bXsI7BCNXd5rub278bdX/NotGcEj4l4adMXi4VIXP2SCTd?=
+ =?us-ascii?Q?2D3q8mhnX+sg2GXiIvFzKIPnmTwCs/ZBGq7uqL6mll4cECVikIbLARrhUi1J?=
+ =?us-ascii?Q?48us0dmUt3utCvSPbbLMgpeCQ5BZsJnzAzcc4cx2+Xgn4f1t11jWm6CdEyji?=
+ =?us-ascii?Q?88bi03BPysNd5ZNg2TuP+Kwlw4rrbW67EEeHazA7C1Yfewwr8wI9l4PZfP6Y?=
+ =?us-ascii?Q?OfoGaC3INTYBToc6CDNEc6pxhDroQNVHXHxn9HwYO/jlQAJLACnbtNFQp0EX?=
+ =?us-ascii?Q?8bGc/CIP+gpTJvosrAQN6eqlW8f0F3IfHjC2GXWbVE4NhB+x+HCAJFXVQ45s?=
+ =?us-ascii?Q?bbd9lOngg+5wGvcXPO3qserObIBuBRDtCgabdi9Lygdcv3cp7yFRz7t0vSTb?=
+ =?us-ascii?Q?fHxIYbETtpAio94O8McGQHrp7um5wf2rCBkdp3/eYQI+CJGGSxsZuIqu89Q9?=
+ =?us-ascii?Q?4uTTj3i8BUlM7wc4kx/UeB+Ja5OIsqVrteHvMnF/ufxe37xvDoEJeZJwBxHc?=
+ =?us-ascii?Q?g187YoTJYwU26+61qSZ3OMwdDWC5HB66K2E9VP6s/hwHi0Hl2E/73aDCkX1Q?=
+ =?us-ascii?Q?8Bwyil86Z8xECDF1O4QREVv50yZEdr8+0F+v8Si1zO0nkygeybDAxuz84VzZ?=
+ =?us-ascii?Q?++zzJS23DilZ8O16jh4hqDP1X6c0aClTiHYBYFwq6Q2thq5CJrMNuvo9/0Ko?=
+ =?us-ascii?Q?zwDjKK0BeiHTV01/Dc4tS5wWVoId1Qh8PGFfUx1ZHnMGIw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR22MB5636.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(52116005)(7416005)(376005)(1800799015)(38350700005);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR22MB5636.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(366007)(1800799015)(52116005)(38350700005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xhQn+ZOlsddM3sKi1s23Zdo9yOUHU7BRkrSh9MGLJQ4Woln0Z2p1G+4wNVtv?=
- =?us-ascii?Q?Jtmt8+ckSjqWEvZiyfjji9tXyK93iRIQYwxhs736mxKCeWzoSKfG0zQfvfhi?=
- =?us-ascii?Q?YkkE04Q1rZtOg6pNfEYqDrkDUhcLWzyftPMT2TvFWD8zKWKchHejU3J16fIH?=
- =?us-ascii?Q?cSOkIGwrDTEYmQBZZ6Mnu253prtuNhKBwRVK5b0v4QARgGSFMW/W+ictEa3g?=
- =?us-ascii?Q?tqIfjjg+cLQVAAhraXy0ynB1R4Pv+69v39WVriYe4Sfr7R38FuP2w2QaQQgw?=
- =?us-ascii?Q?R8mWuRHXgGh0YLzEFAYBbW4VyjLworWT7M5UZhOhCvfRbpELbFYMrbKROJMR?=
- =?us-ascii?Q?LmPOq7GaK5TlxitbzY1xpnBc3+idAN1ufn61cyFH/npF1lFGwJr0eFmE7Vmf?=
- =?us-ascii?Q?eUX+yTnNIg42vLvshIw7tMfeMggfFEAyNRYpTCS/GCSrF9Cs5iN44LpGjImI?=
- =?us-ascii?Q?CFz+dcW41fdUutw0x9m3kPZTD8uGeQGGcy0S56wa5EkBbb/9wUzXOZ39H846?=
- =?us-ascii?Q?Hmou4n5FVVm0/PxCdLkrbs+ci3QKDw5WnLAGmbTbIZAOX01SilBCJ0MIeZi2?=
- =?us-ascii?Q?yPsahRdyy15aZFcklc9i7ki32HwONByW57tLKBbnQTsMX5g5GChHNEJMjr3k?=
- =?us-ascii?Q?lYwwE4SqfI9s0+GvvXvq6cyxjI9zrlDzu9ovzL88DyGpj3Pa7fSyHR3gN5RR?=
- =?us-ascii?Q?em7t18veVz01keqeFRbCJv56D5OR+KKDQKAvLPoe+bSHYK3Dr1YrrMHvbaF6?=
- =?us-ascii?Q?ImqeSVtGi2BPR/a+E21O7HpBDrijIwBPLUIhrozof+ik7v9HPst7enfkPhpy?=
- =?us-ascii?Q?u3abxZ/+nj9dMuLQqK9Rs1Jb+Fa+d5iuQkAnf8pHEvPrWMu/MUESspZRLYf/?=
- =?us-ascii?Q?Sqn8/CjAKn3ctCFhExDpiDG2+/vSoZVOCBkcLvQ3NjXqwiERdhyrime9SJ70?=
- =?us-ascii?Q?8gtA131dlElELS9H1gMAUlNUM3OS8B1tCjiIhjXa8wHYeZT9QoUYEuAPWICK?=
- =?us-ascii?Q?ZoZUyIHgFH9J4anV5EHE2Sn3ATyQV91L06JrWX2Z5aA1I4zzz6dGQ0wGnJx0?=
- =?us-ascii?Q?EIaOfcuEZ4JJLNlAVrvhiVRqVnkfwRvAs0YbKLXIw+d+uO5c8bneH5worl/f?=
- =?us-ascii?Q?YU9xtrgFSdC7/YrwWc8MUdCRO2vZWHiy4fxDfYEGXi3WjBJWFquBCNCmz7IT?=
- =?us-ascii?Q?O7HZyVwXnE6633hI4ZkbjGmz+7SZUEEWK4v7IJAc9DdQCyyhMG3Bv4YP2wmc?=
- =?us-ascii?Q?cAVZRxzu114aV2nl3OdcThU409FYvXSnAblGEvjJNdt/z4JWdd8AoZnli9JT?=
- =?us-ascii?Q?goa0QODjcE+EGaBn5qkIq2E5OEPOzAbNmQEGN8W2mqlYsOdf0ctMLBe1a5ea?=
- =?us-ascii?Q?UJum2C/cutNqHUTKWAzAPqwjaYSt7RPYceeLoiS+AGtEEvgFjPSyiyNgwP3r?=
- =?us-ascii?Q?6YEZKiTy8QRK1QOh62X3l9IHfElSDiC9nhkNM1Tsoa4UYiMdJYHLzKfz5s5k?=
- =?us-ascii?Q?CFY/GKTjAjGqKSbNO1tsmIHGe5nESPhZis+qhq072O5EddAQ9d7dH/kPnVuj?=
- =?us-ascii?Q?DDMiwwOM6l84jLlt9jaeoDh/ALXg78IWbyxWPjP+?=
+	=?us-ascii?Q?00aTXlZUKggVVleGpiJen1FgBR4m8kfd1e73KG9gl4yZj6J06fU6aNh0Oen3?=
+ =?us-ascii?Q?V+vIgacfaWzkPBvVWBKd3p1efUtb2mVvW47qjNu32Tzncc1KDZIgVt/g6na/?=
+ =?us-ascii?Q?QUjTLfmQlpDW/GJ8++qtRk26wZ0ziFy+lXjmVYWdkdX0vYh77H6894E2O8Cv?=
+ =?us-ascii?Q?oSYx4QhBJ4TQ8EkJDOY0xB5D60mVaFNuOuaa7YFEUu7U/yQuK+z6yXks8fOc?=
+ =?us-ascii?Q?0A2uv+YsxeglsC8eIYP1vt2n0IxQ+0UV9EElWncjq4cVmvFkt4d3eVYQQJ6V?=
+ =?us-ascii?Q?UB+yYnm71j9a+wjS8vLmRRiprDVn2QL/DJA05XxySOZb/Ag5ke7y2zU9Sjse?=
+ =?us-ascii?Q?H7xefu2dsoTZ7Tm3ObY/d398PNpDXO4Sjrb98zbyEQNRcNd1CYpOitbYZxhD?=
+ =?us-ascii?Q?Ux3/ZWXdicJ5wdqAoBGPlF7m6KmwC5tKr6iaqV8Yf5EFm3QSsGis8AMf6Qu6?=
+ =?us-ascii?Q?5EzBXOxy20gLr6O7dR5F6Q/3iprNNEn3WODPhp/F0jsOu22k0zss6eikNqGG?=
+ =?us-ascii?Q?r5rZ0/3BqhaXaAnEPVHkJIc1EstknO48O2+x4LgYXLbwkh+LpkkOzNPuyWIc?=
+ =?us-ascii?Q?7FViqcQaEedGWbSL/sJ+iTegUWYqvDPhnukt3+R1b3vk1JwVQ1YivxjTMEqW?=
+ =?us-ascii?Q?URmSLPMda2IdQaduCn1T2Av/8Nn7Gsd9utdTxMBCT61n1LwAkkZlwJCf9jer?=
+ =?us-ascii?Q?lwd5x+Qfcn35Bcvj4OSrtbEd1cPpg3QnuuSji4sE3SgZQjgoXZGajEkXL/gR?=
+ =?us-ascii?Q?/F7Yu6ffyCe44Gi0KbfttX/EKrYf1nEszCWXcQFzi3sYZ9ih6le1M2h7NUwE?=
+ =?us-ascii?Q?XmawqTC7QWQrJGqfJvhB2ErSMyn27EyW25SIyu2OdoRSZWaYi5qHYsikC795?=
+ =?us-ascii?Q?lXspWXPOKyV+S7KE6DYKO+WlKA1sWz4ptC6gHJmnhWFQ5b8afrrVottrg1cF?=
+ =?us-ascii?Q?b20Ry6WPbu3xSH8Krbhiq36my5XCEOmlZEGoEqbqjZiw1ijsELAIhQwUspQq?=
+ =?us-ascii?Q?IkoWOPoeNVb+nZGaVKKhNeXEs5lbBwTnBxVoQqKNfhdLQhVVdnRATPkETedE?=
+ =?us-ascii?Q?qo9VHxFcvEqTiH/OT/378lQyFLfuOehiSYRESESkwDfQdVhIMaigsH8CnTuQ?=
+ =?us-ascii?Q?CZKZwWx2ZO4GWrg7LvYA573P1ntl/tmbME2CFvj2XjCRRuK4MQ+2Pvd2yb3w?=
+ =?us-ascii?Q?zAE2Mmgo/0Ip97a1yBRP5R0tc0k4klH1SVCYlVbBqLSuJBhrvbFsK6zgvORI?=
+ =?us-ascii?Q?43DuRfBfY9IhMPTLYBbHZyeIQJn7pjvZf+dqeNPvWHyb9bOKumUIBWlC8hYT?=
+ =?us-ascii?Q?8Vj0Ytn3WwK4UMpk96XljJfsbWjOO9dORBSa/t29JyCOEy+tczP6JfIpIknf?=
+ =?us-ascii?Q?2FH4ghqpJ5Bu78iCZHAqBlzeAltPa95rQ0rZhOfSeG87Evdo4My1LpbGhTmp?=
+ =?us-ascii?Q?WZHiL7Hu2vVvmWtbYb5MVTsQd68kKwFjjy7oxyCJ1Rr+cChTamk1nZigGa4g?=
+ =?us-ascii?Q?GlSBEAw+BrHzWAVoZ7FA5f+XG0wqo5CEjsSe8YkDGEuzAX53Gyz41uuScyMu?=
+ =?us-ascii?Q?OOU3BX3mFXFWBgOXhb1PHCPJOfP9FQsSzQZ6qsxR?=
 X-OriginatorOrg: phytec.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8979ab5-bbe3-4c20-4ae6-08dc7f68c430
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9ebd197-067c-4dd4-f824-08dc7f68c504
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR22MB5636.namprd22.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 22:51:52.5594
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 22:51:53.9602
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 67bcab1a-5db0-4ee8-86f4-1533d0b4b5c7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MzpobbU25NNvXMC5D1h5ayqMuLrxZ0cGnGPjOOW8x9kyGhe/KvN7fUhdaB75/ehMuSTTcqQ9CYdOzlbvemdNNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR22MB5026
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7EBmoeF3HOzEyUmfi9e9LiLazVaeh5uYDddMNsP1o8e6rBlPExmYueY5nwDNd7/5GXinPnmRiOVsp71GslrCCg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: EA2PR22MB5065
 
-Add an overlay to disable the rtc for all am6xx-phycore-som boards.
+Add an overlay to disable the spi nor for all am6xx-phycore-som
+boards.
 
 Signed-off-by: Nathan Morrisson <nmorrisson@phytec.com>
 ---
@@ -167,45 +168,45 @@ v2:
   - Add build time tests in makefile
 
  arch/arm64/boot/dts/ti/Makefile                   |  5 +++++
- .../boot/dts/ti/k3-am6xx-phycore-disable-rtc.dtso | 15 +++++++++++++++
+ .../dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso  | 15 +++++++++++++++
  2 files changed, 20 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-rtc.dtso
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
 
 diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 320da5ea38e0..3d0e87a78e09 100644
+index 3d0e87a78e09..8d8fc8bfaf7e 100644
 --- a/arch/arm64/boot/dts/ti/Makefile
 +++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -56,6 +56,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am64-tqma64xxl-mbax4xxl-wlan.dtbo
- 
+@@ -57,6 +57,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am64-tqma64xxl-mbax4xxl-wlan.dtbo
  # Common overlays for the phyCORE-AM6* family of boards
  dtb-$(CONFIG_ARCH_K3) += k3-am6xx-phycore-disable-eth-phy.dtbo
-+dtb-$(CONFIG_ARCH_K3) += k3-am6xx-phycore-disable-rtc.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am6xx-phycore-disable-rtc.dtbo
++dtb-$(CONFIG_ARCH_K3) += k3-am6xx-phycore-disable-spi-nor.dtbo
  
  # Boards with AM65x SoC
  k3-am654-gp-evm-dtbs := k3-am654-base-board.dtb \
-@@ -112,6 +113,8 @@ k3-am625-beagleplay-csi2-tevi-ov5640-dtbs := k3-am625-beagleplay.dtb \
- 	k3-am625-beagleplay-csi2-tevi-ov5640.dtbo
- k3-am625-phyboard-lyra-disable-eth-phy-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
+@@ -115,6 +116,8 @@ k3-am625-phyboard-lyra-disable-eth-phy-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
  	k3-am6xx-phycore-disable-eth-phy.dtbo
-+k3-am625-phyboard-lyra-disable-rtc-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
-+	k3-am6xx-phycore-disable-rtc.dtbo
+ k3-am625-phyboard-lyra-disable-rtc-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
+ 	k3-am6xx-phycore-disable-rtc.dtbo
++k3-am625-phyboard-lyra-disable-spi-nor-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
++	k3-am6xx-phycore-disable-spi-nor.dtbo
  k3-am625-phyboard-lyra-gpio-fan-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
  	k3-am62x-phyboard-lyra-gpio-fan.dtbo
  k3-am625-sk-csi2-imx219-dtbs := k3-am625-sk.dtb \
-@@ -139,6 +142,8 @@ k3-am642-evm-icssg1-dualemac-dtbs := \
- 	k3-am642-evm.dtb k3-am642-evm-icssg1-dualemac.dtbo
- k3-am642-phyboard-electra-disable-eth-phy-dtbs := \
+@@ -144,6 +147,8 @@ k3-am642-phyboard-electra-disable-eth-phy-dtbs := \
  	k3-am642-phyboard-electra-rdk.dtb k3-am6xx-phycore-disable-eth-phy.dtbo
-+k3-am642-phyboard-electra-disable-rtc-dtbs := \
-+	k3-am642-phyboard-electra-rdk.dtb k3-am6xx-phycore-disable-rtc.dtbo
+ k3-am642-phyboard-electra-disable-rtc-dtbs := \
+ 	k3-am642-phyboard-electra-rdk.dtb k3-am6xx-phycore-disable-rtc.dtbo
++k3-am642-phyboard-electra-disable-spi-nor-dtbs := \
++	k3-am642-phyboard-electra-rdk.dtb k3-am6xx-phycore-disable-spi-nor.dtbo
  k3-am642-phyboard-electra-gpio-fan-dtbs := \
  	k3-am642-phyboard-electra-rdk.dtb k3-am642-phyboard-electra-gpio-fan.dtbo
  k3-am642-tqma64xxl-mbax4xxl-sdcard-dtbs := \
-diff --git a/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-rtc.dtso b/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-rtc.dtso
+diff --git a/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso b/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
 new file mode 100644
-index 000000000000..8b24191f5948
+index 000000000000..cc0cf269b6e4
 --- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-rtc.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
 @@ -0,0 +1,15 @@
 +// SPDX-License-Identifier: GPL-2.0-only OR MIT
 +/*
@@ -219,7 +220,7 @@ index 000000000000..8b24191f5948
 +/dts-v1/;
 +/plugin/;
 +
-+&i2c_som_rtc {
++&serial_flash {
 +	status = "disabled";
 +};
 -- 
