@@ -1,54 +1,75 @@
-Return-Path: <linux-kernel+bounces-192430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FD78D1D25
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:35:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9937A8D1D27
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDAD4B244FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCEE21C22107
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9B116F29C;
-	Tue, 28 May 2024 13:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257A616F85B;
+	Tue, 28 May 2024 13:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kIrbIrMD"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/vZxkx1"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B513516132E;
-	Tue, 28 May 2024 13:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2631016F27D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903246; cv=none; b=FRDgHVf4jyuHpplCRigaIvY8Yzeow7KsgwBhLEeqPdjp2TIRbfvv/Id0D+Sd+h795PgZzxZs88+W25lTEvSf6fikZpM2W9mag3Ewu0ky1LTXCP6kuTVR4fuwqmprbdbZQQebyarJ/cOjRgnHL6j1c4RYqRX/8sIJMwELaiDfHe4=
+	t=1716903257; cv=none; b=X8i592X/gmD8MmGlq6av56cXf/tRO1J2SRcllxx3b+BbxA3gk9KbwSBOXGhK3eX48ErDKvERdxuCwcu7xONNS6BJfA9GhW5E7+TQluow3S0utTV/TIbsuo56PmFtjJOZxF0lhvqfMLPItV9o5iJOFDF3qSbNNxeyPQ6KP4K0TV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903246; c=relaxed/simple;
-	bh=Ik3IwN+16oKPOTbYrZpxc/FCC7z+whSbWb1zyWjb2EQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=sToyTMhNEVsQkfW6zg3LkfewKzT5RedHEEac5I2HfFnKJ78LV9q8kh0tMCBOEf5Y7T2p2VC9lhi7UBsCEkzK7sE0o2a7IpZORyGP49PeGZ0XeQTq69lWdYY7YPXetcyUxal2NNaktgA/dqpZWwBItKQyiaMMWLapVJxN9A8iH5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kIrbIrMD; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716903231; x=1717508031; i=markus.elfring@web.de;
-	bh=fKUmntawbOtctP6yN0b3gwKJXY86nmY0qmcKIIFU+QM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kIrbIrMD8WUlgP/D3vNfip/cTAhQ5k/CFLBUlFRL7gGPDcTgCr6+cCHzAUNL41eH
-	 nY3663K9aJG4auNJ3v0pyFn4xDrBhi1gpoeId8mD7JL2Z8RmAHpGBPwNKgJSwjkyn
-	 nqjnMJxUE94ChApE6t3bspLnYjGrv6i4GkASmYh+YBKqdHR+bgwh6eQTyUSVam5MQ
-	 l9HDnb/8xCVB+tQq6FHP3WGktuSmWDIQ0M3x9F1K3oU3JS2fpTXUAs6xJVrCYUtcg
-	 oshDjUHzb6VuGhDN8+9foFZd4BnhIrlqbhH+BglAZNGzHYWNUoDvID68p3V+qQA1p
-	 PDlHNcUCJ9a4Ol6+Tg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUCz1-1s3OO42CLj-00J6fC; Tue, 28
- May 2024 15:33:51 +0200
-Message-ID: <799829a9-0061-4e26-a678-ed1e180bfadf@web.de>
-Date: Tue, 28 May 2024 15:33:45 +0200
+	s=arc-20240116; t=1716903257; c=relaxed/simple;
+	bh=/D/BZxkV8W2P6r6SxTpr8oyRNUh6k8SoRVxsDh/8djY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MSxwjMcV25flugNLUHoN3NsCe03xPgIS4wpIw3cQApqOaHMnjzWEswfQld8KAEeGHpZPPfLzNdAbwyxCSrEFs0wEhia64e+XqfDYBMFt7Me5dH9Vzbe9WVeDsF0kZywWmJOK4if3sqPOQfdN1uz5cTEiozfrwmpQuWHbMEIpmzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A/vZxkx1; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4211a86f124so6755635e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716903252; x=1717508052; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xtaRbzBW2FmBq00uLRNYJrl9av0hwx9CNWB6QXoBHec=;
+        b=A/vZxkx15IJscvgkx7VhIDjq7gK6oRvhE31Mbt6GKD4dShXHtpEGvjhpFmNuBQUPGZ
+         fNYcSOn0fueYlXPkQEdymwby5k7nrKyRvGJrlM6jMSI+puWcMI7MP94elMp3g7BFJPyT
+         xAC4KYpr/v7lwSq/1us95DsdFgeHeQtJVTL5IwoHqiiuNbg5VHfM+SMxqFeff37KSSH2
+         M2x2l8fQB0sgsh31Svo7auPx1I9VNYlH9o+L2pDM/a35xeBCOLpcdgzJk49iPCB8bpwG
+         k47h3l7sR0/wDAe0dThPX8zmkTXCHQIRG+yCFOhY4fo+H5GSPh/cXwQDyC3aljgqLvWV
+         tyuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716903252; x=1717508052;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xtaRbzBW2FmBq00uLRNYJrl9av0hwx9CNWB6QXoBHec=;
+        b=poOF/xDU5OWsam5m7595+Umpg3BqLwbXtbuhJE4+mmvfpRx8VNCDJmkuf4ClJUAzb5
+         3FY3suo+ypcZCM+rJO/O/KpYIAHDgjKqnPPcV6KvCIePwPp3Q+3N1YG6Z3tU91/5/El1
+         yyJKj9K73vLb10fRZJoaHtFfAew9NuAXLSncx/qOqJB2nSJ95VMQxQYrvMoemCNog3Ux
+         wlKPlEEZoRF/L4BzzU4wWveCFWBggvtAv2kLlWjhLl+MhrnART2fSboaR+BNKgfh3d5g
+         xfeSjCPvLB6betUHpo6OUw6aO7GHzifmPN7ogxqd9+pLgyCbl4j7yaBDQcWZO60/JYAq
+         mGAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWS/VBpWNWtggNvzirHmRLMTaLCsVGlsFXX1uU8dPGHGz/JMa2+P1wGpYJM5b66VnFT1a+Y8FZ+l6YXGn95bHggRw+8S7tlUbI5SuX6
+X-Gm-Message-State: AOJu0YxB9l82YCpoCqAXuaHXrLbpXhsjwHAqIqqKsFfLGxn4OMr3nPJ0
+	hUPMnASdQjsiOIhT+Sd/uKIOEiDw3Ph3WRZab51/ZyL2fR9glDfKnEzg6r2/XDY=
+X-Google-Smtp-Source: AGHT+IHHeRm/5PPbzVOg65qBFrOHryVw+fWU5RzhUNglYGlZLjg3MKIhQAyFz6f7vlPAODV6LnnStw==
+X-Received: by 2002:a05:600c:558b:b0:41b:d8ef:8dcd with SMTP id 5b1f17b1804b1-42108a1c620mr80958335e9.28.1716903252257;
+        Tue, 28 May 2024 06:34:12 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:8f19:f965:3f93:6385? ([2a01:e0a:982:cbb0:8f19:f965:3f93:6385])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421212c487csm7821565e9.9.2024.05.28.06.34.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 06:34:11 -0700 (PDT)
+Message-ID: <4765cd08-c105-4a48-ab00-4c44fa104d7f@linaro.org>
+Date: Tue, 28 May 2024 15:34:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,48 +77,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Oleksij Rempel <o.rempel@pengutronix.de>, linux-can@vger.kernel.org,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Oliver Hartkopp <socketcan@hartkopp.net>,
- Robin van der Gracht <robin@protonic.nl>
-Cc: LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
- kernel@pengutronix.de, =?UTF-8?Q?Alexander_H=C3=B6lzl?=
- <alexander.hoelzl@gmx.net>
-References: <20240528070648.1947203-1-o.rempel@pengutronix.de>
-Subject: Re: [PATCH] j1939: recover socket queue on CAN bus error during BAM
- transmission
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240528070648.1947203-1-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/MGXPLipIr/QLxKLMjXmGzy0bu0p1jeg0nhf3Q1y6odsN+g7S2G
- 1+jyAY6AASEQ1VUyhHAguwk1lTShv5VD2RnPus4/FOPDtpOjgM3x0DwTEMyJmBsLdbK8afM
- ic4Iit1Ib2bZGJLHtngpEaDFgD/4LbXN9lEie5tVYv7abbUrBacGgzYvWWSi3j46UvijO/6
- iDw9E/lJwCP7tmaOKzvuw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jGP6vXC3I/A=;FWpa1WiDXjnDhxnGscHZLMUwTDe
- iUyyJ6NssagF63SER41bXUFxiqAXcU4FAQJom55FRThQ1r/yULNhalTK72iNx0/Y9cpQ50vSs
- 0UyiBidp6KTs32zwuv6zAy6rCPdVe12XZHGbboVBWpb1yJd21bsFCA9hGfqX70/fIx+XXYzwi
- Y+S9uyrOvrGT9kyjO1GoVMFZiWw8665frmDn8i8NPNKVfeeT4/fCUY3D3gOYqn3zL25h7HwBr
- wlDtDL21N8KGhTmL5czlSvflnnE6+s12ZWbtDoXHKXkV5ScH1J/HE8oS3fWuR2Jherym9VXCW
- DkRfV3ye5lqCeVQm1QuhSWXlWhrill9xezwWSwKH3Y3P77gwDdELiEf6D+S6MB6EgE2mEz03r
- tzm8RMD6NreqR5/KEnDHl/kWINN2ftdPGsG2HeO/pK6i0KYpXNQjdub0xs0I0VJzygMIjNSrU
- tLMPuOhl82zZb3ppaEoNWolIvgLzS2aE11eZLswBnXmQcnPbZUAHh16GEamKc6XLB94mb0R8h
- aQDbk7anIMQzjUGdKr+RWp35VQy5EhxpnAjJL0fUrzULPYYjsuHPBQspwsjbROTf7B0imCRdd
- btgqxndj/0MBnJSz9IxwTPXi9x2RDWmpsga2PTkX7luX/2BUCeyknCTWXSKUDowEETqBVgzlS
- D5YGJj6UxjndM1Cbw5is8R/vrxMvw7CWo/aGdOC4ZqLFb8l7M/v0TyOTAW+tcLKCtn5C1+hf/
- 1sRYDDhUUy2tag+4bAm/zwbQoyBa4mgRPT6J9cUexv9i0q/gQ+3jvf+k400qXAusbWFqIYRVW
- iqRSaINjD8wvRRTYE37PbtTnstiCopPQ1j/Cw82Xh4RzA=
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] arm64: dts: amlogic: ad402: move thermal-zones to top
+ node
+To: Arnd Bergmann <arnd@kernel.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Dmitry Rokosov <ddrokosov@salutedevices.com>,
+ Igor Prusov <ivprusov@salutedevices.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240528133215.2266419-1-arnd@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240528133215.2266419-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->                      =E2=80=A6 The fix activates the next queued session=
- after
-=E2=80=A6
+On 28/05/2024 15:31, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> It appears that this accidentally got added into the spi node, causing
+> a warning.
+> 
+> arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts:119.16-161.4: Warning (spi_bus_reg): /soc/spi@fd000400/thermal-zones: missing or empty reg property
+> 
+> Fixes: 593ab951232b ("arm64: dts: amlogic: ad402: setup thermal-zones")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   .../arm64/boot/dts/amlogic/meson-a1-ad402.dts | 62 +++++++++----------
+>   1 file changed, 31 insertions(+), 31 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts b/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
+> index c8579b6e67cf..6883471a93b4 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
+> @@ -84,37 +84,6 @@ vddio_1v8: regulator-vddio-1v8 {
+>   		vin-supply = <&vddao_3v3>;
+>   		regulator-always-on;
+>   	};
+> -};
+> -
+> -/* Bluetooth HCI H4 */
+> -&uart_AO {
+> -	status = "okay";
+> -	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
+> -	pinctrl-names = "default";
+> -};
+> -
+> -&uart_AO_B {
+> -	status = "okay";
+> -};
+> -
+> -&saradc {
+> -	status = "okay";
+> -	vref-supply = <&vddio_1v8>;
+> -};
+> -
+> -&spifc {
+> -	status = "okay";
+> -	pinctrl-0 = <&spifc_pins>;
+> -	pinctrl-names = "default";
+> -
+> -	flash@0 {
+> -		compatible = "spi-nand";
+> -		status = "okay";
+> -		reg = <0>;
+> -		spi-max-frequency = <96000000>;
+> -		spi-tx-bus-width = <4>;
+> -		spi-rx-bus-width = <4>;
+> -	};
+>   
+>   	thermal-zones {
+>   		soc_thermal: soc_thermal {
+> @@ -161,6 +130,37 @@ map1 {
+>   	};
+>   };
+>   
+> +/* Bluetooth HCI H4 */
+> +&uart_AO {
+> +	status = "okay";
+> +	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
+> +	pinctrl-names = "default";
+> +};
+> +
+> +&uart_AO_B {
+> +	status = "okay";
+> +};
+> +
+> +&saradc {
+> +	status = "okay";
+> +	vref-supply = <&vddio_1v8>;
+> +};
+> +
+> +&spifc {
+> +	status = "okay";
+> +	pinctrl-0 = <&spifc_pins>;
+> +	pinctrl-names = "default";
+> +
+> +	flash@0 {
+> +		compatible = "spi-nand";
+> +		status = "okay";
+> +		reg = <0>;
+> +		spi-max-frequency = <96000000>;
+> +		spi-tx-bus-width = <4>;
+> +		spi-rx-bus-width = <4>;
+> +	};
+> +};
+> +
+>   &usb2_phy1 {
+>   	phy-supply = <&vcc_3v3>;
+>   };
 
-Please choose an imperative change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc1#n94
+Oops thx for figuring that out
 
-Regards,
-Markus
+
+Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+
 
