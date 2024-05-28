@@ -1,88 +1,70 @@
-Return-Path: <linux-kernel+bounces-192562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78538D1F1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:45:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B96A8D1F14
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE801F2373E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0872D1F2368C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51F5170855;
-	Tue, 28 May 2024 14:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1gYFjtG"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035E516FF49;
+	Tue, 28 May 2024 14:43:44 +0000 (UTC)
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB8E170841
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B09216F902
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716907447; cv=none; b=gujVqo7w781GJYATKSLp2vsA1aqZFvx9/TLEiXk0BmCL/9xMcJWSsuEJxqiCBPwg/ZIfz0tm5liXcIghCjwhmbm65E9UejSrPk7v2TLwMPluy1QLnX69899VahE0nGLZu0u/94dz05hFKt+6JntossAAiiA0Nr7/9EwO+iMam9w=
+	t=1716907423; cv=none; b=NaTiroEQRh8FdsRTPznPTMtvkU4DNTemW9LFg4kyIAgATFJ5SYx5TnraLV8NyOAv65HY3LM/iGNvpeHpOLEccyb08iKZjtDw9vcZnSAdV3EryNPvHxIAUyDsPkeuytS0reWOAETeHqvh9Uyke6RuNkOQfhpAWzTjptUN/zchmDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716907447; c=relaxed/simple;
-	bh=XEgoDy6TdaH9VTRy5NifDWwtS+K5TBajp8VDOwsV714=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ITF3VPav6lKq5xvg61sYL57cpz8juPXWNWK5NxDnZEWeu1A84qFNzzfIdcx7GMq4E6VThsHloAABimlDLn+Be2MhRRLx4MznBd2RtGg8w3J0stry3jnj2KNMV/DaH6F194R289R2QTBqMqRj2EwqXCkrYiEJSTC4QmRk513fcCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1gYFjtG; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e6f51f9de4so12972341fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:44:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716907444; x=1717512244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YNJyQBEZIlvY5qkox0e9QbOH8UJx4eH8/3j/qt71lDE=;
-        b=I1gYFjtGpXE8MfenarjVL/PKutL2qWRMdjKS2DLv+tPVFRreYiLmkuu0ql/0QkYULk
-         AnXey+vbONlvFW8J+0V0xaf9ToLOflgIdOIyP/MNCu82RmJoZFSWQF25lRMhU/Sa6U+I
-         UeIOZea6ASX9AVhiWJ/BNisflY/9XLMHwYAqoHyoDdHAV9LPyOl6mg93a6XXTgXU8LOA
-         NJasiNgHqFYQFr0F93LudOJSwBz9+hYEMu4krG9EbzfSqGVKFN8Bliv3OBDsVAlGIi31
-         4uyPvCDY/VV/hEvZ+xIvT6TWOHe6ScLEaOjCa3RKrb/PI/lJxrl0Yp3EiYfeXiZNxL7B
-         xfwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716907444; x=1717512244;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YNJyQBEZIlvY5qkox0e9QbOH8UJx4eH8/3j/qt71lDE=;
-        b=GAHnh7lYPk9oJv3Up8lu7WU0fyJWozbdoFlxz42Uv3ESvG+63KLJNa5pF9ORWXAxhr
-         NybukHcgxB3x85RAkChfhRvFRS2guI2kVuRLIdRcpCaddjWLjesHNNiHws+lWcndydr+
-         y8HKh6qGtrTbdCjTVP8HJAsqYxiNDXPNsstsYK9LnNMKS8UJKgkKDxlIHAGIzZDpz4YA
-         il6FtdLwZ02YWYuPifLs8AP01+yJqkalw+s7pRHsZxhcDqxJtaaSpeLvIXp0QmpI9drx
-         6OHj1QlA9ftUcKSXY1o0QgoxgHLP4MY19HH8QPhsayN702BLhRmg/UVBVvhpOXi1SLZT
-         epQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQynclmtH3IAqR+vedbo5oX/qoBx2YKZBV7dBWM8hJSBGJTexZSydvMN+xq2U2X8mOAP0l+sPQqrrXCR5wULLTtvoMBXSVLH4VWiF
-X-Gm-Message-State: AOJu0Yy4Jsrtr33Gblgjyx1/qQ47MW9gNZ5sTpBJinSyGj1AA2tbabRx
-	yAhONzgqlX5V//O73hqODLhvtW3l9eAlIPVhWb1tekxYwGmxBjJd
-X-Google-Smtp-Source: AGHT+IH9fcX9h8dAddsirOf8W9e2zRkjaMX3KHnPUQQFi9/AO0LjE/tHFGuIEkZAFmGJ+xwruFYb9w==
-X-Received: by 2002:a2e:9e04:0:b0:2d8:5fe6:820d with SMTP id 38308e7fff4ca-2e95b0411c8mr97696731fa.11.1716907441945;
-        Tue, 28 May 2024 07:44:01 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817ad3sm629797966b.16.2024.05.28.07.44.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 07:44:01 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>
-Subject: [PATCH v2 2/2] mm/vmalloc: Use __this_cpu_try_cmpxchg() in preload_this_cpu_lock()
-Date: Tue, 28 May 2024 16:43:14 +0200
-Message-ID: <20240528144345.5980-2-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240528144345.5980-1-ubizjak@gmail.com>
-References: <20240528144345.5980-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1716907423; c=relaxed/simple;
+	bh=AEMPCYijVQ3FjHfU8+MIpB4KRBaUR9tXiKkrF1Oz8mY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g5gDJWFr6weJ0thNo9fWpnYJ1fX81px1VV5Ydy5BZk1U95hXMhn1eegwcV1aUxirayXrHoc9t7xjJRJ7xptvI6Rig1OfijEnPfq1IcZ4xpg7BIpNBNGAlAznWojlv3Q5HTNzRwuvTh9ZQTxl2PD81a5qEBhOeFdRegatI3SW5iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SBn37C019448;
+	Tue, 28 May 2024 14:43:34 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
+ =?UTF-8?Q?=3Dcc:content-transfer-encoding:date:from:message-id:mime-versi?=
+ =?UTF-8?Q?on:subject:to;_s=3Dcorp-2023-11-20;_bh=3DqONFGGvnWDmZHkGRAeYDb5?=
+ =?UTF-8?Q?VDvvTkeSuCre4W1Lo4orU=3D;_b=3DIJSDL/FL9K+jXU1jqAVGEc+Zm3XKS3xQU?=
+ =?UTF-8?Q?gO4RO8fzcjSNU1RZ0hAhEMuCDA4XXwOKGDJ_9o2kdcUGjzM5avmETT+4wumurK2?=
+ =?UTF-8?Q?0hsn8NGAMMtpcse93H7PzlKG4nYzegsbYwsH8UtVV_k22Y2t39nZ8sv3lYsHpkE?=
+ =?UTF-8?Q?dV6MuhDL5klD8Zc6e1kwZb5ivEj3vyF5y/+GdsUVrmPQbtS_4aLUuVGXS8hUrd+?=
+ =?UTF-8?Q?urMrvK8IuNJhEatOMgzi70xzR+lmxYiuzOMKBPrEYG2ZTn1fkk3nF_JPTfpFDJL?=
+ =?UTF-8?Q?jz0uauEIAeZU14GbHYp3kTzc0H3YnlSoecBGBRbk3OqkIkPjI5ExXN6Y7rc_9w?=
+ =?UTF-8?Q?=3D=3D_?=
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8j84ery-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 14:43:34 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44SDud91025822;
+	Tue, 28 May 2024 14:43:33 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50py1hc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 14:43:33 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SEhW7p035350;
+	Tue, 28 May 2024 14:43:32 GMT
+Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3yc50py1g5-1;
+	Tue, 28 May 2024 14:43:32 +0000
+From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
+        mingo@kernel.org, keith.lucas@oracle.com, aruna.ramakrishna@oracle.com
+Subject: [PATCH  v4 0/5] x86/pkeys: update PKRU to enable pkey 0 before
+Date: Tue, 28 May 2024 14:43:26 +0000
+Message-Id: <20240528144331.2758104-1-aruna.ramakrishna@oracle.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,71 +72,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
+ adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=850 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405280111
+X-Proofpoint-ORIG-GUID: dpJjDFvk0tZUvkGSS3B3Fdn_s0Kvkmtt
+X-Proofpoint-GUID: dpJjDFvk0tZUvkGSS3B3Fdn_s0Kvkmtt
 
-Use __this_cpu_try_cmpxchg() instead of
-__this_cpu_cmpxchg (*ptr, old, new) == old in
-preload_this_cpu_lock().  x86 CMPXCHG instruction returns
-success in ZF flag, so this change saves a compare after cmpxchg.
+v4 updates (based on review feedback from Thomas Gleixner):
+- Simplified update_pkru_in_sigframe()
+- Changed sigpkru to enable minimally required keys (init_pkru and current
+  pkru)
+- Modified pkey_sighandler_tests.c to use kselfttest framework
+- Fixed commit descriptions
+- Fixed sigreturn use case (pointed out by Jeff Xu)
+- Added a new sigreturn test case
 
-The generated code improves from:
+v3 updates (based on review feedback from Ingo Molnar and Dave Hansen):
+- Split the original patch into 3:
+        - function interface changes
+        - helper functions
+        - functional change to write pkru on sigframe
+- Enabled all pkeys before XSAVE - i.e. wrpkru(0), rather than assuming
+that the alt sig stack is always protected by pkey 0.
+- Added a few test cases in pkey_sighandler_tests.c.
 
-    4bb6:	48 85 f6             	test   %rsi,%rsi
-    4bb9:	0f 84 10 fa ff ff    	je     45cf <...>
-    4bbf:	4c 89 e8             	mov    %r13,%rax
-    4bc2:	65 48 0f b1 35 00 00 	cmpxchg %rsi,%gs:0x0(%rip)
-    4bc9:	00 00
-    4bcb:	48 85 c0             	test   %rax,%rax
-    4bce:	0f 84 fb f9 ff ff    	je     45cf <...>
+I had some trouble adding these tests to
+tools/testing/selftests/mm/protection_keys.c, so they're in a separate
+file.
 
-to:
+Aruna Ramakrishna (4):
+  x86/pkeys: Add PKRU as a parameter in signal handling functions
+  x86/pkeys: Add helper functions to update PKRU on sigframe
+  x86/pkeys: Update PKRU to enable minimally required pkeys before XSAVE
+  x86/pkeys: Restore altstack before sigcontext
 
-    4bb6:	48 85 f6             	test   %rsi,%rsi
-    4bb9:	0f 84 10 fa ff ff    	je     45cf <...>
-    4bbf:	4c 89 e8             	mov    %r13,%rax
-    4bc2:	65 48 0f b1 35 00 00 	cmpxchg %rsi,%gs:0x0(%rip)
-    4bc9:	00 00
-    4bcb:	0f 84 fe f9 ff ff    	je     45cf <...>
+Keith Lucas (1):
+  selftests/mm: Add new testcases for pkeys
 
-No functional change intended.
+ arch/x86/include/asm/fpu/signal.h             |   2 +-
+ arch/x86/include/asm/sighandling.h            |  10 +-
+ arch/x86/kernel/fpu/signal.c                  |  27 +-
+ arch/x86/kernel/fpu/xstate.c                  |  13 +
+ arch/x86/kernel/fpu/xstate.h                  |   1 +
+ arch/x86/kernel/signal.c                      |  42 +-
+ arch/x86/kernel/signal_32.c                   |  12 +-
+ arch/x86/kernel/signal_64.c                   |  14 +-
+ tools/testing/selftests/mm/Makefile           |   5 +-
+ tools/testing/selftests/mm/pkey-helpers.h     |  11 +-
+ .../selftests/mm/pkey_sighandler_tests.c      | 480 ++++++++++++++++++
+ tools/testing/selftests/mm/protection_keys.c  |  10 -
+ 12 files changed, 582 insertions(+), 45 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/pkey_sighandler_tests.c
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Lorenzo Stoakes <lstoakes@gmail.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>
----
-v2: Show generated code improvement in the commit message.
----
- mm/vmalloc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 5d3aa2dc88a8..4f34d935d648 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1816,7 +1816,7 @@ static void free_vmap_area(struct vmap_area *va)
- static inline void
- preload_this_cpu_lock(spinlock_t *lock, gfp_t gfp_mask, int node)
- {
--	struct vmap_area *va = NULL;
-+	struct vmap_area *va = NULL, *tmp;
- 
- 	/*
- 	 * Preload this CPU with one extra vmap_area object. It is used
-@@ -1832,7 +1832,8 @@ preload_this_cpu_lock(spinlock_t *lock, gfp_t gfp_mask, int node)
- 
- 	spin_lock(lock);
- 
--	if (va && __this_cpu_cmpxchg(ne_fit_preload_node, NULL, va))
-+	tmp = NULL;
-+	if (va && !__this_cpu_try_cmpxchg(ne_fit_preload_node, &tmp, va))
- 		kmem_cache_free(vmap_area_cachep, va);
- }
- 
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+prerequisite-patch-id: d84439301b44c03df2555d3722ec512001ae52f2
 -- 
-2.42.0
+2.39.3
 
 
