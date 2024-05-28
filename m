@@ -1,285 +1,262 @@
-Return-Path: <linux-kernel+bounces-192759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8598D21B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:35:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6898D21B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834A42846AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B85E1C2279B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C575916F27C;
-	Tue, 28 May 2024 16:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B782E172BB6;
+	Tue, 28 May 2024 16:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDinzG4Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="to9eUQna"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F9525779;
-	Tue, 28 May 2024 16:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49E3F9D6;
+	Tue, 28 May 2024 16:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716914119; cv=none; b=UksfJNZYWojIAZtKOOoUYULvFadfYKqsrYm/CKlZJNZc+50Fq70l/axNnFEcPpnHOzWm0DxAk0oOYzPpBoSZi0chAyL7/DMIrgtHPc4uCugLE/9WErLXyfzIDgzFc3VWGwcgAwNYcOzaDo5YjgdvzB4NAlaZPdpeEGf1QHLwOR4=
+	t=1716914177; cv=none; b=llyLSHZF3zG/lcmEOgrbf6HywGnJGrlCPyHS5+gOUdvA7t3HTsFcgxY79WEH4I9JXN60Uwn1MPQ7K768bDPp/883GUYA8kUknlLAFJUz4pSezdvHGV6LwWzqRSOprm6EA+7UbpgWsqIksXav8kgMDQ7+yFaF38EIU4rIsgORd7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716914119; c=relaxed/simple;
-	bh=x9GxzSEQyS9faufytQQHuiv461rRXwkNf2zahJ08E7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rDA5vEbwgLm6vHroPi+eTypHFbRTKbP5R0Iw1+dMrKm9X4e2jjoqX/lcDYn/jx0Rxip4umfHY/kl1ZuFHLfWR7yZtu485im1aAOZr1/8LNGe1fzJvR0LNqnuRPbBfU4TcFRSnbVChdcEuwWFmqIHbfi7zjpDS+hQvD4IUwdMDK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDinzG4Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB3BC3277B;
-	Tue, 28 May 2024 16:35:15 +0000 (UTC)
+	s=arc-20240116; t=1716914177; c=relaxed/simple;
+	bh=NuefzrUj9FO/t6wc3pR2TCeJn0nDqx9DSuM502grMnQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rRAudfS+efjJ9IkVpT9/10vZneEXEFTgC5Jdjzxw45kf7VeOM4WNZDCkmAQ/m5dj9o/qDejxw6VVkYWF2/hyJUWAoU5lEkIkPoLjB1mFvsreFMYdRfM93N4ZDF5J+SGhHviof7hNLKS4yeKCN26rCaSGHaBa/+a2ZLR3yQtat6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=to9eUQna; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BBF4C3277B;
+	Tue, 28 May 2024 16:36:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716914119;
-	bh=x9GxzSEQyS9faufytQQHuiv461rRXwkNf2zahJ08E7g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TDinzG4ZCGlBSi4sinMjD1nUT24MMHz/OcEsSsdF4e11EMdzSMnCG87lmG+ORgyvo
-	 ISer6YT715Ypdm7zLjg39xLCyIVHlTVQ+lV46I3juFs5P0cUj5ihvYO6Wk4oWyTZM1
-	 lI0wodXlIy0owdTGvartCA2wEnYNHlQWVz8PvV6H5D9u/b8JbsFqPhhWdgU1kXcG6C
-	 mbAS08KwxjnVJL86P6RCyTmOlxQ3CdIGBvweEAegI/DqoghlXEkHXbbgX36/3czSzK
-	 C4PPcwoI7QLOZUQ5gBKNt7/f4CmByoKp4URwkqNXNOedyJeXKnqKcqjf3ncOOjaUtM
-	 DtYNtkdgY8uWA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	linux-kbuild@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
+	s=k20201202; t=1716914177;
+	bh=NuefzrUj9FO/t6wc3pR2TCeJn0nDqx9DSuM502grMnQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=to9eUQnaJbyB7NCzJ2G4rbqeNYs95A7m70tx9yOFS+k39aec+WOxXgptyeEFQ9uIV
+	 PBt5BTLemlb5fAei1Sh+nhoO4t2l4X/AZnerO88r0qBjBI68FlKOWAoInpfg1nBivx
+	 dGKkV2d+D4Dwf+exD/Wn3qPLgzxjnLLZlFu3en8GHPagFjuW2tFsL+7u2GiA/3D/ZL
+	 FnXeRLtkz4FVYOH0kLVoOKKZuPkN2ZxX2bvLk87+LryQQxoiNuO9qc2ja4uRPYL2k7
+	 F/KsXvNzc4kX+h4zWwx4yx9ZN2zU6e9wH/nMACyNnKlWxWfhZS/lyk1aQF2olZQ983
+	 s3xGwztL+4Rrw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sBzo6-00GNJS-Sr;
+	Tue, 28 May 2024 17:36:15 +0100
+Date: Tue, 28 May 2024 17:36:14 +0100
+Message-ID: <86ed9lnbb5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] kbuild: rust: remove now-unneeded `rusttest` custom sysroot handling
-Date: Tue, 28 May 2024 18:35:02 +0200
-Message-ID: <20240528163502.411600-1-ojeda@kernel.org>
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4] of: property: Add fw_devlink support for interrupt-map property
+In-Reply-To: <20240509120820.1430587-1-apatel@ventanamicro.com>
+References: <20240509120820.1430587-1-apatel@ventanamicro.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: apatel@ventanamicro.com, robh@kernel.org, saravanak@google.com, palmer@dabbelt.com, paul.walmsley@sifive.com, atishp@atishpatra.org, ajones@ventanamicro.com, sunilvl@ventanamicro.com, anup@brainfault.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Since we dropped our custom `alloc` in commit 9d0441bab775 ("rust: alloc:
-remove our fork of the `alloc` crate"), there is no need anymore to keep
-the custom sysroot hack.
+On Thu, 09 May 2024 13:08:20 +0100,
+Anup Patel <apatel@ventanamicro.com> wrote:
+> 
+> Some of the PCI host controllers (such as generic PCI host controller)
+> use "interrupt-map" DT property to describe the mapping between PCI
+> endpoints and PCI interrupt pins. This is the only case where the
+> interrupts are not described in DT.
+> 
+> Currently, there is no fw_devlink created based on "interrupt-map"
+> DT property so interrupt controller is not guaranteed to be probed
+> before the PCI host controller. This affects every platform where
+> both PCI host controller and interrupt controllers are probed as
+> regular platform devices.
+> 
+> This creates fw_devlink between consumers (PCI host controller) and
+> supplier (interrupt controller) based on "interrupt-map" DT property.
+> 
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> Reviewed-by: Saravana Kannan <saravanak@google.com>
+> ---
+> Changes since v3:
+> - Added a comment about of_irq_parse_raw()
+> - Removed redundant NULL assignments to sup_args.np
+> Changes since v2:
+> - No need for a loop to find #interrupt-cells property value
+> - Fix node de-reference leak when index is greater than number
+>   of entries in interrupt-map property
+> Changes since v1:
+> - Updated commit description based on Rob's suggestion
+> - Use of_irq_parse_raw() for parsing interrupt-map DT property
 
-Thus delete it, which makes the target way simpler and faster too.
+This patch breaks badly on my M1 Mini, with a continuous stream of
+boot time warnings lasting about 100 seconds:
 
-This also means we are not using Cargo for anything at the moment,
-and that no download is required anymore, so update the main `Makefile`
-and the documentation accordingly.
+[   97.832335] ------------[ cut here ]------------
+[   97.836955] /soc/pcie@690000000/pci@2,0 interrupt-map failed, using interrupt-controller
+[   97.845072] WARNING: CPU: 0 PID: 1 at drivers/of/irq.c:277 of_irq_parse_raw+0x620/0x730
+[   97.853087] Modules linked in:
+[   97.856139] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.10.0-rc1 #2915
+[   97.864163] Hardware name: Apple Mac mini (M1, 2020) (DT)
+[   97.869570] pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+[   97.876546] pc : of_irq_parse_raw+0x620/0x730
+[   97.880907] lr : of_irq_parse_raw+0x620/0x730
+[   97.885267] sp : ffffc000800538a0
+[   97.888581] x29: ffffc000800538a0 x28: 0000000000000000 x27: ffffffffff5ffc68
+[   97.895732] x26: ffffc000800539a4 x25: ffffffffff5ffbbc x24: ffffc00080053a48
+[   97.902883] x23: ffffe3ff73284e68 x22: ffffb7889aede6d0 x21: ffffe3ff735f9320
+[   97.910034] x20: ffffc00080053964 x19: ffffb7889aede6d0 x18: ffffffffffffffff
+[   97.917185] x17: 7075727265746e69 x16: 20676e697375202c x15: 64656c6961662070
+[   97.924336] x14: 616d2d7470757272 x13: 72656c6c6f72746e x12: 6f632d7470757272
+[   97.931487] x11: 65746e6920676e69 x10: ffffe3ff740bcb68 x9 : ffffe3ff72335b38
+[   97.938639] x8 : 00000001000028a4 x7 : ffffe3ff740afc08 x6 : 00000000000038a4
+[   97.945789] x5 : 00000000000067b0 x4 : c0000001000028a4 x3 : 0000000000000000
+[   97.952940] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffffb784c16ade00
+[   97.960092] Call trace:
+[   97.962534]  of_irq_parse_raw+0x620/0x730
+[   97.966545]  parse_interrupt_map+0xfc/0x188
+[   97.970731]  of_fwnode_add_links+0x170/0x1e0
+[   97.975004]  fw_devlink_parse_fwtree+0x44/0x98
+[   97.979452]  fw_devlink_parse_fwtree+0x6c/0x98
+[   97.983899]  fw_devlink_parse_fwtree+0x6c/0x98
+[   97.988347]  device_add+0x610/0x6a8
+[   97.991836]  of_device_add+0x4c/0x70
+[   97.995411]  of_platform_device_create_pdata+0xa0/0x160
+[   98.000644]  of_platform_bus_create+0x184/0x370
+[   98.005178]  of_platform_populate+0x68/0x160
+[   98.009451]  of_platform_default_populate_init+0xf4/0x118
+[   98.014859]  do_one_initcall+0x4c/0x320
+[   98.018695]  do_initcalls+0xf4/0x1d8
+[   98.022271]  kernel_init_freeable+0x12c/0x280
+[   98.026632]  kernel_init+0x2c/0x1f8
+[   98.030120]  ret_from_fork+0x10/0x20
+[   98.033696] ---[ end trace 0000000000000000 ]---
 
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- Documentation/rust/quick-start.rst | 14 ------
- Documentation/rust/testing.rst     |  5 +--
- Makefile                           |  3 +-
- rust/Makefile                      | 70 ++++--------------------------
- 4 files changed, 11 insertions(+), 81 deletions(-)
+which comes from 10a20b34d735f ("of/irq: Don't ignore
+interrupt-controller when interrupt-map failed").
 
-diff --git a/Documentation/rust/quick-start.rst b/Documentation/rust/quick-start.rst
-index cc3f11e0d441..5ca13be451f5 100644
---- a/Documentation/rust/quick-start.rst
-+++ b/Documentation/rust/quick-start.rst
-@@ -164,20 +164,6 @@ can be installed manually::
- The standalone installers also come with ``clippy``.
- 
- 
--cargo
--*****
--
--``cargo`` is the Rust native build system. It is currently required to run
--the tests since it is used to build a custom standard library that contains
--the facilities provided by the custom ``alloc`` in the kernel. The tests can
--be run using the ``rusttest`` Make target.
--
--If ``rustup`` is being used, all the profiles already install the tool,
--thus nothing needs to be done.
--
--The standalone installers also come with ``cargo``.
--
--
- rustdoc
- *******
- 
-diff --git a/Documentation/rust/testing.rst b/Documentation/rust/testing.rst
-index acfd0c2be48d..568b71b415a4 100644
---- a/Documentation/rust/testing.rst
-+++ b/Documentation/rust/testing.rst
-@@ -131,9 +131,8 @@ Additionally, there are the ``#[test]`` tests. These can be run using the
- 
- 	make LLVM=1 rusttest
- 
--This requires the kernel ``.config`` and downloads external repositories. It
--runs the ``#[test]`` tests on the host (currently) and thus is fairly limited in
--what these tests can test.
-+This requires the kernel ``.config``. It runs the ``#[test]`` tests on the host
-+(currently) and thus is fairly limited in what these tests can test.
- 
- The Kselftests
- --------------
-diff --git a/Makefile b/Makefile
-index f975b6396328..f368a9167de8 100644
---- a/Makefile
-+++ b/Makefile
-@@ -507,7 +507,6 @@ RUSTDOC		= rustdoc
- RUSTFMT		= rustfmt
- CLIPPY_DRIVER	= clippy-driver
- BINDGEN		= bindgen
--CARGO		= cargo
- PAHOLE		= pahole
- RESOLVE_BTFIDS	= $(objtree)/tools/bpf/resolve_btfids/resolve_btfids
- LEX		= flex
-@@ -601,7 +600,7 @@ endif
- export RUSTC_BOOTSTRAP := 1
- 
- export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE LD CC HOSTPKG_CONFIG
--export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN CARGO
-+export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN
- export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
- export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
- export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
-diff --git a/rust/Makefile b/rust/Makefile
-index f70d5e244fee..385378311322 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -44,17 +44,10 @@ rustc_sysroot := $(shell MAKEFLAGS= $(RUSTC) $(rust_flags) --print sysroot)
- rustc_host_target := $(shell $(RUSTC) --version --verbose | grep -F 'host: ' | cut -d' ' -f2)
- RUST_LIB_SRC ?= $(rustc_sysroot)/lib/rustlib/src/rust/library
- 
--ifeq ($(quiet),silent_)
--cargo_quiet=-q
-+ifneq ($(quiet),)
- rust_test_quiet=-q
- rustdoc_test_quiet=--test-args -q
- rustdoc_test_kernel_quiet=>/dev/null
--else ifeq ($(quiet),quiet_)
--rust_test_quiet=-q
--rustdoc_test_quiet=--test-args -q
--rustdoc_test_kernel_quiet=>/dev/null
--else
--cargo_quiet=--verbose
- endif
- 
- core-cfgs = \
-@@ -135,22 +128,21 @@ quiet_cmd_rustc_test_library = RUSTC TL $<
- 		@$(objtree)/include/generated/rustc_cfg $(rustc_target_flags) \
- 		--crate-type $(if $(rustc_test_library_proc),proc-macro,rlib) \
- 		--out-dir $(objtree)/$(obj)/test --cfg testlib \
--		--sysroot $(objtree)/$(obj)/test/sysroot \
- 		-L$(objtree)/$(obj)/test \
- 		--crate-name $(subst rusttest-,,$(subst rusttestlib-,,$@)) $<
- 
--rusttestlib-build_error: $(src)/build_error.rs rusttest-prepare FORCE
-+rusttestlib-build_error: $(src)/build_error.rs FORCE
- 	+$(call if_changed,rustc_test_library)
- 
- rusttestlib-macros: private rustc_target_flags = --extern proc_macro
- rusttestlib-macros: private rustc_test_library_proc = yes
--rusttestlib-macros: $(src)/macros/lib.rs rusttest-prepare FORCE
-+rusttestlib-macros: $(src)/macros/lib.rs FORCE
- 	+$(call if_changed,rustc_test_library)
- 
--rusttestlib-bindings: $(src)/bindings/lib.rs rusttest-prepare FORCE
-+rusttestlib-bindings: $(src)/bindings/lib.rs FORCE
- 	+$(call if_changed,rustc_test_library)
- 
--rusttestlib-uapi: $(src)/uapi/lib.rs rusttest-prepare FORCE
-+rusttestlib-uapi: $(src)/uapi/lib.rs FORCE
- 	+$(call if_changed,rustc_test_library)
- 
- quiet_cmd_rustdoc_test = RUSTDOC T $<
-@@ -159,7 +151,7 @@ quiet_cmd_rustdoc_test = RUSTDOC T $<
- 	$(RUSTDOC) --test $(rust_common_flags) \
- 		@$(objtree)/include/generated/rustc_cfg \
- 		$(rustc_target_flags) $(rustdoc_test_target_flags) \
--		--sysroot $(objtree)/$(obj)/test/sysroot $(rustdoc_test_quiet) \
-+		$(rustdoc_test_quiet) \
- 		-L$(objtree)/$(obj)/test --output $(rustdoc_output) \
- 		--crate-name $(subst rusttest-,,$@) $<
- 
-@@ -192,7 +184,6 @@ quiet_cmd_rustc_test = RUSTC T  $<
- 	$(RUSTC) --test $(rust_common_flags) \
- 		@$(objtree)/include/generated/rustc_cfg \
- 		$(rustc_target_flags) --out-dir $(objtree)/$(obj)/test \
--		--sysroot $(objtree)/$(obj)/test/sysroot \
- 		-L$(objtree)/$(obj)/test \
- 		--crate-name $(subst rusttest-,,$@) $<; \
- 	$(objtree)/$(obj)/test/$(subst rusttest-,,$@) $(rust_test_quiet) \
-@@ -200,60 +191,15 @@ quiet_cmd_rustc_test = RUSTC T  $<
- 
- rusttest: rusttest-macros rusttest-kernel
- 
--# This prepares a custom sysroot with our custom `alloc` instead of
--# the standard one.
--#
--# This requires several hacks:
--#   - Unlike `core` and `alloc`, `std` depends on more than a dozen crates,
--#     including third-party crates that need to be downloaded, plus custom
--#     `build.rs` steps. Thus hardcoding things here is not maintainable.
--#   - `cargo` knows how to build the standard library, but it is an unstable
--#     feature so far (`-Zbuild-std`).
--#   - `cargo` only considers the use case of building the standard library
--#     to use it in a given package. Thus we need to create a dummy package
--#     and pick the generated libraries from there.
--#   - The usual ways of modifying the dependency graph in `cargo` do not seem
--#     to apply for the `-Zbuild-std` steps, thus we have to mislead it
--#     by modifying the sources in the sysroot.
--#   - To avoid messing with the user's Rust installation, we create a clone
--#     of the sysroot. However, `cargo` ignores `RUSTFLAGS` in the `-Zbuild-std`
--#     steps, thus we use a wrapper binary passed via `RUSTC` to pass the flag.
--#
--# In the future, we hope to avoid the whole ordeal by either:
--#   - Making the `test` crate not depend on `std` (either improving upstream
--#     or having our own custom crate).
--#   - Making the tests run in kernel space (requires the previous point).
--#   - Making `std` and friends be more like a "normal" crate, so that
--#     `-Zbuild-std` and related hacks are not needed.
--quiet_cmd_rustsysroot = RUSTSYSROOT
--      cmd_rustsysroot = \
--	rm -rf $(objtree)/$(obj)/test; \
--	mkdir -p $(objtree)/$(obj)/test; \
--	cp -a $(rustc_sysroot) $(objtree)/$(obj)/test/sysroot; \
--	echo '\#!/bin/sh' > $(objtree)/$(obj)/test/rustc_sysroot; \
--	echo "$(RUSTC) --sysroot=$(abspath $(objtree)/$(obj)/test/sysroot) \"\$$@\"" \
--		>> $(objtree)/$(obj)/test/rustc_sysroot; \
--	chmod u+x $(objtree)/$(obj)/test/rustc_sysroot; \
--	$(CARGO) -q new $(objtree)/$(obj)/test/dummy; \
--	RUSTC=$(objtree)/$(obj)/test/rustc_sysroot $(CARGO) $(cargo_quiet) \
--		test -Zbuild-std --target $(rustc_host_target) \
--		--manifest-path $(objtree)/$(obj)/test/dummy/Cargo.toml; \
--	rm $(objtree)/$(obj)/test/sysroot/lib/rustlib/$(rustc_host_target)/lib/*; \
--	cp $(objtree)/$(obj)/test/dummy/target/$(rustc_host_target)/debug/deps/* \
--		$(objtree)/$(obj)/test/sysroot/lib/rustlib/$(rustc_host_target)/lib
--
--rusttest-prepare: FORCE
--	+$(call if_changed,rustsysroot)
--
- rusttest-macros: private rustc_target_flags = --extern proc_macro
- rusttest-macros: private rustdoc_test_target_flags = --crate-type proc-macro
--rusttest-macros: $(src)/macros/lib.rs rusttest-prepare FORCE
-+rusttest-macros: $(src)/macros/lib.rs FORCE
- 	+$(call if_changed,rustc_test)
- 	+$(call if_changed,rustdoc_test)
- 
- rusttest-kernel: private rustc_target_flags = --extern alloc \
-     --extern build_error --extern macros --extern bindings --extern uapi
--rusttest-kernel: $(src)/kernel/lib.rs rusttest-prepare \
-+rusttest-kernel: $(src)/kernel/lib.rs \
-     rusttestlib-build_error rusttestlib-macros rusttestlib-bindings \
-     rusttestlib-uapi FORCE
- 	+$(call if_changed,rustc_test)
+Each of the 3 PCIe ports are described as such:
 
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+	port02: pci@2,0 {
+		device_type = "pci";
+		reg = <0x1000 0x0 0x0 0x0 0x0>;
+		reset-gpios = <&pinctrl_ap 33 GPIO_ACTIVE_LOW>;
+
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		interrupt-controller;
+		#interrupt-cells = <1>;
+
+		interrupt-map-mask = <0 0 0 7>;
+		interrupt-map = <0 0 0 1 &port02 0 0 0 0>,
+				<0 0 0 2 &port02 0 0 0 1>,
+				<0 0 0 3 &port02 0 0 0 2>,
+				<0 0 0 4 &port02 0 0 0 3>;
+		status = "disabled";
+	};
+
+and get probed *972 times*, which seem... excessive, given that there
+are only 4 entries per port.
+
+> ---
+>  drivers/of/property.c | 52 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index a6358ee99b74..2d749a18b037 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -1311,6 +1311,57 @@ static struct device_node *parse_interrupts(struct device_node *np,
+>  	return of_irq_parse_one(np, index, &sup_args) ? NULL : sup_args.np;
+>  }
+>  
+> +static struct device_node *parse_interrupt_map(struct device_node *np,
+> +					       const char *prop_name, int index)
+> +{
+> +	const __be32 *imap, *imap_end, *addr;
+> +	struct of_phandle_args sup_args;
+> +	u32 addrcells, intcells;
+> +	int i, imaplen;
+> +
+> +	if (!IS_ENABLED(CONFIG_OF_IRQ))
+> +		return NULL;
+> +
+> +	if (strcmp(prop_name, "interrupt-map"))
+> +		return NULL;
+> +
+> +	if (of_property_read_u32(np, "#interrupt-cells", &intcells))
+> +		return NULL;
+> +	addrcells = of_bus_n_addr_cells(np);
+> +
+> +	imap = of_get_property(np, "interrupt-map", &imaplen);
+> +	if (!imap || imaplen <= (addrcells + intcells))
+
+This is "interesting". You compare a number of *bytes* with a number
+of cells. Only off by a factor of 4...
+
+Also, you need a minimum of one extra cell to hold the phandle, and a
+yet unknown number of cells for whatever follows the phandle.
+
+> +		return NULL;
+> +	imap_end = imap + imaplen;
+
+Same problem, with pointer arithmetic this time.
+
+> +
+> +	while (imap < imap_end) {
+> +		addr = imap;
+> +		imap += addrcells;
+> +
+> +		sup_args.np = np;
+> +		sup_args.args_count = intcells;
+> +		for (i = 0; i < intcells; i++)
+> +			sup_args.args[i] = be32_to_cpu(imap[i]);
+> +		imap += intcells;
+> +
+> +		/*
+> +		 * Upon success, the function of_irq_parse_raw() returns
+> +		 * interrupt controller DT node pointer in sup_args.np.
+> +		 */
+> +		if (of_irq_parse_raw(addr, &sup_args))
+> +			return NULL;
+> +
+> +		if (!index)
+> +			return sup_args.np;
+> +
+> +		of_node_put(sup_args.np);
+> +		imap += sup_args.args_count + 1;
+
+This really doesn't map (pun intended) to the way the interrupt-map
+entries are built. You need to account for the parent address size as
+well.
+
+I'll post a patch fixing both issues.
+
+	M.
+
 -- 
-2.45.1
-
+Without deviation from the norm, progress is not possible.
 
