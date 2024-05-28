@@ -1,184 +1,134 @@
-Return-Path: <linux-kernel+bounces-192034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5068D178B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:53:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB748D1790
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853F2286D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB9C1F22A3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CBF169AC9;
-	Tue, 28 May 2024 09:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF6C16ABCC;
+	Tue, 28 May 2024 09:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S8LWQ/1Z"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhvQPAU5"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE1D17E8F4
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA0155A4F;
+	Tue, 28 May 2024 09:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716889975; cv=none; b=cqCRQpMFix3N94KMEZ6fcFw6DHU9temhm3MkZNGuXhk014ozpUePptgpsW/7epjDP0wOgOZrxOMGGye47cp5bRip0dVbgeeeJam29MqB0588fHRlAiPM6zaNHKYmXvV85DcCOfysMPBgVm8KwRu7VlzSEB1vcp63LBxMCammCfA=
+	t=1716890021; cv=none; b=KO05OR4DxBPJ9bOYY4BMgUXZgBc3OlNY5zm9NC7M73LY0AJLPgOoYRFoUSWXHIOm3p0zIwFBoPB9cfHyWg4h6tNXlBIWfoduaKKI8joLuiACIOGeZLt9UlG96S0fe+Jfh1LVwp+3iYxb81mDsFt9DdnNtXxn9e8ebrREPiiH6WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716889975; c=relaxed/simple;
-	bh=q97qnp9lq8ia1znYl0ISjRC8hSlbhCAofPKSEaHvOa8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dd5GgmqvO8KKq1ryFSEqDtVMpSq/16xSNCOSthKRgLq4lJUQv831W1dCGcFC2XpcyzZhUNYVrZckTAnrBfWbizE+4fuR66+WGXkVTB2NKlg9Hmlw3LgSnD2Oz6LuLu+OXmG9Ob155TKITXj8hsMsgqSN+Dy2O8dFLRsLGbrqcAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S8LWQ/1Z; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-354be94c874so490334f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:52:52 -0700 (PDT)
+	s=arc-20240116; t=1716890021; c=relaxed/simple;
+	bh=DwfIAvsMEGgL3IsgcE5uTNC+iW2pyzp8jO+8/qVFFIU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TGV/xiPAChJ6Ran5P76sAwLjfZ3284b1KMzFYDkYKFoFzk6htGqu2MzvdsVw8sZevW8i67M6IVRhWR10hqjDBCY+vpXx+SIbMeOtM9J/7DwPGsX7g8a6SNRBQUJvtDKq5w2RxBmS9id7nN8yL8t8RWs4QIUcHLL9O4WOi7nrab4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhvQPAU5; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2bdf439c664so135062a91.3;
+        Tue, 28 May 2024 02:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716889971; x=1717494771; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q+mVKdg2AFecQuEqldAMrWKghy13Qjqb7Tk5N56y3jw=;
-        b=S8LWQ/1ZoqxZDrmflT8lFTzx4df8vbNAvqmSjs31ZI4jmAZUKBFP8N0ISaUOuyUksv
-         VJUzn1AYIbGZiaSiPnOKcjOzAaj1i7e47o6WwqaE5BMJoqtiSMKquBECuwPyU4kQnKT0
-         +GLUH9AGc/KpJmUL/rFO4rjg1YClf4Gxh52Z7WfbpAPWF4xQfO+vGN8L/8Zz2t2zktX9
-         7EYcyOHtDpN0849WcY5lBINdsfIZV3o1i5uNAB02Sj6ACAwiBPcAdXtRzRHHUBg2ZbYh
-         2z6+04j7YFT9pgI/EypgjWjLa5BkEVBjKZMCfYs3hY8l5w+qQ/ePg3pNF2HC61GuNhYG
-         ZRBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716889971; x=1717494771;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716890020; x=1717494820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q+mVKdg2AFecQuEqldAMrWKghy13Qjqb7Tk5N56y3jw=;
-        b=sEW4QZCSl2HxqSOvbpox2UMq9+LvHmtzFJFOMeSuOewxVQZndJyjLQTBA0358wp/Gd
-         Qvv4n4NQl9qW68PBYMnp32KFWQShWu0blpZRJFOcuJCEfdWGcZaqGXGEPOMUGLrd1Ifc
-         C+r3+bWu34B3DhMDtOo2wXLYJ3TKCCo3NF0h9Yk2sGnJplsvZFgrh3bb0fobXv+09hUq
-         AAN1DRBbhKFwyd+7oOMc/JSjnxvamvTTvvOjh8rPx5LD+uEFZUMFWboJGd7RQ24FGrxf
-         Hnv0GV9VHCNbEjTnXAngPUbubQXcERsX+af2Ux7NmaN7cdAOuyOvP+Rai2/we8Z0J7oO
-         4H2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXG3MyOORRF8Z3NitZjvyRZxl7fMxRuRy23Vjjh2D9Ve/JHcDlbD7mB4Zfg/a902wQUJNVax34Pa8v2PjpR4PxE9AzrYS9ap4sqOZf
-X-Gm-Message-State: AOJu0Yy0JMpG9XAGpJUqFkm8JIADVni79CwEmS/HEzDQOzhKgwHxtpnE
-	Xto/5Bo7yLx3dNgn11WI2gpX38uwcIVqd8P7/CXsqpr6LyWx/+F8NlQbyLzl9LM=
-X-Google-Smtp-Source: AGHT+IFFgfOggTy6K9t1qMtirB5JoqMlGKYjXa/5C7rUCh5C0JyPMjhDdLpJE+rXjTtO1gM+idSb5w==
-X-Received: by 2002:adf:f80e:0:b0:355:465:1445 with SMTP id ffacd0b85a97d-35526c37f5bmr9461325f8f.28.1716889971354;
-        Tue, 28 May 2024 02:52:51 -0700 (PDT)
-Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35607bcdf26sm11128404f8f.99.2024.05.28.02.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 02:52:50 -0700 (PDT)
-From: Oscar Salvador <osalvador@suse.com>
-X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
-Date: Tue, 28 May 2024 11:52:48 +0200
-To: syzbot <syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, muchun.song@linux.dev, netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] kernel BUG in __vma_reservation_common
-Message-ID: <ZlWpcP-6ntXSBRad@localhost.localdomain>
-References: <0000000000004096100617c58d54@google.com>
- <000000000000f9561b06196ef5b3@google.com>
+        bh=e+CCht/uzDQdeE2w0O397gKXPjOgO9WVTzuCP3Dzrjg=;
+        b=JhvQPAU5FXyR85iBSNtkrpU/lo8Nfm3lqm4JOH4796EZw8Pt0SvzqXl0zufjtm6uDP
+         4bep6iIUyOvlpchLXb7BDtl7ofxlxZfF9hG1I1v7U80dLxte5f8emWaVAG6oG6MEWb7i
+         Mlp3DfYK7JVqBaF9QTHrCYZolgHEopNdrxIY3scev0wLic3yTCuHkIZZuhXyQOzUXzdg
+         zwVsAM2uXppMQ0/QIeSAIxmudXB4RPLN4en9rtjQjsOsG58pmSOqAX3Hq2YDUjF07jFe
+         zHNlHHUVhx+140bfQQChaSpocYt/FiZlAk6k6Ibt5I+2CUgkTWpnbmDamBACVzOi1wLC
+         5pzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716890020; x=1717494820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e+CCht/uzDQdeE2w0O397gKXPjOgO9WVTzuCP3Dzrjg=;
+        b=V70WMS4ttYbC/6wmfYUd8Q6BWnaiYmD+pdVtns0F5RDEjhiL96jWHBa+yuHPWjayrm
+         9D/x+21bWzaLrEte2/KsWuNsJUThwBaLzIIogSLREceRUDA0DQ0aqeIVgvyuMzbOXJKO
+         BrHdlSJckitjpwaeCoHba7+UlxIrF6TzPJJ5gH6eZ2tMU4Hp8xJzKn2vlWUFGdVOCNe2
+         FC9/npE0p9dhFuMuB3M+M9BjczuzlFoYYDVEmX3nBEtS3AOgJE7T9qN6+44JmyDwVjrX
+         oBs+CuH+S+savg/hFnjLQ6L3gO7wCfiHft7XAAP46Y4oaIOZZmUzhhhK6rnDCez7swEK
+         Ugyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAxRVIb/4GNEoS4P71gle34B/SGfq0KG6iQGAeFi4LKQM1sA0C8OkQfVqszsl7LhbYfJ3h7TvN476yL32mvcb2s2wDH8F71a0kEYAIuZuIjd76FmvQZfE5ifllHaJoOeHtuX53pbz/pIhN0Fm+ec1KaFRS9jERzhQfn8wEaTjt
+X-Gm-Message-State: AOJu0Yy7gkxExiyGHpBKdJ7YPKT1+KTaR8iwyR65keOmnXimmMh9bpe8
+	Bowi8uWWPEKfhzx4Eisep22ankZDmDF6Jmcfq5yIHIR/acYYP6L6TLx/M+3HmN9vUFNSalbXX61
+	ePmDvKUg4Ow44tgKWtT/pdG0H+eM=
+X-Google-Smtp-Source: AGHT+IHcgkhWTP7zQpBfwy/dk/Ap1StaEOdZbXvZcs6NZFmo8RT5MAGq+ZerxzKxqaHRUdfdyOHLY45RAzsh7bwMmpo=
+X-Received: by 2002:a17:90b:1c85:b0:2bf:eddc:590b with SMTP id
+ 98e67ed59e1d1-2bfedeb9d57mr3176120a91.1.1716890019935; Tue, 28 May 2024
+ 02:53:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="27vzgg1kwDHqn/88"
-Content-Disposition: inline
-In-Reply-To: <000000000000f9561b06196ef5b3@google.com>
+References: <20240528033136.14102-1-ki.chiang65@gmail.com> <20240528033136.14102-2-ki.chiang65@gmail.com>
+ <40d075d0-7075-6ece-ffe3-797d7b49db4a@gmail.com>
+In-Reply-To: <40d075d0-7075-6ece-ffe3-797d7b49db4a@gmail.com>
+From: =?UTF-8?B?6JSj5YWJ55uK?= <ki.chiang65@gmail.com>
+Date: Tue, 28 May 2024 17:53:28 +0800
+Message-ID: <CAHN5xi00mi7T2M9Bj+r9b1gpw2YX5bfXbUzj5ocTSFLBQjpfuw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] xhci: Apply reset resume quirk to Etron EJ188 xHCI host
+To: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Sergey,
 
---27vzgg1kwDHqn/88
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sergei Shtylyov <sergei.shtylyov@gmail.com> =E6=96=BC 2024=E5=B9=B45=E6=9C=
+=8828=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=884:36=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> On 5/28/24 6:31 AM, Kuangyi Chiang wrote:
+>
+> > As described in commit c877b3b2ad5c ("xhci: Add reset on resume quirk f=
+or
+> > asrock p67 host"), EJ188 have the same issue as EJ168, where completely
+> > dies on resume. So apply XHCI_RESET_ON_RESUME quirk to EJ188 as well.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Porting to latest release
+> >
+> >  drivers/usb/host/xhci-pci.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+> > index c040d816e626..b47d57d80b96 100644
+> > --- a/drivers/usb/host/xhci-pci.c
+> > +++ b/drivers/usb/host/xhci-pci.c
+> [...]
+> > @@ -395,6 +396,10 @@ static void xhci_pci_quirks(struct device *dev, st=
+ruct xhci_hcd *xhci)
+> >               xhci->quirks |=3D XHCI_RESET_ON_RESUME;
+> >               xhci->quirks |=3D XHCI_BROKEN_STREAMS;
+> >       }
+> > +     if (pdev->vendor =3D=3D PCI_VENDOR_ID_ETRON &&
+> > +                     pdev->device =3D=3D PCI_DEVICE_ID_EJ188) {
+> > +             xhci->quirks |=3D XHCI_RESET_ON_RESUME;
+> > +     }
+>
+>    You don't need {} around a single statement, according to CodingStyle.
+>
+> [...]
+>
+> MBR, Sergey
 
-On Mon, May 27, 2024 at 05:50:24AM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    66ad4829ddd0 Merge tag 'net-6.10-rc1' of git://git.kernel...
-> git tree:       net-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15c114aa980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=48c05addbb27f3b0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d3fe2dc5ffe9380b714b
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17770d72980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10db1592980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/05c6f2231ef8/disk-66ad4829.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5f4fc63b22e3/vmlinux-66ad4829.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/67f5c4c88729/bzImage-66ad4829.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com
+Got it, I'll modify it and resend patches.
 
-And let us have it here as well
-
-
--- 
-Oscar Salvador
-SUSE Labs
-
---27vzgg1kwDHqn/88
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-mm-hugetlb-Do-not-call-vma_add_reservation-upon-ENOM.patch"
-
-From 917fa54481422c650425c8b0330439f8a3308479 Mon Sep 17 00:00:00 2001
-From: Oscar Salvador <osalvador@suse.de>
-Date: Tue, 28 May 2024 10:43:14 +0200
-Subject: [PATCH] mm/hugetlb: Do not call vma_add_reservation upon ENOMEM
-
-sysbot reported a splat [1] on __unmap_hugepage_range().
-This is because vma_needs_reservation() can return -ENOMEM if
-allocate_file_region_entries() fails to allocate the file_region struct for
-the reservation.
-Check for that and do not call vma_add_reservation() if that is the case,
-otherwise region_abort() and region_del() will see that we do not have any
-file_regions.
-
-If we detect that vma_needs_reservation returned -ENOMEM, we clear the
-hugetlb_restore_reserve flag as if this reservation was still consumed,
-so free_huge_folio will not increment the resv count.
-
-[1] https://lore.kernel.org/linux-mm/0000000000004096100617c58d54@google.com/T/#ma5983bc1ab18a54910da83416b3f89f3c7ee43aa
-
-Reported-by: syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-mm/0000000000004096100617c58d54@google.com/
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- mm/hugetlb.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6be78e7d4f6e..a178e4bcca1b 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5768,8 +5768,20 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 * do_exit() will not see it, and will keep the reservation
- 		 * forever.
- 		 */
--		if (adjust_reservation && vma_needs_reservation(h, vma, address))
--			vma_add_reservation(h, vma, address);
-+		if (adjust_reservation) {
-+			int rc = vma_needs_reservation(h, vma, address)
-+
-+			if (rc < 0)
-+				/* Pressumably allocate_file_region_entries failed
-+				 * to allocate a file_region struct. Clear
-+				 * hugetlb_restore_reserve so that global reserve
-+				 * count will not be incremented by free_huge_folio.
-+				 * Act as if we consumed the reservation.
-+				 */
-+				folio_clear_hugetlb_restore_reserve(folio);
-+			else if (rc)
-+				vma_add_reservation(h, vma, address);
-+		}
- 
- 		tlb_remove_page_size(tlb, page, huge_page_size(h));
- 		/*
--- 
-2.45.1
-
-
---27vzgg1kwDHqn/88--
+Thanks,
+Kuangyi Chiang
 
