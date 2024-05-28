@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-191820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65C18D149F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:43:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1DF8D14A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496B31F2342A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1F941C22022
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742D66D1A8;
-	Tue, 28 May 2024 06:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9FE6D1C1;
+	Tue, 28 May 2024 06:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIEAkusb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GO/LyB86"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F6361FF6;
-	Tue, 28 May 2024 06:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731CA50A93;
+	Tue, 28 May 2024 06:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716878623; cv=none; b=oPhytQ4K5gYe8uvtwWOP1MdL3sBVGL9eXF+6JsiVM3zlyaiFF+G8fo78ZHik/Uzwqn0tck1Ai/8QpjmgIYC5AaomFy98V0ou2FXQCw/SHCL4YbfemXxRQ7gfIqb3jDqEnvMe9KaQhinJ9iEgwUHUHazM3XBABtn8RyHYP/8STKU=
+	t=1716878709; cv=none; b=epo8wysMfjDjw00tL5w/ZkUy4+0A1JpW4NeID20G4X40pRSCTPE86xo4T0DV6zESzluhggVfqeOKKfFDr6ytcOIADoDF3eyrK6LnAYV8skZ19qLtcCIXUfmFpomSQMKUZbzpU2oSbr6C/rceKCzXGNuxB/f80Y88GkL3Vi2TLis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716878623; c=relaxed/simple;
-	bh=yC9RNq5NBNYvAzsheBQyRTWpU38uaTNaemhHlEZPaTE=;
+	s=arc-20240116; t=1716878709; c=relaxed/simple;
+	bh=oB7nzJsTKdW8ErGtsvr7Iq3vZA8fEH+QieeTX0auOlQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tzw6h8SC6ZC5LOAs/p2pFIiYrQKV1B3yQu260RUKnYludL+OVu+Yvg8eN1jErWoJNsWagvr4Ilt4VWb8arbxVUm5Bu99KKzimuQkyGd1kaH7o/T9JcNCBJOVxGaddHZpc/bVwHDmxQ88TLCER8M83XwU7kXRy/QfBkEYHmXTjE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIEAkusb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8A6C3277B;
-	Tue, 28 May 2024 06:43:40 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=sI3r0xuUgg9zZ8iXSVqs3uRnjU8AJW7hup5IyTrtIfjC9dwdA58obpHILDkmCfPF+vIEgirW53UdBb9OpQcGKjxTN8/MxMqiCnTIW8bzM9//3DczDjHuuce2hUvwTzKfBoiHENCrxbA39dGGx9BVJ4kSDz1IopfHQ8Wsc+Mn8AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GO/LyB86; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19843C3277B;
+	Tue, 28 May 2024 06:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716878623;
-	bh=yC9RNq5NBNYvAzsheBQyRTWpU38uaTNaemhHlEZPaTE=;
+	s=k20201202; t=1716878709;
+	bh=oB7nzJsTKdW8ErGtsvr7Iq3vZA8fEH+QieeTX0auOlQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fIEAkusbD8QoLie97Ils2D5LbY+ewWeTYpVlLdtOvWx12e5g1Xpg42L42/xXwfqMT
-	 5yUlpS2dIymgVkSHaQ/ZifTbHLZ6slEFRflJGKe5D3XKJRdUN1bkqL2I5HolCtN50j
-	 2+F1hSAv0gzyvplQBfBQKKkO6Vg11W3y1O8Se2RS7TJgZ2RBrDGIW0jHWLExtV4E7u
-	 lcQIPJWbcWFUzFkvqNnxOg5P8s+5eQmTmdqWC7XMpG6ui5AHvXhB2UUqtywg48jt2+
-	 bk4ANrEvz0j0N7wXSr9oJy20o6NdsOJiVVGYTkDIybDvRH63cQTqZNuAG1ncks/9Fa
-	 lNEGDlfgr16cQ==
-Message-ID: <2b22193e-6469-4139-81aa-da6c6b6b840e@kernel.org>
-Date: Tue, 28 May 2024 08:43:38 +0200
+	b=GO/LyB867EtYqpKUFHEVPciADMGqG6qfDcAQMblvKVOttq92SrKWD9XevP8XTptUy
+	 f1iUbkwfTFXeqs2K5LqIwVXUjezCrz2htGQvBQAvZUZkpImyH8SfeFFRXW6oIgsaw2
+	 TYFsHpQAUQuvjAzREgMRnUduvY8HFOV/PYbpOMQN7vArvs2w8bVCVA1PQqiH7geQ9f
+	 PnTKKO1qQY/mmOi2kG2GvbGmz6efU0U4lVPV99rlWwCXN7sEy+mfQPHm3bn66yPrbn
+	 aj0c5sbuSAlb4DImMYFGqWeJKpuDzMerVLpwkAT81DwhqVhxNG+aqAIsCUrROJ2yma
+	 RrZwJsBmyENDw==
+Message-ID: <50a5d855-6506-4bfa-959b-9393990e158d@kernel.org>
+Date: Tue, 28 May 2024 08:44:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: watchdog: img,pdc-wdt: Convert to
- dtschema
-To: Shresth Prasad <shresthprasad7@gmail.com>, wim@linux-watchdog.org,
- linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- javier.carrasco.cruz@gmail.com, Shresth Prasad <shrestprasad7@gmail.com>
-References: <20240527195811.7897-2-shresthprasad7@gmail.com>
+Subject: Re: [PATCH v2 06/19] dt-bindings: net: mscc-miim: Add resets property
+To: Herve Codina <herve.codina@bootlin.com>, Simon Horman <horms@kernel.org>,
+ Sai Krishna Gajula <saikrishnag@marvell.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com,
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Saravana Kannan
+ <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Allan Nielsen <allan.nielsen@microchip.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240527161450.326615-1-herve.codina@bootlin.com>
+ <20240527161450.326615-7-herve.codina@bootlin.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,35 +120,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240527195811.7897-2-shresthprasad7@gmail.com>
+In-Reply-To: <20240527161450.326615-7-herve.codina@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/05/2024 21:58, Shresth Prasad wrote:
-> Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
-> for validation.
+On 27/05/2024 18:14, Herve Codina wrote:
+> Add the (optional) resets property.
+> The mscc-miim device is impacted by the switch reset especially when the
+> mscc-miim device is used as part of the LAN966x PCI device.
 > 
-> Signed-off-by: Shresth Prasad <shrestprasad7@gmail.com>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 > ---
+>  Documentation/devicetree/bindings/net/mscc,miim.yaml | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mscc,miim.yaml b/Documentation/devicetree/bindings/net/mscc,miim.yaml
+> index 5b292e7c9e46..c67e8caa36cf 100644
+> --- a/Documentation/devicetree/bindings/net/mscc,miim.yaml
+> +++ b/Documentation/devicetree/bindings/net/mscc,miim.yaml
+> @@ -38,6 +38,17 @@ properties:
+>  
+>    clock-frequency: true
+>  
+> +  resets:
+> +    items:
+> +      - description:
+> +          Optional shared switch reset.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+If there is going to be resend - drop "optional". You are repeating the
+schema in free-form text. No need to resend only for this. Actually drop
+entire sentence - it says nothing more than what next sentence is saying.
 
-
----
-
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
