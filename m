@@ -1,214 +1,122 @@
-Return-Path: <linux-kernel+bounces-192927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396278D2477
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CD68D2470
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D771C26A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33EC1C24F67
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F66172767;
-	Tue, 28 May 2024 19:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39651176FBE;
+	Tue, 28 May 2024 19:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHi/n2Mx"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="viVzdojg"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CECB17554C;
-	Tue, 28 May 2024 19:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175E5174EDF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716923827; cv=none; b=G6/IeQj7zo1IL1g2IkPrd5RmOZILjwjVNgQSB8q0gA8EgK3QkhgoQeJ6ckYBrTYhBRnIY674WtKdRoW+M0Ht9E5PbljsRf4q0PI7BD/YSJTD7ODCAPU8kRXUZMUdxHu9Q6xghAGMzZfH5ZrDE/b+L2D6qq0RBqmqmViPxtKwC10=
+	t=1716923775; cv=none; b=qpKIATL2L94jQ3+XpY5Q2ofMUN7Fj7v0HO1+fHfX3Y6HsF0eQX2QdHFlRMGzPK74wTi+7TnITcPDFf0C+k39aIoH1xtp4JZH0cYY3AiSubbnP1I9OyxEN+zs8giSaFWPuzplmIHwy10pHtqhIumVLegsXvUIt70p1u00CJaZa1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716923827; c=relaxed/simple;
-	bh=M8CKwH032NebDTLhUTdgro4R1FJ4NQSIeAWpV/pl18I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ll/mlQknS0b7u/1PwG0CRFCl7lgvuN5zFZ506dtm9nIFMzkwACY3MCbjdeTWh7kAbwx0tcpTlxjvnTxLrx8y1UsvWHb6G35ImlJwxSWt+4WX2J55jUmD2sq2UfrF14IoKkdMz0qhEPQDpnXSHrWQmVzLFz1IJ76kxCpQuE+c89M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHi/n2Mx; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4e77620cf38so395182e0c.1;
-        Tue, 28 May 2024 12:17:06 -0700 (PDT)
+	s=arc-20240116; t=1716923775; c=relaxed/simple;
+	bh=ag7+h70RDNCub6CI9FhMvv9doD/tLeJlJWjTiOiUnAE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Mzn8QAst0DgPIr0YSMwqqGnbp4dt8rcNGDKS/4ScrraPq4OIv/jgjQmVGfZhD6WoBXrGs1lpjrnZoqUlb2o6CKM6mlGw/vqoL5ptUZhR0tSPLTHJtgJMgCTdmcp1mUFtLrUUtO+LEoJtoid/eSzkb1pchclPHM3DpaYKn6XUjBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=viVzdojg; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df52a2535d5so1629092276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:16:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716923825; x=1717528625; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BZIOVysR1nqFTHmWlJtaGHbjCfkWSOvzdf8Ez2dJJ/k=;
-        b=RHi/n2Mx3Bw7DV0DvMBvPleD9KL9viuA74vq2r2QaCvCHVJFXsVIkfG8g6zPGPyKeh
-         yle+uQLg+gILqBy63Plw1IbNhduBI1Hd3soetyjcDi43z0XMUc+v5T2TTJeojPxkgSSz
-         6L6IxhTXFaF4waa5lXKt2kdMivzXLFXVeq+O/Jv/wtD+ow4oVa3wyq2ZHZTpy02/8zkP
-         abVmNxjpwbTrcXzuRVLPyeoaNhVwdEhqA3GNtyPiOQqOr419EUsY+9O05aTfhFcr9ga4
-         yW21siUrLOI7Qmwsc00bvloRyffMTXogwsEF/NDQAQGcssdy8AFZrmHGrxX1jqvrHqx2
-         S0jA==
+        d=google.com; s=20230601; t=1716923773; x=1717528573; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aN1FoCckBsPH3nlr2F+fxU8+3rgvDDBf83ZZTupmDzY=;
+        b=viVzdojgJrWKjqTJr5Izw239q1ePp6TGp5Ng4+2J1ZBKYzp1Q5vdvLiaPr+X+zsujL
+         OenUB1emtOYJB40+qpa9UulYOpd//+GI6WTtyFKPru4x/E4X5IuLATSB+5pVXE2We5gZ
+         X4kojHm4A9VvBmbKwT6iPtnBsWLBak9V6I5BR1qUzfYBF0LJj2Jzh1gNml1u4saDvued
+         EOj4eHTt+pr56Gl/LzD1hJUzUusxiiGQ97hVG62ed8Yu+UX57r21cJIKRV+VDlwjMEdH
+         L0t910eLNg7jRLgk8BefxA7L7r5I2kC0KSWPX7FnLSmWFck+WIq+HZxCOIxSG9NzzoSX
+         dMdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716923825; x=1717528625;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BZIOVysR1nqFTHmWlJtaGHbjCfkWSOvzdf8Ez2dJJ/k=;
-        b=Qdo1jgJVfpMv/SjtQuhimZyAWtsGLamwFHO2J1J4OtvwQMJI0Dr3w9noz0/Ld4Awlt
-         m/APGU8t0geA4VIfSxcz3wMyDB9R52wBZGFCemKgc+LFFCd4mqtaQlKoMWWAy0902xP+
-         ZBp7pUMm/PFUmpiFV+rhecDrfLUqMcwj8zybMp2imveXDKHCexzH7uIq2e5xWUvdR/c1
-         shi569SvgbGUKkqa0ZYvgc6y7ejpQcNXtsYNHkogFXVjVyWeIgVFIl0Kzo/63QbqRts2
-         QgwQfMyYE1b8W/8fChbYLPmpDq3HoQTtMv4T5TdOjgMtHu+gNdt/aJzoUC/wdtSBoTQh
-         HKvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU8zMybXs2HUp7UFSXkc5GzNCpQXlWyOyHH5H7FKlTV3Zhy88MdEwQDo1NR3JAqpBM3H5k7neb853d/SJrhOd49dulK1mLQ4/vDo9Kg8ri76QQrN/A9dKA3XZOEntnGxGeZ7THynaRUc/JnALHfWq+BAJE86+BQozvg/QKhrHUpy/M4o+RlpB2jgnuJvBb5BmVYSVIfrOcKUVqgtFO3mpfCTWiLyNlbQ==
-X-Gm-Message-State: AOJu0Yyi/VSo4N0g7q/Pa/IXoZPElRr6N40n5ee+3wlKoImYbeBrIQn0
-	hUICRJtWjTlAr4yAlnV6tQgMkk3jNAYx8bW4fBUEZ9LFVW1ve+i/uWqPBZ1+tCCcK7QyO4lGrZC
-	4FVbxoO4ObOiliihndkr2UQHCnjc=
-X-Google-Smtp-Source: AGHT+IGHFmTTksUadChKyhIDTfENInK2dhsn5L1iUbeGhk3BxlEFLMezzKz0sqTmLWbkgnLGcRxYsTACqXWxaBGvvLE=
-X-Received: by 2002:a05:6122:3196:b0:4df:19c0:86cd with SMTP id
- 71dfb90a1353d-4e4f0125efamr12030985e0c.0.1716923825019; Tue, 28 May 2024
- 12:17:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716923773; x=1717528573;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aN1FoCckBsPH3nlr2F+fxU8+3rgvDDBf83ZZTupmDzY=;
+        b=Z+bMqIWY7VVNpJlhcx9sWEbPbGLUU16Vz6EA4rjCXtt1VBW/zDhTtB0v/2afPS01iF
+         KmIGy+8Po3lF4ksDF3HGnsiim8v0Zip+MISGzIFAps9rSFbB9cYwOpoV2MoMTxnwqjyS
+         0e44uia/a5ePTLKVm3McX/zAvHzAkeVRsCtARCzeuvnl+QGy0rxX8wt26gFFMbNcdKQL
+         RZnt75HWWKQD6jf7cDM3DCpudLI68Jvy5PgfcKQqFNJ0hXMMkOE9ujoqooolGVh1MEXP
+         C6fVsOuV/zwqFJuH3OCsCL12RtNns78CVY56n4nvD4sGkj+haelQyDQgRBeWWdRwJXf5
+         lQLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtp8xzoyX6aRHLVj9S0TOZQg5FqML5WphDOigIUs7f9lq/1rGDUZCRAGMPT/FtHfQeS9Bi+HdJnMjGRa5HIszX4hDCLc61ORruCmeD
+X-Gm-Message-State: AOJu0Yw/MCWM6DH6kuo36W2V24Vj3PapAWjX6fJew+tKm4v2mEiPpzaB
+	DWQBRt0jn5F+74lBbuVlcv44mQouTBDPnMWyO650QNKuCfqV71czoMC23p+EeePyo0GkUIYyKb3
+	Giw==
+X-Google-Smtp-Source: AGHT+IEYffSoUdZ4cg7KX8v+KoP4uvokISlIeu5qUtxtXAQ85EyWGJZei7jVgr6jZvnufr8gfWsoMUgR1K8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:10c3:b0:df7:943d:f935 with SMTP id
+ 3f1490d57ef6-df7943e55a0mr788014276.2.1716923773190; Tue, 28 May 2024
+ 12:16:13 -0700 (PDT)
+Date: Tue, 28 May 2024 12:16:11 -0700
+In-Reply-To: <c77f3931-31b2-4695-bd74-c69cba9b96c1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240423175900.702640-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY3PR01MB113461F28EA97F494D831267C86112@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdUJXdEG-BQRYNbmhbGCtE+O1uWO0j-PkBaF7S_Qyp8M-Q@mail.gmail.com> <TY3PR01MB11346281D111DB4C411E3333786EB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346281D111DB4C411E3333786EB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 28 May 2024 20:15:54 +0100
-Message-ID: <CA+V-a8uG+xBmDAvXRSDH2Qr8k9Xs-g6_bs+54Erc7_qqP=xLrg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/13] pinctrl: renesas: pinctrl-rzg2l: Add function
- pointers for locking/unlocking the PFC register
-To: Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240522014013.1672962-1-seanjc@google.com> <20240522014013.1672962-4-seanjc@google.com>
+ <c77f3931-31b2-4695-bd74-c69cba9b96c1@intel.com>
+Message-ID: <ZlYte16cvQpPGHkx@google.com>
+Subject: Re: [PATCH v2 3/6] KVM: x86: Fold kvm_arch_sched_in() into kvm_arch_vcpu_load()
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Biju, Geert,
+On Fri, May 24, 2024, Kai Huang wrote:
+> > @@ -1548,6 +1548,9 @@ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+> >   	struct vcpu_svm *svm = to_svm(vcpu);
+> >   	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
+> > +	if (vcpu->scheduled_out && !kvm_pause_in_guest(vcpu->kvm))
+> > +		shrink_ple_window(vcpu);
+> > +
+> 
+> [...]
+> 
+> > @@ -1517,6 +1517,9 @@ void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+> >   {
+> >   	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> > +	if (vcpu->scheduled_out && !kvm_pause_in_guest(vcpu->kvm))
+> > +		shrink_ple_window(vcpu);
+> > +
+> 
+> Nit:  Perhaps we need a kvm_x86_ops::shrink_ple_window()?  :-)
 
-Thank you for the review.
+Heh, that duplicate code annoys me too.  The problem is the "old" window value
+comes from the VMCS/VMCB, so either we'd end up with multiple kvm_x86_ops, or
+we'd only be able to consolidate the scheduled_out + kvm_pause_in_guest() code,
+which isn't all that interesting.
 
-On Wed, May 22, 2024 at 1:40=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
->
-> Hi Geert,
->
-> > -----Original Message-----
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Sent: Wednesday, May 22, 2024 1:23 PM
-> > Subject: Re: [PATCH v2 06/13] pinctrl: renesas: pinctrl-rzg2l: Add func=
-tion pointers for
-> > locking/unlocking the PFC register
-> >
-> > Hi Biju,
-> >
-> > On Tue, Apr 23, 2024 at 8:12=E2=80=AFPM Biju Das <biju.das.jz@bp.renesa=
-s.com> wrote:
-> > > > -----Original Message-----
-> > > > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > > > Sent: Tuesday, April 23, 2024 6:59 PM
-> > > > Subject: [PATCH v2 06/13] pinctrl: renesas: pinctrl-rzg2l: Add
-> > > > function pointers for locking/unlocking the PFC register
-> > > >
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > On the RZ/G2L SoC, the PFCWE bit controls writing to PFC registers.
-> > > > However, on the RZ/V2H(P) SoC, the PFCWE (REGWE_A on RZ/V2H) bit
-> > > > controls writing to both PFC and PMC registers. Additionally, BIT(7=
-)
-> > > > B0WI is undocumented for the PWPR register on RZ/V2H(P) SoC. To
-> > > > accommodate these differences across SoC variants, introduce the
-> > > > set_pfc_mode() and
-> > > > pm_set_pfc() function pointers.
-> > > >
-> > > > Note, in rzg2l_pinctrl_set_pfc_mode() the pwpr_pfc_unlock() call is
-> > > > now called before PMC read/write and pwpr_pfc_lock() call is now
-> > > > called after PMC read/write this is to keep changes minimal for RZ/=
-V2H(P).
-> > > >
-> > > > Signed-off-by: Lad Prabhakar
-> > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > ---
-> > > > RFC->v2
-> > > > - Introduced function pointer for (un)lock
-> >
-> > > > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > > > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > > > @@ -2688,6 +2699,8 @@ static struct rzg2l_pinctrl_data r9a07g043_da=
-ta =3D {
-> > > >       .variable_pin_cfg =3D r9a07g043f_variable_pin_cfg,
-> > > >       .n_variable_pin_cfg =3D ARRAY_SIZE(r9a07g043f_variable_pin_cf=
-g),
-> > > >  #endif
-> > > > +     .pwpr_pfc_unlock =3D &rzg2l_pwpr_pfc_unlock,
-> > > > +     .pwpr_pfc_lock =3D &rzg2l_pwpr_pfc_lock,
-> > > >  };
-> > > >
-> > > >  static struct rzg2l_pinctrl_data r9a07g044_data =3D { @@ -2699,6
-> > > > +2712,8 @@ static struct rzg2l_pinctrl_data r9a07g044_data =3D {
-> > > >       .n_dedicated_pins =3D ARRAY_SIZE(rzg2l_dedicated_pins.common)=
- +
-> > > >               ARRAY_SIZE(rzg2l_dedicated_pins.rzg2l_pins),
-> > > >       .hwcfg =3D &rzg2l_hwcfg,
-> > > > +     .pwpr_pfc_unlock =3D &rzg2l_pwpr_pfc_unlock,
-> > > > +     .pwpr_pfc_lock =3D &rzg2l_pwpr_pfc_lock,
-> > > >  };
-> > > >
-> > > >  static struct rzg2l_pinctrl_data r9a08g045_data =3D { @@ -2709,6
-> > > > +2724,8 @@ static struct rzg2l_pinctrl_data r9a08g045_data =3D {
-> > > >       .n_port_pins =3D ARRAY_SIZE(r9a08g045_gpio_configs) * RZG2L_P=
-INS_PER_PORT,
-> > > >       .n_dedicated_pins =3D ARRAY_SIZE(rzg3s_dedicated_pins),
-> > > >       .hwcfg =3D &rzg3s_hwcfg,
-> > > > +     .pwpr_pfc_unlock =3D &rzg2l_pwpr_pfc_unlock,
-> > > > +     .pwpr_pfc_lock =3D &rzg2l_pwpr_pfc_lock,
-> > >
-> > > Some memory can be saved by avoiding duplication of data by using a
-> > > single pointer for structure containing function pointers??
-> > >
-> > > struct rzg2l_pinctrl_fns {
-> > >         void (*pwpr_pfc_unlock)(struct rzg2l_pinctrl *pctrl);
-> > >         void (*pwpr_pfc_lock)(struct rzg2l_pinctrl *pctrl); }
-> >
-> > So that would replace 3 (4 after adding RZ/V2H support) x 2 pointers in=
- rzg2l_pinctrl_data
-> > structures by 3 (4) pointers in rzg2l_pinctrl_data structures + 1 (2) x=
- 2 pointers in
-> > rzg2l_pinctrl_fns structures, and code size would increase due to extra=
- pointer dereferences before
-> > each call.
-> > Am I missing something?
->
-> Current case
-> 3 * 2 pointers =3D 6 pointers
->
-> Suggestion
-> 3 * 1 pointer + 1 * 2 pointer =3D 5 pointers
->
-> As you said,  code size would increase due to extra pointer dereferences =
-before
-> each call.
->
->
-> >
-> > Merging rzg2l_pwpr_pfc_{,un}lock() into a single function (taking a "bo=
-ol lock" flag) might be a
-> > better solution to reduce rzg2l_pinctrl_data size.
->
-> I agree.
->
-OK, I will introduce a single function pointer (pwpr_pfc_lock_unlock)
-in this patch.
-
-Cheers,
-Prabhakar
+Aha!  Actually, VMX already open codes the functionality provided by VCPU_EXREG_*,
+e.g. has vmx->ple_window_dirty.  If we add VCPU_EXREG_PLE_WINDOW, then the info
+get be made available to common x86 code without having to add new hooks.  And
+that would also allow moving the guts of handle_pause()/pause_interception() to
+common code, i.e. will also allow deduplicating the "grow" side of things.
 
