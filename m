@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-192699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F018D20E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:56:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FAA48D20E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444CE284F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:56:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA25EB22DAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED759171E40;
-	Tue, 28 May 2024 15:56:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EB317083D;
-	Tue, 28 May 2024 15:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7115F171E4C;
+	Tue, 28 May 2024 15:56:48 +0000 (UTC)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1BF171672;
+	Tue, 28 May 2024 15:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716911760; cv=none; b=LR8lNK3GhZP6DDN1sDYNNfeWqSddLVrlxncSHGGQh+MbrhBL04nkwPUV0p03ajVu9tMkaHMIT5cImoBs/BxITYJurMs5KKECFzI63ON81sdpm+9Re+uVZto5r0BlqQADBfwF1E40KG1qZyoEoesArixNqgHX4HbWuCYiyPYICps=
+	t=1716911808; cv=none; b=MJ8W0zBDpfg3eB363S0/2SABg0jXxC5sM7/j8iwgzmlaBwWnjsrH8UQLX+zmgGgV9fqVNBfeYniIS7jIgZSzkwrsyU89NIzkNN8s8vk8qn+6O+a7DT6Pu4JSlgVSZFOyNKmQwhSXth2qDrh7C51FhxOC9W3+XhSvnlxqr/4EA+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716911760; c=relaxed/simple;
-	bh=E7KVZO5kycrqp2EazwtlquGxInXGIMTLxcstfVZyAMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=o+5RSlFLWCf+vfT2vpKVAcGNf75g+yzqbDE57FVyJgVAW+Gr8GIHeBwCAgKxADA4FaIplVjQ4qz3SXk88gDQuYm+vd8xhGkza9c4b93g5lZx8F87/+/u9RwGgNh6/ebU+Q6HCckDHx4MZ2y752rpk+8I44OglSvus4fpRnLjwsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25A05339;
-	Tue, 28 May 2024 08:56:22 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F0643F762;
-	Tue, 28 May 2024 08:55:56 -0700 (PDT)
-Message-ID: <669d0fcf-5afa-45c5-a836-eccad0884d33@arm.com>
-Date: Tue, 28 May 2024 16:55:57 +0100
+	s=arc-20240116; t=1716911808; c=relaxed/simple;
+	bh=ysSgJke61ofzGTOSWNXuddZUCwyuvR4kJz+M8yt9lHE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nYp/V0d/Sb3pgv07Y7laBFLvRlA13XhJY+AyRkHR4WRLCPyCn2L9y7RkAYi/RNlR3wETY7f6Euypf0iC/lcD5qLmBEqBzTaLXQlIZiqs8Fex0ZaGUuisRnw9mQSkKBYP+5yXqaFYHEralQGmlTczCiJv4tKtQfrR8SrHpBqHHps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-529597d77b4so1284936e87.0;
+        Tue, 28 May 2024 08:56:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716911804; x=1717516604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UvZxaJF28iL5uKpQcCM7Mk+grk1BxPMDMrXsVUajEUM=;
+        b=RQ0V4rDELj0HqzwBT7iRqyTfiv+1dQSCWTp5MIGD12ONQihhp84sXTMoZ+JoLmI23C
+         t07LRWjyvFLp1usq7xDTQz4pYKMjwER8s64ChTMEs2L475vghdWuk9R8tBWYb7SNljIE
+         6lFEAbVebLe1kTbHdVJlIU0Y01FYXEVJxqNyDamLbWA0lv7sAti2uHjIc4nqzYuNu+FM
+         fnA5i0c2/+GxE2h3BVIpo3OPP0Ud5+4MW9sAnBdnBXi6/yoJsOprvNxjnRbXAA0sz98N
+         wr5baPQErfgVSHsV6ZSTAoasIGZAZdrvnm9AL2WqTIJrfFmv+zTffQ9tzSqXc3bpV0XQ
+         JpJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpNgYyX4PL99b3/Hr37MJsHHKnAyDuUehOehjCZ/8nrknWsNGmCuCXH6CklKgjQwpSEpm6SaPoB7utZH48OsSzSxaMdC/55QN4nS+4kItmBDid7wr1a66HwcIgSoBUOfghMDyb8Zy6Jg==
+X-Gm-Message-State: AOJu0Yx5Wyz90Nayg5TD7g1wwgf1jnZmgo0gGhn//9csqfa7bk4CiLAG
+	w96SFo02nYoUFDgWLxGJvD0TTaG3bj/h6uqJjVooUM6hd6PPj80yUpvZ0ONR
+X-Google-Smtp-Source: AGHT+IGCOX+RTRXTm34fkoHu4ucl4/nBu08Dw4YFcfi1caFDIr3Qjeas5gW0w91XqkCx1SdKKFTFEQ==
+X-Received: by 2002:a05:6512:36c1:b0:51f:6132:2803 with SMTP id 2adb3069b0e04-529645e337cmr6457584e87.17.1716911803734;
+        Tue, 28 May 2024 08:56:43 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529b259abf7sm541888e87.304.2024.05.28.08.56.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 08:56:43 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso9990161fa.2;
+        Tue, 28 May 2024 08:56:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWwFyNxSDs+VPtXKvLf4SeNYls+3gaQZ4npj6CW6xHyTn/Fh2N9+QZ7/jPBGRIWog9EjFhv7LbqMmJwhP2Ec2M2j7dJ0NheYMn2dTYoi5ab4VW+UFY5Y7prjOFCjZmRHmyVyDJi4YUjpg==
+X-Received: by 2002:a2e:90d9:0:b0:2df:c2b:8c84 with SMTP id
+ 38308e7fff4ca-2e95b09452fmr76184881fa.1.1716911803445; Tue, 28 May 2024
+ 08:56:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf docs: Fix typos
-To: Ian Rogers <irogers@google.com>
-References: <20240521223555.858859-1-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Changbin Du <changbin.du@huawei.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <20240521223555.858859-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <6a772756c2c677dbdaaab4a2c71a358d8e4b27e9.1714304058.git.dsimic@manjaro.org>
+ <49abb93000078c692c48c0a65ff677893909361a.1714304071.git.dsimic@manjaro.org> <171691117471.681554.6744393893618279840.b4-ty@csie.org>
+In-Reply-To: <171691117471.681554.6744393893618279840.b4-ty@csie.org>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 28 May 2024 23:56:31 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64ETOtHxQf1D9n+c9bGivsRTC=O8swDru+2cX2UT=o0qw@mail.gmail.com>
+Message-ID: <CAGb2v64ETOtHxQf1D9n+c9bGivsRTC=O8swDru+2cX2UT=o0qw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: allwinner: Add cache information to the SoC
+ dtsi for H6
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: jernej.skrabec@gmail.com, samuel@sholland.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, May 28, 2024 at 11:46=E2=80=AFPM Chen-Yu Tsai <wens@csie.org> wrote=
+:
+>
+> On Sun, 28 Apr 2024 13:40:36 +0200, Dragan Simic wrote:
+> > Add missing cache information to the Allwinner H6 SoC dtsi, to allow
+> > the userspace, which includes lscpu(1) that uses the virtual files prov=
+ided
+> > by the kernel under the /sys/devices/system/cpu directory, to display t=
+he
+> > proper H6 cache information.
+> >
+> > Adding the cache information to the H6 SoC dtsi also makes the followin=
+g
+> > warning message in the kernel log go away:
+> >
+> > [...]
+>
+> Applied to sunxi/dt-for-6.11 in sunxi/linux.git, thanks!
+>
+> [1/1] arm64: dts: allwinner: Add cache information to the SoC dtsi for H6
+>       https://git.kernel.org/sunxi/linux/c/c8240e4b0fd2
+
+OK, that's weird. Somehow b4 thought this patch was v2 of the A64 patch [1]=
+.
+Looks like they are threaded together because this patch has "In-Reply-To".
+
+Please avoid it in the future.
 
 
+Thanks
+ChenYu
 
-On 21/05/2024 23:35, Ian Rogers wrote:
-> Assorted typo fixes.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-
-Reviewed-by: James Clark <james.clark@arm.com>
-
-> ---
->  tools/perf/Documentation/perf-kwork.txt  | 4 ++--
->  tools/perf/Documentation/perf-mem.txt    | 2 +-
->  tools/perf/Documentation/perf-record.txt | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-kwork.txt b/tools/perf/Documentation/perf-kwork.txt
-> index 109ace1d5e90..21e607669d78 100644
-> --- a/tools/perf/Documentation/perf-kwork.txt
-> +++ b/tools/perf/Documentation/perf-kwork.txt
-> @@ -1,4 +1,4 @@
-> -perf-kowrk(1)
-> +perf-kwork(1)
->  =============
->  
->  NAME
-> @@ -35,7 +35,7 @@ There are several variants of 'perf kwork':
->          perf kwork top
->          perf kwork top -b
->  
-> -   By default it shows the individual work events such as irq, workqeueu,
-> +   By default it shows the individual work events such as irq, workqueue,
->     including the run time and delay (time between raise and actually entry):
->  
->        Runtime start      Runtime end        Cpu     Kwork name                 Runtime     Delaytime
-> diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
-> index 19862572e3f2..47456b212e99 100644
-> --- a/tools/perf/Documentation/perf-mem.txt
-> +++ b/tools/perf/Documentation/perf-mem.txt
-> @@ -21,7 +21,7 @@ and stores are sampled. Use the -t option to limit to loads or stores.
->  
->  Note that on Intel systems the memory latency reported is the use-latency,
->  not the pure load (or store latency). Use latency includes any pipeline
-> -queueing delays in addition to the memory subsystem latency.
-> +queuing delays in addition to the memory subsystem latency.
->  
->  On Arm64 this uses SPE to sample load and store operations, therefore hardware
->  and kernel support is required. See linkperf:perf-arm-spe[1] for a setup guide.
-> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-> index 6015fdd08fb6..77578c0a142a 100644
-> --- a/tools/perf/Documentation/perf-record.txt
-> +++ b/tools/perf/Documentation/perf-record.txt
-> @@ -311,7 +311,7 @@ OPTIONS
->  	User can change the size by passing the size after comma like
->  	"--call-graph dwarf,4096".
->  
-> -	When "fp" recording is used, perf tries to save stack enties
-> +	When "fp" recording is used, perf tries to save stack entries
->  	up to the number specified in sysctl.kernel.perf_event_max_stack
->  	by default.  User can change the number by passing it after comma
->  	like "--call-graph fp,32".
+[1] https://lore.kernel.org/linux-sunxi/6a772756c2c677dbdaaab4a2c71a358d8e4=
+b27e9.1714304058.git.dsimic@manjaro.org/
 
