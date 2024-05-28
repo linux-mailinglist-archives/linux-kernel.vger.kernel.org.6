@@ -1,226 +1,140 @@
-Return-Path: <linux-kernel+bounces-192233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E90B8D1A65
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6548D1A73
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5289B1C22456
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF33F1F23FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AA74C97;
-	Tue, 28 May 2024 11:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D6C16C87E;
+	Tue, 28 May 2024 11:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fK2XAQqT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LI/XBhMM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E5116C84C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076BA4C97;
+	Tue, 28 May 2024 11:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897434; cv=none; b=Tunv9XMvHrPXUJnOEqpovqflHM1xVugjHwciFARib6HxqcFTr3rKuvgsZJwJ4OMHo7yKp8bvqud3e7Bxp5Yenw02YMRRNoZmEzW5HqTqsg/GIYGaC4g1suSvoGgViC1lWqKfbtebAdP68QYOzwr8HNKz5+5PQTzorzqItjx5mac=
+	t=1716897479; cv=none; b=rIqu+rBugC2t9eM7hApaOetIsJNUS4wd/TNSBagLzfjagJMISB+RQcomsMkJNsujtyy83jqLv502kcD9FYJJalkyAYTXab6ln+JuvrifQvJtYvrHh4Mq2avCEz5+sqFICfgCqPet3w8lYDr6UWqi97u4kZjlRZ26NsYzqqrA5Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897434; c=relaxed/simple;
-	bh=w7aldM16JHgcJeDQZB2/8l7sNkK7STVmVf2OHcFU4Ic=;
+	s=arc-20240116; t=1716897479; c=relaxed/simple;
+	bh=1lYQK5mXOyUpa175X1Sy96vhJCVsXrfaSlYdbye/ge8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nxO/eGhsOWg1dCDc9lrAntiaMIvhGMId4ILr0fCjnAtfIs8TrRK/atnHtYJqVkN78AnEknvbQB6crhbh/3gqwBS10LBtWDXSvvDn6O183gB/wYWMgWXbtwefKjn8cL8qnyiPbdes794YG11oFPW7GScyf+LL+JqWcagsQXZOyu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fK2XAQqT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716897431;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SIJ8nojhETCDkAUUqhBd0573y1zDKmktkeIXW+mucrc=;
-	b=fK2XAQqTIEiC0vGYje65e89L5NoLuk4Q6XRpAk7mPDFKlxWh+aKFHPxY6k+8JuA48ur4qr
-	D3x+f86SachW6PCjDBc8SygUjQCyvn7kkwV0kKfb49R3/IYreo0+Wi601Z0Tv3Z5bOQYDG
-	32wP1YrsGQl7FKt2Mrs9g7k7lCPWiKA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-61-yZQmyO8MOM2g7Hj2GsF-Ig-1; Tue, 28 May 2024 07:57:08 -0400
-X-MC-Unique: yZQmyO8MOM2g7Hj2GsF-Ig-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D8CA08058DF;
-	Tue, 28 May 2024 11:57:07 +0000 (UTC)
-Received: from alecto.usersys.redhat.com (unknown [10.45.224.59])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 660F840004D;
-	Tue, 28 May 2024 11:57:05 +0000 (UTC)
-Date: Tue, 28 May 2024 13:57:03 +0200
-From: Artem Savkov <asavkov@redhat.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf record: add a shortcut for metrics
-Message-ID: <20240528115703.GB449511@alecto.usersys.redhat.com>
-References: <20240527101519.356342-1-asavkov@redhat.com>
- <ZlS8pc39t2c1WFye@x1>
- <ZlS9M1vcxZ3Qsx_B@x1>
- <ZlTCvelaGVb6lCia@x1>
- <ZlTG-kPuYUyHLQZ2@x1>
- <CAP-5=fWmmtagTVfacFZgdhughvU--Dz0=jkoqFB8CP1Qd3o3Yw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0guna3hVbZ1UKgssT7/lhvzIvE+WFJ/8nlOBSKdJxscI/Zsg6Jg6Bv4OXIY7KPNY89Vs14F/Rb45j3WXw99p+hbwi/nFoUiYuM3KhAdgjjRyKgB11HcgLu/S5t1OWFMVHsAafO28lsOgsfu0At/Xllgxe15DqdjSbV92Wj3smk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LI/XBhMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B9DDC3277B;
+	Tue, 28 May 2024 11:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716897478;
+	bh=1lYQK5mXOyUpa175X1Sy96vhJCVsXrfaSlYdbye/ge8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LI/XBhMMNJFFMWherkusHeRzK7+ig9lgB76uzLfVZp6mhu+jz6rvYccIm0xFBmnKI
+	 qdIp+dgugEptH32RE3YLTOitOBMYIkW2ueYGAhLeAMPyxUOVCSOta9cjGgW1C4zOwq
+	 NPG4ouUTyBKglYbxJy43bFGuKim5CphIm3SzdPGjIbeMsjvBwRhxSag7ZF37u6JI7v
+	 slfoiaO2tH4JIOhF6hiISFnV6FP+EPXBqSnwoLRHUdXfAxWjd9PoxOVOTWUtwxR3zb
+	 PQ7jbqxiTd1NKwpJEwNtDkY8ZihuVAt9Nv59Uwgr6NKwU4MDZdrVCRFvdWakdI1uFC
+	 MK1nXmNHqjmyw==
+Date: Tue, 28 May 2024 12:57:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Jamie Gibbons <jamie.gibbons@microchip.com>,
+	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] riscv: dts: microchip: add an initial devicetree
+ for the BeagleV Fire
+Message-ID: <20240528-movable-chlorine-cc5ebabb8abf@spud>
+References: <20240327-parkway-dodgy-f0fe1fa20892@spud>
+ <20240327-hurry-escapable-e3212bf3cdd8@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="z79wW9aJnFNbzgAR"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWmmtagTVfacFZgdhughvU--Dz0=jkoqFB8CP1Qd3o3Yw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+In-Reply-To: <20240327-hurry-escapable-e3212bf3cdd8@spud>
 
-On Mon, May 27, 2024 at 10:01:37PM -0700, Ian Rogers wrote:
-> On Mon, May 27, 2024 at 10:46 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Mon, May 27, 2024 at 02:28:32PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Mon, May 27, 2024 at 02:04:54PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > On Mon, May 27, 2024 at 02:02:33PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > > On Mon, May 27, 2024 at 12:15:19PM +0200, Artem Savkov wrote:
-> > > > > > Add -M/--metrics option to perf-record providing a shortcut to record
-> > > > > > metrics and metricgroups. This option mirrors the one in perf-stat.
-> > >
-> > > > > > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > > > > Signed-off-by: Artem Savkov <asavkov@redhat.com>
-> >
-> > > How did you test this?
-> >
-> > > The idea, from my notes, was to be able to have extra columns in 'perf
-> > > report' with things like IPC and other metrics, probably not all metrics
-> > > will apply. We need to find a way to find out which ones are OK for that
-> > > purpose, for instance:
-> >
-> > One that may make sense:
-> >
-> > root@number:~# perf record -M tma_fb_full
-> > ^C[ perf record: Woken up 1 times to write data ]
-> > [ perf record: Captured and wrote 3.846 MB perf.data (21745 samples) ]
-> >
-> > root@number:~# perf evlist
-> > cpu_core/CPU_CLK_UNHALTED.THREAD/
-> > cpu_core/L1D_PEND_MISS.FB_FULL/
-> > dummy:u
-> > root@number:~#
-> >
-> > But then we need to read both to do the math, maybe something like:
-> >
-> > root@number:~# perf record -e '{cpu_core/CPU_CLK_UNHALTED.THREAD/,cpu_core/L1D_PEND_MISS.FB_FULL/}:S'
-> > ^C[ perf record: Woken up 40 times to write data ]
-> > [ perf record: Captured and wrote 14.640 MB perf.data (219990 samples) ]
-> >
-> > root@number:~# perf script | head
-> >     cc1plus 1339704 [000] 36028.995981:  2011389 cpu_core/CPU_CLK_UNHALTED.THREAD/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
-> >     cc1plus 1339704 [000] 36028.995981:    26231   cpu_core/L1D_PEND_MISS.FB_FULL/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
-> >     cc1plus 1340011 [001] 36028.996008:  2004568 cpu_core/CPU_CLK_UNHALTED.THREAD/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
-> >     cc1plus 1340011 [001] 36028.996008:    20113   cpu_core/L1D_PEND_MISS.FB_FULL/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
-> >       clang 1340462 [002] 36028.996043:  2007356 cpu_core/CPU_CLK_UNHALTED.THREAD/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms])
-> >       clang 1340462 [002] 36028.996043:    23481   cpu_core/L1D_PEND_MISS.FB_FULL/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms])
-> >     cc1plus 1339622 [003] 36028.996066:  2004148 cpu_core/CPU_CLK_UNHALTED.THREAD/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
-> >     cc1plus 1339622 [003] 36028.996066:    31935   cpu_core/L1D_PEND_MISS.FB_FULL/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
-> >          as 1340513 [004] 36028.996097:  2005052 cpu_core/CPU_CLK_UNHALTED.THREAD/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.kallsyms])
-> >          as 1340513 [004] 36028.996097:    45084   cpu_core/L1D_PEND_MISS.FB_FULL/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.kallsyms])
-> > root@number:~#
-> >
-> > root@number:~# perf report --stdio -F +period | head -20
-> > # To display the perf.data header info, please use --header/--header-only options.
-> > #
-> > #
-> > # Total Lost Samples: 0
-> > #
-> > # Samples: 219K of events 'anon group { cpu_core/CPU_CLK_UNHALTED.THREAD/, cpu_core/L1D_PEND_MISS.FB_FULL/ }'
-> > # Event count (approx.): 216528524863
-> > #
-> > #         Overhead                Period  Command    Shared Object      Symbol
-> > # ................  ....................  .........  .................  ....................................
-> > #
-> >      4.01%   1.09%  8538169256  39826572  podman     [kernel.kallsyms]  [k] native_queued_spin_lock_slowpath
-> >      1.35%   1.17%  2863376078  42829266  cc1plus    cc1plus            [.] 0x00000000003f6bcc
-> >      0.94%   0.78%  1990639149  28408591  cc1plus    cc1plus            [.] 0x00000000003f6be4
-> >      0.65%   0.17%  1375916283   6109515  podman     [kernel.kallsyms]  [k] _raw_spin_lock_irqsave
-> >      0.61%   0.99%  1304418325  36198834  cc1plus    [kernel.kallsyms]  [k] get_mem_cgroup_from_mm
-> >      0.52%   0.42%  1103054030  15427418  cc1plus    cc1plus            [.] 0x0000000000ca6c69
-> >      0.51%   0.17%  1094200572   6299289  podman     [kernel.kallsyms]  [k] psi_group_change
-> >      0.42%   0.41%   893633315  14778675  cc1plus    cc1plus            [.] 0x00000000018afafe
-> >      0.42%   1.29%   887664793  47046952  cc1plus    [kernel.kallsyms]  [k] asm_exc_page_fault
-> > root@number:~#
-> >
-> > That 'tma_fb_full' metric then would be another column, calculated from
-> > the sampled components of its metric equation:
-> >
-> > root@number:~# perf list tma_fb_full | head
-> >
-> > Metric Groups:
-> >
-> > MemoryBW: [Grouping from Top-down Microarchitecture Analysis Metrics spreadsheet]
-> >   tma_fb_full
-> >        [This metric does a *rough estimation* of how often L1D Fill Buffer
-> >         unavailability limited additional L1D miss memory access requests to
-> >         proceed]
-> >
-> > TopdownL4: [Metrics for top-down breakdown at level 4]
-> > root@number:~#
-> >
-> > This is roughly what we brainstormed, to support metrics in other tools
-> > than 'perf stat' but we need to check the possibilities and limitations
-> > of such an idea, hopefully this discussion will help with that,
->
-> Putting metrics next to code in perf report/annotate sounds good to
-> me, opening all events from a metric as if we want to sample on them
-> less so.
 
-The idea was to record whatever data was asked on record step and
-provide the list of all metrics that can be calculated out of that data
-in perf report, e.g. you could record tma_info_thread_ipc but report
-will suggest both it and tma_info_thread_cpi.
+--z79wW9aJnFNbzgAR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> We don't have metrics working with `perf stat record`, I
-> think Kan may have volunteered for that, but it seems like something
-> more urgent than expanding `perf record`. Presumably the way the
-> metric would be recorded for that could also benefit this effort.
->
-> If you look at the tma metrics a number of them have a "Sample with".
-> For example:
-> ```
-> $ perf list -v
-> ...
->   tma_branch_mispredicts
->        [This metric represents fraction of slots the CPU has wasted
-> due to Branch Misprediction.
->         These slots are either wasted by uops fetched from an
-> incorrectly speculated program path;
->         or stalls when the out-of-order part of the machine needs to
-> recover its state from a
->         speculative path. Sample with: BR_MISP_RETIRED.ALL_BRANCHES.
-> Related metrics:
->         tma_info_bad_spec_branch_misprediction_cost,tma_info_bottleneck_mispredictions,
->         tma_mispredicts_resteers]
-> ...
-> ```
-> It could be logical for `perf record -M tma_branch_mispredicts ...` to
-> be translated to `perf record -e BR_MISP_RETIRED.ALL_BRANCHES ...`
-> rather than to do any form of counting.
+On Wed, Mar 27, 2024 at 12:24:40PM +0000, Conor Dooley wrote:
 
-Thanks for the pointer, I'll see how this could be done.
+> +	fabric-pcie-bus@3000000000 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges = <0x0 0x40000000 0x0 0x40000000 0x0 0x20000000>,
+> +			 <0x30 0x0 0x30 0x0 0x10 0x0>;
+> +
+> +		pcie: pcie@3000000000 {
+> +			compatible = "microchip,pcie-host-1.0";
+> +			#address-cells = <0x3>;
+> +			#interrupt-cells = <0x1>;
+> +			#size-cells = <0x2>;
+> +			device_type = "pci";
+> +			reg = <0x30 0x0 0x0 0x8000000>,
+> +			      <0x0 0x43000000 0x0 0x10000>;
 
---
- Artem
+So this ain't right, I sent some patches yesterday to sort out accessing
+instance 2:
+https://lore.kernel.org/all/20240527-slather-backfire-db4605ae7cd7@wendy/
 
+> +			reg-names = "cfg", "apb";
+> +			bus-range = <0x0 0x7f>;
+> +			interrupt-parent = <&plic>;
+> +			interrupts = <119>;
+> +			interrupt-map = <0 0 0 1 &pcie_intc 0>,
+> +					<0 0 0 2 &pcie_intc 1>,
+> +					<0 0 0 3 &pcie_intc 2>,
+> +					<0 0 0 4 &pcie_intc 3>;
+> +			interrupt-map-mask = <0 0 0 7>;
+> +			clocks = <&ccc_nw CLK_CCC_PLL0_OUT1>,
+> +				 <&ccc_nw CLK_CCC_PLL0_OUT3>;
+> +			clock-names = "fic1", "fic3";
+> +			ranges = <0x43000000 0x0 0x9000000 0x30 0x9000000 0x0 0xf000000>,
+> +				 <0x1000000 0x0 0x8000000 0x30 0x8000000 0x0 0x1000000>,
+> +				 <0x3000000 0x0 0x18000000 0x30 0x18000000 0x0 0x70000000>;
+> +			msi-parent = <&pcie>;
+> +			msi-controller;
+> +			status = "disabled";
+> +
+> +			pcie_intc: interrupt-controller {
+> +				#address-cells = <0>;
+> +				#interrupt-cells = <1>;
+> +				interrupt-controller;
+> +			};
+> +		};
+> +	};
+
+--z79wW9aJnFNbzgAR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlXGwQAKCRB4tDGHoIJi
+0oeuAQCripgxkKIvfMVj9OYaqpJnxghyOymmY6JCpmywHPYZ3gD+JxPnKPy7CEG/
+pxHE90yC5iB1AQRd+jHpUhskYg101gg=
+=Au0t
+-----END PGP SIGNATURE-----
+
+--z79wW9aJnFNbzgAR--
 
