@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-192073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87D88D1806
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:04:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72168D180E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E271C2457B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:04:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5412DB25CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5756F13AD3E;
-	Tue, 28 May 2024 10:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986C216ABE2;
+	Tue, 28 May 2024 10:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bvOIUnGL"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="WOnEOFzn"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF4F9DA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890655; cv=none; b=dOHxp6fn2HFVpK0QA+FiiCcJTUm1YFrD+FdcBGWcQGZf0BJ6sEPjuTeO+zxQ7o+0kEBAp5yIGlwiXlcpaBkBqXx+OJ3UyCfuRJ79tiBIxeRdnKx4YlpZgSbLGkEusGX6ixm8c/xYrgJ2LUZ4+0+YRDZvrCGaYb1UImBiovwPgT4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890655; c=relaxed/simple;
-	bh=1yEvxg/UMf7DXoCsSdoVaI8TMmEaatz23H4XZLpBSjM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE68473471;
+	Tue, 28 May 2024 10:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716890666; cv=pass; b=dG+TZxGH0TV4fJKVAN1u8rauFWi1PyitYD+4mz0B96GCjsrKDkzcgN6RqFifNkd95CnKyk0GxHvzbTxpwDQ0wiIaCH/iY+082s2CCyh7+M8Qlv2DuUW6SzU38DSGfuh6F3i20WCDYjtARmpFnraG3pxmjdshxs0qvSMOj2i8NLk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716890666; c=relaxed/simple;
+	bh=g4CBUXz5T5mu/JCnMt3kyJeUI5ZO8IAT+hqau0JiDts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pjxa2HzqNjubG8sENZd8V63B92VOYFc+yj4zJgLXOSgbCnExiP5o04489x1M1q/OIN628IMFTLQKj3qhLIgaL1hAX04EG0aHfzYdzAWOHUmHE5JlSHZdn4yTPGs8N1ZDZCKQTbD6+0N5wqBRtF9u6OBKwfl/wf5PipfLTwoSlMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bvOIUnGL; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57863a8f4b2so697349a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716890651; x=1717495451; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zuLcdpryWUXbu5ak1d/oYJThVncqY5Jd7DeWCPAKJnY=;
-        b=bvOIUnGLgHpa9sx5dl9A/ko8z7FDaT8PyYc+cF9O1rQF7RUSp8l2QiQtxbQNT4IHj0
-         9M/a8Di2H+eH6FMTKWQDT06oNocUyHlTvPMoufo671T72Tz1cNPCPCKvNgUZLsBX3Bix
-         9gSHTc7pZ20du1PwK3fOEKWTQgSWqnz/R440617ohHE6NrBLGOtQ/Qd0ruc7qPmIcq7J
-         Imh/Ou2HLsKM/yeDrNd+uS0UkiBncC5OatcfjCDqV6yDyaBzY/2rjDgsGTS+XmQFfGdQ
-         nprb/w+b7QNSa1IYJ0XVy42rnOBAz/TzeyStbSq97VLXpTCzFzDWyIIg8Yx0/QuiW2eB
-         yrOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716890651; x=1717495451;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zuLcdpryWUXbu5ak1d/oYJThVncqY5Jd7DeWCPAKJnY=;
-        b=Dp8DKNHRVX7A0c5yFINQINvQka2/PTnjUFtWAcoTZNF4iEn32RnYzJnCCJT65IWbCq
-         MP7K0lDC481PLJc2RmV3E/bbeM5xiH1bH+N6GkV1Fw4VkpRWUCUyLPSxnFkOPJeUSuaG
-         niuo3QNJri4QOEZj/RCHiycABZn5vreXgL8eIQEH+GVxqvKXok59/HRfbHGLNNVkJ9nx
-         8G6i5EivoSX6Gdnu+QfnSptuig80Uf9S9illaiBEj4uVXul+8BHySpMP8kJ6ZZm8hKcA
-         2k3Xw/dohXROmBLZt0/l1cZ+2mCyDWgNRSmzxHneEYbhx2xm2+0C4Hb3TjPJh+XlDOK5
-         W51w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1tbtT2dm/zKXAvzNHWqQlBNiJbqBMhvR/+bi9KjJckhLMiUPF2CksZ8l8XhSrGu0t9OZwr2wCRvqyuAh0VGT201+lUN6MbThE8ppH
-X-Gm-Message-State: AOJu0Yw3ED+RffRXzh1Stxm8DQl1heS5pk4g3MyBjPn7lTkCjhKhEzqU
-	sQkLe9ntcLR6qspgWGXGY9PgNXGhT74lueh7RDPNlE5NZGEFo8+uMJbgeSCq0d0=
-X-Google-Smtp-Source: AGHT+IHStxBPW+RVZLC/cBlGPEigVgucOLaLZJoJjANp3IgFGqIqy41pQ1K2ZkdhIo3YDJ5C/j8z/g==
-X-Received: by 2002:a50:d789:0:b0:572:4041:5637 with SMTP id 4fb4d7f45d1cf-5785199d663mr7353637a12.19.1716890651285;
-        Tue, 28 May 2024 03:04:11 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57852339fc4sm6975423a12.15.2024.05.28.03.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 03:04:11 -0700 (PDT)
-Date: Tue, 28 May 2024 12:04:09 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [PATCH printk v6 29/30] rcu: Mark emergency sections in rcu
- stalls
-Message-ID: <ZlWsGd7ajyrlK-cB@pathway.suse.cz>
-References: <20240527063749.391035-1-john.ogness@linutronix.de>
- <20240527063749.391035-30-john.ogness@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2LyNHoU7bUUYc53YUFzCUCBA22ISvsSvpHSDLRHEpn7ETGfLQFG0ith9So/xcuEFQKnWXgdlwA88bu33vtTJtDMCiUVb1Kspf4u/gdwWA9lvGEnccTo6176OC40GqVmn+3XQoCqePhAjvLH4R7AqgSqlQ8oouDu5pqGEcVZhD0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=WOnEOFzn; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4VpSm62k6YzySG;
+	Tue, 28 May 2024 13:04:22 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1716890662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oc5lpaoUHfjbT29KeXkb2c/2QzBp2Sez/PsceYiqTG0=;
+	b=WOnEOFznfy1bJ+dBgvLx8Qq+pMpXfi73FseMJSufjRH9XgnTzsLvALFEJDwhIJVUJTBHQC
+	96N9mHo5g8uuLY0eeb5kPU5L39W7U7C4BJDvYrhKbuuJjmsTarQVStq1a3SE/YGegNeyKE
+	rkuMYROAldM798FAU2cE4PtCdaCK/HE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1716890662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oc5lpaoUHfjbT29KeXkb2c/2QzBp2Sez/PsceYiqTG0=;
+	b=loIdKMLRludf7WtdSO+IsQ2eZhxmu1xw9v1ZmqsBJjG5NN84Tmoc3lvyGRaIOjWJZcui0C
+	ohH+dKTyHkpCB8Zop1Ydtcj4oc+mP7OwRE+6KmXBB8B4+BmZZGK8rfKAMV70Oyeyn75exm
+	YtmKsGnWafNIdRTqvEJotGQ0YaRZokI=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1716890662; a=rsa-sha256; cv=none;
+	b=YLcHPXBQiGA8MgaVuUmN3uxrJxdiFu8onLUgkI1lp064qrdhp5/bcTnv7IOPSYqfzJy1GA
+	OkkKLwnELuhxdhQkb507BjbC3pmjPMLftELRqVK9DpAhYctA2bjepW2Bz1+L3o22ZPhfmZ
+	auwqRpHcesisfh0r02ldP9svb/xpTPE=
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 33EC0634C93;
+	Tue, 28 May 2024 13:01:22 +0300 (EEST)
+Date: Tue, 28 May 2024 10:01:21 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
+ binding
+Message-ID: <ZlWrcTCNBWEz67Tj@valkosipuli.retiisi.eu>
+References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
+ <20240521162950.6987-2-sylvain.petinot@foss.st.com>
+ <8afe1888-5886-45fc-b576-98db3d392d37@linaro.org>
+ <ZlWiQTfag5yTA4YM@valkosipuli.retiisi.eu>
+ <b6d3d336-5999-424a-9e38-3cf793b6627e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,21 +92,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240527063749.391035-30-john.ogness@linutronix.de>
+In-Reply-To: <b6d3d336-5999-424a-9e38-3cf793b6627e@linaro.org>
 
-On Mon 2024-05-27 08:43:48, John Ogness wrote:
-> Mark emergency sections wherever multiple lines of
-> rcu stall information are generated. In an emergency
-> section the CPU will not perform console output for the
-> printk() calls. Instead, a flushing of the console
-> output is triggered when exiting the emergency section.
-> This allows the full message block to be stored as
-> quickly as possible in the ringbuffer.
+Hi Krzysztof,
+
+On Tue, May 28, 2024 at 11:46:00AM +0200, Krzysztof Kozlowski wrote:
+> On 28/05/2024 11:22, Sakari Ailus wrote:
+> > Hi Krzysztof,
+> > 
+> > On Mon, May 27, 2024 at 09:04:38PM +0200, Krzysztof Kozlowski wrote:
+> >> On 21/05/2024 18:29, Sylvain Petinot wrote:
+> >>> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
+> >>> sensors. Update MAINTAINERS file.
+> >>>
+> >>> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
+> >>
+> >>
+> >>> diff --git a/MAINTAINERS b/MAINTAINERS
+> >>> index ef6be9d95143..554e6861425b 100644
+> >>> --- a/MAINTAINERS
+> >>> +++ b/MAINTAINERS
+> >>> @@ -20885,6 +20885,15 @@ S:	Maintained
+> >>>  F:	Documentation/hwmon/stpddc60.rst
+> >>>  F:	drivers/hwmon/pmbus/stpddc60.c
+> >>>  
+> >>> +ST VD56G3 DRIVER
+> > 
+> > I might add this is a sensor, i.e. "ST VD653G IMAGE SENSOR DRIVER".
+> > 
+> >>> +M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+> >>> +M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
+> >>> +L:	linux-media@vger.kernel.org
+> >>> +S:	Maintained
+> >>> +T:	git git://linuxtv.org/media_tree.git
+> >>
+> >> This is a friendly reminder during the review process.
+> >>
+> >> It seems my or other reviewer's previous comments were not fully
+> >> addressed. Maybe the feedback got lost between the quotes, maybe you
+> >> just forgot to apply it. Please go back to the previous discussion and
+> >> either implement all requested changes or keep discussing them.
+> > 
+> > The above MAINTAINERS entry is roughly in line with what else we have for
+> > the Media tree. I'm in favour of listing the people who would look after
+> > the driver, not just those who merge the patches (or even send PRs to
+> > Linus).
 > 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> I did not propose to drop the entry.
+> 
+> > 
+> > In other words, I think the above entry is fine as-is.
+> 
+> I propose to drop duplicated, redundant git entry. Maintainer of this
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Ah, I agree, that makes sense.
 
-Best Regards,
-Petr
+> driver does not have access to git tree and the git tree is already
+> explained in media subsystem entry. If you ever update the git tree, you
+> need to update 100 driver entries which is meaningless...
+
+-- 
+Regards,
+
+Sakari Ailus
 
