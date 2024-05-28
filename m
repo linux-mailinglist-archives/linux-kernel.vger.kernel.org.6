@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-191606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A70E8D1164
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:19:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D655E8D1167
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFA2E1F21935
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E1281F21A3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CB29450;
-	Tue, 28 May 2024 01:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3B1946F;
+	Tue, 28 May 2024 01:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kg+YiZHD"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="z2OJSaO1"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F1E15BB
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C5E15BB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716859146; cv=none; b=uN4Qp1GSbFla9M/wFD/HYI//le4wox9N5uBCovfK78hzHzcxEmgZbu+jRrpU0zpgvJetovlWHAVOzlZ7a53R76JB3UdXP2CX2Q63rNvGyjSSTu+PUTn+3t2OlDxTh92Tqdkh0BXf31Yr92aq/4YpFg82yDZSjNtUiDeWx98hyRU=
+	t=1716859276; cv=none; b=AURnbjwq3nT6RLrsQd6djcXmYkCvRHp1nagPH4vnINqdfdzXap4OFU+sM7lOihYBLOLhKAq7L3zZJW6LMQicJDQr6dKcwoTL9bHeLw+haxS/j+tpj3Tn8r3d7ixy2JgL2YTYdQ0xoXmqkserlYC40vcA9uwJZBCD0eGxHSHWXT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716859146; c=relaxed/simple;
-	bh=KnD8oh5qhi7MNuAUkQo6zkbODaVzHZhpYFWBOMojA04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nwr++7KIElbINhjN2kr2trISenJWmk9yYEGU2ZN7PBS8jDXvRX/GjHycMiK3eJSejQmGSZSwZaFBgc+4LtEgJWibxz8mr02D2tBtsAe1LceIofDEJA2IWZFNRbAGyw3v22AD3GKgbunNFhWDU58rzpkVA8DZNUbzMgdA7vDgngM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kg+YiZHD; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: sfr@canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716859140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bQny9xk+mpw4ER38XcTOmAry5fkOJEKQTjT/GCnCDAU=;
-	b=kg+YiZHDZtKT1PpTK8WP/85V2DPaRgezBpSeKZqb95geJo6rIHw2cUFU0SRlHJZ/YNA/Nh
-	KNt+9ga3neo1gvfL4Rp4lMSSWZ54q4SDyZmYQu+7kloNg2DyI6mrEluafHFx3VnkSBYRT1
-	KqBoPlMkbCYjSeSWpN9hSLD8Qabbq4E=
-X-Envelope-To: visitorckw@gmail.com
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: colyli@suse.de
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-next@vger.kernel.org
-X-Envelope-To: matthew@mm12.xyz
-X-Envelope-To: akpm@linux-foundation.org
-Date: Mon, 27 May 2024 21:18:56 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	Coly Li <colyli@suse.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Matthew Mirvish <matthew@mm12.xyz>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the refactor-heap tree with the
- block tree
-Message-ID: <xwodecpshjpwgcrrssbmd6zbk6g3ah343t4zjlqdbnpcnc3vkq@k7anzy5e4ek6>
-References: <20240509152745.08af752f@canb.auug.org.au>
- <20240528110737.730a8f40@canb.auug.org.au>
+	s=arc-20240116; t=1716859276; c=relaxed/simple;
+	bh=8XlrUCWHsCgexU34BG4NhbVRXPWg9AEJn4cAmb+cBuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LcKRkMHY2Dfse+8qjXWzbCM9xfAKQReCzn7isAlRORb863B6sJQln3dvW0qQi/3iNnuebL/slvZX2c1DEBpl/TTaSwOwpKSB/SxpnN/p2iiyparFZWMLB2Ca61/OHOwPFo9yplezDabXHjZrEiCo/SE9CYsAnJr0YwGDSZgK98M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=z2OJSaO1; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-354cd8da8b9so276400f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1716859273; x=1717464073; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+rSjKpwIeS1N0EKrWLoorJzB9v8f2v2oQNKeq1QE8c=;
+        b=z2OJSaO1ezz8gk/RvgwM3fv4K2wpDyW8bbjElXtIXBPu+Qcv8wosFyXBjGjaeqe9I4
+         Zg/MzWrhBn4rRdjLzllqF+CZmA6D31RyEVBtgCfIKFwJKVimzFDmZcB+cmh5MryL4IJc
+         GoJJ1xWz/CPkewT0Qj/7OhgyS5mZQPpC96nev/xkorh8S27ZFCqRIrreoJegbY8yuwsM
+         q7v3FMSIKiWk6ntdwsQmAqZtvP5Fwx2TneUZo6RSvtoVTDtjfjdSHDDhkkqV+2Kkkj8b
+         Qd5pMaku0gcTIIkJIc/WT8dkAfAUGIwJI3ebKzjYxNKcJf7QPz6HRMOd0ygruq94o17a
+         uboA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716859273; x=1717464073;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+rSjKpwIeS1N0EKrWLoorJzB9v8f2v2oQNKeq1QE8c=;
+        b=gS/5ksnnh9vXfV3hu4m9UJTXfJG7uWABcawhCvbThq94OU4TFlcidyapCue35ITcWa
+         9se4/YkY9SztyhMshuW2q76fn6AJEEVJcDpEoiVkFuPbBK1qZhfY0HOoZsIx03KmWVid
+         YgfLOGX0QBGRpSxCjl0c8lVS4E6vQS7WtR//T4R+SHYu3d0CotfWf4g/hhgmyyoL1Kh9
+         L0RFt2ldGJDjw5uRhO1pMoIC6KfEdvRNZrf2gYdkWjfDePTUGo1iwuE+ZxcktfSPezsO
+         z0mPotu+Zc2RWEfqf/vCaeZ4yjr+eU+yEGQMT0I1q382n3ULIoRNiBMXsoktJx3aDH44
+         Kl5g==
+X-Gm-Message-State: AOJu0YyLmPTENDPqA/a1YCfN2RYKH/aCoeuhVF5JIkZEdPDV8wFL7Ovo
+	YEhGhZClhDz2kf4zgA4klgyYmbE3mJKzUmby2M1i1S7hSq6pK7lvlNS+8VdJKHI=
+X-Google-Smtp-Source: AGHT+IHxiSrspGb+FegyzUgFXXisAjJGpfkByxVt2IbbOf+YSxpmCL+Vnf9CtK2abC/3GmP86faDvA==
+X-Received: by 2002:adf:ee0e:0:b0:354:fce5:e5d with SMTP id ffacd0b85a97d-35522166276mr7205990f8f.4.1716859272824;
+        Mon, 27 May 2024 18:21:12 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c9570sm10191874f8f.68.2024.05.27.18.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 18:21:12 -0700 (PDT)
+Date: Tue, 28 May 2024 02:21:10 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Questions about transition latency and LATENCY_MULTIPLIER
+Message-ID: <20240528012110.n6se3mapwxgqa3r2@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240528110737.730a8f40@canb.auug.org.au>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 28, 2024 at 11:07:37AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Thu, 9 May 2024 15:27:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the refactor-heap tree got conflicts in:
-> > 
-> >   drivers/md/bcache/bset.c
-> >   drivers/md/bcache/bset.h
-> >   drivers/md/bcache/btree.c
-> >   drivers/md/bcache/writeback.c
-> > 
-> > between commit:
-> > 
-> >   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
-> > 
-> > from the block tree and commit:
-> > 
-> >   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic min_heap")
-> > 
-> > from the refactor-heap tree.
-> > 
-> > Ok, these conflicts are too extensive, so I am dropping the refactor-heap
-> > tree for today.  I suggest you all get together and sort something out.
-> 
-> It looks as though the patches from the refactor-heap tree are now being
-> carried in the mm-nonmm-unstable branch of the mm tree.  Should I
-> rmeove the refactor-heap tree from linux-next?  It *will* be dropped for
-> today at least.
+Hi
 
-Yeah, Andrew's got it
+I am trying to understanding the reason behind the usage of LATENCY_MULTIPLIER
+to create transition_delay_us. It is set to 1000 by default and when I tried to
+dig into the history I couldn't reach the original commit as the code has gone
+through many transformations and I gave up finding the first commit that
+introduced it.
+
+Generally I am seeing that rate_limit_us in schedutil (which is largely
+influenced by this multiplier on most/all systems I am working on) is too high
+compared to the cpuinfo_transition_latency reported by the driver
+
+For example on my M1 mac mini I get 50 and 56us. rate_limit_us is 10ms (on 6.8
+kernel, should become 2ms after my fix)
+
+	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
+	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:50000
+	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:56000
+
+AMD Ryzen it reads 0, and end up with LATENCY_MULTIPLIER (1000 = 1ms) as
+the rate_limit_us.
+
+On Intel I5 I get 20us but rate_limit is 5ms which is requested explicitly by
+intel_pstate driver
+
+	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
+	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:20000
+	/sys/devices/system/cpu/cpufreq/policy1/cpuinfo_transition_latency:20000
+	/sys/devices/system/cpu/cpufreq/policy2/cpuinfo_transition_latency:20000
+	/sys/devices/system/cpu/cpufreq/policy3/cpuinfo_transition_latency:20000
+	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:20000
+	/sys/devices/system/cpu/cpufreq/policy5/cpuinfo_transition_latency:20000
+	/sys/devices/system/cpu/cpufreq/policy6/cpuinfo_transition_latency:20000
+	/sys/devices/system/cpu/cpufreq/policy7/cpuinfo_transition_latency:20000
+
+The question I have is that why so high? If hardware got so good, why can't we
+leverage the hardware's fast ability to change frequencies more often?
+
+This is important because due to uclamp usage, we can end up with less gradual
+transition between frequencies and we can jump up and down more often. And the
+smaller this value is, this means the better we can handle fast transition to
+boost or cap frequencies based on task's requirements when it context switches.
+But the rate limit generally is too high for the hardware and wanted to
+understand if this is pure historical or we still have reasons to worry about?
+
+From what I've seen so far, it seems to me this higher rate limit is helping
+performance as bursty tasks are more likely to find the CPU running at higher
+frequencies due to this behavior. I think this is something I can help these
+bursty tasks with without relying accidentally on this being higher.
+
+Is there any worry on using cpuinfo_transition_latency as is if the driver
+doesn't provide transition_delay_us?
+
+And does the kernel/driver contract need to cater for errors in driver's
+ability to serve the request? Can our request silently be ignored by the
+hardware? Not necessarily due to rate limit being ignored, but for any other
+reason? It is important for Linux to know what frequency we're actually running
+at. Some hardware gives the ability to read a counter to discover that. But
+a lot of systems rely on the fact that the request we sent is actually
+honoured. But failures can mean things like EAS will misbehave.
+
+
+Thanks!
+
+--
+Qais Yousef
 
