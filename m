@@ -1,158 +1,165 @@
-Return-Path: <linux-kernel+bounces-192081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413CE8D1824
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:09:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC238D1826
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2AFEB26547
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:09:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7121D1C22BD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849A316130D;
-	Tue, 28 May 2024 10:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07507161321;
+	Tue, 28 May 2024 10:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DBu/xc6q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Jl1E3YfY"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A0717E8F4
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4308317E8F4
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890969; cv=none; b=s0pGxcH8z+Mm2KKWoGdbJTIXpvrBQvh7Pm9XBk39bK9NtKJQoRLDnClO+kU/Hu05VDERHX5/xYVOBmgC9xWgJAJcaliiS1cxIXJXyRCwgG2aKJIK0aYA0IdEWcetXo5Br6Z6gxEStgPP7oyWhyWgQpSylrjmc3uKNwroo+EblTE=
+	t=1716891026; cv=none; b=ek3Ak1YCqKZMOkHk9TjB4grpeKhUYa1YUWLbqlO0qd0NGpgVDhMW2/26n4r4PrC+klx6qFv2ykTSyhxmQmgyIsCjvB/2koPqDornulm16RpOEaXtahTCOJBqoQH7SFHe/ce8yu+hnUzJCq5SspXSLHH3+TT2gDjUyHvP6sa9Mb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890969; c=relaxed/simple;
-	bh=h19i4uIK303A17Pev7/cmdkTNSROBXXQUVH+EFLdd48=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KXXLIx8ujNdFgZGNZ1LIqnmIyZfMfj10JNHE0X2an9cgVFxY3RAJgdAjgd+FaCPoWeMH4iuLyFP8Zjl6LKiQqtgB/430wZxrtG7FzyelaNbumm8efkIZlG9GvZrHEV92Jw/iscnTqroynedD0vGezicSHr09hWf8C5Xkjgxr3qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DBu/xc6q; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716890968; x=1748426968;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=h19i4uIK303A17Pev7/cmdkTNSROBXXQUVH+EFLdd48=;
-  b=DBu/xc6q+ZZQ3L9ASYupEnb+2oWaDp+GaimoFzzvsST7GA9Uv0gvGipv
-   eq6DkdQV8eBO3RB7VcgdsTKL4CVqmHmvIvIxOZ6ITDRErKHoKhUmitOiV
-   4t6Z/vzkbxcqZhzRGdvQNnGvDp9T9/AD4D56pO273J5YSTQGUl2iKEGmI
-   fwHRUtrJKcPDuaR308JKEn3rvLPGCq3kvbDK9TpTMcN8gVBov1dXgTDOO
-   8K8LP0bxpe9PtUsT5W1JSoiu+xuFkYCGAlphvuOE/U87TV4UeLuhAb4AA
-   eJ5eHU4C0AUf/Fue+lcF6xmXL/pd2egib7rXICyEv7G4KDHuspiOP8ona
-   A==;
-X-CSE-ConnectionGUID: 9Mtl2wgdSQ2pdmATe+MSCQ==
-X-CSE-MsgGUID: XdY9jzYWQFK5MGiSEr4GuA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24640899"
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="24640899"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 03:09:28 -0700
-X-CSE-ConnectionGUID: 2zXrjGVjSJ6A/yX5CpFd2A==
-X-CSE-MsgGUID: JW4ElxonTZCoBCCJj27NQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="39426484"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 28 May 2024 03:09:25 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 2E72417E; Tue, 28 May 2024 13:09:24 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	cho@microsoft.com,
-	decui@microsoft.com,
-	John.Starks@microsoft.com
-Subject: [PATCH] x86/tdx: Generate SIGBUS on userspace MMIO
-Date: Tue, 28 May 2024 13:09:19 +0300
-Message-ID: <20240528100919.520881-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1716891026; c=relaxed/simple;
+	bh=KEyBvNv3y5FXKnuQWWl8Z+2elYl7IvopwqOdihU2JBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NufHtVr+Z35+YGn95QnurH3P52LOAmK6pcqdExvnYY+SFi3uaPScvtKa9pOQZdlGlAL2etVMEBPxTF2TCjtzapn0eFQMu/lwp31/Czq3Xo6+ZsHBRvZfX4vHeMS2ChIu4Z1y0Wy4UeXiwDHWUEut+PKs+XU93sm7NpWJRRAWuAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Jl1E3YfY; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5766cd9ca1bso856030a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:10:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716891023; x=1717495823; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d0aISgCh4COJAaNSxf9GiLx9gPfwSU3DX1Gqw14Y4kY=;
+        b=Jl1E3YfY3k3KaFeL30MZkZEtR0ywImFGRLLfyfVUwbLa3c3GP9+4Mmpjvp0zD2R9km
+         /Y5ok24jr0BzhgU0IotapE0d7pL4JI0RNqPLML7ae1FB8F0ziEwUN93QgHFtmSJxBiT4
+         F8OcOmXa1V9fQfCRjhOxM8PuURagNpKJ1mg4jGKrXr7MbY74k8/wNTNcHWW+WagD1DrL
+         qZS15AQUr/JTcrEOQS+YfmIE7a3xSvJ8VomPnmCwU332cJUCItSdT0AQ0e/GLr/LNhan
+         3sR6x4lwb7uV4wU1Rh9ZdXuzfVPqBoiC6YwgXSfibnyqIcjPIWmvQqbZNpJjA9t8JyAM
+         Dchg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716891023; x=1717495823;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d0aISgCh4COJAaNSxf9GiLx9gPfwSU3DX1Gqw14Y4kY=;
+        b=dPGHWUDOStPOSs8yWq3cXzXXL8+itQuKnwfVDyh+yWRAw5C6ypvESGT9XYne5N+M3a
+         wAsGzJMQWz7blCbikDthzWltFly5/TMqyhm2z+t6DbyenSIt+3gJW6I1SMY0HYbHyY60
+         w5oGOnkSOjA1RFQX9zyn25bIfbZvIy8FxrzJn0VxIv9aWO5GCO3m6enBjTe58M1Ijo6N
+         4nzxxTM3ViLP+anA55rrR8xG2DcPXbl83zHJ5pxncb9dEGm1vaPXvnwieZukn3l4uzsa
+         +mcCNSOODSAjZmEiGbfGKC9hnyCTNu//xEid284iru3ybJnUpQgEMD0/eX3scRBM4Zrl
+         idoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqbNZdVSePfbVbL3d6X7GMIFc27Svwk7YyliE3CCrVQp30x1M+jknRtWsJpfu9W4vR2kyA8BEU81M0VmStsjZ8I1BggaiWCqHf99Rm
+X-Gm-Message-State: AOJu0YwnP8dgNfl2xkCxagErGaqM9BMkQI5lfJeKPLGxpBnDTZeE+8sy
+	Oc6GtUVs9P67xv8q3U0JuwOFqIxJ9kWPryFcASvZCOhmwtD//50xV15XeERhHl0=
+X-Google-Smtp-Source: AGHT+IGpgS+uwKuH2Bpx+dmo3enX8lwr6VN0F4YXbxpz7rHlyHJJKgB6YVNlH7G8nqLwYOL9zLGHxQ==
+X-Received: by 2002:a50:8d1a:0:b0:579:cd46:cbfd with SMTP id 4fb4d7f45d1cf-579cd46cce8mr3527712a12.18.1716891022496;
+        Tue, 28 May 2024 03:10:22 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578524bbb5dsm7015666a12.95.2024.05.28.03.10.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 03:10:22 -0700 (PDT)
+Date: Tue, 28 May 2024 12:10:20 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Tony Lindgren <tony@atomide.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Fabio Estevam <festevam@denx.de>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uros Bizjak <ubizjak@gmail.com>, Lukas Wunner <lukas@wunner.de>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH printk v6 00/30] wire up write_atomic() printing
+Message-ID: <ZlWtjOGNwFIgGYdt@pathway.suse.cz>
+References: <20240527063749.391035-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527063749.391035-1-john.ogness@linutronix.de>
 
-Currently, attempting to perform MMIO from userspace in a TDX guest
-leads to a warning about an unexpected #VE and SIGSEGV being delivered
-to the process.
+On Mon 2024-05-27 08:43:19, John Ogness wrote:
+> Hi,
+> 
+> This is v6 of a series to wire up the nbcon consoles so that
+> they actually perform printing using their write_atomic()
+> callback. v5 is here [0]. For information about the motivation
+> of the atomic consoles, please read the cover letter of v1 [1].
+> 
+> The main focus of this series:
+> 
+> - For nbcon consoles, always call write_atomic() directly from
+>   printk() caller context for the panic CPU.
+> 
+> - For nbcon consoles, call write_atomic() when unlocking the
+>   console lock.
+> 
+> - Only perform the console lock/unlock dance if legacy or boot
+>   consoles are registered.
+> 
+> - For legacy consoles, if nbcon consoles are registered, do not
+>   attempt to print from printk() caller context for the panic
+>   CPU until nbcon consoles have had a chance to print the most
+>   significant messages.
+> 
+> - Mark emergency sections. In these sections printk() calls
+>   will only store the messages. Upon exiting the emergency
+>   section, nbcon consoles are flushed directly. If legacy
+>   consoles cannot be flushed safely, an irq_work is triggered
+>   to do the legacy console flushing.
+> 
+> This series does _not_ include threaded printing or nbcon
+> drivers. Those features will be added in separate follow-up
+> series.
+> 
+> Note: With this series, a system with _only_ nbcon consoles
+>       registered will not perform console printing unless the
+>       console lock or nbcon port lock are used or on panic.
+>       This is on purpose. When nbcon kthreads are introduced,
+>       they will fill the gaps.
 
-Enlightened userspace may choose to handle MMIO on their own if the
-kernel does not emulate it.
+The series seems to be ready for linux-next from my POV.
 
-Handle the EPT_VIOLATION exit reason for userspace and deliver SIGBUS
-instead of SIGSEGV. SIGBUS is more appropriate for the MMIO situation.
+I am going to push it there so that we get as much testing
+as possible before the next merge window.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
-v2:
-  - Rebased;
-  - Fix grammar;
----
- arch/x86/coco/tdx/tdx.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index c1cb90369915..d2aa93cebf5a 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -7,6 +7,7 @@
- #include <linux/cpufeature.h>
- #include <linux/export.h>
- #include <linux/io.h>
-+#include <linux/sched/signal.h>
- #include <asm/coco.h>
- #include <asm/tdx.h>
- #include <asm/vmx.h>
-@@ -630,6 +631,11 @@ void tdx_get_ve_info(struct ve_info *ve)
- 	ve->instr_info  = upper_32_bits(args.r10);
- }
- 
-+static inline bool is_private_gpa(u64 gpa)
-+{
-+	return gpa == cc_mkenc(gpa);
-+}
-+
- /*
-  * Handle the user initiated #VE.
-  *
-@@ -641,17 +647,20 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
- 	switch (ve->exit_reason) {
- 	case EXIT_REASON_CPUID:
- 		return handle_cpuid(regs, ve);
-+	case EXIT_REASON_EPT_VIOLATION:
-+		if (is_private_gpa(ve->gpa))
-+			panic("Unexpected EPT-violation on private memory.");
-+
-+		force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)ve->gla);
-+
-+		/* Return 0 to avoid incrementing RIP */
-+		return 0;
- 	default:
- 		pr_warn("Unexpected #VE: %lld\n", ve->exit_reason);
- 		return -EIO;
- 	}
- }
- 
--static inline bool is_private_gpa(u64 gpa)
--{
--	return gpa == cc_mkenc(gpa);
--}
--
- /*
-  * Handle the kernel #VE.
-  *
--- 
-2.43.0
-
+Best Regards,
+Petr
 
