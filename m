@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-192316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3EE8D1B73
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:39:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757458D1DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3F3283909
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:39:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8609B213F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF2316D9B6;
-	Tue, 28 May 2024 12:39:09 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE5316F850;
+	Tue, 28 May 2024 14:05:31 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.67.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E984B16D9A0;
-	Tue, 28 May 2024 12:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF82313A868;
+	Tue, 28 May 2024 14:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.67.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716899948; cv=none; b=rY3nJ1KIGVREtMvX50jW3wFuWuCiT9N1Xh3OCmbRt6JX5lNkUAEm3W6+0csUVQnVVw/1T21hmLM3WZi/K2ykm4eb2MkFfaD35ydM3d1pJpdubHW6bweWxCDhHPluJwdskEoQIgb53ZyuaWrJTW5diz0p2xm5i8I7cx6KukOwXcc=
+	t=1716905130; cv=none; b=BT6gXd0k/xex+HoUwODXLqZd1GsX72aa0BXkmvQkmXanezNN6IfoYvoi3/rAP39cr+pp0tYk8oiHsthO1VkjCZgMmBBKuE4NQ8dbgjf7o/dxew4g2gqS6hQOy51CK/HA5+FG94ikejikTDnrGsTfAVDDfCunwTISNzwU4yQO/Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716899948; c=relaxed/simple;
-	bh=SwlaZwQTe+WOm3AHJ1DNVfrfD6aHDXuHVxx1381y2W8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RiDx/O/FWtuyw27a58fEOoqe3Qs9aM14NpGnS643opChnUTgmp5W0bZIIIxozbtIuvECg38y3iw7sDrJHblm3a6SDDfzyk8mnzF5oXPietJddRNXIdHk/W+z2C3U8FrHkKQHVN/HVUSc3xLCXSr1mEo+23KuTazGwjK74kSglkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VpXBG46h7z4f3jHg;
-	Tue, 28 May 2024 20:38:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id CF25D1A0568;
-	Tue, 28 May 2024 20:38:55 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+RFd0FVmCNenNw--.15805S4;
-	Tue, 28 May 2024 20:38:55 +0800 (CST)
-From: linan666@huaweicloud.com
-To: song@kernel.org
-Cc: linux-raid@vger.kernel.org,
+	s=arc-20240116; t=1716905130; c=relaxed/simple;
+	bh=PURxRrT+Gaa3PgyTaM0RrVFH1zk0iI3BMDQaWlcoQoE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ykd8gnC9vJxZUlD94aBXLqosMrRXaEWRpEt8+CQoCL1vsrLDmJLyyCDjY2e7i6oBID0VfiQJ1AOXOqyOdcEVGR+Tn/EAFg6xvbWfmOiltvHe/GIxH91hFpgGyDWOo6levzSglkwiACbP3/dJek24dj6zSV3itLxn4biMQ9cagTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=114.132.67.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpip2t1716905071t5oiaaz
+X-QQ-Originating-IP: /mF21PFK26x6K6oJviXRE4OScott3W8Q1MAQbsnwvP8=
+Received: from 192.168.5.25 ( [255.207.235.15])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 28 May 2024 22:04:29 +0800 (CST)
+X-QQ-SSF: 01400000000000E0B000000A0000000
+X-QQ-FEAT: vCKdglClpVIFIXSKsQYpcMzda8EIQBjGdN9NvI/Ztac8F9bO5JKLl43czMiql
+	lmtFEdf2Dxzm+Ienr3Qi1Z+Iisi8sTm08efBAkWZTwnTa/ogGyYIe9b0fzms+Gx8GHVvqqn
+	ouuZ5P+/jlPEevaJdT6LUEp6COMX3BNtF2d5PU95CTCjZYx37HG+dhbMDswoqw0sYbdkeT4
+	705hKwPfV4nBqvC6bSt3+0+3a5xpX4VWrUiU6glv33sclvncurol0FyrjDly/I4vRqOHILv
+	1uwPhxlPO0qGlsu4mwTujhVCTeOh4pYsZGcrTMncbZo6yESsgihfQkm1FD1bSPJ5Y3ayPqM
+	G8UxQUcK0gCft7Wy4E7p5aU9cU21tVPlPAoqZyXYAlSNHD5QzqmW4mcTxjjz8L+Nwr/4R3Z
+	d6Zgi2Dg5MQ=
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15122004700105350673
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com,
+	guanwentao@uniontech.com,
+	marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yukuai3@huawei.com,
-	yi.zhang@huawei.com,
-	houtao1@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2] md: make md_flush_request() more readable
-Date: Wed, 29 May 2024 04:31:49 +0800
-Message-Id: <20240528203149.2383260-1-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	stable@vger.kernel.org
+Subject: [PATCH] Bluetooth: btusb: Add Realtek RTL8852BE support ID 0x13d3:0x3591
+Date: Tue, 28 May 2024 22:03:45 +0800
+Message-ID: <624D89A316F197DF+20240528140345.69035-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,81 +61,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+RFd0FVmCNenNw--.15805S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFyfZw13Aw4rKr15GrWruFg_yoW8Wr4Up3
-	9akF93Zrs5Aws8Aw47JFykJ3Z8Wws3tFWDtrWavws3ZF15ZFn5Gw1SgryvqFykGryfurW3
-	Jrs5A3yrCay8ZwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY
-	6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr
-	0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0E
-	wIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
-	Y4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRuMKZUUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-From: Li Nan <linan122@huawei.com>
+Add the support ID(0x13d3, 0x3591) to usb_device_id table for
+Realtek RTL8852BE.
 
-Setting bio to NULL and checking 'if(!bio)' is redundant and looks strange,
-just consolidate them into one condition. There are no functional changes.
+The device table is as follows:
 
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Li Nan <linan122@huawei.com>
+T:  Bus=01 Lev=02 Prnt=03 Port=00 Cnt=01 Dev#=  5 Spd=12   MxCh= 0
+D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3591 Rev= 0.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Radio
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
-v2: Rewrite the code according to Christoph's suggestion.
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/md/md.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index aff9118ff697..9598b4898ea9 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -654,24 +654,22 @@ bool md_flush_request(struct mddev *mddev, struct bio *bio)
- 		WARN_ON(percpu_ref_is_zero(&mddev->active_io));
- 		percpu_ref_get(&mddev->active_io);
- 		mddev->flush_bio = bio;
--		bio = NULL;
--	}
--	spin_unlock_irq(&mddev->lock);
--
--	if (!bio) {
-+		spin_unlock_irq(&mddev->lock);
- 		INIT_WORK(&mddev->flush_work, submit_flushes);
- 		queue_work(md_wq, &mddev->flush_work);
--	} else {
--		/* flush was performed for some other bio while we waited. */
--		if (bio->bi_iter.bi_size == 0)
--			/* an empty barrier - all done */
--			bio_endio(bio);
--		else {
--			bio->bi_opf &= ~REQ_PREFLUSH;
--			return false;
--		}
-+		return true;
- 	}
--	return true;
-+
-+	/* flush was performed for some other bio while we waited. */
-+	spin_unlock_irq(&mddev->lock);
-+	if (bio->bi_iter.bi_size == 0) {
-+		/* pure flush without data - all done */
-+		bio_endio(bio);
-+		return true;
-+	}
-+
-+	bio->bi_opf &= ~REQ_PREFLUSH;
-+	return false;
- }
- EXPORT_SYMBOL(md_flush_request);
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 79aefdb3324d..7b9421423ebc 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -555,6 +555,8 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3572), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x13d3, 0x3591), .driver_info = BTUSB_REALTEK |
++						     BTUSB_WIDEBAND_SPEECH },
  
+ 	/* Realtek 8852BT/8852BE-VT Bluetooth devices */
+ 	{ USB_DEVICE(0x0bda, 0x8520), .driver_info = BTUSB_REALTEK |
 -- 
-2.39.2
+2.45.1
 
 
