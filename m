@@ -1,853 +1,216 @@
-Return-Path: <linux-kernel+bounces-191961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545078D16A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:51:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383B08D16A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55E71F2211D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAA91F23326
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A453D74BE1;
-	Tue, 28 May 2024 08:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A0913D296;
+	Tue, 28 May 2024 08:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DfeSxjh4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b="jagiKPpz"
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2119.outbound.protection.outlook.com [40.107.7.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1EE17E8FC;
-	Tue, 28 May 2024 08:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716886248; cv=none; b=iQ9CISiOYipqMpVgdRU1fQMgIHA5rNNAoAO8uYLULclS/3aieCz6U7OKHYffNwnIr8Tex6wVJmctUenILm6yaCyJCdqg1pBK7OInqVPT47R+3wnFolm3cGnifSCNM5+4HDteH+hcOswOKIMVfl3Tl7jjEY8pKGeYlH3fpNMqtQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716886248; c=relaxed/simple;
-	bh=iaZxrV6e9H/7cCReDqzeOt7CaOGcswPNhmOdF1bmIbI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Jh/wJNkSfWdRcmXTW+C8683z7vz7xS1D6ezhQhjv7qdL6tMjftdwgn5Nm40TciBont0fclDr+vSiFWqLYdqob0M3G2RsnF5cvritbQTVqWXjGKWL0LT2A+DZy3I1IhcrV+ottj5BQj59+x5gqRnKqCpHdwfUPQrHKrvGy4Jrjs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DfeSxjh4; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716886246; x=1748422246;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=iaZxrV6e9H/7cCReDqzeOt7CaOGcswPNhmOdF1bmIbI=;
-  b=DfeSxjh4KJ7s3gQa4MteW89wbEOUGEJP2vAYzljj1wnnKM8D85p1LS+/
-   +69SkwjQ413YuoNPjpuU8LkSQSxVOCByYHSeOfPcUW44C5Pzu914ZLRkv
-   l+vZNqnAxZZBiU0hELJtnWVNfXJrXsyofGKLMgOr81nijs9FxrvCO7U+G
-   vIp0yWnzmJjIxKqFi+quJaUZ9YWLGQbnOKsvQIOfiEXPJngQOzay3Our6
-   V+ePzA25XJQZdNSXsI58sE/SqBBLk9PaiDbjnH4yc7sfKRiAMMCUvLbVZ
-   eXjhY+NiqcBVpyT08CLC0H5dYmPfImqOGmji0MsieEWKLOUADG0EL7wT1
-   A==;
-X-CSE-ConnectionGUID: t7hPDP8ZTqSmQBFQtMx+TA==
-X-CSE-MsgGUID: toL14cEZTPGkBNRK6Cddbg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13063928"
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="13063928"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 01:50:45 -0700
-X-CSE-ConnectionGUID: 1qHACttARfeD1hlNqIbJiQ==
-X-CSE-MsgGUID: MjNp5ndvSgu1tY1HtIYNjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="34931417"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.144])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 01:50:42 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 28 May 2024 11:50:37 +0300 (EEST)
-To: "Luke D. Jones" <luke@ljones.dev>
-cc: Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/9] platform/x86: asus-wmi: add macros and expose min/max
- sysfs for ppt tunables
-In-Reply-To: <20240528013626.14066-4-luke@ljones.dev>
-Message-ID: <f3a7aa72-78fa-5f60-f4b5-2a38025c2936@linux.intel.com>
-References: <20240528013626.14066-1-luke@ljones.dev> <20240528013626.14066-4-luke@ljones.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B9F17E8FC
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.119
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716886258; cv=fail; b=EhtDi0f1Jh8HWOoKc3GPk0c2s1E21u2g6zB2EvHZ2DO4GWk5gTR2EcwMSDsRD00SA8kNonSGTUSqIBpVH1mXLpjAvbIzK8Lcx6fr8zY1l4ueh9C/nIE8QTCulrR6dxgzXOw3u5mF2K56Hbren1j/Y4y0ztk9KPcgmSw7ygeJ0AM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716886258; c=relaxed/simple;
+	bh=PbNiiaO5Eanmiq0PvtEFyjLqC+3E6aAmWvlKkHE5Jek=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TKmywMdZwXdVUll3nGqRbBUevbXTwJONdLRcjiM58C9s1FdWAGd1V4TnCW0ccRw0racYaEyXtF+6wS4xpptv3K4DqZ1dQhiRn4oTX8oQys+yuaGIt5fVrWR2y/AUC6MO6R64bh+Y3ZP38BF70JdIg15F8KjD1YsUJdz3SeWdcQA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net; spf=pass smtp.mailfrom=wolfvision.net; dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b=jagiKPpz; arc=fail smtp.client-ip=40.107.7.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolfvision.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=F0MYR/DTGEHUNGI7KHtLLrQxYgwO92zuZzhgVODKJd3ySlAwWXfH3oU5TUuCpiimIf1Q2Xbb5I0a/mjEg/JXOwlKpsBgiye77cJWPrYSBs21gTkIO2JDyOhz90NHIdybB75uIFzhZqmBBcrobFxhiWyRcE9gfQrn926QEPJpsNxNvOrTkKZn/IHtMJBHhnefo6usjpy8sfTBmfuDgqultYg76GW8jebMed6IdCXF4O4lgTEyf7HeT4YTWTBncKPZilDbL8t7vPSU1ptwHGqlqRumJxQaKWuzFt/MCKbz18mqAT9JLzBUUih4eKymOi/04aQ8T87oEdDiPoE8B/L1zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qI+kH/IftyhFbLymgeeh1N3ClCxUMYdDosdpgRQllo8=;
+ b=cOmMgAC0ZuObWUHelWZWcyHjPC5Bls7c9cfCR3JxbBOsERLNAV0PYFHhsg46kkU1R4P0Ej385bZEg2LFaceFso/HXalWtP47ZWMGFPzahau201qHErlA3q8h27OZY80yrPvlFhfMaqGhRy1RmDlqlWw7e3g0VeBOTRZGDTeIzH9B0Ha8B8x2mzC8d5YFgCEukQZs6VlHfnodEMAq9e05d8XcvSqOVeXRqeKFiXVdPGA+CgORNUTvZPE2LE14VugzyCndROnEWdF687rROsadxrQKuHjhxXjLWCQDWFCYZ90mmDueNxb9WG6dmpY8RTjjTG5OFEvTgcgYu0OUF3Ihig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wolfvision.net; dmarc=pass action=none
+ header.from=wolfvision.net; dkim=pass header.d=wolfvision.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolfvision.net;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qI+kH/IftyhFbLymgeeh1N3ClCxUMYdDosdpgRQllo8=;
+ b=jagiKPpzBiUmsjn2Kle3xxCryjUDVw6Qo7EcqTjiGk/ExjuZDuKbYaY+DpOpnurPRAAKA7GGkIm8YzY+WJSqJScxOnVH4OXWh7+sZUhPV5jyK/FH6s09lS3C/dPuzskPo/x8G8Mm9M4PCGhkkgvYDHuNbUoY73DkXQGiAhmtt/c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wolfvision.net;
+Received: from DU0PR08MB9155.eurprd08.prod.outlook.com (2603:10a6:10:416::5)
+ by PAWPR08MB11068.eurprd08.prod.outlook.com (2603:10a6:102:471::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Tue, 28 May
+ 2024 08:50:51 +0000
+Received: from DU0PR08MB9155.eurprd08.prod.outlook.com
+ ([fe80::4e72:c5d4:488e:f16d]) by DU0PR08MB9155.eurprd08.prod.outlook.com
+ ([fe80::4e72:c5d4:488e:f16d%7]) with mapi id 15.20.7587.030; Tue, 28 May 2024
+ 08:50:51 +0000
+Message-ID: <bedeec1d-d4eb-4154-a6f4-21b8d873a416@wolfvision.net>
+Date: Tue, 28 May 2024 10:50:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panel: sitronix-st7789v: Add check for
+ of_drm_get_panel_orientation
+To: Chen Ni <nichen@iscas.ac.cn>, neil.armstrong@linaro.org,
+ quic_jesszhan@quicinc.com, sam@ravnborg.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, sre@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240528030832.2529471-1-nichen@iscas.ac.cn>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@wolfvision.net>
+Organization: WolfVision GmbH
+In-Reply-To: <20240528030832.2529471-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1P190CA0007.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:802:2b::20) To DU0PR08MB9155.eurprd08.prod.outlook.com
+ (2603:10a6:10:416::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR08MB9155:EE_|PAWPR08MB11068:EE_
+X-MS-Office365-Filtering-Correlation-Id: f715cb35-6a7c-4328-b551-08dc7ef3470c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|376005|7416005|1800799015|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dDAwaENlWTZwbk5OTVpSOFUyRGVtYlRNaEx4TVN3NzZZU1BqNUROUnpiakpx?=
+ =?utf-8?B?TTVjSHZMamVPblhKc2htZFpzbFo0WE9vQmhBWWhpY3J3ZUg4ajd5RDVvendl?=
+ =?utf-8?B?VU5yWlBycDhpSStEKzNKY2ltMkN1enJtZGFuRzFkdjhJVDV0ci9uVEJORUdM?=
+ =?utf-8?B?YW9vWE81SW9RQjJwRHFtMStpbVd5bFIwelE4T25iOFZHRk1yVCthRFhLN0xT?=
+ =?utf-8?B?QmNZZldSYzYyZXlna0RrRXJ3VkZvUC9UdDU0L3F5MmdkNVRaeHp4M0ZrRG5I?=
+ =?utf-8?B?UzN3SGxrZkxyRHJjMnAvaG5Uam9XZTYvdHYvTm1oS3l0M3FoU1djM2F4cXQ0?=
+ =?utf-8?B?MkpYaXRsZFlEWTFmb21JRHgwWDlOcXU2aXM1MWN1T1lvN0o4SHZOcTJWOWJJ?=
+ =?utf-8?B?UDdhTVhwazJZZUcvamw4amtzQzROZVFGSEU2M1Z5NzBGOVdUZ0I4OE9WaExx?=
+ =?utf-8?B?UzJkL0Q1TUNTaWMxaGdEUlJxdVgyQ2dWT1doRVdKb3hmaEFMb3Q1ZzFDMThG?=
+ =?utf-8?B?TlBlSjBiZXNtSUFRWGtLRjZFaUVBb28rRHBLM0J0Z2E4RU4ycUh3TlM5Nk1o?=
+ =?utf-8?B?T3dRVkMxRUFXcDNUWXhRMUlwK2dWUGZoT2RiQkVxUEkybUNBTXlqdXB6OUNM?=
+ =?utf-8?B?UndSRFM5eUZleVBHWmRFejBFeTlQY3hoVXJSOU1zeWlxOXc5VFJxQWR1bHFM?=
+ =?utf-8?B?aGpkYXBpbURuWEFKUm44Kzg2dUJNeCsveWxQeHluQlAwaG53RzhtR0pxL2M5?=
+ =?utf-8?B?MENUZmNRZmplTU9HTW44TlVjWU0wUEtHbHR3L2tLSzlHN3R6aDFWNEt6RkI3?=
+ =?utf-8?B?VElZc0lVZzc0dHdBSC9JU3FKT0xaMWVWQ1hwZTR1R0E2NWV5b3BKSlVxWGtE?=
+ =?utf-8?B?Z3ZLQzZsa0MxdGk2TWp0MEJQREp6L0NGZWNlbXQwQWRMN25XVDhjbE9abGE0?=
+ =?utf-8?B?UnRzL3NNRkRXRU5XS1lwSG82eWtYTVJ0cXZpa3ZHYzN2cXhzSmIyams1ODVp?=
+ =?utf-8?B?TGNZWUlNMUxCNWRVbkJqNWw4TGwzek04ZnNQTGJuV0ZDNjNQRm9saEQ0Ujhv?=
+ =?utf-8?B?ZzRLeGhBeEo0K1k3aVVoL2ZWY0FoUkZtWGVjODJGMHZqMnhrc2ZDOFJHVEN6?=
+ =?utf-8?B?RDB4MlBueEhReEpSM2ZIbUZuZGNtekhBS3kyVllDdjZkZWUzNU5oQUpDUElj?=
+ =?utf-8?B?YW9JVzBZY3lnVDVSVDY3T2dqeGFYdlhuR3Zhd1dsL01BWFhRQWxEWlYzS1lP?=
+ =?utf-8?B?Zi9waGFWRi9HcnBJbzE3cnRpMWtCWVkxdUM5UTE4S0lHMWFxMGhIQ2lldmFI?=
+ =?utf-8?B?MytoNm1OVGNZaGIzZHQrc2J1TDlMWURPaVc0enQ3dDRhZDA3N2FvU1RlZzFp?=
+ =?utf-8?B?MU5IVGZxOVl4NkhHWXJTNjRiTnZiNUxmV3k3eC83NkZ6bFFES25vUjI5S3Q2?=
+ =?utf-8?B?NHZ6L0QrNWJ0cjFtZzRvQjM4M2YrczhyenEwTThaUk05S2w2WmtuMVVZRVgy?=
+ =?utf-8?B?SGN5UXAwQzdKMkpGUmdVd2pwRGdXSUdhY0s5alFhUW5MdUxCRjVQZFM3TDFI?=
+ =?utf-8?B?TXZjaHl2ajNQYVB4ZlFWSXRIT0lFb3pZMVhRZTY0cVhrR0hEbXBtT20xd0Jw?=
+ =?utf-8?B?dUdHSGZ2cyt1UHBNLzF5dEM3djJJTjN6M2Q5RzVMOUlXNDFLYkhPQ0NzTEFX?=
+ =?utf-8?B?N0VSSFgzQ0Z5UG9aSzFrQndGYmJ1MVVLNk85R3E3S09LUGNWL1pZbm1iZnlE?=
+ =?utf-8?Q?ttSBhXfyr4oWmIq0GD1aXwhz6wokGSVmZrjUPaN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9155.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015)(921011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dFo3cGlhejJBaWVQSVZDalEyd0hBOTFXSytCL2wwT3UvZ3phT3hUTUh6WmZm?=
+ =?utf-8?B?MDllQTA1V1VDZkFNT1dLN202MmxoUDIxQUh2cnFoRUVxZktYUmV0UmVPNkhy?=
+ =?utf-8?B?eUJValRwLzJwL3d5Y29ySGZZZnFVcFl1bU9DUVkweERZUGp0am50Q05WYWox?=
+ =?utf-8?B?Z2xwM052T0k4cVdud1hoNVhkY2wzV3NkcXZiajNFV1NwOTNNS2FIZ25GVTVR?=
+ =?utf-8?B?bnV6S3FQYWt4THVIQklXWVFFRlBwQmFWWmJrR1lNaEU0ZnJPUVpocjhscU00?=
+ =?utf-8?B?Ym5HSmYzclJVMmdnZUthTTNWUDg0Q2ZjNlp0bnc1aGFQaVFuTHNVZjE5ZkNY?=
+ =?utf-8?B?UWdtcU9RWHJ0NEdEMzZqTUhxOEZONnFYNSs0M0hRRnlQcFhLVHJHeFozS1NX?=
+ =?utf-8?B?a21Ca21JdXl5bDk4NkpHbm1RbDRGZzVOUWpWSnhnMTZ5YnVJV1Y0aFJsYzlk?=
+ =?utf-8?B?dDdoZFJ3cHpESnJpMWtxcEhNWURYbEtGdEFlaWlvRmpnUUVrUDlaN01Sa1JO?=
+ =?utf-8?B?SThoY09JQjNTd2ZmQmNNVjJETnZFZko4UGtUQzFYUS82T0JJUEs3TUgybkRi?=
+ =?utf-8?B?N2JCRXdOWnA4NUk0ZTNuRjZrYk51REFRS2lJYUNZSXJVUGFaRDd2WnU5aHFC?=
+ =?utf-8?B?ZGhxVVltNG8rd29ubzh4WkxYaW5FOUI5M1hiNUUwaUZ3OGh3d1pKRy9kWTZp?=
+ =?utf-8?B?ekJ1Vk90OFFPb3RubE5hN0JEWUJkdk5melYvUFJHRmVzUmxINDBCVStvNEZ2?=
+ =?utf-8?B?djZDRmIvNHhHRnExN0Nkb1RBN0NhT1BMdWxpUm8wYWFndjY0MnhtZTIwVExO?=
+ =?utf-8?B?WDB0NXlVRkl5MDhMKzFJbmE1TUhXaHdDTExJNzBJOFNjdlZTMzYvMHo2YlBY?=
+ =?utf-8?B?N25PK3htdUp4R0M4K0Y3T0NLSVRpdmh2b1BwRGpWNGp6aVNQT3RTYml5NGdD?=
+ =?utf-8?B?NkFIZ01hVE5sVUFqYWZla203OEsva1hPcUFpT3ZjdjE2VktGbm9KWm13WUZB?=
+ =?utf-8?B?ZkNqeThYQlpBR045c0Y1MjhhL2NpQ2QzaWhDSnVFN0hoWGRmRDZQcjBSV3hI?=
+ =?utf-8?B?MmJFOFdWVDJEMHM5MDA3TnJxcW81WSthZTdBYjNNdUpnemtzMzMzaVJWcllx?=
+ =?utf-8?B?ZzM4Tm91U2Y5T3ZsaExCUEZHV05ERWsweVJxZWk1TnFuR1ZXRGRWeE9qb0ZM?=
+ =?utf-8?B?VmpoTi9rV2pHMXI5Wmo2VlkyTU1ZN08rT0RBNVhzYzd3Mks5dytKaTFRVjd0?=
+ =?utf-8?B?VXJYNEdSSk5ZcEFGS21SR2N3aXdPTmplbi94bG5MQVduZVJjT0hrZ2hwbGdB?=
+ =?utf-8?B?ekZkOFF5c0FoejZJRVM3UlAwdDhXR3NMUEpXcHFWN0RiTng4UnFvOHhyU1RV?=
+ =?utf-8?B?MVF4OWJzVGRXUU9KMHA2eS9Ra2NTdGlWWWYwbEs4b2JmOHgvR1FsaGxNMDNw?=
+ =?utf-8?B?ZmxqWnVlM0lOdFdZdVlyQW5vYjJBRldDTlBEcHJpT1k0UTEvbFJvK3dmbXRu?=
+ =?utf-8?B?b2xFYnRiRTBDV1Vsd1IvU1FOb3ZhRWZSVC84WGpDZ0h5NWhDcitpaThQa0tE?=
+ =?utf-8?B?cUxjNGtCOEwveFA1QVNaTUhoeHF1c3hicjRhRURoaHdES1pxL2xIWXRQZG5H?=
+ =?utf-8?B?NDVMVHhSQjYweWhNSUQ0M0dIZVg3YTBTdmJPQitITU5GQUx1cjdreFRFK29r?=
+ =?utf-8?B?WmZsNERmZE5GNXU2U3lqc3BreTZjTzBPZzlheUZ2a3hSVEk2Nks4OEhNNXFH?=
+ =?utf-8?B?a2tuMm5Xb3p0Q2FMWnZ2VmtCTTRGaXJ0L2liTTFOcXpDTmRpa2N2ZjhSNlNC?=
+ =?utf-8?B?VDB4SCtyY25aMjZ1ejdycDlDVkZEMjFyL2xHVTB2TzFidGxQYkpaNk5FRHRU?=
+ =?utf-8?B?WUVuRGN5MzBBNWI1VmIyaDdyQW10cTIyMDl6M2R1MDVpR0xOSXVnWTBiYjdZ?=
+ =?utf-8?B?TU1weTBuSnBYOWZtSTdiSnppVGtMTm8welJIcXdoajByVEd0T0FrRXA5b3Z3?=
+ =?utf-8?B?Mktad0RXVVI4U1Y3THE2L2FPNnlwNm5GWjBiWnJKTVozTDRaZFErY1d5S1JZ?=
+ =?utf-8?B?NUJUbjNNV2JhaVJITWNJSWQxc1huOHM1R05TZXMwTHZmdVdKUGREMFZxeWZr?=
+ =?utf-8?B?NGd2dngwUW16OW9qOHNERjloZkVyejQ3amsvN0tTaEpCbm1sY2ZqSW5RVGlk?=
+ =?utf-8?B?V0E9PQ==?=
+X-OriginatorOrg: wolfvision.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: f715cb35-6a7c-4328-b551-08dc7ef3470c
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9155.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 08:50:51.5322
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e94ec9da-9183-471e-83b3-51baa8eb804f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nFByHJZDeoZ/fhkwTurE92xFAuswmMOjNBqKSy+PLB8uTs3X6+VwAaBF88QAj/5dh22ZSLphEcCQpLp4hBVAsnHbfSuNXYWcuSaLPiFGKoY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB11068
 
-On Tue, 28 May 2024, Luke D. Jones wrote:
+Hi Chen Ni,
 
-> In most cases the safe min and max values of the various PPT tunables are
-> known for various ASUS ROG (and other) laptop models. We can match the
-> DMI string for these and expose min/max sysfs points, plus set some sane
-> default values.
+On 5/28/24 05:08, Chen Ni wrote:
+> Add check for the return value of of_drm_get_panel_orientation() and
+> return the error if it fails in order to catch the error.
 > 
-> As part of the addition of the min/max and defaults, to reduce the amount
-> of code copy/paste and introduce some sanity a group of macros were added
-> specific to the PPT and NV tunables. The code becomes much cleaner and
-> easier to read.
-> 
-> This makes the PPT functions much more usable and safe.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> Fixes: b27c0f6d208d ("drm/panel: sitronix-st7789v: add panel orientation support")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 > ---
->  .../ABI/testing/sysfs-platform-asus-wmi       |  23 +-
->  drivers/platform/x86/asus-wmi.c               | 561 ++++++++----------
->  2 files changed, 245 insertions(+), 339 deletions(-)
+>  drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-asus-wmi b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> index 28144371a0f1..984a04f32fd0 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> +++ b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> @@ -142,8 +142,8 @@ Contact:	"Luke Jones" <luke@ljones.dev>
->  Description:
->  		Set the Package Power Target total of CPU: PL1 on Intel, SPL on AMD.
->  		Shown on Intel+Nvidia or AMD+Nvidia based systems:
-> -
-> -			* min=5, max=250
-> +            * min/max varies, read *_min/*_max sysfs entries
-> +			* -1 resets to default
+> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> index 88e80fe98112..8b15e225bf37 100644
+> --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> @@ -643,7 +643,9 @@ static int st7789v_probe(struct spi_device *spi)
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to get backlight\n");
 >  
->  What:		/sys/devices/platform/<platform>/ppt_pl2_sppt
->  Date:		Jun 2023
-> @@ -152,8 +152,8 @@ Contact:	"Luke Jones" <luke@ljones.dev>
->  Description:
->  		Set the Slow Package Power Tracking Limit of CPU: PL2 on Intel, SPPT,
->  		on AMD. Shown on Intel+Nvidia or AMD+Nvidia based systems:
-> -
-> -			* min=5, max=250
-> +            * min/max varies, read *_min/*_max sysfs entries
-> +			* -1 resets to default
+> -	of_drm_get_panel_orientation(spi->dev.of_node, &ctx->orientation);
+> +	ret = of_drm_get_panel_orientation(spi->dev.of_node, &ctx->orientation);
+> +	if (ret)
+> +		return dev_err_probe(&spi->dev, ret, "Failed to get orientation\n");
 >  
->  What:		/sys/devices/platform/<platform>/ppt_fppt
->  Date:		Jun 2023
-> @@ -161,7 +161,8 @@ KernelVersion:	6.5
->  Contact:	"Luke Jones" <luke@ljones.dev>
->  Description:
->  		Set the Fast Package Power Tracking Limit of CPU. AMD+Nvidia only:
-> -			* min=5, max=250
-> +			* min/max varies, read *_min/*_max sysfs entries
-> +			* -1 resets to default
->  
->  What:		/sys/devices/platform/<platform>/ppt_apu_sppt
->  Date:		Jun 2023
-> @@ -169,7 +170,8 @@ KernelVersion:	6.5
->  Contact:	"Luke Jones" <luke@ljones.dev>
->  Description:
->  		Set the APU SPPT limit. Shown on full AMD systems only:
-> -			* min=5, max=130
-> +			* min/max varies, read *_min/*_max sysfs entries
-> +			* -1 resets to default
->  
->  What:		/sys/devices/platform/<platform>/ppt_platform_sppt
->  Date:		Jun 2023
-> @@ -177,7 +179,8 @@ KernelVersion:	6.5
->  Contact:	"Luke Jones" <luke@ljones.dev>
->  Description:
->  		Set the platform SPPT limit. Shown on full AMD systems only:
-> -			* min=5, max=130
-> +			* min/max varies, read *_min/*_max sysfs entries
-> +			* -1 resets to default
->  
->  What:		/sys/devices/platform/<platform>/nv_dynamic_boost
->  Date:		Jun 2023
-> @@ -185,7 +188,8 @@ KernelVersion:	6.5
->  Contact:	"Luke Jones" <luke@ljones.dev>
->  Description:
->  		Set the dynamic boost limit of the Nvidia dGPU:
-> -			* min=5, max=25
-> +			* min/max varies, read *_min/*_max sysfs entries
-> +			* -1 resets to default
->  
->  What:		/sys/devices/platform/<platform>/nv_temp_target
->  Date:		Jun 2023
-> @@ -193,7 +197,8 @@ KernelVersion:	6.5
->  Contact:	"Luke Jones" <luke@ljones.dev>
->  Description:
->  		Set the target temperature limit of the Nvidia dGPU:
-> -			* min=75, max=87
-> +			* min/max varies, read *_min/*_max sysfs entries
-> +			* -1 resets to default
->  
->  What:		/sys/devices/platform/<platform>/boot_sound
->  Date:		Apr 2024
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 999cd658ec8b..d016acb23789 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -112,11 +112,13 @@ module_param(fnlock_default, bool, 0444);
->  /* Mask to determine if setting temperature or percentage */
->  #define FAN_CURVE_PWM_MASK		0x04
->  
-> -/* Limits for tunables available on ASUS ROG laptops */
-> -#define PPT_TOTAL_MIN		5
-> -#define PPT_TOTAL_MAX		250
-> -#define PPT_CPU_MIN			5
-> -#define PPT_CPU_MAX			130
-> +/* Default limits for tunables available on ASUS ROG laptops */
-> +#define PPT_CPU_LIMIT_MIN	5
-> +#define PPT_CPU_LIMIT_MAX	150
-> +#define PPT_CPU_LIMIT_DEFAULT	80
-> +#define PPT_PLATFORM_MIN	5
-> +#define PPT_PLATFORM_MAX	100
-> +#define PPT_PLATFORM_DEFAULT	80
->  #define NVIDIA_BOOST_MIN	5
->  #define NVIDIA_BOOST_MAX	25
->  #define NVIDIA_TEMP_MIN		75
-> @@ -219,6 +221,29 @@ struct fan_curve_data {
->  	u8 percents[FAN_CURVE_POINTS];
->  };
->  
-> +/* Tunables provided by ASUS for gaming laptops */
-> +struct rog_tunables {
-> +	u32 cpu_default;
-> +	u32 cpu_max;
-> +
-> +	u32 platform_default;
-> +	u32 platform_max;
-> +
-> +	u32 ppt_pl1_spl; // total
-> +	u32 ppt_pl2_sppt; // total
-> +	u32 ppt_apu_sppt; // cpu
-> +	u32 ppt_platform_sppt; // cpu
-> +	u32 ppt_fppt; // total
-> +
-> +	u32 nv_boost_default;
-> +	u32 nv_boost_max;
-> +	u32 nv_dynamic_boost;
-> +
-> +	u32 nv_temp_default;
-> +	u32 nv_temp_max;
-> +	u32 nv_temp_target;
-> +};
-> +
->  struct asus_wmi {
->  	int dsts_id;
->  	int spec;
-> @@ -273,14 +298,7 @@ struct asus_wmi {
->  	bool dgpu_disable_available;
->  	u32 gpu_mux_dev;
->  
-> -	/* Tunables provided by ASUS for gaming laptops */
-> -	u32 ppt_pl2_sppt;
-> -	u32 ppt_pl1_spl;
-> -	u32 ppt_apu_sppt;
-> -	u32 ppt_platform_sppt;
-> -	u32 ppt_fppt;
-> -	u32 nv_dynamic_boost;
-> -	u32 nv_temp_target;
-> +	struct rog_tunables rog_tunables;
->  
->  	u32 kbd_rgb_dev;
->  	bool kbd_rgb_state_available;
-> @@ -652,6 +670,98 @@ static void asus_wmi_input_exit(struct asus_wmi *asus)
->  	asus->inputdev = NULL;
->  }
->  
-> +/* Helper macros for generalised WMI calls */
-> +
-> +/* Generic store function for use with many ROG tunables */
-> +static ssize_t rog_tunable_store(struct asus_wmi *asus,
-> +				struct attribute *attr,
-> +				const char *buf, size_t count,
-> +				u32 min, u32 max, u32 defaultv,
-> +				u32 *store_value, u32 wmi_dev)
-> +{
-> +	int result, err, value;
-> +
-> +	result = kstrtoint(buf, 10, &value);
-> +	if (result)
-> +		return result;
-> +
-> +	if (value == -1 )
+>  	drm_panel_add(&ctx->panel);
 
-Remove the extra space.
+I was worried that this effectively makes "rotation" a required property
+(although it is not marked required in the bindings documentation) but
+it turns out that of_drm_get_panel_orientation handles a missing
+"rotation" property gracefully.
 
-> +		value = defaultv;
-> +	if (value < min || value > max)
-> +		return -EINVAL;
-> +
-> +	err = asus_wmi_set_devstate(wmi_dev, value, &result);
-> +	if (err) {
-> +		pr_err("Failed to set %s: %d\n", attr->name, err);
-> +		return err;
-> +	}
-> +
-> +	if (result > 1) {
+Also, all other panel drivers I checked handle the
+of_drm_get_panel_orientation call as you suggested. Nice to see this
+becoming aligned.
 
-Remove the empty line in between since this is still the error handling of 
-the same call.
+Reviewed-by: Michael Riesch <michael.riesch@wolfvision.net>
 
-> +		pr_err("Failed to set %s (result): 0x%x\n", attr->name, result);
-> +		return -EIO;
-> +	}
-> +
-> +	if (store_value != NULL)
-> +		*store_value = value;
-> +	sysfs_notify(&asus->platform_device->dev.kobj, NULL, attr->name);
-> +
-> +	return count;
-> +}
-> +
-> +#define ROG_TUNABLE_STORE(_fname, _min, _max, _default, _wmi) \
-> +static ssize_t _fname##_store(struct device *dev, \
-> +	struct device_attribute *attr, const char *buf, size_t count) \
-> +{ \
-> +	struct asus_wmi *asus = dev_get_drvdata(dev); \
-> +	return rog_tunable_store(asus, &attr->attr, buf, count, \
-> +			_min, asus->rog_tunables._max, asus->rog_tunables._default, \
-> +			&asus->rog_tunables._fname, _wmi); \
-> +}
-
-For all function macros like this, align all the continuation backslashed 
-with tabs somewhere far right so they don't interfere with the code.
-
-> +#define ROG_TUNABLE_SHOW(_fname) \
-> +static ssize_t _fname##_show(struct device *dev, struct device_attribute *attr, char *buf) \
-> +{ \
-> +	struct asus_wmi *asus = dev_get_drvdata(dev); \
-> +	return sysfs_emit(buf, "%u\n", asus->rog_tunables._fname); \
-> +}
-> +
-> +#define ROG_TUNABLE_MIN_SHOW(_fname, _minv) \
-> +static ssize_t _fname##_min_show(struct device *dev, struct device_attribute *attr, char *buf) \
-> +{ \
-> +	return sysfs_emit(buf, "%u\n", _minv); \
-> +}
-> +
-> +#define ROG_TUNABLE_MAX_SHOW(_fname, _maxv) \
-> +static ssize_t _fname##_max_show(struct device *dev, struct device_attribute *attr, char *buf) \
-> +{ \
-> +	struct asus_wmi *asus = dev_get_drvdata(dev); \
-> +	return sysfs_emit(buf, "%u\n", asus->rog_tunables._maxv); \
-> +}
-> +
-> +#define ROG_ATTR_RW(_fname, _minv, _maxv, _defaultv, _wmi) \
-> +ROG_TUNABLE_MIN_SHOW(_fname, _minv); \
-> +ROG_TUNABLE_MAX_SHOW(_fname, _maxv); \
-> +ROG_TUNABLE_STORE(_fname, _minv, _maxv, _defaultv, _wmi);\
-> +ROG_TUNABLE_SHOW(_fname); \
-> +static DEVICE_ATTR_RO(_fname##_min); \
-> +static DEVICE_ATTR_RO(_fname##_max); \
-> +static DEVICE_ATTR_RW(_fname)
-
-Also here, align \ to right with \ so it doesn't interfere with the real 
-content of the macro.
-
-> +
-> +ROG_ATTR_RW(ppt_platform_sppt,
-> +	PPT_PLATFORM_MIN, platform_max, platform_default, ASUS_WMI_DEVID_PPT_PLAT_SPPT);
-> +ROG_ATTR_RW(ppt_pl2_sppt,
-> +	PPT_CPU_LIMIT_MIN, cpu_max, cpu_default, ASUS_WMI_DEVID_PPT_PL2_SPPT);
-> +ROG_ATTR_RW(ppt_apu_sppt,
-> +	PPT_PLATFORM_MIN, platform_max, platform_default, ASUS_WMI_DEVID_PPT_APU_SPPT);
-> +ROG_ATTR_RW(ppt_pl1_spl,
-> +	PPT_CPU_LIMIT_MIN, cpu_max, cpu_default, ASUS_WMI_DEVID_PPT_PL1_SPL);
-> +ROG_ATTR_RW(ppt_fppt,
-> +	PPT_CPU_LIMIT_MIN, cpu_max, cpu_default, ASUS_WMI_DEVID_PPT_FPPT);
-> +ROG_ATTR_RW(nv_dynamic_boost,
-> +	NVIDIA_BOOST_MIN, nv_boost_max, nv_boost_default, ASUS_WMI_DEVID_NV_DYN_BOOST);
-> +ROG_ATTR_RW(nv_temp_target,
-> +	NVIDIA_TEMP_MIN, nv_temp_max, nv_temp_default, ASUS_WMI_DEVID_NV_THERM_TARGET);
-> +
->  /* Tablet mode ****************************************************************/
->  
->  static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
-> @@ -1018,306 +1128,6 @@ static const struct attribute_group *kbd_rgb_mode_groups[] = {
->  	NULL,
->  };
->  
-> -/* Tunable: PPT: Intel=PL1, AMD=SPPT *****************************************/
-> -static ssize_t ppt_pl2_sppt_store(struct device *dev,
-> -				    struct device_attribute *attr,
-> -				    const char *buf, size_t count)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -	int result, err;
-> -	u32 value;
-> -
-> -	result = kstrtou32(buf, 10, &value);
-> -	if (result)
-> -		return result;
-> -
-> -	if (value < PPT_TOTAL_MIN || value > PPT_TOTAL_MAX)
-> -		return -EINVAL;
-> -
-> -	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_PPT_PL2_SPPT, value, &result);
-> -	if (err) {
-> -		pr_warn("Failed to set ppt_pl2_sppt: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	if (result > 1) {
-> -		pr_warn("Failed to set ppt_pl2_sppt (result): 0x%x\n", result);
-> -		return -EIO;
-> -	}
-> -
-> -	asus->ppt_pl2_sppt = value;
-> -	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "ppt_pl2_sppt");
-> -
-> -	return count;
-> -}
-> -
-> -static ssize_t ppt_pl2_sppt_show(struct device *dev,
-> -				       struct device_attribute *attr,
-> -				       char *buf)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -
-> -	return sysfs_emit(buf, "%u\n", asus->ppt_pl2_sppt);
-> -}
-> -static DEVICE_ATTR_RW(ppt_pl2_sppt);
-> -
-> -/* Tunable: PPT, Intel=PL1, AMD=SPL ******************************************/
-> -static ssize_t ppt_pl1_spl_store(struct device *dev,
-> -				    struct device_attribute *attr,
-> -				    const char *buf, size_t count)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -	int result, err;
-> -	u32 value;
-> -
-> -	result = kstrtou32(buf, 10, &value);
-> -	if (result)
-> -		return result;
-> -
-> -	if (value < PPT_TOTAL_MIN || value > PPT_TOTAL_MAX)
-> -		return -EINVAL;
-> -
-> -	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_PPT_PL1_SPL, value, &result);
-> -	if (err) {
-> -		pr_warn("Failed to set ppt_pl1_spl: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	if (result > 1) {
-> -		pr_warn("Failed to set ppt_pl1_spl (result): 0x%x\n", result);
-> -		return -EIO;
-> -	}
-> -
-> -	asus->ppt_pl1_spl = value;
-> -	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "ppt_pl1_spl");
-> -
-> -	return count;
-> -}
-> -static ssize_t ppt_pl1_spl_show(struct device *dev,
-> -				 struct device_attribute *attr,
-> -				 char *buf)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -
-> -	return sysfs_emit(buf, "%u\n", asus->ppt_pl1_spl);
-> -}
-> -static DEVICE_ATTR_RW(ppt_pl1_spl);
-> -
-> -/* Tunable: PPT APU FPPT ******************************************************/
-> -static ssize_t ppt_fppt_store(struct device *dev,
-> -				    struct device_attribute *attr,
-> -				    const char *buf, size_t count)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -	int result, err;
-> -	u32 value;
-> -
-> -	result = kstrtou32(buf, 10, &value);
-> -	if (result)
-> -		return result;
-> -
-> -	if (value < PPT_TOTAL_MIN || value > PPT_TOTAL_MAX)
-> -		return -EINVAL;
-> -
-> -	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_PPT_FPPT, value, &result);
-> -	if (err) {
-> -		pr_warn("Failed to set ppt_fppt: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	if (result > 1) {
-> -		pr_warn("Failed to set ppt_fppt (result): 0x%x\n", result);
-> -		return -EIO;
-> -	}
-> -
-> -	asus->ppt_fppt = value;
-> -	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "ppt_fpu_sppt");
-> -
-> -	return count;
-> -}
-> -
-> -static ssize_t ppt_fppt_show(struct device *dev,
-> -				struct device_attribute *attr,
-> -				char *buf)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -
-> -	return sysfs_emit(buf, "%u\n", asus->ppt_fppt);
-> -}
-> -static DEVICE_ATTR_RW(ppt_fppt);
-> -
-> -/* Tunable: PPT APU SPPT *****************************************************/
-> -static ssize_t ppt_apu_sppt_store(struct device *dev,
-> -				    struct device_attribute *attr,
-> -				    const char *buf, size_t count)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -	int result, err;
-> -	u32 value;
-> -
-> -	result = kstrtou32(buf, 10, &value);
-> -	if (result)
-> -		return result;
-> -
-> -	if (value < PPT_CPU_MIN || value > PPT_CPU_MAX)
-> -		return -EINVAL;
-> -
-> -	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_PPT_APU_SPPT, value, &result);
-> -	if (err) {
-> -		pr_warn("Failed to set ppt_apu_sppt: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	if (result > 1) {
-> -		pr_warn("Failed to set ppt_apu_sppt (result): 0x%x\n", result);
-> -		return -EIO;
-> -	}
-> -
-> -	asus->ppt_apu_sppt = value;
-> -	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "ppt_apu_sppt");
-> -
-> -	return count;
-> -}
-> -
-> -static ssize_t ppt_apu_sppt_show(struct device *dev,
-> -			     struct device_attribute *attr,
-> -			     char *buf)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -
-> -	return sysfs_emit(buf, "%u\n", asus->ppt_apu_sppt);
-> -}
-> -static DEVICE_ATTR_RW(ppt_apu_sppt);
-> -
-> -/* Tunable: PPT platform SPPT ************************************************/
-> -static ssize_t ppt_platform_sppt_store(struct device *dev,
-> -				    struct device_attribute *attr,
-> -				    const char *buf, size_t count)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -	int result, err;
-> -	u32 value;
-> -
-> -	result = kstrtou32(buf, 10, &value);
-> -	if (result)
-> -		return result;
-> -
-> -	if (value < PPT_CPU_MIN || value > PPT_CPU_MAX)
-> -		return -EINVAL;
-> -
-> -	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_PPT_PLAT_SPPT, value, &result);
-> -	if (err) {
-> -		pr_warn("Failed to set ppt_platform_sppt: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	if (result > 1) {
-> -		pr_warn("Failed to set ppt_platform_sppt (result): 0x%x\n", result);
-> -		return -EIO;
-> -	}
-> -
-> -	asus->ppt_platform_sppt = value;
-> -	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "ppt_platform_sppt");
-> -
-> -	return count;
-> -}
-> -
-> -static ssize_t ppt_platform_sppt_show(struct device *dev,
-> -				 struct device_attribute *attr,
-> -				 char *buf)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -
-> -	return sysfs_emit(buf, "%u\n", asus->ppt_platform_sppt);
-> -}
-> -static DEVICE_ATTR_RW(ppt_platform_sppt);
-> -
-> -/* Tunable: NVIDIA dynamic boost *********************************************/
-> -static ssize_t nv_dynamic_boost_store(struct device *dev,
-> -				    struct device_attribute *attr,
-> -				    const char *buf, size_t count)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -	int result, err;
-> -	u32 value;
-> -
-> -	result = kstrtou32(buf, 10, &value);
-> -	if (result)
-> -		return result;
-> -
-> -	if (value < NVIDIA_BOOST_MIN || value > NVIDIA_BOOST_MAX)
-> -		return -EINVAL;
-> -
-> -	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_NV_DYN_BOOST, value, &result);
-> -	if (err) {
-> -		pr_warn("Failed to set nv_dynamic_boost: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	if (result > 1) {
-> -		pr_warn("Failed to set nv_dynamic_boost (result): 0x%x\n", result);
-> -		return -EIO;
-> -	}
-> -
-> -	asus->nv_dynamic_boost = value;
-> -	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "nv_dynamic_boost");
-> -
-> -	return count;
-> -}
-> -
-> -static ssize_t nv_dynamic_boost_show(struct device *dev,
-> -				      struct device_attribute *attr,
-> -				      char *buf)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -
-> -	return sysfs_emit(buf, "%u\n", asus->nv_dynamic_boost);
-> -}
-> -static DEVICE_ATTR_RW(nv_dynamic_boost);
-> -
-> -/* Tunable: NVIDIA temperature target ****************************************/
-> -static ssize_t nv_temp_target_store(struct device *dev,
-> -				    struct device_attribute *attr,
-> -				    const char *buf, size_t count)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -	int result, err;
-> -	u32 value;
-> -
-> -	result = kstrtou32(buf, 10, &value);
-> -	if (result)
-> -		return result;
-> -
-> -	if (value < NVIDIA_TEMP_MIN || value > NVIDIA_TEMP_MAX)
-> -		return -EINVAL;
-> -
-> -	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_NV_THERM_TARGET, value, &result);
-> -	if (err) {
-> -		pr_warn("Failed to set nv_temp_target: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	if (result > 1) {
-> -		pr_warn("Failed to set nv_temp_target (result): 0x%x\n", result);
-> -		return -EIO;
-> -	}
-> -
-> -	asus->nv_temp_target = value;
-> -	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "nv_temp_target");
-> -
-> -	return count;
-> -}
-> -
-> -static ssize_t nv_temp_target_show(struct device *dev,
-> -				     struct device_attribute *attr,
-> -				     char *buf)
-> -{
-> -	struct asus_wmi *asus = dev_get_drvdata(dev);
-> -
-> -	return sysfs_emit(buf, "%u\n", asus->nv_temp_target);
-> -}
-> -static DEVICE_ATTR_RW(nv_temp_target);
-> -
->  /* Ally MCU Powersave ********************************************************/
->  static ssize_t mcu_powersave_show(struct device *dev,
->  				   struct device_attribute *attr, char *buf)
-> @@ -4367,13 +4177,27 @@ static struct attribute *platform_attributes[] = {
->  	&dev_attr_als_enable.attr,
->  	&dev_attr_fan_boost_mode.attr,
->  	&dev_attr_throttle_thermal_policy.attr,
-> -	&dev_attr_ppt_pl2_sppt.attr,
->  	&dev_attr_ppt_pl1_spl.attr,
-> +	&dev_attr_ppt_pl1_spl_min.attr,
-> +	&dev_attr_ppt_pl1_spl_max.attr,
-> +	&dev_attr_ppt_pl2_sppt.attr,
-> +	&dev_attr_ppt_pl2_sppt_min.attr,
-> +	&dev_attr_ppt_pl2_sppt_max.attr,
->  	&dev_attr_ppt_fppt.attr,
-> +	&dev_attr_ppt_fppt_min.attr,
-> +	&dev_attr_ppt_fppt_max.attr,
->  	&dev_attr_ppt_apu_sppt.attr,
-> +	&dev_attr_ppt_apu_sppt_min.attr,
-> +	&dev_attr_ppt_apu_sppt_max.attr,
->  	&dev_attr_ppt_platform_sppt.attr,
-> +	&dev_attr_ppt_platform_sppt_min.attr,
-> +	&dev_attr_ppt_platform_sppt_max.attr,
->  	&dev_attr_nv_dynamic_boost.attr,
-> +	&dev_attr_nv_dynamic_boost_min.attr,
-> +	&dev_attr_nv_dynamic_boost_max.attr,
->  	&dev_attr_nv_temp_target.attr,
-> +	&dev_attr_nv_temp_target_min.attr,
-> +	&dev_attr_nv_temp_target_max.attr,
->  	&dev_attr_mcu_powersave.attr,
->  	&dev_attr_boot_sound.attr,
->  	&dev_attr_panel_od.attr,
-> @@ -4414,19 +4238,33 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
->  		ok = asus->fan_boost_mode_available;
->  	else if (attr == &dev_attr_throttle_thermal_policy.attr)
->  		ok = asus->throttle_thermal_policy_available;
-> -	else if (attr == &dev_attr_ppt_pl2_sppt.attr)
-> +	else if (attr == &dev_attr_ppt_pl2_sppt.attr
-> +		|| attr == &dev_attr_ppt_pl2_sppt_min.attr
-> +		|| attr == &dev_attr_ppt_pl2_sppt_max.attr)
->  		devid = ASUS_WMI_DEVID_PPT_PL2_SPPT;
-
-Please don't align if condition and the code block to same level but add 
-the one space to make it obvious it's inside the opening (. The usual 
-coding style is to put || at the end of the line and align attr to the 
-same column which I think would be beneficial especially on lines which 
-begin the same like here.
-
-> -	else if (attr == &dev_attr_ppt_pl1_spl.attr)
-> +	else if (attr == &dev_attr_ppt_pl1_spl.attr
-> +		|| attr == &dev_attr_ppt_pl1_spl_min.attr
-> +		|| attr == &dev_attr_ppt_pl1_spl_max.attr)
->  		devid = ASUS_WMI_DEVID_PPT_PL1_SPL;
-> -	else if (attr == &dev_attr_ppt_fppt.attr)
-> +	else if (attr == &dev_attr_ppt_fppt.attr
-> +		|| attr == &dev_attr_ppt_fppt_min.attr
-> +		|| attr == &dev_attr_ppt_fppt_max.attr)
->  		devid = ASUS_WMI_DEVID_PPT_FPPT;
-> -	else if (attr == &dev_attr_ppt_apu_sppt.attr)
-> +	else if (attr == &dev_attr_ppt_apu_sppt.attr
-> +		|| attr == &dev_attr_ppt_apu_sppt_min.attr
-> +		|| attr == &dev_attr_ppt_apu_sppt_max.attr)
->  		devid = ASUS_WMI_DEVID_PPT_APU_SPPT;
-> -	else if (attr == &dev_attr_ppt_platform_sppt.attr)
-> +	else if (attr == &dev_attr_ppt_platform_sppt.attr
-> +		|| attr == &dev_attr_ppt_platform_sppt_min.attr
-> +		|| attr == &dev_attr_ppt_platform_sppt_max.attr)
->  		devid = ASUS_WMI_DEVID_PPT_PLAT_SPPT;
-> -	else if (attr == &dev_attr_nv_dynamic_boost.attr)
-> +	else if (attr == &dev_attr_nv_dynamic_boost.attr
-> +		|| attr == &dev_attr_nv_dynamic_boost_min.attr
-> +		|| attr == &dev_attr_nv_dynamic_boost_max.attr)
->  		devid = ASUS_WMI_DEVID_NV_DYN_BOOST;
-> -	else if (attr == &dev_attr_nv_temp_target.attr)
-> +	else if (attr == &dev_attr_nv_temp_target.attr
-> +		|| attr == &dev_attr_nv_temp_target_min.attr
-> +		|| attr == &dev_attr_nv_temp_target_max.attr)
->  		devid = ASUS_WMI_DEVID_NV_THERM_TARGET;
->  	else if (attr == &dev_attr_mcu_powersave.attr)
->  		devid = ASUS_WMI_DEVID_MCU_POWERSAVE;
-> @@ -4652,6 +4490,77 @@ static void asus_wmi_debugfs_init(struct asus_wmi *asus)
->  
->  /* Init / exit ****************************************************************/
->  
-> +/* Set up the min/max and defaults for ROG tunables */
-> +static void init_rog_tunables(struct asus_wmi *asus)
-> +{
-> +	const char *product;
-> +	u32 max_boost = NVIDIA_BOOST_MAX;
-> +	u32 cpu_default = PPT_CPU_LIMIT_DEFAULT;
-> +	u32 cpu_max = PPT_CPU_LIMIT_MAX;
-> +	u32 platform_default = PPT_PLATFORM_DEFAULT;
-> +	u32 platform_max = PPT_PLATFORM_MAX;
-> +
-> +	/*
-> +	 * ASUS product_name contains everything required, e.g,
-> +	 * "ROG Flow X16 GV601VV_GV601VV_00185149B"
-> +	 */
-> +	product = dmi_get_system_info(DMI_PRODUCT_NAME);
-> +
-> +	if (strstr(product, "GA402R")) {
-> +		cpu_default = 125;
-> +	} else if (strstr(product, "13QY")) {
-> +		cpu_max = 250;
-> +	} else if (strstr(product, "X13")) {
-> +		cpu_max = 75;
-> +		cpu_default = 50;
-> +	} else if (strstr(product, "RC71")) {
-> +		cpu_max = 50;
-> +		cpu_default = 30;
-> +	} else if (strstr(product, "G814")
-> +		|| strstr(product, "G614")
-> +		|| strstr(product, "G834")
-> +		|| strstr(product, "G634")) {
-> +		cpu_max = 175;
-
-Here the unusual placement of || made you even intentionally break the 
-alignment to match strstr(). This is a clear proof to me it's not a good 
-idea to put || at the beginning of the line because it incentivizes you 
-to do this kind of misalignment.
-
-The contination of if condition should start from the column after the 
-opening parenthesis (which will make strstr() jumpy, which is why the
-usual style with || at the end of the previous line seems clearly better).
-
-> +	} else if (strstr(product, "GA402X")
-> +		|| strstr(product, "GA403")
-> +		|| strstr(product, "FA507N")
-> +		|| strstr(product, "FA507X")
-> +		|| strstr(product, "FA707N")
-> +		|| strstr(product, "FA707X")) {
-> +		cpu_max = 90;
-
-Ditto.
-
-> +	}
-> +
-> +	if (strstr(product, "GZ301ZE"))
-> +		max_boost = 5;
-> +	else if (strstr(product, "FX507ZC4"))
-> +		max_boost = 15;
-> +	else if (strstr(product, "GU605"))
-> +		max_boost = 20;
-> +
-> +	/* ensure defaults for tunables */
-> +	asus->rog_tunables.cpu_default = cpu_default;
-> +	asus->rog_tunables.cpu_max = cpu_max;
-> +
-> +	asus->rog_tunables.platform_default = platform_default;
-> +	asus->rog_tunables.platform_max = platform_max;
-> +
-> +	asus->rog_tunables.ppt_pl1_spl = cpu_default;
-> +	asus->rog_tunables.ppt_pl2_sppt = cpu_default;
-> +	asus->rog_tunables.ppt_apu_sppt = cpu_default;
-> +
-> +	asus->rog_tunables.ppt_platform_sppt = platform_default;
-> +	asus->rog_tunables.ppt_fppt = platform_default;
-> +
-> +	asus->rog_tunables.nv_boost_default = NVIDIA_BOOST_MAX;
-> +	asus->rog_tunables.nv_boost_max = max_boost;
-> +	asus->rog_tunables.nv_dynamic_boost = NVIDIA_BOOST_MIN;
-> +
-> +	asus->rog_tunables.nv_temp_default = NVIDIA_TEMP_MAX;
-> +	asus->rog_tunables.nv_temp_max = NVIDIA_TEMP_MAX;
-> +	asus->rog_tunables.nv_temp_target = NVIDIA_TEMP_MIN;
-> +
-> +}
-> +
->  static int asus_wmi_add(struct platform_device *pdev)
->  {
->  	struct platform_driver *pdrv = to_platform_driver(pdev->dev.driver);
-> @@ -4677,15 +4586,7 @@ static int asus_wmi_add(struct platform_device *pdev)
->  	if (err)
->  		goto fail_platform;
->  
-> -	/* ensure defaults for tunables */
-> -	asus->ppt_pl2_sppt = 5;
-> -	asus->ppt_pl1_spl = 5;
-> -	asus->ppt_apu_sppt = 5;
-> -	asus->ppt_platform_sppt = 5;
-> -	asus->ppt_fppt = 5;
-> -	asus->nv_dynamic_boost = 5;
-> -	asus->nv_temp_target = 75;
-> -
-> +	init_rog_tunables(asus);
->  	asus->egpu_enable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_EGPU);
->  	asus->dgpu_disable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_DGPU);
->  	asus->kbd_rgb_state_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_STATE);
-> 
-
--- 
- i.
-
+Thanks and best regards,
+Michael
 
