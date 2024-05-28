@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-191615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3218D117A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:37:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9B68D117C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 637BDB21FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27501F22B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A398C1BDD3;
-	Tue, 28 May 2024 01:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112A61DFF5;
+	Tue, 28 May 2024 01:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="BkS7uFZ1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WN12QDGw"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="WFyaHz7J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dPPNYM2x"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BD3EEDB;
-	Tue, 28 May 2024 01:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A9E1BDD5;
+	Tue, 28 May 2024 01:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716860211; cv=none; b=ATgJ7I5XaAQrZtXzgYtANTFRWjuH6mFiiWIK33dxznu9gY0T/7L7z42u2WBln3uJC7tuTs6O58NLs/Nhu7ljQ5jSq3ooQRTBZ2huuJmE6LLlV08bliRJk9sigo2J/171yQ2kE3OlIyvCjxPdo/FuIXC08VG6d0ilgYWkCEJyn9E=
+	t=1716860214; cv=none; b=cCf0h97pg8ZZ8EwmGnTzYMNNOjGGgtTHSzasRKufmNXnnxi4Jwck2mD8ZCjPF0cAXzeGHyb9zHCMRyildGyD7b517QmNwEMMutWtNPEu/wjuwF0AmZ2Bk7mhvJAy+INGa/Qxb7t3JBkhp69WotIsDdrJx5duYVLTyixFYB++g2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716860211; c=relaxed/simple;
-	bh=THpXRT3p/0C4OrepJEXq/5KRR9Y10IEXpmUMdwr0zeM=;
+	s=arc-20240116; t=1716860214; c=relaxed/simple;
+	bh=ItassXh+AUFWJJQOX6KSfktnJt4TTmMNonwiy+/h+Zs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uMA/+1haE8vw5mGAa5M4LvoMxFvcfuG07OFozWH5Ce9tZMjaTv+ltnUYyLz7n04jLQC6/bQ2aLUx3moknNz25vpH5XM7sbsZVxpEcvRqNjFn8he9oQPUOLYq1wfPTtXzIlyxJiV3Z4dJaeCx2SPN0F3BTgDvKjgjamiWfLmVGUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=BkS7uFZ1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WN12QDGw; arc=none smtp.client-ip=103.168.172.145
+	 MIME-Version; b=bPAIAQMRcT5R+4EqNKq5ZOZ5XJbAUnbrXUf4BVN6odGq48BLzlNF1gTy+Chwt4qOgSAjY773yodWjMK7mW3U+DrsZHPb9dHiA6QKE0MohGLtgHrjS+ayik7zmbO6XGlBSprK7g1Xs0C16Nw0/9+lV2W/tMc0RIdX+zcIao1bsj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=WFyaHz7J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dPPNYM2x; arc=none smtp.client-ip=103.168.172.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.nyi.internal (Postfix) with ESMTP id BC584138013D;
-	Mon, 27 May 2024 21:36:48 -0400 (EDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id C79BC11400E2;
+	Mon, 27 May 2024 21:36:51 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 27 May 2024 21:36:48 -0400
+  by compute1.internal (MEProxy); Mon, 27 May 2024 21:36:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1716860208; x=
-	1716946608; bh=1y5ZIKidcSJ1U8GECBO90D6MU52bNNu/qP9jzcpqqYw=; b=B
-	kS7uFZ1iUJMkv1500v7ZpHoA2u9Fmw9+A9GDNL4+Nx5Wv31Od7rr5rnz/cdSIWtg
-	kjdPfphYcdvWkPNFbnWVTVOVPfyn01GMJ8Mc9a4iTmmojXRjiMvG4H3WLlYnws0W
-	1CIjhs5O61wtNRbCskeMpdjYePr30cvDu0yNKXtigWDM2vjO2oNU+KwDYluRqNRJ
-	SO0E4+ydCYkpeaDvBjnXZUMu3/8TuIFu7/REU7LfWoYfMvQwU72pOyDC1z1bk9h0
-	qVLlXkim6gCFddyVBRgTrul+iEY4Slzo/JybnvfgOBxL5lEEUCam+JfA2ir4c2ox
-	XCyHuMc/lDgYpOHgavndA==
+	:reply-to:subject:subject:to:to; s=fm2; t=1716860211; x=
+	1716946611; bh=hORT7ngd02w+eotRPxOFI1MpB1jcIPhVVq4sYj5WU7k=; b=W
+	FyaHz7JWJMD+s+0nNy9FpUgBjNpDq7zaDks2ThFjWNpExS2+WzqAMeOn8Znh8ajK
+	6g8p2CImVwInvl3I4kzGCLWa7M0igS531+MulVccIj0WObZlIP0cqwScTICxEv7K
+	d/aEVL5gRj5WpO2gusK0Yp0UkIvluvwMeLOobuqFKOtqo/FL09DVj3AuZoqIbY9k
+	sS3TIYXKClttUB9HWz5uw9bRqxmr10hGHIz/CSVhueOdXEQWp+EBiRv25/IACYYo
+	XlmrOKz1OFviTWL9KbGLGftR7Goxwk9J7pRVV1+aRA6p+y+kUDIerFreXUrlDiOi
+	jr0mWKSPpGd/32TG8/HyQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716860208; x=
-	1716946608; bh=1y5ZIKidcSJ1U8GECBO90D6MU52bNNu/qP9jzcpqqYw=; b=W
-	N12QDGwO6IEtfEHx76CwupHnm5gqyReJxRohyc7e10bfFrczar71LPQlFTWJh8ca
-	lmWTlIyV5JfZ24T8cR4Hkjmq0hBaCXbqDP46/EmYdraiGb4kgJs1oiOd4dFejpUs
-	bN192GCO7Y+hOqQNhnSCOstqqWAUQgoy8pNbD/OfbWvNXcibXvp/j0PbceD7wJcJ
-	M1smHbRTZJW17QUb1Bl2QT195pgGmfLDYKXZw6THKTRubmZjscSr0bpdKS+VQ7XG
-	w53YInotILCH9fmIfufhe8w/wwpsPOYMhBfA3RewtbNJtEk4iO++0wkmq51RXLXI
-	kAaD0A0WBbTwoz+aQWnmg==
-X-ME-Sender: <xms:MDVVZl1H0KTM2IzNurti8ZBPO5thxGKKAbkt8T2ua5l589GMuaTjNA>
-    <xme:MDVVZsEMfgQ7jgwLsJYn4SRQkIlLLNBs1avnyni8UGpc2aRXw57GPOP4HDkLYVe30
-    9C-ujy2ym9MMqqFHGY>
-X-ME-Received: <xmr:MDVVZl4sbUDyG6gpl6YYOSlw7L-DUUFaC2O5uETs_CGBV7tO0g5_U8zRtTDA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejhedggeekucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716860211; x=
+	1716946611; bh=hORT7ngd02w+eotRPxOFI1MpB1jcIPhVVq4sYj5WU7k=; b=d
+	PPNYM2xIrR6ZZXuIR2JF2EnYEtd3QVywT8LMGydPtO9QWF9/EOOG3+RHq6hZvOZg
+	BIeMvbZOEfBDYzWyOQRdLuFvXwaaNmBRSICNbYpwGj1k6K2yjviVvhliSEc/7N2X
+	D4J4H5bZ4QIKKVHplGJiqOHzJbKdyRqlu1jl3wlWxfqSXwDQJyfT0R+SFp4I1AeP
+	WCTrILLehUKV6OzyLmPL9uWAHRkplYHHBs3qliVbfCtqgu/fG5SS21i9bPnSwnLd
+	iynDFGNkyinymGbM8RRhtv9Pu8CHogFacuwjUUxWLyNVbJ5unTq8S3Zte2+1Ehkn
+	t1EIZ9TFja+YSTWbnt1QA==
+X-ME-Sender: <xms:MzVVZplQEaXaAXECU2HcW1Zec0eRIPOhxnOf4oPu6WtOj_MD2VORUg>
+    <xme:MzVVZk3jyhmF7MGAN6PFE9TKuyL1QcdZVIM5pakwbhBFlsZI2axp137L4kYXHHbKk
+    e0Cdd34VhwGCogxXQY>
+X-ME-Received: <xmr:MzVVZvpN9ovjpPXKk9sjZ-B9wb3Uz1XX4I9_549nWpajRHvGU1ME_XBgNQa7>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejhedggeejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
     ertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehl
     jhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfetfedugfetudeuheetjefhue
-    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgepuden
+    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgeptden
     ucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:MDVVZi3E4zOeW1B9DIbt4k05W7ZY4MJ7ai_ONaAsz9h3NYBjRf09LQ>
-    <xmx:MDVVZoG5-tVEHppOuySbYN1Tm7nh3xCuft8LY5mtggi6o1x9eFLBKQ>
-    <xmx:MDVVZj9-PcBqvJsJn4Em6C1OyBy9-5QflVeY0WjOkBqZliI5o6EinA>
-    <xmx:MDVVZlnsTJBP9JkzyRj7sioiAtk0_LX0SVsUQHkOk2_chWKBgVvvVA>
-    <xmx:MDVVZtONbLmXJwxCSUAMBrvyEwMi3LspuCpAWorAJ-JDDfJG4o5Te1gL>
+X-ME-Proxy: <xmx:MzVVZpk7SdXxSj6Xap11PBEe32T1qvy4RVldRdWvumf2Q1LMkr9AcA>
+    <xmx:MzVVZn2aCXeueYnV0TgyTalRrPVb9k_zoLhOUv8Vnrcfl_I5Kwq02w>
+    <xmx:MzVVZouxBaLi4KcwlbEw-g2WFlwsStIl1QZL1ocopKb8k3FrnHv7Zw>
+    <xmx:MzVVZrULscIMOR-xOrcL2PYuI092PgeUtIArxJF7PAch8hjXanCKzg>
+    <xmx:MzVVZn8pgM4-_dFUww2tyHmFd0PyFkxWuP8Fc8trZfywfeVnd3sjnZKR>
 Feedback-ID: i5ec1447f:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 May 2024 21:36:45 -0400 (EDT)
+ 27 May 2024 21:36:49 -0400 (EDT)
 From: "Luke D. Jones" <luke@ljones.dev>
 To: hdegoede@redhat.com
 Cc: ilpo.jarvinen@linux.intel.com,
@@ -86,9 +86,9 @@ Cc: ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH 4/9] platform/x86: asus-wmi: reduce code duplication with macros
-Date: Tue, 28 May 2024 13:36:21 +1200
-Message-ID: <20240528013626.14066-5-luke@ljones.dev>
+Subject: [PATCH 5/9] platform/x86: asus-wmi: use WMI_SIMPLE_SHOW in more places
+Date: Tue, 28 May 2024 13:36:22 +1200
+Message-ID: <20240528013626.14066-6-luke@ljones.dev>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240528013626.14066-1-luke@ljones.dev>
 References: <20240528013626.14066-1-luke@ljones.dev>
@@ -100,291 +100,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Over time many default patterns have emerged while adding functionality.
-This patch consolidates those patterns in to a few macros to remove a lot
-of copy/paste, and make it easier to add more of the same style of
-features in the future.
+Further reduce code duplication by using the new macros in a few more
+places.
 
 Signed-off-by: Luke D. Jones <luke@ljones.dev>
 ---
- drivers/platform/x86/asus-wmi.c | 215 ++++++--------------------------
- 1 file changed, 38 insertions(+), 177 deletions(-)
+ drivers/platform/x86/asus-wmi.c | 30 ++++--------------------------
+ 1 file changed, 4 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index d016acb23789..5c03e28ff252 100644
+index 5c03e28ff252..260548aa6a42 100644
 --- a/drivers/platform/x86/asus-wmi.c
 +++ b/drivers/platform/x86/asus-wmi.c
-@@ -676,7 +676,7 @@ static void asus_wmi_input_exit(struct asus_wmi *asus)
- static ssize_t rog_tunable_store(struct asus_wmi *asus,
- 				struct attribute *attr,
- 				const char *buf, size_t count,
--				u32 min, u32 max, u32 defaultv,
-+				u32 min, u32 max, int defaultv,
- 				u32 *store_value, u32 wmi_dev)
- {
- 	int result, err, value;
-@@ -685,7 +685,7 @@ static ssize_t rog_tunable_store(struct asus_wmi *asus,
- 	if (result)
- 		return result;
+@@ -813,19 +813,6 @@ static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
+ }
  
--	if (value == -1 )
-+	if (value == -1 && defaultv != -1)
- 		value = defaultv;
- 	if (value < min || value > max)
- 		return -EINVAL;
-@@ -708,6 +708,36 @@ static ssize_t rog_tunable_store(struct asus_wmi *asus,
+ /* dGPU ********************************************************************/
+-static ssize_t dgpu_disable_show(struct device *dev,
+-				   struct device_attribute *attr, char *buf)
+-{
+-	struct asus_wmi *asus = dev_get_drvdata(dev);
+-	int result;
+-
+-	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_DGPU);
+-	if (result < 0)
+-		return result;
+-
+-	return sysfs_emit(buf, "%d\n", result);
+-}
+-
+ /*
+  * A user may be required to store the value twice, typcial store first, then
+  * rescan PCI bus to activate power, then store a second time to save correctly.
+@@ -875,22 +862,11 @@ static ssize_t dgpu_disable_store(struct device *dev,
+ 
  	return count;
  }
- 
-+#define WMI_SIMPLE_STORE(_fname, _min, _max, _wmi) \
-+static ssize_t _fname##_store(struct device *dev, \
-+	struct device_attribute *attr, const char *buf, size_t count) \
-+{ \
-+	struct asus_wmi *asus = dev_get_drvdata(dev); \
-+	return rog_tunable_store(asus, &attr->attr, buf, count, \
-+				_min, _max, -1, NULL, _wmi); \
-+}
 +
-+#define WMI_SIMPLE_SHOW(_fname, _fmt, _wmi) \
-+static ssize_t _fname##_show(struct device *dev, \
-+	struct device_attribute *attr, char *buf) \
-+{ \
-+	struct asus_wmi *asus = dev_get_drvdata(dev); \
-+	u32 result; \
-+	asus_wmi_get_devstate(asus, _wmi, &result); \
-+	if (result < 0) \
-+		return result; \
-+	return sysfs_emit(buf, _fmt, result & ~ASUS_WMI_DSTS_PRESENCE_BIT); \
-+}
-+
-+#define WMI_ATTR_SIMPLE_RW(_fname, _minv, _maxv, _wmi) \
-+WMI_SIMPLE_STORE(_fname, _minv, _maxv, _wmi); \
-+WMI_SIMPLE_SHOW(_fname, "%d\n", _wmi); \
-+static DEVICE_ATTR_RW(_fname)
-+
-+#define WMI_ATTR_SIMPLE_RO(_fname, _wmi) \
-+WMI_SIMPLE_SHOW(_fname, "%d\n", _wmi); \
-+static DEVICE_ATTR_RO(_fname)
-+
- #define ROG_TUNABLE_STORE(_fname, _min, _max, _default, _wmi) \
- static ssize_t _fname##_store(struct device *dev, \
- 	struct device_attribute *attr, const char *buf, size_t count) \
-@@ -761,6 +791,12 @@ ROG_ATTR_RW(nv_dynamic_boost,
- 	NVIDIA_BOOST_MIN, nv_boost_max, nv_boost_default, ASUS_WMI_DEVID_NV_DYN_BOOST);
- ROG_ATTR_RW(nv_temp_target,
- 	NVIDIA_TEMP_MIN, nv_temp_max, nv_temp_default, ASUS_WMI_DEVID_NV_THERM_TARGET);
-+/* Ally MCU Powersave */
-+WMI_ATTR_SIMPLE_RW(mcu_powersave, 0, 1, ASUS_WMI_DEVID_MCU_POWERSAVE);
-+WMI_ATTR_SIMPLE_RO(egpu_connected, ASUS_WMI_DEVID_EGPU_CONNECTED);
-+WMI_ATTR_SIMPLE_RW(panel_od, 0, 1, ASUS_WMI_DEVID_PANEL_OD);
-+WMI_ATTR_SIMPLE_RW(boot_sound, 0, 1, ASUS_WMI_DEVID_BOOT_SOUND);
-+WMI_ATTR_SIMPLE_RO(charge_mode, ASUS_WMI_DEVID_CHARGE_MODE);
++WMI_SIMPLE_SHOW(dgpu_disable, "%d\n", ASUS_WMI_DEVID_DGPU);
+ static DEVICE_ATTR_RW(dgpu_disable);
  
- /* Tablet mode ****************************************************************/
- 
-@@ -776,22 +812,6 @@ static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
- 		asus_wmi_tablet_sw_report(asus, result);
- }
- 
--/* Charging mode, 1=Barrel, 2=USB ******************************************/
--static ssize_t charge_mode_show(struct device *dev,
+ /* eGPU ********************************************************************/
+-static ssize_t egpu_enable_show(struct device *dev,
 -				   struct device_attribute *attr, char *buf)
 -{
 -	struct asus_wmi *asus = dev_get_drvdata(dev);
--	int result, value;
+-	int result;
 -
--	result = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_CHARGE_MODE, &value);
+-	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_EGPU);
 -	if (result < 0)
 -		return result;
 -
--	return sysfs_emit(buf, "%d\n", value & 0xff);
+-	return sysfs_emit(buf, "%d\n", result);
 -}
 -
--static DEVICE_ATTR_RO(charge_mode);
--
- /* dGPU ********************************************************************/
- static ssize_t dgpu_disable_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
-@@ -925,22 +945,6 @@ static ssize_t egpu_enable_store(struct device *dev,
+ /* The ACPI call to enable the eGPU also disables the internal dGPU */
+ static ssize_t egpu_enable_store(struct device *dev,
+ 				    struct device_attribute *attr,
+@@ -943,6 +919,8 @@ static ssize_t egpu_enable_store(struct device *dev,
+ 
+ 	return count;
  }
++
++WMI_SIMPLE_SHOW(egpu_enable, "%d\n", ASUS_WMI_DEVID_EGPU);
  static DEVICE_ATTR_RW(egpu_enable);
  
--/* Is eGPU connected? *********************************************************/
--static ssize_t egpu_connected_show(struct device *dev,
--				   struct device_attribute *attr, char *buf)
--{
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--	int result;
--
--	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_EGPU_CONNECTED);
--	if (result < 0)
--		return result;
--
--	return sysfs_emit(buf, "%d\n", result);
--}
--
--static DEVICE_ATTR_RO(egpu_connected);
--
  /* gpu mux switch *************************************************************/
- static ssize_t gpu_mux_mode_show(struct device *dev,
- 				 struct device_attribute *attr, char *buf)
-@@ -1128,53 +1132,6 @@ static const struct attribute_group *kbd_rgb_mode_groups[] = {
- 	NULL,
- };
- 
--/* Ally MCU Powersave ********************************************************/
--static ssize_t mcu_powersave_show(struct device *dev,
--				   struct device_attribute *attr, char *buf)
--{
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--	int result;
--
--	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_MCU_POWERSAVE);
--	if (result < 0)
--		return result;
--
--	return sysfs_emit(buf, "%d\n", result);
--}
--
--static ssize_t mcu_powersave_store(struct device *dev,
--				    struct device_attribute *attr,
--				    const char *buf, size_t count)
--{
--	int result, err;
--	u32 enable;
--
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--
--	result = kstrtou32(buf, 10, &enable);
--	if (result)
--		return result;
--
--	if (enable > 1)
--		return -EINVAL;
--
--	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_MCU_POWERSAVE, enable, &result);
--	if (err) {
--		pr_warn("Failed to set MCU powersave: %d\n", err);
--		return err;
--	}
--
--	if (result > 1) {
--		pr_warn("Failed to set MCU powersave (result): 0x%x\n", result);
--		return -EIO;
--	}
--
--	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "mcu_powersave");
--
--	return count;
--}
--static DEVICE_ATTR_RW(mcu_powersave);
--
- /* Battery ********************************************************************/
- 
- /* The battery maximum charging percentage */
-@@ -2002,102 +1959,6 @@ static int asus_wmi_rfkill_init(struct asus_wmi *asus)
- 	return result;
- }
- 
--/* Panel Overdrive ************************************************************/
--static ssize_t panel_od_show(struct device *dev,
--				   struct device_attribute *attr, char *buf)
--{
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--	int result;
--
--	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_PANEL_OD);
--	if (result < 0)
--		return result;
--
--	return sysfs_emit(buf, "%d\n", result);
--}
--
--static ssize_t panel_od_store(struct device *dev,
--				    struct device_attribute *attr,
--				    const char *buf, size_t count)
--{
--	int result, err;
--	u32 overdrive;
--
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--
--	result = kstrtou32(buf, 10, &overdrive);
--	if (result)
--		return result;
--
--	if (overdrive > 1)
--		return -EINVAL;
--
--	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_PANEL_OD, overdrive, &result);
--
--	if (err) {
--		pr_warn("Failed to set panel overdrive: %d\n", err);
--		return err;
--	}
--
--	if (result > 1) {
--		pr_warn("Failed to set panel overdrive (result): 0x%x\n", result);
--		return -EIO;
--	}
--
--	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "panel_od");
--
--	return count;
--}
--static DEVICE_ATTR_RW(panel_od);
--
--/* Bootup sound ***************************************************************/
--
--static ssize_t boot_sound_show(struct device *dev,
--			     struct device_attribute *attr, char *buf)
--{
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--	int result;
--
--	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_BOOT_SOUND);
--	if (result < 0)
--		return result;
--
--	return sysfs_emit(buf, "%d\n", result);
--}
--
--static ssize_t boot_sound_store(struct device *dev,
--			      struct device_attribute *attr,
--			      const char *buf, size_t count)
--{
--	int result, err;
--	u32 snd;
--
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--
--	result = kstrtou32(buf, 10, &snd);
--	if (result)
--		return result;
--
--	if (snd > 1)
--		return -EINVAL;
--
--	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BOOT_SOUND, snd, &result);
--	if (err) {
--		pr_warn("Failed to set boot sound: %d\n", err);
--		return err;
--	}
--
--	if (result > 1) {
--		pr_warn("Failed to set panel boot sound (result): 0x%x\n", result);
--		return -EIO;
--	}
--
--	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "boot_sound");
--
--	return count;
--}
--static DEVICE_ATTR_RW(boot_sound);
--
- /* Mini-LED mode **************************************************************/
- static ssize_t mini_led_mode_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
 -- 
 2.45.1
 
