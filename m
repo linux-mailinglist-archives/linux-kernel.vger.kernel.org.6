@@ -1,87 +1,109 @@
-Return-Path: <linux-kernel+bounces-193244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043BA8D28F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:54:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E9E8D28FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985A61F25C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9207B288DB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0743613FD72;
-	Tue, 28 May 2024 23:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BAE140E5E;
+	Tue, 28 May 2024 23:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="nRkk1BG/"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFpDmLKI"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AE513D897;
-	Tue, 28 May 2024 23:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D22B140384;
+	Tue, 28 May 2024 23:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716940461; cv=none; b=trrHwYqO0MXeX84/9O7VFdARe0zsqE8m5wqCUw+X61HWeH1UPuqx79nKNI8wvRIWUZqkqJF1I2bljjySnljITso/4lpB2Z2am1ZRoxWfuAgw623EH/ph0xl2gNCZdXhr7JOLhrLy+iPaQu2xNplESdTlJRL7g4mbazIE2fkxwAg=
+	t=1716940469; cv=none; b=egbGmpAITk3cbvs8Vpl1yY3RxwWh3Qx/xaJo0V/hhTwy53evG4b41l2/dAlq1MMhDdb5rLC2jgrmyKUs3JnZnoIlD07laZ36xpEmx+EeIvh6RpheFkUJzRiUJ1XKrzvuZPp1JFVeEDM1hmhJwftvgAL0Lswreu0y1aTxjkI88VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716940461; c=relaxed/simple;
-	bh=gShILwMjJBDCk7bxa10+DKpVyyvmAskS6Sj1Oh2LJ34=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gEqH06j7IvdK5CnQZ0B9Awwu3SLOQoRaTs7mvIw4N1LlyBccXenGLpXDaqGDFRjyn/daDLo6o9Pt8Xy1thr7knQFfLpaO3f5hXqAZErUlQL/5qNap0/+Vy5B+3+MS+X1ERvCtrGlt7PUgreuB4LUK17UXEs1ZlCEMT4xcS16jwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=nRkk1BG/; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 36F542014A;
-	Wed, 29 May 2024 07:54:09 +0800 (AWST)
+	s=arc-20240116; t=1716940469; c=relaxed/simple;
+	bh=/W3e8geK/8V/pJI8LI/mKqvkPRhYyE0QhjBX7G82yL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8RdDsG3r69mPuVR0ekbaapiRNsg97Za/VYvA3xcX+4neKfjJUw4AkmSrt3xATMt3ON+1WQgxPTzGbw6EPs0Mm8dLsjmOMnWX4x0pwF43TeT7kIjtSw64qagJzQilHqkwffanRAHAyHhkd5VGJ1cM5E+UtFIQh09lLNT6n3yZ7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFpDmLKI; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5785c1e7448so1410515a12.2;
+        Tue, 28 May 2024 16:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1716940450;
-	bh=gShILwMjJBDCk7bxa10+DKpVyyvmAskS6Sj1Oh2LJ34=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=nRkk1BG/PQkujWt1gGUGlfPIr2mNWhLNiXDwGjQrvFd2wfZ42lW0FBl16JVCnFw1H
-	 DRhC3I+LwDUPo6txx+/w+9uzAMvmrqmlklfDoE+w3ZekmqRrL1e9mVew1CL8fKJt07
-	 a/YUN8qI/1Ud+AuBK70J28hi+xaQA9fJunPfc/H6r0kSYZ9E79jBVWGbn+6pBY8axH
-	 jK86a4YygmyCj5Xls+Hb4zW6hJwyL+nimqM2booGDYXMAgiqV3l6lZQuFybmoioImU
-	 imyG0P5RivxyscBDrfF0UpQHo6A2eY3Fb7ebATuzAgks21lrIFztn0CjU1UX2eKyRC
-	 QNlBGhRNsDIGA==
-Message-ID: <520cf8db945cf8dce4afdaddb59ceda65463a406.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] mctp i2c: Add rx trace
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Tal Yacobi <talycb8@gmail.com>, matt@codeconstruct.com.au, 
-	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Date: Wed, 29 May 2024 07:54:08 +0800
-In-Reply-To: <20240528143420.742611-1-talycb8@gmail.com>
-References: <20240528143420.742611-1-talycb8@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1716940466; x=1717545266; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e000vksGZKxcpTxpZnBmsIz0xFc2hPH9avlD+baB/tQ=;
+        b=nFpDmLKIZhDR2+01LtZJaIZRvM0txK4YMWqzRg41jwsXh38qPRq5mvP9QsQqG4Ggqt
+         hYWFhwWOlbfVGZdPWA0I8Nfwh4oj03BW5Tzen+zxZqXUyg3iClmZ1UOJS3dOkWRsQ17t
+         l728qUzYTSQJudqWC1BUekMAKXaargTWo/bIZ0RSXsV44WYR8yFtIVL8+nFieoW4VQbB
+         BldIbpzCzOs1+F4MBmPL4OfFHoUkDcyLFp01/2e1bb/w9s97aN0fcjZLKtZxBRcHKCMw
+         3Fbtmnf9CgQFFs0FTGG4N6gZ5LgPl49QD0UrVRUZrdatrjFwv4qRGrfBfsHg/fQZ1lm5
+         ujcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716940466; x=1717545266;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e000vksGZKxcpTxpZnBmsIz0xFc2hPH9avlD+baB/tQ=;
+        b=r1PPgVoPdKXkgB82MuXxI9YZFhaBNMMixf0EV42x1ZN6mZsMIUNI8RYgw7fsoGOthO
+         RvlRw4FtyAy4PWCYSVAdGdzXF90CAs4VP5/fL2Gr6iVTQfn2cZ4S0+hQnwcYnhEtFumg
+         cgc58PLeUi+i2DaktYCoQ7AwIh5fMPcYpYd9Og4jlq2GmxZlbzuOcyzDQJVoSRZeDrE0
+         sl3Gb8rtuaargRKIErAcC1Yc0TVjZCKj+hmdO6+pFB+KhTZLNOIpeT4iZf/QorUiBIaL
+         zmo3HDVXTvWk/wQDKBT9nlsLZi5SwmvZuVD0WtXf1jkEqFtGpHlmdis+Yw8NKYDoKGLy
+         2Jww==
+X-Forwarded-Encrypted: i=1; AJvYcCVhdDETGqt3b477Ec5SACx2yChYm9/roh4Y2Qymf84/HGaOXAjPIBojvGW21uy0QPe6yuJ5rXX0sytt7PCQUG74TjkT5yAOG7huh69IBvgTX/96j37GSEKiCfBcOU9sOQVcDADC1BMMgCnEen6oIRMmjGQD61eU198QC96ymLfeiqu+lg==
+X-Gm-Message-State: AOJu0Yw2Gvq8OJEkCQd5q4XIlNiKlLTq6gY/6fFDupMBahKpJWgRN486
+	oixhYusHzw//sydavnPVws8IBGXV/C01JqMfu+JyrJkc3uXKupO2
+X-Google-Smtp-Source: AGHT+IHsWsOkBOksuCIUt51kqHsxAps4Tg6mOyc5noJl3q1Tf55mM9iZjLhMWu87KAeA5fz6kMcg+w==
+X-Received: by 2002:a50:9b12:0:b0:572:67d9:3400 with SMTP id 4fb4d7f45d1cf-578519ba232mr8723411a12.39.1716940466319;
+        Tue, 28 May 2024 16:54:26 -0700 (PDT)
+Received: from andrea ([151.76.32.59])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57852339fc4sm7658198a12.15.2024.05.28.16.54.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 16:54:25 -0700 (PDT)
+Date: Wed, 29 May 2024 01:54:21 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH 2/7] riscv: Implement cmpxchg8/16() using Zabha
+Message-ID: <ZlZurXUUUfXHZJaX@andrea>
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-3-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528151052.313031-3-alexghiti@rivosinc.com>
 
-Hi Tal,
+> +zabha:									\
+> +	__asm__ __volatile__ (						\
+> +		prepend							\
+> +		"	amocas" cas_sfx " %0, %z2, %1\n"		\
+> +		append							\
+> +		: "+&r" (r), "+A" (*(p))				\
+> +		: "rJ" (n)						\
+> +		: "memory");						\
 
-Thanks for the contribution! Some comments:
+Couldn't a platform have Zabha but not have Zacas?  I don't see how this
+asm goto could work in such case, what am I missing?
 
-> mctp-i2c rx implementation doesn't call
-> __i2c_transfer which calls the i2c reply trace function.
-
-No, but we can trace the i2c rx path through the trace_i2c_slave
-tracepoint. It is a little messier than tracing trace_i2c_write, but
-has been sufficient with the debugging I've needed in the past.
-
-> Add an mctp_reply trace function that will be used instead.
-
-Can you elaborate a little on what you were/are looking to inspect
-here? (mainly: which packet fields are you interested in?) That will
-help to determine the best approach here.
-
-Cheers,
-
-
-Jeremy
+  Andrea
 
