@@ -1,49 +1,58 @@
-Return-Path: <linux-kernel+bounces-191526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7FD8D10B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:00:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2390A8D10BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5BBAB215E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:00:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F28282A27
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D09813C9CA;
-	Tue, 28 May 2024 00:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F331396;
+	Tue, 28 May 2024 00:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sA7vnbgy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="pRAqlqMc"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B4E17BA2;
-	Tue, 28 May 2024 00:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCE0364;
+	Tue, 28 May 2024 00:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716854430; cv=none; b=OSM85fXUJh+h6yZGUgwNOt1tyjKGMrPdJIN0jQQFJnsYx9r7Si1NAaJhYXtkdaOTRFBA9HfrirS3W1qEP4ahhJmhNIbdzK81uAlcI0hMgXiYHkg658OsKvk5Q5ALB+NlhfgFBVLc9DwlBAh3Blx8G9fHblXPghTmjjLlgqlGpWU=
+	t=1716854802; cv=none; b=nJ50FVYyAHdAOACOZ57mnoAVvdjwAIz+tgaKa4BRig4aFSq2IF0iVvgFyKxCMxRPzaLHndLE1DSNo9VloxP9vRUXQXw71jEt0vqDNmu+vn7SRetVli8mschSlcd7qDvZyMn4Q8FjJgreNIEkQoY4kXVEK/lEX2mCoYsZDSEnNlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716854430; c=relaxed/simple;
-	bh=p/Ids7iJ/P4qpO7RCzP9/JpwQD2AHXNA87vte2+uDC8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=X/NOdODn0qU46OnocHv7K6UHToCzRKA31cP5ex8opY8BcvmC3AUcSZPJV1FLKEzGrBtUrKs6OyFciCPw/qGS4yzlXDeQNjxeX0/I3Z/K+0kNQopWc+9FZj2zXSfvS/wJR1jYW4neHqfPWO8nspszn28NOIDMPcXScx1kLrmdIYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sA7vnbgy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 44EA4C32786;
-	Tue, 28 May 2024 00:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716854430;
-	bh=p/Ids7iJ/P4qpO7RCzP9/JpwQD2AHXNA87vte2+uDC8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sA7vnbgy08cZWMj66YCXZdf1IwytxqVcNfT4j+rInX7njWEfHykrD9/wo8s7rQCFs
-	 7nXE79dOdELRPVHCDGf+tFttW1JQZaJdC2j5tL1rZdx9OW9FfA4u8S2EuNFOEatGrU
-	 kOfL0ivF7VZOWZq2zOLXbAI4EgGoM8MMgA2jDnkOJm6xULIjFJQtzCnSXO3A/Zgqb4
-	 oZsbQ+LQwkrWNatyexllhAJpGsq2RgNodAAFvd7jXp9LzsYwoX47s+6/jpras8woSz
-	 6VH9hfOf1H4fRHsn8pfT+tbqDcC2TYymD43lr1JV6AyQN0JQ2OCemw0Id/ZIb37mf3
-	 6mq+Bj+funsBA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 31BB7CF21F8;
-	Tue, 28 May 2024 00:00:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716854802; c=relaxed/simple;
+	bh=DJqBCnaIiLZ6TV+q82PwY+BZfCuhkw0yr7KZ9Px9Pso=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sUR0q1TkSj2+Bx3U8CfgsOh7AmoBfjgiUiXcOxu7re0id2vNQ4JVNj0HMJ59YalsRH9mRDFHQ3NBOVsbTnr+/0E9kOI37cVxYWfqP6YVb3pTvGuErrLdxm39KGz63BtZ9FpBbQV3tT3c4leVUBsCWOS98D/UjBrU+LphCW0imug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=pRAqlqMc; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=jOmEJNz30Q1WtP6buYZRM03BCS5my7pudHORUvDAbJo=; b=pRAqlqMctoBG9Grh
+	Ld7s9D0Uyu0ecq96p6qFaM1SPTELgCdxLUl+6Tm9bZk5w5b5hP30KB69acAYppqHdriBX8EHqXzCN
+	Flsbz22570iKW81bzmFQTr1h4YWVYwpYEQsga2E5P4RN7C2HhV4/kmxu0Y/J3+6U7nkA6CokfW+eL
+	d5yafxLqZVWbWJV0A3s5F5ueajRIID5V6QlUU/3oJ5/twJvPqo3zaI3QkPkTyPuXvsEu3dqeRDCNt
+	hJCI6moymwMaid2jnji864tNdUIEdRrCrpakDMNL1f3PLYjUw70JXzdTRYq2qpisipOoav6dUObPL
+	Pm2f75+0KajnrIrS7Q==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sBkMO-002pjT-0j;
+	Tue, 28 May 2024 00:06:36 +0000
+From: linux@treblig.org
+To: linus.walleij@linaro.org,
+	mazziesaccount@gmail.com,
+	sre@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH 0/2] power: dead struct removal
+Date: Tue, 28 May 2024 01:06:32 +0100
+Message-ID: <20240528000634.196707-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,44 +60,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] dt-bindings: net: pse-pd: microchip,pd692x0: Fix missing
- "additionalProperties" constraints
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171685443020.27081.631455049098356051.git-patchwork-notify@kernel.org>
-Date: Tue, 28 May 2024 00:00:30 +0000
-References: <20240523171732.2836880-1-robh@kernel.org>
-In-Reply-To: <20240523171732.2836880-1-robh@kernel.org>
-To: Rob Herring (Arm) <robh@kernel.org>
-Cc: o.rempel@pengutronix.de, kory.maincent@bootlin.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, andrew@lunn.ch, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+A couple of dead struct removals in drivers/power
 
-On Thu, 23 May 2024 12:17:31 -0500 you wrote:
-> The child nodes are missing "additionalProperties" constraints which
-> means any undocumented properties or child nodes are allowed. Add the
-> constraints, and fix the fallout of wrong manager node regex and
-> missing properties.
-> 
-> Fixes: 9c1de033afad ("dt-bindings: net: pse-pd: Add bindings for PD692x0 PSE controller")
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> 
-> [...]
+Build tested.
 
-Here is the summary with links:
-  - [net] dt-bindings: net: pse-pd: microchip,pd692x0: Fix missing "additionalProperties" constraints
-    https://git.kernel.org/netdev/net/c/0fe53c0ab018
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-You are awesome, thank you!
+Dr. David Alan Gilbert (2):
+  power: supply: bd99954: remove unused struct 'battery_data'
+  power: supply: ab8500: remove unused struct 'inst_curr_result_list'
+
+ drivers/power/supply/ab8500_fg.c       | 5 -----
+ drivers/power/supply/bd99954-charger.c | 7 -------
+ 2 files changed, 12 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.45.1
 
 
