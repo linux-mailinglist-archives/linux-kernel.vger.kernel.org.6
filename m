@@ -1,162 +1,182 @@
-Return-Path: <linux-kernel+bounces-192298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1E28D1B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:28:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E9E8D1B3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A561B2481B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B999E1F2119B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC12D16D4FE;
-	Tue, 28 May 2024 12:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF2D16EBF3;
+	Tue, 28 May 2024 12:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ya9o9XQV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he62I3Ms"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8599316D4EA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3F716D4C8;
+	Tue, 28 May 2024 12:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716899202; cv=none; b=IR+I/LDpgaLjPT8fzA4oTQiGhdI5T+dhTNOb8aBKW0J9RJ3mqtbKwSZtJuJ/f4dO0RXmYKvSu64NNYtCv469NRnJoASiSTIa2BoCzqZgasrazLd2NTWSav5gLMgK4its43IwPOILgXgA7+ESzanRhjgnV69G/1ZkwXmUXdRiwFQ=
+	t=1716899177; cv=none; b=TeYJ4ZfZU94rdUKQPMYHSxBTqkdIxBwpFrQXGOdtgQH+hnv8Mcn0M1/+LjJIA9HT1V1Lv/kObohWoVApf6ef0B2hVJGBEB/8rc7K7ZzcaT1w/HDqm9iMqja+R+BPGwCljIgbSqe9F+rdl01eC+0lYsw6gQP2v3KmsvRwcM3TO2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716899202; c=relaxed/simple;
-	bh=q7jyQ90CDbKjDFVOMbX7rUGfXAM/w2kLEYKvfcuzvWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ATTfOQ7l9rSqM+XQToBun9wJH3F7d7XgZDLDECi1Wxq9w2gJHZTuVcXvSNW/C38qKPjNxvjKB8l9gb3wwG2VjwQxP1AMsWgu5nzUxeKKY/ipqvFRGl7ksdkYMmQ1FJ1vHF+mlRaTO0uDRfSa+Wbu3hJeF9fTxDg3vwqzjC4koAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ya9o9XQV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716899198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZXftqT8nCmYhEAaMlOtfkkpZWNhGkvnCDmr6/EFeHBo=;
-	b=Ya9o9XQVVwaqHYwBrJHERGJWiYCOwpkFlv1HakeJzrMHptEDv7xRzfdWZ5W2jTb1PX2qdp
-	hz1jqszGK5HFx1uDeKtbK8NcbZadBt85JMqtFiNtLMXfCb3r5jZSoSPcRSud3xiB5cMRyJ
-	WXbstKKMnhnxIG5kJIN8kB1J/WyJL8c=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-O__MSQOFMlChS1wyBCkRaQ-1; Tue, 28 May 2024 08:26:36 -0400
-X-MC-Unique: O__MSQOFMlChS1wyBCkRaQ-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2bf5bb47573so697693a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:26:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716899196; x=1717503996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZXftqT8nCmYhEAaMlOtfkkpZWNhGkvnCDmr6/EFeHBo=;
-        b=TMW9mCp+djdSRtv3xRIW5CBBhIJO/52qqGUYE/8YBGgo5sX5pyMCMxneYLTxFenR+m
-         rBnaxkkfvwocoHWlPkVzRA3AV2VUboo5LiDeQdd2DZyU/fXGSvDxQAnmF+ix4lVOiv68
-         mIoOrrjrRhHKDVhWNzpQnfPZtx3ABYVGdYhC5MAn15MPFGRkuoYl7bNF7blVKempcI8G
-         zSkqWzP6d3oJZ4LDZmXvyQfqMpozm5jgwVHzA1rRmDxIY7ur/eQNdd8WKt5Jb6rfK2nJ
-         CLfpA95nEPd1TvVuCiPk85GyZtTZrRmRMAtzoioS841hGyMyLQ3WDnOuuuTnxyw77tg/
-         /sgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvbdGwrE7o6SVhQsmEV476vcSZvFlo5r0mwSW7cyy9CTYUkVRON7KKkrweG69o2akdmI5kLJ6rcEOfd+Z3CINnSpBY8bMwKtF/5Vky
-X-Gm-Message-State: AOJu0YweC3xrfKhNoiNOdJ1Umq2XrVIt9wiy74MIgS2uxtH7Q+WGTWaa
-	K6UHmn2YQLLgdA8VrdEHYbw91kE1Z7QYIxPFaUN4q9EEj4tb4usw6k85428zwYXxJJ6u0LA2C9Q
-	zLTeU/D7ljOOTkFUB1k7D0+qXXR5+qNkHzBfbRb3yIU4rzsIneauVfwPsWzNYbq8N4GXG4ngLRi
-	fKxPba5gCmfybwIXlkAQvIkoQCO620JWkxK2MT
-X-Received: by 2002:a17:90b:120e:b0:2bd:ebd5:8bf5 with SMTP id 98e67ed59e1d1-2bf5f207c7cmr9892306a91.32.1716899195779;
-        Tue, 28 May 2024 05:26:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnILb8oyVRwey22n3VxpJpZdj/JuBx4Cip4MEcNZcih+aIp+8+qLH1y0azOTTP7yl0A47rV3aFPZjtYcwbU/c=
-X-Received: by 2002:a17:90b:120e:b0:2bd:ebd5:8bf5 with SMTP id
- 98e67ed59e1d1-2bf5f207c7cmr9892286a91.32.1716899195378; Tue, 28 May 2024
- 05:26:35 -0700 (PDT)
+	s=arc-20240116; t=1716899177; c=relaxed/simple;
+	bh=pFz/z+f/rVhs3WRovPmI3LChJp6uQxijM+hhiocDzeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B3DKz6GITLeME6ZbHhSJh9qpvVm2XCZXb8N7ukGxhw0hW5oggb3wfJz9S6qaz/Arqn3P5mPkpuJFv1QeeCTy2Nz9tV4VYI1jup0CV87EMr0vLpJoYUj165U560P7mWF1v1u4GaULHcFkQfvm6eSCbtp5KNcv9Ipe8eJeti0Farg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he62I3Ms; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD362C3277B;
+	Tue, 28 May 2024 12:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716899177;
+	bh=pFz/z+f/rVhs3WRovPmI3LChJp6uQxijM+hhiocDzeQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=he62I3MsHJZldqPro55Y1qUEP6nTT6IFXWzHd3uyT7RZ2essiGre2cEg6RcIOHGMQ
+	 +uVjnc+x1awPcHUGRp579KTV6lE5wuhUH8XmuQ3N8vvRxYt7dojtEjnQzMk4mNwHrZ
+	 BZJ+4hm+0boqVutAzAgaD0ZJDokErkwRPb0Sc4PisqmfIN15iN7lRkZZ2kuzqzOFh5
+	 afYqzUE5D1F0PD9EjlgzOYQzMulMPyPkBtpJqeflCM1Qtn9gK61rDsFiM1kW9Ecjde
+	 rgq/869bO8n6ZwzV6fakfUJVK2t2scsSxbcubB1/qEVzXxkur7y5GglFUfHr24qvj+
+	 nvJTGiSZK9BZQ==
+Message-ID: <a6fe1fbe-681d-429b-99cc-a5f07af1cd15@kernel.org>
+Date: Tue, 28 May 2024 15:26:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528090244.6746-1-ecurtin@redhat.com> <CAJfpegvoao1jd7HhoPEeWCdS8jWEXhKTENbwvLdo=aMiNaLKQQ@mail.gmail.com>
- <CAOgh=FyHFE7qjfYq4BqGc20SYJ5FebhN2iYpJSsYYatO1TkqBw@mail.gmail.com>
- <CAJfpegu+z2Nxvk2H9vfZ3nfzEEixUG4kEthVGHWUYw0wX5bgMg@mail.gmail.com> <CAL7ro1Hm7EOxKUv9U5vEMbe2Ui2oaCdM0b2Xbm0wbdZ52+JV2w@mail.gmail.com>
-In-Reply-To: <CAL7ro1Hm7EOxKUv9U5vEMbe2Ui2oaCdM0b2Xbm0wbdZ52+JV2w@mail.gmail.com>
-From: Eric Curtin <ecurtin@redhat.com>
-Date: Tue, 28 May 2024 13:25:59 +0100
-Message-ID: <CAOgh=FygeLw0jBLvPKiaBCxKkfoQXmwf=sfvyJHs4Hyy_7wDSw@mail.gmail.com>
-Subject: Re: [PATCH] ovl: change error message to info for empty lowerdir
-To: Alexander Larsson <alexl@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	"open list:OVERLAY FILESYSTEM" <linux-unionfs@vger.kernel.org>, Wei Wang <weiwang@redhat.com>, 
-	Amir Goldstein <amir73il@gmail.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/7] arm64: dts: ti: k3-j722s: Add support for PCIe0
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, nm@ti.com, vigneshr@ti.com,
+ afd@ti.com, kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, danishanwar@ti.com,
+ srk@ti.com
+References: <20240524090514.152727-1-s-vadapalli@ti.com>
+ <20240524090514.152727-8-s-vadapalli@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240524090514.152727-8-s-vadapalli@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 28 May 2024 at 13:23, Alexander Larsson <alexl@redhat.com> wrote:
->
->
->
-> On Tue, May 28, 2024 at 1:34=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
-> wrote:
->>
->> On Tue, 28 May 2024 at 12:55, Eric Curtin <ecurtin@redhat.com> wrote:
->> >
->> > On Tue, 28 May 2024 at 11:34, Miklos Szeredi <miklos@szeredi.hu> wrote=
-:
->> > >
->> > > On Tue, 28 May 2024 at 11:03, Eric Curtin <ecurtin@redhat.com> wrote=
-:
->> > > >
->> > > > In some deployments, an empty lowerdir is not considered an error.
->> > >
->> > > I don't think this can be triggered in upstream kernel and can be
->> > > removed completely.
->> >
->> > True... Just switched to Fedora Rawhide and instead we just see this o=
-ne:
->> >
->> > pr_err("cannot append lower layer");
->> >
->> > >
->> > > Or do you have a reproducer?
->> >
->> > Run one of these vms:
->> >
->> > https://github.com/osbuild/bootc-image-builder
->>
->> Apparently it is using the legacy lowerdir append mode
->> "lowerdir=3D:foo".  This works only on 6.5.
->>
->> In 6.6 and later the same can be achieved with "lowerdir+=3Dfoo".
->>
->> It's strange that there are not side effects other then the error messag=
-e.
->
->
-> The code tries to use the new mode, but then falls back on ENOSYS:
->
-> https://github.com/containers/composefs/blob/main/libcomposefs/lcfs-mount=
-c#L431
->
-> So, I guess with a more recent kernel it will not print the warning.
->
-> --
-> =3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=
-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
->  Alexander Larsson                                Red Hat, Inc
->        alexl@redhat.com         alexander.larsson@gmail.com
 
-I realized I never posted the version of the kernel producing this
-error message:
 
-pr_err("cannot append lower layer");
+On 24/05/2024 12:05, Siddharth Vadapalli wrote:
+> The PCIe0 instance of PCIe on TI's J722S SoC is a Gen3 single lane PCIe
+> controller. Add the device-tree nodes for it and enable it in Root Complex
+> mode of operation using Lane 0 of the Serdes1 instance of Serdes.
+> 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> Current patch is v1. No changelog.
+> 
+>  arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 17 +++++++++++
+>  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 37 +++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> index 16c6ab8ee07e..d2d7de5cfe27 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> @@ -416,6 +416,16 @@ serdes0_usb_link: phy@0 {
+>  	};
+>  };
+>  
+> +&serdes1 {
+> +	serdes1_pcie_link: phy@0 {
+> +		reg = <0>;
+> +		cdns,num-lanes = <1>;
+> +		#phy-cells = <0>;
+> +		cdns,phy-type = <PHY_TYPE_PCIE>;
+> +		resets = <&serdes_wiz1 1>;
+> +	};
+> +};
+> +
+>  &usbss0 {
+>  	ti,vbus-divider;
+>  	status = "okay";
+> @@ -439,3 +449,10 @@ &usb1 {
+>  	phys = <&serdes0_usb_link>;
+>  	phy-names = "cdns3,usb3-phy";
+>  };
+> +
+> +&pcie0_rc {
+> +	status = "okay";
+> +	reset-gpios = <&exp1 18 GPIO_ACTIVE_HIGH>;
+> +	phys = <&serdes1_pcie_link>;
+> +	phy-names = "pcie-phy";
+> +};
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> index 19a7e8413ad2..0b32893eb75e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> @@ -4,6 +4,7 @@
+>   * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>   */
+>  
+> +#include <dt-bindings/phy/phy-cadence.h>
+>  #include <dt-bindings/phy/phy-ti.h>
+>  
+>  /*
+> @@ -96,6 +97,35 @@ serdes1: serdes@f010000 {
+>  		};
+>  	};
+>  
+> +	pcie0_rc: pcie@f102000 {
 
-So just for clarity in general, that was this one:
+Please split PCIe node addition in  to separate patch. hopefully you can squash it with patches that
+add USB, SERDES0 and SERDES1 to k3-j722s-main.dtsi.
 
-Linux fedora 6.9.0-64.fc41.x86_64 #1 SMP PREEMPT_DYNAMIC Mon May 13
-11:58:46 UTC 2024 x86_64 GNU/Linux
 
-Is mise le meas/Regards,
+> +		compatible = "ti,j722s-pcie-host", "ti,j721e-pcie-host";
+> +		reg = <0x00 0x0f102000 0x00 0x1000>,
+> +		      <0x00 0x0f100000 0x00 0x400>,
+> +		      <0x00 0x0d000000 0x00 0x00800000>,
+> +		      <0x00 0x68000000 0x00 0x00001000>;
+> +		reg-names = "intd_cfg", "user_cfg", "reg", "cfg";
+> +		ranges = <0x01000000 0x00 0x68001000  0x00 0x68001000  0x00 0x0010000>,
+> +			 <0x02000000 0x00 0x68011000  0x00 0x68011000  0x00 0x7fef000>;
+> +		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
+> +		interrupt-names = "link_state";
+> +		interrupts = <GIC_SPI 99 IRQ_TYPE_EDGE_RISING>;
+> +		device_type = "pci";
+> +		max-link-speed = <3>;
+> +		num-lanes = <1>;
+> +		power-domains = <&k3_pds 259 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 259 0>, <&serdes1 CDNS_TORRENT_REFCLK_DRIVER>;
+> +		clock-names = "fck", "pcie_refclk";
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		bus-range = <0x0 0xff>;
+> +		vendor-id = <0x104c>;
+> +		device-id = <0xb010>;
+> +		cdns,no-bar-match-nbits = <64>;
+> +		ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
+> +		msi-map = <0x0 &gic_its 0x0 0x10000>;
+> +		status = "disabled";
+> +	};
+> +
+>  	usbss1: usb@f920000 {
+>  		compatible = "ti,j721e-usb";
+>  		reg = <0x00 0x0f920000 0x00 0x100>;
+> @@ -138,3 +168,10 @@ serdes_ln_ctrl: mux-controller@4080 {
+>  				<0x10 0x3>; /* SERDES1 lane0 select */
+>  	};
+>  };
+> +
+> +&wkup_conf {
+> +	pcie0_ctrl: pcie0-ctrl@4070 {
+> +		compatible = "ti,j784s4-pcie-ctrl", "syscon";
+> +		reg = <0x4070 0x4>;
+> +	};
+> +};
 
-Eric Curtin
-
+-- 
+cheers,
+-roger
 
