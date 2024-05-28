@@ -1,134 +1,166 @@
-Return-Path: <linux-kernel+bounces-192036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB748D1790
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A368D1799
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB9C1F22A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1751F230D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF6C16ABCC;
-	Tue, 28 May 2024 09:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4509E16ABF8;
+	Tue, 28 May 2024 09:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhvQPAU5"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8W/XxLB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA0155A4F;
-	Tue, 28 May 2024 09:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E53157E61;
+	Tue, 28 May 2024 09:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890021; cv=none; b=KO05OR4DxBPJ9bOYY4BMgUXZgBc3OlNY5zm9NC7M73LY0AJLPgOoYRFoUSWXHIOm3p0zIwFBoPB9cfHyWg4h6tNXlBIWfoduaKKI8joLuiACIOGeZLt9UlG96S0fe+Jfh1LVwp+3iYxb81mDsFt9DdnNtXxn9e8ebrREPiiH6WE=
+	t=1716890083; cv=none; b=Ty/4t54QUciC8eksyMA5bd2SuPSopF3WiOMwj6kaEBUefy0KJkvr90+t1ALj03lN8dwHADceewLtz8B8ET3cvlqhM/RYkxkCAFkjb3MdbraN7j83gn2Y9vLwKTgECHwp1NYhBfPKkiPJiikmHz49yotVMzzAXQw3+3xB7uoLwT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890021; c=relaxed/simple;
-	bh=DwfIAvsMEGgL3IsgcE5uTNC+iW2pyzp8jO+8/qVFFIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TGV/xiPAChJ6Ran5P76sAwLjfZ3284b1KMzFYDkYKFoFzk6htGqu2MzvdsVw8sZevW8i67M6IVRhWR10hqjDBCY+vpXx+SIbMeOtM9J/7DwPGsX7g8a6SNRBQUJvtDKq5w2RxBmS9id7nN8yL8t8RWs4QIUcHLL9O4WOi7nrab4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhvQPAU5; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2bdf439c664so135062a91.3;
-        Tue, 28 May 2024 02:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716890020; x=1717494820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e+CCht/uzDQdeE2w0O397gKXPjOgO9WVTzuCP3Dzrjg=;
-        b=JhvQPAU5FXyR85iBSNtkrpU/lo8Nfm3lqm4JOH4796EZw8Pt0SvzqXl0zufjtm6uDP
-         4bep6iIUyOvlpchLXb7BDtl7ofxlxZfF9hG1I1v7U80dLxte5f8emWaVAG6oG6MEWb7i
-         Mlp3DfYK7JVqBaF9QTHrCYZolgHEopNdrxIY3scev0wLic3yTCuHkIZZuhXyQOzUXzdg
-         zwVsAM2uXppMQ0/QIeSAIxmudXB4RPLN4en9rtjQjsOsG58pmSOqAX3Hq2YDUjF07jFe
-         zHNlHHUVhx+140bfQQChaSpocYt/FiZlAk6k6Ibt5I+2CUgkTWpnbmDamBACVzOi1wLC
-         5pzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716890020; x=1717494820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e+CCht/uzDQdeE2w0O397gKXPjOgO9WVTzuCP3Dzrjg=;
-        b=V70WMS4ttYbC/6wmfYUd8Q6BWnaiYmD+pdVtns0F5RDEjhiL96jWHBa+yuHPWjayrm
-         9D/x+21bWzaLrEte2/KsWuNsJUThwBaLzIIogSLREceRUDA0DQ0aqeIVgvyuMzbOXJKO
-         BrHdlSJckitjpwaeCoHba7+UlxIrF6TzPJJ5gH6eZ2tMU4Hp8xJzKn2vlWUFGdVOCNe2
-         FC9/npE0p9dhFuMuB3M+M9BjczuzlFoYYDVEmX3nBEtS3AOgJE7T9qN6+44JmyDwVjrX
-         oBs+CuH+S+savg/hFnjLQ6L3gO7wCfiHft7XAAP46Y4oaIOZZmUzhhhK6rnDCez7swEK
-         Ugyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAxRVIb/4GNEoS4P71gle34B/SGfq0KG6iQGAeFi4LKQM1sA0C8OkQfVqszsl7LhbYfJ3h7TvN476yL32mvcb2s2wDH8F71a0kEYAIuZuIjd76FmvQZfE5ifllHaJoOeHtuX53pbz/pIhN0Fm+ec1KaFRS9jERzhQfn8wEaTjt
-X-Gm-Message-State: AOJu0Yy7gkxExiyGHpBKdJ7YPKT1+KTaR8iwyR65keOmnXimmMh9bpe8
-	Bowi8uWWPEKfhzx4Eisep22ankZDmDF6Jmcfq5yIHIR/acYYP6L6TLx/M+3HmN9vUFNSalbXX61
-	ePmDvKUg4Ow44tgKWtT/pdG0H+eM=
-X-Google-Smtp-Source: AGHT+IHcgkhWTP7zQpBfwy/dk/Ap1StaEOdZbXvZcs6NZFmo8RT5MAGq+ZerxzKxqaHRUdfdyOHLY45RAzsh7bwMmpo=
-X-Received: by 2002:a17:90b:1c85:b0:2bf:eddc:590b with SMTP id
- 98e67ed59e1d1-2bfedeb9d57mr3176120a91.1.1716890019935; Tue, 28 May 2024
- 02:53:39 -0700 (PDT)
+	s=arc-20240116; t=1716890083; c=relaxed/simple;
+	bh=UoqEy8pe0oo6Q6KLGXA6s4y3pv5XRjR1eEUiP0TzPYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gDkgQ+kdEKzPqbJeknaqtvme2W0+Tucp0tE24aKBq2jpLu4VNM7xBd7PZROyxRqO5aX8eKvdCzdbZBQ4SaOOpKYE2UxMUwtwgaZxRHM4eleZMU0vaHYwhe/bk2FOJN71X+oA1hN2er18zy3YUjFs1G3CLYKjLzpF5bFEkmzYzqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8W/XxLB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1F5C32782;
+	Tue, 28 May 2024 09:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716890083;
+	bh=UoqEy8pe0oo6Q6KLGXA6s4y3pv5XRjR1eEUiP0TzPYg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P8W/XxLBNi4IcCSCy0bmbc+Yvf1q2uC+2oqptIgkXrnrcwgqFvc1xRMe4U0/ksgd7
+	 dkHSXB2n8Op0lDnHD8Mb31OW/KMRIw12HHPEIYOnECPF3tByo9rfcQj9nUjh7p3JDe
+	 4f4iI2MF4rNisJWRGntg+URtETUlcA/FIJqERgjLTJN5FBfaftgxctUI61V5wm0Bq8
+	 aP1YA6eB0dV6I9wu3NoGuewBnjZps65c6T0hJ9B07w1IynPY5ags4cfMsOP9uYV4IZ
+	 byIrItxkQt0m0JiYDmVmA7X6TVVVqouROYS4rrFDXK2vSKFjC12JDkK9EPRSSQcVcV
+	 zqz4sFaMBx46A==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tpm: Rename TPM2_OA_TMPL to TPM2_OA_NULL_KEY and make it local
+Date: Tue, 28 May 2024 12:54:33 +0300
+Message-ID: <20240528095438.1857-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528033136.14102-1-ki.chiang65@gmail.com> <20240528033136.14102-2-ki.chiang65@gmail.com>
- <40d075d0-7075-6ece-ffe3-797d7b49db4a@gmail.com>
-In-Reply-To: <40d075d0-7075-6ece-ffe3-797d7b49db4a@gmail.com>
-From: =?UTF-8?B?6JSj5YWJ55uK?= <ki.chiang65@gmail.com>
-Date: Tue, 28 May 2024 17:53:28 +0800
-Message-ID: <CAHN5xi00mi7T2M9Bj+r9b1gpw2YX5bfXbUzj5ocTSFLBQjpfuw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] xhci: Apply reset resume quirk to Etron EJ188 xHCI host
-To: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Sergey,
+Rename and document TPM2_OA_TMPL, as originally requested in the patch
+set review, but left unaddressed without any appropriate reasoning. The
+new name is TPM2_OA_NULL_KEY, has a documentation and is local only to
+tpm2-sessions.c.
 
-Sergei Shtylyov <sergei.shtylyov@gmail.com> =E6=96=BC 2024=E5=B9=B45=E6=9C=
-=8828=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=884:36=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> On 5/28/24 6:31 AM, Kuangyi Chiang wrote:
->
-> > As described in commit c877b3b2ad5c ("xhci: Add reset on resume quirk f=
-or
-> > asrock p67 host"), EJ188 have the same issue as EJ168, where completely
-> > dies on resume. So apply XHCI_RESET_ON_RESUME quirk to EJ188 as well.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Porting to latest release
-> >
-> >  drivers/usb/host/xhci-pci.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> > index c040d816e626..b47d57d80b96 100644
-> > --- a/drivers/usb/host/xhci-pci.c
-> > +++ b/drivers/usb/host/xhci-pci.c
-> [...]
-> > @@ -395,6 +396,10 @@ static void xhci_pci_quirks(struct device *dev, st=
-ruct xhci_hcd *xhci)
-> >               xhci->quirks |=3D XHCI_RESET_ON_RESUME;
-> >               xhci->quirks |=3D XHCI_BROKEN_STREAMS;
-> >       }
-> > +     if (pdev->vendor =3D=3D PCI_VENDOR_ID_ETRON &&
-> > +                     pdev->device =3D=3D PCI_DEVICE_ID_EJ188) {
-> > +             xhci->quirks |=3D XHCI_RESET_ON_RESUME;
-> > +     }
->
->    You don't need {} around a single statement, according to CodingStyle.
->
-> [...]
->
-> MBR, Sergey
+Link: https://lore.kernel.org/linux-integrity/ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com/
+Link: https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVICYHL@suppilovahvero/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2:
+- linux/tpm.h is not a place for AES_* constants. Move them also to
+  drivers/char/tpm/tpm2-sessions.c.
+- Remove the comment related to TPM2_OA_TMPL as "key tcg documents"
+  is not a legit xerf, and thus only adds obfuscation.
+---
+ drivers/char/tpm/tpm2-sessions.c | 21 +++++++++++++++++++--
+ include/linux/tpm.h              | 15 ---------------
+ 2 files changed, 19 insertions(+), 17 deletions(-)
 
-Got it, I'll modify it and resend patches.
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index ea8860661876..907ac9956a78 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -80,6 +80,9 @@
+ /* maximum number of names the TPM must remember for authorization */
+ #define AUTH_MAX_NAMES	3
+ 
++#define AES_KEY_BYTES	AES_KEYSIZE_128
++#define AES_KEY_BITS	(AES_KEY_BYTES*8)
++
+ static int tpm2_create_primary(struct tpm_chip *chip, u32 hierarchy,
+ 			       u32 *handle, u8 *name);
+ 
+@@ -954,6 +957,20 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+ }
+ EXPORT_SYMBOL(tpm2_start_auth_session);
+ 
++/*
++ * A mask containing the object attributes for the kernel held null primary key
++ * used in HMAC encryption. For more information on specific attributes look up
++ * to "8.3 TPMA_OBJECT (Object Attributes)".
++ */
++#define TPM2_OA_NULL_KEY ( \
++	TPM2_OA_NO_DA | \
++	TPM2_OA_FIXED_TPM | \
++	TPM2_OA_FIXED_PARENT | \
++	TPM2_OA_SENSITIVE_DATA_ORIGIN |	\
++	TPM2_OA_USER_WITH_AUTH | \
++	TPM2_OA_DECRYPT | \
++	TPM2_OA_RESTRICTED)
++
+ /**
+  * tpm2_parse_create_primary() - parse the data returned from TPM_CC_CREATE_PRIMARY
+  *
+@@ -1018,7 +1035,7 @@ static int tpm2_parse_create_primary(struct tpm_chip *chip, struct tpm_buf *buf,
+ 	val = tpm_buf_read_u32(buf, &offset_t);
+ 
+ 	/* object properties */
+-	if (val != TPM2_OA_TMPL)
++	if (val != TPM2_OA_NULL_KEY)
+ 		return -EINVAL;
+ 
+ 	/* auth policy (empty) */
+@@ -1178,7 +1195,7 @@ static int tpm2_create_primary(struct tpm_chip *chip, u32 hierarchy,
+ 	tpm_buf_append_u16(&template, TPM_ALG_SHA256);
+ 
+ 	/* object properties */
+-	tpm_buf_append_u32(&template, TPM2_OA_TMPL);
++	tpm_buf_append_u32(&template, TPM2_OA_NULL_KEY);
+ 
+ 	/* sauth policy (empty) */
+ 	tpm_buf_append_u16(&template, 0);
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index b3217200df28..21a67dc9efe8 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -394,21 +394,6 @@ enum tpm2_object_attributes {
+ 	TPM2_OA_SIGN			= BIT(18),
+ };
+ 
+-/*
+- * definitions for the canonical template.  These are mandated
+- * by the TCG key template documents
+- */
+-
+-#define AES_KEY_BYTES	AES_KEYSIZE_128
+-#define AES_KEY_BITS	(AES_KEY_BYTES*8)
+-#define TPM2_OA_TMPL	(TPM2_OA_NO_DA |			\
+-			 TPM2_OA_FIXED_TPM |			\
+-			 TPM2_OA_FIXED_PARENT |			\
+-			 TPM2_OA_SENSITIVE_DATA_ORIGIN |	\
+-			 TPM2_OA_USER_WITH_AUTH |		\
+-			 TPM2_OA_DECRYPT |			\
+-			 TPM2_OA_RESTRICTED)
+-
+ enum tpm2_session_attributes {
+ 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+ 	TPM2_SA_AUDIT_EXCLUSIVE		= BIT(1),
+-- 
+2.45.1
 
-Thanks,
-Kuangyi Chiang
 
