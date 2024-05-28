@@ -1,113 +1,154 @@
-Return-Path: <linux-kernel+bounces-192200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD73B8D19E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:42:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862308D19EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98F1B22390
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:42:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7054B26857
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4954616C84C;
-	Tue, 28 May 2024 11:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF6116D300;
+	Tue, 28 May 2024 11:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCY/qlw7"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KfyW62/P"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCB113CABD;
-	Tue, 28 May 2024 11:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3369916C849;
+	Tue, 28 May 2024 11:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896553; cv=none; b=VZVXreWjLi54f6s+NO8rwwT5ZOvLWjC04ePGQzc/H3qjadlWM1v6WRTmhLecIxTNk+lsidZD0UwSOK9ELnq8tHNz7/eTu5EZJzbWs2N2xDkSW6ORCOvcGUdkF2AGTBUoZoi1WbCN+u+puE/vge3XCIKfI9+rxWFeJOdRxa5+PKI=
+	t=1716896635; cv=none; b=hUlC3nWk77zpTOiEEWkC5q9q/tTkw7s0glp4xX4GVpKtep/wce2CqTcvum8hXOE9+r2OovYAii608O+4YKdLVmTftqXFwZ4n7JvUhcuxcFqpKx0NO3WieeUgBo28hg/bLWSBsaYfR6SkMZiujcjjBOhrjTK1tn6aRSMuX9AHdqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896553; c=relaxed/simple;
-	bh=sGJmrEh9auOiE3A4aIx6z98vnSFWMxMsIKzLamdhd6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YGZfe3S+lgUlbFIIKVZ7qLZIiwEcUjPBFrI3UpWTyMtGyacMgWy7c1oxKHKCAJ4uk5fQBRnardtqWsbk4/WMdaLW2bM8itPE92PD8I5HIcW69x/VZv7tGTEkk+R4LnzFUI6zETTjs6YanRWnZAK/nV7ykCCtRrTTrecOHDuSyIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCY/qlw7; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f48b825d8cso4990315ad.2;
-        Tue, 28 May 2024 04:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716896551; x=1717501351; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JnEXNXS7Fuo888+4R+iNANBlrnAQM4YxC3FEnPxAUGg=;
-        b=LCY/qlw7ensCFFUOIfl6tF9w5Mguqoj8jcF3apHbHyWyCovwVa9Gjacb2cXlnUuxsA
-         f8PDTKGIDFQwWRs8hmMFdvrvy7ifnvd90rXvu7gcTtlmNmA65qAXtVzsKNTjtpLyxW01
-         yq0n6bH+561R1MR5y9n/033XxzIOhyrfLRmqkzZXtEF5iljqKbl7mqju7W+X3zk1nxas
-         ilg7ORFVcUCXjzJvxixLLVcV58UeBtFo7c8s7KjBUmWSze8fPT8YegmEM0KHnJ3ZPnoC
-         UG3InbYWYZRdAfXiNCkCXcr7dhKdNLGTucDaSAFcKCyRUwgLnX0Yxkis4sHdIiIZzXf/
-         /pcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716896551; x=1717501351;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JnEXNXS7Fuo888+4R+iNANBlrnAQM4YxC3FEnPxAUGg=;
-        b=YLyCLIvbwPudllK+K2Np7N5B9+gUQnLb8JiDAtani/V5AHu0ad58qxx7zB9BX2nn3x
-         y8oz0+ShMqPBpSu9e1Q2QGZuCHLetCRkqWwI8EiXRy00HJFFzFfxjpHcatxDXZIvA9RC
-         5AWJWk2pnRXEY5bUmAhZzFhMn5UEXgXIKNUkWd7F+FBLDjDQ5sLXMBbEbpnXQAKvpNiv
-         xp+EVR+B0CMBT2YGf8PClQmaGp0oZsuJT70u2uk+bmjokra63KwgIxWdUPSQYZ/DaSkF
-         oLjKm7IwlZ0rqAGBDAt1I4ySi0jZcrvSUkv3wsG8fFUle08TWJyvth8ra8h03a6Ag+BG
-         xZPg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1dMmma/2/Efqhm+m4GwLwYDKVVZt+SfgaCw5dCvezwdykfdCZFY/Z9uy6of1uYyiks2C5jMGJQwc4kGb2Akkq1Fgk7UhV9OiYI4/F
-X-Gm-Message-State: AOJu0Ywa7z04NgsSZagk+E8RYrcF7ml62GzdKAvwC6msa72VqPF8C6Cz
-	/Ld9y2KeJsBBJRkCWr5bb+M+sJP5II/OvVBOxjmCjyakjMBW9f3L
-X-Google-Smtp-Source: AGHT+IGO5L3Fa32QU5l+BrSfABCdODP/2O1IBTw/BZxrL/qzg2y4CjJobhzCA/43uv5Ek01jZL0Qzw==
-X-Received: by 2002:a17:903:1d0:b0:1f4:962f:633e with SMTP id d9443c01a7336-1f4962f6542mr71297945ad.12.1716896550607;
-        Tue, 28 May 2024 04:42:30 -0700 (PDT)
-Received: from [192.168.1.164] (h69-130-12-20.bendor.broadband.dynamic.tds.net. [69.130.12.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75debfsm78387435ad.14.2024.05.28.04.42.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 04:42:30 -0700 (PDT)
-Message-ID: <ffd7a57f-8cb9-4f9a-b830-d4659a4de520@gmail.com>
-Date: Tue, 28 May 2024 04:42:29 -0700
+	s=arc-20240116; t=1716896635; c=relaxed/simple;
+	bh=HT8UoLvuzaAWSnPcgEviqzEwUvabn2/pzZgk55vt0io=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hoEZAlZ1I/7+2Y8nijzcd4hkeMQJfMkCVVv0lgFLzcrRZ6YSH7nlnV3ZcOKhMyzG+gYUQ9v7PkUzhZgHjajShoStn2UNHla4G0o8cNZvjSNndE8Vbkm8IHV7umzxSUfL9Ijk+6Z3awKTT97BDVcrudDjIhC6wbmclwCfyViJwsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KfyW62/P; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SArqId030893;
+	Tue, 28 May 2024 11:43:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=0FAGocEjcBEmncpoJtA9QF
+	vm1wrW5g5AZndFgjfE1Bo=; b=KfyW62/P3/ff+E2HWt+YQmgMt7BNB8IaCMyQbA
+	S8/gOQP/3rd34hArZuxp/zvSm61rd3P/nDMHbuv8ThXWybtpHdXsL+JngOf6QZBZ
+	AoIFjBFDKVSSi9Dhkph/QfuPEbxDy13Hs6Eq6TadBiXRhAEdSYEs8O+lBwH0YJx4
+	zaIdQCCpFaOR0Khpqab0/x9LfzRAPAxsN0bfvLWGpuwb2qzZlS/CZFcvb7ks2/+j
+	QxJoXBQikZwJpL20RTRMHmNgVLDZ38xbIJhzzywZmVPlL7aln3rwghSiCApSB0ua
+	rXcEHkQ6/9EDgsSXBMFnRc2sytcZZ0jL5bY7z9FcLgCOSLng==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qdvcr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 11:43:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SBhfBb024744
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 11:43:42 GMT
+Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 28 May 2024 04:43:36 -0700
+From: Ajit Pandey <quic_ajipan@quicinc.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: [PATCH V3 0/8] clk: qcom: Add support for DISPCC, CAMCC and GPUCC on SM4450
+Date: Tue, 28 May 2024 17:12:46 +0530
+Message-ID: <20240528114254.3147988-1-quic_ajipan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ath10k_pci 0000:3a:00.0: Could not init core: -110
-To: Paul Menzel <pmenzel@molgen.mpg.de>, Kalle Valo <kvalo@kernel.org>,
- Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
-References: <0c544b16-5c0d-4687-9f96-8ff1f3269f79@molgen.mpg.de>
- <e1bc0bb8-a66e-4e03-bc22-3dc506b6fb59@quicinc.com>
- <87sey38vte.fsf@kernel.org>
- <96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de>
-Content-Language: en-US
-From: James Prestwood <prestwoj@gmail.com>
-In-Reply-To: <96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EXb4yiK3u9kYrUGqZ8ivuKDZ_CKxBLZx
+X-Proofpoint-ORIG-GUID: EXb4yiK3u9kYrUGqZ8ivuKDZ_CKxBLZx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_07,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280087
 
-Hi Paul,
+This patch series add dt-bindings, driver and device tree support for DISPCC, CAMCC
+and GPUCC on QCOM SM4450 platform and also includes a fix related to LUCID EVO PLL
+config issue in clk-alpha-pll driver which is required for correct scaling of few
+supported frequencies in graphics clock controllers on SM4450.
 
-> Thank you. I haven’t found out yet, how to reproduce this. I’ll keep 
-> an eye on it.
->
-This seems like the original bug I reported here:
+Changes in V3:
+- [PATCH 1/8]: Updated commit tags order and added Reviewed-by: tags
+- [PATCH 3/8]: Fixed reusing of pll0_config and added Reviewed-by: tags 
+- [PATCH 6/8]: Updated commit text and added Reviewed-by tags
+- [PATCH 8/8]: Updated node order for gpucc.
+- Link to v2: https://lore.kernel.org/all/20240416182005.75422-1-quic_ajipan@quicinc.com/ 
 
-https://lore.kernel.org/linux-wireless/304ce305-fbe6-420e-ac2a-d61ae5e6ca1a@gmail.com/
+Ajit Pandey (8):
+  clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
+  dt-bindings: clock: qcom: add DISPCC clocks on SM4450
+  clk: qcom: Add DISPCC driver support for SM4450
+  dt-bindings: clock: qcom: add CAMCC clocks on SM4450
+  clk: qcom: Add CAMCC driver support for SM4450
+  dt-bindings: clock: qcom: add GPUCC clocks on SM4450
+  clk: qcom: Add GPUCC driver support for SM4450
+  arm64: dts: qcom: sm4450: add camera, display and gpu clock controller
 
-Note its not specific to power save which I originally thought, but you 
-can reproduce it somewhat easily (at least I could) by simply 
-adding/removing the wlan interface in a loop. IIRC even just ifup/ifdown 
-would eventually trigger it.
+ .../bindings/clock/qcom,sm4450-camcc.yaml     |   63 +
+ .../bindings/clock/qcom,sm4450-dispcc.yaml    |   71 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml     |    2 +
+ arch/arm64/boot/dts/qcom/sm4450.dtsi          |   38 +
+ drivers/clk/qcom/Kconfig                      |   27 +
+ drivers/clk/qcom/Makefile                     |    3 +
+ drivers/clk/qcom/camcc-sm4450.c               | 1688 +++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm4450.c              |  770 ++++++++
+ drivers/clk/qcom/gpucc-sm4450.c               |  805 ++++++++
+ include/dt-bindings/clock/qcom,sm4450-camcc.h |  106 ++
+ .../dt-bindings/clock/qcom,sm4450-dispcc.h    |   51 +
+ include/dt-bindings/clock/qcom,sm4450-gpucc.h |   62 +
+ 13 files changed, 3687 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/dispcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-camcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-dispcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-gpucc.h
 
-But so far the patch Baochen submitted completely resolved the problem.
-
-Thanks,
-
-James
+-- 
+2.25.1
 
 
