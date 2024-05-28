@@ -1,147 +1,125 @@
-Return-Path: <linux-kernel+bounces-192493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC938D1DF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE8E8D1DFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E6E3B21DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:08:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E25E2B2261F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF9416F903;
-	Tue, 28 May 2024 14:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF59916F28D;
+	Tue, 28 May 2024 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IHI6j8fB"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="J54Gsd09"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0643916F830
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0C16F287;
+	Tue, 28 May 2024 14:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905268; cv=none; b=Wt8UaM028Yd6vK/8x7Af0qANjaowfW4Y1TZiD5aHwerIN70p3qGFCBjbcBS7rfJMbRWWvITHb93pZ6zYhYS9msEgVk7qCAvVqYctM7BrvFo0LhfzsdKP4aFydVsD1+uqbSaSLNrU4OkzT1+EVrsI6ldIA9S1orbyRwIfkAK3wu8=
+	t=1716905299; cv=none; b=B54j4kq4CNJ6SCu5B07eysL3ocFYD+IPQk8YZ9k658wGWSpm8+ubdgH1oJwoIHyObZtJFIBzKrXlB/TG+ju+ZKzlGO5m2Lywrbqz2PSWFkRby0qfD4z8MAjM5zmDsXL3erKx8N330bO279r/+86ZOd4VNPmofs5v3RFWBeyALtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905268; c=relaxed/simple;
-	bh=jdjdppB75uoAt13BI5M5/Jjmnh9buSmpCU+OTqJ0D1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b+9at6JuMwBQyQ0Gi0pmscCi5CrE3KUGRmNRdYsHIHg7WQNE0qPYQSmc+jUL8HJo1pXTSNYNHlzqGicS33xSXyH67I4Av3ZdXtu9/s0D9zHGB/4LUDTW0QajXmp3jeONoJCrrn8t/PbAfYoa/v/oLYPYFsHwPiXScNWX+mT4xyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IHI6j8fB; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-681ad26f277so668172a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:07:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716905266; x=1717510066; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KwJrJJBUm5Uf3A9xKcODYfkmrzU5XrykNEQneC58gf8=;
-        b=IHI6j8fBZu0S6hYIvQbK6wSIdMb5m6jpNfbQ/U7MLlW5VdcoqYeYmOsGsgdj61iY4/
-         FqoVb5r4K6p1pf4mfWV5bfr+yqV4VLCtiQ3L7iOOXl3nNh1upzQgaBceSRs5uQy8hkV+
-         k4XzfxGNfMLPTl/shOhGg5nrH3+a0ogCAJ6ab9xzNCoTe3D3D+1srupHacVLVuRWU7MK
-         WUVLnr0srG7WPh51HS6Ubjr6WAuvWue4k+VUPqJKteWoYl0Y5NHx2zRLn9HsGoGlu9Zs
-         iWJ8GYfbmzOw3uY+Vkxc05zEs6eD3uLAHG/8cx1JJKhiGv+5pbhFLDjV3hMO+Zqq9lwA
-         zePA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716905266; x=1717510066;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KwJrJJBUm5Uf3A9xKcODYfkmrzU5XrykNEQneC58gf8=;
-        b=s0y16x4caAS7XeTEiHdd7po3mCaRsM2P6xEjgXOOSRtYmUytvWOboIz7lMwf6j3ftT
-         mophEW+kDRxETKyn73cGQbpnO0RKUTwgFLI9CgvPiP+Ib7LDcZ3PVUDHynhZ00+gjHGt
-         lQ09o0UTm2eySw+ECjLemWmjuMKMu2jOEqskyWcZCa+jEXpvZNLqg1pSyaKz7dT3uHEh
-         3tRuPy0Uasq/prYQxiVHC7k19PVfPbAAcbPpLUlDGBIYycKsKeVzz4Lx3WjuUz//oSdD
-         1lLHIHtxcnzAb68Vgvnsg78i08A+7sIZHhD/5wsfh2MECZfgv90Zwh3pvr1n9UstmTb7
-         yC+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUDKKCay2AHO00XqW4FTLuS6sxznoD1TCaAT/ImjQrqMJG2jEda3rLFhLwLydHiZ8XoXJnxaxp6TuvLFuJj/SM3NVbu+r4q2mKT50kw
-X-Gm-Message-State: AOJu0Yy9FbxnAU7VRhlqhSLsCyOk3QnhsqWTZsXlgVQB9CpVkHKTwOv4
-	nwfXbhmniHwo2VyKeZbXW4HARPclYx2cpca1MuQd9lGGx9+btS7RUNtzZXL0rsooWGssq0cnBca
-	aE18PlXAkZTnuJ7KPh1DZVUkVvM6eBNkH58Rq4A==
-X-Google-Smtp-Source: AGHT+IEfwlmpC2oQXwwC97Lmjwd4sJMzx+QH6X//LGVcOb6JZk1p/eCzTzAhxtmSsjQTHOqzJmFdujAdomBQnJrwjPk=
-X-Received: by 2002:a17:90b:3641:b0:2bf:5730:1f54 with SMTP id
- 98e67ed59e1d1-2bf5e14b627mr11482907a91.15.1716905266207; Tue, 28 May 2024
- 07:07:46 -0700 (PDT)
+	s=arc-20240116; t=1716905299; c=relaxed/simple;
+	bh=kH6YiGjqeAZHMKBYiAmbjv7Lv6+d0htVBeb25bHqzbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=avtcfjkyMb9o58A44xN1+kxhD4xPwxO9wDqkyYiw/aaEPhFEKdo1HdKJLQsKlRnd3v/vSurZfl/vx4PHkTmRtsKRXlbbKPF+Wrlp8FlvPpKahpP4+qY6T9BxJ/76HoRuhm+cVpAeLRXP/ZnfZzS+yz8kGsGC19D+CWyro3o8Yyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=J54Gsd09; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VpZ9R1Qx6z6Cnk95;
+	Tue, 28 May 2024 14:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1716905278; x=1719497279; bh=dR3ZvbYbJLA8JqSMp6syi4ns
+	5+ck4oQr0inj5+NavnA=; b=J54Gsd09VOPGv6hpJCmRRt25qr85iKrjgG3itku7
+	MkGP8xjPTJudQuNLFqJT1JMHsU8/nRRl7T+v+gR/WZdE/ooloV46oTdCczd1PYjU
+	wPiT6Td9kKxgYjXw9gxIJ7oiywUY/Tdd9iXUMdXjgW8Jg3BHd4dZZiR5a/35/iCR
+	XgavrtZrjswPTxAARrsP5h+llv5vBIU8M6SO4EMsyY+t3fOuJjopWi00f28/NAlJ
+	4ewCx06Ky7FFI9iqLsHXAKKc2C5EhbXaAOd2MoXnTXVLKYeAWQhIdC1kr1m2cjyr
+	WvHFrsXHqBmEClwusPD2KBTERNjrTGi6oqa4aiXhx4oEKg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 5YpJGIeKyzj2; Tue, 28 May 2024 14:07:58 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VpZ974X95z6Cnk94;
+	Tue, 28 May 2024 14:07:55 +0000 (UTC)
+Message-ID: <95bcfe6a-f179-443a-92b6-98e512fec4fc@acm.org>
+Date: Tue, 28 May 2024 07:07:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
- <20230105145159.1089531-3-kajetan.puchalski@arm.com> <20230711175814.zfavcn7xn3ia5va4@airbuntu>
- <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com> <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
- <20230917010516.54dgcmms44wyfrvx@airbuntu> <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
- <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com>
-In-Reply-To: <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 28 May 2024 16:07:35 +0200
-Message-ID: <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org, daniel.lezcano@linaro.org, 
-	Dietmar.Eggemann@arm.com, dsmythies@telus.net, yu.chen.surf@gmail.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Qais Yousef <qyousef@layalina.io>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Hannes Reinecke <hare@suse.de>, Nitesh Shetty <nj.shetty@samsung.com>,
+ Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>
+Cc: martin.petersen@oracle.com, david@fromorbit.com,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+ <f54c770c-9a14-44d3-9949-37c4a08777e7@suse.de>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <f54c770c-9a14-44d3-9949-37c4a08777e7@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
->
-> Hi Vincent,
->
-> On 5/28/24 10:29, Vincent Guittot wrote:
-> > Hi All,
-> >
-> > I'm quite late on this thread but this patchset creates a major
-> > regression for psci cpuidle driver when using the OSI mode (OS
-> > initiated mode).  In such a case, cpuidle driver takes care only of
-> > CPUs power state and the deeper C-states ,which includes cluster and
-> > other power domains, are handled with power domain framework. In such
-> > configuration ,cpuidle has only 2 c-states : WFI and cpu off states
-> > and others states that include the clusters, are managed by genpd and
-> > its governor.
-> >
-> > This patch selects cpuidle c-state N-1 as soon as the utilization is
-> > above CPU capacity / 64 which means at most a level of 16 on the big
-> > core but can be as low as 4 on little cores. These levels are very low
-> > and the main result is that as soon as there is very little activity
-> > on a CPU, cpuidle always selects WFI states whatever the estimated
-> > sleep duration and which prevents any deeper states. Another effect is
-> > that it also keeps the tick firing every 1ms in my case.
->
-> Thanks for reporting this.
-> Could you add what regression it's causing, please?
-> Performance or higher power?
+On 5/21/24 00:01, Hannes Reinecke wrote:
+> On 5/20/24 12:20, Nitesh Shetty wrote:
+>> We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
+>> Since copy is a composite operation involving src and dst sectors/lba,
+>> each needs to be represented by a separate bio to make it compatible
+>> with device mapper.
+>> We expect caller to take a plug and send bio with destination 
+>> information,
+>> followed by bio with source information.
+>> Once the dst bio arrives we form a request and wait for source
+>> bio. Upon arrival of source bio we merge these two bio's and send
+>> corresponding request down to device driver.
+>> Merging non copy offload bio is avoided by checking for copy specific
+>> opcodes in merge function.
+>>
+> I am a bit unsure about leveraging 'merge' here. As Bart pointed out, 
+> this is arguably as mis-use of the 'merge' functionality as we don't
+> actually merge bios, but rather use the information from these bios to
+> form the actual request.
+> Wouldn't it be better to use bio_chain here, and send out the eventual
+> request from the end_io function of the bio chain?
 
-It's not a perf but rather a power regression. I don't have a power
-counter so it's difficult to give figures but I found it while running
-a unitary test below on my rb5:
-run 500us every 19457ms on medium core (uclamp_min: 600).
+Let me formulate this a bit stronger: I think this patch series abuses
+the merge functionality and also that it should use another mechanism
+for combining REQ_OP_COPY_DST and REQ_OP_COPY_SRC. See also my email
+with concerns about using the merge functionality:
+https://lore.kernel.org/linux-block/eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org/.
 
-With this use case, the idle time is more than 18ms (the 500us becomes
-1ms as we don't run at max capacity) but the tick fires every 1ms
-while the system is fully idle (all 8 cpus are idle) and as cpuidle
-selects WFI, it prevents the full cluster power down. So even if WFI
-is efficient, the power impact should be significant.
+Thanks,
 
-For a 5 sec test duration, the system doesn't spend any time in
-cluster power down state with this patch but spent 3.9 sec in cluster
-power down state without
+Bart.
 
-
-> Do you have some handy numbers, so we can see the problem size?
->
-> >
-> > IMO, we should at least increase the utilization level
->
-> Something worth to discuss, or make it configurable even.
->
-> Regards,
-> Lukasz
->
-> >
-> > Regards,
-> > Vincent
 
