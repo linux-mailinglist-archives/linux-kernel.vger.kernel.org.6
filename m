@@ -1,170 +1,296 @@
-Return-Path: <linux-kernel+bounces-192672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A608D207D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:35:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4E78D2086
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572281C234FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 084491F242C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A8D171670;
-	Tue, 28 May 2024 15:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14CC17165A;
+	Tue, 28 May 2024 15:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNXJaHrK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mTImcsC8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC97171653;
-	Tue, 28 May 2024 15:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7FB16F831;
+	Tue, 28 May 2024 15:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716910494; cv=none; b=aJ6N1DBQ3i2IT7bdiO6XbBARCkgIX0zif9mp9EClwEIvus3rhXIdp52wVYH+9BAQSX+F3W+Kmg59af0usbfVhHxlu+e/h0Ahl/tdUtwuwafjKCldAV73Uz6sVwRMb88FTnLYd+tnEo51uaRl+4vf5NoGIa5nvgFPQZREFhSePKg=
+	t=1716910533; cv=none; b=U6ujNMsgMd64og/QQNL3NPEU52FYf1wso3TyV/3WKriYjyiD1tSRWGtiacyXaRaYqlDhV/pFtRhjktemJNVB5fJQ7jQY0I5GBHiPcpp/ncSYn6XUMLaW5TWbuhx1KqbbRKHnGJ3pqQFkCsTyS+IYaTOSQXJnidKbhglOZYldQPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716910494; c=relaxed/simple;
-	bh=Y8FneghY/F4qg3k//k5iTQvpIK9AhJXd3ejvwp4sfg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RtlatW4cL68HV/6soZShJ+worYItzhEQ9Yqpu/mphn4nxAf1onWKpn2iTujNCKvDX8qjnsH1jquRSsUsnKnyCjeqdcWiDpbw36V5MAawV6F5P00JjK0+/GCswDFBUpaAt/FqIAgK7z/y+SaSR2OmuXd59BdTqqu11xtodPJaTBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNXJaHrK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 826BAC32789;
-	Tue, 28 May 2024 15:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716910493;
-	bh=Y8FneghY/F4qg3k//k5iTQvpIK9AhJXd3ejvwp4sfg8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TNXJaHrKc6uzl5of2judQay4AKFy9V0Lxi2Lse5n5azczhWHvYAdX+BEmGaywnHor
-	 2rAaTepYaQiBcJgA0u9wNAM07oJ8FbPBCqx+vWi90DmwXhCrUSw+SegF0wazGKsH8o
-	 jaG9QgJ2BxbFq6RBeIKQfJzmLRhbkQeerqUqiBtMxAfKLuei9gks0Qg0CvKD3PZpwl
-	 Cp1heThgVvCAj96K7A3OqmXhtbZONUXKYG8rV1HTXvpwoc6uiYDjTUfH1b30mkxUOY
-	 ub6jrEwj+0SEtQNLXcAQYiIX+amL/r8+wcKj1un5RH0KAErnEHEUjDbjZ7DaqDRKFu
-	 cLC0+mvMPD1/A==
-Date: Tue, 28 May 2024 16:34:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH 1/7] riscv: Implement cmpxchg32/64() using Zacas
-Message-ID: <20240528-repaint-graffiti-ec4f0e038e5a@spud>
-References: <20240528151052.313031-1-alexghiti@rivosinc.com>
- <20240528151052.313031-2-alexghiti@rivosinc.com>
+	s=arc-20240116; t=1716910533; c=relaxed/simple;
+	bh=ISzWTHgDdPN7pn8VZllpQwDMfA1a1MvvfCvh++/n8dg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Wajh3AsFIzYC00yE3FBQIUCCIjFwiuAQEp9PNZB5E/k3lNwTcDiFM6WpLurXnV+rguV6MfsGpkwyBxPxtV5Iio4B4le+1+rvcpQn6M3wuq+fKe0nzd2K7eB4r0a4+98UtTtJ9atFcbGb8qH5pjGwnxSk9PNkcHmz60CcyBazJZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mTImcsC8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SARTND001482;
+	Tue, 28 May 2024 15:35:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cPcwjG6p8MDcwmfMaotLnf03+OVSfE6ywTXTujEm7sE=; b=mTImcsC8cEPGAbcw
+	0fUHQ/aso1AtfxehfvHZmlJYvR2tHrhTz8TNDH9noYHLZvoNzLSf1e4A33gQByqj
+	ntO5fNW4rzmBhxjt9XeM+oI+viOEhX+tjIvwF9xMfnNuldfnGgreb4iXALGcy73N
+	+KPMPAKSGfVDbZQqpAUDp9OX1JTZwl5s4IgUYaYaUwHneKnHn0XOZyLJKb0Dwm3/
+	d5ohuIt+QoOhVLYBacn6fRStQpGtmNn32/zART5H2UkitQiY/cDFFCY7VB/K4k5s
+	hj3U0iWB3/sCsWpPk2s88sVxJvfaGrFuS+IxwH1Cb2bp0qc4BCnTW6mHMOQDLJ/L
+	Z8tlMw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k6h6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 15:35:06 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SFZ5Wn005500
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 15:35:05 GMT
+Received: from [10.110.47.143] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 08:35:01 -0700
+Message-ID: <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
+Date: Tue, 28 May 2024 08:35:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NeJreBi+Wntza5KK"
-Content-Disposition: inline
-In-Reply-To: <20240528151052.313031-2-alexghiti@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
+ tstamp_type for scalabilty
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Willem
+ de Bruijn" <willemdebruijn.kernel@gmail.com>,
+        Martin KaFai Lau
+	<martin.lau@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        "Daniel
+ Borkmann" <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
+CC: <kernel@quicinc.com>, Willem de Bruijn <willemb@google.com>
+References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
+ <20240509211834.3235191-2-quic_abchauha@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240509211834.3235191-2-quic_abchauha@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9D51rKtRR599XHQz8b6rU9KfPrFOeqL5
+X-Proofpoint-GUID: 9D51rKtRR599XHQz8b6rU9KfPrFOeqL5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_11,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280116
 
 
---NeJreBi+Wntza5KK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 05:10:46PM +0200, Alexandre Ghiti wrote:
-> This adds runtime support for Zacas in cmpxchg operations.
->=20
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+On 5/9/2024 2:18 PM, Abhishek Chauhan wrote:
+> mono_delivery_time was added to check if skb->tstamp has delivery
+> time in mono clock base (i.e. EDT) otherwise skb->tstamp has
+> timestamp in ingress and delivery_time at egress.
+> 
+> Renaming the bitfield from mono_delivery_time to tstamp_type is for
+> extensibilty for other timestamps such as userspace timestamp
+> (i.e. SO_TXTIME) set via sock opts.
+> 
+> As we are renaming the mono_delivery_time to tstamp_type, it makes
+> sense to start assigning tstamp_type based on enum defined
+> in this commit.
+> 
+> Earlier we used bool arg flag to check if the tstamp is mono in
+> function skb_set_delivery_time, Now the signature of the functions
+> accepts tstamp_type to distinguish between mono and real time.
+> 
+> Also skb_set_delivery_type_by_clockid is a new function which accepts
+> clockid to determine the tstamp_type.
+> 
+> In future tstamp_type:1 can be extended to support userspace timestamp
+> by increasing the bitfield.
+> 
+> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+> Reviewed-by: Willem de Bruijn <willemb@google.com>
+> Reviewed-by: Martin KaFai Lau <martin.lau@kernel.org>
 > ---
->  arch/riscv/Kconfig               | 17 +++++++++++++++++
->  arch/riscv/Makefile              | 11 +++++++++++
->  arch/riscv/include/asm/cmpxchg.h | 23 ++++++++++++++++++++---
->  3 files changed, 48 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 8a0f403432e8..b443def70139 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -579,6 +579,23 @@ config RISCV_ISA_V_PREEMPTIVE
->  	  preemption. Enabling this config will result in higher memory
->  	  consumption due to the allocation of per-task's kernel Vector context.
-> =20
-> +config TOOLCHAIN_HAS_ZACAS
-> +	bool
-> +	default y
-> +	depends on !64BIT || $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_zacas)
-> +	depends on !32BIT || $(cc-option,-mabi=3Dilp32 -march=3Drv32ima_zacas)
-> +	depends on AS_HAS_OPTION_ARCH
+> Changes since v7
+> - Added reviewed by tags and removed RFC 
+> 
+> Changes since v6
+> - Moved documentation comment from patch 2 to patch 1 (Minor)
+> - Instead of calling the wrapper api to set tstamp_type
+>   for tcp, directly call main api to set the tstamp_type
+>   as suggested by Willem
+> 
+> Changes since v5
+> - Avoided using garble function names as mentioned by
+>   Willem.
+> - Implemented a conversion function stead of duplicating 
+>   the same logic as mentioned by Willem.
+> - Fixed indentation problems and minor documentation issues
+>   which mentions tstamp_type as a whole instead of bitfield
+>   notations. (Mentioned both by Willem and Martin)
+>   
+> Changes since v4
+> - Introduce new function to directly delivery_time and
+>   another to set tstamp_type based on clockid. 
+> - Removed un-necessary comments in skbuff.h as 
+>   enums were obvious and understood.
+> 
+> Changes since v3
+> - Fixed inconsistent capitalization in skbuff.h
+> - remove reference to MONO_DELIVERY_TIME_MASK in skbuff.h
+>   and point it to skb_tstamp_type now.
+> - Explicitely setting SKB_CLOCK_MONO if valid transmit_time
+>   ip_send_unicast_reply 
+> - Keeping skb_tstamp inline with skb_clear_tstamp. 
+> - skb_set_delivery_time checks if timstamp is 0 and 
+>   sets the tstamp_type to SKB_CLOCK_REAL.
+> - Above comments are given by Willem 
+> - Found out that skbuff.h has access to uapi/linux/time.h
+>   So now instead of using  CLOCK_REAL/CLOCK_MONO 
+>   i am checking actual clockid_t directly to set tstamp_type 
+>   example:- CLOCK_REALTIME/CLOCK_MONOTONIC 
+> - Compilation error fixed in 
+>   net/ieee802154/6lowpan/reassembly.c
+> 
+> Changes since v2
+> - Minor changes to commit subject
+> 
+> Changes since v1
+> - Squashed the two commits into one as mentioned by Willem.
+> - Introduced switch in skb_set_delivery_time.
+> - Renamed and removed directionality aspects w.r.t tstamp_type 
+>   as mentioned by Willem.
+> 
+> 
+>  include/linux/skbuff.h                     | 52 ++++++++++++++++------
+>  include/net/inet_frag.h                    |  4 +-
+>  net/bridge/netfilter/nf_conntrack_bridge.c |  6 +--
+>  net/core/dev.c                             |  2 +-
+>  net/core/filter.c                          | 10 ++---
+>  net/ieee802154/6lowpan/reassembly.c        |  2 +-
+>  net/ipv4/inet_fragment.c                   |  2 +-
+>  net/ipv4/ip_fragment.c                     |  2 +-
+>  net/ipv4/ip_output.c                       |  9 ++--
+>  net/ipv4/tcp_output.c                      | 14 +++---
+>  net/ipv6/ip6_output.c                      |  6 +--
+>  net/ipv6/netfilter.c                       |  6 +--
+>  net/ipv6/netfilter/nf_conntrack_reasm.c    |  2 +-
+>  net/ipv6/reassembly.c                      |  2 +-
+>  net/ipv6/tcp_ipv6.c                        |  2 +-
+>  net/sched/act_bpf.c                        |  4 +-
+>  net/sched/cls_bpf.c                        |  4 +-
+>  17 files changed, 78 insertions(+), 51 deletions(-)
+> 
+> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+> index 1c2902eaebd3..05aec712d16d 100644
+> --- a/include/linux/skbuff.h
+> +++ b/include/linux/skbuff.h
+> @@ -706,6 +706,11 @@ typedef unsigned int sk_buff_data_t;
+>  typedef unsigned char *sk_buff_data_t;
+>  #endif
+>  
+> +enum skb_tstamp_type {
+> +	SKB_CLOCK_REALTIME,
+> +	SKB_CLOCK_MONOTONIC,
+> +};
 > +
-> +config RISCV_ISA_ZACAS
-> +	bool "Zacas extension support for atomic CAS"
-> +	depends on TOOLCHAIN_HAS_ZACAS
-> +	default y
-> +	help
-> +	  Adds support to use atomic CAS instead of LR/SC to implement kernel
-> +	  atomic cmpxchg operation.
-
-If you were a person compiling a kernel, would you be able to read this
-and realise that this is safe to enable when their system does not
-support atomic CAS? Please take a look at other how other extensions
-handle this, or the patch that I have been sending that tries to make
-things clearer:
-https://patchwork.kernel.org/project/linux-riscv/patch/20240528-varnish-sta=
-tus-9c22973093a0@spud/
-
+>  /**
+>   * DOC: Basic sk_buff geometry
+>   *
+> @@ -823,10 +828,8 @@ typedef unsigned char *sk_buff_data_t;
+>   *	@dst_pending_confirm: need to confirm neighbour
+>   *	@decrypted: Decrypted SKB
+>   *	@slow_gro: state present at GRO time, slower prepare step required
+> - *	@mono_delivery_time: When set, skb->tstamp has the
+> - *		delivery_time in mono clock base (i.e. EDT).  Otherwise, the
+> - *		skb->tstamp has the (rcv) timestamp at ingress and
+> - *		delivery_time at egress.
+> + *	@tstamp_type: When set, skb->tstamp has the
+> + *		delivery_time clock base of skb->tstamp.
+>   *	@napi_id: id of the NAPI struct this skb came from
+>   *	@sender_cpu: (aka @napi_id) source CPU in XPS
+>   *	@alloc_cpu: CPU which did the skb allocation.
+> @@ -954,7 +957,7 @@ struct sk_buff {
+>  	/* private: */
+>  	__u8			__mono_tc_offset[0];
+>  	/* public: */
+> -	__u8			mono_delivery_time:1;	/* See SKB_MONO_DELIVERY_TIME_MASK */
+> +	__u8			tstamp_type:1;	/* See skb_tstamp_type */
+>  #ifdef CONFIG_NET_XGRESS
+>  	__u8			tc_at_ingress:1;	/* See TC_AT_INGRESS_MASK */
+>  	__u8			tc_skip_classify:1;
+> @@ -4179,7 +4182,7 @@ static inline void skb_get_new_timestampns(const struct sk_buff *skb,
+>  static inline void __net_timestamp(struct sk_buff *skb)
+>  {
+>  	skb->tstamp = ktime_get_real();
+> -	skb->mono_delivery_time = 0;
+> +	skb->tstamp_type = SKB_CLOCK_REALTIME;
+>  }
+>  
+>  static inline ktime_t net_timedelta(ktime_t t)
+> @@ -4188,10 +4191,33 @@ static inline ktime_t net_timedelta(ktime_t t)
+>  }
+>  
+>  static inline void skb_set_delivery_time(struct sk_buff *skb, ktime_t kt,
+> -					 bool mono)
+> +					 u8 tstamp_type)
+>  {
+>  	skb->tstamp = kt;
+> -	skb->mono_delivery_time = kt && mono;
 > +
-> +	  If you don't know what to do here, say Y.
+> +	if (kt)
+> +		skb->tstamp_type = tstamp_type;
+> +	else
+> +		skb->tstamp_type = SKB_CLOCK_REALTIME;
+> +}
 > +
->  config TOOLCHAIN_HAS_ZBB
->  	bool
->  	default y
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index 5b3115a19852..d5b60b87998c 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -78,6 +78,17 @@ endif
->  # Check if the toolchain supports Zihintpause extension
->  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZIHINTPAUSE) :=3D $(riscv-march-y)_zi=
-hintpause
-> =20
-> +# Check if the toolchain supports Zacas
-> +ifdef CONFIG_AS_IS_LLVM
-> +# Support for experimental Zacas was merged in LLVM 17, but the removal =
-of
-> +# the "experimental" was merged in LLVM 19.
-> +KBUILD_CFLAGS +=3D -menable-experimental-extensions
-> +KBUILD_AFLAGS +=3D -menable-experimental-extensions
-> +riscv-march-y :=3D $(riscv-march-y)_zacas1p0
-> +else
-> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) :=3D $(riscv-march-y)_zacas
-> +endif
+> +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
+> +						    ktime_t kt, clockid_t clockid)
+> +{
+> +	u8 tstamp_type = SKB_CLOCK_REALTIME;
+> +
+> +	switch (clockid) {
+> +	case CLOCK_REALTIME:
+> +		break;
+> +	case CLOCK_MONOTONIC:
+> +		tstamp_type = SKB_CLOCK_MONOTONIC;
+> +		break;
+> +	default:
 
-I'm almost certain that we discussed this before for vector and it was
-decided to not enable experimental extensions (particularly as it is a
-global option), and instead require the non-experimental versions.
-This isn't even consistent with your TOOLCHAIN_HAS_ZACAS checks, that
-will only enable the option for the ratified version. I think we should
-continue to avoid enabling experimental extensions, even if that imposes
-a requirement of having a bleeding edge toolchain to actually use the
-extension.
+Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn. 
+So i think this might result in unnecessary crashes. 
 
-Thanks,
-Conor.
+Let me know what you think. 
 
---NeJreBi+Wntza5KK
-Content-Type: application/pgp-signature; name="signature.asc"
+Logs which are complaining. 
+https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlX5mAAKCRB4tDGHoIJi
-0t2PAP9Q9RDTWJECIVJQNiS2KS4k5svrPYctaW5tBkJNyH24aQD+KGIH/FYhPYH0
-hA4/1t59deBmh2eK/putul6XEIEytAA=
-=zNv0
------END PGP SIGNATURE-----
-
---NeJreBi+Wntza5KK--
+> +		WARN_ON_ONCE(1);
+> +		kt = 0;
+> +	}
+> +
+> +	skb_set_delivery_time(skb, kt, tstamp_type);
+>  }
+>  
 
