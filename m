@@ -1,202 +1,218 @@
-Return-Path: <linux-kernel+bounces-193009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02A88D258C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:13:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C188D2590
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24351C26497
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:13:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C74DC1F23C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939CC178CF2;
-	Tue, 28 May 2024 20:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A5A1791EB;
+	Tue, 28 May 2024 20:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nMofiA1b"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eoHn6TvP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E21510A3E;
-	Tue, 28 May 2024 20:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB0910A3E;
+	Tue, 28 May 2024 20:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716927224; cv=none; b=SepqxMxP82uoOdcFsOeJv0i67HV30I6occExiR85ZdNRQ3bOYVmRlLYfIAKtagU6hBzdBy0+ALWoad7jePJAUuOnjas7zYZmyeJYahXKzcUCbZJ6YbK95Q1Ckc53qDuQrRSsWIJyfnuuT2/O6ZDWSsQWariso46LIHhI7wCU9M4=
+	t=1716927280; cv=none; b=ikeRTN0bY6dumtCj8R1YlxWU1mDjLOHkGmTwIRkO6vtwGi7T4rH8FpB+ZN37bMWqB+e0gU2yisiUw3uKQek0WgI0UAzCdM6A1yx6vruHbuCWXtX/FCGBcIlC1lxYm/Yp3LTFe1xyl3SnurAkB3LVPfF6D2EVhYr5GSMCnrhQXBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716927224; c=relaxed/simple;
-	bh=5L3qsjsXrrwCrw7oASW9JBM1c2YSWZy3HEB/uxPOve8=;
+	s=arc-20240116; t=1716927280; c=relaxed/simple;
+	bh=jl4LCEptJsszgAcfFCEtcYXHjunLw9TYfjiN3KRw8R4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rUdFQ9S2SEXEjpDoRuMXAGwEBFi2rLoPufWx0osy3tyrq9X0lRGGVX6z9VmClxYUf7Yd9O3j+JYWK3wh68t39HEK9Y4Xe6Fx4uUYnz7Lh5AX0FY/Aer1r7CfhTte+CNqH0Npsos2KfIjP3p/wqThW/G8FsOzkGiiABUTF29ouGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nMofiA1b; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 117D43A2;
-	Tue, 28 May 2024 22:13:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716927217;
-	bh=5L3qsjsXrrwCrw7oASW9JBM1c2YSWZy3HEB/uxPOve8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMofiA1bIHN2lh+NOTVMAvyYjG6razaHPOVM4c165dmxqPvkwsbm1NMr6Rt+y26bO
-	 7Mh9JhFSniCHo2SuQFoGTVPUAmhSSRSOS0JGBBarh8fFFC4+UCXN5RmyUTab5Qgczh
-	 dHdHaobzg8RqTrLm1nd/N+L47gk8qMjc5KHdZxEE=
-Date: Tue, 28 May 2024 23:13:26 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Haibo Chen <haibo.chen@nxp.com>
-Subject: Re: [PATCH v2 2/4] mfd: adp5585: Add Analog Devices ADP5585 core
- support
-Message-ID: <20240528201326.GA8500@pendragon.ideasonboard.com>
-References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
- <20240528190315.3865-3-laurent.pinchart@ideasonboard.com>
- <ZlYwJryxeZ2LAKYG@surfacebook.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSuuGOc+8MP7QSbPfotxPAffnECSHT7Hz2z8oYCxdN67zUQdHJJpKpLLwsQm7aM1sRt/lVJ0qacFK9o3t/MDeJTuEhVb7cSu8dsH/2rJQ3lwtv+bXUJglb/Lksj29Qr7aD8MzWk3QlowxoqgYeh16Y4Ekc+tQEMLOf7ITIq5mtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eoHn6TvP; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716927279; x=1748463279;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jl4LCEptJsszgAcfFCEtcYXHjunLw9TYfjiN3KRw8R4=;
+  b=eoHn6TvP2bfF4FM0ukYoUyvS6LPq7ronOpYnj2cr04E8lowIBHhK5ENJ
+   Q38PDQW9wo/PBYZd0f+xn01zuefRfF22ckwL0nUDVYaLGzACFvIPZ8UPB
+   RYSpMDBj+MUyfONmljvGsE7pUWpymxmjhdd9VoE6tMVCUh8RydtaB8YNS
+   48E66neOwM8pdfIi3OFg1+KRkWtDDJcghX4suKsQCtRAK1WkLuG4MrssN
+   yUdHuAWZTcLcAkdT0XLBh+IR+PvJrFr8uVW9Zaxih32QEFOYEZlvwPG0G
+   sxB3a6mZVi9HZZs3dx1yhLdIA+qJKW4y6w3nB9XGPju618P0AryKcuRoN
+   A==;
+X-CSE-ConnectionGUID: K6ZtjlvpSdqM4cQ0FXj1/Q==
+X-CSE-MsgGUID: Lkn5bDaxTiSdZsFzMjyB0w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24715987"
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="24715987"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 13:14:38 -0700
+X-CSE-ConnectionGUID: ab5xhgmrSP+DZ4MoYeLVhw==
+X-CSE-MsgGUID: QJcjuo9UQQiy4FRZKIlX6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="40062364"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 28 May 2024 13:14:35 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sC3DM-000Cid-2i;
+	Tue, 28 May 2024 20:14:32 +0000
+Date: Wed, 29 May 2024 04:13:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"open list:AMD CRYPTOGRAPHIC COPROCESSOR (CCP) DRIVER - DB..." <linux-crypto@vger.kernel.org>,
+	Richard Hughes <hughsient@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/5] crypto: ccp: Move security attributes to their own
+ file
+Message-ID: <202405290447.WIh27jVI-lkp@intel.com>
+References: <20240527152649.3722-3-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZlYwJryxeZ2LAKYG@surfacebook.localdomain>
+In-Reply-To: <20240527152649.3722-3-mario.limonciello@amd.com>
 
-On Tue, May 28, 2024 at 10:27:34PM +0300, Andy Shevchenko wrote:
-> Tue, May 28, 2024 at 10:03:12PM +0300, Laurent Pinchart kirjoitti:
-> > From: Haibo Chen <haibo.chen@nxp.com>
-> > 
-> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> > matrix decoder, programmable logic, reset generator, and PWM generator.
-> > This driver supports the chip by modelling it as an MFD device, with two
-> > child devices for the GPIO and PWM functions.
-> > 
-> > The driver is derived from an initial implementation from NXP, available
-> > in commit 8059835bee19 ("MLK-25917-1 mfd: adp5585: add ADI adp5585 core
-> > support") in their BSP kernel tree. It has been extensively rewritten.
-> 
-> ...
-> 
-> > +	tristate "Analog Devices ADP5585 MFD driver"
-> > +	select MFD_CORE
-> > +	select REGMAP_I2C
-> > +	depends on I2C && OF
-> 
-> Why OF?
+Hi Mario,
 
-Because the driver works on OF systems only.
+kernel test robot noticed the following build errors:
 
-> No COMPILE_TEST?
+[auto build test ERROR on herbert-cryptodev-2.6/master]
+[also build test ERROR on herbert-crypto-2.6/master linus/master v6.10-rc1 next-20240528]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The driver won't compile without CONFIG_I2C, so I can use
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/crypto-ccp-Represent-capabilities-register-as-a-union/20240527-233301
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20240527152649.3722-3-mario.limonciello%40amd.com
+patch subject: [PATCH 2/5] crypto: ccp: Move security attributes to their own file
+config: x86_64-randconfig-015-20240528 (https://download.01.org/0day-ci/archive/20240529/202405290447.WIh27jVI-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240529/202405290447.WIh27jVI-lkp@intel.com/reproduce)
 
-	depends on I2C
-	depends on OF || COMPILE_TEST
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405290447.WIh27jVI-lkp@intel.com/
 
-Do you think that's better ?
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-> 
-> ...
-> 
-> + array_size.h
-> + device.h // e.g., devm_kzalloc()
-> 
-> > +#include <linux/module.h>
-> > +#include <linux/moduleparam.h>
-> > +#include <linux/init.h>
-> > +#include <linux/slab.h>
-
-I'll drop those 3 headers, there's not needed anymore.
-
-> > +#include <linux/i2c.h>
-> 
-> > +#include <linux/of.h>
-> > +#include <linux/of_device.h>
-> 
-> You don't need them, instead of proxying...
-
-of.h for of_device_get_match_data() and of_match_ptr(). I'll drop the
-former, but I need the latter, so I'll keep of.h
-
-of_device.h for historical reasons probably, I'll drop it.
-
-> > +#include <linux/mfd/core.h>
-> > +#include <linux/mfd/adp5585.h>
-> 
-> m is earlier than 'o', but with above drop no more issue :-)
-> 
-> ...just include mod_devicetable.h.
-> 
-> > +#include <linux/regmap.h>
-> 
-> + types.h // e.g., u8
-> 
-> ...
-> 
-> > +	regmap_config = of_device_get_match_data(&i2c->dev);
-> 
-> We have i2c_get_match_data().
-
-Sounds good.
-
-> ...
-> 
-> > +#ifndef __LINUX_MFD_ADP5585_H_
-> > +#define __LINUX_MFD_ADP5585_H_
-> > +
-> > +#include <linux/bits.h>
-> 
-> ...
-> 
-> > +#define		ADP5585_MAN_ID(v)		(((v) & 0xf0) >> 4)
-> 
-> GENMASK()
-
-This is not a mask. Or do you mean
-
-	(((v) & GENMASK(7, 4)) >> 4)
-
-? I think that's overkill.
-
-> ...
-> 
-> > +#define		ADP5585_Rx_PULL_CFG_MASK	(3)
-> 
-> GENMASK()
-
-Not here, as this value is meant to be passed to ADP5585_Rx_PULL_CFG().
-
-> Why parentheses in all of them, btw?
-
-Probably for consistency, but I don't mind dropping them.
-
-> ...
-> 
-> > +#define		ADP5585_C4_EXTEND_CFG_MASK	(1U << 6)
-> 
-> > +#define		ADP5585_R4_EXTEND_CFG_MASK	(1U << 5)
-> 
-> > +#define		ADP5585_R3_EXTEND_CFG_MASK	(3U << 2)
-> 
-> > +#define		ADP5585_R0_EXTEND_CFG_MASK	(1U << 0)
-> 
-> > +#define		ADP5585_OSC_FREQ_MASK		(3U << 5)
-> 
-> BIT() / GENMASK()
-
-I'll use GENMASK for the masks.
-
-> > +#endif
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_managed_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_mm_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_modes_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_plane_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_probe_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_rect_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-abt-y030xx067a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-innolux-ej030na.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-newvision-nv3052c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-novatek-nt39016.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sii9234.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/bochs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/gud/gud.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_mipi_dbi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/udl/udl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-i2c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/dax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/firewire-uapi-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/line-display.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/ezusb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/isight_firmware.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/class/usbtmc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/chipidea/ci_hdrc_msm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/libcomposite.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ss_lb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/u_ether.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ncm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ecm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ecm_subset.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_uac1_legacy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_uac2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_midi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_printer.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/legacy/g_zero.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/legacy/g_midi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/lib_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ccgx-ucsi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ali1563.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/ttpci/budget-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/atmel-sha204a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/fbtft/fbtft.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spilib.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-light.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-loopback.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-power-supply.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-vibrator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gbphy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-pwm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-usb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/chrome/cros_kunit_proto_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_u-boot-env.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/core/sound_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/codecs/snd-soc-sigmadsp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/codecs/snd-soc-wm-adsp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/renoir/snd-acp3x-rn.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/yc/snd-soc-acp6x-mach.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-intel-hda-common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-pci-intel-apl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-pci-intel-cnl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-pci-intel-tgl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-pci-intel-lnl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/snd-sof-utils.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/snd-sof-pci.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mtty.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mbochs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/configfs/configfs_sample.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/bytestream-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/dma-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/inttype-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/record-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kobject/kobject-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kobject/kset-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kprobes/kprobe_example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kmemleak/kmemleak-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/video/fbdev.o
+>> ERROR: modpost: "psp_security_attr_group" [drivers/crypto/ccp/ccp.ko] undefined!
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
