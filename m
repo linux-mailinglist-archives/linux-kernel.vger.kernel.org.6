@@ -1,91 +1,118 @@
-Return-Path: <linux-kernel+bounces-192443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A785A8D1D51
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:45:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365A78D1D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6297B2819A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:45:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 681981C2277A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A59116F27B;
-	Tue, 28 May 2024 13:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lrd4nMk0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8AA16F281;
+	Tue, 28 May 2024 13:46:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B7817C7F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947441DFEB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903895; cv=none; b=mhGZUcHnfqysOSYNLm9o3s50hCkgWVmtE3I/ZW8cfMEFPPv+fj4u1l4gHaYOHJ41Ya1vsjRZYnZlVt4uFBY1IGTNNDlP1UODM/S+u+2jhqGrIfaT4EmdE4rNf0P1GnSNufQtcIhXVrsYKMCk1MT9yvH1zUHiJAEiS2/3fJhkRXI=
+	t=1716903973; cv=none; b=ZsVQ0J0nDzyi7l4U0tn8alJZCZUhoM/+mluUaQ4DKgIpyzZ2TyrXOe46WXPN5ugIftSDOgXIHbUaz0INto2FY4z3e9bnWXXNmva+gI7vSRLqWgW4rjC3RCsfV/tCXNH/s9zXV25mAYQsD+a7Acl5glkUgNpIR+O3X07D1lpa7Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903895; c=relaxed/simple;
-	bh=9EqkoHYcuTnYOItA/g9YcyP8U6j3EYnq+T+pjK+6TR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TKWhARMBo1QO3BmrL3ZnFZGaMPHGRUaBwnGgxsEMfKD6DF+uwdqAqI72VfM+DQFits3uoVFCcj+6iD8AOsyWH1YA3adZXzTCvjlxiUixDv/CFb6LPIFdFCGbx1zNNg2euNOPK4trGxRb5gqN7bFa+D51HOOSIRNb4IrTE8d37gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lrd4nMk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5539AC3277B;
-	Tue, 28 May 2024 13:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716903895;
-	bh=9EqkoHYcuTnYOItA/g9YcyP8U6j3EYnq+T+pjK+6TR0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Lrd4nMk0sOgxul8v1Wq8ot+mopcU135atLvoBZLPdoY0QyJoRv3I9nK5Ghm9NMPZF
-	 Y4nLBLlFe7ZKNzFTy7iyh7Qu0im5K6U/UsGHhkaZwVPVP4LNDACZszrFEA2tWZu+6G
-	 U04QCPmaglotlnB5eby69bI2Dbrzbl9w/+8fmCvOOsTqGFleMGFq/xpd0E4O/7QtWm
-	 13FHqFC0CpVofcYjt+aXqHMujeCx+URtEIfARZw7ZFugolZUo89C9OeSKSrGCR2+Wu
-	 25+GIyCYQTbiEwtjQu5fpispaumM0Sar2GVpxafXKEuutDFZjpvWmGOjfE7Qlq2rwq
-	 dRjE/7S+h3SLQ==
-Message-ID: <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
-Date: Tue, 28 May 2024 15:44:51 +0200
+	s=arc-20240116; t=1716903973; c=relaxed/simple;
+	bh=KcBKNOc/a0yWDzrzTnBHacI/v+q0k5/IM/NT7bw/qN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GcoYO2tH9ouAgmW6lWyykqUwAPAWYEmyLDBXlt17rY0orh4lOxJMm5CiJCC1W7F60RWA47A2IVWmgYn8bNW+ZEAXswZUT7V4oBgzrXbCg1K/J5+GTN3EM+tS0lIamMi+6yFrVwhId5bmIwjKMU2dZQuRcxItqMJIBdfsfSp9oDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1sBx9R-0002U4-Hb; Tue, 28 May 2024 15:46:05 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1sBx9Q-003Kpq-MF; Tue, 28 May 2024 15:46:04 +0200
+Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1sBx9Q-001NB5-1x;
+	Tue, 28 May 2024 15:46:04 +0200
+Date: Tue, 28 May 2024 15:46:04 +0200
+From: Michael Tretter <m.tretter@pengutronix.de>
+To: Nas Chung <nas.chung@chipsnmedia.com>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+	sebastian.fricke@collabora.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE
+ condition
+Message-ID: <ZlXgHN4DPfRtZaPS@pengutronix.de>
+Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
+	Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
+	linux-media@vger.kernel.org, sebastian.fricke@collabora.com,
+	linux-kernel@vger.kernel.org
+References: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memcg: Remove the lockdep assert from
- __mod_objcg_mlstate().
-Content-Language: en-US
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-References: <20240528121928.i-Gu7Jvg@linutronix.de>
- <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
- <20240528134027.OxDASsS3@linutronix.de>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240528134027.OxDASsS3@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 5/28/24 3:40 PM, Sebastian Andrzej Siewior wrote:
-> On 2024-05-28 14:34:55 [+0200], Vlastimil Babka (SUSE) wrote:
->> > The safety of the counter update is already ensured by
->> > VM_WARN_ON_IRQS_ENABLED() which is part of memcg_stats_lock() and does
->> > not require yet another check.
->> 
->> I think here it's __mod_memcg_lruvec_state() doing the VM_WARN_ON_ as we
->> don't go through memcg_stats_lock()?
+On Tue, 28 May 2024 11:04:25 +0900, Nas Chung wrote:
+> Explicitly compare a buffer type only with valid buffer types,
+> to avoid matching the buffer type outside of valid buffer
+> type set.
 > 
-> It is either VM_WARN_ON_IRQS_ENABLED() directly as in
-> __mod_memcg_lruvec_state() (which is special) or memcg_stats_lock().
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+
+Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
+
+> ---
+>  include/uapi/linux/videodev2.h | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> Do you want me to rephrase this part?
-
-I think just s/memcg_stats_lock()/__mod_memcg_lruvec_state()/ in your
-phrasing, since we are removing the lockdep assert from path that calls
-__mod_memcg_lruvec_state() and not memcg_stats_lock()?
-Or am I missing something?
-
-> Sebastian
-
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index fe6b67e83751..fa2b7086e480 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -157,6 +157,10 @@ enum v4l2_buf_type {
+>  	V4L2_BUF_TYPE_PRIVATE              = 0x80,
+>  };
+>  
+> +#define V4L2_TYPE_IS_VALID(type)		\
+> +	((type) >= V4L2_BUF_TYPE_VIDEO_CAPTURE	\
+> +	 && (type) <= V4L2_BUF_TYPE_META_OUTPUT)
+> +
+>  #define V4L2_TYPE_IS_MULTIPLANAR(type)			\
+>  	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
+>  	 || (type) == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> @@ -171,7 +175,8 @@ enum v4l2_buf_type {
+>  	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
+>  	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
+>  
+> -#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
+> +#define V4L2_TYPE_IS_CAPTURE(type)	\
+> +	(V4L2_TYPE_IS_VALID(type) && !V4L2_TYPE_IS_OUTPUT(type))
+>  
+>  enum v4l2_tuner_type {
+>  	V4L2_TUNER_RADIO	     = 1,
+> -- 
+> 2.25.1
+> 
+> 
 
