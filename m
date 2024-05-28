@@ -1,168 +1,115 @@
-Return-Path: <linux-kernel+bounces-192884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2718D2382
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:50:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898128D2361
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31850285A2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A87CE1C225CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7CF171E5E;
-	Tue, 28 May 2024 18:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E911E17082B;
+	Tue, 28 May 2024 18:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/Cq38XZ"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fW6FTf6A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF432E639;
-	Tue, 28 May 2024 18:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEAA2563;
+	Tue, 28 May 2024 18:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716922098; cv=none; b=KEhY1wnURjTJrIoAalGSJ11dUCeKg46iyX6paajBNr5WE6GufCd0m1r4aUKYrxgaglp7zZV1PpvyrI/GXaWukixqqbAUL8zFapVe3vGQ7RigSkAvJouXkx5qc3O8qb/6ffVjeRmJCNGZxFXU14DyOhVGcrHH6EGldPrNpRF6Md8=
+	t=1716922057; cv=none; b=c2ZwH8U0R1oN/tSfFyDXxhyZJVDrKBjRwkm+71iAK7ec7r7JLxR6/AD5J8KLQcVx+L4Hg12JpnNd+bWRAQfeJugxXEQiFICfkDAtlj2/G8IP250uXsOFhL9NCNTv54f/sUHDHT/nDeW3UtUSnX+m4Oi4lMhq2wLDF39XI8lyLNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716922098; c=relaxed/simple;
-	bh=MRChlc3fno+fgWLT1UD9zMfX7V7oZsD0KEIC9Fr5KPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHWPWOKAhfbmVKjTyFYkkeNF75l46+4X0+T1idcBdpn7I25iOXftjz0APARDPOodYx7ZmQ+9CqD1WjJgiqlY6if6vNEQ7/k2dce6OfTJ2d5TLER6LmLI4c2YvORuIM1jc6anuCWoXzKondML+cv5MDtyj4HpvbG9/NuBa3MfHC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/Cq38XZ; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4e4eff99f16so372054e0c.1;
-        Tue, 28 May 2024 11:48:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716922096; x=1717526896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bxlvn5Oq9LbYwfLCGxNQLz0UZ5j1MQaP4pgY98KDpRk=;
-        b=B/Cq38XZ/hShv/h3v17RcYM5+cZzKn8uI4ZinvzHxsND4zNIU2Q4ooucJccj9I+QtA
-         EMwbGbPr6NRKulqPi3he6L2/ePrfDWRysVBx8wuaRBmly3dTI8adRiI8c09l9P18JOFP
-         jS6166nNcoin8QYvDwoEiHP++x/ddV+wqhi/KaCqFo3iwzVwMzi3eAe4OSYwN0Ia7Yv4
-         JVrofvEWa3B4skFlo3fjGaXTVcjExHlP0UxX1k8wgKP40Ao6i5DYZ80zIj1/fHYzuZmd
-         e/CVrLeCetK/obB02bYxY8y4E9no9gMjlkDUgjlPGfH0fLNz71mWePrfg/QV76c/k0aa
-         fFuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716922096; x=1717526896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bxlvn5Oq9LbYwfLCGxNQLz0UZ5j1MQaP4pgY98KDpRk=;
-        b=FzizrR3qxbMH061iZezYxPZ+hjbJ3OgJ4Ef6ZkafuKyvkUzeAV8aIKUxkHcwFDHNW2
-         TFwmIDYMJDEV/7EuNuCn/ykgtaNN4oDMUCuiWtM08HK/b0Uz9MZMq1vwdX7WoCmC+/KM
-         82nwvoUo2UPnfTd0rXwMAbdfwftnzPY30S/sR5Rd2QsI+0+4Uc/niW8/yV0vl8csqdCJ
-         ak4w+lgwj4jEdxPq18wcHZvXk/jZhiI90xlv6J9pz8H7LkhnGuXDGazfhVDVT1XSCR0f
-         gOnYIdrY6tPTOgnbk2U44xXfuURDa5Wujm5osVkkebozcH+NX6cx+UwEJ/iFBFEqJ2HG
-         /B9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWR5oXylYlqxbm1IYZX71K+M5RH53sFOj75JSY4Cbkz7zFgmJqednIiqJzuli+Zsmgj58Xt7E0jqO7T5MoCvEjc3gPQqk9KEy+BTzM5/XRDmaO162pl0Pml7yj8v/7cFg6g0Io/5HnXEGZhIoqJ8+O7B3HbCHNXe5E99Dyzcp+CDNhH3TGRz6PhgcFjoBPB3c0UqWlenynIGzbKA3v63VLUWg2OUFUa+Q==
-X-Gm-Message-State: AOJu0Yy3pP36ir7aTeyDf+GwTDBg9mDmhDVEULTf8lF0d9b4RWEMBDPF
-	m7noDmakF9tnNPBuMBiGF2AMN9aveBwU2m+39LsHWjEhe7p89aOxrf/1+8b3rL/2a/LaWETZbmw
-	Co2Rd7c/c70+iq4NTsHxIenoJbBk=
-X-Google-Smtp-Source: AGHT+IE9trmXEg3oEOdmSAsRssG2a/Bs2cLxXZv1lQZLY6SJ5JxtgyKLzQTyBQReU97+ZhJRjwN1iYkNyibCrLnWAuk=
-X-Received: by 2002:a05:6122:4127:b0:4e4:eda9:ec32 with SMTP id
- 71dfb90a1353d-4e4f02d0410mr13536269e0c.10.1716922095852; Tue, 28 May 2024
- 11:48:15 -0700 (PDT)
+	s=arc-20240116; t=1716922057; c=relaxed/simple;
+	bh=xvP1VccHe8rD/xL8zKhQCPBNYlG7U41tzPfwwybLnDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KjfBX/f00G8C35G8s+gCd8OMAuD7KYHj5RM/g1AuQxbNOdfOrRk/99StvXcM2T0ZNK+tH3p9EGKAwleta2jNYl+Da4sV6GZnKh5D3M9JdijMrnOszXBbp2zjw+UWjChoEvAuvmKf2KbdAGzxTlfJfTIc2rFqbXbueHZ7m2HLd0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fW6FTf6A; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716922056; x=1748458056;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xvP1VccHe8rD/xL8zKhQCPBNYlG7U41tzPfwwybLnDU=;
+  b=fW6FTf6Akilw2xUTHXkDKNZHdhIBZGP4wKEnlc/D1VrvDwxBr399ALJ+
+   ot/4tbJQCgK1PFCUDvRIipJ9PtMozCvXsV83g6llUgM6HuY5OcG+2Vo6r
+   LlU9faKSdNr+EONu03JkBXU+qEwmT0rStagXhnwrOazriXyczGoc3DCI2
+   0RUd8bguqo4+j9ykgBoRQZbMcvD91XICDREFCLc9NAZ++B7HFFBmMzZsf
+   L1pNM751y0O5+kdWPaVj8a8nARGN/CRJbkgKP3hFiwhe+MoJvYdPra8tg
+   w8l9gzx1DsymlocDKmbWd5ucV2cIYVe4i0+HIykdN3GeUPKgHjMpucb7u
+   g==;
+X-CSE-ConnectionGUID: VMCRG5bKTcuC1mJxA7PHmQ==
+X-CSE-MsgGUID: dI4qQdoEQbiviWGmNY4FCQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="17121547"
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="17121547"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 11:47:30 -0700
+X-CSE-ConnectionGUID: iWvAbibhRl230hIK/RG0Xg==
+X-CSE-MsgGUID: H8WBe8U0QYyuD64VG/QGIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="72605163"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 11:47:29 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH 0/8] PM/ACPI - New Intel CPU #defines
+Date: Tue, 28 May 2024 11:47:12 -0700
+Message-ID: <20240528184720.56259-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240423175900.702640-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXUM-s5RQXgKQUtqu5=fVTFk5Ajg2WNZ2eAiy5Lr-tX5A@mail.gmail.com>
-In-Reply-To: <CAMuHMdXUM-s5RQXgKQUtqu5=fVTFk5Ajg2WNZ2eAiy5Lr-tX5A@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 28 May 2024 19:47:04 +0100
-Message-ID: <CA+V-a8vbV0LZ0XkHEOYLww4mpgiaSzfGDCi+Hi45XNSSgSRnfA@mail.gmail.com>
-Subject: Re: [PATCH v2 03/13] pinctrl: renesas: pinctrl-rzg2l: Allow more bits
- for pin configuration
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+These patches were previously posted in a patch bomb[1] across
+all subsystems. The core pieces of that patch bomb are now
+upstream, so here are just the PM/ACPI bits (previously
+Acked by Rafael).
 
-Thank you for the review.
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 
-On Wed, May 22, 2024 at 11:19=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > The pin configuration bits have been growing for every new SoCs being
-> > added for the pinctrl-rzg2l driver which would mean updating the macros
-> > every time for each new configuration. To avoid this allocate additiona=
-l
-> > bits for pin configuration by relocating the known fixed bits to the ve=
-ry
-> > end of the configuration.
-> >
-> > Also update the size of 'cfg' to 'u64' to allow more configuration bits=
- in
-> > the 'struct rzg2l_variable_pin_cfg'.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > RFC->v2
-> > - Merged the macros and rzg2l_variable_pin_cfg changes into single patc=
-h
-> > - Updated types for the config changes
->
-> Thanks for the update!
->
-> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > @@ -78,9 +78,9 @@
-> >                                          PIN_CFG_FILNUM | \
-> >                                          PIN_CFG_FILCLKSEL)
-> >
-> > -#define PIN_CFG_PIN_MAP_MASK           GENMASK_ULL(35, 28)
-> > -#define PIN_CFG_PIN_REG_MASK           GENMASK(27, 20)
-> > -#define PIN_CFG_MASK                   GENMASK(19, 0)
-> > +#define PIN_CFG_PIN_MAP_MASK           GENMASK_ULL(62, 55)
-> > +#define PIN_CFG_PIN_REG_MASK           GENMASK_ULL(54, 47)
-> > +#define PIN_CFG_MASK                   GENMASK_ULL(46, 0)
-> >
-> >  /*
-> >   * m indicates the bitmap of supported pins, a is the register index
->
-> > @@ -241,9 +241,9 @@ struct rzg2l_dedicated_configs {
-> >   * @pin: port pin
-> >   */
-> >  struct rzg2l_variable_pin_cfg {
-> > -       u32 cfg:20;
-> > -       u32 port:5;
-> > -       u32 pin:3;
-> > +       u64 cfg:46;
->
-> 47, to match PIN_CFG_MASK()?
->
-Oops, I missed that.
+[1] https://lore.kernel.org/all/ZlYVqSlx8GLwTJEr@agluck-desk3.sc.intel.com/
 
-> > +       u64 port:5;
-> > +       u64 pin:3;
-> >  };
->
-> To avoid such mistakes, and to increase uniformity, I think it would
-> be good to get rid of this structure, and replace it by masks, to be
-> used with FIELD_GET() and FIELD_PREP_CONST().
->
-Agreed, I will make a patch on top of this patch (so that its easier
-for review).
+Tony Luck (8):
+  cpufreq: Switch to new Intel CPU model defines
+  intel_idle: Switch to new Intel CPU model defines
+  powercap: intel_rapl: Switch to new Intel CPU model defines
+  ASoC: Intel: Switch to new Intel CPU model defines
+  thermal: intel: intel_tcc_cooling: Switch to new Intel CPU model
+    defines
+  ACPI: LPSS: Switch to new Intel CPU model defines
+  cpufreq: intel_pstate: Switch to new Intel CPU model defines
+  powercap: intel_rapl: Switch to new Intel CPU model defines
 
-Cheers,
-Prabhakar
+ include/linux/platform_data/x86/soc.h         |  12 +-
+ drivers/acpi/x86/lpss.c                       |   4 +-
+ drivers/cpufreq/intel_pstate.c                |  90 +++++++------
+ drivers/cpufreq/speedstep-centrino.c          |   8 +-
+ drivers/idle/intel_idle.c                     | 116 ++++++++---------
+ drivers/powercap/intel_rapl_common.c          | 120 +++++++++---------
+ drivers/powercap/intel_rapl_msr.c             |  16 +--
+ drivers/thermal/intel/intel_soc_dts_thermal.c |   2 +-
+ drivers/thermal/intel/intel_tcc_cooling.c     |  30 ++---
+ 9 files changed, 198 insertions(+), 200 deletions(-)
+
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+-- 
+2.45.0
+
 
