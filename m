@@ -1,599 +1,204 @@
-Return-Path: <linux-kernel+bounces-191875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E468D156B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6188D1571
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E98F284D5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ABF01F219A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA057346B;
-	Tue, 28 May 2024 07:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8811173470;
+	Tue, 28 May 2024 07:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M945VAwC"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LUWuTtid"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECCF73164
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329D773447
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716881894; cv=none; b=r3n/YU5Vh+1R+q/fYnd3wl+oyNN5uVZD8CsTEX7ZqkqP2+ruuSDhFRgVxFz/UzYsdmK/0DnrqVgeuJeMT29TIbPwDEhxhkvNUKt6ZAKfYzjI5MU7c4DkBkpRQAtp+x6QaXzM1cw7pUAE9DNHfKa+QMTJsa/g/A342aouu1dg01k=
+	t=1716882227; cv=none; b=GC0s7kyQI5nRuKnvX3ML7sw55AdS2Pf8v+9WhUjZmdL/ISyaegIRUG87L/wZwfz/OWfSLs9frk8Zwf0bwu7rs/I9hFzR7Dw8/wurVMLe4HcXh3clR8GuZTH2g4kCYllcm9FFlOByj+NOI6qPz5aiZhy5zkt5iZoGXLO1wOrBB/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716881894; c=relaxed/simple;
-	bh=AIWiJDwPoSmZuZsiWhSk7+6aXHN6m5joDVSA/w6cc+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uhl4AAAj8Yszv3i5BoCUtHnh1I2/b3d60sik36fjerfh4qmcYinna+/2ZHscU9mGMx00RUmSSY4yFzdXcSNPdVPJX/BMRx/czgIxlDYCceIi+lkO2YLXYHPSURpDR827+65Tq0UzCQQfypM4DnlPcOrmO4WsulNCpXNxA7F9A/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M945VAwC; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-529648cd69dso587448e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716881890; x=1717486690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HHdXY7trRCe9IqJRK/4uBBat10D4WSsZDyKrE9GQue8=;
-        b=M945VAwChwfRMyEYBKArQYOBSzGKAgbyyKAPLg57ZUuHrkqfS1a1HPUCQ7EvamZ6lh
-         e9csJQXVMV3MG/yeggC6ME3UxM8LR3seHzC1r+MtKhXY9sO2JmwHVyzPOCJ9hzzE2AmR
-         /4TmVw9g4Ot7TbTb/u4puSFWRq4uEKI1oSBnc=
+	s=arc-20240116; t=1716882227; c=relaxed/simple;
+	bh=Ze0C8ZZPqtt/t1xyZayQh6LuGP+VHLULOICCJ7Dbowo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XvvCBG0n5EDN5Iv8ndc/itPuhyBiCoOmOVCW2F1R+of7C80G9AYEH4xzkQuCTQbycYZg1FoGKNvEfY4I01J4ZQfCo1G/VmtOVdw3/aRr71wwSilC+55TpCP1kEzk+bXJoZZsGkMIaSoGS5Qd8rFzVdJejknUW05bvFQ/MCqIO68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LUWuTtid; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716882225;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tlYH/skdvPZBpSXPZaME8NdBvlZ6QuaFWdBuSnU2HNg=;
+	b=LUWuTtidjzECG0TH6XDXITbCBPJBgJoBi+0EedmfbPavTNd+tsPgpQuMdk5u48uCQqd7Nx
+	I03p8EDss+5DQ9ZdwRQyFxoDhuvULopE6VWsPTOwSKtGLfDCOOBLRoKFgRIPNuEV/tVckC
+	BxVHKI9yBhgMJrjXhDCGrZP9Z4enkgk=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-14-T8OYAUTRN7eNl4WvldoE4Q-1; Tue, 28 May 2024 03:43:43 -0400
+X-MC-Unique: T8OYAUTRN7eNl4WvldoE4Q-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a6269ad7288so24750266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:43:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716881890; x=1717486690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HHdXY7trRCe9IqJRK/4uBBat10D4WSsZDyKrE9GQue8=;
-        b=gubjhUNRZHw7RGz0d3MGDZSvWWJHprMREJxTSqMT4VFmRkrtFJ2QAY+lI5L2y5w/9F
-         L0CK45cmP4xrFTv3ka0X2BA7re2WoEXtELky0UmHp9tVPDcr7nUPq8do4ZuXBp4S8IIN
-         dGzVmWqv2EEVEaWmcI7NKLP6hhah4GHku2puTzOBnFvMZk3Oi916Ladofh2Xo7z/q9g9
-         SQ4ZlnhvYRhQxCI1svjB5t/SDT0lnxVdF+wh/OOaqS1KnNQcH2Oo+Yz+FCHHStrqYGpX
-         5KT5sIJnIKaOee2q6Hv5Tl9Zl4fiK7e9fmMHNVnWWoE99nLZFsyMqvoZPYDYhvu6xFQa
-         1m9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUusKvyUNZANsfde2gNrA80uhfp1R8r7ehXVnlqLTH5Wc/qVqQsFU0RBAn89Q2fpRToX21MfZMg+5yARu+c9GcgCOHLAAaUD2MPdFuH
-X-Gm-Message-State: AOJu0YxXDeCg5HrSdGveqef7+9GumLGY4ruZUz8OOBhNX4pr0pha7Xfy
-	tg8jMe4dW5LqAL2klqRJCAUdEd7od7bA2JpfJlPTEYumeCwVtAbfQhdo2/f0QYZzL8TS3cpFLNv
-	FXmB9Gis0TeeJwBHq7HgVSy+23KrHrg7lSSkM
-X-Google-Smtp-Source: AGHT+IEESmnCk94ID8RyrB6cRTBo9f0DWrhYYsx4FRrRpoOrxYJNYHEAK+0vR3o7nbq7TzrcAkc8czY/yq0ZvncHf9E=
-X-Received: by 2002:ac2:4a6e:0:b0:51f:2f2:d66 with SMTP id 2adb3069b0e04-52967465409mr9501570e87.61.1716881890203;
- Tue, 28 May 2024 00:38:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716882222; x=1717487022;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tlYH/skdvPZBpSXPZaME8NdBvlZ6QuaFWdBuSnU2HNg=;
+        b=pyJD6naHZXIRFBH7aDqSTDVV92OigI2xFoPh5ThIZlrwRZBzInQW+uiIH/fgFS8SOr
+         C9QXo+rSF/e9AVvJe9pzn+jW8NK7aP+lRhokthVFVdbt07HczviKu2YCgOOa/Vlqy0W9
+         X3akpWzofzmPrGiArpCAgUuwWRSqTeq9uoen8A+7K3NAIXTNq4cwd33i+6yR6DNnr2+y
+         onRBxJILoffsF4H2iIfgPOcy/N6X33HP1Kc4Y7VGH4RKqJ9UHRqydEmp8HhUXIp3hWwG
+         0pIsKoZnKBpOjbeCJ5ICO6i5OAalyEcW2xtSMT1GdnU4hJRffnyYUSwq0fS9gnoyJdaj
+         SExQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQH1V4nJp6w8nI4tcrDzYW6dMqu6js5r5AK7cfeWIil9UmeFcjUJr++/OMLoq9chEfoGIZzMADi2I0A7+YXc4kSOG7RRS3aw4/WLfx
+X-Gm-Message-State: AOJu0YyaAoiXS3rpPbrnbwR8xHeMF0cvhzLk0sOilRzwmYvmdFKaKShb
+	qCRNOagARgStHYbaobpHjGcVJBCTZXhQpsomGOk9vp4ZH/YEkSpoFXpO6t54Me3iAaFS/zgK2+j
+	/wopU1kj4c4OsuFbUiQ90kCnnk9aDJwg45C32t/xhkArKMd2nqtiP9cjG0oczeA==
+X-Received: by 2002:a17:906:408a:b0:a62:bc74:a883 with SMTP id a640c23a62f3a-a62bc74a9aemr473698566b.21.1716882222086;
+        Tue, 28 May 2024 00:43:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGR/TBxPqJ+AxHlEy/X81c9ePzyGnghsIq5S1S5T3yXRoQDlv2KLbRtG+H9BBjIc4/qTw2EHQ==
+X-Received: by 2002:a17:906:408a:b0:a62:bc74:a883 with SMTP id a640c23a62f3a-a62bc74a9aemr473697366b.21.1716882221615;
+        Tue, 28 May 2024 00:43:41 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c93ae41sm582682866b.62.2024.05.28.00.43.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 00:43:41 -0700 (PDT)
+Message-ID: <8aba80ed-7b3e-4c8c-99e8-d8a2e0b112fc@redhat.com>
+Date: Tue, 28 May 2024 09:43:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
- <20240516122102.16379-18-yunfei.dong@mediatek.com> <CAGXv+5FR8iLHgJGJP0C3UKhVXGzf7y44YUggpe3M=gB1mYtJ5A@mail.gmail.com>
-In-Reply-To: <CAGXv+5FR8iLHgJGJP0C3UKhVXGzf7y44YUggpe3M=gB1mYtJ5A@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 28 May 2024 15:37:59 +0800
-Message-ID: <CAGXv+5HjEo3a2BSaUunVqv-eFJoKpn5FNC91P33D=-wf=-voYQ@mail.gmail.com>
-Subject: Re: [PATCH v6,17/24] media: mediatek: vcodec: re-construct h264
- driver to support svp mode
-To: Yunfei Dong <yunfei.dong@mediatek.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Jeffrey Kardatzke <jkardatzke@google.com>, 
-	=?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Nathan Hebert <nhebert@chromium.org>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Tomasz Figa <tfiga@chromium.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	Steve Cho <stevecho@chromium.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T . J . Mercier" <tjmercier@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [mm] d99e3140a4:
+ BUG:KCSAN:data-race_in_folio_remove_rmap_ptes/print_report
+To: kernel test robot <oliver.sang@intel.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miaohe Lin <linmiaohe@huawei.com>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+References: <202405281431.c46a3be9-lkp@intel.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+In-Reply-To: <202405281431.c46a3be9-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 27, 2024 at 1:58=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> On Thu, May 16, 2024 at 8:21=E2=80=AFPM Yunfei Dong <yunfei.dong@mediatek=
-com> wrote:
-> >
-> > Need secure buffer size to convert secure handle to secure
-> > pa in optee-os, re-construct the vsi struct to store each
-> > secure buffer size.
-> >
-> > Separate svp and normal wait interrupt condition for svp mode
-> > waiting hardware interrupt in optee-os.
-> >
-> > Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> > ---
-> >  .../decoder/vdec/vdec_h264_req_multi_if.c     | 261 +++++++++++-------
-> >  .../mediatek/vcodec/decoder/vdec_msg_queue.c  |   9 +-
-> >  2 files changed, 168 insertions(+), 102 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h=
-264_req_multi_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vd=
-ec_h264_req_multi_if.c
-> > index d7fec1887ab5..40836673f7fe 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req=
-_multi_if.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req=
-_multi_if.c
-> > @@ -60,14 +60,36 @@ struct vdec_h264_slice_lat_dec_param {
-> >   * @crc:               Used to check whether hardware's status is righ=
-t
-> >   */
-> >  struct vdec_h264_slice_info {
-> > +       u64 wdma_end_addr_offset;
-> >         u16 nal_info;
-> >         u16 timeout;
-> > -       u32 bs_buf_size;
-> > -       u64 bs_buf_addr;
-> > -       u64 y_fb_dma;
-> > -       u64 c_fb_dma;
-> >         u64 vdec_fb_va;
-> >         u32 crc[8];
-> > +       u32 reserved;
-> > +};
-> > +
-> > +/*
-> > + * struct vdec_h264_slice_mem - memory address and size
-> > + */
-> > +struct vdec_h264_slice_mem {
-> > +       union {
-> > +               u64 buf;
-> > +               u64 dma_addr;
-> > +       };
-> > +       union {
-> > +               size_t size;
-> > +               u64 dma_addr_end;
-> > +       };
-> > +};
-> > +
-> > +/**
-> > + * struct vdec_h264_slice_fb - frame buffer for decoding
-> > + * @y:  current y buffer address info
-> > + * @c:  current c buffer address info
-> > + */
-> > +struct vdec_h264_slice_fb {
-> > +       struct vdec_h264_slice_mem y;
-> > +       struct vdec_h264_slice_mem c;
-> >  };
-> >
-> >  /**
-> > @@ -92,18 +114,16 @@ struct vdec_h264_slice_info {
-> >   */
-> >  struct vdec_h264_slice_vsi {
-> >         /* LAT dec addr */
-> > -       u64 wdma_err_addr;
-> > -       u64 wdma_start_addr;
-> > -       u64 wdma_end_addr;
-> > -       u64 slice_bc_start_addr;
-> > -       u64 slice_bc_end_addr;
-> > -       u64 row_info_start_addr;
-> > -       u64 row_info_end_addr;
-> > -       u64 trans_start;
-> > -       u64 trans_end;
-> > -       u64 wdma_end_addr_offset;
-> > +       struct vdec_h264_slice_mem bs;
-> > +       struct vdec_h264_slice_fb fb;
-> >
-> > -       u64 mv_buf_dma[H264_MAX_MV_NUM];
-> > +       struct vdec_h264_slice_mem ube;
-> > +       struct vdec_h264_slice_mem trans;
-> > +       struct vdec_h264_slice_mem row_info;
-> > +       struct vdec_h264_slice_mem err_map;
-> > +       struct vdec_h264_slice_mem slice_bc;
-> > +
-> > +       struct vdec_h264_slice_mem mv_buf_dma[H264_MAX_MV_NUM];
-> >         struct vdec_h264_slice_info dec;
-> >         struct vdec_h264_slice_lat_dec_param h264_slice_params;
-> >  };
->
-> Hard NAK.
->
-> You are changing the interface with the firmware without any backward
-> compatibility. This breaks H.264 decoding on other platforms that use
-> this code path, including MT8192, MT8195, and MT8186. You cannot just
-> consider the current platform you are working on.
->
-> This is already showing in our downstream test results for Asurada / MT81=
-92
-> on v6.1, same branch as MT8188, which has these patches applied.
+Am 28.05.24 um 09:11 schrieb kernel test robot:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "BUG:KCSAN:data-race_in_folio_remove_rmap_ptes/print_report" on:
+> 
+> commit: d99e3140a4d33e26066183ff727d8f02f56bec64 ("mm: turn folio_test_hugetlb into a PageType")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> [test failed on linus/master      c760b3725e52403dc1b28644fb09c47a83cacea6]
+> [test failed on linux-next/master 3689b0ef08b70e4e03b82ebd37730a03a672853a]
+> 
+> in testcase: trinity
+> version: trinity-i386-abe9de86-1_20230429
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	group: group-04
+> 	nr_groups: 5
+> 
+> 
+> 
+> compiler: gcc-13
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> we noticed this issue does not always happen. we also noticed there are
+> different random KCSAN issues for both this commit and its parent. but below
+> 4 only happen on this commit with not small rate and keep clean on parent.
+> 
 
-Also breaks MT8195 Cherry video decoding on v6.10-rc1 with all patches appl=
-ied.
+Likely that's just a page_type check racing against concurrent
+mapcount changes.
 
-ChenYu
+In __folio_rmap_sanity_checks() we check
+	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
 
-> The kernel needs to be able to run with older firmware. The firmware
-> needs to signal that it wants the new layout either with a version
-> number (which probably won't work with SCP here) or with capability
-> flags, like with 4K or AV1 or HEVC support we had before. The kernel
-> driver sees the capability flag and uses the new data structures.
->
-> Or you make changes to the layout in some backward compatible way, like
-> only expanding the data structure and keeping all the old fields, and
-> duplicating fields for new structures you add.
->
->
-> Regards
-> ChenYu
->
-> > @@ -392,6 +412,100 @@ static void vdec_h264_slice_get_crop_info(struct =
-vdec_h264_slice_inst *inst,
-> >                        cr->left, cr->top, cr->width, cr->height);
-> >  }
-> >
-> > +static void vdec_h264_slice_setup_lat_buffer(struct vdec_h264_slice_in=
-st *inst,
-> > +                                            struct mtk_vcodec_mem *bs,
-> > +                                            struct vdec_lat_buf *lat_b=
-uf)
-> > +{
-> > +       struct mtk_vcodec_mem *mem;
-> > +       int i;
-> > +
-> > +       inst->vsi->bs.dma_addr =3D (u64)bs->dma_addr;
-> > +       inst->vsi->bs.size =3D bs->size;
-> > +
-> > +       for (i =3D 0; i < H264_MAX_MV_NUM; i++) {
-> > +               mem =3D &inst->mv_buf[i];
-> > +               inst->vsi->mv_buf_dma[i].dma_addr =3D mem->dma_addr;
-> > +               inst->vsi->mv_buf_dma[i].size =3D mem->size;
-> > +       }
-> > +       inst->vsi->ube.dma_addr =3D lat_buf->ctx->msg_queue.wdma_addr.d=
-ma_addr;
-> > +       inst->vsi->ube.size =3D lat_buf->ctx->msg_queue.wdma_addr.size;
-> > +
-> > +       inst->vsi->row_info.dma_addr =3D 0;
-> > +       inst->vsi->row_info.size =3D 0;
-> > +
-> > +       inst->vsi->err_map.dma_addr =3D lat_buf->wdma_err_addr.dma_addr=
-;
-> > +       inst->vsi->err_map.size =3D lat_buf->wdma_err_addr.size;
-> > +
-> > +       inst->vsi->slice_bc.dma_addr =3D lat_buf->slice_bc_addr.dma_add=
-r;
-> > +       inst->vsi->slice_bc.size =3D lat_buf->slice_bc_addr.size;
-> > +
-> > +       inst->vsi->trans.dma_addr_end =3D inst->ctx->msg_queue.wdma_rpt=
-r_addr;
-> > +       inst->vsi->trans.dma_addr =3D inst->ctx->msg_queue.wdma_wptr_ad=
-dr;
-> > +}
-> > +
-> > +static int vdec_h264_slice_setup_core_buffer(struct vdec_h264_slice_in=
-st *inst,
-> > +                                            struct vdec_h264_slice_sha=
-re_info *share_info,
-> > +                                            struct vdec_lat_buf *lat_b=
-uf)
-> > +{
-> > +       struct mtk_vcodec_mem *mem;
-> > +       struct mtk_vcodec_dec_ctx *ctx =3D inst->ctx;
-> > +       struct vb2_v4l2_buffer *vb2_v4l2;
-> > +       struct vdec_fb *fb;
-> > +       u64 y_fb_dma, c_fb_dma =3D 0;
-> > +       int i;
-> > +
-> > +       fb =3D ctx->dev->vdec_pdata->get_cap_buffer(ctx);
-> > +       if (!fb) {
-> > +               mtk_vdec_err(ctx, "fb buffer is NULL");
-> > +               return -EBUSY;
-> > +       }
-> > +
-> > +       y_fb_dma =3D (u64)fb->base_y.dma_addr;
-> > +       if (!ctx->is_secure_playback) {
-> > +               if (ctx->q_data[MTK_Q_DATA_DST].fmt->num_planes =3D=3D =
-1)
-> > +                       c_fb_dma =3D
-> > +                               y_fb_dma + inst->ctx->picinfo.buf_w * i=
-nst->ctx->picinfo.buf_h;
-> > +               else
-> > +                       c_fb_dma =3D (u64)fb->base_c.dma_addr;
-> > +       }
-> > +
-> > +       mtk_vdec_debug(ctx, "[h264-core] y/c addr =3D 0x%llx 0x%llx", y=
-_fb_dma, c_fb_dma);
-> > +
-> > +       inst->vsi_core->fb.y.dma_addr =3D y_fb_dma;
-> > +       inst->vsi_core->fb.y.size =3D ctx->picinfo.fb_sz[0];
-> > +       inst->vsi_core->fb.c.dma_addr =3D c_fb_dma;
-> > +       inst->vsi_core->fb.c.size =3D ctx->picinfo.fb_sz[1];
-> > +
-> > +       inst->vsi_core->dec.vdec_fb_va =3D (unsigned long)fb;
-> > +       inst->vsi_core->dec.nal_info =3D share_info->nal_info;
-> > +
-> > +       inst->vsi_core->ube.dma_addr =3D lat_buf->ctx->msg_queue.wdma_a=
-ddr.dma_addr;
-> > +       inst->vsi_core->ube.size =3D lat_buf->ctx->msg_queue.wdma_addr.=
-size;
-> > +
-> > +       inst->vsi_core->err_map.dma_addr =3D lat_buf->wdma_err_addr.dma=
-_addr;
-> > +       inst->vsi_core->err_map.size =3D lat_buf->wdma_err_addr.size;
-> > +
-> > +       inst->vsi_core->slice_bc.dma_addr =3D lat_buf->slice_bc_addr.dm=
-a_addr;
-> > +       inst->vsi_core->slice_bc.size =3D lat_buf->slice_bc_addr.size;
-> > +
-> > +       inst->vsi_core->row_info.dma_addr =3D 0;
-> > +       inst->vsi_core->row_info.size =3D 0;
-> > +
-> > +       inst->vsi_core->trans.dma_addr =3D share_info->trans_start;
-> > +       inst->vsi_core->trans.dma_addr_end =3D share_info->trans_end;
-> > +
-> > +       for (i =3D 0; i < H264_MAX_MV_NUM; i++) {
-> > +               mem =3D &inst->mv_buf[i];
-> > +               inst->vsi_core->mv_buf_dma[i].dma_addr =3D mem->dma_add=
-r;
-> > +               inst->vsi_core->mv_buf_dma[i].size =3D mem->size;
-> > +       }
-> > +
-> > +       vb2_v4l2 =3D v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
-> > +       v4l2_m2m_buf_copy_metadata(&lat_buf->ts_info, vb2_v4l2, true);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  static int vdec_h264_slice_init(struct mtk_vcodec_dec_ctx *ctx)
-> >  {
-> >         struct vdec_h264_slice_inst *inst;
-> > @@ -457,64 +571,22 @@ static void vdec_h264_slice_deinit(void *h_vdec)
-> >
-> >  static int vdec_h264_slice_core_decode(struct vdec_lat_buf *lat_buf)
-> >  {
-> > -       struct vdec_fb *fb;
-> > -       u64 vdec_fb_va;
-> > -       u64 y_fb_dma, c_fb_dma;
-> > -       int err, timeout, i;
-> > +       int err, timeout;
-> >         struct mtk_vcodec_dec_ctx *ctx =3D lat_buf->ctx;
-> >         struct vdec_h264_slice_inst *inst =3D ctx->drv_handle;
-> > -       struct vb2_v4l2_buffer *vb2_v4l2;
-> >         struct vdec_h264_slice_share_info *share_info =3D lat_buf->priv=
-ate_data;
-> > -       struct mtk_vcodec_mem *mem;
-> >         struct vdec_vpu_inst *vpu =3D &inst->vpu;
-> >
-> >         mtk_vdec_debug(ctx, "[h264-core] vdec_h264 core decode");
-> >         memcpy(&inst->vsi_core->h264_slice_params, &share_info->h264_sl=
-ice_params,
-> >                sizeof(share_info->h264_slice_params));
-> >
-> > -       fb =3D ctx->dev->vdec_pdata->get_cap_buffer(ctx);
-> > -       if (!fb) {
-> > -               err =3D -EBUSY;
-> > -               mtk_vdec_err(ctx, "fb buffer is NULL");
-> > +       err =3D vdec_h264_slice_setup_core_buffer(inst, share_info, lat=
-_buf);
-> > +       if (err)
-> >                 goto vdec_dec_end;
-> > -       }
-> > -
-> > -       vdec_fb_va =3D (unsigned long)fb;
-> > -       y_fb_dma =3D (u64)fb->base_y.dma_addr;
-> > -       if (ctx->q_data[MTK_Q_DATA_DST].fmt->num_planes =3D=3D 1)
-> > -               c_fb_dma =3D
-> > -                       y_fb_dma + inst->ctx->picinfo.buf_w * inst->ctx=
-->picinfo.buf_h;
-> > -       else
-> > -               c_fb_dma =3D (u64)fb->base_c.dma_addr;
-> > -
-> > -       mtk_vdec_debug(ctx, "[h264-core] y/c addr =3D 0x%llx 0x%llx", y=
-_fb_dma, c_fb_dma);
-> > -
-> > -       inst->vsi_core->dec.y_fb_dma =3D y_fb_dma;
-> > -       inst->vsi_core->dec.c_fb_dma =3D c_fb_dma;
-> > -       inst->vsi_core->dec.vdec_fb_va =3D vdec_fb_va;
-> > -       inst->vsi_core->dec.nal_info =3D share_info->nal_info;
-> > -       inst->vsi_core->wdma_start_addr =3D
-> > -               lat_buf->ctx->msg_queue.wdma_addr.dma_addr;
-> > -       inst->vsi_core->wdma_end_addr =3D
-> > -               lat_buf->ctx->msg_queue.wdma_addr.dma_addr +
-> > -               lat_buf->ctx->msg_queue.wdma_addr.size;
-> > -       inst->vsi_core->wdma_err_addr =3D lat_buf->wdma_err_addr.dma_ad=
-dr;
-> > -       inst->vsi_core->slice_bc_start_addr =3D lat_buf->slice_bc_addr.=
-dma_addr;
-> > -       inst->vsi_core->slice_bc_end_addr =3D lat_buf->slice_bc_addr.dm=
-a_addr +
-> > -               lat_buf->slice_bc_addr.size;
-> > -       inst->vsi_core->trans_start =3D share_info->trans_start;
-> > -       inst->vsi_core->trans_end =3D share_info->trans_end;
-> > -       for (i =3D 0; i < H264_MAX_MV_NUM; i++) {
-> > -               mem =3D &inst->mv_buf[i];
-> > -               inst->vsi_core->mv_buf_dma[i] =3D mem->dma_addr;
-> > -       }
-> > -
-> > -       vb2_v4l2 =3D v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
-> > -       v4l2_m2m_buf_copy_metadata(&lat_buf->ts_info, vb2_v4l2, true);
-> >
-> >         vdec_h264_slice_fill_decode_reflist(inst, &inst->vsi_core->h264=
-_slice_params,
-> >                                             share_info);
-> > -
-> >         err =3D vpu_dec_core(vpu);
-> >         if (err) {
-> >                 mtk_vdec_err(ctx, "core decode err=3D%d", err);
-> > @@ -573,12 +645,11 @@ static int vdec_h264_slice_lat_decode(void *h_vde=
-c, struct mtk_vcodec_mem *bs,
-> >         struct vdec_h264_slice_inst *inst =3D h_vdec;
-> >         struct vdec_vpu_inst *vpu =3D &inst->vpu;
-> >         struct mtk_video_dec_buf *src_buf_info;
-> > -       int nal_start_idx, err, timeout =3D 0, i;
-> > +       int nal_start_idx, err, timeout =3D 0;
-> >         unsigned int data[2];
-> >         struct vdec_lat_buf *lat_buf;
-> >         struct vdec_h264_slice_share_info *share_info;
-> >         unsigned char *buf;
-> > -       struct mtk_vcodec_mem *mem;
-> >
-> >         if (vdec_msg_queue_init(&inst->ctx->msg_queue, inst->ctx,
-> >                                 vdec_h264_slice_core_decode,
-> > @@ -617,11 +688,9 @@ static int vdec_h264_slice_lat_decode(void *h_vdec=
-, struct mtk_vcodec_mem *bs,
-> >         if (err)
-> >                 goto err_free_fb_out;
-> >
-> > -       vdec_h264_insert_startcode(inst->ctx->dev, buf, &bs->size,
-> > -                                  &share_info->h264_slice_params.pps);
-> > -
-> > -       inst->vsi->dec.bs_buf_addr =3D (uint64_t)bs->dma_addr;
-> > -       inst->vsi->dec.bs_buf_size =3D bs->size;
-> > +       if (!inst->ctx->is_secure_playback)
-> > +               vdec_h264_insert_startcode(inst->ctx->dev, buf, &bs->si=
-ze,
-> > +                                          &share_info->h264_slice_para=
-ms.pps);
-> >
-> >         *res_chg =3D inst->resolution_changed;
-> >         if (inst->resolution_changed) {
-> > @@ -634,38 +703,27 @@ static int vdec_h264_slice_lat_decode(void *h_vde=
-c, struct mtk_vcodec_mem *bs,
-> >                 }
-> >                 inst->resolution_changed =3D false;
-> >         }
-> > -       for (i =3D 0; i < H264_MAX_MV_NUM; i++) {
-> > -               mem =3D &inst->mv_buf[i];
-> > -               inst->vsi->mv_buf_dma[i] =3D mem->dma_addr;
-> > -       }
-> > -       inst->vsi->wdma_start_addr =3D lat_buf->ctx->msg_queue.wdma_add=
-r.dma_addr;
-> > -       inst->vsi->wdma_end_addr =3D lat_buf->ctx->msg_queue.wdma_addr.=
-dma_addr +
-> > -               lat_buf->ctx->msg_queue.wdma_addr.size;
-> > -       inst->vsi->wdma_err_addr =3D lat_buf->wdma_err_addr.dma_addr;
-> > -       inst->vsi->slice_bc_start_addr =3D lat_buf->slice_bc_addr.dma_a=
-ddr;
-> > -       inst->vsi->slice_bc_end_addr =3D lat_buf->slice_bc_addr.dma_add=
-r +
-> > -               lat_buf->slice_bc_addr.size;
-> > -
-> > -       inst->vsi->trans_end =3D inst->ctx->msg_queue.wdma_rptr_addr;
-> > -       inst->vsi->trans_start =3D inst->ctx->msg_queue.wdma_wptr_addr;
-> > -       mtk_vdec_debug(inst->ctx, "lat:trans(0x%llx 0x%llx) err:0x%llx"=
-,
-> > -                      inst->vsi->wdma_start_addr,
-> > -                      inst->vsi->wdma_end_addr,
-> > -                      inst->vsi->wdma_err_addr);
-> > -
-> > -       mtk_vdec_debug(inst->ctx, "slice(0x%llx 0x%llx) rprt((0x%llx 0x=
-%llx))",
-> > -                      inst->vsi->slice_bc_start_addr,
-> > -                      inst->vsi->slice_bc_end_addr,
-> > -                      inst->vsi->trans_start,
-> > -                      inst->vsi->trans_end);
-> > +
-> > +       vdec_h264_slice_setup_lat_buffer(inst, bs, lat_buf);
-> > +       mtk_vdec_debug(inst->ctx, "lat:trans(0x%llx 0x%lx) err:0x%llx",
-> > +                      inst->vsi->ube.dma_addr, (unsigned long)inst->vs=
-i->ube.size,
-> > +                      inst->vsi->err_map.dma_addr);
-> > +
-> > +       mtk_vdec_debug(inst->ctx, "slice(0x%llx 0x%lx) rprt((0x%llx 0x%=
-llx))",
-> > +                      inst->vsi->slice_bc.dma_addr, (unsigned long)ins=
-t->vsi->slice_bc.size,
-> > +                      inst->vsi->trans.dma_addr, inst->vsi->trans.dma_=
-addr_end);
-> >         err =3D vpu_dec_start(vpu, data, 2);
-> >         if (err) {
-> >                 mtk_vdec_debug(inst->ctx, "lat decode err: %d", err);
-> >                 goto err_free_fb_out;
-> >         }
-> >
-> > -       share_info->trans_end =3D inst->ctx->msg_queue.wdma_addr.dma_ad=
-dr +
-> > -               inst->vsi->wdma_end_addr_offset;
-> > +       if (inst->ctx->is_secure_playback)
-> > +               share_info->trans_end =3D inst->vsi->dec.wdma_end_addr_=
-offset;
-> > +       else
-> > +               share_info->trans_end =3D inst->ctx->msg_queue.wdma_add=
-r.dma_addr +
-> > +                       inst->vsi->dec.wdma_end_addr_offset;
-> > +
-> >         share_info->trans_start =3D inst->ctx->msg_queue.wdma_wptr_addr=
-;
-> >         share_info->nal_info =3D inst->vsi->dec.nal_info;
-> >
-> > @@ -691,8 +749,11 @@ static int vdec_h264_slice_lat_decode(void *h_vdec=
-, struct mtk_vcodec_mem *bs,
-> >                 return -EINVAL;
-> >         }
-> >
-> > -       share_info->trans_end =3D inst->ctx->msg_queue.wdma_addr.dma_ad=
-dr +
-> > -               inst->vsi->wdma_end_addr_offset;
-> > +       if (inst->ctx->is_secure_playback)
-> > +               share_info->trans_end =3D inst->vsi->dec.wdma_end_addr_=
-offset;
-> > +       else
-> > +               share_info->trans_end =3D inst->ctx->msg_queue.wdma_add=
-r.dma_addr +
-> > +                       inst->vsi->dec.wdma_end_addr_offset;
-> >         vdec_msg_queue_update_ube_wptr(&lat_buf->ctx->msg_queue, share_=
-info->trans_end);
-> >
-> >         if (!IS_VDEC_INNER_RACING(inst->ctx->dev->dec_capability)) {
-> > @@ -737,10 +798,10 @@ static int vdec_h264_slice_single_decode(void *h_=
-vdec, struct mtk_vcodec_mem *bs
-> >         mtk_vdec_debug(inst->ctx, "[h264-dec] [%d] y_dma=3D%llx c_dma=
-=3D%llx",
-> >                        inst->ctx->decoded_frame_cnt, y_fb_dma, c_fb_dma=
-);
-> >
-> > -       inst->vsi_ctx.dec.bs_buf_addr =3D (u64)bs->dma_addr;
-> > -       inst->vsi_ctx.dec.bs_buf_size =3D bs->size;
-> > -       inst->vsi_ctx.dec.y_fb_dma =3D y_fb_dma;
-> > -       inst->vsi_ctx.dec.c_fb_dma =3D c_fb_dma;
-> > +       inst->vsi_ctx.bs.dma_addr =3D (u64)bs->dma_addr;
-> > +       inst->vsi_ctx.bs.size =3D bs->size;
-> > +       inst->vsi_ctx.fb.y.dma_addr =3D y_fb_dma;
-> > +       inst->vsi_ctx.fb.c.dma_addr =3D c_fb_dma;
-> >         inst->vsi_ctx.dec.vdec_fb_va =3D (u64)(uintptr_t)fb;
-> >
-> >         v4l2_m2m_buf_copy_metadata(&src_buf_info->m2m_buf.vb,
-> > @@ -770,7 +831,7 @@ static int vdec_h264_slice_single_decode(void *h_vd=
-ec, struct mtk_vcodec_mem *bs
-> >
-> >                 for (i =3D 0; i < H264_MAX_MV_NUM; i++) {
-> >                         mem =3D &inst->mv_buf[i];
-> > -                       inst->vsi_ctx.mv_buf_dma[i] =3D mem->dma_addr;
-> > +                       inst->vsi_ctx.mv_buf_dma[i].dma_addr =3D mem->d=
-ma_addr;
-> >                 }
-> >         }
-> >
-> > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_qu=
-eue.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
-> > index f283c4703dc6..c1310176ae05 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
-> > @@ -308,8 +308,13 @@ int vdec_msg_queue_init(struct vdec_msg_queue *msg=
-_queue,
-> >                 msg_queue->wdma_addr.size =3D 0;
-> >                 return -ENOMEM;
-> >         }
-> > -       msg_queue->wdma_rptr_addr =3D msg_queue->wdma_addr.dma_addr;
-> > -       msg_queue->wdma_wptr_addr =3D msg_queue->wdma_addr.dma_addr;
-> > +       if (ctx->is_secure_playback) {
-> > +               msg_queue->wdma_rptr_addr =3D 0;
-> > +               msg_queue->wdma_wptr_addr =3D 0;
-> > +       } else {
-> > +               msg_queue->wdma_rptr_addr =3D msg_queue->wdma_addr.dma_=
-addr;
-> > +               msg_queue->wdma_wptr_addr =3D msg_queue->wdma_addr.dma_=
-addr;
-> > +       }
-> >
-> >         msg_queue->empty_lat_buf.ctx =3D ctx;
-> >         msg_queue->empty_lat_buf.core_decode =3D NULL;
-> > --
-> > 2.25.1
-> >
+To make sure we don't get hugetlb folios in the wrong rmap code path. That
+can easily race with concurrent mapcount changes, just like any other
+page_type checks that end up in folio_test_type/page_has_type e.g., from
+PFN walkers.
+
+Load tearing in these functions shouldn't really result in false positives
+(what we care about), but READ_ONCE shouldn't hurt or make a difference.
+
+
+ From b03dc9bf27571442d886d8da624a4e4f737433f2 Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Tue, 28 May 2024 09:37:20 +0200
+Subject: [PATCH] mm: read page_type using READ_ONCE
+
+KCSAN complains about possible data races: while we check for a
+page_type -- for example for sanity checks -- we might concurrently
+modify the mapcount that overlays page_type.
+
+Let's use READ_ONCE to avoid laod tearing (shouldn't make a difference)
+and to make KCSAN happy.
+
+Note: nothing should really be broken besides wrong KCSAN complaints.
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202405281431.c46a3be9-lkp@intel.com
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  include/linux/page-flags.h | 6 +++---
+  1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 104078afe0b1..e46ccbb9aa58 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -955,9 +955,9 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
+  #define PG_slab		0x00001000
+  
+  #define PageType(page, flag)						\
+-	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
++	((READ_ONCE(page->page_type) & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
+  #define folio_test_type(folio, flag)					\
+-	((folio->page.page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
++	((READ_ONCE(folio->page.page_type) & (PAGE_TYPE_BASE | flag))  == PAGE_TYPE_BASE)
+  
+  static inline int page_type_has_type(unsigned int page_type)
+  {
+@@ -966,7 +966,7 @@ static inline int page_type_has_type(unsigned int page_type)
+  
+  static inline int page_has_type(const struct page *page)
+  {
+-	return page_type_has_type(page->page_type);
++	return page_type_has_type(READ_ONCE(page->page_type));
+  }
+  
+  #define FOLIO_TYPE_OPS(lname, fname)					\
+-- 
+2.45.1
+
+
+-- 
+Thanks,
+
+David / dhildenb
+
 
