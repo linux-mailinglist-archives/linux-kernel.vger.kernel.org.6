@@ -1,118 +1,193 @@
-Return-Path: <linux-kernel+bounces-191599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8558D1147
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:01:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9718D114C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D701F2146C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0BAF282F0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEBBBA29;
-	Tue, 28 May 2024 01:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70A4D515;
+	Tue, 28 May 2024 01:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X3AxBnO7"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g4E+zGg2"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07D28F49
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A4B8825
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716858107; cv=none; b=VFVVhYSf6JLrW3i2D+22LskFtsLjx0JIo2AeIsLfnP5PU1i0v2B6u0ctHlpOGvLzf+Xr8nydwPJC46WngRIhV1fOeGgGKB26osySSTQa52lzGRWAX5lNn4oh0VDcoWQFp84bAuJ7uMDZKPQlFL3mjup0x6RT1oAsvkLoY9BDT6E=
+	t=1716858131; cv=none; b=Jup1pzrZlFQhmZULErjM4E5iyAQrttH83ZCXvY5fcBF12U7SJ56VOq9Q20ucB4HA1Gk+SPM1YoQxsvvmxExuXs0EzSMl1ZHRvHqBzFeASUx7wCJW5sSHLFidY6bdbcv7vZOLpQ033th11BRoLKyUMDHcuR3dhIzpSSWr+UJjvXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716858107; c=relaxed/simple;
-	bh=jsfEKK2/0h6s1wZzf2U3f8BROR3XdQtn/aKqRUIcApI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cBXg5Y01n5+C2S+XsGJ/ParfUQWIdhNdt4rBYrmgCRE2zz41dHrihdnbrUtyMoTJvEluPpf4S9JNXc2tNH3hqA/NbTpIcYF65IYn0BWtYfvMYaOH8/YTUliaPzf+/ZX7VPKQUVAPGeniK5fvbwXvapm/3EzX93AzZntYnQCUjQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X3AxBnO7; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e95a7545bdso2081231fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:01:45 -0700 (PDT)
+	s=arc-20240116; t=1716858131; c=relaxed/simple;
+	bh=AYfH0l+s5u656zWLKGBO56eNhCo6XkoEX2FLQY//O2E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=mYZU6huN2hs0kpQlVILrRI3FxhS0fsX85UaolPB9HwgpS5l/5wpYIlUkBe7+/5Rq4LVbOaFNzBNnfXNqZB3/JmPeyLdoSWMbRaEigoYlMSXfzDaLe5LlBR/Fa/TR2OEMtxZHDzlfwvd+d7xoaDWzGcjaX8TkpaMfSzdC3HqjOzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g4E+zGg2; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2bf5ee192b1so200710a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716858104; x=1717462904; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N/n2HPYcfVAMa9viMhIlGedEXMDJx4RNXfxIzwMIkJU=;
-        b=X3AxBnO7LxVLA4C3oJLnRMRUOIR1N0O9I70fdylIUtWbKD8RQzeUQYKGKbFB/98C2y
-         o+0JLjc9yiNrspRmv/F8SjeILWZRVnqcxEVNH7e2EWQJM/WotwZ/ig0Uvc/AD8w1Vkpd
-         LROih5MoKWrgFqfgMjm7oBEPpJgU2A7Eb+ydtMEslKza6rtZWHyMr4nJcXEBV3Un+rLz
-         +79q6O1VhUNNTQ27F2pt/ZFxDRbGCpZnKd7qom4Y8baatLuchf11aSdQKZkPOANI5wXY
-         4XXprVIBhJLSuHiT/ZiQJMqMxYrg3SPHnZ5YlvXLCxOLE3FIdvdEGWUpBZoTDQNEY/tm
-         4CUQ==
+        d=gmail.com; s=20230601; t=1716858129; x=1717462929; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5dQJP7ckrq9H17dUajU9sivmFtv5phvAbWRXPyPKlQo=;
+        b=g4E+zGg2MuEUn47fLAWZe1e57NewewtbD2en4JLzoHJyKfSbieYg9VoPh53hloMEhY
+         NT9hDL8TN/2hlf8l25xQOTsQYLXRD+VAVd+VGA9kwIa+/abX6px5jLj971k//OmI7SAc
+         fgIDMF/hV7kt6XNCd5N0xOGv/MatI4YH1fBh+2o40MqxgD/IplcVZcPjmLHJml++4PU3
+         aUaLvbGe0sT+kHRe1WEp2qbg0IW+Nm42yDPvix/0T2Pd2uyUMsMc7mS8l5QycHPCd0ZP
+         OULFxkGAnRIkYazwJPSUObSwec+XeLi1nDxUQlFCXiKKX3Mq71tqB1CBCiGiQ5KZxRLn
+         pg5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716858104; x=1717462904;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/n2HPYcfVAMa9viMhIlGedEXMDJx4RNXfxIzwMIkJU=;
-        b=CM2yTt+NeNMUPMff1K2lyHmOFqSs3Y9oE/qXlhQWSW1TXXaf+D164t47/otiaj241N
-         tXSTlWHnmU6RfHgJwindqaHrsEt4vc6Q93KLl0Fnr8fhtHPwgqD4YuuMNSWpKJtYugGV
-         u5jhYKubFmbBXmxikdba/R+y/R/aco9Oq5ZyZY/F0kHuu4s+6QwC64uNxzgdrOdl1HYn
-         vMsKzhP1d65ib855udAaIx+xXpLS2MQSX2IYslG45gt0dd90tG8iM0OoymsAYDJ2GLyw
-         DTxI3UVDuvxbgliS7LnhRYlpu3wmpDN0W4HjvHVWbKvwTH1EdVj9rO4XFc/7/+PflevT
-         v7lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvlqVr28lAS/yceJggi+ixDFehxiMeMUM9xgrLGbjP+mXxhbg9gozx/ckppnAg9ac4QmdL2sQ+kXc41aqKFdpCJa+Pw9NoA7OYu2QH
-X-Gm-Message-State: AOJu0YyZfhzzSi/Ew3weIDDBDTLvDkSWD7s/Z9FHXqgz7nUqsckJQzzk
-	gzEAtvqq5fp9N39uy5kwZOTGp+iBqbb/epFq1/R8fmC7A93TtIXk30hRVFPmuPc=
-X-Google-Smtp-Source: AGHT+IF9DeTXOwnwxp4rQ2ox7OoaNgJ/aFfsN8eoykusp3USaYLBAH6PtRIs6CcigKQqs8R9SXPflA==
-X-Received: by 2002:a2e:9092:0:b0:2df:d2a4:439e with SMTP id 38308e7fff4ca-2e95b0c232cmr60901341fa.27.1716858104135;
-        Mon, 27 May 2024 18:01:44 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bf2866dsm21078741fa.139.2024.05.27.18.01.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 18:01:43 -0700 (PDT)
-Date: Tue, 28 May 2024 04:01:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v15 15/29] drm/connector: hdmi: Compute bpc and format
- automatically
-Message-ID: <yas2tp7anjplld6fxg542i6z7e3mrowy3ex2mb2nohij4kkchv@fp4oi3or67i6>
-References: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
- <20240527-kms-hdmi-connector-state-v15-15-c5af16c3aae2@kernel.org>
+        d=1e100.net; s=20230601; t=1716858129; x=1717462929;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5dQJP7ckrq9H17dUajU9sivmFtv5phvAbWRXPyPKlQo=;
+        b=gQNsZ26t1LbPvICLZ8IXM/TZ7lxoTd7cr859O9B+7JGKHelvsckd1bIJjts9L9n/92
+         igK/Th8nFYdXAnjpUvbvArecAB48ZLOAsnHVAnknWntkQpEtv/mq7faF7DGlxJQf9Lv8
+         8pop79MC7+rebMnRiKkIgM4u/WJbsK6w7EghRDwrCeKLg0QeLCIB7w7ZrhE7Kqnc7Llg
+         L1++Btjwe45LHQkhwAmBJyZUgoLdKCGRTB9ckwDZGOOxBmYdYLlGygqu5uuAG5V0YCKs
+         DnFSuxqaKW+bsSwAll/4fLKqPthIUq3cRPLl8DQZhQDacBVrg7FOo7OP1b2vIfpi589q
+         UJuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhb3KfUitF+lBpdXlPjhAvhWC9RY7rifnEc68H5Yria30YHBsT2FXbP9/Q7Cqvf7JAu9dtcu1UJWjeNlvuYuV84AosbWFLohINqBxV
+X-Gm-Message-State: AOJu0YwuDpbsm0mZ8p4ST+8iE+43zZlzDZh7yly2JK31u2Xyhyz2kwyW
+	KyvNhbCoLHK7FO6qnpiB3kIWe0wgHDZrlQUjM/p/NyvPLzZhp7B/
+X-Google-Smtp-Source: AGHT+IEif073OcjQcQ+Mz9I48PWbOvtLRYIdKE7X5MaSgnxyGtbR3SqKOaiEYgT+WXniq0b67B862w==
+X-Received: by 2002:a17:90a:b009:b0:2b6:208c:2aee with SMTP id 98e67ed59e1d1-2bf5bb6b2abmr14882522a91.20.1716858129021;
+        Mon, 27 May 2024 18:02:09 -0700 (PDT)
+Received: from localhost (110-175-65-7.tpgi.com.au. [110.175.65.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5f310044sm6411613a91.9.2024.05.27.18.02.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 18:02:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240527-kms-hdmi-connector-state-v15-15-c5af16c3aae2@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 May 2024 11:02:03 +1000
+Message-Id: <D1KVETKKSRHL.18ZTVKAN8JS3Y@gmail.com>
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Oleg Nesterov" <oleg@redhat.com>
+Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Frederic Weisbecker"
+ <frederic@kernel.org>, "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Phil Auld" <pauld@redhat.com>, "Chris von
+ Recklinghausen" <crecklin@redhat.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
+ smp_call_function_single() with irqs disabled
+X-Mailer: aerc 0.17.0
+References: <20240522151742.GA10400@redhat.com>
+ <20240523132358.GA1965@redhat.com> <87h6eneeu7.ffs@tglx>
+ <ZlCwKk65-eL0FrKX@pavilion.home> <20240524183700.GA17065@redhat.com>
+ <87v832dfw1.ffs@tglx> <20240526192758.GA21193@redhat.com>
+ <D1KDJILBPEKS.27MVR6A44NMX8@gmail.com> <20240527155739.GB5733@redhat.com>
+In-Reply-To: <20240527155739.GB5733@redhat.com>
 
-On Mon, May 27, 2024 at 03:58:04PM +0200, Maxime Ripard wrote:
-> Now that we have all the infrastructure needed, we can add some code
-> that will, for a given connector state and mode, compute the best output
-> format and bpc.
-> 
-> The algorithm is equivalent to the one already found in i915 and vc4.
-> 
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 217 ++++++++++++++++++++-
->  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  25 ++-
->  2 files changed, 230 insertions(+), 12 deletions(-)
-> 
+On Tue May 28, 2024 at 1:57 AM AEST, Oleg Nesterov wrote:
+> On 05/27, Nicholas Piggin wrote:
+> >
+> > On Mon May 27, 2024 at 5:27 AM AEST, Oleg Nesterov wrote:
+> > > The more I grep the more I confused.
+> > >
+> > > On 05/25, Thomas Gleixner wrote:
+> > > >
+> > > > Right. It does not happen because the kernel starts with jiffies as
+> > > > clocksource except on S390. The jiffies clocksource is not qualifie=
+d to
+> > > > switch over to NOHZ mode for obvious reasons.
+> > >
+> > > Not obvious for those who never looked at this code ;)
+> > >
+> > > OK, clocksource_jiffies doesn't have CLOCK_SOURCE_VALID_FOR_HRES,
+> >
+> > jiffies clocksource requires a timer to run it I suppose.
+>
+> I meant, this is enough to ensure that clocksource_done_booting() paths s=
+hould
+> find another cs, best !=3D curr_clocksource, and call timekeeping_notify(=
+).
+>
+> Nevermind, quite possibly I misread this code.
+>
+> > > And I still don't understand why we can rely on can_stop_idle_tick() =
+even
+> > > in tick_nohz_idle_stop_tick().
+> >
+> > AFAIKS timer_expires_base would be 0 unless tick_nohz_next_event()
+> > were called, but that is only called from places that checked
+> > can_stop_idle_tick() or is already a tick_nohz_full() CPU.
+>
+> OK, thanks.
+>
+> So, Frederic, Nicholas, any objections to the trivial change below?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Since Thomas says it's alright, then no. I guess I added it because I
+was not certain about taking the tick_do_timer_cpu while the boot CPU
+could be running a timer interrupt.
 
--- 
-With best wishes
-Dmitry
+I would take some of his comment to explain the race is harmless and
+put it in that if block.
+
+Out of curiosity, you are getting this going on x86? Or another arch?
+Any particular use-case?
+
+Thanks,
+Nick
+
+>
+> We can cleanup the tick_do_timer_boot_cpu logic on top of it.
+>
+> Oleg.
+>
+> --- a/kernel/time/tick-common.c
+> +++ b/kernel/time/tick-common.c
+> @@ -178,26 +178,6 @@ void tick_setup_periodic(struct clock_event_device *=
+dev, int broadcast)
+>  	}
+>  }
+> =20
+> -#ifdef CONFIG_NO_HZ_FULL
+> -static void giveup_do_timer(void *info)
+> -{
+> -	int cpu =3D *(unsigned int *)info;
+> -
+> -	WARN_ON(tick_do_timer_cpu !=3D smp_processor_id());
+> -
+> -	tick_do_timer_cpu =3D cpu;
+> -}
+> -
+> -static void tick_take_do_timer_from_boot(void)
+> -{
+> -	int cpu =3D smp_processor_id();
+> -	int from =3D tick_do_timer_boot_cpu;
+> -
+> -	if (from >=3D 0 && from !=3D cpu)
+> -		smp_call_function_single(from, giveup_do_timer, &cpu, 1);
+> -}
+> -#endif
+> -
+>  /*
+>   * Setup the tick device
+>   */
+> @@ -231,9 +211,8 @@ static void tick_setup_device(struct tick_device *td,
+> =20
+>  		} else if (tick_do_timer_boot_cpu !=3D -1 &&
+>  						!tick_nohz_full_cpu(cpu)) {
+> -			tick_take_do_timer_from_boot();
+>  			tick_do_timer_boot_cpu =3D -1;
+> -			WARN_ON(READ_ONCE(tick_do_timer_cpu) !=3D cpu);
+> +			WRITE_ONCE(tick_do_timer_cpu, cpu);
+>  #endif
+>  		}
+> =20
+
 
