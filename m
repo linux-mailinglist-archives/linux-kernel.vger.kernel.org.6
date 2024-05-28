@@ -1,164 +1,107 @@
-Return-Path: <linux-kernel+bounces-193122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63288D271E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779008D270D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2891C21BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4971F2442C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB3917BB16;
-	Tue, 28 May 2024 21:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E33B17BB03;
+	Tue, 28 May 2024 21:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="d20xLBfh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UxHWfasx"
-Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qggBL/aJ"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E45217B4ED;
-	Tue, 28 May 2024 21:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5518F17E8EB;
+	Tue, 28 May 2024 21:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716932096; cv=none; b=su1VT0ReQXjE473f5Lo7xP/wIDTRuJRA6SlHhztBdwsMpsViwcI9bA+JXkqCUYVkG4pJ0YBgQ3Ixe/1YGlT20WZxLWSXyg6oAIW54+O2XML9mTO+obJJsqj+fyCmWDjWKTK/w3USZmfGBhfCUz826zN4zkLmXy2INDRFmo6bFmU=
+	t=1716931940; cv=none; b=dtQFB+WCEj+cwTjpdjLflltQdSK063BixqwFwAQznYwHcRKXuj1ERi9Fq+lh3AyfSG3ZoH/9DSWoyq1l1RKoDS+zBCz+OzVBJk2x3W+sYG8bJCNpNaO+0VmuWb07by+3MMGbLrZN49uhl6DOZnWYdhDYFxiiZEVrFVaq39giWE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716932096; c=relaxed/simple;
-	bh=OTUUZ1IOGn8N+025jO0LdHeT0aqbBWd4vImEqG7ne7A=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=XYknWr2kDOj0uOWKIy01tORUBYKkxPH9iDw7JXs97ORQ/05g5a2V1ob0GQlOOjZBpWH7iS34dled2eLifrpQP8ah9HOfwxy/xmpqGCOXUAvUfbuo1pqA27rD9LJ1h3/6jhwkq1bs2rNcKVDoAoFS8VsDKm3TozZAE1ebtfVZ6bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=d20xLBfh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UxHWfasx; arc=none smtp.client-ip=64.147.123.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 68A0E1800103;
-	Tue, 28 May 2024 17:34:53 -0400 (EDT)
-Received: from imap41 ([10.202.2.91])
-  by compute2.internal (MEProxy); Tue, 28 May 2024 17:34:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1716932093; x=1717018493; bh=y7ZRNcwP4p
-	jwdqwTtRlAY8w9sm0m48WlVfyUcA5amrM=; b=d20xLBfhlxbkU/SYrMvR0eoi4o
-	P38uCGbL00szFMDeewkI5QLC0D9lUUXnL6xEI50wsxHaIDYOe9jPRGjjkvuISphu
-	Kdgxk60UDYKdlAWA4hFbUAKjsOXPpUVm3Lbrathqh57/y69dU1qcIUUI/8QJQxbv
-	0U7d6qeTS/zJunOInz5ACXTEKg9xUCkN0+bzcYGCYKbahFH/TWDMe+tAAwfkv5Aj
-	4yxjPH5daLuOPpag3lKhHtHHPJ/Wv96r8AJddl7+EVWQpowmXxmqz2v99KIB2vNr
-	zZPwCqMV4fxaU5V+F2jx1e0Lddzy9UmK1a472ZgZrZC8Lq9ZOjygCplZ4Myg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716932093; x=1717018493; bh=y7ZRNcwP4pjwdqwTtRlAY8w9sm0m
-	48WlVfyUcA5amrM=; b=UxHWfasxL/NE8+/ONWIR9lUhoc95gRWvx5oR3Y3PVbmF
-	pKfW0GtmXJ32YtR+62MwLQaynFI52BNUQuzXu01BDal8JNNqSyFR9SqzDhc1Im66
-	Hmop0qAsoi52cGdQBZLu07TJNw/p6e1FOEIIRz6BV9TQIJ/W5YupBoFic1SHgfew
-	s0JkemMGHOgbp3Ap9kGqAjibJlnjUUGOtdg5Np2HnNI5BWCrUgxOQpEdeCYecJwC
-	lI2sT4i8Z+qp/K76FGDyEeDUzEDMjmQO1LfgtnkVS7YiWTnnsvNKLBrPai1B1Hyi
-	rvKOcUFFaYkw8IMkHPdon8LJPeWWH7O8G/mXdXzLEA==
-X-ME-Sender: <xms:_E1WZtmg2yYELxxfD-PVzMXAgBXDX0E5eBx6B9eUcVhNbA5PF-sHiw>
-    <xme:_E1WZo2OCJyzDKKUwG874-CivXU89e3s47MrAH2tCZeN4shtUTOJHsj7UwvP1gppn
-    NzavxcQvWRtQs0T_OY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedgudefgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enogfuuhhsphgvtghtffhomhgrihhnucdlgeelmdenucfjughrpefofgggkfgjfhffhffv
-    vefutgesthdtredtreertdenucfhrhhomhepfdfnuhhkvgculfhonhgvshdfuceolhhukh
-    gvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhephfeivdehffevtdehhfdt
-    ffefheethfelfefgveeifffhgeeihfefheefhfeghfeknecuffhomhgrihhnpehgihhthh
-    husgdrihhonecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:_E1WZjq4E8c3oEltPliO-RzJtT5qXLIpwQ8IgvtySU_4TOV3aiB25w>
-    <xmx:_E1WZtn4ROESPwr608vRYbvoR9EEN7XgiHLQWkZo6d0TbGY8vzHMIg>
-    <xmx:_E1WZr2uQLTd3A3yIHKz9CH7nLe5zqMSPBN4VCKTQ0nBzshRXixlyQ>
-    <xmx:_E1WZsvQqlkLPYdiBbBme-IK-WDvaTd2eayflGC8_WwXkGu6usaPqw>
-    <xmx:_U1WZr9icwl-iSU2Aj3UjbxC5xgV_aTnClx3XnlgA6UvNNSXkSfgb5x_>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 957612340080; Tue, 28 May 2024 17:34:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716931940; c=relaxed/simple;
+	bh=P780Z2cLz1m9wazVo/8pz+Og5KD+JfWGrdNgn4xCE6o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KKe9qssjK+HsOBcuIdmHteNnRgzNCeURha4Q+R0lzlIyOQVPAuSRQiQy5g5sxQ2B3YHzDQOsTDis2WnErYjyeo3CvpolYvQYg7PEVIpEh14jeeQv4jNMjP3Gqp7+h9JoEolofegUjjkFUz3ne+tG6bweit6Qej7bWcndXx7BnGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qggBL/aJ; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716931938; x=1748467938;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=P780Z2cLz1m9wazVo/8pz+Og5KD+JfWGrdNgn4xCE6o=;
+  b=qggBL/aJdNuC24WZZum8FSFENd5GgsTXw/M9hmqIjcbQDjlUxLZx7OFN
+   P1RNr3vJ8QLukOd4eW9dCHY1Hri8F4FS56YVh/ni4UKFrghaY5lbcPHkf
+   tYArihmfD8YrkPa126MNIBHWoM6UvYF6lRJ1TTwkghRhGM3L+/JbOrtpS
+   P1FfVjtXbG+U9rOqYhm0qKZLeu1E3rUWZ40pXXCqf+8UQInQAlsV85JaK
+   AYFlbf/NI+Jsfm3OaffBka7gEtcLd4V0b/n6SCjrCC28YOhr6tbVg608n
+   gM1AxZjZiUtiKTx3QIdGCXlpn4LGF8BPRBBc2IZX8WtMxHW9216RnMsD2
+   Q==;
+X-CSE-ConnectionGUID: Hdb4HxD6TwGhrq+SF3nsaA==
+X-CSE-MsgGUID: JVnjNpAOSzGoPC4OZo5ZGQ==
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="27243798"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 May 2024 14:32:10 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 28 May 2024 14:31:51 -0700
+Received: from hat-linux.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 28 May 2024 14:31:51 -0700
+From: <Tristram.Ha@microchip.com>
+To: Arun Ramadoss <arun.ramadoss@microchip.com>, Woojung Huh
+	<woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot
+	<vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	"Vladimir Oltean" <olteanv@gmail.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
+	<tristram.ha@microchip.com>
+Subject: [PATCH net] net: dsa: microchip: fix wrong register write when masking interrupt
+Date: Tue, 28 May 2024 14:35:13 -0700
+Message-ID: <1716932113-3418-1-git-send-email-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <6d4e7f1e-ccd0-4ac5-b450-f9c5f8d5c90e@app.fastmail.com>
-In-Reply-To: <371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com>
-References: <20240528013626.14066-1-luke@ljones.dev>
- <20240528013626.14066-9-luke@ljones.dev>
- <6f4bc109-00d0-47b0-a581-b96a6152545c@amd.com>
- <4d6b9171-7248-4937-87de-7e921ed8e507@app.fastmail.com>
- <5f4799b1-0606-46a9-a347-5a03738db341@amd.com>
- <ac597520-fb5b-40e5-ae1f-de825450d2db@app.fastmail.com>
- <371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com>
-Date: Wed, 29 May 2024 09:34:31 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: "Mario Limonciello" <mario.limonciello@amd.com>,
- "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: corentin.chary@gmail.com, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, richard@hughsie.com
-Subject: Re: [PATCH 8/9] platform/x86: asus-wmi: add apu_mem setting
 Content-Type: text/plain
 
+From: Tristram Ha <tristram.ha@microchip.com>
 
+The initial code used 32-bit register.  After that it was changed to 0x1F
+so it is no longer appropriate to use 32-bit write.
 
-On Wed, 29 May 2024, at 9:16 AM, Mario Limonciello wrote:
-> >> For any "new" attributes it's better to put them in that API than code
-> >> duplication of the BIOS attributes API as well as a random sysfs file
-> >> API that you can never discard.
-> > 
-> > Do you mean the firmware_attributes API? If so, I'm not opposed to adding all the existing ROG attributes to it also.
-> > 
-> > If I'm understanding the docs correctly, for example this apu_mem attr would then become:
-> > - /sys/class/firmware-attributes/asus-bios/attributes/apu_mem/type
-> > - /sys/class/firmware-attributes/*/attributes/apu_mem/current_value
-> > - /sys/class/firmware-attributes/*/attributes/apu_mem/default_value
-> > - /sys/class/firmware-attributes/*/attributes/apu_mem/display_name
-> > - /sys/class/firmware-attributes/*/attributes/apu_mem/possible_values
-> > - ..etc
-> > 
-> > That's absolutely much better than what I've been doing and I wish I'd known about it sooner.
-> 
-> Yup!  And even better "fwupdmgr get-bios-setting" and "fwupdmgr 
-> set-bios-setting" [1] will work with bash completion too.
-> 
-> If you want to build a GUI around it, it could use the fwupd dbus 
-> interface for getting those settings and manipulating them. 
+Fixes: e1add7dd6183 ("net: dsa: microchip: use common irq routines for girq and pirq")
+Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+---
+ drivers/net/dsa/microchip/ksz_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My existing GUI effort revolves around me adding these attrs to both kernel and a dbus interface. So if I can drop that then all the better
-
-> The dbus 
-> interface policy is protected by PK.
-
-What is PK? And I'm guessing this restricts users to requiring permissions to change settings?
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 1e0085cd9a9a..3ad0879b00cd 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -2185,7 +2185,7 @@ static void ksz_irq_bus_sync_unlock(struct irq_data *d)
+ 	struct ksz_device *dev = kirq->dev;
+ 	int ret;
  
-> > 
-> > So if I go ahead and convert all the new attr to this are there any issues with also converting much of the previous attr? And I'm aware of "don't break userspace" so really I'm a bit unsure how best to manage that (would a new module be better here also? "asus-bios.c" perhaps).
-> > 
-> > What I don't want is a split between platform and firmware_attributes.
-> > 
-> 
-> My personal thought is add everything to the new API and then hide the 
-> "old" interface behind some boolean Kconfig option that defaults to 
-> disabled.  If someone enables it then when it's "used" (IE read from / 
-> written to) then do something like a pr_warn_once() that it's a 
-> deprecated interface and it will go away.  Wait until next LTS kernel, 
-> and then rip it out after that.
+-	ret = ksz_write32(dev, kirq->reg_mask, kirq->masked);
++	ret = ksz_write8(dev, kirq->reg_mask, kirq->masked);
+ 	if (ret)
+ 		dev_err(dev->dev, "failed to change IRQ mask\n");
+ 
+-- 
+2.34.1
 
-I'm happy to do this. On a serious note though, I should make a new module for this right? It would make it much much easier to manage the "conversion" I think, and then it would act as a separation of concerns.
-
-> 
-> Need Hans and/or Ilpo agree to make with that though before you spend 
-> too much effort on it though.
-
-Ack
-
-> 
-> [1] https://fwupd.github.io/libfwupdplugin/bios-settings.html
-> 
 
