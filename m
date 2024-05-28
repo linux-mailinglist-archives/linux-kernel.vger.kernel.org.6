@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-192654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9624C8D2035
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBAA8D2039
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C712B1C2318F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:19:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262AB1F232E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DC3171671;
-	Tue, 28 May 2024 15:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7F3171643;
+	Tue, 28 May 2024 15:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmHnHnKf"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R5KdY2NU"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1A3171069
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E81E867;
+	Tue, 28 May 2024 15:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909518; cv=none; b=u0w2x93Sthu24zw28mNizkt+BZVqXODIre4cIx4Bx9+/QW/r0MGRmKt3CULWdpGudKTGyGZ+3m0UYzcryan8DOPFfPScPakODht16JmYbctW/Ce5u3EDgCg5me+xXJlKu6Hqv6ER80rIc++TIH5g2m/TSkO7jJsJG+jgc8+qYZU=
+	t=1716909586; cv=none; b=H27ckT/2alLNqEy/1PiZvzQ3nPAf9zuaZUNe+aKlZx64nQCbuOZuYCycN3Pyj/g1V4ArWqbDpwi1CJLbXtBFkTqKpuYSwpLsDLbUDO4vlStW9S40SLD0toUb4wMjKKU5HgVqlxeHAIUo9sEj0pG7bW4uGwldMVXWG8tgui2yNqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909518; c=relaxed/simple;
-	bh=DAI4wTRONpyDHoevO45KRBaZnNMth7l2XRIcdvktxRo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HRXtbu3n2DLhHRgJGQNppFBdnMnX+YbV4edHhEYhxOAZ0ew5/ZZVeP/vlKuRERTL55/tTZfukIZ/T/w0P/NiBYNxzLEl2/PlF2529NkCB7Rmwc+sfBd8vfzKgTL0AOzAeHUMOAJwjyWyCM+qs33HI6Yj2PsOHIoMrwqKfZEMeyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmHnHnKf; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-627ebbe7720so9361827b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716909516; x=1717514316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DAI4wTRONpyDHoevO45KRBaZnNMth7l2XRIcdvktxRo=;
-        b=VmHnHnKf7FTNr5BzRCtSHu2scyRBZNziPTO7sDXi1ccLthEygJkunHj5VHANX2Q8nS
-         4ynox/rx8rVlLBvz/Tap+9U94YqU9Bsi0JLT3Mc8lHI4CdFBgpXf5iRqXenNZbCZgpaq
-         1peK2idJwqmWvF/q6+aqEy9bJ/Wc6UcMzHbOq5P9WyiNN/Hso9CbRKO84whX38QqKSUe
-         NX/PmqDnnppVgfcMCW8VEGHJ22Nu0g8ybQVHr0+oZBitCSoQlCQm/G/AuxtODSQJdbFq
-         fLUIxu/UPyluUOPI53KofzH0amLQs0YsqDgasbTa8lZmGUh/MRmn32kW2wjWau2P3VuN
-         QkyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716909516; x=1717514316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DAI4wTRONpyDHoevO45KRBaZnNMth7l2XRIcdvktxRo=;
-        b=byEof6Q2mgEhOY0PBS9TPHR2DfapSoZUn3HwnXYY75AlC3o8W4xIqLqcRzHdtuVzOE
-         NXAjEPYFkAo9sTj+LN+0npX29NbZO9e0HA5zmgkf9UAg44EgX3ie0i5NSybs/xS73FHd
-         BLYT1fwaN1tClVLnJMT0ssrkNf59RiEFuCoOiI/b4H3Y6ITXMWai6USxyU4g4aqFyj/y
-         3o5fJ1yMoyC+XG/e6y36Ipwl40bs9JPG38TkqC3UbVcRFtcSYNKoxxgOW9S9qgWhQBkw
-         D04l2lcsY5wW1Pa0Uh6QpbqK7vpc8vksp5fZvFNcvafs6PxSlcs3WErATWE+IxnQW227
-         fFVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVO265qmPKBX35FA3po+8i3aD58DdpNmPFL63VuJU+I2K1eJVHVGvKANYmFQUs5QqEFPHBhmg9nWDt8tM6zmvDftb++gX7t18o9fZsi
-X-Gm-Message-State: AOJu0YxaQg0ki3ciLiHBctNTx9tDPBmK53YuspFczudVE08zdSlUtaCu
-	mzEdqMBplm2xMN5tL6wX0x6nqPbJ7EHE0Ma5lFeKOL/YZg8DvMoCgTJAYzrX6ie+zAj520oK59k
-	+BNX6myeKwTCLdwklZal63qUngdU=
-X-Google-Smtp-Source: AGHT+IELtNmAiYU/zHmIId16l19GazG/+CIjmGuOlJuak2gyzWubpM5Tcakcb/jM/SURpKaxrfe74i7P6YqLO60kihY=
-X-Received: by 2002:a0d:dbc2:0:b0:618:1dab:2f0f with SMTP id
- 00721157ae682-62a08d59be1mr122427817b3.2.1716909515011; Tue, 28 May 2024
- 08:18:35 -0700 (PDT)
+	s=arc-20240116; t=1716909586; c=relaxed/simple;
+	bh=Y3hJrkKqkQX3Ls3M4zvv1kb9DoYBZ9ECkpeTzTE2Sbg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=acgNgmD/4AK9h62IDiuew6eKdjIBXV76hIQaryLnEMCmw2RmhaYFR1Uvt5iWDu5PtQoDAO0/60UXevGn0lvewj4kzNpvxUb+WU8FbC6KnBd3dhtYtCVwZGGhaTl2OsFkDYYzj0M796EVyCFNf9visRX47pwOvFY90ubwzB3CPK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R5KdY2NU; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716909563; x=1717514363; i=markus.elfring@web.de;
+	bh=Y3hJrkKqkQX3Ls3M4zvv1kb9DoYBZ9ECkpeTzTE2Sbg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=R5KdY2NU3al30H4QRt8D3lOTCZxRITPw8yl9ZHFDXW4mBBRTYM727mGt72mJ0FMW
+	 LDSQz3nBj1i69+hGPzZkiofVL5hDvx69pFh0IFnfG9xgHqWfio+1SIF/lRbypilkG
+	 D8WPpBfe2AoUXqRGiQXdeCuLJ5lOe1dEo8CvS62PNRYE1Hnmcl/PpNBuNRCKP1R+0
+	 SegDgCNJB/NS7h8Ccp6gYRVSfom4u2H/EQH4gdAhqiBb00RTznGBk6+bYWAWnGuM0
+	 oDvNu8ns/Lm0bVYyKhlV+WcEVh+QwSDupqqGp2o+9sL43Irh/o3Q1DihCfpvPnMpK
+	 e5OOxALD5zt9j658NA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8kEP-1s7Hdi0MqX-00F8jK; Tue, 28
+ May 2024 17:19:23 +0200
+Message-ID: <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
+Date: Tue, 28 May 2024 17:19:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524033819.1953587-1-yosryahmed@google.com> <20240524033819.1953587-4-yosryahmed@google.com>
-In-Reply-To: <20240524033819.1953587-4-yosryahmed@google.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 28 May 2024 08:18:24 -0700
-Message-ID: <CAKEwX=O9nUPwokH__KsT+M6H=6KougJfD1rm4=2G7zmyK0NA+A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mm: zswap: make same_filled functions folio-friendly
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ linux-sound@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bard Liao <bard.liao@intel.com>,
+ Vinod Koul <vinod.koul@linaro.org>
+References: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH RESEND] soundwire: fix usages of
+ device_get_named_child_node()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:jbRx2sCDCPzqXpGNlf8SZ5seobfH1ZH4nHR0WRaxJmPCl4QrUJL
+ 9EWcb7BgfDjYh0ZwOEObhaUQ1sLD8MaURgwMy3soWt40sTlKY7mzJfjvpILx8L/seMawblz
+ gqdmblbM4KeEOyEHL94og3HyIlxyOwzFFjg8AIV3+Y8e/uDSaCFrYNjVs9jJ2JZYbBzhBbr
+ yAshy5oEBZVUk0XEs2sEw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YsxEA9qA9Oo=;9EDX73XTQwS9zgO/5HsrY5WZCVu
+ FOm+PlZ/bgHKNXGeOU172XV/sH6npcqsfYhzNJhI0K88jOX958OKK3pL0wuiPx/b66gwkQs6L
+ BzUfbMKhdkVe4SM6OvELvsGQszHmG7RnOyiNjgS5F5DfVSdazmiXlhqp3ZaOGRpkWSAnNMgJA
+ zQSXQ17k0tadD4ejwsjdOLMgXQyqX8EoRCamQmLhQehjO0gQkovwsBuW2OA4vBwjwPPmU5QGr
+ toeZLDbxSqT6VK67bVy8JB/THFDBnSobDF34/svKGx1G/DZuc3ygd958lG5/dAnnb8jO7Sjp6
+ 2m1TWpSZs+5M/8Ni7zhyy+6W5K5QP7TIHHqquIUzCxwRq/q1ZV4ctHDdOsR038ukXsDsCEVJk
+ JfutFSFbOyHRb6GLdKUB/ysMFvjgVDd+K/mTMbszT8Xn/yufJc9u09kg65A0a998EWMC9q1qd
+ Xn9CCWjOZJxoItuK8aSal7rx70E0g/RbQATbxGTxt/e6zJ3Or88BSB1ijLQbC2EXwzDjWHyYG
+ sGTmmcLWBCTj4U1caDBDg3JVOIaN8fK3JpGY5NVx0gfvJbW1oCQSUkQuqGvw2VQemrtS3iSof
+ LlXXhvn7+WIL2Q0CzRoajEIQa7A2GCW/tF7uUrZtzlPKZEA4/0ObRoAxGyybl39G4Rbic8BZ/
+ PvybX5pMj1SvUUB0ueykyXNffjpDxOE4uNUVzbRyz90BPwJsoC8AZabE+gS74Zh0RkSXHorL1
+ d471OKjnzU/ZWSFnUj0ShkihGHtOuhxTSIuEyjHYC0Iai43JA6HR2G/cilfXGckPCg1OjwKku
+ fNXaHiYaIBkVXrHU6fJE97U1LO+D4CvsnilOciF4f3zCQ=
 
-On Thu, May 23, 2024 at 8:38=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> A variable name 'page' is used in zswap_is_folio_same_filled() and
-> zswap_fill_page() to point at the kmapped data in a folio. Use 'data'
-> instead to avoid confusion and stop it from showing up when searching
-> for 'page' references in mm/zswap.c.
->
-> While we are at it, move the kmap/kunmap calls into zswap_fill_page(),
-> make it take in a folio, and rename it to zswap_fill_folio().
->
-> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> Add fwnode_handle_put() to avoid leaked references.
 
-Seems reasonable to me.
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Are you going to respond also to my previous patch review
+in more constructive ways?
+https://lore.kernel.org/lkml/eb15ab0a-e416-4ae9-98bb-610fdc04492c@web.de/
+https://lkml.org/lkml/2024/4/29/493
+
+Regards,
+Markus
 
