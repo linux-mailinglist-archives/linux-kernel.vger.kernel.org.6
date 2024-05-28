@@ -1,91 +1,113 @@
-Return-Path: <linux-kernel+bounces-192199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9418D19E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:41:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD73B8D19E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134CC1C21C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98F1B22390
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9099D16C86E;
-	Tue, 28 May 2024 11:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4954616C84C;
+	Tue, 28 May 2024 11:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZr8Fovm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCY/qlw7"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA11D16ABEA;
-	Tue, 28 May 2024 11:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCB113CABD;
+	Tue, 28 May 2024 11:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896461; cv=none; b=r4LhWewKvKzb0qu4YZ4NvvesGZEmBIAwJmku9PyaFWxS9O3DPZMXA3cMDsP0GZAu5fmze6cs7V0A04t7ksiWYbVPGHDfHgj0oXhAslz5nAqOaALf+H+6uMDyxWlEtkFkp2SVkV0Tv+5eTv+pojJ9N+wt5KToeiWyoqaXdPkC5yI=
+	t=1716896553; cv=none; b=VZVXreWjLi54f6s+NO8rwwT5ZOvLWjC04ePGQzc/H3qjadlWM1v6WRTmhLecIxTNk+lsidZD0UwSOK9ELnq8tHNz7/eTu5EZJzbWs2N2xDkSW6ORCOvcGUdkF2AGTBUoZoi1WbCN+u+puE/vge3XCIKfI9+rxWFeJOdRxa5+PKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896461; c=relaxed/simple;
-	bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QAPvD2KNsaYY8bx3duTSiTEijzQpHJ89m1OuU5x5JIPTGVGTXacvujighx65rIFJk9XXaAuOefO76VGbikyt3Y0aI/+beSkXHrtyIrko0ZxlnS6ci8OZ5PdKZwodq8Yr/1iiseFOyRxnQ+jQQ3w2TmZd/IPbzWq+mSD3EpvrtLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZr8Fovm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57B10C3277B;
-	Tue, 28 May 2024 11:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716896461;
-	bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UZr8FovmS/oz14uLYlsog1dq/IVopZHHLKcV8JaTHcDNSah+0mVTqL2UyZDJlRi1e
-	 w1j0n+1xQTvoR7lxMWzcddVY2NQ5wjwYlrSX9uMB4rZlhoc90fn/RRvQF28YJgMi63
-	 014eO+1e6j5uln2HzSl6xCoHiDX5iqQ4Y9Iq2/B5YLMcDBPuSzaQzAkwUFQ8sNzfb1
-	 dE0R7PLssMexeZdyLPaB8trqnD6ztT9TAqi7+vk86IhAx+Pzl/CjKjRxv9JI7vK1pt
-	 eG3DmbhOQnkGatkw7Piou1TsK+UmxNAGNNBNJJOBb1azXlOIH/i7ZpZvcav1gNUhKb
-	 /t/Q+ayaNRtsw==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: cramfs: add MODULE_DESCRIPTION()
-Date: Tue, 28 May 2024 13:40:42 +0200
-Message-ID: <20240528-genutzt-wohnprojekt-74654ae5d3ab@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
-References: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
+	s=arc-20240116; t=1716896553; c=relaxed/simple;
+	bh=sGJmrEh9auOiE3A4aIx6z98vnSFWMxMsIKzLamdhd6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YGZfe3S+lgUlbFIIKVZ7qLZIiwEcUjPBFrI3UpWTyMtGyacMgWy7c1oxKHKCAJ4uk5fQBRnardtqWsbk4/WMdaLW2bM8itPE92PD8I5HIcW69x/VZv7tGTEkk+R4LnzFUI6zETTjs6YanRWnZAK/nV7ykCCtRrTTrecOHDuSyIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCY/qlw7; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f48b825d8cso4990315ad.2;
+        Tue, 28 May 2024 04:42:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716896551; x=1717501351; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JnEXNXS7Fuo888+4R+iNANBlrnAQM4YxC3FEnPxAUGg=;
+        b=LCY/qlw7ensCFFUOIfl6tF9w5Mguqoj8jcF3apHbHyWyCovwVa9Gjacb2cXlnUuxsA
+         f8PDTKGIDFQwWRs8hmMFdvrvy7ifnvd90rXvu7gcTtlmNmA65qAXtVzsKNTjtpLyxW01
+         yq0n6bH+561R1MR5y9n/033XxzIOhyrfLRmqkzZXtEF5iljqKbl7mqju7W+X3zk1nxas
+         ilg7ORFVcUCXjzJvxixLLVcV58UeBtFo7c8s7KjBUmWSze8fPT8YegmEM0KHnJ3ZPnoC
+         UG3InbYWYZRdAfXiNCkCXcr7dhKdNLGTucDaSAFcKCyRUwgLnX0Yxkis4sHdIiIZzXf/
+         /pcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716896551; x=1717501351;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JnEXNXS7Fuo888+4R+iNANBlrnAQM4YxC3FEnPxAUGg=;
+        b=YLyCLIvbwPudllK+K2Np7N5B9+gUQnLb8JiDAtani/V5AHu0ad58qxx7zB9BX2nn3x
+         y8oz0+ShMqPBpSu9e1Q2QGZuCHLetCRkqWwI8EiXRy00HJFFzFfxjpHcatxDXZIvA9RC
+         5AWJWk2pnRXEY5bUmAhZzFhMn5UEXgXIKNUkWd7F+FBLDjDQ5sLXMBbEbpnXQAKvpNiv
+         xp+EVR+B0CMBT2YGf8PClQmaGp0oZsuJT70u2uk+bmjokra63KwgIxWdUPSQYZ/DaSkF
+         oLjKm7IwlZ0rqAGBDAt1I4ySi0jZcrvSUkv3wsG8fFUle08TWJyvth8ra8h03a6Ag+BG
+         xZPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1dMmma/2/Efqhm+m4GwLwYDKVVZt+SfgaCw5dCvezwdykfdCZFY/Z9uy6of1uYyiks2C5jMGJQwc4kGb2Akkq1Fgk7UhV9OiYI4/F
+X-Gm-Message-State: AOJu0Ywa7z04NgsSZagk+E8RYrcF7ml62GzdKAvwC6msa72VqPF8C6Cz
+	/Ld9y2KeJsBBJRkCWr5bb+M+sJP5II/OvVBOxjmCjyakjMBW9f3L
+X-Google-Smtp-Source: AGHT+IGO5L3Fa32QU5l+BrSfABCdODP/2O1IBTw/BZxrL/qzg2y4CjJobhzCA/43uv5Ek01jZL0Qzw==
+X-Received: by 2002:a17:903:1d0:b0:1f4:962f:633e with SMTP id d9443c01a7336-1f4962f6542mr71297945ad.12.1716896550607;
+        Tue, 28 May 2024 04:42:30 -0700 (PDT)
+Received: from [192.168.1.164] (h69-130-12-20.bendor.broadband.dynamic.tds.net. [69.130.12.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75debfsm78387435ad.14.2024.05.28.04.42.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 04:42:30 -0700 (PDT)
+Message-ID: <ffd7a57f-8cb9-4f9a-b830-d4659a4de520@gmail.com>
+Date: Tue, 28 May 2024 04:42:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=919; i=brauner@kernel.org; h=from:subject:message-id; bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHjqyeNb3mNpvoturfPjXMExPePn4IfvJ/3Jfja5f/ ly8xvfk4o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJKG1m+O+su+Zewe89k9bv v3v1ZmulZd+hY/JsxvX6pborVdo3iexlZGjt2Z6akG78oLDmMmuiZ7Pe/kJhvk3snrsLuzp6XKf e5QIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+User-Agent: Mozilla Thunderbird
+Subject: Re: ath10k_pci 0000:3a:00.0: Could not init core: -110
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Kalle Valo <kvalo@kernel.org>,
+ Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+References: <0c544b16-5c0d-4687-9f96-8ff1f3269f79@molgen.mpg.de>
+ <e1bc0bb8-a66e-4e03-bc22-3dc506b6fb59@quicinc.com>
+ <87sey38vte.fsf@kernel.org>
+ <96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de>
+Content-Language: en-US
+From: James Prestwood <prestwoj@gmail.com>
+In-Reply-To: <96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Mon, 27 May 2024 10:55:02 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
-> 
-> 
+Hi Paul,
 
-Applied to the v6.10-rc1 branch of the vfs/vfs.git tree.
-Patches in the v6.10-rc1 branch should appear in linux-next soon.
+> Thank you. I haven’t found out yet, how to reproduce this. I’ll keep 
+> an eye on it.
+>
+This seems like the original bug I reported here:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+https://lore.kernel.org/linux-wireless/304ce305-fbe6-420e-ac2a-d61ae5e6ca1a@gmail.com/
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Note its not specific to power save which I originally thought, but you 
+can reproduce it somewhat easily (at least I could) by simply 
+adding/removing the wlan interface in a loop. IIRC even just ifup/ifdown 
+would eventually trigger it.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+But so far the patch Baochen submitted completely resolved the problem.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: v6.10-rc1
+Thanks,
 
-[1/1] fs: cramfs: add MODULE_DESCRIPTION()
-      https://git.kernel.org/vfs/vfs/c/9149a57dd525
+James
+
 
