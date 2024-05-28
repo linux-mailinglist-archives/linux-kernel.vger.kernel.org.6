@@ -1,169 +1,155 @@
-Return-Path: <linux-kernel+bounces-191837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2BB8D14EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA44C8D14F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4464DB22328
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9540028382C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDBB6F08E;
-	Tue, 28 May 2024 07:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7E271B47;
+	Tue, 28 May 2024 07:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="qaJGv4g0"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="iz0AnPYN"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8B51DFEF
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1CD71739;
+	Tue, 28 May 2024 07:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716880169; cv=none; b=GWCrlQBseqVBJYTnwwem1bM4vat+df6FNW5EPPzutU4QKuXLJJ8NIsXxto8OtZ3SNt4GNRYs6Iy39xpj0lifjR4risgGKDx0eiMTrVbJUSdjMDAlACQmRwwePH2Q9EeKYXKsK7E2ltAfbBVbXqkWCJicyqRc08mf45bK7syNiso=
+	t=1716880172; cv=none; b=Ndi2+09nnPzUk+TJZW62rwXqF153RkaWz0hv7zdWs2NpWErJjhN77mCRSh+w1ra2bvwQo6GiQ2mlAU/AZR0fd0N4xfVCAJq9J3HSL7YKGyGKmRXZ5fX4qNrsrDBI46GWHZYaD1667fV7PFJkshCEsnVC3SxghNJO1ewJeKeTE9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716880169; c=relaxed/simple;
-	bh=DYXadX9QCc8lmRomMBMDMpieeZ6MUEEyBFu3Ldgus2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t0P6VxgXoWjBDBpKlNKNTGGYTMICuebgMDWNZVUDlqCZC2smSRqQy2m/WZCJGtk1iWIlY6298qxVdfAzmGoQGvn7LK8MFhTUXWoN/7LYqcPinubjNoSq2h6jUeDgzRNwXQjjqEPL7FEj1wlkO3TSalnPjCZ6dWu6AzqFZiEyD64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=qaJGv4g0; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62a088f80f6so28305117b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:09:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1716880165; x=1717484965; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=28c1rMC/X0dW+TO6kpUchR3zmdXaj4zlqVXQbL/tt3M=;
-        b=qaJGv4g0NpMevmXL6TvgEFftMEKJkCLtIIzX3AdTP6lNyZ5vTLvL7eO5tcBRpjNDfp
-         /luTiWSQMOBHXBY5DTMOAP4Obx4Khpac59cJF7Ys15YFCZmJHc0Z6992zhD7LIguYWl+
-         h5ZzXnnvXSZKba5pUL3l86iucj7bleT5lGrrmLJJ+moYVOD/wzmG8HU0dqPSNWwyL5SC
-         hasclxHCynBvrwiyEDwFP7wXEq7R21nVnFk6H9eoeQs9fhcKbNtm1m4tXSQP5kaBrqwR
-         dAyWojziHZfP8BUl7+lMT4UOe3A8SRPamOajjJ+dWG/ErqKL+2c8FqPNm9R6IqWherOA
-         yDYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716880165; x=1717484965;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=28c1rMC/X0dW+TO6kpUchR3zmdXaj4zlqVXQbL/tt3M=;
-        b=kfZKCqfueWp3ZVAY3fYgCvYgPaUY/9uYB9E7xff72kZskzLtcdk0PrryADjXXh2hkl
-         nCftn09Ub6J6KhSvEjDNtdVxXLw2/2gzL6BW/1QerB6OL+fYwVD9SSunJ6f8KHwAwIWp
-         KUunUXfAY8O/MbpWOcPRx4bzrUWTWQm28wfG4412IKXtgFVolJB2DbTP8EvwT7tGkTPb
-         3oLudX+j0mT0cY68hREOAtmxxQDOREt9UJviCT6gpa7X+OjqwLUQe2laA0xq5butTJcQ
-         GZnrPgzwNgEu7s4WN8TuzJUqVda38qzKsEzzS2AX9PyDjKo59yqD0TmNeq8Xr6D3sT6m
-         vHhA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8tJ4bqYc9S49MP5EAs2/ejswlSqeMhYd/XhUaKpE2tD86yCzS+m9jKt6n5aDA+t9xIzmfyQYWW6mwpfX7ah9ZaiGl9RcwbsWVCjjE
-X-Gm-Message-State: AOJu0Yzcu8s3lkDrPowuU0amjQnyk4F305YqAI8fSzwM9Hasa2B8B9Oy
-	MPEN0+UAS+05rgbAH4o4f5yh7ccP4GONfTz9Gtq4ProcfWaMAmAtb3Ifmrz49F0PuE3SY4MqO+n
-	gLnI=
-X-Google-Smtp-Source: AGHT+IElUa8542f1s0OIBUh4jOnbwb47fWtTE+bG5pXg9354yNtEwpXYqQVUTebzr/luRO31v97lRQ==
-X-Received: by 2002:a05:690c:b1c:b0:61b:e13c:e3f4 with SMTP id 00721157ae682-6281ba319bamr100334217b3.15.1716880164834;
-        Tue, 28 May 2024 00:09:24 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a4ee22esm19587487b3.78.2024.05.28.00.09.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 00:09:23 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a052f74c1so3813267b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:09:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjCjT9XlY6SuHWpSqEWG9qonBDFl0qUnx7hgmdpId/qxbp4E3jCldK3R07VT9MRjW4+sI9L8PEN2bv8Ii2FGCvl3JKJB8RetdFFbxS
-X-Received: by 2002:a81:4305:0:b0:618:48ab:e597 with SMTP id
- 00721157ae682-62a07329a37mr78269317b3.8.1716880163322; Tue, 28 May 2024
- 00:09:23 -0700 (PDT)
+	s=arc-20240116; t=1716880172; c=relaxed/simple;
+	bh=q03TPGrKREgG3I77Fj4FxDGWhUDCTQ/o2lyTrAG5Q4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jgTk+XNFs8xJC09NVK6jHAXSgCyngaWpfuv5Dc0p5nrk6Uk9OcwHs0HLCRRUwR+0cIuGZbPXZh1lo7SFo45Be41qFVGAjJmg2xJILfyh0EX98mAl1xfy62FaQDq5mnXiJZeOXFnPUooScjvnJPWhCaOs3VVv9PchR8yztnhwSOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=iz0AnPYN; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1716880169;
+	bh=q03TPGrKREgG3I77Fj4FxDGWhUDCTQ/o2lyTrAG5Q4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iz0AnPYNL2dWrD9rl7aogfeXOc/OglvopqIlnsvuBUTA91TiQNbpmsu79hQqRdbFS
+	 QXNTHqIMAkgeLNUXmESZ7MwaMasnTX0MqKUtQTZFLiVyKh+rQOLAqQtuD0t9UVbF7C
+	 zbkuQBFnnpo4xWkX+kPCxQoQ0CcUll67RoyI9TvE=
+Date: Tue, 28 May 2024 09:09:28 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>, Guenter Roeck <groeck@chromium.org>, 
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	Dustin Howett <dustin@howett.net>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Moritz Fischer <mdf@kernel.org>, Stephen Horvath <s.horvath@outlook.com.au>, 
+	Rajas Paranjpe <paranjperajas@gmail.com>
+Subject: Re: [PATCH v3 2/3] hwmon: add ChromeOS EC driver
+Message-ID: <3025747e-658a-47fa-8799-86e9e974b796@t-8ch.de>
+References: <20240527-cros_ec-hwmon-v3-0-e5cd5ab5ba37@weissschuh.net>
+ <20240527-cros_ec-hwmon-v3-2-e5cd5ab5ba37@weissschuh.net>
+ <ZlV8HWlsHfoz8QMc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
- <ZkyPoIXBeBUqFJ48@phenom.ffwll.local> <CAAObsKAJvgg54zBEP-e3PKPLVeX+akZFJudjutjzVVZOJa-41g@mail.gmail.com>
- <e22ffdea-3c18-3a23-e526-25809e98fcd9@quicinc.com> <b19b95ca-c235-4738-a586-bfd1a36183dc@linux.intel.com>
-In-Reply-To: <b19b95ca-c235-4738-a586-bfd1a36183dc@linux.intel.com>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Tue, 28 May 2024 09:09:11 +0200
-X-Gmail-Original-Message-ID: <CAAObsKCdU5_O7HgcPQ3SHAuSbCKFPU494GS9dazZ9CfPtvgtcA@mail.gmail.com>
-Message-ID: <CAAObsKCdU5_O7HgcPQ3SHAuSbCKFPU494GS9dazZ9CfPtvgtcA@mail.gmail.com>
-Subject: Re: DRM Accel BoF at Linux Plumbers
-To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, open list <linux-kernel@vger.kernel.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Christian Gmeiner <christian.gmeiner@gmail.com>, 
-	Oded Gabbay <ogabbay@kernel.org>, Olof Johansson <olof@lixom.net>, 
-	Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZlV8HWlsHfoz8QMc@google.com>
 
-On Thu, May 23, 2024 at 8:35=E2=80=AFAM Jacek Lawrynowicz
-<jacek.lawrynowicz@linux.intel.com> wrote:
->
-> Hi,
->
-> On 21.05.2024 17:10, Jeffrey Hugo wrote:
-> > On 5/21/2024 8:41 AM, Tomeu Vizoso wrote:
-> >> On Tue, May 21, 2024 at 2:12=E2=80=AFPM Daniel Vetter <daniel@ffwll.ch=
-> wrote:
-> >>>
-> >>> On Sat, May 18, 2024 at 10:46:01AM +0200, Tomeu Vizoso wrote:
-> >>>> Hi,
-> >>>>
-> >>>> I would like to use the chance at the next Plumbers to discuss the
-> >>>> present challenges related to ML accelerators in mainline.
-> >>>>
-> >>>> I'm myself more oriented towards edge-oriented deployments, and don'=
-t
-> >>>> know enough about how these accelerators are being used in the cloud
-> >>>> (and maybe desktop?) to tell if there is enough overlap to warrant a
-> >>>> common BoF.
-> >>>>
-> >>>> In any case, these are the topics I would like to discuss, some
-> >>>> probably more relevant to the edge than to the cloud or desktop:
-> >>>>
-> >>>> * What is stopping vendors from mainlining their drivers?
-> >>>>
-> >>>> * How could we make it easier for them?
-> >>>>
-> >>>> * Userspace API: how close are we from a common API that we can ask
-> >>>> userspace drivers to implement? What can be done to further this goa=
-l?
-> >>>>
-> >>>> * Automated testing: DRM CI can be used, but would be good to have a
-> >>>> common test suite to run there. This is probably dependent on a comm=
-on
-> >>>> userspace API.
-> >>>>
-> >>>> * Other shared userspace infrastructure (compiler, execution,
-> >>>> synchronization, virtualization, ...)
-> >>>>
-> >>>> * Firmware-mediated IP: what should we do about it, if anything?
-> >>>>
-> >>>> * Any standing issues in DRM infra (GEM, gpu scheduler, DMABuf, etc)
-> >>>> that are hurting accel drivers?
-> >>>>
-> >>>> What do people think, should we have a drivers/accel-wide BoF at
-> >>>> Plumbers? If so, what other topics should we have in the agenda?
-> >>>
-> >>> Yeah sounds good, and I'll try to at least attend lpc this year since=
- it's
-> >>> rather close ... Might be good to explicitly ping teams of merged and
-> >>> in-flight drivers we have in accel already.
-> >>
-> >> Sounds like a good idea to me. Will check if the people that sent the
-> >> previous aborted attempts are still interested in this
-> >
-> > Looks like the Intel VPU folks are missing from this thread.
-> Hi!
->
-> > I like the idea of a BoF.  I suspect I will be remote but this list of =
-topics looks good to me.  Nothing obvious missing from what I can tell.
-> I like it too and I will try to attend. I would maybe add to the list GPU=
-/accel interoperability.
+On 2024-05-28 06:39:25+0000, Tzung-Bi Shih wrote:
+> On Mon, May 27, 2024 at 10:58:32PM +0200, Thomas Weißschuh wrote:
+> > diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+> [...]
+> > + *  ChromesOS EC driver for hwmon
+> 
+> s/ChromesOS/ChromeOS/.
 
-Thanks, that is a really good one.
+Ack. Copy-and-paste...
 
-Tomeu
+> > +struct cros_ec_hwmon_priv {
+> > +	struct cros_ec_device *cros_ec;
+> > +	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
+> > +	u8 usable_fans;
+> > +};
+> > +
+> > +static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+> > +{
+> > +	u16 data;
+> > +	int ret;
+> > +
+> > +	ret = cros_ec_cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &data);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	data = le16_to_cpu(data);
+> > +	*speed = data;
+> > +
+> > +	if (data == EC_FAN_SPEED_NOT_PRESENT || data == EC_FAN_SPEED_STALLED)
+> > +		return -EIO;
+> 
+> `data` could be eliminated; use `*speed` instead.
+
+Then the le16 value would need to be written directly to the out
+parameter. The current usage relies on *speed (sometimes) being set even
+if ret != 0.
+
+(See next response block)
+
+> 
+> > +static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+> > +			      u32 attr, int channel, long *val)
+> > +{
+> [...]
+> > +	u16 speed = 0;
+> > +	u8 temp = 0;
+> 
+> They don't need to initialize.
+
+They need to.
+
+The logic
+
+if (ret == -EIO && speed == EC_FAN_SPEED_STALLED)
+	ret = 0;
+
+relies on -EIO and a write to speed from cros_ec_hwmon_read_fan_speed().
+
+But if cros_ec_cmd_readmem() already returns -EIO, then speed would be
+uninitialized.
+
+I'll see if I can make this clearer somehow.
+
+> 
+> > +	if (type == hwmon_fan && attr == hwmon_fan_input) {
+> > +		ret = cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed);
+> > +		if (ret == 0)
+> > +			*val = speed;
+> > +	} else if (type == hwmon_fan && attr == hwmon_fan_fault) {
+> > +		ret = cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed);
+> > +		if (ret == -EIO && speed == EC_FAN_SPEED_STALLED)
+> > +			ret = 0;
+> > +		if (ret == 0)
+> > +			*val = speed == EC_FAN_SPEED_STALLED;
+> > +	} else if (type == hwmon_temp && attr == hwmon_temp_input) {
+> > +		ret = cros_ec_hwmon_read_temp(priv->cros_ec, channel, &temp);
+> > +		if (ret == 0)
+> > +			*val = kelvin_to_millicelsius((((long)temp) + EC_TEMP_SENSOR_OFFSET));
+> > +	} else if (type == hwmon_temp && attr == hwmon_temp_fault) {
+> > +		ret = cros_ec_hwmon_read_temp(priv->cros_ec, channel, &temp);
+> > +		if (ret == -EIO && speed == EC_TEMP_SENSOR_ERROR)
+> > +			ret = 0;
+> > +		if (ret == 0)
+> > +			*val = temp == EC_TEMP_SENSOR_ERROR;
+> > +	}
+> 
+> Refactoring them by switch .. case .. may improve the readability.
+
+It would introduce another level of indentation, which I tried to avoid.
+But some vertical whitespace would be useful indeed.
 
