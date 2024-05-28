@@ -1,164 +1,211 @@
-Return-Path: <linux-kernel+bounces-191732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4608D1339
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:12:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860EF8D133D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEA97B21494
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:12:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52F41F2165A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1809C17C7F;
-	Tue, 28 May 2024 04:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64976199B8;
+	Tue, 28 May 2024 04:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ydGePfnm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rMs5cO0m";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ydGePfnm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rMs5cO0m"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="W976m3l4"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF991BC20
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910A11429B;
+	Tue, 28 May 2024 04:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716869554; cv=none; b=TiaWYG+SXIR7mJskflBn/LjCEVKynzB4+3b+UiWfyhfOMqnO5+ljXDBz3s2oOFkQAv0+c/OiQgoKbt8qXgHJbA+Cx5Lq8GwlMWZxIfTBYxOPy0P80F6RvfOJ36t2M1Le4ZLG9GCvIAbn1AcQFa5SR2Qq+sghpl56JQTKs789L3Q=
+	t=1716869582; cv=none; b=eEA5G4NJsU/dmP9fkUcDH08LXfSdWLm0qpog/RvN9vHIi9rQCDSlvlCrxi2pZzBtO9ogQlRsf9vimpko9vgQVpYqwhA3O8y1Kg+DVndNUV7kJSXxzh2XFizvnhwEfWBKFFxe9N/Zwew1C+9wupC4l81baQOJy8jR84R+81i5FSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716869554; c=relaxed/simple;
-	bh=oI4MYNkcDayvJQTPe4NF+Zcqhv1sZeFcoIetBpgj7xI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lEsfOADfcBUbk+9fUZhYJ2oufyu9n04MEKAyfZW2Rk9mJiQYLV03bbLKF9sWrz85AvQvtD9xjoJ6aauMhF6jYg/uuA3Vv4sWCSsmwWdKdIrDvrGPTljMtQMTAgaed46egWkFAbUEse+wDH1hWeq+tcHMduivaKEFKr62NSZK8QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ydGePfnm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rMs5cO0m; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ydGePfnm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rMs5cO0m; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 79B2A200EB;
-	Tue, 28 May 2024 04:12:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716869550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gy2fmPzIz29y+vFL0cHH3XbtFn60EEpegJmC7HngM3Y=;
-	b=ydGePfnmIFiekzX2yeycuMFI3rGMkCkSm045XqJUhrvys0C8qxOEGBafgRcN84NeAq4CEd
-	i4q/rp5lq07sxDnmBMITYthirZ3qtBaTXrZepvWmFStMArWSYrIr9hgRpBvwHlzaZ10PNi
-	OGWSInYJGkJWj9AkxN0yT42eNwHcWW0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716869550;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gy2fmPzIz29y+vFL0cHH3XbtFn60EEpegJmC7HngM3Y=;
-	b=rMs5cO0mrpiKyRxl6kONIAW8jrBVplDJSL5Vofvz1QfKe7+Et5CXrdDbpsDo69bBRaEmJf
-	EoRZbtRSGLab+kDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ydGePfnm;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rMs5cO0m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716869550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gy2fmPzIz29y+vFL0cHH3XbtFn60EEpegJmC7HngM3Y=;
-	b=ydGePfnmIFiekzX2yeycuMFI3rGMkCkSm045XqJUhrvys0C8qxOEGBafgRcN84NeAq4CEd
-	i4q/rp5lq07sxDnmBMITYthirZ3qtBaTXrZepvWmFStMArWSYrIr9hgRpBvwHlzaZ10PNi
-	OGWSInYJGkJWj9AkxN0yT42eNwHcWW0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716869550;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gy2fmPzIz29y+vFL0cHH3XbtFn60EEpegJmC7HngM3Y=;
-	b=rMs5cO0mrpiKyRxl6kONIAW8jrBVplDJSL5Vofvz1QfKe7+Et5CXrdDbpsDo69bBRaEmJf
-	EoRZbtRSGLab+kDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF59913A6B;
-	Tue, 28 May 2024 04:12:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vbSXN61ZVWYJCwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 28 May 2024 04:12:29 +0000
-Date: Tue, 28 May 2024 06:12:24 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v4 03/16] mm: Provide mm_struct and address to
- huge_ptep_get()
-Message-ID: <ZlVZqNfjCw5Ay5qo@localhost.localdomain>
-References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
- <941ae68c7813cafc7aee3f34131f895fb7599636.1716815901.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1716869582; c=relaxed/simple;
+	bh=x9Rlf8wl3JxeXV0/ov/EZ5Ix7bzuuHNhbjCuo6p85ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WpKKVOjl4G+LUoEEeaGztmNRVO1LMiKVtRo4vBwf6r3MLVbbrQ7AIHbkCO19F1DNqEz+Gn+xagGfZzwSonBBSL/kHiE2/ZpUh1Axh2NppWJr71pmBYefLHBhz3iYfycHnl+z9XYywh4QFfhPeQqau1Or5YMuknlsqIKo/olUN08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=W976m3l4; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716869571; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=7O8EsjskgXj4srU7xmN/rSPQeBKsB8BqZNKMKD3Eq8o=;
+	b=W976m3l4OS2EI6Ulr0x8lhdrH7zagh2Gx+JKcEYaoKeeQE1Z86PoWYBaV1MOaWhgk4WgKNm99ORqXMZMwrbsYrdaRMCzSFjUjYTCaw8rtGL+ZtBomIbmJbdR3A6MHatthcB3xMZ8OGJEonawG3VUTwhseX2TamiQyK95zEpe/fM=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W7OLZIn_1716869562;
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7OLZIn_1716869562)
+          by smtp.aliyun-inc.com;
+          Tue, 28 May 2024 12:12:50 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-xfs@vger.kernel.org,
+	Dave Chinner <david@fromorbit.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandanbabu@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v2] xfs: avoid redundant AGFL buffer invalidation
+Date: Tue, 28 May 2024 12:12:39 +0800
+Message-Id: <20240528041239.1190215-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <1b2be7fa-332d-4fab-8d36-89ef7a0d3a24@linux.alibaba.com>
+References: <1b2be7fa-332d-4fab-8d36-89ef7a0d3a24@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <941ae68c7813cafc7aee3f34131f895fb7599636.1716815901.git.christophe.leroy@csgroup.eu>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 79B2A200EB
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 03:30:01PM +0200, Christophe Leroy wrote:
-> On powerpc 8xx huge_ptep_get() will need to know whether the given
-> ptep is a PTE entry or a PMD entry. This cannot be known with the
-> PMD entry itself because there is no easy way to know it from the
-> content of the entry.
-> 
-> So huge_ptep_get() will need to know either the size of the page
-> or get the pmd.
-> 
-> In order to be consistent with huge_ptep_get_and_clear(), give
-> mm and address to huge_ptep_get().
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Currently AGFL blocks can be filled from the following three sources:
+ - allocbt free blocks, as in xfs_allocbt_free_block();
+ - rmapbt free blocks, as in xfs_rmapbt_free_block();
+ - refilled from freespace btrees, as in xfs_alloc_fix_freelist().
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Originally, allocbt free blocks would be marked as stale only when they
+put back in the general free space pool as Dave mentioned on IRC, "we
+don't stale AGF metadata btree blocks when they are returned to the
+AGFL .. but once they get put back in the general free space pool, we
+have to make sure the buffers are marked stale as the next user of
+those blocks might be user data...."
 
+However, after commit ca250b1b3d71 ("xfs: invalidate allocbt blocks
+moved to the free list") and commit edfd9dd54921 ("xfs: move buffer
+invalidation to xfs_btree_free_block"), even allocbt / bmapbt free
+blocks will be invalidated immediately since they may fail to pass
+V5 format validation on writeback even writeback to free space would be
+safe.
+
+IOWs, IMHO currently there is actually no difference of free blocks
+between AGFL freespace pool and the general free space pool.  So let's
+avoid extra redundant AGFL buffer invalidation, since otherwise we're
+currently facing unnecessary xfs_log_force() due to xfs_trans_binval()
+again on buffers already marked as stale before as below:
+
+[  333.507469] Call Trace:
+[  333.507862]  xfs_buf_find+0x371/0x6a0       <- xfs_buf_lock
+[  333.508451]  xfs_buf_get_map+0x3f/0x230
+[  333.509062]  xfs_trans_get_buf_map+0x11a/0x280
+[  333.509751]  xfs_free_agfl_block+0xa1/0xd0
+[  333.510403]  xfs_agfl_free_finish_item+0x16e/0x1d0
+[  333.511157]  xfs_defer_finish_noroll+0x1ef/0x5c0
+[  333.511871]  xfs_defer_finish+0xc/0xa0
+[  333.512471]  xfs_itruncate_extents_flags+0x18a/0x5e0
+[  333.513253]  xfs_inactive_truncate+0xb8/0x130
+[  333.513930]  xfs_inactive+0x223/0x270
+
+xfs_log_force() will take tens of milliseconds with AGF buffer locked.
+It becomes an unnecessary long latency especially on our PMEM devices
+with FSDAX enabled and fsops like xfs_reflink_find_shared() at the same
+time are stuck due to the same AGF lock.  Removing the double
+invalidation on the AGFL blocks does not make this issue go away, but
+this patch fixes for our workloads in reality and it should also work
+by the code analysis.
+
+Note that I'm not sure I need to remove another redundant one in
+xfs_alloc_ag_vextent_small() since it's unrelated to our workloads.
+Also fstests are passed with this patch.
+
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+changes since v1:
+ - Get rid of xfs_free_agfl_block() suggested by Dave;
+ - Some commit message refinement.
+
+ fs/xfs/libxfs/xfs_alloc.c | 28 +---------------------------
+ fs/xfs/libxfs/xfs_alloc.h |  6 ++++--
+ fs/xfs/xfs_extfree_item.c |  4 ++--
+ 3 files changed, 7 insertions(+), 31 deletions(-)
+
+diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+index 6cb8b2ddc541..67b0709734f5 100644
+--- a/fs/xfs/libxfs/xfs_alloc.c
++++ b/fs/xfs/libxfs/xfs_alloc.c
+@@ -1934,7 +1934,7 @@ xfs_alloc_ag_vextent_size(
+ /*
+  * Free the extent starting at agno/bno for length.
+  */
+-STATIC int
++int
+ xfs_free_ag_extent(
+ 	struct xfs_trans		*tp,
+ 	struct xfs_buf			*agbp,
+@@ -2424,32 +2424,6 @@ xfs_alloc_space_available(
+ 	return true;
+ }
  
-
+-int
+-xfs_free_agfl_block(
+-	struct xfs_trans	*tp,
+-	xfs_agnumber_t		agno,
+-	xfs_agblock_t		agbno,
+-	struct xfs_buf		*agbp,
+-	struct xfs_owner_info	*oinfo)
+-{
+-	int			error;
+-	struct xfs_buf		*bp;
+-
+-	error = xfs_free_ag_extent(tp, agbp, agno, agbno, 1, oinfo,
+-				   XFS_AG_RESV_AGFL);
+-	if (error)
+-		return error;
+-
+-	error = xfs_trans_get_buf(tp, tp->t_mountp->m_ddev_targp,
+-			XFS_AGB_TO_DADDR(tp->t_mountp, agno, agbno),
+-			tp->t_mountp->m_bsize, 0, &bp);
+-	if (error)
+-		return error;
+-	xfs_trans_binval(tp, bp);
+-
+-	return 0;
+-}
+-
+ /*
+  * Check the agfl fields of the agf for inconsistency or corruption.
+  *
+diff --git a/fs/xfs/libxfs/xfs_alloc.h b/fs/xfs/libxfs/xfs_alloc.h
+index 0b956f8b9d5a..3dc8e44fea76 100644
+--- a/fs/xfs/libxfs/xfs_alloc.h
++++ b/fs/xfs/libxfs/xfs_alloc.h
+@@ -80,6 +80,10 @@ int xfs_alloc_get_freelist(struct xfs_perag *pag, struct xfs_trans *tp,
+ int xfs_alloc_put_freelist(struct xfs_perag *pag, struct xfs_trans *tp,
+ 		struct xfs_buf *agfbp, struct xfs_buf *agflbp,
+ 		xfs_agblock_t bno, int btreeblk);
++int xfs_free_ag_extent(struct xfs_trans *tp, struct xfs_buf *agbp,
++		xfs_agnumber_t agno, xfs_agblock_t bno,
++		xfs_extlen_t len, const struct xfs_owner_info *oinfo,
++		enum xfs_ag_resv_type type);
+ 
+ /*
+  * Compute and fill in value of m_alloc_maxlevels.
+@@ -194,8 +198,6 @@ int xfs_alloc_read_agf(struct xfs_perag *pag, struct xfs_trans *tp, int flags,
+ 		struct xfs_buf **agfbpp);
+ int xfs_alloc_read_agfl(struct xfs_perag *pag, struct xfs_trans *tp,
+ 		struct xfs_buf **bpp);
+-int xfs_free_agfl_block(struct xfs_trans *, xfs_agnumber_t, xfs_agblock_t,
+-			struct xfs_buf *, struct xfs_owner_info *);
+ int xfs_alloc_fix_freelist(struct xfs_alloc_arg *args, uint32_t alloc_flags);
+ int xfs_free_extent_fix_freelist(struct xfs_trans *tp, struct xfs_perag *pag,
+ 		struct xfs_buf **agbp);
+diff --git a/fs/xfs/xfs_extfree_item.c b/fs/xfs/xfs_extfree_item.c
+index 8c382f092332..01ebbd7691a5 100644
+--- a/fs/xfs/xfs_extfree_item.c
++++ b/fs/xfs/xfs_extfree_item.c
+@@ -547,8 +547,8 @@ xfs_agfl_free_finish_item(
+ 
+ 	error = xfs_alloc_read_agf(xefi->xefi_pag, tp, 0, &agbp);
+ 	if (!error)
+-		error = xfs_free_agfl_block(tp, xefi->xefi_pag->pag_agno,
+-				agbno, agbp, &oinfo);
++		error = xfs_free_ag_extent(tp, agbp, xefi->xefi_pag->pag_agno,
++				agbno, 1, &oinfo, XFS_AG_RESV_AGFL);
+ 
+ 	next_extent = efdp->efd_next_extent;
+ 	ASSERT(next_extent < efdp->efd_format.efd_nextents);
 -- 
-Oscar Salvador
-SUSE Labs
+2.39.3
+
 
