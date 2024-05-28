@@ -1,163 +1,103 @@
-Return-Path: <linux-kernel+bounces-192429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50648D1D22
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:34:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FD78D1D25
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2E0EB24016
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:34:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDAD4B244FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAE316F298;
-	Tue, 28 May 2024 13:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9B116F29C;
+	Tue, 28 May 2024 13:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="yp5FCoOt"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kIrbIrMD"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B28716F28D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B513516132E;
+	Tue, 28 May 2024 13:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903197; cv=none; b=smI4H+3r+n7ShAg7Hg4Ap+V+dV+Oi+vxI72bcKSZYWnWrJOh4qGZIpKd/KcSXehmWyyIZCouEUgf4z6IT9ngle1RgT4hmXokr7x5vzQWMjYJ/jNCEmvMEpjozVfJvd8qi29mX2lx/S9eLNugVdQ3+Ni7DEjnpVp38MjFa1y2SHo=
+	t=1716903246; cv=none; b=FRDgHVf4jyuHpplCRigaIvY8Yzeow7KsgwBhLEeqPdjp2TIRbfvv/Id0D+Sd+h795PgZzxZs88+W25lTEvSf6fikZpM2W9mag3Ewu0ky1LTXCP6kuTVR4fuwqmprbdbZQQebyarJ/cOjRgnHL6j1c4RYqRX/8sIJMwELaiDfHe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903197; c=relaxed/simple;
-	bh=q/vMae1L4yOc2ytS+jEdq+z0LHJ0eTg/q1QB2cL92f4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y+Wla4K2L/ZerQ1/Idgi5XaEUzqdSIV3p24IP28YcU64B9waXXROY6Tc6rErIFfkydI9WbDzHMqfXS1WtlDlYDPdLFMiqRYBoj7R1RBWyALDV8v3h35PyOmFnAi32/NHr2v7CndYuZrKPu07oUp4Dp7y59rLkL/hDt42DE8Cv78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=yp5FCoOt; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=+OlDy71KRIzdA+LVGy9z1RewFWm1WDFmdy93yC8byEM=; b=yp5FCoOteuewC8Nl9TYOsbYNyg
-	CKaOdc1Zk/5mY7ser3Q/DH6EE2tB+ZAGkLTJZ4iNF3mUA5dfOYk7rEjwAdy+EaIdb1nNrzkOPJrpN
-	KBYFEcUqqGiMCRUJmW6EJtHbjh4u7BuDD2JcnNPcjUNaytpc6amsgtDP5HjR8Ed4KjsO8YA+rdmBj
-	A4gpEo+CgbIFKcu2Iv0+36JOsJxAFux7tHZ46NiWwgjCGQj6sv6cMaAumX111q+RRnV5xJ3jM7Hod
-	f9Ur9+Qba2onRu6KXQqQTiDZ7Wr449FhD9vwCYV7cXRyemOcVuT7WvoX2pSKMd77dWJMnjIbpATGx
-	XFzwPG2g==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sBwws-0001Wh-HA; Tue, 28 May 2024 15:33:06 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sBwwr-00068E-36;
-	Tue, 28 May 2024 15:33:05 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
- <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  Michael Ellerman
- <mpe@ellerman.id.au>,  Nicholas Piggin <npiggin@gmail.com>,  Christophe
- Leroy <christophe.leroy@csgroup.eu>,  "Aneesh Kumar K.V"
- <aneesh.kumar@kernel.org>,  "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org,
-  linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 2/2] powerpc/configs: Update defconfig with now
- user-visible CONFIG_FSL_IFC
-In-Reply-To: <096662e8-03cf-4c13-baa0-11918cab7511@kernel.org> (Krzysztof
-	Kozlowski's message of "Tue, 28 May 2024 15:00:57 +0200")
-References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
-	<20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
-	<096662e8-03cf-4c13-baa0-11918cab7511@kernel.org>
-Date: Tue, 28 May 2024 15:33:04 +0200
-Message-ID: <87le3ukqnj.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716903246; c=relaxed/simple;
+	bh=Ik3IwN+16oKPOTbYrZpxc/FCC7z+whSbWb1zyWjb2EQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=sToyTMhNEVsQkfW6zg3LkfewKzT5RedHEEac5I2HfFnKJ78LV9q8kh0tMCBOEf5Y7T2p2VC9lhi7UBsCEkzK7sE0o2a7IpZORyGP49PeGZ0XeQTq69lWdYY7YPXetcyUxal2NNaktgA/dqpZWwBItKQyiaMMWLapVJxN9A8iH5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kIrbIrMD; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716903231; x=1717508031; i=markus.elfring@web.de;
+	bh=fKUmntawbOtctP6yN0b3gwKJXY86nmY0qmcKIIFU+QM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kIrbIrMD8WUlgP/D3vNfip/cTAhQ5k/CFLBUlFRL7gGPDcTgCr6+cCHzAUNL41eH
+	 nY3663K9aJG4auNJ3v0pyFn4xDrBhi1gpoeId8mD7JL2Z8RmAHpGBPwNKgJSwjkyn
+	 nqjnMJxUE94ChApE6t3bspLnYjGrv6i4GkASmYh+YBKqdHR+bgwh6eQTyUSVam5MQ
+	 l9HDnb/8xCVB+tQq6FHP3WGktuSmWDIQ0M3x9F1K3oU3JS2fpTXUAs6xJVrCYUtcg
+	 oshDjUHzb6VuGhDN8+9foFZd4BnhIrlqbhH+BglAZNGzHYWNUoDvID68p3V+qQA1p
+	 PDlHNcUCJ9a4Ol6+Tg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUCz1-1s3OO42CLj-00J6fC; Tue, 28
+ May 2024 15:33:51 +0200
+Message-ID: <799829a9-0061-4e26-a678-ed1e180bfadf@web.de>
+Date: Tue, 28 May 2024 15:33:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27289/Tue May 28 10:30:59 2024)
+User-Agent: Mozilla Thunderbird
+To: Oleksij Rempel <o.rempel@pengutronix.de>, linux-can@vger.kernel.org,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ Robin van der Gracht <robin@protonic.nl>
+Cc: LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+ kernel@pengutronix.de, =?UTF-8?Q?Alexander_H=C3=B6lzl?=
+ <alexander.hoelzl@gmx.net>
+References: <20240528070648.1947203-1-o.rempel@pengutronix.de>
+Subject: Re: [PATCH] j1939: recover socket queue on CAN bus error during BAM
+ transmission
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240528070648.1947203-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/MGXPLipIr/QLxKLMjXmGzy0bu0p1jeg0nhf3Q1y6odsN+g7S2G
+ 1+jyAY6AASEQ1VUyhHAguwk1lTShv5VD2RnPus4/FOPDtpOjgM3x0DwTEMyJmBsLdbK8afM
+ ic4Iit1Ib2bZGJLHtngpEaDFgD/4LbXN9lEie5tVYv7abbUrBacGgzYvWWSi3j46UvijO/6
+ iDw9E/lJwCP7tmaOKzvuw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jGP6vXC3I/A=;FWpa1WiDXjnDhxnGscHZLMUwTDe
+ iUyyJ6NssagF63SER41bXUFxiqAXcU4FAQJom55FRThQ1r/yULNhalTK72iNx0/Y9cpQ50vSs
+ 0UyiBidp6KTs32zwuv6zAy6rCPdVe12XZHGbboVBWpb1yJd21bsFCA9hGfqX70/fIx+XXYzwi
+ Y+S9uyrOvrGT9kyjO1GoVMFZiWw8665frmDn8i8NPNKVfeeT4/fCUY3D3gOYqn3zL25h7HwBr
+ wlDtDL21N8KGhTmL5czlSvflnnE6+s12ZWbtDoXHKXkV5ScH1J/HE8oS3fWuR2Jherym9VXCW
+ DkRfV3ye5lqCeVQm1QuhSWXlWhrill9xezwWSwKH3Y3P77gwDdELiEf6D+S6MB6EgE2mEz03r
+ tzm8RMD6NreqR5/KEnDHl/kWINN2ftdPGsG2HeO/pK6i0KYpXNQjdub0xs0I0VJzygMIjNSrU
+ tLMPuOhl82zZb3ppaEoNWolIvgLzS2aE11eZLswBnXmQcnPbZUAHh16GEamKc6XLB94mb0R8h
+ aQDbk7anIMQzjUGdKr+RWp35VQy5EhxpnAjJL0fUrzULPYYjsuHPBQspwsjbROTf7B0imCRdd
+ btgqxndj/0MBnJSz9IxwTPXi9x2RDWmpsga2PTkX7luX/2BUCeyknCTWXSKUDowEETqBVgzlS
+ D5YGJj6UxjndM1Cbw5is8R/vrxMvw7CWo/aGdOC4ZqLFb8l7M/v0TyOTAW+tcLKCtn5C1+hf/
+ 1sRYDDhUUy2tag+4bAm/zwbQoyBa4mgRPT6J9cUexv9i0q/gQ+3jvf+k400qXAusbWFqIYRVW
+ iqRSaINjD8wvRRTYE37PbtTnstiCopPQ1j/Cw82Xh4RzA=
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+>                      =E2=80=A6 The fix activates the next queued session=
+ after
+=E2=80=A6
 
-> On 28/05/2024 14:28, Esben Haabendal wrote:
->> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
->> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
->> selected in config snippets.
->> 
->> Signed-off-by: Esben Haabendal <esben@geanix.com>
->> ---
->>  arch/powerpc/configs/85xx-hw.config | 2 ++
->>  1 file changed, 2 insertions(+)
->> 
->> diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
->> index 524db76f47b7..8aff83217397 100644
->> --- a/arch/powerpc/configs/85xx-hw.config
->> +++ b/arch/powerpc/configs/85xx-hw.config
->> @@ -24,6 +24,7 @@ CONFIG_FS_ENET=y
->>  CONFIG_FSL_CORENET_CF=y
->>  CONFIG_FSL_DMA=y
->>  CONFIG_FSL_HV_MANAGER=y
->> +CONFIG_FSL_IFC=y
->
-> Does not look like placed according to config order.
+Please choose an imperative change description.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc1#n94
 
-Correct.
-
-> This is not alphabetically sorted, but as Kconfig creates it (make
-> savedefconfig).
-
-Are you sure about this?
-
-It looks very much alphabetically sorted, with only two "errors"
-
-$ diff -u 85xx-hw.config 85xx-hw.config.sorted 
---- 85xx-hw.config      2024-05-28 15:05:44.665354428 +0200
-+++ 85xx-hw.config.sorted       2024-05-28 15:05:56.102019081 +0200
-@@ -15,8 +15,8 @@
- CONFIG_DMADEVICES=y
- CONFIG_E1000E=y
- CONFIG_E1000=y
--CONFIG_EDAC=y
- CONFIG_EDAC_MPC85XX=y
-+CONFIG_EDAC=y
- CONFIG_EEPROM_AT24=y
- CONFIG_EEPROM_LEGACY=y
- CONFIG_FB_FSL_DIU=y
-@@ -71,10 +71,10 @@
- CONFIG_MTD_CMDLINE_PARTS=y
- CONFIG_MTD_NAND_FSL_ELBC=y
- CONFIG_MTD_NAND_FSL_IFC=y
--CONFIG_MTD_RAW_NAND=y
- CONFIG_MTD_PHYSMAP_OF=y
- CONFIG_MTD_PHYSMAP=y
- CONFIG_MTD_PLATRAM=y
-+CONFIG_MTD_RAW_NAND=y
- CONFIG_MTD_SPI_NOR=y
- CONFIG_NETDEVICES=y
- CONFIG_NVRAM=y
-
-I don't think that this file has ever been Kconfig sorted since it was
-created back in ancient times.
-
-And as it is merged with other config snippets using merge_into_defconfig
-function. I have no idea how to use savedefconfig to maintain such a snippet.
-It would require doing the reverse of the merge_into_defconfig.
-
->>  CONFIG_FSL_PQ_MDIO=y
->>  CONFIG_FSL_RIO=y
->
-> You also missed to update second defconfig - arm64.
-
-Argh. I thought I checked, and it did not need any changes. But it needs
-to have CONFIG_FSL_IFC=y added.
-
-I will add that for v3.
-
-/Esben
+Regards,
+Markus
 
