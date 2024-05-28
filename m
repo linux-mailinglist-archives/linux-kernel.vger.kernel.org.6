@@ -1,126 +1,240 @@
-Return-Path: <linux-kernel+bounces-192503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04518D1E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 987CB8D1E42
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC431C22FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBDDE1C2262C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AE916F838;
-	Tue, 28 May 2024 14:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2250716F847;
+	Tue, 28 May 2024 14:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wFSLxzoB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QP/pyYu1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Whohw+07"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163A716FF33
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C93A16F83A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905626; cv=none; b=Pk25nPc7kQm0M//atc8+2BDkZAX7qR/Bx8cPStbbkatWs8eiqe8d8nGBAoqTQvWaxmTCpbbQvpTHZQ4+9j+O4KPi/nDtzxH3iHWkPSVqnw8JePMyfuhUoLmwH0094Anlv0lgj53VZOwuNv/gkRBRlstBrg24B5C2TQ3ri4OcPr8=
+	t=1716905676; cv=none; b=nbAhi+H3d1oYj0WP7LPDcEv3jJvAwda6s5RnfnaKjnMpSZU2JPIz2RlJBG8LeGP2ddyfqCJfFIhOSqAL5mzdNtyEKvW3RthJ9HkZKzori56tQSUr3J6D+Hgso9wb92ED6+PBk9cjL1VTVmCrHSUv2cSRNxu7xEDz+zU8F8gCVIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905626; c=relaxed/simple;
-	bh=yGczwoowHgTBSzvC13wg6toyMlplKlmFcpHOKWv7Wrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NejbjtZjEIDZkSc5A/e7ceH5f+ufhTE/3ss4ySwhgYg5JRW7zpKH9TCxF18q05+Qrq539NTQlqjaM19HM3ZczVKNxYSuiSqezmKNnv8E0EkBeJfiqpcOGXAofGLsM+2ynTTxK+lAcMiG5q8QNhUuxSPkAJjr0b6xOUyauikICtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wFSLxzoB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QP/pyYu1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 May 2024 16:13:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716905623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vTOgAjTKulp1YcH/LU4x95O4AvhUBSt+M3+DMT8WODI=;
-	b=wFSLxzoBVfwAtCCftNneGnf1GCgI3etrzLApZhe+KVi6LYCS0Bh+V0msc0WPKEkanbNa+W
-	WY8YiyKsCYMHgB9o8sSwPjki7Yc83Vd+kt0HwL6xw7BvzlDBru09I6gRkXwfEB8IumYjy/
-	4hYOlMRkS4Q/f6P6xZTboAWt1bNKZ+hES9s+VkuKNi1blqLJoNnIuh8KLOOKzqlXpNwnV0
-	rGVxkaoNcXIHFo8J+/WvBAgx2FlzcoL7I/Cejd6Sm6hISTvFGcrFFFYkesIVKF6cLTyncq
-	HEF1e1ecx3U9UgqxfogtdrjiGM9PAXRy1g7pHXiCEF/JhXXN1+LZAA2Yssacyg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716905623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vTOgAjTKulp1YcH/LU4x95O4AvhUBSt+M3+DMT8WODI=;
-	b=QP/pyYu1WTVN5VEjvoSr5awhkcFfSSc5ke5CgQ2wgvJ0vcdgW3vJKZQHLQPBKMm/rqjHlL
-	PRb86YH1xWGdHRAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2] memcg: Remove the lockdep assert from
- __mod_objcg_mlstate().
-Message-ID: <20240528141341.rz_rytN_@linutronix.de>
-References: <20240528121928.i-Gu7Jvg@linutronix.de>
- <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
- <20240528134027.OxDASsS3@linutronix.de>
- <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
+	s=arc-20240116; t=1716905676; c=relaxed/simple;
+	bh=gknVVZDrcAnrDDzqKNaNI9z03xkLRzYl9GLjv9HkC1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PqOf6eAFGLInEktgGtggCXPZ/8T2Sj6B3uMUM5I6kJGEAGV7fCkZtJLJ+pNJ/vw6CbZuttrCnLpBtHMB/zEKi5QCIOsLkbTiKAxWWBGD4XURu3WqgK2pwhjbUag2nszV/1wtdUzm1fEmxC/ntXkwK85HtRluOjHExhYu/m7qVQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Whohw+07; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6ab9dacc38fso4212556d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716905673; x=1717510473; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gu3wKWOoXrILYJvRJgKFCPnUxXEiCQVkjQKAjWWpZY=;
+        b=Whohw+07bdbAEtUd/cRCTAeQSqPWU4AQwo16yrzElashvKacVJZEUYaRb3r16MjKtu
+         xs/w75d4RH749KNLT4WLlw0P28lGninhuztGbrWwBtmmmsuEL/EKYwCSOvSm3o8Xucvk
+         ylZgjQOAq+1b+KYI3/cevB/U7HxdmKeR+Jt48=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716905673; x=1717510473;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9gu3wKWOoXrILYJvRJgKFCPnUxXEiCQVkjQKAjWWpZY=;
+        b=Rsg/ycPpV/YnBIVBmUGkfVbb/u7d5yCkBoMMPp3tpuRkKzZUz/tvzHbdZz3vWqTS3A
+         QYrxYlYJvL+f5f6E3lMA8Vw01eFgQtPX5aScpnTHsioMmqU7wA1lv4hcfJ//+62YpOr+
+         Lg6PX29FDJUL3x2y+ROnrbVf77VAAzyw/+2TxaESZtVpUrfhEnn6GZO8xB3QkJL+Phor
+         yHooOI518nUyILcMwP0S1WL/Pyq5EWLbbgCCCy9jez+a2EIJl6ZXGg7W5B4LHrZGs9dJ
+         dKLmw81Buv3SjVkCfFMN/dUb8zIAL0Fp+Bu/biV2qRBkMZfHIbHM6FWwGjAePIshf99k
+         ujlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8XfB/x5robz+Y5u0mpJnj0jGXDkGo/jVbSnJzmB5/qicXCP9UbVAv5LZg65VHMbsjtBOVrIC83CJq27mBDCmLzgCRTPFdEIeFBBX6
+X-Gm-Message-State: AOJu0YyPL42xrnuS4SmefjRLTwHVD9fBC6eFc0acw0E0BOXMvVWGvH/n
+	zD5NUyuM5qUp3ghU6WwYVWrRVExG3Ldx9sHqbMy7Z+YlQx4rHqfjRbPDO8uQihJPNV3tSBYohhm
+	2+Xs9hP13TDuQ88W37iAG+W60PPEJnbgQdh6L
+X-Google-Smtp-Source: AGHT+IEI+dzgZP8zd/diyeNDZtgq2X5P9KOmX2YoJ6AodFPQYgDfDjDrZMHRZvdxdwMmwyC27IUCqIDPCEnzmESbtLk=
+X-Received: by 2002:a05:6214:5990:b0:6ad:78f2:fcd2 with SMTP id
+ 6a1803df08f44-6ad78f2fe73mr79564096d6.29.1716905673414; Tue, 28 May 2024
+ 07:14:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
+References: <20240521065107.30371-1-wenst@chromium.org> <20240521065107.30371-2-wenst@chromium.org>
+ <CAFLszTgJpaWzJneZ-uReEGrE85MgGYOjJKxOL7jGCYMuVMPKUg@mail.gmail.com>
+ <CAGb2v67MQDep8gfPWgeQoew8URAZyPw6ocGEMxMnwzYYRa0PYg@mail.gmail.com>
+ <CAFLszTh5M+4Vp8oR3t-=6vsROgVJa0NU4egfJu2QuugjAfbrsw@mail.gmail.com>
+ <CAGXv+5Eajy55kAcNzyZtsp9MJhD7EnNONW-JYsoadctaTjnxgA@mail.gmail.com>
+ <CAFLszTjeQdwEp1AgL8geK7AZFwQqDfTkdzj4V2JkYqU4F7Em4Q@mail.gmail.com> <CAGXv+5HhwBx0qGSB=V6O1gXjrTDjhwMRsWe5a4VSP6+suwwU3g@mail.gmail.com>
+In-Reply-To: <CAGXv+5HhwBx0qGSB=V6O1gXjrTDjhwMRsWe5a4VSP6+suwwU3g@mail.gmail.com>
+From: Simon Glass <sjg@chromium.org>
+Date: Tue, 28 May 2024 08:14:22 -0600
+Message-ID: <CAFLszThkZuif9s3CFBUh9Mj==unSMCDP4z6rWHbFToKfck8T8w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] scripts/make_fit: Drop fdt image entry compatible string
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: wens@kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The assert was introduced in the commit cited below as an insurance that
-the semantic is the same after the local_irq_save() has been removed and
-the function has been made static.
+Hi Chen-Yu,
 
-The original requirement to disable interrupt was due the modification
-of per-CPU counters which require interrupts to be disabled because the
-counter update operation is not atomic and some of the counters are
-updated from interrupt context.
+On Tue, 28 May 2024 at 02:31, Chen-Yu Tsai <wenst@chromium.org> wrote:
+>
+> On Fri, May 24, 2024 at 9:01=E2=80=AFPM Simon Glass <sjg@chromium.org> wr=
+ote:
+> >
+> > Hi ChenYu,
+> >
+> > On Fri, 24 May 2024 at 00:30, Chen-Yu Tsai <wenst@chromium.org> wrote:
+> > >
+> > > Hi Simon,
+> > >
+> > > On Fri, May 24, 2024 at 1:38=E2=80=AFAM Simon Glass <sjg@chromium.org=
+> wrote:
+> > > >
+> > > > Hi ChenYu,
+> > > >
+> > > > On Thu, 23 May 2024 at 11:30, Chen-Yu Tsai <wens@kernel.org> wrote:
+> > > > >
+> > > > > On Fri, May 24, 2024 at 1:19=E2=80=AFAM Simon Glass <sjg@chromium=
+org> wrote:
+> > > > > >
+> > > > > > Hi Chen-Yu,
+> > > > > >
+> > > > > > On Tue, 21 May 2024 at 00:51, Chen-Yu Tsai <wenst@chromium.org>=
+ wrote:
+> > > > > > >
+> > > > > > > According to the FIT image spec, the compatible string in the=
+ fdt image
+> > > > > >
+> > > > > > Can you please add a link to where it says this in the spec? I =
+cannot
+> > > > > > find it after a short search.
+> > > > >
+> > > > > (Quick reply from my other email before I forget.)
+> > > > >
+> > > > > From the FIT source file format document, found in U-boot source
+> > > > > "doc/usage/fit/source_file_format.rst", or on the website:
+> > > > > https://docs.u-boot.org/en/latest/usage/fit/source_file_format.ht=
+ml
+> > > > >
+> > > > > Under "'/images' node" -> "Conditionally mandatory property", the
+> > > > > "compatible" property is described as "compatible method for load=
+ing image."
+> > > > >
+> > > > > I'll add the reference in the next version.
+> > > >
+> > > > OK thank you.
+> > > >
+> > > > There is also a spec version at [1] - it might be worth adding ment=
+ion
+> > > > of this explicitly for the fdt nodes.
+> > >
+> > > It seems that this is already mentioned?
+> > >
+> > > See https://github.com/open-source-firmware/flat-image-tree/blob/main=
+/source/chapter2-source-file-format.rst?plain=3D1#L343
+> >
+> > I see that but I am suggesting that it could explicitly mention that
+> > the FDT should not have a compatible string for the model...that
+> > should only be in the configuration node.
+>
+> I sent a pull request on GitHub. The mailing list seemed very empty.
 
-All callers of __mod_objcg_mlstate() acquire a lock
-(memcg_stock.stock_lock) which disables interrupts on !PREEMPT_RT and
-the lockdep assert is satisfied. On PREEMPT_RT the interrupts are not
-disabled and the assert triggers.
+Yes it is fairly new and the spec is pretty stable.
 
-The safety of the counter update is already ensured by
-VM_WARN_ON_IRQS_ENABLED() which is part of __mod_memcg_lruvec_state() and
-does not require yet another check.
+Your PR is merged.
 
-Remove the lockdep assert from __mod_objcg_mlstate().
+Regards,
+Simon
 
-Fixes: 91882c1617c15 ("memcg: simple cleanup of stats update functions")
-Link: https://lore.kernel.org/r/20240528121928.i-Gu7Jvg@linutronix.de
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-On 2024-05-28 15:44:51 [+0200], Vlastimil Babka (SUSE) wrote:
-> I think just s/memcg_stats_lock()/__mod_memcg_lruvec_state()/ in your
-> phrasing, since we are removing the lockdep assert from path that calls
-> __mod_memcg_lruvec_state() and not memcg_stats_lock()?
-> Or am I missing something?
-
-Yeah, makes sense.
-
- mm/memcontrol.c |    2 --
- 1 file changed, 2 deletions(-)
-
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3147,8 +3147,6 @@ static inline void __mod_objcg_mlstate(s
- 	struct mem_cgroup *memcg;
- 	struct lruvec *lruvec;
- 
--	lockdep_assert_irqs_disabled();
--
- 	rcu_read_lock();
- 	memcg = obj_cgroup_memcg(objcg);
- 	lruvec = mem_cgroup_lruvec(memcg, pgdat);
+>
+> ChenYu
+>
+> > >
+> > > It looks like it was copied from U-boot directly.
+> >
+> > Yes mostly it is the same, but there were some changes. It has evolved
+> > slowly over the years but the bones of it is stable.
+> >
+> > Regards,
+> > Simon
+> >
+> > >
+> > >
+> > > Regards,
+> > > ChenYu
+> > >
+> > > > Regards,
+> > > > Simon
+> > > >
+> > > > [1] https://github.com/open-source-firmware/flat-image-tree/
+> > > >
+> > > > >
+> > > > >
+> > > > > ChenYu
+> > > > >
+> > > > > > I believe this patch is correct. Since the information is in th=
+e
+> > > > > > configuration node it does not need to be in the FDT.
+> > > > > >
+> > > > > > > node or any image node specifies the method to load the image=
+, not the
+> > > > > > > compatible string embedded in the FDT or used for matching.
+> > > > > > >
+> > > > > > > Drop the compatible string from the fdt image entry node.
+> > > > > > >
+> > > > > > > While at it also fix up a typo in the document section of out=
+put_dtb.
+> > > > > > >
+> > > > > > > Fixes: 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
+> > > > > > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > > > > > ---
+> > > > > > >  scripts/make_fit.py | 3 +--
+> > > > > > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+> > > > > > > index 3de90c5a094b..263147df80a4 100755
+> > > > > > > --- a/scripts/make_fit.py
+> > > > > > > +++ b/scripts/make_fit.py
+> > > > > > > @@ -190,7 +190,7 @@ def output_dtb(fsw, seq, fname, arch, com=
+press):
+> > > > > > >      Args:
+> > > > > > >          fsw (libfdt.FdtSw): Object to use for writing
+> > > > > > >          seq (int): Sequence number (1 for first)
+> > > > > > > -        fmame (str): Filename containing the DTB
+> > > > > > > +        fname (str): Filename containing the DTB
+> > > > > > >          arch: FIT architecture, e.g. 'arm64'
+> > > > > > >          compress (str): Compressed algorithm, e.g. 'gzip'
+> > > > > > >
+> > > > > > > @@ -211,7 +211,6 @@ def output_dtb(fsw, seq, fname, arch, com=
+press):
+> > > > > > >          fsw.property_string('type', 'flat_dt')
+> > > > > > >          fsw.property_string('arch', arch)
+> > > > > > >          fsw.property_string('compression', compress)
+> > > > > > > -        fsw.property('compatible', bytes(compat))
+> > > > > > >
+> > > > > > >          with open(fname, 'rb') as inf:
+> > > > > > >              compressed =3D compress_data(inf, compress)
+> > > > > > > --
+> > > > > > > 2.45.0.215.g3402c0e53f-goog
+> > > > > > >
+> > > > > >
+> > > > > > Regards,
+> > > > > > Simon
+> > > > > >
+> > > > > > _______________________________________________
+> > > > > > linux-arm-kernel mailing list
+> > > > > > linux-arm-kernel@lists.infradead.org
+> > > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
