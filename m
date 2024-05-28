@@ -1,132 +1,145 @@
-Return-Path: <linux-kernel+bounces-191816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41FC8D1494
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59ACE8D1496
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C4D4B22973
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A37B22693
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144A36A33B;
-	Tue, 28 May 2024 06:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8C06D1A6;
+	Tue, 28 May 2024 06:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwCiDq4O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW0LnRHJ"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD461FE0;
-	Tue, 28 May 2024 06:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BCC61FC5;
+	Tue, 28 May 2024 06:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716878370; cv=none; b=ppwdbxHlrYIgmPuj6aTAUhQxW/9puy9/HINhsq9HB3ORQB1jM76ei4h781p8HXW8BpfQR6agie8e7SFLZXZF2/G/OJRrLvMGglZd/OkG4s7zHei4be2NpjQRIQtTFdNPsP13p3zvRIZa/hntBXL/8gCaT0VST0ZBdITCB6NM/Ic=
+	t=1716878413; cv=none; b=C0J8l/xAcv7Axqx5I6ZuViqGaCQRDbXFGaC1S2xlNXy6XwJjKWMhPvBweoI1ap/1iIzSLCAdkhNFXxTSsgTJ9hv5alxSOzYU6IPArAoFx297HO/qF29VpdkbXIOwDAMmd4Yfp5QHNC0SwhPMPUJYF9rHIYJoa7sezk7vuKS0sls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716878370; c=relaxed/simple;
-	bh=nm/GpAhN0oO9Uj7klikih6fTBlHQd89v/Qhoj4sgPko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GA5cRN3OFHN68C8ysoSgj9IAy0643EcVc+EqTEmEJ369VNMCWXj/dl9SEFntloPSqcS/sfO1wfw2RQoGQX+xxy9fh+fuKWML0uyF3mdAVu1gdkdSPHUrwbSiuGBBh/nmH6PWERp9JtXuwbIdymzP9sxjdnU079aph7bbVGgut58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwCiDq4O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B00E3C3277B;
-	Tue, 28 May 2024 06:39:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716878369;
-	bh=nm/GpAhN0oO9Uj7klikih6fTBlHQd89v/Qhoj4sgPko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iwCiDq4OvzbHujit1i654mMLK11g3PNupDsrG9ue4/ghLgwsINk/OToz8gtoOV5LN
-	 XmCtR0yuBSI2zfl6ISn0CNC/L+QMStuUMJKzYb+y5jKaaV5g2ryKFdvP7o7fYSlN3a
-	 dvrG+PYo/XguhOFRSJOx+FxDJdGES9imtIFZGJqKhmhFsWxW/HFQBLd72e5I4qQcJb
-	 pWTwTMQ2mE0UralUQs2lsCgQZtH+C/T0gTJa47r7wRXY0AREXpl7chd9GVyM9C0Dee
-	 y9yNRuHKZ2xoo3t/aewJczGpOXiKmeSYBCU6rbVFcNTo/7EpbpchNelojr1P8lQUkb
-	 MNDZCOimYdA7A==
-Date: Tue, 28 May 2024 06:39:25 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev,
-	Dustin Howett <dustin@howett.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Stephen Horvath <s.horvath@outlook.com.au>,
-	Rajas Paranjpe <paranjperajas@gmail.com>
-Subject: Re: [PATCH v3 2/3] hwmon: add ChromeOS EC driver
-Message-ID: <ZlV8HWlsHfoz8QMc@google.com>
-References: <20240527-cros_ec-hwmon-v3-0-e5cd5ab5ba37@weissschuh.net>
- <20240527-cros_ec-hwmon-v3-2-e5cd5ab5ba37@weissschuh.net>
+	s=arc-20240116; t=1716878413; c=relaxed/simple;
+	bh=L1uIjANRuY9eh6UNDVsTMZQL6aVuyTCCg8ZM+/uJs4E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LvgIGpY6fseFv+JHOc625Gie6x8ijO5w5v5dMhekxaHo7eDbm/m9/jDfB+4REHLrfW+pVrk7eFepS0HRvxleeXlrTV3BnG/KlwvkiuJ4yw81ZWeLf3RRHf4nz8DyebSCvAfedSbHARZPaWsVrlQKiJpJ85ASdnJ/4kq/vs9Ph8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GW0LnRHJ; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1f47f07acd3so4206685ad.0;
+        Mon, 27 May 2024 23:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716878411; x=1717483211; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GyT1AQYmZjQqmzbCWjENPJaJCrng/s09BLOsFY4/P2o=;
+        b=GW0LnRHJYQaMvQlr5Bjm9jwqQZ9j1XB0c8r1ZaPAODYl9+0671Z6cnAg1Wactiimlx
+         vhjTqJyNP1tLwAbd8QLenNrf9a+MWYRUs2uh88eilXADvG834DjSYkV1AaoKdggoilca
+         VUXBShgYK9ufU8JAk+XS//FfSz1tcvuO8NKMBu3REUYb1UvYQmO4hjF2QqKdKvWqUyEQ
+         CdYU+9gGCWFa8SB81GFM/El5P0KtzX5X8oJjkj1PBe4wsJXfZzvF2TcCHX3sbgt8H1QI
+         a2IsTf8XLnYDDu2mRTFAVjbdaYl45VpCOeb8+x4horB9iZfT0eGlNfe1bt2KLeRH91pe
+         LYBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716878411; x=1717483211;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GyT1AQYmZjQqmzbCWjENPJaJCrng/s09BLOsFY4/P2o=;
+        b=hEDfAGtHj9IH67LB5faArQ2q/r6RrWAPE4QkSmWFyZjRIRX4JBUB+CHChA9BmoNmUm
+         dSYPVp0C7rG2OTdtHTikVrbYAW6hqZiRwPsDs3YCgHECpezjbgmrv7KI4SahRxT/mSKd
+         3lPebONfsNMyvWW7OhLrH59qsdfcOnyl9sgwW2A2mpb/WCKgxHSWSaKpZAcW6ro5ybuK
+         w/Zb+tY8lDa4g1lmFf5K0n0NOoq39dUXKXfK9DQE5Zjl7t9T53TSQRs4CwGLM4jdb5UL
+         BGVKyWb0VyrQRS4F+ecIG7tT2ooyID+1ogufX0AcqZHKa7SIn/hBfqW78e7/BUsZYqPd
+         dg/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXlkiIvBD2z9lUmK88jrU1JelwpyqBMNDHrZ2StBeOXsgn9oXRqwWVO3uVCs+HCOsTzRwfeMKImHpfkRnD8VAl+lIxe1+hiSaEUOTJ1ir+e3tOnlM983Pgw7M5C0RYlsPlMgzgTxm3GSIbxJYc=
+X-Gm-Message-State: AOJu0YxxttPOuiRXzReqz5WnjbXjjNhk/6W/s6BeE/IgMZ/KQ6qX49Wi
+	2ZSQMUGeulu3VCHcuopTZAcbg8nFMYELNRdFzHP+b+zBcOvHWjM5Do5jHG1K
+X-Google-Smtp-Source: AGHT+IE+wVIUiVMByDVOTzItPu0y9LRbh5m3oAn4AgD1IzHZL4RsM/uEAC3sIYVL89q22RxzjyhwFw==
+X-Received: by 2002:a17:902:d2cd:b0:1f4:5685:b159 with SMTP id d9443c01a7336-1f45685b4f9mr129964065ad.31.1716878407789;
+        Mon, 27 May 2024 23:40:07 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4a77a4047sm25782125ad.255.2024.05.27.23.40.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 23:40:07 -0700 (PDT)
+From: xu xin <xu.xin.sc@gmail.com>
+X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
+To: xu.xin16@zte.com.cn
+Cc: bigeasy@linutronix.de,
+	john.ogness@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-rt-users@vger.kernel.org,
+	liu.chun2@zte.com.cn,
+	rostedt@goodmis.org,
+	si.hao@zte.com.cn,
+	yang.yang29@zte.com.cn,
+	zhang.yunkai@zte.com.cn
+Subject: Re: [PATCH  5.10-rt] printk: ignore that console preempted by irq/softirq
+Date: Tue, 28 May 2024 06:40:03 +0000
+Message-Id: <20240528064003.776618-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
+References: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240527-cros_ec-hwmon-v3-2-e5cd5ab5ba37@weissschuh.net>
 
-On Mon, May 27, 2024 at 10:58:32PM +0200, Thomas Wei�schuh wrote:
-> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-[...]
-> + *  ChromesOS EC driver for hwmon
+> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > index 7f27cfee283e..faab85dd4439 100644
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -3735,6 +3735,14 @@ bool pr_flush(int timeout_ms, bool reset_on_progress)
+> > diff = 0;
+> > 
+> > for_each_console(con) {
+> > + /*
+> > + * When we're in the unpreemptible context on the same cpu
+> > + * with which the thread of console locates on, we should
+> > + * ignore this console, because it's a vain.
+> > + */
+> > + if (!preemptible() && con->thread &&
+> > + task_cpu(con->thread) == smp_processor_id())
+> > + continue;
+> > if (!(con->flags & CON_ENABLED))
+> > continue;
+> > printk_seq = read_console_seq(con);
+> 
+> This does not apply.
+> There is `may_sleep' set earlier.
+> 
+> There is no console_lock() around for each…
+> 
 
-s/ChromesOS/ChromeOS/.
+Sorry, I don't get it.
 
-> +struct cros_ec_hwmon_priv {
-> +	struct cros_ec_device *cros_ec;
-> +	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
-> +	u8 usable_fans;
-> +};
-> +
-> +static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
-> +{
-> +	u16 data;
-> +	int ret;
-> +
-> +	ret = cros_ec_cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	data = le16_to_cpu(data);
-> +	*speed = data;
-> +
-> +	if (data == EC_FAN_SPEED_NOT_PRESENT || data == EC_FAN_SPEED_STALLED)
-> +		return -EIO;
+To clarify it again, this patch aims to solve the useless waiting of pr_flush
+when the console is preempted by the current irq/softirq. This has nothing to
+do with might_sleep().
 
-`data` could be eliminated; use `*speed` instead.
+> The other question is which kernel started enforcing might_sleep() for
+> pr_flush(). This should be applied to all kernel or none so we don't
+> have random behaviour across kernels (5.4 yes, 5.10 no, 5.15 yes).
+>
 
-> +static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
-> +			      u32 attr, int channel, long *val)
-> +{
-[...]
-> +	u16 speed = 0;
-> +	u8 temp = 0;
+Sorry, my understanding is that pr_flush didn't start enforcing might_sleep().
+This patch can apply to 5.10 and 5.15 where the problem exist.
 
-They don't need to initialize.
+> This is a delay of max 1 sec during bug() and panic(). Not sure how
+> "critical" this is…
 
-> +	if (type == hwmon_fan && attr == hwmon_fan_input) {
-> +		ret = cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed);
-> +		if (ret == 0)
-> +			*val = speed;
-> +	} else if (type == hwmon_fan && attr == hwmon_fan_fault) {
-> +		ret = cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed);
-> +		if (ret == -EIO && speed == EC_FAN_SPEED_STALLED)
-> +			ret = 0;
-> +		if (ret == 0)
-> +			*val = speed == EC_FAN_SPEED_STALLED;
-> +	} else if (type == hwmon_temp && attr == hwmon_temp_input) {
-> +		ret = cros_ec_hwmon_read_temp(priv->cros_ec, channel, &temp);
-> +		if (ret == 0)
-> +			*val = kelvin_to_millicelsius((((long)temp) + EC_TEMP_SENSOR_OFFSET));
-> +	} else if (type == hwmon_temp && attr == hwmon_temp_fault) {
-> +		ret = cros_ec_hwmon_read_temp(priv->cros_ec, channel, &temp);
-> +		if (ret == -EIO && speed == EC_TEMP_SENSOR_ERROR)
-> +			ret = 0;
-> +		if (ret == 0)
-> +			*val = temp == EC_TEMP_SENSOR_ERROR;
-> +	}
+In some industrial control scenarios, bugs and warnings containning a
+pr_flush delay of 1 sec is very critical to the upper services.
 
-Refactoring them by switch .. case .. may improve the readability.
+Especiall for watchdog timeout(< 2s), just WARN can easily lead to system reset,
+which is unacceptible.
+
 
