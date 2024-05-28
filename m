@@ -1,98 +1,140 @@
-Return-Path: <linux-kernel+bounces-192497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EC38D1E0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:10:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D43A8D1E19
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E180FB2150D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:10:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CEB31C22C52
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AE416F84D;
-	Tue, 28 May 2024 14:10:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DDD16F83D;
+	Tue, 28 May 2024 14:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GgmwOqsT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F046116F836
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3A316F277;
+	Tue, 28 May 2024 14:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905406; cv=none; b=lB0j60uhwK6Z5kRoDRY5lo3QGQMWyS4WJwwXHlL99sHeyvqSV/k5zkzQyae/yDhlhJDMcyZu+Os9tS9uC8x0K3rCExnx3y02LDNkcIh65y7Gg4+nxqdaJnJ8TQZct9OjqVjHOkiCWbpNIX8nq/aFHIJyvTr+GIrm2P1KeoTrDPw=
+	t=1716905490; cv=none; b=RYIIH7Ox+IPOqtmZiInOcwh6tbTOLA/gfn3T/s+Df73YaVYnefrxPKh/XcGUX9n9OiGJT6D6OdDqoBdgvgEGmLWMe9wnOkmyMoAmOPG4Eor8YqY6KfdWcz+X3kzPIezuFD5iG7U5OnktHxo4f5oR2ZMgxwqtVSQIFtBigpmnCf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905406; c=relaxed/simple;
-	bh=h/gURcyiroXERc30tAsjPBSZVuF3pg0jAqJbgtbiT0k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nt8Y91yabYxZHp5mBzptNoce/APV+FXZBlPhEMK09RCXbIS+rOnQ8EbLuMPCHhx7vVw5joZRfDwvyoGmbPYyM8MHzYcnFe+jjRwreC6FHFHFCfqJE2tWX9WUVt5+rweTTL/DnKA79qHqev2r0AET4L0y6OZButBIRiMcBi6dOYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3738732f988so8457355ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:10:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716905404; x=1717510204;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WelPM0YOgva6j7b8RyCxFfD+qVIUmvNqXXrqPoDhdgY=;
-        b=ZkHjALo3f9jweKRlNs2YRr0WS4yqKPqT8hA6z72uVrZOpSQ4lFqY4OsHqdgnsiQMq5
-         4hhdfp7YH7hkFAvIZMHCdKSYRLx0A+/U6zewfiidwUuG7PJhXZku+TAI6sRqhYNRPQHr
-         kDGvEW+hQsnh8w3UrV/xj8r0JgnO1OpkTpHwb0GzGvWg9PIzkkTT5/UNNruPXOFBHNS2
-         K5Vuc2KI18rOqC6ilkdtr7xBcgISS+IQldiiBarHcHI1dVA5/+xYUiZi2fcW5HTuxG5I
-         ifqiv9FfylG0U5bv+mRBj1C/QSZXl+pkOYQz6jOS92xY8XoXPDO/Mkb+h3lKq0HEvcZe
-         7p0g==
-X-Forwarded-Encrypted: i=1; AJvYcCX7iZv2R7vl412QUrW6fcchKDiWPUB8R5VeXDjlfHcGfIeZiocPRnoHQuIZATzjLgmSWgUDBjtOh+/lU+ZSl5r9JdJCUCq2HtzIT6NS
-X-Gm-Message-State: AOJu0Yym1CRKiWFAd9YHen4kCeLCSJSXD0nukTAxT2KDIOimjzMeZkxD
-	rvvLglQ14VEvdPPUwvI1WOKOaQCKObred7oxtch3knZBfThA6vRM3EBNiXQup/yahLmdNTup6Ux
-	nPPUOZOMPpHjce7a8zrQu3Cuztl2mw1ZIdaizHNOnkPESSd7L2eAXZHU=
-X-Google-Smtp-Source: AGHT+IGYxSLRdYdSIj6V1X50DGPsuaMd0GZg6XGsMCIH/LkK6jYr0HVeJzFN9W0DOKbFyaxhbmGnpo9uLKXYNy7mw6IEfD9syljH
+	s=arc-20240116; t=1716905490; c=relaxed/simple;
+	bh=Wh4U9HaJpeOcnxWvaHFBS0Mk9WgABPGCjn/FVN+gqy8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mU8YD/kTm8DozVqt4rKkERPeEZLad6i4FfhtpjompJFyHB8tZZJWIgiPyChOQOIvQg73ZAHqShifxHfMjH4aHz4jZol5SNF/cK3NR4oUrv2ZAIvE8P7CDHa8wYz//IRmti9jXjHOvssCPGedWlBliMx/CncJnlj+tGhmYazuD6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GgmwOqsT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBG8ub006307;
+	Tue, 28 May 2024 14:11:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=xt8AOuLuReTHWwWuia3CRpLS
+	kbzClAGe5UmAniUT+PY=; b=GgmwOqsT++6fSlvaARvQKpNblyp+80muxPNq2WnJ
+	4jhxJm0N8yVA7w2vXQXKE7mUXgLzsPjm3P7Pbi/W2WdbWTevFLK3D1Fc6zhtjOd3
+	4BaWNQPQx64DTuWRgjehm8WmkV7f7Gm8gF8AWWabl7e2VsTunq9854HBL6t6OFHM
+	0pqeHe8qxPJvwB5pZhvKy8Km63AVZjxLYaooK4g43fwNf/8ZWK0AUbgXzi35YMVp
+	x4WAxHs6INZZbiBRGYC055eCqPA6uS6y4//u2y21tg31TWZPHaWz0SIh4V0zk2GS
+	tl8ufHPPN6dqDqakgyTVccY4wC1s6mW383l6WIrL7yi5pA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0pp76h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 14:11:22 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SEBLmx009088
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 14:11:21 GMT
+Received: from hu-vvalluru-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 28 May 2024 07:11:17 -0700
+Date: Tue, 28 May 2024 19:41:13 +0530
+From: Prahlad Valluru <quic_vvalluru@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: "Rob Herring (Arm)" <robh@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nankam@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <quic_abhinavk@quicinc.com>,
+        <konrad.dybcio@linaro.org>, <conor+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
+Message-ID: <20240528141113.GA6631@hu-vvalluru-hyd.qualcomm.com>
+References: <171405653305.2527744.3813895380659072690.robh@kernel.org>
+ <20240426142442.7769-1-quic_vvalluru@quicinc.com>
+ <jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc>
+ <171517823376.1753082.4070659246393696781.robh@kernel.org>
+ <20240515150459.GA32547@hu-vvalluru-hyd.qualcomm.com>
+ <CAA8EJpo=Q4_=JU83-9ooSqiSr=xUeHh2awDhzq9q3Xd56h83zw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2188:b0:374:491c:654a with SMTP id
- e9e14a558f8ab-374491c6dd3mr3454075ab.1.1716905404172; Tue, 28 May 2024
- 07:10:04 -0700 (PDT)
-Date: Tue, 28 May 2024 07:10:04 -0700
-In-Reply-To: <0000000000004fa7ab061966d1b3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ba9d9b06198430d3@google.com>
-Subject: Re: [syzbot] [bpf?] possible deadlock in __lock_task_sighand (3)
-From: syzbot <syzbot+f2ed7d5888894fedf676@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	clang-built-linux@googlegroups.com, daniel@iogearbox.net, davem@davemloft.net, 
-	eddyz87@gmail.com, haoluo@google.com, hawk@kernel.org, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kafai@fb.com, kpsingh@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	mingo@redhat.com, nathan@kernel.org, ndesaulniers@google.com, 
-	netdev@vger.kernel.org, rostedt@goodmis.org, sdf@google.com, song@kernel.org, 
-	songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpo=Q4_=JU83-9ooSqiSr=xUeHh2awDhzq9q3Xd56h83zw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tHUTAAmDNPkyw3QWt4vZhox7tg88BLeY
+X-Proofpoint-GUID: tHUTAAmDNPkyw3QWt4vZhox7tg88BLeY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ suspectscore=0 clxscore=1011 lowpriorityscore=0 priorityscore=1501
+ mlxscore=0 spamscore=0 adultscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280107
 
-syzbot has bisected this issue to:
-
-commit fbd94c7afcf99c9f3b1ba1168657ecc428eb2c8d
-Author: Alexei Starovoitov <ast@kernel.org>
-Date:   Wed Dec 1 18:10:28 2021 +0000
-
-    bpf: Pass a set of bpf_core_relo-s to prog_load command.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=149b9a2c980000
-start commit:   30a92c9e3d6b openvswitch: Set the skbuff pkt_type for prop..
-git tree:       net
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=169b9a2c980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=129b9a2c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=17ffd15f654c98ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2ed7d5888894fedf676
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c203f0980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12046634980000
-
-Reported-by: syzbot+f2ed7d5888894fedf676@syzkaller.appspotmail.com
-Fixes: fbd94c7afcf9 ("bpf: Pass a set of bpf_core_relo-s to prog_load command.")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Wed, May 15, 2024 at 05:28:24PM +0200, Dmitry Baryshkov wrote:
+> On Wed, 15 May 2024 at 17:05, Prahlad Valluru <quic_vvalluru@quicinc.com> wrote:
+> >
+> > On Wed, May 08, 2024 at 09:31:24AM -0500, Rob Herring (Arm) wrote:
+> > >
+> > > On Mon, 06 May 2024 18:14:10 -0500, Bjorn Andersson wrote:
+> > > > On Fri, Apr 26, 2024 at 07:54:42PM GMT, Prahlad Valluru wrote:
+> > > > > From: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
+> > > > >
+> > > >
+> > > > Please don't thread new versions off existing version. b4 helps you with
+> > > > getting these things right, please check go/upstream for more details.
+> > > >
+> > > > > Enable lt9611uxc bridge for qcs6490 rb3 gen2 platform.
+> > > > >
+> > > >
+> > > > Even if it's clear what this is, I would prefer if you described the
+> > > > hardware a little bit in your commit message.
+> > > > "Rb3Gen2 has a HDMI connector, connected to DSI via a LT on i2cX.... reset and
+> > > > irq pins comes from x and y. Describe this."
+> > > >
+> > > > > Signed-off-by: Prahlad Valluru <quic_vvalluru@quicinc.com>
+> > > > > ---
+> > > > > v2: Addressed dtschema errors
+> > > > >   - Fixed lt9611-irq
+> > > > >   - vdd-supply error to be ignored, as it is connected to
+> > > > >     input supply directly, on rb3gen2
+> > >
+> > > The choice is either fix the dts or fix the binding.
+> >
+> > vdd-supply is mandatory for lt9611. Only in case of rb3gen2, we are seeing this
+> > error, since it is connected to supply directly. Will add dummy vreg to address this.
+> 
+> s/add dummy vreg/describe fixed hardware register/
+True, will define a fixed regulator for vdd.
+> 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
