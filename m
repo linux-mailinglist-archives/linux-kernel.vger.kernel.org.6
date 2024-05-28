@@ -1,97 +1,164 @@
-Return-Path: <linux-kernel+bounces-192449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2248D1D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:48:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9803D8D1D65
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A3D5B23374
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:48:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA43C1C22812
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E25C16F28D;
-	Tue, 28 May 2024 13:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AEB16F0F6;
+	Tue, 28 May 2024 13:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV2JvCao"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AJapwwED"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6523C1DFEB;
-	Tue, 28 May 2024 13:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA00A1DFEB;
+	Tue, 28 May 2024 13:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716904116; cv=none; b=gFW5Ow7o9BV3BUnS/tIeBZ+k/HNKfxKs9jXjOoCyvPPvLJGRiSDmM0WrwgfSzHbBW0h7fdz9Ydeuj8uXjkEqaW/OKEsc6pwb8kAOUatyLOdF4sBRDFu8jyoXYLtMDsZilxMveSOXbqe4Vs05k57asoPOJZATHn97oiZvDqyf7oQ=
+	t=1716904160; cv=none; b=KLAqT19aLfkTSL4Z18WIdg9HPIGOPWuvyGZmuqkeY61uccCmvPgFGPB/7ekuXnM0nysXR4GGXe0vFJLlC/yjkjRMQzbkqN7hXRjSNK+Q98etyZHmnu3i7loHmQrMBvJheDYGPsJw57jo8+WXRBqGHMKeYjqp+i00ntAgMrKd+Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716904116; c=relaxed/simple;
-	bh=DoTWcxfPd6ZXM5trbPl344BcOXMoZdGGkPQSwjH/RWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=St7NU+NECVdKw4MSRH5L2ZVFXkbTA8UQvv7J/L9GMSESvuDRW66xh3v38Dlgwn5WhAcuW9smUvxHBZZGChI7hz0vyvdoG5rr56LHMtl6qbLtOLEEVEGMfiB/kGHgyEQ2W2oe2FnBxOCFLYm6MOU8/kUJKXgXoG6N96SR2x5wyi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV2JvCao; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E332FC3277B;
-	Tue, 28 May 2024 13:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716904115;
-	bh=DoTWcxfPd6ZXM5trbPl344BcOXMoZdGGkPQSwjH/RWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qV2JvCaoWDpXgFGwXQMX/wBqV7LbRdk8dAwfrWp8Alhoo43rJMx/Q3Hp0rS1P9Kao
-	 ZTgbPEMUu4ivrI9JU3zpLxcZo/NnyfuEPXRM2BK+IqRQtrVXpP/20Mi+QU2CHNhnVJ
-	 Wh4moUeV6b3EDAh05vasMik0jRZraX6s5NwqrSoO8hUjr6sBpJyeAXIbDqnWe7bp+2
-	 heQR990QJszNbZngqv5b+OeakkEjNGBQW+62ztLRkVmfqmLp/oS7EGDlanDc0O5P0a
-	 J46zpE7fh1fpLxMcVSMob1z1xpT/F/ptPkiZ5ml0IhAzvinmUpiLtGDNHYReiT+dmc
-	 PB1wqi/C/iYqg==
-Date: Tue, 28 May 2024 08:48:33 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	s=arc-20240116; t=1716904160; c=relaxed/simple;
+	bh=N1n/J3TdFsoMMp9tMgptlou6ON9SzyuaBDHKPoaxhO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HV5fsrk9oGkdRVbZe3Uv5emjuic6lW93Z9gAH+WfnqfG+yllAmDwj8KXtNeVKQEcc7CNT2DrMKLOL1XyFk4bnzXfUpz/wmZqBgjbNGpQvrMUXmPQC6u2hpyjZdMp/SVxYSRRBqplthEjMZ5pmlQ76dLnmunPu0aGu583ar4z+w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AJapwwED; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716904159; x=1748440159;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=N1n/J3TdFsoMMp9tMgptlou6ON9SzyuaBDHKPoaxhO0=;
+  b=AJapwwEDARSA0jgRc1mGnbyyzNkJx6n7Qg36Z0wX/UOcfAELbev1LesG
+   9t9s3nHgsVlHGHKS0HTzRvRCq+AfZQSh/RSH7sdiFB8fSbORJ/aKMiZBB
+   68qa8ucSBLmg8mX9auGsCLAkSmW6dRacybuocIoE62rbl5745b7NrkING
+   e844gSBn5RXba3bwQRg2q+T15C5AeVFPkEVsboy12rRnUosB8oog1FE7p
+   4fzfZlFO1ZV4zvqYZQC5GREh0jxwTrxlEZXMp3BU7vbDz/mZyc6N9Sx10
+   On49IPKFesMnt8HaWrKNPdUldl18cSlbYxtevyhXVR/eYmdOH4vmIyvAr
+   Q==;
+X-CSE-ConnectionGUID: wUQO/k3STrO/w3emnxrJNw==
+X-CSE-MsgGUID: nptX5GCSQRq2XaS8tBZumw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13436973"
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="13436973"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 06:49:18 -0700
+X-CSE-ConnectionGUID: HsgTr1Q9QTGVYZLBynusyA==
+X-CSE-MsgGUID: MZgd4IstT7inPchGoX479A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="35577389"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by orviesa008.jf.intel.com with ESMTP; 28 May 2024 06:49:15 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: intel-wired-lan@lists.osuosl.org
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Mina Almasry <almasrymina@google.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] arm64: qcom: allow up to 4 lanes for the Type-C
- DisplayPort Altmode
-Message-ID: <wipu6tdqjbjlrv2sbljgzvoxvpjvkoaz6ic3keq24n3v4tap4j@entxhnd42rml>
-References: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org>
+Subject: [PATCH iwl-next 00/12] idpf: XDP chapter I: convert Rx to libeth
+Date: Tue, 28 May 2024 15:48:34 +0200
+Message-ID: <20240528134846.148890-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 10:42:32AM GMT, Neil Armstrong wrote:
-> Register a typec mux in order to change the PHY mode on the Type-C
-> mux events depending on the mode and the svid when in Altmode setup.
-> 
-> The DisplayPort phy should be left enabled if is still powered on
-> by the DRM DisplayPort controller, so bail out until the DisplayPort
-> PHY is not powered off.
-> 
-> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
-> will be set in between of USB-Only, Combo and DisplayPort Only so
-> this will leave enough time to the DRM DisplayPort controller to
-> turn of the DisplayPort PHY.
-> 
-> The patchset also includes bindings changes and DT changes.
-> 
-> This has been successfully tested on an SM8550 board, but the
-> Thinkpad X13s deserved testing between non-PD USB, non-PD DisplayPort,
-> PD USB Hubs and PD Altmode Dongles to make sure the switch works
-> as expected.
-> 
-> The DisplayPort 4 lanes setup can be check with:
-> $ cat /sys/kernel/debug/dri/ae01000.display-controller/DP-1/dp_debug
-> 	name = msm_dp
-> 	drm_dp_link
-> 		rate = 540000
-> 		num_lanes = 4
+XDP for idpf is currently 5 chapters:
+* convert Rx to libeth (this);
+* convert Tx and stats to libeth;
+* generic XDP and XSk code changes, libeth_xdp;
+* actual XDP for idpf via libeth_xdp;
+* XSk for idpf (^).
 
-Has the issue with the USB controller dying on us been resolved?
+Part I does the following:
+* splits &idpf_queue into 4 (RQ, SQ, FQ, CQ) and puts them on a diet;
+* ensures optimal cacheline placement, strictly asserts CL sizes;
+* moves currently unused/dead singleq mode out of line;
+* reuses libeth's Rx ptype definitions and helpers;
+* uses libeth's Rx buffer management for both header and payload;
+* eliminates memcpy()s and coherent DMA uses on hotpath, uses
+  napi_build_skb() instead of in-place short skb allocation.
 
-Regards,
-Bjorn
+Most idpf patches, except for the queue split, removes more lines
+than adds.
+Expect far better memory utilization and +5-8% on Rx depending on
+the case (+17% on skb XDP_DROP :>).
+
+Alexander Lobakin (12):
+  libeth: add cacheline / struct alignment helpers
+  idpf: stop using macros for accessing queue descriptors
+  idpf: split &idpf_queue into 4 strictly-typed queue structures
+  idpf: avoid bloating &idpf_q_vector with big %NR_CPUS
+  idpf: strictly assert cachelines of queue and queue vector structures
+  idpf: merge singleq and splitq &net_device_ops
+  idpf: compile singleq code only under default-n CONFIG_IDPF_SINGLEQ
+  idpf: reuse libeth's definitions of parsed ptype structures
+  idpf: remove legacy Page Pool Ethtool stats
+  libeth: support different types of buffers for Rx
+  idpf: convert header split mode to libeth + napi_build_skb()
+  idpf: use libeth Rx buffer management for payload buffer
+
+ drivers/net/ethernet/intel/Kconfig            |   13 +-
+ drivers/net/ethernet/intel/idpf/Kconfig       |   26 +
+ drivers/net/ethernet/intel/idpf/Makefile      |    3 +-
+ scripts/kernel-doc                            |    1 +
+ drivers/net/ethernet/intel/idpf/idpf.h        |   11 +-
+ .../net/ethernet/intel/idpf/idpf_lan_txrx.h   |    2 +
+ drivers/net/ethernet/intel/idpf/idpf_txrx.h   |  800 +++++-----
+ include/net/libeth/cache.h                    |  100 ++
+ include/net/libeth/rx.h                       |   19 +
+ .../net/ethernet/intel/idpf/idpf_ethtool.c    |  152 +-
+ drivers/net/ethernet/intel/idpf/idpf_lib.c    |   88 +-
+ drivers/net/ethernet/intel/idpf/idpf_main.c   |    1 +
+ .../ethernet/intel/idpf/idpf_singleq_txrx.c   |  311 ++--
+ drivers/net/ethernet/intel/idpf/idpf_txrx.c   | 1410 +++++++++--------
+ .../net/ethernet/intel/idpf/idpf_virtchnl.c   |  178 ++-
+ drivers/net/ethernet/intel/libeth/rx.c        |  132 +-
+ 16 files changed, 1824 insertions(+), 1423 deletions(-)
+ create mode 100644 drivers/net/ethernet/intel/idpf/Kconfig
+ create mode 100644 include/net/libeth/cache.h
+
+---
+Applies on top of "idpf: don't enable NAPI and interrupts prior to
+allocating Rx buffers" from the -net tree, otherwise may work unstable.
+
+From RFC[0]:
+*  *: add kdocs where needed and fix the existing ones to build cleanly;
+      fix minor checkpatch and codespell warnings;
+      add RBs from Przemek;
+* 01: fix kdoc script to understand new libeth_cacheline_group() macro;
+      add an additional assert for queue struct alignment;
+* 02: pick RB from Mina;
+* 06: make idpf_chk_linearize() static as it's now used only in one file;
+* 07: rephrase the commitmsg: HW supports it, but never wants;
+* 08: fix crashes on some configurations (Mina);
+* 11: constify header buffer pointer in idpf_rx_hsplit_wa().
+
+Testing hints: basic Rx regression tests (+ perf and memory usage
+before/after if needed).
+
+Note that I'm on a vacation starting 30th May and return 10th of June.
+I may sometimes reply, but no new versions in the meantime =\
+
+[0] https://lore.kernel.org/netdev/20240510152620.2227312-1-aleksander.lobakin@intel.com
+-- 
+2.45.1
+
 
