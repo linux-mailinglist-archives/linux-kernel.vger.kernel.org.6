@@ -1,374 +1,149 @@
-Return-Path: <linux-kernel+bounces-193151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABFB8D27CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:17:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988678D27D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02ACC1C24268
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE0C288579
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5462313DDCD;
-	Tue, 28 May 2024 22:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9F113E025;
+	Tue, 28 May 2024 22:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uhrsXZxN"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i17B1wgR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9F928DC7
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E7713D8A5;
+	Tue, 28 May 2024 22:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716934633; cv=none; b=XA0E5fHdhIFEB8Ar47d9SYjS0lNeKEUKk/crEKtCGG5nhuqe+RVVT3jxjCbiTetScIv4gyQi/CCQNpcrewbdoDSi32SspKMF6Eo3ey4aFkCY2JZ0eDnJTsaicoKwUtxJDSoHtw07P6OPrnsdi8NT7zK9yUd+z+pqJTvl0sGZ9/Q=
+	t=1716934776; cv=none; b=mXou4mdHxzfDVfVNlQ3g9QTrP0TB4QUraw9WG/Jq6KCq0FBmt2OVYUcgsSMYE006QXO0q9Pp3f8etb5lWoDgJXBXzuNN19vVcWA9sb3URg1HeDrisZ6/zFH0OAy0nPhrzkkXA96eqcjNmQM7iiBV05XjOZ0v0NvBcLyHxQTPX2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716934633; c=relaxed/simple;
-	bh=KgxKy3B9/bvHCk1XIcrOxAdTViZHUFvaiD1OLQpr4sE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vD4dMs1W9wY4X45RuJBbGuxY565f5AWpytRUnbfqilNyApIT2Dydt6ZKWp2itNf/GyFIDQz3Pdx56LJZaDkbnhYt2yVhjo76R1MDuLauRclfY6HVgZvz386B5q3w/4f/cN3elYekMpK9BCkOdCl1+npuwvPCVn7z+OZcP92rEDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uhrsXZxN; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43dfe020675so193621cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716934630; x=1717539430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KKsx1Wjb37gHKeRHMU40MydeR/ELp98IEnmlde48+So=;
-        b=uhrsXZxNa3RFXafIfe+U2Ltq6bS7DneRc5jPRc37O1O6XONs2lgWFsmXVbBVcs7nBY
-         6KHhcxVxXuy3I/1T3dyC/xBPnI/HO0m/4/a8/D6hTRsIScprEPKYxeAqqMzgPm6B1Xge
-         jMak/ihiTv0r1wooaj8+tY4XaVUG2umuTGuVtPXDVqBAn4J8g9gGz9AYRNXGzDMTjIqV
-         XX+T0kJ0euoLcy+n5GuOPYrw4UM263StVinX0ot4LwxcDK6Ji6fw6UCf7NTh0Lm8/25S
-         Uh2wYXocCrXpSFT5PoEtTb2K0BBr+EOfPKFU37wgUdjhUt2TeWf3eajjqB4xGz1Gcqdq
-         oGEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716934630; x=1717539430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KKsx1Wjb37gHKeRHMU40MydeR/ELp98IEnmlde48+So=;
-        b=cKDPCA9BxIH2V5McesLj0YmUmzYvyxCUzQ9/krBqv9F9NkSPNPLtLM8relUHUr5TDT
-         SsDMZvayE5vNHqmGeogBJ2ZAHFFgkhbOaZ2EfWMVdNWTACBbuDwkg6lof/19TeG/zA7L
-         kx8SmyU3VtFpLn27ZZBNyKBfWhhmc8MwpcoGZxMuToV22lz+fuojns9nRcT/8eFLoeSN
-         rNG6ul9JyhUOUd6QRMJfLUw5KjEH8YlRdDVeX8Vz7weWSsg+AW0OTXM85B75Gh1YLfy5
-         OoDFVW8Ylm5bgQwArEeDLhyUKjHDCawtXJ+x6EzALbO3T6zwieN7IlrYq5ecnjqvf68T
-         HHqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjI4C8i2cv8Mm1wAY9aQm+ahrqEtzFXLcEkzm1/8o5+LOHyGF3TS+YEJdOIPFS4EDMTP/UbcMnyMtZmUJulYRIKU0KHlGfpML+5loC
-X-Gm-Message-State: AOJu0YzHYsCc3Ew85gXBD4svwcXQAccsdWd8oH+gb0Qib+QfroquLyEd
-	EviE00/5pUeZ1/IMFf/3bAilR52Hfo2bH4tVqm+LlHe+qA5jD4PmhKUywEFZmSXsoYKtZs5ejsx
-	3bee8wofq5XJoQhevIjfxmmb1dXr7ZOyEAtJ1
-X-Google-Smtp-Source: AGHT+IETo0a4r5DWLWDwEytiMN9zQ17SSn1T3aVosvBNctOg0AmLMUGYAh9Ft4CGHNsTPvElc6EcRlu9Gn2L3/Z3Xr8=
-X-Received: by 2002:a05:622a:4819:b0:43f:bb44:bbb7 with SMTP id
- d75a77b69052e-43fe0f4cefamr851191cf.8.1716934630467; Tue, 28 May 2024
- 15:17:10 -0700 (PDT)
+	s=arc-20240116; t=1716934776; c=relaxed/simple;
+	bh=QmsGFOJ3NP/a+J6xydble1Si5wrUV1bN84MF4Ukp8FU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ooAlIPWk9GNrSyNNuK5NEJr8rF2sQ3RdhBccb/HqB/mZgpGpptgwt1YyzgocGCYJBrwhlKB2bwy+1T1N1phU14OcuFyabX0Mv7y3Cau1RONalHqezquBygjRRloie316NhemphptnKHStwZDZvP7PZ1AQgnpVnVDIHQjvMGejb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i17B1wgR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SJDZtZ001837;
+	Tue, 28 May 2024 22:19:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JVDAh13cOOeebYG0CpM6TZ7QvUqlsO6PYs9SBehirfo=; b=i17B1wgRuYhVYPxD
+	ZNo10owxbyEGvdD4DzOUa/mj168mEEAuTuv4nyiWxtHFwvnyTSrFyMm8eTOvuTOE
+	rW79iK8fDna5e4Yoal95e5Jbv9+TAn7ytwxo1KyB3Xv0nYyJfkPLOjJrCug+NAKS
+	BtsWtdzmfvETdWIwjoSRcFCjyk8Sy7R4RSgmilnJeQ201kDYpNJqdd8qEbj29b7E
+	3qoBBfTdjlPsitv3RMB+zqceMOG0P++GoKW6bMpaNUDaBhA17XhyVFlru/0h2kcR
+	rzjgu/TOPnvWrZlJkEsJtEL7pniPtD7Zh9A7tz86vuMPW/iwqac3OMhP5ZTxxgap
+	FuUxfw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0g7gt7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 22:19:24 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SMJNcF023308
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 22:19:23 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 15:19:21 -0700
+Message-ID: <d756ce42-3fa4-40df-b2e6-409a70aa5c2e@quicinc.com>
+Date: Tue, 28 May 2024 15:19:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521173952.3397644-1-weilin.wang@intel.com>
- <20240521173952.3397644-5-weilin.wang@intel.com> <CAM9d7cjob_tfgN+rMRrh=0SV56+z32CmP34BRY1eoFv48RVocg@mail.gmail.com>
- <CO6PR11MB563589ED3FC7126A6B27EB22EEF52@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAM9d7cjz0P=vrSr8yU=xMYhQ5XFT9A+K-WG9E+LyNzYWC-JhwA@mail.gmail.com>
-In-Reply-To: <CAM9d7cjz0P=vrSr8yU=xMYhQ5XFT9A+K-WG9E+LyNzYWC-JhwA@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 28 May 2024 15:16:58 -0700
-Message-ID: <CAP-5=fV0Xoe9HAcpvSFBF=vGhTaHAJdDCPEmwZSRk3VXL9S+1A@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 4/7] perf stat: Plugin retire_lat value from
- sampled data to evsel
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: "Wang, Weilin" <weilin.wang@intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"Hunter, Adrian" <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>, 
-	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb" <caleb.biggers@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/6] drm/msm/dsi: add a comment to explain pkt_per_line
+ encoding
+Content-Language: en-US
+To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Vinod Koul <vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Jonathan
+ Marek" <jonathan@marek.ca>
+References: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
+ <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-6-f797ffba4682@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-6-f797ffba4682@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OrdfE5N2c4cnJANWNmu6Lp6jUl2qHGly
+X-Proofpoint-ORIG-GUID: OrdfE5N2c4cnJANWNmu6Lp6jUl2qHGly
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280165
 
-On Sun, May 26, 2024 at 11:01=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Fri, May 24, 2024 at 4:52=E2=80=AFPM Wang, Weilin <weilin.wang@intel.c=
-om> wrote:
-> >
-> >
-> >
-> > > -----Original Message-----
-> > > From: Namhyung Kim <namhyung@kernel.org>
-> > > Sent: Friday, May 24, 2024 4:17 PM
-> > > To: Wang, Weilin <weilin.wang@intel.com>
-> > > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
-> > > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
-> > > <mingo@redhat.com>; Alexander Shishkin
-> > > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; H=
-unter,
-> > > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.co=
-m>;
-> > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylo=
-r, Perry
-> > > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Big=
-gers,
-> > > Caleb <caleb.biggers@intel.com>
-> > > Subject: Re: [RFC PATCH v9 4/7] perf stat: Plugin retire_lat value fr=
-om sampled
-> > > data to evsel
-> > >
-> > > On Tue, May 21, 2024 at 10:40=E2=80=AFAM <weilin.wang@intel.com> wrot=
-e:
-> > > >
-> > > > From: Weilin Wang <weilin.wang@intel.com>
-> > > >
-> > > > In current :R parsing implementation, the parser would recognize ev=
-ents
-> > > with
-> > > > retire_latency modifier and insert them into the evlist like a norm=
-al event.
-> > > > Ideally, we need to avoid counting these events.
-> > > >
-> > > > In this commit, at the time when a retire_latency evsel is read, se=
-t the retire
-> > > > latency value processed from the sampled data to count value. This =
-sampled
-> > > > retire latency value will be used for metric calculation and final =
-event count
-> > > > print out.
-> > >
-> > > I'm confused.  Do you mean you don't count the event with 'R' modifie=
-r
-> > > (w/ perf stat) and just print the (average) retire latency (from perf=
- record)?
-> >
-> > In metric formulas, event without 'R' modifier is included as a normal =
-event already.
-> > So we don't need to count the event that with 'R' modifier. They only n=
-eed to be
-> > sampled.
->
-> Oh, you have the event in the metric expression twice.  I thought of one.
-> Then IIUC the metric looks something like this.
->
->   myevent1 + (myevent2 * myevent1:R)
->
-> I think you'll have 2 myevent1 in perf stat and 1 in perf record, right?
-> But the second one in perf stat is never used and the value is updated
-> from perf record.
->
-> Then we can simply remove the event from the evlist (or replace it with
-> a dummy) to reduce the overheads (of open and read).
->
-> >
-> > >
-> > > >
-> > > > Signed-off-by: Weilin Wang <weilin.wang@intel.com>
-> > > > ---
-> > > >  tools/perf/arch/x86/util/evlist.c |  6 +++++
-> > > >  tools/perf/util/evsel.c           | 44 +++++++++++++++++++++++++++=
-++++
-> > > >  tools/perf/util/evsel.h           |  5 ++++
-> > > >  3 files changed, 55 insertions(+)
-> > > >
-> > > > diff --git a/tools/perf/arch/x86/util/evlist.c
-> > > b/tools/perf/arch/x86/util/evlist.c
-> > > > index b1ce0c52d88d..cebdd483149e 100644
-> > > > --- a/tools/perf/arch/x86/util/evlist.c
-> > > > +++ b/tools/perf/arch/x86/util/evlist.c
-> > > > @@ -89,6 +89,12 @@ int arch_evlist__cmp(const struct evsel *lhs, co=
-nst
-> > > struct evsel *rhs)
-> > > >                         return 1;
-> > > >         }
-> > > >
-> > > > +       /* Retire latency event should not be group leader*/
-> > >
-> > > Hmm.. why?
-> > Because we don't want to count them. Make them the group leader would n=
-ot work.
->
-> I don't understand.  You'll read the event regardless of being a
-> leader or not.
->
-> >
-> > >
-> > > > +       if (lhs->retire_lat && !rhs->retire_lat)
-> > > > +               return 1;
-> > > > +       if (!lhs->retire_lat && rhs->retire_lat)
-> > > > +               return -1;
-> > > > +
-> > > >         /* Default ordering by insertion index. */
-> > > >         return lhs->core.idx - rhs->core.idx;
-> > > >  }
-> > > > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> > > > index a0a8aee7d6b9..4d700338fc99 100644
-> > > > --- a/tools/perf/util/evsel.c
-> > > > +++ b/tools/perf/util/evsel.c
-> > > > @@ -58,6 +58,7 @@
-> > > >  #include <internal/xyarray.h>
-> > > >  #include <internal/lib.h>
-> > > >  #include <internal/threadmap.h>
-> > > > +#include "util/intel-tpebs.h"
-> > > >
-> > > >  #include <linux/ctype.h>
-> > > >
-> > > > @@ -1523,6 +1524,40 @@ static int evsel__read_one(struct evsel *evs=
-el,
-> > > int cpu_map_idx, int thread)
-> > > >         return perf_evsel__read(&evsel->core, cpu_map_idx, thread, =
-count);
-> > > >  }
-> > > >
-> > > > +static int evsel__set_retire_lat(struct evsel *evsel, int cpu_map_=
-idx, int
-> > > thread)
-> > > > +{
-> > > > +       struct perf_counts_values *count;
-> > > > +       struct tpebs_retire_lat *t;
-> > > > +       bool found =3D false;
-> > > > +       __u64 val;
-> > > > +
-> > > > +       count =3D perf_counts(evsel->counts, cpu_map_idx, thread);
-> > > > +
-> > > > +       list_for_each_entry(t, &tpebs_results, nd) {
-> > > > +               if (!strcmp(t->tpebs_name, evsel->name)) {
-> > > > +                       found =3D true;
-> > > > +                       break;
-> > > > +               }
-> > > > +       }
-> > > > +
-> > > > +       if (!found)
-> > > > +               return -1;
-> > > > +
-> > > > +       /*
-> > > > +        * Only set retire_latency value to the first CPU and threa=
-d.
-> > > > +        */
-> > > > +       if (cpu_map_idx =3D=3D 0 && thread =3D=3D 0)
-> > > > +               val =3D t->val;
-> > > > +       else
-> > > > +               val =3D 0;
-> > > > +
-> > > > +       count->val =3D val;
-> > > > +       /* Set ena and run to non-zero */
-> > > > +       count->ena =3D count->run =3D 1;
-> > > > +       count->lost =3D 0;
-> > >
-> > > So here it seems you discard the actual count of the events
-> > > and replace it with the retire latency.  That means you don't
-> > > need to open the event in perf stat, and probably just have a
-> > > placeholder, right?
-> > >
-> > > Btw, I think it's better to move this logic to intel-tpebs.c file and
-> > > rename to tpebs_set_retire_lat().
-> >
-> > Ian wants this to be here and also suggested me to rename this function=
- to
-> > evsel__read_retire_lat(). I'm ok with either way.
->
-> I think it's better to have the tpebs logic together.
 
-I think the tpebs functions can be in a tpebs file. I'd rather have
-the retirement latency events (from the metric) be evsels for a few
-reasons:
 
-1) I'd rather everything in a metric be evsels, so things like
-"num_cpus_online" should really be a tool event rather than a special
-literal kind of thing. I'd like to reduce special cases over time, in
-part as it should help with portability. For example, if only Intel
-x86 can parse :R then someone trying to parse an Intel x86 metric on
-ARM may get parser errors.
+On 5/27/2024 7:21 AM, Jun Nie wrote:
+> From: Jonathan Marek <jonathan@marek.ca>
+> 
+> Make it clear why the pkt_per_line value is being "divided by 2".
+> 
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
 
-2) When we change from forking perf record to directly opening a
-sampling ring buffer then it makes sense that we use/update the
-evsel/evlist logic.
+Hi Jun,
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
 Thanks,
-Ian
 
-> Thanks,
-> Namhyung
->
-> >
-> > >
-> > >
-> > > > +       return 0;
-> > > > +}
-> > > > +
-> > > >  static void evsel__set_count(struct evsel *counter, int cpu_map_id=
-x, int
-> > > thread,
-> > > >                              u64 val, u64 ena, u64 run, u64 lost)
-> > > >  {
-> > > > @@ -1530,6 +1565,12 @@ static void evsel__set_count(struct evsel
-> > > *counter, int cpu_map_idx, int thread,
-> > > >
-> > > >         count =3D perf_counts(counter->counts, cpu_map_idx, thread)=
-;
-> > > >
-> > > > +       if (counter->retire_lat) {
-> > >
-> > > if (evsel__is_retire_lat(counter)) ?
-> > >
-> > >
-> > > > +               evsel__set_retire_lat(counter, cpu_map_idx, thread)=
-;
-> > > > +               perf_counts__set_loaded(counter->counts, cpu_map_id=
-x, thread,
-> > > true);
-> > > > +               return;
-> > > > +       }
-> > > > +
-> > > >         count->val    =3D val;
-> > > >         count->ena    =3D ena;
-> > > >         count->run    =3D run;
-> > > > @@ -1778,6 +1819,9 @@ int evsel__read_counter(struct evsel *evsel, =
-int
-> > > cpu_map_idx, int thread)
-> > > >         if (evsel__is_tool(evsel))
-> > > >                 return evsel__read_tool(evsel, cpu_map_idx, thread)=
-;
-> > > >
-> > > > +       if (evsel__is_retire_lat(evsel))
-> > > > +               return evsel__set_retire_lat(evsel, cpu_map_idx, th=
-read);
-> > > > +
-> > >
-> > > I'm not sure if it works well with group event.  Probably that's
-> > > why you wanted to prevent group leaders.  But I guess you
-> > > can just check this after the PERF_FORMAT_GROUP, no?
-> > >
-> > > Thanks,
-> > > Namhyung
-> > >
-> > >
-> > > >         if (evsel->core.attr.read_format & PERF_FORMAT_GROUP)
-> > > >                 return evsel__read_group(evsel, cpu_map_idx, thread=
-);
-> > > >
-> > > > diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> > > > index bd8e84954e34..aaf572317e92 100644
-> > > > --- a/tools/perf/util/evsel.h
-> > > > +++ b/tools/perf/util/evsel.h
-> > > > @@ -303,6 +303,11 @@ static inline bool evsel__is_tool(const struct=
- evsel
-> > > *evsel)
-> > > >         return evsel->tool_event !=3D PERF_TOOL_NONE;
-> > > >  }
-> > > >
-> > > > +static inline bool evsel__is_retire_lat(const struct evsel *evsel)
-> > > > +{
-> > > > +       return evsel->retire_lat;
-> > > > +}
-> > > > +
-> > > >  const char *evsel__group_name(struct evsel *evsel);
-> > > >  int evsel__group_desc(struct evsel *evsel, char *buf, size_t size)=
-;
-> > > >
-> > > > --
-> > > > 2.43.0
-> > > >
+Jessica Zhang
+
+> ---
+>   drivers/gpu/drm/msm/dsi/dsi_host.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index 7252d36687e6..4768cff08381 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -885,7 +885,11 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
+>   	/* DSI_VIDEO_COMPRESSION_MODE & DSI_COMMAND_COMPRESSION_MODE
+>   	 * registers have similar offsets, so for below common code use
+>   	 * DSI_VIDEO_COMPRESSION_MODE_XXXX for setting bits
+> +	 *
+> +	 * pkt_per_line is log2 encoded, >>1 works for supported values (1,2,4)
+>   	 */
+> +	if (pkt_per_line > 4)
+> +		drm_warn_once(msm_host->dev, "pkt_per_line too big");
+>   	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_PKT_PER_LINE(pkt_per_line >> 1);
+>   	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_EOL_BYTE_NUM(eol_byte_num);
+>   	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_EN;
+> 
+> -- 
+> 2.34.1
+> 
 
