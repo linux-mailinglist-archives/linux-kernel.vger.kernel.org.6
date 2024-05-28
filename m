@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-191810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356A38D1474
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 932608D1479
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588831C21C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74E61C20D16
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B561161FD7;
-	Tue, 28 May 2024 06:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5714361FEE;
+	Tue, 28 May 2024 06:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YkRlREF9"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EA8mFWFd"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2388A53368
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E751F43AA0
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716878063; cv=none; b=fw15DmSpbZrfwitGOG6sDl/ukzFsp5NRop70rSHA0ke8KN7PEg1s2g6isZkzb3O91Dss9KAl/jH5HLy0r7CdJy2HvemnuDX+MeLXRGUrPNVDegZzbJC8RcDbLQzXMUZvE6sjawEBCwsJCLW1FheJak8Z+6FflL5gcNHRMD/iyb0=
+	t=1716878124; cv=none; b=MqLoZmb+es/O3ZftCo43TLIVM7Mp/vwLwHCfsETfR+UXYBuISayknyrc7rmCMEqB92OT/56V9oMzi0bt1IE9acE76QEYxBB+/yJGlSolR3ehhrp6G6m7cWh1PmhJ9SXmPVjTM8ZZvphutGUYWUd+qWUXBlpSCGNKtCye6fmZrjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716878063; c=relaxed/simple;
-	bh=aHDF7D/CSvhtZKfyUS9a6/b72x6IQtyqDuWm+LYK/5g=;
+	s=arc-20240116; t=1716878124; c=relaxed/simple;
+	bh=AInGq0dpgySBxOrIbeWdfGkaSLv1sBXcuiFab9t0Z+Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4jkzZSnTWdx1RyH30eEI5ircBEw3p4UiP/FVdVkDrpytRUWrZ29OsXV9wMtLkKaIZx4cONOkByz48kwxX5e8+ENkRfmNYb93VwEQzcFL+TML/lAA5bM2DnqlAhousfVSldP/tmJJmLQWbBIzAwbpNlJpz6cHp1+LXKJu8fwcZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YkRlREF9; arc=none smtp.client-ip=209.85.218.48
+	 In-Reply-To:Content-Type; b=t/rD4ywmkFqxzITjTnvMS4LIGuI4NaXuUUromFkx6VRov5YJTJrYeic52Ur2G3eN5jeAs9027aOiaHTf43L5ywmxaWb7x+kbntoiaj3x0Lll5v8UKGFy86OqpkxMlUvMAgqtvpTRLl/demM9HDV2neQAFCUWTVQVT1fBgtyhD8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EA8mFWFd; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6265d3c488so65272566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:34:21 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so466608a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:35:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716878060; x=1717482860; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=yWHXKgV8HPEyeVyV0U4ldBfI6C4Z/BqLFrufXVr+cAQ=;
-        b=YkRlREF9MuaE+8j+TA+y+2cg+XxdbyV9nNoWEq28CVALrQN242he8NvjurqET5gOSK
-         iLnJ8PJEK0RSYahJ0ocXmVPfoIWquHDch8hMZN1ZUR5aLIVIAAsywK+eShKTBFhZXkl2
-         Mg8eo/R0zjc/Kt6rjMfr965ZJJlf7H7T6FLqZchiqIZwZlur8X8dghRafCrBXcBixnlH
-         w71eW8WxvsHsy/JAtiAOqEu1hOn81J47w2X7SnyTh1pRDejP6uM4uEk/j2wbAnD1GxZM
-         nsVgJbeYvI4CWYr/4IXUXo/7twa4tUklLLfdoQ7Yn6b2RqjZx0euuJ0qt/x0G+xmwlhB
-         oWfA==
+        d=linaro.org; s=google; t=1716878121; x=1717482921; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yJp4ZnFuLcA6NF47y1J34j5C7+oRXVBD8ucxoGwvMxk=;
+        b=EA8mFWFdtmcQ9ZGkuzaYWXNYkeGgLIzBs3dF7NTI+Xu8WzUCQluaZcK1KGyu7XLpRh
+         oJT8OrLEchacig8TtGVJesBIh7weYfoPhxLbOA/5zWX2L1Rz+Jo/L/x7UqxqRPwXOSDO
+         HRTWBy0q5BLAaJ5QC5oXpe7HT6jzEQV/vDyDYb3yVpQL/LosLsr2Fmue7KqKSrK59OZe
+         YBDeBY+Np7DHaFhyQ61FDfBeuOTaSvw8++qfRlvha4lDZijDd/bRBTa844lBBKOVa56L
+         atwaOoGUfW+g1Bm5lJpNffuWWQlCQwHUO8lgmTf7EszCNThKfSRexvbS3VSZneW5jnr9
+         56bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716878060; x=1717482860;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yWHXKgV8HPEyeVyV0U4ldBfI6C4Z/BqLFrufXVr+cAQ=;
-        b=lJCJFS8aCXq5fgbNtECH7VYKFT79c+QccRM77lt9Bg6YQgOjHzEy7AZY5IHtyyosah
-         rds5y3SqyHWuVOhd1CSuuASNQuPHyuIvIYz0fMkfpDQOTYsderEMDRfKBEhpj8Pg1OIE
-         V031aeHqtz21WVw6PqnLEarqE4QkzmtQVozEwoRNYU9Jpd6CDqaMZ8pxKRGT4e3RMNtm
-         3/EvXFF1zU2VLSOrbgdurllxJdJLnVU5udwLQ0AUYG1rdQB8FwtBEK5W0X5FIrC5mYSa
-         V8iMRz5fkdk5tNOXuSwZlcpd6OLt1JhDBCqwLRSDfGcahPPi716Y/2Y/11KEdg8F8HdK
-         QpUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfd8ibacMOJJcnZL4Dsn3jD7MZG03xN1+/lIZjXQoLDuUTjVJKtDDce/5+UgG2Nuie5dsd+1hspJF+ZVks9YrM3TmtF36l04q58NSN
-X-Gm-Message-State: AOJu0Yx7WtS/ej3teo9nC3lZ6GU2ETkS9y34wyGkxdvHWf5TTgBce8a4
-	AkfY4KCMCWto3OBYVQYmrVVcZF1Mdw2Y5iC/Jc1yZXbT5wU770LmvSTDU93XlX0=
-X-Google-Smtp-Source: AGHT+IFqedIRbH3+ij+rn44LdEbQUE7dywHaYfPRlYPeRYDPjGPPAzUj6Ct/xAR3ZTKmwPTFPHkS0A==
-X-Received: by 2002:a17:906:6a24:b0:a63:3e99:6565 with SMTP id a640c23a62f3a-a633e996aacmr174571666b.23.1716878060080;
-        Mon, 27 May 2024 23:34:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716878121; x=1717482921;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yJp4ZnFuLcA6NF47y1J34j5C7+oRXVBD8ucxoGwvMxk=;
+        b=qOAXO9XX/YZlnZ71qrpd8hiVdm5EqxSVL3nvXbT9CT++7Pv1+0mJds3IpMNaOXOIuT
+         b0yXglYLw5p8/5G1j/7mYMp8HsoBUhUGITU91yA8EuTz5Ra080w8Gje7IO768LBB5b6v
+         dcKV5DERhUV90ddgTyvW+FxigPnu/Ckeho34kkOICQzAUVaT0BLwQYaj+nQ8HsSXco9t
+         gawwKgiD0eTFE312MOx8ffSDcWAY5CU6iZZrtfiQRtdVGDZzakKfcbsuw1gVhFkpymk3
+         Qfa9A64OARfL0uGfQqPAicEkYBsftgA550Eur8BTvK1MrteVfXTZtlDPp9oytL0OXMVY
+         9C/Q==
+X-Gm-Message-State: AOJu0YzxVOfQOjb/wMBxcWchTJsn3y2IuC/YzYTUfXyGJ92EU3gtlRkQ
+	FuZvjOCLdhuguOp/nXBJ5ggeXqQ2jmjVFdsB1L/29oKa7u0sSGVXCOw86YiB4Gs=
+X-Google-Smtp-Source: AGHT+IEz+5qiV/nGMVKDhXki6wm1MLpEUkGywEDGdANeozpj5LYHoZg5IXlA/Inon0AhmITWvM57FA==
+X-Received: by 2002:a50:cd83:0:b0:572:a198:49c5 with SMTP id 4fb4d7f45d1cf-5785192ec9dmr6460482a12.16.1716878121305;
+        Mon, 27 May 2024 23:35:21 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4fd41sm580924666b.137.2024.05.27.23.34.18
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d0b02625sm2825144a12.9.2024.05.27.23.35.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 23:34:19 -0700 (PDT)
-Message-ID: <ac2f4ba0-e48a-480e-98da-500041f564ac@linaro.org>
-Date: Tue, 28 May 2024 08:34:18 +0200
+        Mon, 27 May 2024 23:35:20 -0700 (PDT)
+Message-ID: <ce2fd6bb-47cc-46a1-8f19-1b45a3b05b78@linaro.org>
+Date: Tue, 28 May 2024 08:35:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,23 +75,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Modify number of usable 8250 uart ports
-To: Bhavya Kapoor <b-kapoor@ti.com>, Arnd Bergmann <arnd@arndb.de>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Udit Kumar <u-kumar1@ti.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Bjorn Andersson <quic_bjorande@quicinc.com>, Will Deacon <will@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-References: <20240516095733.276807-1-b-kapoor@ti.com>
- <1d1c92f3-1692-40a1-aeb9-ef3e342e9bf6@app.fastmail.com>
- <9170a555-7cd3-4888-bad3-01b71c6f445e@ti.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [RESEND 4/4] regulator: dt-bindings: rtq2208: Add specified fixed
+ LDO VOUT property
+To: Alina Yu <alina_yu@richtek.com>, lgirdwood@gmail.com, broonie@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ cy_huang@richtek.com
+References: <cover.1716870419.git.alina_yu@richtek.com>
+ <c6cb218f6338291525a29ed89a88a42c175127ad.1716870419.git.alina_yu@richtek.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -137,25 +129,39 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <9170a555-7cd3-4888-bad3-01b71c6f445e@ti.com>
+In-Reply-To: <c6cb218f6338291525a29ed89a88a42c175127ad.1716870419.git.alina_yu@richtek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/05/2024 08:26, Bhavya Kapoor wrote:
-> Hi Arnd, our most boards have 6 uarts that can be used in the runtime
+On 28/05/2024 08:01, Alina Yu wrote:
+> As the fixed voltage for the LDO is outside the range of the adjustable voltage mode,
+> the constraints for this scenario are not suitable to represent both modes.
+> Therefore, A property is added to specify the fixed LDO VOUT.
 > 
-> but overall our SoC has 12 uarts. And some of our customers have this
+> Examples of fixed LDO VOUT and adjustable LDO VOUT is also added to this version.
 > 
-> requirements that on their custom boards they use more than 8 uarts on their
-> 
-> boards. Thus, we need to enable this to 12 uarts.
+> Signed-off-by: Alina Yu <alina_yu@richtek.com>
 
-defconfig is for boards in tree, for developers, not for customers.
-Argument that some out-of-tree user has more uarts does not mean much
-for defconfig. If they have some weird hardware, shall we enable it? Or
-if they want DEBUG_KOBJECT? Or anything else?
+Nothing improved. Where is the changelog and versioning? I already asked
+about this.
 
-You mistake kernel development defconfig with a distro or product config.
+Also,
+
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
 
 Best regards,
 Krzysztof
