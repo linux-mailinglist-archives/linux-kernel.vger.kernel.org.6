@@ -1,197 +1,295 @@
-Return-Path: <linux-kernel+bounces-192827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8758E8D22CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:51:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77568D22CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8C21C22F2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0411A1C21619
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB68F45BEC;
-	Tue, 28 May 2024 17:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7394596E;
+	Tue, 28 May 2024 17:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UyQRSNez"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkEx+AVA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6483A8F7;
-	Tue, 28 May 2024 17:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E248781;
+	Tue, 28 May 2024 17:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716918666; cv=none; b=NP40CRTB/UmD8B5tbBtAIR+bVF9CxwomqIL5iG2SIaOsl/L78NjBSHC3uh1kBsM2sJ0ceZJUABCJw5bfuLYaEHNSG75tnlLbd1MwL0egUtKCrXxRx8MjA+0/EgrLtpCeSaHEGPm5gM/VH8DrZ2XQ+dTX1HYEZIkJqr90dycF9U0=
+	t=1716918773; cv=none; b=Nzwyj9TemaaU+SLRRV4+IQ33qLDDYXX1FAieq4LXGMCE/q5+XE+zt+dPUkTa8bcs/elzrnsFTedGHXP1r1ZWU5F/mUgA4st8ZxBW/LCbNp2pUXVDuaXo47zfdBWpkcXNu7UPv6epBTOdxoDlg9lWVRnINEa++JTEqrxGRcsxYNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716918666; c=relaxed/simple;
-	bh=T0eh8dh1LRF9aUu0bJPzJkjy2d/eWYqU9XQ4xnA7ItA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C47aAQxLaqa1z96XTSwkAJspgEGxTxom/GVvUAnKsT42Vf1DtVoK/3fQHTQ1eHYyt5Z5vB4CJg+INwjJCysNAJzM8O9Fu82yAqU+yEpv4qWWhfDAOqPAbgiX5MT/Mh12M0kqr0ODx/39gmtMYrvMVRlgk6x5m8/XBfwQnaxf1rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UyQRSNez; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: linux@armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716918659;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E4hwheoFrQ7bdjpnORVmrs5FpZ2wpl7LAQHlp/QppDc=;
-	b=UyQRSNezUnHzdfcYU9YCUSRni+xPKZswLtYch39yEostjSju6y2qjYr+eoZL6R7/VnvxZM
-	523HyRHaxLFcu4fpQ5Nyg8fiWaXR5sACZOeO47/aO+krvW4qCkDn/Ux2y609398mCAbM+M
-	R2t8Z3tlTW5w+CaMddiTH+X7Vfl2AZY=
-X-Envelope-To: andrew@lunn.ch
-X-Envelope-To: andi.shyti@kernel.org
-X-Envelope-To: netdev@vger.kernel.org
-X-Envelope-To: linux-i2c@vger.kernel.org
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: hkallweit1@gmail.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <90873b78-13ba-445e-890a-0b90a653721b@linux.dev>
-Date: Tue, 28 May 2024 13:50:54 -0400
+	s=arc-20240116; t=1716918773; c=relaxed/simple;
+	bh=rE9mbY6TdKIdAtMJSTiw3Um7FAbv+WUhCGvVtLNRmJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PaB00NJBTKsRcoRPxf4Cw/6bjq9x8vU/d7qzPJZxpM3xLothtdr6KRl9bxC6LpXn5zn/6LkjSMBbXGy7rhQmLs5p/zWbyOEm5liOmIWlW8cI4n7hlWhUXdX4xOOTMGlh2p5+Q+9nMT3VGFEzmDQhOOvOEdrEm0Vm1uFNoTwZyno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkEx+AVA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6982C3277B;
+	Tue, 28 May 2024 17:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716918771;
+	bh=rE9mbY6TdKIdAtMJSTiw3Um7FAbv+WUhCGvVtLNRmJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gkEx+AVA0tx6eU9KTJgsl1xM6x2eYw+pwOlI1dLfm+jZu1tqDGPrC7/UcnkIrULGM
+	 J1PM2vW6WbaSs1r9krqPJ6kZxVpYYBjp9T6OcXouGVItNBjvBMri5QXC1t1ITFX4aT
+	 d3bnkW2Oui2rHgeEeX7GciAx0M1CXBEUfHfZj1W8b4mTi+ysPVLTrX3FSJhuzzLXKb
+	 PT3fPcjyQE4g+zPZiLpskEyrgzvy5YWCSVnxEoRSYL00/dVdQF2B+Rsxa+0T8UKgGD
+	 abd6ZCxEbuEw2589qp5O+J1q1yaTxiqCxQCUsjxjXiqby23Uyb98022RnmcalhmT2Y
+	 MEuy/iv5X4CPA==
+Date: Tue, 28 May 2024 18:52:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: adc: ad7173: add support for ad411x
+Message-ID: <20240528-filtrate-cloning-b9152322a3da@spud>
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+ <20240527-ad4111-v3-1-7e9eddbbd3eb@analog.com>
+ <20240527-arguably-said-361184ad848e@spud>
+ <d87ae6ef-090d-4e47-bde4-4d08fd445ac1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [BUG] SFP I2C timeout forces link down with PHY_ERROR
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andi Shyti <andi.shyti@kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- linux-i2c@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
- <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="JyMxpBvcw7wBYCtU"
+Content-Disposition: inline
+In-Reply-To: <d87ae6ef-090d-4e47-bde4-4d08fd445ac1@gmail.com>
 
-On 5/28/24 13:28, Russell King (Oracle) wrote:
-> First, note that phylib's policy is if it loses comms with the PHY,
-> then the link will be forced down. This is out of control of the SFP
-> or phylink code.
-> 
-> I've seen bugs with the I2C emulation on some modules resulting in
-> problems with various I2C controllers.
-> 
-> Sometimes the problem is due to a bad I2C level shifter. Some I2C
-> level shifter manufacturers will swear blind that their shifter
-> doesn't lock up, but strangely, one can prove with an osciloscope
-> that it _does_ lock up - and in a way that the only way to recover
-> was to possibly unplug the module or poewr cycle the platform.
 
-Well, I haven't seen any case where the bus locks up. I've been able to
-recover just by doing
+--JyMxpBvcw7wBYCtU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	ip link set net0 down
-	ip link set net0 up
+On Tue, May 28, 2024 at 03:16:07PM +0300, Ceclan, Dumitru wrote:
+> On 27/05/2024 20:48, Conor Dooley wrote:
+> > On Mon, May 27, 2024 at 08:02:34PM +0300, Dumitru Ceclan via B4 Relay w=
+rote:
+> >> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >>
+> >> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
+> >>
+> >> AD411x family ADCs support a VCOM pin, dedicated for single-ended usag=
+e.
+> >> AD4111/AD4112 support current channels, usage is implemented by
+> >>  specifying channel reg values bigger than 15.
+> >>
+> >> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >> ---
+> >>  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 122 ++++++++++++=
+++++++++-
+> >>  1 file changed, 120 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml=
+ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> index ea6cfcd0aff4..5b1af382dad3 100644
+> >> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> @@ -19,7 +19,18 @@ description: |
+> >>    primarily for measurement of signals close to DC but also delivers
+> >>    outstanding performance with input bandwidths out to ~10kHz.
+> >> =20
+> >> +  Analog Devices AD411x ADC's:
+> >> +  The AD411X family encompasses a series of low power, low noise, 24-=
+bit,
+> >> +  sigma-delta analog-to-digital converters that offer a versatile ran=
+ge of
+> >> +  specifications. They integrate an analog front end suitable for pro=
+cessing
+> >> +  fully differential/single-ended and bipolar voltage inputs.
+> >> +
+> >>    Datasheets for supported chips:
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4111.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4112.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4114.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4115.pdf
+> >> +    https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4116.pdf
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD7172-2.pdf
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD7172-4.pdf
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD7173-8.pdf
+> >> @@ -31,6 +42,11 @@ description: |
+> >>  properties:
+> >>    compatible:
+> >>      enum:
+> >> +      - adi,ad4111
+> >> +      - adi,ad4112
+> >> +      - adi,ad4114
+> >> +      - adi,ad4115
+> >> +      - adi,ad4116
+> >>        - adi,ad7172-2
+> >>        - adi,ad7172-4
+> >>        - adi,ad7173-8
+> >> @@ -129,10 +145,36 @@ patternProperties:
+> >>          maximum: 15
+> >> =20
+> >>        diff-channels:
+> >> +        description: |
+> >> +          For using current channels specify select the current inputs
+> >> +           and enable the adi,current-channel property.
+> >> +
+> >> +          Family AD411x supports a dedicated VINCOM voltage input.
+> >> +          To select it set the second channel to 16.
+> >> +            (VIN2, VINCOM) -> diff-channels =3D <2 16>
+> >> +
+> >> +          There are special values that can be selected besides the v=
+oltage
+> >> +          analog inputs:
+> >> +            21: REF+
+> >> +            22: REF=E2=88=92
+> >> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, A=
+D7177-2:
+> >> +            19: ((AVDD1 =E2=88=92 AVSS)/5)+
+> >> +            20: ((AVDD1 =E2=88=92 AVSS)/5)=E2=88=92
+> >> +
+> >>          items:
+> >>            minimum: 0
+> >>            maximum: 31
+> >> =20
+> >> +      single-channel:
+> >> +        description: |
+> >> +          Models AD4111 and AD4112 support single-ended current chann=
+els.
+> >> +          To select the desired current input, specify the desired in=
+put pair:
+> >> +            (IIN2+, IIN2=E2=88=92) -> single-channel =3D <2>
+> >> +
+> >> +        items:
+> >> +          minimum: 1
+> >> +          maximum: 16
+> >> +
+> >>        adi,reference-select:
+> >>          description: |
+> >>            Select the reference source to use when converting on
+> >> @@ -154,9 +196,26 @@ patternProperties:
+> >>            - avdd
+> >>          default: refout-avss
+> >> =20
+> >> +      adi,current-channel:
+> >> +        description: |
+> >> +          Signal that the selected inputs are current channels.
+> >> +          Only available on AD4111 and AD4112.
+> >> +        type: boolean
+> >> +
+> >> +      adi,channel-type:
+> >> +        description:
+> >> +          Used to differentiate between different channel types as th=
+e device
+> >> +           register configurations are the same for all usage types.
+> >> +          Both pseudo-differential and single-ended channels will use=
+ the
+> >> +           single-ended specifier.
+> >> +        $ref: /schemas/types.yaml#/definitions/string
+> >> +        enum:
+> >> +          - single-ended
+> >> +          - differential
+> >> +        default: differential
+> >=20
+> > I dunno if my brain just ain't workin' right today, or if this is not
+> > sufficiently explained, but why is this property needed? You've got
+> > diff-channels and single-channels already, why can you not infer the
+> > information you need from them? What should software do with this
+> > information?
+> > Additionally, "pseudo-differential" is not explained in this binding.
+>=20
+> In previous thread we arrived to the conclusion single-ended and
+> pseudo-differential channels should be marked with the flag
+> "differential=3Dfalse" in the IIO channel struct. This cannot
+> really be inferred as any input pair could be used in that
+> manner and the only difference would be in external wiring.
+>=20
+> Single-channels cannot be used to define such a channel as
+> two voltage inputs need to be selected. Also, we are already
+> using single-channel to define the current channels.
 
-which suggests that this is just a transient problem.
+If I understand correctly, the property could be simplified to a flag
+then, since it's only the pseudo differential mode that you cannot be
+sure of?
+You know when you're single-ended based on single-channel, so the
+additional info you need is only in the pseudo-differential case.
 
-> My advice would be to investigate the hardware in the first instance.
+> As for explaining the pseudo-differential, should it be explained?
+> A voltage channel within the context of these families is actually
+> differential(as there are always two inputs selected).
+> The single-ended and pseudo-diff use case is actually wiring up a
+> constant voltage to the selected negative input.
+>=20
+> I did not consider that this should be described, as there is no
+> need for an attribute to describe it.
 
-I'll try to keep this in mind, but it's pretty infrequent and I probably
-won't be able to test anything until I can reproduce it better.
+I dunno, adding an explanation of it in the text for the channel type
+seems trivial to do. "Both pseudo-differential mode (where the
+one of differential inputs is connected to a constant voltage) and
+single-ended channels will..."
 
-> On Tue, May 28, 2024 at 12:57:25PM -0400, Sean Anderson wrote:
->> Hi,
->> 
->> I saw the following warning [1] twice when testing 1000Base-T SFP
->> modules:
->> 
->> [ 1481.682501] cdns-i2c ff030000.i2c: timeout waiting on completion
->> [ 1481.692010] Marvell 88E1111 i2c:sfp-ge3:16: Master/Slave resolution failed
->> [ 1481.699910] ------------[ cut here ]------------
->> [ 1481.705459] phy_check_link_status+0x0/0xe8: returned: -67
->> [ 1481.711448] WARNING: CPU: 2 PID: 67 at drivers/net/phy/phy.c:1233 phy_state_machine+0xac/0x2ec
->> <snip>
->> [ 1481.904544] macb ff0c0000.ethernet net1: Link is Down
->> 
->> and a second time with some other errors too:
->> 
->> [   64.972751] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
->> [   64.979478] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
-> 
-> I2C driver bug? From what I can see, this occurs when there is further
-> data to be read, and id->recv_count hits zero. The I2C controller is
-> entirely in control of how many bytes are transferred from the remote
-> device, and it should raise a NAK on the last byte before signalling a
-> STOP condition during a read.
+> > Also, what does "the device register configurations are the same for
+> > all uses types" mean? The description here implies that you'd be reading
+> > the registers to determine the configuration, but as far as I understand
+> > it's the job of drivers to actually configure devices.
+> > The only way I could interpret this that makes sense to me is that you'=
+re
+> > trying to say that the device doesn't have registers that allow you to
+> > do runtime configuration detection - but that's the norm and I would not
+> > call it out here.
+>=20
+> No, I meant that the same register configuration will be set for
+> both fully differential and single-ended.=20
+>=20
+> The user will set diff-channels =3D <0, 1>, bipolar(or not) and
+> then they can wire whatever to those pins:=20
+> - a differential signal
+> - AVSS to 1 and a single-ended signal to 0
+> - AVSS+offset to 1 and a single-ended signal to 0
+> 	(which is called pseudo-differential in some datasheets)
+>=20
+> All these cases will look the same in terms of configuration
 
-Commit bbf967b223b3 ("i2c: cadence: Handle transfer_size rollover")
-makes it seem like a hardware error. E.g. Linux thinks we're done but
-the hardware thinks there's still more data. I've added Alex to CC;
-maybe he can comment.
+In that case, I'd just remove this sentence from the description then.
+How you configure the registers to use the device doesn't really have
+anything to do with describing the configuration of the hardware.
+Given it isn't related to configuration detection at runtime, what
+you've got written here just makes it seem like the property is
+redundant because the register settings do not change.
 
->> I think some part of the stack should implement a retry mechanism, but
->> I'm not sure which part. One idea could be to have mdio-i2c propagate
->> negative errors instead of converting them to successful reads of
->> 0xffff.
-> 
-> That would unfortunately break phylib's PHY probing.
-> 
->> - Are I2C bus drivers supposed to be flaky like this? That is, are callers of
->>   i2c_transfer expected to handle the occasional spurious error?
-> 
-> I2C transfers - to some extent - are supposed to have a number of
-> retries, but that's for the I2C device not responding to its address.
-> Otherwise, the bus is supposed to be reliable (there is no form of
-> error detection however - there's no CRCs or similar.)
-> 
-> The problem with merely retrying the transaction is a register read
-> from a PHY may have side-effects (such as the BMSR's LSTATUS bit
-> which is latched in link-fail state until the next read. Or a
-> register pointer could be incremented. So it's not simple to solve
-> at bus level.
+Instead, use the description to talk about when the property should be
+used and what software should use it to determine, e.g. "Software can
+use vendor,channel-type to determine whether or not the measured voltage
+is absolute or relative". I pulled that outta my ass, it might not
+be what you're actually doing, but I figure you just want to know if
+you're measuring from the origin or either side of it.
 
-OK...
+Cheers,
+Conor.
 
->> - Similarly, are MDIO bus drivers allowed to be flaky?
-> 
-> No.
-> 
-> I think the only realistic method would be for phylib to attempt to
-> reprogram the PHY, but that would need lots of changes to phylib.
+--JyMxpBvcw7wBYCtU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Would it? Maybe we just need something like
+-----BEGIN PGP SIGNATURE-----
 
-if (err == -ENOLINK) {
-	phy_init_hw(phydev);
-	needs_aneg = true;
-	phydev->state = PHY_UP;
-	err = 0;
-}
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlYZ7gAKCRB4tDGHoIJi
+0quAAP4oei1xG39MFKI4dDawI5n2Splt1d1pOAs3pqyqscvJaAEAvIsRtJ9fSVYT
+hRBvb//KQJPRwRKOuAHlQCKo6Iu8AQk=
+=p+d0
+-----END PGP SIGNATURE-----
 
-in the phy_state_machine switch statement under PHY_NOLINK and
-PHY_RUNNING. The phy_init_hw wouldn't even be necessary for this case
-(but would probably be a good idea in the general case where
-master/slave resolution fails).
-
-> Many drivers now do not check whether the PHY accesses they are
-> performing succeeded or not, and rely on the failure being permanent.
-
-Well, this driver does, which is how the error gets propagated all the
-way up to phy_state_machine. 
-
->> Of course, the best option would be to fix cdns-i2c to not be buggy, but
->> the hardware itself is buggy in at least one of the above cases so that
->> may not be practical.
-> 
-> Well, I don't think there's much option. If I2C drivers are flakey maybe
-> its better to use GPIOs instead of the broken "inteligent" hardware.
-
-The CPU on this device is already underpowered, so I'd rather not resort
-to bitbanging.
-
---Sean
+--JyMxpBvcw7wBYCtU--
 
