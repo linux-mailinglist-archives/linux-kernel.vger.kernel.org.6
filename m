@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-192438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F78E8D1D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:40:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBAE8D1D43
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0371C21802
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECED52816DB
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA62C16F289;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39D016F28C;
 	Tue, 28 May 2024 13:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vlybEr0m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dTyxuErG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EirubJOS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C183B17C7F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224A1131E3C;
+	Tue, 28 May 2024 13:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903633; cv=none; b=p1zJC4rc9nO9zCe5OQBxd69yxMOioWv5OjXzVLrJWr10+7sbqKtwVoSmJQ7Kcy6iX2k7W6kLyv+yZdlbU52JviQn4zsl94gK4J3evIAiQBieaFhKos2u9CBdGRS0utanmInSvEDtNTPAMe9hdbNW0uGiRZmWlUG6xbvNgLnGzf0=
+	t=1716903633; cv=none; b=jaUd9pBcYkAUQkuquo42blIqNRrOW3C8tKcEgLISaySmHUNeiyX/pfzawEAIqK6Q6gaTAk9xYnZOSkvjCN+luxLOwg2Ok3HsrVQXmpUcGFQkc78U8OnkSU5cSkIHkdNPvo7/a9qQC3M7VottHTMlmKHy2Xk0YjLIqumQycpf3UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716903633; c=relaxed/simple;
-	bh=jCsWH/d8W7fB3e1UAVqtUFoeOTBe4TZO8l/pIk2nA4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jADJ7XXntD7uEEoFQ8bIGqsNF1F3l5PsWStA/TmZIyo8Wm10sAYhKVFtsXc/Hhjxl5JTXi2p3u1CIUJE06zfs3sJb7v1/Mf7KFq6pv3ZHPtFPF5IYxhbXkEkok4OTuaFQ0SealnztzrR13j54AVd0oufqckDcLm702cGOSzfDxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vlybEr0m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dTyxuErG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 May 2024 15:40:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716903628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AAVkJCXJ4dkn+VlJdVdki+iHlel2IgcpuHOJvEpfZzg=;
-	b=vlybEr0mhOc2+ZEjIFHVBhIOrIA9J0OSOvh7I69CVsMFLfXDR43kB82+V3m5RNAwnwKqvD
-	36srCUHqDfoIJGt6PHbUrB2MCLU/o3miqCWr6GUzHhtFUUk8iTF+hJ16Mngnod1X/Wz+0y
-	ldkRBtgs1GmlHQPzbvg2BDt7u/H3Sa1JVAXB3f4nnobJEnRHpPXO0b9cL6VDelUidNxJoA
-	tsQa7mrOOvnCojzK85mgPnqIgoL/05JsKSfgMP2r6m5j74xstw2jmaUF2E4AOIFEnWTJeK
-	rDPNZM1mfboBQDzpBuZHBkUIdhOnBpfmg86gGkVYw3jnO0JiVcZMxQs6y2GGcg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716903628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AAVkJCXJ4dkn+VlJdVdki+iHlel2IgcpuHOJvEpfZzg=;
-	b=dTyxuErG1eKdw5YDua9/Tanb4X6kCsKzP391CYzeNj2f4YmUdOKv4ExWTvhdVBzwgfpkCt
-	TFrGd6BDWgp638CQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] memcg: Remove the lockdep assert from
- __mod_objcg_mlstate().
-Message-ID: <20240528134027.OxDASsS3@linutronix.de>
-References: <20240528121928.i-Gu7Jvg@linutronix.de>
- <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
+	bh=g3PZDtcn7m2wLPlmZwHCmUl5EUebXo1+SaotgCribQw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tf+Fyeb7hAD4Tq+hQ5fLV9jvMc3ZgeRSyqeHGJAj9M0kT/J6Ugn7l/1PFqNYmUiYroVQDpVwCS/kBPqP/7Lgvufr9HzxT4DGuRTloOF+uWwP1doC2WHta/lG/VCCC3MCCBnbA++ZbtiU7sUcdUtKWQw/XDz87ujfW6DB2OtK0z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EirubJOS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8A878C32786;
+	Tue, 28 May 2024 13:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716903630;
+	bh=g3PZDtcn7m2wLPlmZwHCmUl5EUebXo1+SaotgCribQw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EirubJOS9d31fOjcD6cbEpXxvWlKSvYI4ecN9OIvR/bF8TGHNnj4tpCdbpVMz0R4T
+	 8L8BYyIwIpMp6z8+aFQ95FqJBFaPJYPfHZiG5QBAJRCkFyOtBmkgLgaqk+RgK5eqcc
+	 elT/mrxQdtpw2E8lbz/aupCuzKIeiHygwmA1eV6tPnHrVxFaXFc9t8r0aIdZBTWA3+
+	 PW+ifr3ooqG4wIgak5dBCvgbZVPt/stzZQa/FNVOnSnfdQjz6+kwY7cc7daAZ2FkMv
+	 sGpZ8Pn/SbrTw2dcXsdPi7R9oodForX/3oK7Xu7/mIQR0l6hNrWu+cgpjx1a2MtYGM
+	 gCmebZBzgcuDg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 74C1CCF21F3;
+	Tue, 28 May 2024 13:40:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix start counter for ft1
+ filter
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171690363047.22539.6832314055763721476.git-patchwork-notify@kernel.org>
+Date: Tue, 28 May 2024 13:40:30 +0000
+References: <20240527063015.263748-1-danishanwar@ti.com>
+In-Reply-To: <20240527063015.263748-1-danishanwar@ti.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: diogo.ivo@siemens.com, andrew@lunn.ch, pabeni@redhat.com, kuba@kernel.org,
+ edumazet@google.com, davem@davemloft.net, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ vigneshr@ti.com, rogerq@kernel.org, f.fainelli@gmail.com
 
-On 2024-05-28 14:34:55 [+0200], Vlastimil Babka (SUSE) wrote:
-> > The safety of the counter update is already ensured by
-> > VM_WARN_ON_IRQS_ENABLED() which is part of memcg_stats_lock() and does
-> > not require yet another check.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 27 May 2024 12:00:15 +0530 you wrote:
+> The start counter for FT1 filter is wrongly set to 0 in the driver.
+> FT1 is used for source address violation (SAV) check and source address
+> starts at Byte 6 not Byte 0. Fix this by changing start counter to
+> ETH_ALEN in icssg_ft1_set_mac_addr().
 > 
-> I think here it's __mod_memcg_lruvec_state() doing the VM_WARN_ON_ as we
-> don't go through memcg_stats_lock()?
+> Fixes: e9b4ece7d74b ("net: ti: icssg-prueth: Add Firmware config and classification APIs.")
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> 
+> [...]
 
-It is either VM_WARN_ON_IRQS_ENABLED() directly as in
-__mod_memcg_lruvec_state() (which is special) or memcg_stats_lock().
+Here is the summary with links:
+  - [net,v2] net: ti: icssg-prueth: Fix start counter for ft1 filter
+    https://git.kernel.org/netdev/net/c/56a5cf538c3f
 
-Do you want me to rephrase this part?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Sebastian
+
 
