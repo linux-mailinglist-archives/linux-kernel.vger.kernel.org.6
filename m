@@ -1,149 +1,121 @@
-Return-Path: <linux-kernel+bounces-192929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0015A8D247C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7818D2479
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 674F3B2758A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59966B27506
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846B917836C;
-	Tue, 28 May 2024 19:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EA7175555;
+	Tue, 28 May 2024 19:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uewBtLHX"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Q0uIKf0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dlDZNGS9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB7A6DD0D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5956DD0D;
+	Tue, 28 May 2024 19:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716923851; cv=none; b=KNO1sCBcyuShemGdYgeZdVBCDXR+OuYTmFYBGRp88h2VOt8lzy16eyZM0G7SZ/D1A/uDSs5kbgpnIkL5fE1s8by20/S+Y/+TE9fEdObY8gJ+EFerWo1YKTGhUkHTZAhdRnP9awT7Q/rhbauuaQjumd2QofaePN/NBpo/2Bbamao=
+	t=1716923842; cv=none; b=ddxNC53wXVGY0vk9YeffR9lJ//NgC/qEarCL9E4l31Bkz8TcoKXFNXNB2W6mZA/3oev1E9jcSz+SRQxipI/GXyZ8ZF/CmJkdIeE8U4x0kEvjbAqSwB4V7Ve9JVH7B60SRC+fiSuxwDMyTOkUU0C1YAyo9SQ79aWHMOgF2M8vnBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716923851; c=relaxed/simple;
-	bh=8FwTXWjwMKYp0uX5gzAdX2HN/+Ud76IbFLUxgOn4Vlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prYyh/jE+HznN7lINGC5vamanpzZjcdVEHbxqiwJnUPs7VuZUG/T53vUTF8jbirzATRorbpPvEMdO1+aTqWPNMDhVB306EQ7l91VNvUGm534hyyhWMfEm0lb8Nke9g8C1EnKi3w4q6tUGbc8bgJ4D2gfILRb7sMwpWMH4FqdZwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uewBtLHX; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-354de97586cso1469319f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716923847; x=1717528647; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sZV0zcVH6suZcN3zb/p9F3ljLh6Gk5jU60erqTwhnLI=;
-        b=uewBtLHXGMsNo2KB8i+70+Mi6M7Oa+jQZWT6Lr6bqvX/75QqJMEQghcoB5fvkkqH3/
-         SQyK+TxzQwZnCfO74eRkSpU76MbnoXvNMKEVDaZV8a04HD1ePHk0vEQsQb6N7kO8TWxQ
-         GP3ilMOgD1tSZRQb4XGYHXDvaVl9mvBwpW4WzvpvY3y6lWpDIdqhkwKTLtFD/i44U1V0
-         mmzEYeI+9NvxCpelEj20en/hcmGxK8h6OvMgUxyorlFHnqhCu4cVee4Vmw5OxXrBJXVP
-         UuXfOeb4GUJ22QfciYRaiG+Qgp2x57j4wFhpnOqcbAofOCyih7caMk+jZStzw7Yuxu+F
-         jqEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716923847; x=1717528647;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sZV0zcVH6suZcN3zb/p9F3ljLh6Gk5jU60erqTwhnLI=;
-        b=cLS8fIFuF2gMvpfdeist2I4tt48EvaBuC+XjOot9dAp8r8F/wOswmAjv5ObS5TOgn7
-         UeAVF9/4k5ruQqmUReCd1as6HgY3Sq7iVnsvKN3nzLSuQKuQvqiaJyiTswflLVYQOA66
-         /cWyWe8pVzVwyFi2kzVFdkkl44lhj+6GCGJjsf4+cWoAKdPkPS3RgXqAz/D1cuccxMvu
-         SXyqSdr4to1vQfboGuA9XvKTWe4iezplwAiW6+v3BLFp8JEP0jAcVCO5RNBbZSo1ToxR
-         HJRatg+ymNwGVg2P48t2BL+kxCe+XBh4LkSTgr1l6SjXHSyCv50g9T8AN7YlMaaZj/WD
-         LyjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbLQGptbvl1cZxg0nG4h5K5ilZJmvGeGHFww3DkBAmBtpNdgWGSXIfVOrft9MYkz/3oSRrUDqIVRM2xETAiWRwb0X2siHFz1aMLhSD
-X-Gm-Message-State: AOJu0YysEnu0ErQN/7/PYn7p8dr6B8cEgzYSILb3ysvgZBPq9vw4eSXq
-	KFxHrv2y7Ewp2DEzw4pI3QQFR/yCdS0Ov7PDrP6OJbQCKAAUggPjTVHMvcL8axU=
-X-Google-Smtp-Source: AGHT+IEQkE684hYTF7oD4uWMGV+/mx0mhYVZRPi2V51orz/vfPzzL2qPaRkBiMYX9Pvv3mDlAVbbnQ==
-X-Received: by 2002:a05:6000:ec2:b0:354:f724:6417 with SMTP id ffacd0b85a97d-35526d68f8amr8753328f8f.12.1716923847151;
-        Tue, 28 May 2024 12:17:27 -0700 (PDT)
-Received: from [192.168.0.2] (host-87-9-236-85.retail.telecomitalia.it. [87.9.236.85])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a0931c9sm12480054f8f.65.2024.05.28.12.17.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 12:17:26 -0700 (PDT)
-Message-ID: <826c3185-74ca-423c-96f2-4fd4cf2481cb@baylibre.com>
-Date: Tue, 28 May 2024 21:16:50 +0200
+	s=arc-20240116; t=1716923842; c=relaxed/simple;
+	bh=CnnAhhfLz0yuidAHDeeEXBYwXWBSYSxgEY9NZ458gW0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PbpYEen+ChoF39TpGpm0l+hnl71vmGqxlaEke+afHsc8EQh0fCTxGAzoPtgfI98FyUv6/yYLJmMwNGQ/ougwNtjqUastpY4iYN70h23UhK1aFs3oIjGeclys4GMHBOHpobuGRRoqMoOuYRQm+VtPGcwbIPq+XJLuz+K10Jsm2Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Q0uIKf0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dlDZNGS9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716923839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJ1hwXGxp5OziMITpimO5gMUZCDRn1KBiPlKiBihrWA=;
+	b=4Q0uIKf0G8CeKyw1PtsLVCbUOOC9UuZaDRd3Kl9M7VLtjJsA8bmbOw26giQO8UW4MO2dG3
+	Gfwm7SS/uF+VkocqhAr0TR57SDovXB9WMan8RGB9vefJKqBSbeaMZ861oHFSoQPO2X1V3e
+	QYSPBMCYroAILOusV9zsslgjKzv8f6DG/cgdqJaIO1YVt/ckZPiap++MNv4HIi4yIo4Dy5
+	CxOEUKQKmb6U5kuCLsdmGpwrEcAhwKCt+28G8toQTtRtPhYGNcUXSHWh+z8eUX71ZKGVLJ
+	hd8gvOb+O9IYhOpIr/C2P8sDSIbDGvwvQMxIszldpcWSLOap31jmVo5fl6DF7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716923839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJ1hwXGxp5OziMITpimO5gMUZCDRn1KBiPlKiBihrWA=;
+	b=dlDZNGS9j37CdmsfrI+XNgAf9uk8CeaU3aUHLYh+8UhnM4BeOT90CsmTSpQJ3nlzgV4tEI
+	jdRGc/Ee4nS5K9Bg==
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, "linux-mips@vger.kernel.org"
+ <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for
+ MIPS/Loongson64
+In-Reply-To: <558b1d58-08a5-410d-97b8-e77def7c1cf8@app.fastmail.com>
+References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
+ <87sey3b6de.ffs@tglx>
+ <9947f7a5-1a95-48f2-b0eb-0385eb2b3d55@app.fastmail.com>
+ <558b1d58-08a5-410d-97b8-e77def7c1cf8@app.fastmail.com>
+Date: Tue, 28 May 2024 21:17:19 +0200
+Message-ID: <878qztbvb4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] minor fixes and improvements
-To: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <noname.nuno@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nuno.sa@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240522150141.1776196-1-adureghello@baylibre.org>
- <751faef385f81f8a2dd0dcc2acd2d4519bebebe5.camel@gmail.com>
- <20240525180631.13446abc@jic23-huawei>
-Content-Language: en-US
-From: Angelo Dureghello <adureghello@baylibre.com>
-In-Reply-To: <20240525180631.13446abc@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
+On Tue, May 28 2024 at 15:31, Jiaxun Yang wrote:
+> =E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=
+=E5=8D=885:32=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+>> =E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=
+=E5=8D=884:51=EF=BC=8CThomas Gleixner=E5=86=99=E9=81=93=EF=BC=9A
+>>> Jiaxun!
+>>>
+>> Hi Thomas,
+>> [...]
+>>>
+>>> What's this indirection for? Why dont you update=20
+>> [...]
+>>>
+>>>> +static struct clocksource nodecnt_clocksource =3D {
+>>>> +	.name	=3D "nodecnt",
+>>>> +	.read	=3D nodecnt_clocksource_read,
+>>>
+>>> the read function pointer here and spare the indirection?
+>> Smart! sched_clock takes slightly different function pointer argument ty=
+pe
+>> but as we don't use the argument anyway, it should be safe to relax this
+>> indirection.
+>
+> Sadly, I'm unable to remove it with force type catsing :-/
+>
+> drivers/clocksource/loongson-nodecnt.c: In function =E2=80=98nodecnt_cloc=
+ksource_init=E2=80=99:
+> drivers/clocksource/loongson-nodecnt.c:89:36: warning: cast between incom=
+patible function types from =E2=80=98u64 (*)(void)=E2=80=99 {aka =E2=80=98l=
+ong long unsigned int (*)(void)=E2=80=99} to =E2=80=98u64 (*)(struct clocks=
+ource *)=E2=80=99 {aka =E2=80=98long long unsigned int (*)(struct clocksour=
+ce *)=E2=80=99} [-Wcast-function-type]
+>    89 |         nodecnt_clocksource.read =3D (u64 (*)(struct clocksource =
+*))nodecnt_read_fn;
+>
 
-On 25/05/24 7:06 PM, Jonathan Cameron wrote:
-> On Thu, 23 May 2024 14:45:01 +0200
-> Nuno Sá <noname.nuno@gmail.com> wrote:
->
->> On Wed, 2024-05-22 at 17:01 +0200, Angelo Dureghello wrote:
->>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>
->>> After testing this driver, add some minor fixes and improvements,
->>> as adding single channel variants support (ad3541r, ad3551r), also as a
->>> preparatory step to bigger future improvements related to fast-rate mode
->>> for this DAC family.
->>>
->>> Previous patches (v1, 3/3)
->>> https://lore.kernel.org/linux-iio/20240510141836.1624009-1-adureghello@baylibre.org
->>> https://lore.kernel.org/linux-iio/20240510141836.1624009-2-adureghello@baylibre.org/
->>> https://lore.kernel.org/linux-iio/20240510141836.1624009-3-adureghello@baylibre.org/
->>>
->>> Angelo Dureghello (6):
->>>    dt-bindings: iio: dac: fix ad3552r gain parameter names
->>>    dt-bindings: iio: dac: add ad35xxr single output variants
->>>    iio: dac: ad3552r: add model data structure
->>>    iio: dac: ad3552r: add support for ad3541r and ad3551r
->>>    iio: dac: ad3552r: change AD3552R_NUM_CH define name
->>>    iio: dac: ad3552r: uniform structure names
->>>
->>>   .../bindings/iio/dac/adi,ad3552r.yaml         |  43 ++++--
->>>   drivers/iio/dac/ad3552r.c                     | 140 ++++++++++++------
->>>   2 files changed, 128 insertions(+), 55 deletions(-)
->>>    
->> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->>
-> This series crossed with a series using
-> device_for_each_child_node_scoped()
->
-> I've rebased on top of that. Was moderately straightforwards but
-> given last week I messed a similar change up completely please
-> check the testing branch of iio.git!
->
-> The mess was all it the patch adding model_data
-
-i tested the driver from the iio testing beranch,
-it works as expected.
-
-> Thanks,
->
-> Jonathan
+What about making the actual read functions have the required function
+signature? The clocksource argument is not used in those real functions.
 
 Thanks,
 
-Regards,
-angelo
-
-
+        tglx
 
