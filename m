@@ -1,153 +1,111 @@
-Return-Path: <linux-kernel+bounces-193203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7458D2840
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:51:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6950E8D283A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D90C5B25CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8115E1C24B81
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E8213F00B;
-	Tue, 28 May 2024 22:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E14A13E41C;
+	Tue, 28 May 2024 22:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cRDsKCQD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L6idNiH3"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AFD17E8F3;
-	Tue, 28 May 2024 22:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3C113E054
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716936645; cv=none; b=GlilYxSt8dpaxLKU+cZJmrYy89WT2Lpbm2iIpv9aXPzIV7jfKxvbVNgNO1/jV0mpOZAlFUEOi4XqRKI9+0cwzSKlbLBfP9GIpvfsmrmqHLb/UqGelDmLLaJezjHuxA4AKC1Z4tHBK1l4pIsKOcubU1f6XCiNcusosVmtd4x7pdA=
+	t=1716936635; cv=none; b=DTISS8v0aHc3kQ4L7AIRAijRZj/70ZVzLOX8G+7hvmtz/jRbDdGrdmTrSiyD/EGD6dmicpmJlD2JjHys6m1aXfpKhLzgC08ufHSAArtvWBExdrDjF+1NqGWFMJ+Ms2UgALbghA9dUguuYDQabbCtPZvQ87X+FDbp4jYO8YaUnYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716936645; c=relaxed/simple;
-	bh=A1q/7/z20DOapqs/UB4zxXko6V8H8clAPjkctrHxIgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jpHaEFdTtJhQ03hsMDgJmZDL0VAftK4nv+s9J1tuQMsOmxNfa1dLGraps+y5FjW+w8FoIyjM4GWRTdq95mndO7HgIG8ENBJkm1P+D+lwrauRoXqJTTIqoeh7jDScE1epTos0pBaQzV1ZVruvgPkn7T7GbG6ocs8wI88WPvesoe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cRDsKCQD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SKh8u4001482;
-	Tue, 28 May 2024 22:50:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	85GvXhYFcNOFmEbbjkprq9ObtrDiCSDrMIpcOiC1kbg=; b=cRDsKCQDUTBoA3XM
-	rrbboJyfFUgxaXQlzhiqFfpQm6xKwnFugUKTvgpwViuCqocvER4P1vNYGV/6FrIA
-	mc5ekUCae0fL7pk3D4ye0sY7FJQrik5BkzTCHTs2gXfvcn92GvBiY6pJvlfbQDsE
-	PGzdxykhw5VlLOPKW/OfZYwfSw6aE/lCKRYb0R8O2+1vahSte62BNjMRAW1YlMk1
-	L96fqP5F91rdA/ideJkE7BeHTFdCCmqQfWZFO34t2hsnydKC9KuLBOEHwhFQkPNP
-	CwYt6uQ/e6LIcwHq4meRxAlj1FTVZl3cJTbPUzU8RO6k27WxQMbJ+Riv8UgQklLu
-	n56gaQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k7gh0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 22:50:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SMoRta030147
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 22:50:27 GMT
-Received: from [10.110.115.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 15:50:25 -0700
-Message-ID: <f0881f3b-036b-462a-9e0c-42ca81807b86@quicinc.com>
-Date: Tue, 28 May 2024 15:50:25 -0700
+	s=arc-20240116; t=1716936635; c=relaxed/simple;
+	bh=gHbpfeSgkDfVxwkYwenrZjhrUWC3V/PMjbQDgO81FQk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dTjt5DMHOo+HELVI0LKyOJcc8egP2c2Sbbl1/Hn/XXCKzm5JPGKyZtRkSQyinzHRQCxyPTTIZnHN5jYfAuT105dY1ltxXlv52oqK4hML2AOCxb/N4/nrMZTBRdZXDTqIqhchNpDLneR35D1yy3wV/07uULTUV0AigAIKVba852g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L6idNiH3; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f8f34babd4so209107b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:50:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716936634; x=1717541434; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UTOH3e/EfW+pY1lF/i3FXaQ/pSIJmaxop4NhBeQiFYU=;
+        b=L6idNiH37diLwjehmgo9dJ6wWrSW9rJ7seR9p+j2RMPPcVAX75e8svzoPFzRna/t51
+         KM1vC5iBhZ4RAhXLnsSBdGjfXet+EZG015rWVYzs5ASva4MBXrpDfExe12GHKbX4S2rP
+         fLYaICQw2lb5QdqTMVtzZGzZuj6GSzmw623mGTQDRWiHj/cKEICImwwpeO5sqoI2XFJR
+         ptTr/CsuTKWuIXgiqra0KGnGHTqaKJiVCtLJ0nIVhv4v2xo5qno0f8uMmSbcl5RmNW3b
+         1LkRaeEogfnX03hk4Y0yPC09gXOj9DTqf9jbp2tSyfyXfSs9sFIEkFRv3yOxKkPz2PDf
+         a8ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716936634; x=1717541434;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UTOH3e/EfW+pY1lF/i3FXaQ/pSIJmaxop4NhBeQiFYU=;
+        b=Up+kfhNPMyG1McSZfbCb7DVRCBJlAooA9HIWNHGd2TvMaxhI/J8BcDzehLFGLrHbG4
+         EtJv+dx1TDq4KQxXBWmXWW5Odr6LPGcSKZ5kg7ZZYRw0JuXPwgjOcBNmINzh20+PcnxF
+         2oeXxQCcAnOwD+IOcpe5xGTS+jpMQYRcVCwbTfn0bVQ4PIQNv4jLkwOE8gDOVC1zZDcO
+         BewcIrxXYr91DU+YMrtxdHmsapGNvD3mv1lIUNl9PD92PGKbTvCDv4bEzEYZy8Tqm0Ax
+         SyHw93ZrTh+Vdm1ct+F9n/KB6irkk4LBpIG6ZUgIcUnrssSYJhWYHtPeqvmUhSsdRZQS
+         kjaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpjtpBuR89mzXJRlqGHw0WG/bxUQSJhCj3vb3zerV3KRrOL7z2qR57+xfhxLHLZdHq3sNKcoupGhPJ4sHbtTnmp3q8+g1SNsOUuTGb
+X-Gm-Message-State: AOJu0YxIqnr98/pEXF/RvomofJXfBxj01ETC/zTa8UQGe62uEVLKnUpk
+	oi99qAFAt661/V2umD1BddkK/kGuItJXcikfe86CdBKUPW+YE0Rne8Lj0BrRuxp/obFvbbFiVMm
+	6KQ==
+X-Google-Smtp-Source: AGHT+IE3ANcFSo4euu0zbXpca3MbcUJ+ZlvRED7hUs1VWjND6y66XDhsptVuXUjsU+9B6EI4YXgVUsKh6U8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:28cf:b0:6ea:df4b:86d0 with SMTP id
+ d2e1a72fcca58-7020306b721mr1477b3a.2.1716936633742; Tue, 28 May 2024 15:50:33
+ -0700 (PDT)
+Date: Tue, 28 May 2024 15:50:32 -0700
+In-Reply-To: <2d873eb4-67d2-446d-8208-a43a4a8aba14@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] soc: qcom: smem: Add
- qcom_smem_bust_hwspin_lock_by_host()
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon
-	<will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20240524-hwspinlock-bust-v2-0-fb88fd17ca0b@quicinc.com>
- <20240524-hwspinlock-bust-v2-3-fb88fd17ca0b@quicinc.com>
- <nwoeg22jg5yd4amgqqegplygy6aickehvfc6eanmody74h6nss@cmixbwx6vpx4>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <nwoeg22jg5yd4amgqqegplygy6aickehvfc6eanmody74h6nss@cmixbwx6vpx4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cb4X0bwGrqvA1FY1dK4x4i_BT0n7u3hX
-X-Proofpoint-GUID: cb4X0bwGrqvA1FY1dK4x4i_BT0n7u3hX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280169
+Mime-Version: 1.0
+References: <20240522022827.1690416-1-seanjc@google.com> <20240522022827.1690416-5-seanjc@google.com>
+ <2d873eb4-67d2-446d-8208-a43a4a8aba14@intel.com>
+Message-ID: <ZlZfuCI77O9wmHh0@google.com>
+Subject: Re: [PATCH v2 4/6] KVM: Add arch hooks for enabling/disabling virtualization
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 5/28/2024 2:55 PM, Bjorn Andersson wrote:
-> On Fri, May 24, 2024 at 06:26:42PM GMT, Chris Lew wrote:
->> Add qcom_smem_bust_hwspin_lock_by_host to enable remoteproc to bust the
->> hwspin_lock owned by smem. In the event the remoteproc crashes
->> unexpectedly, the remoteproc driver can invoke this API to try and bust
->> the hwspin_lock and release the lock if still held by the remoteproc
->> device.
->>
->> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
->> ---
->>   drivers/soc/qcom/smem.c       | 28 ++++++++++++++++++++++++++++
->>   include/linux/soc/qcom/smem.h |  2 ++
->>   2 files changed, 30 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
->> index 7191fa0c087f..683599990387 100644
->> --- a/drivers/soc/qcom/smem.c
->> +++ b/drivers/soc/qcom/smem.c
-..
->> + *
->> + * Context: Process context.
->> + *
->> + * Returns: 0 on success, otherwise negative errno.
->> + */
->> +int qcom_smem_bust_hwspin_lock_by_host(unsigned host)
->> +{
->> +	if (!__smem)
->> +		return -EPROBE_DEFER;
+On Thu, May 23, 2024, Kai Huang wrote:
+> On 22/05/2024 2:28 pm, Sean Christopherson wrote:
+> >   static int __kvm_enable_virtualization(void)
+> >   {
+> >   	if (__this_cpu_read(hardware_enabled))
+> > @@ -5604,6 +5614,8 @@ static int kvm_enable_virtualization(void)
+> >   	if (kvm_usage_count++)
+> >   		return 0;
+> > +	kvm_arch_enable_virtualization();
+> > +
+> >   	r = cpuhp_setup_state(CPUHP_AP_KVM_ONLINE, "kvm/cpu:online",
+> >   			      kvm_online_cpu, kvm_offline_cpu);
 > 
-> This would be called at a time where -EPROBE_DEFER isn't appropriate,
-> the client should invoke qcom_smem_is_available() at probe time to guard
-> against this.
 > 
+> Nit:  is kvm_arch_pre_enable_virtualization() a better name?
 
-Should we keep the null pointer check to prevent null pointer 
-dereference and return 0? Or would it be better to allow the null 
-pointer deference to go through so we can catch misuse of the API and 
-ask clients to use qcom_smem_is_available()?
+Hmm, yes?  I don't have a strong preference either way.  I did consider a more
+verbose name, but omitted the "pre" because the hook is called only on the 0=>1
+transition of kvm_usage_count, and for some reason that made me think "pre" would
+be confusing.
 
+On the other hand, "pre" very clearly communicates that the hook is invoked,
+and _needs_ to be invoked (for x86), before KVM enables virtualization.
+
+So I'm leaning towards kvm_arch_pre_enable_virtualization().
+
+Anyone else have an opinion?
 
