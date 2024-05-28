@@ -1,165 +1,197 @@
-Return-Path: <linux-kernel+bounces-192586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14E48D1F68
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:01:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151368D1F76
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F421F2375A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C2401C22D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37B5171064;
-	Tue, 28 May 2024 15:00:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C62F1094E;
-	Tue, 28 May 2024 15:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CA3171645;
+	Tue, 28 May 2024 15:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="ACYdXbLK"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2CA16F0C5;
+	Tue, 28 May 2024 15:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716908443; cv=none; b=ewedt+CrrbHf/rwrxhU/45B2+VyHuGB6xa3M66Cc/yl8Fpxtu7ui7ophWzWo2l2G49dGgEgbuQ4tZ5AYv282nLjG9a6HK1LRXz3P4DnmuMorhs+jHGv99AgcmP4FsDen1jnPkfRDQSHG1JLHrPK7P1e7YcPOfR6ZaBU1ADrTjlM=
+	t=1716908472; cv=none; b=KqgEEt67mq05tEbuF+w8NsM+WP+5dF3yKvbouuxQrGzahJTKTltdG+5gMbugcLcPZpAUsNR+zUqtUreGV2ChPTHq6izSrvq1/VIHtZ6EoB8MQTVogPXa3v2ok2gRVVGEW7oZybZPkeWmnn2DRQ9wSU9EBobz1yeZIMS5sVbdySA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716908443; c=relaxed/simple;
-	bh=vVMIytHSqDzGQIHQa79FWs3ijJZgV/ZUXRTkNM6Pl4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=gRG5ueTak4uMISHPZ0cwcBhx+MSuJRaOXHUXwrL0uOBexuD8icvKnZQjvx6kDO1aoc7fHIgF7Au0LxdugRXn4m0+HvxEWj+SAN+co3vXQIQKfGUZLewfFGUQ+3waqdH6AgL5TnhFB/dGtjclgmfU8TXRglGHMfCe93jGmUIc/nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FC2F339;
-	Tue, 28 May 2024 08:01:02 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 267863F762;
-	Tue, 28 May 2024 08:00:36 -0700 (PDT)
-Message-ID: <1f5f1eed-1feb-4a51-92b7-12c1fd195708@arm.com>
-Date: Tue, 28 May 2024 16:00:37 +0100
+	s=arc-20240116; t=1716908472; c=relaxed/simple;
+	bh=SfkOMTdhjXWS0b0FUkV1RZKSmB4hfUU/FP7jdoBRK/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gVkSDAWODUxPuKPyI/XKWlxJwi6CaKHhj6xZz/SfwCrDQkaMVyneh5L4iiYxsF0XSlHGVukxhoUW8yiySfXuBfUHVRT/fsXT5ybZe+sZjRvpc+WX4Piiu5EUytX/u3aqy2a9Gtg4cYeO6JQ96BCcUo3wRX2aXU/DlLQiV7oZd/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=ACYdXbLK; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
+ id a503f829b62d1cab; Tue, 28 May 2024 17:01:01 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 281486A5015;
+	Tue, 28 May 2024 17:01:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1716908461;
+	bh=SfkOMTdhjXWS0b0FUkV1RZKSmB4hfUU/FP7jdoBRK/4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ACYdXbLKNZW3c9L5oGPRFKGoTrIBIlAVOAorx3l3LDGOr9oWaDo8LMasuygnnvu83
+	 Gr6RqyRg3LuCPfwN+WmZG22HofXxefC5eIh0UTHafABEpLmAZUs7BjFxo7e4IYSKry
+	 5cPBijiFlDXt+mpZS+P5dknt2zs8v2BSjwff+d2nB457KkEY6jKXF3a5dw9qgN+qFe
+	 5nVfVZXf0/6YRUIkUC8uFx1qjn0XrU0uzExq/s2OZMyqqmj5oluKAZdIYAxT+fgc2Z
+	 GrK5BOouHzwU4DrFyxI83IyD3mogVsUjR7rWBKKl0S/ORXJpLH+YcohQ+YtpkSZF9T
+	 mwcqSbjMOVRoA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH v2 8/8] thermal: trip: Use common set of trip type names
+Date: Tue, 28 May 2024 17:00:51 +0200
+Message-ID: <3821032.kQq0lBPeGt@kreacher>
+In-Reply-To: <5794974.DvuYhMxLoT@kreacher>
+References: <5794974.DvuYhMxLoT@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] perf maps: Sort kcore maps
-To: Leo Yan <leo.yan@arm.com>, Adrian Hunter <adrian.hunter@intel.com>
-References: <20240520090647.949371-1-leo.yan@arm.com>
- <20240520090647.949371-2-leo.yan@arm.com>
- <2f4fce9f-6283-40ad-8adc-c370e98627da@intel.com>
- <02fbb30f-19cf-4822-9676-35d3e51d99b1@arm.com>
-Content-Language: en-US
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <02fbb30f-19cf-4822-9676-35d3e51d99b1@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedgheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigt
+ rghnoheslhhinhgrrhhordhorhhg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Use the same set of trip type names in sysfs and in the thermal debug
+code output.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v1 -> v2: Rebase.
+
+---
+ drivers/thermal/thermal_core.h    |    2 ++
+ drivers/thermal/thermal_debugfs.c |   10 +---------
+ drivers/thermal/thermal_sysfs.c   |   13 +------------
+ drivers/thermal/thermal_trip.c    |   15 +++++++++++++++
+ 4 files changed, 19 insertions(+), 21 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_trip.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_trip.c
++++ linux-pm/drivers/thermal/thermal_trip.c
+@@ -9,6 +9,21 @@
+  */
+ #include "thermal_core.h"
+ 
++static const char *trip_type_names[] = {
++	[THERMAL_TRIP_ACTIVE] = "active",
++	[THERMAL_TRIP_PASSIVE] = "passive",
++	[THERMAL_TRIP_HOT] = "hot",
++	[THERMAL_TRIP_CRITICAL] = "critical",
++};
++
++const char *thermal_trip_type_name(enum thermal_trip_type trip_type)
++{
++	if (trip_type < THERMAL_TRIP_ACTIVE || trip_type > THERMAL_TRIP_CRITICAL)
++		return "unknown";
++
++	return trip_type_names[trip_type];
++}
++
+ int for_each_thermal_trip(struct thermal_zone_device *tz,
+ 			  int (*cb)(struct thermal_trip *, void *),
+ 			  void *data)
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -240,6 +240,8 @@ void thermal_governor_update_tz(struct t
+ #define trip_to_trip_desc(__trip)	\
+ 	container_of(__trip, struct thermal_trip_desc, trip)
+ 
++const char *thermal_trip_type_name(enum thermal_trip_type trip_type);
++
+ void __thermal_zone_set_trips(struct thermal_zone_device *tz);
+ int thermal_zone_trip_id(const struct thermal_zone_device *tz,
+ 			 const struct thermal_trip *trip);
+Index: linux-pm/drivers/thermal/thermal_sysfs.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_sysfs.c
++++ linux-pm/drivers/thermal/thermal_sysfs.c
+@@ -88,18 +88,7 @@ trip_point_type_show(struct device *dev,
+ 	if (sscanf(attr->attr.name, "trip_point_%d_type", &trip_id) != 1)
+ 		return -EINVAL;
+ 
+-	switch (tz->trips[trip_id].trip.type) {
+-	case THERMAL_TRIP_CRITICAL:
+-		return sprintf(buf, "critical\n");
+-	case THERMAL_TRIP_HOT:
+-		return sprintf(buf, "hot\n");
+-	case THERMAL_TRIP_PASSIVE:
+-		return sprintf(buf, "passive\n");
+-	case THERMAL_TRIP_ACTIVE:
+-		return sprintf(buf, "active\n");
+-	default:
+-		return sprintf(buf, "unknown\n");
+-	}
++	return sprintf(buf, "%s\n", thermal_trip_type_name(tz->trips[trip_id].trip.type));
+ }
+ 
+ static ssize_t
+Index: linux-pm/drivers/thermal/thermal_debugfs.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_debugfs.c
++++ linux-pm/drivers/thermal/thermal_debugfs.c
+@@ -784,7 +784,6 @@ static int tze_seq_show(struct seq_file
+ 	struct thermal_zone_device *tz = thermal_dbg->tz_dbg.tz;
+ 	struct thermal_trip_desc *td;
+ 	struct tz_episode *tze;
+-	const char *type;
+ 	u64 duration_ms;
+ 	int trip_id;
+ 	char c;
+@@ -824,13 +823,6 @@ static int tze_seq_show(struct seq_file
+ 		if (trip_stats->trip_temp == THERMAL_TEMP_INVALID)
+ 			continue;
+ 
+-		if (trip->type == THERMAL_TRIP_PASSIVE)
+-			type = "passive";
+-		else if (trip->type == THERMAL_TRIP_ACTIVE)
+-			type = "active";
+-		else
+-			type = "hot";
+-
+ 		if (trip_stats->timestamp != KTIME_MAX) {
+ 			/* Mitigation in progress. */
+ 			ktime_t delta = ktime_sub(ktime_get(),
+@@ -846,7 +838,7 @@ static int tze_seq_show(struct seq_file
+ 
+ 		seq_printf(s, "| %*d | %*s | %*d | %*d | %c%*lld | %*d | %*d |\n",
+ 			   4 , trip_id,
+-			   8, type,
++			   8, thermal_trip_type_name(trip->type),
+ 			   9, trip_stats->trip_temp,
+ 			   9, trip_stats->trip_hyst,
+ 			   c, 11, duration_ms,
 
 
 
-On 25/05/2024 10:29, Leo Yan wrote:
-> Hi Adrian,
-> 
-> On 5/22/2024 11:31 AM, Adrian Hunter wrote:
->> On 20/05/24 12:06, Leo Yan wrote:
->>> When merging kcore maps into the kernel maps, it has an implicit
->>> requirement for the kcore maps ordering, otherwise, some sections
->>> delivered by the kcore maps will be ignored.
->>
->> perf treats the kernel text map as a special case.  The problem
->> is that the kcore loading logic did not cater for there being 2
->> maps that covered the kernel mapping.
->>
->> The workaround was to choose the smaller mapping, but then that
->> still only worked if that was the first.
-> 
-> You could see below are Kcore maps dumped on Arm64:
-> 
-> kore map start: ffff000000000000 end: ffff00001ac00000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff00001ad88000 end: ffff000032000000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff000032101000 end: ffff00003e000000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff000040000000 end: ffff000089b80000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff000089cc0000 end: ffff0000b9ab0000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff0000b9ad0000 end: ffff0000b9bb0000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff0000b9c50000 end: ffff0000b9d50000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff0000ba114000 end: ffff0000bf130000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff0000bf180000 end: ffff0000e0000000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff000200000000 end: ffff000220000000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff800000000000 end: ffff800080000000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff800080000000 end: ffff8000822f0000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: ffff800080000000 end: fffffdffbf800000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc0000000 end: fffffdffc06b0000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc06b6000 end: fffffdffc0c80000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc0c84000 end: fffffdffc0f80000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc1000000 end: fffffdffc226e000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc2273000 end: fffffdffc2e6b000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc2e6b000 end: fffffdffc2e6f000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc2e71000 end: fffffdffc2e76000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc2e84000 end: fffffdffc2fc5000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc2fc6000 end: fffffdffc3800000 name: [kernel.kallsyms]
-> refcnt: 1
-> kore map start: fffffdffc8000000 end: fffffdffc8800000 name: [kernel.kallsyms]
-> refcnt: 1
-> 
-> You could see it's much more complex rather than only for kernel text section
-> and vmalloc region. We cannot only handle the case for the overlapping between
-> the text section and vmalloc region, it is possible for other maps to be
-> overlapping with each other.
-> 
-> And different arches have their own definition for the Kcore maps. This is why
-> I want to sort maps in this patch, it can allow us to find a reliable way to
-> append the kcore maps.
-> 
->> James essentially fixed that by ensuring the kernel "replacement"
->> map is inserted first.
-> 
-> Yeah, I agreed James' patch has fixed the kernel "replacement" map. But as I
-> elaborated above, there still have other maps might overlap with each other,
-> my understanding is we don't handle all cases.
->> In other respects, the ordering of the maps does not matter, so
->> I am not sure it is worth this extra processing.
-> 
-> To sell my patch, I have another point for why we need sorting Kcore maps.
-> 
-> Now Perf verifies the map in the function check_invariants(), this function
-> reports the broken issue, but we still have no clue how the broken issue happens.
-> 
-> If we can sort the Kcore maps in kcore_mapfn(), then we have chance to detect
-> the overlapping within maps, and then it can reports the overlapping in the
-> first place and this would be helpful for debugging and locating the failures.
-> 
-
-+1 for this point. If check_invariants() insists on sorted maps, then
-keeping them sorted as early as possible is better.
-
-Debugging future issues will be easier if the assert is closer to the
-source of the problem.
-
-James
 
