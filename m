@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-192941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938E28D249F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:30:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8EF38D24A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31738B283E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A74E1F28C9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0601917557C;
-	Tue, 28 May 2024 19:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149B5173342;
+	Tue, 28 May 2024 19:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbw2Fatb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PiXETvYR"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84D8172BD1;
-	Tue, 28 May 2024 19:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558722628C;
+	Tue, 28 May 2024 19:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716924598; cv=none; b=drEgmvdtARLv+NX7oKjF3Njl/HBibLix4yszpalF2d1anr6c/ekcUcr22xH8s9Ln0xZcZtWPjlAjP33DH25z3GNdSPWSJ4FJlhaelSB5fWMfbr2wpO9w3AmzNdmfGEHShypT/OE7ctd4DBl5K8ehj0L6OhCOlJix3BxwQ8K6l4c=
+	t=1716924650; cv=none; b=AFpsArXgGyros7iO9ZvAVXwOs/iznRaSTAK/MHTAC/Hcsf8prFaBAPbwSdToLTgN1HXCAGVRqE64RuTMvMZIUEZNV5wg+wiofrXpeXH1DEYqTGKTp2451NcipNOZYPUn+41ftSzHpAG3sJk+rx4KT9WZpBZ6JDkly6+p+6JHFjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716924598; c=relaxed/simple;
-	bh=yrLkMNL0vjGtPcpJMxCjfDCJZd9eHDtZHTZMrLNb4lI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y8SDJxEYF1D1v3dnySZM/kIysBn12rx6Zni1vGKVDuyj9n0g1Ydcw3YfnZzuGMVTFbwfq/a8Jb5S82q1kPQViQGIWa7/xWZ1bUPA+gpb7bnmr7sVkYpih5WTGW2+1ByR1i4hMskYfStugD8+Z3ESIb0Qvf/JY/B9qH/uQVlSyq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbw2Fatb; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716924597; x=1748460597;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yrLkMNL0vjGtPcpJMxCjfDCJZd9eHDtZHTZMrLNb4lI=;
-  b=nbw2FatbU/qrW/MAO6WpvSE6M6yQiVCCLuyxaCVQpTYV205BnEqDqL1Y
-   n9FlVfrfU4CZKJDiqUc8M2xkMVqzggarJQBYsEB2RGsV8VHDG1IubT4Fw
-   H2V4u3vaUvUafy60IfDRHvNY6TcQOzYitM0aGhQZQZ07AZXmI6ppvmy4J
-   0P3n7wjUjjljlDRnIHJ/zM5neTphcFDQU0331WB5HdzntYV0NEeNzKymn
-   zmP6MFS3mt7t0Y/G+cbtYRRjf5JGOD6qe8oBxy1OVgu4osnKPyGRZPE/S
-   jlD/OjmIo0LfnXAoRitfdGGjjhsX8xrRDans61utGkt3wwrh2DroUqKMz
-   g==;
-X-CSE-ConnectionGUID: SIT48geFRYiCEC2GoPFejA==
-X-CSE-MsgGUID: /pe+cS9SREOGvc0QbVpPBw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24711846"
-X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="24711846"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 12:29:56 -0700
-X-CSE-ConnectionGUID: oPjQrdN/TZOsComV4T9Q5g==
-X-CSE-MsgGUID: dw+3EAeBTcyrDD4eXkFDRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="35246723"
-Received: from unknown (HELO pbossart-mobl6.lan) ([10.125.110.237])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 12:29:55 -0700
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: linux-sound@vger.kernel.org
-Cc: alsa-devel@alsa-project.org,
-	tiwai@suse.de,
-	broonie@kernel.org,
-	rafael@kernel.org,
-	vkoul@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	=?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Rander Wang <rander.wang@intel.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/3] ALSA: hda: intel-sdw-acpi: use acpi_get_local_u64_address()
-Date: Tue, 28 May 2024 14:29:35 -0500
-Message-ID: <20240528192936.16180-4-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240528192936.16180-1-pierre-louis.bossart@linux.intel.com>
-References: <20240528192936.16180-1-pierre-louis.bossart@linux.intel.com>
+	s=arc-20240116; t=1716924650; c=relaxed/simple;
+	bh=fI4YZIUdESe+KXQcRqR67vysxo0zhiFA5TgqGIaSsnk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iwWyXlCzNe2DTtc5rG9HmTqe27yd1P2uTSf81jM2/91rIH9D5XZjN4c/CPMUtQYsAFzBfxLILbvMAepMxAqlYzm7vkV222XWvp5kbuHV49kIGUEZuCCA928n9vhL2lSo31d4HiJFU6dF46z4feEFVrUgViJmtGC+P1a+7CGWGpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PiXETvYR; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: willemdebruijn.kernel@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716924646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gz3k3DiyCGoMOQPg4X/3emTcMizgWP/27mI/YhTD5m0=;
+	b=PiXETvYR6IRMfXEe4gOpDNS9DV3O6W5Gp/M9XzKmFpHzF3IzhEUJabyVl4aKIkY6A9mOQT
+	iWn91fhLI0re1yqfYGa1lq6hNJCm5Y1NbaEitw8hyImb02S6L8FGAx+V9l0wb/W4Td4y6C
+	M5NLDgB6mMCoLSKpQhDcsOYZygSBmig=
+X-Envelope-To: quic_abchauha@quicinc.com
+X-Envelope-To: kernel@quicinc.com
+X-Envelope-To: willemb@google.com
+X-Envelope-To: davem@davemloft.net
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: ahalaney@redhat.com
+X-Envelope-To: martin.lau@kernel.org
+X-Envelope-To: daniel@iogearbox.net
+X-Envelope-To: bpf@vger.kernel.org
+Message-ID: <d1c18889-ef48-4cb8-8b81-474b3b7ddd81@linux.dev>
+Date: Tue, 28 May 2024 12:30:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
+ tstamp_type for scalabilty
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+Cc: kernel@quicinc.com, Willem de Bruijn <willemb@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Martin KaFai Lau <martin.lau@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
+References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
+ <20240509211834.3235191-2-quic_abchauha@quicinc.com>
+ <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
+ <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
+Content-Language: en-US
+In-Reply-To: <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Now we have a helper so there's no need to open-code.
+On 5/28/24 10:24 AM, Willem de Bruijn wrote:
+> Abhishek Chauhan (ABC) wrote:
+> 
+>>> +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
+>>> +						    ktime_t kt, clockid_t clockid)
+>>> +{
+>>> +	u8 tstamp_type = SKB_CLOCK_REALTIME;
+>>> +
+>>> +	switch (clockid) {
+>>> +	case CLOCK_REALTIME:
+>>> +		break;
+>>> +	case CLOCK_MONOTONIC:
+>>> +		tstamp_type = SKB_CLOCK_MONOTONIC;
+>>> +		break;
+>>> +	default:
+>>
+>> Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn.
+>> So i think this might result in unnecessary crashes.
+>>
+>> Let me know what you think.
+>>
+>> Logs which are complaining.
+>> https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
+> 
+> I received reports too. Agreed that we need to fix these reports.
+> 
+> The alternative is to limit sk_clockid to supported ones, by failing
+> setsockopt SO_TXTIME on an unsupported clock.
+> 
+> That changes established ABI behavior. But I don't see how another
+> clock can be used in any realistic way anyway.
+> 
+> Putting it out there as an option. It's riskier, but in the end I
+> believe a better fix than just allowing this state to continue.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
----
- sound/hda/intel-sdw-acpi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Failing early would be my preference also. The current ABI is arguably at least 
+confusing (if not broken) considering other clockid is silently ignored by the 
+kernel.
 
-diff --git a/sound/hda/intel-sdw-acpi.c b/sound/hda/intel-sdw-acpi.c
-index d7417a40392b..f3b2a610df23 100644
---- a/sound/hda/intel-sdw-acpi.c
-+++ b/sound/hda/intel-sdw-acpi.c
-@@ -125,11 +125,11 @@ static acpi_status sdw_intel_acpi_cb(acpi_handle handle, u32 level,
- 				     void *cdata, void **return_value)
- {
- 	struct sdw_intel_acpi_info *info = cdata;
--	acpi_status status;
- 	u64 adr;
-+	int ret;
- 
--	status = acpi_evaluate_integer(handle, METHOD_NAME__ADR, NULL, &adr);
--	if (ACPI_FAILURE(status))
-+	ret = acpi_get_local_u64_address(handle, &adr);
-+	if (ret < 0)
- 		return AE_OK; /* keep going */
- 
- 	if (!acpi_fetch_acpi_dev(handle)) {
--- 
-2.43.0
+> 
+> A third option would be to not fail the system call, but silently
+> fall back to CLOCK_REALTIME. Essentially what happens in the datapath
+> in skb_set_delivery_type_by_clockid now. That is surprising behavior,
+> we should not do that.
+
+Not sure if it makes sense to go back to this option only after there is 
+breakage report with a legit usage?
 
 
