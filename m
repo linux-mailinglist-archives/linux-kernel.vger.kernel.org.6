@@ -1,217 +1,156 @@
-Return-Path: <linux-kernel+bounces-192893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDA08D23A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:00:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870BE8D238C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 078FF28583F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E2F2856D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C9961FFC;
-	Tue, 28 May 2024 19:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DC917082B;
+	Tue, 28 May 2024 18:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hOIgLuYM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tz6SQeQW"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A9C18AF9
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D571739FFB;
+	Tue, 28 May 2024 18:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716922843; cv=none; b=Cfo70XoVNCAm6IigWLn1kbYsPqUt4Lmsr82Cxj80kDESG52xZVab9Ym9UwjgpCMggAZ9Q4EjQvbRByrfuDXGQWGeL1zXwSfO/Y+VDWqUA5k6NYIPFqTIOS4v/XaHNlE4i0jM/8WYob54kto5J+nfXCUqTRrOfkXJLtZGQRRqzO0=
+	t=1716922592; cv=none; b=LECSZsX8iKJ9hK6zCkqPy6K4geaVBiZl87txitEOl+XuKFw2mKLjVmsQrkohWlc6IFLm9igqWN1cKjeY6rOSljzzHUp/wOeF4pOvGQBKPSx7417Sr48t4lSNw9shwlcRfGEgRg2JbFpoI+gPvXTySX9qGJj72GJbuKHuqu1/J5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716922843; c=relaxed/simple;
-	bh=f+voVYQgJ6rLsoG7iQDzb3odNjuXcpx3jZ1qlcYa4aY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=udYPlf30K0663EWEz5Dh3p7WS1C6blCvHv0neZIHwa0BHPUCNkwKCF4UDbg5DthiKHDtUNdRsHjwzAqBfbO/k2lH2S2+AQ4FZyhUlOGuHlMbQd31T3SMkMYqIQEUyYkUeNy/SXFgdxyHxbDhx1Uo9gMQsAO8OOvNYNw4ni4AgGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hOIgLuYM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716922840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EroyhAMtYZlwFiF+i06GpFh0h6zXLI4AvXcFdjRTODk=;
-	b=hOIgLuYM6j3Kye4aK1BFeprbsK2/nuRSV0y7rIVIxe+PlOZrFh3/VVFEHLeLCs7xMAeVJ9
-	FAlQYDf5x2fLczpEfKJWk45V1B1/xzMo8OT6nqdqARPp88MghRlQB3wLYiZp9rIMi3Z58F
-	RlOwWsBO5yVqEfMHlc5xY6LiKIJNwR8=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-209-gPpSsU1BOmm5dlgNF8H8ag-1; Tue, 28 May 2024 15:00:39 -0400
-X-MC-Unique: gPpSsU1BOmm5dlgNF8H8ag-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-43fc7d851f5so12373901cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:00:39 -0700 (PDT)
+	s=arc-20240116; t=1716922592; c=relaxed/simple;
+	bh=ztsJYW0YANpO2rdc8sbJ0K+4goWiO1i3wXZ1mB0Ap2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmjJ0iHM5Zq3gx1WVPdmhNOVqEGSppB7jtzCCMYfZd9ZWKVXCn4an4iyOvFXA2if1Iyt1lWDS4YsUtvqaG0pdJkvjcfuUb2mF2+jFQpMmhiPBq6YoBc5ktNr4Dxv5dBRGFAwhN/WCSzevPikfI87qh4j7hgjkgt7n9Fs4NEuDZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tz6SQeQW; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f480624d0dso10275775ad.1;
+        Tue, 28 May 2024 11:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716922590; x=1717527390; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUgLDFbi2c7FUxokPLXP9/62M0uPAEAEC9MusVwz8b0=;
+        b=Tz6SQeQWI85YRNTKI0Qk3Hwr5f7NfVEgPZfm3zbvTgGTDEYxET2MwFKcU22HaCOMuv
+         XDGZLlh/98X3ho+4lYFLz8PUw0qZaio7K79AChq6EE5BMCEh3D4c4tioGTcAxAjHb2tW
+         jTnB+lCVpZ4LUt+QpRDJmO9tg65XuES1n5IbDSPqnZoJi/xKVaisvlAIb2EdWZDMTLkc
+         cbWOnnnl4/Pnhwj4Oen401FXD0xa+YIXyhDoXdRnCsgZXcSw7JIBnmVXQuGB/QEIUn2j
+         uXVyl8XPXsROrG05fAQpeKI3cgES+DzD9XLqxDKXD/X8PAz2Tvb40Y19AD+JK8UkWxvx
+         pC2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716922838; x=1717527638;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EroyhAMtYZlwFiF+i06GpFh0h6zXLI4AvXcFdjRTODk=;
-        b=UsEGRzWs3sEytqFDmzG97qnLoqOLYRUWxmzSIEgu2Rl3qbIbe3fYdRhBYAh2dd0idc
-         IhZFh/tRtcLkh0Y98JMFTJ5nm9rcUphy8IF0rxX/gW6CQNhyFij2Db/gWNcGX8hRsFuM
-         g0lajkvr8gMc4YEOjtq7BRqyyAS7ozSFooihTsALntskjOlQ48gkdm3vVI8wHnsgAFNW
-         xJFARKvpXGYPm6w7Su2+CC8wEcRWVINAN8mD4fMytBAiZ62vOkQbV74NXzHVVLkCNnZl
-         qa5EWMfUPUQ1Gz46CFGOhihkCT5kOzmh4RH+VvXjaHPWND/O9Q1940ntQTMJJiHpnksh
-         AS2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAdJzRXCNRBnacQ/+NDW+BPvrEsNYWbxIDQkYnt+XNDf9IfhNDe94tyzzc1HKa6fhHQ1ejnr5zGB83xYd7piiWYLN8UM7+oH5Eamic
-X-Gm-Message-State: AOJu0Yz/wOfdBXZT6nEtmftp9R6oNqghlE8sX7EZoH1J82gcITJ+X6Zw
-	Yr8Vh1+AuJD4h1ozFkspbw9bai8OrZnGs/V1ndEFR0nf6ORtpl5xTBGc798As2q0+9GHXO/+lx8
-	TFNt7u4coF0BKatHQQNE65ouix2Yjqde8aOcm3Jj0DTNSfkqcqgJtBq3MK/ykxw==
-X-Received: by 2002:a05:622a:10a:b0:43e:34ea:80ee with SMTP id d75a77b69052e-43fb0e8d809mr134383951cf.29.1716922837921;
-        Tue, 28 May 2024 12:00:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLHIs0G4ODwLtaTgMc9fP7BM4N2EDamkPS2f5rSvXhQ/RuodqmrywBv65gQp5ZlO5A4PV4Ug==
-X-Received: by 2002:a05:622a:10a:b0:43e:34ea:80ee with SMTP id d75a77b69052e-43fb0e8d809mr134383451cf.29.1716922837199;
-        Tue, 28 May 2024 12:00:37 -0700 (PDT)
-Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb17f69ddsm44981881cf.41.2024.05.28.12.00.36
+        d=1e100.net; s=20230601; t=1716922590; x=1717527390;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YUgLDFbi2c7FUxokPLXP9/62M0uPAEAEC9MusVwz8b0=;
+        b=E/Eo4S1Xandwxfph2jbYNs2LKSF3p+WWwB2Gywe80k6yimCqdR+Z1GOB/4dL4qBbSz
+         YvWXdOG3rdRBVxLmW3yPp1a1UYo2xqkXh45S9X882eaPxFbE3tljxqB/4W9QflHH8nkK
+         XqnBbp0/zZuuAFVX6XB6wYJYYq8xWH0NI3Exr6gGke6tp/DNSCzokz71lPhbMf0PgvTj
+         4wLav/rmHf9XH4Klz+348Muh2mDnj3S9FumtXKTAZXcm+YgCmBI59c7RYcEwkQzoqIuA
+         2POMtNmPydnQD9S4wmharygrOBnPrG6RPLtNJ/x4P65jLgKX9YCbKJ2a5QgXWeQtdqd1
+         TRNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhnR0dV7QDcqfxwPzpoqW3l5eMuG6PxIuNELp0xm8yY+SuZRXjfRjke+hfOAmmnwXVDoJ+Jfk4yiRly6BXJO52axy4yYm8CqbSFf6JLEwQFfzI/hhhca8/3pBq18DWp9s9xNgu
+X-Gm-Message-State: AOJu0Yy282CcpA+dpH5fLlPt9lmmnIKGmIEdCoYzHxuzsLNwcy2YZz2R
+	x5WHQmzthsbApEU4HiXfvLkyTyvUny41rpq6uesD4OZQ/Hb6E/Jt
+X-Google-Smtp-Source: AGHT+IEGKMC+GSGE9A5CoOBmwz7+P3FCmjILiQSV42ML2DmZSVRFq0YniZtWUgz4cIjIBsy/BkySQg==
+X-Received: by 2002:a17:902:e5ca:b0:1f4:95cd:6757 with SMTP id d9443c01a7336-1f495cd6cd5mr78359915ad.54.1716922590026;
+        Tue, 28 May 2024 11:56:30 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1181:b338:a9d5:263e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4960ca6d1sm44742135ad.139.2024.05.28.11.56.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 12:00:36 -0700 (PDT)
-From: Eric Chanudet <echanude@redhat.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nick Piggin <npiggin@gmail.com>
-Cc: x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Eric Chanudet <echanude@redhat.com>
-Subject: [PATCH v3] mm/mm_init: use node's number of cpus in deferred_page_init_max_threads
-Date: Tue, 28 May 2024 14:54:58 -0400
-Message-ID: <20240528185455.643227-4-echanude@redhat.com>
-X-Mailer: git-send-email 2.44.0
+        Tue, 28 May 2024 11:56:29 -0700 (PDT)
+Date: Tue, 28 May 2024 11:56:27 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] kobject_uevent: Fix OOB access within
+ zap_modalias_env()
+Message-ID: <ZlYo20ztfLWPyy5d@google.com>
+References: <1716866347-11229-1-git-send-email-quic_zijuhu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1716866347-11229-1-git-send-email-quic_zijuhu@quicinc.com>
 
-When DEFERRED_STRUCT_PAGE_INIT=y, use a node's cpu count as maximum
-thread count for the deferred initialization of struct pages via padata.
-This should result in shorter boot times for these configurations by
-going through page_alloc_init_late() faster as systems tend not to be
-under heavy load that early in the bootstrap.
+On Tue, May 28, 2024 at 11:19:07AM +0800, Zijun Hu wrote:
+> zap_modalias_env() wrongly calculates size of memory block to move, so
+> will cause OOB memory access issue if variable MODALIAS is not the last
+> one within its @env parameter, fixed by correcting size to memmove.
+> 
+> Fixes: 9b3fa47d4a76 ("kobject: fix suppressing modalias in uevents delivered over netlink")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> V1 -> V2: Correct commit messages and add inline comments
+> 
+> V1 discussion link:
+> https://lore.kernel.org/lkml/0b916393-eb39-4467-9c99-ac1bc9746512@quicinc.com/T/#m8d80165294640dbac72f5c48d14b7ca4f097b5c7
+> 
+>  lib/kobject_uevent.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+> index 03b427e2707e..f22366be020c 100644
+> --- a/lib/kobject_uevent.c
+> +++ b/lib/kobject_uevent.c
+> @@ -433,8 +433,23 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
+>  		len = strlen(env->envp[i]) + 1;
+>  
+>  		if (i != env->envp_idx - 1) {
+> +			/* @env->envp[] contains pointers to @env->buf[]
+> +			 * with @env->buflen elements, and we want to
+> +			 * remove variable MODALIAS pointed by
+> +			 * @env->envp[i] with length @len as shown below:
+> +			 *
+> +			 * 0          @env->buf[]      @env->buflen
+> +			 * ----------------------------------------
+> +			 *      ^              ^                  ^
+> +			 *      |->   @len   <-|   target block   |
+> +			 * @env->envp[i]  @env->envp[i+1]
+> +			 *
+> +			 * so the "target block" indicated above is moved
+> +			 * backward by @len, and its right size is
+> +			 * (@env->buf + @env->buflen - @env->envp[i + 1]).
+> +			 */
+>  			memmove(env->envp[i], env->envp[i + 1],
+> -				env->buflen - len);
+> +				env->buf + env->buflen - env->envp[i + 1]);
 
-Only x86_64 does that now. Make it archs agnostic when
-DEFERRED_STRUCT_PAGE_INIT is set. With the default defconfigs, that
-includes powerpc and s390.
+Thank you for noticing this, it is indeed a bug.
 
-It used to be so before offering archs to override the function for
-tuning with commit ecd096506922 ("mm: make deferred init's max threads
-arch-specific").
+I wonder if this would not be expressed better as:
 
-Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64 platforms
-shows faster deferred_init_memmap completions:
-|         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
-|         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
-|         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
-|---------|-------------|--------------|-----------------|--------------|
-| threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
-|---------|-------------|--------------|-----------------|--------------|
-| 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
-| cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
+			tail_len = env->buflen - (env->envp[i + 1] - env->envp[0]);
+			memmove(env->envp[i], env->envp[i + 1], tail_len);
 
-Michael Ellerman on a powerpc machine (1TB, 40 cores, 4KB pages) reports
-faster deferred_init_memmap from 210-240ms to 90-110ms between nodes.
+and we would not need the large comment.
 
-Signed-off-by: Eric Chanudet <echanude@redhat.com>
-Tested-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Otherwise:
 
----
-- v1: https://lore.kernel.org/linux-arm-kernel/20240520231555.395979-5-echanude@redhat.com
-- Changes since v1:
- - Make the generic function return the number of cpus of the node as
-   max threads limit instead overriding it for arm64.
- - Drop Baoquan He's R-b on v1 since the logic changed.
- - Add CCs according to patch changes (ppc and s390 set
-   DEFERRED_STRUCT_PAGE_INIT by default).
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-- v2: https://lore.kernel.org/linux-arm-kernel/20240522203758.626932-4-echanude@redhat.com/
-- Changes since v2:
- - deferred_page_init_max_threads returns unsigned and use max instead
-   of max_t.
- - Make deferred_page_init_max_threads static since there are no more
-   override.
- - Rephrase description.
- - Add T-b and report from Michael Ellerman.
+>  
+>  			for (j = i; j < env->envp_idx - 1; j++)
+>  				env->envp[j] = env->envp[j + 1] - len;
+> -- 
+> 2.7.4
+> 
 
- arch/x86/mm/init_64.c    | 12 ------------
- include/linux/memblock.h |  2 --
- mm/mm_init.c             |  5 ++---
- 3 files changed, 2 insertions(+), 17 deletions(-)
+Thanks.
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 7e177856ee4f..adec42928ec1 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1354,18 +1354,6 @@ void __init mem_init(void)
- 	preallocate_vmalloc_pages();
- }
- 
--#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
--int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
--{
--	/*
--	 * More CPUs always led to greater speedups on tested systems, up to
--	 * all the nodes' CPUs.  Use all since the system is otherwise idle
--	 * now.
--	 */
--	return max_t(int, cpumask_weight(node_cpumask), 1);
--}
--#endif
--
- int kernel_set_to_readonly;
- 
- void mark_rodata_ro(void)
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index e2082240586d..40c62aca36ec 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -335,8 +335,6 @@ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
- 	for (; i != U64_MAX;					  \
- 	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
- 
--int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask);
--
- #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
- /**
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index f72b852bd5b8..acfeba508796 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2122,11 +2122,10 @@ deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
- 	}
- }
- 
--/* An arch may override for more concurrency. */
--__weak int __init
-+static unsigned int __init
- deferred_page_init_max_threads(const struct cpumask *node_cpumask)
- {
--	return 1;
-+	return max(cpumask_weight(node_cpumask), 1U);
- }
- 
- /* Initialise remaining memory on a node */
 -- 
-2.44.0
-
+Dmitry
 
