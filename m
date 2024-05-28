@@ -1,160 +1,98 @@
-Return-Path: <linux-kernel+bounces-192125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD978D18C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551288D18C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45DCFB22672
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F47E1C22C42
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B808516B756;
-	Tue, 28 May 2024 10:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C5A16B743;
+	Tue, 28 May 2024 10:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FgXHIgvp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZibhVsIM"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F0E16B728
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92166139D11;
+	Tue, 28 May 2024 10:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716892794; cv=none; b=qiGVHLVrAWSn/Q/bCgBAebSYMEibkbm8gGVZ0PvGdDSyC1AJx9DWOZGPS4KS0v0mZzptQ1MFR6kCoLLc32/h0jbzipN8IE1rlSAI9byV7X2dfl8Ugeimnjrmh2RBZILiGwDhPbPt7BCx0ALrxp2QyPVdMk2TnEuajI8qexBIkSo=
+	t=1716892856; cv=none; b=qx5esJV2JJSfqzKi97PKvNOpgoMHbq1L5wrFH8L0UvmCgaqq1QvwbXmZQYHZHnxQEkegg9bdpZvJftXiOcUs+0kVplIlKhXiJAFzJh/d3JfQ4BNjgeoZLCXWMdlqv/KfMgWnlI04jIGRu+hfn2NR03sOo+KE9vq4HEj8AGAGLMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716892794; c=relaxed/simple;
-	bh=aj45SEB7D9ldygzhYKXe3HytaBUsioM0atiT5UJiPD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AQ+woGKIcN5wcWXofb1usoplkpQRyX1bskxWxkRgndsWNuDWYwqkO3C9qXSJprPbETjq+bIxUgZLhmQX+LlSzmQ8wZ1jbWsuaO8hh2Jqnro5y7oXru9FFfJDzwgWzII+MBqSE2t/TWIHwVeh5hA8Z/TQFUVvsKK8Id16COY9tHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FgXHIgvp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716892791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cWr5rLzhCiKZuwW7h7YBmazKG48r0xrDo/cGy6it0/4=;
-	b=FgXHIgvpyvHDZWIsSmKyDS3a9nnCVwIQFMXRIVQqjjKEhoNRYWMQKgYaRmdfMenuTYNG9V
-	87/GUy1r/gI2fRU0fi8NxSz3yXYiW/YJOLiB2LCrVjIckVxrO7JWKFipLZp4av+ZCOzAzA
-	Pxj9pnrcXKkUNTS/avqyaJNhzZp7WS4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-173-jK0rw8nEPE-a9RJhGv3Y4w-1; Tue, 28 May 2024 06:39:50 -0400
-X-MC-Unique: jK0rw8nEPE-a9RJhGv3Y4w-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-354f28306dfso508655f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:39:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716892789; x=1717497589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cWr5rLzhCiKZuwW7h7YBmazKG48r0xrDo/cGy6it0/4=;
-        b=De+EdrbIFhwCWZ0C+3Tbg/ZXR3CRp92G1TY0nFoktNYuvkXQth8J7ghtd5lNsmjE26
-         UpiE83XSleitzSpwgHEnl0D70HuJK3bl0v63E6IksvHCUEVT5BTEMCkh+Pyoacl3W41h
-         B3yFM2nUoC5HL3w5Hf6gvX2YRglHnxYySPKKR3JJhJthv31FJ/vuyJn4iDgMYXizBCuK
-         tmdvJPAbkzIHNe0GVu7Bzq4kq6q4AhSmTbHQz1d/6g2Gza44EsbRwpN51+TK8LISE1Rc
-         2tboqSAPOeQUh+yKTM0xuZBHrlVahMplUcOXVTkE8NJ9yIJflqcqrIJ5ldhwxuDh0OXT
-         sx0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWz68RrMcjly0X8dd+EL9DsTyT5GWpPHBE7MZLE2iMHa7E7M/CB9OBkqVbDUNaJkkyxvg+ukwHG3zu4dtTkeXXH/IeY61NaIG6Dka34
-X-Gm-Message-State: AOJu0YyL0FwO2M8Hy3UG2F8Stl03cF7dsDYmElKhUYpiENuJmBgR5Mor
-	vd49zd7aXWxat7so71RDGH5dBN7NsfI5aWnU8pWYlxKPZeQFtZOxodo3wV2pmGWEi5D8xYP0BKm
-	dYUuJsMQKBQK/66CqcVQIRtDTU08H1BkkQR6OUmK79yP+xI/YGGtLTzQQcoLdwpJ+AX5hNiZOpz
-	aBNRHl0r/UGW++feh7mGNBCnysZs4ikLpZ2VF/
-X-Received: by 2002:adf:f605:0:b0:351:d78e:875e with SMTP id ffacd0b85a97d-35526c271e2mr7836464f8f.14.1716892788866;
-        Tue, 28 May 2024 03:39:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG4hqokdTCBlYq+yxpXGdOajfvNiw6vsJ+NmirTpEeZTh+x8A7CTg2keuO9ed6PBfJTW5YEfW34ZoQ5qL3Gp5w=
-X-Received: by 2002:adf:f605:0:b0:351:d78e:875e with SMTP id
- ffacd0b85a97d-35526c271e2mr7836445f8f.14.1716892788425; Tue, 28 May 2024
- 03:39:48 -0700 (PDT)
+	s=arc-20240116; t=1716892856; c=relaxed/simple;
+	bh=1d292TV1UZbC0yrIP5lgIjFD5KX9pGs+tLaH9de1QPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jjFKsYum6Xf1/mFkFDJp5yRkDsM6ukp7ZyhR4pigT5EO8KtDT0v83PMdVFzf9QwL45JIfd9JNQotHP1moMmoh9RENeY2xoCFIIcOdUYWlku6VDmLFQQUbd/pvzB0WQ46xXV14BmPmyIheu6CRSKKyngtdHePnocHXwVZcApcWOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZibhVsIM; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716892852;
+	bh=1d292TV1UZbC0yrIP5lgIjFD5KX9pGs+tLaH9de1QPs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZibhVsIM0j6+d8yRGB4i00nDw2ZXCwWnVLzOMnf3FgTDEPhfnkFaeQ9NnP8x0E7wJ
+	 RGxh9+DG3YD1Lv2WgKopodGETHAhZFXJMLmMltZkwGbCMV1J9NI6o26c5kyaRNzuf3
+	 ZZNJbpw0lI9lcoMIofYzRj94RWj1VvWAy0WdEfMo6Qnoqg0uXs69WO+Nng+bQpvFP+
+	 Ly2rjb3IphffDl87hp4xMAERLbOuNRRFtD58AFwmweDE11OvozK12wKm1nXVv1WqU7
+	 rV+5VW16jHIuPtsMxh7uLHr4lvBawupE4Qse+EgI4N6c1WZHjn5hM6ajjWjNmU7JH9
+	 RugBuIt+iF4fA==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2F9E83782113;
+	Tue, 28 May 2024 10:40:52 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	Pin-yen Lin <treapking@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>,
+	linux-mediatek@lists.infradead.org,
+	Hsin-Te Yuan <yuanhsinte@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8192-asurada: Add off-on-delay-us for pp3300_mipibrdg
+Date: Tue, 28 May 2024 12:40:36 +0200
+Message-ID: <171689282917.117648.357380073276142240.b4-ty@collabora.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240502154455.3427793-1-treapking@chromium.org>
+References: <20240502154455.3427793-1-treapking@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501085210.2213060-1-michael.roth@amd.com>
- <20240501085210.2213060-10-michael.roth@amd.com> <84e8460d-f8e7-46d7-a274-90ea7aec2203@linux.intel.com>
- <CABgObfaXmMUYHEuK+D+2E9pybKMJqGZsKB033X1aOSQHSEqqVA@mail.gmail.com>
- <7d6a4320-89f5-48ce-95ff-54b00e7e9597@linux.intel.com> <rczrxq3lhqguarwh4cwxwa35j5riiagbilcw32oaxd7aqpyaq7@6bqrqn6ontba>
- <7da9c4a3-8597-44aa-a7ad-cc2bd2a85024@linux.intel.com>
-In-Reply-To: <7da9c4a3-8597-44aa-a7ad-cc2bd2a85024@linux.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 28 May 2024 12:39:36 +0200
-Message-ID: <CABgObfajCDkbDbK6-QyZABGTh=5rmE5q3ifvHfZD1A2Z+u0v3A@mail.gmail.com>
-Subject: Re: [PATCH v15 09/20] KVM: SEV: Add support to handle MSR based Page
- State Change VMGEXIT
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-mm@kvack.org, linux-crypto@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-	jroedel@suse.de, thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org, 
-	seanjc@google.com, vkuznets@redhat.com, jmattson@google.com, luto@kernel.org, 
-	dave.hansen@linux.intel.com, slp@redhat.com, pgonda@google.com, 
-	peterz@infradead.org, srinivas.pandruvada@linux.intel.com, 
-	rientjes@google.com, dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de, 
-	vbabka@suse.cz, kirill@shutemov.name, ak@linux.intel.com, tony.luck@intel.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, alpergun@google.com, 
-	jarkko@kernel.org, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
-	pankaj.gupta@amd.com, liam.merwick@oracle.com, 
-	Brijesh Singh <brijesh.singh@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 2:26=E2=80=AFPM Binbin Wu <binbin.wu@linux.intel.co=
-m> wrote:
-> > It seems like TDX should be able to do something similar by limiting th=
-e
-> > size of each KVM_HC_MAP_GPA_RANGE to TDX_MAP_GPA_MAX_LEN, and then
-> > returning TDG_VP_VMCALL_RETRY to guest if the original size was greater
-> > than TDX_MAP_GPA_MAX_LEN. But at that point you're effectively done wit=
-h
-> > the entire request and can return to guest, so it actually seems a litt=
-le
-> > more straightforward than the SNP case above. E.g. TDX has a 1:1 mappin=
-g
-> > between TDG_VP_VMCALL_MAP_GPA and KVM_HC_MAP_GPA_RANGE events. (And eve=
-n
-> > similar names :))
-> >
-> > So doesn't seem like there's a good reason to expose any of these
-> > throttling details to userspace,
+On Thu, 02 May 2024 23:39:51 +0800, Pin-yen Lin wrote:
+> Set off-on-delay-us to 500000 us for pp3300_mipibrdg to make sure it
+> complies with the panel's unprepare delay (the time to power down
+> completely) of the power sequence. Explicit configuration on the
+> regulator node is required because mt8192-asurada uses the same power
+> supply for the panel and the anx7625 DP bridge.
+> 
+> For example, the power sequence could be violated in this sequence:
+> 1. Bridge on: panel goes off, but regulator doesn't turn off (refcount=1).
+> 2. Bridge off: regulator turns off (refcount=0).
+> 3. Bridge resume -> regulator turns on but the bridge driver doesn't
+>    check the delay.
+> 
+> [...]
 
-I think userspace should never be worried about throttling. I would
-say it's up to the guest to split the GPA into multiple ranges, but
-that's not how arch/x86/coco/tdx/tdx.c is implemented so instead we
-can do the split in KVM instead. It can be a module parameter or VM
-attribute, establishing the size that will be processed in a single
-TDVMCALL.
+Applied to v6.10-next/dts64, thanks!
 
-Paolo
+[1/1] arm64: dts: mediatek: mt8192-asurada: Add off-on-delay-us for pp3300_mipibrdg
+      commit: 476d7adf84deb884e0f8f74417bf5249ab9a95b3
 
->
-> The reasons I want to put the throttling in userspace are:
-> 1. Hardcode the TDX_MAP_GPA_MAX_LEN in kernel may not be preferred.
-> 2. The throttling thing doesn't need to be TDX specific, it can be
-> generic in userspace.
->
-> I think we can set a reasonable value in userspace, so that for SNP, it
-> doesn't trigger the throttling since the large request will be split to
-> multiple userspace requests.
->
->
-> > in which case existing
-> > KVM_HC_MAP_GPA_RANGE interface seems like it should be sufficient.
-> >
-> > -Mike
-> >
-> >>
-> >>>> For TDX, it may also want to use KVM_HC_MAP_GPA_RANGE hypercall  to
-> >>>> userspace via KVM_EXIT_HYPERCALL.
-> >>> Yes, definitely.
-> >>>
-> >>> Paolo
-> >>>
->
+Cheers,
+Angelo
 
 
