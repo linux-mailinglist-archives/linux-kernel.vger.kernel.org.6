@@ -1,119 +1,187 @@
-Return-Path: <linux-kernel+bounces-193112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42D58D2700
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:25:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFDA8D2703
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3681C25BAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6032822C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC2417B4EC;
-	Tue, 28 May 2024 21:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD8217B4F1;
+	Tue, 28 May 2024 21:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2OnjPhI"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onsvdPnv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5299A17B439;
-	Tue, 28 May 2024 21:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5237A17B432;
+	Tue, 28 May 2024 21:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716931547; cv=none; b=czAQPYVt83eo/4/+0jORrDi4S2QUKxl7iKLDSCWY3NGpNPVmT1YRFH5fu4/SG4DywT1SbhpK5Gh2u6WCP2ZYMg+O6lsbnQq20Sgvm2NYaGK0j1eUBrzYhwyAAhpc6TunNb0QT/E8oP9LMKnjRcEuQ2yvzIT+MPpZ4h4RIrrxMmk=
+	t=1716931634; cv=none; b=SJw0v5SLS0seIXz7ti/7aKH5FRhELVMkAFLS4bbDvfnVftahwO/YeFVISswC6pkzNqOAa88tP7eAdf6Jg7Rw5yVeqZMGBu05rM1lmgeixl8xIy1em98RXRiIEnx4jpvY/dYFIe9vuRZGgW46fPEgm8IXWO3TZg5Tuy2n+1J/0Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716931547; c=relaxed/simple;
-	bh=fZlxPWbgGevjd5cjd+01/dGc0pmuLz7vTQ5MZ5u224Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wtqt8qlix9gas3sRNkTBuLP9ZTBT5gCTFoDGKwl5ZFV3evZapRcUOGve/olAUYVmfOtRxx7iJIyvzVDUP8wOqIl0xailDLlneBvDctE4zVJcQw0doL6ohZPTOlfqMgfez7axij/FLdEm0HBHyoloK4skiXsak2KqWylGGwks9dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2OnjPhI; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f8e819cf60so1118196b3a.0;
-        Tue, 28 May 2024 14:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716931544; x=1717536344; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q30G+Ol17wTE5vxf3RQS0d4phvzRCZNYkcikIChxgJ4=;
-        b=R2OnjPhI/3PCNsImqTxCkIatf+zwlksHabb+3/XaeF8JAX4fbb6D/oTVl3PdpERIbv
-         rhtf2WkS0WLehVA2Eng3IM625RJo0SQ9v8VyLk7fBUoNGKsMoXXhlB1Zf7CNVMPiDqrR
-         8dTQAneOYDJcYukeEFYVRwR//05eK5L/L/suz9WMIn/7Jl3TUK4Gco78JofakiS9Dzcn
-         l2dlEyvP7zNukCNADTuF5U25LxeqpPdShO4Pv9emFDCzFC5dgl1D+3mWXi/P+Nfj3z/p
-         +kMJ4XGG1Dt79rH77VZWglVasb6f645Xjke4JKLg7ZunSF23xsEvBjMkJxGHwhDZiOBD
-         S70Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716931544; x=1717536344;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q30G+Ol17wTE5vxf3RQS0d4phvzRCZNYkcikIChxgJ4=;
-        b=XLIYIcy8TJXW2JhiDuI7105CiM8Zlkl85WnQ4Df5pqMRmdgR4dGe+gPRUYK6UB/qKt
-         8yVZHS+JdrBnhIMCpRUW+9x80ZraXsng/OADUjYlS+AZigMcq+547gh2pF0bstwKDbMV
-         lZLw3caU3eGS9wLS8UTNtqxu5V9rNvrytEFCReoDtbXIjaNmIouVVApFjait7aLFFfna
-         JnF9FM9hXcWPzXgsZ1PGp7VLuUUR7WIffasp6LI3LaRSmihK4Zgp/xngsYDeWv0fGjxX
-         vCY5Z5p25E+T91U/0+mfvCIRyu6w/l4zNoHs0Jakg/8AHWpUqCf4+z5rH4y8C2C/yJwS
-         52mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYps+zh7PQQDBb6mAFAr31k2C5lAHfJqF9lkwJlLD0Rhs2CWRlRFYOnN4ZdMfgU3CB3vuRx60PvenbQvI77qwrHwrbHpd0YLx+wYSZGUY+CzFkKHMIc5P3sxI/75rB3cPEYBS4
-X-Gm-Message-State: AOJu0YyfOM5e8fR6s4VczL68kEC5IJ3yP5ryn7/dBS4FN+XEM9VA1L4s
-	bypb/TemcfxaI3k5Y8iBnI2fz4ztdFCMLijdj7psUupFl2FmstXQ
-X-Google-Smtp-Source: AGHT+IFQQrrWfOhxR3usxN/wz3KXihWEswWZyob/o3XFZPagZv2IXPSZBbO6vbHoq4971OXdZ6Em9w==
-X-Received: by 2002:a05:6a20:3955:b0:1b1:f6a9:6b0b with SMTP id adf61e73a8af0-1b212e2c3a4mr18856286637.51.1716931543494;
-        Tue, 28 May 2024 14:25:43 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-6f8fcfe64d3sm6860782b3a.167.2024.05.28.14.25.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 14:25:42 -0700 (PDT)
-Message-ID: <d0bd078f-a4f8-4928-9733-d7a021b91dbc@gmail.com>
-Date: Tue, 28 May 2024 14:25:40 -0700
+	s=arc-20240116; t=1716931634; c=relaxed/simple;
+	bh=I1/rPkBVRL+mZ4abLJj6ktTmgOZwov5VOgii3O+1e/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9K+WgTyrFZhNRiynfjcF9AjhICVxGIPqR05PtXMRVhH4II8tZrtOEDo1iyEY7i4e39nQx3w3WKRn0DuSSbSiw6tvVGyETevZTDAsHA5UWbFouDI0F6opyRUtH7L0GYZZrC8vRp8a28kC1cKoNE5287YfoE/wO2BkhNinuKzcLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onsvdPnv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64163C3277B;
+	Tue, 28 May 2024 21:27:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716931633;
+	bh=I1/rPkBVRL+mZ4abLJj6ktTmgOZwov5VOgii3O+1e/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=onsvdPnvSR9jUn3MMH6xETjjunFTtNntwjGExPLhXIBUT8afQHyqUkn+F2Oy1LXm9
+	 frU+wsqgNJ8Eir0x+deTPWksi4qsdT5WO97baiEBFnE6A2jGVZVQR5EXcNHYUVQCuo
+	 7bmqu3MJGwkSASwLB/DLTHss8kUcWVEZ8HjnbmanYhx/3QxNhLY8Uz8JOe9AoxX5Yk
+	 u4Gogfch8L6RHnGDnRbGA1Jr6rEUgzOnYK0fBxnTBaqjm5hbMjhMN006Hazgh/GZBx
+	 D9rgeVO08BcqmnemFTV2ff8el4BzvtsShc1VllPob0bcBUdKJlFs9TWKQN8XAzl5NL
+	 /zZiXMB53X49Q==
+Date: Tue, 28 May 2024 16:27:11 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: mathieu.poirier@linaro.org, konrad.dybcio@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v10] remoteproc: qcom: Move minidump related layout and
+ API to soc/qcom directory
+Message-ID: <jukn3ip6m6twfgxs6olnn5nxfsskewfwgfms3fb47w5jefuful@lne6rvpcqqju>
+References: <1714724287-12518-1-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.9 000/427] 6.9.3-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240527185601.713589927@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240527185601.713589927@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1714724287-12518-1-git-send-email-quic_mojha@quicinc.com>
 
-On 5/27/24 11:50, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.3 release.
-> There are 427 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, May 03, 2024 at 01:48:07PM GMT, Mukesh Ojha wrote:
+> Currently, Qualcomm Minidump is being used to collect mini version of
+> remoteproc coredump with the help of boot firmware however, Minidump
+> as a feature is not limited to be used only for remote processor and
+> can also be used for Application processors. So, in preparation of
+> using it move the Minidump related data structure and its function
+> to its own file under drivers/soc/qcom with qcom_rproc_minidump.c
+> which clearly says it is only for remoteproc minidump.
 > 
-> Responses should be made by Wed, 29 May 2024 18:53:20 +0000.
-> Anything received after that time might be too late.
+> Extra changes made apart from the movement is,
+> 1. Adds new config, kernel headers and module macros to get this
+>    module compiled.
+> 2. Guards the qcom_minidump() with CONFIG_QCOM_RPROC_MINIDUMP.
+> 3. Selects this QCOM_RPROC_MINIDUMP config when QCOM_RPROC_COMMON
+>    enabled.
+> 4. Added new header qcom_minidump.h .
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+I wouldn't be able to merge this without anything depending on it...
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+[..]
+> diff --git a/drivers/soc/qcom/qcom_rproc_minidump.c b/drivers/soc/qcom/qcom_rproc_minidump.c
+[..]
+> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+> +		void (*rproc_dumpfn_t)(struct rproc *rproc,
+> +		struct rproc_dump_segment *segment, void *dest, size_t offset,
+> +		size_t size))
+> +{
+> +	int ret;
+> +	struct minidump_subsystem *subsystem;
+> +	struct minidump_global_toc *toc;
+> +
+> +	/* Get Global minidump ToC*/
+> +	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+> +
+> +	/* check if global table pointer exists and init is set */
+> +	if (IS_ERR(toc) || !toc->status) {
+> +		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+> +		return;
+> +	}
+> +
+> +	/* Get subsystem table of contents using the minidump id */
+> +	subsystem = &toc->subsystems[minidump_id];
+> +
+> +	/**
+> +	 * Collect minidump if SS ToC is valid and segment table
+> +	 * is initialized in memory and encryption status is set.
+> +	 */
+> +	if (subsystem->regions_baseptr == 0 ||
+> +	    le32_to_cpu(subsystem->status) != 1 ||
+> +	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
+> +		return rproc_coredump(rproc);
+> +	}
+> +
+> +	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
+> +		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+> +		return;
+> +	}
+> +
+> +	/**
+> +	 * Clear out the dump segments populated by parse_fw before
+> +	 * re-populating them with minidump segments.
+> +	 */
+> +	rproc_coredump_cleanup(rproc);
 
+I don't think this should be invoked outside drivers/remoteproc, and the
+comment talks about a remoteproc-internal concern...
+
+> +
+> +	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
+
+This function changes the internal state of the remoteproc and relies on
+other operations to clean things up.
+
+I think we could come up with a better design of this, and I don't think
+we should spread this outside of the remoteproc framework.
+
+Regards,
+Bjorn
+
+> +	if (ret) {
+> +		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+> +		goto clean_minidump;
+> +	}
+> +	rproc_coredump_using_sections(rproc);
+> +clean_minidump:
+> +	qcom_minidump_cleanup(rproc);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_minidump);
+> +
+> +MODULE_DESCRIPTION("Qualcomm Remoteproc Minidump helper module");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/soc/qcom/qcom_minidump.h b/include/soc/qcom/qcom_minidump.h
+> new file mode 100644
+> index 000000000000..0fe156066bc0
+> --- /dev/null
+> +++ b/include/soc/qcom/qcom_minidump.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _QCOM_MINIDUMP_H_
+> +#define _QCOM_MINIDUMP_H_
+> +
+> +struct rproc;
+> +struct rproc_dump_segment;
+> +
+> +#if IS_ENABLED(CONFIG_QCOM_RPROC_MINIDUMP)
+> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+> +		   void (*rproc_dumpfn_t)(struct rproc *rproc,
+> +		   struct rproc_dump_segment *segment, void *dest, size_t offset,
+> +		   size_t size));
+> +#else
+> +static inline void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+> +		   void (*rproc_dumpfn_t)(struct rproc *rproc,
+> +		   struct rproc_dump_segment *segment, void *dest, size_t offset,
+> +		   size_t size)) { }
+> +#endif /* CONFIG_QCOM_RPROC_MINIDUMP */
+> +#endif /* _QCOM_MINIDUMP_H_ */
+> -- 
+> 2.7.4
+> 
 
