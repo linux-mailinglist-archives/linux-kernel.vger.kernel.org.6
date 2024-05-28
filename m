@@ -1,196 +1,142 @@
-Return-Path: <linux-kernel+bounces-192030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363058D177E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1C48D1781
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC131F21491
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033BA286492
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A065617E8F4;
-	Tue, 28 May 2024 09:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D983155C8F;
+	Tue, 28 May 2024 09:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJ93Alfn"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eypyjVtk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD723B295
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8CB17E8F4;
+	Tue, 28 May 2024 09:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716889567; cv=none; b=ZexKWleO+H3736WMvLoPWMjZFNl+zrQ2VHFa0hE4DNHJuR3/M/76aOXNYSUeLkgewavRhcyn8hH7jIRaUc629b5fTrg6kPNq+gKkJvI4DPcJSEwS0HdZ+6IIfDIFBJ6CrQMbaF+LvtAC51LzBAIK66HO1yaJ+rVGdPTc9n9x8P0=
+	t=1716889613; cv=none; b=OPAneL88sI1n1AjATKWpwy/pcHXnV8q0CdTk4TvSD7o6fYdLVgnvdYzb/46lC0ksOSiRrbUMThszkruOaWBdno46zHVP9fFrcIZliFc/rYm7KU75lOR1twh79YCQ6DJZ0GkSGA7wGUzJxoy9XmU25vfrOtLurQXLCdwQTDqdRv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716889567; c=relaxed/simple;
-	bh=NflXgaa7gzI3nUDBEsag0fwCyQx4HjJEGZE6UwuNB5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WAaeWUmeN+ZcKYMRTVGWVwEgJ8IDJpGz9zVYvRlxdDU0F/8rcYc4Mwgtyy12ew96X5pa6C5AzPACPDqzt4KyojeoQLQ5JwRL5aMWcAuiQsl0T38dTR0li1BfQaOM870WRiMZLSGWgiXtlVS97a3C2K9KYhlHi2pKXDYn0fTvNXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LJ93Alfn; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e6f51f9de4so8079991fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716889563; x=1717494363; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KY/5/nBeVbrcHKu+ny0EKXullC6QCm1eMO2M/0SXeUA=;
-        b=LJ93Alfn2pY9wAPi5c5vejhhTpkphlef4IeHRE0D9a68Ew3aGdUfBVD7Awszw+aJcx
-         MUNXmnffv5E8rwD+ptRS2K8n3RsN8V6/k0/gDOuVbWGXpjNHTXPCcGOutQIrT2SzTweT
-         K/urniT/Gz3+Ymtw/uGkxFogBI9ziJpJxTndgwy6n+4n1nJWIFMSW2MERmFxvLQzL15l
-         I1owUyS4Scww5iLu3+pkAEnt3dWQ6ZHeHpe5aCLhpz4/eACQq16P+Vw/Vd1qPDR3m+SS
-         5dA8QgdJciab5xe5tUe3mLaYH189qmnjhkJNRrRB1YBp8sT5kkQcEqSyDKGTl+yzP7EK
-         9aeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716889563; x=1717494363;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KY/5/nBeVbrcHKu+ny0EKXullC6QCm1eMO2M/0SXeUA=;
-        b=dQcKapWDTLgrCYkibhe5GMwURW4dwX313o2vtQqO1mUBxGvjeZySLlA6ePpxjQNcru
-         tf5HmNbsaiZT0MRxW7oWR0Wr/lU9kKpPgWCmQ7jPmF5vADlE3qWu8V1pmKd1tagsNf8i
-         RX0ZBUbrO1ek9CBcuUjWA7/OkOpkoOVAH3SvbOi90MKiI+r11xDMxx/tMKYe3rAaILLk
-         lGfXi1citk2Y+zwGuvruq5ontgOFNRHsAcBLIHg/uDbsIQLG9wEUHdvDDmuGHtlQQbBU
-         9Fr5F9vd7QO4Bt544HcqOZx/tIznZNftq3IjiP4ubSF2vBBwJNeWZcmK2gr/EKsqtqye
-         MgZw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+5YqOJvvX5b3glfWFrjaRdme6qAPaf0WoDiuVRx3E7i/8i9Zp4HRvcaPTTzEEFArASoz1ZiqUz2XWoL0CrWg2c7Y97KlS+A3uQzXZ
-X-Gm-Message-State: AOJu0YxXRz52/EUPNzWpnUuNd0YHxjgIKAOnzlcZHDkXB2iHknGjAaJP
-	rFY4uxlAriMsZt1qxyawzLYqRDcxvBXmjZFEIs1Hz/ZBqsHipYcxWC//UA7uts8=
-X-Google-Smtp-Source: AGHT+IH5q0zRQt4om06kgRMF2RCpF5R7k7N6kRZAE+jg0CmZmI7XuPYjUVberS6pHiZtgrXHIDCmuw==
-X-Received: by 2002:a2e:98c5:0:b0:2e9:8679:137a with SMTP id 38308e7fff4ca-2e986791446mr12641441fa.44.1716889562512;
-        Tue, 28 May 2024 02:46:02 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a631220b5b4sm155206466b.5.2024.05.28.02.46.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 02:46:02 -0700 (PDT)
-Message-ID: <b6d3d336-5999-424a-9e38-3cf793b6627e@linaro.org>
-Date: Tue, 28 May 2024 11:46:00 +0200
+	s=arc-20240116; t=1716889613; c=relaxed/simple;
+	bh=uvIeCtTEEJDYfyHrP/Gk+XUZtIAdmLorcvNIp9zS3W8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ad8Mmr5+pStnefpSsORPT5+2BCRebe80hgJzYPTLbLEbK1j188jKT2AB6xjCh1VFTcevKGrYkZgQKtz/jgDk+c/Uanzj/vZDm2TgqKaKeubR6OYeP42+zjjnREVLNXTptKHd6Js4Jcm1WupGOcPZUyRKO2Qw4pWMO1EJKnLi/H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eypyjVtk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8EC0C3277B;
+	Tue, 28 May 2024 09:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716889613;
+	bh=uvIeCtTEEJDYfyHrP/Gk+XUZtIAdmLorcvNIp9zS3W8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eypyjVtkDE746G/DlSuQfj0JPp+lgxIXGkYF0Md7/HpuJrnvBxpzYg2FPjMpj3Ia/
+	 Io657MDr6w3x4l6vxIO8hkF3fHeOyrSr9NZBWIgrgnGrlRaYztQAWWGWaoq/kXhW0g
+	 hZlbSZJcAAzjMDJUTbkGdUr73miojQsjEfpUZRIfv0rTtM6bLgTVxBaN9eh2dHrfLQ
+	 u3rTuPELCfsQPV0DUesKXzk04kGo7Qzxl6OFiG597W6+t3y8Rj+X+f2Y92vGrgObqu
+	 Q9ojWNfGruQTLeMxggMtV0ldGMiM0iExQQSLp2lbMiIRxyOXXXgHkUIYBaEpq/DU9S
+	 J+g6tVTmjdHSw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: Rename TPM2_OA_TMPL to TPM2_OA_NULL_KEY and make it local
+Date: Tue, 28 May 2024 12:46:41 +0300
+Message-ID: <20240528094645.15583-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
- binding
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>,
- benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
- <20240521162950.6987-2-sylvain.petinot@foss.st.com>
- <8afe1888-5886-45fc-b576-98db3d392d37@linaro.org>
- <ZlWiQTfag5yTA4YM@valkosipuli.retiisi.eu>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <ZlWiQTfag5yTA4YM@valkosipuli.retiisi.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/05/2024 11:22, Sakari Ailus wrote:
-> Hi Krzysztof,
-> 
-> On Mon, May 27, 2024 at 09:04:38PM +0200, Krzysztof Kozlowski wrote:
->> On 21/05/2024 18:29, Sylvain Petinot wrote:
->>> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
->>> sensors. Update MAINTAINERS file.
->>>
->>> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
->>
->>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index ef6be9d95143..554e6861425b 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -20885,6 +20885,15 @@ S:	Maintained
->>>  F:	Documentation/hwmon/stpddc60.rst
->>>  F:	drivers/hwmon/pmbus/stpddc60.c
->>>  
->>> +ST VD56G3 DRIVER
-> 
-> I might add this is a sensor, i.e. "ST VD653G IMAGE SENSOR DRIVER".
-> 
->>> +M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
->>> +M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
->>> +L:	linux-media@vger.kernel.org
->>> +S:	Maintained
->>> +T:	git git://linuxtv.org/media_tree.git
->>
->> This is a friendly reminder during the review process.
->>
->> It seems my or other reviewer's previous comments were not fully
->> addressed. Maybe the feedback got lost between the quotes, maybe you
->> just forgot to apply it. Please go back to the previous discussion and
->> either implement all requested changes or keep discussing them.
-> 
-> The above MAINTAINERS entry is roughly in line with what else we have for
-> the Media tree. I'm in favour of listing the people who would look after
-> the driver, not just those who merge the patches (or even send PRs to
-> Linus).
+Rename and document TPM2_OA_TMPL, as originally requested in the patch
+set review, but left unaddressed without any appropriate reasoning. The
+new name is TPM2_OA_NULL_KEY, has a documentation and is local only to
+tpm2-sessions.c.
 
-I did not propose to drop the entry.
+Link: https://lore.kernel.org/linux-integrity/ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com/
+Link: https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVICYHL@suppilovahvero/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm2-sessions.c | 18 ++++++++++++++++--
+ include/linux/tpm.h              |  7 -------
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
-> 
-> In other words, I think the above entry is fine as-is.
-
-I propose to drop duplicated, redundant git entry. Maintainer of this
-driver does not have access to git tree and the git tree is already
-explained in media subsystem entry. If you ever update the git tree, you
-need to update 100 driver entries which is meaningless...
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index ea8860661876..ff2b7f4703fa 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -954,6 +954,20 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+ }
+ EXPORT_SYMBOL(tpm2_start_auth_session);
+ 
++/*
++ * A mask containing the object attributes for the kernel held null primary key
++ * used in HMAC encryption. For more information on specific attributes look up
++ * to "8.3 TPMA_OBJECT (Object Attributes)".
++ */
++#define TPM2_OA_NULL_KEY ( \
++	TPM2_OA_NO_DA | \
++	TPM2_OA_FIXED_TPM | \
++	TPM2_OA_FIXED_PARENT | \
++	TPM2_OA_SENSITIVE_DATA_ORIGIN |	\
++	TPM2_OA_USER_WITH_AUTH | \
++	TPM2_OA_DECRYPT | \
++	TPM2_OA_RESTRICTED)
++
+ /**
+  * tpm2_parse_create_primary() - parse the data returned from TPM_CC_CREATE_PRIMARY
+  *
+@@ -1018,7 +1032,7 @@ static int tpm2_parse_create_primary(struct tpm_chip *chip, struct tpm_buf *buf,
+ 	val = tpm_buf_read_u32(buf, &offset_t);
+ 
+ 	/* object properties */
+-	if (val != TPM2_OA_TMPL)
++	if (val != TPM2_OA_NULL_KEY)
+ 		return -EINVAL;
+ 
+ 	/* auth policy (empty) */
+@@ -1178,7 +1192,7 @@ static int tpm2_create_primary(struct tpm_chip *chip, u32 hierarchy,
+ 	tpm_buf_append_u16(&template, TPM_ALG_SHA256);
+ 
+ 	/* object properties */
+-	tpm_buf_append_u32(&template, TPM2_OA_TMPL);
++	tpm_buf_append_u32(&template, TPM2_OA_NULL_KEY);
+ 
+ 	/* sauth policy (empty) */
+ 	tpm_buf_append_u16(&template, 0);
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index b3217200df28..d3b9e9f9073e 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -401,13 +401,6 @@ enum tpm2_object_attributes {
+ 
+ #define AES_KEY_BYTES	AES_KEYSIZE_128
+ #define AES_KEY_BITS	(AES_KEY_BYTES*8)
+-#define TPM2_OA_TMPL	(TPM2_OA_NO_DA |			\
+-			 TPM2_OA_FIXED_TPM |			\
+-			 TPM2_OA_FIXED_PARENT |			\
+-			 TPM2_OA_SENSITIVE_DATA_ORIGIN |	\
+-			 TPM2_OA_USER_WITH_AUTH |		\
+-			 TPM2_OA_DECRYPT |			\
+-			 TPM2_OA_RESTRICTED)
+ 
+ enum tpm2_session_attributes {
+ 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+-- 
+2.45.1
 
 
