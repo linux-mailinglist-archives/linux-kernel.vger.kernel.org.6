@@ -1,161 +1,281 @@
-Return-Path: <linux-kernel+bounces-192419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89568D1D08
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDFB8D1D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E8FB284D87
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0E0284BF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B6D16F0EE;
-	Tue, 28 May 2024 13:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGVio4F8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1E616F27A;
+	Tue, 28 May 2024 13:32:32 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8225617C7F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42AF16F0EE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903140; cv=none; b=DABuF8iImX/WeBHUd6ncokV+BdE0f4nP6aRQKVikKMXysBP8ul0gG/Qzima0tJp8TNh1bAYzeWKvi5t9S5iJ9Qsn7+e5ENeMo2TiQaqdC7DKL8qK83vFnWXE3w9/5y/7nexjNhihwy6EmTzIyB6uXajiZnvQvdrfOr6t7ovxjxk=
+	t=1716903151; cv=none; b=CQWOD65ztWZiXvF602iRKBx8s8+Vr90/My5nfPSUnZpxsQZ7u6ZC+1VMpykXejV796SheGto1tRDp4xmtJU0N0MfIQFKZ2np6lAmDn2xH2IL/HLkDKMziGw2oZoXrG9JHpFkQnLbjZnQtpysNAAoi/fPpTC8+ik2SPoMrwuOVp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903140; c=relaxed/simple;
-	bh=dhSBmo/CC8MHZ1NdaR65BMzydNIYHlnG51CFEasQqa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xr2D/Qbe5sZWVjhxqJkWE6f5MDS00pYeghZnEnukUh9z4MSRdr734yiYtt2jdxhLmBj5uXGxB6jeuUky/QQuUD7PDTE+D/YUZExVQTTh5QuNV8l+6TdkG+1+UCSbKOV/OQ0lAfgt7v8SEkca5xOq9zoMWslZJRIdvQrP/hdGJzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGVio4F8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C84C3277B;
-	Tue, 28 May 2024 13:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716903140;
-	bh=dhSBmo/CC8MHZ1NdaR65BMzydNIYHlnG51CFEasQqa4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GGVio4F8HQcSQI6ogGTFqUV09ymhEAV3eJ8dZtUX0yF1uA+tlRby5UG1FgyP+T+gO
-	 ilXgioCHnRwpdC7xVWyWcrZE0jvzbK+/T3H/2S1VoFv6LRJUQVKlg8ZHG5NzZmbbkP
-	 4Pf7iGGM1d+25rcP7xYZlNNlH7+jlJf4yw+6hmTLeJfgjbAelU365GQS5KqniZM+0+
-	 pxcRLATpBOyhV/3VATXPRjqrOKditoOh/+TS9SVgb0oxMfiG2UGp6fVkMfcbKpGsMN
-	 oGcUn8F1EsjT0mNNCa/s3cNkcO+0djD/5w/etRNX8oDuCTVYm0l/sCPB0OXBOyug8S
-	 ZKQe4BwQH7dZQ==
-Message-ID: <56f19120-7ddb-4006-99f6-e1b043ed88e1@kernel.org>
-Date: Tue, 28 May 2024 15:32:12 +0200
+	s=arc-20240116; t=1716903151; c=relaxed/simple;
+	bh=Hcf6/+K0cr2AEWIBn+Ow6WDFFhALJcCW+K/xMomulBg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nYzNJ718XVeIQvVkc3Qd1x+7jTxtjtLVhIfFC1XlaXqIb6C96iNTPUiXR/YoJLx7TKRdgIl2SHkhz23CZyI9CBjACXmouJEVkGbDc8re0VZ3l4C+xZe2RkKFrqUTIOBMWJTOqHM2WR0UojVHpvkT71UHXH0uAanPkm8EikrDHCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7ea87fb4fdfso83959039f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:32:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716903149; x=1717507949;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E9WW/RlwC054vVaIwA33rGavwmt7/1xkbxwnwhy0KHg=;
+        b=eqe8Qu79Br2uPhLyVc4ShN2Lk1cDzd/xL/8cmOCBfiCDJRWikzxfol7VYHlF0KcjSL
+         HQuTchU8Fkrtp8wUrunwXsv3vOlS8OJadL7ft59V4KJx1QCuDfolxev55VmPexuNavzx
+         R3jIBSf96d1ejHerDWJkwMa+tfAsU1OCRQlhJDH3iT8fZX7WyAaivE6BUxYdO5tJsDuM
+         2v6IncQFYKVldl8OHd+6FvhXJUp1CFeSBxHxCFbkAV3NvJxQ7qte9X8qoKGq6eVLR9XA
+         ISLzVKqh3zgzRvym83ka2S7P8A0xW+kyqbXFiQveWKLRvj1CDmnhSK/9FdQqnpCcQQ4o
+         sG3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWkPjLyzi+UQuPl2aFem5BrBlkK9n6ebNPzOXymQpDC4SqwFxgLwellgT2e4wW1qc0SkC5WYuHYcv0ZiVS6mFoicpGuyhjgz/l+Xydb
+X-Gm-Message-State: AOJu0Yzk8+IhpDg6psna0QdQEfPJYSC1S1SH/KFtH5gyYk/uKTt4Oody
+	BpqfOKsvbsgjJzSxRjdMfoCqd/tdOZuZwb3dLvpW/+rclQkNs/TYlGy5dMVh8gh37BNv3XllIPM
+	LQ9vk9v19ls5Iz0/DTbJm//dhvqP/ugK/OwW5ZAq2irmWYPyZmdhsJXg=
+X-Google-Smtp-Source: AGHT+IH061RFAZP5YJwlyjhet5L6Lhz0vPfet8cSLde+5yUFzBiat/Nf9XpP1xQqQsbpV3KVzb5TybgLokh3j5tvvV8FjtjlUTsk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] memory: fsl_ifc: Make FSL_IFC config visible and
- selectable
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Esben Haabendal <esben@geanix.com>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>,
- Michael Walle <mwalle@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
- <20240528-fsl-ifc-config-v2-1-5fd7be76650d@geanix.com>
- <eb911c50-2f66-43dd-a1ff-398a3e7c56a2@csgroup.eu>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <eb911c50-2f66-43dd-a1ff-398a3e7c56a2@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3f94:b0:7cc:cc9:4332 with SMTP id
+ ca18e2360f4ac-7e8c75d37d9mr46784539f.4.1716903149092; Tue, 28 May 2024
+ 06:32:29 -0700 (PDT)
+Date: Tue, 28 May 2024 06:32:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000050d101061983aa9c@google.com>
+Subject: [syzbot] [bpf?] [net?] INFO: rcu detected stall in sys_bpf (9)
+From: syzbot <syzbot+4fe86fa6110c580ea1f5@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 28/05/2024 15:15, Christophe Leroy wrote:
-> 
-> 
-> Le 28/05/2024 à 14:28, Esben Haabendal a écrit :
->> [Vous ne recevez pas souvent de courriers de esben@geanix.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
->>
->> While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
->> driver selects FSL_IFC automatically, we need the CONFIG_FSL_IFC option to
->> be selectable for platforms using fsl_ifc with NOR flash.
-> 
-> I don't understand.
-> 
-> Shall I understand :
-> 
-> While use of fsl_ifc driver with NAND flash is fine as the fsl_ifc_nand 
-> driver selects FSL_IFC automatically, ....
-> 
-> or
-> 
-> ..., as the fsl_ifc_nand driver selects FSL_IFC automatically we need 
-> the CONFIG_FSL_IFC option to be selectable for platforms using fsl_ifc 
-> with NOR flash
-> 
-> 
-> 
-> I'm fine with the fact that you want to be able to select it when you 
-> use NOR flashes, 
+Hello,
 
-But users are not fine... their memory won't work if they cannot choose
-it (if you meant select=choose).
+syzbot found the following issue on:
 
-> allthough I can't see why, but why do you need to 
-> change the "select" to a "depend" ? You should be able to leave it as a 
+HEAD commit:    124cfbcd6d18 Add linux-next specific files for 20240521
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15c02784980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2c3a67a38201bdf7
+dashboard link: https://syzkaller.appspot.com/bug?extid=4fe86fa6110c580ea1f5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a8297c980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b60342980000
 
-As explained in v1: user-visible symbols should not be selected. Nothing
-odd here.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ff8e45d8b821/disk-124cfbcd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6aeeec759cde/vmlinux-124cfbcd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9e7d931d0a4b/bzImage-124cfbcd.xz
 
-> "select" in which case patch 2 wouldn't be necessary.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4fe86fa6110c580ea1f5@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5156
+rcu: 	(detected by 0, t=10503 jiffies, g=9261, q=651 ncpus=2)
+task:syz-executor302 state:R  running task     stack:23696 pid:5156  tgid:5156  ppid:5104   flags:0x00004002
+Call Trace:
+ <IRQ>
+ sched_show_task+0x50c/0x6d0 kernel/sched/core.c:9191
+ rcu_print_detail_task_stall_rnp kernel/rcu/tree_stall.h:262 [inline]
+ print_other_cpu_stall+0x122d/0x15e0 kernel/rcu/tree_stall.h:639
+ check_cpu_stall kernel/rcu/tree_stall.h:799 [inline]
+ rcu_pending kernel/rcu/tree.c:4309 [inline]
+ rcu_sched_clock_irq+0x9f4/0x10a0 kernel/rcu/tree.c:2636
+ update_process_times+0x1ce/0x230 kernel/time/timer.c:2485
+ tick_sched_handle kernel/time/tick-sched.c:276 [inline]
+ tick_nohz_handler+0x37c/0x500 kernel/time/tick-sched.c:297
+ __run_hrtimer kernel/time/hrtimer.c:1687 [inline]
+ __hrtimer_run_queues+0x55b/0xd50 kernel/time/hrtimer.c:1751
+ hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1813
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
+ __sysvec_apic_timer_interrupt+0x110/0x3f0 arch/x86/kernel/apic/apic.c:1049
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:rcu_dynticks_curr_cpu_in_eqs include/linux/context_tracking.h:122 [inline]
+RIP: 0010:rcu_is_watching+0x5e/0xb0 kernel/rcu/tree.c:724
+Code: 03 42 80 3c 38 00 74 08 4c 89 f7 e8 bc bb 7f 00 48 c7 c3 08 7d 03 00 49 03 1e 48 89 d8 48 c1 e8 03 42 0f b6 04 38 84 c0 75 22 <8b> 03 65 ff 0d 91 46 87 7e 74 10 83 e0 04 c1 e8 02 5b 41 5e 41 5f
+RSP: 0018:ffffc900044070e8 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: ffff8880b9437d08 RCX: dffffc0000000000
+RDX: ffff8880223cbc00 RSI: ffffffff8c1fe2e0 RDI: ffffffff8c1fe2a0
+RBP: 0000000000000001 R08: ffffffff8100b50d R09: ffffffff814128cf
+R10: 0000000000000003 R11: ffff8880223cbc00 R12: ffff8880223cbc00
+R13: ffffffff81821c30 R14: ffffffff8ddbb9e0 R15: dffffc0000000000
+ kernel_text_address+0x82/0xe0 kernel/extable.c:113
+ __kernel_text_address+0xd/0x40 kernel/extable.c:79
+ unwind_get_return_address+0x5d/0xc0 arch/x86/kernel/unwind_orc.c:369
+ arch_stack_walk+0x125/0x1b0 arch/x86/kernel/stacktrace.c:26
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4043
+ kmalloc_reserve+0xa8/0x2a0 net/core/skbuff.c:575
+ pskb_expand_head+0x202/0x1390 net/core/skbuff.c:2240
+ __bpf_try_make_writable net/core/filter.c:1668 [inline]
+ bpf_try_make_writable net/core/filter.c:1674 [inline]
+ bpf_try_make_head_writable net/core/filter.c:1682 [inline]
+ ____bpf_clone_redirect net/core/filter.c:2456 [inline]
+ bpf_clone_redirect+0x119/0x370 net/core/filter.c:2434
+ bpf_prog_de5959beb1c8948f+0x5a/0x5f
+ bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run include/linux/filter.h:698 [inline]
+ bpf_test_run+0x409/0x910 net/bpf/test_run.c:425
+ bpf_prog_test_run_skb+0xafa/0x13a0 net/bpf/test_run.c:1066
+ bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4291
+ __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5705
+ __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5792
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ffa8dbee859
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe8675d058 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007ffa8dbee859
+RDX: 0000000000000050 RSI: 0000000020000080 RDI: 000000000000000a
+RBP: 0000000000000000 R08: 0000000100000000 R09: 0000000100000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+rcu: rcu_preempt kthread starved for 10553 jiffies! g9261 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:26512 pid:17    tgid:17    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a50 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_timeout+0x1be/0x310 kernel/time/timer.c:2581
+ rcu_gp_fqs_loop+0x2df/0x1370 kernel/rcu/tree.c:2000
+ rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2202
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+CPU: 0 PID: 5156 Comm: syz-executor302 Not tainted 6.9.0-next-20240521-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:rcu_dynticks_curr_cpu_in_eqs include/linux/context_tracking.h:122 [inline]
+RIP: 0010:rcu_is_watching+0x5e/0xb0 kernel/rcu/tree.c:724
+Code: 03 42 80 3c 38 00 74 08 4c 89 f7 e8 bc bb 7f 00 48 c7 c3 08 7d 03 00 49 03 1e 48 89 d8 48 c1 e8 03 42 0f b6 04 38 84 c0 75 22 <8b> 03 65 ff 0d 91 46 87 7e 74 10 83 e0 04 c1 e8 02 5b 41 5e 41 5f
+RSP: 0018:ffffc900044070e8 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: ffff8880b9437d08 RCX: dffffc0000000000
+RDX: ffff8880223cbc00 RSI: ffffffff8c1fe2e0 RDI: ffffffff8c1fe2a0
+RBP: 0000000000000001 R08: ffffffff8100b50d R09: ffffffff814128cf
+R10: 0000000000000003 R11: ffff8880223cbc00 R12: ffff8880223cbc00
+R13: ffffffff81821c30 R14: ffffffff8ddbb9e0 R15: dffffc0000000000
+FS:  000055557e93c380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffa8dc6b0f0 CR3: 000000007b0de000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ </IRQ>
+ <TASK>
+ kernel_text_address+0x82/0xe0 kernel/extable.c:113
+ __kernel_text_address+0xd/0x40 kernel/extable.c:79
+ unwind_get_return_address+0x5d/0xc0 arch/x86/kernel/unwind_orc.c:369
+ arch_stack_walk+0x125/0x1b0 arch/x86/kernel/stacktrace.c:26
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4043
+ kmalloc_reserve+0xa8/0x2a0 net/core/skbuff.c:575
+ pskb_expand_head+0x202/0x1390 net/core/skbuff.c:2240
+ __bpf_try_make_writable net/core/filter.c:1668 [inline]
+ bpf_try_make_writable net/core/filter.c:1674 [inline]
+ bpf_try_make_head_writable net/core/filter.c:1682 [inline]
+ ____bpf_clone_redirect net/core/filter.c:2456 [inline]
+ bpf_clone_redirect+0x119/0x370 net/core/filter.c:2434
+ bpf_prog_de5959beb1c8948f+0x5a/0x5f
+ bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run include/linux/filter.h:698 [inline]
+ bpf_test_run+0x409/0x910 net/bpf/test_run.c:425
+ bpf_prog_test_run_skb+0xafa/0x13a0 net/bpf/test_run.c:1066
+ bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4291
+ __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5705
+ __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5792
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ffa8dbee859
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe8675d058 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007ffa8dbee859
+RDX: 0000000000000050 RSI: 0000000020000080 RDI: 000000000000000a
+RBP: 0000000000000000 R08: 0000000100000000 R09: 0000000100000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+sched: RT throttling activated
 
 
-Best regards,
-Krzysztof
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
