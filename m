@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-191538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA88C8D10DE
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95B48D10DD
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4EEE281263
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447A31F21BB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B67DEADB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EC1EADA;
 	Tue, 28 May 2024 00:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOaaa+Zo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oV92HDZp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377EC4A2D;
-	Tue, 28 May 2024 00:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4092639B;
+	Tue, 28 May 2024 00:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716855631; cv=none; b=B3EbDFjVMlRajnPoIK7+FacuUCcB7aLDx+mw+QA3vzFPhgnT6whrmrd8ZlO8Y6y2AzrNTnNqCS4t3vzQaWOHlH6fqLoiADDc4ZZFongPWZxlMzj43699/MpKY5CWMkrGQwCDPsZnpNc2Q6bV8krxBcMy7endsvoO4SPioYH39AA=
+	t=1716855631; cv=none; b=gsxU5R0AVFo8RrMh6f5F2E8S/ps997e3yr/GUFgFa9ZP/BmZYfZpT+Ey2pBl2IZDCduCGQHys3EowdNkZsFDyPq4Ml7GHJO4Di/IkoJ3t6jH8ASDA9nwATQQxRWdq2JmkeSPhmqpqsG7NI8TuLfCCXqk4RywRAM0rGfU+fG83CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716855631; c=relaxed/simple;
-	bh=s+FbjgCDkvvaLJ+IBxXZ5gOOAsc2UqtoW2RDlXZAvvg=;
+	bh=doi/hbM/iQZc6cYxHxTjepRgnwb7/MoOp65GQJqZ5oE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NTBHhtHSH8On/6itvq5lmi6HWpvedIXhqdqWaKpgDWpUEJCU3ZEKN3wGyqoUEv7obf1mCrnUpIAqG+O2pWE8tn1xXMfmsWCbPvgibbfOmcSJNZKn18G83a/K85tXpV05rZvlU9VWOE4QvOiC0DpSXckHuuuXvr+aKri/KiWvswE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOaaa+Zo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CA846C4AF07;
+	 In-Reply-To:To:Cc; b=b262xT1pHL8RsTUqqyXoxpA7NidDuzhiQU8dKstNOXi3rxW829f3D+tnffUtlpEk8MSFZMn82YSgfEyiGLclflR7nJ6B+I2QcvrCy9yjvhQm7UXH0f2U2RN5QpEJUYdti95TrAdd1vaejl5GWcUEKKlic2GyVX4yCfbLyU5GA3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oV92HDZp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E0B53C4AF0A;
 	Tue, 28 May 2024 00:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1716855630;
-	bh=s+FbjgCDkvvaLJ+IBxXZ5gOOAsc2UqtoW2RDlXZAvvg=;
+	bh=doi/hbM/iQZc6cYxHxTjepRgnwb7/MoOp65GQJqZ5oE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eOaaa+ZoBkdIT6J2hcyBDZL/FXiEcXcdXFTKoEoMjHwJoi0AEJhHSEt/9snwqcPTI
-	 JfO2Yu+f9Asp91GF11qPvf+YiJv7Yka815yE7k26U93xi85mCVsLwGAbXpGT55Fdd4
-	 6HW1ExmfcEnEyYROyfwI9syFzDQcykTLG1IG7RRHtp0Yx7k53j4bfs2N7jO3XhUTxk
-	 QPoeDzj5VH+hjQwbWnV/kIrI65gz471TryUTz7189NKYtjClARpNBc6oO+5GmG8eZm
-	 EwHW25mKAWL6lcP+WfUMYtTYq/EDpD1G+tTBoTzfyUJsvqup4XOrdICYi1WLDWZ0/W
-	 cRLJWYd/j4iAw==
+	b=oV92HDZpgEU22gOQ4LXGTy8+TGZ2BCGRBfAMbT2xdazb2ZW8oEfT9Jxz/41Y1Awpl
+	 lPm+XyOWk+iCJss6zlBrXTrVr3x1a/e8QdehGVKoIq3phZykBnLL/TO7eGkWqhJ6wM
+	 N37icoXlYfCNOETaZ4B7Rhopqm7wv0ndw9SV4tsoa4DK4UfoDTiJzW2ZkrbE5spIhm
+	 JIg9MqrN2b8vXVsg28DKxYTuSXqehCowr4V4BOYew3KEVMTCMVVcvMRp/IpUz1AOJi
+	 9XeZcb+J0zyckcV7DRyJ0QDPlicnuIAgWsAT0DGb/zh/ZQj3JIv2KCop/IJoiAq/PY
+	 uyIedm5EheDKw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B82CFCF21F7;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C98CED40192;
 	Tue, 28 May 2024 00:20:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,44 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/4] selftests: mptcp: mark unstable subtests as flaky
+Subject: Re: [PATCH net] docs: netdev: Fix typo in Signed-off-by tag
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171685563074.6024.16813862230766560677.git-patchwork-notify@kernel.org>
+ <171685563082.6024.3912376131942135596.git-patchwork-notify@kernel.org>
 Date: Tue, 28 May 2024 00:20:30 +0000
-References: <20240524-upstream-net-20240524-selftests-mptcp-flaky-v1-0-a352362f3f8e@kernel.org>
-In-Reply-To: <20240524-upstream-net-20240524-selftests-mptcp-flaky-v1-0-a352362f3f8e@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+References: <20240527103618.265801-2-thorsten.blum@toblux.com>
+In-Reply-To: <20240527103618.265801-2-thorsten.blum@toblux.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, corbet@lwn.net, netdev@vger.kernel.org,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
  linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 24 May 2024 18:30:55 +0200 you wrote:
-> Some subtests can be unstable, failing once every X runs. Fixing them
-> can take time: there could be an issue in the kernel or in the subtest,
-> and it is then important to do a proper analysis, not to hide real bugs.
+On Mon, 27 May 2024 12:36:19 +0200 you wrote:
+> s/of/off/
 > 
-> To avoid creating noises on the different CIs where tests are more
-> unstable than on our side, some subtests have been marked as flaky. As a
-> result, errors with these subtests (if any) are ignored.
-> 
-> [...]
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  Documentation/process/maintainer-netdev.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [net,1/4] selftests: mptcp: lib: support flaky subtests
-    https://git.kernel.org/netdev/net/c/5597613fb3cf
-  - [net,2/4] selftests: mptcp: simult flows: mark 'unbalanced' tests as flaky
-    https://git.kernel.org/netdev/net/c/cc73a6577ae6
-  - [net,3/4] selftests: mptcp: join: mark 'fastclose' tests as flaky
-    https://git.kernel.org/netdev/net/c/8c06ac2178a9
-  - [net,4/4] selftests: mptcp: join: mark 'fail' tests as flaky
-    https://git.kernel.org/netdev/net/c/38af56e6668b
+  - [net] docs: netdev: Fix typo in Signed-off-by tag
+    https://git.kernel.org/netdev/net/c/c519cf9b7434
 
 You are awesome, thank you!
 -- 
