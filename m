@@ -1,100 +1,134 @@
-Return-Path: <linux-kernel+bounces-191776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73368D13F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:33:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F1B8D13F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C641C21A66
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E501C2184D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3314CB4B;
-	Tue, 28 May 2024 05:33:50 +0000 (UTC)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697A74D112;
+	Tue, 28 May 2024 05:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eiHVdzww"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EBF4CB2B;
-	Tue, 28 May 2024 05:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0B17E8FF;
+	Tue, 28 May 2024 05:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716874429; cv=none; b=FB5GcojGsuhh2ZeXV5QquGB9L2hgp3+ov6wj3Q0sohE3/TmP7BU7ew42qmEjXYX3esD1kRiFKh2Ji4zjIENrUSdVO+9tLpqgKSJMr/RU3QUnYZJNzt9rdjYb/CVQD8nRdSP1fIqHcI1K4DMHud1IpinUpOL0XdAs0LI+NtKpvEc=
+	t=1716874569; cv=none; b=N30g7RiLhUgiSJO/sIiKamlCa5HG6zScTgRr7EPJD/90TctOELgmxfQ0aYzPl1cIZDfeXnTQ8/R5jm7LhjS3U75H8gNW90kS503yu8N6Y2fxB1rrIXG7O6l/+sHP2eRYlK4fyeXVvqJpF8USzHx2BZb9qw9T03JeARxIC4WO9Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716874429; c=relaxed/simple;
-	bh=s05Frly+jsi9ApRgAMiozaXpR67rihNmFY6csDtyDUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZMRcgMkgBFywdusNm6XuXphOdV8MChpObr5DojqWCwk3N8y1lYfEZxzyMdr1+kPO8y3e3r6twJKwRZZokG3XbHJg8gNopuckEYs+Y7o2G9TJ/osmDUEz1nO/IzT1Ch+izV1jiqfQrRod0m00nv01C8IGfyJmvpycUctOcgapj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1716874569; c=relaxed/simple;
+	bh=nwW0zyqZWUJuD2uDG8iZdvx4hg2SDrpgyeNcNil+xZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y07KCDhY75i7RCOp3fm2kEMZmAQ3xQA0rMNUtF2QFEQfpsuc3+u2nzZ6yBw/MruZoI0ypsjwspkcXEwhDG2OC7vMyZ+wGMMat2Kv/V3iRKJxtKBu3Gv60q51tGt2QJtrvFw2VJswqL5+4MIS1gjzW8ruN7Uq9AP1ofxuEB9rXvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eiHVdzww; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2bdf446f3d1so310283a91.3;
-        Mon, 27 May 2024 22:33:48 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5238fe0cfc9so377229e87.0;
+        Mon, 27 May 2024 22:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716874566; x=1717479366; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zQ5YRsvHvoBAdRC3HVPp9qo9wscCEvcT4K5gwwVeDRU=;
+        b=eiHVdzww+ixEe7ATEMmrma3m6/UHossdDPeCmuCYB+Qc25a7EB/CZSE16UpmvFwvjK
+         w+gwOK2nR2Zb6mgpPRIWxiuT7gqMfasZ2gUUOekhNYJqdKvqmTgHfDkwu9sdjSinsNEE
+         tpVdrKqtI+Qa3Kx6oN3LV+MsGYDwHuMnx2WHsVNRs20ud1wYL5oIbTN2+dGjlT+zcE9o
+         XNcAQxfWOHQqbv709TbEQdBoOz5yc+A23iA7fKN7CHFmEy2opfJJrjoMp7NA47CfKjZh
+         5ZOP3HyNIqu+GN5vGFGM4PHIgQIQibUUiCBtrOEvQbOGoA+duyJUS5aCC73sTh0h/ohf
+         ppQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716874428; x=1717479228;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fN6LRL+FsIHhjPUj0yA5DeMxhwLzqKe44DGJ+zjen+s=;
-        b=FuKzAXX8Vb05v+iLQYGXBfVDgT4/3h2s/pUrtLJrg5e5HRpl54dFk84G3wPL56YQch
-         G7K6Ib2aAbpD/BEQ5apV/LDStqT1nEds2FRcLFBTDuKy1gkJV/JFD05HdoxmoxkfVNH9
-         SmZ4ukMvv1XqJDbR0J/thrldqufjq2QV4cmY23R7sqHx4m5Vlz9Ip7ev5/CJA8Yn0a2u
-         lWq1vy+RCUixcIALrqaMj+SjfHenc6BvbXnz5T477jEJHjkARIrMogP32bb6M2Dtl5s6
-         u18Um7HsnyFOQPfCKoiLrbk64TLx+KLTc4imjgmlEZ/DCZhTFfsx0PgOB16O00grchXQ
-         BFBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRHfKn7JqD7LhQNPAiiJ3XlPMc1xRBPmTMm9O71SMYiOkoNWuQgE5WQTmZLkZHN6/vsU7GOOYzMaVxj7dMqcVmByUn75fO1NKr1ZpHo7LAnLtqmAvlfjauHGyohZUPZ34zSSeRR0eiOG7Y
-X-Gm-Message-State: AOJu0YyqC7SgP0vOQJ3Knregzc7N8l7+6Rjep0UkW8SvgVYXCklOAQEs
-	oDb+46Vi4ju/iX0wwFkAVJPvT+UD6Jk/wxT/KEmc4DtMbb7pVa//
-X-Google-Smtp-Source: AGHT+IHse1I9e6UDY482/9q4rxCeoBsLH1h8sqxmlnuIt2y7ohHDp0RwxMIzcOm0aIibGNazirrQgg==
-X-Received: by 2002:a17:90a:d143:b0:2c0:11d4:b2e0 with SMTP id 98e67ed59e1d1-2c011d4b31bmr354237a91.34.1716874428096;
-        Mon, 27 May 2024 22:33:48 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bdd9ed2cc7sm8835972a91.3.2024.05.27.22.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 22:33:47 -0700 (PDT)
-Date: Tue, 28 May 2024 05:33:46 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH 06/20] x86/tdx: Convert MSR write handling to use new
- TDVMCALL_0()
-Message-ID: <ZlVsurj64QycDQRr@liuwe-devbox-debian-v2>
-References: <20240517141938.4177174-1-kirill.shutemov@linux.intel.com>
- <20240517141938.4177174-7-kirill.shutemov@linux.intel.com>
+        d=1e100.net; s=20230601; t=1716874566; x=1717479366;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQ5YRsvHvoBAdRC3HVPp9qo9wscCEvcT4K5gwwVeDRU=;
+        b=hEQ3Yr1d2m65sZi1S5uoUw91E+mLMdMeWyA+cRVZ7LsOM6jBXmK5vV5A5MPi+URkBe
+         xxiE4bfi8Xbes0BDvhc3e/hrC+QXDW6mJLm8VbWOU68pHHF2nXl1YYD0QcFB8+1gnjZm
+         Nw45hdOKDaN4V2bJUOvum96GBPtNIEYa/2gMxMkgUNj6IMraSCH/nk5+GMOhOH6qx19y
+         zTTt2YStZrwwr0OBokRtaE0BYVmupHfIUbCS6rf3XQac724XvmuBZf6MSvVOmVnhUbm6
+         b6p5pBfJ5JeeDbTYVjWnbR8KTYkPYbmJMQAf0XSUieJHtb+AnOV2hxwwxnNieFKOkbOk
+         VUXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnOE68tZjsKsl0UtPvz/MuIj34NNgwhRVVmwY4nbYDfv5zXymPocYlbfrEYp2qWHTLhPS2WpxvJraKuanpOoKNtPidLtW6Ive0PCQj
+X-Gm-Message-State: AOJu0Yxux6H0r2nnr8LWBwZ4DNvdIXnIg5vTNFmwXt/RZLRs4CaLud0B
+	YVKMvCxrJqKUS1twIyfFel0MICpfXNtXm4zqHLCBb+u5B24UFaFYQ7DpsA==
+X-Google-Smtp-Source: AGHT+IGReGPOSVoMpusxH7TfsFf0PJuifsnWkIwYw6r1iQmpNfbsbr4kIn1cZE8/HPAqNKOewGcz9A==
+X-Received: by 2002:ac2:4d08:0:b0:51f:fdd3:b673 with SMTP id 2adb3069b0e04-527f15cc5a5mr4347094e87.34.1716874565894;
+        Mon, 27 May 2024 22:36:05 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b730sm855379e87.134.2024.05.27.22.36.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 22:36:05 -0700 (PDT)
+Message-ID: <d34509fa-09e7-4bb4-8d2a-0561e4b0ef26@gmail.com>
+Date: Tue, 28 May 2024 08:36:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517141938.4177174-7-kirill.shutemov@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] power: supply: bd99954: remove unused struct
+ 'battery_data'
+To: linux@treblig.org, linus.walleij@linaro.org, sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240528000634.196707-1-linux@treblig.org>
+ <20240528000634.196707-2-linux@treblig.org>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240528000634.196707-2-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 17, 2024 at 05:19:24PM +0300, Kirill A. Shutemov wrote:
-> Use newly introduced TDVMCALL_0() instead of __tdx_hypercall() to handle
-> MSR write emulation.
+On 5/28/24 03:06, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> It cuts code bloat substantially:
+> 'battery_data' is unused since the original
+> commit 0902f8366491 ("power: supply: Support ROHM bd99954 charger").
 > 
-> Function                                     old     new   delta
-> tdx_handle_virt_exception                   1947    1819    -128
+> Remove it.
 > 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Thanks!
+
 > ---
->  arch/x86/coco/tdx/tdx.c | 9 ++-------
->  arch/x86/hyperv/ivm.c   | 9 ++-------
+>   drivers/power/supply/bd99954-charger.c | 7 -------
+>   1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/power/supply/bd99954-charger.c b/drivers/power/supply/bd99954-charger.c
+> index 1ed1d9f99fb3..54bf88262510 100644
+> --- a/drivers/power/supply/bd99954-charger.c
+> +++ b/drivers/power/supply/bd99954-charger.c
+> @@ -70,13 +70,6 @@
+>   
+>   #include "bd99954-charger.h"
+>   
+> -struct battery_data {
+> -	u16 precharge_current;	/* Trickle-charge Current */
+> -	u16 fc_reg_voltage;	/* Fast Charging Regulation Voltage */
+> -	u16 voltage_min;
+> -	u16 voltage_max;
+> -};
+> -
+>   /* Initial field values, converted to initial register values */
+>   struct bd9995x_init_data {
+>   	u16 vsysreg_set;	/* VSYS Regulation Setting */
 
-Acked-by: Wei Liu <wei.liu@kernel.org>
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
 
