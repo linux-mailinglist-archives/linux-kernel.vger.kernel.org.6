@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-191596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E698D113C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:01:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF95A8D1140
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCBB11F21563
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611271F218BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2938F6B;
-	Tue, 28 May 2024 01:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE00FC0B;
+	Tue, 28 May 2024 01:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqC1zBT+"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q/oDgmuc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451F74437
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03EBEAEB;
+	Tue, 28 May 2024 01:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716858057; cv=none; b=D24dVO0LELBGEyX3lbc2tAUTru580Mu+/5yuu1gH6zi5ywMp+php4YBgPo9M49YZ373ZwfaeFQTCA3nEUXwMmIv+t3X3a+CKP5jieGZB4WhVGB6wafJsarDLRFkHmS4s3z9fSTFOmmAGpsZOUsA3TlXMfcrJ4c3+fT27p7EVBYQ=
+	t=1716858071; cv=none; b=P6Nz5bgi62NzWpAbIXqh5NhdzfN3iX+TJ1Eq5E6c2Xbdh5X/36TEfR3ej4VU6nPKf4+rXt3ZB+EloOU+IigDjcwTsm1x/sW7yEn9KWmDxy3ocLXGeiMDBN7EhDFUzcHaMXZg/8B3oH+HYASFixeHsCXWEJzwOrTTrLvpXKXd6Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716858057; c=relaxed/simple;
-	bh=6RdCALqZATAaluv2o0adt2Iu/oX3BJUs4MRNlUA/VzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RWeKX5BAYm32veZoeSFcLvToVZk11GhIoo9RmP8rAa6wQWPGbAcWUArr1h5vEChzM7j/hfP9QGxmiJcnuyyGuGlQ2gGNcrcLnPUhuUr8kYBfgk5sy6DO3bO1+nZg4ZrADfjXO7m97fHJdFpucqT6sunczaWcBIzlIiEQq9l6+g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqC1zBT+; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-529648cd69dso325791e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:00:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716858054; x=1717462854; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BmwopWG0DiE3sCpp8aZ0JQHOY+FYWa6TPkm28zzJyuE=;
-        b=IqC1zBT+fWSFvFsviFO9X15r/OilFe//BBZ5T1qv8GOEyDDGm4jlUCDhU9KamtAATt
-         eHin5JH2RR7MPE1+MsKi4y71sKDcGbaXrTCFdhtsBz5Y/6ac55ndlabxNRCD1YKtKODC
-         egvRKxmBQG9IneVxQm5P1+/w/bfFvSaCCiAY2KcWMywjOfsIh7wuMPZ7YwTVzPk8Btti
-         NZdNVaLzed48yx6AiJee/mrEx+5IWHqgaKjawSah2zf4V0IWmfVPuNEh4nxWQ+YipqK0
-         SKt8Z30aizmNl5wl7pnlbirK0tydw/nPjLAc7B4Xc+cFMvO1Wx01IBnKguXHKXr1V05u
-         dBAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716858054; x=1717462854;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BmwopWG0DiE3sCpp8aZ0JQHOY+FYWa6TPkm28zzJyuE=;
-        b=tY28Udn9TMi/PxA35DO47ecb0G/QgFBAHLxky2eVxRNXajbVGX6/735EqgYlRdxpG6
-         d82+1Qm9mSPyYOo4eWFk7ZKYlffdIwGP7YnqTW/HRGgdLZAXvJw73PDA+9r3tBtSR9Zp
-         0p+cmeK375pIFJofycFYv55bpq2bM3urCtp4Z2vAoOkcSsn7QY8IdSr/ihYEm8RcTwv2
-         ZRrD+F4knwxuTS8An35LGq2s4a26LS6ll3d41usJAcDlB3reIe9rE1FUHIyztFHlovot
-         2WiJLPn9rhNEHyH5qmfG+925F4cIr8cWpiA31NQx2wbxrrGkkDjzHhIPe21VgkqbDDe+
-         GNWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnpjqyRQQDxpTonCskSzkSGAkcs6IpeMqjBnZZFUkOmNPJskUYkJ1FQXlWkScpLhMiTpWBHqSoONFZVVr2jB4hZ+f1cidRki8nXJtb
-X-Gm-Message-State: AOJu0YxAR4liJR4E8KOV6H1SUtOuN480UOmVfKjn8QliV8aHqYqoxY/r
-	PHRFnNgYbm36R4/qlQoM7e2ORjqbVWntF0gy5XuK5HtqlsxlIYzIg60VTCMMUGA=
-X-Google-Smtp-Source: AGHT+IFvbCrRsIbF9xwlxxNScbQE81pHqx1ki/P6zSR2F11gCd7AhgIu3KUS7x8FnRnamS3CF4QPsA==
-X-Received: by 2002:ac2:5a07:0:b0:520:11b7:6caf with SMTP id 2adb3069b0e04-52967465dbdmr8591708e87.64.1716858053510;
-        Mon, 27 May 2024 18:00:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529712f32f7sm825854e87.282.2024.05.27.18.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 18:00:53 -0700 (PDT)
-Date: Tue, 28 May 2024 04:00:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v15 09/29] drm/display: hdmi: Add HDMI compute clock
- helper
-Message-ID: <gdfhorm6pj7l2z4mfhkyabtckoprp3xmdcihjnulzt5gcbtlbq@hmaoimvgwgqn>
-References: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
- <20240527-kms-hdmi-connector-state-v15-9-c5af16c3aae2@kernel.org>
+	s=arc-20240116; t=1716858071; c=relaxed/simple;
+	bh=/MkQrM/eQKLO9xuDVh6gN9EadPTbBgQEOU2aVQoPRqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kYPIauncsLu/7O7oo9gvPgUko1teoj3Rc1if4KMnVP017fyNnGfuRNnYmdJ0K6N7Z0bG1k6avNVguMWZ3aaJq3XNKOoAL2LR4Ma657jz2+3ObPqfDrChTjVJ/dNA6g13ZeKoHAQpz1F81XkXweMvg1uZdtqW7uvdSFVB3YDew8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=q/oDgmuc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716858068;
+	bh=yDBIwrtzuNuwq/Qf8L4HwUWAPrAwM59cLPBrPL4jRLM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q/oDgmucz+cbR1WtknFYudBFadVPHYsMFQd3aPjnxphV1RnsyiN9Gj8pv2KgVnCuj
+	 x/d57aZLT8EXs5RTxj5GnO5+hEylQKNT3Eml8JH3zmB+Y0Wx4Db1IlkJqSYC7zldkJ
+	 zit3Y2QJ1adVFXNiIuxtdHZO2ZS5dHrEiIth69p3/BecomRUtH0Gmi1EJtD4tQwnIz
+	 Oj6mTRcnxiDb0rh0Biv38iy8Y11Bd4+4Ot36dJsKpNNK3LHqhhuuLQAHS4VpPcYKgv
+	 PJx3jJNPfkG7mzfUogfHVvSTaiKuVSkywvuBl7fR2OGcpjLPNdUAChJMZg+S+ACHsr
+	 JxkjVZKkLKDkQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpDjG69M9z4wyw;
+	Tue, 28 May 2024 11:01:06 +1000 (AEST)
+Date: Tue, 28 May 2024 11:01:06 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Alex Deucher
+ <alexander.deucher@amd.com>, Kenneth Feng <kenneth.feng@amd.com>, Likun Gao
+ <Likun.Gao@amd.com>, Heiner Kallweit <hkallweit1@gmail.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the i2c-host tree
+Message-ID: <20240528110106.5881d1b5@canb.auug.org.au>
+In-Reply-To: <20240522104128.37c646af@canb.auug.org.au>
+References: <20240522104128.37c646af@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527-kms-hdmi-connector-state-v15-9-c5af16c3aae2@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/Xlx.N38ihM7FbNRsO3KBhnK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, May 27, 2024 at 03:57:58PM +0200, Maxime Ripard wrote:
-> A lot of HDMI drivers have some variation of the formula to calculate
-> the TMDS character rate from a mode, but few of them actually take all
-> parameters into account.
-> 
-> Let's create a helper to provide that rate taking all parameters into
-> account.
-> 
-> Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/display/drm_hdmi_helper.c | 61 +++++++++++++++++++++++++++++++
->  include/drm/display/drm_hdmi_helper.h     |  4 ++
->  2 files changed, 65 insertions(+)
-> 
+--Sig_/Xlx.N38ihM7FbNRsO3KBhnK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi all,
 
+On Wed, 22 May 2024 10:41:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the i2c-host tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu14/smu_v14_0_2_ppt.c: In functi=
+on 'smu_v14_0_2_i2c_control_init':
+> drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu14/smu_v14_0_2_ppt.c:1565:34: e=
+rror: 'I2C_CLASS_SPD' undeclared (first use in this function); did you mean=
+ 'I2C_CLASS_HWMON'?
+>  1565 |                 control->class =3D I2C_CLASS_SPD;
+>       |                                  ^~~~~~~~~~~~~
+>       |                                  I2C_CLASS_HWMON
+>=20
+> Caused by commit
+>=20
+>   49b33f4b3a9e ("i2c: Remove I2C_CLASS_SPD")
+>=20
+> interacting with commit
+>=20
+>   3e55845c3983 ("drm/amd/swsmu: add smu v14_0_2 support")
+>=20
+> from Linus' tree (in the current merge window).
+>=20
+> I have used the i2c-host tree from next-20240521 for today.
 
--- 
-With best wishes
-Dmitry
+This is now a failure after the merge of the i2c tree :-(
+
+I have used the i2c tree from next-20240523 for today.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Xlx.N38ihM7FbNRsO3KBhnK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZVLNIACgkQAVBC80lX
+0Gxgqgf+NaIARQEIm343J4zwOEf9oypQ1n8rh7E7dknTsNvjcWTfEQesBmIQcoca
+VDyUBXAtQ87JYD43czuOsiEbvldlcK/ZpE7m03Rf7DA00Tk1MxFmXneM7ZSZR/0X
+MiiL8tJrPp4wYJtBI01hMKTGn9KDONrYnJeyGEgdbEdkLvozihO+icKO1anlR+iQ
+twzj3bqMSeaFSHNttEOWXDcxSysPjVbqo25BLsWEUjDH/w06d/JjeDwSOb+7IULp
+7gIkDeh85mNJ5DX7hgHX4SZuhQfcGy+92qW8swzcBDNmeXb//DAVqFvOej16BPcv
+LACDSab5QuJt/D0dVJslBH8KfdB4Gw==
+=zkMF
+-----END PGP SIGNATURE-----
+
+--Sig_/Xlx.N38ihM7FbNRsO3KBhnK--
 
