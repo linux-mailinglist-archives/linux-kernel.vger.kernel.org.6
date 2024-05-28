@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-192325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1301A8D1B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8294E8D1B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9EE31F228F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:44:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4AF51C21FCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428F116D9AE;
-	Tue, 28 May 2024 12:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F5A16D9A6;
+	Tue, 28 May 2024 12:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AE6rvFds"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="daucjpUN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aRa3BV7B"
+Received: from wfhigh7-smtp.messagingengine.com (wfhigh7-smtp.messagingengine.com [64.147.123.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168AC1EB3F;
-	Tue, 28 May 2024 12:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001891E4A6;
+	Tue, 28 May 2024 12:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716900258; cv=none; b=AJIcS4AqvXsBB38D5mD+apGDV+pBB9mdtzh8CfLeqDj/ThSpDZuSNRMCyFqYtXihrILxnUnxgwH8M/zU1ZFX8dBtMnbqEJ9GRgqhF7oBj5BpqwJrgKidI3/WYrJieayYqQukkQP/dLTfaP7PtIDz5+7JRpj2sFI4kfT/SvTCpCw=
+	t=1716900331; cv=none; b=VxQEKWRo+RP3MioW5F0kCn63I6dV5Y0RWFFBb686zNv4msxDEBBVIiwblPn+gied3aac7HKtOczScjeySftOvcAruOGJ6BygVucclDfOj4khEmZOWd1107KD1OGHmgkz33F/dzjjHG7PfT6rSaYJ1FEWsBbxdjy5D+JcCv/WBP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716900258; c=relaxed/simple;
-	bh=tQXQTMR5G234QCe92JDOaJwq6JO0YPHdVfA+0fIU1HU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nz9Slkd8Q5Rs2XTi3rCYHIMZ7H1Cih+4s1asa153lB1FjlbG9Yht96cziJIC2dtZL0fNI6PyUUQAzsmdvh7YP4/781ip5ebKGHzWZoGcMXD1Zle28tsh+GX1zZhDW/7N08NJf4drHWt+K2cTWNMVFSPmBKeHnFbB6J6PdiWrlxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AE6rvFds; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44SCiAvA051720;
-	Tue, 28 May 2024 07:44:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716900250;
-	bh=JmFVvqPhWyfqK/XNqtMKhNTGIKcBale9VkrI0xk6Hoc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=AE6rvFdsB6hqFqAsTGJRojeLLpJ1LyEKqQ3010bimov8lJJX+uI4iE6pYq3y9mwHM
-	 rFdBgYXKwsbd+9EtvEG87RB/QEnBK9mb8dKDlRiYYnL4YH5Jzt0G2tcpdNckc6DfTY
-	 whRKwl3nmsetDeutY8YIRzSbkVaO0WfDYPkXFxeU=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44SCiAbP027194
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 28 May 2024 07:44:10 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
- May 2024 07:44:10 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 28 May 2024 07:44:10 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44SCi9Ww052614;
-	Tue, 28 May 2024 07:44:09 -0500
-Date: Tue, 28 May 2024 18:14:08 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Roger Quadros <rogerq@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <afd@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
-        <danishanwar@ti.com>, <srk@ti.com>
-Subject: Re: [PATCH v3 7/7] arm64: dts: ti: k3-j722s: Add support for PCIe0
-Message-ID: <ff6cb81b-7760-4c99-9c17-907b0a31396c@ti.com>
-References: <20240524090514.152727-1-s-vadapalli@ti.com>
- <20240524090514.152727-8-s-vadapalli@ti.com>
- <a6fe1fbe-681d-429b-99cc-a5f07af1cd15@kernel.org>
+	s=arc-20240116; t=1716900331; c=relaxed/simple;
+	bh=mlFfM/FT71teXMyZDR9G2/fGGL9GOe9n6pJFAjCA0/4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=LDryS7xwVbKWdRqr0yAAZ9UsxYoL0nsq0bfxxD6EA0k0Uzm33IA5ObPr1SLwH7vPPhUeJ6W4xhx5DpJeZv/aExaZiQWvPW/Znh20t2WnMG+jYZTWL6tKzX+dxK3EZqXbQDyaY8P+zzBxrUvslXo3Ew5y/0QSr8WPGDg/wKu/oIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=daucjpUN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aRa3BV7B; arc=none smtp.client-ip=64.147.123.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id CEB7D1800132;
+	Tue, 28 May 2024 08:45:28 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 28 May 2024 08:45:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716900328; x=1716986728; bh=LwNt6oJ9v4
+	BcU7dsRVvH3T3iQ/AePVkx6Qwh7+sBIEw=; b=daucjpUNJFlMEAajakdwJPLicc
+	dYRSGvN8numsrkY0uucl7raFZMRZzjeMXqt5mDUnrgbeIbm3avQ9acYNN/qKVpf+
+	RHHr9ZCIDho/0O0sY3atgpFOmA1lLBv3gRKU/GZWDyAqC0dTYY5C4Mfi7uIlekg4
+	CYb+COvzQpqiARuZmO/IPdG37iSHohe+Hg+B9uzyY+KKoA+2cZvM1BB6RfMIY2Vo
+	n3cGoPb2cRf88+cuMMenVuetxI0oLU+0cKf2+i2qJPA2IXAYdXelrhDj5TVJBQax
+	VnsnUfTg/zyHrROAl0Pahjld8A8GsOeByni+U6Sn0xtyr7c42yCy8opp9p4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716900328; x=1716986728; bh=LwNt6oJ9v4BcU7dsRVvH3T3iQ/Ae
+	PVkx6Qwh7+sBIEw=; b=aRa3BV7B0ujcQfzw+NUOacd01NMP1fbeo2ePF6dOJQZC
+	qEoUkBi/8wUllaXCDY4ECc5vtDCnt9QeyjToZV8KkIgQsHQT0gxM9XreUVA4gS48
+	XU5N6jeypZwPz8TlaYXFhQVnaqEf2IfkhrI3Rf7hFK703hRWAzII7Tgn9OTKyzxo
+	wEL8F0dFp89u1OcpiP6AWrVM7b0tUpqdhdJ4B0CJAa0d1TwK5Mw4BTXD7mmGPhqo
+	THYnHgGDPmjoVwdYqdnc8H5W7O+2d0k22YOqO1ndLvXJweit8nhjt65rZNfhLf2v
+	peNLCN8Qql/yQIhdoETg5cig+vkpQUG7d3/Oi3lHSg==
+X-ME-Sender: <xms:59FVZmCSQ9nysHHLbogc-7VVwBr5nIB7M5Ea9I9eMEEWFIzI3VtXlA>
+    <xme:59FVZgivva-2cMuos-sh8gEQ0CinvIbLesjLnw5wKx5ArkLrFOGct4xcCK1Bsnzum
+    3AJg5u-T9q8BAy200I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedgvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:6NFVZpkOxYHeF5ZzrRvYSha0HHb6S5Oh23WI80Z1Ygi32ByJsdG11Q>
+    <xmx:6NFVZkwZ9LOZB-dsqKM6Ac0Ckal2C_QTK5j4KIhys3iSJaB_3oPMZw>
+    <xmx:6NFVZrTR_GOV9GgM_1D2tvdfXFYvSprTPi6Gv8zP_Pf5yeUR-Wnacw>
+    <xmx:6NFVZvad46H-PQscy8X-NcrKe5_IREFEZmmlP1ygOaABK2WHCASTIQ>
+    <xmx:6NFVZqFPOrDEMkn0uyYTuDHUVkJUkPyjbLfc3_392orgn0uWLL67Te8F>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E19C9B60092; Tue, 28 May 2024 08:45:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a6fe1fbe-681d-429b-99cc-a5f07af1cd15@kernel.org>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-Id: <dd2a2483-0ad4-4563-8cc2-885a47a96e71@app.fastmail.com>
+In-Reply-To: <20240528115802.3122955-2-arnd@kernel.org>
+References: <20240528115802.3122955-1-arnd@kernel.org>
+ <20240528115802.3122955-2-arnd@kernel.org>
+Date: Tue, 28 May 2024 14:45:07 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Arnd Bergmann" <arnd@kernel.org>,
+ "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
+ "Jiri Kosina" <jikos@kernel.org>, "Benjamin Tissoires" <bentiss@kernel.org>,
+ "Lixu Zhang" <lixu.zhang@intel.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] HID: intel-ish-hid: fix endian-conversion
+Content-Type: text/plain
 
-On Tue, May 28, 2024 at 03:26:11PM +0300, Roger Quadros wrote:
+On Tue, May 28, 2024, at 13:57, Arnd Bergmann wrote:
 
-[...]
-
-> >  
-> > +#include <dt-bindings/phy/phy-cadence.h>
-> >  #include <dt-bindings/phy/phy-ti.h>
-> >  
-> >  /*
-> > @@ -96,6 +97,35 @@ serdes1: serdes@f010000 {
-> >  		};
-> >  	};
-> >  
-> > +	pcie0_rc: pcie@f102000 {
 > 
-> Please split PCIe node addition in  to separate patch. hopefully you can squash it with patches that
-> add USB, SERDES0 and SERDES1 to k3-j722s-main.dtsi.
+>  	for (i = 0; i < fragment->fragment_cnt && offset < ish_fw->size; i++) 
+> {
+>  		dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size, 
+> &dma_addr, GFP_KERNEL);
+> +		dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size,
+> +						 &dma, GFP_KERNEL);
+>  		if (!dma_bufs[i])
+>  			return -ENOMEM;
+> 
 
-I will do so in the v4 series. Thank you for reviewing and sharing your
-feedback on this series.
 
-Regards,
-Siddharth.
+Sorry about this one, the duplicate linen was an incorrect
+rebase. I've fixed this one locally but did not resend the
+series since I'm still waiting for other review comments.
+
+    Arnd
 
