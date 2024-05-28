@@ -1,95 +1,119 @@
-Return-Path: <linux-kernel+bounces-191796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F3F8D142E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:07:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA048D1439
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FBE1C217D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:07:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE926B21DEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAC94F5FD;
-	Tue, 28 May 2024 06:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E678B61FF8;
+	Tue, 28 May 2024 06:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="LA4JevOo"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4263DF6B;
-	Tue, 28 May 2024 06:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us73uEGj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8AD4D11B;
+	Tue, 28 May 2024 06:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716876464; cv=none; b=g9BfAIAcd+BTmI52es6fWoZmeykLHFGgvNAF0VkJTMYiMQO6OvNXvKc2dXQopuDxUbyy++NOvt78M4FUASO0UVgy176ehNfrAWOLS1FBGyWZWVOKWM82JmdWLJS0gzfxe0Tclri5pe3f/A16B7/VGqTDp9VZBPLOJljwucFY0zo=
+	t=1716876565; cv=none; b=Ve/aRsjIIe2zHscHOC8gDfOwYpEAd326vTOnmHtjbN0Da+TK1kfGTzZNwGMZW11LGD9U3HotJOFzG43LD8EfAphd+gpbGrIeHtZT16nYKwuROdouUS6x/zWFR10KNr0ExT6+alOuxGxY6glunnRCMSIZx4JygfzRJGWkqLOJq1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716876464; c=relaxed/simple;
-	bh=YgEFGeEPZxT8s1YqnsK/q7F3fNmn1mUVIATqD2QD4Zs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMnfJDD4eTFsEIybg5aCEGLszhi8TnHZJ/bTsZ/aY3OSGj4qmCqXN7olGolNdK/Z+8J9nOPP7avzYIsDMSahwF8fL9omXlelIEZ4H383M6shyiRpgvICF4nzIRnk4tjVCxoFas6j8QbxCcXVKkeE+EfUIE+Pr0CH6+q1Hc5Pcfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=LA4JevOo; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1716876460;
-	bh=bmYKOtO6JYSDgXLf6T9Jhwa1FRSIr29gYNytPNeRSvk=; l=777;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=LA4JevOoc6pR1oBoS21xHhXky4ADt13fvE623gJ+o8plPn/QxxysbYe1ztfras7ry
-	 i5VroJ2cr9J7AVYKIB7H8YXkxaF+POr8ex9omf3tpbhNsDQ0lE6VqRx0bVEWw0ZY09
-	 rnR+c4xDd99UHeTPQYSAebvSdGogzu2p6a6dOcPGUq7ZTVN+DDJSy2/wv89ZZdqg6o
-	 WKp2yjYqyTasa5aRjbOj/mJsJGL3sVFTK7xxIfPPglWn8+URk/LYOR+YBxNxqDWCWr
-	 AUO4V3NhGzQv+xEaBR7Tu185jLHQnawkpimf6Rz28Xmr9N099C0EO0ahxUODfJyxdY
-	 nROc5fB0iwC0Q==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213223:0:AUTH_RELAY)
-	(envelope-from <alina_yu@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 28 May 2024 14:07:32 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
- 2024 14:07:31 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 28 May 2024 14:07:31 +0800
-Date: Tue, 28 May 2024 14:07:31 +0800
-From: Alina Yu <alina_yu@richtek.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<cy_huang@richtek.com>
-Subject: Re: [PATCH 1/2] regulator: rtq2208: Add fixed LDO VOUT property and
- check that matches the constraints
-Message-ID: <20240528060731.GA25526@linuxcarl2.richtek.com>
-References: <cover.1715846612.git.alina_yu@richtek.com>
- <7c28d2e61d2fc13066ba4814d1ecfab8f344aaad.1715846612.git.alina_yu@richtek.com>
- <c0c7a63d-e435-4778-ad4c-3d93f0215116@sirena.org.uk>
+	s=arc-20240116; t=1716876565; c=relaxed/simple;
+	bh=yL9QuRyCclHUhhy3AcGDuaeU09XaZ3aXaTF2FrRGqEQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OSoweSt6w/mzBWFBc9RC0B9erqxoBu1ZUa3Knb9eLNpoUagtP+8eQKc5TMMprK6jIPonODUnfb7IS4xiWkbsPBDZTWtGYZzBEh3IBQmBmyFBtRrhVdgEJiu/mDr2qjDycibGjKylYWIunhaXN0f+Fniuwwy2wlnxDmE0BcfO+sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us73uEGj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B9BF2C3277B;
+	Tue, 28 May 2024 06:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716876564;
+	bh=yL9QuRyCclHUhhy3AcGDuaeU09XaZ3aXaTF2FrRGqEQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=us73uEGjnmXxoVlTmdl967pSD78BNNqud12LFijTKsZ1Bm1FkQ7zo73RMV5o6hgwl
+	 rKNcCFR4a+ELHaPxcspIISmS2X9Eb8MQ4Z3s8Ygw7Qk4AzBUvlfC2aLTr88x8jAKV0
+	 DOSRa96vRPaixa1kgKKHYjVqbCUpi8Fw8dj8bAyeE4rJ0hwS4aPw8o43HTP18XcavV
+	 IeRppfFRgamIMdCMD9FG+HEa+Tpgjh2Y5BxHGGSfxiQHGOyxv1U3VhmcmXPi8M2QWq
+	 kFA5dLvsTplDyM5JGD3RwZPhxJJ6QVVwus1p0MLRb/vB7IJQc0UdioaMnjDu7AHO9S
+	 lfPaBB8/iShdw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A38BCC25B78;
+	Tue, 28 May 2024 06:09:24 +0000 (UTC)
+From: Nikita Shubin via B4 Relay <devnull+n.shubin.yadro.com@kernel.org>
+Subject: [PATCH v2 0/3] dmaengine: ioatdma: Fix mem leakage series
+Date: Tue, 28 May 2024 09:09:22 +0300
+Message-Id: <20240528-ioatdma-fixes-v2-0-a9f2fbe26ab1@yadro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c0c7a63d-e435-4778-ad4c-3d93f0215116@sirena.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABJ1VWYC/3WNMQ6DMAxFr4I8NxVEIKBT71ExOI5TPEAqB6Eix
+ N0b2Du+9/X0d0iswgkexQ7KqySJcwZ7K4BGnN9sxGcGW9q6bGxtJOLiJzRBvpwMdoHIY+9820N
+ uHCY2TnGm8awmTAvrOXyUryLb15B5lLRE3a7ftTrtv4u1MqVxbdeEKrRIRM8NvcY7xQmG4zh+i
+ CioVsMAAAA=
+To: Vinod Koul <vkoul@kernel.org>, Dave Jiang <dave.jiang@intel.com>, 
+ Logan Gunthorpe <logang@deltatee.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+ Nikita Shubin <nikita.shubin@maquefel.me>, dmaengine@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux@yadro.com, 
+ Nikita Shubin <n.shubin@yadro.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716876563; l=1143;
+ i=n.shubin@yadro.com; s=20230718; h=from:subject:message-id;
+ bh=yL9QuRyCclHUhhy3AcGDuaeU09XaZ3aXaTF2FrRGqEQ=;
+ b=K4gvr1A5/gyMVLHQfIfsxddXfjDgycKJo70pdAg85txaURyEa+qlUCFPsS5oPFoUE7Sg1sKc6lG8
+ rm8wd6zPD+hBhf85i+hCRkyQERBYdLmxp7yd95vJWjTCJIIqhNon
+X-Developer-Key: i=n.shubin@yadro.com; a=ed25519;
+ pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
+X-Endpoint-Received: by B4 Relay for n.shubin@yadro.com/20230718 with
+ auth_id=161
+X-Original-From: Nikita Shubin <n.shubin@yadro.com>
+Reply-To: n.shubin@yadro.com
 
-On Mon, May 27, 2024 at 02:00:47PM +0100, Mark Brown wrote:
-> On Thu, May 16, 2024 at 05:20:33PM +0800, Alina Yu wrote:
-> > A fixed LDO VOUT property has been added to specify the fixed_uV of the regulator_desc.
-> > Additionally, a check has been included in this version
-> > to ensure that the fixed_uV matches the constraints.
-> 
-> This doesn't apply against current code, please check and resend.
+Started with observing leakage in patch 3, investigating revealed much
+more problems in probing error path.
 
-Sorry, I didn't notice these links missed in linux-next tree:
+Andy you are always welcome to review if you have a spare time.
 
-https://lore.kernel.org/all/a1e19b4026d7fea27526ba94c398500a3826b282.1714467553.git.alina_yu@richtek.com/
+Thank you Andy and Markus for your comments.
 
-https://lore.kernel.org/all/ffeecd61c194df1f7f049bd50cb2bbbad3cf1025.1714467553.git.alina_yu@richtek.com/
+Signed-off-by: Nikita Shubin <n.shubin@yadro.com>
+---
+Changes in v2:
+- dmaengine: ioatdma: Fix error path in ioat3_dma_probe():
+  Markus:
+    - fix typo
 
-I have now integrated these missing parts into the resent patches.
+- dmaengine: ioatdma: Fix kmemleak in ioat_pci_probe()
+  Andy:
+    - s/int/unsigned int/
+    - fix spelling errors
+    - trimmed kmemleak reports
 
-Thanks,
-Alina
+- Link to v1: https://lore.kernel.org/r/20240524-ioatdma-fixes-v1-0-b785f1f7accc@yadro.com
+
+---
+Nikita Shubin (3):
+      dmaengine: ioatdma: Fix leaking on version mismatch
+      dmaengine: ioatdma: Fix error path in ioat3_dma_probe()
+      dmaengine: ioatdma: Fix kmemleak in ioat_pci_probe()
+
+ drivers/dma/ioat/init.c | 54 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 29 insertions(+), 25 deletions(-)
+---
+base-commit: 6d69b6c12fce479fde7bc06f686212451688a102
+change-id: 20240524-ioatdma-fixes-a8fccda9bd79
+
+Best regards,
+-- 
+Nikita Shubin <n.shubin@yadro.com>
+
+
 
