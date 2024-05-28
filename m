@@ -1,269 +1,195 @@
-Return-Path: <linux-kernel+bounces-192693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35F38D20C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:51:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6648D20D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A2EB2260D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5341C20F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB01171E6E;
-	Tue, 28 May 2024 15:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CF317166F;
+	Tue, 28 May 2024 15:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aekQx4jR"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mXI2zp7Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C49E171E4D;
-	Tue, 28 May 2024 15:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99CF170851
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716911454; cv=none; b=b6/vG3BIYaGF/O0U9c47A9gG+8rzBJ/u9RHmbo20zUOEYfX/nAMiSdz+4tzd4ItQMzxNPzIadBV2BdXLjgMRqzzaTCxUVGFJtrQRlfa0Vdql5+rRNBEv0MgP3tFUKrLMrlOx+vWxUb3Kt1HgwaeJKaRRqvjE7CJIVM3B11wSy2Y=
+	t=1716911618; cv=none; b=XQETYBlzNPGFOmyUWbJbjcyTmE7GagasPgsU6KNhGMrD0wSde+Al3MLVAiVEfsJt8N8FTmVO08FuEZpC6ogCj6IQAzYJ6FeYNJq1h/dHGdaCL3zWQy90HjI5zBELZeJI0yLnvuJIhv66DkLKXoPBpN3qgVVAeOkyo8zTAubP/Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716911454; c=relaxed/simple;
-	bh=w893qe/kealbejw9LpXOPnWIUhnLGtUJMOvyHH8ODbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bD0NAAUlCXUiGJrcULdXVULApvWCclQyy6r3NcLqL5xj5fv8ZDY+2og0bLd3BlZUl2bSKDtUOSJiZ43oqgg0cfnt+4XGC9gnsXzS0+TR1hpDkZ01qexmrIrBfzteBo2TG6/tP2ICPcmmjQoRgBPmonOB+rJ0wu3fRCmZIdKmIbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aekQx4jR; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f44b4404dfso8882785ad.0;
-        Tue, 28 May 2024 08:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716911452; x=1717516252; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=RPIwnjlc45VQT0mMiNcUcWFb46f4+KlFVHgSXlBA+XE=;
-        b=aekQx4jRlitH7iwD+PQ2E3FVTuev1ovyyvr9GtWmO4w7fHlyqrKnt93Y45lSqTA6Mh
-         LhH4ULsRn5he8etVdCFAG8S7kOoaZoQKtv/H2nhzq00dHmiqMHP2a35rfMQglEyuRWaA
-         PvUouDOFroGpl/2x+i3s34hWog54RakxRPEA85IJk0N6hVv9AdaOrg/wNSHuXDXsnjNj
-         LtjqPjQTmO2EPClSVHWFFLgLWkgo9OrzApG/tK0wRqPapKgvKfQFvWRcVNA4yBX6tEgB
-         4vTsXgd37k1kQ6ckEjVW4mOTBbnR64KFGTSUN13xk13ZCLlcyxBvYKYZuxh+0gSzliQK
-         JiNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716911452; x=1717516252;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RPIwnjlc45VQT0mMiNcUcWFb46f4+KlFVHgSXlBA+XE=;
-        b=gsNtSXE58KxDQWxisNROhpzawO4zU2XYnrHCbKOwpmMG2PK/yaE79DuVl+rlj3jDU/
-         g0ax2l6WSmsjnripS584fXJlwby9CgpyE6L7jvD0AvemOQpG1OLhZhoKmwh13w+IBh/y
-         Oh+qkOK1h8ovzFqu95H/kmDkLmo2+n6fr6t1nQ/XuXhAX7FbdM3aa2Gp9hG1x8BuRwZA
-         EVDWgoVABcC6nqBIkxFiLCq+CrgwH66IP0rij1FbnaioJI7kBhzmezhk5D9gmvKqcTa+
-         cmLv651umnU0gPdMsbFOnWlaigh1TToD9r7eSWwItV+X9CweOOO9HWFZ5xKXn1xvYWpF
-         /ptw==
-X-Forwarded-Encrypted: i=1; AJvYcCXn2sfmNvoCqHjLQ1qVYFawpfyGLiUIb7c/5Hz5NeZZ8lKVMIVOMhJspDStiD1O0fLPqGWDp4pQh5UdoT/8Us4OcglUCWmpP+DR9PDL/EhghKai5fYPeG+GTS8FzGDnMmfXaY132mRwvAA=
-X-Gm-Message-State: AOJu0YwgyHDL3kb3Qs8hW+Eu0e9V04xIRyKlbyK9OXXlogK5T0H2MMwB
-	1ZGgxKvGoQGhaL651E1b2J4xEe/Lquy8CF1XDPzhpjUcwiGx6tFu
-X-Google-Smtp-Source: AGHT+IFZjL+uRqFi3RQWD/opqLth7vJLT2z6vemp4GQgqzjHDTisYaBfAgZLAjFcBPqcovOh2xzOSQ==
-X-Received: by 2002:a17:902:e544:b0:1f4:aac7:ffff with SMTP id d9443c01a7336-1f4aac8035fmr51948175ad.20.1716911452471;
-        Tue, 28 May 2024 08:50:52 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c967a45sm81765515ad.167.2024.05.28.08.50.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 08:50:51 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c9b110eb-ff0e-41f2-9492-8a5d8c3c01d0@roeck-us.net>
-Date: Tue, 28 May 2024 08:50:49 -0700
+	s=arc-20240116; t=1716911618; c=relaxed/simple;
+	bh=bebSNINfLGRXjEL3kdOR1gvaAlgvXerHGRc6bFG72XM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCO0pk5ZafCbECVYF9A9pJUsrcBoa8xDGt/WxgFCBFK78j4V2eFlxjihb5V+7S19a53JAHch3GzD/8dG8wCjjPad0cWLuZOChk8E4HadMf7SGY1zIKMuXPoqFM/El9auPvhXWrRNTpL3Dyjj3RQk/oxkCXwM2TRRq9DcmSoXv5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mXI2zp7Z; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716911617; x=1748447617;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bebSNINfLGRXjEL3kdOR1gvaAlgvXerHGRc6bFG72XM=;
+  b=mXI2zp7ZQsjXBHVXtYpJrC69a+8aA8pC0S8WUYaiFM2Pkq3wdjgnsgwp
+   muH2iu30ZziNXJcf4RVfSX+4XwEAlscmI5vTzOY/+JiLwBeJW4djuvZ+F
+   Mu0EmMsUDoZjCqE/U8176H66cr8LNbuYKUls/NazKFWPOXvrpBMNI82/T
+   PyYa0j1UfHdgNbOdddApK5wCv6D5q5nk7u/O0eZlsKrRTW068cnS7tMqa
+   2Zf18H1tZIZYbmF9m4LSpI6RyUK0ZYKtmk5xJ6H0qjlOITJJB7yIHe3O7
+   BvE6jrn2yBpMmkurlmdyH3hTMSVDnBenFUZ5qLm83wlEE4EdUc7ZFEhYq
+   Q==;
+X-CSE-ConnectionGUID: g5gLuwjYT0mO8iUfFVdwGg==
+X-CSE-MsgGUID: sva2hfgFRlGDpjcmU4iPMw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13488885"
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="13488885"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 08:53:36 -0700
+X-CSE-ConnectionGUID: MtRu17F0SRKNFeJRdnL+dw==
+X-CSE-MsgGUID: 1Akhkm+dTiWzxcfzcudOOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="72551972"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 28 May 2024 08:53:30 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sBz7l-000CPL-0V;
+	Tue, 28 May 2024 15:53:04 +0000
+Date: Tue, 28 May 2024 23:51:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Liu Ying <victor.liu@nxp.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] drm/bridge: imx93-mipi-dsi: Use dev_err_probe
+Message-ID: <202405282314.dvr8cFY0-lkp@intel.com>
+References: <20240528093922.194684-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] hwmon: add ChromeOS EC driver
-To: Stephen Horvath <s.horvath@outlook.com.au>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Benson Leung <bleung@chromium.org>,
- Lee Jones <lee@kernel.org>, Guenter Roeck <groeck@chromium.org>,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- chrome-platform@lists.linux.dev, Dustin Howett <dustin@howett.net>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Moritz Fischer <mdf@kernel.org>
-References: <20240507-cros_ec-hwmon-v2-0-1222c5fca0f7@weissschuh.net>
- <20240507-cros_ec-hwmon-v2-1-1222c5fca0f7@weissschuh.net>
- <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
- <9cf224dd-51eb-4608-abcf-06f337d08178@t-8ch.de>
- <SY4P282MB306325BB023A95198F25A21DC5F12@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <SY4P282MB306325BB023A95198F25A21DC5F12@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528093922.194684-1-alexander.stein@ew.tq-group.com>
 
-On 5/27/24 17:15, Stephen Horvath wrote:
-> Hi Thomas,
-> 
-> On 28/5/24 05:24, Thomas Weißschuh wrote:
->> Hi Stephen,
->>
->> On 2024-05-25 09:13:09+0000, Stephen Horvath wrote:
->>> I was the one to implement fan monitoring/control into Dustin's driver, and
->>> just had a quick comment for your driver:
->>>
->>> On 8/5/24 02:29, Thomas Weißschuh wrote:
->>>> The ChromeOS Embedded Controller exposes fan speed and temperature
->>>> readings.
->>>> Expose this data through the hwmon subsystem.
->>>>
->>>> The driver is designed to be probed via the cros_ec mfd device.
->>>>
->>>> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
->>>> ---
->>>>    Documentation/hwmon/cros_ec_hwmon.rst |  26 ++++
->>>>    Documentation/hwmon/index.rst         |   1 +
->>>>    MAINTAINERS                           |   8 +
->>>>    drivers/hwmon/Kconfig                 |  11 ++
->>>>    drivers/hwmon/Makefile                |   1 +
->>>>    drivers/hwmon/cros_ec_hwmon.c         | 269 ++++++++++++++++++++++++++++++++++
->>>>    6 files changed, 316 insertions(+)
->>>>
->>
->> <snip>
->>
->>>> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
->>>> new file mode 100644
->>>> index 000000000000..d59d39df2ac4
->>>> --- /dev/null
->>>> +++ b/drivers/hwmon/cros_ec_hwmon.c
->>>> @@ -0,0 +1,269 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>>> +/*
->>>> + *  ChromesOS EC driver for hwmon
->>>> + *
->>>> + *  Copyright (C) 2024 Thomas Weißschuh <linux@weissschuh.net>
->>>> + */
->>>> +
->>>> +#include <linux/device.h>
->>>> +#include <linux/hwmon.h>
->>>> +#include <linux/kernel.h>
->>>> +#include <linux/mod_devicetable.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/platform_device.h>
->>>> +#include <linux/platform_data/cros_ec_commands.h>
->>>> +#include <linux/platform_data/cros_ec_proto.h>
->>>> +#include <linux/units.h>
->>>> +
->>>> +#define DRV_NAME    "cros-ec-hwmon"
->>>> +
->>>> +struct cros_ec_hwmon_priv {
->>>> +    struct cros_ec_device *cros_ec;
->>>> +    u8 thermal_version;
->>>> +    const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
->>>> +};
->>>> +
->>>> +static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
->>>> +{
->>>> +    u16 data;
->>>> +    int ret;
->>>> +
->>>> +    ret = cros_ec->cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &data);
->>>> +    if (ret < 0)
->>>> +        return ret;
->>>> +
->>>> +    data = le16_to_cpu(data);
->>>> +
->>>> +    if (data == EC_FAN_SPEED_NOT_PRESENT)
->>>> +        return -ENODEV;
->>>> +
->>>
->>> Don't forget it can also return `EC_FAN_SPEED_STALLED`.
->>
->> Thanks for the hint. I'll need to think about how to handle this better.
->>
->>> Like Guenter, I also don't like returning `-ENODEV`, but I don't have a
->>> problem with checking for `EC_FAN_SPEED_NOT_PRESENT` in case it was removed
->>> since init or something.
->>
+Hi Alexander,
 
-That won't happen. Chromebooks are not servers, where one might be able to
-replace a fan tray while the system is running.
+kernel test robot noticed the following build warnings:
 
->> Ok.
->>
->>> My approach was to return the speed as `0`, since the fan probably isn't
->>> spinning, but set HWMON_F_FAULT for `EC_FAN_SPEED_NOT_PRESENT` and
->>> HWMON_F_ALARM for `EC_FAN_SPEED_STALLED`.
->>> No idea if this is correct though.
->>
->> I'm not a fan of returning a speed of 0 in case of errors.
->> Rather -EIO which can't be mistaken.
->> Maybe -EIO for both EC_FAN_SPEED_NOT_PRESENT (which should never happen)
->> and also for EC_FAN_SPEED_STALLED.
-> 
-> Yeah, that's pretty reasonable.
-> 
+[auto build test WARNING on shawnguo/for-next]
+[also build test WARNING on linus/master v6.10-rc1 next-20240528]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
--EIO is an i/o error. I have trouble reconciling that with
-EC_FAN_SPEED_NOT_PRESENT or EC_FAN_SPEED_STALLED.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Stein/drm-bridge-imx93-mipi-dsi-Use-dev_err_probe/20240528-174332
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240528093922.194684-1-alexander.stein%40ew.tq-group.com
+patch subject: [PATCH 1/1] drm/bridge: imx93-mipi-dsi: Use dev_err_probe
+config: arm-randconfig-001-20240528 (https://download.01.org/0day-ci/archive/20240528/202405282314.dvr8cFY0-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240528/202405282314.dvr8cFY0-lkp@intel.com/reproduce)
 
-Looking into the EC source code [1], I see:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405282314.dvr8cFY0-lkp@intel.com/
 
-EC_FAN_SPEED_NOT_PRESENT means that the fan is not present.
-That should return -ENODEV in the above code, but only for
-the purpose of making the attribute invisible.
+All warnings (new ones prefixed by >>):
 
-EC_FAN_SPEED_STALLED means exactly that, i.e., that the fan
-is present but not turning. The EC code does not expect that
-to happen and generates a thermal event in case it does.
-Given that, it does make sense to set the fault flag.
-The actual fan speed value should then be reported as 0 or
-possibly -ENODATA. It should _not_ generate any other error
-because that would trip up the "sensors" command for no
-good reason.
+   drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c: In function 'imx93_dsi_probe':
+>> drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c:837:13: warning: unused variable 'ret' [-Wunused-variable]
+     837 |         int ret;
+         |             ^~~
 
-Guenter
 
----
-[1] https://chromium.googlesource.com/chromiumos/platform/ec
+vim +/ret +837 drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c
 
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  831  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  832  static int imx93_dsi_probe(struct platform_device *pdev)
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  833  {
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  834  	struct device *dev = &pdev->dev;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  835  	struct device_node *np = dev->of_node;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  836  	struct imx93_dsi *dsi;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21 @837  	int ret;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  838  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  839  	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  840  	if (!dsi)
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  841  		return -ENOMEM;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  842  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  843  	dsi->regmap = syscon_regmap_lookup_by_phandle(np, "fsl,media-blk-ctrl");
+b407e810c9a5b87 Alexander Stein 2024-05-28  844  	if (IS_ERR(dsi->regmap))
+b407e810c9a5b87 Alexander Stein 2024-05-28  845  		return dev_err_probe(dev, PTR_ERR(dsi->regmap),
+b407e810c9a5b87 Alexander Stein 2024-05-28  846  				     "failed to get block ctrl regmap");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  847  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  848  	dsi->clk_pixel = devm_clk_get(dev, "pix");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  849  	if (IS_ERR(dsi->clk_pixel))
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  850  		return dev_err_probe(dev, PTR_ERR(dsi->clk_pixel),
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  851  				     "failed to get pixel clock\n");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  852  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  853  	dsi->clk_cfg = devm_clk_get(dev, "phy_cfg");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  854  	if (IS_ERR(dsi->clk_cfg))
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  855  		return dev_err_probe(dev, PTR_ERR(dsi->clk_cfg),
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  856  				     "failed to get phy cfg clock\n");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  857  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  858  	dsi->clk_ref = devm_clk_get(dev, "phy_ref");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  859  	if (IS_ERR(dsi->clk_ref))
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  860  		return dev_err_probe(dev, PTR_ERR(dsi->clk_ref),
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  861  				     "failed to get phy ref clock\n");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  862  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  863  	dsi->ref_clk_rate = clk_get_rate(dsi->clk_ref);
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  864  	if (dsi->ref_clk_rate < REF_CLK_RATE_MIN ||
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  865  	    dsi->ref_clk_rate > REF_CLK_RATE_MAX) {
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  866  		dev_err(dev, "invalid phy ref clock rate %lu\n",
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  867  			dsi->ref_clk_rate);
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  868  		return -EINVAL;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  869  	}
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  870  	dev_dbg(dev, "phy ref clock rate: %lu\n", dsi->ref_clk_rate);
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  871  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  872  	dsi->dev = dev;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  873  	dsi->pdata.max_data_lanes = 4;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  874  	dsi->pdata.mode_valid = imx93_dsi_mode_valid;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  875  	dsi->pdata.mode_fixup = imx93_dsi_mode_fixup;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  876  	dsi->pdata.get_input_bus_fmts = imx93_dsi_get_input_bus_fmts;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  877  	dsi->pdata.phy_ops = &imx93_dsi_phy_ops;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  878  	dsi->pdata.host_ops = &imx93_dsi_host_ops;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  879  	dsi->pdata.priv_data = dsi;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  880  	platform_set_drvdata(pdev, dsi);
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  881  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  882  	dsi->dmd = dw_mipi_dsi_probe(pdev, &dsi->pdata);
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  883  	if (IS_ERR(dsi->dmd))
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  884  		return dev_err_probe(dev, PTR_ERR(dsi->dmd),
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  885  				     "failed to probe dw_mipi_dsi\n");
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  886  
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  887  	return 0;
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  888  }
+ce62f8ea7e3f8a8 Liu Ying        2023-08-21  889  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
