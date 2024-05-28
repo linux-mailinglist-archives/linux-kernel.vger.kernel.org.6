@@ -1,145 +1,257 @@
-Return-Path: <linux-kernel+bounces-191817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59ACE8D1496
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C7E8D1498
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A37B22693
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:40:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A72283922
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8C06D1A6;
-	Tue, 28 May 2024 06:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980626A33B;
+	Tue, 28 May 2024 06:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW0LnRHJ"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALFsbEHt"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BCC61FC5;
-	Tue, 28 May 2024 06:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEB561FF6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716878413; cv=none; b=C0J8l/xAcv7Axqx5I6ZuViqGaCQRDbXFGaC1S2xlNXy6XwJjKWMhPvBweoI1ap/1iIzSLCAdkhNFXxTSsgTJ9hv5alxSOzYU6IPArAoFx297HO/qF29VpdkbXIOwDAMmd4Yfp5QHNC0SwhPMPUJYF9rHIYJoa7sezk7vuKS0sls=
+	t=1716878514; cv=none; b=Oqac1t0X27tgZW2rh+fKi+ObTCvj/mnhFucTslpACdeCt9MIfYWqjaBlLzBdSdLLF+RcsWo5mw6mRIjcidNX8LIpb06E9g05Qu0Zco3ZZ2uvnTptdHKCHPT+Adl7MjeIpgqAZdkM2RYMNaZB7BvsWkm0QEhB7gDjmY+CyVRnZDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716878413; c=relaxed/simple;
-	bh=L1uIjANRuY9eh6UNDVsTMZQL6aVuyTCCg8ZM+/uJs4E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LvgIGpY6fseFv+JHOc625Gie6x8ijO5w5v5dMhekxaHo7eDbm/m9/jDfB+4REHLrfW+pVrk7eFepS0HRvxleeXlrTV3BnG/KlwvkiuJ4yw81ZWeLf3RRHf4nz8DyebSCvAfedSbHARZPaWsVrlQKiJpJ85ASdnJ/4kq/vs9Ph8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GW0LnRHJ; arc=none smtp.client-ip=209.85.214.195
+	s=arc-20240116; t=1716878514; c=relaxed/simple;
+	bh=82HAfOyvKSoJTle9HI1BkdJU0HPg2ryPihpkE6FIgKs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MYR3U1Tgxmtq7GLJYOf4ggwo0Do8iBu8kmp4awimISEiL/bEPMasXF901cNMz/w+bpipAtbrqO38cp1V3pI9IIP0zhZwE/0n2jhc0eJ9+u64KKrYo8hwQhQ7TcUK4HYfMLA7I8sFxAFxH/ziOE8Kgy/gMLHt75jBXovcCN/Fwp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALFsbEHt; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1f47f07acd3so4206685ad.0;
-        Mon, 27 May 2024 23:40:11 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43e3ba01083so2542201cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:41:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716878411; x=1717483211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716878512; x=1717483312; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GyT1AQYmZjQqmzbCWjENPJaJCrng/s09BLOsFY4/P2o=;
-        b=GW0LnRHJYQaMvQlr5Bjm9jwqQZ9j1XB0c8r1ZaPAODYl9+0671Z6cnAg1Wactiimlx
-         vhjTqJyNP1tLwAbd8QLenNrf9a+MWYRUs2uh88eilXADvG834DjSYkV1AaoKdggoilca
-         VUXBShgYK9ufU8JAk+XS//FfSz1tcvuO8NKMBu3REUYb1UvYQmO4hjF2QqKdKvWqUyEQ
-         CdYU+9gGCWFa8SB81GFM/El5P0KtzX5X8oJjkj1PBe4wsJXfZzvF2TcCHX3sbgt8H1QI
-         a2IsTf8XLnYDDu2mRTFAVjbdaYl45VpCOeb8+x4horB9iZfT0eGlNfe1bt2KLeRH91pe
-         LYBg==
+        bh=4ZWqewD2P1bCIUUISdcl3vIbMvnwxU4jgvPJjfgoMEU=;
+        b=ALFsbEHtEvno+LYqAww6fNH//4Ky/W5EfnED3jXuGy/9+FFLMh63IYz6KQaetr91hJ
+         ol/IaS1IoTw/l76TcJkpe6ALkJvOibDXaTP/D1ETArXvSLF/lkUhrGMN0/sffQ3i00rT
+         gD/fum3oCuuPMAvbkMYgCvNuOopIYGWWKWl/xk4UL7GxhDeqg+/EZi9CouooPihTfMTW
+         BEAaSPL/FuJwWYQgkkcLN+KuCqmL8rM73xB+ieNT+Vt1ImdhiDQk6LyQOOUhWL9MBd8I
+         km+5WXoGjUKiZecQuKsF7OceIbBgibspMP0b3shjLTO4j3CxhurOTD/SHm7bUQYKDm9e
+         gS6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716878411; x=1717483211;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1716878512; x=1717483312;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GyT1AQYmZjQqmzbCWjENPJaJCrng/s09BLOsFY4/P2o=;
-        b=hEDfAGtHj9IH67LB5faArQ2q/r6RrWAPE4QkSmWFyZjRIRX4JBUB+CHChA9BmoNmUm
-         dSYPVp0C7rG2OTdtHTikVrbYAW6hqZiRwPsDs3YCgHECpezjbgmrv7KI4SahRxT/mSKd
-         3lPebONfsNMyvWW7OhLrH59qsdfcOnyl9sgwW2A2mpb/WCKgxHSWSaKpZAcW6ro5ybuK
-         w/Zb+tY8lDa4g1lmFf5K0n0NOoq39dUXKXfK9DQE5Zjl7t9T53TSQRs4CwGLM4jdb5UL
-         BGVKyWb0VyrQRS4F+ecIG7tT2ooyID+1ogufX0AcqZHKa7SIn/hBfqW78e7/BUsZYqPd
-         dg/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXlkiIvBD2z9lUmK88jrU1JelwpyqBMNDHrZ2StBeOXsgn9oXRqwWVO3uVCs+HCOsTzRwfeMKImHpfkRnD8VAl+lIxe1+hiSaEUOTJ1ir+e3tOnlM983Pgw7M5C0RYlsPlMgzgTxm3GSIbxJYc=
-X-Gm-Message-State: AOJu0YxxttPOuiRXzReqz5WnjbXjjNhk/6W/s6BeE/IgMZ/KQ6qX49Wi
-	2ZSQMUGeulu3VCHcuopTZAcbg8nFMYELNRdFzHP+b+zBcOvHWjM5Do5jHG1K
-X-Google-Smtp-Source: AGHT+IE+wVIUiVMByDVOTzItPu0y9LRbh5m3oAn4AgD1IzHZL4RsM/uEAC3sIYVL89q22RxzjyhwFw==
-X-Received: by 2002:a17:902:d2cd:b0:1f4:5685:b159 with SMTP id d9443c01a7336-1f45685b4f9mr129964065ad.31.1716878407789;
-        Mon, 27 May 2024 23:40:07 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4a77a4047sm25782125ad.255.2024.05.27.23.40.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 23:40:07 -0700 (PDT)
-From: xu xin <xu.xin.sc@gmail.com>
-X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
-To: xu.xin16@zte.com.cn
-Cc: bigeasy@linutronix.de,
-	john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-rt-users@vger.kernel.org,
-	liu.chun2@zte.com.cn,
-	rostedt@goodmis.org,
-	si.hao@zte.com.cn,
-	yang.yang29@zte.com.cn,
-	zhang.yunkai@zte.com.cn
-Subject: Re: [PATCH  5.10-rt] printk: ignore that console preempted by irq/softirq
-Date: Tue, 28 May 2024 06:40:03 +0000
-Message-Id: <20240528064003.776618-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
-References: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
+        bh=4ZWqewD2P1bCIUUISdcl3vIbMvnwxU4jgvPJjfgoMEU=;
+        b=v3uSizGzyn5g47R+71e+iFuD3nbmN170UG57/RRMTXttHgO3AdCS2vSZZAZQt+kDrL
+         iEm7wMh2h5VOmJ+5E3EAxextncE1MO3O3oUlosPCsK6JUA8aaZHfDc2ina43xhTnIgD6
+         igiYmgBr/b/M4H+SWCeBWJfiMJOvPHlU7dG+RfpYkPsMEW4k8fU9/jTekBonjxc2UoYK
+         ooJufhYjF6KgJ9+zo+Zk66Ndu//ePAA663+G1x2nWXuZ15hienFA5nYquPfADsh6QmN3
+         brNA9OBpWG9Hgym228SqIR5I4k38UwISgdCXJmsr04bxFPZUcfuck4mRhEnHzmONwH3y
+         84FA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnOE+nkh4WPp10LeI+pkna5j4K3vrbwOzgGdC9zlmmxkbngGJ5edsvB23OKNiYY0VkHfpRK4Jp1Gj1bmlUn52dvxerEMUVARQAqsYf
+X-Gm-Message-State: AOJu0YzDcQVFOuxq6PBjP/PFA7YRQau6O4c5xaE/w+vBNiNDU7lTjoZK
+	sul4Ljsn8Yyli1LOVz8P1QzQNZxBoYWDZTckKC/FXPr/u77y7VXV
+X-Google-Smtp-Source: AGHT+IH/K/aB5kM6SeQm3i4+PpUgsTXL17dWiaLyKiFcKW7Y7tFC4n2rVybUm4lLbLr1ZXghG9ax+g==
+X-Received: by 2002:a05:622a:1923:b0:43a:ecf9:c1c7 with SMTP id d75a77b69052e-43fb0e70accmr115275771cf.51.1716878511923;
+        Mon, 27 May 2024 23:41:51 -0700 (PDT)
+Received: from smtpclient.apple (174.137.59.200.16clouds.com. [174.137.59.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb16b7a06sm40270001cf.8.2024.05.27.23.41.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2024 23:41:51 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH] sched/fair: Reschedule the cfs_rq when current is
+ ineligible
+From: Chunxin Zang <spring.cxz@gmail.com>
+In-Reply-To: <06649B84-DA1D-4360-B0C4-79C81A34BC08@gmail.com>
+Date: Tue, 28 May 2024 14:41:34 +0800
+Cc: mingo@redhat.com,
+ Peter Zijlstra <peterz@infradead.org>,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ bristot@redhat.com,
+ vschneid@redhat.com,
+ linux-kernel@vger.kernel.org,
+ yangchen11@lixiang.com,
+ Jerry Zhou <zhouchunhua@lixiang.com>,
+ Chunxin Zang <zangchunxin@lixiang.com>,
+ kprateek.nayak@amd.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A381B712-B0A2-4218-AAD4-956FB73D88CE@gmail.com>
+References: <20240524134011.270861-1-spring.cxz@gmail.com>
+ <ZlCyhDspcZQhxlNk@chenyu5-mobl2>
+ <06649B84-DA1D-4360-B0C4-79C81A34BC08@gmail.com>
+To: Chen Yu <yu.c.chen@intel.com>
+X-Mailer: Apple Mail (2.3731.700.6)
 
-> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > index 7f27cfee283e..faab85dd4439 100644
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -3735,6 +3735,14 @@ bool pr_flush(int timeout_ms, bool reset_on_progress)
-> > diff = 0;
-> > 
-> > for_each_console(con) {
-> > + /*
-> > + * When we're in the unpreemptible context on the same cpu
-> > + * with which the thread of console locates on, we should
-> > + * ignore this console, because it's a vain.
-> > + */
-> > + if (!preemptible() && con->thread &&
-> > + task_cpu(con->thread) == smp_processor_id())
-> > + continue;
-> > if (!(con->flags & CON_ENABLED))
-> > continue;
-> > printk_seq = read_console_seq(con);
-> 
-> This does not apply.
-> There is `may_sleep' set earlier.
-> 
-> There is no console_lock() around for each…
-> 
 
-Sorry, I don't get it.
 
-To clarify it again, this patch aims to solve the useless waiting of pr_flush
-when the console is preempted by the current irq/softirq. This has nothing to
-do with might_sleep().
+> On May 28, 2024, at 10:42, Chunxin Zang <spring.cxz@gmail.com> wrote:
+>=20
+>>=20
+>> On May 24, 2024, at 23:30, Chen Yu <yu.c.chen@intel.com> wrote:
+>>=20
+>> On 2024-05-24 at 21:40:11 +0800, Chunxin Zang wrote:
+>>> I found that some tasks have been running for a long enough time and
+>>> have become illegal, but they are still not releasing the CPU. This
+>>> will increase the scheduling delay of other processes. Therefore, I
+>>> tried checking the current process in wakeup_preempt and =
+entity_tick,
+>>> and if it is illegal, reschedule that cfs queue.
+>>>=20
+>>> The modification can reduce the scheduling delay by about 30% when
+>>> RUN_TO_PARITY is enabled.
+>>> So far, it has been running well in my test environment, and I have
+>>> pasted some test results below.
+>>>=20
+>>=20
+>> Interesting, besides hackbench, I assume that you have workload in
+>> real production environment that is sensitive to wakeup latency?
+>=20
+> Hi Chen
+>=20
+> Yes, my workload  are quite sensitive to wakeup latency .
+>>=20
+>>>=20
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index 03be0d1330a6..a0005d240db5 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -5523,6 +5523,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct =
+sched_entity *curr, int queued)
+>>> hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+>>> return;
+>>> #endif
+>>> +
+>>> + if (!entity_eligible(cfs_rq, curr))
+>>> + resched_curr(rq_of(cfs_rq));
+>>> }
+>>>=20
+>>=20
+>> entity_tick() -> update_curr() -> update_deadline():
+>> se->vruntime >=3D se->deadline ? resched_curr()
+>> only current has expired its slice will it be scheduled out.
+>>=20
+>> So here you want to schedule current out if its lag becomes 0.
+>>=20
+>> In lastest sched/eevdf branch, it is controlled by two sched =
+features:
+>> RESPECT_SLICE: Inhibit preemption until the current task has =
+exhausted it's slice.
+>> RUN_TO_PARITY: Relax RESPECT_SLICE and only protect current until =
+0-lag.
+>> =
+https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=
+=3Dsched/eevdf&id=3De04f5454d68590a239092a700e9bbaf84270397c
+>>=20
+>> Maybe something like this can achieve your goal
+>> if (sched_feat(RUN_TOPARITY) && !entity_eligible(cfs_rq, curr))
+>> resched_curr
+>>=20
+>>>=20
+>>> @@ -8325,6 +8328,9 @@ static void check_preempt_wakeup_fair(struct =
+rq *rq, struct task_struct *p, int
+>>> if (unlikely(p->policy !=3D SCHED_NORMAL) || =
+!sched_feat(WAKEUP_PREEMPTION))
+>>> return;
+>>>=20
+>>> + if (!entity_eligible(cfs_rq, se))
+>>> + goto preempt;
+>>> +
+>>=20
+>> Not sure if this is applicable, later in this function, pick_eevdf() =
+checks
+>> if the current is eligible, !entity_eligible(cfs_rq, curr), if not, =
+curr will
+>> be evicted. And this change does not consider the cgroup hierarchy.
+>>=20
+>> Besides, the check of current eligiblity can get false negative =
+result,
+>> if the enqueued entity has a positive lag. Prateek proposed to
+>> remove the check of current's eligibility in pick_eevdf():
+>> =
+https://lore.kernel.org/lkml/20240325060226.1540-2-kprateek.nayak@amd.com/=
 
-> The other question is which kernel started enforcing might_sleep() for
-> pr_flush(). This should be applied to all kernel or none so we don't
-> have random behaviour across kernels (5.4 yes, 5.10 no, 5.15 yes).
->
+>=20
+> Thank you for letting me know about Peter's latest updates and =
+thoughts.
+> Actually, the original intention of my modification was to minimize =
+the
+> traversal of the rb-tree as much as possible. For example, in the =
+following
+> scenario, if 'curr' is ineligible, the system would still traverse the =
+rb-tree in
+> 'pick_eevdf' to return an optimal 'se', and then trigger  =
+'resched_curr'. After
+> resched, the scheduler will call 'pick_eevdf' again, traversing the
+> rb-tree once more. This ultimately results in the rb-tree being =
+traversed
+> twice. If it's possible to determine that 'curr' is ineligible within =
+'wakeup_preempt'
+> and directly trigger a 'resched', it would reduce the traversal of the =
+rb-tree
+> by one time.
+>=20
+>=20
+> wakeup_preempt-> pick_eevdf                                      -> =
+resched_curr
+>                                                 |->'traverse the =
+rb-tree'  |
+> schedule->pick_eevdf
+>                                   |->'traverse the rb-tree'
+>=20
+>=20
+> Of course, this would break the semantics of RESPECT_SLICE as well as
+> RUN_TO_PARITY. So, this might be considered a performance enhancement
+> for scenarios without NO_RESPECT_SLICE/NO_RUN_TO_PARITY.
+>=20
+Sorry for the mistake. I mean it should be a performance enhancement for =
+scenarios
+with NO_RESPECT_SLICE/NO_RUN_TO_PARITY.
 
-Sorry, my understanding is that pr_flush didn't start enforcing might_sleep().
-This patch can apply to 5.10 and 5.15 where the problem exist.
+Maybe it should be like this
 
-> This is a delay of max 1 sec during bug() and panic(). Not sure how
-> "critical" this is…
+@@ -8325,6 +8328,9 @@ static void check_preempt_wakeup_fair(struct rq =
+*rq, struct task_struct *p, int
+if (unlikely(p->policy !=3D SCHED_NORMAL) || =
+!sched_feat(WAKEUP_PREEMPTION))
+return;
 
-In some industrial control scenarios, bugs and warnings containning a
-pr_flush delay of 1 sec is very critical to the upper services.
++ if (!sched_feat(RESPECT_SLICE) && !sched_feat(RUN_TO_PARITY) && =
+!entity_eligible(cfs_rq, se))
++ 	goto preempt;
++
 
-Especiall for watchdog timeout(< 2s), just WARN can easily lead to system reset,
-which is unacceptible.
+> thanks=20
+> Chunxin
+>=20
+>=20
+>> If I understand your requirement correctly, you want to reduce the =
+wakeup
+>> latency. There are some codes under developed by Peter, which could
+>> customized task's wakeup latency via setting its slice:
+>> https://lore.kernel.org/lkml/20240405110010.934104715@infradead.org/
+>>=20
+>> thanks,
+>> Chenyu
+
 
 
