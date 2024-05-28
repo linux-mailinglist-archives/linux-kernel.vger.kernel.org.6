@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-192555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B96A8D1F14
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D60F8D1F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0872D1F2368C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148991F23459
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035E516FF49;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB4317084F;
 	Tue, 28 May 2024 14:43:44 +0000 (UTC)
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B09216F902
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3BB16F27E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716907423; cv=none; b=NaTiroEQRh8FdsRTPznPTMtvkU4DNTemW9LFg4kyIAgATFJ5SYx5TnraLV8NyOAv65HY3LM/iGNvpeHpOLEccyb08iKZjtDw9vcZnSAdV3EryNPvHxIAUyDsPkeuytS0reWOAETeHqvh9Uyke6RuNkOQfhpAWzTjptUN/zchmDw=
+	t=1716907424; cv=none; b=Pfh3ws7sGP8/bJEZKqgAGk0xIgWEZ7t+Gs4l3DEjYAgmA3gf8R8pZESmdEXzNSTO4i0RW5jicLf1nfpyiTLL2gQV26ctMWVMSo7OcAe+/r5iluDTdub4ebdL2SKEH2M2UEa3FJH20JuGGl4uMOKtj1wFq+jS6jVGAA7ylIfXrN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716907423; c=relaxed/simple;
-	bh=AEMPCYijVQ3FjHfU8+MIpB4KRBaUR9tXiKkrF1Oz8mY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g5gDJWFr6weJ0thNo9fWpnYJ1fX81px1VV5Ydy5BZk1U95hXMhn1eegwcV1aUxirayXrHoc9t7xjJRJ7xptvI6Rig1OfijEnPfq1IcZ4xpg7BIpNBNGAlAznWojlv3Q5HTNzRwuvTh9ZQTxl2PD81a5qEBhOeFdRegatI3SW5iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=none smtp.client-ip=205.220.177.32
+	s=arc-20240116; t=1716907424; c=relaxed/simple;
+	bh=xRBtbxLMzh49QddBZgDAH2CFH4T6i5yktzrkn+9i++U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cSdYfNzG8L9Q+Z7uyew0Gagzbr083/WU3lbuBWjDKrXfW4KzS+sEiBmffdwTp8PkB4T+RGPcXUnzgPP5+EGDwcjRH7yBh0iwFKYVklP2NFO1KjUDsuDps7F0tf/hY46knLoctx7gCM3Lj/ELfE+E92jg7LmxzlSjMnilaSC5g6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SBn37C019448;
-	Tue, 28 May 2024 14:43:34 GMT
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SBorRU020154;
+	Tue, 28 May 2024 14:43:35 GMT
 DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
- =?UTF-8?Q?=3Dcc:content-transfer-encoding:date:from:message-id:mime-versi?=
- =?UTF-8?Q?on:subject:to;_s=3Dcorp-2023-11-20;_bh=3DqONFGGvnWDmZHkGRAeYDb5?=
- =?UTF-8?Q?VDvvTkeSuCre4W1Lo4orU=3D;_b=3DIJSDL/FL9K+jXU1jqAVGEc+Zm3XKS3xQU?=
- =?UTF-8?Q?gO4RO8fzcjSNU1RZ0hAhEMuCDA4XXwOKGDJ_9o2kdcUGjzM5avmETT+4wumurK2?=
- =?UTF-8?Q?0hsn8NGAMMtpcse93H7PzlKG4nYzegsbYwsH8UtVV_k22Y2t39nZ8sv3lYsHpkE?=
- =?UTF-8?Q?dV6MuhDL5klD8Zc6e1kwZb5ivEj3vyF5y/+GdsUVrmPQbtS_4aLUuVGXS8hUrd+?=
- =?UTF-8?Q?urMrvK8IuNJhEatOMgzi70xzR+lmxYiuzOMKBPrEYG2ZTn1fkk3nF_JPTfpFDJL?=
- =?UTF-8?Q?jz0uauEIAeZU14GbHYp3kTzc0H3YnlSoecBGBRbk3OqkIkPjI5ExXN6Y7rc_9w?=
- =?UTF-8?Q?=3D=3D_?=
+ =?UTF-8?Q?=3Dcc:content-transfer-encoding:date:from:in-reply-to:message-i?=
+ =?UTF-8?Q?d:mime-version:references:subject:to;_s=3Dcorp-2023-11-20;_bh?=
+ =?UTF-8?Q?=3DH9cdt3lpPMrTDH2HH5AJwUAq5CiV1r3IfA2xEocJ7Ww=3D;_b=3DJwzg3JCm?=
+ =?UTF-8?Q?W2MPH6QINpOLZrzmjW4ijeoRKZRmpvgf/SrBOG9po4kaxT4F/jnc+3IKGXRG_x6?=
+ =?UTF-8?Q?EcerbojpTDHIXIYpbGLgLmx9ebQUOT95ob/QxlCCoaj738z0DDYUO2rh3GCfMnJ?=
+ =?UTF-8?Q?+2k_NF3zwpPh7mc9WHNoPQ6WKQS04yhmjIHIVjTcQ680PACtqPHgRXvSNDPVIOI?=
+ =?UTF-8?Q?yLKQFOcsv_r34D5Q34NJ2050TsS38Qc9o4b6XAmJHcRQDGhVcbGygMzgTiKq0ZO?=
+ =?UTF-8?Q?5DtvzscztkBoAob_W3sucUaZ5gWXm1yshYeEMHNUawlC3cviX2G58ejkNcNn0zZ?=
+ =?UTF-8?Q?xLezNE/raBei0qQF3XDtZ_Yw=3D=3D_?=
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8j84ery-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8p7meru-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 28 May 2024 14:43:34 +0000
 Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44SDud91025822;
-	Tue, 28 May 2024 14:43:33 GMT
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44SER3sU025784;
+	Tue, 28 May 2024 14:43:34 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50py1hc-1
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50py1j2-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 14:43:33 +0000
+	Tue, 28 May 2024 14:43:34 +0000
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SEhW7p035350;
-	Tue, 28 May 2024 14:43:32 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SEhW7r035350;
+	Tue, 28 May 2024 14:43:33 GMT
 Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3yc50py1g5-1;
-	Tue, 28 May 2024 14:43:32 +0000
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3yc50py1g5-2;
+	Tue, 28 May 2024 14:43:33 +0000
 From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
         mingo@kernel.org, keith.lucas@oracle.com, aruna.ramakrishna@oracle.com
-Subject: [PATCH  v4 0/5] x86/pkeys: update PKRU to enable pkey 0 before
-Date: Tue, 28 May 2024 14:43:26 +0000
-Message-Id: <20240528144331.2758104-1-aruna.ramakrishna@oracle.com>
+Subject: [PATCH  v4 1/5] x86/pkeys: Add PKRU as a parameter in signal handling functions
+Date: Tue, 28 May 2024 14:43:27 +0000
+Message-Id: <20240528144331.2758104-2-aruna.ramakrishna@oracle.com>
 X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20240528144331.2758104-1-aruna.ramakrishna@oracle.com>
+References: <20240528144331.2758104-1-aruna.ramakrishna@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,61 +79,286 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=850 bulkscore=0
+ adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
  definitions=main-2405280111
-X-Proofpoint-ORIG-GUID: dpJjDFvk0tZUvkGSS3B3Fdn_s0Kvkmtt
-X-Proofpoint-GUID: dpJjDFvk0tZUvkGSS3B3Fdn_s0Kvkmtt
+X-Proofpoint-ORIG-GUID: V89zxVvVeUVPybjM2IFzMjjOR7l6xC_2
+X-Proofpoint-GUID: V89zxVvVeUVPybjM2IFzMjjOR7l6xC_2
 
-v4 updates (based on review feedback from Thomas Gleixner):
-- Simplified update_pkru_in_sigframe()
-- Changed sigpkru to enable minimally required keys (init_pkru and current
-  pkru)
-- Modified pkey_sighandler_tests.c to use kselfttest framework
-- Fixed commit descriptions
-- Fixed sigreturn use case (pointed out by Jeff Xu)
-- Added a new sigreturn test case
+Problem description:
+Let's assume there's a multithreaded application that runs untrusted
+user code. Each thread has its stack/code protected by a non-zero pkey,
+and the PKRU register is set up such that only that particular non-zero
+pkey is enabled. Each thread also sets up an alternate signal stack to
+handle signals, which is protected by pkey zero. The pkeys man page
+documents that the PKRU will be reset to init_pkru when the signal
+handler is invoked, which means that pkey zero access will be enabled.
+But this reset happens after the kernel attempts to push fpu state
+to the alternate stack, which is not (yet) accessible by the kernel,
+which leads to a new SIGSEGV being sent to the application, terminating
+it.
 
-v3 updates (based on review feedback from Ingo Molnar and Dave Hansen):
-- Split the original patch into 3:
-        - function interface changes
-        - helper functions
-        - functional change to write pkru on sigframe
-- Enabled all pkeys before XSAVE - i.e. wrpkru(0), rather than assuming
-that the alt sig stack is always protected by pkey 0.
-- Added a few test cases in pkey_sighandler_tests.c.
+Enabling both the non-zero pkey (for the thread) and pkey zero in
+userspace will not work for this use case. We cannot have the alt stack
+writeable by all - the rationale here is that the code running in that
+thread (using a non-zero pkey) is untrusted and should not have access
+to the alternate signal stack (that uses pkey zero), to prevent the
+return address of a function from being changed. The expectation is that
+kernel should be able to set up the alternate signal stack and deliver
+the signal to the application even if pkey zero is explicitly disabled
+by the application. The signal handler accessibility should not be dictated
+by whatever PKRU value the thread sets up.
 
-I had some trouble adding these tests to
-tools/testing/selftests/mm/protection_keys.c, so they're in a separate
-file.
+Solution:
+The PKRU register is managed by XSAVE, which means the sigframe contents
+must match the register contents - which is not the case here. We want
+the sigframe to contain the user-defined PKRU value (so that it is
+restored correctly from sigcontext) but the actual register must be
+reset to init_pkru so that the alt stack is accessible and the signal
+can be delivered to the application. It seems that the proper fix here
+would be to remove PKRU from the XSAVE framework and manage it
+separately, which is quite complicated. As a workaround, do this:
 
-Aruna Ramakrishna (4):
-  x86/pkeys: Add PKRU as a parameter in signal handling functions
-  x86/pkeys: Add helper functions to update PKRU on sigframe
-  x86/pkeys: Update PKRU to enable minimally required pkeys before XSAVE
-  x86/pkeys: Restore altstack before sigcontext
+        orig_pkru = rdpkru();
+        wrpkru(orig_pkru & init_pkru_value);
+        xsave_to_user_sigframe();
+        put_user(pkru_sigframe_addr, orig_pkru)
 
-Keith Lucas (1):
-  selftests/mm: Add new testcases for pkeys
+This change is split over multiple patches.
 
- arch/x86/include/asm/fpu/signal.h             |   2 +-
- arch/x86/include/asm/sighandling.h            |  10 +-
- arch/x86/kernel/fpu/signal.c                  |  27 +-
- arch/x86/kernel/fpu/xstate.c                  |  13 +
- arch/x86/kernel/fpu/xstate.h                  |   1 +
- arch/x86/kernel/signal.c                      |  42 +-
- arch/x86/kernel/signal_32.c                   |  12 +-
- arch/x86/kernel/signal_64.c                   |  14 +-
- tools/testing/selftests/mm/Makefile           |   5 +-
- tools/testing/selftests/mm/pkey-helpers.h     |  11 +-
- .../selftests/mm/pkey_sighandler_tests.c      | 480 ++++++++++++++++++
- tools/testing/selftests/mm/protection_keys.c  |  10 -
- 12 files changed, 582 insertions(+), 45 deletions(-)
- create mode 100644 tools/testing/selftests/mm/pkey_sighandler_tests.c
+In preparation for writing PKRU to sigframe in a later patch, pass in PKRU as
+an additional parameter down the chain from handle_signal:
+        setup_rt_frame()
+          xxx_setup_rt_frame()
+            get_sigframe()
+              copy_fpstate_to_sigframe()
+                copy_fpregs_to_sigframe()
 
+There are no functional changes in this patch.
 
-base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-prerequisite-patch-id: d84439301b44c03df2555d3722ec512001ae52f2
+Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+---
+ arch/x86/include/asm/fpu/signal.h  |  2 +-
+ arch/x86/include/asm/sighandling.h | 10 +++++-----
+ arch/x86/kernel/fpu/signal.c       |  6 +++---
+ arch/x86/kernel/signal.c           | 19 ++++++++++---------
+ arch/x86/kernel/signal_32.c        |  8 ++++----
+ arch/x86/kernel/signal_64.c        |  8 ++++----
+ 6 files changed, 27 insertions(+), 26 deletions(-)
+
+diff --git a/arch/x86/include/asm/fpu/signal.h b/arch/x86/include/asm/fpu/signal.h
+index 611fa41711af..eccc75bc9c4f 100644
+--- a/arch/x86/include/asm/fpu/signal.h
++++ b/arch/x86/include/asm/fpu/signal.h
+@@ -29,7 +29,7 @@ fpu__alloc_mathframe(unsigned long sp, int ia32_frame,
+ 
+ unsigned long fpu__get_fpstate_size(void);
+ 
+-extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size);
++extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size, u32 pkru);
+ extern void fpu__clear_user_states(struct fpu *fpu);
+ extern bool fpu__restore_sig(void __user *buf, int ia32_frame);
+ 
+diff --git a/arch/x86/include/asm/sighandling.h b/arch/x86/include/asm/sighandling.h
+index e770c4fc47f4..de458354a3ea 100644
+--- a/arch/x86/include/asm/sighandling.h
++++ b/arch/x86/include/asm/sighandling.h
+@@ -17,11 +17,11 @@ void signal_fault(struct pt_regs *regs, void __user *frame, char *where);
+ 
+ void __user *
+ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
+-	     void __user **fpstate);
++	     void __user **fpstate, u32 pkru);
+ 
+-int ia32_setup_frame(struct ksignal *ksig, struct pt_regs *regs);
+-int ia32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs);
+-int x64_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs);
+-int x32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs);
++int ia32_setup_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru);
++int ia32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru);
++int x64_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru);
++int x32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru);
+ 
+ #endif /* _ASM_X86_SIGHANDLING_H */
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 247f2225aa9f..2b3b9e140dd4 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -156,7 +156,7 @@ static inline bool save_xstate_epilog(void __user *buf, int ia32_frame,
+ 	return !err;
+ }
+ 
+-static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
++static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf, u32 pkru)
+ {
+ 	if (use_xsave())
+ 		return xsave_to_user_sigframe(buf);
+@@ -185,7 +185,7 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
+  * For [f]xsave state, update the SW reserved fields in the [f]xsave frame
+  * indicating the absence/presence of the extended state to the user.
+  */
+-bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
++bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size, u32 pkru)
+ {
+ 	struct task_struct *tsk = current;
+ 	struct fpstate *fpstate = tsk->thread.fpu.fpstate;
+@@ -228,7 +228,7 @@ bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ 		fpregs_restore_userregs();
+ 
+ 	pagefault_disable();
+-	ret = copy_fpregs_to_sigframe(buf_fx);
++	ret = copy_fpregs_to_sigframe(buf_fx, pkru);
+ 	pagefault_enable();
+ 	fpregs_unlock();
+ 
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 31b6f5dddfc2..94b894437327 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -74,7 +74,7 @@ static inline int is_x32_frame(struct ksignal *ksig)
+  */
+ void __user *
+ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
+-	     void __user **fpstate)
++	     void __user **fpstate, u32 pkru)
+ {
+ 	struct k_sigaction *ka = &ksig->ka;
+ 	int ia32_frame = is_ia32_frame(ksig);
+@@ -139,7 +139,7 @@ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
+ 	}
+ 
+ 	/* save i387 and extended state */
+-	if (!copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size))
++	if (!copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size, pkru))
+ 		return (void __user *)-1L;
+ 
+ 	return (void __user *)sp;
+@@ -206,7 +206,7 @@ unsigned long get_sigframe_size(void)
+ }
+ 
+ static int
+-setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
++setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru)
+ {
+ 	/* Perform fixup for the pre-signal frame. */
+ 	rseq_signal_deliver(ksig, regs);
+@@ -214,21 +214,22 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	/* Set up the stack frame */
+ 	if (is_ia32_frame(ksig)) {
+ 		if (ksig->ka.sa.sa_flags & SA_SIGINFO)
+-			return ia32_setup_rt_frame(ksig, regs);
++			return ia32_setup_rt_frame(ksig, regs, pkru);
+ 		else
+-			return ia32_setup_frame(ksig, regs);
++			return ia32_setup_frame(ksig, regs, pkru);
+ 	} else if (is_x32_frame(ksig)) {
+-		return x32_setup_rt_frame(ksig, regs);
++		return x32_setup_rt_frame(ksig, regs, pkru);
+ 	} else {
+-		return x64_setup_rt_frame(ksig, regs);
++		return x64_setup_rt_frame(ksig, regs, pkru);
+ 	}
+ }
+ 
+ static void
+ handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+ {
+-	bool stepping, failed;
+ 	struct fpu *fpu = &current->thread.fpu;
++	u32 pkru = read_pkru();
++	bool stepping, failed;
+ 
+ 	if (v8086_mode(regs))
+ 		save_v86_state((struct kernel_vm86_regs *) regs, VM86_SIGNAL);
+@@ -264,7 +265,7 @@ handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+ 	if (stepping)
+ 		user_disable_single_step(current);
+ 
+-	failed = (setup_rt_frame(ksig, regs) < 0);
++	failed = (setup_rt_frame(ksig, regs, pkru) < 0);
+ 	if (!failed) {
+ 		/*
+ 		 * Clear the direction flag as per the ABI for function entry.
+diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
+index c12624bc82a3..68f2bfd7d6e7 100644
+--- a/arch/x86/kernel/signal_32.c
++++ b/arch/x86/kernel/signal_32.c
+@@ -228,7 +228,7 @@ do {									\
+ 		goto label;						\
+ } while(0)
+ 
+-int ia32_setup_frame(struct ksignal *ksig, struct pt_regs *regs)
++int ia32_setup_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru)
+ {
+ 	sigset32_t *set = (sigset32_t *) sigmask_to_save();
+ 	struct sigframe_ia32 __user *frame;
+@@ -246,7 +246,7 @@ int ia32_setup_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 		0x80cd,		/* int $0x80 */
+ 	};
+ 
+-	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp);
++	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp, pkru);
+ 
+ 	if (ksig->ka.sa.sa_flags & SA_RESTORER) {
+ 		restorer = ksig->ka.sa.sa_restorer;
+@@ -299,7 +299,7 @@ int ia32_setup_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	return -EFAULT;
+ }
+ 
+-int ia32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
++int ia32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru)
+ {
+ 	sigset32_t *set = (sigset32_t *) sigmask_to_save();
+ 	struct rt_sigframe_ia32 __user *frame;
+@@ -319,7 +319,7 @@ int ia32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 		0,
+ 	};
+ 
+-	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp);
++	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp, pkru);
+ 
+ 	if (!user_access_begin(frame, sizeof(*frame)))
+ 		return -EFAULT;
+diff --git a/arch/x86/kernel/signal_64.c b/arch/x86/kernel/signal_64.c
+index 23d8aaf8d9fd..6b189de005b5 100644
+--- a/arch/x86/kernel/signal_64.c
++++ b/arch/x86/kernel/signal_64.c
+@@ -161,7 +161,7 @@ static unsigned long frame_uc_flags(struct pt_regs *regs)
+ 	return flags;
+ }
+ 
+-int x64_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
++int x64_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru)
+ {
+ 	sigset_t *set = sigmask_to_save();
+ 	struct rt_sigframe __user *frame;
+@@ -172,7 +172,7 @@ int x64_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	if (!(ksig->ka.sa.sa_flags & SA_RESTORER))
+ 		return -EFAULT;
+ 
+-	frame = get_sigframe(ksig, regs, sizeof(struct rt_sigframe), &fp);
++	frame = get_sigframe(ksig, regs, sizeof(struct rt_sigframe), &fp, pkru);
+ 	uc_flags = frame_uc_flags(regs);
+ 
+ 	if (!user_access_begin(frame, sizeof(*frame)))
+@@ -300,7 +300,7 @@ int copy_siginfo_to_user32(struct compat_siginfo __user *to,
+ 	return __copy_siginfo_to_user32(to, from);
+ }
+ 
+-int x32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
++int x32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs, u32 pkru)
+ {
+ 	compat_sigset_t *set = (compat_sigset_t *) sigmask_to_save();
+ 	struct rt_sigframe_x32 __user *frame;
+@@ -311,7 +311,7 @@ int x32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	if (!(ksig->ka.sa.sa_flags & SA_RESTORER))
+ 		return -EFAULT;
+ 
+-	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp);
++	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp, pkru);
+ 
+ 	uc_flags = frame_uc_flags(regs);
+ 
 -- 
 2.39.3
 
