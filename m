@@ -1,157 +1,247 @@
-Return-Path: <linux-kernel+bounces-192857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18078D2322
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:14:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AF78D232B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868AB1F22468
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:14:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA212826EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133CB482CA;
-	Tue, 28 May 2024 18:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA52487A9;
+	Tue, 28 May 2024 18:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYEP8qQ8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kGqkzwuL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A22B47F60
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112E1175AB;
+	Tue, 28 May 2024 18:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716920054; cv=none; b=Q5/ROG2Vm3TD3asS6okbNXx/BM5gCia8bXvA8C02Xaryg7e4yDNWcJOpUZlv4D50qNyuDY27KNzerOZ6zXOjhzzSwXw/9kFkbRaL2uEZ7tEGEJIdHowf8p2yOmgsv9L+luB3PujiGbkZEGWI7JqxWNc/m5zv0gHQab+H3gKqoIo=
+	t=1716920140; cv=none; b=tvaYg3ZCaaj2Pvpa+j/UNT2GlWW01jwEY2IPsDKw2NTAfgb9GfV7Y8LxG5LtAR4AFaADjagOsef3zukMDb9Q0HT/DHf1B9uOMB6cHfPieIVawAIaIoayjBIlzL2Q5lWrqrTsumnTh3ToGK/SAXI7b3VVvb03MRutS/BsocNXqs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716920054; c=relaxed/simple;
-	bh=eW7J25ArsEyennZdbBf0fqRZKqfZSfVryDcvJEurD+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fy1gV2UmPaW5vHwWmRjHVu/4Bkl9jTWxaVFKTzh7ntgxBlRJUVOWgnHxYVsA7W6mjNZxKsMocSs5u4nF4tfC+Rw27EARobDdhTimOVFAjgWTakTkh37oJukMTObeIsZFspfPC2N8cxnQkI0N7mr4UD7KsSLw8n8AMtFZao42znA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYEP8qQ8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3DAC3277B;
-	Tue, 28 May 2024 18:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716920053;
-	bh=eW7J25ArsEyennZdbBf0fqRZKqfZSfVryDcvJEurD+g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SYEP8qQ8SqLJ/em3CQUMJXMkoo6EwxecpN4tuXsY7+4DO+l32IgpWmKVLjCk3oMG1
-	 vYd0o3q4k4oqx1JQaLZCt0RtQqal4FFuuVUtxmA6su9B3Z62rBXiH/rawveGNkOpDT
-	 A9aD9Auzx7x25o/8+VAGSGNCtyfhINqtXyOkNp7/AOT7XaX+RILBoBQ4EPSxITZQBY
-	 VfDVh8YFGiP1sJW3LbwyqNtGyeWM7kLLFeVqJP6FRmrLEvv3uk1+AiP+TDiqRULW1p
-	 TqGfcHz7ebxlzwXCIEdSa+pfJFd6a88c1zUZK6XhCa3MxkjM/KRaTVp/Hj6QkK0t8O
-	 BUxZF9faSfanw==
-Date: Tue, 28 May 2024 15:14:10 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Subject: [PATCH 1/1 fyi] tools arch x86: Sync the msr-index.h copy with the
- kernel sources
-Message-ID: <ZlYe8jOzd1_DyA7X@x1>
+	s=arc-20240116; t=1716920140; c=relaxed/simple;
+	bh=4W5FCBBXvrTUdKPbuVNMMVHRss0A84zoHMEgZSbaSd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=naoJa0XPDh2XyOl5U/Rz0gjY0cEHDEHibuXr/qRhqCkE3m9cuhOaW4hVEIV+7zmTtlLZAa6pOMEAUUv7c4vEEYtCeKhh352uPkiWTnnnZYY5RDsq0k4VNJ+OWn3a6Q0EC504oxzfy0WkbXLEfO2JJDf/tvuKnTf7ttyT+Dp1eZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kGqkzwuL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SB0CUe018067;
+	Tue, 28 May 2024 18:14:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NSohPjO+aHSrdO1H9ukl+Zfhzj2AbJc55gRsHXpRQeI=; b=kGqkzwuLTMG8wl9B
+	sBcqBi7dfyUDzgOPIEOwU8QwbttsOIy75cF0z4K8mRNImwO3fEJKjfqxJEaMGkj8
+	XIxI7nL/8jxPBLGAYD/9jtoPHkNsBQ+cmmaRO6BQpt+2TXDDB9tkU2+QTPPHr/S3
+	TShJL1KA1V9tpv7RIPWof842OQdCYEHn9fc6lquJNPrzfSIyIDPto4ydum8Se977
+	I1X8aJyYpTtFjZGoEm/DnjnTvVYhXdgdU/bRIb+dUP7Lxf/HS1hh/KH8wtqvlNg5
+	H8FtvlUCsyh/1wig2inooJJYE0OGCR84XQXqNlH40QmKx6mdIh1OuophXapJhi/i
+	4uNADw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2neyv6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 18:14:58 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SIEpjp031733
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 18:14:51 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 11:14:50 -0700
+Message-ID: <5324b1d0-5aee-420c-a6a6-edf5262772b8@quicinc.com>
+Date: Tue, 28 May 2024 11:14:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] drm/display: split DSC helpers from DP helpers
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Sumit Semwal
+	<sumit.semwal@linaro.org>,
+        Caleb Connolly <caleb.connolly@linaro.org>,
+        "Alex
+ Deucher" <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi
+	<rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Vinod Koul
+	<vkoul@kernel.org>, Caleb Connolly <caleb@connolly.tech>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <intel-gfx@lists.freedesktop.org>,
+        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>
+References: <20240522-panel-sw43408-fix-v3-0-6902285adcc0@linaro.org>
+ <20240522-panel-sw43408-fix-v3-1-6902285adcc0@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240522-panel-sw43408-fix-v3-1-6902285adcc0@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KJj3kZhDHKb5JVjOHiO3rB0-tT27BD6_
+X-Proofpoint-GUID: KJj3kZhDHKb5JVjOHiO3rB0-tT27BD6_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_12,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2405280136
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-Full explanation:
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+On 5/21/2024 11:25 PM, Dmitry Baryshkov wrote:
+> Currently the DRM DSC functions are selected by the
+> DRM_DISPLAY_DP_HELPER Kconfig symbol. This is not optimal, since the DSI
+> code (both panel and host drivers) end up selecting the seemingly
+> irrelevant DP helpers. Split the DSC code to be guarded by the separate
+> DRM_DISPLAY_DSC_HELPER Kconfig symbol.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-The way these headers are used in perf are not restricted to just
-including them to compile something.
+Hi Dmitry,
 
-There are sometimes used in scripts that convert defines into string
-tables, etc, so some change may break one of these scripts, or new MSRs
-may use some different #define pattern, etc.
+LGTM
 
-E.g.:
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
-  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
-  tools/perf/trace/beauty/arch_errno_names.sh
-  tools/perf/trace/beauty/drm_ioctl.sh
-  tools/perf/trace/beauty/fadvise.sh
-  tools/perf/trace/beauty/fsconfig.sh
-  tools/perf/trace/beauty/fsmount.sh
-  $
-  $ tools/perf/trace/beauty/fadvise.sh
-  static const char *fadvise_advices[] = {
-        [0] = "NORMAL",
-        [1] = "RANDOM",
-        [2] = "SEQUENTIAL",
-        [3] = "WILLNEED",
-        [4] = "DONTNEED",
-        [5] = "NOREUSE",
-  };
-  $
+Thanks,
 
-The tools/perf/check-headers.sh script, part of the tools/ build
-process, points out changes in the original files.
+Jessica Zhang
 
-So its important not to touch the copies in tools/ when doing changes in
-the original kernel headers, that will be done later, when
-check-headers.sh inform about the change to the perf tools hackers.
-
-To pick up the changes from these csets:
-
-  53bc516ade85a764 ("x86/msr: Move ARCH_CAP_XAPIC_DISABLE bit definition to its rightful place")
-
-That patch just move definitions around, so this just silences this perf
-build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Link: https://lore.kernel.org/lkml/
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/x86/include/asm/msr-index.h | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index e72c2b87295799af..e022e6eb766c6405 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -170,6 +170,10 @@
- 						 * CPU is not affected by Branch
- 						 * History Injection.
- 						 */
-+#define ARCH_CAP_XAPIC_DISABLE		BIT(21)	/*
-+						 * IA32_XAPIC_DISABLE_STATUS MSR
-+						 * supported
-+						 */
- #define ARCH_CAP_PBRSB_NO		BIT(24)	/*
- 						 * Not susceptible to Post-Barrier
- 						 * Return Stack Buffer Predictions.
-@@ -192,11 +196,6 @@
- 						 * File.
- 						 */
- 
--#define ARCH_CAP_XAPIC_DISABLE		BIT(21)	/*
--						 * IA32_XAPIC_DISABLE_STATUS MSR
--						 * supported
--						 */
--
- #define MSR_IA32_FLUSH_CMD		0x0000010b
- #define L1D_FLUSH			BIT(0)	/*
- 						 * Writeback and invalidate the
--- 
-2.44.0
-
+> ---
+>   drivers/gpu/drm/amd/amdgpu/Kconfig | 1 +
+>   drivers/gpu/drm/display/Kconfig    | 6 ++++++
+>   drivers/gpu/drm/display/Makefile   | 3 ++-
+>   drivers/gpu/drm/i915/Kconfig       | 1 +
+>   drivers/gpu/drm/msm/Kconfig        | 1 +
+>   drivers/gpu/drm/panel/Kconfig      | 4 ++--
+>   6 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
+> index 22d88f8ef527..b69d5c4a5367 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig
+> +++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
+> @@ -6,6 +6,7 @@ config DRM_AMDGPU
+>   	depends on !UML
+>   	select FW_LOADER
+>   	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>   	select DRM_DISPLAY_HDMI_HELPER
+>   	select DRM_DISPLAY_HDCP_HELPER
+>   	select DRM_DISPLAY_HELPER
+> diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/display/Kconfig
+> index 864a6488bfdf..f524cf95dec3 100644
+> --- a/drivers/gpu/drm/display/Kconfig
+> +++ b/drivers/gpu/drm/display/Kconfig
+> @@ -59,6 +59,12 @@ config DRM_DISPLAY_DP_TUNNEL_STATE_DEBUG
+>   
+>   	  If in doubt, say "N".
+>   
+> +config DRM_DISPLAY_DSC_HELPER
+> +	bool
+> +	depends on DRM_DISPLAY_HELPER
+> +	help
+> +	  DRM display helpers for VESA DSC (used by DSI and DisplayPort).
+> +
+>   config DRM_DISPLAY_HDCP_HELPER
+>   	bool
+>   	depends on DRM_DISPLAY_HELPER
+> diff --git a/drivers/gpu/drm/display/Makefile b/drivers/gpu/drm/display/Makefile
+> index 17d2cc73ff56..2ec71e15c3cb 100644
+> --- a/drivers/gpu/drm/display/Makefile
+> +++ b/drivers/gpu/drm/display/Makefile
+> @@ -6,7 +6,8 @@ drm_display_helper-y := drm_display_helper_mod.o
+>   drm_display_helper-$(CONFIG_DRM_DISPLAY_DP_HELPER) += \
+>   	drm_dp_dual_mode_helper.o \
+>   	drm_dp_helper.o \
+> -	drm_dp_mst_topology.o \
+> +	drm_dp_mst_topology.o
+> +drm_display_helper-$(CONFIG_DRM_DISPLAY_DSC_HELPER) += \
+>   	drm_dsc_helper.o
+>   drm_display_helper-$(CONFIG_DRM_DISPLAY_DP_TUNNEL) += \
+>   	drm_dp_tunnel.o
+> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+> index 5932024f8f95..117b84260b1c 100644
+> --- a/drivers/gpu/drm/i915/Kconfig
+> +++ b/drivers/gpu/drm/i915/Kconfig
+> @@ -11,6 +11,7 @@ config DRM_I915
+>   	select SHMEM
+>   	select TMPFS
+>   	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>   	select DRM_DISPLAY_HDCP_HELPER
+>   	select DRM_DISPLAY_HDMI_HELPER
+>   	select DRM_DISPLAY_HELPER
+> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> index 1931ecf73e32..6dcd26180611 100644
+> --- a/drivers/gpu/drm/msm/Kconfig
+> +++ b/drivers/gpu/drm/msm/Kconfig
+> @@ -111,6 +111,7 @@ config DRM_MSM_DSI
+>   	depends on DRM_MSM
+>   	select DRM_PANEL
+>   	select DRM_MIPI_DSI
+> +	select DRM_DISPLAY_DSC_HELPER
+>   	default y
+>   	help
+>   	  Choose this option if you have a need for MIPI DSI connector
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index 982324ef5a41..4a2f621433ef 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -547,7 +547,7 @@ config DRM_PANEL_RAYDIUM_RM692E5
+>   	depends on OF
+>   	depends on DRM_MIPI_DSI
+>   	depends on BACKLIGHT_CLASS_DEVICE
+> -	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>   	select DRM_DISPLAY_HELPER
+>   	help
+>   	  Say Y here if you want to enable support for Raydium RM692E5-based
+> @@ -905,7 +905,7 @@ config DRM_PANEL_VISIONOX_R66451
+>   	depends on OF
+>   	depends on DRM_MIPI_DSI
+>   	depends on BACKLIGHT_CLASS_DEVICE
+> -	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>   	select DRM_DISPLAY_HELPER
+>   	help
+>   	  Say Y here if you want to enable support for Visionox
+> 
+> -- 
+> 2.39.2
+> 
 
