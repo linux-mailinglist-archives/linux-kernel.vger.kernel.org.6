@@ -1,209 +1,310 @@
-Return-Path: <linux-kernel+bounces-192529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311E18D1E89
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:24:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78EB8D1E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 966C11F20CCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:24:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE012866A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D9C16F829;
-	Tue, 28 May 2024 14:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D35F17082D;
+	Tue, 28 May 2024 14:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aGgzyqmT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HrcvOnc4"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FA716E895
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5115616F911;
+	Tue, 28 May 2024 14:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716906253; cv=none; b=okTjQOOYMP2J++AKH2eLToD2K8WMwCnqxWkXSzol1fl53zzwsQulpgd5uNl8OFGVIiPvVTH7ZdN3R3ftEqYtRC7m9f0hYgYM8z/TNAwpH1EZn1G5tlhEAnwGhALPDNM2i5JPxcwZMofn9uBRGDMTtpz0zSAEiLGUaRx+8fYy5Yo=
+	t=1716906284; cv=none; b=J0J4ZLKeJP0512kcNec0rOZaCsfYVCnFRMGAQYR+zqRJytFdyRghR4is1ut0RMhwqjSvWuEBIVWNz1hR5Jp5Xz2waZtJp6ptcbjgphqlr5S6CdbALJM/vLttrND7apU7wk3yK9gOMIwaOPToAViOdRfOtx/l2QWXC1jfHV1tB+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716906253; c=relaxed/simple;
-	bh=BAgbIaJ7O9IyvRpFl3SnBuCgOYmAvYzEXVyprL/YZlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JPeUWLYRPTnqyaBqJuKt3UEkFkzILn2YKK2WO/kTgHyqfDGVshU7CnJepabYoeCneSQPxF9cX3KrnE4C1dua1MAISX4qbl2Vja5hY1Zk5O4RhFR61TRm6CcApCpCz3ZfCQLB/C/9ZgVeG8UOTZqAKupD5FFZYWLFNGu66FlbUxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aGgzyqmT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716906250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aFeFUyDI8MZUuk7pi22smpjjmkxD26zY5WjpsA1fKTk=;
-	b=aGgzyqmTUzhwp2/Rm8VDpbuapTKvKjkI/dKk4ElR+5kEGAZVcsRLk/c9LVn9U+UNTLmLSu
-	0OhRVIO41Kfz7a+yxEEtmQU8i/5wi64IRvEai0MOUODp4JF3p3mlUeWnO72JrdHg6Jymep
-	+Sf0/y2nhlbNNmKTuQJXsdIw4ue1Qw4=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-408-t62pFX9CMcGIMw4BX6PnYw-1; Tue, 28 May 2024 10:24:08 -0400
-X-MC-Unique: t62pFX9CMcGIMw4BX6PnYw-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-579e6c8f396so576155a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:24:08 -0700 (PDT)
+	s=arc-20240116; t=1716906284; c=relaxed/simple;
+	bh=m3YhbMcdopdM6w302xpbQOzRJW7uCT/KmmmUaQ4g2qk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gdj8VbkbFYVG/RbaOTnp1MKYHTWMVkABrOqdsPnEgTp+fOCp0vDhD7Gj8P5HDCZN47pYOaSnNwnFN58JljwhS2Sqxg1LaGLTyar32ydHei5bAwUYV7zwB2Zz3b9hpjlXlKuZXKWiSP0lKzbqXioeZCT4toG7UHe2JBXpRb/LdAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HrcvOnc4; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso1515027a12.1;
+        Tue, 28 May 2024 07:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716906280; x=1717511080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YHgsvsU29VBXGFaV2q8xu0tkNZNo7YIfhvej54NDxL4=;
+        b=HrcvOnc4j3tUN/3R3aELKxD6y04JV747L+PfuJx8Ito3cqft1tOGxDeGDwDjvZJh0r
+         5CQQDp4sr0bNno94NVk2OBNhRfzDMQMhbIMaa6kKhz/wXudSUm03nk+pKajEhozLkL56
+         7p5VXxgKyG4yyUs07xPqE3MCWYZOi80s/lwPJ3BqHlJ78k4U4NfmcI1jyrb/eageLTM6
+         oMimB09ew/2QZbc2paQRWsWg21TxRMNrtuAaYVvvqZAGa+kh6XIm8zsjgp0T+9tLN1Cd
+         v2qtQegOfWSWMb2rz5du0oE6a+H6/zZ6Mvb9bd2g3rgusYyFhNMg0uPE+eOtfZ7wW+Jq
+         FprQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716906247; x=1717511047;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aFeFUyDI8MZUuk7pi22smpjjmkxD26zY5WjpsA1fKTk=;
-        b=iRcOaJX7OgNir+oJa0SN6aX7QeKYYIPJA8l9oT4IoIIR2UJxPQ7dfVmghSU5F1qF69
-         9nIWekxVegv0XSQmL3xalkl9xx0XWqE0grdxZHXhOjK5uNu4rBTAod00y1woEMeA7KN6
-         ulABS0GYume/gOXbUEqG5d/TZ/fyOWSQ+JNedWr2h9ix1HZgIVwDXpUn/TAoq2KqiTDP
-         5fZHW3YyN7haqPQBBdzSRe/MHIxUhSh4q1MgowVoFsSqL0382uu+dHcTF2DjtktWWBx9
-         +PIOcbRgU32LHHlRcvQpuNw4quL2goSNIK+56e4IZ2NFJ/7P2Mt3HndMq42tufFD2+io
-         LxQQ==
-X-Gm-Message-State: AOJu0YxDlCRBgE668fiUQvXJqeqrFF7V6Q4atxQl0jLzh6Olq+8elSKH
-	BjDwUk3VnmYnq15pTelfqOiJtWCQsa7NGJ7fZkbHy/IsA6iuO8DKsSG5g4OLSzhgRXP74ce/n5O
-	9qSJ33q5VYxFxSCbu80E9A0WpBom6NaqKkx1GvMoaDctsI6weUdBISPwno5Jryg==
-X-Received: by 2002:a50:cd89:0:b0:572:7926:a0f9 with SMTP id 4fb4d7f45d1cf-578519ba586mr6750485a12.41.1716906247590;
-        Tue, 28 May 2024 07:24:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHijkdlXElSp5VXxgvnTXmYyGnEF/2jH/gidiJ9qEqmCuQy2Hh1Qt6DibwfrYuXVfeINhz/0w==
-X-Received: by 2002:a50:cd89:0:b0:572:7926:a0f9 with SMTP id 4fb4d7f45d1cf-578519ba586mr6750470a12.41.1716906247095;
-        Tue, 28 May 2024 07:24:07 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578572e7aafsm7001506a12.46.2024.05.28.07.24.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 07:24:06 -0700 (PDT)
-Message-ID: <209ff705-fe6e-4d6d-9d08-201afba7d74b@redhat.com>
-Date: Tue, 28 May 2024 16:24:05 +0200
+        d=1e100.net; s=20230601; t=1716906280; x=1717511080;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YHgsvsU29VBXGFaV2q8xu0tkNZNo7YIfhvej54NDxL4=;
+        b=a56T0szetxN+Vd9J9xXRiKIFcthT/+DImlwywh+AGz30FeNgzViFn2sRTR77ONNLVx
+         R3S3nPsYctQzAY3iHeWoLJl5wsECsZC1pbcFW6H5+IBy+bhNVdDvLxvQSN4fgF9Ro4U6
+         xhjNr8KUClcVweHsB9Qfe7j1N3VEnVXqivr5Ii28iTY7+bFNY6AjP+VwHukXllszzzAN
+         sLw+Z1TUekojh0Nv0HK5dHBwU+wYmhqDAlwn54W60DO4ueR0J+wDxLpUjRYxBBL24E5I
+         Csxyhi3yJBTgdMlGtOG2VLdvl4KhbbrZrsm11nxqDfUm734dGDF7d+8Mn8qXuxKZc7JH
+         WAbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMilxT4/+b/YYmmua3CfA/+EohQvKnznJAcsbxrhHBzJ9GRkeBk3/Xp8LAogIWU5Xq1BjbiZwM6Dp0UjQrdwir0SEXQZtvErB+Ntya8NzwaXJM+44rYEMHZV7M/Gfl7qWtMmfuBStPU1qqKWiVsYUa/ZYuHTld0glZqh9BFtGuHA==
+X-Gm-Message-State: AOJu0YxZGOjgQ+EONn4znZtcTcdlqkIoxcRudtGrU+FGDugYBnOUb4fl
+	jkxUHd495HKa4OaNTeJ8JQhfznCAXv02HONgWQQB9wgejr/EHh7RO7edg+5KWF0=
+X-Google-Smtp-Source: AGHT+IHcWsentQhufxYPJdb7Au4CruOkJkjBSyRzos3fpy/VbMMN/VAbmH6z0PwQmW3QoJ1pH9neWA==
+X-Received: by 2002:a50:d516:0:b0:578:d846:fc0a with SMTP id 4fb4d7f45d1cf-578d846fdb8mr7000498a12.20.1716906280514;
+        Tue, 28 May 2024 07:24:40 -0700 (PDT)
+Received: from rbolboac.. ([2a02:2f0e:350b:4500:3736:ef2a:a857:c911])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d7dc9efesm2495580a12.48.2024.05.28.07.24.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 07:24:39 -0700 (PDT)
+From: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+X-Google-Original-From: Ramona Gradinariu <ramona.gradinariu@analog.com>
+To: linux-kernel@vger.kernel.org,
+	jic23@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	corbet@lwn.net,
+	conor+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	robh@kernel.org
+Cc: Ramona Gradinariu <ramona.gradinariu@analog.com>
+Subject: [PATCH v2 2/6] iio: imu: adis16480.c: Add delta angle and delta velocity channels
+Date: Tue, 28 May 2024 17:24:05 +0300
+Message-Id: <20240528142409.239187-3-ramona.gradinariu@analog.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240528142409.239187-1-ramona.gradinariu@analog.com>
+References: <20240528142409.239187-1-ramona.gradinariu@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: 6.9/BUG: Bad page state in process kswapd0 pfn:d6e840
-From: David Hildenbrand <david@redhat.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>
-References: <CABXGCsPktcHQOvKTbPaTwegMExije=Gpgci5NW=hqORo-s7diA@mail.gmail.com>
- <CABXGCsOC2Ji7y5Qfsa33QXQ37T3vzdNPsivGoMHcVnCGFi5vKg@mail.gmail.com>
- <0672f0b7-36f5-4322-80e6-2da0f24c101b@redhat.com>
- <CABXGCsN7LBynNk_XzaFm2eVkryVQ26BSzFkrxC2Zb5GEwTvc1g@mail.gmail.com>
- <6b42ad9a-1f15-439a-8a42-34052fec017e@redhat.com>
- <CABXGCsP46xvu3C3Ntd=k5ARrYScAea1gj+YmKYqO+Yj7u3xu1Q@mail.gmail.com>
- <CABXGCsP3Yf2g6e7pSi71pbKpm+r1LdGyF5V7KaXbQjNyR9C_Rw@mail.gmail.com>
- <162cb2a8-1b53-4e86-8d49-f4e09b3255a4@redhat.com>
-Content-Language: en-US
-In-Reply-To: <162cb2a8-1b53-4e86-8d49-f4e09b3255a4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Am 28.05.24 um 15:57 schrieb David Hildenbrand:
-> Am 28.05.24 um 08:05 schrieb Mikhail Gavrilov:
->> On Thu, May 23, 2024 at 12:05 PM Mikhail Gavrilov
->> <mikhail.v.gavrilov@gmail.com> wrote:
->>>
->>> On Thu, May 9, 2024 at 10:50 PM David Hildenbrand <david@redhat.com> wrote:
->>>
->>> The only known workload that causes this is updating a large
->>> container. Unfortunately, not every container update reproduces the
->>> problem.
->>
->> Is it possible to add more debugging information to make it clearer
->> what's going on?
-> 
-> If we knew who originally allocated that problematic page, that might help. 
-> Maybe page_owner could give some hints?
-> 
->>
->> BUG: Bad page state in process kcompactd0  pfn:605811
->> page: refcount:0 mapcount:0 mapping:0000000082d91e3e index:0x1045efc4f
->> pfn:0x605811
->> aops:btree_aops ino:1
->> flags: 
->> 0x17ffffc600020c(referenced|uptodate|workingset|node=0|zone=2|lastcpupid=0x1fffff)
->> raw: 0017ffffc600020c dead000000000100 dead000000000122 ffff888159075220
->> raw: 00000001045efc4f 0000000000000000 00000000ffffffff 0000000000000000
->> page dumped because: non-NULL mapping
-> 
-> Seems to be an order-0 page, otherwise we would have another "head: ..." report.
-> 
-> It's not an anon/ksm/non-lru migration folio, because we clear the page->mapping 
-> field for them manually on the page freeing path. Likely it's a pagecache folio.
-> 
-> So one option is that something seems to not properly set folio->mapping to 
-> NULL. But that problem would then also show up without page migration? Hmm.
-> 
->> Hardware name: ASUS System Product Name/ROG STRIX B650E-I GAMING WIFI,
->> BIOS 2611 04/07/2024
->> Call Trace:
->>   <TASK>
->>   dump_stack_lvl+0x84/0xd0
->>   bad_page.cold+0xbe/0xe0
->>   ? __pfx_bad_page+0x10/0x10
->>   ? page_bad_reason+0x9d/0x1f0
->>   free_unref_page+0x838/0x10e0
->>   __folio_put+0x1ba/0x2b0
->>   ? __pfx___folio_put+0x10/0x10
->>   ? __pfx___might_resched+0x10/0x10
-> 
-> I suspect we come via
->      migrate_pages_batch()->migrate_folio_unmap()->migrate_folio_done().
-> 
-> Maybe this is the "Folio was freed from under us. So we are done." path
-> when "folio_ref_count(src) == 1".
-> 
-> Alternatively, we might come via
->      migrate_pages_batch()->migrate_folio_move()->migrate_folio_done().
-> 
-> For ordinary migration, move_to_new_folio() will clear src->mapping if
-> the folio was migrated successfully. That's the very first thing that 
-> migrate_folio_move() does, so I doubt that is the problem.
-> 
-> So I suspect we are in the migrate_folio_unmap() path. But for
-> a !anon folio, who should be freeing the folio concurrently (and not clearing 
-> folio->mapping?)? After all, we have to hold the folio lock while migrating.
-> 
-> In khugepaged:collapse_file() we manually set folio->mapping = NULL, before 
-> dropping the reference.
-> 
-> Something to try might be (to see if the problem goes away).
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index dd04f578c19c..45e92e14c904 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1124,6 +1124,13 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
->                  /* Folio was freed from under us. So we are done. */
->                  folio_clear_active(src);
->                  folio_clear_unevictable(src);
-> +               /*
-> +                * Anonymous and movable src->mapping will be cleared by
-> +                * free_pages_prepare so don't reset it here for keeping
-> +                * the type to work PageAnon, for example.
-> +                */
-> +               if (!folio_mapping_flags(src))
-> +                       src->mapping = NULL;
->                  /* free_pages_prepare() will clear PG_isolated. */
->                  list_del(&src->lru);
->                  migrate_folio_done(src, reason);
-> 
-> But it does feel weird: who freed the page concurrently and didn't clear 
-> folio->mapping ...
-> 
-> We don't hold the folio lock of src, though, but have the only reference. So
-> another possible thing might be folio refcount mis-counting: folio_ref_count() 
-> == 1 but there are other references (e.g., from the pagecache).
+Add support for delta angle and delta velocity raw readings to
+adis16480 driver.
+The following devices do not support delta readings in burst mode:
+ADIS16375, ADIS16480, ADIS16485, ADIS16488, ADIS16490, ADIS16495-1,
+ADIS16495-2, ADIS16495-3, ADIS16497-1, ADIS16497-2, ADIS16497-3, thus
+they cannot be retrieved via the buffer interface.
+For these devices, the delta measurements are retrieved by performing
+normal register readings and are made available through the raw
+attributes of the specific channels.
 
-Hmm, your original report mentions kswapd, so I'm getting the feeling someone 
-does one folio_put() too much and we are freeing a pageache folio that is still 
-in the pageache and, therefore, has folio->mapping set ... bisecting would 
-really help.
+Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+---
+changes in v2:
+ - updated commit message
+ drivers/iio/imu/adis16480.c | 72 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 70 insertions(+), 2 deletions(-)
 
--- 
-Thanks,
+diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
+index bc6cbd00cd4b..0cd55040db93 100644
+--- a/drivers/iio/imu/adis16480.c
++++ b/drivers/iio/imu/adis16480.c
+@@ -140,6 +140,8 @@ struct adis16480_chip_info {
+ 	unsigned int accel_max_val;
+ 	unsigned int accel_max_scale;
+ 	unsigned int temp_scale;
++	unsigned int deltang_max_val;
++	unsigned int deltvel_max_val;
+ 	unsigned int int_clk;
+ 	unsigned int max_dec_rate;
+ 	const unsigned int *filter_freqs;
+@@ -445,6 +447,12 @@ enum {
+ 	ADIS16480_SCAN_MAGN_Z,
+ 	ADIS16480_SCAN_BARO,
+ 	ADIS16480_SCAN_TEMP,
++	ADIS16480_SCAN_DELTANG_X,
++	ADIS16480_SCAN_DELTANG_Y,
++	ADIS16480_SCAN_DELTANG_Z,
++	ADIS16480_SCAN_DELTVEL_X,
++	ADIS16480_SCAN_DELTVEL_Y,
++	ADIS16480_SCAN_DELTVEL_Z,
+ };
 
-David / dhildenb
+ static const unsigned int adis16480_calibbias_regs[] = {
+@@ -688,6 +696,14 @@ static int adis16480_read_raw(struct iio_dev *indio_dev,
+ 			*val = 131; /* 1310mbar = 131 kPa */
+ 			*val2 = 32767 << 16;
+ 			return IIO_VAL_FRACTIONAL;
++		case IIO_DELTA_ANGL:
++			*val = st->chip_info->deltang_max_val;
++			*val2 = 31;
++			return IIO_VAL_FRACTIONAL_LOG2;
++		case IIO_DELTA_VELOCITY:
++			*val = st->chip_info->deltvel_max_val;
++			*val2 = 31;
++			return IIO_VAL_FRACTIONAL_LOG2;
+ 		default:
+ 			return -EINVAL;
+ 		}
+@@ -761,6 +777,24 @@ static int adis16480_write_raw(struct iio_dev *indio_dev,
+ 	BIT(IIO_CHAN_INFO_CALIBSCALE), \
+ 	32)
+
++#define ADIS16480_DELTANG_CHANNEL(_mod) \
++	ADIS16480_MOD_CHANNEL(IIO_DELTA_ANGL, IIO_MOD_ ## _mod, \
++	ADIS16480_REG_ ## _mod ## _DELTAANG_OUT, ADIS16480_SCAN_DELTANG_ ## _mod, \
++	0, 32)
++
++#define ADIS16480_DELTANG_CHANNEL_NO_SCAN(_mod) \
++	ADIS16480_MOD_CHANNEL(IIO_DELTA_ANGL, IIO_MOD_ ## _mod, \
++	ADIS16480_REG_ ## _mod ## _DELTAANG_OUT, -1, 0, 32)
++
++#define ADIS16480_DELTVEL_CHANNEL(_mod) \
++	ADIS16480_MOD_CHANNEL(IIO_DELTA_VELOCITY, IIO_MOD_ ## _mod, \
++	ADIS16480_REG_ ## _mod ## _DELTAVEL_OUT, ADIS16480_SCAN_DELTVEL_ ## _mod, \
++	0, 32)
++
++#define ADIS16480_DELTVEL_CHANNEL_NO_SCAN(_mod) \
++	ADIS16480_MOD_CHANNEL(IIO_DELTA_VELOCITY, IIO_MOD_ ## _mod, \
++	ADIS16480_REG_ ## _mod ## _DELTAVEL_OUT, -1, 0,	32)
++
+ #define ADIS16480_MAGN_CHANNEL(_mod) \
+ 	ADIS16480_MOD_CHANNEL(IIO_MAGN, IIO_MOD_ ## _mod, \
+ 	ADIS16480_REG_ ## _mod ## _MAGN_OUT, ADIS16480_SCAN_MAGN_ ## _mod, \
+@@ -816,7 +850,13 @@ static const struct iio_chan_spec adis16480_channels[] = {
+ 	ADIS16480_MAGN_CHANNEL(Z),
+ 	ADIS16480_PRESSURE_CHANNEL(),
+ 	ADIS16480_TEMP_CHANNEL(),
+-	IIO_CHAN_SOFT_TIMESTAMP(11)
++	IIO_CHAN_SOFT_TIMESTAMP(11),
++	ADIS16480_DELTANG_CHANNEL_NO_SCAN(X),
++	ADIS16480_DELTANG_CHANNEL_NO_SCAN(Y),
++	ADIS16480_DELTANG_CHANNEL_NO_SCAN(Z),
++	ADIS16480_DELTVEL_CHANNEL_NO_SCAN(X),
++	ADIS16480_DELTVEL_CHANNEL_NO_SCAN(Y),
++	ADIS16480_DELTVEL_CHANNEL_NO_SCAN(Z),
+ };
+
+ static const struct iio_chan_spec adis16485_channels[] = {
+@@ -827,7 +867,13 @@ static const struct iio_chan_spec adis16485_channels[] = {
+ 	ADIS16480_ACCEL_CHANNEL(Y),
+ 	ADIS16480_ACCEL_CHANNEL(Z),
+ 	ADIS16480_TEMP_CHANNEL(),
+-	IIO_CHAN_SOFT_TIMESTAMP(7)
++	IIO_CHAN_SOFT_TIMESTAMP(7),
++	ADIS16480_DELTANG_CHANNEL_NO_SCAN(X),
++	ADIS16480_DELTANG_CHANNEL_NO_SCAN(Y),
++	ADIS16480_DELTANG_CHANNEL_NO_SCAN(Z),
++	ADIS16480_DELTVEL_CHANNEL_NO_SCAN(X),
++	ADIS16480_DELTVEL_CHANNEL_NO_SCAN(Y),
++	ADIS16480_DELTVEL_CHANNEL_NO_SCAN(Z),
+ };
+
+ enum adis16480_variant {
+@@ -938,6 +984,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(21973 << 16),
+ 		.accel_max_scale = 18,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(180),
++		.deltvel_max_val = 100,
+ 		.int_clk = 2460000,
+ 		.max_dec_rate = 2048,
+ 		.has_sleep_cnt = true,
+@@ -952,6 +1000,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(12500 << 16),
+ 		.accel_max_scale = 10,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(720),
++		.deltvel_max_val = 200,
+ 		.int_clk = 2460000,
+ 		.max_dec_rate = 2048,
+ 		.has_sleep_cnt = true,
+@@ -966,6 +1016,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(20000 << 16),
+ 		.accel_max_scale = 5,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(720),
++		.deltvel_max_val = 50,
+ 		.int_clk = 2460000,
+ 		.max_dec_rate = 2048,
+ 		.has_sleep_cnt = true,
+@@ -980,6 +1032,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(22500 << 16),
+ 		.accel_max_scale = 18,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(720),
++		.deltvel_max_val = 200,
+ 		.int_clk = 2460000,
+ 		.max_dec_rate = 2048,
+ 		.has_sleep_cnt = true,
+@@ -994,6 +1048,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(16000 << 16),
+ 		.accel_max_scale = 8,
+ 		.temp_scale = 14285, /* 14.285 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(720),
++		.deltvel_max_val = 200,
+ 		.int_clk = 4250000,
+ 		.max_dec_rate = 4250,
+ 		.filter_freqs = adis16495_def_filter_freqs,
+@@ -1008,6 +1064,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 8,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(360),
++		.deltvel_max_val = 100,
+ 		.int_clk = 4250000,
+ 		.max_dec_rate = 4250,
+ 		.filter_freqs = adis16495_def_filter_freqs,
+@@ -1025,6 +1083,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 8,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(720),
++		.deltvel_max_val = 100,
+ 		.int_clk = 4250000,
+ 		.max_dec_rate = 4250,
+ 		.filter_freqs = adis16495_def_filter_freqs,
+@@ -1042,6 +1102,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 8,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(2160),
++		.deltvel_max_val = 100,
+ 		.int_clk = 4250000,
+ 		.max_dec_rate = 4250,
+ 		.filter_freqs = adis16495_def_filter_freqs,
+@@ -1059,6 +1121,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 40,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(360),
++		.deltvel_max_val = 400,
+ 		.int_clk = 4250000,
+ 		.max_dec_rate = 4250,
+ 		.filter_freqs = adis16495_def_filter_freqs,
+@@ -1076,6 +1140,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 40,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(720),
++		.deltvel_max_val = 400,
+ 		.int_clk = 4250000,
+ 		.max_dec_rate = 4250,
+ 		.filter_freqs = adis16495_def_filter_freqs,
+@@ -1093,6 +1159,8 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
+ 		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 40,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
++		.deltang_max_val = IIO_DEGREE_TO_RAD(2160),
++		.deltvel_max_val = 400,
+ 		.int_clk = 4250000,
+ 		.max_dec_rate = 4250,
+ 		.filter_freqs = adis16495_def_filter_freqs,
+--
+2.34.1
 
 
