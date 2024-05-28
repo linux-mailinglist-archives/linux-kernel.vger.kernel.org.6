@@ -1,368 +1,87 @@
-Return-Path: <linux-kernel+bounces-193243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124F78D28F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:53:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043BA8D28F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 140EDB232D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985A61F25C80
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE76B1411F6;
-	Tue, 28 May 2024 23:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0743613FD72;
+	Tue, 28 May 2024 23:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uOIcvG1E"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="nRkk1BG/"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C97C13F45A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AE513D897;
+	Tue, 28 May 2024 23:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716940381; cv=none; b=bPri7HWK2LsmXF+7P+AimHQjqHks8+uQpawJeG/wOuEySVBVyCZf2aaskU+8nE20WXkockzOH+rtJ0Wa5rcvIzTZpkCPohPIPGhWUs4U6TKteTsIKQt6TppGntRcYSxeqKfow2/hy5nBmAGNgOE35y3wEHUIqzEpxg2e5Fgy5rI=
+	t=1716940461; cv=none; b=trrHwYqO0MXeX84/9O7VFdARe0zsqE8m5wqCUw+X61HWeH1UPuqx79nKNI8wvRIWUZqkqJF1I2bljjySnljITso/4lpB2Z2am1ZRoxWfuAgw623EH/ph0xl2gNCZdXhr7JOLhrLy+iPaQu2xNplESdTlJRL7g4mbazIE2fkxwAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716940381; c=relaxed/simple;
-	bh=4AEHzhZ7klNl9R6P/rVcHC42cvlcOM0LoXvZQ32OLm0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F2KYcAdZYrhhT9Q0ChbE4jh1NH8HT/L9wDGkGkqx+7U+gzTiBUiqQC9GP5RrAS8A0QtWNDgpAK5U83g/ITcOF2dDdqNZ1TzkG/63cjqH88Id7Z+lYsQ7AX93Mr3UTMlyLLeKpTsRc5bD7iA8vluYElmASuHfpTuSRTgbMJOBFwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uOIcvG1E; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5295dada905so234873e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:52:59 -0700 (PDT)
+	s=arc-20240116; t=1716940461; c=relaxed/simple;
+	bh=gShILwMjJBDCk7bxa10+DKpVyyvmAskS6Sj1Oh2LJ34=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gEqH06j7IvdK5CnQZ0B9Awwu3SLOQoRaTs7mvIw4N1LlyBccXenGLpXDaqGDFRjyn/daDLo6o9Pt8Xy1thr7knQFfLpaO3f5hXqAZErUlQL/5qNap0/+Vy5B+3+MS+X1ERvCtrGlt7PUgreuB4LUK17UXEs1ZlCEMT4xcS16jwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=nRkk1BG/; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 36F542014A;
+	Wed, 29 May 2024 07:54:09 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716940378; x=1717545178; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wOdTyLpX4s9ixOOhNkfBWNVCbfHaxbhfgJLe0YOKBzg=;
-        b=uOIcvG1EBb2fsFmVBjbVDqg8DP7SWVAFIYVPdgNVoBSJR4NS2j9mhgO9A37KDmZj8E
-         m1lZQ7HurQzmXPpWBV7TYbaF/4pbBEnjPItUWzkai6FXchdtNsxg3jr1b40tlG1xzkGH
-         onXJ4S7BuSj3QY5aUty6ui/4L1BBKggo+RFkyr+cBf9Cqqkkm9fCBJ/a5EnDUJmYihrn
-         sjs64Z8AyOBO6ieS7SgortXqsujnnp82WWuPPeaKX2uAyNCQgJ8cZBMJTXwcWHuMBty4
-         nZFIvn9n9AN+WaYWLfiVk/McGfSn/bXIZMc1LrprhhRd3C8jcp53NYn/ZVPPmDLdzLLd
-         VtHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716940378; x=1717545178;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wOdTyLpX4s9ixOOhNkfBWNVCbfHaxbhfgJLe0YOKBzg=;
-        b=ruRVNVymn1/4BVzvAKbYCpNdDiF9968ro32pssT/Fl0X/xjYKxweMU49P+uCfFLWnk
-         CMixPjntzqFbYEAqIW6dNDh9SNI6MZoUCrdpTNQ8T2aPtNEMX8ftXjA6G2T/KEVSsMwN
-         H9lZxbZGBowTpQr7iqev21Ptpnf+xRenXJNeZon/tiqertPhP+bznsSJTCmP9H4DnnVx
-         adWTc1B3MvCXXgcWdPYdtl3lcOgefxwLplR9Xe7rcn5QC9tQw3Nuwv/ytyvMm08lc9To
-         x6gFwhnF/NHuUMBmlcMYuQyg4Vd8YQoSAdgmB/YNEHhOvvPRkO/MSi9rd8jyWIUpzhRP
-         ccGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwolqw52Eh0E4ZAh5dDh1BrjsITh65YcdQowuPPr1F8MoGqHO28hCaFdHiIs1ehYw3KoeJzpFmaxIzJar8IVXH61ESsU7Q/fuWgWJd
-X-Gm-Message-State: AOJu0YyNLkSg2soT+sVeJOehDYCfrgLyij8jWegIq9q1U2chhgGIMB6q
-	SM2HfSoayWXf1PBGTBaaL8zNkxzZcN2JrerXO9VHRa6tX9DAyMXehj+OlrJgPVE1qQNpFhJ2FOX
-	0
-X-Google-Smtp-Source: AGHT+IHEFIeU2xsKDrxCZSWUBFLxClJz5PmO2gczoLHisBLH1qwbbCGbkJGrqhAoWf4jDn56ewdLYw==
-X-Received: by 2002:a05:6512:3ed:b0:529:b6d1:572c with SMTP id 2adb3069b0e04-52a848cf73bmr116026e87.32.1716940378027;
-        Tue, 28 May 2024 16:52:58 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066bd0bsm1099869e87.165.2024.05.28.16.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 16:52:57 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 29 May 2024 02:52:56 +0300
-Subject: [PATCH v2 3/3] drm/panel-edp: drop several legacy panels
+	d=codeconstruct.com.au; s=2022a; t=1716940450;
+	bh=gShILwMjJBDCk7bxa10+DKpVyyvmAskS6Sj1Oh2LJ34=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=nRkk1BG/PQkujWt1gGUGlfPIr2mNWhLNiXDwGjQrvFd2wfZ42lW0FBl16JVCnFw1H
+	 DRhC3I+LwDUPo6txx+/w+9uzAMvmrqmlklfDoE+w3ZekmqRrL1e9mVew1CL8fKJt07
+	 a/YUN8qI/1Ud+AuBK70J28hi+xaQA9fJunPfc/H6r0kSYZ9E79jBVWGbn+6pBY8axH
+	 jK86a4YygmyCj5Xls+Hb4zW6hJwyL+nimqM2booGDYXMAgiqV3l6lZQuFybmoioImU
+	 imyG0P5RivxyscBDrfF0UpQHo6A2eY3Fb7ebATuzAgks21lrIFztn0CjU1UX2eKyRC
+	 QNlBGhRNsDIGA==
+Message-ID: <520cf8db945cf8dce4afdaddb59ceda65463a406.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] mctp i2c: Add rx trace
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Tal Yacobi <talycb8@gmail.com>, matt@codeconstruct.com.au, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Date: Wed, 29 May 2024 07:54:08 +0800
+In-Reply-To: <20240528143420.742611-1-talycb8@gmail.com>
+References: <20240528143420.742611-1-talycb8@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240529-edp-panel-drop-v2-3-fcfc457fc8dd@linaro.org>
-References: <20240529-edp-panel-drop-v2-0-fcfc457fc8dd@linaro.org>
-In-Reply-To: <20240529-edp-panel-drop-v2-0-fcfc457fc8dd@linaro.org>
-To: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- Jeffrey Hugo <quic_jhugo@quicinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7126;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=4AEHzhZ7klNl9R6P/rVcHC42cvlcOM0LoXvZQ32OLm0=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ1pYXtjvjbzVrioeBkuPz3/zLTRL4kKN3ILDsuJi6uE2D
- Dy/U0o7GY1ZGBi5GGTFFFl8ClqmxmxKDvuwY2o9zCBWJpApDFycAjCRwK/s/53+ZecWLbjLpf3L
- 4GJmomDL5JD5F03L3hg83CmV3mDBsOmr3zsupa2ynVsyTh7rYqwNPy+dKm2UV+f4VHriy84X63T
- lxd4F7pxbu/7xzOUXzFR1+DZ1xund1e04cSDjCg/HnLLPQe2Rwj96U5t4d/+7NlfWKu5Jas+Gn3
- 1cfC9WRTIdKG9cVZKq+8RYc9mzy/NfPOXJFevPaFw2j0v0/BO9gjN6tXnbb/9YJJ7KOjG2//PM6
- 6qvH7ld2i8TnavcYe3ke2pr7u+OOYZiwXaT9Na/t2i8KDed44al8eTJTw46d1tHKG6fH7LFzPxH
- aNVc59+3Nn/49ehikkDSj9iYqiCmsLn8AWy83YL8+zMdAA==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The panel-edp driver supports legacy compatible strings for several eDP
-panels which were never used in DT files present in Linux tree and most
-likely have never been used with the upstream kernel. Drop compatibles
-for these panels in favour of using a generic "edp-panel" device on the
-AUX bus.
+Hi Tal,
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/panel/panel-edp.c | 173 ++------------------------------------
- 1 file changed, 7 insertions(+), 166 deletions(-)
+Thanks for the contribution! Some comments:
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index 95b25ec67168..120780e5d34d 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1059,33 +1059,6 @@ static const struct panel_desc auo_b116xak01 = {
- 	},
- };
- 
--static const struct drm_display_mode auo_b133han05_mode = {
--	.clock = 142600,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 58,
--	.hsync_end = 1920 + 58 + 42,
--	.htotal = 1920 + 58 + 42 + 60,
--	.vdisplay = 1080,
--	.vsync_start = 1080 + 3,
--	.vsync_end = 1080 + 3 + 5,
--	.vtotal = 1080 + 3 + 5 + 54,
--};
--
--static const struct panel_desc auo_b133han05 = {
--	.modes = &auo_b133han05_mode,
--	.num_modes = 1,
--	.bpc = 8,
--	.size = {
--		.width = 293,
--		.height = 165,
--	},
--	.delay = {
--		.hpd_reliable = 100,
--		.enable = 20,
--		.unprepare = 50,
--	},
--};
--
- static const struct drm_display_mode auo_b133htn01_mode = {
- 	.clock = 150660,
- 	.hdisplay = 1920,
-@@ -1135,33 +1108,6 @@ static const struct panel_desc auo_b133xtn01 = {
- 	},
- };
- 
--static const struct drm_display_mode auo_b140han06_mode = {
--	.clock = 141000,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 16,
--	.hsync_end = 1920 + 16 + 16,
--	.htotal = 1920 + 16 + 16 + 152,
--	.vdisplay = 1080,
--	.vsync_start = 1080 + 3,
--	.vsync_end = 1080 + 3 + 14,
--	.vtotal = 1080 + 3 + 14 + 19,
--};
--
--static const struct panel_desc auo_b140han06 = {
--	.modes = &auo_b140han06_mode,
--	.num_modes = 1,
--	.bpc = 8,
--	.size = {
--		.width = 309,
--		.height = 174,
--	},
--	.delay = {
--		.hpd_reliable = 100,
--		.enable = 20,
--		.unprepare = 50,
--	},
--};
--
- static const struct drm_display_mode boe_nv101wxmn51_modes[] = {
- 	{
- 		.clock = 71900,
-@@ -1428,33 +1374,6 @@ static const struct panel_desc innolux_p120zdg_bf1 = {
- 	},
- };
- 
--static const struct drm_display_mode ivo_m133nwf4_r0_mode = {
--	.clock = 138778,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 24,
--	.hsync_end = 1920 + 24 + 48,
--	.htotal = 1920 + 24 + 48 + 88,
--	.vdisplay = 1080,
--	.vsync_start = 1080 + 3,
--	.vsync_end = 1080 + 3 + 12,
--	.vtotal = 1080 + 3 + 12 + 17,
--	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
--};
--
--static const struct panel_desc ivo_m133nwf4_r0 = {
--	.modes = &ivo_m133nwf4_r0_mode,
--	.num_modes = 1,
--	.bpc = 8,
--	.size = {
--		.width = 294,
--		.height = 165,
--	},
--	.delay = {
--		.hpd_absent = 200,
--		.unprepare = 500,
--	},
--};
--
- static const struct drm_display_mode kingdisplay_kd116n21_30nv_a010_mode = {
- 	.clock = 81000,
- 	.hdisplay = 1366,
-@@ -1703,75 +1622,6 @@ static const struct panel_desc sharp_lq123p1jx31 = {
- 	},
- };
- 
--static const struct drm_display_mode sharp_lq140m1jw46_mode[] = {
--	{
--		.clock = 346500,
--		.hdisplay = 1920,
--		.hsync_start = 1920 + 48,
--		.hsync_end = 1920 + 48 + 32,
--		.htotal = 1920 + 48 + 32 + 80,
--		.vdisplay = 1080,
--		.vsync_start = 1080 + 3,
--		.vsync_end = 1080 + 3 + 5,
--		.vtotal = 1080 + 3 + 5 + 69,
--		.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
--	}, {
--		.clock = 144370,
--		.hdisplay = 1920,
--		.hsync_start = 1920 + 48,
--		.hsync_end = 1920 + 48 + 32,
--		.htotal = 1920 + 48 + 32 + 80,
--		.vdisplay = 1080,
--		.vsync_start = 1080 + 3,
--		.vsync_end = 1080 + 3 + 5,
--		.vtotal = 1080 + 3 + 5 + 69,
--		.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
--	},
--};
--
--static const struct panel_desc sharp_lq140m1jw46 = {
--	.modes = sharp_lq140m1jw46_mode,
--	.num_modes = ARRAY_SIZE(sharp_lq140m1jw46_mode),
--	.bpc = 8,
--	.size = {
--		.width = 309,
--		.height = 174,
--	},
--	.delay = {
--		.hpd_absent = 80,
--		.enable = 50,
--		.unprepare = 500,
--	},
--};
--
--static const struct drm_display_mode starry_kr122ea0sra_mode = {
--	.clock = 147000,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 16,
--	.hsync_end = 1920 + 16 + 16,
--	.htotal = 1920 + 16 + 16 + 32,
--	.vdisplay = 1200,
--	.vsync_start = 1200 + 15,
--	.vsync_end = 1200 + 15 + 2,
--	.vtotal = 1200 + 15 + 2 + 18,
--	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
--};
--
--static const struct panel_desc starry_kr122ea0sra = {
--	.modes = &starry_kr122ea0sra_mode,
--	.num_modes = 1,
--	.size = {
--		.width = 263,
--		.height = 164,
--	},
--	.delay = {
--		/* TODO: should be hpd-absent and no-hpd should be set? */
--		.hpd_reliable = 10 + 200,
--		.enable = 50,
--		.unprepare = 10 + 500,
--	},
--};
--
- static const struct of_device_id platform_of_match[] = {
- 	{
- 		/* Must be first */
-@@ -1798,18 +1648,12 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "auo,b116xa01",
- 		.data = &auo_b116xak01,
--	}, {
--		.compatible = "auo,b133han05",
--		.data = &auo_b133han05,
- 	}, {
- 		.compatible = "auo,b133htn01",
- 		.data = &auo_b133htn01,
- 	}, {
- 		.compatible = "auo,b133xtn01",
- 		.data = &auo_b133xtn01,
--	}, {
--		.compatible = "auo,b140han06",
--		.data = &auo_b140han06,
- 	}, {
- 		.compatible = "boe,nv101wxmn51",
- 		.data = &boe_nv101wxmn51,
-@@ -1837,9 +1681,6 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "innolux,p120zdg-bf1",
- 		.data = &innolux_p120zdg_bf1,
--	}, {
--		.compatible = "ivo,m133nwf4-r0",
--		.data = &ivo_m133nwf4_r0,
- 	}, {
- 		.compatible = "kingdisplay,kd116n21-30nv-a010",
- 		.data = &kingdisplay_kd116n21_30nv_a010,
-@@ -1870,12 +1711,6 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "sharp,lq123p1jx31",
- 		.data = &sharp_lq123p1jx31,
--	}, {
--		.compatible = "sharp,lq140m1jw46",
--		.data = &sharp_lq140m1jw46,
--	}, {
--		.compatible = "starry,kr122ea0sra",
--		.data = &starry_kr122ea0sra,
- 	}, {
- 		/* sentinel */
- 	}
-@@ -1927,6 +1762,12 @@ static const struct panel_delay delay_200_500_e80_d50 = {
- 	.disable = 50,
- };
- 
-+static const struct panel_delay delay_80_500_e50 = {
-+	.hpd_absent = 80,
-+	.unprepare = 500,
-+	.enable = 50,
-+};
-+
- static const struct panel_delay delay_100_500_e200 = {
- 	.hpd_absent = 100,
- 	.unprepare = 500,
-@@ -2128,7 +1969,7 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('S', 'D', 'C', 0x416d, &delay_100_500_e200, "ATNA45AF01"),
- 
- 	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140M1JW48"),
--	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &sharp_lq140m1jw46.delay, "LQ140M1JW46"),
-+	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M1JW46"),
- 	EDP_PANEL_ENTRY('S', 'H', 'P', 0x154c, &delay_200_500_p2e100, "LQ116M1JW10"),
- 
- 	EDP_PANEL_ENTRY('S', 'T', 'A', 0x0100, &delay_100_500_e200, "2081116HHD028001-51D"),
+> mctp-i2c rx implementation doesn't call
+> __i2c_transfer which calls the i2c reply trace function.
 
--- 
-2.39.2
+No, but we can trace the i2c rx path through the trace_i2c_slave
+tracepoint. It is a little messier than tracing trace_i2c_write, but
+has been sufficient with the debugging I've needed in the past.
 
+> Add an mctp_reply trace function that will be used instead.
+
+Can you elaborate a little on what you were/are looking to inspect
+here? (mainly: which packet fields are you interested in?) That will
+help to determine the best approach here.
+
+Cheers,
+
+
+Jeremy
 
