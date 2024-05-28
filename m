@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-192202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725748D19E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:43:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D41E8D19F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EBB028E285
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEBCE1F22883
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5197E16C84C;
-	Tue, 28 May 2024 11:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EC216D4CB;
+	Tue, 28 May 2024 11:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWuxyqRr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pLVLPC4F"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAFA16ABEA;
-	Tue, 28 May 2024 11:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AF916ABEA
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896590; cv=none; b=RMddlzr+vI1rWHcthlADrfY22H+87v2CT0DGD96yvHvKmpcgT0QdQs214UT5uY8RSaCbsxtlcx/DM/UHPxoDWEh833ymyNm2o6aRpXkXC/crMmQa4E4p1j5FuWYUu1/6/Pe3W3sPHrzlVlOHkhWe/T50QTNUgAORYKrDWExPQuw=
+	t=1716896646; cv=none; b=JM/3KmklOf5KzB/X5PIgLyELDGEVbUsW+itrDFLovqPwFN31FHscInpDjQqdHUu2WHRuOe/gOUtIXL7zW6Rsa2q3JhMfawfRq7O/eVMcKU6bRg3Cy9VLXZS5RITP8lR7idwZlAgDm+bXKvnMlnsWLzyHOqnGWgHhltu30EVaEZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896590; c=relaxed/simple;
-	bh=xxt9e4qBmjjSBgaz5wJg1yxA/w/eio5Xu8qFL8pUrWo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=CrIQMhhBt6OYbZR/trbIXg3RlOY/2zEilc9UBfpDVn9bxo5eN44dU9t1eGsuDnHjSHCpafUIdVIGBMnMMfn3CuzamZJrcw4E67CC1YR68WjRDdv/rZCdkoYYX7DkQAXwOfXK3N3sDkGCtBRP+YVC4OQorwH7XQnpEyFx8fEGsBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWuxyqRr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB1AC3277B;
-	Tue, 28 May 2024 11:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716896590;
-	bh=xxt9e4qBmjjSBgaz5wJg1yxA/w/eio5Xu8qFL8pUrWo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=aWuxyqRrL7SBD0Lc056tIYnG0ozig3/K5u5GooJ9r4/xmVau/SM/ea/QdKRQoox09
-	 lueClrfRzEM7J+7Em7MXusroTlC2otOnEGjJfRwYQEXryzupeI7fo6L+n7JNu0U9m8
-	 gnr+cImb9NJ6gTkene1DusbWmNBcBXnc5qCauUFfrKk5EHQjDXzYfaIi0xFvMHzsix
-	 HHrRDHXcJ+mtISGSc8tArZtDPjoCuVlTaspJRWOdlzIyDHua2DBCz9iiE3UHjkGHkU
-	 0/dm1nrKO2Fw+7OW0MEch8XZWEFR0szjMRnuDnveYDWPMUhmchPtRlVilrz/cA0o04
-	 OoOiejMofKX3Q==
+	s=arc-20240116; t=1716896646; c=relaxed/simple;
+	bh=yOEmwDlZd2rxD+/L1uaF/14KWl2R7msUoWWl9sQJuMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=Na7HF6lDtDB2qiHCV+XTkqkGoFH3LOdwP/XJIkep1z1IEk4rRT+6vKJSD4N2BQQFzwdS7bQ2/2Ah1WqG0hWaGWq4fEBIhaRp+1u278G2RTSsiVb2bEqxg3qfq8qUDdgMh/pRRWrtVnf4U/1p/bKe7CUEeVci01r8C4kostySd00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pLVLPC4F; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-df78acd5bb6so728999276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:44:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716896640; x=1717501440; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PDCC8CEGZqZAB2Msg7Dc9A4feCAIq5W2zp1AC6fm/sY=;
+        b=pLVLPC4Fhu25amY65NRpnDSircVt3aVW7uz5g4EfjbJdsgOBiYSsn+W/REZHto1lDe
+         nVBnyFiYUGMKyhq6Kte5sIrUegMkDf1Dpcyp1hoyVE8GjbbikHXkTeCkZXP483ZRj1xU
+         VK77wqXKG4z9a9tTQ4bQzS1QTWHxM/ZY+amuPNR0/Hv+/pJKWuakGpi/Ub2J/dl8UVxT
+         68wuMO7ikCC86BKfq9YsglwDRT4R34StAwE85B4aoxIvJPuFXCJy9TZLgMvaJa6GJWvH
+         LieOOcXXH4Q1woLFZEmjmRLhrJsCvxwF+tjRz7Ouzp9PaBtzfCrGPO+VXwgpNSQTbz0M
+         6F3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716896640; x=1717501440;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PDCC8CEGZqZAB2Msg7Dc9A4feCAIq5W2zp1AC6fm/sY=;
+        b=hyluMLdnOlESy4uuEs4KrWjAqulJvYg/UcRslQEOZVp+GSjq0M4p+1QPxyDdCaORWg
+         Mp6VVi1v33rhWMwL4ZrRXgCI8FoPLCtXgphVxPSqyNWRqscVJmidi6TxramRcuB+3URd
+         0XvjgH04VrQ/uZbo5tOAiYktVwc+9Vcp3szwA0XKKU+aw2OEE3ZHQePmwOlzNolklgOx
+         QZIfAN7s1Frgx99IkJaTJdWLVpntUHNSH6LpkCWnOW+fwitlrZdT87/1Tt+7DjTENL54
+         zyCV6p2K1UYth76/Ty9q1INCMcn69jEOaejlAhfbCtf/YcxQv7G3XipSuvu4txqzU1v8
+         HgXA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1FY7TPFmiDnEq7hjaz0S6ZvRKUnG12bfcZ7AqEI2w2VP2I0VbE5VJMbghyDvv+RRjuo1REFg8q4typloozSlceOhCJoSuzwgT2wIz
+X-Gm-Message-State: AOJu0YzUyL4SjR5YXuUhdMH3Os4XABbY9ua6G+j2i3P5oXemxS+DDYGQ
+	KIDT31IJf4f/udcTFfCC7z9Z28LG6eiLHMj4wu9pvWduvsJCGQHnNQX1US5ApF5IyE6/TItIFke
+	5Qzko7Cv9GNliQweErQa9EYPoowP7MA9JLwJwZgIqDC82SE4eaCmYWu3q
+X-Google-Smtp-Source: AGHT+IGAlEjh+hwoEoU8O0CZzP7G3ESAVthO5rQ3B4MUj+UE7U4isFNhiJtbVLHDWwHzyej5tQV+REwk0Y5mZnpxIBg=
+X-Received: by 2002:a5b:d0d:0:b0:deb:9e3f:8c7b with SMTP id
+ 3f1490d57ef6-df77223c93emr10443794276.60.1716896639907; Tue, 28 May 2024
+ 04:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <Zktwd4Y8zu6XSGaE@Z926fQmE5jqhFMgp6>
+In-Reply-To: <Zktwd4Y8zu6XSGaE@Z926fQmE5jqhFMgp6>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 28 May 2024 13:43:48 +0200
+Message-ID: <CACRpkdZd_aXy5Dv_pZw5ue+T=1i8_ERP1Anc5Y_mu=cyd_hbxA@mail.gmail.com>
+Subject: Re: [PATCH] gpio-syscon: do not report bogus error
+To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, etienne.buira@free.fr
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 28 May 2024 14:43:06 +0300
-Message-Id: <D1L91NGZIW8B.2NHUSU2BKNP26@kernel.org>
-Subject: Re: [PATCH] crypto: ecdsa: Fix the public key format description
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>
-Cc: <linux-crypto@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240527202840.4818-1-jarkko@kernel.org>
- <0e3bfc37-53d6-422d-adb0-3ee23bbb0a8a@linux.ibm.com>
-In-Reply-To: <0e3bfc37-53d6-422d-adb0-3ee23bbb0a8a@linux.ibm.com>
 
-On Tue May 28, 2024 at 2:18 PM EEST, Stefan Berger wrote:
+On Mon, May 20, 2024 at 5:48=E2=80=AFPM Etienne Buira <etienne.buira@free.f=
+r> wrote:
+
+> Do not issue "can't read the data register offset!" when gpio,syscon-dev
+> is not set albeit unneeded.  gpio-syscon is used with rk3328 chip, but
+> this iomem region is documented in
+> Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.yaml and
+> does not require gpio,syscon-dev setting.
 >
+> v3:
+>   - moved from flag to parent regmap detection
 >
-> On 5/27/24 16:28, Jarkko Sakkinen wrote:
-> > Public key blob is not just x and y concatenated. It follows RFC5480
-> > section 2.2. Address this by re-documenting the function with the
-> > correct description of the format.
-> >=20
-> > Link: https://datatracker.ietf.org/doc/html/rfc5480
-> > Fixes: 4e6602916bc6 ("crypto: ecdsa - Add support for ECDSA signature v=
-erification")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Etienne Buira <etienne.buira@free.fr>
 
-I think doing TPM2 ECDSA is a good test for this code, which is not
-*that* mature in terms of age (from 2021 if I checked correctly). I just
-try to complain at instant when I see badly documented code, when using
-something new, because after a while you become blind to it...
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-The code quality itself is IMHO in good level and I could understand
-what it is doing.
-
-The EKEYREJECTED that I got is I think my own fault. Have to just test
-the fix and send updated version of TPM2 Asymmetric Keys. Getting that
-patch set to the mainline will also support quite well crypto/ecdsa.c,
-which my code uses for verifying the signature using the public key.
-
-Just adding these bits to underline that I don't think in any level
-that any of this code would suck ;-) It is all good and working so
-far...
-
-BR, Jarkko
+Yours,
+Linus Walleij
 
