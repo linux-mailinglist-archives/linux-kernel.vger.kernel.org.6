@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-192513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727B98D1E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:19:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395CF8D1E59
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F529286252
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:19:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1411C23099
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FE316F85A;
-	Tue, 28 May 2024 14:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE1116F84D;
+	Tue, 28 May 2024 14:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZi1t1tt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7vgjl/V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AF76A8A3;
-	Tue, 28 May 2024 14:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D5F16E895
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905938; cv=none; b=csUmy5uvs0Gy9+ByPxJsHHs3sJBZhuXXewP39zf1wxgWiNHRru4G8o0F1eFHB333xbbEafv65yLS/WkQaCmV9KP4XhiCVSvBhb5gzAdnFykOc/15Zh9usfxZnpsA3QOaAzGJPjdC4zUI9eDMwiyKa7Dfj2XOKA8o8Wk1FZrNjRM=
+	t=1716905958; cv=none; b=r985iDd5Xg04D7ScRR6QRm28ICvuqYIxbSgGE899lCreyMdB6l31PBEX2oObadTF/oOasF7YPrMgdJ9r4OkQBwH/mSf4q2c1/Bp8S3ad87120han9IzT7ZxZ5kSoGA/wh9zD/8p79kW2kW+k6WLHQHRJLbxkkz7vNRiuMPiqtgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905938; c=relaxed/simple;
-	bh=GeQXjPcL5Zlu/ChH68n+e6Wl7YqENmrmNyZU7J789TU=;
+	s=arc-20240116; t=1716905958; c=relaxed/simple;
+	bh=yuPDGgUn+VpqJiWJHL5pFexMSMO0h7DglLbUSyFNJ5Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lJvRS+FK+DpuJHztqQUeclKjblRu7UePtEiN7+aEJeFgYhsE/KEU3UJ7MALUNiSYVS7UbBMS8nERczqFIa+5eplvjE3dKMmvzPjiMCnLcbHmPuns8zds2bMDy5BiLYSqM0Ga7ChPvtqE0beX868D7eT/3ILK6+YVWRRZ1JK8Vqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZi1t1tt; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716905937; x=1748441937;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GeQXjPcL5Zlu/ChH68n+e6Wl7YqENmrmNyZU7J789TU=;
-  b=XZi1t1ttPiQfzTr1WMn0bWt2VjoVXoGsL2I4UwVKsnHIRfjxSU2CWFQ5
-   cX3y5lnt91iLdxDro1SXB3yHWEe173mG1LyE2lGe6+HUpSoQJLSaKOLzx
-   EPQZWCeqk0DT8/7NUADdZXUEO7H3EOZ3tGFUzEv9FdQvfABA3gwAi8yjd
-   7HrBnHabEEdBcHjE8JIpkTcQUsT6CyrnP9pXxY134zA8fXjT0UToJGMBe
-   YV523J5QvdP0qkvy9itP//ToOhziZdt0vtEh4tnfHl7wXbqPHAx02kWPi
-   jORFFkYs239dhBnluSKxrm4a1ptMVnpip8FrC3M/hs7d6xlBEiaNdzVQ0
-   w==;
-X-CSE-ConnectionGUID: QasF+GfGRfGcnExJo+17HQ==
-X-CSE-MsgGUID: VlGWu5c3TMWAS3MTByJfNw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13421495"
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="13421495"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 07:18:57 -0700
-X-CSE-ConnectionGUID: JbEJyioLQK6SzoD9gbfqew==
-X-CSE-MsgGUID: x1hA1ZI1QkKxtwgbEAk3NA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="35586543"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.110.248]) ([10.125.110.248])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 07:18:55 -0700
-Message-ID: <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com>
-Date: Tue, 28 May 2024 07:18:54 -0700
+	 In-Reply-To:Content-Type; b=kNgTugJqAleSiPD/txaQhYMem040GMZbLAHAx/RBxRuDugDjl/Ytudhp8CMluCs69Mkd69Fb/iutLQylV3mSN8QXUNYTEMNRym666duUT6SPE+APg5ZGPDs7U2NTxnd0rLUx3dD3q/YmwNNLkfva2W0NPdQJhEYk0ROWfzpUC74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7vgjl/V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 415C7C3277B;
+	Tue, 28 May 2024 14:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716905958;
+	bh=yuPDGgUn+VpqJiWJHL5pFexMSMO0h7DglLbUSyFNJ5Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E7vgjl/Vztm2dNd7g3fcwJZSC9bQIl/dDnx7qD4i9yL3YYEYfUFzGVIb4T0QZLi7z
+	 Vx9xUR7HGlRrdvVzyMrEPer5QIPqvdkKi9dE301/IWlqSdpQnmW424JRVgM7kEMX8Y
+	 TNvyBdnw0f+nA7QbJ5SIf34APGwvIYDlCtwcHugeNe3sJlInHH6YTzvXKUeAdCwi/C
+	 igx906FH1Nkgt+wKfaYxXdCicVg3vkdjqYMA1t7ZZRU5dvZAuyBaprkmHLS5LKCZkL
+	 qFVRMmiVYo+BwZkDbq9dVHaUWRO5OJW5FWHKFB5Rd4ydnnFTBTzDLrbzKiauxIYqvR
+	 Nnv6nB3VpWq8Q==
+Message-ID: <3f4c0d70-8689-40a9-b051-13d013c4f09c@kernel.org>
+Date: Tue, 28 May 2024 16:19:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,90 +49,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
-To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, keescook@chromium.org, tony.luck@intel.com,
- gpiccoli@igalia.com, mat.jonczyk@o2.pl, rdunlap@infradead.org,
- alexandre.belloni@bootlin.com, mario.limonciello@amd.com, yaolu@kylinos.cn,
- bhelgaas@google.com, justinstitt@google.com, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Cc: CobeChen@zhaoxin.com, TimGuo@zhaoxin.com, LeoLiu-oc@zhaoxin.com
-References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v2] memcg: Remove the lockdep assert from
+ __mod_objcg_mlstate().
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <20240528121928.i-Gu7Jvg@linutronix.de>
+ <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
+ <20240528134027.OxDASsS3@linutronix.de>
+ <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
+ <20240528141341.rz_rytN_@linutronix.de>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <20240528141341.rz_rytN_@linutronix.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/27/24 23:38, Tony W Wang-oc wrote:
-..> diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-> index c96ae8fee95e..ecadd0698d6a 100644
-> --- a/arch/x86/kernel/hpet.c
-> +++ b/arch/x86/kernel/hpet.c
-> @@ -804,6 +804,12 @@ static u64 read_hpet(struct clocksource *cs)
->  	if (in_nmi())
->  		return (u64)hpet_readl(HPET_COUNTER);
+On 5/28/24 4:13 PM, Sebastian Andrzej Siewior wrote:
+> The assert was introduced in the commit cited below as an insurance that
+> the semantic is the same after the local_irq_save() has been removed and
+> the function has been made static.
+> 
+> The original requirement to disable interrupt was due the modification
+> of per-CPU counters which require interrupts to be disabled because the
+> counter update operation is not atomic and some of the counters are
+> updated from interrupt context.
+> 
+> All callers of __mod_objcg_mlstate() acquire a lock
+> (memcg_stock.stock_lock) which disables interrupts on !PREEMPT_RT and
+> the lockdep assert is satisfied. On PREEMPT_RT the interrupts are not
+> disabled and the assert triggers.
+> 
+> The safety of the counter update is already ensured by
+> VM_WARN_ON_IRQS_ENABLED() which is part of __mod_memcg_lruvec_state() and
+> does not require yet another check.
+> 
+> Remove the lockdep assert from __mod_objcg_mlstate().
+> 
+> Fixes: 91882c1617c15 ("memcg: simple cleanup of stats update functions")
+> Link: https://lore.kernel.org/r/20240528121928.i-Gu7Jvg@linutronix.de
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+mm-hotfixes as it's a rc1 regression
+
+> ---
+> On 2024-05-28 15:44:51 [+0200], Vlastimil Babka (SUSE) wrote:
+>> I think just s/memcg_stats_lock()/__mod_memcg_lruvec_state()/ in your
+>> phrasing, since we are removing the lockdep assert from path that calls
+>> __mod_memcg_lruvec_state() and not memcg_stats_lock()?
+>> Or am I missing something?
+> 
+> Yeah, makes sense.
+> 
+>  mm/memcontrol.c |    2 --
+>  1 file changed, 2 deletions(-)
+> 
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -3147,8 +3147,6 @@ static inline void __mod_objcg_mlstate(s
+>  	struct mem_cgroup *memcg;
+>  	struct lruvec *lruvec;
 >  
-> +	/*
-> +	 * Read HPET directly if panic in progress.
-> +	 */
-> +	if (unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID))
-> +		return (u64)hpet_readl(HPET_COUNTER);
-> +
+> -	lockdep_assert_irqs_disabled();
+> -
+>  	rcu_read_lock();
+>  	memcg = obj_cgroup_memcg(objcg);
+>  	lruvec = mem_cgroup_lruvec(memcg, pgdat);
 
-There is literally one other piece of the code in the kernel doing
-something similar: the printk() implementation.  There's no other
-clocksource or timekeeping code that does this on any architecture.
-
-Why doesn't this problem apply to any other clock sources?
-
-Why should the problem be fixed in the clock sources themselves?  Why
-doesn't printk() deadlock on systems using the HPET?
-
-In other words, I think we should fix pstore to be more like printk
-rather than hacking around this in each clock source.
 
