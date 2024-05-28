@@ -1,106 +1,138 @@
-Return-Path: <linux-kernel+bounces-191819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0048D149B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65C18D149F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42FAE1F24163
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496B31F2342A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7C86D1A8;
-	Tue, 28 May 2024 06:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742D66D1A8;
+	Tue, 28 May 2024 06:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YAYTy97C"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIEAkusb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF95661FF6;
-	Tue, 28 May 2024 06:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F6361FF6;
+	Tue, 28 May 2024 06:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716878539; cv=none; b=jjTzwU0rtQMpLOkzlhghDm+7Yrj18qiJ9Z2QCwZj6li6NC/6eE+25/sQ2ZN9nJjQR7YiXxsl7VYP7cg+UqktyyFItn8dtkmGxC5M9+97Ntr7YJheHMVyg21aGDPQBKjjWM1lz//VKi+8iwQFkdhYl9Q38d5ArjRPO/F1ABbJqSo=
+	t=1716878623; cv=none; b=oPhytQ4K5gYe8uvtwWOP1MdL3sBVGL9eXF+6JsiVM3zlyaiFF+G8fo78ZHik/Uzwqn0tck1Ai/8QpjmgIYC5AaomFy98V0ou2FXQCw/SHCL4YbfemXxRQ7gfIqb3jDqEnvMe9KaQhinJ9iEgwUHUHazM3XBABtn8RyHYP/8STKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716878539; c=relaxed/simple;
-	bh=unp07GJmZ++P8y9G7R8jwpKp8WXsLs59UX5DVYR1qVw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UhClqjUMtGQgH/Y+97rw4u6NF1g+Froh0l+n/0qKUBfgqSAEqUMdqXEYuIUrLFWJb1EHdzXwRloWTJZ0ZsM0tASFksqxp+QA30l8Z9aixOrtHs8dURS6KsowSHUm3gT0mkrYVMOtKCkbn55nBZMVPMJL0KIyjnvGKxxZJfDCDS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YAYTy97C; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716878527; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=1TYz2MSLWTBADR4fMNQi+uyHDoesbuC11bnI7fbU/Nk=;
-	b=YAYTy97C4//M7/wp5gTfEV1m6srNwHt4opTs6wNkGhDcH40omnnsn5qmYKEMSX56N9X24E1qQuDAqORUaDKh9Htf2MRDdw2EJfED6z/DxmbJDkA7L3t5H5ZXjai21AvU0GvBpdiOk+8IImfN7RqWQLEy3RTzvaFINOMnNgcNVHg=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=yaoma@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W7OiUf9_1716878524;
-Received: from localhost.localdomain(mailfrom:yaoma@linux.alibaba.com fp:SMTPD_---0W7OiUf9_1716878524)
-          by smtp.aliyun-inc.com;
-          Tue, 28 May 2024 14:42:06 +0800
-From: Bitao Hu <yaoma@linux.alibaba.com>
-To: lukas@wunner.de,
-	bhelgaas@google.com,
-	weirongguang@kylinos.cn
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kanie@linux.alibaba.com,
-	yaoma@linux.alibaba.com
-Subject: [PATCHv2] PCI: pciehp: Use appropriate conditions to check the hotplug controller status
-Date: Tue, 28 May 2024 14:42:00 +0800
-Message-Id: <20240528064200.87762-1-yaoma@linux.alibaba.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
-In-Reply-To: <20240524063023.77148-1-yaoma@linux.alibaba.com>
-References: <20240524063023.77148-1-yaoma@linux.alibaba.com>
+	s=arc-20240116; t=1716878623; c=relaxed/simple;
+	bh=yC9RNq5NBNYvAzsheBQyRTWpU38uaTNaemhHlEZPaTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tzw6h8SC6ZC5LOAs/p2pFIiYrQKV1B3yQu260RUKnYludL+OVu+Yvg8eN1jErWoJNsWagvr4Ilt4VWb8arbxVUm5Bu99KKzimuQkyGd1kaH7o/T9JcNCBJOVxGaddHZpc/bVwHDmxQ88TLCER8M83XwU7kXRy/QfBkEYHmXTjE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIEAkusb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8A6C3277B;
+	Tue, 28 May 2024 06:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716878623;
+	bh=yC9RNq5NBNYvAzsheBQyRTWpU38uaTNaemhHlEZPaTE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fIEAkusbD8QoLie97Ils2D5LbY+ewWeTYpVlLdtOvWx12e5g1Xpg42L42/xXwfqMT
+	 5yUlpS2dIymgVkSHaQ/ZifTbHLZ6slEFRflJGKe5D3XKJRdUN1bkqL2I5HolCtN50j
+	 2+F1hSAv0gzyvplQBfBQKKkO6Vg11W3y1O8Se2RS7TJgZ2RBrDGIW0jHWLExtV4E7u
+	 lcQIPJWbcWFUzFkvqNnxOg5P8s+5eQmTmdqWC7XMpG6ui5AHvXhB2UUqtywg48jt2+
+	 bk4ANrEvz0j0N7wXSr9oJy20o6NdsOJiVVGYTkDIybDvRH63cQTqZNuAG1ncks/9Fa
+	 lNEGDlfgr16cQ==
+Message-ID: <2b22193e-6469-4139-81aa-da6c6b6b840e@kernel.org>
+Date: Tue, 28 May 2024 08:43:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: watchdog: img,pdc-wdt: Convert to
+ dtschema
+To: Shresth Prasad <shresthprasad7@gmail.com>, wim@linux-watchdog.org,
+ linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com, Shresth Prasad <shrestprasad7@gmail.com>
+References: <20240527195811.7897-2-shresthprasad7@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240527195811.7897-2-shresthprasad7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-"present" and "link_active" can be 1 if the status is ready, and 0 if
-it is not. Both of them can be -ENODEV if reading the config space
-of the hotplug port failed. That's typically the case if the hotplug
-port itself was hot-removed. Therefore, this situation can occur:
-pciehp_card_present() may return 1 and pciehp_check_link_active()
-may return -ENODEV because the hotplug port was hot-removed in-between
-the two function calls. In that case we'll emit both "Card present"
-*and* "Link Up" since both 1 and -ENODEV are considered "true". This
-is not the expected behavior. Those messages should be emited when
-"present" and "link_active" are positive.
+On 27/05/2024 21:58, Shresth Prasad wrote:
+> Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
+> for validation.
+> 
+> Signed-off-by: Shresth Prasad <shrestprasad7@gmail.com>
+> ---
 
-Signed-off-by: Bitao Hu <yaoma@linux.alibaba.com>
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
 ---
-v1 -> v2:
-1. Explain the rationale of the code change in the commit message
-more clearly.
-2. Add the "Reviewed-by" tag of Lukas.
----
- drivers/pci/hotplug/pciehp_ctrl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-index dcdbfcf404dd..6adfdbb70150 100644
---- a/drivers/pci/hotplug/pciehp_ctrl.c
-+++ b/drivers/pci/hotplug/pciehp_ctrl.c
-@@ -276,10 +276,10 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- 	case OFF_STATE:
- 		ctrl->state = POWERON_STATE;
- 		mutex_unlock(&ctrl->state_lock);
--		if (present)
-+		if (present > 0)
- 			ctrl_info(ctrl, "Slot(%s): Card present\n",
- 				  slot_name(ctrl));
--		if (link_active)
-+		if (link_active > 0)
- 			ctrl_info(ctrl, "Slot(%s): Link Up\n",
- 				  slot_name(ctrl));
- 		ctrl->request_result = pciehp_enable_slot(ctrl);
--- 
-2.37.1 (Apple Git-137.1)
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+Best regards,
+Krzysztof
 
 
