@@ -1,223 +1,122 @@
-Return-Path: <linux-kernel+bounces-191758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDE88D13C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:17:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0868D13C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3DD1F21ECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07BB61C21A3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61606A039;
-	Tue, 28 May 2024 05:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC844D5AA;
+	Tue, 28 May 2024 05:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fSgg9mMT"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HGGhQwFq"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE7829CF4
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0364D108
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716873384; cv=none; b=s1EPVE4lm0u+IcTVwvxId4DTQzIDqBswQwT9hqO7LYns7vFI7ikRbt/9ek0GhN9LdoFPr2I+3H9R/kX3exz+9QzEj9MWLxg+o8xirszqwFFFbe1sh0g3e+g0Nf+qDgJXzGQcXIz3cMEgaJG5t1NPZfwM0c0c/Xw0cU53/SCuh3o=
+	t=1716873410; cv=none; b=dYLCyAmPBWje90TJGENJSjrDNScGSOEUs4ltM0zkCgSm8M7CpEAQgojIwHI2illw/K8PGweH35Q8AOHZGnpn0Xlas+oyFkHNi/nGDv6SfBQY60wfPThkVL4Duh3akGv4AdmUHQBrKNs/zqep9pzI1uup+YSqme+oEuZqL6+PZJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716873384; c=relaxed/simple;
-	bh=5jHsxXd8zdPd706tl2Ubj0ZrdiWpVOv9Lxro+6nHmOc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UCfO1HWwxI+KCmKczWkTgL17whdg+KMA6XCOmcjsnZ3oMRxHzbIx4A+HpwbGr10VJjuKEJ+if7IWxZotWsN6KPcZ1SzFh4LMmksOfeGdKNj44ax0nDGavnCNZVBn2vqA/YvkjiI5VhG/NB+K0wqeXUTuOrOaW5WJX5B7Br02oL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fSgg9mMT; arc=none smtp.client-ip=95.215.58.172
+	s=arc-20240116; t=1716873410; c=relaxed/simple;
+	bh=NMLkvvg5qObSgClZZbO5bDWOjnVmIgpOQUbiedvX498=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SIjWdEkkvcG6bHvkIVtdGOfGsiFYcY7C3os/2RpKMBv/6hR5CsWoqtdOQnLhWGnmD7KsgcWYgfBX4CDUZ0ROohtNaw7zyVvuBoQffbS1/Y5ObK4XSRPjrNbHJ4z2WUyw0PHxKM8V8Hjv8OvA646L4QdlBDqmPLnemZOr2lfAK9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HGGhQwFq; arc=none smtp.client-ip=91.218.175.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: david@redhat.com
+X-Envelope-To: vbabka@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716873377;
+	t=1716873406;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Zg6IUZo0bowQYilDFhdb5hKg47g4PTuCJ0DoynV+1Ow=;
-	b=fSgg9mMT6NoKlJBxIsFelxj0N7eNK3jUnz48HPuWyvIw8AguYxvmguIM3h+PROaMNThruf
-	txlhn+TQX9c9CgwhALfHspAetakAxYX20B/4TxOkshI9scHVPcPx0ns1+p4a6NQ+6hulz6
-	tGmLvjIzmk/oIDckYccOzeEoG3TMdIE=
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: hughd@google.com
-X-Envelope-To: linux-kernel@vger.kernel.org
+	bh=3PvMR9k1pGFigZouPy+tMRVCzX+R62W6OpqFaB67TC8=;
+	b=HGGhQwFq+dRq6k8V3hc0wLl4PSQjCwaiqjWJGTuBoy6sot/EvSMUF9uoO6wgTW9RCaLBnj
+	on9hvRA2ven7pvJ2qnp7M6NxUm6Vgr3vbNIknPjpYBsGp2tW+zIemHk0T9RgVWRV+EZgRc
+	CSOSa25vfYAxSzsOrwyhsrpdD7UbHjs=
+X-Envelope-To: bigeasy@linutronix.de
 X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: chengming.zhou@linux.dev
-X-Envelope-To: yang.yang29@zte.com.cn
-X-Envelope-To: ran.xiaokai@zte.com.cn
-X-Envelope-To: xu.xin16@zte.com.cn
-X-Envelope-To: aarcange@redhat.com
-X-Envelope-To: shr@devkernel.io
-X-Envelope-To: zhouchengming@bytedance.com
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: muchun.song@linux.dev
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: tglx@linutronix.de
+Date: Mon, 27 May 2024 22:16:41 -0700
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-Date: Tue, 28 May 2024 13:15:22 +0800
-Subject: [PATCH v3 2/2] mm/ksm: fix ksm_zero_pages accounting
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] memcg: simple cleanup of stats update functions
+Message-ID: <n6zstrcbqp7fqpennqf3qgt2nuc2tdrnsc5dmoawyke3zn3xcm@6uirkotvrhe6>
+References: <20240420232505.2768428-1-shakeel.butt@linux.dev>
+ <20240527152200.P1rU7FaG@linutronix.de>
+ <86006806-4ffc-4330-ab4b-29215ab2c98c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-b4-ksm-counters-v3-2-34bb358fdc13@linux.dev>
-References: <20240528-b4-ksm-counters-v3-0-34bb358fdc13@linux.dev>
-In-Reply-To: <20240528-b4-ksm-counters-v3-0-34bb358fdc13@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@redhat.com>, hughd@google.com, aarcange@redhat.com, 
- Stefan Roesch <shr@devkernel.io>, Xiaokai Ran <ran.xiaokai@zte.com.cn>, 
- xu xin <xu.xin16@zte.com.cn>, Yang Yang <yang.yang29@zte.com.cn>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, zhouchengming@bytedance.com, 
- Chengming Zhou <chengming.zhou@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716873365; l=5017;
- i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
- bh=5jHsxXd8zdPd706tl2Ubj0ZrdiWpVOv9Lxro+6nHmOc=;
- b=v7pQUR5dWHG0CW3hlK5ixSeteB47vG0GGXUi+MHTgy6Iqr+keE+paN3GabHlhibRUblv0dSGO
- AwnovP9yUvzDbLg6q0J1JWpPPMHN5l5x5yLDJ4esOLuWg9LtJE6s/ku
-X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
- pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <86006806-4ffc-4330-ab4b-29215ab2c98c@kernel.org>
 X-Migadu-Flow: FLOW_OUT
 
-We normally ksm_zero_pages++ in ksmd when page is merged with zero page,
-but ksm_zero_pages-- is done from page tables side, where there is no any
-accessing protection of ksm_zero_pages.
+On Mon, May 27, 2024 at 06:34:24PM GMT, Vlastimil Babka (SUSE) wrote:
+> On 5/27/24 5:22 PM, Sebastian Andrzej Siewior wrote:
+> > On 2024-04-20 16:25:05 [-0700], Shakeel Butt wrote:
+> >> mod_memcg_lruvec_state() is never called from outside of memcontrol.c
+> >> and with always irq disabled. So, replace it with the irq disabled
+> >> version and add an assert that irq is disabled in the caller.
+> > 
+> > unless PREEMPT_RT is enabled. In that case IRQs are not disabled as part
+> > of local_lock_irqsave(&memcg_stock.stock_lock, …) leading to:
 
-So we can read very exceptional value of ksm_zero_pages in rare cases,
-such as -1, which is very confusing to users.
+Sorry about that and thanks for the report.
 
-Fix it by changing to use atomic_long_t, and the same case with the
-mm->ksm_zero_pages.
+> 
+> But then the "interrupts are handled by a kernel thread that can sleep" part
+> of RT also means it's ok to just have the stock_lock taken with no
+> interrupts disabled as no actual raw interrupt handler will interrupt the
+> holder and deadlock, right?
+> 
 
-Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
-Fixes: 6080d19f0704 ("ksm: add ksm zero pages for each process")
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
----
- fs/proc/base.c           |  2 +-
- include/linux/ksm.h      | 17 ++++++++++++++---
- include/linux/mm_types.h |  2 +-
- mm/ksm.c                 | 11 +++++------
- 4 files changed, 21 insertions(+), 11 deletions(-)
+Thanks Vlastimil for jolting my memory on RT reasoning.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 18550c071d71..72a1acd03675 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3214,7 +3214,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
- 	mm = get_task_mm(task);
- 	if (mm) {
- 		seq_printf(m, "ksm_rmap_items %lu\n", mm->ksm_rmap_items);
--		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
-+		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
- 		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
- 		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
- 		mmput(mm);
-diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-index 52c63a9c5a9c..11690dacd986 100644
---- a/include/linux/ksm.h
-+++ b/include/linux/ksm.h
-@@ -33,16 +33,27 @@ void __ksm_exit(struct mm_struct *mm);
-  */
- #define is_ksm_zero_pte(pte)	(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte))
- 
--extern unsigned long ksm_zero_pages;
-+extern atomic_long_t ksm_zero_pages;
-+
-+static inline void ksm_map_zero_page(struct mm_struct *mm)
-+{
-+	atomic_long_inc(&ksm_zero_pages);
-+	atomic_long_inc(&mm->ksm_zero_pages);
-+}
- 
- static inline void ksm_might_unmap_zero_page(struct mm_struct *mm, pte_t pte)
- {
- 	if (is_ksm_zero_pte(pte)) {
--		ksm_zero_pages--;
--		mm->ksm_zero_pages--;
-+		atomic_long_dec(&ksm_zero_pages);
-+		atomic_long_dec(&mm->ksm_zero_pages);
- 	}
- }
- 
-+static inline long mm_ksm_zero_pages(struct mm_struct *mm)
-+{
-+	return atomic_long_read(&mm->ksm_zero_pages);
-+}
-+
- static inline int ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
- {
- 	if (test_bit(MMF_VM_MERGEABLE, &oldmm->flags))
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 24323c7d0bd4..af3a0256fa93 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -985,7 +985,7 @@ struct mm_struct {
- 		 * Represent how many empty pages are merged with kernel zero
- 		 * pages when enabling KSM use_zero_pages.
- 		 */
--		unsigned long ksm_zero_pages;
-+		atomic_long_t ksm_zero_pages;
- #endif /* CONFIG_KSM */
- #ifdef CONFIG_LRU_GEN_WALKS_MMU
- 		struct {
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 9e99cb12d330..34c4820e0d3d 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -296,7 +296,7 @@ static bool ksm_use_zero_pages __read_mostly;
- static bool ksm_smart_scan = true;
- 
- /* The number of zero pages which is placed by KSM */
--unsigned long ksm_zero_pages;
-+atomic_long_t ksm_zero_pages = ATOMIC_LONG_INIT(0);
- 
- /* The number of pages that have been skipped due to "smart scanning" */
- static unsigned long ksm_pages_skipped;
-@@ -1429,8 +1429,7 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
- 		 * the dirty bit in zero page's PTE is set.
- 		 */
- 		newpte = pte_mkdirty(pte_mkspecial(pfn_pte(page_to_pfn(kpage), vma->vm_page_prot)));
--		ksm_zero_pages++;
--		mm->ksm_zero_pages++;
-+		ksm_map_zero_page(mm);
- 		/*
- 		 * We're replacing an anonymous page with a zero page, which is
- 		 * not anonymous. We need to do proper accounting otherwise we
-@@ -3374,7 +3373,7 @@ static void wait_while_offlining(void)
- #ifdef CONFIG_PROC_FS
- long ksm_process_profit(struct mm_struct *mm)
- {
--	return (long)(mm->ksm_merging_pages + mm->ksm_zero_pages) * PAGE_SIZE -
-+	return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PAGE_SIZE -
- 		mm->ksm_rmap_items * sizeof(struct ksm_rmap_item);
- }
- #endif /* CONFIG_PROC_FS */
-@@ -3663,7 +3662,7 @@ KSM_ATTR_RO(pages_skipped);
- static ssize_t ksm_zero_pages_show(struct kobject *kobj,
- 				struct kobj_attribute *attr, char *buf)
- {
--	return sysfs_emit(buf, "%ld\n", ksm_zero_pages);
-+	return sysfs_emit(buf, "%ld\n", atomic_long_read(&ksm_zero_pages));
- }
- KSM_ATTR_RO(ksm_zero_pages);
- 
-@@ -3672,7 +3671,7 @@ static ssize_t general_profit_show(struct kobject *kobj,
- {
- 	long general_profit;
- 
--	general_profit = (ksm_pages_sharing + ksm_zero_pages) * PAGE_SIZE -
-+	general_profit = (ksm_pages_sharing + atomic_long_read(&ksm_zero_pages)) * PAGE_SIZE -
- 				ksm_rmap_items * sizeof(struct ksm_rmap_item);
- 
- 	return sysfs_emit(buf, "%ld\n", general_profit);
+> > | ------------[ cut here ]------------
+> > | WARNING: CPU: 0 PID: 1 at mm/memcontrol.c:3150 __mod_objcg_mlstate+0xc2/0x110
+> > | CPU: 0 PID: 1 Comm: systemd Not tainted 6.10.0-rc1-rt0+ #17
+> > | Call Trace:
+> > |  <TASK>
+> > |  mod_objcg_state+0x2b3/0x320
+> > |  __memcg_slab_post_alloc_hook+0x13c/0x340
+> > |  kmem_cache_alloc_lru_noprof+0x2bd/0x2e0
+> > |  alloc_inode+0x59/0xc0
+> > |  iget_locked+0xf0/0x290
+> > 
+> > suggestions?
+> 
+> So in that case the appropriate thing would be to replace the assert with
+> lockdep_assert_held(&memcg_stock.stock_lock);
+> ?
+> 
+> It seems all the code paths leading here have that one.
+> 
 
--- 
-2.45.1
-
+Yeah this seems right and reasonable. Should I send a fix or you want to
+send it?
 
