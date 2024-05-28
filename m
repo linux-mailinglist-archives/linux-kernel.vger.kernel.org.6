@@ -1,104 +1,79 @@
-Return-Path: <linux-kernel+bounces-192251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C2F8D1AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3418D1AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E65BB22F25
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44EF72841DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9720F16C87C;
-	Tue, 28 May 2024 12:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77B616D4DE;
+	Tue, 28 May 2024 12:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+FXP0OY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="307U86Bq"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD3716C863;
-	Tue, 28 May 2024 12:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E15E16D339;
+	Tue, 28 May 2024 12:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716898085; cv=none; b=tlPLLfFvpwsqyND/hTcxo2teMGaRf+wpMeDz/BDh8ng3vtaNCu6uw9QVpqIQ1I9/XIzqHZPkFRhnK9ndxjU1rTMbrWmqNTIwn5TFHK5WKo5ESOIm2RF/DKPtxa1Rg0C0W8m2S2XPNjIFnWyTeZ1cn8qwqQK52CWESEBy/UNkZ2A=
+	t=1716898116; cv=none; b=YLo6mkuAYtfRMnTsG6cJJl+fIwC8vSIwS+FaTb+Dq7SW3UVwZhyMfpcH+2F9+5IPWnOANtXpbyIqJj06BhPtUPXa/T1rCny559we2ZGxotDz+mNhNYEq5YXd7arbfg3JyuJrOwQWeVxxF+JVO+cGQumUE8oF3vY1q5tvCDtcy4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716898085; c=relaxed/simple;
-	bh=jWIk4zCSEH8ftg3VJcfrN26WHi7FnSNBPYkXftuiS80=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iUHHghDw7oziij1Gz1tO22Ztye96x6Pj0Mk2X4o5pxVqDOic/Tc6i9/5QnyQ/bpAn11NjmoFkKrqLow+j7gqI42KYiniO7qOY8beyWWDtPGZ5rt8RTJ+0FqSyOv5GJAYwEa72gh9vatH5+TG+JOP6hXgGTRPAdmXNZxMwbv68lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+FXP0OY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9664FC3277B;
-	Tue, 28 May 2024 12:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716898084;
-	bh=jWIk4zCSEH8ftg3VJcfrN26WHi7FnSNBPYkXftuiS80=;
-	h=From:To:Cc:Subject:Date:From;
-	b=i+FXP0OYq7CQ+Uobsr+OoL5JuAn0LqqqpQGECrprPQgZ/a08GHCchYKs8LHKBn2Yk
-	 kgCbFKXHPEy2NflkIlARhAHMpSVzEFet5Xbf+7zXnt3llDIbOiX/AcrMh/vD3SraWQ
-	 WBNNNXKwaNqdbK/IU46REw8wqRjfw4MGj2CH7omrnvir/abOsDtQwEyWUVujRACXCv
-	 GJfiRVXMlNIfgar1xhp8zNDzY7Z/VaSLnNCHhxo7F9Cx+f7H8xOVLUOUxQ7BqzRui3
-	 4oNjIzOwhsYifAglhr6W+MPP+t8h+5PHBjfEu76YZ0ZTeeniZeUTlYkhxqOqwVQeYd
-	 34qeVjb5/6f5g==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	David Ober <dober@lenovo.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-watchdog@vger.kernel.org,
+	s=arc-20240116; t=1716898116; c=relaxed/simple;
+	bh=dQeGBHjPQIWO+7pLwlnXWV1KMuBRTnyQEz/KMfUZSwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5krKVOBdhTdBUblIBR+jcm8WsJwGRJfAWE98WX7Mc5xPqIwhW4bhZv/UqUusCRQMldA33ocj3gF1++kDrKEGV3o7ScSyijkwrk1bvTTqj7w1V9DrK7Wx0BGqlQ2bDirBzVSGv1jcNlyF86i+NISfLPKr5VZL6/G4OV1uB8LH2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=307U86Bq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=cVx5qFKGIxYr/0RCHVr63o/16UqTO6KTePA888kXg4Y=; b=307U86Bqtd+yMgnNSYNVXOKiqs
+	HYPIxAyXHp1ZLoTNbhsapdqYop76Kp9Z4FB5PXX78+8Zwfd0KyEsQdZHQKGtHJH2tEqmmVQGYVAiv
+	LcgJVQMpxBnXa+W5kA8eilOfGNo3iZzx1iae71xwMjn4wd/sga1zLZFkV6QGpAu6jqaQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sBvcg-00G9Ld-L9; Tue, 28 May 2024 14:08:10 +0200
+Date: Tue, 28 May 2024 14:08:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Nicolas Pitre <nico@fluxnic.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Breno Leitao <leitao@debian.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] watchdog: lenovo_se10_wdt: add HAS_IOPORT dependency
-Date: Tue, 28 May 2024 14:07:31 +0200
-Message-Id: <20240528120759.3491774-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+Subject: Re: [PATCH net-next] net: smc91x: Refactor SMC_* macros
+Message-ID: <c78b6a94-9379-44df-960e-cd01a9e71d45@lunn.ch>
+References: <20240528104421.399885-3-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528104421.399885-3-thorsten.blum@toblux.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, May 28, 2024 at 12:44:23PM +0200, Thorsten Blum wrote:
+> Use the macro parameter lp directly instead of relying on ioaddr being
+> defined in the surrounding scope.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
 
-Once the inb()/outb() helpers become conditional, the newly added driver
-fails to link on targets without CONFIG_HAS_IOPORT:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-In file included from arch/arm64/include/asm/io.h:299,
-                 from include/linux/io.h:14,
-                 from drivers/watchdog/lenovo_se10_wdt.c:8:
-drivers/watchdog/lenovo_se10_wdt.c: In function 'set_bram':
-include/asm-generic/io.h:596:15: error: call to '_outb' declared with attribute error: outb() requires CONFIG_HAS_IOPORT
-  596 | #define _outb _outb
-include/asm-generic/io.h:655:14: note: in expansion of macro '_outb'
-  655 | #define outb _outb
-      |              ^~~~~
-drivers/watchdog/lenovo_se10_wdt.c:67:9: note: in expansion of macro 'outb'
-   67 |         outb(offset, bram_base);
-      |         ^~~~
-
-Add the same dependency we added to the other such drivers.
-
-Fixes: 1f6602c8ed1e ("watchdog: lenovo_se10_wdt: Watchdog driver for Lenovo SE10 platform")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/watchdog/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 5f91921afc79..24ea3b6f95fe 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -257,6 +257,7 @@ config GPIO_WATCHDOG_ARCH_INITCALL
- config LENOVO_SE10_WDT
- 	tristate "Lenovo SE10 Watchdog"
- 	depends on (X86 && DMI) || COMPILE_TEST
-+	depends on HAS_IOPORT
- 	select WATCHDOG_CORE
- 	help
- 	  If you say yes here you get support for the watchdog
--- 
-2.39.2
-
+    Andrew
 
