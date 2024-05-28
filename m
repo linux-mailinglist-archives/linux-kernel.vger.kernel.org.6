@@ -1,150 +1,171 @@
-Return-Path: <linux-kernel+bounces-192375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CAC68D1C47
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:15:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D90668D1C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D4BEB21844
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:15:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7702B1F235DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14D316E867;
-	Tue, 28 May 2024 13:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE36171E52;
+	Tue, 28 May 2024 13:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wcSp2+pt"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4R+nlNL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732A916DEA5
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B5E171679;
+	Tue, 28 May 2024 13:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716902092; cv=none; b=AbVz+r8GKlR+O/TDozRqvlwYfwIp5kHJoLqo77bysb+seyslbB8m0BplY1hmItI921oepEOSCc7pablKQ7ZwgXPGAoMAjwIwI9ERvCfUZPV43CqDyUHtHLtBVj+bNmhvjRn9+IQslNiYvfroJMsY4v0XV7MqcMb76hbgwfWobas=
+	t=1716902137; cv=none; b=eTx6B2MUjS+1osp8SFMCLwk895QC+pAy6AeYMfE4/6A6ZnE10uig/yhfswZBpTNnYTdOoKkDIaq0L/N5qJCA6WcvJSUylW8oc5HW4zpkqnJx5/RlwkxSmxiFZ3uxNLTZhD8XA+Y3n+jdR0GdK/kJSRJ3nY+noBLQjWwB+KcaQRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716902092; c=relaxed/simple;
-	bh=SeWXVvF22D9ZJf9IgluXoTCpCnkYe9ToAThBJHwIzY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U26kfyNsygcD7NEQT/Hvm87KehiRkb7F/Hs0Mi41PtKA9vdZimQzuBgRnSaxjw3ZklHq9yWmac0f427wIUvbqFKW0zIekYRaKTk/haLB6t98fArjVI9QJdhzB6AB/1p8LujCqPcKfnW5fXLusnvW5NxYmI/5HX6MTT/5jZUyUnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wcSp2+pt; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-529661f2552so1050331e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716902089; x=1717506889; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gaAjPPNW+1o8Nq5Xk3MdnoecgKTcrll+0FrMoJS3ho=;
-        b=wcSp2+ptffLfjHTyNtjcjZc/W5nZ1N+1skE5toYnRLFsi47xpXEeC7knoKy6CGiPUH
-         klgx1HHIWUByaYtdggLq+ixvYdK0Eds6/n9E+hK5QRgmmqcMbF5GRpR0pV4QRYjj3xLJ
-         itMaD1Tuo/Y9HTbhNn5Q3k0bqKVej6MSEu/uwEV4mKhpBMlBtDBhhYJe1Tooq/JCR9uj
-         /PAHCPUrJGCgw+9BWjFc38wYZGjS24iXdTGwYy/BDPHzewfBZahRnIDkoyG5OGq627J0
-         TkxXP0oXeoour2671cnQlvEuzw4w/BEmb4YOm5XhlShXWpJN/1qODfMmzqF/XBymMOHY
-         FqrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716902089; x=1717506889;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6gaAjPPNW+1o8Nq5Xk3MdnoecgKTcrll+0FrMoJS3ho=;
-        b=PR1iilRzCal5g2uTB/wmhpf7hDNyOqPTEqeJB0zbvUrH9BXt9PQJaOhaBkheP/GLck
-         HinWFS7nUQQFcaxN2zPKtuOQz2mQvcOStABvHi9pOtPbYPUCMrTKlHStvyG0VBwrGMip
-         moIwW/DUYlnZqirAC5da0tJy8lIhyR4TiEgEx8rqL35WC4dvtp9SJUwSVh78XT68wNAO
-         SXH+Et9XCivjud7sr8iDHimHfRQzcp+tzQcpXkrG/dkybJhE15pzX2X2RUY5UjbyMqL+
-         v1nUUDJl49F+bh/bqXaBQOTDWnBwxLyyumsOgbDvID2nhKqTirEse+TBR9mIZeFwec6r
-         Mx2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVCtHEXwDvA43cgJGAENVrn0aF0rb+rcnf5bdOUTQVCM2QuZ4nmf8X5Vu+eKcqlXBN8S4EAx35HyFdCumBjSoqlqZuBpiCLS11lzfWX
-X-Gm-Message-State: AOJu0YwQxdqLJaxN7NkQFeuwOQ3aGhSSe7yg0zpSzFGibZKM9uWVHUBx
-	xquP04xoRQqcV5dBcTxurlIV8Cs6Ca7Ph1mtXDFW2B1WtmQPaXz1qL0ggLh3sXo=
-X-Google-Smtp-Source: AGHT+IECgbuCJq5CH9I+wOKcyKpG4gk5FMiLo2gVoFRgQ/xpYXkdBwseE2GUt86zkny6KhanGzA4zg==
-X-Received: by 2002:a05:6512:2017:b0:520:dc1c:3c5d with SMTP id 2adb3069b0e04-529668c9cc9mr6763082e87.42.1716902088640;
-        Tue, 28 May 2024 06:14:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529b72ca748sm404584e87.285.2024.05.28.06.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 06:14:47 -0700 (PDT)
-Date: Tue, 28 May 2024 16:14:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ajit Pandey <quic_ajipan@quicinc.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Vinod Koul <vkoul@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Subject: Re: [PATCH V3 0/8] clk: qcom: Add support for DISPCC, CAMCC and
- GPUCC on SM4450
-Message-ID: <5ppxcqdtyn7a3tyaorzlxhaxhqtse5xvjpecppjcmbxodmsz3m@5kr7uacez7u4>
-References: <20240528114254.3147988-1-quic_ajipan@quicinc.com>
+	s=arc-20240116; t=1716902137; c=relaxed/simple;
+	bh=r5PRmmxJaUk08rAPSCBzO9oSNG9qSKMUcqLqCcrKXiQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NTl8pU3S6m8Mb3m8G6TeRi9guMXkdnD0WO8cX9M1x9N0QoRejp3d9KPLpBpNe13JE36ZTGBiLt0C8JHTX2pq3EonHIWFA08NcyX+cdzzLtvrpn3oYJqdnyDWEoM+7Kg8+4PdmfPYpxZcopn7ySbWljtIhk5kuCjIzwvKiBctABw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4R+nlNL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A32C3277B;
+	Tue, 28 May 2024 13:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716902137;
+	bh=r5PRmmxJaUk08rAPSCBzO9oSNG9qSKMUcqLqCcrKXiQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=a4R+nlNLumi2QM5Rv8uuN48nmEzt4Pj1X60btY+MADHG3O4nmsdzG1UjPRdEskAUl
+	 Ql0R47Bd6wyKxm/tPeHOonVj6DTzPGdZAnIb/lZxylw3c64xx7/aITCLFc/MCYFepW
+	 8gsQtDBedaEpJbFGKGJOOOCyDnQgy096qcRGnZewCQCDYPgKPE2p/PGPcLyNikQ0mz
+	 /RwhOOEvyrdqQmujoBPkpZ7pI1etcYXcGbqZwI/JQs6RjZQv4X0dRXtn0ikW5LdhIc
+	 qFbSWxFyP7gnix/fKuxSMACmsZoT5YyAElCoduX5sBzY1GVrqLfDFNPmAq8lan19jt
+	 CY59CIpm7FFUA==
+From: Benjamin Tissoires <bentiss@kernel.org>
+Date: Tue, 28 May 2024 15:14:47 +0200
+Subject: [PATCH HID 09/13] selftests/hid: add subprog call test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528114254.3147988-1-quic_ajipan@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240528-hid_bpf_struct_ops-v1-9-8c6663df27d8@kernel.org>
+References: <20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org>
+In-Reply-To: <20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org>
+To: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Benjamin Tissoires <bentiss@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716902113; l=2874;
+ i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=r5PRmmxJaUk08rAPSCBzO9oSNG9qSKMUcqLqCcrKXiQ=;
+ b=Bb/kgLvMa2H3hEIhee/vec2iqeL/yB3axdtRrtdDBokZLYyrCJOgC7ir2UEXwkV6TTffDYk5r
+ EdVtWZdCRUKB+HLe/6fAzN1E9G7QqrJmHMO38lFOEg/HkoJhS0gQ8UR
+X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
+ pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
 
-On Tue, May 28, 2024 at 05:12:46PM +0530, Ajit Pandey wrote:
-> This patch series add dt-bindings, driver and device tree support for DISPCC, CAMCC
-> and GPUCC on QCOM SM4450 platform and also includes a fix related to LUCID EVO PLL
-> config issue in clk-alpha-pll driver which is required for correct scaling of few
-> supported frequencies in graphics clock controllers on SM4450.
-> 
-> Changes in V3:
-> - [PATCH 1/8]: Updated commit tags order and added Reviewed-by: tags
-> - [PATCH 3/8]: Fixed reusing of pll0_config and added Reviewed-by: tags 
-> - [PATCH 6/8]: Updated commit text and added Reviewed-by tags
-> - [PATCH 8/8]: Updated node order for gpucc.
-> - Link to v2: https://lore.kernel.org/all/20240416182005.75422-1-quic_ajipan@quicinc.com/ 
+I got a weird verifier error with a subprog once, so let's have a test
+for it.
 
-Nit: in future please retain previous changelogs too.
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+---
+ tools/testing/selftests/hid/hid_bpf.c   | 41 +++++++++++++++++++++++++++++++++
+ tools/testing/selftests/hid/progs/hid.c | 24 +++++++++++++++++++
+ 2 files changed, 65 insertions(+)
 
-> 
-> Ajit Pandey (8):
->   clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
->   dt-bindings: clock: qcom: add DISPCC clocks on SM4450
->   clk: qcom: Add DISPCC driver support for SM4450
->   dt-bindings: clock: qcom: add CAMCC clocks on SM4450
->   clk: qcom: Add CAMCC driver support for SM4450
->   dt-bindings: clock: qcom: add GPUCC clocks on SM4450
->   clk: qcom: Add GPUCC driver support for SM4450
->   arm64: dts: qcom: sm4450: add camera, display and gpu clock controller
-> 
->  .../bindings/clock/qcom,sm4450-camcc.yaml     |   63 +
->  .../bindings/clock/qcom,sm4450-dispcc.yaml    |   71 +
->  .../bindings/clock/qcom,sm8450-gpucc.yaml     |    2 +
->  arch/arm64/boot/dts/qcom/sm4450.dtsi          |   38 +
->  drivers/clk/qcom/Kconfig                      |   27 +
->  drivers/clk/qcom/Makefile                     |    3 +
->  drivers/clk/qcom/camcc-sm4450.c               | 1688 +++++++++++++++++
->  drivers/clk/qcom/clk-alpha-pll.c              |    2 +-
->  drivers/clk/qcom/dispcc-sm4450.c              |  770 ++++++++
->  drivers/clk/qcom/gpucc-sm4450.c               |  805 ++++++++
->  include/dt-bindings/clock/qcom,sm4450-camcc.h |  106 ++
->  .../dt-bindings/clock/qcom,sm4450-dispcc.h    |   51 +
->  include/dt-bindings/clock/qcom,sm4450-gpucc.h |   62 +
->  13 files changed, 3687 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
->  create mode 100644 drivers/clk/qcom/camcc-sm4450.c
->  create mode 100644 drivers/clk/qcom/dispcc-sm4450.c
->  create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
->  create mode 100644 include/dt-bindings/clock/qcom,sm4450-camcc.h
->  create mode 100644 include/dt-bindings/clock/qcom,sm4450-dispcc.h
->  create mode 100644 include/dt-bindings/clock/qcom,sm4450-gpucc.h
-> 
-> -- 
-> 2.25.1
-> 
+diff --git a/tools/testing/selftests/hid/hid_bpf.c b/tools/testing/selftests/hid/hid_bpf.c
+index 967dfe6b58cb..45e173db35bd 100644
+--- a/tools/testing/selftests/hid/hid_bpf.c
++++ b/tools/testing/selftests/hid/hid_bpf.c
+@@ -638,6 +638,47 @@ TEST_F(hid_bpf, raw_event)
+ 	ASSERT_EQ(buf[2], 52);
+ }
+ 
++/*
++ * Attach hid_first_event to the given uhid device,
++ * retrieve and open the matching hidraw node,
++ * inject one event in the uhid device,
++ * check that the program sees it and can change the data
++ */
++TEST_F(hid_bpf, subprog_raw_event)
++{
++	const struct test_program progs[] = {
++		{ .name = "hid_subprog_first_event" },
++	};
++	__u8 buf[10] = {0};
++	int err;
++
++	LOAD_PROGRAMS(progs);
++
++	/* inject one event */
++	buf[0] = 1;
++	buf[1] = 42;
++	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
++
++	/* read the data from hidraw */
++	memset(buf, 0, sizeof(buf));
++	err = read(self->hidraw_fd, buf, sizeof(buf));
++	ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
++	ASSERT_EQ(buf[0], 1);
++	ASSERT_EQ(buf[2], 47);
++
++	/* inject another event */
++	memset(buf, 0, sizeof(buf));
++	buf[0] = 1;
++	buf[1] = 47;
++	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
++
++	/* read the data from hidraw */
++	memset(buf, 0, sizeof(buf));
++	err = read(self->hidraw_fd, buf, sizeof(buf));
++	ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
++	ASSERT_EQ(buf[2], 52);
++}
++
+ /*
+  * Ensures that we can attach/detach programs
+  */
+diff --git a/tools/testing/selftests/hid/progs/hid.c b/tools/testing/selftests/hid/progs/hid.c
+index 9adace26e8aa..efa3c7d292bc 100644
+--- a/tools/testing/selftests/hid/progs/hid.c
++++ b/tools/testing/selftests/hid/progs/hid.c
+@@ -35,6 +35,30 @@ struct hid_bpf_ops first_event = {
+ 	.hid_id = 2,
+ };
+ 
++int __hid_subprog_first_event(struct hid_bpf_ctx *hid_ctx, enum hid_report_type type)
++{
++	__u8 *rw_data = hid_bpf_get_data(hid_ctx, 0 /* offset */, 3 /* size */);
++
++	if (!rw_data)
++		return 0; /* EPERM check */
++
++	rw_data[2] = rw_data[1] + 5;
++
++	return hid_ctx->size;
++}
++
++SEC("?struct_ops/hid_device_event")
++int BPF_PROG(hid_subprog_first_event, struct hid_bpf_ctx *hid_ctx, enum hid_report_type type)
++{
++	return __hid_subprog_first_event(hid_ctx, type);
++}
++
++SEC(".struct_ops.link")
++struct hid_bpf_ops subprog_first_event = {
++	.hid_device_event = (void *)hid_subprog_first_event,
++	.hid_id = 2,
++};
++
+ SEC("?struct_ops/hid_device_event")
+ int BPF_PROG(hid_second_event, struct hid_bpf_ctx *hid_ctx, enum hid_report_type type)
+ {
 
 -- 
-With best wishes
-Dmitry
+2.44.0
+
 
