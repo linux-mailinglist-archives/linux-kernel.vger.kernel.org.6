@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-192356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F4B8D1C0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206558D1C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3C01C22482
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A278A1F23769
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC5516C680;
-	Tue, 28 May 2024 13:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E354D16DEBD;
+	Tue, 28 May 2024 13:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qlUkJALb"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mEsIam4J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D5816EBF2
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2734916DECA
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716901204; cv=none; b=BsJPgrdosAuZ9Hu08gzCfGcnIS1dLdKsg1AngWlZZFS9pbQXcLK9obDevQq1BWvJVcqN/Q7Xu5a18BZoT2/ArkW+HW44+ir/a5PWFYB1cgdD95qV1SRxJ8gVHyVSjjH+4T1iN3TfJWt+YZPphQpW0I4n+nK5/ckYCiUZXknP5XA=
+	t=1716901265; cv=none; b=C6PnL+85j4lC39em1jtjN8mcKGpTn8RgN9Yv/0SoHUnMGm5fq2+Ks4zYX/jY7she0nNi7YlqfoBXop2QdL+mVEyLdDQv9eV+zvdHQAd1l+Z5e9A6URU2MbtYXuI/3P9ETcAJcZNCBxXqNfF6ELjR4gkn1GiVNeRP+PH0eMleKQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716901204; c=relaxed/simple;
-	bh=ibTR33difJu0brc+rGnVpjq76/6lgB2c66S2t3YAECw=;
+	s=arc-20240116; t=1716901265; c=relaxed/simple;
+	bh=7y4RVKFrtvKqPEZh7zHGZLwvzx5dhBxk1lFGikboazk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jqrYv0/JVNwgJ7N7wPfiSYunBH0zjb0Jj1ZityqLbk2yc+7BCfUyXwKmhkFX6nEQnEvVyKzzqfJZyZHf5gWBUHwya2Fwz+SlLIYDGCJBsKYpVVOXx2CEfTc671S944JjEuv0xU95Sxiz5xZL0IvlD/YSPOA/yk5yLsTLiHIP82s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qlUkJALb; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5241b49c0daso1004639e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:00:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716901201; x=1717506001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XOBr0QwA/8BpJHnfWBeozKjSkUVxwa5M0pLTBP3P79A=;
-        b=qlUkJALbZ4LadE7nj9ay6aUba0g7NEQHeA7JkgoOSt60kPKp5L7oYF8p7MpvZTeK3x
-         aYUX3lNr0easPJyEKmGGHVdi3xqmMkb9HIg+s9Djen2mamj7fJlP3u03LKj9/smPdcSa
-         iPuh0OtoVQy+0HXINaoae+pXUBHhwl8pjQCyYowfXaiHDqbEdwo7SD5NRZa8lUcHi/Sv
-         Kb0rkTYy9kqiMXYuPUH8VKxdZmM09/NWLYUivyot8QjuRbC5NaXF1nyELgJjSXR9i19Q
-         E+lPssDnEObFmKHk3uGspGH9D2nnZ5El2PFE7XsVz6PVnML0WpxBZnMWVoaJFhZhVrDK
-         OVyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716901201; x=1717506001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XOBr0QwA/8BpJHnfWBeozKjSkUVxwa5M0pLTBP3P79A=;
-        b=vIKkzjyVUoW812+CKmQCxhrzJsIeNU9ZqESbMYGY+tzJL1n2dpJs76zKYEyi+Uzknc
-         WsciSPVghuAsoHn0to/5yGHVGPBMoDDdCriua7YcNdhImQKiABONbD+AQDXWm8U1kaWp
-         sRGEQn5yjbZLeZL/idkNi3C2WRzt7YcmTUIwfmrqi4ca3oisj/ueIAxJVoJr0GCN2xqY
-         vi5/+tnOSetQHUlqsrzbFM2NShY52GOkcYo4rqDH19uhqNr8wv/1GxKZHg/Q2lIQ6giz
-         XuGMB4sezlIglWLvSlGBWHK1SK/dFpgkd9fH4RazCI6mtdbdExYXjZ85iQA4G6O/DasN
-         9YKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlsRu2kxqiIkYp5gHMx7IcuCYvdv5YwsQwg2QzS4K+VdAnoxBbPz+Sdud7A709n/gVqscPL0n8R4ziMeU5Mu7fF9plmLi2Wp0tKp1v
-X-Gm-Message-State: AOJu0YyUPfFT+dJc7KM8O5ER5eZHQZ+2MUtAHtTcFAiZupeDqLGCGUh5
-	SeMHEFyPr7dpi8qzLm+j1oxRgmTHm8f2AAqWw2+yZxYOVEEGsSPq4iGIpwJ4Js0=
-X-Google-Smtp-Source: AGHT+IFXf/+RRE+alYWCcaaLbnd49N8q+E0GmJHkiDkk528vWbXdOgl6wGGAbUCm0uGw6i7zb8FILQ==
-X-Received: by 2002:ac2:48b4:0:b0:522:2c9b:63b7 with SMTP id 2adb3069b0e04-529645e2488mr7419999e87.14.1716901196633;
-        Tue, 28 May 2024 05:59:56 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:c97:23a9:35bc:df2e:d894:2c76? ([2a00:f41:c97:23a9:35bc:df2e:d894:2c76])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b21dsm988109e87.173.2024.05.28.05.59.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 05:59:55 -0700 (PDT)
-Message-ID: <7140cdb8-eda4-4dcd-b5e3-c4acdd01befb@linaro.org>
-Date: Tue, 28 May 2024 14:59:51 +0200
+	 In-Reply-To:Content-Type; b=V/8FH/jgLJOGythEyh0VHEndgDg6PbBMOu2k9femjuVvWjU2vcZ06or+3Qg6UD1OYfCva9pXORYwHZvkVFCf/ZIDZaNvMmi3pLnxd5NmEqOzo2uc0dd6BkyVD4oGEiVK9GHibnVeWq+boeg2j0tIjXwTGUzG2b3k3gXCiN5F21w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mEsIam4J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAEEC32789;
+	Tue, 28 May 2024 13:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716901264;
+	bh=7y4RVKFrtvKqPEZh7zHGZLwvzx5dhBxk1lFGikboazk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mEsIam4JWoKj1hXy/GIhj4kAUjj6nDvqKng4Ln5AbPLCJ+0886wWIOnDC47XSlTlZ
+	 NlJw5Mpke7QInr/xG5AGxun2i5xQydvSVdASdPjGvu2jPj7jW9EqEVq+nTn//1GbMp
+	 /lqZfjBepg0NzggJ+MUMQUWvfe00mk9B7WWzHQ1eEYz4UWb6Y2vofGEhsUFH3/ZXde
+	 PMf7GFQwXO095XBFlyg5FBkNy71hRxFcnpn3N+OZddToFJwBJ0uPoU5Oas3qukgKKj
+	 imvPjZD6GwvzzR7P7BjpaWOGfCU6gZQtSH+WfoMO8vs71cZqaaLemBCiifXOS5zfl3
+	 tJnngrDjS7ldQ==
+Message-ID: <096662e8-03cf-4c13-baa0-11918cab7511@kernel.org>
+Date: Tue, 28 May 2024 15:00:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,111 +49,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: introduction of ACTLR for custom
- prefetcher settings
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>,
- Rob Clark <robdclark@gmail.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- dmitry.baryshkov@linaro.org, jsnitsel@redhat.com, quic_bjorande@quicinc.com,
- mani@kernel.org, quic_eberman@quicinc.com, robdclark@chromium.org,
- u.kleine-koenig@pengutronix.de, robh@kernel.org, vladimir.oltean@nxp.com,
- quic_pkondeti@quicinc.com, quic_molvera@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240123144543.9405-1-quic_bibekkum@quicinc.com>
- <20240123144543.9405-4-quic_bibekkum@quicinc.com>
- <CAF6AEGs3_wBNo58EbGicFoQuq8--fDohTGv1JSFgoViygLS5Lg@mail.gmail.com>
- <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com>
- <51b2bd40-888d-4ee4-956f-c5239c5be9e9@linaro.org>
- <0a867cd1-8d99-495e-ae7e-a097fc9c00e9@quicinc.com>
+Subject: Re: [PATCH v2 2/2] powerpc/configs: Update defconfig with now
+ user-visible CONFIG_FSL_IFC
+To: Esben Haabendal <esben@geanix.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
+ <20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <0a867cd1-8d99-495e-ae7e-a097fc9c00e9@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 5/15/24 15:59, Bibek Kumar Patro wrote:
+On 28/05/2024 14:28, Esben Haabendal wrote:
+> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
+> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
+> selected in config snippets.
 > 
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
+> ---
+>  arch/powerpc/configs/85xx-hw.config | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> On 5/10/2024 6:32 PM, Konrad Dybcio wrote:
->> On 10.05.2024 2:52 PM, Bibek Kumar Patro wrote:
->>>
->>>
->>> On 5/1/2024 12:30 AM, Rob Clark wrote:
->>>> On Tue, Jan 23, 2024 at 7:00 AM Bibek Kumar Patro
->>>> <quic_bibekkum@quicinc.com> wrote:
->>>>>
->>>>> Currently in Qualcomm  SoCs the default prefetch is set to 1 which allows
->>>>> the TLB to fetch just the next page table. MMU-500 features ACTLR
->>>>> register which is implementation defined and is used for Qualcomm SoCs
->>>>> to have a custom prefetch setting enabling TLB to prefetch the next set
->>>>> of page tables accordingly allowing for faster translations.
->>>>>
->>>>> ACTLR value is unique for each SMR (Stream matching register) and stored
->>>>> in a pre-populated table. This value is set to the register during
->>>>> context bank initialisation.
->>>>>
->>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
->>>>> ---
->>
->> [...]
->>
->>>>> +
->>>>> +               for_each_cfg_sme(cfg, fwspec, j, idx) {
->>>>> +                       smr = &smmu->smrs[idx];
->>>>> +                       if (smr_is_subset(smr, id, mask)) {
->>>>> +                               arm_smmu_cb_write(smmu, cbndx, ARM_SMMU_CB_ACTLR,
->>>>> +                                               actlrcfg[i].actlr);
->>>>
->>>> So, this makes ACTLR look like kind of a FIFO.  But I'm looking at
->>>> downstream kgsl's PRR thing (which we'll need to implement vulkan
->>>> sparse residency), and it appears to be wanting to set BIT(5) in ACTLR
->>>> to enable PRR.
->>>>
->>>>           val = KGSL_IOMMU_GET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR);
->>>>           val |= FIELD_PREP(KGSL_IOMMU_ACTLR_PRR_ENABLE, 1);
->>>>           KGSL_IOMMU_SET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR, val);
->>>>
->>>> Any idea how this works?  And does it need to be done before or after
->>>> the ACTLR programming done in this patch?
->>>>
->>>> BR,
->>>> -R
->>>>
->>>
->>> Hi Rob,
->>>
->>> Can you please help provide some more clarification on the FIFO part? By FIFO are you referring to the storing of ACTLR data in the table?
->>>
->>> Thanks for pointing to the downstream implementation of kgsl driver for
->>> the PRR bit. Since kgsl driver is already handling this PRR bit's
->>> setting, this makes setting the PRR BIT(5) by SMMU driver redundant.
->>
->> The kgsl driver is not present upstream.
->>
-> 
-> Right kgsl is not present upstream, it would be better to avoid configuring the PRR bit and can be handled by kgsl directly in downstream.
+> diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
+> index 524db76f47b7..8aff83217397 100644
+> --- a/arch/powerpc/configs/85xx-hw.config
+> +++ b/arch/powerpc/configs/85xx-hw.config
+> @@ -24,6 +24,7 @@ CONFIG_FS_ENET=y
+>  CONFIG_FSL_CORENET_CF=y
+>  CONFIG_FSL_DMA=y
+>  CONFIG_FSL_HV_MANAGER=y
+> +CONFIG_FSL_IFC=y
 
-No! Upstream is not a dumping ground to reduce your technical debt.
+Does not look like placed according to config order. This is not
+alphabetically sorted, but as Kconfig creates it (make savedefconfig).
 
-There is no kgsl driver upstream, so this ought to be handled here, in
-the iommu driver (as poking at hardware A from driver B is usually not good
-practice).
+>  CONFIG_FSL_PQ_MDIO=y
+>  CONFIG_FSL_RIO=y
 
-> 
->>> Thanks for bringing up this point.
->>> I will send v10 patch series removing this BIT(5) setting from the ACTLR
->>> table.
->>
->> I think it's generally saner to configure the SMMU from the SMMU driver..
-> 
-> Yes, agree on this. But since PRR bit is not directly related to SMMU
-> configuration so I think it would be better to remove this PRR bit
-> setting from SMMU driver based on my understanding.
 
-Why is it not related? We still don't know what it does.
+You also missed to update second defconfig - arm64.
 
-Konrad
+Best regards,
+Krzysztof
+
 
