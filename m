@@ -1,93 +1,141 @@
-Return-Path: <linux-kernel+bounces-192798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A51C8D223F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:14:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8878D2245
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 864E1B23CB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D197AB21453
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1DC174EC2;
-	Tue, 28 May 2024 17:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F18A174EC2;
+	Tue, 28 May 2024 17:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQXZGMAO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kbJ0qTOC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1912117332E;
-	Tue, 28 May 2024 17:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3009823BF;
+	Tue, 28 May 2024 17:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716916486; cv=none; b=Zna42g9Z3AdY51pjmTH5bGJ6pgjPcKmQlXyksEPCMxAP70PXonrv0UHkQRgswufWIopDJs1YSFlhseqC6i+feq//arn9qNxitXbUZRZcFsQCbsKLkAXdKbBgmyJFRK7Pgjodz/KDXMvI8doDF5Qs6lG93U53PC0cE9c7EBxP3OA=
+	t=1716916575; cv=none; b=K/qBG+xbL4JAi6YtFRMzavl6AregPi1nmZLqAn6kajdwS4WC6w2Pl+XhY/pwi0+X/acRV8gf6apGwtU8SZJKAyY7ac7mEKIuox3JDfeBifvk2s1zKbATwzCXiWAY1CMDwtYO6MzG65uJnE6ujkjDSkwzMEC/rLySlhho5RHyGJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716916486; c=relaxed/simple;
-	bh=qyrjilBChXcbabeuPYMmcl4KCvAVqkL8gOwikW3ih3U=;
+	s=arc-20240116; t=1716916575; c=relaxed/simple;
+	bh=Or6uWrOuLzhTuj50EEBT2/wQLVqQ+kLlFEZ5TAS64OU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQJTkmvAOGMKwckfa8xxDL3ZSXh/tGJm5F6xfyJXhW1yq34fHZyG6SSUgO4qrsqAuUseE1e3HMV9U/hSvt9FAOQDYs0OwYeowhi4ySpdd9gVHmBLY5tJfcVOy889EN4lykTRD9BUlHCH55Tbyo0tA7L5Hw+oCJodPL9+AY5j/TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQXZGMAO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6879C32789;
-	Tue, 28 May 2024 17:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716916486;
-	bh=qyrjilBChXcbabeuPYMmcl4KCvAVqkL8gOwikW3ih3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DQXZGMAOWpmruXCqCzgdqN+FgfpL0xIelwQi6ettbFGm47F9kLaHUFcm2wZTi0TV7
-	 R0XKnoXQIaCboVzE7ohGePcLfD01H8kZMOnEK/fkNwTolKh0ENqoilPPD/F6Aj2XkL
-	 7sd94QFlMPmltjCQ/1DKassUe8slfYBJ5PtssVIyUihRErPaj6gNFIqqRFdDnn5alz
-	 C4pAk+h74bqzVOwxNh8CrrFLcfeGHCQyf5wmEAmODSgjWmG4LOQsVxSiHL4EfA2vrz
-	 sBeWkfmY+T9P2vbCxywziaDrQM4+HbyBuMyOq+SeuM9zRZFz7cjbs/dKKvfHzOP8gL
-	 YUwu3XQQVtzbA==
-Date: Tue, 28 May 2024 12:14:44 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Saravana Kannan <saravanak@google.com>,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
-Message-ID: <171691641513.1016774.9157485411952411160.robh@kernel.org>
-References: <20240528164132.2451685-1-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7/unHpvQIIjDnEx5l8szGM4r2aT+jGd6y/79nKAygkUHmNAHs4RTX1DRrPj6ua38jr6aaNX6Pcb8w41hYoARfLfmajbAPGlfLoIG9dma48HPNzNyFMVlZ5/QTnyC17Q1RTsN2jPJbDnlnv/20GVNjLhgzh9wxvWmRg68UOAlp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kbJ0qTOC; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716916574; x=1748452574;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Or6uWrOuLzhTuj50EEBT2/wQLVqQ+kLlFEZ5TAS64OU=;
+  b=kbJ0qTOCGKHM6tdaLyV5F4hcRihzj3KBczoSyxk0kaxKRwAw4WanZ9N4
+   mrMZE8bon4bwoqdiEQN9TJgnFQW+DGpizJ6XwAyjqvfVzA0nXUGgn/iJ3
+   so72rPEs/LztZqAPEuJ878hRbnOiu+EprdRxWQ/ICo5TH3YYoULuzs5fG
+   fY0UrmIobk9vLv2IIUbM9Bqbv+KSs8TbzbVrpodNQTZBqkGnt43Zd/d71
+   1bvDWm4FlUIIkopUuqqY5QQW7l121tulOjyYegV1xtdIc4BKCiVw/0hQ5
+   rdN7WwNphWQs98vQpQVUehLjvz0vNMpSeqgf3QDbMv70+5tWjWPS3FbrP
+   w==;
+X-CSE-ConnectionGUID: /X+oGZGVSiq8Qt02V4HLiQ==
+X-CSE-MsgGUID: b6punY0qR0azhgYU3etFGg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24695126"
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="24695126"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 10:16:13 -0700
+X-CSE-ConnectionGUID: D57IhtI8QgW3uXhmkndhgQ==
+X-CSE-MsgGUID: xuMfQJNMS/qeAGV5537ZFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="39646966"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 10:16:13 -0700
+Date: Tue, 28 May 2024 10:16:12 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+	erdemaktas@google.com, Sagi Shahar <sagis@google.com>,
+	Kai Huang <kai.huang@intel.com>, chen.bo@intel.com,
+	hang.yuan@intel.com, tina.zhang@intel.com,
+	isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH v19 105/130] KVM: TDX: handle KVM hypercall with
+ TDG.VP.VMCALL
+Message-ID: <20240528171612.GA454482@ls.amr.corp.intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <ab54980da397e6e9b7b8d6636dc88c11c303364f.1708933498.git.isaku.yamahata@intel.com>
+ <ZgvHXk/jiWzTrcWM@chao-email>
+ <20240404012726.GP2444378@ls.amr.corp.intel.com>
+ <8d489a08-784b-410d-8714-3c0ffc8dfb39@linux.intel.com>
+ <20240417070240.GF3039520@ls.amr.corp.intel.com>
+ <6a7b865f-9513-4dd2-9aff-e8f19dea6d90@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240528164132.2451685-1-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6a7b865f-9513-4dd2-9aff-e8f19dea6d90@linux.intel.com>
 
+On Mon, May 27, 2024 at 08:57:28AM +0800,
+Binbin Wu <binbin.wu@linux.intel.com> wrote:
 
-On Tue, 28 May 2024 17:41:32 +0100, Marc Zyngier wrote:
-> Commit d976c6f4b32c ("of: property: Add fw_devlink support for
-> interrupt-map property") tried to do what it says on the tin,
-> but failed on a couple of points:
 > 
-> - it confuses bytes and cells. Not a huge deal, except when it
->   comes to pointer arithmetic
 > 
-> - it doesn't really handle anything but interrupt-maps that have
->   their parent #address-cells set to 0
-> 
-> The combinations of the two leads to some serious fun on my M1
-> box, with plenty of WARN-ON() firing all over the shop, and
-> amusing values being generated for interrupt specifiers.
-> 
-> Address both issues so that I can boot my machines again.
-> 
-> Fixes: d976c6f4b32c ("of: property: Add fw_devlink support for interrupt-map property")
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Cc: Anup Patel <apatel@ventanamicro.com>
-> Cc: Saravana Kannan <saravanak@google.com>
-> Cc: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/of/property.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
+> On 4/17/2024 3:02 PM, Isaku Yamahata wrote:
+> > On Wed, Apr 17, 2024 at 02:16:57PM +0800,
+> > Binbin Wu <binbin.wu@linux.intel.com> wrote:
+> > 
+> > > 
+> > > On 4/4/2024 9:27 AM, Isaku Yamahata wrote:
+> > > > On Tue, Apr 02, 2024 at 04:52:46PM +0800,
+> > > > Chao Gao <chao.gao@intel.com> wrote:
+> > > > 
+> > > > > > +static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
+> > > > > > +{
+> > > > > > +	unsigned long nr, a0, a1, a2, a3, ret;
+> > > > > > +
+> > > > > do you need to emulate xen/hyper-v hypercalls here?
+> > > > No. kvm_emulate_hypercall() handles xen/hyper-v hypercalls,
+> > > > __kvm_emulate_hypercall() doesn't.
+> > > So for TDX, kvm doesn't support xen/hyper-v, right?
+> > > 
+> > > Then, should KVM_CAP_XEN_HVM and KVM_CAP_HYPERV be filtered out for TDX?
+> > That's right. We should update kvm_vm_ioctl_check_extension() and
+> > kvm_vcpu_ioctl_enable_cap().  I didn't pay attention to them.
+> Currently, QEMU checks the capabilities for Hyper-v/Xen via
+> kvm_check_extension(), which is the global version.
+> Only modifications in KVM can't hide these capabilities. It needs userspace
+> to use VM or vCPU version to check the capabilities for Hyper-v and Xen.
+> Is it a change of ABI when the old global version is still workable, but
+> userspace switches to use VM/vCPU version to check capabilities for Hyper-v
+> and Xen?
+> Are there objections if both QEMU and KVM are modified in order to
+> hide Hyper-v/Xen capabilities for TDX?
 
-Applied, thanks!
+I think it's okay for KVM_X86_TDX_VM as long as we don't change the value for
+KVM_X86_DEFAULT_VM.  Because vm_type KVM_X86_TDX_VM is different from the
+default and the document (Documentation/virt/kvm/api.rst), 4.4
+KVM_CHECK_EXTENSION explicitly encourages VM version.
 
+  Based on their initialization different VMs may have different capabilities.
+  It is thus encouraged to use the vm ioctl to query for capabilities (available
+  with KVM_CAP_CHECK_EXTENSION_VM on the vm fd)
+
+The change to qemu will be mostly trivial with the quick check.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
