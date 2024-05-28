@@ -1,100 +1,117 @@
-Return-Path: <linux-kernel+bounces-192655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBAA8D2039
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C328D203C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262AB1F232E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:20:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497D11F24468
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7F3171643;
-	Tue, 28 May 2024 15:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C4217083D;
+	Tue, 28 May 2024 15:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R5KdY2NU"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEjCB5ys"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E81E867;
-	Tue, 28 May 2024 15:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97C21E867;
+	Tue, 28 May 2024 15:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909586; cv=none; b=H27ckT/2alLNqEy/1PiZvzQ3nPAf9zuaZUNe+aKlZx64nQCbuOZuYCycN3Pyj/g1V4ArWqbDpwi1CJLbXtBFkTqKpuYSwpLsDLbUDO4vlStW9S40SLD0toUb4wMjKKU5HgVqlxeHAIUo9sEj0pG7bW4uGwldMVXWG8tgui2yNqQ=
+	t=1716909630; cv=none; b=ELZYz7SGIFWz99LJC8Jdt+dbD/09doMaLj4xajw0SwxJTkhdevvygiqwI0phTLKaMss+3c7CK0e+itjA5LwpJkLMDr5PhCPhx32+UOasmE9prKSSSB8OhAbPIIAhgj/nfL2ev9GX/KEicUWvBI/7rAsaN3iChHdaUER4SKWdBhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909586; c=relaxed/simple;
-	bh=Y3hJrkKqkQX3Ls3M4zvv1kb9DoYBZ9ECkpeTzTE2Sbg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=acgNgmD/4AK9h62IDiuew6eKdjIBXV76hIQaryLnEMCmw2RmhaYFR1Uvt5iWDu5PtQoDAO0/60UXevGn0lvewj4kzNpvxUb+WU8FbC6KnBd3dhtYtCVwZGGhaTl2OsFkDYYzj0M796EVyCFNf9visRX47pwOvFY90ubwzB3CPK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R5KdY2NU; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716909563; x=1717514363; i=markus.elfring@web.de;
-	bh=Y3hJrkKqkQX3Ls3M4zvv1kb9DoYBZ9ECkpeTzTE2Sbg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=R5KdY2NU3al30H4QRt8D3lOTCZxRITPw8yl9ZHFDXW4mBBRTYM727mGt72mJ0FMW
-	 LDSQz3nBj1i69+hGPzZkiofVL5hDvx69pFh0IFnfG9xgHqWfio+1SIF/lRbypilkG
-	 D8WPpBfe2AoUXqRGiQXdeCuLJ5lOe1dEo8CvS62PNRYE1Hnmcl/PpNBuNRCKP1R+0
-	 SegDgCNJB/NS7h8Ccp6gYRVSfom4u2H/EQH4gdAhqiBb00RTznGBk6+bYWAWnGuM0
-	 oDvNu8ns/Lm0bVYyKhlV+WcEVh+QwSDupqqGp2o+9sL43Irh/o3Q1DihCfpvPnMpK
-	 e5OOxALD5zt9j658NA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8kEP-1s7Hdi0MqX-00F8jK; Tue, 28
- May 2024 17:19:23 +0200
-Message-ID: <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
-Date: Tue, 28 May 2024 17:19:21 +0200
+	s=arc-20240116; t=1716909630; c=relaxed/simple;
+	bh=QqDR9e2t8bWRx9dhnA1nB/3n1Rs9kv7BgeSLvf9TYFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tl9QZFkkbvZQ3JVn5jcvP+aWy7UAKSeWI+/GtgvN9xJhNxh/uFif6RthwU8+4wUj6nF9jtHph8P+bTBa18IZFwQCdejO9Rzdj+z2OoWyPvXoD+LhBXel2XGnSd8raf9LFxsxgybRtZ4KNzWiSmk3CIQjNhQnV4xmSW7Z3ay3bd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sEjCB5ys; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837B2C3277B;
+	Tue, 28 May 2024 15:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716909629;
+	bh=QqDR9e2t8bWRx9dhnA1nB/3n1Rs9kv7BgeSLvf9TYFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sEjCB5ysRGmNvu75KO3mEfBXhSTO9bcxQ4YAUoG1JEHdOLU9soei1/OJr+S/B4uU9
+	 CQjqQr4OfGq0+bm0qthVLI7TsbLjaxbzPxsUoNiailvWrh8uJxHe3DCVt+D1vXlw0e
+	 nPWoO2QS6hlqyg0+6itzVBzjcfVd9wYSkp4vugR+p3JnW53mNZAirxYpI+seUOws+1
+	 vAvrJxmvH9ULkWDYiTLIqPbBaXKTnQOwOMcTGa+kU9LBPKIpLRRwZ2OgQJcJyQvDQZ
+	 sJNabuQme8bSf7hZyc1QEF+g5kZTNnn2SjBvug4T8Dnxg2Ao7UwphiAgIwM1TMTl7a
+	 TcLsdbDU7XplQ==
+Date: Tue, 28 May 2024 16:20:25 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Naresh Solanki <naresh.solanki@9elements.com>,
+	Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: hwmon: Add max6639
+Message-ID: <20240528-deduct-juggle-4ff2e7fae06e@spud>
+References: <20240528125122.1129986-1-naresh.solanki@9elements.com>
+ <20240528-frame-liqueur-7f37ecc0dad1@spud>
+ <c11900ec-dd03-43b7-916a-dc7315bb50b5@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Bard Liao <yung-chuan.liao@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- linux-sound@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bard Liao <bard.liao@intel.com>,
- Vinod Koul <vinod.koul@linaro.org>
-References: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
-Subject: Re: [PATCH RESEND] soundwire: fix usages of
- device_get_named_child_node()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:jbRx2sCDCPzqXpGNlf8SZ5seobfH1ZH4nHR0WRaxJmPCl4QrUJL
- 9EWcb7BgfDjYh0ZwOEObhaUQ1sLD8MaURgwMy3soWt40sTlKY7mzJfjvpILx8L/seMawblz
- gqdmblbM4KeEOyEHL94og3HyIlxyOwzFFjg8AIV3+Y8e/uDSaCFrYNjVs9jJ2JZYbBzhBbr
- yAshy5oEBZVUk0XEs2sEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YsxEA9qA9Oo=;9EDX73XTQwS9zgO/5HsrY5WZCVu
- FOm+PlZ/bgHKNXGeOU172XV/sH6npcqsfYhzNJhI0K88jOX958OKK3pL0wuiPx/b66gwkQs6L
- BzUfbMKhdkVe4SM6OvELvsGQszHmG7RnOyiNjgS5F5DfVSdazmiXlhqp3ZaOGRpkWSAnNMgJA
- zQSXQ17k0tadD4ejwsjdOLMgXQyqX8EoRCamQmLhQehjO0gQkovwsBuW2OA4vBwjwPPmU5QGr
- toeZLDbxSqT6VK67bVy8JB/THFDBnSobDF34/svKGx1G/DZuc3ygd958lG5/dAnnb8jO7Sjp6
- 2m1TWpSZs+5M/8Ni7zhyy+6W5K5QP7TIHHqquIUzCxwRq/q1ZV4ctHDdOsR038ukXsDsCEVJk
- JfutFSFbOyHRb6GLdKUB/ysMFvjgVDd+K/mTMbszT8Xn/yufJc9u09kg65A0a998EWMC9q1qd
- Xn9CCWjOZJxoItuK8aSal7rx70E0g/RbQATbxGTxt/e6zJ3Or88BSB1ijLQbC2EXwzDjWHyYG
- sGTmmcLWBCTj4U1caDBDg3JVOIaN8fK3JpGY5NVx0gfvJbW1oCQSUkQuqGvw2VQemrtS3iSof
- LlXXhvn7+WIL2Q0CzRoajEIQa7A2GCW/tF7uUrZtzlPKZEA4/0ObRoAxGyybl39G4Rbic8BZ/
- PvybX5pMj1SvUUB0ueykyXNffjpDxOE4uNUVzbRyz90BPwJsoC8AZabE+gS74Zh0RkSXHorL1
- d471OKjnzU/ZWSFnUj0ShkihGHtOuhxTSIuEyjHYC0Iai43JA6HR2G/cilfXGckPCg1OjwKku
- fNXaHiYaIBkVXrHU6fJE97U1LO+D4CvsnilOciF4f3zCQ=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9sDXjxEizOp8NBIa"
+Content-Disposition: inline
+In-Reply-To: <c11900ec-dd03-43b7-916a-dc7315bb50b5@roeck-us.net>
 
-> Add fwnode_handle_put() to avoid leaked references.
 
-Are you going to respond also to my previous patch review
-in more constructive ways?
-https://lore.kernel.org/lkml/eb15ab0a-e416-4ae9-98bb-610fdc04492c@web.de/
-https://lkml.org/lkml/2024/4/29/493
+--9sDXjxEizOp8NBIa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Markus
+On Tue, May 28, 2024 at 07:41:58AM -0700, Guenter Roeck wrote:
+> On 5/28/24 07:26, Conor Dooley wrote:
+> > On Tue, May 28, 2024 at 06:21:21PM +0530, Naresh Solanki wrote:
+> > > Add Devicetree binding documentation for Maxim MAX6639 temperature
+> > > monitor with PWM fan-speed controller.
+> >=20
+> > Other than unneeded |s where your descriptions don't have any
+> > formatting, this patch looks fine. That said - where's your dts or your
+> > driver? A binding on its own is unusual.
+> >=20
+>=20
+> The driver is drivers/hwmon/max6639.c which needs other unrelated changes/
+> cleanups. Holding those up until the bindings are accepted would not make
+> sense, so my guess is that Naresh decided to pursue the other changes for=
+ now
+> and add devicetree support to the driver after the devicetree properties
+> have been approved. On the other side, adding devicetree support does dep=
+end
+> on the other changes, so trying to do that before the other changes are
+> complete would be difficult.
+>=20
+> That is just my guess, though, and I am ok with it.
+
+Well, I think the binding is fine, so it is up to you whether you want
+to merge the binding without having the driver implementation nailed
+down.
+
+Ideally with the |s removed,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Thanks,
+Conor.
+
+--9sDXjxEizOp8NBIa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlX2OQAKCRB4tDGHoIJi
+0uc8AQCzupW+/6KLITUMKXvrN3b4eLuQhtSXFtOOwZUsnzMPmQD+NOOPuU68KhXX
+NAzkgBAfiRBk8yNzpli2gf+Ww7QvrAw=
+=ySB5
+-----END PGP SIGNATURE-----
+
+--9sDXjxEizOp8NBIa--
 
