@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-193061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0B58D2658
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:47:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3EC8D2663
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35F11F2B491
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FC811C2568C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B1517B429;
-	Tue, 28 May 2024 20:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12DD181335;
+	Tue, 28 May 2024 20:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z13M6yQI"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vpPF04SV"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0E417A938
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFE617B406
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716929099; cv=none; b=ds6apU+A8zgYM9Rx/DEdCzHoQvUHeK9OLE3NIl6VGrLcvFwqrxb5Egi9NEEcGWwRkQJ5F/jFYWSQH71IUapmGf00ZxpjY1f9AySzMDDrj8wAmq1dLCO3uoJUjHrgtpGl2X7iLjAvQSio7OzgB9S6PLGgT6b9XDjqmWhpdk+8dZA=
+	t=1716929100; cv=none; b=XO6tn49YnPgLThPR3eQL2KMOzIeR7n7pqELfgRcCKV5/BdpiZ86ibapxPUQ096PB54xMmVlJTLUHbZPi5bAOKlVwO1BrFpGg3Hl5gKPZ1DpzXmIlm/JNohloANYIxreySBr6PW780wHCuXYZ7ygHto1l262wjJi27wgl16bSbqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716929099; c=relaxed/simple;
-	bh=lzuWmQsRHevIFSOU8fqsv8TO85dYE8vzaNEi5gArVS8=;
+	s=arc-20240116; t=1716929100; c=relaxed/simple;
+	bh=I2yK+f17QGvCBbxV9mu1qHPoL9MAc+tgbTW9LI9tZgw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nCg1d6PMJlVHEEr6H3RnPAVRDJupu71OSCUZ0sL3Jl4L49iBIyyvYb3sJiloHkx55RQSrpggxfE+rMbqOUnmlyXjXseDKx2gGO2YzJe8URzs2+XNtXdfdipJhMR3YQ7u7NWbh+jQDURDuKxhFSOSft21WfOTAmzK/lkQx6natqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z13M6yQI; arc=none smtp.client-ip=209.85.208.180
+	 In-Reply-To:To:Cc; b=HrrkZNRZKwcS/KZ6GJjj25RFk/po3ir7p9jCNHKHW1nJwvD1ljeVTKOUxJ4aPr8Lo/krPpX+Q4vI8hEhBCz1FyyE5zqnRl/APyWZ/pBVhZtYHRtbQgCyBCBZFIf51efhWGanNM2g875yJOmZuvjcklpTu1lJPiKpDV5vv5Q7iGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vpPF04SV; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e95abc7259so14588251fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:44:56 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so13424611fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:44:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716929095; x=1717533895; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716929096; x=1717533896; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sp42j2u8rigijiuxzVvZ7hagCwbbwAjC3ss3o2b1CDw=;
-        b=Z13M6yQIhoACLtnb9zl3Gg4rbIgWGEipaUviUxuKTd4SPgsJubu++V4K9Z2lrotpOq
-         QqYgEl5UDYqdvW9i2DteQ6RDKv51E+lSAImokqJP9DII1eDVza2GO8UJ3qbY4ibf/wSR
-         kJJgcjLRyg7VIVoTlRG1RPiAZeAn/KvhBUXidZqkSqTajG2YOso/2Z5ddLDi6LVX1phG
-         +NRMMzBfeclnOhsSGDjqNu75Tr9TxrBFnUY3nDHAXVwsy3oMqEYOabmrMCZQeL2rcXJH
-         NxTfcZc+oisZOVGZtNaR1vivIiYYlQk8Ut+HhE5f5OgxWQ8ILnbzXpzhjts1luBP+lhl
-         4uew==
+        bh=fVK5TzUsekz8eA0P5r1NzTMbXr5dKzZwCG1F9TIdIXw=;
+        b=vpPF04SV5969OZ9MS4ugw63el9gIMwCHD9eWGsszOIUPcQLsdDhn1jTAFcRTxTCtsQ
+         O1DyGa6qUl0BxXvZLQMNh/gJbySISmCsfbiHC1WXvVHdjQfNM4mi7DPR/+7FYOAJP/1Z
+         l6Z+E9HbqrwESPfqDuCoUk/4n5O+27T03+z/xJIth72K2QnRNaiwqwoD/dxkz1Yrjmta
+         QYpMLYTtm7Uxb1WRH7QutTQ7/X/vAWDfXTCjfpuxVJJqpax8eC6zkNaBWBwanNRT36mm
+         cWPmKkLSIgka+v51Qd3M0pG2GDiThb4TwqN9buxc4yG9XZWI1Pz+lQgpcPj6iZm2tKUb
+         p/CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716929095; x=1717533895;
+        d=1e100.net; s=20230601; t=1716929096; x=1717533896;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sp42j2u8rigijiuxzVvZ7hagCwbbwAjC3ss3o2b1CDw=;
-        b=vGGbpQo8EZnUgcJ9NNVRLRKcpo/zXl6Q12yWaXCkf1ILvsqnIMqN72QiU9Vmgmxc0D
-         F4gIz2C0fk0XrGm7cFFApd2ABGwzA1br75alvAtk1F3zf3IurMlXrdw+ZBHtbNi0ffPj
-         GK8DzBZzppjYBhKvsaWcNSNj3s7PMSQghB9/Ivsj+nxQQdfnKFXjSXX41xj/yScKBeNq
-         b0qqjaQsjmFxMZcMKvcMiBjSLwiuh8KD4r21hRzofgH6ec5ryNbFOR2VLS7XtfkQhsVz
-         KiWFAGP0s96QrLabyCCpeRRJcvyPZwbFiT+BPo4eejRMzXwVVD7LX9KNB6YYhlq7R3t/
-         iMbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCZbVTaef466CnWbjHn9RepRTMWf4oR2F2fBaC4OPDfX971+29w+MWfMRQn1Eqvu5r47bu4lc7JYRBAXNaIBHXrhqeIw1KIlBKKZ7X
-X-Gm-Message-State: AOJu0YzQyhFpcIX7Jy0ggwkUQY5f2lR9a/JEetltQlWYxghuZl1I9Xng
-	83ptTzRa84KgVZydRjh34/nzE8Js5FHXJDOFl/0EHGv+lx1BHtq4gxSHaygfUx8=
-X-Google-Smtp-Source: AGHT+IHlUaKp23HRlL/0b+TfL36sV1jVJhvc91UZnAl9jya40ztx/tB33R+O1pqXuGa0SeJRYVTtxA==
-X-Received: by 2002:a2e:9f44:0:b0:2da:50f8:dfab with SMTP id 38308e7fff4ca-2e95b0944e5mr81361441fa.7.1716929094984;
-        Tue, 28 May 2024 13:44:54 -0700 (PDT)
+        bh=fVK5TzUsekz8eA0P5r1NzTMbXr5dKzZwCG1F9TIdIXw=;
+        b=sfFxqjnrkAQBk78vmhxk+6keEatJcyFne0nFL3nmwO1mydcQGn7ROh0OLgUQ3sSAdx
+         643gNjy+kPSrk3QtF6PcTssc/V/W8fBQBcAskcMyq0kjdkXNJNMrw9OvquMMI4UxgMMA
+         J7IUoWficI/BxUlP6BG4WQ9VtustmseY+5GSkDNLK54+in6Kkw3skFFu6DhJ9HR7yYtw
+         ORLjMIKTvG1Sw+D5NX1pPnAhG5GxDrYNjLjy3SkHVmI2HsWzXmmCkGOxkMfte+VA/qSO
+         qtmy7tGyuDtII3F3EIEdJnLo98HPhXEo1daOM6whHSVn0uAb6O+H/vkwrehS0IbJp9I8
+         ragQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Yejc87imfSTsvYCd0Ar9IHsriw8d7bnRz6VhzjFhFSJosyH8rfPpDPSsViQPiI1XiM0AbxmzPp+1iJsi48Zvf1Lg8sSzjMlV/ACG
+X-Gm-Message-State: AOJu0YxwpLLWxDIUoGBIzZXai8oWW87Wjt2WWYxRh0bk0iayQviAv2Ur
+	CYpDxSWAY9A74RSdMxpYo/14bN6u0cqNoYE5O9cwbYyg/rsPfTJqxFeeCa1wlKE=
+X-Google-Smtp-Source: AGHT+IHtRpczqCEc6FMs9OIxl0grSaWJwLWtRBu5eW4BAuBe5EFbx/BOJU9VxHLeBmI6bPDXVzcQHw==
+X-Received: by 2002:a2e:9d84:0:b0:2e2:2791:9842 with SMTP id 38308e7fff4ca-2e95b2da90emr88607421fa.44.1716929095919;
+        Tue, 28 May 2024 13:44:55 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bdcd21esm22759431fa.100.2024.05.28.13.44.54
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bdcd21esm22759431fa.100.2024.05.28.13.44.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 13:44:54 -0700 (PDT)
+        Tue, 28 May 2024 13:44:55 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 28 May 2024 23:44:46 +0300
-Subject: [PATCH v4 1/6] dt-bindings: platform: Add Lenovo Yoga C630 EC
+Date: Tue, 28 May 2024 23:44:47 +0300
+Subject: [PATCH v4 2/6] platform: arm64: add Lenovo Yoga C630 WOS EC driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-yoga-ec-driver-v4-1-4fa8dfaae7b6@linaro.org>
+Message-Id: <20240528-yoga-ec-driver-v4-2-4fa8dfaae7b6@linaro.org>
 References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
 In-Reply-To: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
 To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -92,123 +92,402 @@ To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
 Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
  linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Nikita Travkin <nikita@trvn.ru>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Nikita Travkin <nikita@trvn.ru>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2676;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10790;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=C9Lg3cE1aC1zyYeo+0Q2DO6EQOTcK4wvIXQyDKOKakY=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmVkJElqBixkmpvSAfBNjNdtvgliOtM/Mav1FOs
- GdtJ1vODM+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlZCRAAKCRCLPIo+Aiko
- 1RysCACm8cBuuDtICfshTIEFPNnFOXEcmNqzkQg7Rb7QnNUPfk9cFtUoFrrYAkMCk9Lq5HnEG4v
- w6ZM/UZ7+X4LC3/I7N++lGmyY2DfeRNmO4uW1JB09u/cSvHy7/w9RPQLarDzHcq6g/7ZKFqOIaj
- TtGvLRuoXsasa5aHUJ4N8tvvdevZ6Ecyy2XyZxgKElCpcR+K8p+MGCroh/VRcYT9sk2WoQibOcU
- JmWRhXe/aFies6ODhL1FbdgSe0jkNypoW475f2eF2/WrBEVM+peMPckUXnx5zBSLhCBFWIx6LPu
- 02aXuiyj2ECyMiOlhhrlfXzXyXqK9I+aoccpM637uI116AT5
+ bh=I2yK+f17QGvCBbxV9mu1qHPoL9MAc+tgbTW9LI9tZgw=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmVkJEQATdyJd/dilf1k3uF73rheBep5pswuKFe
+ mKan7UYWjaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlZCRAAKCRCLPIo+Aiko
+ 1a/ICACW6cJK0MC7UbZXDGCJaEsbSq5O9ctu/9vV1yPChOWgVUCRB+9Vw7DyhWQF8Z+9FG+9CVE
+ b9Iae0fBzZ7W/8W0n+d4ygSe7GA9f5hA2V76eBjHpze3+AUjpTFOujSuH8VB7fu+h81I5RMabdn
+ GjB6iQzIeE9JtjhQbxy4t5xUdJQzfdr0+PnyhpCNe6Gf4tLRdiiEBp3uxZWfkJspiU2XjA0qyoX
+ e4I+OuxIkZ0KRuTnl8H/8ElcUYwzrSB0ZjR78TCDEO+sWnxR9rqmz7g2hfPoa4imjeGg5yYlql+
+ rKpa2QanMj6QH2QiBCEBRWiEZb/5rhATZiQj9VXcygV6pTeu
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-From: Bjorn Andersson <andersson@kernel.org>
+Lenovo Yoga C630 WOS is a laptop using Snapdragon 850 SoC. Like many
+laptops it uses embedded controller (EC) to perform various platform
+operations, including, but not limited, to Type-C port control or power
+supply handlng.
 
-Add binding for the Embedded Controller found in the Qualcomm
-Snapdragon-based Lenovo Yoga C630.
+Add the driver for the EC, that creates devices for UCSI and power
+supply devices.
 
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/platform/lenovo,yoga-c630-ec.yaml     | 83 ++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ drivers/platform/arm64/Kconfig                 |  14 ++
+ drivers/platform/arm64/Makefile                |   1 +
+ drivers/platform/arm64/lenovo-yoga-c630.c      | 279 +++++++++++++++++++++++++
+ include/linux/platform_data/lenovo-yoga-c630.h |  42 ++++
+ 4 files changed, 336 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml b/Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml
+diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
+index 8fdca0f8e909..8c103b3150d1 100644
+--- a/drivers/platform/arm64/Kconfig
++++ b/drivers/platform/arm64/Kconfig
+@@ -32,4 +32,18 @@ config EC_ACER_ASPIRE1
+ 	  laptop where this information is not properly exposed via the
+ 	  standard ACPI devices.
+ 
++config EC_LENOVO_YOGA_C630
++	tristate "Lenovo Yoga C630 Embedded Controller driver"
++	depends on I2C
++	help
++	  Driver for the Embedded Controller in the Qualcomm Snapdragon-based
++	  Lenovo Yoga C630, which provides battery and power adapter
++	  information.
++
++	  This driver provides battery and AC status support for the mentioned
++	  laptop where this information is not properly exposed via the
++	  standard ACPI devices.
++
++	  Say M or Y here to include this support.
++
+ endif # ARM64_PLATFORM_DEVICES
+diff --git a/drivers/platform/arm64/Makefile b/drivers/platform/arm64/Makefile
+index 4fcc9855579b..b2ae9114fdd8 100644
+--- a/drivers/platform/arm64/Makefile
++++ b/drivers/platform/arm64/Makefile
+@@ -6,3 +6,4 @@
+ #
+ 
+ obj-$(CONFIG_EC_ACER_ASPIRE1)	+= acer-aspire1-ec.o
++obj-$(CONFIG_EC_LENOVO_YOGA_C630) += lenovo-yoga-c630.o
+diff --git a/drivers/platform/arm64/lenovo-yoga-c630.c b/drivers/platform/arm64/lenovo-yoga-c630.c
 new file mode 100644
-index 000000000000..3180ce1a22d4
+index 000000000000..3d1d5acde807
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml
-@@ -0,0 +1,83 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/platform/lenovo,yoga-c630-ec.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/platform/arm64/lenovo-yoga-c630.c
+@@ -0,0 +1,279 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2022-2024, Linaro Ltd
++ * Authors:
++ *    Bjorn Andersson
++ *    Dmitry Baryshkov
++ */
++#include <linux/auxiliary_bus.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/notifier.h>
++#include <linux/platform_data/lenovo-yoga-c630.h>
 +
-+title: Lenovo Yoga C630 Embedded Controller.
++#define LENOVO_EC_RESPONSE_REG		0x01
++#define LENOVO_EC_REQUEST_REG		0x02
 +
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
++#define LENOVO_EC_UCSI_WRITE		0x20
++#define LENOVO_EC_UCSI_READ		0x21
 +
-+description:
-+  The Qualcomm Snapdragon-based Lenovo Yoga C630 has an Embedded Controller
-+  (EC) which handles things such as battery and USB Type-C. This binding
-+  describes the interface, on an I2C bus, to this EC.
++#define LENOVO_EC_READ_REG		0xb0
++#define LENOVO_EC_REQUEST_NEXT_EVENT	0x84
 +
-+properties:
-+  compatible:
-+    const: lenovo,yoga-c630-ec
++struct yoga_c630_ec {
++	struct i2c_client *client;
++	struct mutex lock;
++	struct blocking_notifier_head notifier_list;
++};
 +
-+  reg:
-+    const: 0x70
++static int yoga_c630_ec_request(struct yoga_c630_ec *ec, u8 *req, size_t req_len,
++				u8 *resp, size_t resp_len)
++{
++	int ret;
 +
-+  '#address-cells':
-+    const: 1
++	WARN_ON(!mutex_is_locked(&ec->lock));
 +
-+  '#size-cells':
-+    const: 0
++	ret = i2c_smbus_write_i2c_block_data(ec->client, LENOVO_EC_REQUEST_REG,
++					     req_len, req);
++	if (ret < 0)
++		return ret;
 +
-+  interrupts:
-+    maxItems: 1
++	return i2c_smbus_read_i2c_block_data(ec->client, LENOVO_EC_RESPONSE_REG,
++					     resp_len, resp);
++}
 +
-+patternProperties:
-+  '^connector@[01]$':
-+    $ref: /schemas/connector/usb-connector.yaml#
++int yoga_c630_ec_read8(struct yoga_c630_ec *ec, u8 addr)
++{
++	u8 req[2] = { LENOVO_EC_READ_REG, };
++	int ret;
++	u8 val;
 +
-+    properties:
-+      reg:
-+        maxItems: 1
++	mutex_lock(&ec->lock);
++	req[1] = addr;
++	ret = yoga_c630_ec_request(ec, req, sizeof(req), &val, 1);
++	mutex_unlock(&ec->lock);
 +
-+    unevaluatedProperties: false
++	return ret < 0 ? ret : val;
++}
++EXPORT_SYMBOL_GPL(yoga_c630_ec_read8);
 +
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
++int yoga_c630_ec_read16(struct yoga_c630_ec *ec, u8 addr)
++{
++	u8 req[2] = { LENOVO_EC_READ_REG, };
++	int ret;
++	u8 msb;
++	u8 lsb;
 +
-+additionalProperties: false
++	mutex_lock(&ec->lock);
 +
-+examples:
-+  - |+
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    i2c1 {
-+        clock-frequency = <400000>;
++	req[1] = addr;
++	ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
++	if (ret < 0)
++		goto out;
 +
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++	req[1] = addr + 1;
++	ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
 +
-+        embedded-controller@70 {
-+            compatible = "lenovo,yoga-c630-ec";
-+            reg = <0x70>;
++out:
++	mutex_unlock(&ec->lock);
 +
-+            interrupts-extended = <&tlmm 20 IRQ_TYPE_LEVEL_HIGH>;
++	return ret < 0 ? ret : msb << 8 | lsb;
++}
++EXPORT_SYMBOL_GPL(yoga_c630_ec_read16);
 +
-+            #address-cells = <1>;
-+            #size-cells = <0>;
++u16 yoga_c630_ec_ucsi_get_version(struct yoga_c630_ec *ec)
++{
++	u8 req[3] = { 0xb3, 0xf2, 0x20};
++	int ret;
++	u8 msb;
++	u8 lsb;
 +
-+            connector@0 {
-+                compatible = "usb-c-connector";
-+                reg = <0>;
-+                power-role = "source";
-+                data-role = "host";
-+            };
++	mutex_lock(&ec->lock);
++	ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
++	if (ret < 0)
++		goto out;
 +
-+            connector@1 {
-+                compatible = "usb-c-connector";
-+                reg = <1>;
-+                power-role = "source";
-+                data-role = "host";
-+            };
-+        };
-+    };
-+...
++	req[2]++;
++	ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
++
++out:
++	mutex_unlock(&ec->lock);
++
++	return ret < 0 ? ret : msb << 8 | lsb;
++}
++EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_get_version);
++
++int yoga_c630_ec_ucsi_write(struct yoga_c630_ec *ec,
++			    const u8 req[YOGA_C630_UCSI_WRITE_SIZE])
++{
++	int ret;
++
++	mutex_lock(&ec->lock);
++	ret = i2c_smbus_write_i2c_block_data(ec->client, LENOVO_EC_UCSI_WRITE,
++					     YOGA_C630_UCSI_WRITE_SIZE, req);
++	mutex_unlock(&ec->lock);
++
++	return ret < 0 ? ret : 0;
++}
++EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_write);
++
++int yoga_c630_ec_ucsi_read(struct yoga_c630_ec *ec,
++			   u8 resp[YOGA_C630_UCSI_READ_SIZE])
++{
++	int ret;
++
++	mutex_lock(&ec->lock);
++	ret = i2c_smbus_read_i2c_block_data(ec->client, LENOVO_EC_UCSI_READ,
++					    YOGA_C630_UCSI_READ_SIZE, resp);
++	mutex_unlock(&ec->lock);
++
++	return ret < 0 ? ret : 0;
++}
++EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_read);
++
++static irqreturn_t yoga_c630_ec_intr(int irq, void *data)
++{
++	u8 req[] = { LENOVO_EC_REQUEST_NEXT_EVENT };
++	struct yoga_c630_ec *ec = data;
++	u8 event;
++	int ret;
++
++	mutex_lock(&ec->lock);
++	ret = yoga_c630_ec_request(ec, req, sizeof(req), &event, 1);
++	mutex_unlock(&ec->lock);
++	if (ret < 0)
++		return IRQ_HANDLED;
++
++	pr_info("NOTIFY %x\n", event);
++
++	blocking_notifier_call_chain(&ec->notifier_list, event, ec);
++
++	return IRQ_HANDLED;
++}
++
++/**
++ * yoga_c630_ec_register_notify - Register a notifier callback for EC events.
++ * @ec: Yoga C630 EC
++ * @nb: Notifier block pointer to register
++ *
++ * Return: 0 on success or negative error code.
++ */
++int yoga_c630_ec_register_notify(struct yoga_c630_ec *ec, struct notifier_block *nb)
++{
++	return blocking_notifier_chain_register(&ec->notifier_list,
++						nb);
++}
++EXPORT_SYMBOL_GPL(yoga_c630_ec_register_notify);
++
++/**
++ * yoga_c630_ec_unregister_notify - Unregister notifier callback for EC events.
++ * @ec: Yoga C630 EC
++ * @nb: Notifier block pointer to unregister
++ *
++ * Unregister a notifier callback that was previously registered with
++ * yoga_c630_ec_register_notify().
++ */
++void yoga_c630_ec_unregister_notify(struct yoga_c630_ec *ec, struct notifier_block *nb)
++{
++	blocking_notifier_chain_unregister(&ec->notifier_list, nb);
++}
++EXPORT_SYMBOL_GPL(yoga_c630_ec_unregister_notify);
++
++static void yoga_c630_aux_release(struct device *dev)
++{
++	struct auxiliary_device *adev = to_auxiliary_dev(dev);
++
++	kfree(adev);
++}
++
++static void yoga_c630_aux_remove(void *data)
++{
++	struct auxiliary_device *adev = data;
++
++	auxiliary_device_delete(adev);
++	auxiliary_device_uninit(adev);
++}
++
++static int yoga_c630_aux_init(struct device *parent, const char *name,
++			      struct yoga_c630_ec *ec)
++{
++	struct auxiliary_device *adev;
++	int ret;
++
++	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
++	if (!adev)
++		return -ENOMEM;
++
++	adev->name = name;
++	adev->id = 0;
++	adev->dev.parent = parent;
++	adev->dev.release = yoga_c630_aux_release;
++	adev->dev.platform_data = ec;
++
++	ret = auxiliary_device_init(adev);
++	if (ret) {
++		kfree(adev);
++		return ret;
++	}
++
++	ret = auxiliary_device_add(adev);
++	if (ret) {
++		auxiliary_device_uninit(adev);
++		return ret;
++	}
++
++	return devm_add_action_or_reset(parent, yoga_c630_aux_remove, adev);
++}
++
++static int yoga_c630_ec_probe(struct i2c_client *client)
++{
++	struct yoga_c630_ec *ec;
++	struct device *dev = &client->dev;
++	int ret;
++
++	ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
++	if (!ec)
++		return -ENOMEM;
++
++	mutex_init(&ec->lock);
++	ec->client = client;
++	BLOCKING_INIT_NOTIFIER_HEAD(&ec->notifier_list);
++
++	ret = devm_request_threaded_irq(dev, client->irq,
++					NULL, yoga_c630_ec_intr,
++					IRQF_ONESHOT, "yoga_c630_ec", ec);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "unable to request irq\n");
++
++	ret = yoga_c630_aux_init(dev, YOGA_C630_DEV_PSY, ec);
++	if (ret)
++		return ret;
++
++	return yoga_c630_aux_init(dev, YOGA_C630_DEV_UCSI, ec);
++}
++
++
++static const struct of_device_id yoga_c630_ec_of_match[] = {
++	{ .compatible = "lenovo,yoga-c630-ec" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, yoga_c630_ec_of_match);
++
++static const struct i2c_device_id yoga_c630_ec_i2c_id_table[] = {
++	{ "yoga-c630-ec", },
++	{}
++};
++MODULE_DEVICE_TABLE(i2c, yoga_c630_ec_i2c_id_table);
++
++static struct i2c_driver yoga_c630_ec_i2c_driver = {
++	.driver = {
++		.name = "yoga-c630-ec",
++		.of_match_table = yoga_c630_ec_of_match
++	},
++	.probe = yoga_c630_ec_probe,
++	.id_table = yoga_c630_ec_i2c_id_table,
++};
++module_i2c_driver(yoga_c630_ec_i2c_driver);
++
++MODULE_DESCRIPTION("Lenovo Yoga C630 Embedded Controller");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/platform_data/lenovo-yoga-c630.h b/include/linux/platform_data/lenovo-yoga-c630.h
+new file mode 100644
+index 000000000000..2b893dbeb124
+--- /dev/null
++++ b/include/linux/platform_data/lenovo-yoga-c630.h
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2022-2024, Linaro Ltd
++ * Authors:
++ *    Bjorn Andersson
++ *    Dmitry Baryshkov
++ */
++
++#ifndef _LENOVO_YOGA_C630_DATA_H
++#define _LENOVO_YOGA_C630_DATA_H
++
++struct yoga_c630_ec;
++
++#define YOGA_C630_MOD_NAME	"lenovo_yoga_c630"
++
++#define YOGA_C630_DEV_UCSI	"ucsi"
++#define YOGA_C630_DEV_PSY	"psy"
++
++int yoga_c630_ec_read8(struct yoga_c630_ec *ec, u8 addr);
++int yoga_c630_ec_read16(struct yoga_c630_ec *ec, u8 addr);
++
++int yoga_c630_ec_register_notify(struct yoga_c630_ec *ec, struct notifier_block *nb);
++void yoga_c630_ec_unregister_notify(struct yoga_c630_ec *ec, struct notifier_block *nb);
++
++#define YOGA_C630_UCSI_WRITE_SIZE	8
++#define YOGA_C630_UCSI_CCI_SIZE		4
++#define YOGA_C630_UCSI_DATA_SIZE	16
++#define YOGA_C630_UCSI_READ_SIZE	(YOGA_C630_UCSI_CCI_SIZE + YOGA_C630_UCSI_DATA_SIZE)
++u16 yoga_c630_ec_ucsi_get_version(struct yoga_c630_ec *ec);
++int yoga_c630_ec_ucsi_write(struct yoga_c630_ec *ec,
++			    const u8 req[YOGA_C630_UCSI_WRITE_SIZE]);
++int yoga_c630_ec_ucsi_read(struct yoga_c630_ec *ec,
++			   u8 resp[YOGA_C630_UCSI_READ_SIZE]);
++
++#define LENOVO_EC_EVENT_USB		0x20
++#define LENOVO_EC_EVENT_UCSI		0x21
++#define LENOVO_EC_EVENT_HPD		0x22
++#define LENOVO_EC_EVENT_BAT_STATUS	0x24
++#define LENOVO_EC_EVENT_BAT_INFO	0x25
++#define LENOVO_EC_EVENT_BAT_ADPT_STATUS	0x37
++
++#endif
 
 -- 
 2.39.2
