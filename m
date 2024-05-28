@@ -1,150 +1,98 @@
-Return-Path: <linux-kernel+bounces-193139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3008D2750
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:56:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDA88D2752
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ADD41C24D66
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A5B1F25928
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877EA13C3D5;
-	Tue, 28 May 2024 21:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18F373474;
+	Tue, 28 May 2024 21:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeOVer9D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Rgc1OEeV"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5A41DA23;
-	Tue, 28 May 2024 21:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20B513AD0E;
+	Tue, 28 May 2024 21:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716933355; cv=none; b=GXkr/oWMgPpiO8XmQe6m/vu4BJptZGdKxnccAYXeA9ABb9vJmSbVKRWbi1Wny9Ztohaf/eInzqm7NzD0e5U836EXagRpxwTKC8TqjOqGwQ2o33qH0HdjUtU7GyfO3+B7G2cv6z3OscXef46ZAMoxatoGcN/uL4b+hbl2F3EBy4U=
+	t=1716933422; cv=none; b=E/KJpwgIS25y+lKM8/I7U3LmRbAv+ziSoxc5ZTtIIdorR4JHedK1njC4hlzoz0V30l3075W1Xqe+IheTcCL8tXpbIMHo7VKg+K5OHm1g8KIti0Z5/6bpvaGbUYDj2/3j77V/w9nPpIxYf8jbCZBylRmmEN/DD/oXEQ5fufkyBrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716933355; c=relaxed/simple;
-	bh=tthgWJCVupl6ERWmdbjXbvx9AlEgF2aFcE/8hKqKCZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqRSQW+bQ9LpXQ1QcU/fL+aqC+XsfmTMEKXDddgi3fxzYT8arKR638orD9wAWxMLdebXbylDlPr8GauKVfMbkeCD09/txeB17GhMfs2GQVT5Cqv1baf3hNVbIy39A5W7QaYllfVdBPTvg8L6sVClJ9e3wEkgy8FUW7up6u5nsqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MeOVer9D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8534C3277B;
-	Tue, 28 May 2024 21:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716933355;
-	bh=tthgWJCVupl6ERWmdbjXbvx9AlEgF2aFcE/8hKqKCZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MeOVer9DpU1XjBV10SP47aXhFGt4HUm8faTIBQLbS7zPZ6585uXYSiNOiPJd2Os1n
-	 7pdwSwF+W+tRsf8WlrPBYcc03rvODX6OVYPrG2mPlquRlfUjnVMB/tuFKkFJssVJ0t
-	 UHUc0j8lAHd7cNboljjzXMDbXiEEIMPrcNoDmBMCgUlgnWFLuFz9hIN+Of0sxMZmMv
-	 Snv7bOHhWG5599Z124M2o4Jw1T00019os/KZX+SKkmhTn08pyZ3Ay8MBys9WvCsppK
-	 8CYFkM/yDGzYsLNwK+Gdi2HREUALIqkjReBoHcATe4d7J+NiDT+VqXCSgJHL0/nSqb
-	 ZsQnf+Jl/+2Dw==
-Date: Tue, 28 May 2024 16:55:52 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] soc: qcom: smem: Add
- qcom_smem_bust_hwspin_lock_by_host()
-Message-ID: <nwoeg22jg5yd4amgqqegplygy6aickehvfc6eanmody74h6nss@cmixbwx6vpx4>
-References: <20240524-hwspinlock-bust-v2-0-fb88fd17ca0b@quicinc.com>
- <20240524-hwspinlock-bust-v2-3-fb88fd17ca0b@quicinc.com>
+	s=arc-20240116; t=1716933422; c=relaxed/simple;
+	bh=ohEurSGig2qE42glJYdmj/T6mbwtgrXzuwprHjyXuO8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E8hFJ16x/QLUjnfw2FPnbsQKHXm9AE49MvLg2qMalBgWNvVMwEXmQaNm9qFppwxoHSo8/dZgO6K4KeMQQ8FtVXgZ4OtEELQ5Ard09PdDEMh0eRgbJ+d2ekv2eD2lrvpQAePY02vDlndS+KAJuD/e0ORTRPv8SfOo2evnvSrCPG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Rgc1OEeV; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=WbJJ4Mwx5sika0WW/PColmV60EevJ2qmfZcxLyzIi1Y=; b=Rgc1OEeVx/XGV7Xc
+	ppIdYp6lNvmF2dPgpWNYD/fYZrXxEVfWQ9ai+LEHfiZiro2g+XcVVnpSkLmhktd5F6zspY6bbljzR
+	HMPlIFF9CPe5FK8RC+dUw1ahoZ8HDcU3eOn27eeb3/NiMkwq1ByyXdKDYb8qkHumnaZ2KqOQGZ66Z
+	u+BmH8Pj/UhW/ljU0wRGBCZqsOVO7jpIzH4oUWesxwTX2UQLZmTG4YInD0MoyrvAhansqBBuld/0T
+	CXwBKFS9IFOrEN0GCxqGreEnFsR35bHuMr62csWRucGU4Nw2JVkHIF4dkAp72+7Sw8VQUi6cpxzdJ
+	fGkzhM1l4xU21yMrOA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sC4oI-0033Ie-1M;
+	Tue, 28 May 2024 21:56:46 +0000
+From: linux@treblig.org
+To: njavali@marvell.com,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] scsi: qla2xxx: remove unused struct 'scsi_dif_tuple'
+Date: Tue, 28 May 2024 22:56:40 +0100
+Message-ID: <20240528215640.91771-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524-hwspinlock-bust-v2-3-fb88fd17ca0b@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 24, 2024 at 06:26:42PM GMT, Chris Lew wrote:
-> Add qcom_smem_bust_hwspin_lock_by_host to enable remoteproc to bust the
-> hwspin_lock owned by smem. In the event the remoteproc crashes
-> unexpectedly, the remoteproc driver can invoke this API to try and bust
-> the hwspin_lock and release the lock if still held by the remoteproc
-> device.
-> 
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> ---
->  drivers/soc/qcom/smem.c       | 28 ++++++++++++++++++++++++++++
->  include/linux/soc/qcom/smem.h |  2 ++
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-> index 7191fa0c087f..683599990387 100644
-> --- a/drivers/soc/qcom/smem.c
-> +++ b/drivers/soc/qcom/smem.c
-> @@ -359,6 +359,34 @@ static struct qcom_smem *__smem;
->  /* Timeout (ms) for the trylock of remote spinlocks */
->  #define HWSPINLOCK_TIMEOUT	1000
->  
-> +/* The qcom hwspinlock id is always plus one from the smem host id */
-> +#define SMEM_HOST_ID_TO_HWSPINLOCK_ID(__x) ((__x) + 1)
-> +
-> +/**
-> + * qcom_smem_bust_hwspin_lock_by_host() - bust the smem hwspinlock for an smem host id
-> + * @host:	remote processor id
-> + *
-> + * Busts the hwspin_lock for the given smem host id. This helper is intended for remoteproc drivers
-> + * that manage remoteprocs with an equivalent smem driver instance in the remote firmware. Drivers
-> + * can force a release of the smem hwspin_lock if the rproc unexpectedly goes into a bad state.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Please wrap these at 80 characters.
+'scsi_dif_tuple' is unused since
+commit 8cb2049c7448 ("[SCSI] qla2xxx: T10 DIF - Handle uninitalized
+sectors.").
 
-> + *
-> + * Context: Process context.
-> + *
-> + * Returns: 0 on success, otherwise negative errno.
-> + */
-> +int qcom_smem_bust_hwspin_lock_by_host(unsigned host)
-> +{
-> +	if (!__smem)
-> +		return -EPROBE_DEFER;
+Remove it.
 
-This would be called at a time where -EPROBE_DEFER isn't appropriate,
-the client should invoke qcom_smem_is_available() at probe time to guard
-against this.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/scsi/qla2xxx/qla_isr.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-> +
-> +	/* This function is for remote procs, so ignore SMEM_HOST_APPS */
-> +	if (host == SMEM_HOST_APPS ||host >= SMEM_HOST_COUNT)
+diff --git a/drivers/scsi/qla2xxx/qla_isr.c b/drivers/scsi/qla2xxx/qla_isr.c
+index d48007e18288..fe98c76e9be3 100644
+--- a/drivers/scsi/qla2xxx/qla_isr.c
++++ b/drivers/scsi/qla2xxx/qla_isr.c
+@@ -3014,12 +3014,6 @@ qla2x00_handle_sense(srb_t *sp, uint8_t *sense_data, uint32_t par_sense_len,
+ 	}
+ }
+ 
+-struct scsi_dif_tuple {
+-	__be16 guard;       /* Checksum */
+-	__be16 app_tag;         /* APPL identifier */
+-	__be32 ref_tag;         /* Target LBA or indirect LBA */
+-};
+-
+ /*
+  * Checks the guard or meta-data for the type of error
+  * detected by the HBA. In case of errors, we set the
+-- 
+2.45.1
 
-Missing <space> after ||
-
-Regards,
-Bjorn
-
-> +		return -EINVAL;
-> +
-> +	return hwspin_lock_bust(__smem->hwlock, SMEM_HOST_ID_TO_HWSPINLOCK_ID(host));
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_smem_bust_hwspin_lock_by_host);
-> +
->  /**
->   * qcom_smem_is_available() - Check if SMEM is available
->   *
-> diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
-> index a36a3b9d4929..959eea0812bb 100644
-> --- a/include/linux/soc/qcom/smem.h
-> +++ b/include/linux/soc/qcom/smem.h
-> @@ -14,4 +14,6 @@ phys_addr_t qcom_smem_virt_to_phys(void *p);
->  
->  int qcom_smem_get_soc_id(u32 *id);
->  
-> +int qcom_smem_bust_hwspin_lock_by_host(unsigned host);
-> +
->  #endif
-> 
-> -- 
-> 2.25.1
-> 
 
