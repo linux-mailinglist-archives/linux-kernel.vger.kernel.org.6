@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-192587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527EB8D1F70
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:01:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A270C8D1F8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0315C1F233AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:01:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C386B223BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E923716FF47;
-	Tue, 28 May 2024 15:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE64F101CE;
+	Tue, 28 May 2024 15:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EhadhZBe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LGuNQzaa"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3562E79F6;
-	Tue, 28 May 2024 15:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803C315E86
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716908469; cv=none; b=VM2x7ZAaI3Zr5AZLwRmu8yAHwRMT7MjsdhWHL0HnQ0qI/SfNJN0tZsa6woW6/Z16GZIdA0UxN3Fg2411QzM8bOy0fDFG4K1RuRV5Zxl3IziUp+U9p+fYMJfgt4kXqte7yfLg18uK8k3f/Ixt1CxJekZ1GyKh2K1dLAXrdQg8+L8=
+	t=1716908494; cv=none; b=Q5b0XsQejA6gmqD6JuXQXHvVsF1i/cO7SOIr7sV8MAZ6+9hVdKAADXvXy8bcmHHSkpHs48vXLEQysMgs+hFOYZm1HEGoIXGCDZ2+kfJ79ONgwjRtmYa65vvo8aftEOlva2ILtsrOTge/m5bDfCir5HhKTr7RVYzNagHwGrBMDXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716908469; c=relaxed/simple;
-	bh=griTV/d48tFOAXbKZWjbvzau5IV3Ow0cB3k5rjAzDCA=;
+	s=arc-20240116; t=1716908494; c=relaxed/simple;
+	bh=LlvRFJOILCzbgT7NNvYggBjSUHVYjQn217GQwoLyvGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3FcH/0LZvFhZf3oaqYqhhPZB073QYXNPxFf8HNv4iJEebB9rP8nxBJP5lKv8sw6eb2uDGuJ1WL3oBHp5Fu2+oABMsYsJid+jWRKH+iXxfFeSgVuZrk/FrMKmOol9LKtUPQGsuVOj5SdgSV7+SJPo4Ld0TKu3evLeUAzRVayOIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EhadhZBe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70411C3277B;
-	Tue, 28 May 2024 15:01:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716908468;
-	bh=griTV/d48tFOAXbKZWjbvzau5IV3Ow0cB3k5rjAzDCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EhadhZBeE18WbKLGgiooW0VxGSBMEhOGF0MwqnuuP6kyWUWmWddS1L6G9AB8+8lm5
-	 jd1V5dCU0ZRklMWsON+LU9+l0O1ByZ/Y/GmZcuj+JmkXJ4KJgwz7ebYT+N0RXxE8Ho
-	 RYFvX1N6JjSPzDnv+ut2SQFeIBGkeyW1blw4RemLnIUH0d/6ZH6f4/2NPFmLXfsiEJ
-	 4bf9tDYqxR3zJ40ngwSx60e5oa/NG0NRfU5cYq8NB2LXw9ECQLxIAXSdmyIMlO58s4
-	 i8JBbcvamnRvXTHGyIgoaPbSQs2UO3v5DCr+FVPkSJNsHSi2QUHSpSBXpUn9MlF49l
-	 fsEWFwyBrCeKw==
-Date: Tue, 28 May 2024 16:01:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: boris.brezillon@collabora.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	daniel@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, steven.price@arm.com, matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/2] dt-bindings: gpu: mali-bifrost: Add compatible for
- MT8188 SoC
-Message-ID: <20240528-flattop-foe-05d6ba73cc06@spud>
-References: <20240527092513.91385-1-angelogioacchino.delregno@collabora.com>
- <20240527092513.91385-2-angelogioacchino.delregno@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ucPBqZDfrgySe3Oq+7RFiqN2lLsvajuQxVCOFK3z5QwYdqcAmzFO2AyLHLmOotD1WbgKpMqlgobTJ6czh2opcvpLgcK884fTkuDJ8qD2plLy4y/AYL/b0ltvGUHl182hDJlrmayEBDXlWJd0vyxcPzZnTSPueaCIIBCVztJaqVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LGuNQzaa; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a626919d19dso699026766b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716908490; x=1717513290; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AZpXRomCophLuh4kP0Z7OM4gjJuOz191Vdv0Rm3MAJs=;
+        b=LGuNQzaaX9qwTzTPWDHCllYkFttcLNJqr8FAVGDK/ue0zZsCxbwkQrul0ApRu4y9Us
+         k/vc6S2Oo7gCifyIJEKByxkv5PY9t+xQMVIzbbyMXI93CwrV/lDgiB8JsOfVwa2yaix/
+         E7ZWv9pb0p5zW6IJ08DW+5Dg8aLena3i8+ZajwBrGdGzPHx7/0gK5Ili+aR7Ak9ketts
+         eMD/4dT1Setm+E5kZWpSjyuoyI5NdCJcojQfa15oevtQr96+ZKQ2hV2v0hySgHSzaPJm
+         jsNJXTEafCbgrsf43XbHXhmH4ZXnxEvklYSL4XVkYq3RuE/54q+2tt2Row6pmT7ANVqx
+         gDbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716908490; x=1717513290;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AZpXRomCophLuh4kP0Z7OM4gjJuOz191Vdv0Rm3MAJs=;
+        b=irvcoDpEwVSQoz3cRW/gmtB8MRojPYgpTAU8bvk98St29wFRXzMUSh595ZbzheDQ1g
+         sgTOrPx9Q3Bg1KrBXy2ikgxW43pak5OOdRtBvGo9PwdZl1vqTbcGIEFWqJAFrpmDK96F
+         u18XREhbiIafrIolNyFcL1FPr0FsYmDGukNqXGHFEWdPApKLRmxK3EIKaNxf2lLelRFH
+         yCcTGYBI0HhEUFimV/az6VeR+pyea83xP4oGnT4vcaKS9EPnf8CM009gpWcwx2Ezh5m7
+         2rgENl3gvGy/cAhMKeSXphWMeMKF71IeCz/9zqSp6ZFWlx1895wrM/lYnRhEHKQ/dHJ+
+         WVsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzeoQBTP8+JgI/7IRGFuYac+xbMtY3jWBTpxAxw2/iHrumUvrE2fvsufyMfcnh/1mwqknZCocNVRFmCe9At+yylGoDxy8gpV/ZKlHn
+X-Gm-Message-State: AOJu0YwXewJ4VT2QfZN/kJaisQyvhWqWlOPx20symBYneoCEQ+Gc4JkX
+	SROf/XQeUzrd2eQ7IrDTVFSW9lOhzAQSYhBsDQIS+YJ6M0OBCr6fJ/7/J4+qsM4=
+X-Google-Smtp-Source: AGHT+IGjXdR1wwIB/XQSuS/su8bySQhPGF1f9VfG551f27pX864NaKYfbnoT+xMu5gTVpvnmh+tb7A==
+X-Received: by 2002:a17:906:1f06:b0:a59:f2d2:49b1 with SMTP id a640c23a62f3a-a6261f91570mr1034023166b.9.1716908489852;
+        Tue, 28 May 2024 08:01:29 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda6d74sm619241766b.201.2024.05.28.08.01.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 08:01:29 -0700 (PDT)
+Date: Tue, 28 May 2024 17:01:28 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, live-patching@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftests: livepatch: Test atomic replace against
+ multiple modules
+Message-ID: <ZlXxyIMNA64Wy395@pathway.suse.cz>
+References: <20240525-lp-atomic-replace-v2-1-142199bb65a1@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lmQ6jMLH/WOT5YCV"
-Content-Disposition: inline
-In-Reply-To: <20240527092513.91385-2-angelogioacchino.delregno@collabora.com>
-
-
---lmQ6jMLH/WOT5YCV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240525-lp-atomic-replace-v2-1-142199bb65a1@suse.com>
 
-On Mon, May 27, 2024 at 11:25:12AM +0200, AngeloGioacchino Del Regno wrote:
-> Add a compatible for the MediaTek MT8188 SoC, with an integrated
-> ARM Mali G57 MC3 (Valhall-JM) GPU.
->=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+On Sat 2024-05-25 11:34:08, Marcos Paulo de Souza wrote:
+> Adapt the current test-livepatch.sh script to account the number of
+> applied livepatches and ensure that an atomic replace livepatch disables
+> all previously applied livepatches.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+I am not completely sure if it is a good idea to test so many
+aspects and use so many different test modules in a single test.
+It might be harder to maintain and analyze eventual problems.
 
-Chers,
-Conor.
+But the change will help to catch more problems which is good.
+I am fine with it:
 
---lmQ6jMLH/WOT5YCV
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlXxrwAKCRB4tDGHoIJi
-0gxEAQCJxm0YW/F3sE3EG2ygW0Xz2I0KMa2JKGoLWElXy5gVRgEA4qAauCj9sAWK
-GjEwoDHxelJzjM0hfALT/Qy2rP/GQQg=
-=atEx
------END PGP SIGNATURE-----
-
---lmQ6jMLH/WOT5YCV--
+Best Regards,
+Petr
 
