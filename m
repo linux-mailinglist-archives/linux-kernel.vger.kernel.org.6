@@ -1,89 +1,160 @@
-Return-Path: <linux-kernel+bounces-192809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39EC8D2283
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:34:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FCD8D2278
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42D0EB23275
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:34:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C46A1F243E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7718224D1;
-	Tue, 28 May 2024 17:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0955174ED3;
+	Tue, 28 May 2024 17:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="oxJuOQtP"
-Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vqz2m5Qj"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0762563;
-	Tue, 28 May 2024 17:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC21DA4C;
+	Tue, 28 May 2024 17:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716917668; cv=none; b=lpp10KrvZUpLFWKeCWwUWJLjEY0HhBvyNhz5KtDEN0Zb6Bs+PIfpCy4Z59DaExG1L+lnzYrQV+y1bGHjrVZrgRweSxDsaxrzpmCt4o9jp6Oawy+RWtc/zCN/Su2eVSblcH5z6G6+mJFXdaboA7dGMfJoZH/aKln+HQbfsDv7W6I=
+	t=1716917310; cv=none; b=W9Cmc5Y01lC2H6qiJKjs0VeBHQrCj0DURgS9Bkm71cyVrxDyEK06g28fSYqjyt2qi/2MvGHPJrc0sG4LzK0lKyvGnzLYAfqb6GOczzBDyQdCLVzn12OYeZZsuR7TG3ywCS/gA2G1X1sLDETMVYP9BKoE62HMKW64+c6AtbNl4EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716917668; c=relaxed/simple;
-	bh=Jo4q+rtPtpqg8nO8+3pGwO34OAH8uHmnEy4GW8MT9us=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SJ/rRdz1KfSjCr9QDmaRRTYvgch0BQUhFyLMRQQAYoOj1Vd/zPLblGDUUeMxeRlkdIZQMlDOA9HJmyL9Rnkz4r+XhWqMCra4a1ZBqPRxcd0fs1PxsPTrhvuG+pN2WaJlD0Y38SW4hkqzlLABpwJQ71uNr1Hfr1bRyjJW6WoAZH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=oxJuOQtP; arc=none smtp.client-ip=202.61.224.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 90A6B280599;
-	Tue, 28 May 2024 19:25:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
-	t=1716917117; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=1m27YV+Npck5o3cnPSRggNl9DizV4QqsbBxedq/OX7g=;
-	b=oxJuOQtP3DddR9rb03nGWWVzDKWL+KtZLYMn/g24eoSPt+zLXXbtGp1HFvbk2uJ+M/vqW/
-	xY/5OAKSJT8/RhDPXkkl1nlPOrsmBCB5b+Tzcri3f9MN0inkJMq5i4y6mB3SGs7gwYJep0
-	oUS1R7weJZlcTF0KDeNkHtLrDTQrZXheAYLg7FGAAt7M1/ocMW0nQi9d/JcB7yd1+5famC
-	VTuK73AiiuIZVaJDgwHhhCAU9QcdkARXaSLyCDyMgwj5tda6UN4CpKOdRjrQEzunLmgyZh
-	fI73bFCti5PyP0CaCy+q4M/RFtBLuzOGDVlXLsIfUl8V8h5NJ1UyCT5JYfaLCA==
-Message-ID: <e14333bb-fa2c-4d14-a2d7-d29c19c18ea5@cachyos.org>
-Date: Tue, 28 May 2024 19:25:14 +0200
+	s=arc-20240116; t=1716917310; c=relaxed/simple;
+	bh=keLiBMxhiaQ84iw6aj4l2f4RxD/rNX/UUq7Sb/E08Q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxNDWYoJO0HQvSofUfW63AHLfIGeeM1JCdIqwhGv1UItQn7EEJXK03IDfTaAZIO84SboCXqyaT8E1+ig//E2VK8wN/IebZQFd+tiIRuibxixs9PmI9M33qQjTDrXAYMDye1fGuWdolFff4NjGdGdSJ60+at258uqXEU8x7oE9LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vqz2m5Qj; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=u1o6iJOkpHwS/LOclFozOycTaolR6RFkB/DiALrvffQ=; b=vqz2m5QjcFshj08py6ocf/DX7w
+	YSPS4Mq8/FpLSvjqJE1qJR+qwxfTIMcdJYgAAyRbrKyaQIpJzpVyYBQISlQfQ5XQashHqZLf9YoyN
+	RnbCtNNk/bcD1c89YlVN1EvJnnWqK4Epz5y3X/4OsMTnA/RVOjkMQZ1IC9l7TM5kdaWVaY6+5XCvx
+	MS/7VGTPV7HLB6NBSYIqkVxxzHOgQPcSD97Q96i8COP7+SXzJzThqaxijkwWDtohCQCUmilQv/Z8H
+	HACaoccR+NKzv80GB5g98DAJrXNbR9hZHCXuU+vpEWBwLAy1UUVp3RaoB6qo3hbLtLnYWmphC/owK
+	rozAQ3MA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44962)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sC0cV-000583-2F;
+	Tue, 28 May 2024 18:28:19 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sC0cW-0003Q7-8H; Tue, 28 May 2024 18:28:20 +0100
+Date: Tue, 28 May 2024 18:28:20 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andi Shyti <andi.shyti@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-i2c@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] SFP I2C timeout forces link down with PHY_ERROR
+Message-ID: <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
+References: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: amd-pstate: Fix the inconsistency in max
- frequency units
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, rafael@kernel.org,
- ray.huang@amd.com, viresh.kumar@linaro.org, ananth.narayan@amd.com,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Perry.Yuan@amd.com
-References: <20240527051128.110091-1-Dhananjay.Ugwekar@amd.com>
- <929aec0d-690b-4277-90b0-d0b4adb437d3@amd.com>
- <ZlSqmYDaPNE8jybO@BLR-5CG11610CF.amd.com>
-Content-Language: en-US
-From: Peter Jung <ptr1337@cachyos.org>
-Organization: CachyOS
-In-Reply-To: <ZlSqmYDaPNE8jybO@BLR-5CG11610CF.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
- > > > Fixes: ec437d71db77 ("cpufreq: amd-pstate: Introduce a new AMD 
-P-State driver to support future processors")
- > > > Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
- > >
- > > Acked-by: Mario Limonciello <mario.limonciello@amd.com>
- >
- > Acked-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+First, note that phylib's policy is if it loses comms with the PHY,
+then the link will be forced down. This is out of control of the SFP
+or phylink code.
 
+I've seen bugs with the I2C emulation on some modules resulting in
+problems with various I2C controllers.
 
-Tested-by: Peter Jung <ptr1337@cachyos.org>
+Sometimes the problem is due to a bad I2C level shifter. Some I2C
+level shifter manufacturers will swear blind that their shifter
+doesn't lock up, but strangely, one can prove with an osciloscope
+that it _does_ lock up - and in a way that the only way to recover
+was to possibly unplug the module or poewr cycle the platform.
 
-Fixes also an introduced regression in amd-pstate=passive reporting 
-wrong frequency values.
+My advice would be to investigate the hardware in the first instance.
 
-Also, see[1]
+On Tue, May 28, 2024 at 12:57:25PM -0400, Sean Anderson wrote:
+> Hi,
+> 
+> I saw the following warning [1] twice when testing 1000Base-T SFP
+> modules:
+> 
+> [ 1481.682501] cdns-i2c ff030000.i2c: timeout waiting on completion
+> [ 1481.692010] Marvell 88E1111 i2c:sfp-ge3:16: Master/Slave resolution failed
+> [ 1481.699910] ------------[ cut here ]------------
+> [ 1481.705459] phy_check_link_status+0x0/0xe8: returned: -67
+> [ 1481.711448] WARNING: CPU: 2 PID: 67 at drivers/net/phy/phy.c:1233 phy_state_machine+0xac/0x2ec
+> <snip>
+> [ 1481.904544] macb ff0c0000.ethernet net1: Link is Down
+> 
+> and a second time with some other errors too:
+> 
+> [   64.972751] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
+> [   64.979478] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
 
-[1]https://github.com/CachyOS/linux-cachyos/issues/253#issuecomment-2135659124
+I2C driver bug? From what I can see, this occurs when there is further
+data to be read, and id->recv_count hits zero. The I2C controller is
+entirely in control of how many bytes are transferred from the remote
+device, and it should raise a NAK on the last byte before signalling a
+STOP condition during a read.
 
+> I think some part of the stack should implement a retry mechanism, but
+> I'm not sure which part. One idea could be to have mdio-i2c propagate
+> negative errors instead of converting them to successful reads of
+> 0xffff.
+
+That would unfortunately break phylib's PHY probing.
+
+> - Are I2C bus drivers supposed to be flaky like this? That is, are callers of
+>   i2c_transfer expected to handle the occasional spurious error?
+
+I2C transfers - to some extent - are supposed to have a number of
+retries, but that's for the I2C device not responding to its address.
+Otherwise, the bus is supposed to be reliable (there is no form of
+error detection however - there's no CRCs or similar.)
+
+The problem with merely retrying the transaction is a register read
+from a PHY may have side-effects (such as the BMSR's LSTATUS bit
+which is latched in link-fail state until the next read. Or a
+register pointer could be incremented. So it's not simple to solve
+at bus level.
+
+> - Similarly, are MDIO bus drivers allowed to be flaky?
+
+No.
+
+I think the only realistic method would be for phylib to attempt to
+reprogram the PHY, but that would need lots of changes to phylib.
+
+Many drivers now do not check whether the PHY accesses they are
+performing succeeded or not, and rely on the failure being permanent.
+
+> Of course, the best option would be to fix cdns-i2c to not be buggy, but
+> the hardware itself is buggy in at least one of the above cases so that
+> may not be practical.
+
+Well, I don't think there's much option. If I2C drivers are flakey maybe
+its better to use GPIOs instead of the broken "inteligent" hardware.
+
+Maybe Andrew has a different view however.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
