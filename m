@@ -1,165 +1,90 @@
-Return-Path: <linux-kernel+bounces-192995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862DE8D2567
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:03:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CE48D2569
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40EAC28C02A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF241C2784C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E607A17839A;
-	Tue, 28 May 2024 20:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FFF173349;
+	Tue, 28 May 2024 20:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVlNeqd4"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E21Ct1tV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9202172BDB;
-	Tue, 28 May 2024 20:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E9A17838E;
+	Tue, 28 May 2024 20:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926587; cv=none; b=HM1KDmutwLJ44BYRG6wKNyqRCq9y3e4CXn4HnsowaHO3B21nGOdvjrrHuwdFyLPwKHC5OrERwhuJwcXfGGnLB2qSc+YasVcxhlJXOdwLHfl3e/WGU4VwMbET8eZBj9bt6+xlh6tpELFE4JypsgIHMn6BYa+/Lsjhe2WnYHQYHeU=
+	t=1716926607; cv=none; b=AeAlm14Q40mnqriqtrDVQYNG8XoGyWMKh2t+FY8UkBenAunQY+ZRCRUuChl8oSBX0X+37aw085lHeHnIG4E4NvYZ8M1HKvJpkpX68BesVZ54SbhgDpLcB5VWimKFhjaQHH2erp1V4fpE34Ki2m2YOdQGoRPETo9I3jClo8ogGEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926587; c=relaxed/simple;
-	bh=hq6uRHm3y9M9TalehTKak0nkSHczL9psHTS4wjPnm1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fkU9NU5LsUusFtIbKznfbvbMjvmf+cG1w+ueCvxlduX5ckxBpXaLqsnH5msZyviXcPlgv4igdEd/s5wy3MGhrSzpYM6X3u0gQ0Q/wTc1Bk11QK3C9ukQlx+dczRZhIDbs7xqSGuo+LM27+hs86JSYa+z2x+Bq6kGYKmnXyosVHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVlNeqd4; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4e3316c0debso420265e0c.0;
-        Tue, 28 May 2024 13:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716926585; x=1717531385; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qSsi77YWskths0d6euwD+vNlpaxcZ5dztOfO9uvhPMw=;
-        b=DVlNeqd4rllQgRgGxjln/K2lU/HCRGAuJDn8dCE33VIM+P4jKJLu2GhvL0V56faTYr
-         LLXDGfi8E+x4u8JS1YlgU0ISwBqMbWPNicPuO7iD5/htiRN1fOaC6NvAjs2BUB3GhrG+
-         XfXrPla49VVh5SIl+tiL1htGqOpef4n0+/ucy+6I9+mJE+OZnioWkFv1joXRzpC/7ID5
-         eF6rBlnF8MdgLPpH/UcMT0EAMnx8fQ802z0AaCSHD4URU1BSFlZYdWpKJtylWuojiAeS
-         79nVdwbQvvKLYgXyY0lVaDNXU30KKp/NdyunDMRheXY6UM8Nc4jz6cuNsITm5YZ+aim1
-         7oRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716926585; x=1717531385;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qSsi77YWskths0d6euwD+vNlpaxcZ5dztOfO9uvhPMw=;
-        b=xNoQrc0lsxGxGlYjrfIt3fmgwB8ChvZjjN7K12d6JjJnCiJDCkN4byEk9YgkR7R8wH
-         0L7pbozoPvSdK56La0/sSpU47OHH9J5D3V2mwQT21RNPLZGMMMt4lkXLe3bl0aPNXoGV
-         YCSnXI+R9dDXFzCIUwp7iooxR5aLyzFCOnGAist71f1GDItBts45SYPRcpgzM10khYnC
-         P05subwhlBlh3+r/7P/nOyn7gogXwf2XCmnEwgoalv+n25dXuRsA+McRO1WntK5EYePz
-         Pq1YEeUNq318EEJ4F+/tyqhoEYjhmI7jqd4MtWNE25WnLgLcBRumGlkbwaCSPB6CmL63
-         8GKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqchREPF+1JGHAwt14uqdk8SDjPqyqmB8O6Cx8E3xrSQMyC+7GjkrM2k2P/qgLGJKn3p4mktaysJw6ilI5fyYTQy1KZ17ga/BXV2ZkkfRrMbQIpvHfic/eUJmib+E7nid0ni5fEqaJCSSAgQU47ub5F4c7kl4PVrDku1I3xMtFj+8HJMtdmX0SPPoXK1ZXTWl2kzRqDpWDf7Z7OOkIR96rEzmQQwjQAg==
-X-Gm-Message-State: AOJu0Yw86fkUERQOwErvfJbvhnqiumk2l9oUyFgAvzwV4pouDffv05wT
-	rhr+W8JvhunTIQ0B6WRu+EDL0hC/eemgGHo5R6oGGC4yECrW//FxujsE4eVhW4MHsBKhXdLPwzC
-	jTlB468BsQZsK/yMnRWlRFuJHEm4=
-X-Google-Smtp-Source: AGHT+IHSpS7JgZ3F7Syj4TVYDPPmkFIU/f9NUkxoYHR18ZZdZFrcScSjcjBSuBmRHMrH+vxnu5WmdvRRTvtprS2k2KQ=
-X-Received: by 2002:a05:6122:3c54:b0:4d8:4a7f:c166 with SMTP id
- 71dfb90a1353d-4e4f02d957dmr13450250e0c.12.1716926584584; Tue, 28 May 2024
- 13:03:04 -0700 (PDT)
+	s=arc-20240116; t=1716926607; c=relaxed/simple;
+	bh=GAX+4DxMOBaXQxskI6jsbm3aDcBHEhA6V34iGhZ3FI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mjtd6TsFzSW09uPfAvLKwfI09lST3YbpPLFRDfRtkSmDSFwT6F/RtByAJNf3JqU2dP6JAy+t045PrS9YpclFFwSx3f+nv3g3b/mrgQP/I8bSmRz8Byo1wxFzf5xBfV5qqFRUElcQBr9hd3cHvyUkZxWoF50EKl6pscJUhaVQz4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E21Ct1tV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E67C32786;
+	Tue, 28 May 2024 20:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716926606;
+	bh=GAX+4DxMOBaXQxskI6jsbm3aDcBHEhA6V34iGhZ3FI8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=E21Ct1tViP9RMBjfbfmBrqQOe7dYJDJ65CW2626+quVfcMw3FhP0GxHO8xqISNLYu
+	 vZ1VKcOeljVot3/6wNJrgCM06vRadywsik/YA6uzQ7SGF90AHNxc37o22AfmQRmBDF
+	 Th9WHV438CCTOl1KWQtboUuAGK2cOW+uOIaE+HRvjal3IfcFbQbB9yL79t6aDGPqMl
+	 BCv/Q3SXzUScRrcZmte3hNC9wK8ObQJk/MxwwMZyeyJM9DGr/SH+Ywv3O0F0cAW1Mm
+	 IdIy8pC3oPr326vcFY/JGr+vzRGw6UYZFfvVv4vrPmQRbte+VOtvh1bPMNFtIGWcG6
+	 naCqVwoHlZH0Q==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Saravana Kannan <saravanak@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: kbuild: Fix dt_binding_check on unconfigured build
+Date: Tue, 28 May 2024 15:02:32 -0500
+Message-ID: <20240528200231.1548800-2-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240423175900.702640-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWS8TNVjd6UBYe1X7p=aVVFBBErh8StL1urJL7w_WYLzA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWS8TNVjd6UBYe1X7p=aVVFBBErh8StL1urJL7w_WYLzA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 28 May 2024 21:01:54 +0100
-Message-ID: <CA+V-a8tBAZiWMXSGTjQqvKjV8AoEMNBkyn+Oa__4WU1xVww93Q@mail.gmail.com>
-Subject: Re: [PATCH v2 10/13] pinctrl: renesas: pinctrl-rzg2l: Add support to
- set pulling up/down the pins
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+The 'dt_binding_check' target shouldn't depend on the kernel
+configuration, but it has since commit 604a57ba9781 ("dt-bindings:
+kbuild: Add separate target/dependency for processed-schema.json").
+That is because CHECK_DT_BINDING make variable was dropped, but
+scripts/dtc/Makefile was missed. The CHECK_DTBS variable can be used
+instead.
 
-Thank you for the review.
+Reported-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Fixes: 604a57ba9781 ("dt-bindings: kbuild: Add separate target/dependency for processed-schema.json")
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ scripts/dtc/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, May 22, 2024 at 2:26=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support to configure bias-disable, bias-pull-up and bias-pull-down
-> > properties of the pin.
-> >
-> > Two new function pointers get_bias_param() and get_bias_val() are
-> > introduced as the values in PUPD register differ when compared to
-> > RZ/G2L family and RZ/V2H(P) SoC,
-> >
-> > Value | RZ/G2L        | RZ/V2H
-> > ---------------------------------
-> > 00b:  | Bias Disabled | Pull up/down disabled
-> > 01b:  | Pull-up       | Pull up/down disabled
-> > 10b:  | Pull-down     | Pull-down
-> > 11b:  | Prohibited    | Pull-up
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > RFC->v2
-> > - New patch
-> > ---
-> >  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 73 +++++++++++++++++++++++++
-> >  1 file changed, 73 insertions(+)
-> >
-> > diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/=
-renesas/pinctrl-rzg2l.c
-> > index 102fa75c71d3..c144bf43522b 100644
-> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > @@ -122,6 +122,7 @@
-> >  #define IOLH(off)              (0x1000 + (off) * 8)
-> >  #define SR(off)                        (0x1400 + (off) * 8)
-> >  #define IEN(off)               (0x1800 + (off) * 8)
-> > +#define PUPD(off)              (0x1C00 + (off) * 8)
-> >  #define ISEL(off)              (0x2C00 + (off) * 8)
-> >  #define SD_CH(off, ch)         ((off) + (ch) * 4)
-> >  #define ETH_POC(off, ch)       ((off) + (ch) * 4)
-> > @@ -140,6 +141,7 @@
-> >  #define IEN_MASK               0x01
-> >  #define IOLH_MASK              0x03
-> >  #define SR_MASK                        0x01
-> > +#define PUPD_MASK              0x03
-> >
-> >  #define PM_INPUT               0x1
-> >  #define PM_OUTPUT              0x2
-> > @@ -265,6 +267,8 @@ struct rzg2l_pinctrl_data {
-> >         void (*pmc_writeb)(struct rzg2l_pinctrl *pctrl, u8 val, void __=
-iomem *addr);
-> >         u32 (*read_oen)(struct rzg2l_pinctrl *pctrl, u32 caps, u32 offs=
-et, u8 pin);
-> >         int (*write_oen)(struct rzg2l_pinctrl *pctrl, u32 caps, u32 off=
-set, u8 pin, u8 oen);
-> > +       int (*get_bias_param)(u8 val);
-> > +       int (*get_bias_val)(enum pin_config_param param);
->
-> Please use consistent naming: "pmc_writeb" uses <noun>_<verb> ordering,
-> "get_bias_pararm" uses <verb>_<noun> ordering.
->
-> Perhaps "hw_to_bias_param()" and "bias_param_to_hw()?"
->
-Ok, I'll rename as suggested above.
+diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
+index a18657072541..b47f4daa4515 100644
+--- a/scripts/dtc/Makefile
++++ b/scripts/dtc/Makefile
+@@ -3,7 +3,7 @@
+ 
+ # *** Also keep .gitignore in sync when changing ***
+ hostprogs-always-$(CONFIG_DTC)		+= dtc fdtoverlay
+-hostprogs-always-$(CHECK_DT_BINDING)	+= dtc
++hostprogs-always-$(CHECK_DTBS)		+= dtc
+ 
+ dtc-objs	:= dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
+ 		   srcpos.o checks.o util.o
+-- 
+2.43.0
 
-Cheers,
-Prabhakar
 
