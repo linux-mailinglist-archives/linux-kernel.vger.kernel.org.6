@@ -1,145 +1,182 @@
-Return-Path: <linux-kernel+bounces-191886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96BE8D1594
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:56:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420368D1599
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B8DD1F21BD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610C01C21C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA68D73509;
-	Tue, 28 May 2024 07:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BF474405;
+	Tue, 28 May 2024 07:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z0wMS8jK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AtJe0IO7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IelRUCbH"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5556D1C1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210DE7D07E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716882989; cv=none; b=PcyNS8guGfW1I8dEnTte/9CiLEKUIjXYdbg5o8a7qFavh5BHwZMdvHwvnQEzO7ZpL++lfmraWilqfg/JhoE6ip8JAlH7EZHD472QF3inqYBigbqDe7kh+P7a38rin4gtIljcK0L4yYTN0X6UDInnM7Xsky3crfLkFBD3TRzYSKw=
+	t=1716883013; cv=none; b=QaW1i0ExH7lHOjJ4631TSGHAdX9os4gnXjunQMoA+oFTNc8h5n9qHrDipXrgVfDeniWEc99o8lpLM3fUEh/wb0QlpaeW9aBhnE3UMVDGDzGtx7wDyBXW35rrzfkwh1gxdR/SONj1mCj1yMRDd5ZfqxTJYYffKTnzRXBNsTrO88U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716882989; c=relaxed/simple;
-	bh=PLRA6eg3GpEb0s6BIYfSrc9jNEo6E5f65DZU6Y7C/Ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3nepB56FhvruB28Qtb7kcmsXtgJsMzYHg+/V92zNVuGbafFGIzcC/KWB2j/C0Mjz9CKFDobpmb6tUjJjK/BuOwxkGDUFtV5AE+OLXOQZwovtKbE2UPCfjW+QbLNNdezaBl0ynj/g7ycprvV2e0WQysGBA4nMxp2B9P/bDk8F8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z0wMS8jK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AtJe0IO7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 May 2024 09:56:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716882985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PLRA6eg3GpEb0s6BIYfSrc9jNEo6E5f65DZU6Y7C/Ts=;
-	b=z0wMS8jK/NcODY+06JDwvEgSi1Hqt8CrfjGJyG8OooTiHIVo3qJlcSf1Y8+Uxed/njRocq
-	WPMEvR6uBjSqqYfRHnE7GCs7Pcz18gSp8w+cjBDFzXfhPIQyK3WMLLr0eCriNiPyfmOgPY
-	ux2kGbtTwEoQ3DEtktHLw/06q9Zkedtt/5U703PV4QHRaeke4vw/UYOYBLFrQEVliTeBPQ
-	719gbf6vatjt+nBdXY6YScOZIELZEsFvyeSxE+MSs+e0LhFlh1a64v9cQttZsVrSUcrvgj
-	me6P58xE84P+7OMg7afqGWHR/FL4et2vlqCR2ZmdsG1tZghLz10ZObtagqVX/A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716882985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PLRA6eg3GpEb0s6BIYfSrc9jNEo6E5f65DZU6Y7C/Ts=;
-	b=AtJe0IO7jvWMw4vtY/DQoswZG5uHlwssofyV+QijtJgBWlZ90aGFXWG5YvedH2jTJ/sZpV
-	LKi42QeDFlFownAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] memcg: simple cleanup of stats update functions
-Message-ID: <20240528075623.oFcU1JLj@linutronix.de>
-References: <20240420232505.2768428-1-shakeel.butt@linux.dev>
- <20240527152200.P1rU7FaG@linutronix.de>
- <86006806-4ffc-4330-ab4b-29215ab2c98c@kernel.org>
- <n6zstrcbqp7fqpennqf3qgt2nuc2tdrnsc5dmoawyke3zn3xcm@6uirkotvrhe6>
+	s=arc-20240116; t=1716883013; c=relaxed/simple;
+	bh=FTkID7+KKMJ9AweJ3LnYfYE2qesoTXjxnJwBfRB1nk0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iX1xYe6T8S9zYI0Y4d89dtNKsCRPb9LV89t1nchtVnxzCpvORmZ5A22sViSLaLDnluVsgO9ojhCsSOsUJrG5s/4tKVgvCiZ4+KWped2NToHTUHQ6PFFIRjzlBgiVuBll2TCmCxw8reLol1vt8FLh/QlWZICjzkkkdfg65uRC8nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IelRUCbH; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42120fc8cbfso127575e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716883010; x=1717487810; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KCjfHPIMT5wUou0t8i9b0QJfs+bLamMmZgWIm/rkFmM=;
+        b=IelRUCbHRIh056sPmCvrubmcNzfnnoYI7RT4fkAGOWg0J9KLisrLbypuGPTFxUUuHR
+         nQlT8+Y5bGggXc8ZdPhkMgnB0RE14zl54B7xUrAd/Uq54zmn7M1K7JpDBXT9qfZQVmSc
+         61n6sa0x7W2OyNhuv0pzgdZS8zN+QAlVgS3s6QpNyLzE4zHk7/rpCRrR0w7quqYMIEJw
+         F3t/yYfSgTIHzbuL5TSQDZKegJEKetQ3lb+2W5eDB62g3ns+NaVI7Lca6bIA+oBZtw3W
+         1wE2lWd+tRdSzTDn9r1QWpUr3F4yTtZZg2oHYNjr4DGVBHQAIBt+JYRcxCxt49e0Ufig
+         7kBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716883010; x=1717487810;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KCjfHPIMT5wUou0t8i9b0QJfs+bLamMmZgWIm/rkFmM=;
+        b=GoYPVPbqujdsh1DIg2WRahzDF4qrvh86S3tzNnRME76Z/Fx65KoYa5dusrA2ccydJV
+         MqMUue0DukRRCSYHfSu75BfWiJuctoHZfmhWooQ0dp4gD3pTdpMmPZl9ltRIwSWw9Ver
+         X+k7SVs78vQ5z9PhaX+qatBVayF0O68B1xejTYrn9dzHv7jNkEJ1ovG/Y9QzVI9ng9Vl
+         w2hFREZg1hBJItQb/NMrJxJCTwAf1jfubCRAXYhHUQAcEWrP3a3EyryOjoylPBGxBr+C
+         G/NpkQ4rQQOd+mpmUaNCCdVWHcDjZ/XyCPW3L22gokTkdH9u+GKH3Ro3hiLAFADJ9SG3
+         tQrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtJAOVtu9CMuSuB0MhlHGdaB+vrYmAKQhKZ21kLkssEEYggaV/P/zCdUo7G0OgbnBMtHp42TBf1UI/A2SA1G7jGIsFcFNsgExqKyU1
+X-Gm-Message-State: AOJu0Ywhao+r4v374z+2I2hPGDuNT8deab/ZKpNECmJ/ODL8J5NVMtgj
+	kkOeuW5kZ3tVg24DTOKozXygCjv36Ahg2F0pm4hhm2EfC19AbRpVkdu/LFGpb8g=
+X-Google-Smtp-Source: AGHT+IEvsSaSRUS9z739pDAh0FjrjH3txLuBAGvYd1RJEBQ7yTIpgIeSfP/iRhvitjp+ztGPhdS87w==
+X-Received: by 2002:a05:600c:5641:b0:41b:85bf:f3a8 with SMTP id 5b1f17b1804b1-42108a0ba39mr101583065e9.35.1716883010189;
+        Tue, 28 May 2024 00:56:50 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:8f19:f965:3f93:6385? ([2a01:e0a:982:cbb0:8f19:f965:3f93:6385])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f163a8sm164159405e9.13.2024.05.28.00.56.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 00:56:49 -0700 (PDT)
+Message-ID: <e8268cf2-16e1-4903-9dc5-9377a9be7d0e@linaro.org>
+Date: Tue, 28 May 2024 09:56:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <n6zstrcbqp7fqpennqf3qgt2nuc2tdrnsc5dmoawyke3zn3xcm@6uirkotvrhe6>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v5 0/6] Add DSC support to DSI video panel
+To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Jonathan Marek <jonathan@marek.ca>
+References: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024-05-27 22:16:41 [-0700], Shakeel Butt wrote:
-> On Mon, May 27, 2024 at 06:34:24PM GMT, Vlastimil Babka (SUSE) wrote:
-> > On 5/27/24 5:22 PM, Sebastian Andrzej Siewior wrote:
-> > > On 2024-04-20 16:25:05 [-0700], Shakeel Butt wrote:
-> > >> mod_memcg_lruvec_state() is never called from outside of memcontrol.c
-> > >> and with always irq disabled. So, replace it with the irq disabled
-> > >> version and add an assert that irq is disabled in the caller.
-> > >=20
-> > > unless PREEMPT_RT is enabled. In that case IRQs are not disabled as p=
-art
-> > > of local_lock_irqsave(&memcg_stock.stock_lock, =E2=80=A6) leading to:
->=20
-> Sorry about that and thanks for the report.
+On 27/05/2024 16:21, Jun Nie wrote:
+> This is follow up update to Jonathan's patch set.
+> 
+> Changes vs V4:
+> - Polish width calculation with helper function
+> - Split cfg2 compression bit into another patch
+> 
+> Changes vs V3:
+> - Rebase to latest msm-next-lumag branch.
+> - Drop the slice_per_pkt change as it does impact basic DSC feature.
+> - Remove change in generated dsi header
+> - update DSC compressed width calculation with bpp and bpc
+> - split wide bus impact on width into another patch
+> - rename patch tile of VIDEO_COMPRESSION_MODE_CTRL_WC change
+> - Polish warning usage
+> - Add tags from reviewers
+> 
+> Changes vs V2:
+> - Drop the INTF_CFG2_DATA_HCTL_EN change as it is handled in
+> latest mainline code.
+> - Drop the bonded DSI patch as I do not have device to test it.
+> - Address comments from version 2.
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+> Changes in v5:
+> - Link to v4: https://lore.kernel.org/r/20240524-msm-drm-dsc-dsi-video-upstream-4-v4-0-e61c05b403df@linaro.org
+> 
+> ---
+> Jonathan Marek (4):
+>        drm/msm/dpu: fix video mode DSC for DSI
+>        drm/msm/dsi: set video mode widebus enable bit when widebus is enabled
+>        drm/msm/dsi: set VIDEO_COMPRESSION_MODE_CTRL_WC
+>        drm/msm/dsi: add a comment to explain pkt_per_line encoding
+> 
+> Jun Nie (2):
+>        drm/msm/dpu: adjust data width for widen bus case
+>        drm/msm/dpu: enable compression bit in cfg2 for DSC
+> 
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c          |  2 +-
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h     |  8 ++++++++
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 18 ++++++++++++++++++
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c          | 13 +++++++++++++
+>   drivers/gpu/drm/msm/dsi/dsi_host.c                   | 10 +++++++++-
+>   5 files changed, 49 insertions(+), 2 deletions(-)
+> ---
+> base-commit: e6428bcb611f6c164856a41fc5a1ae8471a9b5a9
+> change-id: 20240524-msm-drm-dsc-dsi-video-upstream-4-22e2266fbe89
+> 
+> Best regards,
 
-no worries.
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
 
-> >=20
-> > But then the "interrupts are handled by a kernel thread that can sleep"=
- part
-> > of RT also means it's ok to just have the stock_lock taken with no
-> > interrupts disabled as no actual raw interrupt handler will interrupt t=
-he
-> > holder and deadlock, right?
+with https://lore.kernel.org/all/20230728012623.22991-1-quic_parellan@quicinc.com/ and enforce-video-mode in panel node.
 
-I *don't* know why the interrupts-disabled check is here. The
-memcg_stock.stock_lock is acquired on RT with interrupts enabled and
-never disables interrupts. The lock is never acquired in an hard
-interrupt (not threaded interrupt) context so there is never a deadlock.
-
-Originally the interrupts were disabled in mod_memcg_lruvec_state()
-because the counter, it operates on, is per-CPU and relies on disabled
-interrupts because the operation is not atomic and the code can be run
-in interrupts context (on !RT). The __mod_memcg_lruvec_state() variant
-of it relied on interrupts being disabled by the caller. This "rely on"
-was part of a spinlock_t lock (or invoked from an interrupt handler, the
-memory is fading slowly away) which does not disable interrupts on
-PREEMPT_RT.
-So for that reason we ended up with __memcg_stats_lock() which disables
-preemption only on PREEMPT_RT to achieve the same level of "atomic"
-update.
-
-> Thanks Vlastimil for jolting my memory on RT reasoning.
->=20
-> > > suggestions?
-> >=20
-> > So in that case the appropriate thing would be to replace the assert wi=
-th
-> > lockdep_assert_held(&memcg_stock.stock_lock);
-> > ?
-> >=20
-> > It seems all the code paths leading here have that one.
-> >=20
->=20
-> Yeah this seems right and reasonable. Should I send a fix or you want to
-> send it?
-
-I don't mind sending a patch. I'm just not sure if the lock is the right
-thing to do. However it should ensure that interrupts are disabled on
-!RT for the sake of the counter update (if observed in IRQ context).
-
-Yeah, let me prepare something.
-
-Sebastian
+Thanks,
+Neil
 
