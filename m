@@ -1,118 +1,152 @@
-Return-Path: <linux-kernel+bounces-192465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC92A8D1D97
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969448D1DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E948C1C210E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5293A284572
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABFD16F913;
-	Tue, 28 May 2024 13:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BSoGHWTF"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BD616B729;
+	Tue, 28 May 2024 13:53:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC0616F292;
-	Tue, 28 May 2024 13:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED4113C822
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716904307; cv=none; b=nyG9Mhfu+TcLofpB7/7LEJ8WxD8ErbBMUgSihKQjufgGHLXZmRi4lCSzYODgBRA0maQ7L6UVx1cdstyOLPr9PuMZnK5reG+7xUokwpKObZuQCCjTUzGCLOqRbb3Iov8EmudfeNO54Rs0X2tFalWHNz75T/LqNlC+kTpeRlj7pgI=
+	t=1716904384; cv=none; b=C99rgIkwnZ/sHcf/lWCfq0qEDrywJIB//WHO8PbNTbiPXZrzk12fdnKanLXrAl1gGzNTwtbIelDrkZoy9EAE6XD3OWXy/Y7aFYs25Mq7tZa7g7UMKdOAD7yrQb+qaPtLED8rZFYiZe9INj6Doz5BP2ubr56MK2Z/1TdzvY/6Su0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716904307; c=relaxed/simple;
-	bh=bVAtggiMjkZVTQ1NKTcH9oYwlHwQ8p20A1TJxneQkVE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XTzJJV0l+2ZEZZV2q/rX3pheSCzas2BhjmHsrEc8Fq9PFujtf/X0HzJ5qifol4+pfin91PbI+caeuLSY6cJGgg5x/BZyLiRlgZyW/lpR4LPE7HhQVyHvePTN8dXQfuyrs15D6dJixCrGku/dii3lydbaSLH6fEPE3pyT4krjwXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BSoGHWTF; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716904302; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=8Me7WULng0ZAO2ftQFBzA83nRWTMtnRkgCMFfiM9/lY=;
-	b=BSoGHWTFqw+zZEFi9vrRjMaZRHKYdH8FYb5VOJjwHpF/OCSIeSklf6A9H60MaJVNJ3zZ8MhmETY6v3s/NRl7TxQgytU7ANddK4UbpL0wgjAcLIQpePE7D4eXFSnetSiH/PY+SnYb9hEY1iRMl7RuyurJ5h+fzTapETIqXuaEQKc=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W7PmKgr_1716904301;
-Received: from localhost.localdomain(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0W7PmKgr_1716904301)
-          by smtp.aliyun-inc.com;
-          Tue, 28 May 2024 21:51:41 +0800
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: kgraul@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] net/smc: change SMCR_RMBE_SIZES from 5 to 15
-Date: Tue, 28 May 2024 21:51:38 +0800
-Message-Id: <20240528135138.99266-3-guangguan.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
-References: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
+	s=arc-20240116; t=1716904384; c=relaxed/simple;
+	bh=3Pj74Nu4ktesHuDG3HthgKkc3BF0Puu51mhNC0syUjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEEku+hMFDzEvTzC/F9UZlb5UtRSHrs0HSMe2rc9mR3vKWdARZ7JU7YvvpfmfRH2BQ2ilwgC4jHDegqTwYMzK+Vq2ohNj1m82vVQVKG/eUP4RjBXp51QoPxvUjdR1bTh2h6rYA3IgOBkpvIzoisYLM8wb9a8CC5DtD14ZUoL6Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1sBxFG-0003PP-VL; Tue, 28 May 2024 15:52:06 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1sBxFE-003Kql-Le; Tue, 28 May 2024 15:52:04 +0200
+Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1sBxFE-001NEu-1o;
+	Tue, 28 May 2024 15:52:04 +0200
+Date: Tue, 28 May 2024 15:52:04 +0200
+From: Michael Tretter <m.tretter@pengutronix.de>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: [PATCH v3 01/18] media: allegro: nal-hevc: Replace array[1] with
+ arrray[N]
+Message-ID: <ZlXhhPtE0EP8PE-L@pengutronix.de>
+Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+References: <20240527-cocci-flexarray-v3-0-cda09c535816@chromium.org>
+ <20240527-cocci-flexarray-v3-1-cda09c535816@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240527-cocci-flexarray-v3-1-cda09c535816@chromium.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-SMCR_RMBE_SIZES is the upper boundary of SMC-R's snd_buf and rcv_buf.
-The maximum bytes of snd_buf and rcv_buf can be calculated by 2^SMCR_
-RMBE_SIZES * 16KB. SMCR_RMBE_SIZES = 5 means the upper boundary is 512KB.
-TCP's snd_buf and rcv_buf max size is configured by net.ipv4.tcp_w/rmem[2]
-whose defalut value is 4MB or 6MB, is much larger than SMC-R's upper
-boundary.
+Typo in the subject: arrray -> array
 
-In some scenarios, such as Recommendation System, the communication
-pattern is mainly large size send/recv, where the size of snd_buf and
-rcv_buf greatly affects performance. Due to the upper boundary
-disadvantage, SMC-R performs poor than TCP in those scenarios. So it
-is time to enlarge the upper boundary size of SMC-R's snd_buf and rcv_buf,
-so that the SMC-R's snd_buf and rcv_buf can be configured to larger size
-for performance gain in such scenarios.
+On Mon, 27 May 2024 21:08:51 +0000, Ricardo Ribalda wrote:
+> Structures that have a single element array as the last field can be
+> mistaken as a "flex array".
+> 
+> We could replace all the single element arrays in the structure with
+> single element fields, but this driver prefers to follow the ITU-T H.265
+> specification, which defines it as an array.
+> 
+> If we introduce a new define N_HRD_PARAMETERS, we make clear our
+> intentions.
 
-The SMC-R rcv_buf's size will be transferred to peer by the field
-rmbe_size in clc accept and confirm message. The length of the field
-rmbe_size is four bits, which means the maximum value of SMCR_RMBE_SIZES
-is 15. In case of frequently adjusting the value of SMCR_RMBE_SIZES
-in different scenarios, set the value of SMCR_RMBE_SIZES to the maximum
-value 15, which means the upper boundary of SMC-R's snd_buf and rcv_buf
-is 512MB. As the real memory usage is determined by the value of
-net.smc.w/rmem, not by the upper boundary, set the value of SMCR_RMBE_SIZES
-to the maximum value has no side affects.
+N_HRD_PARAMETERS -> N_HRD_PARAMS
 
-Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Co-developed-by: Wen Gu <guwen@linux.alibaba.com>
-Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
----
- net/smc/smc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> This fixes this cocci warning:
+> drivers/media/platform/allegro-dvt/nal-hevc.h:102:14-22: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-index acca3b1a068f..3b95828d9976 100644
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -2006,7 +2006,7 @@ int smc_conn_create(struct smc_sock *smc, struct smc_init_info *ini)
- }
- 
- #define SMCD_DMBE_SIZES		6 /* 0 -> 16KB, 1 -> 32KB, .. 6 -> 1MB */
--#define SMCR_RMBE_SIZES		5 /* 0 -> 16KB, 1 -> 32KB, .. 5 -> 512KB */
-+#define SMCR_RMBE_SIZES		15 /* 0 -> 16KB, 1 -> 32KB, .. 15 -> 512MB */
- 
- /* convert the RMB size into the compressed notation (minimum 16K, see
-  * SMCD/R_DMBE_SIZES.
--- 
-2.24.3 (Apple Git-128)
+With that fixed
 
+Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
+
+> ---
+>  drivers/media/platform/allegro-dvt/nal-hevc.h | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h b/drivers/media/platform/allegro-dvt/nal-hevc.h
+> index eb46f12aae80..361e2f55c254 100644
+> --- a/drivers/media/platform/allegro-dvt/nal-hevc.h
+> +++ b/drivers/media/platform/allegro-dvt/nal-hevc.h
+> @@ -96,10 +96,11 @@ struct nal_hevc_vps {
+>  	unsigned int extension_data_flag;
+>  };
+>  
+> +#define N_HRD_PARAMS 1
+>  struct nal_hevc_sub_layer_hrd_parameters {
+> -	unsigned int bit_rate_value_minus1[1];
+> -	unsigned int cpb_size_value_minus1[1];
+> -	unsigned int cbr_flag[1];
+> +	unsigned int bit_rate_value_minus1[N_HRD_PARAMS];
+> +	unsigned int cpb_size_value_minus1[N_HRD_PARAMS];
+> +	unsigned int cbr_flag[N_HRD_PARAMS];
+>  };
+>  
+>  struct nal_hevc_hrd_parameters {
+> 
+> -- 
+> 2.45.1.288.g0e0cd299f1-goog
+> 
+> 
 
