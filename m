@@ -1,97 +1,103 @@
-Return-Path: <linux-kernel+bounces-192637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C0B8D2006
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B840F8D2010
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9C91C231C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:15:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E90AB1C2306C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC3C17166F;
-	Tue, 28 May 2024 15:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC73172BCE;
+	Tue, 28 May 2024 15:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv2GZYRR"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D99F17166A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DBY9wQdL"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC586170855
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909230; cv=none; b=nPcQxP9Yg1lKs1odxGBOtRFZEVscMDake0fMyrQzIMf5AwZn74lJyTVFXkDPrjM8gcNnFf1+aNTkmbdiLdXHE/kRJ+CWy/a8ZiC1BmGWYoAtxq9e3r5eqEBisrW+PK7jODbP1mWGjm58jyzWhxvrgYYIUtPYpaA2o+T/zbw/4zg=
+	t=1716909287; cv=none; b=pJPMdorw1i1Fa1X4FUhkLpcIqT1fT/OsBIMb9l7I1iRJuXHWFRobjDV8tCru5JyTehD5yk5R1nLC4shRAUHhchQ1cdBRwK3GXWeiMJhleVKxkurfOzy+wVJ34eKvWy3KDYB1WUe2MDHjKzDVPiqRu75dXCLy9OAhUfMZsFEMQ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909230; c=relaxed/simple;
-	bh=e6N91zsLIkCffcVoj9IwNk6WCrnFz/oKvE1DmIr4i3I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=auOJZeWae8K9CGj3XgS12B0Od74PzpK4g5izrLL303p7E7yiDR5NeWzcLtTyth35pS3sSJetVHyUATrq3uwPEPaj4HTIFw8QCBcruFbgVT57KeG4oS5snklfsDWgu0lWZeltqsfghekQdisZqa82ByyRaWwyKlPr/4R4QC4VloY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wv2GZYRR; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6f8d0a1e500so705686a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716909228; x=1717514028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e6N91zsLIkCffcVoj9IwNk6WCrnFz/oKvE1DmIr4i3I=;
-        b=Wv2GZYRRi9qg/7ni5w4z9e4BU+wPffxlUjsMuZT+duzXNxo8/l2JB3fo04d4Tep/YM
-         lGFAG3ucBdHKIcTG4EHGj1xAy2lP5npFI5f12iaQasHGmyINBtbqi/p6gCby37go6dzQ
-         5lBiDySQQiNKXLHKUqgFeaL85oNzUM7sKaEOKdhmxsMY0cdMZG2CDjf8T2qNttrTzBMD
-         w24GvUCrXeDo1VCpnaZh5FkydQKjNf9oujqHUF3IdrcnyOIa/HFJd28la41Me05aaT/l
-         qkv04qh5PKTVHSobFlzGCGYbq5jh/2ppsMsOwrJ/qmge4/56kKX3yrJnnewZuVYW9f4v
-         NCow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716909228; x=1717514028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e6N91zsLIkCffcVoj9IwNk6WCrnFz/oKvE1DmIr4i3I=;
-        b=D/hjhxpFSamcL5vXwj5xeTqU9ykvfWUCeSKEFH0/Pun8DBFQIeIVoIkRv1V7hZLXRT
-         /ZSZHrf7lTC2nFwezAZgBcUniRMHV/8ftCo6yu1Sv63Vc/zpb0arfcW4UpF7Hhpye0X/
-         Yp3U1G5m0ti32HaW18UaXle18W227g7H2T9hS1s9OLkUEBmkxtkJEanWm5LAf2yiwrij
-         uni/ZMv86qh9df5kOGAki5jp1PuDuDPWGZ9qGoXgmu2NftZgEeCjFPyQ7Oq17AQsYJwe
-         8oVPY/T7XRH8YYvTUVmUd+Dv6x7vaZZZXcnl++g8S3aVh3+iK3HYgAenenQ2Ru/nfUwx
-         31WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpzy0Lrvvobqh9DEpkbKpanOiJrk76QxKi4cn6406xTNxao+ilszo1S7ImGw4b4UrjlqbtaQ4bydeyfX0DrBJlGf4s0FWGeCblldzd
-X-Gm-Message-State: AOJu0YzOyyqwsQNa9+9QZvGKDZViwTD+TilCKwtdu9rKSzDBsZyVcvw5
-	jtadP7CZAlQqWS8YtSMqY23uuJQmwETb1WsrMzYI64yYM2W45y4I9Rq+W9Q5sg/Z5zurXsBwgH6
-	5aZA+p7jWcqQK0AwbIouBSCRbj41nIw==
-X-Google-Smtp-Source: AGHT+IGz3r4U+on+uB/aGr+GRepszIiD2ZLz8sbZ0xk1P0EJC+xvzvqhCXeqaCQ9OjPYEXDavg3veacofQZQEKFMVeY=
-X-Received: by 2002:a05:6870:171e:b0:24c:a547:7b5a with SMTP id
- 586e51a60fabf-24ca5478ebbmr14054365fac.14.1716909228407; Tue, 28 May 2024
- 08:13:48 -0700 (PDT)
+	s=arc-20240116; t=1716909287; c=relaxed/simple;
+	bh=bXkg/CgxYBXiILs6UFR7oH6OBkmjVLVOD25GL20hsao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J6fzk6C6J/CDwgKibi3KZKtkUs/1fP8FJqDaPYX9qQh3mZm6O8/MaBDxcr4sM99+zqUir60z53Vsk+npf0wg2PE1fZZyX4gVmOCiyvjea+UOCF+EB7r3jEs8FPaFYIKOA0sr3/e2mO4e7p/tsqJVxcFaxpIydv0iOuh2WHpFnHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DBY9wQdL; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=AuM0r
+	CbJ0hWZ3V+vajoUI/lChlXnydV2UEWmf0D1iXQ=; b=DBY9wQdL30Y1DDfpylrwy
+	K3J0skFmoD/lClkwpeCm8fs6DfCo8mGospFS10UsFgNx95p2du3ermckS3b/t7T3
+	FjY0byc92tQ6UVEWfOwa9znyBKKWC/jdJCJxBdl5npng//iVCFKQGSM4SV7onQrl
+	lRNZrCnYSeFYfUEH4vYZ/E=
+Received: from localhost.localdomain (unknown [111.35.185.173])
+	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wDXj7ek9FVmILt8Ag--.50944S4;
+	Tue, 28 May 2024 23:13:45 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: yjnworkstation@gmail.com
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org
+Subject: [BUG] 6.10.0-rc1: segfault at 0 when reboot with kernel config INIT_MLOCKED_ON_FREE_DEFAULT_ON=y
+Date: Tue, 28 May 2024 23:13:40 +0800
+Message-Id: <20240528151340.4282-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524033819.1953587-1-yosryahmed@google.com> <20240524033819.1953587-2-yosryahmed@google.com>
-In-Reply-To: <20240524033819.1953587-2-yosryahmed@google.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 28 May 2024 08:13:36 -0700
-Message-ID: <CAKEwX=PG183P_BxRHD7gHV=MrmOhuyn+=FTDpOcu_GSBQg-ZAg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: zswap: use sg_set_folio() in zswap_{compress/decompress}()
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXj7ek9FVmILt8Ag--.50944S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tF4fXF45GF4Utw18Cr4UArb_yoW8Kr4fpr
+	1j9F15Cr4vg34UAF18Jr43tF18t3yqka47Xr4DGryDXF1q9F15Jw17K3y5trWDGF45u3W7
+	J3WkXa18Kr1UXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joGQDUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0g3sqmWXyBCpagAAsw
 
-On Thu, May 23, 2024 at 8:38=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> sg_set_folio() is equivalent to sg_set_page() for order-0 folios, which
-> are the only ones supported by zswap. Now zswap_decompress() can take in
-> a folio directly.
->
-> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+Hi,
 
-LGTM.
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+My kernel is 6.10.0-rc1 with CONFIG_INIT_MLOCKED_ON_FREE_DEFAULT_ON=y, and 
+I got following screen when I execute `systemctl reboot` on my system.
+(The text was extracted from a console image, there may be some parse error. And my kernel was tainted mostly because of nvidia driver)
+
+	42.855067] watchdog: watchdog0: watchdog did not stop!
+	42.905871] show_signal_msg: 14 callbacks suppressed
+	42.905874) systemd-shutdow[1]: segfault at 0 ip 0000000000000000 sp 00007ffcc8af7318 error 14 likely on CPU 6 (core 4, socke 42.906017] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+	42.906080] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b 
+	42.906143] CPU: 6 PID: 1 Comm: systemd-shutdow Tainted: P OE 6.10.0-rc1-linan-0 #244
+	42.906220] Hardware name: Micro-Star International Co., Ltd. MS-7889/B450M MORTAR MAX (MS-7889), BIOS 2.80 06/10/2020 42.906308] Call Trace:
+	42.906329] <TASK>
+	42.906346] panic+0x31d/0x350
+	42.906375) ? srso_return_thunk+0x5/0x5f
+	42.906411] do_exit+0x968/0xad0
+	42.906441] do_group_exit+0x2c/0x80
+	42.906472] get_signal+0x876/0x8a0
+	42.906502] arch_do_signal_or_restart+0x2a/0x240
+	42.906544] irgentry_exit_to_user_mode+0xc2/0x160
+	42.906585] asm_exc_page_fault+0x22/0x30
+	42.906619] RIP: 0033:0x0
+	42.906640] Code: Unable to access opcode bytes at 0xfffft fffffffd6. 
+	42.906693] RSP: 002b:00007ffcc8af7318 EFLAGS: 00010206
+	42.906736] RAX: 0000000000000011 RBX: 000000000328adea RCX: 0000000000000005 
+	42.906794] RDX: 00007ffcc8af73b0 RSI: 0000000000000ea8 RDI: 0000000000000001 
+	42.906852] RBP: 00007ffcc8af73be R08: 003b459fca9238c4 R09: 0000000000000069 
+	42.906910] R10: 0000000000000008 R11: 0000000000000202 R12: 00007ffcc8af7330 
+	42.906968] R13: 0000000000000ea8 R14: 0000000000000000 R15: 0000000000000000 
+	42.907029] </TASK>
+	42.907328] Kernel Offset: 0x21a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff) 
+	43.081928) --- [ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
+
+
+I rebuild the kernel with `CONFIG_INIT_MLOCKED_ON_FREE_DEFAULT_ON not set`, the system can reboot normally.
+My guess, some memory is zeroed unproperly when reboot?
+
+
+David
+
 
