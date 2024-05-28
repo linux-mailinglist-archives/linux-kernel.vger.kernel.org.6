@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-192889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6978D238D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:56:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBE18D2394
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DEA91F24532
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0663C1C22E56
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666717165C;
-	Tue, 28 May 2024 18:56:46 +0000 (UTC)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D1E174ED0;
+	Tue, 28 May 2024 18:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BvKLadwi"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EECC39FFB;
-	Tue, 28 May 2024 18:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FB516F8F0
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716922606; cv=none; b=umK+E708zGcYMdMwhjJHRx8XBwhaZyUU4mIHGi7G/Nji/L61ukqn2G9o+ODUd8f/OMiNsL+12ivKU1fPO9WBh2dOasEGkEaZETCEm6Y26ZXoOnCqG09Femi6IesX1Sb6KiWZU1seeBAlQ2seO4wtnCvfXbAj1i8vfQmkKD3/Hk4=
+	t=1716922607; cv=none; b=s0b91mSkQuepBf1RbjiPQ47y0cWtLAbx2+ESTKwAVSP0GVpNVCb13suKiakapqVsEQd7G/UMw0Af49cPNvGCebpzx1xIBBfcwySOJuPdd35F7kRMcnt3ZPncG6BfgXFBt8JT0BxptR/4OY+DdYpuG63gQ3xRhb4MiRhKnqUWq3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716922606; c=relaxed/simple;
-	bh=1GkxxU7eiisDXTv7dlI9z9uvQ2yOMGG0iM5hZFEjUKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BdBBLww4DUHXtajWF+XOnowE62C3aogZxLfQuKsrajylUBfLoJ7BxQd13uUrSdyXkqJAcgMEeePErYY5GqFGqgcMyse8/MbRuGhv3Yd6QtWhSMKCQc9TglMK0PPjKqc4NrS+AAR45Ja8l7Gved74EJd/EUkUOce1UNxtvmJWbEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-68185f92bfdso793896a12.0;
-        Tue, 28 May 2024 11:56:44 -0700 (PDT)
+	s=arc-20240116; t=1716922607; c=relaxed/simple;
+	bh=7VzGZDtBSooFkxUd9OAZGtectfy+uwG4/bUmSmiL7y4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hqIWXWJQfI1HjOGrlzIc2AAKx6+A0cX9WuwLChiBTvE1cuaH9GHMv7D2aNaEM1+KKVkknB+Coy4FqAYWcGEjy5Xa/U9fREgFByT85xrAq0vhhNd7hrnf4XXQjuBRKXBoyonFev6PT4ykG2TKSVvV5K8wAlbxMTELFSxyLrzyWwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BvKLadwi; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2bdf44bdb46so1087979a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:56:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716922605; x=1717527405; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4Hp5OPdGF5QAC5ejV2ec7ZNjyRf7XQzcBDRWuz3U2Q=;
+        b=BvKLadwiu1EUp6B/W7QzDf0vC1qmVA4xA9GlGAhJTIYmUKR4aXx37KdHJfazVVcYXD
+         LLY9oCg8xuQPAia6vvNwmi1CCDxqQJSO1yTVcISCtOoGx9SDFcCC/IP48sK3kwIWB5d2
+         DgdKyyPXggomEr1PFGIzaciu026AyQHfCJvMeigaEaxyk3QadlQnJD4B32EX5d+6Otxx
+         tzwLKy0NSNrGJ+3tkXscX7t3VocrA/StXLCGgiqbAerBwXMNqGREOfD/GX+pGSr4jRQm
+         5z8kyuogd933XlZzGOAeuaAf7Y76xitBVzPHskHuqoJ8rksyBLfnOwwVb23u7//VuZbo
+         4Aew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716922604; x=1717527404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tV2y+zzHtC8fi/GAxZbta7nCZzttI/+j3Qu6+XzqVmY=;
-        b=Apr3e/BSta3V1tuQKozW1RwIYwbH4niIBhIKwmMd8FOOpi5hkBwvOEdA1GdHqfl081
-         eNXTblRdpLE7d/mJA+tId+rU2XLnejmEH5aE0+SQXMxWdUUf9ueXWTAHz7pWeUN4MWRx
-         8F99B/FtA0qUK5EcZ6wPJ0Y12OjTXZYQug+xP3itvaQXRTC+/tsyTR1c0PE7KrRGueAY
-         HKATzqo+E5pOKqocLzc8i1rcVttqdhV2LJQZrQEEoK+7hO8sy04DHkzcWanhodRi7hr6
-         ynFgDEsv7z/JnjAA+zvIgvBJwYCwexaBHIZASk1xehnO3W8r4PAvgJMZPp67nLp6zaU9
-         EmvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvEeVL04BCoFXKDHb3yXGawDjU3szlxQ5cCg6hbzUNFMWFCG9oc7jfOSpIFFFuwytl5GIcHuYI9BexfxCvAEAt8wQqAmXKKzhifXirKCAbHsvd4IOZoWa32hQnT5vbiqNIA1oUvsoW3CxfgH02yg==
-X-Gm-Message-State: AOJu0Yx7esCeSQrdKNZUM9MqxObtI76pzimjJ2PhPeW5V58cAnInn6Nc
-	e2HfQwdt1/5P7QuihW9MhYzC9K8AYGpvuhUh1Mm+EwT1dzA3aHGDSCLGf3HUUZ+/rJfug4IMnfE
-	+lx0b+pDlzIYIqcN2i26IWqdk/pA=
-X-Google-Smtp-Source: AGHT+IE8tv8M6ZLQILAkH0C67BI/2TkBWI9laCMPaHlE1MnRq9lKpGEUlZAVuwUkhx6Wgc/7o+9AwiyHmCrCamGILZQ=
-X-Received: by 2002:a17:90b:30d6:b0:2c0:bc7:63c3 with SMTP id
- 98e67ed59e1d1-2c00bc76514mr2606961a91.42.1716922603850; Tue, 28 May 2024
- 11:56:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716922605; x=1717527405;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4Hp5OPdGF5QAC5ejV2ec7ZNjyRf7XQzcBDRWuz3U2Q=;
+        b=KvfwMjNVXx8plq6qiO71u930OS/GnPtIZD0MkqNXo3L7CGUSmCceMxUkdhRColYD1l
+         sJy+pQckY2lN8tXZxh3X+G++aBvN5VvrRSvn6/A9jVfnsCA98jzrgj263baX1aYoEJDM
+         WBzv24l/gSAmqtQqbPovQpKMDpd26OYs+ESsHpCRgqZYKTpKPk8pi238rf9jeIs11CjR
+         V227aBjInlSnrdO3IfMaa2DnF90n08TY+8IVaP2gkQgJHBgIbFjYJ2yJ5fAcT5R/kqXl
+         GhL63AgNRGdKCHl1oL8MzDRsOORWw5PwhCO+MG63+eiu3KmngrjWr8GsURfKt2QyU01A
+         T2Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGUJTN3a+FaKNRAbAfRYPXfIdK6B667nTaCCxa42lWGG9DOFML0pF8uUzFmsnUGN2Uvt4Z5GlsC3hMfsX67rJY3EmRJHxmPZCPa15u
+X-Gm-Message-State: AOJu0YzMX2Z+HGbT1Ga6418jC1KalOoZ+vpQ9MIVnbLoldmycJAbXYlg
+	DHgrPCYHilJ/59qZsvZUf2OqlL07aDkcxeBPyzAkasqGJZO3iU7xPeCGIlKoFRJNpizrpSpaCPS
+	Baw==
+X-Google-Smtp-Source: AGHT+IHoqr+ISQcH8/FCagbfJ2nL98ZUcD/8qvK2Uon7Hq2ULc+/vLDNTGE1sbxP/IfziOZcYq1e9FeGTCM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:19ce:b0:2bd:6abb:e9f7 with SMTP id
+ 98e67ed59e1d1-2bf5e09d490mr35783a91.0.1716922605104; Tue, 28 May 2024
+ 11:56:45 -0700 (PDT)
+Date: Tue, 28 May 2024 11:56:43 -0700
+In-Reply-To: <18f52be4-6449-4761-a178-1ca87124c28d@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240527090300.17864-1-yskelg@gmail.com>
-In-Reply-To: <20240527090300.17864-1-yskelg@gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 28 May 2024 11:56:32 -0700
-Message-ID: <CAM9d7cjhwO99e0GLKf54V+1g7cdppL3hwjpgB3cdid7YzytkMA@mail.gmail.com>
-Subject: Re: [PATCH] perf stat: allocation check when calculating cache
- instance ID
-To: yskelg@gmail.com
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Gautham Shenoy <gautham.shenoy@amd.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, skhan@linuxfoundation.org, 
-	Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-13-seanjc@google.com>
+ <18f52be4-6449-4761-a178-1ca87124c28d@linux.intel.com>
+Message-ID: <ZlYo67vO5JJ6aCAK@google.com>
+Subject: Re: [PATCH v2 12/49] KVM: x86: Reject disabling of MWAIT/HLT
+ interception when not allowed
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hello Yunseong,
+On Wed, May 22, 2024, Binbin Wu wrote:
+> On 5/18/2024 1:38 AM, Sean Christopherson wrote:
+> > @@ -4726,15 +4740,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+> >   		r = KVM_CLOCK_VALID_FLAGS;
+> >   		break;
+> >   	case KVM_CAP_X86_DISABLE_EXITS:
+> > -		r = KVM_X86_DISABLE_EXITS_PAUSE;
+> > -
+> > -		if (!mitigate_smt_rsb) {
+> > -			r |= KVM_X86_DISABLE_EXITS_HLT |
+> > -			     KVM_X86_DISABLE_EXITS_CSTATE;
+> > -
+> > -			if (kvm_can_mwait_in_guest())
+> > -				r |= KVM_X86_DISABLE_EXITS_MWAIT;
+> > -		}
+> > +		r |= kvm_get_allowed_disable_exits();
+> 
+> Nit: Just use "=".
 
-On Mon, May 27, 2024 at 2:06=E2=80=AFAM <yskelg@gmail.com> wrote:
->
-> From: Yunseong Kim <yskelg@gmail.com>
->
-> Adds an allocation check for cpu_map before perf_cpu_map__min() accessing
-
-I think perf_cpu_map__min() works well with NULL.
-
-Thanks,
-Namhyung
-
->
-> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
-> ---
->  tools/perf/builtin-stat.c | 24 +++++++++++++-----------
->  1 file changed, 13 insertions(+), 11 deletions(-)
->
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 35f79b48e8dc..1f238824abb2 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -1291,20 +1291,22 @@ static struct option stat_options[] =3D {
->   */
->  static int cpu__get_cache_id_from_map(struct perf_cpu cpu, char *map)
->  {
-> -       int id;
-> +       int id =3D cpu.cpu;
->         struct perf_cpu_map *cpu_map =3D perf_cpu_map__new(map);
->
-> -       /*
-> -        * If the map contains no CPU, consider the current CPU to
-> -        * be the first online CPU in the cache domain else use the
-> -        * first online CPU of the cache domain as the ID.
-> -        */
-> -       id =3D perf_cpu_map__min(cpu_map).cpu;
-> -       if (id =3D=3D -1)
-> -               id =3D cpu.cpu;
-> +       if (cpu_map) {
-> +               /*
-> +                * If the map contains no CPU, consider the current CPU t=
-o
-> +                * be the first online CPU in the cache domain else use t=
-he
-> +                * first online CPU of the cache domain as the ID.
-> +                */
-> +               id =3D perf_cpu_map__min(cpu_map).cpu;
-> +               if (id =3D=3D -1)
-> +                       id =3D cpu.cpu;
->
-> -       /* Free the perf_cpu_map used to find the cache ID */
-> -       perf_cpu_map__put(cpu_map);
-> +               /* Free the perf_cpu_map used to find the cache ID */
-> +               perf_cpu_map__put(cpu_map);
-> +       }
->
->         return id;
->  }
-> --
-> 2.34.1
->
+Yowsers, that's more than a nit, that's downright bad code, it just happens to be
+functionally ok.  Thanks again for the reviews!
 
