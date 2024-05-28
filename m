@@ -1,204 +1,248 @@
-Return-Path: <linux-kernel+bounces-192986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC54D8D253C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE588D253F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385211F2A00C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45E741F23BAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E8A178383;
-	Tue, 28 May 2024 19:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F18178383;
+	Tue, 28 May 2024 19:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OJX9UL9X"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtvtadSa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A434CDEC
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DC723BF;
+	Tue, 28 May 2024 19:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716925911; cv=none; b=RS7QFTCKfKH4+dPR+vUYKcSM8c4+UVDLgMOufr9KdJ9Gf0v46pS2rxRBBFs9auVYiBhTCXxlV15B0JM1I09i/zeDmsluiCOmSJ28rAY1NBy9XL2Opb7nozOYixRe+b7qsgmaFFTnE+hLTVufyayEwB0IdF+zoPer4vvsAukx7kQ=
+	t=1716925971; cv=none; b=HehpqcypmkKEHdFEzdGSeyzZCv3dbtvRfieI/s/MfmD///iPr7QdS0o+iAOoCbOf/iBZbW+5feIlwb0MQbb6P8PHP+FZ9yKegroT/ifRfwVAATCAUWr9QaSRem9v28RIjiYYiMF2oQFGAJub4u2ciHMKbKj9TtF9GfMAZNIvtlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716925911; c=relaxed/simple;
-	bh=HM/62gjuE2bbsMwNJlLbJFt0oSriuYMd4jtJOYaq9mc=;
+	s=arc-20240116; t=1716925971; c=relaxed/simple;
+	bh=2rE+lKrC2cS6x32lg8GfCW7VB+hGia9MQvA1fyHT52w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cFfHwFgroUIP3wKSojDlgykf1ip3By0epM59y/qNDqzNs7zi/hN08RPlO54BiTndJbJt2JXtKfOBt1MYTAdjA9w5Bw5o6pG8l7/o6aMiTsORyzXmRBsXhlUVsaneG7wmKF83oZJq2sWwNlyYTn7906rMdhpK+41maLhz0rtozuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OJX9UL9X; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-43e14f0bd75so7671cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716925909; x=1717530709; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9TMTcoUocvE/NbqECARFUZ+u82wBWW35aaQbNOD16pM=;
-        b=OJX9UL9XZ2dbtp/keUse+W0HOMxuSvr9NT9SFPncvdzcj6Efz6wfAwJqif/tphjQyp
-         iFQ7zDko5U9YCMuVJCjCxnaC3mqGX8j0G6HJZ2YisHr9DEwE7LYivqns0wntdNs7d/G4
-         1XvbKZ1PgD+KJmQ2WTgO8CmWGt+/Hb3mNmw4rQLZiyOYNQAkebk9HBVX8b2zHHzUJNGG
-         Y5c7lIGSA1Q4newURkOw6TZg4jhisfn1Iukxc5PoeqTDgPgaD9rzqQnPSHMLHKZDm+JQ
-         T63uQx+Hy6nlSHVc99no9ieUhvqOwMfnpJ8i2a1g3ojgsLY4ElJ5NNlwTLQ/nfrx9JN4
-         2Ilg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716925909; x=1717530709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9TMTcoUocvE/NbqECARFUZ+u82wBWW35aaQbNOD16pM=;
-        b=kx+8j5J/ELap5GoNK9htMoq5VWahfpQLZD/Vs2zkMS3mVF1zvGXlnNzg5SCP/h/luT
-         qfMSWvGGVOsTu/sDprXtKwtrthwz/F98meKVbZC6hUimbFgAsHAjOHNWqkxjqRgVBi5h
-         8wT1eQIbiIRH/B0UTHFlTj8FhHAdOg32dPgR2RGjo0E/LqYRpT8hn5eI5HZpXD6Ia2l7
-         dkP9sLVfLopCYjfiXy+mVM39T7JNORsyMcv7LCiZWgL+xcUYPVCj4IpYZZG2oibLv3wI
-         AsRzhumYR83PNJSqAHLwEx/fU1MA4MGZlfF79ORxfd1Jl16sx5RlPqC+oE8iiaEeavY2
-         f/Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXghpe5nbLdTDfvuP6GwVY7ARveNDYIh1grz1jdP3Gv2Vcc6/79kqwTan5AHnZA0Wxhauep51NwY2EWKBFMaPdHkNbOe9gClS4Yo/ir
-X-Gm-Message-State: AOJu0YxUonlY/h4M02iE3awwIvbbQ0WE7QY9EIhQGnT37v9B3sEyA3Tj
-	JJMjvih/AoHfc7eH32TI4uUGKSH4XLuwgVayuV3kI9s5sxLN3BFYaQGJ/TqmbSPuJVsKEZrYw9T
-	aCm5ckGZDqwxhdXoNy8mo0E5GK3NLfbUuQsnE
-X-Google-Smtp-Source: AGHT+IF7zxSL9uj0wlnWrBCrivYDsLhE+1YoXfGptC8d6TIhtiMz+CunBUfqvgoC3P/zdG2GTVq59lLRadKctHTBtwI=
-X-Received: by 2002:a05:622a:4203:b0:43d:a002:b with SMTP id
- d75a77b69052e-43fe10d6413mr134101cf.9.1716925908895; Tue, 28 May 2024
- 12:51:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=Q6BdV2p0ROO2ZUjLPvO0MUF/Ty9V/Y/TI8u3G9za2hFAL2SMy64toe5wZUJv1g7MsfAw1Do1ec2p0t8hedZ+Ae48xcDT3chiAl+HEF8azOkdx0MpxRom9aypuYINPddPc8vwamWMmUn39Yw5G+ziZVJF2bpADPI22R2jKneIq/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtvtadSa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622B2C4AF0D;
+	Tue, 28 May 2024 19:52:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716925970;
+	bh=2rE+lKrC2cS6x32lg8GfCW7VB+hGia9MQvA1fyHT52w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jtvtadSah/DUsRjW2L+ZN28387g6sHS7xxWab/j4+NLdrh21yV3GIb/lgxxx05cg+
+	 Cil9YBBxY7ZYoeIvJWp1jYldhnHuEaVRNGaQ3R41LOQYxnZgM0DZHS3dbTXacbtpeR
+	 1L2feMz6wRSACAtNAI9xcbfFa0gxyzXtzfNeETXJt+sMvTMcQLC/4LN5jK/nvzU+0z
+	 lIOnSHL8QdIPGstQmpZziQthUg668FLbGnpJaTKXBiOlTfoaCXMtD1iB0fdSIoXaSr
+	 wVv6LLEnn8BWhdGbtErOctWI9zdl1KjE49egcymHxRvWmY0L8n5aHS7ZVRbeuWhJv1
+	 61saiWnXriDWw==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5b96a587d79so77960eaf.0;
+        Tue, 28 May 2024 12:52:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUA6CAEvXDrcdawbCsqrJoWSMKmquzx40kPFAaJZTgMh3StQqicXrXEXCHSH8vd2VMg9YX59DIUxknUoi9mckNGo1/s0sBY7UTixfEundJpGt2SWc1ONWMsjWqleZrUPNxgWGVcskA3fC/2Cp4W2DF7DdDLaRZqw3CcNmJMGyEe2Qy0g5K7YJxeqV//2X1XreCT11HODO43+NFb9+EZs/Kn69dSVG36cDODpw==
+X-Gm-Message-State: AOJu0Ywfz2QqaJ2lm9inp7clhaHMV2QvJPaYoG4ZDWh+mL68E5halkGi
+	hek5Tb6p5JbWFD/zBeAAhk0xOPIm0jclg+r8BI2gKCuhm2+3/knFMQMI9rTO/pfarXx81Z4SrN+
+	cHv9YI2OyrRZfdXx0FSMd0/CKDEc=
+X-Google-Smtp-Source: AGHT+IGnYKb/NKYpWDWiLrDI+pojlbT5VGeR3HVdpe1f5QZ5p+LPLue1yFCYgOwjFvGILYE5/bLzY9T3vt5p752HIcI=
+X-Received: by 2002:a4a:4b06:0:b0:5b2:f29:93f0 with SMTP id
+ 006d021491bc7-5b95cceba96mr14248384eaf.0.1716925969529; Tue, 28 May 2024
+ 12:52:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <ZlY0F_lmB37g10OK@x1>
-In-Reply-To: <ZlY0F_lmB37g10OK@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 28 May 2024 12:51:36 -0700
-Message-ID: <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Leo Yan <leo.yan@linux.dev>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240510201242.3886-1-W_Armin@gmx.de> <CAJZ5v0gu=yvFeXH4uwHeAQZ8p1JyCs8uuiKzr6F+yNkD2E1ZAA@mail.gmail.com>
+ <92415bd8-4231-4c68-8034-e4f7a0ea5651@gmx.de>
+In-Reply-To: <92415bd8-4231-4c68-8034-e4f7a0ea5651@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 28 May 2024 21:52:38 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iLNZT4jU1QV=HTbAv76s6Ay3tx93_K_QoM0XbvSgZF1w@mail.gmail.com>
+Message-ID: <CAJZ5v0iLNZT4jU1QV=HTbAv76s6Ay3tx93_K_QoM0XbvSgZF1w@mail.gmail.com>
+Subject: Re: [PATCH v8] ACPI: fan: Add hwmon support
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, mlj@danelec.com, rafael.j.wysocki@intel.com, 
+	lenb@kernel.org, jdelvare@suse.com, andy.shevchenko@gmail.com, 
+	linux@roeck-us.net, linux@weissschuh.net, ilpo.jarvinen@linux.intel.com, 
+	linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 12:44=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+On Tue, May 28, 2024 at 12:31=E2=80=AFAM Armin Wolf <W_Armin@gmx.de> wrote:
 >
-> On Mon, May 27, 2024 at 10:36:45PM -0700, Ian Rogers wrote:
-> > On Mon, May 27, 2024 at 3:58=E2=80=AFAM Leo Yan <leo.yan@linux.dev> wro=
-te:
-> > > On Sat, May 25, 2024 at 02:14:26PM -0700, Linus Torvalds wrote:
-> > > > On Sat, 25 May 2024 at 09:43, Linus Torvalds <torvalds@linux-founda=
-tion.org> wrote:
+> Am 27.05.24 um 19:29 schrieb Rafael J. Wysocki:
 >
-> > > > > This makes 'perf record' work for me again.
+> > On Fri, May 10, 2024 at 10:13=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wr=
+ote:
+> >> Currently, the driver does only support a custom sysfs
+> >> interface to allow userspace to read the fan speed.
+> >> Add support for the standard hwmon interface so users
+> >> can read the fan speed with standard tools like "sensors".
+> >>
+> >> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> >> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> >> ---
+> >> Tested witha custom ACPI SSDT, available here:
+> >> https://github.com/Wer-Wolf/acpi-fan-ssdt
+> >>
+> >> Changes since v7:
+> >> - add Reviewed-by tag
+> >> - spelling fixes
+> >> - add missing types.h include
+> >>
+> >> Changes since v6:
+> >> - add "hwmon" to the names of functions and variables
+> >> related to hwmon
+> >> - replace -ENODATA with -EIO/-ENODEV
+> >>
+> >> Changes since v5:
+> >> - fix coding style issues
+> >> - replace double break with return
+> >> - add missing includes
+> >>
+> >> Changes since v4:
+> >> - fix spelling issues
+> >> - check power values for overflow condition too
+> >>
+> >> Changes since v3:
+> >> - drop fault attrs
+> >> - rework initialization
+> >>
+> >> Changes since v2:
+> >> - add support for fanX_target and power attrs
+> >>
+> >> Changes since v1:
+> >> - fix undefined reference error
+> >> - fix fan speed validation
+> >> - coding style fixes
+> >> - clarify that the changes are compile-tested only
+> >> - add hwmon maintainers to cc list
+> >> ---
+> >>   drivers/acpi/Makefile    |   1 +
+> >>   drivers/acpi/fan.h       |   9 +++
+> >>   drivers/acpi/fan_core.c  |   4 +
+> >>   drivers/acpi/fan_hwmon.c | 170 +++++++++++++++++++++++++++++++++++++=
+++
+> >>   4 files changed, 184 insertions(+)
+> >>   create mode 100644 drivers/acpi/fan_hwmon.c
+> >>
+> >> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+> >> index 39ea5cfa8326..61ca4afe83dc 100644
+> >> --- a/drivers/acpi/Makefile
+> >> +++ b/drivers/acpi/Makefile
+> >> @@ -77,6 +77,7 @@ obj-$(CONFIG_ACPI_TINY_POWER_BUTTON)  +=3D tiny-powe=
+r-button.o
+> >>   obj-$(CONFIG_ACPI_FAN)         +=3D fan.o
+> >>   fan-objs                       :=3D fan_core.o
+> >>   fan-objs                       +=3D fan_attr.o
+> >> +fan-$(CONFIG_HWMON)            +=3D fan_hwmon.o
+> >>
+> >>   obj-$(CONFIG_ACPI_VIDEO)       +=3D video.o
+> >>   obj-$(CONFIG_ACPI_TAD)         +=3D acpi_tad.o
+> >> diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
+> >> index f89d19c922dc..db25a3898af7 100644
+> >> --- a/drivers/acpi/fan.h
+> >> +++ b/drivers/acpi/fan.h
+> >> @@ -10,6 +10,8 @@
+> >>   #ifndef _ACPI_FAN_H_
+> >>   #define _ACPI_FAN_H_
+> >>
+> >> +#include <linux/kconfig.h>
+> >> +
+> >>   #define ACPI_FAN_DEVICE_IDS    \
+> >>          {"INT3404", }, /* Fan */ \
+> >>          {"INTC1044", }, /* Fan for Tiger Lake generation */ \
+> >> @@ -57,4 +59,11 @@ struct acpi_fan {
+> >>   int acpi_fan_get_fst(struct acpi_device *device, struct acpi_fan_fst=
+ *fst);
+> >>   int acpi_fan_create_attributes(struct acpi_device *device);
+> >>   void acpi_fan_delete_attributes(struct acpi_device *device);
+> >> +
+> >> +#if IS_REACHABLE(CONFIG_HWMON)
+> >> +int devm_acpi_fan_create_hwmon(struct acpi_device *device);
+> >> +#else
+> >> +static inline int devm_acpi_fan_create_hwmon(struct acpi_device *devi=
+ce) { return 0; };
+> >> +#endif
+> >> +
+> >>   #endif
+> >> diff --git a/drivers/acpi/fan_core.c b/drivers/acpi/fan_core.c
+> >> index ff72e4ef8738..7cea4495f19b 100644
+> >> --- a/drivers/acpi/fan_core.c
+> >> +++ b/drivers/acpi/fan_core.c
+> >> @@ -336,6 +336,10 @@ static int acpi_fan_probe(struct platform_device =
+*pdev)
+> >>                  if (result)
+> >>                          return result;
+> >>
+> >> +               result =3D devm_acpi_fan_create_hwmon(device);
+> >> +               if (result)
+> >> +                       return result;
+> >> +
+> >>                  result =3D acpi_fan_create_attributes(device);
+> >>                  if (result)
+> >>                          return result;
+> >> diff --git a/drivers/acpi/fan_hwmon.c b/drivers/acpi/fan_hwmon.c
+> >> new file mode 100644
+> >> index 000000000000..bd0d31a398fa
+> >> --- /dev/null
+> >> +++ b/drivers/acpi/fan_hwmon.c
+> >> @@ -0,0 +1,170 @@
+> >> +// SPDX-License-Identifier: GPL-2.0-or-later
+> >> +/*
+> >> + * hwmon interface for the ACPI Fan driver.
+> >> + *
+> >> + * Copyright (C) 2024 Armin Wolf <W_Armin@gmx.de>
+> >> + */
+> >> +
+> >> +#include <linux/acpi.h>
+> >> +#include <linux/device.h>
+> >> +#include <linux/err.h>
+> >> +#include <linux/hwmon.h>
+> >> +#include <linux/limits.h>
+> >> +#include <linux/types.h>
+> >> +#include <linux/units.h>
+> >> +
+> >> +#include "fan.h"
+> >> +
+> >> +/* Returned when the ACPI fan does not support speed reporting */
+> >> +#define FAN_SPEED_UNAVAILABLE  U32_MAX
+> >> +#define FAN_POWER_UNAVAILABLE  U32_MAX
+> >> +
+> >> +static struct acpi_fan_fps *acpi_fan_get_current_fps(struct acpi_fan =
+*fan, u64 control)
+> >> +{
+> >> +       unsigned int i;
+> >> +
+> >> +       for (i =3D 0; i < fan->fps_count; i++) {
+> >> +               if (fan->fps[i].control =3D=3D control)
+> >> +                       return &fan->fps[i];
+> >> +       }
+> >> +
+> >> +       return NULL;
+> >> +}
+> >> +
+> >> +static umode_t acpi_fan_hwmon_is_visible(const void *drvdata, enum hw=
+mon_sensor_types type,
+> >> +                                        u32 attr, int channel)
+> >> +{
+> >> +       const struct acpi_fan *fan =3D drvdata;
+> >> +       unsigned int i;
+> > AFAICS, the code below can be rewritten as follows:
+> >
+> > if (fan->fif.fine_grain_ctrl)
+> >           return 0;
 >
-> > > > Oh, wait, no it doesn't.
+> Hi,
 >
-> > > > It makes just the plain "perf record" without any arguments work,
-> > > > which was what I was testing because I was lazy.
->
-> > > > So now
->
-> > > >     $ perf record sleep 1
->
-> > > > works fine. But
->
-> > > >     $ perf record -e cycles:pp sleep 1
->
-> > > > is still completely broken (with or without ":p" and ":pp").
->
-> > > Seems to me that this patch fails to check if a PMU is a core-attache=
-d
-> > > PMU that can support common hardware events. Therefore, we should
-> > > consider adding the following check.
->
-> > > +++ b/tools/perf/util/parse-events.c
-> > > @@ -1594,6 +1594,9 @@ int parse_events_multi_pmu_add(struct parse_eve=
-nts_state *parse_state,
-> > >         while ((pmu =3D perf_pmus__scan(pmu)) !=3D NULL) {
-> > >                 bool auto_merge_stats;
-> > >
-> > > +               if (hw_config !=3D PERF_COUNT_HW_MAX && !pmu->is_core=
-)
-> > > +                       continue;
-> > > +
-> > >                 if (parse_events__filter_pmu(parse_state, pmu))
-> > >                         continue;
->
-> > > To be clear, I only compiled this change but I have no chance to test
-> > > it. @Ian, could you confirm this?
->
-> > Hi Leo,
->
-> > so the code is working as intended. I believe it also agrees with what
-> > Arnaldo thinks.
->
-> > If you do:
->
-> > $ perf stat -e cycles ...
->
-> > and you have
->
-> > /sys/devices/pmu1/events/cycles
-> > /sys/devices/pmu2/events/cycles
->
-> > The output of perf stat should contain counts for pmu1 and pmu2. Were
-> > the event 'data_read' or 'inst_retired.any' we wouldn't be having the
->
-> Sure, what is being asked is to count events and if those two events in
-> those two PMUs can count, then do what the user asked.
->
-> For 'perf record' we're asking for sampling, if the event has the name
-> specified and can't be sampled, skip it, warn the user and even so
-> only if verbose mode is asked, something like:
->
->   root@x1:~# perf record -e cycles -a sleep 1
->   [ perf record: Woken up 1 times to write data ]
->   [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
->   root@x1:~# perf evlist
->   cpu_atom/cycles/
->   cpu_core/cycles/
->   dummy:u
->   root@x1:~#
->
-> Cool, there are two 'cycles' events, one in a PMU named 'cpu_atom',
-> another in a 'cpu_core' one, both can be sampled, my workload may
-> run/use resources on then, I'm interested, sample both.
->
-> But if we had some other PMU, to use a name Jiri uses in tests/fake
-> PMUs, the 'krava' PMU and it has a 'cycles' event, so 'krava/cycles/'
-> and for some reason it doesn't support sampling, skip it, then the
-> result should be the same as above.
->
-> If the user finds it strange after looking at sysfs that 'krava/cycles/'
-> isn't being sampled, the usual workflow is to ask perf for more
-> verbosity, using -v (or multiple 'v' letters to get increasing levels of
-> verbosity), in which case the user would see:
->
->   root@x1:~# perf record -v -e cycles -a sleep 1
->   WARNING: skipping 'krava/cycles/' event, it doesn't support sampling.
->   [ perf record: Woken up 1 times to write data ]
->   [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
->   root@x1:~# perf evlist
+> this would break hwmon_fan_input.
 
-The problem here is that we're hiding a problem rather than reporting
-it. Typically we report the issue and more than that we ask the user
-to work around the issue. That would be analogous to wanting the user
-to specify what PMU they want the event to apply to, which has always
-been perf's behavior.
+Ah, I overlooked the first branch.  Fair enough.
 
-Thanks,
-Ian
-
-> - Arnaldo
+Applied as 6.11 material, thanks!
 
