@@ -1,194 +1,132 @@
-Return-Path: <linux-kernel+bounces-191917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D518D160D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:14:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0C88D1610
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0385C1C22177
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:14:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBB94B211C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCCC13B583;
-	Tue, 28 May 2024 08:14:33 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B08913AA32;
+	Tue, 28 May 2024 08:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="10dnc6xa"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6284DA04
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C9E17E8F9;
+	Tue, 28 May 2024 08:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716884073; cv=none; b=DAGxeCWS0OhWMNUknrBgZNKybtkbNkD7z/L1MHBG+51RgOrP6aIG86Lahuem6ViG+o0obgH783/eQMpAuA1iYAN69CRAmaLRww+7L4JWUhEkcY6yJDHvCt/shQTm2Yjtio54O0HfLoy8nshw7YO9PhKFf0NtzPNIwOQm9N5KHGg=
+	t=1716884171; cv=none; b=esgmXTNzhWRTMdTQPN2rSJBBNzGMqhIyZA/HcBhYEJGzEh/ts95mWaDrxEnzRykOAa7DE4V8FecECeFMwXwt7r/Sgldeao5zB6zRaRh8Kc99PB9P8KK0tgHGuVORIfKaU0umBOUd3ib0NgWmCDKXNPQILjo1gcMUBejBQQXgRvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716884073; c=relaxed/simple;
-	bh=0eWo8k2SiyzsJ9fYOcUPFq5LIaob+zHGyuf05nLWH7A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PjW/iL+RQZhn/kw9PpeZD3LhLIgD6nbdyUjxOqotdExdP9BNWi8nsl1hKgV6O7CbsdUpiGL43c6KVgQB7TweKeGFQLa7hoDQON1IOxppoX2qLWEIXPm723K3qaAE1Ijf4h3w1IxEeb76fU7qeaM8W6IAAHX5mQOMUG0+B12FLw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-37452cea7easo5793765ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:14:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716884070; x=1717488870;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zAUolh23tKq5wYxUqvc7bBcvTVTp+n7VeXwB2rrSAdo=;
-        b=FAc4kiWpWHAEuDhXCQ3OG2VaH9cuRspSVB28Kop1OB3nBB8mRqNaJ5DMZHKqSOjf9s
-         +E9+ZJIFzIFM3VjqshbSP/6kbn7E5apaio8cs9Ct9hL8xdl05xeejbx3UUJOmUGJyJMJ
-         dLbwZsAWiLuijr7DLRHbBBfkXeNABZhBQNZ4m52XVmtu/qyMVrO+AdwEDYssHOUuP7qa
-         zhaFGKrJli/Qt4x9OrRyTSXkjmO8kYUuQhnjfz5JVw4Bx/A8s5nq343N8FgLn+CSs5NB
-         FuvcRIfLd4Q2gHEIX7GQxJMzvCu7uE9w+7WV6Tq+fdfnY6f4L7faSUmtTwlyPXPt//rG
-         f25g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZCu6GgFL0WLwJHTRlW4MIPjl4W3og/fUx8dSCuk/HuaLaQ3ID+mEpL23CA0kvew/SCUJ/Ad6h/lTKSp31Ai/hlsiVl1bsnkBGNon3
-X-Gm-Message-State: AOJu0YxAETmm+Pf6LzhzzO5XkTSPn5Ht/x2PagBXJR1S2sNGIFrXbdmM
-	+V8pWFmUVliOgeBWnOAf8RwKeJURbDgV1Qt+py/0SH4zk1fBYxHhkEOHkDHbX+lLdpDEa0B6QpT
-	iLz0xWRtuVCRzyfs4zqRqL63EUVGbSlwC5YoPP1jWu0IsWYsPoLfar/s=
-X-Google-Smtp-Source: AGHT+IHdDIPe/efUxBHApkpoQj8KwBVey4m9Z9nkIX1iqS9LOA9uWHHZOm5WG8g++TidpPWlotNE3rlPYcEutO+WV0CDktKD2PfY
+	s=arc-20240116; t=1716884171; c=relaxed/simple;
+	bh=4V0unZZMxFYExMEXevIB43oB1N7X4q7IE6LTHwkEOtY=;
+	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
+	 Content-Disposition:Content-Type:Message-Id:Date; b=HpuIvNhA8PioQQgwjvh7vm+jGfkmf0wol4TzTjZuRuRurtCCfR+hOwxhD1Vddg6akWmle+wNYMeVPI2GsLRcoVeboq4PjhkcAV6a7Kk5/vQaTRRx/foQXb60QxgDt++jKztlJPfA1fv/+RJKjUUhOb0tWm+yOBULa2pT7KsoYYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=10dnc6xa; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
+	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MfEWqiPiowp1nxWFVOqmObG5hSUllA+ZfcuPMLVDwsA=; b=10dnc6xahQf1TxfTvr7uj+8znz
+	iy9kqoqnE0J1LuGy2fJwm8DiGSlcCZ/dKz3EyZVBxLQYZuJvL8mgYXwPV7TRpBMR8m+Rd5rHZGPZT
+	YLG61wnlbrzHBWPG6LrxwSZF7sLqm6kU3NqVlb8tfY+ies3laLoLT4zfjhpKtyp6zseQfbhzGkGYw
+	cavflUIu4T3bDZkxSOlJC+5aeJGGk+0Mo5O0i5fyDXySARhVvRJVTQ65MbTkyTCrSnMMqOTl/jLc6
+	EwSF8Jowza/7huTK5gKR4P/37p/XQ1/4TEmyXEgyuSlD18/7ZHdGscWhObb2F1mX+MIZq7YtE+nWl
+	A0JAgQWQ==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:44848 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1sBrzl-0004R8-10;
+	Tue, 28 May 2024 09:15:45 +0100
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1sBrzn-00E8GK-Ue; Tue, 28 May 2024 09:15:47 +0100
+In-Reply-To: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	 Ron Economos <re@w6rz.net>,
+	 Samuel Holland <samuel.holland@sifive.com>,
+	 Guenter Roeck <linux@roeck-us.net>,
+	 AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	 Dinh Nguyen <dinguyen@kernel.org>,
+	 Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Paul Walmsley <paul.walmsley@sifive.com>,
+	 Rob Herring <robh@kernel.org>,
+	 Yang Li <yang.lee@linux.alibaba.com>,
+	 linux-kernel@vger.kernel.org,
+	 linux-riscv@lists.infradead.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 regressions@lists.linux.dev
+Subject: [PATCH] clk: clkdev: don't fail clkdev_alloc() if over-sized
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d09:b0:371:e497:209 with SMTP id
- e9e14a558f8ab-3737b2ba7a5mr7300575ab.1.1716884070294; Tue, 28 May 2024
- 01:14:30 -0700 (PDT)
-Date: Tue, 28 May 2024 01:14:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002174ba06197f39c1@google.com>
-Subject: [syzbot] [dri?] [media?] general protection fault in udmabuf_create (2)
-From: syzbot <syzbot+40c7dad27267f61839d4@syzkaller.appspotmail.com>
-To: christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	kraxel@redhat.com, linaro-mm-sig@lists.linaro.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	sumit.semwal@linaro.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1sBrzn-00E8GK-Ue@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Tue, 28 May 2024 09:15:47 +0100
 
-Hello,
+Don't fail clkdev_alloc() if the strings are over-sized. In this case,
+the entry will not match during lookup, so its useless. However, since
+code fails if we return NULL leading to boot failure, return a dummy
+entry with the connection and device IDs set to "bad".
 
-syzbot found the following issue on:
+Leave the warning so these problems can be found, and the useless
+wasteful clkdev registrations removed.
 
-HEAD commit:    6dc544b66971 Add linux-next specific files for 20240528
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1590bec8980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6a363b35598e573d
-dashboard link: https://syzkaller.appspot.com/bug?extid=40c7dad27267f61839d4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/334699ab67f8/disk-6dc544b6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4ca32b2218ce/vmlinux-6dc544b6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/400bc5f019b3/bzImage-6dc544b6.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+40c7dad27267f61839d4@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 PID: 7202 Comm: syz-executor.4 Not tainted 6.10.0-rc1-next-20240528-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:PageTail include/linux/page-flags.h:284 [inline]
-RIP: 0010:const_folio_flags include/linux/page-flags.h:312 [inline]
-RIP: 0010:folio_test_head include/linux/page-flags.h:837 [inline]
-RIP: 0010:folio_test_large include/linux/page-flags.h:858 [inline]
-RIP: 0010:folio_nr_pages include/linux/mm.h:2076 [inline]
-RIP: 0010:udmabuf_create+0xa54/0x11c0 drivers/dma-buf/udmabuf.c:376
-Code: 01 00 00 48 8b 44 24 70 42 80 3c 28 00 48 8b 5c 24 68 74 08 48 89 df e8 fa d5 ee fb 4c 8b 3b 49 8d 5f 08 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 dd d5 ee fb 48 8b 1b 48 89 de 48
-RSP: 0018:ffffc9000cfcfbe0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-RDX: ffffc90009011000 RSI: 0000000000000cc5 RDI: 0000000000000cc6
-RBP: ffffc9000cfcfd70 R08: ffffffff8fad856f R09: 1ffffffff1f5b0ad
-R10: dffffc0000000000 R11: fffffbfff1f5b0ae R12: 0000000000000001
-R13: dffffc0000000000 R14: ffff88801bf793a8 R15: 0000000000000000
-FS:  00007fb83bd9f6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32f21000 CR3: 000000002e5d8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- udmabuf_ioctl_create_list drivers/dma-buf/udmabuf.c:439 [inline]
- udmabuf_ioctl+0x3b2/0x4f0 drivers/dma-buf/udmabuf.c:454
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb83b07cee9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb83bd9f0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fb83b1b3f80 RCX: 00007fb83b07cee9
-RDX: 00000000200000c0 RSI: 0000000040087543 RDI: 0000000000000003
-RBP: 00007fb83b0c947f R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fb83b1b3f80 R15: 00007ffd6ccc32c8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:PageTail include/linux/page-flags.h:284 [inline]
-RIP: 0010:const_folio_flags include/linux/page-flags.h:312 [inline]
-RIP: 0010:folio_test_head include/linux/page-flags.h:837 [inline]
-RIP: 0010:folio_test_large include/linux/page-flags.h:858 [inline]
-RIP: 0010:folio_nr_pages include/linux/mm.h:2076 [inline]
-RIP: 0010:udmabuf_create+0xa54/0x11c0 drivers/dma-buf/udmabuf.c:376
-Code: 01 00 00 48 8b 44 24 70 42 80 3c 28 00 48 8b 5c 24 68 74 08 48 89 df e8 fa d5 ee fb 4c 8b 3b 49 8d 5f 08 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 dd d5 ee fb 48 8b 1b 48 89 de 48
-RSP: 0018:ffffc9000cfcfbe0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-RDX: ffffc90009011000 RSI: 0000000000000cc5 RDI: 0000000000000cc6
-RBP: ffffc9000cfcfd70 R08: ffffffff8fad856f R09: 1ffffffff1f5b0ad
-R10: dffffc0000000000 R11: fffffbfff1f5b0ae R12: 0000000000000001
-R13: dffffc0000000000 R14: ffff88801bf793a8 R15: 0000000000000000
-FS:  00007fb83bd9f6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32f21000 CR3: 000000002e5d8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	01 00                	add    %eax,(%rax)
-   2:	00 48 8b             	add    %cl,-0x75(%rax)
-   5:	44 24 70             	rex.R and $0x70,%al
-   8:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-   d:	48 8b 5c 24 68       	mov    0x68(%rsp),%rbx
-  12:	74 08                	je     0x1c
-  14:	48 89 df             	mov    %rbx,%rdi
-  17:	e8 fa d5 ee fb       	call   0xfbeed616
-  1c:	4c 8b 3b             	mov    (%rbx),%r15
-  1f:	49 8d 5f 08          	lea    0x8(%r15),%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 dd d5 ee fb       	call   0xfbeed616
-  39:	48 8b 1b             	mov    (%rbx),%rbx
-  3c:	48 89 de             	mov    %rbx,%rsi
-  3f:	48                   	rex.W
-
-
+Fixes: 8d532528ff6a ("clkdev: report over-sized strings when creating clkdev entries")
+Closes: https://lore.kernel.org/linux-clk/7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net.
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Please try this patch, which should allow the platform to boot, bit will
+intentionally issue lots of warnings. There is a separate patch posted
+recently that removes the useless registration with clkdev.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ drivers/clk/clkdev.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 6a77d7e201a9..2f83fb97c6fb 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -204,8 +204,15 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+ 	pr_err("%pV:%s: %s ID is greater than %zu\n",
+ 	       &vaf, con_id, failure, max_size);
+ 	va_end(ap_copy);
+-	kfree(cla);
+-	return NULL;
++
++	/*
++	 * Don't fail in this case, but as the entry won't ever match just
++	 * fill it with something that also won't match.
++	 */
++	strscpy(cla->con_id, "bad", sizeof(cla->con_id));
++	strscpy(cla->dev_id, "bad", sizeof(cla->dev_id));
++
++	return &cla->cl;
+ }
+ 
+ static struct clk_lookup *
+-- 
+2.30.2
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
