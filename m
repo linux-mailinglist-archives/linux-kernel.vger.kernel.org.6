@@ -1,187 +1,184 @@
-Return-Path: <linux-kernel+bounces-192014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154AC8D1742
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:27:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3BF8D1744
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F341C21BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:27:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DED3286861
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A20154BFF;
-	Tue, 28 May 2024 09:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED41155C82;
+	Tue, 28 May 2024 09:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aTXnT+O3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="toqHVMvg"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97552154450;
-	Tue, 28 May 2024 09:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EC1155A4F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716888454; cv=none; b=SRb1Fh0csp0kgzEg+cQtoRdt0p6fe0J1cNgORFGQaZhylWQrl4XfKX4TuB27PZsqmaLOr2vUe3JAM0wOuHNXNOeKxWAvZ4tlcWGQZTm4WHRLAiU5qgeMASOmGSRDXSjeLiw/TLpuLl8dXSTsrZvaenGfecENsid6ZkW6tQIVECo=
+	t=1716888555; cv=none; b=jF9BPnMt702fwnVHiPG4rWaEwD22I1FAurTM0GYoWAl+NxCoA6h4LsiwnEyVvo9j+90ZkQtCU5GJCIpQyw2x7wrAiNITE686U0fWEopA7Jwub9mwgXO1KaQKU2GE5alw9/bKqlPA63WRL24OvzWAwd+06tVg/rmPGiY201ah6gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716888454; c=relaxed/simple;
-	bh=Ox5OkVtIPeoJlCBHYNB1yqDcFh8GZpA14ru1JHkYhE4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TS8NE0I9j0C5o02MrqPWgh7/BlXc2+QMsA3ypDYgTQGZJTwjryyVNsgfqfRzo3iWlL4FfsujYMIPgCDQuaAtAKFch6ACWQ4q7wsrCoRZ7XU4iuNXnnEKj6RYrLyxCD++gZa/1c75OB3Zu+LM4CZWFdW9LWebzu4pLlp2W5rMVqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aTXnT+O3; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716888453; x=1748424453;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Ox5OkVtIPeoJlCBHYNB1yqDcFh8GZpA14ru1JHkYhE4=;
-  b=aTXnT+O3oTFuPWaACP2BeM4uWY1StPmYlMjEummbtKD5nT1i/7nSWxQr
-   tvR6NEXhHIN9+FY4leycnI47CmK7TWScNXevElr3dj6RdwjhoXmI4uoXi
-   tjo2Gs8L6r8ZEUaXuSbls7OlAMdMw0pvQYQuvS+VJ6I1O6Pg3pTaOoPga
-   ov3I2hy15ZSt7X7odHWQ45keDqg2zb1NJZy0Qz978/QkP5i4Y6Eb7dAYG
-   XIDxY/KnevmroyKUyyB7o4wkoy+LzblP1On62zCSglh/z8VEfrfAO/8+C
-   Ytx/Q2Gs+zXbQdaONf+X056bxjH9Y66+L85QBxoWbyB34NtXOLqlpVGoi
-   g==;
-X-CSE-ConnectionGUID: ptrLDzK/RCmP4Cvhv3iQ7Q==
-X-CSE-MsgGUID: 4u7Qj8ULSBiYy+teADGmyQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24634586"
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="24634586"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 02:27:33 -0700
-X-CSE-ConnectionGUID: cddHyDsoSQi6j3vX3R0stw==
-X-CSE-MsgGUID: yjivfThfSLaom1C40XMl8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="66217238"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 02:27:30 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 28 May 2024 12:27:26 +0300 (EEST)
-To: "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
-cc: corentin.chary@gmail.com, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/9] platform/x86: asus-wmi: add enable/disable CPU
- cores
-In-Reply-To: <20240528013626.14066-8-luke@ljones.dev>
-Message-ID: <4660daf1-f42f-9b65-eaf5-30daf2931058@linux.intel.com>
-References: <20240528013626.14066-1-luke@ljones.dev> <20240528013626.14066-8-luke@ljones.dev>
+	s=arc-20240116; t=1716888555; c=relaxed/simple;
+	bh=FW+O/dnOrX2cRzlvBKosMIgX6/Jg/BO6pQfm9wfnB2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIFYts1M0L8HgWYIf3aOPDMwjcr8ZDwP81hm0/5Iqm9rHSXZ7FIOM6SIObXaWpSVFK8108EePZVUF46OfnXqQzZFXGvHAfXBGZef1EyPBF4rZYb2haS8CxKHECyYz/HYfdm6k9pUQ3UHtOSvRyLSnC+bgJIlQglvpiZHSt7TXzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=toqHVMvg; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2bf5e0d8df9so2570234a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:29:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716888554; x=1717493354; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fpXBqoA8ceS6poGGWklE+vI0T/nfCFs37lamBJ9RBv0=;
+        b=toqHVMvgr+bixKmX/pXrpdFLR0Vk1EpLGxt/R5vphbAl8SHcu7wgxyhjo4XFWbFZlW
+         cGgqTXhlbGi2aMx6vkDCCEicD6pXAEUFmdbdkbfNgd2Tne2jlrE2Rk94ZcdTZwHVBWN+
+         f12jDhIvTzo1X8VRhaA3cDFWFw5NXtnpLizBRaiDA5qmABc2zg/ZRrl/emkwcOHCxOhj
+         7efrvS469F8t9TLRi2np42bTONgdEMOR/KECzl+ZxTCy/zMvw4VubA1oob4nIu7WqxNz
+         kbnKNvyrtLY7oBiqMNddWusXTVpUPj9JUNO3ShoW0T6/joEnHzoQDo0EgMrULlhIf0Nk
+         S1fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716888554; x=1717493354;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fpXBqoA8ceS6poGGWklE+vI0T/nfCFs37lamBJ9RBv0=;
+        b=lZXKwRV4OzMj37ApGfMEUNJ7OVVTfCThA3ZtgaEBZTzmcljq5vhInuXYWF2ib+Vu/H
+         JUfjGHkxMuZZ5vgd3s1cYrTvLVRvPk9vEs/caGzMc3UdtSHgOiXJ2wKcdOzBVZiA7+1e
+         XkuPwfk15nxBNdNNEfD+OjlT83uUTZAEKXjA4asNm40HzOzgyDzG78xI+0pFTcG/YI7r
+         W4i7zITb+4gsC3+WvANIsCoJ//6q4Zc9vQMrC7aSC0EMTCiYoBRMSzFRX4BVf7fxoDnZ
+         hzk0oEVkSFAEu03kmCzlf8QC9LG8q2UI20AbVsHdNB06rmnOrso+g2FKRWMlowLE6bML
+         8kEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxJqE6izTiqWaxu5fg4O2pcGR0waFUbhKm0HgeX7M2KgNSIln7aSiAfPVPnemXzy88Jg43zCrIaojcfr+ItcXci/XyIqJ6WTBq7BK4
+X-Gm-Message-State: AOJu0YzzA/+kjnAbEVllPQR+FgZvUB4nh9Cv4Ktql9ZujMLUkYWEq1KK
+	tfWzoc+s0K9wAB8jFpEO+ym+AN2/y9Y5lMuSwL4+a/JY0fyLMF3vXLX5nBq8BPDBoUbt5EIyAGq
+	tAZXba3fkw8zGgLVUx9AWlF2C+BnYIoAD9ouydg==
+X-Google-Smtp-Source: AGHT+IFnV6sdZzDEvuU6cJqJjxl/hxM/YpZRWUDj3UQJPXey8HfB4wQltmFu18Cyo2aWW6Kcc44xPc2JWTf+PIGRkgQ=
+X-Received: by 2002:a17:90a:f2c1:b0:2bf:8824:d0a5 with SMTP id
+ 98e67ed59e1d1-2bf8824f30amr11307027a91.6.1716888553554; Tue, 28 May 2024
+ 02:29:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com> <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com> <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu>
+In-Reply-To: <20230917010516.54dgcmms44wyfrvx@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 28 May 2024 11:29:02 +0200
+Message-ID: <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org, daniel.lezcano@linaro.org, 
+	lukasz.luba@arm.com, Dietmar.Eggemann@arm.com, dsmythies@telus.net, 
+	yu.chen.surf@gmail.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi All,
 
-Hans, please check my question below.
+I'm quite late on this thread but this patchset creates a major
+regression for psci cpuidle driver when using the OSI mode (OS
+initiated mode).  In such a case, cpuidle driver takes care only of
+CPUs power state and the deeper C-states ,which includes cluster and
+other power domains, are handled with power domain framework. In such
+configuration ,cpuidle has only 2 c-states : WFI and cpu off states
+and others states that include the clusters, are managed by genpd and
+its governor.
 
-On Tue, 28 May 2024, Luke D. Jones wrote:
+This patch selects cpuidle c-state N-1 as soon as the utilization is
+above CPU capacity / 64 which means at most a level of 16 on the big
+core but can be as low as 4 on little cores. These levels are very low
+and the main result is that as soon as there is very little activity
+on a CPU, cpuidle always selects WFI states whatever the estimated
+sleep duration and which prevents any deeper states. Another effect is
+that it also keeps the tick firing every 1ms in my case.
 
-> Exposes the WMI functions for enable/disable of performance and
-> efficiency cores on some laptop models (largely Intel only).
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
+IMO, we should at least increase the utilization level
 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-asus-wmi b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> index 3b4eeea75b7b..ac881e72e374 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> +++ b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> @@ -226,3 +226,22 @@ Description:
->  		Set panel to UHD or FHD mode
->  			* 0 - UHD,
->  			* 1 - FHD
-> +
-> +What:		/sys/devices/platform/<platform>/cores_enabled
-> +Date:		Jun 2024
-> +KernelVersion:	6.11
-> +Contact:	"Luke Jones" <luke@ljones.dev>
-> +Description:
-> +		Enable/disable efficiency and performance cores. The format is
-> +		0x[E][P] where [E] is the efficiency core count, and [P] is
-> +		the perfromance core count. If the core count is a single digit
+Regards,
+Vincent
 
-performance
-
-> +		it is preceded by a 0 such as 0x0406; E=4, P=6, 0x1006; E=10, P=6
-> +
-> +What:		/sys/devices/platform/<platform>/cores_max
-> +Date:		Jun 2024
-> +KernelVersion:	6.11
-> +Contact:	"Luke Jones" <luke@ljones.dev>
-> +Description:
-> +		Show the maximum performance and efficiency core countin format
-> +		0x[E][P] where [E] is the efficiency core count, and [P] is
-> +		the perfromance core count.
-
-performance
-
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 4b045f1828f1..f62a36dfcd4b 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -815,6 +815,46 @@ static ssize_t panel_fhd_store(struct device *dev,
->  WMI_SIMPLE_SHOW(panel_fhd, "%d\n", ASUS_WMI_DEVID_PANEL_FHD);
->  static DEVICE_ATTR_RW(panel_fhd);
->  
-> +/* Efficiency and Performance core control **********************************/
-> +static ssize_t cores_enabled_store(struct device *dev,
-> +				    struct device_attribute *attr,
-> +				    const char *buf, size_t count)
-> +{
-> +	struct asus_wmi *asus = dev_get_drvdata(dev);
-> +	int result, err;
-> +	u32 cores, max;
-> +
-> +	result = kstrtou32(buf, 16, &cores);
-> +	if (result)
-> +		return result;
-> +
-> +	err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_CORES_MAX, &max);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	if (cores > max) {
-
-This only checks one part of it and the P part can contain whatever 
-garbage as long as E is small enough?
-
-But I'm not sure if it's good idea to have these two changed through the 
-same sysfs file, I'm leaning more on that it would be better to split the 
-interface for P and E.
-
-Hans, what you think about this?
-
-> +		pr_warn("Core count 0x%x exceeds max: 0x%x\n", cores, max);
-> +		return -EIO;
-> +	}
-> +
-> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES_SET, cores, &result);
-> +	if (err) {
-> +		pr_warn("Failed to set cores_enabled: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	pr_info("Enabled core count changed, reboot required\n");
-> +	sysfs_notify(&asus->platform_device->dev.kobj, NULL, "cores_enabled");
-> +
-> +	return count;
-> +}
-
-> @@ -4131,6 +4173,9 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
->  		devid = ASUS_WMI_DEVID_PANEL_OD;
->  	else if (attr == &dev_attr_panel_fhd.attr)
->  		devid = ASUS_WMI_DEVID_PANEL_FHD;
-> +	else if (attr == &dev_attr_cores_enabled.attr
-> +		|| attr == &dev_attr_cores_max.attr)
-
-Wrong alignment.
-
--- 
- i.
-
+On Sun, 17 Sept 2023 at 03:05, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> Hi Kajetan
+>
+> On 07/18/23 14:24, Qais Yousef wrote:
+>
+> > These patches are in GKI. So we'll if there are uncaught problems I guess :)
+> >
+> > No appetite for a knob, but the very low value for littles did strike me and
+> > thought I better ask at least. Today's littles are too tiny for their own good
+> > and it seemed the threshold could end up being too aggressive especially in low
+> > activity state. You effectively are saying that if we have few 100us of
+> > activity, normal TEO predictions based on timers are no good and better to stay
+> > shallower anyway.
+> >
+> > Note that due to NOHZ, if we go to idle for an extended period the util value
+> > might not decay for a while and miss some opportunities. Especially that when
+> > it next wakes up, it's enough for this wake up to run for few 100s us to block
+> > a deeper state before going back to sleep for extended period of time.
+> >
+> > But we shall see. I got the answer I was looking for for now.
+>
+> Unfortunately not too long after the patches got merged I got regression report
+> of worse power. As you know on Android things are not as mainline, so I need to
+> untangle this to make sure it's not a red herring. But if you want to take my
+> word for it, I think the chances of it being a true regression is high. I had
+> to introduce knobs to allow controlling the thresholds for now, so the good
+> news they do help and it's not a total revert. I don't have a lot of info to
+> share, but it's the low activity use cases that seem to got impacted. Like
+> video playback for instance.
+>
+> Generally, I'm trying to remove some hardcoded values from the scheduler that
+> enforces a behavior that is not universally desired on all systems/workloads.
+> And I think the way the util awareness threshold are done today fall into the
+> same category.
+>
+> As I tried to highlight before, it is easy to trick the threshold by a task
+> that runs for a short time then goes back to sleep for a long time.
+>
+> And when the system runs full throttle for a while, it'll take around 150+ms
+> for the util to decay to the threshold value. That's a long time to block
+> entering deeper idle states for. I'm not sure how NOHZ and blocked averaged
+> updates can make this potentially worse.
+>
+> In my view, the absolute comparison against util can be misleading. Even when
+> util is 512 for example, we still have 50% of idle time. How this time is
+> distributed can't be known from util alone. It could be one task waking up and
+> sleeping. It could be multiple tasks at many combination of patterns all
+> leading to the same outcome of CPU util being 512.
+>
+> IIUC the idea is that if we have even small activity, then erring on the
+> shallow side is better. But given that target-residency is usually in few ms
+> range, do we really need to be that quite? With a target-residency of 3ms for
+> example, even at util of 900 there can be opportunities to enter it.
+>
+> Can't we instead sample util at entry to idle loop and see if it is on a rising
+> or falling trend? When rising it makes sense to say there's demand, let's block
+> deeper idle state. But if it is falling, then if the decay time is longer than
+> target-residency we can say it's okay to permit the deeper idle states?
+>
+> I need to think more about this; but I think it's worth trying to make these
+> thresholds more deterministic and quantifiable. There are too many workloads
+> and system variations. I'm not sure if a knob to control these thresholds is
+> good for anything but a workaround like I had to do. These hardcoded values
+> can be improved IMHO. Happy to help to find alternatives.
+>
+>
+> Cheers
+>
+> --
+> Qais Yousef
 
