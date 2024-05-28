@@ -1,236 +1,258 @@
-Return-Path: <linux-kernel+bounces-192697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E199B8D20DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8D28D20DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B6D28800D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:54:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0564D288735
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E564171E7F;
-	Tue, 28 May 2024 15:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32460171679;
+	Tue, 28 May 2024 15:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AM+cLA+w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0EmNdjR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606BF17167F;
-	Tue, 28 May 2024 15:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B6517083D;
+	Tue, 28 May 2024 15:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716911631; cv=none; b=bf1CZ4Xwop0yMjE4wmD4rgiFFQJlZ7btktKqNg6jBRZd2WaGAgTA5EGvryixXC/qzVm+2bv4BocoT0DzBS3oT+kUh+Ds10t7KThA5cFM2Cmy4r/aVpaJmkKdBHUEyPpcc4xHbfo6z+hfu1ld5zqwmqAv5hvkxWm7H9xSKThZ/D0=
+	t=1716911706; cv=none; b=D2kOMKBzn2phQZ0dsgQRd2sGwyiuJWbMbB8PxTrQrZVGkfTVp+dqUnNdbQuDcZhoTSTnAgGaxIf6yEO7fwKng+iWyXK+HacZGUXt6AzrM+Nnyw+b/xLT5WOwAxPoCKb9hKdwOrvL7heafBrvokvBZvIwg9QQtoSO3a03FDjERaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716911631; c=relaxed/simple;
-	bh=rVcl4oJmbxPg0GXfNHL3b9hvs7+krxPFeYYRdXrja94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4K0BSyUEYYGRRTOoiCchRb4KCQenbHN3jXrIRV1hpQoxEncSHQWK11ZfJnXtcZHjMJGfbAhqngonvJOqrWS6eBiENJXVzZDQbcLv6VEdomFKH7491eTpa96pQ+StJRrkpBLZaYl97INKMyONEsoxDvreAeoum+H4GmSXSojNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AM+cLA+w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C4DC3277B;
-	Tue, 28 May 2024 15:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716911630;
-	bh=rVcl4oJmbxPg0GXfNHL3b9hvs7+krxPFeYYRdXrja94=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AM+cLA+wcCb28OGJL5tYm7gL089gzdouBVMNydNW0YMWRbh22yQBshHm8dcefmDNu
-	 4NZIfrvY/NQS0toViyv70/Iz0+sSQtzGmbu0LuT0UzrzgPqAsGyUnFXVQxoqyB8kR3
-	 Yh4llfiT3eO7bI1JL4IMRzlIuqDdcxWolnO1aiDHqYQ0AeeQ6dq5iyHMnMUnee0Xnr
-	 bBh+0AN7Zt96ybXfxf+4LWAS1pCy7U8GlDqosCeA86g+P0PIYWF9Djk9K686nQ0qpa
-	 kwiB5R+oy7jxNUdZxpgMx+tg23ELUbCjTzQIGiSWO7/y7y8/kkhyXoGZwyNNGfW9H+
-	 UVlG3qQpk1EGA==
-Date: Tue, 28 May 2024 16:53:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, lgirdwood@gmail.com,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [RFC PATCH] dt-bindings: regulator: twl-regulator: convert to
- yaml
-Message-ID: <20240528-mandarin-chevron-130406a65434@spud>
-References: <20240528065756.1962482-1-andreas@kemnade.info>
- <e497498c-f3da-4ab9-b6d4-f9723c10471c@kernel.org>
- <20240528131622.4b4f8d03@aktux>
- <f288a1c9-762c-4c66-8611-9a08d6c09bac@kernel.org>
- <20240528150647.40385d08@aktux>
- <3a29c775-4131-4047-9777-4146e6c8eed0@kernel.org>
- <20240528-unimpeded-dealing-0128abb54272@spud>
- <20240528174849.6945343a@aktux>
+	s=arc-20240116; t=1716911706; c=relaxed/simple;
+	bh=Z7nFPpYM6hif/EXLtJYN/0vbm58dmn5PpXh4Pb2kSQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MgK9pQHnfJ2ww8rmQUV7RHjffWm/pfhvXW095u9icfRC6xRIO0y7AsKI2QatrzNq44EHvgaPIjYf17BDgjC4OYoLZHV2OyALNbIBbwefPwhWI3R+6U2mN1ZB+sPQNlQyi7wFCIGjhm0rGe3qYDb0pfgUl4G5g8zK66V0oLh7uq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0EmNdjR; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716911704; x=1748447704;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Z7nFPpYM6hif/EXLtJYN/0vbm58dmn5PpXh4Pb2kSQM=;
+  b=m0EmNdjRDP3QABqwXXmqdmxxz6xVkMdz9qCEow8HrJTY69yrgYuAKa2u
+   QCTUk5Rl3jx3bGCG/MegYjkbkWa4jYl7ByicVUZFBDdZ2xNJBTk4Kk5I3
+   rd5c1l6x56VFEH4vTs5z89HbTIJ+uxLcdlb85gahhcBM3It46WKL15NeH
+   /MO3WkMZmCZ3tB/q34j2HRjpB0Iyr+zJ5c64PYAi7uGTEjufv+gc3tYL2
+   q6xTnFfpqP6vPVlARAMdNaJMQnR/665aM7+VlJwgFwhKkXtj3WhEbF1P/
+   4TsNqpd7eHN2iG7S6cXiKV1SgpC6sKiEMYUw/0gV6xdYFRw9VQwaehny0
+   Q==;
+X-CSE-ConnectionGUID: tqtl5WW+Rxi/fSgzad5T2w==
+X-CSE-MsgGUID: p5iT773yTuWQ/gWYab51/A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13489097"
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="13489097"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 08:55:03 -0700
+X-CSE-ConnectionGUID: 00SyhGZTQYu9g9X1/N1A2g==
+X-CSE-MsgGUID: UP/HehqHSe+XmvhfnWHsQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="35099690"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 08:55:03 -0700
+Received: from [10.209.183.246] (kliang2-mobl1.ccr.corp.intel.com [10.209.183.246])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id A77222078A10;
+	Tue, 28 May 2024 08:55:01 -0700 (PDT)
+Message-ID: <97818e63-051f-4fcf-8c20-75730c08e98a@linux.intel.com>
+Date: Tue, 28 May 2024 11:55:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NaW3yDTJm5rP3IEB"
-Content-Disposition: inline
-In-Reply-To: <20240528174849.6945343a@aktux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf record: add a shortcut for metrics
+To: Artem Savkov <asavkov@redhat.com>, Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-kernel@vger.kernel.org
+References: <20240527101519.356342-1-asavkov@redhat.com> <ZlS8pc39t2c1WFye@x1>
+ <ZlS9M1vcxZ3Qsx_B@x1> <ZlTCvelaGVb6lCia@x1> <ZlTG-kPuYUyHLQZ2@x1>
+ <CAP-5=fWmmtagTVfacFZgdhughvU--Dz0=jkoqFB8CP1Qd3o3Yw@mail.gmail.com>
+ <20240528115703.GB449511@alecto.usersys.redhat.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240528115703.GB449511@alecto.usersys.redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---NaW3yDTJm5rP3IEB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 05:48:49PM +0200, Andreas Kemnade wrote:
-> On Tue, 28 May 2024 15:36:40 +0100
-> Conor Dooley <conor@kernel.org> wrote:
->=20
-> > On Tue, May 28, 2024 at 03:54:05PM +0200, Krzysztof Kozlowski wrote:
-> > > On 28/05/2024 15:06, Andreas Kemnade wrote: =20
-> > > > On Tue, 28 May 2024 13:25:29 +0200
-> > > > Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >  =20
-> > > >> On 28/05/2024 13:16, Andreas Kemnade wrote: =20
-> > > >>> On Tue, 28 May 2024 12:04:22 +0200
-> > > >>> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >>>    =20
-> > > >>>> On 28/05/2024 08:57, Andreas Kemnade wrote:   =20
-> > > >>>>> Convert the regulator bindings to yaml files. To allow only the=
- regulator
-> > > >>>>> compatible corresponding to the toplevel mfd compatible, split =
-the file
-> > > >>>>> into one per device.
-> > > >>>>>
-> > > >>>>> To not need to allow any subnode name, specify clearly node nam=
-es
-> > > >>>>> for all the regulators.
-> > > >>>>>
-> > > >>>>> Drop one twl5030 compatible due to no documentation on mfd side=
- and no
-> > > >>>>> users of the twl5030.
-> > > >>>>>
-> > > >>>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > > >>>>> ---
-> > > >>>>> Reason for being RFC:
-> > > >>>>> the integration into ti,twl.yaml seems not to work as expected
-> > > >>>>> make dt_binding_check crashes without any clear error message
-> > > >>>>> if used on the ti,twl.yaml
-> > > >>>>>
-> > > >>>>>  .../devicetree/bindings/mfd/ti,twl.yaml       |   4 +-
-> > > >>>>>  .../regulator/ti,twl4030-regulator.yaml       | 402 ++++++++++=
-++++++++
-> > > >>>>>  .../regulator/ti,twl6030-regulator.yaml       | 292 ++++++++++=
-+++
-> > > >>>>>  .../regulator/ti,twl6032-regulator.yaml       | 238 +++++++++++
-> > > >>>>>  .../bindings/regulator/twl-regulator.txt      |  80 ----
-> > > >>>>>  5 files changed, 935 insertions(+), 81 deletions(-)
-> > > >>>>>  create mode 100644 Documentation/devicetree/bindings/regulator=
-/ti,twl4030-regulator.yaml
-> > > >>>>>  create mode 100644 Documentation/devicetree/bindings/regulator=
-/ti,twl6030-regulator.yaml
-> > > >>>>>  create mode 100644 Documentation/devicetree/bindings/regulator=
-/ti,twl6032-regulator.yaml
-> > > >>>>>  delete mode 100644 Documentation/devicetree/bindings/regulator=
-/twl-regulator.txt
-> > > >>>>>
-> > > >>>>> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml =
-b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > > >>>>> index c2357fecb56cc..4ced6e471d338 100644
-> > > >>>>> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > > >>>>> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > > >>>>> @@ -50,7 +50,7 @@ allOf:
-> > > >>>>>            properties:
-> > > >>>>>              compatible:
-> > > >>>>>                const: ti,twl4030-wdt
-> > > >>>>> -
-> > > >>>>> +        $ref: /schemas/regulator/ti,twl4030-regulator.yaml    =
- =20
-> > > >>>>
-> > > >>>> That's not needed, just like othehr refs below.
-> > > >>>>   =20
-> > > >>> but how to prevent error messages like this:
-> > > >>>
-> > > >>> arch/arm/boot/dts/ti/omap/omap2430-sdp.dtb: twl@48: Unevaluated p=
-roperties are not allowed ('gpio', 'keypad', 'pwm', 'pwmled', 'regulator-va=
-ux1', 'regulator-vaux2', 'regulator-vaux3', 'regulator-vaux4', 'regulator-v=
-dac', 'regulator-vdd1', 'regulator-vintana1', 'regulator-vintana2', 'regula=
-tor-vintdig', 'regulator-vio', 'regulator-vmmc1', 'regulator-vmmc2', 'regul=
-ator-vpll1', 'regulator-vpll2', 'regulator-vsim', 'regulator-vusb1v5', 'reg=
-ulator-vusb1v8', 'regulator-vusb3v1
-> > > >>>
-> > > >>> esp. the regulator parts without adding stuff to ti,twl.yaml?   =
-=20
-> > > >>
-> > > >> Eh? That's a watchdog, not regulator. Why do you add ref to regula=
-tor?
-> > > >> =20
-> > > > hmm, wrongly indented? At what level doet it belong? But as the reg=
-ualor.yaml stuff can
-> > > > be shortened, maybe just add it directly to ti,twl.yaml to avoid th=
-at trouble. =20
-> > >=20
-> > > I don't follow. The diff here and in other two places suggest you add
-> > > twl-regulator reference to wdt/gpio/whatnot nodes, not to regulators.=
- =20
-> >=20
-> > The diff may look like that, but I think they're just trying to add it
-> > as a subnode of the pmic. There are other nodes, like the madc that do
-> > this in the same file:
-> >         madc:
-> >           type: object
-> >           $ref: /schemas/iio/adc/ti,twl4030-madc.yaml
-> >           unevaluatedProperties: false
-> >=20
-> > I guess this is what was being attempted, albeit incorrectly.
->=20
-> correct. No regulators node, just everything directly as a subnode of
-> the pmic. Well, I have now something using patternProperties directly itn=
- ti,twl.yaml
-> including a more detailed example which does not upset dt_binding_check.
-> I am running dtbs_check to check if anything is odd. the 4030 variant see=
-ms
-> to be ok, waiting for some dtbs containing 603X now.
->=20
-> But somehow I would feel better if I would understand what was syntactica=
-lly
-> wrong with my original proposal. I have totally no idea yet.
+On 2024-05-28 7:57 a.m., Artem Savkov wrote:
+> On Mon, May 27, 2024 at 10:01:37PM -0700, Ian Rogers wrote:
+>> On Mon, May 27, 2024 at 10:46 AM Arnaldo Carvalho de Melo
+>> <acme@kernel.org> wrote:
+>>>
+>>> On Mon, May 27, 2024 at 02:28:32PM -0300, Arnaldo Carvalho de Melo wrote:
+>>>> On Mon, May 27, 2024 at 02:04:54PM -0300, Arnaldo Carvalho de Melo wrote:
+>>>>> On Mon, May 27, 2024 at 02:02:33PM -0300, Arnaldo Carvalho de Melo wrote:
+>>>>>> On Mon, May 27, 2024 at 12:15:19PM +0200, Artem Savkov wrote:
+>>>>>>> Add -M/--metrics option to perf-record providing a shortcut to record
+>>>>>>> metrics and metricgroups. This option mirrors the one in perf-stat.
+>>>>
+>>>>>>> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+>>>>>>> Signed-off-by: Artem Savkov <asavkov@redhat.com>
+>>>
+>>>> How did you test this?
+>>>
+>>>> The idea, from my notes, was to be able to have extra columns in 'perf
+>>>> report' with things like IPC and other metrics, probably not all metrics
+>>>> will apply. We need to find a way to find out which ones are OK for that
+>>>> purpose, for instance:
+>>>
+>>> One that may make sense:
+>>>
+>>> root@number:~# perf record -M tma_fb_full
+>>> ^C[ perf record: Woken up 1 times to write data ]
+>>> [ perf record: Captured and wrote 3.846 MB perf.data (21745 samples) ]
+>>>
+>>> root@number:~# perf evlist
+>>> cpu_core/CPU_CLK_UNHALTED.THREAD/
+>>> cpu_core/L1D_PEND_MISS.FB_FULL/
+>>> dummy:u
+>>> root@number:~#
+>>>
+>>> But then we need to read both to do the math, maybe something like:
+>>>
+>>> root@number:~# perf record -e '{cpu_core/CPU_CLK_UNHALTED.THREAD/,cpu_core/L1D_PEND_MISS.FB_FULL/}:S'
+>>> ^C[ perf record: Woken up 40 times to write data ]
+>>> [ perf record: Captured and wrote 14.640 MB perf.data (219990 samples) ]
+>>>
+>>> root@number:~# perf script | head
+>>>     cc1plus 1339704 [000] 36028.995981:  2011389 cpu_core/CPU_CLK_UNHALTED.THREAD/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+>>>     cc1plus 1339704 [000] 36028.995981:    26231   cpu_core/L1D_PEND_MISS.FB_FULL/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+>>>     cc1plus 1340011 [001] 36028.996008:  2004568 cpu_core/CPU_CLK_UNHALTED.THREAD/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+>>>     cc1plus 1340011 [001] 36028.996008:    20113   cpu_core/L1D_PEND_MISS.FB_FULL/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+>>>       clang 1340462 [002] 36028.996043:  2007356 cpu_core/CPU_CLK_UNHALTED.THREAD/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms])
+>>>       clang 1340462 [002] 36028.996043:    23481   cpu_core/L1D_PEND_MISS.FB_FULL/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms])
+>>>     cc1plus 1339622 [003] 36028.996066:  2004148 cpu_core/CPU_CLK_UNHALTED.THREAD/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+>>>     cc1plus 1339622 [003] 36028.996066:    31935   cpu_core/L1D_PEND_MISS.FB_FULL/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+>>>          as 1340513 [004] 36028.996097:  2005052 cpu_core/CPU_CLK_UNHALTED.THREAD/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.kallsyms])
+>>>          as 1340513 [004] 36028.996097:    45084   cpu_core/L1D_PEND_MISS.FB_FULL/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.kallsyms])
+>>> root@number:~#
+>>>
+>>> root@number:~# perf report --stdio -F +period | head -20
+>>> # To display the perf.data header info, please use --header/--header-only options.
+>>> #
+>>> #
+>>> # Total Lost Samples: 0
+>>> #
+>>> # Samples: 219K of events 'anon group { cpu_core/CPU_CLK_UNHALTED.THREAD/, cpu_core/L1D_PEND_MISS.FB_FULL/ }'
+>>> # Event count (approx.): 216528524863
+>>> #
+>>> #         Overhead                Period  Command    Shared Object      Symbol
+>>> # ................  ....................  .........  .................  ....................................
+>>> #
+>>>      4.01%   1.09%  8538169256  39826572  podman     [kernel.kallsyms]  [k] native_queued_spin_lock_slowpath
+>>>      1.35%   1.17%  2863376078  42829266  cc1plus    cc1plus            [.] 0x00000000003f6bcc
+>>>      0.94%   0.78%  1990639149  28408591  cc1plus    cc1plus            [.] 0x00000000003f6be4
+>>>      0.65%   0.17%  1375916283   6109515  podman     [kernel.kallsyms]  [k] _raw_spin_lock_irqsave
+>>>      0.61%   0.99%  1304418325  36198834  cc1plus    [kernel.kallsyms]  [k] get_mem_cgroup_from_mm
+>>>      0.52%   0.42%  1103054030  15427418  cc1plus    cc1plus            [.] 0x0000000000ca6c69
+>>>      0.51%   0.17%  1094200572   6299289  podman     [kernel.kallsyms]  [k] psi_group_change
+>>>      0.42%   0.41%   893633315  14778675  cc1plus    cc1plus            [.] 0x00000000018afafe
+>>>      0.42%   1.29%   887664793  47046952  cc1plus    [kernel.kallsyms]  [k] asm_exc_page_fault
+>>> root@number:~#
+>>>
+>>> That 'tma_fb_full' metric then would be another column, calculated from
+>>> the sampled components of its metric equation:
+>>>
+>>> root@number:~# perf list tma_fb_full | head
+>>>
+>>> Metric Groups:
+>>>
+>>> MemoryBW: [Grouping from Top-down Microarchitecture Analysis Metrics spreadsheet]
+>>>   tma_fb_full
+>>>        [This metric does a *rough estimation* of how often L1D Fill Buffer
+>>>         unavailability limited additional L1D miss memory access requests to
+>>>         proceed]
+>>>
+>>> TopdownL4: [Metrics for top-down breakdown at level 4]
+>>> root@number:~#
+>>>
+>>> This is roughly what we brainstormed, to support metrics in other tools
+>>> than 'perf stat' but we need to check the possibilities and limitations
+>>> of such an idea, hopefully this discussion will help with that,
+>>
+>> Putting metrics next to code in perf report/annotate sounds good to
+>> me, opening all events from a metric as if we want to sample on them
+>> less so.
+> 
+> The idea was to record whatever data was asked on record step and
+> provide the list of all metrics that can be calculated out of that data
+> in perf report, e.g. you could record tma_info_thread_ipc but report
+> will suggest both it and tma_info_thread_cpi.
+>
 
-If you want to create a child node, you can't just reference another
-schema willy nilly. You need to create a property of type object, as was
-done elsewhere in the file.
+Do you mean that sample all the events in a metrics, and report both
+samples and its metrics calculation result in the report?
+That doesn't work for all the metrics.
 
-> The error message of dt_binding_check is also meaningless:
->  CHKDT   Documentation/devicetree/bindings
-> Traceback (most recent call last):
->   File "/home/andi/.local/bin/dt-doc-validate", line 64, in <module>
->     ret |=3D check_doc(f)
->            ^^^^^^^^^^^^
->   File "/home/andi/.local/bin/dt-doc-validate", line 32, in check_doc
->     for error in sorted(dtsch.iter_errors(), key=3Dlambda e: e.linecol):
->                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->   File "/home/andi/.local/pipx/venvs/dtschema/lib/python3.11/site-package=
-s/dtschema/schema.py", line 125, in iter_errors
->     self.annotate_error(scherr, meta_schema, scherr.schema_path)
->   File "/home/andi/.local/pipx/venvs/dtschema/lib/python3.11/site-package=
-s/dtschema/schema.py", line 104, in annotate_error
->     schema =3D schema[p]
->              ~~~~~~^^^
-> KeyError: 'type'
->   LINT    Documentation/devicetree/bindings
->=20
-> IMHO this should be improved.
+- For the topdown related metrics, especially on ICL and later
+platforms, the perf metrics feature is used by default. It doesn't
+support sampling.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/Documentation/topdown.txt?#n293
+- Some PMUs which doesn't support sampling as well, e.g., uncore, Power,
+MSR.
+- There are some SW events, e.g.,duration_time, you may don't want to do
+sampling
 
-What I see with your patch applied is:
-/stuff/linux-dt/Documentation/devicetree/bindings/mfd/ti,twl.yaml: ignoring=
-, error in schema: allOf: 0: then: properties: $ref
+You probable need to introduce a flag to ignore those metrics in perf
+record.
 
-Not a great error either, but not a crash like you see. What version of
-dt-schema are you using?
+>> We don't have metrics working with `perf stat record`, I
+>> think Kan may have volunteered for that, but it seems like something
+>> more urgent than expanding `perf record`. Presumably the way the
+>> metric would be recorded for that could also benefit this effort.
+>>
+>> If you look at the tma metrics a number of them have a "Sample with".
+>> For example:
+>> ```
+>> $ perf list -v
+>> ...
+>>   tma_branch_mispredicts
+>>        [This metric represents fraction of slots the CPU has wasted
+>> due to Branch Misprediction.
+>>         These slots are either wasted by uops fetched from an
+>> incorrectly speculated program path;
+>>         or stalls when the out-of-order part of the machine needs to
+>> recover its state from a
+>>         speculative path. Sample with: BR_MISP_RETIRED.ALL_BRANCHES.
+>> Related metrics:
+>>         tma_info_bad_spec_branch_misprediction_cost,tma_info_bottleneck_mispredictions,
+>>         tma_mispredicts_resteers]
+>> ...
+>> ```
+>> It could be logical for `perf record -M tma_branch_mispredicts ...` to
+>> be translated to `perf record -e BR_MISP_RETIRED.ALL_BRANCHES ...`
+>> rather than to do any form of counting.
+> 
+> Thanks for the pointer, I'll see how this could be done.
 
---NaW3yDTJm5rP3IEB
-Content-Type: application/pgp-signature; name="signature.asc"
+It sounds more reasonable to me that we can sample some typical events,
+and read the other members in the metrics. So we can put metrics next to
+the code in perf report/annotate as Ian mentioned. It could also address
+limits of some metrics, especially for the topdown related metrics.
+(But I'm not sure if the "Sample with" can give you the right hints. I
+will ask around internally.)
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlX+CgAKCRB4tDGHoIJi
-0qKLAQCGFtx/Ay5ysirhXyqQuy4I9psiS/2NviHEhlp1z8v3mQEAw5uThXMaN3vj
-80ahgep6lSMNVQMa60qsYJ+unQQuFAs=
-=r4Ir
------END PGP SIGNATURE-----
-
---NaW3yDTJm5rP3IEB--
+But there is also some limits for the sampling read. Everything has to
+be in a group. That could be a problem for some big metrics.
+Thanks,
+Kan
 
