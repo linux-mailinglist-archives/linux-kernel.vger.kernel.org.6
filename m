@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-191963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE72B8D16A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2648D16AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E37282CA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0051F21D06
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1303C13C3F4;
-	Tue, 28 May 2024 08:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47956F08A;
+	Tue, 28 May 2024 08:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lfRrZi6O";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lfRrZi6O"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WzcO1dwb"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B358017579;
-	Tue, 28 May 2024 08:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA67C17579
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716886317; cv=none; b=lyW/ICIPqNZER8S1s5PzhsQD1m7zrCpPM0wKy928cCTv/T9ceyId8kP1xivoy3cgLtsjGPwSSyOQSQ9SODCXZxrFY1qW/3P/tdRVDZ4onSDP5DW82l4IMOLMdn3lfJYFn8/ogFCNwXufFo9c5xEPD9CTDSuymU1CNmHcb3uqCIw=
+	t=1716886359; cv=none; b=UqxsFQAq274Vd7b2eTWrt8oI+kXhjb0AMXPeuiBVxsN9SVdNGlwbnQGennZFoxPwFN20YWVwRUdw/vTOAOW1HM1qGe/jAyYR5dwc7MRbzknurGf5BZuYFZ1GAS9i7FfHmtzKIMTZmMq/k6hj3MpRSlBPSCuKmUkgQqDDWnyEy68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716886317; c=relaxed/simple;
-	bh=S7ikE0htQsSrGnTr7qsQAYsEBAbPNGxm7ZCXgikJmZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6bcXSI9zfeglAMvaqD7wHLbb6vs4JL5gPzNIgGiiC/BmfUcq+A2D8zpDconi+wzzpJ/JAcKqrNgA5uxTeVo4e/6IgKc8F6sCtJRIGDCaf5hF/moK6p5UaomvwQNAuH4ZEbweGtiRyINB9qvyuZXjvhQSQ9C5/Uj5wiZrtXRg64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lfRrZi6O; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lfRrZi6O; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B4003201D9;
-	Tue, 28 May 2024 08:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716886313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kt4MNglgqeU2blxMJ/lY93Og0sDSLSr/kWZ7uEkYdcw=;
-	b=lfRrZi6Oug66VGr7HDyKUS1qP5Gqyd5jXS2AiLAHPdoeu6rKElfM3IUJvEGHneXqrZQ29T
-	nHt78mShzF00z4uqoUfj1Vo4vEvmcriXiaqx7jH8oL6p8Qxj/VADu+mmmplpnLEa3FWipz
-	U20IC2bwuvugQfe0o9QDUrDUG+AVYEs=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716886313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kt4MNglgqeU2blxMJ/lY93Og0sDSLSr/kWZ7uEkYdcw=;
-	b=lfRrZi6Oug66VGr7HDyKUS1qP5Gqyd5jXS2AiLAHPdoeu6rKElfM3IUJvEGHneXqrZQ29T
-	nHt78mShzF00z4uqoUfj1Vo4vEvmcriXiaqx7jH8oL6p8Qxj/VADu+mmmplpnLEa3FWipz
-	U20IC2bwuvugQfe0o9QDUrDUG+AVYEs=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F72413A6B;
-	Tue, 28 May 2024 08:51:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dSsBICmbVWZUeQAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Tue, 28 May 2024 08:51:53 +0000
-Date: Tue, 28 May 2024 10:51:52 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-35802: x86/sev: Fix position dependent variable
- references in startup code
-Message-ID: <ZlWbKDZh18KHTsgX@tiehlicka>
-References: <2024051738-CVE-2024-35802-959d@gregkh>
- <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
+	s=arc-20240116; t=1716886359; c=relaxed/simple;
+	bh=p5+92J4Yr91UbUFnVC7glb/EfmWV5LuV1TZqeUfRQoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M1jRgsdkR77+h/6rsxtocWzRvvq+oTUdilWndsGjm6TXnFg6bEzOrzRNIMuPeo06GbnGaDaAA2IlIbTkkoSMvyckBrr21bE3lEOt5G6gZO3rYp21faGb8xnufXGB91QTO8jvIxJJ57VZHt7JrvHWPmC6hUh53v0UJ8SZp3w7kxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WzcO1dwb; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6818e31e5baso477655a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:52:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716886357; x=1717491157; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7QzdCxzv8yGENpSozKsGJewDpr108WZzlNxA7fdNR/8=;
+        b=WzcO1dwbj49kL/QSDXakWJQgp8dup6QSTfnISsCkqtfIt34EXD2hQosmsnf08pGmva
+         A0lJL3TLkaZLWiyqbN25HpB/JqzYACqNg3SjjsEBLEZa93b+A9l00sLPodghN2AIDDFd
+         4cp1K0Reuju9TvZRwMeS3ulp1f+ELiy89OGhU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716886357; x=1717491157;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7QzdCxzv8yGENpSozKsGJewDpr108WZzlNxA7fdNR/8=;
+        b=vkX5njaaj0OKogp4Tq04hq4dOhl1d+Ve+zZedVWIkM4B1M9LCA4nC0Ufi5rVgc5z0Y
+         YT2YlaxXHsxWlsUT5wASHCUH2pUCLuixYXqRsucj8nalODPaHkaQ3h50UnNh9OZgY6He
+         pT2FCb+GKLz9gsXPeCjZ+l5afLTYoWyajOggK0RR1zf7JCPk5J26pBuMYvwNt1R2/+Ck
+         pknR5Crma21aaYujubrF3ArQmVLI9e5VqObQbSkdrG73MSwtlJLOlnJvtsh30dERNBPH
+         IiVqqJrodWj20eZYaN8JnKGyc4P06Cfna+DpLvFRdXvzp9ZiYV1UG4fPlpiOWnT+ahKo
+         nGoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWTn4rclkeRU4szToOuXMpJhtmPOv/77h6/vuaxL+oUzWi7JHPsCDcApHFTRCLVi9B1VDtlPmvN9NLbhZ/SYqHhZON8KsrEcTV84ZP
+X-Gm-Message-State: AOJu0YwOMt6GQLMYG2vdoir2BN9E4xEc9RpCb10ofdl+rC2qh06212Fe
+	HkcXs6KNW26y8Rm76T1/GtlGTrKbAKbDh65cDxyLG8G8CoaQL8JVEZuSjK36Cw==
+X-Google-Smtp-Source: AGHT+IFTTpm0RsjGdPoiR+AoKzXW7E+hd/m8F4dDEyyB9zbyv+NxB20eslkRX45ggDC8YXqbzFdtUA==
+X-Received: by 2002:a05:6a20:d42a:b0:1af:fa18:76f0 with SMTP id adf61e73a8af0-1b212e3c9fbmr10721136637.55.1716886357113;
+        Tue, 28 May 2024 01:52:37 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:7a31:aea8:d44b:edb7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c997d0dsm75119025ad.199.2024.05.28.01.52.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 01:52:36 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Simon Glass <sjg@chromium.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH v2] scripts/make_fit: Drop fdt image entry compatible string
+Date: Tue, 28 May 2024 16:52:18 +0800
+Message-ID: <20240528085221.2989315-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.79
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.79 / 50.00];
-	BAYES_HAM(-2.99)[99.97%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+Content-Transfer-Encoding: 8bit
 
-On Thu 23-05-24 14:14:57, Nikolay Borisov wrote:
-[...]
-> I'd like to dispute this CVE since it doesn't constitute a security related
-> bug. Sure, it might crash a SEV guest during boot but it doesn't constitute
-> a security issue per-se.
+According to the FIT image source file format document found in U-boot [1]
+and the split-out FIT image specification [2], under "'/images' node" ->
+"Conditionally mandatory property", the "compatible" property is described
+as "compatible method for loading image", i.e., not the compatible string
+embedded in the FDT or used for matching.
 
-Let me add analysis by Joerg here:
-: This is not a security issue. The patch works around clangs compiler behavior
-: where it inserts absolute references to kernel addresses. This breaks kernel
-: boot because at the time this code runs the kernel still runs direct-mapped and
-: needs to rely on RIP-relative addressing only.
-: 
-: Any breakage there would be detected at early boot of the kernel by a fatal
-: crash, which can not be exploited. Also, our kernels are not compiled with
-: clang, so from that perspective this is also not an issue for us either.
+Drop the compatible string from the fdt image entry node.
 
-So this is a functional fix for clang builds.
+While at it also fix up a typo in the document section of output_dtb.
+
+[1] U-boot source "doc/usage/fit/source_file_format.rst", or on the website:
+    https://docs.u-boot.org/en/latest/usage/fit/source_file_format.html
+[2] https://github.com/open-source-firmware/flat-image-tree/blob/main/source/chapter2-source-file-format.rst
+
+Fixes: 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+Changes since v1:
+- Add clear reference to U-boot docs along with excerpt
+- Send separately from "disable compression for DTBs" patch
+
+ scripts/make_fit.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+index 3de90c5a094b..263147df80a4 100755
+--- a/scripts/make_fit.py
++++ b/scripts/make_fit.py
+@@ -190,7 +190,7 @@ def output_dtb(fsw, seq, fname, arch, compress):
+     Args:
+         fsw (libfdt.FdtSw): Object to use for writing
+         seq (int): Sequence number (1 for first)
+-        fmame (str): Filename containing the DTB
++        fname (str): Filename containing the DTB
+         arch: FIT architecture, e.g. 'arm64'
+         compress (str): Compressed algorithm, e.g. 'gzip'
+ 
+@@ -211,7 +211,6 @@ def output_dtb(fsw, seq, fname, arch, compress):
+         fsw.property_string('type', 'flat_dt')
+         fsw.property_string('arch', arch)
+         fsw.property_string('compression', compress)
+-        fsw.property('compatible', bytes(compat))
+ 
+         with open(fname, 'rb') as inf:
+             compressed = compress_data(inf, compress)
 -- 
-Michal Hocko
-SUSE Labs
+2.45.1.288.g0e0cd299f1-goog
+
 
