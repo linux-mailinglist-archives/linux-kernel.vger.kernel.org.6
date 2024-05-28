@@ -1,335 +1,208 @@
-Return-Path: <linux-kernel+bounces-192734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708C88D216A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB93C8D2168
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF181F2516B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA191F2517D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450C2172BA6;
-	Tue, 28 May 2024 16:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795A417279C;
+	Tue, 28 May 2024 16:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7fvxDUv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="D4wORzPO"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D58E172762;
-	Tue, 28 May 2024 16:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAF816D9D2;
+	Tue, 28 May 2024 16:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716912971; cv=none; b=fYZ7DPke4LQ6lMkPrDVCioe6K6RSH8m05shj/ARWUpUbp6LnPZAxDnD5Rmiz1sRr3gLHdCedP8zmOEwdsN9g+1kMefdnwewM+A8OVksYtPu+62khXk6JFkDdGZBd0MEeTDeQmpcR+EttPRpd0OIqgU4pe8JoqrO5jnQMjtwc1bg=
+	t=1716912964; cv=none; b=NbbRW/M/jOaD/e04SHT6uIsOkgdqgKihfb2pyfWhW7wo8qYWCQhL3WemdGJZpqXLFSfHecxOA5KQ428P/K+FdVco0IKeZjTKZl7yuL6q0cuRTIK02POcOMYYZRfaVHsZZyVyq1ynT6nrq5t8z4D3/8E1JBVMfB6K9fQDA4w6jBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716912971; c=relaxed/simple;
-	bh=Iz7vkRaP4qUtarjEYxIic7Ot0cHaaKtheqV7WuJvym8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=raqapiWMKCPdgA2cr6pS/Sm2DDZbvSev1voT0klUY6EIRI5OIhrsiFn9GKEQomt9ETPTPBvelwm2iDWL2uNMHUtRsG6uJKO/hYpZJ70afRKNPohEHb1G28ry6mBRhQPZVDSs0hot1sD1yldplepIBahYSjQx7ongjmT4PwCzgAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7fvxDUv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06ACC4AF09;
-	Tue, 28 May 2024 16:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716912970;
-	bh=Iz7vkRaP4qUtarjEYxIic7Ot0cHaaKtheqV7WuJvym8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X7fvxDUv5LIu9xkIINhS27/8+f/SLncSVMcucmnmjEA0vzec6ew1xyMWGXZiHeY7S
-	 AwsqdnTCF2IPnXQqxUrWNAUsVuDGVzWDVO3MPllYciuSlA2A2cZ+jt5s0jj+oYHAPD
-	 NloX7L895z8iaE3AXPbnAbGW3aa2bLf5ZfPVf3YH4QIlRM3r2nsj6NroDqVZaN844Z
-	 VuCq5LUF3ubBObFRheI3+6twwiYFPa1Oiq0TXPYspsi01Hcvo/libvLCcvqlstxKJt
-	 lJEqOE3QSb9Hyh0JDyrvanxwzpGtSGH13YsFGFUOrxR3kD3+WSgxKeV5GZxyWsG5mw
-	 +IZ/gZ+lmzIew==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jijie Shao <shaojijie@huawei.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Hao Lan <lanhao@huawei.com>,
-	Peiyang Wang <wangpeiyang1@huawei.com>,
-	Jie Wang <wangjie125@huawei.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
-	Guangbin Huang <huangguangbin2@huawei.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] hns3: avoid linking objects into multiple modules
-Date: Tue, 28 May 2024 18:15:25 +0200
-Message-Id: <20240528161603.2443125-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716912964; c=relaxed/simple;
+	bh=l6x4ez58HU9UJM5Ps7D89/4CNRdh7IYjsMDwe693JlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t2e8La/7t8uxHYT6Uh0RupVDHOqNgE6i4wl4mobqmFJ/kiGA3mL09d20xdW+kDuJEKsg8lXO3+u0YX1H5Tc1WYmpHbqy5nMpf6LOCvChbwXch0JEcPdlEQ2kXPXyCqOMjfxWLGL0vre97WSdZak8y2bXCKUZfQJjzm4Lwj9QJec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=D4wORzPO; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1716912956;
+	bh=l6x4ez58HU9UJM5Ps7D89/4CNRdh7IYjsMDwe693JlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D4wORzPO/dcNOsesBD/hol+eQeSr63q3p1WKENypCodZkC7huLrBXL1LwoSLZFbP8
+	 X13x5+BT2jwmBPLL8hPhRZhJKBf047O02c5z46EaZ8tmZDjHkQj+wVLFS2Fm6QW+m3
+	 w1k2KYckDr2N4+gVVZbDhHrTAdCA1o89KA4vF/2k=
+Date: Tue, 28 May 2024 18:15:56 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Horvath <s.horvath@outlook.com.au>, 
+	Jean Delvare <jdelvare@suse.com>, Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>, 
+	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Dustin Howett <dustin@howett.net>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Moritz Fischer <mdf@kernel.org>
+Subject: Re: [PATCH v2 1/2] hwmon: add ChromeOS EC driver
+Message-ID: <b8072b36-688f-41b8-8b32-40fc4fa4d148@t-8ch.de>
+References: <20240507-cros_ec-hwmon-v2-0-1222c5fca0f7@weissschuh.net>
+ <20240507-cros_ec-hwmon-v2-1-1222c5fca0f7@weissschuh.net>
+ <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+ <9cf224dd-51eb-4608-abcf-06f337d08178@t-8ch.de>
+ <SY4P282MB306325BB023A95198F25A21DC5F12@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+ <c9b110eb-ff0e-41f2-9492-8a5d8c3c01d0@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c9b110eb-ff0e-41f2-9492-8a5d8c3c01d0@roeck-us.net>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 2024-05-28 08:50:49+0000, Guenter Roeck wrote:
+> On 5/27/24 17:15, Stephen Horvath wrote:
+> > On 28/5/24 05:24, Thomas Weißschuh wrote:
+> > > On 2024-05-25 09:13:09+0000, Stephen Horvath wrote:
+> > > > I was the one to implement fan monitoring/control into Dustin's driver, and
+> > > > just had a quick comment for your driver:
+> > > > 
+> > > > On 8/5/24 02:29, Thomas Weißschuh wrote:
+> > > > > The ChromeOS Embedded Controller exposes fan speed and temperature
+> > > > > readings.
+> > > > > Expose this data through the hwmon subsystem.
+> > > > > 
+> > > > > The driver is designed to be probed via the cros_ec mfd device.
+> > > > > 
+> > > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > > > ---
+> > > > >    Documentation/hwmon/cros_ec_hwmon.rst |  26 ++++
+> > > > >    Documentation/hwmon/index.rst         |   1 +
+> > > > >    MAINTAINERS                           |   8 +
+> > > > >    drivers/hwmon/Kconfig                 |  11 ++
+> > > > >    drivers/hwmon/Makefile                |   1 +
+> > > > >    drivers/hwmon/cros_ec_hwmon.c         | 269 ++++++++++++++++++++++++++++++++++
+> > > > >    6 files changed, 316 insertions(+)
+> > > > > 
+> > > 
+> > > <snip>
+> > > 
+> > > > > diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..d59d39df2ac4
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/hwmon/cros_ec_hwmon.c
+> > > > > @@ -0,0 +1,269 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > > > > +/*
+> > > > > + *  ChromesOS EC driver for hwmon
+> > > > > + *
+> > > > > + *  Copyright (C) 2024 Thomas Weißschuh <linux@weissschuh.net>
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/device.h>
+> > > > > +#include <linux/hwmon.h>
+> > > > > +#include <linux/kernel.h>
+> > > > > +#include <linux/mod_devicetable.h>
+> > > > > +#include <linux/module.h>
+> > > > > +#include <linux/platform_device.h>
+> > > > > +#include <linux/platform_data/cros_ec_commands.h>
+> > > > > +#include <linux/platform_data/cros_ec_proto.h>
+> > > > > +#include <linux/units.h>
+> > > > > +
+> > > > > +#define DRV_NAME    "cros-ec-hwmon"
+> > > > > +
+> > > > > +struct cros_ec_hwmon_priv {
+> > > > > +    struct cros_ec_device *cros_ec;
+> > > > > +    u8 thermal_version;
+> > > > > +    const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
+> > > > > +};
+> > > > > +
+> > > > > +static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+> > > > > +{
+> > > > > +    u16 data;
+> > > > > +    int ret;
+> > > > > +
+> > > > > +    ret = cros_ec->cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &data);
+> > > > > +    if (ret < 0)
+> > > > > +        return ret;
+> > > > > +
+> > > > > +    data = le16_to_cpu(data);
+> > > > > +
+> > > > > +    if (data == EC_FAN_SPEED_NOT_PRESENT)
+> > > > > +        return -ENODEV;
+> > > > > +
+> > > > 
+> > > > Don't forget it can also return `EC_FAN_SPEED_STALLED`.
+> > > 
+> > > Thanks for the hint. I'll need to think about how to handle this better.
+> > > 
+> > > > Like Guenter, I also don't like returning `-ENODEV`, but I don't have a
+> > > > problem with checking for `EC_FAN_SPEED_NOT_PRESENT` in case it was removed
+> > > > since init or something.
+> > > 
+> 
+> That won't happen. Chromebooks are not servers, where one might be able to
+> replace a fan tray while the system is running.
 
-Each object file contains information about which module it gets linked
-into, so linking the same file into multiple modules now causes a warning:
+In one of my testruns this actually happened.
+When running on battery, one specific of the CPU sensors sporadically
+returned EC_FAN_SPEED_NOT_PRESENT.
 
-scripts/Makefile.build:254: drivers/net/ethernet/hisilicon/hns3/Makefile: hns3_common/hclge_comm_cmd.o is added to multiple modules: hclge hclgevf
-scripts/Makefile.build:254: drivers/net/ethernet/hisilicon/hns3/Makefile: hns3_common/hclge_comm_rss.o is added to multiple modules: hclge hclgevf
-scripts/Makefile.build:254: drivers/net/ethernet/hisilicon/hns3/Makefile: hns3_common/hclge_comm_tqp_stats.o is added to multiple modules: hclge hclgevf
+> > > Ok.
+> > > 
+> > > > My approach was to return the speed as `0`, since the fan probably isn't
+> > > > spinning, but set HWMON_F_FAULT for `EC_FAN_SPEED_NOT_PRESENT` and
+> > > > HWMON_F_ALARM for `EC_FAN_SPEED_STALLED`.
+> > > > No idea if this is correct though.
+> > > 
+> > > I'm not a fan of returning a speed of 0 in case of errors.
+> > > Rather -EIO which can't be mistaken.
+> > > Maybe -EIO for both EC_FAN_SPEED_NOT_PRESENT (which should never happen)
+> > > and also for EC_FAN_SPEED_STALLED.
+> > 
+> > Yeah, that's pretty reasonable.
+> > 
+> 
+> -EIO is an i/o error. I have trouble reconciling that with
+> EC_FAN_SPEED_NOT_PRESENT or EC_FAN_SPEED_STALLED.
+> 
+> Looking into the EC source code [1], I see:
+> 
+> EC_FAN_SPEED_NOT_PRESENT means that the fan is not present.
+> That should return -ENODEV in the above code, but only for
+> the purpose of making the attribute invisible.
+> 
+> EC_FAN_SPEED_STALLED means exactly that, i.e., that the fan
+> is present but not turning. The EC code does not expect that
+> to happen and generates a thermal event in case it does.
+> Given that, it does make sense to set the fault flag.
+> The actual fan speed value should then be reported as 0 or
+> possibly -ENODATA. It should _not_ generate any other error
+> because that would trip up the "sensors" command for no
+> good reason.
 
-Change the way that hns3 is built by moving the three common files into a
-separate module with exported symbols instead.
+Ack.
 
-Fixes: 5f20be4e90e6 ("net: hns3: refactor hns3 makefile to support hns3_common module")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/hisilicon/hns3/Makefile       | 11 +++++------
- .../hisilicon/hns3/hns3_common/hclge_comm_cmd.c    | 11 +++++++++++
- .../hisilicon/hns3/hns3_common/hclge_comm_rss.c    | 14 ++++++++++++++
- .../hns3/hns3_common/hclge_comm_tqp_stats.c        |  5 +++++
- 4 files changed, 35 insertions(+), 6 deletions(-)
+Currently I have the following logic (for both fans and temp):
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/Makefile b/drivers/net/ethernet/hisilicon/hns3/Makefile
-index 8e9293e57bfd..e8af26da1fc1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/Makefile
-+++ b/drivers/net/ethernet/hisilicon/hns3/Makefile
-@@ -15,15 +15,14 @@ hns3-objs = hns3_enet.o hns3_ethtool.o hns3_debugfs.o
- 
- hns3-$(CONFIG_HNS3_DCB) += hns3_dcbnl.o
- 
--obj-$(CONFIG_HNS3_HCLGEVF) += hclgevf.o
-+obj-$(CONFIG_HNS3_HCLGEVF) += hclgevf.o hclge-common.o
- 
--hclgevf-objs = hns3vf/hclgevf_main.o hns3vf/hclgevf_mbx.o  hns3vf/hclgevf_devlink.o hns3vf/hclgevf_regs.o \
--		hns3_common/hclge_comm_cmd.o hns3_common/hclge_comm_rss.o hns3_common/hclge_comm_tqp_stats.o
-+hclge-common-objs += hns3_common/hclge_comm_cmd.o hns3_common/hclge_comm_rss.o hns3_common/hclge_comm_tqp_stats.o
- 
--obj-$(CONFIG_HNS3_HCLGE) += hclge.o
-+hclgevf-objs = hns3vf/hclgevf_main.o hns3vf/hclgevf_mbx.o  hns3vf/hclgevf_devlink.o hns3vf/hclgevf_regs.o
-+
-+obj-$(CONFIG_HNS3_HCLGE) += hclge.o hclge-common.o
- hclge-objs = hns3pf/hclge_main.o hns3pf/hclge_mdio.o hns3pf/hclge_tm.o hns3pf/hclge_regs.o \
- 		hns3pf/hclge_mbx.o hns3pf/hclge_err.o  hns3pf/hclge_debugfs.o hns3pf/hclge_ptp.o hns3pf/hclge_devlink.o \
--		hns3_common/hclge_comm_cmd.o hns3_common/hclge_comm_rss.o hns3_common/hclge_comm_tqp_stats.o
--
- 
- hclge-$(CONFIG_HNS3_DCB) += hns3pf/hclge_dcb.o
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_cmd.c
-index ea40b594dbac..4ad4e8ab2f1f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_cmd.c
-@@ -48,6 +48,7 @@ void hclge_comm_cmd_reuse_desc(struct hclge_desc *desc, bool is_read)
- 	else
- 		desc->flag &= cpu_to_le16(~HCLGE_COMM_CMD_FLAG_WR);
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_cmd_reuse_desc);
- 
- static void hclge_comm_set_default_capability(struct hnae3_ae_dev *ae_dev,
- 					      bool is_pf)
-@@ -72,6 +73,7 @@ void hclge_comm_cmd_setup_basic_desc(struct hclge_desc *desc,
- 	if (is_read)
- 		desc->flag |= cpu_to_le16(HCLGE_COMM_CMD_FLAG_WR);
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_cmd_setup_basic_desc);
- 
- int hclge_comm_firmware_compat_config(struct hnae3_ae_dev *ae_dev,
- 				      struct hclge_comm_hw *hw, bool en)
-@@ -517,6 +519,7 @@ int hclge_comm_cmd_send(struct hclge_comm_hw *hw, struct hclge_desc *desc,
- 
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_cmd_send);
- 
- static void hclge_comm_cmd_uninit_regs(struct hclge_comm_hw *hw)
- {
-@@ -553,6 +556,7 @@ void hclge_comm_cmd_uninit(struct hnae3_ae_dev *ae_dev,
- 	hclge_comm_free_cmd_desc(&cmdq->csq);
- 	hclge_comm_free_cmd_desc(&cmdq->crq);
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_cmd_uninit);
- 
- int hclge_comm_cmd_queue_init(struct pci_dev *pdev, struct hclge_comm_hw *hw)
- {
-@@ -591,6 +595,7 @@ int hclge_comm_cmd_queue_init(struct pci_dev *pdev, struct hclge_comm_hw *hw)
- 	hclge_comm_free_cmd_desc(&hw->cmq.csq);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_cmd_queue_init);
- 
- void hclge_comm_cmd_init_ops(struct hclge_comm_hw *hw,
- 			     const struct hclge_comm_cmq_ops *ops)
-@@ -602,6 +607,7 @@ void hclge_comm_cmd_init_ops(struct hclge_comm_hw *hw,
- 		cmdq->ops.trace_cmd_get = ops->trace_cmd_get;
- 	}
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_cmd_init_ops);
- 
- int hclge_comm_cmd_init(struct hnae3_ae_dev *ae_dev, struct hclge_comm_hw *hw,
- 			u32 *fw_version, bool is_pf,
-@@ -672,3 +678,8 @@ int hclge_comm_cmd_init(struct hnae3_ae_dev *ae_dev, struct hclge_comm_hw *hw,
- 
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_cmd_init);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("HNS3: Hisilicon Ethernet PF/VF Common Library");
-+MODULE_AUTHOR("Huawei Tech. Co., Ltd.");
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_rss.c b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_rss.c
-index b4ae2160aff4..4e2bb6556b1c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_rss.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_rss.c
-@@ -62,6 +62,7 @@ int hclge_comm_rss_init_cfg(struct hnae3_handle *nic,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_rss_init_cfg);
- 
- void hclge_comm_get_rss_tc_info(u16 rss_size, u8 hw_tc_map, u16 *tc_offset,
- 				u16 *tc_valid, u16 *tc_size)
-@@ -78,6 +79,7 @@ void hclge_comm_get_rss_tc_info(u16 rss_size, u8 hw_tc_map, u16 *tc_offset,
- 		tc_offset[i] = (hw_tc_map & BIT(i)) ? rss_size * i : 0;
- 	}
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_get_rss_tc_info);
- 
- int hclge_comm_set_rss_tc_mode(struct hclge_comm_hw *hw, u16 *tc_offset,
- 			       u16 *tc_valid, u16 *tc_size)
-@@ -113,6 +115,7 @@ int hclge_comm_set_rss_tc_mode(struct hclge_comm_hw *hw, u16 *tc_offset,
- 
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_set_rss_tc_mode);
- 
- int hclge_comm_set_rss_hash_key(struct hclge_comm_rss_cfg *rss_cfg,
- 				struct hclge_comm_hw *hw, const u8 *key,
-@@ -143,6 +146,7 @@ int hclge_comm_set_rss_hash_key(struct hclge_comm_rss_cfg *rss_cfg,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_set_rss_hash_key);
- 
- int hclge_comm_set_rss_tuple(struct hnae3_ae_dev *ae_dev,
- 			     struct hclge_comm_hw *hw,
-@@ -185,11 +189,13 @@ int hclge_comm_set_rss_tuple(struct hnae3_ae_dev *ae_dev,
- 	rss_cfg->rss_tuple_sets.ipv6_fragment_en = req->ipv6_fragment_en;
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_set_rss_tuple);
- 
- u32 hclge_comm_get_rss_key_size(struct hnae3_handle *handle)
- {
- 	return HCLGE_COMM_RSS_KEY_SIZE;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_get_rss_key_size);
- 
- int hclge_comm_parse_rss_hfunc(struct hclge_comm_rss_cfg *rss_cfg,
- 			       const u8 hfunc, u8 *hash_algo)
-@@ -217,6 +223,7 @@ void hclge_comm_rss_indir_init_cfg(struct hnae3_ae_dev *ae_dev,
- 	for (i = 0; i < ae_dev->dev_specs.rss_ind_tbl_size; i++)
- 		rss_cfg->rss_indirection_tbl[i] = i % rss_cfg->rss_size;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_rss_indir_init_cfg);
- 
- int hclge_comm_get_rss_tuple(struct hclge_comm_rss_cfg *rss_cfg, int flow_type,
- 			     u8 *tuple_sets)
-@@ -250,6 +257,7 @@ int hclge_comm_get_rss_tuple(struct hclge_comm_rss_cfg *rss_cfg, int flow_type,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_get_rss_tuple);
- 
- static void
- hclge_comm_append_rss_msb_info(struct hclge_comm_rss_ind_tbl_cmd *req,
-@@ -304,6 +312,7 @@ int hclge_comm_set_rss_indir_table(struct hnae3_ae_dev *ae_dev,
- 	}
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_set_rss_indir_table);
- 
- int hclge_comm_set_rss_input_tuple(struct hclge_comm_hw *hw,
- 				   struct hclge_comm_rss_cfg *rss_cfg)
-@@ -332,6 +341,7 @@ int hclge_comm_set_rss_input_tuple(struct hclge_comm_hw *hw,
- 			"failed to configure rss input, ret = %d.\n", ret);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_set_rss_input_tuple);
- 
- void hclge_comm_get_rss_hash_info(struct hclge_comm_rss_cfg *rss_cfg, u8 *key,
- 				  u8 *hfunc)
-@@ -355,6 +365,7 @@ void hclge_comm_get_rss_hash_info(struct hclge_comm_rss_cfg *rss_cfg, u8 *key,
- 	if (key)
- 		memcpy(key, rss_cfg->rss_hash_key, HCLGE_COMM_RSS_KEY_SIZE);
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_get_rss_hash_info);
- 
- void hclge_comm_get_rss_indir_tbl(struct hclge_comm_rss_cfg *rss_cfg,
- 				  u32 *indir, u16 rss_ind_tbl_size)
-@@ -367,6 +378,7 @@ void hclge_comm_get_rss_indir_tbl(struct hclge_comm_rss_cfg *rss_cfg,
- 	for (i = 0; i < rss_ind_tbl_size; i++)
- 		indir[i] = rss_cfg->rss_indirection_tbl[i];
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_get_rss_indir_tbl);
- 
- int hclge_comm_set_rss_algo_key(struct hclge_comm_hw *hw, const u8 hfunc,
- 				const u8 *key)
-@@ -408,6 +420,7 @@ int hclge_comm_set_rss_algo_key(struct hclge_comm_hw *hw, const u8 hfunc,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_set_rss_algo_key);
- 
- static u8 hclge_comm_get_rss_hash_bits(struct ethtool_rxnfc *nfc)
- {
-@@ -502,3 +515,4 @@ u64 hclge_comm_convert_rss_tuple(u8 tuple_sets)
- 
- 	return tuple_data;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_convert_rss_tuple);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
-index 618f66d9586b..2b31188ff555 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
-@@ -26,6 +26,7 @@ u64 *hclge_comm_tqps_get_stats(struct hnae3_handle *handle, u64 *data)
- 
- 	return buff;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_tqps_get_stats);
- 
- int hclge_comm_tqps_get_sset_count(struct hnae3_handle *handle)
- {
-@@ -33,6 +34,7 @@ int hclge_comm_tqps_get_sset_count(struct hnae3_handle *handle)
- 
- 	return kinfo->num_tqps * HCLGE_COMM_QUEUE_PAIR_SIZE;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_tqps_get_sset_count);
- 
- u8 *hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 *data)
- {
-@@ -56,6 +58,7 @@ u8 *hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 *data)
- 
- 	return buff;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_tqps_get_strings);
- 
- int hclge_comm_tqps_update_stats(struct hnae3_handle *handle,
- 				 struct hclge_comm_hw *hw)
-@@ -99,6 +102,7 @@ int hclge_comm_tqps_update_stats(struct hnae3_handle *handle,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_tqps_update_stats);
- 
- void hclge_comm_reset_tqp_stats(struct hnae3_handle *handle)
- {
-@@ -113,3 +117,4 @@ void hclge_comm_reset_tqp_stats(struct hnae3_handle *handle)
- 		memset(&tqp->tqp_stats, 0, sizeof(tqp->tqp_stats));
- 	}
- }
-+EXPORT_SYMBOL_GPL(hclge_comm_reset_tqp_stats);
--- 
-2.39.2
+if NOT_PRESENT during probing:
+  make the attribute invisible.
 
+if any error during runtime (including NOT_PRESENT):
+  return -ENODATA and a FAULT
+
+This should also handle the sporadic NOT_PRESENT failures.
+
+What do you think?
+
+Is there any other feedback to this revision or should I send the next?
+
+
+Thanks,
+Thomas
 
