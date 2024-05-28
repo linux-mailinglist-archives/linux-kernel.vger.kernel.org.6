@@ -1,80 +1,103 @@
-Return-Path: <linux-kernel+bounces-192231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152978D1A5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A078D1A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A931C21BB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1168E1C229FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298BD16C870;
-	Tue, 28 May 2024 11:54:57 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 88EDB4C97
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AC316D32C;
+	Tue, 28 May 2024 11:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELLVpAfZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3596C16D31E;
+	Tue, 28 May 2024 11:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897296; cv=none; b=RS3Ypr4b8TZj2CP96HolLDc7kw14+AKQPZQBfwZA9OUJIqXyTjvte7otPoFAyjq95HRasSRJiH3RR0joyED1YniZEAZB6y8AkjaL73wAxnzu7sbuvH19HiZFP98v5mn2HKjNfgXeRYpbFeAJF8Skv6BqKumG7XbmzQ7sdRAbEA4=
+	t=1716897286; cv=none; b=oRgfjQvY44/yCMo2DTjSlx98TYxwKO41eEYqdMi2rfYZ6QhQ9G/A+qhzQw8/nGLEa0R85RbAxHCpqDyRLSAiGgSzHldRBflo+Isc94Mey9nZik8Q8Zxqti73wcdHm9D98R31EotXHDl+pth9aRlaliGZ0Ikg37MLqsPeK9YwekE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897296; c=relaxed/simple;
-	bh=LAMUPsKyPx2PdNYmlXTdAZ78b607CXWP43w8PfKewtI=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=sokWy+g/rCsFX2zMa0AqoPjwySn0L1Uam3FkfTWNU090lAoMuggS/ZvGhQhPTOe3Fcbfve7h+AE6BDZ59s6b3lVjGta3pQHPty+BlLuQ4qJzJajx/7n3mJ1lE8jZpddCS95qPN4AdKJpVepPh7E0JSe43hy0qnMXH9DhCeKvQ3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [219.141.250.2])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 73DD8604FEB94;
-	Tue, 28 May 2024 19:54:42 +0800 (CST)
-X-MD-Sfrom: zeming@nfschina.com
-X-MD-SrcIP: 219.141.250.2
-From: Li zeming <zeming@nfschina.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	bristot@redhat.com,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	Li zeming <zeming@nfschina.com>
-Subject: [PATCH] sched: core: quota and parent_quota can be uninitialized and assigned values
-Date: Tue, 28 May 2024 19:53:50 +0800
-Message-Id: <20240528115350.1927-1-zeming@nfschina.com>
-X-Mailer: git-send-email 2.18.2
+	s=arc-20240116; t=1716897286; c=relaxed/simple;
+	bh=pLxvFN5xoZsmrrcBMk/UoNtiBh/fqcsPOnfsZ8fmsVQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j5bPNtVT0ooLpPYnPd1sp9F6ZLTOnBOme8GCbfhPWZOiLEHg+kGMhXGyd9PPTYTd1cD8ZMzGYiRqVkSjETJET2H4Kvh7f4SLIP87KYw/SucjydUzB9lHRpqZpB7HVAo1/mkau8WRxujvidd8bnv2K/fBwXm2A7GSStCVHV5E1Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELLVpAfZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10472C32782;
+	Tue, 28 May 2024 11:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716897285;
+	bh=pLxvFN5xoZsmrrcBMk/UoNtiBh/fqcsPOnfsZ8fmsVQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ELLVpAfZw8gnXmQG8/5+WnJJZaVPKFcnFt8bg4L6b0QJiCV2d1C09Xes6bKc4+L+i
+	 OKpLeJi+EWcX02O3ZhjvKp8zOoMJ5BaF5UqlBUK3QNRLxwz7Km0jWNYQ9VkbYr/cEX
+	 6wL2pSm69cruSgtH1mG1kj+A30DM2Cj9FvigAuOeqDwuYhY9PDMJKGIkAj4D7ulbO7
+	 8nu/6OmrjNjNGgLIMmeTn4+cXRpadIl0wNIjI3vzvFURmtikDJndqqd2LH2Yg8IKjl
+	 f99ia8uAjdrjHs2lBneWpWMQFRTJIP5XOuQWUe0UWG86SmtFSf3NFP5tUXYC+MsRuE
+	 oNHv0c9ggE7rA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Fabio Estevam <festevam@denx.de>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: fsl-edma: avoid linking both modules
+Date: Tue, 28 May 2024 13:54:22 +0200
+Message-Id: <20240528115440.2965975-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-quota and parent_quota are first assigned values, so their use is not
-affected.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Li zeming <zeming@nfschina.com>
+Kbuild does not support having a source file compiled multiple times
+and linked into distinct modules, or built-in and modular at the
+same time. For fs-edma, there are two common components that are
+linked into the fsl-edma.ko for Arm and PowerPC, plus the mcf-edma.ko
+module on Coldfire. This violates the rule for compile-testing:
+
+scripts/Makefile.build:236: drivers/dma/Makefile: fsl-edma-common.o is added to multiple modules: fsl-edma mcf-edma
+scripts/Makefile.build:236: drivers/dma/Makefile: fsl-edma-trace.o is added to multiple modules: fsl-edma mcf-edma
+
+I tried splitting out the common parts into a separate modules, but
+that adds back the complexity that a cleanup patch removed, and it
+gets harder with the addition of the tracepoints.
+
+As a minimal workaround, address it at the Kconfig level, by disallowing
+the broken configurations.
+
+Link: https://lore.kernel.org/lkml/20240110232255.1099757-1-arnd@kernel.org/
+Fixes: 66aac8ea0a6c ("dmaengine: fsl-edma: clean up EXPORT_SYMBOL_GPL in fsl-edma-common.c")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/sched/core.c | 2 +-
+ drivers/dma/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 140e6373fce2..faa5dcffd2b7 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -11039,7 +11039,7 @@ static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
- {
- 	struct cfs_schedulable_data *d = data;
- 	struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
--	s64 quota = 0, parent_quota = -1;
-+	s64 quota, parent_quota;
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index 965fa49668ff..b3873d01a2ab 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -394,7 +394,7 @@ config LS2X_APB_DMA
  
- 	if (!tg->parent) {
- 		quota = RUNTIME_INF;
+ config MCF_EDMA
+ 	tristate "Freescale eDMA engine support, ColdFire mcf5441x SoCs"
+-	depends on M5441x || COMPILE_TEST
++	depends on M5441x || (COMPILE_TEST && FSL_EDMA=n)
+ 	select DMA_ENGINE
+ 	select DMA_VIRTUAL_CHANNELS
+ 	help
 -- 
-2.18.2
+2.39.2
 
 
