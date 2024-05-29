@@ -1,134 +1,146 @@
-Return-Path: <linux-kernel+bounces-193942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3398D344F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 330238D3447
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D1828456B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B22D42844B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E181017F372;
-	Wed, 29 May 2024 10:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D60317B51E;
+	Wed, 29 May 2024 10:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GPEAHGEk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gt7pDulx"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E556D17DE0D;
-	Wed, 29 May 2024 10:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7ED16936C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977767; cv=none; b=WKCqse0dUm0gGB3dlEzCsMEYy/8PkadIv0O99x5xh7t5qxt9Vcb/XA25Sp+pVGhvH5FreWKbrMjeAlKIZVtwvibrG3Gp0j7xh54GnczJtEEi8j5Qptuy+XvuyVT9iQhZoTNoe0YM5EjKhj9/AU7JnRw5OCQbdUFZKCg2FE0vlTo=
+	t=1716977763; cv=none; b=srAXpJwuakgHRejYSh2cyM3DchxLVg98pldxyHWtBaYFh4MoGkLX/ostkuyG0Y283gRrEeOTWRbRnw3dGcSZdq66f6Fw24DOYWJQ3BLDDTXNcSaVQN5+Xoo+zxOoRkXCip0aNXU8m/py7LTCwY6F0w0l9n2Sdyd6Go0moD58tdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977767; c=relaxed/simple;
-	bh=ntFqdUqKYxrTsbJa0FBoNHdPGh4ACO9fJkViEO4r+H4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sojKq5E3M1g0W1n5NlvKvFcIaOHbaOVyNlw1t5YjOqWi4XjpU1D7qybs4a/625FC4fdqnTHI/RI37s1rgU3OGpCfyoXnCMgnKgBNDAWavywGwA++Hyl8IcRSI/18GTW28zPNl6oLmEh6siWkYMeetbzMQsPviBUbBJ6QzD8pR7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GPEAHGEk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T7MJwh015693;
-	Wed, 29 May 2024 10:16:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BhMsfyU8vMZm7///E/US7eaO4Di6fkE66UjnUDfXHPo=; b=GPEAHGEkiv4cSCtq
-	yrfeRZlIIdi0rQFJZUieabogduw764G/f/szmYeEMUHKwjPnJiRkyGTJ2Eki5/gF
-	a10rILs5THkjHX3FbsrFsD1HzSJ5m984066QZsJanQcfOQBhaZwQh5EBwAWFSr+B
-	qPmT1h8RJY0ZR2NRD/bUPXSBmi2/zCKNiRTgNWDDN6TOZzZk0og2xdsdYn1N2MbE
-	hxg8368OaIaeM/5TKxNHzNMrZXYMy4NSB+I+B3Cv0jHIm+NHAsaFVK8QL0xARmp4
-	qLqHdBjNnGRyBOCBktLYV28wHGoukaPjefz6K7mRvh6+z1E3y9UWgVFzqk60y648
-	7QS5Og==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws0b8f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 10:16:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TAG2YN009809
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 10:16:02 GMT
-Received: from tengfan-gv.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 29 May 2024 03:15:58 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>
-Subject: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add llcc support for the SA8775p platform
-Date: Wed, 29 May 2024 18:15:34 +0800
-Message-ID: <20240529101534.3166507-4-quic_tengfan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240529101534.3166507-1-quic_tengfan@quicinc.com>
-References: <20240529101534.3166507-1-quic_tengfan@quicinc.com>
+	s=arc-20240116; t=1716977763; c=relaxed/simple;
+	bh=IoSfn57HZC0NC4WiSWUxGPzk+tktpN7HgZ6fjrSfHt4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7ZUtHamHQTfowYKmNX8hBg/umzrIw0YPUb+09LfeRvGsnOTgkeOrRZTkoHc+hQR5i1ylNWK4wqDpaMqKXn6++mC8CksbazXIwgb7bmjDBRS5mP2HcXqLb/Iuxx47gGRL8Rrjd+esQ1J85hQrFBZFbfd1rWSF4jcwRN5tV6Hnyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gt7pDulx; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4211a86f124so15854475e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716977760; x=1717582560; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4x27AVMz0iSl17rfIwR6hT5YsDwoPYx2gnD792TvxbI=;
+        b=gt7pDulxBf+sjVdunUngxN1VATgCMN6RDpJScvCkP0r8v9TdtEZSrH06+nDab80GK5
+         wDmcG0pk+bUMmRQeM8V+fKJn4Mc2cvDa8L4aQA1J9ywlyKH1PS0rsm79eykKmdJ27TOE
+         9EYKQxdGq8/WLowI96lXrpKid8mCs2rQUKshKZPLrmwEV2XPNoa7qg/vUHeUmo6w6t8K
+         D6kL6KYofJdr9CW982aCCa3F+Hj2AkucwmGoUgyWipQkivWbnPMjSrekj/ev53MVJxt0
+         nGV68osHK3v3hRUto4geEs6tcO/QLMfga4oghIVe79Igm3agaX2F5CajAXQPsVCICY8a
+         pv7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716977760; x=1717582560;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4x27AVMz0iSl17rfIwR6hT5YsDwoPYx2gnD792TvxbI=;
+        b=GFPF73at831U1LhoGCb/NLd+6dGP0FQA2LQX8Rmi2n+5wIpfomp1u0eU6ishQnilpe
+         PBsHGIuAKqP92k+tU4GrE2Z/EbfVS4SphzwQ06fjVm5bf3oZu7mgb2hOtNiKEXfTAbLJ
+         l5+TtvwtU12D+WOAkZ2N3D9T0v7oioocxf4l8jWFMfPo4M+yuBDCyqsy7KG7jA38rwrk
+         QsTJM/YGXQbbsqyzDtRKhEBE7o0u1qysFztREhZRxsgB+QuK4hn+MhLZ+gHwSHBMUci4
+         VeiV6xjgYUxRRhokI1il137PkQIk2a62d5BiY3IaVofOwF10M254hqpxrOblmyk9d/eP
+         hBAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnKkEiMZQ3yFOy6oGui5O5GCRLyfFyJUwA4asyXQXYl7PglRy4d9NNmXQwEmImXRCBsVYpWk7NwqpF3J/wnuJVCdpL+DQjd52Ab8Ql
+X-Gm-Message-State: AOJu0YwL6dMkQGi5Eb7g4Iw3ZiHab6fNC3JMofdpvkeWqp1Cf69vruLg
+	fRVL+bu3rUhzWvO9nKxP2TOgKTgSGsOflQqjuj/d7E2ZK4pwITG5CFAxTFsF1HI=
+X-Google-Smtp-Source: AGHT+IHqM8vBSZQLQX11IaWlIhjemGFoCG5dMTyPcAeygvinoSDY4HDbiRu9hgo9s7sf/V/iTTF9Zw==
+X-Received: by 2002:a7b:cb16:0:b0:418:e04b:ee63 with SMTP id 5b1f17b1804b1-42108a21421mr117679005e9.36.1716977759946;
+        Wed, 29 May 2024 03:15:59 -0700 (PDT)
+Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4211e43e8easm54635895e9.16.2024.05.29.03.15.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 03:15:59 -0700 (PDT)
+From: Oscar Salvador <osalvador@suse.com>
+X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
+Date: Wed, 29 May 2024 12:15:57 +0200
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Oscar Salvador <osalvador@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v4 12/16] powerpc/e500: Encode hugepage size in PTE
+ bits
+Message-ID: <ZlcAXTMBSMt69ulX@localhost.localdomain>
+References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
+ <10eae3c6815e3aba5f624af92321948e4684c95a.1716815901.git.christophe.leroy@csgroup.eu>
+ <Zlbh5Bwsx7WqEEWr@localhost.localdomain>
+ <3cf95f5e-cc8b-4417-a3fa-80dc3b24ac63@csgroup.eu>
+ <Zlb-9DNmRzIYRdJO@localhost.localdomain>
+ <3186e950-fbf8-42c4-9eed-9564c8374019@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8mtf1OTOl348ZABD3ykoLeA59CQxeG-L
-X-Proofpoint-GUID: 8mtf1OTOl348ZABD3ykoLeA59CQxeG-L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_06,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=604
- priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405290068
+In-Reply-To: <3186e950-fbf8-42c4-9eed-9564c8374019@csgroup.eu>
 
-Add llcc support for the SA8775p platform.
+On Wed, May 29, 2024 at 10:14:15AM +0000, Christophe Leroy wrote:
+> 
+> 
+> Le 29/05/2024 à 12:09, Oscar Salvador a écrit :
+> > On Wed, May 29, 2024 at 09:49:48AM +0000, Christophe Leroy wrote:
+> >> Doesn't really matter if it's PUD or PMD at this point. On a 32 bits
+> >> kernel it will be all PMD while on a 64 bits kernel it is both PMD and PUD.
+> >>
+> >> At the time being (as implemented with hugepd), Linux support 4M, 16M,
+> >> 64M, 256M and 1G (Shifts 22, 24, 26, 28, 30)
+> >>
+> >> The hardware supports the following page sizes, and encodes them on 4
+> >> bits allthough it is not directly a shift. Maybe it would be better to
+> >> use that encoding after all:
+> > 
+> > I think so.
+> > 
+> >>
+> >> 0001 4 Kbytes (Shift 12)
+> >> 0010 16 Kbytes (Shift 14)
+> >> 0011 64 Kbytes (Shift 16)
+> >> 0100 256 Kbytes (Shift 18)
+> >> 0101 1 Mbyte (Shift 20)
+> >> 0110 4 Mbytes (Shift 22)
+> >> 0111 16 Mbytes (Shift 24)
+> >> 1000 64 Mbytes (Shift 26)
+> >> 1001 256 Mbytes (Shift 28)
+> >> 1010 1 Gbyte (e500v2 only) (Shift 30)
+> >> 1011 4 Gbytes (e500v2 only) (Shift 32)
+> > 
+> > You say hugehages start at 2MB (shift 21), but you say that the smallest hugepage
+> > Linux support is 4MB (shift 22).?
+> > 
+> > 
+> 
+> No I say PMD_SIZE is 2MB on e500 with 64 bits PTE and at the time being 
+> Linux powerpc implementation for e500 supports sizes 4M, 16M, 64M, 256M 
+> and 1G.
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Got it. I got confused.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 5632fa896b93..8f910ab113f5 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -2885,6 +2885,25 @@ serdes1: phy@8902000 {
- 			status = "disabled";
- 		};
- 
-+		llcc: system-cache-controller@9200000 {
-+			compatible = "qcom,sa8775p-llcc";
-+			reg = <0x0 0x09200000 0x0 0x80000>,
-+			      <0x0 0x09300000 0x0 0x80000>,
-+			      <0x0 0x09400000 0x0 0x80000>,
-+			      <0x0 0x09500000 0x0 0x80000>,
-+			      <0x0 0x09600000 0x0 0x80000>,
-+			      <0x0 0x09700000 0x0 0x80000>,
-+			      <0x0 0x09a00000 0x0 0x80000>;
-+			reg-names = "llcc0_base",
-+				    "llcc1_base",
-+				    "llcc2_base",
-+				    "llcc3_base",
-+				    "llcc4_base",
-+				    "llcc5_base",
-+				    "llcc_broadcast_base";
-+			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sa8775p-pdc", "qcom,pdc";
- 			reg = <0x0 0x0b220000 0x0 0x30000>,
+
 -- 
-2.25.1
-
+Oscar Salvador
+SUSE Labs
 
