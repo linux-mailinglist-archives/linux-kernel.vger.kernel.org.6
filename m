@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-193854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B3D8D3330
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:38:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8094F8D332E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 605481F263DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17971C23CEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2641116E865;
-	Wed, 29 May 2024 09:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YR56hVG+"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBF516A381;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CC816A362;
 	Wed, 29 May 2024 09:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mecka.net header.i=@mecka.net header.b="nnHXk6+4"
+Received: from mecka.net (mecka.net [159.69.159.214])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B42E33CFC;
+	Wed, 29 May 2024 09:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.159.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716975500; cv=none; b=Ou1i3bWq6G6+arSHYuVebTB4tlRPxmuj6RKgvWHmEEHKysHFwwyjPUZMyf3DFhTB3iLo3pc+YRv2SfwS4v3hKPMzwQuvwkYP5gv2nbqNWIqnxM+wEPNlClkpyy27NSTnSaqhcdjDve4n0GV4t995mVDiDpoQNuzt/hlhPgow/94=
+	t=1716975497; cv=none; b=ibWB22FqfxNAvyUhe4PlqfONHkt5Ogmv9u1A5Eg1e6AusZnkqSt2EtS87D0/KLEl/zIZnLNY4LhvWiIJjOdGUkVZtXkh1XRnDbSyNF3UG6YNIQ0gM+71yoAMB3d99E+sx6v7SR4T5g2Ei8b68HMIMUXyIjub1rjbwjd+ZPeNNiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716975500; c=relaxed/simple;
-	bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ctky4x/bZQD0GtdVXkDs410Jiccc7OtcIaKp+2rDszebLjQjtqAzNJMt2L6ZRPgxAUDCwHfVc5sEjI4GXVfzhhFKgmkSAizzMx+UjbJ7zpqygJB9soFt7PLi9qAUcGIvefWfSaDoKPblbegH2XNBsrpLYufGhaetwAEcS5TYn5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YR56hVG+; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e6f51f9de4so25522911fa.3;
-        Wed, 29 May 2024 02:38:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716975497; x=1717580297; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
-        b=YR56hVG+45U8zxvkuLUwK+wkrRHivvK1jlcj0kZfzXP2DqzPpRhPgPVTI9x9q9hjRA
-         bTrocIfEzO6ZA191VcWAU4KJXZQroSqAuOqj39TIveN0CYrwhiml/1twtnJ9MSXVt8W2
-         uWjE/ppy1nJ0/XIS6L4KMnMAp2aBRi1MjKVyW8kgESOhuuY0Ca7c+lt9R0ww0zb2YgIo
-         FVmINdYwiqQ2kE2+6Xejey+2r9rUbZY9bASlB+/wcgoSi+j1sKR2RSp4hoiGWbe+u127
-         Gv7OmU8OCNU384w/cTm6+r4PLlYr8VI62j713Vkf8X8qGSdWRIVZrLKENXLf335z7EzX
-         aSKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716975497; x=1717580297;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
-        b=fEnxUtRs5MBMFz35UVNi4dMh7ASKhFQuPpqvQu4rXabgZJxvXWLlcBNUNWqyGWN2UI
-         0xVYv2OkQOC88A5JndyG7nqdmlsSdGTVKs5zUVc8UOVtvdwwwZzw4TheFpaTpBCPV0wX
-         2oqarbm3OBGBS1gLFiluXgCuyAQIKLQD4Yhs5TBKEL40rFN7nhVi41T5E22GGdh7BTqk
-         Ua2/Z7Zj25Odgz6C9CtRie7z4+q0elTwtitpkXAMsqKBJAJwS5So8T7HRGAsetDoIhNV
-         GIEdQ8YsTqXf/B6JPEciTYRac65+Xdz7QDkxQrU5LJZ/eCvW6W5eK2WO29AYEMbsptJq
-         NsYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZXmBpLSsLKWbSfIwqhJrneoS8uL+1FmPdG6oNisbQl1tli96Jo+UPCDIB9sq2w+jq1h1G9+l6+6CWIRAeP/Wp6p8QEQGGyW3NrihQve1fTSKxmSKUtDWZr+KW8Hs9rQgB/4U/qO1JVeQqLbk7ayzqD/CP
-X-Gm-Message-State: AOJu0YxftKEe4ULDTFO1ncV2amwVuOGoXJO/G1+akGnM65Hy5wCrgxL7
-	Vh96At4+rRE66kS6KzSFyvAl0RiH9WzTxoISpjrDtQ1xtNDcaNTOAy7562aqB9C7GsTtR7q2+cf
-	z01sO4+BrvJUz2kbF5ERJIMHOLXc=
-X-Google-Smtp-Source: AGHT+IGmab8FsMOO1Mi1C3BhAPxA07HolrdLa1W444dOo1v7T4E8Z9DRX4WhskR3J6/tv+9ZXdM+1wnNxU/f8/8kKLQ=
-X-Received: by 2002:a05:6512:3e19:b0:529:b718:8d00 with SMTP id
- 2adb3069b0e04-529b7188dc4mr5909595e87.8.1716975496547; Wed, 29 May 2024
- 02:38:16 -0700 (PDT)
+	s=arc-20240116; t=1716975497; c=relaxed/simple;
+	bh=t+NQR7JOcisqSyTIuHhXwptMXLRRcGVKKGvUmnuaQ3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7ANcDfFImX1Sa5FKs13GJMzfxDssDGrpUlrbv1ILr/KCMd2DPqEfJIXnBoMuc9XcRJRjmnOiEJv8+yj0mDTTAGARKZQdkIJiiQyySih6bkMStFL9kIBZnLxuyDtPeQRFkq/cFlCrp4QHScqSZF7OqYXxwv8UTk7Y8bH3rXqFBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net; spf=none smtp.mailfrom=manut.de; dkim=fail (0-bit key) header.d=mecka.net header.i=@mecka.net header.b=nnHXk6+4 reason="key not found in DNS"; arc=none smtp.client-ip=159.69.159.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=manut.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mecka.net; s=2016.11;
+	t=1716975486; bh=t+NQR7JOcisqSyTIuHhXwptMXLRRcGVKKGvUmnuaQ3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nnHXk6+4jIfPypE13CpuQyuw5ZPGU7X9fw4pi7s3T40N3XMIHGCTSzseD2yT0pXyc
+	 l54m3gG9GGIDTttXaFKWomH1jCFkfE3N1L1p93+HJPPdZcHP/vLv8lOvfXVikt9iUi
+	 KDX/VMZ0uhvICNpm+Dq5pAkmwG3PwRdTitFF9aIEKKFJoShxLbsDw8tIarY+Bxp2m6
+	 vtW1fc53KZlGnhOGH2GbSszYAb1tgNGVocGsy/Qrula++sTb1rBWe8HXPyIiFjCwTK
+	 +iLMMn/S7RH7nnmJmWB3vNDo0gvYKOaG6ZVTiAwN6Vq+uCGJmeiZLxxlluac+O0Dq5
+	 c2ArOze6Nr+Qw==
+Received: by mecka.net (Postfix, from userid 1000)
+	id B31E250B258; Wed, 29 May 2024 11:38:06 +0200 (CEST)
+Date: Wed, 29 May 2024 11:38:06 +0200
+From: Manuel Traut <manut@mecka.net>
+To: Mikko Rapeli <mikko.rapeli@linaro.org>
+Cc: Sumit Garg <sumit.garg@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org,
+	Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v7 4/4] optee: probe RPMB device using RPMB subsystem
+Message-ID: <Zlb3fuqvQIO9ghQX@manut.de>
+References: <20240527121340.3931987-1-jens.wiklander@linaro.org>
+ <20240527121340.3931987-5-jens.wiklander@linaro.org>
+ <fc3bfebb-78b7-428e-8da5-5221f4921faa@linaro.org>
+ <CAHUa44G0bcK55RxNrN5sXiicBZ-BJtA46KpedfBdUSKsN8eUOA@mail.gmail.com>
+ <ZlWkSCCjJ2fbE2ML@nuoska>
+ <CAFA6WYOT52fdqgGvDYE91DQ_4MUbAv_1Gnn2fTyMNhrj_Agu=w@mail.gmail.com>
+ <ZlbUwI0G3HGvioNm@nuoska>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com> <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
- <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com> <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
- <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com> <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
- <5c94947b-1f1f-44a7-8b9c-b701c78350b4@canonical.com> <CAGudoHFxma+H_iHPV8+gfEkHc0uwFD8=rJtFy7ZE3TH+7tGiwQ@mail.gmail.com>
- <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
-In-Reply-To: <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 29 May 2024 11:38:04 +0200
-Message-ID: <CAGudoHGqvAuAYnc75xRhSMYfxRbgpQuCYnxUWiCXJM8YtGJxjQ@mail.gmail.com>
-Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
- and potential solutions
-To: John Johansen <john.johansen@canonical.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	"Shukla, Santosh" <Santosh.Shukla@amd.com>, "Narayan, Ananth" <Ananth.Narayan@amd.com>, 
-	raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com, 
-	paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZlbUwI0G3HGvioNm@nuoska>
 
-On Wed, May 29, 2024 at 2:37=E2=80=AFAM John Johansen
-<john.johansen@canonical.com> wrote:
-> I don't have objections to moving towards percpu refcounts, but the overh=
-ead
-> of a percpu stuct per label is a problem when we have thousands of labels
-> on the system. That is to say, this would have to be a config option. We
-> moved buffers from kmalloc to percpu to reduce memory overhead to reduce
-> contention. The to percpu, to a global pool because the percpu overhead w=
-as
-> too high for some machines, and then from a global pool to a hybrid schem=
-e
-> because of global lock contention. I don't see a way of doing that with t=
-he
-> label, which means a config would be the next best thing.
->
+Hi Mikko,
 
-There was a patchset somewhere which adds counters starting as atomic
-and automagically converting themselves per-cpu if there as enough
-load applied to them. General point being it is plausible this may
-autotune itself.
+On 10:09 Wed 29 May     , Mikko Rapeli wrote:
+> On Wed, May 29, 2024 at 10:56:04AM +0530, Sumit Garg wrote:
+> > On Tue, 28 May 2024 at 15:00, Mikko Rapeli <mikko.rapeli@linaro.org> wrote:
+> > > On Mon, May 27, 2024 at 03:24:01PM +0200, Jens Wiklander wrote:
+> > > > On Mon, May 27, 2024 at 3:00 PM Jerome Forissier
+> > > > <jerome.forissier@linaro.org> wrote:
+> > > > > On 5/27/24 14:13, Jens Wiklander wrote:
+> > > Outside of these patches, I think the optee RPC setup with fTPM TA is one area which
+> > > currently requires tee-supplicant to be started. Detecting the existence of TPM before
+> > > kernel drivers are loaded is possible via the exported EFI logs from firmware to kernel
+> > > or ACPI TPM2 table entry, and detecting optee and thus starting tee-supplicant in userspace too.
+> > 
+> > One thing I am trying to find an answer about is why do we need to
+> > defer tee-supplicant launch if it's bundled into initrd? Once you
+> > detect OP-TEE then tee-supplicant should be launched unconditionally.
+> > As per your example below, the motivation here seems to be the TPM2
+> > device dependent on RPMB backend but what if other future systemd
+> > services come up and depend on other services offered by
+> > tee-supplicant?
+> 
+> There is an annoying depedency between firmware side optee and TAs, and kernel optee driver,
+> tee-supplicant in userspace and kernel TA drivers like fTPM.
+> 
+> Kernel fTPM driver and fTPM TA require tee-supplicant in userspace for RPMB, RPC etc.
+> 
+> This patch series is adding kernel side support for RPMB handling so that the dependency to
+> tee-supplicant in userspace can be removed. For fTPM use case, there is still the optee RPC
+> buffer setup which currently requires tee-supplicant in userspace or fTPM TA will panic.
+> 
+> So yes, currently, tee-supplicant must be started. But it would be great if kernel drivers
+> and firmware optee trusted applications would not depend on tee-supplicant running in userspace.
+> The startup sequence is really tricky to get right. My fTPM use case is using the TPM device
+> to encrypt rootfs and thus all SW components including tee-supplicant need to run early in
+> initramfs. Currently also switch from initramfs to main rootfs requires unloading
+> fTPM kernel driver and stopping tee-supplicant in initrd, and then starting tee-supplicant
+> and loading fTPM kernel driver from main rootfs. udev and automatic module loading for
+> fTPM can not be used due to the tee-supplicant userspace dependency.
 
-Another option would be a boot-time tunable.
+I decided to build fTPM as buildin-TA into OP-TEE. RPMB routing is already
+implemented in u-boot so it can already write PCR registers.
 
-> Not part of your patch but something to be considered is that the label t=
-ree
-> needs a rework, its locking needs to move to read side a read side lock l=
-ess
-> scheme, and the plan was to make it also use a linked list such that new
-> labels are always queued at the end, allowing dynamically created labels =
-to
-> be lazily added to the tree.
->
+With this series and the required changes in OP-TEE and a compiled in fTPM
+kernel driver and systemd v256 it is possible to use the fTPM in the initrd
+without tee-supplicant.
 
-It's not *my* patchset. ;)
-
-> I see the use of the kworker as problematic as well, especially if we are
-> talking using kconfig to switch reference counting modes. I am futzing wi=
-th
-> some ideas, on how to deal with this.
->
-
-Thanks for the update. Hopefully this is going to get sorted out in
-the foreseeable future.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Maybe this information is helpful to you, regards
+Manuel
 
