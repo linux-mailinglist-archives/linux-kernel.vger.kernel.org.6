@@ -1,141 +1,120 @@
-Return-Path: <linux-kernel+bounces-194684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BEDC8D3FF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F148D3FF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FFA71C215C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27301C21CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9321C8FCE;
-	Wed, 29 May 2024 20:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7D61C8FCB;
+	Wed, 29 May 2024 21:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ajLQpywN"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="eRsJUGMb"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8DB184125
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40AF15CD6E;
+	Wed, 29 May 2024 21:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717016398; cv=none; b=p2LXf07DghRxA/RSRhIJLV9/ZQuJZc3HNgNmS5ZnlIw4BXzeygvdNHxBpHTph09GguQEgILPTbzmPfBCnNu8WoTfDRG3itLQChvpkvre4t7qNmn7CK17i5sgHrGdKQ8GBG++rDbedu6/Q1Nc8iZnuR3NPBKAnlwupOg05OJdl4w=
+	t=1717016408; cv=none; b=Rlyh7dXB6LHJ7Ez1SR0dOCUmAcQbkaJ7lQPxNN3wvu1PYo5q7T+bMXK3nVwt6tbhRytco76zR5uZqPdl7YOKAtevWaOxY34tIls5GVxLFvKZsM/xsTtqrOy1sQtsX4UggBO39akvx611Y4/Oc5MTTbKZsf8e1yAjXC/DVcJS1pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717016398; c=relaxed/simple;
-	bh=0JIEoFJ3JrSuAxA+52iofxCdH9Ed8ss6mxR9tqmYJzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZwkYQVUaHyrnWdZcEkpd2bwtfxvn8jk7U+wCf3Ug0hbSltcR5i2vuMZWhCnKrAvCy3kt6Uw81qb45FQm8cWyN9X+7cQez7hOy92i1+D8awkSqCLwLqX/EWIfB9FsbAbQZwELEdoD9K7xkGodDs3j1R/iIAChJtfVssfXm+cx+7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ajLQpywN; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f8ef894ecdso138824a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:59:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717016396; x=1717621196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xcrwlkn4PrmA7KBIZPAmKm202+tU7DhEeT3No0NEPIQ=;
-        b=ajLQpywNx4mBdSL/A2qg8MNLiT2shdinHllQOOjGtOJqmhnfgrfMO2ypF8Ux7HklyU
-         9kVUyp5tSCYssmT2JWSl0GxXMfZT5T6c1jHFIM1ucyhydbbalnnA+/NWSOtN9bkK7pEu
-         Qd7Z3dgVMbm2SURteI1Oxm7U03kGOB5hZxSqV1MAu0G+QFcvWyFVmCJ7ZzoRX9totJwu
-         07AhoYSGV15yG7D+kHvdhOuF5vAXhvKjZtmw/lnv22qIUHWJSRbhpJ0LcP1GTnFzhVFs
-         ZUaYb5FiNyErwL1buBbetavGZ1e0RywVxlJZJ8+6WHxFFOI1EUQL0Fs9tDq6ysg/kmDV
-         8cfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717016396; x=1717621196;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xcrwlkn4PrmA7KBIZPAmKm202+tU7DhEeT3No0NEPIQ=;
-        b=Bgk5iWTqQtWq6lPLIGx4FCRg8bYRSkmAoWvLt8ws0D4Y07k9UMP7krnl8X4KDBzoy+
-         JshgtkNC4f22RtW5jylJy+yCBjZp68eOlL5JalWacKyLRqWRXcnbdrA4eShbgLt3gjOD
-         R9Oz0uL0v/UqhlWSw1glqJ4HNjtgVL9dsv5JNsMb5hGHEb8+7mfePTop+TDpr2rvbUYl
-         eGcOdjOoTV/wVNYcHu5q48lo0mYyPQ5kPlTn91yBHjCpt7ibLotgUGs5dVb9JPIVLwcr
-         odBIjd2wZqhHTam3d8hPd92WtTwXYFElIAB9y1VHPMfJKK0QbRl5kGFALiaKJ+/U27E0
-         MZ8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXjn9WFijU75OJ7ua0HrxJyUg8U8g3DKduHYzEZ3iMQyUnCP0nrKpWvR8iT3DPYiCC5p3317WfG+k2csTbqnVNYnG9ndFZoTf8bsR84
-X-Gm-Message-State: AOJu0YyVkWJvqAq4yjOI7zV0B+5K0OPzi1qfQPOgjIVDTd3bmUWr5XSS
-	h+psDppSacrcAFbNXc3yEWDe8q/WdATa0ixoTQUiUohodg9hc/Sg+FZRxxql9MM=
-X-Google-Smtp-Source: AGHT+IFBe7dCkzsKuMo5AAfMZUrEPkQh+gWfbh9oGlUyCfIVM90LaPstgFxX6kYR1L/UseeB6AGkLg==
-X-Received: by 2002:a05:6830:4490:b0:6f0:47a2:c1ab with SMTP id 46e09a7af769-6f90aeaf329mr354404a34.16.1717016395753;
-        Wed, 29 May 2024 13:59:55 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f8d11ea076sm2413525a34.58.2024.05.29.13.59.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 13:59:55 -0700 (PDT)
-Message-ID: <30192c2a-5275-41ac-bc20-aa5f436846a3@baylibre.com>
-Date: Wed, 29 May 2024 15:59:54 -0500
+	s=arc-20240116; t=1717016408; c=relaxed/simple;
+	bh=eNNu5XdpkvCFa20sCFUB9zKU8BX11Z4YPBrkRE81bHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FTOGrjfXnA/PSVAcwJv1u+9bunhgLH/i/mn4S3Xj15Y65nHv9tu5Il0KlfY46+4ZQ+CVCMQt0OhZ1ZHmDACjxzZ/CZb/2mz6Fgzr3+O+EH5KCMHHrtrEWbrPw7BeGQA+1Ijp7GvZRPJfOiapo/Z7ERfWu3Nnz/VAtqPdg65Uc2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=eRsJUGMb; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=W4kjSM7663Qh7W4j002fmS4x2G6ciJUJNdGP1nbcIx0=; b=eRsJUGMbSFbdyC0B
+	Q5yn7MxZqZr+FclseZF9ulu/D7GwyCPsvfx7MDf1PWc0ujh9mPFiU30Sbf1qU7wl+gLLdSiJB3PG2
+	k/yyWEIJX9zqGztxMJgCpBzOkFwgDecLv9PhS/kpemfOBNF/5sxi5uwL2atiDQeXwC81DjWMTMarz
+	Kc87u//MJNHJXPtg+6MlHxxCb86lIqFqTEHppZlKn24bqkdev0RkvaE3It61pXaK7BPxy+G8e2Yx5
+	3BtVzLzzZu2D89TtimefAvDAz2xe46y0ipdS0bC3u+GN7PEP9mkZrni9EniolejPRm+YMYXuvQT80
+	UTlPzUDVWIcrz0RP+w==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sCQOw-003GJd-2z;
+	Wed, 29 May 2024 21:00:03 +0000
+From: linux@treblig.org
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] usb: host: oxu210hp: remove unused struct 'ehci_dbg_port'
+Date: Wed, 29 May 2024 22:00:02 +0100
+Message-ID: <20240529210002.106369-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] iio: adc: ad7173: Add support for AD411x devices
-To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>, dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
- <20240527-ad4111-v3-5-7e9eddbbd3eb@analog.com>
- <6f18184de4a37993baedc15b44ecf0a6834a24d1.camel@gmail.com>
- <917bc1d9-fbdc-4ca2-a156-813b57c8201e@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <917bc1d9-fbdc-4ca2-a156-813b57c8201e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 5/29/24 9:03 AM, Ceclan, Dumitru wrote:
-> On 29/05/2024 15:46, Nuno Sá wrote:
->> On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
->>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> 
-> ...
-> 
->>>  static const struct ad7173_device_info ad7173_device_info[] = {
->>> +	[ID_AD4111] = {
->>> +		.name = "ad4111",
->>> +		.id = AD7173_AD4111_AD4112_AD4114_ID,
->>> +		.num_voltage_inputs_with_divider = 8,
->>> +		.num_channels = 16,
->>> +		.num_configs = 8,
->>> +		.num_voltage_inputs = 8,
->>> +		.num_gpios = 2,
->>> +		.higher_gpio_bits = true,
->>> +		.has_temp = true,
->>> +		.has_vcom_input = true,
->>> +		.has_input_buf = true,
->>> +		.has_current_inputs = true,
->>> +		.has_int_ref = true,
->>> +		.clock = 2 * HZ_PER_MHZ,
->>> +		.sinc5_data_rates = ad7173_sinc5_data_rates,
->>> +		.num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
->>> +	},
->>
->> At some point it would be nice to drop the ad7173_device_info array...
->>
-> What are good alternatives to this?
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Drivers like ad7091r8 have individual static struct ad7091r_init_info
-instead of putting them all in an array. I like doing it that
-way because it makes less code to read compared to having the
-array.
+'ehci_dbg_port' is unused in oxu210hp-hcd.c since it's original
+commit b92a78e582b1 ("usb host: Oxford OXU210HP HCD driver.")
+when it was in a separate header.
 
-It would let us get rid of enum ad7173_ids, have one level less
-indent on each static const struct ad7173_device_info and 
+Remove it.
 
-{ .compatible = "adi,ad7172-2", .data = &ad7173_device_info },
+Note, that this structure, and some others in the driver
+are mostly clones of include/linux/usb/ehci_def.h.
+Someone with the hardware to be able to test it might
+be able to remove a lot more structs as well and just
+use that header.
 
-would now fit on one line since we no longer need the array
-index.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/usb/host/oxu210hp-hcd.c | 25 -------------------------
+ 1 file changed, 25 deletions(-)
+
+diff --git a/drivers/usb/host/oxu210hp-hcd.c b/drivers/usb/host/oxu210hp-hcd.c
+index d467472f9d3c..3f871fe62b90 100644
+--- a/drivers/usb/host/oxu210hp-hcd.c
++++ b/drivers/usb/host/oxu210hp-hcd.c
+@@ -196,31 +196,6 @@ struct ehci_regs {
+ #define PORT_RWC_BITS   (PORT_CSC | PORT_PEC | PORT_OCC)
+ } __packed;
+ 
+-/* Appendix C, Debug port ... intended for use with special "debug devices"
+- * that can help if there's no serial console.  (nonstandard enumeration.)
+- */
+-struct ehci_dbg_port {
+-	u32	control;
+-#define DBGP_OWNER	(1<<30)
+-#define DBGP_ENABLED	(1<<28)
+-#define DBGP_DONE	(1<<16)
+-#define DBGP_INUSE	(1<<10)
+-#define DBGP_ERRCODE(x)	(((x)>>7)&0x07)
+-#	define DBGP_ERR_BAD	1
+-#	define DBGP_ERR_SIGNAL	2
+-#define DBGP_ERROR	(1<<6)
+-#define DBGP_GO		(1<<5)
+-#define DBGP_OUT	(1<<4)
+-#define DBGP_LEN(x)	(((x)>>0)&0x0f)
+-	u32	pids;
+-#define DBGP_PID_GET(x)		(((x)>>16)&0xff)
+-#define DBGP_PID_SET(data, tok)	(((data)<<8)|(tok))
+-	u32	data03;
+-	u32	data47;
+-	u32	address;
+-#define DBGP_EPADDR(dev, ep)	(((dev)<<8)|(ep))
+-} __packed;
+-
+ #define	QTD_NEXT(dma)	cpu_to_le32((u32)dma)
+ 
+ /*
+-- 
+2.45.1
 
 
