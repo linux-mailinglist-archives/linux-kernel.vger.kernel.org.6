@@ -1,229 +1,384 @@
-Return-Path: <linux-kernel+bounces-194699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562388D402B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2378D4035
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21C21F240AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:15:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100871F25201
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923D31C68B0;
-	Wed, 29 May 2024 21:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EF51C8FCB;
+	Wed, 29 May 2024 21:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="o4IZQjao";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="CJ3p0DL0"
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DSk1supW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942EB26AF3;
-	Wed, 29 May 2024 21:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.154.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717017350; cv=fail; b=EfiCpy7R4LsgFkmjnNVCMUmjLV07jcwDhakS+zJW37ZjsYZ23yDk5k7KzBEW5WCIIieu5c40ia0AIg8i2hCT5GWl5I0xXsq+zQqHicDk96b3UCufaklAXynwSDW/SrST4fySrETmhj+fUeLkToCmQvAsiv/v951j4uuAETz2WzE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717017350; c=relaxed/simple;
-	bh=TNb7fGWXERxWeFejxhsHaIyWUXvRV9i8cSo1xLGws9M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nYPBG8+QvoDTzomry8o3Z4CD3jcweZAhUK7NJx2d0NI+e2HBJw6E27vwxPyL0dVLZG/Mj1lcmNJD+EBnnDs4fslZiQQU2LfZGcpFDS27cehulVvhoekHTBx33ZcQtnZvWUK2g5bJtGxKTDD9jQJKw8Ya0TfPQW1ZOAYdGA9yCYg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=o4IZQjao; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=CJ3p0DL0; arc=fail smtp.client-ip=216.71.154.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1717017348; x=1748553348;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=TNb7fGWXERxWeFejxhsHaIyWUXvRV9i8cSo1xLGws9M=;
-  b=o4IZQjaox3DyGxEDbwIy6LFO+yUqNSbCyo3W2w89bguwBlElAnZaiHkG
-   JNJG4/Q0G5vVKYzUqL3MrCgZxnT7dDTlhwJkDui3Kfd33ob65aGnAukYf
-   yqYhJAHlsGVTGZXekIL1PFWL5h2HEQm7hW/ef0RJ6JAjzr6/wVeRW7XlN
-   4Sh3aE5v/lpe2EkSUUeL393fIUc5U1XT5rEbhJoNB6XStUUD9TZNq+Doe
-   jWSh3h30hIXm675tmSt1arsYR7HbjxF3lGJiW4regHYHIa9dQmBR11bR9
-   5nlm1ztGkXQbAkVEIsLbLZ3NqSluE3EBldcal4nWpBjeWDhI5zukaztJh
-   A==;
-X-CSE-ConnectionGUID: D28FVz88Ta6N+j0eY4skuA==
-X-CSE-MsgGUID: gFsuuXBKQi+K1pm/ILrFWA==
-X-IronPort-AV: E=Sophos;i="6.08,199,1712592000"; 
-   d="scan'208";a="16923298"
-Received: from mail-dm6nam12lp2169.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.169])
-  by ob1.hgst.iphmx.com with ESMTP; 30 May 2024 05:15:46 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ECnBdBevLxjYryg1xr1ji0rk3gXG6RFVGTNVqp1a94UZmXbm6rpq6+rThEAFGPT9xGDyzUzhL1tTGLSPARuxn7my0VK2BvYwoM8cU78t89b5hs+I7sP5HZlfJrKsSKtJ9rcV4hALxwGKqlNCe+V8SGyqmczR7xoC3lVLYe6bmhUm1ymw5vAUhXDfF8bpeD6p7sjpLCktKmzXRsAIbxQQZDPdj+0/FK0djncO2m30PZncTY7gR7Mt++mQ+nmFCfcRz5bpf3YFCD9AOtUFJb8nY0F5YHMe77hMXe5mrSRqUPa/J2f+TiPatLucZey+S6sw2H2wwcDo7GUKIusIHXnb+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TNb7fGWXERxWeFejxhsHaIyWUXvRV9i8cSo1xLGws9M=;
- b=aRDo/7j5pHZKHNBhGBMuVwC2vxOEAqazMDHLWst0ZXCutEAQEMrzprOF5AZci3lHtBCJdPMfr4fvYDYK9AS+ACERwnVZWV1hYlyu5j9ti6mXTG2nZ7gPabODMyz+q2I4N4pbWbBrcvCTD4SL8mbSSOtKiiXNxfCQbqG4KBRNNZCNN0nhExx/OQGhFjMnxJzj0+eMcR5eOu6nUWUj3z+kb7SssHdn/U7OZK2Pbrt+BT/ZLN6ekOPNaKTh3VLyTDzY9L012VPxE3nKva5KnmK3TbyBfrHsXZ6b3kmFjQLARekxMNWYLI0U6QSU5RTF/w3So9xeWmzZCflkn+HaptmpyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TNb7fGWXERxWeFejxhsHaIyWUXvRV9i8cSo1xLGws9M=;
- b=CJ3p0DL00QTYcl9IzTmiBENHInKmq3fvCmhWTFEkVemRzsWPCka3n+VXPfQ6Uy76R+eifw26mB+EE4Js9k7CGE1IyrA2Cx1DHLWHB/baUdPjOvnVSeHdrICb0vhg85EoGefi+9zjXwen3EROayKIHdZ+pzanqOONgVxDcej7Vf4=
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
- BN8PR04MB6417.namprd04.prod.outlook.com (2603:10b6:408:d9::23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.17; Wed, 29 May 2024 21:15:45 +0000
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f]) by DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f%6]) with mapi id 15.20.7633.018; Wed, 29 May 2024
- 21:15:45 +0000
-From: Avri Altman <Avri.Altman@wdc.com>
-To: Bart Van Assche <bvanassche@acm.org>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>
-CC: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 1/3] scsi: ufs: Allow RTT negotiation
-Thread-Topic: [PATCH v6 1/3] scsi: ufs: Allow RTT negotiation
-Thread-Index: AQHar0UYy1/vUEyaOESNvMrCYAcapbGup/4AgAATcKA=
-Date: Wed, 29 May 2024 21:15:45 +0000
-Message-ID:
- <DM6PR04MB65759C6532DC45C7F2ABE101FCF22@DM6PR04MB6575.namprd04.prod.outlook.com>
-References: <20240526081636.2064-1-avri.altman@wdc.com>
- <20240526081636.2064-2-avri.altman@wdc.com>
- <9c066dfb-b84b-49fc-94da-806b71e261d1@acm.org>
-In-Reply-To: <9c066dfb-b84b-49fc-94da-806b71e261d1@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|BN8PR04MB6417:EE_
-x-ms-office365-filtering-correlation-id: 6b283a4b-6735-45e5-f082-08dc80248116
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NVltTW5Wak1sRXVXbFhkTmU2R013RlVra0FSY0w5NlJPRkhDOGNTQ1JKQjQr?=
- =?utf-8?B?dTQvNmE4eUZ6em9vNysvczJZTllhS3dmeFcvUGJQNmpSTUhyamxjeHB0NmFj?=
- =?utf-8?B?STFuMWFXa0YwSFlwQ0tWNjdCdmVGa3lYL0lWa09Sd1NXd1E3LzJ1b1pQcXFv?=
- =?utf-8?B?aEVVVGZQeDhLamMzd0VrYjJqSHo0MzRpckUzWnI3bCsyUmYvaU9LNGRDNEVG?=
- =?utf-8?B?cWJZbzdmOXYzTDRoVXMwOHZaODNJdFQ0NFZydW4xSGMySHdTQVB3VUJhSHdH?=
- =?utf-8?B?S3BFT2U5UklQL1ZEa3RLbEplRzgrSXN6MWdzcDBMNWpGb2MxMkEwWmgyMytC?=
- =?utf-8?B?dWRPOGxJeVFYYzFlZ05hb2w1WkVLV2txSStYaXVwaFgvQU9PdmIzRmRHampZ?=
- =?utf-8?B?V3JZS2wxclJZSkdzTFFINjJ5UTM5TWRzS2U5NEhlYnBSaGNuZS9ZczcvY1R5?=
- =?utf-8?B?N3d0a2h3NGU0ZDh6bkNhVVB5cEZTeHFVZTJnR2ZpZWlUU2wrRjhEbWRaS0hs?=
- =?utf-8?B?eUs5RmNqL3gxcGlHbnZrSXJQbmxhbDBBaHpmaDhtUTNRdjNuMTJOZU5CRlA3?=
- =?utf-8?B?S0xVUXlTcTNoMEFCdHNZRitQalNLRXRidG5ZZGJ6TTI1cFNLVW82QWFiSFZa?=
- =?utf-8?B?ak02eE5oNm1qRVFaNDRvTDIrWnlLZDhHWHZoeDUyWnU4WnVPY0tiQ0lrWjVH?=
- =?utf-8?B?bXl3MG5STTh0OGc3aG1NdVNJeXFrYUxPNGdlS1JZYjRWSTQ4VTJidkowQmdR?=
- =?utf-8?B?QlNjVHVDaGtaYUQ0OTZZb21JcTRDSUhqZ0JmS2tORUlyWmlzUmgyVERhelhP?=
- =?utf-8?B?bE4xMU1XYXFQbnhvdmxBUlV4NXFhSVY0OG12ZHBiM1BvdUl2eU5ST2VoZm96?=
- =?utf-8?B?RGVzMTVGc0Rpd0dLSG0vWWtxc2FlRDgxTlU1WDd3QlJxUmtQYm1rMUR0UG44?=
- =?utf-8?B?RXR0RzdodEpqRWs0SE9PSjRLWEMvWjYxclArdWVwN0xyMmhPSDhENFhWeWM4?=
- =?utf-8?B?cHNPb01XMll5RXhXdmRPMHdpZXFObzUwN0VVV0RwQzFkWjZtLzN0VG4rVnNV?=
- =?utf-8?B?WEdzVzEwb1hCU1Y2REg3Wi85TXNkTnVHemdSUHk3OG52N3c0L3FYMjVrb1hu?=
- =?utf-8?B?R3BweTNWc0JFV28ybGdxUDB1OGdaNEdHcnYwOGNLaysvTXJNY1dlaWJpNGk1?=
- =?utf-8?B?dTFNcVJ6a044VVZMNStkMW1TTWNCZmFubmlxbWgvR0tvNEFOY0Q4OTlVSk56?=
- =?utf-8?B?SEphRHJrOEg0elBPYUpLa3pZYVhCbmhxZTVkVHU3ZFFZMEkvM2VBWG9EbTB1?=
- =?utf-8?B?Rk5pSEVDLzZSQ0U3YTJuWjBPSFk5UGhLeTBOUDVhWmxjblVUdTFJL1Z3eUJG?=
- =?utf-8?B?SHBjK2wvTE5JditlNFlRczl1UTFGTS94ZzBPcFpSaU05R1doN2I2eTBIZk5G?=
- =?utf-8?B?V3NramF6ejlzT2RsbnkrQjZHQVpPNUtqYW9BdDNYM1NiMGJDTW9reUNXSGp0?=
- =?utf-8?B?QlZrZ3ppbjhhTUZZbEl0Vy9LdzBiZG5ZWHRNZzl1dkNVVzFLd3RDWGR6TGNp?=
- =?utf-8?B?YVlCZ2dsOGhXdEROcS9QLzhUSWFsVlFiZnZLVklwZ1RnTWRDMU5tM3g2RTR5?=
- =?utf-8?B?cnI0Rlg1aDdqZ3ZuMEY0WlVvMHBldXYwVmtPdW5OemRpb0xDK2ZOSFJHZCt6?=
- =?utf-8?B?eFhDaGMzeEpRd3hCVnZmbnQrOU5nNXFKQnNIbldEMFhUZThURzJ5eUFoSExG?=
- =?utf-8?B?N0V2Y2c4eEtUYktnZGtzbWdFOEZYaDdxOEZST25lcDVLUG1USzdMbHNCMUEz?=
- =?utf-8?B?ZStDaWpnZS9XYXZiQysrUT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aUFmNkVWTkhRMW1PZnRqSGJiNU9oRDZOTm9ENi8zZmhVblFuVVhEejZCRjdk?=
- =?utf-8?B?SzVtU0dlREZPaWNnd25xVmpvQlR5blM0UG9XcUJ1eFR0TTdYbHFBM20venBF?=
- =?utf-8?B?N2NGelNLTnd2d2dDWTdFZXQ2NmRzUjlQdmdNU2c0WS8vSzBXRytZYlVhVG00?=
- =?utf-8?B?cm16UTZiQkZsb1cwRWhxNXMrOWtPdU5iMFpodjQ1MWJCTGN6TE1VSENmYktX?=
- =?utf-8?B?RWY4VE5MbEx4UE0zOGo5R01ROUtPLzdxemRONDJRVElPVU5tOXlnU3Q4REdO?=
- =?utf-8?B?QlRQWEcxRzVmOTlRTDJlMnc4OXl2REtsdlpJTXVLMUo3S0pzT2lCS0pWdjZN?=
- =?utf-8?B?RERLSkxhUy9NNVNMUGphaEdNZWhLQWZTdWlDdThiOWZFemZzMng5VG1jWUQ5?=
- =?utf-8?B?VEt1eHF0K3VWT2QwajdyUDhSdm93ZXMyRm1PeXNzTTBsRzJYQ1pmZHl1eDRs?=
- =?utf-8?B?d0RhQXhCb0lpRE1JTWRYRDI1ZTJwMFFNT3ZyYmZVdEN4YXNETlNnSmdZSVRs?=
- =?utf-8?B?OU5iZld0NHljNXUxME9GOTZ5N1FzWVE4R0piUnRRenRSdmdXSmUwc0pmT0My?=
- =?utf-8?B?d2o4RW1HWXA2MVZOTHNtakIyaXpkL0hsdEUvTTdWaCtWY0lVZUtySldpaENB?=
- =?utf-8?B?cDE2UStYVm1PMy8zRUJ3ekowcHZxeE5EOVhpYXBhQkVheUw1bEpDeVFlQjh3?=
- =?utf-8?B?MmNsa0UrMDBTK3c3S0VLS052cTE1UURoNjZMY1VmVlo1b3hCcjE5RlYvR2tW?=
- =?utf-8?B?amFsd0tIUjM4WVVFQnMxR1RoeFdJUGlzRVpFaTNralZ5WjBGNWtFVXFKdjdz?=
- =?utf-8?B?eFBkWWZvOHlMMlZNOTZYVTR0cXRvSDlBc0NmY2NvMnNCUHNsdGwvR2ZzbEhP?=
- =?utf-8?B?WTFvaUhIR1EwTmpvNGwyeWtFSGlwbzdNWmVKOWh5YldRc202dmMrak8zWGQx?=
- =?utf-8?B?bnBhZVhNMmhGcER4L2RQc3lKcEZaQ1NnZlpNQnhGN3I5NHVyWG9VNjNxc2gy?=
- =?utf-8?B?a1k3QWtWV1RRQno4TitNeVptL3hWSmI0MTNTTFdrN0tQN0hZeG5aY1RpRXZT?=
- =?utf-8?B?T0ZFUWt2dlQ4Y3Jjb1liNzBNN2ZwWGJLVVBRbDlzREkySjBxc2VHWmNYd0pS?=
- =?utf-8?B?cVBWWHArbFQvVkF2VmE4ZnlSWXZZd2NJdUVPNjlabnduZWZpcmNRdjhEeTg4?=
- =?utf-8?B?d2gvSFdaOEIwem5EVG5ROTFwa2U3YVFyYWZFVFRXV0NNUFNJdHQrQ1k5KzhT?=
- =?utf-8?B?b3RQNnkrS0hpWUhCV1ljYmc1RDExelB0MTdyejlUMGgyd2dFcnF0MlU2azJt?=
- =?utf-8?B?RW9qbTcwejlhTUttRDgybG1LaC80d2tXQ1h1RGp6ZGtNeXdVcEF4UTNpRERD?=
- =?utf-8?B?MGUrNWFmNFRXWW5JRUk1cTVDOXFoMVM3RlpDRy9sRXdHRU1RR21Qb3NEUnJ4?=
- =?utf-8?B?TS85Zk82ZDl3eXliNCt4b0M3K25abmRSS1hyLzRiTW9SL3IrOGFmZWZoQnNx?=
- =?utf-8?B?aGFlVnQ0UE5HelZjTFM0NDM0VG1BNnRja0JqTEptbFZPWDFodWtON2MwcnE0?=
- =?utf-8?B?aTBOSllNTHoyclFQdHlXZlZKYjY5dnhWRm5JTHhDTDhFVW0vZzJBbnJxcFRR?=
- =?utf-8?B?TE4rQ282VFo0Ukl6YW0veWlPSURLaFUxSWIxOE44N25YMVdSZmwzUVNZVjhT?=
- =?utf-8?B?d2ZnRWNVNWF0S09waWY1aHlieXkxSkpPN0dwbGNORENqcENlNXFqVDFkN3l4?=
- =?utf-8?B?My9LRmdvT1RNMjVnMGMvR3k4aXJ4cFF4MW9QOHRhYU04MjFCU3plMkxYZW53?=
- =?utf-8?B?MGc3WFkxQk0yUzh6ZnhscGU3MXJvYUczalhMZU1HYlREVEtFT1M1UlNJc0FD?=
- =?utf-8?B?YXBMUmpuWHNxRnBYcmRwK0tBQVhvaXVza2FxdkR3Zmp3K2E2dm9pZ2djbVRF?=
- =?utf-8?B?cXFqU0tQZHREejZSY1FSdmk3Nm12eGVtTGN3eGMzdHc1Z0QrdUE0a2w3Q2Rx?=
- =?utf-8?B?QmY5eTZOTEo0bEIrTTdINU1acG8zQzNzZmx6S1JDelhSQmdUby9kMWJIeDJJ?=
- =?utf-8?B?dUxJeWpVbkxSV2NZVVo2TDVmTGN4VCtRekdmZFlnV0x2MGRmWlU5dEpMaGtv?=
- =?utf-8?B?VjBad3A0Qy84ZE5lVHRZUUpBMmFPbFBKQlZEMVp2elFNckNuQndSaXprdVVZ?=
- =?utf-8?Q?t6gHlSqjgO7+rcTKopX7zIVVzm1EoY0UTVve6GkVkEKb?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD233E542;
+	Wed, 29 May 2024 21:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717017651; cv=none; b=R+F5xHrDrkBdRbY11oere0+tgyx0pB5+apL9K+A9Su28Uk+t9WLk9r05sM75M3F3fahbB2JStD6as16GpxKNwyzqTb/OfVjEZehxvd0tQkXCHlvwABjvFNag7L5oEdv+QXBiG7omAXuxweVRPwlVvSBBT8p4Az3u+2kK4ZTDV24=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717017651; c=relaxed/simple;
+	bh=27aTqHAK8eLcXO2lOfN/fmyM05+La3vG0YaOHO5f8ao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qTdorTEhUU57rRFPXsS+aZ3+A1b6bI94TZEnqPiaBsAUOHRlpTa99SYGP8qbFomAKB3fJYhVNhW5NvA2bVumdA/SHC/O82uZw43gb8iQGq9iRKWIDjqU1MJrwZTJNfxDeM53guK7oJrlzpuTMpp6v1iA/kqrko7njJvxZtJkn4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DSk1supW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TCKAUu015705;
+	Wed, 29 May 2024 21:20:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ho9URM4GLxtmveMfnMpGaju9PuKA1yrv2/alLG7suIs=; b=DSk1supWGfabS6qz
+	ljMH72mlzoHdERNCl5WJqDO3UIjB92aQtKki/S344GtCfonq6kaiad1xRpOaBdLG
+	auLhrAVgH877Cyc42PuE5KF9bDMV8DfxFx2iswLE6+V/s7a271VrirNFh41ahAIc
+	p1hAgPw6iaN9AzSs43/IWrnRKEX00BienzvHEzcYMGHDadMbcVnQ+8sBnhRlmQnx
+	Jf/ehnXFyKTVS06RYJH2q6ZmuaB9T5J7k/HXugFjbkvfhe/eWtZzQQdUWCNFj3Bn
+	UqP/5oKsBFDG5NWxs0zTkCX6KEiob0LoG4EVnPWKg8fxHxOmPbxQN5e1CqKMPgTg
+	rdH6Ow==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2ha9c4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 21:20:08 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TLK7pK009738
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 21:20:07 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 14:20:07 -0700
+Message-ID: <0728e1fb-4208-4cad-8cbc-22ca115e2224@quicinc.com>
+Date: Wed, 29 May 2024 14:20:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jh/lx3x7hqOZcFkQQBemFaAUiaSqddC3WoLyZ2D3lXQMNCrwdIhIzOuCPTJxQCmWqtc58SPvXM6qWGBEcbINqq9B9TvqR/fp9gzLJWvSJx4YbmksB6mJYgeWBWtM+qqHa7V1qL4fzFquDPBynj0UE2uTJTFrEx2rRQFZ+NkH1H3+WfHxgfapqRo78VeiK2Lh726rXCx/PnkxbiZWgmKtHkk4T6sXjhENLH45NZFMJymGCGwi4nc4vU9x0wzXATFlAifEOyW2YXB03+O0rQ5f+2mjKZsoHVe5a/sqzebMRLF2kbO4fXrNhE1wtU9SwaFz506J37GzcY6x/IO5T1CCBqZhNiO9JKfx56YetgoPdKrJCD00IS6QpDNFMHUB460m134Kjte0CSCPtSORCFWRhPQgoCZF38fe8VTV6RHxKaNKyasI9r5FSoHOUT7LOe3LICVVLRfvWWpjR2hRu6IEd9ft5puFRJ7tZlwsIj/fYzIA1t1oAEfKcTYQcHJiwHUM8tnMZpq3e+PMbrK+oq5+L5qWAZEVTxPUtuSndXplGxWuNe2ZHkZifkZkosmWmKkbUw/FIlXniSUsxCXueIPutvYf+WrksmP4cf8abqsl5fj2g+TkqE27p4hdOFjMma+x
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b283a4b-6735-45e5-f082-08dc80248116
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2024 21:15:45.2170
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: N7ugvJaMSQO4TMl+Gv4Cb0cKuYfnA0gMoFlmVz2TLCUOks2/ROpjTpj66x+SWCguZbi7LIplfcTkySTMOU+DNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR04MB6417
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] drm/ci: uprev mesa version
+Content-Language: en-US
+To: Vignesh Raman <vignesh.raman@collabora.com>,
+        <dri-devel@lists.freedesktop.org>
+CC: <daniels@collabora.com>, <helen.koike@collabora.com>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <robdclark@gmail.com>,
+        <david.heidelberg@collabora.com>, <guilherme.gallo@collabora.com>,
+        <sergi.blanch.torne@collabora.com>, <dmitry.baryshkov@linaro.org>,
+        <mcanal@igalia.com>, <linux-mediatek@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>, <amd-gfx@lists.freedesktop.org>,
+        <linux-arm-msm@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240529024049.356327-1-vignesh.raman@collabora.com>
+ <20240529024049.356327-2-vignesh.raman@collabora.com>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240529024049.356327-2-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CCh6wsfY60u7InhlF8hd8oJD7Lp4-hfI
+X-Proofpoint-ORIG-GUID: CCh6wsfY60u7InhlF8hd8oJD7Lp4-hfI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290151
 
-PiBPbiA1LzI2LzI0IDAxOjE2LCBBdnJpIEFsdG1hbiB3cm90ZToNCj4gPiBUaGUgcnR0LXVwaXUg
-cGFja2V0cyBwcmVjZWRlIGFueSBkYXRhLW91dCB1cGl1IHBhY2tldHMsIHRodXMNCj4gPiBzeW5j
-aHJvbml6aW5nIHRoZSBkYXRhIGlucHV0IHRvIHRoZSBkZXZpY2U6IHRoaXMgbW9zdGx5IGFwcGxp
-ZXMgdG8NCj4gPiB3cml0ZSBvcGVyYXRpb25zLCBidXQgdGhlcmUgYXJlIG90aGVyIG9wZXJhdGlv
-bnMgdGhhdCByZXF1aXJlcyBydHQgYXMgd2VsbC4NCj4gPg0KPiA+IFRoZXJlIGFyZSBzZXZlcmFs
-IHJ1bGVzIGJpbmRpbmcgdGhpcyBydHQgLSBkYXRhLW91dCBkaWFsb2csDQo+ID4gc3BlY2lmaWNh
-bGx5IFRoZXJlIGNhbiBiZSBhdCBtb3N0IG91dHN0YW5kaW5nIGJNYXhOdW1PZlJUVCBzdWNoDQo+
-ID4gcGFja2V0cy4gIFRoaXMgbWlnaHQgaGF2ZSBhbiBlZmZlY3Qgb24gd3JpdGUgcGVyZm9ybWFu
-Y2UgKHNlcXVlbnRpYWwNCj4gPiB3cml0ZSBpbiBwYXJ0aWN1bGFyKSwgYXMgZWFjaCBkYXRhLW91
-dCB1cGl1IG11c3Qgd2FpdCBmb3IgaXRzIHJ0dCBzaWJsaW5nLg0KPiA+DQo+ID4gVUZTSENJIGV4
-cGVjdHMgYk1heE51bU9mUlRUIHRvIGJlIG1pbihiRGV2aWNlUlRUQ2FwLCBOT1JUVCkuDQo+IEhv
-d2V2ZXIsDQo+ID4gYXMgb2YgdG9kYXksIHRoZXJlIGRvZXMgbm90IGFwcGVhcnMgdG8gYmUgbm8t
-b25lIHdobyBzZXRzIGl0OiBub3QgdGhlDQo+ID4gaG9zdCBjb250cm9sbGVyIG5vciB0aGUgZHJp
-dmVyLiAgSXQgd2Fzbid0IGFuIGlzc3VlIHVwIHRvIG5vdzoNCj4gPiBiTWF4TnVtT2ZSVFQgaXMg
-c2V0IHRvIDIgYWZ0ZXIgbWFudWZhY3R1cmluZywgYW5kIHdhc24ndCBsaW1pdGluZyB0aGUNCj4g
-PiB3cml0ZSBwZXJmb3JtYW5jZS4NCj4gPg0KPiA+IFVGUzQuMCwgYW5kIHNwZWNpZmljYWxseSBn
-ZWFyIDUgY2hhbmdlcyB0aGlzLCBhbmQgcmVxdWlyZXMgdGhlIGRldmljZQ0KPiA+IHRvIGJlIG1v
-cmUgYXR0ZW50aXZlLiAgVGhpcyBkb2Vzbid0IGNvbWUgZnJlZSAtIHRoZSBkZXZpY2UgaGFzIHRv
-DQo+ID4gYWxsb2NhdGUgbW9yZSByZXNvdXJjZXMgdG8gdGhhdCBlbmQsIGJ1dCB0aGUgc2VxdWVu
-dGlhbCB3cml0ZQ0KPiA+IHBlcmZvcm1hbmNlIGltcHJvdmVtZW50IGlzIHNpZ25pZmljYW50LiBF
-YXJseSBtZWFzdXJlbWVudHMgc2hvd3MgMjUlDQo+ID4gZ2FpbiB3aGVuIG1vdmluZyBmcm9tIHJ0
-dCAyIHRvIDkuIFRoZXJlZm9yZSwgc2V0IGJNYXhOdW1PZlJUVCB0byBiZQ0KPiA+IG1pbihiRGV2
-aWNlUlRUQ2FwLCBOT1JUVCkgYXMgVUZTSENJIGV4cGVjdHMuDQo+IA0KPiBSZXZpZXdlZC1ieTog
-QmFydCBWYW4gQXNzY2hlIDxidmFuYXNzY2hlQGFjbS5vcmc+DQoNCk1hcnRpbiwNCkFzIHRoZSBv
-dGhlciAyIHBhdGNoZXMgaW4gdGhpcyBzZXJpZXMgcmVxdWlyZSBzb21lIG1vcmUgd29yaywgYW5k
-IG91ciBjbGllbnRzIGRvIHdhaXQgZm9yIHRoaXMgY2hhbmdlLA0KV291bGQgeW91IGNvbnNpZGVy
-IHBpY2tpbmcgdGhpcyBvbmUgZmlyc3QsIHdoaWxzdCBJJ20gZmluYWxpemluZyB0aGUgb3RoZXIg
-dHdvPw0KDQpUaGFua3MsDQpBdnJpDQo=
+
+
+On 5/28/2024 7:40 PM, Vignesh Raman wrote:
+> zlib.net is not allowing tarball download anymore and results
+> in below error in kernel+rootfs_arm32 container build,
+> urllib.error.HTTPError: HTTP Error 403: Forbidden
+> urllib.error.HTTPError: HTTP Error 415: Unsupported Media Type
+> 
+> Uprev mesa to latest version which includes a fix for this issue.
+> https://gitlab.freedesktop.org/mesa/mesa/-/commit/908f444e
+> 
+> Use id_tokens for JWT authentication. Since s3 bucket is migrated to
+> mesa-rootfs, update the variables accordingly. Also copy helper scripts
+> to install, so that the ci jobs can use these scripts for logging.
+> 
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+
+Hi Vignesh,
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+Thanks,
+
+Jessica Zhang
+
+> ---
+> 
+> v2:
+>    - Uprev to recent version and use id_tokens for JWT authentication
+> 
+> v3:
+>    - Move adding farm variable and updating device type variable to seperate commit
+> 
+> ---
+>   drivers/gpu/drm/ci/build-igt.sh   |  2 +-
+>   drivers/gpu/drm/ci/build.sh       |  6 +++--
+>   drivers/gpu/drm/ci/container.yml  | 12 +++------
+>   drivers/gpu/drm/ci/gitlab-ci.yml  | 44 +++++++++++++++++++++----------
+>   drivers/gpu/drm/ci/image-tags.yml |  2 +-
+>   drivers/gpu/drm/ci/lava-submit.sh |  4 +--
+>   6 files changed, 42 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
+> index 500fa4f5c30a..7859554756c4 100644
+> --- a/drivers/gpu/drm/ci/build-igt.sh
+> +++ b/drivers/gpu/drm/ci/build-igt.sh
+> @@ -32,4 +32,4 @@ tar -cf artifacts/igt.tar /igt
+>   # Pass needed files to the test stage
+>   S3_ARTIFACT_NAME="igt.tar.gz"
+>   gzip -c artifacts/igt.tar > ${S3_ARTIFACT_NAME}
+> -ci-fairy s3cp --token-file "${CI_JOB_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${KERNEL_ARCH}/${S3_ARTIFACT_NAME}
+> +ci-fairy s3cp --token-file "${S3_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${KERNEL_ARCH}/${S3_ARTIFACT_NAME}
+> diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
+> index 106f2d40d222..a67871fdcd3f 100644
+> --- a/drivers/gpu/drm/ci/build.sh
+> +++ b/drivers/gpu/drm/ci/build.sh
+> @@ -128,6 +128,7 @@ fi
+>   # Pass needed files to the test stage
+>   mkdir -p install
+>   cp -rfv .gitlab-ci/* install/.
+> +cp -rfv ci/*  install/.
+>   cp -rfv install/common install/ci-common
+>   cp -rfv drivers/gpu/drm/ci/* install/.
+>   
+> @@ -141,14 +142,15 @@ if [[ "$UPLOAD_TO_MINIO" = "1" ]]; then
+>           FILES_TO_UPLOAD="$FILES_TO_UPLOAD $(basename -a $DEVICE_TREES)"
+>       fi
+>   
+> +    ls -l "${S3_JWT_FILE}"
+>       for f in $FILES_TO_UPLOAD; do
+> -        ci-fairy s3cp --token-file "${CI_JOB_JWT_FILE}" /lava-files/$f \
+> +        ci-fairy s3cp --token-file "${S3_JWT_FILE}" /lava-files/$f \
+>                   https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/$f
+>       done
+>   
+>       S3_ARTIFACT_NAME="kernel-files.tar.zst"
+>       tar --zstd -cf $S3_ARTIFACT_NAME install
+> -    ci-fairy s3cp --token-file "${CI_JOB_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/${S3_ARTIFACT_NAME}
+> +    ci-fairy s3cp --token-file "${S3_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/${S3_ARTIFACT_NAME}
+>   
+>       echo "Download vmlinux.xz from https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/vmlinux.xz"
+>   fi
+> diff --git a/drivers/gpu/drm/ci/container.yml b/drivers/gpu/drm/ci/container.yml
+> index 9764e7921a4f..d6edf3635b23 100644
+> --- a/drivers/gpu/drm/ci/container.yml
+> +++ b/drivers/gpu/drm/ci/container.yml
+> @@ -36,15 +36,15 @@ debian/android_build:
+>     rules:
+>       - when: never
+>   
+> -debian/x86_64_test-android:
+> +.debian/x86_64_test-android:
+>     rules:
+>       - when: never
+>   
+> -windows_build_vs2019:
+> +windows_build_msvc:
+>     rules:
+>       - when: never
+>   
+> -windows_test_vs2019:
+> +windows_test_msvc:
+>     rules:
+>       - when: never
+>   
+> @@ -56,10 +56,6 @@ rustfmt:
+>      rules:
+>       - when: never
+>   
+> -windows_vs2019:
+> -   rules:
+> -    - when: never
+> -
+> -clang-format:
+> +windows_msvc:
+>      rules:
+>       - when: never
+> \ No newline at end of file
+> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+> index 084e3ff8e3f4..8f32de63d92e 100644
+> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
+> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+> @@ -1,6 +1,6 @@
+>   variables:
+>     DRM_CI_PROJECT_PATH: &drm-ci-project-path mesa/mesa
+> -  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha 9d162de9a05155e1c4041857a5848842749164cf
+> +  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha e2b9c5a9e3e4f9b532067af8022eaef8d6fc6c00
+>   
+>     UPSTREAM_REPO: git://anongit.freedesktop.org/drm/drm
+>     TARGET_BRANCH: drm-next
+> @@ -19,33 +19,47 @@ variables:
+>             bash download-git-cache.sh
+>             rm download-git-cache.sh
+>             set +o xtrace
+> +  S3_JWT_FILE: /s3_jwt
+>     S3_HOST: s3.freedesktop.org
+> +  # This bucket is used to fetch the kernel image
+> +  S3_KERNEL_BUCKET: mesa-rootfs
+> +  # Bucket for git cache
+> +  S3_GITCACHE_BUCKET: git-cache
+> +  # Bucket for the pipeline artifacts pushed to S3
+> +  S3_ARTIFACTS_BUCKET: artifacts
+>     # per-pipeline artifact storage on MinIO
+> -  PIPELINE_ARTIFACTS_BASE: ${S3_HOST}/artifacts/${CI_PROJECT_PATH}/${CI_PIPELINE_ID}
+> +  PIPELINE_ARTIFACTS_BASE: ${S3_HOST}/${S3_ARTIFACTS_BUCKET}/${CI_PROJECT_PATH}/${CI_PIPELINE_ID}
+>     # per-job artifact storage on MinIO
+>     JOB_ARTIFACTS_BASE: ${PIPELINE_ARTIFACTS_BASE}/${CI_JOB_ID}
+>     # default kernel for rootfs before injecting the current kernel tree
+>     KERNEL_REPO: "gfx-ci/linux"
+> -  KERNEL_TAG: "v6.6.4-for-mesa-ci-e4f4c500f7fb"
+> -  KERNEL_IMAGE_BASE: https://${S3_HOST}/mesa-lava/${KERNEL_REPO}/${KERNEL_TAG}
+> +  KERNEL_TAG: "v6.6.21-mesa-f8ea"
+> +  KERNEL_IMAGE_BASE: https://${S3_HOST}/${S3_KERNEL_BUCKET}/${KERNEL_REPO}/${KERNEL_TAG}
+> +  PKG_REPO_REV: "3cc12a2a"
+>     LAVA_TAGS: subset-1-gfx
+>     LAVA_JOB_PRIORITY: 30
+> +  ARTIFACTS_BASE_URL: https://${CI_PROJECT_ROOT_NAMESPACE}.${CI_PAGES_DOMAIN}/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts
+> +  # Python scripts for structured logger
+> +  PYTHONPATH: "$PYTHONPATH:$CI_PROJECT_DIR/install"
+>   
+>   default:
+> +  id_tokens:
+> +    S3_JWT:
+> +      aud: https://s3.freedesktop.org
+>     before_script:
+>       - export SCRIPTS_DIR=$(mktemp -d)
+>       - curl -L -s --retry 4 -f --retry-all-errors --retry-delay 60 -O --output-dir "${SCRIPTS_DIR}" "${DRM_CI_PROJECT_URL}/-/raw/${DRM_CI_COMMIT_SHA}/.gitlab-ci/setup-test-env.sh"
+>       - source ${SCRIPTS_DIR}/setup-test-env.sh
+>       - echo -e "\e[0Ksection_start:$(date +%s):unset_env_vars_section[collapsed=true]\r\e[0KUnsetting vulnerable environment variables"
+> -    - export CI_JOB_JWT_FILE="${CI_JOB_JWT_FILE:-$(mktemp)}"
+> -    - echo -n "${CI_JOB_JWT}" > "${CI_JOB_JWT_FILE}"
+> -    - unset CI_JOB_JWT
+> +    - echo -n "${S3_JWT}" > "${S3_JWT_FILE}"
+> +    - unset CI_JOB_JWT S3_JWT
+>       - echo -e "\e[0Ksection_end:$(date +%s):unset_env_vars_section\r\e[0K"
+>   
+>       - echo -e "\e[0Ksection_start:$(date +%s):drm_ci_download_section[collapsed=true]\r\e[0KDownloading mesa from $DRM_CI_PROJECT_URL/-/archive/$DRM_CI_COMMIT_SHA/mesa-$DRM_CI_COMMIT_SHA.tar.gz"
+>       - cd $CI_PROJECT_DIR
+>       - curl --output - $DRM_CI_PROJECT_URL/-/archive/$DRM_CI_COMMIT_SHA/mesa-$DRM_CI_COMMIT_SHA.tar.gz | tar -xz
+>       - mv mesa-$DRM_CI_COMMIT_SHA/.gitlab-ci* .
+> +    - mv mesa-$DRM_CI_COMMIT_SHA/bin/ci .
+>       - rm -rf mesa-$DRM_CI_COMMIT_SHA/
+>       - echo -e "\e[0Ksection_end:$(date +%s):drm_ci_download_section\r\e[0K"
+>   
+> @@ -53,9 +67,9 @@ default:
+>       - >
+>         set +x
+>   
+> -      test -e "${CI_JOB_JWT_FILE}" &&
+> -      export CI_JOB_JWT="$(<${CI_JOB_JWT_FILE})" &&
+> -      rm "${CI_JOB_JWT_FILE}"
+> +      test -e "${S3_JWT_FILE}" &&
+> +      export S3_JWT="$(<${S3_JWT_FILE})" &&
+> +      rm "${S3_JWT_FILE}"
+>   
+>   include:
+>     - project: 'freedesktop/ci-templates'
+> @@ -87,6 +101,7 @@ include:
+>         - '/src/intel/ci/gitlab-ci-inc.yml'
+>         - '/src/freedreno/ci/gitlab-ci-inc.yml'
+>         - '/src/amd/ci/gitlab-ci-inc.yml'
+> +      - '/src/virtio/ci/gitlab-ci-inc.yml'
+>     - drivers/gpu/drm/ci/image-tags.yml
+>     - drivers/gpu/drm/ci/container.yml
+>     - drivers/gpu/drm/ci/static-checks.yml
+> @@ -98,6 +113,7 @@ include:
+>   stages:
+>     - sanity
+>     - container
+> +  - code-validation
+>     - git-archive
+>     - build
+>     - amdgpu
+> @@ -107,7 +123,6 @@ stages:
+>     - msm
+>     - rockchip
+>     - virtio-gpu
+> -  - lint
+>   
+>   # YAML anchors for rule conditions
+>   # --------------------------------
+> @@ -218,14 +233,15 @@ make git archive:
+>     script:
+>       # Remove drm-ci files we just added
+>       - rm -rf .gitlab-ci.*
+> +    - rm -rf ci
+>   
+>       # Compactify the .git directory
+>       - git gc --aggressive
+>       # compress the current folder
+>       - tar -cvzf ../$CI_PROJECT_NAME.tar.gz .
+>   
+> -    # login with the JWT token file
+> -    - ci-fairy s3cp --token-file "${CI_JOB_JWT_FILE}" ../$CI_PROJECT_NAME.tar.gz https://$S3_HOST/git-cache/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/$CI_PROJECT_NAME.tar.gz
+> +    # Use id_tokens for JWT auth
+> +    - ci-fairy s3cp --token-file "${S3_JWT_FILE}" ../$CI_PROJECT_NAME.tar.gz https://$S3_HOST/${S3_GITCACHE_BUCKET}/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/$CI_PROJECT_NAME.tar.gz
+>   
+>   
+>   # Sanity checks of MR settings and commit logs
+> @@ -262,4 +278,4 @@ sanity:
+>   
+>   # Jobs that need to pass before spending hardware resources on further testing
+>   .required-for-hardware-jobs:
+> -  needs: []
+> \ No newline at end of file
+> +  needs: []
+> diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
+> index 7ab4f2514da8..60323ebc7304 100644
+> --- a/drivers/gpu/drm/ci/image-tags.yml
+> +++ b/drivers/gpu/drm/ci/image-tags.yml
+> @@ -1,5 +1,5 @@
+>   variables:
+> -   CONTAINER_TAG: "2023-10-11-mesa-uprev"
+> +   CONTAINER_TAG: "2024-05-09-mesa-uprev"
+>      DEBIAN_X86_64_BUILD_BASE_IMAGE: "debian/x86_64_build-base"
+>      DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
+>   
+> diff --git a/drivers/gpu/drm/ci/lava-submit.sh b/drivers/gpu/drm/ci/lava-submit.sh
+> index 3d39b0c916a8..0707fa706a48 100755
+> --- a/drivers/gpu/drm/ci/lava-submit.sh
+> +++ b/drivers/gpu/drm/ci/lava-submit.sh
+> @@ -27,7 +27,7 @@ KERNEL_IMAGE_BASE="https://${BASE_SYSTEM_HOST_PATH}" \
+>   section_end variables
+>   
+>   tar zcf job-rootfs-overlay.tar.gz -C results/job-rootfs-overlay/ .
+> -ci-fairy s3cp --token-file "${CI_JOB_JWT_FILE}" job-rootfs-overlay.tar.gz "https://${JOB_ROOTFS_OVERLAY_PATH}"
+> +ci-fairy s3cp --token-file "${S3_JWT_FILE}" job-rootfs-overlay.tar.gz "https://${JOB_ROOTFS_OVERLAY_PATH}"
+>   
+>   touch results/lava.log
+>   tail -f results/lava.log &
+> @@ -45,7 +45,7 @@ PYTHONPATH=artifacts/ artifacts/lava/lava_job_submitter.py \
+>   	--ci-project-dir "${CI_PROJECT_DIR}" \
+>   	--device-type "${DEVICE_TYPE}" \
+>   	--dtb-filename "${DTB}" \
+> -	--jwt-file "${CI_JOB_JWT_FILE}" \
+> +	--jwt-file "${S3_JWT_FILE}" \
+>   	--kernel-image-name "${KERNEL_IMAGE_NAME}" \
+>   	--kernel-image-type "${KERNEL_IMAGE_TYPE}" \
+>   	--boot-method "${BOOT_METHOD}" \
+> -- 
+> 2.40.1
+> 
 
