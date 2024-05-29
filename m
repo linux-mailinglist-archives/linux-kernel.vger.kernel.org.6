@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-194725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A9F8D410B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:04:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C508D410E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 118271F23764
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:04:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A1EAB23D0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1801C8FCA;
-	Wed, 29 May 2024 22:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B281C9EA7;
+	Wed, 29 May 2024 22:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="E2oJ1qVe"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UkFqZWLJ"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CCC169361
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82A51A0B06
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717020248; cv=none; b=n5iTMXLSnF0FTrbTP31MYUSQ21m8ss3fDnetJowXIO2MskC+kjv4dersIcaSZwhWyBePk388AGly6dxat4GYAb/HIxtppwXO/zfL7UZqLRzpJi3dez9Vwk+IQDuqnyMH9Hdgn4Jtit/pAyjIxUw3E6BDocO65Rjhlo6tOmMvx5U=
+	t=1717020266; cv=none; b=Ry0OnxCMR5AkgFD5PoZPrw7jkmZl5HbWtIlJ0y7hiXLCusqSvEM8NET4GBGImoP8ffU03Sr+cIyoaLDCEODXX7b3ChTyLn12zBxqnhNqWf7SPBPeetspOz34nbGAX2NfE9uxbCphu9aqw482PASQ+bqhvUHqqbl9rZ7UHSZZf30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717020248; c=relaxed/simple;
-	bh=lxfRgnf95liBnRvndxoOwPf+FRV7px+87k++y56Vr08=;
+	s=arc-20240116; t=1717020266; c=relaxed/simple;
+	bh=VInmetRHk0eKKc12xNtVfGvs6AOei6C88yzbAhsbMvY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XlnWJEi4ouXGE+lVRNBkOSDPNSizudugz68JRqsX9U9Rjuew8aAFyqofaw4z1qYBJ3iUJsh1iVIGFoQ0PAlOB3D0JUpq3YJ0mSmt/F7f5FS8KOdxUNWvjV5BOGfvAfLJW76TmYAx23AzYLeVHh7JwY0c4GJzuZeF1OI+4Oi8J0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=E2oJ1qVe; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-79305314956so18364785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:04:06 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=XNqrYp7Kt1733vOjkTNwD7ebwrnWiVGM1uhtlZbA5OvTlL3pIx6LQKLZKBK0ZL69OazC/WJto3m5KKg92yUlkP75ubiXc5P0JGbAxE1vkz2VthGKNeFYhTKz2gM/pshufe0s9n8/97yMpRkdrBtqS9OmRaGT/W/nYTwwQTz4sW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UkFqZWLJ; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f8ffe1b65dso103419a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:04:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1717020246; x=1717625046; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717020262; x=1717625062; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fNRVbCxzmmEAj6zXCnapG6pKcGSf1C8RmFzEbJ1ADH0=;
-        b=E2oJ1qVeMJWNzU3A86QKuj3uRR9q4ctncQ/yz6Mc1KgbH6af3TFzlHIGTXWxoPijLJ
-         9c+jUTjzLBXLbKY6z2svdBYTKuwCeDu/eDq+vplIpwucAcB+PywElmM65CkcqNtyIbpC
-         nq9G3CYeIMvjhKDf75ce9P2LmiH0GrjktWnLL+F8hnP1BADPUPQrg21jsYDjhWzt9F8A
-         EjY3JLUF0HsGGfKXQrIv572ukNtFzeR0uGtidDFPnwQx3kShXvrl57lE2Nk3Nk5viJJl
-         2Yq7oHggUzRkpC4uPHJ9v/FlIIcK8RF7IuotC6HqjGbm+4MQ5qq6j3L2AXjCMHaNxNsL
-         DHuw==
+        bh=svQ2kP8rlyYfBUzeKnxKowNmF0xNHylxbIzTzO1lnZg=;
+        b=UkFqZWLJSp5Dye4oE8DEZ1WCfHrhWw1tveFbehuiAl5ZsqQw4tdZT1Zpnht40d0O4Y
+         FcZzO0TCwzDJ+Ympw7SyghQ958Bf1INH+j8KdzQFozv/9vR3ZoA9pgZp7ges8oQmbvJ1
+         gr6r/ZIreTj1EqGiFsr1qB0GfHsO5VJmanonC7muMJ0IYwuQvxHhWd6y0J1n9LCHDV4R
+         NL+VnYmNaZ7ojtbBGf87TZJf52nOyLsMSzZ3QENjXVZz+Kt5Ez6JZ2/Og228S2pUUwEV
+         L6hSKzV2wy7PpiVbr3EREbxiLe0M66brmvZzDdM/ChZAeCLUfOzLK36LxXR9b9bBi6fz
+         44CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717020246; x=1717625046;
+        d=1e100.net; s=20230601; t=1717020262; x=1717625062;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fNRVbCxzmmEAj6zXCnapG6pKcGSf1C8RmFzEbJ1ADH0=;
-        b=tEOi5ByzzIJlUE1yVneQZ5QRifrok4SH5jZqLtIybfih1EkOXhDvfdrnULGEySPA55
-         SBKUycSqztWf9OpJNPEOnLehV7GDk3oDqVzPGmL47wcqvOFnEDSHBmqHmGyy4riuVdS5
-         FjXrxnomyss7vKnTJhTBuu7Rku6OOTc1E4sUd69fiWKEUwq3gmC0Nh2A4g7sxpbx9LLc
-         w3zpQffFKiXCTE438mFhGl8Ijb++sZqwvL7+gn9lZSRB8upGUYPXoIbFzmFjnLHs7IMI
-         WyhQyLIoy/OKl+pySiE7ipU1auR6fvWrBK4pnDQM407sNpfoaBMwdTwKIwxDJZeuYYFh
-         5+rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmV3ahvl7L6IW52jwou9TXHn0eZuq3pGgro/mZKD/EihPjZYkOAU4kImF5beuHKIX8gEzUQTqPcyTYysCOaT3tHFKnrDikP9H7fbtI
-X-Gm-Message-State: AOJu0YwklwCQpiJAidphGaDFimu2pf2DWQZC1wwYouUel0av5i1uNPIP
-	I/O6kF6qn6MUY68Zq4U1E9RU8/3ddMxGrIzOu93upTif8kzkVyObIBa0aoQfrkM=
-X-Google-Smtp-Source: AGHT+IHDZpmmzmoJ+k9ZbeknnEHLbYmkLEOEN+VjMtD7xnzdtBpnugQ1ISqlpwt1UFzDGTypUKf2rg==
-X-Received: by 2002:a05:6214:3c87:b0:6ad:6059:208a with SMTP id 6a1803df08f44-6ae0cb39254mr5890786d6.35.1717020245797;
-        Wed, 29 May 2024 15:04:05 -0700 (PDT)
-Received: from [100.64.0.1] ([170.85.6.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac070d8f3dsm58003716d6.33.2024.05.29.15.04.03
+        bh=svQ2kP8rlyYfBUzeKnxKowNmF0xNHylxbIzTzO1lnZg=;
+        b=wGo5uY/DyrLZ+ua6JRRjL7cUc+eWXcj2H9ofGMdb/1Wtq0ZfHvPZruU1JIaSjxN0mF
+         tJxLamLdrdVJ00D9+1Wr1zWgHcqgdpD32TyvayqRhG6FUnKZYeKEqfjVOs1p/Hw8P5VG
+         qlksA6qB/kn/4GdwnoEK6nz4BBvDRHFcnCFhYtNtCKCnv3+Vtbcs764Lr6geYe93ArtH
+         K4CtEoWYPY/beJp1aRXuhkEsoAex/m6DJkN3hEWnL6B0eGSu2+vYSR/1hgdX5CEhXqXu
+         MB+5tAA1WeH1x3xMzBF4YogB5Q1NMSLW4BIDSbumkn7C6zccmETJre0h2fvME+qy6ip2
+         0KZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkyli/ld45LgUi54X/JWTAZMBhqKQpqxKoD1/c6ct3EO6eB/pfaKw7CRLogj+NYopmzBmmEFjSuNYBlVy9/KUu56bWgthppxXCfMWv
+X-Gm-Message-State: AOJu0Ywqtdv9L8ktuH+ySxhOxBiDl6r2jocdu5xdoxeKOn2muYEhSmnd
+	ZCj5NyoPW1FRyRT9cQhBMOo9lAvNWQV3BHDPAZFjq38eGlcQE9dQ3+kB/SxmTZQ=
+X-Google-Smtp-Source: AGHT+IEzkj2SHc8IKvklHfEGggXym14YvXH1eSM9LCSmiFlGo2rIMPkdV9gy8qFjRKk3G8tbRRmkSg==
+X-Received: by 2002:a9d:6c49:0:b0:6f1:222c:2302 with SMTP id 46e09a7af769-6f90b8fcf71mr54831a34.2.1717020261883;
+        Wed, 29 May 2024 15:04:21 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f8d0e6143asm2467044a34.57.2024.05.29.15.04.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 15:04:05 -0700 (PDT)
-Message-ID: <11b3de44-522b-4638-987c-2ca132e84936@sifive.com>
-Date: Wed, 29 May 2024 17:04:02 -0500
+        Wed, 29 May 2024 15:04:21 -0700 (PDT)
+Message-ID: <362e006f-7856-46e3-90fa-b1610784ee9d@baylibre.com>
+Date: Wed, 29 May 2024 17:04:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,156 +75,226 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 01/18] irqchip/sifive-plic: Convert PLIC driver into a
- platform driver
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Anup Patel <apatel@ventanamicro.com>
-Cc: devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Emil Renner Berthing <kernel@esmil.dk>,
- Saravana Kannan <saravanak@google.com>, Marc Zyngier <maz@kernel.org>,
- Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>,
- linux-kernel@vger.kernel.org, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>,
+Subject: Re: [PATCH v3 1/6] dt-bindings: adc: ad7173: add support for ad411x
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Thomas Gleixner <tglx@linutronix.de>, Frank Rowand <frowand.list@gmail.com>,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Andrew Jones <ajones@ventanamicro.com>
-References: <20240222094006.1030709-1-apatel@ventanamicro.com>
- <20240222094006.1030709-2-apatel@ventanamicro.com>
- <CAMuHMdVYFFR7K5SbHBLY-JHhb7YpgGMS_hnRWm8H0KD-wBo+4A@mail.gmail.com>
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+ <20240527-ad4111-v3-1-7e9eddbbd3eb@analog.com>
+ <20240527-arguably-said-361184ad848e@spud>
+ <d87ae6ef-090d-4e47-bde4-4d08fd445ac1@gmail.com>
+ <20240528-filtrate-cloning-b9152322a3da@spud>
+ <a1c75105-6447-4b67-b7d2-326ad9b19b82@gmail.com>
 Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <CAMuHMdVYFFR7K5SbHBLY-JHhb7YpgGMS_hnRWm8H0KD-wBo+4A@mail.gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <a1c75105-6447-4b67-b7d2-326ad9b19b82@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Geert,
-
-On 2024-05-29 9:22 AM, Geert Uytterhoeven wrote:
-> Hi Anup,
-> 
-> On Thu, Feb 22, 2024 at 10:41 AM Anup Patel <apatel@ventanamicro.com> wrote:
->> The PLIC driver does not require very early initialization so convert
->> it into a platform driver.
+On 5/29/24 8:38 AM, Ceclan, Dumitru wrote:
+> On 28/05/2024 20:52, Conor Dooley wrote:
+>> On Tue, May 28, 2024 at 03:16:07PM +0300, Ceclan, Dumitru wrote:
+>>> On 27/05/2024 20:48, Conor Dooley wrote:
+>>>> On Mon, May 27, 2024 at 08:02:34PM +0300, Dumitru Ceclan via B4 Relay wrote:
+>>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>>>
+>>>>> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
+>>>>>
+>>>>> AD411x family ADCs support a VCOM pin, dedicated for single-ended usage.
+>>>>> AD4111/AD4112 support current channels, usage is implemented by
+>>>>>  specifying channel reg values bigger than 15.
+>>>>>
+>>>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>>> ---
+>>>>>  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 122 ++++++++++++++++++++-
+>>>>>  1 file changed, 120 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+>>>>> index ea6cfcd0aff4..5b1af382dad3 100644
+>>>>> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+>>>>> @@ -19,7 +19,18 @@ description: |
+>>>>>    primarily for measurement of signals close to DC but also delivers
+>>>>>    outstanding performance with input bandwidths out to ~10kHz.
+>>>>>  
+>>>>> +  Analog Devices AD411x ADC's:
+>>>>> +  The AD411X family encompasses a series of low power, low noise, 24-bit,
+>>>>> +  sigma-delta analog-to-digital converters that offer a versatile range of
+>>>>> +  specifications. They integrate an analog front end suitable for processing
+>>>>> +  fully differential/single-ended and bipolar voltage inputs.
+>>>>> +
+>>>>>    Datasheets for supported chips:
+>>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4111.pdf
+>>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4112.pdf
+>>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4114.pdf
+>>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4115.pdf
+>>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4116.pdf
+>>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD7172-2.pdf
+>>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD7172-4.pdf
+>>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD7173-8.pdf
+>>>>> @@ -31,6 +42,11 @@ description: |
+>>>>>  properties:
+>>>>>    compatible:
+>>>>>      enum:
+>>>>> +      - adi,ad4111
+>>>>> +      - adi,ad4112
+>>>>> +      - adi,ad4114
+>>>>> +      - adi,ad4115
+>>>>> +      - adi,ad4116
+>>>>>        - adi,ad7172-2
+>>>>>        - adi,ad7172-4
+>>>>>        - adi,ad7173-8
+>>>>> @@ -129,10 +145,36 @@ patternProperties:
+>>>>>          maximum: 15
+>>>>>  
+>>>>>        diff-channels:
+>>>>> +        description: |
+>>>>> +          For using current channels specify select the current inputs
+>>>>> +           and enable the adi,current-channel property.
+>>>>> +
+>>>>> +          Family AD411x supports a dedicated VINCOM voltage input.
+>>>>> +          To select it set the second channel to 16.
+>>>>> +            (VIN2, VINCOM) -> diff-channels = <2 16>
+>>>>> +
+>>>>> +          There are special values that can be selected besides the voltage
+>>>>> +          analog inputs:
+>>>>> +            21: REF+
+>>>>> +            22: REF−
+>>>>> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, AD7177-2:
+>>>>> +            19: ((AVDD1 − AVSS)/5)+
+>>>>> +            20: ((AVDD1 − AVSS)/5)−
+>>>>> +
+>>>>>          items:
+>>>>>            minimum: 0
+>>>>>            maximum: 31
+>>>>>  
+>>>>> +      single-channel:
+>>>>> +        description: |
+>>>>> +          Models AD4111 and AD4112 support single-ended current channels.
+>>>>> +          To select the desired current input, specify the desired input pair:
+>>>>> +            (IIN2+, IIN2−) -> single-channel = <2>
+>>>>> +
+>>>>> +        items:
+>>>>> +          minimum: 1
+>>>>> +          maximum: 16
+>>>>> +
+>>>>>        adi,reference-select:
+>>>>>          description: |
+>>>>>            Select the reference source to use when converting on
+>>>>> @@ -154,9 +196,26 @@ patternProperties:
+>>>>>            - avdd
+>>>>>          default: refout-avss
+>>>>>  
+>>>>> +      adi,current-channel:
+>>>>> +        description: |
+>>>>> +          Signal that the selected inputs are current channels.
+>>>>> +          Only available on AD4111 and AD4112.
+>>>>> +        type: boolean
+>>>>> +
+>>>>> +      adi,channel-type:
+>>>>> +        description:
+>>>>> +          Used to differentiate between different channel types as the device
+>>>>> +           register configurations are the same for all usage types.
+>>>>> +          Both pseudo-differential and single-ended channels will use the
+>>>>> +           single-ended specifier.
+>>>>> +        $ref: /schemas/types.yaml#/definitions/string
+>>>>> +        enum:
+>>>>> +          - single-ended
+>>>>> +          - differential
+>>>>> +        default: differential
+>>>>
+>>>> I dunno if my brain just ain't workin' right today, or if this is not
+>>>> sufficiently explained, but why is this property needed? You've got
+>>>> diff-channels and single-channels already, why can you not infer the
+>>>> information you need from them? What should software do with this
+>>>> information?
+>>>> Additionally, "pseudo-differential" is not explained in this binding.
+>>>
+>>> In previous thread we arrived to the conclusion single-ended and
+>>> pseudo-differential channels should be marked with the flag
+>>> "differential=false" in the IIO channel struct. This cannot
+>>> really be inferred as any input pair could be used in that
+>>> manner and the only difference would be in external wiring.
+>>>
+>>> Single-channels cannot be used to define such a channel as
+>>> two voltage inputs need to be selected. Also, we are already
+>>> using single-channel to define the current channels.
 >>
->> After conversion, the PLIC driver is probed after CPUs are brought-up
->> so setup cpuhp state after context handler of all online CPUs are
->> initialized otherwise PLIC driver crashes for platforms with multiple
->> PLIC instances.
+>> If I understand correctly, the property could be simplified to a flag
+>> then, since it's only the pseudo differential mode that you cannot be
+>> sure of?
+>> You know when you're single-ended based on single-channel, so the
+>> additional info you need is only in the pseudo-differential case.
 >>
->> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> Yes, it could just be a boolean flag. The only thing I have against
+> that is the awkwardness of having both diff-channels and
+> differential=false within a channel definition.
 > 
-> Thanks for your patch, which is now commit 8ec99b033147ef3b
-> ("irqchip/sifive-plic: Convert PLIC driver into a platform
-> driver") in v6.9.
+> No, there is no uncertainty regarding pseudo-differential, it's
+> basically single-ended.
 > 
-> It looks like this conversion is causing issues on BeagleV Starlight
-> Beta.  After updating esmil/visionfive to v6.10-rc1, the kernel usually
-> fails to boot. Adding "earlycon keep_bootcon" reveals these differences:
-> 
-> -riscv-plic c000000.interrupt-controller: mapped 133 interrupts with 2
-> handlers for 4 contexts.
-> +------------[ cut here ]------------
-> +WARNING: CPU: 0 PID: 1 at drivers/irqchip/irq-sifive-plic.c:373
-> plic_handle_irq+0xf2/0xf6
-> +Modules linked in:
-> +CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-> 6.10.0-rc1-starlight-02342-g0ba4c76ca0e8-dirty #323
-> +Hardware name: BeagleV Starlight Beta (DT)
-> +epc : plic_handle_irq+0xf2/0xf6
-> + ra : generic_handle_domain_irq+0x1c/0x2a
-> +epc : ffffffff8033f994 ra : ffffffff8006319a sp : ffffffc800003f50
-> + gp : ffffffff812d63f0 tp : ffffffd8800b8000 t0 : 0000000000000040
-> + t1 : 0000000000000000 t2 : 0000000000001000 s0 : ffffffc800003fa0
-> + s1 : 0000000000000009 a0 : ffffffd880183600 a1 : 0000000000000009
-> + a2 : 0000000000000000 a3 : 0000000000000000 a4 : 0000000000000000
-> + a5 : 0000000000000000 a6 : ffffffd880400248 a7 : ffffffd8804002b8
-> + s2 : ffffffd9f8fac458 s3 : 0000000000000004 s4 : 0000000000000000
-> + s5 : ffffffff81293f58 s6 : ffffffd88014ac00 s7 : 0000000000000004
-> + s8 : ffffffc800013b2c s9 : ffffffc800013b34 s10: 0000000000000006
-> + s11: ffffffd9f8fc1458 t3 : 0000000000000002 t4 : 0000000000000402
-> + t5 : ffffffd8800610c0 t6 : ffffffd8800610e0
-> +status: 0000000200000100 badaddr: ffffffd9f8fac458 cause: 0000000000000003
-> +[<ffffffff8033f994>] plic_handle_irq+0xf2/0xf6
-> +[<ffffffff8006319a>] generic_handle_domain_irq+0x1c/0x2a
-> +[<ffffffff8033d7aa>] riscv_intc_irq+0x26/0x60
-> +[<ffffffff806c92ee>] handle_riscv_irq+0x4a/0x74
-> +[<ffffffff806d2346>] call_on_irq_stack+0x32/0x40
-> +---[ end trace 0000000000000000 ]---
-> +Unable to handle kernel NULL pointer dereference at virtual address
-> 0000000000000004
-> +Oops [#1]
-> +Modules linked in:
-> +CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W
-> 6.10.0-rc1-starlight-02342-g0ba4c76ca0e8-dirty #323
-> +Hardware name: BeagleV Starlight Beta (DT)
-> +epc : plic_handle_irq+0x66/0xf6
-> + ra : generic_handle_domain_irq+0x1c/0x2a
-> +epc : ffffffff8033f908 ra : ffffffff8006319a sp : ffffffc800003f50
-> + gp : ffffffff812d63f0 tp : ffffffd8800b8000 t0 : 0000000000000040
-> + t1 : 0000000000000000 t2 : 0000000000001000 s0 : ffffffc800003fa0
-> + s1 : 0000000000000009 a0 : ffffffd880183600 a1 : 0000000000000009
-> + a2 : 0000000000000000 a3 : 0000000000000000 a4 : 0000000000000000
-> + a5 : ffffffff8033d72a a6 : ffffffd880400248 a7 : ffffffd8804002b8
-> + s2 : ffffffd9f8fac458 s3 : 0000000000000004 s4 : ffffffd880183630
-> + s5 : ffffffff81293f58 s6 : ffffffff812948a0 s7 : ffffffff80c4e660
-> + s8 : ffffffff80d9eea0 s9 : ffffffc800013b34 s10: 0000000000000006
-> + s11: ffffffd9f8fc1458 t3 : 0000000000000002 t4 : 0000000000000402
-> + t5 : ffffffd8800610c0 t6 : ffffffd8800610e0
-> +status: 0000000200000100 badaddr: 0000000000000004 cause: 000000000000000d
-> +[<ffffffff8033f908>] plic_handle_irq+0x66/0xf6
-> +[<ffffffff8006319a>] generic_handle_domain_irq+0x1c/0x2a
-> +[<ffffffff8033d7aa>] riscv_intc_irq+0x26/0x60
-> +[<ffffffff806c92ee>] handle_riscv_irq+0x4a/0x74
-> +[<ffffffff806d2346>] call_on_irq_stack+0x32/0x40
-> +Code: 8b93 d70b 5b17 00f5 0b13 fa8b fc17 00a5 0c13 5a0c (a783) 0009
-> +---[ end trace 0000000000000000 ]---
-> +Kernel panic - not syncing: Fatal exception in interrupt
-> +SMP: stopping secondary CPUs
-> +---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
-> 
-> As "mapped 133 interrupts" is no longer printed, it looks like an
-> unexpected early interrupt comes in while still in plic_probe().
-> 
-> Esmil suggested reverting all of:
-> a7fb69ffd7ce438a irqchip/sifive-plic: Avoid explicit cpumask allocation on stack
-> abb7205794900503 irqchip/sifive-plic: Improve locking safety by using
-> irqsave/irqrestore
-> 95652106478030f5 irqchip/sifive-plic: Parse number of interrupts and
-> contexts early in plic_probe()
-> a15587277a246c38 irqchip/sifive-plic: Cleanup PLIC contexts upon
-> irqdomain creation failure
-> 6c725f33d67b53f2 irqchip/sifive-plic: Use riscv_get_intc_hwnode() to
-> get parent fwnode
-> b68d0ff529a939a1 irqchip/sifive-plic: Use devm_xyz() for managed allocation
-> 25d862e183d4efeb irqchip/sifive-plic: Use dev_xyz() in-place of pr_xyz()
-> 8ec99b033147ef3b irqchip/sifive-plic: Convert PLIC driver into a platform driver
-> 
-> After this, the PLIC is initialized earlier again, and this indeed
-> seems to fix the issue for me.
-> Before, the kernel booted fine in only ca. 1 out of 5 tries.
-> After the reverts, it booted 5/5.
-> 
-> Do you know what's going on? Is there a simpler fix?
+> We cannot use single-channel for voltage channels, two voltage
+> inputs need to be specified. And again, single-channel will be
+> used here for the current channels. 
 
-The fact that you hit the warning indicates that plic_handle_irq() was called
-before handler->present was set. Previously the PLIC driver was probed very
-early, so it is unlikely that some peripheral already had a pending interrupt.
-Now, while platform device drivers would not yet be able to request interrupts
-(because the irqdomain is not registered yet), they could have programmed the
-hardware in a way that generates an interrupt. If that interrupt was enabled at
-the PLIC (e.g. by the bootloader), then we could expect plic_handle_irq() to be
-called as soon as irq_set_chained_handler() is called.
+Instead of using diff-channels for single-ended/pseudo-differential
+plus a property that says "actually not differential" could we just
+add a second common-mode-channel property to specify the second
+input pin that is connected to the common mode voltage source?
 
-So the fix is to not call irq_set_chained_handler() until after the handlers are
-completely set up.
+Just to make sure I'm understanding, single-ended means common mode
+voltage is 0V (or AVSS for this chip, I guess) and pseudo-differential
+means the common mode voltage is something else other than that.
+In other words, single-ended is just a special case of pseudo-differential.
+So effectively, no difference that we need to describe?
 
-I've sent a patch doing this:
-https://lore.kernel.org/linux-riscv/20240529215458.937817-1-samuel.holland@sifive.com/
+So something like this could work?
 
-Regards,
-Samuel
+
+        /* a fully differential voltage input channel */
+        channel@0 {
+          reg = <0>;
+          bipolar;
+          diff-channels = <0 1>; /* VIN0 is +, VIN1 is - */
+          adi,reference-select = "vref";
+        };
+
+        /* a single-ended voltage input channel */
+        channel@1 {
+          reg = <1>;
+          /* no bipolar since common mode is 0V */
+          single-channel = <2>; /* VIN2 is input */
+          common-mode-channel = <3>; /* VIN3 connected to 0V */
+        };
+
+        /* a pseudo-differential voltage input channel */
+        channel@2 {
+          reg = <2>;
+          bipolar; /* since common mode is not 0V */
+          single-channel = <4>; /* VIN4 is input */
+          common-mode-channel = <5>; /* VIN5 connected to Vref / 2 */
+          adi,reference-select = "vref";
+        };
+
+	/* a current input channel */
+        channel@3 {
+          reg = <3>;
+          bipolar;
+          /* 0 is not the same pin as channel@0 because of
+           * the adi,current-channel flag */
+          single-channel = <0>; /* using IIN0+ and IIN0- pins */
+          adi,current-channel;
+        };
+
+
+If we really wanted to go all the way, we could also think about
+adding a common-mode-supply property in each channel node to with
+a common-mode-channel property to describe the voltage source that
+the pin is connected to.
 
 
