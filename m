@@ -1,133 +1,128 @@
-Return-Path: <linux-kernel+bounces-194268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115218D392E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:28:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BAC8D3934
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CAB9B25BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:28:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518BE1C22699
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C948158210;
-	Wed, 29 May 2024 14:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A868E15821E;
+	Wed, 29 May 2024 14:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mw8j/CgV"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IgWRqzwU"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E516156F38;
-	Wed, 29 May 2024 14:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C551158210
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716992924; cv=none; b=a+C+SIxbfjAqS4LCgnTwjFWZQAuPsYyOJitE8B5Qm9l/ciYlG6hm2qdRD+AS7RsTlmkLy5boYrpAgkLLYbzXUNDESQUKk6oNQ3fm2ceW0OjwoSmV+P7w0B43V1EuQrmyXNhVW3XSf/o1kIg33rFMnrahOAXBHLoLqakBZ+MV3xU=
+	t=1716992962; cv=none; b=KzNCsHqjmCOSnXTdcGmSO2BfaxAV2XLaCLVVdgiFGYyDOxHk6DrYbL3VfxFpfLDTW5T5pXZGRKWbPCCUyvVLqTkp0Emd4j7BMTS2d4QtIDzJRvtz7Z8IreV6m/RVgKo1dq4pywmY4c8tCAfJoxd+KJ4GJStolKAgJRmRNKzfnU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716992924; c=relaxed/simple;
-	bh=YMQyhhaP6Gg3VRgatRDCJBiv0lWaUNKjwv78w6uHqZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nmhMu8ikKxP4FwSntfSupSf8/xpxz8NWqAQl/mjgeJ4+TOg9TfZsVz1iiuNWZQaYUup5A+WW6DCR3FGz7yvWpKN83+OqKCCAnxn4EnuS7PSVqKSRHcaNech3Uu9Ur58ZGr6uFmxFNBxFRTBU+xSHtLA2LHXbPhi4u3F/CCDt+eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mw8j/CgV; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716992918; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Oje62Ov6FUBQ4DHAsaEy7GE8Yt2ouQ/knXBYAIm0bWE=;
-	b=mw8j/CgV/4aYJxy1mQgVGQg1YxAhvc0mxSSeSAgQkpRRCd8NaV8RXY7cZHl2bek/h80eaKAK/EREjWe/QcnSstPxHjDX2dqcXNIJM37g8RyFhapq4YpEzqu1IzVW140eEcv6y/OjkaAcJDdiiAYnt+0JiiJ+rh0L30NDQ4zl7Mo=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7U1T.u_1716992916;
-Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7U1T.u_1716992916)
-          by smtp.aliyun-inc.com;
-          Wed, 29 May 2024 22:28:37 +0800
-Message-ID: <2dc48e89-cd3f-4736-8847-4d23bcad27e5@linux.alibaba.com>
-Date: Wed, 29 May 2024 22:28:35 +0800
+	s=arc-20240116; t=1716992962; c=relaxed/simple;
+	bh=//0ii/zNBOQKKNaDNP3w/g1gM1CezyuYoz6Y2NAEkac=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RlgiX8fTqIUjoMoNNyjEnUcEjAwnqUi42ZAnN/xwyGDyKC4QxKkanDum6lbLAFzppz8VafREDNMtJhw7yX/BYuxbh/qMRAdtzs/BL0/x/yh4mitBfK5WIoIj9X5160vD0ROX5wtCDBGEd4D88/i+FvOs1hs0QZBv+ccUjzIo2ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IgWRqzwU; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-629f8a92145so35011787b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716992959; x=1717597759; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UpzkxiZJ+JsVTYQLiVluvU7gtIP+cGyMlWZAn8HOBvc=;
+        b=IgWRqzwUAUE/aQEi4/xVaVivYgj7kYV1vdqPIC7g7km8uYLcpdSAlsw/Z/b4Jmkm9K
+         zs31IhnlalrHF85rPT5sSwJ2uTDG3e079mgDKbeWE7xYQiW3d0YMsQu5hDb6oMKIaRne
+         T3sF2VDD63pRD0nh8bv/lBAz9StTcnndb1IIcHWOCNItaKxHPl7bIGojMw3Fjb2/M7b9
+         vMe4dkBZxcb0kBrkuptQYzXi8vPP5PUBWbNqJTUQvDhVQHaJvBV8xDdOgsuvjF3eDXSG
+         59qmHJlUPOfVvWSnaFzVxDVhvBK7AM7j0usZEmH8mte37YIQni1bGh0nmeY0oa0PH5QK
+         bhUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716992959; x=1717597759;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UpzkxiZJ+JsVTYQLiVluvU7gtIP+cGyMlWZAn8HOBvc=;
+        b=MTtNcJZmMUD9vuuPC1SiszU9vZFI4Xfzsz9mNYMsLrJdrGfeXS4XeqneyudOEWNSWe
+         fP1YDbTmWOtxEz6OvsvombRHa6sIGGBfegOc2kbwvhlhKUR7TqWPuGrt+/9YGWaZTbk0
+         j4vDhFnyY0m+6ODfPBTtuHhulwL0zq8veZOkrcGDIaiLfV/MYRFC5fRn+0A8xn2Ks+69
+         7faXt4bxMyYFGxexE4B8YqFYOKRcmXfMozRl9NTzWBInSM1Q3hZR+6rN3VOe0P0rBygU
+         v7ZSScOPGaxM9SFepamMM2bYqRHICbRaCYhqQ1Do9hCMkDz6Hm2rihYhLDOOO0pW/A8F
+         KuEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWendbSNEM6YBwrwe3gTYpzBypO+3cCslOHa4gfzCGGXu6VxngXxAhKBr+pQb1B/S/NHKsL6na9IKI6y8a+KTp0b2wp5VsNfagV+J3Q
+X-Gm-Message-State: AOJu0YyUej2KqzPCdy6UeOhgEBnt6+gge3pPoeEbw1TTqDE2Nr2CZPz6
+	BAinmFybEv4TrYzs+ZwI+HeIJWVWjxOPoobgV7R4TSPG2Fq1m7tewnk68Xz7DhJjl+NZKmdFRnU
+	azA==
+X-Google-Smtp-Source: AGHT+IEGZoW9p/45uvlpuAhiUqCesSBDBs0K+xmgAn7zLw0SiaXYS/WuIvmvG5ZvjK25/ioNuhWd5tsISM4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:d8f:b0:62a:4932:68de with SMTP id
+ 00721157ae682-62a49326f54mr16363447b3.8.1716992959692; Wed, 29 May 2024
+ 07:29:19 -0700 (PDT)
+Date: Wed, 29 May 2024 07:29:18 -0700
+In-Reply-To: <Zk2MRRkS6c5cGYSV@chao-email>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/12] cachefiles: some bugfixes and cleanups for
- ondemand requests
-To: Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org, libaokun@huaweicloud.com
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Gao Xiang <xiang@kernel.org>
-References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
- <20240529-lehrling-verordnen-e5040aa65017@brauner>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240529-lehrling-verordnen-e5040aa65017@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240522022827.1690416-1-seanjc@google.com> <20240522022827.1690416-2-seanjc@google.com>
+ <Zk2MRRkS6c5cGYSV@chao-email>
+Message-ID: <Zlc7vtp4HaPHqZ2K@google.com>
+Subject: Re: [PATCH v2 1/6] KVM: Register cpuhp and syscore callbacks when
+ enabling hardware
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kai Huang <kai.huang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Christian,
+On Wed, May 22, 2024, Chao Gao wrote:
+> On Tue, May 21, 2024 at 07:28:22PM -0700, Sean Christopherson wrote:
+> >Register KVM's cpuhp and syscore callback when enabling virtualization
+> >in hardware instead of registering the callbacks during initialization,
+> >and let the CPU up/down framework invoke the inner enable/disable
+> >functions.  Registering the callbacks during initialization makes things
+> >more complex than they need to be, as KVM needs to be very careful about
+> >handling races between enabling CPUs being onlined/offlined and hardware
+> >being enabled/disabled.
+> >
+> >Intel TDX support will require KVM to enable virtualization during KVM
+> >initialization, i.e. will add another wrinkle to things, at which point
+> >sorting out the potential races with kvm_usage_count would become even
+> >more complex.
+> >
+> 
+> >Use a dedicated mutex to guard kvm_usage_count, as taking kvm_lock outside
+> >cpu_hotplug_lock is disallowed.  Ideally, KVM would *always* take kvm_lock
+> >outside cpu_hotplug_lock, but KVM x86 takes kvm_lock in several notifiers
+> >that may be called under cpus_read_lock().  kvmclock_cpufreq_notifier() in
+> >particular has callchains that are infeasible to guarantee will never be
+> >called with cpu_hotplug_lock held.  And practically speaking, using a
+> >dedicated mutex is a non-issue as the cost is a few bytes for all of KVM.
+> 
+> Shouldn't this part go to a separate patch?
+> 
+> I think so because you post a lockdep splat which indicates the existing
+> locking order is problematic. So, using a dedicated mutex actually fixes
+> some bug and needs a "Fixes:" tag, so that it can be backported separately.
 
-On 2024/5/29 19:07, Christian Brauner wrote:
-> On Wed, 22 May 2024 19:42:56 +0800, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> Hi all!
->>
->> This is the third version of this patch series. The new version has no
->> functional changes compared to the previous one, so I've kept the previous
->> Acked-by and Reviewed-by, so please let me know if you have any objections.
->>
->> [...]
-> 
-> So I've taken that as a fixes series which should probably make it upstream
-> rather sooner than later. Correct?
+Oooh, good point.  I'll try to re-decipher the lockdep splat, and go this route
+if using a dedicated lock does is indeed fix a real issue.
 
-Yeah, many thanks for picking these up!  AFAIK, they've already been
-landed downstream for a while so it'd be much better to address
-these upstream. :-)
+> And Documentation/virt/kvm/locking.rst needs to be updated accordingly.
+> 
+> Actually, you are doing a partial revert to the commit:
+> 
+>   0bf50497f03b ("KVM: Drop kvm_count_lock and instead protect kvm_usage_count with kvm_lock")
+> 
+> Perhaps you can handle this as a revert. After that, change the lock from
+> a raw_spinlock_t to a mutex.
 
-Thanks,
-Gao Xiang
-
-> 
-> ---
-> 
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
-> 
-> [01/12] cachefiles: add output string to cachefiles_obj_[get|put]_ondemand_fd
->          https://git.kernel.org/vfs/vfs/c/cc5ac966f261
-> [02/12] cachefiles: remove requests from xarray during flushing requests
->          https://git.kernel.org/vfs/vfs/c/0fc75c5940fa
-> [03/12] cachefiles: fix slab-use-after-free in cachefiles_ondemand_get_fd()
->          https://git.kernel.org/vfs/vfs/c/de3e26f9e5b7
-> [04/12] cachefiles: fix slab-use-after-free in cachefiles_ondemand_daemon_read()
->          https://git.kernel.org/vfs/vfs/c/da4a82741606
-> [05/12] cachefiles: remove err_put_fd label in cachefiles_ondemand_daemon_read()
->          https://git.kernel.org/vfs/vfs/c/3e6d704f02aa
-> [06/12] cachefiles: add consistency check for copen/cread
->          https://git.kernel.org/vfs/vfs/c/a26dc49df37e
-> [07/12] cachefiles: add spin_lock for cachefiles_ondemand_info
->          https://git.kernel.org/vfs/vfs/c/0a790040838c
-> [08/12] cachefiles: never get a new anonymous fd if ondemand_id is valid
->          https://git.kernel.org/vfs/vfs/c/4988e35e95fc
-> [09/12] cachefiles: defer exposing anon_fd until after copy_to_user() succeeds
->          https://git.kernel.org/vfs/vfs/c/4b4391e77a6b
-> [10/12] cachefiles: Set object to close if ondemand_id < 0 in copen
->          https://git.kernel.org/vfs/vfs/c/4f8703fb3482
-> [11/12] cachefiles: flush all requests after setting CACHEFILES_DEAD
->          https://git.kernel.org/vfs/vfs/c/85e833cd7243
-> [12/12] cachefiles: make on-demand read killable
->          https://git.kernel.org/vfs/vfs/c/bc9dde615546
+Hmm, I'd prefer to not revert to a spinlock, even temporarily.
 
