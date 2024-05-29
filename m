@@ -1,183 +1,250 @@
-Return-Path: <linux-kernel+bounces-193562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2EB8D2DD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:10:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD8A8D2DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F6B01F25239
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:10:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D312C1F24B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56591667CA;
-	Wed, 29 May 2024 07:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A891649C2;
+	Wed, 29 May 2024 07:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qLzVCfvm"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nqA3SE9g"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AFE15B142
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5B415B142
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716966592; cv=none; b=iNNNjWBS/xoHBgUdPCruFR3x1RuJhTZkrAZMBrSE3KtZQdZLAmqTafKCE0l38z9W/ghGu3YnqRHqTGF4IPIM+CPlXgNjbMuu9kMWHKJf8hN536tHgnp6c2G6BUEcICc0lEbFZDk7iLQ04kJnzmju/AkaLo9e+jWHXA+KNG5/3hA=
+	t=1716966599; cv=none; b=IQzAds4Hzp4NBRaLq8WKg1YHiUsX6+Kkt6rD9xco1lnmZfF4SJK2QfoP6c+h+cB+0rLfSV1nAweNZ/p9+gQiJRachV4rYgsT4iewTQGzSi3jidcur2t3OY2cnIUckkqJVC2tdWIPXXqTYrm7+lZN9TaAIOjyyRlvPAwAK4Jww24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716966592; c=relaxed/simple;
-	bh=XfaFWKu7oi4Neymy5/WAUYtnx6Hwuj7EMkKj1osWQxY=;
+	s=arc-20240116; t=1716966599; c=relaxed/simple;
+	bh=IR+RvCK+/4xLwGVx3D0HTnj+/AXe+O8Ox+ve92jpdXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VytX2wa785bzVwjlYhrg9gxq6TpxD/TjgWuxMl8/ya5eOVzJr3Cc9RvKwqsAtcN6rkBbUYVJ7+WTdy66h6X7CJcWITYJKCUS9zTrVaN0XI4/iKzhZ4rZinvaYxoMeeIn4mxLs2j7heaJ4sC8w//bTdXE/P3Uhf6rmA4AgAlQL3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qLzVCfvm; arc=none smtp.client-ip=209.85.214.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1ffYPs9t1Q0/9shAoLS/8kyzVoU2TlIp0YPXvLvM2fgVpjZNSuI4c88nSOtzUzpcRyXyhKBkPPKlEmvrqV5PValfHE1T+tGgnrxJf+qjWBk4xMSsVElgy8FtuQGBNte62KL1x7GwNwaj9n9n+ZZhJYZ/istfYtGul7v2JZq+rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nqA3SE9g; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f4a6a54416so4555275ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:09:51 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ac99930c6so544873e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716966590; x=1717571390; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YfBLr2Fq0mXBI98PC9MxWEJ6lX7NEiIePEepGikvn2Q=;
-        b=qLzVCfvmBO50vwXYmETujCr2L5xuJhnhC7GMfYE3N6A7E6Szh4OoKCkIk7PBPuhIjc
-         4pwoRYAVz8kpBo0NLwTalAOX04CZXsE9u/74uIj+BbeW82xithArOGgmr6EFYuZp4RuW
-         PLEYE2/dTe4U+3t8BTtDVWurUtnpav+toBccoTrRWqRUwCXB2tAvcW88/CD1nfpx35rG
-         2wsRn3W6TmrZ4voI3bZcfqyzoqMFenunRQH23FWrLfXlacstx2jH4dri1axY47Lp2CXC
-         9wzPcB4ZBfsdgLSnoHcJ0/KMbgm0dd/lcKeIEv/ME7bIK4O6dTlXVHquGImnjrMArIFz
-         kBzQ==
+        d=linaro.org; s=google; t=1716966595; x=1717571395; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ppWh6NKQYdWs0IByPlxTYWyYUwCJ5vCPvljvtNRXhi8=;
+        b=nqA3SE9gaRmf3ztoNBRaHHts8MyafMP7sr6aMMi8mq36h6WNlF6x9+ixvIxrFw7UlZ
+         IAuO7b4pwpE8r++FXzjgJNjcL0dosM2cM6FeXHipn0HeFmrK8bYRZkp03q0RTdjcsxvC
+         xB/9EfCxdyHAaDnOQpYvl8w/exn1fm84Eh75/8y/mm9JzJYxH5UVo6FASHxiile/15y7
+         vdALEimC27EzFoG8PZs4vASaLS/fY/26d8dP3pguwA+fau6mqxnirGvXMFtOEJcJ1bE4
+         /S+LeysSuOhCB9MGFG7FnHBZA+GPJbjdFzfbQ92FN5RdeVE+PkM1ZX6DKcdp60ZHShNx
+         zShA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716966590; x=1717571390;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YfBLr2Fq0mXBI98PC9MxWEJ6lX7NEiIePEepGikvn2Q=;
-        b=Y8SihDkx8fdEM6V1M0Uj6Ol4jeQw8e0JsiPUj3zFaKpmVHogHc47xN/xhsxRjec9B+
-         PBijOnnA1xrZEpGERb4IYPOPpl7zlH+FRDk0dSuOL2ULtuqAwCevTgDFp9t2ZLKkXP0K
-         CajRMREtJuJlgpj75cdP/OqILgULIG+83tbVw9DsnreqHBk2SzRsXSYWA+v9vWe7nuUq
-         e/UcIa+8h9VZVmbmc9K9M7cxLE2Bfcz5+j2iutX2j5lq+T2pgX0A9pMIv/tfBUtW7NXg
-         0si/OlnQ8Qs4wwRcqFLZIeracd1HVgmj79zOI6QIAcjmYMmFTFLZYz8AN43/dIDd28jH
-         PqKA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3wW9SkCDC9ukZ2KaxTDBw8Ys8xBrLcUV1JXbOs4ibsKlft/x8i5+4ylM1dcGg+XZp7nYdUXqKQtGsBzUO/1ku2cQ1r4r8bEPTE42T
-X-Gm-Message-State: AOJu0YxTSecIfdPE2ZyEIFOxgCMxc63mEmFoUy4GPY/Lv7MLs9u9AZjM
-	qyRZysFeoF7mdCTlnwet92jS+UATk9aEm5X6dkqu9Zh5Te6btIQrr9mSDwQlglo=
-X-Google-Smtp-Source: AGHT+IHTai1Wf/bfUCzbnNhmze+7eirkLIlslk7bczKV8arj21k0uHlqRjM8dak5Buu6wHOSQM9dhg==
-X-Received: by 2002:a17:902:db09:b0:1f5:e4ea:9869 with SMTP id d9443c01a7336-1f5e4ea9b7bmr3831925ad.9.1716966590325;
-        Wed, 29 May 2024 00:09:50 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f47737d71csm67837305ad.303.2024.05.29.00.09.49
+        d=1e100.net; s=20230601; t=1716966595; x=1717571395;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ppWh6NKQYdWs0IByPlxTYWyYUwCJ5vCPvljvtNRXhi8=;
+        b=L2N02layryeS82/mVDLTZEs+NVfby6jsIlPklsZ831/C+tGsP3mF6wJ8KQtDP69Zs8
+         rE/llilRRcHRXpJ567a9R/WnbNjq0rVAKOWxpPyq/0jaTrNFiqTL9ypB5M80ILMO+o/o
+         B0eSCQe0fpFvct6W90EDFePqR+cysrX7bzHAASAF9qKhDhep1cSUfI02szQxADUW2TSE
+         mCl9SEmqdnHjz+Gx0WlvkjKV3AZEcKLR8zf5kqEhWUgMgeBdB7s+J1nMKY4cOrruAuh1
+         KlYAv0ulcJZfHzcN65gCl5SYdweDOH+xY/gyB0jYmvvhxsiwf3mmw6Snxi38iK8DR97T
+         r9mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVS6qEXYMxLZwQhZTKPKT6mekk9Wz1TtrhleKidGbtJsQbTIsKkl2/s3/QIdb6B7a/OVNBOqkiCVmIIy8y3zbMWqFx3VNh1Otn48KZR
+X-Gm-Message-State: AOJu0YxxY5lnIYN+nLsfsDOH5y0cR8YiTdeeY967IIwL/AcpKp3S/LQ2
+	bob2Bz03FvAAl1eGp27L6KD9RikRPEmN+Oxf7HthDWJ4BVh6sJ2KNAXuOEtvJ44=
+X-Google-Smtp-Source: AGHT+IE7o2uN79r0sgg4WFBLqbMPFaFhyXoHZRR8FldfhiqvqQHJeK4RqvGxIzkO8Tm/iLsqVYB7aA==
+X-Received: by 2002:a19:4319:0:b0:523:b261:3dde with SMTP id 2adb3069b0e04-52965199475mr8481737e87.41.1716966595081;
+        Wed, 29 May 2024 00:09:55 -0700 (PDT)
+Received: from nuoska (87-100-245-199.bb.dnainternet.fi. [87.100.245.199])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296ee4a8f2sm1169381e87.87.2024.05.29.00.09.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 00:09:49 -0700 (PDT)
-Date: Wed, 29 May 2024 12:39:47 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: Questions about transition latency and LATENCY_MULTIPLIER
-Message-ID: <20240529070947.4zxcdnu32d2u7cny@vireshk-i7>
-References: <20240528012110.n6se3mapwxgqa3r2@airbuntu>
+        Wed, 29 May 2024 00:09:54 -0700 (PDT)
+Date: Wed, 29 May 2024 10:09:52 +0300
+From: Mikko Rapeli <mikko.rapeli@linaro.org>
+To: Sumit Garg <sumit.garg@linaro.org>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org,
+	Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Manuel Traut <manut@mecka.net>
+Subject: Re: [PATCH v7 4/4] optee: probe RPMB device using RPMB subsystem
+Message-ID: <ZlbUwI0G3HGvioNm@nuoska>
+References: <20240527121340.3931987-1-jens.wiklander@linaro.org>
+ <20240527121340.3931987-5-jens.wiklander@linaro.org>
+ <fc3bfebb-78b7-428e-8da5-5221f4921faa@linaro.org>
+ <CAHUa44G0bcK55RxNrN5sXiicBZ-BJtA46KpedfBdUSKsN8eUOA@mail.gmail.com>
+ <ZlWkSCCjJ2fbE2ML@nuoska>
+ <CAFA6WYOT52fdqgGvDYE91DQ_4MUbAv_1Gnn2fTyMNhrj_Agu=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240528012110.n6se3mapwxgqa3r2@airbuntu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFA6WYOT52fdqgGvDYE91DQ_4MUbAv_1Gnn2fTyMNhrj_Agu=w@mail.gmail.com>
 
-HI Qais,
+Hi,
 
-On 28-05-24, 02:21, Qais Yousef wrote:
-> Hi
+On Wed, May 29, 2024 at 10:56:04AM +0530, Sumit Garg wrote:
+> Hi Mikko,
 > 
-> I am trying to understanding the reason behind the usage of LATENCY_MULTIPLIER
-> to create transition_delay_us. It is set to 1000 by default and when I tried to
-> dig into the history I couldn't reach the original commit as the code has gone
-> through many transformations and I gave up finding the first commit that
-> introduced it.
-
-The changes came along with the initial commits for conservative and ondemand
-governors, i.e. before 2005.
-
-> Generally I am seeing that rate_limit_us in schedutil (which is largely
-> influenced by this multiplier on most/all systems I am working on) is too high
-> compared to the cpuinfo_transition_latency reported by the driver
+> On Tue, 28 May 2024 at 15:00, Mikko Rapeli <mikko.rapeli@linaro.org> wrote:
+> >
+> > Hi,
+> >
+> > On Mon, May 27, 2024 at 03:24:01PM +0200, Jens Wiklander wrote:
+> > > On Mon, May 27, 2024 at 3:00 PM Jerome Forissier
+> > > <jerome.forissier@linaro.org> wrote:
+> > > >
+> > > > On 5/27/24 14:13, Jens Wiklander wrote:
+> > > > > Adds support in the OP-TEE drivers (both SMC and FF-A ABIs) to probe and
+> > > > > use an RPMB device via the RPMB subsystem instead of passing the RPMB
+> > > > > frames via tee-supplicant in user space. A fallback mechanism is kept to
+> > > > > route RPMB frames via tee-supplicant if the RPMB subsystem isn't
+> > > > > available.
+> > > > >
+> > > > > The OP-TEE RPC ABI is extended to support iterating over all RPMB
+> > > > > devices until one is found with the expected RPMB key already
+> > > > > programmed.
+> > > > >
+> > > > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > > > > Tested-by: Manuel Traut <manut@mecka.net>
+> > > > > ---
+> > > > >  Documentation/ABI/testing/sysfs-class-tee |  15 ++
+> > > > >  MAINTAINERS                               |   1 +
+> > > > >  drivers/tee/optee/core.c                  |  96 +++++++++++-
+> > > > >  drivers/tee/optee/device.c                |   7 +
+> > > > >  drivers/tee/optee/ffa_abi.c               |  14 ++
+> > > > >  drivers/tee/optee/optee_ffa.h             |   2 +
+> > > > >  drivers/tee/optee/optee_private.h         |  26 +++-
+> > > > >  drivers/tee/optee/optee_rpc_cmd.h         |  35 +++++
+> > > > >  drivers/tee/optee/optee_smc.h             |   2 +
+> > > > >  drivers/tee/optee/rpc.c                   | 177 ++++++++++++++++++++++
+> > > > >  drivers/tee/optee/smc_abi.c               |  14 ++
+> > > > >  11 files changed, 387 insertions(+), 2 deletions(-)
+> > > > >  create mode 100644 Documentation/ABI/testing/sysfs-class-tee
+> > > > >
+> > > > > diff --git a/Documentation/ABI/testing/sysfs-class-tee b/Documentation/ABI/testing/sysfs-class-tee
+> > > > > new file mode 100644
+> > > > > index 000000000000..c9144d16003e
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/ABI/testing/sysfs-class-tee
+> > > > > @@ -0,0 +1,15 @@
+> > > > > +What:                /sys/class/tee/tee{,priv}X/rpmb_routing_model
+> > > >
+> > > > Wouldn't /sys/class/tee/teeX/rpmb_routing_model be good enough?
+> > >
+> > > Doesn't the routing model concern tee-supplicant more than a TEE
+> > > client? Then it might make more sense to have
+> > > /sys/class/tee/teeprivX/rpmb_routing_model only. Keeping it for both
+> > > devices representing the same internal struct optee makes it easier to
+> > > find. Anyway, I don't mind removing one. Mikko, what do you prefer?
+> >
+> > As simple as possible. A single sysfs file is enough. Even the existence of the sysfs file
+> > could be the needed indicator for userspace to queue tee-supplicant startup.
+> >
+> > Outside of these patches, I think the optee RPC setup with fTPM TA is one area which
+> > currently requires tee-supplicant to be started. Detecting the existence of TPM before
+> > kernel drivers are loaded is possible via the exported EFI logs from firmware to kernel
+> > or ACPI TPM2 table entry, and detecting optee and thus starting tee-supplicant in userspace too.
 > 
-> For example on my M1 mac mini I get 50 and 56us. rate_limit_us is 10ms (on 6.8
-> kernel, should become 2ms after my fix)
-> 
-> 	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
-> 	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:50000
-> 	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:56000
-> 
-> AMD Ryzen it reads 0, and end up with LATENCY_MULTIPLIER (1000 = 1ms) as
-> the rate_limit_us.
-> 
-> On Intel I5 I get 20us but rate_limit is 5ms which is requested explicitly by
-> intel_pstate driver
-> 
-> 	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
-> 	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:20000
-> 	/sys/devices/system/cpu/cpufreq/policy1/cpuinfo_transition_latency:20000
-> 	/sys/devices/system/cpu/cpufreq/policy2/cpuinfo_transition_latency:20000
-> 	/sys/devices/system/cpu/cpufreq/policy3/cpuinfo_transition_latency:20000
-> 	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:20000
-> 	/sys/devices/system/cpu/cpufreq/policy5/cpuinfo_transition_latency:20000
-> 	/sys/devices/system/cpu/cpufreq/policy6/cpuinfo_transition_latency:20000
-> 	/sys/devices/system/cpu/cpufreq/policy7/cpuinfo_transition_latency:20000
-> 
-> The question I have is that why so high? If hardware got so good, why can't we
-> leverage the hardware's fast ability to change frequencies more often?
+> One thing I am trying to find an answer about is why do we need to
+> defer tee-supplicant launch if it's bundled into initrd? Once you
+> detect OP-TEE then tee-supplicant should be launched unconditionally.
+> As per your example below, the motivation here seems to be the TPM2
+> device dependent on RPMB backend but what if other future systemd
+> services come up and depend on other services offered by
+> tee-supplicant?
 
-From my understanding, this is about not changing the frequency too often.
-That's all. And it was historical and probably we didn't get better numbers with
-this reduced to a lower value later on as well.
+There is an annoying depedency between firmware side optee and TAs, and kernel optee driver,
+tee-supplicant in userspace and kernel TA drivers like fTPM.
 
-> This is important because due to uclamp usage, we can end up with less gradual
-> transition between frequencies and we can jump up and down more often. And the
-> smaller this value is, this means the better we can handle fast transition to
-> boost or cap frequencies based on task's requirements when it context switches.
-> But the rate limit generally is too high for the hardware and wanted to
-> understand if this is pure historical or we still have reasons to worry about?
+Kernel fTPM driver and fTPM TA require tee-supplicant in userspace for RPMB, RPC etc.
 
-Maybe Rafael knows other reasons, but this is all I remember.
+This patch series is adding kernel side support for RPMB handling so that the dependency to
+tee-supplicant in userspace can be removed. For fTPM use case, there is still the optee RPC
+buffer setup which currently requires tee-supplicant in userspace or fTPM TA will panic.
 
-> From what I've seen so far, it seems to me this higher rate limit is helping
-> performance as bursty tasks are more likely to find the CPU running at higher
-> frequencies due to this behavior. I think this is something I can help these
-> bursty tasks with without relying accidentally on this being higher.
-> 
-> Is there any worry on using cpuinfo_transition_latency as is if the driver
-> doesn't provide transition_delay_us?
+So yes, currently, tee-supplicant must be started. But it would be great if kernel drivers
+and firmware optee trusted applications would not depend on tee-supplicant running in userspace.
+The startup sequence is really tricky to get right. My fTPM use case is using the TPM device
+to encrypt rootfs and thus all SW components including tee-supplicant need to run early in
+initramfs. Currently also switch from initramfs to main rootfs requires unloading
+fTPM kernel driver and stopping tee-supplicant in initrd, and then starting tee-supplicant
+and loading fTPM kernel driver from main rootfs. udev and automatic module loading for
+fTPM can not be used due to the tee-supplicant userspace dependency.
 
-Won't we keep changing the frequency continuously in that case ? Or am I
-misunderstanding something ?
+As an example, here is v6 of this series on rockpi4b using fTPM TA with systemd based initrd
+without tee-supplicant and fTPM TA panics because the RPC setup is missing:
 
-> And does the kernel/driver contract need to cater for errors in driver's
-> ability to serve the request? Can our request silently be ignored by the
-> hardware?
+https://ledge.validation.linaro.org/scheduler/job/87488
 
-cpufreq core maintains its state machine and the failures are used to inform the
-user and / or stop DVFS. It is useful for a clean approach, not sure what we
-will get / miss by ignoring the errors..
+[[0;32m  OK  [0m] Finished [0;1;39mFile System Check on /dev/mapper/usr[0m.
+E/TC:? 0 get_rpc_alloc_res:645 RPC allocation failed. Non-secure world result: ret=0xffff000c ret_origin=0x2
+E/TC:? 0 
+E/TC:? 0 TA panicked with code 0xffff000c
+E/LD:  Status of TA bc50d971-d4c9-42c4-82cb-343fb7f37896
+E/LD:   arch: aarch64
+E/LD:  region  0: va 0x40005000 pa 0x3061b000 size 0x002000 flags rw-s (ldelf)
+E/LD:  region  1: va 0x40007000 pa 0x3061d000 size 0x008000 flags r-xs (ldelf)
+E/LD:  region  2: va 0x4000f000 pa 0x30625000 size 0x001000 flags rw-s (ldelf)
+E/LD:  region  3: va 0x40010000 pa 0x30626000 size 0x004000 flags rw-s (ldelf)
+E/LD:  region  4: va 0x40014000 pa 0x3062a000 size 0x001000 flags r--s
+E/LD:  region  5: va 0x40015000 pa 0x306b2000 size 0x011000 flags rw-s (stack)
+E/LD:  region  6: va 0x40026000 pa 0xe50ce000 size 0x002000 flags rw-- (param)
+E/LD:  region  7: va 0x40062000 pa 0x00001000 size 0x068000 flags r-xs [0]
+E/LD:  region  8: va 0x400ca000 pa 0x00069000 size 0x01f000 flags rw-s [0]
+E/LD:   [0] bc50d971-d4c9-42c4-82cb-343fb7f37896 @ 0x40062000
+E/LD:  Call stack:
+E/LD:   0x400a00c0
+E/LD:   0x40062b40
+E/LD:   0x400631b8
+E/LD:   0x40081f44
+E/LD:   0x4009b060
+E/LD:   0x40063a2c
+E/LD:   0x400a6298
+E/LD:   0x4009b214
+[    7.212584] tpm tpm0: ftpm_tee_tpm_op_send: SUBMIT_COMMAND invoke error: 0xffff3024
+[    7.213281] tpm tpm0: tpm_try_transmit: send(): error -53212
+[    7.213820] tpm tpm0: ftpm_tee_tpm_op_send: SUBMIT_COMMAND invoke error: 0xffff3024
+[    7.214493] tpm tpm0: tpm_try_transmit: send(): error -53212
+[    7.214996] optee-ftpm optee-ta-bc50d971-d4c9-42c4-82cb-343fb7f37896: ftpm_tee_probe: tpm_chip_register failed with rc=-53212
+         Mounting [0;1;39m/sysusr/usr[0m... 
 
-> Not necessarily due to rate limit being ignored, but for any other
-> reason? It is important for Linux to know what frequency we're actually running
-> at.
+This series adds the RPMB support in kernel, if HW supports it, but some HW doesn't and the
+tee-supplicant is emulating it as fall back. Userspace needs to know if tee-supplicant start
+is needed. Thus to me, exporting the RPMB routing details is useful for userspace.
 
-One is that we report to userspace two frequencies:
-- scaling_cur_freq: The frequency that the software thinks the hardware runs at
-  (last requested freq i.e.)
+It's one thing to have a full control of HW and SW and force a policy, like always
+waiting for a specific TPM device to appear, but then again distros should be able
+to have automatic detection of TPM devices if firmware used them too and then
+start the needed bits in userspace, which depend on the firmware and HW configuration,
+like which SW components are needed for RPMB storage, kernel or tee-supplicant in userspace.
 
-- cpuinfo_cur_freq: The real frequency hardware is running at. Can be calculated
-  using counters, etc.
+These could possibly be just bugs in fTPM kernel driver and fTPM TA in optee world,
+which should be able to handle missing RPC and RPMB too and retry later on. Right now
+without tee-supplicant they panic early in boot and become unusable for the rest of the
+power cycle.
 
-And there will be tools which are using them. So these are required.
+Cheers,
 
-> Some hardware gives the ability to read a counter to discover that. But
-> a lot of systems rely on the fact that the request we sent is actually
-> honoured. But failures can mean things like EAS will misbehave.
-
--- 
-viresh
+-Mikko
 
