@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-193824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813018D32BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C881E8D32B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 090DEB24ACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84377283631
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D26C169AE6;
-	Wed, 29 May 2024 09:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92855169AC2;
+	Wed, 29 May 2024 09:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzSd2GdS"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="OBwd7COA";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tu8OT6rM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DEE15FCE6;
-	Wed, 29 May 2024 09:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CCA6F079
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716974235; cv=none; b=gvCfPBoGvf1O2fu4drFiMzW14bQLbyGb9j9RE55NEzbgq46xWpUlce7ppYBWhQy7o4bDpVzDFpUoHCf+Q5ALPO6CQq6n4lTmvwBewPKQmQpUS8NuOZ7vPRDcdyekq7Jowf2GAoX3GKNJCpv3kOyCMaBXI4qWLDNbwxDrVF8fSkY=
+	t=1716974220; cv=none; b=B7uSPvvWA6YAs0fG/e010bsqV+h2l/aECv5zy9CBimVMQFCxPf5TkXhh+QSs1KvE/V8idXu8XchMbGQAMu78lx7CDfG0epF9ueq4Iiy/+ewtCv09L3ak1HeUUby/xlLP0aB4WgYrCojwJ7fzWR7dyCPLgacBPpR4EfBif/sEURc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716974235; c=relaxed/simple;
-	bh=DhhdnnOXh6qGL5/6zvdk/VdVZmsP1nLae35wo137JWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bQCeiDb+CaJt/y4MaNgo/b02/zkklGdCfUXAEiMHay4vK0+uOx2ThYXrjDHFt6c2w/h3FNnXFLeAnCVtkYUPTsNKHv4mUb/JHrCpU7v7jP/nmfEz3N4Sy6hkL+ZSoTal2x3MPxUX0Ac2IZzaE7F86+jxzalWFvA0HDVrAcEtBFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzSd2GdS; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59a352bbd9so110558266b.1;
-        Wed, 29 May 2024 02:17:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716974232; x=1717579032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DhhdnnOXh6qGL5/6zvdk/VdVZmsP1nLae35wo137JWg=;
-        b=jzSd2GdS7PwUVoxhb2O8GyKE5SNUArFCFIrwUpoecw9s4OO0WMgf0VumJI2jryW6eL
-         gq2VvU7/F4yg7nhHqIiEbn3pdrhxGXlbkLSKRDX4fxKa5c2W6hAxBaXI2SkjVACcq4bu
-         VGwnTaBW65LX7A99Z5aLCpIYelY6SDRTGHMQ0M+b88gb0GKG5RjQIYAlGvenSQuBepXD
-         FlG8PSy+TMDwqvJoLg70aMMPeoA2o9GrRk78+GrLoRrQW9hXh5CO7s/qvQO2824kHhjm
-         m0s/VUCr6UNbAfbzEX+MPsybwq/FYqMsJk0qIjE3IChn4YkES9X0Rs92kX7ZIfvQlCUS
-         bzhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716974232; x=1717579032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DhhdnnOXh6qGL5/6zvdk/VdVZmsP1nLae35wo137JWg=;
-        b=nvj9S5rdzvPqcrbXBT4ygJeJ1jkAr2xyKHprA8AmrUW1HwsHD9mqDILYN6RhV+cuv7
-         ttRCi4VAoD0f24M1a5jZxx1u9DU0P5/LZiUFiD7+DPFblsCBV8dP3B6/8s5tXq6sMuMu
-         K9C+egUfIU26fI9R6NSIq89IeDX8S9u8nwkcbNYN7/7tFmA3Ys0a7XwtKDleXxnIbMgu
-         e/287HinCgfaiFhfwwcu62zV5gVAz2pVcrmCd9n1K/s6VSftHeGpxkyfq4AOH5xVBNDu
-         mfifMrRsvfvWetj6KLUMaLNNdSPShryzrg7laFRFHpvuZ801aPljUPPiZSDocXH9jCm1
-         WLyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtDMjUZm/tk/13gI0Huuth1iSbk1NDrYT4Hc8BCsi3JuTHPeMEHQdPIWjnUbkWAFAuaQ0fg/Ps4PAAxJssHcH/7ULDNVrqUPCc7SwXs/RT+gghqldm8gZK1AutA3eknRr4a3xwA2FkTBGuq+6xp3IZAjXvTn2by1ThQDP+dMpz8TzEnqE=
-X-Gm-Message-State: AOJu0YyAgFNLnfpxk2ZgNOUTQQZwJORD97+Qa0UL02A7TlSE2paqr/3v
-	MjD+9bm2RhpN9gAbwmsV+QxdgUssWkN6B9ULXz5eW16J9s61AMuammU0TQktDVs6LI9f/XP21Yn
-	eeZ5iRKwbX8vgxsJ5ReQu1YxEz9I=
-X-Google-Smtp-Source: AGHT+IHGdwBKFS281WJKM1LepXLS87qJk4CkOo+icUfU1WShxVz0GmuGPZsuGmboZ5p2ros9zrvRRiQCXqmzCeTNR8M=
-X-Received: by 2002:a17:906:718f:b0:a5a:7493:5b68 with SMTP id
- a640c23a62f3a-a642d95819emr140252866b.24.1716974232163; Wed, 29 May 2024
- 02:17:12 -0700 (PDT)
+	s=arc-20240116; t=1716974220; c=relaxed/simple;
+	bh=g+v8I5RS5Rx3vW6PyLEYjBK98J13/Fvd9jdUMa+sqsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvNocw+r3ApVhfpAzDE2eTYnDytBumHIg7EYqKbVASOYP4iKG4nWIMBmjxZC/xe8jDNT+zcM+UbYrNcSS5+bwTqPSNeVeg9KKousq/tGVHVhtKtzNFsQDKblSU95NZ6leMMVSoFmtXxAlVnSEuiT8yKicpsW3vjVLrDfXByqcHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=OBwd7COA; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tu8OT6rM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CBD3F229ED;
+	Wed, 29 May 2024 09:16:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716974217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=drsjYDhKr/t1LAl2BAdlMhkJ1IEJgrd0Ng+4OFdPbmA=;
+	b=OBwd7COAQnOiMDeJuo2vxc2pmkPCg2GLFhMXAp0qIDQnhPtjjTmae/UggwkRPMVzjKcBoR
+	RLWHjre8fRDz8f9pWn/9bTBjTA4MlGmqh7bMJTJMxeg6PTfUHBvwmYxcVXXesTf1vF9fNq
+	6HThrSWikRwLLBW+RHEEmo4S0buH8P0=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=tu8OT6rM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716974216; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=drsjYDhKr/t1LAl2BAdlMhkJ1IEJgrd0Ng+4OFdPbmA=;
+	b=tu8OT6rM1QvKJsWHdBsrZuYnoqNjKJ9mN4DG8b155lWQim62knoTjOks0AMAWQ6IKYjZ9K
+	fjSA/XtcW0buJ61w51DHjvZaKhIsUwh50+L0Uu4qOrxHNgnZTnm5WAtCkpWmoNGCIyfIJ6
+	T27ZviTngtAqAQMYiDfJz4OyFF3Rk2M=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7F1A13A6B;
+	Wed, 29 May 2024 09:16:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id g1wcJojyVmbxdgAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Wed, 29 May 2024 09:16:56 +0000
+Date: Wed, 29 May 2024 11:16:56 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] memcg: Remove the lockdep assert from
+ __mod_objcg_mlstate().
+Message-ID: <ZlbyiMnd4x24bR8F@tiehlicka>
+References: <20240528121928.i-Gu7Jvg@linutronix.de>
+ <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
+ <20240528134027.OxDASsS3@linutronix.de>
+ <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
+ <20240528141341.rz_rytN_@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528194951.1489887-1-andy.shevchenko@gmail.com>
- <20240528194951.1489887-11-andy.shevchenko@gmail.com> <358b6488-3f7c-4378-a811-175b6c77290f@collabora.com>
-In-Reply-To: <358b6488-3f7c-4378-a811-175b6c77290f@collabora.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 29 May 2024 12:16:36 +0300
-Message-ID: <CAHp75VfG__AA7bHd15-dg1UphkvzwpMN6eXzJXhyUDNW0a1_1w@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] pinctrl: mediatek: Convert to use func member
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Daniel Golle <daniel@makrotopia.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-mips@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>, 
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528141341.rz_rytN_@linutronix.de>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-2.99)[99.97%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,linutronix.de:email,suse.com:dkim,suse.com:email];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: CBD3F229ED
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-On Wed, May 29, 2024 at 11:24=E2=80=AFAM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 28/05/24 21:45, Andy Shevchenko ha scritto:
-> > Convert drivers to use func member embedded in struct function_desc,
-> > because other members will be removed to avoid duplication and
-> > desynchronisation of the generic pin function description.
-> >
-> > Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->
-> pinctrl: mediatek: moore: Convert to use func member
+On Tue 28-05-24 16:13:41, Sebastian Andrzej Siewior wrote:
+> The assert was introduced in the commit cited below as an insurance that
+> the semantic is the same after the local_irq_save() has been removed and
+> the function has been made static.
+> 
+> The original requirement to disable interrupt was due the modification
+> of per-CPU counters which require interrupts to be disabled because the
+> counter update operation is not atomic and some of the counters are
+> updated from interrupt context.
+> 
+> All callers of __mod_objcg_mlstate() acquire a lock
+> (memcg_stock.stock_lock) which disables interrupts on !PREEMPT_RT and
+> the lockdep assert is satisfied. On PREEMPT_RT the interrupts are not
+> disabled and the assert triggers.
+> 
+> The safety of the counter update is already ensured by
+> VM_WARN_ON_IRQS_ENABLED() which is part of __mod_memcg_lruvec_state() and
+> does not require yet another check.
+> 
+> Remove the lockdep assert from __mod_objcg_mlstate().
+> 
+> Fixes: 91882c1617c15 ("memcg: simple cleanup of stats update functions")
+> Link: https://lore.kernel.org/r/20240528121928.i-Gu7Jvg@linutronix.de
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Sure, if I need a new version. Otherwise I hope Linus can tweak this
-whilst applying.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-> Then,
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-
-Thanks!
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+Michal Hocko
+SUSE Labs
 
