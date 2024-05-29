@@ -1,121 +1,102 @@
-Return-Path: <linux-kernel+bounces-194510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA7A8D3D5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:23:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B708D3D61
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC821C22533
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:23:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67961F24286
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19DD1A2C2A;
-	Wed, 29 May 2024 17:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC00A1A0B0C;
+	Wed, 29 May 2024 17:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2OadvfJ"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNTPFFSQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8681A13DB9F;
-	Wed, 29 May 2024 17:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED0A190670;
+	Wed, 29 May 2024 17:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717003406; cv=none; b=dIZcSufo/V8NVIemfc1cwFixKSWiYUUG5LKjZJ0gpnm5ngFwIerwj5UC5+yUPyJs03GrCyqaE1pYa4acVtAObaIgqNBfnXRApYhgthWEpkH0JEcUFLF33RMA//+hBQCD6KiQfM4SdnAXq4HXAq132RMBo9+1AotKZmLQeQsJibk=
+	t=1717003557; cv=none; b=fuqhaYa7Vmbk/8Dz46K7cfapkerqBstKgkyJjtYGUP+e/r2B0T0w8kzaPU7GwrlV1ynmWG2suHGJjPlvRf86nxVr77wT6URzUtZCC7OOmkbNrAtIjdFCmPHdhnmHRDnG7NE/F3RFy+9c1MeJz8Vm19WlxDzUJkYn7xMqLM6PEBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717003406; c=relaxed/simple;
-	bh=18fR52IAgMh259ZAMQQuaorP+DAd2ZN9ZaPUdgLSpPY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iaF8rs9cZb3DpV9ovbtHxWrCHeU6Zba26GtSQ1Un6q5jUMSzjAYFoNgHrkY97SPPWbE1U3a7pMQEzRLF8NEeuPU8cVfVliGjR3pK6spMEgcxjCAjCTdHWO3ZJHDsX+CVs3FxWgbuLZmwlZ03LTDn3YqvgkSaqkFrubjva4bV7AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2OadvfJ; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-354fb2d8f51so2038889f8f.3;
-        Wed, 29 May 2024 10:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717003403; x=1717608203; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4oTlJu6nFvobrmRIU2tbUcCs8hZRqj/c25H324zaAeU=;
-        b=V2OadvfJCFcyYMxlz1eGDUKoL/Mn3eAKXzgnBwrJHtajSjMrv1JKmL+cI4i1LE1eRs
-         e1xzK/ykcr4jhwjUUpuTf30XLl5qsTDBfe7gryyxtJolGfR8pX1SikPJXv631BZ6DtDm
-         KGZh9Qs/Fx9HsVQnUJc6gt9N53tGTS+N+V2LaJFHyl4ESIBdnKQ/XkIBWZaZUwUgpsoZ
-         ps82CqkBwSx2+3ZvulsdwwPWMudHaQTYEOZuUQzl64CzyIIegQDVUHSu5+HMubNwQo+b
-         vBRYniAqZY2hKGNAsgLDUsu+hYebo/9TT5cxtSQkJtCXGrDHC+EhzSs8MsqALjtAeINM
-         4guQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717003403; x=1717608203;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4oTlJu6nFvobrmRIU2tbUcCs8hZRqj/c25H324zaAeU=;
-        b=vChhCvO6UuxoeYzJsZSiQNKQsAJGf9hCaC/oIeBTXAyZ86okL8rVmhtX4Wbvq+UCdY
-         DaoJtntEwitYfY7bIVZXxD/IURc4VMxV4b5zgTUTlvMYXxwelvPt08P1xbR1fv8tsWgO
-         pO86oMoI5Ha/zWH1U2GUd2kPLYBHQFgPeCFuJ9zbX1Z//jhHPO1LzPufy3Q4vph37fAw
-         ObzYrf1UgVKsxpCMM8eWEAvo3Isydg7gt7az52NRfa9urYcqJxL05GtoB/vRUvZgWWdc
-         s/Coi4phCWC6+AOteLmhkq+boXRfQlhYxzkQKMxl1fYsLTqVMsf6KYirrRBmn4vwj9Jy
-         +DtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcaJ/BAyALl8qxAblak3BNtD8khXtU367VqqTxfNFcHpbnKfRVl5MDx7lkHIpcIk2wKAqTEDqxKyISmaoszCrQ2vI14hEaIgEOyBTr9FzM3B899qlfYZziOQQGFfV7kGyR
-X-Gm-Message-State: AOJu0YzGSFk8nN0vu50wB6lo5Hjpl0lq4hAXBR8CwSuqNaiOk/qddm4k
-	yFC1hX/jeyUBMxcfsn0m7FpP+vGcGF5Er9CcKp8ZveGNN3Rq9YAtExpPDNG0U1Iikt3Dl0Kj8uH
-	QdzSQtbvw5g0mnGwU1yWPl70io0S2rw==
-X-Google-Smtp-Source: AGHT+IGpW3zz43rA4mJN32yG/mGPPz6Xbo2I0jI9HaXGLdQA/pEkhjf2SNyyGfCB0NB/wOtg8hevfpqijFim0ZGYt6c=
-X-Received: by 2002:adf:fa82:0:b0:354:df9f:1010 with SMTP id
- ffacd0b85a97d-35529d31074mr10209426f8f.24.1717003402564; Wed, 29 May 2024
- 10:23:22 -0700 (PDT)
+	s=arc-20240116; t=1717003557; c=relaxed/simple;
+	bh=8tVnrbrULFC79MkPLZU1HT1MRwI8OsH31Ws918LV0sc=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Vv+KdkHI9qU2sP2mv+kru44DQMtHVquCDfi/2upmFpUmzNTP5FvUZdQduOjUIzes98oTV/d6BapaZnMOdA+FC08Eag5FXfAZRQRZa/nB7kzg6r1Q2YREfUNjnT5GgMYzdvOwgr95Cg3ZDwbfJxzPek2gB2ExXEO0ugvmElnl9cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNTPFFSQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434F7C113CC;
+	Wed, 29 May 2024 17:25:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717003556;
+	bh=8tVnrbrULFC79MkPLZU1HT1MRwI8OsH31Ws918LV0sc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=dNTPFFSQPMnC/j7QCac9tJIdCCbEGiHYrpe6ckmgmZ9gAn1OuHqTVrBoHieyqmjvg
+	 w5tdLUt/ECHAsYOYFKOWAwXLX10anrzxH4Ej0sg/YBwEh9fnwMWX8HMqAd/WcOobXQ
+	 8bQV3l4AZOXgmxJITb2aak4XAbRGxMYzvRJBD2bW0AX8kfTD9CCc8mKXIeQ+gcpJT3
+	 r21Fw7xyQWS0UI4X5IW/UAJCEvn0JIjdFDHOceNsdfIWzcHyjLA7/BTvN0YC4nN9LJ
+	 87quRzlf7PNBczfnCtZvV86OPjzPE0TUhlomvLOgCbWnYiwp8FqEvomTaP/odflnMj
+	 6wydnhTexk3Sg==
+Date: Wed, 29 May 2024 12:25:55 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529065311.1218230-1-namhyung@kernel.org> <Zlbn3DOGrzHlw95h@krava>
- <CAM9d7ci0g+ObA7w-tXU9cyjzRUFgXjZ4b9Atx2+oV4Anhraeyg@mail.gmail.com>
-In-Reply-To: <CAM9d7ci0g+ObA7w-tXU9cyjzRUFgXjZ4b9Atx2+oV4Anhraeyg@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 29 May 2024 10:23:10 -0700
-Message-ID: <CAADnVQ+qqx8=WjpMjZyqzCb+02zpw9=wVAwWfyHL_O4Xpadukw@mail.gmail.com>
-Subject: Re: [PATCH v2] bpf: Allocate bpf_event_entry with node info
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Aleksei Shchekotikhin <alekseis@google.com>, Nilay Vaish <nilayvaish@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: ranechita <ramona.nechita@analog.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Cameron <jic23@kernel.org>, devicetree@vger.kernel.org
+In-Reply-To: <20240529160057.6327-1-ramona.nechita@analog.com>
+References: <20240529160057.6327-1-ramona.nechita@analog.com>
+Message-Id: <171700355516.3194061.3370825262697979106.robh@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: iio: adc: add a7779 doc
 
-On Wed, May 29, 2024 at 9:54=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hi Jiri,
->
-> On Wed, May 29, 2024 at 1:31=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wr=
-ote:
-> >
-> > On Tue, May 28, 2024 at 11:53:11PM -0700, Namhyung Kim wrote:
-> > > It was reported that accessing perf_event map entry caused pretty hig=
-h
-> > > LLC misses in get_map_perf_counter().  As reading perf_event is allow=
-ed
-> > > for the local CPU only, I think we can use the target CPU of the even=
-t
-> > > as hint for the allocation like in perf_event_alloc() so that the eve=
-nt
-> > > and the entry can be in the same node at least.
-> >
-> > looks good, is there any profile to prove the gain?
->
-> No, at this point.  I'm not sure if it'd help LLC hit ratio but
-> I think it should improve the memory latency.
 
-I have the same concern as Jiri.
-Without numbers this is just a code churn.
-Does this patch really make a difference?
-Without numbers maintainers would have to believe the "just trust me" part.
-So..
-pw-bot: cr
+On Wed, 29 May 2024 19:00:52 +0300, ranechita wrote:
+> Add dt bindings for adc ad7779.
+> 
+> Signed-off-by: ranechita <ramona.nechita@analog.com>
+> ---
+>  .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+>  .../bindings/iio/adc/adi,ad7779.yaml          | 89 +++++++++++++++++++
+>  2 files changed, 112 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7779.example.dtb: adc@0: Unevaluated properties are not allowed ('clock-names' was unexpected)
+	from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240529160057.6327-1-ramona.nechita@analog.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
