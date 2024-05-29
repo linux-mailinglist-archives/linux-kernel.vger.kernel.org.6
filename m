@@ -1,186 +1,171 @@
-Return-Path: <linux-kernel+bounces-194571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3538D3E59
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:31:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6838D3E5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9811F23DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:31:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24F021C2191C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF021A38F4;
-	Wed, 29 May 2024 18:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED141C0DEA;
+	Wed, 29 May 2024 18:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FmvkvasI"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Usol3I7a"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBEE15B552
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D7415B990;
+	Wed, 29 May 2024 18:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717007463; cv=none; b=Ub7PCz6Br6xCeHaNx39/19NeVasokWVXahJqZHNT8Lp99M19eLwpZhC2Uqwr3g2icH8PqSCJl5RQ0z7Hgg3fTU3o4Prxbj49Pe/b2dhUtRkTyNFCSdf7svjBHxMnYXJcvYd2GEef8ZtFSun5TzMG9nkQQfaFccZW/DV/Hb1SQFc=
+	t=1717007526; cv=none; b=uuSs+Bug2iK1WZb9o5h59ou6532j0+EjftMSskry2BEIiyJs3K++UZQ/Icwh9ZkvZdRH72ixNLtjIEDzWMRAQWqbx13d3pRDYXq6R9TpAk+wbEzrUSdFLn72LyqE207wZ7pUmyDXG5LGsO8dno8OYLSv3kqFTDpDVUB+eOl6ZfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717007463; c=relaxed/simple;
-	bh=xLHwHLiHwsZx+FhZZLfeHLdBEMSp5gCenfiAHTRJLOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SfqcLJSyivemQR8h0BIk9y/3Nd8bSc/n5MWzRMh+jeEegcABFap1IgWfY7x5XPL7HQunJBPRCFdjcSFWeH/WEnYBeIVOft61UwU/wYMOCL4pnl4azNw/03tksesTOmtcM5Tapu8bYl+8wKulD5XyatDTy//aUrOYJX/n33jDMB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FmvkvasI; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4e740924a1dso19007e0c.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717007459; x=1717612259; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbCogX4lIMiJS1kYrrISzNNe/fzp3T/RrkQJx2fP6us=;
-        b=FmvkvasIb7QIU5//bM7TVQP68+pNWyHsxsan1yckeGsciYJ5cKoDYuv6HeF5kHOV/K
-         +LCdoB5w0MD5hOboBA1tXftwbhD/5vVvcM69Zk4fUbUm3jroZ+0hPtZnEVj2becnpj2V
-         9aJDjP7pgQZk0EZvXL0fEeO0UStrovc8jppv5MzfSaCAp+H9dOXrBmj6eFZosK0v8dU6
-         VMGGIT2rXsr7h9hDowBYe63yikLQR4+jmARISScPX8s0+YACIjkJutagcREDcS5ZPRzP
-         arRAHa7XNkAeVaXy6lzaFiXnJIA5FIxRLO3QmMk3DJTeHVy43vgZ9fByswXLZyONiz+S
-         Swdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717007459; x=1717612259;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RbCogX4lIMiJS1kYrrISzNNe/fzp3T/RrkQJx2fP6us=;
-        b=aLodCVtvxrrTYDINCxcbZlvXxB+tZnObws92KLYoqxuujTyexIJvYoiBk7vzWBOxza
-         Z2pPrUeUIXt8Ra5tO1gY5vKiJtrD0eP8yarkr1vVz4b1iB1LcmSaK0VMhHcOEQoIsTUF
-         QF5PKT/Mb+nqU0V791Kbe+W1TVtKWAGT7ZjytN3XNlLZ8cq9vkVt1A57SXEiCLY5uyEZ
-         rHaRdMIK/qfxy004LCXp6ekpkK8sR7YnF6gotTsjVorWJ7Mf3tLDY4azwm2HCYCLMXcV
-         8phkj5V87Te3L5JLHr9LMo48m0mWMbrfK3y1Jub0/dIcTEkbvV4rDhBPqexqHfU7yh++
-         TgCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ57UtCftSpOsv01X9qbP7LmywoW+vJVIDOcSuAAZ5B9lguK/VwczxLN6cwVdFkI5A7qt+WFQ3E27/39yVwIwOetgx+0YDh1aUrQnw
-X-Gm-Message-State: AOJu0YyFiDSL8VwMXrktuevVwjRcUmEhwoVKNlvEYeRdx1xVkj0g/8V0
-	rt9/7qFPKc4CuNZeRk+tWWwBtRrw76qEkCl5tnM3U8oUvpIIEdnGlmue2X5BbEiE1pLFNg4gXpt
-	AdcfzJXsoSTWvEGhfkYw6YJfkKTat5s4y2b21
-X-Google-Smtp-Source: AGHT+IGtZHprsq6fYM3tx1dScCSyP3wPP1H6jiiJYrOGEM1B4J1TT4TyWpCHTA4j0Wg1/LCu7lkpj4ZpsvaVNOZD1A8=
-X-Received: by 2002:a05:6122:168e:b0:4df:261c:fc0c with SMTP id
- 71dfb90a1353d-4e4f02e650cmr15206852e0c.13.1717007459290; Wed, 29 May 2024
- 11:30:59 -0700 (PDT)
+	s=arc-20240116; t=1717007526; c=relaxed/simple;
+	bh=b5KUfmV+0BQDlwndzSzEsRg0XBiTwxcg8iE04GTa7Vg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AFU5vpIKdZdyWW5IhwOi/Q7vvttrDIZHBSo/o3v/8mDu9FfB0nUFpe0YFQBrMCRN2GQ/7VkBQ5ExeLZ8vCpAs1Ac04B43NFoy8D32gzRNDVFv7ivXWnJ2oUwL/UnEP5yUVLvwiItdX+Q9R+tT6zTz0rYOGl7lhznWT0yP7R4gQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Usol3I7a; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44THlM7D015796;
+	Wed, 29 May 2024 18:31:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Il5puEjjGoo/eUo4Gn88zcACE3zHPOHAVn7
+	nercTcfc=; b=Usol3I7aN2TTS5wvxwxtkFg3Nc+zhPf7Hc4r7g8rExm+ahFjE6u
+	Uuncj2HyH/FTbznYj0JC2m8OU4b8W+3Yvt42HBUaFoHkIhrMVAlJqifs1VHbOUEh
+	+mxASwbQliptGUxzdwHh9IzjDSAjUZiWhUYg7nCN6PhtthyGqZoNATuJvBomnc+1
+	LJQjZ7ho0p8j1c/Ebu7AWbSRMAdzPVRlY3GAKjqdpH5kWZ7Yez7bl0ypmZO5QEJf
+	nFpvNNRDVPoElxvmvTSFXXHxUYYVwKVOObF1BKGx96/d/BLsKzfbQXPi8D73rNeo
+	IqvrEK0dIpEaHqNZSfQYn6aJp7xO1se5SsQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws1nsu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 18:31:35 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44TISEq3010782;
+	Wed, 29 May 2024 18:31:34 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 3ydwwpdr08-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 18:31:34 +0000
+Received: from NALASPPMTA05.qualcomm.com (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44TIQZVJ007931;
+	Wed, 29 May 2024 18:31:33 GMT
+Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 44TIVXKo016136
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 18:31:33 +0000
+Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
+	id 51E84220D3; Wed, 29 May 2024 11:31:30 -0700 (PDT)
+From: Abhishek Chauhan <quic_abchauha@quicinc.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Martin KaFai Lau <martin.lau@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
+Cc: kernel@quicinc.com, syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com,
+        syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com
+Subject: [PATCH net-next v2] net: validate SO_TXTIME clockid coming from  userspace
+Date: Wed, 29 May 2024 11:31:30 -0700
+Message-Id: <20240529183130.1717083-1-quic_abchauha@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529022043.3661757-1-gatlin.newhouse@gmail.com>
- <CANpmjNM2S2whk31nfNGSBO5MFPPUHX7FPuHBJn1nN9zdP63xTw@mail.gmail.com> <2j6nkzn2tfdwdqhoal5o56ds2hqg2sqk5diolv23l5nzteypzh@fi53ovwjjl3w>
-In-Reply-To: <2j6nkzn2tfdwdqhoal5o56ds2hqg2sqk5diolv23l5nzteypzh@fi53ovwjjl3w>
-From: Marco Elver <elver@google.com>
-Date: Wed, 29 May 2024 20:30:20 +0200
-Message-ID: <CANpmjNM4pFHYRqmBLi0qUm8K2SroYWg7NFjreHffHvk0WW95kA@mail.gmail.com>
-Subject: Re: [PATCH] x86/traps: Enable UBSAN traps on x86
-To: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Changbin Du <changbin.du@huawei.com>, 
-	Pengfei Xu <pengfei.xu@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, 
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nMSxEiVRugjInCAbig439WwEWISOeAKg
+X-Proofpoint-GUID: nMSxEiVRugjInCAbig439WwEWISOeAKg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290129
 
-On Wed, 29 May 2024 at 20:17, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
->
-> On Wed, May 29, 2024 at 09:25:21AM UTC, Marco Elver wrote:
-> > On Wed, 29 May 2024 at 04:20, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
-> > [...]
-> > >         if (regs->flags & X86_EFLAGS_IF)
-> > >                 raw_local_irq_enable();
-> > > -       if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > > -           handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > > -               regs->ip += LEN_UD2;
-> > > -               handled = true;
-> > > +
-> > > +       if (insn == INSN_UD2) {
-> > > +               if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > > +               handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > > +                       regs->ip += LEN_UD2;
-> > > +                       handled = true;
-> > > +               }
-> > > +       } else {
-> > > +               if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
-> >
-> > handle_ubsan_failure currently only returns BUG_TRAP_TYPE_NONE?
-> >
-> > > +                       if (insn == INSN_REX)
-> > > +                               regs->ip += LEN_REX;
-> > > +                       regs->ip += LEN_UD1;
-> > > +                       handled = true;
-> > > +               }
-> > >         }
-> > >         if (regs->flags & X86_EFLAGS_IF)
-> > >                 raw_local_irq_disable();
-> > > diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-> > > new file mode 100644
-> > > index 000000000000..6cae11f4fe23
-> > > --- /dev/null
-> > > +++ b/arch/x86/kernel/ubsan.c
-> > > @@ -0,0 +1,32 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Clang Undefined Behavior Sanitizer trap mode support.
-> > > + */
-> > > +#include <linux/bug.h>
-> > > +#include <linux/string.h>
-> > > +#include <linux/printk.h>
-> > > +#include <linux/ubsan.h>
-> > > +#include <asm/ptrace.h>
-> > > +#include <asm/ubsan.h>
-> > > +
-> > > +/*
-> > > + * Checks for the information embedded in the UD1 trap instruction
-> > > + * for the UB Sanitizer in order to pass along debugging output.
-> > > + */
-> > > +enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn)
-> > > +{
-> > > +       u32 type = 0;
-> > > +
-> > > +       if (insn == INSN_REX) {
-> > > +               type = (*(u16 *)(regs->ip + LEN_REX + LEN_UD1));
-> > > +               if ((type & 0xFF) == 0x40)
-> > > +                       type = (type >> 8) & 0xFF;
-> > > +       } else {
-> > > +               type = (*(u16 *)(regs->ip + LEN_UD1));
-> > > +               if ((type & 0xFF) == 0x40)
-> > > +                       type = (type >> 8) & 0xFF;
-> > > +       }
-> > > +       pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-> > > +
-> > > +       return BUG_TRAP_TYPE_NONE;
-> > > +}
-> >
-> > Shouldn't this return BUG_TRAP_TYPE_WARN?
->
-> So as far as I understand, UBSAN trap mode never warns. Perhaps it does on
-> arm64, although it calls die() so I am unsure. Maybe the condition in
-> handle_bug() should be rewritten in the case of UBSAN ud1s? Do you have any
-> suggestions?
+Currently there are no strict checks while setting SO_TXTIME
+from userspace. With the recent development in skb->tstamp_type
+clockid with unsupported clocks results in warn_on_once, which causes
+unnecessary aborts in some systems which enables panic on warns.
 
-AFAIK on arm64 it's basically a kernel OOPS.
+Add validation in setsockopt to support only CLOCK_REALTIME,
+CLOCK_MONOTONIC and CLOCK_TAI to be set from userspace.
 
-The main thing I just wanted to point out though is that your newly added branch
+Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+Link: https://lore.kernel.org/lkml/6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com/
+Fixes: 1693c5db6ab8 ("net: Add additional bit to support clockid_t timestamp type")
+Reported-by: syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d7b227731ec589e7f4f0
+Reported-by: syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=30a35a2e9c5067cc43fa
+Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+Acked-by: Martin KaFai Lau <martin.lau@kernel.org>
+---
+Changes since v1 
+- Moved from net to net-next since 
+  Fixes tag is available only on net-next
+  as mentioned by Martin 
+- Added direct link to design discussion as 
+  mentioned by Willem.
+- Parameter in the sockopt_validate_clockid
+  is of type __kernel_clockid_t so changed it from 
+  int to __kernel_clockid_t as mentioned by 
+  Willem.
+- Added Acked-by tag. 
 
-> if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
+ net/core/sock.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-will never be taken, because I don't see where handle_ubsan_failure()
-returns BUG_TRAP_TYPE_WARN.
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 8629f9aecf91..d497285f283a 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1083,6 +1083,17 @@ bool sockopt_capable(int cap)
+ }
+ EXPORT_SYMBOL(sockopt_capable);
+ 
++static int sockopt_validate_clockid(__kernel_clockid_t value)
++{
++	switch (value) {
++	case CLOCK_REALTIME:
++	case CLOCK_MONOTONIC:
++	case CLOCK_TAI:
++		return 0;
++	}
++	return -EINVAL;
++}
++
+ /*
+  *	This is meant for all protocols to use and covers goings on
+  *	at the socket level. Everything here is generic.
+@@ -1497,6 +1508,11 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 			ret = -EPERM;
+ 			break;
+ 		}
++
++		ret = sockopt_validate_clockid(sk_txtime.clockid);
++		if (ret)
++			break;
++
+ 		sock_valbool_flag(sk, SOCK_TXTIME, true);
+ 		sk->sk_clockid = sk_txtime.clockid;
+ 		sk->sk_txtime_deadline_mode =
+-- 
+2.25.1
 
-That means 'handled' will be false, and the code in exc_invalid_op
-will proceed to call handle_invalid_op() which is probably not what
-you intended - i.e. it's definitely not BUG_TRAP_TYPE_NONE, but one of
-TYPE_WARN of TYPE_BUG.
-
-Did you test it and you got the behaviour you expected?
 
