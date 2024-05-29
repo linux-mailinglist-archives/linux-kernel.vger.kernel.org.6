@@ -1,147 +1,170 @@
-Return-Path: <linux-kernel+bounces-193574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D61A8D2E0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:24:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3E18D2E0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823671C21E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:24:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C46B220E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4AC16726F;
-	Wed, 29 May 2024 07:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C878167283;
+	Wed, 29 May 2024 07:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="h4x4CSEt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RUzHnTTF"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXO41CTm"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F482209D;
-	Wed, 29 May 2024 07:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A15D1E86E;
+	Wed, 29 May 2024 07:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716967451; cv=none; b=iVp1ELe8rTYyPoytBLyp60DsUTwJdBlWeKy5GURkKvDDHSyuptlJNeSCUNJUHbaj5kPZ2/iFGwJFs1gANk6tCQZOAcHNTsTmY0Cj/QZin0rZFgyBZRMcM0mfNwECuiUAXnGALtj8zvpL2kh4c5CDb675QrxcgLrOUOZYgTuc+iU=
+	t=1716967415; cv=none; b=r55iKs+L2v51gKztpgwX09GhXU43NDSOE3R6fZuXXAfjd/k8cydnGG/IfQq8KEWVnq+IV/4dlELYRXerkCRL2GhKFwK3gVGxFaeDshWN9dL5XXg9PSd4jqVTsX9CUNOzxRj4lDe7Y2+2SBoX/8tsFk0v8zIHnANyG6R3xwvxIho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716967451; c=relaxed/simple;
-	bh=BiLRi+Tm9dHBabsoQiYKbpEETDYvhOr2pvI35tWBrHI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Tn+uZ45PeTFpstoQHp8fueEpdW7dg1xEFdTrtMe4fxSuDEYDvYINl5AyET4kyTCStKk7jQEry2feIDwscFY/pV83KbCIZ16pkemHudk9fwkc5LnG+UygtaojMkfnw86Olhgx1ANNsnxbCjgDLF26Fxdp7vOsuhGTzbz6NtjGTbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=h4x4CSEt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RUzHnTTF; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 4CDF413800A9;
-	Wed, 29 May 2024 03:24:09 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 29 May 2024 03:24:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1716967449;
-	 x=1717053849; bh=Gf0qo7ee/AEBpbdOcGj06T/gtZe+ynU8fDYYUQNiucM=; b=
-	h4x4CSEtTHwuht1dS/NJgvp65UnTU41dpZW4e9sLOU8xqutZITW+d+RxXo76OzuD
-	ChMjh0GFEzyVlosguBditusdEipRU71hIsyXVbYmbR5niPhsdD7QRRm8Po1tlQFJ
-	ErZkhR4dY/uWkL2ONPkARrIeRdhTO9FCSA6jXog8sby4JvuPNVcTKZ9Yelxdlzgv
-	Vd+HZYCj0bSF/I6NiZZd0yIYZgl/yAdY5+lhH24UDDwqsw38hfrXt2bi4EAZttSJ
-	IcfJAJ08vi4FObI4fjbV/wlfiJ4GFN7U+NY2x7ZDdVMZSfI6k9Y/OvQ6wi0IWnjF
-	mX55VNS3jPEHpQ3HaDZBqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716967449; x=
-	1717053849; bh=Gf0qo7ee/AEBpbdOcGj06T/gtZe+ynU8fDYYUQNiucM=; b=R
-	UzHnTTFdk3oWiRf9YxJEMrpM7NmWEpEQorOLXKOP1+MH0EFg0AuZDM0INP2I+YIi
-	kexZXQfu7rXWFpV8hclGsy+CKG/aelT8BYNhCzwfHM1U3qsdDQPIJIciUtt+nMMx
-	4wDKDoiGZXrnGyDGauzW8JY87iqccW5jGVOz4n3D8NFg0pnCUkY2UqL449iAobdk
-	Zw1sfgqDnkczVnrA3UHPcLwfFz7lsm07e13nH+64Hg8tvXZe7i5tF8OpRjK5M0ME
-	RJAtNvB5rezU8QOnUCSw7F3q8SnXp94tH+NKlB1tU7lzLbX3rybW6OxinYszTv4M
-	0SRvUcfW/ZIr+TLsMW9cw==
-X-ME-Sender: <xms:GNhWZupp2ySFefzGEQi7Mz223B4lYgMtQlReU1C0bNUS3uTMRVuL3g>
-    <xme:GNhWZspwQqoKL1ODI5vwLP08p_iyEllD159sdd1i2xewrmuuIhNDbgDTG8Yz24f-0
-    2qNR7qdDdBLQMzpepg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdektddgudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:GNhWZjPaN01USRLJH2GN7MSCqQXRMmKwYxGm14gM5E7wN8KPPmUBIA>
-    <xmx:GNhWZt4lubTFMPwxPAMw8etb0OR-hH_d2FqnII8OceZrtfaOjQ-4dA>
-    <xmx:GNhWZt5XxvPjGFegJQ7C-RbtbJa1yYcO8JXSqupTxotoaKgijXbC2w>
-    <xmx:GNhWZth58wPWGgCPthdDvIGW8LtY-ku1wHr3BTabRMQMgagCPt7-XQ>
-    <xmx:GdhWZiF6-9rsoR2QapE_JSgmTlxz0pnmbAdcwpp2rXbZkymtvM_k2ex1>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id D889BB6008D; Wed, 29 May 2024 03:24:08 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716967415; c=relaxed/simple;
+	bh=YbcMUl3Yr21K+Yi7SGoXDwuE6o2cNNmCNjhlm4eRlwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EHM48LkzjixbxsSZWpbjjhwty8oy0RN5aCI0bVbdlMwgXdq4OxQ1Dd5J+tpjwfUcH2IKOcx1wXHtUgDAM+myZEDt+6avCrsGFKlpNIRZUIRJJrpxFd8XptcOfl6yJ/jQxMUsP0dIjuF2/n0vv3tsuwJSxhkJkK1NisJA6xfRt1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXO41CTm; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-794b1052194so107070485a.1;
+        Wed, 29 May 2024 00:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716967413; x=1717572213; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gI8YKF2Ka4g09jpIM8zfOLygQWEXZLeemxzrmi+Rpio=;
+        b=dXO41CTmiKomR/VS3PYisrGMb9Vkc6v1I2tfYdbPAh0etl70CPfLRpPSijckQhGqcd
+         w35GQqLwEaOVR31abLYTXRY0R5qB1gZhOnrhFOBp2KKPXPgoMxoFLXvRu0Dvi1w2Kf8Z
+         Qc+PtENOyd8A8NUtl/9vG1DbQnEMQilzZ5iKckNTckYemyTnpvQftL4bPNOLSH68S19E
+         OFFJEWz4yKLnqmPJuEadTuS2sR3QKRs3uhEmG4zQpI/ZPKE4x45vkTu1gsQGeavf807t
+         +WU33l153RY1W6qU8wzagUw4FUCq2JU3U6SR0CnZLdoX+q8LhKaQo5Cwli4Get/uaSYD
+         Hqyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716967413; x=1717572213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gI8YKF2Ka4g09jpIM8zfOLygQWEXZLeemxzrmi+Rpio=;
+        b=e2XkkfHaT13XhES4WIJnEPhaxKLdub1vWv8+SZS1P6BYxs7lc7G9VfHBhNxM0dx/9R
+         cUVXaqTp8uQ9s9DMuaNMN2QBoXbAXe1oK93ofAbJrV0kKbPe69ZGK8uUY+q6J56DRQF8
+         +XSW0H9h+8G/yYK3Pv4yV4u309miiGgHkMNu8c4ceWfife58iKspvwb0fRN+5StoYGXT
+         sPJ2K4rDirhylt88PdvK9l3rCuIdrDiuwZ9EGM2666vxkB9Hrt+lPyCcp2olJzR1pFWl
+         1l26Qd8U27oDQSaB8m/XZ4+88FN8dpEBhcZ5AJMiI8XYQ2a48fJiIjib/uBU9krs2gUt
+         Te7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOT3VTj/qolKTJlzcLK1Gwzh9MDvFK5s9X5Bcb2Ke04e4LXqkieXFpjE8XzxBoAQie0i/taBoKiIhlxx6CmemD1/8A1dPwfsgLNcfsaUtSremw9enxHMMnDP2O42JC/zoKRx8b3i6WZ48tImCSzWrImhlNCK41BLhyAJiQQH9NdsXlsTanYE1k5D0tbB7aqqmspoEFg8LHlPBK4Oi+ShiCJA==
+X-Gm-Message-State: AOJu0Yx5ol2YkQhGplZd/BwGevvBXc7GUl5yhEwoaM2ixLqcKf+uFCED
+	zBf8DWyuEutVBQNKK8iAvbi+tPpUu1Q5LoXocvJNBU1+HagA2JQijaKExoo7ZFwx7q6ZQYJQe2Y
+	9jvl4riehuTtbsCBJxcTnkNSb8v8=
+X-Google-Smtp-Source: AGHT+IELOGt9LVPKWDBseYrnLxtudWIlzNW87iewuhSPONjHfoQRkS3n9W6KZs0Ugv5GJ5aWYJ9yBCflxFgGxEuaQ2c=
+X-Received: by 2002:a05:620a:2017:b0:792:93cb:7649 with SMTP id
+ af79cd13be357-794ab1360admr1470221085a.68.1716967412804; Wed, 29 May 2024
+ 00:23:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <81ec1d1a-d8de-47e4-a5d4-eeaaf1e806a2@app.fastmail.com>
-In-Reply-To: <539a815398a3c991c1bc1a53967fbcba282dfe3b.camel@gmail.com>
-References: <20240528121304.3695252-1-arnd@kernel.org>
- <539a815398a3c991c1bc1a53967fbcba282dfe3b.camel@gmail.com>
-Date: Wed, 29 May 2024 09:23:11 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- "Arnd Bergmann" <arnd@kernel.org>, "Jonathan Cameron" <jic23@kernel.org>
-Cc: "Lars-Peter Clausen" <lars@metafoo.de>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- "Dragos Bogdan" <dragos.bogdan@analog.com>,
- "Anshul Dalal" <anshulusr@gmail.com>,
- "Andrea Collamati" <andrea.collamati@gmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: dac: ad9739a: drop COMPILE_TEST option
-Content-Type: text/plain;charset=utf-8
+References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+ <ZlMADupKkN0ITgG5@infradead.org> <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
+ <ZlRzNquWNalhYtux@infradead.org> <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
+ <ZlS0_DWzGk24GYZA@infradead.org> <20240528101152.kyvtx623djnxwonm@quack3>
+ <ZlW4a6Zdt9SPTt80@infradead.org> <ZlZn/fcphsx8u/Ph@dread.disaster.area> <ZlbKEr15IXO2jxXd@infradead.org>
+In-Reply-To: <ZlbKEr15IXO2jxXd@infradead.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 29 May 2024 10:23:20 +0300
+Message-ID: <CAOQ4uxiXVX-dJTN0UOjP7Zcfnks_kJoHBE+XFBecnUzzK-e5_w@mail.gmail.com>
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to name_to_handle_at(2)
+To: "hch@infradead.org" <hch@infradead.org>
+Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>, 
+	Trond Myklebust <trondmy@hammerspace.com>, "chuck.lever@oracle.com" <chuck.lever@oracle.com>, 
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"alex.aring@gmail.com" <alex.aring@gmail.com>, "cyphar@cyphar.com" <cyphar@cyphar.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jlayton@kernel.org" <jlayton@kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024, at 09:20, Nuno S=C3=A1 wrote:
-> On Tue, 2024-05-28 at 14:12 +0200, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->>=20
->> Build testing without SPI results in a warning:
->>=20
->> WARNING: unmet direct dependencies detected for REGMAP_SPI
->> =C2=A0 Depends on [n]: SPI [=3Dn]
->> =C2=A0 Selected by [m]:
->> =C2=A0 - AD9739A [=3Dm] && IIO [=3Dm] && (SPI [=3Dn] || COMPILE_TEST =
-[=3Dy])
->>=20
->> There is no need for this particular COMPILE_TEST option, as allmodco=
-nfig
->> and randconfig testing can just assume that SPI is enabled separately.
->>=20
->> Drop it to avoid the warning.
->>=20
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
+On Wed, May 29, 2024 at 9:24=E2=80=AFAM hch@infradead.org <hch@infradead.or=
+g> wrote:
 >
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> On Wed, May 29, 2024 at 09:25:49AM +1000, Dave Chinner wrote:
+> > But no-one has bothered to reply or acknowledge my comments so I'll
+> > point them out again and repeat: Filehandles generated by
+> > the kernel for unprivileged use *must* be self describing and self
+> > validating
+
+Very nice requirement for a very strong feature,
+which is far out of scope for the proposed patch IMO.
+
+What is "generated by the kernel for unprivileged use"?
+name_to_handle_at() is unprivileged and for example, fanotify unprivileged
+users can use it to compare a marked (i.e. watched) object with an
+object that is the subject of an event.
+This does not break any security model.
+
+> > as the kernel must be able to detect and prevent
+> > unprivelged users from generating custom filehandles that can be
+> > used to access files outside the restricted scope of their
+> > container.
+
+Emphasis on "that can be used to access files".
+The patch in this thread to get a unique 64bit mntid does not make any
+difference wrt to the concern above, so I am having a hard time
+understand what the fuss is about.
+
 >
-> Only for my understanding. When does COMPILE_TEST makes sense to add?
+> We must not generate file handle for unprivileged use at all, as they
+> bypass all the path based access controls.
+>
 
-The most common use is to enable building a driver
-that is platform specific on x86 allmodconfig
-or on randconfig, e.g.
+Again, how is "generate file handle for unprivileged use" related to
+the patch in question.
 
-config LPC18XX_DAC
-        tristate "NXP LPC18xx DAC driver"
-        depends on ARCH_LPC18XX || COMPILE_TEST
-        depends on HAS_IOMEM
+The simple solution to the race that Aleksa is trying to prevent,
+as was mentioned several times in this thread, is to allow
+name_to_handle_at() on an empty path, e.g.:
+fd =3D openat(.., O_PATH); fstatat(fd,..); name_to_handle_at(fd,..);
 
-Since ARCH_LPC18XX is only visible on arch/arm, the
-driver would never be build tested on anything else
-without the ||COMPILE_TEST.
+Aleksa prefers the unique mntid solution to save 2 syscalls.
+Would any of the objections here been called for letting
+name_to_handle_at() take an empty path?
 
-      Arnd
+I would like to offer a different solution (also may have been
+mentioned before).
+
+I always disliked the fact that mount_id and mount_fd arguments of
+name_to_handle_at()/open_by_handle_at() are not symmetric, when
+at first glance they appear to be symmetric as the handle argument.
+
+What if we can make them symmetric and save the openat() syscall?
+
+int path_fd;
+int ret =3D name_to_handle_at(dirfd, path, handle, &path_fd,
+                                              AT_HADNLE_PATH_FD);
+
+and then kernel returns an O_PATH fd to the path object
+in addition to the file handle (requires same privilege as
+encoding the fh).
+
+Userspace can use path_fd to query unique mntid, fsid, uuid
+or whatever it needs to know in order to make sure that a
+later call in the future to open_by_handle_at() will use
+a mount_fd from the same filesystem/mount whatever,
+whether in the same boot or after reboot.
+
+If we are doing this, it also makes sense to allow mount_fd argument
+to open_by_handle_at() to accept O_PATH fd, but that makes
+sense anyway, because mount_fd is essentially a reference to
+a path.
+
+Thanks,
+Amir.
 
