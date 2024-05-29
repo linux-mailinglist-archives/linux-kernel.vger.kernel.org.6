@@ -1,85 +1,101 @@
-Return-Path: <linux-kernel+bounces-193406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536A48D2B75
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:30:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ADC8D2B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0952C1F23F80
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6F9287A6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD6A15B136;
-	Wed, 29 May 2024 03:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43D015B139;
+	Wed, 29 May 2024 03:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="j1uWl8EP"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hBnK7hz3"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C078C26AC3;
-	Wed, 29 May 2024 03:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CFF15A855;
+	Wed, 29 May 2024 03:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716953426; cv=none; b=kNAwIPP4Kj6xxIKOTyfG5u2sO9+q8YgowFFA9FQNil1+f0GsKtqDMkDBh6UpH/7lJL4PgNwZDbzJ1T3nU1Ll1VNPEdxPHfFg46gLNDY74sIJ4BKE7ZAGZR/Z20JUHPKyycMIwNH1IpUTRIbpeSKmlmrMujKNAeLwAx9YutFMEdY=
+	t=1716953448; cv=none; b=JVykzRKHk/KLcKdqfrH2xazHAC+rcbefrtyTfbhR/czLDOIIHXtnZ1v5axKNYaIfLKhSV/nKZSIUjfSFiF1ZJ6sZ8kkdNbqbRvbg1Td2Zx/dOTVb2SWgSNeLh0OYl0S0nO2MsOs+DLM5p13n48X1pHH3zhE9y+t63sT5n2plaTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716953426; c=relaxed/simple;
-	bh=+C3wNbIduRzUMO9fBitJerOZw/NtYMUeTn1GhV91IkY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UlIn71eRPSkSL5ER6HYzVa+Yybqv5Ertonk40iIffcE/T3G7QfeKYo5qzKrPsUF2FKJf+i8jlQqkBz7U7X76BRQyB5mZ6O9TiimTbkqR0IuXWWSOyhEvRR9RbnPYtVyro5FYjQDXD1ftzKhps8SlHrrw7YkUzjieGD92JmAkmKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=j1uWl8EP; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A8C3B20174;
-	Wed, 29 May 2024 11:30:20 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1716953421;
-	bh=+C3wNbIduRzUMO9fBitJerOZw/NtYMUeTn1GhV91IkY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=j1uWl8EPU+Ntkg3ODbZmYwnc8QVMvHNWc1xxQUqZD1T1+uXMKEsQZxp6XAiLOlXDr
-	 iarF+7B8/vsItQf++oRTbAtkMqWz7oP0z0ba3wyIIgtmH62t4SoOfhzkJ9valUDjyq
-	 b9uVvyGajDjCbIXlYQ4r4sE7BwmIMQiCVrkwCCZs4QCcpJa1/JXz62iWDaRK8nz/RT
-	 4fVuJ8TQlzy+w3JJBpoeIPIjGMySfXwOAg1/n8mgnn3UER8M++hSwZ7o/Iez1yLZcN
-	 pbJVOT6x2btjyudTtXUblNhnlXyt+S0ikEQicyYft3/pTOeqg7BfmuIdIgQEyghozb
-	 PistpX3RlW8rQ==
-Message-ID: <4d2fdb7e2f96313cd3945c8e4e1ce59f57451fbd.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Jakub Kicinski <kuba@kernel.org>, admiyo@os.amperecomputing.com
-Cc: Matt Johnston <matt@codeconstruct.com.au>, "David S. Miller"
-	 <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	 <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 29 May 2024 11:30:20 +0800
-In-Reply-To: <20240528194557.7a8f522d@kernel.org>
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
-	 <20240528191823.17775-1-admiyo@os.amperecomputing.com>
-	 <20240528191823.17775-4-admiyo@os.amperecomputing.com>
-	 <20240528194557.7a8f522d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1716953448; c=relaxed/simple;
+	bh=xL9ffgj8ECADyDd5UAvUtyWmf7r5zRrwShyMG8xrDLg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HHcCf2VMABGi88hf5fRhMhtIPXPRNaG0yfZ/wkyE26K7QINBxJ1Ca2sUalX9LYvfiwa2xXUSS5/A5iyb9B3frU7ev/lAvJfTteFLkbsBka00QVzXu9nGstvmvLKn7d0SlDT9Xzs42D2dFxqbVTzyozsDpVbP/KlZeIR8z16EJFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hBnK7hz3; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d39c3e781d6b11ef8c37dd7afa272265-20240529
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=K7lqLTLsGSV7DHnyTmq6v65NX0/0mNc9+lxlhGDwmvI=;
+	b=hBnK7hz3Ei5k448cdIr1zIwLmnJLwVZxJPg1hqzzTRgdNvaBkW2BG4vbvUiI9hgtrlmI1woPig3oFC9ZXKiNiqsMk10M5jtEXFJhEqFMuFdrWkBsEe7ZG19xafPuH3veFr8Dx9fcRkMXpbxbNmqjxqkCmFJWfvhphPNcN6+75+g=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:34f93bd7-f387-40f0-8f4a-197df445d090,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:f2c2ee43-4544-4d06-b2b2-d7e12813c598,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: d39c3e781d6b11ef8c37dd7afa272265-20240529
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 176390028; Wed, 29 May 2024 11:30:42 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 29 May 2024 11:30:40 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 29 May 2024 11:30:40 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>,
+	Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH 0/3] Bluetooth: btusb: MediaTek ISO data transmission support
+Date: Wed, 29 May 2024 11:30:35 +0800
+Message-ID: <20240529033038.28458-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-Hi Jakub,
-> > +#include <net/pkt_sched.h>
->=20
-> Hm, what do you need this include for?
+Since SIG hasn't clearly defined the specification about ISO data over USB 
+transmission yet, MediaTek adopts a method by adding an additional interrupt
+endpoint for ISO data transmission which is different from current way
+on Bluetooth upstream driver using existed bulk. Interrupt endpoint has
+guaranteed bandwidth, sufficient max data length for LE audio packet and
+support error checking. These characteristics are similar to the use of ISO data.
 
-I've used this in the past for DEFAULT_TX_QUEUE_LEN in existing mctp
-drivers, but looks like setting tx_queue_len =3D 0 will do the right
-thing...
+Chris Lu (3):
+  Bluetooth: net: add hci_iso_hdr function for iso data
+  Bluetooth: btmtk: add macro to get/set/clear MediaTek defined flags
+  Bluetooth: btusb: mediatek: add MediaTek ISO data transmission
+    function
 
-Cheers,
+ drivers/bluetooth/btmtk.c   |  35 +++++
+ drivers/bluetooth/btmtk.h   |  46 ++++++
+ drivers/bluetooth/btusb.c   | 293 +++++++++++++++++++++++++++++++++++-
+ include/net/bluetooth/hci.h |   5 +
+ 4 files changed, 378 insertions(+), 1 deletion(-)
 
-
-Jeremy
-
-
+-- 
+2.18.0
 
 
