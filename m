@@ -1,119 +1,100 @@
-Return-Path: <linux-kernel+bounces-194750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476698D416C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD368D416E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 047B3286BA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FEF1F23137
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05C616F0E8;
-	Wed, 29 May 2024 22:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E9A176FD6;
+	Wed, 29 May 2024 22:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="EEyJS1aH"
-Received: from sandeen.net (sandeen.net [63.231.237.45])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B07169AC5;
-	Wed, 29 May 2024 22:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.231.237.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717021985; cv=none; b=azYolZ9171e/UVP+tLrrfSmkG1Sh51B/p9+1vA9I3ih348El6DwqmNx3QNHlgu2kcaJYIfdh/o4ldwsXH7VbbJ22XgShM7ox8dlboj4qTMJzzlpU5EPTj9UK49sLgCntdKgsQeL2f/bFV/knzMF5ZqKqfIr9gvLBT9KyPiwJg2w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717021985; c=relaxed/simple;
-	bh=vPSCn1US8q24nZmKVQnkbEnaWwJsPIAVyMitRy5BeBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nBNq0k9bgl+Jmm4sr1TRlb/wOisz0hAoK4NrE6pbfIdEj632/RKIdf3PBB2BVnxJTvFmIvsldREAV0+18x6X5sx8vE5D8rUXE3aIDDh7ppriAfHyw/MFMVU2zL3MKUc7XZ9kgA8OLPKSlHRQ7z9zT8ppwoKYHesl2M5Nkp1usNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=EEyJS1aH; arc=none smtp.client-ip=63.231.237.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from [10.0.0.71] (usg [10.0.0.1])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEbRhrOy"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by sandeen.net (Postfix) with ESMTPSA id ACBA511656;
-	Wed, 29 May 2024 17:33:01 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net ACBA511656
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net;
-	s=default; t=1717021981;
-	bh=EtX22mhDFfHazQS1F4btZ405qhG1Tw24hE685V275AI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=EEyJS1aHmol+c+dTF8mt4od7E6tbCzkUhmUY5zmE/G+l2K2wIXsO89Xd257h7oEsD
-	 VqARRPDZT9dhIk2b2On6rCGp0S0iJODjtMyhMJ6p2eVV0eQlQsrECM1y9PyIQ1nxSA
-	 daiPia76ZO0DrlTOjYywZACWXBtOQAg/d2P5k+iY3aCXOkm8YCXSBynaBWnSk3X4j7
-	 y9zXT0LCC4TYOnGA5CEy36ea6noU02KEBSqBxPOYyzxwcphL4JY593irV65474z4Lr
-	 DD5cTAllMe26NHOscqkVXYRh5lDTELKCTgKEJINgMJKQRKSHkV+E6EPghRd5UURkgX
-	 UIyDczLRVmFYw==
-Message-ID: <7f676fbd-5858-4c9a-a4e5-9828955db1f5@sandeen.net>
-Date: Wed, 29 May 2024 17:33:00 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011E6175551;
+	Wed, 29 May 2024 22:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717022014; cv=none; b=Sme9gWqNsADo0LwACbp0CsvOKMgN+uwJxTNXEbfr3R4cRwbQoZRHhQIHZauO2L6lzaNEdFlzPOCGkzZyIIW9ThWmURV8aWEmx0Z62CBGXceEgJeZN2lqNymLf0kPBHAgqSFunG7fD+CugrLRexRP4ywzuYk719wTV7RiFNWQ9Zg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717022014; c=relaxed/simple;
+	bh=CjKowp14yVX6G+cZapxyYVlO0uopznt7PEhMgALSaeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDyAes+NQ1mQUocG2Plonu5jQwZYYGDNSVohsAQqOmvzaA3s1cQpf47hJr2p1k2rH8Ztwwv2pWo8c50eO69CU+9/VYX9AoXdyLsG/lHU7y1UDi/Xr1sH8NEMgYTb54+fYD7kLtffr7GTVBebye/YmMtzuNVIG7OIcgR5/En02CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LEbRhrOy; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f44b5b9de6so2281105ad.3;
+        Wed, 29 May 2024 15:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717022012; x=1717626812; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xH2WadoiNH5239FlTWFDCdHvj7sCxH4Skwal7mzyy6E=;
+        b=LEbRhrOy+ps1IPU6Ms9KqcAxRHMPn7qXPb7lAqjqXFJSRX4Vs/oCreoPM0PrfqPJZ7
+         kd4LiImsz67wEbv9T8Kc7Pko53WFiHnIcoYHHgw1+WtGv7jSzpcMye1aN91cVsXjwUtr
+         VpogawgP5Mwx/xKpodKg9+X2Un8L0AxXwwZNdhKLWzkGRvedz0hpkMtO6j3Jo1xCE1dM
+         81sq8hgiur1gH3aY3tz86o5c2BPLdljErhho7oXlgkxTu1WREtGneGz/T1ZawP0vaVDu
+         V4DHH+dqAYUEU9daBFsLHn5nTnq5UqR7mbEetuBp0EZgKumYaJG6Z4C2hcw5WOx0MVg0
+         AkdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717022012; x=1717626812;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xH2WadoiNH5239FlTWFDCdHvj7sCxH4Skwal7mzyy6E=;
+        b=TTxcDrwiRCIe4HDoPFr5e59REpqOt+FzVBptLkUhoeu/Ucxccwpfy/qKQyTJ8c4Gvp
+         XHn2qrWq8MdBdGuce+gG1IjlqpyZ5Oh/3xBITktcxHERWdMpqKOdXZzr5BVH5gU0M0wM
+         S2O+Xo6Ieapy4qbvxCyVnP54vT/GNPsGgo27z6RHH1b+wmZ57eF8m1Fy6pI4bP++Gl/M
+         djcYqOoTE+Y0fNd0IdC8Xmgh4TSRlauq/C6TW/5ZB3T0gZss3oJHwKdSWIOMPgRdbssz
+         NiyOC2fbQPJoLiRa88/SPvT2lmNB4ALGH9VIjoVYoxXVUo8ohPGLldHoxOZDOAtFMZWh
+         ZKAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDTrS94cSYdPB4vUhP62fjqNvP8NMDNXRX4xJCIRFE2XGUOtsVKhHmFP98r1bOUjrDrKpdAFwU7ukuzLePoNBHy3h2C81nxsOQb28=
+X-Gm-Message-State: AOJu0Yy1OF7g7EkTKbWqtJrJQ4tTRu+c9ATY4gzOE3+fu7qv3mBVBmhS
+	shH4SOCrXNzIFL3I177nnYlxHhKvzh1jMV99hSC/kNTwdTeqU5OR
+X-Google-Smtp-Source: AGHT+IEPkt7VZDFgzRCAbaSskEDjv46isEnmYCWjnBBfHZJxfNhox+/FarnwTzphoS4o40Z/R2X+TA==
+X-Received: by 2002:a17:902:c70c:b0:1f4:6f3a:a13c with SMTP id d9443c01a7336-1f6198307demr2900235ad.47.1717022012162;
+        Wed, 29 May 2024 15:33:32 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4960ca3f6sm65658925ad.164.2024.05.29.15.33.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 15:33:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 29 May 2024 15:33:30 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+Cc: linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: corsair-psu: add USB id of HX1200i Series 2023 psu
+Message-ID: <239f3b5c-8d88-4da9-a758-9fdb34ff7b20@roeck-us.net>
+References: <ZlAZs4u0dU7JxtDf@monster.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Christian Brauner <brauner@kernel.org>, Eric Sandeen <sandeen@redhat.com>,
- linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, David Howells
- <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <39a2d0a7-20f3-4a51-b2e0-1ade3eab14c5@sandeen.net>
- <oste3glol4affqkftofn6hgnldurnn4ghutsdmfl5bjgzwz66o@i4fneiudgzmu>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <oste3glol4affqkftofn6hgnldurnn4ghutsdmfl5bjgzwz66o@i4fneiudgzmu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlAZs4u0dU7JxtDf@monster.localdomain>
 
-On 5/29/24 5:05 PM, Wolfram Sang wrote:
-> Hi Eric,
+On Fri, May 24, 2024 at 04:38:11AM +0000, Wilken Gottwalt wrote:
+> Add the usb id of the HX1200i Series 2023. Update the documentation
+> accordingly. Also fix the version comments, there are no Series 2022
+> products. That are legacy or first version products going back many
+> many years.
 > 
-> thanks for replying!
-> 
->> @Wolfram, what did your actual fstab line look like? I wonder what is actually
->> trying to pass auto as a mount option, and why...
-> 
-> My fstab entry looks like this:
-> 
-> debugfs /sys/kernel/debug       debugfs auto            0       0
-> 
-> This happened on an embedded system using busybox 1.33.0. strace is
-> currently not installed but I can try adding it if that is needed.
-> 
-> Happy hacking,
-> 
->    Wolfram
-> 
+> Signed-off-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
 
-Welp, that looks like it:
+Applied.
 
-# strace busybox mount /debugfs-test
-..
-stat("debugfs", 0x7fffc05d3d60)         = -1 ENOENT (No such file or directory)
-mount("debugfs", "/debugfs-test", "debugfs", MS_SILENT, "auto") = -1 EINVAL (Invalid argument)
-write(2, "mount: mounting debugfs on /debu"..., 66mount: mounting debugfs on /debugfs-test failed: Invalid argument
-) = 66
-
-This does not appear to be unique to debugfs:
-
-# grep tmp /etc/fstab 
-/dev/loop0	/tmp/xfs	xfs	auto 0 0
-# strace busybox mount /tmp/xfs
-..
-mount("/dev/loop0", "/tmp/xfs", "xfs", MS_SILENT, "auto") = -1 EINVAL (Invalid argument)
-write(2, "mount: mounting /dev/loop0 on /t"..., 64mount: mounting /dev/loop0 on /tmp/xfs failed: Invalid argument
-) = 64
-
-# dmesg | grep auto | tail -n 1
-[ 1931.471667] xfs: Unknown parameter 'auto'
-
-This looks to me like a busybox flaw, not a debugfs bug (change in unknown
-argument behavior notwithstanding...)
-
--Eric
+Thanks,
+Guenter
 
