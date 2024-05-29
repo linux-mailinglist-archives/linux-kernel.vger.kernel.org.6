@@ -1,85 +1,108 @@
-Return-Path: <linux-kernel+bounces-194649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EC48D3F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:20:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6EA8D3F7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC7A1F21CFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:20:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE741C22090
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C831C8FA1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680201C8FA7;
 	Wed, 29 May 2024 20:19:56 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HpP7n7qw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAB41C6896;
-	Wed, 29 May 2024 20:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F81F1C689D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717013995; cv=none; b=P0/OoD2+KD2i+oWe8fhb8mEnRH/b2Pg+rCrqklsbeiwGX3bANDNjQi8gXzQebtCH0L9V/qY8SbktPL6HFGhIPpRRVrvFgny/vZXkXjGSjAb+NmgZJoHzNctTTl+QgEJJ2lPUG97ktQyGrmlhRbnyhBW/u8XuPzKdSqTW3+KRMCc=
+	t=1717013995; cv=none; b=TZoYavcM3tmIEBSVVlC1Ir5B/ynVnhwkNXu8rkTNSYqQIlADjxUBEsvLwIaZxel6Qa5T8jp5iSUvHLczqZjYowmjyd3um7GgTLDmClpIW1bdhsnneoQCZrIiMeSL2RoXgdtFlWrqB31eB/QmMnbXb+8udyJze4SRp+gkDhgwqIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717013995; c=relaxed/simple;
-	bh=ZVHdP4P1gAprOsHPZPWQubP/bxr6Z6y1soXdoOoGlkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hWqEU5azK7+JT+/7xUMRKpR5fobVKe3KGaAeX3IsS24PKKCdAb7Vmizg3L5bk1siMo3GBH0SYnKNo9eWH/fYuHovZ4AeDUXheFdZZOurL7MUbDjWt3x9haFwvMvdHKc0hTdBmKncy5a5Fhf40stazMrv3g58Vg/P5Uw9YWc+F7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [10.0.45.140] (unknown [62.214.191.67])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	bh=y3GcMq9ZluqUW1sUBi+CcpJL5Dhf/CqcuOjLkAPEl0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VA8voI6hsxXC0ZzkZeqYr4zdihe5UfoqYfaPRgb+J0fMCEATu/MnuY6AnfchSmPXmr1P1KBwegqHRjJAY9Dq7f8XLHMTDX0q0ftLXUQedR28aZcq6egJiByMS8KkitAPyo2JKPA0iz2i5JVC6Lk8Xyq5Pluprfp2P+zYvif2In0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HpP7n7qw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717013993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NAmC2sHpZW/uyd30+ahP5F1fjRrkzir9nGwEyAcBFJ4=;
+	b=HpP7n7qwRRJHas1dqbeP0tPkFyY9CfvF5IvKEGufMStutbbmoXQWw4HGDeD6e6wTzVa5+C
+	8HRObPqq7her2Pkz+MA4+KuyzubSzFW5oUC0gsA0k4iPx+cEuFoP3ydFccbAnNzhKGyZJY
+	QMiX6VkL6Qt3B0eCCuplB7O4Na881Hs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-447-DmCdbomkPdiGAttvQvWPfQ-1; Wed, 29 May 2024 16:19:47 -0400
+X-MC-Unique: DmCdbomkPdiGAttvQvWPfQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id E9D9E61E5FE3E;
-	Wed, 29 May 2024 22:19:00 +0200 (CEST)
-Message-ID: <971a2c3b-1cd9-48c5-aa50-e3c441277f0a@molgen.mpg.de>
-Date: Wed, 29 May 2024 22:18:59 +0200
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9E928101A52C;
+	Wed, 29 May 2024 20:19:46 +0000 (UTC)
+Received: from sullivan-work.redhat.com (unknown [10.22.9.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id DD32AC15BB1;
+	Wed, 29 May 2024 20:19:45 +0000 (UTC)
+From: Ryan Sullivan <rysulliv@redhat.com>
+To: live-patching@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: mpdesouza@suse.com,
+	jpoimboe@kernel.org,
+	jikos@kernel.org,
+	mbenes@suse.cz,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com,
+	shuah@kernel.org
+Subject: [PATCH] tools/testing/selftests/livepatch: define max test-syscall processes
+Date: Wed, 29 May 2024 16:19:41 -0400
+Message-ID: <20240529201941.13968-1-rysulliv@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH] ice: irdma hardware init failed after
- suspend/resume
-To: En-Wei WU <en-wei.wu@canonical.com>
-Cc: jesse.brandeburg@intel.com, intel-wired-lan@lists.osuosl.org,
- rickywu0421@gmail.com, linux-kernel@vger.kernel.org, edumazet@google.com,
- anthony.l.nguyen@intel.com, netdev@vger.kernel.org, kuba@kernel.org,
- pabeni@redhat.com, davem@davemloft.net
-References: <20240528100315.24290-1-en-wei.wu@canonical.com>
- <88c6a5ee-1872-4c15-bef2-dcf3bc0b39fb@molgen.mpg.de>
- <CAMqyJG0uUgjN90BqjXSfgq7HD3ACdLwOM8P2B+wjiP1Zn1gjAQ@mail.gmail.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <CAMqyJG0uUgjN90BqjXSfgq7HD3ACdLwOM8P2B+wjiP1Zn1gjAQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-Dear En-Wei,
+Define a maximum allowable number of pids that can be livepatched in
+test-syscall.sh as with extremely large machines the output from a
+large number of processes overflows the dev/kmsg "expect" buffer in
+the "check_result" function and causes a false error.
 
+Reported-by: CKI Project <cki-project@redhat.com>
+Signed-off-by: Ryan Sullivan <rysulliv@redhat.com>
+---
+ tools/testing/selftests/livepatch/test-syscall.sh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Thank you for responding so quickly.
+diff --git a/tools/testing/selftests/livepatch/test-syscall.sh b/tools/testing/selftests/livepatch/test-syscall.sh
+index b76a881d4013..289eb7d4c4b3 100755
+--- a/tools/testing/selftests/livepatch/test-syscall.sh
++++ b/tools/testing/selftests/livepatch/test-syscall.sh
+@@ -15,7 +15,10 @@ setup_config
+ 
+ start_test "patch getpid syscall while being heavily hammered"
+ 
+-for i in $(seq 1 $(getconf _NPROCESSORS_ONLN)); do
++NPROC=$(getconf _NPROCESSORS_ONLN)
++MAXPROC=128
++
++for i in $(seq 1 $(($NPROC < $MAXPROC ? $NPROC : $MAXPROC))); do
+ 	./test_klp-call_getpid &
+ 	pids[$i]="$!"
+ done
+-- 
+2.44.0
 
-Am 29.05.24 um 05:17 schrieb En-Wei WU:
-
-[…]
-
->> What effect does this have on resume time?
-> 
-> When we call ice_init_rdma() at resume time, it will allocate entries
-> at pf->irq_tracker.entries and update pf->msix_entries for later use
-> (request_irq) by irdma.
-
-Sorry for being unclear. I meant, does resuming the system take longer 
-now? (initcall_debug might give a clue.)
-
-
-Kind regards,
-
-Paul
 
