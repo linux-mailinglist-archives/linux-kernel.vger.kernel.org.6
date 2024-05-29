@@ -1,105 +1,182 @@
-Return-Path: <linux-kernel+bounces-194614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4188D3EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:32:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADABB8D3EF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36693B22942
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:32:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0EF11C20BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9181667DC;
-	Wed, 29 May 2024 19:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YWMyRygA"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4921C232C;
+	Wed, 29 May 2024 19:35:28 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4173242045;
-	Wed, 29 May 2024 19:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BF742045
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 19:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717011121; cv=none; b=A01Zt9cFv3w4ja9+J1GKysX/irw440cY2SxLKlL9ZAyKnmo0281VJchr/vxiKNDpfVe+EJAnW6tUgL2C0mo+CMZ7Wq8jckhq9WvmkuEMuJs1iG2UVYxZeadcJLyDOeRo4s0mczztd71D+UIjsVENVviRYW7Nttyw4/vC4d77ms4=
+	t=1717011328; cv=none; b=XskWZSQq1JFSEftD1aB50ZnIak/yZaBpNXKfPP5MaDtAm+NkBkFDikNvzpNv6T2Jpvrv6GADlmhGum2v8fLLVKV9qGcd6JQvdlFAxjgJ42gL9n8d9JunYDm7aWEe/3DQXo/rvlVWG0xfG1missl5zX7dP6chTmG9V1zm418eFA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717011121; c=relaxed/simple;
-	bh=XknLD++ZbyOxVWUbX5ZNfhHP323YHHho4U/eXqTv2Yk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJsbXwtIOWqoog/N27UoDYgvXcJHXl5FYE69U2HWNvITgBc/tp2iRNqvWytXNWb+K8zyxzp+BWirg5MgrPB9xjgRHsk02HqNoctZ2pTjz7XmnQZlizvRdScRef7ajlhpcDmyu9RQFxtFTe5mibHb2+15A+77mxrOGY1/7uZA7xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YWMyRygA; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 87CA040E01A3;
-	Wed, 29 May 2024 19:31:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dyeE9Nzyk0oM; Wed, 29 May 2024 19:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717011110; bh=EeR0075bxj700aFxHDQNh71batfPlf0fp9sZmjOxiGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YWMyRygATvPVO4cnKAN5/M61kp9pxWyVX+W0d92nuI4x6WIUCAFgbY/9enuj42Fbt
-	 2lYlrjpTLo+qCOsveJgoRQ1nnu2OgZvWV2MvjyRefGbVAehUNsGHJNZ4oOpi9ptn8Z
-	 CbcKT9xiN9AdeDExDp+DddMtThO6y99cADhcbRF9iCHbiAhARinQYOFQ/icxIVxhFo
-	 sJA9ZJwzcnZjyumP5iPaI3pA3B/Hzh96mtwITmDeK4AJdNqgEQ3KFdNX1aBYsDUJ3N
-	 S6JonM83sFImN3cvJ3oOfmzMH4cIMheKKNPfMXFjB6UTcjwHhSh6QocZMpHU1Zjjrf
-	 tcQLLZhpmT6S6zqSOEOdxzD25rFpF9XJ82HgpV9PY48bJBYDgOuF3vTuoAWPzIPgHB
-	 1c9gNFdUBm48wPxpYqCuRzz3ONq6f3jLTptpG1va6vtko9hb5ZuaVauz/sGfd9c1WT
-	 ilA7CQoCZ5MNZQ0WYZvHCCFqLZMVluOi9JgrC03zKUok332WClWXHC2XBXRPJSZwBW
-	 QC3qGt+7a022AJVTvcNR0DjodpnU+p0EK2zTeHP4KgAxAOyc9xGNG22PrE2YQdWo42
-	 5fcs5kGkS5Y6IrlKcmwsqBYntN7unUxc92HSuwPrhiyGsotDRncO80pe8n96YuUZiw
-	 kP2EfD6nReWwal8oTrAIlriQ=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5246F40E0177;
-	Wed, 29 May 2024 19:31:38 +0000 (UTC)
-Date: Wed, 29 May 2024 21:31:27 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, Marvin Lin <milkfafa@gmail.com>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EDAC, i10nm: make skx_common.o a separate module
-Message-ID: <20240529193127.GEZleCjwyUtnDv_Nc0@fat_crate.local>
-References: <20240529095132.1929397-1-arnd@kernel.org>
+	s=arc-20240116; t=1717011328; c=relaxed/simple;
+	bh=L5LYcj983w/G7cmoPjlZ9HazA9HPlFn0B8m+apoXi00=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ktE3RHBkl8oLFZszgq0AE6jT50zx+ijpFhrPQbkey9NmXwxaLghItS5vsNrTLWxNLe1SdWzJ86zyiMLIyBO9gRD8vbtI2O8Vi/WWiDypMGByG8lFEg09nxcbTsyRkujEz7kzKwazm/wV4RL6zTtk6EDQssrYAP0+ep4Co+9kLnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e94cac3ee5so6947039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:35:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717011326; x=1717616126;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5bUpBAQIlroT+U2Q77MLXTFapZdCAd6xc7X9aNiD0gw=;
+        b=In8jUiPPR/ip1c0tiUyET3kX1g1v8q+D+UT7Rm0kPc3k55hsp0woZADv5VEKAhacaq
+         IGaz8/ZCCTF3m5eoEsUU5POdorad1udenJ+8TYLGasKlBxG+2gD5Szxx6AhQ7gj0xu+4
+         QurraX8rkaxKV85dqT51PxAIPqjPhX+Fp/DFvi7VMj1vr/NELNqOK45/VuxVYhdvFyWv
+         3EiCDIP0mvzllwJcsO4tyJvpx+vmy98Wj6ORywoAtj6cy6FmcqBMF9xNF8ehhHbX+jZh
+         8FXFP/8GKBVyiS7zC3PHPuLkxbBWdsCQZVNVdvBf77seLkuQQid8e6KU1huDxc918m5T
+         02kA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAS/JCvY6NFcb6FZoTJXs+oTG6oG4av7h5efnd2kwDZF89poky0oUXsydbfyWIGHrYNNtNPJeRC+YEaMOQUlPBScWpdZSHp8aOxyKP
+X-Gm-Message-State: AOJu0Yy6aOUH9ZnTtqtqvrNcpaiSsmFOpKNA3GrszenhgVqwZxPOlYkA
+	eCQmcz6Gxle4jyyBWY3Wit6rzSaoWn6X9Er/MRYLaOkGNyTa5vr4EPtyICXlQ1HoZTpHIt97LQl
+	WPc/fnxwgbA9N3Beci42yuchByd9gCUuLT2Inzvp7bf7xcvfgNQVjKYA=
+X-Google-Smtp-Source: AGHT+IHPgBzCc6sDZsZRbK3JXRWbsYidyX+tlba/egulDrs1fIdP5OlO6Owkqoqpzb68bbUtFNNMziLhmBhKUMZNJ4Hcc42B8waT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240529095132.1929397-1-arnd@kernel.org>
+X-Received: by 2002:a05:6602:168a:b0:7de:e20f:4c65 with SMTP id
+ ca18e2360f4ac-7e8c3bbbed7mr53400339f.1.1717011325737; Wed, 29 May 2024
+ 12:35:25 -0700 (PDT)
+Date: Wed, 29 May 2024 12:35:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000256ed406199cda69@google.com>
+Subject: [syzbot] [bcachefs?] WARNING: kmalloc bug in __snapshot_t_mut
+From: syzbot <syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 29, 2024 at 11:51:11AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Linking an object file into multiple modules causes a warning:
-> 
-> scripts/Makefile.build:236: drivers/edac/Makefile: skx_common.o is added to multiple modules: i10nm_edac skx_edac
+Hello,
 
-What changed?
+syzbot found the following issue on:
 
-This wasn't an issue until now-ish...
+HEAD commit:    c13320499ba0 Merge tag '6.10-rc-smb3-fixes-part2' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14fb3ec8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee7b962709a5f5a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=770e99b65e26fa023ab1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157e822c980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ed3a3c980000
 
-> Make this a separate module instead.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/22adcef01567/disk-c1332049.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/03f224c81035/vmlinux-c1332049.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/711f192697c1/bzImage-c1332049.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f94c66f22d99/mount_0.gz
 
-..and I'm not crazy about the exported functions either.
+The issue was bisected to:
 
--- 
-Regards/Gruss,
-    Boris.
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
 
-https://people.kernel.org/tglx/notes-about-netiquette
+    bcachefs: make btree read errors silent during scan
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1799b972980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1459b972980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1059b972980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
+
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=crc64,data_checksum=xxhash,compression=gzip,str_hash=crc64,nojournal_transaction_names
+bcachefs (loop0): recovering from clean shutdown, journal seq 7
+bcachefs (loop0): alloc_read... done
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read...
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5078 at mm/util.c:649 kvmalloc_node_noprof+0x17a/0x190 mm/util.c:649
+Modules linked in:
+CPU: 1 PID: 5078 Comm: syz-executor347 Not tainted 6.9.0-syzkaller-12398-gc13320499ba0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:kvmalloc_node_noprof+0x17a/0x190 mm/util.c:649
+Code: cc 44 89 fe 81 e6 00 20 00 00 31 ff e8 6f 48 be ff 41 81 e7 00 20 00 00 74 0a e8 21 44 be ff e9 3b ff ff ff e8 17 44 be ff 90 <0f> 0b 90 e9 2d ff ff ff 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00
+RSP: 0018:ffffc90004116c68 EFLAGS: 00010293
+RAX: ffffffff81d7d179 RBX: 00000037ffc7c850 RCX: ffff88802d0d9e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff81d7d161 R09: 00000000ffffffff
+R10: ffffc90004116b00 R11: fffff52000822d65 R12: ffffc90004116fef
+R13: 00000000000100ff R14: 00000000ffffffff R15: 0000000000000000
+FS:  000055557a8d2380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005582515a4208 CR3: 0000000011274000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __snapshot_t_mut+0x3c/0x220 fs/bcachefs/snapshot.c:171
+ __bch2_mark_snapshot+0x130/0xac0 fs/bcachefs/snapshot.c:310
+ bch2_snapshots_read+0x596/0x1680 fs/bcachefs/snapshot.c:1845
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:182
+ bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:225
+ bch2_fs_recovery+0x2370/0x3720 fs/bcachefs/recovery.c:807
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1031
+ bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2123
+ bch2_mount+0x71d/0x1310 fs/bcachefs/fs.c:1917
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9cfdd8adea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdd812fab8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffdd812fad0 RCX: 00007f9cfdd8adea
+RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007ffdd812fad0
+RBP: 0000000000000004 R08: 00007ffdd812fb10 R09: 0000000000005d64
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffdd812fb10 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
