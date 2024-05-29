@@ -1,166 +1,239 @@
-Return-Path: <linux-kernel+bounces-193365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6015F8D2ACD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:29:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B824E8D2ACE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFFE31F24043
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:29:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D12A2824E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3D115B0F5;
-	Wed, 29 May 2024 02:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5F015B0ED;
+	Wed, 29 May 2024 02:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KoOiWnAR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C2WwDYrW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D842AEFD;
-	Wed, 29 May 2024 02:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716949737; cv=none; b=WSoFdYdCfAnIKN+SuXgwJ6yaUVNZblEr9xBnKRGbg0uT5W7qWQkISRxXcsVUMyyEG2pRCnCttWtr6Bfq4BbcTswqY5lEibTYWcC+Kgdsz7roejCSjymjmmYreduzgd14nanU6ZLiyHXKRjwt7nAcdkDcp7tezZYpxmzKo1nx/0g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716949737; c=relaxed/simple;
-	bh=ZwvUORaxzc0vrGFqCdwHpqmj4IP8E9GxhkTzYLGO4/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKFcxhP+LKrwcowqqH3mdQiF6MqOmVm7swi/3UKGrWQYm+j7AoCAi5QN/qG0KQFuDPYl9/VRW6WDoSGFjmQKjG6dIKu2CvLwkHpRF+cKYfO0YPZJe8K41uX6Vca4S0iNM0wosk/VH7Qro5xY2HhvZ6LGTYn5ucZlziilP/2SAiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KoOiWnAR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD459C3277B;
-	Wed, 29 May 2024 02:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716949737;
-	bh=ZwvUORaxzc0vrGFqCdwHpqmj4IP8E9GxhkTzYLGO4/w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KoOiWnARhGc9ZaTdHga34C//fejSGA1/f5faW0EmsorMft6hRkhydRTmN/aHLoMb+
-	 igEjT3Zo5OXCK8ab8I41PJXqG2UGKzdQXOrHSV/hDEmuSzey92Nfu2dQnGpk9hw2Ox
-	 eHLiVveiY8oS4XULy8Q2gH0gby1KpqtcDsD+dzJol2jeBuHv4gH7dQQ9MniEmxY49E
-	 KxCL/HSqe3xbuU/B1wgi/7BtrQYL3or3DwxZw5g5AYtyXavyz8NSt7VcoMRy4NPhCG
-	 yJ31hRi0SYVuR/ZKhYhyuJ58vc3Cg2yvse7wUcU3mOtkrcBleCdu86PNrMl4Clizrj
-	 MSag0j0ZzHLLA==
-Date: Tue, 28 May 2024 21:28:54 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <quic_bjorande@quicinc.com>, 
-	Kalle Valo <kvalo@kernel.org>, neil.armstrong@linaro.org, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Loic Poulain <loic.poulain@linaro.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 01/12] soc: qcom: add firmware name helper
-Message-ID: <pd3jgsd2ps73qd2h4rdxavd4zmyeqrqmslkbuwtgwlotm4tzgb@bb5japc6opcq>
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
- <20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
- <a45b53f3-b2a5-4094-af5a-1281e0f94d2f@linaro.org>
- <CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
- <878r03csxn.fsf@kernel.org>
- <CAA8EJpqkgpCb57DGka0ckbPz=2YiaHzxmiNzG39ad5y6smgO5A@mail.gmail.com>
- <Zk52IHqAfOnVDm50@hu-bjorande-lv.qualcomm.com>
- <CAA8EJpogG5wW2mUUkYFtnnZLMVuneU4Wie6GBfYytSYe0zQ77Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1182AEFD;
+	Wed, 29 May 2024 02:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716949772; cv=fail; b=CzTn31k4nJcggk5ezsXxZW5IYjapra6T36Tfz3ScoYoSfm1Hv1eqLiJG25Z3sdGokFTlP7rx3JwHSl2Rd0uCXOOzu0MDfr1eTNNYzMZD+hV6jNmcX94pbkyBmhbexkhfbgCUTy/2R1CcmT6c3nuIcOgmQw8bsoa620gysQkRrNA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716949772; c=relaxed/simple;
+	bh=miW0a7i+4i3RAEbIlvdU0x+emThg1W1rmypw7U8BNfo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OHQ4+bR0IMyarzhrd69JZhEl0WOgdWjRAkm0c3xmBz9lZmxpR4F26Ja46rHBbtZONYc1V2CG9oPIunGz9vVvU3dTGvJBUDZHE1AR0AQyOltIgLkXNY3GagC3jYFrI7mTVRQEIzpa+FDF/qbGKQVJ+ff+yqyBPbCgYCMJ5ovSpnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C2WwDYrW; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716949771; x=1748485771;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=miW0a7i+4i3RAEbIlvdU0x+emThg1W1rmypw7U8BNfo=;
+  b=C2WwDYrWrkobzBBymbWp1MJgtBACcmeK2D16OUohOJor2QZ+DuntDA0R
+   PfCnWPZHdloe/8DnhxL5gnUEej4hmwtljLNj5MTYz1LIDDHZ6EUBkqgiE
+   nNNjb37W8YPOdP4y3xXimTKfcnnJ8zmf3E0nkLTwQzi/V6C5a38VBcLPv
+   mNRaRS7nhLtaEdztPNaHczK+aINajIgy2s1KFdJtl0vqbxgc3b6xcTd5k
+   xcDvYKcepPDZsXm5xvU+q2+/DONG+hqGmtG8sQuVbYdXJTA37N12XGsZD
+   xEe5F6R2Z5UJ6Sf1ICeHjLVfEwUkxGdSfoa4iO1Qfn6wE4YelkNQlNndF
+   w==;
+X-CSE-ConnectionGUID: XFnbF6aISLCcsTXUqOI7cw==
+X-CSE-MsgGUID: gESaHjPmTdKeTFUNKw4LQQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24460568"
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="24460568"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 19:29:31 -0700
+X-CSE-ConnectionGUID: BgAjiGM6RciCw1r6CgIuGQ==
+X-CSE-MsgGUID: 1JIZpokhRDGZL9Gmd1S5XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="58450958"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 May 2024 19:29:31 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 28 May 2024 19:29:30 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 28 May 2024 19:29:30 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 28 May 2024 19:29:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XEJYWT2QldBVByMxNItSCsatqo4GPnEeSqRnRSaFcJ78q1aQSsnUzsLKY09O7R8OSjF+Qe79HeVs6EdZ3MUF66w2bW+wdAP+K/oZnHruJ6+dYwLvhEmSxyZ9IZM7bj89uYGWqvbLD5fTgkjUcpjeXPd+ZzTazvaBkFy5PSdbRNMlYX04GWbmuv85wfVvXRc5mwakvRmMg0BW//rXSexqhWBdEP4OyEOnAVeroxLs3M4THo0HDpzxILSULGfQUqeetawJJuG+ggL3wZkbhINInDXYAMaA9BjuAzKFdAmvpiXz9x1iR3qoemAhUsXqC8CBtRrlcFM41sDV2NAssR4bpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=miW0a7i+4i3RAEbIlvdU0x+emThg1W1rmypw7U8BNfo=;
+ b=E121cTY0C9NWZO7+dL0hhWh7NC6oc4QZ8iLyPRGovwdr7HwK7tP6L9Y2wSIusooaxFsWoPKMVNJYyrS6KqTwri99gM3ynJJY292hiAKdh+gUPFTUlla1JHHyPiTB2ReWJ4yb8U7dEftNiYtOUWTAhyQQFjxQ14ZABKyHVRIzd2qpKktt7CvWZW+6iNh2e3ju1t4Z77XcFignl0aaaDrOQ9pEALhSAIJGUN6tCwGpyrsOmNOUIGJeh5CzBHqZoowyI2D88ehAtQTAEUlHFr5dH/ofb4ZxHbuHS76FkVdPGuUMXEpumKXs8JY59u69JHavjgB7MbRYOS5m+8nrGvnyfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by CY8PR11MB7058.namprd11.prod.outlook.com (2603:10b6:930:52::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Wed, 29 May
+ 2024 02:29:27 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%3]) with mapi id 15.20.7611.030; Wed, 29 May 2024
+ 02:29:27 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "Yamahata, Isaku" <isaku.yamahata@intel.com>
+CC: "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, "seanjc@google.com"
+	<seanjc@google.com>, "sagis@google.com" <sagis@google.com>,
+	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Aktas, Erdem"
+	<erdemaktas@google.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>
+Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+Thread-Topic: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+Thread-Index: AQHapmNTP3XGfqhyyEaM/KHu10XBU7GlgQuAgACYjACABytBAIAAOfSAgAAJegCAAAhggIAAAp8A
+Date: Wed, 29 May 2024 02:29:26 +0000
+Message-ID: <5a5e77006e170e8cb1c77c66eb742d34f9c99324.camel@intel.com>
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+	 <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
+	 <6273a3de68722ddbb453cab83fe8f155eff7009a.camel@intel.com>
+	 <20240524082006.GG212599@ls.amr.corp.intel.com>
+	 <c8cb0829c74596ff660532f9662941dea9aa35f4.camel@intel.com>
+	 <20240529011609.GD386318@ls.amr.corp.intel.com>
+	 <2b3fec05250a4ec993b17ab8c90403428ca5c957.camel@intel.com>
+	 <20240529022003.GG386318@ls.amr.corp.intel.com>
+In-Reply-To: <20240529022003.GG386318@ls.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|CY8PR11MB7058:EE_
+x-ms-office365-filtering-correlation-id: 3b1005d5-6c74-41c9-79ab-08dc7f87294c
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|376005|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?QWRFM3NKN0JYZlVpK0IwSkQyalNIZ1NOSzRoVUZtSmhDZ2hPR056MGw2enMw?=
+ =?utf-8?B?TUZPeTdRZ2VCbmtlMGt6L3RKMEE4ZTVDR1Q5aFd0ZnVmcjk5R1k1OEJ4NDhu?=
+ =?utf-8?B?VVFaSmdGdXVaV3lYQVJ6aStVa2pXTFVxTTQydjJMbnFDOWVDdUtWR0hkNE1R?=
+ =?utf-8?B?SDNIdG16aTR5dXQ3Tm8zd000QS9YUEpWS2NhWlVaQUxRM05HYmdQcTlGVnBN?=
+ =?utf-8?B?bVhYdW14Nk9kSVFIa1pSWjRkdkFiMkZXOHJvSSt1bmdmTEpIc2RPZkhRcWk2?=
+ =?utf-8?B?WUZGMitpRjlPanZEcEpTZ3QyUjJXaXZCN1BIYnhBSFNkaFBWcWQwbWtMZFBs?=
+ =?utf-8?B?Q2ZTVEdFdHVVd3B3bTlaUlNTcEluSUI3YUtRSVljbW8rVnkra0V3S3JZbktx?=
+ =?utf-8?B?Q29rSEFlYm55TmFvWkNCa1BGZng2S24wWDIzZjRxeVRWM3ZnMEJncG1kVVd4?=
+ =?utf-8?B?aXRCb0ZjcENBdXdERk5aM3d4TE9GL3lYVHN2SmljOGE4ek96Ylh0TzBmdVVL?=
+ =?utf-8?B?Tnh3TmNhK2Rzd0QrSTI3ZmwzTmExRERmUnFtMGZUcS9oakVPMHU5S2s0dldt?=
+ =?utf-8?B?dWxDZDZqaGNUWmNqSVN6d1lFRTNGT2Z6VjkyRXk1RC9icFYvbXJZdnkrWGVr?=
+ =?utf-8?B?V2h6Rm9OS054Zzl4ZXdzZUd1dXhpRjRETlZ3aVZoYlg2TUJZMjQrcm1sSUpI?=
+ =?utf-8?B?SmFsQVMzT0VuQXU3ZXZxeWNiQjlEaW5uMVJDMWRKMDhMS0N5ZUhBakNCUXJR?=
+ =?utf-8?B?Q0h1NkVZcGlINXRUZHZJaW9ReitCM0p5ZjRqT0txKzFDemNCSzNmZS9acGdt?=
+ =?utf-8?B?NG9ocjlXKzlFeGoyYzNtOXRjMFVvNjlvandwUlBUTHprMkFyRmFpZXFmUzRT?=
+ =?utf-8?B?S1BibFZnZnZPVS9SN3JWTEVvUlBIZjczbUZiZDg5QTBOaGxiRENYeHhFTGZu?=
+ =?utf-8?B?Vm1YemU2TkloNzlQeUovK3p2cW1LZkZiNzdRSUFXOFVkSlBlVWlIMXdsYk14?=
+ =?utf-8?B?SjNnYTB6U0F4MHhtTWYvMnNZdjM3NVk2SndCYkNhR1RVUTd0cFloS3U4Z3Zp?=
+ =?utf-8?B?K1MvL3d2L2JmakZnN3NGbExPc3luWWRYZkRkWE9IUGVhRzNDV2drUkR4WS9x?=
+ =?utf-8?B?MGVVbTJuSlhBMXNWOGFDVTAwelNsQkR6SXZlc1BpVzdSVldjdGxvcmFYUnU4?=
+ =?utf-8?B?aDJzZXJ1b2lySlJpVzBFMU41aWQ3OVBJYjhDVEs1b2tpS21haEZ0RXYzK2wv?=
+ =?utf-8?B?K3FZRjEvU2orOWZ5QmtwQWEzek5DODVJRnpSWHQzWFFoTHVhbEE1M01SL05S?=
+ =?utf-8?B?SUlzZXJIUERuMGZvWUtJSWZFV3pTTmpWV2U2TXRtOWdyS29kUXFkQzN2dzc4?=
+ =?utf-8?B?OEpHaWk3UlozSkdkSUhJdUFXMkRuTEpQR2ppN0MyYkxyNXdGUUJCeEdsTXdH?=
+ =?utf-8?B?TlE3bEVzNjdvQUIwOEpzcXB3Q1FGV2hOWmJEMFBuQWx0M3V2bWR1V2R6VzN4?=
+ =?utf-8?B?ZWpqSzR2ZkJ3V3BFZ0ZuZDJocEdQUndqMGw5RnZZN0xITHZ0QVFmNzgvcVda?=
+ =?utf-8?B?YmxUVFVQdjlBWmk4Rzc5blhRbmRIRVo3Zk5wYThCZTY1dFRhREd4S0Rha1Jj?=
+ =?utf-8?B?Y0hUVmdqV3kzdWI1UGVhay82OUhWZkhrOWFHcno3TUUxellwSDduWUVVOHFT?=
+ =?utf-8?B?Ri9UcmV3T2ZTY0NqY1VFcGZQT3pHMUhtQUpQNEthTEZITFl3L1ErODBoQ1Qv?=
+ =?utf-8?B?QmlYOFc2RHZqeEhaMlQ0cXl0ODQzTkFSNitYWG9yNmNIZUttTG11TUdEUWZS?=
+ =?utf-8?B?SDlJc2JPNEcwNFhqd1VqZz09?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?b3JEVUZadkZxSFVWMlBLVFVUaHgyUVU4WWdSWEdtb2RCMEtSb0htUmdZc3Y1?=
+ =?utf-8?B?eHNRNzBFK29qMmlsTGNYa2tsa1lrdUNUcFh4UGJDbG9YREFKaVZqOENxVXRC?=
+ =?utf-8?B?ajlHUW5RZXo2cXF4SmxjblhGcEtaZnQzWnVrMGFpNWVac1l1Sjg4aWxkOEpy?=
+ =?utf-8?B?UjFDVnBjSmN5Sld4bkhxV0E5SndWYWNmMmZYQStJNFFtVGM0VlMySzIzQ2xB?=
+ =?utf-8?B?R0JubVd2VStQZ2lzUldjOTZ3OXV4MUtEZElDZjJKNHBsWEJYTGtYYUpQT09H?=
+ =?utf-8?B?MGFET2dRQWZObEpEVEswRXRxcy9TYlNaTmhBOWRRRjYvK0hvK2tVUFFScUFs?=
+ =?utf-8?B?L1puNkVlN1ZTSUlseTVCZVJHQ1IraXoxblo2SzF2MmQ2Y2NYeG05RFVVZVl6?=
+ =?utf-8?B?T2lMUGNNQk9pUkUzb1M2MERmN3h4MUlxRHliY0s1OGIrMEJOZXpqSm8wSnNh?=
+ =?utf-8?B?VDJEUWFvY1JIeVpYcC84cVc5NlBsQUo3ZUVPT3U3V3c3L3dMdGN4TkpiKzRn?=
+ =?utf-8?B?WUkvVmloakxkK0V2TlVROGYyWU9PRk85TW9sYnorbk9mSU5qK20xTkJDbXpa?=
+ =?utf-8?B?aFVPNTlTdWF1a3BFa3VFNjdvU0VWWlRGK1NuUmVUNDFZR1dPeHREVEs2Mngz?=
+ =?utf-8?B?MEdEWGlRZDNFMXpIdnE0YUF0MkxUQ2cxOHlxNGMxZHdkSHpleVlOYjRRK01Y?=
+ =?utf-8?B?ZFl2ZFF3eHROdCt1ZG9DeEVuSFFXVk8ybXhCc0FTRmZZUFZQakJDa0pvVmpY?=
+ =?utf-8?B?cDNVeUVmdlZObFI3aDhSU2tzM2Q0ejRIMHhoaEovaHNhU29pRzNKQmdWWElx?=
+ =?utf-8?B?ZEY5NE1PWmlYcmJtRXZ4ZXBQNEtPaFoyUDROVDFaVVNhTTZTdG5CWXA2UHl2?=
+ =?utf-8?B?RTM4YWQwT1UvRDF0UkdaemplTTA3Z1ZaQ21EODlxcmdqT0ZUc0JyLzlWRC9T?=
+ =?utf-8?B?MzE0Z3FZMlJsZkJRODFUdXIwb0REZEFGR0c1ZkFjR3hLOUVvNjByZFpPOENG?=
+ =?utf-8?B?a0tjTjBrKzZFSVVrbk9HazRxWHkvQkhTeVJYaU1RdHNrd2p1TlF1anJJQkV2?=
+ =?utf-8?B?WUNhN1VxNlMvZVUvVkUyWVZyZEd2OW5jN2RqL3FVbkhmV0xIL2l1QzdmbWtJ?=
+ =?utf-8?B?eDJ0aXJMTUNNaFVhOVpXRk4wbG9Od013ZzNKS3VtbiszWGlMZkowY1VBTCs3?=
+ =?utf-8?B?MTRVcklKeFNaQ3NOSkNYQ2ZoREJBVnRRTCszVnVxUFNOVFBxVDVBbGxHbGhT?=
+ =?utf-8?B?UWdYUlVYRGhKUmpTUGhraExuYUVweU5PcGNxSlhmTEZHZnBPbldxYVgvd3Rj?=
+ =?utf-8?B?UGdXTnUxTEdEWWZIdndnbUpBdDlNNStWR1V1UzJ5WVBGbW1MSFdLMnVMYWtL?=
+ =?utf-8?B?VlRkRFA2Vnp6aWU1V2tJZjErMXdRNlRWMFM5MnMxRzJGZ1JCSndMa0xNTSta?=
+ =?utf-8?B?MWhaVktRZFRxN1kyRmpuVHZTWVZtVTUzNWQvYUVzTFNaeTh5MkxWZjF6ajB3?=
+ =?utf-8?B?U0JvMXRlUnZJZWI4RmZ3cnQ0RGtXcHdyNW1COE5FUkFoQjJCUkptemdSblFZ?=
+ =?utf-8?B?TjR5bDgwQ1VIeTB2WURkQUU4VTBXUllPd0YzMzhmbjhzMXRqbjlpTmt1MDVq?=
+ =?utf-8?B?N0VnUytmc0VCMTB2a01YNk5sVUFIa08zc3ZBOVl2VGY5RW4rSU1MYlk4bHNB?=
+ =?utf-8?B?QjlHR1BnNVlESThaVWp4a1pyZ3lteDZnTlRNQ1NRUk9ldUpTeE9VRTBkc3RX?=
+ =?utf-8?B?TjU1Nmp1d1VZN3BUenlGaHRCU2MrRzEyRk5WaUE1MGdqUHU4a0NBR0FUUzF0?=
+ =?utf-8?B?YUJnV3U5RXhrYlQ5VXA3SnlnTUlEZFl6dnJQaTh1Uk5qOHQ3QzZUSXZVOXdq?=
+ =?utf-8?B?OU90b1hDdXVlYkEyT3RITitybmR2Y2ZhaWtWM1NJRmpwQWpmeEhNYXp6ek1a?=
+ =?utf-8?B?UjdjbDlaa2RpYnduelVlQlRYTWxVb0txL2hoREgwZ3R4SDBUQnMyQ3FVUVJ3?=
+ =?utf-8?B?NEVpeVNTcjBzL0d5R3d1NUFzWHRETzd4QWhOa0lOZU1tZ1lwQncvaDYwQ1lK?=
+ =?utf-8?B?QmtFQUJLMERpRUwvQXU1dHNHbytjeDNZdUx1R2ZGckRjYzhBb1dwMVpRSis0?=
+ =?utf-8?B?SEdBdis1YlJYUmd6U1dxSVpUeDBBTXZiL0gyOXJ5OWVDUHI1TW9UUkF1M2ZX?=
+ =?utf-8?Q?6wZ1A8ggj9fKp5XPu0kh1XU=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <15A36F1C499FA84E9F9B1FA9143AF24B@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpogG5wW2mUUkYFtnnZLMVuneU4Wie6GBfYytSYe0zQ77Q@mail.gmail.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b1005d5-6c74-41c9-79ab-08dc7f87294c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2024 02:29:26.9833
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZGEbyw6JXTMkTcWWrm8xIdowsK6PhmjGwMAGNr6K96CZ7LuSN4f31brpbiFSx13wex9vmHra4Q6sxdmk+MCMFdh4Ur4khC7nOdQgnuJr3Cs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7058
+X-OriginatorOrg: intel.com
 
-On Mon, May 27, 2024 at 02:42:44PM GMT, Dmitry Baryshkov wrote:
-> On Thu, 23 May 2024 at 01:48, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
-> >
-> > On Tue, May 21, 2024 at 03:08:31PM +0200, Dmitry Baryshkov wrote:
-> > > On Tue, 21 May 2024 at 13:20, Kalle Valo <kvalo@kernel.org> wrote:
-> > > >
-> > > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
-> > > >
-> > > > > On Tue, 21 May 2024 at 12:52, <neil.armstrong@linaro.org> wrote:
-> > > > >>
-> > > > >> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
-> > > > >> > Qualcomm platforms have different sets of the firmware files, which
-> > > > >> > differ from platform to platform (and from board to board, due to the
-> > > > >> > embedded signatures). Rather than listing all the firmware files,
-> > > > >> > including full paths, in the DT, provide a way to determine firmware
-> > > > >> > path based on the root DT node compatible.
-> > > > >>
-> > > > >> Ok this looks quite over-engineered but necessary to handle the legacy,
-> > > > >> but I really think we should add a way to look for a board-specific path
-> > > > >> first and fallback to those SoC specific paths.
-> > > > >
-> > > > > Again, CONFIG_FW_LOADER_USER_HELPER => delays.
-> > > >
-> > > > To me this also looks like very over-engineered, can you elaborate more
-> > > > why this is needed? Concrete examples would help to understand better.
-> > >
-> > > Sure. During the meeting last week Arnd suggested evaluating if we can
-> > > drop firmware-name from the board DT files. Several reasons for that:
-> > > - DT should describe the hardware, not the Linux-firmware locations
-> > > - having firmware name in DT complicates updating the tree to use
-> > > different firmware API (think of mbn vs mdt vs any other format)
-> > > - If the DT gets supplied by the vendor (e.g. for
-> > > SystemReady-certified devices), there should be a sync between the
-> > > vendor's DT, linux kernel and the rootfs. Dropping firmware names from
-> > > DT solves that by removing one piece of the equation
-> > >
-> > > Now for the complexity of the solution. Each SoC family has their own
-> > > firmware set. This includes firmware for the DSPs, for modem, WiFi
-> > > bits, GPU shader, etc.
-> > > For the development boards these devices are signed by the testing key
-> > > and the actual signature is not validated against the root of trust
-> > > certificate.
-> > > For the end-user devices the signature is actually validated against
-> > > the bits fused to the SoC during manufacturing process. CA certificate
-> > > (and thus the fuses) differ from vendor to vendor (and from the device
-> > > to device)
-> > >
-> > > Not all of the firmware files are a part of the public linux-firmware
-> > > tree. However we need to support the rootfs bundled with the firmware
-> > > for different platforms (both public and vendor). The non-signed files
-> > > come from the Adreno GPU and can be shared between platforms. All
-> > > other files are SoC-specific and in some cases device-specific.
-> > >
-> > > So for example the SDM845 db845c (open device) loads following firmware files:
-> > > Not signed:
-> > > - qcom/a630_sqe.fw
-> > > - qcom/a630_gmu.bin
-> > >
-> > > Signed, will work for any non-secured sdm845 device:
-> > > - qcom/sdm845/a630_zap.mbn
-> > > - qcom/sdm845/adsp.mbn
-> > > - qcom/sdm845/cdsp.mbn
-> > > - qcom/sdm485/mba.mbn
-> > > - qcom/sdm845/modem.mbn
-> > > - qcom/sdm845/wlanmdsp.mbn (loaded via TQFTP)
-> > > - qcom/venus-5.2/venus.mbn
-> > >
-> > > Signed, works only for DB845c.
-> > > - qcom/sdm845/Thundercomm/db845c/slpi.mbn
-> > >
-> > > In comparison, the SDM845 Pixel-3 phone (aka blueline) should load the
-> > > following firmware files:
-> > > - qcom/a630_sqe.fw (the same, non-signed file)
-> > > - qcom/a630_gmu.bin (the same, non-signed file)
-> > > - qcom/sdm845/Google/blueline/a630_zap.mbn
-> >
-> > How do you get from "a630_zap.mbn" to this? By extending the lookup
-> > table for every target, or what am I missing?
-> 
-> More or less so. Matching the root OF node gives us the firmware
-> location, then it gets prepended to all firmware targets. Not an ideal
-> solution, as there is no fallback support, but at least it gives us
-> some points to discuss (and to decide whether to move to some
-> particular direction or to abandon the idea completely, making Arnd
-> unhappy again).
-> 
-
-I understand the desire to not put linux-firmware-specific paths in the
-DeviceTree, but I think I'm less keen on having a big lookup table in
-the kernel...
-
-Regards,
-Bjorn
+T24gVHVlLCAyMDI0LTA1LTI4IGF0IDE5OjIwIC0wNzAwLCBJc2FrdSBZYW1haGF0YSB3cm90ZToN
+Cj4gUmlnaHQuIFREWCBtb2R1bGUgZG9lc24ndCBlbmZvcmNlIGl0LsKgIElmIHdlIHdhbnQgdG8g
+YmF0Y2ggemFwcGluZywgaXQNCj4gcmVxdWlyZXMNCj4gdG8gdHJhY2sgdGhlIFNQVEUgc3RhdGUs
+IHphcHBlZCwgbm90IFRMQiBzaG9vdCBkb3duIHlldCwgYW5kIG5vdCByZW1vdmVkIHlldC4NCj4g
+SXQncyBzaW1wbGVyIHRvIGlzc3VlIFRMQiBzaG9vdCBwZXIgcGFnZSBmb3Igbm93LiBJdCB3b3Vs
+ZCBiZSBmdXR1cmUNCj4gb3B0aW1pemF0aW9uLg0KDQpUb3RhbGx5IGFncmVlIHdlIHNob3VsZCBu
+b3QgY2hhbmdlIGl0IG5vdy4gSXQncyBqdXN0IGluIHRoZSBsaXN0IG9mIG5vdA0Kb3B0aW1pemVk
+IHRoaW5ncy4NCg0KPiANCj4gQXQgcnVudGltZSwgdGhlIHphcHBpbmcgaGFwcGVucyB3aGVuIG1l
+bW9yeSBjb252ZXJzaW9uKHByaXZhdGUgLT4gc2hhcmVkKSBvcg0KPiBtZW1zbG90IGRlbGV0aW9u
+LsKgIEJlY2F1c2UgaXQncyBub3Qgb2Z0ZW4sIHdlIGRvbid0IGhhdmUgdG8gY2FyZS4NCg0KTm90
+IHN1cmUgSSBhZ3JlZSBvbiB0aGlzIHBhcnQuIEJ1dCBpbiBhbnkgY2FzZSB3ZSBjYW4gZGlzY3Vz
+cyBpdCB3aGVuIHdlIGFyZSBpbg0KdGhlIGhhcHB5IHNpdHVhdGlvbiBvZiB1cHN0cmVhbSBURFgg
+dXNlcnMgZXhpc3RpbmcgYW5kIGNvbXBsYWluaW5nIGFib3V0IHRoaW5ncy4NCg0KQSBncmVhdCB0
+aGluZyBhYm91dCBpdCB0aG91Z2ggLSBpdCdzIG9idmlvdXNseSBjb3JyZWN0Lg0KDQo+IEZvciB2
+bSBkZXN0cnVjdGlvbiwgaXQncyBzaW1wbGVyIHRvIHNraXAgdGxiIHNob290IGRvd24gYnkgZGVs
+ZXRpbmcgSEtJRCBmaXJzdA0KPiB0aGFuIHRvIHRyYWNrIFNQVEUgc3RhdGUgZm9yIGJhdGNoaW5n
+IFRMQiBzaG9vdCBkb3duLg0KDQo=
 
