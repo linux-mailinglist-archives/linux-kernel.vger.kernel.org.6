@@ -1,116 +1,132 @@
-Return-Path: <linux-kernel+bounces-194147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86488D3768
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C654D8D376C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3672873B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:18:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8288128731D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C157B10958;
-	Wed, 29 May 2024 13:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="CpkzA310";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CFfnIKAz"
-Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283ED11184;
+	Wed, 29 May 2024 13:19:23 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9387BD27D;
-	Wed, 29 May 2024 13:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DD2101C4;
+	Wed, 29 May 2024 13:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988723; cv=none; b=WiYkPVjuD2UJYKUJH3Yy3zcLYGPxc/52ZWquh6UMTZzAXNLZ+lNqb3Q2ie3nTljk5V4eL6keBX8tYhtzAfpS4Fv0HdpEcKMZyzxt+EJ50QCOOu8KB1hST67zu+R31eShtgisxI6lqlV0MDCymJzXp/GM3S7fYv0VQx6sDxa6IcY=
+	t=1716988762; cv=none; b=YJtuStkJZ8bPGzZ/AoKjIZ58/pZ7AgtUBygI1uPZ+R22C5Ooh3IGKPqkzKH19W56eav78cLjS+2fN+RXxNxLc2Ek36L+7E0Ty//0DEkQUeTcz+Aa86lqwLRhekEX8BXwn9xK11Dj4bs+u/hgrrFKdWxuln4WyoXcH7YZ88vi0JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988723; c=relaxed/simple;
-	bh=C3uNmjUmCcvGT1KkJFaUXmA2BqwSkBrLcJSJXR6bf1A=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=HAC/yg6y0qQlnjSXHRzyEjpHWtQ+BTFXEmEdcHZfqMEaKW8NOnrVheI+FK67rF17iVdSoBMs50QIXjlcALDMwgITEmrJAxUPql12NVeLHh5EroZ7jcbmwz7qEPGppMcEXQUv7qB58WsYabjBiDUT59p6GbOQwnrkF8Rou07QdDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=CpkzA310; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CFfnIKAz; arc=none smtp.client-ip=64.147.123.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 6DBAB1C00101;
-	Wed, 29 May 2024 09:18:40 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 29 May 2024 09:18:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716988720; x=1717075120; bh=KgCmw4JKIv
-	7OZxjKYNpLcFc1OBFgAdfChyBe0Hk4zvk=; b=CpkzA310AMz3JTCZNVBdhXW7ee
-	o+/cos3jbfgUclTT0SsPsfvUDlsIuh4H6u7lwC97Fs0MM5CTablK3g/Zhss2Qxp7
-	JDe0rsvEAYIHf1bjL6dMZDixGQ6feKOtxV2HBX5HwdlB2w6UoVWVl/1zUZLT6I4Y
-	NzCbMMj7qg+MP2zKZlwS10w6vIsBbRAvlGClskqSx1Zqiswc2NIoXH0qI6YiwSs1
-	h6jW5Lwv7pTgMUTnhOAQxep8+EgYIBqzglnRMqzinNo5uM/s55pJJZYYvyjdXYtz
-	uY7eYSrFk7oVVvGoWdY2A3JNhy6JSU+t9fPG3hphVtS1a/ybhLMGMM9ApFwA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716988720; x=1717075120; bh=KgCmw4JKIv7OZxjKYNpLcFc1OBFg
-	AdfChyBe0Hk4zvk=; b=CFfnIKAzhwTJjWLwbi8PBOl0dCOv4aoubzlL/uZx3uWW
-	nXziA/in35Yf3GFTeLZadvM6g6thQRgOg283ygW5snNHjZgB8B3GEcTH148cZb7A
-	K7Q9r6I4YudXwnaXSOntD5wVGTp0kSNP3JpIrsSLB3ok+Bj+dUMPj/9dEi9kvEEY
-	/6HGXPKcJbDjfAFRjb0rZseYZWNAg6p3hYgHesrm45N5CdNjZYkevUhumBjCKHPr
-	VtbAk27sKMC2OFEKPmBS/44HR+khNFZsyvZNesNeDR13iX/oMgT5y04BCYsylf8x
-	GUiNulHUoF8QOuIulFbmrs3/YnZzV0SdT5IOMENLiw==
-X-ME-Sender: <xms:LytXZggKWst7oUNVKGQS1oEqohLatayVmcQ2QjL5KLYMfK8vjRiNeg>
-    <xme:LytXZpCRr_En30LxEYfzsX-S8ahFxVg-3-nDvgWRrtSTjuW-36S0ir6dq6ejPIMD8
-    Is5y5FehqyHb6uyB2Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgieduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:LytXZoGyqKzZK2nTQqS2WhgfwsosX_9PIrD5u0aY0Fb8PUAKVYG67g>
-    <xmx:LytXZhRTA8bVGalC90mJvSHNESasi3ZN63ncIeof7sLGdM85XqDNNw>
-    <xmx:LytXZtwbwnZGOUkEHmxcL_uJUOOYsy2C8m1zfbZvICtOBgEHh4MC4Q>
-    <xmx:LytXZv4gZO3Lit0JRUYtM0yKuMr87XG99nv4IN6Zvp_-kQRyEf4DGQ>
-    <xmx:MCtXZkkB_oz33EB1VZL8A40HoG1gVrBtz6K09Ig0VGpJU4_AP7zQsFa_>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 79E6BB6008D; Wed, 29 May 2024 09:18:39 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716988762; c=relaxed/simple;
+	bh=m1eNwxHOo0xq5PruMH6TSKX6wAmY5QvLsMPD0jdhJp0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ABx/skUHQbgTOMT4VsdEV3zery6xbzit6AKlOU036EzZ2vlYCYWIiwuDhi72AwX04DYBs3tUSBPrYEZz4GvvBppmJH5MtyOPD+IK+qhEh+GHzSwbuSgVZgOAvCJfj6gFu9U73AvOGr5dYAvtvhLoDejwbwOt6KPaZ/LzvjQ6z4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62a088f80f6so8132727b3.0;
+        Wed, 29 May 2024 06:19:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716988759; x=1717593559;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8k1IGbQ5u070P8JazZPLAom/I0Z76SjM4QN7ew+IbvI=;
+        b=BrDmiZNrrcnS15h04YaSEdxsTrPf3/1JwR0GJOIkqqMjbJ8z42wCOSAbZ/WTpdG+cf
+         OgSM1Xvp6N190OJmpKpkYaw1wuPnHp6RUw/nHNFHvhvpqzGR29uUUMdqjKlWjqtu7z19
+         T75RZD2ITdHJtziouWG+ifU9o+dULzi91qVp4EqXVN8Q76x7USXQ0DafLsVVVYASAtwo
+         GTiCg7GeZ/mld4zcgqkkzW+AXZLfwPdkSpq2RG67BNxvp7YgPb0JniTDnOQMKE5Gx3Nn
+         GcPoq5A+RblhfciwMWrFktvfqmHpRSUuS4/a0XdQfNAO4om/mOUl6cIoYLKRj35uTQdU
+         WeGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTixzLGUZwPILFD/O73rFJkjPsITDhZTLVbMupLpxnHPbUOkO1ji7VWvZRWGiug96vTk133PDTodc+Qd8OzFv2SYCLAsEuVzH/k1KGT/W6CxpHUPfaeD6lg2UHPRHOJw2Va01XzD1GRXS72JcLNnkmMUBX3YnCU76io1a5yzjvFS+1LxA=
+X-Gm-Message-State: AOJu0YyDpgTpoElLFIjrkWOH7oAH6q07Dfl+cli+97Mg/kf55wJEzreF
+	EphAbK4LI71kvCqqhmX3gO9b1UjZCBz/8uv2SQpEOuYYV4HLSbzU0XA7sF/4
+X-Google-Smtp-Source: AGHT+IHQWvWmw6u95qhGpqZCDt0uaZ3TWxTg2fL0mCkBgRuoOxlDMntTjjOTbRM9s6w09/KYrxBk5w==
+X-Received: by 2002:a05:690c:c12:b0:61a:e979:427e with SMTP id 00721157ae682-62c5d2cdee5mr15528597b3.11.1716988759535;
+        Wed, 29 May 2024 06:19:19 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a5347a1sm24204247b3.114.2024.05.29.06.19.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 06:19:19 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-df79380ffceso772127276.1;
+        Wed, 29 May 2024 06:19:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYQSXTMF8Kszyo+YslexzhbNvl+i3J9aGWATlcGwr27S9a2+tQY7nPSQ77yz47C+y7+zxWcsBenKtmna/wcqWxmABX9SymUdQnUjPSy2czlBUahTg80XIXydpNqpoIlokiQypnytf5y+kvFPAYcf2MJq7q/lx57SIH8iwiFc83v8H2uaw=
+X-Received: by 2002:a25:b55:0:b0:dd1:6cad:8fd3 with SMTP id
+ 3f1490d57ef6-dfa464c41e0mr1389492276.27.1716988758013; Wed, 29 May 2024
+ 06:19:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <508d40bb-f2df-469a-9f94-58b41a28f53a@app.fastmail.com>
-In-Reply-To: 
- <DM4PR11MB59959F1AE3E9BDA36642000B93F22@DM4PR11MB5995.namprd11.prod.outlook.com>
-References: <20240528115802.3122955-1-arnd@kernel.org>
- <20240528115802.3122955-2-arnd@kernel.org>
- <DM4PR11MB59959F1AE3E9BDA36642000B93F22@DM4PR11MB5995.namprd11.prod.outlook.com>
-Date: Wed, 29 May 2024 15:18:19 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lixu Zhang" <lixu.zhang@intel.com>, "Arnd Bergmann" <arnd@kernel.org>,
- "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
- "Jiri Kosina" <jikos@kernel.org>, "Benjamin Tissoires" <bentiss@kernel.org>
-Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] HID: intel-ish-hid: fix endian-conversion
-Content-Type: text/plain
+References: <b80d65600641e6dcf00da53ae797f4a40a80e2d0.1716976062.git.geert+renesas@glider.be>
+ <ee5798e5-bcc4-4715-9c93-913094160b97@sirena.org.uk>
+In-Reply-To: <ee5798e5-bcc4-4715-9c93-913094160b97@sirena.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 May 2024 15:19:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUud7=6dK3rUHXKC+qJPJr-vt-AjtxiOBe5ghQYp1viHg@mail.gmail.com>
+Message-ID: <CAMuHMdUud7=6dK3rUHXKC+qJPJr-vt-AjtxiOBe5ghQYp1viHg@mail.gmail.com>
+Subject: Re: [PATCH v2] regulator: gpio: Correct default GPIO state to LOW
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024, at 09:05, Zhang, Lixu wrote:
+Hi Mark,
 
->>
->> 	for (i = 0; i < fragment->fragment_cnt && offset < ish_fw->size; i++) {
-> You added a parameter fragment_count, but you didn't use it. Did you 
-> intend to use it here?
+On Wed, May 29, 2024 at 3:15=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+> On Wed, May 29, 2024 at 11:49:51AM +0200, Geert Uytterhoeven wrote:
+> > According to the GPIO regulator DT bindings[1], the default GPIO state
+> > is LOW.  However, the driver defaults to HIGH.
 >
+> > Before the conversion to descriptors in commit d6cd33ad71029a3f
+> > ("regulator: gpio: Convert to use descriptors"), the default state used
+> > by the driver was rather ill-defined, too:
+>
+> That was 4 years ago...
+>
+> > I have no idea if this has any impact.
+> > I guess most/all DTS files have proper gpios-states properties?
+>
+> That seems optimistic, and a grep in mainline shows some users but not
+> really as many as I'd intuitively expect.
+>
+> > -                     /* Default to high per specification */
+> > +                     /* Default to low per specification */
+> >                       if (ret)
+> > -                             config->gflags[i] =3D GPIOD_OUT_HIGH;
+> > +                             config->gflags[i] =3D GPIOD_OUT_LOW;
+> >                       else
+>
+> The risk here is that we start glitching the power where previously we
+> didn't.  This does make me nervous.
 
-My mistake, that was again broken in my incorrect
-rebase.
+/me too
 
-     Arnd
+The alternative is to change the GPIO regulator DT bindings document
+to match the code...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
