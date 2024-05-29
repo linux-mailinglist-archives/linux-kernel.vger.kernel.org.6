@@ -1,152 +1,222 @@
-Return-Path: <linux-kernel+bounces-193677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D76F8D3065
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610CB8D306A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF048B24CA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B2C1F2B2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D954816ABE7;
-	Wed, 29 May 2024 08:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A6D16D9C0;
+	Wed, 29 May 2024 08:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ygf4SeWD"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="brpmVPro"
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2084.outbound.protection.outlook.com [40.107.7.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E9716A381
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716969794; cv=none; b=DJrSxe/JT4HsBuBRiq8HCqzQdft8qAnLxi9ZQrr5U+iMa2C3IRpAPU3O2/zF+8EbRprfOSPskjqVdEO7C+jtn10DmbEJIj9CEJA2leVl2G174QyUIbQ/y1oQg16yMxJJv1kAJJQFkoOcfTmB8lXcGMjkxB2pTrOKOrVkNI12wwM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716969794; c=relaxed/simple;
-	bh=yyzwBwMrHhyzP+KoX7+xVQUPiv1GRQhCclALjtWRz8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=crU9ZLfRJrxlliuW7SzcJeAId0ewIfnCYEWCsNTtvmW8uUWfuTIUfFx4obH9Pn5oTFjLNKF7fTXrAnGiSUvqW5N5b6Rlxj2hx27MOPk9aGLyFo4R97kVptiL1DD34HB0VgOeBNlD2O/oSENxz5Ir2xZCrP/IS4ddbIbDTavaHZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ygf4SeWD; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3737b3c56d7so5872915ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716969792; x=1717574592; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ogaI7Gpfs636qO5hyNT7bNNQENqOhw8naK259iAtrjo=;
-        b=Ygf4SeWD7mAFcv0rp79qvcE6+GEX/2QtjVtg8teXVLUVK3r2CRsH8cJ/RzO+Th25+c
-         RsgW4bG5nKDkdLiT9HQ9FQp2G9kkLUTrYFaQe0VDldhEcqViMrnOl8rXzLn8TEoK2evp
-         MVR/QVVfYxWalCCU1wIsB6caDYRSiqINM5eUc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716969792; x=1717574592;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ogaI7Gpfs636qO5hyNT7bNNQENqOhw8naK259iAtrjo=;
-        b=BE6HuSET3hZIoZssa1yQ+AO7zx5Kd63zNBdw7TWgpfYDUvKh3Sodsv8pmXuPdmSHjc
-         g+rlXPbl068i5r5g9eDXLnpM0uGD5+6Io3JKPDbezEZokaWpMzkWr5KghgeSPGmohYmH
-         tid3SK6TTb83a1mGG1+FiNY3HbiO43KsC57OhxHBWI+tdp3eOa8FrYBKQbP+qZQ6PDHk
-         uSPyVd/Yn64LjhaGWyZZAhkCX8SxjNLE4lVL7b42XmEf67SA3FhpOPqlBl6S/Ogw+/ia
-         u4HGAiToG5aivCoCHf1KyFy/rDYRs5kfP7lAh1pLoEwW9VzlQcl81jvIj27saenHJLE4
-         4GOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNmnEWpjNdWrzZWeVmCXWvzM4vIzD48DUx/uCvzuDXuWSizOCn7dIcQzK61UHZ54BrXCmA1KKznAy7JlS5SmmKMEvD2t+vWnFiBIrw
-X-Gm-Message-State: AOJu0Yx5njKYdVYCA/buZx7uywn2h1TiPhL1BLyKK808yinkRrElEidU
-	Z1DbuoQUI+mSjE/WiS54j2G86lOewDbFNL273wrwG8ah8rI2pmfkW/ar54FAfw==
-X-Google-Smtp-Source: AGHT+IGdbowjE3p9FsKUQs1U+S3A4H33kvzBquL28Ht/5QUfhl6pM3qzARUiGZqakco6aEOBwwMFCw==
-X-Received: by 2002:a05:6e02:12c1:b0:36d:b381:4852 with SMTP id e9e14a558f8ab-3737b31e049mr175673375ab.15.1716969791822;
-        Wed, 29 May 2024 01:03:11 -0700 (PDT)
-Received: from chromium.org (174.71.80.34.bc.googleusercontent.com. [34.80.71.174])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822189197asm8553266a12.20.2024.05.29.01.03.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:03:11 -0700 (PDT)
-Date: Wed, 29 May 2024 17:03:08 +0900
-From: Tomasz Figa <tfiga@chromium.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"hn.chen" <hn.chen@sunplusit.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v10 4/6] media: uvcvideo: Allow hw clock updates with
- buffers not full
-Message-ID: <4kck7oedsnj6kfiv7ykwsjg35qodg5bdktu5t5w3xtg2xuscto@2yh6kfdqwimc>
-References: <20240323-resend-hwtimestamp-v10-0-b08e590d97c7@chromium.org>
- <20240323-resend-hwtimestamp-v10-4-b08e590d97c7@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C26F16D338;
+	Wed, 29 May 2024 08:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716969874; cv=fail; b=I4XvIZcUzw/lLxhT/EjlJCMlFUDRK/8ZLi8qIcXw2BIeniLijqnyKNlsQiFvkAHRK9RXujj+wf1rMbbrw8BnMjtEKik/xzd/mANsycdqreVnCHbl9/CXqZyaU8G0n19jbYN8u6KhU7Wq+Dp4Cw31rEi1ljyFSxkgepuHwoCOXQA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716969874; c=relaxed/simple;
+	bh=Ym9CMxxDEkd2eO213x9Ep+O36SPBU+umctj0AUHJWXw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=eSwEvitCy75lDlF8SnOmhSV5Rw1MUUPgJ6wE7M2iZ/KiJvYIVXsJEkHc08La7d0KE5Ui3MrLmL+tOdFhYBRTNqCPc0K1rT/tYnjb01Nz/0dsPeSSN6Tj2tM5PIVX7bFmUyPmvWnLdgsNBr0mUyayM5cS2r9uWNSFmseBgZNHP6M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=brpmVPro; arc=fail smtp.client-ip=40.107.7.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GCPSQ77OEqd8GqtcdTn6jM/mgjBv7rrZhTj5H5v6MHD9Xy6wrsbQ8x4dOwnvzEI6j60zMGHNwu/f+IdLd6iO6JNsr5xrqge97Drydwe4cQ7q+v83rU0xrJRy+EA8Z5wAz0vzQoP+zSgZKJDp4mL+XHxqN0QmOHyAkJpqdFBSPSLPKIN+50hQD8EH+UVp2z8WOAgIRDQN0zVPJW4g8pp/wqvP2k9fXJl7HCr8etG+e4zyLAk71xfI573LcuzUO9zwok2Duz35JHGOVhFWbreL0zZQomqPamZSg8pugoLdJUBL85iVXhPop51jmqEY1Dby4kbzcxe1LNnZjZoCwcUy6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5v7tmwSDBOSA1rl4087dqZxA7CFqSfCP4wY5xNi5cfg=;
+ b=lxbbGLE/jxWiPXR01Gy21t9/hVKlw10NyAUrCD8/lsqIUt7xLUZuU4SMqvy8Ie4Z+Nt98lCjvMj0ZK2S5ogSA38yD/CdQy68VRZ4EwRDFyaMAZpU4ifBJIt8mPHIORb7oe9ouKqxjtWwxwKiNYU0Vj/v6nomaOS5jZYxNig29tiKLwvx3iYd8YWUoiPLILpKB3hu2ZuzlY7yzG7saMgPd3yiuQYQwNQdLH5fmg0uWC4vABbnuiATfpVnyMl9KqmpHhPy3nJEjoM7U0y5COci3wO+46gUDwxMGZjbA1tHLdjDsBeDWtLFr+quVvVrLWVhBvcf337ee4cWDZx5MppFVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5v7tmwSDBOSA1rl4087dqZxA7CFqSfCP4wY5xNi5cfg=;
+ b=brpmVProhcC9EdzsUjnF3WlRAxI3Fi9RVtqygd7QIbbkZPq8+/z8749HdR4JN9jCIKO3H7YR5IYSURXJmxqKolAgaEh8UPCGeEYvUhPEiTWvJgBIj5EjKL5tyN8STJR/y12YQvrldXowZ9uIMXCHmh8Qlqs4xh3QZrrQwRbYPaI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
+ by AS1PR04MB9384.eurprd04.prod.outlook.com (2603:10a6:20b:4d8::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Wed, 29 May
+ 2024 08:04:28 +0000
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::4e24:c2c7:bd58:c5c7%4]) with mapi id 15.20.7611.025; Wed, 29 May 2024
+ 08:04:28 +0000
+From: Xu Yang <xu.yang_2@nxp.com>
+To: frank.li@nxp.com,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	john.g.garry@oracle.com,
+	jolsa@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com
+Cc: mike.leach@linaro.org,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	alexander.shishkin@linux.intel.com,
+	adrian.hunter@intel.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH v12 1/8] dt-bindings: perf: fsl-imx-ddr: Add i.MX95 compatible
+Date: Wed, 29 May 2024 16:03:51 +0800
+Message-Id: <20240529080358.703784-1-xu.yang_2@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0016.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::20) To DU2PR04MB8822.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240323-resend-hwtimestamp-v10-4-b08e590d97c7@chromium.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|AS1PR04MB9384:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4f90810-551b-47d4-7d88-08dc7fb5f674
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|1800799015|52116005|376005|7416005|38350700005|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vwv+fXuv5G/HuG27LfqzOcRA+Izr9QwDtbOTbnQ9rTYfn/Ztaa8JTIGOhdLO?=
+ =?us-ascii?Q?lBc5h9Mh1YkFgt5kfOm2GFGxHUllE7symtYtc3JqcrzsjmwKxMjSRYyD1TVh?=
+ =?us-ascii?Q?ti1tePCePHXVdVyqkvP7Pq7MldSgJTrE7snLPYWytn5HyCQ0hn2MWyeGluIk?=
+ =?us-ascii?Q?wovyE/12ZQ0U1Mbrnsj4+t2vUsM13zxWude8u7cQ70B/I326awF7swP7+Wqb?=
+ =?us-ascii?Q?xNhmb9w+J59CPCFxw+2reiFxhd0nw3CLz0lwJkJEg5PA5g7W3LJ3ZwwKbilo?=
+ =?us-ascii?Q?lCfyeIKmnYA3Ksb6pAr2Gw/PAxx9LR3Hw3p92hTkKYlFJRa7viqveoTNX0qp?=
+ =?us-ascii?Q?eUjrg/elM1LDBRxoQvc4dM0FGyETR3kmVHQkBd5kDguPh7tMgt12j7C+tILt?=
+ =?us-ascii?Q?45LxEj2UqbkpizT7z9qKCHhOjRxWidlkhVb2767sDYFke44McC5gf8haiZvG?=
+ =?us-ascii?Q?lY25KL6FPTyQuwlS3WVyRLK1fVwOzJYo/EcoXDEcOX1kh/Np74uFxnRqAPOp?=
+ =?us-ascii?Q?ktGRcDekVsDa8iKlvA49cbCkqpdLrPC9C/iS1ACrbmaiTOEruqAkWj+3Fd6U?=
+ =?us-ascii?Q?FnSU1BCO/YOfM3762TNOjFzRYhrdwhzmxvj+ED/bpT/+iQll2YgyMZ61FbVM?=
+ =?us-ascii?Q?0Tg3weX9WJnNow8oLtE9HRdIscAjMZiTxT0iu3tfERFsO/CiLCw/NerOs9Gy?=
+ =?us-ascii?Q?LM+jYE62o2/ocoilgUnMauv+uoX1bWmOaSo9JQSdno10XTx9ogMJpquNTp/R?=
+ =?us-ascii?Q?A6KJzM6iIJbkUlZXkLnilmG3zkqF0IMIu5ouheoQYIUrLwKbWyg9JkQ/WsO1?=
+ =?us-ascii?Q?tLrT7miWEhCN7wbldeI9BNuT2/ujFR2du+baz/9XojcAGyFRPfEbj2+wnpHc?=
+ =?us-ascii?Q?q/Bg8IqvHBZ6WOrQ0xbQHd3Z/Q7XvqatQkTboKaiGo8IdN4jos0L2D1vFLG/?=
+ =?us-ascii?Q?7c2CdXQ/4YPguf1OVIeOdiJPFATT4rZ2gXD9astWpX9fUG+XMdAnIjl97r0e?=
+ =?us-ascii?Q?yO492+JULPGVLLwJuFLpxauPpo484UZ7Q+9qdDZjtFqKu7N/OqwgwAoj/9dL?=
+ =?us-ascii?Q?XEvlqVk3fo/gkOmMIIoZSCiG/yEPBpthRHuqKpD7wduvsE2m9t1D2hxoN5Sf?=
+ =?us-ascii?Q?HHSQrzM59a5fAa3BWAv2c914RL4dyz3S4n3VVWTNE714ncVPXrIr3OylkyUk?=
+ =?us-ascii?Q?BkbLguBaU79E6JjS1qEYrDO+Z4T6R689vFi6VLeqQ1A2HMiKTKre40CmDhOl?=
+ =?us-ascii?Q?xWnGTB2U3yF+93VtZLe1GA/K9XQDKA0LkXQSl8nsHTA53O1BtNOcO2imtB0k?=
+ =?us-ascii?Q?9b7rTee54gT1p0fJhW3sodmn4HLz4jIM5fBBWhZUpbRL0FXCQnIiEvkl2kXv?=
+ =?us-ascii?Q?jG4jbqc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(52116005)(376005)(7416005)(38350700005)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XwBWoIC6ggicdw2WTXiDoOqs33h22BDh76XF5K8wWKsCtvUwP3Qc2jte07A5?=
+ =?us-ascii?Q?aEv5g7+qPuhYyFcOt83G2n/TCB1xsNT4isUbwilkPUCIXFAzn32BwRfBJOeT?=
+ =?us-ascii?Q?H52Zqnfw3PTwhGa7pkdQmLSXwkczkTPItoL5hKQWDgRJBEr/62gtAGMGigIe?=
+ =?us-ascii?Q?w7YYbdvG81JPVdZjBrKVyrCJJWyK0+hDe+uCV8ae4NO0/AqiQIx06ed6Mx1J?=
+ =?us-ascii?Q?wCiZHLrNDU7OZgtgsX3bc2Z9AsZ8U4WjCKpIZZxz+zB9l2SYDyqVPDeZinuP?=
+ =?us-ascii?Q?bxONs2Zq9JQ6QSpYOOe12jPUx84ViL3NDF2VpvzdjacJmzEFzK9iNPqCEgxx?=
+ =?us-ascii?Q?q52kJZR/VI+ymeIH9PEiuObsuup1uhwBIwzyrbYyhUJn1AzgDvX6jATZDvEV?=
+ =?us-ascii?Q?g3j/adi1hv+uWp23w/xWgjKwfTjtpuyCUyPXD2fknWP2e7sxcNkshvk6qMoM?=
+ =?us-ascii?Q?MeQtk8RDYr48cBN/qMhK5vvyuwuikNc0F84Zknqs08OPgl0vUaClZa4SvJIu?=
+ =?us-ascii?Q?pYQPHybYuJzeRlPX9ddAPTA8EN38ywga0x7Z6zFyLTqoxunBINm9B3MD+W9O?=
+ =?us-ascii?Q?W69+U4fDKOtdnmndbltNrsF7SsDwzwxVba/K+0DzigSVfBlvwniiX9BApZ+o?=
+ =?us-ascii?Q?v8deVAAgrxi6SVMll4KAvYSn1roFURg3719AevUtt5JuhvrNJ7qpdGoBHEPa?=
+ =?us-ascii?Q?uXuKoInxAnLL2eDCeE1THC7LLykV4VJdrwzOVWz+cag4FAx+wYCmHNQ6PPeG?=
+ =?us-ascii?Q?oIJskXAwmbExK+Kq9PXsobM3q5AAE31IaZZ+El9+wMGlCoxitvcLYmZOEmH5?=
+ =?us-ascii?Q?LhBnZkF81sr5U3oZe86Hsnivh5TNazI9bRw9pmxdbXcEIM56loBXqFRzWD8K?=
+ =?us-ascii?Q?4Db/n8pgu/noMlN1tgzjnCivc4tVx5xcblphr0w+jnYRpQpniXBwdRPqTMnl?=
+ =?us-ascii?Q?yDW3hY7zRwSsa70AA06bOaW+36SXtHRFMMcMWj6YMC0vwYJs3XNUZfS5ckOG?=
+ =?us-ascii?Q?vfU5XrXwYU5BeZeL7BDrXZnl/gG++II6jkB7za26/lLUkGKGtZ5hHOP5+wH9?=
+ =?us-ascii?Q?lUojMmWpqX6jX0ngHfAQFpUpP3PY8amKZqbnXmjN+ip78AAXKA5CRuvBotAG?=
+ =?us-ascii?Q?B8V5Jj0ll+s1V3xf40va89kRgRvhnTIArZ1WlkPUJ4x6jy9Wyt3+BDB8ztIV?=
+ =?us-ascii?Q?EiccD4c81aKqyLDusn/xKdbPjka8FkXFqPW82FjizkH+203KuH0wR9BJ2XuW?=
+ =?us-ascii?Q?rI9bAHyEMuRvXwhpn5CaSKa7GEkDoA6ZOogrkFdiVK7/HjZBqWlM2TLFmNlQ?=
+ =?us-ascii?Q?0EiFZDvKc10vUBCdS4JZXxhS7DDyqgmnt6spouOlaT5EdA3KxNFBy3boRUix?=
+ =?us-ascii?Q?61a3Q+UgSfLOQqjzwjUJEXXm/TK59xI1RKVZHhGyYG1IDC7fpJak14LbldMd?=
+ =?us-ascii?Q?2usUdUlnWcvuXRDsue7l/hrEMv9FPo9PAy/BnBHQjUgs422Y04otlmOmCY0X?=
+ =?us-ascii?Q?MRrOL02c/tVjwOIMSbf3A4wJM35ZnUPPIMh/CRPWqVonxX6cxTwSBEPqLymb?=
+ =?us-ascii?Q?8WzbJyVbsNRgDXQT+YGJOgNXoQsTgAd0ioX+bmTj?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4f90810-551b-47d4-7d88-08dc7fb5f674
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 08:04:28.4382
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d6I057QLTMDru+ATnNCmK6zKwE6An5mQ6xe4BR5xmNL2tWhPz87Hcvf4PC1vhFtrzqjbRjrAOw7nqffQrJNtuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9384
 
-On Sat, Mar 23, 2024 at 10:48:05AM +0000, Ricardo Ribalda wrote:
-> With UVC 1.5 we get as little as one clock sample per frame. Which means
-> that it takes 32 frames to move from the software timestamp to the
-> hardware timestamp method.
-> 
-> This results in abrupt changes in the timestamping after 32 frames (~1
-> second), resulting in noticeable artifacts when used for encoding.
-> 
-> With this patch we modify the update algorithm to work with whatever
-> amount of values are available.
-> 
-> Tested-by: HungNien Chen <hn.chen@sunplusit.com>
-> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index d6ca383f643e3..af25b9f1b53fe 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -768,10 +768,10 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
->  
->  	spin_lock_irqsave(&clock->lock, flags);
->  
-> -	if (clock->count < clock->size)
-> +	if (clock->count < 2)
->  		goto done;
->  
-> -	first = &clock->samples[clock->head];
-> +	first = &clock->samples[(clock->head - clock->count + clock->size) % clock->size];
->  	last = &clock->samples[(clock->head - 1 + clock->size) % clock->size];
->  
->  	/* First step, PTS to SOF conversion. */
-> @@ -786,6 +786,18 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
->  	if (y2 < y1)
->  		y2 += 2048 << 16;
->  
-> +	/*
-> +	 * Have at least 1/4 of a second of timestamps before we
-> +	 * try to do any calculation. Otherwise we do not have enough
-> +	 * precision. This value was determined by running Android CTS
-> +	 * on different devices.
-> +	 *
-> +	 * dev_sof runs at 1KHz, and we have a fixed point precision of
-> +	 * 16 bits.
-> +	 */
-> +	if ((y2 - y1) < ((1000 / 4) << 16))
-> +		goto done;
+i.MX95 has a DDR pmu. This will add a compatible for it.
 
-Not a comment for this patch directly, but...
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
 
-This kind of makes me wonder if we don't want to have some documentation
-that specifies what the userspace can expect from the timestamps, so
-that this isn't changed randomly in the future breaking what was fixed
-by this patch.
+---
+Changes in v2:
+ - no changes
+Changes in v3:
+ - let imx95 compatilbe with imx93
+Changes in v4:
+ - add Acked-by tag
+Changes in v5:
+ - no changes
+Changes in v6:
+ - no changes
+Changes in v7:
+ - no changes
+Changes in v8:
+ - no changes
+Changes in v9:
+ - no changes
+Changes in v10:
+ - no changes
+Changes in v11:
+ - no changes
+Changes in v12:
+ - no changes
+---
+ Documentation/devicetree/bindings/perf/fsl-imx-ddr.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Anyway:
+diff --git a/Documentation/devicetree/bindings/perf/fsl-imx-ddr.yaml b/Documentation/devicetree/bindings/perf/fsl-imx-ddr.yaml
+index 6c96a4204e5d..37e8b98f2cdc 100644
+--- a/Documentation/devicetree/bindings/perf/fsl-imx-ddr.yaml
++++ b/Documentation/devicetree/bindings/perf/fsl-imx-ddr.yaml
+@@ -30,6 +30,9 @@ properties:
+       - items:
+           - const: fsl,imx8dxl-ddr-pmu
+           - const: fsl,imx8-ddr-pmu
++      - items:
++          - const: fsl,imx95-ddr-pmu
++          - const: fsl,imx93-ddr-pmu
+ 
+   reg:
+     maxItems: 1
+-- 
+2.34.1
 
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-
-Best regards,
-Tomasz
 
