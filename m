@@ -1,121 +1,150 @@
-Return-Path: <linux-kernel+bounces-193707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39798D30ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:21:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27DB28D30EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75111F2A4C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 593FE1C21206
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542D216E886;
-	Wed, 29 May 2024 08:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DD616D9D9;
+	Wed, 29 May 2024 08:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qPLQi19C"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="W9qTdkjE"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55D216D9BE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A612168C2F
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970459; cv=none; b=N7ckfsLbdxK12huJfXreLjangSr3KGfs5km7XGX0PgsCnNC+03KMZTdI9zQ8pjuw1Oc+8CEo7LQxL99NwIb5ppV3y2Qem6vFRnMQeDxmlsEnMTDtqZP63u+sD6F35NrV5z6NshLm7Fq4TPGFABLxe47TVjE1Zzz3A/pH7tVC7f0=
+	t=1716970457; cv=none; b=oUtXWqOnoCbQUEvbAkZ61H+Hui/NjTPcgeWaYIO/gItQLdDQsOzGPu0e5DmgfvvWp5o6VCi3nGlPfyNwnk2y9/FqhAg8Kk5WlPGSGZ8vWcNVI7j574GGompYFNwvGw1XIRWx8yDxEN8TAfCXE0Hz0z27a/5y7r1U5+LBib+DLwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970459; c=relaxed/simple;
-	bh=8oG+ebmceilmIBqaQs2tVtIByd4rhD1pcJkEmxIya24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjeyyFsqI767es9na/wuqyMxDcV9+8D/uvVj5Ke5Wmq0zg5gp0t7qZPlBOUtlhlcMKA1ID1XAkA99ytcMRFYsHE++jYuYXqudOlmnlG5NVrfPfkWLmMwN9sm7Z/S3yYi94a3VdqTVLEAmBp9gXpE/Pl9oQAfluwWEaoee+BTiIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qPLQi19C; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=patzQVXRASfi38qVj0cUhUjqqyVmf9/+BCwLPiPV1GI=; b=qPLQi19C+wAn8GpEMZh/j38woN
-	7J+Cl4k+j6fNeZgZxDTUdFwPj7uY2RmEutmPJHdUmRSjx2nvWk0HV02WviwKdajaER+5VlE6mG8Nu
-	3Zj9G/QHpKRjP/kSY+058cT4PCYkhnuBE0OI5D8vN2PL5Q9V2HDll62+WUcCzA1C+Wmu/fdbS1P5C
-	st96wFwDTVLSvNtm0l4EJ/+8o4/S7tEZpe72ecCwS40lpBIAI5nGqD+xZxPncI2aMV7aAemoPaPta
-	h//OZ0OhY3ijRukyjUbUiGb4LRx7tJGmVJljn5QhcgbqVA62neQLHtIsdAWoEC9AuS/mP3vInZaJE
-	JfW8+HHg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCERg-0000000DSTZ-3HXB;
-	Wed, 29 May 2024 08:14:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 611CC30073F; Wed, 29 May 2024 10:14:04 +0200 (CEST)
-Date: Wed, 29 May 2024 10:14:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	torvalds@linux-foundation.org, paulmck@kernel.org,
-	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
-	joel@joelfernandes.org, raghavendra.kt@amd.com,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2 16/35] preempt,rcu: warn on PREEMPT_RCU=n, preempt=full
-Message-ID: <20240529081404.GI26599@noisy.programming.kicks-ass.net>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-17-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1716970457; c=relaxed/simple;
+	bh=taHQSmmDXNFY6nJbwdn2t25HBag5U344k6khQnFMUys=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GBYqeZYK4XzIASetYovz22yQTp8D3TFpk6o0c8tJBhEmgCnrs1XUmbBUDL5Bvorw/Z6Sbg9QtZCqejROXgXwfQoMT/POHMcqS9lxeXifNzO2JrsmQw7Hu6U0wPcDHd91HTFymuaSRXmK1wI3TC/hT5e20ha+1a71Lza5bE144P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=W9qTdkjE; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1716970452;
+	bh=VLyOIVHLU95mQ240RHuf6Ii/24aWHKil9L7bk/lJvVw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=W9qTdkjE50eVY4m38Xna9RRypsO9BtrskqY6vWcjxSrgVi39Z93csviy5xBM/UNMr
+	 ICfG1KTNxzfBD4X3x2uVCllEt+4f/FgdJnx06ZEYrCOu2fotVGk6X4r4rDufY4QLCF
+	 QvRN+Ox7uPNwTiyPiOopyQrTGyqQjoexx4p7oe65iXBQ6luGAX4rIXjZ3jylG9s7CI
+	 MBlmwPrfB0FfKh45fiG8FNWDLGxl7oZDjA4vQrA89Pbrvfz2QJKWAJpc1asSxcZT8H
+	 xI1dHj9McpQeLHMkGUip+8jxjs8rAg5MwNQFSUfWuMC+hVWVv6mUFKDFY8eQXG3nl/
+	 zNpm84X9VKX5w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vq2GT6cdtz4x2w;
+	Wed, 29 May 2024 18:14:08 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Esben Haabendal <esben@geanix.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav
+ <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe
+ Leroy <christophe.leroy@csgroup.eu>, "Aneesh Kumar K.V"
+ <aneesh.kumar@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 2/2] powerpc/configs: Update defconfig with now
+ user-visible CONFIG_FSL_IFC
+In-Reply-To: <87le3ukqnj.fsf@geanix.com>
+References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
+ <20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
+ <096662e8-03cf-4c13-baa0-11918cab7511@kernel.org>
+ <87le3ukqnj.fsf@geanix.com>
+Date: Wed, 29 May 2024 18:14:07 +1000
+Message-ID: <87ed9l3ui8.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528003521.979836-17-ankur.a.arora@oracle.com>
+Content-Type: text/plain
 
-On Mon, May 27, 2024 at 05:35:02PM -0700, Ankur Arora wrote:
-> The combination of PREEMPT_RCU=n and (PREEMPT_AUTO=y, preempt=full)
-> works at cross purposes: the RCU read side critical sections disable
-> preemption, while preempt=full schedules eagerly to minimize
-> latency.
-> 
-> Warn if the user is switching to full preemption with PREEMPT_RCU=n.
-> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Link: https://lore.kernel.org/lkml/842f589e-5ea3-4c2b-9376-d718c14fabf5@paulmck-laptop/
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> ---
->  kernel/sched/core.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index d7804e29182d..df8e333f2d8b 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8943,6 +8943,10 @@ static void __sched_dynamic_update(int mode)
->  		break;
->  
->  	case preempt_dynamic_full:
-> +		if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
-> +			pr_warn("%s: preempt=full is not recommended with CONFIG_PREEMPT_RCU=n",
-> +				PREEMPT_MODE);
-> +
+Esben Haabendal <esben@geanix.com> writes:
+> Krzysztof Kozlowski <krzk@kernel.org> writes:
+>
+>> On 28/05/2024 14:28, Esben Haabendal wrote:
+>>> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
+>>> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
+>>> selected in config snippets.
+>>> 
+>>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>>> ---
+>>>  arch/powerpc/configs/85xx-hw.config | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>> 
+>>> diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
+>>> index 524db76f47b7..8aff83217397 100644
+>>> --- a/arch/powerpc/configs/85xx-hw.config
+>>> +++ b/arch/powerpc/configs/85xx-hw.config
+>>> @@ -24,6 +24,7 @@ CONFIG_FS_ENET=y
+>>>  CONFIG_FSL_CORENET_CF=y
+>>>  CONFIG_FSL_DMA=y
+>>>  CONFIG_FSL_HV_MANAGER=y
+>>> +CONFIG_FSL_IFC=y
+>>
+>> Does not look like placed according to config order.
+>
+> Correct.
+>
+>> This is not alphabetically sorted, but as Kconfig creates it (make
+>> savedefconfig).
+>
+> Are you sure about this?
+>
+> It looks very much alphabetically sorted, with only two "errors"
+>
+> $ diff -u 85xx-hw.config 85xx-hw.config.sorted 
+> --- 85xx-hw.config      2024-05-28 15:05:44.665354428 +0200
+> +++ 85xx-hw.config.sorted       2024-05-28 15:05:56.102019081 +0200
+> @@ -15,8 +15,8 @@
+>  CONFIG_DMADEVICES=y
+>  CONFIG_E1000E=y
+>  CONFIG_E1000=y
+> -CONFIG_EDAC=y
+>  CONFIG_EDAC_MPC85XX=y
+> +CONFIG_EDAC=y
+>  CONFIG_EEPROM_AT24=y
+>  CONFIG_EEPROM_LEGACY=y
+>  CONFIG_FB_FSL_DIU=y
+> @@ -71,10 +71,10 @@
+>  CONFIG_MTD_CMDLINE_PARTS=y
+>  CONFIG_MTD_NAND_FSL_ELBC=y
+>  CONFIG_MTD_NAND_FSL_IFC=y
+> -CONFIG_MTD_RAW_NAND=y
+>  CONFIG_MTD_PHYSMAP_OF=y
+>  CONFIG_MTD_PHYSMAP=y
+>  CONFIG_MTD_PLATRAM=y
+> +CONFIG_MTD_RAW_NAND=y
+>  CONFIG_MTD_SPI_NOR=y
+>  CONFIG_NETDEVICES=y
+>  CONFIG_NVRAM=y
+>
+> I don't think that this file has ever been Kconfig sorted since it was
+> created back in ancient times.
+>
+> And as it is merged with other config snippets using merge_into_defconfig
+> function. I have no idea how to use savedefconfig to maintain such a snippet.
+> It would require doing the reverse of the merge_into_defconfig.
 
-Yeah, so I don't believe this is a viable strategy.
+Right. This is a config fragment, not a full config, so it's not managed
+with savedefconfig.
 
-Firstly, none of these RCU patches are actually about the whole LAZY
-preempt scheme, they apply equally well (arguably better) to the
-existing PREEMPT_DYNAMIC thing.
+Alphabetical order is preferable when adding new symbols.
 
-Secondly, esp. with the LAZY thing, you are effectively running FULL at
-all times. It's just that some of the preemptions, typically those of
-the normal scheduling class are somewhat delayed. However RT/DL classes
-are still insta preempt.
-
-Meaning that if you run anything in the realtime classes you're running
-a fully preemptible kernel. As such, RCU had better be able to deal with
-it.
-
-So no, I don't believe this is right.
+cheers
 
