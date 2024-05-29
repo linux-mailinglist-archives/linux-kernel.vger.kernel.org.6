@@ -1,210 +1,172 @@
-Return-Path: <linux-kernel+bounces-194213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411558D3877
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:55:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4A48D3881
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9283B28243
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:55:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5B91C218DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0BB1BF2B;
-	Wed, 29 May 2024 13:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932C71CA81;
+	Wed, 29 May 2024 13:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHaHFGy9"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnQ4NVLP"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5249A1C290
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E5D1BC2F;
+	Wed, 29 May 2024 13:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716990915; cv=none; b=cE8fa5OEpV+rcrytUdMTHXG5iuTgW2hTVJ9caSAPVVF+GBAWYYZW1lVwEulrFx5sS7wwi9QLcrt2U3FH0tSGHnyXh9mj4zSkmcTFe1xcGNgb3RXgMHXixrxGOuXxZJbHMevyUEjgJR4CMPyJlo18wSzDFT5RNyultwIt6x7zSmI=
+	t=1716991115; cv=none; b=I/8Xx1IXzH//O49NRt80pYYY+KX3IDcu9NY2/fbp2yGvtNzwoocmf9MYmD55UmwYnKXnkIytfncBTDnr7SQODRLH2QFR1vv0i3NRaIO0HKoOIJMbl/gcf36In1UeiGARnVYTlC1xauTZe8M9wJozTfOAT1EzPz/872NsfQCcxaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716990915; c=relaxed/simple;
-	bh=7pwxJwgIqNkEt9XQ+aY/jS7KUidtBt2N/WzmYBUYsp4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o+FVcCkuvZfGeUP+o6pUbQ8K9FhUo4y9wdcZR7hyB3gZZTRZ9WU666DDZXQT7K2dOuittxmsqXZFOl1EI2iGFBFZXuCwKWJuaTkJZa6v8MYF3YGpAzzQkkpYrfjusmPV3bkMLAJMAoL0EUxgDdfSi/3X+AF3op+/Ksxrn+fn9x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHaHFGy9; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1716991115; c=relaxed/simple;
+	bh=WNzkX3kQmAm6xhlUmSgtHXFFi9rlz3l8gFZLSArBK1A=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=Y0NWmrrYn4xg84MfknDkVZKV32ik/hcrXiAp+RsIjRc6L+nNDXHssmuLWtXF2iW6vAsXcNiJL2Zu+oVViMGSWK0pBC3lP1SF9BQh0HXDfqPOnWzz7YFZs0rX6VMiz013+C9O0sf0uesupVh6lSk41h3sSUeAwurw3fBNDYKVNKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnQ4NVLP; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f44b5b9de6so16480285ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:55:14 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43fc2ad049aso10849681cf.3;
+        Wed, 29 May 2024 06:58:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716990913; x=1717595713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716991113; x=1717595913; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sGlIeA8hMcr9Fm/VlCdK2KdthFpKjfRPf//jK9Gb9e8=;
-        b=IHaHFGy9c5OqE4xNKb4XCL3vP4xhHCM7G6aGNkV/CWW3yi4C3fqzcoa3ZgSJblFI9a
-         Y8yHj7j3AhxAhnTaATBvfgr1y7t3qr5yrtEiemuiylAUauUUiXW92wTF3JRmwMwMWrLt
-         nF0tWLjnCjeT4HuwewA7hanV8zblX21LVEExt/eivxV804+VcLwh9roN0CZQ45eSNECv
-         EEPhW0MK5Dn9GmeGioLVF4YJ2sUDzPC4d2ECqNty394999/8Tl1tU6x3wprT+a0mSL3J
-         o1JnpPDo3XWRVXgDKJztNfGnYoXOmfgGxw4IYtNKbBi/VcmOGCkB0NNJE20oc+7+7L1j
-         baLg==
+        bh=jnVsuijST4Uccd/R/BYvy+sfPi8n/4n1QlcexbPNowQ=;
+        b=EnQ4NVLP8rHg2zTx6yOWZHTqkU77zgNxeoH2YmLP2nND3tVPMkwirK7wyqQ1jDi0MQ
+         4wyC4bIZpdjOPR4KZIfyOj1MCS0vcOD5rb8558hLs9Du+csFkBjn2QCnUL6rdkcKsehM
+         n+/bkp4lCdwKpawY7uKV6hAnmX0l9gphzdAN/OywHWtKc6ihsqJe3Y14tPRhzVLMl6nc
+         /yP3xnjyKe9Hos3Zmb3wql8hGNHkjxcCJ1yVZJec+UEtotQ6phAdy+IwSa+Zzy5H5jhN
+         OQB9WcEKxn2AifUnUFz6aQdRmAo92lRbEu56UYx7z4Q1jjMmPm7z5CVmizrXb4C724ZU
+         ECrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716990913; x=1717595713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sGlIeA8hMcr9Fm/VlCdK2KdthFpKjfRPf//jK9Gb9e8=;
-        b=Muro07e4PZrt4LzQrm4a+NWOPgAExese5eRJTpBsD/0xVYiw/QflGgbXyUh/XsNkfT
-         IgJ2KCgXQMPbgKYoKGOqtBG274FAO4QeZNC5JCNUhwHJNn77/Ox+fKBOe+/ITKoSoINZ
-         5O8uaX+Zg/oD2TZ6ruHTKGLWr31Igadbs/RlHdf6sfmGWmSzvwLkZrgsN7LI9C6rTktP
-         4bB6iktV0afRGGE6t+QpvZE8zh+xmMQEQIyqNRWhBdwQc/I9RVu1lHAtgA1mciBY/E1M
-         9CC7QwFLbUwd1dQiK2A9s4aCslM9u8uN+vMUrkGQ+g3WRHID2z/ssU+9pZbGQ9LDv4bH
-         80Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWUUuvz7DVQ4j/HxuOcVm/++saf5H9shO+tivxi/K29BGQ6cY4GNz+QuHnWxhmcO3IRMwDFl/O8tvXVPL1WFXJwF5cVz/jzAs2DmtSK
-X-Gm-Message-State: AOJu0YyM7vSeyJ6zN03MLLoOGda/HEzn6SLv4cMIoUyR3OdX2AmMRax7
-	QfNRwqh+EyJM/5Y9k87wUSVc++hNg78O8sRyQIUIw9kc9YadyhR5rqY+esf+c3VoJEqo2m6TDAz
-	L1HbS2zLAatHm3usT128O8gpKZmg=
-X-Google-Smtp-Source: AGHT+IHm0zRTpU3i/A0JVmM25LoggLAhFbg2a1hrsXcUm7MHJr4WHud5PBcWgghHM0zxa3+8cHQc/tmkKlFrhHf/w18=
-X-Received: by 2002:a17:903:188:b0:1f4:ee68:3bc5 with SMTP id
- d9443c01a7336-1f4ee683c53mr18900995ad.57.1716990913482; Wed, 29 May 2024
- 06:55:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716991113; x=1717595913;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jnVsuijST4Uccd/R/BYvy+sfPi8n/4n1QlcexbPNowQ=;
+        b=Yu6cCW9G1IzBS5335BaFlx4WwyJBB+i7iNuvWqDc65GSvEHmioQX41Ee4t2U+rLzf9
+         AcvUDVG39Z0a1w/vt6P4K4uUlv++AFauX4SnylpqIWZ2e41ssiaJZD8MvSeng0kfNlMF
+         GA/syufWuwwa/AQiaSewqxdW4oYU64HPOSgELwBr9pEGMHlWL633w2Xg1Mxde0nEVAOL
+         gmm9dh1jA4OJaljLztxdp6eH90n4CfeCdj6sc31HViiTmw5+x2gYeOYpntr5ttbuPOKY
+         7xV85UmeMV2YHf4aE80WIYkqAiXc3jqTrsjwxKUv3kr2R9hYjwW1tZyukNTQd5+GA8X1
+         9vMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbsc2Jco+u32WaemIzs1Y5u0JmZxUfHoLWP4F/YnX397ecwZLjv10jDTQmm09ne6TTuuspRYmbPTp2t2IGp6HjOD7jA+aPoK+XULMzcSfxrcWk7CLcVFtDKIyoYTdHyXTn1d/IkJk8dSZ0dg0PyU9K134Yvnn7O3Cn
+X-Gm-Message-State: AOJu0YwmAG+3I8GxfQgcwsgzJdJqbgzdtdfH9oo4mmVeq1wURHmnK9Q5
+	Blgeg9SbMq/uRQZS8yw/RkGCEv1e6NvQrWSf5uU68x/jKHu1BKaW
+X-Google-Smtp-Source: AGHT+IHLX9s5HgTIP5hLEXBAHKuHHJJoB1TTaV997mUIdfzfFpIVnL2kUl2gcpyBUJWz5Ry8BMjC4A==
+X-Received: by 2002:ac8:5892:0:b0:43a:dc29:a219 with SMTP id d75a77b69052e-43fb0e221c9mr166332311cf.2.1716991113113;
+        Wed, 29 May 2024 06:58:33 -0700 (PDT)
+Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fd9ab321fsm17099551cf.95.2024.05.29.06.58.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 06:58:32 -0700 (PDT)
+Date: Wed, 29 May 2024 09:58:32 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Abhishek Chauhan <quic_abchauha@quicinc.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Andrew Halaney <ahalaney@redhat.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Martin KaFai Lau <martin.lau@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ bpf <bpf@vger.kernel.org>
+Cc: kernel@quicinc.com, 
+ syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com, 
+ syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com
+Message-ID: <665734886e2a9_31b2672946e@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240528224935.1020828-1-quic_abchauha@quicinc.com>
+References: <20240528224935.1020828-1-quic_abchauha@quicinc.com>
+Subject: Re: [PATCH net] net: validate SO_TXTIME clockid coming from 
+ userspace
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240528210319.1242-1-mario.limonciello@amd.com>
- <CADnq5_OzPT1MVnsqXs2vjr1L2_6jeM6x7jgs4ZtYpNzdDHM6uA@mail.gmail.com> <87r0dkiv4o.fsf@intel.com>
-In-Reply-To: <87r0dkiv4o.fsf@intel.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 29 May 2024 09:55:01 -0400
-Message-ID: <CADnq5_NiJ9a7uYPGj9iuePTRBFKGhhFA6G982bxO2kHe-_5ASA@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during initialization
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	linux-kernel@vger.kernel.org, Chris Bainbridge <chris.bainbridge@gmail.com>, 
-	hughsient@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 29, 2024 at 9:51=E2=80=AFAM Jani Nikula <jani.nikula@linux.inte=
-l.com> wrote:
->
-> On Wed, 29 May 2024, Alex Deucher <alexdeucher@gmail.com> wrote:
-> > On Tue, May 28, 2024 at 5:03=E2=80=AFPM Mario Limonciello
-> > <mario.limonciello@amd.com> wrote:
-> >>
-> >> If the lid on a laptop is closed when eDP connectors are populated
-> >> then it remains enabled when the initial framebuffer configuration
-> >> is built.
-> >>
-> >> When creating the initial framebuffer configuration detect the ACPI
-> >> lid status and if it's closed disable any eDP connectors.
-> >>
-> >> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-> >> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
-> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> >
-> > Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-> >
-> > Do you have drm-misc access or do you need someone to apply this for yo=
-u?
->
-> I've bounced this to intel-gfx and intel-xe lists to get CI testing. I'd
-> appreciate holding off on merging until we have results.
+minor: double space before userspace
 
-Sure.
+Abhishek Chauhan wrote:
+> Currently there are no strict checks while setting SO_TXTIME
+> from userspace. With the recent development in skb->tstamp_type
+> clockid with unsupported clocks results in warn_on_once, which causes
+> unnecessary aborts in some systems which enables panic on warns.
+> 
+> Add validation in setsockopt to support only CLOCK_REALTIME,
+> CLOCK_MONOTONIC and CLOCK_TAI to be set from userspace.
+> 
+> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+> Link: https://lore.kernel.org/lkml/20240509211834.3235191-1-quic_abchauha@quicinc.com/
 
-Alex
+These discussions can be found directly from the referenced commit?
+If any, I'd like to the conversation we had that arrived at this
+approach.
 
->
-> Thanks,
-> Jani.
->
-> >
-> > Alex
-> >
-> >> ---
-> >> Cc: hughsient@gmail.com
-> >> v1->v2:
-> >>  * Match LVDS as well
-> >> ---
-> >>  drivers/gpu/drm/drm_client_modeset.c | 30 +++++++++++++++++++++++++++=
-+
-> >>  1 file changed, 30 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/dr=
-m_client_modeset.c
-> >> index 31af5cf37a09..0b0411086e76 100644
-> >> --- a/drivers/gpu/drm/drm_client_modeset.c
-> >> +++ b/drivers/gpu/drm/drm_client_modeset.c
-> >> @@ -8,6 +8,7 @@
-> >>   */
-> >>
-> >>  #include "drm/drm_modeset_lock.h"
-> >> +#include <acpi/button.h>
-> >>  #include <linux/module.h>
-> >>  #include <linux/mutex.h>
-> >>  #include <linux/slab.h>
-> >> @@ -257,6 +258,34 @@ static void drm_client_connectors_enabled(struct =
-drm_connector **connectors,
-> >>                 enabled[i] =3D drm_connector_enabled(connectors[i], fa=
-lse);
-> >>  }
-> >>
-> >> +static void drm_client_match_edp_lid(struct drm_device *dev,
-> >> +                                    struct drm_connector **connectors=
-,
-> >> +                                    unsigned int connector_count,
-> >> +                                    bool *enabled)
-> >> +{
-> >> +       int i;
-> >> +
-> >> +       for (i =3D 0; i < connector_count; i++) {
-> >> +               struct drm_connector *connector =3D connectors[i];
-> >> +
-> >> +               switch (connector->connector_type) {
-> >> +               case DRM_MODE_CONNECTOR_LVDS:
-> >> +               case DRM_MODE_CONNECTOR_eDP:
-> >> +                       if (!enabled[i])
-> >> +                               continue;
-> >> +                       break;
-> >> +               default:
-> >> +                       continue;
-> >> +               }
-> >> +
-> >> +               if (!acpi_lid_open()) {
-> >> +                       drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is clo=
-sed, disabling\n",
-> >> +                                   connector->base.id, connector->nam=
-e);
-> >> +                       enabled[i] =3D false;
-> >> +               }
-> >> +       }
-> >> +}
-> >> +
-> >>  static bool drm_client_target_cloned(struct drm_device *dev,
-> >>                                      struct drm_connector **connectors=
-,
-> >>                                      unsigned int connector_count,
-> >> @@ -844,6 +873,7 @@ int drm_client_modeset_probe(struct drm_client_dev=
- *client, unsigned int width,
-> >>                 memset(crtcs, 0, connector_count * sizeof(*crtcs));
-> >>                 memset(offsets, 0, connector_count * sizeof(*offsets))=
-;
-> >>
-> >> +               drm_client_match_edp_lid(dev, connectors, connector_co=
-unt, enabled);
-> >>                 if (!drm_client_target_cloned(dev, connectors, connect=
-or_count, modes,
-> >>                                               offsets, enabled, width,=
- height) &&
-> >>                     !drm_client_target_preferred(dev, connectors, conn=
-ector_count, modes,
-> >> --
-> >> 2.43.0
-> >>
->
-> --
-> Jani Nikula, Intel
+> Fixes: 1693c5db6ab8 ("net: Add additional bit to support clockid_t timestamp type")
+> Reported-by: syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=d7b227731ec589e7f4f0
+> Reported-by: syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=30a35a2e9c5067cc43fa
+> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+> ---
+>  net/core/sock.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index 8629f9aecf91..f8374be9d8c9 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -1083,6 +1083,17 @@ bool sockopt_capable(int cap)
+>  }
+>  EXPORT_SYMBOL(sockopt_capable);
+>  
+> +static int sockopt_validate_clockid(int value)
+
+sock_txtime.clockid has type __kernel_clockid_t.
+
+> +{
+> +	switch (value) {
+> +	case CLOCK_REALTIME:
+> +	case CLOCK_MONOTONIC:
+> +	case CLOCK_TAI:
+> +		return 0;
+> +	}
+> +	return -EINVAL;
+> +}
+> +
+>  /*
+>   *	This is meant for all protocols to use and covers goings on
+>   *	at the socket level. Everything here is generic.
+> @@ -1497,6 +1508,11 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+>  			ret = -EPERM;
+>  			break;
+>  		}
+> +
+> +		ret = sockopt_validate_clockid(sk_txtime.clockid);
+> +		if (ret)
+> +			break;
+> +
+>  		sock_valbool_flag(sk, SOCK_TXTIME, true);
+>  		sk->sk_clockid = sk_txtime.clockid;
+>  		sk->sk_txtime_deadline_mode =
+> -- 
+> 2.25.1
+> 
+
+
 
