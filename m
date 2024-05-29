@@ -1,154 +1,232 @@
-Return-Path: <linux-kernel+bounces-194544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBC78D3DD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:01:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9078D3DE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 529BB1C22456
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A178828718B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038051A38DF;
-	Wed, 29 May 2024 18:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A2E1C0DF5;
+	Wed, 29 May 2024 18:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/Y5l9hS"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tLRWpfbG"
+Received: from mail-vs1-f73.google.com (mail-vs1-f73.google.com [209.85.217.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBB360B8A;
-	Wed, 29 May 2024 18:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5D81A38D8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717005683; cv=none; b=Em4nelmfmVvz7PvFKG35Qpk+KQO67d4N/y8QcmuQhh8zpNiPzn5/X+0qJQhumpzcCPL8aPoNLxh5VCC7EaNceIrvY/B65dqRXgJKKdcCfAsUnxJYg/cYtlmwLntOyg62nEpWaO2vLguG69N/57s0XNZgrvxAvkw3Wz28KBKpQbk=
+	t=1717005920; cv=none; b=MTV6j+PxuiX1s8bzvOlNUT2MNZ9XZpjoDdBCODp0o5XOvuGzYLDgWi7+Mz1vIIdYRSj4auF0w3WHlYCjP6WI3n2qx1h0MQ0DAEZneQlEuZ5dr0ps+kK1bM7AxxiD9XlIugY4ZJW/+sYW4TzAFPJoXbMBK+l6ks6pgoAsY6wIDxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717005683; c=relaxed/simple;
-	bh=C9bv8n2Yph9zB4abb7Qhz66pPr/f91zc6NXxwuqWJOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=t5xeiD86+Qbqw1b4vO1o3N3MCsACMxCnQOv1NPngwri+19bSKk2ifY9KOnKTJ4Fa2QBnx411LEKLQWgGMuWL9mfOLsTzWsyoS8QiL0flVvSpOkE7Ivog+86pcdw4bLGvWRt10rq98Bikjd3BPCglKfct2l9tpcTKRrnEil2kJBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/Y5l9hS; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f4603237e0so205859b3a.0;
-        Wed, 29 May 2024 11:01:21 -0700 (PDT)
+	s=arc-20240116; t=1717005920; c=relaxed/simple;
+	bh=h8JkqpoA+/dGY56tQssLYSYz7fbc8Z61hZF9yYzrrVk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mpIu9dQAbeWVSzihXFoXav4eWijU7KNwYJBODKSqFcu2vuiCktrzAeGFrN4BppPP/p0svQJSnqnIB+hlI3gIfVgUx7BvbCELWWvX90phL7KymxBXk9tFG5vEMKCE3TiZJZEpi44v5g8jJd/WrNCUuumqmMOFtIT9WAdW2TRD95E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tLRWpfbG; arc=none smtp.client-ip=209.85.217.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-vs1-f73.google.com with SMTP id ada2fe7eead31-48a32fd9378so19927137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717005681; x=1717610481; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=7v4SBxMsVcC1Y8hf6RcuPsH7ukRGgbWwv2pnXRLZ3hs=;
-        b=a/Y5l9hSCBmKVFJYF8aHn0cGT39Wfrfa8GBM74Uh+bVmpdQMIfy7DmOUcva7+XOdFX
-         mhaibzArFQGyRZoI9/SCpUhbj+UEptR0QwFRjcIcIpPDtnw/wgss2U8Q/SCwN3uviGOO
-         rLjn+Qtn1T45HGkGiwK0/s4hAZUfEfhWhDyhmniz3F7ppHJefMLCoJLSM02mBAKk4NXz
-         XSOULwswu6Z7IlP8oylKGEl1wZbDeY7iBIAxciWmZKQllabM9GSyUjb+Oduo+kTJ+D8v
-         ADcoyyYXIrqooXRFzO/T4I2fg/xIMM3rP0s8gaKjg+/jnVBR8NU35xrpac6CLu/Ujm9t
-         tfIA==
+        d=google.com; s=20230601; t=1717005917; x=1717610717; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oSeK4HIzvhbzZ4+kBhyxeRArFmVuKpeUMlCOBrkyZKY=;
+        b=tLRWpfbGom0LK4rvIK0fV+2oiPGudLhbJMuEVPxaG9jqnjzkOp2rvqgebKwjHUIzu6
+         6QybeDGEtIAIR5yD7T6WgXhxdgP/WAdhCuxqhRzZ5N0+wMxzBqzRk3xYB5fhkKjVK1k5
+         XJHF3lEXkF9EzFibHmlEbsDcpoZ1gmhFnk6xMMk0m+LSsCeaAr6vV63Nqi9EGuljRGHk
+         64/UW/2GsLbMsJeh/ZA7bh2IZfku27lIEE99+yXUgLPHtW/26razedGjyTWAW0Ct+glR
+         O6zsGKJWCH/x247dAU+xCr4Pc9xfzNA5KKB/OKuGwPxSQByArJ5uF1E/x82EXR1ssTVd
+         7RBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717005681; x=1717610481;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7v4SBxMsVcC1Y8hf6RcuPsH7ukRGgbWwv2pnXRLZ3hs=;
-        b=w3231HBCHfYMdhl8tvfWWBi59L1BlhoLc3YEV2i2yLJLaJBxwT3EuoINJy/tifgDXv
-         mmBfQBXL9EE3iM9w++BSKJNLA8pt0xKas5jV/9DFM+dU1aLOUaXINiO7uMSGLeMExwLV
-         IGMDVVrTADfJIHhN0YZ1VaUBqcEx8IseyZFTwchbCY+wtLzZJ9mDS8jWo4fbIr+4ogJB
-         yc3hLjs/qnWPMjgw0IyCc8FU8VZjJz8rN0ysH49XvJHeSClGFTdTD3lFExXmCSPpIsJ2
-         dfl2EslQSmzxqMRlrAB5LnVyXTSnOfE4+QYJn0RmTi4ocrh+7xPVY7MMFj3i9WLAPVE9
-         wKOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5S9eOf0gSDDVJ5HT4AZT1eoivnHf62LnnFOm4xngoCacTT+BDwFs9V91ciGczCksDNpqV+hLEE2B7kg8DDmTDCRdqcovw4xp+qjhQ3vcaSrhHSds0tLlTncYFonIi8ReVEylK6L3xD/reTCcwTeRuzR0NTvFtWFIHLlzh8WxfiUkSR8M=
-X-Gm-Message-State: AOJu0Yxval9RlKocrTb7wm1wdwnzAl6siXGRF1CXP/jWL4Zx2QtS7sj9
-	SjUePHnQXE4VGt+pvaT/wnjYb8RIRFCVRCCOlyiU2IZOJrTwCym/xnwudw==
-X-Google-Smtp-Source: AGHT+IHqiJT/ps0cD036xFv70u0VPuwVVr1EoTm+aFNcmbJuM7L4nOzLZrp+4SENo8ldRBaO9G08vA==
-X-Received: by 2002:a05:6a00:26d7:b0:702:2b15:a1f with SMTP id d2e1a72fcca58-7022b150b97mr1162617b3a.2.1717005679460;
-        Wed, 29 May 2024 11:01:19 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7022f2425e3sm55095b3a.126.2024.05.29.11.01.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 11:01:18 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a3eff514-f515-41a2-bb11-603434dc38fb@roeck-us.net>
-Date: Wed, 29 May 2024 11:01:17 -0700
+        d=1e100.net; s=20230601; t=1717005917; x=1717610717;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oSeK4HIzvhbzZ4+kBhyxeRArFmVuKpeUMlCOBrkyZKY=;
+        b=U+y/GcXVud8MJ7sayiC88VnvPPzgoBsh2HZBXs4TOP5OIBMQ01VuBVx/OYAPZwINxX
+         FUrRU9d4bPz8IV+AHaQfnWZE2MFa3xQ17znLdJTHI+K+6wSoUTGWeCFBatXJmI2ed+h1
+         WSquV6bOrBiyuIFL+BMk8V7cx7L/T0gZPbC94luVqZzb5EnwrDA7dI3fRIWo1s9RROGW
+         yRXpqeMfiNv/ipsEr7zJ1zU2wlMEs0WCV8/eLLG6dFEYblq4xo2JS+CFmj+lj+aAOPS2
+         iSaln3rfISpVg34n9FhDqBePUDfRk/LxOZIbmsvHrYfrTekwbJmImt3Mu7sHIBJcLGUT
+         unZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULJEqJduMF9o54x5v9vfAd22TivuKlfuMWk9uDXDVYmWlKHkVasCVSWjvz78xOj53WkfGfr+ieWEg5e3bHLjabv14YBxq3LXS70m82
+X-Gm-Message-State: AOJu0Yymrg6gj7h26T7rJQJVhRWS6C60Dui+A4y/+UtPbB1UUktJgObN
+	qo1MuucoW+w+spjIqamPqWfQObr5GPOw0PPoROk/5TIC/k7hrWywqX1DjVdqRFZdoHdLRzKoM4K
+	MBBDRq0J0sj3QFayi2A==
+X-Google-Smtp-Source: AGHT+IGirSTR9frt+FMY7mEAkHJfvAwcaa/uk6kZfZAYRVHTIdMTLDcjTaGUq6V+fW4RjZ9NSYV+AI/l972bzeUv
+X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:14:4d90:c0a8:2a4f])
+ (user=jthoughton job=sendgmr) by 2002:a05:6102:3f9e:b0:48a:5834:cea7 with
+ SMTP id ada2fe7eead31-48a5834e759mr882345137.7.1717005917523; Wed, 29 May
+ 2024 11:05:17 -0700 (PDT)
+Date: Wed, 29 May 2024 18:05:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] drivers: hwmon: max31827: Add PEC support
-To: Radu Sabau <radu.sabau@analog.com>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240527092947.4370-1-radu.sabau@analog.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240527092947.4370-1-radu.sabau@analog.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240529180510.2295118-1-jthoughton@google.com>
+Subject: [PATCH v4 0/7] mm: multi-gen LRU: Walk secondary MMU page tables
+ while aging
+From: James Houghton <jthoughton@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Ankit Agrawal <ankita@nvidia.com>, 
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	James Houghton <jthoughton@google.com>, James Morse <james.morse@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Sean Christopherson <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/27/24 02:29, Radu Sabau wrote:
-> Add support for PEC by attaching PEC attribute to the i2c device.
-> Add pec_store and pec_show function for accessing the "pec" file.
-> 
-> Signed-off-by: Radu Sabau <radu.sabau@analog.com>
-> ---
+This patchset makes it possible for MGLRU to consult secondary MMUs
+while doing aging, not just during eviction. This allows for more
+accurate reclaim decisions, which is especially important for proactive
+reclaim.
 
-Sorry for the trouble, but I decided to add PEC support to the
-hardware monitoring code. With those changes, the hwmon core creates
-the attribute and handles i2c client configuration. The driver only
-needs to configure the chip.
+This series makes the necessary MMU notifier changes to MGLRU and then
+includes optimizations on top of that. This series also now includes
+changes to access_tracking_perf_test to verify that aging works properly
+for pages that are mainly used by KVM.
 
-I'll copy you on the patches introducing and using this functionality.
+access_tracking_perf_test also has a mode (-p) to check performance of
+MGLRU aging while the VM is faulting memory in. Here are some results:
 
-Please apply the patch introducing the core changes to your system
-and rebase this patch on top of it.
+  Testing MGLRU aging while vCPUs are faulting in memory on x86 with the
+  TDP MMU. THPs disabled.
 
-Thanks,
-Guenter
+  The test results varied a decent amount from run to run. I did my best to
+  take representative averages, but nonetheless, the big picture is the
+  important part.
+
+  Main takeaways:
+  - With the optimizations, the workload is much less impacted
+    by the presence of aging.
+  - With the optimizations, MGLRU is able to do aging much more
+    quickly, especially at 8+ vCPUs on my machine.
+
+  ./access_tracking_perf_test -p -l -b 1G -v $N_VCPUS # 1G per vCPU
+
+  num_vcpus       vcpu wall time          aging avg pass time
+
+  1 (no aging)    0.878822016             n/a
+  1 (no opt)      0.938250568             0.008236007
+  1 (opt)         0.912270190             0.007314582
+
+  2 (no aging)    0.984959659             n/a
+  2 (no opt)      1.057880728             0.017989741
+  2 (opt)         1.037735641             0.013996319
+
+  4 (no aging)    1.264881581             n/a
+  4 (no opt)      1.318849182             0.056164918
+  4 (opt)         1.314653465             0.029311993
+
+  8 (no aging)    1.473883699             n/a
+  8 (no opt)      1.589441079             0.227419586s
+  8 (opt)         1.498439592             0.063857740s
+
+  16 (no aging)   2.048766096             n/a
+  16 (no opt)     2.399335597             1.247142841s
+  16 (opt)        2.000914001             0.121628689s
+
+  32 (no aging)   3.316256321             n/a
+  32 (no opt)     3.955417018             4.347290433
+  32 (opt)        3.355274507             0.250886289
+
+  64 (no aging)   6.498958516             n/a
+  64 (no opt)     7.127533884             9.815592054
+  64 (opt)        6.442582168             1.392907010
+
+  112 (no aging)  8.498029491             n/a
+  112 (no opt)    10.21372495             13.47381656
+  112 (opt)       8.896963554             2.292223850
+
+Previous versions of this series included logic in MGLRU and KVM to
+support batching the updates to secondary page tables. This version
+removes this logic, as it was complex and not necessary to enable
+proactive reclaim. This optimization, as well as the additional
+optimizations for arm64 and powerpc, can be done in a later series.
+
+Changes since v3[1]:
+ - Vastly simplified the series (thanks David). Removed mmu notifier
+   batching logic entirely.
+ - Cleaned up how locking is done for mmu_notifier_test/clear_young
+   (thanks David).
+ - Look-around is now only done when there are no secondary MMUs
+   subscribed to MMU notifiers.
+ - CONFIG_LRU_GEN_WALKS_SECONDARY_MMU has been added.
+ - Fixed the lockless implementation of kvm_{test,}age_gfn for x86
+   (thanks David).
+ - Added MGLRU functional and performance tests to
+   access_tracking_perf_test (thanks Axel).
+ - In v3, an mm would be completely ignored (for aging) if there was a
+   secondary MMU but support for secondary MMU walking was missing. Now,
+   missing secondary MMU walking support simply skips the notifier
+   calls (except for eviction).
+ - Added a sanity check for that range->lockless and range->on_lock are
+   never both provided for the memslot walk.
+
+For the changes from v2[2] to v3, see v3[1].
+
+This series applies cleanly to mm/mm-unstable and kvm/queue.
+
+[1]: https://lore.kernel.org/linux-mm/20240401232946.1837665-1-jthoughton@google.com/
+[2]: https://lore.kernel.org/kvmarm/20230526234435.662652-1-yuzhao@google.com/
+
+James Houghton (7):
+  mm/Kconfig: Add LRU_GEN_WALKS_SECONDARY_MMU
+  mm: multi-gen LRU: Have secondary MMUs participate in aging
+  KVM: Add lockless memslot walk to KVM
+  KVM: Move MMU lock acquisition for test/clear_young to architecture
+  KVM: x86: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+  KVM: arm64: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+  KVM: selftests: Add multi-gen LRU aging to access_tracking_perf_test
+
+ Documentation/admin-guide/mm/multigen_lru.rst |   6 +-
+ arch/arm64/kvm/hyp/pgtable.c                  |   9 +-
+ arch/arm64/kvm/mmu.c                          |  30 +-
+ arch/loongarch/kvm/mmu.c                      |  20 +-
+ arch/mips/kvm/mmu.c                           |  21 +-
+ arch/powerpc/kvm/book3s.c                     |  14 +-
+ arch/riscv/kvm/mmu.c                          |  26 +-
+ arch/x86/include/asm/kvm_host.h               |   1 +
+ arch/x86/kvm/mmu/mmu.c                        |  10 +-
+ arch/x86/kvm/mmu/tdp_iter.h                   |  27 +-
+ arch/x86/kvm/mmu/tdp_mmu.c                    |  67 ++-
+ include/linux/kvm_host.h                      |   1 +
+ include/linux/mmzone.h                        |   6 +-
+ mm/Kconfig                                    |   8 +
+ mm/rmap.c                                     |   9 +-
+ mm/vmscan.c                                   | 144 +++++--
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/access_tracking_perf_test.c | 365 ++++++++++++++--
+ .../selftests/kvm/include/lru_gen_util.h      |  55 +++
+ .../testing/selftests/kvm/lib/lru_gen_util.c  | 391 ++++++++++++++++++
+ virt/kvm/kvm_main.c                           |  38 +-
+ 21 files changed, 1104 insertions(+), 145 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/lru_gen_util.h
+ create mode 100644 tools/testing/selftests/kvm/lib/lru_gen_util.c
+
+
+base-commit: e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc
+-- 
+2.45.1.288.g0e0cd299f1-goog
 
 
