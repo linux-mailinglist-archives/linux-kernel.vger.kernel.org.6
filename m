@@ -1,119 +1,178 @@
-Return-Path: <linux-kernel+bounces-194727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738088D4111
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E498D4119
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124D41F23971
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E9E1F23328
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376EB1C9EC4;
-	Wed, 29 May 2024 22:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DeGLxYgb"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAD91CB300;
+	Wed, 29 May 2024 22:08:30 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038BE15B56D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50C61A0B06
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717020355; cv=none; b=ji9hCWXEMUZAj1tZ2Q3M5eJHJ/MWRSNdzK62dXNY2Pc/lf0gYflAedYQGbKkhsHd0XSYpjlv3pByki4vUaOGpUHg5Sq0Ba2/25FKJr9mAmo5L6xZZw5e/3agskGrW9gn3rWvyEHd8D5msyq//00ht51Izh0ti37atGBEXiXU+kM=
+	t=1717020510; cv=none; b=kFSEwnNeW8CAYdubWyyeSDTUJ1JIuXF77heANFTh1WhFrwp2KTYtXv+UlDGtTluK505u2wNGL5sEndLCzwCo7ipCntY2rj+otOCMswrY0oyMlZj7Ty4M/y03aYZOv5fs/TeVk5pyzaUOAiAiBWHOliqDN5/2TTA/dpqUpbokACw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717020355; c=relaxed/simple;
-	bh=xQfxlntEhOnUqYKxCNx6748gaa9Y/uZ9w5LTJjm+WfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AE7Nz/hXXNibPi25/VP4oZK7+dRuR82y5qM4YSFMRzpRabvUkZ0+fsfue/9Acq2Z6P4s6PVQu2uHBt4FsbKfqTsz8MavDfMNi0SuwvOVCXUyNfWLAz6Bt57DXMEGmDs6gqk/xIyQoWtW0/TCbJVmwFRb7PJdZCv6NQIsowgCc+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DeGLxYgb; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=GUVf
-	bGqeub1hGLlaQpOnhPVaLkv4E2Iynp2aZXzbj7I=; b=DeGLxYgbSJyISNxm64j6
-	MdFrSDLXvP+UDwG2gC9S1LKl2vUu4J8oziyeWqlY1bL6E0r0AODhwSg0aETx5+8j
-	2CVt1SfK4pGBDRStLBChJA+ryCUMkh9rKE1jXFxczgOg5tnEr+nC9zRUwcdTLb2E
-	EOILBeNmyzGDI0jWg8FkqttTPcbGOwzHl2PtxyJnWaYQ6xpwYFAsXs/f/adjBjZE
-	wG8LTKLtNIAzB5v3DzfAc3DScqlodpnU3X2gcAQnGWSwqOm+UmSewhLLXA7bLXUb
-	Lh4EkhGeYHwRJBAuziEZBrKktnd0U1Y+EcS3mY1u7NqxJVwZbSAfgnWfeNp3tF6a
-	sQ==
-Received: (qmail 701299 invoked from network); 30 May 2024 00:05:49 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 May 2024 00:05:49 +0200
-X-UD-Smtp-Session: l3s3148p1@w2H0854Z1INehhYM
-Date: Thu, 30 May 2024 00:05:48 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <oste3glol4affqkftofn6hgnldurnn4ghutsdmfl5bjgzwz66o@i4fneiudgzmu>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Eric Sandeen <sandeen@sandeen.net>, Christian Brauner <brauner@kernel.org>, 
-	Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <39a2d0a7-20f3-4a51-b2e0-1ade3eab14c5@sandeen.net>
+	s=arc-20240116; t=1717020510; c=relaxed/simple;
+	bh=qlTTWGw8g4V5EQGOqrQjz4puCme7kPOvgv7L6YSc4Bk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=O6XvtaqQ5Q+2unm+arwKYsOKmA2NcdE7xk+DvI8H1h/ohAtWdiWY2FlZMHBUjypWmw/duvFbpNopIMH0AEmeCcGTXqI6hTacetm4zv0EEoKzI57I0LAH+mNYjdls3vSy0hAvfFsAA/g5vJJWRQP//98pMaxd/NJeC0Fw4Er4Rdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3738719bad7so1885615ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:08:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717020508; x=1717625308;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y2TP+cVoXsWGxaPYDHxSt3opPN7Ye6m5B6CFDizYDNQ=;
+        b=Hy6sEQf7CmfBbzvzwvFOJlDMT+MbJeWcfQ71VKFB29U1IeflYWwHPHG7EoO5aufHoy
+         OFKkteLWDYk3R2T1BxCK9Xu6vd0rTjHaZAjS5E07+osw4YSvCcCbC9YJDdvrOU0YE68w
+         qm44psbGamTW/2JYdgSCNUdO3qufdmy43+YYYM3/wV8BYtOwYARa7Zjsczn+qZoaaWd9
+         KmN2nNjbrQ4udfbM/vcDMsAoQd59xfsz+jAwGoUUNpXeBP7EXy21fF0SqiHAHMZa0OiJ
+         gtVBdCZvmAc4sgxNrSljobyEq+RNQWGiBk7DPwdmVaFHH0sllG36qtCgV4lh/cuVc1Zm
+         uoqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8UCXnhT1XBODJtGUVd92q5F63WM1iMazIjdmfhOV65tOmqAEH08x6xqr731lKbfE+0ZbwZbaEB2tJ4VPadDKT5ObPRWt3W/EpHOkL
+X-Gm-Message-State: AOJu0YwFrqwNB7H9P2rnRed0h9Y7BMqkbt+GnWejVTeYlQNGQZg0PhKd
+	tjCI3fd8GNYIwknkN6LLZms9v74bchj3z+LAOCvUum7ul1GduODcjGLLc+7QWf5rB/uiCGAf0Bw
+	OiLdpBFxdO1fJXh904i1co1QKodWFiegQlqvcZ1XwIfXaJSjUhhWxV28=
+X-Google-Smtp-Source: AGHT+IGscVBJk0L7gvnjqMs1VFcnHllRu/Y7i65SekTk48C2yUUMzF11fi2fL9bYsUdKqxSOL4NNyNmdsZB9Aqg2DPLUaJARJBVj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="v5nus3utufq5lujr"
-Content-Disposition: inline
-In-Reply-To: <39a2d0a7-20f3-4a51-b2e0-1ade3eab14c5@sandeen.net>
+X-Received: by 2002:a05:6e02:160e:b0:374:5382:72be with SMTP id
+ e9e14a558f8ab-3747dfcae56mr115275ab.3.1717020508088; Wed, 29 May 2024
+ 15:08:28 -0700 (PDT)
+Date: Wed, 29 May 2024 15:08:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000074ff7b06199efd7b@google.com>
+Subject: [syzbot] [kvm?] [net?] [virt?] INFO: task hung in __vhost_worker_flush
+From: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
+To: eperezma@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    9b62e02e6336 Merge tag 'mm-hotfixes-stable-2024-05-25-09-1..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cb0eec980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3e73beba72b96506
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/61b507f6e56c/disk-9b62e02e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6991f1313243/vmlinux-9b62e02e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/65f88b96d046/bzImage-9b62e02e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com
+
+INFO: task syz-executor.2:9163 blocked for more than 143 seconds.
+      Not tainted 6.9.0-syzkaller-12393-g9b62e02e6336 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.2  state:D stack:27024 pid:9163  tgid:9163  ppid:8496   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6837
+ schedule_timeout+0x258/0x2a0 kernel/time/timer.c:2557
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common+0x3de/0x5f0 kernel/sched/completion.c:116
+ __vhost_worker_flush+0x1aa/0x1e0 drivers/vhost/vhost.c:288
+ vhost_worker_flush drivers/vhost/vhost.c:295 [inline]
+ vhost_dev_flush+0xad/0x120 drivers/vhost/vhost.c:305
+ vhost_vsock_flush drivers/vhost/vsock.c:694 [inline]
+ vhost_vsock_dev_release+0x1a5/0x400 drivers/vhost/vsock.c:746
+ __fput+0x408/0xbb0 fs/file_table.c:422
+ __fput_sync+0x47/0x50 fs/file_table.c:507
+ __do_sys_close fs/open.c:1555 [inline]
+ __se_sys_close fs/open.c:1540 [inline]
+ __x64_sys_close+0x86/0x100 fs/open.c:1540
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f910027bdda
+RSP: 002b:00007ffc83a68930 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 00007f910027bdda
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
+RBP: 00007f91003ad980 R08: 0000001b2ec20000 R09: 00000000000003f6
+R10: 000000008ae9c606 R11: 0000000000000293 R12: 0000000000056292
+R13: 00007f91003abf8c R14: 00007ffc83a68a30 R15: 0000000000000032
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8dbb18e0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8dbb18e0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8dbb18e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x75/0x340 kernel/locking/lockdep.c:6614
+2 locks held by kworker/u8:3/51:
+ #0: ffff8880196fe948 ((wq_completion)iou_exit){+.+.}-{0:0}, at: process_one_work+0x12bf/0x1b60 kernel/workqueue.c:3206
+ #1: ffffc90000bc7d80 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x957/0x1b60 kernel/workqueue.c:3207
+3 locks held by kworker/u8:6/1041:
+ #0: ffff888029f54148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x12bf/0x1b60 kernel/workqueue.c:3206
+ #1: ffffc90004507d80 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work+0x957/0x1b60 kernel/workqueue.c:3207
+ #2: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xcf/0x1500 net/ipv6/addrconf.c:4193
+2 locks held by kworker/u8:8/1261:
+2 locks held by getty/4844:
+ #0: ffff88802b1860a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfc8/0x1490 drivers/tty/n_tty.c:2201
+2 locks held by syz-fuzzer/7666:
+3 locks held by syz-executor.1/9466:
+ #0: ffff88802ce84d88 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_do_close+0x26/0x90 net/bluetooth/hci_core.c:554
+ #1: ffff88802ce84078 (&hdev->lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x339/0x1100 net/bluetooth/hci_sync.c:5050
+ #2: ffffffff8dbbd078 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock+0x1a4/0x3b0 kernel/rcu/tree_exp.h:323
+1 lock held by syz-executor.3/11000:
+ #0: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+ #0: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3e/0x250 drivers/net/tun.c:3500
+1 lock held by syz-executor.3/11005:
+ #0: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+ #0: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3e/0x250 drivers/net/tun.c:3500
+1 lock held by syz-executor.4/11002:
+ #0: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+ #0: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3e/0x250 drivers/net/tun.c:3500
+1 lock held by syz-executor.1/11013:
+ #0: ffffffff8f74afa8 (rtnl_mutex){+.+.}-{3:3}, at: __tun_chr_ioctl+0x4fc/0x4770 drivers/net/tun.c:3110
 
 
---v5nus3utufq5lujr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi Eric,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-thanks for replying!
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> @Wolfram, what did your actual fstab line look like? I wonder what is actually
-> trying to pass auto as a mount option, and why...
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-My fstab entry looks like this:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-debugfs /sys/kernel/debug       debugfs auto            0       0
-
-This happened on an embedded system using busybox 1.33.0. strace is
-currently not installed but I can try adding it if that is needed.
-
-Happy hacking,
-
-   Wolfram
-
-
---v5nus3utufq5lujr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZXprcACgkQFA3kzBSg
-KbbGww//ZLdzgw891psYTdFhPNOK9YNtV7Xce/sxjIf89qMZCLQp+o8cBJYedmhb
-74lxIS8bK7xMtBwL7QEDOSY0z7iPJfx2OKup4zP4xCou+5v7FDMD45Nt4gpSRkAt
-hP1iJFN0I+oFe8s8nOODOjo7B8zoKU3L4dfc9bHt9gscBiDTZNWe8ZdfNoXdELYJ
-tXoFci4zXOIDT8djRpazuOH/S+LQ8pV1/LkgWJqp6Zmx+v55iSQb3nqK0nX4asYT
-ZhLkmMc9UNLK1lWppL232zy+/cazoNvZuiT3Btbjj2vJailxUHNHBLbJTAWqfF4r
-Kqy6NsfLLJEPArIS12QcuSPKkX/5HkcMWbiFgDECA5uNJtQf4ildxk+YlaC5ByLr
-0VFpiFUPM6O6TsNdgIPhx0VfgKr3s15DsAnNbj7tSjjSOnwpqZ/VI39rsAbQzWuC
-G9EbyVKuDSW78i+vV/TUFQBum+TZHe+eDfavf/dAhswTUavjaKHG5VZV9pK0bu7P
-zaFe4zqfABSko5iPmzfmK0OjpwChT/Xzuf+hs2dYJjierMZY3xWOhMyfPM7w0dpI
-ZmO1TX5s9AuwsTWj9LncNwslmKOx/VLN9j/n9+w14m3CM5c7mfPs95I+uEjxTHe8
-zKNMvUtuHDMeNosNkVw99hmtwrutJsTUkew/ZfbLyG+p26zi7gk=
-=ZBlb
------END PGP SIGNATURE-----
-
---v5nus3utufq5lujr--
+If you want to undo deduplication, reply with:
+#syz undup
 
