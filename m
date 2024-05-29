@@ -1,102 +1,155 @@
-Return-Path: <linux-kernel+bounces-194778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1798D41DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:14:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7EB8D41DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111531F23448
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A46C1C213DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302A11CB339;
-	Wed, 29 May 2024 23:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C786015CD70;
+	Wed, 29 May 2024 23:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="diGMsovk"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JSLG9eGc"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8CE15D5A0;
-	Wed, 29 May 2024 23:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B7514B957
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717024452; cv=none; b=MDAu7Nar/Rb0HTNB8S5t0TuNHEvrbNPiK85gpu4Gug5387F7+XjRp/psorc1bnGQAGwonccmpRJ7X/zUqC3WdRIZDgpEIP7B+XbQD7eGIb9S+q74zvg5A+WMLTkMOjJZt4/islALem2PHoM6ocBroW+v0QVgPUnkkSDQK2TcJxI=
+	t=1717024505; cv=none; b=KnEdjJG7raDCicvtGWcOgSlq0WfBTUy8G0R2B4fMG7EvjrXPMFAO/Umn+WnofJ5tlEuU13e4ll8IvqgcgiO8Mze+uFM7lvS3g+u/vN/xF3xoaa0MIGXeXHMSti6O+Nr3CPMpNLAD5ZnTexy7BLWl0+mWNITotfNlKDPR2yDN0sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717024452; c=relaxed/simple;
-	bh=O66tJp8SsOURZgCfCBnNp3tlo69phkl6Wc+whNYcxn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlxZTDxT98Fjn+K0fLFBbUykgWpCGRH29Cq3j4ABqLQIq2U8PMCnz6kNJUZ3evkxxL3zbvtgFFeJV3idi5NMly3ZSpmfBAoPy5T6jRgDDz4HaCVJA97SwIYN+Fe2gT3qnJhTXp02m0LvjaoIhQ+zKMNouoCbyRKTwm4vAZdYW9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=diGMsovk; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hVTZvPLU/CqK7pqt4DIZRXqEAzW4xgug/5xCB3GNQoU=; b=diGMsovko+dnfmZUS4RwN+/ORC
-	2TZp3ZxMumDsnauaAOvoGqVAdSgZm618w3ZsajKh2ScEU8LBDqRuCd9e80EEDEkYbyVJAqvNiXiXT
-	ZBcrhhSQntSie3J75Umjjsqe/A1hQ1JgF+qPFEVU2ACSBhHp0HYc/NBkPiEekIF82CbY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sCSUZ-00GIcm-TM; Thu, 30 May 2024 01:13:59 +0200
-Date: Thu, 30 May 2024 01:13:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 4/8] net: pse-pd: pd692x0: Expand ethtool status message
-Message-ID: <d6aab44f-5e9a-4281-8c67-4b890b726337@lunn.ch>
-References: <20240529-feature_poe_power_cap-v1-0-0c4b1d5953b8@bootlin.com>
- <20240529-feature_poe_power_cap-v1-4-0c4b1d5953b8@bootlin.com>
+	s=arc-20240116; t=1717024505; c=relaxed/simple;
+	bh=MjQOp5UWOk5r9+sxgG/QsPE0boIDxSM9o3fH5lVCqNA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IrR+A5D3nZGUVqlLoI+5pZv3F+hUdVxA0YBZ03xawR9Oxvu/pCfOIvMKDwrcigL3YEteZbmbRqDg2hgD5TpIBCq/SyrjTV6M/vc7E4OpG1soIGMIYnMdfw9rLT3LoyWPiegF5+xs+X3hfCZdEAaTvlJr4zpveP9qn+I0b1KBkJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JSLG9eGc; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f8e859eb1eso298733b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:15:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717024503; x=1717629303; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dnabaEVJa/tSEflSlXJy3215kO3e1psGL7hL7HuyYb4=;
+        b=JSLG9eGcjrUqQJCpBBxatZbmztvgdGeS/xS3j+QwwubNOga29Yr+6h2nJutLb5G6Qx
+         VZD3zwYaRLNVE+g4L94VbP9EuISjgQCy3q4PFMaBXZ+08q5RoBHtqYpOzFNC12esxAQf
+         uvL+qZsouha4LR0Ad9jU0duTiH4+iqcMWdAzITunqf7Z8HoKD6Gf98qEbvDAIZdMo+tG
+         c/WYSTWedltkToJsIY9JE73vHizg6VQEinEoSnIzzBlhqNczav60K61P3XVW2ic1a7jl
+         JwNP4Y8/Uc1GdukK2R/9768GAi+Du6AmHyN8VjDQbJnu5mquSH1BB1QAPeZajMCYIAcI
+         7qUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717024503; x=1717629303;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dnabaEVJa/tSEflSlXJy3215kO3e1psGL7hL7HuyYb4=;
+        b=a0nfl1+suxubV7k7HQmgCqsqGzQUG6MWneizgIE37QVVuKr5Nf13eVsX2ksR4vZbCh
+         YGsUwUkEyYqJcZhzfKitJf39VIZu1tlVUbcS/0mSPXLTncpgoRxzoO/Xy9Nmv7+14MrZ
+         XbSMUnd4EHk67DO4wqODQeVZd+TIjSKFmzMBt4wzn8VTkxRES7/E93B8mHTg6gTV/yLA
+         oNxpWL+xP0+D1eEvYCTvFoxrXHyBu3ezpT4sZAxiS0Fbjy28U6xeTK79UAqpz9jw3xDa
+         dSBLYY1y1mCOgi7ShCMRCCC2l7AV+KG7IXPFpnS/6+q1t26MEHjrolxZxiuxlKIMpC23
+         VqmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAorX1mUs3QmSwXb8rUlD5MwgLVHI4aPChlLGDMOmpnPuMxYwCbf7/7N8HkNCwP37NrnQ/P/GZ3X7fSMJodigaDo9lv8ZlexYNHJRY
+X-Gm-Message-State: AOJu0YyU5rcXu7BsJ76EX3tahzzv4A5MvIWORfiVNaOP6V1++8R2PcXm
+	Cqm6pFr3OzmZwP2ZuCS9PoekB0Jq+/kiJA/YWxYoBOfhX12oL1U8GUCjokAjxvI+N3w2ydl/Km/
+	rEQ==
+X-Google-Smtp-Source: AGHT+IFylHZJ0hSk/e3r/cyIF9npXxo5ZQGUUJErmVcpfAYzuY3QGo2W4ssjCBL/5bEcQamYl0UFx1wDS90=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:2d8b:b0:6ed:d215:9c30 with SMTP id
+ d2e1a72fcca58-702313ff946mr19851b3a.6.1717024502862; Wed, 29 May 2024
+ 16:15:02 -0700 (PDT)
+Date: Wed, 29 May 2024 16:15:01 -0700
+In-Reply-To: <50e09676-4dfc-473f-8b34-7f7a98ab5228@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529-feature_poe_power_cap-v1-4-0c4b1d5953b8@bootlin.com>
+Mime-Version: 1.0
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <9bd868a287599eb2a854f6983f13b4500f47d2ae.1708933498.git.isaku.yamahata@intel.com>
+ <Zjz7bRcIpe8nL0Gs@google.com> <5ba2b661-0db5-4b49-9489-4d3e72adf7d2@intel.com>
+ <Zj1Ty6bqbwst4u_N@google.com> <49b7402c-8895-4d53-ad00-07ce7863894d@intel.com>
+ <20240509235522.GA480079@ls.amr.corp.intel.com> <Zj4phpnqYNoNTVeP@google.com> <50e09676-4dfc-473f-8b34-7f7a98ab5228@intel.com>
+Message-ID: <Zle29YsDN5Hff7Lo@google.com>
+Subject: Re: [PATCH v19 037/130] KVM: TDX: Make KVM_CAP_MAX_VCPUS backend specific
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Sagi Shahar <sagis@google.com>, Bo2 Chen <chen.bo@intel.com>, 
+	Hang Yuan <hang.yuan@intel.com>, Tina Zhang <tina.zhang@intel.com>, 
+	isaku.yamahata@linux.intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-> +static const struct pd692x0_status_msg pd692x0_status_msg_list[] = {
-> +	{.id = 0x06, .msg = "Port is off: Main supply voltage is high."},
-> +	{.id = 0x07, .msg = "Port is off: Main supply voltage is low."},
-> +	{.id = 0x08, .msg = "Port is off: Disable all ports pin is active."},
-> +	{.id = 0x0C, .msg = "Port is off: Non-existing port number."},
-> +	{.id = 0x11, .msg = "Port is yet undefined."},
-> +	{.id = 0x12, .msg = "Port is off: Internal hardware fault."},
-> +	{.id = 0x1A, .msg = "Port is off: User setting."},
-> +	{.id = 0x1B, .msg = "Port is off: Detection is in process."},
-> +	{.id = 0x1C, .msg = "Port is off: Non-802.3AF/AT powered device."},
-> +	{.id = 0x1E, .msg = "Port is off: Underload state."},
-> +	{.id = 0x1F, .msg = "Port is off: Overload state."},
-> +	{.id = 0x20, .msg = "Port is off: Power budget exceeded."},
-> +	{.id = 0x21, .msg = "Port is off: Internal hardware routing error."},
-> +	{.id = 0x22, .msg = "Port is off: Configuration change."},
-> +	{.id = 0x24, .msg = "Port is off: Voltage injection into the port."},
-> +	{.id = 0x25, .msg = "Port is off: Improper Capacitor Detection"},
-> +	{.id = 0x26, .msg = "Port is off: Discharged load."},
+On Tue, May 14, 2024, Kai Huang wrote:
+> 
+> 
+> On 11/05/2024 2:04 am, Sean Christopherson wrote:
+> > On Thu, May 09, 2024, Isaku Yamahata wrote:
+> > > On Fri, May 10, 2024 at 11:19:44AM +1200, Kai Huang <kai.huang@intel.com> wrote:
+> > > > On 10/05/2024 10:52 am, Sean Christopherson wrote:
+> > > > > On Fri, May 10, 2024, Kai Huang wrote:
+> > > > > > On 10/05/2024 4:35 am, Sean Christopherson wrote:
+> > > > > > > KVM x86 limits KVM_MAX_VCPUS to 4096:
+> > > > > > > 
+> > > > > > >      config KVM_MAX_NR_VCPUS
+> > > > > > > 	int "Maximum number of vCPUs per KVM guest"
+> > > > > > > 	depends on KVM
+> > > > > > > 	range 1024 4096
+> > > > > > > 	default 4096 if MAXSMP
+> > > > > > > 	default 1024
+> > > > > > > 	help
+> > > > > > > 
+> > > > > > > whereas the limitation from TDX is apprarently simply due to TD_PARAMS taking
+> > > > > > > a 16-bit unsigned value:
+> > > > > > > 
+> > > > > > >      #define TDX_MAX_VCPUS  (~(u16)0)
+> > > > > > > 
+> > > > > > > i.e. it will likely be _years_ before TDX's limitation matters, if it ever does.
+> > > > > > > And _if_ it becomes a problem, we don't necessarily need to have a different
+> > > > > > > _runtime_ limit for TDX, e.g. TDX support could be conditioned on KVM_MAX_NR_VCPUS
+> > > > > > > being <= 64k.
+> > > > > > 
+> > > > > > Actually later versions of TDX module (starting from 1.5 AFAICT), the module
+> > > > > > has a metadata field to report the maximum vCPUs that the module can support
+> > > > > > for all TDX guests.
+> > > > > 
+> > > > > My quick glance at the 1.5 source shows that the limit is still effectively
+> > > > > 0xffff, so again, who cares?  Assert on 0xffff compile time, and on the reported
+> > > > > max at runtime and simply refuse to use a TDX module that has dropped the minimum
+> > > > > below 0xffff.
+> > > > 
+> > > > I need to double check why this metadata field was added.  My concern is in
+> > > > future module versions they may just low down the value.
+> > > 
+> > > TD partitioning would reduce it much.
+> > 
+> > That's still not a reason to plumb in what is effectively dead code.  Either
+> > partitioning is opt-in, at which I suspect KVM will need yet more uAPI to express
+> > the limitations to userspace, or the TDX-module is potentially breaking existing
+> > use cases.
+> 
+> The 'max_vcpus_per_td' global metadata fields is static for the TDX module.
+> If the module supports the TD partitioning, it just reports some smaller
+> value regardless whether we opt-in TDX partitioning or not.
+> 
+> I think the point is this 'max_vcpus_per_td' is TDX architectural thing and
+> kernel should not make any assumption of the value of it.
 
-I don't know of any other driver returning strings like this. Have you
-seen any other PSE driver with anything similar?
+It's not an assumption, it's a requirement.  And KVM already places requirements
+on "hardware", e.g. kvm-intel.ko will refuse to load if the CPU doesn't support
+a bare mimimum VMX feature set.  Refusing to enable TDX because max_vcpus_per_td
+is unexpectedly low isn't fundamentally different than refusing to enable VMX
+because IRQ window exiting is unsupported.
 
-> +	{.id = 0x34, .msg = "Port is off: Short condition."},
-> +	{.id = 0x35, .msg = "Port is off: Over temperature at the port."},
-> +	{.id = 0x36, .msg = "Port is off: Device is too hot."},
-> +	{.id = 0x37, .msg = "Unknown device port status."},
-> +	{.id = 0x3C, .msg = "Power Management-Static."},
-> +	{.id = 0x3D, .msg = "Power Management-Static\u2014OVL."},
-
-Is there something going on with UTF here? the \u2014 ?
-
-	Andrew
+In the unlikely event there is a legitimate reason for max_vcpus_per_td being
+less than KVM's minimum, then we can update KVM's minimum as needed.  But AFAICT,
+that's purely theoretical at this point, i.e. this is all much ado about nothing.
 
