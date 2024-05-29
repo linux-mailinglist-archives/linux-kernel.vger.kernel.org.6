@@ -1,199 +1,262 @@
-Return-Path: <linux-kernel+bounces-193756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D688D321E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:47:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9632E8D3198
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDCDAB28B1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9AC41C23F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B8C15CD66;
-	Wed, 29 May 2024 08:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1797416F0ED;
+	Wed, 29 May 2024 08:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="zLb6CzVN"
-Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="F7CKCbKz"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2054.outbound.protection.outlook.com [40.107.105.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370D24DA08
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716971554; cv=none; b=Zma3BFC+jTB2RMhon1f3KiRddLWNRJccv8oEHI5mSvSb2JDThoAgfkpD4fMB2woZPgfoSDvJ+UGJHCDwIHJCKN0r7+rLfUTD6nzHXyrg7EeY2rjE5zmD3MjBIcZTvgqWx3D9ZlRPj0C+kRYZxh2R7/B7hhy/dQqa7RdJXGFgCMY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716971554; c=relaxed/simple;
-	bh=KqkqMm+91wYOeZTvCbVYyirrfOGlhLhMNaEStz+8LBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TQEQyOLlt/e3qGjJPQA47P/5WdSzIAwUcQ2L6PEeF70s/2f0yLqeAWPuvfw3npmPdha2Lm2sFgP0RTMIYZE0wxrbE+hhKqjfW+kKE4MfKBwtPo1AYsZwHMynnNOpgNXrY2Kg6J/WsSQLvjIWtC6wOr74qPDHeE739hWVEtPOZIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=zLb6CzVN; arc=none smtp.client-ip=211.125.140.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1716971552; x=1748507552;
-  h=date:from:to:cc:subject:message-id:reply-to:mime-version;
-  bh=HVA1zeIRxUQKNTk6fHoyQMZWXuIH5enpzbqpIdOvEwo=;
-  b=zLb6CzVNNy9jDgqUkSD39/QNt+XLBIFErF9Yjr86WmmV1mMlN1O/Tl1D
-   BA53GR0s5FN3MNEb//ouitGLXUQcwyw+N+h4+XUB5aL+ntdpjmwYZsYOu
-   /4VYxYREMBSU/T37MfQvfrsK9Fj9DbhMS0taxZMLM68mscuScUXlwbgD9
-   usKRtq6s11+8FrcHIHX8OTQoi0PL0+QprIpja4wg3OOZKOPxxNFerBbWd
-   e040REUfwp8sNukTuHaaZSJ+gucQN2gauhpUkxEGOYrQojzPKKAgsHC+R
-   qJnL9TytNW8NW92ae8TAZw901i2HpbgUGGmBkWQqivG+eCDQZqs2UUvyG
-   Q==;
-Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
-  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 17:32:25 +0900
-X-IronPort-AV: E=Sophos;i="6.08,197,1712588400"; 
-   d="scan'208";a="417552078"
-Received: from unknown (HELO LXJ00013166) ([IPv6:2001:cf8:2:f100:2ef0:5dff:fe04:1f0f])
-  by jpmta-ob1.noc.sony.co.jp with ESMTP; 29 May 2024 17:32:24 +0900
-Date: Wed, 29 May 2024 08:32:24 +0000
-From: Soumya Khasnis <soumya.khasnis@sony.com>
-To: gregkh@linuxfoundation.org, rafael@kernel.org,
-	linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
-	festevam@denx.de, lee@kernel.org, benjamin.bara@skidata.com,
-	dmitry.osipenko@collabora.com, ldmldm05@gmail.com,
-	soumya.khasnis@sony.com, srinavasa.nagaraju@sony.com
-Cc: soumya.khasnis@sony.com, srinavasa.nagaraju@sony.com,
-	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
-	keita.aihara@sony.com, masaya.takahashi@sony.com
-Subject: [PATCH] reboot: Add timeout for device shutdown
-Message-ID: <20240529083224.GA71473@sony.com>
-Reply-To: soumya.khasnis@sony.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1C216A380
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716971539; cv=fail; b=uaFB/pgJRCvImOGwJFextY8HG+C1buvvecmZq0TYMC/S7r6G0wNqGBr3JpZbUeWaBkg1AdsDU/gRpJHPaVDQBqPOaTKDfSdn0CltGs3HBZcwi0aET7GcowrOgkk6xiIcG1/H07tS2hkQDe/VgtdUUjaKpn7rGSp5uo37PkfEn2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716971539; c=relaxed/simple;
+	bh=BpKo+8+14sI4RP4UCu7zDVsF/kSRHczDKbjNNOGA3hE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aa8HbDD4SJvcNm+qHsLbgK6kJORPq3uUD/9piVYU7G2OEXhoaNpADAmBkR1+GCZhxBrJROqzLYanFdoeZ2WRcRJIcgBYfOGVYr35wlPG2TkTN3/J58Y141n+W1HnKBkWQGuB7CTjFidB+WtMExctywUcHurYApS1ybH4EpzmZzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=F7CKCbKz; arc=fail smtp.client-ip=40.107.105.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FtKQeF2rL8DboGoP/F/zxr9EisMKqg7YxXZWA6851rwdqt4ffqP5qgdPxBbkDeqE0UipUUTyFVuVo1NZNdhzME9jH1G8M8WZaXA6tAsNz42o2EkjicNtPsBzAbzCv2SsXwSiXKgJIS+oRWJUxXg0pfj2v/gMFdMk5ZiMhgTUinh2X/UfEXxwsLyZ7/re9zoykUGGFIus/hUsIWIoCihNiTsCg7WP1KWOpZZYxty6pr++jM00ZY/xPxwN75tpz/3PzObZxNZX0lb2NpxxuragDpoeNdHiVJ+i3WwgA8BLxKkQlDG2O9UrdOD/suijv1Ian+/wa4nRebalLgJAFyPzlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jEQCEyNLHr2CFfUmjjBnn+Zmv894QYFViBKWTShijz0=;
+ b=J8hh7Iu0WEArl34XKf9F/OlfirIeoKQp9NG7GF3NMoGzwHsP/2rdcSm2NCWEeB04L21yO5/rL3GXi7o4EiECCfNBNwNLBiZAAvlqXCrteydaeCIu4NVEXZzoS+fl+lcs49kYwBzA0MCziKY6EUCk4Xh2n9Xz8lZ9fIr5apLwb/OsbDiTYyk3uqzaFuUYNZ3iW0GY9cDlYxUI/l5PWg+Dd5eB+eEb09ooSISH82BeJg/FgxkWbDGv1OdhuBA+t9uTmLvt5QNm7wOLQCzHGjSEJKjfePbzjeT0AJT+E6nz0G9ftf356nGy77zwOfLlDiMsHFIMA20WLeQ6TAN5/8bCbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jEQCEyNLHr2CFfUmjjBnn+Zmv894QYFViBKWTShijz0=;
+ b=F7CKCbKzbuoKK1UdQwdnAyB3biSdpp89OeXfHGN5pGvSkxSOH9+hfrQyFd/fisi25weYEZAaDjgPtKqZWM+vuy90SaK0E5Y9dNxDujL5d/hUW42Y3WBObIRPGz7a4szmRCAcjQMo4lUJtRZfPcaQgD2tB/Y3zQkLPLg68XoxXKM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AM9PR04MB7538.eurprd04.prod.outlook.com (2603:10a6:20b:2d8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 29 May
+ 2024 08:32:13 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%6]) with mapi id 15.20.7611.030; Wed, 29 May 2024
+ 08:32:13 +0000
+Message-ID: <cc553f61-e494-45c0-84e9-8a0e275ba416@nxp.com>
+Date: Wed, 29 May 2024 16:32:31 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] drm/bridge: imx93-mipi-dsi: Use dev_err_probe
+To: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240529065400.461633-1-alexander.stein@ew.tq-group.com>
+ <091f1d5c-0bff-4dcb-b823-b82989eac628@nxp.com> <6130653.lOV4Wx5bFT@steina-w>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <6130653.lOV4Wx5bFT@steina-w>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR06CA0181.apcprd06.prod.outlook.com (2603:1096:4:1::13)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM9PR04MB7538:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21a0f475-ce64-454f-2f4d-08dc7fb9d6fa
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230031|376005|7416005|366007|1800799015|921011;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?L015Zks3Y1pxSEZmOXRsdjZOZll6aEpPcWV5UTVkSFprOTM3MHBnblpHN3pZ?=
+ =?utf-8?B?ckJST3lZOFc0UDhNaUErMGtmZ1NhdC9xMTBjR1k3UWlSQ3k1VjU4RmpaMjZa?=
+ =?utf-8?B?bFE0aENrR0tQTGxTRnBjS2ZkSGN1ZTZLakVOWlhOUXpHdE1IQU5kVXhuV1dB?=
+ =?utf-8?B?MXk2VGpCU2p4U2V4YUtCaldSb29BRzQ2VDFYN3NVS2c1TFlPV2JnaEMwbWJL?=
+ =?utf-8?B?Nmp0OWppT3V5K081TDgyVVZNSFB0RHB1ZmFEa1Jpb0dNZk53ak50Y1ZiYlBH?=
+ =?utf-8?B?RU1GN2E3cWhCRkg5TzlaQUxyM0Z3bS9tUnBPSEZlNWFvVEx2c1RFb2NNYUVp?=
+ =?utf-8?B?bTlXcTJnS1JBNDY0Qnl6elAwTUlFQzhYYnNSTzRFNUhhOURzMFNWRDdPRXRj?=
+ =?utf-8?B?QjdVZ1FmMUk5Q1VUL29vZ2l5ZlArc1VyZkVLdDBidXpZM0h4QW8zTjN4MUww?=
+ =?utf-8?B?OFU4U3RhUzJzYXVoUS85Y0EwQ0pDYVJTRFo5RjQyTnJoN1MwcVhTR3Q0OVdG?=
+ =?utf-8?B?elFDVFlaT0hiM1VmSForRythT01aY2pRa2h0VXhnVjE5MHZoYTVmbWlxQ2Jp?=
+ =?utf-8?B?S2pyaGd3NE5jVmMyUEo5Tzh0U0x3VjNFVkZKdXVrUENVWlh1QktWMzNQS0Yw?=
+ =?utf-8?B?L1EvSDNkMlJVR1R5VjE2WE9KWk92Z084WVlTclgrQmNEQmdMWU5uaDJuRkp6?=
+ =?utf-8?B?clBTb04xZGtNQm45Qll3STB6Z2RwdGRqQTlFVXU4WW5La0JPckNGU3dzN29s?=
+ =?utf-8?B?NnFaWEE2YlltTUFDbkNxRHlJcDJIU3ZPeWpZZFphMmQ0Sy9HRHQ3c0FWa0pB?=
+ =?utf-8?B?VVIwNTBaZkhPMUliQ1JlcVFUNHNudHRVQys3aHExVjZTYWR4VDRWbDYyRVJO?=
+ =?utf-8?B?OEQvd0JYODdlVTBNTTlZRVc4RGZDN1VlWjd1WGVwU2FRb0paY2ozaExpMXhD?=
+ =?utf-8?B?QVgxK2t5WWVySk5HcWRmTjdtZzVodm5SWmZWMzNHV3I1RFFzME0yVGRkVWVa?=
+ =?utf-8?B?Rm1LNFhadk14WFdHdVhGa0IzaGl1aE9aTGhqVy90WjA2RTBON1NOdUNsQWVx?=
+ =?utf-8?B?U1gzUVFyZW9MMndvZGxFdmcrVlFBS0IrMEpDSVN6K2hYVFp5bmRhdzFkdFA1?=
+ =?utf-8?B?SkN2a1hFM0N2bHNaVWpUNzhTMktZMWd2RVhrYmZSNWN4VnorU05EUTdQYXBB?=
+ =?utf-8?B?a3h1OEdrdU1WU3BQc3pGYkVkcHdoeE90Q1I4RnNSOUQrZ1R1WE9hUHZKRFB1?=
+ =?utf-8?B?MDVpYnIzNlJoUVlVekV2VXAxdlJldlMwaURXWnBVb0VuMmltY1BVc01JbzFk?=
+ =?utf-8?B?WGE2WHM1Qlpad3V0TjcrVTZXUDhFbkphaGpOaFhRaEZsNGZnZFJ5TE1PZkEw?=
+ =?utf-8?B?Mk94TC9wT0RINW5vTkhqUGNYMzZjVkV6VVNFd2tPM0NEeFc0c1hSQk5ON3Rm?=
+ =?utf-8?B?ZUZxem1IaFBweFNqUUdPS1F6dkJaSTBwT0U2dEtTY3IwQ0FhNU4yY011b3Zl?=
+ =?utf-8?B?RkVWcTBld0hhWExGREZjL3BWYjlxeFJDbzA0KzFicFJSd2h5WHYvdmNEVytL?=
+ =?utf-8?B?VjMxaXFXMDBXTVRrSjRacTBXZUZDNmJYQUJpQS9DZzFaUXB3QmI3T0toNW1O?=
+ =?utf-8?B?dk1rN1dmbkdNQ3NPUmNHR3B2NTYvUmV5Y1A0di84clR3MmNBUFp6RlpaR3lS?=
+ =?utf-8?B?Zk1lYTQzMWhoU3JZMFZDelErS2p2UEIwaE55K2Nrai90enlmWk1jaE9sWVlh?=
+ =?utf-8?Q?BGmiPXdS0WoMDh2drRlvN7lm6d3nO0TrNUTKWqr?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(366007)(1800799015)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?bHQ0MkZVS2dLMW5neERIUGI1YUxiNnhsWWVFRE9jUWl5eXBScDJBUjFHLzht?=
+ =?utf-8?B?ZU1wMVUzb25qb2hKNzAyUEdldldIZGo5aVBnYU9zZXloUW16RDRCREpMaHE3?=
+ =?utf-8?B?b0J4T1NVNVBPUlFpY0pDZ2JIQVlQTmpnS0paNDljUDJrOHFjd1hZV28xak1P?=
+ =?utf-8?B?SVpWV09pelM3NmR3S3d0UGFuSG1KVUFrclJZdm1nejR4djBKVWQxMEU0SEdv?=
+ =?utf-8?B?NG9OTXluMW1JSHc4ZzA4dFM1bU5Da3JzMzZIaWZpZTVBS0QvU3Z5ZEp1RDg2?=
+ =?utf-8?B?M204UDB0SlIvRXZzSHEvOUM3OStJTmZpSVIwWjZsL0JxcWtQNENTUnk0SUZC?=
+ =?utf-8?B?c3cwTDZteXU3MXdMeWI0MHNEQW51cVVpdzVLRkIrNEEyMWMrd2RibVZvK3Q3?=
+ =?utf-8?B?Q3oxVlMzZ24ydm1RNTJscDU1VGRCVitQYmdhWHRaVDF1eUw5VHprOTE4QnNL?=
+ =?utf-8?B?bWlySUZXSmYzaktDUzM5cE5WVUJubjhaUGlSWmFya3c2MEdEeWRYZUhFMm5M?=
+ =?utf-8?B?M0RacXVXWHVwVzlqaVV0endqUHJBOWQ3Ykd6cW1NMHJzZE9mN0JpN1ppbmh4?=
+ =?utf-8?B?ejUySW1FMlR4VTR2Y0ZlcFgwemlUZDZ1a2ZpWThsTVI2dEwwdmhhZ003T2V1?=
+ =?utf-8?B?UGp5N1RndFliMDBJeXRXd2hOdFhzbldON1p6WHFjK1MwbDlXOVE4M3Q1Q3B4?=
+ =?utf-8?B?OThObHUyYnYrYm5rUDRuTGFsRTdMeFhWWWVFMVhLbXV5MnduRlkrM2VPcElr?=
+ =?utf-8?B?U3NkbkUxamRCd0JiRmV4QmRaZytLVUdLcyt2aFVvS1lCc1VtRDhmbkdlMWpw?=
+ =?utf-8?B?dWhrY1dJRmRybHovMlN1Mi9QOUplUVhPUUpPYTVVM3ZKWGxob1VsR1AyR1d3?=
+ =?utf-8?B?YnRxTllsVnN3YzZIVHNIS05CQWtRWkR0cS9oOWxjSWNJenFBRWVucERESTdH?=
+ =?utf-8?B?c0FDd1I2NkNXZlZZRWpFaWttYmRhOHVuVVlMZFR0N3ZHeDYzdzdOWHBySUc2?=
+ =?utf-8?B?NEo3SWFIRVNzNEtmT0VISWJVbDhWbEpWU0xIRjlUaTJ5ejBHNUwzTEpvK0Rt?=
+ =?utf-8?B?eDVnSkFZYkdlOTUrdGREN1V3Y3BlWGVVUUtucXltcFBlTjZ0ZUlVYlExSTh1?=
+ =?utf-8?B?M0xkK1Fna2VKZ0ZVV3ZKNUI4QlIrUldHcXgvRUlnb0pNWTlmTGtFT21ac2x6?=
+ =?utf-8?B?K1ptNVNOT05Od2JFL2huZ3I0aFJtaURIelB4Lys1UTV2YlNEMGNUT1M2dzV6?=
+ =?utf-8?B?UnF0QS9LVlZ3WW5xRm53NzNaKzRJQjVHaG1PTnRyanFtMnl1eHBXME1rL28v?=
+ =?utf-8?B?NUhzZ3QrUlhGNU9GTE9veGxXQytjRHJDZm5EWDZHM2FFcDQyTDlwT1lNTGYz?=
+ =?utf-8?B?QmtudjZDd0hXSjJEY3NESHVZR3czaTlIOXkvMDVZdUx4SEFUNHkyUkJmRThM?=
+ =?utf-8?B?VkhVVlBjS2xKVElBTkd3ejdtVHVMUXpFVzl2eUdORGNJMUZoanR1RStwZnBw?=
+ =?utf-8?B?U2x3YTcrU1ZWUDFsZG0rZHh5VnA0Vzl6WUl5RFZKNE1YZUJkNTBacGUyMjNQ?=
+ =?utf-8?B?azJmdnArUVdnV1RHLzZCUXdXUTdTTXVFMkIvek5NRW9CWGd0cjVBbE1vU25l?=
+ =?utf-8?B?RElnaDg2cFNyN1R2dmx3L1NyRyt2TFdWMCtaYjZmQVRtZWtabHM5S3lTUC9G?=
+ =?utf-8?B?MmtSS2J5Wkd0VHdSZmFkN3ZaNnhtcm5HTXk5d3pQVUxxV1hjMFlBMk5ZQ1BR?=
+ =?utf-8?B?ZGIrNWNNeFRKRktkL2duKzFzWE90WGh2VWt6K2Q3dWZrQTlEOVQ2ZjZtZ1FR?=
+ =?utf-8?B?cTd0Ym1PcHBnZWxNOG5iSmtYdU5pNHJEalFoMmRCOTBCVk40UThZMGZRc0wv?=
+ =?utf-8?B?dUpqSHFWOVpPYnZKcTMvd1dDcHo1aGFyT05jdUc1M01oMWI0TktMZFlTZW0w?=
+ =?utf-8?B?alRETGJ4Y3FYZ0R6b3h4MUtHdFhvSzhzQmN5SzBjM0h3azNFTTRZZHgxbCtl?=
+ =?utf-8?B?VlVaUlplU1V1LzFjUmswN0g3N0FoVm9rM3JSbGgzOElUMkh0RThVU1NpUmdS?=
+ =?utf-8?B?V0dVVjBxMmllcjFubC8rWjRaSlB4N1d1UlFZUnNXSEpML1pPVDBIOCtTV0Zy?=
+ =?utf-8?Q?xOF6z2Um9wkhGydwCkSI+N6iW?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21a0f475-ce64-454f-2f4d-08dc7fb9d6fa
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 08:32:13.5270
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hhyww07zR830reUlA4WYcs35HUaMr1eUf8vU2vIkrK6p4+TAc90rZ3i5Sdca7amkyjQiDoOR8+oA5iU3aKKSOw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7538
 
-The device shutdown callbacks invoked during shutdown/reboot
-are prone to errors depending on the device state or mishandling
-by one or more driver. In order to prevent a device hang in such
-scenarios, we bail out after a timeout while dumping a meaningful
-call trace of the shutdown callback which blocks the shutdown or
-reboot process.
+On 05/29/2024, Alexander Stein wrote:
+> Hi,
+> 
+> Am Mittwoch, 29. Mai 2024, 09:50:24 CEST schrieb Liu Ying:
+>> On 05/29/2024, Alexander Stein wrote:
+>>> Although very unlike to occur (media_blk_ctrl needs 'syscon' compatible
+>>> removed), it lines up with the other error paths in probe function.
+>>
+>> Why media_blk_ctrl needs 'syscon' compatible removed?
+> 
+> No, it does not. As media_blk_ctrl is also used as power-domain the device
+> will not even be probed if media_blk_ctrl is not available.
+> I just mentioned it under which conditions this error path could happen.
 
-Change-Id: Ibfc63ca8f8aa45866cbe6b90401d438d95eca742
-Signed-off-by: Soumya Khasnis <soumya.khasnis@sony.com>
-Signed-off-by: Srinavasa Nagaraju <Srinavasa.Nagaraju@sony.com>
----
- drivers/base/Kconfig | 15 +++++++++++++++
- kernel/reboot.c      | 46 +++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 60 insertions(+), 1 deletion(-)
+The error path you mentioned returns ERR_PTR(-EINVAL) which
+doesn't make sense to use dev_err_probe.  ERR_PTR(-EPROBE_DEFER)
+is the one in question.
 
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 2b8fd6bb7da0..d06e379b6281 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -243,3 +243,18 @@ config FW_DEVLINK_SYNC_STATE_TIMEOUT
- 	  work on.
- 
- endmenu
-+
-+config DEVICE_SHUTDOWN_TIMEOUT
-+	bool "device shutdown timeout"
-+	default n
-+	help
-+	   Enable timeout for device shutdown. Helps in case device shutdown
-+	   is hung during shoutdonw and reboot.
-+
-+
-+config DEVICE_SHUTDOWN_TIMEOUT_SEC
-+	int "device shutdown timeout in seconds"
-+	default 5
-+	depends on DEVICE_SHUTDOWN_TIMEOUT
-+	help
-+	  sets time for device shutdown timeout in seconds
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index 22c16e2564cc..8460bd24563b 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -18,7 +18,7 @@
- #include <linux/syscalls.h>
- #include <linux/syscore_ops.h>
- #include <linux/uaccess.h>
--
-+#include <linux/sched/debug.h>
- /*
-  * this indicates whether you can reboot with ctrl-alt-del: the default is yes
-  */
-@@ -48,6 +48,14 @@ int reboot_cpu;
- enum reboot_type reboot_type = BOOT_ACPI;
- int reboot_force;
- 
-+#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
-+struct device_shutdown_timeout {
-+	struct timer_list timer;
-+	struct task_struct *task;
-+} devs_shutdown;
-+#define SHUTDOWN_TIMEOUT CONFIG_DEVICE_SHUTDOWN_TIMEOUT_SEC
-+#endif
-+
- struct sys_off_handler {
- 	struct notifier_block nb;
- 	int (*sys_off_cb)(struct sys_off_data *data);
-@@ -88,12 +96,46 @@ void emergency_restart(void)
- }
- EXPORT_SYMBOL_GPL(emergency_restart);
- 
-+#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
-+static void device_shutdown_timeout_handler(struct timer_list *t)
-+{
-+	pr_emerg("**** device shutdown timeout ****\n");
-+	show_stack(devs_shutdown.task, NULL, KERN_EMERG);
-+	if (system_state == SYSTEM_RESTART)
-+		emergency_restart();
-+	else
-+		machine_power_off();
-+}
-+
-+static void device_shutdown_timer_set(void)
-+{
-+	devs_shutdown.task = current;
-+	timer_setup(&devs_shutdown.timer, device_shutdown_timeout_handler, 0);
-+	devs_shutdown.timer.expires = jiffies + SHUTDOWN_TIMEOUT * HZ;
-+	add_timer(&devs_shutdown.timer);
-+}
-+
-+static void device_shutdown_timer_clr(void)
-+{
-+	del_timer(&devs_shutdown.timer);
-+}
-+#else
-+static inline void device_shutdown_timer_set(void)
-+{
-+}
-+static inline void device_shutdown_timer_clr(void)
-+{
-+}
-+#endif
-+
- void kernel_restart_prepare(char *cmd)
- {
- 	blocking_notifier_call_chain(&reboot_notifier_list, SYS_RESTART, cmd);
- 	system_state = SYSTEM_RESTART;
- 	usermodehelper_disable();
-+	device_shutdown_timer_set();
- 	device_shutdown();
-+	device_shutdown_timer_clr();
- }
- 
- /**
-@@ -293,7 +335,9 @@ static void kernel_shutdown_prepare(enum system_states state)
- 		(state == SYSTEM_HALT) ? SYS_HALT : SYS_POWER_OFF, NULL);
- 	system_state = state;
- 	usermodehelper_disable();
-+	device_shutdown_timer_set();
- 	device_shutdown();
-+	device_shutdown_timer_clr();
- }
- /**
-  *	kernel_halt - halt the system
+> 
+> Best regards,
+> Alexander
+> 
+>> device_node_get_regmap may return error pointer other than
+>> ERR_PTR(-EPROBE_DEFER), like ERR_PTR(-ENOMEM).
+>>
+>> struct regmap *syscon_node_to_regmap(struct device_node *np)                     
+>> {                                                                                
+>>         if (!of_device_is_compatible(np, "syscon"))                              
+>>                 return ERR_PTR(-EINVAL);                                         
+>>                                                                                  
+>>         return device_node_get_regmap(np, true);                                 
+>> }                                                                                
+>> EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
+>>
+>> Regard,
+>> Liu Ying
+>>
+>>>
+>>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+>>> ---
+>>> Changes in v2:
+>>> * Removed unused variable
+>>> * Added missing \n at end of string
+>>>
+>>>  drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c | 9 +++------
+>>>  1 file changed, 3 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c b/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c
+>>> index 2347f8dd632f9..13025f47f3902 100644
+>>> --- a/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c
+>>> +++ b/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c
+>>> @@ -834,18 +834,15 @@ static int imx93_dsi_probe(struct platform_device *pdev)
+>>>  	struct device *dev = &pdev->dev;
+>>>  	struct device_node *np = dev->of_node;
+>>>  	struct imx93_dsi *dsi;
+>>> -	int ret;
+>>>  
+>>>  	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
+>>>  	if (!dsi)
+>>>  		return -ENOMEM;
+>>>  
+>>>  	dsi->regmap = syscon_regmap_lookup_by_phandle(np, "fsl,media-blk-ctrl");
+>>> -	if (IS_ERR(dsi->regmap)) {
+>>> -		ret = PTR_ERR(dsi->regmap);
+>>> -		dev_err(dev, "failed to get block ctrl regmap: %d\n", ret);
+>>> -		return ret;
+>>> -	}
+>>> +	if (IS_ERR(dsi->regmap))
+>>> +		return dev_err_probe(dev, PTR_ERR(dsi->regmap),
+>>> +				     "failed to get block ctrl regmap\n");
+>>>  
+>>>  	dsi->clk_pixel = devm_clk_get(dev, "pix");
+>>>  	if (IS_ERR(dsi->clk_pixel))
+>>
+>>
+> 
+> 
 -- 
-2.40.0
+Regards,
+Liu Ying
 
 
