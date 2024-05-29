@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-193618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AD08D2EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:44:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747848D2ECA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E347F1C20A70
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:44:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EE61F28B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17764167DB5;
-	Wed, 29 May 2024 07:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EDA167D97;
+	Wed, 29 May 2024 07:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aIgkC4Vh"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="kkSRPxZg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="MP0C026J"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB03E167D98
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DC215FCE6;
+	Wed, 29 May 2024 07:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968688; cv=none; b=Uy0+931qHsbMltAW/0v+VCTzZ5xsKq0QtxEVTCegyntl1lYWYJ5VxRoKHBUnOmGdLwKgT2XFgn7B/XOoqIo0iZ0IGjSo2OxbMbOFDzW8B6pnoo29NBvkoN+n32oJLm3ptl5EeDAc8EtWPMYCWiLaCi/TdPblp8ToPZSMDTRaIes=
+	t=1716968796; cv=none; b=hey67oTKsssVbW0pp0cQvd+cUUiLYq4JxhuURC5zJSik620D5sPZnY9sz6UndHEpyBF3Hn7ZTCWvxApYuDSWFXe3IzMNO8HR6XMJhKnKzIvaWgCs75UuUKwPD6fugGD3RcBXheNfhCRogc4jHAoGnoFSmLw6SN5AcnYtLU2O3nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968688; c=relaxed/simple;
-	bh=V2Tay+cwE/xAfntGJvfIlOvq+Bb4o/mzQBalXXWGSTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GzVtdlmVu1f3C5KWmJeKuub/ZWgI04cSxeTNnPSa+PHqAyGse4fCEwjM+Es8bLKlRpRLZXE+aDmAcF+b830lzt68RQ6QsoeFdgiLVeu6iCVesN5y55g+c9vT+DyPPrHZ5cNg7YU+8WIAeNykEC/bTNUrJfDQkYok3Z5+dbEeL90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aIgkC4Vh; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e716e3030aso15809961fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:44:46 -0700 (PDT)
+	s=arc-20240116; t=1716968796; c=relaxed/simple;
+	bh=wIX0I6dBNzJ3YcP9RZ5r6rw6vXpVJT0HcPQ8BSXtYpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jmnpVv2o6DXADqOWM+0fGBNWY1lZJTJooafhhd3zhjVU6bau5jX3Oz7vT6QDPL38alIdW45ln3eawyolpp67zEpgLI59TM/E2BU/T6nAR+w4/Gc549IqmVRMUHuncOttiHUaHwe0/pJDhKPcbkslU5RdrT60pHEYqk9WYLF8QSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=kkSRPxZg; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=MP0C026J reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716968685; x=1717573485; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1XyMvug7w7dhtxZdl8ZlGvff2YgfxxUHgfNNPJEirc=;
-        b=aIgkC4VhDFkGSlpcz3NPbMDKwR97q6csBvbafWQYVWhsMpCcZBRfq2SQ9IV8apsnf7
-         OntV39Lu4gbqPpTyRROPtd5fMcrOl96/fBfzh8r3kt2nvzrp7k4KI/zED/TD95Ms0FIa
-         9fOAaSENVgebAqO7G5PwZyvANl5jAZKvaQuBiz5MNdZdBMKW30gvDtySmihO48Y/spb1
-         RiuYxG/GXf1krAtxIsVQ3ZaI9PG0BZVZWlGWK3RDuBRAuwLiEYi3L0vU//fUyMqiZpgL
-         hm8uj6wYf46abh4lGNfM8HY1ONxKO3dwlOgfZVw5bdRzPDBqNuLO04g9tJoaooQ64GPG
-         lJNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716968685; x=1717573485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S1XyMvug7w7dhtxZdl8ZlGvff2YgfxxUHgfNNPJEirc=;
-        b=ZcqXSOVJM2oadgUB13Nks48BRco2SJCsnX/QoBajjplvov6DqyJyal7YcyKHtBzn0D
-         DC8eJF+/Z1BDozXBK9QctrWP/Q8fPRaF2Rtm4Ibwpj6Co6kqkrFyEqxVHTrf5xEuZmuC
-         QwePz739Hr/YWayTvLalaE2IU1NKNLQQ03cWeS5NvPNGX0N1doU+xfXljnpiC0GS2/uU
-         VDJknC9X8+wyQ1r5BpjnR0yPkLblThHq4DsPuRqG1lFPw03+ukTpwWG3hmNcgIgbjWD4
-         sm8vl9vm71wlnxKAXAR2FA3jrZhOgeOaUKxxN9QR6R2HocbTJ8RXIWNuxtBHlShM09LL
-         lxmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjAfcIpQaODwWi5rkyfbqc7kz5cDxaR9gMICIU0bBOrSVE92uIk9XQlrjrfXtYM5ykng+NQs8ZRlP89+xKWcoCLsSuJX03q9tC9bZt
-X-Gm-Message-State: AOJu0YyJip7OZgUitGlkXaV/RifhODPLntvH0Iztx6BQ8cIJENdjR10K
-	/L+GfjSjGHzq4Ri1CAmuy7neRvx0Iko4jiV58UCzaKMFg1arUwDP5fQypcMezws=
-X-Google-Smtp-Source: AGHT+IHWA2lvLG0B0kntbUD/V5owakoa3EW0tQI6tq3UwCSFqELYaCxoJok/0cawUBov1/1KRXreEw==
-X-Received: by 2002:a2e:b05a:0:b0:2e7:c29:dadc with SMTP id 38308e7fff4ca-2e95b24e06amr72686241fa.34.1716968684582;
-        Wed, 29 May 2024 00:44:44 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e9816943d2sm6297271fa.61.2024.05.29.00.44.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 00:44:44 -0700 (PDT)
-Date: Wed, 29 May 2024 10:44:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
-	david.heidelberg@collabora.com, guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
-	mcanal@igalia.com, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] drm/ci: generate testlist from build
-Message-ID: <nsamdoevg6fhop3otikwsmu4ga6ysyrg2ogxbqhw3sqg2nbqq2@n5xbqid7ltiw>
-References: <20240529024049.356327-1-vignesh.raman@collabora.com>
- <20240529024049.356327-4-vignesh.raman@collabora.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1716968792; x=1748504792;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=12wb6dLYGNieP4dY03eNUQA0kPAmzHw0zvX0b6aijck=;
+  b=kkSRPxZgFW+YgMYdYNn85y8ksIjH2Rns59tpbkCRTlNgT9oQvTEh41/o
+   aJTV/b8G3aWZOfxeRNl80GLkSIvfnJaXphJOpbVa9qjHRsBc7AlrFkND+
+   YHmrY70cia3jAbZXj/Wg/BkWpFr42uxpxjBLoIyoMA0Bi7jCKK4HuxQHT
+   WTv0aYUpobArWVtT1QkhamoGt3So8UqTJLLwMFcd0wLEOES4AzXQ9Jivk
+   wU7NqXD3DEQUDTcSm5jxAJt64eWDnZXEsIzLZQlvfDrYkZ+CQoTHoq65n
+   m6VKWl+hM+NA2F3MiA3f3Vt3JZQ5tMiRL3nxfZ8kEB1veIE+vm5LN74hv
+   g==;
+X-CSE-ConnectionGUID: 6G5bPbjYTamegbHe0LjysA==
+X-CSE-MsgGUID: /xezvZ0jR06T9aAwPC+5PA==
+X-IronPort-AV: E=Sophos;i="6.08,197,1712613600"; 
+   d="scan'208";a="37119668"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 29 May 2024 09:46:30 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 975321652F9;
+	Wed, 29 May 2024 09:46:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1716968785;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=12wb6dLYGNieP4dY03eNUQA0kPAmzHw0zvX0b6aijck=;
+	b=MP0C026Jl0Yj++4/bGAdN5sSvfMn1mwiBF1OlvPktvTdemoE20t6LNQbV/sR3+CcjbqMAD
+	z7g9tO1ERu+9UrwCWIJFRaiqrJSLsALzOalheAA/Qelk2x8IMtbAl1TVOQ0nzUuZ5BCziY
+	qoo4LKRsEABr3qaTjNCDxpjBYC6TN05+4sdozT9951pG4KEAjwgmiH3gTLbH4XOg/VW2Cb
+	Jo/muKPPERF/sMssQYCQ4NPK2pL3ykpO8ph0/VVh5iqb69Afjs8Uul9PQD62cpXT1tVU0q
+	/tH6TDv0z7dNSYyhnGWqjtD8hNb6U+Vv1dH5CfEkyAYyayVzQl7dm7oqrtRoQw==
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>,
+	linux@ew.tq-group.com,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH 0/8] gpio-tqmx86 fixes
+Date: Wed, 29 May 2024 09:45:12 +0200
+Message-ID: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529024049.356327-4-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, May 29, 2024 at 08:10:46AM +0530, Vignesh Raman wrote:
-> Stop vendoring the testlist into the kernel. Instead, use the
-> testlist from the IGT build to ensure we do not miss renamed
-> or newly added tests.
-> 
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
-> 
-> v2:
->   - Fix testlist generation for arm and arm64 builds.
-> 
-> v3:
->   - Rename generated testlist file to ci-testlist.
-> 
-> ---
->  drivers/gpu/drm/ci/build-igt.sh  |   35 +
->  drivers/gpu/drm/ci/igt_runner.sh |    9 +-
->  drivers/gpu/drm/ci/testlist.txt  | 2761 ------------------------------
->  3 files changed, 40 insertions(+), 2765 deletions(-)
->  delete mode 100644 drivers/gpu/drm/ci/testlist.txt
-> 
+This is the first series of improvements to the tqmx86 GPIO driver,
+which fixes some long-standing bugs - in particular, IRQ_TYPE_EDGE_BOTH
+can never have worked correctly.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Other patches in the series are code cleanup, which is included as it
+makes the actual fixes much nicer. I have included the same Fixes tag in
+all commits, as they will need to be cherry-picked together.
 
+A second series with new features (changing GPIO directions, support
+more GPIOs on SMARC TQMx86 modules) will be submitted when the fixes
+have been reviewed and merged.
+
+Gregor Herburger (1):
+  gpio: tqmx86: fix typo in Kconfig label
+
+Matthias Schiffer (7):
+  gpio: tqmx86: introduce shadow register for GPIO output value
+  gpio: tqmx86: change tqmx86_gpio_write() order of arguments to match
+    regmap API
+  gpio: tqmx86: introduce _tqmx86_gpio_update_bits() helper
+  gpio: tqmx86: add macros for interrupt configuration
+  gpio: tqmx86: store IRQ triggers without offsetting index
+  gpio: tqmx86: store IRQ trigger type and unmask status separately
+  gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH interrupt type
+
+ drivers/gpio/Kconfig       |   2 +-
+ drivers/gpio/gpio-tqmx86.c | 151 ++++++++++++++++++++++++++-----------
+ 2 files changed, 106 insertions(+), 47 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
+
 
