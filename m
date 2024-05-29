@@ -1,160 +1,145 @@
-Return-Path: <linux-kernel+bounces-194650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAFA8D3F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526098D3F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F7C28B252
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64EFB1F2202E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5631C68B0;
-	Wed, 29 May 2024 20:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDB71C68AE;
+	Wed, 29 May 2024 20:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D2+SaGAz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LhKwkkz9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1048714534D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812D218E06
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717014034; cv=none; b=dWZx6r9zovFPJKHDuC6N9X9suzjyuISjjzkOPnsAYdVOzkF/RQWj+GXx9ZFVgAhjUh7Lmj5QMNN0RC/g2c422K62X1resSZb435nCxCMMVQpT2CxUChqeliyl9eqyvuVNgZN9CZIoMeH7cPSC9mY7+tf+tt2qyGgIubSgkk+H3w=
+	t=1717014086; cv=none; b=DR7AIf6lvnw5IVILpH5lTQ/+Ydpr8afMdQWj0FpjxvcG2eMv4KLcWabO9/5tb6yWLv87ucJ7kbpeNruZfXCG8d9fF0W/gkf1lQUYT0vr5dikD73VFDgqdBAwtIFPsSAPBQrHBqSrm/jRhh5Ip/EzJ9FxQwzItBeW0Uk2lypNn/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717014034; c=relaxed/simple;
-	bh=/Y28hbBOtK57TCN8FXJojnbsAgLCRqTn2Drt1yM5zRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5iWu9gSl1g3b6Z2JSxYxw6rUoeIXm55eAj+ngIIZwscOx+IbBqGqnpXA1z7xCLtG/ZusyrU356awlKRFBVBmb2rnaK78rupi3WYKYYjcJxkdDzXuiTuen9boAnmnooH4kdWsISNOHzCX169objWFYmkKFxF+3T/nNUadEy9MrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D2+SaGAz; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717014033; x=1748550033;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/Y28hbBOtK57TCN8FXJojnbsAgLCRqTn2Drt1yM5zRk=;
-  b=D2+SaGAz2mOidEqCJQUguG9ePhtcKSBqRxNY2DCKr1nAAz7vm5R4A0ja
-   GgC7K+/clBgK44pRAFudh+VcSjk3fJNxWg/8nsqT6KVPzapi5pN99HMyl
-   Q72CVLb5+9DtYVKMTxmNSmtI339JnU3I+cqZkrlSREFh12A75CtYeWs1r
-   cpqempUxkdh8DyDyXz+4FNVvoknqpeJ2RGsuFxbJqcTrlJgTAi8ow/Xr6
-   UVxzfmDnvE0ugHyq333ezxXbcD6ZSC5FtRIEHdxe75DRPK3Hbyn8G+cuQ
-   qGIE6huLq8QfMTK/29AZb26fUcgpMqmDtkQDqemdHXRXpdvdgnN1z1sFr
-   A==;
-X-CSE-ConnectionGUID: CKls1mXVSjeTfAAQvOqdqQ==
-X-CSE-MsgGUID: SfMmIQxvTS+CQXp1PlC5qQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13264775"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13264775"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 13:20:32 -0700
-X-CSE-ConnectionGUID: Iy6SnbodRKy2moBrJcINAw==
-X-CSE-MsgGUID: IgGj007RROOYQ0mR+V+6RQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="36104289"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 13:20:32 -0700
-Date: Wed, 29 May 2024 13:20:30 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v19 00/20] Add support for Sub-NUMA cluster (SNC) systems
-Message-ID: <ZleODtL_6D-Q_OMX@agluck-desk3.sc.intel.com>
-References: <20240528222006.58283-1-tony.luck@intel.com>
- <08ca8fe7-9da6-41da-aad2-0081b789326c@intel.com>
+	s=arc-20240116; t=1717014086; c=relaxed/simple;
+	bh=O2Xgfhg6ru+w2GvnufPz62XVw7kdrN5hbuagbcPFEoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jHMTkVlRUpqqQ/25fmWrxXPB80dS0nuCVSp6gDyyE8tymexWW1N2dEss2Pj5hzReC83V5N46exxWJ5k9qv9C6AQ0nL1LpOiS7KtpPhgwfsq0KrNMjYBFAhTUQe0hjJdbteRhnab9ey7Yd419T0BSzF0swBw63qNfQGa0o6B1rfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LhKwkkz9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TBtFDb010054;
+	Wed, 29 May 2024 20:20:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VLxWnZgCKiEb6sjEGXxOy0SRrO7Z0dsEeQ0/LUXuLJc=; b=LhKwkkz9jku//r2O
+	sQDWlcBuVZbhY0HK1qEsvNjGg5N9GRQ6fE8ZdbI8hJYa89Zt+lpotT0POrAexuqn
+	WCaeNsmCbYNcjVIvZQeXWLbdMxjweeZtOgiNE1RrvuU46xashGxpUDDjhH6HcFmM
+	RVtIbHW8GwWrVBESRXXf9NkpWDmFDlMLlQ0ka4Oc1KuYYbUISCBi5O2Nzzm7Klll
+	uyKlJ9rgbdFjnbgXe/WZOXWVFBmJJdwWvSF9iooXqoa06tvx3/hSXyvn/4WJYDNX
+	jSAQCCXn5cjdrX27fkvjqGYIaHg4fv7mO2TzE+Qi0A3vuSkDFlxTbrvlQwK+x/hQ
+	v1OBbQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2n27rn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 20:20:58 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TKKuT1004009
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 20:20:56 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 13:20:56 -0700
+Message-ID: <c5c5fe1f-5fdf-4f13-8b89-984072f52838@quicinc.com>
+Date: Wed, 29 May 2024 13:20:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <08ca8fe7-9da6-41da-aad2-0081b789326c@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] drm/panel: sitronix-st7789v: tweak timing for
+ jt240mhqs_hwt_ek_e3 panel
+Content-Language: en-US
+To: Gerald Loacker <gerald.loacker@wolfvision.net>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v2-0-e4821802443d@wolfvision.net>
+ <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v2-2-e4821802443d@wolfvision.net>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v2-2-e4821802443d@wolfvision.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rL9tqHFMZO8X8dg6ilTMKllG-lojgCqE
+X-Proofpoint-ORIG-GUID: rL9tqHFMZO8X8dg6ilTMKllG-lojgCqE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290142
 
-On Tue, May 28, 2024 at 03:55:29PM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> > 13:	Wordsmith commit into imperative.
-> > 	I looked at using kobject_has_children() to check for empty
-> > 	directory, but it needs a "struct kobject *" and all I have
-> > 	is "struct kernfs_node *". I'm now checking how many CPUs
+
+
+On 5/29/2024 7:42 AM, Gerald Loacker wrote:
+> Use the default timing parameters to get a refresh rate of about 60 Hz for
+> a clock of 6 MHz.
 > 
-> Consider how kobject_has_children() uses that struct kobject *.
-> Specifically:
-> 	return kobj->sd && kobj->sd->dir.subdirs
+> Fixes: 0fbbe96bfa08 ("drm/panel: sitronix-st7789v: add jasonic jt240mhqs-hwt-ek-e3 support")
+> Signed-off-by: Gerald Loacker <gerald.loacker@wolfvision.net>
+
+Hi Gerald,
+
+Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+Thanks,
+
+Jessica Zhang
+
+> ---
+>   drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> It operates on kobj->sd, which is exactly what you have: struct kernfs_node.
-
-So right. My turn to grumble about other peoples choice of names. If
-that field was named "kn" instead of "sd" I would have spotted this
-too.
-
-> > 	remain in ci->shared_cpu_map to detect whether this is the
-> > 	last SNC node.
+> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> index 32e5c0348038..c7e3f1280404 100644
+> --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> @@ -282,9 +282,9 @@ static const struct drm_display_mode et028013dma_mode = {
+>   static const struct drm_display_mode jt240mhqs_hwt_ek_e3_mode = {
+>   	.clock = 6000,
+>   	.hdisplay = 240,
+> -	.hsync_start = 240 + 28,
+> -	.hsync_end = 240 + 28 + 10,
+> -	.htotal = 240 + 28 + 10 + 10,
+> +	.hsync_start = 240 + 38,
+> +	.hsync_end = 240 + 38 + 10,
+> +	.htotal = 240 + 38 + 10 + 10,
+>   	.vdisplay = 280,
+>   	.vsync_start = 280 + 48,
+>   	.vsync_end = 280 + 48 + 4,
 > 
-> hmmm, ok, will take a look ... but please finalize discussion of a patch series
-> before submitting a new series that rejects feedback without discussion and
-> does something completely different in new version.
-
-Reinette,
-
-So here's what rmdir_mondata_subdir_allrdtgrp() looks like using the
-subdirs check. It might need an update/better header comment.
-
--Tony
-
----
-
-/*
- * Remove all subdirectories of mon_data of ctrl_mon groups
- * and monitor groups with given domain id.
- */
-static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
-					   struct rdt_mon_domain *d)
-{
-	struct rdtgroup *prgrp, *crgrp;
-	struct kernfs_node *kn;
-	char subname[32];
-	char name[32];
-
-	sprintf(name, "mon_%s_%02d", r->name, d->ci->id);
-	if (r->mon_scope != RESCTRL_L3_CACHE) {
-		/*
-		 * SNC mode: Unless the last domain is being removed must
-		 * just remove the SNC subdomain.
-		 */
-		sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
-	}
-
-	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
-		kn = kernfs_find_and_get(prgrp->mon.mon_data_kn, name);
-		if (!kn)
-			continue;
-
-		if (kn->dir.subdirs <= 1)
-			kernfs_remove(kn);
-		else
-			kernfs_remove_by_name(kn, subname);
-
-		list_for_each_entry(crgrp, &prgrp->mon.crdtgrp_list, mon.crdtgrp_list) {
-			kn = kernfs_find_and_get(crgrp->mon.mon_data_kn, name);
-			if (!kn)
-				continue;
-
-			if (kn->dir.subdirs <= 1)
-				kernfs_remove(kn);
-			else
-				kernfs_remove_by_name(kn, subname);
-		}
-	}
-}
+> -- 
+> 2.37.2
+> 
 
