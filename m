@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-194120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920BF8D36E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:57:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716E48D36E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43E81C22432
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED75D28A70A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22578BFF;
-	Wed, 29 May 2024 12:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3A1DDD9;
+	Wed, 29 May 2024 12:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNZ87PUJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E/8LJNwA"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E9779D3;
-	Wed, 29 May 2024 12:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BA079FD
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716987470; cv=none; b=IROBqZBmDWa+mvx+zAdmdtDTWIW48F08t5WJHCQkXUUDeGcKEg3MOPrxrFnObzC8VeGn1Ti/pJgPlJbnEzS+b0TUiKaW7Mkh+39WWA44uhHtpBLHL7nU0C518HLmuttK9iHMB68wtyqQJf5jdsn0hCs0JpRhG4oZzIbMzFjJtsA=
+	t=1716987504; cv=none; b=KfBDVX5fHIi+5faf8tVqL7x0+hMSkOuCvNAjsZ+ytp5NvxmrGAH3sndCKO+eu1M75vzYIBShMwTgOdToG9XfyQqPtOvW17wpIc4fPwyV6SFNMypR10Wby1NtfL6IYYO26kUtW4Xlpohg6NBbegPnz8xMmPVIfBEaywbx0wDUJSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716987470; c=relaxed/simple;
-	bh=Kf2XD0U6dqkRaiIXSiX5t61ZvzMR1rEAHQmrTquShYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uG/J2/gE1BKSUuD/6KkPj21dxOcqJI7goc0YRuUC2hI+n0s8e6nJKH7HGfS+ChLnJHPLvUU/JD0SmpK8kPqYjWia63VsOgb0aOA+KFGnXE6sZwGXfivcA0UMGpS/fLJu4B25TFQB825nlJRABmx9PZh86knWKbjBZBJTaJKtrHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNZ87PUJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E50DAC2BD10;
-	Wed, 29 May 2024 12:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716987469;
-	bh=Kf2XD0U6dqkRaiIXSiX5t61ZvzMR1rEAHQmrTquShYc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qNZ87PUJnddl+YKpyYkoqkIOY7lxogibjj0LcSsel5rTqUAJHzV9cS0cXF6UA9i6W
-	 n8YKQVHmqxrzAuin6o/k3NANI7Vb5tJu8EYnkGHzvVH4jku1PdLqZRi9BrLCb7pJgG
-	 ionX4DNbdk+zSyIO0SV1Un0NBoUL6CKhSFrsKOnAk1SPeJhuVY+tP56SvC38dR+u3Q
-	 wrlh9v056yQf6UUoJK0MJiU75I46ZFXw4rYpVGDEfw21TfVuAxtfu36D27WXAX6yml
-	 gAWiwoUYRfwi3vMagQywszbDODHLln3y45LaTBg76RKxyhB58un7qoiHRf60yjXTPS
-	 PmyDiJ3bLvCaQ==
-Message-ID: <c8e2d859-ff7c-4ea1-a731-b0f0500ba8c6@kernel.org>
-Date: Wed, 29 May 2024 14:57:44 +0200
+	s=arc-20240116; t=1716987504; c=relaxed/simple;
+	bh=XQz+9lO5ZIikKb8f2qui5XPn38ALEFPc0NcBYdZAJss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RmFIMLcPaZhu2SrgX9DpYuWwm9fFBEKgKlUde0GL5WayzScRSROsELjWuJ0W1hdHrV9zRLi5kN4QPHexT9IqWtgkOxFidnBtm/wPR6ym2JZm6xNsaNAU5oABNWemCWMPiLw/ofEU+u85CxE5MLsFl8FGWJKe8tK3UTJTJ/09Z10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E/8LJNwA; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35507e3a5deso567212f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716987501; x=1717592301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CJE/TrInZvRacWNjkotsg4UFE7vYxZTG6U1qKQXeqbA=;
+        b=E/8LJNwAov0dPpi38gEfN1fyJ24uz1/udy2vHJp16BEIVPVDEkXJkzQrJDd03OIv69
+         15/umws0BBeAtjL2sKNpSR4QUxS+xMTv50e79CEg3krZdEGtj/e01g8N2J4XuOW2AvEH
+         4qW+/Lj14K19dQ+GKnJ3AoGe19agNx/3pftORA4kzIuQQ+1GW/H1P825oFdLf/mYK1hH
+         8CLc4Y/x/h2ayMOXgM6Nl5oEzBdiqCdJsJIQ+Yj6hFLWCd+ALrgDdgQz1vnxlHhOE/MN
+         2V8z/3UJj8CzP89r18p/XoRDzPHx5RzdrpYFfHph/z3FogV2oBB/7miirFhcYowvwAkB
+         OQUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716987501; x=1717592301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CJE/TrInZvRacWNjkotsg4UFE7vYxZTG6U1qKQXeqbA=;
+        b=O1S46/QjZmmfuGger8sK9/irpzItrLBYy3UYHQxQP6xPkzhTEbeCQ6nSyRyaA8l3Bl
+         ytXl0dgOTuftr349g01VJ9k/y5r6TKA8bsqy9tNPWRiL05ZnXC70wsYF8hqpfRBf6xLl
+         eqUEahjaDd6PBeKhzyV2tBQJCTXECkyCuYWVC31eywLVzMx89H4iKvkBfGyU/oyamiCi
+         fH+44CTycvmx3C5Z5Y2Ns8DeoFXbCA8PnyuwqqTFP+khT6aeNVZySv8ameuUv87co+W4
+         c2eM5Vs71U/CBlFhGhYNNqDurw3NpDt+T2kSIh/ptp/mETwL2oSKPetTg0yBjxqhzpvu
+         bKAA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2N5tW8kDqWx2jQBbecnjCFR+CvCvl6JHkdOlfdRrzOOd26vem7HD+Grp8J+uMQKfA2gex3AGD44DHaBkGEArYpH+o3H5OzLCN3CB9
+X-Gm-Message-State: AOJu0YxaKE0bsYAas3J4H5PO0WWPXhUBZFLFtMyKHUKzwHrb7dUBD+B6
+	BA3aUN2yq52e5u5Vc0rX+1OLMAmRzpee2CkSp+kNih93Ot5id6GQwjzk9CXfQZAL/XooPfHQVSV
+	x2UD72UgMrg0bV7hKiBdfN8WMR+/NsqQ2XHT4
+X-Google-Smtp-Source: AGHT+IHLqCIA5rqLOoRvTg/y45Phs642aTjHaD58tJI987z5v8v3ParDcY+NpNGrPo5LJWYTAbY+wWYhlsu8xANJIQ0=
+X-Received: by 2002:adf:fdcb:0:b0:356:af95:e31d with SMTP id
+ ffacd0b85a97d-35c7968d6fdmr1727725f8f.6.1716987500678; Wed, 29 May 2024
+ 05:58:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: cache: qcom,llcc: Add SA8775p
- description
-To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240529101534.3166507-1-quic_tengfan@quicinc.com>
- <20240529101534.3166507-2-quic_tengfan@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240529101534.3166507-2-quic_tengfan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240525-dompteur-darfst-79a1b275e7f3@brauner>
+ <20240527160514.3909734-1-aliceryhl@google.com> <20240529-muskatnuss-jubel-489aaf93fc0b@brauner>
+In-Reply-To: <20240529-muskatnuss-jubel-489aaf93fc0b@brauner>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 29 May 2024 14:58:08 +0200
+Message-ID: <CAH5fLgg0Bh7PfxFRJoXCOHL3M9wSaAOkhdAJbuTbt8=pkcvc1g@mail.gmail.com>
+Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
+To: Christian Brauner <brauner@kernel.org>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, 
+	gary@garyguo.net, gregkh@linuxfoundation.org, joel@joelfernandes.org, 
+	keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
+	viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org, 
+	yakoyoku@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29/05/2024 12:15, Tengfei Fan wrote:
-> Add the cache controller compatible and register region descriptions for
-> SA8775p platform.
-> 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
+On Wed, May 29, 2024 at 10:17=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+> > > Is it honestly worth encoding all that complexity into rust's file
+> > > implementation itself right now? It's barely understandable to
+> > > non-rust experts as it is right now. :)
+> > >
+> > > Imho, it would seem a lot more prudent to just have something simpler
+> > > for now.
+> >
+> > The purpose of the changes I've made are to prevent data races on the
+> > file position. If we go back to what we had before, then the API does
+> > not make it impossible for users of the API to cause such data races.
+> >
+> > That is the tradeoff.
+>
+> Right. Sorry, there's some back and forth here. But we're all navigating
+> this new territory here and it's not always trivial to see what the
+> correct approach is.
+
+Yeah of course. You've been very helpful in that regard, and I'm
+grateful for that.
+
+> I wonder what's better for now. It seems that the binder code isn't
+> really subject to the races we discussed. So maybe we should start with
+> the simpler approach for now to not get bogged down in encoding all
+> subtle details into rust's file wrapper just yet?
+
+Yeah, maybe. But I think that if we can accurately represent the
+requirements of the interface, then that would be preferable. Perhaps we
+can tweak it to make it easier to understand, without giving up
+accuracy?
+
+One of the reasons that the current API is confusing is that the types
+are called `File<NoFdgetPos>` and `File<MaybeFdgetPos>`. These names
+_sound_ like their purpose is to keep track of whether or not the file
+came from an `fdget_pos` call or not, but that is not the case.
+
+Instead, let's call them something else.
+
+We can have two files: File and LocalFile.
+
+This name accurately conveys the main difference between them. File can
+be transferred across thread boundaries. LocalFile cannot.
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+Now, it is still the case that `fget` will return a `LocalFile`, which
+may be confusing. But we can document it like this:
 
+1. On `fget`'s docs, we explain that to get a `File`, you need to
+   convert it using the `assume_not_in_fdget_pos_scope` function. We do
+   not explain why in the docs for `fget`.
+
+2. We can put an explanation of why in the docs for the function
+   `assume_not_in_fdget_pos_scope`.
+
+I think it's possible to design an API like this where the complexities
+about `fdget_pos` are only relevant in a few places. In the rest of the
+implementation, we simplify the situation to "file is threadsafe" or
+"file is not threadsafe", and that distinction should be easier to
+understand than nuances related to `fdget_pos`.
+
+Alice
 
