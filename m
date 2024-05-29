@@ -1,141 +1,86 @@
-Return-Path: <linux-kernel+bounces-194377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB91F8D3B41
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29018D3B42
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCEE51C244D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:43:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F1A828A21C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF78181CED;
-	Wed, 29 May 2024 15:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hfwNwGIY"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCB1181CE1;
+	Wed, 29 May 2024 15:43:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA921181334;
-	Wed, 29 May 2024 15:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429AD1B947
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716997377; cv=none; b=TViY4kA/gAuu2e1fAgS8IjHnwit61p0A4qqmB/yQp9UeprMj5RBpR23MbcOLNpYRm4nncYsXSMAkDWBWveEqcR2PFYxQSws7cCQaPMYI3G7DXoTeRGW47GKVY/EEvw6tIGQ7v5Ha9ud0DFO286nkYW7NHIm8xYiyEkixbbNqtPY=
+	t=1716997385; cv=none; b=C2d8E8YkA3BoT1B8qYyCnGyZQ/bUIO2tRE4DFkgwzpxA9hrTPKXgHRxmOcVOvc21bZ6pMaHb2eXKfGL6HdvYD477c4dKPXjJhQPXfq7bfUZBY4CZrBKdwUknhts+c8/M5ELjmhxtKVTlIuv0SMMIgo1TAnYBz0RB5l6T9dPU+sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716997377; c=relaxed/simple;
-	bh=YVjAOvgGqxa6Vv/TVvkaro0LhBO+CsQZ4z3wd5iHsLg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=buX/F87tu0FZGyIZdMbibTuYfPmzD8aSp2oRY4yCV90Ybo5WyhQgiXaVx0cTnTaHcJ90wyuygYRBUfnUtPSmrMUiM+Je/G65oBLIVXFSEn+UPOXpFa+g2L+i7jC2OpNEVt9Qk/4siYyvjpu6/+f05CUA8GskWcc4/zlrYKFesu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hfwNwGIY; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716997374;
-	bh=YVjAOvgGqxa6Vv/TVvkaro0LhBO+CsQZ4z3wd5iHsLg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=hfwNwGIY8NAShnPZRRmwAnq0tiGmG7BIbkCrQ394odi1UX8zymn7IeLBDVsAHo8UR
-	 4l83tLHA6UJviARTFOr9NqR/DgfN/ubVY5JQt01F1xCVJjv03iiojbobipRs2E5SNd
-	 3/MZZVQ9KMwUTRMoxSwd64/7R4paljxS4KLrgtQVWdQbmBY2iPHjio1LYpvO1+kfiY
-	 0KKTHDoND1Xa0mswZ7A+V4BN46JVJdfKckDgMPVOQyHdjSwQMYGQ3QjqN7M02NQ7c3
-	 /+agy0HrTpn+u0VtDxlxAJTaLvjrjlw0jRmHjk25+VG5DSjXBIP0QDLJ5LOumbYhtF
-	 ZwxMm4+hzYSRA==
-Received: from [192.168.1.221] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B32EF378218C;
-	Wed, 29 May 2024 15:42:52 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Wed, 29 May 2024 11:42:35 -0400
-Subject: [PATCH] spi: Assign dummy scatterlist to unidirectional transfers
+	s=arc-20240116; t=1716997385; c=relaxed/simple;
+	bh=Tpqf4bdpz3oMCSpv1spt76OidEKz7BlTEJl5nQNyJeU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VF9m6OOOvCcUjMP4Q16zBkk1dhcD02oow5uann5QXMNx1ita2zhPC7TNdP8bgWANNNllLYEwcsn+fFFBSUjvhikQYtWxH2c5oHUAfeRA2hlLvTC2MwEtwYsaNIDOIyBr9JP2f614kuZzzP1HPqIm+ntBIrVrKdagWO4GF2qSMOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ead3d6a782so196431139f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:43:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716997383; x=1717602183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpI8iKy7icmSl+K75JXmBzMscWe3lxcEvx7d28ejJsI=;
+        b=fIOv5dMXDAEw1sVEc5tghcVrWfUgEMcuPrVIgqeZYGgDevpHSxcEBxPw9AQVzrukYA
+         WkgPq6Qo3TOlRDO15c/wZqQsN/hMJFHODfUtmXq8NPMw1vY3nJxoeitpMspu2I+gZsPA
+         XUSTeExSSBnXBqEBquKgVOT2UaHrqljHjQsAA1TiIgKGyX6D1ifLD89RD+OEo2hI7Q8D
+         Ini1FzUtQFpEPizCQd/3Qz0FE0TwRpzHDQb0o484aeqOvlOU7651pYXVWw1Il1GfDjmS
+         zHRhCogjUN3t9G8FNSVk/KYPb9s/96t7bpnYUfd6gDJr5moIZFdclIwbXwIUbQW9hm69
+         Kfgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUga2UT168AhM2iGPOuxLoR8FCDP9EW7I8eNtPr92juUWt7Z+ev7UeMh08uGS+zuzxLMUkVmcJXrWlEH0p8WRK90c8h2vCRoBMWfBV
+X-Gm-Message-State: AOJu0YzUGafmHIP8QbVCurPzXFhjj9Rd5lo5I2878z/n/JS+pPhYedp1
+	ua1Q2C3b5pRcADMW7RsfT3kW0owiNvhczKRfEiTyJ9mcFp/wcWdmbiRjy0gC9KnygFV5dG7JGOH
+	ABit0FWqvSFScd5GDYN4CVfhbwyAM7PzpGPdn+bnFCEBhOg0x6yLXJK8=
+X-Google-Smtp-Source: AGHT+IGw1QZeoyZccPKLhLHbLjCRhb5oUTLfVWpEsrgABoGFBx1LHSkJqJr4IdXkXSS3GIJg5nDwMjxaB9oSRV64kGo3Ck1XQn7M
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240529-dma-oops-dummy-v1-1-bb43aacfb11b@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAOpMV2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUyNL3ZTcRN38/IJi3ZTS3NxKXaPkpDSL5KTE1GRTEyWgpoKi1LTMCrC
- B0bG1tQD/kAWZYAAAAA==
-To: Mark Brown <broonie@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, kernel@collabora.com, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+X-Received: by 2002:a05:6602:1601:b0:7da:19cb:1c7f with SMTP id
+ ca18e2360f4ac-7e8c1adbec3mr54742139f.0.1716997383400; Wed, 29 May 2024
+ 08:43:03 -0700 (PDT)
+Date: Wed, 29 May 2024 08:43:03 -0700
+In-Reply-To: <2afuizvfwythsdbwfiz7hdcpi73znr354bcuoy2hjux6et4u5p@mustf2czcn2x>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001e3fec0619999bbd@google.com>
+Subject: Re: [syzbot] [mm?] UBSAN: shift-out-of-bounds in try_to_shrink_lruvec
+From: syzbot <syzbot+17416257cb95200cba44@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hello,
 
-Commit 8cc3bad9d9d6 ("spi: Remove unneded check for orig_nents")
-introduced a regression: unmapped data could now be passed to the DMA
-APIs, resulting in null pointer dereferences. Commit 9f788ba457b4 ("spi:
-Don't mark message DMA mapped when no transfer in it is") and commit
-da560097c056 ("spi: Check if transfer is mapped before calling DMA sync
-APIs") addressed the problem, but only partially. Unidirectional
-transactions will still result in null pointer dereference. To prevent
-that from happening, assign a dummy scatterlist when no data is mapped,
-so that the DMA API can be called and not result in a null pointer
-dereference.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-Closes: https://lore.kernel.org/r/8ae675b5-fcf9-4c9b-b06a-4462f70e1322@linaro.org
-Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Closes: https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
-Closes: https://lore.kernel.org/all/4748499f-789c-45a8-b50a-2dd09f4bac8c@notapiano
-Fixes: 8cc3bad9d9d6 ("spi: Remove unneded check for orig_nents")
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-[nfraprado: wrote the commit message]
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/spi/spi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Reported-and-tested-by: syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index f94420858c22..9bc9fd10d538 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1220,6 +1220,11 @@ void spi_unmap_buf(struct spi_controller *ctlr, struct device *dev,
- 	spi_unmap_buf_attrs(ctlr, dev, sgt, dir, 0);
- }
- 
-+/* Dummy SG for unidirect transfers */
-+static struct scatterlist dummy_sg = {
-+	.page_link = SG_END,
-+};
-+
- static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
- {
- 	struct device *tx_dev, *rx_dev;
-@@ -1258,6 +1263,8 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
- 						attrs);
- 			if (ret != 0)
- 				return ret;
-+		} else {
-+			xfer->tx_sg.sgl = &dummy_sg;
- 		}
- 
- 		if (xfer->rx_buf != NULL) {
-@@ -1271,6 +1278,8 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
- 
- 				return ret;
- 			}
-+		} else {
-+			xfer->rx_sg.sgl = &dummy_sg;
- 		}
- 	}
- 	/* No transfer has been mapped, bail out with success */
+Tested on:
 
----
-base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
-change-id: 20240529-dma-oops-dummy-2cbf8cbaec54
+commit:         9d99040b Add linux-next specific files for 20240529
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1530a9d2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=735e953fee00ec19
+dashboard link: https://syzkaller.appspot.com/bug?extid=17416257cb95200cba44
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14a1650c980000
 
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+Note: testing is done by a robot and is best-effort only.
 
