@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-193252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7A78D2930
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9798D2940
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F1B287597
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84FBE1F258CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2C68BFF;
-	Wed, 29 May 2024 00:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41275DDAB;
+	Wed, 29 May 2024 00:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AwTK3Ubq"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="aopIU6H9"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BB517E8E6;
-	Wed, 29 May 2024 00:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9D6D27A;
+	Wed, 29 May 2024 00:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716940894; cv=none; b=cv0cjg9F1opWEUuDjTktzZnneoXBran6ppFkJ+1uO5ouJqDEvP8juedAS06jehYeWEZ2dktMgSKJJ1n3GeWmxfJBgHCsNSii7Lu2Fkumd7eadd3SXlqVI52rd//HSJ+JkKKiF9JhLVgUUlABa/ZrKCRN4z6S6TmeFGuurSDxldE=
+	t=1716941059; cv=none; b=Ts3QmpXP/qCSsA24MF9EnfEPjPxInByvM0jHQnaJHAJ2q78lz9exmbAZR65GrlK8/oVmcF4Ji/7bh0QpcZvA2W3M5Dm2h1ustsP7iAd3PoX2nnlHppajtrV7+COPqKrZb9PAZXJpHUlpmpILDWnfa6voQt0ICsFf+qF2buY1hIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716940894; c=relaxed/simple;
-	bh=C63Ly9k5dKIFZWQs/wl1bGWVi8J3EJSDPbiFrxMa7xU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FHaZE96MxsGWiBYmQB7LaFm/D0k2eMP6KMD70eMzQtDcC4OPRgXEfc1Pdq6Ki7SauBuQ8wQ4SchRcw7t8kQr4gRcsSgXJyyIx6mMwTo0zwNHTbVSkAmUD4HoO5WSD5oc+X1/5oFsr2vAPq/Ae9SM5EIDokCNKGTRiOtJ86ailaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AwTK3Ubq; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62a0849f5a8so14391967b3.2;
-        Tue, 28 May 2024 17:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716940892; x=1717545692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TIRHKX25G2rvrHd33/dtDE8fOCvBEp9EtBOCUmSmkH8=;
-        b=AwTK3Ubq4MafPRoP1gJ16sOovMMdg4/xiQpmgufQI1HgZf2ojWBBUPUUFIF6zyrXM+
-         4PS9+7UWV+Yxpf/EE5WdlsDIKSyE+t2QKx1ETv4Sy338/8Y+MMRnO/R8pA1/H6BiSxvy
-         cq/KokAHROSiiSTL9+FCBIe8OsMiaPSxN57+TPtd+KYVUx5q8XrV6tM0F/z2Ha0eoBKe
-         qsf9oclQL6TpJv2GXCjxM4sg0maTahgCTCPl+Rtl5lHEdleQS/WXTdtGh2caZoFggbiJ
-         scLeRMqhcirWjiLOAskTlY1y7udkzRnZ8IL6ISv+LNwuHq7TGq6djZ18uzChgL3vWZpK
-         TcmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716940892; x=1717545692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TIRHKX25G2rvrHd33/dtDE8fOCvBEp9EtBOCUmSmkH8=;
-        b=VQ0ia0b1EQpxFqaha2RE3DWadRoH8IMTzZaWXQXnWfLRaa6bcC5v9OlmbQv2k1Un5g
-         rXJWNBtAIOPjuRTsQCHh0mQ2FXjS1zhoEKbdU8Uk5GwAyXXkOGW9eBWwhUGI5Ab/kFVU
-         Jt7zjDfZAjPWPy1cHqCmU6EoSa15Y4nH6jxbsqveTfEBG65z2aMschtEk8c5mAgIsyQ3
-         Vhpu4V7DkL6cfozAZDy5DcPm1F84hILNPEIJ5edd7cWFr9m7xS6lnRy1cLrswlPLQTFM
-         r3pkOjdcnOL+QL/U82ZkobwJF/LEnbHVI5oRuVwPD6bkdCa0rYyPHWs8nvA8SzWq0T7o
-         V2rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUd6EBVy6WqeQPtldey8qKp2xgX9AEEqpWDNlLjqPaIAxtW845W+viXfVTjxHRHIGtdcJYOngk/f7DbvrzL/zWHSLWvHbBiD/v2oR0G0O9Qn1npzJdUApXGum0A2ytTZLT0BXWBILqfAw==
-X-Gm-Message-State: AOJu0YxBoNRPQtuy8jZZQm1uhvXstR9ZeCXSH1bD9f5wHqDQyckGs0V7
-	4SsMBW/8n9EUyCyPP5J1ATCID37WhsFtbimHg0rJTxsGHKlpEww1/u/yb8xf8RYCNSTrbIJd6ZF
-	xsrIeebbB5yfLmq2g+74FJmhAFa9lZzUt6ig=
-X-Google-Smtp-Source: AGHT+IFTzRkenDTDt3wESNB4ZaRKpKcLVxz2To6inH8tHhmRceliC0fS45+10Kk5SPl2fMZu0N83xDR7R+Y3WMrVcOc=
-X-Received: by 2002:a25:bc3:0:b0:df7:92ee:bb1a with SMTP id
- 3f1490d57ef6-df792eebc0dmr9317375276.52.1716940891845; Tue, 28 May 2024
- 17:01:31 -0700 (PDT)
+	s=arc-20240116; t=1716941059; c=relaxed/simple;
+	bh=iCwacVP+fcBaS3qxBrWlpvGpWPI6CSiUHt/DGTElfzc=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HbGkNlqI+va8d75SIm7Bl2dOiFvqu0bN8fVBiBo61zLD+sxwbsTbk4uwA8risqgAehbtNXbjXLPyMIpTFkdPTERF2AR/d89eKtCRSj2fqcnB5UzEHcF6vL5V48qb0LwWr4o7QAp5dB3I8Gmn//q+Dp/H+SEtKOAoa5RMUR92On0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=aopIU6H9; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523111618.17012-1-luis.henriques@linux.dev>
- <20240524162231.l5r4niz7awjgfju6@quack3> <87h6ej64jv.fsf@brahms.olymp>
- <87msob45o7.fsf@brahms.olymp> <20240528103602.akx2gui5ownj25l3@quack3>
- <20240528105203.2q4gxqz6amgvud4l@quack3> <87h6eirl49.fsf@brahms.olymp>
-In-Reply-To: <87h6eirl49.fsf@brahms.olymp>
-From: harshad shirwadkar <harshadshirwadkar@gmail.com>
-Date: Tue, 28 May 2024 17:01:19 -0700
-Message-ID: <CAD+ocbwjeRVS3PL3AL+HKQ=VYm=MRZa1JOesZvERije4KFn7Vw@mail.gmail.com>
-Subject: Re: [PATCH v2] ext4: fix fast commit inode enqueueing during a full
- journal commit
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1716941053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3UyPJg9jT2CCb8WYackyvrQqiNArMyehuNffpOyzV0=;
+	b=aopIU6H9EgsMSPt5ksrdKvzYWVMSYnAv2ZZsRbRs6kY6ufPI1al1Ybb7H0E4bvwLghJgxE
+	2wcZlU+nRH0GPEf7mREx0QwcFM/MCf1lNDzNXytcVFnQlLe6pDiGMak36dMuYLb1y47bE4
+	XA63nI2swkNGCCv7RCZDjwK5RuwoQPHgsGWPDpqDB005aYyMIfrQF6la0I6DU1gxrZ49JT
+	Nhp6NcZ4iqFxFZzy1eea8Du0PXwgGJYgQxpsvBgb86IYs/rW8eAwOVMKNnDx9lysxk7C56
+	ZhZJfxwtP3gLgTRXWXfSytwbEc9aLVrHUlyMrgqWze0/vcqoR8mzwN2UuLoBOg==
+Date: Wed, 29 May 2024 02:04:12 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Alexey Charkov <alchark@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chen-Yu Tsai <wens@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Diederik de Haas
+ <didi.debian@cknow.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 0/6] RK3588 and Rock 5B dts additions: thermal, OPP and
+ fan
+In-Reply-To: <646a33e0-5c1b-471c-8183-2c0df40ea51a@cherry.de>
+References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
+ <5122636.irdbgypaU6@phil> <8727e1c29bd6f562a7fc3de0ddac62cf@manjaro.org>
+ <6230150.aeNJFYEL58@phil>
+ <CABjd4YyRJS0AGehuBTDn8ys9uRRkGc0Usme3GX1POq3AQiWTBA@mail.gmail.com>
+ <646a33e0-5c1b-471c-8183-2c0df40ea51a@cherry.de>
+Message-ID: <7b09e18e850ff0832bd7236810b83e64@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Sorry for getting back late on your patchset - I was on vacation and
-checked your patch just now. This is a good catch! My patchset does
-not fix this issue. Looking forward to your V3 fix.
+Hello Quentin,
 
-Also, using i_sync_tid as Jan suggested sounds like a good way to handle th=
-is.
+On 2024-05-28 18:08, Quentin Schulz wrote:
+> On 5/28/24 5:42 PM, Alexey Charkov wrote:
+>> On Tue, 28 May 2024 at 19:16, Heiko Stuebner <heiko@sntech.de> wrote:
+>>> Am Dienstag, 28. Mai 2024, 17:01:48 CEST schrieb Dragan Simic:
+>>>> On 2024-05-28 16:34, Heiko Stuebner wrote:
+>>>>> Am Dienstag, 28. Mai 2024, 16:05:04 CEST schrieb Dragan Simic:
+>>>>>> On 2024-05-28 11:49, Alexey Charkov wrote:
+>>>>>>> Do you think this can be merged for 6.11? Looks like there hasn't
+>>> been
+>>>>>>> any new feedback in a while, and it would be good to have 
+>>>>>>> frequency
+>>>>>>> scaling in place for RK3588.
+>>>>>>> 
+>>>>>>> Please let me know if you have any reservations or if we need any
+>>>>>>> broader discussion.
+>>>>> 
+>>>>> not really reservations, more like there was still discussion going 
+>>>>> on
+>>>>> around the OPPs. Meanwhile we had more discussions regarding the 
+>>>>> whole
+>>>>> speed binning Rockchip seems to do for rk3588 variants.
+>>>>> 
+>>>>> And waiting for the testing Dragan wanted to do ;-) .
+>>>> 
+>>>> I'm sorry for the delays.
+>>> 
+>>> Was definitly _not_ meant as blame ;-) .
+>>> 
+>>> The series has just too many discussions threads to unravel on half
+>>> an afternoon.
+>> 
+>> FWIW, I think the latest exchange we had with Quentin regarding the 
+>> OPPs
+>> concluded in “false alarm”, given that this version of the series only
+>> introduces a subset of them which should apply to all RK3588(s)
+> 
+> Correct.
+> 
+> However... I'm wondering if we shouldn't somehow follow the same
+> pattern we have used for the rk3399 OPPs? We have a file for the
+> "true" RK3399 OPPs, then the OP1 variant and the RK3399T.
 
-- Harshad
+If I'm not mistaken, the separate rk3399-*opp*.dtsi files were
+added when the need arose.
 
+> We already know there are a few variants of RK3588 with different
+> OPPs: RK3588(S/S2?), RK3588J and RK3588M. I wouldn't be surprised if
+> the RK3582 (though this one has already one big cluster (or two big
+> cores) fewer than RK3588) has different OPPs as well?
 
-On Tue, May 28, 2024 at 8:50=E2=80=AFAM Luis Henriques <luis.henriques@linu=
-x.dev> wrote:
->
-> On Tue 28 May 2024 12:52:03 PM +02, Jan Kara wrote;
->
-> > On Tue 28-05-24 12:36:02, Jan Kara wrote:
-> >> On Mon 27-05-24 16:48:24, Luis Henriques wrote:
-> >> > On Mon 27 May 2024 09:29:40 AM +01, Luis Henriques wrote;
-> >> > >>> +      /*
-> >> > >>> +       * Used to flag an inode as part of the next fast commit;=
- will be
-> >> > >>> +       * reset during fast commit clean-up
-> >> > >>> +       */
-> >> > >>> +      tid_t i_fc_next;
-> >> > >>> +
-> >> > >>
-> >> > >> Do we really need new tid in the inode? I'd be kind of hoping we =
-could use
-> >> > >> EXT4_I(inode)->i_sync_tid for this - I can see we even already se=
-t it in
-> >> > >> ext4_fc_track_template() and used for similar comparisons in fast=
- commit
-> >> > >> code.
-> >> > >
-> >> > > Ah, true.  It looks like it could be used indeed.  We'll still nee=
-d a flag
-> >> > > here, but a simple bool should be enough for that.
-> >> >
-> >> > After looking again at the code, I'm not 100% sure that this is actu=
-ally
-> >> > doable.  For example, if I replace the above by
-> >> >
-> >> >    bool i_fc_next;
-> >> >
-> >> > and set to to 'true' below:
-> >
-> > Forgot to comment on this one: I don't think you even need 'bool i_fc_n=
-ext'
-> > - simply whenever i_sync_tid is greater than committing transaction's t=
-id,
-> > you move the inode to FC_Q_STAGING list in ext4_fc_cleanup().
->
-> Yeah, I got that from your other comment in the previous email.  And that
-> means the actual fix will be a pretty small patch (almost a one-liner).
->
-> I'm running some more tests on v3, I'll probably send it later today or
-> tomorrow.  Thanks a lot for your review (and patience), Jan.
->
-> Cheers,
-> --
-> Lu=C3=ADs
+Do we already have supported boards that use the RK3588J and
+RK3588M variants of the RK3588 SoC?  If yes, we should separate
+the relevant OPPs into the separate .dtsi files, but if not, we
+should wait until the need arises.
+
+> So. We have already discussed that the OPPs in that patch are valid
+> for RK3588(S) but they aren't for the other variants.
+
+.. which applies currently if there are already other RK3588
+variants in use on the supported boards.
+
+> In the downstream kernel, any OPP whose opp-supported-hw has a first
+> value masked by BIT(1) return non-0 is supported by RK3588M. In the
+> downstream kernel, any OPP whose opp-supported-hw has a first value
+> masked by BIT(2) return non-0 is supported by RK3588J.
+> 
+> This means that, for LITTLE clusters:
+> - opp-1608000000 not supported on RK3588J
+> - opp-1704000000 only supported on RK3588M (but already absent in this
+> patch series)
+> - opp-1800000000 only supported on RK3588(S), not RK3588J nor RK3588M
+> 
+> For big clusters:
+> - opp-1800000000 not supported on RK3588J
+> - opp-2016000000 not supported on RK3588J
+> - opp-2208000000 only supported on RK3588(S), not RK3588J nor RK3588M
+> - opp-2256000000 only supported on RK3588(S), not RK3588J nor RK3588M
+> - opp-2304000000 only supported on RK3588(S), not RK3588J nor RK3588M
+> - opp-2352000000 only supported on RK3588(S), not RK3588J nor RK3588M
+> - opp-2400000000 only supported on RK3588(S), not RK3588J nor RK3588M
+> 
+> This is somehow also enforced in downstream kernel by removing the OPP
+> nodes directly (hence, not even requiring the check of
+> opp-supported-hw value), c.f.:
+> https://git.theobroma-systems.com/tiger-linux.git/tree/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
+> https://git.theobroma-systems.com/tiger-linux.git/tree/arch/arm64/boot/dts/rockchip/rk3588m.dtsi
+> 
+> You'll not that the RK3588J also has less OPPs for the GPU and NPU
+> (but those should also be masked by the opp-supported-hw value).
 
