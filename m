@@ -1,173 +1,130 @@
-Return-Path: <linux-kernel+bounces-194432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E498D3C23
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 331548D3C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934061F25616
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72C61F22C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8537D1836FA;
-	Wed, 29 May 2024 16:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E3E184127;
+	Wed, 29 May 2024 16:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C+jo/LF8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxPU1Bmg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C+jo/LF8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxPU1Bmg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gUU7E2rN"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DAA1836E0;
-	Wed, 29 May 2024 16:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECBD181B8B;
+	Wed, 29 May 2024 16:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716999760; cv=none; b=EA3ixII6998BKZwem/TUTGtNZ+CAol77Ww8LYD+C7DJgFIzlzd7uSaBsVJronYkBQwXHlcrI/Cx/Y6Hu+mjT/H1E3stdd8un5nvw/iKQoJMyBk4Bu4vKxYoO0rY2X5rq12hvKTJC4umFHgS/owERZydOnV8paAg7+drPpJ+pHLE=
+	t=1716999788; cv=none; b=ArukjwI8FV07E2RBew2iBam4CtOYZ2OzT/32tW62+XNV5jG2t+H3UbX/U9KoEUk1bl+TdJ1PqLwtuTf1oMw+qAbZ4nAc1kB2ueVodaCF5A5Th29RVbyDcfA7pDD1rTgagPgVkd54mzwA09YCLc3JZO4O+a92K1bJ3DQQaFPCEpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716999760; c=relaxed/simple;
-	bh=0N8WwniUWLzXIUhUFVHN1Xwhqc4YYBcv14U5W5AqVOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKDuvtARsIUx0OyCF79kHgwSYF47xnUWBlA/lQyPLuzszjtsnuM0QTSCTj3M/OfYLgpzPG5oe+ENrNZoLeN2dkomLMLnNotVSb/zyc+ORdIiaPzZcdWTzeRXkzkDy5Cve9xg2Y8DBlV+QFJVTMzUYbM0YA6JG0pZJ10F0I0R1VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C+jo/LF8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxPU1Bmg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C+jo/LF8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxPU1Bmg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1716999788; c=relaxed/simple;
+	bh=g5pHQd73mBrP9X400nvFyG13JPUFcrrvEIFvGsi6JJg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LgVrBFJlyveOmEz8qUYGLn+st2YzvuU44epPWa0Lirb0DFP2zGitms5Iy69XcvGK1ek6eedl5zP6cppITtqOiC36kvp/Zu2wNl8qOQocYN6OElytNitjC48kGq25WREa6z5D05keel0e7A/v+FjeR6/4CXutHYZQH5QBxkkbScE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gUU7E2rN; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716999784;
+	bh=g5pHQd73mBrP9X400nvFyG13JPUFcrrvEIFvGsi6JJg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=gUU7E2rNyrmIiJbOzVcdyExhr6tCisnPx49KpV6y231HX0g9xmPEFi/bBRH3Q6e/J
+	 +/HPD2yTXjYilZJJi9ZFsZtNh2g7i7V4Kq6xBu3J+woJLb9XVqa1mr6WB2m9rGVt3b
+	 osX6HLSb7MDGcSZR1ExJWI4flLVe3DAeGTN8Xo0tA8PcGjTovcgwnpy6cC0PFCZ7kc
+	 0jT/mQDxypj7rjkqlUKzRoDQ/FZPuRc8cX/9RdiZhiwZCMmVsWn8KQ14FWMfK0K0UT
+	 LmGx4pHuL63rQ1xAaYVgMpVrO1A2oV9YBzNFAI8E4DwjuMroOS4KQ1ZfkM8AAOCBX0
+	 HWoMtNwdE/zDg==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 19D8E205B9;
-	Wed, 29 May 2024 16:22:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716999756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCZu6jdsDJqbFUOxgklErOVfk3nUsdlFfJQML2sSSgA=;
-	b=C+jo/LF8K39lhbdaZ1p2WiJgAHG3wgS6vuKBsAsAhgae7r30juMxBVDBZ/Yv0R+zYyIR9A
-	ei4L9SF6ACtq8DghCUEOMyCEUsQv5RvaLisqeaZEM/bTvcBp+zJ2e770bvSK1TZnCmU5kd
-	TdwuOhqs+gxG/Awylxe9CkCJggdDS8c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716999756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCZu6jdsDJqbFUOxgklErOVfk3nUsdlFfJQML2sSSgA=;
-	b=fxPU1BmgKhi9azuUhIPM5e1vvALlG1xJsHEBOphIoINivX8k5AWjZZKoPQTv79aF195+r6
-	wzbRYW7fVSp9SzDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716999756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCZu6jdsDJqbFUOxgklErOVfk3nUsdlFfJQML2sSSgA=;
-	b=C+jo/LF8K39lhbdaZ1p2WiJgAHG3wgS6vuKBsAsAhgae7r30juMxBVDBZ/Yv0R+zYyIR9A
-	ei4L9SF6ACtq8DghCUEOMyCEUsQv5RvaLisqeaZEM/bTvcBp+zJ2e770bvSK1TZnCmU5kd
-	TdwuOhqs+gxG/Awylxe9CkCJggdDS8c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716999756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCZu6jdsDJqbFUOxgklErOVfk3nUsdlFfJQML2sSSgA=;
-	b=fxPU1BmgKhi9azuUhIPM5e1vvALlG1xJsHEBOphIoINivX8k5AWjZZKoPQTv79aF195+r6
-	wzbRYW7fVSp9SzDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B55B1372E;
-	Wed, 29 May 2024 16:22:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RxQ+AkxWV2ZOBgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 29 May 2024 16:22:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9BA1AA082D; Wed, 29 May 2024 18:22:35 +0200 (CEST)
-Date: Wed, 29 May 2024 18:22:35 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs/file: fix the check in find_next_fd()
-Message-ID: <20240529162235.b76ywqisawmcm22o@quack3>
-References: <20240529160656.209352-1-yuntao.wang@linux.dev>
+	(Authenticated sender: sebastianfricke)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 956163782192;
+	Wed, 29 May 2024 16:23:04 +0000 (UTC)
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+Date: Wed, 29 May 2024 18:22:56 +0200
+Subject:
+ [PATCH RFC 1/2] docs: media: Create separate documentation folder for media
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529160656.209352-1-yuntao.wang@linux.dev>
-X-Spam-Flag: NO
-X-Spam-Score: -3.72
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.72 / 50.00];
-	BAYES_HAM(-2.92)[99.67%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240529-b4-media_docs_improve-v1-1-9ddb111c4433@collabora.com>
+References: <20240529-b4-media_docs_improve-v1-0-9ddb111c4433@collabora.com>
+In-Reply-To: <20240529-b4-media_docs_improve-v1-0-9ddb111c4433@collabora.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+ hverkuil-cisco@xs4all.nl, mauro.chehab@linux.intel.com, kernel@collabora.com,
+ Sebastian Fricke <sebastian.fricke@collabora.com>
+X-Mailer: b4 0.11.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716999782; l=1395;
+ i=sebastian.fricke@collabora.com; s=linux-media; h=from:subject:message-id;
+ bh=g5pHQd73mBrP9X400nvFyG13JPUFcrrvEIFvGsi6JJg=;
+ b=o75jPj20EaePaRSJ+J20i20PUyuNl60NtA9hXX/axl6/MA0ymHy9IlLpk2it++ToZcCAc/l1Ps29
+ RFm7rD+KB2ZlY3knlxkwBKZpvG/hdl4JP9bdvuRZ2l2nMjS7YmYb
+X-Developer-Key: i=sebastian.fricke@collabora.com; a=ed25519;
+ pk=pYXedPwrTtErcj7ERYeo/IpTrpe4QbJuEzSB52fslBg=
 
-On Thu 30-05-24 00:06:56, Yuntao Wang wrote:
-> The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
-> maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
-> gives the value of bitbit, which can never be greater than maxfd, it can
-> only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
-> will never be true.
-> 
-> Moreover, when bitbit equals maxfd, it indicates that there are no unused
-> fds, and the function can directly return.
-> 
-> Fix this check.
-> 
-> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+The media subsystem currently only maintains a set of Kernel API
+documentations, with the intent of adding guides for the subsystem a
+separate location is required. Create an empty folder with an index and
+embed it into the subsystem listing.
 
-Good point. Feel free to add:
+Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+---
+ Documentation/media/index.rst    | 19 +++++++++++++++++++
+ Documentation/subsystem-apis.rst |  1 +
+ 2 files changed, 20 insertions(+)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+diff --git a/Documentation/media/index.rst b/Documentation/media/index.rst
+new file mode 100644
+index 000000000000..d056a9e99dca
+--- /dev/null
++++ b/Documentation/media/index.rst
+@@ -0,0 +1,19 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=============================
++Media Subsystem Documentation
++=============================
++
++.. toctree::
++   :maxdepth: 2
++
++   ../userspace-api/media/index
++   ../driver-api/media/index.rst
++   ../admin-guide/media/index
++
++.. only::  subproject and html
++
++   Indices
++   =======
++
++   * :ref:`genindex`
+diff --git a/Documentation/subsystem-apis.rst b/Documentation/subsystem-apis.rst
+index 74af50d2ef7f..5a1d90fd1af6 100644
+--- a/Documentation/subsystem-apis.rst
++++ b/Documentation/subsystem-apis.rst
+@@ -33,6 +33,7 @@ Human interfaces
+    input/index
+    hid/index
+    sound/index
++   media/index
+    gpu/index
+    fb/index
+    leds/index
 
-								Honza
-
-> ---
->  fs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 8076aef9c210..7058901a2154 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -491,7 +491,7 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
->  	unsigned int bitbit = start / BITS_PER_LONG;
->  
->  	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
-> -	if (bitbit > maxfd)
-> +	if (bitbit >= maxfd)
->  		return maxfd;
->  	if (bitbit > start)
->  		start = bitbit;
-> -- 
-> 2.45.1
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
 
