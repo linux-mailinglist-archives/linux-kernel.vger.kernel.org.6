@@ -1,155 +1,228 @@
-Return-Path: <linux-kernel+bounces-194779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7EB8D41DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:15:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBA08D41EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A46C1C213DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D63E287179
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C786015CD70;
-	Wed, 29 May 2024 23:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E866178387;
+	Wed, 29 May 2024 23:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JSLG9eGc"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OabscRPI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B7514B957
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845C729A0;
+	Wed, 29 May 2024 23:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717024505; cv=none; b=KnEdjJG7raDCicvtGWcOgSlq0WfBTUy8G0R2B4fMG7EvjrXPMFAO/Umn+WnofJ5tlEuU13e4ll8IvqgcgiO8Mze+uFM7lvS3g+u/vN/xF3xoaa0MIGXeXHMSti6O+Nr3CPMpNLAD5ZnTexy7BLWl0+mWNITotfNlKDPR2yDN0sk=
+	t=1717024522; cv=none; b=gX6zQ596nUTRegTyPf8uIagGEszOJ3sY3Djjbflw+4ayjGhS9Wf2PbRln9OQlaGjRZLvI+L0MoyUvvyI2xwsNQCWlTq9Gr9D48ydRL4gKTZ6a+QwKShL6t6syM4w9gHNxVL/UL4ISm3s9gcDh77DSYKT6ATBy0l2OOWJAcpms20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717024505; c=relaxed/simple;
-	bh=MjQOp5UWOk5r9+sxgG/QsPE0boIDxSM9o3fH5lVCqNA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IrR+A5D3nZGUVqlLoI+5pZv3F+hUdVxA0YBZ03xawR9Oxvu/pCfOIvMKDwrcigL3YEteZbmbRqDg2hgD5TpIBCq/SyrjTV6M/vc7E4OpG1soIGMIYnMdfw9rLT3LoyWPiegF5+xs+X3hfCZdEAaTvlJr4zpveP9qn+I0b1KBkJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JSLG9eGc; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f8e859eb1eso298733b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717024503; x=1717629303; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dnabaEVJa/tSEflSlXJy3215kO3e1psGL7hL7HuyYb4=;
-        b=JSLG9eGcjrUqQJCpBBxatZbmztvgdGeS/xS3j+QwwubNOga29Yr+6h2nJutLb5G6Qx
-         VZD3zwYaRLNVE+g4L94VbP9EuISjgQCy3q4PFMaBXZ+08q5RoBHtqYpOzFNC12esxAQf
-         uvL+qZsouha4LR0Ad9jU0duTiH4+iqcMWdAzITunqf7Z8HoKD6Gf98qEbvDAIZdMo+tG
-         c/WYSTWedltkToJsIY9JE73vHizg6VQEinEoSnIzzBlhqNczav60K61P3XVW2ic1a7jl
-         JwNP4Y8/Uc1GdukK2R/9768GAi+Du6AmHyN8VjDQbJnu5mquSH1BB1QAPeZajMCYIAcI
-         7qUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717024503; x=1717629303;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dnabaEVJa/tSEflSlXJy3215kO3e1psGL7hL7HuyYb4=;
-        b=a0nfl1+suxubV7k7HQmgCqsqGzQUG6MWneizgIE37QVVuKr5Nf13eVsX2ksR4vZbCh
-         YGsUwUkEyYqJcZhzfKitJf39VIZu1tlVUbcS/0mSPXLTncpgoRxzoO/Xy9Nmv7+14MrZ
-         XbSMUnd4EHk67DO4wqODQeVZd+TIjSKFmzMBt4wzn8VTkxRES7/E93B8mHTg6gTV/yLA
-         oNxpWL+xP0+D1eEvYCTvFoxrXHyBu3ezpT4sZAxiS0Fbjy28U6xeTK79UAqpz9jw3xDa
-         dSBLYY1y1mCOgi7ShCMRCCC2l7AV+KG7IXPFpnS/6+q1t26MEHjrolxZxiuxlKIMpC23
-         VqmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAorX1mUs3QmSwXb8rUlD5MwgLVHI4aPChlLGDMOmpnPuMxYwCbf7/7N8HkNCwP37NrnQ/P/GZ3X7fSMJodigaDo9lv8ZlexYNHJRY
-X-Gm-Message-State: AOJu0YyU5rcXu7BsJ76EX3tahzzv4A5MvIWORfiVNaOP6V1++8R2PcXm
-	Cqm6pFr3OzmZwP2ZuCS9PoekB0Jq+/kiJA/YWxYoBOfhX12oL1U8GUCjokAjxvI+N3w2ydl/Km/
-	rEQ==
-X-Google-Smtp-Source: AGHT+IFylHZJ0hSk/e3r/cyIF9npXxo5ZQGUUJErmVcpfAYzuY3QGo2W4ssjCBL/5bEcQamYl0UFx1wDS90=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:2d8b:b0:6ed:d215:9c30 with SMTP id
- d2e1a72fcca58-702313ff946mr19851b3a.6.1717024502862; Wed, 29 May 2024
- 16:15:02 -0700 (PDT)
-Date: Wed, 29 May 2024 16:15:01 -0700
-In-Reply-To: <50e09676-4dfc-473f-8b34-7f7a98ab5228@intel.com>
+	s=arc-20240116; t=1717024522; c=relaxed/simple;
+	bh=7HtHIBMnOSfXwlIN2FN4JThv0qqYOxoaXPTbFn/okcY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=MFro4ks6n/KhLMlthy+Dh4FXMl2dtxt1qYkJa+RnrjEMR9S/cJl/UY5/1JCew3nJd9hCSEdL5vIfBOjad8KigGKBhNLxi5rMxtHww19v/aiohLdNNxyyBReU9L9AWLf8Q0Tdp3AtsufrktPoFjZAhFayg8tBE45zhZhDIctX9uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OabscRPI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF6DC32781;
+	Wed, 29 May 2024 23:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717024522;
+	bh=7HtHIBMnOSfXwlIN2FN4JThv0qqYOxoaXPTbFn/okcY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=OabscRPIEp57y8+0XlGk2MoMOeUdg3DFch7rE9IX08FLlS4oK8rykJtvab3sIEtiA
+	 bRKPiWK35XtvcazFBhiVQFUOddAQgdYj+QVCvdrPBzcU9X3d/30Gviua7TUav5HcVH
+	 ifDThHZQalm9753WBOnV8YV5lSp4qJgxmXRDfyTMrk2+eTjTsr1Tx0gsrPMLu8yfMp
+	 f4K/Uum4draifjed4IA71oYuDtsQwdkKU4U3aojjuTNeYziub9jTJi54QezxYVXe7/
+	 K4QJdoFY4b00+gH/sYrGVsHbk4NdQ+Hv/vn/al2ck+PIe7Q0n1ndrOSIs8/MUlVFzB
+	 UmKhhc3IAcIoA==
+Message-ID: <3280d9e3c7ba19f86b85a7fa89f5be25.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <9bd868a287599eb2a854f6983f13b4500f47d2ae.1708933498.git.isaku.yamahata@intel.com>
- <Zjz7bRcIpe8nL0Gs@google.com> <5ba2b661-0db5-4b49-9489-4d3e72adf7d2@intel.com>
- <Zj1Ty6bqbwst4u_N@google.com> <49b7402c-8895-4d53-ad00-07ce7863894d@intel.com>
- <20240509235522.GA480079@ls.amr.corp.intel.com> <Zj4phpnqYNoNTVeP@google.com> <50e09676-4dfc-473f-8b34-7f7a98ab5228@intel.com>
-Message-ID: <Zle29YsDN5Hff7Lo@google.com>
-Subject: Re: [PATCH v19 037/130] KVM: TDX: Make KVM_CAP_MAX_VCPUS backend specific
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Sagi Shahar <sagis@google.com>, Bo2 Chen <chen.bo@intel.com>, 
-	Hang Yuan <hang.yuan@intel.com>, Tina Zhang <tina.zhang@intel.com>, 
-	isaku.yamahata@linux.intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a3bed3c2940edc238afbc191d595a727944892f3.1716965617.git.ysato@users.sourceforge.jp>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp> <a3bed3c2940edc238afbc191d595a727944892f3.1716965617.git.ysato@users.sourceforge.jp>
+Subject: Re: [DO NOT MERGE v8 14/36] clk: Compatible with narrow registers
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx
+ .de>, Heiko Stuebner <heiko.stuebner@cherry.de>, Neil Armstrong <neil.armstrong@linaro.org>, Chris Morgan <macromorgan@hotmail.com>, Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, Herve Codina <herve.codina@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anup Patel <apatel@ventanamicro.com>, Jacky Huang <ychuang3@nuvoton.com>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Jonathan Corbet <corbet@lwn.net>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Christophe JAI
+ LLET <christophe.jaillet@wanadoo.fr>, Sam Ravnborg <sam@ravnborg.org>, Javier Martinez Canillas <javierm@redhat.com>, Sergey Shtylyov <s.shtylyov@omp.ru>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Date: Wed, 29 May 2024 16:15:19 -0700
+User-Agent: alot/0.10
 
-On Tue, May 14, 2024, Kai Huang wrote:
-> 
-> 
-> On 11/05/2024 2:04 am, Sean Christopherson wrote:
-> > On Thu, May 09, 2024, Isaku Yamahata wrote:
-> > > On Fri, May 10, 2024 at 11:19:44AM +1200, Kai Huang <kai.huang@intel.com> wrote:
-> > > > On 10/05/2024 10:52 am, Sean Christopherson wrote:
-> > > > > On Fri, May 10, 2024, Kai Huang wrote:
-> > > > > > On 10/05/2024 4:35 am, Sean Christopherson wrote:
-> > > > > > > KVM x86 limits KVM_MAX_VCPUS to 4096:
-> > > > > > > 
-> > > > > > >      config KVM_MAX_NR_VCPUS
-> > > > > > > 	int "Maximum number of vCPUs per KVM guest"
-> > > > > > > 	depends on KVM
-> > > > > > > 	range 1024 4096
-> > > > > > > 	default 4096 if MAXSMP
-> > > > > > > 	default 1024
-> > > > > > > 	help
-> > > > > > > 
-> > > > > > > whereas the limitation from TDX is apprarently simply due to TD_PARAMS taking
-> > > > > > > a 16-bit unsigned value:
-> > > > > > > 
-> > > > > > >      #define TDX_MAX_VCPUS  (~(u16)0)
-> > > > > > > 
-> > > > > > > i.e. it will likely be _years_ before TDX's limitation matters, if it ever does.
-> > > > > > > And _if_ it becomes a problem, we don't necessarily need to have a different
-> > > > > > > _runtime_ limit for TDX, e.g. TDX support could be conditioned on KVM_MAX_NR_VCPUS
-> > > > > > > being <= 64k.
-> > > > > > 
-> > > > > > Actually later versions of TDX module (starting from 1.5 AFAICT), the module
-> > > > > > has a metadata field to report the maximum vCPUs that the module can support
-> > > > > > for all TDX guests.
-> > > > > 
-> > > > > My quick glance at the 1.5 source shows that the limit is still effectively
-> > > > > 0xffff, so again, who cares?  Assert on 0xffff compile time, and on the reported
-> > > > > max at runtime and simply refuse to use a TDX module that has dropped the minimum
-> > > > > below 0xffff.
-> > > > 
-> > > > I need to double check why this metadata field was added.  My concern is in
-> > > > future module versions they may just low down the value.
-> > > 
-> > > TD partitioning would reduce it much.
-> > 
-> > That's still not a reason to plumb in what is effectively dead code.  Either
-> > partitioning is opt-in, at which I suspect KVM will need yet more uAPI to express
-> > the limitations to userspace, or the TDX-module is potentially breaking existing
-> > use cases.
-> 
-> The 'max_vcpus_per_td' global metadata fields is static for the TDX module.
-> If the module supports the TD partitioning, it just reports some smaller
-> value regardless whether we opt-in TDX partitioning or not.
-> 
-> I think the point is this 'max_vcpus_per_td' is TDX architectural thing and
-> kernel should not make any assumption of the value of it.
+Quoting Yoshinori Sato (2024-05-29 01:01:00)
+> divider and gate only support 32-bit registers.
+> Older hardware uses narrower registers, so I want to be able to handle
+> 8-bit and 16-bit wide registers.
+>=20
+> Seven clk_divider flags are used, and if I add flags for 8bit access and
+> 16bit access, 8bit will not be enough, so I expanded it to u16.
+>=20
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  drivers/clk/clk-divider.c    | 41 +++++++++++++++++++++---------
+>  drivers/clk/clk-gate.c       | 49 ++++++++++++++++++++++++++++++++----
+>  include/linux/clk-provider.h | 20 ++++++++++++---
+>  3 files changed, 89 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index a2c2b5203b0a..abafcbbb6578 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -26,17 +26,34 @@
+>   * parent - fixed parent.  No clk_set_parent support
+>   */
+> =20
+> -static inline u32 clk_div_readl(struct clk_divider *divider)
+> -{
+> +static inline u32 clk_div_read(struct clk_divider *divider)
 
-It's not an assumption, it's a requirement.  And KVM already places requirements
-on "hardware", e.g. kvm-intel.ko will refuse to load if the CPU doesn't support
-a bare mimimum VMX feature set.  Refusing to enable TDX because max_vcpus_per_td
-is unexpectedly low isn't fundamentally different than refusing to enable VMX
-because IRQ window exiting is unsupported.
+Please don't change the name. The 'l' is for the return type, u32, which
+is not changed.
 
-In the unlikely event there is a legitimate reason for max_vcpus_per_td being
-less than KVM's minimum, then we can update KVM's minimum as needed.  But AFAICT,
-that's purely theoretical at this point, i.e. this is all much ado about nothing.
+> +{
+> +       if (divider->flags & CLK_DIVIDER_REG_8BIT)
+> +               return readb(divider->reg);
+> +       if (divider->flags & CLK_DIVIDER_REG_16BIT) {
+> +               if (divider->flags & CLK_DIVIDER_BIG_ENDIAN) {
+> +                       return ioread16be(divider->reg);
+> +               } else {
+> +                       return readw(divider->reg);
+> +               }
+> +       }
+>         if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+>                 return ioread32be(divider->reg);
+> =20
+>         return readl(divider->reg);
+>  }
+> =20
+> -static inline void clk_div_writel(struct clk_divider *divider, u32 val)
+> +static inline void clk_div_write(struct clk_divider *divider, u32 val)
+
+Same comment.
+
+>  {
+> -       if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+> +       if (divider->flags & CLK_DIVIDER_REG_8BIT)
+> +               writeb(val, divider->reg);
+> +       else if (divider->flags & CLK_DIVIDER_REG_16BIT) {
+> +               if (divider->flags & CLK_DIVIDER_BIG_ENDIAN) {
+> +                       iowrite16be(val, divider->reg);
+> +               } else {
+> +                       writew(val, divider->reg);
+> +               }
+> +       } else if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+>                 iowrite32be(val, divider->reg);
+>         else
+>                 writel(val, divider->reg);
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 4a537260f655..25f61bd5b952 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -508,6 +508,10 @@ void of_fixed_clk_setup(struct device_node *np);
+>   * CLK_GATE_BIG_ENDIAN - by default little endian register accesses are =
+used for
+>   *     the gate register.  Setting this flag makes the register accesses=
+ big
+>   *     endian.
+> + * CLK_GATE_REG_8BIT - by default 32bit register accesses are used for
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 8bit.
+> + * CLK_GATE_REG_16BIT - by default 32bit register accesses are used for
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 16bit.
+>   */
+>  struct clk_gate {
+>         struct clk_hw hw;
+> @@ -522,6 +526,8 @@ struct clk_gate {
+>  #define CLK_GATE_SET_TO_DISABLE                BIT(0)
+>  #define CLK_GATE_HIWORD_MASK           BIT(1)
+>  #define CLK_GATE_BIG_ENDIAN            BIT(2)
+> +#define CLK_GATE_REG_8BIT              BIT(3)
+> +#define CLK_GATE_REG_16BIT             BIT(4)
+
+Please add kunit tests for the gate at least.
+
+> =20
+>  extern const struct clk_ops clk_gate_ops;
+>  struct clk_hw *__clk_hw_register_gate(struct device *dev,
+> @@ -675,13 +681,17 @@ struct clk_div_table {
+>   * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses a=
+re used
+>   *     for the divider register.  Setting this flag makes the register a=
+ccesses
+>   *     big endian.
+> + * CLK_DIVIDER_REG_8BIT - by default 32bit register accesses are used for
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 8bit.
+> + * CLK_DIVIDER_REG_16BIT - by default 32bit register accesses are used f=
+or
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 16bit.
+>   */
+>  struct clk_divider {
+>         struct clk_hw   hw;
+>         void __iomem    *reg;
+>         u8              shift;
+>         u8              width;
+> -       u8              flags;
+> +       u16             flags;
+>         const struct clk_div_table      *table;
+>         spinlock_t      *lock;
+>  };
+> @@ -697,6 +707,8 @@ struct clk_divider {
+>  #define CLK_DIVIDER_READ_ONLY          BIT(5)
+>  #define CLK_DIVIDER_MAX_AT_ZERO                BIT(6)
+>  #define CLK_DIVIDER_BIG_ENDIAN         BIT(7)
+> +#define CLK_DIVIDER_REG_8BIT           BIT(8)
+> +#define CLK_DIVIDER_REG_16BIT          BIT(9)
+> =20
+>  extern const struct clk_ops clk_divider_ops;
+>  extern const struct clk_ops clk_divider_ro_ops;
+> @@ -726,18 +738,18 @@ struct clk_hw *__clk_hw_register_divider(struct dev=
+ice *dev,
+>                 struct device_node *np, const char *name,
+>                 const char *parent_name, const struct clk_hw *parent_hw,
+>                 const struct clk_parent_data *parent_data, unsigned long =
+flags,
+> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
+gs,
+> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
+ags,
+
+Let's just make this unsigned long for the flags. We don't need to
+specify a strict size like this for the callers.
+
+>                 const struct clk_div_table *table, spinlock_t *lock);
+>  struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
+>                 struct device_node *np, const char *name,
+>                 const char *parent_name, const struct clk_hw *parent_hw,
+>                 const struct clk_parent_data *parent_data, unsigned long =
+flags,
+> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
+gs,
+> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
+ags,
+
+Same here.
+
+>                 const struct clk_div_table *table, spinlock_t *lock);
+>  struct clk *clk_register_divider_table(struct device *dev, const char *n=
+ame,
+>                 const char *parent_name, unsigned long flags,
+>                 void __iomem *reg, u8 shift, u8 width,
+> -               u8 clk_divider_flags, const struct clk_div_table *table,
+> +               u16 clk_divider_flags, const struct clk_div_table *table,
+
+Same here. Preferably do that in another patch too.
 
