@@ -1,94 +1,107 @@
-Return-Path: <linux-kernel+bounces-194062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587908D360C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:13:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4B38D360E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 861F81C23719
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:13:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8682887F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A84F180A90;
-	Wed, 29 May 2024 12:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mfW57XT0"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6095C180A9E;
+	Wed, 29 May 2024 12:13:44 +0000 (UTC)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC29738F96
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1610638F96
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716984811; cv=none; b=BON4L6Qk5x1Ccibp5K2srSk+Ec4Ap9Zs7M556Ife9mh7dWiQ6yyixMsh8L+hv7IzYRco86zFCRtYSnZHtJWl8tj0HbRZrHbCCH7gkpm+R07OTtfwOAQHgQfUmKmnsP3JDJvDPGQYHR/DH2H3noK+bM5Gxia1v6xPo1IM3xx6iak=
+	t=1716984824; cv=none; b=tedOBESbBDb76VPcxoihFREp86nQM48qFWDfJ/8YEJ33KoW5hqNggSC/l71dtnTIFQ9PaQ2j9IFv4GjcviDqWALt1tFST3yRN0u02KNi0/QmorubrTmAuCp5msHTx+sFxj1//HJgjCulyHjbds9PiDLA/Xtp3VtChP8VYq6k280=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716984811; c=relaxed/simple;
-	bh=qPE9lYK/jtCaQQJJj72PN/tJ5wf6JCOgn3hLbpwt2pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VNLBsMCR3Q4azozV3LOrk2l+0/5NUapXcFsJPuoMz6o0lY/pE6RLsxQ3Dc3drUjVm0aWt2j25IBQpOrmgnMghwiXF+OHMq702r+gW+MRVZireFIx3x146lbzzHqx/WOlFI3XrK4vz3E0r8hn28v4LFy1RWF8v4hNDf6aYSAZmzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mfW57XT0; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 333E51BF20C;
-	Wed, 29 May 2024 12:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716984807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qPE9lYK/jtCaQQJJj72PN/tJ5wf6JCOgn3hLbpwt2pk=;
-	b=mfW57XT0mO3W9hMc7glrP0zAYm1E7+Z3v5Q8jnwOfa06mrDfpmU0coM6lH/iq5tq96vMh3
-	+gth/Dq0QThzCc+BLom/aNKoFwiFrxSNu9IMfHdgAwGYYoK9xjmO36V1dNxzv4HjfHvBDd
-	VGHQldoYEnRuaYOhN0EzUq4gS+VbagQp65Q6FxXTTLeooike/X6dLExb8FogcoEOdBymMX
-	YkpsWvJ4cGJxNpcW7upRdLwOCk29YHwr9FnLWOcxju61DFPb1Mlvlt8GgBTxG2PGps1MJk
-	voWeCBh3k3Ov0F3zrjzspcqcp9LxiOytZsRz2vuqaEZRFvug+E8P+59/RON5DA==
-Date: Wed, 29 May 2024 14:13:23 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, David Woodhouse <David.Woodhouse@intel.com>, Akinobu
- Mita <akinobu.mita@gmail.com>, Artem Bityutskiy
- <artem.bityutskiy@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>,
- linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: make mtd_test.c a separate module
-Message-ID: <20240529141323.7015f3d9@xps-13>
-In-Reply-To: <20240529095049.1915393-1-arnd@kernel.org>
-References: <20240529095049.1915393-1-arnd@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716984824; c=relaxed/simple;
+	bh=vTtwrXFt86WZNe0Q6OuOfjGHrOGWBybonPKdpNAT3Sc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hJre6GP4vJuUUu9K1Yh9sDXkGi6wQmhgJVf/8S4/UFCgJEaG6F/crfSPeZIP/IBvyJw5vfqlOxHdjxotPw1jiIHj0ySlgAA10JpA7FqjMq7utaRh409NWJIA05BByuhreK1yfsovuNHZv4sESGU0oanBCooeEOhjRFqZ/Df7NGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
+	by xavier.telenet-ops.be with bizsmtp
+	id V0De2C00Q3VPV9V010De6M; Wed, 29 May 2024 14:13:39 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCIAa-00GcFv-CV;
+	Wed, 29 May 2024 14:13:38 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCIBW-009XN5-Mp;
+	Wed, 29 May 2024 14:13:38 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Shuah Khan <shuah@kernel.org>,
+	John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] selftests: timers: clocksource-switch: Adapt progress to kselftest framework
+Date: Wed, 29 May 2024 14:13:35 +0200
+Message-Id: <e987e3b43b1099a634eb5c10a50bbcebba67cf73.1716984703.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+When adapting the test to the kselftest framework, a few printf() calls
+indicating test progress were not updated.
 
-arnd@kernel.org wrote on Wed, 29 May 2024 11:50:39 +0200:
+Fix this by replacing these printf() calls by ksft_print_msg() calls.
 
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> This file gets linked into nine different modules, which causes a warning:
->=20
-> scripts/Makefile.build:236: drivers/mtd/tests/Makefile: mtd_test.o is add=
-ed to multiple modules: mtd_nandbiterrs mtd_oobtest mtd_pagetest mtd_readte=
-st mtd_speedtest mtd_stresstest mtd_subpagetest mtd_torturetest
+Fixes: ce7d101750ff8450 ("selftests: timers: clocksource-switch: adapt to kselftest framework")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+---
+v2:
+  - Add Reviewed-by.
+---
+ tools/testing/selftests/timers/clocksource-switch.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I've never experienced this warning myself, how did you produce it?
+diff --git a/tools/testing/selftests/timers/clocksource-switch.c b/tools/testing/selftests/timers/clocksource-switch.c
+index c5264594064c8516..83faa4e354e389c2 100644
+--- a/tools/testing/selftests/timers/clocksource-switch.c
++++ b/tools/testing/selftests/timers/clocksource-switch.c
+@@ -156,8 +156,8 @@ int main(int argc, char **argv)
+ 	/* Check everything is sane before we start switching asynchronously */
+ 	if (do_sanity_check) {
+ 		for (i = 0; i < count; i++) {
+-			printf("Validating clocksource %s\n",
+-				clocksource_list[i]);
++			ksft_print_msg("Validating clocksource %s\n",
++					clocksource_list[i]);
+ 			if (change_clocksource(clocksource_list[i])) {
+ 				status = -1;
+ 				goto out;
+@@ -169,7 +169,7 @@ int main(int argc, char **argv)
+ 		}
+ 	}
+ 
+-	printf("Running Asynchronous Switching Tests...\n");
++	ksft_print_msg("Running Asynchronous Switching Tests...\n");
+ 	pid = fork();
+ 	if (!pid)
+ 		return run_tests(runtime);
+-- 
+2.34.1
 
-> Make it a separate module instead.
-
-I'm not a total fan of this just because it now requires an additional
-step to insert these test modules (they are likely used for
-debugging/development purposes, so not properly installed in the
-rootfs). Is there any chance we can find another way?
-
-Thanks,
-Miqu=C3=A8l
 
