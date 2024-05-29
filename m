@@ -1,228 +1,322 @@
-Return-Path: <linux-kernel+bounces-193979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446EF8D34E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4818D34E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674C81C225BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:49:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327CE1C224DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3156C17B510;
-	Wed, 29 May 2024 10:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1E717B515;
+	Wed, 29 May 2024 10:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="kHMKpuyu"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct3sZf7c"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AD1167DB9
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC42A167DB9;
+	Wed, 29 May 2024 10:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716979792; cv=none; b=NBGrgXxCe2AxiWgFi2yb4JdQ9KIpwy26QSyzabsLEKVs5fdWJ/2ITw/OI0GA7qwI9DJl2yixnkU7bKt1xYG8I8UkOYshB6FMTO0/TpAgfpjWNFJWSY2+muZcQ6lmqUO83IikQaeS3LBwY0d8IUE3fk0edDIdb2LfrHVpg3f8hcY=
+	t=1716979850; cv=none; b=lYIceaYpygKDC0rdEiND/UXCuUEGq4l9J6v20J+SXnxfA0d7xT4XCXFtQsylGW+jyM49ZmnncLr6WPUBb4xYQC8YBF3xQ9Hy+2hAMMNmMDiLrSgsmgQkQCK8rPaLSY/qgT8qMMOBI+6uNCxGqMbNl2wzjTf74XF7kwV0kzZR1YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716979792; c=relaxed/simple;
-	bh=Pr/U/nVNuU9P9EoTL2TtKbrFCdG3F3QLoKpQx2KMmgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rY7YjwV4DMmzXIIzN6Rv9jn94tI4scWMpxsSwvm5qUVAizkJ9A47ul5oVoB9c22IXaNmN62LXg7fwXQzeYDkDeQNnRjvM5oB+Sa2zwT9hpOMS0ZO0eEmAfLfyVFeXkD1mc6cj2xM3CpX0QYhv9vA5a1O0xO2/NDAu0GTSQ9RiyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=kHMKpuyu; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421124a0b37so10407145e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:49:50 -0700 (PDT)
+	s=arc-20240116; t=1716979850; c=relaxed/simple;
+	bh=ON8VbFksVmbIPG/lyhHTYgnpBNOyPvXdvZ1EVrZ290Y=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=GxlPw9jdHr+6VOnLFwpSuaYecEpXQcY7IwvY3bkHS34B/Ruha4L+xqAO0NTStAuQ/ALWueWKFbu/rKNfi/QsXC2CuHaTZMsuCbm4vdNAiEu2W9BSKPZSoDBty6pGks12LcCT6opDJTX3EE91ZcaRvzwqwCWGM9NUCvTJkzs8ctc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ct3sZf7c; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-24fda23b9f2so950453fac.0;
+        Wed, 29 May 2024 03:50:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1716979789; x=1717584589; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1/gFwOMitDXUQkYesnOGOUX+glSBcKx0J8m0m0l5u9g=;
-        b=kHMKpuyuWee29Pz6TesobX2TFgdYVTeUuRbn1LZFeL6RGkCvva2hbQ8NMD0SoX4TYv
-         ANyfWqoAyxG+VQVcstoQdmwdINfnsJpSy+NNrV35K06hBX8dVRFcw8eDiaz5/6OSaNxo
-         mcpRTRcBSiyCtUoGCtBwQMjTrFi6UrWW8YAlzWgi6TrCAmJ/tzuhgMflYdaL//2JlcAZ
-         49Tq2CO6y0JTs6vP8EigezdGPfaBO4nIPTsMLm4QOqDIXnmQ5srv8SWgMel41UiXU+40
-         zmK7omzwu+ES3bzp5yPO3dQS6NllIK5eAHTGPxtm2unrEYZYbJFvJTAkGSwhxWO9f8vu
-         zuwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716979789; x=1717584589;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716979848; x=1717584648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1/gFwOMitDXUQkYesnOGOUX+glSBcKx0J8m0m0l5u9g=;
-        b=nWosXipcEhHQTQDcwPG7s2os91qILsKMCtIPjEk31nPzoonugocw/tRWYwUqh7reEP
-         z4QKPM7GNm/wjl7z0LSqBZTGDV87z5gxpgl2h2L4X8KFS78MopLYymbm0HKwxUHKVQad
-         A23LSFkNQT91z3dYnxKhv3NlP3ug796vguYZixfImoW5AVEbmsB6EqFb8eJLs0fsSHhQ
-         8Q0e7SKxf4rPQbDMUcXauUSoYm/EJMptupPzZXOtMIVTAowrLulD/P61Qhj6ItU1idal
-         P5rNN5HxJlWq9p2jq9Jl86X2TUdtgyywe151nyDIG3mBn9DF+uIVUIYeh9IcoHJZScBK
-         b3Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCXEgIOvtESYEtn0BeAVng4uBJ0IExXkW+aQhrWu1tSbLFZpYKlXFgVuSfX8RMr59H4qQUuIPlTTyJtxAn5U8f1X3ws2bnBzYG7ufBQI
-X-Gm-Message-State: AOJu0YyzJ2FiSCiXKwsTxdQr1BNsMFv24G67XkBXPavSqphqh/2K5M+5
-	o3ph0L8yJpfD9IiQuRRYv20gtlknVxs2vt3xhxDUUcrvKU+zo9UC3+0bzcvcxCg=
-X-Google-Smtp-Source: AGHT+IFyD/h5Hjxn5U5yKEN3VlaeOR/orKuvJr0VbxqBrufFoLdNJn3gbTOUdAoBrtJITGT96SwuaQ==
-X-Received: by 2002:a05:600c:1391:b0:421:1e47:f809 with SMTP id 5b1f17b1804b1-4211e47f831mr52391005e9.36.1716979788856;
-        Wed, 29 May 2024 03:49:48 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b58sm176585235e9.3.2024.05.29.03.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 03:49:48 -0700 (PDT)
-Date: Wed, 29 May 2024 11:49:47 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: Questions about transition latency and LATENCY_MULTIPLIER
-Message-ID: <20240529104947.o3pnahmcm7wzi6jb@airbuntu>
-References: <20240528012110.n6se3mapwxgqa3r2@airbuntu>
- <20240529070947.4zxcdnu32d2u7cny@vireshk-i7>
+        bh=ON8VbFksVmbIPG/lyhHTYgnpBNOyPvXdvZ1EVrZ290Y=;
+        b=ct3sZf7c07HfXTpd5JFiBSSqq1HC3TJcJTQDrtdcCl086Ers9G74FTHEvClyC3FpJv
+         PDxwHLZ+shrG4M63umT5JSHYo3Ii06tSnCR1Tc9vbOPPW2lOxigyxd31WnGlSXl0RnYT
+         UljaqlQIMoHCWyAKebcWCI75dfYZ+LQyjPlym0d74cA9bWeE9+ZWi9D2e1ChmnsznTcO
+         kafHoTVCQAoVh8LpkiAOSApbWJIbestFc02sPbC61Qloiyt/2raD3rFV0aAqF9R5/45U
+         T8lA9Wx/kJMuWUhf3dqGuLUAvq2aMeDT8Fs7rjW/EFkkPEbUbdmi7LwANVkezehjBO5G
+         ogPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716979848; x=1717584648;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ON8VbFksVmbIPG/lyhHTYgnpBNOyPvXdvZ1EVrZ290Y=;
+        b=ZFqiJlLlgtwDY16KKsFINMU79xXAd2NpHsT8jpE++/r4P6ffQp2sqAXX3s5xdNbfju
+         Dn8NULHGt7O1OvW6YPl4pFtYru5RbzsdaXKjBPUCvail/hK8Y7Wlj9HlwCaSPDi9JIPF
+         uE0Irv5ta2LjLKUgTk3ruZ+V2f/OgbYtzOXUXSv6B6bPcTefNVk5kzNe05u+5cjiHPGa
+         GhiVuJ0D+ioMoS+87oj9z4cRRjaYr0q1KrVsbQK6mwCgjtwmW7jX9HfAhIGGVHKGv7Y6
+         eEWAzSNOCb0/kOckJ6YYB8mZh/XlsP8xUE2UN+zxpldWxa6PjfrAueVrjr3yGYSl8IZw
+         JX0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBVaW2hPxFsfxHDjMuoGc5HrAQe8UPVVvfwMDIX+XxmAfjB0ErmdArgsGBrXI6V1dM16OjI0Wb536xAGj4g8KwRGgV13GcUS7sxrJKdttV23O/OZUyXZShEXM/QMIJrgdVmMf6wK6O+g==
+X-Gm-Message-State: AOJu0Yz4A2mOEt2msADztSZ70Hh34+yGxGiaqjg6QIYOn4sp52KE3s7K
+	NXDR8SgdspRh9LgCpWi7+akW/7zaCN3zm6LDmRC+K3WzRh18za9I
+X-Google-Smtp-Source: AGHT+IEDsGCiyN149iX9lU2bvkB1z7h9rA7d3r9gRWABUoCAZd/4EOHcw9C0uBV4EXJZJiYtYzmp4A==
+X-Received: by 2002:a05:6870:55c9:b0:24f:e1be:39b4 with SMTP id 586e51a60fabf-24fe1be4a39mr14171911fac.46.1716979847520;
+        Wed, 29 May 2024 03:50:47 -0700 (PDT)
+Received: from [127.0.0.1] ([106.194.121.206])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd4dcde6sm7780536b3a.211.2024.05.29.03.50.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 03:50:47 -0700 (PDT)
+Date: Wed, 29 May 2024 16:20:41 +0530 (GMT+05:30)
+From: Shresth Prasad <shresthprasad7@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: robh@kernel.org, saravanak@google.com,
+	DRI mailing list <dri-devel@lists.freedesktop.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
+	julia.lawall@inria.fr
+Message-ID: <06a5901b-a2f1-4e3f-9744-bbcb3a34f666@gmail.com>
+In-Reply-To: <8d95757c-fd05-4a48-ae9d-24d78d04d663@samsung.com>
+References: <20240515202915.16214-3-shresthprasad7@gmail.com> <CGME20240529101246eucas1p1266853c07f5178c7e3e4b8a264eb436e@eucas1p1.samsung.com> <8d95757c-fd05-4a48-ae9d-24d78d04d663@samsung.com>
+Subject: Re: [PATCH][next] of: property: Remove calls to of_node_put
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240529070947.4zxcdnu32d2u7cny@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <06a5901b-a2f1-4e3f-9744-bbcb3a34f666@gmail.com>
 
-Hi Viresh
+29 May 2024 3:42:48=E2=80=AFpm Marek Szyprowski <m.szyprowski@samsung.com>:
 
-On 05/29/24 12:39, Viresh Kumar wrote:
-> HI Qais,
-> 
-> On 28-05-24, 02:21, Qais Yousef wrote:
-> > Hi
-> > 
-> > I am trying to understanding the reason behind the usage of LATENCY_MULTIPLIER
-> > to create transition_delay_us. It is set to 1000 by default and when I tried to
-> > dig into the history I couldn't reach the original commit as the code has gone
-> > through many transformations and I gave up finding the first commit that
-> > introduced it.
-> 
-> The changes came along with the initial commits for conservative and ondemand
-> governors, i.e. before 2005.
+> On 15.05.2024 22:29, Shresth Prasad wrote:
+>> Add __free cleanup handler to some variable initialisations, which
+>> ensures that the resource is freed as soon as the variable goes out of
+>> scope. Thus removing the need to manually free up the resource using
+>> of_node_put.
+>>=20
+>> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+>> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
+>> ---
+>=20
+> This patch landed in today's linux-next as commit b94d24c08ee1 ("of:
+> property: Remove calls to of_node_put"). I found that it triggers the
+> following warning while booting of the Samsung Exynos5800 based Pi
+> Chromebook (arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts):
+>=20
+> OF: ERROR: of_node_release() detected bad of_node_put() on /panel
+> CPU: 2 PID: 68 Comm: kworker/u36:1 Not tainted
+> 6.10.0-rc1-00001-gb94d24c08ee1 #8619
+> Hardware name: Samsung Exynos (Flattened Device Tree)
+> Workqueue: events_unbound deferred_probe_work_func
+> tps65090 20-0048: No cache defaults, reading back from HW
+> Call trace:
+> =C2=A0unwind_backtrace from show_stack+0x10/0x14
+> =C2=A0show_stack from dump_stack_lvl+0x50/0x64
+> =C2=A0dump_stack_lvl from of_node_release+0x110/0x138
+> =C2=A0of_node_release from kobject_put+0x98/0x108
+> =C2=A0kobject_put from drm_of_find_panel_or_bridge+0x94/0xd8
+> =C2=A0drm_of_find_panel_or_bridge from exynos_dp_probe+0xf0/0x158 [exynos=
+drm]
+> =C2=A0exynos_dp_probe [exynosdrm] from platform_probe+0x80/0xc0
+> =C2=A0platform_probe from really_probe+0xc8/0x288
+> =C2=A0really_probe from __driver_probe_device+0x8c/0x190
+> =C2=A0__driver_probe_device from driver_probe_device+0x30/0xd0
+> =C2=A0driver_probe_device from __device_attach_driver+0x8c/0xbc
+> =C2=A0__device_attach_driver from bus_for_each_drv+0x74/0xc0
+> =C2=A0bus_for_each_drv from __device_attach+0xe8/0x184
+> =C2=A0__device_attach from bus_probe_device+0x88/0x8c
+> =C2=A0bus_probe_device from deferred_probe_work_func+0x7c/0xa8
+> =C2=A0deferred_probe_work_func from process_scheduled_works+0xe8/0x41c
+> =C2=A0process_scheduled_works from worker_thread+0x14c/0x35c
+> =C2=A0worker_thread from kthread+0xd0/0x104
+> =C2=A0kthread from ret_from_fork+0x14/0x28
+> Exception stack(0xf0a81fb0 to 0xf0a81ff8)
+>=20
+> OF: ERROR: next of_node_put() on this node will result in a kobject
+> warning 'refcount_t: underflow; use-after-free.'
+> ------------[ cut here ]------------
+> WARNING: CPU: 3 PID: 68 at lib/refcount.c:25 kobject_get+0xa0/0xa4
+> refcount_t: addition on 0; use-after-free.
+> Modules linked in: i2c_cros_ec_tunnel(+) cros_ec_keyb cros_ec_dev
+> cros_ec_spi cros_ec snd_soc_i2s snd_soc_idma snd_soc_max98090
+> snd_soc_snow snd_soc_s3c_dma snd_soc_core tpm_i2c_infineon ac97_bus
+> snd_pcm_dmaengine tpm exynosdrm libsha256 libaescfb snd_pcm analogix_dp
+> ecdh_generic samsung_dsim ecc snd_timer atmel_mxt_ts snd libaes
+> soundcore exynos_gsc s5p_jpeg s5p_mfc v4l2_mem2mem spi_s3c64xx
+> videobuf2_dma_contig exynos_adc pwm_samsung videobuf2_memops
+> videobuf2_v4l2 videodev phy_exynos_usb2 videobuf2_common ohci_exynos
+> ehci_exynos mc exynos_ppmu rtc_s3c exynos_rng s3c2410_wdt s5p_sss
+> phy_exynos_mipi_video phy_exynos_dp_video
+> CPU: 3 PID: 68 Comm: kworker/u36:1 Not tainted
+> 6.10.0-rc1-00001-gb94d24c08ee1 #8619
+> Hardware name: Samsung Exynos (Flattened Device Tree)
+> Workqueue: events_unbound deferred_probe_work_func
+> Call trace:
+> =C2=A0unwind_backtrace from show_stack+0x10/0x14
+> =C2=A0show_stack from dump_stack_lvl+0x50/0x64
+> =C2=A0dump_stack_lvl from __warn+0x108/0x12c
+> =C2=A0__warn from warn_slowpath_fmt+0x118/0x17c
+> =C2=A0warn_slowpath_fmt from kobject_get+0xa0/0xa4
+> =C2=A0kobject_get from of_node_get+0x14/0x1c
+> =C2=A0of_node_get from of_get_next_parent+0x24/0x50
+> =C2=A0of_get_next_parent from of_graph_get_port_parent.part.1+0x58/0xa4
+> =C2=A0of_graph_get_port_parent.part.1 from
+> of_graph_get_remote_port_parent+0x1c/0x38
+> =C2=A0of_graph_get_remote_port_parent from of_graph_get_remote_node+0x10/=
+0x6c
+> =C2=A0of_graph_get_remote_node from drm_of_find_panel_or_bridge+0x50/0xd8
+> =C2=A0drm_of_find_panel_or_bridge from exynos_dp_probe+0xf0/0x158 [exynos=
+drm]
+> =C2=A0exynos_dp_probe [exynosdrm] from platform_probe+0x80/0xc0
+> =C2=A0platform_probe from really_probe+0xc8/0x288
+> =C2=A0really_probe from __driver_probe_device+0x8c/0x190
+> =C2=A0__driver_probe_device from driver_probe_device+0x30/0xd0
+> =C2=A0driver_probe_device from __device_attach_driver+0x8c/0xbc
+> =C2=A0__device_attach_driver from bus_for_each_drv+0x74/0xc0
+> =C2=A0bus_for_each_drv from __device_attach+0xe8/0x184
+> =C2=A0__device_attach from bus_probe_device+0x88/0x8c
+> =C2=A0bus_probe_device from deferred_probe_work_func+0x7c/0xa8
+> =C2=A0deferred_probe_work_func from process_scheduled_works+0xe8/0x41c
+> =C2=A0process_scheduled_works from worker_thread+0x14c/0x35c
+> =C2=A0worker_thread from kthread+0xd0/0x104
+> =C2=A0kthread from ret_from_fork+0x14/0x28
+> Exception stack(0xf0a81fb0 to 0xf0a81ff8)
+>=20
+> ---[ end trace 0000000000000000 ]---
+> ------------[ cut here ]------------
+>=20
+> If I got this right, this points to the drm_of_find_panel_or_bridge()
+> function. I briefly scanned it, but I don't see any obvious
+> of_node_put() related issue there.
+>=20
+>=20
+>> I had submitted a similar patch a couple weeks ago addressing the same
+>> issue, but as it turns out I wasn't thorough enough and had left a coupl=
+e
+>> instances.
+>>=20
+>> I hope this isn't too big an issue.
+>> ---
+>> =C2=A0 drivers/of/property.c | 27 +++++++++++----------------
+>> =C2=A0 1 file changed, 11 insertions(+), 16 deletions(-)
+>>=20
+>> diff --git a/drivers/of/property.c b/drivers/of/property.c
+>> index 17b294e16c56..96a74f6a8d64 100644
+>> --- a/drivers/of/property.c
+>> +++ b/drivers/of/property.c
+>> @@ -773,15 +773,14 @@ EXPORT_SYMBOL(of_graph_get_port_parent);
+>> =C2=A0 struct device_node *of_graph_get_remote_port_parent(
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct device_node *node)
+>> =C2=A0 {
+>> -=C2=A0=C2=A0 struct device_node *np, *pp;
+>> +=C2=A0=C2=A0 struct device_node *pp;
+>> =C2=A0
+>> =C2=A0=C2=A0=C2=A0 /* Get remote endpoint node. */
+>> -=C2=A0=C2=A0 np =3D of_graph_get_remote_endpoint(node);
+>> +=C2=A0=C2=A0 struct device_node *np __free(device_node) =3D
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 of_graph_get_remote_endpoint(node);
+>> =C2=A0
+>> =C2=A0=C2=A0=C2=A0 pp =3D of_graph_get_port_parent(np);
+>> =C2=A0
+>> -=C2=A0=C2=A0 of_node_put(np);
+>> -
+>> =C2=A0=C2=A0=C2=A0 return pp;
+>> =C2=A0 }
+>> =C2=A0 EXPORT_SYMBOL(of_graph_get_remote_port_parent);
+>> @@ -835,17 +834,18 @@ EXPORT_SYMBOL(of_graph_get_endpoint_count);
+>> =C2=A0 struct device_node *of_graph_get_remote_node(const struct device_=
+node *node,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u3=
+2 port, u32 endpoint)
+>> =C2=A0 {
+>> -=C2=A0=C2=A0 struct device_node *endpoint_node, *remote;
+>> +=C2=A0=C2=A0 struct device_node *endpoint_node __free(device_node) =3D
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 of_graph_get_endpoint_by_regs(node, port, endpoint);
+>> +
+>> +=C2=A0=C2=A0 struct device_node *remote __free(device_node) =3D
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 of_graph_get_remote_port_parent(endpoint_node);
+>> =C2=A0
+>> -=C2=A0=C2=A0 endpoint_node =3D of_graph_get_endpoint_by_regs(node, port=
+, endpoint);
+>> =C2=A0=C2=A0=C2=A0 if (!endpoint_node) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_debug("no valid endpoint (=
+%d, %d) for node %pOF\n",
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ port, endpoint, node);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
+>> =C2=A0=C2=A0=C2=A0 }
+>> =C2=A0
+>> -=C2=A0=C2=A0 remote =3D of_graph_get_remote_port_parent(endpoint_node);
+>> -=C2=A0=C2=A0 of_node_put(endpoint_node);
+>> =C2=A0=C2=A0=C2=A0 if (!remote) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_debug("no valid remote nod=
+e\n");
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
+>> @@ -853,7 +853,6 @@ struct device_node *of_graph_get_remote_node(const s=
+truct device_node *node,
+>> =C2=A0
+>> =C2=A0=C2=A0=C2=A0 if (!of_device_is_available(remote)) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_debug("not available for r=
+emote node\n");
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_put(remote);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
+>> =C2=A0=C2=A0=C2=A0 }
+>> =C2=A0
+>> @@ -1064,19 +1063,15 @@ static void of_link_to_phandle(struct device_nod=
+e *con_np,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_node *sup_np,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 flags)
+>> =C2=A0 {
+>> -=C2=A0=C2=A0 struct device_node *tmp_np =3D of_node_get(sup_np);
+>> +=C2=A0=C2=A0 struct device_node *tmp_np __free(device_node) =3D of_node=
+_get(sup_np);
+>> =C2=A0
+>> =C2=A0=C2=A0=C2=A0 /* Check that sup_np and its ancestors are available.=
+ */
+>> =C2=A0=C2=A0=C2=A0 while (tmp_np) {
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (of_fwnode_handle(tmp_np)->dev)=
+ {
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_pu=
+t(tmp_np);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (of_fwnode_handle(tmp_np)->dev)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break=
+;
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> =C2=A0
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!of_device_is_available(tmp_np=
+)) {
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_pu=
+t(tmp_np);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!of_device_is_available(tmp_np=
+))
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retur=
+n;
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> =C2=A0
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmp_np =3D of_get_next_parent=
+(tmp_np);
+>> =C2=A0=C2=A0=C2=A0 }
+>=20
+> Best regards
+> --=20
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
 
-Thanks for the tip!
+Thanks for letting me know.
 
-> 
-> > Generally I am seeing that rate_limit_us in schedutil (which is largely
-> > influenced by this multiplier on most/all systems I am working on) is too high
-> > compared to the cpuinfo_transition_latency reported by the driver
-> > 
-> > For example on my M1 mac mini I get 50 and 56us. rate_limit_us is 10ms (on 6.8
-> > kernel, should become 2ms after my fix)
-> > 
-> > 	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
-> > 	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:50000
-> > 	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:56000
-> > 
-> > AMD Ryzen it reads 0, and end up with LATENCY_MULTIPLIER (1000 = 1ms) as
-> > the rate_limit_us.
-> > 
-> > On Intel I5 I get 20us but rate_limit is 5ms which is requested explicitly by
-> > intel_pstate driver
-> > 
-> > 	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
-> > 	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:20000
-> > 	/sys/devices/system/cpu/cpufreq/policy1/cpuinfo_transition_latency:20000
-> > 	/sys/devices/system/cpu/cpufreq/policy2/cpuinfo_transition_latency:20000
-> > 	/sys/devices/system/cpu/cpufreq/policy3/cpuinfo_transition_latency:20000
-> > 	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:20000
-> > 	/sys/devices/system/cpu/cpufreq/policy5/cpuinfo_transition_latency:20000
-> > 	/sys/devices/system/cpu/cpufreq/policy6/cpuinfo_transition_latency:20000
-> > 	/sys/devices/system/cpu/cpufreq/policy7/cpuinfo_transition_latency:20000
-> > 
-> > The question I have is that why so high? If hardware got so good, why can't we
-> > leverage the hardware's fast ability to change frequencies more often?
-> 
-> From my understanding, this is about not changing the frequency too often.
-> That's all. And it was historical and probably we didn't get better numbers with
-> this reduced to a lower value later on as well.
-> 
-> > This is important because due to uclamp usage, we can end up with less gradual
-> > transition between frequencies and we can jump up and down more often. And the
-> > smaller this value is, this means the better we can handle fast transition to
-> > boost or cap frequencies based on task's requirements when it context switches.
-> > But the rate limit generally is too high for the hardware and wanted to
-> > understand if this is pure historical or we still have reasons to worry about?
-> 
-> Maybe Rafael knows other reasons, but this is all I remember.
-> 
-> > From what I've seen so far, it seems to me this higher rate limit is helping
-> > performance as bursty tasks are more likely to find the CPU running at higher
-> > frequencies due to this behavior. I think this is something I can help these
-> > bursty tasks with without relying accidentally on this being higher.
-> > 
-> > Is there any worry on using cpuinfo_transition_latency as is if the driver
-> > doesn't provide transition_delay_us?
-> 
-> Won't we keep changing the frequency continuously in that case ? Or am I
-> misunderstanding something ?
+It seems this has already been fixed by Alexander Stein here:
+https://lore.kernel.org/all/20240529073246.537459-1-alexander.stein@ew.tq-g=
+roup.com/
 
-I have schedutil in mind, and it shouldn't. Other governors maybe. Should it be
-up to the governor to scale this then?
-
-For schedutil it shouldn't because utilization changes gradually. But we could
-have events where tasks migrate between policies and if this task has big
-util_avg then we can have big jumps. If this migration frequency is often, then
-yeah we can end up with scenarios. But isn't this desired? We want the previous
-policy to bring the frequency down ASAP to save power, and the new policy to go
-up in frequency to accommodate for the new task.
-
-Only issue I see is !fast_switch case schedutil needs to put some additional
-delay due to kworker triggering and performing the actual request.
-
-I haven't been looking at other governors to be honest. But if I am to propose
-something I'll make sure they are not impacted.
-
-> 
-> > And does the kernel/driver contract need to cater for errors in driver's
-> > ability to serve the request? Can our request silently be ignored by the
-> > hardware?
-> 
-> cpufreq core maintains its state machine and the failures are used to inform the
-> user and / or stop DVFS. It is useful for a clean approach, not sure what we
-> will get / miss by ignoring the errors..
-
-Ah, I am not requesting to ignore the error. I am worried it can be ignored
-silently. Looks like this is not the case.
-
-> 
-> > Not necessarily due to rate limit being ignored, but for any other
-> > reason? It is important for Linux to know what frequency we're actually running
-> > at.
-> 
-> One is that we report to userspace two frequencies:
-> - scaling_cur_freq: The frequency that the software thinks the hardware runs at
->   (last requested freq i.e.)
-> 
-> - cpuinfo_cur_freq: The real frequency hardware is running at. Can be calculated
->   using counters, etc.
-> 
-> And there will be tools which are using them. So these are required.
-
-I was just trying to check with more frequent requests whether we are more
-likely to encounter errors. And if we'd fail safe then as knowing the current
-frequency is important for utilization invariance and EAS in general.
-
-I'll look more at cpufreq core paths to verify. If you have big concerns please
-let me know as I'm curious to explore how we can make things more responsive
-but having heads up of the pitfalls would be much appreciated.
-
-Thanks for the answers!
-
-
-Cheers
-
---
-Qais Yousef
-
-> 
-> > Some hardware gives the ability to read a counter to discover that. But
-> > a lot of systems rely on the fact that the request we sent is actually
-> > honoured. But failures can mean things like EAS will misbehave.
-> 
-> -- 
-> viresh
+Regards,
+Shresth
 
