@@ -1,143 +1,202 @@
-Return-Path: <linux-kernel+bounces-193687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 646428D3082
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FD08D308D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4B61C248AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4051F29B56
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F29178370;
-	Wed, 29 May 2024 08:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F6717B435;
+	Wed, 29 May 2024 08:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AWxjrAvN"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0TPyU/Bm"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD8D168C3A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79DD17B507;
+	Wed, 29 May 2024 08:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716969962; cv=none; b=kCXZ/g06MpgiENjrPizRemN3TEQ2v7ZQf8LkFaZiQ99HfaiG+kDa/G0rTmqbdXWLtx8vfK97VStWBZPIVzxHLvMYhggdQE1rtCmc0urWamCKOdbHXDa9+dnoQIRPW/xKYK4GLvPi3B8bcGo0fM8dhkEFpK+eLhEMIpzgONARZGY=
+	t=1716970005; cv=none; b=NzHRdXgWQCFg0ecUUc/ecsMLQeyhQmjRVk7RfBe9aVsm5sNMlj2KobISRQLhOTOmoAeqNJ+MU8lUzOnsE6iUSeUN/fBd709BKi0Kw6lA+GoE9GcoyWy7/kAyA/M0o4EY02r/10vhT9wpO7zxXis6nJmel+g+GISwh8OiWtxEth4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716969962; c=relaxed/simple;
-	bh=e7seYhpXUI67eJGOAuOpL9ZC55dxEPiWops66jBMc6I=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7YOjQOx74jMu8AgXVqVCa+AkNojMAAYoMNSMI0B1BTNrTWkxLJowipaK8D/hkuwXTepbGMPQ2km70cjmYciZQKk4pp4YfMSxCeX0NSNkL3N/C1jDGa0vi+RBadkCtMtjeG3GgVzPms3nzNKimnpAtkGoycIWZDTRtcLemRlC4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AWxjrAvN; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-354c5b7fafaso1466314f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716969958; x=1717574758; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N5XpAlzs8/5dy/UfJxZhXqs4EkV35bosYx2T12GiUv4=;
-        b=AWxjrAvN/aF+FHqn6/PygoTmC/we3guRzLHEfggqkJ2ohI7w4pXnGf1zmrsDykifuh
-         s/OhW8HBrENpfjSSviqW6CLCzU/HHjBSwTQlDeAV9AuEm+KFH+AauC+0QYqfhdMlT2QH
-         YC7VqeWiy3JCJN9URaVjNs+mkW7wR/7OGh77S5PU9c5oQ1g8efEwhwP/Ibw4wzgV47e9
-         hHJplN7kk6yx3jZH7mCv9CrRMf1f/UQE38ZE8+IuMGjPipmqSE1Hbmigz+HLsv2otACp
-         YwgMxrOJJXkFgujHTPrq/Gd0DFRWCmGrOhhJB+7N3npGUNUT0e6w2AWUQOH4WvW94Ksr
-         kNFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716969958; x=1717574758;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N5XpAlzs8/5dy/UfJxZhXqs4EkV35bosYx2T12GiUv4=;
-        b=cKJtLWD2eMcAkNhCndHmc3zFlhVej8XyKzWZXtKwPDeRem9Nb637JIZ3N/LAx8ydes
-         4iAOOAmJO7J+fVUMONDcPgtagKp3sBoFUNCJVU0ELYT0FhviAJ0QyBidSoIXU9T19h3g
-         230lQhROIVUkXze/H/hzIYpUOHI/7O1daLyvjlh+s5kgJNyGcvzjAtRvJtT/juyXZme8
-         cfrN6idHcvadNGTf1fqC822i/MLouuN9xYl+253Rs1Lx8yuJHDU0dZ/n5P3/BgArEU2T
-         8Jc6c4HTVbOIcofabvY0y+VoPefmaq4Of+nKDthhbrQFfjCtuhyOw2BhhM+r4VpfcrR/
-         zOnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZtqa8O5+w44zBRaq99EafsbCsSejF7x5pJkdLpYPLpTApntnMMppluzxEvHRq0MGTngu0Y7Dl5T6dPHqEHYG0HeNn84Rf77BD+rCh
-X-Gm-Message-State: AOJu0YzQi/Y68Wz+LDypvIGjm3FYfnko9I+jxaBbdBtpa0EMBWjcAzG0
-	6x79W/32LHL3/MQPKE962w5rn/tZd+ibf1BqKf8jpIsm3GRDD5kjvsQ1COIkbpo=
-X-Google-Smtp-Source: AGHT+IEWL+ZvoWTTto3nvB8MwaNuX1ufrqSVnU1SJZSJmLczqxuu5qf+e7ikQWSXZHaCbOMhNsFeCQ==
-X-Received: by 2002:adf:f1c9:0:b0:351:c934:e9e6 with SMTP id ffacd0b85a97d-3552fdfa7a8mr9781890f8f.64.1716969958385;
-        Wed, 29 May 2024 01:05:58 -0700 (PDT)
-Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a0908e4sm14132958f8f.63.2024.05.29.01.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:05:58 -0700 (PDT)
-From: Oscar Salvador <osalvador@suse.com>
-X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
-Date: Wed, 29 May 2024 10:05:56 +0200
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v4 12/16] powerpc/e500: Encode hugepage size in PTE
- bits
-Message-ID: <Zlbh5Bwsx7WqEEWr@localhost.localdomain>
-References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
- <10eae3c6815e3aba5f624af92321948e4684c95a.1716815901.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1716970005; c=relaxed/simple;
+	bh=C9NThqdx/W9npFCwEseQgicfZl61EOyPH13LNK3W6HM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NCWnPe8xAbfLDyrgFj/40G6R39zD9Lpq7YQLuQqYdFaeT0zM2ZoHRUYny/DSpMLfZm8aMt7J+z6O7ahpfaN7pdr3/02GfCdIEVRCBpZ64a0LNAuYHy2SUXfiOcm+k9yyHTTMol1W4ObERaalYXLiiqEP93UPusOFMh7B91ht4sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0TPyU/Bm; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716970002;
+	bh=C9NThqdx/W9npFCwEseQgicfZl61EOyPH13LNK3W6HM=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=0TPyU/Bmm41hIGdVrpdVaPzXI963Y+no4v0A8ghyC3bQvE3pjAxBLp11ReGn+iJGj
+	 kHkobjweMEugNEjPF3NZ9sxAeJaf+HV/ftMvhjdSt4dSK8vN3fgK4BKF3WkP84nv4Q
+	 Uahb+JJ/974RBI0oVHnj1sc0Gnbx4U5nBlVRPmFO1reC/hnSF+ebDirAVVv+V4iZIJ
+	 6TOVPgMZK2NgCJxUzGxnXbSQcCWw6962KX8iQ3WtInBEYIve8tSOGA8wdcXd7zEe/c
+	 3bwjDfVc7MQVEqo/FYZPuUoXJ2f/qc/ilOvZu530ffd2p2iCUIfveKG2Hqb4jwtAhz
+	 1Rmw2FBaZJcGA==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0A9D23782162;
+	Wed, 29 May 2024 08:06:34 +0000 (UTC)
+Message-ID: <0816b38b-41a1-431a-90a4-1ac33401a671@collabora.com>
+Date: Wed, 29 May 2024 13:05:57 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10eae3c6815e3aba5f624af92321948e4684c95a.1716815901.git.christophe.leroy@csgroup.eu>
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Mark Brown <broonie@kernel.org>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Colin Ian King <colin.i.king@gmail.com>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] selftests/vDSO: fix clang build errors and warnings
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+References: <20240527211622.290635-1-jhubbard@nvidia.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240527211622.290635-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 27, 2024 at 03:30:10PM +0200, Christophe Leroy wrote:
-> Use U0-U3 bits to encode hugepage size, more exactly page shift.
+On 5/28/24 2:16 AM, John Hubbard wrote:
+> When building with clang, via:
 > 
-> As we start using hugepages at shift 21 (2Mbytes), substract 20
-> so that it fits into 4 bits. That may change in the future if
-> we want to use smaller hugepages.
-
-What other shifts we can have here on e500? PUD_SHIFT?
-Could you please spell them out here?
-Or even better,
+>     make LLVM=1 -C tools/testing/selftests
+> 
+> ...there are several warnings, and an error. This fixes all of those and
+> allows these tests to run and pass.
+> 
+> 1. Fix linker error (undefined reference to memcpy) by providing a local
+>    version of memcpy.
+> 
+> 2. clang complains about using this form:
+> 
+>     if (g = h & 0xf0000000)
+> 
+> ...so factor out the assignment into a separate step.
+> 
+> 3. The code is passing a signed const char* to elf_hash(), which expects
+>    a const unsigned char *. There are several callers, so fix this at
+>    the source by allowing the function to accept a signed argument, and
+>    then converting to unsigned operations, once inside the function.
+> 
+> 4. clang doesn't have __attribute__((externally_visible)) and generates
+>    a warning to that effect. Fortunately, gcc 12 and gcc 13 do not seem
+>    to require that attribute in order to build, run and pass tests here,
+>    so remove it.
+Just checked with GCC 5.1, it builds fine without any errors.
 
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> [1] https://lore.kernel.org/all/20240329-selftests-libmk-llvm-rfc-v1-1-2f9ed7d1c49f@valentinobst.de/
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+LGTM
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
 > ---
->  arch/powerpc/include/asm/nohash/hugetlb-e500.h | 6 ++++++
->  arch/powerpc/include/asm/nohash/pte-e500.h     | 3 +++
->  2 files changed, 9 insertions(+)
 > 
-> diff --git a/arch/powerpc/include/asm/nohash/hugetlb-e500.h b/arch/powerpc/include/asm/nohash/hugetlb-e500.h
-> index 8f04ad20e040..d8e51a3f8557 100644
-> --- a/arch/powerpc/include/asm/nohash/hugetlb-e500.h
-> +++ b/arch/powerpc/include/asm/nohash/hugetlb-e500.h
-> @@ -42,4 +42,10 @@ static inline int check_and_get_huge_psize(int shift)
->  	return shift_to_mmu_psize(shift);
+> Changes since the first version:
+> 
+> 1) Rebased onto Linux 6.10-rc1
+> 
+> thanks,
+> John Hubbard
+> 
+>  tools/testing/selftests/vDSO/parse_vdso.c      | 16 +++++++++++-----
+>  .../selftests/vDSO/vdso_standalone_test_x86.c  | 18 ++++++++++++++++--
+>  2 files changed, 27 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
+> index 413f75620a35..4ae417372e9e 100644
+> --- a/tools/testing/selftests/vDSO/parse_vdso.c
+> +++ b/tools/testing/selftests/vDSO/parse_vdso.c
+> @@ -55,14 +55,20 @@ static struct vdso_info
+>  	ELF(Verdef) *verdef;
+>  } vdso_info;
+>  
+> -/* Straight from the ELF specification. */
+> -static unsigned long elf_hash(const unsigned char *name)
+> +/*
+> + * Straight from the ELF specification...and then tweaked slightly, in order to
+> + * avoid a few clang warnings.
+> + */
+> +static unsigned long elf_hash(const char *name)
+>  {
+>  	unsigned long h = 0, g;
+> -	while (*name)
+> +	const unsigned char *uch_name = (const unsigned char *)name;
+> +
+> +	while (*uch_name)
+>  	{
+> -		h = (h << 4) + *name++;
+> -		if (g = h & 0xf0000000)
+> +		h = (h << 4) + *uch_name++;
+> +		g = h & 0xf0000000;
+> +		if (g)
+>  			h ^= g >> 24;
+>  		h &= ~g;
+>  	}
+> diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+> index 8a44ff973ee1..27f6fdf11969 100644
+> --- a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+> +++ b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+> @@ -18,7 +18,7 @@
+>  
+>  #include "parse_vdso.h"
+>  
+> -/* We need a libc functions... */
+> +/* We need some libc functions... */
+>  int strcmp(const char *a, const char *b)
+>  {
+>  	/* This implementation is buggy: it never returns -1. */
+> @@ -34,6 +34,20 @@ int strcmp(const char *a, const char *b)
+>  	return 0;
 >  }
 >  
-> +static inline pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
+> +/*
+> + * The clang build needs this, although gcc does not.
+> + * Stolen from lib/string.c.
+> + */
+> +void *memcpy(void *dest, const void *src, size_t count)
 > +{
-> +	return __pte(pte_val(entry) | (_PAGE_U3 * (shift - 20)));
-> +}
-> +#define arch_make_huge_pte arch_make_huge_pte
+> +	char *tmp = dest;
+> +	const char *s = src;
 > +
->  #endif /* _ASM_POWERPC_NOHASH_HUGETLB_E500_H */
-> diff --git a/arch/powerpc/include/asm/nohash/pte-e500.h b/arch/powerpc/include/asm/nohash/pte-e500.h
-> index 975facc7e38e..091e4bff1fba 100644
-> --- a/arch/powerpc/include/asm/nohash/pte-e500.h
-> +++ b/arch/powerpc/include/asm/nohash/pte-e500.h
-> @@ -46,6 +46,9 @@
->  #define _PAGE_NO_CACHE	0x400000 /* I: cache inhibit */
->  #define _PAGE_WRITETHRU	0x800000 /* W: cache write-through */
-> +#define _PAGE_HSIZE_MSK (_PAGE_U0 | _PAGE_U1 | _PAGE_U2 | _PAGE_U3)
-> +#define _PAGE_HSIZE_SHIFT	14
-
-Add a comment in above explaining which P*_SHIFT we need cover with these
-4bits.
-
- 
+> +	while (count--)
+> +		*tmp++ = *s++;
+> +	return dest;
+> +}
+> +
+>  /* ...and two syscalls.  This is x86-specific. */
+>  static inline long x86_syscall3(long nr, long a0, long a1, long a2)
+>  {
+> @@ -70,7 +84,7 @@ void to_base10(char *lastdig, time_t n)
+>  	}
+>  }
+>  
+> -__attribute__((externally_visible)) void c_main(void **stack)
+> +void c_main(void **stack)
+>  {
+>  	/* Parse the stack */
+>  	long argc = (long)*stack;
+> 
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
 
 -- 
-Oscar Salvador
-SUSE Labs
+BR,
+Muhammad Usama Anjum
 
