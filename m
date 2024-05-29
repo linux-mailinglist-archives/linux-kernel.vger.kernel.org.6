@@ -1,150 +1,125 @@
-Return-Path: <linux-kernel+bounces-194766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FDA8D41B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0F78D41B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F4401F22F36
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167C3287087
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595DF200108;
-	Wed, 29 May 2024 23:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AD81CB338;
+	Wed, 29 May 2024 23:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fzoj78OU"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pi0fHrBX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D575178360;
-	Wed, 29 May 2024 23:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DAB178360;
+	Wed, 29 May 2024 23:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717024126; cv=none; b=LV2oaLcPqm9P24U05seULfO/RDqDtytkQuKh/N3Awy1xCn4yGXmTljrBIJ2gAYVOKAiSHDzyWMrFI/xEjz8PSql200YgLLOPnOhCB/v3kIJR8KnvB7u6uxoz+xQtMoxttC9cljhgTiI21SC0mHuz8RV4OKaogwnFKgQgOItGZ9Q=
+	t=1717024227; cv=none; b=L2RNNvaiLsxpJUGl1H7DQA+xIef370nHFXuCzGhYLe3Fm9vnY80Y4ezO/wN+VBtpX0BfEXUwQ/3SplwmweaHGYw/U5IJsYazyUXps2rPH9we/3WuZg/tr6oMQZABOtTaJPEIik4wlg0XdWdqbfflP9ZQ45Y76hljaI6Bn/g1RiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717024126; c=relaxed/simple;
-	bh=9hflfRrZb424cwnqf/iro650WO5bVJxeXnW7wHQXjYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eRw24G+2L7h50SvdpQ7sgBBcy6hB2+5elufI3zDdzhUVazTj0p7GBI3/5oEW4l9SdkSfj7mHlssqo1A5zYaLRPyeGn0dnmnwA12JVjanfZULTgr5/I2Qg6WguhDqAIaibUc8VXdJKY5wcp6h0JJAdWYyzVRAZ3XRYZarngtg2Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fzoj78OU; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44TMbxPF022947;
-	Wed, 29 May 2024 23:08:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : date : from : in-reply-to : message-id :
- mime-version : references : subject : to; s=pp1;
- bh=tfpTIOiHxnILFvod7wxA6yfuRrE3T97/xxPgvdUVf78=;
- b=Fzoj78OUKHHCFEyeln+BzC2zzqAYVAOVwnm136g+5Ly3IyNAckUI+nnfyPf/Yw9wpFAJ
- +bHjqitYE+0VRSwuv4ZtCU3uf7bsH7AaFuiImb59763z9liNDzwqRa+BBy9YCR+lK5Jj
- trfv2g2h9o/3Idtru+Ba0Y+LPaS+rlwj1IrnIUrnZrDNFOuFjJKxBrjic07T+OQ3fAtV
- xTlNah3DMv4kVPpJov3EzGTUplCeb6cV7tN07IZczro5QiNr5ZlKdwbwT/e5ecu1jTqu
- LQIlOA5gZF19pQG9aD6tOIjlvqkXoCNilyEJ4+ZSq/zbiMG9Ju74IaRx67LS0Biic7bZ 1g== 
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yedakg1pd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 23:08:37 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44TLiGx8026662;
-	Wed, 29 May 2024 23:08:36 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ydpd2pkn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 23:08:36 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44TN8XVF18481820
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 May 2024 23:08:35 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 95E3958056;
-	Wed, 29 May 2024 23:08:33 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D951D58054;
-	Wed, 29 May 2024 23:08:32 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 29 May 2024 23:08:32 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org, lukas@wunner.de, jarkko@kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH 2/2] crypto: ecdsa - Use ecc_digits_from_bytes to convert signature
-Date: Wed, 29 May 2024 19:08:27 -0400
-Message-ID: <20240529230827.379111-3-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240529230827.379111-1-stefanb@linux.ibm.com>
-References: <20240529230827.379111-1-stefanb@linux.ibm.com>
+	s=arc-20240116; t=1717024227; c=relaxed/simple;
+	bh=vzWcn7Aw091UVdTPFhmX1lM4t/jWNKg7Zc+z6URoDl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eH1IMWtIQ4izK3Cj5xf8j9W5GKbbgSgT+P95ud0+TDEuacAmpFl1zDf25aIBC6KO6IxdLi52viEPgdKmFV8GAAwQasxtZtAMyUc8QZYPq21t5hLQTA+T90l2kdpGI4mt0W3rwEy06OfN0efQQWbMts8wloOnS4YEblyHR2J5sLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pi0fHrBX; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717024226; x=1748560226;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vzWcn7Aw091UVdTPFhmX1lM4t/jWNKg7Zc+z6URoDl4=;
+  b=Pi0fHrBX7+aPAMNZBWhQNeLSCvW+0PdGI5KNX3zdYBz01Bvey6RCMqnt
+   sHvOTCQBSe3+fM7wu11d/JMGw1CNE/xTS6qCbFz48T0C4h1avEq+wsL+R
+   JWWvb6Sd+CZgbVaMB+qVcT1DR3zCs33JiRdzHPQRNRFMPEeaYMBngC3je
+   DFMLgbS02KudVSi/cITN6bicnvggX9NWSMVZDe8BxNFYALRcnw0T966fF
+   1quIPhRisD7JX0vpj+IxdiZqlciAA2qX7JNi4iktGWYvK4gGg4IPJtTUv
+   +Pj1B1MPObS+2bVdJPXkt53aiEyOsVMdc8g6oWMaNfbH4/AIgGjHB3gXw
+   Q==;
+X-CSE-ConnectionGUID: ZGrwzyeaTlSKkAgVyJSWhg==
+X-CSE-MsgGUID: wJXMxxlvQxO0TY3f8c2b7Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="11763896"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="11763896"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 16:10:26 -0700
+X-CSE-ConnectionGUID: FT9yY/amRni9wzGldubA2g==
+X-CSE-MsgGUID: dsspOyF2TfK9+7eXjWqogA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="35663200"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 29 May 2024 16:10:21 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sCSR1-000EJ3-0U;
+	Wed, 29 May 2024 23:10:19 +0000
+Date: Thu, 30 May 2024 07:09:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chris Lu <chris.lu@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Von Dentz <luiz.dentz@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Sean Wang <sean.wang@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>,
+	Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-mediatek <linux-mediatek@lists.infradead.org>,
+	Chris Lu <chris.lu@mediatek.com>
+Subject: Re: [PATCH v2 3/3] Bluetooth: btusb: mediatek: add MediaTek ISO data
+ transmission function
+Message-ID: <202405300602.AUh9Yu96-lkp@intel.com>
+References: <20240529062946.5655-4-chris.lu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: z0xQju7NkbK5RIUZcofU-LpnTH1PkTj3
-X-Proofpoint-GUID: z0xQju7NkbK5RIUZcofU-LpnTH1PkTj3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 bulkscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- mlxscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405290166
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529062946.5655-4-chris.lu@mediatek.com>
 
-Since ecc_digits_from_bytes will provide zeros when an insufficient number
-of bytes are passed in the input byte array, use it to convert the r and s
-components of the signature to digits directly from the input byte
-array. This avoids going through an intermediate byte array that has the
-first few bytes filled with zeros.
+Hi Chris,
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- crypto/ecdsa.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
-index fa029f36110b..941cdc2b889b 100644
---- a/crypto/ecdsa.c
-+++ b/crypto/ecdsa.c
-@@ -38,7 +38,6 @@ static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
- 	size_t bufsize = ndigits * sizeof(u64);
- 	ssize_t diff = vlen - bufsize;
- 	const char *d = value;
--	u8 rs[ECC_MAX_BYTES];
- 
- 	if (!value || !vlen)
- 		return -EINVAL;
-@@ -46,7 +45,7 @@ static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
- 	/* diff = 0: 'value' has exacly the right size
- 	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
- 	 *           makes the value a positive integer; error on more
--	 * diff < 0: 'value' is missing leading zeros, which we add
-+	 * diff < 0: 'value' is missing leading zeros
- 	 */
- 	if (diff > 0) {
- 		/* skip over leading zeros that make 'value' a positive int */
-@@ -61,14 +60,7 @@ static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
- 	if (-diff >= bufsize)
- 		return -EINVAL;
- 
--	if (diff) {
--		/* leading zeros not given in 'value' */
--		memset(rs, 0, -diff);
--	}
--
--	memcpy(&rs[-diff], d, vlen);
--
--	ecc_swap_digits((u64 *)rs, dest, ndigits);
-+	ecc_digits_from_bytes(d, vlen, dest, ndigits);
- 
- 	return 0;
- }
+[auto build test ERROR on bluetooth-next/master]
+[also build test ERROR on next-20240529]
+[cannot apply to bluetooth/master linus/master v6.10-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Lu/Bluetooth-net-add-hci_iso_hdr-function-for-iso-data/20240529-143216
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
+patch link:    https://lore.kernel.org/r/20240529062946.5655-4-chris.lu%40mediatek.com
+patch subject: [PATCH v2 3/3] Bluetooth: btusb: mediatek: add MediaTek ISO data transmission function
+config: i386-randconfig-014-20240530 (https://download.01.org/0day-ci/archive/20240530/202405300602.AUh9Yu96-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405300602.AUh9Yu96-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405300602.AUh9Yu96-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: btmtk_isopkt_pad
+   >>> referenced by btusb.c:2267 (drivers/bluetooth/btusb.c:2267)
+   >>>               drivers/bluetooth/btusb.o:(btusb_send_frame) in archive vmlinux.a
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
