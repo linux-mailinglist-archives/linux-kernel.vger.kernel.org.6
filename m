@@ -1,82 +1,111 @@
-Return-Path: <linux-kernel+bounces-194763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129678D41A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:03:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B6C8D41ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F68287007
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:02:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5344BB278CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AB31CB32B;
-	Wed, 29 May 2024 23:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841F81667D1;
+	Wed, 29 May 2024 23:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VOWffBz4"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="dA3Qf+Bx"
+Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C716715D5A0;
-	Wed, 29 May 2024 23:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B3928F3;
+	Wed, 29 May 2024 23:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717023771; cv=none; b=TMGNG2vVeBDgPphewE01Ssu2bfBxGNfL1HouchnBw1iyuRHkmxQgKyMNE4D3m8CDKaUxMDDEPXDe88At6LTD8xa/GJI2qe6kXVyHwwcwlz5eFy4ds3DtcJ+wFTwr9BbX4XdDiVVk9j9aH8iGxYKfY6/KYnVv4AHsnpMHPqY1Plg=
+	t=1717024577; cv=none; b=qAvNgY6AJQ4mtRUfFQnCRzYrAf2d6h4ZTjYoIpf/bPkvG8/d+jKXFWMrAWxP72vfO+3f2ZlNFeT7dJ0TfORTk0fBgfDP7SctehonbvYbtoiutdKY7AIS7PrFodqs8+iAI1LWvvbRN9sqEaWW4P+I0AcE1y5WvPSoiPWEXsafvz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717023771; c=relaxed/simple;
-	bh=Ki6OB4kf0d+GQ3AEcaw1nNvdeZ0HvyOOaDOYtve29L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QJby1JRCpApU/Knm6VTDz2sPkT3Yhgn25C4/acCC9Ao/2FxLwAdX5FycUo4SdQqZhTMtqPCysVh64fr+qv1cb2nhSz1bCIrcqnCoA3cIMuNLtQIovWdxwoCU4LUfYAO6jmv/qVxbbvk1S/sGp00aSDy5nJvjCUwSi5Zts6iJIY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VOWffBz4; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NaqPsF+YNHjwUDf2w9rBdP367AFBYc/O3af88711Nu4=; b=VOWffBz4rAP4fZi7xgoTgXlzwV
-	RYdScfYw3LtW64Vt2ZRc6z7jvmHxM0Ed9C8p+BAqiiCwboGFLT8Kpf/KhJtVSIE5MQC9lxjcjL4nY
-	37FQfzRc76zBcltN0Pk2q3srKsS9F1Yojw5SaNSJwWlvC19ZE4ot83Rw89980UOh96r0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sCSJZ-00GIaB-AM; Thu, 30 May 2024 01:02:37 +0200
-Date: Thu, 30 May 2024 01:02:37 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 1/8] net: pse-pd: Use EOPNOTSUPP error code instead of
- ENOTSUPP
-Message-ID: <1e80a2aa-fa3a-4f90-ae43-d4e91e4fa80f@lunn.ch>
-References: <20240529-feature_poe_power_cap-v1-0-0c4b1d5953b8@bootlin.com>
- <20240529-feature_poe_power_cap-v1-1-0c4b1d5953b8@bootlin.com>
+	s=arc-20240116; t=1717024577; c=relaxed/simple;
+	bh=0mxyy6nmrKWMs62jGYfJK+jI1mtrNo02vUVORzUuSmM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NF4N7R3+c5UT1/2kBDsq5oYU0g/1Ztrpri+1VnbjKdhy5bOjSrzY60VGa59btLs4OMZUlilw4HUlVD4l3jUIGRnPnoutJfbTrp4H14bjZFxvBY5L0lNvtNeuPrM3+23LzZB0s9kXdKOsuZ1OvkCfZ5xC4/s41+5upVTQo0EocgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=dA3Qf+Bx; arc=none smtp.client-ip=54.39.219.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 89CD9C005F;
+	Wed, 29 May 2024 19:08:26 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
+	t=1717024109; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=PDLpjtD8+3OyvFRYxZd0ZhadxMjnIfuZmLlbltpqaZ4=;
+	b=dA3Qf+BxPAIQ7NCoICy7S3OpYAGFkO3PKWXmv7LQ/YiG5E4Uim1T12jk0pqy3ACnzqhXUL
+	gpjQl8704UWBpWOD3J19fZeuEHSUSEapfZwLi2HVq3Mtbq2uwEK7RuVekibABdryz6MLGL
+	oOLl+hux41Zz5Vc3h5rFyZi+N7mntDc=
+Message-ID: <b065e243-58dc-4ebe-8dbc-8b23c0b46cd1@kaechele.ca>
+Date: Wed, 29 May 2024 19:07:23 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529-feature_poe_power_cap-v1-1-0c4b1d5953b8@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] input: himax_hx83112b: implement MCU register
+ reading
+From: Felix Kaechele <felix@kaechele.ca>
+To: Mark Brown <broonie@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Job Noorman <job@noorman.info>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240511121245.109644-1-felix@kaechele.ca>
+ <20240511121245.109644-4-felix@kaechele.ca> <ZkKb5_SRNwG1pRou@google.com>
+ <44570cd2-9540-47f8-a409-26220b0812fb@sirena.org.uk>
+ <afab9026-e843-4cc4-8733-f45e9ab34276@kaechele.ca>
+Content-Language: en-US
+In-Reply-To: <afab9026-e843-4cc4-8733-f45e9ab34276@kaechele.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, May 29, 2024 at 04:09:28PM +0200, Kory Maincent wrote:
-> From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
+On 2024-05-14 10:01, Felix Kaechele wrote:
+> On 2024-05-14 05:46, Mark Brown wrote:
+>> On Mon, May 13, 2024 at 04:01:59PM -0700, Dmitry Torokhov wrote:
+>>> On Sat, May 11, 2024 at 08:12:24AM -0400, Felix Kaechele wrote:
+>>>> Implement reading from the MCU in a more universal fashion. This allows
+>>>> properly handling reads of more than 4 bytes using the AHB FIFO
+>>>> implemented in the chip.
+>>
+>>> Mark, do we have anything in regmap to support this better or having a
+>>> wrapper is the best solution here?
+>>
+>> No, I've not seen something that explicitly requires toggling a burst
+>> mode on and off to do a bulk operation.  Off the top of my head I'd
+>> suggest just always leaving the burst mode enabled but I assume there's
+>> some downside to doing that.  We could add something but I'm not sure if
+>> it's worth it without having seen any other devices with the same need.
 > 
-> ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP as reported by
-> checkpatch script.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> I can experiment some more with just leaving burst mode enabled.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+I've done some testing now and can confirm that, unfortunately, not 
+enabling burst mode for every read of the FIFO register results in 
+unreliable touchscreen operation.
 
-    Andrew
+For testing purposes I only enabled burst mode once at both probe and 
+resume.
+The touchscreen will stop working both randomly in normal operation and 
+reproducibly after returning from screen blanking.
+My wild guess is that DSI commands (e.g. for re-initializing the panel) 
+alter the state of the IC such that the burst mode on the I2C interface 
+ends up disabled again.
+
+That means the bus read function from this current v2 series could be 
+used as-is.
+I have a v3 in the pipeline to address the comments Conor made on 
+another patch in the series.
+So far those are the only changes compared to this v2. If you have any 
+other ideas for what I could test in regards to this, please let me 
+know. Otherwise I'll be sending v3 in the next few days.
+
+Regards,
+Felix
 
