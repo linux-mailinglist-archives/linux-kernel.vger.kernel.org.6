@@ -1,155 +1,129 @@
-Return-Path: <linux-kernel+bounces-194756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873678D4184
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:46:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5778D417E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151811F23A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37F6D283C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF2D1CB324;
-	Wed, 29 May 2024 22:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1614169ADC;
+	Wed, 29 May 2024 22:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="ICndzTF3"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="PJ33HDfE"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39E1225D6;
-	Wed, 29 May 2024 22:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99C5177991;
+	Wed, 29 May 2024 22:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717022805; cv=none; b=NuCa/XWlwydSNfW9CP0fyatrR4U5tqgA9yVWu0aOoXTZUd4goer/ipWAVTqHBPA2RPWeBPUsB4UlNfDbCKCzvt6EqxwOokz2x9muk5lGKsD2n180t8O0eUY2ZLuPRgNHjhi9qSlnOx23VUl9lNWV6SK/A3sE97SdnsEE9646jaU=
+	t=1717022540; cv=none; b=WcHKCL8ZfcVTz0bYP969GrXuMpXGJ3eT39srrnhk7bRmsC/r447OF3Qh8GrlFLSQCy2686kPxi/sBBq/jd3NoMyHkXo6crq1TyBjHFfY2zKy5+SXPuLdBa8Gq6bCGP4c86QSGXX+3fyNYMOVihyrQq5Y5Gut9jsDnBVcVqFfFPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717022805; c=relaxed/simple;
-	bh=R8Y/1yWk13Z92Ga0+yRAKYTTyLr7fKDk9Xa0oyL+4KM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oD9967xXUZS+Id34equyQ5R/0NqbXwxp2XuWhK5mc12Rk+ZQNJggmyq4UhcmLpNJEh2Yv2PW4+306u0d8D+nZxZZQsoZJr0KJFzaS8psyoN3AEWlHlyr1QI5KNuHunq/QY7dGoVahnjblWHTgrIaSKedQD9bti1gM8tsQioN1DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=ICndzTF3; arc=none smtp.client-ip=212.227.126.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1717022787; x=1717627587; i=christian@heusel.eu;
-	bh=rvkRn1scf+EMnqlDNbAkVKe1cYluv8bP2a6YdUujSCI=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ICndzTF3GrUAldui7KMwiXp3mZlrOHiyGPXdEYms0CKzmkMEd/QPf2auSXXQMe6P
-	 3C7g6HRpvClswU/6zlsmHT/MCphlgd1Bp1oSdmyC7zYCbOusjnlIxfMsK4jqnpaQX
-	 U56Mzy4+G/+igLzmQeNeZmUIDDaW+pNIT0fsUzMa9T2Xl7PiJNvX6JfbAzipKFOVz
-	 xu/dGVVzxx5lGRfBWYk3uWiM241pNbIn+wUcAy1Iqh2rl4HhsicbMx6gBG5QmV57v
-	 AMd8q6ec6YaMcpTjF05OLi85n2Ou0XgDmX7nxMCjPD5+Sdr1mbg1c0Lb0p+lLwHo7
-	 tQc8ph9Ou+RAJM8oZA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue010
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1MPp0l-1rpi9g0T3b-00Mx3C; Thu, 30
- May 2024 00:40:51 +0200
-Date: Thu, 30 May 2024 00:40:50 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: Re: [tip: x86/urgent] x86/topology/amd: Evaluate SMT in CPUID leaf
- 0x8000001e only on family 0x17 and greater
-Message-ID: <2gj2lkahha4wzyf2ol6xk2ermrmsxaklznrisixdg4m3ogzten@gbrtiyjebeup>
-References: <7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw6g2jduf6c@7b5pvomauugk>
- <171697474837.10875.6335609575452053884.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1717022540; c=relaxed/simple;
+	bh=OVpH2Iy+UNqNaSBm+18bef9LK4uwfGTVFbqySkhuG4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AfVTBBlJvWsrRwNI7KsE7Kb0p8CiwIx49MogYA2aAj0fOPoaRZrBCu3pPW0L2+UhYleA70b7o33LgBxnyPjjvZQnXyQBhzRjyrYxFt6GZTeDe5eG8STEHrdCzJU33bKUwVSEYyLl45YDzYtJjwBLNzWAf7BMFzL+FaOk+PhGqT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=PJ33HDfE; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VqPXB0kc4z6Cnk97;
+	Wed, 29 May 2024 22:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1717022525; x=1719614526; bh=wmqAutlJJibPd6rU+UVnuwTK
+	NEx0bdku7UkT7t6UWI8=; b=PJ33HDfElBr6B2EjMPAfwGu7bE9RZoyBwrnjF5kb
+	ldVDQ25YGiOYb3pvO+o2X4KwZcFOl2ybOFgIkCOc0Ovy3mSs/Qkku5fBtZSpDMAH
+	mo9zWgWAO/CJ+wjKd7BKsK3R35ll6PbtNTvvc0E3qu33t6NW2oxmMmYoqJ0SyYV/
+	CkMts1Kxkn0f77eR5bgC4+EQtVRK5DWNELILtuJUAh/9D3uk14Q74GoSmyK2dSs8
+	ZCbwXv16vYl8xhRpUrE/FHWvAtX/lSM95PUP8DM2HTM46/7eMAE0O6yZP9PjEk+T
+	mNqQ5EKt9zBW3jpgOkylLeHIVqfmpQAEVzpoWX4wuRTsHg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id b0OFq5KM274R; Wed, 29 May 2024 22:42:05 +0000 (UTC)
+Received: from [192.168.3.219] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VqPWk5M18z6Cnk94;
+	Wed, 29 May 2024 22:41:54 +0000 (UTC)
+Message-ID: <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+Date: Wed, 29 May 2024 15:41:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nhya4smjkjicwrca"
-Content-Disposition: inline
-In-Reply-To: <171697474837.10875.6335609575452053884.tip-bot2@tip-bot2>
-X-Provags-ID: V03:K1:vK0vhD8JptAXyk5NIHfgZzm49lbDcZGdvDC2i+N66TZYrb7Tnwq
- L4YgSbQSD1J37/WvTeCs0XvXwOWkuY2fh+lsfh32HGRLu+9SUr3kxnpZkFjD/p2D1tjpgFb
- J5YtzPl0hjcDLaWpROIcv9Xhl2A3OPgpOj+1Gb9iHoE0yrwr38TQr8Z2stpFiHrzO4hXGtX
- X29aRmpDoFNNOoS+Yp8QA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SS0be6QVhhg=;BdKa79pKeARa249qxJa0nL3pErX
- bniyw4L/lNNdVXXrxuK/kSkvmBn1wh5vC/KH2IKA0zWin8hsFtzxfwkqtz3UYFRV+UHXlw6+v
- tTI/UnKn5ggoTkG9YIHzbdMvyeOs+kuPXpRr2Djsw48eGWVi4qWp/uu0Md4XmRBWQAps/7z0e
- l8nfLOy0NMJOh/osHDdiqGOB95CPoqXriTgoPgvJpEs0wctV8KEt//5VfVke5avEHQ1k5bPQ0
- HKIRcUZYaA2U6mLr5obyGQw1q4zMjbjPuWgRMaBk7wZHMKOdsCqwc9WjHHg90UB6nKPXpMa15
- vtams+R4Z0sTWqsm9B/tGHij3pJV7pDsaCoCBRNPHTSpyS+pm6L+u44hNRvBpj7pk9+wmSTym
- ZCvLz1iisVsm7QiruP6EPPY/Yz+U7eEKXjAO9tqQjbictQmm9551OJcoQvVf5JN2KQik5Jrc2
- zt+ayV1FMmp+hU5A+PDJwTWAqUJ6u9FMS2URGRAz2k4tNjS8XR1aeOZ4QhFgWO/JnqxNw+XaS
- dnuWrICXd913zo2pou0Vm5U9jamnYtPWIaO9YAUKqH1L7cQ++O5ExJDjldN2SR5EYbnYGa4mr
- ++M6raM9840GX/NBjmf8W8Lxq+BU2P48V3b5GMwfxBw2s1eilWnzEEIT3pJF1Bb5ysZdRf5g0
- wTD9U7alhLVmTaUwku2X66oci9/xPQkWkU41AelFJXwOe8DBTERFfKcyo54Y+mt5Omyh9oSzC
- 3spgIfd+loz6SEVlGFZJ8szOs0Gh4BRJBtIdHvahrOAeIXmdTO/iD4=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Damien Le Moal <dlemoal@kernel.org>, Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+ <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+ <20240529061736.rubnzwkkavgsgmie@nj.shetty@samsung.com>
+ <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 5/29/24 12:48 AM, Damien Le Moal wrote:
+> On 5/29/24 15:17, Nitesh Shetty wrote:
+>> On 24/05/24 01:33PM, Bart Van Assche wrote:
+>>> On 5/20/24 03:20, Nitesh Shetty wrote:
+>>>> We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
+>>>> Since copy is a composite operation involving src and dst sectors/lba,
+>>>> each needs to be represented by a separate bio to make it compatible
+>>>> with device mapper.
+>>>> We expect caller to take a plug and send bio with destination information,
+>>>> followed by bio with source information.
+>>>> Once the dst bio arrives we form a request and wait for source
+>>>> bio. Upon arrival of source bio we merge these two bio's and send
+>>>> corresponding request down to device driver.
+>>>> Merging non copy offload bio is avoided by checking for copy specific
+>>>> opcodes in merge function.
+>>>
+>>> In this patch I don't see any changes for blk_attempt_bio_merge(). Does
+>>> this mean that combining REQ_OP_COPY_DST and REQ_OP_COPY_SRC will never
+>>> happen if the QUEUE_FLAG_NOMERGES request queue flag has been set?
+>>>
+>> Yes, in this case copy won't work, as both src and dst bio reach driver
+>> as part of separate requests.
+>> We will add this as part of documentation.
+> 
+> So that means that 2 major SAS HBAs which set this flag (megaraid and mpt3sas)
+> will not get support for copy offload ? Not ideal, by far.
 
---nhya4smjkjicwrca
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+QUEUE_FLAG_NOMERGES can also be set through sysfs (see also
+queue_nomerges_store()). This is one of the reasons why using the merge
+infrastructure for combining REQ_OP_COPY_DST and REQ_OP_COPY_SRC is
+unacceptable.
 
-On 24/05/29 09:25AM, tip-bot2 for Thomas Gleixner wrote:
-> The following commit has been merged into the x86/urgent branch of tip:
->=20
-> Commit-ID:     76357cc192acd78b85d4c3380d07f139d906dfe8
-> Gitweb:        https://git.kernel.org/tip/76357cc192acd78b85d4c3380d07f13=
-9d906dfe8
-> Author:        Thomas Gleixner <tglx@linutronix.de>
-> AuthorDate:    Tue, 28 May 2024 22:21:31 +02:00
-> Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-> CommitterDate: Wed, 29 May 2024 11:01:20 +02:00
->=20
-> [...]
->=20
-> Fixes: f7fb3b2dd92c ("x86/cpu: Provide an AMD/HYGON specific topology par=
-ser")
-> Closes: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-=
-/issues/56
-> Reported-by: Tim Teichmann <teichmanntim@outlook.de>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> Tested-by: Tim Teichmann <teichmanntim@outlook.de>
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/r/7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw=
-6g2jduf6c@7b5pvomauugk
+Thanks,
 
-Hey Thomas, hey Borislav,
-
-it seems like somehow the patch has lost the following two trailers
-compared to the list variant[0] while being applied:
-
-    Bisected-by: Christian Heusel <christian@heusel.eu>
-    Cc: regressions@lists.linux.dev
-
-Did that happen on purpose or did some scripts fail?
-
-Cheers,
-Chris
-
-[0]: https://lore.kernel.org/lkml/8734q1bsc4.ffs@tglx/
-
---nhya4smjkjicwrca
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmZXrvIACgkQwEfU8yi1
-JYV8KRAAuYOpDzuKP0RvY1IKUBIeX3h/DmjjLa6cnD3Zm2ZId3lPG3hQE7AlwYVp
-PiYXN7kyhATzDv2xPW7XlhI6QVTXFIgVXP0scxAlxyMf48X9sWN2xr5UcUhHw2t4
-oy264tzA8MikYKICsiTJNHenZoWKgN1/TOGkYDaxX0LNIq8l2xZIQIrGj03gs8h2
-goElBb8Uy1xlk1Ym6sN52HX7Ov7bLpcIBfUgMNVSalYmff78zI80SZx/tRoefufx
-pBBEhdK67u/dK1JpfIciC8pmYgUsnDAUIbrNCT9VKcxeU6Z49wQ3GbsRse/uoX+u
-fgazDTxpY0Nj/eAG0+gkRAHXsM/C1lXBwGnyuCnNN6RpiWrmnxS+70rJ1sz1tbfT
-CPOGKfc4K8nEnNSVojorNHq1bTO7vWYCq1oKJEfDJtK5gOyeyDinoQQAFdUy19uZ
-1jMKeq8kmd+tWav1VpTrPMJyBcYykulr8BVuMX+4kdQqUCqmGg28NoZic6D4iVfo
-nhrsOK8Usvcj86ddgV3OhhSj8NQKLR3WFO8pqw80Ii5a3pWeGfa9rEcHh2dyeVCV
-2Pmzb+Yy8Gwzfa1usngXbnmN/glr42L0E9Q+nrS3BL7whZIPC55sZOR5Lmm2xNFt
-VJ1zM8/DkQAzR8v1h27DHa8PPa3dTBfS3ql+tGWDKgbm5OUbPLQ=
-=vFzW
------END PGP SIGNATURE-----
-
---nhya4smjkjicwrca--
+Bart.
 
