@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-193517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE4E8D2D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:31:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD5B8D2D50
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEE2B1C22A38
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22C31F2552F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D66315B141;
-	Wed, 29 May 2024 06:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="wQ83M6LY"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73EE3A1DD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DCD15B973;
+	Wed, 29 May 2024 06:32:16 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE1838DE8;
+	Wed, 29 May 2024 06:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716964261; cv=none; b=eHqn8rRbx4l/3snbiuQBe7o/PFJvfEnSbzrTHmyzOYr+IDkHfOZbzHjg/DPEGmf2c0eu77Dz1GcGsOH3KL1nVKA+KiwhJrKue1lHCbs9TD4LkPxbfsIeZSJ9emy+0HldUDvlR7zWVZgDy3StZ0hVYNAgeE/Q2NyO3trXA0HhwKY=
+	t=1716964335; cv=none; b=Cq0dbbFIKYg748ccG0owm0E+u4lVrjrwQw4cC7WJntHYEvAgSwlfs2AET0uIuRMwIKQttRaCXffU4fGp9mnr2ktsJMkQ/GZdna0iwLqptSSYeYXsgLydQCs3gKjKsJKDkLjf8DK6LbpQz+FKibPW5SZRaI4Ujy8Mvx4Zuo6pX2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716964261; c=relaxed/simple;
-	bh=zH5y51QIfyWMgU2MS015Gg0xtYou9QU6HF/0Q3WRPYw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q4OBcUQiBJeTv//V9hnix5GrLL9CIfflk4pL7qADhGYlPoTTASV1mNwGcvG4VakufHZdb/RlJ92kcZGs1Bcd+2EGSYRgTwy9+giRa594DVbI1+PPiygnjRgFW0z1EwJ+4J2Q14jqaopURgy4olJicvWeptpDWUDFjHLiin7+H3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=wQ83M6LY; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1716964259; x=1748500259;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zH5y51QIfyWMgU2MS015Gg0xtYou9QU6HF/0Q3WRPYw=;
-  b=wQ83M6LYXpDwt6ivWy4EFdawK4boOTqFdEMlq3mJ15bZtpWFQkEx95W5
-   QAEmewK+tRMDND+SddxVZCQZkWjuf8kTNpB88cd0th4Tnzu+fjCQdPv9a
-   X5nd0zqH7LvRpGr8vpBUWeWVVxU6VIGZ6J4psPQM9UUVovPapIDN5wqwR
-   XnRdIDqXck2bPZMEBhEF8HV8y2IrBwJcYW+veUEmFeH1rHFIHIoAe9wWL
-   95IBkv77I+GNYXUtrVjSKQ/wjCPO6TMQQtMbpAGmfImlX94RWDKvG/87f
-   uHUYRH4t1Jld/Fu/vYeth/cCJ5s/5qIo5ColSElJZC51w7fSltc8IrTkp
-   Q==;
-X-CSE-ConnectionGUID: e6tumgM0T7uwd7L4vEg+tw==
-X-CSE-MsgGUID: A/hO/U7JRlOuR7VbCaFaIQ==
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="asc'?scan'208";a="27300257"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 May 2024 23:30:58 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 28 May 2024 23:30:36 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Tue, 28 May 2024 23:30:33 -0700
-Date: Wed, 29 May 2024 07:30:15 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: "Wang, Xiao W" <xiao.w.wang@intel.com>
-CC: Conor Dooley <conor@kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, Andrew Jones <ajones@ventanamicro.com>,
-	"pulehui@huawei.com" <pulehui@huawei.com>, Charlie Jenkins
-	<charlie@rivosinc.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Samuel Holland <samuel.holland@sifive.com>,
-	Pu Lehui <pulehui@huaweicloud.com>, =?iso-8859-1?Q?Bj=F6rn_T=F6pel?=
-	<bjorn@kernel.org>
-Subject: Re: [PATCH v3 2/2] RISC-V: separate Zbb optimisations requiring and
- not requiring toolchain support
-Message-ID: <20240529-hangup-recipient-246586c6f8a8@wendy>
-References: <20240528-applaud-violin-facef8d9d846@spud>
- <20240528-opossum-flavorful-3411811b87e2@spud>
- <DM8PR11MB5751DBB6A068008269E7D399B8F22@DM8PR11MB5751.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1716964335; c=relaxed/simple;
+	bh=Xs98dxPvN8E+SI+7xNtVW3wrO5Cb9Zr5Ix8c8yFymWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZBvp5DR7iwBXktcJcHs6/OjxwnQxHE6gZJsFYvyYOjejk/wWjl20BhJYQiCIt0dUx/wZ87Z8b5BsvkNRFgaDGq7dX8d8BTQGtJDILvOasrLXPbRyujK6oHYrXsfFzh1Ilt4Rgsr+B4m7s+mU1cj6vBJ7c6phfLnxuLVM6jYpokU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Bx7erpy1ZmfgMBAA--.4358S3;
+	Wed, 29 May 2024 14:32:09 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxNMXoy1ZmY6YMAA--.22585S2;
+	Wed, 29 May 2024 14:32:08 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	rafael@kernel.org
+Cc: loongarch@lists.linux.dev,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] LoongArch: Remove CONFIG_ACPI_TABLE_UPGRADE in platform_init()
+Date: Wed, 29 May 2024 14:32:06 +0800
+Message-ID: <20240529063206.30421-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rG0PxGrUtF8m4yb2"
-Content-Disposition: inline
-In-Reply-To: <DM8PR11MB5751DBB6A068008269E7D399B8F22@DM8PR11MB5751.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8DxNMXoy1ZmY6YMAA--.22585S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7urW7uw1xXFy8GFW3AF1rKrX_yoW8XFyxpr
+	1Fyr4kKr45u3s7GFyUA3s5ur98trnFk34xXFWjkryrC3Z8Wr18XF4qgF9rZF1Fqw48Kw4I
+	v3WftF1agFW0kwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8yrW7UUUUU==
 
---rG0PxGrUtF8m4yb2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+acpi_table_upgrade() and acpi_boot_table_init() are defined as
+empty function under !CONFIG_ACPI_TABLE_UPGRADE and !CONFIG_ACPI
+in include/linux/acpi.h, there are no implicit declaration errors
+with various configs.
 
-On Wed, May 29, 2024 at 01:01:24AM +0000, Wang, Xiao W wrote:
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Tuesday, May 28, 2024 7:11 PM
-> > -	ALTERNATIVE("nop", "j strcmp_zbb", 0, RISCV_ISA_EXT_ZBB,
-> > CONFIG_RISCV_ISA_ZBB)
-> > +	__ALTERNATIVE_CFG("nop", "j strcmp_zbb", 0, RISCV_ISA_EXT_ZBB,
-> > +		IS_ENABLED(CONFIG_RISCV_ISA_ZBB_ALT) &&
-> > IS_ENABLED(CONFIG_TOOLCHAIN_HAS_ZBB))
->=20
-> s/CONFIG_RISCV_ISA_ZBB_ALT/ CONFIG_RISCV_ISA_ZBB
-> Same issue for below changes in strn*.S
+As Huacai suggested, CONFIG_ACPI_TABLE_UPGRADE is ugly and not
+necessary here, just remove it. At the same time, just keep
+CONFIG_ACPI to prevent build error and give a signal to tell
+us the code is ACPI-specific, and also put acpi_table_upgrade()
+under CONFIG_ACPI.
 
-I could have sworn I grepped for it and there was nothing, obviously
-not... Thanks, I'll fix it up in a new version.
+  #ifdef CONFIG_ACPI_TABLE_UPGRADE
+  void acpi_table_upgrade(void);
+  #else
+  static inline void acpi_table_upgrade(void) { }
+  #endif
 
-Thanks,
-Conor
+  #ifdef	CONFIG_ACPI
+  ...
+  void acpi_boot_table_init (void);
+  ...
+  #else	/* !CONFIG_ACPI */
+  ...
+  static inline void acpi_boot_table_init(void)
+  {
+  }
+  ...
+  #endif	/* !CONFIG_ACPI */
 
---rG0PxGrUtF8m4yb2
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/loongarch/kernel/setup.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index ea6d5db6c878..08a077e4efd7 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -353,10 +353,8 @@ void __init platform_init(void)
+ 	arch_reserve_vmcore();
+ 	arch_reserve_crashkernel();
+ 
+-#ifdef CONFIG_ACPI_TABLE_UPGRADE
+-	acpi_table_upgrade();
+-#endif
+ #ifdef CONFIG_ACPI
++	acpi_table_upgrade();
+ 	acpi_gbl_use_default_register_widths = false;
+ 	acpi_boot_table_init();
+ #endif
+-- 
+2.42.0
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlbLcwAKCRB4tDGHoIJi
-0jc8AP90DEvrOSfWOH9WMnrelnVkjWKIwCS3PIn/6IwaBYSKzAEAiZGYQ825H6R3
-OnZEKBXJJgLjKfpAYEb10FkwaeiI2AQ=
-=AHbp
------END PGP SIGNATURE-----
-
---rG0PxGrUtF8m4yb2--
 
