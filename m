@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-194136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F318D373A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:12:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AA28D3754
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434FF28A5F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3D5D2872D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD950FC1D;
-	Wed, 29 May 2024 13:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D011BC43;
+	Wed, 29 May 2024 13:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LUr5Y1bL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="J6iWH5xC"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3AFDDAB;
-	Wed, 29 May 2024 13:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BAD12E5B;
+	Wed, 29 May 2024 13:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988331; cv=none; b=PHRmps5pzgxVyujA75/zknZUEbz/Yb0ReTURk2RdzfbdgaIgbaI013NCG1vkugki157bEcUdZ8UKDFGO/FFItJD2IM1xs0IcYa87GaVTlF6BFIbLQrdZx742ezo+vmJoZqpfD52S0b2NMbI5PPfdn+yFBz/lT+cBFhf9qBqDaAM=
+	t=1716988475; cv=none; b=Em6lDi0pX/wCJGuUQz/faG2LQmX8ZRdlstr5L9JagjiKlMP+ae0tKUfBFwx1UIgMxrkhCRrflvtbgdE4OdDL89My/l6i9kbFl3tc/5Ll+urj6ZZIA+9E6TAmq7085wcHeKmM4PFkQx5cY4rB25260zOjs2+4j2JEDqM+O3IKEHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988331; c=relaxed/simple;
-	bh=LihBiyEtP+byKlYeJMhmFzcL1/UxANEmf6BaRF8uarE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vFJgHLRXgvKiuVOdTV6y+hSaKqrax33W+vwm7RZ0it+sO6K14eqHISocOOZoP7CZ4xIuXIbjir/9tKLCwLJfMh043tlWAQ/QagmqXQSZweGImHL5LYy+zMsPdVklBWdUF5oZIpJBunnIphcbiKFtPD/lGkJt8+jucMUOFNNOnCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LUr5Y1bL; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716988328; x=1748524328;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LihBiyEtP+byKlYeJMhmFzcL1/UxANEmf6BaRF8uarE=;
-  b=LUr5Y1bLEExkpB3cxp00NqyOJJGWHDz0cu2FgVP6xczj+saik6gXqMUY
-   4P7L9rkH0iH/W/Ka/w6xuM84ZOeBNTgyptdFKxK5fY5LITCqQtHwoVesx
-   Uk2VOHLnd/g696iZyyyAy62EeGxyTn+lFMvz7M3KEDWNxWJEpSkrIZTzu
-   NdOZu2w1hItjMLnfcbIXOUnJ3GNCNKWNnoqjM1U1ohco1UmbKsRev9dIh
-   kENPyaXdIF+ld0P+qaV8sVnR8JAhRWngUzz77v8WS1b8TJE7VviMN4Ycs
-   jDgFXgKzkmcZdN46UpohmjpWKuRIkeinLVVqyvoOR7kbqck5wclg/kXk8
-   A==;
-X-CSE-ConnectionGUID: jdebM3dGSRu62HhDn2u5sA==
-X-CSE-MsgGUID: Dt1QnlAyScqpPPJeNvpm1Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13210542"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="13210542"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:12:08 -0700
-X-CSE-ConnectionGUID: DFjTX8MvTFy4uRXjF2xMkg==
-X-CSE-MsgGUID: UI9DxQ6uTIGp9aT9tnyybw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="35460544"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:12:08 -0700
-Received: from [10.212.55.153] (unknown [10.212.55.153])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 686422078A11;
-	Wed, 29 May 2024 06:12:06 -0700 (PDT)
-Message-ID: <67f531f8-6d8c-49f7-a405-09cce28f738b@linux.intel.com>
-Date: Wed, 29 May 2024 09:12:05 -0400
+	s=arc-20240116; t=1716988475; c=relaxed/simple;
+	bh=s+kzo1mIt5kdmhmpjxm0dPVNjA4/CEZktTwadgjJf3k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ul7JFv/rTlTk2xSTVbmhe7ZdD8D+wMEf8tJ/eMZZ9x/kEM6c2q6RD+/zdZ2sKEeQOW6oOkd7FH/u96srOsQgawz5+cCa+/vpPUjcZP7ZSuIclRXsEyDH4KiE/KEb1abOpeKnDgPXq/1zr3F0e4M51JAGYl7j359usL5fyYxQbBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=J6iWH5xC; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TBGXDt027029;
+	Wed, 29 May 2024 15:14:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=PIIcNcmlMr49S8y8EsAlKj
+	uoQdNzfUVhtTNhE4eVCM4=; b=J6iWH5xC+fFF6IhEQpp3Zv+RR1UT4Uqdv57pXh
+	wzFQT+F6yQAre5fmOQtnwBID71E4z7lkxeKnv78RQ5sxgwRDCXZKdtQufQYeRtNd
+	99iRt6rvXgkRUwAT87V3ok7rF8P1NqsZGSpcG2Si8MHeX1bbXHDZ56BbC8ZVzmUY
+	uv0BwrY5Z3nRFToBE6o8O4kpk2ehZiTTPNtFj9hEsGs+6BdrU8yWx9SCClk0nBGo
+	q2sGZxjWmxUY6A6Prf6nIvhId7R02QqiSp5rqHTNtrNlFYNZ55vAoZcJyvY0F6B2
+	oZ53gwqTBtxiIqf+73RbtbjzLcVZjBap0UgL9t7pu1sJUVxg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ybtxhewrb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 15:14:06 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 952BA4002D;
+	Wed, 29 May 2024 15:14:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8354B216606;
+	Wed, 29 May 2024 15:13:12 +0200 (CEST)
+Received: from localhost (10.48.87.209) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 29 May
+ 2024 15:13:12 +0200
+From: <gabriel.fernandez@foss.st.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Dan Carpenter <dan.carpenter@linaro.or6g>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [RESEND PATCH v2 0/3] Use STM32 access controller for STM32MP25 clocks
+Date: Wed, 29 May 2024 15:13:07 +0200
+Message-ID: <20240529131310.260954-1-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] perf/x86/intel/uncore: Fix the bits of the CHA
- extended umask for SPR
-To: peterz@infradead.org, mingo@kernel.org, acme@kernel.org,
- namhyung@kernel.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-Cc: irogers@google.com, mpetlan@redhat.com, eranian@google.com,
- ak@linux.intel.com, stable@vger.kernel.org
-References: <20240416180145.2309913-1-kan.liang@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240416180145.2309913-1-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_10,2024-05-28_01,2024-05-17_01
 
-Hi Peter and Ingo,
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Could you please take a look and accept the bug fix patch?
+Use an STM32 access controller to filter the registration of clocks.
+Don't register a clock if this clock is secured or declared as shared (this
+clock is generally managed by the security world).
 
-It's to fix some broken uncore events on SPR.
-https://lore.kernel.org/linux-perf-users/alpine.LRH.2.20.2405281153210.4040@Diego/
+This series depends on the stm32_firewall framework (merged since
+next-20240419) notably for the include file 'linux/bus/stm32_firewall_device.h'.
 
-Thanks,
-Kan
+Changes in v2:
+  - rebased on next-20240514
+  - YAML patch was apllied on next
+  - use appropriate include
+  - manage the case if 'access-contoller' property is not present in the DT
+  - rename DT patch (RCC support part was merged)
 
-On 2024-04-16 2:01 p.m., kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> The perf stat errors out with UNC_CHA_TOR_INSERTS.IA_HIT_CXL_ACC_LOCAL
-> event.
-> 
->  $perf stat -e uncore_cha_55/event=0x35,umask=0x10c0008101/ -a -- ls
->     event syntax error: '..0x35,umask=0x10c0008101/'
->                                       \___ Bad event or PMU
-> 
-> The definition of the CHA umask is config:8-15,32-55, which is 32bit.
-> However, the umask of the event is bigger than 32bit.
-> This is an error in the original uncore spec.
-> 
-> Add a new umask_ext5 for the new CHA umask range.
-> 
-> Fixes: 949b11381f81 ("perf/x86/intel/uncore: Add Sapphire Rapids server CHA support")
-> Closes: https://lore.kernel.org/linux-perf-users/alpine.LRH.2.20.2401300733310.11354@Diego/
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> Cc: stable@vger.kernel.org
-> ---
->  arch/x86/events/intel/uncore_snbep.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-> index a96496bef678..7924f315269a 100644
-> --- a/arch/x86/events/intel/uncore_snbep.c
-> +++ b/arch/x86/events/intel/uncore_snbep.c
-> @@ -461,6 +461,7 @@
->  #define SPR_UBOX_DID				0x3250
->  
->  /* SPR CHA */
-> +#define SPR_CHA_EVENT_MASK_EXT			0xffffffff
->  #define SPR_CHA_PMON_CTL_TID_EN			(1 << 16)
->  #define SPR_CHA_PMON_EVENT_MASK			(SNBEP_PMON_RAW_EVENT_MASK | \
->  						 SPR_CHA_PMON_CTL_TID_EN)
-> @@ -477,6 +478,7 @@ DEFINE_UNCORE_FORMAT_ATTR(umask_ext, umask, "config:8-15,32-43,45-55");
->  DEFINE_UNCORE_FORMAT_ATTR(umask_ext2, umask, "config:8-15,32-57");
->  DEFINE_UNCORE_FORMAT_ATTR(umask_ext3, umask, "config:8-15,32-39");
->  DEFINE_UNCORE_FORMAT_ATTR(umask_ext4, umask, "config:8-15,32-55");
-> +DEFINE_UNCORE_FORMAT_ATTR(umask_ext5, umask, "config:8-15,32-63");
->  DEFINE_UNCORE_FORMAT_ATTR(qor, qor, "config:16");
->  DEFINE_UNCORE_FORMAT_ATTR(edge, edge, "config:18");
->  DEFINE_UNCORE_FORMAT_ATTR(tid_en, tid_en, "config:19");
-> @@ -5957,7 +5959,7 @@ static struct intel_uncore_ops spr_uncore_chabox_ops = {
->  
->  static struct attribute *spr_uncore_cha_formats_attr[] = {
->  	&format_attr_event.attr,
-> -	&format_attr_umask_ext4.attr,
-> +	&format_attr_umask_ext5.attr,
->  	&format_attr_tid_en2.attr,
->  	&format_attr_edge.attr,
->  	&format_attr_inv.attr,
-> @@ -5993,7 +5995,7 @@ ATTRIBUTE_GROUPS(uncore_alias);
->  static struct intel_uncore_type spr_uncore_chabox = {
->  	.name			= "cha",
->  	.event_mask		= SPR_CHA_PMON_EVENT_MASK,
-> -	.event_mask_ext		= SPR_RAW_EVENT_MASK_EXT,
-> +	.event_mask_ext		= SPR_CHA_EVENT_MASK_EXT,
->  	.num_shared_regs	= 1,
->  	.constraints		= skx_uncore_chabox_constraints,
->  	.ops			= &spr_uncore_chabox_ops,
+Gabriel Fernandez (3):
+  clk: stm32mp2: use of STM32 access controller
+  clk: stm32mp25: add security clocks
+  arm64: dts: st: enable STM32 access controller for RCC
+
+ arch/arm64/boot/dts/st/stm32mp251.dtsi |   1 +
+ drivers/clk/stm32/clk-stm32-core.c     |   2 +-
+ drivers/clk/stm32/clk-stm32-core.h     |   2 +-
+ drivers/clk/stm32/clk-stm32mp13.c      |   2 +-
+ drivers/clk/stm32/clk-stm32mp25.c      | 516 +++++++++++++++----------
+ 5 files changed, 325 insertions(+), 198 deletions(-)
+
+-- 
+2.25.1
+
 
