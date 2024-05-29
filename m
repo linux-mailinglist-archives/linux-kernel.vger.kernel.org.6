@@ -1,126 +1,200 @@
-Return-Path: <linux-kernel+bounces-193358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC558D2AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455558D2AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 804641C22129
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F116E284F1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AA415B0E1;
-	Wed, 29 May 2024 02:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B907A15ADBD;
+	Wed, 29 May 2024 02:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WQj2hlY+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t7s9lkad"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F4D4DA08;
-	Wed, 29 May 2024 02:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95C415AAD7;
+	Wed, 29 May 2024 02:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716949206; cv=none; b=fyxWLght3+Z63s81RiQp3ziMQid+r/+++wXmEcKjzItyXpf7e7Vj6GoZvaf2/1mEtNhAxtjb6xwLWdNUYmueLjw79ZHp9BJWOrZkdh6WkNMu30XQGIuBDBZfa3YpoY4Y+mZkYY8wPdQwOJZqH4mmjQGKdRzAieFkoQhu/tuoCBE=
+	t=1716949039; cv=none; b=u1JkI20gH6NoLxLNpMb1MihkkQESMxLOHDrNdootNMuh8ib/wNdw/4Ld7JZqyB3+I9VGG5XPaOqNnjxgzOr3ZDWr6WtmCJT+9hCGuX2YVGlB4psCAR4SZ7eSqvIRtmsKf9L366dUWrmGPs8IuHy5NkJ6E3Y5MQFlFMdifgL8V/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716949206; c=relaxed/simple;
-	bh=1Lxina2QR/i/PAe6wbyp4MvFOW2Mak7+iWIwuFEcXBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKrETO2vLkOoyTKeLsTR1ZASnz1X1r4ilOASFuyrfzGvGG9AVuoFRtztRGSXJ1sf4mhA4/3h7XdTTuB9ptU2ZtEeCUzkJVZrJB/Z9Yo8GcCJp2dlVhIekphfgw+2OBTBMMJ6CczXbzcfJuV75pGUzj3+CylL8Tq1WC7p9rvad9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WQj2hlY+; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1716949039; c=relaxed/simple;
+	bh=34eSlQKHCn8By2FSveem/MuMJRk0WabJBZDj10rsQgY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=brahBvQJbOEoTueIYesNfutiExdrBMhD7FNuc8zhk0RFO2D++v45YylryeiQBeGpOiNmq1U4mELY/8PWKLtDJ0ViHnfwbcReRkSK6p/51qNAxa+K7lsTnTBW8RgIKp3gCr4ZoX8T4IFuIBlWXLtlNOhxIUoCDhbn6p0kYrCID7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t7s9lkad; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716949206; x=1748485206;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=1Lxina2QR/i/PAe6wbyp4MvFOW2Mak7+iWIwuFEcXBk=;
-  b=WQj2hlY+9YYjf9LTip0Rp+7MTJZZNuXRIv7Nevnge0IUStWgvTsm56x8
-   OdHmh+rJ6VkctcaigndH30yz4J1e+FJk0kbrfYu6fDNAfN7Z2T43IHEhb
-   LSLBeITlKjsqKZSZjqbNo0ljBXQcfhHb8f9vaiZRd4FR3g8X6JxsABzaL
-   eFhRXRWPCujPzkGLsqlQavH73BHJEM3A3CUopn2IVU5LUQjcnFadzsNAo
-   phhgOGgPLrj2cgdgeOzUsKwPfXUjC3PU68KDm6x6XHX3f2yhEbmu0omFi
-   2Iw9VLcf+HswxBBcHBd3lanay7Zm4h4aRYZ069D0Q6YgChSbB6PJAX+g+
-   w==;
-X-CSE-ConnectionGUID: 8E2uLc1IRb2eb3aaDM93XA==
-X-CSE-MsgGUID: Pt2cMSCkTZOrKCWFEOfUSg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13170257"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716949036; x=1748485036;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=34eSlQKHCn8By2FSveem/MuMJRk0WabJBZDj10rsQgY=;
+  b=t7s9lkadrYZUQ+j3XNjAkIMPwXcY+yS9VsszgSfRNdaHVVLNq8Jazesf
+   ctx2DT9XL3mssokFv41Sz1s51NoqsdOSPg4VovAgq0mVzxxWMre6J4GfT
+   1QeWFViXO1/HdyC8Fg+4HeHEGJDmB4UCwY/mYh1iv1fBj+nrUcm40P8w7
+   KWH/iczysin0C/HYJhdsd5AvGGliiYe1gOYuFvf8rIkwnN0rZf+GYGcT7
+   +Slw+lzswebSd86EPm//A7Ida6Y+Ie1qkJkFrSAaAh+Q+2CmSwrcl4vRz
+   efNntNUU01oVKWJz19FHxBf5y850QEDTOo3PfRhK6yeRAGdlYW7MRFWAY
+   g==;
+X-CSE-ConnectionGUID: OFQuk28LRuK+2e1hiRiHpA==
+X-CSE-MsgGUID: 402bAtDKRfqgld3jqBP74Q==
 X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="13170257"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 19:20:05 -0700
-X-CSE-ConnectionGUID: eAAshPejSTO9bYY/tgY3Bg==
-X-CSE-MsgGUID: ElrHQ9duQUq+ev6u3ztCWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="66465436"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 19:20:04 -0700
-Date: Tue, 28 May 2024 19:20:03 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"dmatlack@google.com" <dmatlack@google.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"sagis@google.com" <sagis@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	isaku.yamahata@linux.intel.com
-Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
- TDP MMU
-Message-ID: <20240529022003.GG386318@ls.amr.corp.intel.com>
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
- <6273a3de68722ddbb453cab83fe8f155eff7009a.camel@intel.com>
- <20240524082006.GG212599@ls.amr.corp.intel.com>
- <c8cb0829c74596ff660532f9662941dea9aa35f4.camel@intel.com>
- <20240529011609.GD386318@ls.amr.corp.intel.com>
- <2b3fec05250a4ec993b17ab8c90403428ca5c957.camel@intel.com>
+   d="scan'208";a="26661639"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 May 2024 19:17:15 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 28 May 2024 19:17:01 -0700
+Received: from hat-linux.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 28 May 2024 19:17:01 -0700
+From: <Tristram.Ha@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Robert Hancock
+	<robert.hancock@calian.com>
+CC: Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Tristram Ha <tristram.ha@microchip.com>
+Subject: [PATCH v1 net] net: phy: micrel: fix KSZ9477 PHY issues after suspend/resume
+Date: Tue, 28 May 2024 19:20:23 -0700
+Message-ID: <1716949223-4250-1-git-send-email-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2b3fec05250a4ec993b17ab8c90403428ca5c957.camel@intel.com>
+Content-Type: text/plain
 
-On Wed, May 29, 2024 at 01:50:05AM +0000,
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
+From: Tristram Ha <tristram.ha@microchip.com>
 
-> On Tue, 2024-05-28 at 18:16 -0700, Isaku Yamahata wrote:
-> > > Looking at how to create some more explainable code here, I'm also wondering
-> > > about the tdx_track() call in tdx_sept_remove_private_spte(). I didn't
-> > > realize
-> > > it will send IPIs to each vcpu for *each* page getting zapped. Another one
-> > > in
-> > > the "to optimize later" bucket I guess. And I guess it won't happen very
-> > > often.
-> > 
-> > We need it. Without tracking (or TLB shoot down), we'll hit
-> > TDX_TLB_TRACKING_NOT_DONE.  The TDX module has to guarantee that there is no
-> > remaining TLB entries for pages freed by TDH.MEM.PAGE.REMOVE().
-> 
-> It can't be removed without other changes, but the TDX module doesn't enforce
-> that you have to zap and shootdown a page at at time, right? Like it could be
-> batched.
+When the PHY is powered up after powered down most of the registers are
+reset, so the PHY setup code needs to be done again.  In addition the
+interrupt register will need to be setup again so that link status
+indication works again.
 
-Right. TDX module doesn't enforce it.  If we want to batch zapping, it requires
-to track the SPTE state, zapped, not TLB shoot down yet, and not removed yet.
-It's simpler to issue TLB shoot per page for now. It would be future
-optimization.
+Fixes: 26dd2974c5b5 ("net: phy: micrel: Move KSZ9477 errata fixes to PHY driver")
+Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+---
+v1
+ - put back genphy_restart_ange() in ksz9477_phy_errata()
+ - do not change MMD 0x1c reg 0x8 value
 
-At runtime, the zapping happens when memory conversion(private -> shared) or
-memslot deletion.  Because it's not often, we don't have to care.
-For vm destruction, it's simpler to skip tlb shoot down by deleting HKID first
-than to track SPTE state for batching TLB shoot down.
+ drivers/net/phy/micrel.c | 62 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 56 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 2b8f8b7f1517..8c20cf937530 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -1939,7 +1939,7 @@ static const struct ksz9477_errata_write ksz9477_errata_writes[] = {
+ 	{0x1c, 0x20, 0xeeee},
+ };
+ 
+-static int ksz9477_config_init(struct phy_device *phydev)
++static int ksz9477_phy_errata(struct phy_device *phydev)
+ {
+ 	int err;
+ 	int i;
+@@ -1967,16 +1967,30 @@ static int ksz9477_config_init(struct phy_device *phydev)
+ 			return err;
+ 	}
+ 
++	err = genphy_restart_aneg(phydev);
++	if (err)
++		return err;
++
++	return err;
++}
++
++static int ksz9477_config_init(struct phy_device *phydev)
++{
++	int err;
++
++	/* Only KSZ9897 family of switches needs this fix. */
++	if ((phydev->phy_id & 0xf) == 1) {
++		err = ksz9477_phy_errata(phydev);
++		if (err)
++			return err;
++	}
++
+ 	/* According to KSZ9477 Errata DS80000754C (Module 4) all EEE modes
+ 	 * in this switch shall be regarded as broken.
+ 	 */
+ 	if (phydev->dev_flags & MICREL_NO_EEE)
+ 		phydev->eee_broken_modes = -1;
+ 
+-	err = genphy_restart_aneg(phydev);
+-	if (err)
+-		return err;
+-
+ 	return kszphy_config_init(phydev);
+ }
+ 
+@@ -2085,6 +2099,42 @@ static int kszphy_resume(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++static int ksz9477_resume(struct phy_device *phydev)
++{
++	int ret;
++
++	/* No need to initialize registers if not powered down. */
++	ret = phy_read(phydev, MII_BMCR);
++	if (ret < 0)
++		return ret;
++	if (!(ret & BMCR_PDOWN))
++		return 0;
++
++	genphy_resume(phydev);
++
++	/* After switching from power-down to normal mode, an internal global
++	 * reset is automatically generated. Wait a minimum of 1 ms before
++	 * read/write access to the PHY registers.
++	 */
++	usleep_range(1000, 2000);
++
++	/* Only KSZ9897 family of switches needs this fix. */
++	if ((phydev->phy_id & 0xf) == 1) {
++		ret = ksz9477_phy_errata(phydev);
++		if (ret)
++			return ret;
++	}
++
++	/* Enable PHY Interrupts */
++	if (phy_interrupt_is_valid(phydev)) {
++		phydev->interrupts = PHY_INTERRUPT_ENABLED;
++		if (phydev->drv->config_intr)
++			phydev->drv->config_intr(phydev);
++	}
++
++	return 0;
++}
++
+ static int kszphy_probe(struct phy_device *phydev)
+ {
+ 	const struct kszphy_type *type = phydev->drv->driver_data;
+@@ -5493,7 +5543,7 @@ static struct phy_driver ksphy_driver[] = {
+ 	.config_intr	= kszphy_config_intr,
+ 	.handle_interrupt = kszphy_handle_interrupt,
+ 	.suspend	= genphy_suspend,
+-	.resume		= genphy_resume,
++	.resume		= ksz9477_resume,
+ 	.get_features	= ksz9477_get_features,
+ } };
+ 
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+2.34.1
+
 
