@@ -1,119 +1,180 @@
-Return-Path: <linux-kernel+bounces-194646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C248D3F6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 216C08D3F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2FB81F22F96
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B594D1F240AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD611C68AD;
-	Wed, 29 May 2024 20:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F68D1C68AD;
+	Wed, 29 May 2024 20:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qYza4Rbd"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xy+Be0X9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC426AD3;
-	Wed, 29 May 2024 20:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BE515B963;
+	Wed, 29 May 2024 20:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717013637; cv=none; b=HKNaaHyn2r/MOFPpvDZvyDapuPihly4tDxIe4/BcHX1a6oEbqTw5VzX04G5FVceCiVh9hPsQGvdKt6DbTNglwvQlGv0xCFQANVGj4B0I8sGv4dvnjc6MOqQ05p9iRWSOUriSPrHpzE4JkPpE/9AbcKBWNwyDPv2E8sjxME76HUY=
+	t=1717013827; cv=none; b=kJ09zgxnQKA9k+rUPbJWn354DzenkNW5SdtTvRnDt58a+vhWMtCG2NsOW59rPQXdlTjTKK6OhqyACN3tn/WdKg+aclxiEwNUo7qlpOm/4cMRkeCy7lykTvEcaE/Yhgdyfol4ZZOQr2cQTEAS8BO2/1I8bVV81ze4dYoIS7HMwws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717013637; c=relaxed/simple;
-	bh=8CHIv4RsOjRcg0/LYPFDzPHZMyekDKwfcWoqLpavYC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCS3yZvOPdPUrpUA/N+vKi5LcslePR6fEiFArs74lUjrz5demZcRMvFOaIGFq6OGgwzYf6FhEehi+uHCeVBuupskQdOvmo7epD03C/EoAxC2B214HQ9AB5+7/YTXTXMqZARMyKl4vzB9f/hMqQCF+/q82leFacsoEBGnfaJStyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qYza4Rbd; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eQFXKnSfwk440wscnRX9cECtvXQvJsH6al9gvAq5Rss=; b=qYza4Rbd8T0Qi9wO8nvW/LXuGl
-	fDAszPm46VwyPttxInXsRB84FuTKZ9Iu+Oyhhedj3Q6B4bpxl6YVwP7egkoUC5DKplO6DK9Emvs88
-	6CpNDvmyIv5mxDI5yfXOaxA1hA8JlC+QYtHNu4QRNIbVKTfrJNaAc1UjvJbUrCoVHcZUDngkKGqWh
-	L19sqtn8cWjJOEmUWL/g2S854UIvlXsPGWaZOFrKc0sKNeoMURyrPTf7rhDG2I6pwy7jNvK4no9NR
-	KEUo+RhIg3QkVYdFxUGSwogACot3hB2ijFK9CgE4014SnI23PFmVgPqcMYH/v2CTfRQz7IezsSE82
-	eIUJgdgA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51848)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCPg4-0006ct-13;
-	Wed, 29 May 2024 21:13:40 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCPg4-0004UO-PS; Wed, 29 May 2024 21:13:40 +0100
-Date: Wed, 29 May 2024 21:13:40 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Sneh Shah <quic_snehshah@quicinc.com>,
-	Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: [PATCH net-next] net: stmmac: dwmac-qcom-ethqos: Add support for
- 2.5G SGMII
-Message-ID: <ZleMdFsmQzXGp1GM@shell.armlinux.org.uk>
-References: <20231218071118.21879-1-quic_snehshah@quicinc.com>
- <4zbf5fmijxnajk7kygcjrcusf6tdnuzsqqboh23nr6f3rb3c4g@qkfofhq7jmv6>
- <8b80ab09-8444-4c3d-83b0-c7dbf5e58658@quicinc.com>
- <wvzhz4fmtheculsiag4t2pn2kaggyle2mzhvawbs4m5isvqjto@lmaonvq3c3e7>
- <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
- <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
- <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
- <67553944-5d3f-4641-a719-da84554c0a9f@lunn.ch>
+	s=arc-20240116; t=1717013827; c=relaxed/simple;
+	bh=croJmI7tdrUCnuq3nxQtEULazCqwtzJq0q4D/fdG+Iw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QdDu06Q0Mxv7O8vvIW3XGk6hDdVniQybrbUCMKlUrUTEBwOUdXTvQFHCLW7vYZ76WCn165Rfe9QdC75IRMyeMqfYTicGlYl/+aklosmnhhdkRHi0jYGidEsRnflBNLL6xm0NqBVLDG4kAeUIIa1e6wPEskzBOCPE/KeKzx4HsYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xy+Be0X9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AADCC113CC;
+	Wed, 29 May 2024 20:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717013827;
+	bh=croJmI7tdrUCnuq3nxQtEULazCqwtzJq0q4D/fdG+Iw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Xy+Be0X917eHFKsW7EL60JYBWKR2ebgfehQoYWQgmlws+bk2oeToAI4Z/C2BdFA4v
+	 wYgNPqA4hAK2nnqUDr+IF9GhSxu6MNbz2vOJ3/xvavRzPCd33B73iFcZPVogc2HyoY
+	 NyCSJulJScc7xQ/VN5DPx2AkjVDSxFeqRpIoh6kNVMlzFGt1KwGvtMl7OyUjoKVVZa
+	 ghhGgRE3BncA7OXwFRYp+DPV6ruROloZ3t+uAmB4rzZb57VCdPgU5MazJ1m1Yyuiwq
+	 fHMpGOWrUQwAz4Nh+txYJb0CM4VwyIpeRKxuawQW8rdKpt9EbgRTaYMHzp5K0D9G00
+	 y7O9k30+ANGHQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5295eb47b48so177865e87.1;
+        Wed, 29 May 2024 13:17:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1HJHcUDBrxdq+uyqilFbLSTgkAChtRniGX8+PkySQN1TSBgqpsci72dzcAvyitMF1ncIVHjdF8nD73FHIMBVdckY8fPaeoCzmDRpXe+uWnqrFCCxN8Bws1boWfRL28siAPECOiw/+mw==
+X-Gm-Message-State: AOJu0YwkCa7RkN/Ishyfe0wBremIAiDGkyXF4QfeyijnhacwD5wdr8V/
+	S1nrvMTxDg8Gmmlu5gPFThPape774LSGrgLQIE1PcWh/xpHO1on8WiI3hVF6wOZETD/S3MAdvP2
+	TMRR425OXyjY/TNYVhfP3Vy2kiQ==
+X-Google-Smtp-Source: AGHT+IH8HWoNFVqyKTq0rZ9W0bIDrLI8finr2ZKzQvyke9m79C4i0hxdDUr3JVPqEhZvq4zOQaBlEjJV7cXTXn2P5ag=
+X-Received: by 2002:a05:6512:2025:b0:52b:2f78:9c92 with SMTP id
+ 2adb3069b0e04-52b7d419712mr139602e87.5.1717013825486; Wed, 29 May 2024
+ 13:17:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67553944-5d3f-4641-a719-da84554c0a9f@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240529073246.537459-1-alexander.stein@ew.tq-group.com>
+In-Reply-To: <20240529073246.537459-1-alexander.stein@ew.tq-group.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 29 May 2024 15:16:53 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+QMnjadq6+eH11BxvxTy4vQmqScwOs6sgL3T2gY-mMsg@mail.gmail.com>
+Message-ID: <CAL_Jsq+QMnjadq6+eH11BxvxTy4vQmqScwOs6sgL3T2gY-mMsg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] of: property: Fix device_node cleanup
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Saravana Kannan <saravanak@google.com>, Shresth Prasad <shresthprasad7@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 04:28:16PM +0200, Andrew Lunn wrote:
-> > Qualcomm ethernet HW supports 2.5G speed in overclocked SGMII mode.
-> > we internally term it as OCSGMII.
-> 
-> So it still does SGMII inband signalling? Not 2500BaseX signalling? It
-> is not actually compatible with 2500BaseX?
-> 
-> > End goal of these patches is to enable SGMII with 2.5G speed support.
-> > The patch in these series enabled up SGMII with 2.5 for cases where we
-> > don't have external phy. ( mac-to-mac connectivity)
-> 
-> So the other end needs to be an over clocked SGMII MAC, not 2500BaseX?
-> 
-> > The new patch posted extends this for the case when the MAC has an
-> > external phy connected. ( hence we are advertising fr 2.5G speed by adding
-> > 2500BASEX as supported interface in phylink)
-> 
-> And i assume it does not actually work against a true 2500BaseX
-> device, because it is doing SGMII inband signalling?
+On Wed, May 29, 2024 at 2:33=E2=80=AFAM Alexander Stein
+<alexander.stein@ew.tq-group.com> wrote:
+>
+> '__free(device_node)' attached to remote will cause a double release:
+> > OF: ERROR: of_node_release() detected bad of_node_put() on
+> > /soc@0/bus@32c00000/dsi@32e60000
+>
+> In case remote is to be returned it must not be cleaned up by a call
+> to of_node_put. The caller has to do that as the documentation mentions.
+> Partly revert commit b94d24c08ee1a ("of: property: Remove calls to
+> of_node_put") to fix it.
+>
+> Fixes: b94d24c08ee1 ("of: property: Remove calls to of_node_put")
 
-I really hope the hardware isn't using any SGMII inband signalling
-at 2.5G speeds. Other devices explicitly state that SGMII inband
-signalling while operating the elevated 2.5G speed is *not* supported!
+I've dropped it now.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+> I get the following trace starting with next-20240529:
+>
+> OF: ERROR: of_node_release() detected bad of_node_put() on /soc@0/bus@32c=
+00000/dsi@32e60000
+> CPU: 0 PID: 11 Comm: kworker/u16:0 Not tainted 6.10.0-rc1-next-20240529+ =
+#2511 610eecbb638fc5fab9a27e01b78203e8a379a280
+> Hardware name: TQ-Systems i.MX8MPlus TQMa8MPxL on MBa8MPxL (DT)
+> Workqueue: events_unbound deferred_probe_work_func
+> Call trace:
+>  dump_backtrace+0x90/0x10c
+>  show_stack+0x14/0x1c
+>  dump_stack_lvl+0x6c/0x80
+>  dump_stack+0x14/0x1c
+>  of_node_release+0x11c/0x188
+>  kobject_cleanup+0x48/0x17c
+>  kobject_put+0x78/0xc0
+>  of_node_put+0x14/0x20
+>  drm_of_find_panel_or_bridge+0x84/0xd4
+>  devm_drm_of_get_bridge+0x3c/0x8c
+>  lcdif_attach_bridge+0x88/0x270
+>  lcdif_load+0x144/0x28c
+>  lcdif_probe+0x34/0xcc
+>  platform_probe+0x64/0xe8
+>  really_probe+0xc8/0x3ac
+>  __driver_probe_device+0x84/0x188
+>  driver_probe_device+0x38/0x150
+>  __device_attach_driver+0xcc/0x194
+>  bus_for_each_drv+0x80/0xdc
+>  __device_attach+0x9c/0x1d0
+>  device_initial_probe+0x10/0x18
+>  bus_probe_device+0xa4/0xa8
+>  deferred_probe_work_func+0x9c/0xe8
+>  process_one_work+0x154/0x3fc
+>  worker_thread+0x2f4/0x404
+>  kthread+0xf4/0x100
+>  ret_from_fork+0x10/0x20
+> OF: ERROR: next of_node_put() on this node will result in a kobject warni=
+ng 'refcount_t: underflow; use-after-free.'
+> ------------[ cut here ]------------
+> refcount_t: addition on 0; use-after-free.
+> WARNING: CPU: 0 PID: 11 at lib/refcount.c:25 refcount_warn_saturate+0x150=
+/0x214
+> Modules linked in:
+> CPU: 0 PID: 11 Comm: kworker/u16:0 Not tainted 6.10.0-rc1-next-20240529+ =
+#2511 610eecbb638fc5fab9a27e01b78203e8a379a280
+> Hardware name: TQ-Systems i.MX8MPlus TQMa8MPxL on MBa8MPxL (DT)
+> [...]
+>
+>  drivers/of/property.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 83536216ed4fe..e5c6301643e4c 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -836,9 +836,7 @@ struct device_node *of_graph_get_remote_node(const st=
+ruct device_node *node,
+>  {
+>         struct device_node *endpoint_node __free(device_node) =3D
+>                             of_graph_get_endpoint_by_regs(node, port, end=
+point);
+> -
+> -       struct device_node *remote __free(device_node) =3D
+> -                           of_graph_get_remote_port_parent(endpoint_node=
+);
+> +       struct device_node *remote;
+>
+>         if (!endpoint_node) {
+>                 pr_debug("no valid endpoint (%d, %d) for node %pOF\n",
+> @@ -846,6 +844,7 @@ struct device_node *of_graph_get_remote_node(const st=
+ruct device_node *node,
+>                 return NULL;
+>         }
+>
+> +       remote =3D of_graph_get_remote_port_parent(endpoint_node);
+>         if (!remote) {
+>                 pr_debug("no valid remote node\n");
+>                 return NULL;
+> @@ -853,6 +852,7 @@ struct device_node *of_graph_get_remote_node(const st=
+ruct device_node *node,
+>
+>         if (!of_device_is_available(remote)) {
+>                 pr_debug("not available for remote node\n");
+> +               of_node_put(remote);
+>                 return NULL;
+>         }
+>
+> --
+> 2.34.1
+>
 
