@@ -1,62 +1,72 @@
-Return-Path: <linux-kernel+bounces-193412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6214C8D2B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:32:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972428D2B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F2528B0F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:32:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1CF1F23548
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E7F15B141;
-	Wed, 29 May 2024 03:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F8E15B12D;
+	Wed, 29 May 2024 03:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZAMlduDg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFeS94uX"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286AE273DC;
-	Wed, 29 May 2024 03:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72453273DC
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716953561; cv=none; b=KK2GPsCdA9SJnDjefiuZwXteaJDobaXDwDrD2joIrHO1p+pj/iQv/Y0mmpBo9QPaAkyp4sdHmZxTbrHdIhzItZ+GDV13jkn5EpAxDwj3W/H9Nk3weHx7Id/3KSvRBRM070jVo9DGksO0I/b9KhgBXU6hqRY6m5ok/sG3rd5J2gE=
+	t=1716953736; cv=none; b=KF7MFFH4go6i+Ny9WIkDWRCWTm8pOrNUg+hqpa2Va643N4xCCR7t+nhKQ6TPyHboOWv+WxuwJZJFeL/K61GEck6PVYLw5C28L/zEAyIwLkfp4WDX7xB5/xO44bu+2lE2ZaDCPydk6oE8LdHz27Twa0TKDEFYYZEuZRogO5Duy0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716953561; c=relaxed/simple;
-	bh=mGmvsLYGbl5StfulFfKED3RI+RHo0mK8xf/sBiNNDys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b8vAbggc1ey1IdfL/VTG9HhyA0aZJds3dDD84NdAoTU9ATW/bclJ+zEBB2q+ED3XBamTpwSck8AYLFVR6SLgihwOOI+X6HOhyDRMTsh/JoiGXJRQuMZzVJakiGY9pE15tj2OweWFDmUoUqy8WNoOXWCozzXnLLSLYRb5yoW7uwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZAMlduDg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T1TsHn026579;
-	Wed, 29 May 2024 03:32:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UeX9dqG5LNZnU0NJjRWeuKT/wg9QJproSNKHyt1TmhY=; b=ZAMlduDgGLjvPXJj
-	H8F2s3A6mSb7i2usmMFb0W0dS1bmYdKWI1DtBK+QvQU+P3c3YzqOcU+izDxJM8ei
-	8ZTqY3wK4ElBLJbQfEqLn2I0TNzmRxqOeb7znHG4oQfqIGtuEDRZUrqVVxUtPEDi
-	ty1gJg0ZBvKiL8yU7O1xJcVNxhkBWC2YwyAiDFsSnGsOxL/xtVYnE9LLRKqvyv93
-	6ri8HLjKlNRa7inU3Bv+I5hpjqMs5SXzCmXrRGHEnihybDP+ybOFs3gDnqBJPS4X
-	jQVKdTDXea2jS1qMjJrMAVvOPB+Romdg9Oefowr7bhhyIE1A479Sf9OBVp9QJIkb
-	NcBGJA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qfv8a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 03:32:12 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44T3WAfB002500
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 03:32:10 GMT
-Received: from [10.110.47.143] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 20:32:06 -0700
-Message-ID: <ecac6276-c2e1-43b8-88ad-6ae91cff18cf@quicinc.com>
-Date: Tue, 28 May 2024 20:32:05 -0700
+	s=arc-20240116; t=1716953736; c=relaxed/simple;
+	bh=S4mxqrubtaGOq4O26C1qf8r1Ub+kzSVpFmXbeQjRhjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M2r1fmY3Ew/07BTUL28ptubO/7TWvuwED/BKNBVYbMLaVKy1ObLhe9zzP68Ptf5WzV19EHgDMRyPyd+YT8JYHGizREFGKOBuAs8E39BnNl8kLmJwEa+nnVlP7KoHyJNNcu80M20wKXwl7Nk8cU5sdaqt7cyBuALprZhn0wKUoDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WFeS94uX; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-24e64ca31dfso663829fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716953734; x=1717558534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YcGgl0SXVpIqyoxoh79lT3Pq6551Z8JXvrLPNT45iLU=;
+        b=WFeS94uXDg8xbEWUn+Rce1nVGr7hD+U5GMANpeGJxUjTuTOGpmN+ByM1mDo6FGlA18
+         jywALmYcZN4RF4KIEnoNruY9Pu18EmC5zkYY2NBybOr7Mv3oJsZxFfJ1v3z9Lj5JHAf5
+         J+T7UwIxdiw6kj9zXrr7c1wvhMdu/wpmqHZnqgMLrV+spbgGRbIrLtb3esmSqax2P+ZU
+         4OuoArAE9X4Cmqx8p6UrJxc/WM8JV+ir1dUIOOi3LiVZgenNrFsi2wM3QiRVktGTftau
+         rt+92iKxMhdaGHu243MvuOQ3XUBDd5xaURZQGwRkeh4LOZPFaM/9ar+k2/VsgVYX+MnF
+         bJ3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716953734; x=1717558534;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YcGgl0SXVpIqyoxoh79lT3Pq6551Z8JXvrLPNT45iLU=;
+        b=f62MXyQMB4vxvE0cwrVT+iTgSazmckSQflXPpjOYjhHWrBcKkLXpZni3DwsIftZWdi
+         9PlmqLZ6WfHNkQRZn7XPaeGvja3LUhXG+fI/xQxGzzPNqQIPByaAx0CCeGi0FmMJn4Mr
+         zxO6UN3g86UJUdf453DdkaQWgbFdWr+7v32Bv+9gbOKelBYX4QnUos63GzCMxrXelc4S
+         ib6wbYgqcKvV1IgKyPYm2Eldi0LjI5RLY0fctygiWMdjqQZILRFFkswrAitLsrygKEbG
+         3AhxfX+xcM2VE/qORLFp7mZfzHiY57FPF9LvCiRiYwbElpH+tC8lWg4f7TelSAxcTAao
+         NvBQ==
+X-Gm-Message-State: AOJu0YzWMJZxYog2pWpG9nU8emMo685xALga8tv5TLzBaI5TO/pRRBob
+	TGrRHp+snT6WGLYfZ21YTuENX0vXTX0JCUEht/+gR7U1DBJ6umYS
+X-Google-Smtp-Source: AGHT+IEMeEsXE9j72q9zDbE3gsRd/yUDcgLUVY8IEbz/CCazBQTHtpAxSbadTKCJoWH4iqmrS4BVfA==
+X-Received: by 2002:a05:6870:d608:b0:24f:cddc:ccfe with SMTP id 586e51a60fabf-24fcddcdee4mr11298769fac.0.1716953734345;
+        Tue, 28 May 2024 20:35:34 -0700 (PDT)
+Received: from [192.168.1.224] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-24fe0a85880sm2040128fac.4.2024.05.28.20.35.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 20:35:33 -0700 (PDT)
+Message-ID: <f480f2a4-2958-4b08-ae32-ce307c3c63aa@gmail.com>
+Date: Tue, 28 May 2024 22:35:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,65 +74,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: validate SO_TXTIME clockid coming from userspace
+Subject: Re: [PATCH v6 3/4] driver core: shut down devices asynchronously
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Tanjore Suresh <tansuresh@google.com>,
+ Martin Belanger <Martin.Belanger@dell.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,
+ Keith Busch <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+ David Jeffery <djeffery@redhat.com>, Jeremy Allison <jallison@ciq.com>,
+ Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
+ linux-nvme@lists.infradead.org
+References: <20240516154920.221445-1-stuart.w.hayes@gmail.com>
+ <20240516154920.221445-4-stuart.w.hayes@gmail.com>
+ <20240528063109.GA29965@lst.de>
 Content-Language: en-US
-To: Martin KaFai Lau <martin.lau@linux.dev>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
-        "Willem
- de Bruijn" <willemdebruijn.kernel@gmail.com>,
-        Martin KaFai Lau
-	<martin.lau@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, bpf
-	<bpf@vger.kernel.org>,
-        <kernel@quicinc.com>,
-        <syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com>,
-        <syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com>
-References: <20240528224935.1020828-1-quic_abchauha@quicinc.com>
- <2c363f12-dd52-4163-bbcd-9a017cff6dd4@linux.dev>
-From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-In-Reply-To: <2c363f12-dd52-4163-bbcd-9a017cff6dd4@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+From: stuart hayes <stuart.w.hayes@gmail.com>
+In-Reply-To: <20240528063109.GA29965@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: t-qtwwLBKCyK8KaH6i9BfvPBh6cRLmuo
-X-Proofpoint-ORIG-GUID: t-qtwwLBKCyK8KaH6i9BfvPBh6cRLmuo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=697 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405290021
 
 
 
-On 5/28/2024 6:15 PM, Martin KaFai Lau wrote:
-> On 5/28/24 3:49 PM, Abhishek Chauhan wrote:
->> Currently there are no strict checks while setting SO_TXTIME
->> from userspace. With the recent development in skb->tstamp_type
->> clockid with unsupported clocks results in warn_on_once, which causes
->> unnecessary aborts in some systems which enables panic on warns.
+On 5/28/2024 1:31 AM, Christoph Hellwig wrote:
+> On Thu, May 16, 2024 at 10:49:19AM -0500, Stuart Hayes wrote:
+>> Add /sys/kernel/async_shutdown to allow user control of this feature:
 >>
->> Add validation in setsockopt to support only CLOCK_REALTIME,
->> CLOCK_MONOTONIC and CLOCK_TAI to be set from userspace.
->>
->> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
->> Link: https://lore.kernel.org/lkml/20240509211834.3235191-1-quic_abchauha@quicinc.com/
->> Fixes: 1693c5db6ab8 ("net: Add additional bit to support clockid_t timestamp type")
+>>    safe: shut down all devices synchronously, unless driver prefers async
+>> 	shutdown (driver opt-in) (default)
+>>    on:	shut down all devices asynchronously, unless disabled by the driver
+>> 	(driver opt-out)
+>>    off:	shut down all devices synchronously
 > 
-> Patch lgtm. This should target for net-next instead of net. The Fixes patch is in net-next only.
+> The on option seems very odd.  IMHO safe is the only really sensible
+> option, and maybe we have to support off as a bandaid due to userspace
+> behavior dependent on synchronous shutdown, but I'd rather try even
+> without that first.
 > 
-Thanks Martin. Let me raise a patch on net-next and add your acked-by to it as well. 
 
-> Acked-by: Martin KaFai Lau <martin.lau@kernel.org>
-> 
+I added the option because of comments from Greg K-H on the v4 submission
+of this patch--see
+
+https://lore.kernel.org/lkml/2023102151-rejoicing-studio-6126@gregkh/T/#m5d0459480bc0fda4563040cab2036839bcbb79a8).
+
+I thought it would be nice to have the option for testing, even if it gets
+removed later, but I'll certainly remove it now if necessary.
 
