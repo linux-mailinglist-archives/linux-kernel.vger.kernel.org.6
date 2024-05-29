@@ -1,204 +1,191 @@
-Return-Path: <linux-kernel+bounces-193521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37B98D2D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:34:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 591028D2D16
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7008F1F25C59
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:34:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42351F229AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C05160787;
-	Wed, 29 May 2024 06:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976A1163A9B;
+	Wed, 29 May 2024 06:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KPzAStJm"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="wvgLXS7p"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C9915B99B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD1C15EFB9
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716964454; cv=none; b=V55q03FxLVs7Wlv0171VVRKPzpHkxY+EdyWnvg0bAsejExO8Invw5Zu+SgZeSburJyPrW4FFLo2ummwP4Ujly6LgRktfBA21tcKU0uEq8CIYFve90Ppgq550xqnXvmBem/A7FBIVMO5xKlrdPP3Ft4zhFc8c2uG1/SGi1Y+Omg4=
+	t=1716963526; cv=none; b=GpbujSTsDiJi+5PGxq3RBq2QE8badGG3rXRCa4sm2VPx+qCvLggDQs3A5Sc6gY7VQYfaTculx5PoLYP6spwPC0KvWjwpJ8eb3ioAeRKNydH2YARpzWm1Ynt131nlHx6SC7Q0sTiQ2796hSHactdN6zCHVZg8cL3ETthUgMFsPQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716964454; c=relaxed/simple;
-	bh=NsZzfbV06rLVjw7w9bEi8ENxd4QN9ta1b5bIXmsHmVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=KCmVYAJtqe1ROvbzAAqzOZQWBJTDUNgyc0DJmgnwtfEdLad1zTdyjcqH1xwJvkUSuoBQPkFpSWWj8NdK1zq7FhWSt+jtYkvkuso50cVRife2/NJrIlbhQ2cpYHuL4A68vqeeATAn8XGxLsB08cd38SB6oO3prcNRH99BclzXCfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KPzAStJm; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240529063410epoutp0472cf3191d93f9dc630bbcd5f5d26b83b~T4hILUmpR0188201882epoutp04S
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:34:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240529063410epoutp0472cf3191d93f9dc630bbcd5f5d26b83b~T4hILUmpR0188201882epoutp04S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716964450;
-	bh=NsZzfbV06rLVjw7w9bEi8ENxd4QN9ta1b5bIXmsHmVs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KPzAStJm81IIWFHBjGYYT3sAf9/t9O1m+nKO/iQQOcUxAhJN64KEBQRkGJEvo8dHy
-	 OlmKX7NMGK9xd8QErxb2LR/sSYkypsvHiqMUlzvMmcdIZEXl3CLLMSa6daD7cSToAv
-	 ty+haNNJ6altNKNaapd7BVDqWYj5OMe+opqfiLgc=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240529063409epcas5p369e3e08e61e1803a1c01b61eff6512e0~T4hHdSVi11875018750epcas5p3u;
-	Wed, 29 May 2024 06:34:09 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Vq03332XYz4x9Q9; Wed, 29 May
-	2024 06:34:07 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	28.84.09989.F5CC6566; Wed, 29 May 2024 15:34:07 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240529062441epcas5p35df44836a06016c39d889a70bb41fe55~T4Y2ctZzx0620706207epcas5p3g;
-	Wed, 29 May 2024 06:24:41 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240529062441epsmtrp1670219f5f568e1de070e9a2af6946b10~T4Y2aSjsA1911319113epsmtrp1O;
-	Wed, 29 May 2024 06:24:41 +0000 (GMT)
-X-AuditID: b6c32a4a-bffff70000002705-f7-6656cc5ffad1
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6B.C2.08336.82AC6566; Wed, 29 May 2024 15:24:41 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240529062436epsmtip18af8d6e6bfb03e340ee76cb5830a2d09~T4YyWBPL92138321383epsmtip1q;
-	Wed, 29 May 2024 06:24:36 +0000 (GMT)
-Date: Wed, 29 May 2024 06:17:36 +0000
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
-	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
-	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
-	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <20240529061736.rubnzwkkavgsgmie@nj.shetty@samsung.com>
+	s=arc-20240116; t=1716963526; c=relaxed/simple;
+	bh=td+A5mMkrhdvg9ElSzQdaHWmnHQqfG3xEYFSntb3ivs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=php6A9X+//RDHp6MKpmZYEONFyzxShgZqxD5fzULN2xTnAFEog3mUTRWHlI2xpiq5v1Bawft6thdzB6ByAL1NU4cisRcgKmhQStNvvrmiNLk68VFQCtDHlMEOjLnENA+MPJ92/WQidyrmsqG4RwI6ZC3SMXqevOvMcZc7T3zS1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=wvgLXS7p; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59cc765c29so84238966b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1716963522; x=1717568322; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b5o98irvL1PvcmMP2g/CoSXINiWvruSSImbYO4qwby8=;
+        b=wvgLXS7pAUfty21u7wWUO6QH5bSCBphX1OAVLcg+LHw3oEYmkTRWUcvpTOKvv/6Ha5
+         /Wdko+S9m3RL8dNKlZZdZc06Q6gaCoUr4YgRzvaNvMNQNUaXM6CxRqHJGKZe4H3Si9QK
+         LZvoSYoMhFMXAWxS4p8N+rpzhkLJqTHwG98ZQ21YFlnkehyYrgl2uXbtahhtULWrDz8J
+         msByiEUcM/14L1BN1zTyHvgNiPZgAvUY+TJfevs5rBLXPqIO/w8tyaGqNf5CK96kqfdH
+         lZpVn7tcDIcCTLampjsiahaw+ctxVdKotrcCjKki5Qt6OiRjGAXlzxM7rmYgY5NG+S8C
+         NayQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716963522; x=1717568322;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=b5o98irvL1PvcmMP2g/CoSXINiWvruSSImbYO4qwby8=;
+        b=GJQvG+79lX6528lmXUpFe+yVaVRmdmlAxBTJT5R0asBdQL6n2rxU0ef+PCl4pr+yQN
+         UOXmvmYuPn7LiD6n4+MgDe6oC+PKdBL4zALxsAbMS7/5vuJP/yIPdObuqbjBjKxHnd75
+         7oUBnV2l9mOEJ75gH144cKS45Hxf3gypWqRXraRe4UtwXhdNyRsUNbDXBTTIsz/dvfBQ
+         vNfK7xiQ5G9WKfJU3zPRr6wmMlzsi1LacpazvXNl3MY0T/33vt5IHisUJzdKNOKacnsY
+         xxCGXcvXGMwFjI+ytaQSmSR384M4P1b17hw7UU7Xn4txOI/GvOE1vdw52DR9MWf/uK03
+         UWyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmdyJ4U4Hd3YiSZ07P449KQZEZatoWvosxqfuKURjL1Gzb1VaJFr+Si0vhS6BiR88iEy7p5CZgRDHDrsLNYhSJIuT8neAHfs/rUZ3V
+X-Gm-Message-State: AOJu0Yzxj6JzFakgjP+pWcT3mWu8lVz2X/hKao4fLEuSna65PmNuPcg/
+	20ptg1vw00Q+aQc+petsGS7TfLaME4XA1loRaThawzK29LqGyL0y0WQKWMYyE7I=
+X-Google-Smtp-Source: AGHT+IG1oXccLJqlT99AbIl0tXdj+h1O8dL6G8y8/9eKbxzPQr8rGYbOgwG7VHPYBxA5kpGfbl/kHg==
+X-Received: by 2002:a17:906:314e:b0:a59:c319:f1dc with SMTP id a640c23a62f3a-a62642daa92mr969475866b.4.1716963522482;
+        Tue, 28 May 2024 23:18:42 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6555bc091asm7799266b.138.2024.05.28.23.18.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 23:18:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TaVBTVxSe+17yEpTQ1wB6SaaAQabsJLL0Yo21xeW10CmDxZk6diATHoQB
-	kjSPRbvIJlipgCDoGMWy7wIqExbBWhDQAGWmgC1YlLbQUqlCtbUsgzTwoOO/737LPXPOmcPH
-	hRU8ET9KHUfr1IoYCbGJY+hydnYP7T8UIR2/bIUajD04Sj2zjKPa8RwCzXQ9Bejc3AKOJm+d
-	BGhpYBBHTT0PACoqKeSg0VutGGovycNQdW03hi6eT8NQ98pjAuV13gNoakSPoY4xV1ScUcZB
-	7R13OWio7RKBvq6Y4qHK3hcYyv1yBEMtkykA1c/MctCdMTEaXO7l7hFTQ8MBlLEEUq36cR41
-	+OAqhxoaiKeu1ZwiqOtlSdT09QuAujGaTFCl2We5VFbaE4JqTX/Ipf6aGuNQszdHCCq7qQZQ
-	/UW3eUGWh6N3qWhFOK2zp9VKTXiUOlIuCTgY6h/q4yuVucv80BsSe7UilpZL9gYGue+PijEN
-	R2KfoIiJN1FBCoaReO7epdPEx9H2Kg0TJ5fQ2vAYrbfWg1HEMvHqSA81HbdTJpXu8DEZw6JV
-	ZbPtXO13wqMjxXMgGfS9kgnM+JD0hjOt3bxMsIkvJG8AmDNczlsVhORTAMsvCljhOYDnqp5x
-	NxJlVZXriQ4AfzF+i7GPZyZXXduai0M6wtSMBTwT8PkE6Qr7VvirtBXpBJ9PVHJW/ThZTMCf
-	fpzHVwVLMgw+NuauZQWkP6xunOWw+FV498LkGjYj34SVDZfWwpD83gymdLBhSO6Fhux2jMWW
-	8FFvE4/FIvhHTsY6ToTV+VUEGz4BoP4HPWCFt2C6MWftI5xUwfzSeYLlX4MFxnqM5S1g1tLk
-	egEBbLm8gR1gXUPRut8G3vs3hVjtGJIUvF9nx07lCYCTvxXhZ4Ct/qWG9C+VY/FOeGoulas3
-	xXFSDCtf8FnoDBvaPIsAtwbY0FomNpJmfLQ71HTi/1tWamKvgbWDcXmvBfw8MefRCTA+6ASQ
-	j0usBP15IRFCQbji2Ke0ThOqi4+hmU7gY1pQLi6yVmpMF6eOC5V5+0m9fX19vf28fGWSrYKZ
-	9MJwIRmpiKOjaVpL6zZyGN9MlIy5VYuuhKZR9Vmub2fxGjsGZvcP/H24f1vUqXxnm7Nzdol2
-	W7qtjkl9bR5ZH1lymAnsafu1OfyzZnmEYfSDhw0h85oThkA3/Z7j92ULqarF0RXx5mLxIacV
-	EZVwMrjGvytyn9M3/5g72+YalLz6RmmrxenhAklXonXA0cHbLhZeW/rkf44NO3iSu282f4K5
-	M+MJnPLNSt4RT2af+zvbJ80FV7+wNT9QKL6TpAkICJ7+yKwu/yCpXPzdbfhjO3nwIrNSerxp
-	ukXr9NX86ex5R91yw+vqA/IKm4p3A1oKJ5J6+LVT0Dlsm1SHzhflfdgV5mW4ohSW+UdtDWl3
-	FIs+L39/u7RAwmFUCpkLrmMU/wG1wdKPuQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SeUxTWRjFve+9vj6IjU/AcKUjaqMRNFbreuMgbmiuUeMyStSQaLWPRWip
-	LR3EmShKxC2I1i20VZCtQ4lWgaCUCqQK1YKishhQ6wZDI8oihkhIQSka/e/kO+d3zj8fQ/q4
-	qAAmRpHAqRTSOBHtTZXeEwXODnaER85NKSeR2VFDoqNn3SQqfJVOo857nwG61DNAoraq4wAN
-	PqonUUmNE6Cs7CsUaqkqI5A1W0uggsJqAukvpxCoevgTjbS2ZoDam3QEuts6C11LzaWQ9e5D
-	CjVYDDTKzG/nI6N9iEDnTjQR6E7bEYBudHZT6EGrENW77bzlQtzQuA47siEu073i43rnLQo3
-	PNLgItNJGhfnHsau4gyAy1uSaZxz5jwPp6V00bjs2Gse7m1vpXB3RRONz5SYAK7Lus/f5LvT
-	O0TGxcX8zanmhO72jh5yvgTKZPbAl/9vEMngsuAU8GIguwDm/mfknwLejA9bDqD9QSZ/1JgI
-	8933yVHtCwuGOn6EegH8mN7PGzEodjo8mjrwPcQwNDsL1g4zI2c/Ngj2vzFSI3mSzaPh08pB
-	T6kvuxt+cpzzsAJ2FSy42U2NlnYBeOLJY/6oMR4+zGijRjTJLoJXi996BkhWCI1DngEv9k9o
-	NBuos4DV/UbofiN0v4gsQJrARE6plkfJ1RKlRMElitVSuVqjiBLvjZcXAc8zzAy+A26besQ2
-	QDDABiBDivwEddptkT4CmTTpIKeK36XSxHFqGxAylMhf4O9Kk/mwUdIELpbjlJzqp0swXgHJ
-	xNT5hjmqnpCW0gORYflyqcVWOa1v8HSvZY8scPOLDMPYl9ttE5QfqmJ6/6quOB/vUnhtXexa
-	GSgrujR5WUVdY1oeU6kdPpR4fcAJDCub816Mm/a0OKLuZN+aBk1kaHBi//zWDSvG1QZuehYx
-	+WDo2A/hYfMMzinXiOdfw9amlkp1G/WZOX1x7uOa/QHUkvH49ZOmz3J/8frai1bJDt5HMuzf
-	xZ0bTOEzdIUlFy5s0TXHmm36nOtBPIvBDv8QhQRH1SR1pflJGi3iNtPq9Ahxxxe945l5eYbC
-	ql8S5FLbFyalvhswPv5nS6y4zE6+X6rdt79jkjvh9FfhGOvCaPP7t7nzRJQ6WiqZSarU0m/z
-	cG5+ewMAAA==
-X-CMS-MailID: 20240529062441epcas5p35df44836a06016c39d889a70bb41fe55
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_119f1_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102842epcas5p4949334c2587a15b8adab2c913daa622f
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
-	<20240520102033.9361-3-nj.shetty@samsung.com>
-	<eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 May 2024 08:18:41 +0200
+Message-Id: <D1LWRSO8RFAI.1PQ450TISFN2D@fairphone.com>
+To: "Bjorn Andersson" <andersson@kernel.org>
+Cc: <cros-qcom-dts-watchers@chromium.org>, "Konrad Dybcio"
+ <konrad.dybcio@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Srinivasa Rao Mandadapu" <quic_srivasam@quicinc.com>, "Mohammad Rafi
+ Shaik" <quic_mohs@quicinc.com>, <~postmarketos/upstreaming@lists.sr.ht>,
+ <phone-devel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH DNM 2/2] arm64: dts: qcom: qcm6490-fairphone-fp5: Add
+ DisplayPort sound support
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.17.0
+References: <20240510-sc7280-apr-v1-0-e9eabda05f85@fairphone.com>
+ <20240510-sc7280-apr-v1-2-e9eabda05f85@fairphone.com>
+ <hqwrfe2tcb6vlxybmn52k3j2xrxbt3vw5rqwudindbhj3s3nez@obkr3ayos6gm>
+In-Reply-To: <hqwrfe2tcb6vlxybmn52k3j2xrxbt3vw5rqwudindbhj3s3nez@obkr3ayos6gm>
 
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_119f1_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 24/05/24 01:33PM, Bart Van Assche wrote:
->On 5/20/24 03:20, Nitesh Shetty wrote:
->>We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
->>Since copy is a composite operation involving src and dst sectors/lba,
->>each needs to be represented by a separate bio to make it compatible
->>with device mapper.
->>We expect caller to take a plug and send bio with destination information,
->>followed by bio with source information.
->>Once the dst bio arrives we form a request and wait for source
->>bio. Upon arrival of source bio we merge these two bio's and send
->>corresponding request down to device driver.
->>Merging non copy offload bio is avoided by checking for copy specific
->>opcodes in merge function.
+On Tue May 28, 2024 at 11:35 PM CEST, Bjorn Andersson wrote:
+> On Fri, May 10, 2024 at 02:27:09PM GMT, Luca Weiss wrote:
+> > Add the required nodes for sound playback via a connected external
+> > display (DisplayPort over USB-C).
+> >=20
+> > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> > ---
+> > Depends on a bunch of patches upstream doing bringup of Display (DSI),
+> > DisplayPort, GPU, and then finally audio could land. But we're blocked
+> > on DPU 1:1:1 topology for all of that unfortunately.
+> >=20
+> > And also machine driver for sound just exists a bit hackily.
 >
->In this patch I don't see any changes for blk_attempt_bio_merge(). Does
->this mean that combining REQ_OP_COPY_DST and REQ_OP_COPY_SRC will never
->happen if the QUEUE_FLAG_NOMERGES request queue flag has been set?
->
-Yes, in this case copy won't work, as both src and dst bio reach driver
-as part of separate requests.
-We will add this as part of documentation.
+> Thanks for sharing this, Luca. Can you please resubmit this once it's
+> ready to be merged, so that I don't need to keep track of it?
 
->Can it happen that the REQ_NOMERGE flag is set by __bio_split_to_limits()
->for REQ_OP_COPY_DST or REQ_OP_COPY_SRC bios? Will this happen if the
->following condition is met?
->
->dst_bio->nr_phys_segs + src_bio->nr_phys_segs > max_segments
->
-No, this should not happen. We don't use bio_split_rw for copy.
-We have added a separate function to check for split incase of
-copy(bio_split_copy), which doesn't allow copy bio splits,
-hence REQ_NOMERGE flag won't be set.
+Definitely, though I don't expect it to be soon unfortunately, maybe you
+can ask your colleagues though to fix that DPU 1:1:1 topology ;)
 
->Is it allowed to set REQ_PREFLUSH or REQ_FUA for REQ_OP_COPY_DST or
->REQ_OP_COPY_SRC bios? I'm asking this because these flags disable merging.
 >
->From include/linux/blk_types.h:
+> Regards,
+> Bjorn
 >
->#define REQ_NOMERGE_FLAGS (REQ_NOMERGE | REQ_PREFLUSH | REQ_FUA)
->
-No, setting these flags won't allow copy bio's to merge and hence copy
-won't work.
-We suggest to use helper API blkdev_copy_offload to achieve the
-copy which won't be setting these flags.
+> > ---
+> >  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 36 ++++++++++++++=
+++++++++
+> >  1 file changed, 36 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/=
+arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> > index 05bbf1da5cb8..2bbbcaeff95e 100644
+> > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> > @@ -14,6 +14,8 @@
+> >  #include <dt-bindings/leds/common.h>
+> >  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> >  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> > +#include <dt-bindings/sound/qcom,q6afe.h>
+> > +#include <dt-bindings/sound/qcom,q6asm.h>
+> >  #include "sc7280.dtsi"
+> >  #include "pm7250b.dtsi"
+> >  #include "pm7325.dtsi"
+> > @@ -774,6 +776,12 @@ &pon_resin {
+> >  	status =3D "okay";
+> >  };
+> > =20
+> > +&q6afedai {
+> > +	dai@104 {
+> > +		reg =3D <DISPLAY_PORT_RX>;
+> > +	};
+> > +};
+> > +
+> >  &qup_spi13_cs {
+> >  	drive-strength =3D <6>;
+> >  	bias-disable;
+> > @@ -847,6 +855,34 @@ &sdhc_2 {
+> >  	status =3D "okay";
+> >  };
+> > =20
+> > +&sound {
+> > +	compatible =3D "fairphone,fp5-sndcard";
+> > +	model =3D "Fairphone 5";
+> > +
+> > +	mm1-dai-link {
+> > +		link-name =3D "MultiMedia1";
+> > +		cpu {
+> > +			sound-dai =3D <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
+> > +		};
+> > +	};
+> > +
+> > +	displayport-rx-dai-link {
+> > +		link-name =3D "DisplayPort Playback";
+> > +
+> > +		cpu {
+> > +			sound-dai =3D <&q6afedai DISPLAY_PORT_RX>;
+> > +		};
+> > +
+> > +		platform {
+> > +			sound-dai =3D <&q6routing>;
+> > +		};
+> > +
+> > +		codec {
+> > +			sound-dai =3D <&mdss_dp>;
+> > +		};
+> > +	};
+> > +};
+> > +
+> >  &spi13 {
+> >  	status =3D "okay";
+> > =20
+> >=20
+> > --=20
+> > 2.45.0
+> >=20
 
-Thank You,
-Nitesh Shetty
-
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_119f1_
-Content-Type: text/plain; charset="utf-8"
-
-
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_119f1_--
 
