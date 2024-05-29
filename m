@@ -1,99 +1,99 @@
-Return-Path: <linux-kernel+bounces-194071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF558D3639
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2ED8D3634
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311B9284451
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497E41F2671C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB0F181325;
-	Wed, 29 May 2024 12:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1095181301;
+	Wed, 29 May 2024 12:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhqUIqsF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arF9ebZd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEB3180A97;
-	Wed, 29 May 2024 12:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275CA13699A;
+	Wed, 29 May 2024 12:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716985231; cv=none; b=iGhrBg+udyZLInOQIbXNhY8E2ouZHQ15qfSepkLSoFkfiH1ZiDmLv5gCrjoi1MvgvM6+9JKS1Ef6pnu3HDevyoAUAoZHLK7telGoiLJ8jpR5S7iXsVZoGBdmE3l6LdDABNMQ3EhuJSm44ANRbIkP38mHBlYAjJ2VSznqoLAMbDU=
+	t=1716985231; cv=none; b=Rv3CED12J0AS7mQoU8ceZQxjjT3tN5zB2a7Ae/iVlD7RjP1uYDmoxi8Xs6+MZHF62ypkhsLYq4UIpTbw32zlmz4wJUn2Xulx4hEd/CGrvR103i9q9lXmOOzSoesen0Yw8tR42kRvqrGV54zGT9syRsPfGZKHclDRSWl6jMTxU58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716985231; c=relaxed/simple;
-	bh=VpHIdGNzMITuTJTo8IHKIYXLIDv6AXCePiPAEtOFDFo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=uWe2y1AS3vrIWaV3mf0lqb9Ur7v6l+lULXqtcmfx+/TI1QIshBgWIoQI7iSCAGZKPM1X4OhTUokilCT6Mh2+JfQ9z1pjrm3tYDceD3wwrjjmMJpUUz1CJMpE4MV705xRZcVrLFIhHfptwJyu0UxH2SpzPv9iO4hrpxayPgsGAoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhqUIqsF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66876C2BD10;
-	Wed, 29 May 2024 12:20:27 +0000 (UTC)
+	bh=zjr/Vpc8ZTFCMrq5QTgDG0SNTzCLyB69RToX1iQy6pI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=RPxLLhBFN8bDWiN2JoH68kag+kUWDYAwotdSFQJySrQWkDar5JsDEXLWZz+8BmMejtDuf0aWfUK6r6ZWTjWXBGw/UzucShThpkWx5oIPyDOImNKtWoxRM5VsXyVeXv0Q6uUja0MWYe1hGjG0sMhu4YbebcB04cDJEuWVzked/74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arF9ebZd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A0BC6C32789;
+	Wed, 29 May 2024 12:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716985231;
-	bh=VpHIdGNzMITuTJTo8IHKIYXLIDv6AXCePiPAEtOFDFo=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=AhqUIqsFLYOCebwLbUCnjjUx4VRWTD0BnXxREMkocMYUA64uSMLDspnGAE5xJYbTk
-	 SKotVExoVXb+3cXSp9SmBqPsJWhEs9sfZ8J/MWbC1fW21KUnPN55O21n7nOtem/RsD
-	 eXUaBO6NSuijG9knpgRAZJljAdYrfu1RHxGw8itCCd2HtGX5Y/HanvlZVfgNhI8UOL
-	 cICgXQvSVZGJKY/G129/QZkCx1dV1KQOLnPpjw8Jk1r5yaAKa3Zs3HQgiWy/nH6rQG
-	 mIQZbx18PK5VazXv6QgRoxNq7E79hjWos1ByswqeC7hmLiGCGgtf8z4QLDjuV3VKvV
-	 dbL8l4DMLdfPw==
+	s=k20201202; t=1716985230;
+	bh=zjr/Vpc8ZTFCMrq5QTgDG0SNTzCLyB69RToX1iQy6pI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=arF9ebZdTVp5LM2K8ZRf22mDTCKyhPoQ++0dmHnGOzjRvDFSClVkx705QFLFK/+9t
+	 VlJK0w1aMwE8MOHhC9vOn+cR1T/JacYA7j8EJ/mrDqGVQWVDAaqnFD8u+x5dz9mjdC
+	 5/R8dVfHpKewpqd7ea5KCBz/UL16vnZUt754Pc+aofUcWcVOCF7Md+tHXiz9y06M1M
+	 +PAzZfm+n089A/DfSe1ck6Wq1hq9YO0K7S+8yorG7UYBNYh+iy4SDgVuIr8d+8uxno
+	 //HfExEXUMIu82YUwfOU/PZsOq4TnQxWOj2Urn8VtJPS6X0EysmXPLfF/NpPr9KpAR
+	 9XlAkKhKl4OKg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8FBB1CF21E0;
+	Wed, 29 May 2024 12:20:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 May 2024 15:20:25 +0300
-Message-Id: <D1M4GRF0RL2W.3QHTBXZWNW9RW@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>
-Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
- "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
- <ebiggers@kernel.org>, "James Bottomley"
- <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
- "Lennart Poettering" <lennart@poettering.net>, "David S. Miller"
- <davem@davemloft.net>, "open list" <linux-kernel@vger.kernel.org>, "Mimi
- Zohar" <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
- <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v7 2/5] KEYS: trusted: Change -EINVAL to -E2BIG
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240528210823.28798-1-jarkko@kernel.org>
- <20240528210823.28798-3-jarkko@kernel.org>
- <14d0baf4-fa41-4a08-925d-90f028117352@linux.ibm.com>
-In-Reply-To: <14d0baf4-fa41-4a08-925d-90f028117352@linux.ibm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/2] net: xilinx_gmii2rgmii: Add clock support 
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171698523058.1887.13954040665462825862.git-patchwork-notify@kernel.org>
+Date: Wed, 29 May 2024 12:20:30 +0000
+References: <20240528062008.1594657-1-vineeth.karumanchi@amd.com>
+In-Reply-To: <20240528062008.1594657-1-vineeth.karumanchi@amd.com>
+To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+Cc: git@amd.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ harini.katakam@amd.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, michal.simek@amd.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 
-On Wed May 29, 2024 at 4:50 AM EEST, Stefan Berger wrote:
->
->
-> On 5/28/24 17:08, Jarkko Sakkinen wrote:
-> > Report -E2BIG instead of -EINVAL when too large size for the key blob i=
-s
-> > requested.
-> >=20
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Hello:
 
-Thank you.
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Hmm... I'd like to add even:
+On Tue, 28 May 2024 11:50:06 +0530 you wrote:
+> Add input clock support to gmii_to_rgmii IP.
+> Add "clocks" bindings for the input clock.
+> 
+> Changes in v3:
+> - Added items constraints.
+> 
+> Changes in v2:
+> - removed "clkin" clock name property.
+> v2 link : https://lore.kernel.org/netdev/20240517054745.4111922-1-vineeth.karumanchi@amd.com/
+> 
+> [...]
 
-Cc: stable@vger.kernel.org # v5.13+
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format fo=
-r the blobs")
+Here is the summary with links:
+  - [net-next,v3,1/2] dt-bindings: net: xilinx_gmii2rgmii: Add clock support
+    https://git.kernel.org/netdev/net-next/c/c1d96671088f
+  - [net-next,v3,2/2] net: phy: xilinx-gmii2rgmii: Adopt clock support
+    https://git.kernel.org/netdev/net-next/c/daab0ac53e77
 
-It turned out to be useful error message and would be useful also for
-stable kernels. So if no decent counter-arguments, I'll just pick it
-to my master branch.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-BR, Jarkko
+
 
