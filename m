@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-194739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78EC8D4141
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076968D4142
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A671F23704
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:19:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02EB287D91
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA42169ADC;
-	Wed, 29 May 2024 22:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524D0169AC6;
+	Wed, 29 May 2024 22:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ABnQFjxs"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RB0AZcrH"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405EE16133B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DE015B11E
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717021192; cv=none; b=nm+5GsRkG1KcDXZiZ2m0oA7nGXMxtkHAhxB/HGiYc5J/0vMMBuMLLzQ3fz0CEcjHDjbLFL2qNYz7qHDzEwP9vCJrnQFnwG8QJEMUQ7rBtuoiFoB4lOWiKOm/MB6RW/WjcEiY/0GVERChK9RriInqp7NU+MjmusrDrs8okGIYirI=
+	t=1717021202; cv=none; b=YBGRDzlnldj3ydGCNY059cHgsoZELr8qPVBJp1Vjxm0oCJTqKDjUrlmO/i2H3mjvTsOe+fgf/J9ZKKm9M7Mj9u2gqamG8ftlhXb3kbh007QymigSys4HSaIjYlbsxnF7uPOV3lKcQ9JLykBKiRRsFC1zax5eEvwF+IWiwUoGqyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717021192; c=relaxed/simple;
-	bh=73lBekzJ3/cpyPRD/n21KmDDVPuP2JH1OaIv63wgdjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzUNWcj2+FkWTeI5sKmKUiWD6WCsicnzL1ITtFaHKP1HRyxCWPSsSKG4g+wLiA2v9bgRY4N8Qbd8hPYNgfyWCXV6B7hK8MWtOojp9O//57INa8uYV2KeMCZK1o0pAV9ycTld0oC8wxhUAH5KA/LLdyLbkYlUs7JKDRq5muzIX28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ABnQFjxs; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7e3b1981fe5so1257239f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:19:50 -0700 (PDT)
+	s=arc-20240116; t=1717021202; c=relaxed/simple;
+	bh=z0AOYGNnmldkQeJjZHn0aBihDYdO8aNU08quKCIAuWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SqLUYezzLLn1FYZgSaWqUO3Jvz/FfK8OHam4mIBjET5m1A8+lqNqQJLQ2CyuZfOofcKE16dV8EVFkwaY98pV1HgSomBs+wyGPlaMwtnggUW7OpsRdj3/bbCqauHYf0hfMm5R4eIfUQOUrxa7kxr2Rz+rJjHmLElW5AcYpPEwyNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RB0AZcrH; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f47db642c2so2158485ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:20:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717021189; x=1717625989; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mC4b6Il0GC2QVDL2/I1OYkGxzS6sqepYodC6YDu796A=;
-        b=ABnQFjxsTOMgyhDzI/W+PBhdTXi0rZBT2nXfOZLYddp729WR4Q3JqJjkC/cTikjDl8
-         +3Ybs+y8H0o2eYpovDp5x97mHhbuVxHdIi4eAGNPPLn0arlOJfsVetsv7fZ5FugwjUxH
-         ECwroYaCSdIUo5D4Fiz0VmkoGsbBF5O85cxXg=
+        d=gmail.com; s=20230601; t=1717021200; x=1717626000; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oJrQ16Mm4mEHJBUvo1EcXZ5YtU50XKHhoA+vzh0jLKc=;
+        b=RB0AZcrHBbyGHKMCC/0cU4UiXyJVmbMRaEesgFVBRlGduRNWsdOJIRfSf2oS1WZs31
+         HH+u0wipQkUIOUl/Q+f6y37RLOSqz+CNS4sgXqlHTqgSWqhgCT9reEOUZNIH2Ao3zOC5
+         bD2wdOA2X+Uvp57mJQ/MmmvoIgoFYAzJm9YqQEbyOPDj/dIZ3+MY424r+UZl7l70ACpI
+         JQq9lydPws11oulQE3UH8XJRy4tpyDrzvWHlibsoGcdoqkakJRBrF9FKSGI8JjQ1lnEK
+         ffdDJUICCha/klX8+1tB6acs+x1R8lZdM1T7R9mbndC8ERB9aFglmaD6Gzsl1vKOmRW/
+         b1Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717021189; x=1717625989;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mC4b6Il0GC2QVDL2/I1OYkGxzS6sqepYodC6YDu796A=;
-        b=ao91ihqIqvia5emWFxbhYZbv9/PklUJjhRrmPsNzoz5TavaMKbzbza/Tk7gLPLed/S
-         8wLGJuDOPDd0vvE2xDAOnSZkp1xFuDp7P0bnepYru2f/LU5DvuFONqLYxkzEPGCeBVm3
-         aoCVXGE7b5bmto6T2bVeHm9v/+E+Bm6/GQvOjNMBB/u0od1FHqF3y3AoJ1QSGdo3ItAT
-         /WPerUR4m8pbxQKqsVcdNXTo9tQD6kcpvRdxJkjMT6Gc2LfG+F4rKiF2GLRkZQ63bPN7
-         NWUUjcCUsI9j8l2oghBy7EDYz9fUnUiz54v0/P2YIDS4Wys7UgA+b+S5pdkhPBUMG37M
-         GMBw==
-X-Gm-Message-State: AOJu0YxJpCi9cJNjsSr/hpwIAhJ24NeAGhSvbXunhxMSbiDwlLGmqxmS
-	czRjqLPUFJbaRneTrQ59iMiPC4ydzoRX+n/7FkWvNjzCJtjm7xLZDPmd172fkuc=
-X-Google-Smtp-Source: AGHT+IHkLiHSvg/KtR3lDXPP39vKvdxIInqwjcrMHdeIk4e1kiHq6u41EdK9U8AuM2KlTdWAHFCSVA==
-X-Received: by 2002:a5d:961a:0:b0:7e1:7e15:6471 with SMTP id ca18e2360f4ac-7eaf5d698c8mr34483339f.1.1717021189367;
-        Wed, 29 May 2024 15:19:49 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b10cf31917sm1013611173.45.2024.05.29.15.19.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 15:19:49 -0700 (PDT)
-Message-ID: <2359b378-d664-4d63-bd64-f539ec8607ac@linuxfoundation.org>
-Date: Wed, 29 May 2024 16:19:48 -0600
+        d=1e100.net; s=20230601; t=1717021200; x=1717626000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oJrQ16Mm4mEHJBUvo1EcXZ5YtU50XKHhoA+vzh0jLKc=;
+        b=JvrcpOQX7eWx6BL98mWWh0qd+7lhwSuJLbouUtWv0Tb+GFaXNnvRiRFX2rGM5etHO3
+         stCbDM5lpXRxQgGLfaIIt0k0vH1MezNXLucCwgDlQ8VsEytNza9arqLfXVbn4aclXwPo
+         xkgvD6puj2xKFP0eSlDv7tNc+JX2KJrRXR2OC+nA25MIMVFdSBeWYoR82u02JsElZL6t
+         tm5t64vqFycXua8Lrkyy0OVW41VXRWF2YXJyTdA/fNuk+MPvoHvhDd1iNxuHxqGODaU/
+         FARC++s7lhP0d5jsXLSW7CPpT6yVSmE9WMXxQgE4at6I2xWdGtcy06gRjt4isoRK5igs
+         +k5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWG1WkQmECHGdIYe9h3+JbOFUjgxszJUz7cxD4kukZT1CqaGaTFJ4CL8x9dQQke9cPT/VWVBxwRSEjUX+ZQTg/lgcIjByS8n7Hkrf/3
+X-Gm-Message-State: AOJu0YxYBVTs6v5z2aNK+/xvTScbaQZGU4HtBaA8QQG0YqvL0ogvf2cf
+	2Bk3/H/1l3wXGhcwiH0SzwC0RtMGCNKuVQZkNFjG4WRcwO+zhu/yRwTsMg==
+X-Google-Smtp-Source: AGHT+IG5kR8kOYyzVRzRqbZxqWuOKj6SQweoCw18V8qyrX/WdpuKPWyVew4BiSOzbkoQNpLbeJYeng==
+X-Received: by 2002:a17:902:ecd1:b0:1e6:7700:1698 with SMTP id d9443c01a7336-1f619624c66mr4414635ad.35.1717021199966;
+        Wed, 29 May 2024 15:19:59 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f476f665b0sm79991985ad.250.2024.05.29.15.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 15:19:59 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 29 May 2024 15:19:57 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: linuxppc-dev@lists.ozlabs.org, kernel test robot <lkp@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Limit ARCH_HAS_KERNEL_FPU_SUPPORT to PPC64
+Message-ID: <109b63cc-1dcd-4f40-881b-0fe88ed9ac9c@roeck-us.net>
+References: <20240529162852.1209-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: cachestat: Fix build warnings on ppc64
-To: Michael Ellerman <mpe@ellerman.id.au>, linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- hannes@cmpxchg.org, nphamcs@gmail.com, Shuah Khan
- <skhan@linuxfoundation.org>, shuah <shuah@kernel.org>
-References: <20240521030111.56568-1-mpe@ellerman.id.au>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240521030111.56568-1-mpe@ellerman.id.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529162852.1209-1-samuel.holland@sifive.com>
 
-On 5/20/24 21:01, Michael Ellerman wrote:
-> Fix warnings like:
->    test_cachestat.c: In function ‘print_cachestat’:
->    test_cachestat.c:30:38: warning: format ‘%llu’ expects argument of
->    type ‘long long unsigned int’, but argument 2 has type ‘__u64’ {aka
->    ‘long unsigned int’} [-Wformat=]
+On Wed, May 29, 2024 at 09:28:50AM -0700, Samuel Holland wrote:
+> When building a 32-bit kernel, some toolchains do not allow mixing soft
+> float and hard float object files:
 > 
-> By switching to unsigned long long for u64 for ppc64 builds.
+>     LD      vmlinux.o
+>   powerpc64le-unknown-linux-musl-ld: lib/test_fpu_impl.o uses hard float, arch/powerpc/kernel/udbg.o uses soft float
+>   powerpc64le-unknown-linux-musl-ld: failed to merge target specific data of file lib/test_fpu_impl.o
+>   make[2]: *** [scripts/Makefile.vmlinux_o:62: vmlinux.o] Error 1
+>   make[1]: *** [Makefile:1152: vmlinux_o] Error 2
+>   make: *** [Makefile:240: __sub-make] Error 2
 > 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> This is not an issue when building a 64-bit kernel. To unbreak the
+> build, limit ARCH_HAS_KERNEL_FPU_SUPPORT to 64-bit kernels. This is okay
+> because the only real user of this option, amdgpu, was previously
+> limited to PPC64 anyway; see commit a28e4b672f04 ("drm/amd/display: use
+> ARCH_HAS_KERNEL_FPU_SUPPORT").
+> 
+> Fixes: 01db473e1aa3 ("powerpc: implement ARCH_HAS_KERNEL_FPU_SUPPORT")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405250851.Z4daYSWG-lkp@intel.com/
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/lkml/eeffaec3-df63-4e55-ab7a-064a65c00efa@roeck-us.net/
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+
 > ---
->   tools/testing/selftests/cachestat/test_cachestat.c | 1 +
->   1 file changed, 1 insertion(+)
 > 
-> diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
-> index b171fd53b004..632ab44737ec 100644
-> --- a/tools/testing/selftests/cachestat/test_cachestat.c
-> +++ b/tools/testing/selftests/cachestat/test_cachestat.c
-> @@ -1,5 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0
->   #define _GNU_SOURCE
-> +#define __SANE_USERSPACE_TYPES__ // Use ll64
->   
->   #include <stdio.h>
->   #include <stdbool.h>
-
-Applied to linux-kselftest fixes for the next rc.
-
-Michael, If you want to take this through, let me know, I can drop this.
-
-thanks,
--- Shuah
+>  arch/powerpc/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 3c968f2f4ac4..c88c6d46a5bc 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -137,7 +137,7 @@ config PPC
+>  	select ARCH_HAS_GCOV_PROFILE_ALL
+>  	select ARCH_HAS_HUGEPD			if HUGETLB_PAGE
+>  	select ARCH_HAS_KCOV
+> -	select ARCH_HAS_KERNEL_FPU_SUPPORT	if PPC_FPU
+> +	select ARCH_HAS_KERNEL_FPU_SUPPORT	if PPC64 && PPC_FPU
+>  	select ARCH_HAS_MEMBARRIER_CALLBACKS
+>  	select ARCH_HAS_MEMBARRIER_SYNC_CORE
+>  	select ARCH_HAS_MEMREMAP_COMPAT_ALIGN	if PPC_64S_HASH_MMU
+> -- 
+> 2.44.1
+> 
 
