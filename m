@@ -1,123 +1,200 @@
-Return-Path: <linux-kernel+bounces-194405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1B88D3BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:02:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECBB8D3BA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C691F29056
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF30E1C24518
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BF71836FC;
-	Wed, 29 May 2024 16:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3A918733E;
+	Wed, 29 May 2024 16:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="TnOZ2jGc"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kwDMf22p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53861836EF;
-	Wed, 29 May 2024 16:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03FA42069;
+	Wed, 29 May 2024 16:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716998491; cv=none; b=mP1eO5Ii4aw1h0WWBzcWQr4g1EakKRxrqeEq5amMhSZhZoDu/HfEtA9mIF1tJ02OR+2l6Hjci4aW9865yFyubJU+SaH+VE34i/8tQI7YycAyLRvp1x6bSNjQh9IWSkFWFzJWXsW7Fc8jqxy6GhM2P6SATpB+FfcIxa1uwBdb0yo=
+	t=1716998507; cv=none; b=e61DfiiPENmVfqk6EbDeCgixYV78xKdpKpNp+H6BUdHmUnkSrZYEhdK6KX/jqPxvEGQrS5pXoN2NL094rXlB52RJyFcglto5VNUN1amxVcOxuCvH+OmtytNdmvFg0sIprbHJrEaVpvTSamxR1kSD8SWUfD8JamwjMvgJ+FTIbZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716998491; c=relaxed/simple;
-	bh=MWoBClLeIZ/X4EuwScEqbMFCxUZuHMlhDDgwPq2blEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljfiIXd0PKHVdyFFQRNhWQKNmwNcjItaYYjRp4dI63JNE7Js6wjUtQytpI0iF17B3/hUnHczhnQmY5K6BWy7AWo4BDEi4eEVFgU0LXtj1aNNTCFtVfiu69kiVMXrkFQ2IlSyAJQIWUPJnpPM8PyihRE5hohJJqLkuavyFEM6KJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=TnOZ2jGc; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=v9dTNFNbDEvopER9/lAdaZC8NXm4BEiiYqgBsC4Hxlw=; b=TnOZ2jGcxfirGQkG
-	bWU6Nb740WtaybeQIRrhGULemY4dvxOnwrN2mBKi99Rl5wPOs20LPOjYedlPsmUUDXac9l3DIgq29
-	LFb/rkSmKv0cj4JpMWyVV/HnsRbWk6aAwz/AOjFpkm6QDhjirhd6PyZUXKOy5mutLX4bayvzscx3i
-	q1+twSjrp8OhQb41djrLc+zD09sTLMS7dF1H/W1VRQywiv/6zfTrDZ8uQfR5HQx+AnIdvcYD5WETQ
-	5uFzjjEyDBCcGrE1ozqvltgh8goBoAR7UfGSyYqdNuJAZ4laNVVqrk6+PPnMrVkUUD04Lw3uzFYMq
-	03919vkgZ1g8Bz8Jxw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sCLjw-003Drb-0q;
-	Wed, 29 May 2024 16:01:24 +0000
-Date: Wed, 29 May 2024 16:01:24 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: iio: adt7316: remove unused struct
- 'adt7316_limit_regs'
-Message-ID: <ZldRVBPi4utAfRd8@gallifrey>
-References: <20240528233008.191403-1-linux@treblig.org>
- <d9a3c974-8a13-43f8-a0d1-0e55f6e1f3ef@moroto.mountain>
+	s=arc-20240116; t=1716998507; c=relaxed/simple;
+	bh=B0tHJXr521Nz5ptgu8zXMxt0ClW1L6gfaaq+puzVGvM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NxwfuSbGm1Dh0KTEvTWetBY1ZNs+Pqqgh6dmg3eJ716YkZLJGqBMh8uCWhys6yGvN/AgzmlUBwoW+KiEJLmMpcfmhJJa40GDveM8Kkn57yKonNc65GNIUCYzrmpc2BM6BKLSyiiadkVeYL0T9hnEg8T6XKEmgXSk2avjkwZiXmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kwDMf22p; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716998506; x=1748534506;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=B0tHJXr521Nz5ptgu8zXMxt0ClW1L6gfaaq+puzVGvM=;
+  b=kwDMf22pWMxTrhB7WkQDVgE2M45cObhef+27rRR7/en0zZLoQxAD6cTH
+   ThfhS8jDkDsS+Fm5GWBoFQ4IZYvtaZic8VS80SvDmiIWBhUJE1PK3g69y
+   5J/iMU7XJzDf6BzQXDuZXhlf+uJCKGWgyVUgVBx3ywNQ+4s2UQQdVugFI
+   R6vTXfp2qLHUbGqL5O2BmpcH3eY3CoUX0bxbHhWPBXz5z4GzVaftkI1W/
+   StpQcAQJH7LFboPxBDFgRPtj7fMJ8XHhroDCAt10dJIHmLoNfe2DiuaLF
+   ZJipWSJqlmUZ28/tNx018u4dw+H8BKJ9WAnUBo6SRIxy0Qnyc03J6B2vS
+   A==;
+X-CSE-ConnectionGUID: +so+T2vcSpKmshgJXo1iPg==
+X-CSE-MsgGUID: 9JgoOJD6Tdu13dDWuiqW5g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13595386"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="13595386"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 09:01:45 -0700
+X-CSE-ConnectionGUID: ZNxxFe1dT3GWUsmX+Tvi0g==
+X-CSE-MsgGUID: E8vuwEGmSLOGZthWHfIPhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="40339011"
+Received: from mdutta1-mobl1.amr.corp.intel.com ([10.213.167.110])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 09:01:44 -0700
+Message-ID: <3a7e679712fb47b6c75af84163b5d3ea252f4da9.camel@linux.intel.com>
+Subject: Re: [PATCH 0/3] tracing: Fix some selftest issues
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,  Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Date: Wed, 29 May 2024 11:01:43 -0500
+In-Reply-To: <20240529083818.b7835de167191d4567405ce6@kernel.org>
+References: <171671825710.39694.6859036369216249956.stgit@devnote2>
+	 <20240527192907.49c9220f@rorschach.local.home>
+	 <20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
+	 <20240529083818.b7835de167191d4567405ce6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <d9a3c974-8a13-43f8-a0d1-0e55f6e1f3ef@moroto.mountain>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 16:01:00 up 21 days,  3:15,  1 user,  load average: 0.16, 0.08, 0.02
-User-Agent: Mutt/2.2.12 (2023-09-09)
 
-* Dan Carpenter (dan.carpenter@linaro.org) wrote:
-> On Wed, May 29, 2024 at 12:30:08AM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'adt7316_limit_regs' has never been used since the original
-> > commit 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9
-> > driver").
-> > 
-> > The comment above it is a copy-and-paste from a different struct.
-> > 
-> > Remove both the struct and the comment.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >  drivers/staging/iio/addac/adt7316.c | 8 --------
-> >  1 file changed, 8 deletions(-)
-> > 
-> > diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-> > index 79467f056a05..23d036d2802c 100644
-> > --- a/drivers/staging/iio/addac/adt7316.c
-> > +++ b/drivers/staging/iio/addac/adt7316.c
-> > @@ -209,14 +209,6 @@ struct adt7316_chip_info {
-> >  #define ADT7316_TEMP_AIN_INT_MASK	\
-> >  	(ADT7316_TEMP_INT_MASK)
-> >  
-> > -/*
-> > - * struct adt7316_chip_info - chip specific information
-> > - */
-> > -
-> > -struct adt7316_limit_regs {
-> > -	u16	data_high;
-> > -	u16	data_low;
-> > -};
-> >  
-> 
-> Could you delete the blank line as well?  Otherwise we have two blank
-> lines in a row and checkpatch will complain.
+Hi Masami,
 
-Sure, v2 sent.
-(checkpatch didn't moan at me with or without).
+On Wed, 2024-05-29 at 08:38 +0900, Masami Hiramatsu wrote:
+> On Wed, 29 May 2024 01:46:40 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+>=20
+> > On Mon, 27 May 2024 19:29:07 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> >=20
+> > > On Sun, 26 May 2024 19:10:57 +0900
+> > > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> > >=20
+> > > > Hi,
+> > > >=20
+> > > > Here is a series of some fixes/improvements for the test
+> > > > modules and boot
+> > > > time selftest of kprobe events. I found a WARNING message with
+> > > > some boot=20
+> > > > time selftest configuration, which came from the combination of
+> > > > embedded
+> > > > kprobe generate API tests module and ftrace boot-time selftest.
+> > > > So the main
+> > > > problem is that the test module should not be built-in. But I
+> > > > also think
+> > > > this WARNING message is useless (because there are warning
+> > > > messages already)
+> > > > and the cleanup code is redundant. This series fixes those
+> > > > issues.
+> > >=20
+> > > Note, when I enable trace tests as builtin instead of modules, I
+> > > just
+> > > disable the bootup self tests when it detects this. This helps
+> > > with
+> > > doing tests via config options than having to add user space code
+> > > that
+> > > loads modules.
+> > >=20
+> > > Could you do something similar?
+> >=20
+> > OK, in that case, I would like to move the test cleanup code in
+> > module_exit function into the end of module_init function.=20
+> > It looks there is no reason to split those into 2 parts.
+>=20
+> Wait, I would like to hear Tom's opinion. I found following usage
+> comments
+> in the code.
+>=20
+> =C2=A0* Following that are a few examples using the created events to tes=
+t
+> =C2=A0* various ways of tracing a synthetic event.
+> =C2=A0*
+> =C2=A0* To test, select CONFIG_SYNTH_EVENT_GEN_TEST and build the module.
+> =C2=A0* Then:
+> =C2=A0*
+> =C2=A0* # insmod kernel/trace/synth_event_gen_test.ko
+> =C2=A0* # cat /sys/kernel/tracing/trace
+> =C2=A0*
+> =C2=A0* You should see several events in the trace buffer -
+> =C2=A0* "create_synth_test", "empty_synth_test", and several instances of
+> =C2=A0* "gen_synth_test".
+> =C2=A0*
+> =C2=A0* To remove the events, remove the module:
+> =C2=A0*
+> =C2=A0* # rmmod synth_event_gen_test
+>=20
+> Tom, is that intended behavior ? and are you expected to reuse these
+> events outside of the module? e.g. load the test module and run some
+> test script in user space which uses those events?
+>=20
 
-Dave
+Yeah, this module was meant as a sample module showing how to create
+and generate synthetic events in-kernel.
 
-> regards,
-> dan carpenter
-> 
-> 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+So the interested user insmods the module, looks at the trace stream
+and sees, ok the events are there as expected, so it does work, great,
+let's remove the module to get rid of them and go write our own.
+
+Having both the creation and cleanup in module_init() wouldn't allow
+the user the opportunity to do that i.e. verify the results by reading
+the trace file.
+
+Tom=20
+
+> As far as I can see, those tests are not intended to be embedded in
+> the
+> kernel because those are expected to be removed.
+>=20
+> Thank you,
+>=20
+> >=20
+> > Thank you,
+> >=20
+> > >=20
+> > > -- Steve
+> > >=20
+> > >=20
+> > > >=20
+> > > > Thank you,
+> > > >=20
+> > > > ---
+> > > >=20
+> > > > Masami Hiramatsu (Google) (3):
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tracing: Build event generation test=
+s only as modules
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tracing/kprobe: Remove unneeded WARN=
+_ON_ONCE() in
+> > > > selftests
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tracing/kprobe: Remove cleanup code =
+unrelated to selftest
+> > > >=20
+> >=20
+> >=20
+> > --=20
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>=20
+>=20
+
 
