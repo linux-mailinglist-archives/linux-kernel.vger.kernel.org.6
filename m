@@ -1,158 +1,111 @@
-Return-Path: <linux-kernel+bounces-194129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4681C8D371E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:07:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF818D3724
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A6F1F2595C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07C11C2196A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1762B18AED;
-	Wed, 29 May 2024 13:06:55 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0C014AA9;
-	Wed, 29 May 2024 13:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79085DF58;
+	Wed, 29 May 2024 13:09:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A34C2FD;
+	Wed, 29 May 2024 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988014; cv=none; b=lt9WJjYIPNF8ZNu4S5I3VpsDLL0ho7oO473IkLAsF/N9LBJbTK0u77lkKQ8WIe2HNbKg/1Z16Rp2TF7v4LdTvhyh/VTiH3Lqb6+ugSuSeyqe8GrLAf3VUqyKJMB/a9LTMUOmN2VfIEltWQ7A2ZgerN+M879H6zAMncKtdBbUAUQ=
+	t=1716988191; cv=none; b=Llg//98Zt14ElLGqnebD7uqd9dMXpDwCqL6sz9tjEkG9cx73SeNOU2/OFCXrCXnNeT9b1WdTlziv7eDhkVQKVi9W/pI0XwbbI/mUokftF1n2Wc8AUwptYxoWsypm4OPBqXmlakrm9BGjBEpMxAMitOpas3u6qTt3y+wUDB7Y/QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988014; c=relaxed/simple;
-	bh=Gydwrm8d+mV9pgzpyR75u2RXMfJN81LViSApnAgE098=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QjGxEjre8HAncQY/BwRI0kKXb2uujyQbrQItyA2UFw9l7w3zNRgAvlURB22L9opvbwL+Llj5Zx4b76xt4kaxNclX+VnghEITybnCjixU6yL1bG/apLAcf7mqqWijVT40Uxiiz97/LNclHpZF3DJyirU3BVt5pJLvslo8aKYNo1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a2424ecdaso21226727b3.1;
-        Wed, 29 May 2024 06:06:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716988011; x=1717592811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xVFbPQ9StvkoNrq/0lKZWIQ4ZOA4XJTj64cZbKmwivY=;
-        b=JGGSK+QdZF1tXfN7HWaizV9lCegpQN2zxXCF1VmtX/yvXJnhDhAWWlwVsXnZlokmji
-         SSNp1XJQuV0+2JGyU2yoV5HswGN33ydHIdYb6sLGGdql3wSQDunxUHaLIrz/ZPqtFsaA
-         KNuRRh0gzXaxlBIVUiUwFMJ5lzoYvRZTXFZHCh0H1zSX4M3STo07gydHB3jwWxSsCpID
-         Z9VCrEwAz2oaTdUo6wZQJGH0tAHWorvoqksik8aO/KUgmhCByWi5375pcfA38IsWESLX
-         P3RKSoDOI4o8ibqk8lyu05pZEUzoy4F//w3c7NUsKZa/SzR7VhrEFfZoEP8KNULFi3ld
-         JIkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuOsYbYY50fLN+9TGuZlsLc2uiXKJTJMl0rg2saFwkp+94Xvt/Mw9+pUVmU5CbDXfEbWRe0+qjPbqZDHak0qmZE+rldpFKDw2CKQ1lqLedKFGdGkA3drftjqHD77qfQH+CrKYGWIRR+ovzMtzDrSQXR9+59utqs1HPafJvOE+i/stTrGGuGo+SacM0FvwblIWuQsHpcW0cfUPjLaN0rQj9DwS/C2eZnZi9Mgv+duBmQLx2Czctupy4SrbDzu8gh+hB83yNIZ0FfYqclUwiXVLDjECq0PQ/tfu4ccRBl8EY0z7KM+CLOczAg2m/Vwj/TOsEgLy+UlCJUQAmWSQ8eUpzRjzRHzHtPdOVHvQVl7ywwP9D5iRSxEI=
-X-Gm-Message-State: AOJu0YyxSbWgAjFpzVnuqi8DYbxfz6Lap6OhBhZ1e9KfYqVyw+sG2Wm1
-	KmVeOq2kdWbB+HgpJGDC7vUUjtFvJVNLarQbGHCWO6CJkUddaclVT9T+0PshNRE=
-X-Google-Smtp-Source: AGHT+IFZbNxrq1Y2GcpogkFIJxEEueLh2Pk3k4cqJqns+GErJM+NsuI+yxGgvad9/NZwUzuAxwqHqg==
-X-Received: by 2002:a81:6d01:0:b0:61b:1e81:4eb8 with SMTP id 00721157ae682-62a08d74106mr138719307b3.9.1716988010153;
-        Wed, 29 May 2024 06:06:50 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a56c166sm23852597b3.142.2024.05.29.06.06.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 06:06:49 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa4ad7f6dfso587358276.1;
-        Wed, 29 May 2024 06:06:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3pDuDzRbDY+9yUA5NOXzVQwOp/xs7J2mlpVeZogS4DlAaO2iiIpdUmTxE1NVcHGdjY2rDo/eAmjNhn7Op1n/HTwJJc/xVBQkmofGgkMGQZWYbzA61vikHK5vopMzpJcJtYJsQNIgHvfzB/tIjWQeWGjI35ZW4fOFdNs0LzQfyJtzz++aolL7Tn4Ot+L96du9DQ1iKzxkU9pU40MjMg13tcbrakZBCKqZWVpAN3c3gafErgRWyHt0REkoYPEMoB1uukMkZgm4zkJaZx6ZK4ZO4xG+P4wD+/eZOKqeqyKYnt6OT2BgIx4Y8t/5TQ+ILeAU4+gNAeHdETDL1xzvzZPq6RP+yH8tyOUcv/u9noPa8EmE4B24/U/U=
-X-Received: by 2002:a25:a565:0:b0:dfa:48ec:c4b2 with SMTP id
- 3f1490d57ef6-dfa48ecc64cmr1707039276.22.1716988008813; Wed, 29 May 2024
- 06:06:48 -0700 (PDT)
+	s=arc-20240116; t=1716988191; c=relaxed/simple;
+	bh=w+pe0Z5laKPVOoSBdhBVIHrvGnyev/AXTveXL/veo0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ROKQ1es2FmqK7XbEJ8nW/DVGv+pIx7ad9Wk+ja4Hof174Ly48FfkYwc89GPY13fzVCITj0renVJv3BkKf3VyRMp8E+q2rdzyoDNcJ6UpfKEOSORJQDzqn2Sr2aVsBMKe8CjmN55Dpa8nkDiwpHcbCHUZDaqizxD8zZ2zDeqY6tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F55B339;
+	Wed, 29 May 2024 06:10:12 -0700 (PDT)
+Received: from [10.57.3.125] (unknown [10.57.3.125])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CC253F792;
+	Wed, 29 May 2024 06:09:45 -0700 (PDT)
+Message-ID: <4cd905e8-594e-4858-89df-a501184ee521@arm.com>
+Date: Wed, 29 May 2024 14:09:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1716965617.git.ysato@users.sourceforge.jp> <b1fc49269919c7d6c2e5c607ae29d1a6f2ab40d2.1716965617.git.ysato@users.sourceforge.jp>
-In-Reply-To: <b1fc49269919c7d6c2e5c607ae29d1a6f2ab40d2.1716965617.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 May 2024 15:06:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWdR=SfNBFdABXRqdng8b=68mP_BnnXfpQcUvjCmvOmVA@mail.gmail.com>
-Message-ID: <CAMuHMdWdR=SfNBFdABXRqdng8b=68mP_BnnXfpQcUvjCmvOmVA@mail.gmail.com>
-Subject: Re: [DO NOT MERGE v8 13/36] dt-bindings: clock: sh7750-cpg: Add
- renesas,sh7750-cpg header.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Heiko Stuebner <heiko.stuebner@cherry.de>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Chris Morgan <macromorgan@hotmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>, 
-	Max Filippov <jcmvbkbc@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Herve Codina <herve.codina@bootlin.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Sam Ravnborg <sam@ravnborg.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Vincent Guittot <vincent.guittot@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org,
+ daniel.lezcano@linaro.org, Dietmar.Eggemann@arm.com, dsmythies@telus.net,
+ yu.chen.surf@gmail.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Qais Yousef <qyousef@layalina.io>
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com>
+ <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com>
+ <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu>
+ <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+ <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com>
+ <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Sato-san,
+On 5/28/24 15:07, Vincent Guittot wrote:
+> On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>
+>> Hi Vincent,
+>>
+>> On 5/28/24 10:29, Vincent Guittot wrote:
+>>> Hi All,
+>>>
+>>> I'm quite late on this thread but this patchset creates a major
+>>> regression for psci cpuidle driver when using the OSI mode (OS
+>>> initiated mode).  In such a case, cpuidle driver takes care only of
+>>> CPUs power state and the deeper C-states ,which includes cluster and
+>>> other power domains, are handled with power domain framework. In such
+>>> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
+>>> and others states that include the clusters, are managed by genpd and
+>>> its governor.
+>>>
+>>> This patch selects cpuidle c-state N-1 as soon as the utilization is
+>>> above CPU capacity / 64 which means at most a level of 16 on the big
+>>> core but can be as low as 4 on little cores. These levels are very low
+>>> and the main result is that as soon as there is very little activity
+>>> on a CPU, cpuidle always selects WFI states whatever the estimated
+>>> sleep duration and which prevents any deeper states. Another effect is
+>>> that it also keeps the tick firing every 1ms in my case.
+>>
+>> Thanks for reporting this.
+>> Could you add what regression it's causing, please?
+>> Performance or higher power?
+> 
+> It's not a perf but rather a power regression. I don't have a power
+> counter so it's difficult to give figures but I found it while running
+> a unitary test below on my rb5:
+> run 500us every 19457ms on medium core (uclamp_min: 600).
 
-Thanks for the update!
+Is that supposed to say 19.457ms?
+(Because below you say idle time is >18ms and total test time 5sec)
+Is the utilisation more like 1/20000 or 1/20?
+In any case what you describe is probably an issue, I'll try to reproduce.
+Note also my findings here:
+https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
 
-On Wed, May 29, 2024 at 10:01=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> SH7750 CPG Clock output define.
+Kind Regards,
+Christian
 
-(from my comments on v6 and v7) Please improve the patch description.
-
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.yaml
-> @@ -0,0 +1,107 @@
-
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/sh7750-cpg.h>
-> +    cpg: clock-controller@ffc00000 {
-> +        compatible =3D "renesas,sh7751r-cpg";
-> +        reg =3D <0xffc00000 20>, <0xfe0a0000 16>;
-> +        reg-names =3D "FRQCR", "CLKSTP00";
-> +        clocks =3D <&extal>;
-> +        clock-names =3D "extal";
-> +        renesas,mode =3D <0>;
-
-Nit: please move "renesas,mode" last.
-
-> +        #clock-cells =3D <1>;
-> +        #power-domain-cells =3D <0>;
-> +    };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
