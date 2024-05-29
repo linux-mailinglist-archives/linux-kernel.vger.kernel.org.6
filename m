@@ -1,79 +1,58 @@
-Return-Path: <linux-kernel+bounces-194206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF08D3862
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:51:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272948D3866
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C670286D38
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C661C24496
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5491B7F4;
-	Wed, 29 May 2024 13:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5821BC2F;
+	Wed, 29 May 2024 13:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BYLSbycw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZyeIVmHW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5851CA8D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C6E18EA8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716990693; cv=none; b=LbI57MERxMg38ROIUpBkv6q+D2yivTCDHwxGZbLigW733jOGKUWqVq466hEqPRg2Q420OnlxnHregy6QidC5tzkFR2+o85PBM1lRV1LDjKVzQfBlTbiLMk0DNwCNBegnoBLIbWvM7bDUnGSvR+iD6b82J4nuXHBcJEkgKnZFTtg=
+	t=1716990740; cv=none; b=sDsLeE/G9iGsQR41D4fD/2ExePEPHpdUsfNozSvKkqMUoKrWDCqaAkQze9L9SDmL15uIxXH+HPD8arUYd4aQxPFFGxDIzI8FkU9AzP2t7PgrxoSLY5Z6tgFFcnHBodUg3HNimS4vvvL2fkinqEVeDXLY8PzxbeL6/UkMuXgweHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716990693; c=relaxed/simple;
-	bh=4qG4dad29dPTvZyqQLXRikddg2y7NmdD+VTC9hKpIPE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TcfqV2Tvh2ccf8TtzNGY/sRcFIecSm01LHWH8LzsdobOt6dlzmouTbj7IGdBG2zvMM9aJmqJOJieseGPIevlGjuUCXC5u7CwW9160xmICMQxBx91PJYq/nJMePzrEa77+T3nDymwJYYZlgA/0EqPfZkNh2+W3+HlXWsK02ggYa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BYLSbycw; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716990692; x=1748526692;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=4qG4dad29dPTvZyqQLXRikddg2y7NmdD+VTC9hKpIPE=;
-  b=BYLSbycwjVncgClmsRzXsnhBInZ9R/CQlc4+YDZIZp6b9Jarw3RrCiwj
-   Ayn25G+v4Jobl2bGMxkjAKAnJTN3P9Sq1u276Mf37n8IE6eKwfRqDdoey
-   F38I+lLLxDBUluOBk6jaxjy9uSelSwQsFekkrzTv1TA634ZLRJTS7W+Ne
-   K4nlRfBgjYPsO8GAgSi6fKNy+S2sa+cookUT3JZ8W+EGDvGJTUkaYFqdI
-   +k4JcXUzDT2+83KodN8xhnYCanT1JqSZIdZDrT7zEmBDV00WMAhdJOWHs
-   Uk8tY5uNhKjl4yTQir2E8JdZhVCrX0hip9EF1jx0CAN7D6GmQRC3ObuM6
-   A==;
-X-CSE-ConnectionGUID: q/mM9txnTUmMc2ca8jVhKA==
-X-CSE-MsgGUID: T6nw3AB7Szyum471s5FFqQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13558545"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="13558545"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:51:31 -0700
-X-CSE-ConnectionGUID: aFSTnD87RZ2C1kyGZFNVww==
-X-CSE-MsgGUID: QENQtQuSRL+hs1haaaXu0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="35390243"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.86])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:51:26 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Alex Deucher <alexdeucher@gmail.com>, Mario Limonciello
- <mario.limonciello@amd.com>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- linux-kernel@vger.kernel.org, Chris Bainbridge
- <chris.bainbridge@gmail.com>, hughsient@gmail.com
-Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during
- initialization
-In-Reply-To: <CADnq5_OzPT1MVnsqXs2vjr1L2_6jeM6x7jgs4ZtYpNzdDHM6uA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240528210319.1242-1-mario.limonciello@amd.com>
- <CADnq5_OzPT1MVnsqXs2vjr1L2_6jeM6x7jgs4ZtYpNzdDHM6uA@mail.gmail.com>
-Date: Wed, 29 May 2024 16:51:35 +0300
-Message-ID: <87r0dkiv4o.fsf@intel.com>
+	s=arc-20240116; t=1716990740; c=relaxed/simple;
+	bh=scmYIIWiBUtvQ1/aYgr+xepSrRZem2K/QRx8v/oipBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bFR4liR02oZhoYtyjwMMnzVKedU+KhE3p0SZUls++DY6StB1jcx5vPQ6gPmARz9wdRlUp/vowJqdnWKf73N4QnuGpGeAXMZJOF5TI0KosUEpovgpMECAc6RnLsffVtAkfwUfLJxhCSr5cSjOma5z/CrdvnfQSMA+lHbSpLh7l6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZyeIVmHW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BFDDDB53;
+	Wed, 29 May 2024 15:52:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716990734;
+	bh=scmYIIWiBUtvQ1/aYgr+xepSrRZem2K/QRx8v/oipBg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZyeIVmHW8cSGunAdNU9/7blJ1ax6ZQ72xxzu4qjvu5VNVSKL0uFGxNSKF5QKo7U1H
+	 7IBrqODJ/X55S+azimJKWoBY3/gPLzIiTTdaRnsSWfapQ4OBfgxb200/zi9m7FhhIb
+	 b6LsWkydmckd8ik6kv0IKMYxH0pZ5z8POjYZT48I=
+Date: Wed, 29 May 2024 16:52:05 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: James Clark <james.clark@arm.com>
+Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coresight: Fix ref leak when
+ of_coresight_parse_endpoint() fails
+Message-ID: <20240529135205.GP1436@pendragon.ideasonboard.com>
+References: <20240529133626.90080-1-james.clark@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,112 +60,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20240529133626.90080-1-james.clark@arm.com>
 
-On Wed, 29 May 2024, Alex Deucher <alexdeucher@gmail.com> wrote:
-> On Tue, May 28, 2024 at 5:03=E2=80=AFPM Mario Limonciello
-> <mario.limonciello@amd.com> wrote:
->>
->> If the lid on a laptop is closed when eDP connectors are populated
->> then it remains enabled when the initial framebuffer configuration
->> is built.
->>
->> When creating the initial framebuffer configuration detect the ACPI
->> lid status and if it's closed disable any eDP connectors.
->>
->> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
->> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->
-> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->
-> Do you have drm-misc access or do you need someone to apply this for you?
+Hi James,
 
-I've bounced this to intel-gfx and intel-xe lists to get CI testing. I'd
-appreciate holding off on merging until we have results.
+Thank you for the patch.
 
-Thanks,
-Jani.
+On Wed, May 29, 2024 at 02:36:26PM +0100, James Clark wrote:
+> of_graph_get_next_endpoint() releases the reference to the previous
+> endpoint on each iteration, but when parsing fails the loop exits
+> early meaning the last reference is never dropped.
+> 
+> Fix it by dropping the refcount in the exit condition.
 
->
-> Alex
->
->> ---
->> Cc: hughsient@gmail.com
->> v1->v2:
->>  * Match LVDS as well
->> ---
->>  drivers/gpu/drm/drm_client_modeset.c | 30 ++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_=
-client_modeset.c
->> index 31af5cf37a09..0b0411086e76 100644
->> --- a/drivers/gpu/drm/drm_client_modeset.c
->> +++ b/drivers/gpu/drm/drm_client_modeset.c
->> @@ -8,6 +8,7 @@
->>   */
->>
->>  #include "drm/drm_modeset_lock.h"
->> +#include <acpi/button.h>
->>  #include <linux/module.h>
->>  #include <linux/mutex.h>
->>  #include <linux/slab.h>
->> @@ -257,6 +258,34 @@ static void drm_client_connectors_enabled(struct dr=
-m_connector **connectors,
->>                 enabled[i] =3D drm_connector_enabled(connectors[i], fals=
-e);
->>  }
->>
->> +static void drm_client_match_edp_lid(struct drm_device *dev,
->> +                                    struct drm_connector **connectors,
->> +                                    unsigned int connector_count,
->> +                                    bool *enabled)
->> +{
->> +       int i;
->> +
->> +       for (i =3D 0; i < connector_count; i++) {
->> +               struct drm_connector *connector =3D connectors[i];
->> +
->> +               switch (connector->connector_type) {
->> +               case DRM_MODE_CONNECTOR_LVDS:
->> +               case DRM_MODE_CONNECTOR_eDP:
->> +                       if (!enabled[i])
->> +                               continue;
->> +                       break;
->> +               default:
->> +                       continue;
->> +               }
->> +
->> +               if (!acpi_lid_open()) {
->> +                       drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is close=
-d, disabling\n",
->> +                                   connector->base.id, connector->name);
->> +                       enabled[i] =3D false;
->> +               }
->> +       }
->> +}
->> +
->>  static bool drm_client_target_cloned(struct drm_device *dev,
->>                                      struct drm_connector **connectors,
->>                                      unsigned int connector_count,
->> @@ -844,6 +873,7 @@ int drm_client_modeset_probe(struct drm_client_dev *=
-client, unsigned int width,
->>                 memset(crtcs, 0, connector_count * sizeof(*crtcs));
->>                 memset(offsets, 0, connector_count * sizeof(*offsets));
->>
->> +               drm_client_match_edp_lid(dev, connectors, connector_coun=
-t, enabled);
->>                 if (!drm_client_target_cloned(dev, connectors, connector=
-_count, modes,
->>                                               offsets, enabled, width, h=
-eight) &&
->>                     !drm_client_target_preferred(dev, connectors, connec=
-tor_count, modes,
->> --
->> 2.43.0
->>
+You can add
 
---=20
-Jani Nikula, Intel
+Reported-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> Fixes: d375b356e687 ("coresight: Fix support for sparsely populated ports")
+> Signed-off-by: James Clark <james.clark@arm.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+One a side note, maybe it would be nice to add a new version of the
+for_each_endpoint_of_node() macro that would declare the iterator as a
+local variable scoped to the loop, making sure the reference always gets
+released when we exit the loop.
+
+And now that I've written that, it sounds we could as well have a
+version of the macro that doesn't take a new reference to the iterator.
+That may be simpler and less error-prone in the end.
+
+> ---
+>  drivers/hwtracing/coresight/coresight-platform.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 9d550f5697fa..57a009552cc5 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -297,8 +297,10 @@ static int of_get_coresight_platform_data(struct device *dev,
+>  			continue;
+>  
+>  		ret = of_coresight_parse_endpoint(dev, ep, pdata);
+> -		if (ret)
+> +		if (ret) {
+> +			of_node_put(ep);
+>  			return ret;
+> +		}
+>  	}
+>  
+>  	return 0;
+
+-- 
+Regards,
+
+Laurent Pinchart
 
