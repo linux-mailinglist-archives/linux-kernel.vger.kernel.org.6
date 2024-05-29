@@ -1,63 +1,55 @@
-Return-Path: <linux-kernel+bounces-193331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7798D2A68
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8288C8D2A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA3A1F26617
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3723F1F27828
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D439815CD59;
-	Wed, 29 May 2024 02:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5304A15D5AD;
+	Wed, 29 May 2024 02:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWvREqUP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpSHzTgG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169F415CD4C;
-	Wed, 29 May 2024 02:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995C015D5A0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 02:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716948138; cv=none; b=fCDOPfsO1oPHDPU+a3B1mozHOqzLd8ovGr4HyDUstXfi3viCraLoKktj3sLWehVc/Cm4GLIP61VKsH3T9rC1hvyhMUaZ5CL0yVB4c6E07JrVDEgjTYTz0Ntr2uwolh+D61vJtFNtj6HZSd/TZWsvVtUMAQ/isAF+bBfufXHiRO8=
+	t=1716948138; cv=none; b=BUwXnTipr3AYmgiHQPvRxSGyCW59RNw9tIQgA1aiOnjGJEhwbD0z/lQyMkg7v4Z4/jNWYi8J5PZWHI87HfrM1mBLrNmf1GrHNrQTne0JXrmx+3UpwxF0TBQJP1+DXDApfWAhrc8NnEPK5hGLvkMKvoDs0cq9kXDKeVQLzV5yhY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716948138; c=relaxed/simple;
-	bh=WzM1bY4byL4YUXM6AADhK0X6YuFPtIN4jhP8k24IFpc=;
+	bh=8swLETxim8r2v0QSa7h6ND7QWhB9AeksE9x8hvsQ7Z0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xoj6GQxrkFGtk2ewHSdbkFQSJoyTV9WbsApErSu/2TC3e5NuXVF+Ncqcujx2Stuzc9YvbOu+ZVyhDjO2aYBTGXAh7d/1HXU364vN8YxIqwCI1m+/OS4HREquIY+yeq+vMoD26pCj/Ut4i1Ce8ThwLypWT+blFsADc0mjm5NHus0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWvREqUP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1516C4AF09;
-	Wed, 29 May 2024 02:02:16 +0000 (UTC)
+	 MIME-Version:Content-Type; b=GPIJS/4oRrX6X+CoDlHTsDwDYKFuJ8WhKRNzs1BVhBMOx8242fFRekuaVJfv8aV+IF2VgSe78Ju8zOrX8/2PNuTb+DgnL/6LNyiHVEJRxNdOxV1Gwm+gcDzqSgUmm/IlVSqAZf7n/OG5D8nWVrl+G9iyQ686GEQpbPNmhn4Byyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpSHzTgG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F50C4AF0B;
+	Wed, 29 May 2024 02:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716948137;
-	bh=WzM1bY4byL4YUXM6AADhK0X6YuFPtIN4jhP8k24IFpc=;
+	s=k20201202; t=1716948138;
+	bh=8swLETxim8r2v0QSa7h6ND7QWhB9AeksE9x8hvsQ7Z0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hWvREqUPpgsIjTmg1z6r8R0G7flnMe+fuxGSgmaIHVM+OczV6QcV1N20+YpaHFkDN
-	 Wjef2915xGIMwQJhUX/sySAOzEiI7OvHTWUwzQ0FG7CcpE4rW5e5jiejrYlPebpTqq
-	 Qz2j0Wp9CKPpQztflL/DwFcgT6jn8BTGeAjQfthCVLfux3nVtQhU/bBCN7keXazI38
-	 8PhSBeedzOKVp8iXHZQiSCna5oQA39mUIIzlm6bW0XBUqquV2YSK3AxUgLA4713160
-	 ROnk48xYiRTKLjN3ETcJPeQg1k8cAANAJyNsKFG7R4uD1iiZ1mY+g6lBI10RA/FQLf
-	 lfbK1zbhf4vPw==
+	b=BpSHzTgG4h0JZ7fOnMpNDtGcBUQaraSwnwcuNVnJP3+EvSGtf/Z4x/y1JxvCTarWJ
+	 /Lj2dJ3JkZ++cGijMqUTtH19lRtbsyKEEcnRBRY/0h/xO1vsHgv7ERLLKoF6ql3ELn
+	 n+7csGpPHS8z1SjMcmX9UtGeAz7AxGqPalociJODi5oJyXkrK1kRBMWdwDsXiFVat4
+	 V/ZB+7U+EaO2QZqYTckw9XnZXTMQ3k3biCtC45ShPTf2VnToifqoSDMD+p8BKfL3bT
+	 tz2a4fiOd/m7pOGYEavPDQMQlhVRyY9pXPL3jKhMZpbmIpe08SaNkTYUxGK4Its4F2
+	 B3QRLut+YygxQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Gianluca Boiano <morf3089@gmail.com>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/3] This patch series introduces support for PMI8950 PWM in leds-qcom-lpg.
-Date: Tue, 28 May 2024 21:01:55 -0500
-Message-ID: <171694812071.574781.1418783685100932942.b4-ty@kernel.org>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	quic_kathirav@quicinc.com
+Subject: Re: (subset) [PATCH v4 0/8] ipq9574: Enable PCI-Express support
+Date: Tue, 28 May 2024 21:01:56 -0500
+Message-ID: <171694812079.574781.12688876318785901212.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240402-pmi8950-pwm-support-v1-0-1a66899eeeb3@gmail.com>
-References: <20240402-pmi8950-pwm-support-v1-0-1a66899eeeb3@gmail.com>
+In-Reply-To: <20240501040800.1542805-10-mr.nuke.me@gmail.com>
+References: <20240501040800.1542805-1-mr.nuke.me@gmail.com> <20240501040800.1542805-10-mr.nuke.me@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,21 +60,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 02 Apr 2024 14:35:41 +0200, Gianluca Boiano wrote:
-> The first patch updates the device tree bindings for leds-qcom-lpg to
-> include support for PMI8950 PWM.
+On Tue, 30 Apr 2024 23:07:51 -0500, Alexandru Gagniuc wrote:
+> There are four PCIe ports on IPQ9574, pcie0 thru pcie3. This series
+> addresses pcie2, which is a gen3x2 port. The board I have only uses
+> pcie2, and that's the only one enabled in this series. pcie3 is added
+> as a special request, but is untested.
 > 
-> The second patch adds a pwm node to the device tree for the PMI8950. This
-> node is found on some msm8953 devices, such as the Xiaomi Mido, and its
-> inclusion in the device tree will enable infrared LED functionality on
-> these devices.
+> I believe this makes sense as a monolithic series, as the individual
+> pieces are not that useful by themselves.
 > 
 > [...]
 
 Applied, thanks!
 
-[2/3] arm64: dts: qcom: pmi8950: add pwm node
-      commit: 62aad66b57466287925d17e7ed0f6f14fd6c5459
+[1/8] dt-bindings: clock: Add PCIe pipe related clocks for IPQ9574
+      commit: 475beea0b9f631656b5cc39429a39696876af613
+[2/8] clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
+      commit: a8fe85d40ffe5ec0fd2f557932ffee902be35b38
 
 Best regards,
 -- 
