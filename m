@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-193372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D438D2AE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:31:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF778D2AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B19FB23F15
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:31:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0791C23825
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C7615B0E7;
-	Wed, 29 May 2024 02:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E1D15B0E5;
+	Wed, 29 May 2024 02:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4xysLwa"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Rts1GErr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680112D600;
-	Wed, 29 May 2024 02:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADD817E8F0;
+	Wed, 29 May 2024 02:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716949874; cv=none; b=cYKxCjWoE9iU3Xj5a7fzCdJ2DP4At2O7nAYVO+gDNsQoh9/OaHhLmI6fy+0W7cg4DGVQpaezuzouxj2R6W2qd9l8bzkoUXXG3oKzOK4sCrLR+pB33/XhzuQHccGLAkvEo1r+GeEUtGTVt6RfaDaIE7YRk3ZBNBBjdlkuL01ZUSA=
+	t=1716950136; cv=none; b=CuBO+403GIu0bzWPes1UgIdI0rr1ihR/6P+JOF84jBZh/uf4R5xb4NLgkZBsQEJfL65HODMAkur95YLvSkpaf152Ivits+e2Tr7B4xLhPUcSL9Jp0M9DUC/6Se+ICFRK9U9icc8ntF2djYBD7Q2k+gL0ClCVoIU1SA25vDuCVuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716949874; c=relaxed/simple;
-	bh=s0JJCoeVh8x5RnIYbaB2H25o/x3dJnPn46ytxptyeVc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z7npCgdJ1LOMmuiU/KaCVvGfC5DBfrVuT88c//pSbD5+WwI8THCtgxVGyl/r6Ncfs0e47y+QhkZwQC3Eb6meBfEFBeshXfHjnf6q789ohWDjOo70Bb+Zeekvo+JewGYLhEkZtoJ1qVrKpWOE42WLVw/gfYUJY9mFR9e/1nQe5Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4xysLwa; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f347e8f6acso936145ad.1;
-        Tue, 28 May 2024 19:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716949873; x=1717554673; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e6tzFU+P3Pvz/Mdh7rpOnTlyvAS2od3a+HevUw/HUkY=;
-        b=B4xysLwaWcxaliegQjIIRPydG/25lQftGL6rHqX9umu2/nPxMH9KSXZg008tGDR0Rd
-         6KyJ4Uazbb/RIo/EzAQFkjc4DqjvS5uijanISeGcLYRc5di7QI76HgfVkVK6+aNZCW93
-         XTGtoEdDr8HXbz6FoPzDNtiedu/zJWyhZDaQOAliQ0sEex14w8qHuiELbfbqp4qdashQ
-         evWjahY8bG0FvaEhDsAOfrKaQBlkNhbOli3fzLdTrplGYMPZpsPgzZMH6WjG93lJbH6V
-         DZoCxinWpuKJ0KCIuuoBZSdt6gq87s4KVkQdI6kZYa1FOl1uYRaCOZMWM829OOp5KntL
-         FgDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716949873; x=1717554673;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e6tzFU+P3Pvz/Mdh7rpOnTlyvAS2od3a+HevUw/HUkY=;
-        b=tdor4wgiyoruxM6MsDVnfpMWPCmJPJDKceucvX8bjkxH+iCtIi8OdqedctTTn3snm6
-         lHN9KWh/AyU5grHN4f9RX9aOr6F/m1Cae7X7NsYA6G6FC5VgsI9PQ02smQAUEd5dMp7r
-         Ku6N2KA9wyHaGIpPgUW8fMcSciZATp44DwqUJpUZiWQRzH5YGQNYPTbMX62ojk4MBstT
-         M7m2XZDULDLv33BEjwxk7RdbcE6brWDN3Aoshbr33+8K/sjRbT4fqy262JAMcyCDbMIp
-         RSV6hv/xyxrMtJn2fsl933jzCkY7Y8NAJEFeyz01VcaQmVKe91qJC62ci5ydy6+FrCvl
-         slKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXAbnhTjyCry97eazkdw5fAP1CDCD0KQ5U1Eisd92OMYKHrSaMSzTOTNLKzN6uNwBY5xsiyc0DabhNgh/NCs+aSqGpg35G8awAlj7F
-X-Gm-Message-State: AOJu0YzQSMo8MXGRouFF5P9uZkwovz4ZhBNps/Rwq2WbJo62Fof0kAl1
-	NfVlSTTmoyF1VA6L+PbRIYHtU2ZiG3E6BrOEtFwgL+1Km3i+YS1h
-X-Google-Smtp-Source: AGHT+IHyTZT3Tio93IBUQuQWA42Fl+BjK5I1R17dF2ONQQef+B+lAqQ7sybcI6INskO8W5wkutcBnQ==
-X-Received: by 2002:a17:902:cecd:b0:1f2:f70b:80d5 with SMTP id d9443c01a7336-1f4499328bemr155055105ad.6.1716949872411;
-        Tue, 28 May 2024 19:31:12 -0700 (PDT)
-Received: from localhost.localdomain ([111.48.69.246])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c967a62sm87825315ad.120.2024.05.28.19.31.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 19:31:12 -0700 (PDT)
-From: luriwen <tgsp002@gmail.com>
-X-Google-Original-From: luriwen <luriwen@kylin.cn>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luriwen <luriwen@kylin.cn>
-Subject: [PATCH v1] cpufreq/cppc: Take policy->cur into judge when set target
-Date: Wed, 29 May 2024 10:30:59 +0800
-Message-Id: <20240529023059.2821104-1-luriwen@kylin.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716950136; c=relaxed/simple;
+	bh=TW5Xcn0xnAv5EBBgJAhsWxo81BhjhRFk4kTlGK3u7GI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QIOxglp+97cATOznbfcFmsaRQQFLbwMPEJD3EghBToK/4XQgufJtdYIAMv9lAPiueqfuo160xXDL31vf/jCXjbs7pgi89FUT4jCuxpGBOLvnAQV+waXBOgFBKufn+5/updSVMnX/aupnq0GmWaEqRsrXfRCd72+XM0+9Wefq+ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Rts1GErr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716950132;
+	bh=i5TmU9yV0PI4EyOM3a6WHyyJ8VIjw9e4O1pSXH0Dlcc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Rts1GErrSQLI5NRtA6sa7Bxxqqnf6uj1hUUfRIA0LDQDhEVfn9ehV84mgJ22KLFKC
+	 pd95hE5wH42QThtq3d1LObI0lVoVrKeAylFjoekiBkGNkjflUGskrpMCpTCK9K6gg5
+	 NqQQwWEnRmBDC1I1R2pLcrBzlh7l9RuvmdluttxlqMvWbpJUGy/AB1z63ttdQsfzZR
+	 bjuPQFUtCoQ6aMamh0jxiiW0EJ8GsxpBYO5pPRp+eHVhPX//hwhQuqBzvFrNgUPm8U
+	 iL++BmGFNUNrgPXUancfbr5JtK9z6jgbi/ZhGXuFcPrJp5R+tH2l4VXw8gGrfjctJI
+	 3umQSuOaz0hJw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vptlm16Wqz4wqK;
+	Wed, 29 May 2024 12:35:32 +1000 (AEST)
+Date: Wed, 29 May 2024 12:35:31 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Maxime Ripard <mripard@kernel.org>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <20240529123531.324226b4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/sWwKsn.AeqU0RI8N+udYfdi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-There is a case that desired_perf is exactly the same with the old perf,
-but the actual current freq is not. Add a judgment condition to return
-only when the three values are exactly the same.
+--Sig_/sWwKsn.AeqU0RI8N+udYfdi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This happened in S3 while the cpufreq governor is set to powersave.
-During resume process, the CPU frequency is adjusted to the highest
-perf. For the booting CPU, there's a warning that "CPU frequency out of
-sync", because the policy->cur is the lowest_perf while the actual
-current frequency is the highest_perf that obtained via
-cppc_cpufreq_get_rate(), then set policy->cur to highest_perf. The
-governor->limits() intent to configure the CPU frequency to lowest_perf
-and the governor->target() returned because the desired_perf is equal to
-cpu->perf_ctrls.desired_perf leaving the actual current frequency and
-policy->cur are remain the highest_perf. Add the judgement that whether
-policy->cur is the same with desired_perf.
+Hi all,
 
-Signed-off-by: luriwen <luriwen@kylin.cn>
----
- drivers/cpufreq/cppc_cpufreq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+After merging the drm-misc tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 15f1d41920a3..802f7c7c0ad8 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -296,7 +296,8 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
- 
- 	desired_perf = cppc_khz_to_perf(&cpu_data->perf_caps, target_freq);
- 	/* Return if it is exactly the same perf */
--	if (desired_perf == cpu_data->perf_ctrls.desired_perf)
-+	if (desired_perf == cpu_data->perf_ctrls.desired_perf &&
-+	    desired_perf == policy->cur)
- 		return ret;
- 
- 	cpu_data->perf_ctrls.desired_perf = desired_perf;
--- 
-2.25.1
+drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c: In function 'sun4i_hdmi_connector_m=
+ode_valid':
+drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c:213:17: error: implicit declaration =
+of function 'drm_connector_hdmi_compute_mode_clock'; did you mean 'drm_hdmi=
+_compute_mode_clock'? [-Werror=3Dimplicit-function-declaration]
+  213 |                 drm_connector_hdmi_compute_mode_clock(mode, 8,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                 drm_hdmi_compute_mode_clock
+cc1: some warnings being treated as errors
 
+Caused by commit
+
+  ea64761a54a2 ("drm/sun4i: hdmi: Switch to HDMI connector")
+
+I have used the drm-misc tree from next-20240528 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sWwKsn.AeqU0RI8N+udYfdi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZWlHMACgkQAVBC80lX
+0GweSQf/TJeYvl4unIeXnWL+HOHTA83UiOZHhpsW1EA7OWowgkXskxQKCeFt6wB8
+8snvO+7+4F+XmxVewkN3NiH4UdT/bYN2S/Z89yMlQn9F+JgGN3SjR/Nd4A+pVSfT
+IsiSXicRn+XQvsOhkSFYILjiWWf7LVDF3dQCyjJ1nlolGV0F9OMFZT89KsAHFKog
+pzjVXX2rvV7D8Mt/0BVzwCQ+hA1B6/QLZOK2r4D2fX1QABJKNe5ZR41pqgwQEsBn
+b+RhfGXfaEriC9/28XbWUNj+qVs/VkatBZN6k7wjSiBLWJrAhyy+GYh1eJAHQppe
+5Yl6eUeGHWY7395orb+64W6rrykApA==
+=NZY4
+-----END PGP SIGNATURE-----
+
+--Sig_/sWwKsn.AeqU0RI8N+udYfdi--
 
