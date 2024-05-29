@@ -1,174 +1,186 @@
-Return-Path: <linux-kernel+bounces-193996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123608D353A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EF78D3540
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B891C2194A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:13:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F7D28B2A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B73169383;
-	Wed, 29 May 2024 11:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOwngCH0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB21167DBD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC58F16EBFB;
+	Wed, 29 May 2024 11:14:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46188167DBD
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981215; cv=none; b=VqWSeWm/s1sglribn3yo/J4mNDCjMOaan9j60wRuRzOOwzyGRLO3UfiIswfzJSte015Jtu6USWWUTAD2MfPwJXD+cJhE0AlnSZBSj9OijrtRvWRQOiN1uODayqsl8XA/jjXdcXRYb1U+evBoWfECDyaUNA2fJQmhzoNdI4DldQY=
+	t=1716981271; cv=none; b=LaBHki1f56Bsq9LJofOBEbk1S6sQxetJF7Os6jepZxm/s3dBuTwl+8vY+NK/5Edy3akPslWUFpK+dOL+Cneoca7viZsWFRuB4dxp9dalZ0JzkU+tnDbBDuoPXRHqCbaYLlW2x0hCWunmMJSLz2g5PdcqDQILWDbRY/XkHKUmOV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981215; c=relaxed/simple;
-	bh=b7FjpDnBjzb3hqaviXRWE3Ie4w+SaRNZu55hMptmPaA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=afJ9OpuJhUceb5tAzeV35jHUL9IsEXIUmgRYR/iMA80W2BZtJTnF87chveampk+ZS0qPmibw3RpXd8VQpIApcNe/y37iVE6zgDUcE33M6p0Ap2EEw3EH/6SW2/KGPx7pozISgZ1xnrhZdEGUdef/Njc7v7pRrfSEJmaXogHqlYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOwngCH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D459C32786;
-	Wed, 29 May 2024 11:13:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716981215;
-	bh=b7FjpDnBjzb3hqaviXRWE3Ie4w+SaRNZu55hMptmPaA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=aOwngCH0HIPpHe0Mclknzuv8OKq5zUPew3cN2CwZtZE3/EmaLg+B0hx9E2LurWdvX
-	 UTOAhs+11C9dsWr1+YNWVwWLUggS9gTCWDPO8Ph6zZU0mweZ3JF9baDW2olIatSyOl
-	 HYOTVWbEeFXiJDoMh9bqsQ0lzhZx4oSKKhTJvRmdOZ+6+Vj18rCIbVxJvnzJO7q1RR
-	 zJO/LL7nWvoUheSBEND+q8BEGAthMtrHOvlqoeVEqEZfHF4Kzf6XWPtOR1PHFKHQvD
-	 14z/EtjU09zwB8f6ICVbM0DI2ctRpU5U+zMdeLFWx/WA122w9VAw/WReV14fxBRz+J
-	 DyOl2+9p6S2KQ==
-Message-ID: <03647897-8b1f-4c82-b2b6-0aa0704bed05@kernel.org>
-Date: Wed, 29 May 2024 19:13:31 +0800
+	s=arc-20240116; t=1716981271; c=relaxed/simple;
+	bh=2iOnoOqaH1ns/TUfviGdLnP1bua85YpsSllsgPuidfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QntT4UBNk5sdqdccR4U7YQttv8rn4ZFRaEBbQGerGGN0EUwkZWhTo/HA20t8D+Nrx6iOjBgU8oKNT00VR2lub8dNOgyMk2k1OU9iCBPgRylqRUX/Z8hlS8vLHe7yQ3nmZsCT1FwJk2SFX07N+n+YWJ868Zib+V1iNsTd4vmbDKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD5E2339;
+	Wed, 29 May 2024 04:14:51 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B335E3F792;
+	Wed, 29 May 2024 04:14:25 -0700 (PDT)
+Date: Wed, 29 May 2024 12:14:22 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Baoquan He <bhe@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/io: add constant-argument check
+Message-ID: <ZlcODqVXTDh6n0h-@J2N7QTR9R3>
+References: <20240528120844.3523915-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: use per-log target_bitmap to
- improve lookup performace of ssr allocation
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-References: <20240411082354.1691820-1-chao@kernel.org>
- <11d5d736-bae5-4a71-b400-087b8722893c@kernel.org>
-Content-Language: en-US
-In-Reply-To: <11d5d736-bae5-4a71-b400-087b8722893c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528120844.3523915-1-arnd@kernel.org>
 
-Ping,
+On Tue, May 28, 2024 at 02:08:38PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> In some configurations __const_iowrite32_copy() does not get inlined
+> and gcc runs into the BUILD_BUG():
+> 
+> In file included from <command-line>:
+> In function '__const_memcpy_toio_aligned32',
+>     inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:203:3,
+>     inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:199:20:
+> include/linux/compiler_types.h:487:45: error: call to '__compiletime_assert_538' declared with attribute error: BUILD_BUG failed
+>   487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>       |                                             ^
+> include/linux/compiler_types.h:468:25: note: in definition of macro '__compiletime_assert'
+>   468 |                         prefix ## suffix();                             \
+>       |                         ^~~~~~
+> include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
+>   487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+>    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> include/linux/build_bug.h:59:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+>    59 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+>       |                     ^~~~~~~~~~~~~~~~
+> arch/arm64/include/asm/io.h:193:17: note: in expansion of macro 'BUILD_BUG'
+>   193 |                 BUILD_BUG();
+>       |                 ^~~~~~~~~
+> 
+> Add a check to ensure that the argument is in fact a constant before
+> calling into __const_memcpy_toio_aligned32().
+> 
+> Fixes: ead79118dae6 ("arm64/io: Provide a WC friendly __iowriteXX_copy()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm64/include/asm/io.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+> index 4ff0ae3f6d66..44913f227060 100644
+> --- a/arch/arm64/include/asm/io.h
+> +++ b/arch/arm64/include/asm/io.h
+> @@ -199,7 +199,8 @@ void __iowrite32_copy_full(void __iomem *to, const void *from, size_t count);
+>  static inline void __const_iowrite32_copy(void __iomem *to, const void *from,
+>  					  size_t count)
+>  {
+> -	if (count == 8 || count == 4 || count == 2 || count == 1) {
+> +	if (__builtin_constant_p(count) &&
+> +	    (count == 8 || count == 4 || count == 2 || count == 1)) {
+>  		__const_memcpy_toio_aligned32(to, from, count);
+>  		dgh();
+>  	} else {
 
-On 2024/4/23 10:07, Chao Yu wrote:
-> Jaegeuk, any comments for this serials?
-> 
-> On 2024/4/11 16:23, Chao Yu wrote:
->> After commit 899fee36fac0 ("f2fs: fix to avoid data corruption by
->> forbidding SSR overwrite"), valid block bitmap of current openned
->> segment is fixed, let's introduce a per-log bitmap instead of temp
->> bitmap to avoid unnecessary calculation overhead whenever allocating
->> free slot w/ SSR allocator.
->>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->> v2:
->> - rebase to last dev-test branch.
->>   fs/f2fs/segment.c | 30 ++++++++++++++++++++++--------
->>   fs/f2fs/segment.h |  1 +
->>   2 files changed, 23 insertions(+), 8 deletions(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 6474b7338e81..af716925db19 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -2840,31 +2840,39 @@ static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
->>       return 0;
->>   }
->> -static int __next_free_blkoff(struct f2fs_sb_info *sbi,
->> -                    int segno, block_t start)
->> +static void __get_segment_bitmap(struct f2fs_sb_info *sbi,
->> +                    unsigned long *target_map,
->> +                    int segno)
->>   {
->>       struct seg_entry *se = get_seg_entry(sbi, segno);
->>       int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
->> -    unsigned long *target_map = SIT_I(sbi)->tmp_map;
->>       unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
->>       unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
->>       int i;
->>       for (i = 0; i < entries; i++)
->>           target_map[i] = ckpt_map[i] | cur_map[i];
->> +}
->> +
->> +static int __next_free_blkoff(struct f2fs_sb_info *sbi, unsigned long *bitmap,
->> +                    int segno, block_t start)
->> +{
->> +    __get_segment_bitmap(sbi, bitmap, segno);
->> -    return __find_rev_next_zero_bit(target_map, BLKS_PER_SEG(sbi), start);
->> +    return __find_rev_next_zero_bit(bitmap, BLKS_PER_SEG(sbi), start);
->>   }
->>   static int f2fs_find_next_ssr_block(struct f2fs_sb_info *sbi,
->> -        struct curseg_info *seg)
->> +                    struct curseg_info *seg)
->>   {
->> -    return __next_free_blkoff(sbi, seg->segno, seg->next_blkoff + 1);
->> +    return __find_rev_next_zero_bit(seg->target_map,
->> +                BLKS_PER_SEG(sbi), seg->next_blkoff + 1);
->>   }
->>   bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno)
->>   {
->> -    return __next_free_blkoff(sbi, segno, 0) < BLKS_PER_SEG(sbi);
->> +    return __next_free_blkoff(sbi, SIT_I(sbi)->tmp_map, segno, 0) <
->> +                            BLKS_PER_SEG(sbi);
->>   }
->>   /*
->> @@ -2890,7 +2898,8 @@ static int change_curseg(struct f2fs_sb_info *sbi, int type)
->>       reset_curseg(sbi, type, 1);
->>       curseg->alloc_type = SSR;
->> -    curseg->next_blkoff = __next_free_blkoff(sbi, curseg->segno, 0);
->> +    curseg->next_blkoff = __next_free_blkoff(sbi, curseg->target_map,
->> +                            curseg->segno, 0);
->>       sum_page = f2fs_get_sum_page(sbi, new_segno);
->>       if (IS_ERR(sum_page)) {
->> @@ -4635,6 +4644,10 @@ static int build_curseg(struct f2fs_sb_info *sbi)
->>                   sizeof(struct f2fs_journal), GFP_KERNEL);
->>           if (!array[i].journal)
->>               return -ENOMEM;
->> +        array[i].target_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
->> +                                GFP_KERNEL);
->> +        if (!array[i].target_map)
->> +            return -ENOMEM;
->>           if (i < NR_PERSISTENT_LOG)
->>               array[i].seg_type = CURSEG_HOT_DATA + i;
->>           else if (i == CURSEG_COLD_DATA_PINNED)
->> @@ -5453,6 +5466,7 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
->>       for (i = 0; i < NR_CURSEG_TYPE; i++) {
->>           kfree(array[i].sum_blk);
->>           kfree(array[i].journal);
->> +        kfree(array[i].target_map);
->>       }
->>       kfree(array);
->>   }
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index e1c0f418aa11..10f3e44f036f 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -292,6 +292,7 @@ struct curseg_info {
->>       struct f2fs_summary_block *sum_blk;    /* cached summary block */
->>       struct rw_semaphore journal_rwsem;    /* protect journal area */
->>       struct f2fs_journal *journal;        /* cached journal info */
->> +    unsigned long *target_map;        /* bitmap for SSR allocator */
->>       unsigned char alloc_type;        /* current allocation type */
->>       unsigned short seg_type;        /* segment type like CURSEG_XXX_TYPE */
->>       unsigned int segno;            /* current segment number */
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+I don't think this is the right fix.
+
+The idea was that this was checked in __iowrite32_copy(), which does:
+
+	#define __iowrite32_copy(to, from, count)                  \
+	        (__builtin_constant_p(count) ?                     \
+	                 __const_iowrite32_copy(to, from, count) : \
+	                 __iowrite32_copy_full(to, from, count))
+
+.. and so __const_iowrite32_copy() should really be marked as __always_inline,
+and the same for __const_memcpy_toio_aligned32(), to guarantee that both get
+inlined and such that __const_memcpy_toio_aligned32() sees a constant.
+
+The same reasoning applies to __const_iowrite64_copy() and
+__const_memcpy_toio_aligned64().
+
+Checking for a constant in __const_iowrite32_copy() doesn't guarantee
+that __const_memcpy_toio_aligned32() is inlined and will actually see a
+constant.
+
+Does diff the below you for you?
+
+Mark.
+
+---->8----
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 4ff0ae3f6d669..f4350aae92d5d 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -153,8 +153,9 @@ extern void __memset_io(volatile void __iomem *, int, size_t);
+  * emit the large TLP from the CPU.
+  */
+ 
+-static inline void __const_memcpy_toio_aligned32(volatile u32 __iomem *to,
+-                                                const u32 *from, size_t count)
++static __always_inline void
++__const_memcpy_toio_aligned32(volatile u32 __iomem *to, const u32 *from,
++                             size_t count)
+ {
+        switch (count) {
+        case 8:
+@@ -196,8 +197,8 @@ static inline void __const_memcpy_toio_aligned32(volatile u32 __iomem *to,
+ 
+ void __iowrite32_copy_full(void __iomem *to, const void *from, size_t count);
+ 
+-static inline void __const_iowrite32_copy(void __iomem *to, const void *from,
+-                                         size_t count)
++static __always_inline void
++__const_iowrite32_copy(void __iomem *to, const void *from, size_t count)
+ {
+        if (count == 8 || count == 4 || count == 2 || count == 1) {
+                __const_memcpy_toio_aligned32(to, from, count);
+@@ -212,8 +213,9 @@ static inline void __const_iowrite32_copy(void __iomem *to, const void *from,
+                 __const_iowrite32_copy(to, from, count) : \
+                 __iowrite32_copy_full(to, from, count))
+ 
+-static inline void __const_memcpy_toio_aligned64(volatile u64 __iomem *to,
+-                                                const u64 *from, size_t count)
++static __always_inline void
++__const_memcpy_toio_aligned64(volatile u64 __iomem *to, const u64 *from,
++                             size_t count)
+ {
+        switch (count) {
+        case 8:
+@@ -255,8 +257,8 @@ static inline void __const_memcpy_toio_aligned64(volatile u64 __iomem *to,
+ 
+ void __iowrite64_copy_full(void __iomem *to, const void *from, size_t count);
+ 
+-static inline void __const_iowrite64_copy(void __iomem *to, const void *from,
+-                                         size_t count)
++static __always_inline void
++__const_iowrite64_copy(void __iomem *to, const void *from, size_t count)
+ {
+        if (count == 8 || count == 4 || count == 2 || count == 1) {
+                __const_memcpy_toio_aligned64(to, from, count);
+
 
