@@ -1,95 +1,99 @@
-Return-Path: <linux-kernel+bounces-194060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5AE8D3605
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199358D3609
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9B5288E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2931F26495
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D52180A95;
-	Wed, 29 May 2024 12:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E055180A96;
+	Wed, 29 May 2024 12:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUOqqiI3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZY/LpWNZ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB8053802;
-	Wed, 29 May 2024 12:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E282169385;
+	Wed, 29 May 2024 12:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716984630; cv=none; b=mGnAA33YcFIqVyjjaGqxKDrqkIHpRAmS08TrOpEwgxi5gsXxBCRFq3yy5eQb3HRcktnaQ0fhW7hky+xUfZzg3J4cZOHkxUyI6gl+DHO7+hAX5tMj9kcarhKvKEnX8xGrSF1o2Qr2PyMb6nndQZcpUl+tsHDbnCCVV1cwuqRSz8U=
+	t=1716984691; cv=none; b=TsHhUfLwQgS16cX9w+4QCRUnoK35Cz3lxufMrVufUA2tHc+CKWSB2dADUNjqeOjmUwj07HLOG4E+7MeVkC9Lkgs5oSpVJDG8vVXGwfQaUUOPNxWXrCV+oWq7vUtw46FQ0luVKsVHUVEytjjY1b06FipXdlMXpmIcCL5vnaxwSE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716984630; c=relaxed/simple;
-	bh=8NfucMNLvFp1QwhNmIS+QI1xk5Eqk7nGbvyzo69njHc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IEyw468Fl6UVtXPEnVR6KRZt1d4unTdm1LWm2RGzt2aFdoSk53QN7nKweeDCUsTXGkM6XWH0luQYVaQZsKh+RltM6vFl7ni3EhdohrOdydDy7YqkkX6dCHoNjzt//tGmfmYBVtf6kMjDh+YEjz6z+kXKWGMXWg5c1E9DNHsgwCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUOqqiI3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E66ADC32786;
-	Wed, 29 May 2024 12:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716984630;
-	bh=8NfucMNLvFp1QwhNmIS+QI1xk5Eqk7nGbvyzo69njHc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DUOqqiI38l+G6AkVtWxJY3dfDJm6Db5b8pTbtr+4rz6+hGBX/Orzm/Duzl2gfwMQc
-	 YaubxBgY7JY0oD7YXXNOGqPJCZ+zg6AO1PzADpLKnsYJ+RwDKVnRVlfpvmUyLbMDfM
-	 GOI57/j/UWPRu7KPcB2kxGyMJAzv/d476FYcOmgwmzVJyOxDmG9F1adM6DnjawakQ6
-	 DBw821zSYmMCwcQyDCtWJRkiLz7x4UhjfR5joanyKES8u22UCqfRSO7TvSwiMTK+YX
-	 gYO3x+WJ5wQtfCZQSY1AdfQB3cFqQ9lS5peoUhP7pad4LA2Dnfl4WJzFpMeN0ynasd
-	 T3pZF6TRBPbbQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DAA1ECF21F0;
-	Wed, 29 May 2024 12:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716984691; c=relaxed/simple;
+	bh=zHynZzfWyKxvjDFzKY2juRFP0ZSe0Cdjp+o8ve6Txh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvUjQpkO2xfI7IhT1XSWJ90t9aYb57JtU+YntUNdjxXef0BEDWh+hb8HTOXa/dkDC/dKltXgU1kOUKe3zxaZLmIRxPjdOZ1S0RGMXoYHR6dj5nuxhVenngpOA9ApbZ6ZaIZFV+JX/TAFrsSZ7D4g5YmBq3HzErCtFua9WVoSExc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZY/LpWNZ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=QaUeLkv+IGLulmWDppONnVvHaXgaUzJE4SuWA4cP95k=; b=ZY
+	/LpWNZtc0Nd5Odm0+b7Y6NfexXjOj0jSW3h2ilRIpUXRst8MYNYCSY30JPufaNgBuUOqozVjCDLQu
+	D0h/l2hD/wxa/iJoIIEorKKF+BMqxnHOFGTulpjlyVLEa86ZXQqfnwaknibLzuvQjtXk82eox9r4U
+	xfqZLc6jvJrNI10=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sCI9M-00GFcX-QD; Wed, 29 May 2024 14:11:24 +0200
+Date: Wed, 29 May 2024 14:11:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH 3/8] gpio: tqmx86: change tqmx86_gpio_write() order of
+ arguments to match regmap API
+Message-ID: <a83d2274-3b45-4206-891d-b1e5bbfd6e23@lunn.ch>
+References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
+ <56cb8a4f19ac0596318d740ed14091d6904d3f7f.1716967982.git.matthias.schiffer@ew.tq-group.com>
+ <CAMRc=Me_JMjp55VYLFH_gX6+fdCR+3zpsWtds1W+hCmf+k70KQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] nfc/nci: Add the inconsistency check between the input data
- length and count
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171698462989.27277.5441892226443327957.git-patchwork-notify@kernel.org>
-Date: Wed, 29 May 2024 12:10:29 +0000
-References: <tencent_53E8065F49BD2ECD2EC28C9AE7EC86EC5206@qq.com>
-In-Reply-To: <tencent_53E8065F49BD2ECD2EC28C9AE7EC86EC5206@qq.com>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+71bfed2b2bcea46c98f2@syzkaller.appspotmail.com,
- davem@davemloft.net, edumazet@google.com, krzk@kernel.org, kuba@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com
+In-Reply-To: <CAMRc=Me_JMjp55VYLFH_gX6+fdCR+3zpsWtds1W+hCmf+k70KQ@mail.gmail.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Tue, 28 May 2024 11:12:31 +0800 you wrote:
-> write$nci(r0, &(0x7f0000000740)=ANY=[@ANYBLOB="610501"], 0xf)
+On Wed, May 29, 2024 at 02:03:35PM +0200, Bartosz Golaszewski wrote:
+> On Wed, May 29, 2024 at 9:46 AM Matthias Schiffer
+> <matthias.schiffer@ew.tq-group.com> wrote:
+> >
+> > Conversion to actually use regmap does not seem useful for this driver,
+> > as regmap can't properly represent separate read-only and write-only
+> > registers at the same address, but we can at least match the API to make
+> > the code clearer.
+> >
+> > No functional change intended.
+> >
+> > Fixes: b868db94a6a7 ("gpio: tqmx86: Add GPIO from for this IO controller")
 > 
-> Syzbot constructed a write() call with a data length of 3 bytes but a count value
-> of 15, which passed too little data to meet the basic requirements of the function
-> nci_rf_intf_activated_ntf_packet().
-> 
-> Therefore, increasing the comparison between data length and count value to avoid
-> problems caused by inconsistent data length and count.
-> 
-> [...]
+> This is not a fix.
 
-Here is the summary with links:
-  - nfc/nci: Add the inconsistency check between the input data length and count
-    https://git.kernel.org/netdev/net/c/068648aab72c
+Agreed.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+I'm somewhat conflicted by this patch. It is a step towards using
+regmap, but then says regmap does not make sense. So why make that
+step?
 
+Changing the order of parameters like this seems like it is will make
+back porting bug fixes harder, unless all supported versions are
+changed, which is why fixes make sense. Does the compiler at least
+issue a warning if the parameters are used the wrong way around?
 
+Overall, i'm leaning towards just dropping it.
+
+	 Andrew
 
