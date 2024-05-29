@@ -1,133 +1,127 @@
-Return-Path: <linux-kernel+bounces-194263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE008D3918
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C76AF8D390F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0910B25021
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:25:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F82DB2444B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E2215884E;
-	Wed, 29 May 2024 14:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgWnHcp2"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8708A1586C6;
-	Wed, 29 May 2024 14:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA3E1581E8;
+	Wed, 29 May 2024 14:24:29 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id C5351157E84
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716992683; cv=none; b=TKwm485mKhDhCcUVhN5CwQ/gdldR5pLSmmeSVjo7u9sBjMnVdVF1LNHjKuu+skT5ZeCMnBRtfqhZk2/rsF4UiyhC1WPrubGt5VWbX0c4vJOOulT/Ob48BEMYJgSxZlw+leFAK8ZTNHnXcnPjfF3bYZPJ/d5f/9L5IRxLektzht4=
+	t=1716992669; cv=none; b=ZiXFsbe5XneaAyFm8Frt8+tGrbO9fsSebk7SdBCEhzVLPEys8EEDHcNcUzfrRbnBoHA6Gk5dNWU2IuPMi+k2dGGaqRbNY8xg3B1iNUfRoraDviTfIHDWuEOT97oyG86MKCXx827crl0FGwTVrOpedBF8EG+gEBod4+p5mCV84I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716992683; c=relaxed/simple;
-	bh=mNgUYEnubcG8x6sqIvwYtUSCoKzzcOYzQhUu7gFNBSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NuqtO01X19K2/Mj1OIf6x+sIIYY7I/9WhoQV3rtGvCM+lvFHYrSmRSkINxs4yZI3SNHLpIXTB60beYMHbahM5EOtxdrOoRrZ2NKRO35je6VlqY6anssc5BYYataAuOo+9eiHw8OqZM56wdpx2ZX7c3fQzTI/8ICjrdR5qkTevq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgWnHcp2; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a630ff4ac84so244017266b.1;
-        Wed, 29 May 2024 07:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716992680; x=1717597480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RXUaCkB6tMzvL4LfnqvowAZkzoZ/9h0tRmEhy+jXdZA=;
-        b=UgWnHcp2nMy92Z71MaWa1rFD8SbWvyOsiINSOheSyQL/6CjxGQ+CX/BQuX2xaoyf+C
-         szANyfWicq/zjhreAoWuoKefLDtRy5O9Ctc5C9+XDnIYgI0j7pBQtUwONJCYfdSiDSGC
-         OcZGNlyTqcjGEmxv9NQ3JzUrGSu5JtdDzOwwvhl8OOaQZddH88/rw3/kFhJzqsMtAe28
-         vOHwTJCtZs3Ow5tyQE5PTT8ysdHAGw8c5HlrIGZkamB8Bi6qAb27Uzx7q0UrxT8mANTQ
-         4fznhDazqnhnFmclBrpQ5Q8UJKjOpV/QLRZu6HODIzulLFbjjlyKlm+ycLSbXD0JpJ6t
-         R7bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716992680; x=1717597480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RXUaCkB6tMzvL4LfnqvowAZkzoZ/9h0tRmEhy+jXdZA=;
-        b=pJ4whqEASyPzNQ/UmcYvI5Q0YxvbBMlt8LlcC1aqcwWi5ZxxLqL+NdZU+qw92WJnJE
-         9ROXCuhPIyn6JGdV7OGOslfrK8jTCMTK+CjK59ZU7DFtjoYisE33WsRJcrsW8hxU/ZOP
-         9gDSpczJLmAvl8fvSX930xkIe6+t+SY0lK8uBeJJMeEKuSu+5uxUmzFoWghGgntEZdAx
-         eRwIB/UyQuc15BniCfedV6zo8Lz8BdO21R7x1Hr1qOtpTAkANUTl17Zpa96XAMpxSidG
-         JW1YQxTZvPhRuusvAWR5BiLRCRpBCrcvWEU623+kADG04XqjWv267IYzZwfp8/YC4FhU
-         XL3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrCoNX1IxK0UQgnx2fICkn36hJCXdWxNlLJCGTghZ3EMlf2KdUoQnawsce3GS03pXXNXl2gpkRpfssJb34QFtrgcFba8id5n0QgDYpoyYnMQOGquYYpPbBFTuQvGcrvQhjF0fKdGqSO07dAi836hVnUFQZ32ujiAK/bocPkV+9klI=
-X-Gm-Message-State: AOJu0Yzk646NzqspK6IgrlVnVuyt3SRqttb/fSWbhYejhWRYbUdPyxY8
-	Hz6VYXW+0uniiOyI2toKmik72mDr4qMIu98hLbxwOVWA2fkNKxmeHrr9l3XnGk+tEJbqfAruMKV
-	G5n6Oy0SvWyx7zhw5Wo8LCXPNibY=
-X-Google-Smtp-Source: AGHT+IHyZuAkokx73kdGAbIZ/CLYololxUsLncCUOjD0KN1JH9pe4IZRwVZJaedOC5UYnHuNWa89YDIMQfY5VzWtOtc=
-X-Received: by 2002:a17:906:384:b0:a62:2ef9:131 with SMTP id
- a640c23a62f3a-a62641a2aecmr975337266b.6.1716992679816; Wed, 29 May 2024
- 07:24:39 -0700 (PDT)
+	s=arc-20240116; t=1716992669; c=relaxed/simple;
+	bh=gehAJrBCj0tUPfdTW7IgQRwjU9msG11mfhKKvOrwlj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obAXXEjtu9OQspCe4Ym4UBLhwUYXTfolR6+/X4MJqSRtT6yd0y6EdHocHZrHnbHYDUWFAA43u+5MXR2FdmCW7VDi7TVJzHT2z5BjdXl9QUVlO6cZXRfnpZiWMIigfn8iTkeueebchf40TSeDmHgeqqkAFS5DOXe4ZAV5jwqxYvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 724843 invoked by uid 1000); 29 May 2024 10:24:26 -0400
+Date: Wed, 29 May 2024 10:24:26 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Andrea Parri <parri.andrea@gmail.com>,
+  Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>, will@kernel.org,
+  peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
+  j.alglave@ucl.ac.uk, luc.maranget@inria.fr, paulmck@kernel.org,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+Message-ID: <2e34674c-2443-4345-8bc7-8c950a47f621@rowland.harvard.edu>
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
+ <ZlSKYA/Y/daiXzfy@andrea>
+ <41bc01fa-ce02-4005-a3c2-abfabe1c6927@huaweicloud.com>
+ <ZlYbXZSLPmjTKtaE@boqun-archlinux>
+ <7e2963a3-d471-4593-9170-7f59aa1ce038@huaweicloud.com>
+ <b54575b9-ab29-4bcd-ae7a-6132d1e36195@rowland.harvard.edu>
+ <8c6174c7-a26c-416e-b9b1-2aff2d43dea1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
- <20240528190315.3865-4-laurent.pinchart@ideasonboard.com> <ZlYyJpLeDLD_T5V6@surfacebook.localdomain>
- <20240528202044.GB8500@pendragon.ideasonboard.com> <CAHp75Vc2-jOMybL7vwJHgrvb_434p094tgdLo1SyK4i_RXYiDw@mail.gmail.com>
- <20240529094748.GM1436@pendragon.ideasonboard.com>
-In-Reply-To: <20240529094748.GM1436@pendragon.ideasonboard.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 29 May 2024 17:24:03 +0300
-Message-ID: <CAHp75Vf1uBTKHGazcuLCRvEo9k01t3+6oJnfZgpPZQ_dVCOeDg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] gpio: adp5585: Add Analog Devices ADP5585 support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Haibo Chen <haibo.chen@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c6174c7-a26c-416e-b9b1-2aff2d43dea1@huaweicloud.com>
 
-On Wed, May 29, 2024 at 12:48=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wed, May 29, 2024 at 09:16:43AM +0300, Andy Shevchenko wrote:
-> > On Tue, May 28, 2024 at 11:20=E2=80=AFPM Laurent Pinchart wrote:
-> > > On Tue, May 28, 2024 at 10:36:06PM +0300, Andy Shevchenko wrote:
+On Wed, May 29, 2024 at 04:17:36PM +0200, Jonas Oberhauser wrote:
+> 
+> 
+> Am 5/29/2024 um 4:07 PM schrieb Alan Stern:
+> > On Wed, May 29, 2024 at 02:37:30PM +0200, Jonas Oberhauser wrote:
+> > > Given herd's other syntactic limitations, perhaps the best way would be to
+> > > introduce these macros as
+> > > 
+> > > 	x = cmpxchg(...) {
+> > > 		__fence{mb-successful-rmw};
+> > >   		x = __cmpxchg{once}(...);
+> > >   		__fence{mb-successful-rmw};
+> > > 	}
+> > > 
+> > > since I think x = M(...) is the only way we are allowed to use these macros
+> > > anyways.
+> > 
+> > If we did this, how would the .cat file know to ignore the fence events
+> > when the cmpxchg() fails?  It doesn't look like there's anything to
+> > connect the two of them.
+> > 
+> > Adding the MB tag to the cmpxchg itself seems like the only way forward.
+> > 
+> > Alan
+> 
+> Something along these lines:
+> 
+>   Mb = Mb | Mb-successful-rmw & (domain((po\(po;po));rmw) |
+> range(rmw;(po\(po;po)))
+> 
+> i.e., using the fact that these mb-successful-rmw fences must appear
+> directly next to a possibly failing rmw, and looking for successful rmw
+> directly around them.
+> 
+> I suppose we have to distinguish between the before- and after- fences
+> though to make it work for cases like
+> 
+> xchg_release();
+> cmpxchg(); // fails
+> 
+> 
+>                 __xchg_release(...); // is an rmw
+>  		__fence{mb-successful-rmw}; // wrong takes mb semantics
+>    		x = __cmpxchg{once}(...); // fails
+>    		__fence{mb-successful-rmw};
+> 
+> 
+> So that would leave us with
+> 
+>  	x = cmpxchg(...) {
+>  		__fence{mb-before-successful-rmw};
+>    		x = __cmpxchg{once}(...);
+>    		__fence{mb-after-successful-rmw};
+>  	}
+> 
+> and in .cat/.bell:
+> 
+>   Mb = Mb | Mb-before-successful-rmw & domain((po\(po;po));rmw) |
+> Mb-after-successful-rmw & range(rmw;(po\(po;po)))
 
-..
+It's messy.  Associating the fences directly with the RMW event(s) by 
+adding the MB tags is much cleaner, IMO.
 
-> > > > > +   device_set_of_node_from_dev(dev, dev->parent);
-> > > >
-> > > > Why not device_set_node()?
-> > >
-> > > Because device_set_of_node_from_dev() is meant for this exact use cas=
-e,
-> > > where the same node is used for multiple devices. It also puts any
-> > > previous dev->of_node, ensuring proper refcounting when devices are
-> > > unbound and rebound, without being deleted.
-> >
-> > When will the refcount be dropped (in case of removal of this device)?
-> > Or you mean it shouldn't?
->
-> Any refcount taken on the OF node needs to be dropped. The device core
-> only drops the refcount when the device is being deleted, not when
-> there's an unbind-rebind cycle without deletion of the device (as
-> happens for instance when the module is unloaded and reloaded).
+Also, does the syntax you are proposing require changes to herd7?  I'm 
+not aware that it is currently able to parse that kind of definition.
 
-Under "device" you meant the real hardware, as Linux device (instance
-of the struct device object) is being rebuilt AFAIK)?
-
-> This has
-> to be handled by the driver. device_set_of_node_from_dev() handles it.
-
-But why do you need to keep a parent node reference bumped?
-Only very few drivers in the kernel use this API and I believe either
-nobody knows what they are doing and you are right, or you are doing
-something which is not needed.
-
---
-With Best Regards,
-Andy Shevchenko
+Alan
 
