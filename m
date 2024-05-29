@@ -1,347 +1,227 @@
-Return-Path: <linux-kernel+bounces-193555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2648D2DBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:59:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D698D2DF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66BF1F24C10
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09FDCB21690
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC60115B138;
-	Wed, 29 May 2024 06:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552671667FA;
+	Wed, 29 May 2024 07:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="YOebDCXm"
-Received: from SINPR02CU002.outbound.protection.outlook.com (mail-southeastasiaazon11011005.outbound.protection.outlook.com [52.101.133.5])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K8SUtCHJ"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961D8273DC;
-	Wed, 29 May 2024 06:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.133.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716965946; cv=fail; b=du93m4lBGIwMwjf2nxQXAUf7LNGcnO+tS7O8m1bSZBT3bu1ShpSZJQZhIsarkARJiJa7ywi+07EY+P5SsoVZBCas/QrIZbkiOhwfnKN7VGHvMI9JjDfu0HcZidn4OReO//8kZMfIyRcAaS7qHK7+2Zz0OtEyztujd74XBd5cBw8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716965946; c=relaxed/simple;
-	bh=p2ti3bERSaxq1+DBZOYqaY3QZDMNENTVjBjm1pR9/34=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=D1KW94hkdIPt7CZw+IBfSHCdIpZGky8Rg7QBbmCDkeW62nXwZGFmGFZTOYA6dgk5GqF8U0u9y9KuIX5lrpxjPcrZPLJjXwrzkjbxw0+e3utgsY4NdV2iDUrBg30jDSs5bEDNfs/0pDNE+ldXzSleEH3epVk2LawOezlS4iVL23Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=YOebDCXm; arc=fail smtp.client-ip=52.101.133.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZGioeFBRoz/iCVUwR4HRwoo9PzOV/7g/hvOz7wnM1gjV4eoi7pxuT0QDfNeD4E9QKZHci2OorTV+Ef1P1Y3uABzCv9e4FZqUY0XbAIN8xUjanUax3ccMHn1OSO81LNm0FyKRrMZVprP6fnVGvu59BK0RoznmyCj7CWqeq3tpGLtFAL+/z1kv2lDWDVPXyZBfIVszZi//QSGI+EX125y+hp3qk/YVsVQ4Nz+pB7o9MtpF/tQN0LDwIY8xJ3O0zEP5Y05N6LydT7NbBoTHKSBJeNYsxP8rfqVLEQA27lNbdadvNrXslMc8M8rPptijOEahowXnRupt3EdPuldsXTAOqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kd73hugEHrkwRgo0STaQ7W+q/VZq4iM79NDNP/Ezukg=;
- b=MBzCabIcZ3DZFGhlpJAgTIxoW7rszPlpHztoy10wQ9cNeWtE8fPFQDnVwvRENg1AbaQK/5NzlCmtd8+I7BdLvIwtAPc/3Iwiozp+qDtgj14Etsw0BGORtttU7ehk1Cyvy3/YiTZdyrpuMJ6ZODJl5pW6FY60x6NN6mMdhlF6lEsBwN75MP1Fenc3NiQeZbehT7QzCKl1c9q8YS/HdSA6+aeUPIOIO+4MNkVGyhPhGGy+gP+HF5gSFnAfhlrMLAnI1cET+k7C59HbqmDM5j4GHON6Y7GILzTctuMgxoxvPEdjLzVUR8/gu9b6cdSO6I28xfn4ggWRqh8UMsG5H37kNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kd73hugEHrkwRgo0STaQ7W+q/VZq4iM79NDNP/Ezukg=;
- b=YOebDCXmL5LA83EFkYw4LB8b8gYLycC35b5XOZZd1K3sNkVPohZmEGQ+svbjxwk8m6qFGHtT/ytGdpri9cPvqwOb5+OUyMOOCt7aAIDhwrWEUO70BtK+OQEqEStPQqugpCTHWwlou9F0FnkwB9PJyiwbNMCtiYlX6hjVBYvRrlTFcJqMLZjaVyi1ifPZAiE0p+cgxE/iyloGeWxz0BdteQJwhs1txhCMJBodMeuIhNouFLSajioF3/my4wCRZNcu5LW5W3yXwsZz3z3QFwoErA6Tur+jFASr2dMN3oLx8M3XnZ4PWTwgiesoknoV8VDClNLsQL4SMGNGwM2zHE8qKg==
-Received: from PS2PR02CA0020.apcprd02.prod.outlook.com (2603:1096:300:41::32)
- by KL1PR04MB7417.apcprd04.prod.outlook.com (2603:1096:820:115::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 29 May
- 2024 06:59:00 +0000
-Received: from HK2PEPF00006FAF.apcprd02.prod.outlook.com
- (2603:1096:300:41:cafe::97) by PS2PR02CA0020.outlook.office365.com
- (2603:1096:300:41::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.18 via Frontend
- Transport; Wed, 29 May 2024 06:59:00 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- HK2PEPF00006FAF.mail.protection.outlook.com (10.167.8.5) with Microsoft SMTP
- Server id 15.20.7633.15 via Frontend Transport; Wed, 29 May 2024 06:58:59
- +0000
-From: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Gavin Shan <gwshan@linux.vnet.ibm.com>
-Cc: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 net] net/ncsi: Fix the multi thread manner of NCSI driver
-Date: Wed, 29 May 2024 14:58:55 +0800
-Message-Id: <20240529065856.825241-1-delphine_cc_chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830CA15B99A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716966986; cv=none; b=QIixpKod5AJl2WiSiKgeyM+4iVmIHM9JdqIlDp9f4154YCpn2oIKaOFyW+ozc2r5Ey7OaNv48IX9v+zvPx2V4pzX+ta100qhxkuv5Tq9WYEZX9T9ybiKW2acK+dJt/XIeTOJte7muNs8ARZ715kWK7QGW1DSEr9ri7yi7gjnI2I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716966986; c=relaxed/simple;
+	bh=nq9OPjriJWIJ5BFeLbgNqrTQm3GhcP0bGpwBiZ8qkO8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=pOv8vdq2tKrJZJQ3bQ18EkFDfaInUyM09MGCoilcwAZIF57sslFuWyeLlhwBB+pVct03xiwFnDxsY3OaAT/naqNxiZ2SNWb93/7KbZ8oC0en+I/wk7SWnv6fHU8dtrUpIWdLCBcVUfnE/6kgRObYsISiYf7Nezy4H9hm+6FNtKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=K8SUtCHJ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240529071621epoutp011a779517e95757c96dcd5cd321f04799~T5F96VNtU0122101221epoutp01b
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:16:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240529071621epoutp011a779517e95757c96dcd5cd321f04799~T5F96VNtU0122101221epoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716966981;
+	bh=SiGNd/X062sCjbQ3KNasPq9AXI1T7vTAaXy64r0sd5g=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=K8SUtCHJ3n7H9BRfgnOdXRSJ4bj6GCNBIYh/TSsQwm9Q8TdJFdCAR2XL8AjoAfmJZ
+	 FOWcDMi6oBOgu6MUQjNIYeSN7YzznUJPH7GodW3Lpj2NqhCH+dmwzjq/HpGLAn0OMS
+	 gel+perT/43YNxOED0fGFp4R/zLc8w7RBfFSQCJk=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240529071621epcas5p23fe659a7ce88c64dab6ca24ccaec2ec2~T5F9cD9pv3114431144epcas5p25;
+	Wed, 29 May 2024 07:16:21 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Vq0zm0Y7cz4x9Pr; Wed, 29 May
+	2024 07:16:20 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	53.60.08853.246D6566; Wed, 29 May 2024 16:16:18 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240529070220epcas5p140580a28b93ce5cb256ef825c778c649~T45urcH3o2715427154epcas5p1B;
+	Wed, 29 May 2024 07:02:20 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240529070220epsmtrp2922cc095f16316937ad6715823142c6d~T45uqpiv91136511365epsmtrp2l;
+	Wed, 29 May 2024 07:02:20 +0000 (GMT)
+X-AuditID: b6c32a44-5fcaba8000002295-e2-6656d642360e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	41.36.08622.CF2D6566; Wed, 29 May 2024 16:02:20 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240529070219epsmtip17ef35fc42e2bd39fbdedfa6f12c23d0a~T45tOTlm01300713007epsmtip1H;
+	Wed, 29 May 2024 07:02:19 +0000 (GMT)
+From: Vishnu Reddy <vishnu.reddy@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
+	linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pankaj.dubey@samsung.com, ravi.patel@samsung.com
+Subject: [PATCH] pinctrl: samsung: Add support for pull-up and pull-down
+Date: Wed, 29 May 2024 12:29:39 +0530
+Message-Id: <20240529065939.36369-1-vishnu.reddy@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAKsWRmVeSWpSXmKPExsWy7bCmpq7TtbA0gz8rVS0ezNvGZnH+/AZ2
+	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxaKtX9gtHn7Yw25x+E07qwOXx6ZVnWwed67t
+	YfPYvKTeo2/LKkaPz5vkAlijsm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
+	EnNTbZVcfAJ03TJzgI5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YW
+	l+al6+WlllgZGhgYmQIVJmRnXNq6gb1gu1TF959rGRsYJ4t1MXJwSAiYSJx4F9PFyMUhJLCb
+	UWL3n5uMEM4nRon+vhlsEM43Rok1yz4BZTjBOj78aWOHSOxllGjonQLltDJJvOs4AlbFJqAr
+	8XnJWRYQW0QgQeLlh5Ngo5hBlkyefIgNJCEs4CGxbNd6MJtFQFVi5ZFbbCBH8QrYSny9Hg2x
+	TV5i9YYDzCC9EgKH2CWuTfnKDpFwkfi0eznUScISr45vgYpLSXx+t5cNwk6WWP/7FDvEozkS
+	PdMUIML2EgeuzGEBCTMLaEqs36UPEZaVmHpqHROIzSzAJ9H7+wkTRJxXYsc8GFtN4tik6awQ
+	toxE54obUBd4SMzY0glmCwnESrSe2MA4gVF2FsKGBYyMqxglUwuKc9NTk00LDPNSy+HxlJyf
+	u4kRnNS0XHYw3pj/T+8QIxMH4yFGCQ5mJRHeM5NC04R4UxIrq1KL8uOLSnNSiw8xmgJDbCKz
+	lGhyPjCt5pXEG5pYGpiYmZmZWBqbGSqJ875unZsiJJCeWJKanZpakFoE08fEwSnVwGQgv4FL
+	iXPhzaW3X57fMrvgnn9/zcszP4z/HLhx/Mt/vWP+txfNajDYtOjUdHvPZO4EpZtttlwT137X
+	VwvwMr/7SViQ9+jHCzzHZhfOPbAhxO2/KMucp8mq+bO3zlMRiHzz+3vtzwyWV6dYhdzM77fe
+	E4+czpqoaHzb7aUR+9mAVQuyZkzUlbE7yrv1ejn/zs/p/zd8e3tF2Wli6psZHotfv2Mo3NnQ
+	4vJ/pVpVeof7q/zAffYzdT+ftrxz6kVvDsed3Mc7WVdeaRapmu12eVPlXIe2BzryoUvLXVQN
+	TNPYOj0n2cT+dBA4aijeLjUvYX/O/Hb5LVc1BQ7WlLAxtXV1nZvxbvc2y0eL/9XmvzqjxFKc
+	kWioxVxUnAgAXGOByvMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42LZdlhJTvfPpbA0gwU/VSwezNvGZnH+/AZ2
+	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxaKtX9gtHn7Yw25x+E07qwOXx6ZVnWwed67t
+	YfPYvKTeo2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDIubd3AXrBdquL7z7WMDYyTxboYOTkk
+	BEwkPvxpY+9i5OIQEtjNKHFo2hR2iISMxIc7W5ghbGGJlf+eQxU1M0ksOfWBFSTBJqAr8XnJ
+	WRYQW0QgReL1pVtgRcwCBxkl5n1sBysSFvCQWLZrPRuIzSKgKrHyyC0gm4ODV8BW4uv1aIgF
+	8hKrNxxgnsDIs4CRYRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnCIaWntYNyz6oPe
+	IUYmDsZDjBIczEoivGcmhaYJ8aYkVlalFuXHF5XmpBYfYpTmYFES5/32ujdFSCA9sSQ1OzW1
+	ILUIJsvEwSnVwHRGTltXdOv8/98EmU+q/U1inMstfnN6z/wlvD+6Wt01e54dSZhVaH23+/nX
+	RIuPy9jYP98PZvj9h3GeYqLQlEOL1W//jn2kPmnqsofSNXfkD/627l3qoa2+4ffxG/MOdwQ9
+	vXRCPGci2xlO5UM8bTHvqgM6y2+fn8bDHax8LLRjC8uSRyqPDUrFTsgantyiH+9u6+rSwM61
+	e3ps+XbVeU4q0ZEzjStb1+RNcWRbrb75+/eDrRbeS+0KFr8W6/yveTQ26pd17+qZrMKnCyJC
+	PgTWz+J6utrp/JKpO4p9Sv+k7nAJOm8Rnb8h4OGnbRqN2tOi6g3Djt8rCxBS8RWRuami4vjr
+	f7RL2xt+gaQZlUosxRmJhlrMRcWJAINOWoKgAgAA
+X-CMS-MailID: 20240529070220epcas5p140580a28b93ce5cb256ef825c778c649
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240529070220epcas5p140580a28b93ce5cb256ef825c778c649
+References: <CGME20240529070220epcas5p140580a28b93ce5cb256ef825c778c649@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FAF:EE_|KL1PR04MB7417:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 7da1b5ec-cedc-48b2-aada-08dc7facd0f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|1800799015|7416005|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?w275JfBSY6PE5NbHsmD9sFdb5G6D9BfU4qhbleyfPnAC3akIRTYkduR2vgIK?=
- =?us-ascii?Q?a8b20K58taLecFxQb+pS1Og0zp16hXH+CrEbEluUGO37cLkEvdyKZni7L2Sm?=
- =?us-ascii?Q?FgIAksUmZRF4gxcm9D8WVHEW4d+w+zjnils5wgmLvcRGDLvoQ0CbaVDzTUu2?=
- =?us-ascii?Q?IMPUbUoXJJ9Vfu7CWi2hb7G7/8Z+3CqkvmkLol596rBVSOnm6IKzhISYhl/Q?=
- =?us-ascii?Q?kkhS8TjG+h1K3I2OHkLb0KX6yWj3i+PwBI6WkU3fsQFegRPt/hnf0KhAdP0y?=
- =?us-ascii?Q?Jd093Ju6HStbnFmlhXp5C4z5CPGEbQoOK4XvP5n2POj8nDn6ClduArYM8Uaw?=
- =?us-ascii?Q?dFPLb2ozFBGsCXGiyRaH7PmkYsh5viFfmeID5FMDBQo15DBc5+FuzeBzBQHi?=
- =?us-ascii?Q?NylLuTeDKt45H2WNIDZh6VHApI/HaThfIpjuP/erPReYOgfgo/lBbFZhL/XP?=
- =?us-ascii?Q?9uc4XRfnbHvygKdFkmGMMcOu4eEzxcrLntjTo1uYHyiZvsTEHFhJlJ8DDjDT?=
- =?us-ascii?Q?taq1Xl/bjLdm25LRvzb2nVnbZafMUq37iusCtIrfk7ByYwyLjfgxCRnjlTau?=
- =?us-ascii?Q?wjC7SYajuFRLbfSm42krZinGMhABgPnD55b/0dJ7Szw2IF+40k2jZoz7JPYp?=
- =?us-ascii?Q?+m/s5pyM8rWS7fkPQJxvBBvFYRmA9cu23R+lqN41TRW7MpRjIdgiPnsATDIW?=
- =?us-ascii?Q?NwDc6ijSVoHbrOtxtpFkPNdkCZZDQTsRtrAohjwj1iQEdkMWBmJyLAggQAdB?=
- =?us-ascii?Q?yLXTjgVjxChbUNP3II7reI2SvLWJSJg4CzE6uNUHtuk89hPGSG0Jsnagr5hi?=
- =?us-ascii?Q?aQ/AfGr6ST+fuKDkA4dHDsUjmDcfKLgU399DR81T2UvTVvdyF2EfUuzivpmI?=
- =?us-ascii?Q?v4uWly9gfED2YQao3qo3E/g8v2SDsA6X3sdaVvJTab3uDnnAfQqs5RvwdkGC?=
- =?us-ascii?Q?5zd+OpBcvKMMTrjmwOgOJoX4aGR8gGZl05MTSCIJSusodSgpeRGThjOnpmrm?=
- =?us-ascii?Q?Gx7lVBy/O5BC6hd1yuiqh21+cYind2rn0jY6ewGuPXaC6tHdVpQMkVBroFqD?=
- =?us-ascii?Q?Bfx/StRm5UCCjpzaR1gzM8PtycBvJDsTbiufnWSva5k+91cbhmmaUextkqcz?=
- =?us-ascii?Q?3+WHDRFIpk/A2WD7XZJ+wMzkfl/HaNZCUuQoWewZ2Uejl+aHyG+LMM5OwTDe?=
- =?us-ascii?Q?UUWKHCgro0WcFJcKi0KkJ9KLDDjtVont3gzRyGG5+C8VDJk22yHyMsOWlM6s?=
- =?us-ascii?Q?pZGwmWUpqsS8kKKyC+yhmbOU9/xeHUUiO5Nayt+y2KRQSXMZRrSHuMGlorUa?=
- =?us-ascii?Q?3Ey/UmI/rQdHGPeF5sErlH9yAh26rIBZD7gbc1mQIKP5Sg7pStY3AryeecPf?=
- =?us-ascii?Q?s4q3OLE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(7416005)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 06:58:59.4090
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7da1b5ec-cedc-48b2-aada-08dc7facd0f2
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK2PEPF00006FAF.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR04MB7417
 
-Currently NCSI driver will send several NCSI commands back to back without
-waiting the response of previous NCSI command or timeout in some state
-when NIC have multi channel. This operation against the single thread
-manner defined by NCSI SPEC(section 6.3.2.3 in DSP0222_1.1.1)
+gpiolib framework has the implementation of setting up the
+PUD configuration for GPIO pins but there is no driver support.
 
-According to NCSI SPEC(section 6.2.13.1 in DSP0222_1.1.1), we should probe
-one channel at a time by sending NCSI commands (Clear initial state, Get
-version ID, Get capabilities...), than repeat this steps until the max
-number of channels which we got from NCSI command (Get capabilities) has
-been probed.
+Add support to handle the PUD configuration request from the
+userspace in samsung pinctrl driver.
 
-Fixes: e6f44ed6d04d ("net/ncsi: Package and channel management")
-Signed-off-by: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
+Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
 ---
- net/ncsi/internal.h    |  2 ++
- net/ncsi/ncsi-manage.c | 73 +++++++++++++++++++++---------------------
- net/ncsi/ncsi-rsp.c    |  4 ++-
- 3 files changed, 41 insertions(+), 38 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 51 +++++++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.h |  7 ++++
+ 2 files changed, 58 insertions(+)
 
-diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-index 374412ed780b..ef0f8f73826f 100644
---- a/net/ncsi/internal.h
-+++ b/net/ncsi/internal.h
-@@ -325,6 +325,7 @@ struct ncsi_dev_priv {
- 	spinlock_t          lock;            /* Protect the NCSI device    */
- 	unsigned int        package_probe_id;/* Current ID during probe    */
- 	unsigned int        package_num;     /* Number of packages         */
-+	unsigned int        channel_probe_id;/* Current cahnnel ID during probe */
- 	struct list_head    packages;        /* List of packages           */
- 	struct ncsi_channel *hot_channel;    /* Channel was ever active    */
- 	struct ncsi_request requests[256];   /* Request table              */
-@@ -343,6 +344,7 @@ struct ncsi_dev_priv {
- 	bool                multi_package;   /* Enable multiple packages   */
- 	bool                mlx_multi_host;  /* Enable multi host Mellanox */
- 	u32                 package_whitelist; /* Packages to configure    */
-+	unsigned char       channel_count;     /* Num of channels to probe   */
- };
- 
- struct ncsi_cmd_arg {
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index 745c788f1d1d..5ecf611c8820 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -510,17 +510,19 @@ static void ncsi_suspend_channel(struct ncsi_dev_priv *ndp)
- 
- 		break;
- 	case ncsi_dev_state_suspend_gls:
--		ndp->pending_req_num = np->channel_num;
-+		ndp->pending_req_num = 1;
- 
- 		nca.type = NCSI_PKT_CMD_GLS;
- 		nca.package = np->id;
-+		nca.channel = ndp->channel_probe_id;
-+		ret = ncsi_xmit_cmd(&nca);
-+		if (ret)
-+			goto error;
-+		ndp->channel_probe_id++;
- 
--		nd->state = ncsi_dev_state_suspend_dcnt;
--		NCSI_FOR_EACH_CHANNEL(np, nc) {
--			nca.channel = nc->id;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
-+		if (ndp->channel_probe_id == ndp->channel_count) {
-+			ndp->channel_probe_id = 0;
-+			nd->state = ncsi_dev_state_suspend_dcnt;
- 		}
- 
- 		break;
-@@ -1345,7 +1347,6 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- {
- 	struct ncsi_dev *nd = &ndp->ndev;
- 	struct ncsi_package *np;
--	struct ncsi_channel *nc;
- 	struct ncsi_cmd_arg nca;
- 	unsigned char index;
- 	int ret;
-@@ -1423,23 +1424,6 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 
- 		nd->state = ncsi_dev_state_probe_cis;
- 		break;
--	case ncsi_dev_state_probe_cis:
--		ndp->pending_req_num = NCSI_RESERVED_CHANNEL;
--
--		/* Clear initial state */
--		nca.type = NCSI_PKT_CMD_CIS;
--		nca.package = ndp->active_package->id;
--		for (index = 0; index < NCSI_RESERVED_CHANNEL; index++) {
--			nca.channel = index;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
--		}
--
--		nd->state = ncsi_dev_state_probe_gvi;
--		if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY))
--			nd->state = ncsi_dev_state_probe_keep_phy;
--		break;
- 	case ncsi_dev_state_probe_keep_phy:
- 		ndp->pending_req_num = 1;
- 
-@@ -1452,14 +1436,17 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 
- 		nd->state = ncsi_dev_state_probe_gvi;
- 		break;
-+	case ncsi_dev_state_probe_cis:
- 	case ncsi_dev_state_probe_gvi:
- 	case ncsi_dev_state_probe_gc:
- 	case ncsi_dev_state_probe_gls:
- 		np = ndp->active_package;
--		ndp->pending_req_num = np->channel_num;
-+		ndp->pending_req_num = 1;
- 
--		/* Retrieve version, capability or link status */
--		if (nd->state == ncsi_dev_state_probe_gvi)
-+		/* Clear initial state Retrieve version, capability or link status */
-+		if (nd->state == ncsi_dev_state_probe_cis)
-+			nca.type = NCSI_PKT_CMD_CIS;
-+		else if (nd->state == ncsi_dev_state_probe_gvi)
- 			nca.type = NCSI_PKT_CMD_GVI;
- 		else if (nd->state == ncsi_dev_state_probe_gc)
- 			nca.type = NCSI_PKT_CMD_GC;
-@@ -1467,19 +1454,29 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 			nca.type = NCSI_PKT_CMD_GLS;
- 
- 		nca.package = np->id;
--		NCSI_FOR_EACH_CHANNEL(np, nc) {
--			nca.channel = nc->id;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
--		}
-+		nca.channel = ndp->channel_probe_id;
- 
--		if (nd->state == ncsi_dev_state_probe_gvi)
-+		ret = ncsi_xmit_cmd(&nca);
-+		if (ret)
-+			goto error;
-+
-+		if (nd->state == ncsi_dev_state_probe_cis) {
-+			nd->state = ncsi_dev_state_probe_gvi;
-+			if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY) && ndp->channel_probe_id == 0)
-+				nd->state = ncsi_dev_state_probe_keep_phy;
-+		} else if (nd->state == ncsi_dev_state_probe_gvi) {
- 			nd->state = ncsi_dev_state_probe_gc;
--		else if (nd->state == ncsi_dev_state_probe_gc)
-+		} else if (nd->state == ncsi_dev_state_probe_gc) {
- 			nd->state = ncsi_dev_state_probe_gls;
--		else
-+		} else {
-+			nd->state = ncsi_dev_state_probe_cis;
-+			ndp->channel_probe_id++;
-+		}
-+
-+		if (ndp->channel_probe_id == ndp->channel_count) {
-+			ndp->channel_probe_id = 0;
- 			nd->state = ncsi_dev_state_probe_dp;
-+		}
- 		break;
- 	case ncsi_dev_state_probe_dp:
- 		ndp->pending_req_num = 1;
-@@ -1780,6 +1777,7 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
- 		ndp->requests[i].ndp = ndp;
- 		timer_setup(&ndp->requests[i].timer, ncsi_request_timeout, 0);
- 	}
-+	ndp->channel_count = NCSI_RESERVED_CHANNEL;
- 
- 	spin_lock_irqsave(&ncsi_dev_lock, flags);
- 	list_add_tail_rcu(&ndp->node, &ncsi_dev_list);
-@@ -1813,6 +1811,7 @@ int ncsi_start_dev(struct ncsi_dev *nd)
- 
- 	if (!(ndp->flags & NCSI_DEV_PROBED)) {
- 		ndp->package_probe_id = 0;
-+		ndp->channel_probe_id = 0;
- 		nd->state = ncsi_dev_state_probe;
- 		schedule_work(&ndp->work);
- 		return 0;
-diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-index bee290d0f48b..e28be33bdf2c 100644
---- a/net/ncsi/ncsi-rsp.c
-+++ b/net/ncsi/ncsi-rsp.c
-@@ -795,12 +795,13 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
- 	struct ncsi_rsp_gc_pkt *rsp;
- 	struct ncsi_dev_priv *ndp = nr->ndp;
- 	struct ncsi_channel *nc;
-+	struct ncsi_package *np;
- 	size_t size;
- 
- 	/* Find the channel */
- 	rsp = (struct ncsi_rsp_gc_pkt *)skb_network_header(nr->rsp);
- 	ncsi_find_package_and_channel(ndp, rsp->rsp.common.channel,
--				      NULL, &nc);
-+				      &np, &nc);
- 	if (!nc)
- 		return -ENODEV;
- 
-@@ -835,6 +836,7 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
- 	 */
- 	nc->vlan_filter.bitmap = U64_MAX;
- 	nc->vlan_filter.n_vids = rsp->vlan_cnt;
-+	np->ndp->channel_count = rsp->channel_cnt;
- 
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index ed07e23e0912..a4b6eea5e168 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -939,6 +939,56 @@ static int samsung_pinctrl_unregister(struct platform_device *pdev,
  	return 0;
  }
+ 
++/*
++ * samsung_gpio_set_pud will enable or disable the pull-down and
++ * pull-up for the gpio pins in the PUD register.
++ */
++static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int offset,
++				 unsigned int value)
++{
++	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
++	const struct samsung_pin_bank_type *type = bank->type;
++	void __iomem *reg;
++	unsigned int data;
++
++	reg = bank->pctl_base + bank->pctl_offset;
++	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
++	data &= ~(0xf << (offset * 4));
++	data |= value << (offset * 4);
++	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
++}
++
++/*
++ * samsung_gpio_set_config will identify the type of PUD config based
++ * on the gpiolib request to enable or disable the PUD configuration.
++ */
++static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
++				   unsigned long config)
++{
++	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
++	unsigned long flags;
++	unsigned int value = 0;
++
++	switch (pinconf_to_config_param(config)) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		value = DISABLE_PIN_PULL_UP_DOWN;
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		value = ENABLE_PIN_PULL_DOWN;
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		value = ENABLE_PIN_PULL_UP;
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	raw_spin_lock_irqsave(&bank->slock, flags);
++	samsung_gpio_set_pud(gc, offset, value);
++	raw_spin_unlock_irqrestore(&bank->slock, flags);
++	return 0;
++}
++
+ static const struct gpio_chip samsung_gpiolib_chip = {
+ 	.request = gpiochip_generic_request,
+ 	.free = gpiochip_generic_free,
+@@ -948,6 +998,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
+ 	.direction_output = samsung_gpio_direction_output,
+ 	.to_irq = samsung_gpio_to_irq,
+ 	.add_pin_ranges = samsung_add_pin_ranges,
++	.set_config = samsung_gpio_set_config,
+ 	.owner = THIS_MODULE,
+ };
+ 
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index ab791afaabf5..23b70ddcaccc 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -61,6 +61,13 @@ enum pincfg_type {
+ #define PIN_CON_FUNC_INPUT		0x0
+ #define PIN_CON_FUNC_OUTPUT		0x1
+ 
++/*
++ * Values for the pin PUD register.
++ */
++#define DISABLE_PIN_PULL_UP_DOWN	0x0
++#define ENABLE_PIN_PULL_DOWN		0x1
++#define ENABLE_PIN_PULL_UP		0x3
++
+ /**
+  * enum eint_type - possible external interrupt types.
+  * @EINT_TYPE_NONE: bank does not support external interrupts
 -- 
-2.25.1
+2.17.1
 
 
