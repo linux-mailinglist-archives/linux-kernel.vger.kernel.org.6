@@ -1,264 +1,135 @@
-Return-Path: <linux-kernel+bounces-194732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48438D4125
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:10:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02928D4129
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17AE81F23776
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:10:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FAADB22888
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C4A1C9ECF;
-	Wed, 29 May 2024 22:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC7E1C9EA7;
+	Wed, 29 May 2024 22:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="orAqw0sq"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gsCkJM17"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A23A194C73
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32111C2302
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717020593; cv=none; b=JC4XTc9STpbLlT6L4VDXKLh9PPkm0gHzuavMLC/B1nprwtvrvWnw8Y81xw7+2o3JOHWh/gcxxniyo75RIUYIdZbOZWslmLsLtpMz5dB33DMyI6pjbYfzC81Cooohf0IR4SdtdU8KrNbtTp/BfX62fa3KjNtDB6gja+EkQTaYaC0=
+	t=1717020637; cv=none; b=sJI1V2wUK2iygXoH6ONHVLLohL0sDU5tRefDnXHhNOnvkxBkP6GntcYVxBhyPZ8MJclG1TDJd5CbVWDC1wEhz8rrlfnxCfrmxE9fjL5ePlxJSFadJ66TcuiqFUpazsmSjHF86YYNYSGmrE/KyHxZRhMrk8QrkocBVJDWKeNPu64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717020593; c=relaxed/simple;
-	bh=lsUrj+g5d0SbZG3Yj7cDrsprDSMCwBebex4XzId6dLw=;
+	s=arc-20240116; t=1717020637; c=relaxed/simple;
+	bh=QuEnVBRxaxmVOCS92xgH+2N6PGcTBUbaO5iCtxsNXWI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dg7NGzGFrcaA0+g3IgaP5JDJKGL+ARltwk8gqNIU4nrvs/2rPbcDskMLyQQ/aLFhGfRYr25RrXeedPXh/Yp8a9yxbZMq3PBAwaGmrXVZXMDZHPTLo4slE/xEOWMH1SedyLMxsV6Jn6x5vwxUH/WwScl99/xzR6QeE5Tmu+Dhung=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=orAqw0sq; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-421208c97a2so2587305e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:09:51 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CfK0CbTA3Tk9MT687awblX/8r3ddycLw53PnyMIMFS5kgP7fEoNJyC1NY8e4QXJmoEF31JeV7v+TLu72IfzweMASKpGrXQC2aPyet2IXNHjaumXNunoD9xCE7+ikpsDrXqTw2ybMYv2KyiqV7gYyRxC5/8yQyrgwTkUInuxKoWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gsCkJM17; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2bdd8968dabso163582a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:10:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717020590; x=1717625390; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=peC3dLc1iF5iZFELK9i3hjmf/MdP9AREksPgTWzVxyQ=;
-        b=orAqw0sqqTKDnB5CayuomXXgcdPW/tav/T8DwP1/sVlvXv2iPYaUgORGsxTGiUiNg4
-         aaf/XHW2LzjvONXcLQlnknmygnCraTRdM78zmes8rDcaQAVJd7K+T1eMRC0RREoCvLQ/
-         cI9rs4VkImTx6RgTeRhvbVsS7q2nrLcteDXFA0D3ZVOeqCJQSgqw4E7wTa66EvbfiX2H
-         vsEuh6tD8WCiyEdU4wfp/UATZlbKod7DS4gm+0zaE4ewLMFwqStJERkCOuor8XqM4W7a
-         DKkjFFeUWse6zAq2uRNrw8rOSdCb9iBmNfdr/6Uk2rD8L3XPauetcsGpVIcw0106WhdG
-         hfog==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717020635; x=1717625435; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=e+fbNuxAx3WZmFzqMqAqWViMBWTStqdh1s3mW/5wrdE=;
+        b=gsCkJM17dTeR4HLzJEl1hY3G4Za79ziIIH9UDG0/LTJieq+lvLhOtnNKJhKYNVCAoX
+         ya/Xgpiu645VexBKar/ZqGQbwo7M1+mCTxGepOjY7tE9Gt3ZSp9DIQMTy6mdukjh+SII
+         I2IWVHJOmVRVBsQ1IbwAPPdFGuN9STcC5lB1l/3iyjYazazpG0Eb6MSUbbO9B3yGLcAz
+         M3ImXgAFaH3bZhKSGj0VTPrnTGwozCRQolbkyu6WxNWHiB0dKeeAh0kDGQsDWf/5rfYY
+         P0u7PdpjYgrdne0pUVWdOAuFPBszSt0LIuv7yURgTfCfWmxes1JZfH8TYxtweZpmPqHE
+         lCTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717020590; x=1717625390;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=peC3dLc1iF5iZFELK9i3hjmf/MdP9AREksPgTWzVxyQ=;
-        b=MZaQ/QplQN64QtS36VlutpmjEeu1boG1UNVq605EoUzEUEQgfVioJDGdc0wHJRAsQt
-         7PAbKc77RzDw10nHzKS0Z8IsEQ0eWuHNpO57B1O2oraSwkbXYPih1EngptTCHwgusOln
-         Hhs0H7a9C9P0hiDAeMaeY80nHMyY02LKFccmNul9HdY4h8CcDvx7gulnfNWj82QDjWX1
-         /pQr4oc6iPuj6W5sfj3/cZ7oWFOq9Zm8+ZE2BWTrw30rNSXtIZewStvrd4N+ietp2b1b
-         +hvM3J11O2GSp7VDpfd168+RqwO2+8+oLwm0nQxj4+jJZKrTHbifCNXq/SrOODyMYWxq
-         ysXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6TccOUvxzMVzwzwfACxsB+V7sN+eZJQwrI558BVDi8PgcHTu6DxNu73BCVe+1XNkOPoUCSck5bbct6EJrDEqgyTT3Zaa22OOpU88g
-X-Gm-Message-State: AOJu0YyFmWBhGMS7fCUD2MEpaNzYQYd278saJGZCInWsEYhS3cBoEHan
-	v8MHDsnlK1uW08p+c9W+2JYwtQVw84GicmFbVknsangNJKUnwXRsxxtyc+MqPcw=
-X-Google-Smtp-Source: AGHT+IG3pBFiuYE5/mN8gIAvHfHwu7YSneojcKffB7ch1odqlQSiPGmtPn5o31/xvxfFahUJ8Dp24w==
-X-Received: by 2002:a05:600c:154e:b0:420:112e:6c1 with SMTP id 5b1f17b1804b1-4212781b016mr5472785e9.13.1717020589514;
-        Wed, 29 May 2024 15:09:49 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557dcf0740sm15801060f8f.107.2024.05.29.15.09.48
+        d=1e100.net; s=20230601; t=1717020635; x=1717625435;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e+fbNuxAx3WZmFzqMqAqWViMBWTStqdh1s3mW/5wrdE=;
+        b=V0QXgrRdhZzyCTCNDgRcjWEem2Hq+OiaFQjU5AWE8MYHBKtPfMJFwyl8wT8XH7rvtd
+         4kj8Nu7ZxRtgTULcjEtJ0sU/55wehFTIw77daEk6/WxALkKmBGfVhSt386NQxbI+pDp3
+         MHYpVm/sXYPAvG+/aeZxdCHY+4r+SeA9NTeDTBVhgnyLGCIcLmfDCRF2HfC2dv+Gx5k5
+         BfXL44Ov+ImZ+bLMOgxhjkmIk5a4aN47NhXRmhnJnUWf8PL0Ak5VzaFgvDOzF/G4TrkW
+         CYkm/41V5OG6ctbtJK4FyDzFZcZl0n4GvTqbCBqXJ1Vd1eqL47k1HIDmvcwiyqyOTJWz
+         lV9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXiadyS+nfOOPzD36AqqPN/MPoJcWqny2DL71JmXQEEPXCNYI8bO/tJZ+7eNmhgQr7cTPXr4lEukkuP01GNUkM0u20k5wqKRRK3KaVV
+X-Gm-Message-State: AOJu0YzZUhmoOH8JlKViBvDvazsr+787QKi8tbtCN2dlGKvb+lyGBOek
+	fKsyNZChSCOgXvkXQta1WFNZT7anS6FMuKkSVPzGpparnZcNR6EgfiO6pjKxzSE=
+X-Google-Smtp-Source: AGHT+IGB2IuW8qeBair3I30nTxYXl3h2Wp+x/ksnoaod2z/+/aYYn9Gy8Js/qgGb7n5+xXapJsQdmQ==
+X-Received: by 2002:a17:90a:c798:b0:2ae:7f27:82cd with SMTP id 98e67ed59e1d1-2c1ab9e39a3mr414491a91.7.1717020635249;
+        Wed, 29 May 2024 15:10:35 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:32f9:8d5b:110a:1952])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1abebfbdbsm121966a91.55.2024.05.29.15.10.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 15:09:49 -0700 (PDT)
-Date: Wed, 29 May 2024 23:09:47 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	torvalds@linux-foundation.org, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <20240529220947.mocxiiugpvf4u4no@airbuntu>
-References: <20240502084800.GY30852@noisy.programming.kicks-ass.net>
- <ZjPnb1vdt80FrksA@slm.duckdns.org>
- <20240503085232.GC30852@noisy.programming.kicks-ass.net>
- <ZjgWzhruwo8euPC0@slm.duckdns.org>
- <20240513080359.GI30852@noisy.programming.kicks-ass.net>
- <20240513142646.4dc5484d@rorschach.local.home>
- <20240514000715.4765jfpwi5ovlizj@airbuntu>
- <20240514213402.GB295811@maniforge>
- <20240527212540.u66l3svj3iigj7ig@airbuntu>
- <ZlZsyFl79Zk074eK@slm.duckdns.org>
+        Wed, 29 May 2024 15:10:34 -0700 (PDT)
+Date: Wed, 29 May 2024 15:10:32 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
+	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] dt-bindings: riscv: add Zimop ISA extension
+ description
+Message-ID: <Zlen2LmttEdaqAGm@ghost>
+References: <20240517145302.971019-1-cleger@rivosinc.com>
+ <20240517145302.971019-2-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZlZsyFl79Zk074eK@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240517145302.971019-2-cleger@rivosinc.com>
 
-On 05/28/24 13:46, Tejun Heo wrote:
-> Hello,
+On Fri, May 17, 2024 at 04:52:41PM +0200, Clément Léger wrote:
+> Add description for the Zimop (May-Be-Operations) ISA extension which
+> was ratified in commit 58220614a5f of the riscv-isa-manual.
 > 
-> BTW, David is off for the week and might be a bit slow to respond. I just
-> want to comment on one part.
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> On Mon, May 27, 2024 at 10:25:40PM +0100, Qais Yousef wrote:
-> ...
-> > And I can only share my experience, I don't think the algorithm itself is the
-> > bottleneck here. The devil is in the corner cases. And these are hard to deal
-> > with without explicit hints.
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> index 99d2a9e8c52d..b9100addeb90 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -363,6 +363,11 @@ properties:
+>              ratified in the 20191213 version of the unprivileged ISA
+>              specification.
+>  
+> +        - const: zimop
+> +          description:
+> +            The standard Zimop extension version 1.0, as ratified in commit
+> +            58220614a5f ("Zimop is ratified/1.0") of the riscv-isa-manual.
+> +
+>          - const: ztso
+>            description:
+>              The standard Ztso extension for total store ordering, as ratified
+> -- 
+> 2.43.0
 > 
-> Our perceptions of the scope of the problem space seem very different. To
-> me, it seems pretty unexplored. Here's just one area: Constantly increasing
-> number of cores and popularization of more complex cache hierarchies.
 > 
-> Over a hundred CPUs in a system is fairly normal now with a couple layers of
-> cache hierarchy. Once we have so many, things can look a bit different from
-> the days when we had a few. Flipping the approach so that we can dynamically
-> assign close-by CPUs to related groups of threads becomes attractive.
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-I had this use case in mind actually for sched-qos [1] idea I am trying to
-develop. There are workloads that can benefit if 2 or 3 tasks are kept withing
-the closest cache. And I think we can describe that with a hint.
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 
-I was thinking to borrow from core scheduling concept of cookie to tag a group
-of task via the hint and try to find reasonable higher level behavior that we
-can translate correctly into different systems.
-
-> 
-> e.g. If you have a bunch of services which aren't latency critical but are
-> needed to maintain system integrity (updates, monitoring, security and so
-> on), soft-affining them to a number of CPUs while allowing some CPU headroom
-> can give you noticeable gain both in performance (partly from cleaner
-> caches) and power consumption while not adding that much to latency. This is
-> something the scheduler can and, I believe, should do transparently.
-
-This looks similar to what I am trying to do with uclamp_max and extending load
-balancer to allow to balance workloads based on power - keeping in mind freeing
-resources for tasks that need performance too. I don't think we can fix this
-problem on wake up balance only. The system is in a constant flux and we need
-load balancer to do corrections when other things wake up and we need better
-decisions to be made.
-
-Generally if we have EAS type of behavior available for SMP systems where we
-don't distribute by default but try to pack based on compute demand - and
-a hint to tell us that some tasks really want to be spread as an exception for
-those that packing really hurts them, I think we'd be in a much better place to
-be able to distribute resources like you describe.
-
-> 
-> It's not obvious how to do it though. It doesn't quite fit the current LB
-> model. cgroup hierarchy seems to provide some hints on how threads can be
-> grouped but the boundaries might not match that well. Even if we figure out
-
-cgroups is too aggressive IMHO. We really need per-task hints. It's coarse vs
-fine grained hinting. There's only so much classification you can give to
-a larger group of tasks. Especially if you can't control the codebase of this
-group of tasks.
-
-Some people can get invested in tuning specific apps. But this is not
-scalable and fragile.
-
-> how to define these groups, figuring out group-vs-group competition isn't
-> trivial (naive load-sums don't work when comparing across groups spanning
-> multiple CPUs).
-
-I think the implementation is trickier than the definition. There's lots of
-demands to keep the fast path as fast as possible. To do smarter decisions this
-will get expensive. Personally I think today we have abundant of compute power
-and the challenge is how to smartly distribute resources, which justify slowing
-things down in favour of making better choices. But I don't know how much we
-can afford to be honest.
-
-Generally as I was telling David, people who tend to come forward more to
-support or complain are those who have pure throughput in mind. Maybe I am
-wrong, but from my perception a lot of decisions were biased this way. We need
-to be more vocal about our needs to make sure that things move in the right
-direction. It's hard to help a use case or fix a problem when you don't know
-about it.
-
-> 
-> Also, what about the threads with oddball cpumasks? Should we begin to treat
-> CPUs more like other resources, e.g., memory? We don't generally allow
-> applications to specify which specific physical pages they get because that
-> doesn't buy anything while adding a lot of constraints. If we have dozens
-> and hundreds of CPUs, are there fundamental reason to view them differently
-> from other resources which are treated fungible?
-
-I'd be more than happy to see affinity and cpuset disappear :) But I fear it
-might be a little too late..
-
-Can't some selinux rule or some syscall filter be used to block userspace from
-playing with affinity?
-
-I'm assuming you're not referring to in-kernel usage of affinity. Which might
-be worth scrutinizing. But we have more control over that in general to make it
-better when a problem arises.
-
-> 
-> The claim that the current scheduler has the fundamentals all figured out
-> and it's mostly about handling edge cases and educating users seems wildly
-> off mark to me.
-
-I don't think anyone claimed that. But EEVDF or CFS is about how tasks enqueued
-on the CPU will be ordered and run. It's not about selecting which CPU to run
-the task on.
-
-EAS modifies the selection algorithm (which is not what David was talking about
-IIUC). It seems your problems are more with CPU selection then?
-
-> 
-> Maybe we can develop all that in the current framework in a gradual fashion,
-> but when the problem space is so wide open, that is not a good approach to
-> take. The cost of constricting is likely significantly higher than the
-> benefits of having a single code base. Imagine having to develop all the
-> features of btrfs in the ext2 code base. It's probably doable, at least
-> theoretically, but that would have been massively stifling, maybe to the
-> point of most of it not happening.
-> 
-> To the above particular problem of soft-affinity, scx_layered has something
-
-What layered refers to here? Is it akin to different sched classes?
-
-> really simple and dumb implemented and we're testing and deploying it in the
-> fleet with noticeable perf gains, and there are early efforts to see whether
-> we can automatically figure out grouping based on the cgroup hierarchy and
-> possibly minimal xattr hints on them.
-> 
-> I don't yet know what generic form soft-affinity should take eventually,
-> but, with sched_ext, we have a way to try out different ideas in production
-> and iterate on them learning each step of the way. Given how generic both
-> the problem and benefits from solving it are, we'll have to reach some
-> generic solution at one point. Maybe it will come from sched_ext or maybe it
-> will come from people working on fair like yourself. Either way, sched_ext
-> is already showing us what can be achieved and prodding people towards
-> solving it.
-
-To be honest this doesn't look any different to all the hacks out there that do
-the same. The path I see this is going into is the same as I mentioned above
-where some people manually tune for specific usage. I really struggle to see
-how this is going to be applicable later and all I see a divergence and
-parallel universes - which ultimately will hurt the user as Linux behavior is
-just not predictable.
-
-This Linus rant [2] is relevant to the situation. In this case people who write
-applications will just find that Linux is not reliable because every system
-doesn't behave the same.
-
-[1] https://lore.kernel.org/lkml/20230916213316.p36nhgnibsidoggt@airbuntu/
-[2] https://lore.kernel.org/lkml/CAHk-=wgtb7y-bEh7tPDvDWru7ZKQ8-KMjZ53Tsk37zsPPdwXbA@mail.gmail.com/
-
-
-Thanks!
-
---
-Qais Yousef
 
