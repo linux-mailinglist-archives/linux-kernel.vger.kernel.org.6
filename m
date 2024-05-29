@@ -1,128 +1,125 @@
-Return-Path: <linux-kernel+bounces-194394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56BB8D3B81
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:55:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DEA8D3B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5751F279FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00C6C1C23A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8DD181CF8;
-	Wed, 29 May 2024 15:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED41E181D06;
+	Wed, 29 May 2024 15:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="eM4NCV4d"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Bfx7xSsO"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132E5181315
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7553F181BB3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716998147; cv=none; b=M6wcYPWtSJBaYXMWiG8QpiLGfXWdyf0ubnMCby3POG2oG5pSI5jpFM7aZcB/mtUpJtNPZqXh4ealYoasHktfFa61TUB1XAxHRiL+E73hKIDTQHKHHv/Rq7IjDvh0p6liBI+h3wXxAe8786cYrOYNk1vuKSKvXe01vIhcQo9pvE4=
+	t=1716998307; cv=none; b=hQuC7yLCXBeIvWKvUD0XGj0xFbiFhKlyQIFaS9eaqkFb43T/Vmk3mrXemtBcw8beAr12iyOdHI8IW4wisT2JdLkLeiSPhHrMczWV2NsoThCtPjlU7b7/ftTPt3e70RhKlRarQTQTA+wYL65w32xTDF7AwTx/04D+d8A0X0g/zn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716998147; c=relaxed/simple;
-	bh=+pYI+bMJGo4NqoiYpBOogZyuwpPP/luQTBEuiisPj/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SkqsHSf9Ij70zmNSACWwN2sNy3suzEEJ6rgim7rJFZK9rJRxMY/qjo6fb2vxymC61OfMubhAb5La9i37kwLVnY4z3quboG4OFr9j1uJ+Ts4WSzxqlKLHNiEeg4BOKgImTDeKPK0ySZ6bQEjPeXiw+Tzot428qbNK+cfiBgGjqR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=eM4NCV4d; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: andyshrk@163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1716998143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4v4JxLcVLd8gWkKTMWCIwey80lFqT9gw7qVAp737Dzg=;
-	b=eM4NCV4dS8iSwN/mOl5uzlsEI1LjYgeCgfecjsWoyo3XXG8yFFz3DVfV7jdPbn17iu7gSi
-	OdUK3Gcy58sPhOhc274/8+ybpTz9LTNiBSFy7DxkRogyT5zvsAbpx00b2EgfIyM5Lmlabj
-	tJFQALmxUD2R/VvbaX2jGYyyqo0bijRCJfjqCawV2B+khyJFolrhDVt7yE5LOAI8JXtvXI
-	eiRGXgW6DB3CPwynNORtxQPH+2PujPvtJ6Z91puigUlg9ZormsIIiRAf9xEabIqnp1Cmr1
-	l9pLLuredi+4cWZzDPKINY+nV6Qa6dPfMaAcDmXm0+wh2B4rZ9tXBNPQ7sPy7g==
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: hjc@rock-chips.com
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: dri-devel@lists.freedesktop.org
-X-Envelope-To: s.hauer@pengutronix.de
-X-Envelope-To: andy.yan@rock-chips.com
-X-Envelope-To: heiko@sntech.de
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Andy Yan <andyshrk@163.com>, linux-rockchip@lists.infradead.org
-Cc: Heiko Stuebner <heiko@sntech.de>, mripard@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, hjc@rock-chips.com, tzimmermann@suse.de,
- dri-devel@lists.freedesktop.org, s.hauer@pengutronix.de,
- Andy Yan <andy.yan@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 0/1] Fix the port mux of VP2
-Date: Wed, 29 May 2024 17:55:25 +0200
-Message-ID: <2397969.FhQbyb98Gs@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <171405838036.2897712.4067984796758491640.b4-ty@sntech.de>
-References:
- <20240422101905.32703-1-andyshrk@163.com>
- <171405838036.2897712.4067984796758491640.b4-ty@sntech.de>
+	s=arc-20240116; t=1716998307; c=relaxed/simple;
+	bh=F6cyAmkItPJMHlzbT5ed2RaRwc0dmuF+iURbDkk2joo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ge9AaptzzE62h615Hv+sWukMcd+1XX2948Ii50UhXrKhKmU8YEF9f0Mw9gzui9oTRqxmuIrBbMW3qmcd5hV3RI5PbZu+Vpd8XAGn6b49Nj/NrT8INsvqV+AHcAStIWr7JNwi1v0gQArcBnaKBdmyb3hAw3xxJpx79IrAGdnCjrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Bfx7xSsO; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44TFvQiL092772;
+	Wed, 29 May 2024 10:57:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716998246;
+	bh=VtlZBCIrXk7KWkQBoJWGM8oCenwDZWgPBkeKsS0cLy0=;
+	h=From:To:CC:Subject:Date;
+	b=Bfx7xSsOlRFaxh858qh8x9RRHbVRqngv2ZLfpVerQI7m2JI6dpJ+dAvj3Z6j/nUbD
+	 gjpwBmcEM1MAz9ZGa4wS1hmbvDWr0dct7PFdIPnuIGiNvBavS3kEcA2WCy1DpVYfUi
+	 f99qS9Lu9mMDQr/j8vMAZQYKLM2gy0tT+8IaARNc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44TFvQVi032095
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 29 May 2024 10:57:26 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 29
+ May 2024 10:57:26 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 29 May 2024 10:57:26 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.250.165.138])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44TFvHYp029748;
+	Wed, 29 May 2024 10:57:18 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <pierre-louis.bossart@linux.intel.com>, <kevin-lu@ti.com>,
+        <shenghao-ding@ti.com>, <navada@ti.com>, <13916275206@139.com>,
+        <v-hampiholi@ti.com>, <v-po@ti.com>, <niranjan.hy@ti.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <liam.r.girdwood@intel.com>, <yung-chuan.liao@linux.intel.com>,
+        <baojun.xu@ti.com>, <broonie@kernel.org>, <soyer@irl.hu>
+Subject: [PATCH v6 0/1] Add tas2781 driver for SPI.
+Date: Wed, 29 May 2024 23:56:52 +0800
+Message-ID: <20240529155653.3037-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7320409.ZChHLWW2r3";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
---nextPart7320409.ZChHLWW2r3
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Andy Yan <andyshrk@163.com>, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 0/1] Fix the port mux of VP2
-Date: Wed, 29 May 2024 17:55:25 +0200
-Message-ID: <2397969.FhQbyb98Gs@bagend>
-Organization: Connecting Knowledge
-MIME-Version: 1.0
+This patch was used to add TAS2781 devices on SPI support in sound/pci/hda.
+It use ACPI node descript about parameters of TAS2781 on SPI, it like:
+    Scope (_SB.PC00.SPI0)
+    {
+        Device (GSPK)
+        {
+            Name (_HID, "TXNW2781")  // _HID: Hardware ID
+            Method (_CRS, 0, NotSerialized)
+            {
+                Name (RBUF, ResourceTemplate ()
+                {
+                    SpiSerialBusV2 (...)
+                    SpiSerialBusV2 (...)
+                }
+            }
+        }
+    }
 
-On Thursday, 25 April 2024 17:19:58 CEST Heiko Stuebner wrote:
-> On Mon, 22 Apr 2024 18:19:04 +0800, Andy Yan wrote:
-> > From: Andy Yan <andy.yan@rock-chips.com>
-> > 
-> > The port mux bits of VP2 should be defined by
-> > RK3568_OVL_PORT_SET__PORT2_MUX, this maybe a copy and paste error when
-> > this driver first introduced.> 
-> > Hi Heiko:
-> >    Maybe thi is the problem you met when you porting the dsi2 driver.
-> > 
-> 
-> Applied, thanks!
-> 
-> [1/1] drm/rockchip: vop2: Fix the port mux of VP2
->       commit: 2bdb481bf7a93c22b9fea8daefa2834aab23a70f
+And in platform/x86/serial-multi-instantiate.c, those spi devices will be
+added into system as a single SPI device, so TAS2781 SPI driver will
+probe twice for every single SPI device. And driver will also parser
+mono DSP firmware binary and RCA binary for itself.
 
-Wasn't this patch supposed to be part of 6.10-rc1?
---nextPart7320409.ZChHLWW2r3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 
------BEGIN PGP SIGNATURE-----
+Baojun Xu (1):
+  ALSA: hda/tas2781: Add tas2781 hda driver based on SPI
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZldP7QAKCRDXblvOeH7b
-btUeAQC4sSMaBwRDiexmeDgGbIxjwMuMYE0XHbgLjJI+tvfh9QD/R83eqtzCIjKM
-dqgg+qGOUYmVLyE8XIDN42D5ZijcDQY=
-=uCK0
------END PGP SIGNATURE-----
+ drivers/acpi/scan.c                           |    1 +
+ .../platform/x86/serial-multi-instantiate.c   |   12 +
+ sound/pci/hda/Kconfig                         |   14 +
+ sound/pci/hda/Makefile                        |    2 +
+ sound/pci/hda/patch_realtek.c                 |   13 +
+ sound/pci/hda/tas2781-spi.h                   |  148 ++
+ sound/pci/hda/tas2781_hda_spi.c               | 1266 ++++++++++
+ sound/pci/hda/tas2781_spi_fwlib.c             | 2101 +++++++++++++++++
+ 8 files changed, 3557 insertions(+)
+ create mode 100644 sound/pci/hda/tas2781-spi.h
+ create mode 100644 sound/pci/hda/tas2781_hda_spi.c
+ create mode 100644 sound/pci/hda/tas2781_spi_fwlib.c
 
---nextPart7320409.ZChHLWW2r3--
-
-
+-- 
+2.40.1
 
 
