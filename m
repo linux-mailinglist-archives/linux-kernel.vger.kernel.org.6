@@ -1,133 +1,109 @@
-Return-Path: <linux-kernel+bounces-194582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B17D8D3E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93C78D3E93
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB64D2864C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751191F25091
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051571C230B;
-	Wed, 29 May 2024 18:50:39 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4CE1386A7;
-	Wed, 29 May 2024 18:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68881C0DCC;
+	Wed, 29 May 2024 18:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zM9fjI1P"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742AC15B139
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717008638; cv=none; b=lx1Id/sQvwwvR/NbQcF1Yo8IEs8vN8moGb+xUpJmPlxf7ryWFWA2qg9n3GGzY4FYgWN7y4cc4AnM2NDr0H0eZPLwVrSh40489RHcygQM0UtFUN255ozYJAocpU5TeG0L0jmEiA0WZR9feuXmxdjY9ybIlxhzKKyHhjhoBdCUrIE=
+	t=1717008775; cv=none; b=EFsGRY6ny8eGjmghyu28NUksld2aMMXF7mZ7KXROIG3ImUvLnxGrAGMVPZnK+ademSvVmw+TSQmHJVxggVB1CblF0DG2dQSgTdaFHdp3bmFFdkCwnHz4q1B2g4SADuD4eimt3ip2ggL4zvtTERFbtJTtvXyDJBS2LfFonTq9KOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717008638; c=relaxed/simple;
-	bh=4zhxO8s80sghmwZ6xTs9Tn3DwRhHd0HONhAed0apv1A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eOe44F64YrF5JbvU6FQxi5IYyu1RfY4EK8kKeayOgO9wyRX5vMAivWLOpEzxhJ5lcbCYaYcS17JME1D4okR3PpkrdY559rR/6rY9N0SK1KNEIEGRr4Fy9zXInuL6Xie8VIQkm+Xy7Md861j4yCFYKcPk8pr1TbAMafVyN4fL9MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 2B10892009C; Wed, 29 May 2024 20:50:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 23E9192009B;
-	Wed, 29 May 2024 19:50:28 +0100 (BST)
-Date: Wed, 29 May 2024 19:50:28 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-    Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
-    Arnd Bergmann <arnd@arndb.de>, 
-    Richard Henderson <richard.henderson@linaro.org>, 
-    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Marc Zyngier <maz@kernel.org>, 
-    Linus Torvalds <torvalds@linux-foundation.org>, 
-    linux-kernel@vger.kernel.org, Michael Cree <mcree@orcon.net.nz>, 
-    Frank Scheiner <frank.scheiner@web.de>
-Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
-In-Reply-To: <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
-Message-ID: <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk>
-References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de> <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1717008775; c=relaxed/simple;
+	bh=VCyLXfQw+vODJ+gWUnxnJTmwZOqAzSvyZikbefhPOtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MXXXCQ5C5ReTkiP/kb73wRxr6VeH92diXV0sf1SJPOIXK9Edq82CTVPamYz8tAYE92LxfbzopAnavTx+hTQcth5yW8eR/trK52cxGCDZDGFGU9OlDfnaWWWP/qngL62jlyGc3u3xX1SH+L6if/9Pm+r8w5VI8QXvXa2MTMpxnHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zM9fjI1P; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4211a86f124so518925e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717008772; x=1717613572; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VCyLXfQw+vODJ+gWUnxnJTmwZOqAzSvyZikbefhPOtA=;
+        b=zM9fjI1PJgVf3I5U58hFLJCvNWRJPeAU3ubFCxPJ/C9i/YmkT9YCRB3CyX8sJWXFwt
+         7PhBoBOIT6GLphMoAKOcmOJ4kyREu4XIDyZJeiHB6T233Cv/6fQHvH1iFc4u7kLmyuwH
+         Sc+VWcZxbgT7cNajydCbpt//Z35CXhMcVsesb0wRJi/keZ8Nq3WJkjjvYk703g3JHrtK
+         7augOOp21v0kxpHbqJjMJ/zDJNIcbD4+Ck+f4TYhpF3/VXDeLIS3IWmtnV++c7qAsE1Z
+         eGw7UsXgVpAfcqpMFIoTwMqp1CbWZxxKWU/xi9P5b5KkBpavQkpF7KhlW6ZZUZfXidZJ
+         xJXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717008772; x=1717613572;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VCyLXfQw+vODJ+gWUnxnJTmwZOqAzSvyZikbefhPOtA=;
+        b=QvqgkQXa+0l1dc3a3ApOgcEDQ2JnZ8ZMH2BHjcihmJgYhLcCa3QrknlPYfjiPu4v2A
+         vuS4yysTgHEHd+sHDowR1ZuJjyv7GDauUHdwf3lup2KIjTNnepeZI8O0GJIHYqdZi3MX
+         d/d7pLQLq5rkr9JXDo99GTqa0DfcpCVMkVUDtOEs2VndaSJyMF2e/j6VyIfWAtLC+eJd
+         iEx+zcpicwyDERkWEa+koPRTmpmLLEZQwdzo3FY2KNskytUwMA4Jph2Swa0ZwLrs1PBQ
+         10GBL5ejszDiSaGLg7P794ALaGEz1vXZjxycCNGYLc3bYUb+9W/pTdZ3hyqjVTtJSnYR
+         Hmxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVK4YAbar2yW39bho72YoJS5VZq+JP9MN59U1r/rvUS/OI4s4nUT62bCJl1dLFTUDGrCOxz0lKf6q1chWm+JLQibxl7+MsF6aloxDt
+X-Gm-Message-State: AOJu0YzO1BdQEeePR0t+ACQ3vLC6Ugo9C7+xWHVx0wXm9uvhRjTZCsR+
+	wZOh4q1bI2X+tKJ2ruDo2pRzV5h5+DN+XQ7aYE7n6RuIyeolWmD9SmGsRPhDDHQ=
+X-Google-Smtp-Source: AGHT+IFYV8lOdAq8BVnBAdwANSNE1at77ft2iuhi77Gbpa36U2AS+eGe4gpkadqc9c7yNfvtjizhyQ==
+X-Received: by 2002:a05:600c:4ecd:b0:420:1fd2:e611 with SMTP id 5b1f17b1804b1-421279294dcmr155055e9.27.1717008771805;
+        Wed, 29 May 2024 11:52:51 -0700 (PDT)
+Received: from [192.168.0.31] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-356c8daef27sm13465928f8f.115.2024.05.29.11.52.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 11:52:51 -0700 (PDT)
+Message-ID: <6caa0d27-3abf-4198-97a9-42b0e564bbba@linaro.org>
+Date: Wed, 29 May 2024 19:52:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/13] mfd: pm8008: deassert reset on probe
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-4-johan+linaro@kernel.org>
+ <4468becb-dc03-4832-aa03-5f597023fcb2@linaro.org>
+ <ZjyX6iBqc50ic_oI@hovoldconsulting.com>
+ <ZldU_LqjkU-4uphO@hovoldconsulting.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <ZldU_LqjkU-4uphO@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 28 May 2024, Paul E. McKenney wrote:
+On 29/05/2024 17:17, Johan Hovold wrote:
+> The irqchip registration will also fail if there's no from reply from
+> this address.
 
-> > > > This topic came up again when Paul E. McKenney noticed that
-> > > > parts of the RCU code already rely on byte access and do not
-> > > > work on alpha EV5 reliably, so I refreshed my series now for
-> > > > inclusion into the next merge window.
-> > > 
-> > > Hrrrm? That sounds like like Paul ran tests on EV5, did he?
-> > 
-> >  What exactly is required to make it work?
-> 
-> Whatever changes are needed to prevent the data corruption that can
-> currently result in code generated by single-byte stores.  For but one
-> example, consider a pair of tasks (or one task and an interrupt handler
-> in the CONFIG_SMP=n case) do a single-byte store to a pair of bytes
-> in the same machine word.  As I understand it, in code generated for
-> older Alphas, both "stores" will load the word containing that byte,
-> update their own byte, and store the updated word.
-> 
-> If two such single-byte stores run concurrently, one or the other of those
-> two stores will be lost, as in overwritten by the other.  This is a bug,
-> even in kernels built for single-CPU systems.  And a rare bug at that, one
-> that tends to disappear as you add debug code in an attempt to find it.
+That's acceptable too.
 
- Thank you for the detailed description of the problematic scenario.
-
- I hope someone will find it useful, however for the record I have been 
-familiar with the intricacies of the Alpha architecture as well as their 
-implications for software for decades now.  The Alpha port of Linux was 
-the first non-x86 Linux platform I have used and actually (and I've chased 
-that as a matter of interest) my first ever contribution to Linux was for 
-Alpha platform code:
-
-On Mon, 30 Mar 1998, Jay.Estabrook@digital.com wrote:
-
-> Hi, sorry about the delay in answering, but you'll be happy to know, I took
-> your patches and merged them into my latest SMP patches, and submitted them
-> to Linus just last night. He promises them to (mostly) be in 2.1.92, so we
-> can look forward to that... :-)
-
-so I find the scenario you have described more than obvious.
-
- Mind that the read-modify-write sequence that software does for sub-word 
-write accesses with original Alpha hardware is precisely what hardware 
-would have to do anyway and support for that was deliberately omitted by 
-the architecture designers from the ISA to give it performance advantages 
-quoted in the architecture manual.  The only difference here is that with 
-hardware read-modify-write operations atomicity for sub-word accesses is 
-guaranteed by the ISA, however for software read-modify-write it has to be 
-explictly coded using the usual load-locked/store-conditional sequence in 
-a loop.  I don't think it's a big deal really, it should be trivial to do 
-in the relevant accessors, along with the memory barriers that are needed 
-anyway for EV56+ and possibly other ports such as the MIPS one.
-
- What I have been after actually is: can you point me at a piece of code 
-in our tree that will cause an issue with a non-BWX Alpha as described in 
-your scenario, so that I have a starting point?  Mind that I'm completely 
-new to RCU as I didn't have a need to research it before (though from a 
-skim over Documentation/RCU/rcu.rst I understand what its objective is).
-
- FWIW even if it was only me I think that depriving the already thin Alpha 
-port developer base of any quantity of the remaining manpower, by dropping 
-support for a subset of the hardware available, and then a subset that is 
-not just as exotic as the original i386 became to the x86 platform at the 
-time support for it was dropped, is only going to lead to further demise 
-and eventual drop of the entire port.
-
- And I think it would be good if we kept the port, just as we keep other 
-ports of historical significance only, for educational reasons if nothing 
-else, such as to let people understand based on an actual example, once 
-mainstream, the implications of weakly ordered memory systems.
-
-  Maciej
+---
+bod
 
