@@ -1,80 +1,91 @@
-Return-Path: <linux-kernel+bounces-194751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD368D416E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:33:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A615F8D4174
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FEF1F23137
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62ECA286B88
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E9A176FD6;
-	Wed, 29 May 2024 22:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEE61779BD;
+	Wed, 29 May 2024 22:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEbRhrOy"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HgrlXmL7"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011E6175551;
-	Wed, 29 May 2024 22:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13032169ADC;
+	Wed, 29 May 2024 22:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717022014; cv=none; b=Sme9gWqNsADo0LwACbp0CsvOKMgN+uwJxTNXEbfr3R4cRwbQoZRHhQIHZauO2L6lzaNEdFlzPOCGkzZyIIW9ThWmURV8aWEmx0Z62CBGXceEgJeZN2lqNymLf0kPBHAgqSFunG7fD+CugrLRexRP4ywzuYk719wTV7RiFNWQ9Zg=
+	t=1717022113; cv=none; b=tMobQCyhZAXvDNERpbgeNvQ16m7IIkZZRqj4rkeofJLUTtsX+FbUnPaRQ+vvBaY3cEHWrr5c3JGHYatLITE8F24xqWAeCkvuZQfxfNa5x/fJYAgR5RFBc2fbUvoHWmtRqv/NSl765EFYb3lhyqGrZYV0nabyXvOGOu6lsIhDQH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717022014; c=relaxed/simple;
-	bh=CjKowp14yVX6G+cZapxyYVlO0uopznt7PEhMgALSaeU=;
+	s=arc-20240116; t=1717022113; c=relaxed/simple;
+	bh=B5hvaFVG7YU+FAqWqO6NYlaM4U8myrItdnQs/64YBLc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDyAes+NQ1mQUocG2Plonu5jQwZYYGDNSVohsAQqOmvzaA3s1cQpf47hJr2p1k2rH8Ztwwv2pWo8c50eO69CU+9/VYX9AoXdyLsG/lHU7y1UDi/Xr1sH8NEMgYTb54+fYD7kLtffr7GTVBebye/YmMtzuNVIG7OIcgR5/En02CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LEbRhrOy; arc=none smtp.client-ip=209.85.214.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=GuixQpSLOJLR/eswXnPt1OMbhWSsCudK+pSPGkV6dab5x4ReZst6mYX/TV813954ucYpiIRa64ED2rkpEi2Iy0Nb1YUIQYAE9XGG6fLqUbV9vMiE2gut3Tohx1yDWqIRbAdOwiexTTRF3O516xwkJMAmbPl+Xe+NFH9BsKA9jYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HgrlXmL7; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f44b5b9de6so2281105ad.3;
-        Wed, 29 May 2024 15:33:32 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f082d92864so2393515ad.1;
+        Wed, 29 May 2024 15:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717022012; x=1717626812; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717022111; x=1717626911; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xH2WadoiNH5239FlTWFDCdHvj7sCxH4Skwal7mzyy6E=;
-        b=LEbRhrOy+ps1IPU6Ms9KqcAxRHMPn7qXPb7lAqjqXFJSRX4Vs/oCreoPM0PrfqPJZ7
-         kd4LiImsz67wEbv9T8Kc7Pko53WFiHnIcoYHHgw1+WtGv7jSzpcMye1aN91cVsXjwUtr
-         VpogawgP5Mwx/xKpodKg9+X2Un8L0AxXwwZNdhKLWzkGRvedz0hpkMtO6j3Jo1xCE1dM
-         81sq8hgiur1gH3aY3tz86o5c2BPLdljErhho7oXlgkxTu1WREtGneGz/T1ZawP0vaVDu
-         V4DHH+dqAYUEU9daBFsLHn5nTnq5UqR7mbEetuBp0EZgKumYaJG6Z4C2hcw5WOx0MVg0
-         AkdA==
+        bh=8PKXIGJClXO6XAR8p5BSrXpvC9eow4Z4B6WrKMzRXUQ=;
+        b=HgrlXmL77IBlbDM/qXOsRRXDifT5th8zkdU0X7UkJt56h5QsK7VGSzl7+14pskiTg4
+         RMWHfVl4NLd5jytSz4lOOxITutoq57cJ+0N7F73uFvEHr5QXMUuDLDHzpA/HGJkf220D
+         ux1F/u2q/DipatWEfWG+AlmtVOVlathmz3ob15Bp8L248bJpV5spSklmeCIszA0byBab
+         jIt310APGIT6+Cpyt9nlmvQUZ36GpdcD5UJtcxuKsgzKDSiDUdgbc2q9NKaKPHVFl8kh
+         it/2OfKAGqPgQPClGYfxqW+sKOYZ3n1P/lQevKDoFscj8XCnY2WkytI5SUzllrsynHxi
+         JeMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717022012; x=1717626812;
+        d=1e100.net; s=20230601; t=1717022111; x=1717626911;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xH2WadoiNH5239FlTWFDCdHvj7sCxH4Skwal7mzyy6E=;
-        b=TTxcDrwiRCIe4HDoPFr5e59REpqOt+FzVBptLkUhoeu/Ucxccwpfy/qKQyTJ8c4Gvp
-         XHn2qrWq8MdBdGuce+gG1IjlqpyZ5Oh/3xBITktcxHERWdMpqKOdXZzr5BVH5gU0M0wM
-         S2O+Xo6Ieapy4qbvxCyVnP54vT/GNPsGgo27z6RHH1b+wmZ57eF8m1Fy6pI4bP++Gl/M
-         djcYqOoTE+Y0fNd0IdC8Xmgh4TSRlauq/C6TW/5ZB3T0gZss3oJHwKdSWIOMPgRdbssz
-         NiyOC2fbQPJoLiRa88/SPvT2lmNB4ALGH9VIjoVYoxXVUo8ohPGLldHoxOZDOAtFMZWh
-         ZKAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDTrS94cSYdPB4vUhP62fjqNvP8NMDNXRX4xJCIRFE2XGUOtsVKhHmFP98r1bOUjrDrKpdAFwU7ukuzLePoNBHy3h2C81nxsOQb28=
-X-Gm-Message-State: AOJu0Yy1OF7g7EkTKbWqtJrJQ4tTRu+c9ATY4gzOE3+fu7qv3mBVBmhS
-	shH4SOCrXNzIFL3I177nnYlxHhKvzh1jMV99hSC/kNTwdTeqU5OR
-X-Google-Smtp-Source: AGHT+IEPkt7VZDFgzRCAbaSskEDjv46isEnmYCWjnBBfHZJxfNhox+/FarnwTzphoS4o40Z/R2X+TA==
-X-Received: by 2002:a17:902:c70c:b0:1f4:6f3a:a13c with SMTP id d9443c01a7336-1f6198307demr2900235ad.47.1717022012162;
-        Wed, 29 May 2024 15:33:32 -0700 (PDT)
+        bh=8PKXIGJClXO6XAR8p5BSrXpvC9eow4Z4B6WrKMzRXUQ=;
+        b=ZCcP2i89bEgtg9cq8UTtQWHts3lxPzukv2dSa2iiybLN/va2Lx3Mx0n+GKS2mijDqs
+         FzwyjKgS+3YdfyFRRyic1vTLaarha1fr+jk10TfTmkc8ETJtk+ENDX472+oC4d646JKv
+         8VX+tqFlkKcJFcU9pVbf95qSaOUXqOLICMI22lbqJ4312a7L6ck9VjpADmTqp34BuCkR
+         xPAbTrGebS5yZjNLjZSIItPbQ0dyyQFMwpYWD4wsjOx6W/ZWnFvWOWVxirYgVnt0l2Ks
+         LB5c1xvwYqKt7qXYVpELdgSz4ABe+RMU/xYTv2clRnrfxsfu7uDDti3/4bkWtwgAmcFA
+         Ck3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVWtP4uY6RFDyX+h7yIjNe+YuULSNr7XYqlbH/a4YMuO7FuvcLlgnsmJXJEilF0eJMJwOhlFB0R5rOS9CEAv3auAh8aAa97B1Mdl2IHMWuqFIHQT0IbjxanBddxjt35e0qQ7gWbqcMXPS/HnNWxXTLp/sp/xyyq4cofq/LxF7+GCusIPqla7tbg4qbq86J37ewpYEKFZ6aJI8OcBjsh
+X-Gm-Message-State: AOJu0YxMLMytyPAT8iOStetIPyh2qrTJf+xHfrbzZ/4AbOlTba0GnMas
+	bC9HljLbtQaL34fCAmmzC1/KCAwD/w/LwiLWDza7azNNYbwX2DvSkaa8Lg==
+X-Google-Smtp-Source: AGHT+IG1NrCLle47DLbyygolIxX5Tco70P9/XgtD5t9zZDYX0lW5PrdLLaWKjqhcaq4HgMEUKqMrZg==
+X-Received: by 2002:a17:902:c94b:b0:1f4:89e2:b47b with SMTP id d9443c01a7336-1f61992ee59mr4102995ad.50.1717022111255;
+        Wed, 29 May 2024 15:35:11 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4960ca3f6sm65658925ad.164.2024.05.29.15.33.31
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75783asm105081475ad.23.2024.05.29.15.35.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 15:33:31 -0700 (PDT)
+        Wed, 29 May 2024 15:35:10 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 29 May 2024 15:33:30 -0700
+Date: Wed, 29 May 2024 15:35:09 -0700
 From: Guenter Roeck <linux@roeck-us.net>
-To: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Cc: linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: corsair-psu: add USB id of HX1200i Series 2023 psu
-Message-ID: <239f3b5c-8d88-4da9-a758-9fdb34ff7b20@roeck-us.net>
-References: <ZlAZs4u0dU7JxtDf@monster.localdomain>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] hwmon: (ltc2992) Fix memory leak in
+ ltc2992_parse_dt()
+Message-ID: <a44d1612-0731-4f9f-aa93-04864599251c@roeck-us.net>
+References: <20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com>
+ <20240523-fwnode_for_each_available_child_node_scoped-v2-1-701f3a03f2fb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,18 +94,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZlAZs4u0dU7JxtDf@monster.localdomain>
+In-Reply-To: <20240523-fwnode_for_each_available_child_node_scoped-v2-1-701f3a03f2fb@gmail.com>
 
-On Fri, May 24, 2024 at 04:38:11AM +0000, Wilken Gottwalt wrote:
-> Add the usb id of the HX1200i Series 2023. Update the documentation
-> accordingly. Also fix the version comments, there are no Series 2022
-> products. That are legacy or first version products going back many
-> many years.
+On Thu, May 23, 2024 at 05:47:14PM +0200, Javier Carrasco wrote:
+> A new error path was added to the fwnode_for_each_available_node() loop
+> in ltc2992_parse_dt(), which leads to an early return that requires a
+> call to fwnode_handle_put() to avoid a memory leak in that case.
 > 
-> Signed-off-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+> Add the missing fwnode_handle_put() in the error path from a zero value
+> shunt resistor.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 10b029020487 ("hwmon: (ltc2992) Avoid division by zero")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 Applied.
 
 Thanks,
 Guenter
+
+> ---
+>  drivers/hwmon/ltc2992.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/ltc2992.c b/drivers/hwmon/ltc2992.c
+> index 229aed15d5ca..d4a93223cd3b 100644
+> --- a/drivers/hwmon/ltc2992.c
+> +++ b/drivers/hwmon/ltc2992.c
+> @@ -876,9 +876,11 @@ static int ltc2992_parse_dt(struct ltc2992_state *st)
+>  
+>  		ret = fwnode_property_read_u32(child, "shunt-resistor-micro-ohms", &val);
+>  		if (!ret) {
+> -			if (!val)
+> +			if (!val) {
+> +				fwnode_handle_put(child);
+>  				return dev_err_probe(&st->client->dev, -EINVAL,
+>  						     "shunt resistor value cannot be zero\n");
+> +			}
+>  			st->r_sense_uohm[addr] = val;
+>  		}
+>  	}
 
