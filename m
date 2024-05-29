@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-193753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9BA8D3193
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:36:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898008D3197
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F39E28A896
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA92C1C23DA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C278B16E86F;
-	Wed, 29 May 2024 08:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC5516F0E5;
+	Wed, 29 May 2024 08:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AG4zH0A9"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSlKwQV6"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD2615CD50
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3CE16A380;
+	Wed, 29 May 2024 08:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716971433; cv=none; b=nlx9qZToPAFyp8nutAfZ5lBNxaPMNXQwtdAXCurmCP4NZxLM92pA2df+UGdzKkzmzifdPdRmErWTaM8R9tKKlxnUiBQRJHQGHSx1ALWRAL1dHFXVxx8j3aI0xFaTdj2UiXsVbq9stBx5eMCucp2zlD5CX7drHOEsZ1FrRsOPpYk=
+	t=1716971490; cv=none; b=Mleta4djfW7Y57eolemQY6XXeAfwmU7USDHmqEEvSgBmT4Ofe8hOyHwjejvwhrfOlJLyvhBzs4NG233ueh1V2OY4wL9AziIqJdNiPRTB2r5Nuejo6TMvzxgRS1X3BtrBNjGyEh7OdM1H5LRU2oE/i5bVDDJm9dvEhzZ3oX62DRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716971433; c=relaxed/simple;
-	bh=KalOd4VNB9ddnqI5SJEA/fxZiA7LJ85CstT18qQ+mEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiMM0bXE33VA1AgygymoQQt6bhOgG+8JDf8Beytt5roZB/rzP5QR7bD8+GK7p3M3ok/3n21whCmfpWxTMT6Gf5r6H/QPZlzK0pLe7l6oVTXjRI0EMyNpv2eRObeDWlpIHiDaPRp8tXhxoNTlJPEqYmF81Vwuy4v5sp1/hrd3VYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AG4zH0A9; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70224f928edso39611b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:30:31 -0700 (PDT)
+	s=arc-20240116; t=1716971490; c=relaxed/simple;
+	bh=g8wLVx6SzI7f5hfBWjCx8/IiFtnpI5IJH84ulc3VsEM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i9efdMUX5247T9Ry709p23zO0JelV/jtT5L5wiP9eE5KM6MfoK9sEbh/9t0X8k6Qce1/gIB7GNq4ZHLV3j6f/b1wfToAvq+nltltveq1eOQ56jdXBNgWIIKOhVKCp2wxSPTkz+U7OwZtfEVrCyXZJv0fLOJRdWoxD8z8YY4o4tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eSlKwQV6; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42101a2ac2cso15301675e9.0;
+        Wed, 29 May 2024 01:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716971431; x=1717576231; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716971487; x=1717576287; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3qenqQXhZZCyagreSZ+ZOYO//Et9NuVOjmhUJ/lmfY0=;
-        b=AG4zH0A9IWb1LVOZAVTzjwqJpHpt9d4/DKxdxn7HS1+aelMJ0zXazylpAUxuw82fxE
-         8xMBPOpyFW9ERkZ3cSSYc5aGcUiPJXoIJ8uY3wrOyRddUseAe5vO73oIPeNykgz/1P72
-         iGZUHkFMUTWEPhm/5NJPAXaztaaiNoLUiVSrI=
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rn7yPS61VZDyN0hXW0NrmYKzmNUSInF0ZrwB9evZ1F8=;
+        b=eSlKwQV65+3CTLQvtQrK4CTKupGaewTEFgzelyuGJx2eT2E93IlP6IMcNqPy4sYU2u
+         7O8DFaPj5YoWwQrL2Lk+rHTTkzeCIR1o5iPQcRRI9LLVbPPBMWIkjvhlAttlUiWddqXc
+         EXQkIHIXKP6+K/lBfSizSPyJKZ4HYB+T0Cg9rY0kh/CItemTiHWICxxIY+aODcjFBdvj
+         3TXqAuMJvP+90SNN7x7xKfctY9nPxrbcCJeZVwK1YyS0xkEZMaODEO/ufLvUsfRJd3dJ
+         hv8fkuO/3msPnLoP7Mhmvwl9l6zJht84i3QS+zn0GUNJ1L4XjRPbzdHNh79QGzhcsAhl
+         +IGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716971431; x=1717576231;
+        d=1e100.net; s=20230601; t=1716971487; x=1717576287;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3qenqQXhZZCyagreSZ+ZOYO//Et9NuVOjmhUJ/lmfY0=;
-        b=l/G6S+mdF0Lt3pXhyoxY8bwZUq8Y4wC7pChujjsvY72t6DeQQBC/QYSl8WtnOurQ4Q
-         nkK86bHtHgE6EFe17udX6v3GmRi3NVzc1UJ1R//CvIJ4WXpOuF79iVo30udgFLbftjF5
-         8OzyfZvjX/20cCaljWYMha1TznmIMQx0F6JyxIdFl+XWWDJwEF3tbhpkQkZv6wWXtPYE
-         YicKQqjro5rDTpNFOpi6rs8AkpfsctB0je97+BXySuRi0yu7iV/4wUrXgbmye5M754uK
-         Xf7bjy0QcOVjpJIO3aWPzs1D0uMIgohVO5uViOqqzDAaSDfmfFQ/kZodpGfAW/M8Yi9q
-         WvBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVj1nY1eNP/Tz/8lD0EV1E7YYmk2HONa4bVejoEcqWSiGEFaoUVCS8GXJOzmq5zo9oFn+ponsWGErowKg9PDXztrs2ufSa+Iu6fkqwf
-X-Gm-Message-State: AOJu0Yx5yXILhgxpQ7OzaCRldMxKu2r3PbxihSGpgfFqcN81vdpPMaeo
-	o1WH3witU2KBcx+f6M3/5HI6bmSoAhcdQhd6Zkgmpn1Fea9eqZzMezHnqAqrnw==
-X-Google-Smtp-Source: AGHT+IEKKnlncqrQ+kEjd4U5yF4d7zX7PXa2e7lk0PLPAQVbSpQp5HDbTrt3J6bgh2D9uEk1OmzcPw==
-X-Received: by 2002:a05:6a00:4405:b0:6f4:3fe7:7aa9 with SMTP id d2e1a72fcca58-6f8f2d6e5f3mr18821491b3a.10.1716971430731;
-        Wed, 29 May 2024 01:30:30 -0700 (PDT)
-Received: from chromium.org (174.71.80.34.bc.googleusercontent.com. [34.80.71.174])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fbf2e3c8sm7576786b3a.41.2024.05.29.01.30.28
+        bh=rn7yPS61VZDyN0hXW0NrmYKzmNUSInF0ZrwB9evZ1F8=;
+        b=u76IGlEtY7brFr7aMwLI1rF7NPWdXFfc1GaEzEedJ4L7li9NtWoGzB2GJO/WAW4+t9
+         V4E8kwf5X6XmlezL9pcTWza5nSBvUtgl9ZOn9otryNedlm8JbOmR9gdBl2+QNuI1FS9d
+         vP82guQWpEzQCJN8LQQqizBslaBr+1MBj0RD5rK0qtWZV+e8yBZB8MWelCFDHBf/Ncol
+         yXma7yuY8IXBPMpGvrboG6a+vfwaF2pyW635IxkFB2L9QJirvrf0xKBWvBCFKDLGuONU
+         bpQ5nfQ4FvKLMhwExBR1iHxyRiDsHAZJoVJFsjqHAFOCIqiihG4vSph3nVD86e74pvIc
+         tJ+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW1BpSWuw6eO90jppbWx6/JAzJNZMO1TB7qMWhjCTGiXCoBzKJ0LNZ8P5oA76gDJG4pVf5mzcrQ3NxphMYrqgRgzwfTSTn3xnLg4145j4KyV09LL2TFNnPmBESOeG2hYY9r
+X-Gm-Message-State: AOJu0YxLUsk9oDJJ8Z8AovKTuopx3MjBTsQUGtJXPQKWCYCQkNz73bRd
+	0IuY9AieWRHSG2vDyE3y2wxY2AvUmRIMJbeS25spQY0fxLCFu2to
+X-Google-Smtp-Source: AGHT+IHI3lJArJXzafeVRrKWqyHrhTUty+cf9AUiuyoKb+lHZLYh8EC0aY14fLhOqSAqg6nNMo5YFQ==
+X-Received: by 2002:adf:e444:0:b0:356:4cfa:b4b9 with SMTP id ffacd0b85a97d-3564cfaecfdmr8805125f8f.2.1716971486900;
+        Wed, 29 May 2024 01:31:26 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-358a33e6f03sm9046320f8f.36.2024.05.29.01.31.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:30:30 -0700 (PDT)
-Date: Wed, 29 May 2024 17:30:27 +0900
-From: Tomasz Figa <tfiga@chromium.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"hn.chen" <hn.chen@sunplusit.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v10 6/6] media: uvcvideo: Fix hw timestamp handling for
- slow FPS
-Message-ID: <djwmp42odw4cre3yzvhlhsaxgp437qcg36kcvqzqadqqtc45zo@mzvernwjawfi>
-References: <20240323-resend-hwtimestamp-v10-0-b08e590d97c7@chromium.org>
- <20240323-resend-hwtimestamp-v10-6-b08e590d97c7@chromium.org>
+        Wed, 29 May 2024 01:31:26 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 29 May 2024 10:31:24 +0200
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org, Aleksei Shchekotikhin <alekseis@google.com>,
+	Nilay Vaish <nilayvaish@google.com>
+Subject: Re: [PATCH v2] bpf: Allocate bpf_event_entry with node info
+Message-ID: <Zlbn3DOGrzHlw95h@krava>
+References: <20240529065311.1218230-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,97 +91,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240323-resend-hwtimestamp-v10-6-b08e590d97c7@chromium.org>
+In-Reply-To: <20240529065311.1218230-1-namhyung@kernel.org>
 
-On Sat, Mar 23, 2024 at 10:48:07AM +0000, Ricardo Ribalda wrote:
-> In UVC 1.5 we get a single clock value per frame. With the current
-> buffer size of 32, FPS slowers than 32 might roll-over twice.
+On Tue, May 28, 2024 at 11:53:11PM -0700, Namhyung Kim wrote:
+> It was reported that accessing perf_event map entry caused pretty high
+> LLC misses in get_map_perf_counter().  As reading perf_event is allowed
+> for the local CPU only, I think we can use the target CPU of the event
+> as hint for the allocation like in perf_event_alloc() so that the event
+> and the entry can be in the same node at least.
+
+looks good, is there any profile to prove the gain?
+
+jirka
+
 > 
-> The current code cannot handle two roll-over and provide invalid
-> timestamps.
-> 
-> Remove all the samples from the circular buffer that are more than two
-> rollovers old, so the algorithm always provides good timestamps.
-> 
-> Note that we are removing values that are more than one second old,
-> which means that there is enough distance between the two points that
-> we use for the interpolation to provide good values.
-> 
-> Tested-by: HungNien Chen <hn.chen@sunplusit.com>
-> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Reported-by: Aleksei Shchekotikhin <alekseis@google.com>
+> Reported-by: Nilay Vaish <nilayvaish@google.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+
 > ---
->  drivers/media/usb/uvc/uvc_video.c | 24 ++++++++++++++++++++++++
->  drivers/media/usb/uvc/uvcvideo.h  |  1 +
->  2 files changed, 25 insertions(+)
+> v2) fix build errors
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index 5df8f61d39cd1..900b57afac93a 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -471,8 +471,31 @@ static void uvc_video_clock_add_sample(struct uvc_clock *clock,
+>  kernel/bpf/arraymap.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+> index feabc0193852..067f7cf27042 100644
+> --- a/kernel/bpf/arraymap.c
+> +++ b/kernel/bpf/arraymap.c
+> @@ -1194,10 +1194,17 @@ static struct bpf_event_entry *bpf_event_entry_gen(struct file *perf_file,
+>  						   struct file *map_file)
 >  {
->  	unsigned long flags;
+>  	struct bpf_event_entry *ee;
+> +	struct perf_event *event = perf_file->private_data;
+> +	int node = -1;
 >  
-> +	/*
-> +	 * If we write new data on the position where we had the last
-> +	 * overflow, remove the overflow pointer. There is no overflow
-> +	 * on the whole circular buffer.
-> +	 */
-> +	if (clock->head == clock->last_sof_overflow)
-> +		clock->last_sof_overflow = -1;
+> -	ee = kzalloc(sizeof(*ee), GFP_KERNEL);
+> +#ifdef CONFIG_PERF_EVENTS
+> +	if (event->cpu >= 0)
+> +		node = cpu_to_node(event->cpu);
+> +#endif
 > +
->  	spin_lock_irqsave(&clock->lock, flags);
->  
-> +	/* Handle overflows */
-> +	if (clock->count > 0 && clock->last_sof > sample->dev_sof) {
-> +		/*
-> +		 * Remove data from the circular buffer that is older than the
-> +		 * last overflow. We only support one overflow per circular
-> +		 * buffer.
-> +		 */
-> +		if (clock->last_sof_overflow != -1) {
-> +			clock->count = (clock->head - clock->last_sof_overflow
-> +					+ clock->count) % clock->count;
-> +		}
-> +		clock->last_sof_overflow = clock->head;
-> +	}
-> +
-> +	/* Add sample */
->  	clock->samples[clock->head] = *sample;
->  	clock->head = (clock->head + 1) % clock->size;
->  	clock->count = min(clock->count + 1, clock->size);
-> @@ -616,6 +639,7 @@ static void uvc_video_clock_reset(struct uvc_clock *clock)
->  	clock->head = 0;
->  	clock->count = 0;
->  	clock->last_sof = -1;
-> +	clock->last_sof_overflow = -1;
->  	clock->sof_offset = -1;
->  }
->  
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index cb9dd50bba8ac..fb9f9771131ac 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -499,6 +499,7 @@ struct uvc_streaming {
->  		unsigned int head;
->  		unsigned int count;
->  		unsigned int size;
-> +		unsigned int last_sof_overflow;
->  
->  		u16 last_sof;
->  		u16 sof_offset;
-> 
+> +	ee = kzalloc_node(sizeof(*ee), GFP_KERNEL, node);
+>  	if (ee) {
+> -		ee->event = perf_file->private_data;
+> +		ee->event = event;
+>  		ee->perf_file = perf_file;
+>  		ee->map_file = map_file;
+>  	}
 > -- 
-> 2.44.0.396.g6e790dbe36-goog
+> 2.45.1.288.g0e0cd299f1-goog
 > 
-> 
-
-Given that majority of cameras kind of run ~30 fps, this should improve
-the timestamps for quite a lot of the users. Thanks.
-
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-
-Best regards,
-Tomasz
 
