@@ -1,108 +1,181 @@
-Return-Path: <linux-kernel+bounces-194107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7817A8D36B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:48:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B463C8D36B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A34284806
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:48:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A751F285F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344F14A39;
-	Wed, 29 May 2024 12:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB025235;
+	Wed, 29 May 2024 12:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lUX5Vt7q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URZmtme1"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB061847;
-	Wed, 29 May 2024 12:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18DADDA6;
+	Wed, 29 May 2024 12:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716986892; cv=none; b=rmmHaK3FJypA3GN/ks+0JEDW9NgOF8SzeCwXD8XZCOgwC0SjWlIgPqLHcLmYhplA5wbMcABU07hpb2FefBwq+bL5fIr5eZ0dF/FuKc075PtrdzItmaLFm0ppyhmWfl1AlhYskLEZPJ8mgpdX5pzLcwRpnXPo6dV+ZnlReqMx+SA=
+	t=1716986956; cv=none; b=V/lZ17FZcu5vlvge5RYtDdUwrIvW3hsySNriSu9aEIlvR9v+cVxKTehlyQr01HlN8SsmQ5RL3pMcA9jUq8wG4By3Vhkd5+Yzz0Ooa2xJzsZOmeAnge59hOmIP6TXHHE8KzQ0xc8H0i8kWIExypGxy+J7oOPVAZQx96DUuPJ7XoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716986892; c=relaxed/simple;
-	bh=9pJvNja2U7PLURXTO3eftWYh0qDuyaJBNkaVWjDGzR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bp+1481i0fidfz8JRE3IGew/As/1Dnm8Ke7lrEB5kQFYM5OTPbJ5YHjPMDE9O6cTUk2Q5XUMqSM06noDNffl0kBVIMss5+GuXY6DZZbuNrLESnwyVZETy6EbcO7s9QNb7IlQaZJtdjrSrI+2K72ViCdRw51MErEpBeH6HzpRl2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lUX5Vt7q; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716986891; x=1748522891;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=9pJvNja2U7PLURXTO3eftWYh0qDuyaJBNkaVWjDGzR0=;
-  b=lUX5Vt7q8CMO4zlxOTOP+cbeYrBvT2qvqj4tXJ27CPvbhslDiTIhb7wy
-   5+TbogQzUJ5E53CROknD8+3bgzuJRNmjoU9pZCjKUlU3r3Y+eaN682jdK
-   QzfaePPQm8pPuWYrNo3Yj9adzOQemNjO+YIWzz0J4EGJPUpliiUTQ6vz8
-   0eheIMiuiYPlC/2mhfmJH+/Yx7YwPbsJVEu31DOfnYHSeCS/CFESx9Qup
-   jQPo9hLKeyb4FnCH7RV7Tm2PNcZ5ptPQBQ+x352zRggnyjjA+zxIL/eSW
-   PzMQVjzQxc+eSEIucGS/YSq3CLYFWwJEq/rCuf3pFV/wIhH2l8zevJP7p
-   g==;
-X-CSE-ConnectionGUID: cE/5HA16Sc+jCcop+v+xcA==
-X-CSE-MsgGUID: fBTP5M4rQmGoDfVEQpgC3A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="24040527"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="24040527"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 05:48:10 -0700
-X-CSE-ConnectionGUID: GbmwNwHdS9KpuWbz7QaFNQ==
-X-CSE-MsgGUID: 8wwERgIWTI6RcqwHppxPJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="72875655"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 05:48:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sCIis-0000000BnNm-0vFs;
-	Wed, 29 May 2024 15:48:06 +0300
-Date: Wed, 29 May 2024 15:48:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 2/2] spi: Check if transfer is mapped before calling
- DMA sync APIs
-Message-ID: <ZlckBe02dybokq94@smile.fi.intel.com>
-References: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
- <20240522171018.3362521-3-andriy.shevchenko@linux.intel.com>
- <4748499f-789c-45a8-b50a-2dd09f4bac8c@notapiano>
- <60691eb7-ca16-4547-8744-f9bfae919a3f@notapiano>
+	s=arc-20240116; t=1716986956; c=relaxed/simple;
+	bh=DcKxVZZV+EgA4m/SNpu5gXfJDOpxyV8oN+5zhuZvvR4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ua+q1OCfzmsORxAAxy3nfR3abIvBGCCVtq150gkJRMqiOVBpX01+vU9NAWzbbXBT0iF43yXzLkZd2Amy/E9+gFyk/XRgDB+3xUNT53+FFt2rmbKA5l1nFKqe6mgMdhaR+5q86UKuJk3Yc7gsEVRAcDHyHLwdeWeDxz09L/JhYlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URZmtme1; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6519c6ec7bso73724166b.1;
+        Wed, 29 May 2024 05:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716986953; x=1717591753; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hxm5RCkT6Z8eOTgdAgsYs+Y3bbauIPRrHzupKWf9eIw=;
+        b=URZmtme1Zos//ogIf7XYzHXfOjFqfAxBOeMW4kvd8txWHzuA5g1lGxKvQ6TFJYSFps
+         K2IZEpqcE+CYqz5HeKKXHd1+KPO6XJKk+kRKN3eDYulaKHumxdJo/zq5HcSatRYM4FEd
+         1asPYGZh+vnsVodMtOOsIwCrCZbc7E6tGj9pX4ntDJdf/bcNXjyaR6DgngTnT4/HqSLd
+         F05+loohR63YRXvIcqViRAa2+Dr+pCGU8EyS+p/niSuYgGI3Pkf2PwJrjhD/B6sxB5Ls
+         DA32wKF9y+jxt0DTetbnOa1lE7YhmYSQoF86tc/qvSNe32EOXE4UjVt52fEIZpCuhMgt
+         SQjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716986953; x=1717591753;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hxm5RCkT6Z8eOTgdAgsYs+Y3bbauIPRrHzupKWf9eIw=;
+        b=BOhmv/pIeGs+JKP4kxCqpMQaevir11fT04LTZvShC9SRdX/hy7OpYy+vRfgEf7+VHR
+         OnLuN46YUKVOsn3i+0OEdDscr9JVm2Q9cJ0nygVH6/s3DecmbJrAzZMVXsHgYBvmMcao
+         0fFAWgPadLgWpZ9sZQBuj+mcrKBTl/3hnAiy+fQKhcuYzSKXIPrCGA/zh7oGlicONka6
+         pX5UW/rMfK8IA1W2L+h7itOVATxS3nKidFUXpKFsiI8K5NvTs5jS7JdgpBpbz2fG8cZT
+         9Y/IuUrdjnmrVCzdJfcQVpa+5NGn+y9B6jSgE7tUbZwjg+VqBGUsmjo/qC4KondUUVTR
+         SRWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnupsFz8DBCspPkHd9ZN/ziOtgNbM3Ov1bCAGhUwaCdngZBd1sotvxhwNMTL3Tn1+oStQuvdbXAeEoJgvY/szQmEbRqXMD/jxMdDg5X6EpbphY3IYXC2XGbbwoz0EXTkn6zTakn4nnXZVxIiKGhiKjyWUsyQOl7I8i/QvAGjp/XK+mVg==
+X-Gm-Message-State: AOJu0YyXxu8G4KzlyTNJpmZPKfdFsymn6dSkvX+35REtsFjr9Efy0gt+
+	/D9aG6MPYfrzMq/ZHvUUgsLlle7ZgaCenht0Bvtq7xLuyi3VHhAi
+X-Google-Smtp-Source: AGHT+IHFwpbqkz/8c/KOKh2nJyonvUdwIFcztAvT82b2LrqXwJx/RqdJ2bmL5xtZSfqETojujYeOyw==
+X-Received: by 2002:a17:906:6a24:b0:a63:3e99:6565 with SMTP id a640c23a62f3a-a633e996aacmr661119566b.23.1716986952948;
+        Wed, 29 May 2024 05:49:12 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c987cf8sm716081666b.94.2024.05.29.05.49.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 05:49:12 -0700 (PDT)
+Message-ID: <4b704b553282c0689dfef714c49ba97a33198898.camel@gmail.com>
+Subject: Re: [PATCH v3 3/6] iio: adc: ad7173: refactor ain and vref selection
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org, Dumitru Ceclan
+ <mitrutzceclan@gmail.com>
+Date: Wed, 29 May 2024 14:49:12 +0200
+In-Reply-To: <71452f6882efe6a181d477914488617d28a38e2f.camel@gmail.com>
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+	 <20240527-ad4111-v3-3-7e9eddbbd3eb@analog.com>
+	 <71452f6882efe6a181d477914488617d28a38e2f.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <60691eb7-ca16-4547-8744-f9bfae919a3f@notapiano>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, May 29, 2024 at 08:35:26AM -0400, Nícolas F. R. A. Prado wrote:
-> On Wed, May 22, 2024 at 02:41:51PM -0400, Nícolas F. R. A. Prado wrote:
-> > On Wed, May 22, 2024 at 08:09:50PM +0300, Andy Shevchenko wrote:
+On Wed, 2024-05-29 at 14:27 +0200, Nuno S=C3=A1 wrote:
+> On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
+> > From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >=20
+> > Move validation of analog inputs and reference voltage selection to
+> > separate functions to reduce the size of the channel config parsing
+> > function and improve readability.
+> >=20
+> > Reviewed-by: David Lechner <dlechner@baylibre.com>
+> > Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> > ---
+> > =C2=A0drivers/iio/adc/ad7173.c | 62 ++++++++++++++++++++++++++++++++++-=
+-------------
+> > =C2=A01 file changed, 44 insertions(+), 18 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> > index 9e507e2c66f0..8a53821c8e58 100644
+> > --- a/drivers/iio/adc/ad7173.c
+> > +++ b/drivers/iio/adc/ad7173.c
+> > @@ -906,6 +906,44 @@ static int ad7173_register_clk_provider(struct iio=
+_dev
+> > *indio_dev)
+> > =C2=A0					=C2=A0=C2=A0 &st->int_clk_hw);
+> > =C2=A0}
+> > =C2=A0
+> > +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+> > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int ain[2])
 
-[..]
+Pass the pointer and size of it... Also, it should be made 'const'
 
-> I can send this patch to the list myself with your authorship, I just need
-> your SoB.
+> > +{
+> > +	struct device *dev =3D &st->sd.spi->dev;
+> > +
+> > +	for (int i =3D 0; i < 2; i++) {
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Use the size in here... At the very least, ARRAY_SIZE() if you keep it like=
+ this.
 
-P.S. Sorry for the delay, I was and still is on a sick leave.
+> > +		if (ain[i] < st->info->num_inputs)
+> > +			continue;
+> > +
+> > +		return dev_err_probe(dev, -EINVAL,
+> > +			"Input pin number out of range for pair (%d %d).\n",
+> > +			ain[0], ain[1]);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int ad7173_validate_reference(struct ad7173_state *st, int ref_=
+sel)
+> > +{
+> > +	struct device *dev =3D &st->sd.spi->dev;
+> > +	int ret;
+> > +
+> > +	if (ref_sel =3D=3D AD7173_SETUP_REF_SEL_INT_REF && !st->info->has_int=
+_ref)
+> > +		return dev_err_probe(dev, -EINVAL,
+> > +			"Internal reference is not available on current
+> > model.\n");
+> > +
+> > +	if (ref_sel =3D=3D AD7173_SETUP_REF_SEL_EXT_REF2 && !st->info->has_re=
+f2)
+> > +		return dev_err_probe(dev, -EINVAL,
+> > +			"External reference 2 is not available on current
+> > model.\n");
+> > +
+> > +	ret =3D ad7173_get_ref_voltage_milli(st, ref_sel);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(dev, ret, "Cannot use reference %u\n",
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0 ref_sel);
+> > +
+> > +	return 0;
+>=20
+> If you need a v4, I would just 'return ad7173_get_ref_voltage_milli(...)'=
+ Any
+> error
+> log needed should be done inside ad7173_get_ref_voltage_milli(). Anyways:
+>=20
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>=20
 
+In fact, no tag :). Just realized the above in another patch..
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+- Nuno S=C3=A1
 
 
