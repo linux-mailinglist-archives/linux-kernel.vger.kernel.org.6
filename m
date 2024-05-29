@@ -1,70 +1,69 @@
-Return-Path: <linux-kernel+bounces-194738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583008D413E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:19:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78EC8D4141
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 178F3286931
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A671F23704
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DB5169ACA;
-	Wed, 29 May 2024 22:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA42169ADC;
+	Wed, 29 May 2024 22:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IVvMYp6A"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ABnQFjxs"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8D915B0E6
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405EE16133B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717021155; cv=none; b=WpFhEp4zSh/51dLqO4KAKWr81xhMxtzuETHVm6Q7jYgSDxjB/YpqP7pgOh1qLou5T9jeEWTDC+kFX+RPYzEPt436yaBf5b7RWsZBRBjDK8Jm6CUdhiFjss5NBTXprxaO4+iTKN5qi8mXs4VAtDo7IzBlFZq0RnjVDBEULIgS0z8=
+	t=1717021192; cv=none; b=nm+5GsRkG1KcDXZiZ2m0oA7nGXMxtkHAhxB/HGiYc5J/0vMMBuMLLzQ3fz0CEcjHDjbLFL2qNYz7qHDzEwP9vCJrnQFnwG8QJEMUQ7rBtuoiFoB4lOWiKOm/MB6RW/WjcEiY/0GVERChK9RriInqp7NU+MjmusrDrs8okGIYirI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717021155; c=relaxed/simple;
-	bh=P15Xc0XyTPFvoCXfmrMxrFhFsyfQkEO7hmX8PLu1Xtk=;
+	s=arc-20240116; t=1717021192; c=relaxed/simple;
+	bh=73lBekzJ3/cpyPRD/n21KmDDVPuP2JH1OaIv63wgdjI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=leJU3zkVzCqBv/Ds3Q1ElKpBU6nVMa150aQAdwDxskYuS1NJukLPZZSebQuOrsvYH9Nq04T0GJ2zU3+BRw5SM4pyNzFtkr/8BIrhE4/XwGefWQEV5ukvEI5qnqiyGC3nspgaaR7XSm5ztmHOapYsCDyxPIpy2PQsJyutKv7H4ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IVvMYp6A; arc=none smtp.client-ip=209.85.166.174
+	 In-Reply-To:Content-Type; b=nzUNWcj2+FkWTeI5sKmKUiWD6WCsicnzL1ITtFaHKP1HRyxCWPSsSKG4g+wLiA2v9bgRY4N8Qbd8hPYNgfyWCXV6B7hK8MWtOojp9O//57INa8uYV2KeMCZK1o0pAV9ycTld0oC8wxhUAH5KA/LLdyLbkYlUs7JKDRq5muzIX28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ABnQFjxs; arc=none smtp.client-ip=209.85.166.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3745eb24ffaso161915ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:19:13 -0700 (PDT)
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7e3b1981fe5so1257239f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:19:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717021153; x=1717625953; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1717021189; x=1717625989; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QIQsNObstWkWgKnY1UZsOrj0Wfr/JVGgFuTZShWQ62k=;
-        b=IVvMYp6Ayi1TfYHVt/th2r4xneI5dfgrjM3hn1bakEPDdJqh/wKzx4Dhm9+3RDkFzo
-         vAXnQBiqgU0NM9jF3YeoN4kYJ2qcaXyT3mlT7yZvg7FWWCjlcdFKbdW814LCiBdkaA38
-         JF/GCCUgIoABz8n7sL7iOmZw9y0quszELsS/Q=
+        bh=mC4b6Il0GC2QVDL2/I1OYkGxzS6sqepYodC6YDu796A=;
+        b=ABnQFjxsTOMgyhDzI/W+PBhdTXi0rZBT2nXfOZLYddp729WR4Q3JqJjkC/cTikjDl8
+         +3Ybs+y8H0o2eYpovDp5x97mHhbuVxHdIi4eAGNPPLn0arlOJfsVetsv7fZ5FugwjUxH
+         ECwroYaCSdIUo5D4Fiz0VmkoGsbBF5O85cxXg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717021153; x=1717625953;
+        d=1e100.net; s=20230601; t=1717021189; x=1717625989;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QIQsNObstWkWgKnY1UZsOrj0Wfr/JVGgFuTZShWQ62k=;
-        b=c/bztJGhZpXKe7oTrFjLCozAM/AO0vdnYV0wds+ReSbohRXpb+tpeRF6sBi0dZL+No
-         UJsXrXUaDmHuCfoBjGAETjcWiXAHWBfl+HOe6Q/BDp6FAyJhtrlwEBvIzbm9UuoWVAT/
-         7CJ8yn96gfrffk49ZZVJelUem/sydG6BeVqdFEJFVE8dEcv4dfcFEUT4ZW+NSMb7nFiY
-         /f5DRz2VzbtWMoOJ9IxBEch9AkqB7TYduEUbR+kJMkDC9ynglrAN/ipStt4uOiLtNxhg
-         u2oT35gtZqQQZyzBciv5/vo449bzmfpK/DTTTHtJBVrOfAEwS7gn2qpBp/gSRjZKuNOF
-         P/0Q==
-X-Gm-Message-State: AOJu0Yzm7IoTrtFXAiPlrGuypnnope203S5GqZDuUpiSRBaA25E5P2h7
-	AedTagCmnU3sEJfANRw3JvriSBPLQGgi23/ne1FAV+T5ADLk8511mXS1bxKHpHhZASWwde+Brd1
-	K
-X-Google-Smtp-Source: AGHT+IGX3vM7AirEhD0z1TjIJ73Jy0G+hX175YByeN8PNH6Y8OAF4RTa4RM3+I+p92DV9/6KWiuc1Q==
-X-Received: by 2002:a05:6602:1d41:b0:7de:e495:42bf with SMTP id ca18e2360f4ac-7eaf5d79567mr28209339f.1.1717021152820;
-        Wed, 29 May 2024 15:19:12 -0700 (PDT)
+        bh=mC4b6Il0GC2QVDL2/I1OYkGxzS6sqepYodC6YDu796A=;
+        b=ao91ihqIqvia5emWFxbhYZbv9/PklUJjhRrmPsNzoz5TavaMKbzbza/Tk7gLPLed/S
+         8wLGJuDOPDd0vvE2xDAOnSZkp1xFuDp7P0bnepYru2f/LU5DvuFONqLYxkzEPGCeBVm3
+         aoCVXGE7b5bmto6T2bVeHm9v/+E+Bm6/GQvOjNMBB/u0od1FHqF3y3AoJ1QSGdo3ItAT
+         /WPerUR4m8pbxQKqsVcdNXTo9tQD6kcpvRdxJkjMT6Gc2LfG+F4rKiF2GLRkZQ63bPN7
+         NWUUjcCUsI9j8l2oghBy7EDYz9fUnUiz54v0/P2YIDS4Wys7UgA+b+S5pdkhPBUMG37M
+         GMBw==
+X-Gm-Message-State: AOJu0YxJpCi9cJNjsSr/hpwIAhJ24NeAGhSvbXunhxMSbiDwlLGmqxmS
+	czRjqLPUFJbaRneTrQ59iMiPC4ydzoRX+n/7FkWvNjzCJtjm7xLZDPmd172fkuc=
+X-Google-Smtp-Source: AGHT+IHkLiHSvg/KtR3lDXPP39vKvdxIInqwjcrMHdeIk4e1kiHq6u41EdK9U8AuM2KlTdWAHFCSVA==
+X-Received: by 2002:a5d:961a:0:b0:7e1:7e15:6471 with SMTP id ca18e2360f4ac-7eaf5d698c8mr34483339f.1.1717021189367;
+        Wed, 29 May 2024 15:19:49 -0700 (PDT)
 Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b0e80c3b6fsm1483913173.135.2024.05.29.15.19.12
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b10cf31917sm1013611173.45.2024.05.29.15.19.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 15:19:12 -0700 (PDT)
-Message-ID: <3f3a70ba-40d2-4624-b8c5-7c3ae2a025fb@linuxfoundation.org>
-Date: Wed, 29 May 2024 16:19:11 -0600
+        Wed, 29 May 2024 15:19:49 -0700 (PDT)
+Message-ID: <2359b378-d664-4d63-bd64-f539ec8607ac@linuxfoundation.org>
+Date: Wed, 29 May 2024 16:19:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,42 +71,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/overlayfs: Fix build error on ppc64
+Subject: Re: [PATCH] selftests: cachestat: Fix build warnings on ppc64
 To: Michael Ellerman <mpe@ellerman.id.au>, linux-kselftest@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Shuah Khan <skhan@linuxfoundation.org>, shuah <shuah@kernel.org>
-References: <20240521022616.45240-1-mpe@ellerman.id.au>
+ hannes@cmpxchg.org, nphamcs@gmail.com, Shuah Khan
+ <skhan@linuxfoundation.org>, shuah <shuah@kernel.org>
+References: <20240521030111.56568-1-mpe@ellerman.id.au>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240521022616.45240-1-mpe@ellerman.id.au>
+In-Reply-To: <20240521030111.56568-1-mpe@ellerman.id.au>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 5/20/24 20:26, Michael Ellerman wrote:
-> Fix build error on ppc64:
->    dev_in_maps.c: In function ‘get_file_dev_and_inode’:
->    dev_in_maps.c:60:59: error: format ‘%llu’ expects argument of type
->    ‘long long unsigned int *’, but argument 7 has type ‘__u64 *’ {aka ‘long
->    unsigned int *’} [-Werror=format=]
+On 5/20/24 21:01, Michael Ellerman wrote:
+> Fix warnings like:
+>    test_cachestat.c: In function ‘print_cachestat’:
+>    test_cachestat.c:30:38: warning: format ‘%llu’ expects argument of
+>    type ‘long long unsigned int’, but argument 2 has type ‘__u64’ {aka
+>    ‘long unsigned int’} [-Wformat=]
 > 
 > By switching to unsigned long long for u64 for ppc64 builds.
 > 
 > Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 > ---
->   tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c | 1 +
+>   tools/testing/selftests/cachestat/test_cachestat.c | 1 +
 >   1 file changed, 1 insertion(+)
 > 
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c b/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c
-> index 759f86e7d263..2862aae58b79 100644
-> --- a/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c
-> +++ b/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c
+> diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
+> index b171fd53b004..632ab44737ec 100644
+> --- a/tools/testing/selftests/cachestat/test_cachestat.c
+> +++ b/tools/testing/selftests/cachestat/test_cachestat.c
 > @@ -1,5 +1,6 @@
 >   // SPDX-License-Identifier: GPL-2.0
 >   #define _GNU_SOURCE
 > +#define __SANE_USERSPACE_TYPES__ // Use ll64
 >   
->   #include <inttypes.h>
->   #include <unistd.h>
+>   #include <stdio.h>
+>   #include <stdbool.h>
 
 Applied to linux-kselftest fixes for the next rc.
 
