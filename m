@@ -1,46 +1,83 @@
-Return-Path: <linux-kernel+bounces-193935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F028D343B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:14:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA09B8D343C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE6C1C21282
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B26A1F22DA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44EB17BB1B;
-	Wed, 29 May 2024 10:13:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABC317B433
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B292117F389;
+	Wed, 29 May 2024 10:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CCHuvYqN"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E665217B4FB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977598; cv=none; b=BMIL+7ubYSag+KeZ7CPfE3OMA0yHwxWQWq6BI3jxTdIgCGP/wscmhbe7keTUR/LpjrbCJRdkVqDq2Ncl5xtXFKzyi7FFO55hJTpkjkCQIW+me8ldrDr9V3uHuHXNjGvDsG9xS0YVYcO2n82eAYoV2gWw8SksLKcFyj7T2hlrjIs=
+	t=1716977633; cv=none; b=Oh1/RoHCf0ApR6uCPCtlOyOkBlXjMJuaZWwhwSYian9x1MsIpyCsGw8l79yGbCSY7R/NRbXq/YGxmrsnfDtzOCrdq60MW6bH9v7ZM2aJ9EvR3R7YI2BxrWvIoDeyTP/qmZM+7TjmAP67mVPstWLci1iw9Gi/Rc2CcaYJvJgoJEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977598; c=relaxed/simple;
-	bh=Ngxa2GWKs4Uq84NqmR/MCdsQquOm3zh0BhDz/lmyJvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pS/XJP8qkpnyObQ5xgBEpQla8+mToB/mlk8rJ0xPhQ8t8Q/H00K9OXGPCCApgu9YpVV5VKOSeXCJkh5+25kLBGOm5uQ2qJBZzfLQGDaK7VGBLaKCLawI18OvvzitI5lt47A7/LmoLMa5KdwrRS6PTvaFtGQo08H6w5Rn/A5NoiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BC71339;
-	Wed, 29 May 2024 03:13:39 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32FD23F792;
-	Wed, 29 May 2024 03:13:14 -0700 (PDT)
-Date: Wed, 29 May 2024 11:13:11 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mailbox: ARM_MHU_V3 should depend on ARM64
-Message-ID: <Zlb_txl4CqCfxWZz@pluto>
-References: <e00498fccf6dcbcf63bd24a137bfc7abd1b98345.1716967720.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1716977633; c=relaxed/simple;
+	bh=RgeY+bfDNoZzO4vZsnnU/cGly045qdyVLEtGwYs+1fI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=psgk8pdG31cRQZjw4IMztgyJ800W4IP4cTUQQA9kUk9YBrC7UWqcYLb8XYADF9QXLTOyGa3oZfIPbU0vNGjcSsW7KwanUFz+RcU5Ba774yEcpNM42KdougbX0OOYB6BYIXtTFXhyly4hDy+MiKLeFI1jGuR1B6dZIKqpgur1WYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CCHuvYqN; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354fb2d9026so1777566f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716977629; x=1717582429; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DWva4iesfpIM/la1EwXKKVb8Cdii/+9H2sXG1XsGOhg=;
+        b=CCHuvYqNI4Z5I3F13XIxjHTM2IJLD1U/0z9g6WpooipVk8M3cn5G9q63aCRAHmrx7j
+         qLZDPLXsrNnfrMtDkx/fDZcrEUBJ/CPHM/tuw5303u5a97/JZOl0I9e47/wyNmkqEu83
+         vF1tM0Ur044hJhXkz+eUqg/A8HHdwmtGIW0Q/B+6wG1+V1E1AIBp0Xm4dweK1kAHdtrq
+         Dy9kX8fp/Gg6v7zH9GU/YrPig4RqfFM9lPw5h9AAHQVO9zyke99w/bR2aYMi5fw523rc
+         kDL4shaH2zLh18kNJrqxroQ0/CQR1of2Fxf42LavcPT2qfcDGyif2JHufwdhxSojkXHX
+         tARg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716977629; x=1717582429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWva4iesfpIM/la1EwXKKVb8Cdii/+9H2sXG1XsGOhg=;
+        b=s9l2pY31vD3QnmZUaB/YILZHbsPh7FW7dLnVbiJtdRewFxKi510IGH2ZGiHCBCjkel
+         JnMfTDqh40L9ZDPX89HHmzbchs0nnGz/8cWA7zpHAyv4LatuMx7RCc4Cnpqe56Bye3Y7
+         JyhiW/YmnjrLy58RpyUaXKaV9zoTHBNbGA8J+hSZzBSgVdupBql9HCwRRDOmVgCfVfCM
+         LePRKNGgpDrXUR+fSNEre9jmGUyqDToHzHWWII2+4ESvAWAuK8wfx1uB0rnIObfc9feL
+         maqpZu5Yrg/f3gzQS4cXGaZ6cO9lgd3/hOYqfq63XGGmWISFw7q683aDc7g5UiMm1OfJ
+         fLFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5RDJKdXGU+ty8AM9HgYeWn2oM/hX87f+FwPwD1+7VmxnBz/rqpkTPs0pAUhivMqL9z+DwFqfyw/ZeffaFpwrd9lSjhaCy3q3mIuiN
+X-Gm-Message-State: AOJu0YxnFCfgsBGIpLMDn2bLdckSSTEqdtDWfG6j8uUNGBxWYjV3tCrp
+	Re/kLzq/YXSopm1C/FbN0YW5i655WndGwEsIQTa9CFfj6b+/67AuHrjL8QBlvc0=
+X-Google-Smtp-Source: AGHT+IHt9Ba6L+0f+m26haQIjzUpLMjXASE+7cuXYPhAXHN7krwAJUlx5hJ8S9Vd/bRx1rHfXxW0sg==
+X-Received: by 2002:adf:b350:0:b0:354:f82c:78b0 with SMTP id ffacd0b85a97d-3552fdf968fmr11329720f8f.70.1716977629174;
+        Wed, 29 May 2024 03:13:49 -0700 (PDT)
+Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3574c7017d1sm11775623f8f.76.2024.05.29.03.13.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 03:13:48 -0700 (PDT)
+From: Oscar Salvador <osalvador@suse.com>
+X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
+Date: Wed, 29 May 2024 12:13:47 +0200
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v4 16/16] mm: Remove CONFIG_ARCH_HAS_HUGEPD
+Message-ID: <Zlb_243CPcPiN7Q-@localhost.localdomain>
+References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
+ <98d6ff5bc9395785e268b9f8eff08fb742c045c6.1716815901.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,54 +86,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e00498fccf6dcbcf63bd24a137bfc7abd1b98345.1716967720.git.geert+renesas@glider.be>
+In-Reply-To: <98d6ff5bc9395785e268b9f8eff08fb742c045c6.1716815901.git.christophe.leroy@csgroup.eu>
 
-On Wed, May 29, 2024 at 09:30:45AM +0200, Geert Uytterhoeven wrote:
-> The ARM MHUv3 controller is only present on ARM64 SoCs.  Hence add a
-> dependency on ARM64, to prevent asking the user about this driver when
-> configuring a kernel for a different architecture than ARM64.
+On Mon, May 27, 2024 at 03:30:14PM +0200, Christophe Leroy wrote:
+> powerpc was the only user of CONFIG_ARCH_HAS_HUGEPD and doesn't
+> use it anymore, so remove all related code.
 > 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Hi,
+Acked-by: Oscar Salvador <osalvador@suse.de>
 
-the ARM64 dependency was dropped on purpose after a few iterations of
-this series since, despite this being an ARM IP, it has really no technical
-dependency on ARM arch, not even the usual one on ARM AMBA bus, being this a
-platform driver, so it seemed an uneeded artificial restriction to impose...
-..having said that, surely my live testing were performed only on arm64 models
-as of now.
 
-So, I am not saying that I am against this proposed fix but what is the
-issue that is trying to solve, have you seen any compilation error ? or
-is it just to avoid the user-prompting ?
-
-Thanks,
-Cristian
-
-> Fixes: ca1a8680b134b5e6 ("mailbox: arm_mhuv3: Add driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> The MHUv3 documentation is unclear about whether this can be present
-> only on ARM64, or also on ARM.
-> Googling 'site:arm.com MHUv3 "aarch32"' shows no results.
-> Googling 'site:arm.com MHUv3 "aarch64"' does show results.
-> ---
->  drivers/mailbox/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index 3b8842c4a3401579..8d4d1cbb1d4ca625 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -25,6 +25,7 @@ config ARM_MHU_V2
->  
->  config ARM_MHU_V3
->  	tristate "ARM MHUv3 Mailbox"
-> +	depends on ARM64 || COMPILE_TEST
->  	depends on HAS_IOMEM || COMPILE_TEST
->  	depends on OF
->  	help
-> -- 
-> 2.34.1
-> 
+-- 
+Oscar Salvador
+SUSE Labs
 
