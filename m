@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-194676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098818D3FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:50:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C698D3FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A97D1C2152A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E29D1F24F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62061C8FB4;
-	Wed, 29 May 2024 20:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0CE1C68B5;
+	Wed, 29 May 2024 20:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Du2HtpT5"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XHt+MPZ/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F55D1B960;
-	Wed, 29 May 2024 20:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91D41C6894
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717015816; cv=none; b=aCute0yJNeucc2q2/vB0KYfHulw914IM2KTNduJT4T2ukuZIpetgoA/odYMvuBJawXIH1gslKkZaHj+91s18IhQjhEDtCF2ar/LqBEqQSvqh8cEhW4vuw7aN9HH+on9W3k8/2idGi9xKpSpdmTCShSVVUHlYln5zZt1LV6F9A/o=
+	t=1717015838; cv=none; b=elt/tGOKov2Ea4quSSOhufp09rBiSk6DnPRJDCWfRwuP8Uz0Rgdg21c8Xl3j7LZAJzGKlAoIjDFx8P0OGiUucwOdsVwG5LXqWMHLTbhHoeKfF9g1bpnLARoM1831SgL6jpsvUjR6Wt8TP75t5LNqAiHe3C1tbdySDjrO3F6i2xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717015816; c=relaxed/simple;
-	bh=Miy+kFZ2+P8ycrCWMIisuRCUzIjZxG4FVNiHwcPNP9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Atpx+MedEL2EDQlkQvmllzQLz2WuY6clReEO/ARaI5l1qwgvks6R/twtXQ02c1s5LslOqNCLpmEXG7+MIB2Kp1AbN2dHxtLmN+QKXmeQQeYT7KC/EJDcrGbsYCFSY5dfMyCE3G5ulIlmgUtUuWrgsZ3UAQ1AjjCog6YZkD6gJJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Du2HtpT5; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8002:4641:eb14:ad94:2806:1c1a] ([IPv6:2601:646:8002:4641:eb14:ad94:2806:1c1a])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 44TKnjVX3680049
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 29 May 2024 13:49:46 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 44TKnjVX3680049
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1717015787;
-	bh=Dt9nvUxgAaeh3oiuSqLfDzaWvZJkj452nS/FzWKq3N0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Du2HtpT58m/CEIjc+7Sx7ZvdcbvvUpx0CvzJ51hyTt7Mx9VDh1YQLxxbH0dCX8rto
-	 dDzHIWyOvI44QfQRw1qUv3r7t63s8iiagLd+PVAQfz1QSb44M+hcMqXT2jnjEy7wNt
-	 B8J08zY/rmcKf1zvD3DsBmFpPl9YipZdcrB0P1Y2Vp59bwoqEE+0u0e8H2sleBizZx
-	 xwmKS52J4kht975yrmilQlAEbTtd/E0reDj5lTcR6ifziINjTPlNWGqQy+pwF7rXao
-	 JmXod/oQ/FBQo+JQwGz2o0+UVZYjD9Psksq8ikTqp5lQL+jHYyiGgSek5aSleWf+ro
-	 OYmGBtXIQrJMQ==
-Message-ID: <9dabe435-7208-4aa8-886c-a3351ee11e80@zytor.com>
-Date: Wed, 29 May 2024 13:49:40 -0700
+	s=arc-20240116; t=1717015838; c=relaxed/simple;
+	bh=lblQCcvQsEn3C0L7QF+8CmIxKphkimznAVnOBSt1Fq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vAr1lrSJBuF4n20vEw5ytxS2ihy+F8xl43opkvkQrogwVO9WqsNIGWZQ37uvIU8Y3v5FgoodDUFR5vwn6Vurv64Skp4Ny5QKXrh/QTwSi/mDI4qpwFVfG6Bh8Uszm8ExgQdydwLcDs4CLyb+ITI5L/338y+JNg3NC6830CMEHtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XHt+MPZ/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717015834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1G4MuJLfcNe+eQlPR9y6C2DI9izpMDDpafLXltcFND8=;
+	b=XHt+MPZ/lbhv1pMxuZjFaLaYe71ysbNkxUTlNk6IIhgo+su6shYnE27kcESG31w6LfKZ3s
+	tm50fV/SzSzxl3BhP2jMpq734kfQjQUhMhH9jPRWKUz9IuQ/su/umD4uDvy/MBx6AKHVcE
+	WZMIsPtw0f8ueY5g76108wQq8jhn9og=
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
+ [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-QDIH5lrxPsONRWP3ibmC_A-1; Wed, 29 May 2024 16:50:33 -0400
+X-MC-Unique: QDIH5lrxPsONRWP3ibmC_A-1
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3c9ad64e35bso60013b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:50:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717015832; x=1717620632;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1G4MuJLfcNe+eQlPR9y6C2DI9izpMDDpafLXltcFND8=;
+        b=qi2B+ohsOJwa4v7M23vBeIO7vnhjiQ+Mu/xk0cTF2mQlD3s7HZrz8d2RDoScceMt6S
+         9B88ik5Rr2QbfLHlkKmg2pncvmL6laMOVmdJlstp7SJYbRlt4IxmMCWYUJmFVvYMI/pj
+         UkJawbx+grJ5qbZMUg276jIJb3COrdhrFT4ey3k7QqhL+bc2LSCLSGxmYAH+mqa+KdKA
+         ndTJhsUV69ksUaZMNsv+ofCa0T6TNsBf4W0VdOb4U7b3InGUMIvRXCPtCfVH7ghTxHl6
+         dmRpclVFPPzHfuvtWvcLYM0mHn9uC3fqPp7KY6D1sNveSEt3bHWh2YfCWytL+I0qJVDm
+         7n6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUL0CqtCetc+JTgjxPOmUQN0jdz3NGNR8ZAJQFjrev5S3PDAOTxknfp2jAgGhM84XNuAfcsjndzynFLcDk85bDG6E8IBFhDZwB+cPzj
+X-Gm-Message-State: AOJu0Yzs90tpqxtFAwdBKUITOd5uK3Ukhe9x9aitD12Ch05VxsLJJFFM
+	nqa661gZYVbM7jPbJnneal4G9jevEcNmyVuNSw64ckwxIk8o9hRhzf3TqOUf3E1hf78sfiqKVdD
+	BKes6mg2/fJEji8lSusvNcraXZb7xyNbw3SFW6P8MV9kxwZopJdaLom2AjdUV/w==
+X-Received: by 2002:a05:6808:1ab0:b0:3d1:c187:15d5 with SMTP id 5614622812f47-3d1dcca93c5mr144663b6e.20.1717015832362;
+        Wed, 29 May 2024 13:50:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsuJSmbdsoQ85Rq/8DqXZY+yAtM9jIMKwB2wvZYK6VBkogsAWKXFSzfzBTS9dp8U90qeTsfA==
+X-Received: by 2002:a05:6808:1ab0:b0:3d1:c187:15d5 with SMTP id 5614622812f47-3d1dcca93c5mr144646b6e.20.1717015831958;
+        Wed, 29 May 2024 13:50:31 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ad8fa000eesm22065026d6.1.2024.05.29.13.50.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 13:50:31 -0700 (PDT)
+Date: Wed, 29 May 2024 15:50:28 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jochen Henneberg <jh@henneberg-systemdesign.com>, 
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: dwmac-qcom-ethqos: Configure host DMA width
+Message-ID: <7w5bibuejmd5kg3ssozaql4urews26kpj57zvsaoq2pva3vrlo@agfxwq5i65pc>
+References: <20240529-configure_ethernet_host_dma_width-v1-1-3f2707851adf@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] x86/irq: Add enumeration of NMI source reporting CPU
- feature
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>, X86 Kernel <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>
-References: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
- <20240529203325.3039243-2-jacob.jun.pan@linux.intel.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <20240529203325.3039243-2-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529-configure_ethernet_host_dma_width-v1-1-3f2707851adf@quicinc.com>
 
-On 5/29/24 13:33, Jacob Pan wrote:
-> diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-> index b7d9f530ae16..3f1a1a1961fa 100644
-> --- a/arch/x86/kernel/cpu/cpuid-deps.c
-> +++ b/arch/x86/kernel/cpu/cpuid-deps.c
-> @@ -84,6 +84,7 @@ static const struct cpuid_dep cpuid_deps[] = {
->   	{ X86_FEATURE_SHSTK,			X86_FEATURE_XSAVES    },
->   	{ X86_FEATURE_FRED,			X86_FEATURE_LKGS      },
->   	{ X86_FEATURE_FRED,			X86_FEATURE_WRMSRNS   },
-> +	{ X86_FEATURE_FRED,			X86_FEATURE_NMI_SOURCE},
->   	{}
->   };
->   
+$Subject should be have [PATCH net] since this targets the net tree:
 
-This is incorrect. FRED does *not* inherently depend on NMI_SOURCE; the 
-dependency is the reverse, but since it *also* depends on FRED being 
-dynamically enabled, there is no need to add it to the static table; the 
-dynamic test:
+https://docs.kernel.org/process/maintainer-netdev.html
 
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 4fa0b17e5043..465f04e4a79f 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -1427,8 +1427,10 @@ early_param("fred", fred_setup);
+On Wed, May 29, 2024 at 11:39:04AM GMT, Sagar Cheluvegowda wrote:
+> Fixes: 070246e4674b ("net: stmmac: Fix for mismatched host/device DMA address width")
+> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+
+Please, always write a commit body, even if its simple. Just inferring
+from this patch, I am guessing there is some limitation on CPU's DMA
+address width that doesn't match up with the MAC's ability? Paint that
+picture for us here please! We want to know the _why_ in this section.
+
+Also, I think the Fixes: here would be for adding support for this SoC
+in the driver, not what's listed? Might make more sense after you have a
+proper body though.
+
+> ---
+> Change-Id: Ifdf3490c6f0dd55afc062974c05acce42d5fb6a7
+
+I know this is under the ---, so its not actually in the commit, but I'd
+not include that at all when submitting. Someone will complain about it
+looking like this is from / for a downstream fork. At least checkpatch
+doesn't warn about it, but a human probably will :P
+
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> index e254b21fdb59..65d7370b47d5 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> @@ -93,6 +93,7 @@ struct ethqos_emac_driver_data {
+>  	bool has_emac_ge_3;
+>  	const char *link_clk_name;
+>  	bool has_integrated_pcs;
+> +	u32 dma_addr_width;
+>  	struct dwmac4_addrs dwmac4_addrs;
+>  };
 >  
->  void __init trap_init(void)
->  {
-> -	if (cpu_feature_enabled(X86_FEATURE_FRED) && !enable_fred)
-> +	if (cpu_feature_enabled(X86_FEATURE_FRED) && !enable_fred) {
->  		setup_clear_cpu_cap(X86_FEATURE_FRED);
-> +		setup_clear_cpu_cap(X86_FEATURE_NMI_SOURCE);
-> +	}
+> @@ -276,6 +277,7 @@ static const struct ethqos_emac_driver_data emac_v4_0_0_data = {
+>  	.has_emac_ge_3 = true,
+>  	.link_clk_name = "phyaux",
+>  	.has_integrated_pcs = true,
+> +	.dma_addr_width = 36,
+>  	.dwmac4_addrs = {
+>  		.dma_chan = 0x00008100,
+>  		.dma_chan_offset = 0x1000,
+> @@ -845,6 +847,8 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+>  		plat_dat->flags |= STMMAC_FLAG_RX_CLK_RUNS_IN_LPI;
+>  	if (data->has_integrated_pcs)
+>  		plat_dat->flags |= STMMAC_FLAG_HAS_INTEGRATED_PCS;
+> +	if (data->dma_addr_width)
+> +		plat_dat->host_dma_width = data->dma_addr_width;
 >  
->  	/* Init cpu_entry_area before IST entries are set up */
->  	setup_cpu_entry_areas();
+>  	if (ethqos->serdes_phy) {
+>  		plat_dat->serdes_powerup = qcom_ethqos_serdes_powerup;
+> 
+> ---
+> base-commit: 1b10b390d945a19747d75b34a6e01035ac7b9155
+> change-id: 20240515-configure_ethernet_host_dma_width-c619d552992d
+> 
+> Best regards,
+> -- 
+> Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> 
+> 
 
-.. suffices just fine on its own.
-
-	-hpa
 
