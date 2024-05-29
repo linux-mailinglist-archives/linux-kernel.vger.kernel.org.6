@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-194282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D0D8D3973
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3824D8D3994
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1631C22B67
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:35:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5367B1C23676
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEF7159594;
-	Wed, 29 May 2024 14:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B64C15AD83;
+	Wed, 29 May 2024 14:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ONGrP/dq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acvxl+jF"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DBD159568;
-	Wed, 29 May 2024 14:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7AB1581E9;
+	Wed, 29 May 2024 14:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716993328; cv=none; b=e0ytloT8qhmqTD/GSiMwJGexPZl+tFnqMnt0IbGxjSPiJA03auP20+Vi+Da9JsK6j5/1SzVB2Fz1BK3et2GR0rAd8qGmAr+Zl56nhQtYS/OAlFOHhumS7jIe2oMVOFoD2KiLrmc4C2+ivqJbTLYwSLusXena+46fnMlOZL/DJtY=
+	t=1716993881; cv=none; b=g3RqQkb7wnD+quKa8SYbJyarJ5UQwbTAfssPtwu/Ra9Yohplw8uYNZg1CRq8QA6oepanLO2rHNRFRRpfvTZtXgKU4uM1kAjBmmOXzu4qpTUHrtMhGGkW0ClgheuMdGO39pUcnEz3w7U0u6MMSTJZzmqnpAQMbYNgzYOIjWYH+PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716993328; c=relaxed/simple;
-	bh=DGQ2MiJt8VADMRRzcCTAtGDh88V5+BK2CV2kjEWYnw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j6WGLIKxPZXztrzGV+6tHKyO7d8Pk3QsDxEyOSwqWPd7xXoVQOvg92c6P73o5q37mlOHJ4P3FFMZPstEByebKw8ldyVfEZD8+ZR8H78OT424WNSdPmkGKh2FPcHEulREyLABociNfBFCtcoPoqCvh6EQ+4pWTRs+c9jjU9lCogw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ONGrP/dq; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716993327; x=1748529327;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DGQ2MiJt8VADMRRzcCTAtGDh88V5+BK2CV2kjEWYnw8=;
-  b=ONGrP/dqu3BIHcWVRc8htUfQzPGaKbS8U8i2Jcoy6xV5tsj5j53ckta5
-   5D8SVvb0UQMJqhn9nSCHkvb6zuX20SZiliawEFdmsAclSR5NlK3ACxJqt
-   YFTYJ9+qE0ozK1swWXKrGpmHDVrmJHcZgdDUZLXEJimTsVVI1JJmVLY8s
-   ATw5lLWcsMo0vr+tr9cyXpJvV3/tKMrPXneiKGx9UQDZ4IZBA43XaIIug
-   I0DhjbamvDfRVLxIzmyEo2Af9S41zMoQ6vkV3FZct4g1Wt0lYUfhgcpm7
-   7LRf3BsFdzkJZXsewiYHsbhHs206RkG20hQEllPl1ixgiGbsrD+Hf0Q3r
-   w==;
-X-CSE-ConnectionGUID: petFuGviSny2O7+YPQaOsg==
-X-CSE-MsgGUID: 4R33d1g1RRWLK0jMcgBcag==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="17231209"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="17231209"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 07:35:26 -0700
-X-CSE-ConnectionGUID: UYPNIogpT1S/XknKS3BvmQ==
-X-CSE-MsgGUID: gXaxtfI4QfaIkMCJdaDf4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="35540351"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 07:35:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sCKOZ-0000000BpWl-3Oav;
-	Wed, 29 May 2024 17:35:15 +0300
-Date: Wed, 29 May 2024 17:35:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
-	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-	adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
-	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
-	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
-	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com,
-	dlatypov@google.com
-Subject: Re: [PATCH v9 07/10] lib: add basic KUnit test for lib/math
-Message-ID: <Zlc9I4H2u0TQC95X@smile.fi.intel.com>
-References: <20240526175655.1093707-1-devarsht@ti.com>
- <20240526180933.1126116-1-devarsht@ti.com>
- <ZlTu_9orsuosNiGk@smile.fi.intel.com>
- <ZlTvLS8oTPcvZKQN@smile.fi.intel.com>
- <9c88bc47-35f0-86ed-2df7-dd83640d9997@ti.com>
+	s=arc-20240116; t=1716993881; c=relaxed/simple;
+	bh=gCT8PDxsy7chYSyUoW1k8QcPJdu1mk37WMs2Qzi/GIg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MsVH9LzQHnOHLZfyi6OjKC5wPZnsLX9PBhL1IKQVz1oiSavsxao3QGTzL9cFGTeG7nAo7Gtsz9jcpXxHEXL0PGfmrv5kJjHke07Maheyv9nidpv7oKZKqAGI1nLqj5LFp+OObkdAHYm7/TM3f78DSsRBHyM7+lq0IxIqF/ZrzKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acvxl+jF; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52388d9ca98so3367348e87.0;
+        Wed, 29 May 2024 07:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716993878; x=1717598678; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmg0Xdln3CoQgJ9NVNuMFs06AxZyiuM9wtNOUDPn1Ws=;
+        b=acvxl+jF4l1Fn445EpMyDJP7HLvePAY76vT08rr+n5PrrEaEprEfFmSgpJMCphR3Z1
+         l+Z7Jw605mq+zZo3VJ/nHFalbQVJ1xv1fzt59aMc+/ag00PfgZVRcDuGRvHCezYzHUk5
+         j8ZEqCp9Wrp3D+lEmqygIxXYhBhD0Q7PmTLVQD5hfEA7GNrzmKxfdG6bCz52esbBdkjT
+         lNYNFNhed1sbnhl9wKCjZ0JjXOPVYKt75evVtme3ROxoqY/aaiJi/v7vzCxN/RfSWeVV
+         52CxTe2or+iZTLtt2C4cTh32a9mXkDYCKFKBZGh+6c0SCdM/lNLXzMT991t+UqNpkRfU
+         uI0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716993878; x=1717598678;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wmg0Xdln3CoQgJ9NVNuMFs06AxZyiuM9wtNOUDPn1Ws=;
+        b=qpHHsFvdEGGQXfpiC9fWOKcI+kFScZ1ptqfT6jEk46qRzXD2Ys0lcjHDjNJwkg/V8o
+         BGafz4FibddZn7G2ohJfr7KjejZ/PA1mszuclbyxy9HzoR8Ijq98ojTwD5Sna3eKUlKa
+         Wzbdph2rj3hQeRcu3ZttVOpE4IWcoWRSQMQTZdZ16z+HLlwZb8fFqaP1edHR+rdJ3Day
+         FHFB/VSnV9vIn1qt4Clkj1Z8hE/ezQLQ1UHctOh3SMWssgMHV3wyorALr4yKZMi1/mZ7
+         1CSbrSbYCn+jxT6NIZtwI7xpgSA3PIrc3/eA6NOBbOv0oMRLYSOvLwrB9P3mrfIl9MEX
+         AxIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjEP5Nv3Q1fn0v1HZDomj4euS6o0oVm94bz+qmNLbeKEBJOVWcPRQsPFU/2mRR5KQ7+Y/84qyLJYOb9682klykMSvAwbj3pn1iZId0JxiCRsxOKMOjMvMHd9G6AaxlBl5Xx+v8bGrvvQztc/JONyJrJazwEd55vMazGx9sP2D8wYTJI0I=
+X-Gm-Message-State: AOJu0YyxXfvkBe/lQRWElPFILY7QcNWGI33Fmkz7Y5rzEu/cM/nDonsr
+	pGJPb23zYXC7Qqc3Ko2HXu8/7C4GSp0uE9hqekanNop001fBDuL0
+X-Google-Smtp-Source: AGHT+IEmeGBP4gSt953JX9l/IvekTaw0WinbNkSEyrZcdumRfTqWxO7Errv9yS6JwzWsqMFJg0mUOw==
+X-Received: by 2002:ac2:5dc1:0:b0:522:8352:ff29 with SMTP id 2adb3069b0e04-5296736bb86mr12370567e87.42.1716993877840;
+        Wed, 29 May 2024 07:44:37 -0700 (PDT)
+Received: from yoga-710.tas.nnz-ipc.net ([178.218.200.115])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529ac903bd9sm928915e87.236.2024.05.29.07.44.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 07:44:37 -0700 (PDT)
+From: Dmitry Yashin <dmt.yashin@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Yashin <dmt.yashin@gmail.com>
+Subject: [PATCH v2 0/2] pinctrl: rockchip: add rk3308b SoC support
+Date: Wed, 29 May 2024 19:35:32 +0500
+Message-ID: <20240529143534.32402-1-dmt.yashin@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c88bc47-35f0-86ed-2df7-dd83640d9997@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 28, 2024 at 05:01:31PM +0530, Devarsh Thakkar wrote:
-> On 28/05/24 02:08, Andy Shevchenko wrote:
-> > On Mon, May 27, 2024 at 11:37:20PM +0300, Andy Shevchenko wrote:
-> >> On Sun, May 26, 2024 at 11:39:33PM +0530, Devarsh Thakkar wrote:
+This patch series and adds support for pin controller found on rk3308b.
+According to rk3308b TRM, this pinctrl much the same as rk3308's,
+but with additional iomux routes and 3bit iomuxes selected via
+gpio##_sel_src_ctrl registers.
 
-..
+Downstream kernel [1] managed this SoC's with rk3308b_soc_data_init,
+wich picked configuration based on cpuid. Upstream pinctrl patches
+droped soc init function.
 
-> >>> +MODULE_LICENSE("GPL");
-> >>
-> >> modpost validator won't be happy about this, i.e. missing MODULE_DESCRIPTION().
-> > 
-> > And obviously + module.h in the inclusion block.
-> 
-> The module.h is already included under include/kunit/test.h and that's the
-> reason compiler did not give any error. But I can still include it under
-> math.h for better readability as you suggested as anyway compiler will not
-> re-include if already included by another header file.
+The function rk3308b_soc_sel_src_init sets up gpio##_sel_src_ctrl
+registers, making SoC to use 3bit iomuxes over some 2bit old ones.
 
-Please do as it will be in line with IWYU principle.
+These patches have been tested on Radxa's ROCK Pi S, one based on rk3308
+and the other on rk3308b (from the latest batches). For the new boards it
+fixes broken spi1 clk.
 
-> Also I see we were missing a dependency between math_kunit and kunit modules,
-> so adding a dependency there too.
+Similar effort [2] was made several years ago, but without keeping base
+rk3308 SoC pinctrl support.
 
-Thank you.
+Based on feedback from Luca, Heiko and Jonas, the v2 series droped dt
+binding in the favor of runtime SoC detection, so iomux_recalced and
+iomux_routes updated for the new SoC's and patch 1 delays recalced_mask
+and route_mask init.
+
+[1] https://github.com/radxa/kernel/blob/stable-4.4-rockpis/drivers/pinctrl/pinctrl-rockchip.c#L4388
+[2] https://lore.kernel.org/linux-rockchip/20220930102620.1568864-1-jay.xu@rock-chips.com/
+
+v1 Link: https://lore.kernel.org/all/20240515121634.23945-1-dmt.yashin@gmail.com/
+
+Changes in v2:
+- Drop routes fixup patch, already applied
+- Drop dt binding patch
+- Add new patch to delay recalced_mask and route_mask init
+- Rework last patch from dt to runtime setup with rk3308_soc_data_update
+
+Dmitry Yashin (2):
+  pinctrl: rockchip: delay recalced_mask and route_mask init
+  pinctrl: rockchip: add rk3308b SoC support
+
+ drivers/pinctrl/pinctrl-rockchip.c | 286 +++++++++++++++++++++++++++--
+ drivers/pinctrl/pinctrl-rockchip.h |   1 +
+ 2 files changed, 267 insertions(+), 20 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.2
 
 
