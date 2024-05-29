@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-193285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC6A8D29CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236AE8D29CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0783D2857CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:11:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B72891F24D7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C5215A862;
-	Wed, 29 May 2024 01:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC2715AAB6;
+	Wed, 29 May 2024 01:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="WxkaUUTw"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGpROf/I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A37518B04
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B26615A850;
+	Wed, 29 May 2024 01:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716945111; cv=none; b=Un/xvT+4wsw4rK8986jiBm5cWmUQzJRJZxWpffjLVC/SmQA+Xj1xu4FzCL4Mwvuvm56HL9dx3mj070x6lSaLHqnEtnVFVnSaiXlHxE6x1IF6kCF3Xaj+AWOoZ1wkS16Afc68BMdORGqzWixjhnZZH2C8J+etDDEYrn2/8sbJToY=
+	t=1716945305; cv=none; b=MZHg0un97r2vHJnYulmOqEOqvnzfD878ZoQDtChqWykJfa5klDrHmB4+AuRXH15fpPbXKdUrBvWqKPuR2oGH85mt7+V7H8pYMjkKfGXr6I/6SdUvTx+40Y/1Cl7K5W9IHFCWgprJPCgaXI2+tttYSZyv1bLQhNfm6XABdScNuXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716945111; c=relaxed/simple;
-	bh=mtCLC3el6bEP3xWXKXrEM+Cdpht1UY4rwfRbaeK/mLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+QsA13wzlCihyj1dCTU6zkRhCPMf7hoh6VlOAHy2zbDTdOPUL5Vk5eni+m+ca/E56q5Apjp5MX9uoEI5hHtmWLicDf5C/kaNc6nc+5EpzrKiAqPHEW5dk1sNAMLdCcHGiRNBzKzoSSqbeG43LoQFHZKtzXAOjrjKCoeHfSwKAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=WxkaUUTw; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42120e3911eso10055845e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:11:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1716945107; x=1717549907; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPNZaoaJtA1xZK2fsp/RvQvPvLoyRAgx50EU+G39ics=;
-        b=WxkaUUTw2N8ZpnXqIblNsQ4Ekbqrh8odr+U3cr5TyvdUzp7lOgjlg/aKb2J9h5Eis/
-         kSsjT0mfuP2D/h6RSGrFAKd5Isf314lkMY/HmVXurvEDs3PManfhpcV2FrTk6MpLV262
-         MPVLzx4T5hn7B58l4zEUPDZwEmMdmEYg53Iz319xJ2w23twGt8gHB0ttq10jmCy3CNT4
-         mbiUjLUJf/dQLpBK/skv1ULF2/aHTAxvgyBXBqsQSnnfEay+7n5+g1ucu3nQSjaGPg7X
-         5Dg3690NAe2JAkgbH+SDsY6KgQF24Luq3lsRZgJ4flXEDrKaT//ZIQrLXIMXC/ax9Q2I
-         xWpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716945107; x=1717549907;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VPNZaoaJtA1xZK2fsp/RvQvPvLoyRAgx50EU+G39ics=;
-        b=Hg5pEF4+O3LghYEepiVdoPvx+kIa4MA2DvLa1OJQ7hnS1oDmhqlGvrPApYyUKCK7Zk
-         DqC8UH4i13gg8ooKE+NfrxH/brzpfmifuL3z0YoQiV2hBGPclDY/jS8jT3FmbcDetc0g
-         94LXFW3ViQ/yDYpUsy96ADNURcyvC2r9FiuR7nhE3Rkgfyg6B1Dh2lyOrVPia2sIkMU5
-         SUqVVEUIRT86A+SUoyF3jvdBLhEcHCKyz9sOhyA8VOi+bJBuYnon/csz3LkFaNjn0IfL
-         bR8006fMkwE7Iyb9WC4K6v8NcFqUreEp2jIUXIcLiWsWR5zFkaw7rwTuowUqFnh3npN9
-         XR+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBl21b64YtpTZ11g99zqDKW3gFrN7o4RibbpV53/qOZYRhKwzlC9HkgYGeZMrFMk7HtX5IsrHsgzIBoK1K7BiP1XqVS4pPBQ6crJ3p
-X-Gm-Message-State: AOJu0Yx0TePAkoOShnBsYcrglcygSTlaC5CExeqS5Snr5WLDTG0hTl+h
-	PNEJw2WWjCgMX/eROEAQ6xw3MSyP98jFYLKiOJHB35oDNVbIzKrsdYjlx4I0QgE=
-X-Google-Smtp-Source: AGHT+IEMCKnHbB6p+UdL/7W8I4STKw4+5Uw4acnirh3UUgvFatwuAO+P0FEkARvVha8lh0p/kUK4Cw==
-X-Received: by 2002:a7b:cd06:0:b0:41b:d4a3:ad6a with SMTP id 5b1f17b1804b1-421089d322fmr116587215e9.17.1716945106551;
-        Tue, 28 May 2024 18:11:46 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee954bsm193491525e9.4.2024.05.28.18.11.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 18:11:45 -0700 (PDT)
-Date: Wed, 29 May 2024 02:11:44 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Hongyan Xia <hongyan.xia2@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] sched: Consolidate cpufreq updates
-Message-ID: <20240529011144.smuq6dbaxvulxy4e@airbuntu>
-References: <20240516204802.846520-1-qyousef@layalina.io>
- <b4036b48-7d04-4bba-b405-f64ee309e874@arm.com>
+	s=arc-20240116; t=1716945305; c=relaxed/simple;
+	bh=/GfoeoRReOIcuGfxqsKcE/ssX+1CbriDPv2XiapiR74=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qENrCbMT04/mrMf2REBnQ0QKJ++W7zANR800aH2euPcxuCpRt0du9KN4fSdd5JD4E8wqTTbpzQBw7/iu2MYns0GG8zgfsp3hRhfPIlLtpUAJuPcB2QSwlVaanwQLdV5EwbEJPNTpiaX92wgIYf2ZybfPuV1m4NaPFgDaHkikez0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGpROf/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E412EC3277B;
+	Wed, 29 May 2024 01:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716945304;
+	bh=/GfoeoRReOIcuGfxqsKcE/ssX+1CbriDPv2XiapiR74=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=kGpROf/I0sN3dx/iNmVuHImgJXfDfwZBIR422JA711ML9z8bQffVQXre2gwdwVhne
+	 ZTaO0t0IJPgbG+JH1ylOornajxZYDZv1o3x7eHmHZye4dYNMhEspCsnIU38YoQfJ3c
+	 3EiDqEAMry/ziID4lUCX/2IEH9vk6f7ApybGt7i58uoXK4PeCcdVSrC9nI8vLltVwB
+	 KFswRC1P7gWiKQnV99yMIdKjB9uhm+qrBJMAMzWP4LlO6LHhsCFoJnkZLvM3Wmmu+G
+	 NzvjOjXbb5HQgRDhD5t7VlftKbs4fbA97YKmaGlKx+S2cLNo2rcFnkNQGmIpKf+U6L
+	 8G6VYRd40/FLw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b4036b48-7d04-4bba-b405-f64ee309e874@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 May 2024 04:14:58 +0300
+Message-Id: <D1LQB9HGZ7JK.1VDGJVT6IPHDB@kernel.org>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
+ <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
+ "Lennart Poettering" <lennart@poettering.net>, "David S. Miller"
+ <davem@davemloft.net>, "open list" <linux-kernel@vger.kernel.org>, "David
+ Howells" <dhowells@redhat.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>
+Subject: Re: [PATCH v7 5/5] keys: asymmetric: Add tpm2_key_ecdsa
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+X-Mailer: aerc 0.17.0
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-6-jarkko@kernel.org>
+ <ce1d3188-046d-42c1-b8a7-17325d791ec5@linux.ibm.com>
+In-Reply-To: <ce1d3188-046d-42c1-b8a7-17325d791ec5@linux.ibm.com>
 
-On 05/17/24 12:06, Hongyan Xia wrote:
+On Wed May 29, 2024 at 2:15 AM EEST, Stefan Berger wrote:
+> > +	ptr[TPM2_KEY_ECDSA_SIG_R_TAG] =3D 0x02; /* INTEGER */
+> > +	ptr[TPM2_KEY_ECDSA_SIG_R_SIZE] =3D SHA256_DIGEST_SIZE + r_0;
+>
+> The size of the signature has nothing to do with the size of the hash.=20
+> SHA256_DIGEST_SIZE (32) happens to match the number of bytes of a=20
+> coordinate of prime256v1 / NIST p256 but should fail when you use=20
+> secp521r1 / NIST p521 since then r or s may then be 66 or 67 bytes (if=20
+> most sign. bit is set) long.
 
-> > @@ -1997,6 +1999,13 @@ static void __setscheduler_uclamp(struct task_struct *p,
-> >   		uclamp_se_set(&p->uclamp_req[UCLAMP_MAX],
-> >   			      attr->sched_util_max, true);
-> >   	}
-> > +
-> > +	/*
-> > +	 * Updating uclamp values has impact on freq, ensure it is taken into
-> > +	 * account.
-> > +	 */
-> > +	if (task_current(rq, p))
-> > +		update_cpufreq_ctx_switch(rq, NULL);
-> 
-> Do we care about updating the frequency here? p is dequeued during the
-> __setscheduler_uclamp() call, so I think it's better to do this after the
-> uclamp() call and after enqueue_task(), so that uclamp_rq_inc() comes into
-> effect.
+First remark did not go unnoticed, so thanks for both. There was not
+just much to comment on it :-)
 
-Yes!
+I could just replace the constant with a (range checked) variable
+read from the response and overall structure woud be the same.
 
-> Also, do we want to limit the update to task_current()?
+This will also mean that in the case of P521 also prefix byte (0x81) is
+required but just for the sequence I think, not for the integers.
 
-Yes we only care about current because it is running and asking to run faster
-so we should honour this immediately.
+Finally, I need to implement p521 smoke test for testing this patch set.
 
-With this patch we don't do freq updates at enqueue anyway.
+One big letdown that I only now have consciously realized, is that TCG
+does not have p256k1 in their algorithm repository. It is the basis for
+quite a few blockchain technologies. I wonder why...
 
-
-Thanks!
-
---
-Qais Yousef
+BR, Jarkko
 
