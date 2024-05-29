@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-193877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030F48D338C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:48:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9F88D338D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2771F2873D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:48:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE14D28320E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB2D174EE2;
-	Wed, 29 May 2024 09:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0BB17557C;
+	Wed, 29 May 2024 09:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="QcL+0SJV"
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2071.outbound.protection.outlook.com [40.107.13.71])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="qoxTJSlH"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2082.outbound.protection.outlook.com [40.107.21.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2847715FA8A;
-	Wed, 29 May 2024 09:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.13.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E230C16EC12;
+	Wed, 29 May 2024 09:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.82
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716976078; cv=fail; b=eJJXEGCtZoupT3AVxLvdMz9xucIhAF/0wBl1/mJBL17RL0mCvi+4gXm771Eh3ezxakBiJWJpGzvI7vxCnDJOFzGHHI0ZFUIRfdKo8SDkQr+pxDWtwPg+yeDYky9HNaOEwis0SfrQJGYwT9Dvea3nAJ+A6gOeFhjQfiun3wVV2cE=
+	t=1716976078; cv=fail; b=mxMCf/t67r0gx8jhHTOXfzg65M935jx30TsiQcadBYqJrL+eyqpT5vgMhZMD7QxTwAlZrRZXh56jMDCVcUybUbkPaC824t9U1nl/otRn3S2m1DQ7FZI5tdVATHv3pi6DfMJyjbvFfWZ9WREVB1Hf8YQVk2zjINBsu06KvGnBzgc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716976078; c=relaxed/simple;
-	bh=2FuTfbP8zlAPC1OSWLFqlXwCGfe1tqulXZF9pZY0Umw=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=IJgG+qLTS59BA3M2bgSDMD4PkuP6b0lnkFLK4zJM5G80VsPjeTIn8MPOeT5nOtNKo52sHjUl0k+PhkAOsPhQMlczj+uSHMEJcRd7cNnd1Gp2kGU8MnOx6UJ8fcrvEO2Th7iNoYpns2HSDVR/Y1VFtspD3b2dTauWuY4atDWHeBs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=QcL+0SJV; arc=fail smtp.client-ip=40.107.13.71
+	bh=QtFI7CreFFbBGPrCfYrDu+3YvF2hDagPnDTWtnn68Xs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=IWRMyMW4VVINggPSU060IPA6QxO2s7KqpqnOw+kiQ1VR6hzdyF5PLtrCAeG2FvYP0XJahgw+is9gt4ltqhXzt+tZe+KH64H2fZXAoGrTIn6yrSHsBNCbMur+t1/TbNtcqAs+I5RD221QXq06HFmIIa4gSLdgp3WDfIElYaTnR4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=qoxTJSlH; arc=fail smtp.client-ip=40.107.21.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UO/2GZLN0dx9NA7KmiSdBGufpH61+gQIJhjXLRzrPoOiiK1e8jCpFJbfG9h7IRl/bgtCFIW4nTD3BJfaDyyk0h22eN7uXoCyjx/4Vlr66SqRseSbIfoRLxh+8f7tAZGSH2oS0/qlvG/0yyrtJmz6Z2PyPwrsZ8eMOdZz2CcyPn2oMcz3UhJSgN0kTHXFH0kgJkdaF+ldfWxf23UJfRxs/xEIVsKkXj5xYZnI0atZfK6NPwH496hF6nYHrVMRZ1eM7m4Gsz7IQPlfvNir98tUv0RNtMq/AoCyUiX50/ZsYwla3po17hHmgpBo8L29IBeRxcoDW33VoKgNxVh5DL2YUQ==
+ b=eFg2suisJvfPuq9j8ubs3zpDf6zVmblSJmcCfNQizytjFg/oFIpfD1rO70ajRx/ZmrLjba9U9zTF+nsyzYfBrC6UyAjrSUV4UBzlPNZjQ8fWMkh9chT2m4ofeQ+kLNe8hA9P1p26PtckvUE+YZM2BRcvVtLFt/CQnaegdNJPGpT1fOYcg8lBMjCbZx/2Z/KY6bp9tqbzsEIOuCitMSPeu8a0eAJrxeDntQdk5Y6qu+U3uovDei4ZwDBycUNDnmniQ/hO2yQfLS2KrCuSe5sUj+FWxqsTFJ2J3SQLbAZIekpAMJ6KbyNHN1RwqJSzW/Yjv8vgr3C6crZGLp3zrC1bpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7b0fIg7fxl2jRGfHlxDRU/BLK0jh0Si0kFxV60/4bKM=;
- b=CRyxF/o80+hJd9en+R8hjJOsUB/uO1kfhC0GttkB7W1vaBj51ObHQt//Fj4zgVl6uYw7tG/KDkbCN0fI8VEr0d7AJqwonE9L/HQiZ1jssy8Z7y+Nhlkx/IVawjbIRRnK3JpuG5WtGOZYLqanM65s8IRBB+u2ox/7O6/boDk4zq2zE7/X9Fc8dY/ETBpM5nSaVQCsIfqg5IbxliUcJVzz6d2FFjpCXpu5bEroKaDHmLJb+/m8HfouOWMttseZSqiZXo8qknDz/Tg8sj7VxSsyiIjgrm1AcUEMwvyvFYzzp7XJCyN7T1q5E890c1JnEE56k00vRp8oarRjmWeZOscCKQ==
+ bh=N4tRu2bF+DkzMwBEDj/T9HHanHKPhHWvbUHJifa09Jo=;
+ b=Zxo4SgjRZneC4v3GGHknWf/Q6mLfHB9weJs1tO34KvKRoSGCQyF6CVzvgQwur+FHpwbtz9OORVqjRPOJbA/PnW5al7fUxu7scaFQcLH+51/h017FUsr6jp4KP9eG4qayIsOilqO7ahFDkrKcSEFcGP6EPSyuz/YpQ89+hiI92g9JoltPEVdORd1PvnmV3dWdHsMpfd6B6HTfXO5YFRW/39yu0EZqQIABu9GJQl1qVLsm5L9+DT+WZmS8GYztZ1PaZx0uB7hffFpjTjuvW8yHhTY66YLBN9l8xwC0HV/nGGkHW7vxxJbhTFxRLC8Yk+Oxnf4bNBR+pC1K3pnHP9kA2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  195.60.68.100) smtp.rcpttodomain=kernel.org smtp.mailfrom=axis.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7b0fIg7fxl2jRGfHlxDRU/BLK0jh0Si0kFxV60/4bKM=;
- b=QcL+0SJVVQHoeH2/bMPn/FR85rfz3p86PmxWk4r8PSzSeSDkKJLu72jAJgaG1oVW52xW38ricZwZeQRg1iJsEn/7x57LKdC26iBkUsq61sOOmaJwm1fobh7Yi3GP7WqBUTai/g9rJHelIFIvNS3xc+VRiT9t5R3ml6QIga/shng=
-Received: from AS4P250CA0007.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:5df::11)
- by PA4PR02MB7087.eurprd02.prod.outlook.com (2603:10a6:102:10c::15) with
+ bh=N4tRu2bF+DkzMwBEDj/T9HHanHKPhHWvbUHJifa09Jo=;
+ b=qoxTJSlHPcKGaPT1EfVxHNqfHHZJTEYWIURsK3/Ocan8eLuzXuQfExvdOH6WNVjyKl0/lmUEsWU5EVol9wfAt34PHXyrn/fBLogB/7TTFVZ4fjpt8JNIszEwo8hGP5cFC3Z0S4SZ7+DJU7UCp0gCCHUxFxZTfesGbMImw//F7e4=
+Received: from AS4P250CA0003.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:5df::19)
+ by AS2PR02MB10374.eurprd02.prod.outlook.com (2603:10a6:20b:545::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Wed, 29 May
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Wed, 29 May
  2024 09:47:51 +0000
 Received: from AM4PEPF00027A5D.eurprd04.prod.outlook.com
- (2603:10a6:20b:5df:cafe::c) by AS4P250CA0007.outlook.office365.com
- (2603:10a6:20b:5df::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.18 via Frontend
+ (2603:10a6:20b:5df:cafe::e2) by AS4P250CA0003.outlook.office365.com
+ (2603:10a6:20b:5df::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19 via Frontend
  Transport; Wed, 29 May 2024 09:47:51 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
  smtp.mailfrom=axis.com; dkim=none (message not signed)
@@ -64,23 +65,26 @@ Received: from mail.axis.com (195.60.68.100) by
  AM4PEPF00027A5D.mail.protection.outlook.com (10.167.16.69) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.20.7633.15 via Frontend Transport; Wed, 29 May 2024 09:47:51 +0000
-Received: from se-mail02w.axis.com (10.20.40.8) by se-mail02w.axis.com
+Received: from SE-MAIL21W.axis.com (10.20.40.16) by se-mail02w.axis.com
  (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 29 May
+ 2024 11:47:50 +0200
+Received: from se-mail02w.axis.com (10.20.40.8) by SE-MAIL21W.axis.com
+ (10.20.40.16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Wed, 29 May
  2024 11:47:50 +0200
 Received: from se-intmail01x.se.axis.com (10.0.5.60) by se-mail02w.axis.com
  (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
  Transport; Wed, 29 May 2024 11:47:50 +0200
 Received: from lnxamnaw.se.axis.com (unknown [10.92.129.190])
-	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 5FF762225;
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 690F1AF6;
 	Wed, 29 May 2024 11:47:50 +0200 (CEST)
 Received: by lnxamnaw.se.axis.com (Postfix, from userid 12778)
-	id 5B760206558; Wed, 29 May 2024 11:47:45 +0200 (CEST)
+	id 5F2E32066B0; Wed, 29 May 2024 11:47:45 +0200 (CEST)
 From: Amna Waseem <Amna.Waseem@axis.com>
-Subject: [PATCH v2 0/2] hwmon: (ina2xx):Add Suppor for passing alert
- polarity from device tree to driver
-Date: Wed, 29 May 2024 11:47:43 +0200
-Message-ID: <20240529-apol-ina2xx-fix-v2-0-ee2d76142de2@axis.com>
+Date: Wed, 29 May 2024 11:47:44 +0200
+Subject: [PATCH v2 1/2] dt-bindings: hwmon: ti,ina2xx: Add
+ ti,alert-polarity property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,10 +93,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAL/5VmYC/2WNQQ6CMBBFr0Jm7Zh2Wqmw8h6GRcEikyglrWlqC
- He3krhy+V7y318husAuQlutEFziyH4uQIcKhsnOd4d8KwwkSIsTabSLfyDPlnLGkTMq7UytdD3
- 0VENZLcEVvRevXeGJ48uH936Q5Nf+Ws1fK0kUaEyve3Um2YjxYjPH4+Cf0G3b9gHhq8vnrQAAA
- A==
+Message-ID: <20240529-apol-ina2xx-fix-v2-1-ee2d76142de2@axis.com>
+References: <20240529-apol-ina2xx-fix-v2-0-ee2d76142de2@axis.com>
+In-Reply-To: <20240529-apol-ina2xx-fix-v2-0-ee2d76142de2@axis.com>
 To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, "Rob
  Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
  Dooley" <conor+dt@kernel.org>
@@ -102,89 +105,97 @@ CC: Krzysztof Kozlowski <krzk@kernel.org>, <linux-hwmon@vger.kernel.org>,
 X-Mailer: b4 0.13.0
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A5D:EE_|PA4PR02MB7087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7249e3e6-8e39-4bc9-cbaf-08dc7fc467e4
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A5D:EE_|AS2PR02MB10374:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e2725f1-ad43-49de-7abb-08dc7fc46814
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|376005|1800799015|36860700004;
+	BCL:0;ARA:13230031|376005|36860700004|82310400017|1800799015;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eDNsWkYyczRWVHhxYWQ0UzFmTFUyK0kveG5BdnpCUElzSnpLZUhxd2NJU3lM?=
- =?utf-8?B?SFhnT1NZU2VxLzlWSXA1Y1RVejluZ1ZuREdtd3dpbGdEMVlzRDI2eEZaYnZT?=
- =?utf-8?B?a0haUWVrN0dYZGRTTis4eWk4OHlVTy9oaFRsbmdsaXhmY0N2MUxNNkRpVHRT?=
- =?utf-8?B?Vi8xZzlnRVFuQ3gzeEJIVHZyNmdPRE4xeU9GcmhRTktCZ3N5d0JtQW5SZjJS?=
- =?utf-8?B?b09Pbzhkc3dUVmRWMEpTNmZCR1RQT3Y2eGZYeXRSMzZxS3BjMitGaXhxY3E2?=
- =?utf-8?B?ckJ2OXVvWWhkNUoySnF3VWZpazFCdFdCdDA5VE1Dbkp5MU90VVJCS013ejZV?=
- =?utf-8?B?NjE4SXR5YmlEQXd1OWROcU9ic21xa0FTTGtmYzRmOC94VjdwYloxeGNjL3dp?=
- =?utf-8?B?RXJlWUtDRFVKL1JEVDVtK1d3Y0ZhYkY3TUVZU29TekxsaDdQSkMvb1BIdW5R?=
- =?utf-8?B?TVRuTFJMZ2tJUEluNExicUIyaFVnOE5ZYVBIRnZ1clBiUGhRWHFmcmx0UzM1?=
- =?utf-8?B?MnRCWUUyZlZGdVBlbzNjaCtYRXlwemtQTU0rWmF6VTFObFJhWmRxQWd4SHhJ?=
- =?utf-8?B?K3pyL3FJN0QxZkF0MXdmbFNhR1dRTzFFTEcwYTBRaTJzTWo3WHAzZjZrNjAv?=
- =?utf-8?B?NkZIMTR0ZlQ1OTFHTStRL1hRTlI5RmY0VHR5RkJMb3FDeFlHL2JyMjZSOFFm?=
- =?utf-8?B?K0hZWWNEdTdaWkZEakxWMldmVlJCN3gzTnF0WnZnRnh4QjNteTVXY2JvZDZN?=
- =?utf-8?B?ajQwc0hQNVA4ODViZjR0VFNSempVbFJNcXJIeEErSkJyNUlmOVhBSzNyNVlI?=
- =?utf-8?B?OStvY2tVR0tKWWlFVzRsaExyZzdmbk1sS3NZZmlib05yZjhQWlpwNG9uRjcz?=
- =?utf-8?B?YUJlQ0w0eHZ1d3B3RDV4alhoRStZQnQrT3NzUjFibUNQRVhoMm94Z2pIS2VT?=
- =?utf-8?B?SEI1QzNLSS9wL2hPZ0lkSUZjRS9LT1U0eWZvbWlXUGZ5cGlZRHdUalllRHh6?=
- =?utf-8?B?eEdTQm1YNjlBbDZ3WGJYSWVBN29XZC83cmV4c3RjclVvTmQrRWRYMTZhVjBE?=
- =?utf-8?B?ckZBM3pXQTE5UUJQL3plZEVLdHVuTGUzZ1ljY3pBTWVyY3FwVmI3OU1BNW55?=
- =?utf-8?B?QzhlOHpGNFlLTjVIbC9pRUNOemZ0eVA4RzViTUFzcmx0RmhUVnUrZVFXOThO?=
- =?utf-8?B?OWM1U2JoNmttUjdQMmpDTnhvOHR4L25sM2c1eEFTY28xaExlbTgyckJvd2hJ?=
- =?utf-8?B?WUJDendGMTJ0OTZSRmw1Q21WcEszaTB4YWYwRUUrK0UrZldKRjA5TGErRjFL?=
- =?utf-8?B?dHR3elNyZ0UweWpkSGI1WEdWSkRhMHFrMTJVYmlDUGY5UDlZS0tYaGxUd0I4?=
- =?utf-8?B?TzZETGs0ZVZuTTU2RWl2NkJLckZIMDhMSHRoZlFWRGhlWGQwMk13cklvK01r?=
- =?utf-8?B?K0lYMlVpM3hBWlZ6NkJlM1g5L0Q0aGJlZldWSDhjY2ZvUVJaK294SkdNNmd5?=
- =?utf-8?B?ZDNFVW0yZ1RockFvSjA3djliaDFOMkVGcEhmUTFmU3pYb21VMEM1SFVyQ3pz?=
- =?utf-8?B?VVgyY3ZReUkzL1ViVUh6emhJbVlSNGtVV0p0ZEt4N2R6UXBoTGVIRUVUUW9t?=
- =?utf-8?B?SEx0UUk1L3IrK0hoWlhZbmlLYm9MT3RJdDBXQ0R1TG1RVjJMOGJNMHZDRjlC?=
- =?utf-8?B?TC9kdlVwZUJmZTdGOFJxTlZFeTBtK3IwcHUzdHM2a3ByVE9KblBRcW1HYTd2?=
- =?utf-8?Q?/G/nxJm24oS4vlKHic6qeJdWOtpDd3MNPawdNbb?=
+	=?utf-8?B?OERWblIwVFNIa0RBQTZUY29jb05SVTdhOEllTWt3NWltZFVFQjVkNmZaaFRs?=
+ =?utf-8?B?QTFSQmY4THZSR0hSQ1l4NmVYTitydGJVcHFDejg2NCtoRXlISUExblpJUWtO?=
+ =?utf-8?B?akovblpVL2o5bWEycXY1Qy9vbE9kbUtGM0oyOWU3VFlTbHp3QXQzR1NYazYx?=
+ =?utf-8?B?T0gvOFg4QVVOMlIyZGpBcCtDcWhqOVhiM05hU3pGMEl6emFrOVV4RmdtWkpt?=
+ =?utf-8?B?UXhQYTB5cHo3NVNtTFFkeitDOGVsZXZvL1R2MkFqMndNMXFWd2tvVTJtcTNi?=
+ =?utf-8?B?WlJhaTFwWld3YU54RFNiZU9rVGhaQUxac3Rqekx1QlhTNzRiazdBNzgwdmNw?=
+ =?utf-8?B?MTcvS2NPdVI4Ti8rUnZqRnQ0RGVReHo1TFkydHVlT2ZYd2k4dW5sYmFhejgx?=
+ =?utf-8?B?b296S3Ixemhpb0lvemV3NVpZU2FTaFcvdzF2bm4rZzNoWFpLM21SdS8yRHBK?=
+ =?utf-8?B?UHBxNHg3TEt1cGFwaUw2a3dvY1BWSGdiRWNGRmpVWjBmWTBSNEtsWVhUeDVK?=
+ =?utf-8?B?L004bEVwckE5eDJtY0VVWktuaDhQd0JiSVYxcFUvVEVzQ3pTZ0ZLaEZVSW0y?=
+ =?utf-8?B?OVJZVU83WDVIeXM1SnRSNFFiam9kbFlSbmtLY0xTSmZxMFA2ZDZITnk2L1Ur?=
+ =?utf-8?B?ekdUeWFaOWVMUnF4VjdDT0xOUkpTZTBzb3RBZXhYV051VStSanBTUmtuM2sy?=
+ =?utf-8?B?YWE3OTEzalZ2SGNVNzV3a0N2ZXF3K0QzTjJtT0FUWGNsUW9taEYyS0FReXc4?=
+ =?utf-8?B?V2FUUTJOdG9XT09hUzQrV0VkbnprQkRXWWovMGMyamhYLyswNGhLaEQxRGtP?=
+ =?utf-8?B?OEd4YjNqUS9iV2s0NmMzTXplWFRFQ05MayttRVZ3SXVmSHZraEQ4aWFidHZD?=
+ =?utf-8?B?cnBDQjJKUkg1Ujc2cGo4ZjRvMVY1ZHhta0JXak9HM2RLU05HTUFsaE5GZ3hK?=
+ =?utf-8?B?SDRnUmEwZEdOTjdTKzhqZDgrL3VKeEl3QndNTHNKeC9YQWJhK2d5T3ltbWRT?=
+ =?utf-8?B?eGhGTDJPT0dPalpUbExRbkwydmRhVElvYTE1MmVOdDJWVTMwNTVFdzlSZ3g1?=
+ =?utf-8?B?a1BHRGRQb3dHOUFjZzRWTzRMZXBLRlNGcWFWL3FNVlpYNVd2elM5SU9VWkYv?=
+ =?utf-8?B?KzBTTkxIQ1hHdDRqWTFmZ3c2VU9KVEg1eElteU9IT2RtWUxuK0dqS0ozM0RH?=
+ =?utf-8?B?UjBjZ2JaQXpJbzZ1cTRpU1ZTZWxmaURqY2JZdzNJUVd1dGVZMy9MOWxCb25V?=
+ =?utf-8?B?Vm4wSzkwM3VvTlloVUdXaDRUYkhvZG1sMitNSEltODNNSStXS2YzUURJNWdt?=
+ =?utf-8?B?RU4wSFJ4UjNDTWJnOUxTTjZNcWs3c21JcVpiTWoxcmpIbjdhWXorb1luUWdt?=
+ =?utf-8?B?ekVMM25QOEgvTEI1M1F0L0hESzVKZDF3KzF0emlSekw3MlF6Q0ZqbmtmK2sz?=
+ =?utf-8?B?U29WbFE4SEc4MlZ4Y1pIc1Jyd1FKdVhTa1QvcWdSRHRxN0ptemlXdkRnQ3g0?=
+ =?utf-8?B?b0dKajV5YW5JNEE5MXdnTVM3bVp6WXFDdEdTamVUWER2eFpDQlZrM2RRVzFY?=
+ =?utf-8?B?aEU1K3pBTE85bkJRVEtkSnFETTRkWE1pMUJJVHhZS2s5aFU1QlBBYkEvYWV4?=
+ =?utf-8?B?dnpxcGtmQWhhSy9rbU96MU1uNTVkT3hGMExWd0FKNW9LUHdEUjBXMWxkN1dW?=
+ =?utf-8?B?V3J0V1VxQ3c5dng5SGJoUkZoSmszcXFLRlRzcU0vMm42KzVIbk53VVN2ZlNW?=
+ =?utf-8?B?bml1V2pVTEJ5QVRPdjEvUDlIZnF5TzRQeGg1UW9BSmhQQ2cwL3FZRFVEUWRH?=
+ =?utf-8?Q?4pGaBkVa7LUmnkQyAqJGV0IYjbnWq62QSynPQ=3D?=
 X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(376005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400017)(1800799015);DIR:OUT;SFP:1101;
 X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 09:47:51.2820
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 09:47:51.5945
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7249e3e6-8e39-4bc9-cbaf-08dc7fc467e4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2725f1-ad43-49de-7abb-08dc7fc46814
 X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	AM4PEPF00027A5D.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR02MB7087
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB10374
 
-The INA230 has alert polarity bit in Mask/Enable register which can be
-configured to be active high or active low depending upon the requirements
-of the hardware using this chip. The patches in this series adds the support
-for passing alert polarity value from device tree to the driver. Alert polarity
-property is added device tree bindings and the driver is modified to read
-this property and set the Alert polarity (APOL) bit value in Mask/Enable register
-of INA230.
+Add a property to the binding to configure the Alert Polarity.
+Alert pin is asserted based on the value of Alert Polarity bit of
+Mask/Enable register. It is by default 0 which means Alert pin is
+configured to be active low open collector. Value of 1 maps to
+Inverted (active high open collector).
 
 Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
 ---
-Changes in v2:
-- Add vendor specific prefix to alert polarity property in binding.
-- Minor improvement in description of alert polarity binding property
-- Remove usage of mutex while setting alert polarity in Mask/Enable
-  register
-- Correct indentation
-- Link to v1: https://lore.kernel.org/r/20240529-apol-ina2xx-fix-v1-0-77b4b382190f@axis.com
+ Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
----
-Amna Waseem (2):
-      dt-bindings: hwmon: ti,ina2xx: Add ti,alert-polarity property
-      hwmon: (ina2xx) Add device tree support to pass alert polarity
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+index df86c2c92037..5a16d2d94587 100644
+--- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
++++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+@@ -66,6 +66,14 @@ properties:
+     description: phandle to the regulator that provides the VS supply typically
+       in range from 2.7 V to 5.5 V.
+ 
++  ti,alert-polarity:
++    description: Alert polarity bit value of Mask/Enable register. Alert pin is
++      asserted based on the value of Alert polarity Bit. Default value is Normal
++      (0 which maps to active-low open collector). The other value is Inverted
++      (1 which maps to active-high open collector).
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1]
++
+ required:
+   - compatible
+   - reg
+@@ -88,5 +96,6 @@ examples:
+             label = "vdd_3v0";
+             shunt-resistor = <1000>;
+             vs-supply = <&vdd_3v0>;
++            ti,alert-polarity = <1>;
+         };
+     };
 
- .../devicetree/bindings/hwmon/ti,ina2xx.yaml       |  9 ++++++++
- drivers/hwmon/ina2xx.c                             | 27 ++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
----
-base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-change-id: 20240524-apol-ina2xx-fix-34e76346cb26
-
-Best regards,
 -- 
-Amna Waseem <Amna.Waseem@axis.com>
+2.30.2
 
 
