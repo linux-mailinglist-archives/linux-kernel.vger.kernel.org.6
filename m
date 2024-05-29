@@ -1,54 +1,69 @@
-Return-Path: <linux-kernel+bounces-193905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC478D33E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:01:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D3F8D33F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A411C2264E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA1E286DA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95689179957;
-	Wed, 29 May 2024 10:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D091217A937;
+	Wed, 29 May 2024 10:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfbNOE2E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Hrw8qRLH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5A6178CCD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE231A60;
+	Wed, 29 May 2024 10:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716976871; cv=none; b=Trrs6NAbVDYbAp8YlZOdglx8Gn0czX8chg8KzNJ2UEpq/aQ6Pbsem4sSQ+aBe8MJhjbJ/xb6aoGDCPyOjGggr2t4i5dLNY9a9AhUff9hK0IcoHtyOSMGTi9s3c7fC8HkzMmCC0PGdnruuFQOAtJHoN+WE2ReVecGu/EkvtZ29ac=
+	t=1716977033; cv=none; b=H6/gfdHu1bQ275ScdjpoN9K9B0MnHb6saeWsOt0Ha5jgZK1NEle0LUmGkPTc569gOuarNVKF+LtCu+RlslNjuW8gqf0RLX4HzM1DswpEy2hfWwQW32NRUWTZBoU6clfRlj674M+Y4Cu4s7FWLX4b/6a0oa7wGq14HKMQ2jUmGUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716976871; c=relaxed/simple;
-	bh=L7R4kCrVdkA/TC10eCp9qRWAc3qUaQIFe050f7cF73U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lq7X+9RUyHZFp4rVxlLUSYobS4B3hma0af8h6ICjUTnpk6/cMpAP3iLGaYG40GKQR/yTFzYneNP7tYPqbP5E9mdzNAFeHf+uMTcfUr0EUhPH3lSUhrQF1cvalXUZmgWQfgFwygGilmyxtERPQsCZ6p2BzRVQcoMXlS8vmGhNzX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BfbNOE2E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 075F8C32781;
-	Wed, 29 May 2024 10:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716976871;
-	bh=L7R4kCrVdkA/TC10eCp9qRWAc3qUaQIFe050f7cF73U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BfbNOE2EwJ150dW1NbUWRK2354DfLSxWJs1lbcASlZb5gHhuG/g/xEFu7peFMyXz3
-	 MUOQ0/Eg37WklBN7V6ompNAq5r9WRqqIBGFepdl57/sbYnKGlbsVgIT6xdxPPTVtdo
-	 Oqs/j4YuMw2uw//COEEvDSX9c37reqZg4Muk8z3Y3qoSTffYzVc/hoslnZZ4kanfN4
-	 C7nwn1fOXM9KGSSOH5eUoCQn3Dzt7piLxMfLwkBRQfFXd2U5L2VOgWpozP8dc8DrTG
-	 px90Tk6pAErwd7NT+nwxl2GnYIOyBqNflSkESzg/dmu6bRGBLw5KFQeriGuwci33bD
-	 j3xM2DlRJ/v5g==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	chenyuwen <yuwen.chen@xjmz.com>
-Subject: [PATCH v2] f2fs: fix to truncate preallocated blocks in f2fs_file_open()
-Date: Wed, 29 May 2024 18:01:03 +0800
-Message-Id: <20240529100103.329778-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1716977033; c=relaxed/simple;
+	bh=NJpAF6QFUxlk0MavKXR0ryC/gmNuSQVWCAV1AOyOdDc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ve/OQjYkzkrwWvZGqfWUt4UqyOTmUmY/EMevd1dYvpm6bTga17IT+YAKpdbPg7XwuF819G+WlA5RkL/O1VKy1zY2ewnfjgsD2SqzB1r4ZPw6tlf8dIiAxHlPkSNJsSE4sVWRAAdIqjIOtD0Pl0onopD6xswyIVbrODDO7wNEL9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Hrw8qRLH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T7MING015684;
+	Wed, 29 May 2024 10:03:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=90voEcY5RKzH2Ai3yNSH8J
+	R9TUrfx1YU3v2z/zT5j58=; b=Hrw8qRLH8CNkh8ecZM90yORb1IXclZnxP8EkD9
+	xlacHCYhdb67mnEZBTd/ruyiYb/00oGEBQyZzb4bhP61YfCFDSzzKPOZKrNp6Gy9
+	xqQc8CI1djZbZCAkbjla8jT5Kpvmf2LrmMd6WQkcoeo+qxg9d/auvmSoegwNzkRh
+	Kc/6v80oN7okYuxVaJgRkSUvDqrMIQiWiKiKgQV9VA9PGGYg3gdaZtpAxtITsmUV
+	h6V7roYcD/LLSAxR/qgvxnmTafzOQZLzKi9NxQrlgG3XHzcstSoC6BFznn+0+G9J
+	FlCCClW3REA4QS5oOBrGZNsaPAp07jZwpZcYfv6lIlqpy7hA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws0a8u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 10:03:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TA3keY009633
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 10:03:46 GMT
+Received: from tengfan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 29 May 2024 03:03:40 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Tengfei Fan
+	<quic_tengfan@quicinc.com>
+Subject: [PATCH v2 0/2] arm64: dts: qcom: sm8550: Update some
+Date: Wed, 29 May 2024 18:02:54 +0800
+Message-ID: <20240529100256.3158447-1-quic_tengfan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,152 +71,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VnTHfA7z6y2s3YwHoRzvvs7eXjBhgq1N
+X-Proofpoint-GUID: VnTHfA7z6y2s3YwHoRzvvs7eXjBhgq1N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_06,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=285
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290067
 
-chenyuwen reports a f2fs bug as below:
+Move usb-role-switch to SoC dtsi, and remove usb default dr_mode.
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000011
- fscrypt_set_bio_crypt_ctx+0x78/0x1e8
- f2fs_grab_read_bio+0x78/0x208
- f2fs_submit_page_read+0x44/0x154
- f2fs_get_read_data_page+0x288/0x5f4
- f2fs_get_lock_data_page+0x60/0x190
- truncate_partial_data_page+0x108/0x4fc
- f2fs_do_truncate_blocks+0x344/0x5f0
- f2fs_truncate_blocks+0x6c/0x134
- f2fs_truncate+0xd8/0x200
- f2fs_iget+0x20c/0x5ac
- do_garbage_collect+0x5d0/0xf6c
- f2fs_gc+0x22c/0x6a4
- f2fs_disable_checkpoint+0xc8/0x310
- f2fs_fill_super+0x14bc/0x1764
- mount_bdev+0x1b4/0x21c
- f2fs_mount+0x20/0x30
- legacy_get_tree+0x50/0xbc
- vfs_get_tree+0x5c/0x1b0
- do_new_mount+0x298/0x4cc
- path_mount+0x33c/0x5fc
- __arm64_sys_mount+0xcc/0x15c
- invoke_syscall+0x60/0x150
- el0_svc_common+0xb8/0xf8
- do_el0_svc+0x28/0xa0
- el0_svc+0x24/0x84
- el0t_64_sync_handler+0x88/0xec
-
-It is because inode.i_crypt_info is not initialized during below path:
-- mount
- - f2fs_fill_super
-  - f2fs_disable_checkpoint
-   - f2fs_gc
-    - f2fs_iget
-     - f2fs_truncate
-
-So, let's relocate truncation of preallocated blocks to f2fs_file_open(),
-after fscrypt_file_open().
-
-Fixes: d4dd19ec1ea0 ("f2fs: do not expose unwritten blocks to user by DIO")
-Reported-by: chenyuwen <yuwen.chen@xjmz.com>
-Closes: https://lore.kernel.org/linux-kernel/20240517085327.1188515-1-yuwen.chen@xjmz.com
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
 ---
-v2:
-- only handle FADVISE_TRUNC_BIT for first open()
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/file.c  | 42 +++++++++++++++++++++++++++++++++++++++++-
- fs/f2fs/inode.c |  8 --------
- 3 files changed, 42 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f463961b497c..9118a4e2db6d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -803,6 +803,7 @@ enum {
- 	FI_COW_FILE,		/* indicate COW file */
- 	FI_ATOMIC_COMMITTED,	/* indicate atomic commit completed except disk sync */
- 	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
-+	FI_OPENED_FILE,		/* indicate file has been opened */
- 	FI_MAX,			/* max flag, never be used */
- };
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5c0b281a70f3..d35190994a67 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -554,6 +554,42 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	return 0;
- }
- 
-+static int finish_preallocate_blocks(struct inode *inode)
-+{
-+	int ret;
-+
-+	inode_lock(inode);
-+	if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
-+		inode_unlock(inode);
-+		return 0;
-+	}
-+
-+	if (!file_should_truncate(inode)) {
-+		set_inode_flag(inode, FI_OPENED_FILE);
-+		inode_unlock(inode);
-+		return 0;
-+	}
-+
-+	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	filemap_invalidate_lock(inode->i_mapping);
-+
-+	truncate_setsize(inode, i_size_read(inode));
-+	ret = f2fs_truncate(inode);
-+
-+	filemap_invalidate_unlock(inode->i_mapping);
-+	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+
-+	if (!ret)
-+		set_inode_flag(inode, FI_OPENED_FILE);
-+
-+	inode_unlock(inode);
-+	if (ret)
-+		return ret;
-+
-+	file_dont_truncate(inode);
-+	return 0;
-+}
-+
- static int f2fs_file_open(struct inode *inode, struct file *filp)
- {
- 	int err = fscrypt_file_open(inode, filp);
-@@ -571,7 +607,11 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 	filp->f_mode |= FMODE_NOWAIT;
- 	filp->f_mode |= FMODE_CAN_ODIRECT;
- 
--	return dquot_file_open(inode, filp);
-+	err = dquot_file_open(inode, filp);
-+	if (err)
-+		return err;
-+
-+	return finish_preallocate_blocks(inode);
- }
- 
- void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 33b2778d5452..4b39aebd3c70 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -610,14 +610,6 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 	}
- 	f2fs_set_inode_flags(inode);
- 
--	if (file_should_truncate(inode) &&
--			!is_sbi_flag_set(sbi, SBI_POR_DOING)) {
--		ret = f2fs_truncate(inode);
--		if (ret)
--			goto bad_inode;
--		file_dont_truncate(inode);
--	}
--
- 	unlock_new_inode(inode);
- 	trace_f2fs_iget(inode);
- 	return inode;
+v1 -> v2:
+  - Splitting a patch into two patches based on functionality
+  - Remove some changes that have already been mainlined
+  - Update patch commit message
+
+previous discussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240513084701.1658826-1-quic_tengfan@quicinc.com
+
+Tengfei Fan (2):
+  arm64: dts: qcom: sm8550: Move usb-role-switch to SoC dtsi
+  arm64: dts: qcom: sm8550: Remove usb default dr_mode
+
+ arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 5 -----
+ arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 5 -----
+ arch/arm64/boot/dts/qcom/sm8550-qrd.dts                     | 5 -----
+ arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 5 -----
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 1 +
+ 5 files changed, 1 insertion(+), 20 deletions(-)
+
+
+base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
 -- 
-2.40.1
+2.25.1
 
 
