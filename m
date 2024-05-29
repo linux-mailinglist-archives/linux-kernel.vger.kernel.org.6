@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-194480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDDB8D3CF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:39:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614018D3CF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3946A288E96
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06CF1F24F90
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8198918733B;
-	Wed, 29 May 2024 16:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwqB1+e3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5D91836E3;
-	Wed, 29 May 2024 16:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506BA19069F;
+	Wed, 29 May 2024 16:36:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0D4190683
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717000492; cv=none; b=EbJI0sMtn92Py6Rzz6QJN7gckOpjsQaUkI/PXPJPCvHRtA0HwutBe4WyBYZ2aggBwxhR6X+c98ZPCoYJWdIFu51pu/DqOdXcsZxgsGWgRP372+3LvxUU8aA9f1/l+PCKXNtBJFiaGZSW4gFGo9LbPNan7XsMfyXXxc6+vqcThIU=
+	t=1717000601; cv=none; b=R/EmlxoOVps5Y0eKW7bEAEMQt2y23b14WEry4xt8LW5cJGjEN8dbLep7Dwa+ADlnR/vxkgowTFKezG4FdbzmwIcWLNipngOGKeNJFHt4V2LW7lFzUnSoz3cdr42F6671R02vX5axqn+0/9GwYLe/ZwsNuiQWPOCjBgJJoR8j6FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717000492; c=relaxed/simple;
-	bh=VD2gswSUfZLLqKh/tx8fNLjin9G8nLP9kZDorypk1r0=;
+	s=arc-20240116; t=1717000601; c=relaxed/simple;
+	bh=N9WrYbSatpSG3LGiA7yCIjFuPYdHg8AWHSKNnwTQGrI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NbxH9cWWiJp1jcCtSSfIFwIcCIAGUTd1QRWbWZd6299ZPWg0zke8BD3ujpEDQ5Zy9VUGVGdfBUCWkV+BNchRrdozRBevnE3E7o8TW6ByF1suL8p16hHhab+FjylBDQdU4gj3pSHYZAob1apw2eoORZoFSHPVOst1ZZXBtPXHyBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WwqB1+e3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664D1C113CC;
-	Wed, 29 May 2024 16:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717000492;
-	bh=VD2gswSUfZLLqKh/tx8fNLjin9G8nLP9kZDorypk1r0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WwqB1+e3VTVgkW5jGcvDRuMF/MoxoOUBsnInvhPNLsMGm8s+HMqFcp6W/l7ET5rO/
-	 1klZhKyHv0S8fFLLxejeUAjIbu0NkJ1EJJ+4p8W/nHpXul2hNinnKPU76NGo2Tn8yx
-	 /y7pgd4kVKTP9MDl7/JV7kUlZ/lQwGTfIxwyNPTfjO8s5AxcRxUwVHPIqMvmCo280c
-	 mIFmV/1Mx5g1LIJPZoDhGPmRBAaqVSN+MYnRLzi7rTnpQSLO3axAErhdA5AOA1VYee
-	 ZdwaTZzI/ze5FsGYOD6VGCYMboLb6wR6x9YmoN67X2obMxBW35LHpqmPew7u87+umb
-	 oQDtMN7N5UDVQ==
-Date: Wed, 29 May 2024 17:34:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Gustavo Silva <gustavograzs@gmail.com>, jic23@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lars@metafoo.de, christophe.jaillet@wanadoo.fr,
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: vendor-prefixes: add ScioSense
-Message-ID: <20240529-greedy-paralegal-86f41c376a1f@spud>
-References: <20240529001504.33648-1-gustavograzs@gmail.com>
- <8e27c8da-d856-4fab-bb12-3af07e13838e@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rp39Qbd9vh57fB4e96Zqa2dxNxj1ybiD7UEPMMCN0RRyi6PMpdziw43QApIya0ZdG0WFxmuf0mTzXyRy2KlWrYUiTW+yFJblKSVmEJUNgxvKi0YfJG9wa2nCO2gLiHb9JVpnCQZF8gT06cFFyQuJqbYBwxipYZM5HfjUJIicWHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7645D339;
+	Wed, 29 May 2024 09:37:03 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D270E3F792;
+	Wed, 29 May 2024 09:36:37 -0700 (PDT)
+Date: Wed, 29 May 2024 17:36:34 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Baoquan He <bhe@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/io: add constant-argument check
+Message-ID: <ZldZkm_bqDSZ1oS5@J2N7QTR9R3.cambridge.arm.com>
+References: <20240528120844.3523915-1-arnd@kernel.org>
+ <ZlcODqVXTDh6n0h-@J2N7QTR9R3>
+ <8ff9bc52-bf2f-4856-9335-14bf659e7e4c@app.fastmail.com>
+ <ZldE0dp7cBpZl4JY@J2N7QTR9R3.cambridge.arm.com>
+ <c63093a6-6787-49ba-ac23-8e27b4861560@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dv4KJo6oQP0VOAKM"
-Content-Disposition: inline
-In-Reply-To: <8e27c8da-d856-4fab-bb12-3af07e13838e@kernel.org>
-
-
---dv4KJo6oQP0VOAKM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c63093a6-6787-49ba-ac23-8e27b4861560@app.fastmail.com>
 
-On Wed, May 29, 2024 at 09:29:54AM +0200, Krzysztof Kozlowski wrote:
-> On 29/05/2024 02:14, Gustavo Silva wrote:
-> > Add vendor prefix for ScioSense B.V.
-> > https://www.sciosense.com/
-> >=20
-> > Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-> > ---
->=20
-> This is a friendly reminder during the review process.
->=20
-> It looks like you received a tag and forgot to add it.
+On Wed, May 29, 2024 at 06:15:57PM +0200, Arnd Bergmann wrote:
+> On Wed, May 29, 2024, at 17:08, Mark Rutland wrote:
+> > On Wed, May 29, 2024 at 02:29:37PM +0200, Arnd Bergmann wrote:
+> >> On Wed, May 29, 2024, at 13:14, Mark Rutland wrote:
+> 
+> >> 
+> >> Yes, your version addresses both failures I ran into, and
+> >> I think all other theoretical cases.
+> >> 
+> >> I would prefer to combine both though, using __always_inline
+> >> to force the compiler to pick the inline version over
+> >> __iowrite32_copy_full() even when it is optimizing for size
+> >> and it decides the inline version is larger, but removing
+> >> the extra complexity from the macro.
+> >
+> > Sorry, I'm not sure what you mean here. I don't see anything handling
+> > optimizing for size today so I'm not sure what change your suggesting to
+> > force the use of the inline version; AFAICT that'd always be forced for
+> > a suitable constant size.
+> >
+> > What change are you suggesting?
+> 
+> What I meant is that reason gcc chooses to not inline
+> the macro is when we build with CONFIG_CC_OPTIMIZE_FOR_SIZE.
+> 
+> Since it doesn't know that __const_memcpy_toio_aligned64()
+> is intended to be small after inlining, it sometimes
+> decides against it, which (with just my patch) would
+> fall back to the out-of-line __iowrite32_copy_full()
+> while trying to generate smaller code.
+> 
+> The __always_inline annotation just overrides the
+> calculation.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Ah, ok.
 
-Thanks,
-Conor.
+I think what you're suggesting is:
 
---dv4KJo6oQP0VOAKM
-Content-Type: application/pgp-signature; name="signature.asc"
+* Add the __always_inline annotations, as in my patch.
 
------BEGIN PGP SIGNATURE-----
+* Move the __builtin_constant_p check into __const_iowrite32_copy(), as in your
+  patch.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZldZKAAKCRB4tDGHoIJi
-0s+FAP0dRDD0H+qMKCNznITN6x9gudPSI8RQYPpnS7Q6/4IErwD/Z3OlFRsCG+Es
-GL0LPrYQYjEfULwIRGlArU2/NwkFygg=
-=EkT6
------END PGP SIGNATURE-----
+* Remove the __iowrite32_copy() macro and rename __const_iowrite32_copy() to
+  __iowrite32_copy(), removing the redundant logic.
 
---dv4KJo6oQP0VOAKM--
+Assuming so, that makes total sense to me.
+
+Mark.
 
