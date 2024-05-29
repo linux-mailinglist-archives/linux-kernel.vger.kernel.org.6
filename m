@@ -1,144 +1,105 @@
-Return-Path: <linux-kernel+bounces-193303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1E88D2A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:37:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F038D2A0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E297AB2227F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:36:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34FAFB22D10
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8034A15AAB8;
-	Wed, 29 May 2024 01:36:49 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2105A15AAC8;
+	Wed, 29 May 2024 01:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psB1Cnph"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E9929A0;
-	Wed, 29 May 2024 01:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A13E1B974;
+	Wed, 29 May 2024 01:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716946609; cv=none; b=XYO0ag/nkVEoSaVJswh+MQuJU+3oNVumrj2Hrtz9YkXEv0Pv1E0TWrsJeuF4qPTskSfPvoxbVX4tz72PVMK/uJt7A/OlMYIc0fdk/KtecDCaBTGrPGW6CIGB329z8ewGAg2dctYzVyFgj0WyzmoOGzqYTdVS4tw4zxZrQqnm7RI=
+	t=1716946976; cv=none; b=RRCBab3dfHQNIPiU5+qMTpeC8SBQReDvalIHkyn/tHwjiQRJAgNkBZQIAp8Xv06gKQIAxX24U+HLQmg0I4ZxHhOy3dyn3NmzDLgrRq/QWOqhtBzU4HBnbWXj+OoLHkksynaRfbJUsOjfLRQC9GpzIBW8TB62KzBJyr5b86g8p3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716946609; c=relaxed/simple;
-	bh=mpEl7XZmp7M1ZOKua3Q8W69E/fOmIpZvLeF8vm3j7CI=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fee3ScCqctSMeMYMJe7W58iK66qYc7uiVnYBW9IgPU0kjzq4/CGZHtz1q49vz08wwe5X+26h655Ln+yoAani3UF8mgRfGuumj7uI1MHNzJ0xB4oNiEvKAQt3q0h/ph3g/CeU8nAmgksApdKOAsa2ZdLZ2DM6D5kUbCwlSWKjjfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VpsMX4sWbzwQck;
-	Wed, 29 May 2024 09:32:56 +0800 (CST)
-Received: from canpemm500007.china.huawei.com (unknown [7.192.104.62])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9AA4B18006E;
-	Wed, 29 May 2024 09:36:43 +0800 (CST)
-Received: from [10.174.179.113] (10.174.179.113) by
- canpemm500007.china.huawei.com (7.192.104.62) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 29 May 2024 09:36:43 +0800
-Subject: Re: [PATCH net] ipvlan: Dont Use skb->sk in
- ipvlan_process_v{4,6}_outbound
-To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <hannes@stressinduktion.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240525034231.2498827-1-yuehaibing@huawei.com>
- <1a1b249e7d53984a3ea094cdf5b362cea3273dc4.camel@redhat.com>
-From: Yue Haibing <yuehaibing@huawei.com>
-Message-ID: <a4a6ab6a-013c-a07a-80c1-506fdefa320f@huawei.com>
-Date: Wed, 29 May 2024 09:36:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1716946976; c=relaxed/simple;
+	bh=sE0gJI150ZuuQbrkcwTftnClRrSe8hDjT2tlkzJFjwA=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=SWYXNL6CKlZ3YxeYDJZt4rgQk+ZdnteKUrGkIHKgFoHuoj2BMJ/BAetOu27b+rua8ptpPLSwjnHeyBGxoUD1aXaZBX3yRJsdD/6emH8T3gCp/amSpAXFkF95WFr3Qkrl/kkflvxHE1Ot33/YanQKDaWLkDApo+Od8C8f0OgyqWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psB1Cnph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D698C3277B;
+	Wed, 29 May 2024 01:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716946975;
+	bh=sE0gJI150ZuuQbrkcwTftnClRrSe8hDjT2tlkzJFjwA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=psB1CnphOJvhC4iVuMJ5WSTxxJ+8oKzUJlM5u0h+5ZzdZjUBoGnChk5vWIBMZhgWg
+	 yGk+uFkAxclxqX9wsO2TxM4GXxxuCsXRMjIQarjN4shXv/w7fAq895YzFwRJHQemrz
+	 DgMFCpA4NN8ufZDjPYi78GCdahk/4GcTigilxgshFlNCmPSfyiVmLY2KdTvtuMTqY5
+	 Ygalskh/fxLqcv4w1SpFUA64RxcCxOiI5nrXv37CGMLD+RYID3W02UX5HETUrusl65
+	 Xwah4GvoAjyiquBqeFX5xf9f/XqD8equRMJGJq6GjpNCYw1UNixjQOhUsEf0KzLyIb
+	 qJAO99x0AD28A==
+Date: Tue, 28 May 2024 20:42:54 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1a1b249e7d53984a3ea094cdf5b362cea3273dc4.camel@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- canpemm500007.china.huawei.com (7.192.104.62)
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr, 
+ devicetree@vger.kernel.org, jic23@kernel.org, conor+dt@kernel.org, 
+ krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org
+In-Reply-To: <20240529001504.33648-2-gustavograzs@gmail.com>
+References: <20240529001504.33648-1-gustavograzs@gmail.com>
+ <20240529001504.33648-2-gustavograzs@gmail.com>
+Message-Id: <171694697450.2956310.4053503259175533537.robh@kernel.org>
+Subject: Re: [PATCH v2 2/6] dt-bindings: iio: chemical: add ENS160 sensor
 
-On 2024/5/28 19:15, Paolo Abeni wrote:
-> On Sat, 2024-05-25 at 11:42 +0800, Yue Haibing wrote:
->> Raw packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device will
->> hit WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path.
->>
->> WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
->> Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg drm_kms_helper
->> CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
->> RIP: 0010:sk_mc_loop+0x2d/0x70
->> Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 48 85 ff 74 1c
->> RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
->> RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
->> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
->> RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
->> R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
->> R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
->> FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->> <IRQ>
->>  ? __warn (kernel/panic.c:693)
->>  ? sk_mc_loop (net/core/sock.c:760)
->>  ? report_bug (lib/bug.c:201 lib/bug.c:219)
->>  ? handle_bug (arch/x86/kernel/traps.c:239)
->>  ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
->>  ? asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
->>  ? sk_mc_loop (net/core/sock.c:760)
->>  ip6_finish_output2 (net/ipv6/ip6_output.c:83 (discriminator 1))
->>  ? nf_hook_slow (net/netfilter/core.c:626)
->>  ip6_finish_output (net/ipv6/ip6_output.c:222)
->>  ? __pfx_ip6_finish_output (net/ipv6/ip6_output.c:215)
->>  ipvlan_xmit_mode_l3 (drivers/net/ipvlan/ipvlan_core.c:602) ipvlan
->>  ipvlan_start_xmit (drivers/net/ipvlan/ipvlan_main.c:226) ipvlan
->>  dev_hard_start_xmit (net/core/dev.c:3594)
->>  sch_direct_xmit (net/sched/sch_generic.c:343)
->>  __qdisc_run (net/sched/sch_generic.c:416)
->>  net_tx_action (net/core/dev.c:5286)
->>  handle_softirqs (kernel/softirq.c:555)
->>  __irq_exit_rcu (kernel/softirq.c:589)
->>  sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043)
->>
->> The warning triggers as this:
->> packet_sendmsg
->>    packet_snd //skb->sk is packet sk
->>       __dev_queue_xmit
->>          __dev_xmit_skb //q->enqueue is not NULL
->>              __qdisc_run
->>                sch_direct_xmit
->>                  dev_hard_start_xmit
->>                    ipvlan_start_xmit
->>                       ipvlan_xmit_mode_l3 //l3 mode
->>                         ipvlan_process_outbound //vepa flag
->>                           ipvlan_process_v6_outbound
->>                             ip6_local_out
->>                                 __ip6_finish_output
->>                                   ip6_finish_output2 //multicast packet
->>                                     sk_mc_loop //sk->sk_family is AF_PACKET
->>
->> Call ip{6}_local_out() with NULL sk in ipvlan as other tunnels to fix this.
->>
->> Fixes: f60e5990d9c1 ("ipv6: protect skb->sk accesses from recursive dereference inside the stack")
-> 
-> The patch LGTM, but the above fixes tag looks incorrect, I think the
-> reproducer should splat even before such commit as the relevant warning
-> will be still there and should be still reachable.
 
-Yes, it should be Fixes: 2ad7bf363841 ("ipvlan: Initial check-in of the IPVLAN driver."), will post v2.
+On Tue, 28 May 2024 21:14:19 -0300, Gustavo Silva wrote:
+> Add bindings for ScioSense ENS160 multi-gas sensor.
 > 
-> Cheers,
+> Datasheet: https://www.sciosense.com/wp-content/uploads/2023/12/ENS160-Datasheet.pdf
 > 
-> Paolo
+> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
+> ---
+> changes in v2:
+>  - Add devicetree binding file specifically for this sensor instead of
+>    adding it to trivial-devices.yaml. This is needed in order to
+>    document that this chip supports Vdd and Vddio supplies.
+>  .../iio/chemical/sciosense,ens160.yaml        | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/chemical/sciosense,ens160.yaml
 > 
-> .
-> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/chemical/sciosense,ens160.example.dtb: gas-sensor@0: 'spi-max-frequency' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/chemical/sciosense,ens160.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240529001504.33648-2-gustavograzs@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
