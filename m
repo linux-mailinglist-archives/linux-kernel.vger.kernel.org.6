@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-194008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629728D3557
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:20:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD918D3558
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F67A28625E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:20:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C22A3B25769
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EAF180A90;
-	Wed, 29 May 2024 11:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782A7181309;
+	Wed, 29 May 2024 11:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6+VH6/r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PekxWPKT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73496180A6C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0F3180A83
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981561; cv=none; b=qWNN45Y0gLDstfKY68ZooHWkRQdDJYevxcbx9d9NdOhLwQAZI5UCAQg3YNJ94At1l7vtFH2ykqmkEIW0tkmKsN/hs5tY+/7uHkrbaC12hvAR8XEy217QDGCcE+jtOJf/rM/jY8gwZGtPMNfdHrAnzcFFywh2SndccNJ723h6sKo=
+	t=1716981562; cv=none; b=fzjzt4aMVEeu58uJXsilovQbCc23CyePLBvt1XrKoCxKhPDNTQXsVyGFi2dltUprLA9k9ygXFHrSFuygb9tGYLEmZtGzmzb4V9j3cRPBmu9/R4wxvTtlwZj03+MJWm+ZzypAE/vGthEVCHFUOKZV+4Tj+yeXLUzGrRm6cvIBW8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981561; c=relaxed/simple;
-	bh=G8bCvqh1wqCa8uGv9DTnkX6odqXl+cfD6if2DoZ6U5s=;
+	s=arc-20240116; t=1716981562; c=relaxed/simple;
+	bh=u1TfSxJfb/OshHhAS7cl9CkuPjr/yVjayHR5SnVoIyo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UrpnpmVK7/Te6ivyWxs3MMt/yxNFSgB7f8BwCJ8COHP8FdkABklEWPmfhP2APurt+lk83Q3hCq9/k6YV1vHFenB52PZBe5IbXaYXaBV1XbxYWHycU0LPjY88LT2r8bGS8W+6jewN+pT6MTtG+u9OlcUkHjegpUE63fPdoTFqCIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6+VH6/r; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=ipQB+WcZwYthD5S9RcJlzYFQ9jfwr7e6PRqqX8SJiWqyjlkni5XMrNdflZAwCqZmcm/KFECFlbnS+1HCv1xfhO36B5GigzAmCEVg/kcYC+6GsTvaNs9P5WVBPjtDCCZw4p+ZqYAaSMm42WT0EJrzVVIWDJYLOdKQom3Qnj6XpnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PekxWPKT; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716981559;
+	s=mimecast20190719; t=1716981560;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lXRirrIvNUFDVUMts2hQOYTUr+V+4XzCDnXRbx7dYx4=;
-	b=D6+VH6/rfsbp9G3uogE9uy/Aek3kjZ5/wsKcTSgBtqE+X8RAtTUehwOicGI7lESEiMfP/f
-	Zwhs6L22CpZA0DVnyu0pYTMhDFgSTRp5y7AUf0+T1+ty5yaDtEIXvXAJC0auMgJ97rCJ7/
-	icahycXB7CIg5HqNk5ZkgZY5CZyD6fg=
+	bh=O9wGKMA7pg+ELfK4C46qM4+rq+qnJqY5pRyECiTlobg=;
+	b=PekxWPKTRkzVu7/8WIJK3BxLYPPBBF9+F02JjjXzFQB44NDacb7N48NdatcRVhxxaROrQA
+	0lWBzRYf9vOQgQv2Jw6/G79NHmmNXYd+ftZfb4JrCifDSXuGCLaPo8Fnq8e1soBxETdJwF
+	BDi8C4F+zDMx1zneTgbdUzSWx51Z3Lg=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-I5NU4P9fO96nrEfFJX_p9Q-1; Wed,
- 29 May 2024 07:19:16 -0400
-X-MC-Unique: I5NU4P9fO96nrEfFJX_p9Q-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-600-YyUVCmUjPleKjz5PsgrFIg-1; Wed,
+ 29 May 2024 07:19:17 -0400
+X-MC-Unique: YyUVCmUjPleKjz5PsgrFIg-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7EDCE1C0512D;
-	Wed, 29 May 2024 11:19:15 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6752B3806701;
+	Wed, 29 May 2024 11:19:17 +0000 (UTC)
 Received: from t14s.fritz.box (unknown [10.39.193.127])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id E1F68C15BB9;
-	Wed, 29 May 2024 11:19:13 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id BA1DAC15BB1;
+	Wed, 29 May 2024 11:19:15 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -64,9 +64,9 @@ Cc: linux-mm@kvack.org,
 	Minchan Kim <minchan@kernel.org>,
 	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: [PATCH v2 4/6] mm/page_alloc: clear PageBuddy using __ClearPageBuddy() for bad pages
-Date: Wed, 29 May 2024 13:19:02 +0200
-Message-ID: <20240529111904.2069608-5-david@redhat.com>
+Subject: [PATCH v2 5/6] mm/filemap: reinitialize folio->_mapcount directly
+Date: Wed, 29 May 2024 13:19:03 +0200
+Message-ID: <20240529111904.2069608-6-david@redhat.com>
 In-Reply-To: <20240529111904.2069608-1-david@redhat.com>
 References: <20240529111904.2069608-1-david@redhat.com>
 Precedence: bulk
@@ -78,38 +78,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-Let's stop using page_mapcount_reset() and clear PageBuddy using
-__ClearPageBuddy() instead.
+Let's get rid of the page_mapcount_reset() call and simply reinitialize
+folio->_mapcount directly.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- mm/page_alloc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ mm/filemap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index b1e3eb5787de1..591d28b9f3e48 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -498,7 +498,8 @@ static void bad_page(struct page *page, const char *reason)
- 	dump_stack();
- out:
- 	/* Leave bad fields for debug, except PageBuddy could make trouble */
--	page_mapcount_reset(page); /* remove PageBuddy */
-+	if (PageBuddy(page))
-+		__ClearPageBuddy(page);
- 	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
- }
- 
-@@ -1346,7 +1347,8 @@ static void check_new_page_bad(struct page *page)
- {
- 	if (unlikely(page->flags & __PG_HWPOISON)) {
- 		/* Don't complain about hwpoisoned pages */
--		page_mapcount_reset(page); /* remove PageBuddy */
-+		if (PageBuddy(page))
-+			__ClearPageBuddy(page);
- 		return;
- 	}
- 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index ba06237b942d6..9fe5c02ae92e7 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -177,7 +177,7 @@ static void filemap_unaccount_folio(struct address_space *mapping,
+ 				 * and we'd rather not leak it: if we're wrong,
+ 				 * another bad page check should catch it later.
+ 				 */
+-				page_mapcount_reset(&folio->page);
++				atomic_set(&folio->_mapcount, -1);
+ 				folio_ref_sub(folio, mapcount);
+ 			}
+ 		}
 -- 
 2.45.1
 
