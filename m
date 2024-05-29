@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-193449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332318D2C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:36:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EA68D2C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C19E1F22811
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:36:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E00B1F23ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DB015CD57;
-	Wed, 29 May 2024 05:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192C415CD58;
+	Wed, 29 May 2024 05:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VaGQefDP"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LoHlT/xK"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7D615E5C2
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E957B15B99F
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716960973; cv=none; b=P+Kcsw8mWmc5MdtEvv99gKMLb1XpY7fMM4AOHUbJjHrw/opv25jiC8+5rNfpt3e9XbhqlIZOjWSrJAecEKvNLJsxm3+O5G06rbVRuyo/jw2LFWbQAvCt//7j/R2ltObRnOOd391cB75Bx6N28OmAVepCUw08UAuQTKKsFCmcnJ0=
+	t=1716960974; cv=none; b=WsUdK4YseZ8NGdO8KhfI5dyg+SwMdLjJ1tH69W5KGkSJMjc56V+Wn1cFvhpS9H3hvzcXW2r5gf0wu3XRDtTWJYpfsZlUGuvG+jbj2aHS+n78SVZU9bwA1tONf7Xq8ZTe1NcWGGS5ZQG4IVnm5ckYXjQLJ7sX7y4AGtClvZbWsh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716960973; c=relaxed/simple;
-	bh=WX+m07wt3DtPAOjU2K7TAng/knQriugPLDZHnttGpjU=;
+	s=arc-20240116; t=1716960974; c=relaxed/simple;
+	bh=i2g4o4FMSNI6vy56g2mVccrM+MuXNKNyXwoqmECaK9M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cVA2kPG5fv9e9z16F6THagf54Qx9dixaocCr8kmWH13cvwLDR9jNi/R6gJxMjJAeN1t2rolESf8A/gU9uIA6Gx9GuKq0ZeeHs9fmFsf6qoaJaXvspVbcoK+yk6926t2/TlhMV0HrXbxRTfQmE++mi6jjqEF8kv2NLsGzU9QXIcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VaGQefDP; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=gCYayg2BzNde7TUHHktX7lSQ1CAxY71Pfs2BOsHik4wV8I8xq7RcEz3kO+nUwOyRBCORLWfXSOkV6ZXrCcH0o+vSPruxIjWd8oZe+5AK9M1OKfuOkU/INerfhEYoZbaozW5V5BhywrQDV93bGRmFaLwDEXjQC/hopLrlFyeQJ+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LoHlT/xK; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716960972; x=1748496972;
+  t=1716960973; x=1748496973;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=WX+m07wt3DtPAOjU2K7TAng/knQriugPLDZHnttGpjU=;
-  b=VaGQefDPRkneW/E9Kbi0WwIjw2vmsXbpcmSzPcSRbGV66YqmM3cZqVp/
-   rsTdMRTgrrnJBp2tMbmBKZRUAqK90FkcmszS9LA53ibTl8V+iSPqeaDXb
-   0Myen88Qex7ersTUSyR3It0D7h9ldQyQTXIO1EVtENUJRarYOeHuO6Y8b
-   o5i6a0heX4iv4k3fx6gAbL6OG94O+w7kmBMbhPntv1hg6vcfndTcQDYDw
-   Uu4OXA4N/acsnWVcAiA0caYRMSDBwIYZGrjcwpQDUUsZCXWyPuKTD+c2C
-   qSsFF94SyLUSe/Q7eWBMcY2goi5eRkSnFfVNigtOvye17Zh+kjkiEIAoH
-   g==;
-X-CSE-ConnectionGUID: QexXOv6bTzOUnNzmiZaQig==
-X-CSE-MsgGUID: o+2ptHiPRxmZhLEslIrccg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13568749"
+  bh=i2g4o4FMSNI6vy56g2mVccrM+MuXNKNyXwoqmECaK9M=;
+  b=LoHlT/xKZsJ3n82UnMR7MhwE7kMuSLFeUf+MtzUztsBWfLLr6vC9Rajv
+   KTzHFyJB1Z9KPW/ImITeJ77BokppLmQ+mlHyauBeGwKErN5qjizn4qDBL
+   xqEXkrOsVTXsDWtBDu8fe7SG6JwJZzWzhKl6jsA+8Rl8YgHZ9QBuYHHJd
+   syK3fFdNUWZUOYCdCV8GISmU5hcm3i9Cqc5v+NZ83GmEeLcLzzpvgM6kX
+   HaDIIQsQEGYNSOf5Iw/Z0kqELG04NB2ibBKC0qmFJ81iYfZJzeoPLMCxI
+   VgkCZ/SapkPN9Ah/jYs12Zw4PJWnCy9vWE4otZwfWDFOwVGccayAeM3zy
+   Q==;
+X-CSE-ConnectionGUID: nmTIRLnNSKm4XCBasgy7qA==
+X-CSE-MsgGUID: 2WemJI2wTimyi1F/xArePA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13568764"
 X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="13568749"
+   d="scan'208";a="13568764"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 22:35:06 -0700
-X-CSE-ConnectionGUID: ff5BmhNMSBOq/6aqKuHlTw==
-X-CSE-MsgGUID: VRTTk5mGQciwJeBPrShRDw==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 22:35:11 -0700
+X-CSE-ConnectionGUID: ooEsLAqOTEq37Hrx3ZeYbQ==
+X-CSE-MsgGUID: FAzliAhcS6u1szAMWmJLKQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="35257451"
+   d="scan'208";a="35257473"
 Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 28 May 2024 22:35:01 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 28 May 2024 22:35:06 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -79,9 +79,9 @@ Cc: Yi Liu <yi.l.liu@intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 01/20] iommu: Add iommu_user_domain_alloc() interface
-Date: Wed, 29 May 2024 13:32:31 +0800
-Message-Id: <20240529053250.91284-2-baolu.lu@linux.intel.com>
+Subject: [PATCH 02/20] iommufd: Use iommu_user_domain_alloc()
+Date: Wed, 29 May 2024 13:32:32 +0800
+Message-Id: <20240529053250.91284-3-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240529053250.91284-1-baolu.lu@linux.intel.com>
 References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
@@ -93,104 +93,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit <909f4abd1097> ("iommu: Add new iommu op to create domains owned
-by userspace") added a dedicated iommu op to allocate a user domain.
-While IOMMUFD has already made use of this callback, other frameworks
-like vfio/type1 and vDPA still use the paging domain allocation interface.
-
-Add a new interface named iommu_user_domain_alloc(), which indicates the
-allocation of a domain for device DMA managed by user space driver. All
-device passthrough frameworks could use this interface for their domain
-allocation.
-
-Although it is expected that all iommu drivers could implement their own
-domain_alloc_user ops, most drivers haven't implemented it yet. Rollback
-to the paging domain allocation interface if the iommu driver hasn't
-implemented this op yet.
+Replace iommu_domain_alloc() with iommu_user_domain_alloc().
 
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- include/linux/iommu.h |  6 ++++++
- drivers/iommu/iommu.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+ drivers/iommu/iommufd/hw_pagetable.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 7bc8dff7cf6d..6648b2415474 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -780,6 +780,7 @@ extern bool iommu_present(const struct bus_type *bus);
- extern bool device_iommu_capable(struct device *dev, enum iommu_cap cap);
- extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
- extern struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus);
-+struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 flags);
- extern void iommu_domain_free(struct iommu_domain *domain);
- extern int iommu_attach_device(struct iommu_domain *domain,
- 			       struct device *dev);
-@@ -1086,6 +1087,11 @@ static inline struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus
- 	return NULL;
- }
+diff --git a/drivers/iommu/iommufd/hw_pagetable.c b/drivers/iommu/iommufd/hw_pagetable.c
+index 33d142f8057d..ada05fccb36a 100644
+--- a/drivers/iommu/iommufd/hw_pagetable.c
++++ b/drivers/iommu/iommufd/hw_pagetable.c
+@@ -127,21 +127,11 @@ iommufd_hwpt_paging_alloc(struct iommufd_ctx *ictx, struct iommufd_ioas *ioas,
+ 	hwpt_paging->ioas = ioas;
+ 	hwpt_paging->nest_parent = flags & IOMMU_HWPT_ALLOC_NEST_PARENT;
  
-+static inline struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 flags)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+
- static inline void iommu_domain_free(struct iommu_domain *domain)
- {
- }
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 9df7cc75c1bc..f1416892ef8e 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2032,6 +2032,48 @@ struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus)
- }
- EXPORT_SYMBOL_GPL(iommu_domain_alloc);
+-	if (ops->domain_alloc_user) {
+-		hwpt->domain = ops->domain_alloc_user(idev->dev, flags, NULL,
+-						      user_data);
+-		if (IS_ERR(hwpt->domain)) {
+-			rc = PTR_ERR(hwpt->domain);
+-			hwpt->domain = NULL;
+-			goto out_abort;
+-		}
+-		hwpt->domain->owner = ops;
+-	} else {
+-		hwpt->domain = iommu_domain_alloc(idev->dev->bus);
+-		if (!hwpt->domain) {
+-			rc = -ENOMEM;
+-			goto out_abort;
+-		}
++	hwpt->domain = iommu_user_domain_alloc(idev->dev, flags);
++	if (IS_ERR(hwpt->domain)) {
++		rc = PTR_ERR(hwpt->domain);
++		hwpt->domain = NULL;
++		goto out_abort;
+ 	}
  
-+/**
-+ * iommu_user_domain_alloc() - Allocate a user domain
-+ * @dev: device for which the domain is allocated
-+ * @flags: iommufd_hwpt_alloc_flags defined in uapi/linux/iommufd.h
-+ *
-+ * Allocate a user domain which will be managed by a userspace driver. Return
-+ * allocated domain if successful, or a ERR pointer for failure.
-+ */
-+struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 flags)
-+{
-+	struct iommu_domain *domain;
-+	const struct iommu_ops *ops;
-+
-+	if (!dev_has_iommu(dev))
-+		return ERR_PTR(-ENODEV);
-+
-+	ops = dev_iommu_ops(dev);
-+	if (ops->domain_alloc_user) {
-+		domain = ops->domain_alloc_user(dev, flags, NULL, NULL);
-+		if (IS_ERR(domain))
-+			return domain;
-+
-+		domain->type = IOMMU_DOMAIN_UNMANAGED;
-+		domain->owner = ops;
-+		domain->pgsize_bitmap = ops->pgsize_bitmap;
-+		domain->ops = ops->default_domain_ops;
-+
-+		return domain;
-+	}
-+
-+	/*
-+	 * The iommu driver doesn't support domain_alloc_user callback.
-+	 * Rollback to a UNMANAGED paging domain which doesn't support
-+	 * the allocation flags.
-+	 */
-+	if (flags)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
-+	return __iommu_domain_alloc(ops, dev, IOMMU_DOMAIN_UNMANAGED);
-+}
-+EXPORT_SYMBOL_GPL(iommu_user_domain_alloc);
-+
- void iommu_domain_free(struct iommu_domain *domain)
- {
- 	if (domain->type == IOMMU_DOMAIN_SVA)
+ 	/*
 -- 
 2.34.1
 
