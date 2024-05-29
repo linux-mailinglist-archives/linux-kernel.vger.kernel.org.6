@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-194493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC3D8D3D23
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:54:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4868D3D24
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567C1286B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2203B1F2161E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DA1187333;
-	Wed, 29 May 2024 16:54:26 +0000 (UTC)
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E19187332;
+	Wed, 29 May 2024 16:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LpyNQ8mD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CCC1C6B2;
-	Wed, 29 May 2024 16:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF4F1C6B2;
+	Wed, 29 May 2024 16:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717001666; cv=none; b=UlS3OmLxOsggF7z4IuDo1/nbK0nqbeCNAWKRvpG9nGibEFXvK9B/LFAZLed0c2Xi+A+NRHo3izL0Vjg68f/OVz/kJTlWsAV8tIcmLc1cONZLUZnEUMWM4LoqGYPrNhtOF+gd4ErVEdCEp6dT5kejLdN2iGxSniDL8ng0ENTgvwo=
+	t=1717001725; cv=none; b=tXVuQDcQuphbDF5MPTIuQNq8F64ME+RNwJjTlN235ek81t9DIyLkLWHjdnNeDSLYNPxi2+RvpTm5CFWeYlguDEuHWRZn/trDcNnaF3dCfYvHRa2sdo4Kk5Pb1meXWIpFsjxqWiMsgSiuOy/Aolya2Ld8N872zJMOF6UaiTxvypE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717001666; c=relaxed/simple;
-	bh=LAl8vHzfRbppB/pNLfLE/513EmF3jGEalkh5FEUirqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZDbCSbUWFX1LAjYVPltKC3BSqQLL1Mtz4FggAtJ9lrmy6WMPMfxwDG+6TqVmLxsFbzMjCQfERhMss3A67RUCMN1x2yh3zD86UYaQC897eMLa40aJHkbYpNdN3s5Opk7D9OaePSlfafJfEBIwQNAp7/Eqdjy9Ua+qe9siwga42Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2bf59381a11so1986457a91.1;
-        Wed, 29 May 2024 09:54:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717001664; x=1717606464;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KWI2NSpe+7WLerE4yFBKsFEJGp0TLAv3d84f3/3z3NA=;
-        b=SU7aaCp5oHVgzxCBIgBR8wOi35ro2RItX5fsNkckcLwhr1k2B4LunKWTxnzuJOgwrg
-         4LdTDhlMtggUlUSnldyRDRKehF/Z8/QHta7RGpPMUvQMB5OLIO2/0oJ78dkzgVRforlC
-         sBHQdLRdKIg1buFUdXkKbxcVucuxL1gKKFqXvmmeDFpaYQoMNYwwzCKxDNPPG69IawAR
-         sP0g9Jm8fCV4IcUw8pl3bnoA1uMa4FzVkjsV0ltEhKnq49QI/9XM/xDo00LJZ3MQihX2
-         ig6gkgMUZc149uswIjgbmGz+OAdHWfBeBEv3YVrt3jPcdwUXQgm2FI+VB06hl0sAYpje
-         pYsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXf2A/I0PfRfz+j4PbSGwhJI7J0iJ9rPWSBfAgJviHjMYCl2o9QzSmtlMdg+1H4p3+v2N70QgXOgSo9MpI9bDLnLEEH6YQai8fmPAKlVSLueW2lYSLZ6wyQvjdeqq9TykwL
-X-Gm-Message-State: AOJu0Yyt3S036nUYAavFH5Dedw1PzueAfAQ3cyCo9zlrtgaSAezZsi/R
-	sncCHrZYLOQ7UUQD8CaxOCp7ePlc0A5K1O+bzMwVXGg+imwNSHu8T8xY4gYXigyal8hLLUdybw+
-	T/ecH0x5cjQScSX3YjFO+VGY1PfY=
-X-Google-Smtp-Source: AGHT+IGEmPeOuMcdoDkBlv8Mys5lgspI2S4rqBjz/+agGh7fGyxt8IHBR+NFxhATNgVAXKiTMD7CvbjWQk6m/bg2CyE=
-X-Received: by 2002:a17:90a:a409:b0:2bf:9981:e0bc with SMTP id
- 98e67ed59e1d1-2bf9981e16fmr9700999a91.27.1717001664337; Wed, 29 May 2024
- 09:54:24 -0700 (PDT)
+	s=arc-20240116; t=1717001725; c=relaxed/simple;
+	bh=adQZoOVxXiRU8SzRlZMsbJp0FGrW/aeQJb2xgSY2l4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRL3hwDkWvtjj7xLiL7kr/Xe70qRCD79rDh6zGN27eVvcwtBfOK4mFx70hfSSe+aCGrPmqgQaGp0i3/OF+Z0YQGJr91lgu49Q8LclXWf++Od8wjAV7OV9QG8rzT0KsxZZBVisvuMzXdZjeqHO+LYaTdtEui0NDHm6sBSsbzrRDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LpyNQ8mD; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717001723; x=1748537723;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=adQZoOVxXiRU8SzRlZMsbJp0FGrW/aeQJb2xgSY2l4E=;
+  b=LpyNQ8mDnZ9VA18VB3lxH0Id6vE2vAqHQw8d7B37Lu9/jpyBYKYAWLoF
+   p4G0sGPXCl51mV7najyydOtKBJxPNZ9bEbYdZn1CNUBFn9VeshEhq2Plm
+   YQZ7jnk/lbY3VXbDTh2MQVc6rNRVcJzcZuD7zCLWGkPMzTe2nGfSWcMU/
+   ju1kIq5VG5Du/2SZsHW1rrciNBTCU28vo7yNZIF6YlNjZGAxTSpDeHKrj
+   qVvKTevxflYp8DzRhzxR/yI72m6+5RytcBaJyW+Oan355VKgMBPBU8OBu
+   i7sUY08lYfibg/BjaapbpePqDfXlEee125Em3e2szv/4NQnL5V0GRiFa6
+   w==;
+X-CSE-ConnectionGUID: 8QlyvXwORJOr9MqOfM/bKw==
+X-CSE-MsgGUID: IclgLZvVQUudCZRfJkzPmg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="17252043"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="17252043"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 09:55:22 -0700
+X-CSE-ConnectionGUID: 3RjkdsR0SbiLRmd3N1zBow==
+X-CSE-MsgGUID: 9TNZEWNpQgy44pf7ZX402g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="39923851"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 09:55:21 -0700
+Date: Wed, 29 May 2024 09:55:20 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"sagis@google.com" <sagis@google.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"dmatlack@google.com" <dmatlack@google.com>,
+	isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+Message-ID: <20240529165520.GH386318@ls.amr.corp.intel.com>
+References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
+ <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
+ <a5ad658b1eec38f621315431a24e028187b5ca2d.camel@intel.com>
+ <20240529015749.GF386318@ls.amr.corp.intel.com>
+ <6a831f1b429ab6d1dd3e60a947cab7ab0b3f7149.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529065311.1218230-1-namhyung@kernel.org> <Zlbn3DOGrzHlw95h@krava>
-In-Reply-To: <Zlbn3DOGrzHlw95h@krava>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 29 May 2024 09:54:11 -0700
-Message-ID: <CAM9d7ci0g+ObA7w-tXU9cyjzRUFgXjZ4b9Atx2+oV4Anhraeyg@mail.gmail.com>
-Subject: Re: [PATCH v2] bpf: Allocate bpf_event_entry with node info
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
-	Aleksei Shchekotikhin <alekseis@google.com>, Nilay Vaish <nilayvaish@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6a831f1b429ab6d1dd3e60a947cab7ab0b3f7149.camel@intel.com>
 
-Hi Jiri,
+On Wed, May 29, 2024 at 02:13:24AM +0000,
+"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
 
-On Wed, May 29, 2024 at 1:31=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Tue, May 28, 2024 at 11:53:11PM -0700, Namhyung Kim wrote:
-> > It was reported that accessing perf_event map entry caused pretty high
-> > LLC misses in get_map_perf_counter().  As reading perf_event is allowed
-> > for the local CPU only, I think we can use the target CPU of the event
-> > as hint for the allocation like in perf_event_alloc() so that the event
-> > and the entry can be in the same node at least.
->
-> looks good, is there any profile to prove the gain?
+> On Tue, 2024-05-28 at 18:57 -0700, Isaku Yamahata wrote:
+> > > --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> > > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> > > @@ -438,6 +438,9 @@ static void handle_removed_pt(struct kvm *kvm,
+> > > tdp_ptep_t
+> > > pt, bool shared)
+> > >                           */
+> > >                          old_spte = kvm_tdp_mmu_write_spte(sptep, old_spte,
+> > >                                                            REMOVED_SPTE,
+> > > level);
+> > > +
+> > > +                       if (is_mirror_sp(sp))
+> > > +                               reflect_removed_spte(kvm, gfn, old_spte,
+> > > REMOVED_SPTE, level);
+> > 
+> > The callback before handling lower level will result in error.
+> 
+> Hmm, yea the order is changed. It didn't result in an error for some reason
+> though. Can you elaborate?
 
-No, at this point.  I'm not sure if it'd help LLC hit ratio but
-I think it should improve the memory latency.
+TDH.MEM.{PAGE, SEPT}.REMOVE() needs to be issued from the leaf.  I guess
+zapping is done at only leaf by tdp_mmu_zap_leafs(). Subtree zapping case wasn't
+exercised.
 
-Thanks,
-Namhyung
 
->
-> >
-> > Reported-by: Aleksei Shchekotikhin <alekseis@google.com>
-> > Reported-by: Nilay Vaish <nilayvaish@google.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->
-> > ---
-> > v2) fix build errors
-> >
-> >  kernel/bpf/arraymap.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-> > index feabc0193852..067f7cf27042 100644
-> > --- a/kernel/bpf/arraymap.c
-> > +++ b/kernel/bpf/arraymap.c
-> > @@ -1194,10 +1194,17 @@ static struct bpf_event_entry *bpf_event_entry_=
-gen(struct file *perf_file,
-> >                                                  struct file *map_file)
-> >  {
-> >       struct bpf_event_entry *ee;
-> > +     struct perf_event *event =3D perf_file->private_data;
-> > +     int node =3D -1;
-> >
-> > -     ee =3D kzalloc(sizeof(*ee), GFP_KERNEL);
-> > +#ifdef CONFIG_PERF_EVENTS
-> > +     if (event->cpu >=3D 0)
-> > +             node =3D cpu_to_node(event->cpu);
-> > +#endif
-> > +
-> > +     ee =3D kzalloc_node(sizeof(*ee), GFP_KERNEL, node);
-> >       if (ee) {
-> > -             ee->event =3D perf_file->private_data;
-> > +             ee->event =3D event;
-> >               ee->perf_file =3D perf_file;
-> >               ee->map_file =3D map_file;
-> >       }
-> > --
-> > 2.45.1.288.g0e0cd299f1-goog
-> >
+> > > Otherwise, we could move the "set present" mirroring operations into
+> > > handle_changed_spte(), and have some earlier conditional logic do the
+> > > REMOVED_SPTE parts. It starts to become more scattered.
+> > > Anyway, it's just a code clarity thing arising from having hard time
+> > > explaining
+> > > the design in the log. Any opinions?
+> > 
+> > Originally I tried to consolidate the callbacks by following TDP MMU using
+> > handle_changed_spte().
+> 
+> How did it handle the REMOVED_SPTE part of the set_present() path?
+
+is_removed_pt() was used. It was ugly.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
