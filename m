@@ -1,90 +1,100 @@
-Return-Path: <linux-kernel+bounces-193340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FD88D2A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:06:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16568D2A86
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7269928772C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9ED289DFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7A5167DB9;
-	Wed, 29 May 2024 02:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617D415ADB3;
+	Wed, 29 May 2024 02:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGAsfje+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sW/ywED9"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842DA167DA0;
-	Wed, 29 May 2024 02:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B3415AD99;
+	Wed, 29 May 2024 02:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716948151; cv=none; b=MFEjM6zDb5fOA7cD11Av7zObzqLX5AW2Pz3cpXHSBrd5/sHSRCr9GhdCZXE5+GCxlaYtF0pkXQWmUMLy2X5I7BzBEGPYPvhuxzMbwGAaDwKfQkncUjHBjkT4k8vgW4PoAqEO19sO75/XTd1yAxCnQOYo7kj3kHHJ5aetlsZyHJk=
+	t=1716948183; cv=none; b=VUoZipdTgPnzQQUlZUR8eNCTlugPf9BhqAVNiw8W/5zrhC09m1LlCpg7esd7HWa2ioSjOQTRRKyLwTzrF5EJb/ZFNiCUQ5+EqrkNtoSE0cE+dFdMlp09K7bJA4Wk2vt3GnnO05l1QPAC9p/GpziqkgyOXxyHnKrYMUkj8HQ150g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716948151; c=relaxed/simple;
-	bh=m8RVivrf6E1pKWyeR3UJd2My77826M9SSOcksm9icVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AS3Mhz35XvjpskW2lXtTfrklSmyMFeTdgzw+V3fvVP1peF8TrB8sh9/baz26lki6TgUAx5stmaOKjWHorijLLULULiVNM4QEIkZ/s3QyeK3JzGrog+7gNm7++K9MV2NoxTfPUA9f7qrcWHoWEf/UhMGVWPKmCtc2QtijiaUX0UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGAsfje+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B7FC32789;
-	Wed, 29 May 2024 02:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716948151;
-	bh=m8RVivrf6E1pKWyeR3UJd2My77826M9SSOcksm9icVI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qGAsfje+vAkOofcHbtYXB1412ZRakfkEsCay9lE0A6iZnNrhj9OY+GoPCJjRzcY85
-	 a57Go9IZze2h0T1icMnxLdFKM2U4yzqoeYuFS+QG7uMmfIzsyPoq2EpyO5/+pMds2H
-	 I68esbUkP6U5NQsXQ3/5Dviee2oJLe2TYaFNky441v5YcNvIFU8DdfSmbmYCLHP7w0
-	 rVS0CJcYjiFogAj/qIPUMtSEQUefvy12PhHTCMOcnMuqIctqtci3bHJyY+jnKBYPbm
-	 2HRDFxWFlfKKcTIk0su4CDwD1n/Okx9X2mhf/7DJ09OliHgWYA8tcRnwOgyZ7ujs6X
-	 PBKz9+/CVHTZg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandru Marc Serdeliuc <serdeliuk@yahoo.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1716948183; c=relaxed/simple;
+	bh=O79keix28rmAHBpO1tmH+HkKuIfiwhKx1JCWllxFRxc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yc7XJOLvUOQTmU7Olr096choVx449y1mgS1yxVk3b4PAE+gDfxtd9zZlExoVuBEIXMNsnJa8QR43fN8mqUENwyvpaYSfK7tIXUmJq3KrwgKNTsMHMwzGj15r77anYuIdnxhft078sS32Upvlvuw4pXhSksm3YsRpiygmPD4i4cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sW/ywED9; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716948178; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=wlYFxgSPBB8GHLCmZnRucL7d7MzOWuLmNUc70TG55TY=;
+	b=sW/ywED9AgTrF9CCg554+e14AypJHxFo9AJ2rIcMhd3M4pZbXBXS2L20qIk7xesKiwyQMlVkpnFYDuwEcIbW5a3o8oaazaPfMeOJLUZWa97Ki+0cUdu9CieF1K3MIv5Yh0NxK7W9bObD+ZqvEcg+1K35SxU56sXVKBQrxKyLGBY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R431e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W7R4YvH_1716948165;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W7R4YvH_1716948165)
+          by smtp.aliyun-inc.com;
+          Wed, 29 May 2024 10:02:58 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: pkshih@realtek.com
+Cc: kvalo@kernel.org,
+	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 0/2] Samsung Galaxy Z Fold5 initial support
-Date: Tue, 28 May 2024 21:02:04 -0500
-Message-ID: <171694812092.574781.2178262972154423898.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240411-samsung-galaxy-zfold5-q5q-v6-0-8142297515aa@yahoo.com>
-References: <20240411-samsung-galaxy-zfold5-q5q-v6-0-8142297515aa@yahoo.com>
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH v2] wifi: rtw89: chan: Use swap() in rtw89_swap_sub_entity()
+Date: Wed, 29 May 2024 10:02:44 +0800
+Message-Id: <20240529020244.129027-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Use existing swap() function instead of keeping duplicate source code.
 
-On Thu, 11 Apr 2024 18:51:29 +0200, Alexandru Marc Serdeliuc wrote:
-> This documents and add intial dts support for Samsung Galaxy Z Fold5 (samsung,q5q)
-> which is a foldable phone by Samsung based on the sm8550 SoC.
-> 
-> ChangeLog
-> 
-> - v6
->   . Moved Acked-by to the right  place
-> 
-> [...]
+/drivers/net/wireless/realtek/rtw89/chan.c:2336:32-33: WARNING opportunity for swap().
 
-Applied, thanks!
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9174
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+Changes in v2:
+  -Amend commit message to make it more clearer.
 
-[1/2] dt-bindings: arm: qcom: Add Samsung Galaxy Z Fold5
-      commit: d328da7f07563c1a4a21eae4b28b7b69d9ba3df9
-[2/2] arm64: dts: qcom: sm8550: Add support for Samsung Galaxy Z Fold5
-      commit: ba2c082a401ff6ea0f3460cd80174b4c8273445d
+ drivers/net/wireless/realtek/rtw89/chan.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Best regards,
+diff --git a/drivers/net/wireless/realtek/rtw89/chan.c b/drivers/net/wireless/realtek/rtw89/chan.c
+index 051a3cad6101..3b1997223cc5 100644
+--- a/drivers/net/wireless/realtek/rtw89/chan.c
++++ b/drivers/net/wireless/realtek/rtw89/chan.c
+@@ -2322,7 +2322,6 @@ static void rtw89_swap_sub_entity(struct rtw89_dev *rtwdev,
+ 				  enum rtw89_sub_entity_idx idx2)
+ {
+ 	struct rtw89_hal *hal = &rtwdev->hal;
+-	struct rtw89_sub_entity tmp;
+ 	struct rtw89_vif *rtwvif;
+ 	u8 cur;
+ 
+@@ -2332,9 +2331,7 @@ static void rtw89_swap_sub_entity(struct rtw89_dev *rtwdev,
+ 	hal->sub[idx1].cfg->idx = idx2;
+ 	hal->sub[idx2].cfg->idx = idx1;
+ 
+-	tmp = hal->sub[idx1];
+-	hal->sub[idx1] = hal->sub[idx2];
+-	hal->sub[idx2] = tmp;
++	swap(hal->sub[idx1], hal->sub[idx2]);
+ 
+ 	rtw89_for_each_rtwvif(rtwdev, rtwvif) {
+ 		if (!rtwvif->chanctx_assigned)
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.20.1.7.g153144c
+
 
