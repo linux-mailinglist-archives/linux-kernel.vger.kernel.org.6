@@ -1,191 +1,209 @@
-Return-Path: <linux-kernel+bounces-194286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CA08D3983
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691FC8D3990
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999CB1C22EC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:40:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A251F251D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4BC169ACE;
-	Wed, 29 May 2024 14:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4329217F376;
+	Wed, 29 May 2024 14:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMo/J1Ub"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b="GE1TpE3E"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2124.outbound.protection.outlook.com [40.107.6.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C313E15AD86;
-	Wed, 29 May 2024 14:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716993587; cv=none; b=NnSHvjDKP7IFY/L8KiJ2ZW3DndUsVWTmDN5EpHe3l/fPfGvNdftGX3Fdg/PkXsDSLd5PYarT+1YN4fpmguV0jD/5wuog1SU1BxgSrSJ4BaW5yjtu9nW2N1PTGuxF5V62vzHA9W4XObiFa55sZR3v3NBXfFQ9R7S6SYQE85s8u+8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716993587; c=relaxed/simple;
-	bh=+7lzzUzJGgXMBccWlEUAK8WAPNKktuWs7wc3Hg3pPtU=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2Y/mho6ve5vjr2NIiqbMcP4AxLyvICjeKy1j1ZkDj1tKu/NWbFnem0ca63QQd5WXb1CffApUWhW9oL8sWLU2HtsUHEmb9wFuHd6+pLPtBMCRQYNzZcerb5GSG7QLNUgzYkNNoOhcZvtPoMsAYmbYRFf/6BlHedpyrsYnzarSWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YMo/J1Ub; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42121d27861so10671745e9.0;
-        Wed, 29 May 2024 07:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716993584; x=1717598384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ibpy32+dFO/lcZskkUu9jbWqhVqkGGZ+uttQqfSwDdk=;
-        b=YMo/J1UbcVq7HgglqnHc8BGvr+MfNraSSifHpqCjcYd2m+N7uWjOGoQCQUfyg8SLMw
-         nJDEN6QUlE9nnby2pskl1FFeMjULqXzx6CWxO2jmggozrwkgR9Hg3ZcPxbaJWVl+Itvz
-         tG7/q75KfRvBdv5bJ2jYrThYAedWVZOGFc8eJC3tV4KnKS0AGXaXJE79ESSeAVSS32xI
-         BUEv8jzZfwEQI9UzY6NRz0rHZLV6HLhqEh/OATqYiBcDMtY9dufvJ5mk1GwpXJtlK7gk
-         ygU1MHVVN9a2LStBJ2B/p/LdQs1AvAqsTfOcJqwStfu+qBIRQuN9LNQ6qnr9DqmmzGio
-         eH/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716993584; x=1717598384;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ibpy32+dFO/lcZskkUu9jbWqhVqkGGZ+uttQqfSwDdk=;
-        b=CvJ2t7b0FUNA96HdqdIOmW5+uaXgsXyLJLezD7v2Uh0QL5wumBFlkRCEGhaf/K00oI
-         lMjF7fZEvj5T30ihcbLYVdl043Br841GgDB94lQHg5rjeNE6kqFg4a/qYNOxyowymRxI
-         IXrSqzOdKyEYD0Kb6gYgpbJJeVyFkCnAhFaTxQcQNeMBE56ip7bHCpkZ18QM/2hVCe/q
-         zlkdlzYk1YGaX3S1Nz4aNHNi7Bpe32r8749GTL8spWaCga6ycuCeKxQtkTvH4xXIf58T
-         IiyZnNuaU2j+8YsYop+zct9fNsXy1NAsKmomhfFPS5W8bTtxWDcr+ex2BiFbuut4ZU+y
-         Qr9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVq/X1a+Dy3uEm1kmDyhSuFBoAOC4VapzGy74jEdwYGmHlS6vd2JQYM3I4K5sD0QKD92X8NNsokaYtfYluQbgqWCkQBGeR+o36NC50oCpWvDxHXntB7WW4VIfX4qY0TUR54Rq4E8krbkLgq4AoHht+OtUTpybtehMmImNRQP3giaAOJt8Y=
-X-Gm-Message-State: AOJu0Yzh8G7jmQGOt7iebxz8CQJnl8iiQe3JbHk/Uk/qlx0edTpNpjb2
-	0JFOL3Jbuv7ITR+AEWgTLdYaYf1iCu7GRw5faajRW7dovVfLrqmROcbMHA==
-X-Google-Smtp-Source: AGHT+IF/66n4nH3mHwStiq+QQr9At/NmFho2BOE/s+vlEyKYny/ioEw+zi5g5rQzQ2LIzlkES75zgQ==
-X-Received: by 2002:a05:600c:45cd:b0:420:29dd:84db with SMTP id 5b1f17b1804b1-42108a26c56mr138485295e9.35.1716993583841;
-        Wed, 29 May 2024 07:39:43 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ccb10sm181585805e9.44.2024.05.29.07.39.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 07:39:43 -0700 (PDT)
-Message-ID: <66573e2f.050a0220.4afa0.0925@mx.google.com>
-X-Google-Original-Message-ID: <Zlc-Li5bKgD9Ou-p@Ansuel-XPS.>
-Date: Wed, 29 May 2024 16:39:42 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v3 3/3] leds: leds-lp5569: Add support for Texas
- Instruments LP5569
-References: <20240527094737.13354-3-ansuelsmth@gmail.com>
- <1f970609-42fa-4e6d-95d3-7ccdf52d3fee@moroto.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D253917BB2F
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716993794; cv=fail; b=ZDOCTT44nmOglsDGJeoNHhnUqCRDJZ4unDhJgBphDou2YoFKmHKvYDn2D6Y0VHXDVHjxlzGGOiE3W69e0TFWeF4FD298dQozxi+T3Ojx8sRGNH1j/kbvGoWRp9afPeN5YNmuPi/NXlTwOSsYLI754VtYwiHplxdha9hTkC4EHgg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716993794; c=relaxed/simple;
+	bh=5r36wtFuMjOKdGbwbpGTJiPH2SBkc3GShmj39rlkRQY=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=qRHBAdbdPGHYkh/NWaLZPiGc3HRjNuBqKfkDwvvK9UjPt/Ye2rOquoHg5FF1kEifdNOaObNLUyaY6xFQmXCJ/G2/1gGVn5o26DUhRy0Ib1K3LExtnPmuP2pgMfsCz03NgXRP3IFm8es7aBVMAiCNYc74/snJWlgjDsLoXglOMgk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net; spf=pass smtp.mailfrom=wolfvision.net; dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b=GE1TpE3E; arc=fail smtp.client-ip=40.107.6.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolfvision.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Gz0BiGc4dUgdFSSIxInoggRrEQRyg9EeMCELzUR/ewlAFs3lf2RIdeRKagCvQYp62XH78lqURyrrdNWHJRouSdOsBjU0cGQAAwSW6CgveIVhW4+UQe8RhSlbCNos322TJL7q2Jy20C/yiuIgUu/7mSUl4Qt+UnYYJqBykYHmbCiOjqA/APAVPBZViuuQdmciQiCR0LhoR1t+qNeiqHwQX2dDi+YLKSSFMQ49tFqGpP7az9iFdMc5QP38GEk1yPIhFxJUhhwIR2WKrcR0B7wkpDY3G8oIlMskYfgluDu2WFlemW0uTuqzM8dFl61xHkg3jF+QJC4yhipwnWo7Rry4+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jn32+tMJ0dEmaEnJ9x3K5PQSu0DSMQcGVcLoYoN/GwE=;
+ b=CfIz7PgaFSyzr0STF4InlO0z7+RfXgYsVcEHQzo8eUXjOmQonFZcL/vHQ/AsaNSFddtXMSmTGex3zGPO+WLkQA0R0yw+n2kf5TrhPXMzIFA8EsuAxx97FVA0aoHK/udFb9uqDLLHQmoLX6WT67XxbIwO1LEn2+3gNXqQg2iHnbKx1wa0LM4gdItLKN7LGH+tqRgE+2XxZztK5+S+kjZRN8FRunpFF2Cx+X1HqMo7pDuFk701P9aj8jMsMNPnlIO4Fp3CpbhjMSh7vAasY+VPouA9/9DxVUsASTZhR10SFzNfiGz7HYQ3ZTN0GiNGvFGOWrK/RoqSBUNxBqp25ZtjwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wolfvision.net; dmarc=pass action=none
+ header.from=wolfvision.net; dkim=pass header.d=wolfvision.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolfvision.net;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jn32+tMJ0dEmaEnJ9x3K5PQSu0DSMQcGVcLoYoN/GwE=;
+ b=GE1TpE3E8D9m00fFVS68SqBfDUzjGApmcfqS5vYSutPoVgS41tt7rWiHXJ9qfeCR+XTECLyIJmEiMVUcx+OgwPFRyKi9oImZyFhh0p2k7x9uNF7YvovXT161/EazkHi+wN1Yn+q5mS2p8QxP75ygs/LF9JZc964vMqazKfZ58Uc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wolfvision.net;
+Received: from DBBPR08MB4539.eurprd08.prod.outlook.com (2603:10a6:10:cf::22)
+ by PAWPR08MB9032.eurprd08.prod.outlook.com (2603:10a6:102:335::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 29 May
+ 2024 14:42:56 +0000
+Received: from DBBPR08MB4539.eurprd08.prod.outlook.com
+ ([fe80::87a9:a8d0:96fa:19e1]) by DBBPR08MB4539.eurprd08.prod.outlook.com
+ ([fe80::87a9:a8d0:96fa:19e1%6]) with mapi id 15.20.7611.030; Wed, 29 May 2024
+ 14:42:56 +0000
+From: Gerald Loacker <gerald.loacker@wolfvision.net>
+Subject: [PATCH v2 0/3] drm/panel: sitronix-st7789v: fixes for
+ jt240mhqs_hwt_ek_e3 panel
+Date: Wed, 29 May 2024 16:42:44 +0200
+Message-Id: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v2-0-e4821802443d@wolfvision.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOQ+V2YC/5WPTQ6CMBSEr2K69plSCD+uvIchpC2vtApF2wIaw
+ t2teAKX3yy+mVmJR2fQk/NhJQ5n481oI7DjgUjNbYdg2siEUZbRjFYgpk6ZF9xC5EE/faOX0OC
+ 9wRSCGYztoGV5VaYFTQUrSPQI7hGE41bqaLJT38fw4TBq9uJrHVkbH0b33nfMyTf9p3JOgIKqp
+ FQ5Frwsk8sy9ur35mQxkHrbtg/UhZgX7AAAAA==
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Gerald Loacker <gerald.loacker@wolfvision.net>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716993775; l=1022;
+ i=gerald.loacker@wolfvision.net; s=20230502; h=from:subject:message-id;
+ bh=5r36wtFuMjOKdGbwbpGTJiPH2SBkc3GShmj39rlkRQY=;
+ b=hPkq+Zjm30YOObk6q8ekZz1vcbtb87BBrR5CGQL3Og1vLAf5vBmv5RzO0zNPCW2Jfz4cb43it
+ YmllavkiismAji7vKT+5oWYRayfED1T0VnqsDjsbSzTbhJgeZH32X02
+X-Developer-Key: i=gerald.loacker@wolfvision.net; a=ed25519;
+ pk=UXhp+obGMUOjknszonesnb29P6a2Kk/K5eBuz62ggVE=
+X-ClientProxiedBy: VI1P190CA0041.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:800:1bb::8) To DBBPR08MB4539.eurprd08.prod.outlook.com
+ (2603:10a6:10:cf::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f970609-42fa-4e6d-95d3-7ccdf52d3fee@moroto.mountain>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DBBPR08MB4539:EE_|PAWPR08MB9032:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30b86438-db53-4fa4-a3c9-08dc7feda0b1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|1800799015|52116005|376005|7416005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L1hhNGkxVEVtcVVOdXkrUnRQTmtzOEVtdWhLb0pybkxPcC81Qk1zSmQxcTMy?=
+ =?utf-8?B?bTJydENqdEFvT2tRWFJRcHlVMWx4N2U5dVl2azFIbjI2OUdjcVI5a2U2QTRM?=
+ =?utf-8?B?SWpaZzZLdlJZQlA2VEh4QWY0RnlXUmgvd2M2eVA3YTFTSXVFeElFaHpmcnpv?=
+ =?utf-8?B?MllNSlNSdkYvRkhXc1k4OG00NHRVelpzN2xta3hDYUU0S3orekRhb0lRRmJk?=
+ =?utf-8?B?ZmhPSVVBTFhrZmQwUFpHUXc5NVpTNG9LMjE1eDh2S2QyNDV6QWpXN1MwTERD?=
+ =?utf-8?B?MjRKazgwRG1XanpoekdBUmZtN1JaMWh4UjdabVQ5WGpSZTBiS3llMzhzcVk5?=
+ =?utf-8?B?TTg1amdIcXdjWU5hY3JTSU5Xdk94Nk1KWkJ0WUxzdk9yK1NBWFkwYXFqbmZI?=
+ =?utf-8?B?cHcvekNpNDZKbng5blV1ZUxnMU9hMENZYWg5SmlXbkpvdmRSZDBrQTgyMGhX?=
+ =?utf-8?B?Tk5ZUm1NWTJJOEpKMmtCQnFKTmZsZnRCdXlqQVhQd080UlJ6dkpGTkRnenFj?=
+ =?utf-8?B?VWZ4bGlrdTczVHROMjI0WXd4WDUvRk82ejNNeVo3WVBVRmFEUUVvMVMwUE1z?=
+ =?utf-8?B?L3lZK0Z6TWxBWFVrZ2ZQSE0zRFdGQlQrbGQ5Y0RuR1VUSHBKVWFBVmdzTzdk?=
+ =?utf-8?B?RkM5cVpOUDhvTVJxYnpSR0lpRGswTWxOZ0xxTUNXc1d5SHFoM2dUdm5Md1Ev?=
+ =?utf-8?B?KzdhUHY5WWhIKzF6K3lLaEpYeVVocmE1c1ZvTEVUZjFLQzlVTlZLNWRkeE1X?=
+ =?utf-8?B?Z3h1UmlWTUw5bHZHbmVTZXBIU1pFOVdzZFdNazJzSVd5N1QxZFRXRk5la1RH?=
+ =?utf-8?B?aDhjVU56L0lmMVBRcmRXQmVrNm1FUzE1WXozZWhGM09Wb1Q4dTV2OVM2VXlw?=
+ =?utf-8?B?SXVxRzJGUk9XRzVjQ2N3Q2tPMWswb05nVDE5SVhiWDM2WXExVXpObEV1V2F0?=
+ =?utf-8?B?NUN6YVNLQXR6WlNEenNHZm9NTCtsUE9hODNOUURXREV6TE43YzN4K0s4R1N6?=
+ =?utf-8?B?bzBRR0RMbXFKUTNQTWpVTHJ0NmV2Q1ZoMExnNTFnZHdiOWNvNEwrMWVLQXV0?=
+ =?utf-8?B?WHFiNE1laEtKMS95M3JCZzVTc2I5R1J1UUNNRk9OTmY4TEdpYjlYUFdKZzE1?=
+ =?utf-8?B?a29hcGRkbzdHRlBBdVRzbE1EM05XbnJwVkw0SHRORkZpNG10azEwRVhhK044?=
+ =?utf-8?B?b2xmeUFvckRuVGZjQ3ZHVFFueUVFSjBLTXhaM2xrKzZIVlZpMjlPQU1iSExS?=
+ =?utf-8?B?b1k2VUJLVUlONkovVlJKUC9ZeWFpUzZ1UWkycTI2L0ovSDdpSTlKWktvM2JB?=
+ =?utf-8?B?d1JrZmFQbm5GY3dpRFMwb2RVanhnT2lQc0h3V2ttVFZqaElHZC9tYWl3U2hK?=
+ =?utf-8?B?MlhnOVc1alduMTI3N1Z1YkozSGswYTlSay9FblFBR3phcWYwc1IvNFhpZ3Nt?=
+ =?utf-8?B?YUJxSlFsZGxQOUl2MGJRQTdJUVd0UXgzS240NTFWL3NMWHVtZy9hcU4yQ3g0?=
+ =?utf-8?B?MGczV3lGclVDVFJ6WU5FNy9RWDRHUDY0MjFmcWNyRWpNNDIvSXRVM3FHRVRD?=
+ =?utf-8?B?L09OMEJZVmZ6VGRvUUxUWnpmcFFZZkVnYnR1NjJrWWpIL0dYM1RPREtKTUV1?=
+ =?utf-8?B?TjdoTElaZkZLbzZZVGQrN0psQ2ZWMWxuNzk0T2FFRlQ0aE1lUFlEVUpDekZB?=
+ =?utf-8?B?TWVBd2dMYVdMT3NsNXhxdlZwY3llcVAzdytwWW5RUTZ0b1ZqeENMRExRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR08MB4539.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(52116005)(376005)(7416005)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SXFRRTRMMlJFUW9PNjM2WS9tSy9RZzhsY3hrYTIwcTJUcFJJazUrcVRIMkNP?=
+ =?utf-8?B?cFlsZ0pDUVh1Q1o5Mk9sa01sTkxSejkvbHpFZzdlU05wQmF1ZlJrUlROVlVB?=
+ =?utf-8?B?SHFsR3FFd21NdGwxRlA0RnVvekxSMVRGK2lBOGRUYm9YZVpVM1lQOE5yaEJ4?=
+ =?utf-8?B?a3Nsc3JLVk9zS1RNckFlME1FYzBuQzJmd2hXYTdiNHpYQm1Yc2dhYXhzNFdW?=
+ =?utf-8?B?OFNNVTR0bTJYRkM4VlR1cFRtVXJvclAwcytkc0srRlg3TzYxSDl4ekkvajI5?=
+ =?utf-8?B?eWZvVUZxNVByQThDbHZRdTZGT0FlYlN4QUtaR1BFNDNFbTRLZm9LMHNtTEVq?=
+ =?utf-8?B?dmlJdlE3Q0JHa0dGa21WNEgyaVNIdUczbnpBU3I5ZW8xUzNHQXpoSGtqekxY?=
+ =?utf-8?B?U29ieDFCSjFFSzl0Y0dteisvWDErRXp4YTZhb0NXamZoVTRHY29CWWpGZ2kx?=
+ =?utf-8?B?VGMzcVJobEpmNlF3S3o4WHk0aVBFbjZSUVZqclVENEx2aUhhcXBTbGR6bHl3?=
+ =?utf-8?B?bHRJSzRyMm5LQXRNVzF6TWU4WXZTSjYvamRpZVlqYWV3M2h4dzZ5Q1VqNmFM?=
+ =?utf-8?B?UlNVUWNrSS9lWDdEeGFXZ216M2o3M29RV0oyNlVjcExVNHlkbithRFlBY3JJ?=
+ =?utf-8?B?aENrRWUyZ0hFa0Y0Yi8vSXVjTFZ5Q3dSL2F4amloR2F5OGhxQ3lPaTJhVHRU?=
+ =?utf-8?B?clJoVW5TdTRWejZ1VTRiOXRVQTVoZEVqVU9qdU9XNFg5QitwTHNPVkdBdDB5?=
+ =?utf-8?B?SjZpMEdLMmdqMHYzVDlYSlJUenZVdm16VnlKZFAvQTVHQ2hmdy9uc2JVdnk1?=
+ =?utf-8?B?MDhVbmlocVZteEtqQlU1ZDRSNjZwR3VoOU1wSGtPZUVmRkRiY1doZTEzQkJZ?=
+ =?utf-8?B?ZThZTXY1RDh3dTQ5bmpnZ2tFdkFHVVRUdHJQQUdLK0J1YlJ2d0NNVnpwQ2gr?=
+ =?utf-8?B?cjVkaEVJbjVEY0VSRjJZYThjVmhLWlFZZVJSVDNhMEVBZHlpVm9mQXQyUU04?=
+ =?utf-8?B?NzArTlA0a3l6QWRxZk0vck5MbkZHYWNLajRSUjczZHgxbDVXYk5NQmJmMTc1?=
+ =?utf-8?B?U0pqdloxQTJrKzJ4eFBRZkREa1VXNFlCVjM3SHV3ZUx2UWZCUm90elhzejJM?=
+ =?utf-8?B?alExelNuamRPblBpaWNkRWdQR0FzRnBlNTVSem9XNUhYWHFBTjZidTBPcHBy?=
+ =?utf-8?B?U3dsK0xMR0M3bzA2djdxNDVwR2ZBYVozN3hudTNpWHZWK01ScHBBd0JWRndU?=
+ =?utf-8?B?Y0dCc1hzblJwMXRUY0Uxa0JCUE1BdU9vOVZJWktOTFJ1cDBjekRESGpwL0cw?=
+ =?utf-8?B?RFV0eTdiTHBPby9jU1hwUnZnK09EenZSN3hpZDJaMzdGV25BM1RuVXA3OTM0?=
+ =?utf-8?B?dHcvTVJmRWJ1OEVXbHAwdmo1NnpEa3ZPdzJpK1NkaCszQUJ1TTdvdVQ2WFk0?=
+ =?utf-8?B?ZytVU0NGamlHOXpHelp6b3VJUHRxS2c4RCsxaHNwSFVuWmVHemRQTkIvdU1R?=
+ =?utf-8?B?VVNWSWpEdFM2QklsOCs2MU5CTkNnYVdpVDZYb2pjcjhMbnZueitQeTZYK1hB?=
+ =?utf-8?B?Z1ZxbDRjTXQ4NjNlTHVXaDNGWkdxUG56WklqcEd4VXU3aC9CQkU0YlpjMFpM?=
+ =?utf-8?B?VlRVNm9Ta3ExMnQzdEJ5eU1lTFFxa2VPMytHZWRPVVNJMHVQRGxvYnBoZlVq?=
+ =?utf-8?B?bkRBRzR5MlVYREtXc0hMSU1OL2dJL3ptOXpqQVgvQ0ZUTzAzaXk5NzhTaEx6?=
+ =?utf-8?B?ckJXWFBVSUtkTVVKbUFDWHBoR1JUNXlsMmtGL2ttOGJnNmxFWVpRNUhGbDla?=
+ =?utf-8?B?SENXS3VpZmhmSW0xeWl5emlndGFqSHFlbUNGRCtYNTNJOE9tait1T3JmQUd0?=
+ =?utf-8?B?SExrcnI3bUV5aU5XWnA3YmZoOE1YM2pzdzJPSjc0dUdrUkVnM0tna1E4THps?=
+ =?utf-8?B?b3FQREp5OTJneFVwejRtaUtNQ0RTeVFWQWZDbjRlczYzelg4dTZkNTlCU01n?=
+ =?utf-8?B?UDh3TjFvS0R1eGJleFJBeURwZ3FSOGg5MDJscFBWazliUmI4T2FESHVCQU8w?=
+ =?utf-8?B?UVlvWi9OL3JqWUtoUW02VHRvZ2c4cy91VzE3N1hnaDVFdk1vV0hob0tLYjJ3?=
+ =?utf-8?B?MncvaU82YnFEREozNVQ4ejA3OGFpZWF0c092bFF5Q0V6Z1ZVNzNIUElMeDUv?=
+ =?utf-8?B?M0E9PQ==?=
+X-OriginatorOrg: wolfvision.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30b86438-db53-4fa4-a3c9-08dc7feda0b1
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR08MB4539.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 14:42:56.0709
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e94ec9da-9183-471e-83b3-51baa8eb804f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v3wpT9Ymh9/PVyDSIaC6KU1c0DBve2sPfopSK4kB9Z60nC1iJEoBKsH3z7iBAQpkJI5s5+jdRVXb/THidjT34lSVBTGMIAa3AK+QSCLvMFs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB9032
 
-On Wed, May 29, 2024 at 05:32:16PM +0300, Dan Carpenter wrote:
-> Hi Christian,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-leds-lp55xx-Add-new-ti-lp5569-compatible/20240527-174959
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-> patch link:    https://lore.kernel.org/r/20240527094737.13354-3-ansuelsmth%40gmail.com
-> patch subject: [PATCH v3 3/3] leds: leds-lp5569: Add support for Texas Instruments LP5569
-> config: sparc-randconfig-r071-20240528 (https://download.01.org/0day-ci/archive/20240528/202405280611.QUICzlRj-lkp@intel.com/config)
-> compiler: sparc-linux-gcc (GCC) 13.2.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202405280611.QUICzlRj-lkp@intel.com/
-> 
-> New smatch warnings:
-> drivers/leds/leds-lp5569.c:378 lp5569_update_program_memory() error: buffer overflow 'pattern' 128 <= 223
-> 
-> vim +/pattern +378 drivers/leds/leds-lp5569.c
-> 
-> ed7ae4f43e228c Christian Marangi 2024-05-27  340  static int lp5569_update_program_memory(struct lp55xx_chip *chip,
-> ed7ae4f43e228c Christian Marangi 2024-05-27  341  					const u8 *data, size_t size)
-> ed7ae4f43e228c Christian Marangi 2024-05-27  342  {
-> ed7ae4f43e228c Christian Marangi 2024-05-27  343  	enum lp55xx_engine_index idx = chip->engine_idx;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  344  	u8 pattern[LP5569_PROGRAM_LENGTH] = {0};
-> ed7ae4f43e228c Christian Marangi 2024-05-27  345  	unsigned int cmd;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  346  	char c[3];
-> ed7ae4f43e228c Christian Marangi 2024-05-27  347  	int nrchars;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  348  	int ret;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  349  	int offset = 0;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  350  	int page, i = 0;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  351  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  352  	while ((offset < size - 1) && (i < LP5569_PROGRAM_LENGTH)) {
-> ed7ae4f43e228c Christian Marangi 2024-05-27  353  		/* separate sscanfs because length is working only for %s */
-> ed7ae4f43e228c Christian Marangi 2024-05-27  354  		ret = sscanf(data + offset, "%2s%n ", c, &nrchars);
-> ed7ae4f43e228c Christian Marangi 2024-05-27  355  		if (ret != 1)
-> ed7ae4f43e228c Christian Marangi 2024-05-27  356  			goto err;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  357  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  358  		ret = sscanf(c, "%2x", &cmd);
-> ed7ae4f43e228c Christian Marangi 2024-05-27  359  		if (ret != 1)
-> ed7ae4f43e228c Christian Marangi 2024-05-27  360  			goto err;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  361  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  362  		pattern[i] = (u8)cmd;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  363  		offset += nrchars;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  364  		i++;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  365  	}
-> ed7ae4f43e228c Christian Marangi 2024-05-27  366  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  367  	/* Each instruction is 16bit long. Check that length is even */
-> ed7ae4f43e228c Christian Marangi 2024-05-27  368  	if (i % 2)
-> ed7ae4f43e228c Christian Marangi 2024-05-27  369  		goto err;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  370  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  371  	for (page = 0; page < LP5569_PROGRAM_LENGTH / LP5569_BYTES_PER_PAGE; page++) {
-> ed7ae4f43e228c Christian Marangi 2024-05-27  372  		/* Write to the next page each 32 bytes */
-> ed7ae4f43e228c Christian Marangi 2024-05-27  373  		lp55xx_write(chip, LP5569_REG_PROG_PAGE_SEL,
-> ed7ae4f43e228c Christian Marangi 2024-05-27  374  			     LP5569_PAGE_ENG(idx) + page);
-> ed7ae4f43e228c Christian Marangi 2024-05-27  375  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  376  		for (i = 0; i < LP5569_PROGRAM_LENGTH; i++) {
-> ed7ae4f43e228c Christian Marangi 2024-05-27  377  			ret = lp55xx_write(chip, LP5569_REG_PROG_MEM + i,
-> ed7ae4f43e228c Christian Marangi 2024-05-27 @378  					   pattern[i + (page * LP5569_BYTES_PER_PAGE)]);
->                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> i can co up to LP5569_PROGRAM_LENGTH and "page * LP5569_BYTES_PER_PAGE"
-> can also go up to LP5569_PROGRAM_LENGTH.  So we're 2x beyond the end of
-> the array.
->
+At the jt240mhqs_hwt_ek_e3 panel, noticeable flickering occurs. This is
+addressed by patch 1, which adjusts the vertical timing. Patch 2 and 3 are
+two more minor fixes for timing and dimension.
 
-Yes the second loop max value should have been LP5569_BYTES_PER_PAGE,
-totally a copy paste error on my side.
+Signed-off-by: Gerald Loacker <gerald.loacker@wolfvision.net>
+---
+Changes in v2:
+- Added fixes tag to patches 1-3
+- Link to v1: https://lore.kernel.org/r/20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v1-0-f9ccf6e7a881@wolfvision.net
 
-Thanks a lot for warning about this bug, will send new version with this
-fixed.
+---
+Gerald Loacker (3):
+      drm/panel: sitronix-st7789v: fix timing for jt240mhqs_hwt_ek_e3 panel
+      drm/panel: sitronix-st7789v: tweak timing for jt240mhqs_hwt_ek_e3 panel
+      drm/panel: sitronix-st7789v: fix display size for jt240mhqs_hwt_ek_e3 panel
 
-> ed7ae4f43e228c Christian Marangi 2024-05-27  379  			if (ret)
-> ed7ae4f43e228c Christian Marangi 2024-05-27  380  				return -EINVAL;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  381  		}
-> ed7ae4f43e228c Christian Marangi 2024-05-27  382  	}
-> ed7ae4f43e228c Christian Marangi 2024-05-27  383  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  384  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  385  	return size;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  386  
-> ed7ae4f43e228c Christian Marangi 2024-05-27  387  err:
-> ed7ae4f43e228c Christian Marangi 2024-05-27  388  	dev_err(&chip->cl->dev, "wrong pattern format\n");
-> ed7ae4f43e228c Christian Marangi 2024-05-27  389  	return -EINVAL;
-> ed7ae4f43e228c Christian Marangi 2024-05-27  390  }
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-> 
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-d26983703b27
 
+Best regards,
 -- 
-	Ansuel
+Gerald Loacker <gerald.loacker@wolfvision.net>
+
 
