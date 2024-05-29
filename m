@@ -1,215 +1,306 @@
-Return-Path: <linux-kernel+bounces-194244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661DD8D38DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:13:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AAA98D38DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8975A1C20FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114E91C225E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604301459E3;
-	Wed, 29 May 2024 14:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alXnCIxL"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E7214A093;
+	Wed, 29 May 2024 14:12:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6BE144D34;
-	Wed, 29 May 2024 14:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E045154FAE;
+	Wed, 29 May 2024 14:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716991888; cv=none; b=PUc0vDmCjqdanm39oxMI7MyKK9jaTH+TmaPVHtknf2S77YFFyRbLscld4MYiY9bznFfpTkb8xY6ibhf/mWgggVwTcvexuTIh6gGTMNy7Ve+Y4KyXPS9iB/aXSaeO0hSL6cLNgRtxItP9kGdJOFcXqQ8V6Kf9EDcP6PW3LE1VGys=
+	t=1716991931; cv=none; b=OpR0rgFl6jeUHL5+6aIQHCHLQXifpW5BA6NrZ2sDUuCW0JQo3qENRfa3Svucq8+32MTQBQ88DnINQuy3zTrr1swpJi2S0+JgHI5GqUXRMvmQ0fFfU2YsHXrMrypepYFA+mb7W1gDw4a5NVF2cEZ/o/4kQdutDE1254EoPn4zSeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716991888; c=relaxed/simple;
-	bh=nvya7ZlgACfFyatqNIXscH2VuvYtZOyEAo4x90jdgfI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F7nLEmvqR9+iA+iT0/clLZuxTBXPfGxBwvgAWW8871fHrYk7qG6ugdJQNtjmTJX6rjboe+tj9upUjJT3Ga/nwfFKQ47kQV7+c8O4+rHBNLagrQvoD53LIJ1oEXAOJJHbnRUK8TEZunf4ldONLArVFfAZtyKLLaWZfT8Dv5aKR1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alXnCIxL; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f60a502bb2so1683245ad.3;
-        Wed, 29 May 2024 07:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716991886; x=1717596686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=EoBQc0kl6LB1qi1fWgBiA7CgfTFpaSH0Gsxy+hQaR7Q=;
-        b=alXnCIxLQpzGzmG5G8tihUjC+OyArhAtte8eIWfQ6U6nRbvdI1RRXrjF4FdURf+i6e
-         HeDBvVowCxhpkREQYdr+ijuOQhTQ+MWWWKXiLJIA9Iac+ujt14JYEGGUIuCkv/0kGq6n
-         CLEcyNU08KzKnX+3ibm8vHwtB2Ytcu3AIw1G+j42ayW7yTdwfJzCATFyha3qlSYGJqqE
-         ixEEUx2+AZhd8LGHBFNl3RyjRu1ncfUayRoXnHrnHGfIAQDm4L6vnCRbGKgmCkaQ6HB3
-         lcN7mENe6O9ksbmhPBTTSzU2aRsOJTxfXCXjSsSldM1IdUu+Fuoqj3Ohx5V7Q8IYjv8U
-         PwOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716991886; x=1717596686;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EoBQc0kl6LB1qi1fWgBiA7CgfTFpaSH0Gsxy+hQaR7Q=;
-        b=Jn2uGPJ/fKRXvn0JY2lsCVN8LtTsi5oTzfAT1HfWwLApzpc8JEUxHG84A8eiqzsGsN
-         VHLjUozNGTYRzaN7yLZ3S3/IphvtGENjU+Ot3FN/wtML4mQ1ksdLzagJrYn664wP1fmE
-         XOC2rhwaZTfu/VKdxGqRSZhNvCLHybArrkOnZsY/t55/dw5ZKNfpump0uK6LbBPYhNCg
-         gG05SdHg8Eo+IF8bqJV92X7PNhXat7Z7JbUTvZfaH50v9TimHhAqJykfb0ZnBDo7uKGJ
-         whuunY+NhRJP/rQCUkpoUhwWKNXSaEL25gFrFU/CR3oDdC7O9qCHfgE6PlW8ORYwolt2
-         XG+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUmnHVI/qNga0atDM6z75dyeZzRFy5t2qgyTVz6EHZZGFSzgoNntJ5rAFKmgDKG+m+U6pDJO/NK85nEx/sApkgkyiSOr/CaZxEDcPR+UiiaCpmfEuK2pBOvEdkD/Hvo8ASB44/x1f9EGDij6C4qgQbdkrWpSSb9NPkHlHLFiMsvjBuitd9g
-X-Gm-Message-State: AOJu0YztkPCCCwpQ2EYcKlRQmAL416nROiub9AmG7JHUP+QAPUokrS8O
-	tj/rSNfPjsLcs+7GzKuiSmDoKLMpX180bO6m+erFO+W8fBbXQFa0
-X-Google-Smtp-Source: AGHT+IEyG65qZfUUyugq93mgzzLOsIPM+gy0sf3JZ8+G1Pig5602piIwBHJrHow3OJ6kfXdRQBugGg==
-X-Received: by 2002:a17:902:e846:b0:1f4:9e85:9d5f with SMTP id d9443c01a7336-1f49e85a1damr90112945ad.19.1716991885357;
-        Wed, 29 May 2024 07:11:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c997d0dsm99891065ad.199.2024.05.29.07.11.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 07:11:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <6b87136a-01e7-4b4b-b36f-632cf59b4760@roeck-us.net>
-Date: Wed, 29 May 2024 07:11:23 -0700
+	s=arc-20240116; t=1716991931; c=relaxed/simple;
+	bh=+scz4t99HrNfb43TGDs/Gk5/fHNulxEOPZbWLGxOB1k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=otgL9jRvOESCNyHjNtZm+J5t8WLAoojdxsYTjAcRtPJuJwCaso8ca7xO3c2CA4ot+VIPUAVJjN7pZC7jSO/GbVpHIiRJow//VHeFHXXWk3HUG1h1wlSqiEIfI0qdH0/htMqJVinZYBUjpGzHLoE38Rv9mEfBBNomw0dIqrhmK64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VqBBK2sS0z6K9F7;
+	Wed, 29 May 2024 22:11:05 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29D78140A78;
+	Wed, 29 May 2024 22:12:06 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 29 May
+ 2024 15:12:05 +0100
+Date: Wed, 29 May 2024 15:12:04 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Julien Stephan <jstephan@baylibre.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Nuno Sa
+	<nuno.sa@analog.com>
+Subject: Re: [PATCH v2] driver: iio: add missing checks on iio_info's
+ callback access
+Message-ID: <20240529151204.00001293@Huawei.com>
+In-Reply-To: <CAEHHSvZFfV9mMjnGprqfU-NyCFCdkTLCmfy8K6Ey83-Yg_wA6A@mail.gmail.com>
+References: <20240529-iio-core-fix-segfault-v2-1-7b5a5fa6853f@baylibre.com>
+	<20240529130458.000049e6@Huawei.com>
+	<CAEHHSvZFfV9mMjnGprqfU-NyCFCdkTLCmfy8K6Ey83-Yg_wA6A@mail.gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] hwmon: (ina2xx) Add device tree support to pass
- alert polarity
-To: Amna Waseem <Amna.Waseem@axis.com>, Jean Delvare <jdelvare@suse.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@axis.com
-References: <20240529-apol-ina2xx-fix-v2-0-ee2d76142de2@axis.com>
- <20240529-apol-ina2xx-fix-v2-2-ee2d76142de2@axis.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240529-apol-ina2xx-fix-v2-2-ee2d76142de2@axis.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 5/29/24 02:47, Amna Waseem wrote:
-> The INA230 has an Alert pin which is asserted when the alert
-> function selected in the Mask/Enable register exceeds the
-> value programmed into the Alert Limit register. Assertion is based
-> on the Alert Polarity Bit (APOL, bit 1 of the Mask/Enable register).
-> It is default set to value 0 i.e Normal (active-low open collector).
-> However, hardware can be designed in such a way that expects Alert pin
-> to become active high if a user-defined threshold in Alert limit
-> register has been exceeded. This patch adds a way to pass alert polarity
-> value to the driver via device tree.
-> 
-> Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
+On Wed, 29 May 2024 15:10:42 +0200
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-Please address my earlier comments, and in the future please wait a few minutes
-before sending another version to give people time to provide feedback
-on the earlier version(s).
+> Le mer. 29 mai 2024 =E0 14:05, Jonathan Cameron
+> <Jonathan.Cameron@huawei.com> a =E9crit :
+> >
+> > On Wed, 29 May 2024 13:55:52 +0200
+> > Julien Stephan <jstephan@baylibre.com> wrote:
+> > =20
+> > > Some callbacks from iio_info structure are accessed without any check=
+, so
+> > > if a driver doesn't implement them trying to access the corresponding
+> > > sysfs entries produce a kernel oops such as:
+> > >
+> > > [ 2203.527791] Unable to handle kernel NULL pointer dereference at vi=
+rtual address 00000000 when execute
+> > > [...]
+> > > [ 2203.783416] Call trace:
+> > > [ 2203.783429]  iio_read_channel_info_avail from dev_attr_show+0x18/0=
+x48
+> > > [ 2203.789807]  dev_attr_show from sysfs_kf_seq_show+0x90/0x120
+> > > [ 2203.794181]  sysfs_kf_seq_show from seq_read_iter+0xd0/0x4e4
+> > > [ 2203.798555]  seq_read_iter from vfs_read+0x238/0x2a0
+> > > [ 2203.802236]  vfs_read from ksys_read+0xa4/0xd4
+> > > [ 2203.805385]  ksys_read from ret_fast_syscall+0x0/0x54
+> > > [ 2203.809135] Exception stack(0xe0badfa8 to 0xe0badff0)
+> > > [ 2203.812880] dfa0:                   00000003 b6f10f80 00000003 b6e=
+ab000 00020000 00000000
+> > > [ 2203.819746] dfc0: 00000003 b6f10f80 7ff00000 00000003 00000003 000=
+00000 00020000 00000000
+> > > [ 2203.826619] dfe0: b6e1bc88 bed80958 b6e1bc94 b6e1bcb0
+> > > [ 2203.830363] Code: bad PC value
+> > > [ 2203.832695] ---[ end trace 0000000000000000 ]---
+> > >
+> > > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> > > Signed-off-by: Julien Stephan <jstephan@baylibre.com> =20
+> >
+> > How bad would a registration time check look?
+> > I'd rather catch this early than have drivers with missing hooks
+> > that we don't notice because no one pokes the file. =20
+>=20
+> Hi Jonathan,
+>=20
+> Do you mean something like that (as it is done for ext_info for example) :
+>=20
+> ret =3D __iio_add_chan_devattr(iio_chan_info_postfix[i],
+>                  chan,
+> -                &iio_read_channel_info,
+> -                &iio_write_channel_info,
+> +                indio_dev->info->read_raw ?
+> +                    &iio_read_channel_info : NULL,
 
-> ---
->   drivers/hwmon/ina2xx.c | 27 +++++++++++++++++++++++++++
->   1 file changed, 27 insertions(+)
-> 
-> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
-> index d8415d1f21fc..9afaabdc367d 100644
-> --- a/drivers/hwmon/ina2xx.c
-> +++ b/drivers/hwmon/ina2xx.c
-> @@ -73,6 +73,9 @@
->   #define INA226_READ_AVG(reg)		(((reg) & INA226_AVG_RD_MASK) >> 9)
->   #define INA226_SHIFT_AVG(val)		((val) << 9)
->   
-> +#define INA226_ALERT_POLARITY_MASK		0x0002
-> +#define INA226_SHIFT_ALERT_POLARITY(val)	((val) << 1)
-> +
->   /* bit number of alert functions in Mask/Enable Register */
->   #define INA226_SHUNT_OVER_VOLTAGE_BIT	15
->   #define INA226_SHUNT_UNDER_VOLTAGE_BIT	14
-> @@ -178,6 +181,21 @@ static u16 ina226_interval_to_reg(int interval)
->   	return INA226_SHIFT_AVG(avg_bits);
->   }
->   
-> +static int ina2xx_set_alert_polarity(struct ina2xx_data *data,
-> +				     unsigned long val)
-> +{
-> +	int ret;
-> +
-> +	if (val > INT_MAX || !(val == 0 || val == 1))
-> +		return -EINVAL;
-> +
-> +	ret = regmap_update_bits(data->regmap, INA226_MASK_ENABLE,
-> +				 INA226_ALERT_POLARITY_MASK,
-> +				 INA226_SHIFT_ALERT_POLARITY(val));
-> +
-> +	return ret;
+Doesn't work because of the read_raw_multi callback, but otherwise
+this does improve our permissions handling a little at least.
+It 'might' be considered an ABI change though :(
 
-ret is an unnecessary variable.
-	return regmap_update_bits(...);
+> +                indio_dev->info->write_raw ?
+> +                    &iio_write_channel_info : NULL,
+>                  i,
+>                  shared_by,
+>                  &indio_dev->dev,
+>                  NULL,
+>                  &iio_dev_opaque->channel_attr_list);
+>=20
+> Or do you want to check even before and do not create the  sysfs
+> entry if there is no callback registered by the driver?
+
+I was thinking a much more stupid option of a missing read_raw
+and read_raw_multi + anything in the info_masks pretty much
+indicates a bug.
+
+I don't think we have any 'write only' attributes
+
+Similar for read_event_config, though write_event_config is
+trickier as we 'might' one day have a device where the events
+are all fixed value and always on (so read only).
+
+Perhaps what you have here is the simplest option as the exact
+rules for what callbacks are provided area bit messy so checking
+at use is fine.
+
+However I'd like to see some scattered use of local variables like
+in inkern.c
+struct iio_info *info =3D chan->indio_dev->info;
+to reduce the long lines.
 
 
-> +}
-> +
->   /*
->    * Calibration register is set to the best value, which eliminates
->    * truncation errors on calculating current register in hardware.
-> @@ -659,6 +677,15 @@ static int ina2xx_probe(struct i2c_client *client)
->   	if (ret)
->   		return dev_err_probe(dev, ret, "failed to enable vs regulator\n");
->   
-> +	if (!of_property_read_u32(dev->of_node, "ti,alert-polarity", &val)) {
-> +		ret = ina2xx_set_alert_polarity(data, val);
-> +		if (ret < 0) {
-> +			return dev_err_probe(
-> +			   dev, ret,
-> +			   "failed to set APOL bit of Enable/Mask register\n");
-
-Line split is still as bad as before.
-
-Guenter
+>=20
+> Julien
+>=20
+> >
+> > The inkern ones are good though.
+> >
+> > Jonathan
+> > =20
+> > > ---
+> > > Changes in v2:
+> > > - crop dmesg log to show only pertinent info and reduce commit message
+> > > - Link to v1: https://lore.kernel.org/r/20240529-iio-core-fix-segfaul=
+t-v1-1-7ff1ba881d38@baylibre.com
+> > > ---
+> > >  drivers/iio/industrialio-core.c  |  7 ++++++-
+> > >  drivers/iio/industrialio-event.c |  9 +++++++++
+> > >  drivers/iio/inkern.c             | 16 +++++++++++-----
+> > >  3 files changed, 26 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrial=
+io-core.c
+> > > index fa7cc051b4c4..2f185b386949 100644
+> > > --- a/drivers/iio/industrialio-core.c
+> > > +++ b/drivers/iio/industrialio-core.c
+> > > @@ -758,9 +758,11 @@ static ssize_t iio_read_channel_info(struct devi=
+ce *dev,
+> > >                                                       INDIO_MAX_RAW_E=
+LEMENTS,
+> > >                                                       vals, &val_len,
+> > >                                                       this_attr->addr=
+ess);
+> > > -     else
+> > > +     else if (indio_dev->info->read_raw)
+> > >               ret =3D indio_dev->info->read_raw(indio_dev, this_attr-=
+>c,
+> > >                                   &vals[0], &vals[1], this_attr->addr=
+ess);
+> > > +     else
+> > > +             return -EINVAL;
+> > >
+> > >       if (ret < 0)
+> > >               return ret;
+> > > @@ -842,6 +844,9 @@ static ssize_t iio_read_channel_info_avail(struct=
+ device *dev,
+> > >       int length;
+> > >       int type;
+> > >
+> > > +     if (!indio_dev->info->read_avail)
+> > > +             return -EINVAL;
+> > > +
+> > >       ret =3D indio_dev->info->read_avail(indio_dev, this_attr->c,
+> > >                                         &vals, &type, &length,
+> > >                                         this_attr->address);
+> > > diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industria=
+lio-event.c
+> > > index 910c1f14abd5..a64f8fbac597 100644
+> > > --- a/drivers/iio/industrialio-event.c
+> > > +++ b/drivers/iio/industrialio-event.c
+> > > @@ -285,6 +285,9 @@ static ssize_t iio_ev_state_store(struct device *=
+dev,
+> > >       if (ret < 0)
+> > >               return ret;
+> > >
+> > > +     if (!indio_dev->info->write_event_config)
+> > > +             return -EINVAL;
+> > > +
+> > >       ret =3D indio_dev->info->write_event_config(indio_dev,
+> > >               this_attr->c, iio_ev_attr_type(this_attr),
+> > >               iio_ev_attr_dir(this_attr), val);
+> > > @@ -300,6 +303,9 @@ static ssize_t iio_ev_state_show(struct device *d=
+ev,
+> > >       struct iio_dev_attr *this_attr =3D to_iio_dev_attr(attr);
+> > >       int val;
+> > >
+> > > +     if (!indio_dev->info->read_event_config)
+> > > +             return -EINVAL;
+> > > +
+> > >       val =3D indio_dev->info->read_event_config(indio_dev,
+> > >               this_attr->c, iio_ev_attr_type(this_attr),
+> > >               iio_ev_attr_dir(this_attr));
+> > > @@ -318,6 +324,9 @@ static ssize_t iio_ev_value_show(struct device *d=
+ev,
+> > >       int val, val2, val_arr[2];
+> > >       int ret;
+> > >
+> > > +     if (!indio_dev->info->read_event_value)
+> > > +             return -EINVAL;
+> > > +
+> > >       ret =3D indio_dev->info->read_event_value(indio_dev,
+> > >               this_attr->c, iio_ev_attr_type(this_attr),
+> > >               iio_ev_attr_dir(this_attr), iio_ev_attr_info(this_attr),
+> > > diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+> > > index 52d773261828..74f87f6ac390 100644
+> > > --- a/drivers/iio/inkern.c
+> > > +++ b/drivers/iio/inkern.c
+> > > @@ -560,9 +560,11 @@ static int iio_channel_read(struct iio_channel *=
+chan, int *val, int *val2,
+> > >                                       vals, &val_len, info);
+> > >               *val =3D vals[0];
+> > >               *val2 =3D vals[1];
+> > > -     } else {
+> > > +     } else if (chan->indio_dev->info->read_raw) {
+> > >               ret =3D chan->indio_dev->info->read_raw(chan->indio_dev,
+> > >                                       chan->channel, val, val2, info);
+> > > +     } else {
+> > > +             return -EINVAL;
+> > >       }
+> > >
+> > >       return ret;
+> > > @@ -753,8 +755,10 @@ static int iio_channel_read_avail(struct iio_cha=
+nnel *chan,
+> > >       if (!iio_channel_has_available(chan->channel, info))
+> > >               return -EINVAL;
+> > >
+> > > -     return chan->indio_dev->info->read_avail(chan->indio_dev, chan-=
+>channel,
+> > > -                                              vals, type, length, in=
+fo);
+> > > +     if (chan->indio_dev->info->read_avail)
+> > > +             return chan->indio_dev->info->read_avail(chan->indio_de=
+v, chan->channel,
+> > > +                                                      vals, type, le=
+ngth, info);
+> > > +     return -EINVAL;
+> > >  }
+> > >
+> > >  int iio_read_avail_channel_attribute(struct iio_channel *chan,
+> > > @@ -917,8 +921,10 @@ EXPORT_SYMBOL_GPL(iio_get_channel_type);
+> > >  static int iio_channel_write(struct iio_channel *chan, int val, int =
+val2,
+> > >                            enum iio_chan_info_enum info)
+> > >  {
+> > > -     return chan->indio_dev->info->write_raw(chan->indio_dev,
+> > > -                                             chan->channel, val, val=
+2, info);
+> > > +     if (chan->indio_dev->info->write_raw)
+> > > +             return chan->indio_dev->info->write_raw(chan->indio_dev,
+> > > +                                                     chan->channel, =
+val, val2, info);
+> > > +     return -EINVAL;
+> > >  }
+> > >
+> > >  int iio_write_channel_attribute(struct iio_channel *chan, int val, i=
+nt val2,
+> > >
+> > > ---
+> > > base-commit: 409b6d632f5078f3ae1018b6e43c32f2e12f6736
+> > > change-id: 20240528-iio-core-fix-segfault-aa74be7eee4a
+> > >
+> > > Best regards, =20
+> > =20
 
 
