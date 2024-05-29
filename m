@@ -1,100 +1,164 @@
-Return-Path: <linux-kernel+bounces-193300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265288D2A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:29:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F97B8D2A00
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3D21F26E3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:29:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A386A1C23A8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6015ADB3;
-	Wed, 29 May 2024 01:29:10 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29D615AD9B;
+	Wed, 29 May 2024 01:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q3E7oWEj"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14FD15AAD9;
-	Wed, 29 May 2024 01:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425F815AAD9;
+	Wed, 29 May 2024 01:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716946150; cv=none; b=ZMZrD/1gShE6ycCHNovvC+qWBLX2EzzlZdgStYZsryuI1ON8XSxAHbb6BfrTs2y1GWaT6W2Ia3b8TWVag1Nr2qzLhl8vrp0CIpZeRemP5eqt3auoRbWkYfzPSyySnrXL6qTi2wTQ+I8PlCIB1GV4G8tY9wLTp7tMAp1QYRw0MVs=
+	t=1716946139; cv=none; b=OiIwqPKYq4ogMiVR5lwzAHOJj5pXNb59L9lVQUX85Lo8lMT0RuAaJ6jI4/ZvoC33XPTBDyhtkvK3lC+Vi/MxK+KzXMNPMni6ip7MSJESHzeWM4g5y9nN/NKBRaZF6jt6cOaYNoIC0JF33Imnv5hXaAoRkE8jZoHU1XFGRlMgXjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716946150; c=relaxed/simple;
-	bh=lkvz82Zkg1Uxcp8tAZo4JvAUx8Uw550p4vhxe3h2Up8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sOlLPVi15YXN+l+Hv7CAhDn2CLYmchpqelDrwyoHF4yQK9ro/ZWyuI0XQLPDWPr9LqE6qJN10PPdANOiFZ4N0c/HgSBzQ3vQXGfk5YwRleqp9KAENxdAxuNE03p0UJLg7s+fJUH5Y1Wl/nU6pbH0cSLdl39fnw2/iz6BenieaW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44T1Slj662994523, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44T1Slj662994523
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 May 2024 09:28:47 +0800
-Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 29 May 2024 09:28:47 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 29 May 2024 09:28:46 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Wed, 29 May 2024 09:28:46 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: =?utf-8?B?TWFyY2luIMWabHVzYXJ6?= <marcin.slusarz@gmail.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-CC: =?utf-8?B?TWFyY2luIMWabHVzYXJ6?= <mslusarz@renau.com>,
-        Tim K
-	<tpkuester@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo
-	<kvalo@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtw88: schedule rx work after everything is set up
-Thread-Topic: [PATCH] wifi: rtw88: schedule rx work after everything is set up
-Thread-Index: AQHasFekMjDEF5R7/k+0650S2/2b8bGrUuCQgACfb4CAAAQJAIABdicQ
-Date: Wed, 29 May 2024 01:28:46 +0000
-Message-ID: <801bd77995184b1fa35bf4a32ab3a036@realtek.com>
-References: <13e848c1544245e6aef4b89c3f38daf0@realtek.com>
- <20240528110246.477321-1-marcin.slusarz@gmail.com>
-In-Reply-To: <20240528110246.477321-1-marcin.slusarz@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1716946139; c=relaxed/simple;
+	bh=+6UmtZ3tFAh1ncQEqGpFhys5EuukV5ETxWLZaIAEsrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GS2CbJ4218sm8l61Ph1BKoL2S4XFdMCIJe1hplJ7ATZCnGXm45uNl04TeYiOVtnhUQ0qbW55YUfJRomEymdgr+jC9fhtRgt85HWuAL8dlocWa0J4Nb029QA0pTPup7TGguFYOLpXdP9Jd1O5o1JowmjZZPnasYlHh+jKuETNAcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=q3E7oWEj; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716946132;
+	bh=DFxujHLqbwNMNPEh3VXzYbit5PH4X95MhhNNu8Ap+rU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=q3E7oWEjrobCB9GpdSByUSL2XUJDTpGecwOkeuqmmRNXEBtSU1r0xp+cSu8qQX9EU
+	 m5BsXDWR3/LdJJ1fz21sHe4lRznZ4GAJCrl+J9p3iqeaq8wrqK/eW6Vq4f+DYAqG1+
+	 wW94O/8ycTMugrBx49YzxvF0WeZn+KN0Y/jgHexjhtU4sVXGoCIqsJg5dI5h1RwDrN
+	 iP+k5daQccZr04dPeEcOCk27S3lUJ8jRufm/umyQkD+MXqFVJd15jXdvMoOv1M3HAF
+	 22u7K7TmF3gc9Xkpahhwhz/XA2OBE3nFUTggBbmOB37PssRV1DOIbM8vhs5LMYNdO+
+	 Z1nUiPzi7rWDQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpsGr0n2hz4wyY;
+	Wed, 29 May 2024 11:28:51 +1000 (AEST)
+Date: Wed, 29 May 2024 11:28:49 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Ogness
+ <john.ogness@linutronix.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Shimoyashiki Taichi
+ <taichi.shimoyashiki@sony.com>, Sreenath Vijayan
+ <sreenath.vijayan@sony.com>
+Subject: linux-next: manual merge of the printk tree with Linus' tree
+Message-ID: <20240529112849.74718b45@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: multipart/signed; boundary="Sig_/Oprw9qRIHmPcaH3yQtnnJx7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-TWFyY2luIMWabHVzYXJ6IDxtYXJjaW4uc2x1c2FyekBnbWFpbC5jb20+IHdyb3RlOg0KPiBGcm9t
-OiBNYXJjaW4gxZpsdXNhcnogPG1zbHVzYXJ6QHJlbmF1LmNvbT4NCj4gDQo+IFJlcG9ydGVkLWJ5
-OiBUaW0gSyA8dHBrdWVzdGVyQGdtYWlsLmNvbT4NCj4gQ2xvc2VzOg0KPiBodHRwczovL2xvcmUu
-a2VybmVsLm9yZy9saW51eC13aXJlbGVzcy9DQStzaG9XUTdQNDlqaFFhc29mRGNUZFFoaXVhclBU
-allFRGEtLU5pVlZ4NDk0V2N1UXdAbWFpbC5nbWFpbC4NCj4gY29tLw0KDQpJIGdhdmUgdGhpcyBz
-dWdnZXN0aW9ucyB0b28gZWFybHksIHNpbmNlIHdlIGhhdmUgbm90IGdvdHRlbiB0ZXN0IHJlc3Vs
-dCBmcm9tIFRpbS4NCkkgd2lsbCBjaGFuZ2UgdGhlbSB0byAiTGluazoiIGlmIG5vIEFDSyBmcm9t
-IFRpbSB3aGlsZSBtZXJnaW5nLiANCg0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJjaW4gxZpsdXNhcnog
-PG1zbHVzYXJ6QHJlbmF1LmNvbT4NCj4gQ2M6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0ZWsu
-Y29tPg0KPiBDYzogTGFycnkgRmluZ2VyIDxMYXJyeS5GaW5nZXJAbHdmaW5nZXIubmV0Pg0KPiBD
-YzogS2FsbGUgVmFsbyA8a3ZhbG9Aa2VybmVsLm9yZz4NCj4gQ2M6IGxpbnV4LXdpcmVsZXNzQHZn
-ZXIua2VybmVsLm9yZw0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KDQpUaGlz
-IGlzIHYyIHZlcnNpb24sIHNvIG1haWwgc3ViamVjdCBzaG91bGQgYmUgIltQQVRDSCB2Ml0gLi4u
-LiIsIGFuZCBhZGQgDQpjaGFuZ2UgbG9nIGhlcmUsIGxpa2U6DQoNCi0tLSAgKGRlbGltaXRlciBp
-cyBpbXBvcnRhbnQgaGVyZSkNCg0KdjI6IGFkZCBSZXBvcnRlZC1ieSBhbmQgQ2xvc2VzLg0KDQo+
-IC0tLQ0KPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OC91c2IuYyB8IDEzICsr
-KysrKysrKystLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAzIGRlbGV0
-aW9ucygtKQ0KPiANCg0KQWxzbyBJIHdvdWxkIHByZWZlciB0byBwb2ludCBvdXQgInVzYiIgaW4g
-c3ViamVjdCwgcGxlYXNlIHVzZSAid2lmaTogcnR3ODg6IHVzYjogIg0KYXMgcHJlZml4Lg0KDQpb
-Li4uXQ0KDQo=
+--Sig_/Oprw9qRIHmPcaH3yQtnnJx7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the printk tree got a conflict in:
+
+  include/linux/printk.h
+
+between commit:
+
+  693f75b91a91 ("printk: Add function to replay kernel log on consoles")
+
+from Linus' tree and commits:
+
+  7e4289a0c15f ("nbcon: Add API to acquire context for non-printing operati=
+ons")
+  8a192e951d8a ("printk: nbcon: Add unsafe flushing on panic")
+  dc0f096fb7aa ("printk: Coordinate direct printing in panic")
+
+from the printk tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/printk.h
+index 40afab23881a,69f40a71c438..000000000000
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@@ -195,7 -195,10 +198,11 @@@ void show_regs_print_info(const char *l
+  extern asmlinkage void dump_stack_lvl(const char *log_lvl) __cold;
+  extern asmlinkage void dump_stack(void) __cold;
+  void printk_trigger_flush(void);
+ +void console_replay_all(void);
++ void printk_legacy_allow_panic_sync(void);
++ extern bool nbcon_device_try_acquire(struct console *con);
++ extern void nbcon_device_release(struct console *con);
++ void nbcon_atomic_flush_unsafe(void);
+  #else
+  static inline __printf(1, 0)
+  int vprintk(const char *s, va_list args)
+@@@ -275,9 -278,24 +282,27 @@@ static inline void dump_stack(void
+  static inline void printk_trigger_flush(void)
+  {
+  }
+ +static inline void console_replay_all(void)
+ +{
+ +}
++=20
++ static inline void printk_legacy_allow_panic_sync(void)
++ {
++ }
++=20
++ static inline bool nbcon_device_try_acquire(struct console *con)
++ {
++ 	return false;
++ }
++=20
++ static inline void nbcon_device_release(struct console *con)
++ {
++ }
++=20
++ static inline void nbcon_atomic_flush_unsafe(void)
++ {
++ }
++=20
+  #endif
+ =20
+  bool this_cpu_in_panic(void);
+
+--Sig_/Oprw9qRIHmPcaH3yQtnnJx7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZWhNEACgkQAVBC80lX
+0GwrEggAni6VJycneGbV6/QWilOWSI8ZvINicDqu7d00tfwtWBw1lzurDbhv1qNP
+kWOV9DIWrzTD33FbpeG5btKM+K5OuB+eArOBTLFRFHD6ReQwLDQrLB43+5ClGmuB
+GtzI25HMjN5V5mLLwYWBOKsMkAPNwKGwlAklF6AAX8eG7N5pgrSulKuSJBvTMGaC
+yxzG16DO+ON21TXdFWPDJHdkgl0t0DuT7D/MYsKCPs5Ulmgj5r+xlDLyZW1pqf6v
+KXXR/Tt7yage+UTz5OpJoV6ug2JARwIVdILK1KPHzwQqNw0/46NpjA0+mRz0EC+e
+3BqiU53fpxtII8DDLMMgAVPxv1BYlg==
+=QklN
+-----END PGP SIGNATURE-----
+
+--Sig_/Oprw9qRIHmPcaH3yQtnnJx7--
 
