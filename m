@@ -1,190 +1,198 @@
-Return-Path: <linux-kernel+bounces-194445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7F38D3C6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:29:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F25D8D3CD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6185BB22B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 804D52846ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB118184115;
-	Wed, 29 May 2024 16:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD9F200131;
+	Wed, 29 May 2024 16:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="AovK9IGB"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02olkn2105.outbound.protection.outlook.com [40.92.44.105])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3U+Fwyv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C851836FA;
-	Wed, 29 May 2024 16:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.44.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717000161; cv=fail; b=IgfQDgqUEJV5G8F43imbroWfWrrdOiF9Y3jncxUHSS0aqkE/ToH37XiOZQ0DR6Ip9IEp/jdNlnq1LxkypveNmro8JZwS4doe+0c9bmdZE2aqyQN6nTaKw5lxV5DhL50m3FJhr0Q0jXL4kvlXBBTA6M4a7ssyyaA7MOGnYfwbqp8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717000161; c=relaxed/simple;
-	bh=yFAGUgu7E+HmIBAhjf1jD+2MjD7BK5ajHyHo1q6TqbE=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TJMWhsF+DYUyV/f+bvWM+x4QmWnkY3Vb+6No2R/+QscTFrY9D1seOTNXq124XHF7mYOgFZOgi+KV7zFqU0grXeCp9rmi54x0XiXw45vmSwnvZK824SmstnPXPHlcjmRZ+wik3+EgF6vglkHJy88SZyFegES3U8ao56gVm1U6KUY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=AovK9IGB; arc=fail smtp.client-ip=40.92.44.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qd3CoOR60ZrTcWJp/++Yo66OfopNGJ2cGxSW6t/NgQ2XdMhJhmTi/+3f7jkGK4LjD0QPPxROVY2jhQa/cNW5mUqQHQqyNTugiSWNMQ4OwvfVEChaiUOlKenBj4/W9Q8iTNFMwZIN2NTt51xM/ewzL50a6Ci21Rp5o6ngJLHVot+/S288N6FJ/h5wuG2zoduDlvG/s2Ce14C4Q22y+mtX53E7d3VRDNSqL3GLgZ0uCje4ok8cD4/NETkppzboRFuHnC8i1+xhG3N8mp5tZcohHyMeAXgv5gDS6eXDxIcqv6nr71n+/L2umyu/SROl7bfvvGjptgq9wnUKTk9F4IDhQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6neLBZV6KYmHgmG767vB0nCQfhMAQSKYLDFcOdKEPt8=;
- b=JEafn+qX721iJ6Cb3zaApzZIfOFl7bMfkFOwjvl6MMe3sXjkeDqKcauggwjNd/sXnyxmPKJi9n5nuVtceM40WgCyKxawCOcho53g6AfnryBAXOrkHdtpzsVRPfdJeB3DsGP1HHjsCMFds6HsNvzftK9ZvgSgZ5TxOS3lpRdM1z7TItDJdrUZ3Vr1fyAuWyPOO7k+6mzS7/vpuulrNAgAybZYjFffmfzTUG341A+WYSMBj7vvLg8t4Ksh9j4Gyu9gkIok0C2uhjf3KFy7vH0phbcALnVEmMrsoxHsAJN2j2nZuwr+1Gu3iHNgt1jXPdmE9EHo2agPs3EeSxR+PCppyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6neLBZV6KYmHgmG767vB0nCQfhMAQSKYLDFcOdKEPt8=;
- b=AovK9IGB3kguANvxFCS25BpuHGo2AsTlao/P7fmWwFr3Pc6wJ0ed7mA2O6kAO0g7zC3Ub5qMto6B4/TxtE0/xnPet/iMxsEQixgzDFIJGYrbNIqz/m5fTtQugIMCTSyMQs6T5HTvZpVD02WQ8l1rOJk/1EVkjwXIXph6ZworyelfB+uBSz1iRcdci3hEg2Xv3y88XSuu21Sdwpjr4I4ad5WRYHRxMEo7raKfv7Mt2HiAUg1XPj4nNy7Osbi/s2AFz8zJ3MlSQ0dTvKcHl2QxUDmTZF9tf5G2zP6pb8bC6j8krEF8TJh31+E1lObWzCcTDIKiZm1r7IFgykT/vbrzDA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by IA0PR02MB9582.namprd02.prod.outlook.com (2603:10b6:208:403::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Wed, 29 May
- 2024 16:29:18 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7633.018; Wed, 29 May 2024
- 16:29:18 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Aditya Nagesh <adityanagesh@linux.microsoft.com>,
-	"adityanagesh@microsoft.com" <adityanagesh@microsoft.com>,
-	"kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5] Drivers: hv: Cosmetic changes for hv.c and balloon.c
-Thread-Topic: [PATCH v5] Drivers: hv: Cosmetic changes for hv.c and balloon.c
-Thread-Index: AQHaseJ69t/2vyNxWkWkqbj5I7HRCLGuZKrA
-Date: Wed, 29 May 2024 16:29:17 +0000
-Message-ID:
- <SN6PR02MB41572A8E15A990EB162C60FCD4F22@SN6PR02MB4157.namprd02.prod.outlook.com>
-References:
- <1716998695-32135-1-git-send-email-adityanagesh@linux.microsoft.com>
-In-Reply-To:
- <1716998695-32135-1-git-send-email-adityanagesh@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [1kgsHnhazKmnHjAJbQfRzb5e3Qkv2LuI]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|IA0PR02MB9582:EE_
-x-ms-office365-filtering-correlation-id: 8f555280-1bb0-4661-a3e6-08dc7ffc7ca1
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199019|102099023|440099019|3412199016;
-x-microsoft-antispam-message-info:
- DgL1dPNYLkxn9tmYG0aKTesY4kO7nJwfC7xSrnlLqS1yxlLKRrDD4k2ouxNznZCBhrvetzD3qB07MeqikgIvFSPz0bIJv9R0gky4o72wI+lW0ngAOPRp6HIukJsIZR7NGc+0e8r1FBVQkq//hjnSaVW6IbNQ/HXzADMivTKr+VjzNOCdWYuTcuMWQqMvclk9VDKEfjkpMJ0LjSkRep1BPTGC8q9lSzcFAqrmkm8+hAed0w/oAXh7XKmjgzHoFq00eM5rmimGD3hBChQArzOUngzd2l+ChqtQHlLo/jwREhAlCNbR83qMPXR77ow+EPmutxzAUxB9CGbzHvTSBQ5jRhFLD0bQHOzD04nlX1JhpYxfktQiWYEDjcJlJM/fbJrd8kQFIvDXlW/j4wUENdSpsgda8A20V4ULfpYYgYHIcy/3AbnTFwYtEICbpppFv1QosvOPiT7fzuqlQpVzOG1FtrE38Vsw6/g6W6C7vd0F/Ygc+EvqmeevNy6XYHcOemQAcxFXvZGxk7o7tgTblfDNUC4MN/B12Sn/C86ALcI0pl6cSi77L3Sm+TWRxTzjVppu
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?2ocTWdRznMtBUGq1YHSb8t1kBVLFLb4DTAwtapTobvgSMw8xpxiLqZxNMZGp?=
- =?us-ascii?Q?UEeuLOiIljiIljT5HR/6qgq7sE1XrofBiaMrBmY4LzJWbBEl6mxvnADq975T?=
- =?us-ascii?Q?FaZnuzLv4ESSGdUwlOTAPccH2wfEHm+38kZ82V6n9ioGSMfe8vmjtcZZK/Xr?=
- =?us-ascii?Q?+fkDG5s/WpixLfxHpjslXC5bEM0UO+Ah8mdiM6YXeqU+dmYtNfQfCiMEb3Wd?=
- =?us-ascii?Q?MTrzSEwTstMvAnGX8Yt5cQ7EeO7G0kbZ4MMfnOteQe3Fbek5ueatWpZ3XLLy?=
- =?us-ascii?Q?VSLguCIq4hKLXxq1Cuxq6YokRW3VZmrLELBO49Jr8cq1uz2bKs9O4T/Sn9Xs?=
- =?us-ascii?Q?JZbVYfDa+V2FKtRyhX+mq2k+rVoW1FYQWjnwfsGVKajB+A3LBPsPGlu1HtSW?=
- =?us-ascii?Q?EM7Zi1OEQvWr/C89HcgS0H7usR2VEp2Azhhqifv8qZXBC8ViAO5JiWUY4orG?=
- =?us-ascii?Q?AgmRv/l/0kes6wy9PYYzSnypcKYsatA4L8ffADqHCheN2E+lKZDUczqx1evr?=
- =?us-ascii?Q?jInK53dFmhXHhdhHXgsmD19p+8XlwFDV+PZyYa84GyHy2vYxjOHOaChg/l79?=
- =?us-ascii?Q?rwGtDIrvOtTxqQ0lH/33B5+lKviIPbujGKQ8ki3+/728FEJQEFCrDQ2VxXOd?=
- =?us-ascii?Q?63US9e95V2jSzFU/gcB3grgJJa7tYXj25CfB87TURFnUTY9EFGnuNYgmYAq9?=
- =?us-ascii?Q?g2fKDvyLGtuHqaUOr1R5aSWFZnnywkhbgT7rkia0zFTn0co5mi0024IWv3wh?=
- =?us-ascii?Q?fZ5eCVD1jtvo0tuXMG+9FVy0k558wTBebBeqkgVm5WBop2DcBqVfraN3GPtG?=
- =?us-ascii?Q?u3N83cwlCVhQI5Rcl5WzWaad2NAbwplWh6kP06U+XBCx5n5fUI0wUOkqlKHz?=
- =?us-ascii?Q?LkkP2rvQqkv0kmtAv63ImUU2cUZIZqfc5a0lvNhuGgJvZyVPbZMuS9UX7ZHr?=
- =?us-ascii?Q?oAcNXtX9N4FRQ6iKEt/6bN3wcCYNkXGeJhk/pSuWzKLQpuO2HOQhr2KpDaRA?=
- =?us-ascii?Q?iofgutvTw2CdRwhqbRqHmGiirzZnlLoUfUx1oDTLchkUBKHUDL8hBV/J1Bca?=
- =?us-ascii?Q?U8BgHcRcT+D3eWgr6Ez/ISRPM0JUOU2DjzjtIe9VsMPb99MzUCrcnUDvBYuW?=
- =?us-ascii?Q?IfM5kPQf4BT3gfXAOS/R+f97HcuisiWpVn0hEEQn5di0R1j5Lh6xfgh84VeY?=
- =?us-ascii?Q?ZUVTTQpKLFgjC4x12y5UfMdycvAfQPh71vOrfwQE7RszRCvr5ZQUrVy++1g?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50696187345;
+	Wed, 29 May 2024 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717000236; cv=none; b=ahaOdVl0CCl2gq3cOKWNhtLWJ37zL95pUEw2mOVAIeNDUQHH3WilTy3x/jRkFp3zMw8N/VBmgDzit9OmmcGhhQ2WsslkcuySE6mI4vmLEoEnO8Qrsgmf+R3iCgYkznQarI4EFuDFB4y3SGyzrHquoY/qsGq2TopPFzWaFx8WEfs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717000236; c=relaxed/simple;
+	bh=WLkRq0XdqFbptdq4GI1zmUzWSeRZ/kiprUVNCzcmZjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H1p7vyxvVnb18ZE962U/uCbkSXP2+6VRQtWCOunUCPeC4tptYsYAM/eOHW9PQGGaTG4mpgJSaWD9tDabph/b/8Q3B3FDYDwqzgmZXNwxKNZvx+eqHx4JlQuh71sdRC657xrBjTmRzhTqiW3hI1T5Z0K8X1c/RB5XR1OwH3NZMR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3U+Fwyv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0786C4AF09;
+	Wed, 29 May 2024 16:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717000235;
+	bh=WLkRq0XdqFbptdq4GI1zmUzWSeRZ/kiprUVNCzcmZjs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a3U+Fwyvlbzzz2zHjSo8i6Vs7NV/hxb5B6eXC6QD/9P1mhZe+Vo0PX3e7Hvlw4imP
+	 uxmmwQz+ZB0kqFirPr6cGzetmYpwOV7JZvkW3suNsjL09lAJObbFqypIeLGJ9fWtzX
+	 xpqYoNw6YsorYpOtMBdNmoCWZkEBa+iW7RZFKPK4pR0jE+hWUoCqO+yCO6ojpeW9lq
+	 hwdY13da9LH8H6kaxqo1eMH+eOTleBjr8zBqQUCORku36FERwEvYexacJO6nVjiFb0
+	 O6dBzTwzmkqEtBp2zIrTc04UEJy5PXeQ3AldKIHZA2brW8htUzCVojbgMYdHN7RUoT
+	 pA+nF+3G0M/qg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1sCMCA-000000004ia-2HPc;
+	Wed, 29 May 2024 18:30:35 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v2 00/14] arm64: dts: qcom: sc8280xp-x13s: enable pm8008 camera pmic
+Date: Wed, 29 May 2024 18:29:44 +0200
+Message-ID: <20240529162958.18081-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f555280-1bb0-4661-a3e6-08dc7ffc7ca1
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2024 16:29:17.8976
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR02MB9582
+Content-Transfer-Encoding: 8bit
 
-From: Aditya Nagesh <adityanagesh@linux.microsoft.com> Sent: Wednesday, May=
- 29, 2024 9:05 AM
->=20
-> Fix issues reported by checkpatch.pl script in hv.c and
-> balloon.c
->  - Remove unnecessary parentheses
->  - Remove extra newlines
->  - Remove extra spaces
->  - Add spaces between comparison operators
->  - Remove comparison with NULL in if statements
->=20
-> No functional changes intended
->=20
-> Signed-off-by: Aditya Nagesh <adityanagesh@linux.microsoft.com>
-> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> ---
-> [V5]
-> Rebase to hyperv-fixes
->=20
-> [V4]
-> Fix Alignment issue and revert a line since 100 characters are allowed in=
- a line
->=20
-> [V3]
-> Fix alignment issues in multiline function parameters.
->=20
-> [V2]
-> Change Subject from "Drivers: hv: Fix Issues reported by checkpatch.pl sc=
-ript"
->  to "Drivers: hv: Cosmetic changes for hv.c and balloon.c"
->  drivers/hv/hv.c         |  37 +++++++-------
->  drivers/hv/hv_balloon.c | 105 ++++++++++++++--------------------------
->  2 files changed, 53 insertions(+), 89 deletions(-)
->=20
+The Qualcomm PM8008 PMIC is a so called QPNP PMIC with seven LDO
+regulators, a temperature alarm block and two GPIO pins (which are also
+used for interrupt signalling and reset).
 
-[snip]
+Unlike previous QPNP PMICs it uses an I2C rather than SPMI interface,
+which has implications for how interrupts are handled.
 
-> @@ -999,21 +984,14 @@ static void hot_add_req(struct work_struct *dummy)
->  	rg_start =3D dm->ha_wrk.ha_region_range.finfo.start_page;
->  	rg_sz =3D dm->ha_wrk.ha_region_range.finfo.page_cnt;
->=20
-> -	if ((rg_start =3D=3D 0) && (!dm->host_specified_ha_region)) {
-> +	if (rg_start =3D=3D 0 && !dm->host_specified_ha_region) {
->  		/*
-> -		 * The host has not specified the hot-add region.
->  		 * Based on the hot-add page range being specified,
-> -		 * compute a hot-add region that can cover the pages
-> -		 * that need to be hot-added while ensuring the alignment
-> -		 * and size requirements of Linux as it relates to hot-add.
-> -		 */
-> -		rg_start =3D ALIGN_DOWN(pg_start, ha_pages_in_chunk);
-> -		rg_sz =3D ALIGN(pfn_cnt, ha_pages_in_chunk);
+A previous attempt by Qualcomm to upstream support for PM8008 stalled
+two years ago at version 15 after a lot of back and forth discussion on
+how best to describe this device in the devicetree. [1]
 
-Hmmm.  The above is not a cosmetic change.  Looks like this
-delta was erroneously introduced in the v5 version.  It wasn't
-there in v4.
+After reviewing the backstory on this and surveying the current SPMI
+PMIC bindings and implementation, I opted for a new approach that does
+not describe internal details like register offsets and interrupts in
+the devicetree.
 
-Everything else LGTM.
+The original decision to include registers offsets and internal
+interrupts for SPMI PMICs has led to a number of PMIC dtsi being created
+to avoid copying lots of boiler plate declarations. This in turn causes
+trouble when the PMIC USID address is configurable as the address is
+included in every interrupt specifier.
 
-Michael
+The current SPMI bindings still do not describe the devices fully and
+additional data is therefore already provided by drivers (e.g.
+additional register blocks, supplies, additional interrupt specifiers).
+
+The fact that PMICs which use two USIDs (addresses) are modelled as two
+separate devices causes trouble, for example, when there are
+dependencies between subfunctions. [2]
+
+Subfunctions also do not necessarily map neatly onto the 256-register
+block partitioning of the SPMI register space, something which has lead
+to unresolved inconsistencies in how functions like PWM are described.
+[3]
+
+In short, it's a bit of a mess.
+
+With the new style of bindings, by contrast, only essential information
+that actually differs between machines would be included in the
+devicetree. The bindings would also be mostly decoupled from the
+implementation, which has started to leak out into the binding (e.g. how
+the QPNP interrupts are handled). This also allows for extending the
+implementation without having to update the binding, which is especially
+important as Qualcomm does not publish any documentation (e.g. to later
+enable regulator over-current protection).
+
+Some PMICs support both I2C and SPMI interfaces (e.g. PM8010) and we
+want to be able to reuse the same bindings regardless of the interface.
+
+As a proof concept I have written a new pmc8280 driver for one of the
+SPMI PMICs in the Lenovo ThinkPad X13s that uses the new style of
+bindings and I've been using that one to control backlight and
+peripheral regulators for a while now. Specifically, the gpio and
+temperature-alarm blocks can be used with some minor updates to the
+current drivers.
+
+That work still needs a bit of polish before posting, but my working PoC
+means that I'm confident enough that the new model will work and that we
+can go ahead and merge regulator support for the PM8008.
+
+This series is specifically needed for the camera sensors in the X13s,
+for which camera subsystem (camss) support has now been merged for 6.10.
+
+The first seven patches are preparatory and can possibly be merged
+separately from the rest of the series. The next two patches drop the
+broken GPIO support for PM8008 which had already been upstreamed. The
+last five patches rework the binding and MFD driver, add support for the
+regulators and enable the camera PMIC on the X13s.
+
+Johan
+
+[1] https://lore.kernel.org/all/1655200111-18357-1-git-send-email-quic_c_skakit@quicinc.com
+[2] https://lore.kernel.org/lkml/20231003152927.15000-3-johan+linaro@kernel.org
+[3] https://lore.kernel.org/r/20220828132648.3624126-3-bryan.odonoghue@linaro.org
+
+
+Changes in v2
+ - use IRQ_TYPE_SENSE_MASK in regmap_irq table
+ - add post-reset delay
+ - reorder pinctrl binding and driver update
+ - split out binding cleanups
+ - use platform_device_id matching
+ - replace underscore in supply names with dash
+ - use more fine-grained includes in regulator driver
+ - rework regulator driver and update authorship
+
+
+Johan Hovold (14):
+  dt-bindings: mfd: pm8008: add reset gpio
+  mfd: pm8008: fix regmap irq chip initialisation
+  mfd: pm8008: deassert reset on probe
+  mfd: pm8008: mark regmap structures as const
+  mfd: pm8008: use lower case hex notation
+  mfd: pm8008: rename irq chip
+  mfd: pm8008: drop unused driver data
+  pinctrl: qcom: spmi-gpio: drop broken pm8008 support
+  dt-bindings: pinctrl: qcom,pmic-gpio: drop pm8008
+  dt-bindings: mfd: pm8008: drop redundant descriptions
+  dt-bindings: mfd: pm8008: rework binding
+  mfd: pm8008: rework driver
+  regulator: add pm8008 pmic regulator driver
+  arm64: dts: qcom: sc8280xp-x13s: enable pm8008 camera pmic
+
+ .../devicetree/bindings/mfd/qcom,pm8008.yaml  | 158 ++++++++------
+ .../bindings/pinctrl/qcom,pmic-gpio.yaml      |   3 -
+ .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 123 +++++++++++
+ drivers/mfd/Kconfig                           |   1 +
+ drivers/mfd/qcom-pm8008.c                     | 169 ++++++++++-----
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      |   1 -
+ drivers/regulator/Kconfig                     |   7 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/qcom-pm8008-regulator.c     | 198 ++++++++++++++++++
+ include/dt-bindings/mfd/qcom-pm8008.h         |  19 --
+ 10 files changed, 542 insertions(+), 138 deletions(-)
+ create mode 100644 drivers/regulator/qcom-pm8008-regulator.c
+ delete mode 100644 include/dt-bindings/mfd/qcom-pm8008.h
+
+-- 
+2.44.1
+
 
