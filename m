@@ -1,165 +1,120 @@
-Return-Path: <linux-kernel+bounces-194274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311BC8D3949
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:32:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF7E8D3954
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4DF1F21E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4B01C21090
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A437159562;
-	Wed, 29 May 2024 14:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1FF159216;
+	Wed, 29 May 2024 14:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xUIgsqKA"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QVPyv7hF"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7130159209
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082FE159912
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716993168; cv=none; b=Kh2EihSdse2kX6FvZrcOdR/ljyvUtBLmR2bJUvzXuMq5dz13U7MrmC7gL2Npr2WwJ6kLk/fWp1rlMcUeQq8rOECzkNPZI5HW4FSQnByhK+/J+KUfGmn/JyBaCSiRqgS3Sd37OzFOyJaeJWLH7GzjN/GHtpH9+u3tdmL9qiwbk0Q=
+	t=1716993173; cv=none; b=BobWypbRxO/XeOFGB8KbEwErKV+Mp+FH+eSC+StFwYLnAOGG1QpRzTkRMezgX0laqMjYhjNNDreBvcZZ0QeY4jQCCXpm+55j1La37aZwetkXxgu3wHkF4HWUblsEt2UTbRfERsORs8er3rqu5hM7oTv0Z7OByLbGSI6gt0rGKwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716993168; c=relaxed/simple;
-	bh=li4ZbxG2F4FGjel82rPqgESS9j5jdY8puT5M++X2kzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=jInkwshYaleJbYU8c2JTDAGyr1vaET4/O+zfshc3uE0uibnrzP8PajZJ3l0WuaZLDx2i3umkC5v25oSutt8aDqYwsPeU0RgBg0ueTjDiWpm4Panp6Y/dpmvSjZt7nkzjXHLe4pbbKScew3hAQDC29H0YA8JnfAe61yr/sfTcLgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xUIgsqKA; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1716993173; c=relaxed/simple;
+	bh=dVJ+EvwFT4Heb4Cx07/uQgdH1ZEbjDU3smi2K9tnUTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxeAsCkEfZryDhDO1xZQq6de8TXTFwwlL68kvXWwI9OBYM5q0tkdf/TzQM8Keiu43TQ7nsmAHpARz8WsDpI2llTi2a7LbMh/VTYdoTIG1Lx+T0Bhm7Sf7/vaAjszi8HvhzNcCcIE8ridRFYUESMTuWbg68uYHuDC+E2pET5CZ1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QVPyv7hF; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a034697fbso1230804a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:32:46 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a63036f2daaso269240166b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:32:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716993165; x=1717597965; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GL+ZXu8YsVg8veqNeDMZZjWT6LtrFbHYU/tEpop01gE=;
-        b=xUIgsqKA4gwS6IlCcqRCDws750HblDaRb5uS1D8m4Uv2bLD3NYQhVeIxMpg+l9IWeK
-         3dl3aaL0AS+1HrSJGPmeOMyzUrhawEwmg8OIvB2PgpqNta+QanLTQmtfZLD0PbUN/hzd
-         1nmT7xcbk9PthQ5vqGcU2H1gVdxkc6P+oVdQa8SVyJkBF2uda+1+iC0bQ5PUdVRXEgm3
-         X+g7lySFmZuQJvKZf62r+rARCDo2ppCkNbZMgmvxjLVP/lv/Rpb6WW3jQZSCBRdo0hVE
-         pV3HU6TnMt06ZCMYHEdwUZNiR2adMD1p75eEeORrcQBp4OnXu8YlFPOei2vvegtd9sNV
-         LeLA==
+        d=linaro.org; s=google; t=1716993170; x=1717597970; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yhL9Q7EwnBs27v2LEV5NKZLimYfj6QTltIE7lVekQTA=;
+        b=QVPyv7hFYfdvAge+P1PhDzAXHKd+67lYDtTRoHHNdcF+875YFuFvobBl/b5gEBPuP6
+         RnS3xscoIzaN1GpPMq0ffn5DWQO62n2Uo46UY5cMb1wnPzcvohesmZLzud1bbHl0Bs9z
+         fyN+0uK78T5qUfFyUaxUcKjY77cYlTvECJQcRJk7RuQIEBY29gRhBGgHEBI9ZhjwGnrk
+         lJuLVktf1QXIWcKFxBXtLYEJn6H8DbwVYj8GMcE4lhPWOQpOlVy5v5NHGEsbiuDXYZYq
+         qtdjGb4YDv0I7guJFg4eJmLyBx28JqfNwMVd2CrdXDcn3uMV+KXzZFyUjxM5oLucxaeM
+         aQ/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716993165; x=1717597965;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GL+ZXu8YsVg8veqNeDMZZjWT6LtrFbHYU/tEpop01gE=;
-        b=OPiSjgbhQ9beyAoC3Q/0wmXs4ecoZz6CqiVyZjJzoGabHyHK4vc0/88zmwWDE5bYfw
-         mVDDjQY5eKX/mJBY4wAmfsktR1Kpzi5BQgihNZ68MIJsMgWrYISrZX3nAUwJhL+ckUmn
-         v3j3RxGknW5O7jZXhxZxZtefqigKYFw5ouIEXdW18H1xG5J27zMWiGLBg+h/c1ugA1os
-         X92AL7E1xN4tBxtaL53OfAAvwdOzWSUUIO4V89vXgzis+f39WMCnnF07Ek2blsak2/qi
-         IHV8y9cmhG/9FhS9nFO7FKREQ/0rVRuk+p9KA9B/OPLU9XPshaRKwLKgFffRn3OTw2eL
-         UXYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXb8Nr0nGHRjm82qnKf0Cv2p8tLXHJoLpI73B7gyPTJBd71agGL9X6Cqae3UkLH5d2RUpjmejSzLJSqCIpN32+AuFK6qUw8GxNna4Je
-X-Gm-Message-State: AOJu0YxRhWbJn3XPp96ej2wQHDQ1lBotNiQgovY4xPoMsv/QQ4bqyZeq
-	GN2zxEQb5l99UnP62b8IJeyWq4+eiu999ZJYLs6uvNe6yIyDTaAwoZmwUn0hXUo=
-X-Google-Smtp-Source: AGHT+IFHKZcI8vnShZhzgKqN73KpOv8IjqZ877BnV4ShkqFBb+Deu4xUihuipUqnmdso1P98gLeYAA==
-X-Received: by 2002:a17:906:dff9:b0:a5a:5bd3:9f0 with SMTP id a640c23a62f3a-a62641df7b1mr987106666b.24.1716993164975;
-        Wed, 29 May 2024 07:32:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716993170; x=1717597970;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yhL9Q7EwnBs27v2LEV5NKZLimYfj6QTltIE7lVekQTA=;
+        b=LgNMTNim3vBONO7D0OpCd0bCV9Si/diQyNQa4ccafPoEyO75JyngCJxbzjnUwbno36
+         D+iYFWrj95DCNplneP5lhxpA0NetbAM28xqGC0bEIa0a/5T5qADWVYUG0raYCuDxcpIM
+         beDXpzw3Ryae1q5q9ayKJV6PkrDmPR/OMPnS+VD3gaLD7/06gkbulNnWPRM5lR3rFXVj
+         Q811waEEiDbIqn6lrINBQhV+4GGWMPcmN5GkBPzJoRpolZWDXw81tWu6f4t2a3OHD3fm
+         0rxLhvgkug01RE75Ymb9eKCuAKy/SjAFJfdCHbbWGxry1CEp5Hn2ChbLojCIoNiuZmpI
+         OFeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKXtjYljL80bkSgsDreODQ+B14y9v0CtbLzIikQsyj7TYrjCPT1BK7N+tFHeb8d9Bpj3mwpGt7c8gEL+VTPxNX4evMBPkhT5fT/sBt
+X-Gm-Message-State: AOJu0Yxg/Bgy/3Q2n55f//6mbcLs+qroWkeUC8HIOQPLe/NN//utxAc2
+	fgCpzNc7vE58Ut/06fQWFhVrl8z96n0iU/fAVWYrdlGVZahO5X6WxBhK0Tm7d3I=
+X-Google-Smtp-Source: AGHT+IGfQCqqRfxMIiISzvS9/g8UPvhr1QZ45ocg7vu1MZ6Ig+gY0oCIAZ6h2UT5aAvZRkeeCfsndA==
+X-Received: by 2002:a17:906:379a:b0:a63:41d4:ca86 with SMTP id a640c23a62f3a-a6341d4cbe1mr320147166b.24.1716993170311;
+        Wed, 29 May 2024 07:32:50 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4f465sm717035366b.120.2024.05.29.07.32.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6590d02e53sm40275466b.119.2024.05.29.07.32.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 07:32:44 -0700 (PDT)
-Date: Wed, 29 May 2024 17:32:40 +0300
+        Wed, 29 May 2024 07:32:50 -0700 (PDT)
+Date: Wed, 29 May 2024 17:32:46 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
-	linux-kernel@vger.kernel.org, jic23@kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	robh@kernel.org, nuno.sa@analog.com
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-Subject: Re: [PATCH v5 9/9] drivers: iio: imu: Add support for adis1657x
- family
-Message-ID: <ff870fa7-436c-4ab1-9e8b-a5efcdd28c29@moroto.mountain>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7] gpio: virtuser: new virtual driver
+Message-ID: <c5799a51-b39b-49b7-89ef-9cec2509330a@moroto.mountain>
+References: <20240527144054.155503-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240527142618.275897-10-ramona.bolboaca13@gmail.com>
+In-Reply-To: <20240527144054.155503-1-brgl@bgdev.pl>
 
-Hi Ramona,
+On Mon, May 27, 2024 at 04:40:54PM +0200, Bartosz Golaszewski wrote:
+> +static ssize_t
+> +gpio_virtuser_sysfs_consumer_store(struct device *dev,
+> +				   struct device_attribute *attr,
+> +				   const char *buf, size_t len)
+> +{
+> +	struct gpio_virtuser_line_data *data = to_gpio_virtuser_data(attr);
+> +	int ret;
+> +
+> +	if (strlen(buf) > GPIO_CONSUMER_NAME_MAX_LEN)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This is off by one.  strlen() doesn't count the NUL terminator.
 
-kernel test robot noticed the following build warnings:
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&data->consumer_lock);
+> +
+> +	ret = gpiod_set_consumer_name(data->desc, buf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sprintf(data->consumer, buf);
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+It results in a buffer overflow here.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +
+> +	return len;
+> +}
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Gradinariu/dt-bindings-iio-imu-Add-ADIS16501-compatibles/20240527-230203
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240527142618.275897-10-ramona.bolboaca13%40gmail.com
-patch subject: [PATCH v5 9/9] drivers: iio: imu: Add support for adis1657x family
-config: x86_64-randconfig-161-20240528 (https://download.01.org/0day-ci/archive/20240528/202405281539.EXGy0dhk-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202405281539.EXGy0dhk-lkp@intel.com/
-
-smatch warnings:
-drivers/iio/imu/adis16475.c:1608 adis16475_push_single_sample() warn: missing error code? 'ret'
-
-vim +/ret +1608 drivers/iio/imu/adis16475.c
-
-c49e2871e50119 Ramona Gradinariu 2024-05-27  1577  static int adis16475_push_single_sample(struct iio_poll_func *pf)
-fff7352bf7a3ce Nuno Sá           2020-04-13  1578  {
-fff7352bf7a3ce Nuno Sá           2020-04-13  1579  	struct iio_dev *indio_dev = pf->indio_dev;
-fff7352bf7a3ce Nuno Sá           2020-04-13  1580  	struct adis16475 *st = iio_priv(indio_dev);
-fff7352bf7a3ce Nuno Sá           2020-04-13  1581  	struct adis *adis = &st->adis;
-8f6bc87d67c030 Ramona Bolboaca   2023-08-08  1582  	int ret, bit, buff_offset = 0, i = 0;
-fff7352bf7a3ce Nuno Sá           2020-04-13  1583  	__be16 *buffer;
-fff7352bf7a3ce Nuno Sá           2020-04-13  1584  	u16 crc;
-fff7352bf7a3ce Nuno Sá           2020-04-13  1585  	bool valid;
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1586  	u8 crc_offset = 9;
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1587  	u16 burst_size = ADIS16475_BURST_MAX_DATA;
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1588  	u16 start_idx = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ? 2 : 0;
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1589  
-fff7352bf7a3ce Nuno Sá           2020-04-13  1590  	/* offset until the first element after gyro and accel */
-fff7352bf7a3ce Nuno Sá           2020-04-13  1591  	const u8 offset = st->burst32 ? 13 : 7;
-fff7352bf7a3ce Nuno Sá           2020-04-13  1592  
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1593  	if (st->burst32) {
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1594  		crc_offset = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ? 16 : 15;
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1595  		burst_size = adis->data->burst_max_len;
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1596  	}
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1597  
-fff7352bf7a3ce Nuno Sá           2020-04-13  1598  	ret = spi_sync(adis->spi, &adis->msg);
-fff7352bf7a3ce Nuno Sá           2020-04-13  1599  	if (ret)
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1600  		return ret;
-fff7352bf7a3ce Nuno Sá           2020-04-13  1601  
-fff7352bf7a3ce Nuno Sá           2020-04-13  1602  	buffer = adis->buffer;
-fff7352bf7a3ce Nuno Sá           2020-04-13  1603  
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1604  	crc = be16_to_cpu(buffer[crc_offset]);
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27  1605  	valid = adis16475_validate_crc(adis->buffer, crc, burst_size, start_idx);
-fff7352bf7a3ce Nuno Sá           2020-04-13  1606  	if (!valid) {
-fff7352bf7a3ce Nuno Sá           2020-04-13  1607  		dev_err(&adis->spi->dev, "Invalid crc\n");
-7f174ee4adeb12 Ramona Gradinariu 2024-05-27 @1608  		return ret;
-                                                                ^^^^^^^^^^
-return -EINVAL
-
-fff7352bf7a3ce Nuno Sá           2020-04-13  1609  	}
-fff7352bf7a3ce Nuno Sá           2020-04-13  1610  
-fff7352bf7a3ce Nuno Sá           2020-04-13  1611  	for_each_set_bit(bit, indio_dev->active_scan_mask,
-fff7352bf7a3ce Nuno Sá           2020-04-13  1612  			 indio_dev->masklength) {
-fff7352bf7a3ce Nuno Sá           2020-04-13  1613  		/*
-fff7352bf7a3ce Nuno Sá           2020-04-13  1614  		 * When burst mode is used, system flags is the first data
-fff7352bf7a3ce Nuno Sá           2020-04-13  1615  		 * channel in the sequence, but the scan index is 7.
-fff7352bf7a3ce Nuno Sá           2020-04-13  1616  		 */
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+regards,
+dan carpenter
 
 
