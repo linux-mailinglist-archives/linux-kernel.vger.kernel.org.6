@@ -1,160 +1,116 @@
-Return-Path: <linux-kernel+bounces-194146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774F98D3765
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86488D3768
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164731F240FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3672873B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EADA10A03;
-	Wed, 29 May 2024 13:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C157B10958;
+	Wed, 29 May 2024 13:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xf/UdYNf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="CpkzA310";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CFfnIKAz"
+Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF6B17C67;
-	Wed, 29 May 2024 13:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9387BD27D;
+	Wed, 29 May 2024 13:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988640; cv=none; b=AIRBlAJ/2wkyWQ0W2cvi3ZG0pjNQg9b1hi0AHiPX3f9K0dhm50fKy3quG21zAMVGaU7Eitn95aEGnyDGeln/4OOSdiUMBtvMiEKG1oDAVgL+qIGx/5akcWjm8yUr+qx/95n1ypOQlKrPYQQ47ZinfDwUalVQ1HTVqsh1PA/nlNA=
+	t=1716988723; cv=none; b=WiYkPVjuD2UJYKUJH3Yy3zcLYGPxc/52ZWquh6UMTZzAXNLZ+lNqb3Q2ie3nTljk5V4eL6keBX8tYhtzAfpS4Fv0HdpEcKMZyzxt+EJ50QCOOu8KB1hST67zu+R31eShtgisxI6lqlV0MDCymJzXp/GM3S7fYv0VQx6sDxa6IcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988640; c=relaxed/simple;
-	bh=BmD7dT9t87GMS04NIpQ27MfyjLdW9OC9lzhy731bihs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AKJ0hfFOxikI9GbD7KBvEv2EdmfeABYO+Zjw6nkY3zdS+7wnQOGvtCIL7LktQsuD3ykeg+RALDdqYQbEoVcuUU3iXIaSauVLfxSJ0SKS/+NDPkPJxE5H1H19JRWkY0TiTlPoxPfxjsJnBBTp+TZWxD3GrxuLbJP+DKKNQ7BLcU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xf/UdYNf; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716988639; x=1748524639;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BmD7dT9t87GMS04NIpQ27MfyjLdW9OC9lzhy731bihs=;
-  b=Xf/UdYNf1gez9RBGAdwYBx7XTuDBK2gI2YvzB4ZlrIvbt9q5xfgc7xcQ
-   8cVjJMkgj2SJEas/+9gCQVTuOxd9g0jXQ7nd3b4H+nzIDCVS8p4lI9o5O
-   4Oz9WCwiu2bm1l39QEMi6IIGsfl+XCRr0wQAl5EDu/60U5o6B7uckh0sF
-   95e5nSjYU12c4m/z1CzFAde7tovOreIe/DNRc1vNexyqpdRPvnqDvpoaG
-   0ZphpHmAGxBNx91vZ8P2SQQsKgMaDlHG9+vt09bbfIFGuy6eeUc27I90q
-   97wXBcGnYV/TPu3yyqtPZGiBDddAU70soeIkEpTh3JSuPhLXx/cvNTbRc
-   Q==;
-X-CSE-ConnectionGUID: EOwSPIyDS86rxR5fzs2TBw==
-X-CSE-MsgGUID: PUaf8JRqRpi0zvo889DWwQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="17221011"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="17221011"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:17:19 -0700
-X-CSE-ConnectionGUID: TLr+a4g+QUyEQtMQ22Ef+w==
-X-CSE-MsgGUID: HbHpf9VKSu6jNVQR0Pd0ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="40328426"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:17:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sCJAy-0000000Bnsd-0MYz;
-	Wed, 29 May 2024 16:17:08 +0300
-Date: Wed, 29 May 2024 16:17:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
-	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-	adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
-	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
-	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
-	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com,
-	dlatypov@google.com
-Subject: Re: [PATCH v9 06/10] math.h: Add macros for rounding to closest value
-Message-ID: <Zlcq07G697jGqHAg@smile.fi.intel.com>
-References: <20240526175655.1093707-1-devarsht@ti.com>
- <20240526180856.1124470-1-devarsht@ti.com>
- <ZlTt-YWzyRyhmT9n@smile.fi.intel.com>
- <86f9ed66-c58e-0b2d-dd2b-4372ff26a3c3@ti.com>
+	s=arc-20240116; t=1716988723; c=relaxed/simple;
+	bh=C3uNmjUmCcvGT1KkJFaUXmA2BqwSkBrLcJSJXR6bf1A=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=HAC/yg6y0qQlnjSXHRzyEjpHWtQ+BTFXEmEdcHZfqMEaKW8NOnrVheI+FK67rF17iVdSoBMs50QIXjlcALDMwgITEmrJAxUPql12NVeLHh5EroZ7jcbmwz7qEPGppMcEXQUv7qB58WsYabjBiDUT59p6GbOQwnrkF8Rou07QdDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=CpkzA310; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CFfnIKAz; arc=none smtp.client-ip=64.147.123.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id 6DBAB1C00101;
+	Wed, 29 May 2024 09:18:40 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 29 May 2024 09:18:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716988720; x=1717075120; bh=KgCmw4JKIv
+	7OZxjKYNpLcFc1OBFgAdfChyBe0Hk4zvk=; b=CpkzA310AMz3JTCZNVBdhXW7ee
+	o+/cos3jbfgUclTT0SsPsfvUDlsIuh4H6u7lwC97Fs0MM5CTablK3g/Zhss2Qxp7
+	JDe0rsvEAYIHf1bjL6dMZDixGQ6feKOtxV2HBX5HwdlB2w6UoVWVl/1zUZLT6I4Y
+	NzCbMMj7qg+MP2zKZlwS10w6vIsBbRAvlGClskqSx1Zqiswc2NIoXH0qI6YiwSs1
+	h6jW5Lwv7pTgMUTnhOAQxep8+EgYIBqzglnRMqzinNo5uM/s55pJJZYYvyjdXYtz
+	uY7eYSrFk7oVVvGoWdY2A3JNhy6JSU+t9fPG3hphVtS1a/ybhLMGMM9ApFwA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716988720; x=1717075120; bh=KgCmw4JKIv7OZxjKYNpLcFc1OBFg
+	AdfChyBe0Hk4zvk=; b=CFfnIKAzhwTJjWLwbi8PBOl0dCOv4aoubzlL/uZx3uWW
+	nXziA/in35Yf3GFTeLZadvM6g6thQRgOg283ygW5snNHjZgB8B3GEcTH148cZb7A
+	K7Q9r6I4YudXwnaXSOntD5wVGTp0kSNP3JpIrsSLB3ok+Bj+dUMPj/9dEi9kvEEY
+	/6HGXPKcJbDjfAFRjb0rZseYZWNAg6p3hYgHesrm45N5CdNjZYkevUhumBjCKHPr
+	VtbAk27sKMC2OFEKPmBS/44HR+khNFZsyvZNesNeDR13iX/oMgT5y04BCYsylf8x
+	GUiNulHUoF8QOuIulFbmrs3/YnZzV0SdT5IOMENLiw==
+X-ME-Sender: <xms:LytXZggKWst7oUNVKGQS1oEqohLatayVmcQ2QjL5KLYMfK8vjRiNeg>
+    <xme:LytXZpCRr_En30LxEYfzsX-S8ahFxVg-3-nDvgWRrtSTjuW-36S0ir6dq6ejPIMD8
+    Is5y5FehqyHb6uyB2Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgieduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:LytXZoGyqKzZK2nTQqS2WhgfwsosX_9PIrD5u0aY0Fb8PUAKVYG67g>
+    <xmx:LytXZhRTA8bVGalC90mJvSHNESasi3ZN63ncIeof7sLGdM85XqDNNw>
+    <xmx:LytXZtwbwnZGOUkEHmxcL_uJUOOYsy2C8m1zfbZvICtOBgEHh4MC4Q>
+    <xmx:LytXZv4gZO3Lit0JRUYtM0yKuMr87XG99nv4IN6Zvp_-kQRyEf4DGQ>
+    <xmx:MCtXZkkB_oz33EB1VZL8A40HoG1gVrBtz6K09Ig0VGpJU4_AP7zQsFa_>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 79E6BB6008D; Wed, 29 May 2024 09:18:39 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86f9ed66-c58e-0b2d-dd2b-4372ff26a3c3@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-Id: <508d40bb-f2df-469a-9f94-58b41a28f53a@app.fastmail.com>
+In-Reply-To: 
+ <DM4PR11MB59959F1AE3E9BDA36642000B93F22@DM4PR11MB5995.namprd11.prod.outlook.com>
+References: <20240528115802.3122955-1-arnd@kernel.org>
+ <20240528115802.3122955-2-arnd@kernel.org>
+ <DM4PR11MB59959F1AE3E9BDA36642000B93F22@DM4PR11MB5995.namprd11.prod.outlook.com>
+Date: Wed, 29 May 2024 15:18:19 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lixu Zhang" <lixu.zhang@intel.com>, "Arnd Bergmann" <arnd@kernel.org>,
+ "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
+ "Jiri Kosina" <jikos@kernel.org>, "Benjamin Tissoires" <bentiss@kernel.org>
+Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] HID: intel-ish-hid: fix endian-conversion
+Content-Type: text/plain
 
-On Tue, May 28, 2024 at 04:02:30PM +0530, Devarsh Thakkar wrote:
-> On 28/05/24 02:02, Andy Shevchenko wrote:
-> > On Sun, May 26, 2024 at 11:38:56PM +0530, Devarsh Thakkar wrote:
+On Wed, May 29, 2024, at 09:05, Zhang, Lixu wrote:
 
-..
+>>
+>> 	for (i = 0; i < fragment->fragment_cnt && offset < ish_fw->size; i++) {
+> You added a parameter fragment_count, but you didn't use it. Did you 
+> intend to use it here?
+>
 
-> >> +/**
-> >> + * round_closest_up - round closest to be multiple of specified value (which is
-> >> + *                    power of 2) with preference to rounding up
-> >> +
-> > 
-> > Not that big deal, but missing '*' here. Personally I would not even put
-> > a blank line between Summary and Field Descriptions.
-> 
-> My bad. Yes I would remove the blank line here. This is picked up as warning
-> from kernel-doc too.
-> 
-> >> + * @x: the value to round
-> >> + * @y: multiple to round closest to (must be a power of 2)
-> >> + *
-> >> + * Rounds @x to closest multiple of @y (which must be a power of 2).
-> >> + * The value can be either rounded up or rounded down depending upon rounded
-> >> + * value's closeness to the specified value. If there are two closest possible
-> >> + * values, i.e. the difference between the specified value and it's rounded up
-> >> + * and rounded down values is same then preference is given to rounded up
-> >> + * value.
-> >> + *
-> >> + * To perform arbitrary rounding to closest value (not multiple of 2), use
-> >> + * roundclosest().
-> >> + *
-> >> + * Examples :
-> > 
-> > What is this suppose to be rendered to?
-> 
-> The file math.h is not rendered as part of kernel-doc right now. I can put
-> this under Documentation/core-api/kernel-api.rst perhaps I can create a new
-> section as below:
-> 
-> Rounding, absolute diff and 32bit division macros
-> -------------------------------------------------
-> 
-> under the section:
-> CRC and Math Functions in Linux
-> 
-> ===============================
-> 
-> is that okay ?
+My mistake, that was again broken in my incorrect
+rebase.
 
-This is up to you, but what I meant is that you always can render manually
-yourself. And I was asking about the result you got when you tried (and you
-did, right?) to render to man, html, and pdf.
-
-> >> + * round_closest_up(17, 4) = 16
-> >> + * round_closest_up(15, 4) = 16
-> >> + * round_closest_up(14, 4) = 16
-> > 
-> > Btw, is kernel-doc validator happy about all kernel docs you added?
-> 
-> Yes, except the aforementioned blank line.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+     Arnd
 
