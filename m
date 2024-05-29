@@ -1,187 +1,236 @@
-Return-Path: <linux-kernel+bounces-194402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3198D3B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:00:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B518D3BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BD401C24282
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 561BAB28A36
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BC1181D02;
-	Wed, 29 May 2024 16:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629FD187328;
+	Wed, 29 May 2024 16:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TOYvQ2DT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="yS3TiWC8"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB0F42044
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33331836EF;
+	Wed, 29 May 2024 16:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716998423; cv=none; b=ePvdtfuyFtnZrMIggno1pSsy1ZD7ogPanQ6gKwAnjMTrer0joKC4rOPTAEuxXiHsIujk8X6T81JpcjSXlseNHRvhDx981OipeWg4IB771x7Wr8mqBZm22QPTGN15g1pq+G4lV8W83BF52/cP8OvuZQ1QTDZCkStFGFYZivGukSs=
+	t=1716998496; cv=none; b=TVO0UwhFeh4juFniLZTUi6+MPKFLDQUHdlI3j4RFiapXB2waFsqys25HIyS0koCPVMYFv7Kyhk3h1gmUdgLgoFodrkddtSfOT0FK9DLCyogkzWZiofVf2FLk/7swsEkrncEavguWaKigbw7WyUV4VrxUGv2X8aqK9OfYfl1plVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716998423; c=relaxed/simple;
-	bh=KsZu+itOh+MvfBKf5n9Y+aAS9H5rId/yaV+Uhx0XvC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nTwmVpDQehUQS9RXCP32uzZXgqmcZe79MeOnjlFdBz1Wnqu7EVSFJxpnALnlwc9OC2k6PkyR/RDPpFgnyJwAa/q5GLsXFliNeQjYyLXzJta7I+AcsHzOI3BVgcSawnmp6dRHOhEPoexJTEQsY5rCMMkcEUyB0UTeiOEtf7YCQW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TOYvQ2DT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716998420;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TKuzCUSELONIqgQVNbotEXKxMenfyryDdt7x3lwA7YA=;
-	b=TOYvQ2DTSUCtJ7nR8biJyD0vb/AKFybKYwTxCsxzZMukiyt97OyMxSnCEqjHdCAEZtMOUI
-	BR4rLBquDRW5gY8SDh0Txj4kAC45KbFMNcaXde30aXbrk1oFNjM8L314ecMlAWseTFdudO
-	eynHl5rxckxINNzSs5oJ5Kk1VHvQnKY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-1KQV612JMsqFg3JAQFOwDw-1; Wed, 29 May 2024 12:00:19 -0400
-X-MC-Unique: 1KQV612JMsqFg3JAQFOwDw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42109a85f5cso19435675e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:00:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716998418; x=1717603218;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKuzCUSELONIqgQVNbotEXKxMenfyryDdt7x3lwA7YA=;
-        b=F0F0VTdRciSz1sreu349a9UCGpZdylBWz32jR2u54wcRS+dAB+A4Fn19LnWi2TlL9e
-         qkcbu9NVmZHw6kCtyCEmbbc5Br/F68zLGT5axOJ4avuka+y8WbmcJwgSyikQ7zFA7awe
-         QLr4Wh/LedCggkzB9AA5lFJgg1Pvh5wLOCwgJV7ADsJpjSqWsLPDoTlPGMJP2y1F4fMo
-         5KWibKsvkR2DKD9r2qU9mQDccZJbriD8SZbgPFpQAsXrMNHPXPpWCUjHh6mwsovOjVoQ
-         vQ4GdooEmBlNG/DOcSrxduKlW6Y0gnoGPMI+sEBgwhCo7y6aB58nBbTEUN9NzasbskN1
-         G9NA==
-X-Gm-Message-State: AOJu0YwRScdbyezqFufUm0gdboSrR1kHKpRbDL3bKfkyV8jhMXCO7CyI
-	eyHn0NwBOtDPs+jpyJfbZkY+T4D2R88/mQThkrI9QBkj6eXkTh7O2HUGy01WZAkwZKST0UXWvkp
-	yneb6It7Uq/KtEn/z7Or2nxbWDfoe1RJKUxmSPgCnXEk3QzB3XP6iV3VttHL1tS1NMIcohNLYUk
-	NfMJ6uYHYl1agBB9l4F2Ckqagel2R7EpLkEyKX23q+lA==
-X-Received: by 2002:a05:600c:1c02:b0:41c:23f3:65fa with SMTP id 5b1f17b1804b1-42108a99cf6mr139879435e9.28.1716998417964;
-        Wed, 29 May 2024 09:00:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8bbffO2pA5kZPA0yZ0/Ri9Y9WYow5IoHfXWKW/IOMPNF3jzZkCRpZ2AaxOoaN45KGr1mHHg==
-X-Received: by 2002:a05:600c:1c02:b0:41c:23f3:65fa with SMTP id 5b1f17b1804b1-42108a99cf6mr139878855e9.28.1716998417343;
-        Wed, 29 May 2024 09:00:17 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70c:3c00:686e:317c:3ed4:d7b8? (p200300cbc70c3c00686e317c3ed4d7b8.dip0.t-ipconnect.de. [2003:cb:c70c:3c00:686e:317c:3ed4:d7b8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212348aa22sm29163965e9.36.2024.05.29.09.00.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 09:00:16 -0700 (PDT)
-Message-ID: <f9b78c91-ae2f-4bb3-bf01-8f157284b2c2@redhat.com>
-Date: Wed, 29 May 2024 18:00:15 +0200
+	s=arc-20240116; t=1716998496; c=relaxed/simple;
+	bh=eZ5GVaGIQa005WoB8AKmDURWmwScw3watWUx4myIdZA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qZVlh5gIsNH/+Pft0q0zEalb7/LL73z7tqKjnKKow86xaIG+/PC7uMGBuU2gIFQH4o0DV9mgwEHGVMeUnctSLHOcS6pMTOFlaSjlURvuEKqUvPCH/0qmk9C9gW9D2y4Hm5CnyfIAkUYx4IvkL6bbhGIAcewsRxN41RerpXUy8Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=yS3TiWC8; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TEUbn1029547;
+	Wed, 29 May 2024 12:01:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=DlQ54r1DZlxmCkjgOJYKS3DxLfX
+	8GXbbjNWGFcTHLTQ=; b=yS3TiWC8Jvk5aTSySeyBgvbJzYtj1r8hBOAJp5O28yo
+	LWBoCTo1CQ1OK2X9yTQ53GppPVoIUdR5t668WKs3wVSghBGJJRRGSei9wRxkuFtm
+	k1B2ud94Qg69DbhPVllrdw5xzIOuHyLQAEu7PLqFU6acmbvze45FDhlppfs7Qp5d
+	15KxL9KXJb25ijCsjfrGkQcZPbiQxAYyO/V/844uKTgyG6HPBlCnaL5LIGR5DScL
+	ehuEr9G9zp8seO4RX8Id0X2+zzv6JzTLcBS/83IFypW1Xbaq+nmwfxOErqzZENWB
+	foeSXZZnhf4cPKQ0DNWJ2yaTNpdSNLH5XegQow7K+hw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3ye66jgc2c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 12:01:19 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44TG1ILV028467
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 29 May 2024 12:01:18 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Wed, 29 May
+ 2024 12:01:17 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 29 May 2024 12:01:17 -0400
+Received: from HYB-hYN1yfF7zRm.ad.analog.com ([10.32.223.167])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44TG14tY011783;
+	Wed, 29 May 2024 12:01:06 -0400
+From: ranechita <ramona.nechita@analog.com>
+To: <linux-iio@vger.kernel.org>
+CC: ranechita <ramona.nechita@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v2] dt-bindings: iio: adc: add a7779 doc
+Date: Wed, 29 May 2024 19:00:52 +0300
+Message-ID: <20240529160057.6327-1-ramona.nechita@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] mm: allow reuse of the lower 16 bit of the page
- type with an actual type
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Mike Rapoport <rppt@kernel.org>, Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, wang wei <a929244872@163.com>
-References: <20240529111904.2069608-1-david@redhat.com>
- <20240529111904.2069608-3-david@redhat.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240529111904.2069608-3-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: SWpqXr40D1YI1E6Xyg87ToKtnuyz5EVL
+X-Proofpoint-ORIG-GUID: SWpqXr40D1YI1E6Xyg87ToKtnuyz5EVL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_12,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=999 mlxscore=0 clxscore=1015
+ bulkscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290110
 
->   
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index d1bdbaaccc964..f060db808102c 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -945,15 +945,19 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
->    * mistaken for a page type value.
->    */
->   
-> -#define PAGE_TYPE_BASE	0xf0000000
-> -/* Reserve		0x0000007f to catch underflows of _mapcount */
-> -#define PAGE_MAPCOUNT_RESERVE	-128
-> -#define PG_buddy	0x00000080
-> -#define PG_offline	0x00000100
-> -#define PG_table	0x00000200
-> -#define PG_guard	0x00000400
-> -#define PG_hugetlb	0x00000800
-> -#define PG_slab		0x00001000
-> +#define PAGE_TYPE_BASE	0x80000000
-> +/*
-> + * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflows and
-> + * allow owners that set a type to reuse the lower 16 bit for their own
-> + * purposes.
-> + */
-> +#define PG_buddy	0x40000000
-> +#define PG_offline	0x20000000
-> +#define PG_table	0x10000000
-> +#define PG_guard	0x08000000
-> +#define PG_hugetlb	0x04008000
+Add dt bindings for adc ad7779.
 
-As Wang Wei points out, the 0 and 8 look too similar on my screen ;)
+Signed-off-by: ranechita <ramona.nechita@analog.com>
+---
+ .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+ .../bindings/iio/adc/adi,ad7779.yaml          | 89 +++++++++++++++++++
+ 2 files changed, 112 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
 
-This should be
-
-#define PG_hugetlb	0x04000000
-
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+new file mode 100644
+index 000000000000..0a57fda598e6
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+@@ -0,0 +1,23 @@
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Reading returns a list with the possible filter modes. Only supported by
++		AD7771.
++
++		  * "sinc3"	- The digital sinc3 filter implements three main notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another two at the ODR frequency selected to
++				stop noise aliasing into the pass band.
++
++		  * "sinc5"	- The sinc5 filter implements five notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another four at the ODR frequency
++				selected to stop noise aliasing into the pass band.
++
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Set the filter mode of the differential channel. The current sampling_frequency
++		is set according to the filter range. Only supported by AD7771.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+new file mode 100644
+index 000000000000..190070ed80b5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+@@ -0,0 +1,89 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Sampling ADCs
++
++maintainers:
++  - Ramona Nechita <ramona.nechita@analog.com>
++
++description: |
++  The AD777X family consist of 8-channel, simultaneous sampling analog-to-
++  digital converter (ADC). Eight full Σ-Δ ADCs are on-chip. The
++  AD7771 provides an ultralow input current to allow direct sensor
++  connection. Each input channel has a programmable gain stage
++  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
++  outputs into the full-scale ADC input range, maximizing the
++  dynamic range of the signal chain.
++
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7770.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7771.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7779.pdf
++
++$ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - adi,ad7770
++      - adi,ad7771
++      - adi,ad7779
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  spi-max-frequency: true
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  vref-supply:
++    description:
++      ADC reference voltage supply
++
++  start-gpios:
++    description:
++      Pin that controls start synchronization pulse.
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        adc@0 {
++          compatible = "adi,ad7779";
++          reg = <0>;
++          spi-max-frequency = <20000000>;
++          vref-supply = <&vref>;
++          start-gpios = <&gpio0 87 GPIO_ACTIVE_LOW>;
++          reset-gpios = <&gpio0 93 GPIO_ACTIVE_LOW>;
++          clocks = <&adc_clk>;
++          clock-names = "adc-clk";
++        };
++    };
++...
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
