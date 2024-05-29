@@ -1,384 +1,222 @@
-Return-Path: <linux-kernel+bounces-194111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7808D36BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:50:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58248D36C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B71B24A7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992041F28F03
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC6779FD;
-	Wed, 29 May 2024 12:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8611B79FD;
+	Wed, 29 May 2024 12:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ebZnCnLj"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="04w5Mozj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1315235
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0DB6FC6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716987013; cv=none; b=gggcR/kgKlb6p0OdGF4JlDlnQPP4kgPclMrUjO8xoobVcSuadvrGSWw+54nxetkmQ+vjObIBnQTBXYwcmZQ2GuMxuZ5YW/esAQDuX4BJydklouetlKuM645mbHplibAhK/dqzIFUpYHwI4cSqzeMgqziQhvinRW6rxDtWJtP6X8=
+	t=1716987104; cv=none; b=RBEZVtzdeV9RE6Y5AEmIhrMg1c1aO1yvDkNJeNe1tlgcXV8X14AlRDIIV36ZGUeR70sUKNjYfj8158KYTLllQS/G3OzZya6iJE5V7FvxfZaDudzoi4rZ3ZfPCxtrO0aPmd0RW8Uu1YNPM1R1JSeEzqetc7h9PjeD/iFIt6rg43Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716987013; c=relaxed/simple;
-	bh=wDOh3GgxeeojaaGvJLYrqx3gp0ldmjEWoy3FOFKhGH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eBcZNpRtBFMweJJlAEmePfeaT6dCZskx4tC/tVHzX6d2uEOdDkzMYd/DjKbw34sTUi51UgP1N10rfXWNXizbyyi1nWbAa8xqe5VISs5M499U6Ai09DAHuH1IALbdROl8bWO9djrMXwc+EfprUq/D5/Bpp9AhpmP8+jPc5ETHwPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ebZnCnLj; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a620a28e95cso214026566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716987010; x=1717591810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FNItZxu06YRXLGqNeIhgtHR87fPjOnrEFWQ8pXCNo7A=;
-        b=ebZnCnLjnAb8W35JdZrO/gXhF/VuzlPUlAd832zKCps8LMgrE1XbcQIagd7skiXHCR
-         MsD8+FyDvemYitHIbK8HsYzeCBQwmM2kpyDRGx2Q2WtHi8Ge8+PYotXSdKPJ4xhjTkTD
-         tMEohgMfZQCjwyqdCQB5+oq0UqUHxCrsl1FLFdxLUctVZscXZ+UwnATRBhx6j/upilW0
-         +Vg4O2pkGsDPHQzwdrPhIVDLTalQZq6qry8n7rKxQqsYRVpHRpng1ONyk6Af7h7ehfSL
-         uqvy8NJT+Vnt0CR55ogm7L67I8ZSdmWumuXSDUSIvCc/sW77MCG9NYbwMnnyyxG8qpsn
-         yp5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716987010; x=1717591810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FNItZxu06YRXLGqNeIhgtHR87fPjOnrEFWQ8pXCNo7A=;
-        b=ZHV2eojBuWlUB2Lf2Ti6OJsQ0g0kD3n1zVGeCLY16G/kjKYZ+aKO5noflGP+gJqXd4
-         gE2mAJ8EcLYPY64TCyJp31riybpvKgscmpW22As28Ink1qavw3f21B0hJCAUBwzUXRms
-         Fzwk0OyDWhVKjdqVN83w97SXQiGOhtCPgA8Reve6CA6avjZ8Kpsn5EIrB52jQi99q449
-         Us0obGQT7/iiJWp4X5czs3Csj80eTaCzkAozGUeaDercU39+tCfxlLj8RXcisWKkHrJh
-         5jbyReYSzLAlF3ZNdKgF92UMY3pu7S0Uw1jvKVkR1AKZmP2p98LTz4XQjEHTj+yYrvB3
-         kGWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+8YeFoM5vnoXDADMmft4jBB+Oa4nKaC3G+4Dwd2auVV0pTCABqgHU1cz9tTSB5QYa4cdXmTrO/9QbvsxAhQvqkZNsC7XsQi4CwnhB
-X-Gm-Message-State: AOJu0Yxfi2uhuP4y9MDMYR0RQ4d8m8TkfZwiXvUmRpbzUhO5SB5pdCrb
-	flAEGb1/P+e2AptRR5d13Q7IAPoXyMMSQD7TTGCxPLymUvN7ozQBWgAeToQttbmyJPjH0CoRlM6
-	68xbwRCgFyXKVzbsu3UsRea86qMYMNw89XzBLHQ==
-X-Google-Smtp-Source: AGHT+IFo7SAqMDV9cCjNymAf4nsO+/p56SCIQeUO+4/vtGcG6LahU0XxGcz6O9HPFeYpq9htcwA09N4+2mEm7/5JEL0=
-X-Received: by 2002:a17:906:b00d:b0:a59:df1d:f5ae with SMTP id
- a640c23a62f3a-a62641bbae3mr1046027366b.31.1716987010122; Wed, 29 May 2024
- 05:50:10 -0700 (PDT)
+	s=arc-20240116; t=1716987104; c=relaxed/simple;
+	bh=4J+bOv1QJigSGcEp8oiwju1wbh6UwxCDdBQO59w4Lm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiuWz2SqrMb9qHcsbQoyrQJgWfkz9KZQoqCdnimQ5CYqBepP8AOSTxIowEaH9OZz+d0ASGm5q6H/OQ+AIFWFLvTV79xJdUS7jGxYcsR1rCZ2o7JwL+AS+VsckXDlU8t8EjZBddu3R9couDuBUGGQdn+TCU0Tmsn1vBlTUyXddis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=04w5Mozj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA23DC32789;
+	Wed, 29 May 2024 12:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716987104;
+	bh=4J+bOv1QJigSGcEp8oiwju1wbh6UwxCDdBQO59w4Lm4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=04w5MozjHmoKfUA17BqfgRejyf6ticGZ40+/Joq3jpa61lLUi2tlE+466VMs07p8+
+	 Lx3RWUxSMp4iFp+DfYaRoO6W0coHIki5AB0oUOjDu6mh5uXsVhWdiH7M75VirjX3c+
+	 iAy49xSlheuioM8zObC+U2CprAOANrncgNAnBRTU=
+Date: Wed, 29 May 2024 14:51:48 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Soumya Khasnis <soumya.khasnis@sony.com>
+Cc: rafael@kernel.org, linux-kernel@vger.kernel.org,
+	daniel.lezcano@linaro.org, festevam@denx.de, lee@kernel.org,
+	benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
+	ldmldm05@gmail.com, srinavasa.nagaraju@sony.com,
+	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
+	keita.aihara@sony.com, masaya.takahashi@sony.com
+Subject: Re: [PATCH v2] reboot: Add timeout for device shutdown
+Message-ID: <2024052927-traffic-lazy-e3ad@gregkh>
+References: <20240529110049.GA73111@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528151052.313031-1-alexghiti@rivosinc.com>
- <20240528151052.313031-3-alexghiti@rivosinc.com> <20240528193110.GA2196855@thelio-3990X>
-In-Reply-To: <20240528193110.GA2196855@thelio-3990X>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 29 May 2024 14:49:58 +0200
-Message-ID: <CAHVXubjYVjOH8RKaF1h=iogO3xBM6k+xrGwkPnc-md2oRxbxrQ@mail.gmail.com>
-Subject: Re: [PATCH 2/7] riscv: Implement cmpxchg8/16() using Zabha
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529110049.GA73111@sony.com>
 
-Hi Nathan,
+On Wed, May 29, 2024 at 11:00:49AM +0000, Soumya Khasnis wrote:
+> The device shutdown callbacks invoked during shutdown/reboot
+> are prone to errors depending on the device state or mishandling
+> by one or more driver.
 
-On Tue, May 28, 2024 at 9:31=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> Hi Alexandre,
->
-> On Tue, May 28, 2024 at 05:10:47PM +0200, Alexandre Ghiti wrote:
-> > This adds runtime support for Zabha in cmpxchg8/16 operations.
-> >
-> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > ---
-> >  arch/riscv/Kconfig               | 16 ++++++++++++++++
-> >  arch/riscv/Makefile              | 10 ++++++++++
-> >  arch/riscv/include/asm/cmpxchg.h | 26 ++++++++++++++++++++++++--
-> >  3 files changed, 50 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > index b443def70139..05597719bb1c 100644
-> > --- a/arch/riscv/Kconfig
-> > +++ b/arch/riscv/Kconfig
-> > @@ -579,6 +579,22 @@ config RISCV_ISA_V_PREEMPTIVE
-> >         preemption. Enabling this config will result in higher memory
-> >         consumption due to the allocation of per-task's kernel Vector c=
-ontext.
-> >
-> > +config TOOLCHAIN_HAS_ZABHA
-> > +     bool
-> > +     default y
-> > +     depends on !64BIT || $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_za=
-bha)
-> > +     depends on !32BIT || $(cc-option,-mabi=3Dilp32 -march=3Drv32ima_z=
-abha)
->
-> This test does not take into account the need for
-> '-menable-experimental-extensions' and '1p0' in the '-march=3D' value wit=
-h
-> clang 19, so it can never be enabled even if it is available.
+Why not fix those drivers?  A release callback should not stall, and if
+it does, that's a bug that should be fixed there.
 
-Then I missed that, I should have checked the generated code. Is the
-extension version "1p0" in '-march=3D' only required for experimental
-extensions?
+Or use a watchdog and just reboot if that triggers at shutdown time.
 
->
-> I am not really sure how to succinctly account for this though, other
-> than duplicating and modifying the cc-option checks with a dependency on
-> either CC_IS_GCC or CC_IS_CLANG. Another option is taking the same
-> approach as the _SUPPORTS_DYNAMIC_FTRACE symbols and introduce
-> CLANG_HAS_ZABHA and GCC_HAS_ZABHA? That might not make it too ugly.
->
-> I think the ZACAS patch has a similar issue, it just isn't noticeable
-> with clang 19 but it should be with clang 17 and 18.
+> In order to prevent a device hang in such
+> scenarios, we bail out after a timeout while dumping a meaningful
+> call trace of the shutdown callback which blocks the shutdown or
+> reboot process.
 
-But from Conor comment here [1], we should not enable extensions that
-are only experimental. In that case, we should be good with this.
+Dump it where?
 
-[1] https://lore.kernel.org/linux-riscv/20240528151052.313031-1-alexghiti@r=
-ivosinc.com/T/#mefb283477bce852f3713cbbb4ff002252281c9d5
 
->
-> > +     depends on AS_HAS_OPTION_ARCH
-> > +
-> > +config RISCV_ISA_ZABHA
-> > +     bool "Zabha extension support for atomic byte/half-word operation=
-s"
-> > +     depends on TOOLCHAIN_HAS_ZABHA
-> > +     default y
-> > +     help
-> > +       Adds support to use atomic byte/half-word operations in the ker=
-nel.
-> > +
-> > +       If you don't know what to do here, say Y.
-> > +
-> >  config TOOLCHAIN_HAS_ZACAS
-> >       bool
-> >       default y
-> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> > index d5b60b87998c..f58ac921dece 100644
-> > --- a/arch/riscv/Makefile
-> > +++ b/arch/riscv/Makefile
-> > @@ -89,6 +89,16 @@ else
-> >  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) :=3D $(riscv-march-y)_zacas
-> >  endif
-> >
-> > +# Check if the toolchain supports Zabha
-> > +ifdef CONFIG_AS_IS_LLVM
-> > +# Support for experimental Zabha was merged in LLVM 19.
-> > +KBUILD_CFLAGS +=3D -menable-experimental-extensions
-> > +KBUILD_AFLAGS +=3D -menable-experimental-extensions
-> > +riscv-march-y :=3D $(riscv-march-y)_zabha1p0
->
-> This block should have some dependency on CONFIG_TOOLCHAIN_HAS_ZABHA as
-> well right? Otherwise, the build breaks with LLVM toolchains that do not
-> support zabha, like LLVM 18.1.x:
->
->   clang: error: invalid arch name 'rv64imac_zihintpause_zacas1p0_zabha1p0=
-', unsupported version number 1.0 for extension 'zabha'
->
-> I think the zacas patch has the same bug.
+> 
+> Signed-off-by: Soumya Khasnis <soumya.khasnis@sony.com>
+> Signed-off-by: Srinavasa Nagaraju <Srinavasa.Nagaraju@sony.com>
+> ---
+>  drivers/base/Kconfig | 15 +++++++++++++++
+>  kernel/reboot.c      | 46 +++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 60 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+> index 2b8fd6bb7da0..d06e379b6281 100644
+> --- a/drivers/base/Kconfig
+> +++ b/drivers/base/Kconfig
+> @@ -243,3 +243,18 @@ config FW_DEVLINK_SYNC_STATE_TIMEOUT
+>  	  work on.
+>  
+>  endmenu
+> +
+> +config DEVICE_SHUTDOWN_TIMEOUT
+> +	bool "device shutdown timeout"
+> +	default n
 
-Ok, I will fix that, thanks.
+That is the default, so no need for this.
 
->
-> I think that it would be good to consolidate the adding of
-> '-menable-experimental-extensions' to the compiler and assembler flags
-> to perhaps having a hidden symbol like CONFIG_EXPERIMENTAL_EXTENSIONS
-> that is selected by any extension that is experimental for the
-> particular toolchain version.
->
-> config EXPERIMENTAL_EXTENSIONS
->     bool
->
-> config TOOLCHAIN_HAS_ZABHA
->     def_bool y
->     select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG
->     ...
->
-> config TOOLCHAIN_HAS_ZACAS
->     def_bool_y
->     # ZACAS was experimental until Clang 19: https://github.com/llvm/llvm=
--project/commit/95aab69c109adf29e183090c25dc95c773215746
->     select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG && CLANG_VERSION < 1900=
-00
->     ...
->
-> Then in the Makefile:
->
-> ifdef CONFIG_EXPERIMENTAL_EXTENSIONS
-> KBUILD_AFLAGS +=3D -menable-experimental-extensions
-> KBUILD_CFLAGS +=3D -menable-experimental-extensions
-> endif
 
-That's a good idea to me, let's see what Conor thinks [2]
+> +	help
+> +	   Enable timeout for device shutdown. Helps in case device shutdown
+> +	   is hung during shoutdonw and reboot.
+> +
+> +
+> +config DEVICE_SHUTDOWN_TIMEOUT_SEC
+> +	int "device shutdown timeout in seconds"
+> +	default 5
+> +	depends on DEVICE_SHUTDOWN_TIMEOUT
+> +	help
+> +	  sets time for device shutdown timeout in seconds
 
-[2] https://lore.kernel.org/linux-riscv/20240528151052.313031-1-alexghiti@r=
-ivosinc.com/T/#m1d798dfc4c27e5b6d9e14117d81b577ace123322
+You need much more help text for all of these.
 
->
-> > +else
-> > +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZABHA) :=3D $(riscv-march-y)_zabha
-> > +endif
-> > +
-> >  # Remove F,D,V from isa string for all. Keep extensions between "fd" a=
-nd "v" by
-> >  # matching non-v and non-multi-letter extensions out with the filter (=
-[^v_]*)
-> >  KBUILD_CFLAGS +=3D -march=3D$(shell echo $(riscv-march-y) | sed -E 's/=
-(rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
-> > diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/=
-cmpxchg.h
-> > index 1c50b4821ac8..65de9771078e 100644
-> > --- a/arch/riscv/include/asm/cmpxchg.h
-> > +++ b/arch/riscv/include/asm/cmpxchg.h
-> > @@ -103,8 +103,14 @@
-> >   * indicated by comparing RETURN with OLD.
-> >   */
-> >
-> > -#define __arch_cmpxchg_masked(sc_sfx, prepend, append, r, p, o, n)   \
-> > +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, =
-o, n)  \
-> >  ({                                                                   \
-> > +     __label__ zabha, end;                                           \
-> > +                                                                     \
-> > +     asm goto(ALTERNATIVE("nop", "j %[zabha]", 0,                    \
-> > +                          RISCV_ISA_EXT_ZABHA, 1)                    \
-> > +                     : : : : zabha);                                 \
-> > +                                                                     \
-> >       u32 *__ptr32b =3D (u32 *)((ulong)(p) & ~0x3);                    =
- \
-> >       ulong __s =3D ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE; =
- \
-> >       ulong __mask =3D GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)  =
- \
-> > @@ -131,6 +137,17 @@
-> >               : "memory");                                            \
-> >                                                                       \
-> >       r =3D (__typeof__(*(p)))((__retx & __mask) >> __s);              =
- \
-> > +     goto end;                                                       \
-> > +                                                                     \
-> > +zabha:                                                                =
-       \
-> > +     __asm__ __volatile__ (                                          \
-> > +             prepend                                                 \
-> > +             "       amocas" cas_sfx " %0, %z2, %1\n"                \
->
-> This should probably have some dependency on CONFIG_RISCV_ISA_ZABHA? I ge=
-t the
-> following with GCC 13.2.0:
->
->   include/linux/atomic/atomic-arch-fallback.h: Assembler messages:
->   include/linux/atomic/atomic-arch-fallback.h:2108: Error: unrecognized o=
-pcode `amocas.w a4,a3,0(s1)'
+And why are these in the drivers/base/Kconfig file?  It has nothing to
+do with "devices", or the driver core, it's all core kernel reboot
+logic.
 
-Indeed, my test setup lacks a few things apparently, I will fix that, thank=
-s.
 
->
-> > +             append                                                  \
-> > +             : "+&r" (r), "+A" (*(p))                                \
-> > +             : "rJ" (n)                                              \
-> > +             : "memory");                                            \
-> > +end:                                                                 \
->
-> I get a lot of warnings from this statement and the one added by the
-> previous patch for zacas, which is a C23 extension:
->
->   include/linux/atomic/atomic-arch-fallback.h:4234:9: warning: label at e=
-nd of compound statement is a C23 extension [-Wc23-extensions]
->   include/linux/atomic/atomic-arch-fallback.h:89:29: note: expanded from =
-macro 'raw_cmpxchg_relaxed'
->      89 | #define raw_cmpxchg_relaxed arch_cmpxchg_relaxed
->         |                             ^
->   arch/riscv/include/asm/cmpxchg.h:219:2: note: expanded from macro 'arch=
-_cmpxchg_relaxed'
->     219 |         _arch_cmpxchg((ptr), (o), (n), "", "", "")
->         |         ^
->   arch/riscv/include/asm/cmpxchg.h:200:3: note: expanded from macro '_arc=
-h_cmpxchg'
->     200 |                 __arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,     =
-         \
->         |                 ^
->   arch/riscv/include/asm/cmpxchg.h:150:14: note: expanded from macro '__a=
-rch_cmpxchg_masked'
->     150 | end:                                                           =
-         \
->         |                                                                =
-         ^
->
-> This resolves it:
->
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cm=
-pxchg.h
-> index ba3ffc2fcdd0..57aa4a554278 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -147,7 +147,7 @@ zabha:                                               =
-                       \
->                 : "+&r" (r), "+A" (*(p))                                \
->                 : "rJ" (n)                                              \
->                 : "memory");                                            \
-> -end:                                                                   \
-> +end:;                                                                  \
->  })
->
->  #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o,=
- n)    \
-> @@ -180,7 +180,7 @@ zacas:                                               =
-                       \
->                 : "+&r" (r), "+A" (*(p))                                \
->                 : "rJ" (n)                                              \
->                 : "memory");                                            \
-> -end:                                                                   \
-> +end:;                                                                  \
->  })
->
->  #define _arch_cmpxchg(ptr, old, new, sc_sfx, prepend, append)          \
+> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> index 22c16e2564cc..8460bd24563b 100644
+> --- a/kernel/reboot.c
+> +++ b/kernel/reboot.c
+> @@ -18,7 +18,7 @@
+>  #include <linux/syscalls.h>
+>  #include <linux/syscore_ops.h>
+>  #include <linux/uaccess.h>
+> -
+> +#include <linux/sched/debug.h>
 
-Weird, I missed this too, I will fix that, thanks.
+Why remove the blank line?
 
->
-> >  })
-> >
-> >  #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, =
-o, n)  \
-> > @@ -175,8 +192,13 @@ end:                                              =
-                       \
-> >                                                                       \
-> >       switch (sizeof(*__ptr)) {                                       \
-> >       case 1:                                                         \
-> > +             __arch_cmpxchg_masked(sc_sfx, ".b" sc_sfx,              \
-> > +                                     prepend, append,                \
-> > +                                     __ret, __ptr, __old, __new);    \
-> > +             break;                                                  \
-> >       case 2:                                                         \
-> > -             __arch_cmpxchg_masked(sc_sfx, prepend, append,          \
-> > +             __arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,              \
-> > +                                     prepend, append,                \
-> >                                       __ret, __ptr, __old, __new);    \
-> >               break;                                                  \
-> >       case 4:                                                         \
-> > --
-> > 2.39.2
-> >
-> >
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+>  /*
+>   * this indicates whether you can reboot with ctrl-alt-del: the default is yes
+>   */
+> @@ -48,6 +48,14 @@ int reboot_cpu;
+>  enum reboot_type reboot_type = BOOT_ACPI;
+>  int reboot_force;
+>  
+> +#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
+> +struct device_shutdown_timeout {
+> +	struct timer_list timer;
+> +	struct task_struct *task;
+> +} devs_shutdown;
+> +#define SHUTDOWN_TIMEOUT CONFIG_DEVICE_SHUTDOWN_TIMEOUT_SEC
+> +#endif
 
-Thanks for your thorough review!
+#ifdefs should not be in .c files, please put this in a .h file where it
+belongs.  Same for the other #ifdefs.
 
-Alex
+
+
+> +
+>  struct sys_off_handler {
+>  	struct notifier_block nb;
+>  	int (*sys_off_cb)(struct sys_off_data *data);
+> @@ -88,12 +96,46 @@ void emergency_restart(void)
+>  }
+>  EXPORT_SYMBOL_GPL(emergency_restart);
+>  
+> +#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
+> +static void device_shutdown_timeout_handler(struct timer_list *t)
+> +{
+> +	pr_emerg("**** device shutdown timeout ****\n");
+
+What does this have to do with "devices"?  This is a whole-system issue,
+or really a "broken driver" issue.
+
+> +	show_stack(devs_shutdown.task, NULL, KERN_EMERG);
+
+How do you know this is the 'device shutdown' stack?  What is a "device
+shutdown"?
+
+> +	if (system_state == SYSTEM_RESTART)
+> +		emergency_restart();
+> +	else
+> +		machine_power_off();
+> +}
+> +
+> +static void device_shutdown_timer_set(void)
+> +{
+> +	devs_shutdown.task = current;
+
+It's just the normal shutdown stack/process, why call it a device?
+
+> +	timer_setup(&devs_shutdown.timer, device_shutdown_timeout_handler, 0);
+> +	devs_shutdown.timer.expires = jiffies + SHUTDOWN_TIMEOUT * HZ;
+> +	add_timer(&devs_shutdown.timer);
+> +}
+> +
+> +static void device_shutdown_timer_clr(void)
+> +{
+> +	del_timer(&devs_shutdown.timer);
+> +}
+> +#else
+> +static inline void device_shutdown_timer_set(void)
+> +{
+> +}
+> +static inline void device_shutdown_timer_clr(void)
+> +{
+> +}
+> +#endif
+> +
+>  void kernel_restart_prepare(char *cmd)
+>  {
+>  	blocking_notifier_call_chain(&reboot_notifier_list, SYS_RESTART, cmd);
+>  	system_state = SYSTEM_RESTART;
+>  	usermodehelper_disable();
+> +	device_shutdown_timer_set();
+>  	device_shutdown();
+> +	device_shutdown_timer_clr();
+
+Why isn't all of this done in device_shutdown() if you think it is a
+device issue?  Why put it in reboot.c?
+
+thanks,
+
+greg k-h
 
