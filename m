@@ -1,203 +1,163 @@
-Return-Path: <linux-kernel+bounces-194783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41DF8D41FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:32:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECDB8D41FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837C1286741
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDCBB1F22E9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456201CB32A;
-	Wed, 29 May 2024 23:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2BC1A0B0A;
+	Wed, 29 May 2024 23:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a58uEDwL"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hh0ZkaYH"
+Received: from mail-lf1-f68.google.com (mail-lf1-f68.google.com [209.85.167.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094666AB8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD38C17F37A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717025560; cv=none; b=jCgV5iioIQDFO4Teg73B9Yib6v736kmQ+aH5GYuqJURK9ce5Dbb3OJ2Ng477yBVereEZu+t5OqVMX9JuID5HFS5bT35jT2FvNfXTG4qWJepsOpV8+tDbxSoU7hHwpJn152lbUnGEtlW390Utd9CL+9UrADj49YxTtfWS00/L+dc=
+	t=1717025933; cv=none; b=ZRWSMYovyljXgGtPUgrpD7pv9zhv6lP1mf8eiq/Jpt0NpxijB1QdnwsPGhVBOXoCZKHFO09FF6tiMtrToi6HGOLowzeR2TM+M+b9ryQBgPOdBifw5YoiMkMzlw0rs3BJtjl06WopvIo15iKA4fi6E/Lg+Gubthe2Y1blSvISJmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717025560; c=relaxed/simple;
-	bh=/0SdF5uqE6gzTTXQWDfWuqijnmeHpXTwYnsb4nK5NfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJJjU+5H3IS3f+JaaCgGmSeOwSHYyArl3AYDVjV2OvgjItVShjvnpHYzoLcLZ/Xmj31BSfB2P+gNKiYNNcv0kbL67xFdki7lOmOdAW+eDnVPuHpBvJ1rsgAEvpDY+ueE3sky8I88aHwiC/LYq+r8fbFbF+a/8FLazqzjkgMz/y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a58uEDwL; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f44b5b9de6so2593295ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:32:38 -0700 (PDT)
+	s=arc-20240116; t=1717025933; c=relaxed/simple;
+	bh=8awMhfh+EooDyyG77D0x2IEYHXjNwY2rq0QQPZ/UDew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p2uY62rBKgjh6sZXd4vUM99D8L+f27yycdUAueKnhtDHmWni7VJMBKeyg4yH3mUnilMgFUYll4H8YyqCbLjRc/UQF9g3yhls4ADmSpGhQM7TAYvb5rRQzwlzcNkAJnsQRuBL0+vSQ51w/DCYCguVR8Ajuukh/tcv50lqgEZ+RSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hh0ZkaYH; arc=none smtp.client-ip=209.85.167.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f68.google.com with SMTP id 2adb3069b0e04-52b7c82e39eso354105e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:38:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717025558; x=1717630358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cucV7qOoOPIUrj3G8eYL6EQD/QmFAva7FNUzBgHa+iQ=;
-        b=a58uEDwLj6REAZQa20YQi97Tz1B2GRbcFDP/P7su90S4EqShgZUSsGnDpWXuvxVelJ
-         0uNpL+p1Fjb33y70olYS5Ia/pJfDGUGVOzjAnTSK25hQHQZ08j4oqyn4guNk0hpJNLCd
-         Vyt6vuUxoMwKoJH0WuQxPPoE6FOt4X13ARtsE=
+        d=linaro.org; s=google; t=1717025930; x=1717630730; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5I0b3/ox7MmhZc36+ZmYiuYZWHtorfeiNRM4b5O0zwA=;
+        b=hh0ZkaYHFArasu91APiZmh3WDkmRNRUBEyzEPuxHFG6CXuAt0/41d9LUGYUOP53bXN
+         mneE3CP8FycdGPwdODUfdmqTufhJrlj19VtjnqkJAvgKXmM3DUY/CX1rU8wIhlJdj7Dz
+         ATFN0Om9IqyVy6peqVbqyYftkiJlQif/eEq90ihKKSAnAZa6t4ZsH+p7XeZzItJkpnVB
+         tDCjm6R53xuxC3KMFjPkA0wB0JMEUq8opgt5UEr8ADxqxOvdfm1qdn3MShVEEQISUAAL
+         mEDgIWCLY1utliZ9lyZ3o8x7I3SGodCohmCNbw//QWMi/8Td4teW1JAzvLm5P8faq+Qa
+         Pzfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717025558; x=1717630358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cucV7qOoOPIUrj3G8eYL6EQD/QmFAva7FNUzBgHa+iQ=;
-        b=v1hcmgdmNGvbeqdTvsMXvaSdtjN3iRqbrQugt3/dk3wWL33yPqkrk4tHMyvmewoTFg
-         xIz9lciMf+kqBoKsw+qGtN21Sw/Dyd2hQmcf6JdWS4QdBujRmOpSWK1/6v2y7ayAFUhT
-         1HxhxQBL+QGkeEQ9Gmbo5ZwiXscZABu7OAP0yQNr9z5jEhZo9WM/dLgCjDD/MrkseG3c
-         ZpzYGqNlrnB2XNJPpVvHeuLbCtDjuj2Yw9aHiMg2f+nfygRWgrt4rzZ8WF+J52T+W5yX
-         5rQR0F+DrrhvrVHyjDeIERFQJI83Lq/XkrARLpGjmLMnZ8RLNKMl/K+1d2rBOybl3Zxm
-         XoiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCOlSqwtsSGu7V8YOXFKgPY07QFpxiGYKwmhUc5VRanv2AQVrFlwsbPPC/9vRoeoPMG1loZG1nGa9geQqNTQ+EO17u6r//nKjeIdZJ
-X-Gm-Message-State: AOJu0YxvMw5oOvjcHKxdrgDF3/OvnlWIAFqAM5UMUH59DOXEfqfts5i0
-	Ptx57MgFLlvZgemghau955x6o9lT87uTcw8/RYC2c+P3hJQCwNpSMwN58X3dbA==
-X-Google-Smtp-Source: AGHT+IGrZufDO7aDrD5XQN2/A2YMhT+Y9cL7VGKbNsy++FzDVwe+PKFjUp+fb94aTS54ZMP8pq2noA==
-X-Received: by 2002:a17:902:d2c1:b0:1f3:903:5c9a with SMTP id d9443c01a7336-1f619936a85mr5241125ad.58.1717025558317;
-        Wed, 29 May 2024 16:32:38 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c99d23asm108088905ad.208.2024.05.29.16.32.37
+        d=1e100.net; s=20230601; t=1717025930; x=1717630730;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5I0b3/ox7MmhZc36+ZmYiuYZWHtorfeiNRM4b5O0zwA=;
+        b=V7oJc8dsv5BH6TJEGzEwBOTh60tTFA1LS/AJCTIWNg7rDHjifoG30iNJb6SIb8e6WC
+         zRzXHTVOQvgQNYkyLSvGjM4AK+5SHec9je47q406qkpQMkkkyhlpqscPhgEnF9giV7Zv
+         QC0ZpRuX79P3D9Sc25paeKv2bWVrg3eeRkV/THsea67ilCR2TKt0MYwu6YZICWClLHzK
+         w3Embk8c/fdxPsOI4CISNflRhE0Olk16jOdHFUhNGX4QluARqBomp/iT3XIZJ8AVi93s
+         /EcVHrXr6G9YJ57ywE2ELG4EhK6IL0pRk3wyNGlDzq6yfOndlUY2q/PnznDzVtu4Lv0F
+         lp0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUo/8qVh4e11nqoL41o9Q6/uShdMlZgcgnr3VsV6utLFhlC6QRbxZd45l2oG5a1hFkQqjXtHebjkKuz5q/6pyJITrEC+Gw6adeEox55
+X-Gm-Message-State: AOJu0YyrJriS7oFnF+KsD9pzhBLbNPs1o6XWxbiAErdKRXJehESjRm0i
+	GjnY4PxrjXFejVITT8V6nQrmwMmmP0iNVa15R0YkF7vAHpbdkpZNAOHTutqtGgE=
+X-Google-Smtp-Source: AGHT+IG/aGdeRrqwFu9J/BRmvb/AuvLWHGvrfxszJ8D5r4j/xoh7p2OfNm/14ILIBgfofmLFprw/mg==
+X-Received: by 2002:a19:6a10:0:b0:523:919d:302e with SMTP id 2adb3069b0e04-52b7d418f97mr527341e87.7.1717025929824;
+        Wed, 29 May 2024 16:38:49 -0700 (PDT)
+Received: from [192.168.0.113] ([2a02:8109:aa0d:be00::8bb3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d5e3f995sm4389262a12.64.2024.05.29.16.38.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 16:32:37 -0700 (PDT)
-Date: Wed, 29 May 2024 16:32:37 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-Cc: Marco Elver <elver@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Pengfei Xu <pengfei.xu@intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/traps: Enable UBSAN traps on x86
-Message-ID: <202405291631.79BB8BF@keescook>
-References: <20240529022043.3661757-1-gatlin.newhouse@gmail.com>
- <CANpmjNM2S2whk31nfNGSBO5MFPPUHX7FPuHBJn1nN9zdP63xTw@mail.gmail.com>
- <2j6nkzn2tfdwdqhoal5o56ds2hqg2sqk5diolv23l5nzteypzh@fi53ovwjjl3w>
- <CANpmjNM4pFHYRqmBLi0qUm8K2SroYWg7NFjreHffHvk0WW95kA@mail.gmail.com>
- <57vgoje4bmrckwqtwnletukcnlvjpj2yp3cjlkym4bfw66a57a@w35yjzcurcis>
+        Wed, 29 May 2024 16:38:49 -0700 (PDT)
+From: Caleb Connolly <caleb.connolly@linaro.org>
+Subject: [PATCH v3 0/2] qcom: initial support for the SHIFTphone 8
+Date: Thu, 30 May 2024 01:38:46 +0200
+Message-Id: <20240530-otter-bringup-v3-0-9847d3ddb2d9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57vgoje4bmrckwqtwnletukcnlvjpj2yp3cjlkym4bfw66a57a@w35yjzcurcis>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIa8V2YC/13MSwrCMBSF4a2UjI3kYZvoyH2IgzRJ2wuSlJsal
+ NK9mxYE7fAc+L+ZJI/gE7lUM0GfIUEMZchDRexgQu8puLKJYOLEaqZonCaPtEUI/XOkUmvbSWO
+ UNTUpzYi+g9fm3e5lD5CmiO+Nz3x9v5LeSZlTRq1mykl3lrxrrg8IBuMxYk9WKoufXLB9LkruF
+ FeOO9M2rf7Ll2X5AHOkgljqAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alexander Martinz <amartinz@shiftphones.com>, 
+ Luca Weiss <luca.weiss@fairphone.com>, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Caleb Connolly <caleb@postmarketos.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1621;
+ i=caleb.connolly@linaro.org; h=from:subject:message-id;
+ bh=8awMhfh+EooDyyG77D0x2IEYHXjNwY2rq0QQPZ/UDew=;
+ b=owEBbQKS/ZANAwAIAQWDMSsZX2S2AcsmYgBmV7yIpYEad0Z2kxpBicJZt8Z1dZqvqyL/0oqZo
+ 4QM5MEY6umJAjMEAAEIAB0WIQS2UaFGPGq+0GkMVc0FgzErGV9ktgUCZle8iAAKCRAFgzErGV9k
+ tvhhD/90F0f4KDuMIycJOwj3Jadn5jhFHDm0p8w7LmwFSfS8vH1oShWWXvlTD0ZP9Evrus/mxj+
+ 9Abt6QdbFEbfIiCOQZ0RxSMr4gt7Q3lm5FJ8kG9pElp7kvZINTTCgcj4HYoidSTq5XmMxaCQE+b
+ uqV+pA2MJG9KXsffYnwojSngkKFFneeRk/KQ3ZiSKkgxmdKLlwnyfGmn+gEUnZbGNci900rreRw
+ pKnOP6iTLsYzTO3y7AwlbvGWTJS8oAtwRiNajGE/0DQltztiqxubAYAROttdndk7JACgM07bIJU
+ 3AJR7GmogwJgHMTYioc3OEJImBIYEV0l0O9IONMh9T2eVP+L3wJ0OXsb2O5nNyFWPJFaJ5Bi+0p
+ KQSP5x6Hwpid8BYhpxe+agny4semnHQ0Zwjdns1BSbjiWWtrobslGsC01zWXSxGDVJLpePrXN+Q
+ XoKoiH2Og/lS7tIYHAz6VHvzn9ODmCD1qPSu8hQh6VoCnH8yIEGrImfwbQwjWfdgl9RuFtnGh53
+ 8i1+SlL+clbhnpkdbYkBIVB4Ll/PtZvxDAfjpzxAMfMRJmA1R1oYh1jjO1G3A8x193V4zycrn1L
+ jCBamVloTMn1IR1PABvbqoYeCQNCpuPNZu1CxSewwCmi9kxDZ3P2DMPvfjCyRuJkQAqF2cQQS6U
+ wcTuYdtk7eY6YXg==
+X-Developer-Key: i=caleb.connolly@linaro.org; a=openpgp;
+ fpr=83B24DA7FE145076BC38BB250CD904EB673A7C47
 
-On Wed, May 29, 2024 at 01:36:39PM -0700, Gatlin Newhouse wrote:
-> On Wed, May 29, 2024 at 08:30:20PM UTC, Marco Elver wrote:
-> > On Wed, 29 May 2024 at 20:17, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
-> > >
-> > > On Wed, May 29, 2024 at 09:25:21AM UTC, Marco Elver wrote:
-> > > > On Wed, 29 May 2024 at 04:20, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
-> > > > [...]
-> > > > >         if (regs->flags & X86_EFLAGS_IF)
-> > > > >                 raw_local_irq_enable();
-> > > > > -       if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > > > > -           handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > > > > -               regs->ip += LEN_UD2;
-> > > > > -               handled = true;
-> > > > > +
-> > > > > +       if (insn == INSN_UD2) {
-> > > > > +               if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > > > > +               handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > > > > +                       regs->ip += LEN_UD2;
-> > > > > +                       handled = true;
-> > > > > +               }
-> > > > > +       } else {
-> > > > > +               if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
-> > > >
-> > > > handle_ubsan_failure currently only returns BUG_TRAP_TYPE_NONE?
-> > > >
-> > > > > +                       if (insn == INSN_REX)
-> > > > > +                               regs->ip += LEN_REX;
-> > > > > +                       regs->ip += LEN_UD1;
-> > > > > +                       handled = true;
-> > > > > +               }
-> > > > >         }
-> > > > >         if (regs->flags & X86_EFLAGS_IF)
-> > > > >                 raw_local_irq_disable();
-> > > > > diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..6cae11f4fe23
-> > > > > --- /dev/null
-> > > > > +++ b/arch/x86/kernel/ubsan.c
-> > > > > @@ -0,0 +1,32 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > +/*
-> > > > > + * Clang Undefined Behavior Sanitizer trap mode support.
-> > > > > + */
-> > > > > +#include <linux/bug.h>
-> > > > > +#include <linux/string.h>
-> > > > > +#include <linux/printk.h>
-> > > > > +#include <linux/ubsan.h>
-> > > > > +#include <asm/ptrace.h>
-> > > > > +#include <asm/ubsan.h>
-> > > > > +
-> > > > > +/*
-> > > > > + * Checks for the information embedded in the UD1 trap instruction
-> > > > > + * for the UB Sanitizer in order to pass along debugging output.
-> > > > > + */
-> > > > > +enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn)
-> > > > > +{
-> > > > > +       u32 type = 0;
-> > > > > +
-> > > > > +       if (insn == INSN_REX) {
-> > > > > +               type = (*(u16 *)(regs->ip + LEN_REX + LEN_UD1));
-> > > > > +               if ((type & 0xFF) == 0x40)
-> > > > > +                       type = (type >> 8) & 0xFF;
-> > > > > +       } else {
-> > > > > +               type = (*(u16 *)(regs->ip + LEN_UD1));
-> > > > > +               if ((type & 0xFF) == 0x40)
-> > > > > +                       type = (type >> 8) & 0xFF;
-> > > > > +       }
-> > > > > +       pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-> > > > > +
-> > > > > +       return BUG_TRAP_TYPE_NONE;
-> > > > > +}
-> > > >
-> > > > Shouldn't this return BUG_TRAP_TYPE_WARN?
-> > >
-> > > So as far as I understand, UBSAN trap mode never warns. Perhaps it does on
-> > > arm64, although it calls die() so I am unsure. Maybe the condition in
-> > > handle_bug() should be rewritten in the case of UBSAN ud1s? Do you have any
-> > > suggestions?
-> > 
-> > AFAIK on arm64 it's basically a kernel OOPS.
-> > 
-> > The main thing I just wanted to point out though is that your newly added branch
-> > 
-> > > if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
-> > 
-> > will never be taken, because I don't see where handle_ubsan_failure()
-> > returns BUG_TRAP_TYPE_WARN.
-> >
-> 
-> Initially I wrote this with some symmetry to the KCFI checks nearby, but I
-> was unsure if this would be considered handled or not.
+The SHIFTphone 8 is an upcoming QCM6490 smartphone, it has the following
+features:
 
-Yeah, that seemed like the right "style" to me too. Perhaps, since it
-can never warn, we could just rewrite it so it's a void function avoid
-the checking, etc.
+* 12GB of RAM, 512GB UFS storage
+* 1080p display.
+* Hardware kill switches for cameras and microphones
+* UART access via type-c SBU pins (enabled by an internal switch)
 
--- 
-Kees Cook
+Initial support includes:
+
+* Framebuffer display
+* UFS and sdcard storage
+* Battery monitoring and USB role switching via pmic glink
+* Bluetooth
+* Thermals
+
+Wifi works but requires some commits to be reverted to prevent a
+firmware crash.
+
+The serial port on the device can be accessed via the usb-cereal
+adapter, it must first be enabled by flipping the switch under the
+display. Additional info can be found on the postmarketOS wiki page.
+
+https://wiki.postmarketos.org/wiki/SHIFT_SHIFTphone_8_(shift-otter)
+
+---
+Changes in v3:
+- Enable wifi
+- Fix protected-clocks indentation in gcc
+- Link to v2: https://lore.kernel.org/r/20240520-otter-bringup-v2-0-d717d1dab6b8@linaro.org
+
+Changes in v2:
+- Fix authorship
+- Address Luca's feedback
+- Link to v1: https://lore.kernel.org/r/20240508-otter-bringup-v1-0-c807d3d931f6@linaro.org
+
+---
+Caleb Connolly (2):
+      dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
+      arm64: dts: qcom: add QCM6490 SHIFTphone 8
+
+ Documentation/devicetree/bindings/arm/qcom.yaml  |   1 +
+ arch/arm64/boot/dts/qcom/Makefile                |   1 +
+ arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 926 +++++++++++++++++++++++
+ 3 files changed, 928 insertions(+)
+---
+change-id: 20240507-otter-bringup-388cf3aa7ca5
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+
+// Caleb (they/them)
+
 
