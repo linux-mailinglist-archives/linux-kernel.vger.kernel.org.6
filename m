@@ -1,192 +1,134 @@
-Return-Path: <linux-kernel+bounces-194361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679F68D3AD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:28:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8870F8D3AD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2377E289B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:28:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6171C215C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB923181305;
-	Wed, 29 May 2024 15:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAF41802D6;
+	Wed, 29 May 2024 15:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="T5xOS7MP"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="GZeXdiV7";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="GZeXdiV7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D500B746E;
-	Wed, 29 May 2024 15:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D997746E
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716996491; cv=none; b=o7Eoe06VOKtwUfx6Iybf4Q+wgeeGvJ4fLBzFQ28xf8a3kOHM8RQV/L6qrxGHwBSA3GwhOfKFpTDkyOLCipTYeW6+/PsrdkhAdtsSvf4ji+NuPOijcS08BA/msU3xxWzj0PYc3t+/yFF3WZ2ybIN6FqjsoXIZZcCUZtxbRXt7ays=
+	t=1716996537; cv=none; b=PsrihvUGTRrKhrUQtJBqj+AFPEEF8yq4NKhcASrA3k83KVeLCb1OAkbmAmfWgMgHyzdGIZORoQeu27+W9hFrPscX2s4mn1uT8LqfjCwYz3DISWj0nxo85oXGhqGAd/RWfacNpYVuoVX6+78vUCAhtKHIDD1GirvcTrnIi5oZLI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716996491; c=relaxed/simple;
-	bh=pn2lr3RjvPC4Kc+5d659uK69HVfUPhe0KhyTp8Pn+kA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qCZk3efANyI7mNIDeG+AOJDrrf3C1wC/URFhia/Ccd9FdRY2flDpclFMJx9xl69BWox4GVeXK23Ns+TAcSSC+7OS7R5B/0T2+xRumjbsSCidlLzVFP/9QrjRhj9qfo6L92016hCQQ1uaO+4+GomskeXoCcoHzHvZccP9ylGdOeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=T5xOS7MP; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1716996482; bh=pn2lr3RjvPC4Kc+5d659uK69HVfUPhe0KhyTp8Pn+kA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=T5xOS7MPDEL8D3/viSlPXTIMggw8ExSd5CQDGIYx55cFN5bl8G/VcS2W3XrtvhvJN
-	 xGpU2q6c4/TtRfFQASCzit+VccylNHUw/Tln+KFyj9LgfIIZdlalALcjm5nFTp7mUU
-	 aYjuuVhxNoJ0QD+kt0fbp/FvbE+Npk0Lw/l9Ns/Y=
-From: Luca Weiss <luca@z3ntu.xyz>
-To: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- ~postmarketos/upstreaming@lists.sr.ht, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying mboxes
- instead of qcom,ipc
-Date: Wed, 29 May 2024 17:28:01 +0200
-Message-ID: <5782729.DvuYhMxLoT@g550jk>
-In-Reply-To: <f8c48554-984f-48fd-aa12-87d39888b0f6@kernel.org>
-References:
- <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz> <4881282.LvFx2qVVIh@g550jk>
- <f8c48554-984f-48fd-aa12-87d39888b0f6@kernel.org>
+	s=arc-20240116; t=1716996537; c=relaxed/simple;
+	bh=KV2PN+zHiynw9SsYBN77fsZ7CbSVNoJRxI7I3GKbct8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EPJHs9f/P1aIL2B3XO7zzeoTFq+68ght+pc4lht6g3U4DL12Y1+8nhNEG3/k98FyqUwQwsTS6A/R3JEm0HPh9AoeW61FHmyf+cAHX+tCKnNdXis29JfyLsjxp8EkMpq7z1WKO5pZaDw/NS/JsaLqs9r1CuvGVLsrJVl3pPBCAKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=GZeXdiV7; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=GZeXdiV7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A796821BFD;
+	Wed, 29 May 2024 15:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716996533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=QVcS2ml1yTHvRqrZdzEVXS8S59w2Jdj6F5oGk4wAxvg=;
+	b=GZeXdiV7AESq8LWFOTwkC2yUIAkzK7fP5T4wwRNs8MumG7Dcn+a5MuPzpGefTrRvmo82rw
+	xdY0AlishzYZDBpNVYQYMFN2DzuVlyGLG5WSiANQmuj+TA3T+FHdfveoSs3IFRYQuLJRdt
+	VMhye90r3sBKYU0MMxMZeOGJZ7tthvU=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716996533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=QVcS2ml1yTHvRqrZdzEVXS8S59w2Jdj6F5oGk4wAxvg=;
+	b=GZeXdiV7AESq8LWFOTwkC2yUIAkzK7fP5T4wwRNs8MumG7Dcn+a5MuPzpGefTrRvmo82rw
+	xdY0AlishzYZDBpNVYQYMFN2DzuVlyGLG5WSiANQmuj+TA3T+FHdfveoSs3IFRYQuLJRdt
+	VMhye90r3sBKYU0MMxMZeOGJZ7tthvU=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7287413A6B;
+	Wed, 29 May 2024 15:28:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UhqkGbVJV2ZJdAAAD6G6ig
+	(envelope-from <nik.borisov@suse.com>); Wed, 29 May 2024 15:28:53 +0000
+From: Nikolay Borisov <nik.borisov@suse.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org,
+	Nikolay Borisov <nik.borisov@suse.com>
+Subject: [PATCH] x86/kexec: Remove spurious jmp 1f from from identity_mapped()
+Date: Wed, 29 May 2024 18:28:50 +0300
+Message-Id: <20240529152850.1227756-1-nik.borisov@suse.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.66 / 50.00];
+	BAYES_HAM(-2.86)[99.39%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.66
+X-Spam-Flag: NO
 
-On Samstag, 25. Mai 2024 18:47:08 MESZ Krzysztof Kozlowski wrote:
-> On 24/05/2024 19:55, Luca Weiss wrote:
-> > On Donnerstag, 23. Mai 2024 08:19:11 MESZ Krzysztof Kozlowski wrote:
-> >> On 23/05/2024 08:16, Luca Weiss wrote:
-> >>> On Donnerstag, 23. Mai 2024 08:02:13 MESZ Krzysztof Kozlowski wrote:
-> >>>> On 22/05/2024 19:34, Luca Weiss wrote:
-> >>>>> On Mittwoch, 22. Mai 2024 08:49:43 MESZ Krzysztof Kozlowski wrote:
-> >>>>>> On 21/05/2024 22:35, Luca Weiss wrote:
-> >>>>>>> On Dienstag, 21. Mai 2024 10:58:07 MESZ Krzysztof Kozlowski wrote:
-> >>>>>>>> On 20/05/2024 17:11, Luca Weiss wrote:
-> >>>>>>>>> Hi Krzysztof
-> >>>>>>>>>
-> >>>>>>>>> Ack, sounds good.
-> >>>>>>>>>
-> >>>>>>>>> Maybe also from you, any opinion between these two binding styles?
-> >>>>>>>>>
-> >>>>>>>>> So first using index of mboxes for the numbering, where for the known
-> >>>>>>>>> usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
-> >>>>>>>>>
-> >>>>>>>>> The second variant is using mbox-names to get the correct channel-mbox
-> >>>>>>>>> mapping.
-> >>>>>>>>>
-> >>>>>>>>> -               qcom,ipc-1 = <&apcs 8 13>;
-> >>>>>>>>> -               qcom,ipc-2 = <&apcs 8 9>;
-> >>>>>>>>> -               qcom,ipc-3 = <&apcs 8 19>;
-> >>>>>>>>> +               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> >>>>>>>>>
-> >>>>>>>>> vs.
-> >>>>>>>>>
-> >>>>>>>>> -               qcom,ipc-1 = <&apcs 8 13>;
-> >>>>>>>>> -               qcom,ipc-2 = <&apcs 8 9>;
-> >>>>>>>>> -               qcom,ipc-3 = <&apcs 8 19>;
-> >>>>>>>>> +               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> >>>>>>>>> +               mbox-names = "ipc-1", "ipc-2", "ipc-3";
-> >>>>>>>>
-> >>>>>>>> Sorry, don't get, ipc-1 is the first mailbox, so why would there be <0>
-> >>>>>>>> in first case?
-> >>>>>>>
-> >>>>>>> Actually not, ipc-0 would be permissible by the driver, used for the 0th host
-> >>>>>>>
-> >>>>>>> e.g. from:
-> >>>>>>>
-> >>>>>>> 	/* Iterate over all hosts to check whom wants a kick */
-> >>>>>>> 	for (host = 0; host < smsm->num_hosts; host++) {
-> >>>>>>> 		hostp = &smsm->hosts[host];
-> >>>>>>>
-> >>>>>>> Even though no mailbox is specified in any upstream dts for this 0th host I
-> >>>>>>> didn't want the bindings to restrict that, that's why in the first example
-> >>>>>>> there's an empty element (<0>) for the 0th smsm host
-> >>>>>>>
-> >>>>>>>> Anyway, the question is if you need to know that some
-> >>>>>>>> mailbox is missing. But then it is weird to name them "ipc-1" etc.
-> >>>>>>>
-> >>>>>>> In either case we'd just query the mbox (either by name or index) and then
-> >>>>>>> see if it's there? Not quite sure I understand the sentence..
-> >>>>>>> Pretty sure either binding would work the same way.
-> >>>>>>
-> >>>>>> The question is: does the driver care only about having some mailboxes
-> >>>>>> or the driver cares about each specific mailbox? IOW, is skipping ipc-0
-> >>>>>> important for the driver?
-> >>>>>
-> >>>>> There's nothing special from driver side about any mailbox. Some SoCs have
-> >>>>> a mailbox for e.g. hosts 1&2&3, some have only 1&3, and apq8064 even has
-> >>>>> 1&2&3&4.
-> >>>>>
-> >>>>> And if the driver doesn't find a mailbox for a host, it just ignores it
-> >>>>> but then of course it can't 'ring' the mailbox for that host when necessary.
-> >>>>>
-> >>>>> Not sure how much more I can add here, to be fair I barely understand what
-> >>>>> this driver is doing myself apart from the obvious.
-> >>>>
-> >>>> From what you said, it looks like it is enough to just list mailboxes,
-> >>>> e.g. for ipc-1, ipc-2 and ipc-4 (so no ipc-0 and ipc-3):
-> >>>
-> >>> No, for sure we need also the possibility to list ipc-3.
-> >>
-> >> ? You can list it, what's the problem>
-> > 
-> > Maybe we're talking past each other...
-> > 
-> > You asked why this wouldn't work:
-> > 
-> >   e.g. for ipc-1, ipc-2 and ipc-4 (so no ipc-0 and ipc-3):
-> >   mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> > 
-> > How would we know that the 3rd mailbox (&apcs 19) is for the 4th host
-> > (previous ipc-4)?
-> > 
-> > 1. If we use mboxes with indexes we'd need to have <0> values for
-> > "smsm hosts" where we don't have a mailbox for - this is at least
-> > for the 2nd smsm host (qcom,ipc-2) for a bunch of SoCs.
-> > 
-> > 2. If we use mboxes with mbox-names then we could skip that since we
-> > can directly specify which "smsm host" a given mailbox is for.
-> > 
-> > My only question really is whether 1. or 2. is a better idea.
-> > 
-> > Is this clearer now or still not?
-> 
-> 
-> So again, does the driver care about missing entry? If so, why?
+This seemingly straightforward jmp was introduced in the initial version
+of the the 64bit kexec code without any explanation. It turns out (check
+accompanying link) it's likely a copy/paste artefact from 32bit code,
+where such a jmp could be used as a serialising instruction for the 486's
+prefetch queue. On x86_64 that's not needed beacuse there's already a
+preceding write to cr4 which itself is a serialising operation.
 
-What do you mean with "care"?
+Link: https://lore.kernel.org/all/55bc0649-c017-49ab-905d-212f140a403f@citrix.com/
+Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+---
+ arch/x86/kernel/relocate_kernel_64.S | 3 ---
+ 1 file changed, 3 deletions(-)
 
-I didn't change any behavior to what's happening now, if e.g. qcom,ipc-3
-is not set right now then the driver is okay with that and just won't
-ring the mailbox for that smsm host.
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index 56cab1bb25f5..54e620021c7e 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -153,9 +153,6 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 1:
+ 	movq	%rax, %cr4
 
-The behavior will be the same with mbox, if a mbox for e.g. the 3rd smsm
-host is not set, the driver is okay with that but then of course won't do
-anything for that host.
+-	jmp 1f
+-1:
+-
+ 	/* Flush the TLB (needed?) */
+ 	movq	%r9, %cr3
 
-See the driver patch for details, or is something unclear there?
-
-Regards
-Luca
-
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-
-
-
+--
+2.34.1
 
 
