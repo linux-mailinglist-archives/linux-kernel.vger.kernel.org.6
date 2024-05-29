@@ -1,74 +1,48 @@
-Return-Path: <linux-kernel+bounces-194010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C714D8D3559
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:20:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3CA8D355C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790411F26053
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7602285184
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A091181B8B;
-	Wed, 29 May 2024 11:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h23b6e1B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3BE181300
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E5917F371;
+	Wed, 29 May 2024 11:19:56 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C87A13DDB2;
+	Wed, 29 May 2024 11:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981564; cv=none; b=sr0ipeDqTT1HTnYsHCx2+B6R9r5abDyYqQV4d/hzWbYcfxBSNgf9dMjodywTwJdUI6A6Uc/JWgQQgE8zPwj3BcLy1+6/KQRpnblr98Hlci4RK1mE154TCjppsF1y5S1+Z4WvEDaTnxRDGLxrRYDgqD7NvyT87Bs3Xx/gIWyjxS8=
+	t=1716981595; cv=none; b=ibkuHZ0rp//L2P9aadcr13nk15MjjkE17tE798ZTDb+muZO+eG5XkN3snsPG8k6hT85+DZ1BTp7vIkzvD9/b1p6yWvd4/Tp1VpwXxDH6Oh3IG2EuTtnGlzNswSGJUiFal4Lv0ZNKACqlGdYtzJ27HsnN9ExrT4rHtEP+cK6CyYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981564; c=relaxed/simple;
-	bh=OrtHN7gm6sG7/e44ksUr1jsieGg46k546PJ3cCa5NdE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S/6Opr29y49R+tRWZ7ns9N4LUFYQmIg9Mb3xGj7qH/e0HnoFw+da4qfdXmHF2cNJ+E/cxRsFPYGgn5S/hryFpdcjc21BHuju/qK8zgVLJZMoFYkuuFcJPOe+IGSwAqfCaq3e6Z+E4DGis8Bew/tYLn1dUDrB/q0Un3RcnliilBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h23b6e1B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716981562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=503jl45eQ6DH26oe7TpQo3EopwWo8mZfnH3eTedH2jo=;
-	b=h23b6e1BiZmOdspkExb2c/aKQ7NIbdcL7jFLuCGGfMVcRbejSQ/ThcwFmT5n4N5musRcDq
-	tGPXqXkObuN+obOm6vt9HUYG8yA+Y/svwQdStWt5lET6gQzdi8o5zJ8m29cRtGvOM/wkvH
-	pYfpzykC1v163lmhbtV8o0VzW/Pmp8U=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-jaInmsy4NLOfXj_IkOsLPQ-1; Wed, 29 May 2024 07:19:19 -0400
-X-MC-Unique: jaInmsy4NLOfXj_IkOsLPQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E2B185A58C;
-	Wed, 29 May 2024 11:19:19 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.39.193.127])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 9DAFDC15BB9;
-	Wed, 29 May 2024 11:19:17 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: [PATCH v2 6/6] mm/mm_init: initialize page->_mapcount directly in __init_single_page()
-Date: Wed, 29 May 2024 13:19:04 +0200
-Message-ID: <20240529111904.2069608-7-david@redhat.com>
-In-Reply-To: <20240529111904.2069608-1-david@redhat.com>
-References: <20240529111904.2069608-1-david@redhat.com>
+	s=arc-20240116; t=1716981595; c=relaxed/simple;
+	bh=cTpW4h0esAKGMKfykiWz6wsPp/48KJ+ilI1XLm2O+rw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sgMDVzmDDUXWUyE0roODwpNSf6JDgfs2rkG4caDr1PoNXPJoPdl/jWP+drrxQpbzb5jmYBZiWXISr5/t70+VP42K5XLYjCyNflDi8YO/As8L2ITIH1YnG1hWVgKEtLweuqeqSjTJvsL+mnrY2jcAYU35dtfe/wNlb9QY+eH+NjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.180.133.93])
+	by gateway (Coremail) with SMTP id _____8AxW+pWD1dmRB4BAA--.4656S3;
+	Wed, 29 May 2024 19:19:50 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.133.93])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxfcdVD1dmDewMAA--.34229S2;
+	Wed, 29 May 2024 19:19:50 +0800 (CST)
+From: Hongchen Zhang <zhanghongchen@loongson.cn>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Huacai Chen <chenhuacai@loongson.cn>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	Hongchen Zhang <zhanghongchen@loongson.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] PCI: use local_pci_probe when best selected cpu is offline
+Date: Wed, 29 May 2024 19:19:47 +0800
+Message-Id: <20240529111947.1549556-1-zhanghongchen@loongson.cn>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,47 +50,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+X-CM-TRANSID:AQAAf8DxfcdVD1dmDewMAA--.34229S2
+X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/1tbiAQAMB2ZWihIEpwAnsm
+X-Coremail-Antispam: 1Uk129KBj9xXoWrZF1rXr18WryfXw1UZr1UJwc_yoWfAFX_ua
+	48Wrs7Wr4UCr10k3s09r1fZrZak3WjvFs2gF4xKa4rZa42yr4UtasrZry5Jr1ru3y5JF9F
+	yr1UXF1rZr17JosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb7kYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU25EfUUUUU
 
-Let's simply reinitialize the page->_mapcount directly. We can now
-get rid of page_mapcount_reset().
+When the best selected cpu is offline, work_on_cpu will stuck
+forever. Therefore, in this case, we should call
+local_pci_probe instead of work_on_cpu.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
 ---
- include/linux/mm.h | 5 -----
- mm/mm_init.c       | 2 +-
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ drivers/pci/pci-driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index eebfce8f58bca..c41c82bcbec2f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1206,11 +1206,6 @@ static inline int folio_entire_mapcount(const struct folio *folio)
- 	return atomic_read(&folio->_entire_mapcount) + 1;
- }
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index af2996d0d17f..32a99828e6a3 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -386,7 +386,7 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
+ 		free_cpumask_var(wq_domain_mask);
+ 	}
  
--static inline void page_mapcount_reset(struct page *page)
--{
--	atomic_set(&(page)->_mapcount, -1);
--}
--
- /**
-  * page_mapcount() - Number of times this precise page is mapped.
-  * @page: The page.
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index e0023aa685556..426314eeecec3 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -568,7 +568,7 @@ void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 	mm_zero_struct_page(page);
- 	set_page_links(page, zone, nid, pfn);
- 	init_page_count(page);
--	page_mapcount_reset(page);
-+	atomic_set(&page->_mapcount, -1);
- 	page_cpupid_reset_last(page);
- 	page_kasan_tag_reset(page);
- 
+-	if (cpu < nr_cpu_ids)
++	if ((cpu < nr_cpu_ids) && cpu_online(cpu))
+ 		error = work_on_cpu(cpu, local_pci_probe, &ddi);
+ 	else
+ 		error = local_pci_probe(&ddi);
 -- 
-2.45.1
+2.33.0
 
 
