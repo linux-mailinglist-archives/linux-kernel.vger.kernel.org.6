@@ -1,163 +1,338 @@
-Return-Path: <linux-kernel+bounces-193266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5930E8D296F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8198D2974
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F058287883
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09DFA1F2544C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363F414EC5F;
-	Wed, 29 May 2024 00:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3016415A49F;
+	Wed, 29 May 2024 00:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bcVG4bbz"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SujxBDxU"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B54C14EC55
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6220315957D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716942523; cv=none; b=CKv/jBoGbVMcUkSx2Bhd1YmOxYWHhFSwzZqDFno4GQJ94mGmOaVsyx5zWAsKbl6Qzs/FC+yMzYljXlKiRCzXyg4rkNnzNb6w0V2mQlz7pkTClq0PHY2JVXdRR/g0HtHcOSF2d3VBpC92GD5xRd+B48yy4xpdzTMXq+dqrfQ6M+Y=
+	t=1716942831; cv=none; b=KmRGDb7vM4+5b/+y/+/VtLwFcYIglr/Mqgv0ggWluJVOfjsK+6lo1TyZe8tSNM/C2K85eAffIa0eeNaPojfN5qT1U3tzjawcCl5xQdB/gV04UdkAtY8oKBZuYL9fhSnxb6BNlRecQENbwe5B9wiV47T0nLsOE9yp4j8FHUTZ3kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716942523; c=relaxed/simple;
-	bh=yCC2XhdoqcrVGPVCuuGH8xc+X7lrIWtkAzs8ln3HmvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=stVPBIGp5A6pvg0Lr4EJh4SAEgKnjD1ldGqZ8PD3EHj6FDiLsTEpfVATTI5Dbg9d1T5fbGcmVg7e62G0ve4FM9SptODJcfxOZzDI1rGJFLYZWG1rWZdeWR5LmIFjBGmz1wt9ub5mO/5q9nTdBwS5BTfsO3rh++UWA303E8BUQ2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bcVG4bbz; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f44b42e9a6so11959735ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:28:41 -0700 (PDT)
+	s=arc-20240116; t=1716942831; c=relaxed/simple;
+	bh=DnnR4m1p4oU4U6SccO/LeVG9lOdHFpIn9om0icQLd3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZgDt+RzdCK6pAcG4M1dmR0tyY1vjKbgAKDRoWyZAofa5Eh6U/+GVY8c37pBOnsv8thlr9sLFmG0Nq+peQqlG9gpVk2S/zFoEycSHFQt24VSTn7E5me4LJovA/gR4K1ExDEWItr2HeV3Jw55JaOwlEUaO0IyJtZS+wqmzGxofloo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SujxBDxU; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f4a6a54416so2908005ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716942520; x=1717547320; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1c9G1Yasw8H462EyOiSehnDLVP9jP7KmNiDzPxioqSM=;
-        b=bcVG4bbzPffUJ9a1vsCUPfHHsUlQYfch95/Fn3dwGqZXwkOyHjdm6ftWU5IPmyLwX9
-         EcLrk+oyiB2uESqRQXA26J102VxfYZA4H1NiQ+Di+DJrgHrLoXtq8k2yweD+SpqR1PB1
-         O5krVgrm/PSHDjknVEcRZETCezvCKhRPmz9yJyxVNU0SIzRJcotS0owEnvmD5vK+uY73
-         CCo39PzeLIqYjIir0PkDXWnNLzw/rRrGrs8IfoobHaEVveU700RP8vJL4MpVU/rPZpDE
-         ltP4jujFS5OgFuwGIpRg+GLRvvBCks7T51pNSdlgtB2gOv3aGg/V1NUARp8oxs5GX2Va
-         jJPw==
+        d=google.com; s=20230601; t=1716942829; x=1717547629; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZEoXkEUUAwl5YxPM26D+WgNJiJo07MgNYdTcPdzNMEE=;
+        b=SujxBDxUi3M4wkfpRhLggafGcWPB2EHrdkBFl657HIInrTVpdj9Cot2U9Sr9JD/oSB
+         0U5O4QO9DBjmn83zC3odp7p8RZN9JOu/Jt6PwLxB+yLhlet+8AKg1mxGuHS9tZM9NrjP
+         nSjhRQIPOvkZQC2xgwi6swScqaNmmaj+2Wq72M2og9Xx19I4Y0/8X9MqJ60wTLBa6t9H
+         UD3k5NmVskZPxulEePLct4lPY2Epbvu8/N249Ha5PulzqQB2wJzaovB4r2oHBqljYnfx
+         UEqeGwA+gL3ZDIDJ5tZJGHjnPrjzTTdDH2pB3kENnfCNQXd6Hs5mg7e7oW7d4n746kg+
+         NRog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716942520; x=1717547320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1c9G1Yasw8H462EyOiSehnDLVP9jP7KmNiDzPxioqSM=;
-        b=oaqAyJQ3YO4kpHjnJ8d0XSwz6qxjXsgUigCYNqKRSF6tB4H6MlXoXq1O4eqNogN/Ks
-         TRgVU7ozgaxXSvDmC5nUM1q/pSFVbLbpCgna4bxRRcemh3JyXRXTwMm7s//tfu0tAZjk
-         VgyVd5jeaReKOAuxXUajQpDS/We1Gf3QtCYfsV9dck2Jg0yXw2nOGCrYAHQsISmr1qCh
-         ws/AdNgQCclqRk3oaW1QLeCiSQuUvxtvzt5UqAwE3lEoETWn7Uj5wZys30VIwwRT/7LU
-         YtLtXCRQSXluVTTq9iintg1Mwg3hE9HFqVRZVwn/iGaQYk8da/haM0z9OULYUB/97YFL
-         c0eA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyQfCWvlNPpDvhkgAvuXufUhfryonntLgov3wxhS8raCfmiSx94vZKvLeGyK2qB0zLrEJOmmWlBMYz7ns2SyFRmj9JMcUJArt7rJcA
-X-Gm-Message-State: AOJu0YwURDYMPDJk8uGbdS+taBTMBP5qg3qtQDj0Rk738yfFq84jOMvj
-	T9GHAROiwiGF1LjM1IjAIYrKPvy9sIwG9ecE4HLkpxA/S5cwjxmCpH6kKEtqnhU=
-X-Google-Smtp-Source: AGHT+IErol/Kf7s7IaV5INq5x9HrKvgHUI68JV/sh0AcH0N8qryzCBp/1solrCqXc/0XR6QAWHV1RQ==
-X-Received: by 2002:a17:902:ecc7:b0:1f4:8190:33a5 with SMTP id d9443c01a7336-1f481903723mr100631945ad.56.1716942520407;
-        Tue, 28 May 2024 17:28:40 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c967ab5sm86402065ad.162.2024.05.28.17.28.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 17:28:39 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sC7BF-00E344-0H;
-	Wed, 29 May 2024 10:28:37 +1000
-Date: Wed, 29 May 2024 10:28:37 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-xfs@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] xfs: avoid redundant AGFL buffer invalidation
-Message-ID: <ZlZ2tfqvagRusmVv@dread.disaster.area>
-References: <1b2be7fa-332d-4fab-8d36-89ef7a0d3a24@linux.alibaba.com>
- <20240528041239.1190215-1-hsiangkao@linux.alibaba.com>
+        d=1e100.net; s=20230601; t=1716942829; x=1717547629;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZEoXkEUUAwl5YxPM26D+WgNJiJo07MgNYdTcPdzNMEE=;
+        b=lG7RhVY6KJ1Ip+BlpUQURYEsnYhOK3dKl9bAXu7VpSwW4K/L8ze31LP7vXrAu0KnNP
+         8Afxdbib2ZkRN6/A/Jy5gOJJoC0A+sMnJTBUvHtoLNRpQl9+BK9vtIzCY3uH45GkBf8e
+         hrzXJ30vqL0TO/jIQOqOXBSuYAN8ZFCFmjoxw3kSseFgMAp8p5V2KY3+NwxxktMJnGHI
+         ywJz+soIZvbpWFYcEEgt2PM4aPh18Gg+GHee7UiXGHhwJE+tt5Nw3xWYKN2x55rwJU6r
+         uE+IJ5Q8etlHee8MKVZ3xrm5klIreQf9zLtIRObSmlyvRvlMdnPjfsQpFJ5axBM1jm8l
+         cKVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+PH86rbE5TqEP8OrHqJatjGClcprLQ61pNNbzxY5GFwbEVWnofmb2xld+TGXIar/9r4obbgFlxN7BWGOksuwTcQGI2258xSIKYSNg
+X-Gm-Message-State: AOJu0YzKJ9yvdh0pbLxDWtaQZWrKDkzHJb5BUbnAZ86vl05edjs4SxVC
+	7D9Io0sL7qYsqBSQU5KoqivYIeUmI1vGbWz5fdg7RLOu9Pt8TbcOL48o3gOcwQ==
+X-Google-Smtp-Source: AGHT+IGMG4IZrbeGjf0fVtb1fsD40Zt48ILPY0YEhyTQQVy/ubNjlBazTaLP/BgbOqPYwiU1sjCJgw==
+X-Received: by 2002:a17:902:e5cf:b0:1f4:84e6:5a87 with SMTP id d9443c01a7336-1f4e9ea07damr9993335ad.9.1716942828183;
+        Tue, 28 May 2024 17:33:48 -0700 (PDT)
+Received: from [192.168.60.239] (213.126.145.34.bc.googleusercontent.com. [34.145.126.213])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c96f67fsm86723345ad.154.2024.05.28.17.33.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 17:33:47 -0700 (PDT)
+Message-ID: <adabc6f5-1b87-4bbe-9070-984f0acc8e75@google.com>
+Date: Tue, 28 May 2024 17:33:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528041239.1190215-1-hsiangkao@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
+ interval length and buffersize
+To: Michael Grzeschik <mgr@pengutronix.de>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Daniel Scally <dan.scally@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jayant Chowdhary <jchowdhary@google.com>,
+ "etalvala@google.com" <etalvala@google.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+References: <ZkE-O0yJ33T9hWa0@pengutronix.de>
+ <20240517014359.p2s44ypl4bix4odm@synopsys.com>
+ <Zk03Ys1rA0I5yiZy@pengutronix.de>
+ <20240522014132.xlf7azgq2urfff2d@synopsys.com>
+ <3f404a27-50e8-42c5-a497-b46751154613@rowland.harvard.edu>
+ <20240522171640.iuol4672rnklc35g@synopsys.com>
+ <Zk4td_0RR0cMJKro@pengutronix.de>
+ <f4f0b38a-1f8e-4cf5-8cf1-6da337a1c3c0@google.com>
+ <ZlY88BebTEZs6urD@pengutronix.de>
+ <0642b7a2-0982-4529-b742-3310f34d16b9@google.com>
+ <ZlZeHLmKnw1mApKM@pengutronix.de>
+Content-Language: en-US
+From: Avichal Rakesh <arakesh@google.com>
+In-Reply-To: <ZlZeHLmKnw1mApKM@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 28, 2024 at 12:12:39PM +0800, Gao Xiang wrote:
-> Currently AGFL blocks can be filled from the following three sources:
->  - allocbt free blocks, as in xfs_allocbt_free_block();
->  - rmapbt free blocks, as in xfs_rmapbt_free_block();
->  - refilled from freespace btrees, as in xfs_alloc_fix_freelist().
-> 
-> Originally, allocbt free blocks would be marked as stale only when they
-> put back in the general free space pool as Dave mentioned on IRC, "we
-> don't stale AGF metadata btree blocks when they are returned to the
-> AGFL .. but once they get put back in the general free space pool, we
-> have to make sure the buffers are marked stale as the next user of
-> those blocks might be user data...."
-> 
-> However, after commit ca250b1b3d71 ("xfs: invalidate allocbt blocks
-> moved to the free list") and commit edfd9dd54921 ("xfs: move buffer
-> invalidation to xfs_btree_free_block"), even allocbt / bmapbt free
-> blocks will be invalidated immediately since they may fail to pass
-> V5 format validation on writeback even writeback to free space would be
-> safe.
-> 
-> IOWs, IMHO currently there is actually no difference of free blocks
-> between AGFL freespace pool and the general free space pool.  So let's
-> avoid extra redundant AGFL buffer invalidation, since otherwise we're
-> currently facing unnecessary xfs_log_force() due to xfs_trans_binval()
-> again on buffers already marked as stale before as below:
-> 
-> [  333.507469] Call Trace:
-> [  333.507862]  xfs_buf_find+0x371/0x6a0       <- xfs_buf_lock
-> [  333.508451]  xfs_buf_get_map+0x3f/0x230
-> [  333.509062]  xfs_trans_get_buf_map+0x11a/0x280
-> [  333.509751]  xfs_free_agfl_block+0xa1/0xd0
-> [  333.510403]  xfs_agfl_free_finish_item+0x16e/0x1d0
-> [  333.511157]  xfs_defer_finish_noroll+0x1ef/0x5c0
-> [  333.511871]  xfs_defer_finish+0xc/0xa0
-> [  333.512471]  xfs_itruncate_extents_flags+0x18a/0x5e0
-> [  333.513253]  xfs_inactive_truncate+0xb8/0x130
-> [  333.513930]  xfs_inactive+0x223/0x270
-> 
-> xfs_log_force() will take tens of milliseconds with AGF buffer locked.
-> It becomes an unnecessary long latency especially on our PMEM devices
-> with FSDAX enabled and fsops like xfs_reflink_find_shared() at the same
-> time are stuck due to the same AGF lock.  Removing the double
-> invalidation on the AGFL blocks does not make this issue go away, but
-> this patch fixes for our workloads in reality and it should also work
-> by the code analysis.
-> 
-> Note that I'm not sure I need to remove another redundant one in
-> xfs_alloc_ag_vextent_small() since it's unrelated to our workloads.
-> Also fstests are passed with this patch.
-> 
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> ---
-> changes since v1:
->  - Get rid of xfs_free_agfl_block() suggested by Dave;
->  - Some commit message refinement.
-> 
->  fs/xfs/libxfs/xfs_alloc.c | 28 +---------------------------
->  fs/xfs/libxfs/xfs_alloc.h |  6 ++++--
->  fs/xfs/xfs_extfree_item.c |  4 ++--
->  3 files changed, 7 insertions(+), 31 deletions(-)
 
-Looks fine - it appears to me that all the places that put blocks
-onto the freelist will have already invalidated any buffers over
-those blocks, so we don't need to do it again when moving them from
-the freelist to the freespace btrees.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+On 5/28/24 15:43, Michael Grzeschik wrote:
+> On Tue, May 28, 2024 at 02:27:34PM -0700, Avichal Rakesh wrote:
+>>
+>>
+>> On 5/28/24 13:22, Michael Grzeschik wrote:
+>>> On Tue, May 28, 2024 at 10:30:30AM -0700, Avichal Rakesh wrote:
+>>>>
+>>>>
+>>>> On 5/22/24 10:37, Michael Grzeschik wrote:
+>>>>> On Wed, May 22, 2024 at 05:17:02PM +0000, Thinh Nguyen wrote:
+>>>>>> On Wed, May 22, 2024, Alan Stern wrote:
+>>>>>>> On Wed, May 22, 2024 at 01:41:42AM +0000, Thinh Nguyen wrote:
+>>>>>>> > On Wed, May 22, 2024, Michael Grzeschik wrote:
+>>>>>>> > > On Fri, May 17, 2024 at 01:44:05AM +0000, Thinh Nguyen wrote:
+>>>>>>> > > > For isoc endpoint IN, yes. If the host requests for isoc data IN while
+>>>>>>> > > > no TRB is prepared, then the controller will automatically send 0-length
+>>>>>>> > > > packet respond.
+>>>>>>> > >
+>>>>>>> > > Perfect! This will help a lot and will make active queueing of own
+>>>>>>> > > zero-length requests run unnecessary.
+>>>>>>> >
+>>>>>>> > Yes, if we rely on the current start/stop isoc transfer scheme for UVC,
+>>>>>>> > then this will work.
+>>>>>>>
+>>>>>>> You shouldn't rely on this behavior.  Other device controllers might not
+>>>>>>> behave this way; they might send no packet at all to the host (causing a
+>>>>>>> USB protocol error) instead of sending a zero-length packet.
+>>>>>>
+>>>>>> I agree. The dwc3 driver has this workaround to somewhat work with the
+>>>>>> UVC. This behavior is not something the controller expected, and this
+>>>>>> workaround should not be a common behavior for different function
+>>>>>> driver/protocol. Since this behavior was added a long time ago, it will
+>>>>>> remain the default behavior in dwc3 to avoid regression with UVC (at
+>>>>>> least until the UVC is changed). However, it would be nice for UVC to
+>>>>>> not rely on this.
+>>>>>
+>>>>> With "this" you mean exactly the following commit, right?
+>>>>>
+>>>>> (f5e46aa4 usb: dwc3: gadget: when the started list is empty stop the active xfer)
+>>>>>
+>>>>> When we start questioning this, then lets dig deeper here.
+>>>>>
+>>>>> With the fast datarate of at least usb superspeed shouldn't they not all
+>>>>> completely work asynchronous with their in flight trbs?
+>>>>>
+>>>>> In my understanding this validates that, with at least superspeed we are
+>>>>> unlikely to react fast enough to maintain a steady isoc dataflow, since
+>>>>> the driver above has to react to errors in the processing context.
+>>>>>
+>>>>> This runs the above patch (f5e46aa4) a gadget independent solution
+>>>>> which has nothing to do with uvc in particular IMHO.
+>>>>>
+>>>>> How do other controllers and their drivers work?
+>>>>>
+>>>>>> Side note, when the dwc3 driver reschedules/starts isoc transfer again,
+>>>>>> the first transfer will be scheduled go out at some future interval and
+>>>>>> not the next immediate microframe. For UVC, it probably won't be a
+>>>>>> problem since it doesn't seem to need data going out every interval.
+>>>>>
+>>>>> It should not make a difference. [TM]
+>>>>>
+>>>>
+>>>>
+>>>> Sorry for being absent for a lot of this discussion.
+>>>>
+>>>> I want to take a step back from the details of how we're
+>>>> solving the problem to what problems we're trying to solve.
+>>>>
+>>>> So, question(s) for Michael, because I don't see an explicit
+>>>> answer in this thread (and my sincerest apologies if they've
+>>>> been answered already and I missed it):
+>>>>
+>>>> What exactly is the bug (or bugs) we're trying to solve here?
+>>>>
+>>>> So far, it looks like there are two main problems being
+>>>> discussed:
+>>>>
+>>>> 1. Reducing the bandwidth usage of individual usb_requests
+>>>> 2. Error handling for when transmission over the wire fails.
+>>>>
+>>>> Is that correct, or are there other issues at play here?
+>>>
+>>> That is correct.
+>>>
+>>>> (1) in isolation should be relatively easy to solve: Just
+>>>> smear the encoded frame across some percentage
+>>>> (prefereably < 100%) of the usb_requests in one
+>>>> video frame interval.
+>>>
+>>> Right.
+>>>
+>>>> (2) is more complicated, and your suggestion is to have a
+>>>> sentinel request between two video frames that tells the
+>>>> host if the transmission of "current" video frame was
+>>>> successful or not. (Is that correct?)
+>>>
+>>> Right.
+>>>
+>>>> Assuming my understanding of (2) is correct, how should
+>>>> the host behave if the transmission of the sentinel
+>>>> request fails after the video frame was sent
+>>>> successfully (isoc is best effort so transmission is
+>>>> never guaranteed)?
+>>>
+>>> If we have transmitted all requests of the frame but would only miss the
+>>> sentinel request to the host that includes the EOF, the host could
+>>> rather show it or drop it. The drop would not be necessary since the
+>>> host did see all data of the frame. The user would not see any
+>>> distortion in both cases.
+>>>
+>>> If we have transmitted only partial data of the frame it would be
+>>> preferred if the host would drop the frame that did not finish with an
+>>> proper EOF tag.
+>>>
+>>> AFAIK the linux kernel would still show the frame if the FID of the
+>>> currently handled request would change and would take this as the end of
+>>> frame indication. But I am not totally sure if this is by spec or
+>>> optional.
+>>>
+>>> One option to be totally sure would be to resend the sentinel request to
+>>> be properly transmitted before starting the next frame. This resend
+>>> polling would probably include some extra zero-length requests. But also
+>>> if this resend keeps failing for n times, the driver should doubt there
+>>> is anything sane going on with the USB connection and bail out somehow.
+>>>
+>>> Since we try to tackle case (1) to avoid transmit errors and also avoid
+>>> creating late enqueued requests in the running isoc transfer, the over
+>>> all chance to trigger missed transfers should be minimal.
+>>
+>> Gotcha. It seems like the UVC gadget driver implicitly assumes that EOF
+>> flag will be used although the userspace application can technically
+>> make it optional.
+> 
+> That is not all. The additional UVC_STREAM_ERR tag on the sentinel
+> request can be set optional by the host driver. But by spec the
+> userspace application has to drop the frame when the flag was set.
 
--- 
-Dave Chinner
-david@fromorbit.com
+Looking at the UVC specs, the ERR bit doesn't seem to refer to actual 
+transmission error, only errors in frame generation (Section 4.3.1.7 
+of UVC 1.5 Class Specification). Maybe "data discontinuity" can be 
+used but the examples given are bad media, and encoder issues, which
+suggests errors at higher level than the wire.
+
+> 
+> With my proposal this flag will be set, whenever we find out that
+> the currently transferred frame was erroneous.
+> 
+>> Summarizing some of the discussions above:
+>> 1. UVC gadget driver should _not_ rely on the usb controller to
+>>   enqueue 0-length requests on UVC gadget drivers behalf;
+>> 2. However keeping up the backpressure to the controller means the
+>>   EOF request will be delayed behind all the zero-length requests.
+> 
+> Exactly, this is why we have to somehow finetune the timedelay between
+> requests that trigger interrupts. And also monitor the amount of
+> requests currently enqueued in the hw ringbuffer. So that our drivers
+> enqueue dequeue mechanism is virtually adding only the minimum amount
+> of necessary zero-length requests in the hardware. This should be
+> possible.
+> 
+> I am currently thinking through the remaining steps the pump worker has
+> to do on each wakeup to maintain the minimum threshold while waiting
+> with submitting requests that contain actual image payload.
+> 
+>> Out of curiosity: What is wrong with letting the host rely on
+>> FID alone? Decoding the jpeg payload _should_ fail if any of the
+>> usb_requests containing the payload failed to transmit.
+> 
+> This is not totally true. We saw partially rendered jpeg frames on the
+> host stream. How the host behaves with broken data is totally undefined
+> if the typical uvc flags EOF/ERR are not used as specified. Then think
+> about uncompressed formats. So relying on the transferred image format
+> to solve our problems is just as wrong as relying on the gadgets
+> hardware behavior.
+
+Do you know if the partially rendered frames were valid JPEGs, or 
+if the host was simply making a best effort at displaying a broken
+JPEG? Perhaps the fix should go to the host instead?
+
+Following is my opinion, feel free to disagree (and correct me if 
+something is factually incorrect):
+
+The fundamental issue here is that ISOC doesn't guarantee
+delivery of usb_requests or even basic data consistency upon delivery.
+So the gadget driver has no way to know the state of transmitted data. 
+The gadget driver is notified of underruns but not of any other issues,
+and ideally we should never have an underrun if the zero-length 
+backpressure is working as intended.
+
+So, UVC gadget driver can reduce the number of errors, but it'll never be 
+able to guarantee that the data transmitted to the host isn't somehow
+corrupted or missing unless a more reliable mode of transmission 
+(bulk, for example) is used.
+
+All of this to say: The host absolutely needs to be able to handle
+all sorts of invalid and broken payloads. How the host handles it 
+might be undefined, but the host can never rely on perfect knowledge 
+about the transmission state. In cases like these, where the underlying 
+transport is unreliable, the burden of enforcing consistency moves up 
+a layer, i.e. to the encoded payload in this case. So it is perfectly 
+fine for the host to rely on the encoding to determine if the payload 
+is corrupt and handle it accordingly.
+
+As for uncompressed format, you're correct that subtle corruptions
+may not be caught, but outright missing usb_requests can be easily
+checked by simply looking at the number of bytes in the payload. YUV 
+frames are all of the same (predetermined) size for a given resolution.
+
+So my recommendation is the following:
+1. Fix the bandwidth problem by splitting the encoded video frame
+   into more usb_requests (as your patch already does) making sure 
+   there are enough free usb_request to encode the video frame in 
+   one burst so we don't accidentally inflate the transmission 
+   duration of a video frame by sneaking in zero-length requests in
+   the middle.
+2. Unless there is an unusually high rate of transmission failures
+   when using the UVC gadget driver, it might be worth fixing the
+   host side driver to handle broken frames better instead (assuming 
+   host is linux as well).
+2. Tighten up the error checking in UVC gadget driver -- We drop the 
+   current frame whenever an EXDEV happens which is wrong. We should 
+   only be dropping the current frame if the EXDEV corresponds to the 
+   frame currently being encoded. If the frame is already fully queued 
+   to the usb controller, the host can handle missing payload as it 
+   sees fit.
+
+
+- Avi.
 
