@@ -1,76 +1,117 @@
-Return-Path: <linux-kernel+bounces-193904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19788D33E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:01:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FBA8D33EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E6EB218F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9FAE1F23983
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA73417995A;
-	Wed, 29 May 2024 10:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09C617B51D;
+	Wed, 29 May 2024 10:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z032jTVm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+lMm492"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A18017A902
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1306517B400;
+	Wed, 29 May 2024 10:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716976850; cv=none; b=pAY4oelo3zff/nyvrcznsWGJ0uI7DoQTeyU+9Mt2WoG6+J2R1I1VFMqLsbHNaOps6y5q9ACW5fnzgapPRJtVwKyyeh+5UdDDKL1WqLJl5WUsN/J1azadw/x+18yobc9BnQKB6liShBKTrtDgKGVcWzd3K6AC3od66VNocfHQv3k=
+	t=1716976878; cv=none; b=MrtpCT8InvNzw3/xkTTW5kCfcMm55QfYqOhMeUiEs6BTVLrIUZSLsmWVsfLI3YPB5thG8JSm1eoAObJ6nCF+QoM1XYxEvmmjxFhL58lL/hgoxcG6rTOhfh1QsjTI5CpeaFx0/g3UhGzsipf9nbyArnFKy9qmr/4edUwUCretSng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716976850; c=relaxed/simple;
-	bh=JkIX8xKo+lNY07uEq9QS69wNHFvrTozc/et+eiZHLE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FxaIyhhj4gLnnfTCddqQphZp3bGnvh5K42rFDNDeWLl4ttu7sFmAAQduwQJxXJUi3/yyNlgnJPbZVVIIY26kkbfd+1AmqGw0CwQpQZd3BvqKoxOEeSDJoR23xvRDiwzs3TJcgxDzZgzcSq+YXxtuPtGH7l8Yjr+Dr48HOKd5EDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z032jTVm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12ECAC4AF08;
-	Wed, 29 May 2024 10:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716976849;
-	bh=JkIX8xKo+lNY07uEq9QS69wNHFvrTozc/et+eiZHLE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z032jTVmh53cyY1k9uthsBXu6CX9bXQIlZj3fBscYA0lGqhqfILLHqI86PXjP5vRp
-	 2QgJRBewVMKiqOJs4Ouf+3StxL9/NpQFQNHpK/q1M3UwhOOeBAMQ69IsLSPVciU5tR
-	 rruJLA4t68ssP5VhkymRvzHKVzWiFmjrrRpzt9wY=
-Date: Wed, 29 May 2024 12:00:54 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Soumya Khasnis <soumya.khasnis@sony.com>
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org,
-	daniel.lezcano@linaro.org, festevam@denx.de, lee@kernel.org,
-	benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
-	ldmldm05@gmail.com, srinavasa.nagaraju@sony.com,
-	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
-	keita.aihara@sony.com, masaya.takahashi@sony.com
-Subject: Re: [PATCH] reboot: Add timeout for device shutdown
-Message-ID: <2024052935-think-gaffe-80d4@gregkh>
-References: <20240529083224.GA71473@sony.com>
+	s=arc-20240116; t=1716976878; c=relaxed/simple;
+	bh=a91FxspxlRCfgSu57AGk4ebkLMPvGl9K4zWKW9UVBnU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iSL2ceikzjMKnnRVaO+vWpEtrcmzYjOn+iVQGW8HIthO3RDRzhNwr91E71Ndg5LCL0oIFJXSlWyWX7d6nDYYHmNhAZmtXEHlKo0yXqlQMUHRkwcXtOYpLwZpNCJi9iV5uEfkPh132aKl/SNmOKhLghKmomJwf3V2TLnONz5/GAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+lMm492; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A2272C2BD10;
+	Wed, 29 May 2024 10:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716976877;
+	bh=a91FxspxlRCfgSu57AGk4ebkLMPvGl9K4zWKW9UVBnU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=d+lMm492mXxD569WnYSsqnv7M7bM1QaWTk+8xuzoHl40aQi29EKTiI27LKYczrqQ4
+	 89dp7KxTmEgpmPaV6m5FqL3mQm2j6RbUYcwne3EMQFghoCFAnP+wvhzRVpENeofd9x
+	 wNs5Cu8fs8BxzF+T8fpn3kYUyEYHigyL0eMleborjI0K3h6TPavimgxDyJuzpdZRB+
+	 gnoorDSQyL5ABYGTTduKSO2qQlNiS6Tgh3j4nrnFZ4AbPD65MNEd0JmAs2a+ox2W4l
+	 brFX2gvc+4sZH/n2cBIIsHVBLwpW0vQXat0USkHz90jxRs4rJ/v7hJzbXwuflZ+BcQ
+	 HfX5HgrUdPKzw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FCEC27C43;
+	Wed, 29 May 2024 10:01:17 +0000 (UTC)
+From: Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>
+Subject: [PATCH v6 0/2] Add support for Amlogic S4 PWM
+Date: Wed, 29 May 2024 18:00:55 +0800
+Message-Id: <20240529-s4-pwm-v6-0-270f63049f20@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529083224.GA71473@sony.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANf8VmYC/2WMQQrCMBBFr1JmbSQdk2pdeQ9xEZJJO2BNSSQqp
+ Xc37UIRl+/z35sgUWRKcKwmiJQ5cbgVaDYV2N7cOhLsCgNKVFKhEkmJ8TEIdHvZtofGGiIo5zG
+ S5+caOl8K95zuIb7WblbL+pfISkhBhEjeOyWdPJnhGjq2WxsGWCJZf0WN9UfURZS2rb32ZofW/
+ YrzPL8BBSOvPdcAAAA=
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kelvin Zhang <kelvin.zhang@amlogic.com>, 
+ Junyi Zhao <junyi.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716976876; l=1140;
+ i=kelvin.zhang@amlogic.com; s=20240329; h=from:subject:message-id;
+ bh=a91FxspxlRCfgSu57AGk4ebkLMPvGl9K4zWKW9UVBnU=;
+ b=/SM+S10/vNZX/3yq/Vv/gVtGFkhrqyd951SBAMUefxD4hriwDQ+A5PQW7I5uW3k6gprCPivv7
+ CWOHQUlXHkZC6nYGzPJpAW4cp/lPI3y3ZfKAHt+qBWl+g5u6TG/gmuG
+X-Developer-Key: i=kelvin.zhang@amlogic.com; a=ed25519;
+ pk=pgnle7HTNvnNTcOoGejvtTC7BJT30HUNXfMHRRXSylI=
+X-Endpoint-Received: by B4 Relay for kelvin.zhang@amlogic.com/20240329 with
+ auth_id=148
+X-Original-From: Kelvin Zhang <kelvin.zhang@amlogic.com>
+Reply-To: kelvin.zhang@amlogic.com
 
-On Wed, May 29, 2024 at 08:32:24AM +0000, Soumya Khasnis wrote:
-> The device shutdown callbacks invoked during shutdown/reboot
-> are prone to errors depending on the device state or mishandling
-> by one or more driver. In order to prevent a device hang in such
-> scenarios, we bail out after a timeout while dumping a meaningful
-> call trace of the shutdown callback which blocks the shutdown or
-> reboot process.
-> 
-> Change-Id: Ibfc63ca8f8aa45866cbe6b90401d438d95eca742
+Add support for Amlogic S4 PWM, including the driver and DTS.
 
-Any reason you didn't run this through checkpatch.pl first?
+Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+---
+Changes in v6:
+- Rename 'pwm_meson_s4_data' to 'pwm_s4_data'.
+- Rename 'meson_pwm_init_channels_meson_s4' to 'meson_pwm_init_channels_s4'.
+- Adjust the order of the device nodes according to their unit addresses.
+- Some minor improvements.
+- Link to v5: https://lore.kernel.org/r/20240521-s4-pwm-v5-0-0c91f5fa32cd@amlogic.com
 
-:(
+Changes in v5:
+- Add devm_add_action_or_reset for free clk when unloading.
+- Replace the underscores of node name with dashes.
+- Link to v4: https://lore.kernel.org/r/20240424-s4-pwm-v4-0-ee22effd40d0@amlogic.com
+
+---
+Junyi Zhao (2):
+      pwm: meson: Add support for Amlogic S4 PWM
+      arm64: dts: amlogic: Add Amlogic S4 PWM
+
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 207 ++++++++++++++++++++++++++++++
+ drivers/pwm/pwm-meson.c                   |  49 +++++++
+ 2 files changed, 256 insertions(+)
+---
+base-commit: 124cfbcd6d185d4f50be02d5f5afe61578916773
+change-id: 20240424-s4-pwm-2d709986caee
+
+Best regards,
+-- 
+Kelvin Zhang <kelvin.zhang@amlogic.com>
+
 
 
