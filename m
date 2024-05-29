@@ -1,192 +1,297 @@
-Return-Path: <linux-kernel+bounces-194176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AC88D37F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:39:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479028D37EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80651C2399D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:39:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1EE01F2253A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8F017C73;
-	Wed, 29 May 2024 13:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B391BC4E;
+	Wed, 29 May 2024 13:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRU53TuQ"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMG+0x2X"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B1014AA9;
-	Wed, 29 May 2024 13:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B189171AD;
+	Wed, 29 May 2024 13:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716989960; cv=none; b=qiRfQcFLPN/RWXQGyCaJBbVWZLJbZDfde86jJzO9JLPmzZpDxL5kIg+BpRD1QdXulFHR1LP/LPJ/nGUIltPbeOnbdRHwSwJwjODzWKfqQvAAdAOjJd9XKSmvPbiNOjuuXLOmoRjD/R1EI1yYFs4iKZUA0v3sNkcE5MCxjrSpZWc=
+	t=1716989939; cv=none; b=bTUEyTOLjbAM2/aoUjWIXtms+g9ZqDIyVoAO1qeXfrz92anX1e3iYkHmi0uKHTCrgxmYgdEAAMK2gUVYOfhdYucVEQWQlY1jcGZY8BbKI2nItpB9KbJIaUAEsyYsVQnJ8DdoPofMTR3XJowezy5EdrwzytuswPUdyQBKLsEcZoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716989960; c=relaxed/simple;
-	bh=R3h5tSBPfEHGlt3Qf5kTWfRHMfookplRqGhxVq0OW2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dnVAOPq0ELV01zqga3EvSPGzWGdWuOJGGCALYiJcsPPLYaNAn6D+u3elK4c45J7aYKsFEvLqRcydFaNRh86cM05MNo4jtwL03tWbduIUzslRr0FzWx1cxeGIPR48fO0NrtqC1N3DOgasdP1v1bKy1NWzU49PzI/l7qCXzZC4uos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRU53TuQ; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1716989939; c=relaxed/simple;
+	bh=+l6x6i3kHtqLonQfr69W4feqb/M1K6UTmYJxPGqj/lU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oQ0gyI9P0Up3lpHColjbwhsgEcW3Aoh1xFOTCD7G6gvuchY2DYwPLVIfDgWG/hjSGIUay73TcLYDL4u/gH5kzj1xthj7ZfJPxfgkox2OAxvs3u+tF9NRQ20syWIsissHZVLq1ZBtkIfjDeCN0I/Rk4IhQv+Z/IEMkk2H0B8a14Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NMG+0x2X; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-529614b8c29so3362328e87.2;
-        Wed, 29 May 2024 06:39:18 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a1059dc4fso509024a12.0;
+        Wed, 29 May 2024 06:38:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716989957; x=1717594757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/OSOPo7Lbda7dPzDxelwiNRlHm/oYGM0dTgvUx1nRbg=;
-        b=VRU53TuQHJIY840hcXzPUGBWV5XKo5psl+MfCFGMiubddH3c+W6lmzQgbFJx9GN39N
-         cBCMX3C5wX/rW8Wg7od8WRfBRyccxhC1ERJB3RlElph6UcShO8CwXBBF2lPzACHtI87u
-         yYOn9jh2UYK5bliR9wM/O8qT3gtVaFJlKjCwtI0M2a46Cew3VBztgPUmJxnCWqGmaeob
-         EKeuphOMzSh5jx/B4jfBTceA6sCyIEg8rIpyOZWUJ1iXUTmWengessqxdnSJp7czKGKm
-         17MnZj4OwMKNEDWr8fI06nt3IynIZPBJN40jhzgOEhOV+eGJC5zPXv53MdXl3MMRQQtn
-         +y7A==
+        d=gmail.com; s=20230601; t=1716989935; x=1717594735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ol6KhilEnQNQYC6nLVi3xWbUX0mrmnhrtYsnemUxP0k=;
+        b=NMG+0x2Xz3OyFXmGjTiz4fqKDNazt1nIw71mZX3BsqQny5tP8cOQIPyIgKJpZNU7dl
+         ZNhaLrHwRRbgc7zuas2utTmKOyurK3Y227fXEIIVw3w1NLKGEGMhTqMhIOVS1uKORL+s
+         xZg62WQHVTWVZh5TN86aVDi1ZqYp6dTRLJI97D9qqLzyZXWPKqNX3reYDEZIq4/pZVMH
+         wyj0tvQovdcamqvNPB+U83MuYGqA+3XvfjeJdK4+vVhv/gDhNLLd4nqNlKwzHWsPStJT
+         kqgxadNIZXK3AxIDJuFbKvUJTJxZpzRvu9I67BRAcOkQx/S1uU0AUL4xOGoN9BD3B7Tp
+         jyoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716989957; x=1717594757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/OSOPo7Lbda7dPzDxelwiNRlHm/oYGM0dTgvUx1nRbg=;
-        b=pouTgx0qkl5VqxIclebWLZlxFq+yXncBg3CNBfxZjDHW/n56ClnfYgare7zBLm9Eqm
-         V+EvDBBO1v8y0ttuy0rb9G/ddgsJJNSleJHJv8zm8SNjDcFvXa+yqga5Msh+p0kfkUG7
-         FkfHDGWXMBSD21aSEsQEzicQyMcn0LEpsTkBJc3oWQcMizvtXetu20slGI/KHRQX3e1t
-         BzlYVpmzEXsHkEEn8uultsak5N6k7TWlQL4aG/oBjvrDcA3QJGQXhnGDbXjv+IHL/LBR
-         TN5m/LWUH/wCwEn7A/LANcDEnkJWDGuilD2JxBpWJ6gyW7yX3ONcQPQ2czn7+2ZT/KTT
-         lRPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdzE4kezQct5F7/4rIup1Jw8J7P4vfmo212lHj3ic753dyJN/JreYfQEs+7vIoAghPLaq1aAJkfN1U4omE2uL1IjDt0tf4BN8C0Ay3D9RUk5FbBuDL7GyoDwpvzJWrylR4e2/cZ3uGQPNY/5iUqrGiwmoluWb7LQoc20bll4ooDHQ=
-X-Gm-Message-State: AOJu0YxhIVekDoLoVjF45/XqgIop2lzKpOoEBfndn/TkXC/ycNc3a71w
-	j5snbZ65ePeO3uLIx0lUT4oRJkR4WY3AoXoFyM1GF/vXx1XU4Mc7ck6GSkLqN28scaTxPJyWa7L
-	jfag4iGW9Jya6qOHgYFv5D/pou2iAj/XX
-X-Google-Smtp-Source: AGHT+IF/Mx+aeQaDKWNtONCluGWzcUX4rpkMKxmKVHQ27MIk0ibKAqPWIDbQ7NzwC9rfk9DG3bxn038hq6LXNmgObN8=
-X-Received: by 2002:a19:ca01:0:b0:51a:df97:cc8d with SMTP id
- 2adb3069b0e04-52965a421acmr10862970e87.26.1716989956613; Wed, 29 May 2024
- 06:39:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716989935; x=1717594735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ol6KhilEnQNQYC6nLVi3xWbUX0mrmnhrtYsnemUxP0k=;
+        b=HSx02JbWOSHdwe61mrQC7Lbmf9y+HgA0OASfwC70h0+P02I8eZT8WYrh264GeAhtSG
+         T+lL/OOS9synzSG608BX4lNl6qbib1WlPxy8pHQ6Kvy7HsJ1sCMo+9ihCvmWQom3VeaV
+         vSfTQRcVi40mHWSluF+DBPJ5TFgg9Vr1JyI2UE3gfiBQRBFafwpihA8TqNDMCmQ39H4z
+         s7gfLrL77R44uNyc+Ge2VdlDaGtKbqLlf2ZGvtMLoCCu0lO/fJJf73ASDKwisrHa6lF3
+         jWJO2LsiY2G47Z0+wQ6oumSNd3l/QMrU7zZMB7GdhSvCYmFXi5TcNiiPvCcXgT4FG2PI
+         yj/g==
+X-Forwarded-Encrypted: i=1; AJvYcCW6d3qYChELGtRnAIVkPawDFTYmTSN3JbZoVEtX7dOgcVG5KzJJhMugZjiylXkgaPBtMRMzXYCTtW3ylVMmNwhsjrK7SAA+o7nkBs6yebcHGEz97Hc8omS4eZ9UBSNHQAIqVM93j25WYsXPA0Q2TqTXQzJhQCzKapYFM8FdjCf4BZyfAg==
+X-Gm-Message-State: AOJu0YxDWQZl6EDiQZucDtKrqIEKswgPxh0IxE32ddSdg/iIu6lel0Vf
+	Q518N4Bx+flMwxBR1iReM2mcEXwf2NRYYJ6AFjnpzw4z/yU3gDX4
+X-Google-Smtp-Source: AGHT+IEBZ+mrLk6M7uSV+VBJ3oMx1LiFjXuncOjXlE2sq6T1Ogk+r/u4girc+UD32T5H1HvBSUVL4w==
+X-Received: by 2002:a50:f695:0:b0:578:68b6:dc48 with SMTP id 4fb4d7f45d1cf-57868b6de63mr8760700a12.22.1716989935227;
+        Wed, 29 May 2024 06:38:55 -0700 (PDT)
+Received: from [192.168.0.137] ([188.24.75.156])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a111f8b3fsm248075a12.85.2024.05.29.06.38.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 06:38:54 -0700 (PDT)
+Message-ID: <a1c75105-6447-4b67-b7d2-326ad9b19b82@gmail.com>
+Date: Wed, 29 May 2024 16:38:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
- <20240528190315.3865-3-laurent.pinchart@ideasonboard.com> <ZlYwJryxeZ2LAKYG@surfacebook.localdomain>
- <20240528201326.GA8500@pendragon.ideasonboard.com> <CAHp75VeHA8qH_S=KJjAMv24vGP=hmeN9wSt1_NPsRhBZfEYXXw@mail.gmail.com>
- <20240529093541.GL1436@pendragon.ideasonboard.com>
-In-Reply-To: <20240529093541.GL1436@pendragon.ideasonboard.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 29 May 2024 16:38:40 +0300
-Message-ID: <CAHp75Vf1EgHOs2jBZPWtX7PdaNcEX_J4wX_aXDehNgxhDf39dw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] mfd: adp5585: Add Analog Devices ADP5585 core support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Haibo Chen <haibo.chen@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] dt-bindings: adc: ad7173: add support for ad411x
+To: Conor Dooley <conor@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+ <20240527-ad4111-v3-1-7e9eddbbd3eb@analog.com>
+ <20240527-arguably-said-361184ad848e@spud>
+ <d87ae6ef-090d-4e47-bde4-4d08fd445ac1@gmail.com>
+ <20240528-filtrate-cloning-b9152322a3da@spud>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <20240528-filtrate-cloning-b9152322a3da@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 12:35=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wed, May 29, 2024 at 08:44:26AM +0300, Andy Shevchenko wrote:
-> > On Tue, May 28, 2024 at 11:13=E2=80=AFPM Laurent Pinchart wrote:
-> > > On Tue, May 28, 2024 at 10:27:34PM +0300, Andy Shevchenko wrote:
-> > > > Tue, May 28, 2024 at 10:03:12PM +0300, Laurent Pinchart kirjoitti:
+On 28/05/2024 20:52, Conor Dooley wrote:
+> On Tue, May 28, 2024 at 03:16:07PM +0300, Ceclan, Dumitru wrote:
+>> On 27/05/2024 20:48, Conor Dooley wrote:
+>>> On Mon, May 27, 2024 at 08:02:34PM +0300, Dumitru Ceclan via B4 Relay wrote:
+>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>>
+>>>> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
+>>>>
+>>>> AD411x family ADCs support a VCOM pin, dedicated for single-ended usage.
+>>>> AD4111/AD4112 support current channels, usage is implemented by
+>>>>  specifying channel reg values bigger than 15.
+>>>>
+>>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>> ---
+>>>>  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 122 ++++++++++++++++++++-
+>>>>  1 file changed, 120 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+>>>> index ea6cfcd0aff4..5b1af382dad3 100644
+>>>> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+>>>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+>>>> @@ -19,7 +19,18 @@ description: |
+>>>>    primarily for measurement of signals close to DC but also delivers
+>>>>    outstanding performance with input bandwidths out to ~10kHz.
+>>>>  
+>>>> +  Analog Devices AD411x ADC's:
+>>>> +  The AD411X family encompasses a series of low power, low noise, 24-bit,
+>>>> +  sigma-delta analog-to-digital converters that offer a versatile range of
+>>>> +  specifications. They integrate an analog front end suitable for processing
+>>>> +  fully differential/single-ended and bipolar voltage inputs.
+>>>> +
+>>>>    Datasheets for supported chips:
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4111.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4112.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4114.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4115.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4116.pdf
+>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD7172-2.pdf
+>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD7172-4.pdf
+>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD7173-8.pdf
+>>>> @@ -31,6 +42,11 @@ description: |
+>>>>  properties:
+>>>>    compatible:
+>>>>      enum:
+>>>> +      - adi,ad4111
+>>>> +      - adi,ad4112
+>>>> +      - adi,ad4114
+>>>> +      - adi,ad4115
+>>>> +      - adi,ad4116
+>>>>        - adi,ad7172-2
+>>>>        - adi,ad7172-4
+>>>>        - adi,ad7173-8
+>>>> @@ -129,10 +145,36 @@ patternProperties:
+>>>>          maximum: 15
+>>>>  
+>>>>        diff-channels:
+>>>> +        description: |
+>>>> +          For using current channels specify select the current inputs
+>>>> +           and enable the adi,current-channel property.
+>>>> +
+>>>> +          Family AD411x supports a dedicated VINCOM voltage input.
+>>>> +          To select it set the second channel to 16.
+>>>> +            (VIN2, VINCOM) -> diff-channels = <2 16>
+>>>> +
+>>>> +          There are special values that can be selected besides the voltage
+>>>> +          analog inputs:
+>>>> +            21: REF+
+>>>> +            22: REF−
+>>>> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, AD7177-2:
+>>>> +            19: ((AVDD1 − AVSS)/5)+
+>>>> +            20: ((AVDD1 − AVSS)/5)−
+>>>> +
+>>>>          items:
+>>>>            minimum: 0
+>>>>            maximum: 31
+>>>>  
+>>>> +      single-channel:
+>>>> +        description: |
+>>>> +          Models AD4111 and AD4112 support single-ended current channels.
+>>>> +          To select the desired current input, specify the desired input pair:
+>>>> +            (IIN2+, IIN2−) -> single-channel = <2>
+>>>> +
+>>>> +        items:
+>>>> +          minimum: 1
+>>>> +          maximum: 16
+>>>> +
+>>>>        adi,reference-select:
+>>>>          description: |
+>>>>            Select the reference source to use when converting on
+>>>> @@ -154,9 +196,26 @@ patternProperties:
+>>>>            - avdd
+>>>>          default: refout-avss
+>>>>  
+>>>> +      adi,current-channel:
+>>>> +        description: |
+>>>> +          Signal that the selected inputs are current channels.
+>>>> +          Only available on AD4111 and AD4112.
+>>>> +        type: boolean
+>>>> +
+>>>> +      adi,channel-type:
+>>>> +        description:
+>>>> +          Used to differentiate between different channel types as the device
+>>>> +           register configurations are the same for all usage types.
+>>>> +          Both pseudo-differential and single-ended channels will use the
+>>>> +           single-ended specifier.
+>>>> +        $ref: /schemas/types.yaml#/definitions/string
+>>>> +        enum:
+>>>> +          - single-ended
+>>>> +          - differential
+>>>> +        default: differential
+>>>
+>>> I dunno if my brain just ain't workin' right today, or if this is not
+>>> sufficiently explained, but why is this property needed? You've got
+>>> diff-channels and single-channels already, why can you not infer the
+>>> information you need from them? What should software do with this
+>>> information?
+>>> Additionally, "pseudo-differential" is not explained in this binding.
+>>
+>> In previous thread we arrived to the conclusion single-ended and
+>> pseudo-differential channels should be marked with the flag
+>> "differential=false" in the IIO channel struct. This cannot
+>> really be inferred as any input pair could be used in that
+>> manner and the only difference would be in external wiring.
+>>
+>> Single-channels cannot be used to define such a channel as
+>> two voltage inputs need to be selected. Also, we are already
+>> using single-channel to define the current channels.
+> 
+> If I understand correctly, the property could be simplified to a flag
+> then, since it's only the pseudo differential mode that you cannot be
+> sure of?
+> You know when you're single-ended based on single-channel, so the
+> additional info you need is only in the pseudo-differential case.
+> 
+Yes, it could just be a boolean flag. The only thing I have against
+that is the awkwardness of having both diff-channels and
+differential=false within a channel definition.
 
-..
+No, there is no uncertainty regarding pseudo-differential, it's
+basically single-ended.
 
-> > > > > +   depends on I2C && OF
-> > > >
-> > > > Why OF?
-> > >
-> > > Because the driver works on OF systems only.
-> > >
-> > > > No COMPILE_TEST?
-> > >
-> > > The driver won't compile without CONFIG_I2C, so I can use
-> > >
-> > >         depends on I2C
-> > >         depends on OF || COMPILE_TEST
-> > >
-> > > Do you think that's better ?
-> >
-> > I think that dropping OF completely is the best.
-> > OF || COMPILE_TEST would work as well, but I still don't know why we ne=
-ed this.
+We cannot use single-channel for voltage channels, two voltage
+inputs need to be specified. And again, single-channel will be
+used here for the current channels. 
+
+>> As for explaining the pseudo-differential, should it be explained?
+>> A voltage channel within the context of these families is actually
+>> differential(as there are always two inputs selected).
+>> The single-ended and pseudo-diff use case is actually wiring up a
+>> constant voltage to the selected negative input.
+>>
+>> I did not consider that this should be described, as there is no
+>> need for an attribute to describe it.
+> 
+> I dunno, adding an explanation of it in the text for the channel type
+> seems trivial to do. "Both pseudo-differential mode (where the
+> one of differential inputs is connected to a constant voltage) and
+> single-ended channels will..."
 >
-> For the same reason that many drivers depend on specific CONFIG_$ARCH.
-
-It's different. You may not do in many cases the $ARCH ||
-COMPILE_TEST, while OF || COMPILE_TEST should just work in 100% cases.
-
-> They can't run on other platforms, the dependency hides the symbol for
-> users who can't use the driver. This driver works on OF platforms only.
-
-What you are talking about is functional dependency, what I'm talking
-about is the compilation one.
-So, it's a pity that Kbuild doesn't distinguish these two basic
-concepts in dependencies and
-FOO || COMPILE_TEST is basically an artificial hack to tell "hey, FOO
-is _functional_ dependency, I do not care if I can compile without
-it".
-
-..
-
-> > > > > +#define            ADP5585_MAN_ID(v)               (((v) & 0xf0)=
- >> 4)
-> > > >
-> > > > GENMASK()
-> > >
-> > > This is not a mask. Or do you mean
-> > >
-> > >         (((v) & GENMASK(7, 4)) >> 4)
-> > >
-> > > ?
-> >
-> > Yes.
-> >
-> > > I think that's overkill.
-> >
-> > Why? You have a mask, use it for less error prone code.
+>>> Also, what does "the device register configurations are the same for
+>>> all uses types" mean? The description here implies that you'd be reading
+>>> the registers to determine the configuration, but as far as I understand
+>>> it's the job of drivers to actually configure devices.
+>>> The only way I could interpret this that makes sense to me is that you're
+>>> trying to say that the device doesn't have registers that allow you to
+>>> do runtime configuration detection - but that's the norm and I would not
+>>> call it out here.
+>>
+>> No, I meant that the same register configuration will be set for
+>> both fully differential and single-ended. 
+>>
+>> The user will set diff-channels = <0, 1>, bipolar(or not) and
+>> then they can wire whatever to those pins: 
+>> - a differential signal
+>> - AVSS to 1 and a single-ended signal to 0
+>> - AVSS+offset to 1 and a single-ended signal to 0
+>> 	(which is called pseudo-differential in some datasheets)
+>>
+>> All these cases will look the same in terms of configuration
+> 
+> In that case, I'd just remove this sentence from the description then.
+> How you configure the registers to use the device doesn't really have
+> anything to do with describing the configuration of the hardware.
+> Given it isn't related to configuration detection at runtime, what
+> you've got written here just makes it seem like the property is
+> redundant because the register settings do not change.
 >
-> I'll change this to
+> Instead, use the description to talk about when the property should be
+> used and what software should use it to determine, e.g. "Software can
+> use vendor,channel-type to determine whether or not the measured voltage
+> is absolute or relative". I pulled that outta my ass, it might not
+> be what you're actually doing, but I figure you just want to know if
+> you're measuring from the origin or either side of it.
+>It's more to the "software can this property to correctly mark the channel
+as differential or not". Hope this is acceptable. But got it, thanks.
 
-..
+> Cheers,
+> Conor.
 
-> -       if (ADP5585_MAN_ID(id) !=3D ADP5585_MAN_ID_VALUE)
-> +       if (id & ADP5585_MAN_ID_MASK !=3D ADP5585_MAN_ID_VALUE)
-
-(Don't forget inner parentheses)
-
-..
-
-> > > > > +#define            ADP5585_Rx_PULL_CFG_MASK        (3)
-> > > >
-> > > > GENMASK()
-> > >
-> > > Not here, as this value is meant to be passed to ADP5585_Rx_PULL_CFG(=
-).
-> >
-> > Why is it marked as a mask? Rename it to _ALL or alike.
->
-> It's a mask, but used as
->
->         ADP5585_Rx_PULL_CFG(ADP5585_Rx_PULL_CFG_MASK)
->
-> We're reaching a level of bike-shedding that even I find impressive :-)
-> As with a few other of your review comments that I think are related to
-> personal taste more than anything else, I'll defer to the subsystem
-> maintainer and follow their preference on this one.
-
-I would name it _ALL and use (BIT(2) - 1) notation to show that you
-want all of them to be set. But okay, let's leave this to the
-maintainer.
-
---=20
-With Best Regards,
-Andy Shevchenko
 
