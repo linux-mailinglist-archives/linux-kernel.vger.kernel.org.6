@@ -1,99 +1,96 @@
-Return-Path: <linux-kernel+bounces-194419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3908D3BE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5738D3BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB071282B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:08:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A322824F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CECD1836FE;
-	Wed, 29 May 2024 16:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E05F1836CF;
+	Wed, 29 May 2024 16:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xcMnwLhA"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SukM/c9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA77181CF8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5D61836CC;
+	Wed, 29 May 2024 16:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716998872; cv=none; b=NZuxwWgFlP1GyAyhy9RwrsznYnmziCAkvp0KILzmBPXsKDgPcrXHnxk5ZqjyTEb6MrVm0aJJ120b4vn0NlLGfeKcoimYATTQjOSkhOHGcPfMN1mZ0Kk4Shc7+WksM+H43P+cIThX4EQgAUKMs6AnDRT1FuFTIyM2AzzntQRbTqk=
+	t=1716998852; cv=none; b=dMzEu24ls2iNEyGoAQret8nsQeZUL2LG10O+QluQRbtdWHwZ+38I1LhQg/2Uew9JDCxm8pfrBQCxAeQ7JktWUbNGdDHYdF8CQCP1MXdzBHd0SP0FwDQKbuWgrQC/0aNCG+x8XRXJJ6fpscYhAYEpCCJ5PK5c69B8GKvcxolGYbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716998872; c=relaxed/simple;
-	bh=E9DNaoOmfthVbSQNM5zSx1ewbDVsnzuDLD8hcnb2gp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nbhSrlEjKg+V4HN7eN5fMGscim0ujPiCBpjbSHGd8/G0zFzg31PEEb0mjZU19HOCR8ZmJFaBb4H96rSIO4N/sPepLwnBDj3+eU6GDVeEMcOx66UoJJm4Rvt8QwvB2KJdJZQNmWnZQ1Y/3DabY2jdJ7f2PtOqAjrXr3laUNHSAIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xcMnwLhA; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: linux-kernel@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716998869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KIXA4id9G2CaRpAXjkEzIwnBt0h+Tpbe5UdX8oSDWlk=;
-	b=xcMnwLhAI1ZaHjJfQJolPSG3SR6XQd5C+R63Vp+xElxibh3Jp5gUTavEAijzqbJawBAxWZ
-	ifKwmchh4xU5kIzkREMVlLbqTMhkifQjsjDRDBX88ANAGAU6hu7FXId4j+OW7tzq24zA6S
-	R/SljvB3b5svAHQf2QSid15P3EHsTeo=
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: viro@zeniv.linux.org.uk
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: jack@suse.cz
-X-Envelope-To: yuntao.wang@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yuntao Wang <yuntao.wang@linux.dev>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Yuntao Wang <yuntao.wang@linux.dev>
-Subject: [PATCH] fs/file: fix the check in find_next_fd()
-Date: Thu, 30 May 2024 00:06:56 +0800
-Message-ID: <20240529160656.209352-1-yuntao.wang@linux.dev>
+	s=arc-20240116; t=1716998852; c=relaxed/simple;
+	bh=BqJYQUD414oUHDTKcg4GFQrry8JqQEJqLasmiA4XQgI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=iJFlcAjH3U/xImClg15b9TDmE9lKdRVDcbP2cqpIP/aVB085m+dpt/gLPvaG3ZkUy1IxEt3kZCUKuBS6d3zsLfgFaL4DWqEl1tWPgf7ShU491BJ7P8HEFHi19UTA4cdNNMMdoSFyAgwOiL+J+/3ChyYIsrmoWoXG4ltoyUIBIDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SukM/c9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B99C113CC;
+	Wed, 29 May 2024 16:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716998851;
+	bh=BqJYQUD414oUHDTKcg4GFQrry8JqQEJqLasmiA4XQgI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=SukM/c9vDlVvEL/70LCGicsuIODMhF2QAZ9JNGxVMaXQ61GZ1MF+g18g3G1NBXloA
+	 7r7b3kfJsT1kxUCbBOo+IS3s2OZKY+l7vmi9b0KDb2Ccq0KMgwluDxQdQh8fNBpLJZ
+	 J9N45xwLd8Srd7XY2kTEUJUm2B96HdKGxpt1vMxKOXBt00u6sCNkLbOb+G3W57e4Vg
+	 8bz3x34XiM4ddZkInfds4MgFsvEwd3084x2LD+4j2tJdSjR5htlPyL2R8Q6so/EUMc
+	 KcBg/X7D7115mMKfwDwXNbqd5jlisLasa2fvz5SUmJr4fz5pcXvBosRQPaG6jyfzf7
+	 lCVisuyUk/aFA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 May 2024 19:07:26 +0300
+Message-Id: <D1M9AKX8TO34.1EMXQ88L3T58C@kernel.org>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
+ <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
+ "Stefan Berger" <stefanb@linux.ibm.com>, "Lennart Poettering"
+ <lennart@poettering.net>, "David S. Miller" <davem@davemloft.net>, "open
+ list" <linux-kernel@vger.kernel.org>, "David Howells"
+ <dhowells@redhat.com>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Ard Biesheuvel"
+ <ardb@kernel.org>, "Mario Limonciello" <mario.limonciello@amd.com>, "Dan
+ Carpenter" <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v7 4/5] keys: asymmetric: Add tpm2_key_rsa
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+X-Mailer: aerc 0.17.0
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-5-jarkko@kernel.org>
+In-Reply-To: <20240528210823.28798-5-jarkko@kernel.org>
 
-The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
-maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
-gives the value of bitbit, which can never be greater than maxfd, it can
-only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
-will never be true.
+On Wed May 29, 2024 at 12:08 AM EEST, Jarkko Sakkinen wrote:
+> * Asymmetric TPM2 RSA key with signing and verification.
+> * Encryption and decryption when pcks1 encoding is used.
+> * Enabled with CONFIG_ASYMMETRIC_TPM2_KEY_ECDSA_SUBTYPE.
+>
+> Signed-off-by: James Prestwood <prestwoj@gmail.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Moreover, when bitbit equals maxfd, it indicates that there are no unused
-fds, and the function can directly return.
+To be addressed in v8:
 
-Fix this check.
+"
+4970b8d723c3af Jarkko Sakkinen 2024-05-26  634  	key =3D tpm2_key_decode(pr=
+ep->data, prep->datalen);
+4970b8d723c3af Jarkko Sakkinen 2024-05-26  635  	if (IS_ERR(key))
+4970b8d723c3af Jarkko Sakkinen 2024-05-26 @636  		return ret;
+                                                                ^^^^^^^^^^
+Same.  return PTR_ERR(key);
+" - https://lore.kernel.org/all/cbae0ed0-e0a6-41ba-9671-a9f48e8f07f3@moroto=
+mountain/
 
-Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
----
- fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index 8076aef9c210..7058901a2154 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -491,7 +491,7 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
- 	unsigned int bitbit = start / BITS_PER_LONG;
- 
- 	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
--	if (bitbit > maxfd)
-+	if (bitbit >= maxfd)
- 		return maxfd;
- 	if (bitbit > start)
- 		start = bitbit;
--- 
-2.45.1
-
+BR, Jarkko
 
