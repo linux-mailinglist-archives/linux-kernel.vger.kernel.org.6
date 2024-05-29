@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-194333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD588D3A5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:10:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0138D3A5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE98D2864FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:10:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE8D1C23D6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1BA17F39E;
-	Wed, 29 May 2024 15:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE35181306;
+	Wed, 29 May 2024 15:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAy1XNia"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jplFHyjf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188A217DE30;
-	Wed, 29 May 2024 15:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B42415B97D;
+	Wed, 29 May 2024 15:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716995400; cv=none; b=fDNgzM6yj1NUAzZ+FE8AdgRiDYQoAUs/IbJAHxvsVfBv1c3RP6ICX8O/ALwDdIsbGxQQzA/wCQpZmILiVyu0t+T81tG141hoX3m9UV7jqDixWNrbFc74wSkZQum55E9yi2OgtTy9iEH2vKGtZYPRia5yDXG7YHBWaklP6QuG29w=
+	t=1716995405; cv=none; b=ZdUsW+aNLsZOeN4Th8OAiVN5b9hVO0P6aukGMXpq5m8tgbo/XzDR3Lsnb04ty3HxWNtja+EbJU3N1wW+Joiiyg950waytMLM57nUMI6yIohYnOIVsGdfWRoGcGNxRpPQ66IrfGPG+1xabpqQf5Y5y/TOGXO4aTPK4zT1a2kZ2/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716995400; c=relaxed/simple;
-	bh=Xhb3zJFmFfGlU8AJi68kSsih9jBID7aB32p8Q47N+Oo=;
+	s=arc-20240116; t=1716995405; c=relaxed/simple;
+	bh=9VTxAFuwXMVGR8QCr9KFqS8UEt1MJDSjeHSXAiGvkYs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WBpbSHHWK+o948ZQl+JWcBK9NT/YDrMcwv7MDl/t89cPaYfR4UifORWEdpGMoXRXFRbEsU7ifJD+AdB9RuN5zbxXE7QRdF1Wmr8XdqGrakGrHmxUEvFq8DqzH+b1B2BJCb4ISDyy4yDohKVgyyxiiHMwjmQ/zo+dGC5DzKOb4hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAy1XNia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B379C113CC;
-	Wed, 29 May 2024 15:09:57 +0000 (UTC)
+	 MIME-Version:Content-Type; b=WdY7i9LKAP1ETqBCOc9EhoWJ5HtnDKdZnC13Y1xSXPzKNF3Z/9eROqXiSQHQCu02XMmOn77vVO7df+e6DR5B7pSbOM6fiABTk59zG76djJfSBhu0cZOT1EN92nmTxPQq3FcMhe7Ngn50yQEEc6sxe3mNGfogsAogZPNgWx77kUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jplFHyjf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB70C113CC;
+	Wed, 29 May 2024 15:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716995399;
-	bh=Xhb3zJFmFfGlU8AJi68kSsih9jBID7aB32p8Q47N+Oo=;
+	s=k20201202; t=1716995405;
+	bh=9VTxAFuwXMVGR8QCr9KFqS8UEt1MJDSjeHSXAiGvkYs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=fAy1XNiaqdFHRcQjhbDjF29KzwVn7lKBIldDFYUzYuNAIXqqpkxIyXMEdmdjXnD92
-	 1oQgLo4yTsEVa0Qas3rHTAzCd0NBxyc7aE6dv9O8COmPRIg4fKmxfPdMgHDRLtcXA9
-	 aYOk3retWoghQ6VGbESChBFNjqK3KkeBOnY2CsbeHKZFxJoPbk8VQQ1vrOOBB5CWcD
-	 PqB69C2xALgXFcSoMex3114vwzsUZB0BfUxIw460Q6ao5IW9itfCSBFJ+kbyY/Dnk3
-	 rQVTE7WMij3VndgU8lqJ7KFdMaQIL7Jxrfiqk8ij4K1+PzQSEYwpnvWgqgSYV9Au8+
-	 R+Llv088MhBfA==
+	b=jplFHyjfl5mKem+XFTnxrZE6kGguINK7gyfk7X2VTV8EEYtSJjek0PSh+3nMxIRHE
+	 Eb076fIMHNUwJID1VmSpSbVJB5ap36XWLKRUQMxqX56s3eJz+6T4F6bzQ0pd6WkZPZ
+	 iWvQVH6BQbpCR9OX7VfmJXCQVqv5YhP2Te0dmSxRdb04cxQkhICDitgtBhsUuAlWkG
+	 Ld6jfJX2qUiKE6l7+BauRKa18C3sk1HMl1x6qi2+CPT0GYsdWf+qBn5wmwI0qUTo5T
+	 VcUN3Q6T5OTUeC4OWJ5/rZuJxXqxyvaSOSt1DWYZksTKt9FVa9yJ/cvBYPrkHXpfGs
+	 jIzYAOg9KzaBQ==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
- Alina Yu <alina_yu@richtek.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- cy_huang@richtek.com
-In-Reply-To: <cover.1716870419.git.alina_yu@richtek.com>
-References: <cover.1716870419.git.alina_yu@richtek.com>
-Subject: Re: [RESEND 0/4] Fix issue when using
- devm_of_regulator_put_matches and add compatiblity for both fixed and
- adjustable LDO VOUT
-Message-Id: <171699539775.117971.10350524168531143563.b4-ty@kernel.org>
-Date: Wed, 29 May 2024 16:09:57 +0100
+To: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, Witold Sadowski <wsadowski@marvell.com>
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ pthombar@cadence.com
+In-Reply-To: <20240529074037.1345882-1-wsadowski@marvell.com>
+References: <20240529074037.1345882-1-wsadowski@marvell.com>
+Subject: Re: (subset) [PATCH v6 0/5] Marvell HW overlay support for Cadence
+ xSPI
+Message-Id: <171699540330.118008.2661040654002810758.b4-ty@kernel.org>
+Date: Wed, 29 May 2024 16:10:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,33 +61,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-2ee9f
 
-On Tue, 28 May 2024 14:01:12 +0800, Alina Yu wrote:
-> There are two types of LDO VOUT: fixed voltage mode and adjustable voltage mode.
+On Wed, 29 May 2024 00:40:31 -0700, Witold Sadowski wrote:
+> This patch series adds support for the second version of the Marvell
+> hardware overlay for the Cadence xSPI IP block. The overlay is a hardware
+> change made around the original xSPI block. It extends xSPI features with
+> clock configuration, interrupt masking, and full-duplex, variable-length SPI
+> operations.
 > 
-> As the fixed voltage for the LDO is outside the range of the adjustable voltage mode,
-> the constraints for this scenario are not suitable to represent both modes.
-> Therefore, A property is added to specify the fixed LDO VOUT.
-> 
-> In this version, a software bug has been fixed.
-> rtq2208_ldo_match is no longer a local variable.
-> It prevents invalid memory access when devm_of_regulator_put_matches is called.
+> These functionalities allow the xSPI block to operate not only with memory
+> devices but also with simple SPI devices and TPM devices.
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/4] regulator: rtq2208: Fix invalid memory access when devm_of_regulator_put_matches is called
-      commit: 72b6a2d6506843375c7b91197f49ef38ca0c6d0f
-[2/4] regulator: rtq2208: Fix LDO to be compatible with both fixed and adjustable vout
-      (no commit info)
-[3/4] regulator: rtq2208: Add fixed LDO VOUT property and check that matches the constraints
-      (no commit info)
-[4/4] regulator: dt-bindings: rtq2208: Add specified fixed LDO VOUT property
-      (no commit info)
+[1/5] spi: cadence: Ensure data lines set to low during dummy-cycle period
+      commit: 4a69c1264ff41bc5bf7c03101ada0454fbf08868
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
