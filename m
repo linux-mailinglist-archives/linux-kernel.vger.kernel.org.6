@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-193584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F2D8D2E33
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:28:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C788D2E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6B51F28F27
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:28:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0344284C02
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4E716728A;
-	Wed, 29 May 2024 07:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7921716726D;
+	Wed, 29 May 2024 07:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syoZjgjN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKbZikdO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475E0167264;
-	Wed, 29 May 2024 07:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48B5167275;
+	Wed, 29 May 2024 07:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716967712; cv=none; b=TvlMRSLwNKhOKSuHde5C2VxTy/UXMmREYqMgmlLmEnCMRy1nyQlWsl5vFNk7AV9wplMCc9bWIFcU+mJvncjGKqVqKPMzLaTVzJQHDYhwQoJlfIsNyZlT9ePYzsof1DuyOKP/S3+LExL1Jwwhds1H581uZX9ClSvamEcfzZIU4VA=
+	t=1716967739; cv=none; b=QkjWrSRmcjjgFl9HIy/6Rq3DZ0uh9gaETln9d3GJSm8DWRhiU9AAz/z3ZkYAeZUobcVItRIZSMB/SCP/H1/QYlO57EdszAx8S2TdFIGJZPZ/KvrBVL+PF4KGGwPfhIflrN3lnJatjU0QuBgms1ZLQJo3CoYYi3+kT9ppoumTwbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716967712; c=relaxed/simple;
-	bh=KZ9GjB/xKdhFascLXvvrn/XFXsL822Oj9fyfJPoRlwQ=;
+	s=arc-20240116; t=1716967739; c=relaxed/simple;
+	bh=EoXu23rHRqFy4FBXCw2C4NbFeyQXb8OE3dkXMkUZuXY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FsOsdyqRszIq5DRV5CKrz3P/13KqZFjh0As3sSikSyLuhJZotYW1dhiYoc85SmYwQFLQ+sGk5nEVfGRGg496fRfBAwXKm54yrIw5SmWqiajaypPRgbtgvYXl25L8SSU/9qCCDMmPbGAbrFYgc2zMrB/E1qH6/xlIgxAeZ7QFNAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syoZjgjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A761AC2BD10;
-	Wed, 29 May 2024 07:28:29 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=c3nzg89QeX9xEd5hMpADZKFGe4FFBLg0MIpArii083JKsSLpSMaT+65NEmuvsontGRNBszI8EtiqNpGbL+D3N35OSV9jgpJsbGmcggEdsNhyGUvAn85gYvnCwmVnpxN67XCD/0AuB5g1nqvk5q/NZzZ0XenM0akLujNfljuQYAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKbZikdO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1AD5C2BD10;
+	Wed, 29 May 2024 07:28:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716967712;
-	bh=KZ9GjB/xKdhFascLXvvrn/XFXsL822Oj9fyfJPoRlwQ=;
+	s=k20201202; t=1716967739;
+	bh=EoXu23rHRqFy4FBXCw2C4NbFeyQXb8OE3dkXMkUZuXY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=syoZjgjNaQzVVNQPHxNaIx4ojTvTRBEIOxxX5VqtPsGjqR/3z2onK8lcukrrGqCQF
-	 hMnhISM5t4H+uw1cKsWPr/RUyyHfnCiOJ9t1u3SI/auz9kQpNUIWVSfXigGXcMw2WR
-	 c4bDyY+q3FXD39/rgXfXsX2VNmmOVxYGestBvOn1Eq/tsAPW7DaNwEYVY9MVG5GLM0
-	 dFJH6IpFD54wGzvKoRveMaTdgnS3F4r3letEGhVwO6Q/5Lbs3+VDp3ek7oakUXuxVC
-	 N1GSXucgYvOxE1lPreyeuKIKaEWJjtf/S7U2HBw8/GTHETUFMikgVa6uh/e2gpuc/h
-	 Y6cH3XkT28LpA==
-Message-ID: <e40041ef-fb1e-4348-97b5-64487859a7f9@kernel.org>
-Date: Wed, 29 May 2024 09:28:27 +0200
+	b=ZKbZikdOAr4ICVAim/CBqcc/7xMPE7Fl8PVA18BUZpAeqk26yAtJMGngcUIg7qXQb
+	 faFerXVYyvBE4OCc603hxPgLccOCp9/PvTUe/m9c5DHzlgQRvna8dcNGn686ucCfz+
+	 4umCZ3YK1+mXEVL5t9Enxv7HDF21q++i4xDHG/i/LCM2JN4MAmTVDNJxsV4EAg2OPx
+	 /CpikfEvuRhtYX+8eJXmawGB60k6zyi+gJin0fNR5DABL8snU9vatuV/UVVCMSM5SC
+	 /G2x1ZqjonJcJMJF8Uh0IyPxpIH3PWr3Okb585RkNyTR/8FBqOZq5Vkd5bO6ztsrFY
+	 v8rmxh2OoBG6A==
+Message-ID: <35b39da8-4efd-44ae-bcc1-7f4d501e0873@kernel.org>
+Date: Wed, 29 May 2024 09:28:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: gpio: aspeed,sgpio: Specify
+Subject: Re: [PATCH 4/4] dt-bindings: gpio: aspeed,sgpio: Require
  #interrupt-cells
 To: Andrew Jeffery <andrew@codeconstruct.com.au>,
  Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
@@ -60,7 +60,7 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
  linux-kernel@vger.kernel.org
 References: <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-0-91c42976833b@codeconstruct.com.au>
- <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-3-91c42976833b@codeconstruct.com.au>
+ <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-4-91c42976833b@codeconstruct.com.au>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,17 +106,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-3-91c42976833b@codeconstruct.com.au>
+In-Reply-To: <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-4-91c42976833b@codeconstruct.com.au>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/05/2024 07:13, Andrew Jeffery wrote:
-> Squash warnings such as:
+> It shouldn't have been the case that it wasn't required. The kernel
+> devicetrees already specified it where compatible nodes were defined,
+> and u-boot pulls in the kernel devicetrees, so this should have minimal
+> practical impact.
 > 
-> ```
-> /home/andrew/src/kernel.org/linux/build.aspeed_g5/arch/arm/boot/dts/aspeed/aspeed-ast2500-evb.dtb: sgpio@1e780200: '#interrupt-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
 
-Please trim the log from unnecessary path components.
+This should be squashed with previous patch.
 
 Best regards,
 Krzysztof
