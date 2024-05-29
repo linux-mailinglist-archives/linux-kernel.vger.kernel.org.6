@@ -1,169 +1,123 @@
-Return-Path: <linux-kernel+bounces-194083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE2B8D365E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:27:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 721C58D365F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3089284017
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC762840CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E3918130B;
-	Wed, 29 May 2024 12:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6548F181305;
+	Wed, 29 May 2024 12:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihyA1DZj"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aL40JY7N"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CF13B295;
-	Wed, 29 May 2024 12:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9753C180A97
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716985670; cv=none; b=lxTQyuGhtJBoEVDCQrzq/f7GhePUia8N2L4nPbN6nZcLL+43oBMjxzQvGox5Q0P9d3xsGGXJZxV9/LAiq9cxGV5MqcXH9upS3YndUyqLGFaLJhzXYQIvq+EpBymMKqnSHl2IacZ8apEza1ced4FkZ9PJBUN5zbVeGRgad9tvIfA=
+	t=1716985679; cv=none; b=RRMoYSR0QXlASgg8yMta+3wl+zvYHkdQnLrai5OWfJIUrkJhHmAgY/8FEc9t1KpH1N/jyuUwvM4btx5hDNJBNlidy4tNmp+LEeLBj4S6nZm9IrchYQxW9LnrORMACgSHpVM+7AgbwJF/JNuz2TCZDKPZALDwYNQZiktdDIIf+vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716985670; c=relaxed/simple;
-	bh=2Tq8KNkDSL/r4RYS7ksyDoh99l2whRhNO3fn6pVmCAQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sQ2q60A9NnAKZieaL+2oYebvXGgN00MdPKSMcx3WV7RSyxs2qqSbfI+v1IhgAOYVArSTFuMBldcxkNm1iih7KMd2tKpAjv8zx9q7rSmvteqE1EMTrVHUSERxdQT4RQGd9W7HJBequtHQb66RDK3Zbxsy0J/SqYbxduCE26PTrbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihyA1DZj; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b79447c58so279521e87.1;
-        Wed, 29 May 2024 05:27:48 -0700 (PDT)
+	s=arc-20240116; t=1716985679; c=relaxed/simple;
+	bh=A2PaivvbHJ6+z/fjXCVTj+U6wyPAAu3Zi6GtdqrEe/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AEsavacvxkAuGUI8p4u5FPhw/6ZtfRAWYDK2Ol3Vn/TzEY96AK5TUxLI9cbfu1T5GVHbPnFJeJDs5x7RYBvdPz46Z2YDqQhQZOCnhP0TuwVeigsNKE7m3+OGSun3bw3WWtm0bcVv7tPxQvdFvPD8PMG0GHAnnd6PAzSJ4NjG8t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aL40JY7N; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so18459545e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716985667; x=1717590467; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PeimGJvmfer6fOyUvMTNsas+IdsraV9cPm9aE+JTB+A=;
-        b=ihyA1DZjmiY8u0Z8wxmTedmb71VFYXaRbp0Opvaxhs+LQVlf+JI62qx2Z0qT7GA0bY
-         FJx7Y8HexdFx0Ia6dlkJupaWIdmOVQpJIkdVaGcRo9Gb6W42hc1N+2sSM7lWi+EuwCdX
-         Oak8kd80VTtDYMwFxtM/Oun8Rw+CGeJBJ5HjLP/B4K4b7riVkAh28MeN5BkYV6AarJ/J
-         C5UkdNjEdY7mPKuoLcIRhTuo69k7rmn6IQXAKH5yLQ7F6eDJjjvxsUjsgXu1VmzYcVQl
-         XvzBZ8dVeCMpazyOgbacN28DTv3zPHJ0UDcilj67LHc4B5RIrgfpJF6vwHGKnlxZd3IX
-         3rmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716985667; x=1717590467;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=suse.com; s=google; t=1716985676; x=1717590476; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PeimGJvmfer6fOyUvMTNsas+IdsraV9cPm9aE+JTB+A=;
-        b=qMIJsQbDRg5GphlCfum/E9bqH3iW5T2a+sqF8Nmcp1TTNM7gG45YDmvpd328LpP3AL
-         RPPt1ryH2OKLvruOzonFZl92X7QnF7tlK8T/rCr3sGBacreeyCJCwD5cIzvfwhxQ/WZT
-         B2zvdK3zENUKJuXJtro79GPuIRwlWOYPpgfb8Z71SEPpSthw5YJq383/d9srT7Hqv2CU
-         BtTefOwNLgbl0uUbhCwIz0gOroUMoAYCzlw8DUiALStXQbmmA7yeC1jd3JFQYUmGvbL0
-         I3MusgNO/JCcgE70f1oBOT69Qztfp2MeDRR1sKPQsB6s+0QFVSqQUYCWUuE/3OWjx4a1
-         mfMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUG2q9WTE6iUYmpXooI1SIyTAFgbv4RJVCzRYQVMG/KbqFxbF6IPrPMWzID4hULnd1vT7C7DfhbdB/K7/eHnJ/gcWHe1YyeRFYWJvEkUUpefoQtuQl8ulyaD5KEHIzD0ADf+6z5g2LF9lNPEFwhJCIaM3pIU/uLKvgoyJXTyA00LTLUw==
-X-Gm-Message-State: AOJu0YwAPqFAQ3fN+ccMr72A3qvPG+rZvba3U56iuohj8VPf/3LbdFLu
-	JcJuuSXu4jwdbn/i8UdznP+hQlPFaAtlP7P8KSfnNOW0glRuj/fL
-X-Google-Smtp-Source: AGHT+IG/SxXQZnV+jg9CyYE9LKyyC/PcXXF3petb+D2XGxuU27/7/M6yyQWFvHsbEy9LLJX4I3CKQg==
-X-Received: by 2002:ac2:4c08:0:b0:521:7846:69d3 with SMTP id 2adb3069b0e04-5296736bb7bmr11593905e87.55.1716985666782;
-        Wed, 29 May 2024 05:27:46 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4f969sm708931866b.101.2024.05.29.05.27.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 05:27:46 -0700 (PDT)
-Message-ID: <71452f6882efe6a181d477914488617d28a38e2f.camel@gmail.com>
-Subject: Re: [PATCH v3 3/6] iio: adc: ad7173: refactor ain and vref selection
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org, Dumitru Ceclan
- <mitrutzceclan@gmail.com>
-Date: Wed, 29 May 2024 14:27:46 +0200
-In-Reply-To: <20240527-ad4111-v3-3-7e9eddbbd3eb@analog.com>
-References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
-	 <20240527-ad4111-v3-3-7e9eddbbd3eb@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+        bh=o0im46VMvTgzf4CgpxLpfyG0tO3nmPdi92aMWun6A3U=;
+        b=aL40JY7NbITGm9rsaOajHY0od2yLPrcgjh1c+pwYeKC+MOx35gZgrD66vzfuNqMm7K
+         mf9lcexXlKFBf8dI0oA6cSjAf1yNRYyT5sI7th4O2hbQE3rcm0Ilyo4fdugB4HGbtAJU
+         bw2jZYPkHzr3uUZvZDetVSNCC9F9EZoGKODuGp27D/MffBcG3JdIg0YDABuvJkTN6650
+         aOpPjePoIe73mNa3RqNv7YQuU2HkiUZ5xAp2U21nhbreedVpdK9OZK5oFhQOWkuASyWf
+         WmHarB9QeLZs62XrL7EpMJIWRbezgPbswHldJQoXJ2Gg3w0fc+VsnlUma12ChjYS7U09
+         +m1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716985676; x=1717590476;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o0im46VMvTgzf4CgpxLpfyG0tO3nmPdi92aMWun6A3U=;
+        b=m269iKPo54hG5aSJtinVUyg4z2z1/sgIr3ECUrw7ADLwxWzEF6KDpuZkOlpDBEnTOR
+         2YykkfJ25+cqP5thoWzIleWmuw6cOHv4/jOTD6Geav9AaKrf6mL1bfdcoWFyczOTlicV
+         z26Nwiyjn3d3aWnxAu53R2AS36tEbMeANBgtaZ9mKI/roHBgJqhPr1hyjqgEDihltGPi
+         lozXkwUoEmIQ0kbmVgEBTsBdPvC0/5o3YXdMgSAPBXwSx+XY/z/d8ZlX2BRUBOk+HNth
+         PqJ56kVQX6aw0x7JZU12Yc+u7On5IjHCk3IS+WhaOosflec+hWWlyY2HtrFy5o6mD3IE
+         nd+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJwGzGoy7tj15NvUejGhgNOaaSLx1vU1KQl2Uh1s5iILA0x529GQZMLkMd3rArnStoEvnnC5AdD3PqLk5WRZUjlSZRhheK548bBzMp
+X-Gm-Message-State: AOJu0YzV1LUUkBSTH9MyNcL/SLBw+HDPxTrAg9XvAcpubsKAeB0lQWuC
+	zxCGhgG1kWqX5Y8t2SyUCE7LjIYgWaXyLF21FJsUpUlUMYbiFfqAxDc5KCDB3xQ=
+X-Google-Smtp-Source: AGHT+IGh33p4hKsb6CQ/ea4derqiTxXb5sBTzSj5MqjCQx3uSuJyvMs24xDjjXfWO5KMwaEt87X2sA==
+X-Received: by 2002:a05:600c:5593:b0:420:2b2e:f6e7 with SMTP id 5b1f17b1804b1-42108a79034mr125180765e9.17.1716985675868;
+        Wed, 29 May 2024 05:27:55 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad7fasm211038455e9.38.2024.05.29.05.27.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 05:27:55 -0700 (PDT)
+Message-ID: <0c53415d-3394-455a-a6b5-99d3efb92318@suse.com>
+Date: Wed, 29 May 2024 14:27:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen/xenbus: handle potential dangling pointer issue in
+ xen_pcibk_xenbus_probe
+To: yskelg@gmail.com, Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: skhan@linuxfoundation.org, sj@kernel.org,
+ Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
+ linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20240529122232.25360-1-yskelg@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240529122232.25360-1-yskelg@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->=20
-> Move validation of analog inputs and reference voltage selection to
-> separate functions to reduce the size of the channel config parsing
-> function and improve readability.
->=20
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+On 29.05.24 14:22, yskelg@gmail.com wrote:
+> From: Yunseong Kim <yskelg@gmail.com>
+> 
+> If 'xen_pcibk_init_devices()' fails. This ensures that 'pdev->xdev' does
+> not point to 'xdev' when 'pdev' is freed.
+> 
+> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
 > ---
-> =C2=A0drivers/iio/adc/ad7173.c | 62 ++++++++++++++++++++++++++++++++++---=
------------
-> =C2=A01 file changed, 44 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> index 9e507e2c66f0..8a53821c8e58 100644
-> --- a/drivers/iio/adc/ad7173.c
-> +++ b/drivers/iio/adc/ad7173.c
-> @@ -906,6 +906,44 @@ static int ad7173_register_clk_provider(struct iio_d=
-ev
-> *indio_dev)
-> =C2=A0					=C2=A0=C2=A0 &st->int_clk_hw);
-> =C2=A0}
-> =C2=A0
-> +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int ain[2])
-> +{
-> +	struct device *dev =3D &st->sd.spi->dev;
-> +
-> +	for (int i =3D 0; i < 2; i++) {
-> +		if (ain[i] < st->info->num_inputs)
-> +			continue;
-> +
-> +		return dev_err_probe(dev, -EINVAL,
-> +			"Input pin number out of range for pair (%d %d).\n",
-> +			ain[0], ain[1]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad7173_validate_reference(struct ad7173_state *st, int ref_se=
-l)
-> +{
-> +	struct device *dev =3D &st->sd.spi->dev;
-> +	int ret;
-> +
-> +	if (ref_sel =3D=3D AD7173_SETUP_REF_SEL_INT_REF && !st->info->has_int_r=
-ef)
-> +		return dev_err_probe(dev, -EINVAL,
-> +			"Internal reference is not available on current
-> model.\n");
-> +
-> +	if (ref_sel =3D=3D AD7173_SETUP_REF_SEL_EXT_REF2 && !st->info->has_ref2=
-)
-> +		return dev_err_probe(dev, -EINVAL,
-> +			"External reference 2 is not available on current
-> model.\n");
-> +
-> +	ret =3D ad7173_get_ref_voltage_milli(st, ref_sel);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Cannot use reference %u\n",
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 ref_sel);
-> +
-> +	return 0;
+>   drivers/xen/xen-pciback/xenbus.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/xen/xen-pciback/xenbus.c b/drivers/xen/xen-pciback/xenbus.c
+> index b11e401f1b1e..348d6803b8c0 100644
+> --- a/drivers/xen/xen-pciback/xenbus.c
+> +++ b/drivers/xen/xen-pciback/xenbus.c
+> @@ -54,6 +54,7 @@ static struct xen_pcibk_device *alloc_pdev(struct xenbus_device *xdev)
+>   	INIT_WORK(&pdev->op_work, xen_pcibk_do_op);
+>   
+>   	if (xen_pcibk_init_devices(pdev)) {
+> +		pdev->xdev = NULL;
+>   		kfree(pdev);
+>   		pdev = NULL;
+>   	}
 
-If you need a v4, I would just 'return ad7173_get_ref_voltage_milli(...)'. =
-Any error
-log needed should be done inside ad7173_get_ref_voltage_milli(). Anyways:
+NAK.
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-
-- Nuno S=C3=A1
+This doesn't make any sense, as pdev is freed.
 
 
+Juergen
 
