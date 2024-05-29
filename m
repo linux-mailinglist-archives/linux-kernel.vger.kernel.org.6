@@ -1,181 +1,76 @@
-Return-Path: <linux-kernel+bounces-193902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4D98D33DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:00:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19788D33E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47127284126
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:00:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E6EB218F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C0817A934;
-	Wed, 29 May 2024 10:00:42 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA73417995A;
+	Wed, 29 May 2024 10:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z032jTVm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C20178385
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A18017A902
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716976842; cv=none; b=N3A6DeYyPZSjk4aBFR4GIwP4c3Mkm8bmNeAdVnioYMj3LU5rWVM+ejygCYAvapJMFRJhSn6udRLy5FLPYcbJ1FDuLzeXGCPyXThcuhqLt70mLP1mCaCkRfKVNdtIqJpu7qhdyXTF7gH2U/91TSRtnP6iEMTbSk20N7zsF0JaOCQ=
+	t=1716976850; cv=none; b=pAY4oelo3zff/nyvrcznsWGJ0uI7DoQTeyU+9Mt2WoG6+J2R1I1VFMqLsbHNaOps6y5q9ACW5fnzgapPRJtVwKyyeh+5UdDDKL1WqLJl5WUsN/J1azadw/x+18yobc9BnQKB6liShBKTrtDgKGVcWzd3K6AC3od66VNocfHQv3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716976842; c=relaxed/simple;
-	bh=j15g7+Zs11MXgNdFt9xjPzQq0JE/TjMvjYfFKO5EiIg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GxS6wGbg0twzPlwWCWI/jOHgBkjHHFEw5UydgKgAvcD9mO48in4gTSaHHtORQy58O/ogfu2q+VCTKmb3zHMKyLNr6OXXnd0YSsxuLbb4c77RTA0CHBKcurbIPqaspG45SVowLnDTm5jxSoJGtuYBM1fD3SXEbBz9+ZJPCu7clwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
-	by albert.telenet-ops.be with bizsmtp
-	id Uy0Y2C00C3VPV9V06y0Ynv; Wed, 29 May 2024 12:00:38 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sCG5l-00GLHw-T9;
-	Wed, 29 May 2024 12:00:32 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sCG6i-0090jY-88;
-	Wed, 29 May 2024 12:00:32 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Davis <afd@ti.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] docs: dt: Update overlay file extension
-Date: Wed, 29 May 2024 12:00:31 +0200
-Message-Id: <977f66b9882b6150a8da5787bf94a418aa9affec.1716976241.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716976850; c=relaxed/simple;
+	bh=JkIX8xKo+lNY07uEq9QS69wNHFvrTozc/et+eiZHLE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FxaIyhhj4gLnnfTCddqQphZp3bGnvh5K42rFDNDeWLl4ttu7sFmAAQduwQJxXJUi3/yyNlgnJPbZVVIIY26kkbfd+1AmqGw0CwQpQZd3BvqKoxOEeSDJoR23xvRDiwzs3TJcgxDzZgzcSq+YXxtuPtGH7l8Yjr+Dr48HOKd5EDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z032jTVm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12ECAC4AF08;
+	Wed, 29 May 2024 10:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716976849;
+	bh=JkIX8xKo+lNY07uEq9QS69wNHFvrTozc/et+eiZHLE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z032jTVmh53cyY1k9uthsBXu6CX9bXQIlZj3fBscYA0lGqhqfILLHqI86PXjP5vRp
+	 2QgJRBewVMKiqOJs4Ouf+3StxL9/NpQFQNHpK/q1M3UwhOOeBAMQ69IsLSPVciU5tR
+	 rruJLA4t68ssP5VhkymRvzHKVzWiFmjrrRpzt9wY=
+Date: Wed, 29 May 2024 12:00:54 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Soumya Khasnis <soumya.khasnis@sony.com>
+Cc: rafael@kernel.org, linux-kernel@vger.kernel.org,
+	daniel.lezcano@linaro.org, festevam@denx.de, lee@kernel.org,
+	benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
+	ldmldm05@gmail.com, srinavasa.nagaraju@sony.com,
+	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
+	keita.aihara@sony.com, masaya.takahashi@sony.com
+Subject: Re: [PATCH] reboot: Add timeout for device shutdown
+Message-ID: <2024052935-think-gaffe-80d4@gregkh>
+References: <20240529083224.GA71473@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529083224.GA71473@sony.com>
 
-Building DTB overlays from .dts files is no longer supported.
-Update the documentation to reflect this.
+On Wed, May 29, 2024 at 08:32:24AM +0000, Soumya Khasnis wrote:
+> The device shutdown callbacks invoked during shutdown/reboot
+> are prone to errors depending on the device state or mishandling
+> by one or more driver. In order to prevent a device hang in such
+> scenarios, we bail out after a timeout while dumping a meaningful
+> call trace of the shutdown callback which blocks the shutdown or
+> reboot process.
+> 
+> Change-Id: Ibfc63ca8f8aa45866cbe6b90401d438d95eca742
 
-Fixes: 81d362732bac05f6 ("kbuild: Disallow DTB overlays to built from .dts named source files")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Andrew Davis <afd@ti.com>
-Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
----
-v2:
-  - Add Acked-by, Reviewed-by.
----
- Documentation/devicetree/overlay-notes.rst           | 12 ++++++------
- .../translations/zh_CN/devicetree/overlay-notes.rst  | 12 ++++++------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+Any reason you didn't run this through checkpatch.pl first?
 
-diff --git a/Documentation/devicetree/overlay-notes.rst b/Documentation/devicetree/overlay-notes.rst
-index e139f22b363e9f36..35e79242af9a928d 100644
---- a/Documentation/devicetree/overlay-notes.rst
-+++ b/Documentation/devicetree/overlay-notes.rst
-@@ -38,10 +38,10 @@ Lets take an example where we have a foo board with the following base tree::
- 	};
-     ---- foo.dts ---------------------------------------------------------------
- 
--The overlay bar.dts,
-+The overlay bar.dtso,
- ::
- 
--    ---- bar.dts - overlay target location by label ----------------------------
-+    ---- bar.dtso - overlay target location by label ---------------------------
- 	/dts-v1/;
- 	/plugin/;
- 	&ocp {
-@@ -51,7 +51,7 @@ The overlay bar.dts,
- 			... /* various properties and child nodes */
- 		};
- 	};
--    ---- bar.dts ---------------------------------------------------------------
-+    ---- bar.dtso --------------------------------------------------------------
- 
- when loaded (and resolved as described in [1]) should result in foo+bar.dts::
- 
-@@ -88,9 +88,9 @@ in the base DT. In this case, the target path can be provided. The target
- location by label syntax is preferred because the overlay can be applied to
- any base DT containing the label, no matter where the label occurs in the DT.
- 
--The above bar.dts example modified to use target path syntax is::
-+The above bar.dtso example modified to use target path syntax is::
- 
--    ---- bar.dts - overlay target location by explicit path --------------------
-+    ---- bar.dtso - overlay target location by explicit path -------------------
- 	/dts-v1/;
- 	/plugin/;
- 	&{/ocp} {
-@@ -100,7 +100,7 @@ The above bar.dts example modified to use target path syntax is::
- 			... /* various properties and child nodes */
- 		}
- 	};
--    ---- bar.dts ---------------------------------------------------------------
-+    ---- bar.dtso --------------------------------------------------------------
- 
- 
- Overlay in-kernel API
-diff --git a/Documentation/translations/zh_CN/devicetree/overlay-notes.rst b/Documentation/translations/zh_CN/devicetree/overlay-notes.rst
-index 43e3c0bc5a9f8235..ba5edd05dc1e7fd2 100644
---- a/Documentation/translations/zh_CN/devicetree/overlay-notes.rst
-+++ b/Documentation/translations/zh_CN/devicetree/overlay-notes.rst
-@@ -43,10 +43,10 @@ Documentation/devicetree/dynamic-resolution-notes.rst[1]的配套文档。
- 	};
-     ---- foo.dts ---------------------------------------------------------------
- 
--覆盖bar.dts,
-+覆盖bar.dtso,
- ::
- 
--    ---- bar.dts - 按标签覆盖目标位置 ----------------------------
-+    ---- bar.dtso - 按标签覆盖目标位置 ---------------------------
- 	/dts-v1/;
- 	/插件/;
- 	&ocp {
-@@ -56,7 +56,7 @@ Documentation/devicetree/dynamic-resolution-notes.rst[1]的配套文档。
- 			... /* 各种属性和子节点 */
- 		};
- 	};
--    ---- bar.dts ---------------------------------------------------------------
-+    ---- bar.dtso --------------------------------------------------------------
- 
- 当加载（并按照[1]中描述的方式解决）时，应该产生foo+bar.dts::
- 
-@@ -90,9 +90,9 @@ Documentation/devicetree/dynamic-resolution-notes.rst[1]的配套文档。
- DT中的适当位置。在这种情况下，可以提供目标路径。通过标签的目标位置的语法是比
- 较好的，因为不管标签在DT中出现在哪里，覆盖都可以被应用到任何包含标签的基础DT上。
- 
--上面的bar.dts例子被修改为使用目标路径语法，即为::
-+上面的bar.dtso例子被修改为使用目标路径语法，即为::
- 
--    ---- bar.dts - 通过明确的路径覆盖目标位置 --------------------
-+    ---- bar.dtso - 通过明确的路径覆盖目标位置 -------------------
- 	/dts-v1/;
- 	/插件/;
- 	&{/ocp} {
-@@ -102,7 +102,7 @@ DT中的适当位置。在这种情况下，可以提供目标路径。通过标
- 			... /* 各种外围设备和子节点 */
- 		}
- 	};
--    ---- bar.dts ---------------------------------------------------------------
-+    ---- bar.dtso --------------------------------------------------------------
- 
- 
- 内核中关于覆盖的API
--- 
-2.34.1
+:(
 
 
