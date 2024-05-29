@@ -1,53 +1,73 @@
-Return-Path: <linux-kernel+bounces-194687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6208D3FF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:00:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEDC8D3FF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25E80B26A3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:00:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FFA71C215C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D951C8FCA;
-	Wed, 29 May 2024 21:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9321C8FCE;
+	Wed, 29 May 2024 20:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="MvKoFnd5"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ajLQpywN"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88201C68AE;
-	Wed, 29 May 2024 21:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8DB184125
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717016426; cv=none; b=EQxsn2a3JfX6Q6qhCEjFc0pzpmQbZJjkc1ABiX67pKhleEFPwb3R4J8CZPXoc3oDJG5id/1lDsoJ40FYAAcSD9N72h/ZdOHtpGp0olPhe5ztzXZUHEjojEDeu/JFz5kamhJkLsAva64Xxul6ElqKjmWkN+Znr5myn/lN1G1t6A4=
+	t=1717016398; cv=none; b=p2LXf07DghRxA/RSRhIJLV9/ZQuJZc3HNgNmS5ZnlIw4BXzeygvdNHxBpHTph09GguQEgILPTbzmPfBCnNu8WoTfDRG3itLQChvpkvre4t7qNmn7CK17i5sgHrGdKQ8GBG++rDbedu6/Q1Nc8iZnuR3NPBKAnlwupOg05OJdl4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717016426; c=relaxed/simple;
-	bh=hhUIEFW6clsqHfXWPi43BFltxUFJorc+dCRnW5g87yI=;
+	s=arc-20240116; t=1717016398; c=relaxed/simple;
+	bh=0JIEoFJ3JrSuAxA+52iofxCdH9Ed8ss6mxR9tqmYJzI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VkvwLF4FRjaW+WtBxS5mWHkhss+PoBy/mM369EOBbxWmg8ifMcC4yaK90h/uqtGmtq0UFctVQJhontExnPKZuztT6z/qfb8SC7VjN19v8Rp8mdicoctlv5rC9UJiKqBnbsYIKqAEaa5d5+0iDyr+3Vhc47zMllpmcOitWaLL5ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=MvKoFnd5; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8002:4641:eb14:ad94:2806:1c1a] ([IPv6:2601:646:8002:4641:eb14:ad94:2806:1c1a])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 44TKxuet3698639
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 29 May 2024 13:59:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 44TKxuet3698639
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1717016399;
-	bh=dCTZ0kTcw9gD6nzityX2P8p7to8LRjQC6Tvw6Gljs0I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MvKoFnd5IATi0F+TV49dchN/2fatIVl9nWMkBtN15640BXlfO8q2YWF+9NMfGkuy3
-	 3rls21dVKglZXKLPpoeL3RXa3fCc/LqTju1wEWU0I799xkxnbs5idrte6CH9IZ34TW
-	 1XkAtlVsu/syoEnR+n1vsUiXvWP1ro7QlowrvenTwQ9cD+oglqbxT9n/+mpSSKoHpV
-	 GUqq0oWlZzrGUx1cF6+OVhuriA7U3/7z0q8IZDAt2m6yVmbpl037bLr3/os1St3qGC
-	 c/6/0wFM2woWDfBLS4d/9vabx/HdyO7Np9Jac+IxpaogeuLPCqJCfQ64YlEpFHh60w
-	 uiEgnY25fzkeQ==
-Message-ID: <746fecd5-4c79-42f9-919e-912ec415e73f@zytor.com>
-Date: Wed, 29 May 2024 13:59:51 -0700
+	 In-Reply-To:Content-Type; b=ZwkYQVUaHyrnWdZcEkpd2bwtfxvn8jk7U+wCf3Ug0hbSltcR5i2vuMZWhCnKrAvCy3kt6Uw81qb45FQm8cWyN9X+7cQez7hOy92i1+D8awkSqCLwLqX/EWIfB9FsbAbQZwELEdoD9K7xkGodDs3j1R/iIAChJtfVssfXm+cx+7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ajLQpywN; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f8ef894ecdso138824a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717016396; x=1717621196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xcrwlkn4PrmA7KBIZPAmKm202+tU7DhEeT3No0NEPIQ=;
+        b=ajLQpywNx4mBdSL/A2qg8MNLiT2shdinHllQOOjGtOJqmhnfgrfMO2ypF8Ux7HklyU
+         9kVUyp5tSCYssmT2JWSl0GxXMfZT5T6c1jHFIM1ucyhydbbalnnA+/NWSOtN9bkK7pEu
+         Qd7Z3dgVMbm2SURteI1Oxm7U03kGOB5hZxSqV1MAu0G+QFcvWyFVmCJ7ZzoRX9totJwu
+         07AhoYSGV15yG7D+kHvdhOuF5vAXhvKjZtmw/lnv22qIUHWJSRbhpJ0LcP1GTnFzhVFs
+         ZUaYb5FiNyErwL1buBbetavGZ1e0RywVxlJZJ8+6WHxFFOI1EUQL0Fs9tDq6ysg/kmDV
+         8cfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717016396; x=1717621196;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xcrwlkn4PrmA7KBIZPAmKm202+tU7DhEeT3No0NEPIQ=;
+        b=Bgk5iWTqQtWq6lPLIGx4FCRg8bYRSkmAoWvLt8ws0D4Y07k9UMP7krnl8X4KDBzoy+
+         JshgtkNC4f22RtW5jylJy+yCBjZp68eOlL5JalWacKyLRqWRXcnbdrA4eShbgLt3gjOD
+         R9Oz0uL0v/UqhlWSw1glqJ4HNjtgVL9dsv5JNsMb5hGHEb8+7mfePTop+TDpr2rvbUYl
+         eGcOdjOoTV/wVNYcHu5q48lo0mYyPQ5kPlTn91yBHjCpt7ibLotgUGs5dVb9JPIVLwcr
+         odBIjd2wZqhHTam3d8hPd92WtTwXYFElIAB9y1VHPMfJKK0QbRl5kGFALiaKJ+/U27E0
+         MZ8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXjn9WFijU75OJ7ua0HrxJyUg8U8g3DKduHYzEZ3iMQyUnCP0nrKpWvR8iT3DPYiCC5p3317WfG+k2csTbqnVNYnG9ndFZoTf8bsR84
+X-Gm-Message-State: AOJu0YyVkWJvqAq4yjOI7zV0B+5K0OPzi1qfQPOgjIVDTd3bmUWr5XSS
+	h+psDppSacrcAFbNXc3yEWDe8q/WdATa0ixoTQUiUohodg9hc/Sg+FZRxxql9MM=
+X-Google-Smtp-Source: AGHT+IFBe7dCkzsKuMo5AAfMZUrEPkQh+gWfbh9oGlUyCfIVM90LaPstgFxX6kYR1L/UseeB6AGkLg==
+X-Received: by 2002:a05:6830:4490:b0:6f0:47a2:c1ab with SMTP id 46e09a7af769-6f90aeaf329mr354404a34.16.1717016395753;
+        Wed, 29 May 2024 13:59:55 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f8d11ea076sm2413525a34.58.2024.05.29.13.59.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 13:59:55 -0700 (PDT)
+Message-ID: <30192c2a-5275-41ac-bc20-aa5f436846a3@baylibre.com>
+Date: Wed, 29 May 2024 15:59:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,69 +75,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] x86/irq: Extend NMI handler registration interface to
- include source
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>, X86 Kernel <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>
-References: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
- <20240529203325.3039243-3-jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v3 5/6] iio: adc: ad7173: Add support for AD411x devices
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>, dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+ <20240527-ad4111-v3-5-7e9eddbbd3eb@analog.com>
+ <6f18184de4a37993baedc15b44ecf0a6834a24d1.camel@gmail.com>
+ <917bc1d9-fbdc-4ca2-a156-813b57c8201e@gmail.com>
 Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <20240529203325.3039243-3-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <917bc1d9-fbdc-4ca2-a156-813b57c8201e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 5/29/24 13:33, Jacob Pan wrote:
-> diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
-> index 13aea8fc3d45..b8388bc00cde 100644
-> --- a/arch/x86/include/asm/irq_vectors.h
-> +++ b/arch/x86/include/asm/irq_vectors.h
-> @@ -105,6 +105,27 @@
->   
->   #define NR_VECTORS			 256
->   
-> +/*
-> + * The NMI senders specify the NMI source vector as an 8bit integer in their
-> + * vector field with NMI delivery mode. A local APIC receiving an NMI will
-> + * set the corresponding bit in a 16bit bitmask, which is accumulated until
-> + * the NMI is delivered.
-> + * When a sender didn't specify an NMI source vector the source vector will
-> + * be 0, which will result in bit 0 of the bitmask being set. For out of
-> + * bounds vectors >= 16 bit 0 will also be set.
-> + * When bit 0 is set, system software must invoke all registered NMI handlers
-> + * as if NMI source feature is not enabled.
-> + */
-> +#define NMI_SOURCE_VEC_UNKNOWN		0
-> +#define NMI_SOURCE_VEC_PMI		1	/* PerfMon counters */
-> +#define NMI_SOURCE_VEC_IPI_BT		2	/* CPU backtrace */
-> +#define NMI_SOURCE_VEC_IPI_MCE		3	/* MCE injection */
-> +#define NMI_SOURCE_VEC_IPI_KGDB		4
-> +#define NMI_SOURCE_VEC_IPI_REBOOT	5	/* Crash reboot */
-> +#define NMI_SOURCE_VEC_IPI_SMP_STOP	6	/* Panic stop CPU */
-> +#define NMI_SOURCE_VEC_IPI_TEST		7	/* For remote and local IPIs*/
-> +#define NR_NMI_SOURCE_VECTORS		8
-> +
+On 5/29/24 9:03 AM, Ceclan, Dumitru wrote:
+> On 29/05/2024 15:46, Nuno Sá wrote:
+>> On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
+>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> 
+> ...
+> 
+>>>  static const struct ad7173_device_info ad7173_device_info[] = {
+>>> +	[ID_AD4111] = {
+>>> +		.name = "ad4111",
+>>> +		.id = AD7173_AD4111_AD4112_AD4114_ID,
+>>> +		.num_voltage_inputs_with_divider = 8,
+>>> +		.num_channels = 16,
+>>> +		.num_configs = 8,
+>>> +		.num_voltage_inputs = 8,
+>>> +		.num_gpios = 2,
+>>> +		.higher_gpio_bits = true,
+>>> +		.has_temp = true,
+>>> +		.has_vcom_input = true,
+>>> +		.has_input_buf = true,
+>>> +		.has_current_inputs = true,
+>>> +		.has_int_ref = true,
+>>> +		.clock = 2 * HZ_PER_MHZ,
+>>> +		.sinc5_data_rates = ad7173_sinc5_data_rates,
+>>> +		.num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
+>>> +	},
+>>
+>> At some point it would be nice to drop the ad7173_device_info array...
+>>
+> What are good alternatives to this?
 
-I would avoid using vector 2; it is at least remotely possible that some 
-third-party chipset sends NMI messages with a hardcoded vector of 2. As 
-long as you don't actively need that slot, it is better to avoid it.
+Drivers like ad7091r8 have individual static struct ad7091r_init_info
+instead of putting them all in an array. I like doing it that
+way because it makes less code to read compared to having the
+array.
 
-Even better is to set the LINT1 (= external NMI) vector to 2 and treat 
-bit 2 as "other"; use vector 2 for anything that you don't have an 
-explicit vector for. You can treat a received bit 2 the same as bit 0, 
-except that you can explicitly trust that any event assigned an explicit 
-vector number is *NOT* triggered and so do not need to be polled.
+It would let us get rid of enum ad7173_ids, have one level less
+indent on each static const struct ad7173_device_info and 
 
-I would also recommend sorting these in order of decreasing importance 
-(other than 0 and 2). Although the current intent is there to be 16 
-vectors indefinitely, defensive design would be to consider that number 
-to be potentially variable (up to 64, obviously). Since any out-of-range 
-vector will set bit 0, the code will still Just Work[TM].
+{ .compatible = "adi,ad7172-2", .data = &ad7173_device_info },
 
-	-hpa
+would now fit on one line since we no longer need the array
+index.
+
 
