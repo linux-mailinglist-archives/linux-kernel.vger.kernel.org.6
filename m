@@ -1,227 +1,235 @@
-Return-Path: <linux-kernel+bounces-193570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D698D2DF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:16:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B068D2DC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09FDCB21690
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:16:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0C81F24B71
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552671667FA;
-	Wed, 29 May 2024 07:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F191607A3;
+	Wed, 29 May 2024 07:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K8SUtCHJ"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b="pgDMHp14"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2126.outbound.protection.outlook.com [40.107.22.126])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830CA15B99A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716966986; cv=none; b=QIixpKod5AJl2WiSiKgeyM+4iVmIHM9JdqIlDp9f4154YCpn2oIKaOFyW+ozc2r5Ey7OaNv48IX9v+zvPx2V4pzX+ta100qhxkuv5Tq9WYEZX9T9ybiKW2acK+dJt/XIeTOJte7muNs8ARZ715kWK7QGW1DSEr9ri7yi7gjnI2I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716966986; c=relaxed/simple;
-	bh=nq9OPjriJWIJ5BFeLbgNqrTQm3GhcP0bGpwBiZ8qkO8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=pOv8vdq2tKrJZJQ3bQ18EkFDfaInUyM09MGCoilcwAZIF57sslFuWyeLlhwBB+pVct03xiwFnDxsY3OaAT/naqNxiZ2SNWb93/7KbZ8oC0en+I/wk7SWnv6fHU8dtrUpIWdLCBcVUfnE/6kgRObYsISiYf7Nezy4H9hm+6FNtKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=K8SUtCHJ; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240529071621epoutp011a779517e95757c96dcd5cd321f04799~T5F96VNtU0122101221epoutp01b
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:16:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240529071621epoutp011a779517e95757c96dcd5cd321f04799~T5F96VNtU0122101221epoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716966981;
-	bh=SiGNd/X062sCjbQ3KNasPq9AXI1T7vTAaXy64r0sd5g=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=K8SUtCHJ3n7H9BRfgnOdXRSJ4bj6GCNBIYh/TSsQwm9Q8TdJFdCAR2XL8AjoAfmJZ
-	 FOWcDMi6oBOgu6MUQjNIYeSN7YzznUJPH7GodW3Lpj2NqhCH+dmwzjq/HpGLAn0OMS
-	 gel+perT/43YNxOED0fGFp4R/zLc8w7RBfFSQCJk=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240529071621epcas5p23fe659a7ce88c64dab6ca24ccaec2ec2~T5F9cD9pv3114431144epcas5p25;
-	Wed, 29 May 2024 07:16:21 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Vq0zm0Y7cz4x9Pr; Wed, 29 May
-	2024 07:16:20 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	53.60.08853.246D6566; Wed, 29 May 2024 16:16:18 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240529070220epcas5p140580a28b93ce5cb256ef825c778c649~T45urcH3o2715427154epcas5p1B;
-	Wed, 29 May 2024 07:02:20 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240529070220epsmtrp2922cc095f16316937ad6715823142c6d~T45uqpiv91136511365epsmtrp2l;
-	Wed, 29 May 2024 07:02:20 +0000 (GMT)
-X-AuditID: b6c32a44-5fcaba8000002295-e2-6656d642360e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	41.36.08622.CF2D6566; Wed, 29 May 2024 16:02:20 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240529070219epsmtip17ef35fc42e2bd39fbdedfa6f12c23d0a~T45tOTlm01300713007epsmtip1H;
-	Wed, 29 May 2024 07:02:19 +0000 (GMT)
-From: Vishnu Reddy <vishnu.reddy@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
-	linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com
-Subject: [PATCH] pinctrl: samsung: Add support for pull-up and pull-down
-Date: Wed, 29 May 2024 12:29:39 +0530
-Message-Id: <20240529065939.36369-1-vishnu.reddy@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAKsWRmVeSWpSXmKPExsWy7bCmpq7TtbA0gz8rVS0ezNvGZnH+/AZ2
-	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxaKtX9gtHn7Yw25x+E07qwOXx6ZVnWwed67t
-	YfPYvKTeo2/LKkaPz5vkAlijsm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
-	EnNTbZVcfAJ03TJzgI5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YW
-	l+al6+WlllgZGhgYmQIVJmRnXNq6gb1gu1TF959rGRsYJ4t1MXJwSAiYSJx4F9PFyMUhJLCb
-	UWL3n5uMEM4nRon+vhlsEM43Rok1yz4BZTjBOj78aWOHSOxllGjonQLltDJJvOs4AlbFJqAr
-	8XnJWRYQW0QgQeLlh5Ngo5hBlkyefIgNJCEs4CGxbNd6MJtFQFVi5ZFbbCBH8QrYSny9Hg2x
-	TV5i9YYDzCC9EgKH2CWuTfnKDpFwkfi0eznUScISr45vgYpLSXx+t5cNwk6WWP/7FDvEozkS
-	PdMUIML2EgeuzGEBCTMLaEqs36UPEZaVmHpqHROIzSzAJ9H7+wkTRJxXYsc8GFtN4tik6awQ
-	toxE54obUBd4SMzY0glmCwnESrSe2MA4gVF2FsKGBYyMqxglUwuKc9NTk00LDPNSy+HxlJyf
-	u4kRnNS0XHYw3pj/T+8QIxMH4yFGCQ5mJRHeM5NC04R4UxIrq1KL8uOLSnNSiw8xmgJDbCKz
-	lGhyPjCt5pXEG5pYGpiYmZmZWBqbGSqJ875unZsiJJCeWJKanZpakFoE08fEwSnVwGQgv4FL
-	iXPhzaW3X57fMrvgnn9/zcszP4z/HLhx/Mt/vWP+txfNajDYtOjUdHvPZO4EpZtttlwT137X
-	VwvwMr/7SViQ9+jHCzzHZhfOPbAhxO2/KMucp8mq+bO3zlMRiHzz+3vtzwyWV6dYhdzM77fe
-	E4+czpqoaHzb7aUR+9mAVQuyZkzUlbE7yrv1ejn/zs/p/zd8e3tF2Wli6psZHotfv2Mo3NnQ
-	4vJ/pVpVeof7q/zAffYzdT+ftrxz6kVvDsed3Mc7WVdeaRapmu12eVPlXIe2BzryoUvLXVQN
-	TNPYOj0n2cT+dBA4aijeLjUvYX/O/Hb5LVc1BQ7WlLAxtXV1nZvxbvc2y0eL/9XmvzqjxFKc
-	kWioxVxUnAgAXGOByvMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42LZdlhJTvfPpbA0gwU/VSwezNvGZnH+/AZ2
-	iyl/ljNZbHp8jdVi8/w/jBaXd81hs5hxfh+TxaKtX9gtHn7Yw25x+E07qwOXx6ZVnWwed67t
-	YfPYvKTeo2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDIubd3AXrBdquL7z7WMDYyTxboYOTkk
-	BEwkPvxpY+9i5OIQEtjNKHFo2hR2iISMxIc7W5ghbGGJlf+eQxU1M0ksOfWBFSTBJqAr8XnJ
-	WRYQW0QgReL1pVtgRcwCBxkl5n1sBysSFvCQWLZrPRuIzSKgKrHyyC0gm4ODV8BW4uv1aIgF
-	8hKrNxxgnsDIs4CRYRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnCIaWntYNyz6oPe
-	IUYmDsZDjBIczEoivGcmhaYJ8aYkVlalFuXHF5XmpBYfYpTmYFES5/32ujdFSCA9sSQ1OzW1
-	ILUIJsvEwSnVwHRGTltXdOv8/98EmU+q/U1inMstfnN6z/wlvD+6Wt01e54dSZhVaH23+/nX
-	RIuPy9jYP98PZvj9h3GeYqLQlEOL1W//jn2kPmnqsofSNXfkD/627l3qoa2+4ffxG/MOdwQ9
-	vXRCPGci2xlO5UM8bTHvqgM6y2+fn8bDHax8LLRjC8uSRyqPDUrFTsgantyiH+9u6+rSwM61
-	e3ps+XbVeU4q0ZEzjStb1+RNcWRbrb75+/eDrRbeS+0KFr8W6/yveTQ26pd17+qZrMKnCyJC
-	PgTWz+J6utrp/JKpO4p9Sv+k7nAJOm8Rnb8h4OGnbRqN2tOi6g3Djt8rCxBS8RWRuami4vjr
-	f7RL2xt+gaQZlUosxRmJhlrMRcWJAINOWoKgAgAA
-X-CMS-MailID: 20240529070220epcas5p140580a28b93ce5cb256ef825c778c649
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240529070220epcas5p140580a28b93ce5cb256ef825c778c649
-References: <CGME20240529070220epcas5p140580a28b93ce5cb256ef825c778c649@epcas5p1.samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE9115B14B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.126
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716966113; cv=fail; b=O56apttBV6z5xSgi7s4+3w1HXFkeE4R8fK2pc4BxGpCQk8JM0ALt2m1CmNbnEOyfqp7K0Bcs5SMqiom9x2lUQCvZLr+JxodenYeY3V6GWG7Zz95RgMtWRhr8aYPKvkOOF4QG4PZmn/9gvQhNAa7BWbqbFXj8v4AolC0d1qrWum8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716966113; c=relaxed/simple;
+	bh=kXfo67MmjfX2FKEkRJJ+0XQAnwuV7QgzPiXOY4WoneA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RJjAAx2Baj6Nkles7tNC1yN+bZ8dvXwKlxt772+ZOPfldXV/68Xn5y8M5dlPFtkDQlVz//Ho1j9U+maRteme5NA/b9TelnClmE+1rStDGVz7QJMMHVqohwgLVy3PIxliULmZOeqdv6q72vua0VSBckRm9+XJUJloMYGyPX7x428=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net; spf=pass smtp.mailfrom=wolfvision.net; dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b=pgDMHp14; arc=fail smtp.client-ip=40.107.22.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolfvision.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OHjcKIAbkeiloH7nhQuae5uk18MoLuzolH54qdtLaYBKEC4f9CW1kf43uU/Fbx//gX28/8oL95CUQHeoY+/u/3L8WpJ0BohHRNJk4QQPt8eJjyjdnbhJuQ9CgQ1+3L8OGmfdMUheQ+JdYiSz3pZ73JliShsulARkIeVxsLHUY4wBRi/x1o4U5tBGn9dLIsN34hG/WTxUF/gcv6K19yE+Ht+OKAnHVjjRq+MS5zFZLHgYdcDQ63zFEJ6zUCPeoJ+LYACzoJC2NuIdswhHCvpvk0BB/TEvQJxJzisI6dXInXfM6ClHLgfDFVZ5/X+Tgc7lTnvWWVOmXO08xLBEKvhufw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/cKpq/o8dvTtQJ8EncQ/cvB16TM+BNx0WzTRZOg227k=;
+ b=k1sAOKpIX5xIqCOQ5LzOIjx/sZW6AVOAGIrYKU/U7qlRyHipboZCr9ra7XYMqr2BPRP8UmCBAPmklyHFNrhtqIgew8R9vkIbpqQu7RQMOBjWFvuohNSRcwx1DCQYcGuKZ9Ua+CUyeHnQ0qRzr5MYdkf9XhH3SGD4Eug22rnQqm1yUc7bYqTQQo3CnB8oaeNip8SxP/EQwDNXfwYZ+Cyeq/LUrWe51h5J/rCIThUITNhraV5XBBC1NTH3xIvKiiux9hyliGoQa4jAUSSt8EKwGQCZwcyTAyJWZraepu5EO/VX7C6AGp4tXbjSEzOhblK0THSq1gvgKOPFVLAYWGoODw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wolfvision.net; dmarc=pass action=none
+ header.from=wolfvision.net; dkim=pass header.d=wolfvision.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolfvision.net;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/cKpq/o8dvTtQJ8EncQ/cvB16TM+BNx0WzTRZOg227k=;
+ b=pgDMHp14yUdTC6D+I61EFqx19Sfxe0dlGSr1BcyjEZPZeASPErjdTHpH79ZVNeDfxNQ5C+SxAQqeephpszpvNb/dtv7wvdQZP0xUSJoop5Rs5W5Sl2jAfu2Gn1J1R685XXMKKf/h1lYfrzDF46nu1dwlTNme1rI0tlOWbqKEDSE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wolfvision.net;
+Received: from DBBPR08MB4539.eurprd08.prod.outlook.com (2603:10a6:10:cf::22)
+ by AS8PR08MB6422.eurprd08.prod.outlook.com (2603:10a6:20b:33b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Wed, 29 May
+ 2024 07:01:48 +0000
+Received: from DBBPR08MB4539.eurprd08.prod.outlook.com
+ ([fe80::87a9:a8d0:96fa:19e1]) by DBBPR08MB4539.eurprd08.prod.outlook.com
+ ([fe80::87a9:a8d0:96fa:19e1%6]) with mapi id 15.20.7611.030; Wed, 29 May 2024
+ 07:01:48 +0000
+Message-ID: <820889e8-f004-46a8-9d03-b098ffcdade3@wolfvision.net>
+Date: Wed, 29 May 2024 09:01:45 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 1/3] drm/panel: sitronix-st7789v: fix timing for
+ jt240mhqs_hwt_ek_e3 panel
+To: Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v1-0-f8351d4a8d4b@wolfvision.net>
+ <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v1-1-f8351d4a8d4b@wolfvision.net>
+ <d10e14ce-b65f-4dbd-8686-bf8c1796ba06@quicinc.com>
+From: Gerald Loacker <gerald.loacker@wolfvision.net>
+Organization: WolfVision GmbH
+In-Reply-To: <d10e14ce-b65f-4dbd-8686-bf8c1796ba06@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VI1P190CA0039.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:800:1bb::20) To DBBPR08MB4539.eurprd08.prod.outlook.com
+ (2603:10a6:10:cf::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DBBPR08MB4539:EE_|AS8PR08MB6422:EE_
+X-MS-Office365-Filtering-Correlation-Id: f7841815-729e-4f82-62f7-08dc7fad356c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TWswYUk0S0hiaUhndjRtOXFiTXZOOVArQ3ZOLzFTUjlGcXk0WHI3bTJXUEVW?=
+ =?utf-8?B?TldTNmVmK2NYdFEvV0srVE0xSzV5SWhjN3ZjRENnYzFVQXp6VHZhOTFXTTRm?=
+ =?utf-8?B?bUVBSmZMRyt4SXUzTHJielJPd0MzbjczZWxVRnoyUzRLY0hwKy9mQTlKRkYw?=
+ =?utf-8?B?TXJ0dVZqN3E2cjF6Ym9jc3BxZWtrZ2RFcTg5UHR5UU1HQ0V0ZGdPRjM3TGpi?=
+ =?utf-8?B?VVFFbnR1Wk5MK2FGY0ZBb0lsOUduaDUyd0Y3WVBZcXl2bk5lYmlta2lIOGVo?=
+ =?utf-8?B?Y1BHVHhWeUp5dzFFTXV6QkpFRnB2NitmT3dHNmlBdmoxc1VVTk9DWG5tNEhU?=
+ =?utf-8?B?ZjI5RHZqZ05wOS9paFlmN09CTGs2NGxtVWE1VDdNYTdFa0FUQVNXdUIwS1lm?=
+ =?utf-8?B?aEZMdXpOZnJZbHovbndwYU1ITDh6QTVaeHdoaWlxdmU0dVZUZzdMY1E1RWVx?=
+ =?utf-8?B?WEtxNVNnUHZBTWs2eG9jZ09jbFBrL1lTd2lzZ3RkQ1VNaHBHTit0UDM3V1VM?=
+ =?utf-8?B?SzhiS1JZYnRRSytHTG5mTjRQUmdUVko0UEkrdGsvUUV0c2U3NVJubUkyazNO?=
+ =?utf-8?B?NWsvTC9KQUFENm0vVjluM3JpbkxiQmJlNmFFdTZidDAycHl5RTB1aEx6UEM4?=
+ =?utf-8?B?bjN1RDFkbHp3MEJQTWtjMDgwVXMzaHZIS1pCZm5ROWMzc0xBZ1R1S1ltbXE5?=
+ =?utf-8?B?MXlBRjl3TWNwR3NONldQZTc4eEIvekRubGNGQ2J5VmJGekgvUi8wbTZTMVo1?=
+ =?utf-8?B?eGF6STlZcGtmSENVbUNYb0RJbGU4aUVDTVZ0VlZVOG9ETUl4Q2liakZmWDRP?=
+ =?utf-8?B?ZjAwSnoveUR1N3hSQy9hbERoWTdoQUNwMFZzQkpCYVRMS1ltSkluaGRPV1cz?=
+ =?utf-8?B?MHNRMmJQOW91bytBNDhGZGhnQ1pzcmFuZWluNjZGNWJVNmtqbEpUNkZ3Q0Vt?=
+ =?utf-8?B?WDlKeER6VGJPWWJLQmpMSmR3MWhlYmFEK2JZeUFGdVhSOXV1UC96K25DRi9D?=
+ =?utf-8?B?OEx6SDNxMGJIR1puRVVDQloxdlRiVHdaYXZJNzJXdDR0OTRHUVFwaXNVMWRx?=
+ =?utf-8?B?Z2R4cWRaMm81aEZLbDVpbnNzK2ptTVNXOTB5Y0NNczRSNGRCMjJoTDlMTEll?=
+ =?utf-8?B?MktoRFBkM0taV2NIUDZyYkRFclVHT09Fc2NrVWhiRGY3bEI1MCtOWUFOSlB5?=
+ =?utf-8?B?WTdVWXIvUkREZmdOM29Dd05PUDZSdnRMa0hGQVpoRDA2OFZxV0ZzUE9OVC9k?=
+ =?utf-8?B?b3d4R3dYR2RBQ1pPYlhvQmluYklNQy9aV2g4TUkzWEFIQTBxZjlUZlM5amNx?=
+ =?utf-8?B?NTlreG1yQWN2UFl3eHNiK3VCWXdjb1F3cm8rV08zMkRIOWVtS2k5QUNLbzNF?=
+ =?utf-8?B?NlVTSE5VMlVPT2IwWDJ2SWpURjlyNCtZYmNxTnBFVFNlUFBQMHh6b3NpazVU?=
+ =?utf-8?B?MFd1bUJoQXBwNTEwWnFNcHEyVFE0bmVlT0p0RXdrQlZLNytqeVh6VUFGYXNN?=
+ =?utf-8?B?YXRVL0tRWVNoZUV1TVNSclR5RGV1YUZiYTlTZXNKL2prc09KdnFxOEN6RFRp?=
+ =?utf-8?B?Nm15Rm0vT001TTNveW5kSmVSZHZvNHNkTVR1VzNaYVg5RHorY0FpcmsxMHNq?=
+ =?utf-8?B?QUppNzRpV2Nhd3dSZnh4TkYzcjJlOGRvdWxVcjdBTVlVdSt6cmMyNEEzNWFT?=
+ =?utf-8?B?YVMzT3kyQlN1QW1xaU5VVndUT3JMdUd6RG5YQVBlUFRaVG8wWlRuVU93PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR08MB4539.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cVpFbGErMlNDVzFvYUpkZ1ZPKzd6S1RhS25xODQyV09LamlYRGtkUEZRd1NR?=
+ =?utf-8?B?bmFibTh3RW5UcVZIUTFBWXBiZkVRbFRVano0b1FKTlRhVFBxQk11NzNrNzI4?=
+ =?utf-8?B?U2RWdmtWQUNVbGJSb0xLQVEyMVdNRkZORDdJU3BHakl5ODV3bktrUzJnSzFF?=
+ =?utf-8?B?UHdTa0FzeG9OK3ZBM0pyNzNwb3V1VUVxWkFHRFEwekt2WStyMXFMSXU4aEl4?=
+ =?utf-8?B?Y0JlNmVyRFJVeUR6d2FJeHN3TWYyeWpOaHBRNlJDcjc5Mnd6MUlTaEtXTWtp?=
+ =?utf-8?B?STl1WG41M3dBQlpzUHNDb3JwOTNpbTBSNWczZDBnbEJVYXhrOW1wTmNKZXRt?=
+ =?utf-8?B?RmZ4bDVOdi9SN1RsNis1azNJTHJYT2hlSG45YW83QllzSXk5RGxoa0ExWSt3?=
+ =?utf-8?B?UllPMGRGSWphazhwZ2p3UkhKRTd1WHY5VXpQQ1VaTFV0Um5xdmJ0dDduZHN4?=
+ =?utf-8?B?VTJSb3NLYWFvS3VNUjJmRnVtV0hTQ1crbWptLzkycE1RMWkyM1pwNStrWEd4?=
+ =?utf-8?B?dGxKanIwcmJQaUhxQjcrWVRMaTZncW52MGRGbDNmZnEzNk5oQnh4VDYzWC9O?=
+ =?utf-8?B?OW1GZWJOUnhRVVhkREhzb291U09Xck1XMkwvZW9IaCtIR3V6YXdQMWZ1QWh5?=
+ =?utf-8?B?bFFzMFJvazJDYU1HM2tMTG9EMHYwUkduTWRmaEQ1Nk00Rk9HOVNrSm50QTF6?=
+ =?utf-8?B?WnFGQlJyaFh4UnJSbkliMzUwWEVSaTR1bk9hZDZpdk5rcDh5MXN2UGFWQWdI?=
+ =?utf-8?B?dm9Cd1loMGJMdFZSdHp3UTFiZ3ArRVM3bzdKZ05RYi82UkcwUm5tNXhGbm90?=
+ =?utf-8?B?b0JFYXNac1NvSEZUUkRiZHNqc2ptQ0lmYkwySUV1elduMWs0K2ovbmZMVjhG?=
+ =?utf-8?B?OUk5cEd2WFlsZFJETWV2SFJmWEJFaXFIUnVnRnpDQS9XUnd2NmlXNmN0ZEJr?=
+ =?utf-8?B?cVRycUNZLzc0NFhBbFQrQnFIQ09peGw4Q3MvVC83dElVYk41NzlSQlFBMS91?=
+ =?utf-8?B?NFRzRGVPTVAvMytxODAzTnVCbEVKR3NWYmpkc2NHS2dDZkdPckdXOTZ2T1ZE?=
+ =?utf-8?B?Qm5uQ05FSG9WbDZUbnNsNjR4WEFXejBVc29zbEZITFpDZWIvQ2hydnl2OWxr?=
+ =?utf-8?B?V0NKQ1ZOZjFkdG9sOTRxdE5rZHFzajhyaUxFQ2t6T3lTaklQMHpnbDdUQ3k5?=
+ =?utf-8?B?dXRDckQwTm9JR1F1UTRVNktHMjFnakttQm1UcERXUWhCcDRST1Z1US9pa2U5?=
+ =?utf-8?B?MUtaeUZ0ZUZZRmRPVFp0cGVEWCtQbURJRS9VYXBtTnM3c0VMc0lUY0VHNFYv?=
+ =?utf-8?B?MFlOSE4xdm1XeVpOOFl0eTVUMis0MXpZNTVjVTBEbWhtNzZ4UlBNZTlpL0x3?=
+ =?utf-8?B?Wk5YZkt1Ly9YLzhyR2p1N1dhV0UrWnFzcGIzTXNxRXZRbXlkTHMyYkFkVFY4?=
+ =?utf-8?B?YUpScm85OUhuKzA1Z1dFbW4rQUhHb2V5VXdmcDZwbFdEeHl6akVGTXJqVlBz?=
+ =?utf-8?B?OGNYdzJMdjkxdHlsWjB6bmMxYjVYWVpJVnRQT0J6aVNkUHdKVEJ5eHplOU91?=
+ =?utf-8?B?SzB1ZW40M1ladHRuQUFLUllqTEU3enBadzlaeGxEV1czTGhWTVZhVDNHdExS?=
+ =?utf-8?B?Yys1NHhsaGxZdFFjYXhxVGs2UlRzV1JTVm9oblJUcExGY1greHdMc3BNU0Zv?=
+ =?utf-8?B?Q0ZlVTExN3RPWHlBMVBuUHZSVnMxNVZIT2lOdmYvS2grcEZaWUZWbWdzdWJK?=
+ =?utf-8?B?UjF6RmRPalVFRUF3TWNRZDZKSG4xYnozS0RhZitkZTl4NDZkMHh2dnlFdnBG?=
+ =?utf-8?B?NFBKKzNNNjAvQ0tFYmdmNk42RlZmcnpHSE9GajR1Rm9iemdOMUtKM1Y5UVVU?=
+ =?utf-8?B?bVZKTlExdVdvN0w2ZnNFK2FWTXhqOEpHZlJHaXlPandQVEQ5VGVKVDlXdHhl?=
+ =?utf-8?B?UXRCVXc3TnNLdFdMTWZiR1E3R1Q4RjI4UVVaY1ppdElyaldHME1pTFZYam1K?=
+ =?utf-8?B?TjhYd25JVncvQm1LRHZTN1h2VnAvRTRFRmtuYXAwNFlvK1AzcHZrWWpQVU9Z?=
+ =?utf-8?B?Zmw2a1VaUHUwcXcyRlZPYzE1UWYyY2M5S0NDbkM2UDU5YW53NWNQbkxIYVZi?=
+ =?utf-8?B?b3pwdlFXNzM0VUxhN09zcE9EYml6V2FVOWhEd1ZBSVdwUVM5b2NIN1B4NU5x?=
+ =?utf-8?B?a3c9PQ==?=
+X-OriginatorOrg: wolfvision.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7841815-729e-4f82-62f7-08dc7fad356c
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR08MB4539.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 07:01:48.4224
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e94ec9da-9183-471e-83b3-51baa8eb804f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2I+6oQt2WGLunLksLbzzXI2cfkY8xx7I8IJU+qkTG+ERB/xU+soZjCBCkzNFXPtlU2fVeVmvDocxzwwXi33I3NAQfAcRR8YX04xpLzt1hoM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6422
 
-gpiolib framework has the implementation of setting up the
-PUD configuration for GPIO pins but there is no driver support.
+Hi Jessica,
 
-Add support to handle the PUD configuration request from the
-userspace in samsung pinctrl driver.
+Am 28.05.2024 um 19:36 schrieb Jessica Zhang:
+> 
+> 
+> On 5/28/2024 1:32 AM, Gerald Loacker wrote:
+>> Flickering was observed when using partial mode. Moving the vsync to the
+>> same position as used by the default sitronix-st7789v timing resolves
+>> this
+>> issue.
+>>
+>> Signed-off-by: Gerald Loacker <gerald.loacker@wolfvision.net>
+> 
+> Hi Gerald,
+> 
+> Just wondering, are these new timing values taken from the panel specs?
+> If the timing in the original patch was wrong, maybe we need a fixes tag.
+> 
 
-Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 51 +++++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.h |  7 ++++
- 2 files changed, 58 insertions(+)
+Both, the old and the new timing specs, are within the specified range
+defined in the data sheet. But as the new values achieve a better result
+adding a fixes tag is a good point.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index ed07e23e0912..a4b6eea5e168 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -939,6 +939,56 @@ static int samsung_pinctrl_unregister(struct platform_device *pdev,
- 	return 0;
- }
- 
-+/*
-+ * samsung_gpio_set_pud will enable or disable the pull-down and
-+ * pull-up for the gpio pins in the PUD register.
-+ */
-+static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int offset,
-+				 unsigned int value)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	const struct samsung_pin_bank_type *type = bank->type;
-+	void __iomem *reg;
-+	unsigned int data;
-+
-+	reg = bank->pctl_base + bank->pctl_offset;
-+	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+	data &= ~(0xf << (offset * 4));
-+	data |= value << (offset * 4);
-+	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+}
-+
-+/*
-+ * samsung_gpio_set_config will identify the type of PUD config based
-+ * on the gpiolib request to enable or disable the PUD configuration.
-+ */
-+static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	unsigned long flags;
-+	unsigned int value = 0;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		value = DISABLE_PIN_PULL_UP_DOWN;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		value = ENABLE_PIN_PULL_DOWN;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		value = ENABLE_PIN_PULL_UP;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	raw_spin_lock_irqsave(&bank->slock, flags);
-+	samsung_gpio_set_pud(gc, offset, value);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+	return 0;
-+}
-+
- static const struct gpio_chip samsung_gpiolib_chip = {
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
-@@ -948,6 +998,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
- 	.direction_output = samsung_gpio_direction_output,
- 	.to_irq = samsung_gpio_to_irq,
- 	.add_pin_ranges = samsung_add_pin_ranges,
-+	.set_config = samsung_gpio_set_config,
- 	.owner = THIS_MODULE,
- };
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index ab791afaabf5..23b70ddcaccc 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -61,6 +61,13 @@ enum pincfg_type {
- #define PIN_CON_FUNC_INPUT		0x0
- #define PIN_CON_FUNC_OUTPUT		0x1
- 
-+/*
-+ * Values for the pin PUD register.
-+ */
-+#define DISABLE_PIN_PULL_UP_DOWN	0x0
-+#define ENABLE_PIN_PULL_DOWN		0x1
-+#define ENABLE_PIN_PULL_UP		0x3
-+
- /**
-  * enum eint_type - possible external interrupt types.
-  * @EINT_TYPE_NONE: bank does not support external interrupts
--- 
-2.17.1
+Regards,
+Gerald
 
+> Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> 
+> Thanks,
+> 
+> Jessica Zhang
+> 
+>> ---
+>>   drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+>> b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+>> index 88e80fe98112..32e5c0348038 100644
+>> --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+>> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+>> @@ -286,9 +286,9 @@ static const struct drm_display_mode
+>> jt240mhqs_hwt_ek_e3_mode = {
+>>       .hsync_end = 240 + 28 + 10,
+>>       .htotal = 240 + 28 + 10 + 10,
+>>       .vdisplay = 280,
+>> -    .vsync_start = 280 + 8,
+>> -    .vsync_end = 280 + 8 + 4,
+>> -    .vtotal = 280 + 8 + 4 + 4,
+>> +    .vsync_start = 280 + 48,
+>> +    .vsync_end = 280 + 48 + 4,
+>> +    .vtotal = 280 + 48 + 4 + 4,
+>>       .width_mm = 43,
+>>       .height_mm = 37,
+>>       .flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
+>>
+>> -- 
+>> 2.37.2
+>>
 
