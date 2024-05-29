@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-194391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968C78D3B7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:54:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2B68D3B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338A81F26F6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19ADE285116
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B33181CFA;
-	Wed, 29 May 2024 15:54:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB93181315
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0B3181D11;
+	Wed, 29 May 2024 15:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmXp/s9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6650181BB3;
+	Wed, 29 May 2024 15:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716998062; cv=none; b=dz9ZTqeX8QXtLg2FMyKsnTl1EAZmNCF0jK/mnuJEUNmQb/aOJZue4RHkWr9zI/nmeMw/u2PiwPlXyvVqqJjiMg7n50hb1qjGD3hG7t8Z9k/ReMExz8Omlu+mRhfacD34hOdeSgcDdzKO3SoGrlYknyi+dV10YK50dbFiYm8bCgk=
+	t=1716998116; cv=none; b=ij5u8Q4Wgtoze/z0M1p1LDZ7aeXVT9U7tTiEdpDPnT0fGfApBg1/0tfQZBilI8lt5j6H0Avx766RH90XPeDmF97v1Aar/pXElnnAw1pUc9jW8QhA+J0gyTg04jUoN8mJ2eKEbiEEo17GIIG1cXAFwChK5NQoSBBaPheIEuUgLWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716998062; c=relaxed/simple;
-	bh=c6dqKVeQyxgbzfBnYTmLHRwbpXQUgnveDT5DlgxVB50=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FNywXnuw8C3UO6KZfOrajP2loCmTMd7WyMuPt/saq3pJH9TYkTM+RDtKxQhI0RSoyxKLg94Cc13RYJmkYLMqJewZ/9AXBQubJH1/p9GnqkBesSNljZ3V05lir5TkSfZARFx5TD2KcHeQgCGTE/Kv2kA/pkMXmQbyamc9VWp+yHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB0FA339;
-	Wed, 29 May 2024 08:54:43 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 99F1A3F792;
-	Wed, 29 May 2024 08:54:18 -0700 (PDT)
-From: Robin Murphy <robin.murphy@arm.com>
-To: joro@8bytes.org
-Cc: iommu@lists.linux.dev,
-	will@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: [PATCH v2] iommu/dma: Fix domain init
-Date: Wed, 29 May 2024 16:54:09 +0100
-Message-Id: <159193e80b6a7701c61b32d6119ac68989d457bd.1716997607.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
+	s=arc-20240116; t=1716998116; c=relaxed/simple;
+	bh=cvCI74XULFLsUOYSrpSQ5aAd1HGoaFATJaZrDy1RBK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UBOavMln/ZRfgK9DmWPjVcvS5YZeWcy52UoQZitKviT2i++HU3NflKidbK/na3yI5vVUrL+cWtRuxEYal6MZE3WYe7Q7tOxiTyZoo7u8L9/VZPXvcz1znHG48B8o5FhvkmAv/LR1pjCTSgiJ8a0/WmS1zQI8JBFmWkjXSTIJoW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmXp/s9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B30FC113CC;
+	Wed, 29 May 2024 15:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716998116;
+	bh=cvCI74XULFLsUOYSrpSQ5aAd1HGoaFATJaZrDy1RBK8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WmXp/s9vHFC0BXI3VHUObfGwuQj1zxrYLOB2NH1CaxvAcKrnnmPbBpHqtmBaUIvmO
+	 7OrKLE0HbBrxG9SObqzJVZTEUPG/49lSTHcWRAx6eQMz/CWbsqWhjE0DyfIqS9e1Z2
+	 gKhlZzo3158eL4rQlpNGpBVvfOeL+DRbOCbaCcs3hiRNd8jpj8MIJdeAwj/T+dja+8
+	 M0sHpT3wWbHEhzVpJzyvzpKPbWrzN5C3J+pA56Dew8ffLEk9zjHJLEqsVeBZWspcol
+	 rpW0Q5iOxnzsbvj6xFLHkjQ4h0e3px1WIoyVOf6b1ntkimc+DWUImO5SMuZXkkFxKI
+	 jnc9o0VQW92WA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sCLdz-000000004DT-1fTP;
+	Wed, 29 May 2024 17:55:15 +0200
+Date: Wed, 29 May 2024 17:55:15 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+Message-ID: <ZldP4zODYZzCoHW3@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-13-johan+linaro@kernel.org>
+ <CAE-0n52KTZ8G2VuvrDgJ9kAE61YULXY4u6nPP3CYWpg1CBjbXA@mail.gmail.com>
+ <ZjyTEVLp8VAhQfT5@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjyTEVLp8VAhQfT5@hovoldconsulting.com>
 
-Despite carefully rewording the kerneldoc to describe the new direct
-interaction with dma_range_map, it seems I managed to confuse myself in
-removing the redundant force_aperture check and ended up making the code
-not do that at all. This led to dma_range_maps inadvertently being able
-to set iovad->start_pfn = 0, and all the nonsensical chaos which ensues
-from there. Restore the correct behaviour of constraining base_pfn to
-the domain aperture regardless of dma_range_map, and not trying to apply
-dma_range_map constraints to the basic IOVA domain since they will be
-properly handled with reserved regions later.
+On Thu, May 09, 2024 at 11:10:41AM +0200, Johan Hovold wrote:
+> On Wed, May 08, 2024 at 10:37:50PM +0000, Stephen Boyd wrote:
+> > Quoting Johan Hovold (2024-05-06 08:08:29)
 
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Fixes: ad4750b07d34 ("iommu/dma: Make limit checks self-contained")
-Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+> > > +struct pm8008_regulator {
+> > > +       struct regmap           *regmap;
+> > > +       struct regulator_desc   rdesc;
+> > > +       u16                     base;
+> > > +       int                     step_rate;
+> > 
+> > Is struct regulator_desc::vsel_step usable for this? If not, can it be
+> > unsigned?
+> 
+> Not sure, I'll take a look when respinning.
 
-Since I've now got round to rebasing on -rc1, I figured I may as well
-send a v2 with updated tags to avoid any confusion.
+No, vsel_step is unrelated to this, which is really a slew rate.
 
- drivers/iommu/dma-iommu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I've reworked the driver and dropped this field in favour of
+regulator_desc::ramp_delay.
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index f731e4b2a417..43520e7275cc 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -686,15 +686,15 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
+> > > +};
  
- 	/* Check the domain allows at least some access to the device... */
- 	if (map) {
--		dma_addr_t base = dma_range_map_min(map);
--		if (base > domain->geometry.aperture_end ||
-+		if (dma_range_map_min(map) > domain->geometry.aperture_end ||
- 		    dma_range_map_max(map) < domain->geometry.aperture_start) {
- 			pr_warn("specified DMA range outside IOMMU capability\n");
- 			return -EFAULT;
- 		}
--		/* ...then finally give it a kicking to make sure it fits */
--		base_pfn = max(base, domain->geometry.aperture_start) >> order;
- 	}
-+	/* ...then finally give it a kicking to make sure it fits */
-+	base_pfn = max_t(unsigned long, base_pfn,
-+			 domain->geometry.aperture_start >> order);
- 
- 	/* start_pfn is always nonzero for an already-initialised domain */
- 	mutex_lock(&cookie->mutex);
--- 
-2.39.2.101.g768bb238c484.dirty
+> > > +static int pm8008_regulator_get_voltage(struct regulator_dev *rdev)
+> > > +{
+> > > +       struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
+> > > +       __le16 mV;
+> > > +       int uV;
 
+> > > +
+> > > +       regmap_bulk_read(pm8008_reg->regmap,
+> > > +                       LDO_VSET_LB_REG(pm8008_reg->base), (void *)&mV, 2);
+> > 
+> > Is struct regulator_desc::vsel_reg usable for this?
+> 
+> Will look into that.
+
+I don't think vsel_reg can be used here as the voltage is set using two
+registers (LSB and MSB).
+  
+> > > +
+> > > +       uV = le16_to_cpu(mV) * 1000;
+> > > +       return (uV - pm8008_reg->rdesc.min_uV) / pm8008_reg->rdesc.uV_step;
+> > > +}
+
+Johan
 
