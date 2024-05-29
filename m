@@ -1,42 +1,62 @@
-Return-Path: <linux-kernel+bounces-193913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835498D33FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:06:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D788D3404
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A9A285BA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496351C226EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF7317B418;
-	Wed, 29 May 2024 10:06:27 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8276E17B424;
+	Wed, 29 May 2024 10:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BOxxSrdH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4CF31A60;
-	Wed, 29 May 2024 10:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7717E16D9B4;
+	Wed, 29 May 2024 10:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977187; cv=none; b=jExvA05/sTJWKShe426qj6C9+QZ2O0x+eZZgYmKauFCg2/O36antdn/+AO5UTjJr7pK3mnfkQBT0hBhCqSmbJmNTM7MAuqRfQMOKHVYhcy2Z53IPuqQATgo7jN+c/REXj5dOaTEYCpK/iSsvF10MEBT0v8n2v7j2gN8Qcmo0/GE=
+	t=1716977238; cv=none; b=C9DCSkrQPnmemwjTHT6UiXCog/EZcP/jRhxMBJfun22R5N/mO54hH6Z9mc5Ji2u7bZlcmcaiycoZyu6PJjGjZDXWEk31K+iVV8BgBNmX1QVhUY8vb0E+vLuN2hL0+TlTmHCaQR3HwoQgANj5wHW3Zoy0sIW2dMN0yitnFkX8qow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977187; c=relaxed/simple;
-	bh=G1Rk+7kEkFD09wELNnRj53zJwtqDGrgnZU8T7fnfjek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLQdI1tLIJE2JQiMec2wxw0VHutBTF3Yh0jmsoMNqKamK72U+/K2orPm5/A25o4QXcSg/oHCBvjy1FxIPcH23lUD8De6EtNboIidZmkskBwQ1zroQ7uXc5TADuI/9SkFFH58Zw4ciivK1YrS9/jw42UxVhpLgSygWFo/ciX+jG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.3] (ip5f5af7f7.dynamic.kabel-deutschland.de [95.90.247.247])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id ABB5461E5FE01;
-	Wed, 29 May 2024 12:05:43 +0200 (CEST)
-Message-ID: <52ccf0c1-e5dd-412b-9e47-7829ca0f6ffc@molgen.mpg.de>
-Date: Wed, 29 May 2024 12:05:42 +0200
+	s=arc-20240116; t=1716977238; c=relaxed/simple;
+	bh=D2FIcGRzfrnFELx//dlrNJww8kPwkf0Y2f823Q+kP2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DRmlqqnIw3LXGHXmt3Ugmz6/dr/jyUk7aUDEyzVibFayBqAhKkStVsrYodG45XZd8bMYei2Ju0asxQ4W3IY/CLF8rmRBkkYH+VNdwr2Ii2cylYWuuEuruBd6vHNzlt0riXrOVIEt1nP89GIAT1otevo0UK+be0dRoyaTkLYac/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BOxxSrdH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T0R5lD012159;
+	Wed, 29 May 2024 10:07:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Pmy6sncnroHSOSN+lPmW/VpSZNMn1CzZWb1tYiv3AT0=; b=BOxxSrdHni0pzaQY
+	VM0jkl2zANhh7nRVAQsJ6qOCpFnns2wRXi5Lk/k/GiHO9Ig5oVwtxCUlnsjfkLoY
+	MH+N5nNl+00qWxoex0teV1CSesz4q3bkpl2wMQSUQUHUYuP1YFxu5/gBmnNatCZQ
+	VFMeSi1BQoEGWanGjO7siOqrL5aSKSzWL8bM5L+7pWpSHlRexMqGCWKgY3qYR1Zq
+	2x41AH6eDTgGV4naalylYQMgXtETRoCi8qslMfk14duuSDKJ2n010kiOYEDybfjB
+	SxYvwWjTCayIDp3JvFsH6eTGo7IJATTA/cl4iZ/BOzZ7QzYYXumMEBG2HzT4Lta4
+	j0GjqQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2prpfh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 10:07:11 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TA79Sc019570
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 10:07:09 GMT
+Received: from [10.253.14.197] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 03:07:08 -0700
+Message-ID: <74e2db16-007a-4b31-b43d-649516000f16@quicinc.com>
+Date: Wed, 29 May 2024 18:07:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,110 +64,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] Bluetooth: btnxpuart: Update firmware names
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, amitkumar.karwar@nxp.com, rohit.fule@nxp.com,
- sherry.sun@nxp.com, ziniu.wang_1@nxp.com, haibo.chen@nxp.com,
- LnxRevLi@nxp.com, regressions@lists.linux.dev
-References: <20240529095347.22186-1-neeraj.sanjaykale@nxp.com>
- <20240529095347.22186-3-neeraj.sanjaykale@nxp.com>
+Subject: Re: [PATCH v2] kobject_uevent: Fix OOB access within
+ zap_modalias_env()
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <1716866347-11229-1-git-send-email-quic_zijuhu@quicinc.com>
+ <ZlYo20ztfLWPyy5d@google.com>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240529095347.22186-3-neeraj.sanjaykale@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <ZlYo20ztfLWPyy5d@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JfGmXeMnH89KATRnpbyJzQG1L7qmZPYA
+X-Proofpoint-ORIG-GUID: JfGmXeMnH89KATRnpbyJzQG1L7qmZPYA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_06,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290068
 
-[Cc: regressions@]
-
-Dear Neeraj,
-
-
-Am 29.05.24 um 11:53 schrieb Neeraj Sanjay Kale:
-> This updates the firmware names of 3 chipsets: w8987, w8997, w9098.
-> These changes are been done to standardize chip specific firmware
-> file names.
-
-Can you please describe the new naming schema in the commit message?
-
-> To allow user to use older firmware file names, a new device tree
-> property has been introduced called firmware-name, which will override
-> the hardcoded firmware names in the driver.
-
-So users updating the Linux kernel but not updating the devicetree with 
-the new property are going to see a regression, right? I think this 
-violates Linux’ no regression policy. If so, please implement a way to 
-support old and new names.
-
-> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> ---
-> v2: Remove "nxp/" from all firmware name definitions to be inline with
-> firware file name read from device tree file. (Krzysztof)
-
-fir*m*ware
-
-> ---
->   drivers/bluetooth/btnxpuart.c | 28 +++++++++++++++++-----------
->   1 file changed, 17 insertions(+), 11 deletions(-)
+On 5/29/2024 2:56 AM, Dmitry Torokhov wrote:
+> On Tue, May 28, 2024 at 11:19:07AM +0800, Zijun Hu wrote:
+>> zap_modalias_env() wrongly calculates size of memory block to move, so
+>> will cause OOB memory access issue if variable MODALIAS is not the last
+>> one within its @env parameter, fixed by correcting size to memmove.
+>>
+>> Fixes: 9b3fa47d4a76 ("kobject: fix suppressing modalias in uevents delivered over netlink")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>> V1 -> V2: Correct commit messages and add inline comments
+>>
+>> V1 discussion link:
+>> https://lore.kernel.org/lkml/0b916393-eb39-4467-9c99-ac1bc9746512@quicinc.com/T/#m8d80165294640dbac72f5c48d14b7ca4f097b5c7
+>>
+>>  lib/kobject_uevent.c | 17 ++++++++++++++++-
+>>  1 file changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+>> index 03b427e2707e..f22366be020c 100644
+>> --- a/lib/kobject_uevent.c
+>> +++ b/lib/kobject_uevent.c
+>> @@ -433,8 +433,23 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
+>>  		len = strlen(env->envp[i]) + 1;
+>>  
+>>  		if (i != env->envp_idx - 1) {
+>> +			/* @env->envp[] contains pointers to @env->buf[]
+>> +			 * with @env->buflen elements, and we want to
+>> +			 * remove variable MODALIAS pointed by
+>> +			 * @env->envp[i] with length @len as shown below:
+>> +			 *
+>> +			 * 0          @env->buf[]      @env->buflen
+>> +			 * ----------------------------------------
+>> +			 *      ^              ^                  ^
+>> +			 *      |->   @len   <-|   target block   |
+>> +			 * @env->envp[i]  @env->envp[i+1]
+>> +			 *
+>> +			 * so the "target block" indicated above is moved
+>> +			 * backward by @len, and its right size is
+>> +			 * (@env->buf + @env->buflen - @env->envp[i + 1]).
+>> +			 */
+>>  			memmove(env->envp[i], env->envp[i + 1],
+>> -				env->buflen - len);
+>> +				env->buf + env->buflen - env->envp[i + 1]);
 > 
-> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-> index 0b93c2ff29e4..4442d911eba8 100644
-> --- a/drivers/bluetooth/btnxpuart.c
-> +++ b/drivers/bluetooth/btnxpuart.c
-> @@ -33,16 +33,16 @@
->   /* NXP HW err codes */
->   #define BTNXPUART_IR_HW_ERR		0xb0
->   
-> -#define FIRMWARE_W8987		"nxp/uartuart8987_bt.bin"
-> -#define FIRMWARE_W8997		"nxp/uartuart8997_bt_v4.bin"
-> -#define FIRMWARE_W9098		"nxp/uartuart9098_bt_v1.bin"
-> -#define FIRMWARE_IW416		"nxp/uartiw416_bt_v0.bin"
-> -#define FIRMWARE_IW612		"nxp/uartspi_n61x_v1.bin.se"
-> -#define FIRMWARE_IW624		"nxp/uartiw624_bt.bin"
-> -#define FIRMWARE_SECURE_IW624	"nxp/uartiw624_bt.bin.se"
-> -#define FIRMWARE_AW693		"nxp/uartaw693_bt.bin"
-> -#define FIRMWARE_SECURE_AW693	"nxp/uartaw693_bt.bin.se"
-> -#define FIRMWARE_HELPER		"nxp/helper_uart_3000000.bin"
-> +#define FIRMWARE_W8987		"uart8987_bt_v0.bin"
-> +#define FIRMWARE_W8997		"uart8997_bt_v4.bin"
-> +#define FIRMWARE_W9098		"uart9098_bt_v1.bin"
-> +#define FIRMWARE_IW416		"uartiw416_bt_v0.bin"
-> +#define FIRMWARE_IW612		"uartspi_n61x_v1.bin.se"
-> +#define FIRMWARE_IW624		"uartiw624_bt.bin"
-> +#define FIRMWARE_SECURE_IW624	"uartiw624_bt.bin.se"
-> +#define FIRMWARE_AW693		"uartaw693_bt.bin"
-> +#define FIRMWARE_SECURE_AW693	"uartaw693_bt.bin.se"
-> +#define FIRMWARE_HELPER		"helper_uart_3000000.bin"
->   
->   #define CHIP_ID_W9098		0x5c03
->   #define CHIP_ID_IW416		0x7201
-> @@ -685,13 +685,19 @@ static bool process_boot_signature(struct btnxpuart_dev *nxpdev)
->   static int nxp_request_firmware(struct hci_dev *hdev, const char *fw_name)
->   {
->   	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
-> +	const char *fw_name_dt;
->   	int err = 0;
->   
->   	if (!fw_name)
->   		return -ENOENT;
->   
->   	if (!strlen(nxpdev->fw_name)) {
-> -		snprintf(nxpdev->fw_name, MAX_FW_FILE_NAME_LEN, "%s", fw_name);
-> +		if (strcmp(fw_name, FIRMWARE_HELPER) &&
-> +		    !device_property_read_string(&nxpdev->serdev->dev,
-> +						 "firmware-name",
-> +						 &fw_name_dt))
-> +			fw_name = fw_name_dt;
-> +		snprintf(nxpdev->fw_name, MAX_FW_FILE_NAME_LEN, "nxp/%s", fw_name);
->   
->   		bt_dev_dbg(hdev, "Request Firmware: %s", nxpdev->fw_name);
->   		err = request_firmware(&nxpdev->fw, nxpdev->fw_name, &hdev->dev);
+> Thank you for noticing this, it is indeed a bug.
+> 
+> I wonder if this would not be expressed better as:
+> 
+> 			tail_len = env->buflen - (env->envp[i + 1] - env->envp[0]);
+> 			memmove(env->envp[i], env->envp[i + 1], tail_len);
+> 
+> and we would not need the large comment.
+>
+Greg KH suggests add inline comments since my fix is not obvious with
+first glance, let us wait for his comments within 2 days about below
+question:
+is it okay to remove those inline comments if block size to move is
+changed to env->buflen - (env->envp[i + 1] - env->envp[0]) ?
+> Otherwise:
+> 
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+>>  
+>>  			for (j = i; j < env->envp_idx - 1; j++)
+>>  				env->envp[j] = env->envp[j + 1] - len;
+>> -- 
+>> 2.7.4
+>>
+> 
+> Thanks.
+> 
 
-
-Kind regards,
-
-Paul
 
