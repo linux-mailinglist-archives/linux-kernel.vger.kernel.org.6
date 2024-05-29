@@ -1,186 +1,103 @@
-Return-Path: <linux-kernel+bounces-193433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45328D2BE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:05:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105CF8D2C1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E849C1C22357
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E552878AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A1015B579;
-	Wed, 29 May 2024 05:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E990715B978;
+	Wed, 29 May 2024 05:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g3N7tETX"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="cBCP8gOa"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A4815B569
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4223315B575;
+	Wed, 29 May 2024 05:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716959114; cv=none; b=jhQIqqHzDjkDNYL9PYPZU0t4FtUJKxFeQbu0PlDUgTkrvDEL/VRZ1gzrGGRMYORMJRF0OqfPSYKzh3ySwHcabWu8BIABV3d/pOmVq0j8nfNMwN29A5uGLN3mInQfMPaFBQcIivrMB7sR4uh9ePZLKBToRC8eRIOn1fehOyow97E=
+	t=1716959632; cv=none; b=jBrqDKZdCBcnIliigJwxSdRf1TmRa0QhqeUrLXAHJc6oJoU5qg9NAheTplt5AGvi2sKavXCJxf/3ri7Y5l0MPShn0sR2hKnepTBafWvZLkM0gHUnrPCR3Kmu5UDQhS4o6b/zj3jgBBrK6xPBPZfElke9D9uZgJ1Af/DrVteSb/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716959114; c=relaxed/simple;
-	bh=edYATESJWmsjM0xhVxjlpyLFJN2AzhjUneUPftzfzJY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j2X4KjMhuKbuE53YNnRc9ePB+HqYDQUL2pFt5Bzk4r+NuJc+M9wgsYdOtNlQgb5M9v727RHPwEWRESkxiX/GEfMPJtdT3+zqvyZyXwTpwcr010dn4ZFopn8TaN6owbz6ZKz4Ek1PZAq0uy2nG5C9Dm28sliOr21ZOZ4z5/Q1u1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g3N7tETX; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-48a39a3b10dso516728137.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:05:11 -0700 (PDT)
+	s=arc-20240116; t=1716959632; c=relaxed/simple;
+	bh=7m5R8xBEsR7gKu+JfTyNhwOA4wOGzMtlaFLo+8zMc5Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PuIs+w3pu07BMTeetDm/u4f4Jagb005dieet3hHdn0qB9amRF3dbJzIzgrrJJkWZq1NgKBrE+KjSw6qm0ev3mKd1Bwzk8ph4qByqSKyjCwnHf+jSkZzAy+wn9+B5v7Mbowqy1HxnNEibkaHRbb4GXFOi7jYOGztBvQDyFp0VY4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=cBCP8gOa; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [127.0.1.1] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 354BC2014A;
+	Wed, 29 May 2024 13:13:43 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716959110; x=1717563910; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CKmbUeAYX99Z/W8wHYS7l713oDOhasoyW6w2BmqBmx0=;
-        b=g3N7tETX30wucCzrKJCbJQwD0P4Et0XZsSMwojoks6QDeGnhSOsgI/TsBhBlkC4cVp
-         mh+6oyk0yKTtKYcbAjgZhXXr3hyV2t3j5kXCxiTkEBeiuXP40F2F/UEUG8H5UlbCTv07
-         GYev2HnnZKcSCXf+KkUUIeB5JKB34ibcM8OgMvL3mLubkh1GCI9XqtIL2kQTSoIh0Bpm
-         l67QDaLa7cz1oOQ21/knagatgBEyRat1wEEApNSRd1nV5lcePv3VoZtjiB+A5R2YuM2C
-         vfHnahrJar7RGs3fLZJtXUGjWybU4tJbFuz9zo8rksaql4MN+XMNCkYXlrUqjNMMAjoK
-         yhjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716959110; x=1717563910;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CKmbUeAYX99Z/W8wHYS7l713oDOhasoyW6w2BmqBmx0=;
-        b=KpkYcnfo7Wrox7xAARI8gSAcaQgDZtxH51c1wGQeNmk+T1DXGtHSHdxa65nsZXollC
-         PcgjkdVJgnlNVnoq3ubSR9IZVEISWalnOQ6rIuvj6Rpc1B7CzIBx6GWNSXmX6P+GuZIl
-         Pbx/9F/fn2k4Kgs+8Qni0m5ouCeEo9xs/S0rjNYgMMvwnfNVgzpUvPLac/xXIgnFZsc0
-         RjIFlr+SmD1KkQ/SLOW1uFbASvUpfZpE88WsUebtCYqdg4oP/IPtwupwX3bjeftoToL1
-         Y/t/BGF+Irea7L5OFNstiCQnzyAeUBCvmCeQUn7INtQJ+IxgB8U7wLcvjgv+gArFVG1V
-         0E2Q==
-X-Gm-Message-State: AOJu0YxqyHU9ulmtsMBZ1zsbIqUC++5z57ZckQv47cTlrWEqhkI7fsFI
-	uIvRon2NRIqmZWwJCJAD08QJNfwd73XNStehE236p238Jb/QzxuMnH47JEw1yhvlPAzLCA0qoX/
-	y3fiVY3WvPLSwFRnq3Nmjofd1b7mJbxAWh49FHQ==
-X-Google-Smtp-Source: AGHT+IGLmzof1jZ4cDRooqbgTFk+QfXjN2BKW7YXz8qJTEkMgr7Y2s74VX0eUhStsUj7n1f+KqTK4cvVJU85NhMUGvw=
-X-Received: by 2002:a05:6102:98:b0:47b:614e:cbd with SMTP id
- ada2fe7eead31-48a386d7d64mr12686870137.31.1716959110120; Tue, 28 May 2024
- 22:05:10 -0700 (PDT)
+	d=codeconstruct.com.au; s=2022a; t=1716959627;
+	bh=h4M8rZbowMLRerjP3q6tibaxSn7JV3KdcB7/Gsd+7Sg=;
+	h=From:Subject:Date:To:Cc;
+	b=cBCP8gOaeRVNkWdCtFQ7WeZ9NFuk53Mx0bIwLpK+nUMuLbR9+YC260XEDN0pyOtkV
+	 WM41jOPl5V+cuTf5P5Gdq0LCD2IIjzAbtcqyPhdfCr4OIdz9kyfxPWzCGs24Y3hBGW
+	 ZvA7L0tBX8sCwGMWnotaDdUIptUkoKLmiAHqY/XwV5aBtnY7N7MpWuMO14TExcM0dG
+	 afMnV6n5tZkIN/ANFVZ1FEFD/jw3tnBng22BejSAI/Hr2WbT4ORO+G0j1hWvUH0XpF
+	 uRM2vQjV3+RxF8a6uJrvPwWidNTsZNYv7sRmpv6dIm0Yz8Ph+MnwsPaz5byrJjAX0Z
+	 xO70/T6yc/bIg==
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+Subject: [PATCH 0/4] dt-bindings: gpio: aspeed,sgpio: Miscellaneous
+ cleanups
+Date: Wed, 29 May 2024 14:43:19 +0930
+Message-Id: <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-0-91c42976833b@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527121340.3931987-1-jens.wiklander@linaro.org>
- <20240527121340.3931987-5-jens.wiklander@linaro.org> <CAFA6WYNF77WrpC6PPY4idM7XkObnrS9hDyyBJDsaLRLcqdH_9g@mail.gmail.com>
- <CAHUa44EFYwYU6LSGfv+2ym_pweDKbJzqQG0MfW=bqx5UGSnYSQ@mail.gmail.com>
-In-Reply-To: <CAHUa44EFYwYU6LSGfv+2ym_pweDKbJzqQG0MfW=bqx5UGSnYSQ@mail.gmail.com>
-From: Sumit Garg <sumit.garg@linaro.org>
-Date: Wed, 29 May 2024 10:34:58 +0530
-Message-ID: <CAFA6WYMobtWMFjv11Gg5-bhU_Guf_R4tx35kwdK-aT4hjLfn0g@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] optee: probe RPMB device using RPMB subsystem
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Bart Van Assche <bvanassche@acm.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manuel Traut <manut@mecka.net>, 
-	Mikko Rapeli <mikko.rapeli@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG+5VmYC/x2NQQqDMBAAvyJ77kIaahG/Ij2kyZouyBp2Uy2If
+ 2/wMjCXmQOMlMlg7A5Q2th4lSb3WwfxEyQTcmoO3vmH6/2AqeIeVFiyYS68ol1kqaT6LRUjLYv
+ hc+iDozn56N7QYkVp5t81ml7n+QeTDH4eeAAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
 
-On Tue, 28 May 2024 at 14:38, Jens Wiklander <jens.wiklander@linaro.org> wr=
-ote:
->
-> Hi Sumit,
->
-> On Mon, May 27, 2024 at 4:38=E2=80=AFPM Sumit Garg <sumit.garg@linaro.org=
-> wrote:
-> >
-> > On Mon, 27 May 2024 at 17:44, Jens Wiklander <jens.wiklander@linaro.org=
-> wrote:
-> > >
-> > > Adds support in the OP-TEE drivers (both SMC and FF-A ABIs) to probe =
-and
-> > > use an RPMB device via the RPMB subsystem instead of passing the RPMB
-> > > frames via tee-supplicant in user space. A fallback mechanism is kept=
- to
-> > > route RPMB frames via tee-supplicant if the RPMB subsystem isn't
-> > > available.
-> > >
-> > > The OP-TEE RPC ABI is extended to support iterating over all RPMB
-> > > devices until one is found with the expected RPMB key already
-> > > programmed.
-> > >
-> > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > > Tested-by: Manuel Traut <manut@mecka.net>
-> > > ---
-> > >  Documentation/ABI/testing/sysfs-class-tee |  15 ++
-> > >  MAINTAINERS                               |   1 +
-> > >  drivers/tee/optee/core.c                  |  96 +++++++++++-
-> > >  drivers/tee/optee/device.c                |   7 +
-> > >  drivers/tee/optee/ffa_abi.c               |  14 ++
-> > >  drivers/tee/optee/optee_ffa.h             |   2 +
-> > >  drivers/tee/optee/optee_private.h         |  26 +++-
-> > >  drivers/tee/optee/optee_rpc_cmd.h         |  35 +++++
-> > >  drivers/tee/optee/optee_smc.h             |   2 +
-> > >  drivers/tee/optee/rpc.c                   | 177 ++++++++++++++++++++=
-++
-> > >  drivers/tee/optee/smc_abi.c               |  14 ++
-> > >  11 files changed, 387 insertions(+), 2 deletions(-)
-> > >  create mode 100644 Documentation/ABI/testing/sysfs-class-tee
-> > >
-> > > diff --git a/Documentation/ABI/testing/sysfs-class-tee b/Documentatio=
-n/ABI/testing/sysfs-class-tee
-> > > new file mode 100644
-> > > index 000000000000..c9144d16003e
-> > > --- /dev/null
-> > > +++ b/Documentation/ABI/testing/sysfs-class-tee
-> > > @@ -0,0 +1,15 @@
-> > > +What:          /sys/class/tee/tee{,priv}X/rpmb_routing_model
-> > > +Date:          May 2024
-> > > +KernelVersion: 6.10
-> > > +Contact:        op-tee@lists.trustedfirmware.org
-> > > +Description:
-> > > +               RPMB frames can be routed to the RPMB device via the
-> > > +               user-space daemon tee-supplicant or the RPMB subsyste=
-m
-> > > +               in the kernel. The value "user" means that the driver
-> > > +               will route the RPMB frames via user space. Conversely=
-,
-> > > +               "kernel" means that the frames are routed via the RPM=
-B
-> > > +               subsystem without assistance from tee-supplicant. It
-> > > +               should be assumed that RPMB frames are routed via use=
-r
-> > > +               space if the variable is absent. The primary purpose
-> > > +               of this variable is to let systemd know whether
-> > > +               tee-supplicant is needed in the early boot with initr=
-amfs.
-> >
-> > Why do we need this if we already have [1] [2]? AFAICS, whichever
-> > devices like fTPM etc. systemd depends upon, it can be easily known
-> > via existing sysfs property.
-> >
-> > [1] https://docs.kernel.org/admin-guide/abi-testing.html?highlight=3Dop=
-tee#abi-sys-bus-tee-devices-optee-ta-uuid-need-supplicant
-> > [2] Documentation/ABI/testing/sysfs-bus-optee-devices
->
-> The dependency is reversed. A TA depending on tee-supplicant will not
-> be loaded until tee-supplicant is ready. rpmb_routing_model is used as
-> one of the inputs to determine if tee-supplicant must be started early
-> or if it can wait until the real rootfs is available.
->
+Hello,
 
-Okay but I am still not able to understand the reasoning as to why
-tee-supplicant can't be started unconditionally. If it's available in
-the initrd then systemd should be able to launch it unconditionally.
-Or is there any dependency I am missing for the tee-supplicant to be
-started? RPMB routing isn't the only service offered by tee-supplcant,
-so gating it behind that for no real reason isn't making sense to me.
+This short series fixes some SGPIO-related devicetree warnings currently
+emitted by `make dtbs_check` for Aspeed devicetrees.
 
-IOW, why do we need to defer starting tee-supplicant until the real
-rootfs is available?
+One change documents `#interrupt-cells` and a subseqent change makes
+it required. The property should have been both documented and marked
+as required from the start. As the change is technically not backwards
+compatible, I've split it such that we can debate the required status
+separately.
 
--Sumit
+Please review!
+
+Andrew
+
+---
+Andrew Jeffery (4):
+      dt-bindings: gpio: aspeed,sgpio: Order properties by DTS style
+      dt-bindings: gpio: aspeed,sgpio: Specify gpio-line-names
+      dt-bindings: gpio: aspeed,sgpio: Specify #interrupt-cells
+      dt-bindings: gpio: aspeed,sgpio: Require #interrupt-cells
+
+ .../devicetree/bindings/gpio/aspeed,sgpio.yaml     | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240528-dt-warnings-gpio-sgpio-interrupt-cells-685a0efd2c0b
+
+Best regards,
+-- 
+Andrew Jeffery <andrew@codeconstruct.com.au>
+
 
