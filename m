@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-193615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002088D2EAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:44:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFC58D2EB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9AA4286AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6746E2845B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AFD167DA5;
-	Wed, 29 May 2024 07:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD881167DAF;
+	Wed, 29 May 2024 07:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YKCcpFy9"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuFc0cXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6175167D82
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1221E167D82;
+	Wed, 29 May 2024 07:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968640; cv=none; b=sqJeSTjk/OyxKnptuL/uTjbQj67I41tG7M/bzPlfn01CKP4hR/pP7EGd8XmJKOUaXsOwutU625Cjm7yosLBOcVKLPeU8B3c7F6B3ArkvT0Gzmp4xpFOhmqWUxkLLsLnTJRDnmAZC72W5/omqsgNpQG1foFmtmV45XIo6ghJ/ifA=
+	t=1716968668; cv=none; b=gFhNPInb1Z9vCxDiF5SMUUvof204Rrg9mqWttxc+J+tXJDlVqmQu2cD8plgxDlwEOjuKPMX2UQMFSz6wbmGY/j3enBEV8XFf+M8h4JGo+q/D+Biw3WxQoTMTDAfAXR0flpR7EfJfcI9UYsg+JavDNfzU/ryosjc+bleUrr7plkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968640; c=relaxed/simple;
-	bh=+QUSnP/ngwbPQEWBZkzfhpGYUxEWZhbTwbH0REe7wBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEXh0ztDfQ+PWqt3rdtEPqRdsylikJRBoulS547uwlIKibbgNc+PbAF3yStFb0WjNGLS4AAR+FscG9oe3dLbq95vkRrrJKcwTHmrAIjPRLVr53hqahsv78mxg56rMRivzGsSX9ftyDk3xDsn1dIs0P2zrvCv33fQwmdqIh9Twk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YKCcpFy9; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b119986f2so273658e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716968636; x=1717573436; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ka2Maam5Ei5EuRcb2P0MO3/hFv2w3w7reQQ7Fg93ZTo=;
-        b=YKCcpFy9OLhD3ykiha37ntqiOinXhwfbb+L3n+JNNIAINNliTIqZC3SLZo6yFOUK8f
-         uVCq3UUficore1l2+t2Dx9eg9U+kdBDkOftunUnE4614+wVe75vkEGZJhWfarjZQrieV
-         dt+FGqoEAcEb0pZAh4LTWFEkDmrIsYn+vfZp0Otk5/ZuGT81m2Y9m0uNcD8bA/tx6+aw
-         Bygc0BdiX+EgqYnfKgV9l1sNOKeAOXstJIUO26ixx+4PdcTIlUFNeJ1reDouiiuKTb28
-         9b77ylNzFUp0Qk34+SjUlfCKYkcx+6nTKnTaoWZQCeUwSFkozYCaZkbjbJf9sEbXA5eg
-         JqQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716968636; x=1717573436;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ka2Maam5Ei5EuRcb2P0MO3/hFv2w3w7reQQ7Fg93ZTo=;
-        b=wV2fV/VkoH2t6ncCzD/RcoWuJua5dyX/kbhs6ON2ZOtK4YeDeCVcGkBiyTMEwqaVzt
-         rS4ophSqY14DA/IfXJGmpwaBVgs/7OHn/sGYWvX4Lo8kkbrcvHK+J6az/OoPtSwORqew
-         WGC7ZpZJOo9YDxK+/m8Um4SvzC0HpJrlxuMiBDWQvbzedesPi9zT4JiQxpmoHJsAEPO+
-         buQPs/Nn9B3PT1hfaVJjoBkRCUvbt5sRVM1jH/n83HPjhOxZGGQop0kGIs7zcSP2vAuE
-         wUHQ00JHMceu9OasgxTsd38eaf0Tkikv/PnIGQMEQp6NDkmhPCaYU3eqerBhpfG4YaBG
-         tm2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSZX4ZMbtP2juUlVLIYuoN4B9jOcdSq5sLUod4fdpcAIqjweIJHfQiBYVjbubO9DXyWIkLdbNRLm7YslEykwQUWiZbfNYDcKs7+eCD
-X-Gm-Message-State: AOJu0YzDU7iNda2t8ux08ObWGSObqFy/lo5ZnZ28XIK8jvdUWf9KpoBb
-	qfUgx0Fhngd52k/HlZNvj9HUBnLGwm4oyh2abKIVbhntDMelvcJVUwgxmKF7pr8=
-X-Google-Smtp-Source: AGHT+IEpKoJxeYMMRmRHKz19pKO8ijGaGc5T6KYCnRuUNFgdev3K9Yfz0P6oPUoZ1/TYqG8Ww0hnig==
-X-Received: by 2002:a05:6512:3241:b0:51c:df1f:2edc with SMTP id 2adb3069b0e04-529644ebe8cmr7988541e87.2.1716968635950;
-        Wed, 29 May 2024 00:43:55 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529a50b1d85sm978336e87.113.2024.05.29.00.43.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 00:43:55 -0700 (PDT)
-Date: Wed, 29 May 2024 10:43:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
-	david.heidelberg@collabora.com, guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
-	mcanal@igalia.com, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] drm/ci: add farm variable
-Message-ID: <xhdcswueynlctjznqnxo663v2k6q2lrk55jjdodrkd7ojijaiw@lg3e2e5qcnny>
-References: <20240529024049.356327-1-vignesh.raman@collabora.com>
- <20240529024049.356327-3-vignesh.raman@collabora.com>
+	s=arc-20240116; t=1716968668; c=relaxed/simple;
+	bh=AzzDMJdA28GXgKKNDPed4G6wzS0vsyy1cTbdGo0qXx4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=SQYB5ZuJrbdLDzkWoZiGB8xmKHFsNCGYRoRwVpbsH1NSkZLBa9WolELGvsmaumbp3ISFQWeDAj0Xs92qQQqrGt54CLkxt1DkaAmlmjgcap6WpW+6mxcWVDjNbu1UAvQ9CvHqB2DOoNQh0sxpCJjFmlUoB6q1FhqxSj2+afyKdDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuFc0cXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07FEC32786;
+	Wed, 29 May 2024 07:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716968667;
+	bh=AzzDMJdA28GXgKKNDPed4G6wzS0vsyy1cTbdGo0qXx4=;
+	h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+	b=IuFc0cXg7QZcBM/e78aPfrhBLd64oyBQbj++bPzquLHjN1El6N7G2cxjH1GnojcRA
+	 UAKgr8AanpQgN8kkqaHAe8P0V7JngaFfbCjhgzUImu22Xgy+mGBaWrA9phVcoHfHqO
+	 UPXcvCCmHqylLRul5mz4vw/TWykgIHybn23Iry3+RSb0wmoETVk5GDR59Vy9XVXEoj
+	 qi2YbSTTRB2zolkkfCW3W6YbxsKuatjmKdN6zpVfi0iYx38TvZehfY2onAdGON1EVG
+	 bx0Iddop5HCFibaQ+9aiEJq4H/zC3vZMNTddS9VtdcCgX5afQqorzRtPF97+YQCRGM
+	 RpgA1b5BXBrsA==
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id BCF861200032;
+	Wed, 29 May 2024 03:44:25 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 29 May 2024 03:44:25 -0400
+X-ME-Sender: <xms:2dxWZp09F_zgveTjUahiJYfxfKwtcrUDlCKk32Euwgn0mJ4j1L61iw>
+    <xme:2dxWZgFm8nF-9Ui0ZZ7M9s3S74-EbNno_ppR7o3eiP9PBwU4VVX9Mwf5E3EFr1T6e
+    b3zKIoYXPnRMYtlWtQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdektddgudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
+    grthhtvghrnhepvdeviefgtedugeevieelvdfgveeuvdfgteegfeeiieejjeffgeeghedu
+    gedtveehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedt
+    vdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrd
+    guvg
+X-ME-Proxy: <xmx:2dxWZp6sJipIZmP3vYTZHtAJI65-auL8_Lbf2Jz0zwZDFGgV9xRydw>
+    <xmx:2dxWZm3fGByL6p01B6SN1ErYS7B7tw5cia8zk88c15tNPpxLkoY03Q>
+    <xmx:2dxWZsHTEgrpqSJk7YbP9EskBR6ulP_ZET3rojqM-BTs7H52ghit3w>
+    <xmx:2dxWZn8rFkl481g5QNQpWGJcK2hD297RINDbNuaqutcHZ77_zknmiA>
+    <xmx:2dxWZpkwNrdA9PO5hp2wfEY6MB5IcP2qaLlJdlASDuJ4HazGG-WRRemt>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7935EB6008D; Wed, 29 May 2024 03:44:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529024049.356327-3-vignesh.raman@collabora.com>
+Message-Id: <b779241d-36d8-4728-a126-9340bc569a2d@app.fastmail.com>
+In-Reply-To: <0da9785e-ba44-4718-9d08-4e96c1ba7ab2@kernel.org>
+References: <cover.1712080158.git.legion@kernel.org>
+ <cover.1713375378.git.legion@kernel.org>
+ <e4229fe2933a003341e338b558ab1ea8b63a51f6.1713375378.git.legion@kernel.org>
+ <2024041836-most-ablaze-f417@gregkh>
+ <0da9785e-ba44-4718-9d08-4e96c1ba7ab2@kernel.org>
+Date: Wed, 29 May 2024 09:44:04 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Jiri Slaby" <jirislaby@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Alexey Gladkov" <legion@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kbd@lists.linux.dev,
+ linux-api@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ linux-serial@vger.kernel.org, "Alexander Viro" <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v5 1/3] VT: Use macros to define ioctls
+Content-Type: text/plain
 
-On Wed, May 29, 2024 at 08:10:45AM +0530, Vignesh Raman wrote:
-> Mesa uses structured logs for logging and debug purpose,
-> https://mesa.pages.freedesktop.org/-/mesa/-/jobs/59165650/artifacts/results/job_detail.json
-> 
-> Since drm-ci uses the mesa scripts, add the farm variable
-> and update the device type for missing jobs.
-> 
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
-> 
-> v3:
->   - New commit to add farm variable and update device type variable.
-> 
+On Wed, May 29, 2024, at 09:29, Jiri Slaby wrote:
+> On 18. 04. 24, 8:18, Greg Kroah-Hartman wrote:
+>> 
+>> This is a nice cleanup, thanks for doing it, I'll just take this one
+>> change now if you don't object.
+>
+> Unfortunately, _IOC_NONE is 1 on some archs as noted by Arnd, and this 
+> commit changed the kd ioctl values in there which broke stuff as noted 
+> by Al.
+>
+> We either:
+> * use _IOC(0, X, Y) in here, instead of _IO(X, Y), or
+> * define KDIOC(X) as _IOC(0, KD_IOCTL_BASE, X), or
+> * revert the commit which landed to -rc1 already.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I would prefer a simple revert, as the other options may
+end up more confusing. Another option might be a new
+global macro, if we then go an convert all plain ioctl
+command numbers to that.
 
-
--- 
-With best wishes
-Dmitry
+      Arnd
 
