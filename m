@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-193345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B788D2A9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:07:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B485A8D2AA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106761F26722
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:07:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5774A284C3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C3915B987;
-	Wed, 29 May 2024 02:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CFE15AD9A;
+	Wed, 29 May 2024 02:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spPMwPRg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HRSdr8mM"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A761915AAD7;
-	Wed, 29 May 2024 02:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D4226AF3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 02:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716948352; cv=none; b=Z5/i/BqDQd6BOHygaZesjmnNBWg74cU6PEeSCOIk8qTPZlGAkfV+lQdOITikPxWeOAzLDV0sxzqCEJU4pMSPAg7CI/IOyvjn0Vs157jsgLq9/XqZSQt0i47kpt36S+1DdT8zGyJb1JiA7zzaFVzrUlZNxpAzTFIoxPnVbSvLj1M=
+	t=1716948762; cv=none; b=RFTcCk39zRARsHawq7Zhs1m0iAHFJ8Pht1kqz7zi13nnudTf6DWgA6YLC7c3YfUYKvQ95Afats0ILBBFJC03mXJ7S+AdeVslViKV8AgDMXaNTm1pWFMAuDMhLz8MQo4fHO3gm4gFMhgRPZzrWFCFkHu2k9bzTkOfGlB3tJZ8z+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716948352; c=relaxed/simple;
-	bh=tshLIKDQX0zUEL0G4rPCVqyXNQad4aHwxWiAd2HUP/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dSLbvgd5s/Esa5NXJ+y33+0ZHUuKmS1qSMdCJ9bP1TrkgO35mNTWcYsjCxkUlplwpD/T+7v+f+oMA9w3XiqGR5PvZxcnaqRgxsapVaRPF6Sjn+clIEW43WxCCq1FwB6CMIfestBVKJfeqXWc7VNs0xSNeBSO9trcj4hHQWClFDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spPMwPRg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86D7C32782;
-	Wed, 29 May 2024 02:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716948352;
-	bh=tshLIKDQX0zUEL0G4rPCVqyXNQad4aHwxWiAd2HUP/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=spPMwPRggwpE80SBC05KT7CcQelIEaFg5HbhWG2WRO9btBrx95aHWZ3kiGrKXxwSz
-	 kC7qRLQbFwrJMTd0Z0ehYgHCwtZuK0mlP7tptB2GrOPonbwQuuu1snNUb8htzfRxZp
-	 URTKwCGLH0AoDnxjjPLv9CexJKCU4GqbigUgoAbOpZZEVeG3IzSHht9qPZMPndVUec
-	 AtwbeGSh4DWOpIMzei8fJy3+fYQlkngbP7Mwd78OTu/IgYdUpD1ZQ42G1PNQTNt6A1
-	 d1Qlg+OP8KFRgi+z09gwbBb7ZT1h9RwN2RzC/tFvOoAQzbCGFvm4gFVjPzNUzuh6oH
-	 /y2lXFcJTkIjA==
-Date: Tue, 28 May 2024 19:10:34 -0700
-From: Bjorn Andersson <andersson@kernel.org>
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	Richard Maina <quic_rmaina@quicinc.com>
-Subject: Re: [PATCH v2 4/4] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
- stop
-Message-ID: <i6fisxbgemwx7prani3zegkcnrll2w5gexcqllk4jqbmiazdz6@tcna7sfs5j63>
-References: <20240524-hwspinlock-bust-v2-0-fb88fd17ca0b@quicinc.com>
- <20240524-hwspinlock-bust-v2-4-fb88fd17ca0b@quicinc.com>
+	s=arc-20240116; t=1716948762; c=relaxed/simple;
+	bh=QfND/PD5GrGnKbwK+0FJycGdhW/D1Jmpc9axx2H3JGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pl4bKONjhLoWDfU/F/QmNKWKSZbTFdRIleeJ2vELDKGZn02TBMDdiKPFzMb6ubuhGGc+KanAoeNAvRpX8FWSA177BmTmtOxshaGwyCrUi5Bu+Qy3xRkJjAw6ofc6jpqcMDQnO6nZ0Z5ag/hsOyc6B2Xs9Kq/f+a+2Yl70RKoHgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HRSdr8mM; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716948758; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=diY8Yj7pHCeARPPadn/ZK5HGSeSyGpgtjlSUI3jYyZ0=;
+	b=HRSdr8mMfWr05qLRrX6BLm+pP+7kF9OE4rSYN8i5m2jXnjGNEpNxfLwuBAkPWv1Z7k43UbydWcSeolENWNBZHXvPDJpvFAOYZdErGGB4PGc1HlQbxSRaagVMCli+y5f8j5vYWfe4lVCEAeGHnqN4RudTCFD001S7STNZ1GouTp4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7RADWX_1716948752;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W7RADWX_1716948752)
+          by smtp.aliyun-inc.com;
+          Wed, 29 May 2024 10:12:37 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: msakai@redhat.com
+Cc: dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH v2] dm vdo indexer: Use swap() in swap_open_chapter()
+Date: Wed, 29 May 2024 10:12:31 +0800
+Message-Id: <20240529021231.21043-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524-hwspinlock-bust-v2-4-fb88fd17ca0b@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 24, 2024 at 06:26:43PM -0700, Chris Lew wrote:
-> From: Richard Maina <quic_rmaina@quicinc.com>
-> 
-> When remoteproc goes down unexpectedly this results in a state where any
-> acquired hwspinlocks will remain locked possibly resulting in deadlock.
-> In order to ensure all locks are freed we include a call to
-> qcom_smem_bust_hwspin_lock_by_host() during remoteproc shutdown.
-> 
-> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned smem
-> host_id. Remoteproc can pass this id to smem to try and bust the lock on
-> remoteproc stop.
-> 
-> This edge case only occurs with q6v5_pas watchdog crashes. The error
-> fatal case has handling to clear the hwspinlock before the error fatal
-> interrupt is triggered.
-> 
-> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+Use existing swap() function rather than duplicating its implementation.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+/drivers/md/dm-vdo/indexer/index.c:207:43-44: WARNING opportunity for swap().
 
-Regards,
-Bjorn
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9173
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+Changes in v2:
+  -Amend commit message to make it more clear.
+
+ drivers/md/dm-vdo/indexer/index.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/md/dm-vdo/indexer/index.c b/drivers/md/dm-vdo/indexer/index.c
+index 1ba767144426..df4934846244 100644
+--- a/drivers/md/dm-vdo/indexer/index.c
++++ b/drivers/md/dm-vdo/indexer/index.c
+@@ -197,15 +197,12 @@ static int finish_previous_chapter(struct uds_index *index, u64 current_chapter_
+ static int swap_open_chapter(struct index_zone *zone)
+ {
+ 	int result;
+-	struct open_chapter_zone *temporary_chapter;
+ 
+ 	result = finish_previous_chapter(zone->index, zone->newest_virtual_chapter);
+ 	if (result != UDS_SUCCESS)
+ 		return result;
+ 
+-	temporary_chapter = zone->open_chapter;
+-	zone->open_chapter = zone->writing_chapter;
+-	zone->writing_chapter = temporary_chapter;
++	swap(zone->open_chapter, zone->writing_chapter);
+ 	return UDS_SUCCESS;
+ }
+ 
+-- 
+2.20.1.7.g153144c
+
 
