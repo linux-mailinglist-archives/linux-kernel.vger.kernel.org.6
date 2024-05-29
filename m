@@ -1,253 +1,79 @@
-Return-Path: <linux-kernel+bounces-194690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95828D4001
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:04:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E84F8D4005
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23BF71F2425D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:04:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DD13B21373
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF65F1C8FCA;
-	Wed, 29 May 2024 21:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fDVwffn9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279EB1C8FCB;
+	Wed, 29 May 2024 21:04:35 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A200B1C8FB0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4244D1C8FBB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717016665; cv=none; b=G5UAvbdsFdSjL0vd5dxHM3AQh3XEPci60cYbvGwc/ejmYbgIIEtoGsmaKuL3/fddEHS/cWb5zQgwqK4vi2djDxRdaJSWCaezUtw3Tag6RQxnG2YS4dsJAn/7gdAabbnYe4cdJktX7DnAa5tHeDOwKCiEMLQL7XUYwyCTJuv63Cg=
+	t=1717016674; cv=none; b=mWXGry5f9+khZbXTSlsruHKpuL/j4OvtNY1NpBTRpQpq1OxAUmJgIcdUIqvfsFemAkxRCNX1XtgNXAPT4fv1i/FGWPLY0J2AS4enTyC5DTHHj+ZE4FaYmsHTOpkb+W0QA66Rph4Rl7lsmF8/QvgFFGUhIxxhWsFGiY3smhYS8fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717016665; c=relaxed/simple;
-	bh=iMtIvobYI0H9G7tHBc7YyOTeHwx/p57qqvfNbF270pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IVdk7UFpDLXc4d6MhbaiBkeH1uyyOOE/IUfDssMuCXVyFRyS9nGy/CM2AREVpXtkFzVPhH2JIOlWDV16FttXNbGiynGeVVYtbmAE2nbPNXCdw/97GcHyhtFrq0zpCcelh7sDdQalW2leuXUCiyxjtBNWPIKfLUydrxHVLvSzNr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fDVwffn9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717016662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tupnB1YLeLXMhE46LR4yaeakn/pWQ8hjwTVAwcgO5mI=;
-	b=fDVwffn9ERfWvR486BGabJ73yeDwDkeIumayAi2kS9TkntUwGOkBtF9K1Dad5pD9Kl7qS4
-	zz9NnSquIYV+yDFbyq6+r/gJjMgYW3YGdDtX0sOPcucdK9kNG8YB8N7UNLLHwOxVIEAmjN
-	zJZBayxqHholNTbaCiZybWFyOhA8gUg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-100-Hki8t8H2MDKypt6_4pUH6g-1; Wed, 29 May 2024 17:04:19 -0400
-X-MC-Unique: Hki8t8H2MDKypt6_4pUH6g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D82DD8016E9;
-	Wed, 29 May 2024 21:04:18 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.18.140])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5AA511C0D100;
-	Wed, 29 May 2024 21:04:18 +0000 (UTC)
-Date: Wed, 29 May 2024 17:04:16 -0400
-From: Joe Lawrence <joe.lawrence@redhat.com>
-To: Lukas Hruska <lhruska@suse.cz>
-Cc: pmladek@suse.com, mbenes@suse.cz, jpoimboe@kernel.org,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, mpdesouza@suse.com,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v2 2/6] livepatch: Add klp-convert tool
-Message-ID: <ZleYUN4z4jizCteM@redhat.com>
-References: <20240516133009.20224-1-lhruska@suse.cz>
- <20240516133009.20224-3-lhruska@suse.cz>
+	s=arc-20240116; t=1717016674; c=relaxed/simple;
+	bh=QGN6nTaLRATuAanyY2JWCC/5zV4E2mNZXxlfOcaB6dE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CjsuRhGEiZ9uz8+w6Q5tGpmNFEW3k9bIgwFVCteEvnBpBiLjCTFbE3Hw9NbxaEl7CwQhvqNbInEhcNbl5kPwDtc4/79oESMqNqRqhnKl9th5VkCY7Qxxx/bMBsIaEcwkcF0fY5qyQy+VOQdrmhB3nF6NveDShKuaIsuejXObn1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id 0a7d1c25-1dff-11ef-8e2d-005056bdf889;
+	Thu, 30 May 2024 00:04:30 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 30 May 2024 00:04:30 +0300
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>, kernel@collabora.com,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: Assign dummy scatterlist to unidirectional transfers
+Message-ID: <ZleYXoesgdAboMoF@surfacebook.localdomain>
+References: <20240529-dma-oops-dummy-v1-1-bb43aacfb11b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240516133009.20224-3-lhruska@suse.cz>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240529-dma-oops-dummy-v1-1-bb43aacfb11b@collabora.com>
 
-Hi Lukas,
-
-As mentioned offlist, reviewing and testing this is on my TODO list, but
-here are some early notes ...
-
-On Thu, May 16, 2024 at 03:30:05PM +0200, Lukas Hruska wrote:
-> Livepatches need to access external symbols which can't be handled
-> by the normal relocation mechanism. It is needed for two types
-> of symbols:
+Wed, May 29, 2024 at 11:42:35AM -0400, Nícolas F. R. A. Prado kirjoitti:
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
->   + Symbols which can be local for the original livepatched function.
->     The alternative implementation in the livepatch sees them
->     as external symbols.
-> 
->   + Symbols in modules which are exported via EXPORT_SYMBOL*(). They
->     must be handled special way otherwise the livepatch module would
->     depend on the livepatched one. Loading such livepatch would cause
->     loading the other module as well.
-> 
-> The address of these symbols can be found via kallsyms. Or they can
-> be relocated using livepatch specific relocation sections as specified
-> in Documentation/livepatch/module-elf-format.txt.
-> 
-> Currently, there is no trivial way to embed the required information as
-> requested in the final livepatch elf object. klp-convert solves this
-> problem by using annotations in the elf object to convert the relocation
-> accordingly to the specification, enabling it to be handled by the
-> livepatch loader.
-> 
-> Given the above, create scripts/livepatch to hold tools developed for
-> livepatches and add source files for klp-convert there.
-> 
-> Allow to annotate such external symbols in the livepatch by a macro
-> KLP_RELOC_SYMBOL(). It will create symbol with all needed
-> metadata. For example:
-> 
->   extern char *saved_command_line \
->                  KLP_RELOC_SYMBOL(vmlinux, vmlinux, saved_command_line, 0);
+> Commit 8cc3bad9d9d6 ("spi: Remove unneded check for orig_nents")
+> introduced a regression: unmapped data could now be passed to the DMA
+> APIs, resulting in null pointer dereferences. Commit 9f788ba457b4 ("spi:
+> Don't mark message DMA mapped when no transfer in it is") and commit
+> da560097c056 ("spi: Check if transfer is mapped before calling DMA sync
+> APIs") addressed the problem, but only partially. Unidirectional
+> transactions will still result in null pointer dereference. To prevent
+> that from happening, assign a dummy scatterlist when no data is mapped,
+> so that the DMA API can be called and not result in a null pointer
+> dereference.
 
-Nit: should this be KLP_RELOC_SYMBOL_POS if it including the 0 position?
-(Or KLP_RELOC_SYMBOL and omit the implied 0-th position.)
+I feel that with this the da560097c056 ("spi: Check if transfer is mapped
+before calling DMA sync APIs") can be reverted as unneeded. Nícolas, can
+you check that? If it works, we better revert the unneeded checks.
 
-> diff --git a/scripts/livepatch/elf.c b/scripts/livepatch/elf.c
-> --- /dev/null
-> +++ b/scripts/livepatch/elf.c
-> +static int update_shstrtab(struct elf *elf)
-> +{
-> +	struct section *shstrtab, *sec;
-> +	size_t orig_size, new_size = 0, offset, len;
-> +	char *buf;
-> +
-> +	shstrtab = find_section_by_name(elf, ".shstrtab");
-> +	if (!shstrtab) {
-> +		WARN("can't find .shstrtab");
-> +		return -1;
-> +	}
-> +
-> +	orig_size = new_size = shstrtab->size;
-> +
-> +	list_for_each_entry(sec, &elf->sections, list) {
-> +		if (sec->sh.sh_name != ~0U)
-> +			continue;
-> +		new_size += strlen(sec->name) + 1;
-> +	}
-> +
-> +	if (new_size == orig_size)
-> +		return 0;
-> +
-> +	buf = malloc(new_size);
-> +	if (!buf) {
-> +		WARN("malloc failed");
-> +		return -1;
-> +	}
-> +	memcpy(buf, (void *)shstrtab->data, orig_size);
+-- 
+With Best Regards,
+Andy Shevchenko
 
-While reviewing klp-convert v7 [1], Alexey Dobriyan notes here,
-
-"This code is called realloc(). :-)"
-
-[1] https://lore.kernel.org/live-patching/4ce29654-4e1e-4680-9c25-715823ff5e02@p183/
-
-> +static int update_strtab(struct elf *elf)
-> +{
-> +	struct section *strtab;
-> +	struct symbol *sym;
-> +	size_t orig_size, new_size = 0, offset, len;
-> +	char *buf;
-> +
-> +	strtab = find_section_by_name(elf, ".strtab");
-> +	if (!strtab) {
-> +		WARN("can't find .strtab");
-> +		return -1;
-> +	}
-> +
-> +	orig_size = new_size = strtab->size;
-> +
-> +	list_for_each_entry(sym, &elf->symbols, list) {
-> +		if (sym->sym.st_name != ~0U)
-> +			continue;
-> +		new_size += strlen(sym->name) + 1;
-> +	}
-> +
-> +	if (new_size == orig_size)
-> +		return 0;
-> +
-> +	buf = malloc(new_size);
-> +	if (!buf) {
-> +		WARN("malloc failed");
-> +		return -1;
-> +	}
-> +	memcpy(buf, (void *)strtab->data, orig_size);
-
-I think Alexey's realloc suggestion would apply here, too.
-
-> +static int write_file(struct elf *elf, const char *file)
-> +{
-> +	int fd;
-> +	Elf *e;
-> +	GElf_Ehdr eh, ehout;
-> +	Elf_Scn *scn;
-> +	Elf_Data *data;
-> +	GElf_Shdr sh;
-> +	struct section *sec;
-> +
-> +	fd = creat(file, 0664);
-> +	if (fd == -1) {
-> +		WARN("couldn't create %s", file);
-> +		return -1;
-> +	}
-> +
-> +	e = elf_begin(fd, ELF_C_WRITE, NULL);
-
-Alexy also found an ELF coding bug:
-
-"elf_end() doesn't close descriptor, so there is potentially corrupted
-data. There is no unlink() call if writes fail as well."
-
-> +void elf_close(struct elf *elf)
-> +{
-> +	struct section *sec, *tmpsec;
-> +	struct symbol *sym, *tmpsym;
-> +	struct rela *rela, *tmprela;
-> +
-> +	list_for_each_entry_safe(sym, tmpsym, &elf->symbols, list) {
-> +		list_del(&sym->list);
-> +		free(sym);
-> +	}
-> +	list_for_each_entry_safe(sec, tmpsec, &elf->sections, list) {
-> +		list_for_each_entry_safe(rela, tmprela, &sec->relas, list) {
-> +			list_del(&rela->list);
-> +			free(rela);
-> +		}
-> +		list_del(&sec->list);
-> +		free(sec);
-> +	}
-> +	if (elf->fd > 0)
-> +		close(elf->fd);
-
-Alexy found another ELF coding bug here:
-
-"Techically, it is "fd >= 0"."
-
-
-I had coded fixes for these in a v8-devel that I never finished.  It
-shouldn't be too hard to fix these up in the minimal version of the
-patchset, but lmk if you'd like a patch.
-
-That's all for now.  My plan is to try and turn off kpatch-build's
-klp-relocation code and see how passing through to klp-convert fares.
-That would give us a good comparison of real-world examples that need to
-be handled and tested.
-
---
-Joe
 
 
