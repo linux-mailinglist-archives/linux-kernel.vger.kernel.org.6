@@ -1,269 +1,223 @@
-Return-Path: <linux-kernel+bounces-194487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F8AF8D3D0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:43:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939E88D3D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A211E1C21543
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:43:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9C21F219B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060F818411E;
-	Wed, 29 May 2024 16:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415CA18412E;
+	Wed, 29 May 2024 16:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KdYz2AGL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCkNXUfP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E573181BA7;
-	Wed, 29 May 2024 16:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5A11836DB;
+	Wed, 29 May 2024 16:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717001029; cv=none; b=siryK/j6Y/1yHbumuv0HZsdLpXwrYJy51U3r8slhpgkTLJrDuek9ERaAAw6YInu74KLgMXmFuo2B7MAgxl2XuTDMkac5buyjBA7U5OuQfC1EM6Y2w4/9c3YiVBislHYaMILCuti6yexNQGJAktL/DcuNzGc7uJDlElHhfa3Jjcs=
+	t=1717001230; cv=none; b=MJzTBufvlzhIWJdmvgHdy+g1yC5yEB3ohOhmC02oieo/EGtvIkKZUaxgVGqYKQkrM04EI612Qfqnh+KPZCbdggM8RTxoexN5fwMwt6RtHvP3vdUZWI76ACA432SMXNGq5AM2V29HmgGal3M//o0uJtkyliwkfs4VjK5wnKMcaRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717001029; c=relaxed/simple;
-	bh=je77Ka8YprgrmbKHyRiQGt8NAHF7dfXlmbFMH/IJScs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWwfE00dQD2UYy9ACaJXLbek4RGPCzPzyYU0A1JQf2tq0iGdkj1W4LAIgwWgxiE9jzsic+KT1FMFTy+6ad1Ss775e8vkbPzdepNbfgXXwQepWzKxDQyemj+ViNMhYKGZC+LX4mNHUySmFA028MDz63GUhT4/lSZFvyaKD7mPLSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KdYz2AGL; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717001027; x=1748537027;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=je77Ka8YprgrmbKHyRiQGt8NAHF7dfXlmbFMH/IJScs=;
-  b=KdYz2AGLDVw5ivRrfuYYeUP/L294xb+oL/FgR3dNT8BU0E4Ccaaml5Ls
-   p53BGizLecX5x1mRua22Xzb+7WD0J+6uDXWIVZ7BFfhIYNs1daCNLvRP4
-   BUCGL+LlJEKD0FQ1DQaXDHGeEo7P5EFm6LyKbd4e3KTR3TZqx+cizd+CI
-   0zqumsGjqWrviKDCaMAzzkCN1HtI3F1Jg+MuJAMTEFWW9ji92ykSTnE60
-   klcwb2oi3xipx8P0fZsQ830lQSibOZGexNCNXm7ckJk8Lm2h4cOcXVp/l
-   OYpN1s5UZsSej7DF5zuyHYlZPO5K35ucFZ/71RvynyDQQPjXrWr/I9zSW
-   A==;
-X-CSE-ConnectionGUID: PyigqhlURrOm89TS73f5XA==
-X-CSE-MsgGUID: wWAN3GG2Q2uuX+KibGtgSQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="23972168"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="23972168"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 09:43:45 -0700
-X-CSE-ConnectionGUID: TF+Nn9NJTNWSWX6BpSAMdQ==
-X-CSE-MsgGUID: jWVL5+PuQWyT30qg2i08rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="35458498"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.212.164.97])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 09:43:44 -0700
-Date: Wed, 29 May 2024 09:43:42 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Ben Widawsky <bwidawsk@kernel.org>, linux-cxl@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] cxl/pci: Convert PCIBIOS_* return codes to errnos
-Message-ID: <ZldbPhzJ1LID096X@aschofie-mobl2>
-References: <20240527123403.13098-1-ilpo.jarvinen@linux.intel.com>
- <ZlZYrsPfzAiFzNLM@aschofie-mobl2>
- <78e5690b-832f-3da5-3500-141e9b155c09@linux.intel.com>
+	s=arc-20240116; t=1717001230; c=relaxed/simple;
+	bh=n7ShnOOdeIWlPrL1n4Qs6VgIfCSCN6l/akX1/ZK9iYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RWONw/aPYv53ktZdz0KOhV/Abib4IwBhimTgT+lWwJheh7QkiBeP9QpZhCBcaPy+SHklsH5AeuqJhNbcOW6VC/U4FUh41cCnsmN7h+Bv3DXBXfX6KABOKBGBBCs4VnoDL/mdmKSFrBWHRXijA0pXokXNF2z08jG5TybhA+AGqns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCkNXUfP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B9CC2BD10;
+	Wed, 29 May 2024 16:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717001229;
+	bh=n7ShnOOdeIWlPrL1n4Qs6VgIfCSCN6l/akX1/ZK9iYo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aCkNXUfPlo3EhRbLwsDwFyRATwLVLUxUtj5wd3U/saK9gL5LhRqc4OABpaV61v8zT
+	 ubUpa9SCgvaGflDHtcC8oDphpTExJvrdJ+lTHVVkOBGjvb5RCZRBTEAnMVwE2kM7ky
+	 DL1TWkTid2Dw77FzPEK/ULvttmd3G6bb8U0Msa1QzIR43ZEhnhfPlO7fYqttmVEd1X
+	 m0kx6PFCQ9hiWY6dGLVwi+TVW0JGQ7hNUH2kXCA1V7vf7fIbrl1+r+ZGIFsLdtL5Hp
+	 TM1sj/29jL/UZBxiuz4r8M6mtqA0FkvfVZTUdoUobAUeaoBZMayRftrVGZolSbCs1v
+	 Lq91EPR1iUUOA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b78ef397bso191000e87.0;
+        Wed, 29 May 2024 09:47:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKjWdIYunNS7nq+gyVDdD3nNA0iBHzuF1LjW8twFBt5nBmD8jUYptFgw5PQdlFENT/OdiiO2+YtfQTINqnuZgkUgU6Sj2my+vJSbh/xWfZEw2Imx2Rz04NwMVArbLlZM4lXQ/JWgAriQ==
+X-Gm-Message-State: AOJu0YyDBjgHbfDbw8FWTZmQYAwTcI194Q8zQmNgEQxp84MiTIT1K/9s
+	GQOaXVJUBDuMbZDTLVTXvOvoZlKPOSCr/2t0bz3R+oLVIzC8SVseGyJX+Qn9nwBJahtJU2qvb9i
+	xszD6KDrpFmUS+8jTFMLGb4tPyg==
+X-Google-Smtp-Source: AGHT+IFE6/+pP8QOr7VDz95upfl9e+YZ3sfN4RgI1zbUAJDDzRKCICanPYQR7UH0Oun/B9qoZvrxOicJ6ZYmtkymUpk=
+X-Received: by 2002:ac2:5a08:0:b0:52a:7742:4593 with SMTP id
+ 2adb3069b0e04-52a78c36684mr864211e87.25.1717001228317; Wed, 29 May 2024
+ 09:47:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <78e5690b-832f-3da5-3500-141e9b155c09@linux.intel.com>
+References: <20240528164132.2451685-1-maz@kernel.org> <CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
+ <86bk4pm8j1.wl-maz@kernel.org> <CAK9=C2XRx==OTPoGW_AHmjq4Th0bv4okwcq6-3L5JYwHwQp97A@mail.gmail.com>
+ <86a5k8nbh1.wl-maz@kernel.org> <CAK9=C2Ugq=0y8M86CD75mQccBo=TBLBomb4rqC4i1naKy2LyWQ@mail.gmail.com>
+ <CAL_JsqJE15D-xXxmELsmuD+JQHZzxGzdXvikChn6KFWqk6NzPw@mail.gmail.com>
+In-Reply-To: <CAL_JsqJE15D-xXxmELsmuD+JQHZzxGzdXvikChn6KFWqk6NzPw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 29 May 2024 11:46:55 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL5BwSCZDZPNW2-0kBOw0j9KZZ8WOdnqEmGKhSgquY6Pw@mail.gmail.com>
+Message-ID: <CAL_JsqL5BwSCZDZPNW2-0kBOw0j9KZZ8WOdnqEmGKhSgquY6Pw@mail.gmail.com>
+Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Marc Zyngier <maz@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 03:19:19PM +0300, Ilpo Järvinen wrote:
-> On Tue, 28 May 2024, Alison Schofield wrote:
-> 
-> > On Mon, May 27, 2024 at 03:34:02PM +0300, Ilpo Järvinen wrote:
-> > > pci_{read,write}_config_*word() and pcie_capability_read_word() return
-> > > PCIBIOS_* codes, not usual errnos.
-> > > 
-> > > Fix return value checks to handle PCIBIOS_* return codes correctly by
-> > > dropping < 0 from the check and convert the PCIBIOS_* return codes into
-> > > errnos using pcibios_err_to_errno() before returning them.
-> > 
-> > 
-> > Do we ever make a bad decision based on the wrong rc value or is this
-> > a correction to the emitted dev_*() messaging, or both?
-> 
-> There is potential for bad decision.
-> 
-> Eg. cxl_set_mem_enable() it can return 0, 1 and rc that is currently 
-> returning PCIBIOS_* return codes that are > 0).  devm_cxl_enable_mem() 
-> then tries to check for >0 and <0 but the <0 condition won't match 
-> correctly because PCIBIOS_* is not <0 but >0, devm_cxl_enable_mem() then 
-> return 0 where it should have returned an error.
-> 
-> The positive "error code" from wait_for_valid(), cxl_dvsec_rr_decode(), 
-> and cxl_pci_ras_unmask leaks out of .probe().
-> 
+On Wed, May 29, 2024 at 8:51=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Wed, May 29, 2024 at 6:28=E2=80=AFAM Anup Patel <apatel@ventanamicro.c=
+om> wrote:
+> >
+> > On Wed, May 29, 2024 at 4:15=E2=80=AFPM Marc Zyngier <maz@kernel.org> w=
+rote:
+> > >
+> > > On Wed, 29 May 2024 11:16:30 +0100,
+> > > Anup Patel <apatel@ventanamicro.com> wrote:
+> > > >
+> > > > On Wed, May 29, 2024 at 12:03=E2=80=AFPM Marc Zyngier <maz@kernel.o=
+rg> wrote:
+> > > > >
+> > > > > On Wed, 29 May 2024 06:15:52 +0100,
+> > > > > Anup Patel <apatel@ventanamicro.com> wrote:
+> > > > > >
+> > > > > > On Tue, May 28, 2024 at 10:11=E2=80=AFPM Marc Zyngier <maz@kern=
+el.org> wrote:
+> > > > > > >
+> > > > > > > Commit d976c6f4b32c ("of: property: Add fw_devlink support fo=
+r
+> > > > > > > interrupt-map property") tried to do what it says on the tin,
+> > > > > > > but failed on a couple of points:
+> > > > > > >
+> > > > > > > - it confuses bytes and cells. Not a huge deal, except when i=
+t
+> > > > > > >   comes to pointer arithmetic
+> > > > > > >
+> > > > > > > - it doesn't really handle anything but interrupt-maps that h=
+ave
+> > > > > > >   their parent #address-cells set to 0
+> > > > > > >
+> > > > > > > The combinations of the two leads to some serious fun on my M=
+1
+> > > > > > > box, with plenty of WARN-ON() firing all over the shop, and
+> > > > > > > amusing values being generated for interrupt specifiers.
+> > > > > > >
+> > > > > > > Address both issues so that I can boot my machines again.
+> > > > > > >
+> > > > > > > Fixes: d976c6f4b32c ("of: property: Add fw_devlink support fo=
+r interrupt-map property")
+> > > > > > > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > > > > > > Cc: Anup Patel <apatel@ventanamicro.com>
+> > > > > > > Cc: Saravana Kannan <saravanak@google.com>
+> > > > > > > Cc: Rob Herring (Arm) <robh@kernel.org>
+> > > > > >
+> > > > > > Thanks for the fix patch but unfortunately it breaks for RISC-V=
+.
+> > > > > >
+> > > > > > > ---
+> > > > > > >  drivers/of/property.c | 16 ++++++++++++++--
+> > > > > > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/of/property.c b/drivers/of/property.c
+> > > > > > > index 1c83e68f805b..9adebc63bea9 100644
+> > > > > > > --- a/drivers/of/property.c
+> > > > > > > +++ b/drivers/of/property.c
+> > > > > > > @@ -1322,7 +1322,13 @@ static struct device_node *parse_inter=
+rupt_map(struct device_node *np,
+> > > > > > >         addrcells =3D of_bus_n_addr_cells(np);
+> > > > > > >
+> > > > > > >         imap =3D of_get_property(np, "interrupt-map", &imaple=
+n);
+> > > > > > > -       if (!imap || imaplen <=3D (addrcells + intcells))
+> > > > > > > +       imaplen /=3D sizeof(*imap);
+> > > > > > > +
+> > > > > > > +       /*
+> > > > > > > +        * Check that we have enough runway for the child uni=
+t interrupt
+> > > > > > > +        * specifier and a phandle. That's the bare minimum w=
+e can expect.
+> > > > > > > +        */
+> > > > > > > +       if (!imap || imaplen <=3D (addrcells + intcells + 1))
+> > > > > > >                 return NULL;
+> > > > > > >         imap_end =3D imap + imaplen;
+> > > > > > >
+> > > > > > > @@ -1346,8 +1352,14 @@ static struct device_node *parse_inter=
+rupt_map(struct device_node *np,
+> > > > > > >                 if (!index)
+> > > > > > >                         return sup_args.np;
+> > > > > > >
+> > > > > > > -               of_node_put(sup_args.np);
+> > > > > > > +               /*
+> > > > > > > +                * Account for the full parent unit interrupt=
+ specifier
+> > > > > > > +                * (address cells, interrupt cells, and phand=
+le).
+> > > > > > > +                */
+> > > > > > > +               imap +=3D of_bus_n_addr_cells(sup_args.np);
+> > > > > >
+> > > > > > This breaks for RISC-V because we don't have "#address-cells"
+> > > > > > property in interrupt controller DT node and of_bus_n_addr_cell=
+s()
+> > > > > > retrieves "#address-cells" from the parent of interrupt control=
+ler.
+> > > > >
+> > > > > That's a feature, not a bug. #address-cells, AFAICT, applies to a=
+ll
+> > > > > child nodes until you set it otherwise.
+> > > > >
+> > > > > >
+> > > > > > The of_irq_parse_raw() looks for "#address-cells" property
+> > > > > > in the interrupt controller DT node only so we should do a
+> > > > > > similar thing here as well.
+> > > > >
+> > > > > This looks more like a of_irq_parse_raw() bug than anything else.
+> > > >
+> > > > If we change of_irq_parse_raw() to use of_bus_n_addr_cells()
+> > > > then it would still break for RISC-V.
+> > >
+> > > I'm not trying to "fix" riscv. I'm merely outlining that you are
+> > > relying on both broken DTs and a buggy OS.
+> > >
+> > > >
+> > > > Using of_bus_n_addr_cells() over here forces interrupt controller
+> > > > DT nodes to have a "#address-cells" DT property. There are many
+> > > > interrupt controller (e.g. RISC-V PLIC or RISC-V APLIC) where the
+> > > > DT bindings don't require "#address-cells" DT property and existing
+> > > > DTS files with such interrupt controllers don't have it either.
+> > >
+> > > It forces you to set #address-cells *if you rely on a different
+> > > value in a child node*. It's not like the semantics are new.
+> >
+> > We don't have child nodes under the interrupt controller DT node
+> > (for both RISC-V PLIC and APLIC) so we certainly don't require the
+> > "#address-cells" property in the interrupt controller DT node.
+>
+> interrupt controller nodes which are referred to by interrupt-map
+> require #address-cells. Period. Child nodes or not.
 
-Ah, I see the fix is quite tidy but the impact is more complex. Please
-update the commit log to explain user visible impacts of this fix.
+Now that I've re-read the code, the kernel will treat missing
+#address-cells in the interrupt parent as 0. Looking in the parent
+nodes for #address-cells only happens for the input address (i.e. the
+address before the phandle). IOW, the first use of_bus_n_addr_cells()
+was correct, but the 2nd use is not correct. That's not great, but
+that's how this code passed down on stone tablets works...
 
+As I commented on v1 of the original patch. I don't like parsing
+interrupt-map in 2 places. It leads to problems exactly as this thread
+has shown. The duplication was reduced some, but is still more than
+I'd like. So I'm looking at how to refactor of_irq_parse_raw() to make
+it work for what's needed here. Maybe I'll have a fix quickly. If not,
+I'm going to revert the original commit.
 
-> -- 
->  i.
-> 
-> > > Fixes: ce17ad0d5498 ("cxl: Wait Memory_Info_Valid before access memory related info")
-> > > Fixes: 34e37b4c432c ("cxl/port: Enable HDM Capability after validating DVSEC Ranges")
-> > > Fixes: 14d788740774 ("cxl/mem: Consolidate CXL DVSEC Range enumeration in the core")
-> > > Fixes: 560f78559006 ("cxl/pci: Retrieve CXL DVSEC memory info")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > > ---
-> > >  drivers/cxl/core/pci.c | 30 +++++++++++++++---------------
-> > >  drivers/cxl/pci.c      |  2 +-
-> > >  2 files changed, 16 insertions(+), 16 deletions(-)
-> > > 
-> > > diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> > > index 8567dd11eaac..9ca67d4e0a89 100644
-> > > --- a/drivers/cxl/core/pci.c
-> > > +++ b/drivers/cxl/core/pci.c
-> > > @@ -121,7 +121,7 @@ static int cxl_dvsec_mem_range_valid(struct cxl_dev_state *cxlds, int id)
-> > >  					   d + CXL_DVSEC_RANGE_SIZE_LOW(id),
-> > >  					   &temp);
-> > >  		if (rc)
-> > > -			return rc;
-> > > +			return pcibios_err_to_errno(rc);
-> > >  
-> > >  		valid = FIELD_GET(CXL_DVSEC_MEM_INFO_VALID, temp);
-> > >  		if (valid)
-> > > @@ -155,7 +155,7 @@ static int cxl_dvsec_mem_range_active(struct cxl_dev_state *cxlds, int id)
-> > >  		rc = pci_read_config_dword(
-> > >  			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(id), &temp);
-> > >  		if (rc)
-> > > -			return rc;
-> > > +			return pcibios_err_to_errno(rc);
-> > >  
-> > >  		active = FIELD_GET(CXL_DVSEC_MEM_ACTIVE, temp);
-> > >  		if (active)
-> > > @@ -188,7 +188,7 @@ int cxl_await_media_ready(struct cxl_dev_state *cxlds)
-> > >  	rc = pci_read_config_word(pdev,
-> > >  				  d + CXL_DVSEC_CAP_OFFSET, &cap);
-> > >  	if (rc)
-> > > -		return rc;
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	hdm_count = FIELD_GET(CXL_DVSEC_HDM_COUNT_MASK, cap);
-> > >  	for (i = 0; i < hdm_count; i++) {
-> > > @@ -225,7 +225,7 @@ static int wait_for_valid(struct pci_dev *pdev, int d)
-> > >  	 */
-> > >  	rc = pci_read_config_dword(pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(0), &val);
-> > >  	if (rc)
-> > > -		return rc;
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	if (val & CXL_DVSEC_MEM_INFO_VALID)
-> > >  		return 0;
-> > > @@ -234,7 +234,7 @@ static int wait_for_valid(struct pci_dev *pdev, int d)
-> > >  
-> > >  	rc = pci_read_config_dword(pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(0), &val);
-> > >  	if (rc)
-> > > -		return rc;
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	if (val & CXL_DVSEC_MEM_INFO_VALID)
-> > >  		return 0;
-> > > @@ -250,8 +250,8 @@ static int cxl_set_mem_enable(struct cxl_dev_state *cxlds, u16 val)
-> > >  	int rc;
-> > >  
-> > >  	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
-> > > -	if (rc < 0)
-> > > -		return rc;
-> > > +	if (rc)
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	if ((ctrl & CXL_DVSEC_MEM_ENABLE) == val)
-> > >  		return 1;
-> > > @@ -259,8 +259,8 @@ static int cxl_set_mem_enable(struct cxl_dev_state *cxlds, u16 val)
-> > >  	ctrl |= val;
-> > >  
-> > >  	rc = pci_write_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, ctrl);
-> > > -	if (rc < 0)
-> > > -		return rc;
-> > > +	if (rc)
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	return 0;
-> > >  }
-> > > @@ -336,11 +336,11 @@ int cxl_dvsec_rr_decode(struct device *dev, int d,
-> > >  
-> > >  	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CAP_OFFSET, &cap);
-> > >  	if (rc)
-> > > -		return rc;
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
-> > >  	if (rc)
-> > > -		return rc;
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	if (!(cap & CXL_DVSEC_MEM_CAPABLE)) {
-> > >  		dev_dbg(dev, "Not MEM Capable\n");
-> > > @@ -379,14 +379,14 @@ int cxl_dvsec_rr_decode(struct device *dev, int d,
-> > >  		rc = pci_read_config_dword(
-> > >  			pdev, d + CXL_DVSEC_RANGE_SIZE_HIGH(i), &temp);
-> > >  		if (rc)
-> > > -			return rc;
-> > > +			return pcibios_err_to_errno(rc);
-> > >  
-> > >  		size = (u64)temp << 32;
-> > >  
-> > >  		rc = pci_read_config_dword(
-> > >  			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(i), &temp);
-> > >  		if (rc)
-> > > -			return rc;
-> > > +			return pcibios_err_to_errno(rc);
-> > >  
-> > >  		size |= temp & CXL_DVSEC_MEM_SIZE_LOW_MASK;
-> > >  		if (!size) {
-> > > @@ -400,14 +400,14 @@ int cxl_dvsec_rr_decode(struct device *dev, int d,
-> > >  		rc = pci_read_config_dword(
-> > >  			pdev, d + CXL_DVSEC_RANGE_BASE_HIGH(i), &temp);
-> > >  		if (rc)
-> > > -			return rc;
-> > > +			return pcibios_err_to_errno(rc);
-> > >  
-> > >  		base = (u64)temp << 32;
-> > >  
-> > >  		rc = pci_read_config_dword(
-> > >  			pdev, d + CXL_DVSEC_RANGE_BASE_LOW(i), &temp);
-> > >  		if (rc)
-> > > -			return rc;
-> > > +			return pcibios_err_to_errno(rc);
-> > >  
-> > >  		base |= temp & CXL_DVSEC_MEM_BASE_LOW_MASK;
-> > >  
-> > > diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> > > index e53646e9f2fb..0ec9cbc64896 100644
-> > > --- a/drivers/cxl/pci.c
-> > > +++ b/drivers/cxl/pci.c
-> > > @@ -540,7 +540,7 @@ static int cxl_pci_ras_unmask(struct pci_dev *pdev)
-> > >  
-> > >  	rc = pcie_capability_read_word(pdev, PCI_EXP_DEVCTL, &cap);
-> > >  	if (rc)
-> > > -		return rc;
-> > > +		return pcibios_err_to_errno(rc);
-> > >  
-> > >  	if (cap & PCI_EXP_DEVCTL_URRE) {
-> > >  		addr = cxlds->regs.ras + CXL_RAS_UNCORRECTABLE_MASK_OFFSET;
-> > > -- 
-> > > 2.39.2
-> > > 
-> > 
-
+Rob
 
