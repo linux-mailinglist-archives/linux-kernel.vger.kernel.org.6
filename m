@@ -1,118 +1,144 @@
-Return-Path: <linux-kernel+bounces-194219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1045A8D3891
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AEF8D3896
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97AC2B21A90
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:02:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32674287086
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897701CAB5;
-	Wed, 29 May 2024 14:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47C61CAB5;
+	Wed, 29 May 2024 14:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioooeFAH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxNOqsOR"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11D71C6A1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B2012B95;
+	Wed, 29 May 2024 14:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716991373; cv=none; b=U85SxR0o7f85oy0wY+99Vs+adlbrn4zoJIFJpjLSKshc9T27Is4FVKqnqm1AFRE4gcH+5p6eyMSutipLcENSu7Sy3cGDmDuXd5s7OChJsY1NjQowhRmyQbsvSHEYZ7ULadDNFiSvLl7+Bl83MrcDW4qHkYNC9XZD+/gBU/qyKJ8=
+	t=1716991414; cv=none; b=C2bdksmd61A7hSbiMIfOm8KLNngSzg5qsOknt8qq4WnzRSRXidXcx4L5DurvyV41cL6KqXfG02B6vV1rnYC49k7DZr5/QSOBEm8vp5zf4+mnQ2qf+J74iZBj9bYA0LxgCvUuZSsbQjlcYcsKDBhXc8a5bRdwgVrgx3+nvJ8lj08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716991373; c=relaxed/simple;
-	bh=ClKliciffLvAYOJd0zEs/omJQhLpuiCBv2RFdMFaVkg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rusXRe45ssDRkSV2YCfeEOdfy7zq3sMbp75ttxtpQDFSaMN+fapWjIoX0TGsixbMUa+LgaOTJgU7fka/rVEStQxjqceiX7+8dGoURKJCp7gFE6q08cAf1ZvknMqG7eed6oROHg+VlCB4Ia9kdqOIpnApgmUEnojain9B+/hsftI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioooeFAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69057C2BD10
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716991373;
-	bh=ClKliciffLvAYOJd0zEs/omJQhLpuiCBv2RFdMFaVkg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ioooeFAHqJUVENw/TxzwW2AKwslsUnB5913QU+BV3I+cHtjiY4574Ez/5pKv2nlor
-	 h75rqS+IhFWufHIL/DbPKdvwh2XU+LAbvIY7lhEDeELB/bFpiKdGcpqiJC40gVY3S7
-	 U1SklR0qELVmyMoWpx/FTGrWloxKD35OUTxIYiejGk/4KkwxjSialuWmsnRgeGXtw3
-	 gjeDfSQimxVUyZ78Pn0FcKT5tWnhdZkHfrKGn/1V8xmMXIIIf8tDfmhoU+hmRHIuqr
-	 p6ULJwweJc7LrT3EbkYQaJjSPepzAIJip7BX2bF4UzWpLiJhMLwMu8XKvqP+DbUKDu
-	 SHdfThbgsaXyA==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a2424ed00so19646287b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:02:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTAZF68En3m7rzkfSe95LylsVDHDckKclnBnhRPp4OyJEToSlwXXRJeAjYry+Kmn7v8FNi3bR9zGsjO5pzA8oT/VxPQslzf3cJcSRu
-X-Gm-Message-State: AOJu0Yx1GilwjOGT9uvkRbk4mVtd3JtIRMWOWlZD/nP9Wh0Q58flDrMy
-	p0j/RXoeOroIKQkD81pgYYWi4fgIQlxPbsCEeF9abFM3I89QfGTo8Ues4IwWKLtYADJwYfyOrnL
-	FRZkOCKdOMNGD7OqiCJB/wNwKzetZFzlkkiltRQ==
-X-Google-Smtp-Source: AGHT+IEQfAx4JIxkU4lwhsuOXXdkyjbqTK/TzbD39b2JjThMlG91WmwmEdm1flu1c5ds/ZRYMrcp6sgaL0vcye4/joQ=
-X-Received: by 2002:a81:840c:0:b0:620:255a:a5c5 with SMTP id
- 00721157ae682-62a08ea7e3fmr150098277b3.32.1716991372687; Wed, 29 May 2024
- 07:02:52 -0700 (PDT)
+	s=arc-20240116; t=1716991414; c=relaxed/simple;
+	bh=WjdW1FP762sEgNbUJdyYCjRIv0VEhWJXADENEQ+EJdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FnCbXCveLNRTvbSDgOcysVjhIoY8zMgIknlk2JdIGxlQVxYPmiKm+CbLZz24CR8vHoIq42ufg0nCkHbAWTCXylzvaXG29B2cWRUujXm/H0C0j5Gv/P8TTonObp04oBuk/QQUPv/0EsX5Yt2NMIHVlb31hImBO2LYqcPyBzFcras=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxNOqsOR; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5785c1e7448so2121717a12.2;
+        Wed, 29 May 2024 07:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716991410; x=1717596210; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F1ujdDEYUIIkAJTFHWvU9CFPTnOkFnbvdnN/RkQMKsY=;
+        b=VxNOqsOR2+Wv2aPaUyuqALu/rEiZG0u8IlrrZMZGJ3DouUVUE0AKugwiMNhtRwLq3d
+         1EbB6CP4riSiOZ7Ynvd/t/IAHEQYHrOiCO3cHnd3BpjfprgeziDHZVLvQTzhPskfCjPY
+         ZItaqq5OIPkSYvoAqp6/R303W1C7i3TzW0VGWivH+TiK96pJbHAahfV4+u5mjAsAfs7E
+         NRKhxthsQGkaz3CLkCQjWhe0IgE00ktWg2Qrb6MhhRSU4CntP9X9MvdZEm0EXvBoEyK5
+         4LUoAE6fLVDxPVdu4nWJawuBjo6n/o9m2rAruguLWukP15TCNOP8Zq0/FOoaW91gYba8
+         lfow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716991410; x=1717596210;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1ujdDEYUIIkAJTFHWvU9CFPTnOkFnbvdnN/RkQMKsY=;
+        b=kFzeu3R3Vyjtd8xFovHRS7i+IVHxVX3To0VmO7PWVVpgDsD9q89XC0LegMOrQYlytg
+         JlzxjWrBnmOHYRGucJcGexyz7pKKZurWv/NefwNM9o5dYc41tIz4RUh80UK+fGX+fQIm
+         ljluXI1s7s4g6Xgv3Rks2FYSKU354q3p6+1N83IZQGEh/Cn1NyHOYwKb+WXDEM2txHhZ
+         P4Ucu+EWMdrZc5Gpfc2JXBnRpLn673MQ2TedTubT4FGHIMouE1ZggS+v8TAGnziCPi+1
+         WykS2HfNJzu3SdmEdI75KcsMmw60YgEwkJsIz/vE5adyQrcf6/aE43F5jd4V9Gr0K4aS
+         HlQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVwxyzngXBcajkaJaCixg/IM+9FKTgvyKZ9ftvJvRgUoPyeLQRW6Njh2M/072KMiT5NfhxMBfk979q9tv2JxZhxV+qYy6SUnS6ZPQ7er1FgF3HW9po9hQt9nWew957j8NA9VWkX+zdl8K+Hy2hLkw5VdOqlq4yCPy9UiXczvPb2wdywQ==
+X-Gm-Message-State: AOJu0YyVpofDRxmj4Gq2wgwlsDKCiuOKZrwK4R7q0cgS1n46m7U0O7Xo
+	iL6JCK+TAS2bNsMbvLHr2Cxi6I5xt/oOToH3qapPqJAD6Op6IZO8
+X-Google-Smtp-Source: AGHT+IECePkYinauu8AtBL+pjHmC4fTu+y/z0FujBAwpBmBYBYATXLR/JUybGKJN+92ubFWQWLGFjw==
+X-Received: by 2002:a50:c359:0:b0:578:5ee4:921f with SMTP id 4fb4d7f45d1cf-5785ee495f6mr9808278a12.13.1716991409673;
+        Wed, 29 May 2024 07:03:29 -0700 (PDT)
+Received: from [192.168.0.137] ([188.24.75.156])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785234a7efsm8555915a12.4.2024.05.29.07.03.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 07:03:29 -0700 (PDT)
+Message-ID: <917bc1d9-fbdc-4ca2-a156-813b57c8201e@gmail.com>
+Date: Wed, 29 May 2024 17:03:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516062455.106266-1-alexander.stein@ew.tq-group.com> <20240516062455.106266-3-alexander.stein@ew.tq-group.com>
-In-Reply-To: <20240516062455.106266-3-alexander.stein@ew.tq-group.com>
-From: Robert Foss <rfoss@kernel.org>
-Date: Wed, 29 May 2024 16:02:41 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi6k3Fv5oQaWbDakaq6_=f-gmVY21OsQ5vxAdepUvU5VBQ@mail.gmail.com>
-Message-ID: <CAN6tsi6k3Fv5oQaWbDakaq6_=f-gmVY21OsQ5vxAdepUvU5VBQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] drm/bridge: tc358767: Only print GPIO debug output
- if they actually occur
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] iio: adc: ad7173: Add support for AD411x devices
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+ <20240527-ad4111-v3-5-7e9eddbbd3eb@analog.com>
+ <6f18184de4a37993baedc15b44ecf0a6834a24d1.camel@gmail.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <6f18184de4a37993baedc15b44ecf0a6834a24d1.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 8:25=E2=80=AFAM Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
->
-> Currently the output the following output is printed upon each interrupt:
->  tc358767 1-000f: GPIO0:
-> This spams the kernel log while debugging an IRQ storm from the bridge.
-> Only print the debug output if the GPIO hotplug event actually happened.
->
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
->  drivers/gpu/drm/bridge/tc358767.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/t=
-c358767.c
-> index de62a7e2eafec..8874713bdd4a4 100644
-> --- a/drivers/gpu/drm/bridge/tc358767.c
-> +++ b/drivers/gpu/drm/bridge/tc358767.c
-> @@ -2146,11 +2146,11 @@ static irqreturn_t tc_irq_handler(int irq, void *=
-arg)
->                 bool h =3D val & INT_GPIO_H(tc->hpd_pin);
->                 bool lc =3D val & INT_GPIO_LC(tc->hpd_pin);
->
-> -               dev_dbg(tc->dev, "GPIO%d: %s %s\n", tc->hpd_pin,
-> -                       h ? "H" : "", lc ? "LC" : "");
-> -
-> -               if (h || lc)
-> +               if (h || lc) {
-> +                       dev_dbg(tc->dev, "GPIO%d: %s %s\n", tc->hpd_pin,
-> +                               h ? "H" : "", lc ? "LC" : "");
->                         drm_kms_helper_hotplug_event(tc->bridge.dev);
-> +               }
->         }
->
->         regmap_write(tc->regmap, INTSTS_G, val);
-> --
-> 2.34.1
->
->
+On 29/05/2024 15:46, Nuno Sá wrote:
+> On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
+>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
 
-Reviewed-by: Robert Foss <rfoss@kernel.org>
+..
+
+>>  static const struct ad7173_device_info ad7173_device_info[] = {
+>> +	[ID_AD4111] = {
+>> +		.name = "ad4111",
+>> +		.id = AD7173_AD4111_AD4112_AD4114_ID,
+>> +		.num_voltage_inputs_with_divider = 8,
+>> +		.num_channels = 16,
+>> +		.num_configs = 8,
+>> +		.num_voltage_inputs = 8,
+>> +		.num_gpios = 2,
+>> +		.higher_gpio_bits = true,
+>> +		.has_temp = true,
+>> +		.has_vcom_input = true,
+>> +		.has_input_buf = true,
+>> +		.has_current_inputs = true,
+>> +		.has_int_ref = true,
+>> +		.clock = 2 * HZ_PER_MHZ,
+>> +		.sinc5_data_rates = ad7173_sinc5_data_rates,
+>> +		.num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
+>> +	},
+> 
+> At some point it would be nice to drop the ad7173_device_info array...
+> 
+What are good alternatives to this?
+..
+
+>> +		ret = fwnode_property_match_property_string(child,
+>> +							    "adi,channel-type",
+>> +							    ad7173_channel_types,
+>> +							   
+>> ARRAY_SIZE(ad7173_channel_types));
+>> +		chan->differential = (ret < 0 || ret == AD7173_CHAN_DIFFERENTIAL)
+>> +					? 1 : 0;
+> 
+> I don't think we should treat 'ret < 0' has a differential channel. Any reason for
+> it? For me, it's just an invalid property value given by the user...
+> 
+Yes, as that would be the default value if it's missing or invalid
+
+> - Nuno Sá
+> 
+
 
