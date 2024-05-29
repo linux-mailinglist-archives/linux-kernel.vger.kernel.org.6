@@ -1,91 +1,160 @@
-Return-Path: <linux-kernel+bounces-194145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5448D3762
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:17:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774F98D3765
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 611511C2396A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:17:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164731F240FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128E113ADA;
-	Wed, 29 May 2024 13:17:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EADA10A03;
+	Wed, 29 May 2024 13:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xf/UdYNf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE2711CAB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF6B17C67;
+	Wed, 29 May 2024 13:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988626; cv=none; b=kr2zJ2QKf7yIFnMU/ogz57s6HVHoAquKoF4s86KmBG13852pOZ+B4ycsOqqKRXUdxN5+KJN0xey+zAXoD4mtIm8+SuguqzMC4BBfYTvHDBN0qSm7HEWO/QlMp2Cuq2NLly49cFI9O3JCdm26Ogf45B1SmH/c1VbuNU8VrxAQs5I=
+	t=1716988640; cv=none; b=AIRBlAJ/2wkyWQ0W2cvi3ZG0pjNQg9b1hi0AHiPX3f9K0dhm50fKy3quG21zAMVGaU7Eitn95aEGnyDGeln/4OOSdiUMBtvMiEKG1oDAVgL+qIGx/5akcWjm8yUr+qx/95n1ypOQlKrPYQQ47ZinfDwUalVQ1HTVqsh1PA/nlNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988626; c=relaxed/simple;
-	bh=mHkHq3jMKH06n9vgAf2jzhRfI22gJrW6gclhd19+eaU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WA85KxhzXDEa7j6jHbc9y4Z5wQ5TRypa4eFdGDAP3iRelKkwf30FLVW2IoPeiBuX2G8NhtIbbtBavtQPkq1kd58Ue6WyovnDNM7DbNa0Zpqz8YU5luQRxuYJfTDpEAMvBIuiFSbsNwVwHQl3o0vzn48DltE1sGweZYUZFfbRevM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37450b16f7cso19927345ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:17:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716988624; x=1717593424;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qfO/SB2UFfHt97a87aSQyblLMjrNQ0YH7sS6OSZhUIE=;
-        b=kMruUF/lCih3RmNVEADz881nDvLi+DJIllSPCpI5d2D7KZ99hFEQ7epxxMJeqozNKK
-         lC7uRBE0AHtwEOZoLfqE8VmTaaCXZQCJ4LfyyVHQpr3j0O9aOOXX7tez+kQclt0pY6UG
-         hKuK1aabJ6g8RnYfJLFTnbpALp6YuZ2aqedHcm82yy0A+DOIbmzvAn5DX4lJEyL2BsjX
-         lqkwVtOm6NwYgzbxMVPDDgVGOImDEPWfQ/pFoZgEwsPnI6bY7FFpa74RMHdIzsRyqTch
-         La3B/zn05966DXptrFLBHsHfZZzpblktgSzrvZR38GmAIzELxsecvQDatarSJnsbEBkr
-         xaHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVliElK/y1zQIv6G7b9gwmBG4SsAhIMXG0RRZhFqU5hmA5L/5NuqCRH8u3zQDIems76z95krgibwHxPeBvX4aamsmeF31hoPab3ySNJ
-X-Gm-Message-State: AOJu0YxeS70PxPGYQDZw2mmmZplokYRGENwqtgxdbRMXwXbDKlxS7gL0
-	lqCBlv5jing7FOHqDyDjOzBQSdLIYbCHzzQ+M/fLGU6lzXd1czqf8s4lhOTJIHc6LM/V5+WPc5R
-	sM7RLvVkA9zpp0WG9/15Qur0QCvvSmvMGKCmPB+40JFY654xqZ2qAHvY=
-X-Google-Smtp-Source: AGHT+IH69uuYJoSGUbkjmQu3luLjcHAK2G1MSD5e3SByJKKkardLk9TaBJEgPDSfC7inxTgZ8mfcbypAYmshT3hu8NG6Y+ek5OgY
+	s=arc-20240116; t=1716988640; c=relaxed/simple;
+	bh=BmD7dT9t87GMS04NIpQ27MfyjLdW9OC9lzhy731bihs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AKJ0hfFOxikI9GbD7KBvEv2EdmfeABYO+Zjw6nkY3zdS+7wnQOGvtCIL7LktQsuD3ykeg+RALDdqYQbEoVcuUU3iXIaSauVLfxSJ0SKS/+NDPkPJxE5H1H19JRWkY0TiTlPoxPfxjsJnBBTp+TZWxD3GrxuLbJP+DKKNQ7BLcU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xf/UdYNf; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716988639; x=1748524639;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BmD7dT9t87GMS04NIpQ27MfyjLdW9OC9lzhy731bihs=;
+  b=Xf/UdYNf1gez9RBGAdwYBx7XTuDBK2gI2YvzB4ZlrIvbt9q5xfgc7xcQ
+   8cVjJMkgj2SJEas/+9gCQVTuOxd9g0jXQ7nd3b4H+nzIDCVS8p4lI9o5O
+   4Oz9WCwiu2bm1l39QEMi6IIGsfl+XCRr0wQAl5EDu/60U5o6B7uckh0sF
+   95e5nSjYU12c4m/z1CzFAde7tovOreIe/DNRc1vNexyqpdRPvnqDvpoaG
+   0ZphpHmAGxBNx91vZ8P2SQQsKgMaDlHG9+vt09bbfIFGuy6eeUc27I90q
+   97wXBcGnYV/TPu3yyqtPZGiBDddAU70soeIkEpTh3JSuPhLXx/cvNTbRc
+   Q==;
+X-CSE-ConnectionGUID: EOwSPIyDS86rxR5fzs2TBw==
+X-CSE-MsgGUID: PUaf8JRqRpi0zvo889DWwQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="17221011"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="17221011"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:17:19 -0700
+X-CSE-ConnectionGUID: TLr+a4g+QUyEQtMQ22Ef+w==
+X-CSE-MsgGUID: HbHpf9VKSu6jNVQR0Pd0ZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="40328426"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:17:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sCJAy-0000000Bnsd-0MYz;
+	Wed, 29 May 2024 16:17:08 +0300
+Date: Wed, 29 May 2024 16:17:07 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
+	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+	adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
+	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
+	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
+	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com,
+	dlatypov@google.com
+Subject: Re: [PATCH v9 06/10] math.h: Add macros for rounding to closest value
+Message-ID: <Zlcq07G697jGqHAg@smile.fi.intel.com>
+References: <20240526175655.1093707-1-devarsht@ti.com>
+ <20240526180856.1124470-1-devarsht@ti.com>
+ <ZlTt-YWzyRyhmT9n@smile.fi.intel.com>
+ <86f9ed66-c58e-0b2d-dd2b-4372ff26a3c3@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda6:0:b0:374:5d81:9136 with SMTP id
- e9e14a558f8ab-3745d8193d4mr4771605ab.0.1716988624612; Wed, 29 May 2024
- 06:17:04 -0700 (PDT)
-Date: Wed, 29 May 2024 06:17:04 -0700
-In-Reply-To: <000000000000849b0606179c33b7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000dc0d10619979126@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in bchfs_truncate
-From: syzbot <syzbot+247ac87eabcb1f8fa990@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86f9ed66-c58e-0b2d-dd2b-4372ff26a3c3@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-syzbot has bisected this issue to:
+On Tue, May 28, 2024 at 04:02:30PM +0530, Devarsh Thakkar wrote:
+> On 28/05/24 02:02, Andy Shevchenko wrote:
+> > On Sun, May 26, 2024 at 11:38:56PM +0530, Devarsh Thakkar wrote:
 
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
+..
 
-    bcachefs: Ignore unknown mount options
+> >> +/**
+> >> + * round_closest_up - round closest to be multiple of specified value (which is
+> >> + *                    power of 2) with preference to rounding up
+> >> +
+> > 
+> > Not that big deal, but missing '*' here. Personally I would not even put
+> > a blank line between Summary and Field Descriptions.
+> 
+> My bad. Yes I would remove the blank line here. This is picked up as warning
+> from kernel-doc too.
+> 
+> >> + * @x: the value to round
+> >> + * @y: multiple to round closest to (must be a power of 2)
+> >> + *
+> >> + * Rounds @x to closest multiple of @y (which must be a power of 2).
+> >> + * The value can be either rounded up or rounded down depending upon rounded
+> >> + * value's closeness to the specified value. If there are two closest possible
+> >> + * values, i.e. the difference between the specified value and it's rounded up
+> >> + * and rounded down values is same then preference is given to rounded up
+> >> + * value.
+> >> + *
+> >> + * To perform arbitrary rounding to closest value (not multiple of 2), use
+> >> + * roundclosest().
+> >> + *
+> >> + * Examples :
+> > 
+> > What is this suppose to be rendered to?
+> 
+> The file math.h is not rendered as part of kernel-doc right now. I can put
+> this under Documentation/core-api/kernel-api.rst perhaps I can create a new
+> section as below:
+> 
+> Rounding, absolute diff and 32bit division macros
+> -------------------------------------------------
+> 
+> under the section:
+> CRC and Math Functions in Linux
+> 
+> ===============================
+> 
+> is that okay ?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1077cf8a980000
-start commit:   b6394d6f7159 Merge tag 'pull-misc' of git://git.kernel.org..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1277cf8a980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1477cf8a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=713476114e57eef3
-dashboard link: https://syzkaller.appspot.com/bug?extid=247ac87eabcb1f8fa990
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c61a0c980000
+This is up to you, but what I meant is that you always can render manually
+yourself. And I was asking about the result you got when you tried (and you
+did, right?) to render to man, html, and pdf.
 
-Reported-by: syzbot+247ac87eabcb1f8fa990@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+> >> + * round_closest_up(17, 4) = 16
+> >> + * round_closest_up(15, 4) = 16
+> >> + * round_closest_up(14, 4) = 16
+> > 
+> > Btw, is kernel-doc validator happy about all kernel docs you added?
+> 
+> Yes, except the aforementioned blank line.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
