@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-193560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07C88D2DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:07:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303D68D2DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C591F2708D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:07:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF2B287B19
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC30F167269;
-	Wed, 29 May 2024 07:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5BB1667DC;
+	Wed, 29 May 2024 07:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbRvsLBt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zwtn5GH4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162E915FA8A;
-	Wed, 29 May 2024 07:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728042F32;
+	Wed, 29 May 2024 07:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716966443; cv=none; b=oAERIW18Ci11qXzjCjMH4NafOx+ApIoZ+gKKUuS76WJwEgYG9XbQ09LgXtIV8xz/clW/6oaZc5JY0TAAX5zuYR0Ltv2m987GXkOUgJBmCWcRv8sTWxjANrtrBNigDrvrG3EN73eHRBvhbJyA0DlphCHVA4JGPeTCkuw/4cnjlBM=
+	t=1716966562; cv=none; b=Rc0LlweO9/H1XVJhVrdTMEJwmOxxgaveJ3JqspcFU5RdY/djzCTHeZ4kXeVOqVuxbi2Tm7CXvmUe0+iktxD4tV3IHQ9BrV2IihhsPqQuvKs7NIkeO7U9hO8aFhBpC62f2vjYFFbEcPhLZnUIwKf4l0tKG1s9XnE7JvL46IJFxzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716966443; c=relaxed/simple;
-	bh=7XlnxYk3BD60vR+RT2oOGeO/o/5OVYZX2jQ5GdTYpfg=;
+	s=arc-20240116; t=1716966562; c=relaxed/simple;
+	bh=f5hieK2dVR8m72dQIfBgiq+09hpzZd5FvWTa+h7XuwE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MBUCZtUs46TZqv3jv/arl1w2a7Xhz6aJeli8/R+1nClIGBVC83jhr1QgimSaMtCTUZU4H88jrZH3NoealcvdNEanfWswt52KyN71kVJw/f7OherHzOf9PuI265D7qGxfRuiOObZbIZKygjGktxq812iD4w3NByby7mv9mItRHr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbRvsLBt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D031C32781;
-	Wed, 29 May 2024 07:07:19 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qFy7ACFv25O3oEU/81fJclTZeCrJPzq+YQHdjEmJmGcj/OT46SksrMB3ga04AMjYMLf0klrDY2PtiGbIs3w0h2BAWugHt6e5OeGft7sXVDPNg5iBDG5tWyMOWOf6ZxKyJeXOhgliEwD3eHYEVX9skHsS2QJw2hfkomiKhihb2Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zwtn5GH4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1946EC32781;
+	Wed, 29 May 2024 07:09:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716966442;
-	bh=7XlnxYk3BD60vR+RT2oOGeO/o/5OVYZX2jQ5GdTYpfg=;
+	s=k20201202; t=1716966562;
+	bh=f5hieK2dVR8m72dQIfBgiq+09hpzZd5FvWTa+h7XuwE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bbRvsLBtOSrJOMVA71FDoJqOigCxPooIDeBgHHnMsEltMtqi9+XkpZ79p7d0U5cXI
-	 072Hcnnoqj6ZiZtfq3QitF6okhckcEKy4XlxDTwhuivWXjhT/y/9URTkwmeXuhoCfn
-	 Tl1qvY4N0mAJmOtakxDRYCY4cjKTTIGH4pTjTr/bhClxSuNpPg8CTlzPLvJDwcwHk8
-	 qfqBmm+a3flj805zI7xp5v6UCNWCfjY1emHXwZf1VJKx1AVxwxzXnKaGexg31VQtZV
-	 KkfFFDnh2gvPk3JVpZnMf7aSsP+MUpcBvEwdKl+EgZdW8LYQFQoqZSDSMoLUIk8E8Y
-	 qxzQtTp9hEBBg==
-Message-ID: <1ae97b90-ff20-4238-abe2-f2e5d87fc344@kernel.org>
-Date: Wed, 29 May 2024 09:07:17 +0200
+	b=Zwtn5GH46/BmFtgUJT0+jA7hR7JDwcnFzmA0BATIWfjv5BXGGAg/M97xp413hLwKT
+	 ukOAy06EaXNN3N8OkhoYg3jVYB1t4jLpdXiq6UuDHY5V3n44TjahRAU2qrarbPo082
+	 8TZ9B06t1rska/zP7jrW4i+Ualycb5ckwb4r+pyvwdcfQChqaPrxNQ7UCldpUiL8Hl
+	 pXrPuEEHhuXx4y2vNqhrkABsjI15C1rmKMshWdiLHONwpBiXhHtKTVA8VZU2aKWH05
+	 E55qfSlprcDD5Z74HWagCqu7WwqfgoTF4ddF5xUxNnb/5JLV7l7wd854JrjXoE57vv
+	 fMpKi1M340ybg==
+Message-ID: <3531ac76-bcee-4c4d-8396-65b5dfbd8df9@kernel.org>
+Date: Wed, 29 May 2024 09:09:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ti,ina2xx: Add alert-polarity
- property
+Subject: Re: [PATCH 2/2] hwmon: (ina2xx) Add device tree support to pass alert
+ polarity
 To: Amna Waseem <Amna.Waseem@axis.com>, Jean Delvare <jdelvare@suse.com>,
  Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel@axis.com
 References: <20240529-apol-ina2xx-fix-v1-0-77b4b382190f@axis.com>
- <20240529-apol-ina2xx-fix-v1-1-77b4b382190f@axis.com>
+ <20240529-apol-ina2xx-fix-v1-2-77b4b382190f@axis.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,46 +103,48 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240529-apol-ina2xx-fix-v1-1-77b4b382190f@axis.com>
+In-Reply-To: <20240529-apol-ina2xx-fix-v1-2-77b4b382190f@axis.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/05/2024 08:07, Amna Waseem wrote:
-> Add a property to the binding to configure the Alert Polarity.
-> Alert pin is asserted based on the value of Alert Polarity bit of
-> Mask/Enable register. It is by default 0 which means Alert pin is
-> configured to be active low. To configure it to active high, set
-> alert-polarity property value to 1.
-> 
-> Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
-> ---
->  Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-> index df86c2c92037..a3f0fd71fcc6 100644
-> --- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-> @@ -66,6 +66,14 @@ properties:
->      description: phandle to the regulator that provides the VS supply typically
->        in range from 2.7 V to 5.5 V.
 >  
-> +  alert-polarity:
+> +static int ina2xx_set_alert_polarity(struct ina2xx_data *data,
+> +				     unsigned long val)
+> +{
+> +	int ret;
+> +
+> +	if (val > INT_MAX || !(val == 0 || val == 1))
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&data->config_lock);
 
-Missing vendor prefix.
+Aren't you calling it before registering sysfs interface? Why do you
+need mutex?
 
-> +    description: |
+> +	ret = regmap_update_bits(data->regmap, INA226_MASK_ENABLE,
+> +				 INA226_ALERT_POLARITY_MASK,
+> +				 INA226_SHIFT_ALERT_POLARITY(val));
+> +
+> +	mutex_unlock(&data->config_lock);
+> +	return ret;
+> +}
+> +
+>  /*
+>   * Calibration register is set to the best value, which eliminates
+>   * truncation errors on calculating current register in hardware.
+> @@ -659,6 +679,14 @@ static int ina2xx_probe(struct i2c_client *client)
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "failed to enable vs regulator\n");
+>  
+> +	if (!of_property_read_u32(dev->of_node, "alert-polarity", &val)) {
+> +		ret = ina2xx_set_alert_polarity(data, val);
+> +		if (ret < 0)
+> +			return dev_err_probe(
+> +				dev, ret,
+> +				"failed to set APOL bit of Enable/Mask register\n");
 
-Do not need '|' unless you need to preserve formatting.
-
-> +      Alert polarity bit value of Mask/Enable register. Alert pin is asserted
-> +      based on the value of Alert polarity Bit. Default value is active low.
-> +      0 selects active low, 1 selects active high.
-
-Just use string, easier to read. But for sure do not introduce different
-values than we already have - GPIO HIGH is 0, not 1.
-
-
+That's odd wrapping. Please follow Linux coding style and align these.
 
 Best regards,
 Krzysztof
