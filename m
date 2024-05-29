@@ -1,284 +1,177 @@
-Return-Path: <linux-kernel+bounces-193554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61688D2DB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F628D2DB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 317F5B278AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B347284781
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE9DDDC3;
-	Wed, 29 May 2024 06:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901AF1607BA;
+	Wed, 29 May 2024 06:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MdaFL/tM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="GVJnqVnI";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="UN7acJL1"
+Received: from e3i84.smtp2go.com (e3i84.smtp2go.com [158.120.84.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AD7273DC
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E3A273DC
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716965876; cv=none; b=hPH5ItnuT7YSGaVOvEwYfMJT3AyTiolhtHcz05MVxuRzyRO5cRa48g1gE87I0aROqmNBPcN+X9P1FH6t1xXGtY4phiYcagFINmnXQKOz7EVC5AXpMG5V9n373fHzlSQSKXFv2pFNeJ/ssD2lbmzWeo7MXYx4cHecYsaI5sUgMJ8=
+	t=1716965829; cv=none; b=OQRTm+car6j3DTZ3J+9nrrn6QK/6DrnRxMEGonXKBazEx4kkXFmcjUIYqkGYrobHTtzZ7lDosU0SCS8kcQXIweJ55+FA+cnzXmMyAtSfn/1hzYpSf7cPylYakVt0pdRuYFTIy2ccFdMG3wqd0/+jZ2muMPAcvb6zfje6BSnhkCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716965876; c=relaxed/simple;
-	bh=l/V05A/Kr9pMR3eklw9K8MKRqnjCwDmp2OTE5UqpVjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SymLWDacP95Z3tkPC2UUFEXfxyOcZswwc/OP4b34mOrDeK+Aq9RDgUQCvmeC2smVIqG4du1SppKCgu0Brwp4slJEavZZs1mmFx4aYVMhsBvKCvjFnVCLSLGu6pKYiH19dlC/EtC1RHy7RJjkeQSVNwutooyMIA2QEpfi7U0ZBmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MdaFL/tM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716965873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=X1jNL5AKCTqKVJJWMUcLi/+HsxHmghC2E1+CScAu2FQ=;
-	b=MdaFL/tMe3OnpC8azQuftqv0/BBVMx4UOvkjcnwIgLH31T3SaIeJVSBPsbMOZe4nL4x0Kg
-	IU5gGTRs2OUkNF6VSKSu0opQGymnnTclt2ACXz2BxOCXOV27Yka3Urz/Y6kKITAwjRjYsD
-	Zc21FLpjpNL7cfNBSWN2cLV7U8BdnFw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-Z08P9OPLPj6nje3jOlgPtA-1; Wed, 29 May 2024 02:57:52 -0400
-X-MC-Unique: Z08P9OPLPj6nje3jOlgPtA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4210f81af43so12962425e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:57:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716965871; x=1717570671;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=X1jNL5AKCTqKVJJWMUcLi/+HsxHmghC2E1+CScAu2FQ=;
-        b=cDPZMrPJNQPJmx08AszsL7YVH4JLstfEdTa9yNqiw43VbFc8gH/LqrDk8k1a4Mab8V
-         BVKXGjkllIFM2YIB/7bxqo9a/wxq06kizgZMp2rBYneloUxtqyn+wUNxneWe8aPpUt3l
-         7Jl9rLUYfmHNO8QETlLG5yMyoRceUwYk4KmMzrf5ILSMXqhH5d8bP3ObgUam1s1KnH5e
-         GfUeVuHvM3HXHL+g3pkySTcIrE5VDNWKpIYjO4VNRb/ox7g+V+Y5pk4dgYYPMwo+vqSV
-         0Rk0i2jm6toA2+oIvMwsC/sRcx04X9Cjt2WTS258FPry93V1Yab23moZAwzn4bSlNFmL
-         HwiQ==
-X-Gm-Message-State: AOJu0YwlnG5Lv6tRJcD2xQWO60TPa8hWhDrg0Ws35GgV8jnLgDv+OB4Y
-	zGxW6QnBmrhCsPFrPXAAzxGXIhTQjqCp8wwnUq/eqWg11LRPOLMfer+aQcTYiP4pZNtqb2TgOZp
-	+uwyAQo5dlI26EWIaND2at/0HtvpYMIUkB8ZN8DCNzKLcu4NgH8k074IgVAyDlw==
-X-Received: by 2002:a05:600c:198e:b0:420:fe60:c387 with SMTP id 5b1f17b1804b1-42108a12ab4mr117555425e9.38.1716965870801;
-        Tue, 28 May 2024 23:57:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0CejlWqPuXFqZN2EXRjw1Ccc4Nzq8rTsvDWbC57PrZ0GsEmBQvVcERgWRL1Bwkx7iEvBtug==
-X-Received: by 2002:a05:600c:198e:b0:420:fe60:c387 with SMTP id 5b1f17b1804b1-42108a12ab4mr117555135e9.38.1716965870249;
-        Tue, 28 May 2024 23:57:50 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70c:3c00:686e:317c:3ed4:d7b8? (p200300cbc70c3c00686e317c3ed4d7b8.dip0.t-ipconnect.de. [2003:cb:c70c:3c00:686e:317c:3ed4:d7b8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee7f1dsm201788225e9.7.2024.05.28.23.57.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 23:57:49 -0700 (PDT)
-Message-ID: <ff29f723-32de-421b-a65e-7b7d2e03162d@redhat.com>
-Date: Wed, 29 May 2024 08:57:48 +0200
+	s=arc-20240116; t=1716965829; c=relaxed/simple;
+	bh=bOeSZdmBwsNitFB+etEOBIX7vNxYqj75SIjFwIErgSg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fxctJ4cHTllPPz5Yjh2iNSYlNOvey+0o9oxcPrclJ19+CwO3EMd8cwb/ioXGmQLToIcSEwMMWkM0iN257Ay2h9Cenw73nsj/VzxZt+Pb8wT1sQGgme3PcwF6Blsvmf2jQB1d08rJC3AEx6Z01XZvTTPJQfi8+4GTD/AtAt8gjE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=GVJnqVnI; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=UN7acJL1; arc=none smtp.client-ip=158.120.84.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+Received: from [10.12.239.196] (helo=localhost)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97-S2G)
+	(envelope-from <repk@triplefau.lt>)
+	id 1sCDEk-4o5NDgrmVFt-pPXg;
+	Wed, 29 May 2024 06:56:38 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH] wifi: mac80211: Fix deadlock in ieee80211_sta_ps_deliver_wakeup()
+Date: Wed, 29 May 2024 08:57:53 +0200
+Message-Id: <8e36fe07d0fbc146f89196cd47a53c8a0afe84aa.1716910344.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.40.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: 6.9/BUG: Bad page state in process kswapd0 pfn:d6e840
-From: David Hildenbrand <david@redhat.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, Chris Mason
- <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>
-Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- Matthew Wilcox <willy@infradead.org>,
- linux-btrfs <linux-btrfs@vger.kernel.org>
-References: <CABXGCsPktcHQOvKTbPaTwegMExije=Gpgci5NW=hqORo-s7diA@mail.gmail.com>
- <CABXGCsOC2Ji7y5Qfsa33QXQ37T3vzdNPsivGoMHcVnCGFi5vKg@mail.gmail.com>
- <0672f0b7-36f5-4322-80e6-2da0f24c101b@redhat.com>
- <CABXGCsN7LBynNk_XzaFm2eVkryVQ26BSzFkrxC2Zb5GEwTvc1g@mail.gmail.com>
- <6b42ad9a-1f15-439a-8a42-34052fec017e@redhat.com>
- <CABXGCsP46xvu3C3Ntd=k5ARrYScAea1gj+YmKYqO+Yj7u3xu1Q@mail.gmail.com>
- <CABXGCsP3Yf2g6e7pSi71pbKpm+r1LdGyF5V7KaXbQjNyR9C_Rw@mail.gmail.com>
- <162cb2a8-1b53-4e86-8d49-f4e09b3255a4@redhat.com>
- <209ff705-fe6e-4d6d-9d08-201afba7d74b@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <209ff705-fe6e-4d6d-9d08-201afba7d74b@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 510616m:510616apGKSTK:510616s_HaTRL7zn
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-smtpcorp-track: kL16-ZDVMfQj.1iUigA7plmv5.d199tAAR2gi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1716965816; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=UbyaOHOiUST4mImhXXu+03xsYYW4FuYClhsIqgPQ0Bw=;
+ b=GVJnqVnIKvDo6ThvFb3o9opW37w/RM4znqT4FNT1I8wnNfRD6yKr/D4S4yQtPvmGANF+a
+ GpsWX8pONzAfxtDh5Jigry8rth44bTxQl/tM4cBHP1PkRTifcqbSLloorfVPUNxiDpPNqfW
+ 0PtrPrZpEzeMX8S8+wUQnc6b3MTcQ/4MgMZe14+02Q+MGXap5zhrlma4uoloU06BrvQfv6t
+ /2MpkB/9TLSxwxOfxq2Tjga6g/JDfDpNK8Z64TC3ll6TO9D+i2iiBF2pjI9MXRtf6te/G73
+ Cgb69IrN+r6MNRZD0dyVnz6p/ENKCNlTTyMx6iB273q6ik258OdBqlVn0qvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1716965816; h=from : subject
+ : to : message-id : date;
+ bh=UbyaOHOiUST4mImhXXu+03xsYYW4FuYClhsIqgPQ0Bw=;
+ b=UN7acJL1QS4N+D8VFsFod3lHOY2OSWU5lXQf7oVcZBlqT0rcst4wu8/g/ZPfMDs9L+a/E
+ 5HZ4oybQTRyy35GuyOzQisAuE4SAAnBJedkHWNk6AvAgUEzrCwQe793f+WIVQkWggvUvjve
+ CTzOrapydbyIKkTusoohEyHjOLtOVZ+60lLEflMWj6bm+B/NQzxKtuPBF22NLcGZ5snznad
+ 4geTsPPNo09z+M3ItkltTH+9mvXzBQI/ExXaPU+FoIjq9Dq/y6S6Tms5z5gvyBks7GFv061
+ 1OxLPh7T/logNlfiYSMRyKDWdjz/rzqYib/bb47mUCBRfx7QoHcU+MuoxmqQ==
 
-On 28.05.24 16:24, David Hildenbrand wrote:
-> Am 28.05.24 um 15:57 schrieb David Hildenbrand:
->> Am 28.05.24 um 08:05 schrieb Mikhail Gavrilov:
->>> On Thu, May 23, 2024 at 12:05 PM Mikhail Gavrilov
->>> <mikhail.v.gavrilov@gmail.com> wrote:
->>>>
->>>> On Thu, May 9, 2024 at 10:50 PM David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>> The only known workload that causes this is updating a large
->>>> container. Unfortunately, not every container update reproduces the
->>>> problem.
->>>
->>> Is it possible to add more debugging information to make it clearer
->>> what's going on?
->>
->> If we knew who originally allocated that problematic page, that might help.
->> Maybe page_owner could give some hints?
->>
->>>
->>> BUG: Bad page state in process kcompactd0  pfn:605811
->>> page: refcount:0 mapcount:0 mapping:0000000082d91e3e index:0x1045efc4f
->>> pfn:0x605811
->>> aops:btree_aops ino:1
->>> flags:
->>> 0x17ffffc600020c(referenced|uptodate|workingset|node=0|zone=2|lastcpupid=0x1fffff)
->>> raw: 0017ffffc600020c dead000000000100 dead000000000122 ffff888159075220
->>> raw: 00000001045efc4f 0000000000000000 00000000ffffffff 0000000000000000
->>> page dumped because: non-NULL mapping
->>
->> Seems to be an order-0 page, otherwise we would have another "head: ..." report.
->>
->> It's not an anon/ksm/non-lru migration folio, because we clear the page->mapping
->> field for them manually on the page freeing path. Likely it's a pagecache folio.
->>
->> So one option is that something seems to not properly set folio->mapping to
->> NULL. But that problem would then also show up without page migration? Hmm.
->>
->>> Hardware name: ASUS System Product Name/ROG STRIX B650E-I GAMING WIFI,
->>> BIOS 2611 04/07/2024
->>> Call Trace:
->>>    <TASK>
->>>    dump_stack_lvl+0x84/0xd0
->>>    bad_page.cold+0xbe/0xe0
->>>    ? __pfx_bad_page+0x10/0x10
->>>    ? page_bad_reason+0x9d/0x1f0
->>>    free_unref_page+0x838/0x10e0
->>>    __folio_put+0x1ba/0x2b0
->>>    ? __pfx___folio_put+0x10/0x10
->>>    ? __pfx___might_resched+0x10/0x10
->>
->> I suspect we come via
->>       migrate_pages_batch()->migrate_folio_unmap()->migrate_folio_done().
->>
->> Maybe this is the "Folio was freed from under us. So we are done." path
->> when "folio_ref_count(src) == 1".
->>
->> Alternatively, we might come via
->>       migrate_pages_batch()->migrate_folio_move()->migrate_folio_done().
->>
->> For ordinary migration, move_to_new_folio() will clear src->mapping if
->> the folio was migrated successfully. That's the very first thing that
->> migrate_folio_move() does, so I doubt that is the problem.
->>
->> So I suspect we are in the migrate_folio_unmap() path. But for
->> a !anon folio, who should be freeing the folio concurrently (and not clearing
->> folio->mapping?)? After all, we have to hold the folio lock while migrating.
->>
->> In khugepaged:collapse_file() we manually set folio->mapping = NULL, before
->> dropping the reference.
->>
->> Something to try might be (to see if the problem goes away).
->>
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index dd04f578c19c..45e92e14c904 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -1124,6 +1124,13 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
->>                   /* Folio was freed from under us. So we are done. */
->>                   folio_clear_active(src);
->>                   folio_clear_unevictable(src);
->> +               /*
->> +                * Anonymous and movable src->mapping will be cleared by
->> +                * free_pages_prepare so don't reset it here for keeping
->> +                * the type to work PageAnon, for example.
->> +                */
->> +               if (!folio_mapping_flags(src))
->> +                       src->mapping = NULL;
->>                   /* free_pages_prepare() will clear PG_isolated. */
->>                   list_del(&src->lru);
->>                   migrate_folio_done(src, reason);
->>
->> But it does feel weird: who freed the page concurrently and didn't clear
->> folio->mapping ...
->>
->> We don't hold the folio lock of src, though, but have the only reference. So
->> another possible thing might be folio refcount mis-counting: folio_ref_count()
->> == 1 but there are other references (e.g., from the pagecache).
-> 
-> Hmm, your original report mentions kswapd, so I'm getting the feeling someone
-> does one folio_put() too much and we are freeing a pageache folio that is still
-> in the pageache and, therefore, has folio->mapping set ... bisecting would
-> really help.
-> 
+The ieee80211_sta_ps_deliver_wakeup() function takes sta->ps_lock to
+synchronizes with ieee80211_tx_h_unicast_ps_buf() which is called from
+softirq context. However using only spin_lock() to get sta->ps_lock in
+ieee80211_sta_ps_deliver_wakeup() does not prevent softirq to execute
+on this same CPU, to run ieee80211_tx_h_unicast_ps_buf() and try to
+take this same lock ending in deadlock. Below is an example of rcu stall
+that arises in such situation.
 
-A little bird just told me that I missed an important piece in the dmesg 
-output: "aops:btree_aops ino:1" from dump_mapping():
+ rcu: INFO: rcu_sched self-detected stall on CPU
+ rcu:    2-....: (42413413 ticks this GP) idle=b154/1/0x4000000000000000 softirq=1763/1765 fqs=21206996
+ rcu:    (t=42586894 jiffies g=2057 q=362405 ncpus=4)
+ CPU: 2 PID: 719 Comm: wpa_supplicant Tainted: G        W          6.4.0-02158-g1b062f552873 #742
+ Hardware name: RPT (r1) (DT)
+ pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+ pc : queued_spin_lock_slowpath+0x58/0x2d0
+ lr : invoke_tx_handlers_early+0x5b4/0x5c0
+ sp : ffff00001ef64660
+ x29: ffff00001ef64660 x28: ffff000009bc1070 x27: ffff000009bc0ad8
+ x26: ffff000009bc0900 x25: ffff00001ef647a8 x24: 0000000000000000
+ x23: ffff000009bc0900 x22: ffff000009bc0900 x21: ffff00000ac0e000
+ x20: ffff00000a279e00 x19: ffff00001ef646e8 x18: 0000000000000000
+ x17: ffff800016468000 x16: ffff00001ef608c0 x15: 0010533c93f64f80
+ x14: 0010395c9faa3946 x13: 0000000000000000 x12: 00000000fa83b2da
+ x11: 000000012edeceea x10: ffff0000010fbe00 x9 : 0000000000895440
+ x8 : 000000000010533c x7 : ffff00000ad8b740 x6 : ffff00000c350880
+ x5 : 0000000000000007 x4 : 0000000000000001 x3 : 0000000000000000
+ x2 : 0000000000000000 x1 : 0000000000000001 x0 : ffff00000ac0e0e8
+ Call trace:
+  queued_spin_lock_slowpath+0x58/0x2d0
+  ieee80211_tx+0x80/0x12c
+  ieee80211_tx_pending+0x110/0x278
+  tasklet_action_common.constprop.0+0x10c/0x144
+  tasklet_action+0x20/0x28
+  _stext+0x11c/0x284
+  ____do_softirq+0xc/0x14
+  call_on_irq_stack+0x24/0x34
+  do_softirq_own_stack+0x18/0x20
+  do_softirq+0x74/0x7c
+  __local_bh_enable_ip+0xa0/0xa4
+  _ieee80211_wake_txqs+0x3b0/0x4b8
+  __ieee80211_wake_queue+0x12c/0x168
+  ieee80211_add_pending_skbs+0xec/0x138
+  ieee80211_sta_ps_deliver_wakeup+0x2a4/0x480
+  ieee80211_mps_sta_status_update.part.0+0xd8/0x11c
+  ieee80211_mps_sta_status_update+0x18/0x24
+  sta_apply_parameters+0x3bc/0x4c0
+  ieee80211_change_station+0x1b8/0x2dc
+  nl80211_set_station+0x444/0x49c
+  genl_family_rcv_msg_doit.isra.0+0xa4/0xfc
+  genl_rcv_msg+0x1b0/0x244
+  netlink_rcv_skb+0x38/0x10c
+  genl_rcv+0x34/0x48
+  netlink_unicast+0x254/0x2bc
+  netlink_sendmsg+0x190/0x3b4
+  ____sys_sendmsg+0x1e8/0x218
+  ___sys_sendmsg+0x68/0x8c
+  __sys_sendmsg+0x44/0x84
+  __arm64_sys_sendmsg+0x20/0x28
+  do_el0_svc+0x6c/0xe8
+  el0_svc+0x14/0x48
+  el0t_64_sync_handler+0xb0/0xb4
+  el0t_64_sync+0x14c/0x150
 
-This is btrfs, i_ino is 1, and we don't have a dentry. Is that 
-BTRFS_BTREE_INODE_OBJECTID?
+Using spin_lock_bh()/spin_unlock_bh() instead prevents softirq to raise
+on the same CPU that is holding the lock.
 
-Summarizing what we know so far:
-(1) Freeing an order-0 btrfs folio where folio->mapping
-     is still set
-(2) Triggered by kswapd and kcompactd; not triggered by other means of
-     page freeing so far
+Fixes: 1d147bfa6429 ("mac80211: fix AP powersave TX vs. wakeup race")
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+ net/mac80211/sta_info.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Possible theories:
-(A) folio->mapping not cleared when freeing the folio. But shouldn't
-     this also happen on other freeing paths? Or are we simply lucky to
-     never trigger that for that folio?
-(B) Messed-up refcounting: freeing a folio that is still in use (and
-     therefore has folio-> mapping still set)
-
-I was briefly wondering if large folio splitting could be involved.
-
-CCing btrfs maintainers.
-
+diff --git a/net/mac80211/sta_info.c b/net/mac80211/sta_info.c
+index da5fdd6f5c85..aa22f09e6d14 100644
+--- a/net/mac80211/sta_info.c
++++ b/net/mac80211/sta_info.c
+@@ -1724,7 +1724,7 @@ void ieee80211_sta_ps_deliver_wakeup(struct sta_info *sta)
+ 	skb_queue_head_init(&pending);
+ 
+ 	/* sync with ieee80211_tx_h_unicast_ps_buf */
+-	spin_lock(&sta->ps_lock);
++	spin_lock_bh(&sta->ps_lock);
+ 	/* Send all buffered frames to the station */
+ 	for (ac = 0; ac < IEEE80211_NUM_ACS; ac++) {
+ 		int count = skb_queue_len(&pending), tmp;
+@@ -1753,7 +1753,7 @@ void ieee80211_sta_ps_deliver_wakeup(struct sta_info *sta)
+ 	 */
+ 	clear_sta_flag(sta, WLAN_STA_PSPOLL);
+ 	clear_sta_flag(sta, WLAN_STA_UAPSD);
+-	spin_unlock(&sta->ps_lock);
++	spin_unlock_bh(&sta->ps_lock);
+ 
+ 	atomic_dec(&ps->num_sta_ps);
+ 
 -- 
-Cheers,
-
-David / dhildenb
+2.40.0
 
 
