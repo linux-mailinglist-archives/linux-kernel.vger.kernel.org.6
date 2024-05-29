@@ -1,100 +1,105 @@
-Return-Path: <linux-kernel+bounces-193593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245288D2E53
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 286C58D2E59
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0686B20DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:35:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85455B26C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4C516729F;
-	Wed, 29 May 2024 07:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5589116729A;
+	Wed, 29 May 2024 07:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DkWAFrkW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="18aBzXJk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXm8Rrb2"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F7E1E86E;
-	Wed, 29 May 2024 07:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC1415CD6A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968096; cv=none; b=qflAifSJRwp5aLaBbPuK53rNhd53eSFGwwP2G2BVo833ntWxqgRDKV9gG8Afc1Ff8pMIr6nTHgd4yJSQuB5IPqyVhBzynWFcHf6TQiYSGf3loADM3THuMrKH7VxbD9VEqXWUaTd2LOsn2vYF+sOZXMc3il1jJ046WP90MzP8gWE=
+	t=1716968178; cv=none; b=eYTlffOPR3bv5gVp58x/NlGskE/U9+WZh9I6FUgCuweHEUNfyeARDM8dC3RyxdxkshjQD+/9klH2q3LuEqj0JbKHCDcDh3icdvojG1WKC9k4OLiX4mwXKK1x7Wz4z/HgUhmtkqKWInj/4RzgNbbert0S01PUxkKjPwTbNY4J0qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968096; c=relaxed/simple;
-	bh=J3pSsWUPvYQZmX6tPmgdskzDWH8jsyiuRbZHnmaPwGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u0Nf8NOf9saz8QGYlRdND3IlcWdbA2fZn9CYO4n8UAfwqoVgIDgte9MYKWWopYJOu/SVW446gwA6MIEZrYj7YjfF9GzVNpYit+YzewyZku3tm4li2T5H+EccOHDtczUaXFw4Wnq1eDvK6gHrVxSuuL1NxXC5w3riJCBNBl/wlfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DkWAFrkW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=18aBzXJk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 29 May 2024 09:34:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716968093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X7mHIbpcdtYFJ1w3GFH1CGLaSQctBjceRPKxBiR4wnc=;
-	b=DkWAFrkW5M0eSiId0W/ZyzPB1JiACgJRIL1zt7m8JNJToCpGV8MBJQ+jiLRYS2+KhHmLO4
-	rhJAwxZz8u9XkmekBs+Aa/seNB9I4XvwLVy9l1BTX8V29jR+ibsPTFKxnTNbZ9+lyiX+IW
-	Ayn1wBjwX0HjidnIaPTOp/DykOv2df/KpVInqAwPDqvS5SNqf0vc05B47vHt2JE/8jtCnY
-	iflxRoxi8yc30HnEjz8DKOWeOIzHj9qvsApb4qh9IZ171mV/cE9xw3n5SEoFHHa6qbjwU0
-	IwSxwEAQb3RMLTBQ+jWx9Z4DpzCkYH7O8/dBUs3gfBj2OGsd7+JdfiufrOQYlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716968093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X7mHIbpcdtYFJ1w3GFH1CGLaSQctBjceRPKxBiR4wnc=;
-	b=18aBzXJkU20fSjBtZe7CRO+mWR20Y2UL/579NdAL4djPY5KIoJsQOKxIEs0Wx08v7/NZ7K
-	twlzQPpM1esmKvAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 3/3] sched/rt, dl: Convert functions to return bool
-Message-ID: <20240529073451.IIA7HXMj@linutronix.de>
-References: <20240527234508.1062360-1-qyousef@layalina.io>
- <20240527234508.1062360-4-qyousef@layalina.io>
+	s=arc-20240116; t=1716968178; c=relaxed/simple;
+	bh=Q/nLvZ9ebMbKWDAfuBKkm9DIkm0SWKJ80JMb41SoLPI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BMlAsTcI5/8F8hFR8I20YUsgTvRvHHXdZQxDcd62xD933vG0lJXYY+NGzh+21yw7aImvaiSgIe3M9Y0vSf/YDds5VIyJLSUin5NpA5ZsalHnkEfeLbj6IlLDhQ2eDtfEiBITGzn8+b0/0Me5e38G/TsJbD3cKkmftTIjNshKOv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXm8Rrb2; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df4e1366da6so1652178276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716968176; x=1717572976; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q/nLvZ9ebMbKWDAfuBKkm9DIkm0SWKJ80JMb41SoLPI=;
+        b=eXm8Rrb24Zqthic8ztxHVQWmSOGnrOUgcg3lSdJXsNtag7kMVCAIN6GJA4nHNZkYKl
+         xRNIocG+GS0Nx/M7qYDv5XQB5QpAQ7ecUY31K4GWhaV0f+46po2Vz2WYlp8n7CYMo/1L
+         KPUqjG3F6En/zOshpPuv6S/Fe625tUIio0lNfAmuyEG5KGX5eg6naYCfSUGOLo7GYFYz
+         7bc8b0JZ3A7lSab0JlxBeRKHR1QlfGAnU/4o+ARiiKjOns1sDWUJFr6ooawzM0SnMbxj
+         O00bHcn4/2JAnK+A1TW6SU2PJMBg7fNi4Zm5wJoZzxJuvQxKAkkqefx9NY0yHVICOMpX
+         0Eug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716968176; x=1717572976;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q/nLvZ9ebMbKWDAfuBKkm9DIkm0SWKJ80JMb41SoLPI=;
+        b=uNJLjZ5N8ebVI1QscNWGervihWWcoc2M109PMse9ZlqxbX9rVm8jz7LEMQ80r02gz4
+         eyW6A5QU3w9Q6BFi8P+ybobRTqZjIeqdv+jK53ff1xNJOaMa0mw7yCt8wsHYrfnoTP9d
+         Mz+ncNz5CZrg8vvny8yifWVh3cxavrinXt66uL5xnuA61TvBl2egXM7mbk9Iu7VvuYCz
+         BiVhdmLsk8iZUy39169P0Rqt7J8BTHkbJi/p2quf0kKrDmAft9mLYRT7iZJyrNGt2inD
+         W/GyYbObWumJsa5qY6R6Ve3dLsYiFyyJvvXPkbK+XKPOMsAM+5S/qYQqNNP3Dok97Nvn
+         6zFQ==
+X-Gm-Message-State: AOJu0YwrSGqH74DN/dRgQ6bxCi+aNLoGo7jOiAxSrdy/AeaOogwF0ln5
+	+WNBekfAfRh57Fu0QIRRVpsJuPE3s23d/kczqw7p58xowg7LxRQ2Za/ZTQjX5TvO0uGiuMone3M
+	/ImljPgbYXFHseQfWyXVSGFgar/xskifxSKbfAw==
+X-Google-Smtp-Source: AGHT+IFlX+rjINhP6rj5KImP86n2ckidVC+rBC7U7ObxqdZfbojFCSZHlagJ/LaoPf753xBgaalezz/mT4lgUB82gz0=
+X-Received: by 2002:a25:ce8b:0:b0:df4:978c:3794 with SMTP id
+ 3f1490d57ef6-df772167874mr17998282276.1.1716968176161; Wed, 29 May 2024
+ 00:36:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240527234508.1062360-4-qyousef@layalina.io>
+References: <2413a1f99278d70313960f13daecda9ef54172d8.1716807432.git.michal.simek@amd.com>
+In-Reply-To: <2413a1f99278d70313960f13daecda9ef54172d8.1716807432.git.michal.simek@amd.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 May 2024 09:36:04 +0200
+Message-ID: <CACRpkdYsWjCmK82P=fqxSJX9WstF7HEYUBR2fUYJEDzfGrV11A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: pinctrl-zynqmp: Use pin numbers stored in pin descriptor
+To: Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com, 
+	git@xilinx.com, Swati Agarwal <swati.agarwal@amd.com>, 
+	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-05-28 00:45:08 [+0100], Qais Yousef wrote:
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 5cb88b748ad6..87d2370dd3db 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -10,7 +10,7 @@
->  
->  #include <linux/sched.h>
->  
-> -static inline int dl_prio(int prio)
-> +static inline bool dl_prio(int prio)
->  {
->  	if (unlikely(prio < MAX_DL_PRIO))
->  		return 1;
+On Mon, May 27, 2024 at 12:57=E2=80=AFPM Michal Simek <michal.simek@amd.com=
+> wrote:
 
-if we return a bool we should return true/ false.
+> From: Swati Agarwal <swati.agarwal@amd.com>
+>
+> Use pin numbers stored in the pin descriptors instead of index value whil=
+e
+> creating the pin groups. Pin Id's are not same as Index values for Xilinx
+> Versal platform, so use the pin values from descriptor which works for bo=
+th
+> ZynqMP and Versal platforms.
+>
+> Signed-off-by: Swati Agarwal <swati.agarwal@amd.com>
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
 
-Sebastian
+Patch applied!
+
+Yours,
+Linus Walleij
 
