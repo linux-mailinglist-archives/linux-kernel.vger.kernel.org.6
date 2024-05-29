@@ -1,241 +1,224 @@
-Return-Path: <linux-kernel+bounces-193927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9287C8D3428
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:12:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9E38D341F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809AB288392
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 729D3282F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AAD180A65;
-	Wed, 29 May 2024 10:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B3817B438;
+	Wed, 29 May 2024 10:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="kUotTfrp"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2122.outbound.protection.outlook.com [40.107.105.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="QW4RfmeK"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F2D17B51C;
-	Wed, 29 May 2024 10:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977463; cv=fail; b=KFj812qtFtG/tEGmS1+UqRCF1HE2I8Zh2FLRaIt1SHTYl379pxHXz4w0NG3mzOFVo3bLKx1Xj645m7nyPzSZyb4lPtMo0cE+UHEDDWAa25r5zYpYrrHSuZ5nmvdhZEIsNPv4VruWsdK+0Orb2+a/gqn6yj1bdGkA4/G7sxqMiog=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977463; c=relaxed/simple;
-	bh=acgJ9eLt5MEqg2YYyc3epGLTS3EsLW0MaWJt1OaIuxo=;
-	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=ufc85FXDqVSBoqi1cizJjUhNH1A9LR/LO6LXn8sGzKC8QkaUba8vcMdPJ/M+jOwTLR4Gs3MvAYXUiCcfkXt/d96v7ZDt/U3TF65bUROAyoRpR8zzL+Oa6pxeDjMWheMyaqDMsrRorwWeOaB1xejXtASKwCfstnD/isGqqYqtStU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=kUotTfrp; arc=fail smtp.client-ip=40.107.105.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n+s1VfxtT+LElADHKlufzwOsjdMVe6HTpM6oYs5FcPmNQME9XXf+KLT9IalumCKGe5AQ4EBnNlNjDdMgygwLaJE0D3Nf/QE50nk0tcWHaLR1R/vSEb6dQyMAVdW2XsQEYIV5UWhN9Zss6yKgU/w9un8JMER115WEx0vpZ0jt6EmKiHZMsE2JehHOZ7XG+iP5q2ZDwRvdp74syAGWggjNYhnyxgrLMR9vcYnNMims/f4IqwaigP9dUB3k+DvBv6yHfZRXo1M9Gxva9CQJyIOlzIMbrbv8fwlWgbzwms6zioi9tmljikrES7or8JpPKzLM5FFI4HEQsXobVt2Xhdp8Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jxWFOafSEWg8GVa7FIRUhdWVZTfHV/SfAVlmj0XA2tU=;
- b=FZ9aXV/W+P0J3fhiTPR0y0Dy6UaY7oPLMnBsdNQfn4yVIUHV+9tQThearPP9zUgoLccUuOdJnfO9jjsUkO3yq7ZLRG2cp1rG5hBLTFZMTwPOAuuIi4wTPHyWzmGpAroPZpupntbTeVCtDIM/93OgwS+90CWpwdcBSatN0kst8pbQcurpx+TFWFd7NA4KSfxxRCTy3fWWoQJ57WZJFfjbrxRoQhBirW8/tsw9xqMeo1e0d2dZZ9WrkRnr9Tjy1Olzdk3H/3nieLkUaCb9+WbAQbtZaNYoZ5zDpiM9RFPn4oAkb5g7w6BMSjCAf/hlj4T/9635CZT6rSFpMcpzYtbMAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jxWFOafSEWg8GVa7FIRUhdWVZTfHV/SfAVlmj0XA2tU=;
- b=kUotTfrposaVJkwo6R1xAxEtZcMnmXPkB5Jm/YtoGGkBQEtEC6nGKF3dh//i7tXVdK1u9K0lorKJ812Yij4C3hK05yK31kJVlrkMwu730Kf6+LTKeiw0W5Pt3Y4VjB54Q7sdEnGgrNiBfv1K4gJVFEw+FnpWsRUZSOyoDPV5/6k=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from VE1PR04MB6382.eurprd04.prod.outlook.com (2603:10a6:803:122::31)
- by AM9PR04MB8811.eurprd04.prod.outlook.com (2603:10a6:20b:40a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Wed, 29 May
- 2024 10:10:51 +0000
-Received: from VE1PR04MB6382.eurprd04.prod.outlook.com
- ([fe80::2a24:328:711:5cd6]) by VE1PR04MB6382.eurprd04.prod.outlook.com
- ([fe80::2a24:328:711:5cd6%4]) with mapi id 15.20.7633.018; Wed, 29 May 2024
- 10:10:50 +0000
-From: Farouk Bouabid <farouk.bouabid@cherry.de>
-Subject: [PATCH 0/6] Add Mule PWM-over-I2C support
-Date: Wed, 29 May 2024 12:10:29 +0200
-Message-Id: <20240529-buzzer_support-v1-0-fd3eb0a24442@cherry.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABX/VmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDU0NT3aTSqqrUovji0oKC/KISXWPjFEvjZMsUgzTDJCWgpoKi1LTMCrC
- B0bG1tQAqsYyYYAAAAA==
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Quentin Schulz <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Farouk Bouabid <farouk.bouabid@cherry.de>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: VI1P194CA0043.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:803:3c::32) To VE1PR04MB6382.eurprd04.prod.outlook.com
- (2603:10a6:803:122::31)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA9917B409
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716977453; cv=none; b=IKGb20a1r3Qtu6WFvxmSDphuvbtfHYgt8Nb34bAy3h+Dg4JbuD8JAcKEt7u1PheideI7kaiBMfEgKCJjvNx/I25hIfRsvnJb7VyxdsXVdNajKuOWF6TBLb3EPOFYJRmd83RRKBSktm9+/fg3VDm5pMc75AP23pPx5g1B6xYlsAo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716977453; c=relaxed/simple;
+	bh=zygsDcne8CRDzO76sDobH5aabsfZxMHdf9IAs1HAIE4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JeFK6D35BtetAvAy87NlVD64jVL+ZUSeFBfco/Shpux+yVRXPjjW1RIOdlhhHFk0q11FUdMHqAJCQsO5rTHvFqDjLyY5WvVBbXqnWbzhJ7IgVmGtdHnWKxuweDiNKxjxjltvOob+VnE4LLdxhdPtohmnz0BDA/Awgr4fGNKUiPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=QW4RfmeK; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52449b7aa2bso2233023e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1716977450; x=1717582250; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZSoVp4DQNbCfZosuSUspIzbLhAdqRfk3MzM3YcjAKVw=;
+        b=QW4RfmeKoXspQ7dP1ha77yS5lt+nWYno17iBBzIEX6dLv3g+MBk7zzCSBjw03DHC4U
+         y4Zj8X3UIBg2ziApeYb7hWy7q3AVLn/jTgtwlFlJrU49aUJBE4SfaGNjWXwvphMP4Qas
+         k7XrhRAYYRfOYiHoEyggWJoK7api2TNj6WA09tjFW0zAfnz5BG2JUPB+MKWlm4wIwG9Q
+         r/GIqNVNzGReHZNlWjQBFtPG5NBMw4gua1+8+8v6HadRah1WsS6qxwhKF2WPr4JnDL9R
+         qgIHUGsFcWX+jvPGCsxqFsVT32pBH0NONWixl+QN+KTL8nw0MYOks+oqkGMKn4NUSD/m
+         1Rig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716977450; x=1717582250;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZSoVp4DQNbCfZosuSUspIzbLhAdqRfk3MzM3YcjAKVw=;
+        b=qawBLir2pHGeaMDF5sBp3CNxHOHEwW2vFGjVteja3buV8N4/iH8BWXjUCqUK2OkrjA
+         UMpCyaligfGo5eXF62FLYG5iAIWJiAp6w6BB+bMjmDrErhuSCN2rcG/D9AYo0P8akcCe
+         /zce4EjQhEmFloxM/3lJc++7FXZddMPuN3VuSyv8BcnGhUElvraaPN971tFEfZp1xn3v
+         9mE0zC0fXg8Q781z0axZT5B9L4UvBnigdEN5JOdiPhY6F0/n9dRxkuZab/nTPhv1phHI
+         9VnwpECLKkrCNLp7+UKwHOX1sl/U8kiVgu0TaI3SlovthKb4Dh3iq4zS2lDLAH2aqBtc
+         mOiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0du0MSnrmw2XcEZsGeXHDJ5BByrGiWg60xjlhiQSw+IyhdveBufCba7jxr4CZShlM356pMC8bl1BEtLiVI6TZuprfBUa4WZzKF2z5
+X-Gm-Message-State: AOJu0YyElBMoG0NHU5qH8ZV0tUZLgxyMhT/s/Y+HjUmXzMy62am9bDs8
+	PnvJeUnV+yT4cevgZubSVtxXZc+n4jRUomo9D0KdHxPtB1oXBcYkhAy8y/Vzl2LvLLZG9NukOw/
+	frMMjSQtHECnq/kHuHiRsQr+tSUp7LgeZvvq0bA==
+X-Google-Smtp-Source: AGHT+IHYJZBsJdRJR+ZSwpHCzyuGph7Zavse2q6Cc2Nu04AACOr9/ojv1MOTePUCWn/12FmemAN3H/3cVYdAZT8fQX0=
+X-Received: by 2002:ac2:4c25:0:b0:515:9abe:6c46 with SMTP id
+ 2adb3069b0e04-52965199a87mr8479219e87.34.1716977445168; Wed, 29 May 2024
+ 03:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1PR04MB6382:EE_|AM9PR04MB8811:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8480373-6d0a-4f9a-348c-08dc7fc79db2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|366007|52116005|1800799015|7416005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R3orMDVLeG5jN2R3c2pWT1dzS3A1Y1BwMVZWWHNUYmRBRGwzcjRkY2ZCL3R5?=
- =?utf-8?B?NWYvUTRDWkxQUXAvZ1U4Q0NySjA0dE54L0oyM2lzbDA4RWVkRHpOU2lwMTlj?=
- =?utf-8?B?U1d0VlRZSElwUUtOTjFuZVhCSmhtelIreVdpeXd6eks5aDVMblUxcEtVeHFI?=
- =?utf-8?B?T3JON2ZHaWN1N3d3WDF2QlRJMmk4Y1JoYklYbk9PVjdpTml3OGhHS1hNT29v?=
- =?utf-8?B?SnNhNGIyQXZjT0FNdDZhWnBRdk1jdnFqMjhIb3NOcjRSdHY3dS91UWEvYStL?=
- =?utf-8?B?dHB5U2lLcDJ3dzR5eEVUd2MyUldqNFdMRERhNnBlTExqYm83djlHUG05bUov?=
- =?utf-8?B?eWxCMVE2UEtJRDVWOEVwVm9LRnQ4MStCL2owZllmdGlLZ0VuazIxNVVjNnF1?=
- =?utf-8?B?eUxoZzJ1OVZXeFVYZk1ZWE4wQ2xsV3JJcnlFRkpacWdlWWpqdU5IdkNJY0x2?=
- =?utf-8?B?bmNmdXFQQWtzUnY1SU1Pcll3VFNsMk5mNzlYbGxKL1FTQXlKeVFnQTJmYzdQ?=
- =?utf-8?B?NWdVL2Y0bGVuUEJRMERWZ1lCMVZzTHVjMGp2dDRCaUFhbmV3WVZvRkxrMUJ1?=
- =?utf-8?B?a0tLQ0Q0SFAxQmZHRUZlQlgrcGc4N2ZycGxucGQydjB1cXFOZHNNWVhwSXY0?=
- =?utf-8?B?M0NKZXYvbFJlRE9SUUxyWjVZNnZGeU1pclRoYnZxNW9JRE5WS2ZEbTdYTkVv?=
- =?utf-8?B?QXJGN25GVFpxVkMyL3pkK1FkYmxydWhJTE10aTN4YTJZM3VOM3dsSHBSSGY1?=
- =?utf-8?B?YXFVV2FlTEFZMnRYM01pdTd0V2V4RldvTGxOQzlSbFVkdEVwT0ZtemxQYjAr?=
- =?utf-8?B?R2xhUGFQMUR0ckw2RjBvQ3lyQzFYRUxrMUM2U2JWU2F0dzBBNU8vRkZ3RVdV?=
- =?utf-8?B?a1dQc3NFUzFsdDhVaTRDWTIxOEdHSXRJeWRRODc1NWptRnJzUFdIYktEY2po?=
- =?utf-8?B?eW01ekFSUUZURE9EMnZ5bDNNeDhyVk0ydDJlVnpObjB2cnRzbFJEeldTdkVj?=
- =?utf-8?B?UFNoQXIvVmtDNVdITDVJeXlHNSs5MHdNU1ZXbHZ4VUlEdVBYdlZaT3I2ZnZt?=
- =?utf-8?B?ZDZDUmVINFJCQ3dYK1JmeGE2UnFMQUNoem50L3ZPN2xCZUIzVnlzVXE1L3da?=
- =?utf-8?B?WVlzWXdBZkVvemlJekNnZDJMMGNDTDhLVjZSV0oxTEZNUXorMkM0RnMxOE5X?=
- =?utf-8?B?aEpncHArbThMbWIyVXVFQ2pNSk84QVlRSlBibWJLcUhPQ2tBN0FDdXlJb29U?=
- =?utf-8?B?cm9QR1JqY21jb2NPOTZGaTA3Y29oY1c4N2VhQWI3WVhQTi8ySTNVOGdvQms0?=
- =?utf-8?B?SlM2eUV6c3hndlo4WmZndzU5RXBQcEtBQW9NQ0ZHRmlPeWEzcVNhcXBRdVJt?=
- =?utf-8?B?czVZMXlMUStQVHhncFNPV0J1OXNsWnQ3V1VHTkNrd0h6d3dDZEdPYWdHeU4x?=
- =?utf-8?B?dStwZldLR3N1QXhDOGhXVDlYKzA3cmxFS3RGRnl2b3JBWWZOSnBFa3cxc1FY?=
- =?utf-8?B?YUxFRkNyNlhhRmg0TTdyejNoanNWbGk3TmNNNnhJUGNrUjNPZDNKcHNVdkQv?=
- =?utf-8?B?TWxUTWd3RlZUT3JoeFdRR2pjeHV4VUlkZXFjV0JIRUxZSUx2QnYzVXo3STJ2?=
- =?utf-8?B?RERFMzBzWStZVkt1dC9SZFhUUnFRL1RTcWdJYTg0eC9HMHZ4RFVSWkMxcmZj?=
- =?utf-8?B?K3NTRzZYRDJqRzM1Rkc5ZWkrbHdNSWI0Y3B3TkdhUGZ6UGZ1dEZabWpBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR04MB6382.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(52116005)(1800799015)(7416005)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZFBqMXNIUVV0dWliQkJ6VnVLcnI0MzA4UmhDcmdYUWY2dFFqcm1NcGdUMndW?=
- =?utf-8?B?ektwMzFaNFhrYzd2R3J2a2R6M0FxY0NCV3lxRjl3ZVlDdXNtT1FCK3g2L3N6?=
- =?utf-8?B?dGtCOWFuL3UvUDhtKzB6bW11d2JiZng2QmVhdGJHQjYrZW1yQlNGSVpMSWhW?=
- =?utf-8?B?cnR1R2R4MjltVzNtMnl3Rk1BcTVIUGg1cGIrUFdYekxhbnFvMzEvc2VrbFpS?=
- =?utf-8?B?QkdJTWJEbENJaEVZR0JVYUkwd1UwSUlYdnpWUUtEMjNVeGtHbjR0TFZLRXRw?=
- =?utf-8?B?Qk9wY2gzWW9FZkNZaHJpMEQzV01wZ3FaS2VaY0t0bGdHZnZ5Sit1YS9BbXA0?=
- =?utf-8?B?L3VERkRFVVd3TTRGWFQwa1dOM0xhcDhoZWx1aTN0cHdidHhiMVRranhWaEwy?=
- =?utf-8?B?QkE2bjB5QWQreE5RT0V1bVpqUnIrc2JvQTJiV2kwaUJ4Tm9PQzF4TTlROUZH?=
- =?utf-8?B?YVBleHhTeXJrTnkvdU95NUtHL0RpSmlyeEp4aFNqV2UzQWZNYlgrRDdiTTBM?=
- =?utf-8?B?eFp2TldNZldlVmRoR3pyU3FTc29KUk9JQm4wcXZ1amhwNks1azVHODhKMGli?=
- =?utf-8?B?ME9GaGQzRWlaQkZjNW5HeVcyRlNmcS80VWZSd0I1WUEwVXFZMHlranJOdXRK?=
- =?utf-8?B?ckk4bDYwOWJXNVd1NXpxdDRnZlpRb1QrMTNYYmRPeXdOQk4zV2JtdUpLQy9O?=
- =?utf-8?B?NFF2WXNkejZ5OXIzVnVJRFZaZGdlbVhzZzVrcHNObUdlODB0T0ZCNml1aEhJ?=
- =?utf-8?B?Y2pyei9waFZuYnliaU4xcjBjdklwZ2xrS1psdUVqbFRtUk1EWnFXNEdCUVZS?=
- =?utf-8?B?THBrdVV6Z1B6ZUpHNGFpRlBlSGgyWXYrS1FWVStiRnpXS0NrOC9PRGs4T2tw?=
- =?utf-8?B?NFpqQ3hUQzdZRSt2bTZtc0ZIM3pBUUFjTEc4dEdZU3ZWRU5WdXB1NG1KcVFN?=
- =?utf-8?B?SGROQmsrOFdXcTN4bm1ibGVnOFI1eUlNbEg2a29OMWxuK05UdUIwd0dhemNG?=
- =?utf-8?B?SHk5RDRaaGxvVUtMNlJlQkRrL2dPdzlWMm1zYm82T2ZQN2szOE1aa2d6blVh?=
- =?utf-8?B?eTJaSWV1OVJuMkozdlVuc2VLNElnSTlQdGxDZjZKYTYxVnZyS2pGcXFYODB0?=
- =?utf-8?B?OVRDaklTUW1xeUVpclVDRkhaelprTWFDYWc1U0JtWmozWldYNEJBUHkxQW9y?=
- =?utf-8?B?S09YV3RIcnZwQWVORjN5cDJRKy9sOG1sWU9vRndrSFNyRnFXS3FoV3RWSHEr?=
- =?utf-8?B?WXhzVklNMkp3YUlMVEtVSzE4SzRHRTFCZEkvMG03cWw1bk5qQVdqUzhpTDFQ?=
- =?utf-8?B?dG0wSFhKVVRQYTdTMThmbXpkUVV2aFlUcnJET1lUdWJnaWk1ME9pa08xQ0JR?=
- =?utf-8?B?K2hoSTd1K0RxTHNwbUFBQW5HY3pIR3NId1NOVzdHRTF6TDdETWE2bHZKRjBp?=
- =?utf-8?B?MGYxakNrdlJKWHdmanF2OUNJK24zMlBLMTVzM2tpemhpdk1xV3hGUWlCN1hs?=
- =?utf-8?B?R3AvUmpZMXc0SGNING9UY1Mra3FDd0ZOTmdYbmlVam5vTFZxaXFQTnRSSVUz?=
- =?utf-8?B?dzBRMC8vbnVtblhrZDVoYmU2c3lPUU9lOWNIQjRoRk5yTnI1WFpNMGtPeGVx?=
- =?utf-8?B?cHdWd3lmUktaTmVjd0c1L0VOMG5NLzFPSjlmTjhaWTVLVHF1SzBzWEk2anpO?=
- =?utf-8?B?QXl3MzZkYytBc0FURTIyWGZlVkVVN2VQTElUSUdib0tock9YYlcrSFR1Yi9p?=
- =?utf-8?B?bUZwNVgrUllTdDJSVzZkVFZxRTVGRE5IbExrcTBqY2I0alI5V1d6OUJCVkxr?=
- =?utf-8?B?c1NzL0RFalpkU1F5ZmlMb1g3ZjdPS2lnOXVocGNXL2RpZXd3LzIxMDVzeVRJ?=
- =?utf-8?B?dzVTVjZiaExDTVByWUt1MjRseXRIWTkyTW9OZCtiSEhDWFkvT3VvYjFhMXJO?=
- =?utf-8?B?ek1vMEx1Mzg5T2xLUHJQdVRDMHE0dWF3WElza2NBLzN6QVNEY1J5S2V5VEpj?=
- =?utf-8?B?MzBBMC9RY0wzT0MrcEtCYWJSQ2ZGWklkbWJHTzU1RnVWNFpGaGIvTlJ6bXlV?=
- =?utf-8?B?SUV2OFVqL29mVHpyWkpYbEVHbVA3TUtNZkJidXZ6L1lNcWFPQ2ZEMDB6Zm5N?=
- =?utf-8?B?TVJnbGhxVVNWOGhZRnZOblhvbnQrd3RZTjBBUzFYQm5pSFF3NEZXdDhyNzg2?=
- =?utf-8?B?Zmc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8480373-6d0a-4f9a-348c-08dc7fc79db2
-X-MS-Exchange-CrossTenant-AuthSource: VE1PR04MB6382.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 10:10:50.2541
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PjZUB+x1YcHSL8AlEsUsAQhc8R1su1NeHj5BfNjjgYlSQiv84zPw24gla2HfJgt7RHP8eI2fwzoePwn1iH9jhv1vKcdVHDtc7UiXu1iaXgM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8811
+From: Zhitao Li <zhitao.li@smartx.com>
+Date: Wed, 29 May 2024 18:10:29 +0800
+Message-ID: <CAPKjjnoeLkkvSZwpWw_bTCOCTfWYgjCyvjpoa95E4yroQR5zyA@mail.gmail.com>
+Subject: Question: How to customize retransmission timeout of unacknowledged
+ NFS v3 TCP packet?
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ping Huang <huangping@smartx.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Mule is an MCU that emulates a set of I2C devices which are reachable
-through an I2C-mux that is implemented in a different patch-series[1].
+Hi, dear community,
 
-Device #1 on the mux is a PWM controller that allows users to I2C-configure
-the PWM output signal.
+In our NFS environment, NFS client mounts remote NFS export with its
+VIP. The VIP can be assigned to another server node for failover.
+However, the NFS client sends the unacknowledged packet 50s+ after the
+VIP is ready on the new node, which is because of the exponential
+backoff retransmission algorithm.  I tried to set this parameter
+"tcp_retries2" smaller so that the NFS client can reconnect with the
+new node more quickly, but this parameter didn't take effect. From
+tcpdump entries as follows,
+  1. At "2024-05-29 11:47:00",  ARP is updated.
+  2. At "2024-05-29 11:47:52" ,  the NFS client retried to send the packet.
+  3. Then the connection is reset and a new connection starts.
 
-On rk3399-puma-haikou, px30-ringneck-haikou, rk3588-tiger-haikou and
-rk3588-jaguar boards, this PWM controller is connected to a PWM beeper.
+I guess the parameter just takes effect for applications and doesn't
+take effect for kernel modules like the NFS client. Could anyone give
+some advice to customize  retransmission timeout of unacknowledged NFS
+v3 TCP packet?
 
-      +-----------------------------------------------+
-      |  Mule                                         |
-      |        +---------------+                      |
-    ----+----->|Config register|                      |
-      | |      +--------|------+                      |
-      | |               |                             |
-      | |               V                             |
-      | |               __           +--------------+ |
-      | |              |   \-------->| amc6821      | |
-      | |              |   |         +--------------+ |      +--------+
-      | |              | M |-------->| PWM over I2C |------->| Beeper |
-      | +------------->| U |         +--------------+ |      +--------+
-      |                | X |-------->| dev #2       | |
-      |                |   |         +--------------+ |
-      |                |   /-------->| dev #3       | |
-      |                |__/          +--------------+ |
-      +-----------------------------------------------+
 
-This patch-series add support for Mule PWM-over-I2C controller as well
-as the PWM-beeper on theses boards.
+OS: Linux kernel v6.7.0
+NFS mount options:
+vers=3,nolock,proto=tcp,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport
 
-The device-tree patches are to be merged after the other patch-series.
-The dt-bindings and driver patches can be merged regardless of the state
-of the other series.
+tcp_retries2:
+[root@vm-play zhitaoli]# sysctl -w net.ipv4.tcp_retries2=5
+net.ipv4.tcp_retries2 = 5
+[root@vm-play zhitaoli]# cat /proc/sys/net/ipv4/tcp_retries2
+5
 
-[1] https://lore.kernel.org/lkml/20240506-dev-mule-i2c-mux-v2-0-a91c954f65d7@cherry.de/
+tcpdump entries:
 
-Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
----
-Farouk Bouabid (6):
-      dt-bindings: pwm: add dt-bindings for mule pwm-over-i2c controller
-      pwm: add mule pwm-over-i2c driver
-      arm64: dts: rockchip: add pwm-beeper to rk3399-puma-haikou
-      arm64: dts: rockchip: add pwm-beeper to px30-ringneck-haikou
-      arm64: dts: rockchip: add pwm-beeper to rk3588-tiger-haikou
-      arm64: dts: rockchip: add pwm-beeper to rk3588-jaguar
+2024-05-29 11:46:02.331891 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973659245 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
 
- .../devicetree/bindings/pwm/tsd,pwm-mule.yaml      |  46 +++++++++
- .../boot/dts/rockchip/px30-ringneck-haikou.dts     |   5 +
- arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi    |  13 +++
- .../arm64/boot/dts/rockchip/rk3399-puma-haikou.dts |   5 +
- arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      |  13 +++
- arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts     |  18 ++++
- .../boot/dts/rockchip/rk3588-tiger-haikou.dts      |   6 ++
- arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi     |  13 +++
- drivers/pwm/Kconfig                                |  10 ++
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/pwm-mule.c                             | 115 +++++++++++++++++++++
- 11 files changed, 245 insertions(+)
----
-base-commit: fd8c3f3cd1b029f1851393839f7ce558db9cf202
-change-id: 20240515-buzzer_support-33d93c9d0f1b
+2024-05-29 11:46:02.542836 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973659456 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:02.751013 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973659664 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:03.166958 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973660080 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:04.046882 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973660960 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:05.710910 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973662624 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:09.039310 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973665952 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:16.017889 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973672930 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:29.326891 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973686240 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:46:55.950915 52:54:00:1d:a4:24 > 52:54:00:a0:93:93,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973712864 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:47:00.379844 52:54:00:13:1f:34 > Broadcast, ethertype
+ARP (0x0806), length 60: Reply 10.125.1.85 is-at 52:54:00:13:1f:34,
+length 46
+
+2024-05-29 11:47:52.271192 52:54:00:1d:a4:24 > 52:54:00:13:1f:34,
+ethertype IPv4 (0x0800), length 190: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [P.], seq 129897:130021, ack 171633, win 2356,
+options [nop,nop,TS val 1973769184 ecr 28456
+58566], length 124: NFS request xid 1954624602 120 access fh
+Unknown/43000001180100000000000000DE40020000000000F439000000000000000000
+NFS_ACCESS_READ|NFS_ACCESS_LOOKUP|NFS_ACCESS_MODIFY|NFS_ACCESS_EXTEND|NFS_ACCESS_DELETE
+
+2024-05-29 11:47:52.272041 52:54:00:13:1f:34 > 52:54:00:1d:a4:24,
+ethertype IPv4 (0x0800), length 54: 10.125.1.85.nfs >
+10.125.1.214.58428: Flags [R], seq 1148562527, win 0, length 0
+
+2024-05-29 11:47:52.272909 52:54:00:1d:a4:24 > 52:54:00:13:1f:34,
+ethertype IPv4 (0x0800), length 74: 10.125.1.214.58428 >
+10.125.1.85.nfs: Flags [S], seq 1734997801, win 32120, options [mss
+1460,sackOK,TS val 1973769186 ecr 0,nop,wscale 7], length 0
+
+2024-05-29 11:47:52.273503 52:54:00:13:1f:34 > 52:54:00:1d:a4:24,
+ethertype IPv4 (0x0800), length 74: 10.125.1.85.nfs >
+10.125.1.214.58428: Flags [S.], seq 1078843840, ack 1734997802, win
+28960, options [mss 1460,sackOK,TS val 2235915769 ecr
+1973769186,nop,wscale 7], length 0
+
 
 Best regards,
--- 
-Farouk Bouabid <farouk.bouabid@cherry.de>
-
+Zhitao Li
 
