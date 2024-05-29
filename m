@@ -1,154 +1,180 @@
-Return-Path: <linux-kernel+bounces-193969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66C78D34B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:41:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40DB8D34BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79B741F2393A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:41:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BA7328756D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989BE17B4F9;
-	Wed, 29 May 2024 10:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A0A17BB1A;
+	Wed, 29 May 2024 10:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tvxUVA65"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="B+WjQjKe"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1773B16A38C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591C17B4E5;
+	Wed, 29 May 2024 10:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716979283; cv=none; b=bkmL1UCtfkN+0KIEicVHKTJ7XzbZxxwWLrUxhR4As/EGscIvxtWU72WmFG+NFaTXMHjTd2+n85xek0SRLISmvhx43LyP287VOEHM0I7abAlpkqVZhO6b4sAyrOibc6PbZD4sUG64eotXzQ9cEVuKI17HcGj8cxthbR28DYeSQHc=
+	t=1716979426; cv=none; b=MUq3iQflzkaAYmafmcmoqTs8gbfmIkn/N9SEPsnB9wFDGnguBahaRJ/EuKmADsMzM+mVlp0ep2CDQcOunrOphdPOr1RBzsVDgUzM1gw4kMth2G6nblt7poQg+1we7DvZj6asaI9DqdkAvP4ePUBk0v57GUJN1dwAlB5BTIs41LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716979283; c=relaxed/simple;
-	bh=CA/gJtzVIOXbSxBYf9GyZuSLnbZ96s+3qD9KnUlRTog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBIax88Ut+pDJJ9qYsbF7tPtX4k8PhP2e6tNk+qiOElV4UThaVzOgs0+HoNRQPsLTr3kFNdxM/C9kTazR3yZWjdpUTLNVMHQfr9L+OcPvkMjKF639cXkG41VR8BsThVwwJyjHcM9RGc8CkkbU5tX1Pa55gxSbqFy9fslYYqyHB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tvxUVA65; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a033c2ec2so703258a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:41:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716979280; x=1717584080; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=sla1AgMnfTvaVQbJp/AkvnN3q3g3If3gBgcTVDSAp8U=;
-        b=tvxUVA65hI2e33xHZ+CsAJRJuQvmbVYI/jEFpLKONHQyNOWsEmuwXdftI5uJt8udlk
-         z6JETDGTZSToW7UA36vNfnJcVJUjFmkibsRhLZZBfgPgTjzJIH+REqN5stOB95v5UBvt
-         1s8+ZtFkQzMUiR6/yLTkjEIY21oY62N/FopJNv7zFH1ChafSLXP7Jl4akcXBUZJC39cR
-         Mmewvec9FxW5TbW9F/Ha+mQZhLQCCj6s8svnAhkq3BaqERaIIGFr2SbZhj1eLElXODk4
-         S0PX1Y+rjmNNA5f1y7p806wRyQiGl42YyxLKn8hqWcqBoVOtrmTRmEDUXX+qSik1weWR
-         SWEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716979280; x=1717584080;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sla1AgMnfTvaVQbJp/AkvnN3q3g3If3gBgcTVDSAp8U=;
-        b=GTPhado8P2ZTGKho/ka40P9+LETS4LOy5Ac8Ui3N9HjnLnj1CaE1aXh6LNlYCAmpzd
-         xyQ6ZxNShTeZ2ib75nFGNfZAFjm/NN/i81vuA0tGZFYS11J+yZ3v6klHq5poU/N6ICf7
-         fsTJkslOf0fJkpuuLsNajdrFS3A5m5n5j3xSg9pSPTtN3t/gAiWs1+WVeDNWD/0b/KxI
-         2TWGKrtF30rsI52jX6nSv579tcE6Wv8gweGXpdl70Cj9oxLC9+sAbcW5styjHK2nwVPB
-         pWyvHkhRpFoK3PnsXdW1lWKnvAnyaL9k0ZGmLOuOOX2s+Wdh85J4PajiLE5t9oSr77l0
-         2khw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlGanE4hPsZ6Bd+1yhqodq6GuvtSN7EE985ZGKNgRyvaCcI/6O4h7VYfYZkfThQaGxWZGUUEJj8FgONhbrfGYGmY0DAmkFiXIXHc+t
-X-Gm-Message-State: AOJu0Yycu5Rmcx4xyeJs3ZHXZZ4c9wV9EE8G26G72XnUOE3I/KKDuzDP
-	znek5yF9oOUNa1JJEs2zIGOAirMTPf/plKnYl8y+/huoUc1be4pQEZ2+Q+s3DX0=
-X-Google-Smtp-Source: AGHT+IFJb2R+Y16iwF/EewPOwd9YBStxfjgZzM8O2br3b03khmAr2gwVf6sHjTgvjvuxyJ8HDT025Q==
-X-Received: by 2002:a17:907:82a5:b0:a5a:3da6:7712 with SMTP id a640c23a62f3a-a6265134c8fmr795610966b.71.1716979280376;
-        Wed, 29 May 2024 03:41:20 -0700 (PDT)
-Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817ad3sm713720366b.16.2024.05.29.03.41.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 03:41:19 -0700 (PDT)
-Message-ID: <76a124b6-8cc3-4060-866c-03f47da450cc@linaro.org>
-Date: Wed, 29 May 2024 12:41:18 +0200
+	s=arc-20240116; t=1716979426; c=relaxed/simple;
+	bh=up394OjV6Mya4etDTOCYaWlZ31SgZg4PVph4Q7LohxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pb1kEHHY6d9YmDzlkVB3BbGasBp32Wz8F8jN49tzQW8rCKh9FMiKJHyZQ1t0IBok3G1Smd5gmBKCqQuZ2QbBkaTNFKF0MU87tmTQ0nOfow0er2MXNZRfxetmt+7SnMB7YdTfsKapmjoq7ztEx+snfU7lAMu/luOyTiOvK3hh2C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=B+WjQjKe; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2054A40E02AF;
+	Wed, 29 May 2024 10:43:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id AwDXIKgAyAXx; Wed, 29 May 2024 10:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716979412; bh=e1AAoC8VPH2JOJ+ljlTpXygxtyAhC2c5XbpDeQh3FuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B+WjQjKeqTyuu8CI7MMsYGxCJTuSJtxQJpcVNv0maCOvgyWtzobmD/5owgf8vb56c
+	 /01mD/zxJ2v/pmRbVrzodj7rSYLw3WgMDWCMa2Mon2eonhgEolnoHq3NNDDJo8OvuP
+	 7X+bJC26zES1rQyM2SFu4Osr/uUMGIlE9EQ4IaTQNWdkTrmbsXxNYGFaVfHtOe3QnO
+	 2CjOpnysup14rg3wkX13EkLKmZ61lVddVg7RBRQ0OPd+oKkzB8uLLUVkDegzNvblrm
+	 5KqASPmbnDv4UxzBpmHDLNfVX8aIMg3fi7jAsJ8VE+R0rBb614mLWKU77OtTBCb6ZN
+	 H02+Ts10dftT//q3g4bdKJHn05rKN/yoANx3s3ew6XP1/K+2dUAwnQ+4z2lXcWWaVd
+	 6DIe3crIOrv8Ntogwes2bnjdnbUlH401beIUfosBDHh/d9Lxgye+gkwimySbQyNI/E
+	 jfEqBWFwSt7zpJLEqTmxdhH5LgOoMMI6vhcSiB2oHZ+4bhOP2vo+mz0vi23xxmVJ8Q
+	 YB38fbImDcMkOOOTkOxSSu2w1pehpE/fkKPaFPmdzZmcH02c05Exm7WcMHrmIuYgb+
+	 kOM2aDXxW4yWyT62Y6fYBD3oTOfukx1d3ofe98oFoDI+W+1v8DUsHUHbUcrALP9htz
+	 uHf3ICtv+3vCpq1w51ajQHoM=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A4DA940E0241;
+	Wed, 29 May 2024 10:43:03 +0000 (UTC)
+Date: Wed, 29 May 2024 12:42:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Nikolay Borisov <nik.borisov@suse.com>, Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 10/19] x86/mm: Add callbacks to prepare encrypted
+ memory for kexec
+Message-ID: <20240529104257.GIZlcGsTkJHVBblkrY@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-11-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/adreno: Add A306A support
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-References: <20240528-a306a-v1-1-03a66dacd8c7@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240528-a306a-v1-1-03a66dacd8c7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240528095522.509667-11-kirill.shutemov@linux.intel.com>
 
-On 28.05.2024 9:43 PM, Barnabás Czémán wrote:
-> From: Otto Pflüger <otto.pflueger@abscue.de>
-> 
-> Add support for Adreno 306A GPU what is found in MSM8917 SoC.
-> This GPU marketing name is Adreno 308.
-> 
-> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-> [use internal name of the GPU, reword the commit message]
-> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
-> ---
+On Tue, May 28, 2024 at 12:55:13PM +0300, Kirill A. Shutemov wrote:
+> diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+> index 28ac3cb9b987..6cade48811cc 100644
+> --- a/arch/x86/include/asm/x86_init.h
+> +++ b/arch/x86/include/asm/x86_init.h
+> @@ -149,12 +149,21 @@ struct x86_init_acpi {
+>   * @enc_status_change_finish	Notify HV after the encryption status of a range is changed
+>   * @enc_tlb_flush_required	Returns true if a TLB flush is needed before changing page encryption status
+>   * @enc_cache_flush_required	Returns true if a cache flush is needed before changing page encryption status
+> + * @enc_kexec_begin		Begin the two-step process of conversion shared memory back
 
-[...]
+s/conversion/converting/
 
+> + *				to private. It stops the new conversions from being started
+> + *				and waits in-flight conversions to finish, if possible.
 
+Good.
+
+Now add "The @crash parameter denotes whether the function is being
+called in the crash shutdown path."
+
+> + * @enc_kexec_finish		Finish the two-step process of conversion shared memory to
+
+s/conversion/converting/
+
+> + *				private. All memory is private after the call.
+
+"... when the function returns."
+
+> + *				It called with all CPUs but one shutdown and interrupts
+> + *				disabled.
+
+"It is called on only one CPU while the others are shut down and with
+interrupts disabled."
+
+>   */
+>  struct x86_guest {
+>  	int (*enc_status_change_prepare)(unsigned long vaddr, int npages, bool enc);
+>  	int (*enc_status_change_finish)(unsigned long vaddr, int npages, bool enc);
+>  	bool (*enc_tlb_flush_required)(bool enc);
+>  	bool (*enc_cache_flush_required)(void);
+> +	void (*enc_kexec_begin)(bool crash);
+> +	void (*enc_kexec_finish)(void);
+>  };
 >  
-> +static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
-> +{
-> +	/* a306a marketing name is a308 */
-> +	return adreno_is_revn(gpu, 308);
-> +}
+>  /**
+> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+> index f06501445cd9..74f6305eb9ec 100644
+> --- a/arch/x86/kernel/crash.c
+> +++ b/arch/x86/kernel/crash.c
+> @@ -128,6 +128,18 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+>  #ifdef CONFIG_HPET_TIMER
+>  	hpet_disable();
+>  #endif
+> +
+> +	/*
+> +	 * Non-crash kexec calls enc_kexec_begin() while scheduling is still
+> +	 * active. This allows the callback to wait until all in-flight
+> +	 * shared<->private conversions are complete. In a crash scenario,
+> +	 * enc_kexec_begin() get call after all but one CPU has been shut down
 
-The .c changes look good. Rob, do we still want .rev nowadays?
+"gets called" ... "have been shut down"
 
+> +	 * and interrupts have been disabled. This only allows the callback to
+
+only?
+
+> +	 * detect a race with the conversion and report it.
+> +	 */
+> +	x86_platform.guest.enc_kexec_begin(true);
+> +	x86_platform.guest.enc_kexec_finish();
+> +
+
+..
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
