@@ -1,180 +1,149 @@
-Return-Path: <linux-kernel+bounces-194428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22C78D3C1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:20:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE428D3C1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E0528627D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AE41F253BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3641836E5;
-	Wed, 29 May 2024 16:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AAA1836DB;
+	Wed, 29 May 2024 16:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b16dWyMa"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NW3NQ93Q"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065E2E576;
-	Wed, 29 May 2024 16:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A69AE576
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716999612; cv=none; b=Ck6X2DX05th7l9X0LYfnwEO1aCXO79w2BqKZNOy2FjxwcPas/yX2jutGerSyWrdRfBwXEt+4OnTZlOPsmgvW9Y8naQXBGMnnJqzeF2Krxn9jkJE2DE3KIZl0zTPRWNuY7yVYxCwh7AjrGF2qCelRpUvT250WWAQPTYhMQA9h/FA=
+	t=1716999656; cv=none; b=p03pk2GnECxz9g+Uf5IHDJOxG5cnrwlrdRXzgF163Mc4GqWtS2uCC12RHDi2PR+ZaeRliJVkciTxw4nTR1b8dtuavFTqvxFt6JwcvLj/246Xzd3+hEUe1sJagz6vQCV8G9rgNFvRyZD8z9mmK6xYjrOzEfXM5IyLjaQcl/MZWkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716999612; c=relaxed/simple;
-	bh=6zNVaT7pBxjmTO3i2MBilBBPp1dfMBnZrrUBcWnT56w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dDrt1ji5Og0JtZv6uv39DPP6xvSOU0Kk9ep+qeF3Csq2jjcVScGlsU8eX39nnDpvvFo6LSerF/t+9Pmgn7es9XiSLyCdRUgtgmN1nvAU8SW+R2Bxjncu7EE6PK6gbgN3mlscWhqzanNQ/Z8vIPCuA2UAW+drwgU1UcFUsje2PDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b16dWyMa; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f850ff30c0so1835613b3a.0;
-        Wed, 29 May 2024 09:20:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716999610; x=1717604410; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=7DIlpIcV63xQIC+uFrCIfv9uIn22GwHRD2QMx2fQXbw=;
-        b=b16dWyMalzxX47xCfv5iP8Xfp5grg9hM/WJjNgBgh9bW/iuAXPCLJ9dpIuW2Q6WuQv
-         740a2bGF3sEZVpyk19hPiUmzaz2Ko1H0pKioBxLjAN915f5DpkidHmmSjer+0N0mDBZW
-         yx9Pg7C8FADxp9RF9ju336m8BgFjNTfSiZjxkhaF6DGRX1VA0fYoC5cD8TBrqlDmnnCX
-         PGhPk+FQ57XLkyY16/GtsKP67WE0FwoAFVMB7j+LtEdHHF84wRSyWriVqeTapHTeXbzn
-         RjaRS/XEzjFNGoTD7npSVoVyThAifUC395rOVQmRNwe8Ikwz+hGS5K0LqK9nL0lLF0uD
-         rarQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716999610; x=1717604410;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7DIlpIcV63xQIC+uFrCIfv9uIn22GwHRD2QMx2fQXbw=;
-        b=UgcZxE7dFI42I/CvMMXjS3zNxMANXKMmhbtuc54pjuI2M2aNZ+Ve+lElwvtOSiOBwt
-         FYa1m7r8m2DrnPsILQEv8WkXQFGNBsZbRyTXAIs7Id7pGi1wDTTAf94CJ1lXRT7PdGuF
-         TwCZBDpseWoNtyduYs2nbpps0OBKj8PFzSN+5wjiZy5BDBoOk2IG9JIaqGh9C22YGxoV
-         V1VAolY8oUGX/PJ8zXcO5cNwtpJK4ImwApRpjBEeDMx0FXVmsqPcuoOTX/8EtYaKqcVC
-         kX+eMHbsl+7kqPJNlJVlBqVhxMi/+8OwfMmX/PQlSToeiEPxNu7CtJB7Tho2nlLKf/sk
-         LvoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCd+2BydkSazKuaOgvsFSLMFZRS5B4mk5SQdUKboWXx76ofQEi2fGMYK/PXNkRqKHSJVYMP1+ZTbYRIKoDz0yQQ3H/65vO2/OQTirKhbQ0C3UAw/YG9srUQEZlLy9PvC64FF3reCOcrNOJySwNsY0YYaFFe/ItmKFbeBJ68I0rgiUUiCgb
-X-Gm-Message-State: AOJu0YzPii6eRaM5xFon8EKwZkTZriOWuSrMvdyIf/sahhqEKnw5/UMb
-	6quEwBCv9CU/BpFjhfAZUpZeut7/HJt2LX7XbwvktGJdGxbHjggMOP/KDA==
-X-Google-Smtp-Source: AGHT+IGObym2lzqymUsTK/krTJ9/MpXIkhFV1Nv+K3Beojwf7DIXXaqkvHSlqxJFg/VG8UX+2ANNkQ==
-X-Received: by 2002:a05:6a21:8193:b0:1af:ac96:f4bf with SMTP id adf61e73a8af0-1b212d1e48cmr15208604637.15.1716999610215;
-        Wed, 29 May 2024 09:20:10 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822198a7e3sm9311534a12.34.2024.05.29.09.20.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 09:20:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f41480c8-f149-4826-aa28-549a504df181@roeck-us.net>
-Date: Wed, 29 May 2024 09:20:06 -0700
+	s=arc-20240116; t=1716999656; c=relaxed/simple;
+	bh=7Zm71bZ0gdfUIY18MRDwLirXAVjFm8dJHtioBjyMJYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4DnhR69+pel0w099+ifIURU15LvGZBrcklgqbP43QEUxhUlkEILUKn8EI/h83amYXye7TWXoRYiCE7Qa1hLkFMctIzqjeJmN6a0rPfb+5yynxBOizpj+EPbYTq7FgwxCJyEpXtfjRmkETi1eyRzWMnYPoqcuWECV68wSBQjdTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NW3NQ93Q; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: shakeel.butt@linux.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716999652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CKdtFGY2qvDebu+brZlimiXooxRBw7HUXpJ9H2HyUM8=;
+	b=NW3NQ93Qo3m6BS94m+TO02ezsQNUb0s2NNOWweZX9yjZlp9KVgq6W4e5vvgwPJTdhi4UI9
+	IBNz67RtT9iUmAvGQQFZonQMy/eudmH0OQ/gnlLXWsicse5rAhsYEkf4HptjvV32C5QnpN
+	8ZVkC+dk39FLl+5Vejp2C+3FBqrCeWc=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: riel@surriel.com
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: kernel-team@fb.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
+Date: Wed, 29 May 2024 09:20:46 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Rik van Riel <riel@surriel.com>, Michal Hocko <mhocko@kernel.org>,
+	Facebook Kernel Team <kernel-team@fb.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm: vmscan: reset sc->priority on retry
+Message-ID: <ZldV3pNL6ArlgPyU@P9FQF9L96D>
+References: <20240529154911.3008025-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: ti,ina2xx: Add
- ti,alert-polarity property
-To: Conor Dooley <conor@kernel.org>, Amna Waseem <Amna.Waseem@axis.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@axis.com
-References: <20240529-apol-ina2xx-fix-v2-0-ee2d76142de2@axis.com>
- <20240529-apol-ina2xx-fix-v2-1-ee2d76142de2@axis.com>
- <20240529-untangled-occultist-5c9804aa9c8f@spud>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240529-untangled-occultist-5c9804aa9c8f@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529154911.3008025-1-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On 5/29/24 09:17, Conor Dooley wrote:
-> On Wed, May 29, 2024 at 11:47:44AM +0200, Amna Waseem wrote:
->> Add a property to the binding to configure the Alert Polarity.
->> Alert pin is asserted based on the value of Alert Polarity bit of
->> Mask/Enable register. It is by default 0 which means Alert pin is
->> configured to be active low open collector. Value of 1 maps to
->> Inverted (active high open collector).
->>
->> Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
->> ---
->>   Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
->> index df86c2c92037..5a16d2d94587 100644
->> --- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
->> +++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
->> @@ -66,6 +66,14 @@ properties:
->>       description: phandle to the regulator that provides the VS supply typically
->>         in range from 2.7 V to 5.5 V.
->>   
->> +  ti,alert-polarity:
->> +    description: Alert polarity bit value of Mask/Enable register. Alert pin is
->> +      asserted based on the value of Alert polarity Bit. Default value is Normal
->> +      (0 which maps to active-low open collector). The other value is Inverted
->> +      (1 which maps to active-high open collector).
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    enum: [0, 1]
+On Wed, May 29, 2024 at 08:49:11AM -0700, Shakeel Butt wrote:
+> The commit 6be5e186fd65 ("mm: vmscan: restore incremental cgroup
+> iteration") added a retry reclaim heuristic to iterate all the cgroups
+> before returning an unsuccessful reclaim but missed to reset the
+> sc->priority. Let's fix it.
 > 
-> There's no need for this to have a value, it's sufficient to be a flag
-> of "ti,alert-active-high". Present would mean active-high and absent
-> active-low. This has the added benefit the devicetree node being
-> understandable to a reader.
+> Reported-and-tested-by: syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
+> Fixes: 6be5e186fd65 ("mm: vmscan: restore incremental cgroup iteration")
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+
+Good catch!
+
+> ---
+>  mm/vmscan.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index b9170f767353..731b009a142b 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -6317,6 +6317,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
+>  	 * meaningful forward progress. Avoid false OOMs in this case.
+>  	 */
+>  	if (!sc->memcg_full_walk) {
+> +		sc->priority = initial_priority;
+>  		sc->memcg_full_walk = 1;
+>  		goto retry;
+>  	}
+> -- 
+> 2.43.0
 > 
 
-Agreed, makes sense. Even better, at the same time simplifies the code.
+I wonder if it makes sense to refactor things to be more robust like this:
 
-Guenter
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index d3ae6bf1b65c7..f150e79f736da 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -6246,7 +6246,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
+        if (!cgroup_reclaim(sc))
+                __count_zid_vm_events(ALLOCSTALL, sc->reclaim_idx, 1);
 
+-       do {
++       for (sc->priority = initial_priority; sc->priority >= 0; sc->priority--) {
+                if (!sc->proactive)
+                        vmpressure_prio(sc->gfp_mask, sc->target_mem_cgroup,
+                                        sc->priority);
+@@ -6265,7 +6265,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
+                 */
+                if (sc->priority < DEF_PRIORITY - 2)
+                        sc->may_writepage = 1;
+-       } while (--sc->priority >= 0);
++       }
 
+        last_pgdat = NULL;
+        for_each_zone_zonelist_nodemask(zone, z, zonelist, sc->reclaim_idx,
+@@ -6318,7 +6318,6 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
+         * good, and retry with forcible deactivation if that fails.
+         */
+        if (sc->skipped_deactivate) {
+-               sc->priority = initial_priority;
+                sc->force_deactivate = 1;
+                sc->skipped_deactivate = 0;
+                goto retry;
+@@ -6326,7 +6325,6 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
+
+        /* Untapped cgroup reserves?  Don't OOM, retry. */
+        if (sc->memcg_low_skipped) {
+-               sc->priority = initial_priority;
+                sc->force_deactivate = 0;
+                sc->memcg_low_reclaim = 1;
+                sc->memcg_low_skipped = 0;
 
