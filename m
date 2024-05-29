@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-194442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EC28D3C64
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:28:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6BF8D3C67
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 606B028452B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:28:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2AC1C216EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91AB1836FA;
-	Wed, 29 May 2024 16:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84C118411B;
+	Wed, 29 May 2024 16:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="guea9sdN"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="V6Ylf2dN"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7731836D1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE6CE576;
+	Wed, 29 May 2024 16:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717000093; cv=none; b=Gne9DJNCZeXV8/CqTClOgWEkfRrBYwcpbKdsYVzV8gqhfz6Lu2P3TkWCqr39rWgrkm3An2ZJtaAQ1Udg3q11wytpWqEOPlRUgWXzxTaZaZXCuHVb/qIEHuEuhmsY1fZ7gFQEs8+u2c2BRDrJXzxbW4lOmEfEVBloFHqRcpPOLCQ=
+	t=1717000128; cv=none; b=HtzlopFbDGcX9AbU88Vttq7emUyq2v1VKvFkNbOoSpfDu15y/Z7wmO7p4VZ0dSUIGBnNOjPEmOVH+PD2ujKeh2hZAJTU/lLIdaBXnlpezQQUWkZuSQAnM9/hhVMHRLXmXqRzioJSBTP1Cprgb6WG3oe/L6JlAjFEpMTkdhbull8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717000093; c=relaxed/simple;
-	bh=vNJiDOu1HJQcTh2QoH0ZF6EeoU/vMa/maD5ym7acze8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+YbD7pu8xZx8e5c/6DpZJStKxJaBkQE4jj6LJNvNz1XUotI+lSauW4pUOehDlRpgunx0UCsv/ZqvptwflO+sPS6r7ma5mkDUNrjtdGpu4BP6+SkcVHfmvaoHQGTcumuglVfZLJf3WF3KG+4abiM8Sfp1yMVFj2ZNf/X05DfUfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=guea9sdN; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso6712831fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717000090; x=1717604890; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEJH+7+vj6ruF1GbLbgob2BE38yHKh8JHlHGL8KdovU=;
-        b=guea9sdNPBp2+nH2CwK0kuAmxX84BW8S6340QSc4xEFZnpdR+AIISSsoZP3ilcwh/8
-         W1Xs1+bN2zkeAWzlAWBZa48MpUlC9TYXxOk18PuiMcKYZvQKUrOj6j9KYEZfeFrYViNa
-         oPJttLcbj7UefRTjWchYzSCyRHf2gkbzKeVynXLB/iaDD8t0X9CYQvMdQTL+bHzALPEK
-         /CzRBu3CvK2gEse5Xd8XPrqDTncDxNfe++Sk5bLHdLjSfiEEIHSp+M203xdoFzrlRN2m
-         e/AliR3tZKSAGbAosEVBJD6bTi+I6S1ba4ZMUWADTzpxbVm2lax7G9wEX7pYXj5hThCK
-         /bjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717000090; x=1717604890;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NEJH+7+vj6ruF1GbLbgob2BE38yHKh8JHlHGL8KdovU=;
-        b=u1tgeJdiZ56FG+igj52fsJiCwDS2b4QQ3DGVqT9jUf0tspzWg0FwOFHnsToQYlIrmV
-         8UHOhcdoj1GWMXvvwKl2nFrG5vux6OfY66sceKvH0lJ8o/YJtL4Y+0m1gzT3yYp9pAH3
-         +ig9KJ6gbj3jQ2FWpyq0nRJ6fD50as+xKBq/VzUAbG5iBdhL9ECkIrwIHAFDcTwtaf90
-         dIHEnAMcbMYSOn0DHDiv8SgSwDwXzIT2CJVz36jebKuWiq74gK0J0DXpP/dyjADo6L5P
-         KQFdjceh0MIWzCmUCUDNM5PQ2XOA9wE8tDvPHT3L2yVLIvzV2KOk01g0Sl9BTx+xn2kr
-         zBLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWG5RhHe1r4wjmclORxXqvUQQ8j6sPHpHCGvfLBfwu4L1pR4v9spgPA45Akag7lEadcigCUosOEDXya7ExXWHgMZgXZzwY1AnHC46W5
-X-Gm-Message-State: AOJu0YzIYEIOgVkGVYtG9A0Ww2j5mHnpnOQnoa3TBXlxMjkqrLZ05WE+
-	ogfzQoDASLAT9jkiKR3CZ4ZqAggkGaPPWEED2A18D5HIOf4IPAPWhuJLh1Aok9k=
-X-Google-Smtp-Source: AGHT+IFmYVGVDhXJ/UgzgklvENZdHrtaQJwa288W1cA8geS62OGiVwASpA0S4D47EdPq0VKN1MsXJw==
-X-Received: by 2002:a2e:9d91:0:b0:2e9:821a:82fb with SMTP id 38308e7fff4ca-2e9821a837cmr55797371fa.6.1717000087636;
-        Wed, 29 May 2024 09:28:07 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c93a828sm735495666b.83.2024.05.29.09.28.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 09:28:07 -0700 (PDT)
-Date: Wed, 29 May 2024 19:28:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: iio: adt7316: remove unused struct
- 'adt7316_limit_regs'
-Message-ID: <c0bcb7b5-3155-445f-94ff-4020fe05109d@moroto.mountain>
-References: <20240528233008.191403-1-linux@treblig.org>
- <d9a3c974-8a13-43f8-a0d1-0e55f6e1f3ef@moroto.mountain>
- <ZldRVBPi4utAfRd8@gallifrey>
+	s=arc-20240116; t=1717000128; c=relaxed/simple;
+	bh=V0TviS2uKrn6p35TGcOJVKCpDa1dWM+F7HNcsMWP0aI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=htGTnLFouDdvyEvNVAdu36OgtT6oxV3wqstQzTi4w6CXV56GKmPeaB7pUpvu4nm/s5xs8goT+B2tc7OZGpXRg0vo042vvxdq3EB1aC2FTdD3mJYDs5G5Nr91WiRHjerej4mJI8iiSw6dHW5tsyuOyHUQbtBZgLrj+iLDDoTKg0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=V6Ylf2dN; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44TGNjhv018657;
+	Wed, 29 May 2024 16:28:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=hBAJKWqg1ls0OvvDemuQQUNTL6+Fe6WvQdUTJBH9uEQ=;
+ b=V6Ylf2dNBz8/RRNVRv7n63LsnIr61drpMV7sy1/xnFF1LQFVGlXvjIop4KEIdBMtVG4M
+ WTg+rLj5e8B+YXJ7Gj0eqqTKRaZlOcu7HZmtHcUrpOorOk+LVhd018DsrJ5ljhX0foJd
+ A0tnCpWZdJ36YflElbD+ymCoTEZT0Mu1Gq9dQXQ7e3/nGW1onjxiq510QNRP5HMifXmy
+ T33l92ZWbADq10iRE9AtakZjwzMMqbMoWKQJkm/Wm9lgOXW33lMko6EzXNi9J5oUTPYO
+ MUksKSPpEzj8IcBhcWRa3ky+1KE/mQIvZNLIpYNYboParzU3uN8nIP0aeGNxR4asx1eu 8Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ye7ty00ee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 16:28:42 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44TGSf0V025394;
+	Wed, 29 May 2024 16:28:41 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ye7ty00e6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 16:28:41 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44TF8V2L006891;
+	Wed, 29 May 2024 16:28:40 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ydpebcrgb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 16:28:40 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44TGSaaN27525784
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 29 May 2024 16:28:39 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A26AE58064;
+	Wed, 29 May 2024 16:28:36 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D1C758062;
+	Wed, 29 May 2024 16:28:34 +0000 (GMT)
+Received: from [9.171.1.223] (unknown [9.171.1.223])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 29 May 2024 16:28:34 +0000 (GMT)
+Message-ID: <328ea674-0904-4c81-a6e2-7be3420ad578@linux.ibm.com>
+Date: Wed, 29 May 2024 18:28:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZldRVBPi4utAfRd8@gallifrey>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/2] Change the upper boundary of SMC-R's snd_buf
+ and rcv_buf to 512MB
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, jaka@linux.ibm.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc: kgraul@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+        guwen@linux.alibaba.com, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: JeTtFwYsY_9fneFcNcZ7aLcr7wLvRjAJ
+X-Proofpoint-GUID: gFS97OqS68VpR5rQwnyIkS6y9ZsYqGYd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_13,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 clxscore=1011 mlxlogscore=999 lowpriorityscore=0
+ spamscore=0 bulkscore=0 impostorscore=0 adultscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2405290114
 
-On Wed, May 29, 2024 at 04:01:24PM +0000, Dr. David Alan Gilbert wrote:
-> * Dan Carpenter (dan.carpenter@linaro.org) wrote:
-> > On Wed, May 29, 2024 at 12:30:08AM +0100, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > 'adt7316_limit_regs' has never been used since the original
-> > > commit 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9
-> > > driver").
-> > > 
-> > > The comment above it is a copy-and-paste from a different struct.
-> > > 
-> > > Remove both the struct and the comment.
-> > > 
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > ---
-> > >  drivers/staging/iio/addac/adt7316.c | 8 --------
-> > >  1 file changed, 8 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-> > > index 79467f056a05..23d036d2802c 100644
-> > > --- a/drivers/staging/iio/addac/adt7316.c
-> > > +++ b/drivers/staging/iio/addac/adt7316.c
-> > > @@ -209,14 +209,6 @@ struct adt7316_chip_info {
-> > >  #define ADT7316_TEMP_AIN_INT_MASK	\
-> > >  	(ADT7316_TEMP_INT_MASK)
-> > >  
-> > > -/*
-> > > - * struct adt7316_chip_info - chip specific information
-> > > - */
-> > > -
-> > > -struct adt7316_limit_regs {
-> > > -	u16	data_high;
-> > > -	u16	data_low;
-> > > -};
-> > >  
-> > 
-> > Could you delete the blank line as well?  Otherwise we have two blank
-> > lines in a row and checkpatch will complain.
+
+
+On 28.05.24 15:51, Guangguan Wang wrote:
+> SMCR_RMBE_SIZES is the upper boundary of SMC-R's snd_buf and rcv_buf.
+> The maximum bytes of snd_buf and rcv_buf can be calculated by 2^SMCR_
+> RMBE_SIZES * 16KB. SMCR_RMBE_SIZES = 5 means the upper boundary is 512KB.
+> TCP's snd_buf and rcv_buf max size is configured by net.ipv4.tcp_w/rmem[2]
+> whose defalut value is 4MB or 6MB, is much larger than SMC-R's upper
+> boundary.
 > 
-> Sure, v2 sent.
-> (checkpatch didn't moan at me with or without).
+> In some scenarios, such as Recommendation System, the communication
+> pattern is mainly large size send/recv, where the size of snd_buf and
+> rcv_buf greatly affects performance. Due to the upper boundary
+> disadvantage, SMC-R performs poor than TCP in those scenarios. So it
+> is time to enlarge the upper boundary size of SMC-R's snd_buf and rcv_buf,
+> so that the SMC-R's snd_buf and rcv_buf can be configured to larger size
+> for performance gain in such scenarios.
+> 
+> The SMC-R rcv_buf's size will be transferred to peer by the field
+> rmbe_size in clc accept and confirm message. The length of the field
+> rmbe_size is four bits, which means the maximum value of SMCR_RMBE_SIZES
+> is 15. In case of frequently adjusting the value of SMCR_RMBE_SIZES
+> in different scenarios, set the value of SMCR_RMBE_SIZES to the maximum
+> value 15, which means the upper boundary of SMC-R's snd_buf and rcv_buf
+> is 512MB. As the real memory usage is determined by the value of
+> net.smc.w/rmem, not by the upper boundary, set the value of SMCR_RMBE_SIZES
+> to the maximum value has no side affects.
+> 
+Hi Guangguan,
 
-Thanks.  You'd need to apply the patch and re-run checkpatch.pl with the
--f option.  It's not something that's obvious.
+That is correct that the maximum buffer(snd_buf and rcv_buf) size of 
+SMCR is much smaller than TCP's. If I remember correctly, that was 
+because the 512KB was enough for the traffic and did not waist memory 
+space after some experiment. Sure, that was years ago, and it could be 
+very different nowadays. But I'm still curious if you have any concrete 
+scenario with performance benchmark which shows the distinguish 
+disadvantage of the current maximum buffer size.
 
-regards,
-dan carpenter
+Thanks,
+Wenjia
 
+> Guangguan Wang (2):
+>    net/smc: set rmb's SG_MAX_SINGLE_ALLOC limitation only when
+>      CONFIG_ARCH_NO_SG_CHAIN is defined
+>    net/smc: change SMCR_RMBE_SIZES from 5 to 15
+> 
+>   net/smc/smc_core.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
 
