@@ -1,105 +1,197 @@
-Return-Path: <linux-kernel+bounces-193304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F038D2A0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C788D2A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34FAFB22D10
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A39285687
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2105A15AAC8;
-	Wed, 29 May 2024 01:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1118846F;
+	Wed, 29 May 2024 01:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psB1Cnph"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pQbVCrRO"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A13E1B974;
-	Wed, 29 May 2024 01:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1246D3D6B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716946976; cv=none; b=RRCBab3dfHQNIPiU5+qMTpeC8SBQReDvalIHkyn/tHwjiQRJAgNkBZQIAp8Xv06gKQIAxX24U+HLQmg0I4ZxHhOy3dyn3NmzDLgrRq/QWOqhtBzU4HBnbWXj+OoLHkksynaRfbJUsOjfLRQC9GpzIBW8TB62KzBJyr5b86g8p3c=
+	t=1716947189; cv=none; b=GXLtR5TfaHbyV+wgxC9uK5iOitTJLrP4gMxy3jA9tAMixP/vR6v9BxOCfHuLyoX9/AciaFPKTcZ5yvwJJGRMIomAnA+i0tfzxEwuHejQVShfUGDRo3GAh0VvtdyyENCBHloSFuMAf1xXfuSxX6E2j/XAr/SnWQBZqA+Z1p+xr0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716946976; c=relaxed/simple;
-	bh=sE0gJI150ZuuQbrkcwTftnClRrSe8hDjT2tlkzJFjwA=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=SWYXNL6CKlZ3YxeYDJZt4rgQk+ZdnteKUrGkIHKgFoHuoj2BMJ/BAetOu27b+rua8ptpPLSwjnHeyBGxoUD1aXaZBX3yRJsdD/6emH8T3gCp/amSpAXFkF95WFr3Qkrl/kkflvxHE1Ot33/YanQKDaWLkDApo+Od8C8f0OgyqWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psB1Cnph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D698C3277B;
-	Wed, 29 May 2024 01:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716946975;
-	bh=sE0gJI150ZuuQbrkcwTftnClRrSe8hDjT2tlkzJFjwA=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=psB1CnphOJvhC4iVuMJ5WSTxxJ+8oKzUJlM5u0h+5ZzdZjUBoGnChk5vWIBMZhgWg
-	 yGk+uFkAxclxqX9wsO2TxM4GXxxuCsXRMjIQarjN4shXv/w7fAq895YzFwRJHQemrz
-	 DgMFCpA4NN8ufZDjPYi78GCdahk/4GcTigilxgshFlNCmPSfyiVmLY2KdTvtuMTqY5
-	 Ygalskh/fxLqcv4w1SpFUA64RxcCxOiI5nrXv37CGMLD+RYID3W02UX5HETUrusl65
-	 Xwah4GvoAjyiquBqeFX5xf9f/XqD8equRMJGJq6GjpNCYw1UNixjQOhUsEf0KzLyIb
-	 qJAO99x0AD28A==
-Date: Tue, 28 May 2024 20:42:54 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1716947189; c=relaxed/simple;
+	bh=rbQEvIL690bkG9IWdLrwGk8ptdFeL9kL/86s8eAzb9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qryjUPX1HNgMzIlGuKezrFL1AKn8+dgWGc28rUCZrJQtvLKUW3UAzrFeWdEYKcn5JqgvLx3XgROY12ItB3XQVGyJ2ahjubp20g9q1p/0xNoumO3lUjaBacZ/R9D1jC4s4UaRBsguFVvMZKEcpdyPJjR8c7u4ogpnRX0Pkpcg/5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pQbVCrRO; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: syzbot+fa3fc4c486ec9c342fcc@syzkaller.appspotmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716947185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M0+zIhjjjyp5vT+5kLHJh8IZDUmJyjbKFkeg444xOQo=;
+	b=pQbVCrRObxsdSEd0M5F6uGrU5Ar8wRYyiFwZa1yt3VpVEprHVVm6bz2FKekMxipz+EvpSO
+	TvBv5dK2PPMrgGMxBElubdurbflGarXIClNOkBL3y6UxqBo3CoFAROHC8o6Cxu0mwaoipZ
+	+opwucSyRx5TGRDRdfLuAzbQ7RU5FhY=
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Tue, 28 May 2024 21:46:22 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+fa3fc4c486ec9c342fcc@syzkaller.appspotmail.com>
+Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] UBSAN: array-index-out-of-bounds in
+ bch2_btree_path_traverse_cached_slowpath
+Message-ID: <6yf73ahygmues2ou6khxnyvtktlilbboggfhy4adjfat32dhwz@5azlopa2llt7>
+References: <0000000000001f886b06197f358f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr, 
- devicetree@vger.kernel.org, jic23@kernel.org, conor+dt@kernel.org, 
- krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org
-In-Reply-To: <20240529001504.33648-2-gustavograzs@gmail.com>
-References: <20240529001504.33648-1-gustavograzs@gmail.com>
- <20240529001504.33648-2-gustavograzs@gmail.com>
-Message-Id: <171694697450.2956310.4053503259175533537.robh@kernel.org>
-Subject: Re: [PATCH v2 2/6] dt-bindings: iio: chemical: add ENS160 sensor
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000001f886b06197f358f@google.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Tue, May 28, 2024 at 01:13:23AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    2bfcfd584ff5 Merge tag 'pmdomain-v6.10-rc1' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1674fd44980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=fa3fc4c486ec9c342fcc
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: i386
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2bfcfd58.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c7ed3bb80bed/vmlinux-2bfcfd58.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/93acc5bfbaef/bzImage-2bfcfd58.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+fa3fc4c486ec9c342fcc@syzkaller.appspotmail.com
+> 
+> bcachefs (loop2): journal_replay... done
+> bcachefs (loop2): resume_logged_ops... done
+> bcachefs (loop2): going read-write
+> bcachefs (loop2): done starting filesystem
+> ------------[ cut here ]------------
+> UBSAN: array-index-out-of-bounds in fs/bcachefs/btree_key_cache.c:215:16
+> index 66 is out of range for type 'bkey_cached *[16]'
 
-On Tue, 28 May 2024 21:14:19 -0300, Gustavo Silva wrote:
-> Add bindings for ScioSense ENS160 multi-gas sensor.
+So, this is an odd one - the number of elements on the percpu freelist
+was somehow set to 64.
+
+And it wasn't a buffer overrun, 64 isn't a pointer.
+
+Perhaps there's a bug in the percpu allocator and it's not zeroing
+correctly? That would fit, since we're seeing it on startup.
+
+> CPU: 1 PID: 7694 Comm: syz-executor.2 Not tainted 6.10.0-rc1-syzkaller-00013-g2bfcfd584ff5 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:114
+>  ubsan_epilogue lib/ubsan.c:231 [inline]
+>  __ubsan_handle_out_of_bounds+0x110/0x150 lib/ubsan.c:429
+>  bkey_cached_alloc fs/bcachefs/btree_key_cache.c:215 [inline]
+>  btree_key_cache_create fs/bcachefs/btree_key_cache.c:329 [inline]
+>  bch2_btree_path_traverse_cached_slowpath+0x4304/0x4d90 fs/bcachefs/btree_key_cache.c:484
+>  bch2_btree_path_traverse_cached+0x9ec/0xdc0 fs/bcachefs/btree_key_cache.c:587
+>  bch2_btree_path_traverse_one+0x16b4/0x2e40 fs/bcachefs/btree_iter.c:1158
+>  bch2_btree_path_traverse fs/bcachefs/btree_iter.h:229 [inline]
+>  bch2_btree_path_traverse fs/bcachefs/btree_iter.h:221 [inline]
+>  bch2_btree_iter_peek_slot+0x715/0x2450 fs/bcachefs/btree_iter.c:2603
+>  __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:552 [inline]
+>  bch2_bkey_get_iter fs/bcachefs/btree_iter.h:566 [inline]
+>  bch2_inode_peek_nowarn+0x1e3/0x390 fs/bcachefs/inode.c:340
+>  bch2_inode_peek fs/bcachefs/inode.c:366 [inline]
+>  bch2_inode_find_by_inum_trans+0x125/0x2a0 fs/bcachefs/inode.c:939
+>  bch2_vfs_inode_get+0x41f/0x550 fs/bcachefs/fs.c:277
+>  bch2_mount+0xc81/0x1090 fs/bcachefs/fs.c:1999
+>  legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+>  vfs_get_tree+0x8f/0x380 fs/super.c:1780
+>  do_new_mount fs/namespace.c:3352 [inline]
+>  path_mount+0x6e1/0x1f10 fs/namespace.c:3679
+>  do_mount fs/namespace.c:3692 [inline]
+>  __do_sys_mount fs/namespace.c:3898 [inline]
+>  __se_sys_mount fs/namespace.c:3875 [inline]
+>  __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>  __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+>  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+> RIP: 0023:0xf72f3579
+> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+> RSP: 002b:00000000f5ee5400 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
+> RAX: ffffffffffffffda RBX: 00000000f5ee5460 RCX: 0000000020011a40
+> RDX: 0000000020000040 RSI: 0000000001200014 RDI: 00000000f5ee54a0
+> RBP: 00000000f5ee5460 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>  </TASK>
+> ---[ end trace ]---
+> ----------------
+> Code disassembly (best guess), 2 bytes skipped:
+>    0:	10 06                	adc    %al,(%rsi)
+>    2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+>    6:	10 07                	adc    %al,(%rdi)
+>    8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+>    c:	10 08                	adc    %cl,(%rax)
+>    e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+>   1e:	00 51 52             	add    %dl,0x52(%rcx)
+>   21:	55                   	push   %rbp
+>   22:	89 e5                	mov    %esp,%ebp
+>   24:	0f 34                	sysenter
+>   26:	cd 80                	int    $0x80
+> * 28:	5d                   	pop    %rbp <-- trapping instruction
+>   29:	5a                   	pop    %rdx
+>   2a:	59                   	pop    %rcx
+>   2b:	c3                   	ret
+>   2c:	90                   	nop
+>   2d:	90                   	nop
+>   2e:	90                   	nop
+>   2f:	90                   	nop
+>   30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+>   37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 > 
-> Datasheet: https://www.sciosense.com/wp-content/uploads/2023/12/ENS160-Datasheet.pdf
 > 
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
 > ---
-> changes in v2:
->  - Add devicetree binding file specifically for this sensor instead of
->    adding it to trivial-devices.yaml. This is needed in order to
->    document that this chip supports Vdd and Vddio supplies.
->  .../iio/chemical/sciosense,ens160.yaml        | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/chemical/sciosense,ens160.yaml
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/chemical/sciosense,ens160.example.dtb: gas-sensor@0: 'spi-max-frequency' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/chemical/sciosense,ens160.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240529001504.33648-2-gustavograzs@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
