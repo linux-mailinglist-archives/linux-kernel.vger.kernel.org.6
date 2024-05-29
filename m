@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-193837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934028D32E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:25:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE638D32E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27211C23869
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0171C238AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADD316A361;
-	Wed, 29 May 2024 09:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C1B169AF0;
+	Wed, 29 May 2024 09:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="It8emVbG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HhD0qEXL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="acdtmzeo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B11A13E8BD;
-	Wed, 29 May 2024 09:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBD913E8BD
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716974752; cv=none; b=IzAcQ7ARyqBUribupaINx42hc+eHMdwYujcjkpkd9NCm6NP+zIkfab5Z1c4ECHRgzRkYViLp0P1iZRG5yuhbHOhgnhCIuelZ/dBPlKALIn/hLQBjGzq89kj1xEaUj+d4C3g2kcgVR/4gpqmQWYX53ChnxQ9qyv6biQPq9wkdMy4=
+	t=1716974807; cv=none; b=XtnHqPiFq3axbt76hAOwjmIrTG4En/hdzvpiOGiEvP2vyFCpLzHKfHMTnHi2JnzYknl8xFYQOX01D9vzs+MioEHMm80cozRpEb29k02kljTZpTLfrdaYWD/Iq8Ftk5CqGCuk3ToDZHfaq+4kmQGqGYJtTwHfwXFYT+aNhsmVvfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716974752; c=relaxed/simple;
-	bh=G3edRpMzbg5HHY5drPrF6AcqvazAmZsmRfp8TMwv1rM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=MS21Wb8YAKcmmW5JqWJh7e1doySQWsKKAnCFDLTSeCbQzB6W5Y2JRctSKKau0dIDapn4j9W8tBGsJT5pfZs3Gt1ar/ApWywYKwFkiDVStIBrsZmcqLiSGYDh7lGd8nQbIAieIGqd9AjoMqABuYp7rRUpQNQbnH/VvxomAbyGOXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=It8emVbG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HhD0qEXL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 29 May 2024 09:25:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716974749;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gYf6hhq55nlaV5z/0xlR1QSxXGDBh7E2b5APlc26He0=;
-	b=It8emVbGlZJ/nSR4gCgU7iDA90/u7zQLMMOUR/rnqf0ooMMLRci5/BIbH3SAw1IjuZnUys
-	iciuhVfbLrC1APxeF6v/bILif+XTO10hGbVOfBdYfq7MLZK2XkqGeGjEC9qSJHKHGpaKzJ
-	sTmB8EeabVCQsv/uYPJfKFhEsd1zcR4ujngp6vEJ8+z6p4ZC7+PAhWLTJVcqruJPjiCTCK
-	82+Wmw1085vB5Ji16wAZRIUYTwwqvO9sF8bEM5LuUsItyirqukPnFNZb1o/Wf/3EtRPsD5
-	A7XBPrRKbUGeg2478l44MAOyCUcqJvfO4kcS52iJQ5JMXviiDO7vG5adyU16dw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716974749;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gYf6hhq55nlaV5z/0xlR1QSxXGDBh7E2b5APlc26He0=;
-	b=HhD0qEXLeDpOAI1XQdEvE8rEj9N9vJ7ACiB1m9rRBRAu4k/wv3lfy7ZCvf5ZVRw+TdZygw
-	Izypo9GSxbFVFBBw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/topology/amd: Evaluate SMT in CPUID leaf
- 0x8000001e only on family 0x17 and greater
-Cc: Tim Teichmann <teichmanntim@outlook.de>,
- Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw6g2jduf6c@7b5pvomauugk>
-References: <7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw6g2jduf6c@7b5pvomauugk>
+	s=arc-20240116; t=1716974807; c=relaxed/simple;
+	bh=ijXHrEeuJaWBnQhJyxtNR1JF+hAoVSjKQuuiusB+JT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jh+Qk4OtjkE1eI8BRmnuGmpl3nAwDT8xwmci3kUdPYm7zoydpN97booae6FJmqCHHpbijpvbtl76OlATFdgl4/079TIvD3kasmcTS5GFZkjUxXfBOyxS8fwhW14/7bHcI77FVni2E9s1JVOyqziGRHN0cViy8mKPQOU6qC0l4tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=acdtmzeo; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716974806; x=1748510806;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ijXHrEeuJaWBnQhJyxtNR1JF+hAoVSjKQuuiusB+JT0=;
+  b=acdtmzeoZ4488ExsSaElXtJSrEIv6Dtp5uxF8ytSYFYfBbFP22rZnpah
+   xZ3qXJ4wc15n2HB01Ycq9cuJPDXXEd5jKjbVgi9t+NxM+ETAzH4+mNi82
+   /LkSdflkXhR4a7lOyDWR77nZTtZJJs/pwO7Z9wNqnCH1g7j1BK2SegHrk
+   TKnGzkYGQtvJ4kW2Shq+lsD8eZY0LLdHs1hLiX4yeWv+r1W/dNCoRsv2E
+   aLEIZLCytjyNgHPK3Pq9j1OLFKFSJQgJju7dh+mClPfspSInW14gvXpYn
+   mQQlTP0yx//tsGpKFefcfq2cT/CYvVtBnyrb6eOvi3k5/0/9OanjnwV6R
+   w==;
+X-CSE-ConnectionGUID: 5pmZXJ+6QJOpLn9t3jLgBQ==
+X-CSE-MsgGUID: GoxDbH21RaSZddEPwagQLw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="17199338"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="17199338"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 02:26:45 -0700
+X-CSE-ConnectionGUID: hrtsej3cTBy72BYnTHoe+g==
+X-CSE-MsgGUID: m4IciKliTJWiGxcKLFzbhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="35457346"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 02:26:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sCFZw-0000000Bl08-3JTe;
+	Wed, 29 May 2024 12:26:40 +0300
+Date: Wed, 29 May 2024 12:26:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Subject: Re: [PATCH v1 1/1] MAINTAINERS: Add Intel MID section
+Message-ID: <Zlb00IRVZQB1b0xF@smile.fi.intel.com>
+References: <20240521142758.2298717-1-andriy.shevchenko@linux.intel.com>
+ <26e49d69-bcec-4f4c-9e7f-5c3b91b8f24c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171697474837.10875.6335609575452053884.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26e49d69-bcec-4f4c-9e7f-5c3b91b8f24c@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Tue, May 28, 2024 at 11:19:54AM -0700, Dave Hansen wrote:
+> On 5/21/24 07:27, Andy Shevchenko wrote:
+> > +INTEL MID (Mobile Internet Device) PLATFORM
+> > +M:	Andy Shevchenko <andy@kernel.org>
+> > +L:	linux-kernel@vger.kernel.org
+> > +S:	Maintained
+> 
+> Hey Andy,
+> 
+> I would have expected you to mark this as "Supported":
 
-Commit-ID:     76357cc192acd78b85d4c3380d07f139d906dfe8
-Gitweb:        https://git.kernel.org/tip/76357cc192acd78b85d4c3380d07f139d906dfe8
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 28 May 2024 22:21:31 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 29 May 2024 11:01:20 +02:00
+Okay! I think I also want to add something more to the file list.
 
-x86/topology/amd: Evaluate SMT in CPUID leaf 0x8000001e only on family 0x17 and greater
+> >            Supported:   Someone is actually paid to look after this.
+> >            Maintained:  Someone actually looks after it.
+> 
+> Or were you trying to make this point you're maintaining this without
+> your Intel hat on?
 
-The new AMD/HYGON topology parser evaluates the SMT information in CPUID leaf
-0x8000001e unconditionally while the original code restricted it to CPUs with
-family 0x17 and greater.
+In the future (if it ever happens to maintain this while not being an Intel
+employee anymore) why not?
 
-This breaks family 0x15 CPUs which advertise that leaf and have a non-zero
-value in the SMT section. The machine boots, but the scheduler complains loudly
-about the mismatch of the core IDs:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-  WARNING: CPU: 1 PID: 0 at kernel/sched/core.c:6482 sched_cpu_starting+0x183/0x250
-  WARNING: CPU: 0 PID: 1 at kernel/sched/topology.c:2408 build_sched_domains+0x76b/0x12b0
 
-Add the condition back to cure it.
-
-  [ bp: Make it actually build because grandpa is not concerned with
-    trivial stuff. :-P ]
-
-Fixes: f7fb3b2dd92c ("x86/cpu: Provide an AMD/HYGON specific topology parser")
-Closes: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/56
-Reported-by: Tim Teichmann <teichmanntim@outlook.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Tested-by: Tim Teichmann <teichmanntim@outlook.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw6g2jduf6c@7b5pvomauugk
----
- arch/x86/kernel/cpu/topology_amd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topology_amd.c
-index d419dee..7d476fa 100644
---- a/arch/x86/kernel/cpu/topology_amd.c
-+++ b/arch/x86/kernel/cpu/topology_amd.c
-@@ -84,9 +84,9 @@ static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
- 
- 	/*
- 	 * If leaf 0xb is available, then the domain shifts are set
--	 * already and nothing to do here.
-+	 * already and nothing to do here. Only valid for family >= 0x17.
- 	 */
--	if (!has_topoext) {
-+	if (!has_topoext && tscan->c->x86 >= 0x17) {
- 		/*
- 		 * Leaf 0x80000008 set the CORE domain shift already.
- 		 * Update the SMT domain, but do not propagate it.
 
