@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-193494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB368D2D01
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:16:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5758D2D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB216B273BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7CCF1F24AE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554FB15F417;
-	Wed, 29 May 2024 06:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C911607A1;
+	Wed, 29 May 2024 06:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0gsXUsf"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EGPOj2ZR"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0C415B141;
-	Wed, 29 May 2024 06:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1354B15B570
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716963354; cv=none; b=ToP2r7xhFLUl0iNK2JCkvOTJLSgN4UgdufbkyZXpLL9MYcjcwXUEZi22n3+hv7/gaS5236YEDC7bT+dxNMwP1QLbnzJAdsSgU1A62BX9qj+ryVH4VHZmzww5iSXqPFSMT2wswBXeMbMJ2xS0g+9IVLTWxw0A5SZkxlz0SyMFhlg=
+	t=1716963356; cv=none; b=LRuwc56NQxO2CrN4aCZ+FikVJ4shMT9vrdNGXq3ci0v7LarhiS1nHfBkFAcV815jsPQTRHjS4ZQqyfBgpmI3b5nCrqome9I1qPCNpingREkXG3kHXy+mp+7BHPPD957IdqzTkxHcsEn4ra0dLZBBkXd+twB87tTIwRGUvxQZqfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716963354; c=relaxed/simple;
-	bh=7UL5tAAEjUHcX7+hcSy9AlEexa/1+pvr7uBA+iBHPMw=;
+	s=arc-20240116; t=1716963356; c=relaxed/simple;
+	bh=J+6g85MacrkhD1shRZPgIPHazStFB7uwlbQPh89YIGk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hzOInP6puocw9Dw0IeVtZeahWZNU23gjDX24so9GubEJF/LyS/SLxXQw7TLFJ1qma4IGL/lJXvOx0vpkPxOxEVHaU33x2W4FN4rBbbsdV5GZDfy/P43XV8j9ae465phPS0cxuVuXm8hy0VnXmQ6ll9j9QU6qeo3Jl4fTFbFSy7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0gsXUsf; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4e15ac35809so502075e0c.2;
-        Tue, 28 May 2024 23:15:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=ePrZr+4B2lYH3d4FPpgRdDMiFWoqDpW2CvdTlkqh5sdfrmR0Wlv5xMmcKLGpHnmIY3JAwqi+PzSHCywopFIPB8UcjY30qXdJtCQuQfjBp708wmv2PRLDMoNPV1s3JxnlubFQBSWLkz4aDja5P60X9Bs7dKvPQvkeNdJbt2SS69g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EGPOj2ZR; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e95a1d5ee2so30903961fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:15:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716963352; x=1717568152; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716963352; x=1717568152; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L3R+ZHPYoSGUqMaWR0E46qOgK1Bg85/ubJnAG+H028Y=;
-        b=m0gsXUsf8dPiJB3Ruh+zifOIqfkoN1RKXTuBAe/4TKWrdydxYqbmKqhM1KLvDCu+a7
-         kSt7ww6AcJlC80+T8k54iQyCmVFgCVuReDEdGuC6fx2iFlX0mJSt1h3bqdwLBmX+5jpY
-         NN38JOGUQUMZtw5Fe65XSSUJT+quj/kEFEmvHR46JB/VLMvqSK/MDJQ5XI4R54rE/3um
-         WQV0+9CeuArtJ+dw00wGnAFLzuHF8Q4V8NqSGB5bpZBlgmBNQJ9bgdQFSQlnu2q4GKFJ
-         VX+I8v88fI3HBh3p+5OT1OpUHTs6+U9QVJ7Puz2H0JZT/Ef2rybRZnNuRAcUjIFh8RA6
-         r8dw==
+        bh=Bh0ieLiOPTlnWO1kYS9M0GlqV4zOVJ6IiYKninn4+tc=;
+        b=EGPOj2ZRwNYZVsmt/xgNAaN9Qh5qC4/ahKgdB3FqJjCONzi86G8l+ARNLbKC9Del6D
+         48MX40fWduWhtP1Hb1LU2oIexalqNfhTR+kkMptf22G5vL2sqPdFTEJ8eu4fuQGyjPfP
+         kaSG/5a2e41Pbe6Lbe0Yqa1S9AWjdPaD3FPQHN/oh3/zTx8AbRPCyjS3otOI0XLIrZPE
+         ApfiZzQ27DYv0Cc3enDA4yLwPaAvPsSk80YarMdxUkdLD6aT641w2sYMhpLIFtZTcE/Z
+         AhNID7YbXTc8dn1q7O0MnOKGgHhWAfnxfKbQT6MBGwB5TjDlUpXTI4+6u0NeWVb+Rf+Q
+         PIqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1716963352; x=1717568152;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L3R+ZHPYoSGUqMaWR0E46qOgK1Bg85/ubJnAG+H028Y=;
-        b=g0A2tYdFt8Lt82hJ+Sc8NqQuIoEbzmVX+DS/IHT8FG/OvJVmdeie2aBUuHIjfB3b9Z
-         5BiXsp7SIcbGDDvIEm1KAoLt4Z5IMmYuLBEQ8rVeixTIfPWLn9Ki55Ggg5ZatylfN3V2
-         BXVjLmceraO56DtpjdHXBhWfYGJqqKyIReuaPZMCCC/f6Zel6pQI/oh5fFdYbo/Pc7NR
-         Efg5AiiOghDbcucjkLxH7ALJfMLKI5hnfIlJlr8+dSPn3H6IPYCbxNbLkZjsixVRKuuP
-         lG+bw9DkJgB7/uOX1eA0k+6VGczXKWuJIJ3fMQbVj4fA1rLQk18diG8z8xD6lqK2a/zC
-         Nm2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVd7+QES5QbmcWVCKxHjhsanC3UnySu9f7Yi2INq7/foTdRNsaSh8OwU5yX4F8cI0oDLJrJtabBnZvR1VC25EmqRUnaxuO9h5uAp23Hr5YLlOGU9v9kYFXraiIph5bVLvGpaZSrpiziphDj4/q9nobhylKE8gZnO+c1qB33FIGk3V8SyJtm9b6aJL98TN4vSJclTQn49PRcaqs6fFvU+2XKffAyimMHBCBr
-X-Gm-Message-State: AOJu0YxAz0m7dygPpOzPiFyeM/UwTg6YJIrZ53BGi5fENZg9pcagYtOY
-	EmqcVDM5elLGPmjyeFmqFZnhoCjybdyRe3w12TwRGGVobPs10SYQoGTUtu1puqXVpM5haeBCj/j
-	JUdsrmYDzLtzGTCj2zAzOZCJisWM=
-X-Google-Smtp-Source: AGHT+IGxKzOO4a6F70I0rFUbkqpZcal23aCdcbs7VzaqdTx7dCQeaRBwHMmX/dZwoneR9bkFVUJGsfqXYFNe05QHJrE=
-X-Received: by 2002:a05:6122:1798:b0:4df:1a3f:2ec1 with SMTP id
- 71dfb90a1353d-4e4f021b92emr14545453e0c.1.1716963350441; Tue, 28 May 2024
- 23:15:50 -0700 (PDT)
+        bh=Bh0ieLiOPTlnWO1kYS9M0GlqV4zOVJ6IiYKninn4+tc=;
+        b=ZfnZ5AH9t0xsivpEVMc7naGF7Wwj40vusjLdvjDYaKdFI5lqyCndDN/yN+iF47Dwb5
+         Ted1PRxYcGWOlUPSO+eMu7QzM9SHlUu/YSV73Q0p7ZhNYZYrovPkgXgiLCbknySHXsAA
+         eTVmWsXMBHQkBV4Cs8sMowYEG6iCqG/0CnVLT6mZc5yAi7HCBZzT1x96t9m92C1QBgEn
+         pKF/bgoFhX3QEoxil/9A3TzuxnilKs6kWstL7ZtopCkqG6rz1BX4VUbUd5LoGSFdTbEo
+         CkPQtokqQnzplGi2kQaN5XuIuiDk2YHibsXdl2P0Rt6aiADde7ZxzlU5zYUttUEdxaoX
+         nRRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOEZ7vsuL58s/X7khduXyu76T3mFUl+NM7vKLVFSz7j5z0B0SMp+6P+Nr7fP7yjkI50v5TU7EGQVC7Ph+ZsPIAjdwoOsll6MFXv/Jz
+X-Gm-Message-State: AOJu0Yy1GI3ta99eVy+XRda6phUrC8rk00tas+QsSEgJOOeg2G8S92gc
+	CGBameadIVTJZ8BGtQYEZGOgOtPkH19Kl+aSTc61Ur2EhK0bgZy8Gb2mxsD+YVn6v8p1zEb9zjl
+	PXAyGv0cpxRZAnxcx4licIiJnkx3IsyARaU6U0A==
+X-Google-Smtp-Source: AGHT+IEm6bYc2ftZFt2uXoqzzY7bu2Oy5wbaxhF7xACheYlMcKXX+Saw39KXwd1j/qas7p5N+0C1MMzLyv9RtXFbmuc=
+X-Received: by 2002:a2e:968a:0:b0:2e1:c448:d61e with SMTP id
+ 38308e7fff4ca-2e95b096f52mr108173371fa.15.1716963352171; Tue, 28 May 2024
+ 23:15:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240322144355.878930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240322144355.878930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 29 May 2024 07:15:23 +0100
-Message-ID: <CA+V-a8vQr2jxrW+C5VTcmEHmDgNp6S8=3KcAT1SzcKusFaP7Gw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] Add SCIF support for Renesas RZ/V2H(P) SoC
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-5-alexghiti@rivosinc.com> <20240528-prenatal-grating-2b6096cc2a1b@spud>
+In-Reply-To: <20240528-prenatal-grating-2b6096cc2a1b@spud>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Wed, 29 May 2024 08:15:40 +0200
+Message-ID: <CAHVXubhsqOp2hSxVg7eGjjLN2-iTUFz1AMDTeEvyJh01iypzrw@mail.gmail.com>
+Subject: Re: [PATCH 4/7] riscv: Implement xchg8/16() using Zabha
+To: Conor Dooley <conor@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Conor,
 
-On Fri, Mar 22, 2024 at 2:45=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
+On Tue, May 28, 2024 at 5:22=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
 >
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On Tue, May 28, 2024 at 05:10:49PM +0200, Alexandre Ghiti wrote:
+>         \
+> > diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hw=
+cap.h
+> > index e17d0078a651..f71ddd2ca163 100644
+> > --- a/arch/riscv/include/asm/hwcap.h
+> > +++ b/arch/riscv/include/asm/hwcap.h
+> > @@ -81,6 +81,7 @@
+> >  #define RISCV_ISA_EXT_ZTSO           72
+> >  #define RISCV_ISA_EXT_ZACAS          73
+> >  #define RISCV_ISA_EXT_XANDESPMU              74
+> > +#define RISCV_ISA_EXT_ZABHA          75
+> >
+> >  #define RISCV_ISA_EXT_XLINUXENVCFG   127
+> >
+> > diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeat=
+ure.c
+> > index 3ed2359eae35..8d0f56dd2f53 100644
+> > --- a/arch/riscv/kernel/cpufeature.c
+> > +++ b/arch/riscv/kernel/cpufeature.c
+> > @@ -257,6 +257,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D=
+ {
+> >       __RISCV_ISA_EXT_DATA(zihintpause, RISCV_ISA_EXT_ZIHINTPAUSE),
+> >       __RISCV_ISA_EXT_DATA(zihpm, RISCV_ISA_EXT_ZIHPM),
+> >       __RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
+> > +     __RISCV_ISA_EXT_DATA(zabha, RISCV_ISA_EXT_ZABHA),
+> >       __RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
+> >       __RISCV_ISA_EXT_DATA(zfh, RISCV_ISA_EXT_ZFH),
+> >       __RISCV_ISA_EXT_DATA(zfhmin, RISCV_ISA_EXT_ZFHMIN),
 >
-> Hi All,
->
-> This patch series updates DT binding doc and scif driver to add support
-> for the Renesas RZ/V2H(P) SoC. RZ/V2H(P) SoC supports one channel SCIF
-> interface.
->
-> v3->v4
-> - patch 2/4 reverted back to version 2
-> - new patch 3/5 added
-> - Added new reg type for RZ/V2H
->
-> v2->v3
-> - Included DT validation patches
-> - Added a new compat string for RZ/V2H(P) SoC
-> - Added driver changes for RZ/V2H(P) SoC
-> - Listed interrupts and interrupt-names for every SoC in if check
->
-> Cheers,
-> Prabhakar
->
-> Lad Prabhakar (5):
->   dt-bindings: serial: renesas,scif: Move ref for serial.yaml at the end
->   dt-bindings: serial: renesas,scif: Validate 'interrupts' and
->     'interrupt-names'
->   dt-bindings: serial: renesas,scif: Make 'interrupt-names' property as
->     required
->   dt-bindings: serial: Add documentation for Renesas RZ/V2H(P)
->     (R9A09G057) SCIF support
->   serial: sh-sci: Add support for RZ/V2H(P) SoC
->
-Gentle ping.
+> You're missing a dt-binding patch in this series adding zabha.
 
-All the patches have been Acked/Reviewed.
+Thanks, I will add that to the v2.
 
-Cheers,
-Prabhakar
-
->  .../bindings/serial/renesas,scif.yaml         | 136 +++++++++++++-----
->  drivers/tty/serial/sh-sci.c                   |  55 ++++++-
->  include/linux/serial_sci.h                    |   1 +
->  3 files changed, 154 insertions(+), 38 deletions(-)
 >
-> --
-> 2.34.1
->
+> Thanks,
+> Conor.
 
