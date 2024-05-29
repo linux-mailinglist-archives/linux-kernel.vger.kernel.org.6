@@ -1,50 +1,86 @@
-Return-Path: <linux-kernel+bounces-193431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E998D2BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517128D2BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DB2A1C226DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0634285EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A18C15B558;
-	Wed, 29 May 2024 05:00:59 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B19CA48
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61F15B56F;
+	Wed, 29 May 2024 05:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s6Mkm2O/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44D815B54F;
+	Wed, 29 May 2024 05:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716958858; cv=none; b=rS7KfnRoYNuA8cgiu+h6eWfsdSflGfwL9Yn6Swn0XioOK1aiUqFR6+TG1UwYy53/aZB7YqGOMoUcmApS7rcsUim7hAwWmAJjgfDTMSUVJvKVUtvbdqcR1/LCtA1cJCMHmNPhbSfPAqw0lRGokBaPtgnIUl/QrHy0QQjQL1MyUUI=
+	t=1716958876; cv=none; b=VVX8BpV3/xJ02KP+Sz0vX6rvSSADCGXxXbClZbq8J09Uyhbkv3b6jF8oOCt9cMizjWBgVK66MR2yP4DJWmoh88pBkePMPKn4ZsRqk48UqhgEkbxun5Qe/8VSCFIbLMPTfg/FOfwLTkM/EFWmUg3nBCbaqlp1e+re3/xa/8mXcoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716958858; c=relaxed/simple;
-	bh=42DKLfdq51KggxPTbkiYyOCqUowHpFUBrFqz2zQtih0=;
+	s=arc-20240116; t=1716958876; c=relaxed/simple;
+	bh=xSqHcKYEDaxxJfuUNzVrGGQy133EFKDCw6O99I9og2M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0ymq4XgEYwZGKPMJ93bFpuxYV0xES86rqlWdbx1MDFN2mawYF9u02k/DMpc41KbJsRjSPiybLHElyx01fzWypRDdWEmP4rB0/tG6SYFYGscPj+Vy8IpSn8f+QvAUelOqQifoSP67D84JIbrDOW2/9Vh1Dey0YE5/LPBd6WTbnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-d3-6656b683f724
-Date: Wed, 29 May 2024 14:00:46 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com,
-	akpm@linux-foundation.org, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240529050046.GB20307@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
- <20240527015732.GA61604@system.software.com>
- <8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <44e4f2fd-e76e-445d-b618-17a6ec692812@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ov5ENeWj7+ed/6LzF6cO2+HQlvKMLuqOLhw/VeOjpEM+mKEGprnMQVfTNSW5W1HSx6/B26E1MNIONHU0gMZLW5i2hlFvGFwQ0xW7CqhHmVhGAb7cF3VC1jP6HlhCMvXlBMnTgAo4CdiXm5WMH15Nodu3hQcEgm8YfYTib4LAhR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s6Mkm2O/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44T4blX1000523;
+	Wed, 29 May 2024 05:01:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc : content-type : date
+ : from : in-reply-to : message-id : mime-version : references : subject :
+ to; s=pp1; bh=xSqHcKYEDaxxJfuUNzVrGGQy133EFKDCw6O99I9og2M=;
+ b=s6Mkm2O/+HQigUNXpRnK8pes1dELq1cJKBxJ+Ivkal+KJORumKieXjuIlim7BpvC02/B
+ 4be1g97rPaRVo7ywQjVNOtyT93MuPUUVyA5FS5G5xOz6/speW6sG8JTYcETZ9KsIsauN
+ pHMJneV5H7X1ZeChqEUmIJ9Oe/MlWqjPlsQ9SQ7fWp7TJ07nNjyxr29J7MvYq77ggYLC
+ QTXIqgAhIx8xUvSWw4ZqQ7QMInnug2N/LyLadaUdb4a+A+DX+e6R+I80rCzJ/NCoO91p
+ OHg9+tSPEVgkregiDw+gqM2veYySpFspZzk4llM4ZZsC6NrEGetqU/gcD5Wm6M6Fswi5 lw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydwgj0222-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 05:01:00 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44T4qvHN022363;
+	Wed, 29 May 2024 05:01:00 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydwgj021x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 05:01:00 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44T4PG6T009811;
+	Wed, 29 May 2024 05:00:59 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ydpbbhwb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 05:00:59 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44T50tTB46137728
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 29 May 2024 05:00:57 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C10752004B;
+	Wed, 29 May 2024 05:00:55 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E7EE20040;
+	Wed, 29 May 2024 05:00:54 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.204.206.66])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 29 May 2024 05:00:53 +0000 (GMT)
+Date: Wed, 29 May 2024 10:30:51 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen.n.rao@linux.ibm.com, clg@kaod.org
+Cc: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH 0/3] XICS emulation optimizations in KVM for PPC
+Message-ID: <oj3kgyo7erm23w5jg4bsik5zzyaknmezurm3i67iy4duxg4jwm@aaqussro73bm>
+References: <20240520082014.140697-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,73 +89,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <44e4f2fd-e76e-445d-b618-17a6ec692812@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsXC9ZZnkW7LtrA0g7YHXBZz1q9hs/i84R+b
-	xaeXDxgtXmxoZ7T4uv4Xs8XTT30sFpd3zWGzuLfmP6vF+V1rWS12LN3HZHHpwAImi+O9B5gs
-	5t/7zGaxedNUZovjU6YyWvz+AVR8ctZkFgdBj++tfSweO2fdZfdYsKnUY/MKLY/Fe14yeWxa
-	1cnmsenTJHaPd+fOsXucmPGbxWPeyUCP9/uusnls/WXn0Tj1GpvH501yAXxRXDYpqTmZZalF
-	+nYJXBlb9h9nLzjCV/FjZU0D40buLkYODgkBE4k9N1i6GDnBzAe7DzOB2CwCqhKvJu5jBLHZ
-	BNQlbtz4yQxiiwDZp1YuZ+9i5OJgFuhnlvj/DsTh5BAWCJGY9mENWDOvgIXEnGebmUGKhAT+
-	MUosXrcIKiEocXLmE7BtzAJaEjf+vWQCOYJZQFpi+T8OkDCngK3EjF8zwcpFBZQlDmw7zgQy
-	R0JgE7vEko0b2CAulZQ4uOIGywRGgVlIxs5CMnYWwtgFjMyrGIUy88pyEzNzTPQyKvMyK/SS
-	83M3MQIjclntn+gdjJ8uBB9iFOBgVOLhtTgQmibEmlhWXJl7iFGCg1lJhPfMJKAQb0piZVVq
-	UX58UWlOavEhRmkOFiVxXqNv5SlCAumJJanZqakFqUUwWSYOTqkGRi2lKx5xr/sunPo/aU2x
-	yZys146H9c/+c1465YHxvZIy4fce/8/uFj28YPumfWuSCl/MVuq/uPPJsdD6T3M+l2TszfEz
-	rFio/Km+9IFd5dbTYg3FprOOGa1u+MuiHrGup/6bf0WKldLyX4+OrDcSr/TNuPzYgWdmVo7c
-	xVWrGbWUTzVv2u38boISS3FGoqEWc1FxIgB7108wxAIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsXC5WfdrNu8LSzNoG+VkcWc9WvYLD5v+Mdm
-	8enlA0aLFxvaGS2+rv/FbPH0Ux+LxeG5J1ktLu+aw2Zxb81/Vovzu9ayWuxYuo/J4tKBBUwW
-	x3sPMFnMv/eZzWLzpqnMFsenTGW0+P0DqPjkrMksDkIe31v7WDx2zrrL7rFgU6nH5hVaHov3
-	vGTy2LSqk81j06dJ7B7vzp1j9zgx4zeLx7yTgR7v911l81j84gOTx9Zfdh6NU6+xeXzeJBfA
-	H8Vlk5Kak1mWWqRvl8CVsWX/cfaCI3wVP1bWNDBu5O5i5OSQEDCReLD7MBOIzSKgKvFq4j5G
-	EJtNQF3ixo2fzCC2CJB9auVy9i5GLg5mgX5mif/vQBxODmGBEIlpH9aANfMKWEjMebaZGaRI
-	SOAfo8TidYugEoISJ2c+YQGxmQW0JG78ewkU5wCypSWW/+MACXMK2ErM+DUTrFxUQFniwLbj
-	TBMYeWch6Z6FpHsWQvcCRuZVjCKZeWW5iZk5pnrF2RmVeZkVesn5uZsYgRG2rPbPxB2MXy67
-	H2IU4GBU4uE12BmaJsSaWFZcmXuIUYKDWUmE98wkoBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe
-	r/DUBCGB9MSS1OzU1ILUIpgsEwenVAPj5rdv0j3T9098KW8WcFOE0adlh8w169Y1i2UuMMfs
-	/bc8M/LNhanPNAtYxXiEPeN/rN/Qyv4hdfX2BWr8u8zv6XOEprlfMtZeaqksEbY0sPrQsnU/
-	H7yYs+uh7DvV735bn/Gbv5zn+ETiRc5rqXbLF3n7+DmmiYRdFr8m9uLqMhU3liPGPZqtSizF
-	GYmGWsxFxYkAZNKlOKwCAAA=
-X-CFilter-Loop: Reflected
+In-Reply-To: <20240520082014.140697-1-gautam@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: iYKXO3KBcQdCEOP_c_8ZoDjnrZyBGoF2
+X-Proofpoint-ORIG-GUID: vZxMD4m2KcMZnEI-ezQ6ohrIEzAaxK-X
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=352 phishscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405290029
 
-On Tue, May 28, 2024 at 08:14:43AM -0700, Dave Hansen wrote:
-> On 5/26/24 20:10, Huang, Ying wrote:
-> >> Thank you for the pointing out.  I will fix it too by introducing a new
-> >> flag in inode or something to make LUF aware if updating the file has
-> >> been tried so that LUF can give up and flush right away in the case.
-> >>
-> >> Plus, I will add another give-up at code changing the permission of vma
-> >> to writable.
-> > I guess that you need a framework similar as
-> > "flush_tlb_batched_pending()" to deal with interaction with other TLB
-> > related operations.
-> 
-> Where "other TLB related operations" includes both things that
-> traditionally invalidate TLBs (like going Present 1=>0) and things like
-> fault-in that go Present 0=>1 that can result in TLB population.
-> 
-> It's actually a really crummy problem to solve.  We don't have _any_
-> machinery to say, "Hey, you know that PTE you wanted to install?  There
-> was something there before you and we haven't flushed it yet.  Can you
-> be a doll and do a flush before _populating_ that PTE?"
+Hello,
 
-All the code updating ptes already performs TLB flush needed in a safe
-way if it's inevitable e.g. munmap.  LUF which controls when to flush in
-a higer level than arch code, just leaves stale ro tlb entries that are
-currently supposed to be in use.  Could you give a scenario that you are
-concering?
+Please review this series and let me know if any changes are needed.
 
-	Byungchul
-
-> To solve it generically, I suspect you'll need some kind of special
-> non-present PTE to say:
-> 
-> 	There _was_ a PTE here that wasn't flushed.
-> 
-> Sure, you can add gunk to the VMA to track when this happens.  But
-> that'll penalize anyone populating a PTE anywhere in the VMA at least
-> once.  If there were other threads faulting in pages to the same VMA,
-> they'll just end up doing the flush that LUF tried to avoid in the first
-> place.
+Thanks,
+Gautam
 
