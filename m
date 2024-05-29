@@ -1,135 +1,351 @@
-Return-Path: <linux-kernel+bounces-193689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0836A8D3088
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 489028D30C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6611F2A46D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAF51F2A107
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28C17B427;
-	Wed, 29 May 2024 08:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE6F180A66;
+	Wed, 29 May 2024 08:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jyqzYE5g"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPZ01eCK"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1BF168C3B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF281C230C;
+	Wed, 29 May 2024 08:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970001; cv=none; b=Wz4cR1owuJQEhVSxYplKfCVHWhstQdp98jJJJYOY43BnIItzhvP96f9skQsr46NGG/URa+nxI7/0xq+gSjPRJrv89JR4EOo19HuMj1wH9FtRpBDrZz8dVziKuDAFOsePbpUVa3ImfI7UyJ0ZaK5BSQxH0RPsmhKXfyuHmfTcE8I=
+	t=1716970063; cv=none; b=VMEO29SaF0KLhQD8xSmekrOzvN0xcHxjN3O9+2lOpktEfB3G4C+nqgAM2hy+BpUXa10KcFKMi/uweyS0+FIwUgDT4fzj/B5uSeP+Q8f/PMNsxAAEu50rTdFKx2clqyaosp4tuUAH7hYAfd/nHfPOWhjFxnKuVs/st7UPVH+jcoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970001; c=relaxed/simple;
-	bh=KMlPyALNcmol9ih45kPl4G8oK06PC8+I1ZcxbqQgksk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SMXoXk0QhVfSbAuiO+6dA7anv7xGCevPeMWuRvbv72mMpuoLCqKgkIqvZ6whj7U+qkXgZwAsps1NGH8p1e+77zbTqSdJAUnBhr8prJ8oy7i6XFY9sfMMToeA9GtgRCM84K2prDiuEqKj7wggT+i/2ZLGs3ZptIAWFT7yX4DlyOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jyqzYE5g; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5295e488248so2125120e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:06:37 -0700 (PDT)
+	s=arc-20240116; t=1716970063; c=relaxed/simple;
+	bh=DbJRWGPwaHoF/f0oYgnmbX2wUVOjF64ReE/qreCyuIU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aiOBjp+7zE76ofq1FkBBBYwuPdi8ICVLOhcDRLelnuvOEGkXE9oIDCUgPF7VBJ7Hg8PETwk2mZqu2sAowybEt0xLkxoRs+/HFdQ7tcV/4M8uTr+c/v7L01lJjC69GJt2Uzsf/v4OIgonOUV7iMzz1bpWGLr+/SZnnTklvtFODqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPZ01eCK; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a621cb07d8fso198611266b.2;
+        Wed, 29 May 2024 01:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716969996; x=1717574796; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RTSiUFlqkmvNoNz/S7kke8O9CZuW/PMI0ZvnUNNmSrw=;
-        b=jyqzYE5gww42Yz4DxhZPJGl9ge2GiCEkrWohgCYApBgnPglM7282o2xeQsQ3ETTgiP
-         RxNSfBIRNZg9kZfuUqNYtV02NMYHgSX0J4gmIn9ig9nx3Z3kbdYZ6deSQvzzTVj48fr1
-         Vl2XqmmBdOed1i5PlgHZX4/JUWIvKd7RTuObUgSgv+4e1ekCgChWMKptOcpQSF98ufeI
-         8DYYAzAj7vBBkr5WEqTtMK/f64NYz+eaU8wIHXQhr1CLmzW3UxfKjue2YtbAZYIxen70
-         wUfGjMZrqa1FVY/9myHsapCFM2SILae/VV/ly38QspFmZjX0y6VAY0f37oheortT1SFd
-         kXWw==
+        d=gmail.com; s=20230601; t=1716970059; x=1717574859; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HbmeazO7vBjxMc5Hy7I+L4x41EIeSvLatAytZpScfhg=;
+        b=bPZ01eCKH15ajaTmR/JTkekuP+X5ZdNjtVs8Q9Go/d10/Pj6DsobpOjhoaxrAm2Dp3
+         XHD/gKOCkszW+cOK+MlUp7IigyAVKIGMmFUQCIpMBzkrVEx5bkqP/H1Rsmmhz32eEOTr
+         c5f9ym5yjAx4/T/cS+TzV0zAAj/s27EE/prmQU2Rw9Bu0c1z52wPU4gBajgoJjW/Ts3p
+         dbqOHOvxnL7r58xuMjMaMJM8xRz8em8SiXYXnOOfDRbzOuJhO1oCaCPPY1STo2GGlNso
+         TxhQMeeWhfraQK2v00gu7tY7INJRL8MNC9Vpd5LWTlcZGPoXRYtlyErghnpUilJUbOuB
+         vTyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716969996; x=1717574796;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RTSiUFlqkmvNoNz/S7kke8O9CZuW/PMI0ZvnUNNmSrw=;
-        b=bPjGRxno+nh8oPkB5f+27qnaHIsyRBIOmMdBPnog0n0Xl+F9w4SAf1FSt/iF/Pa4tI
-         E76rk2JqUZefXdNjxQEY0jx51fi/JV/WOvmHb4RRfJeMJBTl5vX9OZaZ2HWGuBq4zjUk
-         lQsVeOJW7/H55nwpzQQZOuovtuP7drj3kdiqa2aglqyYvWPrrRR862xx3Nrmtz81dUtb
-         XUfYLImXZZWK66kkZBolbuRX+zHpqDie8dWiA2xHJBFS/YrrcvtB/vyItWdhtPW8u3sK
-         ozol/TVfejKTryGKy6PxBxjOaaDESJRSRBQnERb0J/6tpG3dY3CaGRrjycECHocgyoVl
-         C3Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCFLJ5hghPq/RNCJ4WIJwaubWUx0PoXMPM+3zSKCzqkyuko711DlganWebHH8n0dzTHzVqd/xhGZwHzlcZMLx5mTsMc30ohdNqzHed
-X-Gm-Message-State: AOJu0YzFfAEf8IqS4eb8W8u8rlzActDXDYudmqHZeCV16WwaE1XR3gob
-	npjxxhHsOFNJHMs5mlQsXr68QsRwi9RcXYjjxjh+j9kjsfrvpC2mcvClLIstf5c=
-X-Google-Smtp-Source: AGHT+IH/SwMX52gxKBB8D0lQdRpnYx4BvSNc36lN8ZNxmso71kU/Y0Tqv6DyKinhb/feekEPcZl6QQ==
-X-Received: by 2002:ac2:4206:0:b0:528:5301:bae4 with SMTP id 2adb3069b0e04-52964ca7358mr9020474e87.35.1716969996000;
-        Wed, 29 May 2024 01:06:36 -0700 (PDT)
-Received: from [10.1.5.19] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f163a8sm201920345e9.13.2024.05.29.01.06.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 01:06:35 -0700 (PDT)
-Message-ID: <0b737c86-25bd-4bc6-b1c1-1011e15bccfa@baylibre.com>
-Date: Wed, 29 May 2024 10:06:34 +0200
+        d=1e100.net; s=20230601; t=1716970059; x=1717574859;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HbmeazO7vBjxMc5Hy7I+L4x41EIeSvLatAytZpScfhg=;
+        b=W61DHUKUDb6b51Eq2R1wSom/94rjWVPC/gcZTDcuPa+yfaS90VBActjTWd6dsfB9xo
+         yveRfHFjIjsiG1gy1X6S0Rye86dWeJNMNX6KZawe2XaiT5+cqXpL8sX9Pk/g4k2u9sOC
+         Oh99Asu5VIADYVZww5AangCzSSrDuMiN9g9uXXvoPtINCANIXO6Ru7FAy7ZQPteq0D8W
+         GHmjRaMxhXQfvngoJnsDYE8cXgwcEukR3kFskTGf3C+mI0laMO3xHC1S0lK2r8sCnzkS
+         HUpaIzxMGy/39QA4PUbxFfGRYn85M1v+UGQwmB3zH1bTaEEgs230jOo/prWzTiaRkGtj
+         T2ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVpMtNrf8Md4P00t+ojUpvjTck0RPSnWCChzYcLQ8nBovfjXKN06NP728ffKeZcARzmBbQCBYWXQx2FEx5K19PTsVAHtghxcuix/UgC1pUuIBu/204rcPcjxq/k8GwfcJ+9sSW9G3OWxHj3U7nqpSJItV9e48SC309fxOLGLuJ+PF9ACpQOK7UEI2sn6y3xo8BNlivz6O0VQgQ6P09USQ==
+X-Gm-Message-State: AOJu0YzV5fhv/csKLql4/UnrfFWSpsRpjJjHGHleyh++vSSOLl9K+jSS
+	dSdUVbTkLBwXrvM/GIdnfToP67arzRaPQknq1zGD8CiKeEQGGjzP
+X-Google-Smtp-Source: AGHT+IFqLe66tCV8uvRY+ijnQhAQ1SPt9jaw31+gWnFWDuxF2+A75aWbBMXHZGoyyrJJ5W1q23KhdA==
+X-Received: by 2002:a17:906:fa17:b0:a63:d926:7f34 with SMTP id a640c23a62f3a-a63d9268961mr112902166b.26.1716970059221;
+        Wed, 29 May 2024 01:07:39 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6418ee2286sm53672966b.17.2024.05.29.01.07.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 01:07:38 -0700 (PDT)
+Message-ID: <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron
+	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Lars-Peter Clausen
+	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org
+Date: Wed, 29 May 2024 10:07:37 +0200
+In-Reply-To: <20240526-peculiar-panama-badda4f02336@spud>
+References: <20240513-headsman-hacking-d51fcc811695@spud>
+	 <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
+	 <20240514-aspire-ascension-449556da3615@spud>
+	 <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
+	 <20240516-rudder-reburial-dcf300504c0a@spud>
+	 <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
+	 <20240519-abreast-haziness-096a57ef57d3@spud>
+	 <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
+	 <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
+	 <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
+	 <20240526-peculiar-panama-badda4f02336@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] dt-bindings: thermal: Add a property to select the
- aggregation type
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, rafael@kernel.org,
- daniel.lezcano@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240524143150.610949-1-abailon@baylibre.com>
- <20240524143150.610949-5-abailon@baylibre.com>
- <824a9871-1fd4-4b92-a3b5-e57a126dac53@linaro.org>
-Content-Language: en-US
-From: Alexandre Bailon <abailon@baylibre.com>
-In-Reply-To: <824a9871-1fd4-4b92-a3b5-e57a126dac53@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+On Sun, 2024-05-26 at 18:35 +0100, Conor Dooley wrote:
+> On Thu, May 23, 2024 at 02:15:35PM +0200, Nuno S=C3=A1 wrote:
+> > On Wed, 2024-05-22 at 19:24 +0100, Conor Dooley wrote:
+>=20
+> > >=20
+> > > To remind myself, "Application 2" featured an offload engine designed
+> > > specifically to work with a particular data format that would strip a
+> > > CRC byte and check the validity of the data stream.
+> > >=20
+> >=20
+> > I think the data manipulation is not really a property of the engine. T=
+ypically
+> > data
+> > going out of the offload engine goes into another "data reorder" block =
+that is
+> > pure
+> > HW.
+> >=20
+> > > I think you're right something like that is a stretch to say that tha=
+t
+> > > is a feature of the SPI controller - but I still don't believe that
+> > > modelling it as part of the ADC is correct. I don't fully understand =
+the
+> > > io-backends and how they work yet, but the features you describe ther=
+e
+> > > seem like something that should/could be modelled as one, with its ow=
+n
+> > > node and compatible etc. Describing custom RTL stuff ain't always
+> > > strightforward, but the stuff from Analog is versioned and documented
+> > > etc so it shouldn't be quite that hard.
+> > >=20
+> >=20
+> > Putting this in io-backends is likely a stretch but one thing to add is=
+ that the
+> > peripheral is always (I think) kind of the consumer of the resources.
+>=20
+> Could you explain you think why making some additional processing done to
+> the data an io-backend is a stretch? Where else can this RTL be
+> represented? hint: it's not part of the ADC, just like how if you have
+> some custom RTL that does video processing that is not part of the
+> camera!
 
+Maybe we are speaking about two different things... I do agree with the vid=
+eo
+processing example you gave but for this case I'm not sure there#s any data
+manipulation involved. i mean, there is but nothing controlled by SW at thi=
+s point.
+Or maybe there's already a future usecase that I'm not aware about (maybe t=
+he CRC
+stuff David mentioned).
 
-On 5/27/24 08:55, Krzysztof Kozlowski wrote:
-> On 24/05/2024 16:31, Alexandre Bailon wrote:
->> This adds a new property named "aggregation" that could be used to
->> select the aggregation type when there are multiple sensors assigned
->> to a thermal zone.
->>
->> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
->> ---
->>   .../devicetree/bindings/thermal/thermal-zones.yaml        | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
->> index fa7a72e2ba44..e6e4b46773e3 100644
->> --- a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
->> +++ b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
->> @@ -111,6 +111,14 @@ patternProperties:
->>             coefficients are ordered and are matched with sensors by means of the
->>             sensor ID. Additional coefficients are interpreted as constant offset.
->>   
->> +      aggregation:
->> +        $ref: /schemas/types.yaml#/definitions/string
->> +        enum:
->> +          - avg
->> +          - max
->> +        description:
->> +          Aggregation type to use compute a temperature from multiple sensors.
-> 
-> Hm, why exactly this is a property of hardware? Why on one board you
-> would like to average and on other use max? I can only think of a case
-> that some sensors give inaccurate data. Otherwise it is OS policyIn the case of Mediatek SoC, we only need max temperature.
-I am not really sure if there is really an use case for the average.
-Maybe I should drop average if no-one has a use case for it.
+I'm more focusing on where the trigger (PWMS in this particular case but co=
+uld be
+something else) and the DMA properties belong. I do agree that, Hardware wi=
+se, the
+trigger is a property of the offload engine even though intrinsically conne=
+cted with
+the peripheral.
 
-Best Regards,
-Alexandre
-> 
-> Best regards,
-> Krzysztof
-> 
+The DMA is also directly connected to the offload but I'm not sure if in th=
+is case we
+should say it's a property of it? It's an external block that we do not con=
+trol at
+all and the data is to be consumed by users of the peripheral.
+
+>=20
+> > Taking the
+> > trigger (PWM) as an example and even when it is directly connected with=
+ the
+> > offload
+> > block, the peripheral still needs to know about it. Think of sampling
+> > frequency...
+> > The period of the trigger signal is strictly connected with the samplin=
+g
+> > frequency of
+> > the peripheral for example. So I see 2 things:
+> >=20
+> > 1) Enabling/Disabling the trigger could be easily done from the periphe=
+ral even
+> > with
+> > the resource in the spi engine. I think David already has some code in =
+the series
+> > that would make this trivial and so having the property in the spi cont=
+roller
+> > brings
+> > no added complexity.
+> >=20
+> > 2) Controlling things like the trigger period/sample_rate. This could b=
+e harder
+> > to do
+> > over SPI (or making it generic enough) so we would still need to have t=
+he same
+> > property on the peripheral (even if not directly connected to it). I ki=
+nd of
+> > agree
+> > with David that having the property both in the peripheral and controll=
+er is a
+> > bit
+> > weird.
+>=20
+> Can you explain what you mean by "same property on the peripheral"? I
+> would expect a peripheral to state its trigger period (just like how it
+> states the max frequency) and for the trigger period not to appear in
+> the controller.
+>=20
+
+Just have the same 'pwms' property on both the controller and peripheral...
+
+> I think a way that this could be modelled to reduce some software
+> complexity is considering that the periodic trigger is a clock, not
+> a PWM, provided you are only interested in the period. That'd give you
+> an interface that was less concerned about what the provider of the
+> periodic trigger is. After all, I doubt the ADC cares how you decide to
+> generate the trigger, as long as the periodicity is correct.
+> With the examples provided, you'd get something like:
+>=20
+
+Unfortunately that's not the case. For instance, in the design on the link =
+I gave you
+on the last reply we do have an averaging mode where we actually need an of=
+fset
+(effort for supporting that in PWM is already ongoing) between the offload =
+trigger
+and the peripheral conversion signal (so assuming we only care about period=
+ will fail
+pretty soon :)).
+
+> pwm {
+> }
+>=20
+> pclk {
+> 	compatible =3D pwm-clock
+> 	pwms =3D <&pwm 0 x>
+> }
+>=20
+> spi {
+> 	compatible =3D spi-engine
+> 	clocks =3D <&clks SPI>, <&pwm>
+> 	clock-names =3D "bus", "offload"
+> }
+>=20
+> The pwm-clock driver (clk-pwm.c) doesn't implement .set_rate though, but
+> maybe you don't need that or maybe it could be added if needed.
+>=20
+> > And the DMA block is a complete different story. Sharing that data back=
+ with the
+> > peripheral driver (in this case, the IIO subsystem) would be very inter=
+esting at
+> > the
+> > very least. Note that the DMA block is not really something that is par=
+t of the
+> > controller nor the offload block. It is an external block that gets the=
+ data
+> > coming
+> > out of the offload engine (or the data reorder block). In IIO, we alrea=
+dy have a
+> > DMA
+> > buffer interface so users of the peripheral can get the data without an=
+y
+> > intervention
+> > of the driver (on the data). We "just" enable buffering and then everyt=
+hing
+> > happens
+> > on HW and userspace can start requesting data. If we are going to attac=
+h the DMA
+> > in
+> > the controller, I have no idea how we can handle it. Moreover, the offl=
+oad it's
+> > really just a way of replaying the same spi transfer over and over and =
+that
+> > happens
+> > in HW so I'm not sure how we could "integrate" that with dmaengine.
+> >=20
+> > But maybe I'm overlooking things... And thinking more in how this can b=
+e done in
+> > SW
+> > rather than what makes sense from an HW perspective.
+>=20
+> I don't think you're overlooking things at all, I'm intentionally being
+> a bit difficult and ignoring what may be convenient for the adc driver.
+> This is being presented as a solution to a generic problem (and I think
+> you're right to do that), but it feels as if the one implementation is
+> all that's being considered here and I'm trying to ensure that what we
+> end up with doesn't make limiting assumptions.
+
+Yeah, I know and I do agree we need something generic enough and not someth=
+ing that
+only fits a couple usecases.
+
+>=20
+> Part of me says "sure, hook the DMAs up to the devices, as that's what
+> happens for other IIO devices" but at the same time I recognise that the
+> DMA isn't actually hooked up like that and the other IIO devices I see
+> like that are all actually on the SoC, rather than connected over SPI.
+
+Yeah, I know... But note (but again, only for ADI designs) that the DMA rol=
+e is
+solely for carrying the peripheral data. It is done like this so everything=
+ works in
+HW and there's no need for SW to deal with the samples at all. I mean, only=
+ the
+userspace app touches the samples.
+
+TBH, the DMA is the bit that worries me the most as it may be overly comple=
+x to share
+buffers (using dma-buf or something else) from the spi controller back to c=
+onsumers
+of it (IIO in this case). And I mean sharing in a way that there's no need =
+to touch
+the buffers.
+
+> It might be easy to do it this way right now, but be problematic for a
+> future device or if someone wants to chuck away the ADI provided RTL and
+> do their own thing for this device. Really it just makes me wonder if
+> what's needed to describe more complex data pipelines uses an of_graph,
+> just like how video pipelines are handled, rather than the implementation
+> of io-backends that don't really seem to model the flow of data.
+>=20
+
+Yeah, backends is more for devices/soft-cores that extend the functionality=
+ of the
+device they are connected too. Like having DACs/ADCs hdl cores for connecti=
+ng to high
+speed controllers. Note that in some cases they also manipulate or even cre=
+ate data
+but since they fit in IIO, having things like the DMA property in the hdl b=
+inding was
+fairly straight.
+
+Maybe having an offload dedicated API (through spi) to get/share a DMA hand=
+le would
+be acceptable. Then we could add support to "import" it in the IIO core. Th=
+en it
+would be up to the controller to accept or not to share the handle (in some=
+ cases the
+controller could really want to have the control of the DMA transfers).
+
+Not familiar enough with of_graph so can't argue about it but likely is som=
+ething
+worth looking at.
+
+- Nuno S=C3=A1
+> >=20
 
