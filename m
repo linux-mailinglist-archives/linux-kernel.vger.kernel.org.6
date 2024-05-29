@@ -1,97 +1,144 @@
-Return-Path: <linux-kernel+bounces-193349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B485A8D2AA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:12:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CCA8D2AA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5774A284C3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44EF1C22040
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CFE15AD9A;
-	Wed, 29 May 2024 02:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899C315B0E6;
+	Wed, 29 May 2024 02:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HRSdr8mM"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJ/jcpaF"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D4226AF3
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 02:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8642315AAD1;
+	Wed, 29 May 2024 02:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716948762; cv=none; b=RFTcCk39zRARsHawq7Zhs1m0iAHFJ8Pht1kqz7zi13nnudTf6DWgA6YLC7c3YfUYKvQ95Afats0ILBBFJC03mXJ7S+AdeVslViKV8AgDMXaNTm1pWFMAuDMhLz8MQo4fHO3gm4gFMhgRPZzrWFCFkHu2k9bzTkOfGlB3tJZ8z+Y=
+	t=1716948813; cv=none; b=SRV+bRoB9UPucdbHcMPsmdtz4GUfTRuK19oi8/zKrO40NHkKQBwGIXyQYoSLiUetDIlUGB998S0vVtqWnFkxvSv0K4Ed0Z8YUA2NZSsQUnuhKt0OEE94/Ec3qnvcfGdlbldXYU4+c4xSlw3kax8KD1JpFdbkucDNUa1IrqgVMIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716948762; c=relaxed/simple;
-	bh=QfND/PD5GrGnKbwK+0FJycGdhW/D1Jmpc9axx2H3JGg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pl4bKONjhLoWDfU/F/QmNKWKSZbTFdRIleeJ2vELDKGZn02TBMDdiKPFzMb6ubuhGGc+KanAoeNAvRpX8FWSA177BmTmtOxshaGwyCrUi5Bu+Qy3xRkJjAw6ofc6jpqcMDQnO6nZ0Z5ag/hsOyc6B2Xs9Kq/f+a+2Yl70RKoHgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HRSdr8mM; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716948758; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=diY8Yj7pHCeARPPadn/ZK5HGSeSyGpgtjlSUI3jYyZ0=;
-	b=HRSdr8mMfWr05qLRrX6BLm+pP+7kF9OE4rSYN8i5m2jXnjGNEpNxfLwuBAkPWv1Z7k43UbydWcSeolENWNBZHXvPDJpvFAOYZdErGGB4PGc1HlQbxSRaagVMCli+y5f8j5vYWfe4lVCEAeGHnqN4RudTCFD001S7STNZ1GouTp4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7RADWX_1716948752;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W7RADWX_1716948752)
-          by smtp.aliyun-inc.com;
-          Wed, 29 May 2024 10:12:37 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: msakai@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH v2] dm vdo indexer: Use swap() in swap_open_chapter()
-Date: Wed, 29 May 2024 10:12:31 +0800
-Message-Id: <20240529021231.21043-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1716948813; c=relaxed/simple;
+	bh=fRmKL97jCVnuhOiBjDTdG6991F8Se0tI2EqwVSGt9+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CbQCiw+XvwPJRbBvvsvWINktU0ZflxQCLY1rIa/obc90IaQyAdo3NNb7AVVpIb9sPIP2XNpRGNbHvll+Kcj7nh/kflhfBmJzxNHkmU4dJXY9WAQQ4oa2nInZQlX5evTv6RgB5zXlr445DdMdJJJqN1nu3LKI6Wp78VbTt2aJ7yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJ/jcpaF; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2bde007cc57so1231077a91.2;
+        Tue, 28 May 2024 19:13:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716948812; x=1717553612; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NuLrPrHjIynazzegpdQ4US6OLS1P3+gvAlmYCriGiGI=;
+        b=OJ/jcpaF2M2B7ZpcfXeBjFjONyIxS8D6DEyonWel6U9wY0d9nz16N+P0kt/eFNGtiU
+         1MbROljC3RqhF5w0oc3N47kNa1oJzGgGwAoHJVzSvTtBXSG78BB6LD9zUUJfoI3xaKTb
+         1zpmpqJMsGSW1j/Mg+e9E8GWaKKlERoAdiaK6xxTrqBueRNHzpgIXbqEXnlug93pq2TF
+         hW+GDvO5oN6UGn7cp44ifyWradePNP/gJHhRywwIAadtbqYZ9cSpwZX0wDXdZb0M1RxZ
+         zukVNkOcu/i/huvoXvDAfZCkGJTIIUKx+AuMTwD170yeLtreR2Yz36i0xYY1Bl3kw9mq
+         m/cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716948812; x=1717553612;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NuLrPrHjIynazzegpdQ4US6OLS1P3+gvAlmYCriGiGI=;
+        b=sOAreIM+apR0lMDJ4dear8BGmuwBAvTA1SAWXkEdMO/OyII6pbQYu3PgxR9RkEBiuZ
+         FcWpSkCnBy2f/yzuIkC+tkjLVLeZuRrTqorzMcczoH4kgYUB+PfoRshnmy2BY02RAZjT
+         gt9CdRYysTxJ5RSyFMCpP9RoTJjdsyhSQk11eNPIaLj01Ivmm3c4gI9coNwnpqVc5kYh
+         yYpphaozkWeSjvzLXpjOx8xaL87zExg1YSFz9+RNkqitRkp/oxkAFvJfQFfkTYZHI3kB
+         Y3iADfWf5msy4Tyo7RGslyDk7eFdG3UxjIULgUs1PNIIvhhms6IExrqKU1aGfL936kTF
+         oIig==
+X-Forwarded-Encrypted: i=1; AJvYcCUk+iOAHKmM4thmqD1TJGZA7Utbqg/nNJNkPA3czw6sl8mpopXbaOOEsqxvP2wJQai9rb0FUdYbIwKRs/mNwWlLKRpuwc/o5ZvYWHdoAKaGONfq4g5H+nEYhpF4MYb9T5eI
+X-Gm-Message-State: AOJu0Yzfykd9Zr7Y4AWoSJBSsYq81aCSen5oe/+xGYT9cCDjrDOYZrvF
+	MJ0qNeqUjP3OeRde6rnMTulukmNdonwjzV80Q+5T9RUN4cnZJnXRMIkNHmelWGw6JAFY1r8+iZd
+	hcs0bk+13fGzaJTeemHVlVAoAHe4=
+X-Google-Smtp-Source: AGHT+IEMBFmXy0UoQfNxKbQvbsq4lAJ6OsHHFfNUGwIAtLKFWy7hW1B5cLJDBIIVSgPV22u+VHDdWU97UI05ZwHRMN0=
+X-Received: by 2002:a17:90a:fb52:b0:2bd:db8b:ca78 with SMTP id
+ 98e67ed59e1d1-2bf5f715405mr13010723a91.33.1716948811675; Tue, 28 May 2024
+ 19:13:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240528030054.4525-1-qiang.zhang1211@gmail.com> <1195a9a3-db87-465d-a3b0-ee92d67da954@paulmck-laptop>
+In-Reply-To: <1195a9a3-db87-465d-a3b0-ee92d67da954@paulmck-laptop>
+From: Z qiang <qiang.zhang1211@gmail.com>
+Date: Wed, 29 May 2024 10:13:20 +0800
+Message-ID: <CALm+0cVZ7GQC+v4Xe7nArh0DHKeax+ok_tYsKaB=JtG-BVgUag@mail.gmail.com>
+Subject: Re: [PATCH] rcutorture: Skip debug object testing for cur_ops without
+ ->debug_objects set
+To: paulmck@kernel.org
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
+	urezki@gmail.com, rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Use existing swap() function rather than duplicating its implementation.
+>
+> On Tue, May 28, 2024 at 11:00:54AM +0800, Zqiang wrote:
+> > This commit make rcu_test_debug_objects() early return when the
+> > specified cur_ops not set the ->debug_objects.
+> >
+> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> > ---
+> >  kernel/rcu/rcutorture.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > index 08bf7c669dd3..9b8c277ab91a 100644
+> > --- a/kernel/rcu/rcutorture.c
+> > +++ b/kernel/rcu/rcutorture.c
+> > @@ -3495,8 +3495,9 @@ static void rcu_test_debug_objects(void)
+> >               return;
+> >       }
+> >
+> > -     if (WARN_ON_ONCE(cur_ops->debug_objects &&
+> > -                     (!cur_ops->call || !cur_ops->cb_barrier)))
+> > +     if (!cur_ops->debug_objects ||
+> > +                     WARN_ON_ONCE(cur_ops->debug_objects &&
+>
+> You lost me here.  Given that we have "!cur_ops->debug_objects" before
+> that WARN_ON_ONCE(), why do we need "cur_ops->debug_objects" inside of it?
+>
+> Also, we don't get here unless the rcutorture.object_debug kernel boot
+> parameter is specified, don't we really want to WARN_ON_ONCE if the
+> current flavor does not support that?
 
-/drivers/md/dm-vdo/indexer/index.c:207:43-44: WARNING opportunity for swap().
+Hi, Paul
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9173
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
-Changes in v2:
-  -Amend commit message to make it more clear.
+The rcutorture.object_debug is set true, but the tasks-tracing does not support
+duplicate cur_ops->call check, but the debug_objects test was still done.
 
- drivers/md/dm-vdo/indexer/index.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+insmod rcutorture.ko torture_type=tasks-tracing fwd_progress=4
+n_barrier_cbs=4 object_debug=1
 
-diff --git a/drivers/md/dm-vdo/indexer/index.c b/drivers/md/dm-vdo/indexer/index.c
-index 1ba767144426..df4934846244 100644
---- a/drivers/md/dm-vdo/indexer/index.c
-+++ b/drivers/md/dm-vdo/indexer/index.c
-@@ -197,15 +197,12 @@ static int finish_previous_chapter(struct uds_index *index, u64 current_chapter_
- static int swap_open_chapter(struct index_zone *zone)
- {
- 	int result;
--	struct open_chapter_zone *temporary_chapter;
- 
- 	result = finish_previous_chapter(zone->index, zone->newest_virtual_chapter);
- 	if (result != UDS_SUCCESS)
- 		return result;
- 
--	temporary_chapter = zone->open_chapter;
--	zone->open_chapter = zone->writing_chapter;
--	zone->writing_chapter = temporary_chapter;
-+	swap(zone->open_chapter, zone->writing_chapter);
- 	return UDS_SUCCESS;
- }
- 
--- 
-2.20.1.7.g153144c
+[  106.082416] rcutorture: WARN: Duplicate call_tasks-tracing() test starting.
+[  106.082533] tasks-tracing-torture: rcu_torture_read_exit: Start of test
+[  106.082543] tasks-tracing-torture: rcu_torture_read_exit: Start of episode
+[  106.105552] rcutorture: duplicated callback was invoked.
+[  106.105567] rcutorture: duplicated callback was invoked.
+[  106.111269] rcutorture: WARN: Duplicate call_tasks-tracing() test complete.
 
+Thanks
+Zqiang
+
+>
+> Or do you have a use case that needs to silence these warnings?
+>
+>                                                         Thanx, Paul
+>
+> > +                             (!cur_ops->call || !cur_ops->cb_barrier)))
+> >               return;
+> >
+> >       struct rcu_head *rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
+> > --
+> > 2.17.1
+> >
 
