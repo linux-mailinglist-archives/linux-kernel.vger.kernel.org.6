@@ -1,190 +1,295 @@
-Return-Path: <linux-kernel+bounces-194354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033BD8D3AB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:22:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B51C8D3AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66462876BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D011F26B02
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5E9181306;
-	Wed, 29 May 2024 15:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0BD181338;
+	Wed, 29 May 2024 15:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WTvN2d5J"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2061.outbound.protection.outlook.com [40.107.94.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qB6Y8QYc"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0056D17BB17;
-	Wed, 29 May 2024 15:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716996127; cv=fail; b=eV6EgbC2p4SCcAh7FUlBZTTrXt3nU8KugY+Tzy0McHNvUtaF22yDIMHuKPgQwqdfVNp2os4NWbjIOOnqqSI9AnBh+lNsgXCTkCU2i7aBXm/rR/OPWgoAjwd4b6GxC7yfdvUZqBpYF0UXGu9U9RaIHl9C0tddGrV0Tkx4MD7D/JI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716996127; c=relaxed/simple;
-	bh=IZEBq2SPjCbHaSMZjwQmslAMGGKgFC9zOyMZndddVy8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dgjHfG6NmXMehuns2OARVBVM5Br7Ot5N9JZpthBcP2HQdOjzdz4gHY/Vl4FgrC1m/mDfU/O4yKwl2Bg0xalI9HspPiPX1pLYRGK6+YKfb6+UBZphTmITQldt9jhHkSXNmu891Q1ci3s47JIE4ESZ9j+5+CMKMgEXpBOQbuB98Ok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WTvN2d5J; arc=fail smtp.client-ip=40.107.94.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lWajU+rTxrcQ49JmNungzztrpdWJVsqBRMrWFooTXpHoN/SmHQCIarJGPwEwUBUNasOpM1wHmKoOtWSPGWT9fPGRBzOEpM8gEjUutCxFk47yL4PnadI9S04PKCAqeotAUQijRE7Pj66CkRl2MKGaIz9R4uF9B3osV3IrYjP6hZbNZ0cg8rJKgPbN8VxFPlbTlSfM+S76whATZqYo8FOL3s5HWmmXXA7KMm0d0nxG6AoWCF0aDO0iJGZ+7Mym7gspbUPJ90rloHkcA2H31M99ep/bXkKSu9Ky3+j+ALvuTXYcm8Y22SzDLQtAltz9pENA+BdR/3qveSzs0b4xr+1sIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iHAkm8TaS44OJ4gA/XfrnsZpwLTJAn5G8zvhpOjvW8Y=;
- b=LkOliEgznrOcxQ+RgeBduRt15Pc8YM3KGLNzqMUe/b4WUPL3ycHnCfToW0JySUfT4kGXutlcKw/a3ENqP1r8zvvnWMEL+7wabTN+xhjayWZBGx40D92IhOJrqWiPyG4EyBJIfQLD6lgFr5MxDlkGlndh6YU5wvR030AyMIcEN7ABICYWiny8v/hFbSALOdmcz0KNF78TTvvY7izbLF+MCNJ+3Ay/RprsyDdiW8ImFYM1kh7MDU74bYcBMoD+GeKlrxBy5zK1vtrGPXms9Q3RPvZFGnW2ZK1q2ZRLiOM5ISKucs4YZ7/q/3zKvC3+BUZSKBV5Q9PSBYPMM2E6evtajg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iHAkm8TaS44OJ4gA/XfrnsZpwLTJAn5G8zvhpOjvW8Y=;
- b=WTvN2d5JUQiPENEETNPPMz8XEf+UUwDnazvw8b40J+HyCLliv8jwUeeeetugEaxH2zDAY5agUS7xpH5qI3EHUwBLW9xZuFY2Lpg0bG9pzK7Ilnn3z1qTK9h59AK838usuOmupiLqoE6RgRGbpeOYUsqSefcITDgjOQ23bAwkc+o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
- by CYXPR12MB9337.namprd12.prod.outlook.com (2603:10b6:930:d8::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Wed, 29 May
- 2024 15:22:03 +0000
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7611.030; Wed, 29 May 2024
- 15:22:03 +0000
-Message-ID: <82c1d98d-0bf7-b65f-2ca8-7b19e3229461@amd.com>
-Date: Wed, 29 May 2024 10:22:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 5/5] crypto: ccp: Move message about TSME being enabled
- later in init
-Content-Language: en-US
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "open list:AMD CRYPTOGRAPHIC COPROCESSOR (CCP) DRIVER - DB..."
- <linux-crypto@vger.kernel.org>, Richard Hughes <hughsient@gmail.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240528210712.1268-1-mario.limonciello@amd.com>
- <20240528210712.1268-6-mario.limonciello@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20240528210712.1268-6-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR13CA0017.namprd13.prod.outlook.com
- (2603:10b6:806:130::22) To BL1PR12MB5732.namprd12.prod.outlook.com
- (2603:10b6:208:387::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA061802A5
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716996144; cv=none; b=uDwkp/lxuuLNcgjoSFSWMlqxCX52XmOx9nqIlZdBkLhXRCG8UnaqcBBWY5cE96bYObNGS8G/EMe8jh3hQXin0TIdLhEl9Ox8kn1XRK1Z9kBbOGisQaIp/3vgHng5h7ljSWj0fqRz6W3dRneMqzOkpCz6v2IIa+x2FvBdkvw2gok=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716996144; c=relaxed/simple;
+	bh=ftdb1zmL/72PvtsH9vB/i7unc05q/XJ1MbfMwbPqDoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iOH8l3vc45JNe7dt2deUXkHF46YHtaSiFRMK4g/fd8JRF7furwFomholxfc0oGjc9m/kCdQvC/JXeTpaCqU3FwfvHcQN99l8znH5C/8k0RPdU1LIlFc5IVehg6HbNh9N5N88E5gqdDaDX3H1bbY8vPwYpMddGQr0eax1ZkUxwCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qB6Y8QYc; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so1986908276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:22:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716996142; x=1717600942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xVNOgelONT07b9FQMGSY/r/Dp2asYo6hWXODwZeg4Kk=;
+        b=qB6Y8QYcYH1arSgMPD8SGZMN5e0gw8pdxETMGC78SOhWbMbyFXglp6tybyyXWSVRIN
+         DMKVk1rsTk4tBN8IeJdt8G0SSGaKN8IwwzNUx+KWsBQf783gyYTfHWDk009q6AsdyD2z
+         +1drkaV7AgSGPVJ+q6XZG3VzBwvLY2DTSt+DptRUoqC+SYoIArlrEDbGMvzcGrFdmfDH
+         rEYoK7H6H3o031d+ELHj0+Epx3f28GHUtOxCdsms+ij/NjNl7sGET6fl2YlXRgk1c6Pa
+         UtAZ/0kWRHU744TTCGR7iUnrbUVvxxYsWFb/fFWBwnf12ctyYOQuNxA1rGojc9OjUKOn
+         1+eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716996142; x=1717600942;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xVNOgelONT07b9FQMGSY/r/Dp2asYo6hWXODwZeg4Kk=;
+        b=XVq31dwntkEEZfTeFlImz20JXsozaGK+QXp2HMiv3xi+iBW+P9ugje3oZx9zutJBgK
+         1tsJJPaAq0Dr0varEIkz+6TPyYUpcqPAeqsEdV3qNi7IbCN0NYb67l6hdFDuRAXp8EkH
+         IQDr292eaAEb+/pWWFbiVku8oTx2MhaxSKipvJvRvOPD5BxWXh4vC3TiW8Sc2Ydrad6U
+         K9HUmfbECb8HjDOxr0GWBlc29KPPFy25m/PX8bQJ9SIaMenB6Frc0qdel+xrldtYTGY9
+         qsnoEfW3BNm4z0KT9waynp5BcqqavJaeNeUhochucp6LBrjzGv0scI2DXVHiFijeFrJL
+         UKrA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8rbzbMwa0kYRXDF94R2aVPKhwwy7wTkciVhKp/PjbaV4O8IK0PoSk1/Cl2X2Ad5Dc5YbE2Y9/laVIv83ZgEsz5MFzkflU3ijPOVET
+X-Gm-Message-State: AOJu0YxxZTunTZtWNhOqbQvYqVYub4Ty1uz1lz39S2HB+2LMGYOawLui
+	Cr9zZl59ficHiT6sf/GvET46Bk50drAIuUqDHDEO4zE4483bmWfgWxSVPmI6MMy3Sc3kVOrpg1N
+	dBKTZCwwo9Lz2E1hxynRkL4kL1NFP9Z/HleVMPQ==
+X-Google-Smtp-Source: AGHT+IFEEwc2BzA0rX78s94Zqs2JUVOvx29Z00Sv0+XpxHmRvPtJIPPoRxajiH7TOZW3YzoQpbeJXN26G/E57oUUVgs=
+X-Received: by 2002:a5b:b49:0:b0:dfa:4ff5:d55d with SMTP id
+ 3f1490d57ef6-dfa4ff5d6f4mr1490315276.49.1716996141911; Wed, 29 May 2024
+ 08:22:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|CYXPR12MB9337:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5aef066-e868-4fc8-57cf-08dc7ff317b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RENmNFZLNE1VdXhhQ2NzRnE3MnhqMlVYWlk0QkxRdkYrdmdCUFNPNlVGRnJU?=
- =?utf-8?B?QTFJSzRWUTBreGt6Z0lvaGxMcEsyd0xJZElMTnlRUGN2R1R3T0FIM2dvaG1N?=
- =?utf-8?B?cm9NOTQ2OGt4SmxzcnRHZ0JPMW03ZEJBTDdhZWk0RGZBYlpLYVlhTWhRV0d4?=
- =?utf-8?B?ZVUvVGhtNEZnejRJMHp5Q1hVRHF1ZEoxUFFiUDYwWnFnNVhmcHlPKzF3dXlQ?=
- =?utf-8?B?KzB5RDgrMzdJVHBoZ2YrY3FYNUR2RExRUnJKS3RFeCtOd0tGMk5pNVQ3UTNY?=
- =?utf-8?B?MFFkWmN1UVVSa2x6UEVkOUhzWUlzbTR6Qmw3emx2UHNBdENNQUVRVlZkWWh5?=
- =?utf-8?B?ZmN0NEFUNjRhWlduaEVmdG9OYzRHZWc3S2N4SlNkZUxOM2NuUTIrVFNLcVNH?=
- =?utf-8?B?WWdMWmVUQkJheVU3b2tHVmQ1alFLQ2R6aDJlUUhpaS9Tb2Y0WG5ZcFkwUTNE?=
- =?utf-8?B?aTNqNW5PcnY2UlZQZzVxT0dhbm9MRUIwZUpHK3owM2NQazhaeXFBeGovZ0hU?=
- =?utf-8?B?QzdIakk2NDNjVHJ0RG5WZElSYlVGR2FUelljT2YyYmtaT09sN3FZZGpXL3dn?=
- =?utf-8?B?Tk5scStNZGNNWjJsdENIcGVmdFJDUmg0V1NVMmR3c0Rsd1ExL3VQU283K1pF?=
- =?utf-8?B?NS9KUVphOGhoNHNHbjdSRWJyazJaU2NnM2VQc21zdVVKd3cxN29sTEU4eHZj?=
- =?utf-8?B?TDVBbEpYb0NzSm03c3BIaS9iN25TUHprZENFcWd4eGlGRFo2TTY1NVJyN1JI?=
- =?utf-8?B?ZFQzUks0STkxb3hSdDJZOEtEMTdodWtzZ3N2emJzSzBpNzZNczl1U1VBb3pW?=
- =?utf-8?B?RnljRFpwMmZscTR0ekJXVEZDbUNacERWVkR3alZGQnNZVTc4M2Q5U0w2d0Vz?=
- =?utf-8?B?K0NkRHhEbi8vRHZlQ2FyczN5UFlNZHZhN1A4SHJVTGMrMkFpS0w1MCtSQ2kr?=
- =?utf-8?B?SWdSaWRUMTRhZnhQVnFOZU9qZUJTL1hMenlXZmQzQm0vMkkzQzhkNHFMQkhk?=
- =?utf-8?B?TUJHQzFNakF2Z0dRbXRXYXIzY2ZKcEhYNi8rSlVpWW5QMTFNeGpXc21HS3Ey?=
- =?utf-8?B?MGNML0VMVXFSS3dnV284a24yUTIwaVlxbUNwOEpwU090R0wxbTJPR2tmTHoy?=
- =?utf-8?B?UmM5dkpkSWltaEFjbFlkS2xwdDhzSUV5QlhKYzNuQTVpUDM4ZmR2TytyOHYx?=
- =?utf-8?B?RnB2THhuQ3VsaHNFek1SVGQ1SnZlcTRwTk1Ha2lVZ1Y4L2MyTkFHUTRSc2ZO?=
- =?utf-8?B?YmV6b2JsRDRDQzY1bU50c1Y4bXgwRWZLMnYyOWZIMzFoQWMzMU1UWGNxS0Y5?=
- =?utf-8?B?V0k2OFdjYTc1b3pNVE9VMDN2VzlEZndUT3JSSXVtcklTWDBFOU5aR0tRNGY4?=
- =?utf-8?B?UnVnRzFtNndQSDRhSGFYZGFUSldiUmNWcThTckhUcWc3OEpKaCtjUHNOOFl1?=
- =?utf-8?B?cndnUlZwcFFuMU95NGpDUXdmYlhyMlc5Y28zU3ZvMlRuRityaE1DY2hyWndq?=
- =?utf-8?B?d0g0djF2a3p0ODRqaiswcXVKU0RuVVVWMnRtL2xiZkMxZVhyRXVSaXQ0cmYx?=
- =?utf-8?B?MzJxQ3NLM3ZxRGJ3azhkUVR6SjFRZHRSaU0xeWNmMHI0cmJBYUtSYWxTVUJi?=
- =?utf-8?B?MjkvWXM0Tm9FQXk3M096dEZ0WDFxTFppMVVlNDZ1Tk80UkdaYnNVWDRqbWRt?=
- =?utf-8?B?T09BdE5nWEFsdjA5TGN4SDlWWFZmWVhjc2Z3eE4vK2FVWitEeE9MZ2pBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eDRlTmc3cGZjaXJFeFE1Wk5Ud2lPeVY3VmFBUElqdDNNV3ZYc1lFcHRsTldW?=
- =?utf-8?B?MUo2TkZJQmI1TzRnSkpha3NVZ0pLVS9hRjFiMUc4T09nNjh0YVBtbU90V2gr?=
- =?utf-8?B?N3lEVGZyMllDdU92Z3BhT3JBQVNURmZYazZHN0hNbUdqVDE5VzQ1bDVlV1dm?=
- =?utf-8?B?ZENYT2s0aTFSblBIRHkzQXdsL1MxelBuSE0zUVhCOW55TjBtM2NvMGtWVWtK?=
- =?utf-8?B?VXN5Z3FIRkV5TU9Eak5VTzRMV1pKRVc3MFBydWlBMyswczZ1dGFwOVRxRk5Q?=
- =?utf-8?B?SHZGaCtLMzdzRFBtczBqdHhoNlo2M3AyQXdZb05yQXBnN1Z2YnQxWmtpVExo?=
- =?utf-8?B?T1pvZnE0NFJXVzRFQlM1RkRjU3ZGaFRTVGs5NGY2b3EyMmpjbnVVRVpQcU9m?=
- =?utf-8?B?WTZ3RnpJRk15aFkzNGx4cFpRUlFNM2Y2dE40eGdwNVByNUY2ZW00eDRId0c5?=
- =?utf-8?B?ZVhmV2RNcDU0UFBLOUQrYWhzNmxvNi95MHEyOHQ5MVZKMzhTTitMZnF4MnZN?=
- =?utf-8?B?V1J4SElEdmNOc1N3RGxMdDRiN2Flc3FnV2dLMTZ6T0NTWk1QQlZUZCtVc2N2?=
- =?utf-8?B?RkdTL0MxUFVZaG9qZWxlVjhIQUZaYVVPajJtR3orZkZlMVMycEd6b3d2VGg2?=
- =?utf-8?B?ZElaMW5pRXlmNWs3cCtDeVRiUDRHRVRxdXhETzZRRVN5ZzFKUVZrRXFtaGFt?=
- =?utf-8?B?YWVoOXZqNE1IVHZCQUlzQ2QrWVRQUDJDMXZPb3lZKzl5cDI5U2ZwZ29QM2dM?=
- =?utf-8?B?dnBCdzJiUmk3Wnl1VHVWSEdQYy8vQkhkaXhNdEFYck9kbjlXdGluR0pwbHpa?=
- =?utf-8?B?ejR4eXVZSmt6dHJxeFUvNUtRSEFwdyt3b3JtTmFBamQyRldaMEpyYUJVUmpR?=
- =?utf-8?B?dHpTb0pycmg2bDEvMTVtemlNd1lyanVGb0VFTTJDbThZdUxvRmhScXZFd2RL?=
- =?utf-8?B?NGdwRWtXU2pyRWlIb0FVeXJSYitxcXJUb1d1N0NFUVhJSmJhTzZrQzFZelZr?=
- =?utf-8?B?VVhzK051WjhraUZoanhINkJtNUVGSWhCRzdsd3h0SGljN2ROWUxqcjhmSU5O?=
- =?utf-8?B?U1FEaEluaFhKTU5iNVF3WlZEdDQ4MDZhZ1lSck1zMVdMMTRKMXBJS0ZaYlpR?=
- =?utf-8?B?dSt3MjdRUTJSUUVHNXZMM3V6eW5NWFdWZlVoTzVhdXVzekMvRGNmeVR0NXhS?=
- =?utf-8?B?SGxnaVloMWJPTW5CNk9ESk5lMUVWUDBSS0hSbERnTkxoS3hLWXNFQTlBNlNy?=
- =?utf-8?B?RzYrTVdWWTdRZHUvZWNrR2EyVjhaeWxxeFQ5R1lhTFVXVTZDdDJLbHJzVWFE?=
- =?utf-8?B?ZUZxMjZ1K09ZWkRjcGhraW84L2dWSUw3WlhrNm9YYm9yd1lCTUxHRDFwdWFU?=
- =?utf-8?B?OXE1MURoRE52SVREZ29ocGROVGg5ZlpSWUZPTlBuc2Q0TkZvcTlSdXNDM3F1?=
- =?utf-8?B?Rkd1dFN2ajNQR3NrTlNUTW5tZVU5ZS9aQXhGNVhFL1VsTmhDeC9IRHNwQ0h3?=
- =?utf-8?B?bEJsUGFzcHJkSmwzQTN1RjRKT2ZFK3FnSmJQdWVBWlowTlJrOVFxSmVVa0F0?=
- =?utf-8?B?aUNLN0FmeW53TGoxL2F2OFdlWFhKYXhkQnhrL3RlN2lpb1F6dXpXRk96VmhZ?=
- =?utf-8?B?UXJ2dVpnTjZyemdvTUxSamJFc3lUS3l0T1VZZlZ6UUxrRFF0L2Q5N2JzZjJ4?=
- =?utf-8?B?RGFJd2RjemxqV1hlWlhHV25OUFdSeUNmSklPbk9iUGQxVXBoTjNDdGxIaHl3?=
- =?utf-8?B?NjVzTHVmdmIyeWNLNUo3N0t2T3BjYi9qZzVHTW96VU03cjNaVVV1Z0g0aHRx?=
- =?utf-8?B?T1FQSHc3bzA2U3NNTGxhRi9VQVlFb0Iyc1ExbVdHZFpKVWdrbG4ycUtmYkhv?=
- =?utf-8?B?SlBXOG0vLzNTaGtWaitmVlVEMkVBMnB5SEpiazBNL0VlNXpHdE9IQjZPZytY?=
- =?utf-8?B?R2xla211RUtZRWNjSEgwY2lJQTdDTU1RcWRvWHd1Q1E1UG0rUkx4ejFuYTRC?=
- =?utf-8?B?ZXcvQWEwZENvY01oclFUZ3hyTlpMb0V6WDJ2NVRZVnpsMEpEckwyd2hjanB1?=
- =?utf-8?B?Vk5mRGRNTzVxVGxDZ0FiQk1ubmtjclFYUHJNNVptTm1kY1lWakRYTmJvaXlP?=
- =?utf-8?Q?owwJnqqQw1PJT1RHwAPlahlg8?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5aef066-e868-4fc8-57cf-08dc7ff317b5
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 15:22:03.2535
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3KJzr9zBQcgt20lpv73blYzFRzBL8GEJy1ZZ2hGK2ls8ihWFWzudtYqndQOMRTYaLaCSfS6GDopQ1llmDhduyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9337
+References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
+ <20240528-yoga-ec-driver-v4-3-4fa8dfaae7b6@linaro.org> <ce6cbe69-f1de-1224-2a6e-3c7b07203d84@linux.intel.com>
+In-Reply-To: <ce6cbe69-f1de-1224-2a6e-3c7b07203d84@linux.intel.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 29 May 2024 17:22:10 +0200
+Message-ID: <CAA8EJproC_mW4pZ_C-BUUm73xfqja0EKVLvCZ+C_1dhW3xoEnw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] usb: typec: ucsi: add Lenovo Yoga C630 glue driver
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Nikita Travkin <nikita@trvn.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/28/24 16:07, Mario Limonciello wrote:
-> Some of the security attributes data is now populated from an HSTI
-> command on some processors, so show the message after it has been
-> populated.
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On Wed, 29 May 2024 at 17:20, Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> On Tue, 28 May 2024, Dmitry Baryshkov wrote:
+>
+> > The Lenovo Yoga C630 WOS laptop provides implements UCSI interface in
+> > the onboard EC. Add glue driver to interface the platform's UCSI
+> > implementation.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/usb/typec/ucsi/Kconfig          |   9 ++
+> >  drivers/usb/typec/ucsi/Makefile         |   1 +
+> >  drivers/usb/typec/ucsi/ucsi_yoga_c630.c | 189 ++++++++++++++++++++++++=
+++++++++
+> >  3 files changed, 199 insertions(+)
+> >
+> > diff --git a/drivers/usb/typec/ucsi/Kconfig b/drivers/usb/typec/ucsi/Kc=
+onfig
+> > index bdcb1764cfae..680e1b87b152 100644
+> > --- a/drivers/usb/typec/ucsi/Kconfig
+> > +++ b/drivers/usb/typec/ucsi/Kconfig
+> > @@ -69,4 +69,13 @@ config UCSI_PMIC_GLINK
+> >         To compile the driver as a module, choose M here: the module wi=
+ll be
+> >         called ucsi_glink.
+> >
+> > +config UCSI_LENOVO_YOGA_C630
+> > +     tristate "UCSI Interface Driver for Lenovo Yoga C630"
+> > +     depends on EC_LENOVO_YOGA_C630
+> > +     help
+> > +       This driver enables UCSI support on the Lenovo Yoga C630 laptop=
+.
+> > +
+> > +       To compile the driver as a module, choose M here: the module wi=
+ll be
+> > +       called ucsi_yoga_c630.
+> > +
+> >  endif
+> > diff --git a/drivers/usb/typec/ucsi/Makefile b/drivers/usb/typec/ucsi/M=
+akefile
+> > index b4679f94696b..aed41d23887b 100644
+> > --- a/drivers/usb/typec/ucsi/Makefile
+> > +++ b/drivers/usb/typec/ucsi/Makefile
+> > @@ -21,3 +21,4 @@ obj-$(CONFIG_UCSI_ACPI)                     +=3D ucsi=
+_acpi.o
+> >  obj-$(CONFIG_UCSI_CCG)                       +=3D ucsi_ccg.o
+> >  obj-$(CONFIG_UCSI_STM32G0)           +=3D ucsi_stm32g0.o
+> >  obj-$(CONFIG_UCSI_PMIC_GLINK)                +=3D ucsi_glink.o
+> > +obj-$(CONFIG_UCSI_LENOVO_YOGA_C630)  +=3D ucsi_yoga_c630.o
+> > diff --git a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c b/drivers/usb/type=
+c/ucsi/ucsi_yoga_c630.c
+> > new file mode 100644
+> > index 000000000000..ca1ab5c81b87
+> > --- /dev/null
+> > +++ b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
+> > @@ -0,0 +1,189 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2022-2024, Linaro Ltd
+> > + * Authors:
+> > + *    Bjorn Andersson
+> > + *    Dmitry Baryshkov
+> > + */
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_data/lenovo-yoga-c630.h>
+> > +
+> > +#include "ucsi.h"
+> > +
+> > +struct yoga_c630_ucsi {
+> > +     struct yoga_c630_ec *ec;
+> > +     struct ucsi *ucsi;
+> > +     struct notifier_block nb;
+> > +     struct completion complete;
+>
+> Add includes for what you used here.
+>
+> > +     unsigned long flags;
+> > +#define UCSI_C630_COMMAND_PENDING    0
+> > +#define UCSI_C630_ACK_PENDING                1
+> > +     u16 version;
+> > +};
+> > +
+> > +static  int yoga_c630_ucsi_read(struct ucsi *ucsi, unsigned int offset=
+,
+>
+> extra space
+>
+> > +                             void *val, size_t val_len)
+> > +{
+> > +     struct yoga_c630_ucsi *uec =3D ucsi_get_drvdata(ucsi);
+>
+> Missing include for ucsi_get_drvdata
 
-Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
+I'll review my includes, but this comment and the comment for
+ucsi_operations are clearly wrong. There is a corresponding include.
 
-> ---
-> v1->v2:
->   * Move code from patch 4
-> ---
->   drivers/crypto/ccp/hsti.c    | 15 +++++++++++++++
->   drivers/crypto/ccp/psp-dev.c |  8 --------
->   2 files changed, 15 insertions(+), 8 deletions(-)
-> 
+>
+> > +     u8 buf[YOGA_C630_UCSI_READ_SIZE];
+> > +     int ret;
+> > +
+> > +     ret =3D yoga_c630_ec_ucsi_read(uec->ec, buf);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     if (offset =3D=3D UCSI_VERSION) {
+> > +             memcpy(val, &uec->version, min(val_len, sizeof(uec->versi=
+on)));
+> > +             return 0;
+> > +     }
+> > +
+> > +     if (offset =3D=3D UCSI_CCI)
+> > +             memcpy(val, buf,
+> > +                    min(val_len, YOGA_C630_UCSI_CCI_SIZE));
+>
+> Fits to one line.
+>
+> > +     else if (offset =3D=3D UCSI_MESSAGE_IN)
+> > +             memcpy(val, buf + YOGA_C630_UCSI_CCI_SIZE,
+> > +                    min(val_len, YOGA_C630_UCSI_DATA_SIZE));
+> > +     else
+> > +             return -EINVAL;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static  int yoga_c630_ucsi_async_write(struct ucsi *ucsi, unsigned int=
+ offset,
+>
+> extra space, there seems to be more of them below but I won't mark them.
+>
+> > +                                    const void *val, size_t val_len)
+> > +{
+> > +     struct yoga_c630_ucsi *uec =3D ucsi_get_drvdata(ucsi);
+> > +
+> > +     if (offset !=3D UCSI_CONTROL ||
+> > +         val_len !=3D YOGA_C630_UCSI_WRITE_SIZE)
+> > +             return -EINVAL;
+> > +
+> > +     return yoga_c630_ec_ucsi_write(uec->ec, val);
+> > +}
+> > +
+> > +static  int yoga_c630_ucsi_sync_write(struct ucsi *ucsi, unsigned int =
+offset,
+> > +                                   const void *val, size_t val_len)
+> > +{
+> > +     struct yoga_c630_ucsi *uec =3D ucsi_get_drvdata(ucsi);
+> > +     bool ack =3D UCSI_COMMAND(*(u64 *)val) =3D=3D UCSI_ACK_CC_CI;
+> > +     int ret;
+> > +
+> > +     if (ack)
+> > +             set_bit(UCSI_C630_ACK_PENDING, &uec->flags);
+> > +     else
+> > +             set_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
+>
+> Include for set_bit()
+>
+> > +     reinit_completion(&uec->complete);
+> > +
+> > +     ret =3D yoga_c630_ucsi_async_write(ucsi, offset, val, val_len);
+> > +     if (ret)
+> > +             goto out_clear_bit;
+> > +
+> > +     if (!wait_for_completion_timeout(&uec->complete, 5 * HZ))
+> > +             ret =3D -ETIMEDOUT;
+> > +
+> > +out_clear_bit:
+> > +     if (ack)
+> > +             clear_bit(UCSI_C630_ACK_PENDING, &uec->flags);
+> > +     else
+> > +             clear_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +const struct ucsi_operations yoga_c630_ucsi_ops =3D {
+>
+> Include for ucsi_operations.
+>
+> > +     .read =3D yoga_c630_ucsi_read,
+> > +     .sync_write =3D yoga_c630_ucsi_sync_write,
+> > +     .async_write =3D yoga_c630_ucsi_async_write,
+> > +};
+> > +
+> > +static int yoga_c630_ucsi_notify(struct notifier_block *nb,
+> > +                              unsigned long action, void *data)
+> > +{
+> > +     struct yoga_c630_ucsi *uec =3D container_of(nb, struct yoga_c630_=
+ucsi, nb);
+>
+> Include for container_of
+>
+> --
+>  i.
+>
+
+
+--=20
+With best wishes
+Dmitry
 
