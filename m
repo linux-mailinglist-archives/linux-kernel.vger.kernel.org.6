@@ -1,207 +1,210 @@
-Return-Path: <linux-kernel+bounces-194212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246BA8D3874
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:54:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411558D3877
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEDB1F27A35
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9283B28243
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D981D1BDCF;
-	Wed, 29 May 2024 13:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0BB1BF2B;
+	Wed, 29 May 2024 13:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="G6nq/Wsq"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2049.outbound.protection.outlook.com [40.107.96.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHaHFGy9"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410D91AAC4
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716990871; cv=fail; b=lwhrS2JWpNm6U5+lqCfyMmSBItlynyI+fGmoMiq86RxVnzEEm6oLqcuDU2GSgzj2yMq1aZ8oRjn5lLpU97fwoHDQ276gK+IGPolutyhIjdBIsMBtcdx00afbe4qLOu2sy0QoBrAyl05ONINwMzzE4IK7GT/xIr9U2IWoCW+j9Mc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716990871; c=relaxed/simple;
-	bh=dLcb/m46f4mHFez7+qYJZ6owuALFJJCwldKrcprJfRs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=THODz8lMO1ESOenC2RKiEQCtcolsaiQbHYicwRViJboHXeElKnBHONFeXHAF6KWeBGfMZbKHUl89/5XA0KBLUSo1ijOkTyPpFeaVts4WmT7btfF6tX8+jay9SXIN9/3avQWqjYMG5xctWiQzWhulHgza45ThorRk7Bo7oj22BzE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=G6nq/Wsq; arc=fail smtp.client-ip=40.107.96.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TJyep9qJxDBbYZIdVEPios97m4yivUVI5zS+BpCs7kwg8PfFP0Lzw6lhciRzD37SALi7TSdE99PpUphdBYYiYn6GTlKdFxSHR1pbDgFRbDxIponriVpoblizR/iD0HoggSJbquAJQRoXVlMhIT9oTrVcvrNFACDzjBeJ6N7yBTBsKSzN09gaT9Ct6q9E6IN7ZZ6KEYhnszASh3REe27jcwtenlh9AQnilV5fPyhPhcbxGgiWWRGOEYvnVFQCqSgQwtA4BYjDIa3wGNetOtjn/aPgpzgyp45uf/QoEbtN2vUwzt+syoKRHdwX5y7jIkY62vLfFshHMw+KIVHTBeSR6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pxFUVLsWAaEskTBzKKHY1nywwnuiYdLW21f/ORgFrr0=;
- b=EPLBz24Vcf+OF+69Yp/OY4HkIYAayn1yvo0QcvAvnajh6MAlpOtt1NwS67MTW2/CLl5tPpFyfAKUrsDGPmb8K5D5rrqfaPh0C5HzS7fs/BFGmJ8qiomkfo3yUAYcBCagpGzKDRKA+y63L7kmaA0UjQAwGYfcbHxUDlsNqhIVkOjZ4INTKKGgy1h25TtfLvvzwE6GuVK4m25sZ1Sjz8u9+OOfuiCMKRYu41ODk60T2ekOCsSk8BaBitDpvjt8JiU3Ixzcm4ENY1xx2i4BWuaiKNle92ooLc5XMZRmKJm0qorMPLWuUOmc9aTQ+8JxN6N0S1gHFH8vvelxX/vaBZU3EA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pxFUVLsWAaEskTBzKKHY1nywwnuiYdLW21f/ORgFrr0=;
- b=G6nq/WsqbLF9Z6dcJIVENl3CRsIHjbVp1Bna1a9ywO0B6ZZMFnZkXu0M4rSPwxRb3/7Vaa7omqFzPR/dpexor316tiRUDH1GqNlZGSXN0a7VsavAqft4VSi7rUUkxj/jCyGJ0nZ+r+mz9VVoqrQUvgGBrsuHF2+J5/BCCBu708w=
-Received: from BL1PR12MB5144.namprd12.prod.outlook.com (2603:10b6:208:316::6)
- by PH7PR12MB7020.namprd12.prod.outlook.com (2603:10b6:510:1ba::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.31; Wed, 29 May
- 2024 13:54:25 +0000
-Received: from BL1PR12MB5144.namprd12.prod.outlook.com
- ([fe80::491a:cce3:e531:3c42]) by BL1PR12MB5144.namprd12.prod.outlook.com
- ([fe80::491a:cce3:e531:3c42%7]) with mapi id 15.20.7633.017; Wed, 29 May 2024
- 13:54:25 +0000
-From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Feng,
- Kenneth" <Kenneth.Feng@amd.com>, "Ma, Jun" <Jun.Ma2@amd.com>
-CC: Evan Quan <quanliangl@hotmail.com>, "amd-gfx@lists.freedesktop.org"
-	<amd-gfx@lists.freedesktop.org>
-Subject: RE: [PATCH] MAINTAINERS: update email for Evan Quan
-Thread-Topic: [PATCH] MAINTAINERS: update email for Evan Quan
-Thread-Index: AQHascuLV49pwrA7CkO/aF72jGzTg7GuO1WQ
-Date: Wed, 29 May 2024 13:54:25 +0000
-Message-ID:
- <BL1PR12MB51449A1977FA06BACE4FF306F7F22@BL1PR12MB5144.namprd12.prod.outlook.com>
-References: <20240529114621.11795-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20240529114621.11795-2-wsa+renesas@sang-engineering.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ActionId=bd98857b-6104-4cb0-b492-3e5926516051;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=0;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=true;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
- Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2024-05-29T13:52:57Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR12MB5144:EE_|PH7PR12MB7020:EE_
-x-ms-office365-filtering-correlation-id: 42bcdee2-f65a-450e-da6f-08dc7fe6da03
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?g52COfK4L3awr0n4bf9DozWzgP9D+8YrH0lZ94D04G17nWbIIuCUOLM36Nbw?=
- =?us-ascii?Q?E0mYsOHSDtOp9QBoirK2WQ1lzZB7kKZXpVkzYUjDvfpfMrSpUjvcHroaflz1?=
- =?us-ascii?Q?QoIL3CsOAnkzxa0TstXJ76cGubjmv3czsRekhROgZyYqK8hgG3D3df6QTLdh?=
- =?us-ascii?Q?NMATXaVdgdO9Wofd0OsUP+1PUgq7UHBZo8TBdQ/e7bCIKQq+pl7+X82SyXkx?=
- =?us-ascii?Q?xoXaY7ZY5BJY6gapCcsV8u/KLs5U5JmJukMB0cq04tgdHrBr/wt8P6K2nXHH?=
- =?us-ascii?Q?mD+dDQNLTYmDLZ34v9czTaeB/22feBMSTbEXW+1mD6pmHKO43N/eR4Njn1zj?=
- =?us-ascii?Q?NAEbbTpJH59eoK1fW+GMoB69DGBgBszI60mWZSZF2co99askcLpCk3gucqkx?=
- =?us-ascii?Q?fBgilIQ7Q3Wprvs2zAjPCHrajo5srCu9h1//pDLi8xbuBenPIisf/XS7npgL?=
- =?us-ascii?Q?BaODUo0G5Ok3f8rO1lXNBI6tDsxdcw5NsqQ8damEap0IDi7a3uxEOXuUiqHG?=
- =?us-ascii?Q?dLEQ1hriaVSksjQe8YJT7c8gJFrWJrr9Z5IQFejl44g6axpZ0RfLOfa9v4TG?=
- =?us-ascii?Q?NjLELPXpFxASlL4nn3HquMT0ONFhOx1QnY2HBWG7E4E2En3TnN8RvZCMtryT?=
- =?us-ascii?Q?mWE5JBBDhrtIYi20/0384+CoXR4mQ5RB4KBhJvy7oeEGtxdX936wWfrN7EUj?=
- =?us-ascii?Q?O0g2hc9yIC8v6KsqHrD+xpNuf4RvR1PmXyPSf/5JTzh8YgJgjlctHqJCHDbQ?=
- =?us-ascii?Q?0F9sBZq2rUc+KA6dHO67ulF9u0OdrpZ/LV5b8mPir46b6HErtVGSWRgvH0ps?=
- =?us-ascii?Q?kG5hk6FoUFbohjrr4MopRO0t+l9gT79n3lbagTws791yU2w8lWdgEHKeA+SW?=
- =?us-ascii?Q?D7KcpX7HIGIBwesMABlIZ0kieGNAEzbyP2yLMoDhdaqmqxUT9KoBt7wEh/Wt?=
- =?us-ascii?Q?mmIaI7dmZ65r3dKLOAmyGhMJCIqQEJyXJ5DL1nVmY8GeLGh8zvVc8p3lb/TI?=
- =?us-ascii?Q?PY8JskfzrmDTrIL3Yo/LDgKTFnY/4VpOkDST1kvFb0M9jQS4IhGK9t2I0oxh?=
- =?us-ascii?Q?tDe/R9LNKLNnoasWSGW0NrFxNj71OkAcYqdb8L0tV9B+cTOiX1Ew6M+fC1bc?=
- =?us-ascii?Q?QNg5OgPFH7KsLLupQXCzHfIeihU1z6gOq5yDyt+iVJMUqRewPrOCmC1yDpZ3?=
- =?us-ascii?Q?HzmDAHqeaPBVg+Q6+wbCmHq4p98gMnX3Tw23DTx1/PQo6RFBi8kS+9xsBpII?=
- =?us-ascii?Q?fTTr1+1ObLyJlelJL2DxP1o7E15sutK/z6LOGITqDw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5144.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?zcdhCUxjtNtgsirgDhGR/lkrWfhGI0cBN9i1jKoF34zg1KskFVf3+cZTmXka?=
- =?us-ascii?Q?kUJcApo+CKCOD9cjXYIEgdWVZGhQD/OC5avQWsy729gzA4OjAwspoQRm5YUc?=
- =?us-ascii?Q?rV45GiDRWOhcw4OJ1UzK7JhuQisEclfvJLlFMod4Zm/tXEJZZQwXQv+SNujA?=
- =?us-ascii?Q?Oyx5GKKCOYcrx1CRiWR3nZB/D3aeU4cMOfSszOpaRHsvBKeZnorkMhU05wSe?=
- =?us-ascii?Q?DqWvhFMuuuiVfYXfRomqAEW1QMgl4Xf/ZNt6t2tBIERTc/bpsiNQnWo1r4El?=
- =?us-ascii?Q?UDswh85qgQyKIMp293Q5pC+nyiEPQwzuqk5tDwNSQZWEGg0Gn2g8lHMCsT1v?=
- =?us-ascii?Q?UBXxg2FzfxkDeUEVt7ObiZDyYgWqo4Jrpyzet2owQ08Pk1hxOY1OWXjPRBtn?=
- =?us-ascii?Q?4WL2ANBIcIwQC1GVqCgnpxaR2fYEbeuIVsw3MzT5smxjAI1Ln8EG9MJIL3vi?=
- =?us-ascii?Q?lZW66i0jMG81UWJsHjOooRvuh5cwlSwmGNVRyBT0Wl7iC686UiF3Mq2SEEka?=
- =?us-ascii?Q?tFJeodWQ7C+RxxRWtQz9sK3o+VYb5B7oUcYFk4pZ2rb1Ivbd4m+wH9HKJMAP?=
- =?us-ascii?Q?TPstbsOG5BytvAnmLCGa6oGG9dei8pz6Z7/63Ij6dFwZa7ceBWarCNte1nDN?=
- =?us-ascii?Q?MOwu/piEt/dEA4v+AthF6WaHKEhrg1HATFKBZFnTH1fIYdYTsqvrlfh8wC/e?=
- =?us-ascii?Q?61OCYv7xeUv7KEQyQOGwbydEskaW44vvVh7gYOnmtRjbosuy/J31GPFKdTB1?=
- =?us-ascii?Q?XP63mZ0q7ySFL4qPfVIvCZSHsBzFoyzXtbteQ0cOTRwffiuRNyGTpkUy3CR9?=
- =?us-ascii?Q?ibCqp4ziDD5AOaqAEAf3VgknEu450RjkOsGSDRYcO1UZloPmFNuOgLBlQyuu?=
- =?us-ascii?Q?iD7Kh/zWBQADWMEMxv2qDMhMoLjbJrO4tFGLtxrzxa/4DfCJH87LhRhgKhjI?=
- =?us-ascii?Q?e3YZm9D++ovtAaXUaX5fgpfVsW21eVfhpc5jDcLyfRozSZ3OZNsw42Hj5KhQ?=
- =?us-ascii?Q?eZkg2hWYTF+UH5x9LajHjVBmZKOur0q/beuaQUM3leTYmCNlCRU5cgX3Mi4h?=
- =?us-ascii?Q?B7v80yHsijPEM5KrPn0muJZSY+hmfZUDnU2dMco+lfDBc7GfUETcn4PZDN1f?=
- =?us-ascii?Q?90VjhuG0xC8DCL5me5RqzxwSfSbP/D9MY9lYkZCC6lKc6DxwMFlWmQmb4iQh?=
- =?us-ascii?Q?y1LjMimPs/7h1jCDVTFmUnmr49cCoaZu9rs8+yRnjFNRnEQAb0Evzpikl7Jw?=
- =?us-ascii?Q?LXRuPSst4eKZ1ZaSYNLq9DU1iy20586DIAwFwNPh5lmVZAcyNvfKwnFPovHP?=
- =?us-ascii?Q?yTlzcyNtnPr5nYIYO5/M7sbK9JxglNpVUDYnH/5U6Vb7d3bohlUx70qlrCJl?=
- =?us-ascii?Q?ss988W4YxZ32VLM/ImF+3/3KxbykoEa5Z0kPiH0Lro+RCMITozmvnaF3ihM9?=
- =?us-ascii?Q?/rXjzccrCPYlctwpS222hKHMeoKB6PJcxztwG92qn/BZPEXX4UdOGq/u1ykF?=
- =?us-ascii?Q?VltK6pvjYGEsklupeoC/RvC4T/YF4sedWGkPKZ6zXBtZv8Rr4V6QVB2Veblg?=
- =?us-ascii?Q?2rXq76VmR7HY7zd4dE0=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5249A1C290
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716990915; cv=none; b=cE8fa5OEpV+rcrytUdMTHXG5iuTgW2hTVJ9caSAPVVF+GBAWYYZW1lVwEulrFx5sS7wwi9QLcrt2U3FH0tSGHnyXh9mj4zSkmcTFe1xcGNgb3RXgMHXixrxGOuXxZJbHMevyUEjgJR4CMPyJlo18wSzDFT5RNyultwIt6x7zSmI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716990915; c=relaxed/simple;
+	bh=7pwxJwgIqNkEt9XQ+aY/jS7KUidtBt2N/WzmYBUYsp4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+FVcCkuvZfGeUP+o6pUbQ8K9FhUo4y9wdcZR7hyB3gZZTRZ9WU666DDZXQT7K2dOuittxmsqXZFOl1EI2iGFBFZXuCwKWJuaTkJZa6v8MYF3YGpAzzQkkpYrfjusmPV3bkMLAJMAoL0EUxgDdfSi/3X+AF3op+/Ksxrn+fn9x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHaHFGy9; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f44b5b9de6so16480285ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716990913; x=1717595713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sGlIeA8hMcr9Fm/VlCdK2KdthFpKjfRPf//jK9Gb9e8=;
+        b=IHaHFGy9c5OqE4xNKb4XCL3vP4xhHCM7G6aGNkV/CWW3yi4C3fqzcoa3ZgSJblFI9a
+         Y8yHj7j3AhxAhnTaATBvfgr1y7t3qr5yrtEiemuiylAUauUUiXW92wTF3JRmwMwMWrLt
+         nF0tWLjnCjeT4HuwewA7hanV8zblX21LVEExt/eivxV804+VcLwh9roN0CZQ45eSNECv
+         EEPhW0MK5Dn9GmeGioLVF4YJ2sUDzPC4d2ECqNty394999/8Tl1tU6x3wprT+a0mSL3J
+         o1JnpPDo3XWRVXgDKJztNfGnYoXOmfgGxw4IYtNKbBi/VcmOGCkB0NNJE20oc+7+7L1j
+         baLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716990913; x=1717595713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sGlIeA8hMcr9Fm/VlCdK2KdthFpKjfRPf//jK9Gb9e8=;
+        b=Muro07e4PZrt4LzQrm4a+NWOPgAExese5eRJTpBsD/0xVYiw/QflGgbXyUh/XsNkfT
+         IgJ2KCgXQMPbgKYoKGOqtBG274FAO4QeZNC5JCNUhwHJNn77/Ox+fKBOe+/ITKoSoINZ
+         5O8uaX+Zg/oD2TZ6ruHTKGLWr31Igadbs/RlHdf6sfmGWmSzvwLkZrgsN7LI9C6rTktP
+         4bB6iktV0afRGGE6t+QpvZE8zh+xmMQEQIyqNRWhBdwQc/I9RVu1lHAtgA1mciBY/E1M
+         9CC7QwFLbUwd1dQiK2A9s4aCslM9u8uN+vMUrkGQ+g3WRHID2z/ssU+9pZbGQ9LDv4bH
+         80Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWUUuvz7DVQ4j/HxuOcVm/++saf5H9shO+tivxi/K29BGQ6cY4GNz+QuHnWxhmcO3IRMwDFl/O8tvXVPL1WFXJwF5cVz/jzAs2DmtSK
+X-Gm-Message-State: AOJu0YyM7vSeyJ6zN03MLLoOGda/HEzn6SLv4cMIoUyR3OdX2AmMRax7
+	QfNRwqh+EyJM/5Y9k87wUSVc++hNg78O8sRyQIUIw9kc9YadyhR5rqY+esf+c3VoJEqo2m6TDAz
+	L1HbS2zLAatHm3usT128O8gpKZmg=
+X-Google-Smtp-Source: AGHT+IHm0zRTpU3i/A0JVmM25LoggLAhFbg2a1hrsXcUm7MHJr4WHud5PBcWgghHM0zxa3+8cHQc/tmkKlFrhHf/w18=
+X-Received: by 2002:a17:903:188:b0:1f4:ee68:3bc5 with SMTP id
+ d9443c01a7336-1f4ee683c53mr18900995ad.57.1716990913482; Wed, 29 May 2024
+ 06:55:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5144.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42bcdee2-f65a-450e-da6f-08dc7fe6da03
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2024 13:54:25.6265
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: eTAj9BtDOFepZBguNBkIWwnRs2Ik5AwRy07uWd97T73B12tETJ8S2L/kVYoZldofPO+4S+IPopil4SNIUm1Jxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7020
+References: <20240528210319.1242-1-mario.limonciello@amd.com>
+ <CADnq5_OzPT1MVnsqXs2vjr1L2_6jeM6x7jgs4ZtYpNzdDHM6uA@mail.gmail.com> <87r0dkiv4o.fsf@intel.com>
+In-Reply-To: <87r0dkiv4o.fsf@intel.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 29 May 2024 09:55:01 -0400
+Message-ID: <CADnq5_NiJ9a7uYPGj9iuePTRBFKGhhFA6G982bxO2kHe-_5ASA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during initialization
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, dri-devel@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, Chris Bainbridge <chris.bainbridge@gmail.com>, 
+	hughsient@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[Public]
-
-> -----Original Message-----
-> From: amd-gfx <amd-gfx-bounces@lists.freedesktop.org> On Behalf Of
-> Wolfram Sang
-> Sent: Wednesday, May 29, 2024 7:46 AM
-> To: linux-kernel@vger.kernel.org
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>; Evan Quan
-> <quanliangl@hotmail.com>; amd-gfx@lists.freedesktop.org
-> Subject: [PATCH] MAINTAINERS: update email for Evan Quan
+On Wed, May 29, 2024 at 9:51=E2=80=AFAM Jani Nikula <jani.nikula@linux.inte=
+l.com> wrote:
 >
-> The old email address bounced. I found the newer one in recent git histor=
-y,
-> update MAINTAINERS accordingly.
+> On Wed, 29 May 2024, Alex Deucher <alexdeucher@gmail.com> wrote:
+> > On Tue, May 28, 2024 at 5:03=E2=80=AFPM Mario Limonciello
+> > <mario.limonciello@amd.com> wrote:
+> >>
+> >> If the lid on a laptop is closed when eDP connectors are populated
+> >> then it remains enabled when the initial framebuffer configuration
+> >> is built.
+> >>
+> >> When creating the initial framebuffer configuration detect the ACPI
+> >> lid status and if it's closed disable any eDP connectors.
+> >>
+> >> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+> >> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
+> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >
+> > Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+> >
+> > Do you have drm-misc access or do you need someone to apply this for yo=
+u?
 >
-> Cc: Evan Quan <quanliangl@hotmail.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> I've bounced this to intel-gfx and intel-xe lists to get CI testing. I'd
+> appreciate holding off on merging until we have results.
 
-Evan no longer maintains the SWSMU code, it should be changed to Kenneth an=
-d Jun (CCed).
-
-Thanks!
+Sure.
 
 Alex
 
-> ---
 >
-> Against v6.10-rc1. Still needs ack from Evan Quan
+> Thanks,
+> Jani.
 >
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Alex
+> >
+> >> ---
+> >> Cc: hughsient@gmail.com
+> >> v1->v2:
+> >>  * Match LVDS as well
+> >> ---
+> >>  drivers/gpu/drm/drm_client_modeset.c | 30 +++++++++++++++++++++++++++=
++
+> >>  1 file changed, 30 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/dr=
+m_client_modeset.c
+> >> index 31af5cf37a09..0b0411086e76 100644
+> >> --- a/drivers/gpu/drm/drm_client_modeset.c
+> >> +++ b/drivers/gpu/drm/drm_client_modeset.c
+> >> @@ -8,6 +8,7 @@
+> >>   */
+> >>
+> >>  #include "drm/drm_modeset_lock.h"
+> >> +#include <acpi/button.h>
+> >>  #include <linux/module.h>
+> >>  #include <linux/mutex.h>
+> >>  #include <linux/slab.h>
+> >> @@ -257,6 +258,34 @@ static void drm_client_connectors_enabled(struct =
+drm_connector **connectors,
+> >>                 enabled[i] =3D drm_connector_enabled(connectors[i], fa=
+lse);
+> >>  }
+> >>
+> >> +static void drm_client_match_edp_lid(struct drm_device *dev,
+> >> +                                    struct drm_connector **connectors=
+,
+> >> +                                    unsigned int connector_count,
+> >> +                                    bool *enabled)
+> >> +{
+> >> +       int i;
+> >> +
+> >> +       for (i =3D 0; i < connector_count; i++) {
+> >> +               struct drm_connector *connector =3D connectors[i];
+> >> +
+> >> +               switch (connector->connector_type) {
+> >> +               case DRM_MODE_CONNECTOR_LVDS:
+> >> +               case DRM_MODE_CONNECTOR_eDP:
+> >> +                       if (!enabled[i])
+> >> +                               continue;
+> >> +                       break;
+> >> +               default:
+> >> +                       continue;
+> >> +               }
+> >> +
+> >> +               if (!acpi_lid_open()) {
+> >> +                       drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is clo=
+sed, disabling\n",
+> >> +                                   connector->base.id, connector->nam=
+e);
+> >> +                       enabled[i] =3D false;
+> >> +               }
+> >> +       }
+> >> +}
+> >> +
+> >>  static bool drm_client_target_cloned(struct drm_device *dev,
+> >>                                      struct drm_connector **connectors=
+,
+> >>                                      unsigned int connector_count,
+> >> @@ -844,6 +873,7 @@ int drm_client_modeset_probe(struct drm_client_dev=
+ *client, unsigned int width,
+> >>                 memset(crtcs, 0, connector_count * sizeof(*crtcs));
+> >>                 memset(offsets, 0, connector_count * sizeof(*offsets))=
+;
+> >>
+> >> +               drm_client_match_edp_lid(dev, connectors, connector_co=
+unt, enabled);
+> >>                 if (!drm_client_target_cloned(dev, connectors, connect=
+or_count, modes,
+> >>                                               offsets, enabled, width,=
+ height) &&
+> >>                     !drm_client_target_preferred(dev, connectors, conn=
+ector_count, modes,
+> >> --
+> >> 2.43.0
+> >>
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d6c90161c7bf..b2fd2a19277e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1092,7 +1092,7 @@ F:      Documentation/ABI/testing/sysfs-amd-pmf
->  F:   drivers/platform/x86/amd/pmf/
->
->  AMD POWERPLAY AND SWSMU
-> -M:   Evan Quan <evan.quan@amd.com>
-> +M:   Evan Quan <quanliangl@hotmail.com>
->  L:   amd-gfx@lists.freedesktop.org
->  S:   Supported
->  T:   git https://gitlab.freedesktop.org/agd5f/linux.git
 > --
-> 2.43.0
-
+> Jani Nikula, Intel
 
