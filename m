@@ -1,74 +1,127 @@
-Return-Path: <linux-kernel+bounces-194790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110458D421D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:48:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C0A8D4221
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2E31F21659
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:48:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDEE8B24986
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504F21CB32F;
-	Wed, 29 May 2024 23:48:13 +0000 (UTC)
-Received: from mail115-95.sinamail.sina.com.cn (mail115-95.sinamail.sina.com.cn [218.30.115.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2528F1CB332;
+	Wed, 29 May 2024 23:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rn7DAx3f"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFEC1802C4
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DCA28E8;
+	Wed, 29 May 2024 23:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717026492; cv=none; b=NIiV4kqV1SDliLT1IGRTu7bZ52scnTOfNy0bO2q1ME91QNW4q7pQ64CLEooO8VTFCVVDL64+eL+28FjzZNzZZw3vGC3iT+puCyjtEsF2384ryDeYPv5l9/32MPIVU+FDa/c3an1YBs3awcuPnZ9/VQPdo5N2fcZEr1afQljnrC0=
+	t=1717026564; cv=none; b=PFUAvu8gXKbMCakJPChw3HHifZ/nhwVAVzMuXzEbTTd93MuCSG3QAyetASgEBlYKTyKAfCMG8ApAse6r6pZpO86YTnfTCCBfWz+4WvhCpnub/M9/IsFILQEoEt/fmRKhWop+rLoydvVhnm8eduBy2xByXZJgxd5/2QHBdhbBjm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717026492; c=relaxed/simple;
-	bh=VPP80Y6bX7mpgJ2reko6KRR6cfiu4C/0yZT1T3uduEw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qx+v44fAA+9OKlYfOliYghCAKJsfNhuWgnjwrM1nJ5kAH9vxU+i8+RcgQTwo5V/76BhlC/a3kSmBWHs072WWFwKbVPU752VME9VYay9d3lEZlVCi/sGAP18x2Q08KCy1bNkH6MjetSwfhS816W27WfXJZLNFK0SZo4xU9hFa+JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.5])
-	by sina.com (172.16.235.24) with ESMTP
-	id 6657BEAB0000795F; Wed, 30 May 2024 07:47:57 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 63944445089465
-X-SMAIL-UIID: D3A3C44DE0B44A9891E0D3EAE79B62C1-20240530-074757-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com>
-Cc: edumazet@google.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	radoslaw.zielonek@gmail.com,
-	syzkaller-bugs@googlegroups.com,
-	vinicius.gomes@intel.com,
-	vladimir.oltean@nxp.com
-Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
-Date: Thu, 30 May 2024 07:47:45 +0800
-Message-Id: <20240529234745.3023-1-hdanton@sina.com>
-In-Reply-To: <000000000000ae4d6e06199fd917@google.com>
-References: 
+	s=arc-20240116; t=1717026564; c=relaxed/simple;
+	bh=x2aVOwUD3F9tCvVgme9sF7aWoHzcwEI3aj/2Y2l1upM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLpzz6Cj5/Sl46zdUEwAguoGt9QBVSd88T5DfMWlYfrIl+Pr+NxIBvTyNVnTqnrOHaTV5ZLtdv9C7RgmYPlQSzlgkzZVlxq+n3IBjmSEWbbZ7zqWAFkThPgQTTkE8Pbf2+u9jD/Q3HQcH7vg6I2m2GJZcyhsTTA41GHs8lZ5R30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rn7DAx3f; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso3772541fa.2;
+        Wed, 29 May 2024 16:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717026561; x=1717631361; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9nBHoXpEdG0AwZuUWf4ewl7uV+b4KkibHlTOCLBb8Y=;
+        b=Rn7DAx3f38K81pOx6+SdvZ9OA3rwXnm/wlsult2XwXbRJllrGprTfWlTcHOJutqW0c
+         ejQm0Cm8zXzapkZQDHFb27do7/tXwOKunzvvuOaqv7iTSBdO7OsCUHBz02+URfYe5d75
+         gOphzswL8AxZ3bOCImHwYnpjCcENNTGDYrodmpvbrtZtMdOzIp99YYgd0o5b4RNvc5NR
+         QrVSzVdk+liVXLrh5GPNHpCT7CzQVDJX9nN7FmCUZkDvYf/JYF9zoR88jUFO99MzCsp0
+         srIgMvUyu0YStScAS65ioYOhm2C6ntb3SFTJe7dvaLWiOfv5O6e9kZNtpZKjtB5NJ/Av
+         K8mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717026561; x=1717631361;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y9nBHoXpEdG0AwZuUWf4ewl7uV+b4KkibHlTOCLBb8Y=;
+        b=O/O30ZF9tcg2A0g+SPlBoFJDBKqgLit5Zq+51sFqqVUbGQEI2dMXAMXPTPTuXeJoN1
+         o9R6edMyWTRBYPy+p4BvPYxmffwnYj/0OR7qZgef93mj0C10l9CzV0HKHdwrydtCXqB9
+         gpHbEJKSNYhrhs4mcnrLcI4pRQcGJ+7Ck6Z7t7S/kGI+TJEIjtapOthmKQJQGSJ/E1ay
+         9J3/YzyMFU94wa3Qxq6UFVO7j1CgSB+mN6+yw/ss+pp8XqThVqDFHcuezTNYzzIjywa2
+         RRrKlHF+Mrs2TmIjLtquDRdJQTArY3VSm0JZBTEc6ZHS6wHqYibm+mrnmhnQgCWUt9wv
+         AonQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9JwEKySUtaFhRSCu6MMNlP+3NRX1APiyt097HYjtB3OjEoq0aPY1mrhVW5SKPSHFFxkO59DikI569dOsf1+E32IJ+iGsqqnZUJ7IB4jLo91jeHUeX6Wo4eBuuHG0CWoMadsHD77Ha
+X-Gm-Message-State: AOJu0YxlsH+MW/M8EG8PgWueH+VVDE4mfntWIal7MTq4/CaiTTuQQPOm
+	yHRJbIDqtrn7YQNhdKkEBFqghZT9wTUw5RmQTtudDly03qRb6K/o
+X-Google-Smtp-Source: AGHT+IGQ1wfQ4nVqG0431DiYzj8HZ20GJ5tVZcDweACQcFZqqA3fYviibe14czDSUTvr3UzP4D87MQ==
+X-Received: by 2002:a19:c20b:0:b0:523:772c:2c1c with SMTP id 2adb3069b0e04-52b7d43a692mr408706e87.38.1717026560656;
+        Wed, 29 May 2024 16:49:20 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:b667:478c:868b:5803])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda6cdcsm757739366b.209.2024.05.29.16.49.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 16:49:20 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Thu, 30 May 2024 01:49:17 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	mazziesaccount@gmail.com, ak@it-klinger.de,
+	petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+	linus.walleij@linaro.org, semen.protsenko@linaro.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 5/5] iio: pressure: bmp280: Add triggered buffer
+ support
+Message-ID: <20240529234917.GA83937@vamoiridPC>
+References: <20240512230524.53990-1-vassilisamir@gmail.com>
+ <20240512230524.53990-6-vassilisamir@gmail.com>
+ <20240529211228.2d7fbd93@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529211228.2d7fbd93@jic23-huawei>
 
-On Wed, 29 May 2024 16:10:02 -0700
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> INFO: rcu detected stall in sctp_addr_wq_timeout_handler
+On Wed, May 29, 2024 at 09:12:28PM +0100, Jonathan Cameron wrote:
+> On Mon, 13 May 2024 01:05:24 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
+> > temperature, pressure and humidity readings. This facilitates the
+> > use of burst/bulk reads in order to acquire data faster. The
+> > approach is different from the one used in oneshot captures.
+> > 
+> > BMP085 & BMP1xx devices use a completely different measurement
+> > process that is well defined and is used in their buffer_handler().
+> > 
+> > Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ---
+> 
+> > +
+> > +const struct iio_buffer_setup_ops bmp280_buffer_setup_ops = {
+> 0-day noted that this isn't actually used.
+> I'll add it to the buffer setup where it's currently passed as null.
 
-Feel free to read again the root cause [1] Vlad.
+Hi Jonathan,
 
-[1] https://lore.kernel.org/lkml/20240528122610.21393-2-radoslaw.zielonek@gmail.com/
+Yes, 0-day informed me, but I was not sure what to do so I was waiting
+to see if you would see it during the weekend. Thanks for taking care
+of it.
 
-Adding the tested patch in the net tree now looks like a case of blind landing.
+Cheers,
+Vasilis
+> > +	.preenable = bmp280_buffer_preenable,
+> > +	.postdisable = bmp280_buffer_postdisable,
+> > +};
+> > +
 
