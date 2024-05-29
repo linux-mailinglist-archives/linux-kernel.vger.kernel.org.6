@@ -1,100 +1,247 @@
-Return-Path: <linux-kernel+bounces-194260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229048D390C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:23:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1BD8D3A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B580B1F2424B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:23:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDECAB229D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC35157E84;
-	Wed, 29 May 2024 14:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCF217DE23;
+	Wed, 29 May 2024 15:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pAT4Mtv8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b81h5WXS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122ED157A7D;
-	Wed, 29 May 2024 14:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FC315A861
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716992593; cv=none; b=Bco76btzh/ZmuMgnCxFOBRzQa2ymIqf+PqaOQEh7X/WiGhzMvkBJlWotfZel1rmI//K7AbYrOqL4Ikojqj6WuW1B6OdeA3KUl5lDgW9yDWmBO6vZWxPw+Rb05QbtY3Kg8yR1cL9cgKaqV0ZoZeZHNrRpkrXclXK3I0vhQeEBsh0=
+	t=1716995695; cv=none; b=PmtI/i7cNTxgdPIVcv/4MhaykSF5ttsRpeqLmDlbAVVbNuB8+DNdHaNDBLk/JZ30QT3964o25f7XxMRAbb35zC4uSXbGdwB6fGOaeAgIcXfBvO5CP118Dr7pL20g97S1IO4t2L+O8sbxx28qIgLiRTRPk+6KzISxz6vWYEKcrS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716992593; c=relaxed/simple;
-	bh=bhCG4kplqmrZggYyow0NngpMzA6V+smGjmtFA4lsZrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iofI8FvuaiQ+KcBpGGYFbBMBmeoN8dS2+nkscXn3FuTRTrWKLvAvFriYnLWlOa7tLwVCDzQEqlBZQCocISI4XgkzW8p6sXAc25lmh+YhF2hKmKjU4b+3HyF+wqH6FreOzNJpYi8noK4JJodlj45t7xBZ1ccL2FwmBrm6PyhcHaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pAT4Mtv8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00E66C113CC;
-	Wed, 29 May 2024 14:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716992592;
-	bh=bhCG4kplqmrZggYyow0NngpMzA6V+smGjmtFA4lsZrY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pAT4Mtv8GPIvyCcYfK1Aalw8Cb/DS3AIFrZzn1djhuXr8tqy97h50w2f+Yi9ecorg
-	 FHLDesY7g+kk782SCHj6dMYBMxFOMlRHYIs6PB/MXH66FKZOEQzyHni48Wjomaku4O
-	 OAhyK9KBHbFleyVnYGWVfeKSatYucXF+PraPUSVaAtaQE1IzfZvkZ9rJjcQoXDCbiK
-	 MmBwzNlyMtkpdfJN94S3XjI/sAzwKYRh+y6Y3YMWbVsWrW0AUsuQggO8Ebl0wq5r22
-	 WsWbW5Yai37XptWeqB/wuNhNTlSipZF+eAH9b2Ap8Cv5veDihpfK6w+mkZOREx4FdC
-	 ZuWwFwnIUyDCw==
-Date: Wed, 29 May 2024 15:23:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Marcus Cooper <codekipper@gmail.com>,
-	=?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s
- mode
-Message-ID: <d02e981b-da33-45c4-9d9e-f47a890e0e79@sirena.org.uk>
-References: <20240529140658.180966-2-matteomartelli3@gmail.com>
- <a003dac1-de47-4a15-8959-25f7d5f1c129@sirena.org.uk>
- <665739895996a_26e4f3704a@njaxe.notmuch>
+	s=arc-20240116; t=1716995695; c=relaxed/simple;
+	bh=+5PvPZmLOmnshPNPKSLTEOoqrHNii4uujhjt1IhjMqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fnRBKBdObQj4q+bSRkfTIatRfT+wmEBkHj1I2gUoEnxzIay0B/gEIFFsM0tbIa+x+VLFUiX3y1dPw7PlAIiEX8bCa1WE/S9WaQR0OrNQoYAiMbAsSEb6qtZ4h9FS293eX7lOJI9rLSVEuE/A6t3xgTyf4/SLHgY9piMha3KBKtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b81h5WXS; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716995695; x=1748531695;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+5PvPZmLOmnshPNPKSLTEOoqrHNii4uujhjt1IhjMqQ=;
+  b=b81h5WXSyFUvDj7Jd80kuPIKOF2u1In2ceVWLafuVwtbRvaBk88wvXBC
+   x54jvntbRFx2zobxwJRXcQhxj5let3Mx3GEuwLd2rc+19knax8l4lGG3l
+   Q8tPit8JeLi0DiHlAFRMMGI0V44QpKFjMIHYAoMQZ4Frj2Vz5kBZ4rOzD
+   tcuknPRRstf381Fs4DkpWee0glGrTToEQGaDyA3X40fnQS+Xktr13om8Y
+   iVvjKdnRYt2Qx/uogx3DB5Sx92ZgD7sYjZGklq1pKOjcIJ9UGGmgOs+od
+   W618hk9s7531lqAzZqX6KI31WIyO3Qdsax6uSJaQzson7NVG4ZVLdCDQg
+   g==;
+X-CSE-ConnectionGUID: AgEe4vKhRvOVgQn1vsj0kQ==
+X-CSE-MsgGUID: nA7IggyjTk6QiEYsG853Tw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13356147"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="13356147"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:14:55 -0700
+X-CSE-ConnectionGUID: pVfW9CPiQYG+ybnwT0wnIA==
+X-CSE-MsgGUID: J8vlnD7eSByTEwjwOndNIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="39892434"
+Received: from unknown (HELO [10.125.111.89]) ([10.125.111.89])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:14:52 -0700
+Message-ID: <de2d3908-e424-4449-9ee5-c1b783d73a9d@linux.intel.com>
+Date: Wed, 29 May 2024 09:23:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Q0vjnQJ659h0qWMK"
-Content-Disposition: inline
-In-Reply-To: <665739895996a_26e4f3704a@njaxe.notmuch>
-X-Cookie: Everybody gets free BORSCHT!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ASoc: tas2781: Enable RCA-based playback without DSP
+ firmware download
+To: Shenghao Ding <shenghao-ding@ti.com>, broonie@kernel.org
+Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
+ 13916275206@139.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
+ linux-kernel@vger.kernel.org, j-chadha@ti.com, liam.r.girdwood@intel.com,
+ jaden-yue@ti.com, yung-chuan.liao@linux.intel.com, dipa@ti.com,
+ kevin-lu@ti.com, yuhsuan@google.com, tiwai@suse.de, baojun.xu@ti.com,
+ soyer@irl.hu, Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
+ cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
+ savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com
+References: <20240529103543.2089-1-shenghao-ding@ti.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240529103543.2089-1-shenghao-ding@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---Q0vjnQJ659h0qWMK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, May 29, 2024 at 04:19:53PM +0200, Matteo Martelli wrote:
 
-> All right, sorry for that. Should I resend this patch without cover letter?
+> In only RCA(Reconfigurable Architecture) binary case, no DSP program will
+> be working inside tas2563/tas2781, that is dsp-bypass mode, do not support
+> speaker protection, and audio acoustic algorithms in this mode.
 
-No.
+The commit title and body are much better, thank you!
 
---Q0vjnQJ659h0qWMK
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> -enum tasdevice_dsp_fw_state {
+> +enum tasdevice_fw_state {
+>  	TASDEVICE_DSP_FW_NONE = 0,
+>  	TASDEVICE_DSP_FW_PENDING,
+>  	TASDEVICE_DSP_FW_FAIL,
+> +	TASDEVICE_RCA_FW_OK,
+>  	TASDEVICE_DSP_FW_ALL_OK,
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZXOkoACgkQJNaLcl1U
-h9AGhgf8Db0kv+/TVscfXv8n4MsdBaq44VCh1YU+cMMdVJoaaDIvm5/0mIXc1it7
-kHp+1xm35g38cgoFTP8VTcHdeBpb7BNtSCDAkSodtnHrI/fUvxbjnbFue3EEAN2+
-Ni+tJ3X/j2EuXIBuLdj6bacgJ5WajhmEHIeHjFudYSSJr9ZBM9mTS8pzVrbiqOkK
-pXr+ckX+pgH55DZVyQaiREWUN+ajiRJdbZyOtzgxYntJQI4sI2KbjihclEJ+0BYj
-Rq5DAvwlhGRevlPih81PsoB+Z88E5VYQExJrNpEQKaEc6xZshI1N8v/qwm0/OImM
-wu7ZWqoof/PEuEx3TEGdjzzbRsIVIQ==
-=CFCV
------END PGP SIGNATURE-----
+You should really add a description of what the state machine looks
+like, and why FW_PENDING/FAIL remain but are not used.
 
---Q0vjnQJ659h0qWMK--
+>  };
+>  
+> diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+> index 265a8ca25cbb..5db1a0ac6036 100644
+> --- a/sound/soc/codecs/tas2781-fmwlib.c
+> +++ b/sound/soc/codecs/tas2781-fmwlib.c
+> @@ -2324,14 +2324,19 @@ void tasdevice_tuning_switch(void *context, int state)
+>  	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
+>  	int profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
+>  
+> -	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
+> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
+> +	/*
+> +	 * Only RCA-based Playback can still work with no dsp program running
+> +	 * inside the chip?
+> +	 */
+> +	if (!(tas_priv->fw_state == TASDEVICE_RCA_FW_OK ||
+> +		tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK)) {
+> +		dev_err(tas_priv->dev, "No firmware loaded\n");
+>  		return;
+>  	}
+>  
+>  	if (state == 0) {
+> -		if (tas_priv->cur_prog < tas_fmw->nr_programs) {
+> -			/*dsp mode or tuning mode*/
+> +		if (tas_fmw && tas_priv->cur_prog < tas_fmw->nr_programs) {
+> +			/* dsp mode or tuning mode */
+>  			profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
+>  			tasdevice_select_tuningprm_cfg(tas_priv,
+>  				tas_priv->cur_prog, tas_priv->cur_conf,
+> @@ -2340,9 +2345,10 @@ void tasdevice_tuning_switch(void *context, int state)
+>  
+>  		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
+>  			TASDEVICE_BIN_BLK_PRE_POWER_UP);
+> -	} else
+> +	} else {
+>  		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
+>  			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
+> +	}
+>  }
+>  EXPORT_SYMBOL_NS_GPL(tasdevice_tuning_switch,
+>  	SND_SOC_TAS2781_FMWLIB);
+> diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+> index 9350972dfefe..9b85a44511c2 100644
+> --- a/sound/soc/codecs/tas2781-i2c.c
+> +++ b/sound/soc/codecs/tas2781-i2c.c
+> @@ -380,23 +380,33 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+>  	mutex_lock(&tas_priv->codec_lock);
+>  
+>  	ret = tasdevice_rca_parser(tas_priv, fmw);
+> -	if (ret)
+> +	if (ret) {
+> +		tasdevice_config_info_remove(tas_priv);
+>  		goto out;
+> +	}
+>  	tasdevice_create_control(tas_priv);
+>  
+>  	tasdevice_dsp_remove(tas_priv);
+>  	tasdevice_calbin_remove(tas_priv);
+> -	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
+> +	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
+>  	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
+>  		tas_priv->dev_name);
+> +
+>  	ret = tasdevice_dsp_parser(tas_priv);
+>  	if (ret) {
+>  		dev_err(tas_priv->dev, "dspfw load %s error\n",
+>  			tas_priv->coef_binaryname);
+> -		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
+>  		goto out;
+>  	}
+> -	tasdevice_dsp_create_ctrls(tas_priv);
+> +
+> +	/*
+> +	 * If no dsp-related kcontrol created, the dsp resource will be freed.
+> +	 */
+> +	ret = tasdevice_dsp_create_ctrls(tas_priv);
+> +	if (ret) {
+> +		dev_err(tas_priv->dev, "dsp controls error\n");
+> +		goto out;
+> +	}
+>  
+>  	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
+>  
+> @@ -417,9 +427,8 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+>  	tasdevice_prmg_load(tas_priv, 0);
+>  	tas_priv->cur_prog = 0;
+>  out:
+> -	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
+> -		/*If DSP FW fail, kcontrol won't be created */
+> -		tasdevice_config_info_remove(tas_priv);
+> +	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
+> +		/*If DSP FW fail, DSP kcontrol won't be created */
+
+please add spaces on each side of a comment.
+
+>  		tasdevice_dsp_remove(tas_priv);
+
+So the state "FW_OK" means a fail now? It's not clear if this branch
+will work in all cases, including the original configuration where RCA
+was NOT used.
+
+Your previous explanation on the states is very hard to follow
+
+>> It looks like you're no longer using PENDING and FAIL states?
+> The state machine is becoming really hard to follow.
+PENDING and FAIL states have been used in HDA-based tas2563/tas2781 driver
+
+Not following why the DSP boot state would depend on what interface is
+used to load firmware?
+
+If this is because the definition is included in two separate drivers,
+is this ok to add an intermediate state on one side but not the other?
+Is there any merit to a shared definition if the states are completely
+different?
+
+
+>  	}
+>  	mutex_unlock(&tas_priv->codec_lock);
+> @@ -466,14 +475,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
+>  {
+>  	struct snd_soc_component *codec = dai->component;
+>  	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
+> -	int ret = 0;
+>  
+> -	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
+> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
+> -		ret = -EINVAL;
+> +	if (!(tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK ||
+> +		tas_priv->fw_state == TASDEVICE_RCA_FW_OK)) {
+> +		dev_err(tas_priv->dev, "Bin file not loaded\n");
+> +		return -EINVAL;
+>  	}
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int tasdevice_hw_params(struct snd_pcm_substream *substream,
 
