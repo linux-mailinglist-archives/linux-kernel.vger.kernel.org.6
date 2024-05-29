@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-194004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42688D3553
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:19:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A805F8D3554
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51784B24B29
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:19:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48F42B250B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5733516D9AD;
-	Wed, 29 May 2024 11:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1330B17F367;
+	Wed, 29 May 2024 11:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L3myBUqI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R/attSln"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A9E137903
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7B416EBF0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981553; cv=none; b=AfatNo+pU1QE0lRKoPeHjZMje6qvtALr6O3ENbi7e/tiw/j4GQg29lBsOAQQW6ztJtcti6tsTUVAM6EgjzLGsO14I516Sy9m5K66Cgtqm+xb48HtdzWtaiflw5Z/nx8G4XyiEapz8PDdQbEBPoXhtP18HQr2S02NWQxXW2+objg=
+	t=1716981556; cv=none; b=uNJG33ZfW5dnOwPIhxT0bdsIt3xwualbKvG/DRgDzdIc0Z4x06YXSlIvwXmpssGxqv0xZtnVGMsL00iBGQYA/VVRrTaYM1gYONQBw87Ow6/sJisXU4z5VyEfpoyrGFgX0F5g03sXe4GsxxxwvAnANkU1/xQ1va4frBFKRMYjfnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981553; c=relaxed/simple;
-	bh=IdYZdK+0Kpa8lbkG4W6iZOfgFAUE+8WOlAiZncQqZmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CamgbS+aL34Wgt7U2VNx0Za4fAC4jxeAuMuarAuYzDkVY5ENQUaA3EW3Zaw8/PGjbQ8E3qL5irDv9BCY+LeXmrC1xoOcMEYhx9KXud6YgsQ4FQLCs7gtzyqhRYqeLVUt+Yo7TWSQVor5X8eYF8ab/Adf/Cb8rRVAm3w8gOHc6vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L3myBUqI; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1716981556; c=relaxed/simple;
+	bh=WIyToRVLU5UPSAo+kAbFtG62AOKqZ9vqaCQCkPtTXdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rqq7rgKGWOSR0d+3zlCagp2pW+6G+5obcS4WA6UyXtuiKK9hj69k39Pmk35EzQGwTFB7pCnSrMeyCo+SqecYeaWjARa3qJ5sAEbt6E1gScpsckV36dzsDJHF3GbWul2/uOklKIOdQHprcbMFJR4SIgN1/OYpnUh8o8wbBE5lVEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R/attSln; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716981550;
+	s=mimecast20190719; t=1716981553;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jPxv1H9FEvCkjhG3HJ1KbEh1kIcR6+OYpFhiyO9bfXs=;
-	b=L3myBUqICjG+YFiU/NJfKXtn06fgwmjJdzRQddjFhSRl7Ts/3/SDvRO02Q4dJMZviZfTBp
-	ZPsneu9Bl39qzHf3uTAhDmSxkbL7QcsGoKMiDauK400/V2T0GdqozcLnTSXmJKJqSoIk/I
-	24KnYQ1RaxFMtgCDuC74nKJdVFqDiSU=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eYW6FgG2O6XV/uk9aR1DRrJWoOUkUVwlSfHnXOiWQ04=;
+	b=R/attSlnudsGgZD2A123ebGkVnGtr5iW1IvBDndz5zRJQEV6KosbIhnOaZzoWjk7h7SNPU
+	TdL46oXzx25CeVvqm3QimCZkAJJCS0xHlvfhs7zZSVP5bfDCXQpoKSiQRuJWxfWaTpIv9V
+	FOWyufDMIO2WWcCP8d0lH7U13HGlMkU=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-336-hdrW9_VDPtqk-vfyiUgC2g-1; Wed, 29 May 2024 07:19:07 -0400
-X-MC-Unique: hdrW9_VDPtqk-vfyiUgC2g-1
+ us-mta-228-yxWjoKy1OFGlzWoM2RexRg-1; Wed, 29 May 2024 07:19:10 -0400
+X-MC-Unique: yxWjoKy1OFGlzWoM2RexRg-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 12C47800169;
-	Wed, 29 May 2024 11:19:07 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2072480028D;
+	Wed, 29 May 2024 11:19:09 +0000 (UTC)
 Received: from t14s.fritz.box (unknown [10.39.193.127])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id F0116C15BB1;
-	Wed, 29 May 2024 11:19:04 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 4B9D6C15BB9;
+	Wed, 29 May 2024 11:19:07 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -62,9 +64,11 @@ Cc: linux-mm@kvack.org,
 	Minchan Kim <minchan@kernel.org>,
 	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: [PATCH v2 0/6] mm: page_type, zsmalloc and page_mapcount_reset()
-Date: Wed, 29 May 2024 13:18:58 +0200
-Message-ID: <20240529111904.2069608-1-david@redhat.com>
+Subject: [PATCH v2 1/6] mm: update _mapcount and page_type documentation
+Date: Wed, 29 May 2024 13:18:59 +0200
+Message-ID: <20240529111904.2069608-2-david@redhat.com>
+In-Reply-To: <20240529111904.2069608-1-david@redhat.com>
+References: <20240529111904.2069608-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,86 +78,87 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-Wanting to remove the remaining abuser of _mapcount/page_type along with
-page_mapcount_reset(), I stumbled over zsmalloc, which is yet to be
-converted away from "struct page" [1].
+Let's make it clearer that _mapcount must no longer be used for own
+purposes, and how _mapcount and page_type behaves nowadays (also in the
+context of hugetlb folios, which are typed folios that will be mapped
+to user space).
 
-Unfortunately, we cannot stop using the page_type field in zsmalloc code
-completely for its own purposes. All other fields in "struct page" are
-used one way or the other. Could we simply store a 2-byte offset value
-at the beginning of each page? Likely, but that will require a bit more
-work; and once we have memdesc we might want to move the offset in there
-(struct zsalloc?) again.
+Move the documentation regarding "-1" over from page_mapcount_reset(),
+which we will remove next. Move "page_type" before "mapcount", to make
+it clearer what typed folios are.
 
-.. but we can limit the abuse to 16 bit, glue it to a page type that
-must be set, and document it. page_has_type() will always successfully
-indicate such zsmalloc pages, and such zsmalloc pages only.
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ include/linux/mm.h       |  5 -----
+ include/linux/mm_types.h | 28 +++++++++++++++++-----------
+ 2 files changed, 17 insertions(+), 16 deletions(-)
 
-We lose zsmalloc support for PAGE_SIZE > 64KB, which should be tolerable.
-We could use more bits from the page type, but 16 bit sounds like a good
-idea for now.
-
-So clarify the _mapcount/page_type documentation, use a proper page_type
-for zsmalloc, and remove page_mapcount_reset().
-
-Briefly tested with zram on x86-64.
-
-[1] https://lore.kernel.org/all/20231130101242.2590384-1-42.hyeyoo@gmail.com/
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-
-v1 -> v2:
- * Rebased to mm/mm-unstable
- * "mm: update _mapcount and page_type documentation"
-  -> Minor comment change
- * "mm: allow reuse of the lower 16 bit of the page type with an actual
-    type"
-  -> Fixup 18 vs 16 in description
-  -> Reduce PAGE_TYPE_BASE to a single bit and hand-out bits from highest
-     to lowest
-  -> Adjust description
-
-RFC -> v1:
- * Rebased to v6.10-rc1
- * "mm: update _mapcount and page_type documentation"
-  -> Exchange members and fixup doc as suggested by Mike
- * "mm: allow reuse of the lower 16bit of the page type with an actual
-    type"
-  -> Remove "highest bit" comment, fixup PG_buddy, extend description
- * "mm/zsmalloc: use a proper page type"
-  -> Add and use HAVE_ZSMALLOC to fixup compilcation
-  -> Fixup BUILD_BUG_ON
-  -> Add some VM_WARN_ON_ONCE(!PageZsmalloc(page));
- * "mm/mm_init: initialize page->_mapcount directly
-    in __init_single_page()"
-  -> Fixup patch subject
-
-David Hildenbrand (6):
-  mm: update _mapcount and page_type documentation
-  mm: allow reuse of the lower 16 bit of the page type with an actual
-    type
-  mm/zsmalloc: use a proper page type
-  mm/page_alloc: clear PageBuddy using __ClearPageBuddy() for bad pages
-  mm/filemap: reinitialize folio->_mapcount directly
-  mm/mm_init: initialize page->_mapcount directly in
-    __init_single_page()
-
- drivers/block/zram/Kconfig |  1 +
- include/linux/mm.h         | 10 ----------
- include/linux/mm_types.h   | 33 ++++++++++++++++++++++-----------
- include/linux/page-flags.h | 25 ++++++++++++++++---------
- mm/Kconfig                 | 10 ++++++++--
- mm/filemap.c               |  2 +-
- mm/mm_init.c               |  2 +-
- mm/page_alloc.c            |  6 ++++--
- mm/zsmalloc.c              | 29 +++++++++++++++++++++++++----
- 9 files changed, 78 insertions(+), 40 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 3aa1b6889bccf..eebfce8f58bca 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1206,11 +1206,6 @@ static inline int folio_entire_mapcount(const struct folio *folio)
+ 	return atomic_read(&folio->_entire_mapcount) + 1;
+ }
+ 
+-/*
+- * The atomic page->_mapcount, starts from -1: so that transitions
+- * both from it and to it can be tracked, using atomic_inc_and_test
+- * and atomic_add_negative(-1).
+- */
+ static inline void page_mapcount_reset(struct page *page)
+ {
+ 	atomic_set(&(page)->_mapcount, -1);
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 24323c7d0bd48..dd2ce1b3ec80e 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -46,9 +46,7 @@ struct mem_cgroup;
+  * which is guaranteed to be aligned.  If you use the same storage as
+  * page->mapping, you must restore it to NULL before freeing the page.
+  *
+- * If your page will not be mapped to userspace, you can also use the four
+- * bytes in the mapcount union, but you must call page_mapcount_reset()
+- * before freeing it.
++ * The mapcount field must not be used for own purposes.
+  *
+  * If you want to use the refcount field, it must be used in such a way
+  * that other CPUs temporarily incrementing and then decrementing the
+@@ -152,18 +150,26 @@ struct page {
+ 
+ 	union {		/* This union is 4 bytes in size. */
+ 		/*
+-		 * If the page can be mapped to userspace, encodes the number
+-		 * of times this page is referenced by a page table.
++		 * For head pages of typed folios, the value stored here
++		 * allows for determining what this page is used for. The
++		 * tail pages of typed folios will not store a type
++		 * (page_type == _mapcount == -1).
++		 *
++		 * See page-flags.h for a list of page types which are currently
++		 * stored here.
+ 		 */
+-		atomic_t _mapcount;
++		unsigned int page_type;
+ 
+ 		/*
+-		 * If the page is neither PageSlab nor mappable to userspace,
+-		 * the value stored here may help determine what this page
+-		 * is used for.  See page-flags.h for a list of page types
+-		 * which are currently stored here.
++		 * For pages that are part of non-typed folios for which mappings
++		 * are tracked via the RMAP, encodes the number of times this page
++		 * is directly referenced by a page table.
++		 *
++		 * Note that the mapcount is always initialized to -1, so that
++		 * transitions both from it and to it can be tracked, using
++		 * atomic_inc_and_test() and atomic_add_negative(-1).
+ 		 */
+-		unsigned int page_type;
++		atomic_t _mapcount;
+ 	};
+ 
+ 	/* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
 -- 
 2.45.1
 
