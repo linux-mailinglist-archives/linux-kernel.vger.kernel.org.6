@@ -1,173 +1,127 @@
-Return-Path: <linux-kernel+bounces-194793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDFB8D422E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:03:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD2E8D4297
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F030A1F21F1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3431C21D54
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEF38814;
-	Thu, 30 May 2024 00:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836BFFBEA;
+	Thu, 30 May 2024 00:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lwh91/MA"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WgYt+R64"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532044A09
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F431C14F;
+	Thu, 30 May 2024 00:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717027385; cv=none; b=U52CrF4yZmC4aWrbjgCLrfhzXcrvIiBEwZp1/CrldZ8vgw2ExhlDZ2rYY2kkovXu6KAjU+/lzxOIQfLUUV+ZWZz6mMeUnZ5A9UbCwkyNKO8UgYb6gsU/5ci9W35O/XwYyc07eKsHF9LiO4fQ3yDqyXGJgvNswen92bovgB1coWg=
+	t=1717030479; cv=none; b=twzXx9YPPsf1Ilgvs9YC0Uh36Mg3joltyfffSIlyfrzt+U+tljQEL/ypPkO6XXYJiLwpOSqF50mNq1XASVyTsVh4/zJTZdVRwC8cuMcpiWL/76kvusk9BS9IL6LqVp7g0d6WgUNQAj746wR/mLo43TR/8pMd7Er0l7Z9TY7wPIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717027385; c=relaxed/simple;
-	bh=+//77i90X6MWdsSJq3OLw61xhJ25bRq5QV8ppVhQqtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzS1Glys1PGbXR1TawmTwBy3/yDb1vbfzgdeM0AxjUVElrnOwzRsg+a0ekcc9ZbKqr37/CYBc0TE9h4T9v0i4kFvanBzc4BRkcP6b/u/YkANnuP//Ig6P40GGQ0QlivjIGXbEWwnc6IMBKWoL+KA/qq23RH68aPvhGgVoJZFH/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lwh91/MA; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a62614b9ae1so20226866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717027383; x=1717632183; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXXZxCwdNAbS3hi1LwsxoI0rpYt2j5QqgkpvxC6L2tQ=;
-        b=Lwh91/MAlOfS3Ig4mcXZgQT3JPrlBS+g4z1/AzZISmBiOPYRPxiHIuQzFXrgXanf5A
-         LGkT2PKJNiRzrfWRFhx6vGWhwJERQCySQKi6JjHDvp68u8JwuWX97bADwrfVMV8uECom
-         chO/bC5Jrufq9BspG8SBtJx9jkS7B5MIlmT23awwOvpD5pgeFXylONT0ppT5q8KMMgcW
-         hHzVlTOMCFAfvKkIyzmXV/BMwYAWLW0PhkoEhd54zG8uE/QJgUeFDOFff9lM4U/KDJs5
-         hKqoZ6WkzvNLZd7XEewZn5f7nA0HaSgCitUGcemhLJ/98jTESyiGJxMgJ7L7EmDesy6D
-         GJaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717027383; x=1717632183;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dXXZxCwdNAbS3hi1LwsxoI0rpYt2j5QqgkpvxC6L2tQ=;
-        b=DbAb5tvxwrQG0qa0ay2bvP3BSMmIjFa/OYfgNHvEnec/6eoLeuScSSGimHoRKY/eCE
-         lfl6X1I+Z0k+LVE0fnBUWhWxvYwxBcC5VMr8Amhk+ejCfqJ6QM843ylxwoHM+gTNNN1i
-         ZuU2WyM9sUse1P7ehBJpN2xLM9raTYG7jiMSJ1lyrOjfFyILgc//royRTZDd23keHFh7
-         f+ltMms4GD7Z2AUOvl355Z1iO+/DhOo0YnjAFb01WN/V0cgTGoGlrhLkTtidEqxqICsz
-         JeMQM+Ei+cGWYuQ2/SEynhoKa01dpAdCT8miwnTuzqVF7s0aaA3y/lg4y9cQP/Feb5FR
-         LLRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjYjmmujJ+SgvNXeO0qYJoob0kWdcwLni6AmPtrAbgC2BwdidjbvFSl6Yl5q1hsPgqA2Z4SAA8WFOK9WPPjCSH+Ljbrp/sEp63eP98
-X-Gm-Message-State: AOJu0YxdaaVhzdSZhWcM21z+f75eB9v5Jxn9LN0WRcS0AsPw3l+1W1UT
-	Woef71/gDawWBhmnZ3EOt7DdIwrjzGIpw8wYlh2M4OTpQXkFlSPO
-X-Google-Smtp-Source: AGHT+IFbI6VvfNKlbzoVh0+60FyeSJFj5XowYUjGq2PbZVoAMwdo0+F3B8iiBtmxWi2S6WXUu2uLYg==
-X-Received: by 2002:a17:906:c18f:b0:a63:49a5:9390 with SMTP id a640c23a62f3a-a65e8f74d3dmr31749066b.41.1717027382462;
-        Wed, 29 May 2024 17:03:02 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c97a41esm764532666b.96.2024.05.29.17.03.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2024 17:03:01 -0700 (PDT)
-Date: Thu, 30 May 2024 00:03:01 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Jaewon Kim <jaewon31.kim@gmail.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	Jaewon Kim <jaewon31.kim@samsung.com>,
-	Mike Rapoport <rppt@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tkjos@google.com" <tkjos@google.com>,
-	Pintu Agarwal <pintu.ping@gmail.com>
-Subject: Re: (2) [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Message-ID: <20240530000301.zvirmigx3pdw474w@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <ZkxN0yQ7Fb0X26hT@kernel.org>
- <20240521023957.2587005-1-jaewon31.kim@samsung.com>
- <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
- <20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
- <20240524090715epcms1p274939a1d5954be3423f6ce14a3df6f92@epcms1p2>
- <20240527013504epcms1p22bec7b83f2a42e76877b97ed0d769009@epcms1p2>
- <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p7>
- <20240529095119epcms1p73f0e9ff756bcb2ee6a14db459128a644@epcms1p7>
- <20240529113519.jupuazcf754zjxzy@master>
- <CAJrd-UuiDq-o=r7tK=CG6Q3yeARQBEAtaov2yqO6e6tBwJZoqQ@mail.gmail.com>
+	s=arc-20240116; t=1717030479; c=relaxed/simple;
+	bh=ZLZvK70J7dzK/liNvZM3bw+pDlcX659UoYR6RqaFFD0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Juns1l6vCROnBlDtI2qdupbBdpXyeKxztjsEjPfzFZHKDphjhzkhn8c4E6QhSECWIDCOax/+yuNZpwPhxW4yaVrAuZ/qNCybaBzzlSJbHBX8mpKYT0/QkB75UnRJTbiseEC8nEgMBJlCY609wfjwHtmP08/tjxtNfH5buwF+YPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WgYt+R64; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44TN0Itb016820;
+	Thu, 30 May 2024 00:54:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
+ h=cc:date:from:message-id:subject:to; s=corp-2023-11-20;
+ bh=WtYI8PHFyipbQc0+WD8LMMKrLJos4GRp31+t3Pdq25g=;
+ b=WgYt+R64oTBw07YlnLaL206xhzeNXVoSybKMnLsF9CmSAhv85+3e/pgfabAIcSoHoor8
+ ikWKttJYUnTeChsFoVkHmxgtHF5EsyVKi/BOn21U6FrXUAe5yxeXXFW73J4eZ6O6jmQC
+ oNqMJN7bloirj1Uhl0qJNLkw5jfymeHrx6o9SZ4w5hC0Y/EnR0oAI295+Q/O3zdOmOMD
+ mPBF40TzGm9JRIDoKxNzr1n8FnmgPzpdVJQYcINWwqsS7HGF9M8MD7wDU7VeITzdnkGD
+ esTcxdjgrZDaA7szUFDK78nyIGTlrzPkR7XU5FbjWqjK4U7foqFws3TKZ+oIQNhLOPQJ qg== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8g47x2w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 May 2024 00:54:24 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44TN5QKX010665;
+	Thu, 30 May 2024 00:54:23 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50yy6e7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 May 2024 00:54:22 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44U0sMfI017218;
+	Thu, 30 May 2024 00:54:22 GMT
+Received: from ban25x6uut24.us.oracle.com (ban25x6uut24.us.oracle.com [10.153.73.24])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3yc50yy6dn-1;
+	Thu, 30 May 2024 00:54:22 +0000
+From: Si-Wei Liu <si-wei.liu@oracle.com>
+To: willemdebruijn.kernel@gmail.com, jasowang@redhat.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        mst@redhat.com, boris.ostrovsky@oracle.com
+Subject: [PATCH] net: tap: validate metadata and length for XDP buff before building up skb
+Date: Wed, 29 May 2024 16:42:21 -0700
+Message-Id: <1717026141-25716-1-git-send-email-si-wei.liu@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ spamscore=0 adultscore=0 mlxscore=0 phishscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405300005
+X-Proofpoint-GUID: tZmsOaspPiyTAjdS_3bLsp7xd0OvjDyb
+X-Proofpoint-ORIG-GUID: tZmsOaspPiyTAjdS_3bLsp7xd0OvjDyb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJrd-UuiDq-o=r7tK=CG6Q3yeARQBEAtaov2yqO6e6tBwJZoqQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Wed, May 29, 2024 at 10:10:29PM +0900, Jaewon Kim wrote:
->(Sorry I might forget to change to be plain text)
->
->Oh good thing, I did not know this patch. Thanks.
->
->By the way, I've tried to get memblock/memory and kernel log from a
->device based on
->v6.6.17 kernel device, to see upstream patches above.
->memblok/memory does not show region for
+The cited commit missed to check against the validity of the length
+and various pointers on the XDP buff metadata in the tap_get_user_xdp()
+path, which could cause a corrupted skb to be sent downstack. For
+instance, tap_get_user() prohibits short frame which has the length
+less than Ethernet header size from being transmitted, while the
+skb_set_network_header() in tap_get_user_xdp() would set skb's
+network_header regardless of the actual XDP buff data size. This
+could either cause out-of-bound access beyond the actual length, or
+confuse the underlayer with incorrect or inconsistent header length
+in the skb metadata.
 
-memblock/memory only shows ranges put in "memory".
-memblock/reserved shows ranges put in "reserved".
+Propose to drop any frame shorter than the Ethernet header size just
+like how tap_get_user() does. While at it, validate the pointers in
+XDP buff to avoid potential size overrun.
 
-If we just put them in "reserved", it will not displayed in "memory".
+Fixes: 0efac27791ee ("tap: accept an array of XDP buffs through sendmsg()")
+Cc: jasowang@redhat.com
+Signed-off-by: Si-Wei Liu <si-wei.liu@oracle.com>
+---
+ drivers/net/tap.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
->0x00000000_80000000..0x0x00000000_8195ffff.
->
->   0: 0x0000000081960000..0x00000000819fffff    0 NONE
->
->The kernel log shows information for 0x0000000080000000..0x00000000813fffff, but
->we don't see information for 0x0000000081400000..0x000000008195ffff
->from kernel log.
->
->(I removed the name.)
-><6>[    0.000000][    T0] OF: reserved mem:
->0x0000000080000000..0x0000000080dfffff (14336 KiB) nomap non-reusable
->AAA
-><6>[    0.000000][    T0] OF: reserved mem:
->0x0000000080e00000..0x00000000811fffff (4096 KiB) nomap non-reusable
->BBB
-><6>[    0.000000][    T0] OF: reserved mem:
->0x0000000081200000..0x00000000813fffff (2048 KiB) nomap non-reusable
->CCC
-><6>[    0.000000][    T0] OF: reserved mem:
->0x0000000081a00000..0x0000000081a3ffff (256 KiB) nomap non-reusable DD
->
-
-I guess those ranges are only put into "reserved"? Have those ranges put in
-"memory"? Would you mind point the code where those messages are printed?
-
->A smart parser should gather these kernel log and memblock/memory log
->and should show
->log like my memsize logic shows below.
->0x0000000081400000-0x0000000081960000 0x00560000 (    5504 KB ) nomap
->unusable unknown
->
->Thank you
->Jaewon
->
->On Wed, May 29, 2024 at 8:35 PM Wei Yang <richard.weiyang@gmail.com> wrote:
->>
->> On Wed, May 29, 2024 at 06:51:19PM +0900, Jaewon Kim wrote:
->> ><!DOCTYPE html>
->> ><html>
->> ><head>
->> ...
->>
->> Would you mind sending it in pure text again?
->>
->> --
->> Wei Yang
->> Help you, Help me
-
+diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+index bfdd3875fe86..69596479536f 100644
+--- a/drivers/net/tap.c
++++ b/drivers/net/tap.c
+@@ -1177,6 +1177,13 @@ static int tap_get_user_xdp(struct tap_queue *q, struct xdp_buff *xdp)
+ 	struct sk_buff *skb;
+ 	int err, depth;
+ 
++	if (unlikely(xdp->data < xdp->data_hard_start ||
++		     xdp->data_end < xdp->data ||
++		     xdp->data_end - xdp->data < ETH_HLEN)) {
++		err = -EINVAL;
++		goto err;
++	}
++
+ 	if (q->flags & IFF_VNET_HDR)
+ 		vnet_hdr_len = READ_ONCE(q->vnet_hdr_sz);
+ 
 -- 
-Wei Yang
-Help you, Help me
+2.39.3
+
 
