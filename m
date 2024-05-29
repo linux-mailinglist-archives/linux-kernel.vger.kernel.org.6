@@ -1,74 +1,88 @@
-Return-Path: <linux-kernel+bounces-194226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDAB8D38A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:05:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEA18D38AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01731F24F09
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:05:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78BF01F22488
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD4224211;
-	Wed, 29 May 2024 14:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199051D69E;
+	Wed, 29 May 2024 14:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hdtXU6nG"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nVsGN4H5";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nVsGN4H5"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9501F95E;
-	Wed, 29 May 2024 14:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8C21F5F6;
+	Wed, 29 May 2024 14:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716991522; cv=none; b=dN9kyEviuD8Z5MN/KMUarrdyjKjDAHRUfokN38RQDsHyTRJDOvqU5db+CmvHC9w4f5XUC5OBFYadDRryAzg8qnKXYHouTV2dGvjmFJleY+mDLnF52G1VDl84Ev8pgLL8AviROEC52JBqqi4pcgJgRwwwkEouxuPluxPITqJr8so=
+	t=1716991544; cv=none; b=s9R0k7CwJAP4XBnFGD3hZkaVD1/hOTMJ3ifz9GRmwufJfNLL6Vhg6VBKYD91qI5ZOq6lgRkIi4lu+7BgIOQFc9xhnijNSewm4TBnhyZ0ZznGr6uB4H7pEivl+IfdTxpr7E+PLpnBm9u5f3ePju9OA4E58qy0Tniu4n16SpvEp2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716991522; c=relaxed/simple;
-	bh=xLXQdWfnM+lZS5GVhD6SBArCWokhO6jmgrkUuYBlHAs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CI4jKBlTfKt2ng8ypeTcAqRvMUpDUXQWDZwF2+2+5GLqdl2wDqGIa3/oO9SeNBlmQhGV4Ogaj0v1PHYI1zTWaRER45vMaTRwk2t3LA2B8XGZYJhCpgVldKI7watPUPeW+j0ify1RqkKEK/Q1FJrE9g48aQswfRXHO19LB0mw3xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hdtXU6nG; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1716991521; x=1748527521;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xLXQdWfnM+lZS5GVhD6SBArCWokhO6jmgrkUuYBlHAs=;
-  b=hdtXU6nGWER6Yo2w4X3tpixF6XDWZssWqfFvAitcE+iIxh5pmg5uYOT1
-   lFJx59tuZO26jGXFV0kb5D4qmFUBBPfPEyPihC2MlzanvfiIBWNK6ojJ+
-   n9GtXpHLNRQbP0AD5rPDtozpAeNGwArou68Qy9f78ddCZK9JRTfksr6SG
-   8Edm/vlN05VGhU7v3Nij+xzUkOmoFPm4beIPAER0TGzYIIog06ZydxqoG
-   h7gGRUeec6LOVvaQrqY0Im8sZyp2ZWphlyhVKQoUHZzFMoF1xckUBbCep
-   IizBaMRqCe7PUtyzunm7nA2KFpqPhYEVz0k9urQHtL3Y6FKGqKN2QNUkR
-   A==;
-X-CSE-ConnectionGUID: J4E1/ZSyRQW1wK6IW2PL8w==
-X-CSE-MsgGUID: fhosNk4gT+OOU4eVFz4BXw==
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="257537345"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 May 2024 07:05:20 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 29 May 2024 07:04:41 -0700
-Received: from che-ld-unglab06.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 29 May 2024 07:04:38 -0700
-From: Rengarajan S <rengarajan.s@microchip.com>
-To: <woojung.huh@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <rengarajan.s@microchip.com>
-Subject: [PATCH net-next v3 2/2] lan78xx: Enable Auto Speed and Auto Duplex configuration for LAN7801 if NO EEPROM is detected
-Date: Wed, 29 May 2024 19:32:56 +0530
-Message-ID: <20240529140256.1849764-3-rengarajan.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240529140256.1849764-1-rengarajan.s@microchip.com>
-References: <20240529140256.1849764-1-rengarajan.s@microchip.com>
+	s=arc-20240116; t=1716991544; c=relaxed/simple;
+	bh=44DuED9EFhJ0GFgSWxyzBEOtcMqHHs3WgFTDn4hoJ6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BO7DnLmqw69DBnGgzTGzacpMVacXfcQ27/EDjLc88b4Evnsw7wHqJ1noXa2rAVC1v7u71ZzAKReMuVYNPx3wrh01qFXkJ9BeuCqwBbijeQ7cTUzVJjdvaeKgP0oo+lpd9AdN9rrUI4+MEeafPpkUloF4Zc1ygQUwDzs+VdAdctE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nVsGN4H5; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nVsGN4H5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7B608336AF;
+	Wed, 29 May 2024 14:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716991540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7+lTfIl4GO+Abh7YhdGsCv7gLWnQXpzMH8I4JBF3MI=;
+	b=nVsGN4H5ifPGKbfG0TTRltiQ3UENeJocDNI/xhYt33Uu8/PJKORDtd83+Mf8aYNLt5Ofgv
+	9gU0ijoLi2bReJfhmQNb7FPdW2sbikbss8DJ/kVYPuukFUlAtTDtwBGhdzpNLAwsHCDDqi
+	N8P+JGhW3ePbzRpwd7LvmPBZNAr21xc=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716991540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7+lTfIl4GO+Abh7YhdGsCv7gLWnQXpzMH8I4JBF3MI=;
+	b=nVsGN4H5ifPGKbfG0TTRltiQ3UENeJocDNI/xhYt33Uu8/PJKORDtd83+Mf8aYNLt5Ofgv
+	9gU0ijoLi2bReJfhmQNb7FPdW2sbikbss8DJ/kVYPuukFUlAtTDtwBGhdzpNLAwsHCDDqi
+	N8P+JGhW3ePbzRpwd7LvmPBZNAr21xc=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 161041372E;
+	Wed, 29 May 2024 14:05:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CtCHNTM2V2aRWAAAD6G6ig
+	(envelope-from <mpdesouza@suse.com>); Wed, 29 May 2024 14:05:39 +0000
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Lukas Hruska <lhruska@suse.cz>
+Cc: mpdesouza@suse.com,
+	pmladek@suse.com,
+	mbenes@suse.cz,
+	jpoimboe@kernel.org,
+	joe.lawrence@redhat.com,
+	live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] livepatch: klp-convert tool - Minimal version
+Date: Wed, 29 May 2024 11:05:27 -0300
+Message-ID: <20240529140536.18137-1-mpdesouza@suse.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240516133009.20224-1-lhruska@suse.cz>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,36 +90,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
 
-Enabled ASD/ADD configuration for LAN7801 in the absence of EEPROM.
-After the lite reset these contents go back to defaults where ASD/
-ADD is disabled. The check is already available for LAN7800.
+From: mpdesouza@suse.com
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
----
- drivers/net/usb/lan78xx.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+On Thu, 16 May 2024 15:30:03 +0200 Lukas Hruska <lhruska@suse.cz> wrote:
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 7ac540cc3686..62dbfff8dad4 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -3034,8 +3034,11 @@ static int lan78xx_reset(struct lan78xx_net *dev)
- 		return ret;
+> Summary
+> -------
+> 
+> This is a significantly simplified version of the original klp-convert tool.
+> The klp-convert code has never got a proper review and also clean ups
+> were not easy. The last version was v7, see
+> https://lore.kernel.org/r/20230306140824.3858543-1-joe.lawrence@redhat.com
+> 
+> The main change is that the tool does not longer search for the
+> symbols which would need the livepatch specific relocation entry.
+> Also klp.symbols file is not longer needed.
+> 
+> Instead, the needed information is appended to the symbol declaration
+> via a new macro KLP_RELOC_SYMBOL(). It creates symbol with all needed
+> metadata. For example:
+> 
+>   extern char *saved_command_line \
+>                  KLP_RELOC_SYMBOL(vmlinux, vmlinux, saved_command_line, 0);
+> 
+> would create symbol
+> 
+> $>readelf -r -W <compiled livepatch module>:
+> Relocation section '.rela.text' at offset 0x32e60 contains 10 entries:
+>     Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+> [...]
+> 0000000000000068  0000003c00000002 R_X86_64_PC32          0000000000000000 .klp.sym.rela.vmlinux.vmlinux.saved_command_line,0 - 4
+> [...]
+> 
+> 
+> The simplified klp-convert tool just transforms symbols
+> created by KLP_RELOC_SYMBOL() to object specific rela sections
+> and rela entries which would later be proceed when the livepatch
+> or the livepatched object is loaded.
+> 
+> For example, klp-convert would replace the above symbols with:
+> 
+> $> readelf -r -W <livepatch_module_proceed_by_klp_convert>
+> Relocation section '.klp.rela.vmlinux.text' at offset 0x5cb60 contains 1 entry:
+>     Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+> 0000000000000068  0000003c00000002 R_X86_64_PC32          0000000000000000 .klp.sym.vmlinux.saved_command_line,0 - 4
+> 
+> 
+> Note that similar macro was needed also in the original version
+> to handle more symbols of the same name (sympos).
+> 
+> Given the above, add klp-convert tool; integrate klp-convert tool into
+> kbuild; add data-structure and macros to enable users to annotate
+> livepatch source code; make modpost stage compatible with livepatches;
+> update livepatch-sample and update documentation.
+> 
+> 
+> Testing
+> -------
+> 
+> The patchset selftests build and execute on x86_64, s390x, and ppc64le
+> for both default config (with added livepatch dependencies) and a larger
+> SLE-15-ish config.
+> 
+> 
+> Summary of changes in this minimal version v2
+> ------------------------
+> 
+> - rebase for v6.9
+> - cleaned-up SoB chains (suggested by pmladek)
+> - klp-convert: remove the symbol map auto-resolving solution
+> - klp-convert: add macro for flagging variables inside a LP src to be resolved by this tool
+> - klp-convert: code simplification
+> - selftests: add selftest livepatching function using an external symbol
+
+Thanks for sending this new version Lukas! It currently fails to apply on
+current Linux master, but the conflict is very simple to address (attached
+patch).
+
+Joe, Josh, other people, can you also take a look in the patchset? It would be
+good we can move this forward.
+
+Thanks,
+  Marcos
+
+commit 1a1cf8b0967c26857b17e8ceb02f6a1bd854667d
+Author: Marcos Paulo de Souza <mpdesouza@suse.com>
+Date:   Wed May 29 10:18:38 2024 -0300
+
+    Solve merge problem
+    
+    Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+
+diff --git a/Makefile b/Makefile
+index f975b6396328..579dfb46e691 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1491,7 +1491,7 @@ endif # CONFIG_MODULES
+ # Directories & files removed with 'make clean'
+ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
+ 	       modules.builtin modules.builtin.modinfo modules.nsdeps \
+-	       compile_commands.json rust/test \
++	       compile_commands.json .thinlto-cache rust/test \
+ 	       rust-project.json .vmlinux.objs .vmlinux.export.c
  
- 	/* LAN7801 only has RGMII mode */
--	if (dev->chipid == ID_REV_CHIP_ID_7801_)
-+	if (dev->chipid == ID_REV_CHIP_ID_7801_) {
- 		buf &= ~MAC_CR_GMII_EN_;
-+		/* Enable Auto Duplex and Auto speed */
-+		buf |= MAC_CR_AUTO_DUPLEX_ | MAC_CR_AUTO_SPEED_;
-+	}
- 
- 	if (dev->chipid == ID_REV_CHIP_ID_7800_ ||
- 	    dev->chipid == ID_REV_CHIP_ID_7850_) {
--- 
-2.25.1
+ # Directories & files removed with 'make mrproper'
 
+> 
+> Previous versions
+> -----------------
+> 
+> RFC:
+>   https://lore.kernel.org/r/cover.1477578530.git.jpoimboe@redhat.com/
+> v2:
+>   https://lore.kernel.org/r/f52d29f7-7d1b-ad3d-050b-a9fa8878faf2@redhat.com/
+> v3:
+>   https://lore.kernel.org/r/20190410155058.9437-1-joe.lawrence@redhat.com/
+> v4:
+>   https://lore.kernel.org/r/20190509143859.9050-1-joe.lawrence@redhat.com/
+> v5:
+>   (not posted)
+>   https://github.com/joe-lawrence/klp-convert-tree/tree/klp-convert-v5-devel
+> v6:
+>   https://lore.kernel.org/r/20220216163940.228309-1-joe.lawrence@redhat.com/
+> v7:
+>   https://lore.kernel.org/r/20230306140824.3858543-1-joe.lawrence@redhat.com/
+> v1 minimal:
+>   https://lore.kernel.org/r/20231106162513.17556-1-lhruska@suse.cz/
 
