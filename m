@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-193558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B42D8D2DC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:06:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07C88D2DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 372E0283B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C591F2708D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72BA1649CD;
-	Wed, 29 May 2024 07:06:26 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC30F167269;
+	Wed, 29 May 2024 07:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbRvsLBt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A57A15FD1A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162E915FA8A;
+	Wed, 29 May 2024 07:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716966386; cv=none; b=Ee9FTwd2CIreo+pQrgYI+3xh8WXPM8HTaxl5Vzq1uG3Ynakpcx7ozcsiTsNrK6sfvgygRRvDZN5rkO59Dbksawr5+7u2m04hqPl6x5X9xVmdGnoNbLdA4pLxb1I+BxhPwxeicunrp6fOH4IEawJcWEv1ogTXWXxT/cjHi2/k/e4=
+	t=1716966443; cv=none; b=oAERIW18Ci11qXzjCjMH4NafOx+ApIoZ+gKKUuS76WJwEgYG9XbQ09LgXtIV8xz/clW/6oaZc5JY0TAAX5zuYR0Ltv2m987GXkOUgJBmCWcRv8sTWxjANrtrBNigDrvrG3EN73eHRBvhbJyA0DlphCHVA4JGPeTCkuw/4cnjlBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716966386; c=relaxed/simple;
-	bh=IagwluD925SdelzHNX7QWN2Q+2QA6HlovV0JutT8uM0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Foh7IqIcqUyBTnRd9V6GkFKU9+Za+L/mz3xPecINIDIeKlit1nlUP5vsUQ/2EYzxiTSXvD55Nr4N31Fl8y88DRJRYep3170RAbp3Y5N3E25jL0RxZ4DZPRKH1pYrn5RYQ3jxM2u+fjwFDJeoiZiZk8/DOhOCA3Vz6aBBh77ifL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7eacdc3fb57so162652439f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:06:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716966383; x=1717571183;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UpeARKsh3J1nnJW40BruIL9buJo4U0ODQr+zgsCGAks=;
-        b=nIiImMS+J+EGmocuJS4iCJLo3fDEu8pdLf9q/mYOpQwYpEGpB4n2vIWxULfHAubS1K
-         HpqOjFwiQ1t8/PIYRB5goocVAqBZi+Lx+4df0bPqx9wwWDAOX3Pv1kcnjWP21FnVIAXX
-         xPYHBhlFwR5rarppxXzL4IdwAjSo7lFkYCPSrenxH1n8bEn62OfeX1xkIfw5yfe/zV0K
-         3RfMxL3GbfW/TPYD5rICE2BnNO+kthFJcwkVD4droGlLV/eQ3Fae+a3YUHh44MVgilUc
-         9h5MPi0CS52XSrmmYj3herJ7firLrpESX5t58H+sOZQJe7hd8Q1VT1krjqOApD6cJ27U
-         kvwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwxzSx9ZcmBV0jhNBannlaEBduIWr7rMpv9MUwM9inLHtRIyw4bS3rff6/WWODRNQ2YxWnLeYjoQTmBvb8Xkig42vJ5ia0x84SIHGX
-X-Gm-Message-State: AOJu0Yz/j4rjrCL7Yj6eXbnvDNbVJNoAxjzrv/RDwDivwvT/H2gWuaU6
-	/6Nr8FvbX7nQbH3JLZu/XYIccQfpQGb/ZP94sx2ng5bnx9vxGmuiqZNWfRas4wA5UIFPjATyI7A
-	oB45QfzzOYNZj2aMFP4XJpkiF0x0W+RtlkMs8dVSkpzIfnbxXuU01+4k=
-X-Google-Smtp-Source: AGHT+IFq0eWP3fkAZhbL7BDWkqnfxo3MTtThHrFzEgToA4znYAMVJq00YnPC+xesUqmGExURrKKKhiidclwzTu/oBeNyPahuWYMw
+	s=arc-20240116; t=1716966443; c=relaxed/simple;
+	bh=7XlnxYk3BD60vR+RT2oOGeO/o/5OVYZX2jQ5GdTYpfg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MBUCZtUs46TZqv3jv/arl1w2a7Xhz6aJeli8/R+1nClIGBVC83jhr1QgimSaMtCTUZU4H88jrZH3NoealcvdNEanfWswt52KyN71kVJw/f7OherHzOf9PuI265D7qGxfRuiOObZbIZKygjGktxq812iD4w3NByby7mv9mItRHr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbRvsLBt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D031C32781;
+	Wed, 29 May 2024 07:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716966442;
+	bh=7XlnxYk3BD60vR+RT2oOGeO/o/5OVYZX2jQ5GdTYpfg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bbRvsLBtOSrJOMVA71FDoJqOigCxPooIDeBgHHnMsEltMtqi9+XkpZ79p7d0U5cXI
+	 072Hcnnoqj6ZiZtfq3QitF6okhckcEKy4XlxDTwhuivWXjhT/y/9URTkwmeXuhoCfn
+	 Tl1qvY4N0mAJmOtakxDRYCY4cjKTTIGH4pTjTr/bhClxSuNpPg8CTlzPLvJDwcwHk8
+	 qfqBmm+a3flj805zI7xp5v6UCNWCfjY1emHXwZf1VJKx1AVxwxzXnKaGexg31VQtZV
+	 KkfFFDnh2gvPk3JVpZnMf7aSsP+MUpcBvEwdKl+EgZdW8LYQFQoqZSDSMoLUIk8E8Y
+	 qxzQtTp9hEBBg==
+Message-ID: <1ae97b90-ff20-4238-abe2-f2e5d87fc344@kernel.org>
+Date: Wed, 29 May 2024 09:07:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2205:b0:488:8256:987d with SMTP id
- 8926c6da1cb9f-4b03fcc5a67mr219425173.6.1716966383487; Wed, 29 May 2024
- 00:06:23 -0700 (PDT)
-Date: Wed, 29 May 2024 00:06:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000061213e0619926313@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent
-From: syzbot <syzbot+ca5e77364a05ff2d8c8b@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ti,ina2xx: Add alert-polarity
+ property
+To: Amna Waseem <Amna.Waseem@axis.com>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@axis.com
+References: <20240529-apol-ina2xx-fix-v1-0-77b4b382190f@axis.com>
+ <20240529-apol-ina2xx-fix-v1-1-77b4b382190f@axis.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240529-apol-ina2xx-fix-v1-1-77b4b382190f@axis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 29/05/2024 08:07, Amna Waseem wrote:
+> Add a property to the binding to configure the Alert Polarity.
+> Alert pin is asserted based on the value of Alert Polarity bit of
+> Mask/Enable register. It is by default 0 which means Alert pin is
+> configured to be active low. To configure it to active high, set
+> alert-polarity property value to 1.
+> 
+> Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> index df86c2c92037..a3f0fd71fcc6 100644
+> --- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> @@ -66,6 +66,14 @@ properties:
+>      description: phandle to the regulator that provides the VS supply typically
+>        in range from 2.7 V to 5.5 V.
+>  
+> +  alert-polarity:
 
-syzbot found the following issue on:
+Missing vendor prefix.
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1701d634980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca5e77364a05ff2d8c8b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> +    description: |
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Do not need '|' unless you need to preserve formatting.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+> +      Alert polarity bit value of Mask/Enable register. Alert pin is asserted
+> +      based on the value of Alert polarity Bit. Default value is active low.
+> +      0 selects active low, 1 selects active high.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ca5e77364a05ff2d8c8b@syzkaller.appspotmail.com
-
-loop1: detected capacity change from 0 to 64
-=====================================================
-BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
-BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
- __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
- __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
- hfs_file_truncate+0x769/0xd30 fs/hfs/extent.c:526
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:652
- notify_change+0x1a07/0x1af0 fs/attr.c:497
- do_truncate fs/open.c:65 [inline]
- do_ftruncate+0x8d3/0xc00 fs/open.c:181
- do_sys_ftruncate fs/open.c:199 [inline]
- __do_sys_ftruncate fs/open.c:207 [inline]
- __se_sys_ftruncate fs/open.c:205 [inline]
- __x64_sys_ftruncate+0x133/0x280 fs/open.c:205
- x64_sys_call+0x247a/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:78
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3877 [inline]
- slab_alloc_node mm/slub.c:3918 [inline]
- __do_kmalloc_node mm/slub.c:4038 [inline]
- __kmalloc+0x6e4/0x1060 mm/slub.c:4052
- kmalloc include/linux/slab.h:632 [inline]
- hfs_find_init+0x91/0x250 fs/hfs/bfind.c:21
- hfs_file_truncate+0x3c5/0xd30 fs/hfs/extent.c:512
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:652
- notify_change+0x1a07/0x1af0 fs/attr.c:497
- do_truncate fs/open.c:65 [inline]
- do_ftruncate+0x8d3/0xc00 fs/open.c:181
- do_sys_ftruncate fs/open.c:199 [inline]
- __do_sys_ftruncate fs/open.c:207 [inline]
- __se_sys_ftruncate fs/open.c:205 [inline]
- __x64_sys_ftruncate+0x133/0x280 fs/open.c:205
- x64_sys_call+0x247a/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:78
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 PID: 8137 Comm: syz-executor.1 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
+Just use string, easier to read. But for sure do not introduce different
+values than we already have - GPIO HIGH is 0, not 1.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best regards,
+Krzysztof
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
