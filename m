@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-193407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93ADC8D2B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:30:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6ADC8D2B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6F9287A6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A253128A302
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43D015B139;
-	Wed, 29 May 2024 03:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6420C15B569;
+	Wed, 29 May 2024 03:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hBnK7hz3"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eOTT6iTF"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CFF15A855;
-	Wed, 29 May 2024 03:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04C215B146;
+	Wed, 29 May 2024 03:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716953448; cv=none; b=JVykzRKHk/KLcKdqfrH2xazHAC+rcbefrtyTfbhR/czLDOIIHXtnZ1v5axKNYaIfLKhSV/nKZSIUjfSFiF1ZJ6sZ8kkdNbqbRvbg1Td2Zx/dOTVb2SWgSNeLh0OYl0S0nO2MsOs+DLM5p13n48X1pHH3zhE9y+t63sT5n2plaTc=
+	t=1716953451; cv=none; b=BHOeJu/TcVV/JtzwOUyyGQz6tTStimEthDfiuAt6XL0Garma9zezrROC3GBA8sBOrvHyePGH1C8gVbKjq2UGTcCeQCDXJD58Ys8kTWeD6rTJHcX1E6/vZMLXarTUFeMgGdpFrRXkeExUqJF6qQ1zT8NRM/lVijdqQvZEHLBk5DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716953448; c=relaxed/simple;
-	bh=xL9ffgj8ECADyDd5UAvUtyWmf7r5zRrwShyMG8xrDLg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HHcCf2VMABGi88hf5fRhMhtIPXPRNaG0yfZ/wkyE26K7QINBxJ1Ca2sUalX9LYvfiwa2xXUSS5/A5iyb9B3frU7ev/lAvJfTteFLkbsBka00QVzXu9nGstvmvLKn7d0SlDT9Xzs42D2dFxqbVTzyozsDpVbP/KlZeIR8z16EJFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hBnK7hz3; arc=none smtp.client-ip=60.244.123.138
+	s=arc-20240116; t=1716953451; c=relaxed/simple;
+	bh=npoc+tLCgORcX3+Xd3WFDMV1tlPhhBwlx6soQQcSPEs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QrQgM5818w6JoSsoiXISi0YHcaTdUBlIgCEu3wq4l38QD444HdufeSzMzoJyjsaj0zArNEmzDun7Pe2AduaakF2ywvcoCXUbdv1ulkFvWpWJNtQj66dM4zqEDbR6ztAd/MmUmupRwGR3gV3NO9KJg4lA9EBNvTH+6vASru+Tzxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eOTT6iTF; arc=none smtp.client-ip=210.61.82.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: d39c3e781d6b11ef8c37dd7afa272265-20240529
+X-UUID: d507e1681d6b11efbfff99f2466cf0b4-20240529
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=K7lqLTLsGSV7DHnyTmq6v65NX0/0mNc9+lxlhGDwmvI=;
-	b=hBnK7hz3Ei5k448cdIr1zIwLmnJLwVZxJPg1hqzzTRgdNvaBkW2BG4vbvUiI9hgtrlmI1woPig3oFC9ZXKiNiqsMk10M5jtEXFJhEqFMuFdrWkBsEe7ZG19xafPuH3veFr8Dx9fcRkMXpbxbNmqjxqkCmFJWfvhphPNcN6+75+g=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=mTQrmF36jYllv3mP9Yybi+HEjaafjrlWHqq19OeW1oU=;
+	b=eOTT6iTFDxZ9Bb4MNrDGJ22EQb4yOeUMSFThh/GNL5Hq++A8I/0Hy+RHawK1hAq5SVFX1QmhVv23kdDIduy72QETefZHL5C6lD2sJlKGPn+UmeX4JqFlUWyNyQmuINrFzdoeGI0yURiQpVZej6DBfzaLO4FPBpqybV1dHnBAFPw=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.39,REQID:34f93bd7-f387-40f0-8f4a-197df445d090,IP:0,U
+X-CID-O-INFO: VERSION:1.1.39,REQID:b4c08df2-9760-498e-8608-a099f13996e0,IP:0,U
 	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
 	release,TS:0
-X-CID-META: VersionHash:393d96e,CLOUDID:f2c2ee43-4544-4d06-b2b2-d7e12813c598,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-META: VersionHash:393d96e,CLOUDID:1ac3ee43-4544-4d06-b2b2-d7e12813c598,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d39c3e781d6b11ef8c37dd7afa272265-20240529
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: d507e1681d6b11efbfff99f2466cf0b4-20240529
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
 	(envelope-from <chris.lu@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 176390028; Wed, 29 May 2024 11:30:42 +0800
+	with ESMTP id 1248307800; Wed, 29 May 2024 11:30:44 +0800
 Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 29 May 2024 11:30:40 +0800
+ 15.2.1118.26; Tue, 28 May 2024 20:30:43 -0700
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 29 May 2024 11:30:40 +0800
+ 15.2.1118.26 via Frontend Transport; Wed, 29 May 2024 11:30:43 +0800
 From: Chris Lu <chris.lu@mediatek.com>
 To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
 	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
@@ -64,10 +65,12 @@ CC: Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>,
 	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
 	<linux-kernel@vger.kernel.org>, linux-mediatek
 	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH 0/3] Bluetooth: btusb: MediaTek ISO data transmission support
-Date: Wed, 29 May 2024 11:30:35 +0800
-Message-ID: <20240529033038.28458-1-chris.lu@mediatek.com>
+Subject: [PATCH 1/3] Bluetooth: net: add hci_iso_hdr function for iso data
+Date: Wed, 29 May 2024 11:30:36 +0800
+Message-ID: <20240529033038.28458-2-chris.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20240529033038.28458-1-chris.lu@mediatek.com>
+References: <20240529033038.28458-1-chris.lu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,25 +79,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Since SIG hasn't clearly defined the specification about ISO data over USB 
-transmission yet, MediaTek adopts a method by adding an additional interrupt
-endpoint for ISO data transmission which is different from current way
-on Bluetooth upstream driver using existed bulk. Interrupt endpoint has
-guaranteed bandwidth, sufficient max data length for LE audio packet and
-support error checking. These characteristics are similar to the use of ISO data.
+Add function hci_iso_hdr to get skb->data when packet type is ISO
+which is similar to other packet type.
 
-Chris Lu (3):
-  Bluetooth: net: add hci_iso_hdr function for iso data
-  Bluetooth: btmtk: add macro to get/set/clear MediaTek defined flags
-  Bluetooth: btusb: mediatek: add MediaTek ISO data transmission
-    function
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ include/net/bluetooth/hci.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- drivers/bluetooth/btmtk.c   |  35 +++++
- drivers/bluetooth/btmtk.h   |  46 ++++++
- drivers/bluetooth/btusb.c   | 293 +++++++++++++++++++++++++++++++++++-
- include/net/bluetooth/hci.h |   5 +
- 4 files changed, 378 insertions(+), 1 deletion(-)
-
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index e372a88e8c3f..b9f8f91f6c7f 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -2898,6 +2898,11 @@ static inline struct hci_sco_hdr *hci_sco_hdr(const struct sk_buff *skb)
+ 	return (struct hci_sco_hdr *) skb->data;
+ }
+ 
++static inline struct hci_iso_hdr *hci_iso_hdr(const struct sk_buff *skb)
++{
++	return (struct hci_iso_hdr *) skb->data;
++}
++
+ /* Command opcode pack/unpack */
+ #define hci_opcode_pack(ogf, ocf)	((__u16) ((ocf & 0x03ff)|(ogf << 10)))
+ #define hci_opcode_ogf(op)		(op >> 10)
 -- 
 2.18.0
 
