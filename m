@@ -1,137 +1,307 @@
-Return-Path: <linux-kernel+bounces-194576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83998D3E77
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E5048D3E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25C191C21781
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C001C2160D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6B91C0DE8;
-	Wed, 29 May 2024 18:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4281C0DF7;
+	Wed, 29 May 2024 18:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lv+48xcG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRBCc1od"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB7526286
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2378217F36D;
+	Wed, 29 May 2024 18:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717007979; cv=none; b=Yv+yXoJAiAHYgOoj+B8VWA6tj6xyX2N6GOs6RwCBnzoZG6HyhJ20TkW1ue28EahD89bWFWv0uRLC6v8MdTRQzxLAziYd6WQViYZt9exn0d9mPf0DZ5Kn6bbYzY+f+GM/e88tsE5e9NvR49vuldh48CxKDuqJ7q9UW2/qnnmm1R0=
+	t=1717008250; cv=none; b=nO3xVxMqCa64b+Ra+sK//DJQc8QEKl5khFsGFI+4TJNiSqHBYmEJWzq703VJ3eM81wW2Rq2FFqlA1+FZzk6torWkENZOk96jFsO+5PmWoSp1LMBIfaRYGkpC3uy1rMT8LEuWcAp16lBGEQ9g7UXx293m6Ml1+09V2vnGMaPYQmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717007979; c=relaxed/simple;
-	bh=CNvdaWG9fyNXV+XrVbGhthLEVOJ6Jk5dnVrf2KJ+fPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jeByTwE9F9fL9WwPMwdH2IPLxVZrfKDUwnUVr9uNsSubsFGGwKIOnXySZhKOpfcsfujUiWHOk30bZk+JJI4wMBwPvsY9UACiDp/InJEGoXlEDPG/WQNtsd+caIAjWKoNXP77SdpwyX3jbCyJxjHWW5LmqEgGC5e67frHUoHfXhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lv+48xcG; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717007978; x=1748543978;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CNvdaWG9fyNXV+XrVbGhthLEVOJ6Jk5dnVrf2KJ+fPY=;
-  b=lv+48xcGEyHKoF4vBjolgLO/Jj+KyAxfs4MPkEPWwF8Ks8B7nySydFnT
-   GfK1Kil2UxSC/hVvuoYAOxgukjt2rNLmoz7tqk2BTSeBfCBEN//GmNhM4
-   XDvDzwYMASiEvT8TpVkAF+3xGiNOVfIWBqJfC7dFVqfatHxaCHcc1dIib
-   3kYyc2gR8qSM5W0WKSvKehOoBcGytz5nkLFL+fSDDCVfTBanxsiZWNF96
-   ugD1kITBpPmH1zWpm9ZS1aNN+qm34ko+CO7d6N+FxMwbmFSrbz54ucKFx
-   RELDAZmFgrybRFUhjaor7mpb+KR4UOwQEQKJeQGa6WzIT/GqUSJtFJ0Vj
-   Q==;
-X-CSE-ConnectionGUID: P51ewUtXRS22Rw0xMjjmvQ==
-X-CSE-MsgGUID: Tfgf0oqZQWyBZRj/c5OkHw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="17264808"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="17264808"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 11:39:37 -0700
-X-CSE-ConnectionGUID: nUu9drqARRONXGdQIsNZPQ==
-X-CSE-MsgGUID: 5JRZQE+cRTCzexlN2ol/bw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="35465590"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.111.96]) ([10.125.111.96])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 11:39:37 -0700
-Message-ID: <8ef9d8ad-9236-4254-b819-50832cd05cd9@intel.com>
-Date: Wed, 29 May 2024 11:39:36 -0700
+	s=arc-20240116; t=1717008250; c=relaxed/simple;
+	bh=XV8bZo5tv4utERnmEJ1qxcCK/d2WUG8notNvjYH5IjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgNJBNDMl8ELgcE7L7ltjsI6Zo260mzTyPeKl2nI3374H2mYqdaAE6SiG++4L3IGd/5ccnVNSTxpeOWSPYNheNrWEBDdMb66GxA25FlIWuAysWEITV3ynwlRh/Vl869dPKVw6o7caIhRVeZSFagAfcfcq56EX186dvW0c1rKjrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRBCc1od; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F211DC113CC;
+	Wed, 29 May 2024 18:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717008249;
+	bh=XV8bZo5tv4utERnmEJ1qxcCK/d2WUG8notNvjYH5IjQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uRBCc1odlaN7rkUuIkqAYRBDQd9GLxjVMa4MlzY9yxJ5/Cq47eboQ3kgKhHAUu3vg
+	 ruRk/SMmuk5X3rFF+jKAJJoiOUWtMFk2ftbit7Af+uAkIkAb29y2e4MNqBDoOZbMqE
+	 0v3NL6A/vuwe9ofhhVpBfGuD371wKdZlFXJwl+oWoD/wkgjma/MsV4YmgJ2bxBOgPD
+	 XMBa95QuTVc0BSImQj7PvbbO6Pm6q+3x8tKO2BwPEdbqdBWVszTUJs7fv8lABqAmlf
+	 fvHcJ516Huh83IZsnYcAF5jq1zXWVR8ijCIBp+zh222IG8IekbuKfbeRsR5Cr6bWI/
+	 lTYUaB56lBeeg==
+Date: Wed, 29 May 2024 15:44:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@arm.com>
+Cc: Ian Rogers <irogers@google.com>, Leo Yan <leo.yan@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
+ PMUs
+Message-ID: <Zld3dlJHjFMFG02v@x1>
+References: <20240525152927.665498-1-irogers@google.com>
+ <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
+ <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
+ <20240527105842.GB33806@debian-dev>
+ <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
+ <ZlY0F_lmB37g10OK@x1>
+ <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
+ <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/cpu/intel: Drop stray FAM6 check with new Intel CPU
- model defines
-To: Andrew Cooper <andrew.cooper3@citrix.com>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Ashok Raj <ashok.raj@intel.com>,
- Alison Schofield <alison.schofield@intel.com>
-References: <20240529183605.17520-1-andrew.cooper3@citrix.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240529183605.17520-1-andrew.cooper3@citrix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com>
 
-On 5/29/24 11:36, Andrew Cooper wrote:
-> The outer if () should have been dropped when switching to c->x86_vfm.
+On Wed, May 29, 2024 at 03:50:53PM +0100, James Clark wrote:
+> Is the problem you are referring to that there are multiple PMUs with
+> 'cycles' events? Surely that's only a problem in the context of the new
+> proposed behavior, otherwise it's not really a problem. It's just
+> something that happens to exist.
+ 
+> Because the user could always use the defaults (no argument) or -e
+> cycles and historically Perf correctly picked the one that could be
 
-FWIW, we are going to need to do a pass over all of arch/x86 looking for
-these.  I suspect many of the 'if (c->x86 == ...) ' checks can go away
-like this one.
+See below to see if mixing up "cycles" for efficiency and performance
+cores is something sane or if I am missing something.
 
-Thanks for finding this one, though!
+> opened. Or if they want the DSU one they could specify it. That can all
+> still work _and_ we can support "prefer sysfs/JSON" as long as we don't
+> prefer it when opening the event doesn't work.
+
+Yeah, getting all the events in all the PMUs that match a string (after
+it is normalized to cover historical artifacts, as in the case of
+"cycles", "cpu_cycles" and "cpu-cycles", all of which should mean
+"cycles" the special, default event) and that can sample if that is what
+is being asked seems to be a sane outcome from this discussion.
+
+But lemme do try to show the differences from my Lenovo Intel Hybrid
+system (13th gen) and a Libre Computer Rockchip ARM64 hybrid system:
+
+There are some differences on how ARM64 supports hybrid that we may find
+interesting to fix or at least to (better) document, for instance:
+
+root@roc-rk3399-pc:~# dmidecode -H 1
+# dmidecode 3.4
+Getting SMBIOS data from sysfs.
+SMBIOS 3.0 present.
+7 structures occupying 283 bytes.
+Table at 0xEAE7A020.
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+	Manufacturer: libre-computer
+	Product Name: roc-rk3399-pc
+	Version: Not Specified
+	Serial Number: b03c01a7179278b7
+	UUID: 63333062-3130-3761-3137-393237386237
+	Wake-up Type: Reserved
+	SKU Number: Not Specified
+	Family: Not Specified
+
+root@roc-rk3399-pc:~#
+
+This is a hybrid architecture:
+
+root@roc-rk3399-pc:~# ls -la /sys/devices/*/events/cpu_cycles
+-r--r--r-- 1 root root 4096 May 29 16:27 /sys/devices/armv8_cortex_a53/events/cpu_cycles
+-r--r--r-- 1 root root 4096 May 29 16:27 /sys/devices/armv8_cortex_a72/events/cpu_cycles
+root@roc-rk3399-pc:~#
+
+In an intel hybrid system we instead have:
+
+root@number:~# ls -la /sys/devices/*/events/cpu-cycles
+-r--r--r--. 1 root root 4096 May 29 13:59 /sys/devices/cpu_atom/events/cpu-cycles
+-r--r--r--. 1 root root 4096 May 29 14:00 /sys/devices/cpu_core/events/cpu-cycles
+root@number:~#
+
+Small difference, a - versus a _, but then both hybrid, efficiency
+cores (armv8_cortex_a53 vs cpu_atom) and performance ones
+(armv8_cortex_a72 vs cpu_core).
+
+On the Intel Hybrid system:
+
+root@number:~# perf record -e cycles -a sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 4.709 MB perf.data (46911 samples) ]
+root@number:~# perf evlist
+cpu_atom/cycles/
+cpu_core/cycles/
+dummy:u
+root@number:~#
+
+root@number:~# perf evlist -v
+cpu_atom/cycles/: type: 0 (PERF_TYPE_HARDWARE), size: 136, config: 0xa00000000, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|CPU|PERIOD|IDENTIFIER, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, sample_id_all: 1, exclude_guest: 1
+cpu_core/cycles/: type: 0 (PERF_TYPE_HARDWARE), size: 136, config: 0x400000000, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|CPU|PERIOD|IDENTIFIER, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, sample_id_all: 1, exclude_guest: 1
+dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|CPU|IDENTIFIER, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+root@number:~#
+
+So it is recording CPU cycles in all the CPUs in the system, performance
+and efficiency ones and that gets clear on a per-sample base:
+
+root@number:~# perf script
+            perf 2465078 [000] 73716.379947:          1 cpu_core/cycles/:  ffffffffb40a55fa native_write_msr+0xa ([kernel.kallsyms])
+            perf 2465078 [001] 73716.379966:          1 cpu_core/cycles/:  ffffffffb40a55fa native_write_msr+0xa ([kernel.kallsyms])
+<SNIP more cpu_core/cycles/ samples>
+     gnome-shell    2608 [018] 73716.380704:    6721618 cpu_atom/cycles/:  ffffffffc0b8419c fw_domains_get_with_fallback+0xfc ([kernel.kallsyms])
+          podman  688107 [017] 73716.380706:    6695621 cpu_atom/cycles/:      564fc6110da0 [unknown] (/usr/bin/podman)
+          podman  687246 [000] 73716.380842:    8844997 cpu_core/cycles/:  ffffffffb515150c _raw_spin_lock_irqsave+0xc ([kernel.kallsyms])
+          podman  688108 [016] 73716.380913:    6737580 cpu_atom/cycles/:  ffffffffb515205c native_queued_spin_lock_slowpath+0x28c ([kernel.kallsyms])
+         swapper       0 [004] 73716.380932:    2090132 cpu_core/cycles/:  ffffffffb513ad49 poll_idle+0x59 ([kernel.kallsyms])
+<SNIP>
+
+But on the ARM hybrid system, without Ian's patch, i.e. with what is in
+torvalds/master right now (plus some header copies updates I'm working
+on that are unrelated):
+
+root@roc-rk3399-pc:~# perf record -e cycles -a sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.135 MB perf.data (359 samples) ]
+root@roc-rk3399-pc:~# perf evlist
+cycles
+dummy:u
+root@roc-rk3399-pc:~#
+
+It records just one "event" even tho it is recording for all CPUs, both
+efficiency and performance:
+
+root@number:~# perf script
+<SNIP>
+ kworker/2:1-eve   10124 [002]  9687.302790:      60674  cycles:  ffffc4c65bdd7380 vmap_small_pages_range_noflush+0x190 ([kernel.kallsyms])
+ kworker/2:1-eve   10124 [002]  9687.302957:      66040  cycles:  ffffc4c65bdd7438 vmap_small_pages_range_noflush+0x248 ([kernel.kallsyms])
+ kworker/2:1-eve   10124 [002]  9687.303139:      71011  cycles:  ffffc4c65cde0210 ww_mutex_lock+0x60 ([kernel.kallsyms])
+         swapper       0 [002]  9687.303342:      75390  cycles:  ffffc4c65bbc31c8 update_blocked_averages+0x188 ([kernel.kallsyms])
+         swapper       0 [000]  9687.309276:      45496  cycles:  ffffc4c65ca38978 cpuidle_enter_state+0xc8 ([kernel.kallsyms])
+<SNIP>
+
+Everything appears as "cycles" but we're getting samples for all CPUs,
+again, performance and efficiency ones, different kinds of processors,
+right?
+
+root@roc-rk3399-pc:~# perf report --stdio --sort cpu
+# To display the perf.data header info, please use --header/--header-only options.
+#
+# Total Lost Samples: 0
+#
+# Samples: 359  of event 'cycles'
+# Event count (approx.): 23873034
+#
+# Overhead  CPU
+# ........  ...
+#
+    31.34%  003
+    22.44%  004
+    19.30%  000
+    12.94%  002
+     9.14%  001
+     4.84%  005
+
+root@roc-rk3399-pc:~#
+
+If we try, instead with cpu-cycles:
+
+root@roc-rk3399-pc:~# perf record -e cpu-cycles -a sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.135 MB perf.data (346 samples) ]
+root@roc-rk3399-pc:~# perf evlist
+cpu-cycles
+dummy:u
+root@roc-rk3399-pc:~#
+root@roc-rk3399-pc:~# perf evlist -v
+cpu-cycles: type: 0 (PERF_TYPE_HARDWARE), size: 136, config: 0 (PERF_COUNT_HW_CPU_CYCLES), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|CPU|PERIOD|IDENTIFIER, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, sample_id_all: 1, exclude_guest: 1
+dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|CPU|IDENTIFIER, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+root@roc-rk3399-pc:~# 
+
+Both 'cycles' and 'cpu-cycles' end up the same as type: 0
+(PERF_TYPE_HARDWARE), size: 136, config: 0 (PERF_COUNT_HW_CPU_CYCLES).
+
+But if we use something equivalent but with that - replaced with a _ we
+get a behaviour that is closer to the Intel one:
+
+root@roc-rk3399-pc:~# perf record -e cpu_cycles -a sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.137 MB perf.data (390 samples) ]
+root@roc-rk3399-pc:~# 
+root@roc-rk3399-pc:~# perf evlist 
+armv8_cortex_a53/cpu_cycles/
+armv8_cortex_a72/cpu_cycles/
+dummy:u
+root@roc-rk3399-pc:~#
+
+root@roc-rk3399-pc:~# perf evlist -v
+armv8_cortex_a53/cpu_cycles/: type: 7 (armv8_cortex_a53), size: 136, config: 0x11 (cpu_cycles), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|CPU|PERIOD|IDENTIFIER, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, sample_id_all: 1, exclude_guest: 1
+armv8_cortex_a72/cpu_cycles/: type: 8 (armv8_cortex_a72), size: 136, config: 0x11 (cpu_cycles), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|CPU|PERIOD|IDENTIFIER, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, sample_id_all: 1, exclude_guest: 1
+dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|CPU|IDENTIFIER, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+root@roc-rk3399-pc:~# 
+
+That doesn't mixes up CPU cycles for different CPU types:
+
+root@roc-rk3399-pc:~# perf script
+<SNIP>
+            perf   16726 [005] 12632.206216:       3798 armv8_cortex_a72/cpu_cycles/:  ffffc4c65be618d8 do_vfs_ioctl+0x424 ([kernel.kallsyms])
+         swapper       0 [000] 12632.206235:      78413 armv8_cortex_a53/cpu_cycles/:  ffffc4c65ca38978 cpuidle_enter_state+0xc8 ([kernel.kallsyms])
+            perf   16726 [005] 12632.206272:      20279 armv8_cortex_a72/cpu_cycles/:  ffffc4c65be113b4 kmem_cache_alloc+0x44 ([kernel.kallsyms])
+         sugov:4     166 [004] 12632.206409:      52979 armv8_cortex_a72/cpu_cycles/:  ffffc4c65cde5de8 _raw_spin_unlock_irqrestore+0x14 ([kernel.kallsyms])
+            perf   16726 [005] 12632.206443:      67123 armv8_cortex_a72/cpu_cycles/:  ffffc4c65be26bbc arch_local_irq_restore+0x8 ([kernel.kallsyms])
+            perf   16726 [005] 12632.206690:      96987 armv8_cortex_a72/cpu_cycles/:  ffffc4c65bdb4a84 fault_in_readable+0xe4 ([kernel.kallsyms])
+       perf-exec   16727 [004] 12632.206836:      84199 armv8_cortex_a72/cpu_cycles/:  ffffc4c65bd6c3b4 next_uptodate_page+0x264 ([kernel.kallsyms])
+            perf   16726 [005] 12632.206950:     102567 armv8_cortex_a72/cpu_cycles/:  ffffc4c65bbe2aa4 up_write+0xa4 ([kernel.kallsyms])
+         swapper       0 [000] 12632.207030:      78413 armv8_cortex_a53/cpu_cycles/:  ffffc4c65ca38978 cpuidle_enter_state+0xc8 ([kernel.kallsyms])
+       perf-exec   16727 [004] 12632.207037:      79507 armv8_cortex_a72/cpu_cycles/:  ffffc4c65c48b89c strnlen_user+0x16c ([kernel.kallsyms])
+<SNIP>
+
+So from the point of view of the user its important to differentiate
+samples for each type of CPU, so grouping everything into the same
+basket as ARM did in its big.LITTLE seems strange/"wrong".
+
+The way that in Intel when it "does the right thing" (I think no quotes
+are needed here, but I may be missing something) and at the tool level
+translates the special event name "cycles" into what the Intel PMU
+kernel drivers advertises to the world via sysfs as
+/sys/devices/cpu_{atom,core}/events/cpu-cycles (with that -) and ARM
+advertises as /sys/devices/armv8_cortex_a{53,72}/events/cpu_cycles (note
+the _) but gets translated in terms of 'struct perf_event_attr' as
+
+Intel:
+
+cpu_atom/cycles/: type: 0 (PERF_TYPE_HARDWARE), size: 136, config: 0xa00000000
+cpu_core/cycles/: type: 0 (PERF_TYPE_HARDWARE), size: 136, config: 0x400000000
+
+Versus ARM as:
+
+armv8_cortex_a53/cpu_cycles/: type: 7 (armv8_cortex_a53), size: 136, config: 0x11 (cpu_cycles)
+armv8_cortex_a72/cpu_cycles/: type: 8 (armv8_cortex_a72), size: 136, config: 0x11 (cpu_cycles)
+
+can possibly be made more consistent in a way that doesn't break any
+user experience using the perf command line.
+
+I would propose that 'cycles' explicitely asked or as the default,
+translates into armv8_cortex_a{53,72}/cpu_cycles/ on ARM and on
+/sys/devices/cpu_{atom,core}/events/cpu-cycles on Intel, and that
+whatever other architecture that comes to this party tries to learn from
+this botched experience.
+
+- Arnaldo
 
