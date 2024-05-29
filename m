@@ -1,157 +1,232 @@
-Return-Path: <linux-kernel+bounces-194121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716E48D36E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:58:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137488D36EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED75D28A70A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDBF528A9DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3A1DDD9;
-	Wed, 29 May 2024 12:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119B4D527;
+	Wed, 29 May 2024 13:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E/8LJNwA"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XrEa4Tj4"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BA079FD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A9D23AD;
+	Wed, 29 May 2024 13:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716987504; cv=none; b=KfBDVX5fHIi+5faf8tVqL7x0+hMSkOuCvNAjsZ+ytp5NvxmrGAH3sndCKO+eu1M75vzYIBShMwTgOdToG9XfyQqPtOvW17wpIc4fPwyV6SFNMypR10Wby1NtfL6IYYO26kUtW4Xlpohg6NBbegPnz8xMmPVIfBEaywbx0wDUJSU=
+	t=1716987616; cv=none; b=UgJLEZZ8vPvrpwQzXfQciDJer6mOTCSLui74iUZ2rKzj9Lrh+KH3sL7h8G4JJ5KzXCLgtjSF8BFUiB7wSfgsmMBrnePAEC89yJJITQNsDtSIqomF8yg5Lq4HzdmWv6kSg7jftUizAbQ3LN4/ySP16g2hQreedg2FQPkOpij1Yjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716987504; c=relaxed/simple;
-	bh=XQz+9lO5ZIikKb8f2qui5XPn38ALEFPc0NcBYdZAJss=;
+	s=arc-20240116; t=1716987616; c=relaxed/simple;
+	bh=+7MAXcpEI2V0dn74e9ZJ+0ezqO0as0UObbIP44gwxOc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RmFIMLcPaZhu2SrgX9DpYuWwm9fFBEKgKlUde0GL5WayzScRSROsELjWuJ0W1hdHrV9zRLi5kN4QPHexT9IqWtgkOxFidnBtm/wPR6ym2JZm6xNsaNAU5oABNWemCWMPiLw/ofEU+u85CxE5MLsFl8FGWJKe8tK3UTJTJ/09Z10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E/8LJNwA; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35507e3a5deso567212f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:58:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=rsrtzOVkA2XopI2Ax6lwWPPb5RhxpRwHp7Oxd3fW8bIlQVYzJKa2OBP3bsoXSxDeSHam4DzbZSn+NkTwOFVRkfKfzPAQDY/XHGYLbiUcI3s6zwp/BvFVl+MaCEvnO1FNgT3CoSt1qA9oP1nID4pTalxpOu7wbTwhrfoKDgRs5vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XrEa4Tj4; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-62a2424ecb8so18795737b3.1;
+        Wed, 29 May 2024 06:00:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716987501; x=1717592301; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716987614; x=1717592414; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CJE/TrInZvRacWNjkotsg4UFE7vYxZTG6U1qKQXeqbA=;
-        b=E/8LJNwAov0dPpi38gEfN1fyJ24uz1/udy2vHJp16BEIVPVDEkXJkzQrJDd03OIv69
-         15/umws0BBeAtjL2sKNpSR4QUxS+xMTv50e79CEg3krZdEGtj/e01g8N2J4XuOW2AvEH
-         4qW+/Lj14K19dQ+GKnJ3AoGe19agNx/3pftORA4kzIuQQ+1GW/H1P825oFdLf/mYK1hH
-         8CLc4Y/x/h2ayMOXgM6Nl5oEzBdiqCdJsJIQ+Yj6hFLWCd+ALrgDdgQz1vnxlHhOE/MN
-         2V8z/3UJj8CzP89r18p/XoRDzPHx5RzdrpYFfHph/z3FogV2oBB/7miirFhcYowvwAkB
-         OQUg==
+        bh=/8xSjHIJtxOZ2a/v+doe+8LgtILr0Bo4UnJUupQYDU8=;
+        b=XrEa4Tj4PUqZ6PGzlD26vI04XWCDM8KSa6Wft/miSdo+5Tx8mHRCuOvHGXE5ZTWYd/
+         rtWJ35qbFtPmoNR16FwobUe8EbV5NtTl2fxSnWZDFeMAsDwICZk9jXG7frs9/yFOWCZY
+         By843T6Ql/jVYi3DWWpgrF06ux0mL6IHt3DZkUwi5V2skT4UTWKXZuzc4HyR5/E0aug7
+         oKcDf2wh43TJ+RWnCg42Bwe1ue2rhJXEG4+m6fWBk7/l/G+1h0umkkpojqA0100BBwH0
+         X4kkfyjhoU7fipxBP0wvT2IrN8CDvDizDRYmjOdZAk9VF/CnzDPIhd/8JRM67TvOUAQ/
+         Cy4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716987501; x=1717592301;
+        d=1e100.net; s=20230601; t=1716987614; x=1717592414;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CJE/TrInZvRacWNjkotsg4UFE7vYxZTG6U1qKQXeqbA=;
-        b=O1S46/QjZmmfuGger8sK9/irpzItrLBYy3UYHQxQP6xPkzhTEbeCQ6nSyRyaA8l3Bl
-         ytXl0dgOTuftr349g01VJ9k/y5r6TKA8bsqy9tNPWRiL05ZnXC70wsYF8hqpfRBf6xLl
-         eqUEahjaDd6PBeKhzyV2tBQJCTXECkyCuYWVC31eywLVzMx89H4iKvkBfGyU/oyamiCi
-         fH+44CTycvmx3C5Z5Y2Ns8DeoFXbCA8PnyuwqqTFP+khT6aeNVZySv8ameuUv87co+W4
-         c2eM5Vs71U/CBlFhGhYNNqDurw3NpDt+T2kSIh/ptp/mETwL2oSKPetTg0yBjxqhzpvu
-         bKAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2N5tW8kDqWx2jQBbecnjCFR+CvCvl6JHkdOlfdRrzOOd26vem7HD+Grp8J+uMQKfA2gex3AGD44DHaBkGEArYpH+o3H5OzLCN3CB9
-X-Gm-Message-State: AOJu0YxaKE0bsYAas3J4H5PO0WWPXhUBZFLFtMyKHUKzwHrb7dUBD+B6
-	BA3aUN2yq52e5u5Vc0rX+1OLMAmRzpee2CkSp+kNih93Ot5id6GQwjzk9CXfQZAL/XooPfHQVSV
-	x2UD72UgMrg0bV7hKiBdfN8WMR+/NsqQ2XHT4
-X-Google-Smtp-Source: AGHT+IHLqCIA5rqLOoRvTg/y45Phs642aTjHaD58tJI987z5v8v3ParDcY+NpNGrPo5LJWYTAbY+wWYhlsu8xANJIQ0=
-X-Received: by 2002:adf:fdcb:0:b0:356:af95:e31d with SMTP id
- ffacd0b85a97d-35c7968d6fdmr1727725f8f.6.1716987500678; Wed, 29 May 2024
- 05:58:20 -0700 (PDT)
+        bh=/8xSjHIJtxOZ2a/v+doe+8LgtILr0Bo4UnJUupQYDU8=;
+        b=nYrzdGPvaZpr6B0GYJBmrMIGI8DknankbS6aCtrrApmnSh+1N1JNEoQLekktzNQACp
+         LGO/09w+M7YxvhZAMZ80iJSOrYAvqJLxY0hhF5AKvuw9CUSCGP6lqo8F4AIrIG2cNNHS
+         PFUW3RKz9m9ljBGUx92CRh++voyasRkP9qJtzREL5D69S9FjS3ZrGW7xrYBlcHTCnDtA
+         g3+sXT+iD1F+gGFYHtdqMPY+vIHb3hUx3+WS7KMKX4fHMz4RCnHpqP11ykU679B+T8QA
+         RJKJ3FHJGmFwULQ3rp0PvOrrx3b8BOEuKJwRQP3Zi3f57cjuudmmujN5RixyIVlfeNHH
+         HkYA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9dMmDu6gotGIeSg/YTZFEuTw6jGS+O3tJJKAWw3HvSUyA5Kcfb9w6VQyf/sQt1d9FRDsSsj2YnH5p2nSrJ9TrOqff4xItDZwULqeFo/fInhP8GkZ4gRsOOa09AvBteCw5h2DvyJdh
+X-Gm-Message-State: AOJu0YyAgGkRas4/rlw9Nhp/7TdJEJH/7oCNxntqUFUY3tgHpePb9MrA
+	w8ydqKp7mdhQAACsisdDyqEjq068HtBkPZ9IauFnAUnajnEhbSW7RpkmwSwzW+xGkxC357H/Bsu
+	Eqt7ssrRKU70DLK70A/L7ufQ34owN1FT5vVI=
+X-Google-Smtp-Source: AGHT+IHec4C5468aehPFSf+H+IRsi2KOo7M1H9KdehWrWGG2japGsiZWWYbaXE8DwyOOFQCDUWY+syODWJolEyUTa3k=
+X-Received: by 2002:a81:6cd6:0:b0:61b:6757:a3df with SMTP id
+ 00721157ae682-62a08eb4a6emr145503807b3.33.1716987612935; Wed, 29 May 2024
+ 06:00:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525-dompteur-darfst-79a1b275e7f3@brauner>
- <20240527160514.3909734-1-aliceryhl@google.com> <20240529-muskatnuss-jubel-489aaf93fc0b@brauner>
-In-Reply-To: <20240529-muskatnuss-jubel-489aaf93fc0b@brauner>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 29 May 2024 14:58:08 +0200
-Message-ID: <CAH5fLgg0Bh7PfxFRJoXCOHL3M9wSaAOkhdAJbuTbt8=pkcvc1g@mail.gmail.com>
-Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
-To: Christian Brauner <brauner@kernel.org>
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, 
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, 
-	gary@garyguo.net, gregkh@linuxfoundation.org, joel@joelfernandes.org, 
-	keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
-	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
-	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
-	viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org, 
-	yakoyoku@gmail.com
+References: <20240528043404.39327-2-flintglass@gmail.com> <20240528043404.39327-4-flintglass@gmail.com>
+ <CAKEwX=NnigYafFtQ63mknr_Gi7AVG5rp514GHi0a1K5PiNUxSQ@mail.gmail.com>
+In-Reply-To: <CAKEwX=NnigYafFtQ63mknr_Gi7AVG5rp514GHi0a1K5PiNUxSQ@mail.gmail.com>
+From: Takero Funaki <flintglass@gmail.com>
+Date: Wed, 29 May 2024 22:00:02 +0900
+Message-ID: <CAPpodddOjhqh27Nt_Gkf=BTG0NBvWR4sxLPWQRHmPmwGOk0JAA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] mm: zswap: fix global shrinker error handling logic
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 10:17=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> > > Is it honestly worth encoding all that complexity into rust's file
-> > > implementation itself right now? It's barely understandable to
-> > > non-rust experts as it is right now. :)
-> > >
-> > > Imho, it would seem a lot more prudent to just have something simpler
-> > > for now.
-> >
-> > The purpose of the changes I've made are to prevent data races on the
-> > file position. If we go back to what we had before, then the API does
-> > not make it impossible for users of the API to cause such data races.
-> >
-> > That is the tradeoff.
+2024=E5=B9=B45=E6=9C=8829=E6=97=A5(=E6=B0=B4) 0:11 Nhat Pham <nphamcs@gmail=
+com>:
 >
-> Right. Sorry, there's some back and forth here. But we're all navigating
-> this new territory here and it's not always trivial to see what the
-> correct approach is.
+> On Mon, May 27, 2024 at 9:34=E2=80=AFPM Takero Funaki <flintglass@gmail.c=
+om> wrote:
+> >
+> > This patch fixes zswap global shrinker that did not shrink zpool as
+> > expected.
+> >
+> > The issue it addresses is that `shrink_worker()` did not distinguish
+> > between unexpected errors and expected error codes that should be
+> > skipped, such as when there is no stored page in a memcg. This led to
+> > the shrinking process being aborted on the expected error codes.
+> >
+> > The shrinker should ignore these cases and skip to the next memcg.
+> > However,  skipping all memcgs presents another problem. To address this=
+,
+> > this patch tracks progress while walking the memcg tree and checks for
+> > progress once the tree walk is completed.
+> >
+> > To handle the empty memcg case, the helper function `shrink_memcg()` is
+> > modified to check if the memcg is empty and then return -ENOENT.
+> >
+> > Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
+> > Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> > ---
+> >  mm/zswap.c | 31 ++++++++++++++++++++++++++-----
+> >  1 file changed, 26 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/mm/zswap.c b/mm/zswap.c
+> > index 0b1052cee36c..08a6f5a6bf62 100644
+> > --- a/mm/zswap.c
+> > +++ b/mm/zswap.c
+> > @@ -1304,7 +1304,7 @@ static struct shrinker *zswap_alloc_shrinker(void=
+)
+> >
+> >  static int shrink_memcg(struct mem_cgroup *memcg)
+> >  {
+> > -       int nid, shrunk =3D 0;
+> > +       int nid, shrunk =3D 0, stored =3D 0;
+> >
+> >         if (!mem_cgroup_zswap_writeback_enabled(memcg))
+> >                 return -EINVAL;
+> > @@ -1319,9 +1319,16 @@ static int shrink_memcg(struct mem_cgroup *memcg=
+)
+> >         for_each_node_state(nid, N_NORMAL_MEMORY) {
+> >                 unsigned long nr_to_walk =3D 1;
+> >
+> > +               if (!list_lru_count_one(&zswap_list_lru, nid, memcg))
+> > +                       continue;
+> > +               ++stored;
+> >                 shrunk +=3D list_lru_walk_one(&zswap_list_lru, nid, mem=
+cg,
+> >                                             &shrink_memcg_cb, NULL, &nr=
+_to_walk);
+> >         }
+> > +
+> > +       if (!stored)
+> > +               return -ENOENT;
+> > +
+> >         return shrunk ? 0 : -EAGAIN;
+> >  }
+> >
+> > @@ -1329,12 +1336,18 @@ static void shrink_worker(struct work_struct *w=
+)
+> >  {
+> >         struct mem_cgroup *memcg =3D NULL;
+> >         struct mem_cgroup *next_memcg;
+> > -       int ret, failures =3D 0;
+> > +       int ret, failures =3D 0, progress;
+> >         unsigned long thr;
+> >
+> >         /* Reclaim down to the accept threshold */
+> >         thr =3D zswap_accept_thr_pages();
+> >
+> > +       /*
+> > +        * We might start from the last memcg.
+> > +        * That is not a failure.
+> > +        */
+> > +       progress =3D 1;
+> > +
+> >         /* global reclaim will select cgroup in a round-robin fashion.
+> >          *
+> >          * We save iteration cursor memcg into zswap_next_shrink,
+> > @@ -1366,9 +1379,12 @@ static void shrink_worker(struct work_struct *w)
+> >                  */
+> >                 if (!memcg) {
+> >                         spin_unlock(&zswap_shrink_lock);
+> > -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
+> > +
+> > +                       /* tree walk completed but no progress */
+> > +                       if (!progress && ++failures =3D=3D MAX_RECLAIM_=
+RETRIES)
+> >                                 break;
+> >
+> > +                       progress =3D 0;
+> >                         goto resched;
+> >                 }
 
-Yeah of course. You've been very helpful in that regard, and I'm
-grateful for that.
+Here, the `progress` counter tracks how many memcgs successfully evict
+a page in a tree walking. (not per the while loop) then reset to 0.
+progress > 0 ensures there is progress.
+If we visit the tree root (NULL) without any progress, it will be a failure=
+.
 
-> I wonder what's better for now. It seems that the binder code isn't
-> really subject to the races we discussed. So maybe we should start with
-> the simpler approach for now to not get bogged down in encoding all
-> subtle details into rust's file wrapper just yet?
-
-Yeah, maybe. But I think that if we can accurately represent the
-requirements of the interface, then that would be preferable. Perhaps we
-can tweak it to make it easier to understand, without giving up
-accuracy?
-
-One of the reasons that the current API is confusing is that the types
-are called `File<NoFdgetPos>` and `File<MaybeFdgetPos>`. These names
-_sound_ like their purpose is to keep track of whether or not the file
-came from an `fdget_pos` call or not, but that is not the case.
-
-Instead, let's call them something else.
-
-We can have two files: File and LocalFile.
-
-This name accurately conveys the main difference between them. File can
-be transferred across thread boundaries. LocalFile cannot.
+Before the loop starts, progress counter is initialized to 1 because
+the first tree walk might not  iterate all the memcgs, e.g. the
+previous worker was terminated at the very last memcg.
 
 
+> >
+> > @@ -1391,10 +1407,15 @@ static void shrink_worker(struct work_struct *w=
+)
+> >                 /* drop the extra reference */
+> >                 mem_cgroup_put(memcg);
+> >
+> > -               if (ret =3D=3D -EINVAL)
+> > -                       break;
+> > +               /* not a writeback candidate memcg */
+> > +               if (ret =3D=3D -EINVAL || ret =3D=3D -ENOENT)
+> > +                       continue;
+> > +
+>
+> Can we get into an infinite loop or a really long running loops here
+> if all memcgs have their writeback disabled?
+>
+> >                 if (ret && ++failures =3D=3D MAX_RECLAIM_RETRIES)
+> >                         break;
+> > +
+> > +               ++progress;
+> > +               /* reschedule as we performed some IO */
+> >  resched:
+> >                 cond_resched();
+> >         } while (zswap_total_pages() > thr);
+> > --
+> > 2.43.0
+> >
 
-Now, it is still the case that `fget` will return a `LocalFile`, which
-may be confusing. But we can document it like this:
 
-1. On `fget`'s docs, we explain that to get a `File`, you need to
-   convert it using the `assume_not_in_fdget_pos_scope` function. We do
-   not explain why in the docs for `fget`.
 
-2. We can put an explanation of why in the docs for the function
-   `assume_not_in_fdget_pos_scope`.
+--=20
 
-I think it's possible to design an API like this where the complexities
-about `fdget_pos` are only relevant in a few places. In the rest of the
-implementation, we simplify the situation to "file is threadsafe" or
-"file is not threadsafe", and that distinction should be easier to
-understand than nuances related to `fdget_pos`.
-
-Alice
+<flintglass@gmail.com>
 
