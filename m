@@ -1,100 +1,102 @@
-Return-Path: <linux-kernel+bounces-193792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DA98D323C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:51:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880668D3240
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3F51C2353C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C83A2898F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E200170828;
-	Wed, 29 May 2024 08:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67720172BB5;
+	Wed, 29 May 2024 08:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="c8CaiQOj"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bcensdPR"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7865168C2A;
-	Wed, 29 May 2024 08:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECDB172BA2
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716972433; cv=none; b=ACeLYyrmlQdMGW9HBdRE3nJO/xUTHSFu6uSXLuzLxAiqWEJcUnUxuqOgibwBJBTkQijoQ64QFt41qQldygrROlP3Pxe39PMXrYbyFIe+x9mBZe6OoM3jiY/eUQnSIFBQ8KDJNd0b5bjZioMM6fLjKsrigBQxCKo9bQHeHTXKu/4=
+	t=1716972467; cv=none; b=IbxbapCAKOYw4CED86RWxk+shtKMwW3r7QYVESU2lUT4jqzan7yhAAVmV6xHwYmPfZu8FWtoL7JIw1GS0APFdasnzKwGx1OpcbGHu+E8zOZKGw6KtVDcFofijxisrE4pFqynDRiDlu08HLd9MSszynJ4OWVevIAvOxKWuo86Ies=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716972433; c=relaxed/simple;
-	bh=i012pIJmMwpVMNC0wVzKWfXKqOZHs0negPRQdj4uoV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZHDG5fym91F0v0Lu+fAlI8SqwRaKkgas47pHlMx0jmDVvWlZtBHw4WROZ5eymrS/7WOLp508Huhb645gjB4aQMdg52mqaOP3n6b3swG59wRAeY1cIBFRKvZM/k5zU5N6QZC3ZVd8Y8DP31qq9Xeh6okn8Wpx5JScOLeH01zX9jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=c8CaiQOj; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NDBP5MjscEqYWSfB6IwDfvlV49qbL9VUtfUm5r9opnU=; b=c8CaiQOjxsu+TIUsAK5E2w+ydd
-	FUFKddMHwkoZbFRpXmCCrbcFGj0VCWJtJuofeH4T8i0u5YHKfsrpCnS1Ffgz5KbCq6BkfugA/Bmr7
-	BcQnArMqOQ3DueMHpPiesrUuV3jyoievmpMITqHgN52uTgOFdyvJ8xIoQmS8Mb+oRogtnCd1mgr8a
-	Jv/Fpz6b+quoMVKOIjxrfO10NHhpfshcYr8sWWCo1BftTDEGFUhm6xvOgEZljYlGIcI76PKva+rmK
-	bkb3BAY0lmDsMzk+6bH/IAvydsr5BdS5teIEZYZaNZFBOcxL3s4v6x5POVHQ1VNxiOPpzyVn/BF/D
-	DmLXQesQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54206)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCExT-0005pQ-16;
-	Wed, 29 May 2024 09:46:55 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCExT-00045H-Nq; Wed, 29 May 2024 09:46:55 +0100
-Date: Wed, 29 May 2024 09:46:55 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [net PATCH] net: stmmac: update priv->speed to SPEED_UNKNOWN
- when link down
-Message-ID: <Zlbrf8ixl9jeTTIv@shell.armlinux.org.uk>
-References: <20240528092010.439089-1-xiaolei.wang@windriver.com>
+	s=arc-20240116; t=1716972467; c=relaxed/simple;
+	bh=IpLrYynUPcGnN44fpYmeg2e+T+0uVvq6OO+E/pX+kdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TobzRPlSuaWWE3Vnxhpo/IP0a9jMbKXjI4pe3xx+LSGq4k7oMN/I9CBKKLJ4epHKbNB4BgHECkPMpVA+1P/8ox5+ImPZVNZHGSyQtmq636Sdb5Egkk4Z3CPVGYR/JPENh+n8tGZVjCrNBgrhh+SrlKxOHYHW8RUBonYb92gFDGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bcensdPR; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62a08091c2bso19105517b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716972465; x=1717577265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IpLrYynUPcGnN44fpYmeg2e+T+0uVvq6OO+E/pX+kdM=;
+        b=bcensdPRMarAQD0vc5olm3y7wDrmMxvAZhIqyHx16K2B+y8vfgMy1aDLPwEQszAL0+
+         OQHG7xRsCRv/TyACttNzzeov743T/wjWssj+/Fh1ySSfkFu9e4HCfQ9/UGHcUL5cToRQ
+         wNYslPnt28zkLs0tnHSckGFOFwBGAHIrk4mgI37FBbxSPLpeNmzIcDhpYeYEhMR91fep
+         KlRzVllLoWJbwMpUM5X6x8G96+WEz8ZyihmTw/UJ8McsCFdyyEq2qkguQtDilbDZyh4k
+         pn1e+fIbrTSsgOvfacy3Sji6TL6bwoMbSiQvr6qNxANrwHwvGq14i+CSzmoLNAN7tXHD
+         KUvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716972465; x=1717577265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IpLrYynUPcGnN44fpYmeg2e+T+0uVvq6OO+E/pX+kdM=;
+        b=QURHpipzXj1HV8A1gZRzu9LBDOKrzbp4yLSH4aO0ot10O1Q5QwYeVfeIX191MUq6zK
+         UIFCPjRPQLQgQZ8jZwmlkiCbsROxRHwRlG1vhXaciw2hJAc/FpX5QsnY890nSHOBty/9
+         6NbZUkNyoSXfExfPrR46qOkePT8L4+EpabrTuxVkwmXIWfqnoVovf5FVsyw8JSeOC9dJ
+         OXzpqcg7DVEBUoFoeZl9y44blkmqCYWuxhh8wqVNHY7T75ohHEtO4WpSHLcNf+XJBFOp
+         a19NieduWQzfwHXaHCLO41pT7UKIFqckPz0353kyTbQ0kXGACb58Vq0Mfv70Nc9yJSxI
+         kjtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcvWatzQSpDczNXgT77sbfZkYSQ4D1/vKaAbVvZgvQPNSkg2gez7x64g1ZrCBFfJU6214KgU6+3ynVzJRV3V7Y6xOHhAYP8uelZ4in
+X-Gm-Message-State: AOJu0Yx1hVWX6FUyvfjeYkX+NuIOpZtfzfFO+U6As0F1SRKfgWd86VSi
+	3Yl6ktxW3ixF2CCjt1JJdYWDEwIKNx8slsW1qglnSaCT7ZVGIiXJyop4a1ogWHyEElZOfOB6DNP
+	6CPFgXEuFBRmd44PwmWl+Aal3GZ7Nd6kQJEpP2A==
+X-Google-Smtp-Source: AGHT+IGd/vmJitGpaybRz5aemUbpLx02og4W+Vhbz8nzpaQebVx7YF0/2G3viEH0CBNgwAxA7dqKRl5SApiWa9JZm/8=
+X-Received: by 2002:a05:6902:2747:b0:de4:603f:cc2a with SMTP id
+ 3f1490d57ef6-df7721e9296mr15812732276.45.1716972465270; Wed, 29 May 2024
+ 01:47:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528092010.439089-1-xiaolei.wang@windriver.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240528191536.1444649-1-robh@kernel.org> <20240528191536.1444649-2-robh@kernel.org>
+In-Reply-To: <20240528191536.1444649-2-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 May 2024 10:47:34 +0200
+Message-ID: <CACRpkdbxrwnBU_yRAeeqQU96J_M8wqrKiFsCMUqHcLgZPT18aQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm/arm64: dts: arm: Use generic clock and regulator nodenames
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 05:20:10PM +0800, Xiaolei Wang wrote:
-> The CBS parameter can still be configured when the port is
-> currently disconnected and link down. This is unreasonable.
-> The current speed_div and ptr parameters depend on the negotiated
-> speed after uplinking. So When the link is down, update priv->speed
-> to SPEED_UNKNOWN and an error log should be added.
-> 
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+On Tue, May 28, 2024 at 9:15=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
 
-So what happens if stmmac is connected to a PHY that can negotiate with
-the link partner, it has link up at e.g. 1G speed, one configures CBS,
-and then the link goes down and comes up at a different speed?
+> With the recent defining of preferred naming for fixed clock and
+> regulator nodes, convert the Arm Ltd. boards to use the preferred
+> names. In the cases which had a unit-address, warnings about missing
+> "reg" property are fixed.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-I can't see any way in the stmmac driver that this is handled, which
-makes this feature way more buggy than you're referring to here. It
-also means that with your patch, if one attempts to configure CBS
-when the link is down, it will fail.
+Neat! :)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-To me, commit 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
-just looks very buggy.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Yours,
+Linus Walleij
 
