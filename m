@@ -1,74 +1,56 @@
-Return-Path: <linux-kernel+bounces-193420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616398D2BB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4BC8D2BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE1B285DA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:17:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11BF11C21AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEF515B11E;
-	Wed, 29 May 2024 04:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YDoXqvuk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764B315B148;
+	Wed, 29 May 2024 04:34:29 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FA413B783
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A379A55;
+	Wed, 29 May 2024 04:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716956234; cv=none; b=GKUm1Wdf1KWZmDOXC9ZQV0Df5K/vUqQZ6BilH2uEbcC/NZfgFgnGHRXXE5kPqpYT+taMClxFSLwn5fE8wWaGxo04nwcMGTf+W+RqryTH7zJdjdjDiadSYjUK/JdJbIQparN7UeA1cjsFreBoNCgd3Gmx+OdauBPNKsin5lVLb8E=
+	t=1716957269; cv=none; b=mFQIYaao+Wsqb5UcTCZqURtgjGZzjuQz65RkXvfN0y/Y5L45qZysTQ4CHQKJfiVPO92zLkaJd/VZ4rIqdEbiohvY0yEhmztz59kLzHyCz5spsMX+R0kaTJ/DIsQXaoeKjWwiZHYn9yAM2q3RArjmCUO6HTwzfLc2ujMEMSfgUcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716956234; c=relaxed/simple;
-	bh=Xic0N21kMSiu+SRUsA58mU3USYRQuD0NHOJa3KcEL7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OHxrMSj7vRV3PpY7GWEjAaw2bJPV75vq61yU+ygEf6KVDUci5CGbfvXdAbHNU7K6JJ6QiyMbsAYe4hGeLTycTCrsbgpYFOn3tMnSFWSH10MvvBIsLf81jva4m5xhPxMP+K4U4CykRJFcQsC0oBYqIvO95xiJ9URatyePWRMEiEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YDoXqvuk; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716956234; x=1748492234;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Xic0N21kMSiu+SRUsA58mU3USYRQuD0NHOJa3KcEL7Q=;
-  b=YDoXqvuk4TQI4eg6epBcp9SHdy9ob8XiAvP/1A46Dgrxw+2DN2FzjQz2
-   q77uoulTkiIOfg/grcu0qL1qoi8dxpW294iWLz436TO7NcozLUZ+7zQBD
-   LcaC3GsPHd0BVJG5bPmlZxt9S0JaOBZXW+xHVo4eVuOkBkAkjvYJ4N9a0
-   SIAh5fqr6Er7Oy1AY2OJC1uFKdTQ1P31hDFVWppEttU2M0NHXmEIM3G2D
-   ywRsi57crngMebprevYd/4JnKNvw66jRyRuiKJojaad2Vy+GnNMWQsgvl
-   gTgiRVsOPw9HrP7uvy5/W8+3fENpHTDNPGuyguKVbYxS4a3OiaDYCF6cW
-   w==;
-X-CSE-ConnectionGUID: SytLc6pyRAOmTkKLh7exaA==
-X-CSE-MsgGUID: T3ijXcN0R+CJYaNsinaabQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="30838519"
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="30838519"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 21:17:13 -0700
-X-CSE-ConnectionGUID: K3wlXKejQkGEoqzrW6j3cg==
-X-CSE-MsgGUID: qWEff19oRlaWY1csXCQSiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="58474490"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 28 May 2024 21:17:00 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCAk9-000D6T-1p;
-	Wed, 29 May 2024 04:16:55 +0000
-Date: Wed, 29 May 2024 12:15:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: [tip:sched/core 1/2] powerpc-linux-ld: warning: orphan section
- `.bss..Lubsan_data1032' from `kernel/sched/build_policy.o' being placed in
- section `.bss..Lubsan_data1032'
-Message-ID: <202405291235.9o2DCsjw-lkp@intel.com>
+	s=arc-20240116; t=1716957269; c=relaxed/simple;
+	bh=uULQ3FTkF4PJbu/IpU5tIpNPZ6qr38dEXqA/v1696pc=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S24/m24JoiZay6/SikADenPW1ssWD5zN5duCpXXnNXRC3sS36kMKLKx6l+ZyWidevlJBiOoDytjQmRF1jBln6CPFK29PKU05ajyjage6mEOh2xPrw9+ZyWuKCLdyd0bLU3OPdkytjd4lhtyoQkj7njL5Q4LcJCrJk+DekUVS6UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sCAl6-003FLH-1p;
+	Wed, 29 May 2024 12:17:53 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 29 May 2024 12:17:54 +0800
+Date: Wed, 29 May 2024 12:17:54 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Fixes for 6.10
+Message-ID: <ZlascqIex2rE2nO_@gondor.apana.org.au>
+References: <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au>
+ <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
+ <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
+ <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
+ <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
+ <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZbstBewmaIfrFocE@gondor.apana.org.au>
+ <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
+ <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,43 +59,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-head:   402de7fc880fef055bc984957454b532987e9ad0
-commit: 04746ed80bcf3130951ed4d5c1bc5b0bcabdde22 [1/2] sched/syscalls: Split out kernel/sched/syscalls.c from kernel/sched/core.c
-config: powerpc-buildonly-randconfig-r001-20211222 (https://download.01.org/0day-ci/archive/20240529/202405291235.9o2DCsjw-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240529/202405291235.9o2DCsjw-lkp@intel.com/reproduce)
+Hi Linus:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405291235.9o2DCsjw-lkp@intel.com/
+The following changes since commit c6ab5c915da460c0397960af3c308386c3f3247b:
 
-All warnings (new ones prefixed by >>):
+  crypto: ecc - Prevent ecc_digits_from_bytes from reading too many bytes (2024-05-17 18:55:07 +0800)
 
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data852' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data852'
->> powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data1032' from `kernel/sched/build_policy.o' being placed in section `.bss..Lubsan_data1032'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data861' from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data861'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data845' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data845'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data844' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data844'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data852' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data852'
->> powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data1032' from `kernel/sched/build_policy.o' being placed in section `.bss..Lubsan_data1032'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data861' from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data861'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data845' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data845'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data844' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data844'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data852' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data852'
->> powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data1032' from `kernel/sched/build_policy.o' being placed in section `.bss..Lubsan_data1032'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data861' from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data861'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data845' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data845'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data844' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data844'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data852' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data852'
->> powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data1032' from `kernel/sched/build_policy.o' being placed in section `.bss..Lubsan_data1032'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data861' from `drivers/cxl/core/port.o' being placed in section `.bss..Lubsan_data861'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data845' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data845'
-   powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data844' from `drivers/cxl/core/mbox.o' being placed in section `.bss..Lubsan_data844'
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.10-p3 
+
+for you to fetch changes up to 67ec8cdf29971677b2fb4b6d92871eb5d5e95597:
+
+  hwrng: core - Remove add_early_randomness (2024-05-26 18:32:16 +0800)
+
+----------------------------------------------------------------
+This push fixes a new run-time warning triggered by tpm.
+----------------------------------------------------------------
+
+Herbert Xu (1):
+      hwrng: core - Remove add_early_randomness
+
+ drivers/char/hw_random/core.c | 47 ++++---------------------------------------
+ 1 file changed, 4 insertions(+), 43 deletions(-)
+
+Thanks,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
