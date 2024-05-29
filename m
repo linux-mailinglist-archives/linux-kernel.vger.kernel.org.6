@@ -1,141 +1,207 @@
-Return-Path: <linux-kernel+bounces-193975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C495F8D34D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:45:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F279A8D34DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756691F25859
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FCE41F258C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BD917F391;
-	Wed, 29 May 2024 10:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF76815B97D;
+	Wed, 29 May 2024 10:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9K3lbkl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GD0/hxXt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2170117DE34;
-	Wed, 29 May 2024 10:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E901804F;
+	Wed, 29 May 2024 10:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716979477; cv=none; b=WMzKELM5gyoB7wnNVxVvzP2/JyD3oCoPMHriiPCwdxR8yj7QV53ilpY7WHR/+gl5FFdMAbw2Kq+OoFPkztzFY9XrfZGLFtp/A9puQuWxTFQVJlIlUcqkCuuoUR3lnD/yn8frt9irWxB5ffnuqXLbZEmnyFMf9MVlR9K7G1IuyXI=
+	t=1716979503; cv=none; b=Latp6u6XSB5h/5+WlHdIjeWLiUyqq4Eq7UrqWMWkysQqbhXcrwEUY0QyHX/yRIjTQXd2jN7e7atw6SWPn5Us83lsN2qF+2mNdmwDJJUEbvvpHofm3XxIiS9wW+d5/b7wqgWroj5qomTE/6jKEV6+popsMJDoDBOqzmKguhW7XRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716979477; c=relaxed/simple;
-	bh=s8KdvSWO6HOHAGUGJGDqeLCe+B13uuVSOHh4kq7jejg=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=sOCqmyku1LmOeA6fDcAM58vKG6wkdnBlsRmhftQ5gBRmhDYiMXsiNH4Ne4gqeohS7s/mEOYoX36n2I2y2p7WMkwfFtTH/A0TaJJb8gdcTrbo/imEEfcFe0tV8/axSuDcAF2tHgal36Hr3IxAuoOAnOOJU5fKPZW/JkDmmGZawzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9K3lbkl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E84BC4AF09;
-	Wed, 29 May 2024 10:44:36 +0000 (UTC)
+	s=arc-20240116; t=1716979503; c=relaxed/simple;
+	bh=DChLerdywJ2VIfY90QcVmGj9zaM+zQADMtga2RWsg0Q=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GMQsN9/j2gTZ59avEfdxNlWStP3tKhOhegVNwhRrV+F7vSmEScPUCm5iPFcIocSNR7UsnFW5uSNShK0fROcgOz72DJo2NlqkAPx2FaDWLUkHkvY/ZKd1MVc1HM8j5fogz5JlZwkzrgLU7SjBu+C1LdZRX1vM+A70cT/1Ex5L0kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GD0/hxXt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C70C2BD10;
+	Wed, 29 May 2024 10:45:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716979476;
-	bh=s8KdvSWO6HOHAGUGJGDqeLCe+B13uuVSOHh4kq7jejg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=O9K3lbklkKB2Jie3QsfACPrRW8c9tFLYnkt2tyMY+RcM+3fncWnIGqA95YTsAs6pq
-	 0TJ5GwnaVa2sm1Exchz9DLbs1vX7ah6j0w9svRttzVoAy7miEcSpSFwJj+4Eo3NS63
-	 SSG7q2XZ8fIizkOYQr1q/gRO85p14BNgBY/F0xQ8MXtejL9Qvb3+2Y6DNz9/d7sQUi
-	 C40NMghnMIyZm5CgFiYpZL5BuEs4I2w/hXqSsFwxgttEkIbNTo0QFTIrPXormX7ptW
-	 mBOMq4TNRfeYnCXCSNnTOafBydgMPca//J5IUGd3kLly0wh9soHqYlgOkexrkNY+SE
-	 lqfzyYAot6hjw==
-Date: Wed, 29 May 2024 05:44:35 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1716979502;
+	bh=DChLerdywJ2VIfY90QcVmGj9zaM+zQADMtga2RWsg0Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GD0/hxXtID9qZ90DSquWe/Fen/Gej2oChC8r3GtEMxqdKZvfQ6AJWzgvAKFGY1cmd
+	 7Bgj5x5WYfBCvTnMDGX7CNpQUQy1WsyjprmxlOgUDyYjslR9pKLe10EFwMoqtXHK/a
+	 8nvEwZw5VNk3Yxrcr7n6Gtn20NUSJYKiAEBs8HPF+2920QjKXmpAza4QonkVLMTFg3
+	 LC268LGiZhqMzrKzwsfrvgrsKUGoE4bFjrCyOuSbu6m+nxeh1JASoZlDzNYjBT3V2e
+	 9NdxbqNunYQ+0jJF3YQOIbTbGDZTBdNTFoeX4LunEbjdlhJn1SIawQx0rzvd4bfj52
+	 elVro26NwU8NA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sCGnj-00GaQE-KB;
+	Wed, 29 May 2024 11:45:00 +0100
+Date: Wed, 29 May 2024 11:44:58 +0100
+Message-ID: <86a5k8nbh1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Saravana Kannan <saravanak@google.com>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
+In-Reply-To: <CAK9=C2XRx==OTPoGW_AHmjq4Th0bv4okwcq6-3L5JYwHwQp97A@mail.gmail.com>
+References: <20240528164132.2451685-1-maz@kernel.org>
+	<CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
+	<86bk4pm8j1.wl-maz@kernel.org>
+	<CAK9=C2XRx==OTPoGW_AHmjq4Th0bv4okwcq6-3L5JYwHwQp97A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
- Herve Codina <herve.codina@bootlin.com>, linux-clk@vger.kernel.org, 
- Rich Felker <dalias@libc.org>, Jonathan Corbet <corbet@lwn.net>, 
- Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, 
- Heiko Stuebner <heiko.stuebner@cherry.de>, 
- Max Filippov <jcmvbkbc@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, linux-ide@vger.kernel.org, 
- Magnus Damm <magnus.damm@gmail.com>, Guenter Roeck <linux@roeck-us.net>, 
- Sergey Shtylyov <s.shtylyov@omp.ru>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- linux-serial@vger.kernel.org, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
- Jiri Slaby <jirislaby@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
- Michael Turquette <mturquette@baylibre.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Sebastian Reichel <sre@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Jacky Huang <ychuang3@nuvoton.com>, Niklas Cassel <cassel@kernel.org>, 
- linux-fbdev@vger.kernel.org, Azeem Shaikh <azeemshaikh38@gmail.com>, 
- devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
- David Airlie <airlied@gmail.com>, linux-sh@vger.kernel.org, 
- Andrew Morton <akpm@linux-foundation.org>, linux-pci@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Helge Deller <deller@gmx.de>, Thomas Zimmermann <tzimmermann@suse.de>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Stephen Rothwell <sfr@canb.auug.org.au>, 
- Kefeng Wang <wangkefeng.wang@huawei.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Maxime Ripard <mripard@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Baoquan He <bhe@redhat.com>, Guo Ren <guoren@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
- Anup Patel <apatel@ventanamicro.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>
-In-Reply-To: <d54cb668f3f19221fdbf34a70a9123fb3a6b4004.1716965617.git.ysato@users.sourceforge.jp>
-References: <cover.1716965617.git.ysato@users.sourceforge.jp>
- <d54cb668f3f19221fdbf34a70a9123fb3a6b4004.1716965617.git.ysato@users.sourceforge.jp>
-Message-Id: <171697947401.1106915.1101535794733326128.robh@kernel.org>
-Subject: Re: [DO NOT MERGE v8 24/36] dt-binding: sh: cpus: Add SH CPUs
- json-schema
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: apatel@ventanamicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, saravanak@google.com, robh@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Wed, 29 May 2024 11:16:30 +0100,
+Anup Patel <apatel@ventanamicro.com> wrote:
+>=20
+> On Wed, May 29, 2024 at 12:03=E2=80=AFPM Marc Zyngier <maz@kernel.org> wr=
+ote:
+> >
+> > On Wed, 29 May 2024 06:15:52 +0100,
+> > Anup Patel <apatel@ventanamicro.com> wrote:
+> > >
+> > > On Tue, May 28, 2024 at 10:11=E2=80=AFPM Marc Zyngier <maz@kernel.org=
+> wrote:
+> > > >
+> > > > Commit d976c6f4b32c ("of: property: Add fw_devlink support for
+> > > > interrupt-map property") tried to do what it says on the tin,
+> > > > but failed on a couple of points:
+> > > >
+> > > > - it confuses bytes and cells. Not a huge deal, except when it
+> > > >   comes to pointer arithmetic
+> > > >
+> > > > - it doesn't really handle anything but interrupt-maps that have
+> > > >   their parent #address-cells set to 0
+> > > >
+> > > > The combinations of the two leads to some serious fun on my M1
+> > > > box, with plenty of WARN-ON() firing all over the shop, and
+> > > > amusing values being generated for interrupt specifiers.
+> > > >
+> > > > Address both issues so that I can boot my machines again.
+> > > >
+> > > > Fixes: d976c6f4b32c ("of: property: Add fw_devlink support for inte=
+rrupt-map property")
+> > > > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > > > Cc: Anup Patel <apatel@ventanamicro.com>
+> > > > Cc: Saravana Kannan <saravanak@google.com>
+> > > > Cc: Rob Herring (Arm) <robh@kernel.org>
+> > >
+> > > Thanks for the fix patch but unfortunately it breaks for RISC-V.
+> > >
+> > > > ---
+> > > >  drivers/of/property.c | 16 ++++++++++++++--
+> > > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/of/property.c b/drivers/of/property.c
+> > > > index 1c83e68f805b..9adebc63bea9 100644
+> > > > --- a/drivers/of/property.c
+> > > > +++ b/drivers/of/property.c
+> > > > @@ -1322,7 +1322,13 @@ static struct device_node *parse_interrupt_m=
+ap(struct device_node *np,
+> > > >         addrcells =3D of_bus_n_addr_cells(np);
+> > > >
+> > > >         imap =3D of_get_property(np, "interrupt-map", &imaplen);
+> > > > -       if (!imap || imaplen <=3D (addrcells + intcells))
+> > > > +       imaplen /=3D sizeof(*imap);
+> > > > +
+> > > > +       /*
+> > > > +        * Check that we have enough runway for the child unit inte=
+rrupt
+> > > > +        * specifier and a phandle. That's the bare minimum we can =
+expect.
+> > > > +        */
+> > > > +       if (!imap || imaplen <=3D (addrcells + intcells + 1))
+> > > >                 return NULL;
+> > > >         imap_end =3D imap + imaplen;
+> > > >
+> > > > @@ -1346,8 +1352,14 @@ static struct device_node *parse_interrupt_m=
+ap(struct device_node *np,
+> > > >                 if (!index)
+> > > >                         return sup_args.np;
+> > > >
+> > > > -               of_node_put(sup_args.np);
+> > > > +               /*
+> > > > +                * Account for the full parent unit interrupt speci=
+fier
+> > > > +                * (address cells, interrupt cells, and phandle).
+> > > > +                */
+> > > > +               imap +=3D of_bus_n_addr_cells(sup_args.np);
+> > >
+> > > This breaks for RISC-V because we don't have "#address-cells"
+> > > property in interrupt controller DT node and of_bus_n_addr_cells()
+> > > retrieves "#address-cells" from the parent of interrupt controller.
+> >
+> > That's a feature, not a bug. #address-cells, AFAICT, applies to all
+> > child nodes until you set it otherwise.
+> >
+> > >
+> > > The of_irq_parse_raw() looks for "#address-cells" property
+> > > in the interrupt controller DT node only so we should do a
+> > > similar thing here as well.
+> >
+> > This looks more like a of_irq_parse_raw() bug than anything else.
+>=20
+> If we change of_irq_parse_raw() to use of_bus_n_addr_cells()
+> then it would still break for RISC-V.
 
-On Wed, 29 May 2024 17:01:10 +0900, Yoshinori Sato wrote:
-> Renesas SH series and compatible ISA CPUs.
-> 
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-> ---
->  .../devicetree/bindings/sh/cpus.yaml          | 63 +++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sh/cpus.yaml
-> 
+I'm not trying to "fix" riscv. I'm merely outlining that you are
+relying on both broken DTs and a buggy OS.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+> Using of_bus_n_addr_cells() over here forces interrupt controller
+> DT nodes to have a "#address-cells" DT property. There are many
+> interrupt controller (e.g. RISC-V PLIC or RISC-V APLIC) where the
+> DT bindings don't require "#address-cells" DT property and existing
+> DTS files with such interrupt controllers don't have it either.
 
-yamllint warnings/errors:
+It forces you to set #address-cells *if you rely on a different
+value in a child node*. It's not like the semantics are new.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sh/cpus.example.dtb: cpu@0: 'clock-names', 'dcache-line-size', 'dcache-size', 'icache-line-size', 'icache-size' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/sh/cpus.yaml#
+>=20
+> In the RISC-V world, there have been quite a few QEMU releases
+> where the generated DT node of the interrupt controller does not
+> have the "#address-cells" property. This patch breaks the kernel
+> for all such QEMU releases.
 
-doc reference errors (make refcheckdocs):
+Congratulations, you've forked DT. News at 11.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/d54cb668f3f19221fdbf34a70a9123fb3a6b4004.1716965617.git.ysato@users.sourceforge.jp
+>=20
+> I think we should align the implementation in parse_interrupt_map()
+> with of_irq_parse_raw() and use of_property_read_u32() instead of
+> of_bus_n_addr_cells().
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+I think we should fix the kernel and quirk riscv as broken, just like
+PPC or sparc.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+	M.
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--=20
+Without deviation from the norm, progress is not possible.
 
