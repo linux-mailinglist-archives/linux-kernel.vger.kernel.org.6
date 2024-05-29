@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-194279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446998D3966
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D238D396F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F298B2805D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93BA1F283C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C244F159214;
-	Wed, 29 May 2024 14:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F234715958E;
+	Wed, 29 May 2024 14:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OiZShIOy"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iwBFRY/S"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C85C15920B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC2B1E878;
+	Wed, 29 May 2024 14:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716993285; cv=none; b=W4yTJLxLiYolh8d9Y0zB8j0rl+CNLrg7PbwN50Wg5aU6Z0L6wAuoj/+LQFVjye/gEKnTvEflZhN/toqn1z27UxMC6c9oMtAbCeRcX2f38QMzYH5hTTILNJ7jXOZHviX4pjxjRuBwDgpi3uSbEvyCtph5g/7s4H5HeRMS7uhM4WI=
+	t=1716993321; cv=none; b=NOX/PswX36YSnIDVMAygO22GNwLviBkaO7wE3w3Om9nVjZRpX9gphyR5LO84Oe9+cFM2shvdT8UdmFU1WtkiGnVVcU2Ua2zWonRRcxiStC6haknF8aI35l9BWg06aMcQIQH8IwfsM7R/eWor4o3sxpxmaK7esCKTPHPGNkwY+4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716993285; c=relaxed/simple;
-	bh=kA7CXxgdm0m1foHK3IR+qoqDJrbO6cKUy0Fh4VXhYZ0=;
+	s=arc-20240116; t=1716993321; c=relaxed/simple;
+	bh=L5QOuW20k+ogAmMWdD97uiioC0T9avtdcJFTVooK+iY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apud1GjrtLRTGhTBbZNQknlriQ2Okn8yMMFoetHC05Tl+aWzBYlWA2x+UCWCKK8H3qd1Z6aAmcsUbYy6oqDVkJNdLoh/LuXJfP158YwNW9Vz68IACHHNJxYoh96E9i2GCET6yMT0502IXHS4/epQmZZx74+hzWEKINC0O3ObMHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OiZShIOy; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a653972487fso65457266b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716993282; x=1717598082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cd5Jaltzw12rjCKy5wbs74zqw1sF+7oimZgG7BDaEa4=;
-        b=OiZShIOyKEFduqaeZrGuGp9mNLwOrN+IIXfAqH5a5CdmZg6xdB1CZluwEUG02Vptwc
-         aQBqk59MANjHtkxkpWt/X9V6Tzza+NshNAdwT1klNEkicZrUNl2P8/e32vykBg6nZ+80
-         NeucUgG+HH0CAMh/q23GubfhacN96+Sqn6IZWekkEWE+iZpcoNKsUIiwfyOgWgj1bN8/
-         fVs8yBoEhF9mCQer+IzYrT4AV/SJH6rYNbw+QvDW1qN2/rncynf/fAoxWhOVJqf2olad
-         dolyqP0/6ocoy9vw5wOPPWkLD7BLhaXR3/KiwDuQnu6cyUcgJ4d1bjV+1SJXeujDwDbd
-         JMKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716993282; x=1717598082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cd5Jaltzw12rjCKy5wbs74zqw1sF+7oimZgG7BDaEa4=;
-        b=Oak6HrOu0SlBI6VTq3Yddp5z/OEseU/WCUzl2RB3rWywrS3/9N5ZcKBC0/HRQHAesl
-         UaE2e+9KudS3DbeoT+yb6OwztP9iWMlNX4yQNERESB6eLFmlrzFlMMUKYeoutXdoWDFd
-         MXgoqWQpuLhXHp7tD3qI3i9oB5jcJSq7NgK7P1SfiB7UpdiAzZBTzK7ZgTCJi9F51boE
-         NV9AR5ZTLw4mUZAz+L4YkxItQ4eR04Y7iSa8Mt8pPOEdEW+ObFMpYO4AxMCLXy5SceEl
-         Dc+35Asf8/8ZHu+/fUf2APq4XwqP5XGU+zTHEPl+xApAx+nTygq+d5YqOokncW2grgAA
-         fNXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVowtF+x+iMTIAEgEEo1fkX/6D4GuxfXDgSuPCfVWEzAvLn1EeluBeQRaXqznbnpdQSENFDxekeOoqhVQRxvn+nGwAwhSWy68wsY/sw
-X-Gm-Message-State: AOJu0YzSaCZpcK8EFyHEMkCUQH/x8PQmlyR0Vrx+uJBOxMgDMq+Gpbrz
-	AJ5zWIsS2qpIUEDH94rSmVN0p9O/ZqXZUGjAvGZMFjDOXdk70E0yjDVLGFRUSHo=
-X-Google-Smtp-Source: AGHT+IHzDIOEvIZTdtVtvHtAQQImy8QQq+8Ht/4nvi42XIhMSlQyREMA7uCbQ/iCpAaEW85rsjw9JA==
-X-Received: by 2002:a17:906:abd0:b0:a5a:896f:9be0 with SMTP id a640c23a62f3a-a62642eb70bmr1169713166b.27.1716993281816;
-        Wed, 29 May 2024 07:34:41 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a64255dc8cesm83208466b.186.2024.05.29.07.34.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 07:34:41 -0700 (PDT)
-Date: Wed, 29 May 2024 17:34:35 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: linux@treblig.org
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: iio: adt7316: remove unused struct
- 'adt7316_limit_regs'
-Message-ID: <d9a3c974-8a13-43f8-a0d1-0e55f6e1f3ef@moroto.mountain>
-References: <20240528233008.191403-1-linux@treblig.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/7XhHnLlLnxAQc3PSGEzHsQf7O03L53dEKZmkRRfK82ZCP3XWfRnQ7Z2a4W6TK00hapn1SHWS+txN7wdIz8F9CPwaKgVI8hXi6T/X+IQC0IsVOpB9+wOhJWvqZiTcgexGVE4KZNL/aumoKB6/lkAml+W2QdOh9oWs48ewDe/00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iwBFRY/S; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 477B74AB;
+	Wed, 29 May 2024 16:35:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716993314;
+	bh=L5QOuW20k+ogAmMWdD97uiioC0T9avtdcJFTVooK+iY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iwBFRY/SoMbnxNfbatbIcrnb12Crw5w7FqQAZG0LGFFaHXAVvGWW+j/B8yD3C6Eqn
+	 q4StBl2YqExw5oLdEuHUX3cIKrqBvzY23fnhblpiqKMkFEImcj3+82GD+QZXhENzo+
+	 0zguCzlZI5MHt65ftZVohuaoGnrfF6S5hr/7Y1rk=
+Date: Wed, 29 May 2024 17:35:06 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Haibo Chen <haibo.chen@nxp.com>
+Subject: Re: [PATCH v2 3/4] gpio: adp5585: Add Analog Devices ADP5585 support
+Message-ID: <20240529143506.GD19014@pendragon.ideasonboard.com>
+References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
+ <20240528190315.3865-4-laurent.pinchart@ideasonboard.com>
+ <ZlYyJpLeDLD_T5V6@surfacebook.localdomain>
+ <20240528202044.GB8500@pendragon.ideasonboard.com>
+ <CAHp75Vc2-jOMybL7vwJHgrvb_434p094tgdLo1SyK4i_RXYiDw@mail.gmail.com>
+ <20240529094748.GM1436@pendragon.ideasonboard.com>
+ <CAHp75Vf1uBTKHGazcuLCRvEo9k01t3+6oJnfZgpPZQ_dVCOeDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240528233008.191403-1-linux@treblig.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75Vf1uBTKHGazcuLCRvEo9k01t3+6oJnfZgpPZQ_dVCOeDg@mail.gmail.com>
 
-On Wed, May 29, 2024 at 12:30:08AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, May 29, 2024 at 05:24:03PM +0300, Andy Shevchenko wrote:
+> On Wed, May 29, 2024 at 12:48 PM Laurent Pinchart wrote:
+> > On Wed, May 29, 2024 at 09:16:43AM +0300, Andy Shevchenko wrote:
+> > > On Tue, May 28, 2024 at 11:20 PM Laurent Pinchart wrote:
+> > > > On Tue, May 28, 2024 at 10:36:06PM +0300, Andy Shevchenko wrote:
 > 
-> 'adt7316_limit_regs' has never been used since the original
-> commit 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9
-> driver").
+> ...
 > 
-> The comment above it is a copy-and-paste from a different struct.
+> > > > > > +   device_set_of_node_from_dev(dev, dev->parent);
+> > > > >
+> > > > > Why not device_set_node()?
+> > > >
+> > > > Because device_set_of_node_from_dev() is meant for this exact use case,
+> > > > where the same node is used for multiple devices. It also puts any
+> > > > previous dev->of_node, ensuring proper refcounting when devices are
+> > > > unbound and rebound, without being deleted.
+> > >
+> > > When will the refcount be dropped (in case of removal of this device)?
+> > > Or you mean it shouldn't?
+> >
+> > Any refcount taken on the OF node needs to be dropped. The device core
+> > only drops the refcount when the device is being deleted, not when
+> > there's an unbind-rebind cycle without deletion of the device (as
+> > happens for instance when the module is unloaded and reloaded).
 > 
-> Remove both the struct and the comment.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/staging/iio/addac/adt7316.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-> index 79467f056a05..23d036d2802c 100644
-> --- a/drivers/staging/iio/addac/adt7316.c
-> +++ b/drivers/staging/iio/addac/adt7316.c
-> @@ -209,14 +209,6 @@ struct adt7316_chip_info {
->  #define ADT7316_TEMP_AIN_INT_MASK	\
->  	(ADT7316_TEMP_INT_MASK)
->  
-> -/*
-> - * struct adt7316_chip_info - chip specific information
-> - */
-> -
-> -struct adt7316_limit_regs {
-> -	u16	data_high;
-> -	u16	data_low;
-> -};
->  
+> Under "device" you meant the real hardware, as Linux device (instance
+> of the struct device object) is being rebuilt AFAIK)?
 
-Could you delete the blank line as well?  Otherwise we have two blank
-lines in a row and checkpatch will complain.
+I mean struct device. The driver core will drop the reference in
+platform_device_release(), called when the last reference to the
+platform device is released, just before freeing the platform_device
+instance. This happens after the device is removed from the system (e.g.
+hot-unplug), but not when a device is unbound from a driver and rebound
+(e.g. module unload and reload).
 
-regards,
-dan carpenter
+> > This has
+> > to be handled by the driver. device_set_of_node_from_dev() handles it.
+> 
+> But why do you need to keep a parent node reference bumped?
+> Only very few drivers in the kernel use this API and I believe either
+> nobody knows what they are doing and you are right, or you are doing
+> something which is not needed.
 
+I need to set the of_node and fwnode fields of struct device to enable
+OF-based lookups of GPIOs and PWMs. The of_node field is meant to be
+populated by the driver core when the device is created, with a
+reference to the OF node. When populated directly by driver, this needs
+to be taken into account, and drivers need to ensure the reference will
+be released correctly. device_set_of_node_from_dev() is meant for that.
 
+-- 
+Regards,
+
+Laurent Pinchart
 
