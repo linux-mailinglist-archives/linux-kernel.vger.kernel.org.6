@@ -1,181 +1,193 @@
-Return-Path: <linux-kernel+bounces-194569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0408D3E54
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DDC08D3E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B83EE1C2142D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:29:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3459C1C216C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A269C15EFBC;
-	Wed, 29 May 2024 18:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJXnETLB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FFF1C0DC7;
+	Wed, 29 May 2024 18:30:32 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C895D139588;
-	Wed, 29 May 2024 18:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ABF1B949;
+	Wed, 29 May 2024 18:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717007341; cv=none; b=OqoovyEAHloB/PA01q1vSTNYByb2GcrlGKFRzGd+nVWGTDFXvqxdnNr826vU26wNIdJnMm1H+GIzrXJ9PaKmG9AO7PLM7PpEiozYfInLJUW2fbWo1EUi6MrkFJWWCVdgwwc/hofs71eJFIpsue58+5lNijXDG2JoWdM6aqQqswQ=
+	t=1717007431; cv=none; b=FGFIrJCY0+XqLnMHCMLOuuhrxXIlF7UXIOOU/CDq7C+nT/r6AOZWqg5dhRZy7oJswKwqQzW8We+Gg80kWWAKu6dX5h3CoMQiInQn8rKbPLZeV3csUcucxW49ceS+RBhBT+EuIitXfo8g4yg9JbZ8o5MbNZuQhVvmMyFG4cqrmkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717007341; c=relaxed/simple;
-	bh=F+taAuGNZhYoMVVTU7lLtx1SfJK0lEHssiup5OjbRwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=poWNIdkMcU/yUyadDcvrE4H72IWejS6PuNAyviFT87LO28DogZyb5QquVTFeb4h4SqnIBZB56W04BOCn38cZBTI6fr2LRG60NKw9rC5yawMxjYbrzkD+WfDAezdbpnQRXoz5HeoxjO62bzNaU67aFz8lrlyI+99GgnCc1zWNCBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJXnETLB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E98A3C113CC;
-	Wed, 29 May 2024 18:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717007341;
-	bh=F+taAuGNZhYoMVVTU7lLtx1SfJK0lEHssiup5OjbRwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OJXnETLB0f223e8W2RsjVYjIMqr7bToNJyCmyAB7OTW0Iicuh+rYG+KqGLCO7ayAa
-	 5Zjo3ibnNU2XwEc8OSrrpR+1TAEW1ZAKLXmVnd7TwUVt+pkO/C7yQit4ADtk1by60H
-	 18N9HLeNgZt14M20HKEBHZXu0bPKDdCnhjCZWpkCqd+Ag4TPBIn7/Mv5/bwJC5PQCh
-	 VBT/OnOdiSVlRL7tTRDbSpnUUoY0jGfrW3YsMZPt1mmZKjBvj+ukeeS4wMX0qXYyEc
-	 v9Zo2t6/fE7gXSOVGqjADcEXaVQ08aKhfDUg/zief3WxpW+mv7LHka2D7m4VfgEWE9
-	 lc2xnfVCwm4dg==
-Date: Wed, 29 May 2024 11:28:59 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 3/4] LoongArch: Fix entry point in image header
-Message-ID: <20240529182859.GA3994034@thelio-3990X>
-References: <20240522-loongarch-booting-fixes-v3-0-25e77a8fc86e@flygoat.com>
- <20240522-loongarch-booting-fixes-v3-3-25e77a8fc86e@flygoat.com>
+	s=arc-20240116; t=1717007431; c=relaxed/simple;
+	bh=v/g7ChUERc+YBX4PR0tIacx+5V0vyX+QMkYyi8IFySY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OI+1UdPJqFOkXJYkbt/wHq3bM+7zANvrp/DZ68wisoMfSgy6SCkFimiYak4vM2Hb67iPJu0ToKdd2R8QsfANUDJMrghWMj8naTfdecBKLY5E4Yt4/inR4doTyItZYU0GPyV3JluOwMElt9LFfsNpYdY7rZVvMaVSJV6dFpWmTVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (178.176.72.107) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 29 May
+ 2024 21:30:09 +0300
+Subject: Re: [net-next PATCH v4 4/7] net: ravb: Refactor GbEth RX code path
+To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
+ <20240528150339.6791-5-paul.barker.ct@bp.renesas.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <611a49b8-ecdb-6b91-9d3e-262bf3851f5b@omp.ru>
+Date: Wed, 29 May 2024 21:30:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522-loongarch-booting-fixes-v3-3-25e77a8fc86e@flygoat.com>
+In-Reply-To: <20240528150339.6791-5-paul.barker.ct@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 05/29/2024 18:07:30
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 185600 [May 29 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
+ 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.72.107 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.72.107
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 05/29/2024 18:11:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 5/29/2024 5:02:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Hi Jiaxun,
+On 5/28/24 6:03 PM, Paul Barker wrote:
 
-On Wed, May 22, 2024 at 11:02:19PM +0100, Jiaxun Yang wrote:
-> Currently kernel entry in head.S is in DMW address range,
-> firmware is instructed to jump to this address after loading
-> the image.
+> We can reduce code duplication in ravb_rx_gbeth().
 > 
-> However kernel should not make any assumption on firmware's
-> DMW setting, thus the entry point should be a physical address
-> falls into direct translation region.
-> 
-> Fix by converting entry address to physical and amend entry
-> calculation logic in libstub accordingly.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
-> v2: Fix efistub
-> v3: Move calculation to linker script
-> ---
->  arch/loongarch/kernel/head.S             | 2 +-
->  arch/loongarch/kernel/vmlinux.lds.S      | 2 ++
->  drivers/firmware/efi/libstub/loongarch.c | 2 +-
->  3 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
-> index c4f7de2e2805..2cdc1ea808d9 100644
-> --- a/arch/loongarch/kernel/head.S
-> +++ b/arch/loongarch/kernel/head.S
-> @@ -22,7 +22,7 @@
->  _head:
->  	.word	MZ_MAGIC		/* "MZ", MS-DOS header */
->  	.org	0x8
-> -	.dword	kernel_entry		/* Kernel entry point */
-> +	.dword	_kernel_entry_phys	/* Kernel entry point (physical address) */
->  	.dword	_kernel_asize		/* Kernel image effective size */
->  	.quad	PHYS_LINK_KADDR		/* Kernel image load offset from start of RAM */
->  	.org	0x38			/* 0x20 ~ 0x37 reserved */
-> diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/vmlinux.lds.S
-> index e8e97dbf9ca4..c6f89e51257a 100644
-> --- a/arch/loongarch/kernel/vmlinux.lds.S
-> +++ b/arch/loongarch/kernel/vmlinux.lds.S
-> @@ -6,6 +6,7 @@
->  
->  #define PAGE_SIZE _PAGE_SIZE
->  #define RO_EXCEPTION_TABLE_ALIGN	4
-> +#define TO_PHYS_MASK			0x000fffffffffffff /* 48-bit */
->  
->  /*
->   * Put .bss..swapper_pg_dir as the first thing in .bss. This will
-> @@ -142,6 +143,7 @@ SECTIONS
->  
->  #ifdef CONFIG_EFI_STUB
->  	/* header symbols */
-> +	_kernel_entry_phys = kernel_entry & TO_PHYS_MASK;
->  	_kernel_asize = _end - _text;
->  	_kernel_fsize = _edata - _text;
->  	_kernel_vsize = _end - __initdata_begin;
-> diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmware/efi/libstub/loongarch.c
-> index 684c9354637c..60c145121393 100644
-> --- a/drivers/firmware/efi/libstub/loongarch.c
-> +++ b/drivers/firmware/efi/libstub/loongarch.c
-> @@ -41,7 +41,7 @@ static efi_status_t exit_boot_func(struct efi_boot_memmap *map, void *priv)
->  unsigned long __weak kernel_entry_address(unsigned long kernel_addr,
->  		efi_loaded_image_t *image)
->  {
-> -	return *(unsigned long *)(kernel_addr + 8) - VMLINUX_LOAD_ADDRESS + kernel_addr;
-> +	return *(unsigned long *)(kernel_addr + 8) - TO_PHYS(VMLINUX_LOAD_ADDRESS) + kernel_addr;
->  }
->  
->  efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
-> 
-> -- 
-> 2.43.0
-> 
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+[...]
 
-This patch is now in -next as commit 75461304ee4e ("LoongArch: Fix entry
-point in kernel image header"). I just bisected a build failure that I
-see when building with LLVM (either 18 or 19) to this change.
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 7df7d2e93a3a..c9c5cc641589 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -817,47 +817,54 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
+>  				stats->rx_missed_errors++;
+>  		} else {
+>  			die_dt = desc->die_dt & 0xF0;
+> +			skb = ravb_get_skb_gbeth(ndev, entry, desc);
+>  			switch (die_dt) {
 
-$ make -skj"$(nproc)" ARCH=loongarch LLVM=1 defconfig vmlinux
-..
-kallsyms failure: relative symbol value 0x9000000000200000 out of range in relative mode
-make[4]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
-..
+   Why not do instead (as I've asked you alraedy):
 
-Does kallsyms need some adjustment for this?
+			case DT_FSTART:
+				priv->rx_1st_skb = skb;
+				fallthrough;
 
-Cheers,
-Nathan
+>  			case DT_FSINGLE:
+> -				skb = ravb_get_skb_gbeth(ndev, entry, desc);
 
-# bad: [9d99040b1bc8dbf385a8aa535e9efcdf94466e19] Add linux-next specific files for 20240529
-# good: [e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc] Merge tag 'tpmdd-next-6.10-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd
-git bisect start '9d99040b1bc8dbf385a8aa535e9efcdf94466e19' 'e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc'
-# bad: [270c6bb9d5e8448b74950f23ff2a192faaf10428] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
-git bisect bad 270c6bb9d5e8448b74950f23ff2a192faaf10428
-# good: [c38b067bf2ab58d93590a50cbc06c992fe00447e] Merge branch 'ti-next' of git://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
-git bisect good c38b067bf2ab58d93590a50cbc06c992fe00447e
-# bad: [6bcfb2dcf8b00c0b4cef68ac026c71dae3c25070] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
-git bisect bad 6bcfb2dcf8b00c0b4cef68ac026c71dae3c25070
-# good: [2ca0cd490407a728a9aa57b9538f3ca8b287a089] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
-git bisect good 2ca0cd490407a728a9aa57b9538f3ca8b287a089
-# good: [f3760c80d06a838495185c0fe341c043e6495142] Merge branch 'rework/write-atomic' into for-next
-git bisect good f3760c80d06a838495185c0fe341c043e6495142
-# good: [b9fc9904efcaea8470f0d4cd0691f1295add9381] Merge branch 'vfs.module.description' into vfs.all
-git bisect good b9fc9904efcaea8470f0d4cd0691f1295add9381
-# good: [88dbb5f3c068ba8944e97235ccfdc5fbd6c7d577] Merge branch '9p-next' of git://github.com/martinetd/linux
-git bisect good 88dbb5f3c068ba8944e97235ccfdc5fbd6c7d577
-# bad: [b4660cd50cb1e5821532e34dbc7f47cb155ba57b] Merge branch 'next' of git://git.monstr.eu/linux-2.6-microblaze.git
-git bisect bad b4660cd50cb1e5821532e34dbc7f47cb155ba57b
-# bad: [c768fc96978cd0f74dd297d58720cb984a7f6341] LoongArch: Override higher address bits in JUMP_VIRT_ADDR
-git bisect bad c768fc96978cd0f74dd297d58720cb984a7f6341
-# good: [2624e739c2e9abe5f6cc9acc37f9752f0055fb5f] LoongArch: Add all CPUs enabled by fdt to NUMA node 0
-git bisect good 2624e739c2e9abe5f6cc9acc37f9752f0055fb5f
-# bad: [75461304ee4e7e2cb282265a6a89c35b81282d19] LoongArch: Fix entry point in kernel image header
-git bisect bad 75461304ee4e7e2cb282265a6a89c35b81282d19
-# first bad commit: [75461304ee4e7e2cb282265a6a89c35b81282d19] LoongArch: Fix entry point in kernel image header
+
+> +			case DT_FSTART:
+> +				/* Start of packet:
+> +				 * Set initial data length.
+> +				 */
+
+   Please consider turning that block comment into one-liner...
+
+>  				skb_put(skb, desc_len);
+> +
+> +				/* Save this SKB if the packet spans multiple
+> +				 * descriptors.
+> +				 */
+
+   This one too...
+   (The current line length limit is 100 columns.)
+
+> +				if (die_dt == DT_FSTART)
+> +					priv->rx_1st_skb = skb;
+
+   This needs to be done under *case* DT_FSTART above instead...
+
+> +				break;
+> +
+> +			case DT_FMID:
+> +			case DT_FEND:
+> +				/* Continuing a packet:
+> +				 * Move data into the saved SKB.
+> +				 */
+> +				skb_copy_to_linear_data_offset(priv->rx_1st_skb,
+> +							       priv->rx_1st_skb->len,
+> +							       skb->data,
+> +							       desc_len);
+> +				skb_put(priv->rx_1st_skb, desc_len);
+> +				dev_kfree_skb(skb);
+> +
+> +				/* Set skb to point at the whole packet so that
+
+   Please call it consistently, either SKB or skb (I prefer this one).
+
+> +				 * we only need one code path for finishing a
+> +				 * packet.
+> +				 */
+> +				skb = priv->rx_1st_skb;
+> +			}
+> +
+> +			switch (die_dt) {
+> +			case DT_FSINGLE:
+> +			case DT_FEND:
+> +				/* Finishing a packet:
+> +				 * Determine protocol & checksum, hand off to
+> +				 * NAPI and update our stats.
+> +				 */
+>  				skb->protocol = eth_type_trans(skb, ndev);
+>  				if (ndev->features & NETIF_F_RXCSUM)
+>  					ravb_rx_csum_gbeth(skb);
+> +				stats->rx_bytes += skb->len;
+>  				napi_gro_receive(&priv->napi[q], skb);
+>  				rx_packets++;
+
+   Otherwise, this is very good patch! Sorry for letting in the duplcate
+code earlier! :-)
+
+[...]
+
+MBR, Sergey
 
