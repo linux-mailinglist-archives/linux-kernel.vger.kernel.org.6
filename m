@@ -1,339 +1,146 @@
-Return-Path: <linux-kernel+bounces-193982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0F48D34ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:52:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C238D34EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13EE528178D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D744B1C210EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7908017B51F;
-	Wed, 29 May 2024 10:51:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B0717B4E2;
-	Wed, 29 May 2024 10:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09D817B50C;
+	Wed, 29 May 2024 10:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esM21nvj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AC9383A5
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716979917; cv=none; b=fN7KHUYDOho2rcFC1sMKvgGNhYA5YdsNisSeErvJsatW3HNHcONCLZLhneZvu+XlCUkPn1BKckIFZYi4cxIfWal3FuxJ57CWX46U0ptRAjhKa+6M+EhU6G86DmyAcz3Uv0y9XCdZq/qRljGNDysNnlTceyARHOpAikIIoD0PDjM=
+	t=1716980019; cv=none; b=VEqFKlYycKyJMKkWHR47RrutZsUanKDujThCGKiFrSBFuQKhzvlkLHYVqNjgKvjipDgzjSM+jwO7LDOLsnYvoPl76BP8g0gPPCWgkYDkgOPRTfSc/TBKMbnVWIhPYznHoRRR23H5WSAHcyQ4z2GT8hIuwrf3irkIs6EiD+TrhwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716979917; c=relaxed/simple;
-	bh=hu2o7TrXLAGI3/sOnTzeqAdPmrb8I0AVR4eoXnAypvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eqtZ1qjqW6aa9OeZF0EF4gueGEOOw8NvaMmZIMx1HIfbJZMwNNP5PS+fH87XhOT9VFsWUacya0P9QYoZ4VM9mOmiZmpctVC0fNVRTRNCSq8oAHMx5lVyiBHoECJs7IyHt+kLQMme1X1k+6Bg3h631DnJ5nVr0cH1Q2cbuASxA8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64F72339;
-	Wed, 29 May 2024 03:52:18 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22C433F792;
-	Wed, 29 May 2024 03:51:47 -0700 (PDT)
-Date: Wed, 29 May 2024 11:51:40 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com,
-	Mark Brown <broonie@kernel.org>, James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Oliver Upton <oliver.upton@linux.dev>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH V17 4/9] arm64/boot: Enable EL2 requirements for BRBE
-Message-ID: <ZlcIvJUArqDYHVFm@J2N7QTR9R3>
-References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
- <20240405024639.1179064-5-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1716980019; c=relaxed/simple;
+	bh=/5navyvdICkzbpNTn34/7jRLnxebQlxYAkLucnosB4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ny/bQJFVoXsk1jQjdqqke0AHuasdaV7GBjjvM2eMOvy/0oi0vLLYusDKHDkDKsu+MF/rZ7lGhF0hpY/Um/hXtFTR4J0Fa0rVO8QAvezuS0NzSR1PfhUxhgbbeSxO0yyc9SWIj7+n4Tk4VVHK0IQAC+m458vbkqp+1w23dC8QLQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esM21nvj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EC6C2BD10;
+	Wed, 29 May 2024 10:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716980018;
+	bh=/5navyvdICkzbpNTn34/7jRLnxebQlxYAkLucnosB4Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=esM21nvjKV+ztpXgAPOxgnpDo+7Uok0lyZli05ocoQibVsO5eibMCNPhRjU7GNsMI
+	 xhjjpcgaaKRgHZLw1tjYSURdRdMM22BFdYB9DFCHiaa8a1VDBYo5PgPDHGsCOdRPk+
+	 TtlMIrNwq4ew1DT8V/9jO3PBmUv/0ev4uJcrI2wTnAWZqmUxo7W+BZEo2XLlZPOgoU
+	 NvTqglt2U8tmOGV9nF/1PdWxUY18HDFO9BuLOXXwiuHxDqSlvAqgWzWFCQ+Ms+3+t4
+	 790pk8WrwsOIpil7BaGEbjQQn14sEzBul9j2Eo6IDtRn49YCnFyf62w903P8Y9R/1J
+	 mw925jbkhV6bQ==
+Message-ID: <6310dd93-2e4a-4b80-85a9-2439bad15e1e@kernel.org>
+Date: Wed, 29 May 2024 12:53:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240405024639.1179064-5-anshuman.khandual@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] w1: Add missing newline and fix typos in
+ w1_bus_master comment
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20240515101150.3289-2-thorsten.blum@toblux.com>
+ <20240527092746.263038-2-thorsten.blum@toblux.com>
+ <38eae3e5-cb91-436f-a422-0d03d4c8cc95@kernel.org>
+ <C058E8F5-3F00-44FC-8294-93E0B767F13E@toblux.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <C058E8F5-3F00-44FC-8294-93E0B767F13E@toblux.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 05, 2024 at 08:16:34AM +0530, Anshuman Khandual wrote:
-> Fine grained trap control for BRBE registers, and instructions access need
-> to be configured in HDFGRTR_EL2, HDFGWTR_EL2 and HFGITR_EL2 registers when
-> kernel enters at EL1 but EL2 is present. This changes __init_el2_fgt() as
-> required.
+On 29/05/2024 12:29, Thorsten Blum wrote:
+> On 27. May 2024, at 13:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 27/05/2024 11:27, Thorsten Blum wrote:
+>>> - Add missing newline before @return
+>>> - s/bytes/byte/
+>>> - s/handles/handle/
+>>>
+>>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+>>
+>> Do not attach (thread) your patchsets to some other threads (unrelated
+>> or older versions). This buries them deep in the mailbox and might
+>> interfere with applying entire sets.
+>>
+>>
+>> Applying: w1: Add missing newline and fix typos in w1_bus_master comment
+>> Applying: w1: Add missing newline and fix typos in w1_bus_master comment
+>> Patch failed at 0002 w1: Add missing newline and fix typos in
+>> w1_bus_master comment
+>> When you have resolved this problem, run "git am --continue".
+>> If you prefer to skip this patch, run "git am --skip" instead.
+>> To restore the original branch and stop patching, run "git am --abort".
+>> error: patch failed: include/linux/w1.h:85
+>> error: include/linux/w1.h: patch does not apply
+>> hint: Use 'git am --show-current-patch=diff' to see the failed patch
 > 
-> Similarly cycle and mis-prediction capture need to be enabled in BRBCR_EL1
-> and BRBCR_EL2 when the kernel enters either into EL1 or EL2. This adds new
-> __init_el2_brbe() to achieve this objective.
+> Hi Krzysztof,
 > 
-> This also updates Documentation/arch/arm64/booting.rst with all the above
-> EL2 along with MDRC_EL3.SBRBE requirements.
-> 
-> First this replaces an existing hard encoding (1 << 62) with corresponding
-> applicable macro HDFGRTR_EL2_nPMSNEVFR_EL1_MASK.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ----
-> Changes in V17:
-> 
-> - New patch added in the series
-> - Separated out from the BRBE driver implementation patch
-> - Dropped the comment in __init_el2_brbe()
-> - Updated __init_el2_brbe() with BRBCR_EL2.MPRED requirements
-> - Updated __init_el2_brbe() with __check_hvhe() constructs
-> - Updated booting.rst regarding MPRED, MDCR_EL3 and fine grained control
-> 
->  Documentation/arch/arm64/booting.rst | 26 ++++++++
->  arch/arm64/include/asm/el2_setup.h   | 90 +++++++++++++++++++++++++++-
->  2 files changed, 113 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
-> index b57776a68f15..512210da7dd2 100644
-> --- a/Documentation/arch/arm64/booting.rst
-> +++ b/Documentation/arch/arm64/booting.rst
-> @@ -349,6 +349,32 @@ Before jumping into the kernel, the following conditions must be met:
->  
->      - HWFGWTR_EL2.nSMPRI_EL1 (bit 54) must be initialised to 0b01.
->  
-> +  For CPUs with feature Branch Record Buffer Extension (FEAT_BRBE):
-> +
-> +  - If the kernel is entered at EL2 and EL1 is present:
-> +
-> +    - BRBCR_EL1.CC (bit 3) must be initialised to 0b1.
-> +    - BRBCR_EL1.MPRED (bit 4) must be initialised to 0b1.
+> just to clarify: do you want me to submit the patch again or did you run 
+> "git am --skip" to skip the identical, but threaded resend?
 
-IIUC this isn't necessary; if the kernel is entered at EL2, it's capable
-of initializing the EL1 regs, and it doesn't look like this silently
-affects something we'd need in the absence of a BRBE driver.
+I run --skip, so patch is there. Should be already in the next. You just
+don't get notification email, because `b4 ty` does not mark such case as
+applied. No need for resend.
 
-AFAICT the __init_el2_brbe() code you add below handles this, so I think
-this is redundant and can be deleted.
+Best regards,
+Krzysztof
 
-> +  - If the kernel is entered at EL1 and EL2 is present:
-> +
-> +    - BRBCR_EL2.CC (bit 3) must be initialised to 0b1.
-> +    - BRBCR_EL2.MPRED (bit 4) must be initialised to 0b1.
-> +
-> +    - HDFGRTR_EL2.nBRBDATA (bit 61) must be initialised to 0b1.
-> +    - HDFGRTR_EL2.nBRBCTL  (bit 60) must be initialised to 0b1.
-> +    - HDFGRTR_EL2.nBRBIDR  (bit 59) must be initialised to 0b1.
-> +
-> +    - HDFGWTR_EL2.nBRBDATA (bit 61) must be initialised to 0b1.
-> +    - HDFGWTR_EL2.nBRBCTL  (bit 60) must be initialised to 0b1.
-> +
-> +    - HFGITR_EL2.nBRBIALL (bit 56) must be initialised to 0b1.
-> +    - HFGITR_EL2.nBRBINJ  (bit 55) must be initialised to 0b1.
-> +
-> +  - If EL3 is present:
-> +
-> +    - MDCR_EL3.SBRBE (bits 33:32) must be initialised to 0b11.
-
-Minor nit: please list the EL3 requirements first, that way this can be
-read in EL3->EL2->EL1 order to match the FW boot-flow order.
-
-> +
->    For CPUs with the Scalable Matrix Extension FA64 feature (FEAT_SME_FA64):
->  
->    - If EL3 is present:
-> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-> index b7afaa026842..7c12a8e658d4 100644
-> --- a/arch/arm64/include/asm/el2_setup.h
-> +++ b/arch/arm64/include/asm/el2_setup.h
-> @@ -154,6 +154,41 @@
->  .Lskip_set_cptr_\@:
->  .endm
->  
-> +#ifdef CONFIG_ARM64_BRBE
-> +/*
-> + * Enable BRBE cycle count and miss-prediction
-> + *
-> + * BRBE requires both BRBCR_EL1.CC and BRBCR_EL2.CC fields, be set
-> + * for the cycle counts to be available in BRBINF<N>_EL1.CC during
-> + * branch record processing after a PMU interrupt. This enables CC
-> + * field on both these registers while still executing inside EL2.
-
-Huh, it's a bit of an oddity to do that for a register that gets the E2H
-treatment, but that is what the ARM ARM says, looking at the pseudocode
-in ARM DDI 0487K.a:
-
-| // BRBCycleCountingEnabled()
-| // =========================
-| // Returns TRUE if the recording of cycle counts is allowed,
-| // FALSE otherwise.
-| boolean BRBCycleCountingEnabled()
-| 	if HaveEL(EL2) && BRBCR_EL2.CC == '0' then return FALSE;
-| 	if BRBCR_EL1.CC == '0' then return FALSE;
-| 	return TRUE;
-
-.. and likewise for MPRED:
-
-| // BRBEMispredictAllowed()
-| // =======================
-| // Returns TRUE if the recording of branch misprediction is allowed,
-| // FALSE otherwise.
-| boolean BRBEMispredictAllowed()
-| 	if HaveEL(EL2) && BRBCR_EL2.MPRED == '0' then return FALSE;
-| 	if BRBCR_EL1.MPRED == '0' then return FALSE;
-| 	return TRUE;
-
-.. though BRBCycleCountingEnabled() isn't actually used anywhere, while
-BRBEMispredictAllowed is used by BRBEBranch(), since that does:
-
-| (ccu, cc) = BranchEncCycleCount();
-| ...
-| bit mispredict = if BRBEMispredictAllowed() && BranchMispredict() then '1' else '0';
-
-.. where BranchEncCycleCount() is a stub that doesn't mention
-BRBCycleCountingEnabled() at all, so it's not clear to me whether CCU is
-guaranteed to be set.
-
-> + *
-> + * BRBE driver would still be able to toggle branch records cycle
-> + * count support via BRBCR_EL1.CC field regardless of whether the
-> + * kernel ends up executing in EL1 or EL2.
-> + *
-> + * The same principle applies for branch record mis-prediction info
-> + * as well, thus requiring MPRED field to be set on both BRBCR_EL1
-> + * and BRBCR_EL2 while still executing inside EL2.
-> + */
-
-I think we can clarify this comment to:
-
-/*
- * Enable BRBE to record cycle counts and branch mispredicts.
- *
- * At any EL, to record cycle counts BRBE requires that both
- * BRBCR_EL2.CC=1 and BRBCR_EL1.CC=1.
- *
- * At any EL, to record branch mispredicts BRBE requires that both
- * BRBCR_EL2.MPRED=1 and BRBCR_EL1.MPRED=1.
- *
- * When HCR_EL2.E2H=1, the BRBCR_EL1 encoding is redirected to
- * BRBCR_EL2, but the {CC,MPRED} bits in the real BRBCR_EL1 register
- * still apply.
- *
- * Set {CC,MPRBED} in both BRBCR_EL2 and BRBCR_EL1 so that at runtime we
- * only need to enable/disable thse in BRBCR_EL1 regardless of whether
- * the kernel ends up executing in EL1 or EL2.
- */
-
-> +.macro __init_el2_brbe
-> +	mrs	x1, id_aa64dfr0_el1
-> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
-> +	cbz	x1, .Lskip_brbe_\@
-> +
-> +	mov_q	x0, BRBCR_ELx_CC | BRBCR_ELx_MPRED
-> +	msr_s	SYS_BRBCR_EL2, x0
-> +
-> +	__check_hvhe .Lset_brbe_nvhe_\@, x1
-> +	msr_s	SYS_BRBCR_EL12, x0	// VHE
-> +	b	.Lskip_brbe_\@
-> +
-> +.Lset_brbe_nvhe_\@:
-> +	msr_s	SYS_BRBCR_EL1, x0	// NVHE
-> +.Lskip_brbe_\@:
-> +.endm
-> +#endif /* CONFIG_ARM64_BRBE */
-> +
->  /* Disable any fine grained traps */
->  .macro __init_el2_fgt
->  	mrs	x1, id_aa64mmfr0_el1
-> @@ -161,16 +196,48 @@
->  	cbz	x1, .Lskip_fgt_\@
->  
->  	mov	x0, xzr
-> +	mov	x2, xzr
->  	mrs	x1, id_aa64dfr0_el1
->  	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
->  	cmp	x1, #3
->  	b.lt	.Lset_debug_fgt_\@
-> +
->  	/* Disable PMSNEVFR_EL1 read and write traps */
-> -	orr	x0, x0, #(1 << 62)
-> +	orr	x0, x0, #HDFGRTR_EL2_nPMSNEVFR_EL1_MASK
-> +	orr	x2, x2, #HDFGWTR_EL2_nPMSNEVFR_EL1_MASK
->  
->  .Lset_debug_fgt_\@:
-> +#ifdef CONFIG_ARM64_BRBE
-> +	mrs	x1, id_aa64dfr0_el1
-> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
-> +	cbz	x1, .Lskip_brbe_reg_fgt_\@
-> +
-> +	/*
-> +	 * Disable read traps for the following registers
-> +	 *
-> +	 * [BRBSRC|BRBTGT|RBINF]_EL1
-> +	 * [BRBSRCINJ|BRBTGTINJ|BRBINFINJ|BRBTS]_EL1
-> +	 */
-> +	orr	x0, x0, #HDFGRTR_EL2_nBRBDATA_MASK
-> +
-> +	/*
-> +	 * Disable write traps for the following registers
-> +	 *
-> +	 * [BRBSRCINJ|BRBTGTINJ|BRBINFINJ|BRBTS]_EL1
-> +	 */
-> +	orr	x2, x2, #HDFGWTR_EL2_nBRBDATA_MASK
-> +
-> +	/* Disable read and write traps for [BRBCR|BRBFCR]_EL1 */
-> +	orr	x0, x0, #HDFGRTR_EL2_nBRBCTL_MASK
-> +	orr	x2, x2, #HDFGWTR_EL2_nBRBCTL_MASK
-> +
-> +	/* Disable read traps for BRBIDR_EL1 */
-> +	orr	x0, x0, #HDFGRTR_EL2_nBRBIDR_MASK
-> +
-> +.Lskip_brbe_reg_fgt_\@:
-> +#endif /* CONFIG_ARM64_BRBE */
->  	msr_s	SYS_HDFGRTR_EL2, x0
-> -	msr_s	SYS_HDFGWTR_EL2, x0
-> +	msr_s	SYS_HDFGWTR_EL2, x2
->  
->  	mov	x0, xzr
->  	mrs	x1, id_aa64pfr1_el1
-> @@ -193,7 +260,21 @@
->  .Lset_fgt_\@:
->  	msr_s	SYS_HFGRTR_EL2, x0
->  	msr_s	SYS_HFGWTR_EL2, x0
-> -	msr_s	SYS_HFGITR_EL2, xzr
-> +	mov	x0, xzr
-> +#ifdef CONFIG_ARM64_BRBE
-> +	mrs	x1, id_aa64dfr0_el1
-> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
-> +	cbz	x1, .Lskip_brbe_insn_fgt_\@
-> +
-> +	/* Disable traps for BRBIALL instruction */
-> +	orr	x0, x0, #HFGITR_EL2_nBRBIALL_MASK
-> +
-> +	/* Disable traps for BRBINJ instruction */
-> +	orr	x0, x0, #HFGITR_EL2_nBRBINJ_MASK
-> +
-> +.Lskip_brbe_insn_fgt_\@:
-> +#endif /* CONFIG_ARM64_BRBE */
-> +	msr_s	SYS_HFGITR_EL2, x0
->  
->  	mrs	x1, id_aa64pfr0_el1		// AMU traps UNDEF without AMU
->  	ubfx	x1, x1, #ID_AA64PFR0_EL1_AMU_SHIFT, #4
-> @@ -228,6 +309,9 @@
->  	__init_el2_nvhe_idregs
->  	__init_el2_cptr
->  	__init_el2_fgt
-> +#ifdef CONFIG_ARM64_BRBE
-> +	__init_el2_brbe
-> +#endif
-
-This largely looks fine, but I note that we haven't bothered with
-ifdeffery for PMU and SPE, so I suspect it might be worth getting rid of
-the ifdeffery for BRBE.
-
-Mark.
 
