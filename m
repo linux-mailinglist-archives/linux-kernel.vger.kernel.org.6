@@ -1,90 +1,183 @@
-Return-Path: <linux-kernel+bounces-194023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B968D3593
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:30:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038568D3599
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E63288C9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34EEB1C23097
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C8517F39A;
-	Wed, 29 May 2024 11:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921D017F396;
+	Wed, 29 May 2024 11:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaRCdd3a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwxaQUTE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AD51BDCF;
-	Wed, 29 May 2024 11:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC80013C83E;
+	Wed, 29 May 2024 11:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716982230; cv=none; b=FIewkDddMAYUU+jhl9O7ve5nM8j94pdeMlYjBE4bJqivftPCP9/pCWCo7EeKz+bKUFuUeQm8Rve1hs2F9PrWNHGBH4eCBMr3aEjBcpkLRSSzwxEALLXwlP8UlI/g1evFQV3iEnyCB4vvFiWXD6bA71MhFVI3iymYNIS9sQ3YPao=
+	t=1716982315; cv=none; b=VkQL7ATAW2gNyx6G686IuwXyl6ZIXgxk4ktpzM2ceCBO5WwFulOSWa3PpU1EddaKuVyw7sYpX+6MdidMj2tWeEU6l9qUcknUI08O51SrdfTlZreBqlDsQ2kllwTmoas5Zdgi9VpxEjVSD9MkIdZ6rbz1TBvyt36C6O4Hauzn0pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716982230; c=relaxed/simple;
-	bh=iGJBYC0HS9WohGDJgHX+IX1VimUcl63tvEKfwQTFOLw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UZv5wvARTJ2KOBp0DFwMXj77D27/+4XN0W8EHKxZAoeSL6WxontS8HacHtaDUVPWjtPUtUpz9zy62bJ9NXRajG4xsTt8Hafhj9ekmVuHPHBOLwJIvx9ACbzF4taW5lXRp8CRGktM27emS7NEcDv1IaAB+sOiHQSFviD93ly5BQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaRCdd3a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D2143C32786;
-	Wed, 29 May 2024 11:30:29 +0000 (UTC)
+	s=arc-20240116; t=1716982315; c=relaxed/simple;
+	bh=uESYWc7CHoToEHQVWQ0OlC9Wi0KT2BNb1DscZcNS3Qk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t7wfPFpXx3am+KvtHLlM/BwxfHWuKemV65WYT72WrvRB0ShdvmXq5rIAajfUX8nTUBBEeLW8rHNogJUtBuBvm4SqbunraWtCK9wcW996rdU//KNeHwCqwGbEyqxo2GDm8jQZcUV9bTazFXNt4fqzrMnxVC4Z506c9zTFFnaWXGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwxaQUTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BCDAC32781;
+	Wed, 29 May 2024 11:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716982229;
-	bh=iGJBYC0HS9WohGDJgHX+IX1VimUcl63tvEKfwQTFOLw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HaRCdd3aUptqszMAFpDNjuPVQW4EdDUIJdM1lbP1sbDyN14I8+s0hpFOEd/L9+/mh
-	 f8tYyfxiuNR8f6ZZDYwgnzjVy1o9Tb+KucSc99IMyWzZr+8L7BolGmVvF2LAQ/W1O5
-	 VnWnAbLmLMjLn3dkv6Pn2LMYZJZq6LutIJDtTWPd0OqDQsXcki42uy3p3suaEZInbF
-	 vURY9/WxqUgpM6CNdqWIB9pP2TAbQhNoevrSjJBGi9kJrrRelHSqA5tZ6CofP3N0gx
-	 Hf7tq1+ooTXxPt24jBCbBQox1zFmKmcFIGtFpGFY/DBedynXvyqUM+AsfX28Bp/gsG
-	 ZgiDHrMT1Smgw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1ECCCF21E0;
-	Wed, 29 May 2024 11:30:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1716982315;
+	bh=uESYWc7CHoToEHQVWQ0OlC9Wi0KT2BNb1DscZcNS3Qk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QwxaQUTEaOozKsFkTtAjlYDSmwQOcopG8kE1gZJe7lR4+hRSWl0YXg6WM+zL8hYLj
+	 GapR8zZ3fS3WzzMqSl64m5AT2vtKL4DPpnYUKtpfxmR9cKeVdns3TjrpH6ivqy0FCn
+	 2CQXN9qyb3xakD7VSm/ISmwyL4FgunQCGj09hWRy6kHucZuQzvNbfEYVX2WmA3C3Y8
+	 1Wq0HJtdC0rGOec2AwPBbTQADJm117sRX4sBFdZNSG3HWxOViWZG53b0LReojNxFu2
+	 3kmHwemBv7aUbPCcCEgV2UqVLOsE9HKeBkJkqGmaVmmDGj33QUJ791TG4zLk2yEXDq
+	 HTJE57tZHp3Pw==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e974857588so20036901fa.3;
+        Wed, 29 May 2024 04:31:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWYTOU845ccg4XhXjzUrwQqfONvz4sSnAdc60C7MD2tPxHz4/p9A8xdeVZOB8h1u1mGamzJ/9T9rQLjVm4Z+sr2VYqydm1VDd4ncJqsw37F/Q25VFJJ8ZPSdf9AAuiqkMq5rrQW1limKxuSHOvrx6ExKb39nV/2vEFwGr5VrOFIA9oQkLRoSw==
+X-Gm-Message-State: AOJu0Yz+WzIXB13Gc+4B6l8raGsVSVolzYroCnRpbR8Ta/ckCmD2UhIX
+	4l2/nNpaVRtMYOzAvN9Mm9ySW5G8XyWjYWXmXuPfJY7Z2rdoD/CkyJ+/TI6mzwddze9+uAcqRC1
+	0CVULMsvnhovxztcFNVzYDf344bU=
+X-Google-Smtp-Source: AGHT+IHoNX5Kwsnh1mNZdzmDHtdg2S3B5FDxAO/1z7ESikMP+bKO7aJY3LtIQMemB6bw7x5zk/SHzcJ0k9gyDp1ZE/g=
+X-Received: by 2002:a2e:b8d3:0:b0:2e1:ec20:9ae5 with SMTP id
+ 38308e7fff4ca-2e95b0c2401mr108564941fa.31.1716982314130; Wed, 29 May 2024
+ 04:31:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1] MAINTAINERS: dwmac: starfive: update Maintainer
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171698222979.5082.5782691130195774110.git-patchwork-notify@kernel.org>
-Date: Wed, 29 May 2024 11:30:29 +0000
-References: <20240528015120.128716-1-minda.chen@starfivetech.com>
-In-Reply-To: <20240528015120.128716-1-minda.chen@starfivetech.com>
-To: Minda Chen <minda.chen@starfivetech.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, kernel@esmil.dk,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
+References: <20240527-dtbo-check-schema-v1-1-ee1094f88f74@linaro.org>
+ <CAL_Jsq+cmNmm4we6B6OdeS_Qty44FxKmtZHDjLBi9f=DaBw4GA@mail.gmail.com> <CAA8EJpoeGTitM1vYg712Q2fFPenJJvvA7HS7GBA9pqY87zbOjw@mail.gmail.com>
+In-Reply-To: <CAA8EJpoeGTitM1vYg712Q2fFPenJJvvA7HS7GBA9pqY87zbOjw@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 29 May 2024 20:31:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARXLirGk-rdOUofC9bpKKNiNiiWt9CR8KwyDQgp1X7dAg@mail.gmail.com>
+Message-ID: <CAK7LNARXLirGk-rdOUofC9bpKKNiNiiWt9CR8KwyDQgp1X7dAg@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: verify dtoverlay files against schema
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Tue, May 28, 2024 at 10:16=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Tue, 28 May 2024 at 16:15, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Mon, May 27, 2024 at 6:34=E2=80=AFAM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> > >
+> > > Currently only the single part device trees are validated against DT
+> > > schema. For the multipart schema files only the first file is validat=
+ed.
+> >
+> > What do you mean by multipart schema files? Did you mean multipart DTs
+> > (i.e. base plus overlays)?
+>
+> Yes, multipart DT files, dts + dtso =3D> dtb + dtbo =3D> final dtb
+>
+> >
+> > Looks good otherwise and I can fix that up.
+>
+> Awesome, thanks!
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Tue, 28 May 2024 09:51:20 +0800 you wrote:
-> Update the maintainer of starfive dwmac driver.
-> 
-> Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [v1] MAINTAINERS: dwmac: starfive: update Maintainer
-    https://git.kernel.org/netdev/net/c/e9022b31db80
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
+
+This looks equivalent to the former patch rejected by Rob Herring:
+
+https://lore.kernel.org/lkml/20240225151209.343160-1-alexander.stein@mailbo=
+x.org/
+
+
+
+Did he change his mind since then?
+
+
+
+
+
+
+
+
+
+> >
+> > > Extend the fdtoverlay commands to validate the resulting DTB file
+> > > against schema.
+> > >
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  scripts/Makefile.lib | 9 ++++++++-
+> > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> > > index 9f06f6aaf7fc..29da0dc9776d 100644
+> > > --- a/scripts/Makefile.lib
+> > > +++ b/scripts/Makefile.lib
+> > > @@ -407,8 +407,15 @@ cmd_dtc =3D $(HOSTCC) -E $(dtc_cpp_flags) -x ass=
+embler-with-cpp -o $(dtc-tmp) $< ;
+> > >                 -d $(depfile).dtc.tmp $(dtc-tmp) ; \
+> > >         cat $(depfile).pre.tmp $(depfile).dtc.tmp > $(depfile)
+> > >
+> > > +DT_CHECK_CMD =3D $(DT_CHECKER) $(DT_CHECKER_FLAGS) -u $(srctree)/$(D=
+T_BINDING_DIR) -p $(DT_TMP_SCHEMA)
+> > > +
+> > > +ifneq ($(CHECK_DTBS),)
+> > > +quiet_cmd_fdtoverlay =3D DTOVLCH $@
+> > > +      cmd_fdtoverlay =3D $(objtree)/scripts/dtc/fdtoverlay -o $@ -i =
+$(real-prereqs) ; $(DT_CHECK_CMD) $@ || true
+> > > +else
+> > >  quiet_cmd_fdtoverlay =3D DTOVL   $@
+> > >        cmd_fdtoverlay =3D $(objtree)/scripts/dtc/fdtoverlay -o $@ -i =
+$(real-prereqs)
+> > > +endif
+> > >
+> > >  $(multi-dtb-y): FORCE
+> > >         $(call if_changed,fdtoverlay)
+> > > @@ -421,7 +428,7 @@ DT_BINDING_DIR :=3D Documentation/devicetree/bind=
+ings
+> > >  DT_TMP_SCHEMA :=3D $(objtree)/$(DT_BINDING_DIR)/processed-schema.jso=
+n
+> > >
+> > >  quiet_cmd_dtb =3D        DTC_CHK $@
+> > > -      cmd_dtb =3D        $(cmd_dtc) ; $(DT_CHECKER) $(DT_CHECKER_FLA=
+GS) -u $(srctree)/$(DT_BINDING_DIR) -p $(DT_TMP_SCHEMA) $@ || true
+> > > +      cmd_dtb =3D        $(cmd_dtc) ; $(DT_CHECK_CMD) $@ || true
+> > >  else
+> > >  quiet_cmd_dtb =3D $(quiet_cmd_dtc)
+> > >        cmd_dtb =3D $(cmd_dtc)
+> > >
+> > > ---
+> > > base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
+> > > change-id: 20240527-dtbo-check-schema-4f695cb98de5
+> > >
+> > > Best regards,
+> > > --
+> > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >
+>
+>
+>
+> --
+> With best wishes
+> Dmitry
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
