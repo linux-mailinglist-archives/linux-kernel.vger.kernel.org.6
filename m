@@ -1,1103 +1,751 @@
-Return-Path: <linux-kernel+bounces-194552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8638D3E04
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:08:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039298D3E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989CE1F211E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:08:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0F7286B1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A6A1CB335;
-	Wed, 29 May 2024 18:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8C61C0DC3;
+	Wed, 29 May 2024 18:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="obYwEYoD"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="LWMnqDz8"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0241C688E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6F115B57F;
+	Wed, 29 May 2024 18:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717005929; cv=none; b=sNbG3hLf6JcepOv85Cxk/GDAQS0QTFvmp32BlVh3WO30arUHmAPdltoAYunEcFpdsfO+XE93QtiuDSQglqJh2+lqFAQwymhZKLi9+QG2TenzvWcXjRY3bJJBGoyiu0J3SHMY03Ct9Ta5bR/j3KiQ61hoZ7Rc0yPWcC6jmxGCa0g=
+	t=1717006071; cv=none; b=G1OZ7Aga5/3wrdU/elS6WQEdwEjM2mr+avkdrT1xMif2der0jVawo/Dz6XjIf7UqfYBDbVqO+xAK4imyBU5KB/jokgamwrjd4SsvJZxFUlMV7KHxGy30ebq7Hc0Krd9fcDSxPiDDhtRx6DT67I7tqfx2IMDRoDpf6MXtqNP4OcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717005929; c=relaxed/simple;
-	bh=HxUpyE4cgKAUUbNhgJVD54jNZmrZ7gIbbpjjGwW6oOk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mLsLUGH3qNjOMonfeDHPlbEKvkrwaEhAqyaOBzqo9fai2I0GvhpJzKRkKKtncWapRSGK5TMb5h1GmMEXIohSW38nJVo6EkT8LeXqE41CnM2G4pBUH+04FSH4NeV4sXbY6T6Q5UMgCu9XOquo+S1/kGE1W9xHPIfauY2s1tItWbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=obYwEYoD; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df4e7854de8so4131333276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717005924; x=1717610724; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFOu6Kxojus6YReobAbXgdpXtL4lDaOJhpPuWR2SyLk=;
-        b=obYwEYoD4CPLm9FpSZLzpWx/JktxtSndRBIRxdOgJ40RMklEBx1oEGSOQId7ShYM/o
-         01k37Mrc7sTQOvC2mCM9KAyfFIfM6oIFg2FwCMizsivtMnPJt0PP1VKcnuIDDRnfc8SQ
-         oi/9s2iRE1tRzyjIZzLR7RgcNeNbW2fML1I7z+S12Wm85+pmhMcjcU9r4jHIyxAZDiZP
-         pRdyIxAPzTNQzNvIPSvCSkVh/Ig9fR66YN+w4FMiFTbuTXtDtnyWLwTAh6idO7mqnvYg
-         iqTYRvxZQaISuEHn1QCsb6IKLe2mziydJwKa+G7hJXjlaRCiAvXTh/r1k+OtgU2YSx/C
-         agtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717005924; x=1717610724;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFOu6Kxojus6YReobAbXgdpXtL4lDaOJhpPuWR2SyLk=;
-        b=PUUg6navw0ojPn6YX1/jQ9RyVZptYNL1Q+Ss31lPtoqmtimnHT+59fVQPHNflufzyU
-         yNUioqthPUMvg9GXHqIhT8NYWTYsMPexKsHggIaikccMjmt0h0RlfOVhI2GqsOtOMYj2
-         MiTAk/9XiRNVSE4xAZ4vnm0d7SzisXRWRTxHXXMtXrIUZ4gWBZX6uz7fWC9gxWb9oT8M
-         VgBvP8lmwzg8ebfTpLLjHFh/S26HWRGf5WLlvkOWo4abvHn7vzFwtn/1vfJDXmxxdlfc
-         0x7G0SkrBQdZPWV8J8nSUTkO5Gy/KqNXCbcAOghJuJXPOokzx/6Phh0w3P1KbYc8eT1D
-         Teow==
-X-Forwarded-Encrypted: i=1; AJvYcCVXxyZhnKEV93B07/bpRL4iySq1T2jB4uvmIeWB71dZX+80/DkhPIrharjs9yDj5tC+GxMob70A/ddBOICn1jzKkex5hG+7c/OAm7c1
-X-Gm-Message-State: AOJu0YzQB8ZCM81M81i2PKVxDDg+IyRlQpsdCH35uO0msjGGyRBZwjPj
-	c7iRNuAszUy7cvI1HOlEPnPQDUCF9iER0ubArRJ7MalrZdaUWTkHjpm9k3FV19K5PdAeIAjEm8X
-	8eEBUdZ7q+w1C6zq6uw==
-X-Google-Smtp-Source: AGHT+IHayFRCcCsOufeFd8eaD+LZvvSABNudK6ccp427lR+6//MCzL41ey0oGuHFJkkj5Se24qSRYhlBG5VXTugN
-X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:14:4d90:c0a8:2a4f])
- (user=jthoughton job=sendgmr) by 2002:a05:6902:1248:b0:dcb:e982:4e40 with
- SMTP id 3f1490d57ef6-df7723fc9e6mr4213312276.12.1717005923815; Wed, 29 May
- 2024 11:05:23 -0700 (PDT)
-Date: Wed, 29 May 2024 18:05:10 +0000
-In-Reply-To: <20240529180510.2295118-1-jthoughton@google.com>
+	s=arc-20240116; t=1717006071; c=relaxed/simple;
+	bh=XDLYvL047fgSFh4KfG4f1bwyxaaOQTZiSzYw1pWTRaM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uVpwPAyMJHiZnf9r6lKT322TwQCWyvudI+SnRXNKfDjiX4qDId0kb1NxYbTptAozjcBidjF+q76IDM2g+8NtV3cX3ViFW4wi1t6MJcbOPihCvC9zhsBJe96jjWrq7EdQOLfQJ1L+HERAJy28CyjeKFjZdYPRi1ZCnCuK6ly0bE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=LWMnqDz8; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=7scin46c7jatxcwxrro7pcb72i.protonmail; t=1717006059; x=1717265259;
+	bh=9Hu7NQkgD3QTGjHaSy/nLBTtgh42YxiP4FTMBrecY5w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=LWMnqDz8RZoBCVPEQi04HjSIPUkbmx9R6YdXmqvyiQPU19BN8raZAixmqgoWLWOII
+	 RGT9k6xQLco4RftL3iq35THXk5KrzQGYvsX61VMSKo8E1kypEZbVWASE9uukoRDrPY
+	 o4coJoM5PF1ijMmylZkUXgWZx8SbDq9ZBMyjAotimu6Oe2lJkEcXb+jNezjvdOAUz5
+	 G26xaPI/jZragXgXH/mD52TlsseViWwub5sN1gWFQFa/u5NuIWy2ZlF+dZd4vBagjN
+	 dKcNwqlAbNBd5MCVSB7YiAlU/UOfKTiTJADu1dhouyXDqboRyG89e+Ny9NvMdKYiUM
+	 C+GJdBBZLm2Wg==
+Date: Wed, 29 May 2024 18:07:33 +0000
+To: Andreas Hindborg <nmi@metaspace.dk>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Bart Van Assche <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, Andreas Hindborg <a.hindborg@samsung.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Chaitanya Kulkarni <chaitanyak@nvidia.com>, Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>, =?utf-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>, Joel Granados <j.granados@samsung.com>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Daniel Gomez
+	<da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>, Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>, open list <linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, "gost.dev@samsung.com" <gost.dev@samsung.com>
+Subject: Re: [PATCH v2 1/3] rust: block: introduce `kernel::block::mq` module
+Message-ID: <29e31afd-c10f-4262-82ef-d0e3599753ea@proton.me>
+In-Reply-To: <87sey0rda8.fsf@metaspace.dk>
+References: <20240521140323.2960069-1-nmi@metaspace.dk> <20240521140323.2960069-2-nmi@metaspace.dk> <2d2689e7-7052-4a92-b6fb-37f25fd05810@proton.me> <87sey0rda8.fsf@metaspace.dk>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 7052567407e042c1f95f9f22d3346922410cf7b4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240529180510.2295118-1-jthoughton@google.com>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240529180510.2295118-8-jthoughton@google.com>
-Subject: [PATCH v4 7/7] KVM: selftests: Add multi-gen LRU aging to access_tracking_perf_test
-From: James Houghton <jthoughton@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Ankit Agrawal <ankita@nvidia.com>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Bibo Mao <maobibo@loongson.cn>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	James Houghton <jthoughton@google.com>, James Morse <james.morse@arm.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Sean Christopherson <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This test now has two modes of operation:
-1. (default) To check how much vCPU performance was affected by access
-             tracking (previously existed, now supports MGLRU aging).
-2. (-p) To also benchmark how fast MGLRU can do aging while vCPUs are
-        faulting in memory.
+On 29.05.24 14:52, Andreas Hindborg wrote:
+> Benno Lossin <benno.lossin@proton.me> writes:
+>=20
+>> On 21.05.24 16:03, Andreas Hindborg wrote:
+>>> From: Andreas Hindborg <a.hindborg@samsung.com>
+>=20
+> [...]
+>=20
+>>>>> +
+>>> +//! This module provides types for implementing block drivers that int=
+erface the
+>>> +//! blk-mq subsystem.
+>>> +//!
+>>> +//! To implement a block device driver, a Rust module must do the foll=
+owing:
+>>> +//!
+>>> +//! - Implement [`Operations`] for a type `T`
+>>> +//! - Create a [`TagSet<T>`]
+>>> +//! - Create a [`gen_disk::GenDisk<T>`], passing in the `TagSet` refer=
+ence
+>>
+>> I would use short links [`GenDisk<T>`].
+>=20
+> `GenDisk` is not in scope, so short link is not working. But I can do
+> whatever this is called:
+>=20
+>=20
+> //! - Create a [`GenDisk<T>`], passing in the `TagSet` reference
+> ...
+> //! [`GenDisk<T>`]: gen_disk::GenDisk
+>=20
+> Would you prefer that?
 
-Mode (1) also serves as a way to verify that aging is working properly
-for pages only accessed by KVM.  It will fail if one does not have the
-0x8 lru_gen feature bit.
+Yes that is what I had in mind.
 
-To support MGLRU, the test creates a memory cgroup, moves itself into
-it, then uses the lru_gen debugfs output to track memory in that cgroup.
-The logic to parse the lru_gen debugfs output has been put into
-selftests/kvm/lib/lru_gen_util.c.
+>>> +//! - Add the disk to the system by calling [`gen_disk::GenDisk::add`]
+>>> +//!
+>>> +//! The types available in this module that have direct C counterparts=
+ are:
+>>> +//!
+>>> +//! - The `TagSet` type that abstracts the C type `struct tag_set`.
+>>
+>> Missing link? (also below)
+>=20
+> `TagSet` was linked above. Would you link it on each mention?
 
-Co-developed-by: Axel Rasmussen <axelrasmussen@google.com>
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-Signed-off-by: James Houghton <jthoughton@google.com>
+I think that is more resilient to doc updates (eg if the mention above
+is removed, then there would be no link). Also the reader won't have to
+search for a different, linked location of the same thing.
+
+> [...]
+>=20
+>>> +//!
+>>> +//!     fn commit_rqs(
+>>> +//!     ) {
+>>> +//!     }
+>>
+>> Formatting.
+>=20
+> I would love if `rustfmt` would do this. But I think it is both unstable
+> and broken for examples like this [1]. I'll fix it up by hand.
+>=20
+> How do you manage formatting in examples? By hand?
+
+I usually copy-paste it into a temporary file and then format that
+(removing the leading `//! `) the annoying thing is that you then want
+to align it to 96 columns. The way I do it is by wrapping the code in a
+`mod tmp {}`, since that introduces 4 additional spaces. I think you
+could also directly do it in the file by just removing the prefix and
+wrapping in a module.
+
+[...]
+
+>>> +impl<T: Operations> GenDisk<T, Initialized> {
+>>> +    /// Register the device with the kernel. When this function return=
+s, the
+>>> +    /// device is accessible from VFS. The kernel may issue reads to t=
+he device
+>>> +    /// during registration to discover partition information.
+>>> +    pub fn add(self) -> Result<GenDisk<T, Added>> {
+>>> +        crate::error::to_result(
+>>> +            // SAFETY: By type invariant, `self.gendisk` points to a v=
+alid and
+>>> +            // initialized instance of `struct gendisk`
+>>> +            unsafe {
+>>> +                bindings::device_add_disk(
+>>> +                    core::ptr::null_mut(),
+>>> +                    self.gendisk,
+>>> +                    core::ptr::null_mut(),
+>>> +                )
+>>> +            },
+>>> +        )?;
+>>> +
+>>> +        // We don't want to run the destuctor and remove the device fr=
+om the VFS
+>>> +        // when `disk` is dropped.
+>>> +        let mut old =3D core::mem::ManuallyDrop::new(self);
+>>> +
+>>> +        let new =3D GenDisk {
+>>> +            _tagset: old._tagset.clone(),
+>>> +            gendisk: old.gendisk,
+>>> +            _phantom: PhantomData,
+>>> +        };
+>>> +
+>>> +        // But we have to drop the `Arc` or it will leak.
+>>> +        // SAFETY: `old._tagset` is valid for write, aligned, non-null=
+, and we
+>>> +        // have exclusive access. We are not accessing the value again=
+ after it
+>>> +        // is dropped.
+>>> +        unsafe { core::ptr::drop_in_place(&mut old._tagset) };
+>>> +
+>>> +        Ok(new)
+>>
+>> Instead of using `ManuallyDrop` and `drop_in_place` why not use
+>> `transmute`? I feel like that would be a lot simpler.
+>=20
+> I was considering the layout not being deterministic for `repr(Rust)`. I
+> think that in practice it will be the case that the two types will have
+> the same layout, but I could not find the documentation that states
+> this. Nomicon does not talk about zero sized types [2].
+
+Ah I forgot about this issue... You are absolutely correct that we do
+not get the guarantee for `repr(Rust)`.
+
+[...]
+
+>>> +/// Implement this trait to interface blk-mq as block devices.
+>>> +///
+>>> +/// To implement a block device driver, implement this trait as descri=
+bed in the
+>>> +/// [module level documentation]. The kernel will use the implementati=
+on of the
+>>> +/// functions defined in this trait to interface a block device driver=
+ Note:
+>>> +/// There is no need for an exit_request() implementation, because the=
+ `drop`
+>>> +/// implementation of the [`Request`] type will be invoked by automati=
+cally by
+>>> +/// the C/Rust glue logic.
+>>
+>> This text is wrapped to 80 columns, but our usual wrapping is 100.
+>=20
+> This had me scratch my head for a bit. I run `make rustfmt` and `make
+> rustfmtcheck`, so I had no idea why my code would be formatted
+> incorrect. It took me a while to figure out that we are not enabling
+> `comment_width =3D 100`, presumably because it is an unstable `rustfmt`
+> feature.
+
+Yeah, Alice also ran into this issue.
+
+> I am not sure what the correct way to enable it but I hacked
+> the Makefile and enabled it. It gives a huge diff all across the kernel
+> crate.
+
+Oh I did not notice...
+
+> So, it seems we _are_ in fact using 80 line fill column, since that is
+> what much of our existing code is using, and that is what the build
+> system is configured to use.
+>=20
+> Where did you come across the 100 character fill column?
+
+Well, my editor is configured to wrap at the 100th column including
+comments. I don't know why we have so many comment blocks at 80 columns.
+
+> Anyways, we should configure our tools to the standard we want. I don't
+> care if it's 80 or 100, as long as I can have the tools do the job for
+> me.
+
+Agreed.
+
+> Let's discuss this at next meeting.
+>=20
+>>
+>>> +///
+>>> +/// [module level documentation]: kernel::block::mq
+>>> +#[macros::vtable]
+>>> +pub trait Operations: Sized {
+>>> +    /// Called by the kernel to queue a request with the driver. If `i=
+s_last` is
+>>> +    /// `false`, the driver is allowed to defer committing the request=
+.
+>>> +    fn queue_rq(rq: ARef<Request<Self>>, is_last: bool) -> Result;
+>>> +
+>>> +    /// Called by the kernel to indicate that queued requests should b=
+e submitted.
+>>> +    fn commit_rqs();
+>>> +
+>>> +    /// Called by the kernel when the request is completed.
+>>> +    fn complete(_rq: ARef<Request<Self>>);
+>>
+>> Is there a reason for the `_`?
+>=20
+> Copy pasta probably. Will remove.
+>=20
+>>
+>> To me it seems this is called when the given request is already done, so
+>> would it make more sense to name it `completed` or `on_completion`?
+>=20
+> I would agree. But we had a bit of discussion at LSF about naming things
+> differently in Rust vs C. C people prefer if we keep the C names, even
+> if they do not make sense to the people who write the new Rust code.
+
+That makes sense. In that case, we could also probably add an additional
+note to the function that the name might be a bit misleading. In the
+sense that it sounds like "here is a request, please complete it"
+instead of "here is a request that was just completed".
+
+> In C, the vtable entry is called `complete_callback` and the called
+> symbol is usually `my_driver_complete_rq`.
+>=20
+> We could go with `completed`, `completed_callback`, or `complete_rq`.
+> Although `completed` sounds like it should return a bool indicating
+> whether the request was already completed.
+>=20
+> I think I'll leave it for now, and we can always change it if we come up
+> with a really good name.
+
+[...]
+
+>>> diff --git a/rust/kernel/block/mq/raw_writer.rs b/rust/kernel/block/mq/=
+raw_writer.rs
+>>> new file mode 100644
+>>> index 000000000000..4f7e4692b592
+>>> --- /dev/null
+>>> +++ b/rust/kernel/block/mq/raw_writer.rs
+>>> @@ -0,0 +1,55 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +use core::fmt::{self, Write};
+>>> +
+>>> +use crate::error::Result;
+>>> +use crate::prelude::EINVAL;
+>>> +
+>>> +/// A mutable reference to a byte buffer where a string can be written=
+ into.
+>>> +///
+>>> +/// # Invariants
+>>> +///
+>>> +/// `buffer` is always null terminated.
+>>
+>> I don't know how valuable this would be, but you could only ask for this
+>> invariant, if `buffer` is non-empty. Then you could have the `new` and
+>> `from_array` functions return a `RawWriter` without result.
+>=20
+> I think guaranteeing at least a null character is always written by
+> `write_str` is a good thing. It is used for writing C strings to device
+> name fields. `write_str` with a zero size buffer would give undesirable
+> results, and is probably not what the caller wants.
+
+Makes sense.
+
+[...]
+
+>>> +    /// Notify the block layer that the request has been completed wit=
+hout errors.
+>>> +    ///
+>>> +    /// This function will return `Err` if `this` is not the only `ARe=
+f`
+>>> +    /// referencing the request.
+>>> +    pub fn end_ok(this: ARef<Self>) -> Result<(), ARef<Self>> {
+>>
+>> I am not yet fully convinced that this is the way we should go. I think
+>> I would have to see a more complex usage of `Request` with that id <->
+>> request mapping that you mentioned. Because with how rnull uses this
+>> API, it could also have a `URef<Self>` parameter (URef :=3D unique ARef)=
+.
+>=20
+> I considered a `UniqueARef` but it would just move the error handing to
+> `ARef::into_unique` and then make `end_ok` infallible.
+>=20
+> There are four states for a request that we need to track:
+>=20
+> A) Request is owned by block layer (refcount 0)
+> B) Request is owned by driver but with zero `ARef`s in existence
+>    (refcount 1)
+> C) Request is owned by driver with exactly one `ARef` in existence
+>    (refcount 2)
+> D) Request is owned by driver with more than one `ARef` in existence
+>    (refcount > 2)
+>=20
+> It is in the doc comments for `RequestDataWrapper` as well.
+>=20
+> We need A and B to ensure we fail tag to request conversions for
+> requests that are not owned by the driver.
+>=20
+> We need C and D to ensure that it is safe to end the request and hand bac=
+k
+> ownership to the block layer.
+>=20
+> I will ping you when I hook up the NVMe driver with this.
+
+Thanks. I think that since the C side doesn't use ref-counting, the
+lifecycle of a request is probably rather simple. Therefore we should
+try to also avoid refcounting in Rust and see if we can eg tie ending
+requests to the associated `TagSet` (ie require `&mut` on the tagset)
+and tie accessing requests to shared access to the `TagSet`. Then we
+would be able to avoid the refcount. But I will first have to take a
+look at the nvme driver to gauge the plausibility.
+
+>>> +        let this =3D Self::try_set_end(this)?;
+>>> +        let request_ptr =3D this.0.get();
+>>> +        core::mem::forget(this);
+>>
+>> Would be a good idea to mention who is going to own this refcount.
+>=20
+> The refcount is zero after `try_set_end`, so there is no owner of the
+> count. The request will be in state A and thus block layer owns the
+> request. Block layer does not honor this refcount, it is only for the
+> driver to know.
+>=20
+> Perhaps I should move the explanation up into the docs for `Request`.
+
+It wouldn't hurt to have the above as a comment :)
+
+>>> +
+>>> +        // SAFETY: By type invariant, `self.0` is a valid `struct requ=
+est`. By
+>>> +        // existence of `&mut self` we have exclusive access.
+>>> +        unsafe { bindings::blk_mq_end_request(request_ptr, bindings::B=
+LK_STS_OK as _) };
+>>> +
+>>> +        Ok(())
+>>> +    }
+>>> +
+>>> +    /// Return a pointer to the `RequestDataWrapper` stored in the pri=
+vate area
+>>> +    /// of the request structure.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// - `this` must point to a valid allocation.
+>>> +    pub(crate) unsafe fn wrapper_ptr(this: *mut Self) -> NonNull<Reque=
+stDataWrapper> {
+>>> +        let request_ptr =3D this.cast::<bindings::request>();
+>>> +        let wrapper_ptr =3D
+>>> +            // SAFETY: By safety requirements for this function, `this=
+` is a
+>>> +            // valid allocation.
+>>> +            unsafe { bindings::blk_mq_rq_to_pdu(request_ptr).cast::<Re=
+questDataWrapper>() };
+>>> +        // SAFETY: By C api contract, wrapper_ptr points to a valid al=
+location
+>>> +        // and is not null.
+>>> +        unsafe { NonNull::new_unchecked(wrapper_ptr) }
+>>> +    }
+>>> +
+>>> +    /// Return a reference to the `RequestDataWrapper` stored in the p=
+rivate
+>>> +    /// area of the request structure.
+>>> +    pub(crate) fn wrapper_ref(&self) -> &RequestDataWrapper {
+>>> +        // SAFETY: By type invariant, `self.0` is a valid alocation. F=
+urther,
+>>> +        // the private data associated with this request is initialize=
+d and
+>>> +        // valid. The existence of `&self` guarantees that the private=
+ data is
+>>> +        // valid as a shared reference.
+>>> +        unsafe { Self::wrapper_ptr(self as *const Self as *mut Self).a=
+s_ref() }
+>>> +    }
+>>> +}
+>>> +
+>>> +/// A wrapper around data stored in the private area of the C `struct =
+request`.
+>>> +pub(crate) struct RequestDataWrapper {
+>>
+>> Why is this called `Wrapper`? It doesn't really wrap anything,
+>> `RequestData` seems fine.
+>=20
+> It will eventually wrap private data associated with the request. Those
+> patches will be submitted later. Should I change the name in the
+> meanwhile?
+
+I don't think the churn of the name change is worth it, so keep the
+wrapper name.
+
+>>> +    /// The Rust request refcount has the following states:
+>>> +    ///
+>>> +    /// - 0: The request is owned by C block layer.
+>>> +    /// - 1: The request is owned by Rust abstractions but there are n=
+o ARef references to it.
+>>> +    /// - 2+: There are `ARef` references to the request.
+>>> +    refcount: AtomicU64,
+>>> +}
+>>> +
+>>> +impl RequestDataWrapper {
+>>> +    /// Return a reference to the refcount of the request that is embe=
+dding
+>>> +    /// `self`.
+>>> +    pub(crate) fn refcount(&self) -> &AtomicU64 {
+>>> +        &self.refcount
+>>> +    }
+>>> +
+>>> +    /// Return a pointer to the refcount of the request that is embedd=
+ing the
+>>> +    /// pointee of `this`.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// - `this` must point to a live allocation of at least the size =
+of `Self`.
+>>> +    pub(crate) unsafe fn refcount_ptr(this: *mut Self) -> *mut AtomicU=
+64 {
+>>> +        // SAFETY: Because of the safety requirements of this function=
+, the
+>>> +        // field projection is safe.
+>>> +        unsafe { addr_of_mut!((*this).refcount) }
+>>> +    }
+>>> +}
+>>> +
+>>> +// SAFETY: Exclusive access is thread-safe for `Request`. `Request` ha=
+s no `&mut
+>>> +// self` methods and `&self` methods that mutate `self` are internally
+>>> +// synchronzied.
+>>> +unsafe impl<T: Operations> Send for Request<T> {}
+>>> +
+>>> +// SAFETY: Shared access is thread-safe for `Request`. `&self` methods=
+ that
+>>> +// mutate `self` are internally synchronized`
+>>> +unsafe impl<T: Operations> Sync for Request<T> {}
+>>> +
+>>> +/// Store the result of `op(target.load())` in target, returning new v=
+alue of
+>>> +/// taret.
+>>> +fn atomic_relaxed_op_return(target: &AtomicU64, op: impl Fn(u64) -> u6=
+4) -> u64 {
+>>> +    let mut old =3D target.load(Ordering::Relaxed);
+>>> +    loop {
+>>> +        match target.compare_exchange_weak(old, op(old), Ordering::Rel=
+axed, Ordering::Relaxed) {
+>>> +            Ok(_) =3D> break,
+>>> +            Err(x) =3D> {
+>>> +                old =3D x;
+>>> +            }
+>>> +        }
+>>> +    }
+>>
+>> This seems like a reimplementation of `AtomicU64::fetch_update` to me.
+>=20
+> It looks like it! Except this function is returning the updated value,
+> `fetch_update` is returning the old value.
+>=20
+> Would you rather that I rewrite in terms of the library function?
+
+If you can just use the fetch_update function, then that would be better
+than (almost) reimplementing it. But if you really need to get the new
+value, then I guess it can't really be helped. (or do you think you can
+just apply `op` to the old value returned by `fetch_update`?)
+
+>>> +
+>>> +    op(old)
+>>> +}
+>>> +
+>>> +/// Store the result of `op(target.load)` in `target` if `target.load(=
+) !=3D
+>>> +/// pred`, returning previous value of target
+>>> +fn atomic_relaxed_op_unless(target: &AtomicU64, op: impl Fn(u64) -> u6=
+4, pred: u64) -> bool {
+>>> +    let x =3D target.load(Ordering::Relaxed);
+>>> +    loop {
+>>> +        if x =3D=3D pred {
+>>> +            break;
+>>> +        }
+>>> +        if target
+>>> +            .compare_exchange_weak(x, op(x), Ordering::Relaxed, Orderi=
+ng::Relaxed)
+>>> +            .is_ok()
+>>> +        {
+>>> +            break;
+>>> +        }
+>>> +    }
+>>> +
+>>> +    x =3D=3D pred
+>>> +}
+>>> +
+>>> +// SAFETY: All instances of `Request<T>` are reference counted. This
+>>> +// implementation of `AlwaysRefCounted` ensure that increments to the =
+ref count
+>>> +// keeps the object alive in memory at least until a matching referenc=
+e count
+>>> +// decrement is executed.
+>>> +unsafe impl<T: Operations> AlwaysRefCounted for Request<T> {
+>>> +    fn inc_ref(&self) {
+>>> +        let refcount =3D &self.wrapper_ref().refcount();
+>>> +
+>>> +        #[cfg_attr(not(CONFIG_DEBUG_MISC), allow(unused_variables))]
+>>
+>> Another option would be to use `_updated` as the name of the variable. I
+>> personally would prefer that. What do you guys think?
+>=20
+> Either way is fine by me.
+>=20
+> [...]
+>=20
+>>> diff --git a/rust/kernel/block/mq/tag_set.rs b/rust/kernel/block/mq/tag=
+_set.rs
+>>> new file mode 100644
+>>> index 000000000000..4217c2b03ff3
+>>> --- /dev/null
+>>> +++ b/rust/kernel/block/mq/tag_set.rs
+>>> @@ -0,0 +1,93 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +//! This module provides the `TagSet` struct to wrap the C `struct blk=
+_mq_tag_set`.
+>>> +//!
+>>> +//! C header: [`include/linux/blk-mq.h`](srctree/include/linux/blk-mq.=
+h)
+>>> +
+>>> +use core::pin::Pin;
+>>> +
+>>> +use crate::{
+>>> +    bindings,
+>>> +    block::mq::request::RequestDataWrapper,
+>>> +    block::mq::{operations::OperationsVTable, Operations},
+>>> +    error::{self, Error, Result},
+>>> +    prelude::PinInit,
+>>> +    try_pin_init,
+>>> +    types::Opaque,
+>>> +};
+>>> +use core::{convert::TryInto, marker::PhantomData};
+>>> +use macros::{pin_data, pinned_drop};
+>>> +
+>>> +/// A wrapper for the C `struct blk_mq_tag_set`.
+>>> +///
+>>> +/// `struct blk_mq_tag_set` contains a `struct list_head` and so must =
+be pinned.
+>>> +#[pin_data(PinnedDrop)]
+>>> +#[repr(transparent)]
+>>> +pub struct TagSet<T: Operations> {
+>>> +    #[pin]
+>>> +    inner: Opaque<bindings::blk_mq_tag_set>,
+>>> +    _p: PhantomData<T>,
+>>> +}
+>>> +
+>>> +impl<T: Operations> TagSet<T> {
+>>> +    /// Try to create a new tag set
+>>> +    pub fn try_new(
+>>> +        nr_hw_queues: u32,
+>>> +        num_tags: u32,
+>>> +        num_maps: u32,
+>>> +    ) -> impl PinInit<Self, error::Error> {
+>>> +        try_pin_init!( TagSet {
+>>> +            inner <- unsafe {kernel::init::pin_init_from_closure(move =
+|place: *mut Opaque<bindings::blk_mq_tag_set>| -> Result<()> {
+>>
+>> We currently do not have `Opaque::try_ffi_init`, I vaguely remember that
+>> we talked about it. Do you mind adding it? Otherwise I can also send a
+>> patch.
+>=20
+> I have a `try_ffi_init` patch queued. I removed it from here to cut
+> dependencies. I will submit it soon after this is in.
+>=20
+>>
+>>> +                let place =3D place.cast::<bindings::blk_mq_tag_set>()=
+;
+>>> +
+>>> +                // SAFETY: try_ffi_init promises that `place` is writa=
+ble, and
+>>> +                // zeroes is a valid bit pattern for this structure.
+>>> +                core::ptr::write_bytes(place, 0, 1);
+>>> +
+>>> +                /// For a raw pointer to a struct, write a struct fiel=
+d without
+>>> +                /// creating a reference to the field
+>>> +                macro_rules! write_ptr_field {
+>>> +                    ($target:ident, $field:ident, $value:expr) =3D> {
+>>> +                        ::core::ptr::write(::core::ptr::addr_of_mut!((=
+*$target).$field), $value)
+>>> +                    };
+>>> +                }
+>>> +
+>>> +                // SAFETY: try_ffi_init promises that `place` is writa=
+ble
+>>> +                    write_ptr_field!(place, ops, OperationsVTable::<T>=
+::build());
+>>> +                    write_ptr_field!(place, nr_hw_queues , nr_hw_queue=
+s);
+>>> +                    write_ptr_field!(place, timeout , 0); // 0 means d=
+efault which is 30 * HZ in C
+>>> +                    write_ptr_field!(place, numa_node , bindings::NUMA=
+_NO_NODE);
+>>> +                    write_ptr_field!(place, queue_depth , num_tags);
+>>> +                    write_ptr_field!(place, cmd_size , core::mem::size=
+_of::<RequestDataWrapper>().try_into()?);
+>>> +                    write_ptr_field!(place, flags , bindings::BLK_MQ_F=
+_SHOULD_MERGE);
+>>> +                    write_ptr_field!(place, driver_data , core::ptr::n=
+ull_mut::<core::ffi::c_void>());
+>>> +                    write_ptr_field!(place, nr_maps , num_maps);
+>>
+>> I think that there is some way for pinned-init to do a better job here.
+>> I feel like we ought to be able to just write:
+>>
+>>     Opaque::init(
+>>         try_init!(bindings::blk_mq_tag_set {
+>>             ops: OperationsVTable::<T>::build(),
+>>             nr_hw_queues,
+>>             timeout: 0, // 0 means default, which is 30Hz
+>>             numa_node: bindings::NUMA_NO_NODE,
+>>             queue_depth: num_tags,
+>>             cmd_size: size_of::<RequestDataWrapper>().try_into()?,
+>>             flags: bindings::BLK_MQ_F_SHOULD_MERGE,
+>>             driver_data: null_mut(),
+>>             nr_maps: num_maps,
+>>             ..Zeroable::zeroed()
+>>         }? Error)
+>>         .chain(|tag_set| to_result(bindings::blk_mq_alloc_tag_set(tag_se=
+t)))
+>>     )
+>>
+>> But we don't have `Opaque::init` (shouldn't be difficult) and
+>> `bindings::blk_mq_tag_set` doesn't implement `Zeroable`. We would need
+>> bindgen to put `derive(Zeroable)` on certain structs...
+>>
+>> Another option would be to just list the fields explicitly, since there
+>> aren't that many. What do you think?
+>=20
+> Both options sound good. Ofc the first one sounds more user friendly
+> while the latter one sounds easier to implement. Getting rid of the
+> unsafe blocks here would be really nice.
+
+I think since it is not that expensive in this case, you should go for
+the second approach.
+We can fix it later, when we get the proper bindgen support.
+
 ---
- tools/testing/selftests/kvm/Makefile          |   1 +
- .../selftests/kvm/access_tracking_perf_test.c | 365 ++++++++++++++--
- .../selftests/kvm/include/lru_gen_util.h      |  55 +++
- .../testing/selftests/kvm/lib/lru_gen_util.c  | 391 ++++++++++++++++++
- 4 files changed, 782 insertions(+), 30 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/include/lru_gen_util.h
- create mode 100644 tools/testing/selftests/kvm/lib/lru_gen_util.c
+Cheers,
+Benno
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index ce8ff8e8ce3a..86415f524c48 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -22,6 +22,7 @@ LIBKVM += lib/elf.c
- LIBKVM += lib/guest_modes.c
- LIBKVM += lib/io.c
- LIBKVM += lib/kvm_util.c
-+LIBKVM += lib/lru_gen_util.c
- LIBKVM += lib/memstress.c
- LIBKVM += lib/guest_sprintf.c
- LIBKVM += lib/rbtree.c
-diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-index 3c7defd34f56..15be99ff3bdc 100644
---- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
-+++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-@@ -38,6 +38,7 @@
- #include <inttypes.h>
- #include <limits.h>
- #include <pthread.h>
-+#include <stdio.h>
- #include <sys/mman.h>
- #include <sys/types.h>
- #include <sys/stat.h>
-@@ -47,6 +48,20 @@
- #include "memstress.h"
- #include "guest_modes.h"
- #include "processor.h"
-+#include "lru_gen_util.h"
-+
-+static const char *TEST_MEMCG_NAME = "access_tracking_perf_test";
-+static const int LRU_GEN_ENABLED = 0x1;
-+static const int LRU_GEN_MM_WALK = 0x2;
-+static const int LRU_GEN_SECONDARY_MMU_WALK = 0x8;
-+static const char *CGROUP_PROCS = "cgroup.procs";
-+/*
-+ * If using MGLRU, this test assumes a cgroup v2 or cgroup v1 memory hierarchy
-+ * is mounted at cgroup_root.
-+ *
-+ * Can be changed with -r.
-+ */
-+static const char *cgroup_root = "/sys/fs/cgroup";
- 
- /* Global variable used to synchronize all of the vCPU threads. */
- static int iteration;
-@@ -62,6 +77,9 @@ static enum {
- /* The iteration that was last completed by each vCPU. */
- static int vcpu_last_completed_iteration[KVM_MAX_VCPUS];
- 
-+/* The time at which the last iteration was completed */
-+static struct timespec vcpu_last_completed_time[KVM_MAX_VCPUS];
-+
- /* Whether to overlap the regions of memory vCPUs access. */
- static bool overlap_memory_access;
- 
-@@ -74,6 +92,12 @@ struct test_params {
- 
- 	/* The number of vCPUs to create in the VM. */
- 	int nr_vcpus;
-+
-+	/* Whether to use lru_gen aging instead of idle page tracking. */
-+	bool lru_gen;
-+
-+	/* Whether to test the performance of aging itself. */
-+	bool benchmark_lru_gen;
- };
- 
- static uint64_t pread_uint64(int fd, const char *filename, uint64_t index)
-@@ -89,6 +113,50 @@ static uint64_t pread_uint64(int fd, const char *filename, uint64_t index)
- 
- }
- 
-+static void write_file_long(const char *path, long v)
-+{
-+	FILE *f;
-+
-+	f = fopen(path, "w");
-+	TEST_ASSERT(f, "fopen(%s) failed", path);
-+	TEST_ASSERT(fprintf(f, "%ld\n", v) > 0,
-+		    "fprintf to %s failed", path);
-+	TEST_ASSERT(!fclose(f), "fclose(%s) failed", path);
-+}
-+
-+static char *path_join(const char *parent, const char *child)
-+{
-+	char *out = NULL;
-+
-+	return asprintf(&out, "%s/%s", parent, child) >= 0 ? out : NULL;
-+}
-+
-+static char *memcg_path(const char *memcg)
-+{
-+	return path_join(cgroup_root, memcg);
-+}
-+
-+static char *memcg_file_path(const char *memcg, const char *file)
-+{
-+	char *mp = memcg_path(memcg);
-+	char *fp;
-+
-+	if (!mp)
-+		return NULL;
-+	fp = path_join(mp, file);
-+	free(mp);
-+	return fp;
-+}
-+
-+static void move_to_memcg(const char *memcg, pid_t pid)
-+{
-+	char *procs = memcg_file_path(memcg, CGROUP_PROCS);
-+
-+	TEST_ASSERT(procs, "Failed to construct cgroup.procs path");
-+	write_file_long(procs, pid);
-+	free(procs);
-+}
-+
- #define PAGEMAP_PRESENT (1ULL << 63)
- #define PAGEMAP_PFN_MASK ((1ULL << 55) - 1)
- 
-@@ -242,6 +310,8 @@ static void vcpu_thread_main(struct memstress_vcpu_args *vcpu_args)
- 		};
- 
- 		vcpu_last_completed_iteration[vcpu_idx] = current_iteration;
-+		clock_gettime(CLOCK_MONOTONIC,
-+			      &vcpu_last_completed_time[vcpu_idx]);
- 	}
- }
- 
-@@ -253,38 +323,68 @@ static void spin_wait_for_vcpu(int vcpu_idx, int target_iteration)
- 	}
- }
- 
-+static bool all_vcpus_done(int target_iteration, int nr_vcpus)
-+{
-+	for (int i = 0; i < nr_vcpus; ++i)
-+		if (READ_ONCE(vcpu_last_completed_iteration[i]) !=
-+		    target_iteration)
-+			return false;
-+
-+	return true;
-+}
-+
- /* The type of memory accesses to perform in the VM. */
- enum access_type {
- 	ACCESS_READ,
- 	ACCESS_WRITE,
- };
- 
--static void run_iteration(struct kvm_vm *vm, int nr_vcpus, const char *description)
-+static void run_iteration(struct kvm_vm *vm, int nr_vcpus, const char *description,
-+			  bool wait)
- {
--	struct timespec ts_start;
--	struct timespec ts_elapsed;
- 	int next_iteration, i;
- 
- 	/* Kick off the vCPUs by incrementing iteration. */
- 	next_iteration = ++iteration;
- 
--	clock_gettime(CLOCK_MONOTONIC, &ts_start);
--
- 	/* Wait for all vCPUs to finish the iteration. */
--	for (i = 0; i < nr_vcpus; i++)
--		spin_wait_for_vcpu(i, next_iteration);
-+	if (wait) {
-+		struct timespec ts_start;
-+		struct timespec ts_elapsed;
-+
-+		clock_gettime(CLOCK_MONOTONIC, &ts_start);
- 
--	ts_elapsed = timespec_elapsed(ts_start);
--	pr_info("%-30s: %ld.%09lds\n",
--		description, ts_elapsed.tv_sec, ts_elapsed.tv_nsec);
-+		for (i = 0; i < nr_vcpus; i++)
-+			spin_wait_for_vcpu(i, next_iteration);
-+
-+		ts_elapsed = timespec_elapsed(ts_start);
-+
-+		pr_info("%-30s: %ld.%09lds\n",
-+			description, ts_elapsed.tv_sec, ts_elapsed.tv_nsec);
-+	} else
-+		pr_info("%-30s\n", description);
- }
- 
--static void access_memory(struct kvm_vm *vm, int nr_vcpus,
--			  enum access_type access, const char *description)
-+static void _access_memory(struct kvm_vm *vm, int nr_vcpus,
-+			   enum access_type access, const char *description,
-+			   bool wait)
- {
- 	memstress_set_write_percent(vm, (access == ACCESS_READ) ? 0 : 100);
- 	iteration_work = ITERATION_ACCESS_MEMORY;
--	run_iteration(vm, nr_vcpus, description);
-+	run_iteration(vm, nr_vcpus, description, wait);
-+}
-+
-+static void access_memory(struct kvm_vm *vm, int nr_vcpus,
-+			  enum access_type access, const char *description)
-+{
-+	return _access_memory(vm, nr_vcpus, access, description, true);
-+}
-+
-+static void access_memory_async(struct kvm_vm *vm, int nr_vcpus,
-+				enum access_type access,
-+				const char *description)
-+{
-+	return _access_memory(vm, nr_vcpus, access, description, false);
- }
- 
- static void mark_memory_idle(struct kvm_vm *vm, int nr_vcpus)
-@@ -297,19 +397,111 @@ static void mark_memory_idle(struct kvm_vm *vm, int nr_vcpus)
- 	 */
- 	pr_debug("Marking VM memory idle (slow)...\n");
- 	iteration_work = ITERATION_MARK_IDLE;
--	run_iteration(vm, nr_vcpus, "Mark memory idle");
-+	run_iteration(vm, nr_vcpus, "Mark memory idle", true);
- }
- 
--static void run_test(enum vm_guest_mode mode, void *arg)
-+static void create_memcg(const char *memcg)
-+{
-+	const char *full_memcg_path = memcg_path(memcg);
-+	int ret;
-+
-+	TEST_ASSERT(full_memcg_path, "Failed to construct full memcg path");
-+retry:
-+	ret = mkdir(full_memcg_path, 0755);
-+	if (ret && errno == EEXIST) {
-+		TEST_ASSERT(!rmdir(full_memcg_path),
-+			    "Found existing memcg at %s, but rmdir failed",
-+			    full_memcg_path);
-+		goto retry;
-+	}
-+	TEST_ASSERT(!ret, "Creating the memcg failed: mkdir(%s) failed",
-+		    full_memcg_path);
-+
-+	pr_info("Created memcg at %s\n", full_memcg_path);
-+}
-+
-+/*
-+ * Test lru_gen aging speed while vCPUs are faulting memory in.
-+ *
-+ * This test will run lru_gen aging until the vCPUs have finished all of
-+ * the faulting work, reporting:
-+ *  - vcpu wall time (wall time for slowest vCPU)
-+ *  - average aging pass duration
-+ *  - total number of aging passes
-+ *  - total time spent aging
-+ *
-+ * This test produces the most useful results when the vcpu wall time and the
-+ * total time spent aging are similar (i.e., we want to avoid timing aging
-+ * while the vCPUs aren't doing any work).
-+ */
-+static void run_benchmark(enum vm_guest_mode mode, struct kvm_vm *vm,
-+			  struct test_params *params)
- {
--	struct test_params *params = arg;
--	struct kvm_vm *vm;
- 	int nr_vcpus = params->nr_vcpus;
-+	struct memcg_stats stats;
-+	struct timespec ts_start, ts_max, ts_vcpus_elapsed,
-+			ts_aging_elapsed, ts_aging_elapsed_avg;
-+	int num_passes = 0;
- 
--	vm = memstress_create_vm(mode, nr_vcpus, params->vcpu_memory_bytes, 1,
--				 params->backing_src, !overlap_memory_access);
-+	printf("Running lru_gen benchmark...\n");
- 
--	memstress_start_vcpu_threads(nr_vcpus, vcpu_thread_main);
-+	clock_gettime(CLOCK_MONOTONIC, &ts_start);
-+	access_memory_async(vm, nr_vcpus, ACCESS_WRITE,
-+			    "Populating memory (async)");
-+	while (!all_vcpus_done(iteration, nr_vcpus)) {
-+		lru_gen_do_aging_quiet(&stats, TEST_MEMCG_NAME);
-+		++num_passes;
-+	}
-+
-+	ts_aging_elapsed = timespec_elapsed(ts_start);
-+	ts_aging_elapsed_avg = timespec_div(ts_aging_elapsed, num_passes);
-+
-+	/* Find out when the slowest vCPU finished. */
-+	ts_max = ts_start;
-+	for (int i = 0; i < nr_vcpus; ++i) {
-+		struct timespec *vcpu_ts = &vcpu_last_completed_time[i];
-+
-+		if (ts_max.tv_sec < vcpu_ts->tv_sec ||
-+		    (ts_max.tv_sec == vcpu_ts->tv_sec  &&
-+		     ts_max.tv_nsec < vcpu_ts->tv_nsec))
-+			ts_max = *vcpu_ts;
-+	}
-+
-+	ts_vcpus_elapsed = timespec_sub(ts_max, ts_start);
-+
-+	pr_info("%-30s: %ld.%09lds\n", "vcpu wall time",
-+		ts_vcpus_elapsed.tv_sec, ts_vcpus_elapsed.tv_nsec);
-+
-+	pr_info("%-30s: %ld.%09lds, (passes:%d, total:%ld.%09lds)\n",
-+		"lru_gen avg pass duration",
-+		ts_aging_elapsed_avg.tv_sec,
-+		ts_aging_elapsed_avg.tv_nsec,
-+		num_passes,
-+		ts_aging_elapsed.tv_sec,
-+		ts_aging_elapsed.tv_nsec);
-+}
-+
-+/*
-+ * Test how much access tracking affects vCPU performance.
-+ *
-+ * Supports two modes of access tracking:
-+ * - idle page tracking
-+ * - lru_gen aging
-+ *
-+ * When using lru_gen, this test additionally verifies that the pages are in
-+ * fact getting younger and older, otherwise the performance data would be
-+ * invalid.
-+ *
-+ * The forced lru_gen aging can race with aging that occurs naturally.
-+ */
-+static void run_test(enum vm_guest_mode mode, struct kvm_vm *vm,
-+		     struct test_params *params)
-+{
-+	int nr_vcpus = params->nr_vcpus;
-+	bool lru_gen = params->lru_gen;
-+	struct memcg_stats stats;
-+	long total_pages = nr_vcpus * params->vcpu_memory_bytes / getpagesize();
-+	int found_gens[5];
- 
- 	pr_info("\n");
- 	access_memory(vm, nr_vcpus, ACCESS_WRITE, "Populating memory");
-@@ -319,11 +511,83 @@ static void run_test(enum vm_guest_mode mode, void *arg)
- 	access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from populated memory");
- 
- 	/* Repeat on memory that has been marked as idle. */
--	mark_memory_idle(vm, nr_vcpus);
-+	if (lru_gen) {
-+		/* Do an initial page table scan */
-+		lru_gen_do_aging(&stats, TEST_MEMCG_NAME);
-+		TEST_ASSERT(sum_memcg_stats(&stats) >= total_pages,
-+		  "Not all pages tracked in lru_gen stats.\n"
-+		  "Is lru_gen enabled? Did the memcg get created properly?");
-+
-+		/* Find the generation we're currently in (probably youngest) */
-+		found_gens[0] = lru_gen_find_generation(&stats, total_pages);
-+
-+		/* Do an aging pass now */
-+		lru_gen_do_aging(&stats, TEST_MEMCG_NAME);
-+
-+		/* Same generation, but a newer generation has been made */
-+		found_gens[1] = lru_gen_find_generation(&stats, total_pages);
-+		TEST_ASSERT(found_gens[1] == found_gens[0],
-+			    "unexpected gen change: %d vs. %d",
-+			    found_gens[1], found_gens[0]);
-+	} else
-+		mark_memory_idle(vm, nr_vcpus);
-+
- 	access_memory(vm, nr_vcpus, ACCESS_WRITE, "Writing to idle memory");
--	mark_memory_idle(vm, nr_vcpus);
-+
-+	if (lru_gen) {
-+		/* Scan the page tables again */
-+		lru_gen_do_aging(&stats, TEST_MEMCG_NAME);
-+
-+		/* The pages should now be young again, so in a newer generation */
-+		found_gens[2] = lru_gen_find_generation(&stats, total_pages);
-+		TEST_ASSERT(found_gens[2] > found_gens[1],
-+			    "pages did not get younger");
-+
-+		/* Do another aging pass */
-+		lru_gen_do_aging(&stats, TEST_MEMCG_NAME);
-+
-+		/* Same generation; new generation has been made */
-+		found_gens[3] = lru_gen_find_generation(&stats, total_pages);
-+		TEST_ASSERT(found_gens[3] == found_gens[2],
-+			    "unexpected gen change: %d vs. %d",
-+			    found_gens[3], found_gens[2]);
-+	} else
-+		mark_memory_idle(vm, nr_vcpus);
-+
- 	access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from idle memory");
- 
-+	if (lru_gen) {
-+		/* Scan the pages tables again */
-+		lru_gen_do_aging(&stats, TEST_MEMCG_NAME);
-+
-+		/* The pages should now be young again, so in a newer generation */
-+		found_gens[4] = lru_gen_find_generation(&stats, total_pages);
-+		TEST_ASSERT(found_gens[4] > found_gens[3],
-+			    "pages did not get younger");
-+	}
-+}
-+
-+static void setup_vm_and_run(enum vm_guest_mode mode, void *arg)
-+{
-+	struct test_params *params = arg;
-+	int nr_vcpus = params->nr_vcpus;
-+	struct kvm_vm *vm;
-+
-+	if (params->lru_gen) {
-+		create_memcg(TEST_MEMCG_NAME);
-+		move_to_memcg(TEST_MEMCG_NAME, getpid());
-+	}
-+
-+	vm = memstress_create_vm(mode, nr_vcpus, params->vcpu_memory_bytes, 1,
-+				 params->backing_src, !overlap_memory_access);
-+
-+	memstress_start_vcpu_threads(nr_vcpus, vcpu_thread_main);
-+
-+	if (params->benchmark_lru_gen)
-+		run_benchmark(mode, vm, params);
-+	else
-+		run_test(mode, vm, params);
-+
- 	memstress_join_vcpu_threads(nr_vcpus);
- 	memstress_destroy_vm(vm);
- }
-@@ -331,8 +595,8 @@ static void run_test(enum vm_guest_mode mode, void *arg)
- static void help(char *name)
- {
- 	puts("");
--	printf("usage: %s [-h] [-m mode] [-b vcpu_bytes] [-v vcpus] [-o]  [-s mem_type]\n",
--	       name);
-+	printf("usage: %s [-h] [-m mode] [-b vcpu_bytes] [-v vcpus] [-o]"
-+	       " [-s mem_type] [-l] [-r memcg_root]\n", name);
- 	puts("");
- 	printf(" -h: Display this help message.");
- 	guest_modes_help();
-@@ -342,6 +606,9 @@ static void help(char *name)
- 	printf(" -v: specify the number of vCPUs to run.\n");
- 	printf(" -o: Overlap guest memory accesses instead of partitioning\n"
- 	       "     them into a separate region of memory for each vCPU.\n");
-+	printf(" -l: Use MGLRU aging instead of idle page tracking\n");
-+	printf(" -p: Benchmark MGLRU aging while faulting memory in\n");
-+	printf(" -r: The memory cgroup hierarchy root to use (when -l is given)\n");
- 	backing_src_help("-s");
- 	puts("");
- 	exit(0);
-@@ -353,13 +620,15 @@ int main(int argc, char *argv[])
- 		.backing_src = DEFAULT_VM_MEM_SRC,
- 		.vcpu_memory_bytes = DEFAULT_PER_VCPU_MEM_SIZE,
- 		.nr_vcpus = 1,
-+		.lru_gen = false,
-+		.benchmark_lru_gen = false,
- 	};
- 	int page_idle_fd;
- 	int opt;
- 
- 	guest_modes_append_default();
- 
--	while ((opt = getopt(argc, argv, "hm:b:v:os:")) != -1) {
-+	while ((opt = getopt(argc, argv, "hm:b:v:os:lr:p")) != -1) {
- 		switch (opt) {
- 		case 'm':
- 			guest_modes_cmdline(optarg);
-@@ -376,6 +645,15 @@ int main(int argc, char *argv[])
- 		case 's':
- 			params.backing_src = parse_backing_src_type(optarg);
- 			break;
-+		case 'l':
-+			params.lru_gen = true;
-+			break;
-+		case 'p':
-+			params.benchmark_lru_gen = true;
-+			break;
-+		case 'r':
-+			cgroup_root = strdup(optarg);
-+			break;
- 		case 'h':
- 		default:
- 			help(argv[0]);
-@@ -383,12 +661,39 @@ int main(int argc, char *argv[])
- 		}
- 	}
- 
--	page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
--	__TEST_REQUIRE(page_idle_fd >= 0,
--		       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
--	close(page_idle_fd);
-+	if (!params.lru_gen) {
-+		page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
-+		__TEST_REQUIRE(page_idle_fd >= 0,
-+			       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
-+		close(page_idle_fd);
-+	} else {
-+		int lru_gen_fd, lru_gen_debug_fd;
-+		long mglru_features;
-+		char mglru_feature_str[8] = {};
-+
-+		lru_gen_fd = open("/sys/kernel/mm/lru_gen/enabled", O_RDONLY);
-+		__TEST_REQUIRE(lru_gen_fd >= 0,
-+			       "CONFIG_LRU_GEN is not enabled");
-+		TEST_ASSERT(read(lru_gen_fd, &mglru_feature_str, 7) > 0,
-+				 "couldn't read lru_gen features");
-+		mglru_features = strtol(mglru_feature_str, NULL, 16);
-+		__TEST_REQUIRE(mglru_features & LRU_GEN_ENABLED,
-+			       "lru_gen is not enabled");
-+		__TEST_REQUIRE(mglru_features & LRU_GEN_MM_WALK,
-+			       "lru_gen does not support MM_WALK");
-+		__TEST_REQUIRE(mglru_features & LRU_GEN_SECONDARY_MMU_WALK,
-+			       "lru_gen does not support SECONDARY_MMU_WALK");
-+
-+		lru_gen_debug_fd = open(DEBUGFS_LRU_GEN, O_RDWR);
-+		__TEST_REQUIRE(lru_gen_debug_fd >= 0,
-+				"Cannot access %s", DEBUGFS_LRU_GEN);
-+		close(lru_gen_debug_fd);
-+	}
-+
-+	TEST_ASSERT(!params.benchmark_lru_gen || params.lru_gen,
-+		    "-p specified without -l");
- 
--	for_each_guest_mode(run_test, &params);
-+	for_each_guest_mode(setup_vm_and_run, &params);
- 
- 	return 0;
- }
-diff --git a/tools/testing/selftests/kvm/include/lru_gen_util.h b/tools/testing/selftests/kvm/include/lru_gen_util.h
-new file mode 100644
-index 000000000000..4eef8085a3cb
---- /dev/null
-+++ b/tools/testing/selftests/kvm/include/lru_gen_util.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Tools for integrating with lru_gen, like parsing the lru_gen debugfs output.
-+ *
-+ * Copyright (C) 2024, Google LLC.
-+ */
-+#ifndef SELFTEST_KVM_LRU_GEN_UTIL_H
-+#define SELFTEST_KVM_LRU_GEN_UTIL_H
-+
-+#include <inttypes.h>
-+#include <limits.h>
-+#include <stdlib.h>
-+
-+#include "test_util.h"
-+
-+#define MAX_NR_GENS 16 /* MAX_NR_GENS in include/linux/mmzone.h */
-+#define MAX_NR_NODES 4 /* Maximum number of nodes we support */
-+
-+static const char *DEBUGFS_LRU_GEN = "/sys/kernel/debug/lru_gen";
-+
-+struct generation_stats {
-+	int gen;
-+	long age_ms;
-+	long nr_anon;
-+	long nr_file;
-+};
-+
-+struct node_stats {
-+	int node;
-+	int nr_gens; /* Number of populated gens entries. */
-+	struct generation_stats gens[MAX_NR_GENS];
-+};
-+
-+struct memcg_stats {
-+	unsigned long memcg_id;
-+	int nr_nodes; /* Number of populated nodes entries. */
-+	struct node_stats nodes[MAX_NR_NODES];
-+};
-+
-+void print_memcg_stats(const struct memcg_stats *stats, const char *name);
-+
-+void read_memcg_stats(struct memcg_stats *stats, const char *memcg);
-+
-+void read_print_memcg_stats(struct memcg_stats *stats, const char *memcg);
-+
-+long sum_memcg_stats(const struct memcg_stats *stats);
-+
-+void lru_gen_do_aging(struct memcg_stats *stats, const char *memcg);
-+
-+void lru_gen_do_aging_quiet(struct memcg_stats *stats, const char *memcg);
-+
-+int lru_gen_find_generation(const struct memcg_stats *stats,
-+			    unsigned long total_pages);
-+
-+#endif /* SELFTEST_KVM_LRU_GEN_UTIL_H */
-diff --git a/tools/testing/selftests/kvm/lib/lru_gen_util.c b/tools/testing/selftests/kvm/lib/lru_gen_util.c
-new file mode 100644
-index 000000000000..3c02a635a9f7
---- /dev/null
-+++ b/tools/testing/selftests/kvm/lib/lru_gen_util.c
-@@ -0,0 +1,391 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2024, Google LLC.
-+ */
-+
-+#include <time.h>
-+
-+#include "lru_gen_util.h"
-+
-+/*
-+ * Tracks state while we parse memcg lru_gen stats. The file we're parsing is
-+ * structured like this (some extra whitespace elided):
-+ *
-+ * memcg (id) (path)
-+ * node (id)
-+ * (gen_nr) (age_in_ms) (nr_anon_pages) (nr_file_pages)
-+ */
-+struct memcg_stats_parse_context {
-+	bool consumed; /* Whether or not this line was consumed */
-+	/* Next parse handler to invoke */
-+	void (*next_handler)(struct memcg_stats *,
-+			     struct memcg_stats_parse_context *, char *);
-+	int current_node_idx; /* Current index in nodes array */
-+	const char *name; /* The name of the memcg we're looking for */
-+};
-+
-+static void memcg_stats_handle_searching(struct memcg_stats *stats,
-+					 struct memcg_stats_parse_context *ctx,
-+					 char *line);
-+static void memcg_stats_handle_in_memcg(struct memcg_stats *stats,
-+					struct memcg_stats_parse_context *ctx,
-+					char *line);
-+static void memcg_stats_handle_in_node(struct memcg_stats *stats,
-+				       struct memcg_stats_parse_context *ctx,
-+				       char *line);
-+
-+struct split_iterator {
-+	char *str;
-+	char *save;
-+};
-+
-+static char *split_next(struct split_iterator *it)
-+{
-+	char *ret = strtok_r(it->str, " \t\n\r", &it->save);
-+
-+	it->str = NULL;
-+	return ret;
-+}
-+
-+static void memcg_stats_handle_searching(struct memcg_stats *stats,
-+					 struct memcg_stats_parse_context *ctx,
-+					 char *line)
-+{
-+	struct split_iterator it = { .str = line };
-+	char *prefix = split_next(&it);
-+	char *memcg_id = split_next(&it);
-+	char *memcg_name = split_next(&it);
-+	char *end;
-+
-+	ctx->consumed = true;
-+
-+	if (!prefix || strcmp("memcg", prefix))
-+		return; /* Not a memcg line (maybe empty), skip */
-+
-+	TEST_ASSERT(memcg_id && memcg_name,
-+		    "malformed memcg line; no memcg id or memcg_name");
-+
-+	if (strcmp(memcg_name + 1, ctx->name))
-+		return; /* Wrong memcg, skip */
-+
-+	/* Found it! */
-+
-+	stats->memcg_id = strtoul(memcg_id, &end, 10);
-+	TEST_ASSERT(*end == '\0', "malformed memcg id '%s'", memcg_id);
-+	if (!stats->memcg_id)
-+		return; /* Removed memcg? */
-+
-+	ctx->next_handler = memcg_stats_handle_in_memcg;
-+}
-+
-+static void memcg_stats_handle_in_memcg(struct memcg_stats *stats,
-+					struct memcg_stats_parse_context *ctx,
-+					char *line)
-+{
-+	struct split_iterator it = { .str = line };
-+	char *prefix = split_next(&it);
-+	char *id = split_next(&it);
-+	long found_node_id;
-+	char *end;
-+
-+	ctx->consumed = true;
-+	ctx->current_node_idx = -1;
-+
-+	if (!prefix)
-+		return; /* Skip empty lines */
-+
-+	if (!strcmp("memcg", prefix)) {
-+		/* Memcg done, found next one; stop. */
-+		ctx->next_handler = NULL;
-+		return;
-+	} else if (strcmp("node", prefix))
-+		TEST_ASSERT(false, "found malformed line after 'memcg ...',"
-+				   "token: '%s'", prefix);
-+
-+	/* At this point we know we have a node line. Parse the ID. */
-+
-+	TEST_ASSERT(id, "malformed node line; no node id");
-+
-+	found_node_id = strtol(id, &end, 10);
-+	TEST_ASSERT(*end == '\0', "malformed node id '%s'", id);
-+
-+	ctx->current_node_idx = stats->nr_nodes++;
-+	TEST_ASSERT(ctx->current_node_idx < MAX_NR_NODES,
-+		    "memcg has stats for too many nodes, max is %d",
-+		    MAX_NR_NODES);
-+	stats->nodes[ctx->current_node_idx].node = found_node_id;
-+
-+	ctx->next_handler = memcg_stats_handle_in_node;
-+}
-+
-+static void memcg_stats_handle_in_node(struct memcg_stats *stats,
-+				       struct memcg_stats_parse_context *ctx,
-+				       char *line)
-+{
-+	/* Have to copy since we might not consume */
-+	char *my_line = strdup(line);
-+	struct split_iterator it = { .str = my_line };
-+	char *gen, *age, *nr_anon, *nr_file;
-+	struct node_stats *node_stats;
-+	struct generation_stats *gen_stats;
-+	char *end;
-+
-+	TEST_ASSERT(it.str, "failed to copy input line");
-+
-+	gen = split_next(&it);
-+
-+	/* Skip empty lines */
-+	if (!gen)
-+		goto out_consume; /* Skip empty lines */
-+
-+	if (!strcmp("memcg", gen) || !strcmp("node", gen)) {
-+		/*
-+		 * Reached next memcg or node section. Don't consume, let the
-+		 * other handler deal with this.
-+		 */
-+		ctx->next_handler = memcg_stats_handle_in_memcg;
-+		goto out;
-+	}
-+
-+	node_stats = &stats->nodes[ctx->current_node_idx];
-+	TEST_ASSERT(node_stats->nr_gens < MAX_NR_GENS,
-+		    "found too many generation lines; max is %d",
-+		    MAX_NR_GENS);
-+	gen_stats = &node_stats->gens[node_stats->nr_gens++];
-+
-+	age = split_next(&it);
-+	nr_anon = split_next(&it);
-+	nr_file = split_next(&it);
-+
-+	TEST_ASSERT(age && nr_anon && nr_file,
-+		    "malformed generation line; not enough tokens");
-+
-+	gen_stats->gen = (int)strtol(gen, &end, 10);
-+	TEST_ASSERT(*end == '\0', "malformed generation number '%s'", gen);
-+
-+	gen_stats->age_ms = strtol(age, &end, 10);
-+	TEST_ASSERT(*end == '\0', "malformed generation age '%s'", age);
-+
-+	gen_stats->nr_anon = strtol(nr_anon, &end, 10);
-+	TEST_ASSERT(*end == '\0', "malformed anonymous page count '%s'",
-+		    nr_anon);
-+
-+	gen_stats->nr_file = strtol(nr_file, &end, 10);
-+	TEST_ASSERT(*end == '\0', "malformed file page count '%s'", nr_file);
-+
-+out_consume:
-+	ctx->consumed = true;
-+out:
-+	free(my_line);
-+}
-+
-+/* Pretty-print lru_gen @stats. */
-+void print_memcg_stats(const struct memcg_stats *stats, const char *name)
-+{
-+	int node, gen;
-+
-+	fprintf(stderr, "stats for memcg %s (id %lu):\n",
-+			name, stats->memcg_id);
-+	for (node = 0; node < stats->nr_nodes; ++node) {
-+		fprintf(stderr, "\tnode %d\n", stats->nodes[node].node);
-+		for (gen = 0; gen < stats->nodes[node].nr_gens; ++gen) {
-+			const struct generation_stats *gstats =
-+				&stats->nodes[node].gens[gen];
-+
-+			fprintf(stderr,
-+				"\t\tgen %d\tage_ms %ld"
-+				"\tnr_anon %ld\tnr_file %ld\n",
-+				gstats->gen, gstats->age_ms, gstats->nr_anon,
-+				gstats->nr_file);
-+		}
-+	}
-+}
-+
-+/* Re-read lru_gen debugfs information for @memcg into @stats. */
-+void read_memcg_stats(struct memcg_stats *stats, const char *memcg)
-+{
-+	FILE *f;
-+	ssize_t read = 0;
-+	char *line = NULL;
-+	size_t bufsz;
-+	struct memcg_stats_parse_context ctx = {
-+		.next_handler = memcg_stats_handle_searching,
-+		.name = memcg,
-+	};
-+
-+	memset(stats, 0, sizeof(struct memcg_stats));
-+
-+	f = fopen(DEBUGFS_LRU_GEN, "r");
-+	TEST_ASSERT(f, "fopen(%s) failed", DEBUGFS_LRU_GEN);
-+
-+	while (ctx.next_handler && (read = getline(&line, &bufsz, f)) > 0) {
-+		ctx.consumed = false;
-+
-+		do {
-+			ctx.next_handler(stats, &ctx, line);
-+			if (!ctx.next_handler)
-+				break;
-+		} while (!ctx.consumed);
-+	}
-+
-+	if (read < 0 && !feof(f))
-+		TEST_ASSERT(false, "getline(%s) failed", DEBUGFS_LRU_GEN);
-+
-+	TEST_ASSERT(stats->memcg_id > 0, "Couldn't find memcg: %s\n"
-+		    "Did the memcg get created in the proper mount?",
-+		    memcg);
-+	if (line)
-+		free(line);
-+	TEST_ASSERT(!fclose(f), "fclose(%s) failed", DEBUGFS_LRU_GEN);
-+}
-+
-+/*
-+ * Find all pages tracked by lru_gen for this memcg in generation @target_gen.
-+ *
-+ * If @target_gen is negative, look for all generations.
-+ */
-+static long sum_memcg_stats_for_gen(int target_gen,
-+				    const struct memcg_stats *stats)
-+{
-+	int node, gen;
-+	long total_nr = 0;
-+
-+	for (node = 0; node < stats->nr_nodes; ++node) {
-+		const struct node_stats *node_stats = &stats->nodes[node];
-+
-+		for (gen = 0; gen < node_stats->nr_gens; ++gen) {
-+			const struct generation_stats *gen_stats =
-+				&node_stats->gens[gen];
-+
-+			if (target_gen >= 0 && gen_stats->gen != target_gen)
-+				continue;
-+
-+			total_nr += gen_stats->nr_anon + gen_stats->nr_file;
-+		}
-+	}
-+
-+	return total_nr;
-+}
-+
-+/* Find all pages tracked by lru_gen for this memcg. */
-+long sum_memcg_stats(const struct memcg_stats *stats)
-+{
-+	return sum_memcg_stats_for_gen(-1, stats);
-+}
-+
-+/* Read the memcg stats and optionally print if this is a debug build. */
-+void read_print_memcg_stats(struct memcg_stats *stats, const char *memcg)
-+{
-+	read_memcg_stats(stats, memcg);
-+#ifdef DEBUG
-+	print_memcg_stats(stats, memcg);
-+#endif
-+}
-+
-+/*
-+ * If lru_gen aging should force page table scanning.
-+ *
-+ * If you want to set this to false, you will need to do eviction
-+ * before doing extra aging passes.
-+ */
-+static const bool force_scan = true;
-+
-+static void run_aging_impl(unsigned long memcg_id, int node_id, int max_gen)
-+{
-+	FILE *f = fopen(DEBUGFS_LRU_GEN, "w");
-+	char *command;
-+	size_t sz;
-+
-+	TEST_ASSERT(f, "fopen(%s) failed", DEBUGFS_LRU_GEN);
-+	sz = asprintf(&command, "+ %lu %d %d 1 %d\n",
-+		      memcg_id, node_id, max_gen, force_scan);
-+	TEST_ASSERT(sz > 0, "creating aging command failed");
-+
-+	pr_debug("Running aging command: %s", command);
-+	if (fwrite(command, sizeof(char), sz, f) < sz) {
-+		TEST_ASSERT(false, "writing aging command %s to %s failed",
-+			    command, DEBUGFS_LRU_GEN);
-+	}
-+
-+	TEST_ASSERT(!fclose(f), "fclose(%s) failed", DEBUGFS_LRU_GEN);
-+}
-+
-+static void _lru_gen_do_aging(struct memcg_stats *stats, const char *memcg,
-+			      bool verbose)
-+{
-+	int node, gen;
-+	struct timespec ts_start;
-+	struct timespec ts_elapsed;
-+
-+	pr_debug("lru_gen: invoking aging...\n");
-+
-+	/* Must read memcg stats to construct the proper aging command. */
-+	read_print_memcg_stats(stats, memcg);
-+
-+	if (verbose)
-+		clock_gettime(CLOCK_MONOTONIC, &ts_start);
-+
-+	for (node = 0; node < stats->nr_nodes; ++node) {
-+		int max_gen = 0;
-+
-+		for (gen = 0; gen < stats->nodes[node].nr_gens; ++gen) {
-+			int this_gen = stats->nodes[node].gens[gen].gen;
-+
-+			max_gen = max_gen > this_gen ? max_gen : this_gen;
-+		}
-+
-+		run_aging_impl(stats->memcg_id, stats->nodes[node].node,
-+			       max_gen);
-+	}
-+
-+	if (verbose) {
-+		ts_elapsed = timespec_elapsed(ts_start);
-+		pr_info("%-30s: %ld.%09lds\n", "lru_gen: Aging",
-+			ts_elapsed.tv_sec, ts_elapsed.tv_nsec);
-+	}
-+
-+	/* Re-read so callers get updated information */
-+	read_print_memcg_stats(stats, memcg);
-+}
-+
-+/* Do aging, and print how long it took. */
-+void lru_gen_do_aging(struct memcg_stats *stats, const char *memcg)
-+{
-+	return _lru_gen_do_aging(stats, memcg, true);
-+}
-+
-+/* Do aging, don't print anything. */
-+void lru_gen_do_aging_quiet(struct memcg_stats *stats, const char *memcg)
-+{
-+	return _lru_gen_do_aging(stats, memcg, false);
-+}
-+
-+/*
-+ * Find which generation contains more than half of @total_pages, assuming that
-+ * such a generation exists.
-+ */
-+int lru_gen_find_generation(const struct memcg_stats *stats,
-+			    unsigned long total_pages)
-+{
-+	int node, gen, gen_idx, min_gen = INT_MAX, max_gen = -1;
-+
-+	for (node = 0; node < stats->nr_nodes; ++node)
-+		for (gen_idx = 0; gen_idx < stats->nodes[node].nr_gens;
-+		     ++gen_idx) {
-+			gen = stats->nodes[node].gens[gen_idx].gen;
-+			max_gen = gen > max_gen ? gen : max_gen;
-+			min_gen = gen < min_gen ? gen : min_gen;
-+		}
-+
-+	for (gen = min_gen; gen < max_gen; ++gen)
-+		/* See if the most pages are in this generation. */
-+		if (sum_memcg_stats_for_gen(gen, stats) >
-+				total_pages / 2)
-+			return gen;
-+
-+	TEST_ASSERT(false, "No generation includes majority of %lu pages.",
-+		    total_pages);
-+
-+	/* unreachable, but make the compiler happy */
-+	return -1;
-+}
--- 
-2.45.1.288.g0e0cd299f1-goog
+>>> +
+>>> +                // SAFETY: Relevant fields of `place` are initialised =
+above
+>>> +                let ret =3D bindings::blk_mq_alloc_tag_set(place);
+>>> +                if ret < 0 {
+>>> +                    return Err(Error::from_errno(ret));
+>>> +                }
+>>> +
+>>> +                Ok(())
+>>> +            })},
+>>> +            _p: PhantomData,
+>>> +        })
+>>> +    }
+>>> +
+>>> +    /// Return the pointer to the wrapped `struct blk_mq_tag_set`
+>>> +    pub(crate) fn raw_tag_set(&self) -> *mut bindings::blk_mq_tag_set =
+{
+>>> +        self.inner.get()
+>>> +    }
+>>> +}
+>>> +
+>>> +#[pinned_drop]
+>>> +impl<T: Operations> PinnedDrop for TagSet<T> {
+>>> +    fn drop(self: Pin<&mut Self>) {
+>>> +        // SAFETY: We are not moving self below
+>>> +        let this =3D unsafe { Pin::into_inner_unchecked(self) };
+>>
+>> You don't need to unwrap the `Pin`, since you only need access to `&Self=
+`
+>> and `Pin` always allows you to do that. (so just use `self` instead of
+>> `this` below)
+>=20
+> Thanks =F0=9F=91=8D
+>=20
+>>
+>>> +
+>>> +        // SAFETY: `inner` is valid and has been properly initialised =
+during construction.
+>>
+>> Should be an invariant.
+>=20
+> Ok =F0=9F=91=8D
+>=20
+> Thanks for the review! I will send a new version.
+>=20
+>=20
+> Best regards,
+> Andreas
+>=20
+>=20
+> [1] https://github.com/rust-lang/rustfmt/issues/3348
+> [2] https://doc.rust-lang.org/nomicon/repr-rust.html#reprrust
+
 
 
