@@ -1,196 +1,251 @@
-Return-Path: <linux-kernel+bounces-193891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35FB8D33B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:52:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82E98D33B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 711602897D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E9C286590
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C5116EBFC;
-	Wed, 29 May 2024 09:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519CC16E896;
+	Wed, 29 May 2024 09:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O81h11Mu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zhMTQOxB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d3o3uKIf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pEEaYwYz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1COFIhq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2719316ABEB;
-	Wed, 29 May 2024 09:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8438F16A360
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716976289; cv=none; b=TJ07mutl2Yz97nxLDIrFS+eBHZQJGotykYmusGbsLBtaIWTkAKN34m9xywkQG5LRlmyBwTUOC4JEZ8Li1WYMYPrAvPINYond98k4yRoq6nXPDH3DzYnS7ZJ0c/UhZBvaUTGDniazlMREoV4fFXJmoxPt3+lje1tL5eU2QUo+zNM=
+	t=1716976342; cv=none; b=eMXzsRtKgPKklGOEYNAOtIPc9q/BK6UWkeEqU0xCz4q9Md+4chFE8efbakwIQqPi9GzaTCJvbLQ48EOXCWnKcGG65K1J2JNR1H+OAHzsnBOVPWkNWSTCc4CJkKiDAEdy7mpNuk7pqk9oAK2KCr91ezhlnJpf4vt4rOPxmzt9Hu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716976289; c=relaxed/simple;
-	bh=YcXMSAiXYTWYD+B9xHrJXe+f9U1uQ4Iaw4UQkhIvGAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWmIR5SYicgDCumw77hXAJKJTGhDWEKGaiI/CooUn4crDXqo4Ayi80PPGfBxA24pvYi/1ub3aidrFUha48IziNpEIx6OO8ybUlz7HlMMbV/mkgC6EOMYUA3J4wgyr+RaJkBHSWTqWlgoN37+xkadBatYttRsOaceo1B3zsDUhOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O81h11Mu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zhMTQOxB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d3o3uKIf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pEEaYwYz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F072C22D44;
-	Wed, 29 May 2024 09:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716976285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
-	b=O81h11MusrSEK65a42zVplfa90Fvf9IRoBm6s4dmPb2tgC23vPxTpU6LB8GHS3zKGFFw2e
-	hZEM+6Se7Nt497NHkrwOKwoFDmiBgrUNEV7f7qE84EHDKC/eQi0gfQKb7EuP2XSYW96Ko+
-	Q26BYt2lOXh8O7A9Py5F+SOk3KcE+hI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716976285;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
-	b=zhMTQOxBGd+dbxAuUzrETt32OTvwdvlKfFQcF6NtVQU/GdgUpo9Hrtea2YuNJznMH/Kujv
-	uOyeJTOnqsfmZPAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716976284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
-	b=d3o3uKIfQtG8+DnLcIjs3jP2se3epXVniyBt3ymIuotoDAhhEfs2agUo0yQnVO6bW3iPOl
-	zITwnFqDUnGNPmcVjbFoYgGz7qdVk69CQcnV86PZRVjHjvivc5RvZfANKIUA/IHEuZPq0g
-	DiHiJFFErU8cOIg+z+abIddvZ4RAXo4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716976284;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
-	b=pEEaYwYzpuQzWvylxML73HbK4LhXKg5grWGRANfddeEVRbP86ZRSWFKsgO5Rzz5l5HyC5o
-	9OAORjAD+LqmKlDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E40BB1372E;
-	Wed, 29 May 2024 09:51:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WT6sN5z6VmYfAwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 29 May 2024 09:51:24 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A91D1A0825; Wed, 29 May 2024 11:51:16 +0200 (CEST)
-Date: Wed, 29 May 2024 11:51:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] ext4: fix possible tid_t sequence overflows
-Message-ID: <20240529095116.b3arzr5rjz6cs2rb@quack3>
-References: <20240529092030.9557-1-luis.henriques@linux.dev>
- <20240529092030.9557-3-luis.henriques@linux.dev>
+	s=arc-20240116; t=1716976342; c=relaxed/simple;
+	bh=JrVzi9t9nN2k3gm4A1Sjc6C5/DP/aCCwcBk5RcZ7FEA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hpBMTN2G5B4JgCCzSEMOf2/7mwIA5jkuCf9Cwib7Fd9DGrWBcpKPltWt7bcgwl6rIQx3V4ZcVXDn/Rgc0DYc/8FWuXVPOPLqSpUVSplGHhIvKqCDpA/v9BuLIgCafdwJwXEF5aZXJ2OymIiHm3A7qbmWCaPxYEQMpnBvPVlSlxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1COFIhq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499C8C2BD10;
+	Wed, 29 May 2024 09:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716976342;
+	bh=JrVzi9t9nN2k3gm4A1Sjc6C5/DP/aCCwcBk5RcZ7FEA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p1COFIhqjJ4asDHG21pfERVJ9zWJwfenyf40Noe+DGze98xkg5OORjd2/E+jtXf4Z
+	 7GxLU6+GAn7fceD1m+HPG9HkIQCjAnaOesYB8BHYHNgdiynaNOPDxKM9ndBmo6OSUc
+	 w6MKxG/Ti1ZPLgf+UQGwH/QWRjEwdM1LtN9A63wwVwFEQNufp0VNnUAm/Iz2eZLedf
+	 YYlEMe+2ayZ4ze4aSwSbyfpj1Jsi5OGDQju0yPscYoKawH0zfrhiCk7KTEI6cTCXAh
+	 kQOdF8jkGGQnKVFhGRwOicWSUHG9hMOuw1WbRNsPKxnMCaYdpc+pdeMJ0b2pVfAOHb
+	 Vl0M7bGNBa4OA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	syzbot+74ebe2104433e9dc610d@syzkaller.appspotmail.com
+Subject: [PATCH] f2fs: fix to cover read extent cache access with lock
+Date: Wed, 29 May 2024 17:52:11 +0800
+Message-Id: <20240529095211.323808-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529092030.9557-3-luis.henriques@linux.dev>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.98%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,linux.dev:email]
+Content-Transfer-Encoding: 8bit
 
-On Wed 29-05-24 10:20:30, Luis Henriques (SUSE) wrote:
-> In the fast commit code there are a few places where tid_t variables are
-> being compared without taking into account the fact that these sequence
-> numbers may wrap.  Fix this issue by using the helper functions tid_gt()
-> and tid_geq().
-> 
-> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+syzbot reports a f2fs bug as below:
 
-Thanks! Feel free to add:
+BUG: KASAN: slab-use-after-free in sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
+Read of size 4 at addr ffff8880739ab220 by task syz-executor200/5097
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+CPU: 0 PID: 5097 Comm: syz-executor200 Not tainted 6.9.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
+ do_read_inode fs/f2fs/inode.c:509 [inline]
+ f2fs_iget+0x33e1/0x46e0 fs/f2fs/inode.c:560
+ f2fs_nfs_get_inode+0x74/0x100 fs/f2fs/super.c:3237
+ generic_fh_to_dentry+0x9f/0xf0 fs/libfs.c:1413
+ exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
+ exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
+ do_handle_to_path fs/fhandle.c:155 [inline]
+ handle_to_path fs/fhandle.c:210 [inline]
+ do_handle_open+0x495/0x650 fs/fhandle.c:226
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-								Honza
+We missed to cover sanity_check_extent_cache() w/ extent cache lock,
+so, below race case may happen, result in use after free issue.
 
-> ---
->  fs/ext4/fast_commit.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-> index 088bd509b116..30d312e16916 100644
-> --- a/fs/ext4/fast_commit.c
-> +++ b/fs/ext4/fast_commit.c
-> @@ -353,7 +353,7 @@ void ext4_fc_mark_ineligible(struct super_block *sb, int reason, handle_t *handl
->  		read_unlock(&sbi->s_journal->j_state_lock);
->  	}
->  	spin_lock(&sbi->s_fc_lock);
-> -	if (sbi->s_fc_ineligible_tid < tid)
-> +	if (tid_gt(tid, sbi->s_fc_ineligible_tid))
->  		sbi->s_fc_ineligible_tid = tid;
->  	spin_unlock(&sbi->s_fc_lock);
->  	WARN_ON(reason >= EXT4_FC_REASON_MAX);
-> @@ -1207,7 +1207,7 @@ int ext4_fc_commit(journal_t *journal, tid_t commit_tid)
->  	if (ret == -EALREADY) {
->  		/* There was an ongoing commit, check if we need to restart */
->  		if (atomic_read(&sbi->s_fc_subtid) <= subtid &&
-> -			commit_tid > journal->j_commit_sequence)
-> +		    tid_gt(commit_tid, journal->j_commit_sequence))
->  			goto restart_fc;
->  		ext4_fc_update_stats(sb, EXT4_FC_STATUS_SKIPPED, 0, 0,
->  				commit_tid);
-> @@ -1282,7 +1282,7 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
->  		list_del_init(&iter->i_fc_list);
->  		ext4_clear_inode_state(&iter->vfs_inode,
->  				       EXT4_STATE_FC_COMMITTING);
-> -		if (iter->i_sync_tid <= tid) {
-> +		if (tid_geq(tid, iter->i_sync_tid)) {
->  			ext4_fc_reset_inode(&iter->vfs_inode);
->  		} else {
->  			/*
-> @@ -1322,7 +1322,7 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
->  	list_splice_init(&sbi->s_fc_q[FC_Q_STAGING],
->  				&sbi->s_fc_q[FC_Q_MAIN]);
->  
-> -	if (tid >= sbi->s_fc_ineligible_tid) {
-> +	if (tid_geq(tid, sbi->s_fc_ineligible_tid)) {
->  		sbi->s_fc_ineligible_tid = 0;
->  		ext4_clear_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
->  	}
-> 
+- f2fs_iget
+ - do_read_inode
+  - f2fs_init_read_extent_tree
+  : add largest extent entry in to cache
+					- shrink
+					 - f2fs_shrink_read_extent_tree
+					  - __shrink_extent_tree
+					   - __detach_extent_node
+					   : drop largest extent entry
+  - sanity_check_extent_cache
+  : access et->largest w/ lock
+
+let's refactor sanity_check_extent_cache() to avoid extent cache access
+and call it before f2fs_init_read_extent_tree() to fix this issue.
+
+Reported-by: syzbot+74ebe2104433e9dc610d@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/00000000000009beea061740a531@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/extent_cache.c | 48 +++++++++++++++++-------------------------
+ fs/f2fs/f2fs.h         |  2 +-
+ fs/f2fs/inode.c        | 10 ++++-----
+ 3 files changed, 25 insertions(+), 35 deletions(-)
+
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 48048fa36427..fd1fc06359ee 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -19,33 +19,23 @@
+ #include "node.h"
+ #include <trace/events/f2fs.h>
+ 
+-bool sanity_check_extent_cache(struct inode *inode)
++bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	struct extent_tree *et = fi->extent_tree[EX_READ];
+-	struct extent_info *ei;
+-
+-	if (!et)
+-		return true;
++	struct f2fs_extent *i_ext = &F2FS_INODE(ipage)->i_ext;
++	struct extent_info ei;
+ 
+-	ei = &et->largest;
+-	if (!ei->len)
+-		return true;
++	get_read_extent_info(&ei, i_ext);
+ 
+-	/* Let's drop, if checkpoint got corrupted. */
+-	if (is_set_ckpt_flags(sbi, CP_ERROR_FLAG)) {
+-		ei->len = 0;
+-		et->largest_updated = true;
++	if (!ei.len)
+ 		return true;
+-	}
+ 
+-	if (!f2fs_is_valid_blkaddr(sbi, ei->blk, DATA_GENERIC_ENHANCE) ||
+-	    !f2fs_is_valid_blkaddr(sbi, ei->blk + ei->len - 1,
++	if (!f2fs_is_valid_blkaddr(sbi, ei.blk, DATA_GENERIC_ENHANCE) ||
++	    !f2fs_is_valid_blkaddr(sbi, ei.blk + ei.len - 1,
+ 					DATA_GENERIC_ENHANCE)) {
+ 		f2fs_warn(sbi, "%s: inode (ino=%lx) extent info [%u, %u, %u] is incorrect, run fsck to fix",
+ 			  __func__, inode->i_ino,
+-			  ei->blk, ei->fofs, ei->len);
++			  ei.blk, ei.fofs, ei.len);
+ 		return false;
+ 	}
+ 	return true;
+@@ -394,24 +384,22 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
+ 
+ 	if (!__may_extent_tree(inode, EX_READ)) {
+ 		/* drop largest read extent */
+-		if (i_ext && i_ext->len) {
++		if (i_ext->len) {
+ 			f2fs_wait_on_page_writeback(ipage, NODE, true, true);
+ 			i_ext->len = 0;
+ 			set_page_dirty(ipage);
+ 		}
+-		goto out;
++		set_inode_flag(inode, FI_NO_EXTENT);
++		return;
+ 	}
+ 
+ 	et = __grab_extent_tree(inode, EX_READ);
+ 
+-	if (!i_ext || !i_ext->len)
+-		goto out;
+-
+ 	get_read_extent_info(&ei, i_ext);
+ 
+ 	write_lock(&et->lock);
+-	if (atomic_read(&et->node_cnt))
+-		goto unlock_out;
++	if (atomic_read(&et->node_cnt) || !ei.len)
++		goto skip;
+ 
+ 	en = __attach_extent_node(sbi, et, &ei, NULL,
+ 				&et->root.rb_root.rb_node, true);
+@@ -423,11 +411,13 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
+ 		list_add_tail(&en->list, &eti->extent_list);
+ 		spin_unlock(&eti->extent_lock);
+ 	}
+-unlock_out:
++skip:
++	/* Let's drop, if checkpoint got corrupted. */
++	if (f2fs_cp_error(sbi)) {
++		et->largest.len = 0;
++		et->largest_updated = true;
++	}
+ 	write_unlock(&et->lock);
+-out:
+-	if (!F2FS_I(inode)->extent_tree[EX_READ])
+-		set_inode_flag(inode, FI_NO_EXTENT);
+ }
+ 
+ void f2fs_init_age_extent_tree(struct inode *inode)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9118a4e2db6d..9688df332147 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4191,7 +4191,7 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi);
+ /*
+  * extent_cache.c
+  */
+-bool sanity_check_extent_cache(struct inode *inode);
++bool sanity_check_extent_cache(struct inode *inode, struct page *ipage);
+ void f2fs_init_extent_tree(struct inode *inode);
+ void f2fs_drop_extent_tree(struct inode *inode);
+ void f2fs_destroy_extent_node(struct inode *inode);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 4b39aebd3c70..3a13f32b43a2 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -508,16 +508,16 @@ static int do_read_inode(struct inode *inode)
+ 
+ 	init_idisk_time(inode);
+ 
+-	/* Need all the flag bits */
+-	f2fs_init_read_extent_tree(inode, node_page);
+-	f2fs_init_age_extent_tree(inode);
+-
+-	if (!sanity_check_extent_cache(inode)) {
++	if (!sanity_check_extent_cache(inode, node_page)) {
+ 		f2fs_put_page(node_page, 1);
+ 		f2fs_handle_error(sbi, ERROR_CORRUPTED_INODE);
+ 		return -EFSCORRUPTED;
+ 	}
+ 
++	/* Need all the flag bits */
++	f2fs_init_read_extent_tree(inode, node_page);
++	f2fs_init_age_extent_tree(inode);
++
+ 	f2fs_put_page(node_page, 1);
+ 
+ 	stat_inc_inline_xattr(inode);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.40.1
+
 
