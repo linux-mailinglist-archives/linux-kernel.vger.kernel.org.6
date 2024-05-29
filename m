@@ -1,89 +1,179 @@
-Return-Path: <linux-kernel+bounces-194761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96B68D4190
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:52:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDE08D419C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A731C21386
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:52:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC93B2694B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD501CB332;
-	Wed, 29 May 2024 22:52:37 +0000 (UTC)
-Received: from mail115-79.sinamail.sina.com.cn (mail115-79.sinamail.sina.com.cn [218.30.115.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6561200106;
+	Wed, 29 May 2024 22:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hQASlsLC"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB8317557C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF681CB32A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717023157; cv=none; b=oYzCxjZC57TY2huzg+gXjRu/ZUQO6U/pEB+ayWwGdiVmyZ5iJ5epI2nmoNHRaA9OeZa+KTXHlRUXaa6b7lejO0CjHP7W3yfeObU0s3s9dU1ZilCd4hfKMzvlyeU3V8WVjxYcMHDtQXaiSZ++JikmanThXlSpi3cKB1NZ0phB7fE=
+	t=1717023487; cv=none; b=edLngfeoTVw5PhYwIq4k3d7LAtIfB6AzYBZ03cdA9pvbZK3JUQmftr6lmWfUxYe9K8rUNV1wDmJ29iUyYQ+OLzd7nLO943VGzQ611oXJOU1d200BuyQmVoig8fseCBUBNMhOCQXbE7k4Ps6lo1CKFpjcjxJD5YEeGfJjG4f0yKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717023157; c=relaxed/simple;
-	bh=vqkyHHW4PwgHBGmkIZoxN/e0NEz8SOdRvMtxc1UfDSo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mV6qheGnjMqjCiubVL1CEwvliZXBFPhmvtceQheB8Wva+1+9XF0jIwXDC/mi3nGZKiE+fy0HU2cddEruqJt8Wsq2vhlTZYBUdk08q/j4XgZrQu7IxhaW4d3lJMFiJfUNYO74GKAVGU4v72G/gQHha8WoCCodNEJaSpK9B7ulZtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.5])
-	by sina.com (10.75.12.45) with ESMTP
-	id 6657B1A800008D7B; Wed, 30 May 2024 06:52:26 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 53405531457760
-X-SMAIL-UIID: 60F0618A0EC44D0B8A2E020B17212CA5-20240530-065226-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Radoslaw Zielonek <radoslaw.zielonek@gmail.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
-Date: Thu, 30 May 2024 06:52:14 +0800
-Message-Id: <20240529225214.2968-1-hdanton@sina.com>
-In-Reply-To: <0000000000007d66bc06196e7c66@google.com>
-References: 
+	s=arc-20240116; t=1717023487; c=relaxed/simple;
+	bh=ILTrqYj7gGL+uJmOCLBAjzct0EhWj0aN1ME6oQovXBA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gaaZEoZLWfSbzT1OOcEEQ3gmfH0GmxnPbOZIRhSHFlWW7yQulLAYGaHWXjMvYIhFZyhnK2NwGj4vxbilCbNUBACqkj+j7NkfFFa3xX5BksY8djiKwbzmlnRRV8u6NU/ByypGkqHqvT/IiJ9AwEUW2OAKYsRmfRiT12+3rJ5ClGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hQASlsLC; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627f20cff42so3832557b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717023484; x=1717628284; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lXQ4aAmXpFR+Rnn+LVSp/P9w+zocv3IAjl6jcVlXHAQ=;
+        b=hQASlsLCL8kat+pj2/OkA1ZECcq0+xKl8UztvJtH9+LXg6cCfWSX0oohqQTDHgHoIb
+         J6rtEUd3mudMo4BrLifi5jjMNrb//SYmWuebakj8yeapa+M7cM5rUoZcZlx3Ve+NlJDg
+         zd/JJqHa5+YYXVp4BgXx5VQTmO3mwBsaM7h74wh90vWCuVcNEX66rVWxK5hJ7BvneDvO
+         CajLCrG7dWW7LRy2ArZt5Y6OfZjNOArR1+A54pEBICg/tKqOHQxZTurZ7Wor7jsvEqOW
+         reBjDmxC96PJzNL61dz+shkHdzwkmQRJziF8517eNEIX/mNdrh/qkIuS3DWbDtU6yAAX
+         Q/1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717023484; x=1717628284;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lXQ4aAmXpFR+Rnn+LVSp/P9w+zocv3IAjl6jcVlXHAQ=;
+        b=X/lBRji5Y5vM35CT5T3CLxzD0HD7f55hwETzC/7EnPXBQmWBoedF24fc5vfeRkIFp+
+         aRjKXcRmHlzSlMFh1Xh0JkHtRi469y7dzQhOfyQ607ndANB76HAlx8x7LXLzcDGJpOYA
+         /b2PK1E8L4l8NCUqKc7P/jtx6Mk540SCb1QNcT0SKrVxZWbPvU4Ym4ZG4lwDyR7kwjky
+         Yc49Xd18j1ntTJF/s3dTCrvUa6oa+Rur8ZcHP9IWvD1NrGdIShArW5m/GwqxUu1HGkdz
+         rxylfC3Lz6zCxcDVgX/XUywQ3EjOzuS8bw6VonCu0g6kfveXA9zddb5MrAEK9MvhxcLW
+         GjVg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2L3Hkf7fJ0R4xYBUCjPTxOI4JjkYF12Oqhcuz0cHVENa9ufjIFSCeiF+DftZzLqMX7wDdJ0dEYpVX/u6sG5IfZOrQyS0CR3pkkbMf
+X-Gm-Message-State: AOJu0YzjGHXQU88eAaR6htif4AYLK1VhZBGvelMPsfgVF5ImwH4foMCg
+	mvKAPt2JJXk/orQM3JXcpmeuwv6IxWmBOGPi0A2HEsrhlgXsCAFc+bD2/CDlc1OFtIVhHVuONH+
+	m8w==
+X-Google-Smtp-Source: AGHT+IEcoxWAWGQljmQC1ObvPASoASZSWeSUzQr2Szq7dgxCnuAYyloQCwOCyj3B7twEp9K1BnNOHbqA4OU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1007:b0:dfa:5838:b919 with SMTP id
+ 3f1490d57ef6-dfa5a68828dmr142777276.10.1717023484293; Wed, 29 May 2024
+ 15:58:04 -0700 (PDT)
+Date: Wed, 29 May 2024 15:58:02 -0700
+In-Reply-To: <CAOUHufZdEpY6ra73SMHA33DegKxKaUM=Os7A7aDBFND6NkbUmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240529180510.2295118-1-jthoughton@google.com>
+ <20240529180510.2295118-3-jthoughton@google.com> <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
+ <ZlelW93_T6P-ZuSZ@google.com> <CAOUHufZdEpY6ra73SMHA33DegKxKaUM=Os7A7aDBFND6NkbUmQ@mail.gmail.com>
+Message-ID: <Zley-u_dOlZ-S-a6@google.com>
+Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
+ in aging
+From: Sean Christopherson <seanjc@google.com>
+To: Yu Zhao <yuzhao@google.com>
+Cc: James Houghton <jthoughton@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Ankit Agrawal <ankita@nvidia.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Bibo Mao <maobibo@loongson.cn>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, James Morse <james.morse@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Test Vlad's patch [1]
-[1] https://lore.kernel.org/netdev/20240527153955.553333-1-vladimir.oltean@nxp.com/
+On Wed, May 29, 2024, Yu Zhao wrote:
+> On Wed, May 29, 2024 at 3:59=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> >
+> > On Wed, May 29, 2024, Yu Zhao wrote:
+> > > On Wed, May 29, 2024 at 12:05=E2=80=AFPM James Houghton <jthoughton@g=
+oogle.com> wrote:
+> > > >
+> > > > Secondary MMUs are currently consulted for access/age information a=
+t
+> > > > eviction time, but before then, we don't get accurate age informati=
+on.
+> > > > That is, pages that are mostly accessed through a secondary MMU (li=
+ke
+> > > > guest memory, used by KVM) will always just proceed down to the old=
+est
+> > > > generation, and then at eviction time, if KVM reports the page to b=
+e
+> > > > young, the page will be activated/promoted back to the youngest
+> > > > generation.
+> > >
+> > > Correct, and as I explained offline, this is the only reasonable
+> > > behavior if we can't locklessly walk secondary MMUs.
+> > >
+> > > Just for the record, the (crude) analogy I used was:
+> > > Imagine a large room with many bills ($1, $5, $10, ...) on the floor,
+> > > but you are only allowed to pick up 10 of them (and put them in your
+> > > pocket). A smart move would be to survey the room *first and then*
+> > > pick up the largest ones. But if you are carrying a 500 lbs backpack,
+> > > you would just want to pick up whichever that's in front of you rathe=
+r
+> > > than walk the entire room.
+> > >
+> > > MGLRU should only scan (or lookaround) secondary MMUs if it can be
+> > > done lockless. Otherwise, it should just fall back to the existing
+> > > approach, which existed in previous versions but is removed in this
+> > > version.
+> >
+> > IIUC, by "existing approach" you mean completely ignore secondary MMUs =
+that
+> > don't implement a lockless walk?
+>=20
+> No, the existing approach only checks secondary MMUs for LRU folios,
+> i.e., those at the end of the LRU list. It might not find the best
+> candidates (the coldest ones) on the entire list, but it doesn't pay
+> as much for the locking. MGLRU can *optionally* scan MMUs (secondary
+> included) to find the best candidates, but it can only be a win if the
+> scanning incurs a relatively low overhead, e.g., done locklessly for
+> the secondary MMU. IOW, this is a balance between the cost of
+> reclaiming not-so-cold (warm) folios and that of finding the coldest
+> folios.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  main
+Gotcha.
 
---- x/net/sched/sch_taprio.c
-+++ y/net/sched/sch_taprio.c
-@@ -1847,6 +1847,7 @@ static int taprio_change(struct Qdisc *s
- 		return -EOPNOTSUPP;
- 	}
- 	q->flags = taprio_flags;
-+	taprio_set_picos_per_byte(dev, q);
- 
- 	err = taprio_parse_mqprio_opt(dev, mqprio, extack, q->flags);
- 	if (err < 0)
-@@ -1907,7 +1908,6 @@ static int taprio_change(struct Qdisc *s
- 	if (err < 0)
- 		goto free_sched;
- 
--	taprio_set_picos_per_byte(dev, q);
- 	taprio_update_queue_max_sdu(q, new_admin, stab);
- 
- 	if (FULL_OFFLOAD_IS_ENABLED(q->flags))
---
+I tend to agree with Yu, driving the behavior via a Kconfig may generate si=
+mpler
+_code_, but I think it increases the overall system complexity.  E.g. distr=
+os
+will likely enable the Kconfig, and in my experience people using KVM with =
+a
+distro kernel usually aren't kernel experts, i.e. likely won't know that th=
+ere's
+even a decision to be made, let alone be able to make an informed decision.
+
+Having an mmu_notifier hook that is conditionally implemented doesn't seem =
+overly
+complex, e.g. even if there's a runtime aspect at play, it'd be easy enough=
+ for
+KVM to nullify its mmu_notifier hook during initialization.  The hardest pa=
+rt is
+likely going to be figuring out the threshold for how much overhead is too =
+much.
 
