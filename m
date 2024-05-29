@@ -1,109 +1,259 @@
-Return-Path: <linux-kernel+bounces-193404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903A08D2B6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:27:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488458D2B71
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA311C230CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11391F23921
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A148715B133;
-	Wed, 29 May 2024 03:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DD015B12D;
+	Wed, 29 May 2024 03:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Qw+E4ozk"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wyACmEhr"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB15315AAD6;
-	Wed, 29 May 2024 03:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCD615B111
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716953228; cv=none; b=R990DuwtFs4dAk2UyMU7SyiaLwrpcZJi1tatDn/T86/IErfUZ1zutCNQc+3wm4UCjx/sCvNAmQ+d1IaJwB6gVpOM19BrkjMsyT+EsheghSbGNZlmKrwOu+z+RKJzl+1BhYtsgk/+qtGJSs9OUxq7fwHCI021JNf/U/j1OITfv9g=
+	t=1716953301; cv=none; b=Dy+SIQkUp6EaC61Rx20G2ntKdyxERZDDwgBz+5ABO0SwMZVq9RyzvybfzuIuYu9DYfeuSRiavgl/LIvJ3LHT/3JY5gs2KWn8K5SEIAd5hIaQK1cknZBfyyW+JLl0tavVKE/IOnBZTRn7rucJeyKt+Aqf2VrIVP55822eHmDYmPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716953228; c=relaxed/simple;
-	bh=kQfP42T/dAHcc/tnWKAwbI8C/k2XqzabQEapm5nIR1k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zya4njlx5tIK93optBgEdxgB9sSNYVFvbft6SRygjSWRcY9dJt4CQ6QhCyX1JtYMxRAGBCKL/6pbQn/WweE+xVTI5Gg2g+yS6vJ+stI6WNCneFTOiE3rWomMRoZgR8PQI8Nc8DgESxWvoJDNXyJPSd+d0FLH0MJ4PhcwFFtoUME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Qw+E4ozk; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SHEAsG018876;
-	Tue, 28 May 2024 20:26:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=EzsftoVAdJpzN/fNHfBnxc2es
-	4lKHibS5VZTZ9TXl7Q=; b=Qw+E4ozk3iZQp/NJISY2sOpya+FqViFAod13fEP5o
-	nBZU4sGw0SX5b2emr4UL3QUujDsrlKv73zQzVyoy5Mk/tzGAqnLVzYTtXufB7HEN
-	JVFhlVgBIGr6FfPJ2W4r03KdHtv6xS1aj+El6lg6eULxub4ABU1y8gXNWQxhBz6O
-	kK/9OgCj9IVs4+J6J7718OGfsvIWGL76IvWU+wKK5dsGjzCuCIEpxFn0SaYK5by8
-	HvqnKvqPhlY66dFcjw7FQ9tyS4sFlP3P813Yyjc7HqPyqctE5d+Ki0l0TDivi/3H
-	SYCj7GlqApyuX1dGbqbo5Uml+Q3dc5cu/YH2sIY3nsNZw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3ydhcj2ydv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 20:26:57 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 28 May 2024 20:26:56 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 28 May 2024 20:26:56 -0700
-Received: from maili.marvell.com (unknown [10.28.36.165])
-	by maili.marvell.com (Postfix) with SMTP id 501683F70A9;
-	Tue, 28 May 2024 20:26:54 -0700 (PDT)
-Date: Wed, 29 May 2024 08:56:53 +0530
-From: Ratheesh Kannoth <rkannoth@marvell.com>
-To: <admiyo@os.amperecomputing.com>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>,
-        Robert Moore <robert.moore@intel.com>,
-        "Rafael J.
- Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] mctp pcc: Check before sending MCTP PCC response
- ACK
-Message-ID: <20240529032653.GB2452291@maili.marvell.com>
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
- <20240528191823.17775-1-admiyo@os.amperecomputing.com>
- <20240528191823.17775-2-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1716953301; c=relaxed/simple;
+	bh=wRt+TDfSYlFEo9QS6+j0hrFYKrhvxg8xfu70bcZErBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N788ifOgf3TRaiGX9fRtewyozMVdX4Y+XFqMcgm1XoumHzJ+JvcrzL0su7zBJu0ArHxG9wUldWE5foMkeCs7DQJ3X36nwxf9x2PKNABg0r8eABZYz4z+HtmBFpZMxQEYhHLTEZ46y7zT03s5t9peMzxUeoz3NIKq2RHBNIRaMlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wyACmEhr; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48202cd14e7so381144137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716953298; x=1717558098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aTGZhWYe+6C1xgVbBSIL7jdPle1wizKI4qRK3FbTxHg=;
+        b=wyACmEhrSculZ8ECLzxFP5zfZ4OrqmjCce8cn9Y03HYGHgHu0ggEgL1qQHRsjGoahJ
+         gzfBIKxODDxBHTXmrN3CKxVynsaYDbbhwHcIMpNvGH3a/hvPK39S6Tk4IPqnQ/3Z4q20
+         X7v81CwXAIUCdDNHhV5DchHQNMTzd0ABo32/Jauk193IJdtrx+oTrm8p/kAz50eNrIW6
+         qsGSKqv3+C1gvZ2ML2EEPPZgrqvqb1HoXde+bB5KyEhjZSf4ZIorcAVbafPGcuzY9LDn
+         ZWAHDkkSxJoy9d04z2DyHM8eIflTk/LvnVKLI5nkM0Ls304ktXl/kQ85jclXY9yYCvbp
+         gcwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716953298; x=1717558098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aTGZhWYe+6C1xgVbBSIL7jdPle1wizKI4qRK3FbTxHg=;
+        b=mKsQ8dh4LA5pVhA/5JWNGPToizZUq3ZKu16YG3flxq2X9xO8FrmVRrL9TvXfoDNIS0
+         1soyFrX3MUgt7G22yQnQtMmKi32C6jJRU2dbJCuyBzFkGRGU1xSWlvRuA/c1WGDTR96m
+         x7mDRLsf+K5DGq77QlIrHBamNUKhnAgPiBuf2EqFNAP0DBB2ky53xq8YOfG/vPOnESG7
+         TW1loKdRS8perIvlpn0m0/8cJ7YVnhAK4nrkxOmVexcCDzvZ37gRDfTtemcWpcGGakez
+         gohUOlx5ITBu791kuyXs5SJTl32gsA01VgM2bU6FNEfMGCOreKhVsCgnITsSZSyOb1Pg
+         3EUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEiYqeBjrfBMas5s3fW0A3frwvw+UltNI3UwoAHxDAWPQwV24Dcw4PmW6A0+vzwyzWyzRDLWXydNoxJ4i3Dmnew1zKpzwK9t7mcB+K
+X-Gm-Message-State: AOJu0YwgQDhIa40mY/lvPCLQQVHmJK2SY9fHB+D8qHSutNxUgUTvAysZ
+	NaOOwZoV2RhbWkxfhwSDuWyZ+hKe9kV/Bs/edT828GMCyHamr8nmADq7cFfLDivHTLEfx0wkdvT
+	xiZYYqgSDUv5YekRonpzHhdfMqEdPSXkjixITsGuPvGR2QPiKlvQ=
+X-Google-Smtp-Source: AGHT+IHpoGFgIK6a88msVLi1jV2V44/8HkVwz9s/s+DVm/mINPSvG56jyyOZprGwQ43LYPMKYsw7FuSaczrzvnnBj9s=
+X-Received: by 2002:a05:6102:22f6:b0:48b:9460:b5f5 with SMTP id
+ ada2fe7eead31-48b9460b61emr3078771137.29.1716953298214; Tue, 28 May 2024
+ 20:28:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240528191823.17775-2-admiyo@os.amperecomputing.com>
-X-Proofpoint-GUID: Ov3njcPBFClY2NnUyboYJ7w05xiond0Z
-X-Proofpoint-ORIG-GUID: Ov3njcPBFClY2NnUyboYJ7w05xiond0Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+References: <20240527185601.713589927@linuxfoundation.org>
+In-Reply-To: <20240527185601.713589927@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 29 May 2024 08:58:06 +0530
+Message-ID: <CA+G9fYsbuFey+yukQYqKwVK3tEcMebAKsoV-qNaFZX7aHLDrDA@mail.gmail.com>
+Subject: Re: [PATCH 6.9 000/427] 6.9.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-05-29 at 00:48:21, admiyo@os.amperecomputing.com (admiyo@os.amperecomputing.com) wrote:
-> From: Adam Young <admiyo@amperecomputing.com>
+On Tue, 28 May 2024 at 00:30, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 94885e411085..774727b89693 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -280,6 +280,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->  {
->  	struct pcc_chan_info *pchan;
->  	struct mbox_chan *chan = p;
-> +	struct pcc_mbox_chan *pmchan;
-Reverse xmas tree.
+> This is the start of the stable review cycle for the 6.9.3 release.
+> There are 427 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 29 May 2024 18:53:20 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.9.3-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
->  	u64 val;
->  	int ret;
->
->
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.9.3-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.9.y
+* git commit: c1009266618d24dff4fa4dd5f4086d4701b1fdf9
+* git describe: v6.9.2-428-gc1009266618d
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.2=
+-428-gc1009266618d
+
+## Test Regressions (compared to v6.9.2)
+
+## Metric Regressions (compared to v6.9.2)
+
+## Test Fixes (compared to v6.9.2)
+
+## Metric Fixes (compared to v6.9.2)
+
+## Test result summary
+total: 194636, pass: 167011, fail: 3701, skip: 23924, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 129 total, 129 passed, 0 failed
+* arm64: 39 total, 39 passed, 0 failed
+* i386: 29 total, 29 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 34 total, 34 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-forwarding
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-cap_bounds
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-io
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-securebits
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
