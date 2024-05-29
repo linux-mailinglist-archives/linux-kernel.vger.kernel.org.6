@@ -1,192 +1,205 @@
-Return-Path: <linux-kernel+bounces-193395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A448D2B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:18:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D568D2B65
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82119B233B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9371F2555D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BD31391;
-	Wed, 29 May 2024 03:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A873215B146;
+	Wed, 29 May 2024 03:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="t+Dv74Qj"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SCZLt4Tk"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2051.outbound.protection.outlook.com [40.107.236.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C599A8BE0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716952691; cv=none; b=Gc6v6jDY7FiOz9qiZ/Ze4Pzslnv9SavULEtAE71LWnSDOfv1YmJoM3sCqV93hgMylT1NaNnhFk2QtA/yDW/F1TKR72JG9i/b7nTat4FqfcqDgIyu2JYeKamwvgvRkzVPlfVWjzueV6NQ29PcObD2KNNtW9K1wCgnXy8iH2TgzNY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716952691; c=relaxed/simple;
-	bh=jbfmJS2BdmG5oxbEaUOnRzLbKYW8OnaBkBN1o+oKM5I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jm4SKyV9Dmxd2raj5Mez3LagZTCAFjRCHmsxQBUQ+b7Pfl8hN+X3F+PlvBi18csQipvKsunhqO0NaxtiNhX7MVGt7vN4KyLmplW5NjCweXN5lsGZLBcTQZ80ZfGMCKMh2cVoWtvsB63bCl24RhB0yKpihaa6ALjtlqDa1aCj4vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=t+Dv74Qj; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CA5023FE69
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1716952681;
-	bh=wzuecrJ0JFchccEBCmxLIDXRwMQkEzpCJKJ1c3kKpP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=t+Dv74QjPBGB3y6rduoyaeebj2bggcd/YFdZKtrr0hf84X9Ch0PPOOr2BqRtOiDF2
-	 cmClN8xl4kB0eG9SYieYppNrcMvi0scG0zGBt2dJFPyeurgtYRlgbYjXuk1xI97U9O
-	 sjWdqaXYlJgkKFLaeuZSbeFinYCx3nxdmDSyIO/Bi9ljK5EcYE6yhJL/SOTugrPX/x
-	 we0iB4h/b6sY+nGpZV3sVvseCz4P5HKZBkPkMh0lCV6Wt7eKWV+XL9OffDKOX+3LPk
-	 L2SI94OmH/0SRbl/WVH/a7np68r7p1uajOmg84oWySpwnnfnwbXpmuD+CMzhAwFg+z
-	 FLTaniWLfq1jw==
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-357ad1f7b08so812289f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:18:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716952681; x=1717557481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wzuecrJ0JFchccEBCmxLIDXRwMQkEzpCJKJ1c3kKpP4=;
-        b=JScFZoV+XWTqiYPJ1j/RxnlemXAvXc8k7iIonWqaVUqoX00GlxzsVYPi6GArPu6UFV
-         dxp79vCTQ6Vmm8SPpnqKsAOtWEK2XIKjtK0g/kHu4+OhXXUbNJtufzTUvSVKuU27xJOs
-         /h8v6iHZNMiT95TLpHdLZGEI5++81jDD9K2INjbqgYblL7I7kWXI8uqrizLDBGVtKrjH
-         zjd4Jc/90wti6xUko2cKSelgYpB8YqWC57mtDjnucYIVG51wU9CXbGNb+oerKHEgQnF7
-         HFZaULbbiV5JS/OzZYOqUO7wCUUbOTxu8i5ABa6rvvMAYnc2dg/GMaR0drdFeShr3Hv7
-         0Mcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrdZFRv1toUQGxcPDniPHVJvGMaLixBGEYyR5PJxwxYlkMOdMLDJugHIws74D9tp2qAimIQUn5PcN+oPjLXeGdrUP4oziABSt0r0fw
-X-Gm-Message-State: AOJu0YzlpsnmlCONPbpk4zzwtMVErn+c2a8ADx6nXsBFJrMPHHxpYx2M
-	L+fjHn746ubmNmOiSpuRCsmFUdUgEqY1I8kzHCnAlXkbL+/zQnyypY7OPpf00KcbY5/Ab+Sgq4l
-	xeqQnTRNi/Lm4tKrt0edOwxYuoCjm7JL4EoKm0oPKWwPhZsXS+nDUHpZwg0Y62nayB1o4ZhJH+5
-	Zg0r5mhFe5+jYlRXv5UA2VbD0bU+QkNqTf6fvQWT4eGa+jbvlVlUb5QtySmjLwrhY=
-X-Received: by 2002:adf:fa44:0:b0:354:fa0d:1427 with SMTP id ffacd0b85a97d-35526c25695mr13910661f8f.15.1716952681276;
-        Tue, 28 May 2024 20:18:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpCJ+0J4feg5DWmCamoCmdHKV9NdQcsZdg5GrTQwmVV6HKgfUo06EW5RnIGllF7jaxWmj3OWvP61y/5+LdyDY=
-X-Received: by 2002:adf:fa44:0:b0:354:fa0d:1427 with SMTP id
- ffacd0b85a97d-35526c25695mr13910642f8f.15.1716952680890; Tue, 28 May 2024
- 20:18:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8A22F2A;
+	Wed, 29 May 2024 03:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716952872; cv=fail; b=p1u4GHZpGwv7iUXE0AofVgZwekLTZoPj37ZQLa3hPUcPCho8dCdchWOQyvxlskR3e+A9V3PplNzya41/Y11GP639Uxn3T6uIkaOMHDyZTuCXJ0+75i6po/DmKVX4v93IYU+k36bDRLjl5Cvxg4mCex6sx8NUK+Hjj/cZ2F9Wso4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716952872; c=relaxed/simple;
+	bh=SOMm15IT+JkhWYZa++LFvmzrrNSLuy1gh4Z/HKUcfwQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afKsyhri6v00oTgfLF6biXu8EGi5T4R88XzdvSRBoq4s8WZrrNnFm/7+DNOXITFGq75fBCaOCzCgJkt4itiOeyG6sDhwkrfBfyI2gLXJ5JVq2mXWwZndGEhmHOT74oh8fBqnSLt6fvSY9E3hNhPBinFF2QdBx770hENEE9794X8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SCZLt4Tk; arc=fail smtp.client-ip=40.107.236.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hjA7xYFm49K6WMTqznCCVgtUTaw9dJM+TjspRNwMA1di6uLE1SYeuE0FUPER34E1dFyhj6gjmQuUBWfI0AFH5tt+SwsyHaFceKxZ4TWdQ/finC0KBfiILy1Bg3fN1kB42y2IyEYjdtbQOev/kbrZPHGE+vMueHbzY1FutCLpz99MilKd+4EBh11u11anF2h1WnVLMnKVnkMue/FGKPjZcSwaw2EcBuinCaHEU5KeDI4BmAR1JrrtxG/OBzDAJlHIrounuZxJ0r+SHhDukytuh4oL2yYm5ringNiK0HFgTg1e1vcq3ecIb584LnuCGGczWxWrXFRCJiSuBUMJOLD5yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WTTunXqXtujk54sWHoY347iA3cWxu+VHyjCJ2mW72eQ=;
+ b=hyTBwlbJ5oNvdTPmdr674q8YkTfkY8lyo9hgzobsrViaaxmqsrkoCF7+ygKGtUZChK7e6nWUrBXP6pLnjGXIX+kgofAIMDqfvuUYXOwf9n/Z+r6yWOB4EF8I8TUf94AphqBuWNRKeTYpGm7umX3neWbvoWRjy2f+J7bysv2ziAaa5pfVrT0fX5HVsycr3ubK632TQKgksODRfqjypmyJhlnZBp2qh+hZUKvN28oDwm5BNS4MpHk2AfLfLbelnGTqwAp5fE7Wq2F/EUdL/p4RCZTNzt6AvwlRdEbKAxqcw3vkENO+BHNcRdqI7SmG4ddkbvDz6MFLcKEbPAc2n702eQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WTTunXqXtujk54sWHoY347iA3cWxu+VHyjCJ2mW72eQ=;
+ b=SCZLt4TkrLDNOtMZhF5FtZYVwSA5WnauYy/aS00jYvEE8Zcchk+uC6teniWEh/MUKGZkup/qnObMPy3sIzDv96sl42LZD5md4eqNErpWL8b1216lObtY7DtyFpWPPcjdyRDCXD5U+zG3wTYGSIEIXex1gW7UN+7Kbquxp0+Za6/ELAI5Wb5+JgHokc0zc8t8u1r199CwGAzcXmHDCPEwQ2P7qOXH0pPcKLjwDaiV3tZu5yFehWMbcYbKQ5dhUtW4l0cRgW4BI95MR23ESpxAL4hsmqpnQsXRTP6Ynhe1aHayk/b8kcmcPdon9kdSADvM3CkexpbAMkAqQQc5G739sw==
+Received: from MN2PR16CA0036.namprd16.prod.outlook.com (2603:10b6:208:134::49)
+ by CH3PR12MB9121.namprd12.prod.outlook.com (2603:10b6:610:1a1::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Wed, 29 May
+ 2024 03:21:08 +0000
+Received: from BL6PEPF0001AB53.namprd02.prod.outlook.com
+ (2603:10b6:208:134:cafe::71) by MN2PR16CA0036.outlook.office365.com
+ (2603:10b6:208:134::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
+ Transport; Wed, 29 May 2024 03:21:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF0001AB53.mail.protection.outlook.com (10.167.241.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Wed, 29 May 2024 03:21:07 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
+ 2024 20:20:54 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
+ 2024 20:20:53 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 28 May 2024 20:20:52 -0700
+Date: Tue, 28 May 2024 20:20:50 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
+	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
+	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
+Message-ID: <ZlafEktUu5znDsNt@Asurada-Nvidia>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <c97a98a72ee3498c587e5898d6b899553ccd9b27.1712978212.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276A897A5386DFAC9A35F9D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlAoN3s96HL7ROth@nvidia.com>
+ <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240524131912.GT20229@nvidia.com>
+ <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlY886FT3HHLC8Cf@nvidia.com>
+ <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528100315.24290-1-en-wei.wu@canonical.com> <88c6a5ee-1872-4c15-bef2-dcf3bc0b39fb@molgen.mpg.de>
-In-Reply-To: <88c6a5ee-1872-4c15-bef2-dcf3bc0b39fb@molgen.mpg.de>
-From: En-Wei WU <en-wei.wu@canonical.com>
-Date: Wed, 29 May 2024 11:17:50 +0800
-Message-ID: <CAMqyJG0uUgjN90BqjXSfgq7HD3ACdLwOM8P2B+wjiP1Zn1gjAQ@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] [PATCH] ice: irdma hardware init failed after suspend/resume
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: jesse.brandeburg@intel.com, intel-wired-lan@lists.osuosl.org, 
-	rickywu0421@gmail.com, linux-kernel@vger.kernel.org, edumazet@google.com, 
-	anthony.l.nguyen@intel.com, netdev@vger.kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, davem@davemloft.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB53:EE_|CH3PR12MB9121:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea5b4631-7ccb-46c5-e081-08dc7f8e61ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|7416005|376005|1800799015|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1ggiU19qpYBnYc7Ac6b+p+e33zMPo5jzqGr3xoDFvvKT/FckeHcp0EBLIEPk?=
+ =?us-ascii?Q?gzqJ5Jn7umursg3I4KaD5xUNkYDdCJQ10GKOueMPYPw8SIM1NXLtxT7I7Q6W?=
+ =?us-ascii?Q?/AakyH7u2vOQH2zl38IN8mBWD6b2hobTI1BjEs9k4Ogh3IYd73HLHIBP7m3B?=
+ =?us-ascii?Q?co5VFi2WvrT7iq7uQgNB19Djpfx46T4js5LGbQtYtyXT5r45/UBES0y0MB+l?=
+ =?us-ascii?Q?EFvX8ZGh64P0KLuMEWxb02gT6IDsJ3frrsK2or2cP1xnzf4leL2mQWQmaEHH?=
+ =?us-ascii?Q?MKtUdx+U2otZIRN+x2X28OBz6uqg94KsNJ7Z0nUE0WL85Gd/DR7uJcSTUU9v?=
+ =?us-ascii?Q?r+MheXCbztEl4KzkGKWFcertF2doM+8rvFvUUU+4KWBuiPgNMTNHNE8UfQCx?=
+ =?us-ascii?Q?7bUFtENV3V+irTUgOWKsCX40/nfTL1MnFE0668Tf+feYOMVZjOKEAsqU4WFA?=
+ =?us-ascii?Q?Qe16I6bRL3g3dSM0QToO+klz13eTftUIw0FXyF4Lmrm0ixO81bOKzZhA75MT?=
+ =?us-ascii?Q?jknyx4UxSC+3v85gS8wA7pYAwuQnAHFGOs7n2UmwI9VKLPLa2Rd9GCej4dQb?=
+ =?us-ascii?Q?fLjqrywGIVIpu9qWpTbQbvk59s0yQGxyAEN90rr2LhHufp2aaafLX/+3p2IV?=
+ =?us-ascii?Q?Q+I6buW8Wgb3d/VACbd2OyXwA3VR+U0U8ocyg5ofIeHLqvydNxsJnFGuH98i?=
+ =?us-ascii?Q?mtDPWYzt2EESUWE+qvMDf/ZfuH4+1jYStNg7pqBIivEh2ocdxAxeHnSHmC1K?=
+ =?us-ascii?Q?SxFFDhucMxR6mkn3U70dHGyBg9AzAgNU/GnwEzVCbIiD9HMuGHiUsHTMxY04?=
+ =?us-ascii?Q?pcJ30bNhNTrMf9xOHEcngxI1V9CkZ38+AuIQ/h3ygMQkOCgB6JgYb1/iBZvn?=
+ =?us-ascii?Q?koDxw9Og8Mavj3aQhQfiJoAlaIGaoHNn+r4FiYGw0Js7w4LmWO9n2oDVcQH5?=
+ =?us-ascii?Q?FBHtLhNLY/7TFXgjp+T9kgA2feICeFd0PRZo1yGcVU6OEJ9sKJo3qK8B4gOE?=
+ =?us-ascii?Q?F9U2NIbR4GE5nhlzMOe0+6lgKicZIpr/7GPL2evscROajrUbL2ou398vxdKq?=
+ =?us-ascii?Q?6NUuv+l7uB/GoNkgI7mpsP3xNxvQFghnZks4DfVfvqOf/siXuB7KRJ8T2Ebw?=
+ =?us-ascii?Q?uO2phZH5+aY0Eya4AXsCYYCPIjGM+UeR4xYoqOsL+cBoVgaFA/o8rSdduhZ4?=
+ =?us-ascii?Q?xFXcR7OgGoqQeY0mh6WsfqbKR7I6zGnN2My+8ylWnMYNavhRo25lPD/i8rGI?=
+ =?us-ascii?Q?xONZuXdLn1WtGV/sdKebLHzzXR0lQjZAiddTVtaVFw//advwf+eiFIVVmLww?=
+ =?us-ascii?Q?//tZSk2FquG1fxBi/4mgaP2gwJv9I+mGneTN383IOkR9tq4nlC0nlm139yVy?=
+ =?us-ascii?Q?7zUasbU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(7416005)(376005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 03:21:07.8449
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea5b4631-7ccb-46c5-e081-08dc7f8e61ad
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB53.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9121
 
-Thanks for your kind and quick reply.
+On Wed, May 29, 2024 at 02:58:11AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Wednesday, May 29, 2024 4:23 AM
 
-> I think this should be called later in the reset path IMO.
-> You should call ice_deinit_rdma in ice_prepare_for_reset (replace ice_unp=
-lug_aux_dev),
-I'm afraid this would break the existing code because in
-ice_deinit_rdma(), it will remove some entries in
-pf->irq_tracker.entries. And in ice_reinit_interrupt_scheme() (which
-is called before ice_prepare_for_reset), some entries have been
-allocated for other irq usage.
+> > What I mean is for regular vSMMU. Without VCMDQ, a regular vSMMU
+> > on a multi-pSMMU setup will look like (e.g. three devices behind
+> > different SMMUs):
+> > |<------ VMM ------->|<------ kernel ------>|
+> >        |-- viommu0 --|-- pSMMU0 --|
+> > vSMMU--|-- viommu1 --|-- pSMMU1 --|--s2_hwpt
+> >        |-- viommu2 --|-- pSMMU2 --|
+> >
+> > And device would attach to:
+> > |<---- guest ---->|<--- VMM --->|<- kernel ->|
+> >        |-- dev0 --|-- viommu0 --|-- pSMMU0 --|
+> > vSMMU--|-- dev1 --|-- viommu1 --|-- pSMMU1 --|
+> >        |-- dev2 --|-- viommu2 --|-- pSMMU2 --|
+> >
+> > When trapping a device cache invalidation: it is straightforward
+> > by deciphering the virtual device ID to pick the viommu that the
+> > device is attached to.
+> 
+> I understand how above works.
+> 
+> My question is why that option is chosen instead of going with 1:1
+> mapping between vSMMU and viommu i.e. letting the kernel to
+> figure out which pSMMU should be sent an invalidation cmd to, as
+> how VT-d is virtualized.
+> 
+> I want to know whether doing so is simply to be compatible with
+> what VCMDQ requires, or due to another untold reason.
 
-> What effect does this have on resume time?
-When we call ice_init_rdma() at resume time, it will allocate entries
-at pf->irq_tracker.entries and update pf->msix_entries for later use
-(request_irq) by irdma.
+Because we use viommu as a VMID holder for SMMU. So a pSMMU must
+have its own viommu to store its VMID for a shared s2_hwpt:
+        |-- viommu0 (VMIDx) --|-- pSMMU0 --|
+ vSMMU--|-- viommu1 (VMIDy) --|-- pSMMU1 --|--s2_hwpt
+        |-- viommu2 (VMIDz) --|-- pSMMU2 --|
 
-On Tue, 28 May 2024 at 19:12, Paul Menzel <pmenzel@molgen.mpg.de> wrote:
->
-> Dear Ricky,
->
->
-> Thank you for your patch. Some minor nits. It=E2=80=99d be great if you m=
-ade the
-> summary about the action and not an issue description. Maybe:
->
-> Avoid IRQ collision to fix init failure on ACPI S3 resume
->
-> Am 28.05.24 um 12:03 schrieb Ricky Wu:
-> > A bug in https://bugzilla.kernel.org/show_bug.cgi?id=3D218906 describes
-> > that irdma would break and report hardware initialization failed after
-> > suspend/resume with Intel E810 NIC (tested on 6.9.0-rc5).
-> >
-> > The problem is caused due to the collision between the irq numbers
-> > requested in irdma and the irq numbers requested in other drivers
-> > after suspend/resume.
-> >
-> > The irq numbers used by irdma are derived from ice's ice_pf->msix_entri=
-es
-> > which stores mappings between MSI-X index and Linux interrupt number.
-> > It's supposed to be cleaned up when suspend and rebuilt in resume but
-> > it's not, causing irdma using the old irq numbers stored in the old
-> > ice_pf->msix_entries to request_irq() when resume. And eventually
-> > collide with other drivers.
-> >
-> > This patch fixes this problem. On suspend, we call ice_deinit_rdma() to
-> > clean up the ice_pf->msix_entries (and free the MSI-X vectors used by
-> > irdma if we've dynamically allocated them). On Resume, we call
->
-> resume
->
-> > ice_init_rdma() to rebuild the ice_pf->msix_entries (and allocate the
-> > MSI-X vectors if we would like to dynamically allocate them).
-> >
-> > Signed-off-by: Ricky Wu <en-wei.wu@canonical.com>
->
-> Please add a Link: tag.
->
-> If this was tested by somebody else, please also add a Tested-by: line.
->
-> > ---
-> >   drivers/net/ethernet/intel/ice/ice_main.c | 6 +++++-
-> >   1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/et=
-hernet/intel/ice/ice_main.c
-> > index f60c022f7960..ec3cbadaa162 100644
-> > --- a/drivers/net/ethernet/intel/ice/ice_main.c
-> > +++ b/drivers/net/ethernet/intel/ice/ice_main.c
-> > @@ -5544,7 +5544,7 @@ static int ice_suspend(struct device *dev)
-> >        */
-> >       disabled =3D ice_service_task_stop(pf);
-> >
-> > -     ice_unplug_aux_dev(pf);
-> > +     ice_deinit_rdma(pf);
-> >
-> >       /* Already suspended?, then there is nothing to do */
-> >       if (test_and_set_bit(ICE_SUSPENDED, pf->state)) {
-> > @@ -5624,6 +5624,10 @@ static int ice_resume(struct device *dev)
-> >       if (ret)
-> >               dev_err(dev, "Cannot restore interrupt scheme: %d\n", ret=
-);
-> >
-> > +     ret =3D ice_init_rdma(pf);
-> > +     if (ret)
-> > +             dev_err(dev, "Reinitialize RDMA during resume failed: %d\=
-n", ret);
-> > +
-> >       clear_bit(ICE_DOWN, pf->state);
-> >       /* Now perform PF reset and rebuild */
-> >       reset_type =3D ICE_RESET_PFR;
->
-> What effect does this have on resume time?
->
->
-> Kind regards,
->
-> Paul
+Thanks
+Nicolin
 
