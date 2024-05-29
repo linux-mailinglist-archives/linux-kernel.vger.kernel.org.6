@@ -1,151 +1,89 @@
-Return-Path: <linux-kernel+bounces-194051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12308D35E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:02:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2748D35EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977DC285476
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6DE61F260FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213C4180A7B;
-	Wed, 29 May 2024 12:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9991A180A81;
+	Wed, 29 May 2024 12:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kj4tVaPA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EOuuUoyw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0910E819
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFB8180A65;
+	Wed, 29 May 2024 12:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716984162; cv=none; b=cyPAcpGG/fgy0+aqaV25KzOyWOpmu/83kgXH3VyJySgqOnH64uUiviVWgDVB0UBmPVH1orh/xIC0s97DdIE0it3dEiJ+I98nEnpWS7iTZan5Bmhspg6eZgpSceZRrblpVra3G87XyN8FbMvqFv8FNaTz9oBD24klu+HMvdxrUmQ=
+	t=1716984182; cv=none; b=iFNNZ43yklzIbWcII43TEx0dYErtrvyrxouVHaKEwOZQtj8edxgGu6eWrDWdnxzP2AnMDSpyNuSSazfMNBKLfnztDKQ4AGGYJOZyMa6Z4xCTOghV10T8Ow89+b5xYliBZZdzrfpePlio1pKBEf0/99pSQCkgRdRU0+ggwDsuLsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716984162; c=relaxed/simple;
-	bh=S6PR7hASefAykUiQJ98a2gkLPejgKFckIybEKFG05rw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kjyEdSCJsNtlD39ehOLssXq225SqdVftbMUfEERylnrXCHYddWOnj1G1f7BpIayvGiUz/lZyh/NOjPpdI+qhSIqiTYJGEXgg4Erp2Fh1FZiVZtNOfuNDfwxAAnWTUpPXaJ/V8Pwca6wCyG28GafyZ25Ws9900NTMZSHyufcvU90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kj4tVaPA; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716984161; x=1748520161;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=S6PR7hASefAykUiQJ98a2gkLPejgKFckIybEKFG05rw=;
-  b=Kj4tVaPA5xH2UwIsll3f9VOLh+mYSHKRgPv/TxAh93nrkrWcQhL6AxmX
-   y+BXAEvfJQOluo/GEH3VpxCS8uJzscwA1Cuc1Ta+M8Ex30uiRmUH52NFc
-   /UzlKLDaiBm61mYZUAh5rd3wdkesh+0ic6dyTLqWh7DlU/55G0oDcVOyR
-   y8tyHNGVGtO6/+cg2S161WUxr8oLF5RVN9hFMFDSYdYHI6LfX30/r1uSo
-   3wTuoRn+mMFnNEYhYONQP/noR5oADiPf/EDCdJrDdltzZgwvW+n6+HQCA
-   VZKwpI+gVMlQiUhXMEzzwpGGPJc2f2GBbJV1IV2mIZJ/Ye2sOr5seKYBu
-   w==;
-X-CSE-ConnectionGUID: Tbm9QstlQ/u63oyYcdJnDQ==
-X-CSE-MsgGUID: 4ihc+CHfRD+WcRwXuv3J6g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13509618"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="13509618"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 05:02:20 -0700
-X-CSE-ConnectionGUID: bmIch7XpSyGgCPOKiEIJ7g==
-X-CSE-MsgGUID: g95b3E+NTC2z4V13RCkw+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="40262520"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.237.100]) ([10.124.237.100])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 05:02:15 -0700
-Message-ID: <a1f2c08a-e92f-4080-b55e-8d6dbd94db78@linux.intel.com>
-Date: Wed, 29 May 2024 20:02:12 +0800
+	s=arc-20240116; t=1716984182; c=relaxed/simple;
+	bh=FyoOjqny/xJPD7HNo4I46mJ3CF4D4Z73lT1Hsa1X+ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTusjQ8336xCF4gPT4aVgM2GMzfXPLtqMaYj8srnbi4X9X3hqLT/sBnWZRonGkBALVBHm0N5QFWt0MwwrFhlzYvQ3WxR5XBCKlARa4BzM1AsTrZjc2r+3IRQXAym+t4CqKcFw8DnRq3yp5nx7cg8GPJbLCqXkPhTyQYrTXWj1XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EOuuUoyw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=n/x1Z37OezN75w7C6JPLJkcKz+QLusQSg8hGqUj0csw=; b=EOuuUoywca/LZrvrzety5nLa5w
+	FfzOOfEin02XTV0tOaJoVW7TrBvI9bT41+QcznCl43OzfUK+wAC7IZV96bZsL7g9h3gPNrFuvUTiC
+	4jgpxuFP+yYsl6jUSGeb6AouVGUTolpH0TWXn1L7XwXot3riyEfEasPYirRg5IZ9FRhs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sCI19-00GFZD-Fk; Wed, 29 May 2024 14:02:55 +0200
+Date: Wed, 29 May 2024 14:02:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH 2/8] gpio: tqmx86: introduce shadow register for GPIO
+ output value
+Message-ID: <5d45ed61-e1f0-4898-b094-24785843dc8d@lunn.ch>
+References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
+ <3fe75a419cd3a4628315e3457703581304cfc9b8.1716967982.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
- Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/20] iommu: Refactoring domain allocation interface
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
- <efd902f6-eafc-4a26-8057-bdd9d7d6e535@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <efd902f6-eafc-4a26-8057-bdd9d7d6e535@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3fe75a419cd3a4628315e3457703581304cfc9b8.1716967982.git.matthias.schiffer@ew.tq-group.com>
 
-On 2024/5/29 17:03, Yi Liu wrote:
-> On 2024/5/29 13:32, Lu Baolu wrote:
->> The IOMMU subsystem has undergone some changes, including the removal
->> of iommu_ops from the bus structure. Consequently, the existing domain
->> allocation interface, which relies on a bus type argument, is no longer
->> relevant:
->>
->>      struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
->>
->> This series is designed to refactor the use of this interface. It
->> proposes two new interfaces to replace iommu_domain_alloc():
->>
->> - iommu_user_domain_alloc(): This interface is intended for allocating
->>    iommu domains managed by userspace for device passthrough scenarios,
->>    such as those used by iommufd, vfio, and vdpa. It clearly indicates
->>    that the domain is for user-managed device DMA.
+On Wed, May 29, 2024 at 09:45:14AM +0200, Matthias Schiffer wrote:
+> The TQMx86 GPIO controller uses the same register address for input and
+> output data. Reading the register will always return current inputs
+> rather than the previously set outputs (regardless of the current
+> direction setting). Therefore, using a RMW pattern does not make sense
+> when setting output values. Instead, the previously set output register
+> value needs to be stored as a shadow register.
 > 
-> user paging domain? It looks to me user domain includes the nested domains
-> as well.
-
-Yes, nested domain is a user domain. The iommu driver should implement
-iommu_ops->domain_alloc_user for nested domain allocation.
-
+> As there is no reliable way to get the current output values from the
+> hardware, also initialize all channels to 0, to ensure that stored and
+> actual output values match. This should usually not have any effect in
+> practise, as the TQMx86 UEFI sets all outputs to 0 during boot.
 > 
->>    If an IOMMU driver does not implement iommu_ops->domain_alloc_user,
->>    this interface will rollback to the generic paging domain allocation.
->>
->> - iommu_paging_domain_alloc(): This interface is for allocating iommu
->>    domains managed by kernel drivers for kernel DMA purposes. It takes a
->>    device pointer as a parameter, which better reflects the current
->>    design of the IOMMU subsystem.
->>
->> The majority of device drivers currently using iommu_domain_alloc() do
->> so to allocate a domain for a specific device and then attach that
->> domain to the device. These cases can be straightforwardly migrated to
->> the new interfaces.
->>
->> However, there are some drivers with more complex use cases that do
->> not fit neatly into this new scheme. For example:
->>
->> $ git grep "= iommu_domain_alloc"
->> arch/arm/mm/dma-mapping.c:      mapping->domain = 
->> iommu_domain_alloc(bus);
->> drivers/gpu/drm/rockchip/rockchip_drm_drv.c:    private->domain = 
->> iommu_domain_alloc(private->iommu_dev->bus);
->> drivers/gpu/drm/tegra/drm.c:            tegra->domain = 
->> iommu_domain_alloc(&platform_bus_type);
->> drivers/infiniband/hw/usnic/usnic_uiom.c:       pd->domain = domain = 
->> iommu_domain_alloc(dev->bus);
->>
->> This series leave those cases unchanged and keep iommu_domain_alloc()
->> for their usage. But new drivers should not use it anymore.
+> Also prepare for extension of the driver to more than 8 GPIOs by using
+> DECLARE_BITMAP.
 > 
-> does it mean there is still domains allocated via iommu_domain_alloc()
-> on VT-d platform?
+> Fixes: b868db94a6a7 ("gpio: tqmx86: Add GPIO from for this IO controller")
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 
-I think the drivers mentioned above do not run on x86 platforms, or do
-they?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Best regards,
-baolu
+    Andrew
 
