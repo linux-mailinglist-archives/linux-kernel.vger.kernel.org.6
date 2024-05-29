@@ -1,139 +1,204 @@
-Return-Path: <linux-kernel+bounces-194028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF518D35A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:37:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE99B8D35AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4751F25A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C662820AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3919717F39A;
-	Wed, 29 May 2024 11:37:00 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57400180A69;
+	Wed, 29 May 2024 11:37:23 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D3013DDB1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185C21802CD
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716982619; cv=none; b=p05SCWQjoX5SFuz+YolAeI6u6OVPHuT9BkTwftqrlSiIdmx5+COU/QzRoG3R9asx9JBphau4/4QWTU9SJBqAol1mhV0tavDC7+kyL9VGpuULLnKNjOR83jVvpZOEeW9B27h97PsNN4mCeYYsaIyvJUhY1eVtSX2Kl3FF40QBKY0=
+	t=1716982642; cv=none; b=qWWga4No/+W0QWc4m54rrusMX/ABVCSTZZEJecbN5Xviq376WXxh4eIppxiUQi8zrxGeDO/G4Qh5gjr56hsTJELdkJdmjuu8m7bPlXRiAFJh0q6e4/R28gG1VZKB78oR2HvJXW+lKW7kRFWuXbuh9zmPPRq4D50I07saAArzEho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716982619; c=relaxed/simple;
-	bh=iShmSxtXMPEhTX4ponozTRBBflmhDnZSE0hptLtsa6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U3bZDVwhLqcww47Fm5Zw0JO5XVUH9LKfAwiK3Yu/YXAuc3dYbRVf3YDhxTS6UIB40Fwbk7EQRSWejdCE0JZ92sPBbMcAWbHPK3oNuPScqnwtITVxcjvqjetXDbxsXOG0HYCdSRb3ZJ5XOMp3IZj9B3Wmd0NEJNElL0Qz8DkgOoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62a08b1a81bso18143257b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:36:57 -0700 (PDT)
+	s=arc-20240116; t=1716982642; c=relaxed/simple;
+	bh=oAG1h0r+hnSIGhHxm+D/VLfwSXAZLi5hh6ALXv7pu/Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qGZ/2a/acUlG7AAiyxyAPoYYAGzbcRLsq6E11eKWlGMuu9vUqgu5UdNWTYkEldR/7zd/ByUBnqr7zRxKP1Gigg3SMoogt94UhwbaU+XFURTZ2u9Xq+3Z32qDwc1P7FxbKMKPhwOo19i1HWK+c1bBc6ZXpoz4GatDNNu0XulLBTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e92491e750so80286839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:37:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716982617; x=1717587417;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SAcy5LwIEmEVGAqzGqE9HEuOYHbjFDuBNtLO4xPGjiM=;
-        b=mMupJzsASVG3ZZZq1ZZEapvx0DyRQIGmbyKvXyiuBNsphC5nu8aFovY2icPqHd0jcz
-         6+87YGPxhCEdrzFLKZPXEFJk2xRGj0TzD/VJywBA6FWrcgGZlSCXaQRP24/TqK9Q7hi+
-         bCQyLAmFI2FJaXW08MgEki89XzxDYX8WcW1WD1n+Jjz7MhXuMFmI9wmmKdoMoECs7acs
-         0UiwTAi4gJpSOgByrZ68fJzYM85DLK/SeTsxfvDoGk4ZrsoGXyavWsIcXZZSrFdeTl/e
-         E6xjeXrzQUNU9xxpAPphxbBLZAi4oHE9rasYOfKTuPcQzKE6f1BjQ7RBKMeP8wXOs5B/
-         us7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKPUhZV/WAPi9GMlR0Bfbt48ak1ulBbz9l5uaQapQcfye2BWrVSOPBRXMB321c18yMgfK5lBygbfKgH/u0k71Gdcn65hxzrWDPJpHA
-X-Gm-Message-State: AOJu0Yy8nEL2umIfxbeb+qNcTSsBeHTQ3SzwdXdgBCaeVV5WVHYFMRUV
-	55lOSwMWeGo2a5jAT1IKpgjlsn+8ekFEIHjT1b88GTcuh1/V3L1Rdp5TgnupHaY=
-X-Google-Smtp-Source: AGHT+IF4B/i16JVgjvn9Gq3AMZ6xwnJfhnnJ/T89UQd5PVzaSEKNvWZ8UT1ysVkPHfHhor4MZFfZgw==
-X-Received: by 2002:a0d:d644:0:b0:617:cfb8:4e50 with SMTP id 00721157ae682-62a08d86a9bmr156046657b3.17.1716982615693;
-        Wed, 29 May 2024 04:36:55 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a3bfeb3sm24055037b3.38.2024.05.29.04.36.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 04:36:55 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df7713445d3so2147464276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:36:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVdPXln+mEOBYiar1Ytk26DdjUtpe6oqFuvRRYkNTstIcR5aiMsaOXZBcIES6cqD5NeyKxBS4oR7B8pv39vNezbdmtkUxdt0K2A8q/w
-X-Received: by 2002:a25:bccc:0:b0:df7:8291:d109 with SMTP id
- 3f1490d57ef6-df78291d1dcmr12179009276.59.1716982614980; Wed, 29 May 2024
- 04:36:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716982640; x=1717587440;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=guInrQclf5fwu1l7pfAp9j5yGk+WubFjiJRZ6ShZ0ww=;
+        b=eFyiOxTsyMnaPc6dKRvzInBgPw+AyzLHxufgR7IpChhMob21K3r3F6zNWSuLLyq3zp
+         C5F1iaY4IK+CdxADV9wyxsNlxUVJGzkQxK8QuTiGxaZYGnxh0KgO+VqICikBIQ9sg6L8
+         Ow7l+yzljocssE4tD+j844jROdLS1mTxxApWFuBNuo6Dh9ljV03sl7Lu3WkheNnWZESM
+         wgtQUdpFMNJoMRPRRi8bx1wmeFLrBa1LETZxoQ6HzeSOZNf59DdBC7vQSr/ZNEVb6id+
+         2vbkaI+QGuJAexy/3OXyiJNVlaSHJkHTvxr/zjOpG44XaNqi7GNIx6NMErJ2L8XLG6qU
+         5nHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPSMsNcEx3Hn7gswFajL6GM4faKVyEaT4ec2DgKj9vp2FNJCahNr15uQ5eiNvmG97XvItccDiSYY5ouIszBDkHXXILUWpE86aAJdR6
+X-Gm-Message-State: AOJu0YzZU1y8H92kuYeXrhpU15ZH7ciUd03/20/33r9gK8T1HtYXe5yR
+	hQJDE99w76U6Mv/LTWUzwC1ySH/Aiafn53KxeXjVpS3n7sXJs2miKVMNehV1mdMB6xo4OVTZKS6
+	C24MVNLsBu8ENx+YOHEy9mtMlOgEPrlFC61QkA7JHhzEoeACXmCakF90=
+X-Google-Smtp-Source: AGHT+IE6cbWOqYPtOGW353usc29WtMxEid9kOPAacp74u7Zl3dHWClyaCxJW0IjKFfqr+2fmDSW9KzL+jyf20Bhex7ZRzqBGoqi/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e00498fccf6dcbcf63bd24a137bfc7abd1b98345.1716967720.git.geert+renesas@glider.be>
- <Zlb_txl4CqCfxWZz@pluto>
-In-Reply-To: <Zlb_txl4CqCfxWZz@pluto>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 May 2024 13:36:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUyW_RxfUaxnyWVzPsdXQWqCQbgZ+avHskinXkrSFqhtw@mail.gmail.com>
-Message-ID: <CAMuHMdUyW_RxfUaxnyWVzPsdXQWqCQbgZ+avHskinXkrSFqhtw@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: ARM_MHU_V3 should depend on ARM64
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6638:808c:b0:4af:ed6c:d8d7 with SMTP id
+ 8926c6da1cb9f-4b11cd84d43mr33605173.0.1716982640304; Wed, 29 May 2024
+ 04:37:20 -0700 (PDT)
+Date: Wed, 29 May 2024 04:37:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005c792d0619962ca1@google.com>
+Subject: [syzbot] [btrfs?] KMSAN: uninit-value in btrfs_compress_heuristic
+From: syzbot <syzbot+ca895d3f00092ebf1408@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Cristian,
+Hello,
 
-On Wed, May 29, 2024 at 12:13=E2=80=AFPM Cristian Marussi
-<cristian.marussi@arm.com> wrote:
-> On Wed, May 29, 2024 at 09:30:45AM +0200, Geert Uytterhoeven wrote:
-> > The ARM MHUv3 controller is only present on ARM64 SoCs.  Hence add a
-> > dependency on ARM64, to prevent asking the user about this driver when
-> > configuring a kernel for a different architecture than ARM64.
->
-> the ARM64 dependency was dropped on purpose after a few iterations of
-> this series since, despite this being an ARM IP, it has really no technic=
-al
-> dependency on ARM arch, not even the usual one on ARM AMBA bus, being thi=
-s a
-> platform driver, so it seemed an uneeded artificial restriction to impose=
-..
-> ...having said that, surely my live testing were performed only on arm64 =
-models
-> as of now.
+syzbot found the following issue on:
 
-For that, we have COMPILE_TEST=3Dy.
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14573014980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca895d3f00092ebf1408
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> So, I am not saying that I am against this proposed fix but what is the
-> issue that is trying to solve, have you seen any compilation error ? or
-> is it just to avoid the user-prompting ?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I did not see a compile error (I didn't enable it on any non-ARM
-platform).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
 
-But it is rather futile to ask the user about (thousands of) drivers
-for hardware that cannot possibly be present on the system he is
-configuring a kernel for.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ca895d3f00092ebf1408@syzkaller.appspotmail.com
 
-> > --- a/drivers/mailbox/Kconfig
-> > +++ b/drivers/mailbox/Kconfig
-> > @@ -25,6 +25,7 @@ config ARM_MHU_V2
-> >
-> >  config ARM_MHU_V3
-> >       tristate "ARM MHUv3 Mailbox"
-> > +     depends on ARM64 || COMPILE_TEST
-> >       depends on HAS_IOMEM || COMPILE_TEST
-> >       depends on OF
-> >       help
+=====================================================
+BUG: KMSAN: uninit-value in btrfs_compress_heuristic+0xb34/0x31f0 fs/btrfs/compression.c:1507
+ btrfs_compress_heuristic+0xb34/0x31f0 fs/btrfs/compression.c:1507
+ inode_need_compress fs/btrfs/inode.c:812 [inline]
+ btrfs_run_delalloc_range+0x158f/0x16e0 fs/btrfs/inode.c:2281
+ writepage_delalloc+0x244/0x6b0 fs/btrfs/extent_io.c:1213
+ __extent_writepage fs/btrfs/extent_io.c:1465 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2142 [inline]
+ extent_writepages+0x1c01/0x3850 fs/btrfs/extent_io.c:2264
+ btrfs_writepages+0x35/0x40 fs/btrfs/inode.c:7929
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2613
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+ start_delalloc_inodes+0xb02/0x17c0 fs/btrfs/inode.c:9404
+ btrfs_start_delalloc_roots+0x89e/0x1030 fs/btrfs/inode.c:9481
+ shrink_delalloc fs/btrfs/space-info.c:648 [inline]
+ flush_space+0xbd6/0x16d0 fs/btrfs/space-info.c:758
+ btrfs_async_reclaim_metadata_space+0x76d/0x9c0 fs/btrfs/space-info.c:1088
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
+ worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Gr{oetje,eeting}s,
+Uninit was stored to memory at:
+ heuristic_collect_sample fs/btrfs/compression.c:1461 [inline]
+ btrfs_compress_heuristic+0x303/0x31f0 fs/btrfs/compression.c:1496
+ inode_need_compress fs/btrfs/inode.c:812 [inline]
+ btrfs_run_delalloc_range+0x158f/0x16e0 fs/btrfs/inode.c:2281
+ writepage_delalloc+0x244/0x6b0 fs/btrfs/extent_io.c:1213
+ __extent_writepage fs/btrfs/extent_io.c:1465 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2142 [inline]
+ extent_writepages+0x1c01/0x3850 fs/btrfs/extent_io.c:2264
+ btrfs_writepages+0x35/0x40 fs/btrfs/inode.c:7929
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2613
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+ start_delalloc_inodes+0xb02/0x17c0 fs/btrfs/inode.c:9404
+ btrfs_start_delalloc_roots+0x89e/0x1030 fs/btrfs/inode.c:9481
+ shrink_delalloc fs/btrfs/space-info.c:648 [inline]
+ flush_space+0xbd6/0x16d0 fs/btrfs/space-info.c:758
+ btrfs_async_reclaim_metadata_space+0x76d/0x9c0 fs/btrfs/space-info.c:1088
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
+ worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-                        Geert
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:122 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
+ iterate_and_advance include/linux/iov_iter.h:271 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x2ae0 lib/iov_iter.c:481
+ btrfs_copy_from_user+0x176/0x4c0 fs/btrfs/file.c:59
+ btrfs_buffered_write+0x119a/0x2ab0 fs/btrfs/file.c:1339
+ btrfs_do_write_iter+0x395/0x2270 fs/btrfs/file.c:1688
+ btrfs_file_write_iter+0x38/0x50 fs/btrfs/file.c:1705
+ __kernel_write_iter+0x64d/0xc80 fs/read_write.c:523
+ dump_emit_page fs/coredump.c:895 [inline]
+ dump_user_range+0x8dc/0xee0 fs/coredump.c:956
+ elf_core_dump+0x57c7/0x5ae0 fs/binfmt_elf.c:2083
+ do_coredump+0x32d5/0x4920 fs/coredump.c:769
+ get_signal+0x267e/0x2d00 kernel/signal.c:2896
+ arch_do_signal_or_restart+0x53/0xcb0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x5d/0x160 kernel/entry/common.c:218
+ do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+Uninit was created at:
+ __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
+ alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
+ alloc_pages+0x1bf/0x1e0 mm/mempolicy.c:2335
+ dump_user_range+0x4a/0xee0 fs/coredump.c:940
+ elf_core_dump+0x57c7/0x5ae0 fs/binfmt_elf.c:2083
+ do_coredump+0x32d5/0x4920 fs/coredump.c:769
+ get_signal+0x267e/0x2d00 kernel/signal.c:2896
+ arch_do_signal_or_restart+0x53/0xcb0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x5d/0x160 kernel/entry/common.c:218
+ do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+CPU: 1 PID: 3751 Comm: kworker/u8:28 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Workqueue: events_unbound btrfs_async_reclaim_metadata_space
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
