@@ -1,258 +1,368 @@
-Return-Path: <linux-kernel+bounces-193968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F4E8D34AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:37:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BDC8D34A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82AFC2885D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060DE1C242C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72A117B510;
-	Wed, 29 May 2024 10:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF73717B4E7;
+	Wed, 29 May 2024 10:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u3kqZZY0"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icgKG8Bs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9442C17B50B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF55F73475
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716979048; cv=none; b=duoMfEwW2Db/CTym3UzxnupWjSbZ/WmjFbZ4c/DZI31WT4HUaUKEKd/6jH0LspcHu8H8d6qlZ2m1fSERfZ/pd0NiiLa6KBDtnKkx/4PhL/j1/W7FGzVFXyRw+c9UNDyK9yfUHEQrUXFmuB0F9XzyIKuSJopy4VZBjmDJ9uPQ0tQ=
+	t=1716979031; cv=none; b=RlotG9MUKeB+6j6qkz7AtYORySzaqrBA4CNBmH/LrrofZwEO+YlvcYYjHr+bhx9IxVKUguQqVqEO2NPNK4D6Eby4y3L8wDNaHxlaIkpqkbHVX++A+NTfFLVKTEi1xM7DVOkKjzFgUksvA2WtttphRG09RQmYH0FMYTK8ZK+afo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716979048; c=relaxed/simple;
-	bh=RRhep4tQqxUgLf/+iYgoXbZOV9YBI9NwCmFOsL9sl5w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EBXROvRbtoy+tgELfzhKprBbaA5r8rS2nFWrnm4VzziqQ9KG0EjDfEWh5wJPihumVLtCQr8/NRa1ftYqD4Eh2rGZV1c8EWHlSDV712F48EthCYkh4FPhbHH8iuN+XHJpX6jYuA3Bf9OC5m0gXrTseO+g2PkjqS4hd9j+gAZFd3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u3kqZZY0; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44TAZwoX127872;
-	Wed, 29 May 2024 05:35:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716978958;
-	bh=gbTce+LVcO4bL3KUBnZa++UMz5RC5JOaMX/CYP78Ezc=;
-	h=From:To:CC:Subject:Date;
-	b=u3kqZZY0LKmxp/QLo4TJ+YtAhr0OITDfEP2MApf36JkCSKJEobaIvbbp1MI+ppbqw
-	 sSdo3rNPASlSRk42NuUfTWBHg0iMT4F1kHYGS77UWUW0mqw9rAvSOLLnuHqisIVn5R
-	 UEWTo6KVpYuGZ7zLFAXW4TpPlupQngso0B+JxvbA=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44TAZw4h091218
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 29 May 2024 05:35:58 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 29
- May 2024 05:35:57 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 29 May 2024 05:35:57 -0500
-Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.171])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44TAZlsL034133;
-	Wed, 29 May 2024 05:35:48 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <alsa-devel@alsa-project.org>,
-        <i-salazar@ti.com>, <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <kevin-lu@ti.com>,
-        <yuhsuan@google.com>, <tiwai@suse.de>, <baojun.xu@ti.com>,
-        <soyer@irl.hu>, <Baojun.Xu@fpt.com>, <judyhsiao@google.com>,
-        <navada@ti.com>, <cujomalainey@google.com>, <aanya@ti.com>,
-        <nayeem.mahmud@ti.com>, <savyasanchi.shukla@netradyne.com>,
-        <flaviopr@microsoft.com>, Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v3] ASoc: tas2781: Enable RCA-based playback without DSP firmware download
-Date: Wed, 29 May 2024 18:35:41 +0800
-Message-ID: <20240529103543.2089-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1716979031; c=relaxed/simple;
+	bh=p1BEXnhw2cEjMFOVZy+OFL7YQynXp+9t0CliU3bLueU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vcn74XvtVxKu38Ltft9feg8lnICXzavVwVCIQrDXKT3ooOQ70vb1k9LAD5zZy3Mc6foaP0bvk1QMmPb9zXGddF09qp5KfwOshYpQFrf37m6wbOpAHURDr764DxB0i+3iaQFdWUOzFUeTaIIuZXuSx8zifJ5K/ZAcLA+ZiVc4GuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icgKG8Bs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716979028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CpU2Z2y/Dq9mAc3rD+4Oa98jBsSY1tqS5W7YQ5yVdpY=;
+	b=icgKG8BsH2oCM1ugG4TuILu1g5uOeoOwnFNi1DWz+9Yua+RpyXt5kZRTNIceDZK81PnBd4
+	ECKdijJ4EJBcQNSqbxayg9tdis13EfSIvmmGEpNbcJPI8WWwgiefCA/nHDwQZndvBSHX7r
+	15ERyH8l8pj85mmkorQ8noSPVZufmZs=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-626-drsFCTJHN56luaiAtSP_1A-1; Wed, 29 May 2024 06:37:07 -0400
+X-MC-Unique: drsFCTJHN56luaiAtSP_1A-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42120a4c56eso5864405e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:37:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716979026; x=1717583826;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CpU2Z2y/Dq9mAc3rD+4Oa98jBsSY1tqS5W7YQ5yVdpY=;
+        b=tfdZek1AFHksl+jNOwz+Mw41lpTaI7Uw5JZl95cDmgpEUwzJ3qrka9knPtqkE+qTrk
+         qPFYhRXtdc6MAwxXwGjRzZmbCwiDFm8X8thAO2g/5oH8DUT/yB0tpisekqCih7Mz+muE
+         6kUh+tt96T688BkSWEvdzH39s6Nn7cxv3lBqaqlkQfaW4VDuAIIch/eBo1cEpvKNWNxy
+         zfNcGzK1I4v/tXc9DQzswLTqtChjfRAW5xhagmuGff5ejXRT3AiQBCJ1K9OT3jSiqZty
+         lXVF06Shj50OIQGzX3xF2stUY+f1w+01n7hSY3ta18JmxzMF9QGCuCc/l5ZjxmFJKuwn
+         z5OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMKygJW6sy512fFosRwfH+G6lK4imVKBQuKUoZoeBFGm7+pCMP826nwSQYcwfcxvKZJeXqakPMqBqC20zb4cX8f9jWcITMTscQbIgs
+X-Gm-Message-State: AOJu0Yx9XzVOIVyrLHrfGp052UXZFx/axqoc0++jYE3nvc6eNOUSXZvV
+	KTfR2/r826nBBRBJHudTePFr6sHUgkZ6sa/KoPC8ln0/cGDroF6QY3NlemcOO4usCih6rH9rmmP
+	1jzFuqhr03rc0tD87G+9OqsSPoRHKJasBfXnyxbPBE9YpL0KR2sAWA+c2N8+fFQ==
+X-Received: by 2002:a05:600c:1d93:b0:420:1a72:69dd with SMTP id 5b1f17b1804b1-42122af2992mr15023185e9.10.1716979026186;
+        Wed, 29 May 2024 03:37:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHMiOsDUw8h6VNgkHESEJS4VY79Xl3PvqRp9SgguK+PKmVKvFbmTQlWI9/6A1ewVEnFLRo/AA==
+X-Received: by 2002:a05:600c:1d93:b0:420:1a72:69dd with SMTP id 5b1f17b1804b1-42122af2992mr15022865e9.10.1716979025686;
+        Wed, 29 May 2024 03:37:05 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:59e:9d80:527b:9dff:feef:3874? ([2a01:e0a:59e:9d80:527b:9dff:feef:3874])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee954bsm207676175e9.4.2024.05.29.03.37.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 03:37:05 -0700 (PDT)
+Message-ID: <312fd3cf-2eb9-4a38-8c50-e3b7639c3cbc@redhat.com>
+Date: Wed, 29 May 2024 12:37:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] KVM: arm64: add emulation for CTR_EL0 register
+Content-Language: en-US
+To: Sebastian Ott <sebott@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ James Morse <james.morse@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+References: <20240514072252.5657-1-sebott@redhat.com>
+ <20240514072252.5657-4-sebott@redhat.com>
+From: Eric Auger <eauger@redhat.com>
+In-Reply-To: <20240514072252.5657-4-sebott@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In only RCA(Reconfigurable Architecture) binary case, no DSP program will
-be working inside tas2563/tas2781, that is dsp-bypass mode, do not support
-speaker protection, and audio acoustic algorithms in this mode.
+Hi Sebastian,
+On 5/14/24 09:22, Sebastian Ott wrote:
+> CTR_EL0 is currently handled as an invariant register, thus
+> guests will be presented with the host value of that register.
+> 
+> Add emulation for CTR_EL0 based on a per VM value. Userspace can
+> switch off DIC and IDC bits and reduce DminLine and IminLine sizes.
+> 
+> When CTR_EL0 is changed validate that against CLIDR_EL1 and CCSIDR_EL1
+> to make sure we present the guest with consistent register values.
+> Changes that affect the generated cache topology values are allowed if
+> they don't clash with previous register writes.
+> 
+> Signed-off-by: Sebastian Ott <sebott@redhat.com>
+> ---
+>  arch/arm64/kvm/sys_regs.c | 130 +++++++++++++++++++++++++++++++++-----
+>  1 file changed, 114 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 0213c96f73f2..8e8acf3dd9bd 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -215,13 +215,8 @@ void vcpu_write_sys_reg(struct kvm_vcpu *vcpu, u64 val, int reg)
+>  /* CSSELR values; used to index KVM_REG_ARM_DEMUX_ID_CCSIDR */
+>  #define CSSELR_MAX 14
+>  
+> -/*
+> - * Returns the minimum line size for the selected cache, expressed as
+> - * Log2(bytes).
+> - */
+> -static u8 get_min_cache_line_size(struct kvm *kvm, bool icache)
+> +static u8 __get_min_cache_line_size(u64 ctr, bool icache)
+>  {
+> -	u64 ctr = kvm->arch.ctr_el0;
+>  	u8 field;
+>  
+>  	if (icache)
+> @@ -240,6 +235,15 @@ static u8 get_min_cache_line_size(struct kvm *kvm, bool icache)
+>  	return field + 2;
+>  }
+>  
+> +/*
+> + * Returns the minimum line size for the selected cache, expressed as
+> + * Log2(bytes).
+> + */
+> +static u8 get_min_cache_line_size(struct kvm *kvm, bool icache)
+> +{
+> +	return __get_min_cache_line_size(kvm->arch.ctr_el0, icache);
+> +}
+> +
+>  /* Which cache CCSIDR represents depends on CSSELR value. */
+>  static u32 get_ccsidr(struct kvm_vcpu *vcpu, u32 csselr)
+>  {
+> @@ -1880,6 +1884,45 @@ static int set_wi_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+>  	return 0;
+>  }
+>  
+> +static const struct sys_reg_desc *get_sys_reg_desc(u32 encoding);
+> +
+> +static int validate_clidr_el1(u64 clidr_el1, u64 ctr_el0)
+> +{
+> +	u64 idc = !CLIDR_LOC(clidr_el1) ||
+> +		  (!CLIDR_LOUIS(clidr_el1) && !CLIDR_LOUU(clidr_el1));
+This actually computes:
+CLIDR_EL1.LoC == 0b000 or (CLIDR_EL1.LoUIS == 0b000 &&
+CLIDR_EL1.LoUU == 0b000)
 
-Fixes: ef3bcde75d06 ("ASoC: tas2781: Add tas2781 driver")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+refering to ARM ARM
+Terminology for Clean, Invalidate, and Clean and Invalidate instructions
 
----
-v3:
- - Add description on RCA is Reconfigurable Architecture.
- - Add the description on enabling
- - Reword the commit
- - Remove question mark in the comments.
- - Add spaces in comments.
-v2:
- - Correct comment.
- - Add Fixes.
- - Move header file to the first.
-v1:
- - Split out the different logical changes into different patches.
- - rename tasdevice_dsp_fw_state -> tasdevice_fw_state, the fw are not
-   only DSP fw, but also RCA(Reconfigurable data, such as acoustic data
-   and register setting, etc).
- - Add TASDEVICE_RCA_FW_OK in tasdevice_fw_state to identify the state
-   that only RCA binary file has been download successfully, but DSP fw
-   is not loaded or loading failure.
- - Add the this strategy into tasdevice_tuning_switch.
- - If one side of the if/else has a braces both should in
-   tasdevice_tuning_switch.
- - Identify whehter both RCA and DSP have been loaded or only RCA has
-   been loaded in tasdevice_fw_ready.
- - Add check fw load status in tasdevice_startup.
- - remove ret in tasdevice_startup to make the code neater.
----
- include/sound/tas2781-dsp.h       |  3 ++-
- sound/soc/codecs/tas2781-fmwlib.c | 16 ++++++++++-----
- sound/soc/codecs/tas2781-i2c.c    | 33 ++++++++++++++++++++-----------
- 3 files changed, 34 insertions(+), 18 deletions(-)
+1) If the LoC field value is 0x0, this means that no levels of cache
+need to cleaned or invalidated
+when cleaning or invalidating to the Point of Coherency.
 
-diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
-index 7fba7ea26a4b..92d68ca5eafb 100644
---- a/include/sound/tas2781-dsp.h
-+++ b/include/sound/tas2781-dsp.h
-@@ -117,10 +117,11 @@ struct tasdevice_fw {
- 	struct device *dev;
- };
- 
--enum tasdevice_dsp_fw_state {
-+enum tasdevice_fw_state {
- 	TASDEVICE_DSP_FW_NONE = 0,
- 	TASDEVICE_DSP_FW_PENDING,
- 	TASDEVICE_DSP_FW_FAIL,
-+	TASDEVICE_RCA_FW_OK,
- 	TASDEVICE_DSP_FW_ALL_OK,
- };
- 
-diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-index 265a8ca25cbb..5db1a0ac6036 100644
---- a/sound/soc/codecs/tas2781-fmwlib.c
-+++ b/sound/soc/codecs/tas2781-fmwlib.c
-@@ -2324,14 +2324,19 @@ void tasdevice_tuning_switch(void *context, int state)
- 	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
- 	int profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
- 
--	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
--		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-+	/*
-+	 * Only RCA-based Playback can still work with no dsp program running
-+	 * inside the chip?
-+	 */
-+	if (!(tas_priv->fw_state == TASDEVICE_RCA_FW_OK ||
-+		tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK)) {
-+		dev_err(tas_priv->dev, "No firmware loaded\n");
- 		return;
- 	}
- 
- 	if (state == 0) {
--		if (tas_priv->cur_prog < tas_fmw->nr_programs) {
--			/*dsp mode or tuning mode*/
-+		if (tas_fmw && tas_priv->cur_prog < tas_fmw->nr_programs) {
-+			/* dsp mode or tuning mode */
- 			profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
- 			tasdevice_select_tuningprm_cfg(tas_priv,
- 				tas_priv->cur_prog, tas_priv->cur_conf,
-@@ -2340,9 +2345,10 @@ void tasdevice_tuning_switch(void *context, int state)
- 
- 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
- 			TASDEVICE_BIN_BLK_PRE_POWER_UP);
--	} else
-+	} else {
- 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
- 			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
-+	}
- }
- EXPORT_SYMBOL_NS_GPL(tasdevice_tuning_switch,
- 	SND_SOC_TAS2781_FMWLIB);
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 9350972dfefe..9b85a44511c2 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -380,23 +380,33 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	mutex_lock(&tas_priv->codec_lock);
- 
- 	ret = tasdevice_rca_parser(tas_priv, fmw);
--	if (ret)
-+	if (ret) {
-+		tasdevice_config_info_remove(tas_priv);
- 		goto out;
-+	}
- 	tasdevice_create_control(tas_priv);
- 
- 	tasdevice_dsp_remove(tas_priv);
- 	tasdevice_calbin_remove(tas_priv);
--	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
-+	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
- 	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
- 		tas_priv->dev_name);
-+
- 	ret = tasdevice_dsp_parser(tas_priv);
- 	if (ret) {
- 		dev_err(tas_priv->dev, "dspfw load %s error\n",
- 			tas_priv->coef_binaryname);
--		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
- 		goto out;
- 	}
--	tasdevice_dsp_create_ctrls(tas_priv);
-+
-+	/*
-+	 * If no dsp-related kcontrol created, the dsp resource will be freed.
-+	 */
-+	ret = tasdevice_dsp_create_ctrls(tas_priv);
-+	if (ret) {
-+		dev_err(tas_priv->dev, "dsp controls error\n");
-+		goto out;
-+	}
- 
- 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
- 
-@@ -417,9 +427,8 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	tasdevice_prmg_load(tas_priv, 0);
- 	tas_priv->cur_prog = 0;
- out:
--	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
--		/*If DSP FW fail, kcontrol won't be created */
--		tasdevice_config_info_remove(tas_priv);
-+	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
-+		/*If DSP FW fail, DSP kcontrol won't be created */
- 		tasdevice_dsp_remove(tas_priv);
- 	}
- 	mutex_unlock(&tas_priv->codec_lock);
-@@ -466,14 +475,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_component *codec = dai->component;
- 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
--	int ret = 0;
- 
--	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
--		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
--		ret = -EINVAL;
-+	if (!(tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK ||
-+		tas_priv->fw_state == TASDEVICE_RCA_FW_OK)) {
-+		dev_err(tas_priv->dev, "Bin file not loaded\n");
-+		return -EINVAL;
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static int tasdevice_hw_params(struct snd_pcm_substream *substream,
--- 
-2.34.1
+2) If the LoUU field value is 0x0, this means that no levels of data
+cache need to be cleaned or
+invalidated when cleaning or invalidating to the Point of Unification.
+
+3) If the LoUIS field value is 0x0, this means that no levels of data or
+unified cache need to
+cleaned or invalidated when cleaning or invalidating to the Point of
+Unification for the Inner Shareable shareability domain.
+
+so to me if above computation is true this means who have no level of
+cache to take care of, so although CTR_EL0.IDC = 0 would normally mean
+you must "Data cache clean to the Point of Unification" that is not
+needed in that case.
+
+But the spec does not really state that IDC=0 and
+no_level_of_cache_to_clean_inv are incompatible as far as I see
+
+
+> +
+> +	if ((clidr_el1 & CLIDR_EL1_RES0) || (!(ctr_el0 & CTR_EL0_IDC) && idc))> +		return -EINVAL;
+
+Isn't (clidr_el1 & CLIDR_EL1_RES0) already checked by
+
+        { SYS_DESC(SYS_CLIDR_EL1), access_clidr, reset_clidr, CLIDR_EL1,
+          .set_user = set_clidr, .val = ~CLIDR_EL1_RES0 },
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int validate_cache_top(struct kvm_vcpu *vcpu, u64 ctr_el0)
+s/top/topology?
+> +{
+> +	const struct sys_reg_desc *clidr_el1;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	clidr_el1 = get_sys_reg_desc(SYS_CLIDR_EL1);
+> +	if (!clidr_el1)
+> +		return -ENOENT;
+> +
+> +	ret = validate_clidr_el1(__vcpu_sys_reg(vcpu, clidr_el1->reg), ctr_el0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!vcpu->arch.ccsidr)
+> +		return 0;
+> +
+worth to add a comment about what this does as this is not
+straighforward ;-)
+> +	for (i = 0; i < CSSELR_MAX; i++) {
+> +		if ((FIELD_GET(CCSIDR_EL1_LineSize, get_ccsidr(vcpu, i)) + 4)
+maybe use a local variable such as log2_cache_bytes
+> +		    < __get_min_cache_line_size(ctr_el0, i & CSSELR_EL1_InD))
+I don't get i & CSSELR_EL1_InD, please can you explain?
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static bool access_ctr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+>  		       const struct sys_reg_desc *r)
+>  {
+> @@ -1890,6 +1933,55 @@ static bool access_ctr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+>  	return true;
+>  }
+>  
+> +static u64 reset_ctr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd)
+> +{
+> +	vcpu->kvm->arch.ctr_el0 = read_sanitised_ftr_reg(SYS_CTR_EL0);
+> +	return vcpu->kvm->arch.ctr_el0;
+> +}
+> +
+> +static int get_ctr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+> +		   u64 *val)
+> +{
+> +	*val = vcpu->kvm->arch.ctr_el0;
+> +	return 0;
+> +}
+> +
+> +static int set_ctr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+> +		   u64 val)
+> +{
+don't you need to take the config_lock earlier as in set_id_reg()? isn't
+it racy versus has_ran_once?
+> +	u64 ctr = vcpu->kvm->arch.ctr_el0;
+> +	u64 writable_mask = rd->val;
+> +	int ret;
+> +
+> +	if (val == ctr)
+> +		return 0;
+> +
+> +	if (kvm_vm_has_ran_once(vcpu->kvm))> +		return -EBUSY;> +
+> +	if ((ctr & ~writable_mask) != (val & ~writable_mask))
+> +		return -EINVAL;
+> +
+> +	if (((ctr & CTR_EL0_DIC_MASK) < (val & CTR_EL0_DIC_MASK)) ||
+> +	    ((ctr & CTR_EL0_IDC_MASK) < (val & CTR_EL0_IDC_MASK)) ||
+> +	    ((ctr & CTR_EL0_DminLine_MASK) < (val & CTR_EL0_DminLine_MASK)) ||
+> +	    ((ctr & CTR_EL0_IminLine_MASK) < (val & CTR_EL0_IminLine_MASK))) {
+> +		return -EINVAL;
+> +	}
+> +
+> +	mutex_lock(&vcpu->kvm->arch.config_lock);
+> +	ret = validate_cache_top(vcpu, val);
+> +	if (ret) {
+> +		mutex_unlock(&vcpu->kvm->arch.config_lock);
+> +		return ret;
+nit use a goto out
+> +	}
+> +
+> +	vcpu->kvm->arch.ctr_el0 = val;
+out:
+> +	mutex_unlock(&vcpu->kvm->arch.config_lock);
+> +
+> +	return 0;
+> +}
+> +
+>  static bool access_clidr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+>  			 const struct sys_reg_desc *r)
+>  {
+> @@ -1959,10 +2051,9 @@ static u64 reset_clidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
+>  static int set_clidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+>  		      u64 val)
+>  {
+> -	u64 idc = !CLIDR_LOC(val) || (!CLIDR_LOUIS(val) && !CLIDR_LOUU(val));
+>  	u64 ctr_el0 = vcpu->kvm->arch.ctr_el0;
+>  
+> -	if ((val & CLIDR_EL1_RES0) || (!(ctr_el0 & CTR_EL0_IDC) && idc))
+> +	if (validate_clidr_el1(val, ctr_el0))
+>  		return -EINVAL;
+>  
+>  	__vcpu_sys_reg(vcpu, rd->reg) = val;
+> @@ -2475,7 +2566,11 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	{ SYS_DESC(SYS_CCSIDR2_EL1), undef_access },
+>  	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
+>  	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
+> -	{ SYS_DESC(SYS_CTR_EL0), access_ctr },
+> +	{ SYS_DESC(SYS_CTR_EL0), access_ctr, .reset = reset_ctr,
+> +	  .get_user = get_ctr, .set_user = set_ctr, .val = (CTR_EL0_DIC_MASK |
+> +							    CTR_EL0_IDC_MASK |
+> +							    CTR_EL0_DminLine_MASK |
+> +							    CTR_EL0_IminLine_MASK)},
+>  	{ SYS_DESC(SYS_SVCR), undef_access },
+>  
+>  	{ PMU_SYS_REG(PMCR_EL0), .access = access_pmcr, .reset = reset_pmcr,
+> @@ -3651,6 +3746,13 @@ static bool index_to_params(u64 id, struct sys_reg_params *params)
+>  	}
+>  }
+>  
+> +static const struct sys_reg_desc *get_sys_reg_desc(u32 encoding)
+> +{
+> +	struct sys_reg_params params = encoding_to_params(encoding);
+> +
+> +	return find_reg(&params, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
+> +}
+> +
+>  const struct sys_reg_desc *get_reg_by_id(u64 id,
+>  					 const struct sys_reg_desc table[],
+>  					 unsigned int num)
+> @@ -3704,18 +3806,11 @@ FUNCTION_INVARIANT(midr_el1)
+>  FUNCTION_INVARIANT(revidr_el1)
+>  FUNCTION_INVARIANT(aidr_el1)
+>  
+> -static u64 get_ctr_el0(struct kvm_vcpu *v, const struct sys_reg_desc *r)
+> -{
+> -	((struct sys_reg_desc *)r)->val = read_sanitised_ftr_reg(SYS_CTR_EL0);
+> -	return ((struct sys_reg_desc *)r)->val;
+> -}
+> -
+>  /* ->val is filled in by kvm_sys_reg_table_init() */
+>  static struct sys_reg_desc invariant_sys_regs[] __ro_after_init = {
+>  	{ SYS_DESC(SYS_MIDR_EL1), NULL, get_midr_el1 },
+>  	{ SYS_DESC(SYS_REVIDR_EL1), NULL, get_revidr_el1 },
+>  	{ SYS_DESC(SYS_AIDR_EL1), NULL, get_aidr_el1 },
+> -	{ SYS_DESC(SYS_CTR_EL0), NULL, get_ctr_el0 },
+>  };
+>  
+>  static int get_invariant_sys_reg(u64 id, u64 __user *uaddr)
+> @@ -4083,6 +4178,9 @@ static void vcpu_set_hcr(struct kvm_vcpu *vcpu)
+>  	 */
+>  	if (!kvm_has_feat(kvm, ID_AA64ISAR0_EL1, TLB, OS))
+>  		vcpu->arch.hcr_el2 |= HCR_TTLBOS;
+> +
+> +	if (kvm->arch.ctr_el0 != read_sanitised_ftr_reg(SYS_CTR_EL0))
+> +		vcpu->arch.hcr_el2 |= HCR_TID2;
+>  }
+>  
+>  void kvm_calculate_traps(struct kvm_vcpu *vcpu)
+
+Thanks
+
+Eric
 
 
