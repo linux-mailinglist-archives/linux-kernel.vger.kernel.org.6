@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-194074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6629D8D3645
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:22:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D804A8D3647
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C68521C22CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E721F266B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03141181334;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C375181326;
 	Wed, 29 May 2024 12:22:16 +0000 (UTC)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99B4180A96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1714A181306
 	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716985335; cv=none; b=eRERypT2JIf+6mWa1q+3tnsoQpLtktYdu58+w7op2lf6L0zmrPwFbPi9BvZhISxCV+ljhd0dVJWLinQPjhk4/1nd2wCoW8iWZU9eh3dIXpFsi5VFTNbDY2dTzjzvaZIzNenJXK4WspK+lbcG6UOLBU/JISfaCqCWy9fJCpBGHIY=
+	t=1716985336; cv=none; b=LAGeoLOHaY+WZHPlQatgbNYNuJrfQsmjC7lcvX7yqjudfHdl+dmS9iiQgF7jyyh7CsyfEt2s/asvH8HUHT02OdTKrf9rVYYteslP6ypKOoCk93RT/iMyqUuEKbiSWpljaHXXU2ETofhnChX5C5oOtEYuhKLVNX1QWULC+bUPYt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716985335; c=relaxed/simple;
-	bh=feewhomXOl7dYCVVnvL83cmLCbLT7Ntv8OV3SB+KiaY=;
+	s=arc-20240116; t=1716985336; c=relaxed/simple;
+	bh=mV1F6L5sqaDjww5uno/FDLOWmQlYZfaJQaMcLbUzZIk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EjsNaJHB7q1e8OhZ9XFEdrLCz6QxHEn50QaD+bBhHn7kjNUDOWB/ngY3A5wFFfJWARMV2ECnu3vTNSaEyngf6oCTCEMgcfgmk2WpzwmRBH6StebtnC5X3RRf8J0G9yk5q3IHVT6SUfJu67roGAXdHBufyEnuEoYDZ/YZm4JwHx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	 MIME-Version:Content-Type; b=NPob2ORsc/5Jon7kPOldxcWbnkuXmYLFOMllKBnqkptvh9MekfaL/vsYZsbRmFMnk5nywfuRt8ZlF0O5oGv+URORfRzM/s/U/twkNLkyDDjvGvBzOJ5rihS1RP5fYGSiQPVLDamZNkrQniyyhIl6dmE1kPusoqH52/FbrVNX/2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
-	by xavier.telenet-ops.be with bizsmtp
-	id V0N82C00R3VPV9V010N8aF; Wed, 29 May 2024 14:22:12 +0200
+	by albert.telenet-ops.be with bizsmtp
+	id V0N82C00a3VPV9V060N8im; Wed, 29 May 2024 14:22:12 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCIIo-00GdJw-8t;
+	id 1sCIIo-00GdK2-9Y;
 	Wed, 29 May 2024 14:22:08 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCIJk-009XU5-Lt;
+	id 1sCIJk-009XUA-Md;
 	Wed, 29 May 2024 14:22:08 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -54,9 +54,9 @@ Cc: devicetree@vger.kernel.org,
 	Conor Dooley <conor.dooley@microchip.com>,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/3] dt-bindings: timer: renesas,tmu: Add RZ/G1 support
-Date: Wed, 29 May 2024 14:22:05 +0200
-Message-Id: <bdc30850526f448b8480d9a5e65e35739f416771.1716985096.git.geert+renesas@glider.be>
+Subject: [PATCH v2 3/3] dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
+Date: Wed, 29 May 2024 14:22:06 +0200
+Message-Id: <de215e00e180c266527b7bd7cff5f75df918da98.1716985096.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1716985096.git.geert+renesas@glider.be>
 References: <cover.1716985096.git.geert+renesas@glider.be>
@@ -69,7 +69,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Document support for the Timer Unit (TMU) on RZ/G1 SoCs.
+Document support for the Timer Unit (TMU) on R-Car Gen2 SoCs.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
@@ -83,21 +83,21 @@ v2:
  1 file changed, 5 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-index 33170daa3bc348a0..cc228ed28ee8a301 100644
+index cc228ed28ee8a301..b6dd98d956f3e867 100644
 --- a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
 +++ b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-@@ -23,6 +23,11 @@ properties:
-       - enum:
-           - renesas,tmu-r8a73a4  # R-Mobile APE6
-           - renesas,tmu-r8a7740  # R-Mobile A1
-+          - renesas,tmu-r8a7742  # RZ/G1H
-+          - renesas,tmu-r8a7743  # RZ/G1M
-+          - renesas,tmu-r8a7744  # RZ/G1N
-+          - renesas,tmu-r8a7745  # RZ/G1E
-+          - renesas,tmu-r8a77470 # RZ/G1C
-           - renesas,tmu-r8a774a1 # RZ/G2M
-           - renesas,tmu-r8a774b1 # RZ/G2N
-           - renesas,tmu-r8a774c0 # RZ/G2E
+@@ -34,6 +34,11 @@ properties:
+           - renesas,tmu-r8a774e1 # RZ/G2H
+           - renesas,tmu-r8a7778  # R-Car M1A
+           - renesas,tmu-r8a7779  # R-Car H1
++          - renesas,tmu-r8a7790  # R-Car H2
++          - renesas,tmu-r8a7791  # R-Car M2-W
++          - renesas,tmu-r8a7792  # R-Car V2H
++          - renesas,tmu-r8a7793  # R-Car M2-N
++          - renesas,tmu-r8a7794  # R-Car E2
+           - renesas,tmu-r8a7795  # R-Car H3
+           - renesas,tmu-r8a7796  # R-Car M3-W
+           - renesas,tmu-r8a77961 # R-Car M3-W+
 -- 
 2.34.1
 
