@@ -1,129 +1,254 @@
-Return-Path: <linux-kernel+bounces-193546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43EB8D2D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884E68D2D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686311F26854
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FA0289423
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4657216078E;
-	Wed, 29 May 2024 06:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE7D160797;
+	Wed, 29 May 2024 06:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="length tag value exceeds body size" (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="g/1OA8Rr";
-	dkim=fail reason="length tag value exceeds body size" (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="QQ9BedQy"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA27273DC;
-	Wed, 29 May 2024 06:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OV31kIFV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0F238DE8;
+	Wed, 29 May 2024 06:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716965494; cv=none; b=E4oxDBSuAbw+o/3QhNgGGiTtq27Weu8El08BMHBDGBPz3IrZTOj6D59d6yPYZvuJ7ESrLCUcxEPuljtNiiQi6EG8CGjDyxO4fTLxLxrx6elE2+flyO6On41aAp4do9syArNQwZrhjc9K9amMoM+6PKTL0nWWndefFltIJ4JuAWI=
+	t=1716965016; cv=none; b=M2t4WiN5wmxHq7TuJBxN+hbxrys0TpdrifZONojSnMj5rd1Fa01MgxV13fkcpfLv+TZw+44fpz4XK7QVnYPNornwCWy/sL0IL2fqfsNf5hxCUAVqEfFq1O1YMe3yg6dKkUCXrrP+BKr8hVrtre9pN4sJuBXnDDnAZoY7M01qV74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716965494; c=relaxed/simple;
-	bh=jFTfeTtYWGbpeFmV+28NZwKVWAB7YPdr4ftKZZB4ahI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5ZQBMd9RIyjxMv3cq7cOQhlZnyXeBu7SZFQbaNEaQz1uXa+mUDLCTQbUBU2qgQepVj5m6PXyPRpH8UaHZ3ndJ4E27m1vJlh6Aau77sMyoduho4G+BoIazWFXHWTjYnmnYXMq71wnt91oDazM3MkZzjdnFPoYzqRryw2hZAEIrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=g/1OA8Rr; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=QQ9BedQy; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1716965489;
-	bh=FM07nAP+48bSOuTtekpfEzG6O9VwkpGppNHrIxFz+7A=; l=1313;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=g/1OA8RrD2hD/Y3IXDklsGD0MS/eQnGbHTVlk1+iRzcMXSkwj1oq5UPU07xfL5FYf
-	 qMFCThbGtzI71H8o6xzfKPa/EzEF5c/zHec4oCXrvIA9pBP5SR7SSbVzGF19uyTz9Y
-	 VhYNGDZK1NaNXvA9indp3y0wcu7HUeEchpkCdUfDIcChLYvTArAGFQaIiVadJaYj5W
-	 LKcqzCNwqPl/oWTiG+HH65FQIdZ08DOa5J/eiQh5CXHaUzMLBkJYcS+jPW2HnIUNSM
-	 gR21PeGQnuxL8tCap0inNzvU3bkE6RoiJH4k6Ya0E7oAObiP5GrUJhgw9deNSoqyzw
-	 rezj0l3cT3d1w==
-Received: from 192.168.8.21
-	by mg.richtek.com with MailGates ESMTP Server V3.0(3828186:0:AUTH_RELAY)
-	(envelope-from <prvs=1876C162DF=alina_yu@richtek.com>); Wed, 29 May 2024 14:51:28 +0800 (CST)
-X-MailGates: (compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1716965488;
-	bh=FM07nAP+48bSOuTtekpfEzG6O9VwkpGppNHrIxFz+7A=; l=1313;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=QQ9BedQy6mBg+QqPLNU19qOS5+hbcKoeNFU8HAU/Dv3DovLWN1skAEGvJj2WOav3g
-	 mgkdWTPZZo9w+PsjPOWaj9c0F3PLvEu6/1lChzqDsdJGGIptlX3sSbdiYvBJ2xNINN
-	 FSZ2+edOfF6eVDJvMHX8QcuEF3USdaONJeiPUF8Vbl/Mnx4V772j8YUBzOtOCooQCo
-	 vKdOf7Ph1cYJw8G/cpn32ILUJmi3oiTGnCH4XModKJxXN4j/KUOB/E8Fh4bv1dsFD9
-	 adfb2KazguNn8VO+VjHiv+x+xZvuk65WuFbcvSQPz4DMClcNM1aeLYsiQws8VH9Iq/
-	 ZgyR/dqqpt5Xg==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213210:0:AUTH_RELAY)
-	(envelope-from <alina_yu@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Wed, 29 May 2024 14:41:23 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 29 May
- 2024 14:41:23 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 29 May 2024 14:41:23 +0800
-Date: Wed, 29 May 2024 14:41:23 +0800
-From: Alina Yu <alina_yu@richtek.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<cy_huang@richtek.com>
-Subject: Re: [PATCH 1/2] regulator: rtq2208: Add fixed LDO VOUT property and
- check that matches the constraints
-Message-ID: <20240529064123.GA13317@linuxcarl2.richtek.com>
-References: <cover.1715846612.git.alina_yu@richtek.com>
- <7c28d2e61d2fc13066ba4814d1ecfab8f344aaad.1715846612.git.alina_yu@richtek.com>
- <c0c7a63d-e435-4778-ad4c-3d93f0215116@sirena.org.uk>
+	s=arc-20240116; t=1716965016; c=relaxed/simple;
+	bh=9bMOYC/3TXNfLMxzK4TbkcsOU/3B9utGKd1/mu8n6Fo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eZMdIx19dnv7HJZrl98dD43uFGLnWF28N0fl0JU85MWssD27kVaL34aRIicz0rEdqaptIiYYaE1A0QVBcB/G6SOO9Va5+wb9NyQB4Jo+dzg1Jpr0t433ipysSvofO6IO3xgX8buCblqtpANlj+xdecS8jjB4iuH7lqZzCSA24Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OV31kIFV; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716965015; x=1748501015;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9bMOYC/3TXNfLMxzK4TbkcsOU/3B9utGKd1/mu8n6Fo=;
+  b=OV31kIFVzTgNM60g1qcUaQP8nK5hVF3MN+uKAO18CJ7OYOI+n1WSJIct
+   ZHGNaTzvlnP0+KQWjQ5mRF0zcC2wjRs3L3Dbd/6Kf3+uRLdf5CZlKkUyi
+   cchnVXePV9EKOzj6rQFzdT78v+Cpp118iyjbyoA93OEyhsUem0fvpHN8O
+   mj1HoSXO8cRUJEzN75R/d4HL2ehg+p92t/CdXK53uFrj2GpOToXDGSx2z
+   JvFB+uvM1hte9VEPOHfJr1fB/hjv2go99NyIhsK41GmOjsJP/SwYw51OZ
+   P3LaFLmrD6sHql7c6W55yxkhd99EEqCHKaUT+HspEca9PQ1Sq2x3kxlIH
+   g==;
+X-CSE-ConnectionGUID: jWy2PBFlRGqEMXazorE11Q==
+X-CSE-MsgGUID: Z75Bc+i1T9OHh9RDro3x9A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="16297976"
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="16297976"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 23:43:34 -0700
+X-CSE-ConnectionGUID: Cmy0Gz79QaG+EQ9Vy6uIXw==
+X-CSE-MsgGUID: kGlj2FVvSVq5mU4AAnH87Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="39759246"
+Received: from fl31ca102ks0602.deacluster.intel.com (HELO gnr-bkc.deacluster.intel.com) ([10.75.133.163])
+  by fmviesa005.fm.intel.com with ESMTP; 28 May 2024 23:43:33 -0700
+From: weilin.wang@intel.com
+To: weilin.wang@intel.com,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>
+Subject: [RFC PATCH v10 0/8] TPEBS counting mode support
+Date: Wed, 29 May 2024 02:43:16 -0400
+Message-ID: <20240529064327.4080674-1-weilin.wang@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c0c7a63d-e435-4778-ad4c-3d93f0215116@sirena.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 02:00:47PM +0100, Mark Brown wrote:
-> On Thu, May 16, 2024 at 05:20:33PM +0800, Alina Yu wrote:
-> > A fixed LDO VOUT property has been added to specify the fixed_uV of the regulator_desc.
-> > Additionally, a check has been included in this version
-> > to ensure that the fixed_uV matches the constraints.
-> 
-> This doesn't apply against current code, please check and resend.
+From: Weilin Wang <weilin.wang@intel.com>
+
+I have tried not to count retire_latency events but did not succeed.
+In particular, I tried the following methods:
+ - Convert retire_latency event to dummy event in event parser.
+ - Early bail out in evsel__open_cpu() and store_evsel_ids().
+
+The first method fails and causes non-retire_latency events with the same event
+name return 0 count.
+
+The second method fails and causes all the events in the same group returning
+"<not counted>" results.
+
+Because of above, the retire_latency event will still run in counting mode.
+
+Other changes in v10:
+ - Change perf record fork from perf stat to evsel. All the major operations
+ like tpebs start, stop, read_evsel should directly work through evsel.
+ - Make intel-tpebs x86_64 only. This change is cross-compiled to arm64.
+ - Put tpebs code to intel-tepbs and simplify intel-tpebs APIs to minimum number
+of functions and variables. Update funtion name and variable names to use
+consistent prefix. Also improve error handling.
+ - Integrate code patch from Ian for the :R parser.
+ - Update MTL metrics to TMA 4.8.
+
+V9: https://lore.kernel.org/all/20240521173952.3397644-1-weilin.wang@intel.com/
+
+Changes in v9:
+ - Update the retire_latency result print and metric calculation method. Plugin
+the value to evsel so that no special code is required.
+ - Update --control:fifo to use pipe instead of named pipe.
+ - Add test for TPEBS counting mode.
+ - Update Document with more details.
+
+Changes in v8:
+- In this revision, the code is updated to base on Ian's patch on R modifier
+parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@google.com/
+After this change, there is no special code required for R modifier in
+metricgroup.c and metricgroup.h files.
+
+Caveat of this change:
+  Ideally, we will need to add special handling to skip counting events with R
+modifier in evsel. Currently, this is not implemented so the event with :R will
+be both counted and sampled. Usually, in a metric formula that uses retire_latency,
+it would already require to count the event. As a result, we will endup count the
+same event twice. This should be able to be handled properly when we finalize our
+design on evsel R modifier support.
+
+- Move TPEBS specific code out from main perf stat code to separate files in
+util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
+- Use --control:fifo to ack perf stat from forked perf record instead of sleep(2) [Namhyung]
+- Add introductions about TPEBS and R modifier in Documents. [Namhyung]
 
 
-Regarding the previous discussion in
+Changes in v7:
+- Update code and comments for better code quality [Namhyung]
+- Add a separate commit for perf data [Namhyung]
+- Update retire latency print function to improve alignment [Namhyung]
 
-https://lore.kernel.org/all/20240528060731.GA25526@linuxcarl2.richtek.com/
+Changes in v6:
+- Update code and add comments for better code quality [Namhyung]
+- Remove the added fd var and directly pass the opened fd to data.file.fd [Namhyung]
+- Add kill() to stop perf record when perf stat exists early [Namhyung]
+- Add command opt check to ensure only start perf record when -a/-C given [Namhyung]
+- Squash commits [Namhyung]
 
-I found some patches missing in the linux-next tree.
+Changes in v5:
+- Update code and add comments for better code quality [Ian]
 
-So I merged the missing part in my latest resent sereies.
+Changes in v4:
+- Remove uncessary debug print and update code and comments for better
+readability and quality [Namhyung]
+- Update mtl metric json file with consistent TmaL1 and TopdownL1 metricgroup
 
-The issue has been addressed in
+Changes in v3:
+- Remove ':' when event name has '@' [Ian]
+- Use 'R' as the modifier instead of "retire_latency" [Ian]
 
-In '[RESEND 2/4] regulator: rtq2208: Fix LDO to be compatible with both fixed and adjustable vout'
-https://lore.kernel.org/all/5ad4c7728c7fa7f6286db36b99d31c9d0f5d16c7.1716870419.git.alina_yu@richtek.com/
+Changes in v2:
+- Add MTL metric file
+- Add more descriptions and example to the patch [Arnaldo]
+
+Here is an example of running perf stat to collect a metric that uses
+retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL system.
+
+In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES sample.
+Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latency value
+are all 0.
+
+/perf stat -M tma_dtlb_store -a -- sleep 1
+
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.000 MB - ]
+
+ Performance counter stats for 'system wide':
+
+       181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tma_dtlb_store
+         3,195,608      cpu_core/topdown-retiring/
+        40,156,649      cpu_core/topdown-mem-bound/
+         3,550,925      cpu_core/topdown-bad-spec/
+       117,571,818      cpu_core/topdown-fe-bound/
+        57,118,087      cpu_core/topdown-be-bound/
+            69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
+             4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
+        30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
+        30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
+           168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
+              0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
+
+       1.003105924 seconds time elapsed
+
+v1:
+TPEBS is one of the features provided by the next generation of Intel PMU.
+Please refer to Section 8.4.1 of "Intel® Architecture Instruction Set Extensions
+Programming Reference" [1] for more details about this feature.
+
+This set of patches supports TPEBS in counting mode. The code works in the
+following way: it forks a perf record process from perf stat when retire_latency
+of one or more events are used in a metric formula. Perf stat would send a
+SIGTERM signal to perf record before it needs the retire latency value for
+metric calculation. Perf stat will then process sample data to extract the
+retire latency data for metric calculations. Currently, the code uses the
+arithmetic average of retire latency values.
+
+[1] https://www.intel.com/content/www/us/en/content-details/812218/intel-architecture-instruction-set-extensions-programming-reference.html?wapkw=future%20features
 
 
-@@ -219,7 +219,7 @@ static const struct regulator_ops rtq2208_regulator_buck_ops = {
- 	.set_suspend_mode = rtq2208_set_suspend_mode,
-};
-	  
--static const struct regulator_ops rtq2208_regulator_ldo_ops = {
-+static const struct regulator_ops rtq2208_regulator_ldo_fix_ops = {
-	.enable = regulator_enable_regmap,
-	.disable = regulator_disable_regmap,
-	.is_enabled = regulator_is_enabled_regmap,
+Ian Rogers (1):
+  perf parse-events: Add a retirement latency modifier
 
-..
+Weilin Wang (7):
+  perf data: Allow to use given fd in data->file.fd
+  perf stat: Fork and launch perf record when perf stat needs to get
+    retire latency value for a metric.
+  perf stat: Plugin retire_lat value from sampled data to evsel
+  perf vendor events intel: Add MTL metric json files
+  perf stat: Add command line option for enabling tpebs recording
+  perf Document: Add TPEBS to Documents
+  perf test: Add test for Intel TPEBS counting mode
 
-Thanks,
-Alina
+ tools/perf/Documentation/perf-list.txt        |    1 +
+ tools/perf/Documentation/topdown.txt          |   30 +
+ tools/perf/arch/x86/util/evlist.c             |    6 +
+ tools/perf/builtin-stat.c                     |    8 +
+ .../arch/x86/meteorlake/metricgroups.json     |  140 +
+ .../arch/x86/meteorlake/mtl-metrics.json      | 2595 +++++++++++++++++
+ .../perf/tests/shell/test_stat_intel_tpebs.sh |   19 +
+ tools/perf/util/Build                         |    1 +
+ tools/perf/util/data.c                        |    7 +-
+ tools/perf/util/evsel.c                       |   26 +
+ tools/perf/util/evsel.h                       |    6 +
+ tools/perf/util/intel-tpebs.c                 |  397 +++
+ tools/perf/util/intel-tpebs.h                 |   48 +
+ tools/perf/util/parse-events.c                |    2 +
+ tools/perf/util/parse-events.h                |    1 +
+ tools/perf/util/parse-events.l                |    3 +-
+ 16 files changed, 3288 insertions(+), 2 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/metricgroups.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/mtl-metrics.json
+ create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
+ create mode 100644 tools/perf/util/intel-tpebs.c
+ create mode 100644 tools/perf/util/intel-tpebs.h
+
+--
+2.43.0
+
 
