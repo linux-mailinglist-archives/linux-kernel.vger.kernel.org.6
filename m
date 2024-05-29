@@ -1,146 +1,184 @@
-Return-Path: <linux-kernel+bounces-193283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4EE8D29C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:04:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F2E8D29C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DDA81F2680A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:04:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4988B20A08
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7931D15A865;
-	Wed, 29 May 2024 01:04:27 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6D115A862;
+	Wed, 29 May 2024 01:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L+qvWV+t"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9809114269
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2618D2FE;
+	Wed, 29 May 2024 01:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716944667; cv=none; b=NHLx4z1fTZYHL5yGmERqhwm55RhPS9YRrmGqZI1BTJSqq+3eGnNQOLQdBClx1czTSapaiCAPcMa1hlvvxCerlirQG9bEmUdDiAWUpR254qjAGOpgpzDce+cVzmSnQL+RAK7HzSJVobIq19LYxKonOlLb/xdMs4exrhizd1Mgxm0=
+	t=1716944792; cv=none; b=XCT45WMBaC1MH13W7Al02/uh0uqJJIjE3NoJeRf/xQPSKues8eT02itEK26V4F5hFM4YAaOQFk76clBUKRtYknCs3xxGF5Oj9mTPomxIoZNjK9dYgUUU3qv4Y5AIZB7fTQvekxowXRXMTke5lupZLel/1PzXYUMQ6IrIhghfXsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716944667; c=relaxed/simple;
-	bh=yYrBrc80hyIGlQBoRvOT48y8Ztkx5nKyCtUFjZ39Q5M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=atFvJo215824JNOjKdOI50WfbdFx4oB4zzNyoDcii/Y+PgpTMxkzwWPV7yfG4j9aHpxQDI15xOj/7mrkTpnM2OzcyWxT+Hjx3ljlVzroRk/HkTSgWVjtNod3iM5DVeup08z5EV9lMMB29eOtL9VdlSUpztyWwNowbI7g0EpUuyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e94cac3c71so174830739f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:04:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716944665; x=1717549465;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WZXGbhTFhiJOStQUUF1Ob48iI23dJ6bKL3UoFrOl37s=;
-        b=IXowrHF9L7y8pi8mduY6mQA0YO5Dad6JXuXJ+c4raAC7D6FRupIIC3UJR8rXudPaEG
-         Fw8HydRFqUPC8o/2TlK5vq7XvE5sCvBwbbsJ+Ex2CEjKaQKnI+RMiqc2w4E+VddLt6Rw
-         TyP/j9nL0hCxnl6/4bnQ7fkIfvqOV85mWdgiBBsyMk26xPO4blFfEzN6fnl+fiuMt9/i
-         rF5SBhnsp2lgHSbg2igDpz1jKaYlvrL9JrGP1XHxjw9rOa1Req9YfPbHlDcSfw9cymw9
-         TE9CCbN0+kwvicdAXIHXpSknHhDmAdZ/uMlFvFjtnH5lFRUT/ObMTH7ML3X8ohhAFKb+
-         QjUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVjNoHwnQ4/XRGTbY/Q9r979WQ4G79zX1UbAEfJfpCmB0/5jEgQeqBNBeQdd8gNWJImtMiKrFmQCxnyW72mz+3NMqY8Xd/o17JkmWG
-X-Gm-Message-State: AOJu0YxVTSC5ukUCmiS+3fdZfv4mAwfrxlxCp4oos5mbJnqF54g34QFI
-	nOf7jtN46cEp+Drf3vk4jZfQmAcGF7ncNtpy8bFBu4BrKgJrExtCXVRZHQ75CRZm9KPijgvZbgw
-	2JdVGsSO4L12gdjxh/GG7pMArF53wKYFQ398ksu0src0KHIu2gnlzIfw=
-X-Google-Smtp-Source: AGHT+IHNdzOfvn06/H/KYXpYdvV38vQwvCrsuvwsSbEuj9AkmWaZ18IZe1lNAsEqSgFY81XZw/GpnHqE52339NWkU475qX/ZTWGS
+	s=arc-20240116; t=1716944792; c=relaxed/simple;
+	bh=HzrJdIzF71/TdMwwY6rKr0qTW4EAIFYcro4Y8ofZOLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhRUpHB9ffhtwY9LV+2wpLhONza4Z4IGB/99q59Ip5BlsMCw6Cg+zv3ejYf4jubcYNPb6ZfVRZ5ss50PTw3/cXGpAHyiAj/paEOeXW1iTazjDduXErw3oRbkXsixUtIkkQsqzCdPVpgx5sAWdp4Kt1+43+hpEjyXh6vLOcHSqTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L+qvWV+t; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716944790; x=1748480790;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=HzrJdIzF71/TdMwwY6rKr0qTW4EAIFYcro4Y8ofZOLg=;
+  b=L+qvWV+trHrpnF5vj2R2NhR9kHAXkN05XsgxdMO0/sphHaAEwPaqD29H
+   5khRZBsmHkx2exeY9m7i/GgU/kajX9jwifIM0RK+evw2Ee6XlBqsda4ml
+   gAb0kGUOk/sR64wVekAk+/mIIMRsX8LUVj+Ibq+SK/eKIiuBEi5ghuU5m
+   VliDVlV2/jGFIvTwNvOFV8g8YIKjJ6Ikt+Hu2xkyLjirMhGCzkejdUfOA
+   1TrsGbeqfFPOXCgd05TzUHZZttPV+6pXW3n5MrC3hrHI4NdQEtCYtaSl5
+   JoU86119C8nQUPCkbTKQ4Wr0HfnLzFrbVObZ7ZZwcJY9zirIbccQFkFRN
+   g==;
+X-CSE-ConnectionGUID: i5oYMAGaSSCWJ+PS271ckA==
+X-CSE-MsgGUID: BKiKyEAiRw61ekHnZ1WRkw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="17160738"
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="17160738"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 18:06:30 -0700
+X-CSE-ConnectionGUID: uenbFkcNRkqzEK4awyaV8A==
+X-CSE-MsgGUID: o5kMJ+2TRF6RWQhIzVCpBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="35341860"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 18:06:30 -0700
+Date: Tue, 28 May 2024 18:06:29 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	"sagis@google.com" <sagis@google.com>,
+	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>,
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"dmatlack@google.com" <dmatlack@google.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+Message-ID: <20240529010629.GC386318@ls.amr.corp.intel.com>
+References: <588d801796415df61136ce457156d9ff3f2a2661.camel@intel.com>
+ <021e8ee11c87bfac90e886e78795d825ddab32ee.camel@intel.com>
+ <eb7417cccf1065b9ac5762c4215195150c114ef8.camel@intel.com>
+ <20240516194209.GL168153@ls.amr.corp.intel.com>
+ <55c24448fdf42d383d45601ff6c0b07f44f61787.camel@intel.com>
+ <20240517090348.GN168153@ls.amr.corp.intel.com>
+ <d7b5a1e327d6a91e8c2596996df3ff100992dc6c.camel@intel.com>
+ <20240517191630.GC412700@ls.amr.corp.intel.com>
+ <CABgObfY=RnDFcs8Mxt3RZYmA1nQ24dux3Rhs4hK0ZfeE_OtLUw@mail.gmail.com>
+ <3fa97619ca852854408eec8bb2f7a0ed635b3c1d.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d18:b0:36c:4c5b:ce1 with SMTP id
- e9e14a558f8ab-3737b41cca1mr8697405ab.5.1716944664871; Tue, 28 May 2024
- 18:04:24 -0700 (PDT)
-Date: Tue, 28 May 2024 18:04:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d9551e06198d54b4@google.com>
-Subject: [syzbot] [wireguard?] INFO: task hung in wg_destruct
-From: syzbot <syzbot+a6bdd2d02402f18fdd5e@syzkaller.appspotmail.com>
-To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3fa97619ca852854408eec8bb2f7a0ed635b3c1d.camel@intel.com>
 
-Hello,
+On Tue, May 28, 2024 at 06:29:59PM +0000,
+"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
 
-syzbot found the following issue on:
+> On Tue, 2024-05-28 at 19:16 +0200, Paolo Bonzini wrote:
+> > > > After this, gfn_t's never have shared bit. It's a simple rule. The MMU
+> > > > mostly
+> > > > thinks it's operating on a shared root that is mapped at the normal GFN.
+> > > > Only
+> > > > the iterator knows that the shared PTEs are actually in a different
+> > > > location.
+> > > > 
+> > > > There are some negative side effects:
+> > > > 1. The struct kvm_mmu_page's gfn doesn't match it's actual mapping
+> > > > anymore.
+> > > > 2. As a result of above, the code that flushes TLBs for a specific GFN
+> > > > will be
+> > > > confused. It won't functionally matter for TDX, just look buggy to see
+> > > > flushing
+> > > > code called with the wrong gfn.
+> > > 
+> > > flush_remote_tlbs_range() is only for Hyper-V optimization.  In other cases,
+> > > x86_op.flush_remote_tlbs_range = NULL or the member isn't defined at compile
+> > > time.  So the remote tlb flush falls back to flushing whole range.  I don't
+> > > expect TDX in hyper-V guest.  I have to admit that the code looks
+> > > superficially
+> > > broken and confusing.
+> > 
+> > You could add an "&& kvm_has_private_root(kvm)" to
+> > kvm_available_flush_remote_tlbs_range(), since
+> > kvm_has_private_root(kvm) is sort of equivalent to "there is no 1:1
+> > correspondence between gfn and PTE to be flushed".
+> > 
+> > I am conflicted myself, but the upsides below are pretty substantial.
+> 
+> It looks like kvm_available_flush_remote_tlbs_range() is not checked in many of
+> the paths that get to x86_ops.flush_remote_tlbs_range().
+> 
+> So maybe something like:
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 65bbda95acbb..e09bb6c50a0b 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1959,14 +1959,7 @@ static inline int kvm_arch_flush_remote_tlbs(struct kvm
+> *kvm)
+>  
+>  #if IS_ENABLED(CONFIG_HYPERV)
+>  #define __KVM_HAVE_ARCH_FLUSH_REMOTE_TLBS_RANGE
+> -static inline int kvm_arch_flush_remote_tlbs_range(struct kvm *kvm, gfn_t gfn,
+> -                                                  u64 nr_pages)
+> -{
+> -       if (!kvm_x86_ops.flush_remote_tlbs_range)
+> -               return -EOPNOTSUPP;
+> -
+> -       return static_call(kvm_x86_flush_remote_tlbs_range)(kvm, gfn, nr_pages);
+> -}
+> +int kvm_arch_flush_remote_tlbs_range(struct kvm *kvm, gfn_t gfn, u64 nr_pages);
+>  #endif /* CONFIG_HYPERV */
+>  
+>  enum kvm_intr_type {
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 43d70f4c433d..9dc1b3db286d 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -14048,6 +14048,14 @@ int kvm_sev_es_string_io(struct kvm_vcpu *vcpu,
+> unsigned int size,
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_sev_es_string_io);
+>  
+> +int kvm_arch_flush_remote_tlbs_range(struct kvm *kvm, gfn_t gfn, u64 nr_pages)
+> +{
+> +       if (!kvm_x86_ops.flush_remote_tlbs_range || kvm_gfn_direct_mask(kvm))
+> +               return -EOPNOTSUPP;
+> +
+> +       return static_call(kvm_x86_flush_remote_tlbs_range)(kvm, gfn, nr_pages);
+> +}
+> +
+>  EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_entry);
+>  EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_exit);
+>  EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_mmio);
 
-HEAD commit:    e0cce98fe279 Merge tag 'tpmdd-next-6.10-rc2' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1040c63a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=a6bdd2d02402f18fdd5e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2739658d66f3/disk-e0cce98f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ad17bcdfd78d/vmlinux-e0cce98f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/31990c7700ed/bzImage-e0cce98f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a6bdd2d02402f18fdd5e@syzkaller.appspotmail.com
-
-INFO: task kworker/u8:2:35 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:2    state:D stack:14456 pid:35    tgid:35    ppid:2      flags:0x00004000
-Workqueue: netns cleanup_net
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- wg_destruct+0x25/0x2e0 drivers/net/wireguard/device.c:246
- netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10692
- default_device_exit_batch+0xa14/0xa90 net/core/dev.c:11760
- ops_exit_list net/core/net_namespace.c:178 [inline]
- cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task kworker/u8:12:8583 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:12   state:D stack:21976 pid:8583  tgid:8583  ppid:2      flags:0x00004000
-Workqueue: ipv6_addrconf addrconf_verify_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+kvm_x86_ops.flush_remote_tlbs_range() is defined only when CONFIG_HYPERV=y.
+We need #ifdef __KVM_HAVE_ARCH_FLUSH_REMOTE_TLBS_RANGE  ... #endif around the
+function.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
