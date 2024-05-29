@@ -1,132 +1,121 @@
-Return-Path: <linux-kernel+bounces-193614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70418D2EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:43:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9548D2EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E4028B4DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDEA71F213EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18DE168C0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C793168C24;
 	Wed, 29 May 2024 07:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QuKNrxUu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZD7NnbKW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TvNV7Dvi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE379168C08;
-	Wed, 29 May 2024 07:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833C0168C0F;
+	Wed, 29 May 2024 07:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968567; cv=none; b=iKmJen3xWk8ELe1zXWgvHSgGxRkKZCj8PLWgYGZB8kCk5ptYq9NwEIUA61Yp8MwE74EPyS5ytP48bumXz7igrozxYPiI55DFPNyIxl9Yln4VE3CVTIoRG+bmHxL+CuyiEamXI8BAEaH6QQa4kcG6nsZNGq96kJNC7BmOg8JS9Gg=
+	t=1716968566; cv=none; b=pvsXmHCv7GTuqErpFan/J6k/aA8re9pNgPJtOMtwNqKyGJgmPW58/Y9OE7CtKWYXATifgi18r0vZfUy2R57o87QD+XwqWEZnjvqFDvf6FGwOLtIXbZQnL5mBmbBCTbOwkZTjZQ2ccHkvAbEkgc+TeP9QqCiaDpuZQ650GFlvtFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968567; c=relaxed/simple;
-	bh=ulWHMbKruyWR5uPQUxmckqv2wx9fqc+HKd1746aF3jQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hWKfJsOEAbxVym59N+RdJcc8VaFPZK4R5MS9cwrBOUoWiNQSHFJ1CDmGlbRkNdUwDQ1eCU5F4p/s1FmrZFb5JrGguctKtb4IyNK1NjvJZwRy1qVmwgkLx9YgbuBrHpW2E//qa5pm4M41X5dBQT+VJ+/Vbv3x/Ctf3xnsUUYY58k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QuKNrxUu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZD7NnbKW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716968563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GbBWiLYIihe5kRoqFun+3uFh9apRMozX/dNd6f8NMMU=;
-	b=QuKNrxUuepGmOZ2niwSVrSYItCMUdCenMqs/1mSyWFN1dm/uTyCzfTF2uCB3BhV4aBUW11
-	rn14dvy4nOHiT17kd4P0RJDfv5iLaVDU1HroT4UCbgjZObLkXfHTeRIDKVcKKVvcT8liHB
-	ofPZ6CVsjRHbNV0ilJUzyaoheYKosc297ALX7KtwyVXRLOuarsAocjuS9INQ839vWqFY0c
-	bO08YJ/FnFx1WjGmf9LLBSxpTYY6S2Km/VvUgD3kTBG9y1mvoyn3ajTwCl6hn9WEypNJ2E
-	py89RJCGsAvJVh+9M6l1jcXRT1M26SGq5Y1DKy7O83petB93WxMMrmL/YXAPSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716968563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GbBWiLYIihe5kRoqFun+3uFh9apRMozX/dNd6f8NMMU=;
-	b=ZD7NnbKWri5Vxr5kPEurTWpN4jJfKvL9gpsP5J4mNIXdO5gQPwgNCi73wofqupUXeHNQQL
-	CLKpJhHVA5ix6IDg==
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, Tony W Wang-oc
- <TonyWWang-oc@zhaoxin.com>, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
- mat.jonczyk@o2.pl, rdunlap@infradead.org, alexandre.belloni@bootlin.com,
- mario.limonciello@amd.com, yaolu@kylinos.cn, bhelgaas@google.com,
- justinstitt@google.com, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, CobeChen@zhaoxin.com, TimGuo@zhaoxin.com,
- LeoLiu-oc@zhaoxin.com
-Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
-In-Reply-To: <CAHk-=wgMoeOTL1V3wTO=o=U1OXn7xF8OWv2hB9NF9Z=G4KotfQ@mail.gmail.com>
-References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
- <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com> <87wmnda8mc.ffs@tglx>
- <CAHk-=wgMoeOTL1V3wTO=o=U1OXn7xF8OWv2hB9NF9Z=G4KotfQ@mail.gmail.com>
-Date: Wed, 29 May 2024 09:42:43 +0200
-Message-ID: <87le3t9i8c.ffs@tglx>
+	s=arc-20240116; t=1716968566; c=relaxed/simple;
+	bh=SkhK1XhIZ1X7AgwyKwYJRp2ZVjO0FPB7fwwFSlEBnMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wp/kDhFwu02XcmZnucUMzpf0psi9i/vB4mt6Z0Dc9+5jiF1+u6H2YBT9Re15brjQMBeL8NeZxS1kcLwXBveSc4UoOLX6eiVqAoNfp9keSh4TOQTnjNY5ztmt+ds0WW/fsbRqXg5wGrhYKXjXybPaigFzKfUT+cim3ftAFTAo33Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TvNV7Dvi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840C9C2BD10;
+	Wed, 29 May 2024 07:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716968566;
+	bh=SkhK1XhIZ1X7AgwyKwYJRp2ZVjO0FPB7fwwFSlEBnMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TvNV7Dviop/wlWuzrCK+PwZE1o4r2x1OLVBKJ9nln3eQ/d5R7qRH2JbStik2aCOCC
+	 fEV3XBPIO5sE17C/uVUWTTW0vdhg67ADauE0BAXnN5d4FBvEEJUxeYr9y5ZkXF/KtL
+	 aksuDfviZOGPcPIrV62awx0ciOM3Iopij/zgjtko=
+Date: Wed, 29 May 2024 09:42:50 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 0/5] Add SCIF support for Renesas RZ/V2H(P) SoC
+Message-ID: <2024052955-phrase-portion-8d1f@gregkh>
+References: <20240322144355.878930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CA+V-a8vQr2jxrW+C5VTcmEHmDgNp6S8=3KcAT1SzcKusFaP7Gw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8vQr2jxrW+C5VTcmEHmDgNp6S8=3KcAT1SzcKusFaP7Gw@mail.gmail.com>
 
-Linus!
+On Wed, May 29, 2024 at 07:15:23AM +0100, Lad, Prabhakar wrote:
+> Hi Greg,
+> 
+> On Fri, Mar 22, 2024 at 2:45 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Hi All,
+> >
+> > This patch series updates DT binding doc and scif driver to add support
+> > for the Renesas RZ/V2H(P) SoC. RZ/V2H(P) SoC supports one channel SCIF
+> > interface.
+> >
+> > v3->v4
+> > - patch 2/4 reverted back to version 2
+> > - new patch 3/5 added
+> > - Added new reg type for RZ/V2H
+> >
+> > v2->v3
+> > - Included DT validation patches
+> > - Added a new compat string for RZ/V2H(P) SoC
+> > - Added driver changes for RZ/V2H(P) SoC
+> > - Listed interrupts and interrupt-names for every SoC in if check
+> >
+> > Cheers,
+> > Prabhakar
+> >
+> > Lad Prabhakar (5):
+> >   dt-bindings: serial: renesas,scif: Move ref for serial.yaml at the end
+> >   dt-bindings: serial: renesas,scif: Validate 'interrupts' and
+> >     'interrupt-names'
+> >   dt-bindings: serial: renesas,scif: Make 'interrupt-names' property as
+> >     required
+> >   dt-bindings: serial: Add documentation for Renesas RZ/V2H(P)
+> >     (R9A09G057) SCIF support
+> >   serial: sh-sci: Add support for RZ/V2H(P) SoC
+> >
+> Gentle ping.
 
-On Tue, May 28 2024 at 16:22, Linus Torvalds wrote:
-> On Tue, 28 May 2024 at 15:12, Thomas Gleixner <tglx@linutronix.de> wrote:
-> I see the smiley, but yeah, I don't think we really care about it.
+It is only 3 days since the merge window ended, please be patient for
+maintainers to catch up with their pending review queue.  Especially for
+non-bugfixes like these that will be included in the 6.11-rc1 release,
+there is not any rush here for anyone just yet.
 
-Indeed. But the same problem exists on other architectures as
-well. drivers/clocksource alone has 4 examples aside of i8253
+For example, my todo queue currently has 1458 emails to process in it,
+this thread is somewhere in the middle.
 
->>   1) Should we provide a panic mode read callback for clocksources which
->>      are affected by this?
->
-> The current patch under discussion may be ugly, but looks workable.
-> Local ugliness isn't necessarily a show-stopper.
->
-> So if the HPET is the *only* case which has this situation, I vote for
-> just doing the ugly thing.
->
-> Now, if *other* cases exist, and can't be worked around in similar
-> ways, then that argues for a more "proper" fix.
->
-> And no, I don't think i8253 is a strong enough argument. I don't
-> actually believe you can realistically find a machine that doesn't
-> have HPET or the TSC and really falls back on the i8253 any more. And
-> if you *do* find hw like that, is it SMP-capable? And can you find
-> somebody who cares?
+In the meantime, please help review other pending patches for the
+subsystem to help enable your patches to move toward the top of the
+queue.
 
-Probably not.
+thanks,
 
->>   2) Is it correct to claim that a MCE which hits user space and ends up in
->>      mce_panic() is still just a regular exception or should we upgrade to
->>      NMI class context when we enter mce_panic() or even go as far to
->>      upgrade to NMI class context for any panic() invocation?
->
-> I do think that an NMI in user space should be considered mostly just
-> a normal exception. From a kernel perspective, the NMI'ness just
-> doesn't matter.
-
-That's correct. I don't want to change that at all especially not for
-recoverable MCEs.
-
-> That said, I find your suggestion of making 'panic()' just basically
-> act as an NMI context intriguing. And cleaner than the
-> atomic_read(&panic_cpu) thing.
->
-> Are there any other situations than this odd HPET thing where that
-> would change semantics?
-
-I need to go and stare at this some more.
-
-Thanks,
-
-        tglx
+greg k-h
 
