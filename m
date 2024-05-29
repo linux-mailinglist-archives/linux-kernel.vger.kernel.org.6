@@ -1,305 +1,201 @@
-Return-Path: <linux-kernel+bounces-194590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0F88D3E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83028D3EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F0FE1C22287
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2A82870CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90FA1C8FD4;
-	Wed, 29 May 2024 18:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB4A1C2325;
+	Wed, 29 May 2024 18:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Q8dA1usY"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nWmzA2l1"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FE71C230E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD131C0DEE;
+	Wed, 29 May 2024 18:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717008879; cv=none; b=U9mt14C5YapfZADHbrTVLOlteMh1rMB+jm/emi7aXbXU5noYzszLKXjAdz8DsliQjlWgLDtnVTE2TjoH+CY0i+CJoHO1MSvHAX0v8o0rzOjk/H3T1jwsGPduWiQnPVac/1H2LUTotOm4h+pHdmoaQZG8bm1kuWDwieCpjWvN8fM=
+	t=1717008934; cv=none; b=U+XXSOK3eb8EnLV0BF+kEoDH1RjoqSsyBRkpW4gNAeEYYJKczMfi6Ra/iTX1lD534zPI4k6w7h+PwUT7QqmGG11Y0PX5frISrMWRqLi8cv8br8X+7zvQfB++evMf19LjhV+V8UMK7JaProfdpJvqK+/mI5HBzd/UxRGpHThcPrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717008879; c=relaxed/simple;
-	bh=fhyOW32KF7x1nOg5NvGrhHnYTYAqHGUN810iLS+POK0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Br1y4J8a9PwvpXiS5ptflKi3p1ihSkYEGkbc3c1DxD3WyfKpwdXR1Y76b4CIybQyeCQQbECeGsyBPMUG5bNYWvTYqsDag8QAZ94lImjEZH8UcmSEkMwZRT+f5nKG9/hKAgntc5YpgQHAwNeLP4kKsV/HVShVo3bhoEbSOZDAD9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Q8dA1usY; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42120fc8cbfso358265e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717008876; x=1717613676; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U+2U8h+2rvtM/KDIv8ZmxGGBqHz1DJ98r4cPzpRskE8=;
-        b=Q8dA1usY15b8WQ+g36JDmCaqZrRlLcNcwX+fkhSDvbQ4jMTMiZOfZZTYuLpRGTm3kE
-         8p2jfSzp3bm5nk6yzXQyB/zk8gbTi8M8c3x/oE8Lmm6+Qhws8kd5+qSKkVR56WWDaF7a
-         D751SZznnFXI21jvW5Or8VJ+bgmCD2JaO2y+aSnIvznWM3RINVvkd7q+Mqmj9rmXXD9s
-         rXj/GqrsjZAOG6HIuTcz0iCi5O8isXLQ1bHSjkTQ7RVfD66sKp+mYvnKwvBipPcw4Z61
-         aJobQE+UWSFfqkojekkPMO/nC1o+t/ZlkqjGPxOHuv72GwCUw8tqYyk73bVYF7EA8z1F
-         h5DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717008876; x=1717613676;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U+2U8h+2rvtM/KDIv8ZmxGGBqHz1DJ98r4cPzpRskE8=;
-        b=jKAod/5WozILD/HtvSoIGdFOCXd/HQj/qg/pTO39Rf68xmt/yItzKOYYK4YbXWK8yr
-         jXzrWbGm1skJqzvDv7XOIq+vXpe8oGevsQtbejGqDgWYZYu0YsxG9jogGrmo0vY5yWK3
-         RqyBGWMbrB+CEztS7dsKU+QReYx55LJ8tX89cMhkGohKzF+DMiDOpe126HJMf+xelv9Q
-         L8uNFDPszndjNlgr9tQkLx/DXlGjPGQESr+GlI4dKx5RKcH8+c00H8eh04KMlev0msQH
-         iUilTernFJmRSTfNSkopd/qwuZCh1cTHV+qyLtTDzqHxDS9L0iX/krHDt3Y05Fza6pxn
-         D8Zw==
-X-Gm-Message-State: AOJu0YyLLUuRxB+Fz1ETdmvKGShlFxOOqPIkSPy+5Hr10Ieepmteosuz
-	BWa15gfZ7bZgYA1Tlvido3KNgndzV/Z7DcNmzUAGf/VbQjgFCYZsTQ1437QVddGqrbdxDBJiFks
-	b
-X-Google-Smtp-Source: AGHT+IHyilA5pn7bTk5wG0if56ayFdi//JSBq/3E0JiJr67lveFf/JA8ZYRTkFP5SiaOqO8femclbQ==
-X-Received: by 2002:a7b:c391:0:b0:420:1db0:53c1 with SMTP id 5b1f17b1804b1-421279375bamr150315e9.41.1717008876402;
-        Wed, 29 May 2024 11:54:36 -0700 (PDT)
-Received: from rkanwal-XPS-15-9520.Home ([2a02:c7c:7527:ee00:7446:71c1:a41a:da9b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212706a23csm2787885e9.27.2024.05.29.11.54.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 11:54:35 -0700 (PDT)
-From: Rajnesh Kanwal <rkanwal@rivosinc.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	ajones@ventanamicro.com,
-	anup@brainfault.org,
-	acme@kernel.org,
-	atishp@rivosinc.com,
-	beeman@rivosinc.com,
-	brauner@kernel.org,
-	conor@kernel.org,
-	heiko@sntech.de,
-	irogers@google.com,
-	mingo@redhat.com,
-	james.clark@arm.com,
-	renyu.zj@linux.alibaba.com,
-	jolsa@kernel.org,
-	jisheng.teoh@starfivetech.com,
-	palmer@dabbelt.com,
-	tech-control-transfer-records@lists.riscv.org,
-	will@kernel.org,
-	kaiwenxue1@gmail.com,
-	Rajnesh Kanwal <rkanwal@rivosinc.com>
-Subject: [PATCH RFC 6/6] riscv: perf: Integrate CTR Ext support in riscv_pmu_dev driver
-Date: Wed, 29 May 2024 19:53:37 +0100
-Message-Id: <20240529185337.182722-7-rkanwal@rivosinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240529185337.182722-1-rkanwal@rivosinc.com>
-References: <20240529185337.182722-1-rkanwal@rivosinc.com>
+	s=arc-20240116; t=1717008934; c=relaxed/simple;
+	bh=U4Rsy2pPhz/359g6Rk4fJeQdhXCIaeRtqzSU/shOa0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pWUCb7za2ys2xQb8HhCxCZKOw0yEl+YPX1LnSrhQAaAejeeLqiC80L8qyibFzI0Pghyv6T0E+vv5OfSYBBdR/Y0+fygG5IDSuz5lj9Nk8xnFX7hUfHqTX2059qzP2UIDfnBr6r5bMz4hfHoJ8Hh7iPJhUvf/+FPJRuvvjrtqw+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nWmzA2l1; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44TIsZuq101155;
+	Wed, 29 May 2024 13:54:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717008875;
+	bh=9EEbQ1P0bS7o94PZeSQIGVykCCKi5H729feXlk6MNGI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=nWmzA2l1edBES7eoreuhEJ0nVh+lzRPIJrE9aeQ63a4Ero/cIcjJ2rtRZaU/0MBAy
+	 41HrlIVyqkzB30zAqQ2Znee1eYUuKh0Dn/L8Lgrij/5BZGoCZahHzs7UrmjOubVPUd
+	 5YULvNhERV0fBGYaMADcCoJMa/vj3gx1i3WMYa6M=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44TIsY3j019806
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 29 May 2024 13:54:34 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 29
+ May 2024 13:54:34 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 29 May 2024 13:54:34 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44TIsYDc007851;
+	Wed, 29 May 2024 13:54:34 -0500
+Message-ID: <10c57c70-5e12-4baf-b986-d060858949ce@ti.com>
+Date: Wed, 29 May 2024 13:54:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: counter: Add new ti,am62-eqep
+ compatible
+To: David Lechner <david@lechnology.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        Nishanth Menon
+	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240523231516.545085-1-jm@ti.com>
+ <20240523231516.545085-3-jm@ti.com>
+ <2956d10b-d2cf-4019-adc8-d8053e435767@lechnology.com>
+ <e6a03921-532c-4aa7-92b6-812cd9a356d6@lechnology.com>
+ <2339db0d-db21-4372-808d-8648500e971a@ti.com>
+ <55a21233-918f-4cf4-800c-3e0eee0cd467@lechnology.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <55a21233-918f-4cf4-800c-3e0eee0cd467@lechnology.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-This integrates recently added CTR ext support in riscv_pmu_dev driver
-to enable branch stack sampling using PMU events.
+Hi David,
 
-This mainly adds CTR enable/disable callbacks in rvpmu_ctr_stop()
-and rvpmu_ctr_start() function to start/stop branch recording along
-with the event.
+On 5/25/24 12:49 PM, David Lechner wrote:
+> On 5/24/24 4:44 PM, Judith Mendez wrote:
+>> On 5/24/24 3:57 PM, David Lechner wrote:
+>>> On 5/24/24 3:50 PM, David Lechner wrote:
+>>>> On 5/23/24 6:15 PM, Judith Mendez wrote:
+>>>>> Add new compatible ti,am62-eqep for TI K3 devices. If a device
+>>>>> uses this compatible, require power-domains property.
+>>>>>
+>>>>> Since there is only one functional and interface clock for eqep,
+>>>>> clock-names is not really required. The clock-name also changed
+>>>>> for TI K3 SoCs so make clock-names optional for the new compatible
+>>>>> since there is only one clock that is routed to the IP.
+>>>>>
+>>>>> While we are here, add an example using ti,am62-eqep compatible.
+>>>>>
+>>>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>>>> ---
+>>>>> Changes since v1:
+>>>>> - Fix eqep binding for new compatible, require
+>>>>>    power-domains for new compatible
+>>>>> ---
+>>>>>    .../devicetree/bindings/counter/ti-eqep.yaml  | 53 +++++++++++++++++--
+>>>>>    1 file changed, 48 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/counter/ti-eqep.yaml b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
+>>>>> index 85f1ff83afe72..c4bb0231f166a 100644
+>>>>> --- a/Documentation/devicetree/bindings/counter/ti-eqep.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
+>>>>> @@ -11,7 +11,9 @@ maintainers:
+>>>>>      properties:
+>>>>>      compatible:
+>>>>> -    const: ti,am3352-eqep
+>>>>> +    enum:
+>>>>> +      - ti,am3352-eqep
+>>>>> +      - ti,am62-eqep
+>>>>>        reg:
+>>>>>        maxItems: 1
+>>>>> @@ -21,19 +23,43 @@ properties:
+>>>>>        maxItems: 1
+>>>>>        clocks:
+>>>>> -    description: The clock that determines the SYSCLKOUT rate for the eQEP
+>>>>> -      peripheral.
+>>>>> +    description: The functional and interface clock that determines the clock
+>>>>> +      rate for the eQEP peripheral.
+>>>>>        maxItems: 1
+>>>>>        clock-names:
+>>>>> -    const: sysclkout
+>>>>> +    enum:
+>>>>> +      - sysclkout
+>>>>> +      - fck
+>>>>> +
+>>>>
+>>>> If we are making this optional for ti,am62-eqep, why add a new name?
+>>>>
+>>>> Also, we could change the description to say that sysclockout is not a
+>>>> great name but is required for backwards compatibility.
+>>>>
+>>>>> +  power-domains:
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - if:
+>>>>> +      properties:
+>>>>> +        compatible:
+>>>>> +          contains:
+>>>>> +            enum:
+>>>>> +              - ti,am3352-eqep
+>>>>> +    then:
+>>>>> +      required:
+>>>>> +        - clock-names
+>>>
+>>> I just looked at the Linux driver for this and the clock name is
+>>> not used in the driver. So we could probably just deprecate the
+>>> clock-names property here and not make it required for
+>>> ti,am3352-eqep (and not allowed for any new compatibles as
+>>> suggested below).
+>>
+>> We could do this, although I was under the impression that we should
+>> not drop DT properties just because the linux driver isn't using it,
+>> that is why I went with keeping clock-names around for am335x compatible
+>> and making it optional for am62x compatible.
+>>
+>> But if it is all the same, we could drop the the DT property.
+>>
+>> ~ Judith
+>>
+> 
+> I wasn't suggesting to remove clock-names from the bindings, just
+> deprecate that property in this binding and not use it with any
+> new compatibles.
+> 
+> In the AM62x technical reference manual, it looks like it calls
+> the functional and interface clock FICLK rather than FCK. So
+> I'm just suggesting maybe it just easier to not give it a name
+> rather than try to get the right name? No name will work with
+> any future SoCs as well. :-)
 
-PMU overflow handler rvpmu_ovf_handler() is also updated to sample
-CTR entries in case of the overflow for the particular event programmed
-to records branches. The recorded entries are fed to core perf for
-further processing.
+Understood, so I will make clock-names optional for ti,am3352-eqep
+compatible and not allowed for ti,am62-eqep compatible.
 
-Signed-off-by: Rajnesh Kanwal <rkanwal@rivosinc.com>
----
- drivers/perf/riscv_pmu_common.c |  3 +-
- drivers/perf/riscv_pmu_dev.c    | 77 +++++++++++++++++++++++++++------
- 2 files changed, 65 insertions(+), 15 deletions(-)
+Thanks for your feedback (:
 
-diff --git a/drivers/perf/riscv_pmu_common.c b/drivers/perf/riscv_pmu_common.c
-index e794675e4944..e1f3a33b479f 100644
---- a/drivers/perf/riscv_pmu_common.c
-+++ b/drivers/perf/riscv_pmu_common.c
-@@ -326,8 +326,7 @@ static int riscv_pmu_event_init(struct perf_event *event)
- 	u64 event_config = 0;
- 	uint64_t cmask;
- 
--	/* driver does not support branch stack sampling */
--	if (has_branch_stack(event))
-+	if (has_branch_stack(event) && !riscv_pmu_ctr_supported(rvpmu))
- 		return -EOPNOTSUPP;
- 
- 	hwc->flags = 0;
-diff --git a/drivers/perf/riscv_pmu_dev.c b/drivers/perf/riscv_pmu_dev.c
-index 40ae5fc897a3..1b2c04c35bed 100644
---- a/drivers/perf/riscv_pmu_dev.c
-+++ b/drivers/perf/riscv_pmu_dev.c
-@@ -675,7 +675,7 @@ static void pmu_sched_task(struct perf_event_pmu_context *pmu_ctx,
- {
- 	struct riscv_pmu *pmu = to_riscv_pmu(pmu_ctx->pmu);
- 
--	/* Call CTR specific Sched hook. */
-+	riscv_pmu_ctr_sched_task(pmu_ctx, sched_in);
- }
- 
- static int rvpmu_sbi_find_num_ctrs(void)
-@@ -935,17 +935,25 @@ static irqreturn_t rvpmu_ovf_handler(int irq, void *dev)
- 		hw_evt = &event->hw;
- 		riscv_pmu_event_update(event);
- 		perf_sample_data_init(&data, 0, hw_evt->last_period);
--		if (riscv_pmu_event_set_period(event)) {
--			/*
--			 * Unlike other ISAs, RISC-V don't have to disable interrupts
--			 * to avoid throttling here. As per the specification, the
--			 * interrupt remains disabled until the OF bit is set.
--			 * Interrupts are enabled again only during the start.
--			 * TODO: We will need to stop the guest counters once
--			 * virtualization support is added.
--			 */
--			perf_event_overflow(event, &data, regs);
-+		if (!riscv_pmu_event_set_period(event))
-+			continue;
-+
-+		if (needs_branch_stack(event)) {
-+			riscv_pmu_ctr_consume(cpu_hw_evt, event);
-+			perf_sample_save_brstack(
-+				&data, event,
-+				&cpu_hw_evt->branches->branch_stack, NULL);
- 		}
-+
-+		/*
-+		 * Unlike other ISAs, RISC-V don't have to disable interrupts
-+		 * to avoid throttling here. As per the specification, the
-+		 * interrupt remains disabled until the OF bit is set.
-+		 * Interrupts are enabled again only during the start.
-+		 * TODO: We will need to stop the guest counters once
-+		 * virtualization support is added.
-+		 */
-+		perf_event_overflow(event, &data, regs);
- 	}
- 
- 	rvpmu_start_overflow_mask(pmu, overflowed_ctrs);
-@@ -1103,10 +1111,12 @@ static void rvpmu_ctr_start(struct perf_event *event, u64 ival)
- 	else
- 		rvpmu_sbi_ctr_start(event, ival);
- 
--
- 	if ((hwc->flags & PERF_EVENT_FLAG_USER_ACCESS) &&
- 	    (hwc->flags & PERF_EVENT_FLAG_USER_READ_CNT))
- 		rvpmu_set_scounteren((void *)event);
-+
-+	if (needs_branch_stack(event))
-+		riscv_pmu_ctr_enable(event);
- }
- 
- static void rvpmu_ctr_stop(struct perf_event *event, unsigned long flag)
-@@ -1128,6 +1138,9 @@ static void rvpmu_ctr_stop(struct perf_event *event, unsigned long flag)
- 	} else {
- 		rvpmu_sbi_ctr_stop(event, flag);
- 	}
-+
-+	if (needs_branch_stack(event))
-+		riscv_pmu_ctr_disable(event);
- }
- 
- static int rvpmu_find_ctrs(void)
-@@ -1161,6 +1174,9 @@ static int rvpmu_find_ctrs(void)
- 
- static int rvpmu_event_map(struct perf_event *event, u64 *econfig)
- {
-+	if (needs_branch_stack(event) && !riscv_pmu_ctr_valid(event))
-+		return -EOPNOTSUPP;
-+
- 	if (static_branch_likely(&riscv_pmu_cdeleg_available) && !pmu_sbi_is_fw_event(event))
- 		return rvpmu_deleg_event_map(event, econfig);
- 	else
-@@ -1207,6 +1223,8 @@ static int rvpmu_starting_cpu(unsigned int cpu, struct hlist_node *node)
- 		enable_percpu_irq(riscv_pmu_irq, IRQ_TYPE_NONE);
- 	}
- 
-+	riscv_pmu_ctr_starting_cpu();
-+
- 	return 0;
- }
- 
-@@ -1218,6 +1236,7 @@ static int rvpmu_dying_cpu(unsigned int cpu, struct hlist_node *node)
- 
- 	/* Disable all counters access for user mode now */
- 	csr_write(CSR_SCOUNTEREN, 0x0);
-+	riscv_pmu_ctr_dying_cpu();
- 
- 	return 0;
- }
-@@ -1331,6 +1350,29 @@ static void riscv_pmu_destroy(struct riscv_pmu *pmu)
- 	cpuhp_state_remove_instance(CPUHP_AP_PERF_RISCV_STARTING, &pmu->node);
- }
- 
-+static int branch_records_alloc(struct riscv_pmu *pmu)
-+{
-+	struct branch_records __percpu *tmp_alloc_ptr;
-+	struct branch_records *records;
-+	struct cpu_hw_events *events;
-+	int cpu;
-+
-+	if (!riscv_pmu_ctr_supported(pmu))
-+		return 0;
-+
-+	tmp_alloc_ptr = alloc_percpu_gfp(struct branch_records, GFP_KERNEL);
-+	if (!tmp_alloc_ptr)
-+		return -ENOMEM;
-+
-+	for_each_possible_cpu(cpu) {
-+		events = per_cpu_ptr(pmu->hw_events, cpu);
-+		records = per_cpu_ptr(tmp_alloc_ptr, cpu);
-+		events->branches = records;
-+	}
-+
-+	return 0;
-+}
-+
- static void rvpmu_event_init(struct perf_event *event)
- {
- 	/*
-@@ -1490,6 +1532,12 @@ static int rvpmu_device_probe(struct platform_device *pdev)
- 		pmu->pmu.attr_groups = riscv_cdeleg_pmu_attr_groups;
- 	else
- 		pmu->pmu.attr_groups = riscv_sbi_pmu_attr_groups;
-+
-+	riscv_pmu_ctr_init(pmu);
-+	ret = branch_records_alloc(pmu);
-+	if (ret)
-+		goto out_ctr_finish;
-+
- 	pmu->cmask = cmask;
- 	pmu->ctr_start = rvpmu_ctr_start;
- 	pmu->ctr_stop = rvpmu_ctr_stop;
-@@ -1506,7 +1554,7 @@ static int rvpmu_device_probe(struct platform_device *pdev)
- 
- 	ret = cpuhp_state_add_instance(CPUHP_AP_PERF_RISCV_STARTING, &pmu->node);
- 	if (ret)
--		return ret;
-+		goto out_ctr_finish;
- 
- 	ret = riscv_pm_pmu_register(pmu);
- 	if (ret)
-@@ -1523,6 +1571,9 @@ static int rvpmu_device_probe(struct platform_device *pdev)
- out_unregister:
- 	riscv_pmu_destroy(pmu);
- 
-+out_ctr_finish:
-+	riscv_pmu_ctr_finish(pmu);
-+
- out_free:
- 	kfree(pmu);
- 	return ret;
--- 
-2.34.1
+~ Judith
+> 
 
 
