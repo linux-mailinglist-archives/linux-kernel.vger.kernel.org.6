@@ -1,97 +1,227 @@
-Return-Path: <linux-kernel+bounces-193914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5C58D3403
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:07:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9FB8D3405
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A46285CD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8FB81F233D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50CE17B400;
-	Wed, 29 May 2024 10:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9DA17A93D;
+	Wed, 29 May 2024 10:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1wqL0Xd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="cVL83hoo"
+Received: from MRZP264CU002.outbound.protection.outlook.com (mail-francesouthazon11020003.outbound.protection.outlook.com [52.101.165.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34989179970;
-	Wed, 29 May 2024 10:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977238; cv=none; b=Wi7ups7K7IeNE4d9/LZPEUnOHanMsl8nXV3iLfUdfqa6EhXeMP92jPgn3PdfcO4V+Kvs9nj4iejaKN2wIIITgdppfopKvOY72mOJCgbg49C3ZjnIUbEcJLpWS0jbDo4Sz0QXji7MVTh2uIQ6TEH0jDU705C4c/ssrYEgAXWu8+4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977238; c=relaxed/simple;
-	bh=jU0NjnEWLZP7qMvgt67CMX8Qo17uw3DQgTOfVNjliyg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dcVZmeqVeDYUb1qx/XLKHkeiADuZHB0Jx7kNQ69qPZTeo4n4BDUzChoBIbqJy3+jdIwnnlxaLNZcNueVOvtHwI+ODUxcWZUvcSe5we4WvVSd95BD24tXsXA2uUwX1L5ZqrBY6FiKeAx4h2QC0sAQ/br0WrQb98PaoRMNmUp3L/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1wqL0Xd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7B5C32781;
-	Wed, 29 May 2024 10:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716977238;
-	bh=jU0NjnEWLZP7qMvgt67CMX8Qo17uw3DQgTOfVNjliyg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=A1wqL0XdX9wMCS4dsyySs/MmlTc8LI7t28AKGgVfnjqyPYxeQZUnZfo1iv75TUihk
-	 Q7cwplSpI/GTrmX/IvZUbOZydfdu0wEi3yGdAnr8TtkL6FGvMbmgv6s47t2v/aYXo/
-	 YZzCxR7Zz0E2zu208LfNQ36vxtpquue8S1E15kI68DeWPxFTGONQ/+JOArTV6P3zip
-	 zPudOozPxuUDOFN3DEEaeiZxpNgJAEs1+IVRu7iZd8HhzBJ2TFAyyECdZh7sXfm0U3
-	 jZRYwHt5P5VVnt/NoJxPbpjSGDO4pge66uWb94Y/OOpVWb5twItFtzbiQTfs0DsOHI
-	 on9WnEwc6NW7A==
-From: Mark Brown <broonie@kernel.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: lgirdwood@gmail.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <20240527101326.440345-1-ckeepax@opensource.cirrus.com>
-References: <20240527101326.440345-1-ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH] MAINTAINERS: Remove James Schulman from Cirrus audio
- maintainers
-Message-Id: <171697723476.23184.7362558841511719141.b4-ty@kernel.org>
-Date: Wed, 29 May 2024 11:07:14 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFB316D9B4
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.165.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716977280; cv=fail; b=uJTfsi4FprzJmSRD2jciYuk3qskyW+XAVQYm97ogdKoVSk72JcYTZggKVSBe9XzOCL1CMWu2/xYmbvPFjj6mYy2V3uWq7/mLHroqyayiA0yRqK29qVCr9Lo5YGalTpsaKpdYJVdvOnWXTLzsPE51FsMEfOgj7hp3Q8N4F34XJlU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716977280; c=relaxed/simple;
+	bh=MoShlhpxio/whrlJi14aoDFtRktfktpmfFk2sjSOWaE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HDWQhNbIc3wBq4Tix0NawIDF9bY9jk3TCyVgl6tzSs/a64uqA4VWvSPlVUPB6ljKJE0jQp/46Lu9c377K6hXM4DVNaZXzBbbh6y7lGVWxsVX2PSSgEVusvLTmugPnE6xrmuJPIyjaOQ44lmNWyZtiI46teQ1sR6e8i97Tl6WmPE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=cVL83hoo; arc=fail smtp.client-ip=52.101.165.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VxRFaw2+HL+sCbYgc/+4RA3C5KK/DH388lBp/H94GAazkqu7DWeujbnOA3TxX0TRVUtFOP6bH6tYfICE4UftsNbu97kG4GavhoUB7KxAI2b3anmQv+S//7tStkOvjvbjI/2INFn72MyvsqsSIWdTlnXICMDzW64Cz4SWRwDGTv46g9EvI7F+2j+oqQswIdxCD1LyjS5eVnfiTUlw4RshPfKOZyIpmVx1jD4CcxZyt2BJFrJ2EY8iAezBUuaqXG7pFf6Y7qLG+i/XJoA4WezCD7UyyyCXMKctVHhL9x5X4elR/KbKjLa+ju1BgElqZlKYNJcx61S51k3VP0lr/N8T7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MoShlhpxio/whrlJi14aoDFtRktfktpmfFk2sjSOWaE=;
+ b=aCUMlr9b+kK0BHYeZAlOxVx+IS48ncQNlOQ2oc65QYfXGQ1iu8ftmG6+G6yukW3AissDiQ0UQINGeTAKGx4ZXS5Or9VyVdrLZPVHB+gcCWhGG5Cc8mUUJ47TU3DGQPyDJ7YSmaS6c7Luk0bCsSpAajwQK1nDFzqN2vuCNcs5eBgpCxFXmBRAXDDZHtGsdd2DBo//3o86wlJdoG+5qECyMIysgDEhqIZhtaGzjWY99Gpov16hGwDQWLBfcGX5O99Xz8FiySuc4zQdwDlHAzKdz/mIw19CZnO/cjUAwvW6YogPI0Ll3eETDGKpK0B7r10IXT1kgPmo9YF/GLSr4sXHXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
+ dkim=pass header.d=csgroup.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MoShlhpxio/whrlJi14aoDFtRktfktpmfFk2sjSOWaE=;
+ b=cVL83hoo5xK9+TW5281Ba7og4H1GeWtZPZe87lgIGHvUjS0YWdubn4zP8UM1mziP65WPVcMqihWpHYKUwsYcvqSkCD33j5TONxjzIE6BpbP1LynSS0lDHjKG35C51gOu3mROv+fmEoEpYNi72YKoV7kdIn3Y/TRr4Per+v06+PmtfuJ4R/zJsDPh2z3KItfHtK6JtMbMQWWNZNkrpb9tCwz4OEGCp32pXh2JrJuhItmtct6pQbLbxyCFvP6plV6Oo+ZvbhPm7bMbDg8Yxrld5hpE5TdDCppqXLyZJs20qDrIUTvPwbSxbYL1GWWutF5HQB48c8KSLveVzSf70BbEIA==
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
+ by MRZP264MB2053.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:17::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Wed, 29 May
+ 2024 10:07:55 +0000
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::96ff:7284:1fa1:b02a]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::96ff:7284:1fa1:b02a%4]) with mapi id 15.20.7633.018; Wed, 29 May 2024
+ 10:07:55 +0000
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Oscar Salvador <osalvador@suse.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe
+	<jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, Michael Ellerman
+	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v4 14/16] powerpc/64s: Use contiguous PMD/PUD instead
+ of HUGEPD
+Thread-Topic: [RFC PATCH v4 14/16] powerpc/64s: Use contiguous PMD/PUD instead
+ of HUGEPD
+Thread-Index: AQHasDocM3CDkNRhzEO1+Too0SBD17Gt8zoAgAAMdgA=
+Date: Wed, 29 May 2024 10:07:55 +0000
+Message-ID: <315d1dc7-9eda-45cd-863d-803bfae4c29b@csgroup.eu>
+References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
+ <610be6003a6d215e9e9ca87d7f5402042da1e355.1716815901.git.christophe.leroy@csgroup.eu>
+ <Zlb0BugOwko4PrLm@localhost.localdomain>
+In-Reply-To: <Zlb0BugOwko4PrLm@localhost.localdomain>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=csgroup.eu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MRZP264MB2988:EE_|MRZP264MB2053:EE_
+x-ms-office365-filtering-correlation-id: 2da655b5-17a2-48e2-6fed-08dc7fc7356f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MHM1SGlFK2JKVk45WmdMbE9wWWphbUNWRXBLK1VsVlBXT3RXZGhqOVAzbDlI?=
+ =?utf-8?B?Ym12V0RaQit1T1NVUkRpclRjYkFaZlVlNlgrNStoaHNqT0ZWZkwwSUNEK1Qv?=
+ =?utf-8?B?RVIreGxpQ09WSk1KWmpBMTduR2Z1WUhNSkJ3dXNOcDZFdndobU4zMnUrMmxD?=
+ =?utf-8?B?elJsWTdjR3JYNHJhOWFHcFByUnFOL0ZiUU5yZkNhemZsa0pOVC9nT3VTRkZG?=
+ =?utf-8?B?M2FHM3MzMzJaQUdnRjA0NkRVd3RDaCtaQkJxMmZyMzBkMUlqalg0dkJPbVl0?=
+ =?utf-8?B?OG9wMThCMG5FUGtDa3doVWQrRmNybVRJcWVWVWRlWlE3S2lJZ1prQjZDUVU0?=
+ =?utf-8?B?Q08vd2Z0Y2p6V01IK1lKbkwwdkNyL2thNWFkaWpSaGI3VEdoMlVERDdmRStv?=
+ =?utf-8?B?OXNReUpsbktYV0xrRGprT1NRUVBkYlFRNktNQ1E5YXBFN28zU1lnWDhwTmJm?=
+ =?utf-8?B?WmVoTXB2Vkp6VDRmM0Jkai9IaVZuTEVmWHV5S3BiWG5JOGJSUmNHMjZvQTNI?=
+ =?utf-8?B?TllOS1dvTnRneENpcUtYK2paMnkvVUJ4R1J0SWNtQUlSeU0wNk9BU0JwQzhP?=
+ =?utf-8?B?T05MYXVSNlBlV3BNSFpTMFptRE1ILzNaS1FYUWp4bDRORjZqc0VBMVNhcXM5?=
+ =?utf-8?B?MC9MK1l4NTlYN2lMeXMzR3A3UndDcFVKQ2UxbU9xTml2RzAzd3RWbGNNbk9q?=
+ =?utf-8?B?c0pmUlpyaEhFMllaU2xJVVlIWE81YlRmdmNsdW9DV0RjVWxJVkRwSzRPa2w0?=
+ =?utf-8?B?bnNvNzhDa2Z0M1hkY3N1enJFeURiUE9Lb3lvYmRrK1c5S0lCRmFlZHc3VzNt?=
+ =?utf-8?B?L2loSUZoZ0Q2NGtxbmVuRUhRQUhmUXdLcDM2KzBKRGUyNXFSSEJSVU8wN1RN?=
+ =?utf-8?B?NXRTVGxwZmJuaVF3aUZ4Y1VvdFduWkRKUWVBMGNNbmZIcVhPdG5qNzBWQlps?=
+ =?utf-8?B?Qzd0SWI1bTRUWHh2MEVlYlJQdXhuMUk1Q3NTVis0U09pTnlRYnA3RnI1RTYy?=
+ =?utf-8?B?Sk1LY1ZYeXZDQno3eEpuZ0w2dllwRGg1NjJaYmYvWXlXQXNHRHFjNW1JbG51?=
+ =?utf-8?B?d2ZaZEtGek1leVJnSW1HNG9VL05HdEtsRG0vRkJDSEdWVFZRMjA0VW8vMFR0?=
+ =?utf-8?B?UmZCS0JQUEloU2FJeGtiWURwU0FZTGRYQlUvZUkxVFlHMHN2eWR4VXp5VmtQ?=
+ =?utf-8?B?aE5tVVM4cjB1SWNNN1QzOGs3aCtGd0tXSFFVclphZEFHeVJCOU52d1RzVUhJ?=
+ =?utf-8?B?NkxQOSthK0Z4SVBzaDliNnNYY0hHeFRpZjBvN3dKSW1xVmdXVjVKSWJodjZZ?=
+ =?utf-8?B?VmNSd25xM3piM1FuNVg3V2pSY0VCMzVSbGF0YWl0Qmc1V3B6UkVyVjBBNCs0?=
+ =?utf-8?B?bTBIa0oyMkZYMTlBNXNqVE9FMnFHVnBXVmNrdXZMTm1ONFFOc21TT25GMEs4?=
+ =?utf-8?B?TlVmWVF1YnpDWUJETm1YeWFPRmhmSXk0ZGZQaTVvb05HR1ZzbDZOU0hTQ2xk?=
+ =?utf-8?B?Qm9Hd0xCS0lsT0M1RXNlWFp5S1l1NG1EVlZ5Vjc4c1Q0Y3NHTFdrWXNUMmdl?=
+ =?utf-8?B?Wm9YQWNEbkdMTkQ3U1l3cEpuRjh4TWlmc3l1Tm8rUGl3bmxiR0FqVm5ESjR5?=
+ =?utf-8?B?QjhFNDhMZWo2Mmw0SGg0YWZxNXJ3VVNyWUZQaFZtQlhKeHhtNW9oWUY4akJB?=
+ =?utf-8?B?bEFLNGZ1QVp0RUhQU05GRDZQUnIwR01ZV3c4a0JuZmF5cG9lWmJSWksySzVI?=
+ =?utf-8?B?ZUM1K2FJK3dVem15TTlqZnhtT2w1bGtxMnNWMUI4VTlFcXFrN3NEaEt4NjR2?=
+ =?utf-8?B?S0hnUFlxcTZSUWxDeGFXdz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?aVFWTWUzczdOclVrTmFoOE5zTDd6M0xCRWxxVVJmTU5HR1B3QUF0SUlvcG1O?=
+ =?utf-8?B?RExXNWRxbTFYY0ZQZk1jZHAyR1hEbjZuaXZsUzFmREFxMTVKWHVYRzFoWFpo?=
+ =?utf-8?B?VTJZd0YxZWVLQnQxNHpsT2RUcTF2dTdRZG1xdVdOdkwxMXNCc2RmRnlsN0M0?=
+ =?utf-8?B?OWFmeStMQ0JaT0RsUWdwVkxVMm01akxVNTRkWjIyNUw2VzNweld5REFzVnJ2?=
+ =?utf-8?B?cktXSHVVZzh6NDFHVXhQQnQ5MlhDVWN6MmZUcmpsdU5KMjBVbjRBbjRodmpl?=
+ =?utf-8?B?ODgzSUw4M1A1T041dElFY0lkWVZHTVNvVzA3UFA3enJocCtrZ3JlTGdNVXBl?=
+ =?utf-8?B?bmIzUEJpMGxyT3F5a3VzRkZqei8vT3JjMVFXajc1cnBJVE5VeElweXdKMTYw?=
+ =?utf-8?B?ME9scDByclZpU0srTWVoakVHRVBsL0FqWVNIdzZ0b0lOVURrY2R0b0VFL0Fi?=
+ =?utf-8?B?OGxvd3E3QWVraFNXVkcxamsvU0ZrMnNkWkJYWGNPWWlTOFJydWpmdjBLbXB3?=
+ =?utf-8?B?QzdWYlUvUkVZcEdsVFQ0TXUzdmd3V24yOEtuTkFzOVRjQ1FlLzBpazFybER2?=
+ =?utf-8?B?YUJrU0UxVHozYUdobUhoMlAyNDIxbkJTWkQ2R3BRVFpOZE8wQkxKbE4yaERy?=
+ =?utf-8?B?YVI1SFBGRkNla2VGdTIybjVRN1J2MXVaUTRwTjU4cm5ZRmhUQ3hQSVROL3Ju?=
+ =?utf-8?B?ODhMcVFnS2NnOXVuL0YzMVc2dTlGbDFacW1odnNFR1h1S2xxMGVmbzVkZXdz?=
+ =?utf-8?B?QWJoQVZJNGxOSGNyazZKK3ZBWm8zMFk3WjZBVkh0K1diUTlERUdzTVVYQUZ6?=
+ =?utf-8?B?MEQyRTdzOCtkejNydjhmSGlLRDBwRHpQS2d3MnBXN1Y3WHJHbnFqMGU0SStG?=
+ =?utf-8?B?UjVheGRtcDhwRWVTSlhEVGhHZGRseGFtWHFFNkhkbG5icnFsQVhkWFcwa05H?=
+ =?utf-8?B?T3I0eUtOaHZOWFdmd1lPMWo1ZFNUMm1nOTJaWlROMVZOcTY2bCtKSzAzamZG?=
+ =?utf-8?B?VGRNWEhmZFJhUlY2YVJUVFUxK1prbmVqUlBjeXltRi80U25TUnQvdnhPL0dR?=
+ =?utf-8?B?bmFDWDVVSjFZNnpOTzAxbnliWFkyU2JtRllUMUVqQU5sVmErM2NIUDY5Q1ZU?=
+ =?utf-8?B?K1ZYRE1iZm5uTVRLZmJBaW1ZRVZwdnZvVEZDelpsZlVRWWtvSWE4eEZKbUtK?=
+ =?utf-8?B?Skh4TVIrK0UxamxLN0p4MnBFYzM5MXIrdnRYV3Q3aGMzbGx1Y2VQbVB6WmdZ?=
+ =?utf-8?B?RTZBVDNMZEIvcEdubkNRdjJUdnVVUDBUaitjRGF2VUFwbnJxR0F0ekpDMDQ0?=
+ =?utf-8?B?OFFNb1g5V2hGV1EybGs2ZDNqK1BuZnhoai9zV2lrQ2dqRzFCTVhmbTY1VVZE?=
+ =?utf-8?B?NlYwS2wzUEtWNFdCdlNrRXI2R3F3d0ZJNUdpWjRJMEd5ZVlCK3g0VjFZaHVh?=
+ =?utf-8?B?Y251YXpnZlNINnZkaGljVzdGWUh5cWVma1ZXVUt0eWVwRngrVG9EZDlsRGdQ?=
+ =?utf-8?B?alZVMElBazlRbllUV3YwY0I2a3J6bHkyN3hpT243MCt1amM4K3ExUVlFMDN0?=
+ =?utf-8?B?NDNhWVp2cXhTb3BTQ2FraVllMmpRTFI1SnFNY3A4M1BqUmJFME5PQmk1OE9j?=
+ =?utf-8?B?WHJUWjBSclpFc0Jxbkcvdm80aTFRTkowYkowUmJjY0dteDBrZEVSWjlMSzk3?=
+ =?utf-8?B?NG1oNTQ4dEpod3VkWFdLZmZEVkFXSVNoNlpRekh0cm40R3lJNG91VnNCNFFP?=
+ =?utf-8?B?Q011OEFPZTV2b1JWSFFOcWlEREFORnNNeUZOQjgxaHZpNitLVDdGK1V6VXNq?=
+ =?utf-8?B?S3plSktpclFxV2JkWFJoZXNoZktoTDEva1NNTXRKTFNucm9Db0ozeGJ1WnA3?=
+ =?utf-8?B?Z284UVdldUYxNFRmbkxGbmIzU3cybmwrOGpmL3R5WVZwZmd1NzBaU3N3NmlT?=
+ =?utf-8?B?YTZPSU1ZcHVRUU1odUIwUVBaQU4ycEJ3clhuWmZQNjZKR2IyamhJaXpCck1C?=
+ =?utf-8?B?anBsSzZFaEhSUWZQaUFMTndud1N3bmVTR1ZrM3JRM200MFAyeVhZZmdRSHN5?=
+ =?utf-8?B?RTBwdWdDeUsxMVNIUUtnWkQ5RE11c2xDejU5VkFTdnd1Q3YyVHpFMjdWdlkz?=
+ =?utf-8?Q?XKGVX77TEOkOsFu8Ykzc3pXZO?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E2BC30FF99EA1C46BD8FB0731C61AB6C@FRAP264.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-2ee9f
+X-OriginatorOrg: csgroup.eu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2da655b5-17a2-48e2-6fed-08dc7fc7356f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2024 10:07:55.1082
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wzg9sIM3ErIjtbO0dieMHDatD/K8mB7hX8oIE2R0Qbt+qs7BPiwvqeFJtkL1CUiLv7lTavxgVhzAqaoIeAm9TaDy6gwcbsWVZMFdAmghA1Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB2053
 
-On Mon, 27 May 2024 11:13:26 +0100, Charles Keepax wrote:
-> James no longer works for Cirrus Logic, remove him from the list of
-> maintainers for the Cirrus audio CODEC drivers.
-> 
-> 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] MAINTAINERS: Remove James Schulman from Cirrus audio maintainers
-      commit: d5d2a5dacbc8ea4386071ce243c43ea0dac23cb8
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+DQoNCkxlIDI5LzA1LzIwMjQgw6AgMTE6MjMsIE9zY2FyIFNhbHZhZG9yIGEgw6ljcml0wqA6DQo+
+IE9uIE1vbiwgTWF5IDI3LCAyMDI0IGF0IDAzOjMwOjEyUE0gKzAyMDAsIENocmlzdG9waGUgTGVy
+b3kgd3JvdGU6DQo+PiBPbiBib29rM3MvNjQsIHRoZSBvbmx5IHVzZXIgb2YgaHVnZXBkIGlzIGhh
+c2ggaW4gNGsgbW9kZS4NCj4+DQo+PiBBbGwgb3RoZXIgc2V0dXBzIChoYXNoLTY0LCByYWRpeC00
+LCByYWRpeC02NCkgdXNlIGxlYWYgUE1EL1BVRC4NCj4+DQo+PiBSZXdvcmsgaGFzaC00ayB0byB1
+c2UgY29udGlndW91cyBQTUQgYW5kIFBVRCBpbnN0ZWFkLg0KPj4NCj4+IEluIHRoYXQgc2V0dXAg
+dGhlcmUgYXJlIG9ubHkgdHdvIGh1Z2UgcGFnZSBzaXplczogMTZNIGFuZCAxNkcuDQo+Pg0KPj4g
+MTZNIHNpdHMgYXQgUE1EIGxldmVsIGFuZCAxNkcgYXQgUFVEIGxldmVsLg0KPiANCj4gDQo+IE9u
+IDRrIG1vZGUsIFBNRF9TSVpFIGlzIDJNQiBhbmQgUFVEX1NJWkUgaXMgMjU2TUIsIHJpZ2h0Pw0K
+DQpDb3JyZWN0LCBhcyBkb2N1bWVudGVkIGluIGFyY2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9ib29r
+M3MvNjQvaGFzaC00ay5oDQoNCj4gDQo+PiArc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIGhh
+c2hfX3B0ZV91cGRhdGUoc3RydWN0IG1tX3N0cnVjdCAqbW0sDQo+PiArCQkJCQkgdW5zaWduZWQg
+bG9uZyBhZGRyLA0KPj4gKwkJCQkJIHB0ZV90ICpwdGVwLCB1bnNpZ25lZCBsb25nIGNsciwNCj4+
+ICsJCQkJCSB1bnNpZ25lZCBsb25nIHNldCwNCj4+ICsJCQkJCSBpbnQgaHVnZSkNCj4+ICt7DQo+
+PiArCXVuc2lnbmVkIGxvbmcgb2xkOw0KPj4gKw0KPj4gKwlvbGQgPSBoYXNoX19wdGVfdXBkYXRl
+X29uZShwdGVwLCBjbHIsIHNldCk7DQo+PiArDQo+PiArCWlmIChJU19FTkFCTEVEKENPTkZJR19Q
+UENfNEtfUEFHRVMpICYmIGh1Z2UpIHsNCj4+ICsJCXVuc2lnbmVkIGludCBwc2l6ZSA9IGdldF9z
+bGljZV9wc2l6ZShtbSwgYWRkcik7DQo+PiArCQlpbnQgbmIsIGk7DQo+PiArDQo+PiArCQlpZiAo
+cHNpemUgPT0gTU1VX1BBR0VfMTZNKQ0KPj4gKwkJCW5iID0gU1pfMTZNIC8gUE1EX1NJWkU7DQo+
+PiArCQllbHNlIGlmIChwc2l6ZSA9PSBNTVVfUEFHRV8xNkcpDQo+PiArCQkJbmIgPSBTWl8xNkcg
+LyBQVURfU0laRTsNCj4+ICsJCWVsc2UNCj4+ICsJCQluYiA9IDE7DQo+IA0KPiBPbiA0SywgaHVn
+ZXBhZ2VzIGFyZSBlaXRoZXIgMTZNIG9yIDE2Ry4gSG93IGNhbiB3ZSBlbmQgdXAgaW4gYSBzaXR1
+YXRpb24NCj4gd2h3ZXJlIHRoZSBpcyBwdGUgaXMgaHVnZSwgYnV0IGlzIGlzIG5laXRoZXIgTU1V
+X1BBR0VfMTZHIG5vciBNTVVfUEFHRV8xNk0/DQoNCldlIGNhbid0IGJ1dCBJIGRpZG4ndCB3YW50
+IHRvIGxlYXZlIG5iIHVuZGVmaW5lZCBvciB3aXRoIGEgdmFsdWUgdGhhdCANCm1pZ2h0IGxlYWQg
+dG8gd3JpdGluZyBpbiB0aGUgd2VlZC4gVmFsdWUgMSBzZWVtcyBhIHNhZmUgZGVmYXVsdC4NCg0K
+PiANCj4+IGRpZmYgLS1naXQgYS9hcmNoL3Bvd2VycGMvbW0vYm9vazNzNjQvaHVnZXRsYnBhZ2Uu
+YyBiL2FyY2gvcG93ZXJwYy9tbS9ib29rM3M2NC9odWdldGxicGFnZS5jDQo+PiBpbmRleCA1YTJl
+NTEyZTk2ZGIuLjgzYzMzNjFiMzU4YiAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvcG93ZXJwYy9tbS9i
+b29rM3M2NC9odWdldGxicGFnZS5jDQo+PiArKysgYi9hcmNoL3Bvd2VycGMvbW0vYm9vazNzNjQv
+aHVnZXRsYnBhZ2UuYw0KPj4gQEAgLTUzLDYgKzUzLDE2IEBAIGludCBfX2hhc2hfcGFnZV9odWdl
+KHVuc2lnbmVkIGxvbmcgZWEsIHVuc2lnbmVkIGxvbmcgYWNjZXNzLCB1bnNpZ25lZCBsb25nIHZz
+aWQsDQo+PiAgIAkJLyogSWYgUFRFIHBlcm1pc3Npb25zIGRvbid0IG1hdGNoLCB0YWtlIHBhZ2Ug
+ZmF1bHQgKi8NCj4+ICAgCQlpZiAodW5saWtlbHkoIWNoZWNrX3B0ZV9hY2Nlc3MoYWNjZXNzLCBv
+bGRfcHRlKSkpDQo+PiAgIAkJCXJldHVybiAxOw0KPj4gKwkJLyoNCj4+ICsJCSAqIElmIGhhc2gt
+NGssIGh1Z2VwYWdlcyB1c2Ugc2VlcmFsIGNvbnRpZ3VvdXMgUHhEIGVudHJpZXMNCj4gJ3NldmVy
+YWwnDQo+PiArCQkgKiBzbyBiYWlsIG91dCBhbmQgbGV0IG1tIG1ha2UgdGhlIHBhZ2UgeW91bmcg
+b3IgZGlydHkNCj4+ICsJCSAqLw0KPj4gKwkJaWYgKElTX0VOQUJMRUQoQ09ORklHX1BQQ180S19Q
+QUdFUykpIHsNCj4+ICsJCQlpZiAoIShvbGRfcHRlICYgX1BBR0VfQUNDRVNTRUQpKQ0KPj4gKwkJ
+CQlyZXR1cm4gMTsNCj4+ICsJCQlpZiAoKGFjY2VzcyAmIF9QQUdFX1dSSVRFKSAmJiAhKG9sZF9w
+dGUgJiBfUEFHRV9ESVJUWSkpDQo+PiArCQkJCXJldHVybiAxOw0KPiANCj4gSSBoYXZlIDAgY2x1
+ZSBhYm91dCB0aGlzIGNvZGUuIFdoYXQgd291bGQgaGFwcGVuIGlmIHdlIGRvIG5vdCBiYWlsIG91
+dD8NCj4gDQoNCkluIHRoYXQgY2FzZSB0aGUgcHRlX3hjaGcoKSBpbiB0aGUgd2hpbGUgKCkgd2ls
+bCBvbmx5IHNldCBBQ0NFU1Mgb3IgDQpESVJUWSBiaXQgb24gdGhlIGZpcnN0IFB4RCBlbnRyeSwg
+bm90IG9uIGFsbCBjb250LVB4RCBlbnRyaWVzLg0KDQpDaHJpc3RvcGhlDQo=
 
