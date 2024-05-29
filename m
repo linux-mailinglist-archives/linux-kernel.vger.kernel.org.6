@@ -1,240 +1,196 @@
-Return-Path: <linux-kernel+bounces-193892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03FD8D33B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:52:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35FB8D33B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E8A1C22BA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 711602897D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B88D177983;
-	Wed, 29 May 2024 09:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C5116EBFC;
+	Wed, 29 May 2024 09:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BohEjhST"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O81h11Mu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zhMTQOxB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d3o3uKIf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pEEaYwYz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA06173359;
-	Wed, 29 May 2024 09:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2719316ABEB;
+	Wed, 29 May 2024 09:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716976298; cv=none; b=gLqTriNpcDtfbQm7isdIqYYE+MHSxqbE8l340PZg+qlkO6WkZx5JbHykVxHqozOawK88LT7vqHK9rjt9JLvEVjqevucQuiY++2Mn38ytG28kpzv/s+pZTIbBMpOOhVKcZ9px0nMsvUlFlLhlVCAiXWtXZXPqAsWoQF35ktMNy8g=
+	t=1716976289; cv=none; b=TJ07mutl2Yz97nxLDIrFS+eBHZQJGotykYmusGbsLBtaIWTkAKN34m9xywkQG5LRlmyBwTUOC4JEZ8Li1WYMYPrAvPINYond98k4yRoq6nXPDH3DzYnS7ZJ0c/UhZBvaUTGDniazlMREoV4fFXJmoxPt3+lje1tL5eU2QUo+zNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716976298; c=relaxed/simple;
-	bh=Vv+BaY4iMh9LAabSCIsXW40L4YUilFaxA1vyLO43b9c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z0IjHjvw5N4u6FyCL7jojxXB5Gd+ipbSHeb8yptfSyQXhM1RaWlJoU5YBq74LVSArkUD4XgDx7ADuiZo8GpT2n7gd+9V6zr9muul35VapoJXZlAEzsRQAa2GcwXJhgIwa53F8zL7hwIzI1SFI0sDH1FKV/HJapNi8g7rhi6XuKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BohEjhST; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97A2BC2BD10;
-	Wed, 29 May 2024 09:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716976298;
-	bh=Vv+BaY4iMh9LAabSCIsXW40L4YUilFaxA1vyLO43b9c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BohEjhSTj6rXCsmdffpmVZc9z9Dmu5GHfH8Glr5ttRqeI8cVMkOelrQj33Rj4QHTw
-	 1xpBtVTLpiW3aKnSo8fDieTMIhyL8VV+ER+HTm16Rm1I9ZsjFzLdrsE+cJeM7U9gUS
-	 2/6NBalyAZgZgdJcTQ8uB6AElfSGnauc6+FMEvdOfSzC885pkE9PhHz8VLuI+xVmoR
-	 C4sayyd6nAr/UaFIxs24T9J++O7ViaivXB+5FXUCj0+z9W6z8fYjpKxBaituPpoX2X
-	 N2Q0HaomiKEk2NS4fR1gVa/2+3qbS1LGjIP3KTgCx2AZ65giVjJaQGNYw8Jfkv0GEf
-	 buodoqEBn+9CA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Marvin Lin <milkfafa@gmail.com>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] EDAC, i10nm: make skx_common.o a separate module
-Date: Wed, 29 May 2024 11:51:11 +0200
-Message-Id: <20240529095132.1929397-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716976289; c=relaxed/simple;
+	bh=YcXMSAiXYTWYD+B9xHrJXe+f9U1uQ4Iaw4UQkhIvGAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EWmIR5SYicgDCumw77hXAJKJTGhDWEKGaiI/CooUn4crDXqo4Ayi80PPGfBxA24pvYi/1ub3aidrFUha48IziNpEIx6OO8ybUlz7HlMMbV/mkgC6EOMYUA3J4wgyr+RaJkBHSWTqWlgoN37+xkadBatYttRsOaceo1B3zsDUhOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O81h11Mu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zhMTQOxB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d3o3uKIf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pEEaYwYz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F072C22D44;
+	Wed, 29 May 2024 09:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716976285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
+	b=O81h11MusrSEK65a42zVplfa90Fvf9IRoBm6s4dmPb2tgC23vPxTpU6LB8GHS3zKGFFw2e
+	hZEM+6Se7Nt497NHkrwOKwoFDmiBgrUNEV7f7qE84EHDKC/eQi0gfQKb7EuP2XSYW96Ko+
+	Q26BYt2lOXh8O7A9Py5F+SOk3KcE+hI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716976285;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
+	b=zhMTQOxBGd+dbxAuUzrETt32OTvwdvlKfFQcF6NtVQU/GdgUpo9Hrtea2YuNJznMH/Kujv
+	uOyeJTOnqsfmZPAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716976284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
+	b=d3o3uKIfQtG8+DnLcIjs3jP2se3epXVniyBt3ymIuotoDAhhEfs2agUo0yQnVO6bW3iPOl
+	zITwnFqDUnGNPmcVjbFoYgGz7qdVk69CQcnV86PZRVjHjvivc5RvZfANKIUA/IHEuZPq0g
+	DiHiJFFErU8cOIg+z+abIddvZ4RAXo4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716976284;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FqAdLPrYpeP2hRlhvLGvf4ixrOgf8Ok3KPjSNl4wreY=;
+	b=pEEaYwYzpuQzWvylxML73HbK4LhXKg5grWGRANfddeEVRbP86ZRSWFKsgO5Rzz5l5HyC5o
+	9OAORjAD+LqmKlDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E40BB1372E;
+	Wed, 29 May 2024 09:51:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WT6sN5z6VmYfAwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 29 May 2024 09:51:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A91D1A0825; Wed, 29 May 2024 11:51:16 +0200 (CEST)
+Date: Wed, 29 May 2024 11:51:16 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
+	Jan Kara <jack@suse.cz>,
+	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] ext4: fix possible tid_t sequence overflows
+Message-ID: <20240529095116.b3arzr5rjz6cs2rb@quack3>
+References: <20240529092030.9557-1-luis.henriques@linux.dev>
+ <20240529092030.9557-3-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529092030.9557-3-luis.henriques@linux.dev>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,linux.dev:email]
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed 29-05-24 10:20:30, Luis Henriques (SUSE) wrote:
+> In the fast commit code there are a few places where tid_t variables are
+> being compared without taking into account the fact that these sequence
+> numbers may wrap.  Fix this issue by using the helper functions tid_gt()
+> and tid_geq().
+> 
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 
-Linking an object file into multiple modules causes a warning:
+Thanks! Feel free to add:
 
-scripts/Makefile.build:236: drivers/edac/Makefile: skx_common.o is added to multiple modules: i10nm_edac skx_edac
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Make this a separate module instead.
+								Honza
 
-Fixes: d4dc89d069aa ("EDAC, i10nm: Add a driver for Intel 10nm server processors")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/edac/Makefile     | 10 ++++++----
- drivers/edac/skx_common.c | 21 +++++++++++++++++++--
- drivers/edac/skx_common.h |  4 ++--
- 3 files changed, 27 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-index 9c09893695b7..4edfb83ffbee 100644
---- a/drivers/edac/Makefile
-+++ b/drivers/edac/Makefile
-@@ -54,11 +54,13 @@ obj-$(CONFIG_EDAC_MPC85XX)		+= mpc85xx_edac_mod.o
- layerscape_edac_mod-y			:= fsl_ddr_edac.o layerscape_edac.o
- obj-$(CONFIG_EDAC_LAYERSCAPE)		+= layerscape_edac_mod.o
- 
--skx_edac-y				:= skx_common.o skx_base.o
--obj-$(CONFIG_EDAC_SKX)			+= skx_edac.o
-+skx_edac_common-y			:= skx_common.o
- 
--i10nm_edac-y				:= skx_common.o i10nm_base.o
--obj-$(CONFIG_EDAC_I10NM)		+= i10nm_edac.o
-+skx_edac-y				:= skx_base.o
-+obj-$(CONFIG_EDAC_SKX)			+= skx_edac.o skx_edac_common.o
-+
-+i10nm_edac-y				:= i10nm_base.o
-+obj-$(CONFIG_EDAC_I10NM)		+= i10nm_edac.o skx_edac_common.o
- 
- obj-$(CONFIG_EDAC_CELL)			+= cell_edac.o
- obj-$(CONFIG_EDAC_PPC4XX)		+= ppc4xx_edac.o
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index 27996b7924c8..8d18099fd528 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -48,7 +48,7 @@ static u64 skx_tolm, skx_tohm;
- static LIST_HEAD(dev_edac_list);
- static bool skx_mem_cfg_2lm;
- 
--int __init skx_adxl_get(void)
-+int skx_adxl_get(void)
- {
- 	const char * const *names;
- 	int i, j;
-@@ -110,12 +110,14 @@ int __init skx_adxl_get(void)
- 
- 	return -ENODEV;
- }
-+EXPORT_SYMBOL_GPL(skx_adxl_get);
- 
--void __exit skx_adxl_put(void)
-+void skx_adxl_put(void)
- {
- 	kfree(adxl_values);
- 	kfree(adxl_msg);
- }
-+EXPORT_SYMBOL_GPL(skx_adxl_put);
- 
- static bool skx_adxl_decode(struct decoded_addr *res, bool error_in_1st_level_mem)
- {
-@@ -187,12 +189,14 @@ void skx_set_mem_cfg(bool mem_cfg_2lm)
- {
- 	skx_mem_cfg_2lm = mem_cfg_2lm;
- }
-+EXPORT_SYMBOL_GPL(skx_set_mem_cfg);
- 
- void skx_set_decode(skx_decode_f decode, skx_show_retry_log_f show_retry_log)
- {
- 	driver_decode = decode;
- 	skx_show_retry_rd_err_log = show_retry_log;
- }
-+EXPORT_SYMBOL_GPL(skx_set_decode);
- 
- int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
- {
-@@ -206,6 +210,7 @@ int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
- 	*id = GET_BITFIELD(reg, 12, 14);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(skx_get_src_id);
- 
- int skx_get_node_id(struct skx_dev *d, u8 *id)
- {
-@@ -219,6 +224,7 @@ int skx_get_node_id(struct skx_dev *d, u8 *id)
- 	*id = GET_BITFIELD(reg, 0, 2);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(skx_get_node_id);
- 
- static int get_width(u32 mtr)
- {
-@@ -284,6 +290,7 @@ int skx_get_all_bus_mappings(struct res_config *cfg, struct list_head **list)
- 		*list = &dev_edac_list;
- 	return ndev;
- }
-+EXPORT_SYMBOL_GPL(skx_get_all_bus_mappings);
- 
- int skx_get_hi_lo(unsigned int did, int off[], u64 *tolm, u64 *tohm)
- {
-@@ -323,6 +330,7 @@ int skx_get_hi_lo(unsigned int did, int off[], u64 *tolm, u64 *tohm)
- 	pci_dev_put(pdev);
- 	return -ENODEV;
- }
-+EXPORT_SYMBOL_GPL(skx_get_hi_lo);
- 
- static int skx_get_dimm_attr(u32 reg, int lobit, int hibit, int add,
- 			     int minval, int maxval, const char *name)
-@@ -394,6 +402,7 @@ int skx_get_dimm_info(u32 mtr, u32 mcmtr, u32 amap, struct dimm_info *dimm,
- 
- 	return 1;
- }
-+EXPORT_SYMBOL_GPL(skx_get_dimm_info);
- 
- int skx_get_nvdimm_info(struct dimm_info *dimm, struct skx_imc *imc,
- 			int chan, int dimmno, const char *mod_str)
-@@ -442,6 +451,7 @@ int skx_get_nvdimm_info(struct dimm_info *dimm, struct skx_imc *imc,
- 
- 	return (size == 0 || size == ~0ull) ? 0 : 1;
- }
-+EXPORT_SYMBOL_GPL(skx_get_nvdimm_info);
- 
- int skx_register_mci(struct skx_imc *imc, struct pci_dev *pdev,
- 		     const char *ctl_name, const char *mod_str,
-@@ -512,6 +522,7 @@ int skx_register_mci(struct skx_imc *imc, struct pci_dev *pdev,
- 	imc->mci = NULL;
- 	return rc;
- }
-+EXPORT_SYMBOL_GPL(skx_register_mci);
- 
- static void skx_unregister_mci(struct skx_imc *imc)
- {
-@@ -688,6 +699,7 @@ int skx_mce_check_error(struct notifier_block *nb, unsigned long val,
- 	mce->kflags |= MCE_HANDLED_EDAC;
- 	return NOTIFY_DONE;
- }
-+EXPORT_SYMBOL_GPL(skx_mce_check_error);
- 
- void skx_remove(void)
- {
-@@ -725,3 +737,8 @@ void skx_remove(void)
- 		kfree(d);
- 	}
- }
-+EXPORT_SYMBOL_GPL(skx_remove);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Tony Luck");
-+MODULE_DESCRIPTION("MC Driver for Intel server processors");
-diff --git a/drivers/edac/skx_common.h b/drivers/edac/skx_common.h
-index b6d3607dffe2..11faf1db4fa4 100644
---- a/drivers/edac/skx_common.h
-+++ b/drivers/edac/skx_common.h
-@@ -231,8 +231,8 @@ typedef int (*get_dimm_config_f)(struct mem_ctl_info *mci,
- typedef bool (*skx_decode_f)(struct decoded_addr *res);
- typedef void (*skx_show_retry_log_f)(struct decoded_addr *res, char *msg, int len, bool scrub_err);
- 
--int __init skx_adxl_get(void);
--void __exit skx_adxl_put(void);
-+int skx_adxl_get(void);
-+void skx_adxl_put(void);
- void skx_set_decode(skx_decode_f decode, skx_show_retry_log_f show_retry_log);
- void skx_set_mem_cfg(bool mem_cfg_2lm);
- 
+> ---
+>  fs/ext4/fast_commit.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+> index 088bd509b116..30d312e16916 100644
+> --- a/fs/ext4/fast_commit.c
+> +++ b/fs/ext4/fast_commit.c
+> @@ -353,7 +353,7 @@ void ext4_fc_mark_ineligible(struct super_block *sb, int reason, handle_t *handl
+>  		read_unlock(&sbi->s_journal->j_state_lock);
+>  	}
+>  	spin_lock(&sbi->s_fc_lock);
+> -	if (sbi->s_fc_ineligible_tid < tid)
+> +	if (tid_gt(tid, sbi->s_fc_ineligible_tid))
+>  		sbi->s_fc_ineligible_tid = tid;
+>  	spin_unlock(&sbi->s_fc_lock);
+>  	WARN_ON(reason >= EXT4_FC_REASON_MAX);
+> @@ -1207,7 +1207,7 @@ int ext4_fc_commit(journal_t *journal, tid_t commit_tid)
+>  	if (ret == -EALREADY) {
+>  		/* There was an ongoing commit, check if we need to restart */
+>  		if (atomic_read(&sbi->s_fc_subtid) <= subtid &&
+> -			commit_tid > journal->j_commit_sequence)
+> +		    tid_gt(commit_tid, journal->j_commit_sequence))
+>  			goto restart_fc;
+>  		ext4_fc_update_stats(sb, EXT4_FC_STATUS_SKIPPED, 0, 0,
+>  				commit_tid);
+> @@ -1282,7 +1282,7 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
+>  		list_del_init(&iter->i_fc_list);
+>  		ext4_clear_inode_state(&iter->vfs_inode,
+>  				       EXT4_STATE_FC_COMMITTING);
+> -		if (iter->i_sync_tid <= tid) {
+> +		if (tid_geq(tid, iter->i_sync_tid)) {
+>  			ext4_fc_reset_inode(&iter->vfs_inode);
+>  		} else {
+>  			/*
+> @@ -1322,7 +1322,7 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
+>  	list_splice_init(&sbi->s_fc_q[FC_Q_STAGING],
+>  				&sbi->s_fc_q[FC_Q_MAIN]);
+>  
+> -	if (tid >= sbi->s_fc_ineligible_tid) {
+> +	if (tid_geq(tid, sbi->s_fc_ineligible_tid)) {
+>  		sbi->s_fc_ineligible_tid = 0;
+>  		ext4_clear_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
+>  	}
+> 
 -- 
-2.39.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
