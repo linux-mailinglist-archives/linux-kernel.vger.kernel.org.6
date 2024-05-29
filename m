@@ -1,193 +1,186 @@
-Return-Path: <linux-kernel+bounces-194570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDC08D3E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3538D3E59
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3459C1C216C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9811F23DF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FFF1C0DC7;
-	Wed, 29 May 2024 18:30:32 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF021A38F4;
+	Wed, 29 May 2024 18:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FmvkvasI"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ABF1B949;
-	Wed, 29 May 2024 18:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBEE15B552
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717007431; cv=none; b=FGFIrJCY0+XqLnMHCMLOuuhrxXIlF7UXIOOU/CDq7C+nT/r6AOZWqg5dhRZy7oJswKwqQzW8We+Gg80kWWAKu6dX5h3CoMQiInQn8rKbPLZeV3csUcucxW49ceS+RBhBT+EuIitXfo8g4yg9JbZ8o5MbNZuQhVvmMyFG4cqrmkA=
+	t=1717007463; cv=none; b=Ub7PCz6Br6xCeHaNx39/19NeVasokWVXahJqZHNT8Lp99M19eLwpZhC2Uqwr3g2icH8PqSCJl5RQ0z7Hgg3fTU3o4Prxbj49Pe/b2dhUtRkTyNFCSdf7svjBHxMnYXJcvYd2GEef8ZtFSun5TzMG9nkQQfaFccZW/DV/Hb1SQFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717007431; c=relaxed/simple;
-	bh=v/g7ChUERc+YBX4PR0tIacx+5V0vyX+QMkYyi8IFySY=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=OI+1UdPJqFOkXJYkbt/wHq3bM+7zANvrp/DZ68wisoMfSgy6SCkFimiYak4vM2Hb67iPJu0ToKdd2R8QsfANUDJMrghWMj8naTfdecBKLY5E4Yt4/inR4doTyItZYU0GPyV3JluOwMElt9LFfsNpYdY7rZVvMaVSJV6dFpWmTVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.72.107) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 29 May
- 2024 21:30:09 +0300
-Subject: Re: [net-next PATCH v4 4/7] net: ravb: Refactor GbEth RX code path
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
- <20240528150339.6791-5-paul.barker.ct@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <611a49b8-ecdb-6b91-9d3e-262bf3851f5b@omp.ru>
-Date: Wed, 29 May 2024 21:30:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717007463; c=relaxed/simple;
+	bh=xLHwHLiHwsZx+FhZZLfeHLdBEMSp5gCenfiAHTRJLOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SfqcLJSyivemQR8h0BIk9y/3Nd8bSc/n5MWzRMh+jeEegcABFap1IgWfY7x5XPL7HQunJBPRCFdjcSFWeH/WEnYBeIVOft61UwU/wYMOCL4pnl4azNw/03tksesTOmtcM5Tapu8bYl+8wKulD5XyatDTy//aUrOYJX/n33jDMB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FmvkvasI; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4e740924a1dso19007e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:31:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717007459; x=1717612259; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RbCogX4lIMiJS1kYrrISzNNe/fzp3T/RrkQJx2fP6us=;
+        b=FmvkvasIb7QIU5//bM7TVQP68+pNWyHsxsan1yckeGsciYJ5cKoDYuv6HeF5kHOV/K
+         +LCdoB5w0MD5hOboBA1tXftwbhD/5vVvcM69Zk4fUbUm3jroZ+0hPtZnEVj2becnpj2V
+         9aJDjP7pgQZk0EZvXL0fEeO0UStrovc8jppv5MzfSaCAp+H9dOXrBmj6eFZosK0v8dU6
+         VMGGIT2rXsr7h9hDowBYe63yikLQR4+jmARISScPX8s0+YACIjkJutagcREDcS5ZPRzP
+         arRAHa7XNkAeVaXy6lzaFiXnJIA5FIxRLO3QmMk3DJTeHVy43vgZ9fByswXLZyONiz+S
+         Swdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717007459; x=1717612259;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RbCogX4lIMiJS1kYrrISzNNe/fzp3T/RrkQJx2fP6us=;
+        b=aLodCVtvxrrTYDINCxcbZlvXxB+tZnObws92KLYoqxuujTyexIJvYoiBk7vzWBOxza
+         Z2pPrUeUIXt8Ra5tO1gY5vKiJtrD0eP8yarkr1vVz4b1iB1LcmSaK0VMhHcOEQoIsTUF
+         QF5PKT/Mb+nqU0V791Kbe+W1TVtKWAGT7ZjytN3XNlLZ8cq9vkVt1A57SXEiCLY5uyEZ
+         rHaRdMIK/qfxy004LCXp6ekpkK8sR7YnF6gotTsjVorWJ7Mf3tLDY4azwm2HCYCLMXcV
+         8phkj5V87Te3L5JLHr9LMo48m0mWMbrfK3y1Jub0/dIcTEkbvV4rDhBPqexqHfU7yh++
+         TgCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ57UtCftSpOsv01X9qbP7LmywoW+vJVIDOcSuAAZ5B9lguK/VwczxLN6cwVdFkI5A7qt+WFQ3E27/39yVwIwOetgx+0YDh1aUrQnw
+X-Gm-Message-State: AOJu0YyFiDSL8VwMXrktuevVwjRcUmEhwoVKNlvEYeRdx1xVkj0g/8V0
+	rt9/7qFPKc4CuNZeRk+tWWwBtRrw76qEkCl5tnM3U8oUvpIIEdnGlmue2X5BbEiE1pLFNg4gXpt
+	AdcfzJXsoSTWvEGhfkYw6YJfkKTat5s4y2b21
+X-Google-Smtp-Source: AGHT+IGtZHprsq6fYM3tx1dScCSyP3wPP1H6jiiJYrOGEM1B4J1TT4TyWpCHTA4j0Wg1/LCu7lkpj4ZpsvaVNOZD1A8=
+X-Received: by 2002:a05:6122:168e:b0:4df:261c:fc0c with SMTP id
+ 71dfb90a1353d-4e4f02e650cmr15206852e0c.13.1717007459290; Wed, 29 May 2024
+ 11:30:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240528150339.6791-5-paul.barker.ct@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 05/29/2024 18:07:30
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185600 [May 29 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.72.107 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.72.107
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 05/29/2024 18:11:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 5/29/2024 5:02:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+References: <20240529022043.3661757-1-gatlin.newhouse@gmail.com>
+ <CANpmjNM2S2whk31nfNGSBO5MFPPUHX7FPuHBJn1nN9zdP63xTw@mail.gmail.com> <2j6nkzn2tfdwdqhoal5o56ds2hqg2sqk5diolv23l5nzteypzh@fi53ovwjjl3w>
+In-Reply-To: <2j6nkzn2tfdwdqhoal5o56ds2hqg2sqk5diolv23l5nzteypzh@fi53ovwjjl3w>
+From: Marco Elver <elver@google.com>
+Date: Wed, 29 May 2024 20:30:20 +0200
+Message-ID: <CANpmjNM4pFHYRqmBLi0qUm8K2SroYWg7NFjreHffHvk0WW95kA@mail.gmail.com>
+Subject: Re: [PATCH] x86/traps: Enable UBSAN traps on x86
+To: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Changbin Du <changbin.du@huawei.com>, 
+	Pengfei Xu <pengfei.xu@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, 
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/28/24 6:03 PM, Paul Barker wrote:
+On Wed, 29 May 2024 at 20:17, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
+>
+> On Wed, May 29, 2024 at 09:25:21AM UTC, Marco Elver wrote:
+> > On Wed, 29 May 2024 at 04:20, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
+> > [...]
+> > >         if (regs->flags & X86_EFLAGS_IF)
+> > >                 raw_local_irq_enable();
+> > > -       if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+> > > -           handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+> > > -               regs->ip += LEN_UD2;
+> > > -               handled = true;
+> > > +
+> > > +       if (insn == INSN_UD2) {
+> > > +               if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+> > > +               handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+> > > +                       regs->ip += LEN_UD2;
+> > > +                       handled = true;
+> > > +               }
+> > > +       } else {
+> > > +               if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
+> >
+> > handle_ubsan_failure currently only returns BUG_TRAP_TYPE_NONE?
+> >
+> > > +                       if (insn == INSN_REX)
+> > > +                               regs->ip += LEN_REX;
+> > > +                       regs->ip += LEN_UD1;
+> > > +                       handled = true;
+> > > +               }
+> > >         }
+> > >         if (regs->flags & X86_EFLAGS_IF)
+> > >                 raw_local_irq_disable();
+> > > diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
+> > > new file mode 100644
+> > > index 000000000000..6cae11f4fe23
+> > > --- /dev/null
+> > > +++ b/arch/x86/kernel/ubsan.c
+> > > @@ -0,0 +1,32 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Clang Undefined Behavior Sanitizer trap mode support.
+> > > + */
+> > > +#include <linux/bug.h>
+> > > +#include <linux/string.h>
+> > > +#include <linux/printk.h>
+> > > +#include <linux/ubsan.h>
+> > > +#include <asm/ptrace.h>
+> > > +#include <asm/ubsan.h>
+> > > +
+> > > +/*
+> > > + * Checks for the information embedded in the UD1 trap instruction
+> > > + * for the UB Sanitizer in order to pass along debugging output.
+> > > + */
+> > > +enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn)
+> > > +{
+> > > +       u32 type = 0;
+> > > +
+> > > +       if (insn == INSN_REX) {
+> > > +               type = (*(u16 *)(regs->ip + LEN_REX + LEN_UD1));
+> > > +               if ((type & 0xFF) == 0x40)
+> > > +                       type = (type >> 8) & 0xFF;
+> > > +       } else {
+> > > +               type = (*(u16 *)(regs->ip + LEN_UD1));
+> > > +               if ((type & 0xFF) == 0x40)
+> > > +                       type = (type >> 8) & 0xFF;
+> > > +       }
+> > > +       pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
+> > > +
+> > > +       return BUG_TRAP_TYPE_NONE;
+> > > +}
+> >
+> > Shouldn't this return BUG_TRAP_TYPE_WARN?
+>
+> So as far as I understand, UBSAN trap mode never warns. Perhaps it does on
+> arm64, although it calls die() so I am unsure. Maybe the condition in
+> handle_bug() should be rewritten in the case of UBSAN ud1s? Do you have any
+> suggestions?
 
-> We can reduce code duplication in ravb_rx_gbeth().
-> 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-[...]
+AFAIK on arm64 it's basically a kernel OOPS.
 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 7df7d2e93a3a..c9c5cc641589 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -817,47 +817,54 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
->  				stats->rx_missed_errors++;
->  		} else {
->  			die_dt = desc->die_dt & 0xF0;
-> +			skb = ravb_get_skb_gbeth(ndev, entry, desc);
->  			switch (die_dt) {
+The main thing I just wanted to point out though is that your newly added branch
 
-   Why not do instead (as I've asked you alraedy):
+> if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
 
-			case DT_FSTART:
-				priv->rx_1st_skb = skb;
-				fallthrough;
+will never be taken, because I don't see where handle_ubsan_failure()
+returns BUG_TRAP_TYPE_WARN.
 
->  			case DT_FSINGLE:
-> -				skb = ravb_get_skb_gbeth(ndev, entry, desc);
+That means 'handled' will be false, and the code in exc_invalid_op
+will proceed to call handle_invalid_op() which is probably not what
+you intended - i.e. it's definitely not BUG_TRAP_TYPE_NONE, but one of
+TYPE_WARN of TYPE_BUG.
 
-
-> +			case DT_FSTART:
-> +				/* Start of packet:
-> +				 * Set initial data length.
-> +				 */
-
-   Please consider turning that block comment into one-liner...
-
->  				skb_put(skb, desc_len);
-> +
-> +				/* Save this SKB if the packet spans multiple
-> +				 * descriptors.
-> +				 */
-
-   This one too...
-   (The current line length limit is 100 columns.)
-
-> +				if (die_dt == DT_FSTART)
-> +					priv->rx_1st_skb = skb;
-
-   This needs to be done under *case* DT_FSTART above instead...
-
-> +				break;
-> +
-> +			case DT_FMID:
-> +			case DT_FEND:
-> +				/* Continuing a packet:
-> +				 * Move data into the saved SKB.
-> +				 */
-> +				skb_copy_to_linear_data_offset(priv->rx_1st_skb,
-> +							       priv->rx_1st_skb->len,
-> +							       skb->data,
-> +							       desc_len);
-> +				skb_put(priv->rx_1st_skb, desc_len);
-> +				dev_kfree_skb(skb);
-> +
-> +				/* Set skb to point at the whole packet so that
-
-   Please call it consistently, either SKB or skb (I prefer this one).
-
-> +				 * we only need one code path for finishing a
-> +				 * packet.
-> +				 */
-> +				skb = priv->rx_1st_skb;
-> +			}
-> +
-> +			switch (die_dt) {
-> +			case DT_FSINGLE:
-> +			case DT_FEND:
-> +				/* Finishing a packet:
-> +				 * Determine protocol & checksum, hand off to
-> +				 * NAPI and update our stats.
-> +				 */
->  				skb->protocol = eth_type_trans(skb, ndev);
->  				if (ndev->features & NETIF_F_RXCSUM)
->  					ravb_rx_csum_gbeth(skb);
-> +				stats->rx_bytes += skb->len;
->  				napi_gro_receive(&priv->napi[q], skb);
->  				rx_packets++;
-
-   Otherwise, this is very good patch! Sorry for letting in the duplcate
-code earlier! :-)
-
-[...]
-
-MBR, Sergey
+Did you test it and you got the behaviour you expected?
 
