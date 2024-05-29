@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-194144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E218D375C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:15:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704B18D3758
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB49285C6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:15:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01DCBB25699
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41FD1643A;
-	Wed, 29 May 2024 13:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D136610A19;
+	Wed, 29 May 2024 13:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D15IPLoT"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+sSY9x2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AF014285;
-	Wed, 29 May 2024 13:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7F82572;
+	Wed, 29 May 2024 13:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988531; cv=none; b=nR7U3zsAp+V6Z2g3envbUKsZoqeRiFP7ehiBG3OusChpYQ5ZF9z08rVnqGsIOYRxVhdstShu5b8IVufjXd/7pxcwNbFEyJDvrRghm2IIl7dgn/eM0M8xWhplfFVsO8fvFcpjErKauAkzSOYPlrCTklU3mLyVLKxyi+L1ZSKWsQQ=
+	t=1716988524; cv=none; b=oO4ekYH6aOfyn8LUwnpO2YGNkzfAmnq1Cyh/r1Cc7IQC5WxgXXxEcrbyCZDGi2c7d5E+5b+mlr7v3pmNWDxkwlVIYEAEfOET3kw8BRmRbfD4aJtzTXzvozfKmVeXvBbO3YtfASIHUy9PR+XnUMlnGwzRj+yfsUAlkLnQjEMQgHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988531; c=relaxed/simple;
-	bh=OmM5PAMFbN4dfmCw525+OX5fDy1sVOYxPtyU5Ru9uAo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=o0o7vaLZLGxbE8hDPjl2R+r45k4r9wuYGGaRPUNrLy9iaTQOt2oxMrA/0YOGCvJhUwWMEllUqEI6G1ddJZ8wdwONizZL/wVazJUBOySUf8t5ckj5dlccozDoLMKGInVP4EcOXQ6GJs4q6IHHEIgrksJBHGV0l8K/Hqmj78AxSRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D15IPLoT; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44TDFFRq127926;
-	Wed, 29 May 2024 08:15:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716988515;
-	bh=SGXEU/HXs2xZG2V9QTv7x2JhjWA83Vf2BvYxteRQpkU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=D15IPLoTypsUVfAq5iNhZrhWsUCKh0AF7+uShdkTIG36aZfOnTrkDPZ+xfKyzLFEL
-	 ppygFvpRKcjOXg99cmZL8s9xPkiIyYF4CpdmatwL0byu8qHD6lSyihZD8hQEHYVNKq
-	 z8WTMv9sAorzvdGZgxcSzwLLMXPc7IRGbH8mTIH8=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44TDFFPB062731
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 29 May 2024 08:15:15 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 29
- May 2024 08:15:15 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 29 May 2024 08:15:15 -0500
-Received: from [137.167.6.219] (lt5cg1094w5k.dhcp.ti.com [137.167.6.219])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44TDFDUW119086;
-	Wed, 29 May 2024 08:15:14 -0500
-Message-ID: <abbb5c02-6cda-41c6-9900-06e7f4920541@ti.com>
-Date: Wed, 29 May 2024 16:15:13 +0300
+	s=arc-20240116; t=1716988524; c=relaxed/simple;
+	bh=ujzhhXCydAwZXc7rS5LhBrMDvamEvdGbdaBp/U8b0oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUnIkfyKWDDxnqoh5q/PzCgpMKKPDiCjZBZsU4wSZm6Mt35vnc8t7nGeB/lWG147e3uMC8cFpJcg6ft7e9OY7liDhMhTmRfEdk/rslRKcjzT68rZGOLNUsoAlafFEMvTw5wEA+bWHOHhuE9TR6uZh94yXFGvH3/xtguAS0qqNhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+sSY9x2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F58AC2BD10;
+	Wed, 29 May 2024 13:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716988523;
+	bh=ujzhhXCydAwZXc7rS5LhBrMDvamEvdGbdaBp/U8b0oM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r+sSY9x2Yr9SOckTZ0mrTp0XctmZIan7I1jgy+rBnVb5Y5LKO6/8i5FTX7h1XGmQW
+	 5SCmmxjYTmk5S1d47S946+DXlDncD8ytFzgK9f/MXx/IswC8zZjqrzfY+j8G5wP+fk
+	 e+aNg6gR91SaPXD4YuqMskL5j3iuYXwNmDU/BqZL3hLSZLzWK6hYlzKUBO/0FZUEAZ
+	 cC5tDEhR2efhjkE6CwlXIV3CLpAT3WWTUb3QDEZklkBmcmJCgoYXY6PhjcNr+GsyTo
+	 Y5nrN8wZjcxZSZBVJNNwtatUfwKJTUWf37s5ru8ZVVDDKaQjVi6C2bpEsOhMxcPz8N
+	 P/zxR/ZW0I7mw==
+Date: Wed, 29 May 2024 14:15:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] regulator: gpio: Correct default GPIO state to LOW
+Message-ID: <ee5798e5-bcc4-4715-9c93-913094160b97@sirena.org.uk>
+References: <b80d65600641e6dcf00da53ae797f4a40a80e2d0.1716976062.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH wireless-next 4/8] wifi: wlcore: pass "status" to
- wlcore_hw_convert_fw_status()
-To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-        Kalle Valo
-	<kvalo@kernel.org>
-CC: Johannes Berg <johannes.berg@intel.com>, <linux-kernel@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>
-References: <ZlWhH4HleGILuUtN@shell.armlinux.org.uk>
- <E1sBsxx-00E8vi-Gf@rmk-PC.armlinux.org.uk>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <E1sBsxx-00E8vi-Gf@rmk-PC.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="U4bdCLzVLSiyC7ix"
+Content-Disposition: inline
+In-Reply-To: <b80d65600641e6dcf00da53ae797f4a40a80e2d0.1716976062.git.geert+renesas@glider.be>
+X-Cookie: Everybody gets free BORSCHT!
 
 
-On 5/28/2024 12:17 PM, Russell King (Oracle) wrote:
-> wlcore_fw_status() is passed a pointer to the struct wl_fw_status to
-> decode the status into, which is always wl->fw_status. Rather than
-> referencing wl->fw_status within wlcore_fw_status(), use the supplied
-> argument so that we access this member in a consistent manner.
->
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> ---
->    drivers/net/wireless/ti/wlcore/main.c | 2 +-
->    1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-> index a98b26dc3cb8..3defe49c5120 100644
-> --- a/drivers/net/wireless/ti/wlcore/main.c
-> +++ b/drivers/net/wireless/ti/wlcore/main.c
-> @@ -392,7 +392,7 @@ static int wlcore_fw_status(struct wl1271 *wl, struct wl_fw_status *status)
->    	if (ret < 0)
->    		return ret;
->    
-> -	wlcore_hw_convert_fw_status(wl, wl->raw_fw_status, wl->fw_status);
-> +	wlcore_hw_convert_fw_status(wl, wl->raw_fw_status, status);
->    
->    	wl1271_debug(DEBUG_IRQ, "intr: 0x%x (fw_rx_counter = %d, "
->    		     "drv_rx_counter = %d, tx_results_counter = %d)",
-> -- 
-> 2.30.2
+--U4bdCLzVLSiyC7ix
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Agree this is more consistent. Maybe *status shouldn't be an argument to 
-wlcore_fw_status at all? It's called only in one place with 
-wl->fw_status anyway.
+On Wed, May 29, 2024 at 11:49:51AM +0200, Geert Uytterhoeven wrote:
+> According to the GPIO regulator DT bindings[1], the default GPIO state
+> is LOW.  However, the driver defaults to HIGH.
 
-Michael.
+> Before the conversion to descriptors in commit d6cd33ad71029a3f
+> ("regulator: gpio: Convert to use descriptors"), the default state used
+> by the driver was rather ill-defined, too:
 
+That was 4 years ago...
+
+> I have no idea if this has any impact.
+> I guess most/all DTS files have proper gpios-states properties?
+
+That seems optimistic, and a grep in mainline shows some users but not
+really as many as I'd intuitively expect.
+
+> -			/* Default to high per specification */
+> +			/* Default to low per specification */
+>  			if (ret)
+> -				config->gflags[i] = GPIOD_OUT_HIGH;
+> +				config->gflags[i] = GPIOD_OUT_LOW;
+>  			else
+
+The risk here is that we start glitching the power where previously we
+didn't.  This does make me nervous.
+
+--U4bdCLzVLSiyC7ix
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZXKmUACgkQJNaLcl1U
+h9B9Gwf/R2iAIKgEctcw6myFMUeu271otHOu/guyQ+Ko2nLT21+UkH3EiiU5p4b3
+cY20iuEK4tmSJPUueJDiwdXAlPOZhQ8JFxIZvXPm0ZIMWDNdMECgb/LkRjJFTN46
+WAjtna5x94CON+5t0Bx+OMpM/obwIYqvYWhAZPR8boURfOULjQed3Qs4UzB5O7A2
+c9QLLGmeAcCjknN1Xc9OJgVe7sfHp86mwyivy5/5QAvmYPCDJYbt8dPFqg34Rjec
+Xk2lJxw1LE6kD0xYg/60lxTEWeiuBJAsX7aVXdxHf8+dP5Y1qgTWwoYY8f9ww81W
+X/EozJGbyVxrkmP6w29IaAXV1Ol0Kg==
+=DNcl
+-----END PGP SIGNATURE-----
+
+--U4bdCLzVLSiyC7ix--
 
