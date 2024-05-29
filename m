@@ -1,192 +1,191 @@
-Return-Path: <linux-kernel+bounces-194768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2878D41B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A958D41C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBF21F231BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B978C286F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFFA1CB338;
-	Wed, 29 May 2024 23:10:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361D6200107;
+	Wed, 29 May 2024 23:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Td6v7cZw"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAC916E876
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B771CB31C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717024205; cv=none; b=CR7IrTvOTl4Zyxb38E8lccSjht8/PVmkaelWpkxcYYivg0brmEDVzc4PnjK33I6vKSDlicgNHY5ICii/qL24MvC+bEJtltxj8xxzyo+SbC/5bHQxIBoB7DzVPyQyIdkDfl9QGitZJ4FO8a3wghYE4jhAP7JeMYo3VzNH6EaeimI=
+	t=1717024352; cv=none; b=B5wCczLbQxNF5X44YWdjgHRkJGFfhyjb+LJvi5zQkupYUYKER2N0tiheQaimsU5NkcKoSKiPwHQwRRjdZdHw36UcFkqOeGKRMdXLyblfiT39fEOeZBtCdmwdevjtJ87yMyDV0mNzQhn9cWztli5h+VRie7PXoLMfpMJloJHKGbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717024205; c=relaxed/simple;
-	bh=aUcdWCMLV2Ko5G/J4AtCbG705B3p09pva3y/wsykGPI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=L3fDBhhF0G8py+NLz7ohf9dMJPxpqePfsWprFRRDpxlrUxiVW8gPDB9cAbQ+ebrelZDsgbSfjyuGDiSTcuSJv1TtG1C3pidih3p3aj+Mq27iVuRwL1XscebyTlmDtidfn1t4DUuEie8x8FvNw86o5RiES4totBpE/2okSI74LFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e8e5d55441so35696239f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:10:03 -0700 (PDT)
+	s=arc-20240116; t=1717024352; c=relaxed/simple;
+	bh=K5f1oCCKwffOJ6cxdd7XW0UTw/TTSMDXlaLsFScHRec=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ny2bVBNHoJLR9KdtKfNOSgZRUpINyzCTdqLwCnb7dW8Pdf4GqvZM1n8eQtYNLFl82glBYMfX7iVwdMasPPgndM+vZfyzJ77ejdANhr9RhmJANGYCj4dOc88x8zxPZO2M/ZFoWtT4GkLdO3z90wqRddGhkX11z7sp6Qb2RoMPBI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Td6v7cZw; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52a54d664e3so353237e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717024348; x=1717629148; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCeLGri5tnpDOe2DivnhztrkNF0hgqupYfwv9NgZRyc=;
+        b=Td6v7cZwz0y9ixx+vutgUAsKpg6tjd+HbXU03UsmXYtOMCCphYrBVftU+Xt3K+Z6sQ
+         9KuYLmyfdq8BsOQIbf9qNXatjVOwzHj3zyq0/10WZAHopu4+hqFRNA28uXUQqHfIJM0G
+         01wJ6DhSpppD/csqWsrsjHwA4KYVuhW6muI7uwogtR/8JWeqAAbmeJNgcUjLoANObfMJ
+         hjlWNMFhH2Pt89txf0+EnLIh7E0bGREkUqSlcbIQOonCXEDGBDIXTbTyhk8LK2MKduwm
+         ySiolDb3gYnovUrz9SuHcqfY05T/MSE1B5o9qAmgSkJmizFLCToNl9gj2CJa6JuucAco
+         md3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717024203; x=1717629003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=le8xpKyVOWznnS1DqEaKJXXI5P2bpZs5ptmd/ntjvJk=;
-        b=iLYViCv7rYhrXPx5ULOzO5uqHUlGFsO4BwgPl1Jpfi3vXNl7vmW2fof7v85p3yW2CZ
-         smAmxQboxw4ZhfowG6+47sxlJVsLCNT+OzmVqd9GN2Rtr0urEvV1l8tTZ4aJLet1Tchb
-         VEUXuN4iKcISQbS6zbSmd36V5IHfXXhrR4F4Ed/aH7XRk0Z2u9ejVdb6wCqOiaz+QpU9
-         HODkHqlzMxXInojaIYktn2bwRYZnt0rB5i4om8lAruUTGGJWGGJIrY4EPNLNUNYg1MES
-         +b2E3ofk9hrzJqo3P9YY0oLlldRkLymOeXvzyGtG7hnkHexy22eV6bcZYzoKcHoYHfvx
-         HzXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnNFGjT1dbfJhkCkuiYpK7P9bgeTLhIg4/DL9U1ceYZ3oeV9VuJeQOEdjWPtviY5T/C0fUNFn8PcxRlMnW0pxN++h7lDFNMKD8pcyB
-X-Gm-Message-State: AOJu0YwG8X1keMNfPdDNlLoGKTjg1OZOahRmhGuapRRzrxlHHM4ld7j2
-	jXEQIyKSob9E6pURS4DyQoe/lHbqqlxMumTrmkQkpAoAq83CAfpB15GBVjn8GPoM+l9HpGE1tYf
-	FQPvC4UBihdohiSn/7GCwDL6YeSv8tTllBcygdRC4SBiAntfhR8Ks3YU=
-X-Google-Smtp-Source: AGHT+IF628Hq7DAY03hVT0vQjY42e6tz/nx6jxRDZh9j/ZFPCTIdVgsy8X2q5aFPz0GqM13QA319Mkl4RgfFNhxzIAtP03oPlX2C
+        d=1e100.net; s=20230601; t=1717024348; x=1717629148;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QCeLGri5tnpDOe2DivnhztrkNF0hgqupYfwv9NgZRyc=;
+        b=GeiA6mwRxNiFYoxb+DEzr16NI0PcNPiYXX2AsKneRL8kyKEIzdc2sVm1NrevvmaKDW
+         D6+TWhLmeWqZRxtRgGd3TpEzkR3YIn3gKdQxxpm3oa3+PBhyajUb/wlILhHvb8jUeVxp
+         qHmvT5fFjP9LwEZ2tksfaRa4X7FUpsTsHaS4nKsRXfY/NEDrw74YpQJghGfHAj/+MJUH
+         JBdFjX0mDChqA84G4zhJrSHI84MwVDY3l65OtjIorul9CLpt8ohXZdAtMMA3YkjOC2Ib
+         WtUVKxutm/WKmd+IrULVJha8MeMHzDom3sQDSaDkKUO2KhxlAKZIHSqYEUA02Yfoa19J
+         fPqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJxFHPdRW1+mBUOCUeKMfFk94LyRf7Ako1rPel5wqyptiwCQx0qF2qbmhfBMwyobLoc5FmVw+fKqk9JZCgRcxAv4Ba19LcmocYigC6
+X-Gm-Message-State: AOJu0YxfZ17RLChMrV1DjiaWC/K0h8056xWm+3jzyY07LNQ0D6Y6X8Mb
+	C2WSDLen4CZ9sckkLMVg7JpI5GASy1SI9DT5UDfOFBWR3R11MFrimXHh+UFZ0kM=
+X-Google-Smtp-Source: AGHT+IGYpt2DxsWSN4VRJToaIsased6v+8hlXaQxqyBwrowNYESyXyUzOhnEcHA9RATrmIVwLWAF/w==
+X-Received: by 2002:ac2:51d4:0:b0:521:532d:eb38 with SMTP id 2adb3069b0e04-52b7d491b07mr334531e87.63.1717024348305;
+        Wed, 29 May 2024 16:12:28 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529acea1ea8sm1015998e87.276.2024.05.29.16.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 16:12:27 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 0/7] drm/msm: make use of the HDMI connector
+ infrastructure
+Date: Thu, 30 May 2024 02:12:23 +0300
+Message-Id: <20240530-bridge-hdmi-connector-v3-0-a1d184d68fe3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:236:b0:48a:37e1:a543 with SMTP id
- 8926c6da1cb9f-4b1ed16f015mr11549173.6.1717024202833; Wed, 29 May 2024
- 16:10:02 -0700 (PDT)
-Date: Wed, 29 May 2024 16:10:02 -0700
-In-Reply-To: <20240529225214.2968-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ae4d6e06199fd917@google.com>
-Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
-From: syzbot <syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com>
-To: edumazet@google.com, hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, radoslaw.zielonek@gmail.com, 
-	syzkaller-bugs@googlegroups.com, vinicius.gomes@intel.com, 
-	vladimir.oltean@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFe2V2YC/3XNQQ6CMBAF0KuQrq2ZttCCK+9hXAAdYRJtSWsaD
+ eHuFhITXbD8P/PfzCxiIIzsVMwsYKJI3uWgDgXrx9YNyMnmzCTIEhQY3gWyuR3tg3jvncP+6QM
+ 3qExVotbCAsvbKeCNXpt7ueY8Usxn7+1NEmv7FesdMQkOvIFON6qqQGo438m1wR99GNhKJvnLN
+ HuMzIxQNXTYKkTzzyzL8gFomhxGAgEAAA==
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3794;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=K5f1oCCKwffOJ6cxdd7XW0UTw/TTSMDXlaLsFScHRec=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ1r4tqiAjusBD3S+67ZJbgto2Fz9bcGzWJVVS4PaDgSn+
+ xrcPHC6k9GYhYGRi0FWTJHFp6Blasym5LAPO6bWwwxiZQKZwsDFKQATyVvF/j+sSt//1m7L7nj2
+ o+K85/y/equ4ZjKVnWvn6LjvZvO/PlSD8czqwJ0mZpkz9veXdEevkvn5d9U95sglEdZRM+bp3XG
+ +96XHzarHQDf9J1td/tpQ04Ygl/5Jp305ve1fX1boPlNc/jW04Nf+5Jq7FiteXr5wZWlUE3+X/I
+ r4F06CO2OlT37YFZRq/t7OgqnUtFxB2fP2ycNVG+unWZxc9fJkwdTubGdGb9PPR1O2zTpRUxn+I
+ Ioz97UV+/n69N3lm/44nTOZPjPBzO5nbFPF11VxJX/tjp3eILPA6lRrt5zikW3BW1kX1Z2JO+G0
+ pl8rtljze6HODpFjrYbMjN71biI6gue9P/4PlihbGy0KAA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hello,
+This patchset sits on top Maxime's HDMI connector patchset ([1]).
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in sctp_addr_wq_timeout_handler
+Currently this is an RFC exploring the interface between HDMI bridges
+and HDMI connector code. This has been lightly verified on the Qualcomm
+DB820c, which has native HDMI output. If this approach is considered to
+be acceptable, I'll finish MSM HDMI bridge conversion (reworking the
+Audio Infoframe code). Other bridges can follow the same approach (we
+have lt9611 / lt9611uxc / adv7511 on Qualcomm hardware).
 
-rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { 1-...D } 2647 jiffies s: 2345 root: 0x2/.
-rcu: blocking rcu_node structures (internal RCU debug):
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 5448 Comm: dhcpcd Not tainted 6.9.0-syzkaller-12116-g782471db6c72-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:check_kcov_mode kernel/kcov.c:173 [inline]
-RIP: 0010:write_comp_data kernel/kcov.c:236 [inline]
-RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x1f/0x90 kernel/kcov.c:304
-Code: 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 4c 8b 04 24 65 48 8b 14 25 00 d5 03 00 65 8b 05 60 4b 6e 7e a9 00 01 ff 00 74 10 <a9> 00 01 00 00 74 5b 83 ba 1c 16 00 00 00 74 52 8b 82 f8 15 00 00
-RSP: 0018:ffffc90000a18168 EFLAGS: 00000006
-RAX: 0000000000010303 RBX: ffffffff89814b22 RCX: ffff88807bd9da00
-RDX: ffff88807bd9da00 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffffff89814b52 R09: 1ffffffff25f04b0
-R10: dffffc0000000000 R11: fffffbfff25f04b1 R12: dffffc0000000000
-R13: ffff888024155808 R14: ffff888024155800 R15: ffff888023e05360
-FS:  00007fc8f8104740(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc8f805eff8 CR3: 000000007cda8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <IRQ>
- rcu_read_lock include/linux/rcupdate.h:782 [inline]
- advance_sched+0xa32/0xca0 net/sched/sch_taprio.c:985
- __run_hrtimer kernel/time/hrtimer.c:1687 [inline]
- __hrtimer_run_queues+0x59b/0xd50 kernel/time/hrtimer.c:1751
- hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1813
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
- __sysvec_apic_timer_interrupt+0x110/0x3f0 arch/x86/kernel/apic/apic.c:1049
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x52/0xc0 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:get_current arch/x86/include/asm/current.h:49 [inline]
-RIP: 0010:write_comp_data kernel/kcov.c:235 [inline]
-RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x8/0x90 kernel/kcov.c:304
-Code: 44 0a 20 c3 cc cc cc cc 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 4c 8b 04 24 <65> 48 8b 14 25 00 d5 03 00 65 8b 05 60 4b 6e 7e a9 00 01 ff 00 74
-RSP: 0018:ffffc90000a185b8 EFLAGS: 00000246
-RAX: ffffc90000a18700 RBX: 0000000000000002 RCX: ffffc90000a11000
-RDX: 0000000000000003 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: 1ffff920001430e2 R08: ffffffff814090ad R09: ffffffff81409006
-R10: 0000000000000003 R11: ffff88807bd9da00 R12: ffffc90000a186f8
-R13: ffffc90000a19000 R14: 1ffff920001430e1 R15: dffffc0000000000
- on_stack arch/x86/include/asm/stacktrace.h:58 [inline]
- stack_access_ok arch/x86/kernel/unwind_orc.c:393 [inline]
- deref_stack_reg arch/x86/kernel/unwind_orc.c:403 [inline]
- unwind_next_frame+0x109d/0x2a00 arch/x86/kernel/unwind_orc.c:585
- __unwind_start+0x641/0x7c0 arch/x86/kernel/unwind_orc.c:760
- unwind_start arch/x86/include/asm/unwind.h:64 [inline]
- arch_stack_walk+0x103/0x1b0 arch/x86/kernel/stacktrace.c:24
- stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2195 [inline]
- slab_free mm/slub.c:4436 [inline]
- kfree+0x14a/0x370 mm/slub.c:4557
- sctp_addr_wq_timeout_handler+0x2e6/0x470 net/sctp/protocol.c:685
- call_timer_fn+0x18e/0x650 kernel/time/timer.c:1792
- expire_timers kernel/time/timer.c:1843 [inline]
- __run_timers kernel/time/timer.c:2417 [inline]
- __run_timer_base+0x66a/0x8e0 kernel/time/timer.c:2428
- run_timer_base kernel/time/timer.c:2437 [inline]
- run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2447
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
-RIP: 0010:_raw_spin_unlock_irq+0x29/0x50 kernel/locking/spinlock.c:202
-Code: 90 f3 0f 1e fa 53 48 89 fb 48 83 c7 18 48 8b 74 24 08 e8 ca ab ee f5 48 89 df e8 e2 ef ef f5 e8 fd 94 19 f6 fb bf 01 00 00 00 <e8> d2 cc e1 f5 65 8b 05 f3 77 80 74 85 c0 74 06 5b c3 cc cc cc cc
-RSP: 0018:ffffc90004917cf0 EFLAGS: 00000286
-RAX: 8cf5a8119035ed00 RBX: ffff8880275fae40 RCX: ffffffff9477a603
-RDX: dffffc0000000000 RSI: ffffffff8bcabc20 RDI: 0000000000000001
-RBP: ffffc90004917dd0 R08: ffffffff8fac132f R09: 1ffffffff1f58265
-R10: dffffc0000000000 R11: fffffbfff1f58266 R12: 1ffff1100f7b3c63
-R13: 00000000000006e0 R14: ffff88807bd9e318 R15: dffffc0000000000
- do_sigaction+0x1f3/0x530
- __do_sys_rt_sigaction kernel/signal.c:4499 [inline]
- __se_sys_rt_sigaction kernel/signal.c:4484 [inline]
- __x64_sys_rt_sigaction+0x1b9/0x290 kernel/signal.c:4484
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc8f813eb57
-Code: 4d 85 c0 74 0e 48 8d 54 24 20 31 f6 48 85 c0 75 04 eb 07 31 d2 48 8d 74 24 88 41 ba 08 00 00 00 44 89 cf b8 0d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 10 48 8b 15 a2 a2 16 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fc8f805edc0 EFLAGS: 00000246 ORIG_RAX: 000000000000000d
-RAX: ffffffffffffffda RBX: 00007ffd0b08de50 RCX: 00007fc8f813eb57
-RDX: 00007fc8f805ede0 RSI: 0000000000000000 RDI: 0000000000000038
-RBP: 00007fc8f805eff0 R08: 00007fc8f805ef28 R09: 0000000000000038
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007ffd0b08e168
-R13: 00007fc8f805ef28 R14: 0000000000000000 R15: 0000000000000038
- </TASK>
+[1] https://patchwork.freedesktop.org/series/122421/
 
+To: Andrzej Hajda <andrzej.hajda@intel.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Robert Foss <rfoss@kernel.org>
+To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Rob Clark <robdclark@gmail.com>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Sean Paul <sean@poorly.run>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: freedreno@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Tested on:
+Changes in v3:
+- Rebased on top of the merged HDMI connector patchset.
+- Changed drm_bridge_connector to use drmm_connector_init() (Maxime)
+- Added a check that write_infoframe callback is present if
+  BRIDGE_OP_HDMI is set.
+- Moved drm_atomic_helper_connector_hdmi_check() call from
+  drm_bridge_connector to the HDMI bridge driver to remove dependency
+  from drm_kms_helpers on the optional HDMI state helpers.
+- Converted Audio InfoFrame handling code.
+- Added support for HDMI Vendor Specific and SPD InfoFrames.
+- Link to v2: https://lore.kernel.org/r/20240309-bridge-hdmi-connector-v2-0-1380bea3ee70@linaro.org
 
-commit:         782471db Merge branch 'xilinx-clock-support'
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git main
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a7c3ec980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98a238b2569af6d
-dashboard link: https://syzkaller.appspot.com/bug?extid=a7d2b1d5d1af83035567
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1491d7c6980000
+Changes in v2:
+- Dropped drm_connector_hdmi_setup(). Instead added
+  drm_connector_hdmi_init() to be used by drm_bridge_connector.
+- Changed the drm_bridge_connector to act as a proxy for the HDMI
+  connector  infrastructure. This removes most of the logic from
+  the bridge drivers.
+- Link to v1: https://lore.kernel.org/r/20240308-bridge-hdmi-connector-v1-0-90b693550260@linaro.org
+
+---
+Dmitry Baryshkov (7):
+      drm/connector: hdmi: accept NULL for Audio Infoframe
+      drm/bridge-connector: switch to using drmm allocations
+      drm/bridge-connector: implement glue code for HDMI connector
+      drm/msm/hdmi: switch to atomic bridge callbacks
+      drm/msm/hdmi: make use of the drm_connector_hdmi framework
+      drm/msm/hdmi: update HDMI_GEN_PKT_CTRL_GENERIC0_UPDATE definition
+      drm/msm/hdmi: also send the SPD and HDMI Vendor Specific InfoFrames
+
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c |  14 +-
+ drivers/gpu/drm/drm_bridge_connector.c          | 114 ++++++++--
+ drivers/gpu/drm/drm_debugfs.c                   |   2 +
+ drivers/gpu/drm/msm/Kconfig                     |   2 +
+ drivers/gpu/drm/msm/hdmi/hdmi.c                 |  44 +---
+ drivers/gpu/drm/msm/hdmi/hdmi.h                 |  16 +-
+ drivers/gpu/drm/msm/hdmi/hdmi_audio.c           |  74 ++-----
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c          | 271 ++++++++++++++++++++----
+ drivers/gpu/drm/msm/registers/display/hdmi.xml  |   2 +-
+ include/drm/drm_bridge.h                        |  82 +++++++
+ 10 files changed, 455 insertions(+), 166 deletions(-)
+---
+base-commit: 03e98b48e2125d0cc99eeaace0f06290e20a1c55
+change-id: 20240307-bridge-hdmi-connector-7e3754e661d0
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
