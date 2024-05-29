@@ -1,218 +1,162 @@
-Return-Path: <linux-kernel+bounces-194507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C9B8D3D4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:20:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91428D3D59
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C96BB1C23694
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0F82871EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004301C0DCE;
-	Wed, 29 May 2024 17:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FA61A38F4;
+	Wed, 29 May 2024 17:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OahVjF+u"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=seb-dev@web.de header.b="kna8nhGa"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44B11A0B1A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C7C15B12C;
+	Wed, 29 May 2024 17:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717003225; cv=none; b=JqOrW/yspGVScs1BYifRn+loEelSh7cOUX772vhuFZpktWN/QnlILT4MivbTDs+bNhBhE/WsDp/2HAefFBvzk3CarijY6/xk7HcnmT+aVT0mMx7TOTGef61FFLQR1Mnqs2CIDf2Y9EiRmVvx5IsakD4xi1jZ8Pd48WyUAi5pPsE=
+	t=1717003262; cv=none; b=KVrga4yFXPeCEP0UG0sgZdmC4/ErAbvnRZ/ubiV7nUcpmehjAu2Imad8GZZBDBdoKrlU8MLxa0wn6KogY/9GpUY9rQ+61Z+v9VqJCBOQKb9cqMsSddAMYoChsdefou78gm5mDqhdRgHsu4CtCbR6N7ccIK1hLSULj6GFLiCJcWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717003225; c=relaxed/simple;
-	bh=7Dvlwp3cj9kBhnrZACSLGYw+fDrt3VMF9KkgcqNKF7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dRuOv58JPd/NHGUS/Zv61BUdxsDc0dEpLoVsB7f6+BdjRRx6K6HVRD8+ZbcssKPgW5m/HpbbaZSF7hK1N90rWmCQf88UK4vCq5TV/IJ/dnj1uFSNV4rNDl/VznOkPBjA7kV0fMnHK3QPimAMkbR5JjtXWCTEr9FLSz3mePdmo6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OahVjF+u; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5789733769dso356771a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717003220; x=1717608020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T6S92XYKao8zmEwYTt3a/Nczc/mks5grdh4+BnfyPTc=;
-        b=OahVjF+uze/S9Yn0R/e+72J80Eo14Ndb0JX3BX7MdTwFUtnWHqryLwOZV9e/HwNRn/
-         KCzJSttyBaVlcSU8Aii7iGYJnLXOnG/vYNoV9ub7xA++Wb/uaDy335X6NZe/d0MZ4KmA
-         Yemfy5Zcudp9/S6EY/5hs9Z0auOiK+7PZnIHC97KPZtxaRwTe04/w8S7LccXPI7E7tWD
-         PEuSnKcy5PguqBJ+VJOY+H20C1JqxCF7VOzCbyV9PZf5dOwX7ILRV2T4KIDbhzzMEIgf
-         F2HFp+dgVFKGX0yDYiaEGS6Kw/9n2i+uyrYYhyw+0lo+xD51tEUpd0vb5ywrXcox0zmZ
-         d3nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717003220; x=1717608020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T6S92XYKao8zmEwYTt3a/Nczc/mks5grdh4+BnfyPTc=;
-        b=i+67VOoqCDZ+XUflobli7wDLy0cygp1vLDw2UqfSDP1hQQmlvPuFSLO1ZGn9Z6qWyI
-         afY9mR4BCtCkKuvZ9n6UmPTjtVRdBMxN0yS/DThJXPvDuwPuEUYavntoB/hnYCNvuuhr
-         9g/9NFNeLW+wPRl9rw9s2yMjMb0o5zqiOpqeweH6m7f/2H7oWGKIygCxXoxWEJHtPZqM
-         BhI0BLeX1DtXe+g9vPHJjlv3xyLQ5F3rUWSb4RzdbmI51V+G2nDq7MknmLgFzF/RfsX/
-         qP6Zg5+gSEO4yT/ThvBz1Qk8tgVTI1vnQzWArBmZhBvSrPaloxyTRprE/tiJcu6nQlar
-         C7MA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6mBRTw+gxrJ6LB+I7GaI93DBAI+G5JE8xuyelQSBALo3NYfYPAw89zCpUq6N1dVJCelQsku5dYrW1sJ+ZfokvYNyKS7fze6ilmS9K
-X-Gm-Message-State: AOJu0Yy1T3iB+oWxw4mkBA3CjGOT7ZsymS2d1oLmER+fAfKSMMsIoe7J
-	1vWrZlGVB6h6mPK91PYE/yzybrr1xxgrjJSOZw2CekgajzRmfSsppgLlSW+9E15r0TK9DsADWin
-	jkE1SN6CDxI2PT541pJfkF0ULx9EHZbubkSvp
-X-Google-Smtp-Source: AGHT+IFAhIhHvER4srrkWNvWRV5ZrC6gug/SN6NLXzcRRgpzDjuVBSfERRb5LBk6wrj7S1gKnfcF1nodGURXGds/8UM=
-X-Received: by 2002:a17:906:2dc2:b0:a62:c41d:c25f with SMTP id
- a640c23a62f3a-a642d6b1573mr258384666b.21.1717003219656; Wed, 29 May 2024
- 10:20:19 -0700 (PDT)
+	s=arc-20240116; t=1717003262; c=relaxed/simple;
+	bh=LnvUL3j+FhUIYu1ECockb+0k/yEHuOso9bE/McckZ2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RYYw2II3CxO/HAeaXAPvep6wURdAYBbFNpIeyWlwSPnFATiyxSn4JYM84VrJn1loZXGJHlL4WwVdN9/g6XmMS9wpFURx7D+m/i/wUrmvPMpyinVdnClMx9oGDB2A/iKFVXp4E2/HkuVQEgelZ4BYijCeKbLTo+St4rOfqX22XbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=seb-dev@web.de header.b=kna8nhGa; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717003228; x=1717608028; i=seb-dev@web.de;
+	bh=LnvUL3j+FhUIYu1ECockb+0k/yEHuOso9bE/McckZ2Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=kna8nhGaGMg6V5WETmO60PwrliEoYDpnqxoaCkZ31vDdwRTxJ3w0yyuXeZyqV0ZI
+	 CSuLJBOeWHES8ndKvBpjU3VbXb9UMiGc5cAOp2Bksbd72ZnvxeU2FZc9stCm0Mf1W
+	 I7m2/xPMyT39eabhSTIb7bJUTru259PwC/5k5XrFxloM4DtxgO/7tpc5gVKKXyakh
+	 p0sG8FulGevW3yJ9h6Ar13ogmIR1R2TnlG/hhFZ0gYlKDXYOMHVc1khKwprh3qDDw
+	 4/1fTtDZbiN3mKoCPWkfQmlM3d9svSzy//+jLVh3iql0cOJBrRqxZZxrfbmEUwR6f
+	 lcTbmwL5i7ibH/S0GQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.24] ([84.155.184.248]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUl9B-1s3BtN2SfJ-00QwGU; Wed, 29
+ May 2024 19:20:28 +0200
+Message-ID: <ebd69de8-5c97-487e-b86a-8afdcde49a6d@web.de>
+Date: Wed, 29 May 2024 19:20:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510232128.1105145-1-almasrymina@google.com>
- <20240510232128.1105145-12-almasrymina@google.com> <9097e78d-0e7d-43bd-bafd-e53a4872a4d1@davidwei.uk>
- <CAHS8izOe-uYjm0ttQgHOFpvp_Tj4_oRHV6d1Y1sWJAZJdCdCBA@mail.gmail.com> <29464e46-e196-47aa-9ff5-23173099c95e@gmail.com>
-In-Reply-To: <29464e46-e196-47aa-9ff5-23173099c95e@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 29 May 2024 10:20:03 -0700
-Message-ID: <CAHS8izOnD3J3i+z1nxg=AZQW9dm0w2JBtbg2=oouiER8xqeRPA@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 11/14] tcp: RX path for devmem TCP
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add CM3588 NAS board
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240526214340.8459-1-seb-dev@web.de>
+ <20240526214820.9381-1-seb-dev@web.de>
+ <9f40c748-691b-4a03-bbd6-54870f46bf05@kwiboo.se>
+ <29e5cf31-3d9a-469a-befa-41a5aa2fe8b3@web.de>
+ <bccd8879a19ceacfd92a41e7533b324c@manjaro.org>
+From: Sebastian Kropatsch <seb-dev@web.de>
+In-Reply-To: <bccd8879a19ceacfd92a41e7533b324c@manjaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hOpgXAHojh64+byf+dXx6/yojN2mCvobytSvKX4N1UvJOQJ3bWi
+ 5QmnxAI1ZQ3Mqy07BGdu6CuZa4ovU721gwe7yKEHSqZxfnkF9YGvvaevEOAS8xrBuAijeoD
+ Pe33+pj2nIoPaCOxgUv4bAslZlOBFWc4oObksZ2jV6f3jJbV6cvI2AaHVZOG+0ifeJ29vu7
+ XnyVJf3e+FGCQZ8aOhAxA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AWu6vFBFlaM=;iS1IlLJHaAyDKPqsIyiWaZlG9iZ
+ thspF47GX2usRA858C/sGhaax0Uygs+xMCeaKF0ehVcSpam+FvfJlJY8TkJCtKF8hR4mGDUtc
+ /4LMkbGQ7gpRmjF9sDoKtqxfp0yfvjVJQFsHKQhINcxtFVpXu71BVJc17NvyGxZH6M6HsUxiM
+ E9jqU+pJAOInJd0BOutE8UyzDY3FRV5bKAI7cDGjjIofsB+nek+37JOAEoI8faGZDgbHB+f8E
+ Bq51n4wWDbg0/98OhjZBpfwhcVlsxQnZBz0uJLNgg+EFHXLf1fgsC5/eOR7d20nOSOo7q6Utq
+ 5E3ibIASn/yJX3cZvFOxniVPpD3wG1kOKRHBs/0bwnZbZKWIexs4C1XoA2ZUZ2THKtAIo6ipL
+ PQvwQ41pT8KX6PAN9YEV7CkSkh1DcgQTMVDYymiP/qbo/BPP8Ng+4ZPqgwLMwFZRaUFbsIPDv
+ U84gguIDvIB4YXw3LE+SsJ9L9vZTrXn614Fi/0JauA8lo5FaSE7DlJLmKgj17y6undLOaOHqv
+ NNTQH7w6eiABoJ9cwOoX3o1FqdNByEkKt0jVfPTnjKAmXmVuZkLMkvUFlFpr6ezIwGXpKqRE6
+ jswOT7vlTjB00g8BziSoQKAouLS8MBahgykDqDuNgirocupdV4g0zwhwrpd8ldMKTIqqrgHeu
+ bCIVRjT3CoLzc3g8+x6Ko2WlW4Cwq9A3H4jAhd/zVwn7pkiImvsFuQWYlAWkYXY7nNjXP+F/N
+ aP0i6ktWYbELG/G8oDqH+USmlqFOKWnuGOd916BfjJILxeggarbY+Lmu2JPaUN1dHrZhw5mqV
+ LxKxYt++K6JXOVcfWYqgSsV+v2sz1Rq8qj6WwAbtsVwoY=
 
-On Tue, May 28, 2024 at 7:42=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 5/28/24 18:36, Mina Almasry wrote:
-> > On Wed, May 22, 2024 at 11:02=E2=80=AFPM David Wei <dw@davidwei.uk> wro=
-te:
-> ...
-> >>> +                      */
-> >>> +                     if (!skb_frag_net_iov(frag)) {
-> >>> +                             net_err_ratelimited("Found non-dmabuf s=
-kb with net_iov");
-> >>> +                             err =3D -ENODEV;
-> >>> +                             goto out;
-> >>> +                     }
-> >>> +
-> >>> +                     niov =3D skb_frag_net_iov(frag);
-> >>
-> >> Sorry if we've already discussed this.
-> >>
-> >> We have this additional hunk:
-> >>
-> >> + if (niov->pp->mp_ops !=3D &dmabuf_devmem_ops) {
-> >> +       err =3D -ENODEV;
-> >> +       goto out;
-> >> + }
-> >>
-> >> In case one of our skbs end up here, skb_frag_is_net_iov() and
-> >> !skb_frags_readable(). Does this even matter? And if so then is there =
-a
-> >> better way to distinguish between our two types of net_iovs?
-> >
-> > Thanks for bringing this up, yes, maybe we do need a way to
-> > distinguish, but it's not 100% critical, no? It's mostly for debug
-> > checking?
->
-> Not really. io_uring definitely wouldn't want the devmem completion path
-> taking an iov and basically stashing it into a socket (via refcount),
-> that's a lifetime problem. Nor we'd have all the binding/chunk_owner
-> parts you have and probably use there.
->
-> Same the other way around, you don't want io_uring grabbing your iov
-> and locking it up, it won't even be possible to return it back. We
-> also may want to have access to backing pages for different fallback
-> purposes, for which we need to know the iov came from this particular
-> ring.
->
-> It shouldn't happen for a behaving user, but most of it would likely
-> be exploitable one way or another.
->
-> > I would say add a helper, like net_iov_is_dmabuf() or net_iov_is_io_uri=
-ng().
->
-> We're verifying that the context the iov bound to is the current
-> context (e.g. io_uring instance) we're executing from. If we can
-> agree that mp_priv should be a valid pointer, the check would look
-> like:
->
-> if (pp->mp_priv =3D=3D io_uring_ifq)
->
-> > Checking for niov->pp->mp_ops seems a bit hacky to me, and may be
-> > outright broken. IIRC niov's can be disconnected from the page_pool
-> > via page_pool_clear_pp_info(), and niov->pp may be null. Abstractly
->
-> It's called in the release path like page_pool_return_page(),
-> I can't imagine someone can sanely clear it while inflight ...
->
+Hi Dragan,
 
-Ah, yes, I wasn't sure what happens to the inflight pages when the pp
-gets destroyed. I thought maybe the pp would return the inflight
-pages, but it looks to me like the pp just returns the free pages in
-the alloc cache and the ptr_ring, and the pp stays alive until all the
-inflight pages are freed. So indeed niov->pp should always be valid
-while it's in flight. I still prefer to have the memory type to be
-part of the niov itself, but I don't feel strongly at this point; up
-to you.
+Am 29.05.2024 um 02:10 schrieb Dragan Simic:
+> Hello Sebastian,
+>
+> On 2024-05-28 19:22, Sebastian Kropatsch wrote:
+>> Am 27.05.2024 um 21:02 schrieb Jonas Karlman:
+>>> On 2024-05-26 23:48, Sebastian Kropatsch wrote:
+>>>> The CM3588 NAS by FriendlyElec pairs the CM3588 compute module,
+>>>> based on
+>>>> the Rockchip RK3588 SoC, with the CM3588 NAS Kit carrier board.
+>>>>
+>>>> [...]
+>>>>
+>>>> PCIe bifurcation is used to handle all four M.2 sockets at PCIe 3.0 x=
+1
+>>>> speed. Data lane mapping in the DT is done like described in commit
+>>>> f8020dfb311d ("phy: rockchip-snps-pcie3: fix bifurcation on rk3588").
+>>>>
+>>>> This device tree includes support for eMMC, SD card, ethernet, all US=
+B2
+>>>> and USB3 ports, all four M.2 slots, GPU, RTC, buzzer, UART debugging =
+as
+>>>> well as the buttons and LEDs.
+>>>> The GPIOs are labeled according to the schematics.
+>>>>
+>>>> Signed-off-by: Sebastian Kropatsch <seb-dev@web.de>
+>>>> ---
+>>>> =C2=A0 arch/arm64/boot/dts/rockchip/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+>>>> =C2=A0 .../boot/dts/rockchip/rk3588-cm3588-nas.dts=C2=A0=C2=A0 | 1269
+>>>> +++++++++++++++++
+>>>> =C2=A0 2 files changed, 1270 insertions(+)
+>>>> =C2=A0 create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-cm3588-=
+nas.dts
+>>>
+>>> Because the CM3588 is a SoM and the NAS is a carrier board this should
+>>> probably be split in two, cm3588.dtsi and cm3588-nas.dts.
+>>
+>> I thought about this before submitting. My reason for not splitting thi=
+s
+>> into two files for now was that as far as I know this board is the only
+>> combination for the CM, maybe no other daughter board will ever get
+>> released. If another carrier board compatible with the CM3588 is
+>> released, the splitting could be done at that point in time.
+>>
+>> But since both you and Heiko prefer to have it split, I will figure out
+>> a way how and which parts will have to split up to the CM so we can
+>> have two files in the end. I guess most things will go into the NAS dts
+>> anyway.
+>>
+>> I'll have a look how other Rockchip compute modules with split device
+>> trees were done in the past and orient myself by that.
+>
+> I also support the DT split between the SoM and the carrier board,
+> even if there are currently no more carrier boards available for
+> the particular SoM.=C2=A0 That may seem redundant, but it reflects the
+> nature of the hardware setup, in which the SoM plugs into the carrier
+> board.=C2=A0 This follows the principle of the DT describing hardware.
 
-> > speaking the niov type maybe should be a property of the niov itself,
-> > and not the pp the niov is attached to.
->
-> ... but I can just stash all that in niov->owner,
-> struct dmabuf_genpool_chunk_owner you have. That might be even
-> cleaner. And regardless of it I'll be making some minor changes
-> to the structure to make it generic.
->
-> > It is not immediately obvious to me what the best thing to do here is,
-> > maybe it's best to add a flag to niov or to use niov->pp_magic for
-> > this.
-> >
-> > I would humbly ask that your follow up patchset takes care of this
-> > bit, if possible. I think mine is doing quite a bit of heavy lifting
-> > as is (and I think may be close to ready?), when it comes to concerns
-> > of devmem + io_uring coexisting if you're able to take care, awesome,
-> > if not, I can look into squashing some fix.
->
-> Let it be this way then. It's not a problem while there is
-> only one such a provider.
->
+Following the principle of the DT describing the hardware does make
+sense, that's a very good explanation!
+I'll try to follow up with this in a v2 in the next few days.
 
-Thank you!
-
---=20
-Thanks,
-Mina
+Thank you,
+Sebastian
 
