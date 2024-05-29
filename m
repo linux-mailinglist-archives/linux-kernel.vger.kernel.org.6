@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-193743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36788D3168
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:32:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAA18D316A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF4E28CD79
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:32:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5CED28DD3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687B715CD52;
-	Wed, 29 May 2024 08:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B042168C3A;
+	Wed, 29 May 2024 08:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BR0L3okB"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewyicS+C"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F58844C7B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E721344C7B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716971326; cv=none; b=AUyiNBgLPXow9kNULLoHLhOtN6Ky3AFn8blzkmxQdsdi5iUFuZ+QT5GFXDR7h7GxISfC/nseHocrArCejt8BCxbfCBu25ZI9ULf2ULDpcxqvjcYzOpjOomvRyc4rKhfhwZdyuJYqfyJF2GA+iwPXYbVjHvX7uCzP6HKMCjqTv4E=
+	t=1716971333; cv=none; b=jfHdnAWTP9ktNf77j/Gnqz5+KUWcE043CrhvwXGqFigyK7h+NE76vv7RpgnnZ/uAwxg5bGYybo5QIsosC2SmSLWJBPYXK0kacFVkWal7AtGJ+2Abmp8E2tCT313DfNRVJVhXcI2i9qr56y2rZLj/4DX9EBsyMGIp3bvfVVsWUfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716971326; c=relaxed/simple;
-	bh=UlPPzuqGSwEhmI/VU350FnDdRaqL17RoW3KSjn0a/k4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LfpKHPGtULVBZCbgBNrxWnzj6Fznw2e4RkSuHu7VTfdd/L6GK0wQ1jTCZ8mWKvpmbapK7+Bp6y6vnWq9fcWPLNUXMdd45hac9zXPywgwBA3IKj22CUaphknDonNL1+LJWUvKtAmsZ3H8kjvBEv7nMvLk3CQEp6+K4bRA9HF+1Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BR0L3okB; arc=none smtp.client-ip=209.85.160.48
+	s=arc-20240116; t=1716971333; c=relaxed/simple;
+	bh=08oobRwRz3gaF/temZ05IpZbrn5Dik268m1bTOTym00=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sp+ViFYbDXy4pRbD4R7Cr8jHIqvNWGFkKfLiFcukOffqXstiv0WW3OKvS12eOnP6Mhjo6DP9EvhJagYapF/6TT3ULeW2eOUkswXqJH3+5MA2DXTcvdemai1O+60nwoxIUqRgScKsQ6wiPXoYCNnaqqIPRUV/d5/uueOBWyOgUyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewyicS+C; arc=none smtp.client-ip=209.85.160.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-24cbb2b71b4so760569fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:28:44 -0700 (PDT)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-24fca68b554so727476fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716971324; x=1717576124; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewOefsnjLcZF9k8X2fk5+VmjOrQKwuSB4YjvYAvVnjc=;
-        b=BR0L3okBZzk6kDmEZNxn8L7ZR2A5To+203a2dOsTaFAHG1164aKYTm2ve6aLGv7Jvm
-         rp0CsKLMmv3+Z94nATMIRoBD/uSSe5ORVMmhmc2A87Hrncq4kdUne1Wqa8vynkInXW9W
-         P5XZEOcOY2zbIs6s+Oa8xAFfoTn7IHk9STEVPHzF6/XxKzUFmr6YQ77B8qQeLXhToJ7A
-         59jIRs3E7303bl+QyaD3aQ6w6w/AgGLR1W3f68dEjFbouIk3UIufBGvsmDMWeZYiYuW6
-         TpByvxcJEHweb/ekfw86Yv+nfCmlvUrgu+tKdCTV3QooddyXDJRXYaX4YVPjcoHePrPQ
-         Tvvw==
+        d=gmail.com; s=20230601; t=1716971331; x=1717576131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7k7udukJq/5lufC/QvLOUP0N512BAUWebXH46Q8HtFk=;
+        b=ewyicS+CzMUpq+qTA46ap/qls+3Ujh28I1AS3Y+m42gAw8VCGd5W0zPs93yqo/qBMp
+         yVudo/IJ6f4ScwAn305sa8RGtgG8oJPicMjiKVti2BB1td41PEdGs/CC/KqMabkKHpDu
+         0bHbNxoI6n+SsHDpiULlItiMk4yqm21kHeNjtaQybL5u2NFBG6IkDHwoSEpvWXEUwl2U
+         KgYz20sIL8s/MbOJtuNxri9xVs82lcT9lkhcAP/ULCrukVqSuDz0skqgXwjRSDtv6Ses
+         i+Zz4xliYeYa37CBKH95QZISOLDdq7bEpGR7Nlv3KMXSkcFsgJD0cuAV2ylbDFRW24nQ
+         5CxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716971324; x=1717576124;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ewOefsnjLcZF9k8X2fk5+VmjOrQKwuSB4YjvYAvVnjc=;
-        b=vBhCYbxN8Q23f+4G2wcinOK9/TpMK7KrZgE2rQ9aYHXf4ZWDF69J0ZWh6qxvJfuVKb
-         50tKUb+i9cv8smrbGnaOCaoZfhm2x5p9WelZ+hC4n8mzsyTIITv6r6tVH92OYa0Cyt/W
-         Kk8jBW4AwiNUqumiYfqoO8jFcI2QsoJdJm48TfL0S2kA7iGBsaF1bmI6w4nPdGew1tQT
-         Me6/uHxttAc0UUBrW20nTTYkfdWiwqAQBbO6YBmdbVdL6PxV7oC+EX+++tFFSABTuPWe
-         5j9Ht84U21GXJCCNf8kwonvbIRhRBxb6xMpMFohV8YSAKuYYb/4ddBD74KpvkNZUXDie
-         dA0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXCGOWqQEf1fLjRSuOZtADMmCbUsbUGFAwHJSaCAVFzTELF/cisQVJY+y0jid+yKUAdtfHvZURRm9t+Kd8D/wQ+xBD/R9fZN6afTfgu
-X-Gm-Message-State: AOJu0Yx+A97wGoP341jxBrYhdIlLZyvtU5AGlwHUQkQfojhtzsIESf1n
-	pWi2b5HDscTkxiMK01dPr1hoGhDtchMkthbDoSSIGfcHcqOF9FUu
-X-Google-Smtp-Source: AGHT+IH3UNmleoitLaaWKEkGkztsqlk0g2xMkG4KbUUl9w4zYCJXpK0DOsfwuTA5F3olq/PwYIKyfA==
-X-Received: by 2002:a05:6870:4722:b0:24e:4fef:61df with SMTP id 586e51a60fabf-24e4fef737fmr12412326fac.54.1716971324013;
-        Wed, 29 May 2024 01:28:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716971331; x=1717576131;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7k7udukJq/5lufC/QvLOUP0N512BAUWebXH46Q8HtFk=;
+        b=d17DbSM5Yx8l0VtH7d77VzqDPJKkaTGTBmR3SHfPe8pxI42mgW4D3QmHYt/iFYqmIO
+         daenHd3k6J84XMZPj8aLrnhccKg/j2RdYX7s42FiOVjXGMVLRzImjPyQrwTnX8efcyGm
+         Ra/ppFlwl93Eplb98GzLorm7F1AmTGNkrVlXolsNmAbxIyN/YrWfAQiAX1uqzOgVvq5e
+         IvvyHoZWcS5v+dtGnxJb1IOmSUBc7ao0YMOTixw+JjlFo82Kt6tpAHkuj57K7uMR3/Yt
+         baMoo9ddL0RX2VnELNpjIwYrcx5H4qchd18Ikvt5SMp6ktBoraii5TiHBVXnxQCYyAOU
+         KsTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTnasSD++hlIALFJ/oNx6zd4R7qKrrh3558FoCoyrKyATb7826jl7eKrX1tRTVe/qeg38hQYrobxVGDf5u/TwfU2P/J6EsYqYFiJzi
+X-Gm-Message-State: AOJu0YxLOchNq4ociJ7UsEOExVy6wTmWffrjZzar0UmxSTMc+dBevXGD
+	mZEqg9OaQ/wMLY/809rJYvGnyMT22XCZImOFlt8hEz0O3Vvy45Uh
+X-Google-Smtp-Source: AGHT+IFwms1cBvU+f9ojhWDg3nZKfLTfOVGOcCh0o9BJomwXX1OgvRueLY1XlvYRSI7zo2uCYFeifw==
+X-Received: by 2002:a05:6870:96a2:b0:24c:a414:3eab with SMTP id 586e51a60fabf-24ca41467f3mr15324961fac.32.1716971330911;
+        Wed, 29 May 2024 01:28:50 -0700 (PDT)
 Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702220d948bsm174916b3a.131.2024.05.29.01.28.37
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702220d948bsm174916b3a.131.2024.05.29.01.28.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:28:43 -0700 (PDT)
+        Wed, 29 May 2024 01:28:50 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -84,10 +86,12 @@ Cc: baolin.wang@linux.alibaba.com,
 	yosryahmed@google.com,
 	yuzhao@google.com,
 	ziy@nvidia.com
-Subject: [PATCH v5 0/6] large folios swap-in: handle refault cases first
-Date: Wed, 29 May 2024 20:28:18 +1200
-Message-Id: <20240529082824.150954-1-21cnbao@gmail.com>
+Subject: [PATCH v5 1/6] mm: swap: introduce swap_free_nr() for batched swap_free()
+Date: Wed, 29 May 2024 20:28:19 +1200
+Message-Id: <20240529082824.150954-2-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240529082824.150954-1-21cnbao@gmail.com>
+References: <20240529082824.150954-1-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,103 +100,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Barry Song <v-songbaohua@oppo.com>
+From: Chuanhua Han <hanchuanhua@oppo.com>
 
-This patch is extracted from the large folio swapin series[1], primarily addressing
-the handling of scenarios involving large folios in the swap cache. Currently, it is
-particularly focused on addressing the refaulting of mTHP, which is still undergoing
-reclamation. This approach aims to streamline code review and expedite the integration
-of this segment into the MM tree.
+While swapping in a large folio, we need to free swaps related to the whole
+folio. To avoid frequently acquiring and releasing swap locks, it is better
+to introduce an API for batched free.
+Furthermore, this new function, swap_free_nr(), is designed to efficiently
+handle various scenarios for releasing a specified number, nr, of swap
+entries.
 
-It relies on Ryan's swap-out series[2], leveraging the helper function
-swap_pte_batch() introduced by that series.
+Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
+Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Acked-by: Chris Li <chrisl@kernel.org>
+Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+---
+ include/linux/swap.h |  5 +++++
+ mm/swapfile.c        | 47 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
-Presently, do_swap_page only encounters a large folio in the swap
-cache before the large folio is released by vmscan. However, the code
-should remain equally useful once we support large folio swap-in via
-swapin_readahead(). This approach can effectively reduce page faults
-and eliminate most redundant checks and early exits for MTE restoration
-in recent MTE patchset[3].
-
-The large folio swap-in for SWP_SYNCHRONOUS_IO and swapin_readahead()
-will be split into separate patch sets and sent at a later time.
-
--v5:
-   collect reviewed-by of Ryan, "Huang, Ying", thanks!
-
--v4:
- - collect acked-by/reviewed-by of Ryan, "Huang, Ying", Chris, David and
-   Khalid, many thanks!
- - Simplify reuse code in do_swap_page() by checking refcount==1, per
-   David;
- - Initialize large folio-related variables later in do_swap_page(), per
-   Ryan;
- - define swap_free() as swap_free_nr(1) per Ying and Ryan.
-
--v3:
- - optimize swap_free_nr using bitmap with single one "long"; "Huang, Ying"
- - drop swap_free() as suggested by "Huang, Ying", now hibernation can get
-   batched;
- - lots of cleanup in do_swap_page() as commented by Ryan Roberts and "Huang,
-   Ying";
- - handle arch_do_swap_page() with nr pages though the only platform which
-   needs it, sparc, doesn't support THP_SWAPOUT as suggested by "Huang,
-   Ying";
- - introduce pte_move_swp_offset() as suggested by "Huang, Ying";
- - drop the "any_shared" of checking swap entries with respect to David's
-   comment;
- - drop the counter of swapin_refault and keep it for debug purpose per
-   Ying
- - collect reviewed-by tags
- Link:
-  https://lore.kernel.org/linux-mm/20240503005023.174597-1-21cnbao@gmail.com/
-
--v2:
- - rebase on top of mm-unstable in which Ryan's swap_pte_batch() has changed
-   a lot.
- - remove folio_add_new_anon_rmap() for !folio_test_anon()
-   as currently large folios are always anon(refault).
- - add mTHP swpin refault counters
-  Link:
-  https://lore.kernel.org/linux-mm/20240409082631.187483-1-21cnbao@gmail.com/
-
--v1:
-  Link: https://lore.kernel.org/linux-mm/20240402073237.240995-1-21cnbao@gmail.com/
-
-Differences with the original large folios swap-in series
- - collect r-o-b, acked;
- - rename swap_nr_free to swap_free_nr, according to Ryan;
- - limit the maximum kernel stack usage for swap_free_nr, Ryan;
- - add output argument in swap_pte_batch to expose if all entries are
-   exclusive
- - many clean refinements, handle the corner case folio's virtual addr
-   might not be naturally aligned
-
-[1] https://lore.kernel.org/linux-mm/20240304081348.197341-1-21cnbao@gmail.com/
-[2] https://lore.kernel.org/linux-mm/20240408183946.2991168-1-ryan.roberts@arm.com/
-[3] https://lore.kernel.org/linux-mm/20240322114136.61386-1-21cnbao@gmail.com/
-
-Barry Song (3):
-  mm: remove the implementation of swap_free() and always use
-    swap_free_nr()
-  mm: introduce pte_move_swp_offset() helper which can move offset
-    bidirectionally
-  mm: introduce arch_do_swap_page_nr() which allows restore metadata for
-    nr pages
-
-Chuanhua Han (3):
-  mm: swap: introduce swap_free_nr() for batched swap_free()
-  mm: swap: make should_try_to_free_swap() support large-folio
-  mm: swap: entirely map large folios found in swapcache
-
- include/linux/pgtable.h | 26 +++++++++++++-----
- include/linux/swap.h    |  9 +++++--
- kernel/power/swap.c     |  5 ++--
- mm/internal.h           | 25 ++++++++++++++---
- mm/memory.c             | 60 +++++++++++++++++++++++++++++++++--------
- mm/swapfile.c           | 48 +++++++++++++++++++++++++++++----
- 6 files changed, 142 insertions(+), 31 deletions(-)
-
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index a11c75e897ec..45f76dfe29b1 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -481,6 +481,7 @@ extern void swap_shmem_alloc(swp_entry_t);
+ extern int swap_duplicate(swp_entry_t);
+ extern int swapcache_prepare(swp_entry_t);
+ extern void swap_free(swp_entry_t);
++extern void swap_free_nr(swp_entry_t entry, int nr_pages);
+ extern void swapcache_free_entries(swp_entry_t *entries, int n);
+ extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
+ int swap_type_of(dev_t device, sector_t offset);
+@@ -562,6 +563,10 @@ static inline void swap_free(swp_entry_t swp)
+ {
+ }
+ 
++static inline void swap_free_nr(swp_entry_t entry, int nr_pages)
++{
++}
++
+ static inline void put_swap_folio(struct folio *folio, swp_entry_t swp)
+ {
+ }
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index f1e559e216bd..92a045d34a97 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1356,6 +1356,53 @@ void swap_free(swp_entry_t entry)
+ 		__swap_entry_free(p, entry);
+ }
+ 
++static void cluster_swap_free_nr(struct swap_info_struct *sis,
++		unsigned long offset, int nr_pages)
++{
++	struct swap_cluster_info *ci;
++	DECLARE_BITMAP(to_free, BITS_PER_LONG) = { 0 };
++	int i, nr;
++
++	ci = lock_cluster_or_swap_info(sis, offset);
++	while (nr_pages) {
++		nr = min(BITS_PER_LONG, nr_pages);
++		for (i = 0; i < nr; i++) {
++			if (!__swap_entry_free_locked(sis, offset + i, 1))
++				bitmap_set(to_free, i, 1);
++		}
++		if (!bitmap_empty(to_free, BITS_PER_LONG)) {
++			unlock_cluster_or_swap_info(sis, ci);
++			for_each_set_bit(i, to_free, BITS_PER_LONG)
++				free_swap_slot(swp_entry(sis->type, offset + i));
++			if (nr == nr_pages)
++				return;
++			bitmap_clear(to_free, 0, BITS_PER_LONG);
++			ci = lock_cluster_or_swap_info(sis, offset);
++		}
++		offset += nr;
++		nr_pages -= nr;
++	}
++	unlock_cluster_or_swap_info(sis, ci);
++}
++
++void swap_free_nr(swp_entry_t entry, int nr_pages)
++{
++	int nr;
++	struct swap_info_struct *sis;
++	unsigned long offset = swp_offset(entry);
++
++	sis = _swap_info_get(entry);
++	if (!sis)
++		return;
++
++	while (nr_pages) {
++		nr = min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
++		cluster_swap_free_nr(sis, offset, nr);
++		offset += nr;
++		nr_pages -= nr;
++	}
++}
++
+ /*
+  * Called after dropping swapcache to decrease refcnt to swap entries.
+  */
 -- 
 2.34.1
 
