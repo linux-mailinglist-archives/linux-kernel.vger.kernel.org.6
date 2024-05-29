@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-193747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FAD8D31C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA6F8D3222
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A293DB2DA25
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:33:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87A3CB28AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43392174ED7;
-	Wed, 29 May 2024 08:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B33180A70;
+	Wed, 29 May 2024 08:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SRPNYFeO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rAokD/kt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SintWRtc"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40107169AD9;
-	Wed, 29 May 2024 08:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9377316936B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716971356; cv=none; b=ZuBXN+ki5vd6+A2bUeajjTiQtsIkD5ehhLsXkDnEa7hxB5+hNpfovy0q3CRFnwbr+XdeLxlc3qs/cOMlh2Bzb0HaIL2UqypPV9JApk8f4+tAG613d5mKM0j8dCDRmCR2GVBUKEp/QaQot0DvBshe1W/6VBn11GWz4BOEahA7Q60=
+	t=1716971379; cv=none; b=p6JzpgtsK4FcYRKuGvANpp+ePPv0B6ZIXpWgxSj/CIXIgH410PHon0tsFJlBlzktA9/njUiQAPiaPmxXlupAAy8A5JQEaauv+ijljluABmL/zKkm7VN7eeFD2NGlqUbhsOUVUxnFN7QMSxffqzTRIH0MvIWYbf0CX+zxvp0vQyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716971356; c=relaxed/simple;
-	bh=o9DQnDi62SVThmHsJFN8GzWXXKPHm4neh84ypARH/kY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QX7Cnmzl2Avc6IZN6+y5UMRVekir9D7UD8jpR13LVURd9FYTJia1ZS+mrcygZc0ARUz11qRyTsrLWT+knkV5DDVKk7kOuNxrCmc9owHjSs/qcLIYE5xr3z2gngs8mi5Kecj+ZVZ+u5K9zj393b10Gw2p2mcLG60WUrenVYcLChA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SRPNYFeO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rAokD/kt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 29 May 2024 10:29:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716971353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o9DQnDi62SVThmHsJFN8GzWXXKPHm4neh84ypARH/kY=;
-	b=SRPNYFeOAAQ6EO5TmISg+WdT5xutmuEvGiHVPiLk25JF94IvoO5dJe74+yTlf+DsVN1+3o
-	NPprB2daAAUrPDhsX3A77MeaqdhBxfcCBrc1U+p4hQGJmJ2vCdnBZHifjh7Au/EyYZyy48
-	eN2gSKSyo6HPBxwLSjqbON6PvxdgfJE9sDcN9lZ8ZHJGRNhXB2gHiGac0VJv8ht3dFGK2j
-	F1raEtP3dyshOrsuQc452RucueZ9nPqZSBOSWeE667FRSeHDAu77un7wZNNJ8hdZpApqfI
-	/dQVgOKXP9T1J8ZpTzvli/9R8iB9UQMWg5WiHD/UUt2jBGHUMe5gYscrwf2pDg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716971353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o9DQnDi62SVThmHsJFN8GzWXXKPHm4neh84ypARH/kY=;
-	b=rAokD/ktxO9WLt/FyEsByG7MpgD69acVBS3P8Uyiz3JZZBqcPShAqUFCb1T1KDpFYJfRac
-	soZjOVMB1ERztlCA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Phil Auld <pauld@redhat.com>
-Subject: Re: [PATCH v2] sched/rt: Clean up usage of rt_task()
-Message-ID: <20240529082912.gPDpgVy3@linutronix.de>
-References: <20240515220536.823145-1-qyousef@layalina.io>
- <20240521110035.KRIwllGe@linutronix.de>
- <20240527172650.kieptfl3zhyljkzx@airbuntu>
+	s=arc-20240116; t=1716971379; c=relaxed/simple;
+	bh=1YVdUCwouStxfwxnG32hP50AhXVdPgyiygSC//AbcxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NKNZyfswN9KDIc0AGNoEKeaeFPf9xVg2FtUz9lifk38eBobr7OHeOqhJKZ7wb07ZmHBgjfp8fMARfINsHYu0zSmZx0KEP2N5nYsQqm4qPlZD/diIMH8J8l1y/CtzKiQeIpl7RyNqM6N9vkaA4yP6H0oUavK+vtioEUtcUnxlODQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SintWRtc; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so11468a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716971376; x=1717576176; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1YVdUCwouStxfwxnG32hP50AhXVdPgyiygSC//AbcxE=;
+        b=SintWRtcydtx+Z5Gyw2nxTtEI9RjAyWtlUnkEQCsI/EvwHmU+Be7mvcukYIirr1T1K
+         2DumjSqQRcBBtpRp1LhZkjMTUJ9Iq3Lo7+rgEnvGaJpvTMixFpG2OngX1CJlkwvAyFPi
+         IO6zQbnGpup1yL08fn0Ev7/MwUXirH+uGKbLGikIUncYAGkUMjmOkJe/Q+itcXBh2I4S
+         NKZau1nK1Nd/abk6lj6JSNUrBPOzW9nVHXzMUG25ZYAhjIjF2/4ViXtcpy9jWvhlbRv+
+         pF8Su7fhUaAvLOQ57Zp/gkFo3AAsMKto+XQskzh+/26haOrO7El/0AbUAztD1zvNIpG7
+         k/iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716971376; x=1717576176;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1YVdUCwouStxfwxnG32hP50AhXVdPgyiygSC//AbcxE=;
+        b=sS5tWiUhtJDZADBZ8j1re0tOS/yHvBwOs3A+Kvqhkdc+7Din4hVy9tPKmyfEf8sCrb
+         k+xL6ZDMmjY/t+2Bmv4RAxmDgdQgxxehOeJFdj85HOvugX2RU1ude389K2YKCcHFC0LV
+         LyCpoA7cMA3C+BXrSKnEriQtbKvZXCnaSMXWINNMNv0S98M6gniKf/AVOL+UZ6T3xh39
+         j3/5qBMpGt6vzRC2uPhsXG+clxvfvJWVN0q7qnJ/m0urbOz8CT2vX/nx1lauokxqhxgV
+         TvK9fkRqtcmYL3RR2sPZ+tNSZ98vAmpFKwRZu2tfpTQc5xL34r8JAkJGhdJ7KPuq4zPs
+         H++Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUejVg3S9a9wRbZrYaGvPcKNhPSnoxjFlBd0jpIf94nAzByLLaaqlSl2Mwvb9BiKnPf/87GDPFs2v0oOUY0kcu9D4RRsXlC3xj+bZyg
+X-Gm-Message-State: AOJu0YyFaNhY6mJ4r/Ec1W3tsG2NeBpp6p1e/khPaQ094L9al8dRJgab
+	5lpqMHDI3001zWrlDjoKLSOYMvUFWuaVu3PtfjH0MtqLofRmJQc9qFR1mrcqgLECIAaXq6g8/hy
+	7TaqlbYH+5rkdmCVR8NTmb9zON0Y7M5GzdpFo
+X-Google-Smtp-Source: AGHT+IGAhtDvsJERwf3pb+t/VLOUXZcR/4+FfDaCdhT+APDm0SbJawgi6YlMKOwTLAhHnB/JKadI8zSAKP0IVHve4qg=
+X-Received: by 2002:a05:6402:40c1:b0:578:61c0:eb0f with SMTP id
+ 4fb4d7f45d1cf-57a05d1fae1mr93618a12.3.1716971375558; Wed, 29 May 2024
+ 01:29:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240528203030.10839-1-aleksandr.mikhalitsyn@canonical.com> <20240529-orchester-abklatsch-2d29bd940e89@brauner>
+In-Reply-To: <20240529-orchester-abklatsch-2d29bd940e89@brauner>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 29 May 2024 10:29:24 +0200
+Message-ID: <CANn89iLOqXZO_nD0FBUvJypgTA6NTL2dKvXYDxpMuZReYZXFDQ@mail.gmail.com>
+Subject: Re: [PATCH net] ipv4: correctly iterate over the target netns in inet_dump_ifaddr()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, kuba@kernel.org, 
+	dsahern@kernel.org, pabeni@redhat.com, stgraber@stgraber.org, 
+	davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240527172650.kieptfl3zhyljkzx@airbuntu>
 
-On 2024-05-27 18:26:50 [+0100], Qais Yousef wrote:
-> > In order to be PI-boosted you need to acquire a lock and the only lock
-> > you can sleep while acquired without generating a warning is a mutex_t
-> > (or equivalent sleeping lock) on PREEMPT_RT.=20
->=20
-> Note we care about the behavior for !PREEMPT_RT. PI issues are important =
-there
-> too. I assume the fact the PREEMPT_RT changes the locks behavior is what =
-you're
-> referring to here and not applicable to normal case.
+On Wed, May 29, 2024 at 9:49=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, May 28, 2024 at 10:30:30PM +0200, Alexander Mikhalitsyn wrote:
+> > A recent change to inet_dump_ifaddr had the function incorrectly iterat=
+e
+> > over net rather than tgt_net, resulting in the data coming for the
+> > incorrect network namespace.
+> >
+> > Fixes: cdb2f80f1c10 ("inet: use xa_array iterator to implement inet_dum=
+p_ifaddr()")
+> > Reported-by: St=C3=A9phane Graber <stgraber@stgraber.org>
+> > Closes: https://github.com/lxc/incus/issues/892
+> > Bisected-by: St=C3=A9phane Graber <stgraber@stgraber.org>
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
+> > Tested-by: St=C3=A9phane Graber <stgraber@stgraber.org>
+> > ---
+>
+> Acked-by: Christian Brauner <brauner@kernel.org>
 
-So for !PREEMPT_RT you need a rtmutex for PI. RCU and i2c is using it
-within the kernel and this shouldn't go via the `slack' API.
+Thanks a lot for the bisection and the fix !
 
-The FUTEX API on the other hand is a different story and it might
-matter. So you have one task running SCHED_OTHER and acquiring a lock in
-userspace (pthread_mutex_t, PTHREAD_PRIO_INHERIT). Another task running
-at SCHED_FIFO/ RR/ DL would also acquire that lock, block on it and
-then inherit its priority.
-This is the point where the former task has a different policy vs
-priority considering PI-boosting. You could argue that the task
-shouldn't sleep or invoke anything possible sleeping with a timeout > 0
-because it is using an important lock.
-But then it is userland and has the freedom to do whatever it wants you
-know=E2=80=A6
-
-So it might be better to forget what I said and keeping the current
-behaviour. But then it is insistent which matters only in the RT case.
-Puh. Any sched folks regarding policy?
-
-> Thanks!
-
-Sebastian
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
