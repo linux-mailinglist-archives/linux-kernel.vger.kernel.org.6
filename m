@@ -1,93 +1,123 @@
-Return-Path: <linux-kernel+bounces-194117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD3C8D36D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:56:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 920BF8D36E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF9FB22333
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43E81C22432
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD34748D;
-	Wed, 29 May 2024 12:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22578BFF;
+	Wed, 29 May 2024 12:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2pdmLTK7"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNZ87PUJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210B7746E;
-	Wed, 29 May 2024 12:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E9779D3;
+	Wed, 29 May 2024 12:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716987368; cv=none; b=jQbm9IHrNBjbN0ygaQpYQv9KDkyXUwaW/DTqbr4RcLr0150wXft9fUfGzBMupsLNRTb8oy3xCFYFQQ0/lDXvpwBFb6FmO4fjJuHKMva3pcGB75uDtgSfms71QHYwQl7bGVZrHT/sL++FpVI3TVzXCLcRWv76D6OUW6voDmDnTMg=
+	t=1716987470; cv=none; b=IROBqZBmDWa+mvx+zAdmdtDTWIW48F08t5WJHCQkXUUDeGcKEg3MOPrxrFnObzC8VeGn1Ti/pJgPlJbnEzS+b0TUiKaW7Mkh+39WWA44uhHtpBLHL7nU0C518HLmuttK9iHMB68wtyqQJf5jdsn0hCs0JpRhG4oZzIbMzFjJtsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716987368; c=relaxed/simple;
-	bh=K0nojx5NICne0xfYuxLzroD8EclM47ueGXsA2K0lQEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CmfeYn/E1Oj/PTd9sw4aOPfFaU2/Rkg6dMU3fm2nJAut1uIZ6uBCfQcElAQWp1mp64Mmjmjv98YlpzLBZVnKR2rn3rAOMj5fp6HAt1UYNoIEU1aoY61uL1kAXsGil6PjergvtLOmMjCHmADTbmVSxCTtep02cRSir18iiQOeAUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2pdmLTK7; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716987363;
-	bh=K0nojx5NICne0xfYuxLzroD8EclM47ueGXsA2K0lQEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2pdmLTK7kJ4wgg5/z5uUyLQptgLBjrf9EbPZ3W1OvhYwXRq77t9L+sZdfb9RxyuM3
-	 VO44uwPjGxVa0r9KI5tiSzhgd54hUgxReMmt3gfRaRYfJTdnjZ75GNmzhiq8405dLn
-	 Dvxy4LbHwxUH9rc/zF16WKoGdcG6g+/zRLFTHKfX9FU4kfQjX2YkRxz6pAaEGUqApm
-	 P3dVa2bTAoKoglk+xQCxnc83YKqeoEZQ+9czJC9KmC2462PKSNdCRXWNGWZ6TD3s+k
-	 U/cNXFhPRU2dPuu4QF1C7av4gVkyyfAyKuJQG5smueCniB92Cq1MeXIY1Y+Vp/PsEM
-	 5OovF5J2P3NSA==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7C357378205D;
-	Wed, 29 May 2024 12:56:02 +0000 (UTC)
-Date: Wed, 29 May 2024 08:56:00 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 2/2] spi: Check if transfer is mapped before calling
- DMA sync APIs
-Message-ID: <08b3087b-2a35-4921-b0dd-b57996d6df19@notapiano>
-References: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
- <20240522171018.3362521-3-andriy.shevchenko@linux.intel.com>
- <4748499f-789c-45a8-b50a-2dd09f4bac8c@notapiano>
- <60691eb7-ca16-4547-8744-f9bfae919a3f@notapiano>
- <ZlckBe02dybokq94@smile.fi.intel.com>
+	s=arc-20240116; t=1716987470; c=relaxed/simple;
+	bh=Kf2XD0U6dqkRaiIXSiX5t61ZvzMR1rEAHQmrTquShYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uG/J2/gE1BKSUuD/6KkPj21dxOcqJI7goc0YRuUC2hI+n0s8e6nJKH7HGfS+ChLnJHPLvUU/JD0SmpK8kPqYjWia63VsOgb0aOA+KFGnXE6sZwGXfivcA0UMGpS/fLJu4B25TFQB825nlJRABmx9PZh86knWKbjBZBJTaJKtrHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNZ87PUJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E50DAC2BD10;
+	Wed, 29 May 2024 12:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716987469;
+	bh=Kf2XD0U6dqkRaiIXSiX5t61ZvzMR1rEAHQmrTquShYc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qNZ87PUJnddl+YKpyYkoqkIOY7lxogibjj0LcSsel5rTqUAJHzV9cS0cXF6UA9i6W
+	 n8YKQVHmqxrzAuin6o/k3NANI7Vb5tJu8EYnkGHzvVH4jku1PdLqZRi9BrLCb7pJgG
+	 ionX4DNbdk+zSyIO0SV1Un0NBoUL6CKhSFrsKOnAk1SPeJhuVY+tP56SvC38dR+u3Q
+	 wrlh9v056yQf6UUoJK0MJiU75I46ZFXw4rYpVGDEfw21TfVuAxtfu36D27WXAX6yml
+	 gAWiwoUYRfwi3vMagQywszbDODHLln3y45LaTBg76RKxyhB58un7qoiHRf60yjXTPS
+	 PmyDiJ3bLvCaQ==
+Message-ID: <c8e2d859-ff7c-4ea1-a731-b0f0500ba8c6@kernel.org>
+Date: Wed, 29 May 2024 14:57:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZlckBe02dybokq94@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: cache: qcom,llcc: Add SA8775p
+ description
+To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20240529101534.3166507-1-quic_tengfan@quicinc.com>
+ <20240529101534.3166507-2-quic_tengfan@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240529101534.3166507-2-quic_tengfan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 29, 2024 at 03:48:05PM +0300, Andy Shevchenko wrote:
-> On Wed, May 29, 2024 at 08:35:26AM -0400, Nícolas F. R. A. Prado wrote:
-> > On Wed, May 22, 2024 at 02:41:51PM -0400, Nícolas F. R. A. Prado wrote:
-> > > On Wed, May 22, 2024 at 08:09:50PM +0300, Andy Shevchenko wrote:
+On 29/05/2024 12:15, Tengfei Fan wrote:
+> Add the cache controller compatible and register region descriptions for
+> SA8775p platform.
 > 
-> [..]
-> 
-> > I can send this patch to the list myself with your authorship, I just need
-> > your SoB.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> P.S. Sorry for the delay, I was and still is on a sick leave.
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
 
-No need to be sorry, health comes first. Hope you get better soon! :)
 
-Thanks,
-Nícolas
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
