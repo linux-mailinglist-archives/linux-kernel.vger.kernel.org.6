@@ -1,278 +1,234 @@
-Return-Path: <linux-kernel+bounces-194658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140EF8D3F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:29:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43F28D3FB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9A0286DDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:29:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6DA9B26759
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0031C9EDE;
-	Wed, 29 May 2024 20:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CFF1C8FA1;
+	Wed, 29 May 2024 20:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YyZMyHzf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CKwZ6vKp"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEE01C8FB7;
-	Wed, 29 May 2024 20:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74941C68AB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717014518; cv=none; b=GABv32gei74P0lXjrgEsRa1o2O8Vn1YkzeWRkW0nC1zVpJTMK2P4xF9YGqyzAGzBko68rNzZyO67qI7HqGctT87tpWj4V7FwZ08Q3N2P9JMRHKLa0ryxVAjChCqkh9Q4emv0Me1rZe/yU1nD9Semsh9Ga90b29xN7IOX4LHjQz8=
+	t=1717014910; cv=none; b=YYHlMiWkVg34fUkd7/UaHb4sOJPo5prI4pC+olYgcOuTWRIhbJMb3wcnBYlMl1LPYRcfxizLJKvcKa8Bo1AEsznBYVM7kduyYHKpxqcYTHYg4YBhHyQPkhqTgEci8qYIoUzvSSzVKie7128PZ5ZqzeJzP/gj7HV32JnMgWPWZko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717014518; c=relaxed/simple;
-	bh=OzDhCGOxOXfNQnK7LQxh+1TRrj9b9K7AgFE2duCxNjs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eJzACIxtjNG1d6WcXqvdARl21B2qE729WebFfQ4nFjTd67JCqbEVeOGKPl8yMmmvvu16rzMs6Tby9/C190HTrbAwfXFfMgi5uLngJ6cEo/8uhsGvQrKaHca5zKpnOY3uylp+8K5+VoHRKmpgjIu1LK0G8OFFN+y1iI/80uT/CZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YyZMyHzf; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717014517; x=1748550517;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OzDhCGOxOXfNQnK7LQxh+1TRrj9b9K7AgFE2duCxNjs=;
-  b=YyZMyHzfiX9Jh0HUAiNNOMnQmdP3IO9Xy/nJs5iBFZp7/DgnXdyfOQvX
-   ++LMLIO7RLyO5kIWaQx97YqRBvpNBEDJr9tPxY4WPE+JJbVEoLUvdlG8S
-   JrYgZbCewIMSAOuNF0HKJc38457LPe/evVhpl3zNULvZvVfckWehLkawV
-   lhGE/exqCMkWczMmA5SgWLF4/Q4w0E7djQ19kXW4eUysEWVDhhEgvkvk/
-   fV7KrCfmzpnuRktvHdy1aKEOB948IqKUI268lKD8Q4QtSuYJy4QVg8v5V
-   23+3y3vMIrBZ/wMgut7+oBW+G8VOTZFqUqySp9s+VnciEf+bFTh33OgMz
-   Q==;
-X-CSE-ConnectionGUID: AdGIypunSa2mG82IbUnIUQ==
-X-CSE-MsgGUID: Y2t8jaDaTTOLk/gW3w+U9w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13574568"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13574568"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 13:28:35 -0700
-X-CSE-ConnectionGUID: 3ztwErLcQl+m1YgkHjaImw==
-X-CSE-MsgGUID: 5DX4HpxrRemJsikK5emZKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="35491299"
-Received: from jacob-builder.jf.intel.com ([10.54.39.125])
-  by fmviesa007.fm.intel.com with ESMTP; 29 May 2024 13:28:35 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: X86 Kernel <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Ingo Molnar" <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>,
-	linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <andi.kleen@intel.com>,
-	"Xin Li" <xin3.li@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 6/6] x86/irq: Enable NMI source on IPIs delivered as NMI
-Date: Wed, 29 May 2024 13:33:25 -0700
-Message-Id: <20240529203325.3039243-7-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
-References: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
+	s=arc-20240116; t=1717014910; c=relaxed/simple;
+	bh=fapBRwr7N+bwxyICl1DbraOozMbVgHVNKigU8lMsAFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dw8m56LCkfTL0ZuVjKLMtWca1Ld1uElSHKoephfS0KuaB/sofk/1RPINFHWA8Opui7ElbwMTKlj8YXRGDAU8rImDKAKE/sADISPJryJBxOtQ5ZjGQnINtE1DccJyZbx8536nAtXmjhlCIP0MZU5Djj8b4FtyWAC7+oGGJO06FQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CKwZ6vKp; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7022cabdc0aso305691b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717014908; x=1717619708; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q4R2w4xWQ6PatLB6R5HSZ3uYzsk47/bCihA9HMiSc+o=;
+        b=CKwZ6vKpENAgvaRC4iAqT6Ko5NaIT+5CVSAL7ggVoByMNfagwDGcbY3wjZqvLvPTG2
+         2oxwrGbE0NtWwJ08LmyFsxXI0mp2wtBXk8SsK3D44bKaXjnjFvxmc/oGZIS2KY3Yinbp
+         LJicoUbwlcpfN21r0M4BwQqL1w6Jb84hqVqYaOG5REZkok17Bd8PkFa5KqsOX3NkJ65P
+         1ULoZJIw3LzrKROu2wP4wpRgtj3jbEmLxZKVDZ6VkcoGXoflBFcK5OtWuucMKkchFkeo
+         0dOdRRhZblw0HQCrlhc6XnO57RdAffiUES5MZWxDKIsZ6T4simhaFKDRsmIQGXq9voCe
+         KYGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717014908; x=1717619708;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q4R2w4xWQ6PatLB6R5HSZ3uYzsk47/bCihA9HMiSc+o=;
+        b=BMpSxrIt9582JP/2FvBsFT+mC3373NK7OIEpiGr1kM0Mc7gziW2gurti2crDmSOUyp
+         AVyhn7v40g7UfwwIEdkiwHYvqA1EwfOXucXBIu7F62oHZx+7Pu17TrxLA7lnhrqktGH4
+         iIKKTYGzBF3wtc8pI/MustEq4EeXR8d894kpAIm4BHv09uELzpIxAdnylvug8yRacGuA
+         o//4NUyFUJxM6NqLvEICQhoTltre4a/K/80o+8IId9h9qWoPfFCzKeDU5zSkaoABzYs/
+         PV4Sap7kdPzQJUHXdBbu+JNYFLBlblDXW055q234x7UwlPp0YERQhc/Tr1cElhEU1uX3
+         aqpg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/j2r1TjWd5w6q3A52sCdcI7U5Msw+W6vi6TK5pFlZ57bNBHQvdbbkBHmEtBCojCF1RTpYvJ/9BTyW59p39jP2ckUBpDGepyqKFwB+
+X-Gm-Message-State: AOJu0YwA6MaZb9M2tLaVDQ28jkxUpE1nFJ/0kx+ASYaPf+Jemme3F4kv
+	rUJ0xNrFFyfuniNqHnOEDc4lpoEphb5Rqzr8TKGRcCo7RJFxLEwh0vfEYtiPc9k=
+X-Google-Smtp-Source: AGHT+IG5f8QdrwFNWTz+gMWVv1LraPXZQk/5mqFSbYPG/HdxM6UCLn6jBEyoiEpoKriP0ewd/4J1Vg==
+X-Received: by 2002:a05:6a21:1f28:b0:1a9:d27c:3151 with SMTP id adf61e73a8af0-1b259aba6ebmr4090148637.23.1717014907887;
+        Wed, 29 May 2024 13:35:07 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:bffd:785e:5b80:dd8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822092b723sm8034692a12.14.2024.05.29.13.35.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 13:35:07 -0700 (PDT)
+Date: Wed, 29 May 2024 14:35:04 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
+Message-ID: <ZleReEIgD8O5zATO@p14s>
+References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
+ <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
+ <ZlZM/hgSO4EeRVqS@p14s>
+ <d9e1356a-d8bf-40a3-9a78-424ead8089a9@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9e1356a-d8bf-40a3-9a78-424ead8089a9@foss.st.com>
 
-Program designated NMI source vectors for all NMI delivered IPIs
-such that their handlers can be selectively invoked.
+On Wed, May 29, 2024 at 09:13:26AM +0200, Arnaud POULIQUEN wrote:
+> Hello Mathieu,
+> 
+> On 5/28/24 23:30, Mathieu Poirier wrote:
+> > On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
+> >> 1) on start:
+> >> - Using the TEE loader, the resource table is loaded by an external entity.
+> >> In such case the resource table address is not find from the firmware but
+> >> provided by the TEE remoteproc framework.
+> >> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
+> >> - test that rproc->cached_table is not null before performing the memcpy
+> >>
+> >> 2)on stop
+> >> The use of the cached_table seems mandatory:
+> >> - during recovery sequence to have a snapshot of the resource table
+> >>   resources used,
+> >> - on stop to allow  for the deinitialization of resources after the
+> >>   the remote processor has been shutdown.
+> >> However if the TEE interface is being used, we first need to unmap the
+> >> table_ptr before setting it to rproc->cached_table.
+> >> The update of rproc->table_ptr to rproc->cached_table is performed in
+> >> tee_remoteproc.
+> >>
+> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >> ---
+> >>  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
+> >>  1 file changed, 23 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >> index 42bca01f3bde..3a642151c983 100644
+> >> --- a/drivers/remoteproc/remoteproc_core.c
+> >> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
+> >>  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
+> >>  {
+> >>  	struct resource_table *loaded_table;
+> >> +	struct device *dev = &rproc->dev;
+> >>  
+> >>  	/*
+> >>  	 * The starting device has been given the rproc->cached_table as the
+> >> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
+> >>  	 * this information to device memory. We also update the table_ptr so
+> >>  	 * that any subsequent changes will be applied to the loaded version.
+> >>  	 */
+> >> -	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >> -	if (loaded_table) {
+> >> -		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >> -		rproc->table_ptr = loaded_table;
+> >> +	if (rproc->tee_interface) {
+> >> +		loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
+> >> +		if (IS_ERR(loaded_table)) {
+> >> +			dev_err(dev, "can't get resource table\n");
+> >> +			return PTR_ERR(loaded_table);
+> >> +		}
+> >> +	} else {
+> >> +		loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >>  	}
+> >>  
+> >> +	if (loaded_table && rproc->cached_table)
+> >> +		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >> +
+> > 
+> > Why is this not part of the else {} above as it was the case before this patch?
+> > And why was an extra check for ->cached_table added?
+> 
+> Here we have to cover 2 use cases if rproc->tee_interface is set.
+> 1) The remote processor is in stop state
+>      - loaded_table points to the resource table in the remote memory and
+>      -  rproc->cached_table is null
+>      => no memcopy
+> 2) crash recovery
+>      - loaded_table points to the resource table in the remote memory
+>      - rproc-cached_table point to a copy of the resource table
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- arch/x86/include/asm/irq_vectors.h | 10 ++++++++++
- arch/x86/kernel/apic/hw_nmi.c      |  3 ++-
- arch/x86/kernel/apic/ipi.c         |  4 ++--
- arch/x86/kernel/apic/local.h       | 18 ++++++++++++------
- arch/x86/kernel/cpu/mce/inject.c   |  2 +-
- arch/x86/kernel/kgdb.c             |  2 +-
- arch/x86/kernel/nmi_selftest.c     |  2 +-
- arch/x86/kernel/reboot.c           |  2 +-
- arch/x86/kernel/smp.c              |  2 +-
- 9 files changed, 31 insertions(+), 14 deletions(-)
+A cached_table exists because it was created in rproc_reset_rsc_table_on_stop().
+But as the comment says [1], that part of the code was meant to be used for the
+attach()/detach() use case.  Mixing both will become extremely confusing and
+impossible to maintain.
 
-diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
-index b8388bc00cde..a13ce6e96542 100644
---- a/arch/x86/include/asm/irq_vectors.h
-+++ b/arch/x86/include/asm/irq_vectors.h
-@@ -126,6 +126,16 @@
- #define NMI_SOURCE_VEC_IPI_TEST		7	/* For remote and local IPIs*/
- #define NR_NMI_SOURCE_VECTORS		8
- 
-+/*
-+ * When programming the local APIC, IDT NMI vector and NMI source vector
-+ * are encoded in a single 32 bit variable. The top 16 bits contain
-+ * the NMI source vector and the bottom 16 bits contain NMI_VECTOR (2)
-+ * The top 16 bits are always zero when NMI source feature is not enabled
-+ * or the caller does not use NMI source.
-+ */
-+#define NMI_VECTOR_WITH_SOURCE(src)	(NMI_VECTOR | (src << 16))
-+#define NMI_SOURCE_VEC_MASK		GENMASK(15, 0)
-+
- #ifdef CONFIG_X86_LOCAL_APIC
- #define FIRST_SYSTEM_VECTOR		POSTED_MSI_NOTIFICATION_VECTOR
- #else
-diff --git a/arch/x86/kernel/apic/hw_nmi.c b/arch/x86/kernel/apic/hw_nmi.c
-index 9f0125d3b8b0..f73ca95d961e 100644
---- a/arch/x86/kernel/apic/hw_nmi.c
-+++ b/arch/x86/kernel/apic/hw_nmi.c
-@@ -20,6 +20,7 @@
- #include <linux/nmi.h>
- #include <linux/init.h>
- #include <linux/delay.h>
-+#include <asm/irq_vectors.h>
- 
- #include "local.h"
- 
-@@ -33,7 +34,7 @@ u64 hw_nmi_get_sample_period(int watchdog_thresh)
- #ifdef arch_trigger_cpumask_backtrace
- static void nmi_raise_cpu_backtrace(cpumask_t *mask)
- {
--	__apic_send_IPI_mask(mask, NMI_VECTOR);
-+	__apic_send_IPI_mask(mask, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_BT));
- }
- 
- void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
-diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
-index 5da693d633b7..9d2b18e58758 100644
---- a/arch/x86/kernel/apic/ipi.c
-+++ b/arch/x86/kernel/apic/ipi.c
-@@ -157,7 +157,7 @@ static void __default_send_IPI_shortcut(unsigned int shortcut, int vector)
- 	 * issues where otherwise the system hangs when the panic CPU tries
- 	 * to stop the others before launching the kdump kernel.
- 	 */
--	if (unlikely(vector == NMI_VECTOR))
-+	if (unlikely(is_nmi_vector(vector)))
- 		apic_mem_wait_icr_idle_timeout();
- 	else
- 		apic_mem_wait_icr_idle();
-@@ -174,7 +174,7 @@ void __default_send_IPI_dest_field(unsigned int dest_mask, int vector,
- 				   unsigned int dest_mode)
- {
- 	/* See comment in __default_send_IPI_shortcut() */
--	if (unlikely(vector == NMI_VECTOR))
-+	if (unlikely(is_nmi_vector(vector)))
- 		apic_mem_wait_icr_idle_timeout();
- 	else
- 		apic_mem_wait_icr_idle();
-diff --git a/arch/x86/kernel/apic/local.h b/arch/x86/kernel/apic/local.h
-index 842fe28496be..60e90b7bf058 100644
---- a/arch/x86/kernel/apic/local.h
-+++ b/arch/x86/kernel/apic/local.h
-@@ -12,6 +12,7 @@
- 
- #include <asm/irq_vectors.h>
- #include <asm/apic.h>
-+#include <asm/nmi.h>
- 
- /* X2APIC */
- void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
-@@ -26,19 +27,24 @@ extern u32 x2apic_max_apicid;
- 
- DECLARE_STATIC_KEY_FALSE(apic_use_ipi_shorthand);
- 
-+static inline bool is_nmi_vector(int vector)
-+{
-+	return (vector & NMI_SOURCE_VEC_MASK) == NMI_VECTOR;
-+}
-+
- static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
- 					 unsigned int dest)
- {
- 	unsigned int icr = shortcut | dest;
- 
--	switch (vector) {
--	default:
--		icr |= APIC_DM_FIXED | vector;
--		break;
--	case NMI_VECTOR:
-+	if (is_nmi_vector(vector)) {
- 		icr |= APIC_DM_NMI;
--		break;
-+		if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-+			icr |= vector >> 16;
-+	} else {
-+		icr |= APIC_DM_FIXED | vector;
- 	}
-+
- 	return icr;
- }
- 
-diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
-index 365a03f11d06..07bc6c29bd83 100644
---- a/arch/x86/kernel/cpu/mce/inject.c
-+++ b/arch/x86/kernel/cpu/mce/inject.c
-@@ -270,7 +270,7 @@ static void __maybe_unused raise_mce(struct mce *m)
- 					mce_irq_ipi, NULL, 0);
- 				preempt_enable();
- 			} else if (m->inject_flags & MCJ_NMI_BROADCAST)
--				__apic_send_IPI_mask(mce_inject_cpumask, NMI_VECTOR);
-+				__apic_send_IPI_mask(mce_inject_cpumask, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_MCE));
- 		}
- 		start = jiffies;
- 		while (!cpumask_empty(mce_inject_cpumask)) {
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index d167eb23cf13..02198cf9fe21 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -416,7 +416,7 @@ static void kgdb_disable_hw_debug(struct pt_regs *regs)
-  */
- void kgdb_roundup_cpus(void)
- {
--	apic_send_IPI_allbutself(NMI_VECTOR);
-+	apic_send_IPI_allbutself(NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_KGDB));
- }
- #endif
- 
-diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
-index f014c8a66b0c..5aa122d3368c 100644
---- a/arch/x86/kernel/nmi_selftest.c
-+++ b/arch/x86/kernel/nmi_selftest.c
-@@ -76,7 +76,7 @@ static void __init test_nmi_ipi(struct cpumask *mask)
- 	/* sync above data before sending NMI */
- 	wmb();
- 
--	__apic_send_IPI_mask(mask, NMI_VECTOR);
-+	__apic_send_IPI_mask(mask, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_TEST));
- 
- 	/* Don't wait longer than a second */
- 	timeout = USEC_PER_SEC;
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index acc19c1d3b4f..fb63bc0d6a0f 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -918,7 +918,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	 */
- 	wmb();
- 
--	apic_send_IPI_allbutself(NMI_VECTOR);
-+	apic_send_IPI_allbutself(NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_REBOOT));
- 
- 	/* Kick CPUs looping in NMI context. */
- 	WRITE_ONCE(crash_ipi_issued, 1);
-diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
-index f27469e40141..b79e78762a73 100644
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -217,7 +217,7 @@ static void native_stop_other_cpus(int wait)
- 			pr_emerg("Shutting down cpus with NMI\n");
- 
- 			for_each_cpu(cpu, &cpus_stop_mask)
--				__apic_send_IPI(cpu, NMI_VECTOR);
-+				__apic_send_IPI(cpu, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_SMP_STOP));
- 		}
- 		/*
- 		 * Don't wait longer than 10 ms if the caller didn't
--- 
-2.25.1
+I think the TEE scenario should be as similar as the "normal" one where TEE is
+not involved.  To that end, I suggest to create a cached_table in
+tee_rproc_parse_fw(), exactly the same way it is done in
+rproc_elf_load_rsc_table().  That way the code path in
+rproc_set_rsc_table_on_start() become very similar and we have a cached_table to
+work with when the remote processor is recovered.  In fact we may not need
+rproc_set_rsc_table_on_start() at all but that needs to be asserted.
 
+[1]. https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/remoteproc/remoteproc_core.c#L1565
+
+>      => need to perform the memcpy to reapply settings in the resource table
+> 
+> I can duplicate the memcpy in if{} and else{} but this will be similar code
+> as needed in both case.
+> Adding rproc->cached_table test if proc->tee_interface=NULL seems also
+> reasonable as a memcpy from 0 should not be performed.
+> 
+> 
+> > 
+> > This should be a simple change, i.e introduce an if {} else {} block to take
+> > care of the two scenarios.  Plus the comment is misplaced now. 
+> 
+> What about split it in 2 patches?
+> - one adding the test on rproc->cached_table for the memcpy
+> - one adding the if {} else {}?
+> 
+> Thanks,
+> Arnaud
+> 
+> 
+> > 
+> > More comments tomorrow.
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> >> +	rproc->table_ptr = loaded_table;
+> >> +
+> >>  	return 0;
+> >>  }
+> >>  
+> >> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> >>  	kfree(rproc->clean_table);
+> >>  
+> >>  out:
+> >> -	/*
+> >> -	 * Use a copy of the resource table for the remainder of the
+> >> -	 * shutdown process.
+> >> +	/* If the remoteproc_tee interface is used, then we have first to unmap the resource table
+> >> +	 * before updating the proc->table_ptr reference.
+> >>  	 */
+> >> -	rproc->table_ptr = rproc->cached_table;
+> >> +	if (!rproc->tee_interface) {
+> >> +		/*
+> >> +		 * Use a copy of the resource table for the remainder of the
+> >> +		 * shutdown process.
+> >> +		 */
+> >> +		rproc->table_ptr = rproc->cached_table;
+> >> +	}
+> >>  	return 0;
+> >>  }
+> >>  
+> >> -- 
+> >> 2.25.1
+> >>
 
