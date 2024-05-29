@@ -1,88 +1,65 @@
-Return-Path: <linux-kernel+bounces-193754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898008D3197
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:36:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D688D321E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA92C1C23DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:36:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDCDAB28B1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC5516F0E5;
-	Wed, 29 May 2024 08:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B8C15CD66;
+	Wed, 29 May 2024 08:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSlKwQV6"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="zLb6CzVN"
+Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3CE16A380;
-	Wed, 29 May 2024 08:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370D24DA08
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716971490; cv=none; b=Mleta4djfW7Y57eolemQY6XXeAfwmU7USDHmqEEvSgBmT4Ofe8hOyHwjejvwhrfOlJLyvhBzs4NG233ueh1V2OY4wL9AziIqJdNiPRTB2r5Nuejo6TMvzxgRS1X3BtrBNjGyEh7OdM1H5LRU2oE/i5bVDDJm9dvEhzZ3oX62DRI=
+	t=1716971554; cv=none; b=Zma3BFC+jTB2RMhon1f3KiRddLWNRJccv8oEHI5mSvSb2JDThoAgfkpD4fMB2woZPgfoSDvJ+UGJHCDwIHJCKN0r7+rLfUTD6nzHXyrg7EeY2rjE5zmD3MjBIcZTvgqWx3D9ZlRPj0C+kRYZxh2R7/B7hhy/dQqa7RdJXGFgCMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716971490; c=relaxed/simple;
-	bh=g8wLVx6SzI7f5hfBWjCx8/IiFtnpI5IJH84ulc3VsEM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9efdMUX5247T9Ry709p23zO0JelV/jtT5L5wiP9eE5KM6MfoK9sEbh/9t0X8k6Qce1/gIB7GNq4ZHLV3j6f/b1wfToAvq+nltltveq1eOQ56jdXBNgWIIKOhVKCp2wxSPTkz+U7OwZtfEVrCyXZJv0fLOJRdWoxD8z8YY4o4tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eSlKwQV6; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42101a2ac2cso15301675e9.0;
-        Wed, 29 May 2024 01:31:28 -0700 (PDT)
+	s=arc-20240116; t=1716971554; c=relaxed/simple;
+	bh=KqkqMm+91wYOeZTvCbVYyirrfOGlhLhMNaEStz+8LBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TQEQyOLlt/e3qGjJPQA47P/5WdSzIAwUcQ2L6PEeF70s/2f0yLqeAWPuvfw3npmPdha2Lm2sFgP0RTMIYZE0wxrbE+hhKqjfW+kKE4MfKBwtPo1AYsZwHMynnNOpgNXrY2Kg6J/WsSQLvjIWtC6wOr74qPDHeE739hWVEtPOZIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=zLb6CzVN; arc=none smtp.client-ip=211.125.140.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716971487; x=1717576287; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rn7yPS61VZDyN0hXW0NrmYKzmNUSInF0ZrwB9evZ1F8=;
-        b=eSlKwQV65+3CTLQvtQrK4CTKupGaewTEFgzelyuGJx2eT2E93IlP6IMcNqPy4sYU2u
-         7O8DFaPj5YoWwQrL2Lk+rHTTkzeCIR1o5iPQcRRI9LLVbPPBMWIkjvhlAttlUiWddqXc
-         EXQkIHIXKP6+K/lBfSizSPyJKZ4HYB+T0Cg9rY0kh/CItemTiHWICxxIY+aODcjFBdvj
-         3TXqAuMJvP+90SNN7x7xKfctY9nPxrbcCJeZVwK1YyS0xkEZMaODEO/ufLvUsfRJd3dJ
-         hv8fkuO/3msPnLoP7Mhmvwl9l6zJht84i3QS+zn0GUNJ1L4XjRPbzdHNh79QGzhcsAhl
-         +IGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716971487; x=1717576287;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rn7yPS61VZDyN0hXW0NrmYKzmNUSInF0ZrwB9evZ1F8=;
-        b=u76IGlEtY7brFr7aMwLI1rF7NPWdXFfc1GaEzEedJ4L7li9NtWoGzB2GJO/WAW4+t9
-         V4E8kwf5X6XmlezL9pcTWza5nSBvUtgl9ZOn9otryNedlm8JbOmR9gdBl2+QNuI1FS9d
-         vP82guQWpEzQCJN8LQQqizBslaBr+1MBj0RD5rK0qtWZV+e8yBZB8MWelCFDHBf/Ncol
-         yXma7yuY8IXBPMpGvrboG6a+vfwaF2pyW635IxkFB2L9QJirvrf0xKBWvBCFKDLGuONU
-         bpQ5nfQ4FvKLMhwExBR1iHxyRiDsHAZJoVJFsjqHAFOCIqiihG4vSph3nVD86e74pvIc
-         tJ+g==
-X-Forwarded-Encrypted: i=1; AJvYcCW1BpSWuw6eO90jppbWx6/JAzJNZMO1TB7qMWhjCTGiXCoBzKJ0LNZ8P5oA76gDJG4pVf5mzcrQ3NxphMYrqgRgzwfTSTn3xnLg4145j4KyV09LL2TFNnPmBESOeG2hYY9r
-X-Gm-Message-State: AOJu0YxLUsk9oDJJ8Z8AovKTuopx3MjBTsQUGtJXPQKWCYCQkNz73bRd
-	0IuY9AieWRHSG2vDyE3y2wxY2AvUmRIMJbeS25spQY0fxLCFu2to
-X-Google-Smtp-Source: AGHT+IHI3lJArJXzafeVRrKWqyHrhTUty+cf9AUiuyoKb+lHZLYh8EC0aY14fLhOqSAqg6nNMo5YFQ==
-X-Received: by 2002:adf:e444:0:b0:356:4cfa:b4b9 with SMTP id ffacd0b85a97d-3564cfaecfdmr8805125f8f.2.1716971486900;
-        Wed, 29 May 2024 01:31:26 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-358a33e6f03sm9046320f8f.36.2024.05.29.01.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:31:26 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 29 May 2024 10:31:24 +0200
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, LKML <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org, Aleksei Shchekotikhin <alekseis@google.com>,
-	Nilay Vaish <nilayvaish@google.com>
-Subject: Re: [PATCH v2] bpf: Allocate bpf_event_entry with node info
-Message-ID: <Zlbn3DOGrzHlw95h@krava>
-References: <20240529065311.1218230-1-namhyung@kernel.org>
+  d=sony.com; s=s1jp; t=1716971552; x=1748507552;
+  h=date:from:to:cc:subject:message-id:reply-to:mime-version;
+  bh=HVA1zeIRxUQKNTk6fHoyQMZWXuIH5enpzbqpIdOvEwo=;
+  b=zLb6CzVNNy9jDgqUkSD39/QNt+XLBIFErF9Yjr86WmmV1mMlN1O/Tl1D
+   BA53GR0s5FN3MNEb//ouitGLXUQcwyw+N+h4+XUB5aL+ntdpjmwYZsYOu
+   /4VYxYREMBSU/T37MfQvfrsK9Fj9DbhMS0taxZMLM68mscuScUXlwbgD9
+   usKRtq6s11+8FrcHIHX8OTQoi0PL0+QprIpja4wg3OOZKOPxxNFerBbWd
+   e040REUfwp8sNukTuHaaZSJ+gucQN2gauhpUkxEGOYrQojzPKKAgsHC+R
+   qJnL9TytNW8NW92ae8TAZw901i2HpbgUGGmBkWQqivG+eCDQZqs2UUvyG
+   Q==;
+Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
+  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 17:32:25 +0900
+X-IronPort-AV: E=Sophos;i="6.08,197,1712588400"; 
+   d="scan'208";a="417552078"
+Received: from unknown (HELO LXJ00013166) ([IPv6:2001:cf8:2:f100:2ef0:5dff:fe04:1f0f])
+  by jpmta-ob1.noc.sony.co.jp with ESMTP; 29 May 2024 17:32:24 +0900
+Date: Wed, 29 May 2024 08:32:24 +0000
+From: Soumya Khasnis <soumya.khasnis@sony.com>
+To: gregkh@linuxfoundation.org, rafael@kernel.org,
+	linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+	festevam@denx.de, lee@kernel.org, benjamin.bara@skidata.com,
+	dmitry.osipenko@collabora.com, ldmldm05@gmail.com,
+	soumya.khasnis@sony.com, srinavasa.nagaraju@sony.com
+Cc: soumya.khasnis@sony.com, srinavasa.nagaraju@sony.com,
+	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
+	keita.aihara@sony.com, masaya.takahashi@sony.com
+Subject: [PATCH] reboot: Add timeout for device shutdown
+Message-ID: <20240529083224.GA71473@sony.com>
+Reply-To: soumya.khasnis@sony.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,55 +68,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529065311.1218230-1-namhyung@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Tue, May 28, 2024 at 11:53:11PM -0700, Namhyung Kim wrote:
-> It was reported that accessing perf_event map entry caused pretty high
-> LLC misses in get_map_perf_counter().  As reading perf_event is allowed
-> for the local CPU only, I think we can use the target CPU of the event
-> as hint for the allocation like in perf_event_alloc() so that the event
-> and the entry can be in the same node at least.
+The device shutdown callbacks invoked during shutdown/reboot
+are prone to errors depending on the device state or mishandling
+by one or more driver. In order to prevent a device hang in such
+scenarios, we bail out after a timeout while dumping a meaningful
+call trace of the shutdown callback which blocks the shutdown or
+reboot process.
 
-looks good, is there any profile to prove the gain?
+Change-Id: Ibfc63ca8f8aa45866cbe6b90401d438d95eca742
+Signed-off-by: Soumya Khasnis <soumya.khasnis@sony.com>
+Signed-off-by: Srinavasa Nagaraju <Srinavasa.Nagaraju@sony.com>
+---
+ drivers/base/Kconfig | 15 +++++++++++++++
+ kernel/reboot.c      | 46 +++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 60 insertions(+), 1 deletion(-)
 
-jirka
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index 2b8fd6bb7da0..d06e379b6281 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -243,3 +243,18 @@ config FW_DEVLINK_SYNC_STATE_TIMEOUT
+ 	  work on.
+ 
+ endmenu
++
++config DEVICE_SHUTDOWN_TIMEOUT
++	bool "device shutdown timeout"
++	default n
++	help
++	   Enable timeout for device shutdown. Helps in case device shutdown
++	   is hung during shoutdonw and reboot.
++
++
++config DEVICE_SHUTDOWN_TIMEOUT_SEC
++	int "device shutdown timeout in seconds"
++	default 5
++	depends on DEVICE_SHUTDOWN_TIMEOUT
++	help
++	  sets time for device shutdown timeout in seconds
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index 22c16e2564cc..8460bd24563b 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -18,7 +18,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/uaccess.h>
+-
++#include <linux/sched/debug.h>
+ /*
+  * this indicates whether you can reboot with ctrl-alt-del: the default is yes
+  */
+@@ -48,6 +48,14 @@ int reboot_cpu;
+ enum reboot_type reboot_type = BOOT_ACPI;
+ int reboot_force;
+ 
++#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
++struct device_shutdown_timeout {
++	struct timer_list timer;
++	struct task_struct *task;
++} devs_shutdown;
++#define SHUTDOWN_TIMEOUT CONFIG_DEVICE_SHUTDOWN_TIMEOUT_SEC
++#endif
++
+ struct sys_off_handler {
+ 	struct notifier_block nb;
+ 	int (*sys_off_cb)(struct sys_off_data *data);
+@@ -88,12 +96,46 @@ void emergency_restart(void)
+ }
+ EXPORT_SYMBOL_GPL(emergency_restart);
+ 
++#ifdef CONFIG_DEVICE_SHUTDOWN_TIMEOUT
++static void device_shutdown_timeout_handler(struct timer_list *t)
++{
++	pr_emerg("**** device shutdown timeout ****\n");
++	show_stack(devs_shutdown.task, NULL, KERN_EMERG);
++	if (system_state == SYSTEM_RESTART)
++		emergency_restart();
++	else
++		machine_power_off();
++}
++
++static void device_shutdown_timer_set(void)
++{
++	devs_shutdown.task = current;
++	timer_setup(&devs_shutdown.timer, device_shutdown_timeout_handler, 0);
++	devs_shutdown.timer.expires = jiffies + SHUTDOWN_TIMEOUT * HZ;
++	add_timer(&devs_shutdown.timer);
++}
++
++static void device_shutdown_timer_clr(void)
++{
++	del_timer(&devs_shutdown.timer);
++}
++#else
++static inline void device_shutdown_timer_set(void)
++{
++}
++static inline void device_shutdown_timer_clr(void)
++{
++}
++#endif
++
+ void kernel_restart_prepare(char *cmd)
+ {
+ 	blocking_notifier_call_chain(&reboot_notifier_list, SYS_RESTART, cmd);
+ 	system_state = SYSTEM_RESTART;
+ 	usermodehelper_disable();
++	device_shutdown_timer_set();
+ 	device_shutdown();
++	device_shutdown_timer_clr();
+ }
+ 
+ /**
+@@ -293,7 +335,9 @@ static void kernel_shutdown_prepare(enum system_states state)
+ 		(state == SYSTEM_HALT) ? SYS_HALT : SYS_POWER_OFF, NULL);
+ 	system_state = state;
+ 	usermodehelper_disable();
++	device_shutdown_timer_set();
+ 	device_shutdown();
++	device_shutdown_timer_clr();
+ }
+ /**
+  *	kernel_halt - halt the system
+-- 
+2.40.0
 
-> 
-> Reported-by: Aleksei Shchekotikhin <alekseis@google.com>
-> Reported-by: Nilay Vaish <nilayvaish@google.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-
-> ---
-> v2) fix build errors
-> 
->  kernel/bpf/arraymap.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-> index feabc0193852..067f7cf27042 100644
-> --- a/kernel/bpf/arraymap.c
-> +++ b/kernel/bpf/arraymap.c
-> @@ -1194,10 +1194,17 @@ static struct bpf_event_entry *bpf_event_entry_gen(struct file *perf_file,
->  						   struct file *map_file)
->  {
->  	struct bpf_event_entry *ee;
-> +	struct perf_event *event = perf_file->private_data;
-> +	int node = -1;
->  
-> -	ee = kzalloc(sizeof(*ee), GFP_KERNEL);
-> +#ifdef CONFIG_PERF_EVENTS
-> +	if (event->cpu >= 0)
-> +		node = cpu_to_node(event->cpu);
-> +#endif
-> +
-> +	ee = kzalloc_node(sizeof(*ee), GFP_KERNEL, node);
->  	if (ee) {
-> -		ee->event = perf_file->private_data;
-> +		ee->event = event;
->  		ee->perf_file = perf_file;
->  		ee->map_file = map_file;
->  	}
-> -- 
-> 2.45.1.288.g0e0cd299f1-goog
-> 
 
