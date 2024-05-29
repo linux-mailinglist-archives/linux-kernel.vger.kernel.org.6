@@ -1,101 +1,99 @@
-Return-Path: <linux-kernel+bounces-194416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EB38D3BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:07:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3908D3BE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CE05281714
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB071282B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED091836E3;
-	Wed, 29 May 2024 16:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CECD1836FE;
+	Wed, 29 May 2024 16:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nOkzWmVk"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xcMnwLhA"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C9417DE14;
-	Wed, 29 May 2024 16:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA77181CF8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716998765; cv=none; b=hCf5BRdB+VZfJbqeElApTHhZdUQBv6KPlhvKL+OmmXD29Uy53/PZlIMiwzkckhWYu+xxSDzeHLAeD/ZjUuGrjKstl0jgn6f9Aoc57uHkTkYZNEnsa2nXS32r7ysEtSPmWP/S6Z0FQJPSahuw924o+L9wG5gDTjsz8hbL/5DluEc=
+	t=1716998872; cv=none; b=NZuxwWgFlP1GyAyhy9RwrsznYnmziCAkvp0KILzmBPXsKDgPcrXHnxk5ZqjyTEb6MrVm0aJJ120b4vn0NlLGfeKcoimYATTQjOSkhOHGcPfMN1mZ0Kk4Shc7+WksM+H43P+cIThX4EQgAUKMs6AnDRT1FuFTIyM2AzzntQRbTqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716998765; c=relaxed/simple;
-	bh=CK8OAPbBbXSoOWPUjOyns04q5VfwYNuBKWySKS482EI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TsyGa+U7oIRuQ3/oSY8hvrlZy2k6LiZqsFpLHQfyeaOnbL9xIkgMsiTw85+1lZKvyEwP9U0/6DdASwgflVvKqmgGKtYPU5KUQolXDuxlPrClTukM5DHldASN3dCLZOGakx5jMeqaTY1RNBjsdIHzQCjkcDbnzpVbPAoKHWXGViE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nOkzWmVk; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 84BBB60005;
-	Wed, 29 May 2024 16:05:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716998759;
+	s=arc-20240116; t=1716998872; c=relaxed/simple;
+	bh=E9DNaoOmfthVbSQNM5zSx1ewbDVsnzuDLD8hcnb2gp0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nbhSrlEjKg+V4HN7eN5fMGscim0ujPiCBpjbSHGd8/G0zFzg31PEEb0mjZU19HOCR8ZmJFaBb4H96rSIO4N/sPepLwnBDj3+eU6GDVeEMcOx66UoJJm4Rvt8QwvB2KJdJZQNmWnZQ1Y/3DabY2jdJ7f2PtOqAjrXr3laUNHSAIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xcMnwLhA; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716998869;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=seDn1vi/ugGwlftgDNRlK7URLt36H1AKmJnfJmt6SmQ=;
-	b=nOkzWmVkHiv5suXZbHQNJKWlM24kofPWPIRmyjduQrM9+ukK4C/yJY9l0/nTT0dAU1ZrSl
-	OCcAcu3TnwA2iohmkJfkHAHcrVGPo97acCokRvBoUlVyhPBcFnwaZsOxfex4pbuXyEMEO1
-	Pz27VosTUyOwdWuC3djd10lUeGrLSJl5NwKpV7aweNF3QdS3ciYHigwbFo02TRw8TuXV0P
-	Bebp65AInAGdRbwoECQOrz8yMmd+11GkyShRCaY8Q3BsgJMBmWAvGZ1vLlhO3YKyM5uwxa
-	ongV+jkwxhSJUEJesYbgzFLhN5aC+IedJBJIK+hf54hqHAncfw3qGyubDfgm7g==
-Date: Wed, 29 May 2024 18:05:56 +0200
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>
-Subject: Re: [PATCH net-next v13 09/14] net: Add the possibility to support
- a selected hwtstamp in netdevice
-Message-ID: <20240529180556.0e500675@windsurf>
-In-Reply-To: <20240529175032.54070c60@kmaincent-XPS-13-7390>
-References: <20240529-feature_ptp_netnext-v13-0-6eda4d40fa4f@bootlin.com>
-	<20240529-feature_ptp_netnext-v13-9-6eda4d40fa4f@bootlin.com>
-	<20240529082111.1a1cbf1e@kernel.org>
-	<20240529175032.54070c60@kmaincent-XPS-13-7390>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KIXA4id9G2CaRpAXjkEzIwnBt0h+Tpbe5UdX8oSDWlk=;
+	b=xcMnwLhAI1ZaHjJfQJolPSG3SR6XQd5C+R63Vp+xElxibh3Jp5gUTavEAijzqbJawBAxWZ
+	ifKwmchh4xU5kIzkREMVlLbqTMhkifQjsjDRDBX88ANAGAU6hu7FXId4j+OW7tzq24zA6S
+	R/SljvB3b5svAHQf2QSid15P3EHsTeo=
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: viro@zeniv.linux.org.uk
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: yuntao.wang@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yuntao Wang <yuntao.wang@linux.dev>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Yuntao Wang <yuntao.wang@linux.dev>
+Subject: [PATCH] fs/file: fix the check in find_next_fd()
+Date: Thu, 30 May 2024 00:06:56 +0800
+Message-ID: <20240529160656.209352-1-yuntao.wang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.petazzoni@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 29 May 2024 17:50:32 +0200
-Kory Maincent <kory.maincent@bootlin.com> wrote:
+The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
+maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
+gives the value of bitbit, which can never be greater than maxfd, it can
+only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
+will never be true.
 
-> > ERROR: modpost: "ptp_clock_phydev" [drivers/net/phy/libphy.ko] undefined!  
-> 
-> Thanks for the report.
-> Weird, it should be in builtin code.
+Moreover, when bitbit equals maxfd, it indicates that there are no unused
+fds, and the function can directly return.
 
-Right, but you don't have an EXPORT_SYMBOL() for it, as far as I can see.
+Fix this check.
 
-Thomas
+Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+---
+ fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index 8076aef9c210..7058901a2154 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -491,7 +491,7 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+ 	unsigned int bitbit = start / BITS_PER_LONG;
+ 
+ 	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+-	if (bitbit > maxfd)
++	if (bitbit >= maxfd)
+ 		return maxfd;
+ 	if (bitbit > start)
+ 		start = bitbit;
 -- 
-Thomas Petazzoni, co-owner and CEO, Bootlin
-Embedded Linux and Kernel engineering and training
-https://bootlin.com
+2.45.1
+
 
