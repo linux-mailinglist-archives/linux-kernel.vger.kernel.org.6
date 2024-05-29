@@ -1,80 +1,88 @@
-Return-Path: <linux-kernel+bounces-193324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517E98D2A4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:02:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DB68D2A50
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E47521F2B077
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9719828B6B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D628A15B124;
-	Wed, 29 May 2024 02:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C8F15ADB5;
+	Wed, 29 May 2024 02:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QPRIznJ4"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFjEqvjJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AD715A856;
-	Wed, 29 May 2024 02:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0301815AAD9;
+	Wed, 29 May 2024 02:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716948096; cv=none; b=MD7eYoUq6JKOpL3k7E5MzsrGDLrhkoZHICk7WvfE6hM6PY7kakoObIljnPvLEimV9cP9aKSVUVKQNQcXOFNNvGhENuobiHM9JkMWrjKLd/hvZyy1avK7rtvAuRfEe9HDhUQkPChwpzKSlOwzi2fQxjtCCa8bX4IXTr5j1u+Y7Z8=
+	t=1716948129; cv=none; b=utu2bNw7azimpdVkVHe1910sWdqw5YNb7/KB9A2sfiJ2xmDIqnd6oO5tXEHnOOGrN/R+a51chP7wjpDf6YZQa+BjYoKsi+FW/vzpAYeRsNu0n3enT40yNZXq0gVDSW/fNz8pAU8PTgPnGEmEnapCDaU7EhMAipM7Dk8dGsZ9bxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716948096; c=relaxed/simple;
-	bh=cjm0d7iJq0ZZy8NXDanN6QOQ8yyu7l9oVdu/MkVpRNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDdjpKuv8o+K6onjgpSc+cEMx2ghOMctnXIo7N2f0B/0sQKw2nk1l7t/mDqSKSKis+kNwf7Smuiz0WIS0ELs/WpBr9jEiMMKIuTHq7oWSYS9rRxI1mwUgkYXp4VWw055/lMn5qwDNSkHXCytJNmJQB6f+o9BEiUcAEGIqI2V7fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=QPRIznJ4; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=W7VynibdGQv1JFv2RbWXbyZjg4WNXsABmpDa7JG50io=; b=QPRIznJ4SQbjdTZHwCXUdxD3wi
-	iguHnEQ10cLXK9n/V6VJZhgX2zIqnZfMPHSXksRjo2pwj/EI6Gr2ohFokkT9uVfDKXI/4opg/e+ff
-	L89UVW0ZOu/7ryKAyEOv4+McyGolM1uCZP+a8PmBKup3+qq+HOiFeFvJ7/jVLB6ANTsUpgMOg+bcG
-	mJYr014oSDEnektFQWy3cpt2WploE0IkkcJgSY4UmzrGrLJhGeGjVuiZ3dlAqQYjWKMldPejk0SaF
-	oJSyXY1v8bKlSJ/eCTHoJEqI0Fdg/D/rgLROJ10rBi9ka7KI/2GcrIewzP48CA+9wXbxyJ8p0IJOW
-	JsA82X1Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sC8d8-001pva-22;
-	Wed, 29 May 2024 02:01:30 +0000
-Date: Wed, 29 May 2024 03:01:30 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+fe42a669c87e4a980051@syzkaller.appspotmail.com,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: Re: [PATCH] fs/dcache: fix warning in ext4_xattr_inode_lookup_create
-Message-ID: <20240529020130.GK2118490@ZenIV>
-References: <0000000000002b03350619853096@google.com>
- <tencent_72297DA3B4444FF762977666C65361437E05@qq.com>
- <20240529015652.GJ2118490@ZenIV>
+	s=arc-20240116; t=1716948129; c=relaxed/simple;
+	bh=ki9XafRlD+raZ2EDl7VVzXwlVnr8DZKn1SI2rrt8tUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i7D5ERxKIiHyEGnhPqxpt4WOc/C6MStnk7E4ymjoUd+2pL3G3mu0ia7f4wipNegX8x3+kLOTmYp1hEt4Brqoqgw2kUmtD1DE9KlpOljL7dWVaCdUi+Y3MbNhW8QNqtRGI/hwOgU5JBM3fVej7vM0/OTTWsKBJB1EQ/MiTK2KBiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFjEqvjJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3287AC3277B;
+	Wed, 29 May 2024 02:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716948128;
+	bh=ki9XafRlD+raZ2EDl7VVzXwlVnr8DZKn1SI2rrt8tUo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gFjEqvjJtpkcg5xU69L9xbKAN3Cm5y5pykOP3LwK23usR9u04uwJmbTh3fPpfTU6b
+	 h94sFotVBKSsF2QA6w527Ume1dfGPymsZE5TgwMI75cUEpvvD3AW7c4+7J/4tKWrsh
+	 R9OtrHzQoUEBWNMDZ0ww24Cu7fWwST+cjDqAKhMoN+vZdrVvVi0EtT3l+oQBi5uQnT
+	 8R59pIJDwvvaRwm+6Ky4UXVXH8qu1q1hBjVIEFwV2q65PsjxswCrrh3sNslj9DO1C9
+	 wvtUU0/icnx+DidqSpRRysgGUU+8obZybh0wwVWQdjFJfj0YxQqGHZEy46aptGt07R
+	 qehuuPeFJc1ew==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabor Juhos <j4g8y7@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Varadarajan Narayanan <quic_varada@quicinc.com>,
+	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+	Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from Stromer pll configs
+Date: Tue, 28 May 2024 21:01:48 -0500
+Message-ID: <171694812081.574781.1941116620101881567.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
+References: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529015652.GJ2118490@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 02:56:52AM +0100, Al Viro wrote:
-> On Wed, May 29, 2024 at 09:15:02AM +0800, Edward Adam Davis wrote:
-> > ext4_xattr_inode_lookup_create() will use s_root, so set it to NULL
-> > after do_one_tree().
+
+On Thu, 09 May 2024 10:08:04 +0200, Gabor Juhos wrote:
+> Since the CONFIG_CTL register is only 32 bits wide in the Stromer
+> and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
+> IPQ5018 and IPQ5332 configurations are not used so remove those.
 > 
-> Why, in the name of everything unholy, would eviction of dentries need
-> to set any kind of xattrs?
+> No functional changes.
+> 
+> 
+> [...]
 
-IOW, that might make the testcase STFU, but something odd is happening
-there and I would really like to understand the details before we go
-that way.
+Applied, thanks!
+
+[1/1] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from Stromer pll configs
+      commit: 2ba8425678af422da37b6c9b50e9ce66f0f55cae
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
