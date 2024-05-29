@@ -1,136 +1,125 @@
-Return-Path: <linux-kernel+bounces-193874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90EED8D337C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:46:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C016F8D3383
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDD9288DDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF85E1C22280
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD0916EC10;
-	Wed, 29 May 2024 09:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YRG18PHs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326DE16D9C2;
+	Wed, 29 May 2024 09:47:54 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC3B16EBF5;
-	Wed, 29 May 2024 09:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D5215FA8A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716975761; cv=none; b=PG9ia/8iSBWSmGJamR8cXtKgFD/1ghjonq700jH7kw4fEu8UpFqRF9O3tbdRrw89c7ffvGg8k4PL4N2CmFBEnfu5UEx4f1SZHIP33GAq+obcKXLM0ZjBcEuaM4Kax1QoPAaUYfgi3E6Jt08xIdApb1WuLp0blJL+V5JRjRiLtFs=
+	t=1716976073; cv=none; b=clj9id9jXiRPB8ZJYRQgCzocE7fQUHrHIOs0G+8L88opD5MRSd8ZVuX6lX44EpgCO9fPbQy96ryoduNaycfaVOGPGfmFCBJKxiimYBLYrkpbMgCOxqbHMyh6Z2PHra/9se+dMM4p0a51jlGB6WakuPfpg3iSx4XH5uMjWdJG/9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716975761; c=relaxed/simple;
-	bh=Vy70+CTL7OOqjzsr317++Apk/PTfDzXzYE7uDGK3xB8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=neRzEV2fj/bOho+i0i52vWXVdRyoGs7yAjfXn9Jgg9pzdp6kY8i92FomtNIw3HlThNfxrpUJ0u3wfK4PBsFnPJYIg+mYmQUttbH2PjcdxHCuPavSRHrwNPfjl7nZYwssFFRPyXNL5IcVv4CSQVT9lf9CNHy5jacNWmFsvpdXNWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YRG18PHs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969C6C32789;
-	Wed, 29 May 2024 09:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716975760;
-	bh=Vy70+CTL7OOqjzsr317++Apk/PTfDzXzYE7uDGK3xB8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YRG18PHsZ9KMS7WtWGU1+QUYmL5eLEWKSnlK7rtKl81e9sMaDGWWfVZSKshNKrCAl
-	 yJtrFsqZ9LD9mHkxg5T9XbR8Gg3+BmQtoGOpZHCgRRgkOfQhrM47BLYqBy19DozhG1
-	 wjjJ1VA7TjrPVOQb30aMUb19DqSwPxE4HBMfwN7SBB7xdnB8//NNor3ybpeKH6DGP3
-	 7IPweRpWPswxx2YCAZWTv0gVM+wrkgtae152VVEKY4CbVkWZfmYGcV3AcNOcuWivfn
-	 GLzcmRBY/6lh0Pmpu+fRcRy/qHsN3Oh5cHn39HCbM9xbUaQyho8NOnShyQYRrdzBRv
-	 0WDSCqq5YBXhg==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e96f298fbdso18030841fa.1;
-        Wed, 29 May 2024 02:42:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWBs0fykij7tTQhnso6juhrRrvCucjKk4Jkr/+Fl4xQ5uW7QQ670vOvvEZH+4YYefAPpkfQcwRjn0um9Y2XRBTl9AAgiVYqvoWPWBkbgtWAFgt71iTcoDZXYWvyXUkC7bVEjP3jH3coBwMg
-X-Gm-Message-State: AOJu0YwMRwL3MyvFGaz8xnxsItkBmFv9pjWFsSj/D+lipQD9XtJLhYM5
-	ovPnx400UzAjhxUjwnrvvji4inmK8dWM3ZQxpx9mqS6v2FwCr8LcvMIG4GwDroFvMJi6dyvs5nH
-	RaaM1vP8hGtaaYJyLMHRFmUVxYzk=
-X-Google-Smtp-Source: AGHT+IGN/KsYOrGLvG0TdO3KxfZ4/EPftpLwrew3QpQ5vfb+ZPGBjlABdo7mq0eRqdvZm1M14CekhNeMOKaMAyFe8TQ=
-X-Received: by 2002:a05:651c:1986:b0:2df:d071:76ed with SMTP id
- 38308e7fff4ca-2e95b0959a5mr116201551fa.10.1716975759303; Wed, 29 May 2024
- 02:42:39 -0700 (PDT)
+	s=arc-20240116; t=1716976073; c=relaxed/simple;
+	bh=Ic2kBUoF4L1dbNFEYy5kzmUUSyvGI4DcVcuyQhMnU+c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jYwyuEAsB1h8Vo84cYL2joohRsSpLIseqChVho2VF2nU/72rTwgqY5Kon/DZsLsmZRJzou5HAzufsWfAfDKCHQA0XlRQdbDrp0E0BkDN0SnywUWEHI0GUonu4aloMLKsF3juBpPD2XhUSaS/U6rRpIIkRc7jQR19HIQRlJojTVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 44T9lHNh081025;
+	Wed, 29 May 2024 17:47:17 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Vq4FZ3SBdz2QGMfs;
+	Wed, 29 May 2024 17:43:30 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 29 May 2024 17:47:14 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>
+Subject: [PATCH v2] f2fs: fix to avoid use SSR allocate when do defragment
+Date: Wed, 29 May 2024 17:47:00 +0800
+Message-ID: <1716976020-28757-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528163150.410706-1-ojeda@kernel.org>
-In-Reply-To: <20240528163150.410706-1-ojeda@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 29 May 2024 18:42:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASZ=_QEqUQDdnGvksjvxJMwYF0L8MdoGjHqMD4-iLQZJA@mail.gmail.com>
-Message-ID: <CAK7LNASZ=_QEqUQDdnGvksjvxJMwYF0L8MdoGjHqMD4-iLQZJA@mail.gmail.com>
-Subject: Re: [PATCH] kheaders: use `command -v` to test for existence of `cpio`
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 44T9lHNh081025
 
-On Wed, May 29, 2024 at 1:32=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Commit 13e1df09284d ("kheaders: explicitly validate existence of cpio
-> command") added an explicit check for `cpio` using `type`.
->
-> However, `type` in `dash` (which is used in some popular distributions
-> and base images as the shell script runner) prints the missing message
-> to standard output, and thus no error is printed:
->
->     $ bash -c 'type missing >/dev/null'
->     bash: line 1: type: missing: not found
->     $ dash -c 'type missing >/dev/null'
->     $
->
-> For instance, this issue may be seen by loongarch builders, given its
-> defconfig enables CONFIG_IKHEADERS since commit 9cc1df421f00 ("LoongArch:
-> Update Loongson-3 default config file").
->
-> Therefore, use `command -v` instead to have consistent behavior, and
-> take the chance to provide a more explicit error.
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  kernel/gen_kheaders.sh | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-> index 6d443ea22bb7..4ba5fd3d73ae 100755
-> --- a/kernel/gen_kheaders.sh
-> +++ b/kernel/gen_kheaders.sh
-> @@ -14,7 +14,12 @@ include/
->  arch/$SRCARCH/include/
->  "
->
-> -type cpio > /dev/null
-> +if ! command -v cpio >/dev/null; then
-> +       echo >&2 "***"
-> +       echo >&2 "*** 'cpio' could not be found."
-> +       echo >&2 "***"
-> +       exit 1
-> +fi
->
->  # Support incremental builds by skipping archive generation
->  # if timestamps of files being archived are not changed.
->
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-> --
-> 2.45.1
->
+SSR allocate mode will be used when doing file defragment
+if ATGC is working at the same time, that is because
+set_page_private_gcing may make CURSEG_ALL_DATA_ATGC segment
+type got in f2fs_allocate_data_block when defragment page
+is writeback, which may cause file fragmentation is worse.
 
-Ah, right.
-'command -v' is more portable.
+A file with 2 fragmentations is changed as following after defragment:
 
-Applied to linux-kbuild.
-Thanks!
+----------------file info-------------------
+sensorsdata :
+--------------------------------------------
+dev       [254:48]
+ino       [0x    3029 : 12329]
+mode      [0x    81b0 : 33200]
+nlink     [0x       1 : 1]
+uid       [0x    27e6 : 10214]
+gid       [0x    27e6 : 10214]
+size      [0x  242000 : 2367488]
+blksize   [0x    1000 : 4096]
+blocks    [0x    1210 : 4624]
+--------------------------------------------
 
+file_pos   start_blk     end_blk        blks
+       0    11361121    11361207          87
+  356352    11361215    11361216           2
+  364544    11361218    11361218           1
+  368640    11361220    11361221           2
+  376832    11361224    11361225           2
+  385024    11361227    11361238          12
+  434176    11361240    11361252          13
+  487424    11361254    11361254           1
+  491520    11361271    11361279           9
+  528384     3681794     3681795           2
+  536576     3681797     3681797           1
+  540672     3681799     3681799           1
+  544768     3681803     3681803           1
+  548864     3681805     3681805           1
+  552960     3681807     3681807           1
+  557056     3681809     3681809           1
 
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+v2: check FI_OPU_WRITE without adding new FI flag.
+---
+---
+ fs/f2fs/segment.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7caf20a..f0c0906 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3482,7 +3482,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 		if (page_private_gcing(fio->page)) {
+ 			if (fio->sbi->am.atgc_enabled &&
+ 				(fio->io_type == FS_DATA_IO) &&
+-				(fio->sbi->gc_mode != GC_URGENT_HIGH))
++				(fio->sbi->gc_mode != GC_URGENT_HIGH) &&
++				!is_inode_flag_set(inode, FI_OPU_WRITE))
+ 				return CURSEG_ALL_DATA_ATGC;
+ 			else
+ 				return CURSEG_COLD_DATA;
+-- 
+1.9.1
 
---=20
-Best Regards
-Masahiro Yamada
 
