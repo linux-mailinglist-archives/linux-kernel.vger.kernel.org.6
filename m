@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-193601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EF68D2E77
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:40:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0B78D2E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203CB2892DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:40:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E00B1C221C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B8B168C18;
-	Wed, 29 May 2024 07:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCF5169369;
+	Wed, 29 May 2024 07:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2VgUpUu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSIW1bsK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81A316729A;
-	Wed, 29 May 2024 07:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432D167D82;
+	Wed, 29 May 2024 07:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968402; cv=none; b=eepT0Ntg16SGdCZUdnW/2SrLp2/rAx3cAvi7NHKGS77BYvJwUM/rM5gocgncDN0mWUDFvMYj0RzkwXx/kBMjpEcblFXOa8FpM1JiZndGJtu874aNZMNn2KlJPYTVt/ZPPIIc3DuwgY+//M/OUUIaqgQ5enzZDLDrpd29OEbtHvY=
+	t=1716968408; cv=none; b=LSb3NmkJVXP24vd65VULe/SQGFmEBz4MuLFBrnUyOkfzRFbowSOeEg9x2EwZ65gPGuZ2Nn3jGFnsSqTDCmcHviIswJYi0ENhdrGlsRAXW4v7iV5NUYUM8gHSUEzVoddKAZIcFvfkwyMQpWZRkcx06tGV0Uio/zYjWUk/U3oDHxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968402; c=relaxed/simple;
-	bh=kNlO+mTdoNetOiI3GwPrT8/7ufDlY6sALFSSiIRW/tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=POW9AWX9X2vR47IgNgAeR2H1o7TLy7QA5bUziD8UiKKHDIc0shugVJDjsxdOMxvjQ5xi9ekelSwrHeFRDATXvx8bCWisE1xzrvqlPUv8bWEpFODyQDNsTFTqDl92nnuOYOW7VRJpModiyufTST24J1bOa69IfFTKeLpX0Mt4hBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2VgUpUu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF13C2BD10;
-	Wed, 29 May 2024 07:39:58 +0000 (UTC)
+	s=arc-20240116; t=1716968408; c=relaxed/simple;
+	bh=fYdRJDyAIc+5o5Dbk1DjBWhpxgCjUP+fOk/zHS1zwnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPrZOu5YmbJHc4NYNoCTL0TG4PoNK45Z4mDG5dPRYOmXRZs4anGsCBUOS17jv5qpsQIjuW1zhC7YDYbiedYUPYq/707D787fVEq3UTW8TL8y0OCbXy6SWnDQllaVjm8NHnWvIvQp8Qek8Znq6Wg/vnQUDCTj9WMlMdq5ML1VjPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSIW1bsK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E99C2BD10;
+	Wed, 29 May 2024 07:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716968401;
-	bh=kNlO+mTdoNetOiI3GwPrT8/7ufDlY6sALFSSiIRW/tk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n2VgUpUu9xlRY58wex8EHdFAmfMMGJgzy5A8M9Q4GK50y0ioPn5Da9wa88abOAgwQ
-	 U6u+CWuL8dp7ekRv2KgQ7isQOVbt3MmvgGUDvxKHxm4mmHUQY6DlM/uOtNTzbEJQuL
-	 0JIbuxfTgPaD5K2bRsTDwioYeHmVXjFOtgRuQLglGkOj9Ppf8sBLLnBvl/kH4CsEE2
-	 A7vqQQds83PCGtsuwaC+oehBrdlwqHmdHA8/eqvWNDHk5E9lb1NHxa3zyNfLi+xUIQ
-	 xIqXWbsjFnR3bwtvf0V7ypbYNxE0qnU3QW07WZ88wKWyGsB3+xXRqfsIQJomVWKvMO
-	 Ry4wHRvabA6WA==
-Message-ID: <a346365a-b525-45e5-9622-8d5a10fa86c4@kernel.org>
-Date: Wed, 29 May 2024 09:39:57 +0200
+	s=k20201202; t=1716968407;
+	bh=fYdRJDyAIc+5o5Dbk1DjBWhpxgCjUP+fOk/zHS1zwnc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oSIW1bsKD/EAqn+s8PblXjVl3IuvA6Y/+Dquf8C9YubXIElluFUBcOh+88Dgjzrhy
+	 ElRMC+w1kRG/i1gN7A6CAxlRfcsScnfOpPgCh61hrT6lRRPLUgRux8txeNv2FHLA1L
+	 GDazokt0/5OANj2uuFXH48I/Ddx4hOxxRh5lrYO6m8RLwGcXAp1U9ttcmuXPE8/fTL
+	 k+f7YGUO/BgCulmeNnA7WVTM84Of+1x24JzSSbeeGPEyiSM2T92cssnTl2POyZrY7D
+	 p1ni0u9m0i9JYBZZM9WacOw+5LXLnNGnOJhJwv9dJgNFr0wyUN0veMYTL0k7fr8VFF
+	 3NH+V2AcRCfcA==
+Date: Wed, 29 May 2024 09:40:01 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240529-marzipan-verspannungen-48b760c2f66b@brauner>
+References: <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
+ <ZlRy7EBaV04F2UaI@infradead.org>
+ <20240527133430.ifjo2kksoehtuwrn@quack3>
+ <ZlSzotIrVPGrC6vt@infradead.org>
+ <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
+ <ZlWVkJwwJ0-B-Zyl@infradead.org>
+ <20240528-gesell-evakuieren-899c08cbfa06@brauner>
+ <ZlW4IWMYxtwbeI7I@infradead.org>
+ <20240528-gipfel-dilemma-948a590a36fd@brauner>
+ <ZlXaj9Qv0bm9PAjX@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/10] arm64: dts: qcom: ipq8074: fix GCC node name
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Robert Marko <robimarko@gmail.com>, Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240528-qcom-gdscs-v1-0-03cf1b102a4f@linaro.org>
- <20240528-qcom-gdscs-v1-10-03cf1b102a4f@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240528-qcom-gdscs-v1-10-03cf1b102a4f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZlXaj9Qv0bm9PAjX@infradead.org>
 
-On 28/05/2024 22:43, Dmitry Baryshkov wrote:
-> Device nodes should have generic names. Use 'clock-controller@' as a GCC
-> node name instead of a non-generic 'gcc@'.
+On Tue, May 28, 2024 at 06:22:23AM -0700, Christoph Hellwig wrote:
+> On Tue, May 28, 2024 at 02:04:16PM +0200, Christian Brauner wrote:
+> > Can you please explain how opening an fd based on a handle returned from
+> > name_to_handle_at() and not using a mount file descriptor for
+> > open_by_handle_at() would work?
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+> Same as NFS file handles:
+> 
+> name_to_handle_at returns a handle that includes a file system
+> identifier.
+> 
+> open_by_handle_at looks up the superblock based on that identifier.
+> 
+> For the identifier I could imagin three choices:
+> 
+>  1) use the fsid as returned in statfs and returned by fsnotify.
+>     The downside is that it is "only" 64-bit.  The upside is that
+>     we have a lot of plumbing for it
+>  2) fixed 128-bit identifier to provide more entropy
+>  3) a variable length identifier, which is more similar to NFS,
+>     but also a lot more complicated
+> 
+> We'd need a global lookup structure to find the sb by id.  The simplest
+> one would be a simple linear loop over super_blocks which isn't terribly
+> efficient, but probably better than whatever userspace is doing to
+> find a mount fd right now.
+> 
+> Let me cook up a simple prototype for 1) as it shouldn't be more than
+> a few hundred lines of code.
 
+Yeah, that's exactly what I figured and no that's not something we
+should do.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Not just can have a really large number of superblocks if you have mount
+namespaces and large container workloads that interface also needs to be
+highly privileged.
 
-Best regards,
-Krzysztof
+Plus, you do have filesystems like btrfs that can be mounted multiple
+times with the same uuid.
 
+And in general users will still need to be able to legitimately use a
+mount fd and not care about the handle type used with it.
 
