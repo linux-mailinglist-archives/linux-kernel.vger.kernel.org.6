@@ -1,107 +1,182 @@
-Return-Path: <linux-kernel+bounces-194437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84928D3C32
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:24:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F258D3C45
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D301F23646
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29B5281535
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49931836E7;
-	Wed, 29 May 2024 16:24:43 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE0318412E;
+	Wed, 29 May 2024 16:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ns2ZIr6V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B931181B8B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44141836DA;
+	Wed, 29 May 2024 16:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716999883; cv=none; b=hFVnOU7ScUPyhGfvfy19knz1PiyvlpJX+v7a/S+m/ajXBAE2yeeTjaYpNXTdHgHOcwt6QzIE/v1a+FWAQfgIyS7Pn/VjE2bkXhl7HNM5P3/D3WHebSxb7tIkWV7pSAsJwQooPeLAVovjG5pN50KbidjcphokTlO32JtF2KO8fwY=
+	t=1716999934; cv=none; b=DyF1RvSsLXtZwRvtjzWb4vn8raCKXpd+KoKrD1ZIoUzcLrVjeujIAI0tbBD8w91iBJRQAREjLkIeKluSmlEuw9to8pXE5Bn8pHfIsttw2eN7IpuJazX40UIvs2yE2h8wQhmmolmZXsrWfprfBmeuYQrGbZN2BxUtMAPc9lhzOOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716999883; c=relaxed/simple;
-	bh=BNLah/QDHzx6qCWDqnWrCWU9HLpUvuMNchraD+Ektj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oC5eqseqc+j3lPrSnl2Q/TTfMOBrRBw2iz4sjR6cEkldIdEQbM3ZhxtNn37dVGKgITTesSFtwH5FIr8WpG2qJCKRoaerCywYeyuxMecVqO3Mg34g1qJxWqcYkx85YwoSvSyppfQrkkUoIvsfYIk8tXAicZtFkH5JgHWYasxMD2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875a0e.versanet.de ([83.135.90.14] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sCM69-0005AH-Ga; Wed, 29 May 2024 18:24:21 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andy Yan <andyshrk@163.com>, linux-rockchip@lists.infradead.org,
- Diederik de Haas <didi.debian@cknow.org>, tzimmermann@suse.de,
- maarten.lankhorst@linux.intel.com
-Cc: mripard@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- hjc@rock-chips.com, dri-devel@lists.freedesktop.org, s.hauer@pengutronix.de,
- Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH 0/1] Fix the port mux of VP2
-Date: Wed, 29 May 2024 18:24:20 +0200
-Message-ID: <2652218.tIAgqjz4sF@diego>
-In-Reply-To: <2397969.FhQbyb98Gs@bagend>
-References:
- <20240422101905.32703-1-andyshrk@163.com>
- <171405838036.2897712.4067984796758491640.b4-ty@sntech.de>
- <2397969.FhQbyb98Gs@bagend>
+	s=arc-20240116; t=1716999934; c=relaxed/simple;
+	bh=XWTvgOpa/ROLa55P7YiVGDQAHxuXZkHUHPhWeWr2A8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hurRMpza75ysobGAbTsou1ieVHn/j7FD/qTr7BZUNgYtb51X/vqdefAS7j3y4uV0VUDri8n7jiyqDkXWBeNvuPuxzNnWVD4uX7a10cRJzdAZkv4DZn7poJ3bcK+HsEWqP/nnxEY5V1s1M/jC9niLqedETXizUX6AzkHY6+KvmIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ns2ZIr6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79A2C116B1;
+	Wed, 29 May 2024 16:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716999933;
+	bh=XWTvgOpa/ROLa55P7YiVGDQAHxuXZkHUHPhWeWr2A8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ns2ZIr6VvO8DHPaypxlYrKfLH9G+32HhMEMwz/5JSbWg0D6qa4LfRSxhqKONCYa0R
+	 El5E2QewPGDcyBtgrGO4tkwMqTN+3Jkp4f7g57lV1+0mb/SSgaRIoCQ0TsIOuUugUv
+	 ee7i9V20WwHOmybWFY2JFqFiSMTAyw+jyguINTU0H+RDKDomlq1x0YEdX6wZy8B4I6
+	 U/brKIm/WxSoAKYHXNsoKaALvFcMjVN4mVCG5tfctZ17jIFlgw/Yf0EGjkDtN0V9I+
+	 9uwDykhAK3o4VunkJZ0BSmHGUaZSSqaHLNkYzJ96Vojh+b/yogx4ZSvfnX4gpTEa5j
+	 rxXvfmWYGvmqA==
+Date: Wed, 29 May 2024 17:25:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v8 26/36] dt-bindings: ata: ata-generic: Add new
+ targets
+Message-ID: <20240529-arise-small-f3277feee4e4@spud>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+ <8ff46a90c7be5eea45984f60b9b0db99219c82e6.1716965617.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-Am Mittwoch, 29. Mai 2024, 17:55:25 CEST schrieb Diederik de Haas:
-> On Thursday, 25 April 2024 17:19:58 CEST Heiko Stuebner wrote:
-> > On Mon, 22 Apr 2024 18:19:04 +0800, Andy Yan wrote:
-> > > From: Andy Yan <andy.yan@rock-chips.com>
-> > > 
-> > > The port mux bits of VP2 should be defined by
-> > > RK3568_OVL_PORT_SET__PORT2_MUX, this maybe a copy and paste error when
-> > > this driver first introduced.> 
-> > > Hi Heiko:
-> > >    Maybe thi is the problem you met when you porting the dsi2 driver.
-> > > 
-> > 
-> > Applied, thanks!
-> > 
-> > [1/1] drm/rockchip: vop2: Fix the port mux of VP2
-> >       commit: 2bdb481bf7a93c22b9fea8daefa2834aab23a70f
-> 
-> Wasn't this patch supposed to be part of 6.10-rc1?
-
-Looking at the drm-misc tree, the last tag for the drm-misc to drm-main
-merge is labeled drm-misc-next-2024-04-25, same day as I applied the
-patch.
-
-In theory I think -rc6 is the cutoff for drm-misc changes for mainline,
-which would've been the 28th of april, but there might've been simple
-hickups preventing that last merge, resulting in the patch missing an
-early cutoff.
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EwaFJRsUcMIAwW3R"
+Content-Disposition: inline
+In-Reply-To: <8ff46a90c7be5eea45984f60b9b0db99219c82e6.1716965617.git.ysato@users.sourceforge.jp>
 
 
-On the other hand, somehow Torvald's tree actually has this commit [0],
-just with a "Notice: this object is not reachable from any branch."
-Possibly some drm-merge-mayhem?
+--EwaFJRsUcMIAwW3R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-All very confusing.
+Hey,
 
-@Thomas, @Marten: do you possible have an idea what might've happened?
+On Wed, May 29, 2024 at 05:01:12PM +0900, Yoshinori Sato wrote:
+> Added new ata-generic target.
+> - iodata,usl-5p-ata
+> - renesas,rts7751r2d-ata
+>=20
+> Each boards have simple IDE Interface. Use ATA generic driver.
+>=20
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
+Why do you keep dropping tags? Damien and I acked this back in v6 and
+Krzysztof reminded you in v7:
+https://lore.kernel.org/all/06fdb2cf7927681acf3099b826390ef75ba321af.170478=
+8539.git.ysato@users.sourceforge.jp/
+https://lore.kernel.org/all/53f85cc2e124d1c2e7394458b73293d797817d6d.171220=
+7606.git.ysato@users.sourceforge.jp/
 
-Heiko
+Dropping the tags just leads to wasted time re-reviewing patches that
+already got approved. I don't see any valid reason to drop them on a
+trivial patch like this :/ Please check back to previous revisions and
+make sure that you picked up applicable tags.
 
+Thanks,
+Conor.
 
+> ---
+>  Documentation/devicetree/bindings/ata/ata-generic.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/ata/ata-generic.yaml b/Doc=
+umentation/devicetree/bindings/ata/ata-generic.yaml
+> index 0697927f3d7e..1025b3b351d0 100644
+> --- a/Documentation/devicetree/bindings/ata/ata-generic.yaml
+> +++ b/Documentation/devicetree/bindings/ata/ata-generic.yaml
+> @@ -18,6 +18,8 @@ properties:
+>        - enum:
+>            - arm,vexpress-cf
+>            - fsl,mpc8349emitx-pata
+> +          - iodata,usl-5p-ata
+> +          - renesas,rts7751r2d-ata
+>        - const: ata-generic
+> =20
+>    reg:
+> --=20
+> 2.39.2
+>=20
 
+--EwaFJRsUcMIAwW3R
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2bdb481bf7a93c22b9fea8daefa2834aab23a70f
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZldW7wAKCRB4tDGHoIJi
+0rICAP9V1iNf3aedUZq4py3MAFbhxEMXF2XlH0Il+KuD+J/ZuAD9Eti+5ySYfFAX
+cxCmNqYe51qJCuNdyoXp6/hLh6B1JwY=
+=l0ak
+-----END PGP SIGNATURE-----
 
+--EwaFJRsUcMIAwW3R--
 
