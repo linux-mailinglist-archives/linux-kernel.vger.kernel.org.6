@@ -1,133 +1,236 @@
-Return-Path: <linux-kernel+bounces-194044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415C38D35D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:55:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1728D35D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B0C1F23A8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:55:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610801C23653
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7532180A67;
-	Wed, 29 May 2024 11:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F68180A68;
+	Wed, 29 May 2024 11:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QvAdy3Vk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gbmxHoSK"
+Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C931BC57;
-	Wed, 29 May 2024 11:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676BD1802C8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716983704; cv=none; b=ElPL/MbdLXQHnbRprbxCQ04mVpQ8Y0tgBPn1m/1cZgupbfS4dIAgej1g47+uUd5jx9dZtAtlIZfHq6CNIfg5FpPxsopmDV61Dy2ZF5Zv5tn82C7D5POm9SH/73KBidZ4UmeYtUWqTjL0fuTWEkt3fsK2KXncwDZ9PD7IRLa3oQ0=
+	t=1716983761; cv=none; b=ALzXcYtlXZcvVtry2/Nn3hCXVe5Lhxl+EYkfExZ8T4Ty49z9eM4bXEPJEU3A4UczeH9m2/ekirNyGgIXjb7WGtpjIfD8evIQq/DQOc4UIrUnZ/1SF+4DFatUFqPLKAo7/4vQ3T8oV2S5vmDK00jLuHf91YzhTNnfSIv26dEGqiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716983704; c=relaxed/simple;
-	bh=p7wQtzPc0gskeZlqdHZkaIR8z402TtfibTSQeobi72Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NRjPlttJQw+M8boY8Uf0wXr62AnVka4LCO+GNHDOeGX80JxflmawjXmmpp/RqcTYBiI8FqZNWKU3nJAA+A8LpKevYyZIgEjPjXGoPw/RHMRZy3tB5m6WSWc/crHg/dQEBNK8IINOIqxxmYsJ/SQA5rQ3BlEd29sLoGr3RCnlGBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QvAdy3Vk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T9jhqN011441;
-	Wed, 29 May 2024 11:54:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SP7r+/9vOIiDhIdLbDBVBorrd8fvJYwJfnczReif0ZY=; b=QvAdy3Vks2lxWAdP
-	LKqn0Og9ORaR3o0voQdEmqpgtL7iXO6T4Vblm4lvFI2sna9dj85AA+pI0W1st3Hp
-	YFcuWUQPld5FcYs5f+g+pavKl35s/CgT18gmxEoUU8aMj7avrrH1+kU7JDTNJsdZ
-	I2p3TEzsJ4xDMeVTvHjxCEXdXoLT6rL9P+ih4aFBaexk6nR+t6G2soOpQI3EICl5
-	izAVJsfjs8RmZnHfDVhUgN1kYVVXDszHoP+jse8D2PnoEhvKVKH4ateE3CWYMqIw
-	VdAFmzzM4mu1MAqV+tXy+itVnpXpZyuOyG/Zs3VA9Rr8+LmPmy/Bz0x1K/4f3gqY
-	06oG5A==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qgu95-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 11:54:58 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TBsvnQ011684
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 11:54:57 GMT
-Received: from [10.216.41.231] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
- 2024 04:54:54 -0700
-Message-ID: <d85bf913-b6dc-e9fd-7c54-fe52b79c2593@quicinc.com>
-Date: Wed, 29 May 2024 17:24:29 +0530
+	s=arc-20240116; t=1716983761; c=relaxed/simple;
+	bh=wFaV86ck7QF8ggW3rB5WVf3ZtFyBTjaT7frcFvGnbMA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dyQr8B/yXWEUjcyI5nlWhna7ZGtfHKjJctS9Zlsj9Nexi15Nr7/YxN/lOx1fZTESUUjJdO4pDDFRqqF+/yu4Cawr+lei9mug+BbWexbcHMX+vawbY4tMnv3ZVOhoqeFaFCoFmdvdD6ISubtKVMLQZmoUWxR8MazuV7FKGwq73WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gbmxHoSK; arc=none smtp.client-ip=209.85.221.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-354f51ac110so1974642f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:55:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716983755; x=1717588555; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f9FUeFgYpsWXF3MFE7xmBZbQGZ+/K1H8MVPPwiFhTR4=;
+        b=gbmxHoSKnjF20jU0HewqmeiCAppoFKjki/VZ6wBPRQDipQJUGw8BB1L09ffR41Aqvf
+         UmX1ZYGSBR8jwAn0Y9TbTk+XumptqrfkSyEoFZJUhq/8AERMppynjRo/um24bOPYZmku
+         G+XLEYyKUxumGwIIzasQcRd3Lu8uEVpu9HhSwbOOoZRerFZeHf39P/mEdMkBmHXWP9of
+         iMW2iQGjccqmtkt6vB3niHlhpFWCmry6cmyIHz6VQd5ISxjnWBWVGumIuzPJa3wKvX6p
+         u3NRsKXOiv0W8WA4G0HE2yBlsGLK9rlqh70VClPu4QqRZLcvj2bcaWuVQGAjtnLl4ozJ
+         rfnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716983755; x=1717588555;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f9FUeFgYpsWXF3MFE7xmBZbQGZ+/K1H8MVPPwiFhTR4=;
+        b=C8YlyjY9CKFdL/tc+XnziqBNtdYVr7YJUkiB2DlSiUyoWkyuyCCIW7CNuHIZq9byE2
+         lGF//4ius6GJ844BKiiU+XlU2+KAOEOdVFEim2zXW0OiZgL58vitEbuVO8E0XCH0NwpG
+         LFQ8tehV7fANvgleHNTDaaHcoxNw0QpuTZd93Dw9RZP4xF0D/S9VHLyvvDSYAmiCrIwe
+         gY8LCWebCEM/cjEkaURpRaVHmAV3tCMIB/TqXDbHBydLw5ElPp2+28G/NDzhSXe/qc1b
+         9h412htIjQBuWIVlI2OPFyYSmQfJ3FTudMZI+Nmbzw/G/jy563fb6toA+3+/dYJOzdLR
+         jNwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVunpzVdzalQ6WqrRyU1rbfa8Vbs0hr5DyoE0xv73NWWGEVHxDIqVzbi1WLM8uT2xGA5vpC9XLkQySFBUNuC3zwPCfkEM7RORE5aAY
+X-Gm-Message-State: AOJu0YxMdd6SZ/A3bWBFmk0mll1sRP7z73ppZjiBQuhTldYE9KA9hM9q
+	st9h/onNv+JOzSaF/kbarDawVlZ/NoNtPqe337LKXuVqihOCDFV6UgDM51Ys2FNIAJA8Xcv6ute
+	sfSXov/cN
+X-Google-Smtp-Source: AGHT+IFmFZnnN8czMqY8uLukaazrDK7oBtqJXR5sTBMOCV4ypMULcy6vjSsi/NnB59THLYsQFx6A6w==
+X-Received: by 2002:a5d:4089:0:b0:355:7e4:3cfb with SMTP id ffacd0b85a97d-3552f4fd798mr12389882f8f.23.1716983755303;
+        Wed, 29 May 2024 04:55:55 -0700 (PDT)
+Received: from [192.168.1.63] ([2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7de7esm14482339f8f.14.2024.05.29.04.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 04:55:55 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Wed, 29 May 2024 13:55:52 +0200
+Subject: [PATCH v2] driver: iio: add missing checks on iio_info's callback
+ access
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] firmware: qcom_scm: Add a padded page to ensure DMA
- memory from lower 4GB
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1716564705-9929-1-git-send-email-quic_mojha@quicinc.com>
- <h6omxqre7pod3ztn7x3sckjbgcg32u4btfmtxwn2rkjw7uwsgd@ncdmu5ed4gm3>
-Content-Language: en-US
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <h6omxqre7pod3ztn7x3sckjbgcg32u4btfmtxwn2rkjw7uwsgd@ncdmu5ed4gm3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: aL52d0rawomMSiGPufVMQOfTYaQNQGXX
-X-Proofpoint-ORIG-GUID: aL52d0rawomMSiGPufVMQOfTYaQNQGXX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405290081
+Message-Id: <20240529-iio-core-fix-segfault-v2-1-7b5a5fa6853f@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAMgXV2YC/3WNwQ6CMBBEf4Xs2TW0Yqie/A/DYVu2sAlS0yKRE
+ P7dSuLR45vJvFkhcRROcC1WiDxLkjBm0IcCXE9jxyhtZtClrsqzNigS0IXI6OWNiTtPr2FCorq
+ yXDNzRZC3z8i53733JnMvaQpx2W9m9U1/xssf46xQYe29smSMak/mZmkZxEY+uvCAZtu2D3UCX
+ 9i9AAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nuno Sa <nuno.sa@analog.com>, Julien Stephan <jstephan@baylibre.com>
+X-Mailer: b4 0.13.0
 
+Some callbacks from iio_info structure are accessed without any check, so
+if a driver doesn't implement them trying to access the corresponding
+sysfs entries produce a kernel oops such as:
 
+[ 2203.527791] Unable to handle kernel NULL pointer dereference at virtual address 00000000 when execute
+[...]
+[ 2203.783416] Call trace:
+[ 2203.783429]  iio_read_channel_info_avail from dev_attr_show+0x18/0x48
+[ 2203.789807]  dev_attr_show from sysfs_kf_seq_show+0x90/0x120
+[ 2203.794181]  sysfs_kf_seq_show from seq_read_iter+0xd0/0x4e4
+[ 2203.798555]  seq_read_iter from vfs_read+0x238/0x2a0
+[ 2203.802236]  vfs_read from ksys_read+0xa4/0xd4
+[ 2203.805385]  ksys_read from ret_fast_syscall+0x0/0x54
+[ 2203.809135] Exception stack(0xe0badfa8 to 0xe0badff0)
+[ 2203.812880] dfa0:                   00000003 b6f10f80 00000003 b6eab000 00020000 00000000
+[ 2203.819746] dfc0: 00000003 b6f10f80 7ff00000 00000003 00000003 00000000 00020000 00000000
+[ 2203.826619] dfe0: b6e1bc88 bed80958 b6e1bc94 b6e1bcb0
+[ 2203.830363] Code: bad PC value
+[ 2203.832695] ---[ end trace 0000000000000000 ]---
 
-On 5/27/2024 2:16 AM, Bjorn Andersson wrote:
-> On Fri, May 24, 2024 at 09:01:45PM GMT, Mukesh Ojha wrote:
->> For SCM protection, memory allocation should be physically contiguous,
->> 4K aligned, and non-cacheable to avoid XPU violations. This granularity
->> of protection applies from the secure world. Additionally, it's possible
->> that a 32-bit secure peripheral will access memory in SoCs like
->> sm8{4|5|6}50 for some remote processors. Therefore, memory allocation
->> needs to be done in the lower 4 GB range. To achieve this, Linux's CMA
->> pool can be used with dma_alloc APIs.
->>
->> However, dma_alloc APIs will fall back to the buddy pool if the requested
->> size is less than or equal to PAGE_SIZE. It's also possible that the remote
->> processor's metadata blob size is less than a PAGE_SIZE. Even though the
->> DMA APIs align the requested memory size to PAGE_SIZE, they can still fall
->> back to the buddy allocator, which may fail if `CONFIG_ZONE_{DMA|DMA32}`
->> is disabled.
-> 
-> Does "fail" here mean that the buddy heap returns a failure - in some
-> case where dma_alloc would have succeeded, or that it does give you
-> a PAGE_SIZE allocation which doesn't meeting your requirements?
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Changes in v2:
+- crop dmesg log to show only pertinent info and reduce commit message
+- Link to v1: https://lore.kernel.org/r/20240529-iio-core-fix-segfault-v1-1-7ff1ba881d38@baylibre.com
+---
+ drivers/iio/industrialio-core.c  |  7 ++++++-
+ drivers/iio/industrialio-event.c |  9 +++++++++
+ drivers/iio/inkern.c             | 16 +++++++++++-----
+ 3 files changed, 26 insertions(+), 6 deletions(-)
 
-Yes, buddy will also try to allocate memory and may not get PAGE_SIZE 
-memory in lower 4GB(for 32bit capable device) if CONFIG_ZONE_{DMA|DMA32} 
-is disabled. However, DMA memory would have successful such case if
-padding is added to size to cross > PAGE_SIZE.
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index fa7cc051b4c4..2f185b386949 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -758,9 +758,11 @@ static ssize_t iio_read_channel_info(struct device *dev,
+ 							INDIO_MAX_RAW_ELEMENTS,
+ 							vals, &val_len,
+ 							this_attr->address);
+-	else
++	else if (indio_dev->info->read_raw)
+ 		ret = indio_dev->info->read_raw(indio_dev, this_attr->c,
+ 				    &vals[0], &vals[1], this_attr->address);
++	else
++		return -EINVAL;
+ 
+ 	if (ret < 0)
+ 		return ret;
+@@ -842,6 +844,9 @@ static ssize_t iio_read_channel_info_avail(struct device *dev,
+ 	int length;
+ 	int type;
+ 
++	if (!indio_dev->info->read_avail)
++		return -EINVAL;
++
+ 	ret = indio_dev->info->read_avail(indio_dev, this_attr->c,
+ 					  &vals, &type, &length,
+ 					  this_attr->address);
+diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industrialio-event.c
+index 910c1f14abd5..a64f8fbac597 100644
+--- a/drivers/iio/industrialio-event.c
++++ b/drivers/iio/industrialio-event.c
+@@ -285,6 +285,9 @@ static ssize_t iio_ev_state_store(struct device *dev,
+ 	if (ret < 0)
+ 		return ret;
+ 
++	if (!indio_dev->info->write_event_config)
++		return -EINVAL;
++
+ 	ret = indio_dev->info->write_event_config(indio_dev,
+ 		this_attr->c, iio_ev_attr_type(this_attr),
+ 		iio_ev_attr_dir(this_attr), val);
+@@ -300,6 +303,9 @@ static ssize_t iio_ev_state_show(struct device *dev,
+ 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+ 	int val;
+ 
++	if (!indio_dev->info->read_event_config)
++		return -EINVAL;
++
+ 	val = indio_dev->info->read_event_config(indio_dev,
+ 		this_attr->c, iio_ev_attr_type(this_attr),
+ 		iio_ev_attr_dir(this_attr));
+@@ -318,6 +324,9 @@ static ssize_t iio_ev_value_show(struct device *dev,
+ 	int val, val2, val_arr[2];
+ 	int ret;
+ 
++	if (!indio_dev->info->read_event_value)
++		return -EINVAL;
++
+ 	ret = indio_dev->info->read_event_value(indio_dev,
+ 		this_attr->c, iio_ev_attr_type(this_attr),
+ 		iio_ev_attr_dir(this_attr), iio_ev_attr_info(this_attr),
+diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+index 52d773261828..74f87f6ac390 100644
+--- a/drivers/iio/inkern.c
++++ b/drivers/iio/inkern.c
+@@ -560,9 +560,11 @@ static int iio_channel_read(struct iio_channel *chan, int *val, int *val2,
+ 					vals, &val_len, info);
+ 		*val = vals[0];
+ 		*val2 = vals[1];
+-	} else {
++	} else if (chan->indio_dev->info->read_raw) {
+ 		ret = chan->indio_dev->info->read_raw(chan->indio_dev,
+ 					chan->channel, val, val2, info);
++	} else {
++		return -EINVAL;
+ 	}
+ 
+ 	return ret;
+@@ -753,8 +755,10 @@ static int iio_channel_read_avail(struct iio_channel *chan,
+ 	if (!iio_channel_has_available(chan->channel, info))
+ 		return -EINVAL;
+ 
+-	return chan->indio_dev->info->read_avail(chan->indio_dev, chan->channel,
+-						 vals, type, length, info);
++	if (chan->indio_dev->info->read_avail)
++		return chan->indio_dev->info->read_avail(chan->indio_dev, chan->channel,
++							 vals, type, length, info);
++	return -EINVAL;
+ }
+ 
+ int iio_read_avail_channel_attribute(struct iio_channel *chan,
+@@ -917,8 +921,10 @@ EXPORT_SYMBOL_GPL(iio_get_channel_type);
+ static int iio_channel_write(struct iio_channel *chan, int val, int val2,
+ 			     enum iio_chan_info_enum info)
+ {
+-	return chan->indio_dev->info->write_raw(chan->indio_dev,
+-						chan->channel, val, val2, info);
++	if (chan->indio_dev->info->write_raw)
++		return chan->indio_dev->info->write_raw(chan->indio_dev,
++							chan->channel, val, val2, info);
++	return -EINVAL;
+ }
+ 
+ int iio_write_channel_attribute(struct iio_channel *chan, int val, int val2,
 
-> 
->  From this I do find the behavior of dma_alloc unintuitive, do we know if
-> there's a reason for the "equal to PAGE_SIZE" case you describe here?
+---
+base-commit: 409b6d632f5078f3ae1018b6e43c32f2e12f6736
+change-id: 20240528-iio-core-fix-segfault-aa74be7eee4a
 
-I am not a memory expert but the reason i can think of could be, <= 
-PAGE_SIZE can anyway possible to be requested outside DMA coherent api's
-with kmalloc and friends api and that could be the reason it is falling
-back to buddy pool in DMA api.
+Best regards,
+-- 
+Julien Stephan <jstephan@baylibre.com>
 
--Mukesh
 
