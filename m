@@ -1,152 +1,259 @@
-Return-Path: <linux-kernel+bounces-193421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B4B8D2BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:25:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C613A8D2BC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17519288609
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D002B23BF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438FA15B14E;
-	Wed, 29 May 2024 04:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cVI8tKmv"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB3A15B148;
+	Wed, 29 May 2024 04:39:27 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135812F37;
-	Wed, 29 May 2024 04:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F5828E8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716956705; cv=none; b=r0gf6SkEFr6IxVh2YF2+0BWhyMSvBBivgn7jzt7Pr6qxPlYvt7PDedp94wuxO7K0jmypCNZmGcUp6mb14lDRsHxVcKrEhDGfPCkJ8Ef4nowT7kPSdz+mohoiN3k5TRe02tBrqsfR6c2KUzoi2qON08eRUOk1vaRkzgK/sYsCE5w=
+	t=1716957567; cv=none; b=Efm19qF+FlOpMM7EYq3eQ92hsQoYYiEpO/Gw+DK87AfmtNCdWWotFp45+QJkOqJvdrLGREJpveCUjId6EKvv3BqzXCUEI833XOVAuadlbTRQGMPx3g3acWJsNkX8SfiMx34CDPaNufqmmrc11RF1NUcwlgct+0/iNkgjo1ypzw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716956705; c=relaxed/simple;
-	bh=t/wyqOZCUtaJj94OWxcggJOyzt1ZBavPfMbI2zcPKiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M59FZpXft87LKz9BxXPm/B8q6qlXD7ZqjZtxWEB6+1K0MDOrZPtKoHf4+BY/srMrYxR9uZHJrYlXy7ha6jLVq76TyALF+v+XjX3mSZqYtws3rJx35PBz2j3qjvKf3aqALFaXcjZBoL46EVtYOE/cOxTREae4cGI3m5St3NJ5TSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cVI8tKmv; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1716956698;
-	bh=QS9UC6q6IV1lekvIOBY7aqCAICP+q66LAbGf/Ww1y9g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cVI8tKmv8tr7WpEwlbt1Dw8sUdgt/numMfkLFBJcwMkojqffPhDPAYrOo//zNHFop
-	 OIdrA1sVsvjvbxGAj7GIcwstCYjJVNYBCAlkUIbgQSWGMjxYYLErQsGX9KLU4kjvJm
-	 l2JUImvNkc+GIvuPhpRmmmfWPXGQYmnryCcbjY9tVSiRSeL/bM0ZWmOD+rwHfJhR5X
-	 wmb6Z1YE2GKkUkk8dQp5g7zIBzWmSP7jtjePkSlfhzCPdeM2JIUTFdHtAzws62tBNW
-	 S+/eLio11EcB+iOge1O5wPtdI/aQ00FhsQJfCuyk9g/w24+zVDqYM/WzIzOjq4MKH1
-	 qwGex9zCmm/1g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpxB22tcrz4wqK;
-	Wed, 29 May 2024 14:24:58 +1000 (AEST)
-Date: Wed, 29 May 2024 14:24:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson
- <rpeterso@redhat.com>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the gfs2 tree
-Message-ID: <20240529142455.1c68e65a@canb.auug.org.au>
+	s=arc-20240116; t=1716957567; c=relaxed/simple;
+	bh=w+SMDGzTJFQuqdvJfu1aC+qtLD5AS6Lz4nehZdCVabs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Lmvzwm9rqnSlLC2zpXhyAafP6JKX4lDhlISGODD8bGRAZRaabI0tVpYnpYdG/0qRv+rOlgpxmoIYALLhAClcYHXefFDeZoCsOCNQWDyWLRjELEeAsmraTL/ErH35vsWrsTStXExvEiGmsDdM5N+9I1cu2+p8a9g7jIBHeCFZ7s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1716957556-1eb14e15780f850001-xx1T2L
+Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx2.zhaoxin.com with ESMTP id 0VsrEwHzzn7pxCgS (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 29 May 2024 12:39:16 +0800 (CST)
+X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX1.zhaoxin.com
+ (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 29 May
+ 2024 12:39:16 +0800
+Received: from [10.32.65.162] (10.32.65.162) by ZXBJMBX03.zhaoxin.com
+ (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.27; Wed, 29 May
+ 2024 12:39:14 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Message-ID: <2553dd17-f763-4894-89b7-5f76c03d3a37@zhaoxin.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.32.65.162
+Date: Wed, 29 May 2024 12:39:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/fy_UqbgbTx50A8B2YiQfi8t";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+To: Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <keescook@chromium.org>,
+	<tony.luck@intel.com>, <gpiccoli@igalia.com>, <mat.jonczyk@o2.pl>,
+	<rdunlap@infradead.org>, <alexandre.belloni@bootlin.com>,
+	<mario.limonciello@amd.com>, <yaolu@kylinos.cn>, <bhelgaas@google.com>,
+	<justinstitt@google.com>, <linux-kernel@vger.kernel.org>,
+	<linux-hardening@vger.kernel.org>
+X-ASG-Orig-Subj: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+CC: <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <LeoLiu-oc@zhaoxin.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
+ <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com> <87wmnda8mc.ffs@tglx>
+Content-Language: en-US
+From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+In-Reply-To: <87wmnda8mc.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
+X-Barracuda-Start-Time: 1716957556
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 6655
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.125490
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
---Sig_/fy_UqbgbTx50A8B2YiQfi8t
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the gfs2 tree, today's linux-next build (htmldocs) produced
-these warnings:
+On 2024/5/29 06:12, Thomas Gleixner wrote:
+> 
+> 
+> [这封邮件来自外部发件人 谨防风险]
+> 
+> On Tue, May 28 2024 at 07:18, Dave Hansen wrote:
+>> On 5/27/24 23:38, Tony W Wang-oc wrote:
+>> ...> diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+>>> index c96ae8fee95e..ecadd0698d6a 100644
+>>> --- a/arch/x86/kernel/hpet.c
+>>> +++ b/arch/x86/kernel/hpet.c
+>>> @@ -804,6 +804,12 @@ static u64 read_hpet(struct clocksource *cs)
+>>>       if (in_nmi())
+>>>               return (u64)hpet_readl(HPET_COUNTER);
+>>>
+>>> +    /*
+>>> +     * Read HPET directly if panic in progress.
+>>> +     */
+>>> +    if (unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID))
+>>> +            return (u64)hpet_readl(HPET_COUNTER);
+>>> +
+>>
+>> There is literally one other piece of the code in the kernel doing
+>> something similar: the printk() implementation.  There's no other
+>> clocksource or timekeeping code that does this on any architecture.
+>>
+>> Why doesn't this problem apply to any other clock sources?
+> 
+> I principle it applies to any clocksource which needs a spinlock to
+> serialize access. HPET is not the only insanity here.
+> 
+> Think about i8253 :)
+> 
+> Most real clocksources, like TSC and the majority of the preferred clock
+> sources on other architectures are perfectly fine. They just read and be
+> done.
+> 
+>> Why should the problem be fixed in the clock sources themselves?  Why
+>> doesn't printk() deadlock on systems using the HPET?
+> 
+> Because regular printk()s are deferred to irq work when in NMI and
+> similar contexts, but that obviously does not apply to panic
+> situations. Also NMI is treated special even in the HPET code. See
+> below.
+> 
+>> In other words, I think we should fix pstore to be more like printk
+>> rather than hacking around this in each clock source.
+> 
+> pstore is perfectly fine. It uses a NMI safe time accessor function
+> which is then tripping over the HPET lock. That's really a HPET specific
+> problem.
+> 
+> Though what I read out of the changelog is that the MCE hits the same
+> CPU 'x' which holds the lock. But that's fairy tale material as you can
+> see in the patch above:
+> 
+>          if (in_nmi())
+>                  return (u64)hpet_readl(HPET_COUNTER);
+> 
+> For that particular case the dead lock, which would actually be a live
+> lock, cannot happen because in kernel MCEs are NMI class exceptions and
+> therefore in_nmi() evaluates to true and that new voodoo can't be
+> reached at all.
+> 
+> Now there are two other scenarios which really can make that happen:
+> 
+>   1) A non-NMI class exception within the lock held region
+> 
+>      CPU A
+>      acquire(hpet_lock);
+>      ...                 <- #PF, #GP, #DE, ... -> panic()
+> 
+>      If any of that happens within that lock held section then the live
+>      lock on the hpet_lock is the least of your worries. Seriously, I
+>      don't care about this at all.
+> 
+>   2) The actual scenario is:
+> 
+>      CPU A                       CPU B
+>      lock(hpet_lock)
+>                                  MCE hits user space
+>                                  ...
+>                                  exc_machine_check_user()
+>                                    irqentry_enter_from_user_mode(regs);
+> 
+>      irqentry_enter_from_user_mode() obviously does not mark the
+>      exception as NMI class, so in_nmi() evaluates to false. That would
+>      actually dead lock if CPU A is not making progress and releases
+>      hpet_lock.
+> 
+>      Sounds unlikely to happen, right? But in reality it can because of
+>      MCE broadcast. Assume that both CPUs go into MCE:
+> 
+>      CPU A                       CPU B
+>      lock(hpet_lock)
+>                                  exc_machine_check_user()
+>                                    irqentry_enter_from_user_mode();
+>      exc_machine_check_kernel()    do_machine_check()
+>        irqentry_nmi_enter();         mce_panic()
+>        do_machine_check()            if (atomic_inc_return(&mce_panicked) > 1)
+>          mce_panic()                     wait_for_panic(); <- Not taken
+> 
+>          if (atomic_inc_return(&mce_panicked) > 1)
+>              wait_for_panic(); <- Taken
+> 
+>                                      ....
+>                                      hpet_read()
+> 
+>      -> Dead lock because in_nmi() evaluates to false on CPU B and CPU A
+>         obviously can't release the lock.
+> 
 
-Documentation/filesystems/gfs2-glocks.rst:64: ERROR: Malformed table.
-Text in column margin in table line 7.
+Because MCE handler will call printk() before call the panic, so 
+printk() deadlock may happen in this scenario:
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D      =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-Field              Purpose
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D      =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-go_sync            Called before remote state change (e.g. to sync dirty da=
-ta)
-go_xmote_bh        Called after remote state change (e.g. to refill cache)
-go_inval           Called if remote state change requires invalidating the =
-cache
-go_instantiate     Called when a glock has been acquired
-go_held            Called every time a glock holder is acquired
-go_dump            Called to print content of object for debugfs file, or on
-                   error to dump glock to the log.
-go_callback        Called if the DLM sends a callback to drop this lock
-go_unlocked        Called when a glock is unlocked (dlm_unlock())
-go_type            The type of the glock, ``LM_TYPE_*``
-go_flags           GLOF_ASPACE is set, if the glock has an address space
-                   associated with it
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D      =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-Documentation/filesystems/gfs2-glocks.rst:96: ERROR: Malformed table.
-Text in column margin in table line 7.
+CPU A                            CPU B
+printk()
+   lock(console_owner_lock)
+                                  exc_machine_check_user()
+                                    irqentry_enter_from_user_mode()
+exc_machine_check_kernel()         do_machine_check()
+   irqentry_nmi_enter()               mce_panic()
+   do_machine_check()                 printk_mce()  #A
+     mce_panic()                      ...
+       wait_for_panic()               panic()
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Operation        GLF_LOCK bit lock held    gl_lockref.lock spinlock held
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-go_sync               Yes                       No
-go_xmote_bh           Yes                       No
-go_inval              Yes                       No
-go_instantiate        No                        No
-go_held               No                        No
-go_dump               Sometimes                 Yes
-go_callback           Sometimes (N/A)           Yes
-go_unlocked           Yes                       No
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+printk deadlock will happened at #A because in_nmi() evaluates to false 
+on CPU B and CPU B do not enter the panic() AT #A.
 
-Introduced by commit
+Update user space MCE handler to NMI class context is preferred?
 
-  ded323aef6d5 ("gfs2: Update glocks documentation")
+Sincerely
+TonyWWang-oc
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/fy_UqbgbTx50A8B2YiQfi8t
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZWrhcACgkQAVBC80lX
-0Gw4/gf/cx3o8BXTNavjVPnJteNrPjDc61CCUC9RoN4jpaC1mbzIu6+IKm9pEV5G
-SvdT/9PSwrzurw72lnc7E/fL6cgDxw91sS9W6JR+MzfxRV+B5k3tN7OEY4wuGgH1
-+Qy/6+/Qh5M/YuFBsZ70/LDHTm7sRi+2Djxxp3dqlX4CBSuIOV/0UVwf4QsVSJCF
-lpjHeoW78Tmla6ycYsosAjKlyeLkd/qJFGUsLAH68TCWqvsvt36SGmhC+XN5WGpq
-uzMk6AGlAAejXW9WFOOnegaP8nKoKGp9lKdJN0cvDiQ/9hNQaXjnhA78QjlCwIzk
-W1lrUKSVDC3MUaWXnjFt9JoLIkw1gg==
-=J5PD
------END PGP SIGNATURE-----
-
---Sig_/fy_UqbgbTx50A8B2YiQfi8t--
+> So the proposed patch makes sense to some extent. But it only cures the
+> symptom. The real underlying questions are:
+> 
+>    1) Should we provide a panic mode read callback for clocksources which
+>       are affected by this?
+> 
+>    2) Is it correct to claim that a MCE which hits user space and ends up in
+>       mce_panic() is still just a regular exception or should we upgrade to
+>       NMI class context when we enter mce_panic() or even go as far to
+>       upgrade to NMI class context for any panic() invocation?
+> 
+> #1 Solves it at the clocksource level. It still needs HPET specific
+>     changes.
+> 
+> #2 Solves a whole class of issues
+> 
+>     ... while potentially introducing new ones :)
+> 
+>     To me upgrading any panic() invocation to NMI class context makes a
+>     lot of sense because in that case all bets are off.
+> 
+>     in_nmi() is used in quite some places to avoid such problems. IOW,
+>     that would kill a whole class of issues instead of "curing" the HPET
+>     problem locally for the price of an extra conditional. Not that the
+>     extra conditional matters much if HPET is the clocksource as that's
+>     awfully slow anyway and I really don't care about that.
+> 
+>     But I very much care about avoiding to sprinkle panic_cpu checks all
+>     over the place.
+> 
+> Thanks,
+> 
+>          tglx
 
