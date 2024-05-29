@@ -1,164 +1,110 @@
-Return-Path: <linux-kernel+bounces-194336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BACE8D3A66
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:11:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B23B8D3A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250742865CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1F31F21FF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9CC17DE1D;
-	Wed, 29 May 2024 15:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d5MuwJyg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE1115B97D;
-	Wed, 29 May 2024 15:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B2417DE34;
+	Wed, 29 May 2024 15:12:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8711B15A861;
+	Wed, 29 May 2024 15:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716995501; cv=none; b=gcuBB76n0Efa03P/Av/HXZJdD68KB5ycN/5gyI9Dlz5MLsktKFy1JlRUe4bwxZOpL6XysRY/aRnacx+AIpwj7VeQoKC5GhHhO+dqLDR4ZT6DAW62og43xonUsb6RZoedAq6xLUzmtpuBQSQSw1nQrelcejn4AI3qHfeEKQfZDW4=
+	t=1716995557; cv=none; b=qaiAvV6lGYMouHy/QafYDgFEzLm7EBt5XZqzHXQR2zG7+7G32k09h2fW4suTZh5BoZ7H/frwnAY6AP1j1GKnFdJ0m1YR5r55n/KD0cKNvzSa19pyBamEG1b2XKT0EUuUF6GEXWAu4+kTtjvRqFH3yGIlOl3LUM/5GQboQoZG9gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716995501; c=relaxed/simple;
-	bh=U9XeYahFP5qM1pI2/zD/me4C9iA60afmuetgFSYYx1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDFpsStGOBDf4Tyb/V0ON5Kqpssumzp6viety5IYz+ujbfSbQpGbS+CGE1IOoG/AQmzjVwiq1NmmnxKegRFCG6OXoGjRtjLK1j9fWKI0hXjsNGs4iqbL5rKkvll58D6XzFuYHtv3LiadMvCcWbY0gTaTiIpKQ2b5ZtpGz5WdWe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d5MuwJyg; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716995501; x=1748531501;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U9XeYahFP5qM1pI2/zD/me4C9iA60afmuetgFSYYx1w=;
-  b=d5MuwJygq5PwoDohvXHbkdRkzN9IOVx6ATbmUXoocbLN/0ldXiYrQu3W
-   LM7/7CoWbc+D0SpRSEA6D6RAVpajBysHN1pVBPrtVF48cx4IXJZ3INEqL
-   bZAG0fXwNWD1O1hMAFtG6j/WJb45KRbWB/F2I/SoIUoGie4YACR7LrBqe
-   c9xGVaevLNJOs6M0dqhYscKAwy2vWnAtsIFoJ8jC2Vu5/hHpaaVLZDBAU
-   dozncKKxjV95uE1IFeH6xifo8FRylLk0Ne/ghayVNGb+jcEflUz8DKZeb
-   xxqkycwl6Bd3m7AYSm7XzJ/QznpkDREN6UGlCp2zvIPquCV/tLHnJm9lj
-   w==;
-X-CSE-ConnectionGUID: SvinpZOpSUG46xRgkZF9Hw==
-X-CSE-MsgGUID: OO4tg4/CTWCP+20mYAWqHw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13355611"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="13355611"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:11:40 -0700
-X-CSE-ConnectionGUID: gVD+VuWSRr2FON0PRyAeAg==
-X-CSE-MsgGUID: 56ZQbB1sTfqsJkbc/Le1pA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="35556268"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:11:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sCKxh-0000000BqBg-1tq8;
-	Wed, 29 May 2024 18:11:33 +0300
-Date: Wed, 29 May 2024 18:11:33 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
-Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	Maksim Kiselev <bigunclemax@gmail.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Liam Beguin <liambeguin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drivers: iio: adc: add support for ad777x family
-Message-ID: <ZldFpSQPAmAhbW2I@smile.fi.intel.com>
-References: <20240522120005.18197-1-ramona.nechita@analog.com>
- <Zk3-qxCb0zfR440Q@smile.fi.intel.com>
- <SN6PR03MB432071701D6A19C3B4C0C33FF3F22@SN6PR03MB4320.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1716995557; c=relaxed/simple;
+	bh=CJ5RlxlDLbERx7YGng96bn1B0FuKChH0JxLOQF08Io0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eCu7hznXIY3fnRrwgfyuIJDzK0OoPLHM7rVscDQX+KRTcXp0Lk+94g58Ucmv/g/XX6iM+Ndjec6OY71f0Gf990Y2/xV1CDwALc0rIFHpSNvTUPx0rbJKdl/LDcBM2X5bgydFFikk6YaDGrqsFw3uQSMog6xXzAZaM9Q59Tylxm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D874339;
+	Wed, 29 May 2024 08:12:59 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A4A6C3F762;
+	Wed, 29 May 2024 08:12:33 -0700 (PDT)
+Message-ID: <5a18f5ac-4e9a-4baf-b720-98eac7b6792f@arm.com>
+Date: Wed, 29 May 2024 16:12:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR03MB432071701D6A19C3B4C0C33FF3F22@SN6PR03MB4320.namprd03.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 13/21] bitmap: make bitmap_{get,set}_value8()
+ use bitmap_{read,write}()
+To: Alexander Lobakin <aleksander.lobakin@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Alexander Potapenko
+ <glider@google.com>, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240327152358.2368467-1-aleksander.lobakin@intel.com>
+ <20240327152358.2368467-14-aleksander.lobakin@intel.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240327152358.2368467-14-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 03:01:06PM +0000, Nechita, Ramona wrote:
+Hi Alexander,
 
-..
+On 27/03/2024 3:23 pm, Alexander Lobakin wrote:
+> Now that we have generic bitmap_read() and bitmap_write(), which are
+> inline and try to take care of non-bound-crossing and aligned cases
+> to keep them optimized, collapse bitmap_{get,set}_value8() into
+> simple wrappers around the former ones.
+> bloat-o-meter shows no difference in vmlinux and -2 bytes for
+> gpio-pca953x.ko, which says the optimization didn't suffer due to
+> that change. The converted helpers have the value width embedded
+> and always compile-time constant and that helps a lot.
 
-> >> +	/*
-> >> +	 * DMA (thus cache coherency maintenance) requires the
-> >> +	 * transfer buffers to live in their own cache lines.
-> >> +	 */
-> >> +	u8			reg_rx_buf[3] ____cacheline_aligned;
-> >> +	u8			reg_tx_buf[3];
-> >
-> >> +	u8			spidata_rx[32];
-> >> +	u8			spidata_tx[32];
-> >
-> >These will not be cache aligned. Is it a problem?
-> 
-> No, it should be fine without the alignment.
+This change appears to have introduced a build failure for me on arm64
+(with GCC 9.4.0 from Ubuntu 20.04.02) - reverting b44759705f7d makes
+these errors go away again:
 
-I.o.w. it means that only reg_*x_buf are supposed to be in the different cache lines, correct?
+In file included from drivers/gpio/gpio-pca953x.c:12:
+drivers/gpio/gpio-pca953x.c: In function ‘pca953x_probe’:
+/include/linux/bitmap.h:799:17: error: array subscript [1, 1024] is outside array bounds of ‘long unsigned int[1]’ [-Werror=array-bounds]
+   799 |  map[index + 1] &= BITMAP_FIRST_WORD_MASK(start + nbits);
+       |                 ^~
+In file included from ./include/linux/atomic.h:5,
+                  from drivers/gpio/gpio-pca953x.c:11:
+drivers/gpio/gpio-pca953x.c:1015:17: note: while referencing ‘val’
+  1015 |  DECLARE_BITMAP(val, MAX_LINE);
+       |                 ^~~
+/include/linux/types.h:11:16: note: in definition of macro ‘DECLARE_BITMAP’
+    11 |  unsigned long name[BITS_TO_LONGS(bits)]
+       |                ^~~~
+In file included from drivers/gpio/gpio-pca953x.c:12:
+/include/linux/bitmap.h:800:17: error: array subscript [1, 1024] is outside array bounds of ‘long unsigned int[1]’ [-Werror=array-bounds]
+   800 |  map[index + 1] |= (value >> space);
+       |  ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+In file included from ./include/linux/atomic.h:5,
+                  from drivers/gpio/gpio-pca953x.c:11:
+drivers/gpio/gpio-pca953x.c:1015:17: note: while referencing ‘val’
+  1015 |  DECLARE_BITMAP(val, MAX_LINE);
+       |                 ^~~
+/include/linux/types.h:11:16: note: in definition of macro ‘DECLARE_BITMAP’
+    11 |  unsigned long name[BITS_TO_LONGS(bits)]
+       |                ^~~~
 
-..
+I've not dug further since I don't have any interest in the pca953x
+driver - it just happened to be enabled in my config, so for now I've
+turned it off. However I couldn't obviously see any other reports of
+this, so here it is.
 
-> >Btw, can't you use regmap for IO?
-> 
-> Unfortunately, I don't think regmap could be used, because of the crc and the
-> fact that data is shifted out on the SPI SDO line in the interrupt. I
-> consider perhaps adding regmap to the mix might complicate things a bit. 
-
-Can you add this into the comment area of the patch?
-
-..
-
-> >> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_N_LSB, lsb);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_N_MSB, msb);
-> >> +	if (ret)
-> >> +		return ret;
-> >
-> >Can you use 16-bit writes?
-> >Same Q to all similar LSB/MSB write groups.
-> 
-> I cannot do 16-bit writes due to how the spi functions on the chip and
-> because the registers for MSB/LSB are at different addresses.
-
-They are supposed to be on the different addresses.
-You mean the distance between them > than stride?
-
-..
-
-> >> +	ret = devm_add_action_or_reset(&spi->dev,
-> >> +				       ad777x_clk_disable,
-> >> +				       st->mclk);
-> >> +	if (ret)
-> >> +		return ret;
-> >
-> >So, what's wrong with the _enabled() API?
-> 
-> Sorry, I am not sure what you mean here by _enabled() API, is there a
-> different mechanism that can be used for this type of operations?
-
-devm_clk_get_enabled()
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Robin.
 
