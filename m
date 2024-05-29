@@ -1,102 +1,215 @@
-Return-Path: <linux-kernel+bounces-193789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCE48D3235
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:50:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28028D3254
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97ED1F24798
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:50:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75AC1B24C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770EF16D9AD;
-	Wed, 29 May 2024 08:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1487616EBE7;
+	Wed, 29 May 2024 08:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="saQFZyJw"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hWwridfM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47DC16A369
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C08168C1A;
+	Wed, 29 May 2024 08:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716972311; cv=none; b=L6c8IM/f7iCtlZpWkGW8hZzyrvrj+Glr8ekaiJiGaqcPJZ1/VjctgJyM7K39YaMf/ZjGlfI7nHIFTqGIxAbMYQjYwlAHV1ctU6J960htPlTe2tlJEnN7IQPmtZXJsFsTmiwRExr8m3j1z0vyi4fsmEngwOPHKR2UUMOo5pPjqzA=
+	t=1716972350; cv=none; b=lXIfax1+J5dJWGFlLfaWKkHSTVBnZyWP6HK9X3E8eqTvkt/O2tPAUq+bkJFU6ni/Y4nIPWpDgN0nXDCBUzxXcWHyHuYIOuTrT6Q15KK5nx8N7KkA9MMLIE0Wotrrf2jZuJH9Z2DY36v7fmh5n+RkThXunFy4cQFMNgvkNW3iWE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716972311; c=relaxed/simple;
-	bh=cEQZgv7lA65Mqddsp2++Rozt4mjzOKyK0xJtWUBpnoE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pPRhq6TtjcEYzyU/IPg85BUi1D6xC12lfDzlBbX9yxHE/BIHqxXwzz1orxHNNAdRII+ebn/q7gubKOw5Nzpx0/9AnGlq8aEVeFA59+1yUsib3UDZt1qG9Ly6wLOReuihUjNeRtMojbdcEDO8Ku4iAdWgw4xU/T6xP5mePowxxk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=saQFZyJw; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4dda88ce9so1532921276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716972308; x=1717577108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cEQZgv7lA65Mqddsp2++Rozt4mjzOKyK0xJtWUBpnoE=;
-        b=saQFZyJw6Z0aBDilz+Rqg+rlTUm8Uc+eEZo5bPFXI6grbjxNdTaCQI+Zh/2hZ/U/b6
-         taYs8d9H+9QLieLnosucA4wggU3+bRlYRaWW/t1Wg2GNo8vln3ujJRzKLxDcWANj3dQd
-         e6gyuPR5/Ht6Y18uUTuUC4zFn3QukRE9QFLlFdz7MmYOLoGAjU+YQByTQanpG3Naoxii
-         aRue3zC/CCx7SOiCBk4onLxsie2dgXjRrL4v1AG+7lCAgWgJuF9HDPLVtaZqIbL/v3Sg
-         tbfvn/+XXTG117zdzLNxniDsiXRD206pl2CO8AZ3LKYhHOQAti+IJTqF69wurw8rfpj5
-         iBTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716972308; x=1717577108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cEQZgv7lA65Mqddsp2++Rozt4mjzOKyK0xJtWUBpnoE=;
-        b=xGrxcbMAdOd5z5Wpc5mr5gu79XNAFKaaWWOeNY0AJgJMli8MiUduPMy5AfCWN2oONJ
-         cqKuZuLTtA7y0Z07SjTvs4NDgThFnHLWuFCYmZ/3beQkxlh7ajdkm3AZoPFBbHwrmiwx
-         U0BUIyFn7PAchJOrUePbB45kX7+hZLI5o8tMUQnDiqhobbDOdMMCdLS73pXsY1zMCQJw
-         FK34BIxbZGNkyng5T9n+jfMNJJnuwWzrFAc3iDM3SsahgJboxSKa6Obwq+JHc0f+iifz
-         M9cCXSbA6CuAmcYnFiZE8qy4N4ROzwv545KsYtCX7/CQkkCh31Zw3/s13hWxYaJlL8O3
-         2gcw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9PpqhYfMldSSY1D3lXBWCfxuwkQaMS8s2H2yIXkq86ItT79jtR/jVk52j92Am4Q2oWjzgLQWuAz8GqPtW4UxQudjyuXHBhKUWpbQe
-X-Gm-Message-State: AOJu0YzSanmx1PUMvgHe4R5PbEjnRwPW0Jb6HgBhIA4RsNNXisi5+89i
-	zW4Nfq29hoHrecfJJPIifoKIK5mckoOjKdQ7/bLM013XFLjzwF2n1cjoe+IWIfS+HFUYYMh1ifB
-	NV8uHodc+Lol01AJbFyWjdOb7e3n5MT8bHte1ZLlmF5XxeA0r6uHyqA==
-X-Google-Smtp-Source: AGHT+IHG3pzJxRaWvOHhrglnhPYr6/z3Ebb+ReDnEzXNEKzJNc+W87h4giJSH+3km64fkbhWxZHVbzSqpA9BcH4//5Q=
-X-Received: by 2002:a25:8183:0:b0:df7:9762:ba42 with SMTP id
- 3f1490d57ef6-df79762bf78mr9594641276.31.1716972307863; Wed, 29 May 2024
- 01:45:07 -0700 (PDT)
+	s=arc-20240116; t=1716972350; c=relaxed/simple;
+	bh=4k93cKDWyHTm7hIIZKu0U1D1pK2kVFiyj4VsKeMkNbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FHQcF4yJAHEqH2IK8ONlaADwphTSYoVDKNc7Jg30cDtMblu3yVOxkLtyN9xytKBrgZ/LyYz8nz6e/LKzB7kErNerC3lDd1CPvSr8DdBOQneILfET0/7QHHlsYnna7ewgc0n8X4bh2TxeNecrOwt8OWAugGPnwd4FaptWVA7iucI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hWwridfM; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716972348; x=1748508348;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4k93cKDWyHTm7hIIZKu0U1D1pK2kVFiyj4VsKeMkNbc=;
+  b=hWwridfMgI/zqVuFFJcAnZ+nBbRFv1eZl/iDQ4NBrCgWRTgDsuKEy/BT
+   dKn+KZ3gV/LjwxMHDmq4mlDQckNYBpsCb8Vv1WEJiDTZznEuvqvGToGgO
+   z6BLF3+q/kBpB5iy4nTElzrFxRR5TRCbVD6Zje12qMJ9wLs4olNoiKThF
+   Bja/BwWXG0Y7pZqdHZVXCZUPchxbmIBHJvJ1PNJOCJzEM2kNZit1vXEz+
+   tpiKBNN+lWBj316ljg/8gQ9mXdcZizV7QNa4AsuKANvxAg+Ukoqwk990M
+   9zhkw4wep8bqfX/WnzK5EO9MnBAelAzufzNBZ1vK4EzmYCbxlDsLYEFkk
+   g==;
+X-CSE-ConnectionGUID: JLZG+Hb0Q9u2aBhqNzHYng==
+X-CSE-MsgGUID: urtr5MSnSTiJ7/k/dCoSxg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24494142"
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="24494142"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 01:45:30 -0700
+X-CSE-ConnectionGUID: y84rBaqMSrmaLSggfYGnyw==
+X-CSE-MsgGUID: IPPBN0tNQU2HObCI2sA71w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
+   d="scan'208";a="40360935"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.248.18])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 01:45:26 -0700
+Message-ID: <286413cc-6257-49f0-8e8d-e65443494d16@intel.com>
+Date: Wed, 29 May 2024 11:45:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528191510.1444068-1-robh@kernel.org>
-In-Reply-To: <20240528191510.1444068-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 May 2024 10:44:57 +0200
-Message-ID: <CACRpkdZpdjYNci0uN4yxZhYforA-0FV=YBXhmcKCw8L1NYMUhQ@mail.gmail.com>
-Subject: Re: [PATCH] arm: dts: realview: Add/drop missing/spurious unit-addreses
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] perf maps: Sort kcore maps
+To: Leo Yan <leo.yan@arm.com>, James Clark <james.clark@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240520090647.949371-1-leo.yan@arm.com>
+ <20240520090647.949371-2-leo.yan@arm.com>
+ <2f4fce9f-6283-40ad-8adc-c370e98627da@intel.com>
+ <02fbb30f-19cf-4822-9676-35d3e51d99b1@arm.com>
+ <1f5f1eed-1feb-4a51-92b7-12c1fd195708@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <1f5f1eed-1feb-4a51-92b7-12c1fd195708@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 28, 2024 at 9:15=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
+On 28/05/24 18:00, James Clark wrote:
+> 
+> 
+> On 25/05/2024 10:29, Leo Yan wrote:
+>> Hi Adrian,
+>>
+>> On 5/22/2024 11:31 AM, Adrian Hunter wrote:
+>>> On 20/05/24 12:06, Leo Yan wrote:
+>>>> When merging kcore maps into the kernel maps, it has an implicit
+>>>> requirement for the kcore maps ordering, otherwise, some sections
+>>>> delivered by the kcore maps will be ignored.
+>>>
+>>> perf treats the kernel text map as a special case.  The problem
+>>> is that the kcore loading logic did not cater for there being 2
+>>> maps that covered the kernel mapping.
+>>>
+>>> The workaround was to choose the smaller mapping, but then that
+>>> still only worked if that was the first.
+>>
+>> You could see below are Kcore maps dumped on Arm64:
+>>
+>> kore map start: ffff000000000000 end: ffff00001ac00000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff00001ad88000 end: ffff000032000000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff000032101000 end: ffff00003e000000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff000040000000 end: ffff000089b80000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff000089cc0000 end: ffff0000b9ab0000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff0000b9ad0000 end: ffff0000b9bb0000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff0000b9c50000 end: ffff0000b9d50000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff0000ba114000 end: ffff0000bf130000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff0000bf180000 end: ffff0000e0000000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff000200000000 end: ffff000220000000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff800000000000 end: ffff800080000000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff800080000000 end: ffff8000822f0000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: ffff800080000000 end: fffffdffbf800000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc0000000 end: fffffdffc06b0000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc06b6000 end: fffffdffc0c80000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc0c84000 end: fffffdffc0f80000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc1000000 end: fffffdffc226e000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc2273000 end: fffffdffc2e6b000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc2e6b000 end: fffffdffc2e6f000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc2e71000 end: fffffdffc2e76000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc2e84000 end: fffffdffc2fc5000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc2fc6000 end: fffffdffc3800000 name: [kernel.kallsyms]
+>> refcnt: 1
+>> kore map start: fffffdffc8000000 end: fffffdffc8800000 name: [kernel.kallsyms]
+>> refcnt: 1
+>>
+>> You could see it's much more complex rather than only for kernel text section
+>> and vmalloc region. We cannot only handle the case for the overlapping between
+>> the text section and vmalloc region, it is possible for other maps to be
+>> overlapping with each other.
 
-> Various nodes on the Arm Realview boards have missing or spurious
-> unit-addresses.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+That should not matter because maps__merge_in() deals with overlaps. Just
+need the replacement map to cover the kernel text.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+There would be a problem if the mappings were inconsistent i.e. the overlapped
+part pointed to a different part of the file.  Not sure how much sense there is
+in general in overlapping program headers in an ELF file, but if they exist,
+they *must* have:
 
-I send pull requests for these files very seldom and the risk of
-collision is practically zero, could you take the patch through your
-DT tree?
+	vaddr_1 - offset_1 == vaddr_2 - offset_2
 
-Yours,
-Linus Walleij
+We could add a check for that, but that would be fatal i.e. fail to load kcore
+at all.
+
+>>
+>> And different arches have their own definition for the Kcore maps. This is why
+>> I want to sort maps in this patch, it can allow us to find a reliable way to
+>> append the kcore maps.
+>>
+>>> James essentially fixed that by ensuring the kernel "replacement"
+>>> map is inserted first.
+>>
+>> Yeah, I agreed James' patch has fixed the kernel "replacement" map. But as I
+>> elaborated above, there still have other maps might overlap with each other,
+>> my understanding is we don't handle all cases.
+>>> In other respects, the ordering of the maps does not matter, so
+>>> I am not sure it is worth this extra processing.
+>>
+>> To sell my patch, I have another point for why we need sorting Kcore maps.
+>>
+>> Now Perf verifies the map in the function check_invariants(), this function
+>> reports the broken issue, but we still have no clue how the broken issue happens.
+>>
+>> If we can sort the Kcore maps in kcore_mapfn(), then we have chance to detect
+>> the overlapping within maps, and then it can reports the overlapping in the
+>> first place and this would be helpful for debugging and locating the failures.
+>>
+> 
+> +1 for this point. If check_invariants() insists on sorted maps, then
+> keeping them sorted as early as possible is better.
+> 
+> Debugging future issues will be easier if the assert is closer to the
+> source of the problem.
+
+The issue there is with using maps__insert().  It should be
+maps__fixup_overlap_and_insert() instead.  Probably most callers
+of maps__insert() should be using maps__fixup_overlap_and_insert().
+Probably they should be renamed:
+
+  maps__insert			  -> maps__insert_unsafe
+  maps__fixup_overlap_and_insert  -> maps__insert
+
 
