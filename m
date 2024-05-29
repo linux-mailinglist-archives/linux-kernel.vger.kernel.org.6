@@ -1,505 +1,716 @@
-Return-Path: <linux-kernel+bounces-193414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA258D2B92
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:57:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0974B8D2BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7930F1C22CEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:57:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736201F24FBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC2615B13B;
-	Wed, 29 May 2024 03:57:02 +0000 (UTC)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5A015B158;
+	Wed, 29 May 2024 04:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXPpr6c0"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A16C2B2CF;
-	Wed, 29 May 2024 03:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B1410F4;
+	Wed, 29 May 2024 04:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716955021; cv=none; b=T4ShsCL8rYivrOAE6n63OM2KRhTmFY3TaBTMcAUuULPZHJSQGv/rZKOxRZwQ5r2oVSHrcvrfA4GwFmon3G2RZhjId7VBU/pLCe1erYoFWi8lNRooE3fiiW4QnDXQBngmdWQ9MPZdx3+3aZm9VwjsIDOe1QKGIqdRUJc3HqI34Qo=
+	t=1716955367; cv=none; b=R6sFWlS09FngHhphQUkzUH9snNtbCisMI8zBxD/m7xw2OoE0LGTdl//CQa1QQdqKMhfh4AhIeZCIR+U8emWQ0fmEF0HJcW3Lk83UNtoD6lZzREiOy/sebRGtIvM7zp76Gk/fXCeObkNs7zK16qG68WyLRHPn97HJW9WjOU1x/d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716955021; c=relaxed/simple;
-	bh=keNMOVfP1TK9oagnpDtxlxMYmo8DonPgF5e3uiIyRhg=;
+	s=arc-20240116; t=1716955367; c=relaxed/simple;
+	bh=lxC/S3iBDvLQFDA6HbrEv0F9SmQ+A/SqEV8xkQ9UrH8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMmZPYCMibZ1wpk2gRvSu2aPorrOCfbclLEm2KY2gXre6qumG91o+InmVJRjJt2RvgVmVZDjqGT7cXMnrBGdLFqdqDWlB78Tof6UnMszG9lshJBtuJebcfTNqxH+I/l2W6SDYnGOxdQEeX98JDsJxYlNQFnJU8vKjyZEN4f3mRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	 To:Cc:Content-Type; b=LGE18yjPKdiaXIhz768Bhc8heNzGatFj83p5v5RaO/TfhKQ/LsiwlR4eggPOxEWVDe1/mpgz684svSHdY6Ys0Ke2fGU6Wjcts/ksiwKDn/P9KZiG6SnuX1Kj4c+bX3axYIZX/f09epeRv88qTA5B5wJys0eZMyEPl3tb0N5Sfp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXPpr6c0; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-681a4427816so1261981a12.3;
-        Tue, 28 May 2024 20:56:59 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4202ca70270so19134935e9.3;
+        Tue, 28 May 2024 21:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716955363; x=1717560163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oUQ7rQZYzQapUhz9VctJrkZnstSdpS0FQ8DXDeIk2CE=;
+        b=XXPpr6c0KNt/RLOemsKiR8pfqMn68UU31j+0+FCafHU1bsKr7COC0T6RdvkoVss+gy
+         zgamnraOuqjG877XDjeNR3kNQxgxnPxbQYVoJ9pm5ZrjWF/emhPhEPEkh1z1gqtmnvDQ
+         PSroD6FZOHZ7zCAal6CB/cNLGpFaxpvnTilMlvYYCxqC2cLK98N7SJikHOLxv7t4yadg
+         A4kA1Vk+Z9ZPpMHF2E3zbYmKlehy5FzZgpff02fgbE+anykzkVhSbCsHRL2hMoZkPrQE
+         thbvCEJiqHvQ3qDkNeInFOHnhlUQhZ4ElLKSaquxWRrDY54nzgC6w9Xv1sRtfgvaMsig
+         M6uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716955019; x=1717559819;
+        d=1e100.net; s=20230601; t=1716955363; x=1717560163;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oQifBxt0wAI7sVP0FJgdPRFaeqi3UguaMLT3yU/AMp0=;
-        b=OWSNGtTBJvPPG7y2Dc3PkUSzRIh/i82lrwwlHQfgnoDoyHnyb9fZl53M+wt9HFAHdp
-         Tyjf0nKy3vuzktGYcN0o95mgllfcOdy3STTvCs8sbGLkAJqgzep503RJtAy4x5Z6xFQM
-         ZP1/wQ5ER4roVxpiCek2bI0Huu6/wWIDfJlsO87Zuz/4GJM1XmtaQWmIqhub0yw7Pmq/
-         Zp2M0mGhUCSza6StUhrphOjxKihf4KX1eRWARCcOw/Qb0mC1vzSl2D2ryWEqVqAYX2Qj
-         4O4pbwswMy6b5lhcy9W0jBStSmnLE5L1Gpb6AINuTqyr6ayH/Qz/yd6vAzO3Qw3JRKPf
-         LKHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpwI5t4aNWzT3VU3MYPqqV3GVHfpjvyOX4wifz/sA6NxPGjvVXuy38b2Fh55N9BbMZTulv27utJKm5lWGmGPc5Ff0WWl6wSuTJ8/Eqqd4vo4BaBrYCX4Q/3odT931LYpfHZws9eLuAqkHdecmS8w==
-X-Gm-Message-State: AOJu0Yzl5RfNf3UKfbl8FMNazgZnqJ8ahdrNmHhZmvp/BTPYk/T2/FFn
-	FjQAzJKU2xJpX5flRcvbPTLbeLzOgp6rYZ9HAQpdyxCsPaZIvTIrHmFrgPnMp0ddl7UCPJfuKt9
-	gmZZCOg2FQi7Nd3CUg0gcTvWYl1Jbow==
-X-Google-Smtp-Source: AGHT+IFXRC635TfpXJm4sG0gxK/0mhN+aNLTv4T/xAvUz0z8WZEcUgC9HbmWv062lJQB5lMSMiB/rEB5AhRHiA4bdlk=
-X-Received: by 2002:a05:6a20:7285:b0:1b0:259e:c8e0 with SMTP id
- adf61e73a8af0-1b212e575d8mr15823811637.59.1716955019183; Tue, 28 May 2024
- 20:56:59 -0700 (PDT)
+        bh=oUQ7rQZYzQapUhz9VctJrkZnstSdpS0FQ8DXDeIk2CE=;
+        b=wR+3TKdu/fXYxaKrVHeuYUYcgdPwR1KtzrbPnlddAu7lfrLLY1OPpB1SikEHFMABDc
+         xAZvEZKigt5NFCZFxLZH/rMx3hWiVNtFQutC4HqhDbIg54thd9FO3x2lNqdmPUS1iSxt
+         ZcPKrPy/hPiaoL7hb2/CKyYZuNJA8SzSBSmlPC7jrCvSTw/HOjJfmYY3U1Wi/hfxgVnT
+         kwwcLvPJfwxNqlMRSK1z8M1QrOZn3PPPQKe6x6VyQsK1U/JGsBYV0ffhS0+uO60jhXJM
+         Vj8262PWQOtbK4pMW8jK66lgVILMFP5ihL4+NF6wbe1SXa136X37qcFf+wrdYUoDFwBU
+         ESEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnon7ExMfZsJaKKywXe/VbRCAgvpWJDWlT60mH4L4Y/l9oypSQ04+dlBDUll8U4DJI4UhZXtDlGzbFSiJnGFhZBcRKK/uEf6Pv5bLpLsNgAr7q8SMbCq5t1PkvCvLXBBYvGl00N35eJ6MdFKZOygxy/bN7YcNrUKqKCtyyQrHxQ1SzZQcqj/p1kAIOXU2pqIP5+XoTLzgZbC1lrdCtzCD+7yO+oAIcEiEIN9QUu1/lLyU2/aM20llAKM4=
+X-Gm-Message-State: AOJu0Ywr50cWLJUGLpPkCix1H7EQKlFfYyQ0uJOcN469GItvVijUGeWq
+	rzPuT8FeOVvoFpha8crGr0WeSV1V14qhwUil9bYOtXRJAXFLlEEh5I9h4w492UkwjJLl6GRnThT
+	+oYLT1oQ8kP3zvrO8CgrD1RDL3I9pSCAm
+X-Google-Smtp-Source: AGHT+IEcc0R/3aTXwhzekGq6976I5/Bgh/+z7I78iDqWQ4ACqC9Bv2FYZa0tJo6a6tq+gaXKPiDOI0GfUi9+dMXph7Q=
+X-Received: by 2002:a05:600c:5129:b0:421:1fb1:fe00 with SMTP id
+ 5b1f17b1804b1-4211fb1fecbmr38409115e9.17.1716955363165; Tue, 28 May 2024
+ 21:02:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240526182212.544525-1-sesse@google.com>
-In-Reply-To: <20240526182212.544525-1-sesse@google.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 28 May 2024 20:56:47 -0700
-Message-ID: <CAM9d7chY7CzMx9sSYeagDK81PsE=soGmn4AUxXAE7rHp=jmx3Q@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] perf report: Support LLVM for addr2line()
-To: "Steinar H. Gunderson" <sesse@google.com>
-Cc: acme@kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, irogers@google.com, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org> <20240528-hid_bpf_struct_ops-v1-3-8c6663df27d8@kernel.org>
+In-Reply-To: <20240528-hid_bpf_struct_ops-v1-3-8c6663df27d8@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 28 May 2024 21:02:31 -0700
+Message-ID: <CAADnVQJbc4uVmhh+ABPMBGFjTYwQQp3wGLeTBYEUWti3R8V8aw@mail.gmail.com>
+Subject: Re: [PATCH HID 03/13] HID: bpf: implement HID-BPF through bpf_struct_ops
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Alexei Starovoitov <ast@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-On Sun, May 26, 2024 at 11:22=E2=80=AFAM Steinar H. Gunderson <sesse@google=
-com> wrote:
+On Tue, May 28, 2024 at 6:15=E2=80=AFAM Benjamin Tissoires <bentiss@kernel.=
+org> wrote:
 >
-> In addition to the existing support for libbfd and calling out to
-> an external addr2line command, add support for using libllvm directly.
-> This is both faster than libbfd, and can be enabled in distro builds
-> (the LLVM license has an explicit provision for GPLv2 compatibility).
-> Thus, it is set as the primary choice if available.
+> We do this implementation in several steps to not have the CI failing:
+> - first (this patch), we add struct_ops while keeping the existing infra
+>   available
+> - then we change the selftests, the examples and the existing in-tree
+>   HID-BPF programs
+> - then we remove the existing trace points making old HID-BPF obsolete
 >
-> As an example, running perf report on a medium-size profile with
-> DWARF-based backtraces took 58 seconds with LLVM, 78 seconds with
-> libbfd, 153 seconds with external llvm-addr2line, and I got tired
-> and aborted the test after waiting for 55 minutes with external
-> bfd addr2line (which is the default for perf as compiled by distributions
-> today). Evidently, for this case, the bfd addr2line process needs
-> 18 seconds (on a 5.2 GHz Zen 3) to load the .debug ELF in question,
-> hits the 1-second timeout and gets killed during initialization,
-> getting restarted anew every time. Having an in-process addr2line
-> makes this much more robust.
+> There are a few advantages of struct_ops over tracing:
+> - compatibility with sleepable programs (for hid_hw_raw_request() in
+>   a later patch)
+> - a lot simpler in the kernel: it's a simple rcu protected list
+> - we can add more parameters to the function called without much trouble
+> - the "attach" is now generic through BPF-core: the caller just needs to
+>   set hid_id and flags before calling __load().
+> - all the BPF tough part is not handled in BPF-core through generic
+>   processing
+> - hid_bpf_ctx is now only writable where it needs be
 >
-> As future extensions, libllvm can be used in many other places where
-> we currently use libbfd or other libraries:
->
->  - Symbol enumeration (in particular, for PE binaries).
->  - Demangling (including non-Itanium demangling, e.g. Microsoft
->    or Rust).
->  - Disassembling (perf annotate).
->
-> However, these are much less pressing; most people don't profile
-> PE binaries, and perf has non-bfd paths for ELF. The same with
-> demangling; the default _cxa_demangle path works fine for most
-> users. Disassembling is coming in a later patch in the series;
-> however do note that while bfd objdump can be slow on large binaries,
-> it is possible to use --objdump=3Dllvm-objdump to get the speed benefits.
-> (It appears LLVM-based demangling is very simple, should we want
-> that.)
->
-> Tested with LLVM 14, 15, 16, 18 and 19. For some reason, LLVM 12 was not
-> correctly detected using feature_check, and thus was not tested.
->
-> Signed-off-by: Steinar H. Gunderson <sesse@google.com>
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
 > ---
->  tools/build/Makefile.feature       |   1 +
->  tools/perf/Makefile.config         |  15 ++++
->  tools/perf/builtin-version.c       |   1 +
->  tools/perf/util/Build              |   1 +
->  tools/perf/util/llvm-c-helpers.cpp | 134 +++++++++++++++++++++++++++++
->  tools/perf/util/llvm-c-helpers.h   |  49 +++++++++++
->  tools/perf/util/srcline.c          |  57 +++++++++++-
->  7 files changed, 257 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/util/llvm-c-helpers.cpp
->  create mode 100644 tools/perf/util/llvm-c-helpers.h
+>  drivers/hid/bpf/Makefile             |   2 +-
+>  drivers/hid/bpf/hid_bpf_dispatch.c   |  52 +++++++-
+>  drivers/hid/bpf/hid_bpf_dispatch.h   |   4 +
+>  drivers/hid/bpf/hid_bpf_jmp_table.c  |   3 +
+>  drivers/hid/bpf/hid_bpf_struct_ops.c | 246 +++++++++++++++++++++++++++++=
+++++++
+>  include/linux/hid_bpf.h              |  64 ++++++++-
+>  6 files changed, 362 insertions(+), 9 deletions(-)
 >
-> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-> index 1e2ab148d5db..278b26216254 100644
-> --- a/tools/build/Makefile.feature
-> +++ b/tools/build/Makefile.feature
-> @@ -136,6 +136,7 @@ FEATURE_DISPLAY ?=3D              \
->           libunwind              \
->           libdw-dwarf-unwind     \
->           libcapstone            \
-> +         llvm                   \
->           zlib                   \
->           lzma                   \
->           get_cpuid              \
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index 7f1e016a9253..42f5ad89c0ca 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -969,6 +969,21 @@ ifdef BUILD_NONDISTRO
->    endif
->  endif
+> diff --git a/drivers/hid/bpf/Makefile b/drivers/hid/bpf/Makefile
+> index cf55120cf7d6..1cb3f31e9335 100644
+> --- a/drivers/hid/bpf/Makefile
+> +++ b/drivers/hid/bpf/Makefile
+> @@ -8,4 +8,4 @@ LIBBPF_INCLUDE =3D $(srctree)/tools/lib
+>  obj-$(CONFIG_HID_BPF) +=3D hid_bpf.o
+>  CFLAGS_hid_bpf_dispatch.o +=3D -I$(LIBBPF_INCLUDE)
+>  CFLAGS_hid_bpf_jmp_table.o +=3D -I$(LIBBPF_INCLUDE)
+> -hid_bpf-objs +=3D hid_bpf_dispatch.o hid_bpf_jmp_table.o
+> +hid_bpf-objs +=3D hid_bpf_dispatch.o hid_bpf_jmp_table.o hid_bpf_struct_=
+ops.o
+> diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf=
+_dispatch.c
+> index c8bb79ce2354..7216c3c7713d 100644
+> --- a/drivers/hid/bpf/hid_bpf_dispatch.c
+> +++ b/drivers/hid/bpf/hid_bpf_dispatch.c
+> @@ -58,6 +58,7 @@ dispatch_hid_bpf_device_event(struct hid_device *hdev, =
+enum hid_report_type type
+>                 },
+>                 .data =3D hdev->bpf.device_data,
+>         };
+> +       struct hid_bpf_ops *e;
+>         int ret;
 >
-> +ifndef NO_LIBLLVM
-> +  $(call feature_check,llvm)
-> +  ifeq ($(feature-llvm), 1)
-> +    CFLAGS +=3D -DHAVE_LIBLLVM_SUPPORT
-> +    CXXFLAGS +=3D -DHAVE_LIBLLVM_SUPPORT
-> +    CXXFLAGS +=3D $(shell $(LLVM_CONFIG) --cxxflags)
-> +    LIBLLVM =3D $(shell $(LLVM_CONFIG) --libs all) $(shell $(LLVM_CONFIG=
-) --system-libs)
-> +    EXTLIBS +=3D -L$(shell $(LLVM_CONFIG) --libdir) $(LIBLLVM)
-> +    $(call detected,CONFIG_LIBLLVM)
-> +  else
-> +    $(warning No libllvm found, slower source file resolution, please in=
-stall llvm-devel/llvm-dev)
-> +    NO_LIBLLVM :=3D 1
-> +  endif
-> +endif
-> +
->  ifndef NO_DEMANGLE
->    $(call feature_check,cxa-demangle)
->    ifeq ($(feature-cxa-demangle), 1)
-> diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
-> index 398aa53e9e2e..4b252196de12 100644
-> --- a/tools/perf/builtin-version.c
-> +++ b/tools/perf/builtin-version.c
-> @@ -65,6 +65,7 @@ static void library_status(void)
->         STATUS(HAVE_LIBBFD_SUPPORT, libbfd);
->         STATUS(HAVE_DEBUGINFOD_SUPPORT, debuginfod);
->         STATUS(HAVE_LIBELF_SUPPORT, libelf);
-> +       STATUS(HAVE_LIBLLVM_SUPPORT, libllvm);
->         STATUS(HAVE_LIBNUMA_SUPPORT, libnuma);
->         STATUS(HAVE_LIBNUMA_SUPPORT, numa_num_possible_cpus);
->         STATUS(HAVE_LIBPERL_SUPPORT, libperl);
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index da64efd8718f..6a1fd8f1a488 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -226,6 +226,7 @@ perf-$(CONFIG_CXX_DEMANGLE) +=3D demangle-cxx.o
->  perf-y +=3D demangle-ocaml.o
->  perf-y +=3D demangle-java.o
->  perf-y +=3D demangle-rust.o
-> +perf-$(CONFIG_LIBLLVM) +=3D llvm-c-helpers.o
+>         if (type >=3D HID_REPORT_TYPES)
+> @@ -70,9 +71,25 @@ dispatch_hid_bpf_device_event(struct hid_device *hdev,=
+ enum hid_report_type type
+>         memset(ctx_kern.data, 0, hdev->bpf.allocated_data);
+>         memcpy(ctx_kern.data, data, *size);
 >
->  ifdef CONFIG_JITDUMP
->  perf-$(CONFIG_LIBELF) +=3D jitdump.o
-> diff --git a/tools/perf/util/llvm-c-helpers.cpp b/tools/perf/util/llvm-c-=
-helpers.cpp
-> new file mode 100644
-> index 000000000000..3cc967ec6f28
-> --- /dev/null
-> +++ b/tools/perf/util/llvm-c-helpers.cpp
-> @@ -0,0 +1,134 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Must come before the linux/compiler.h include, which defines several
-> + * macros (e.g. noinline) that conflict with compiler builtins used
-> + * by LLVM.
-> + */
-> +#pragma GCC diagnostic push
-> +#pragma GCC diagnostic ignored "-Wunused-parameter"  /* Needed for LLVM =
-<=3D 15 */
-> +#include <llvm/DebugInfo/Symbolize/Symbolize.h>
-> +#pragma GCC diagnostic pop
-> +
-> +#include <stdio.h>
-> +#include <sys/types.h>
-> +#include <linux/compiler.h>
-> +extern "C" {
-> +#include <linux/zalloc.h>
-> +}
-> +#include "symbol_conf.h"
-> +#include "llvm-c-helpers.h"
-> +
-> +using namespace llvm;
-> +using llvm::symbolize::LLVMSymbolizer;
-> +
-> +/*
-> + * Allocate a static LLVMSymbolizer, which will live to the end of the p=
-rogram.
-> + * Unlike the bfd paths, LLVMSymbolizer has its own cache, so we do not =
-need
-> + * to store anything in the dso struct.
-> + */
-> +static LLVMSymbolizer *get_symbolizer()
-> +{
-> +       static LLVMSymbolizer *instance =3D nullptr;
-> +       if (instance =3D=3D nullptr) {
-> +               LLVMSymbolizer::Options opts;
-> +               /*
-> +                * LLVM sometimes demangles slightly different from the r=
-est
-> +                * of the code, and this mismatch can cause new_inline_sy=
-m()
-> +                * to get confused and mark non-inline symbol as inlined
-> +                * (since the name does not properly match up with base_s=
-ym).
-> +                * Thus, disable the demangling and let the rest of the c=
-ode
-> +                * handle it.
-> +                */
-> +               opts.Demangle =3D false;
-> +               instance =3D new LLVMSymbolizer(opts);
-> +       }
-> +       return instance;
-> +}
-> +
-> +/* Returns 0 on error, 1 on success. */
-> +static int extract_file_and_line(const DILineInfo &line_info, char **fil=
-e,
-> +                                unsigned int *line)
-> +{
-> +       if (file) {
-> +               if (line_info.FileName =3D=3D "<invalid>") {
-> +                       /* Match the convention of libbfd. */
-> +                       *file =3D nullptr;
-> +               } else {
-> +                       /* The caller expects to get something it can fre=
-e(). */
-> +                       *file =3D strdup(line_info.FileName.c_str());
-> +                       if (*file =3D=3D nullptr)
-> +                               return 0;
-> +               }
-> +       }
-> +       if (line)
-> +               *line =3D line_info.Line;
-> +       return 1;
-> +}
-> +
-> +extern "C"
-> +int llvm_addr2line(const char *dso_name, u64 addr,
-> +                  char **file, unsigned int *line,
-> +                  bool unwind_inlines,
-> +                  llvm_a2l_frame **inline_frames)
-> +{
-> +       LLVMSymbolizer *symbolizer =3D get_symbolizer();
-> +       object::SectionedAddress sectioned_addr =3D {
-> +               addr,
-> +               object::SectionedAddress::UndefSection
-> +       };
-> +
-> +       if (unwind_inlines) {
-> +               Expected<DIInliningInfo> res_or_err =3D
-> +                       symbolizer->symbolizeInlinedCode(dso_name,
-> +                                                        sectioned_addr);
-> +               if (!res_or_err)
-> +                       return 0;
-> +               unsigned num_frames =3D res_or_err->getNumberOfFrames();
-> +               if (num_frames =3D=3D 0)
-> +                       return 0;
-> +
-> +               if (extract_file_and_line(res_or_err->getFrame(0),
-> +                                         file, line) =3D=3D 0)
-> +                       return 0;
-> +
-> +               *inline_frames =3D (llvm_a2l_frame *)calloc(
-> +                       num_frames, sizeof(**inline_frames));
-> +               if (*inline_frames =3D=3D nullptr)
-> +                       return 0;
-> +
-> +               for (unsigned i =3D 0; i < num_frames; ++i) {
-> +                       const DILineInfo &src =3D res_or_err->getFrame(i)=
-;
-> +
-> +                       llvm_a2l_frame &dst =3D (*inline_frames)[i];
-> +                       if (src.FileName =3D=3D "<invalid>")
-> +                               /* Match the convention of libbfd. */
-> +                               dst.filename =3D nullptr;
-> +                       else
-> +                               dst.filename =3D strdup(src.FileName.c_st=
-r());
-> +                       dst.funcname =3D strdup(src.FunctionName.c_str())=
-;
-> +                       dst.line =3D src.Line;
-> +
-> +                       if (dst.filename =3D=3D nullptr ||
-> +                           dst.funcname =3D=3D nullptr) {
-> +                               for (unsigned j =3D 0; j <=3D i; ++j) {
-> +                                       zfree(&(*inline_frames)[j].filena=
-me);
-> +                                       zfree(&(*inline_frames)[j].funcna=
-me);
-> +                               }
-> +                               zfree(inline_frames);
-> +                               return 0;
+> +       rcu_read_lock();
+> +       list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
+
+In the typical case there will be only one prog per device, right?
+The for_each is future proofing?
+
+> +               if (e->hid_device_event) {
+> +                       ret =3D e->hid_device_event(&ctx_kern.ctx, type);
+> +                       if (ret < 0) {
+> +                               rcu_read_unlock();
+> +                               return ERR_PTR(ret);
 > +                       }
+> +
+> +                       if (ret)
+> +                               ctx_kern.ctx.retval =3D ret;
 > +               }
-> +
-> +               return num_frames;
-> +       } else {
-> +               if (inline_frames)
-> +                       *inline_frames =3D nullptr;
-> +
-> +               Expected<DILineInfo> res_or_err =3D
-> +                       symbolizer->symbolizeCode(dso_name, sectioned_add=
-r);
-> +               if (!res_or_err)
-> +                       return 0;
-> +               return extract_file_and_line(*res_or_err, file, line);
 > +       }
-> +}
-> diff --git a/tools/perf/util/llvm-c-helpers.h b/tools/perf/util/llvm-c-he=
-lpers.h
+> +       rcu_read_unlock();
+> +
+>         ret =3D hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_DEVICE_EVENT, &c=
+tx_kern);
+>         if (ret < 0)
+>                 return ERR_PTR(ret);
+> +       ret =3D ctx_kern.ctx.retval;
+>
+>         if (ret) {
+>                 if (ret > ctx_kern.ctx.allocated_size)
+> @@ -122,7 +139,10 @@ u8 *call_hid_bpf_rdesc_fixup(struct hid_device *hdev=
+, u8 *rdesc, unsigned int *s
+>
+>         memcpy(ctx_kern.data, rdesc, min_t(unsigned int, *size, HID_MAX_D=
+ESCRIPTOR_SIZE));
+>
+> -       ret =3D hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_RDESC_FIXUP, &ct=
+x_kern);
+> +       if (hdev->bpf.rdesc_ops)
+> +               ret =3D hdev->bpf.rdesc_ops->hid_rdesc_fixup(&ctx_kern.ct=
+x);
+> +       else
+> +               ret =3D hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_RDESC_FI=
+XUP, &ctx_kern);
+
+This is for backward compat?
+I don't see it's being removed in the later patches.
+
+>         if (ret < 0)
+>                 goto ignore_bpf;
+>
+> @@ -150,7 +170,7 @@ static int device_match_id(struct device *dev, const =
+void *id)
+>         return hdev->id =3D=3D *(int *)id;
+>  }
+>
+> -static struct hid_device *hid_get_device(unsigned int hid_id)
+> +struct hid_device *hid_get_device(unsigned int hid_id)
+>  {
+>         struct device *dev;
+>
+> @@ -164,7 +184,7 @@ static struct hid_device *hid_get_device(unsigned int=
+ hid_id)
+>         return to_hid_device(dev);
+>  }
+>
+> -static void hid_put_device(struct hid_device *hid)
+> +void hid_put_device(struct hid_device *hid)
+>  {
+>         put_device(&hid->dev);
+>  }
+> @@ -205,7 +225,7 @@ static int __hid_bpf_allocate_data(struct hid_device =
+*hdev, u8 **data, u32 *size
+>         return 0;
+>  }
+>
+> -static int hid_bpf_allocate_event_data(struct hid_device *hdev)
+> +int hid_bpf_allocate_event_data(struct hid_device *hdev)
+>  {
+>         /* hdev->bpf.device_data is already allocated, abort */
+>         if (hdev->bpf.device_data)
+> @@ -592,14 +612,22 @@ static const struct btf_kfunc_id_set hid_bpf_syscal=
+l_kfunc_set =3D {
+>
+>  int hid_bpf_connect_device(struct hid_device *hdev)
+>  {
+> -       struct hid_bpf_prog_list *prog_list;
+> +       bool need_to_allocate =3D false;
+> +       struct hid_bpf_ops *e;
+>
+>         rcu_read_lock();
+> -       prog_list =3D rcu_dereference(hdev->bpf.progs[HID_BPF_PROG_TYPE_D=
+EVICE_EVENT]);
+> +       list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
+> +               if (e->hid_device_event) {
+> +                       need_to_allocate =3D true;
+> +                       break;
+> +               }
+> +       }
+> +       if (rcu_dereference(hdev->bpf.progs[HID_BPF_PROG_TYPE_DEVICE_EVEN=
+T]))
+> +               need_to_allocate =3D true;
+>         rcu_read_unlock();
+>
+>         /* only allocate BPF data if there are programs attached */
+> -       if (!prog_list)
+> +       if (!need_to_allocate)
+>                 return 0;
+>
+>         return hid_bpf_allocate_event_data(hdev);
+> @@ -623,12 +651,15 @@ void hid_bpf_destroy_device(struct hid_device *hdev=
+)
+>         hdev->bpf.destroyed =3D true;
+>
+>         __hid_bpf_destroy_device(hdev);
+> +       __hid_bpf_ops_destroy_device(hdev);
+>  }
+>  EXPORT_SYMBOL_GPL(hid_bpf_destroy_device);
+>
+>  void hid_bpf_device_init(struct hid_device *hdev)
+>  {
+>         spin_lock_init(&hdev->bpf.progs_lock);
+> +       INIT_LIST_HEAD(&hdev->bpf.prog_list);
+> +       mutex_init(&hdev->bpf.prog_list_lock);
+>  }
+>  EXPORT_SYMBOL_GPL(hid_bpf_device_init);
+>
+> @@ -662,6 +693,13 @@ static int __init hid_bpf_init(void)
+>                 return 0;
+>         }
+>
+> +       /* register struct_ops kfuncs after we are sure we can load our p=
+reloaded bpf program */
+> +       err =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &hid_=
+bpf_kfunc_set);
+> +       if (err) {
+> +               pr_warn("error while setting HID BPF tracing kfuncs: %d",=
+ err);
+> +               return 0;
+> +       }
+> +
+>         /* register syscalls after we are sure we can load our preloaded =
+bpf program */
+>         err =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &hid_bpf=
+_syscall_kfunc_set);
+>         if (err) {
+> diff --git a/drivers/hid/bpf/hid_bpf_dispatch.h b/drivers/hid/bpf/hid_bpf=
+_dispatch.h
+> index fbe0639d09f2..e52c43d81650 100644
+> --- a/drivers/hid/bpf/hid_bpf_dispatch.h
+> +++ b/drivers/hid/bpf/hid_bpf_dispatch.h
+> @@ -10,12 +10,16 @@ struct hid_bpf_ctx_kern {
+>         u8 *data;
+>  };
+>
+> +struct hid_device *hid_get_device(unsigned int hid_id);
+> +void hid_put_device(struct hid_device *hid);
+> +int hid_bpf_allocate_event_data(struct hid_device *hdev);
+>  int hid_bpf_preload_skel(void);
+>  void hid_bpf_free_links_and_skel(void);
+>  int hid_bpf_get_prog_attach_type(struct bpf_prog *prog);
+>  int __hid_bpf_attach_prog(struct hid_device *hdev, enum hid_bpf_prog_typ=
+e prog_type, int prog_fd,
+>                           struct bpf_prog *prog, __u32 flags);
+>  void __hid_bpf_destroy_device(struct hid_device *hdev);
+> +void __hid_bpf_ops_destroy_device(struct hid_device *hdev);
+>  int hid_bpf_prog_run(struct hid_device *hdev, enum hid_bpf_prog_type typ=
+e,
+>                      struct hid_bpf_ctx_kern *ctx_kern);
+>  int hid_bpf_reconnect(struct hid_device *hdev);
+> diff --git a/drivers/hid/bpf/hid_bpf_jmp_table.c b/drivers/hid/bpf/hid_bp=
+f_jmp_table.c
+> index aa8e1c79cdf5..8a54ba447718 100644
+> --- a/drivers/hid/bpf/hid_bpf_jmp_table.c
+> +++ b/drivers/hid/bpf/hid_bpf_jmp_table.c
+> @@ -81,6 +81,9 @@ static int hid_bpf_program_count(struct hid_device *hde=
+v,
+>         if (type >=3D HID_BPF_PROG_TYPE_MAX)
+>                 return -EINVAL;
+>
+> +       if (type =3D=3D HID_BPF_PROG_TYPE_RDESC_FIXUP && hdev->bpf.rdesc_=
+ops)
+> +               n +=3D 1;
+> +
+>         FOR_ENTRIES(i, jmp_table.tail, jmp_table.head) {
+>                 struct hid_bpf_prog_entry *entry =3D &jmp_table.entries[i=
+];
+>
+> diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_b=
+pf_struct_ops.c
 > new file mode 100644
-> index 000000000000..19332dd98e14
+> index 000000000000..be514a98e55b
 > --- /dev/null
-> +++ b/tools/perf/util/llvm-c-helpers.h
-> @@ -0,0 +1,49 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __PERF_LLVM_C_HELPERS
-> +#define __PERF_LLVM_C_HELPERS 1
+> +++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
+> @@ -0,0 +1,246 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
 > +
 > +/*
-> + * Helpers to call into LLVM C++ code from C, for the parts that do not =
-have
-> + * C APIs.
+> + *  HID-BPF support for Linux
+> + *
+> + *  Copyright (c) 2024 Benjamin Tissoires
 > + */
 > +
-> +#include <linux/compiler.h>
+> +#include <linux/bitops.h>
+> +#include <linux/bpf_verifier.h>
+> +#include <linux/bpf.h>
+> +#include <linux/btf.h>
+> +#include <linux/btf_ids.h>
+> +#include <linux/filter.h>
+> +#include <linux/hid.h>
+> +#include <linux/hid_bpf.h>
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/workqueue.h>
+> +#include "hid_bpf_dispatch.h"
 > +
-> +#ifdef __cplusplus
-> +extern "C" {
-> +#endif
+> +static struct btf *hid_bpf_ops_btf;
 > +
-> +struct llvm_a2l_frame {
-> +  char* filename;
-> +  char* funcname;
-> +  unsigned int line;
+> +static int hid_bpf_ops_init(struct btf *btf)
+> +{
+> +       hid_bpf_ops_btf =3D btf;
+> +       return 0;
+> +}
+> +
+> +static bool hid_bpf_ops_is_valid_access(int off, int size,
+> +                                         enum bpf_access_type type,
+> +                                         const struct bpf_prog *prog,
+> +                                         struct bpf_insn_access_aux *inf=
+o)
+> +{
+> +       return bpf_tracing_btf_ctx_access(off, size, type, prog, info);
+> +}
+> +
+> +static int hid_bpf_ops_check_member(const struct btf_type *t,
+> +                                     const struct btf_member *member,
+> +                                     const struct bpf_prog *prog)
+> +{
+> +       u32 moff =3D __btf_member_bit_offset(t, member) / 8;
+> +
+
+this is good...
+
+> +       switch (moff) {
+> +       case offsetof(struct hid_bpf_ops, hid_rdesc_fixup):
+> +               break;
+> +       default:
+> +               if (prog->sleepable)
+> +                       return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int hid_bpf_ops_btf_struct_access(struct bpf_verifier_log *log,
+> +                                          const struct bpf_reg_state *re=
+g,
+> +                                          int off, int size)
+> +{
+> +       const struct btf_type *state;
+> +       const struct btf_type *t;
+> +       s32 type_id;
+> +
+> +       type_id =3D btf_find_by_name_kind(reg->btf, "hid_bpf_ctx",
+> +                                       BTF_KIND_STRUCT);
+> +       if (type_id < 0)
+> +               return -EINVAL;
+> +
+> +       t =3D btf_type_by_id(reg->btf, reg->btf_id);
+> +       state =3D btf_type_by_id(reg->btf, type_id);
+> +       if (t !=3D state) {
+> +               bpf_log(log, "only access to hid_bpf_ctx is supported\n")=
+;
+> +               return -EACCES;
+> +       }
+> +
+> +       /* out-of-bound access in hid_bpf_ctx */
+> +       if (off + size > sizeof(struct hid_bpf_ctx)) {
+> +               bpf_log(log, "write access at off %d with size %d\n", off=
+, size);
+> +               return -EACCES;
+> +       }
+> +
+> +       if (off < offsetof(struct hid_bpf_ctx, retval)) {
+> +               bpf_log(log,
+> +                       "write access at off %d with size %d on read-only=
+ part of hid_bpf_ctx\n",
+> +                       off, size);
+> +               return -EACCES;
+> +       }
+> +
+> +       return NOT_INIT;
+> +}
+> +
+> +static const struct bpf_verifier_ops hid_bpf_verifier_ops =3D {
+> +       .is_valid_access =3D hid_bpf_ops_is_valid_access,
+> +       .btf_struct_access =3D hid_bpf_ops_btf_struct_access,
 > +};
 > +
-> +/*
-> + * Implement addr2line() using libLLVM. LLVM is a C++ API, and
-> + * many of the linux/ headers cannot be included in a C++ compile unit,
-> + * so we need to make a little bridge code here. llvm_addr2line() will
-> + * convert the inline frame information from LLVM's internal structures
-> + * and put them into a flat array given in inline_frames. The caller
-> + * is then responsible for taking that array and convert it into perf's
-> + * regular inline frame structures (which depend on e.g. struct list_hea=
-d).
-> + *
-> + * If the address could not be resolved, or an error occurred (e.g. OOM)=
-,
-> + * returns 0. Otherwise, returns the number of inline frames (which mean=
-s 1
-> + * if the address was not part of an inlined function). If unwind_inline=
-s
-> + * is set and the return code is nonzero, inline_frames will be set to
-> + * a newly allocated array with that length. The caller is then responsi=
-ble
-> + * for freeing both the strings and the array itself.
+> +static int hid_bpf_ops_init_member(const struct btf_type *t,
+> +                                const struct btf_member *member,
+> +                                void *kdata, const void *udata)
+> +{
+> +       u32 flags;
+> +
+> +       switch (member->offset) {
+> +       case offsetof(struct hid_bpf_ops, hid_id) * 8:
+
+but here you're open coding it and adding ugly * 8
+Just do:
+        moff =3D __btf_member_bit_offset(t, member) / 8;
+        switch (moff) {
+        case offsetof(struct tcp_congestion_ops, flags):
+
+the way bpf_tcp_ca.c is doing?
+Open code of ->offset is asking for trouble.
+
+> +               /* For hid_id and flags fields, this function has to copy=
+ it
+> +                * and return 1 to indicate that the data has been handle=
+d by
+> +                * the struct_ops type, or the verifier will reject the m=
+ap if
+> +                * the value of those fields is not zero.
+> +                */
+> +               ((struct hid_bpf_ops *)kdata)->hid_id =3D ((struct hid_bp=
+f_ops *)udata)->hid_id;
+> +               return 1;
+> +       case offsetof(struct hid_bpf_ops, flags) * 8:
+> +               flags =3D ((struct hid_bpf_ops *)udata)->flags;
+> +               if (flags & ~HID_BPF_FLAG_MASK)
+> +                       return -EINVAL;
+> +               ((struct hid_bpf_ops *)kdata)->flags =3D flags;
+> +               return 1;
+> +       }
+> +       return 0;
+> +}
+> +
+> +static int hid_bpf_reg(void *kdata)
+> +{
+> +       struct hid_bpf_ops *ops =3D kdata;
+> +       struct hid_device *hdev;
+> +       int count, err =3D 0;
+> +
+> +       hdev =3D hid_get_device(ops->hid_id);
+> +       if (IS_ERR(hdev))
+> +               return PTR_ERR(hdev);
+> +
+> +       ops->hdev =3D hdev;
+> +
+> +       mutex_lock(&hdev->bpf.prog_list_lock);
+> +
+> +       count =3D list_count_nodes(&hdev->bpf.prog_list);
+> +       if (count >=3D HID_BPF_MAX_PROGS_PER_DEV) {
+> +               err =3D -E2BIG;
+> +               goto out_unlock;
+> +       }
+> +
+> +       if (ops->hid_rdesc_fixup) {
+> +               if (hdev->bpf.rdesc_ops) {
+> +                       err =3D -EINVAL;
+> +                       goto out_unlock;
+> +               }
+> +
+> +               hdev->bpf.rdesc_ops =3D ops;
+> +       }
+> +
+> +       if (ops->hid_device_event) {
+> +               err =3D hid_bpf_allocate_event_data(hdev);
+> +               if (err)
+> +                       goto out_unlock;
+> +       }
+> +
+> +       if (ops->flags & HID_BPF_FLAG_INSERT_HEAD)
+> +               list_add_rcu(&ops->list, &hdev->bpf.prog_list);
+> +       else
+> +               list_add_tail_rcu(&ops->list, &hdev->bpf.prog_list);
+
+Looks like future proofing, but I feel it's too little to materialize.
+Take a look at include/linux/bpf_mprog.h
+I suspect it might be useful here too.
+
+> +
+> +out_unlock:
+> +       mutex_unlock(&hdev->bpf.prog_list_lock);
+> +
+> +       if (err) {
+> +               if (hdev->bpf.rdesc_ops =3D=3D ops)
+> +                       hdev->bpf.rdesc_ops =3D NULL;
+> +               hid_put_device(hdev);
+> +       } else if (ops->hid_rdesc_fixup) {
+> +               hid_bpf_reconnect(hdev);
+> +       }
+> +
+> +       return err;
+> +}
+> +
+> +static void hid_bpf_unreg(void *kdata)
+> +{
+> +       struct hid_bpf_ops *ops =3D kdata;
+> +       struct hid_device *hdev;
+> +       bool reconnect =3D false;
+> +
+> +       hdev =3D ops->hdev;
+> +
+> +       /* check if __hid_bpf_ops_destroy_device() has been called */
+> +       if (!hdev)
+> +               return;
+> +
+> +       mutex_lock(&hdev->bpf.prog_list_lock);
+> +
+> +       list_del_rcu(&ops->list);
+> +
+> +       reconnect =3D hdev->bpf.rdesc_ops =3D=3D ops;
+> +       if (reconnect)
+> +               hdev->bpf.rdesc_ops =3D NULL;
+> +
+> +       mutex_unlock(&hdev->bpf.prog_list_lock);
+> +
+> +       if (reconnect)
+> +               hid_bpf_reconnect(hdev);
+> +
+> +       hid_put_device(hdev);
+> +}
+> +
+> +static int __hid_bpf_device_event(struct hid_bpf_ctx *ctx, enum hid_repo=
+rt_type type)
+> +{
+> +       return 0;
+> +}
+> +
+> +static int __hid_bpf_rdesc_fixup(struct hid_bpf_ctx *ctx)
+> +{
+> +       return 0;
+> +}
+> +
+> +static struct hid_bpf_ops __bpf_hid_bpf_ops =3D {
+> +       .hid_device_event =3D __hid_bpf_device_event,
+> +       .hid_rdesc_fixup =3D __hid_bpf_rdesc_fixup,
+> +};
+> +
+> +static struct bpf_struct_ops bpf_hid_bpf_ops =3D {
+> +       .verifier_ops =3D &hid_bpf_verifier_ops,
+> +       .init =3D hid_bpf_ops_init,
+> +       .check_member =3D hid_bpf_ops_check_member,
+> +       .init_member =3D hid_bpf_ops_init_member,
+> +       .reg =3D hid_bpf_reg,
+> +       .unreg =3D hid_bpf_unreg,
+> +       .name =3D "hid_bpf_ops",
+> +       .cfi_stubs =3D &__bpf_hid_bpf_ops,
+> +       .owner =3D THIS_MODULE,
+> +};
+> +
+> +void __hid_bpf_ops_destroy_device(struct hid_device *hdev)
+> +{
+> +       struct hid_bpf_ops *e;
+> +
+> +       rcu_read_lock();
+> +       list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
+> +               hid_put_device(hdev);
+> +               e->hdev =3D NULL;
+> +       }
+> +       rcu_read_unlock();
+> +}
+> +
+> +static int __init hid_bpf_struct_ops_init(void)
+> +{
+> +       return register_bpf_struct_ops(&bpf_hid_bpf_ops, hid_bpf_ops);
+> +}
+> +late_initcall(hid_bpf_struct_ops_init);
+> diff --git a/include/linux/hid_bpf.h b/include/linux/hid_bpf.h
+> index a66103618e6e..96495e977204 100644
+> --- a/include/linux/hid_bpf.h
+> +++ b/include/linux/hid_bpf.h
+> @@ -65,11 +65,12 @@ struct hid_bpf_ctx {
+>   * @HID_BPF_FLAG_INSERT_HEAD: insert the given program before any other =
+program
+>   *                            currently attached to the device. This doe=
+sn't
+>   *                            guarantee that this program will always be=
+ first
+> - * @HID_BPF_FLAG_MAX: sentinel value, not to be used by the callers
+>   */
+>  enum hid_bpf_attach_flags {
+>         HID_BPF_FLAG_NONE =3D 0,
+>         HID_BPF_FLAG_INSERT_HEAD =3D _BITUL(0),
+> +
+> +       /* private: internal use only */
+>         HID_BPF_FLAG_MAX,
+>  };
+>
+> @@ -112,6 +113,63 @@ struct hid_ops {
+>
+>  extern struct hid_ops *hid_ops;
+>
+> +/**
+> + * struct hid_bpf_ops - A BPF struct_ops of callbacks allowing to attach=
+ HID-BPF
+> + *                     programs to a HID device
+> + * @hid_id: the HID uniq ID to attach to. This is writeable before ``loa=
+d()``, and
+> + *         cannot be changed after
+> + * @flags: &enum hid_bpf_attach_flags to assign flags before ``load()``.
+> + *        Writeable only before ``load()``
 > + */
-> +int llvm_addr2line(const char* dso_name,
-> +                   u64 addr,
-> +                   char** file,
-> +                   unsigned int* line,
-> +                   bool unwind_inlines,
-> +                   struct llvm_a2l_frame** inline_frames);
-> +
-> +#ifdef __cplusplus
-> +}
-> +#endif
-> +
-> +#endif /* __PERF_LLVM_C_HELPERS */
-> diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-> index 9d670d8c1c08..74091ecc21df 100644
-> --- a/tools/perf/util/srcline.c
-> +++ b/tools/perf/util/srcline.c
-> @@ -16,6 +16,9 @@
->  #include "util/debug.h"
->  #include "util/callchain.h"
->  #include "util/symbol_conf.h"
-> +#ifdef HAVE_LIBLLVM_SUPPORT
-> +#include "util/llvm-c-helpers.h"
-> +#endif
->  #include "srcline.h"
->  #include "string2.h"
->  #include "symbol.h"
-> @@ -130,7 +133,59 @@ static struct symbol *new_inline_sym(struct dso *dso=
-,
->
->  #define MAX_INLINE_NEST 1024
->
-> -#ifdef HAVE_LIBBFD_SUPPORT
-> +#ifdef HAVE_LIBLLVM_SUPPORT
-> +
-> +static void free_llvm_inline_frames(struct llvm_a2l_frame *inline_frames=
-,
-> +                                   int num_frames)
-> +{
-> +       if (inline_frames !=3D NULL) {
-> +               for (int i =3D 0; i < num_frames; ++i) {
-> +                       zfree(&inline_frames[i].filename);
-> +                       zfree(&inline_frames[i].funcname);
-> +               }
-> +               zfree(&inline_frames);
-> +       }
-> +}
-> +
-> +static int addr2line(const char *dso_name, u64 addr,
-> +                    char **file, unsigned int *line, struct dso *dso,
-> +                    bool unwind_inlines, struct inline_node *node,
-> +                    struct symbol *sym)
-> +{
-> +       struct llvm_a2l_frame *inline_frames =3D NULL;
-> +       int num_frames =3D llvm_addr2line(dso_name, addr, file, line,
-> +                                       node && unwind_inlines, &inline_f=
-rames);
-> +
-> +       if (num_frames =3D=3D 0 || !inline_frames) {
-> +               /* Error, or we didn't want inlines. */
-> +               return num_frames;
-> +       }
-> +
-> +       for (int i =3D 0; i < num_frames; ++i) {
-> +               struct symbol *inline_sym =3D
-> +                       new_inline_sym(dso, sym, inline_frames[i].funcnam=
-e);
-> +               char *srcline =3D NULL;
-> +
-> +               if (inline_frames[i].filename)
-> +                       srcline =3D srcline_from_fileline(
-> +                               inline_frames[i].filename,
-> +                               inline_frames[i].line);
-> +               if (inline_list__append(inline_sym, srcline, node) !=3D 0=
-) {
-> +                       free_llvm_inline_frames(inline_frames, num_frames=
-);
-> +                       return 0;
-> +               }
-> +       }
-> +       free_llvm_inline_frames(inline_frames, num_frames);
-> +
-> +       return num_frames;
-> +}
-> +
-> +void dso__free_a2l(struct dso *)
-> +{
-> +       /* Nothing to free. */
-> +}
-> +
-> +#elif defined(HAVE_LIBBFD_SUPPORT)
+> +struct hid_bpf_ops {
+> +       /* hid_id needs to stay first so we can easily change it
+> +        * from userspace.
+> +        */
 
-Hmm.. it's unfortunate that we have only one addr2line
-implementation at a time.  Maybe we can do the same thing
-like in annotate with objdump so that it can fallback to another
-method when failing.  But it'd require more changes beyond
-this work and I'm not sure if it's really worth it.
+hmm.
+patch 5 just does:
++       skel->struct_ops.mouse_invert->hid_id =3D hid_id;
 
-Thanks,
-Namhyung
+I don't see a reason why it needs to be first.
 
->
->  /*
->   * Implement addr2line using libbfd.
-> --
-> 2.45.1
->
->
+> +       int                     hid_id;
+> +       u32                     flags;
+> +
+> +       /* private: internal use only */
+> +       struct list_head        list;
+> +
+> +       /* public: rest is public */
+> +
+> +/* fast path fields are put first to fill one cache line */
+> +
+> +       /**
+> +        * @hid_device_event: called whenever an event is coming in from =
+the device
+> +        *
+> +        * It has the following arguments:
+> +        *
+> +        * ``ctx``: The HID-BPF context as &struct hid_bpf_ctx
+> +        *
+> +        * Return: %0 on success and keep processing; a positive
+> +        * value to change the incoming size buffer; a negative
+> +        * error code to interrupt the processing of this event
+> +        *
+> +        * Context: Interrupt context.
+> +        */
+> +       int (*hid_device_event)(struct hid_bpf_ctx *ctx, enum hid_report_=
+type report_type);
+> +
+> +/* control/slow paths put last */
+> +
+> +       /**
+> +        * @hid_rdesc_fixup: called when the probe function parses the re=
+port descriptor
+> +        * of the HID device
+> +        *
+> +        * It has the following arguments:
+> +        *
+> +        * ``ctx``: The HID-BPF context as &struct hid_bpf_ctx
+> +        *
+> +        * Return: %0 on success and keep processing; a positive
+> +        * value to change the incoming size buffer; a negative
+> +        * error code to interrupt the processing of this device
+> +        */
+> +       int (*hid_rdesc_fixup)(struct hid_bpf_ctx *ctx);
+
+It's fine since you want to keep the prog mostly unchanged,
+but since the whole api is improving maybe it's time
+to do something about hid_bpf_ctx in all callbacks?
+Pass into prog what prog needs to see.
+In the old api all progs had to have a common hid_bpf_ctx.
+With struct-ops it can be fine tuned.
+
+Overall it looks great.
+hid_id did the trick :)
 
