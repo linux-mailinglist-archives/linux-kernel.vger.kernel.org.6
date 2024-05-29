@@ -1,389 +1,594 @@
-Return-Path: <linux-kernel+bounces-194616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3170F8D3EFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:37:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF018D3EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C7E1C212AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50CB81F237FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C931C2325;
-	Wed, 29 May 2024 19:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC751C2324;
+	Wed, 29 May 2024 19:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cxQxOIFl"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2058.outbound.protection.outlook.com [40.107.21.58])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lrADXn7n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9750515B573;
-	Wed, 29 May 2024 19:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717011435; cv=fail; b=m5+DaJrs/ja31jJHh/LL2tad/XKwiqXATv0dUab486V45afoXy2UqKzMIoxd38bUx3fgYz4gijDBf/Hm6ZoQkV5Ab78WV4F/zZ7Gkkk8zCALz76pK6zNrBuvxAXR9UyZIPOCqbzoIWjHHZ2Yq3qrY47Qc1XPoEEKEnTnZzpHQxg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717011435; c=relaxed/simple;
-	bh=78y6owJf/6kQvgJy8xgdIWalMSoQai2qVhOK56ujX/E=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D7FP4R9Ga8iZ2zo1FiFCEKQQZpT58q4Xvk6mvXWH/Gr7zh36sSEbMQotzxOQcYQxc7whxxDw7l5FhnrrAWofI5c8ffKYxlqr9//5bCLXghMN+DNk0TWiboE6THG+IAZ5xEKvN8hhOVT+kaGwzTRvCYyH8E2SbcFz2xssPy8PwF8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=cxQxOIFl; arc=fail smtp.client-ip=40.107.21.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ilXwMnDjKcz7RfDbisSbBa7ZdYDgROdehjDxf1IBa6s5GRi4k5SFVTq/xC9wIbK9lvvZczFt4pQNLBuwJu6W7+LaGbPZ890Kj+tTofajE0Pp2Ra++bkDLrrga3REnT7jhJ3tj9zf4LJH4grbhdu4WbQA3fHeKUzlQwRGs1GBqVA48IYcCXuYpgAmBh98bzbLEm/FoH79yphiNUCci41Bl85MxLvKjVHg++wYB81xjtGrYVV2clOr/EyqiGt5CM7F7KzJaF6lPG//3jcqUgI6azAVgqOw29nmgsm9CDdKsu+L14EFAzisq+tZtBJqoAPbkMHb5QP+fn0g2YIkU0biZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d+i6Q18CVQUbsgabYWX1sdl8SAE/noRujsFZ6a7czo8=;
- b=mgqaWRJJjo1WlbgkgmheShZrBTL75i8VPyxq6mMIDZXV09wvwFKLmE43Vj+jvAVAZltiZsqKFJzfRe0OCX2uWOsXpOywzvJMza24gXEEphCb4E7p6T9UP89PbeVPA4GyG84uhFuGN8i3HjCzRvsmwjsSc7RNKevdPWl2pNiOs/RTvlOeoaEISJrdAP6PllwA3cfXOwIdjTEms4v9C+p82VFshtsIlL70Hy3gt09PXhNasw4x+k0kw8o1f1/u/YsT9Wn2dPQZjyyvkLN1q1yUtqTiTzJc7wDOmBiI25+/uFVTxiq+WYs7+ho4YROhZJJZdn0HFWKXPtrNaCOrjhbl+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d+i6Q18CVQUbsgabYWX1sdl8SAE/noRujsFZ6a7czo8=;
- b=cxQxOIFlT/Wn7FYmFVejREO03yyoXULk0RfEwhRP/J1nh9oWS/T+NOl6Xpyy1PtsKq6TxpZWvSfi/DDITWs/nL+ol+DCDoFP7rnpxwZY22QPrN6QvN6jsVM6evj/lVzeosrYV7MAEVAogVx5X6SR/kljkT9xyvhv4H7H4HV0Ugg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI1PR04MB7023.eurprd04.prod.outlook.com (2603:10a6:800:12f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Wed, 29 May
- 2024 19:37:09 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.018; Wed, 29 May 2024
- 19:37:09 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] spi: dt-bindings: fsl-dspi: Convert to yaml format
-Date: Wed, 29 May 2024 15:36:50 -0400
-Message-Id: <20240529193651.1029840-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR07CA0076.namprd07.prod.outlook.com
- (2603:10b6:a03:12b::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EEC15B573;
+	Wed, 29 May 2024 19:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717011685; cv=none; b=B1yrifc3MDblkp6fa2qIyJhEFniBR4bGiUuNh9QJ7p/on6qQ62a7TDOdJxvh6KwmF+jgldGdHxrZTZLFFxHn6RKtzboxAR+xCDEPsis2Fs7ppm9WylVMFyMHF6agYBD5dR9mLAICKJ4lzJh+7deVR1TLIWmzGcSs+P/RvLlgNqo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717011685; c=relaxed/simple;
+	bh=Qdp6pufV0uRIRc6fZhOYLW2CNvhYtmWBwEBfeNDyVug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D+k/58eCQjaAETYGO3V+towwfoamBdvUGRuN8ZbCs24pFyTLy/YdT+ig7NsXlWrtzEBe+xS7Xpp/HWj+TaCc28jW/DwOvW0xttbNNzPC2+34sZkengw8g2NabUHvVO17WuqN28GnbU4GMNOd2ln53XuG2KeF2KVxaFzVneoEYbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lrADXn7n; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717011684; x=1748547684;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Qdp6pufV0uRIRc6fZhOYLW2CNvhYtmWBwEBfeNDyVug=;
+  b=lrADXn7nTbTs+RwyAsHfMbszr8oQsCjqJzAwrbXT/dgQfElZzbNjoo+y
+   0hHpqzc/HN+oGPYDgugSbvs1z20B16BJqw5MmHvf+G0aFxmqn1WPOYLMA
+   LpGXnVf6m6AHAGTsyilWowgyJ0K5DXj9DNQiRRgA46CLFjADHtvbyp8Cf
+   +SFgrLqLEFn1JqWjAIThj24rpcX/G8J1UnadA29ZJZjTm2P7o775n3Fov
+   EKAF2rPYyDp0iaVxgzQMwjrqw+mSrhQ8Z4SejRMJuT7CI9tXLLZtXxLgU
+   SBuIo7tDxmpMdoKOH4wXbPFQcm373zTNuk8ALoiWs6aUZzZZX8jaDQPJe
+   Q==;
+X-CSE-ConnectionGUID: t3n35JQiTEGHoNmh/Alcow==
+X-CSE-MsgGUID: 4glfzX48SgmKO0Kpi3vjhA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13622358"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="13622358"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 12:41:23 -0700
+X-CSE-ConnectionGUID: jKo0jS8GTICLbiRD9Fp/Hw==
+X-CSE-MsgGUID: WaAvQoDERe+Daeh7lGtuTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="66740836"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 12:41:22 -0700
+Received: from [10.212.55.153] (kliang2-mobl1.ccr.corp.intel.com [10.212.55.153])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 82B5C2078A10;
+	Wed, 29 May 2024 12:41:20 -0700 (PDT)
+Message-ID: <956e1c32-c4c4-4626-8b5d-b523575e643e@linux.intel.com>
+Date: Wed, 29 May 2024 15:41:19 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB7023:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5fabf339-8d90-431a-155e-08dc8016bac7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|366007|52116005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?arsDpqDlv8/to9DOlJm8du+TRbF81fAMhY9c0gXY9aKGfWVqGV3hRc1Ru3vu?=
- =?us-ascii?Q?M4oLrAR19205If9MAbKVWs7QBYtpsK0AZpm45Hl69RXuy9XJJkQ1BpLF2PH3?=
- =?us-ascii?Q?JP4u0bEw0pf3Tyw9aLa7CCxK72f7iXEdM13+yrhdl8MKVxTv6uNd9110liVX?=
- =?us-ascii?Q?VRR+telbGerjH8/v6gm6IqEsRe+B85z/7xbuBxMgmfJbFxDuBWmfQc2s3oVH?=
- =?us-ascii?Q?if8ArS/UVCFsBlGwPse55Uupgd9+jlBjE5qJ+SABVJfigGhwkTw3/rcXuMFU?=
- =?us-ascii?Q?CgnFlUVJ+4aYWqETOjjWxXCA5RKXmQctu6Z8lyTaUyLVeE51ypjO8Z95y69o?=
- =?us-ascii?Q?8u2S9G7pyjAQ3731aUJc/MuArdXdyinEpi2MsXrU5MPxfmYM3McTWAJep9BV?=
- =?us-ascii?Q?B6MkvwZx6m/56PsrBrbURF/K+dS3bo8yLIfIKsjsoAhuAhxp9PiYGxj4KfNz?=
- =?us-ascii?Q?Y7KIpBv2RhgTeSpGgjdrC6cf9E0/WS/yWlCTIabFqRL4Vuk4SRwxH9JC2IJy?=
- =?us-ascii?Q?uNZFnXUnpJgxAL3CGSMcDtw0Uqy7qAWxrLeU95Mp5fSHlSYpGJeLHD6c/zZ5?=
- =?us-ascii?Q?4iQlE4mf8RSnb94/u/YJvxqrkJq3wwrTjjKeuR4XAmQvfWMjQ2ju2BKkWPeb?=
- =?us-ascii?Q?h1DZkA5yzTRHEdMMmJe89SoCeeF36oOKMxkpsU2PPPMmg3vFLPQJ2cLQxTnB?=
- =?us-ascii?Q?EEOGJrA54pLhQ0UV+mVX56gOCRJ18hQr1JZMTauKLk5A4SqzFiITUpks4k6c?=
- =?us-ascii?Q?tNDTPqjjAK42RQyMa1Sgro0em8dejZV896lc01oBBYUorB3lh0nRunbr72I7?=
- =?us-ascii?Q?JYFVW1gvCTOgJoJJ1nLpVCZjVlVEgvNYtVMEu1qOA8SeN8FGiG6aeBRQkxT5?=
- =?us-ascii?Q?z1FtJG13GrV01Kmot6gR9vt565pObrTIul59zQeKTRp3SVC9EO9xL0vrgXru?=
- =?us-ascii?Q?0GjFWpuH5+Cnzu9YuaeGGF1aev203khHekE1LuPSrRPahVvx2TxXiOTv/+nv?=
- =?us-ascii?Q?k6C375+6Ut3h124LfFMxaCG/XMkUK//RfbEu3MU6qtwmGgGrTici9JpSde4U?=
- =?us-ascii?Q?a3Z9tI8vE2lcoz/iaN+aLvhx9ZQVk2Srq+3wxK81cXdfBVBqReMBgJMZUJlW?=
- =?us-ascii?Q?f3XfG/+EMAn3t5Q/IrUUTPC9+hfEca/gWxHTcjMTMXlRy5WI8K64mvkm/ARA?=
- =?us-ascii?Q?QWsa/lVQpaNhO8oyL6yh86mj6llIHRwCjx/4nf8f/+TA2DXYpXn/N8lOu71H?=
- =?us-ascii?Q?S8WUfrQwWDlMR8w3OnB2yqYCJ7zDSyWNzQEDorrmyg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(52116005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3fWLeX8qZYNZNqxzwBrCdFkVAclMn77NIbvOixqMg3qzHbDyCFMOx+ldONg1?=
- =?us-ascii?Q?8qJh4viRDaTWDr9DC3qhKxuXDPjIllskoTFZirLqKk0XAiiNpnoGaSqryQhV?=
- =?us-ascii?Q?NqohmblzWnZE/SQsps1gwWqD5554zlxzACMf3sMH4tKdivDmasn50H0OyIvB?=
- =?us-ascii?Q?efSYeA8ZrFlkxewRgkRPcNpBL/O7JpjcOVhiUFCaW/jVVsD8/aoyKQ0AMvPK?=
- =?us-ascii?Q?ySmNAjnbKPay0v1T9yujxljfpUPKXtSI5o/0NMIoS4pS7pC53XidS7rGa2Ho?=
- =?us-ascii?Q?jjqtpp9J+GC58AvPNIrlQ5lHgh4WO8zTUT2A2LxazrVhE3vT/J8tcCt7b5rx?=
- =?us-ascii?Q?GV6HGUrSe2hj6FbY78feAfoTsJTKrtm+ZK+bIyflit2ejI/Mv7vyEcVC7Uua?=
- =?us-ascii?Q?t2nFJwqP8qeemi06RZ80eL0C3iskjbnTLXhAYXZXm1eextzUpilk71E4Pn37?=
- =?us-ascii?Q?iXCBAqFHFdn5h0zOEFb9hMOMyi0GlS+kRStWZ3j8F2gh52UipuptPoJjtAkM?=
- =?us-ascii?Q?JRXE8aoPpLc1SMy2OuSfyObuDORgBsLxaxXH5t6Fq8dEBIUksD5KHqJbZ08i?=
- =?us-ascii?Q?Q6oL41/F0X6Ed8I8PMVoEzi3DTfJ25L7l+bxejWEij3gXGGz9CMD8Ajjw3AC?=
- =?us-ascii?Q?LWwgmgOMx9RMnTmybtFUrFTm3vsaURL4+/brsSc3j1mjPTHtHHekpDimAJpZ?=
- =?us-ascii?Q?kGWbpTVi9mPvqXxfV3K2f4ya8VlPHRN6NZ5jp5CobaauyOAkAKraOLFCN7xu?=
- =?us-ascii?Q?QzQQEUpug27v3eiWlTU5nEe7PQFUiEjx761KtiWZL2iLw271S7+9xummbTF1?=
- =?us-ascii?Q?PAlxviIK9ev3QNPjdmrBW0+//WQGOyo4pxpG8WgIF7HFzRBhwlqN/NqIvxtl?=
- =?us-ascii?Q?i0KxwSKagpTB8wg3oPkLp+DCA7MlL0JBDZv2kCHQaFkRHNyphjqpeS1XsuXC?=
- =?us-ascii?Q?CbuOm8mhvzJBKhfkFyixyhGHkzjQtsXXvo6K9kz+b4jyoQ43mrWwW6wUxZHa?=
- =?us-ascii?Q?8w975Wuh3v6WP6xDV8u9KdD7Z9U5nJFG/mDDskvmwGuJ4wXOsayu4bDftIkl?=
- =?us-ascii?Q?i/9bXp9SlSKddVuLAFDp4ejiY0PRXpyPPJQgFc8226uKlLBUext6zkmfVGCe?=
- =?us-ascii?Q?FCADh8MJGtze7R7j/SW1pdF/r+RFytwYK6E3yEGZjJ3F4fGSooOOk4rAzNuj?=
- =?us-ascii?Q?jLs21qT4zWduOP26jYEQNnmYSbURQl9CjHHcNwyWm5+hSWfPuACOdGvEE9r+?=
- =?us-ascii?Q?x+bxfIYAqiUHwCFgxMonf5zMDwcMeN8z7Ok35Vx0Ax8gLEhB21PGx+yq+BMo?=
- =?us-ascii?Q?e6Q6SVgHjMBSAc3m+QFPxCtnFOrG/pHQ20XXKVJ6xMogTUS6VTdFamTTULm8?=
- =?us-ascii?Q?CSISrGqc47Mu9z1zdp1RdxFPxfhXKVoLTbKvYrLLmYatIsRHeYJF0k2ck3sb?=
- =?us-ascii?Q?+5JafIFFH8OqxridPYxtwJ83z51rpt177rwxgvC3PLQmudv6iwlcj8s6+1oP?=
- =?us-ascii?Q?EbKCp719eND8+wcuM6bozzVMGVzASITuDBe1VwRHmGehFQb6iYWLKXAx/3Q5?=
- =?us-ascii?Q?HOUm9+p4JbNr66Y8yM6iQXVim6r+Uthp2VcuJnZ1?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fabf339-8d90-431a-155e-08dc8016bac7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 19:37:09.3192
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ujmAd3J02n95ck3B6BRD4HkHND13ohUNg0RQmQwvT+XjV2QgVzEg755T8Ka9Fhjbgc6W22SDxfM1De8xp9Ibjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7023
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf record: add a shortcut for metrics
+To: Guilherme Amadio <amadio@cern.ch>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Artem Savkov <asavkov@redhat.com>, Ian Rogers <irogers@google.com>,
+ "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Andi Kleen <ak@linux.intel.com>
+References: <20240527101519.356342-1-asavkov@redhat.com> <ZlS8pc39t2c1WFye@x1>
+ <ZlS9M1vcxZ3Qsx_B@x1> <ZlTCvelaGVb6lCia@x1> <ZlTG-kPuYUyHLQZ2@x1>
+ <CAP-5=fWmmtagTVfacFZgdhughvU--Dz0=jkoqFB8CP1Qd3o3Yw@mail.gmail.com>
+ <20240528115703.GB449511@alecto.usersys.redhat.com>
+ <97818e63-051f-4fcf-8c20-75730c08e98a@linux.intel.com> <ZlYgVYI6ABqmwb-d@x1>
+ <ZldGrKGQzGikxgqL@cern.ch>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <ZldGrKGQzGikxgqL@cern.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Convert dt-binding spi-fsl-dspi.txt to yaml format.
 
-Addtional changes during convert:
-- compatible string "fsl,ls1028a-dspi" can be followed by
-fsl,ls1021a-v1.0-dspi
-- Change "dspi0@4002c000" to "spi@4002c000" in example
-- Reorder properties in example
-- Use GIC include in example
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
+On 2024-05-29 11:15 a.m., Guilherme Amadio wrote:
+> Hi Arnaldo,
+>=20
+> On Tue, May 28, 2024 at 08:20:05PM +0200, Arnaldo Carvalho de Melo wrot=
+e:
+>> On Tue, May 28, 2024 at 11:55:00AM -0400, Liang, Kan wrote:
+>>> On 2024-05-28 7:57 a.m., Artem Savkov wrote:
+>>>> On Mon, May 27, 2024 at 10:01:37PM -0700, Ian Rogers wrote:
+>>>>> On Mon, May 27, 2024 at 10:46=E2=80=AFAM Arnaldo Carvalho de Melo
+>>>>> <acme@kernel.org> wrote:
+>>>>>>
+>>>>>> On Mon, May 27, 2024 at 02:28:32PM -0300, Arnaldo Carvalho de Melo=
+ wrote:
+>>>>>>> On Mon, May 27, 2024 at 02:04:54PM -0300, Arnaldo Carvalho de Mel=
+o wrote:
+>>>>>>>> On Mon, May 27, 2024 at 02:02:33PM -0300, Arnaldo Carvalho de Me=
+lo wrote:
+>>>>>>>>> On Mon, May 27, 2024 at 12:15:19PM +0200, Artem Savkov wrote:
+>>>>>>>>>> Add -M/--metrics option to perf-record providing a shortcut to=
+ record
+>>>>>>>>>> metrics and metricgroups. This option mirrors the one in perf-=
+stat.
+>>>>>>>
+>>>>>>>>>> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+>>>>>>>>>> Signed-off-by: Artem Savkov <asavkov@redhat.com>
+>>>>>>
+>>>>>>> How did you test this?
+>>>>>>
+>>>>>>> The idea, from my notes, was to be able to have extra columns in =
+'perf
+>>>>>>> report' with things like IPC and other metrics, probably not all =
+metrics
+>>>>>>> will apply. We need to find a way to find out which ones are OK f=
+or that
+>>>>>>> purpose, for instance:
+>>>>>>
+>>>>>> One that may make sense:
+>>>>>>
+>>>>>> root@number:~# perf record -M tma_fb_full
+>>>>>> ^C[ perf record: Woken up 1 times to write data ]
+>>>>>> [ perf record: Captured and wrote 3.846 MB perf.data (21745 sample=
+s) ]
+>>>>>>
+>>>>>> root@number:~# perf evlist
+>>>>>> cpu_core/CPU_CLK_UNHALTED.THREAD/
+>>>>>> cpu_core/L1D_PEND_MISS.FB_FULL/
+>>>>>> dummy:u
+>>>>>> root@number:~#
+>>>>>>
+>>>>>> But then we need to read both to do the math, maybe something like=
+:
+>>>>>>
+>>>>>> root@number:~# perf record -e '{cpu_core/CPU_CLK_UNHALTED.THREAD/,=
+cpu_core/L1D_PEND_MISS.FB_FULL/}:S'
+>>>>>> ^C[ perf record: Woken up 40 times to write data ]
+>>>>>> [ perf record: Captured and wrote 14.640 MB perf.data (219990 samp=
+les) ]
+>>>>>>
+>>>>>> root@number:~# perf script | head
+>>>>>>     cc1plus 1339704 [000] 36028.995981:  2011389 cpu_core/CPU_CLK_=
+UNHALTED.THREAD/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc=
+-linux-gnu/13/cc1plus)
+>>>>>>     cc1plus 1339704 [000] 36028.995981:    26231   cpu_core/L1D_PE=
+ND_MISS.FB_FULL/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc=
+-linux-gnu/13/cc1plus)
+>>>>>>     cc1plus 1340011 [001] 36028.996008:  2004568 cpu_core/CPU_CLK_=
+UNHALTED.THREAD/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc=
+-linux-gnu/13/cc1plus)
+>>>>>>     cc1plus 1340011 [001] 36028.996008:    20113   cpu_core/L1D_PE=
+ND_MISS.FB_FULL/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc=
+-linux-gnu/13/cc1plus)
+>>>>>>       clang 1340462 [002] 36028.996043:  2007356 cpu_core/CPU_CLK_=
+UNHALTED.THREAD/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms=
+])
+>>>>>>       clang 1340462 [002] 36028.996043:    23481   cpu_core/L1D_PE=
+ND_MISS.FB_FULL/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms=
+])
+>>>>>>     cc1plus 1339622 [003] 36028.996066:  2004148 cpu_core/CPU_CLK_=
+UNHALTED.THREAD/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc=
+-linux-gnu/13/cc1plus)
+>>>>>>     cc1plus 1339622 [003] 36028.996066:    31935   cpu_core/L1D_PE=
+ND_MISS.FB_FULL/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc=
+-linux-gnu/13/cc1plus)
+>>>>>>          as 1340513 [004] 36028.996097:  2005052 cpu_core/CPU_CLK_=
+UNHALTED.THREAD/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.ka=
+llsyms])
+>>>>>>          as 1340513 [004] 36028.996097:    45084   cpu_core/L1D_PE=
+ND_MISS.FB_FULL/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.ka=
+llsyms])
+>>>>>> root@number:~#
+>>>>>>
+>>>>>> root@number:~# perf report --stdio -F +period | head -20
+>>>>>> # To display the perf.data header info, please use --header/--head=
+er-only options.
+>>>>>> #
+>>>>>> #
+>>>>>> # Total Lost Samples: 0
+>>>>>> #
+>>>>>> # Samples: 219K of events 'anon group { cpu_core/CPU_CLK_UNHALTED.=
+THREAD/, cpu_core/L1D_PEND_MISS.FB_FULL/ }'
+>>>>>> # Event count (approx.): 216528524863
+>>>>>> #
+>>>>>> #         Overhead                Period  Command    Shared Object=
+      Symbol
+>>>>>> # ................  ....................  .........  .............=
+=2E...  ....................................
+>>>>>> #
+>>>>>>      4.01%   1.09%  8538169256  39826572  podman     [kernel.kalls=
+yms]  [k] native_queued_spin_lock_slowpath
+>>>>>>      1.35%   1.17%  2863376078  42829266  cc1plus    cc1plus      =
+      [.] 0x00000000003f6bcc
+>>>>>>      0.94%   0.78%  1990639149  28408591  cc1plus    cc1plus      =
+      [.] 0x00000000003f6be4
+>>>>>>      0.65%   0.17%  1375916283   6109515  podman     [kernel.kalls=
+yms]  [k] _raw_spin_lock_irqsave
+>>>>>>      0.61%   0.99%  1304418325  36198834  cc1plus    [kernel.kalls=
+yms]  [k] get_mem_cgroup_from_mm
+>>>>>>      0.52%   0.42%  1103054030  15427418  cc1plus    cc1plus      =
+      [.] 0x0000000000ca6c69
+>>>>>>      0.51%   0.17%  1094200572   6299289  podman     [kernel.kalls=
+yms]  [k] psi_group_change
+>>>>>>      0.42%   0.41%   893633315  14778675  cc1plus    cc1plus      =
+      [.] 0x00000000018afafe
+>>>>>>      0.42%   1.29%   887664793  47046952  cc1plus    [kernel.kalls=
+yms]  [k] asm_exc_page_fault
+>>>>>> root@number:~#
+>>>>>>
+>>>>>> That 'tma_fb_full' metric then would be another column, calculated=
+ from
+>>>>>> the sampled components of its metric equation:
+>>>>>>
+>>>>>> root@number:~# perf list tma_fb_full | head
+>>>>>>
+>>>>>> Metric Groups:
+>>>>>>
+>>>>>> MemoryBW: [Grouping from Top-down Microarchitecture Analysis Metri=
+cs spreadsheet]
+>>>>>>   tma_fb_full
+>>>>>>        [This metric does a *rough estimation* of how often L1D Fil=
+l Buffer
+>>>>>>         unavailability limited additional L1D miss memory access r=
+equests to
+>>>>>>         proceed]
+>>>>>>
+>>>>>> TopdownL4: [Metrics for top-down breakdown at level 4]
+>>>>>> root@number:~#
+>>>>>>
+>>>>>> This is roughly what we brainstormed, to support metrics in other =
+tools
+>>>>>> than 'perf stat' but we need to check the possibilities and limita=
+tions
+>>>>>> of such an idea, hopefully this discussion will help with that,
+>>>>>
+>>>>> Putting metrics next to code in perf report/annotate sounds good to=
 
-Notes:
-    pass dt_binding_check
-    
-    make dt_binding_check DT_SCHEMA_FILES=fsl,dspi.yaml
-      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-      CHKDT   Documentation/devicetree/bindings
-      LINT    Documentation/devicetree/bindings
-      DTEX    Documentation/devicetree/bindings/spi/fsl,dspi.example.dts
-      DTC_CHK Documentation/devicetree/bindings/spi/fsl,dspi.example.dtb
+>>>>> me, opening all events from a metric as if we want to sample on the=
+m
+>>>>> less so.
+>>>>
+>>>> The idea was to record whatever data was asked on record step and
+>>>> provide the list of all metrics that can be calculated out of that d=
+ata
+>>>> in perf report, e.g. you could record tma_info_thread_ipc but report=
 
- .../devicetree/bindings/spi/fsl,dspi.yaml     | 126 ++++++++++++++++++
- .../devicetree/bindings/spi/spi-fsl-dspi.txt  |  65 ---------
- 2 files changed, 126 insertions(+), 65 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/spi/fsl,dspi.yaml
- delete mode 100644 Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt
+>>>> will suggest both it and tma_info_thread_cpi.
+>>>>
+>>>
+>>> Do you mean that sample all the events in a metrics, and report both
+>>> samples and its metrics calculation result in the report?
+>>> That doesn't work for all the metrics.
+>>
+>> IIRC Guilherme was mentioning having extra metrics on report was
+>> something he missed that is available on tools such as VTune, Guilherm=
+e?
+>=20
+> Thanks for asking. I will try to explain the motivation behind metric
+> sampling. VTune offers something called a Microarchitecture Analysis
+> report, which will show a break down of all the TMA metrics per symbol:=
 
-diff --git a/Documentation/devicetree/bindings/spi/fsl,dspi.yaml b/Documentation/devicetree/bindings/spi/fsl,dspi.yaml
-new file mode 100644
-index 0000000000000..12a67b2cc25c8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/fsl,dspi.yaml
-@@ -0,0 +1,126 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/fsl,dspi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ARM Freescale DSPI controller
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - fsl,vf610-dspi
-+          - fsl,ls1021a-v1.0-dspi
-+          - fsl,ls1012a-dspi
-+          - fsl,ls1028a-dspi
-+          - fsl,ls1043a-dspi
-+          - fsl,ls1046a-dspi
-+          - fsl,ls1088a-dspi
-+          - fsl,ls2080a-dspi
-+          - fsl,ls2085a-dspi
-+          - fsl,lx2160a-dspi
-+      - items:
-+          - enum:
-+              - fsl,ls1012a-dspi
-+              - fsl,ls1043a-dspi
-+              - fsl,ls1046a-dspi
-+              - fsl,ls1088a-dspi
-+          - const: fsl,ls1021a-v1.0-dspi
-+      - items:
-+          - const: fsl,ls2080a-dspi
-+          - const: fsl,ls2085a-dspi
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: dspi
-+
-+  pinctrl-0: true
-+
-+  pinctrl-names:
-+    items:
-+      - const: default
-+
-+  spi-num-chipselects:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: the number of the chipselect signals.
-+
-+  big-endian:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      If present the dspi device's registers are implemented
-+      in big endian mode.
-+
-+  bus-num:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: the slave chip chipselect signal number.
-+
-+  fsl,spi-cs-sck-delay:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      a delay in nanoseconds between activating chip
-+      select and the start of clock signal, at the start of a transfer.
-+  fsl,spi-sck-cs-delay:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      a delay in nanoseconds between stopping the clock
-+      signal and deactivating chip select, at the end of a transfer.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - pinctrl-0
-+  - pinctrl-names
-+  - spi-num-chipselects
-+
-+allOf:
-+  - $ref: spi-controller.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/vf610-clock.h>
-+
-+    spi@4002c000 {
-+        compatible = "fsl,vf610-dspi";
-+        reg = <0x4002c000 0x1000>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clks VF610_CLK_DSPI0>;
-+        clock-names = "dspi";
-+        spi-num-chipselects = <5>;
-+        bus-num = <0>;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&pinctrl_dspi0_1>;
-+        big-endian;
-+
-+        flash@0 {
-+                compatible = "atmel,at26df081a";
-+                reg = <0>;
-+                spi-max-frequency = <16000000>;
-+                spi-cpol;
-+                spi-cpha;
-+                linux,modalias = "m25p80";
-+                modal = "at26df081a";
-+                fsl,spi-cs-sck-delay = <100>;
-+                fsl,spi-sck-cs-delay = <50>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt
-deleted file mode 100644
-index 30a79da9c039d..0000000000000
---- a/Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt
-+++ /dev/null
-@@ -1,65 +0,0 @@
--ARM Freescale DSPI controller
--
--Required properties:
--- compatible : must be one of:
--	"fsl,vf610-dspi",
--	"fsl,ls1021a-v1.0-dspi",
--	"fsl,ls1012a-dspi" (optionally followed by "fsl,ls1021a-v1.0-dspi"),
--	"fsl,ls1028a-dspi",
--	"fsl,ls1043a-dspi" (optionally followed by "fsl,ls1021a-v1.0-dspi"),
--	"fsl,ls1046a-dspi" (optionally followed by "fsl,ls1021a-v1.0-dspi"),
--	"fsl,ls1088a-dspi" (optionally followed by "fsl,ls1021a-v1.0-dspi"),
--	"fsl,ls2080a-dspi" (optionally followed by "fsl,ls2085a-dspi"),
--	"fsl,ls2085a-dspi",
--	"fsl,lx2160a-dspi",
--- reg : Offset and length of the register set for the device
--- interrupts : Should contain SPI controller interrupt
--- clocks: from common clock binding: handle to dspi clock.
--- clock-names: from common clock binding: Shall be "dspi".
--- pinctrl-0: pin control group to be used for this controller.
--- pinctrl-names: must contain a "default" entry.
--- spi-num-chipselects : the number of the chipselect signals.
--
--Optional property:
--- big-endian: If present the dspi device's registers are implemented
--  in big endian mode.
--- bus-num : the slave chip chipselect signal number.
--
--Optional SPI slave node properties:
--- fsl,spi-cs-sck-delay: a delay in nanoseconds between activating chip
--  select and the start of clock signal, at the start of a transfer.
--- fsl,spi-sck-cs-delay: a delay in nanoseconds between stopping the clock
--  signal and deactivating chip select, at the end of a transfer.
--
--Example:
--
--dspi0@4002c000 {
--	#address-cells = <1>;
--	#size-cells = <0>;
--	compatible = "fsl,vf610-dspi";
--	reg = <0x4002c000 0x1000>;
--	interrupts = <0 67 0x04>;
--	clocks = <&clks VF610_CLK_DSPI0>;
--	clock-names = "dspi";
--	spi-num-chipselects = <5>;
--	bus-num = <0>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_dspi0_1>;
--	big-endian;
--
--	sflash: at26df081a@0 {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		compatible = "atmel,at26df081a";
--		spi-max-frequency = <16000000>;
--		spi-cpol;
--		spi-cpha;
--		reg = <0>;
--		linux,modalias = "m25p80";
--		modal = "at26df081a";
--		fsl,spi-cs-sck-delay = <100>;
--		fsl,spi-sck-cs-delay = <50>;
--	};
--};
--
--
--- 
-2.34.1
+>=20
+> https://www.intel.com/content/www/us/en/docs/vtune-profiler/cookbook/20=
+23-0/top-down-microarchitecture-analysis-method.html
+>=20
+> The link above has a small screenshot showing function, instructions,
+> CPI, and the metrics. This is much better than just counting, because i=
+n
+> a large detector simulation, for example, there are many different kind=
+s
+> of bottlenecks the code can have, and the break down per symbol helps t=
+o
+> identify which functions suffer from bad speculation, which suffer from=
 
+> cache misses, etc. This allows one to choose what kind of change to mak=
+e
+> to the software to optimize it. So as a first step, having TMA level 0
+> (i.e. a breakdown of the pipelines for Front-End Bound, Bad Speculation=
+,
+> Core Bound, and Memory Bound) would already be quite far towards the
+> goal of understanding bottlenecks in specific parts of the code. VTune
+> forces sampling without collecting call stacks for this, perf could do
+> the same. Hotspots usually have lots of samples, which then allows
+> computing metrics relatively accurately.=20
+
+Yes, that's the assumption the VTune method relies on. Otherwise, the
+result may be dubious.
+
+> VTune uses multiplexing and
+> very large sampling expression, which I am pasting at the end of this
+> message=C2=B2. I extracted that command from the report file after usin=
+g
+> "vtune -collect uarch-exploration <command>" to produce a report. I
+> tried that with standard perf record and it failed to parse, so likely
+> amplxe-perf is required to be able to record that, but I thought it'd
+> be useful information.
+
+Actually, there is already a similar support for the perf script which
+was provided by Andi.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D4bd1bef8bba2f99ff472ae3617864dda301f81bd
+
+It should be able to be extended to other tools, e.g., annotate or report=
+=2E
+
+But it seems the feature is broken now. It's better to fix it first.
+$ sudo perf script -I -F cpu,ip,sym,event,period,metric
+Segmentation fault
+
+The solution relies on the sample read feature. So you probably have to
+divide the metrics into several groups if the metrics is too big.
+For the leading event, the ref-cycles suggested in Andi's example should
+be a good default choice, after all you want to measure time.
+
+For example, the "perf record -M tma_info_thread_ipc"
+may be interpreted to
+perf record -e "{ref-cycles,INST_RETIRED.ANY,CPU_CLK_UNHALTED.THREAD}:S"
+
+The implementation should be simpler than the VTune method.
+
+>=20
+> As for the interface, I suggest adding a "perf mlist" similar to
+> perf evlist, that would just print what metrics could be calculated
+> from the events recorded in the input file. Then one could be selected
+> for use with perf report or perf annotate.
+>
+
+The "perf mlist" looks good, since the metrics are used more widely.
+
+Thanks,
+Kan
+
+> I hope this explains enough to clarify things for you. I am attaching a=
+
+> screenshot example for the classic matrix multiplication with wrong
+> indexing as well, which shows that only certain lines get the metric,
+> whereas lines with low number of samples just get 0.0%.
+>=20
+> Best regards,
+> -Guilherme
+>=20
+>>> - For the topdown related metrics, especially on ICL and later
+>>> platforms, the perf metrics feature is used by default. It doesn't
+>>> support sampling.
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/tools/perf/Documentation/topdown.txt?#n293
+>>> - Some PMUs which doesn't support sampling as well, e.g., uncore, Pow=
+er,
+>>> MSR.
+>>> - There are some SW events, e.g.,duration_time, you may don't want to=
+ do
+>>> sampling
+>>>
+>>> You probable need to introduce a flag to ignore those metrics in perf=
+
+>>> record.
+>>>
+>>>>> We don't have metrics working with `perf stat record`, I
+>>>>> think Kan may have volunteered for that, but it seems like somethin=
+g
+>>>>> more urgent than expanding `perf record`. Presumably the way the
+>>>>> metric would be recorded for that could also benefit this effort.
+>>>>>
+>>>>> If you look at the tma metrics a number of them have a "Sample with=
+".
+>>>>> For example:
+>>>>> ```
+>>>>> $ perf list -v
+>>>>> ...
+>>>>>   tma_branch_mispredicts
+>>>>>        [This metric represents fraction of slots the CPU has wasted=
+
+>>>>> due to Branch Misprediction.
+>>>>>         These slots are either wasted by uops fetched from an
+>>>>> incorrectly speculated program path;
+>>>>>         or stalls when the out-of-order part of the machine needs t=
+o
+>>>>> recover its state from a
+>>>>>         speculative path. Sample with: BR_MISP_RETIRED.ALL_BRANCHES=
+=2E
+>>>>> Related metrics:
+>>>>>         tma_info_bad_spec_branch_misprediction_cost,tma_info_bottle=
+neck_mispredictions,
+>>>>>         tma_mispredicts_resteers]
+>>>>> ...
+>>>>> ```
+>>>>> It could be logical for `perf record -M tma_branch_mispredicts ...`=
+ to
+>>>>> be translated to `perf record -e BR_MISP_RETIRED.ALL_BRANCHES ...`
+>>>>> rather than to do any form of counting.
+>>>>
+>>>> Thanks for the pointer, I'll see how this could be done.
+>>>
+>>> It sounds more reasonable to me that we can sample some typical event=
+s,
+>>> and read the other members in the metrics. So we can put metrics next=
+ to
+>>> the code in perf report/annotate as Ian mentioned. It could also addr=
+ess
+>>> limits of some metrics, especially for the topdown related metrics.
+>>> (But I'm not sure if the "Sample with" can give you the right hints. =
+I
+>>> will ask around internally.)
+>>>
+>>> But there is also some limits for the sampling read. Everything has t=
+o
+>>> be in a group. That could be a problem for some big metrics.
+>>> Thanks,
+>>> Kan
+>=20
+> 2. runCmd: amplxe-perf record -v --control=3Dfd:21,24 -o system-wide.pe=
+rf -N -B -T --sample-cpu -d -a --compression-level=3D1 --threads --clocki=
+d=3DCLOCK_MONOTONIC_RAW -e cpu/period=3D0xa037a0,event=3D0x3c,name=3D'CPU=
+_CLK_UNHALTED.THREAD'/Duk,cpu/period=3D0xa037a0,umask=3D0x3,name=3D'CPU_C=
+LK_UNHALTED.REF_TSC'/Duk,cpu/period=3D0xa037a0,event=3D0xc0,name=3D'INST_=
+RETIRED.ANY'/Duk,cpu/period=3D0x7a12f,event=3D0x3c,umask=3D0x1,name=3D'CP=
+U_CLK_UNHALTED.REF_XCLK'/uk,cpu/period=3D0x7a12f,event=3D0x3c,umask=3D0x2=
+,name=3D'CPU_CLK_UNHALTED.ONE_THREAD_ACTIVE'/uk,cpu/period=3D0x98968f,eve=
+nt=3D0x3c,name=3D'CPU_CLK_UNHALTED.THREAD_P'/uk,cpu/period=3D0x98968f,eve=
+nt=3D0xa3,umask=3D0x14,cmask=3D0x14,name=3D'CYCLE_ACTIVITY.STALLS_MEM_ANY=
+'/uk,cpu/period=3D0x98968f,event=3D0xa3,umask=3D0x4,cmask=3D0x4,name=3D'C=
+YCLE_ACTIVITY.STALLS_TOTAL'/uk,cpu/period=3D0x98968f,event=3D0xa6,umask=3D=
+0x2,name=3D'EXE_ACTIVITY.1_PORTS_UTIL'/uk,cpu/period=3D0x98968f,event=3D0=
+xa6,umask=3D0x4,name=3D'EXE_ACTIVITY.2_PORTS_UTIL'/uk,cpu/period=3D0x9896=
+8f,event=3D0xa6,umask=3D0x40,name=3D'EXE_ACTIVITY.BOUND_ON_STORES'/uk,cpu=
+/period=3D0x7a143,event=3D0xc6,umask=3D0x1,frontend=3D0x400406,name=3D'FR=
+ONTEND_RETIRED.LATENCY_GE_4_PS'/ukpp,cpu/period=3D0x98968f,event=3D0x9c,u=
+mask=3D0x1,name=3D'IDQ_UOPS_NOT_DELIVERED.CORE'/uk,cpu/period=3D0x98968f,=
+event=3D0xd,umask=3D0x1,name=3D'INT_MISC.RECOVERY_CYCLES'/uk,cpu/period=3D=
+0x98968f,event=3D0xe,umask=3D0x1,name=3D'UOPS_ISSUED.ANY'/uk,cpu/period=3D=
+0x98968f,event=3D0xc2,umask=3D0x2,name=3D'UOPS_RETIRED.RETIRE_SLOTS'/uk,c=
+pu/period=3D0x7a12f,event=3D0xe6,umask=3D0x1,name=3D'BACLEARS.ANY'/uk,cpu=
+/period=3D0x1e84ad,event=3D0xc5,name=3D'BR_MISP_RETIRED.ALL_BRANCHES'/uk,=
+cpu/period=3D0x98968f,event=3D0xab,umask=3D0x2,name=3D'DSB2MITE_SWITCHES.=
+PENALTY_CYCLES'/uk,cpu/period=3D0x7a143,event=3D0xc6,umask=3D0x1,frontend=
+=3D0x1,name=3D'FRONTEND_RETIRED.ANY_DSB_MISS'/uk,cpu/period=3D0x7a143,eve=
+nt=3D0xc6,umask=3D0x1,frontend=3D0x11,name=3D'FRONTEND_RETIRED.DSB_MISS_P=
+S'/ukpp,cpu/period=3D0x7a143,event=3D0xc6,umask=3D0x1,frontend=3D0x13,nam=
+e=3D'FRONTEND_RETIRED.L2_MISS_PS'/ukpp,cpu/period=3D0x7a143,event=3D0xc6,=
+umask=3D0x1,frontend=3D0x401006,name=3D'FRONTEND_RETIRED.LATENCY_GE_16_PS=
+'/ukpp,cpu/period=3D0x7a143,event=3D0xc6,umask=3D0x1,frontend=3D0x100206,=
+name=3D'FRONTEND_RETIRED.LATENCY_GE_2_BUBBLES_GE_1_PS'/ukpp,cpu/period=3D=
+0x7a143,event=3D0xc6,umask=3D0x1,frontend=3D0x15,name=3D'FRONTEND_RETIRED=
+=2ESTLB_MISS_PS'/ukpp,cpu/period=3D0x98968f,event=3D0x80,umask=3D0x4,name=
+=3D'ICACHE_16B.IFDATA_STALL'/uk,cpu/period=3D0x98968f,event=3D0x80,edge=3D=
+0x1,umask=3D0x4,cmask=3D0x1,name=3D'ICACHE_16B.IFDATA_STALL:cmask=3D1:e=3D=
+yes'/uk,cpu/period=3D0xf424f,event=3D0x83,umask=3D0x4,name=3D'ICACHE_64B.=
+IFTAG_STALL'/uk,cpu/period=3D0x98968f,event=3D0x79,umask=3D0x18,cmask=3D0=
+x4,name=3D'IDQ.ALL_DSB_CYCLES_4_UOPS'/uk,cpu/period=3D0x98968f,event=3D0x=
+79,umask=3D0x18,cmask=3D0x1,name=3D'IDQ.ALL_DSB_CYCLES_ANY_UOPS'/uk,cpu/p=
+eriod=3D0x98968f,event=3D0x79,umask=3D0x24,cmask=3D0x4,name=3D'IDQ.ALL_MI=
+TE_CYCLES_4_UOPS'/uk,cpu/period=3D0x98968f,event=3D0x79,umask=3D0x24,cmas=
+k=3D0x1,name=3D'IDQ.ALL_MITE_CYCLES_ANY_UOPS'/uk,cpu/period=3D0x98968f,ev=
+ent=3D0x79,umask=3D0x8,name=3D'IDQ.DSB_UOPS'/uk,cpu/period=3D0x98968f,eve=
+nt=3D0x79,umask=3D0x4,name=3D'IDQ.MITE_UOPS'/uk,cpu/period=3D0x98968f,eve=
+nt=3D0x79,edge=3D0x1,umask=3D0x30,cmask=3D0x1,name=3D'IDQ.MS_SWITCHES'/uk=
+,cpu/period=3D0x98968f,event=3D0x79,umask=3D0x30,name=3D'IDQ.MS_UOPS'/uk,=
+cpu/period=3D0x98968f,event=3D0x9c,umask=3D0x1,cmask=3D0x4,name=3D'IDQ_UO=
+PS_NOT_DELIVERED.CYCLES_0_UOPS_DELIV.CORE'/uk,cpu/period=3D0x98968f,event=
+=3D0x87,umask=3D0x1,name=3D'ILD_STALL.LCP'/uk,cpu/period=3D0x98968f,event=
+=3D0x55,umask=3D0x1,cmask=3D0x1,name=3D'INST_DECODED.DECODERS:cmask=3D1'/=
+uk,cpu/period=3D0x98968f,event=3D0x55,umask=3D0x1,cmask=3D0x2,name=3D'INS=
+T_DECODED.DECODERS:cmask=3D2'/uk,cpu/period=3D0x98968f,event=3D0xd,umask=3D=
+0x80,name=3D'INT_MISC.CLEAR_RESTEER_CYCLES'/uk,cpu/period=3D0x7a12f,event=
+=3D0xc3,edge=3D0x1,umask=3D0x1,cmask=3D0x1,name=3D'MACHINE_CLEARS.COUNT'/=
+uk,cpu/period=3D0x1e84ad,event=3D0xc5,umask=3D0x4,name=3D'BR_MISP_RETIRED=
+=2EALL_BRANCHES_PS'/ukpp,cpu/period=3D0x98968f,event=3D0xa3,umask=3D0x8,c=
+mask=3D0x8,name=3D'CYCLE_ACTIVITY.CYCLES_L1D_MISS'/uk,cpu/period=3D0x9896=
+8f,event=3D0xa3,umask=3D0x10,cmask=3D0x10,name=3D'CYCLE_ACTIVITY.CYCLES_M=
+EM_ANY'/uk,cpu/period=3D0x98968f,event=3D0xa3,umask=3D0xc,cmask=3D0xc,nam=
+e=3D'CYCLE_ACTIVITY.STALLS_L1D_MISS'/uk,cpu/period=3D0x98968f,event=3D0xa=
+3,umask=3D0x5,cmask=3D0x5,name=3D'CYCLE_ACTIVITY.STALLS_L2_MISS'/uk,cpu/p=
+eriod=3D0x98968f,event=3D0xa3,umask=3D0x6,cmask=3D0x6,name=3D'CYCLE_ACTIV=
+ITY.STALLS_L3_MISS'/uk,cpu/period=3D0x98968f,event=3D0x8,umask=3D0x20,cma=
+sk=3D0x1,name=3D'DTLB_LOAD_MISSES.STLB_HIT:cmask=3D1'/uk,cpu/period=3D0x7=
+a12f,event=3D0x8,umask=3D0x10,cmask=3D0x1,name=3D'DTLB_LOAD_MISSES.WALK_A=
+CTIVE'/uk,cpu/period=3D0x7a12f,event=3D0x49,umask=3D0x20,cmask=3D0x1,name=
+=3D'DTLB_STORE_MISSES.STLB_HIT:cmask=3D1'/uk,cpu/period=3D0x7a12f,event=3D=
+0x49,umask=3D0x10,cmask=3D0x1,name=3D'DTLB_STORE_MISSES.WALK_ACTIVE'/uk,c=
+pu/period=3D0x98968f,event=3D0x48,umask=3D0x2,cmask=3D0x1,name=3D'L1D_PEN=
+D_MISS.FB_FULL:cmask=3D1'/uk,cpu/period=3D0x98968f,event=3D0x48,umask=3D0=
+x1,name=3D'L1D_PEND_MISS.PENDING'/uk,cpu/period=3D0xf424f,event=3D0x24,um=
+ask=3D0xe2,name=3D'L2_RQSTS.ALL_RFO'/uk,cpu/period=3D0xf424f,event=3D0x24=
+,umask=3D0xc2,name=3D'L2_RQSTS.RFO_HIT'/uk,cpu/period=3D0x7a12f,event=3D0=
+x3,umask=3D0x8,name=3D'LD_BLOCKS.NO_SR'/uk,cpu/period=3D0x7a12f,event=3D0=
+x3,umask=3D0x2,name=3D'LD_BLOCKS.STORE_FORWARD'/uk,cpu/period=3D0x7a12f,e=
+vent=3D0x7,umask=3D0x1,name=3D'LD_BLOCKS_PARTIAL.ADDRESS_ALIAS'/uk,cpu/pe=
+riod=3D0x98968f,event=3D0xd0,umask=3D0x82,name=3D'MEM_INST_RETIRED.ALL_ST=
+ORES_PS'/ukpp,cpu/period=3D0x7a143,event=3D0xd0,umask=3D0x21,name=3D'MEM_=
+INST_RETIRED.LOCK_LOADS_PS'/ukpp,cpu/period=3D0x7a12f,event=3D0xd0,umask=3D=
+0x41,name=3D'MEM_INST_RETIRED.SPLIT_LOADS_PS'/ukpp,cpu/period=3D0x7a12f,e=
+vent=3D0xd0,umask=3D0x42,name=3D'MEM_INST_RETIRED.SPLIT_STORES_PS'/ukpp,c=
+pu/period=3D0x7a12f,event=3D0xd0,umask=3D0x11,name=3D'MEM_INST_RETIRED.ST=
+LB_MISS_LOADS_PS'/ukpp,cpu/period=3D0x7a12f,event=3D0xd0,umask=3D0x12,nam=
+e=3D'MEM_INST_RETIRED.STLB_MISS_STORES_PS'/ukpp,cpu/period=3D0x186d7,even=
+t=3D0xd2,umask=3D0x4,name=3D'MEM_LOAD_L3_HIT_RETIRED.XSNP_HITM_PS'/ukpp,c=
+pu/period=3D0x186d7,event=3D0xd2,umask=3D0x2,name=3D'MEM_LOAD_L3_HIT_RETI=
+RED.XSNP_HIT_PS'/ukpp,cpu/period=3D0x186d7,event=3D0xd2,umask=3D0x1,name=3D=
+'MEM_LOAD_L3_HIT_RETIRED.XSNP_MISS_PS'/ukpp,cpu/period=3D0x7a143,event=3D=
+0xd3,umask=3D0x1,name=3D'MEM_LOAD_L3_MISS_RETIRED.LOCAL_DRAM_PS'/ukpp,cpu=
+/period=3D0x7a143,event=3D0xd3,umask=3D0x2,name=3D'MEM_LOAD_L3_MISS_RETIR=
+ED.REMOTE_DRAM_PS'/ukpp,cpu/period=3D0x7a143,event=3D0xd3,umask=3D0x8,nam=
+e=3D'MEM_LOAD_L3_MISS_RETIRED.REMOTE_FWD'/uk,cpu/period=3D0x7a143,event=3D=
+0xd3,umask=3D0x4,name=3D'MEM_LOAD_L3_MISS_RETIRED.REMOTE_HITM_PS'/ukpp,cp=
+u/period=3D0x7a143,event=3D0xd3,umask=3D0x10,name=3D'MEM_LOAD_L3_MISS_RET=
+IRED.REMOTE_PMM_PS'/ukpp,cpu/period=3D0x7a12f,event=3D0xd1,umask=3D0x40,n=
+ame=3D'MEM_LOAD_RETIRED.FB_HIT_PS'/ukpp,cpu/period=3D0x98968f,event=3D0xd=
+1,umask=3D0x1,name=3D'MEM_LOAD_RETIRED.L1_HIT_PS'/ukpp,cpu/period=3D0x7a1=
+2f,event=3D0xd1,umask=3D0x8,name=3D'MEM_LOAD_RETIRED.L1_MISS_PS'/ukpp,cpu=
+/period=3D0x7a12f,event=3D0xd1,umask=3D0x2,name=3D'MEM_LOAD_RETIRED.L2_HI=
+T_PS'/ukpp,cpu/period=3D0x3d0f9,event=3D0xd1,umask=3D0x4,name=3D'MEM_LOAD=
+_RETIRED.L3_HIT_PS'/ukpp,cpu/period=3D0x7a143,event=3D0xd1,umask=3D0x20,n=
+ame=3D'MEM_LOAD_RETIRED.L3_MISS_PS'/ukpp,cpu/period=3D0x7a143,event=3D0xd=
+1,umask=3D0x80,name=3D'MEM_LOAD_RETIRED.LOCAL_PMM_PS'/ukpp,cpu/period=3D0=
+x98968f,event=3D0xb2,umask=3D0x1,name=3D'OFFCORE_REQUESTS_BUFFER.SQ_FULL'=
+/uk,cpu/period=3D0x98968f,event=3D0x60,umask=3D0x8,cmask=3D0x4,name=3D'OF=
+FCORE_REQUESTS_OUTSTANDING.ALL_DATA_RD:cmask=3D4'/uk,cpu/period=3D0x98968=
+f,event=3D0x60,umask=3D0x8,cmask=3D0x1,name=3D'OFFCORE_REQUESTS_OUTSTANDI=
+NG.CYCLES_WITH_DATA_RD'/uk,cpu/period=3D0x98968f,event=3D0x60,umask=3D0x4=
+,cmask=3D0x1,name=3D'OFFCORE_REQUESTS_OUTSTANDING.CYCLES_WITH_DEMAND_RFO'=
+/uk,cpu/period=3D0x98968f,event=3D0x14,umask=3D0x1,cmask=3D0x1,name=3D'AR=
+ITH.DIVIDER_ACTIVE'/uk,cpu/period=3D0x98968f,event=3D0xa6,umask=3D0x1,nam=
+e=3D'EXE_ACTIVITY.EXE_BOUND_0_PORTS'/uk,cpu/period=3D0x98968f,event=3D0xc=
+7,name=3D'FP_ARITH_INST_RETIRED.128B_PACKED_DOUBLE:umask=3D0xfc'/uk,cpu/p=
+eriod=3D0x98968f,event=3D0xc7,name=3D'FP_ARITH_INST_RETIRED.SCALAR_SINGLE=
+:umask=3D0x03'/uk,cpu/period=3D0x98968f,event=3D0x59,umask=3D0x1,name=3D'=
+PARTIAL_RAT_STALLS.SCOREBOARD'/uk,cpu/period=3D0x98968f,event=3D0xc0,umas=
+k=3D0x1,name=3D'INST_RETIRED.PREC_DIST'/ukpp,cpu/period=3D0x98968f,event=3D=
+0xcc,umask=3D0x40,name=3D'ROB_MISC_EVENTS.PAUSE_INST'/uk,cpu/period=3D0x9=
+8968f,event=3D0xa1,umask=3D0x1,name=3D'UOPS_DISPATCHED_PORT.PORT_0'/uk,cp=
+u/period=3D0x98968f,event=3D0xa1,umask=3D0x2,name=3D'UOPS_DISPATCHED_PORT=
+=2EPORT_1'/uk,cpu/period=3D0x98968f,event=3D0xa1,umask=3D0x4,name=3D'UOPS=
+_DISPATCHED_PORT.PORT_2'/uk,cpu/period=3D0x98968f,event=3D0xa1,umask=3D0x=
+8,name=3D'UOPS_DISPATCHED_PORT.PORT_3'/uk,cpu/period=3D0x98968f,event=3D0=
+xa1,umask=3D0x10,name=3D'UOPS_DISPATCHED_PORT.PORT_4'/uk,cpu/period=3D0x9=
+8968f,event=3D0xa1,umask=3D0x20,name=3D'UOPS_DISPATCHED_PORT.PORT_5'/uk,c=
+pu/period=3D0x98968f,event=3D0xa1,umask=3D0x40,name=3D'UOPS_DISPATCHED_PO=
+RT.PORT_6'/uk,cpu/period=3D0x98968f,event=3D0xa1,umask=3D0x80,name=3D'UOP=
+S_DISPATCHED_PORT.PORT_7'/uk,cpu/period=3D0x98968f,event=3D0xb1,umask=3D0=
+x2,cmask=3D0x1,name=3D'UOPS_EXECUTED.CORE_CYCLES_GE_1'/uk,cpu/period=3D0x=
+98968f,event=3D0xb1,umask=3D0x2,cmask=3D0x2,name=3D'UOPS_EXECUTED.CORE_CY=
+CLES_GE_2'/uk,cpu/period=3D0x98968f,event=3D0xb1,umask=3D0x2,cmask=3D0x3,=
+name=3D'UOPS_EXECUTED.CORE_CYCLES_GE_3'/uk,cpu/period=3D0x98968f,event=3D=
+0xb1,inv=3D0x1,umask=3D0x2,cmask=3D0x1,name=3D'UOPS_EXECUTED.CORE_CYCLES_=
+NONE'/uk,cpu/period=3D0x98968f,event=3D0xb1,umask=3D0x1,name=3D'UOPS_EXEC=
+UTED.THREAD'/uk,cpu/period=3D0x98968f,event=3D0xb1,umask=3D0x10,name=3D'U=
+OPS_EXECUTED.X87'/uk,cpu/period=3D0x98968f,event=3D0xe,umask=3D0x2,name=3D=
+'UOPS_ISSUED.VECTOR_WIDTH_MISMATCH'/uk,cpu/period=3D0x98968f,event=3D0xc2=
+,umask=3D0x4,name=3D'UOPS_RETIRED.MACRO_FUSED'/uk,cpu/period=3D0x1e84ad,e=
+vent=3D0xc4,name=3D'BR_INST_RETIRED.ALL_BRANCHES'/uk,cpu/period=3D0x98968=
+f,event=3D0xc7,umask=3D0x4,name=3D'FP_ARITH_INST_RETIRED.128B_PACKED_DOUB=
+LE'/uk,cpu/period=3D0x98968f,event=3D0xc7,umask=3D0x8,name=3D'FP_ARITH_IN=
+ST_RETIRED.128B_PACKED_SINGLE'/uk,cpu/period=3D0x98968f,event=3D0xc7,umas=
+k=3D0x10,name=3D'FP_ARITH_INST_RETIRED.256B_PACKED_DOUBLE'/uk,cpu/period=3D=
+0x98968f,event=3D0xc7,umask=3D0x20,name=3D'FP_ARITH_INST_RETIRED.256B_PAC=
+KED_SINGLE'/uk,cpu/period=3D0x98968f,event=3D0xc7,umask=3D0x40,name=3D'FP=
+_ARITH_INST_RETIRED.512B_PACKED_DOUBLE'/uk,cpu/period=3D0x98968f,event=3D=
+0xc7,umask=3D0x80,name=3D'FP_ARITH_INST_RETIRED.512B_PACKED_SINGLE'/uk,cp=
+u/period=3D0x7a12f,event=3D0xca,umask=3D0x1e,cmask=3D0x1,name=3D'FP_ASSIS=
+T.ANY'/uk,cpu/period=3D0x98968f,event=3D0xc0,umask=3D0x2,name=3D'INST_RET=
+IRED.NOP'/uk,cpu/period=3D0x98968f,event=3D0xd0,umask=3D0x83,name=3D'MEM_=
+INST_RETIRED.ANY'/uk,cpu/period=3D0x7a12f,event=3D0xc1,umask=3D0x3f,name=3D=
+'OTHER_ASSISTS.ANY'/uk,cpu/period=3D0x7a12f,event=3D0xb7,offcore_rsp=3D0x=
+8003c0001,umask=3D0x1,name=3D'OCR.DEMAND_DATA_RD.L3_HIT.HIT_OTHER_CORE_FW=
+D'/uk,cpu/period=3D0x7a12f,event=3D0xbb,offcore_rsp=3D0x10003c0002,umask=3D=
+0x1,name=3D'OCR.DEMAND_RFO.L3_HIT.HITM_OTHER_CORE'/uk,cpu/period=3D0x7a12=
+f,event=3D0xb7,offcore_rsp=3D0x103fc00020,umask=3D0x1,name=3D'OCR.PF_L2_R=
+FO.L3_MISS.REMOTE_HITM'/uk,cpu/period=3D0x7a12f,event=3D0xbb,offcore_rsp=3D=
+0x10003c0001,umask=3D0x1,name=3D'OCR.DEMAND_DATA_RD.L3_HIT.HITM_OTHER_COR=
+E'/uk,cpu/period=3D0x98968f,event=3D0xc7,umask=3D0x2,name=3D'FP_ARITH_INS=
+T_RETIRED.SCALAR_SINGLE'/uk,cpu/period=3D0x98968f,event=3D0xc7,umask=3D0x=
+1,name=3D'FP_ARITH_INST_RETIRED.SCALAR_DOUBLE'/uk,cpu/period=3D0x7a12f,ev=
+ent=3D0xb7,offcore_rsp=3D0x103fc00002,umask=3D0x1,name=3D'OCR.DEMAND_RFO.=
+L3_MISS.REMOTE_HITM'/uk,cpu/period=3D0x7a12f,event=3D0xbb,offcore_rsp=3D0=
+x10003c0020,umask=3D0x1,name=3D'OCR.PF_L2_RFO.L3_HIT.HITM_OTHER_CORE'/uk =
+amplxe-perf-sync sync sys
 
