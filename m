@@ -1,337 +1,136 @@
-Return-Path: <linux-kernel+bounces-194157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37ED38D3794
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:28:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102478D3797
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D71287540
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A311C23A00
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F53F12B87;
-	Wed, 29 May 2024 13:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2912A12B82;
+	Wed, 29 May 2024 13:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2cRTPc+"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cwHVbGQL"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4CF1758B;
-	Wed, 29 May 2024 13:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F3112B73
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716989287; cv=none; b=l/JDQy6Ak236VCS9OCukE6wTGgE758S13d9GcY0iG7FJC3OBLSN6yQAgHuR2XReZ2yICe/ZA9cMs2gKg5CVmUE+eFORKppLmkxVhgMlEMa3PbY8gThMtRKF/4IR89ugM/idVE1bnx05wayN7IlVhGPSxnlpiTNxEkYY4YT4V514=
+	t=1716989330; cv=none; b=A4Onwtmqp8mBDSMbNXwdQzBCjGTwVZGRh8fjje75KwLQeKnsyjojlJF9zGMnvQZg1fDVE6Uw7/hlIm1aHACRGTW/6eo0JWAoJQgaeoo+GrU+lX2KLyKD+U2C5o9OVj08WQiqAO4KabJ+flcFYzQSUPCVAusr+cv02WW+HJtQtEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716989287; c=relaxed/simple;
-	bh=2D9bsF8IboVFVHlZqy8N3BUVc0dB5uLL5L7p85Qzrp0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=USeSj/JzdCc1z/9wIw1TUqJGIzOO2SGGJ8a3/An0CvkegPicsZ3u7OUaaetd15qzMx2aaxlQY0a3IqIxzM6JlfKTfDBnjQuWWljJCoX3TLQQ/kS79lQm3SvnIvLOe0umu/eRc70Ok7rgir4236Kz4xa0y/bNvhgMpNqcb32SdSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2cRTPc+; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-62a0849f5a8so20547727b3.2;
-        Wed, 29 May 2024 06:28:05 -0700 (PDT)
+	s=arc-20240116; t=1716989330; c=relaxed/simple;
+	bh=p/oqckoilHDd3nwrPNG90Eb/yDiE/NNkxmvgpHkUi5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=opw3WRw3lcHkVxhBfRiwq635+8HnN7MuoreEnPV7qnD6/8c1VAHkH4ggzEGj1JGY0InzRGI9opkuavdHxVP9quQ8jH9TFDrNPooezzsB7YsAfw/Hs0Q1gxiHFLq2PMBzwljqCrOdgmKazsvdKPGTNcZ7ZWa0qfTN2qCXn+sgDE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cwHVbGQL; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b03d66861so719960e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:28:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716989285; x=1717594085; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=feB/56QcRvQlMzL2KSQZZ9GD4whRaX0bA2BQ/DYpEpE=;
-        b=F2cRTPc+9HfkIdaoetLG2OFAbna4RVlAuFCuFM681Cv5FkknHp2L71tEtoAv9gQ/9x
-         C1aDdbGENmIJpt/5pkatdDlEXZbNz5z/3wMgKgqeGVAI6YDXL4PO1Xk2GYSn9AY9an/U
-         vKTPu2oZlzEhN28KP/qU9wbEHkSuh2ETAVSMISVUw3CmgUHb39e02OD6PPvPbZgEgpc/
-         MX2mC8dezIXm/Jq/W4ahHYyr+tUz4zHVOS8+TJPz4N+/zYwJ+C6UrIhNRUf7t+uBv3xz
-         Nm02AxLkHjg3uoTNS7pGECVww2OGoL4QXO8hNEiFORSpE4qrwGy0X+VvXkHgDAWqsBZK
-         7LSQ==
+        d=suse.com; s=google; t=1716989325; x=1717594125; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gXmr6j/tvonQwkWDxBgodd8VSD2h8lNR4zZeNwuG1Go=;
+        b=cwHVbGQLaqYTIG4lMoUvO1wDmxJfptHMbRaLZk4qRpM+vykkzSaisTuxasbv4eolYV
+         Yl4PbA05EptI3p81+l3dZceaYg7neUy1Tg3FPKAiPvrVR5IvMLyWDuIZ/9+oHYun4BP/
+         kSuZ8C/7QxC5oNdA2F9NK9Zi3PgDW16KAKp1NvHyy/siY9sTBdi8kQmyyQcbfplwoRYV
+         fFvYK0TZ9R2XoGls/yn57iZpi4786uTY8lj8JdptEAbxuJc4W8GG1XmdgKmuoi0H86nL
+         DqMQdl1sJOJo1D5iRxfGWZS0l5B5mxxOzzncJV4pNVd/cWyna5M7CutjKNEdokFNZD9r
+         mCpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716989285; x=1717594085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=feB/56QcRvQlMzL2KSQZZ9GD4whRaX0bA2BQ/DYpEpE=;
-        b=kL2je20yze6H+vWqAUJe5mB4te+B5QcjImB3/3nAcuEwoI+yVRwDZQqDbmjXE6bjU1
-         7K6OXlULgre+6DsKkpP2D9lUU4w0vkuLIyaE0bfLaqxVDU+JPb50s6VReDYWHcQ4kUEf
-         9cL1Fvcljz42Ycq4utsXq0sx/lZin/3Zk/xsutYSsUQemm8cc9o59ioS4ddZNn1oviEQ
-         z47sm6CFMDXlpQpAcuoFvgHTGJiXV8p7coVX8YTSJ3b6hOE1w6HzBjohCk0SsNyb+LYV
-         SZWekJWAitO3/mBOwYVgZLhlOTAIc27zKGHqeLJhQymhUCG2M+HN1ibv+UVJ1iy3xORM
-         dDlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYsCZg1NyB8v3YMiQbU9VODGZoUP2n4FRoAfRaKpH/sDEERJYuQXZk+3RmdMUYcpGaLVqlXUpcUqr/oJ+ShNNNNS8ti16ry7stYMjQqCkdQmQD4kY0EdJIu0e2Gl5nJUhVD1oMNQ0C
-X-Gm-Message-State: AOJu0YzTZ3OiRLE1kpeEF+CxMf3Pzk7NGs94dZ8EqDB73Jn9spHgd8l5
-	sZrvPkOqJ86QGEi5Foex453msbxp3O43eFT07QOYcGFXh3kRyrzqPx2QZYwb9ZeapKguH/+R6Ra
-	T1CACkMbAwLG9pOHmbzL6Cy0Zono=
-X-Google-Smtp-Source: AGHT+IFnI9mmjeBQWyXqd2gNmeCooUG1lmc3tLc06VpUQ3YLD+iLEKKuHLgn24xSsUDXY/kOhkHfBCiukUoSkgposW8=
-X-Received: by 2002:a0d:e2cd:0:b0:61b:33b6:41dd with SMTP id
- 00721157ae682-62a08ea7e34mr149139207b3.37.1716989284656; Wed, 29 May 2024
- 06:28:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716989325; x=1717594125;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXmr6j/tvonQwkWDxBgodd8VSD2h8lNR4zZeNwuG1Go=;
+        b=v5rzZV55ClmJRBNUdsYbtQyq2l2JcaSKdKtBACd3wAO44PQTGZ9Y5sijGuQcXWxHLa
+         dbQ97M2dFC5ZREGDdFZBC2oEQbh6bGRCtBvQmYM6FzPJhlgymSMsWbaRikMqeOPuz0Gd
+         te42539QohbH9FzhWDddGQ5nWhd3QbcuKbH9K0hT9osKHhbzb+XSlfEuchOCSjX7cp82
+         sjKX9pkfCmwIgsHssX1JpAOuHRYJTbBruA+cqNbDosN9MA6X0uhZVYESOea1CTB1JQuf
+         +4gpNpViDH9fEtmiYC/G1UNtkOCZohESA2q4sdTQSOOD2cbS5UM8j9bC8pxd+hjcP//O
+         Nhyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjP7Tl1zspo4I2j/EJ9MfR19kHCuxsIjmxvXANcHCRz2R//jnutluF0YS5PU89E5GKwdaVtt2gskWis9gusJs+U/a++eNMylmajWqd
+X-Gm-Message-State: AOJu0Yw+xeVqQ3ACMRZDFNOse+dq+RPpfTHDLqXx5r1hXvvbB1VzjClV
+	GdEIKldIWUUd8Gv0AhkjW7rEQu/zkaSZrmGmK02oSwdbnGnREVhX3WMp+ZRb7ek=
+X-Google-Smtp-Source: AGHT+IEq5J35jp5oyjSaT4U2EpNtDbrlLRiwcYvKIzo9K+RuuN07fUdxYFnLzwmPTjwExZKBrEuQig==
+X-Received: by 2002:a05:6512:1042:b0:529:a389:f6a6 with SMTP id 2adb3069b0e04-529a389f747mr9715451e87.67.1716989325376;
+        Wed, 29 May 2024 06:28:45 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d7276d95sm3726512a12.78.2024.05.29.06.28.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 06:28:45 -0700 (PDT)
+Message-ID: <2095a4a2-7db5-4de6-9609-d8e6a5adf27f@suse.com>
+Date: Wed, 29 May 2024 15:28:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528043404.39327-2-flintglass@gmail.com> <20240528043404.39327-5-flintglass@gmail.com>
- <CAKEwX=NcdpgGTp8Kj_kiTkvAK=k8kzayhMo+oeaXGZFA5RuoEw@mail.gmail.com>
-In-Reply-To: <CAKEwX=NcdpgGTp8Kj_kiTkvAK=k8kzayhMo+oeaXGZFA5RuoEw@mail.gmail.com>
-From: Takero Funaki <flintglass@gmail.com>
-Date: Wed, 29 May 2024 22:27:53 +0900
-Message-ID: <CAPpoddeKguLK3paGKAXQ+jO30jC05hvdvZiro2yfVGgrZWnOeA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mm: zswap: proactive shrinking before pool size limit
- is hit
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen/xenbus: handle pointer to NULL in alloc/free_pdev
+To: yskelg@gmail.com, Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: skhan@linuxfoundation.org, sj@kernel.org,
+ Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
+ linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20240529131926.29590-1-yskelg@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240529131926.29590-1-yskelg@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-2024=E5=B9=B45=E6=9C=8829=E6=97=A5(=E6=B0=B4) 1:01 Nhat Pham <nphamcs@gmail=
-com>:
->
-> On Mon, May 27, 2024 at 9:34=E2=80=AFPM Takero Funaki <flintglass@gmail.c=
-om> wrote:
-> >
-> > This patch implements proactive shrinking of zswap pool before the max
-> > pool size limit is reached. This also changes zswap to accept new pages
-> > while the shrinker is running.
-> >
-> > To prevent zswap from rejecting new pages and incurring latency when
-> > zswap is full, this patch queues the global shrinker by a pool usage
-> > threshold at the middle of 100% and accept_thr_percent, instead of the
-> > max pool size.  The pool size will be controlled between 90% to 95% for
-> > the default accept_thr_percent=3D90.  Since the current global shrinker
-> > continues to shrink until accept_thr_percent, we do not need to maintai=
-n
-> > the hysteresis variable tracking the pool limit overage in
-> > zswap_store().
-> >
-> > Before this patch, zswap rejected pages while the shrinker is running
-> > without incrementing zswap_pool_limit_hit counter. It could be a reason
-> > why zswap writethrough new pages before writeback old pages.  With this
-> > patch, zswap accepts new pages while shrinking, and zswap increments
-> > the counter when and only when zswap rejects pages by the max pool size=
-.
-> >
-> > The name of sysfs tunable accept_thr_percent is unchanged as it is stil=
-l
-> > the stop condition of the shrinker.
-> > The respective documentation is updated to describe the new behavior.
->
-> I'm a bit unsure about using this tunable. How would the user
-> determine the level at which the zswap pool should be kept empty?
->
-> I was actually thinking of removing this knob altogether :)
->
+On 29.05.24 15:19, yskelg@gmail.com wrote:
+> From: Yunseong Kim <yskelg@gmail.com>
+> 
+> Modify 'alloc_pdev()' to set 'pdev->xdev' to NULL
+> if 'xen_pcibk_init_devices()' fails. This ensures that 'pdev->xdev' does
+> not point to 'xdev' when 'pdev' is freed.
+> And modify 'free_pdev()' to set 'pdev' to NULL.
+> 
+> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+> ---
+>   drivers/xen/xen-pciback/xenbus.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/xen/xen-pciback/xenbus.c b/drivers/xen/xen-pciback/xenbus.c
+> index b11e401f1b1e..f1709b8e284a 100644
+> --- a/drivers/xen/xen-pciback/xenbus.c
+> +++ b/drivers/xen/xen-pciback/xenbus.c
+> @@ -54,6 +54,7 @@ static struct xen_pcibk_device *alloc_pdev(struct xenbus_device *xdev)
+>   	INIT_WORK(&pdev->op_work, xen_pcibk_do_op);
+>   
+>   	if (xen_pcibk_init_devices(pdev)) {
+> +		pdev->xdev = NULL;
+>   		kfree(pdev);
+>   		pdev = NULL;
+>   	}
+> @@ -102,6 +103,7 @@ static void free_pdev(struct xen_pcibk_device *pdev)
+>   	pdev->xdev = NULL;
+>   
+>   	kfree(pdev);
+> +	pdev = NULL;
+>   }
+>   
+>   static int xen_pcibk_do_attach(struct xen_pcibk_device *pdev, int gnt_ref,
 
-If we see a large pool_limit_hit, that indicates we should lower the
-accept threshold to make more space proactively, to store new pages
-from active processes rather than rejecting.
-If not, we can set a higher accept threshold for swapin, s.t.
-low-activity background processes.
-That depends on one's workload, and can be tuned by the admin, I think.
+NAK!
 
-> >
-> > Signed-off-by: Takero Funaki <flintglass@gmail.com>
-> > ---
-> >  Documentation/admin-guide/mm/zswap.rst | 17 +++++----
-> >  mm/zswap.c                             | 49 +++++++++++++++-----------
-> >  2 files changed, 37 insertions(+), 29 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/mm/zswap.rst b/Documentation/adm=
-in-guide/mm/zswap.rst
-> > index 3598dcd7dbe7..a1d8f167a27a 100644
-> > --- a/Documentation/admin-guide/mm/zswap.rst
-> > +++ b/Documentation/admin-guide/mm/zswap.rst
-> > @@ -111,18 +111,17 @@ checked if it is a same-value filled page before =
-compressing it. If true, the
-> >  compressed length of the page is set to zero and the pattern or same-f=
-illed
-> >  value is stored.
-> >
-> > -To prevent zswap from shrinking pool when zswap is full and there's a =
-high
-> > -pressure on swap (this will result in flipping pages in and out zswap =
-pool
-> > -without any real benefit but with a performance drop for the system), =
-a
-> > -special parameter has been introduced to implement a sort of hysteresi=
-s to
-> > -refuse taking pages into zswap pool until it has sufficient space if t=
-he limit
-> > -has been hit. To set the threshold at which zswap would start acceptin=
-g pages
-> > -again after it became full, use the sysfs ``accept_threshold_percent``
-> > -attribute, e. g.::
-> > +To prevent zswap from rejecting new pages and incurring latency when z=
-swap is
-> > +full, zswap initiates a worker called global shrinker that proactively=
- evicts
-> > +some pages from the pool to swap devices while the pool is reaching th=
-e limit.
-> > +The global shrinker continues to evict pages until there is sufficient=
- space to
-> > +accept new pages. To control how many pages should remain in the pool,=
- use the
-> > +sysfs ``accept_threshold_percent`` attribute as a percentage of the ma=
-x pool
-> > +size, e. g.::
-> >
-> >         echo 80 > /sys/module/zswap/parameters/accept_threshold_percent
-> >
-> > -Setting this parameter to 100 will disable the hysteresis.
-> > +Setting this parameter to 100 will disable the proactive shrinking.
-> >
-> >  Some users cannot tolerate the swapping that comes with zswap store fa=
-ilures
-> >  and zswap writebacks. Swapping can be disabled entirely (without disab=
-ling
-> > diff --git a/mm/zswap.c b/mm/zswap.c
-> > index 08a6f5a6bf62..0186224be8fc 100644
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -71,8 +71,6 @@ static u64 zswap_reject_kmemcache_fail;
-> >
-> >  /* Shrinker work queue */
-> >  static struct workqueue_struct *shrink_wq;
-> > -/* Pool limit was hit, we need to calm down */
-> > -static bool zswap_pool_reached_full;
-> >
-> >  /*********************************
-> >  * tunables
-> > @@ -118,7 +116,10 @@ module_param_cb(zpool, &zswap_zpool_param_ops, &zs=
-wap_zpool_type, 0644);
-> >  static unsigned int zswap_max_pool_percent =3D 20;
-> >  module_param_named(max_pool_percent, zswap_max_pool_percent, uint, 064=
-4);
-> >
-> > -/* The threshold for accepting new pages after the max_pool_percent wa=
-s hit */
-> > +/*
-> > + * The percentage of pool size that the global shrinker keeps in memor=
-y.
-> > + * It does not protect old pages from the dynamic shrinker.
-> > + */
-> >  static unsigned int zswap_accept_thr_percent =3D 90; /* of max pool si=
-ze */
-> >  module_param_named(accept_threshold_percent, zswap_accept_thr_percent,
-> >                    uint, 0644);
-> > @@ -487,6 +488,14 @@ static unsigned long zswap_accept_thr_pages(void)
-> >         return zswap_max_pages() * zswap_accept_thr_percent / 100;
-> >  }
-> >
-> > +/*
-> > + * Returns threshold to start proactive global shrinking.
-> > + */
-> > +static inline unsigned long zswap_shrink_start_pages(void)
-> > +{
-> > +       return zswap_max_pages() * (100 - (100 - zswap_accept_thr_perce=
-nt)/2) / 100;
-> > +}
-> > +
-> >  unsigned long zswap_total_pages(void)
-> >  {
-> >         struct zswap_pool *pool;
-> > @@ -504,21 +513,6 @@ unsigned long zswap_total_pages(void)
-> >         return total;
-> >  }
-> >
-> > -static bool zswap_check_limits(void)
-> > -{
-> > -       unsigned long cur_pages =3D zswap_total_pages();
-> > -       unsigned long max_pages =3D zswap_max_pages();
-> > -
-> > -       if (cur_pages >=3D max_pages) {
-> > -               zswap_pool_limit_hit++;
-> > -               zswap_pool_reached_full =3D true;
-> > -       } else if (zswap_pool_reached_full &&
-> > -                  cur_pages <=3D zswap_accept_thr_pages()) {
-> > -                       zswap_pool_reached_full =3D false;
-> > -       }
-> > -       return zswap_pool_reached_full;
-> > -}
-> > -
-> >  /*********************************
-> >  * param callbacks
-> >  **********************************/
-> > @@ -1475,6 +1469,8 @@ bool zswap_store(struct folio *folio)
-> >         struct obj_cgroup *objcg =3D NULL;
-> >         struct mem_cgroup *memcg =3D NULL;
-> >         unsigned long value;
-> > +       unsigned long cur_pages;
-> > +       bool need_global_shrink =3D false;
-> >
-> >         VM_WARN_ON_ONCE(!folio_test_locked(folio));
-> >         VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
-> > @@ -1497,8 +1493,18 @@ bool zswap_store(struct folio *folio)
-> >                 mem_cgroup_put(memcg);
-> >         }
-> >
-> > -       if (zswap_check_limits())
-> > +       cur_pages =3D zswap_total_pages();
-> > +
-> > +       if (cur_pages >=3D zswap_max_pages()) {
-> > +               zswap_pool_limit_hit++;
-> > +               need_global_shrink =3D true;
-> >                 goto reject;
-> > +       }
-> > +
-> > +       /* schedule shrink for incoming pages */
-> > +       if (cur_pages >=3D zswap_shrink_start_pages()
-> > +                       && !work_pending(&zswap_shrink_work))
-> > +               queue_work(shrink_wq, &zswap_shrink_work);
->
-> I think work_pending() check here is redundant. If you look at the
-> documentation, queue_work only succeeds if zswap_shrink_work is not
-> already on the shrink_wq workqueue.
->
-> More specifically, if you check the code, queue_work calls
-> queue_work_on, which has this check:
->
-> if (!test_and_set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work)) &&
->    !clear_pending_if_disabled(work)) {
->
-> This is the same bit-check as work_pending, which is defined as:
->
-> #define work_pending(work) \
-> test_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work))
->
+Please stop that nonsense. NULL-ing pointers which have no chance to be used any
+more is just adding code for no purpose at all.
 
-Thanks for the review and info. I will remove the tests.
-
->
-> >
-> >         /* allocate entry */
-> >         entry =3D zswap_entry_cache_alloc(GFP_KERNEL, folio_nid(folio))=
-;
-> > @@ -1541,6 +1547,9 @@ bool zswap_store(struct folio *folio)
-> >
-> >                 WARN_ONCE(err !=3D -ENOMEM, "unexpected xarray error: %=
-d\n", err);
-> >                 zswap_reject_alloc_fail++;
-> > +
-> > +               /* reduce entry in array */
-> > +               need_global_shrink =3D true;
-> >                 goto store_failed;
-> >         }
-> >
-> > @@ -1590,7 +1599,7 @@ bool zswap_store(struct folio *folio)
-> >         zswap_entry_cache_free(entry);
-> >  reject:
-> >         obj_cgroup_put(objcg);
-> > -       if (zswap_pool_reached_full)
-> > +       if (need_global_shrink && !work_pending(&zswap_shrink_work))
-> >                 queue_work(shrink_wq, &zswap_shrink_work);
-> >  check_old:
-> >         /*
-> > --
-> > 2.43.0
-> >
+Please don't send other iterations of this patch. You are wasting review
+bandwidth.
 
 
-
---=20
-
-<flintglass@gmail.com>
+Juergen
 
