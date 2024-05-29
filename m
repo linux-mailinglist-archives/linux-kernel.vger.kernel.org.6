@@ -1,131 +1,111 @@
-Return-Path: <linux-kernel+bounces-194641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B218D3F60
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0370D8D3F62
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E7BD28A9EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:09:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3A6128AAF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC5A1C68A6;
-	Wed, 29 May 2024 20:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A211C68A3;
+	Wed, 29 May 2024 20:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UuJc4lM5"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WgabCIb4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB97418E06;
-	Wed, 29 May 2024 20:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA26318E06;
+	Wed, 29 May 2024 20:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717013386; cv=none; b=pDTXtDE6UK89+AmAF8aooTXvMkVXbd439gvOyznBcuKQ+ZSnOAZIIQ084VS05KsDtIuRckgyIx5gTyEpYXZvUTw2bnujSeqNPABx9xesRd5tb2Fs1fTkAzuSJl3mMQXihbWzU5Xms+GtBKg+HMfZMj02jLeEwOpaEU4+AtPR9VE=
+	t=1717013416; cv=none; b=PGV4EIOfQHLs1yszeEMT/W/k38joSMtvddT2zrZBkJd3a8DobWKhCQ8sju1jL+E6G2M0EcZ9ejUNAJsKhEMFDSlhYMqYfmI9hZwJyLmKLTkItm2fpFR2YU22EgHWRNrXfnENlScYDyOJJgCwJN7fnXFRdCtkcKV57LNVoEM9uDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717013386; c=relaxed/simple;
-	bh=VmTjocAj8CY1BjnBiFgQ0KHUqKpPYIGWoK1UGssEBmM=;
+	s=arc-20240116; t=1717013416; c=relaxed/simple;
+	bh=dbzk/a5JW/20BuFXVjmuN0kgqEvg6DNfu1vI8J6pyP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpoHhinP4uX1E8uk4IAO+I5uh6uTXihqR59k67qmR+JXAust51nq5jVt+ML6LlwO5Xv20KWSU6DD6CAlCP+hW/PcCbpDEyacYAIxddDOMvH8DJJK5QDB72LnTiHj+9ZbIOj6jycqLGyXXu2oUbM7cvsEOTyMhKehM8jp9dXimno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=UuJc4lM5; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EfQ/Q2iVyXpG7SyzUHxYwMhwGinL//RTWhWN7EORZ8U=; b=UuJc4lM5bz5/HnE+yz/N6peyBE
-	RbGvl89sUErh0CP4XxfiqiUCcQTU3gZ9Kx3efB73d+UdhiBVnqizINl+sOftuzZGuOf+uOrA3fvLA
-	GsoOVe49GXYJCj1VpEQm0yAxpqpEbICHtMOpSRsUGU0fVTh87ZE/MN5KFg3va92gNQY9uiFyjezLS
-	Gx6ENPcFw09Qdba9l68BL06+GT5eK2k3DiCGAmzUSUBwJ8psekOelpcLEYpF30JGQlgOsCvB6njKi
-	CpZ6jqpElpgZ0pWVl6m9wDH6V39bA9Hnidhg0Qa5AlsPSQMkRHoaJ0jlIRym7sQduqx2zXyk9+05B
-	vU1gGLLA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56960)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCPbu-0006cJ-1q;
-	Wed, 29 May 2024 21:09:22 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCPbr-0004UG-KU; Wed, 29 May 2024 21:09:19 +0100
-Date: Wed, 29 May 2024 21:09:19 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sneh Shah <quic_snehshah@quicinc.com>
-Cc: Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: [PATCH net-next] net: stmmac: dwmac-qcom-ethqos: Add support for
- 2.5G SGMII
-Message-ID: <ZleLb+dtJ8Uspq4S@shell.armlinux.org.uk>
-References: <20231218071118.21879-1-quic_snehshah@quicinc.com>
- <4zbf5fmijxnajk7kygcjrcusf6tdnuzsqqboh23nr6f3rb3c4g@qkfofhq7jmv6>
- <8b80ab09-8444-4c3d-83b0-c7dbf5e58658@quicinc.com>
- <wvzhz4fmtheculsiag4t2pn2kaggyle2mzhvawbs4m5isvqjto@lmaonvq3c3e7>
- <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
- <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
- <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=axyS4Ma++AHL6h7EtafeRWzGxDBCYUAUYbI7L8FLKpT/hPirtDu653gpQchQSeh3q6cVihDa8s42VIssLpcVJFMFT8zWr8BXypRmTzO4eYbL9UdU8bwoX/xKvPERFXyZ3uaQA3mB3Ws4sCbgg1YCDRJ+5qn3j/IiH7Pl18li8kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WgabCIb4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4A2D140E01E8;
+	Wed, 29 May 2024 20:10:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9aZzfH1uuNjS; Wed, 29 May 2024 20:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717013408; bh=73f/1KhBwHSD2Gb8IwWVkcZO7O2Ot+HSxzuxsTqHla8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WgabCIb4NzzKQWAKng+Ku1pySu8f4dMlaK6dUr09WEphv6V3RTT7GAmmw3vNWYzxI
+	 fCdRoCwa15LY1jvu33E9IHhycngTajHQLXlngeyysDHDVBqfhIoJ+xifXURJwKNGur
+	 NU1Qw4QqMkD7M4JG4cPGczj6DwtUwyw2wqdaN6zrKaacqSv75jsV3eX4nRAHqT0/OE
+	 4sydJZEeOhcPG5F/7bB5ZDPqDQEVOCCilRX/hhGsIGBEujiQDQhmHnImf62RczCytd
+	 KREWAYgaNeEYHAfR5sjbe90vzPsdQ6LShkxaULRnIb8pSFdHli3GJqwP2KIYQoazLT
+	 FcmppXhDAQGVesohwh8rc1mMGU0d/CAv2XutnGzm8ZPlD6MEjjV4FmnEV3wQBm4at9
+	 jeVSbZbPF040Jk6owat38Xg4qAeldjECj68yOaqjxICqVzlV4F/Et25Keex0TYGP98
+	 ckLCuJqwyigXKieICx9IyjLhA1PDk9NTP+P+tpwGzCuvritd1BWzHOoaR1ezlV/gQP
+	 fydSQIcWeLKVtMsFW2+RVzfTWT4+rqjV+PukM29kDzmcwBaX0fT/+eqlEElNdkzhfL
+	 91p5ke1vMTWBWRpSbo4aXfgKyg5KG8uNMGKO1l9lPxYBkg54x+Qz9UfWA9SdVA0SA1
+	 RceWR+37fVS1IJBq+2G9UR4M=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0FE7A40E01A3;
+	Wed, 29 May 2024 20:09:56 +0000 (UTC)
+Date: Wed, 29 May 2024 22:09:50 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Marvin Lin <milkfafa@gmail.com>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC, i10nm: make skx_common.o a separate module
+Message-ID: <20240529200950.GFZleLjk22m3kt2K61@fat_crate.local>
+References: <20240529095132.1929397-1-arnd@kernel.org>
+ <20240529193127.GEZleCjwyUtnDv_Nc0@fat_crate.local>
+ <fc7f2a95-2a61-4eea-a1b8-b764893eabe3@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <fc7f2a95-2a61-4eea-a1b8-b764893eabe3@app.fastmail.com>
 
-On Wed, May 29, 2024 at 07:43:15PM +0530, Sneh Shah wrote:
-> In this version of qualcomm ethernet, PCS is not an independent HW
-> block. It is integrated to MAC block itself. It has very limited
-> configuration.Here PCS doesn't have it's own link speed/duplex
-> capabities. Hence we are bypassing all this PCS related functionalities.
+On Wed, May 29, 2024 at 09:55:04PM +0200, Arnd Bergmann wrote:
+> It has caused problems in enough other drivers that we now
+> have a warning for it, it was added in commit 598afa050403
+> ("kbuild: warn objects shared among multiple modules").
+> 
+> Most modules are modified already, and we are now down to
+> the last handful. Since the bugs are fairly hard to understand
+> when they happen, it would be nice to enable the warning
+> by default.
 
-I want to concentrate on this part first - we'll address the 2.5G
-issues separately once I've got a picture of this hardware (and thus
-can work out what needs to change in my phylink_pcs implementation to
-support the standard Cisco SGMII speeds.
+Yah, this should've been in the commit message: it's not like I've
+caught a public announcement that we're doing this now... :)
 
-From what I understand you're saying, your integrated PCS is different
-from the DesignWare integrated PCS?
+Tony, please add it before committing.
 
-Which core does it use? dwmac4_core.c or dwmac1000_core.c, or some
-other? Not knowing which core makes asking the following questions
-harder, since I'm having to double them up to cover both cores with
-their different definitions.
-
-Does it only present its status via the GMAC_PHYIF_CONTROL_STATUS or
-GMAC_RGSMIIIS register?
-
-From what you're saying:
-- if using the dwmac1000 core, then for the registers at GMAC_PCS_BASE
-  (0xc0 offset)...
-- if using the dwmac4 core, then for registers at GMAC_PCS_BASE
-  (0xe0 offset)...
-.. is it true that only the GMAC_AN_CTRL() register is implemented
-and none of the other registers listed in stmmac_pcs.h?
-
-In terms of interrupts when the link status changes, how do they
-present? Are they through the GMAC_INT_RGSMIIS interrupt only?
-What about GMAC_INT_PCS_LINK or GMAC_INT_PCS_ANE? Or in the case
-of the other core, is it through the PCS_RGSMIIIS_IRQ interrupt
-only? Similarly, what about PCS_LINK_IRQ or PCS_ANE_IRQ?
-
-Thanks.
+Thx.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
