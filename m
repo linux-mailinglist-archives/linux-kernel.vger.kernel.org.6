@@ -1,77 +1,71 @@
-Return-Path: <linux-kernel+bounces-193796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009238D3245
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:52:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021D78D3247
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2404D1C233F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA691F22D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC63F17A930;
-	Wed, 29 May 2024 08:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBB717B515;
+	Wed, 29 May 2024 08:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I/wJZpQT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DXkkWZ0E"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E127617995B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4A817B433;
+	Wed, 29 May 2024 08:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716972524; cv=none; b=F4PjIcmRPqlv5Jk67+etUViBkSXo7XhA8Y2Rl+L9i+nFWuB2Q5LVoWElC5mJSPhsKKFzDtTfa7aVNFWXImJ9I7viFeJt8rjlY9JdDDYuYzH8MOj91dKX3K4KM4rJ1Dnj3Rz7wepx/Q0es/QzIi1zzG93Stn8mFLmclGz0FuH360=
+	t=1716972536; cv=none; b=u2VONaSjqJxFf5psXuFJLF08DFXknGUbe8jqpteX6YsnFrBRPu10pOcdJSOEdwyplfRothrUGaa/pk1osXuZcxLcDNG5Bw7Fly3jk/dw8eo/fXkdSQlHBkkqBYIxwos1INaJIj16axUpYCm5ButGrFr7ExrKGqvRFuVCU01HpYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716972524; c=relaxed/simple;
-	bh=+i8HiSPRhTKcPyCksq58UaPubny0a8rrctX46TVvSMk=;
+	s=arc-20240116; t=1716972536; c=relaxed/simple;
+	bh=05mPMURiJUzB68uwZ1AnFCRU9HvmdnaueMsK6PvezjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGZmCSrws2cFhByF8RjIa0m7qoqn72dHCSfgfGrb7Vvhhz8jNPSpZRUU7Q7bsvzAybjXq90fzcv5BC5Bz4NcBq1mfi118OMBedERiO1TXqG7s6/LSDZ7f9geO8ts6sE4ZpcdNiNJXJ7hpoDsitJA7xyUmbcIai2ZL+FzeiFpqMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I/wJZpQT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716972520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=znIpA3udPqKI4MZkxSxCZR6WCKKDK3sQ7qzxLXZGsaI=;
-	b=I/wJZpQTje82vgG33dIsyJFn45REaNDqy0607Dkl7KJY/sjqTB9t1WbrbV/iXEeBMKLk4w
-	E+rQ+lvchzBISTXoU5XlZLM6/5BSFd8SQmYWKuuxKsO8BaAjptYbjr4PNDTVbtf7FDWEi4
-	EVKZFLQESw6hOTT250KvZp3nSANIZvY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-fYMqePKiMEm9xRyDkphb7w-1; Wed, 29 May 2024 04:48:37 -0400
-X-MC-Unique: fYMqePKiMEm9xRyDkphb7w-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 90DC185A58C;
-	Wed, 29 May 2024 08:48:36 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.54])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id CDD611C0D104;
-	Wed, 29 May 2024 08:48:34 +0000 (UTC)
-Date: Wed, 29 May 2024 16:48:31 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Eric Chanudet <echanude@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>, Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nick Piggin <npiggin@gmail.com>, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3] mm/mm_init: use node's number of cpus in
- deferred_page_init_max_threads
-Message-ID: <Zlbr38h/kwxMWLLs@MiWiFi-R3L-srv>
-References: <20240528185455.643227-4-echanude@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bFYJmHZuRDJUg3+OP+JSuPFGJ3tmrD4n0BsB+QlCPT2NK5NQQge3khil1FAxfTLCoumijoutstVyyIMgiOYsx9fywFquHjNOH7oRGj+hJiyqyqw82SymwcdS7zVu0zfZjmkCzThUiLU2o8iLJwcjno0nV87K27jvCOXPwMOKqW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DXkkWZ0E; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fy/VN4d93AK58QWLNniu+JNSSAyKTkDFLr45JXQ5Bzs=; b=DXkkWZ0Esh+3Ku43CUqs2kR56L
+	S6ClNqQdm5L+GJn4agj4N/jzOMZFcWU8Z63sliv6R3BbOmaZIT02J4lW10dxZKzutKDSZlejmv0v6
+	TWDISFNFG8xPNlA+SvivbcenRpCITMm7RCgKRUmzAB8qzmP3GZwlvSzhs3TeGj/nLKcLkz3O2keNg
+	x6+Z1FMLu8UGhaXMvpZdGvGBZm7qO03SYsBqTbRvkAYzsy1yoMBdK6v5C5/LzHyWdGbiT5eOO1yLH
+	5IfQ91PmRDXwsaPrF8+aXvmcWB8Nbfqaa72v326Wl+nElipaL2GTnXWbA+PW+4xscr1gt0CxJmT9O
+	eWlU2d0g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38530)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sCEzB-0005qn-1p;
+	Wed, 29 May 2024 09:48:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sCEzB-00045O-Pl; Wed, 29 May 2024 09:48:41 +0100
+Date: Wed, 29 May 2024 09:48:41 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: xiaolei wang <xiaolei.wang@windriver.com>, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH] net: stmmac: update priv->speed to SPEED_UNKNOWN
+ when link down
+Message-ID: <Zlbr6ZCI0GZR6FKn@shell.armlinux.org.uk>
+References: <20240528092010.439089-1-xiaolei.wang@windriver.com>
+ <775f3274-69b4-4beb-84f3-a796343fc095@lunn.ch>
+ <b499cbcd-a3c9-4f38-a69a-ad465e7f8d5a@windriver.com>
+ <98e6266f-805c-4da2-b2dc-b25297c53742@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,123 +74,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528185455.643227-4-echanude@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+In-Reply-To: <98e6266f-805c-4da2-b2dc-b25297c53742@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 05/28/24 at 02:54pm, Eric Chanudet wrote:
-> When DEFERRED_STRUCT_PAGE_INIT=y, use a node's cpu count as maximum
-> thread count for the deferred initialization of struct pages via padata.
-> This should result in shorter boot times for these configurations by
-> going through page_alloc_init_late() faster as systems tend not to be
-> under heavy load that early in the bootstrap.
+On Wed, May 29, 2024 at 02:57:27AM +0200, Andrew Lunn wrote:
+> On Wed, May 29, 2024 at 08:22:01AM +0800, xiaolei wang wrote:
+> > 
+> > On 5/28/24 21:20, Andrew Lunn wrote:
+> > > CAUTION: This email comes from a non Wind River email account!
+> > > Do not click links or open attachments unless you recognize the sender and know the content is safe.
+> > > 
+> > > On Tue, May 28, 2024 at 05:20:10PM +0800, Xiaolei Wang wrote:
+> > > > The CBS parameter can still be configured when the port is
+> > > > currently disconnected and link down. This is unreasonable.
+> > > This sounds like a generic problem. Can the core check the carrier
+> > > status and error out there? Maybe return a useful extack message.
+> > > 
+> > > If you do need to return an error code, ENETDOWN seems more
+> > 
+> > Currently cbs does not check link status. If ops->ndo_setup_tc() returns
+> > failure, there will only be an output of "Specified device failed to setup
+> > cbs hardware offload".
 > 
-> Only x86_64 does that now. Make it archs agnostic when
-> DEFERRED_STRUCT_PAGE_INIT is set. With the default defconfigs, that
-> includes powerpc and s390.
-> 
-> It used to be so before offering archs to override the function for
-> tuning with commit ecd096506922 ("mm: make deferred init's max threads
-> arch-specific").
-> 
-> Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64 platforms
-> shows faster deferred_init_memmap completions:
-> |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
-> |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
-> |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
-> |---------|-------------|--------------|-----------------|--------------|
-> | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
-> |---------|-------------|--------------|-----------------|--------------|
-> | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
-> | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
-> 
-> Michael Ellerman on a powerpc machine (1TB, 40 cores, 4KB pages) reports
-> faster deferred_init_memmap from 210-240ms to 90-110ms between nodes.
-> 
-> Signed-off-by: Eric Chanudet <echanude@redhat.com>
-> Tested-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-> 
-> ---
-> - v1: https://lore.kernel.org/linux-arm-kernel/20240520231555.395979-5-echanude@redhat.com
-> - Changes since v1:
->  - Make the generic function return the number of cpus of the node as
->    max threads limit instead overriding it for arm64.
->  - Drop Baoquan He's R-b on v1 since the logic changed.
->  - Add CCs according to patch changes (ppc and s390 set
->    DEFERRED_STRUCT_PAGE_INIT by default).
-> 
-> - v2: https://lore.kernel.org/linux-arm-kernel/20240522203758.626932-4-echanude@redhat.com/
-> - Changes since v2:
->  - deferred_page_init_max_threads returns unsigned and use max instead
->    of max_t.
->  - Make deferred_page_init_max_threads static since there are no more
->    override.
->  - Rephrase description.
->  - Add T-b and report from Michael Ellerman.
-> 
->  arch/x86/mm/init_64.c    | 12 ------------
->  include/linux/memblock.h |  2 --
->  mm/mm_init.c             |  5 ++---
->  3 files changed, 2 insertions(+), 17 deletions(-)
+> So it sounds like we should catch this in the core then, not the
+> driver. And cbs_enable_offload() takes an extack, so you can report a
+> user friendly reason for failing, the at the carrier is off.
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+It's worse than that (see my other reply.) If the link speed changes,
+there's nothing that deals with updating the CBS configuration for the
+new speed. CBS here is basically buggy - unless one reconfigures CBS
+each time the link comes up.
 
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 7e177856ee4f..adec42928ec1 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1354,18 +1354,6 @@ void __init mem_init(void)
->  	preallocate_vmalloc_pages();
->  }
->  
-> -#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> -int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
-> -{
-> -	/*
-> -	 * More CPUs always led to greater speedups on tested systems, up to
-> -	 * all the nodes' CPUs.  Use all since the system is otherwise idle
-> -	 * now.
-> -	 */
-> -	return max_t(int, cpumask_weight(node_cpumask), 1);
-> -}
-> -#endif
-> -
->  int kernel_set_to_readonly;
->  
->  void mark_rodata_ro(void)
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index e2082240586d..40c62aca36ec 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -335,8 +335,6 @@ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
->  	for (; i != U64_MAX;					  \
->  	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
->  
-> -int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask);
-> -
->  #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
->  
->  /**
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index f72b852bd5b8..acfeba508796 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -2122,11 +2122,10 @@ deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
->  	}
->  }
->  
-> -/* An arch may override for more concurrency. */
-> -__weak int __init
-> +static unsigned int __init
->  deferred_page_init_max_threads(const struct cpumask *node_cpumask)
->  {
-> -	return 1;
-> +	return max(cpumask_weight(node_cpumask), 1U);
->  }
->  
->  /* Initialise remaining memory on a node */
-> -- 
-> 2.44.0
-> 
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
