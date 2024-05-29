@@ -1,184 +1,166 @@
-Return-Path: <linux-kernel+bounces-194152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811908D3776
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:21:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913888D3778
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D03C28732C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:21:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0453B22932
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E42C1643A;
-	Wed, 29 May 2024 13:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B9012B93;
+	Wed, 29 May 2024 13:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caYOEQv+"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kgju41kX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBCF17C6C;
-	Wed, 29 May 2024 13:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C617B12B82;
+	Wed, 29 May 2024 13:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988863; cv=none; b=fBee5TYM0lasuzRr/txFeHnCjoqdtlTAq2wC03weSsh1CGDPEVka68/KMMxP7WkJHYUSWaalpVflyvWP04NZx+y5Z1CqBSabf/e69cnCUbioIpjG5eoNvCoUoC25G56t1yGW80cFK8038pMCLBTz9/v3xV2uWGOWiRKfOPgWEuc=
+	t=1716988888; cv=none; b=JYXs7KarK1ZkQbuVZ+WhpLEMb8XTaILiNu6WRx8fcvxh9tISx2VXz4RiEN4Dkxo0aliRFgOdb62bS1CeA0WEC0JZ2LXLRM817NXuQAEW7tVxSZBSIjaY29AOBdyGqNCP7xqUOe5iLx0XQ13VBjeXWfcgfJWw8GiiOHa/PZ7MKy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988863; c=relaxed/simple;
-	bh=zYMiCwE56OohnrxrdgwAfg+qSxvgxoW4HoLHgQdpU2I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T1m4CpXMvvrDLFu/LWepICN1Q5N+b8Qboiyxzyo0jmLZOQI+K0jyRcfn2HYqmt4baoEsD5htZeyOisHDvew4Ip9B4+YhboE0nti+GJshFpiOJe8EVoIRt8LnVOgISOC/R9974S9rvymnK+hxJK8rgDj0siO0CEyJCkaHL6+2k8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caYOEQv+; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-701b0b0be38so1688492b3a.0;
-        Wed, 29 May 2024 06:21:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716988862; x=1717593662; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iqqCp8YkE8QN0J5Hn1yUPom3eC9D/QLg0KIhmBD/bc0=;
-        b=caYOEQv+6cBdBsFpJz7zx3It35IlIUIy0zs78abmKcrc+J426gs8OBhsN+5raYa1O1
-         x1MxXwvewctzBBMwHBAxccypaF1G0ARTqxB0bQVlDp+liOwguywRmP49RB3BLgYDoE+I
-         lM7a1a92nvHPPJgnq7RVKRL4ZJNLNntbi473eQNpOGSyeTnfXBKnm1nqs6N+Ycqc/Iqe
-         mFwY9A38kdX5J6F/Ki27mDGzDUtRwDnFet1jj5gUejOs8Rcch5S8+UyhUamzTVwhHwVJ
-         jBXEDyC2I/CvMXh9BB6xtN2EIfT0ESIQV7qdyxeh5Ua8vvY91KSAynRe0zEjNzPLcHIA
-         ojfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716988862; x=1717593662;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iqqCp8YkE8QN0J5Hn1yUPom3eC9D/QLg0KIhmBD/bc0=;
-        b=avphEtlWwz+i9WN4v7ILkp1kzQe3JDga2jo9+Js9eCMUbeIDS9P/JOaPN3PYliliZN
-         3sYVcSZLwC8LzQ9tN83QGEiPYjZBFjYh94ZvYV1G8eCgiVZXZIjAi70xGOQizZvMZQzJ
-         LgnAj8HO9heMnJmgW78fsPq1KpRnPiKZkO38cJ8I1AZkHrodvuiX9fQFypDlmB500e9i
-         1pz2zq0Kmdp1FLpou+lS0HnmW8q5QL3QmQMyI64QKoYvrs/b/zssQAfTR+ZiEZqIritM
-         QUmjJ3ajAVdg133XdDhUdQgv0GunPSLty5ikCs0G/B5mvJ8M9g314BgfRr+fm0VWQ9Vg
-         T9fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ08TGqY7rosQx9gT5J0PlzJh9MaLHO2hGfR7w1g289b1uhgUM5SZf8R4rOd52328NRdvcSQFoJiJqeXBAg0MgV0/2M+8JpadGig==
-X-Gm-Message-State: AOJu0YxL/0/ZLyU5SzABUe7jAN6SoGfg7qCGEwaltYY9+Do+U6gBmFQd
-	ClzfaawnKdqXB8fq4JwIaiKQGMmuTYUY9hb8YKvmAGuUNVfLMSUuKRLlNA==
-X-Google-Smtp-Source: AGHT+IGMGvvlVB+CMTQa0lnvTQ+546THlA+9C2/oQn2PkU84e8LaVTdfCCoVMARv9KR3JYNe8GY/Tw==
-X-Received: by 2002:a05:6a21:3a94:b0:1b2:1de2:7dfa with SMTP id adf61e73a8af0-1b21de27eb4mr17837121637.22.1716988861617;
-        Wed, 29 May 2024 06:21:01 -0700 (PDT)
-Received: from rigel.home.arpa (194-223-191-29.tpgi.com.au. [194.223.191.29])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682227f1838sm9121844a12.46.2024.05.29.06.20.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 06:21:01 -0700 (PDT)
-From: Kent Gibson <warthog618@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	brgl@bgdev.pl,
-	linus.walleij@linaro.org
-Cc: Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v2 3/3] gpiolib: cdev: Cleanup kfifo_out() error handling
-Date: Wed, 29 May 2024 21:19:53 +0800
-Message-Id: <20240529131953.195777-4-warthog618@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240529131953.195777-1-warthog618@gmail.com>
-References: <20240529131953.195777-1-warthog618@gmail.com>
+	s=arc-20240116; t=1716988888; c=relaxed/simple;
+	bh=fUQHYwNl7zcp4QNb8POCu3jUGN7bcqSedR6ot/+vHPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hy3CE64/RzKPQCW60mL3x+4cf8r8fBV9AovYb5WF4YZDT1wPkFWAdhmKvySTtuanLvBOgPvDf1D5z8YA2kQ7aq+lfKUgscFtmmEUOc4YrNgT20sjOG3KmtZcDBIHm7ipQChLCtOlNWeXZWsBEv3ZyUSQl6EZ/mR+kxhvUYu13fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kgju41kX; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716988887; x=1748524887;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fUQHYwNl7zcp4QNb8POCu3jUGN7bcqSedR6ot/+vHPU=;
+  b=kgju41kXqisu4QG4iA5ZIh1ktXNzQgyDzG00FXD6EGWnDVroYF44PMW6
+   ueHbnfpXyTJqUrKyM6sPkKp5PR8ZJJXLD9y8P1KmEtEs3ABUhun1HcSxL
+   qHrbgs6A9LQaYvByMfNXTbIVTrdmaW7NvBdonPoee4zdLd3t0+GPkcpne
+   Bty/jBD321MQ4TNhE/1oMqT7aw56MqUxCrk6bpmdfL7/VVr+xidtRQnUl
+   cOfKnLfAAYOYpAeu928ez8WOa8aJhSbd+Jdjju0YGBfhzCoAeiYvstplK
+   PNEvYehIMFpVyiDupFCXfzSYc9a7T2mzWRjzRkjKMI4O9CmzJgNUmZYaV
+   w==;
+X-CSE-ConnectionGUID: ka6w4kFcTdWcxv/etIulNw==
+X-CSE-MsgGUID: 5CEZxv0GTvGCtdP8a0/M8g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="24804936"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="24804936"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:21:27 -0700
+X-CSE-ConnectionGUID: pAp8tyZ8QZiCnq4QgPZaJA==
+X-CSE-MsgGUID: 9WHNBzE2RLyKZ166qLkHOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="35406511"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 29 May 2024 06:21:23 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sCJF3-000Dh5-1N;
+	Wed, 29 May 2024 13:21:21 +0000
+Date: Wed, 29 May 2024 21:21:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202405292136.ZyuCa1Fc-lkp@intel.com>
+References: <20240528191823.17775-4-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528191823.17775-4-admiyo@os.amperecomputing.com>
 
-The handling of kfifo_out() errors in read functions obscures any error.
-The error condition should never occur but, while a ret is set to -EIO, it
-is subsequently ignored and the read functions instead return the number
-of bytes copied to that point, potentially masking the fact that any error
-occurred.
+Hi,
 
-Log a warning and return -EIO in the case of a kfifo_out() error to make
-it clear something very odd is going on here.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
- drivers/gpio/gpiolib-cdev.c | 53 +++++++++++++++++++------------------
- 1 file changed, 27 insertions(+), 26 deletions(-)
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.10-rc1 next-20240529]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index c7218c9f2c5e..1cb952daacfb 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -1642,16 +1642,15 @@ static ssize_t linereq_read(struct file *file, char __user *buf,
- 					return ret;
- 			}
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240529-072116
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240528191823.17775-4-admiyo%40os.amperecomputing.com
+patch subject: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240529/202405292136.ZyuCa1Fc-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240529/202405292136.ZyuCa1Fc-lkp@intel.com/reproduce)
 
--			ret = kfifo_out(&lr->events, &le, 1);
--		}
--		if (ret != 1) {
--			/*
--			 * This should never happen - we were holding the
--			 * lock from the moment we learned the fifo is no
--			 * longer empty until now.
--			 */
--			ret = -EIO;
--			break;
-+			if (kfifo_out(&lr->events, &le, 1) != 1) {
-+				/*
-+				 * This should never happen - we hold the
-+				 * lock from the moment we learned the fifo
-+				 * is no longer empty until now.
-+				 */
-+				WARN(1, "failed to read from non-empty kfifo");
-+				return -EIO;
-+			}
- 		}
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405292136.ZyuCa1Fc-lkp@intel.com/
 
- 		if (copy_to_user(buf + bytes_read, &le, sizeof(le)))
-@@ -1995,16 +1994,15 @@ static ssize_t lineevent_read(struct file *file, char __user *buf,
- 					return ret;
- 			}
+All errors (new ones prefixed by >>):
 
--			ret = kfifo_out(&le->events, &ge, 1);
--		}
--		if (ret != 1) {
--			/*
--			 * This should never happen - we were holding the lock
--			 * from the moment we learned the fifo is no longer
--			 * empty until now.
--			 */
--			ret = -EIO;
--			break;
-+			if (kfifo_out(&le->events, &ge, 1) != 1) {
-+				/*
-+				 * This should never happen - we hold the
-+				 * lock from the moment we learned the fifo
-+				 * is no longer empty until now.
-+				 */
-+				WARN(1, "failed to read from non-empty kfifo");
-+				return -EIO;
-+			}
- 		}
+   drivers/net/mctp/mctp-pcc.c:331:10: error: 'struct acpi_driver' has no member named 'owner'
+     331 |         .owner = THIS_MODULE,
+         |          ^~~~~
+   In file included from include/linux/printk.h:6,
+                    from include/asm-generic/bug.h:22,
+                    from arch/loongarch/include/asm/bug.h:60,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/loongarch/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/spinlock.h:56,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/slab.h:16,
+                    from include/linux/resource_ext.h:11,
+                    from include/linux/acpi.h:13,
+                    from drivers/net/mctp/mctp-pcc.c:7:
+>> include/linux/init.h:180:21: error: initialization of 'const char *' from incompatible pointer type 'struct module *' [-Werror=incompatible-pointer-types]
+     180 | #define THIS_MODULE (&__this_module)
+         |                     ^
+   drivers/net/mctp/mctp-pcc.c:331:18: note: in expansion of macro 'THIS_MODULE'
+     331 |         .owner = THIS_MODULE,
+         |                  ^~~~~~~~~~~
+   include/linux/init.h:180:21: note: (near initialization for 'mctp_pcc_driver.drv.name')
+     180 | #define THIS_MODULE (&__this_module)
+         |                     ^
+   drivers/net/mctp/mctp-pcc.c:331:18: note: in expansion of macro 'THIS_MODULE'
+     331 |         .owner = THIS_MODULE,
+         |                  ^~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:322:45: warning: missing braces around initializer [-Wmissing-braces]
+     322 | static struct acpi_driver mctp_pcc_driver = {
+         |                                             ^
+   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_mod_init':
+   drivers/net/mctp/mctp-pcc.c:343:80: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]
+     343 |                 ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error registering driver\n"));
+         |                                                                                ^
+   cc1: some warnings being treated as errors
 
- 		if (copy_to_user(buf + bytes_read, &ge, ge_size))
-@@ -2707,12 +2705,15 @@ static ssize_t lineinfo_watch_read(struct file *file, char __user *buf,
- 			if (count < event_size)
- 				return -EINVAL;
- #endif
--			ret = kfifo_out(&cdev->events, &event, 1);
--		}
--		if (ret != 1) {
--			ret = -EIO;
--			break;
--			/* We should never get here. See lineevent_read(). */
-+			if (kfifo_out(&cdev->events, &event, 1) != 1) {
-+				/*
-+				 * This should never happen - we hold the
-+				 * lock from the moment we learned the fifo
-+				 * is no longer empty until now.
-+				 */
-+				WARN(1, "failed to read from non-empty kfifo");
-+				return -EIO;
-+			}
- 		}
 
- #ifdef CONFIG_GPIO_CDEV_V1
---
-2.39.2
+vim +180 include/linux/init.h
 
+f2511774863487e Arjan van de Ven 2009-12-13  177  
+5b20755b7780464 Masahiro Yamada  2023-11-26  178  #ifdef MODULE
+5b20755b7780464 Masahiro Yamada  2023-11-26  179  extern struct module __this_module;
+5b20755b7780464 Masahiro Yamada  2023-11-26 @180  #define THIS_MODULE (&__this_module)
+5b20755b7780464 Masahiro Yamada  2023-11-26  181  #else
+5b20755b7780464 Masahiro Yamada  2023-11-26  182  #define THIS_MODULE ((struct module *)0)
+5b20755b7780464 Masahiro Yamada  2023-11-26  183  #endif
+5b20755b7780464 Masahiro Yamada  2023-11-26  184  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
