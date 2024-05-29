@@ -1,218 +1,206 @@
-Return-Path: <linux-kernel+bounces-194065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8B28D3627
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3508D362A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1A31F23F3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B141F254D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621B917F371;
-	Wed, 29 May 2024 12:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60F71802DD;
+	Wed, 29 May 2024 12:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="Ct5brx8D"
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2133.outbound.protection.outlook.com [40.107.6.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lqrt1BjS"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5BE22089;
-	Wed, 29 May 2024 12:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.133
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716985024; cv=fail; b=Kek2uCl+9ZvLvJLyJACgI6aoVT04iI2E1mg251Nukn3+YcWX8+wkYBZhPLiARt51i6mIYZKzVc7lTPPaF0/4OkKVlDk3OZhBvtHqneqb3mVL4RtK9PasT2bMLubRIbmvRhqIzXlQOYQRWnMqhUOoA6WtBz2S749IGoWY2l3v1SQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716985024; c=relaxed/simple;
-	bh=GcwfrUGjK3mPkFqwu3jkAbxHnQa8m0fQka5pr1GJeWE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YSYV/7Z33COVQsJxrk8lxFt75yLrr8DC/Bwgi+ruweYqs4io8KB55Zax7iofST4RmVt2NJoBQ/xBdlaGB15A8gG079K468eJuIdcwA6ECW/rZWyBFcWVf1ywJW48/6TetQ0rIZgm1Lhi9d7X5TR79qRD0LBP33YYt0Frd8OebxY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se; spf=pass smtp.mailfrom=axentia.se; dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b=Ct5brx8D; arc=fail smtp.client-ip=40.107.6.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axentia.se
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KdN8LpALDha6ty0zJr4KlDfHDsDAi8p/YMdhx2s5i8N/mQsSML7beOZCj++sHeq+jFNODxBaBgtAjU4TwXHQzsugL0H445daGVD7yeL1RnDjIU2dV0I0ZcqG0X1o76eEa/6pBLZUO+eYDAN2DnJ6r6+nZamf1ThQUogibirp1kgG2VkqanFbAf+wqwV1yuK7DAgnlnuc9MqAsuHNJ7Tgd203rqZJQk7sWPCiZy5OjrGI/N7gOux1coSlqWBegO4Ju9S1qeC+MoRoqFmp8Ofr1SmQyOyfD2UzC6P9nqgHJGjEJv+X2rfs03OGKvlYHySl3xftwEhdnowNvRylnqZ88Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=omf99T/di9T7JtfjISJ1RuZTEhsVWPeXv/fFA++bSSg=;
- b=GgwBUNRvlsQG9uDIWOjHrwlR0O7x8mYPEzDZIKls5ljihrJbjg5LwELvrz8v/w/TZH5+rzWtOfr38WBqUqhpR9zUGh8+dgXdAQ538vpnniEXYkGyX65U2KiNxZ4RDQ5RRBK0qT8c+9FagF/ahY2ZdfXkyUbWc3ZT+IJ4LJ4cmYvEB17zUgguMb4155hLKYV6TjDLTVSRSovHhgc3urkUtys2cXHa7/e1diXGsNfsDM2tWuPaGTcFkE5f0f+k55btjRzMbWLuRb0tguWaN9FIFuiZdrG8cG1q/mkIFhpLAEa/UukGp5FWYY8TQpWlpi2l2treSx8Z9XXdoJM8E3Ol2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=omf99T/di9T7JtfjISJ1RuZTEhsVWPeXv/fFA++bSSg=;
- b=Ct5brx8DiJI4ePAh9KLwT24o2luFHFJEtQINrfdnyQtj5F4qdtAxetgebydSGXTPS4BbWGEfQY68NLi8kJVS9To1KQ0sJp2izJ9R2e5sOJ/Njr+dsjTa4i+UJuWtF58j7Gyx61okueNflLxhBVTSyKFeQxSXsofJM9gKtGrZFCY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axentia.se;
-Received: from DU0PR02MB8500.eurprd02.prod.outlook.com (2603:10a6:10:3e3::8)
- by DB9PR02MB7116.eurprd02.prod.outlook.com (2603:10a6:10:1fd::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Wed, 29 May
- 2024 12:17:00 +0000
-Received: from DU0PR02MB8500.eurprd02.prod.outlook.com
- ([fe80::aff4:cbc7:ff18:b827]) by DU0PR02MB8500.eurprd02.prod.outlook.com
- ([fe80::aff4:cbc7:ff18:b827%4]) with mapi id 15.20.7633.018; Wed, 29 May 2024
- 12:17:00 +0000
-Message-ID: <ca3a96c2-e4d9-d935-cf1b-114f7a59872e@axentia.se>
-Date: Wed, 29 May 2024 14:16:58 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v2 3/3] i2c: mux: gpio: Add support for the
- 'transition-delay-us' property
-Content-Language: sv-SE, en-US
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Korsgaard <peter.korsgaard@barco.com>,
- Wolfram Sang <wsa@kernel.org>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Herve Codina <herve.codina@bootlin.com>,
- Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20240529091739.10808-1-bastien.curutchet@bootlin.com>
- <20240529091739.10808-4-bastien.curutchet@bootlin.com>
-From: Peter Rosin <peda@axentia.se>
-In-Reply-To: <20240529091739.10808-4-bastien.curutchet@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: GVYP280CA0027.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:f9::26) To DU0PR02MB8500.eurprd02.prod.outlook.com
- (2603:10a6:10:3e3::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7663954673;
+	Wed, 29 May 2024 12:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716985049; cv=none; b=FCurE+S57jqoFkjFVED6RVkHDoAvoWg/Xc4DfMvEdpdRBRMIXemen6b0Qul2wMvVvXBQ9ngYhUuZBkaQ2OvPhUS8RElLl/BoRn49+2To0fORwzSZbH2s5pXn5WBn4CM07PblEiqvDTs6lPOSh8Tmk0gQEVLjamghOSFiHnOVB/g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716985049; c=relaxed/simple;
+	bh=sgKwjPODxzYN3p+okRqBGRJBeVvvLIorjrEYlALuRBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cC0GGryNXISKQpJVZkmNwdQU3zhOJxv0wNnfpZgeD7ThBgfSKLn6NwjUSKm17c80HQg/2G62gWJ23kvOJMzEEmoV5lTJgHUXzQpB4eGKOV1fTxDNmnvzEhP7I8n01dal/vnn1P2YfykLtz+TRmFkHJh0A8iANLNxxy0KVeNO7QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lqrt1BjS; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f8e98760fcso1515000b3a.1;
+        Wed, 29 May 2024 05:17:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716985048; x=1717589848; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U+MihMHKV9dZJCXs33ES9SxmacG/nuOnOhI3+T1gT0g=;
+        b=Lqrt1BjSQklyo4+bRPo9Ca27im1VmdPHp8Ml0DeVNkCXUos36viZ9fjsoJYHAxT3M3
+         9V5RiJFxdrgjLTUCH6rVXtJjEvXT3LwupxBApeEdaXYr96mCRO+cRVfHWQIHHZP/oJhp
+         mQ/QFT+lKULdpa1cmAsvGAMBL3qMHdrRCOgMEkXJf2FtSKylkyWbKFT9cwgVDutvc1Rt
+         LVyxXF11mE/3ssK3IvtkQ4KYc0lxehiGzTYse64lvciop0p7PLhVxYR2j1YQfRjgzqvf
+         4Gmf1WdbQLvdp0RkRbG6XuMiMEgmYsCiAT0lXiAGEzd6yggsaKpHW+4HlNKAmyYOX9GG
+         qlVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716985048; x=1717589848;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+MihMHKV9dZJCXs33ES9SxmacG/nuOnOhI3+T1gT0g=;
+        b=s4hjJ2baLaS+OnmFQKLa90oOIJ7MOge2z5Ms+1k1m0GIZyI0fhP2/hcy52ht1ENiFN
+         F8PIgLTVINOf1f4SOVsqhWLfjI9baxP3thO+dMF+ZuyG6vzVPTW9rIl44MuP7dedwBiM
+         BygMmNpBSjkbDOeNakyxzLqi9zzag4DBnYJLaA6wd7rCIskb1TorwnDtEwxoMTZbNZTK
+         3IjN0zmslmIskI9N/qZJj468gBERW+43u5ZSN+0hwz7s+aHX/mhw6iwpwJc4s9lPZodr
+         MeD0iOMJsCARjYQdIEBjPf5J3J5bGSclSxviXziWME0K6u92sVf0rJgNiiVAI8f+JykN
+         jfIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzS9gG7ASGjiZ8KWL6bfMKJ+VZCNFLeCgr9V6q1HMOknBkGII6lii+x8vj0aiMCObS7JtNsCr9N/CH51LG+fJeMN2vQm8QDoyL58dr6/oePiOzlYgn8+etJ6HLVO1aqcOk1b28hxLW
+X-Gm-Message-State: AOJu0Yybm73SwXZvPXeoPY5BZDxQMOT2/4H9/QgKvaclNebql0/R8YCQ
+	A824ss+LBlRYD9tqOPPDd04omwnydKeGv+d/cptSoCq77HOXK7Y8
+X-Google-Smtp-Source: AGHT+IEv+/g1WObNhavH5ma7i4PTgVsskCJDAVpbKkIEhJENbKuSmCBCY+k1lfCvtbdjXyNaPoSUFA==
+X-Received: by 2002:a05:6a21:32a8:b0:1af:fb2c:fac9 with SMTP id adf61e73a8af0-1b212d0002emr23292426637.20.1716985047627;
+        Wed, 29 May 2024 05:17:27 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-701d70c8b35sm2424065b3a.65.2024.05.29.05.17.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 05:17:27 -0700 (PDT)
+Message-ID: <d4e4064c-e731-4721-b815-a2e30d3af513@gmail.com>
+Date: Wed, 29 May 2024 20:17:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR02MB8500:EE_|DB9PR02MB7116:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbf4e695-de6e-4112-3d47-08dc7fd93ded
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005|7416005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TWtJSnZmWXpiYW1HaUVSZkVqUk5BNXFscTVaek5MVWY1OE5TUThSUjQ5S1ov?=
- =?utf-8?B?cWtqQVZCTDR5cDRvczRFVW9ObVBOTExXNWVwQk9qaHlnNWxzZGVaRTZVSUht?=
- =?utf-8?B?SUxJajMrVUZ4TjdTWDUrRXhIWUhHZG5JWEdVWmpsRTBQclJ3SThVT1R1Qy9D?=
- =?utf-8?B?SE1qbGJxRVl0cENpUG5TeTRGZnQxVlNSenk1bWFaZDFrQ29KWUNOcmF6QmFz?=
- =?utf-8?B?eFlJMWtnU2FvY1JJQjg3b21uME5ETjJ2THdBcjVIZEF1b0ZPRjc3QTJ0aXVT?=
- =?utf-8?B?OUxmV2tsMGk2ZUpzSWxGTjhFZ3UwdmVjM2laTVYzbkthbXJubGQ4cG5RMVJC?=
- =?utf-8?B?QnZITTNmYTh1d29FNTdqZFdwcnl1enNJYjIxZFVoYy9vYWRzK2dFTnpGajZp?=
- =?utf-8?B?SWR5TzVWcWJRd2dWRGtYM2lFVlVuNDVFUVpzcVRjcE1HUmZkMjluZXRNNzR3?=
- =?utf-8?B?WWg0Yis0ZjFFcFVlSVpFM28rMW1ZTTBRK3VTMHljaVlWTWFNRDdTdUk0ME5P?=
- =?utf-8?B?SlVCeGRnR1hrYUNLS1Uva1dTS2JJNW5kaUdzZlcyK3ZLQUtWYlVrNWs5aU5v?=
- =?utf-8?B?eDJqNlIxY3hWc2lnL1BoaFc3SnlUdExObUtVTmRqelY5VjBWTlhqelZZOFow?=
- =?utf-8?B?bndHS2N6ZVdneEMwQTBZOGMrMnpwNDBHTnF1Qmk2S05QbHRQckpiZ0lvUzhk?=
- =?utf-8?B?bGFCSnhQNFlaaW9HZWEyeDZ1L1NlWk04N04xa3JmbG5Qazg3eTZoc3REeUtF?=
- =?utf-8?B?WHl4eDgrb2x0ZXIwTVI4VXFVNFVmaE9sM0FnMk0vOTBROWhiVzI1MEo5Sktu?=
- =?utf-8?B?UThvUDhqTWxtWWNyOFpCNS94bHNLRmNXcHRvQXprT2trZy9ZZXlpOHNlK3lF?=
- =?utf-8?B?a2Z6dmRiTElwQlBWTVc1YS82V0lMOUJNcDlWaUpSbjRoUGVtTTJwRlY1emFR?=
- =?utf-8?B?TVZBQ0NxQmlmUmlrdURXQWoxSmRXSVpiRVFTZy9CeFlYbnQxNEgyTnk0L0FD?=
- =?utf-8?B?OEx3VFIwbnQ3VnpHdVdBZTV1b0ZCYTRnMlJRdEE5RUpHVWlxYm1BYWtzMVpW?=
- =?utf-8?B?WENuVkRmN0JRNnUveHR1aGZuVjNtOWE1bnJ2Z0NsRmF3ZEx3bWZJMkhISU15?=
- =?utf-8?B?SFRUUzFjRGNpUjRyK2U2SHRyTm95elhQSkJmNytNRFZRdStmNmJPeTNKMDl1?=
- =?utf-8?B?Z09TNGl5azlQUHhRNWNkSmlGb2hzUDhMdVJPb1JmTjhGU0tpdkM0bmwxZkM4?=
- =?utf-8?B?NENITVdYQ1AvdUFvY3hXZ1EvZ3lXaHZSVCtkbGwvNmNCclNTaW5acnZZTFFa?=
- =?utf-8?B?bm45bHRjaXkzZHBiam5XT2U4UEVQUisrTXUweWZPMFRVUzh0RWttQXliY1lV?=
- =?utf-8?B?bHc0bTFDejdrVlQ4cGh2KzRHRWJibHduaGt6ZmNZQmltSHNGZXFraTUvbzNX?=
- =?utf-8?B?dktXUjdhUCtQcGNlUVNJRnoyY3RpS0loTFUwd2dEZGlzSnpRNjhjeStrQitU?=
- =?utf-8?B?a1FtV1RYRVMrZlZXSElMTmt5SDhKYTRNL0Y1RjVmWHFLS1ZJNFlaNW91SjRn?=
- =?utf-8?B?VG9jeFFDcjNjd2gwZzFhSmg4aTIyMXFMZklyUWRDcDIvNzRQdHVkSExIY0Zv?=
- =?utf-8?B?QWxReFVtUnVQeWVEZ1FWV3dJLytOS3RtTU1Pc3dIQ3hqM1pseFBsQXV3bFhr?=
- =?utf-8?B?MWhJRGlMaEtkWEtDbUxLUXZLKzlHenFVYXFDK3JkRnFEN2tYMHlvS2NRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR02MB8500.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WmVnc2FtQW9ENjVFZUxhbEU5YnJOWTllSUd4ZGxra3hoczdXT29ENllVOWNI?=
- =?utf-8?B?d0U5R0I3NjBUUXZRS04vMG1udXR0a0crNHdmaXNTZ0tsNGdtSDc3dUUrRm8w?=
- =?utf-8?B?eXFscUFpeVNkTlJvQjIrd3JaUjlXZ3FFZXN0SW1MSU9tb2hDV213UUphZllM?=
- =?utf-8?B?aFFaa2dEb3UyV1JFRnFVbS9Cd1A2amlnOU9wdWVhRS94blVra2FzbXlzL0tB?=
- =?utf-8?B?S1o0SDlaaHBpaWFNck4rRFBCWEFRbmw1a3RhcmhnSy81MjBWNDNwUGw3czNK?=
- =?utf-8?B?N25DU3FRaXBiRlZ1Nk5wdHAyaVpHKzU5eTRXQWx3TnB6RGVreWJPc0lCWlVE?=
- =?utf-8?B?UERqbVJ3Mkcvc0J0MWtTbXhLZUZOWWpMUlFPZytIcXhoUlNKTyszL0FqSjhW?=
- =?utf-8?B?dUZsZWJUWDVBWVRvdTkxQ01iY1QxZkhGdUh6R2hyRk1BUlhVWERRMGVCQm9y?=
- =?utf-8?B?SUVqUjU3MlBwZGNEV21DbitZbDBmbkI2SHNVVEhUeS9jU0RjVDM1a2cyMnJ6?=
- =?utf-8?B?MUFDRzhkVXZwT3NabDFpc2R2WlNzVmxXNlh0UGdZeTZabDV0M2ZTWlN4K3o1?=
- =?utf-8?B?VElYV2ZJVWg2Nmg3ayttdENldkFiRUViVnk3dWpjaUdsOUd6NTVPMEdCenBF?=
- =?utf-8?B?eUk4RHFaQWt4R2I1ZmxlamU3a3FGWWxjZEs3L1ZOZUFPMkVhZUFRN2ZBQklo?=
- =?utf-8?B?L1lLYVVFOEZ3U3UxSGZwdks1NGNKV3VLTXZIWWwvVFlicGRubHZEOThNUFp5?=
- =?utf-8?B?ZzFxdXQ5YllTUXNBU1FHTUppd3h5SDQrNUR4Y296c1JldDdqbGt0UFpiV1hE?=
- =?utf-8?B?TVJVclYxa1hCN2EzZTZHTElLNSs1TGtXcjczcWJWS2R6eG9BNzJkbE5LeU1m?=
- =?utf-8?B?eW1pL25GWmFyaFo5NksrblJSRkFjbGtwMlFScDY1WlNNK29Jd3ljTzRwb3pn?=
- =?utf-8?B?bVVEaittSXczZFFwYTRUd3JsaWEwemY4QjgrcFRpblZhVEpwUlA4a2pQdzlG?=
- =?utf-8?B?YXRGMDNnOU9vQlU0MWloT0JhWVo5OFc3QTA1RnFDOEVmTTRsUnBEaC9EQ2pS?=
- =?utf-8?B?dVVLa3l3TklOOVlGdFBKdDgyNVVPWTJIMTI0eVlWRS9PZDdCVWdHSUZkWC9P?=
- =?utf-8?B?NEhNaC9WQXVFN2VGMTZTL21DVTlzWHltaVh1dTBrOHgvL2EyRjQ5QjlnL0hL?=
- =?utf-8?B?dTYra1ZZVWQxK2t1UnRnM1FqRHA4eHlQKzVUeFZ0MnFNMWhoZWxlTFFqVzNF?=
- =?utf-8?B?TXk0UHhkNDRaQ2FpdWx2SFY4OEsweVJyWWRkZE1xdmNoMExIRkFnSWZaZTJ5?=
- =?utf-8?B?SVNDUVVFREE4bERpbVM5WW9hRFJTVG9hYnJzd0RyWjNwczNDYWRwQ3FPb1N3?=
- =?utf-8?B?SFYyaUtBQ0I5UktCM3lQUXNxU1dTNkF5RCs0U25lcStjd0huZm85cGZ5L0JW?=
- =?utf-8?B?S1lsVW0zQnRuNmVlK1ZGbkRvQWxlM1dzYWJORWZmSEtZaXcxczMyVkxjQ3U4?=
- =?utf-8?B?WGF4dlNkOElLVUZwRU9GVlF6YlB3Qlg4cTYzUXY4REJJS3ZMOHpkSnd5cUgw?=
- =?utf-8?B?bVJVd00rVG41UlJsSE1BWExRYXA1MDdlRDRiRzBQV3pGRldJMVlGR3QzWFh6?=
- =?utf-8?B?aFNKWEMzTDNnVGRWK0VLOEFqRDVQTGpBUGhtKzFpQWlWQ2NaQ0NiR0RJYUNz?=
- =?utf-8?B?K01iTFlyanBDNmszQ0pLZEdKejZTQloyR2tVNXFHWWp4MzVCUjliamVoR2lP?=
- =?utf-8?B?YzFkclIzZnpHVnVGTjQ5b2NuQ05vbFQ2S1hHTGtFSGYvdHJUSEhuNG94TEpI?=
- =?utf-8?B?VmRUZ2pCMnZxa3d1RkI4dXN6MXNkLzgrR3pGenZWb1NHN3F1S1BRNTdHcXhs?=
- =?utf-8?B?SkZUQjUrKzZpajBacFlkWUxDVU56WjVWZTB2MDQ5MmVyN0hWT3dvM3hwbWc5?=
- =?utf-8?B?TzAyUG9zelZsa3Bndm9sTEpMWDRMNXl1ZWM3emppT0RyMi9IRU1ia00yVE5Z?=
- =?utf-8?B?ZUVVRHlNYmxTWFExaGx1cklvU2hwYi9WSWpEdjRUZm1EOGRvd0dkamRPQVIz?=
- =?utf-8?B?SWdxUzQ4ZHIxbEovdWtrNFFxVmJ0d2NzRXB3dDMwWVNqUHBiM2Z5WVVGYm1r?=
- =?utf-8?Q?bq7so3QjzWY/h4DBNilnfKkmq?=
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbf4e695-de6e-4112-3d47-08dc7fd93ded
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR02MB8500.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 12:17:00.4923
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7V1zUQ0Pakt2Yk7C4dnga7X/JxLdlGNH2x9+npOmGtvKb1/ZEKqlT7e7m/JGKI9/
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR02MB7116
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] docs: dt: Update overlay file extension
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Davis <afd@ti.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <977f66b9882b6150a8da5787bf94a418aa9affec.1716976241.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <977f66b9882b6150a8da5787bf94a418aa9affec.1716976241.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi!
+LGTM.
 
-2024-05-29 at 11:17, Bastien Curutchet wrote:
-> Some hardware need some time to switch from a bus to another. This can
-> cause the first transfers following the selection of a bus to fail.
-> There is no way to configure this kind of waiting time in the driver.
+On 5/29/24 6:00 PM, Geert Uytterhoeven wrote:
+> Building DTB overlays from .dts files is no longer supported.
+> Update the documentation to reflect this.
 > 
-> Add support for the 'transition-delay-us' device-tree property. When set,
-> the i2c_mux_gpio_select() applies a delay before returning, leaving
-> enough time to the hardware to switch to the new bus.
-> 
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+> Fixes: 81d362732bac05f6 ("kbuild: Disallow DTB overlays to built from .dts named source files")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Andrew Davis <afd@ti.com>
+> Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
 > ---
->  drivers/i2c/muxes/i2c-mux-gpio.c           | 6 ++++++
->  include/linux/platform_data/i2c-mux-gpio.h | 2 ++
->  2 files changed, 8 insertions(+)
+> v2:
+>   - Add Acked-by, Reviewed-by.
+> ---
+>  Documentation/devicetree/overlay-notes.rst           | 12 ++++++------
+>  .../translations/zh_CN/devicetree/overlay-notes.rst  | 12 ++++++------
+>  2 files changed, 12 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/i2c/muxes/i2c-mux-gpio.c b/drivers/i2c/muxes/i2c-mux-gpio.c
-> index c61e9d9ea695..b9cfc80660e2 100644
-> --- a/drivers/i2c/muxes/i2c-mux-gpio.c
-> +++ b/drivers/i2c/muxes/i2c-mux-gpio.c
-> @@ -6,6 +6,7 @@
->   */
+> diff --git a/Documentation/devicetree/overlay-notes.rst b/Documentation/devicetree/overlay-notes.rst
+> index e139f22b363e9f36..35e79242af9a928d 100644
+> --- a/Documentation/devicetree/overlay-notes.rst
+> +++ b/Documentation/devicetree/overlay-notes.rst
+> @@ -38,10 +38,10 @@ Lets take an example where we have a foo board with the following base tree::
+>  	};
+>      ---- foo.dts ---------------------------------------------------------------
 >  
->  #include <linux/bits.h>
-> +#include <linux/delay.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/i2c.h>
-> @@ -37,6 +38,9 @@ static int i2c_mux_gpio_select(struct i2c_mux_core *muxc, u32 chan)
+> -The overlay bar.dts,
+> +The overlay bar.dtso,
+>  ::
 >  
->  	i2c_mux_gpio_set(mux, chan);
+> -    ---- bar.dts - overlay target location by label ----------------------------
+> +    ---- bar.dtso - overlay target location by label ---------------------------
+>  	/dts-v1/;
+>  	/plugin/;
+>  	&ocp {
+> @@ -51,7 +51,7 @@ The overlay bar.dts,
+>  			... /* various properties and child nodes */
+>  		};
+>  	};
+> -    ---- bar.dts ---------------------------------------------------------------
+> +    ---- bar.dtso --------------------------------------------------------------
 >  
-> +	if (mux->data.transition_delay)
-> +		udelay(mux->data.transition_delay);
-
-fsleep() is appropriate here.
-
-Cheers,
-Peter
+>  when loaded (and resolved as described in [1]) should result in foo+bar.dts::
+>  
+> @@ -88,9 +88,9 @@ in the base DT. In this case, the target path can be provided. The target
+>  location by label syntax is preferred because the overlay can be applied to
+>  any base DT containing the label, no matter where the label occurs in the DT.
+>  
+> -The above bar.dts example modified to use target path syntax is::
+> +The above bar.dtso example modified to use target path syntax is::
+>  
+> -    ---- bar.dts - overlay target location by explicit path --------------------
+> +    ---- bar.dtso - overlay target location by explicit path -------------------
+>  	/dts-v1/;
+>  	/plugin/;
+>  	&{/ocp} {
+> @@ -100,7 +100,7 @@ The above bar.dts example modified to use target path syntax is::
+>  			... /* various properties and child nodes */
+>  		}
+>  	};
+> -    ---- bar.dts ---------------------------------------------------------------
+> +    ---- bar.dtso --------------------------------------------------------------
+>  
+>  
+>  Overlay in-kernel API
+> diff --git a/Documentation/translations/zh_CN/devicetree/overlay-notes.rst b/Documentation/translations/zh_CN/devicetree/overlay-notes.rst
+> index 43e3c0bc5a9f8235..ba5edd05dc1e7fd2 100644
+> --- a/Documentation/translations/zh_CN/devicetree/overlay-notes.rst
+> +++ b/Documentation/translations/zh_CN/devicetree/overlay-notes.rst
+> @@ -43,10 +43,10 @@ Documentation/devicetree/dynamic-resolution-notes.rst[1]的配套文档。
+>  	};
+>      ---- foo.dts ---------------------------------------------------------------
+>  
+> -覆盖bar.dts,
+> +覆盖bar.dtso,
+>  ::
+>  
+> -    ---- bar.dts - 按标签覆盖目标位置 ----------------------------
+> +    ---- bar.dtso - 按标签覆盖目标位置 ---------------------------
+>  	/dts-v1/;
+>  	/插件/;
+>  	&ocp {
+> @@ -56,7 +56,7 @@ Documentation/devicetree/dynamic-resolution-notes.rst[1]的配套文档。
+>  			... /* 各种属性和子节点 */
+>  		};
+>  	};
+> -    ---- bar.dts ---------------------------------------------------------------
+> +    ---- bar.dtso --------------------------------------------------------------
+>  
+>  当加载（并按照[1]中描述的方式解决）时，应该产生foo+bar.dts::
+>  
+> @@ -90,9 +90,9 @@ Documentation/devicetree/dynamic-resolution-notes.rst[1]的配套文档。
+>  DT中的适当位置。在这种情况下，可以提供目标路径。通过标签的目标位置的语法是比
+>  较好的，因为不管标签在DT中出现在哪里，覆盖都可以被应用到任何包含标签的基础DT上。
+>  
+> -上面的bar.dts例子被修改为使用目标路径语法，即为::
+> +上面的bar.dtso例子被修改为使用目标路径语法，即为::
+>  
+> -    ---- bar.dts - 通过明确的路径覆盖目标位置 --------------------
+> +    ---- bar.dtso - 通过明确的路径覆盖目标位置 -------------------
+>  	/dts-v1/;
+>  	/插件/;
+>  	&{/ocp} {
+> @@ -102,7 +102,7 @@ DT中的适当位置。在这种情况下，可以提供目标路径。通过标
+>  			... /* 各种外围设备和子节点 */
+>  		}
+>  	};
+> -    ---- bar.dts ---------------------------------------------------------------
+> +    ---- bar.dtso --------------------------------------------------------------
+>  
+>  
+>  内核中关于覆盖的API
 
