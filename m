@@ -1,128 +1,94 @@
-Return-Path: <linux-kernel+bounces-194628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F9F8D3F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:55:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F67F8D3F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7084281DC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:55:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A4D5B23132
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD401C6894;
-	Wed, 29 May 2024 19:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C221C6891;
+	Wed, 29 May 2024 19:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NA7mxaH7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CjVC4ES6"
-Received: from wfout8-smtp.messagingengine.com (wfout8-smtp.messagingengine.com [64.147.123.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3QGKidW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FCD1C2333;
-	Wed, 29 May 2024 19:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57679D27E;
+	Wed, 29 May 2024 19:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717012534; cv=none; b=fv7r2RdUuQnZ7RUp7LqP9yzvyTjCqlAp7kn5Ww5sdf7PjPM4MLngNTm3MVPafd3mQ0gqCD4IhpO1Bied4NxhecQyb7LVWaR1NM5Jgf81+BQIlcbv4OJ6ZJJXM5/JjmymNHTRbQiGfZyFhPCrUdHeX2D01/r71Off0uB/KGKqxLc=
+	t=1717012775; cv=none; b=accu0qIVFNlAOPm94d7e7h1H6GWZ9wT5BYlcQtjmcB+doECkycsLYdzmEQ1jEvKoqmhQD0hE5/Oy1U9zFyv5NtoWTjAk4c5QNhIv37hEU7s4sjYj08esuFigkDkGmBcgrS6LenbFSMUR6evfHbHm58H3PJlGG9X20gfZnPDV/Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717012534; c=relaxed/simple;
-	bh=N4jgiuvfYE8OrlkeRZ4JhuC/8gtM3lMrQG3gCv2wHJM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=fzQiWVOFBeCw1mQK7xFE/q95I7Des1pnKTNK8SFSIzZwmJxrN/L3rY34MVGESSYhK7/6rWeiNUOQTcEBVF6D9LsHWuF+TjLVGVK55c6Jd1fWDQmulBtQ7/7mR6E/hMH5AVZT646jhr7S/drJtBnAKcYDNPZCxor4gpMisZlRWs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NA7mxaH7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CjVC4ES6; arc=none smtp.client-ip=64.147.123.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id D66AF1C000D6;
-	Wed, 29 May 2024 15:55:29 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 29 May 2024 15:55:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1717012529; x=1717098929; bh=wlwWXCsQ/e
-	aeGKvYIW4tA7hpA+jryO2cZljm6EODNys=; b=NA7mxaH70FA0ZkbI5+HcFRWbXl
-	k+3O0Zuf69j7tJKA2JVIYYYeKLRHiN+rIyoVTJwP94XOg3ghGKzZiECof+ztyyjf
-	Vom/5OxGFXnYyKdyIjjxR4o+WCCIyyvDYgQl/sskPV8tglxy3owRvCb7h3GyvxpY
-	b+pi1P3Wy/tueEtYdTchHuJarQP9koV6kJ1U6Xs70YXUh+9qDP+xPK2awE2GNxan
-	beDe+ANMUfpmCUe617xsnTDzLODgdRgASTmrC4aonYktUntrP9RL2L5RlM25Ibrk
-	KxORdOIQLo1db0MZoVrmfW4Zfvf5kQceWp91S8j8VQZrBRytjSXWnHpd0Eqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717012529; x=1717098929; bh=wlwWXCsQ/eaeGKvYIW4tA7hpA+jr
-	yO2cZljm6EODNys=; b=CjVC4ES6lLFizXkfh5icN4FjEVT7OEmQCYlhuZt+Jso5
-	vUziqusgyUKhvH4ri5jQqGPM+0JvxF+ZdRvgik+6VrCIwRw170RTNH9iXNTL11tE
-	WIjGhyk9pTBMwY5+SGfKaBN5989ygrK4dga+GCG1sFyNh1RgiUlGLSp9U9znFJsV
-	za1IATLveMFUPE6Vm3StJd6MUTOvfNXPkUEJrUUFcTzFG+vraYMIH7rPViXFBKV6
-	GaIQwZzWuhuSEugl8pD23/IQlGXerET9dEmQwTx/WiuPRdI/C4ok0tJaxFZfIpK9
-	JtiqPrd7fZZc1bf/btXl7b4dx9+k89uIoThLYbIpqQ==
-X-ME-Sender: <xms:MYhXZlBRaGEyHI8jMxSgcPnD7i32tl64nB4ZiTwUjDbzyzofWTYHgA>
-    <xme:MYhXZjibLtA5nkCWzT7C7dEXkasg6lMpGKXBp84883VS84RUZtEHc7lgBytJFoRjm
-    GvtEyX6FQ_D3LxfGZU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgudegudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:MYhXZgm_TCLrdEqCMwa6Loq3XqtRN7RBMdvtgEa5ncaG2dIzrpNXBQ>
-    <xmx:MYhXZvzYfr1q8iMI_R9RV2gdrR9FuYrCa6s5L87r1rUgpLyvMaUmUQ>
-    <xmx:MYhXZqSPiHIcMO0DcG28BQRroPgoGoC4PeDkDXA_qU_Zr9N5vMjmNw>
-    <xmx:MYhXZiYdSZmxukUwzG3lvHyGWxPmZjmcmP-NaQNnXoO-23KMZjeRHA>
-    <xmx:MYhXZmbFmDEg7UsHb-3ZXz413myFZAbpQTGXLrbv49h9jn-BOWfuPTLF>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 01EC6B6009B; Wed, 29 May 2024 15:55:29 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1717012775; c=relaxed/simple;
+	bh=qh84C1aPyUvP46Gu8Dv17j5i6PpcG0j1xKFVooUqkcE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=g1G5QNMYpxIS3JE2X6L15/ax++TC0wYynouQGE90+7V8hskL7CwEOZ9Mq/sOxvB+Up9azbyDnlf9UYWxI01/jjTEuSMf+aP/QnvU4req2i+3nx78bEGd/Rco5nV98hRAmN3AVRmm59ftRbxxxA+F3rjkaWNzOKLOIyOBAqGbduE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3QGKidW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 970E2C32781;
+	Wed, 29 May 2024 19:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717012774;
+	bh=qh84C1aPyUvP46Gu8Dv17j5i6PpcG0j1xKFVooUqkcE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=r3QGKidWT4gN19Wv9KIVZLNIHhVjnObmNEvgLKX/521M45DWEkZSeYXtNaEUYAdIs
+	 3OUgmfdVvbNYWqQqTLAOg8Jc8xvi+GaJdRdauRp+A5ecDvNbz8EkFaMqAnuaIXiTBq
+	 p/nJAK2QoFbFM84yY1sPGNEAnOXWQj4ZuH8ZRCgKaJo6rwk7nMuyCKApuqbPTMfHG5
+	 K5M9tqknIXkfcJVJLEVe+Rpz5QLJkYJmYSKmdEStO4YtgNOk2uujdE+28frpES1WI9
+	 UOwB+Ypqt42Odt5wa4NrEoEkuwd/BCjj/Kl7R0gUxtUQq1Yw75ZRoNevC89LwdwD+w
+	 EgbkF+EfZ9JYQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH v2 0/2] of: Fix interrupt-map for fw_devlink
+Date: Wed, 29 May 2024 14:59:19 -0500
+Message-Id: <20240529-dt-interrupt-map-fix-v2-0-ef86dc5bcd2a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <fc7f2a95-2a61-4eea-a1b8-b764893eabe3@app.fastmail.com>
-In-Reply-To: <20240529193127.GEZleCjwyUtnDv_Nc0@fat_crate.local>
-References: <20240529095132.1929397-1-arnd@kernel.org>
- <20240529193127.GEZleCjwyUtnDv_Nc0@fat_crate.local>
-Date: Wed, 29 May 2024 21:55:04 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Borislav Petkov" <bp@alien8.de>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Tony Luck" <tony.luck@intel.com>, "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
- "James Morse" <james.morse@arm.com>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Robert Richter" <rric@kernel.org>, "Marvin Lin" <milkfafa@gmail.com>,
- "Shubhrajyoti Datta" <shubhrajyoti.datta@amd.com>,
- "Sai Krishna Potthuri" <sai.krishna.potthuri@amd.com>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EDAC, i10nm: make skx_common.o a separate module
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABeJV2YC/x2MQQqAMAzAviI9WxhTEf2KeKjaaQ/O0U0RxL87P
+ CaQPBBZhSP0xQPKl0Q5fAZbFjBv5FdGWTKDNbY2je1wSSg+seoZEu4U0MmNVLVTR841MxnIaVD
+ O+t8O4/t+vykBzGYAAAA=
+To: Saravana Kannan <saravanak@google.com>, 
+ Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
+X-Mailer: b4 0.14-dev
 
-On Wed, May 29, 2024, at 21:31, Borislav Petkov wrote:
-> On Wed, May 29, 2024 at 11:51:11AM +0200, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> Linking an object file into multiple modules causes a warning:
->> 
->> scripts/Makefile.build:236: drivers/edac/Makefile: skx_common.o is added to multiple modules: i10nm_edac skx_edac
->
-> What changed?
->
-> This wasn't an issue until now-ish...
+The duplicated parsing continued to bother me, so I've refactored things 
+to avoid that for parsing the interrupt parent and args in the 
+interrupt-map.
 
-It has caused problems in enough other drivers that we now
-have a warning for it, it was added in commit 598afa050403
-("kbuild: warn objects shared among multiple modules").
+It passes testing with unittests on QEMU virt platform, but I don't 
+think that catches the problematic cases. So please test.
 
-Most modules are modified already, and we are now down to
-the last handful. Since the bugs are fairly hard to understand
-when they happen, it would be nice to enable the warning
-by default.
+v1: https://lore.kernel.org/all/20240528164132.2451685-1-maz@kernel.org/
+ - Refactor existing interrupt-map parsing code and use it for 
+   fw_devlink
 
-     Arnd
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Marc Zyngier (1):
+      of: property: Fix fw_devlink handling of interrupt-map
+
+Rob Herring (Arm) (1):
+      of/irq: Factor out parsing of interrupt-map parent phandle+args from of_irq_parse_raw()
+
+ drivers/of/irq.c        | 127 +++++++++++++++++++++++++++++-------------------
+ drivers/of/of_private.h |   3 ++
+ drivers/of/property.c   |  30 ++++--------
+ 3 files changed, 89 insertions(+), 71 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240529-dt-interrupt-map-fix-a37b9aff5ca0
+
+Best regards,
+-- 
+Rob Herring (Arm) <robh@kernel.org>
+
 
