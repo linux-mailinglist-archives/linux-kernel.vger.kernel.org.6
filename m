@@ -1,242 +1,151 @@
-Return-Path: <linux-kernel+bounces-193722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A6E8D3119
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:25:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A028B8D3137
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8930D1C237F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:25:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C93FB2BDC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBCE169AFE;
-	Wed, 29 May 2024 08:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B0016EBE7;
+	Wed, 29 May 2024 08:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VTyTFzHP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wf5DmHRW"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBE7168C37
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900A7168C3D;
+	Wed, 29 May 2024 08:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970924; cv=none; b=Vh8MriZug5mLnVzX4JD50HEeBI0+a41wCKTnoSI2OANwdN9bm7sZ5GxqZeGhO3twvk5QV2EBcK2TzCaOGCnW+1BHJyf5OC9BtW3JSNa4Omxol7IC07ELszWiVVGLw8+WZW3lGgAcoFJkT2DbA+MciQJtfjm/KtJXJ+BRQHmtOpE=
+	t=1716971006; cv=none; b=qdgm2IgEe6wFyq7Oz4QcdxSyAcuZXXrMK6MTtf00UPIoyOOphY4jypgebDSL3+xUpegOyspCtPIx13V9axqDSUI23NVCtm5fkd7KCKgymdSkJ/qha/b5MqNecARCwjrh1n5SlC7YF77yKfwxWShU4IuvSeY84dPjeI1QPHa+7/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970924; c=relaxed/simple;
-	bh=JvJ/znY5aAJUH6CBtu3z63ozlDO6l7q/FWJId5WW5u8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rIw/yRRAMfdoYFIcGavPh2i7s1/4nE+TS01O2aF9Gc11YdVmUF9eNMQQC3+/0BZSC4XvJQGQFO419WcZlC+rB/kwDlSgdeaBJBU1QVUx1rsz1LlRoKje2o3cGEDeH570GBF5vUFsCiZ1DpOAiSt+S6DooVKHPF+0T8E/mpMDCHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VTyTFzHP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716970922;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=saeEBWoWqmMbGp2rBntpWc8gNzVhRyq6SnG448wWm2U=;
-	b=VTyTFzHPZRos2RLOSBaFFYfjwCCvhOzyGo1YBSWSm6iZ6u+nYuNcF51R18W/kPdeUQfCYQ
-	TVOFlV/wdlR7WBOn3Ct/t0T4Db9jmAsE0iFcUpEe+yBeFFF3GoItraDYDjLV3I//+XVbMf
-	VOqs05CUvWOG74pVCzzU+sqU2gHUhsg=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-136-GhGWA2WxNgKulB6T5jZW5g-1; Wed, 29 May 2024 04:22:00 -0400
-X-MC-Unique: GhGWA2WxNgKulB6T5jZW5g-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6265d3cb78so103803266b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:22:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970919; x=1717575719;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=saeEBWoWqmMbGp2rBntpWc8gNzVhRyq6SnG448wWm2U=;
-        b=Bex4JrEamTsWy+njpfFDon8WP6G7EH6aAQD9Q8QTcMbFjOzjrZS/QUX8jPmI9miSig
-         1K54snNi4VHLxBs4PlWDp5DBOyNAT9uS6zQ4xe1pc7k60hjfAWSMysfT8BFTb06W49tZ
-         Ep9JF9v9Tsu0BQdVxPwoBzyOlfYni2A1jTpcUZUC+pFbb+lSdYlZAXkGMy+qx9tfiMPk
-         ZhBF7GPM6vNc1okUMsY7/PoqZGb0BeaqyQ1VK3tlv/HMbJl/Nu5yS3QTrw2Vb8FEu4na
-         p2OL1KpVVyFVnRgqP/zQuVMM5lp75RqOeQN/qnlFrn1mCMGtcevNLrEb96CB6QlZTUXW
-         mQ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCU0adLwl0dFFLUcG4PPaAEAslDl9KjPX+BZSVvDWWD1FgC3NEi0xLwO7+4djNqNhiAnYfCB/GTtG1Ua7su6RHa33bwZC4TyKJAhTQ9e
-X-Gm-Message-State: AOJu0Yz8POzxsKwsrK4JbupT+DzoTVw1iNsJ07nIjlgfF2tH2OnixDun
-	6lKDnyHJFEBqCSEka4uoaeYOvBsaRY2DQ7L6T7yj5zM4RBjCpL0AY0Yu7geSRrmdkru7Nu6cuIe
-	xJp3G5vRvKwCyOZMB4EW2AqLEW/s0mQ14ApFh4BxKK1a5pZTGzQ5Dm3pSU0DlAQ==
-X-Received: by 2002:a17:906:63ca:b0:a59:a9c5:e73b with SMTP id a640c23a62f3a-a62647ce012mr862583366b.46.1716970919181;
-        Wed, 29 May 2024 01:21:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWk3/1wjwfIXsCmZeoXQBLcPsIitG9Fxniw+cXvQl5pRhA/ibqHffOsf0ZrQrhKZTXW5UaYw==
-X-Received: by 2002:a17:906:63ca:b0:a59:a9c5:e73b with SMTP id a640c23a62f3a-a62647ce012mr862581266b.46.1716970918430;
-        Wed, 29 May 2024 01:21:58 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8a742sm686508566b.153.2024.05.29.01.21.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 01:21:57 -0700 (PDT)
-Message-ID: <fc082b9e-b6f7-457c-b9e5-6797a0285bc3@redhat.com>
-Date: Wed, 29 May 2024 10:21:56 +0200
+	s=arc-20240116; t=1716971006; c=relaxed/simple;
+	bh=mawRK5aA/EMwju15c9CJjjLslMegigQKs81Kuy+CIzg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uv+i2gUQ6GmWpRMnhR7d7PmOgxHyJnrNp8WHVt3a0P2ExX4ZH4gTIwxvLZp4YFR7qrqwJIphlKzjKO8Fj9j/CEsxKHkEqIl7PqVPDtceLbFRyQJxZeHBd5plPa+ZfjJqcSkUkcqEQzD0THWF1PwqkOEXS53A9jmYm/SD6NAdaHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wf5DmHRW; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44T8N5jP028176;
+	Wed, 29 May 2024 03:23:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716970985;
+	bh=GA84cJ8nNnm/xjeHKTyGRus4Kr3hXRBkbAwrEXa69NI=;
+	h=From:To:CC:Subject:Date;
+	b=wf5DmHRWdAUIVyzyR3VzxbjbUXqYbnyu5p5it8WEZaNoZjbhR/txYWd4abn8aD6OF
+	 /DJb6ncZpbD2OR1OQt/+qOCH0Q+Fban0n4+LE3ba0qNLCXPIlLwqBLC5+BEa1Fie/7
+	 ha6ZHxGXzmMKqS6MbJrRvVOPc/jblFuJyyLeDFoQ=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44T8N5r9048695
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 29 May 2024 03:23:05 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 29
+ May 2024 03:23:04 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 29 May 2024 03:23:04 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44T8N0d6084708;
+	Wed, 29 May 2024 03:23:00 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <francesco@dolcini.it>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <sabiya.d@ti.com>,
+        <u-kumar1@ti.com>, <danishanwar@ti.com>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH v4 0/4] Add PCIe DT support for TI's J784S4-EVM and AM69-SK
+Date: Wed, 29 May 2024 13:52:55 +0530
+Message-ID: <20240529082259.1619695-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] hid-asus: use hid for brightness control on
- keyboard
-To: "Luke D. Jones" <luke@ljones.dev>, jikos@kernel.org
-Cc: ilpo.jarvinen@linux.intel.com, corentin.chary@gmail.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org, bentiss@kernel.org
-References: <20240529012827.146005-1-luke@ljones.dev>
- <20240529012827.146005-2-luke@ljones.dev>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240529012827.146005-2-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Luke,
+TI's J784S4 SoC has two x4 Lane and two x2 Lane Gen3 PCIe Controllers.
+This series adds the device-tree nodes for all 4 PCIe instances in the
+SoC file (k3-j784s4-main.dtsi). The J784S4-EVM board has only PCIe0 and
+PCIe1 instances of PCIe brought out while the AM69-SK board has PCIe0,
+PCIe1 and PCIe3 instances of PCIe brought out. The device-tree overlay
+to enable PCIe0 and PCIe1 in Endpoint mode of operation on J784S4-EVM is
+also included in this series.
 
-Thank you for the new version, much better.
+v3:
+https://lore.kernel.org/r/20240523111008.4057988-1-s-vadapalli@ti.com/
+Changes since v3:
+- Rebased on linux-next tagged next-20240528.
+- Added ranges for PCIe2 and PCIe3 in k3-j784s4.dtsi which was missed in
+  v3 series.
+- Added new patch in this series for enabling PCIe on AM69-SK board.
 
-On 5/29/24 3:28 AM, Luke D. Jones wrote:
-> On almost all ASUS ROG series laptops the MCU used for the USB keyboard
-> also has a HID packet used for setting the brightness. This is usually
-> the same as the WMI method. But in some laptops the WMI method either
-> is missing or doesn't work, so we should default to the HID control.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
->  drivers/hid/hid-asus.c                     |  6 ++++
->  drivers/platform/x86/asus-wmi.c            | 35 +++++++++++++++++++++-
->  include/linux/platform_data/x86/asus-wmi.h | 10 +++++++
->  3 files changed, 50 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 02de2bf4f790..4cba8e143031 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -492,12 +492,18 @@ static void asus_kbd_backlight_work(struct work_struct *work)
->   */
->  static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
->  {
-> +	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
->  	u32 value;
->  	int ret;
->  
->  	if (!IS_ENABLED(CONFIG_ASUS_WMI))
->  		return false;
->  
-> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_use_hid_led()) {
-> +		hid_info(hdev, "using HID for asus::kbd_backlight\n");
-> +		return false;
-> +	}
-> +
->  	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
->  				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
->  	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 3f9b6285c9a6..54cb07c79fcf 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -144,6 +144,15 @@ module_param(fnlock_default, bool, 0444);
->  
->  static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
->  
-> +static const char * const use_hid_led_matches[] = {
-> +	"ROG Zephyrus",
-> +	"ROG Strix",
-> +	"ROG Flow",
-> +	"GA403",
-> +	"GU605",
-> +	"RC71L",
-> +};
-> +
->  static int throttle_thermal_policy_write(struct asus_wmi *);
->  
->  static bool ashs_present(void)
-> @@ -1642,6 +1651,29 @@ static int micmute_led_set(struct led_classdev *led_cdev,
->  	return err < 0 ? err : 0;
->  }
->  
-> +bool asus_use_hid_led(void)
-> +{
-> +	const char *product, *board;
-> +	int i;
-> +
-> +	product = dmi_get_system_info(DMI_PRODUCT_FAMILY);
-> +	if (!product)
-> +		return false;
-> +
-> +	board = dmi_get_system_info(DMI_BOARD_NAME);
-> +	if (!board)
-> +		return false;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(use_hid_led_matches); i++) {
-> +		if (strstr(product, use_hid_led_matches[i]))
-> +			return true;
-> +		if (strstr(board, use_hid_led_matches[i]))
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +EXPORT_SYMBOL_GPL(asus_use_hid_led);
-> +
+v2:
+https://lore.kernel.org/r/20240520101149.3243151-1-s-vadapalli@ti.com/
+Changes since v2:
+- Rebased on linux-next tagged next-20240523.
+- Based on feedback from Francesco Dolcini <francesco@dolcini.it> at:
+  https://lore.kernel.org/r/20240521200909.GA3707@francesco-nb/
+  the device-tree nodes for PCIe2 and PCIe3 instances of PCIe have been
+  added.
 
-With the new helper in this form you are pretty much re-inventing
-dmi_check_system().
+v1:
+https://lore.kernel.org/r/20240129114749.1197579-1-s-vadapalli@ti.com
+Changes since v1:
+- Rebased series on linux-next tagged next-20240520.
+- All dependencies mentioned in v1 series have been met. This series has
+  no further dependencies for functionality.
+- Added "pcie0_ctrl" and "pcie1_ctrl" nodes within the System Controller
+  node (scm_conf). This enables reusing the existing
+  "ti,syscon-pcie-ctrl" property without having to map the entire System
+  Controller region for configuring the PCIe specific registers within
+  "scm_conf". This change is also done in the "overlay" file in patch
+  3/3 w.r.t. providing the phandle to the pcie0_ctrl and pcie1_ctrl
+  nodes to the "ti,syscon-pcie-ctrl" property in the overlay.
 
-So IMHO you should just replace use_hid_led_matches[] with
-a dmi_system_id array and simplify asus_use_hid_led() to just
-a single "dmi_check_system(asus_use_hid_led_dmi_ids)" call.
-
-Using dmi_system_id-s also allows you to specify if the string
-which is being matched should be matched against DMI_PRODUCT_FAMILY
-or DMI_BOARD_NAME. Note the normal DMI_MATCH() macro to fill in
-dmi_system_id array entries does non exact matching using strstr()
-just like you do above.
-
-Note you need to terminate the dmi_system_id array with an empty
-{} entry.
-
-
-
->  static void asus_wmi_led_exit(struct asus_wmi *asus)
->  {
->  	led_classdev_unregister(&asus->kbd_led);
-> @@ -1681,7 +1713,8 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
->  			goto error;
->  	}
->  
-> -	if (!kbd_led_read(asus, &led_val, NULL)) {
-> +	if (!kbd_led_read(asus, &led_val, NULL) && !asus_use_hid_led()) {
-> +		pr_info("using asus-wmi for asus::kbd_backlight\n");
->  		asus->kbd_led_wk = led_val;
->  		asus->kbd_led.name = "asus::kbd_backlight";
->  		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 3eb5cd6773ad..6833035f7006 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -160,4 +160,14 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
->  }
->  #endif
->  
-> +/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
-> +#if IS_ENABLED(CONFIG_ASUS_WMI)
-> +bool asus_use_hid_led(void);
-> +#else
-> +static inline bool asus_use_hid_led(void)
-> +{
-> +	return true;
-> +}
-> +#endif
-> +
->  #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
+Test Logs:
+1. J784S4-EVM PCIe0 and PCIe1 in RC Mode with NVMe SSD connected to PCIe0:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/af94b2da5dd0613de8a238e37f70eb7e
+2. J784S4-EVM PCIe0 as Endpoint and AM69-SK PCIe0 acting as RC:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/1d305c5145bdc34975615e15fe0f433c
+3. J784S4-EVM PCIe1 as Endpoint and AM69-SK PCIe0 acting as RC:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/3129da32c9984f4f02351ca03105e49e
+4. AM69-SK PCIe0, PCIe1 and PCIe3 in RC Mode with NVMe SSD connected to
+PCIe0:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/5571eb0a0273501fcc214519beab6713
 
 Regards,
+Siddharth.
 
-Hans
+Dasnavis Sabiya (1):
+  arm64: dts: ti: k3-am69-sk: Add PCIe support
 
+Siddharth Vadapalli (3):
+  arm64: dts: ti: k3-j784s4-main: Add PCIe nodes
+  arm64: dts: ti: k3-j784s4-evm: Enable PCIe0 and PCIe1 in RC Mode
+  arm64: dts: ti: k3-j784s4-evm: Add overlay for PCIe0 and PCIe1 EP Mode
+
+ arch/arm64/boot/dts/ti/Makefile               |   7 +-
+ arch/arm64/boot/dts/ti/k3-am69-sk.dts         |  60 ++++++++
+ .../dts/ti/k3-j784s4-evm-pcie0-pcie1-ep.dtso  |  79 ++++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts      |  46 ++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi    | 136 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4.dtsi         |  10 +-
+ 6 files changed, 336 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j784s4-evm-pcie0-pcie1-ep.dtso
+
+-- 
+2.40.1
 
 
