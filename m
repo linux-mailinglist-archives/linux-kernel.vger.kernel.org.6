@@ -1,171 +1,140 @@
-Return-Path: <linux-kernel+bounces-194560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A96B8D3E32
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:17:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1D68D3E37
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B34D0B220AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38E77285189
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD8C15CD5D;
-	Wed, 29 May 2024 18:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B810015CD59;
+	Wed, 29 May 2024 18:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Om1FB3e+"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="D658ylIp";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="IzmzNyB6"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF55B15B575;
-	Wed, 29 May 2024 18:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717006619; cv=none; b=RIH8Xp8g6aneMw3swPEBMilkC1LqP9q5KPyVgBFUKzdc0pjb+fSE6BITQy6kpONnMX+ZbrYIsYCqeZvmELmGbB/XA91788daXmazrwVzsJX12dZrCaENgtv11sxNH0kaXSQrtCblpgCNxH695cg5qsNEPUauHtdiYE6UwEVho1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717006619; c=relaxed/simple;
-	bh=bBxK7oGH7Qc+v5OVBzgZ/gYfy8r6SkX1r3Lg7bTGGck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rcAsA6WF1ivQcbBRbb6uT/hVjgnQsAghApk/J8Q/DsTLTzpQJxeg2zDj3dozzc9NcOQBCp+sP5L+Co3hcSi7Oftlgg9/mcdj29Q2nXLiYZ4blUDzTddKicV1ihuMiDxQOREm3SbQp0q1QpCCh3020f7DZJxwP+rBhft6hoqpMng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Om1FB3e+; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f44b5d0c50so308235ad.2;
-        Wed, 29 May 2024 11:16:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717006617; x=1717611417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iXEkR867jEs+moBzGXY8ULu3YeFsr12ik86Lu88hpJM=;
-        b=Om1FB3e+VTMeUoOhnE7yMedx7f8rz9HQ/AvmptyH/LCZzpvEvQSAmkp+f2ar4YNLWC
-         E9KDqj3vIRwmOZvrwDnEEZm0ndSlJR54B0C/Ol8FzQEQJdTaFN1tMXtqpMVVQnxR15ac
-         MJBcUtyMi5gcGEhxux1a1jaxfihKdhdipYiQKKEfTitz5+MWW1NEGXxCSSvW820MHEYX
-         XC0Nz8kF543N8PaWZBGK4Qn2zuiynKtF2/Snn+sErcqcTCgXav6hY1OJbz7rJqbinwch
-         iL4LYD6Jh58C1ptSC6uDdCbJwBCaSxxpa4f7r8qd5UPlILngvUhOhW945xI6XZx/k85X
-         ZLhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717006617; x=1717611417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iXEkR867jEs+moBzGXY8ULu3YeFsr12ik86Lu88hpJM=;
-        b=fpjXDCEXy59ex1BURNRV/ODl2prESX/O+oVlPYIxg8ATVBXP+6xwBAJoej8O1Rozfe
-         R7XZQIwIJJCBUETqI0NNrAKeITO/qSbmwKsblpml6FtryHG+M1ISRp4vf2u+XMlP9a0x
-         BPG4iXykf1xR+azUrgfmhmZ3zqkfGmc+ovmF9L/j6sDKkENeKo+6NKndnAbt8TrpjjUp
-         W9oLU3y2lLqMMg3R6CCADB6sGJn+DVhmOAupzKTrbJhG+lLxb58nIpfa9RgQ1gx5PKZl
-         sUfmHh7ey7rdVD9BWyxVkZwIOUPh1aqhOtZIdr0eutagKu3SeWbP5aqi7BWNjoiNoJH7
-         gidQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkIl5hH343Ld2WHBq4jqqxgQ/ZilhhU8T3otIIso4BMJxo24yQBsj064DjXhtVIoO+h99gu9GsNWaSq+FWrxRjb29dlgvjTg30fOoXUyeKdC43n+1yiXktq0zNWL8cOJj0qLXGbPSuWvQWmyeK
-X-Gm-Message-State: AOJu0YwRsRiH3+GvQI7WEluQp9cMlyrVTU1tg9kgeV+dYUDxJrB3G2Fl
-	2p2SHkHBTbeHNdAZAiLKRZCboaCd+6QhDQWWkISA+YYmNFEXtAlO
-X-Google-Smtp-Source: AGHT+IEX452clUdy+2NK2IX+qUe8wBeDObu8s6wfNc0sKgoaVuLMAuhtbZnjhqa4qhDIJRoL4CRqTA==
-X-Received: by 2002:a17:902:dacc:b0:1f4:be9b:d306 with SMTP id d9443c01a7336-1f4be9bd71dmr75508835ad.31.1717006616911;
-        Wed, 29 May 2024 11:16:56 -0700 (PDT)
-Received: from Gatlins-MacBook-Pro.local ([131.252.142.255])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c7592e6sm102718815ad.45.2024.05.29.11.16.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 11:16:56 -0700 (PDT)
-Date: Wed, 29 May 2024 11:16:55 -0700
-From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-To: Marco Elver <elver@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Changbin Du <changbin.du@huawei.com>, 
-	Pengfei Xu <pengfei.xu@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/traps: Enable UBSAN traps on x86
-Message-ID: <2j6nkzn2tfdwdqhoal5o56ds2hqg2sqk5diolv23l5nzteypzh@fi53ovwjjl3w>
-References: <20240529022043.3661757-1-gatlin.newhouse@gmail.com>
- <CANpmjNM2S2whk31nfNGSBO5MFPPUHX7FPuHBJn1nN9zdP63xTw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDE515B575
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717006647; cv=fail; b=TNEFkxhz8nZQno07TJyA6ty4U1FeEeqgEr9ZQ6/pZFmWgdysRpesZip8CUqxKQXzActVdeJTsjqCxKgALl/f1aN/Y2CsLRPZsE+GjQ3qsB/S/4IbdhkJoELWDaTjTCYv/r0ucjp4iWooVOQmWU2tY8vcIYuyUv7QQB9oVAqyKlc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717006647; c=relaxed/simple;
+	bh=EyhckvVm2a5/R7Gd4g1kKgdM67y/GY/cspQ3Gw8Ro2A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jRin4estXdSnBW9TEn6ZDvVGri1CYS4BaqjcVOcz7mYj09G/G4Bn+Km8VTyMkWKrpXbI06GtZjjJqIQ/xMKJ6MdnmU2NpCZXlW6uI3TQ9lVUG+6A1UVgKBQVxbLj+hwV3STV1/eVEMSSwOqf/swVdlYKFQWD2NYNABU8yG/0E1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=D658ylIp; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=IzmzNyB6; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 8428B48099C;
+	Wed, 29 May 2024 14:17:23 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717006643;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=XUebccGL4OfbGpTIxAPqulwEmf7Yl5LLhgv/rXDB/y4=;
+ b=D658ylIpT1ZPvH0l4T1Fyz6QAm3Xd4zNodOywYgISBjFmlvzktnkujpbIvr5xx65/q5RQ
+ ji6Tu+c857cVexVCQ==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717006643;
+	cv=none; b=nXFGmq0RayC9mAnhmJkzWPSNmrih1406n+ZquhR+PA0GqChVN3BhtvVf1Qpyj6nG+ifCnckIEwHePLSyPjrFrm6aiDm/qkoQHLQaYLjj+7GRpPs0llMTD4tdAEZL/hEoqBo336jp5urUyg7QXV/OYLt3j30jlsFuR8XgbGcd7GPMepm/MhQJAMldJMP7zCm/Y6HdeNGeTYHqUohfGg6GQj1ELWA2WzGHQz3FBSK7ZgsL8YtaNFXR1XpFVTAr78ZWxvnMn6yUvolh2IZbZSHBRLLEKcgjsnNWsJz9GKIRk9WgfW8t/KrK3WNwcWhUJl9TkYBfJmmE1MuiTfV2la9ZEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1717006643; c=relaxed/simple;
+	bh=EyhckvVm2a5/R7Gd4g1kKgdM67y/GY/cspQ3Gw8Ro2A=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=JRh7O8DLePTmne25sJFwYVfRF9cpx55V+M0w7dlMheyTztCjUBuvOv9Pmbq5qcj/ScybJi8MglIap3o3Y8M+EcalSlq45bugC+vNZ6OlfG2VPHrbNL7X+YsAhIUtm7sr3WGInd8dGSQ5+w9ZujLvwOF6hcfhpzIYHT+RxlTtOOhfSQ2yTcPzg5vuU5P0LJ1x647kJO6qaRJIF1DzDzQPf0xNAiP/MQmcN/JnEUw5WI+88mPki1e4bbhvNXACz6MixPDq5qmkTemY8UfgyqvvX89TSwBYHjS3e2b2SGDOZzEdPzYrcSDXtIJXD2B0+Lsc6R91ffFXwKsvJ6dtEeEvKA==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717006643;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=XUebccGL4OfbGpTIxAPqulwEmf7Yl5LLhgv/rXDB/y4=;
+ b=IzmzNyB6P4ze6qHg2invxjTaX2UCR3zY4u3Oztznzi96Z/uHT2rAKU11XFX83L5kgDyYz
+ NOi5G+wEQDaD53Coi+4J4M3LFom7smMYGMR8qnvBeYatJOOBW3qxeBvGm7ap5abmFit6KxY
+ mEz2LE0GvLy2dki6UQ3n3N4WE/ccF1BBQ2GxbJADcUXwSwParszsiTdNSjOE/n0P0tSLWgi
+ pRgzodQTVXOoC1PBVSSNZKSnHaDfDokiR7oVTMkuhaDWB5Q65wa/XihmZW8Qyt+HLNWWSE3
+ QUJAtqUd8vSoNPrmYNxlCuxxhCR/tQdHLOkVy2MMXU4aF7k++gnfsPL2P2rg==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 5A374280042;
+	Wed, 29 May 2024 14:17:23 -0400 (EDT)
+Message-ID: <49bc946ed3f29b819e3b1b2f91f0c42f07b47769.camel@sapience.com>
+Subject: Re: Intermittent inability to type in graphical Plymouth on UEFI
+ VMs since kernel 6.9
+From: Genes Lists <lists@sapience.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>, Adam
+ Williamson <awilliam@redhat.com>, linux-kernel@vger.kernel.org
+Cc: jforbes@redhat.com, rstrode@redhat.com
+Date: Wed, 29 May 2024 14:17:23 -0400
+In-Reply-To: <937e6c6b-7d98-4c9f-b3f7-47e1d6562963@leemhuis.info>
+References: <75c17881-68e9-40e7-821c-5655d49d7c0f@redhat.com>
+	 <8fee69cc8fdd67fd265790c0fa287cb9566c2349.camel@sapience.com>
+	 <165f7cfd-41bc-4c37-b859-a418a3ccece7@leemhuis.info>
+	 <c5b3d3ec7701b51dd7b163261c84fb54c778b9bb.camel@sapience.com>
+	 <937e6c6b-7d98-4c9f-b3f7-47e1d6562963@leemhuis.info>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-hf2nUVxltrbbuXaIrmJK"
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNM2S2whk31nfNGSBO5MFPPUHX7FPuHBJn1nN9zdP63xTw@mail.gmail.com>
 
-On Wed, May 29, 2024 at 09:25:21AM UTC, Marco Elver wrote:
-> On Wed, 29 May 2024 at 04:20, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
-> [...]
-> >         if (regs->flags & X86_EFLAGS_IF)
-> >                 raw_local_irq_enable();
-> > -       if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > -           handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > -               regs->ip += LEN_UD2;
-> > -               handled = true;
-> > +
-> > +       if (insn == INSN_UD2) {
-> > +               if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > +               handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > +                       regs->ip += LEN_UD2;
-> > +                       handled = true;
-> > +               }
-> > +       } else {
-> > +               if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
-> 
-> handle_ubsan_failure currently only returns BUG_TRAP_TYPE_NONE?
-> 
-> > +                       if (insn == INSN_REX)
-> > +                               regs->ip += LEN_REX;
-> > +                       regs->ip += LEN_UD1;
-> > +                       handled = true;
-> > +               }
-> >         }
-> >         if (regs->flags & X86_EFLAGS_IF)
-> >                 raw_local_irq_disable();
-> > diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-> > new file mode 100644
-> > index 000000000000..6cae11f4fe23
-> > --- /dev/null
-> > +++ b/arch/x86/kernel/ubsan.c
-> > @@ -0,0 +1,32 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Clang Undefined Behavior Sanitizer trap mode support.
-> > + */
-> > +#include <linux/bug.h>
-> > +#include <linux/string.h>
-> > +#include <linux/printk.h>
-> > +#include <linux/ubsan.h>
-> > +#include <asm/ptrace.h>
-> > +#include <asm/ubsan.h>
-> > +
-> > +/*
-> > + * Checks for the information embedded in the UD1 trap instruction
-> > + * for the UB Sanitizer in order to pass along debugging output.
-> > + */
-> > +enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn)
-> > +{
-> > +       u32 type = 0;
-> > +
-> > +       if (insn == INSN_REX) {
-> > +               type = (*(u16 *)(regs->ip + LEN_REX + LEN_UD1));
-> > +               if ((type & 0xFF) == 0x40)
-> > +                       type = (type >> 8) & 0xFF;
-> > +       } else {
-> > +               type = (*(u16 *)(regs->ip + LEN_UD1));
-> > +               if ((type & 0xFF) == 0x40)
-> > +                       type = (type >> 8) & 0xFF;
-> > +       }
-> > +       pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-> > +
-> > +       return BUG_TRAP_TYPE_NONE;
-> > +}
-> 
-> Shouldn't this return BUG_TRAP_TYPE_WARN?
 
-So as far as I understand, UBSAN trap mode never warns. Perhaps it does on
-arm64, although it calls die() so I am unsure. Maybe the condition in
-handle_bug() should be rewritten in the case of UBSAN ud1s? Do you have any
-suggestions?
+--=-hf2nUVxltrbbuXaIrmJK
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2024-05-29 at 16:04 +0200, Linux regression tracking (Thorsten
+Leemhuis) wrote:
+>=20
+> np; but without a bisecting or at least locating the subsystem that
+>=20
+
+Yep. I will set up luks + plymouth on a (different) machine first
+instead of my primary laptop.  If that reproduces the issue, then
+bisect should be quite doable. Will take a little time but will work on
+it soon.
+
+
+--=20
+Gene
+
+
+--=-hf2nUVxltrbbuXaIrmJK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZldxMwAKCRA5BdB0L6Ze
+20IoAQC54YgzwhSy7BjW5KMbvvraiUrj6e5IxAJUt6nGw8ITeQD/SRy7vlrvL6n+
+ur+trD86Kzit4ylH+Ddwk9Dc8nvdOgc=
+=7IHX
+-----END PGP SIGNATURE-----
+
+--=-hf2nUVxltrbbuXaIrmJK--
 
