@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-193719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7A28D3116
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDB68D3117
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360171F264ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACC4292807
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D231802BB;
-	Wed, 29 May 2024 08:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E19167D98;
+	Wed, 29 May 2024 08:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ORKOniri"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MVsXj67/"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE15169397
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2214374F6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970786; cv=none; b=gDlYEUQeh0JjzxkNs3RsxXKX57QNf2fAOS1b47tzw5kPh6v7rh0zf+2setcWdlzjyUDbGjGGmqAmPOM/4vo5Go+kSPRJvikyn03gUlYjd5/nJNkd5L/OfA8Per/CJRMXwp1btHWDdwhsyPjWzME7DyQH56Pab6+lp/BJ/pWX+is=
+	t=1716970867; cv=none; b=WZ3e1pgN+NjbRXby6h8qnzkWyjPCt5mewO65XQTgdJAtKMLM9eExf3QWgXjxCeWjcTr6jAWHVom/398tzXUzyavcOta8Va6Ntd8PyNc8R5rcNW5c0Bn9kk9Udl9g5L8sAeSwHgNvgcXw25W1iZ1pbWdHRgiXVYWeeAr1/ksaIzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970786; c=relaxed/simple;
-	bh=Ae90CS/pD9BkisUZjgTcWgpjDwmgKX7NJpeOtvmu0Cg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R3QmytwWaUfePFT4lnH6pCznBI2cCS1LcCz4mlwDAIlkAQHWOUlL6sKy8b8a0RUdRIwCfBFR/fTs7AdE1svJ8lwDn208hEArCCnf4AfIqZJaRknpbkEPXub+zoIzdJb5Xqrx0Wk2DiGYz/wj2j6PJ0Ic0FOzB2XX611CRXn6MF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ORKOniri; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-354de3c5d00so320991f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:19:43 -0700 (PDT)
+	s=arc-20240116; t=1716970867; c=relaxed/simple;
+	bh=GvQlmrtOsIq9NPc29uY9RaT1100f0FwdAhRIUUBDucs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R1oNNn0M2w8JMZlcalkvriMco02LHKWhyn/uq1Eyv2dK7wSTlkkoH/aiPRaZTOvMdjpjzmgvUI5CfqBCIYbk6YmIRwHpSa9jxCP0X84EN9zw2aqALITHBmGypPFb0U0L8CEEEjN3BCcU9hrV9rzNKcw7sPIO7AhhptTZQuZCjOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MVsXj67/; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e968e77515so21666081fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:21:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716970782; x=1717575582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fOE0A0l7NfKBSljfnqniwrdePepuGPXfC4qSeThvThQ=;
-        b=ORKOniriRTgvLumwzUPoO36Jr1rJqkdRndtrWdXm1o5TBJNsUzt6+Cd8E0g05EzmLH
-         dEwtdniCgDE4k0Fx3liyZXKqdZpZcGtDCb3hG1amgpMP+TzCOgQ8XuVsT+nUJbcy51nD
-         W1x04Yx2NaZofPOERJnv3Jq+UVMgg07mpFmeluGkepf7BDzWPw7o/Zy+TG4Jw//7axjF
-         /nxPUZ6oLjTodPReTR1JUCaiO05hxFvLptGu3AyeZgcfaaGJxU2vMOw7/SxUuPGYxM9D
-         tMazW3WBe2AdkF12frt8dLi2m59j6dwjhlyjetkyUQIuibFZE+3hamLg8FyTpKH9edi8
-         DEjQ==
+        d=linaro.org; s=google; t=1716970864; x=1717575664; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NlPH0P994GSLr65I7MtbS6ikre4n5vkaipn9KH2517g=;
+        b=MVsXj67/Zcyq6wAYRKctbOnZUCIJsooiFBN/cU7XqJgzQwXJRkGb2wVXhUIc2zuuBT
+         9v3W8uDn+1k/QSFnu4qwjcNpGLlQCEeqqkrDS3lk6ODC/nwP3EvMH7quZy6VXdbFGp4J
+         o5q6JRIAcVZeRdgdYJkbL3io+r5nrdy0qPnjP2RysAY62xHMtDcHSBDK0c0IHSQ4QDNj
+         Rhvw32VheC9/TT71dbsjelN1z0zPLAEjeln0shTzdRZkhA9mCOJJWmVRa6X0Ru+ZesgL
+         KmZ4gXVcwSN8qi7eFsemUL7trTP9dLJI8R2LYZDdymXrWBStCy14bbnSR4/wCgOaDgqo
+         KITQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970782; x=1717575582;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fOE0A0l7NfKBSljfnqniwrdePepuGPXfC4qSeThvThQ=;
-        b=DSas9PvNQW2ncGJeKPDGCISbigUE0DnkwSKHZPynDxQ/S6f9yYT/UDTkDuNDyDNK+I
-         nc92Gx5x5QbiH0q86ff9qQGDaKHA56x6OtxCm2HkZfjJAh/yLe4SkZDHIJVs4nAjwAi5
-         R+zA9P2ro9j41q/b8g94yIBet70TTCAY9Pjk88pHXC44zQ+odGR9hcPx3C5LFFVo5lOg
-         MUYw9BVXssilFt0u21EEmfKKgiFK1AnBpWVAZ2IgeZhL2VmthRYszWnKaWuJm2oCoOvF
-         5NGUcL/ykTdvj31ezbKlrjuWQiGB8rQ6ruuX5jljyfpjWbKKhuu1jhHkXtLwImRLiPdc
-         MBLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwmFMvTHIn4+Jocv323G6pmgN8gagMd3CqEzLT63j0Ya+fq7Whn12GhZSlqM6qHyXEwV/w1jjz0r/nL/kDF2aSp+/pmzf4PfC7QEzy
-X-Gm-Message-State: AOJu0Yzqx1tM/j85gz4GsyIdxhXbu00Lgcv/TcaZsUYmZ9YeLu1VVshK
-	abbvsvuowp6kQ/Q27lJ2Xm+oPTGj4GTsYJKIs6si23ZiEQCxGJw/x3dOFh9tfxU=
-X-Google-Smtp-Source: AGHT+IHpw1t1jfuB8Lm6EEhhiKMl5JYdCi2dxzOWePLyDrJX6Q08/jdxLnIq3dUJbEMEHNAi+oDsAQ==
-X-Received: by 2002:adf:cb92:0:b0:34c:77bd:2508 with SMTP id ffacd0b85a97d-35c79d6fecbmr990696f8f.11.1716970782209;
-        Wed, 29 May 2024 01:19:42 -0700 (PDT)
-Received: from [10.1.5.19] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a08a8dfsm13980128f8f.30.2024.05.29.01.19.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 01:19:41 -0700 (PDT)
-Message-ID: <6d01d555-9af8-4ec8-8630-0d9a7b48f423@baylibre.com>
-Date: Wed, 29 May 2024 10:19:40 +0200
+        d=1e100.net; s=20230601; t=1716970864; x=1717575664;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NlPH0P994GSLr65I7MtbS6ikre4n5vkaipn9KH2517g=;
+        b=Wo4z4dX93h4OMSmgKPUZbP2bZEdYHbPO9kbx37YduayvLCZoQoo1Ta7feTh1qYbpQa
+         z43HDT4sf51emEJfOaCHay37rB0Z09w4Y3hO2gISbQbUBX1ZxQnVxZ/bkDz8/4hQSWZi
+         7j1hQur3tOiEHfdMi/kwUMuLPbAnm5xKxvNs9Yw1hntdk5FnI3zBUZfX3H5AjXDH/CaV
+         Y++pTWzLAAUhIGU9Ng2FVnCFAyHZeNKAZ0GQtIg12XbiwJK/bY8LvsS84jhidzdfBawr
+         mwkvzRKlIEhe1qj31WX8tR9ZZseKlKaXQDD9JWASoIyIZkFf0QDBWI10wml00rKy5GKe
+         PGzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeuazwCC29AfoLa76qUHmiCiyOpT6tdcRkUv5Zdg7v07u642w1/x+swbdYxe3NXrQ4ghO4gEfI9yEUiVWrcleiqiIF4mcnd7OEqtq4
+X-Gm-Message-State: AOJu0YxN22yHxVh800W2g/S4Nu0WrmIQAn1R2C3+XqQEQPyeLcoSU+lD
+	U8w+uIkKF+UG3kSyuM80zxsQch/5N96y/cU0k42rr91m4PCuvr9vzNzu7iO0wEo=
+X-Google-Smtp-Source: AGHT+IGHFRFnp+MyYG+YuWo3CGNhxr5zVQkELmm+9aSx5PbZeqdQ7lHk7UJdLwxeRsOL0b9TVbrimQ==
+X-Received: by 2002:a2e:99c2:0:b0:2df:e0c4:8429 with SMTP id 38308e7fff4ca-2e95b0c22abmr100784511fa.18.1716970864023;
+        Wed, 29 May 2024 01:21:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcc48c8sm25085331fa.14.2024.05.29.01.21.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 01:21:03 -0700 (PDT)
+Date: Wed, 29 May 2024 11:21:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com, Jason Wang <jasowang@redhat.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/20] drm/msm: Use iommu_paging_domain_alloc()
+Message-ID: <jd7df7jshswukstxwbfoxuswyltyemdmkx272i5mpldlfsk4t7@ad36olyvmw27>
+References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
+ <20240529053250.91284-7-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] ARM64: mt8195: Use thermal aggregation for big and
- little cpu
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, rafael@kernel.org,
- daniel.lezcano@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240524143150.610949-1-abailon@baylibre.com>
- <20240524143150.610949-7-abailon@baylibre.com>
- <1b691b03-1d2c-48ee-9907-dc043ea1ed5d@linaro.org>
-Content-Language: en-US
-From: Alexandre Bailon <abailon@baylibre.com>
-In-Reply-To: <1b691b03-1d2c-48ee-9907-dc043ea1ed5d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529053250.91284-7-baolu.lu@linux.intel.com>
 
+On Wed, May 29, 2024 at 01:32:36PM +0800, Lu Baolu wrote:
+> The domain allocated in msm_iommu_new() is for the @dev. Replace
+> iommu_domain_alloc() with iommu_paging_domain_alloc() to make it explicit.
+> 
+> Update msm_iommu_new() to always return ERR_PTR in failure cases instead
+> of NULL.
 
+Please don't mix unrelated changes, because ...
 
-On 5/27/24 08:56, Krzysztof Kozlowski wrote:
-> On 24/05/2024 16:31, Alexandre Bailon wrote:
->> This uses the thermal aggregation for the mt8195 to get the maximal
->> temperature of big and little cpu clusters.
->>
->> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
->> ---
->>   arch/arm64/boot/dts/mediatek/mt8195.dtsi | 212 +++--------------------
->>   1 file changed, 27 insertions(+), 185 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> index 5d8b68f86ce4..8aa2bf142622 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> @@ -3600,50 +3600,31 @@ dp_tx: dp-tx@1c600000 {
->>   	};
->>   
->>   	thermal_zones: thermal-zones {
->> -		cpu0-thermal {
->> +		cpu-little {
 > 
-> How is it related to the commit?
-To aggregate all thermal sensors which are in same performance domain, 
-we removes each individual nodes to create only two: cpu-little and cpu-big.
-We need to remove the other nodes because their trips points and cooling 
-devices would conflict with those we define for the multi sensor thermal 
-zone.
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/gpu/drm/msm/msm_iommu.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+> index d5512037c38b..f7e28d4b5f62 100644
+> --- a/drivers/gpu/drm/msm/msm_iommu.c
+> +++ b/drivers/gpu/drm/msm/msm_iommu.c
+> @@ -407,9 +407,9 @@ struct msm_mmu *msm_iommu_new(struct device *dev, unsigned long quirks)
+>  	struct msm_iommu *iommu;
+>  	int ret;
+>  
+> -	domain = iommu_domain_alloc(dev->bus);
+> -	if (!domain)
+> -		return NULL;
+> +	domain = iommu_paging_domain_alloc(dev);
+> +	if (IS_ERR(domain))
+> +		return ERR_CAST(domain);
+>  
+>  	iommu_set_pgtable_quirks(domain, quirks);
+>  
+> @@ -441,7 +441,7 @@ struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gpu, unsig
+>  	struct msm_mmu *mmu;
+>  
+>  	mmu = msm_iommu_new(dev, quirks);
+> -	if (IS_ERR_OR_NULL(mmu))
+> +	if (IS_ERR(mmu))
+>  		return mmu;
 
-Best Regards,
-Alexandre
+NAK, not having an IOMMU is a poor but legit usecase for some of devices
+which don't have IOMMU support yet (for example because of the buggy
+implementation for which we were not able to get all the hooks in).
+
+Please don't break compatibility for existing platforms.
+
+>  
+>  	iommu = to_msm_iommu(mmu);
+> -- 
+> 2.34.1
 > 
-> Does not look tested. You just introduced warnings.
-> 
-> Best regards,
-> Krzysztof
-> 
+
+-- 
+With best wishes
+Dmitry
 
