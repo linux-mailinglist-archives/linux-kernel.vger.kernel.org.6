@@ -1,162 +1,208 @@
-Return-Path: <linux-kernel+bounces-194116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D768D36D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:55:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA308D36E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 058131C22877
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:55:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DDB4B22194
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C81D746E;
-	Wed, 29 May 2024 12:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E87112B87;
+	Wed, 29 May 2024 12:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="FLFBtbDx";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Ybwd9FSZ"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KVTQ3Yk8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C666610799;
-	Wed, 29 May 2024 12:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EA610A03;
+	Wed, 29 May 2024 12:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716987306; cv=none; b=FA8gvQYFbVPfRW8bb0VndRcOPTEtJokfYmr/QeM3jrOFANJ+qFX6kf6Dm7yR8N8C52HG2UczRa25ygH5CVfGcA+H2phgkqRB5R96sERRWetBCKm2YkQmbLh8tp9GlM3/qe7VO0x0/c4+gNfpYI42kCEVb6n7HnT7oiOurDeVMwU=
+	t=1716987376; cv=none; b=q+8YcJ+cPGttXCf5trwTid44wvv3en2q3uxT1l1tR/iwsaH7assjczmQA+S5nTSF30X/G4lkTL8CEQ+63oOx+/YPVtKGENv9ZDZoNVMmffhplct1mpaNvzzoZ5RhX7IOZvwjbWwFsSX1XkkGHQOOQzK6vVt2hJenYO6euBROuJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716987306; c=relaxed/simple;
-	bh=cW3+J5g9mAKtQbuc3AqY2+EuRfTIIGpTTyo0Q29eH/I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V0N29KcPyFrZi1kC+pm9fpssmQuq8hJJTcYeEhVJLwZk5p4UihssjvKyFzU+6K8MpJFY9guEgK9eBwJ73H+uGvMIo45igo04oJur572Pr1aUHBqmc4uokr59MDoHrXuJyC16pLtkE6pDC7DQUhoyyYQ7RIMWOrT6aMxrD0IqVPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=FLFBtbDx; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Ybwd9FSZ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1716987302; x=1748523302;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=mg1ZMEN7i1mpW546Tn968v5+HhfztaRu+3KyyqxuRyo=;
-  b=FLFBtbDxO068C1tqy8dRiiL8vgvKMJFugDBiqD7wPrljBDLvwtuqJ4Ge
-   /vr8mSDDhOY9XZi88j4kkuvvk1B1wnd1QLiKT0QXD00HdP60uGbXJJB4L
-   WZORq4o0tjokka25QSHSThsm1OldPBSrwBe4icDdd9Ex3qSEZ9dPOu194
-   EliEt7GpdL5xC3KwUQJR80BP8us9jTGuqyxeZnI2PQfXwEbUtzzMtv8uL
-   +KHKLQCbMANYk2ePX8mhbCTB1jcszU/t65FnPDjWVrp4GuE726ibi7AE2
-   ok5q8eSLyPWTszh06wHx63TX7FnTDAVpLMlFHpZ/qsGOHfbvtFjH1hfpT
+	s=arc-20240116; t=1716987376; c=relaxed/simple;
+	bh=gz8z8N5bHTtjf1WXKP3VLR7zy+2ou75tSdQdUmX2Vx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DUb0B9xOXxoMuH01AVMLxEZlGBXuUrooLiiQuc3cCnPj37fNkeTH+RZ8w3JBtwsyy4aMfLmnvoqbQcEwAVREWF/YUiEcDl+QfZQTute1igQWYb9dfvT504BD/qHemH7O4xpcQ6EjybLqcAuA+FwHIX8kH7tFEZcRmxtOC9Kun5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KVTQ3Yk8; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716987375; x=1748523375;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gz8z8N5bHTtjf1WXKP3VLR7zy+2ou75tSdQdUmX2Vx4=;
+  b=KVTQ3Yk8L6lLF0SlKKAnpEMyUVPKkDcnDzC9DQYWKx+Ee0D/j5wS8jWj
+   aFE+70oEJD0vC9u1uUJTx/ampL9Tphh3THlJyyPS8Ukn4kn18vvVUsK8c
+   4s9mGPkKa1XoMOK/7X+qmVpTAseosXptqqlj7jbPtCoyc8I4jDU5KSXBV
+   ZHmZgTGM5Q+ATf42JFns4GxYgQrNbEb9+5wFl2g4Q6y/E4ErrTyoJrPj7
+   8E8hN6wW4BQGj/jW3HIXeINSUo4GBUqncw1erGowPuuHp5DyryA0S1unS
+   xhT7kAM7DoFzyHUDZK4LhEkHaj0jz1lqSUiNcammTvzyVDIKVtG8yVu1P
    g==;
-X-CSE-ConnectionGUID: wwVPb7adTTOxqNzRc8Jp9g==
-X-CSE-MsgGUID: yZeP8SNbRKicvpung8VlSg==
-X-IronPort-AV: E=Sophos;i="6.08,198,1712613600"; 
-   d="scan'208";a="37129201"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 29 May 2024 14:54:59 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 11B3E16588A;
-	Wed, 29 May 2024 14:54:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1716987295;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=mg1ZMEN7i1mpW546Tn968v5+HhfztaRu+3KyyqxuRyo=;
-	b=Ybwd9FSZmODL030sd27we+lRoWjq9KTmmZFrsCQlkue3ZgnZ7AF0f7WTuwQLCu/3CmXCFS
-	5lfxIVl5aiIxuJ6p16cxWN3+wq0Zh9VHEkgVdAxHngUgCPpoeEy62I2P0bMd8tS40xbcW4
-	H82sXcgVn+nNnFFqBYqjzLy9HF5eWKVmSiHUIad3+SVd9c59dVUQm3NWK6Kf9zXutyoSTd
-	GkF+J2Xp5woAcaQFrbaY8Kha3Dh7S9aJ0ascIEfzM0rKWz8T5HJ5ZaB6DuQcLDl9Eer7Ax
-	fRHq6PBG31NxFwMOlOfPUTFIec6H9UHpP8NSNmjfv6jnd2bOQ+wBjfHsu7Rc5g==
-Message-ID: <ad4dee46c4e0e508c54dd79bab7f45060099ef9b.camel@ew.tq-group.com>
-Subject: Re: [PATCH 0/8] gpio-tqmx86 fixes
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andrew Lunn <andrew@lunn.ch>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Gregor Herburger
-	 <gregor.herburger@tq-group.com>, linux@ew.tq-group.com
-Date: Wed, 29 May 2024 14:54:54 +0200
-In-Reply-To: <CAMRc=MeN+QzzSy1BwiD57Y3vTF9Ups=6dtWuFbPmxzOxic=arQ@mail.gmail.com>
-References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
-	 <CAMRc=MeN+QzzSy1BwiD57Y3vTF9Ups=6dtWuFbPmxzOxic=arQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+X-CSE-ConnectionGUID: BSG6Xos3Sp+uL1jtf0ROkw==
+X-CSE-MsgGUID: M3losH2pRy2/1+utwYVpyw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13618479"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="13618479"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 05:56:13 -0700
+X-CSE-ConnectionGUID: H5QcdFF9TbONM172UGdoGg==
+X-CSE-MsgGUID: zqE6bIAkQpSvlFOcfBHkJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="35963852"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 05:56:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sCIqP-0000000BnVT-2SiK;
+	Wed, 29 May 2024 15:55:53 +0300
+Date: Wed, 29 May 2024 15:55:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v8 08/36] clocksource: sh_tmu: CLOCKSOURCE support.
+Message-ID: <Zlcl2QxRDDrGh7Ru@smile.fi.intel.com>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+ <f40e91e3f010880b0cf7a1c3a18d0c57bb55d93a.1716965617.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f40e91e3f010880b0cf7a1c3a18d0c57bb55d93a.1716965617.git.ysato@users.sourceforge.jp>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 2024-05-29 at 14:08 +0200, Bartosz Golaszewski wrote:
-> On Wed, May 29, 2024 at 9:46=E2=80=AFAM Matthias Schiffer
-> <matthias.schiffer@ew.tq-group.com> wrote:
-> >=20
-> > This is the first series of improvements to the tqmx86 GPIO driver,
-> > which fixes some long-standing bugs - in particular, IRQ_TYPE_EDGE_BOTH
-> > can never have worked correctly.
-> >=20
-> > Other patches in the series are code cleanup, which is included as it
-> > makes the actual fixes much nicer. I have included the same Fixes tag i=
-n
-> > all commits, as they will need to be cherry-picked together.
-> >=20
-> > A second series with new features (changing GPIO directions, support
-> > more GPIOs on SMARC TQMx86 modules) will be submitted when the fixes
-> > have been reviewed and merged.
-> >=20
-> > Gregor Herburger (1):
-> >   gpio: tqmx86: fix typo in Kconfig label
-> >=20
-> > Matthias Schiffer (7):
-> >   gpio: tqmx86: introduce shadow register for GPIO output value
-> >   gpio: tqmx86: change tqmx86_gpio_write() order of arguments to match
-> >     regmap API
-> >   gpio: tqmx86: introduce _tqmx86_gpio_update_bits() helper
-> >   gpio: tqmx86: add macros for interrupt configuration
-> >   gpio: tqmx86: store IRQ triggers without offsetting index
-> >   gpio: tqmx86: store IRQ trigger type and unmask status separately
-> >   gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH interrupt type
-> >=20
-> >  drivers/gpio/Kconfig       |   2 +-
-> >  drivers/gpio/gpio-tqmx86.c | 151 ++++++++++++++++++++++++++-----------
-> >  2 files changed, 106 insertions(+), 47 deletions(-)
-> >=20
-> > --
-> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
-Germany
-> > Amtsgericht M=C3=BCnchen, HRB 105018
-> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
- Schneider
-> > https://www.tq-group.com/
-> >=20
->=20
-> Hi Matthias!
->=20
-> Not all patches in this series are fixes (as in: warrant being sent
-> upstream outside of the merge window). Please split the series into
-> two with the first one containing actual fixes to real bugs and the
-> second for any refactoring and improvements.
->=20
-> Bart
+On Wed, May 29, 2024 at 05:00:54PM +0900, Yoshinori Sato wrote:
+> Allows initialization as CLOCKSOURCE.
+
+..
+
+> -	dev_info(&ch->tmu->pdev->dev, "ch%u: used for %s clock events\n",
+> -		 ch->index, periodic ? "periodic" : "oneshot");
+> +	pr_info("%s ch%u: used for %s clock events\n",
+> +		ch->tmu->name, ch->index, periodic ? "periodic" : "oneshot");
+
+This is a step back change. We should use dev_*() if we have a device
+available. And I believe this is the case (at least for the previous boards),
+no?
+
+..
+
+> -	ch->irq = platform_get_irq(tmu->pdev, index);
+> +	if (tmu->np)
+> +		ch->irq = of_irq_get(tmu->np, index);
+> +	else if (tmu->pdev)
+> +		ch->irq = platform_get_irq(tmu->pdev, index);
+
+I found these changes counterproductive. Instead better to have up to three
+files to cover:
+- the common code (library)
+- the platform device support
+- the pure OF support.
+
+..
+
+> -	res = platform_get_resource(tmu->pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		dev_err(&tmu->pdev->dev, "failed to get I/O memory\n");
+> -		return -ENXIO;
+> +	if (tmu->pdev) {
+> +		res = platform_get_resource(tmu->pdev, IORESOURCE_MEM, 0);
+> +		if (!res) {
+> +			pr_err("sh_tmu failed to get I/O memory\n");
+> +			return -ENXIO;
+> +		}
+> +
+> +		tmu->mapbase = ioremap(res->start, resource_size(res));
+
+devm_platform_ioremap_resource() should be good to have.
+Again, consider proper splitting.
+
+>  	}
+> +	if (tmu->np)
+> +		tmu->mapbase = of_iomap(tmu->np, 0);
+
+So, how many boards are non-OF compatible? Maybe makes sense to move them to OF
+and drop these platform code entirely from everywhere?
+
+..
+
+> +	tmu->name = dev_name(&pdev->dev);
+> +	tmu->clk = clk_get(&tmu->pdev->dev, "fck");
+
+devm_ approach can help a lot in case of platform device code.
+
+> +	if (IS_ERR(tmu->clk)) {
+> +		dev_err(&tmu->pdev->dev, "cannot get clock\n");
+> +		return PTR_ERR(tmu->clk);
+
+		return dev_err_probe() ?
+
+> +	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Hi Bartosz,
-
-as explained in the cover letter, I've found that the fixes become much nic=
-er to implement (and to
-review) if they are based on the refactoring. I can leave out _tqmx86_gpio_=
-update_bits for now, but
-removing "add macros for interrupt configuration" and "store IRQ triggers w=
-ithout offsetting index"
-does make the actual fixes "store IRQ trigger type and unmask status separa=
-tely" and "fix broken
-IRQ_TYPE_EDGE_BOTH interrupt type" somewhat uglier.
-
-That being said, you're the maintainer, and I will structure this series in=
- any way you prefer. I
-can remove the mentioned refactoring, even though it makes the fixes less p=
-leasant. Another option
-would be that I can submit just the refactoring for -next for now, and leav=
-e the fixes for a future
-series. Let me know how you want to proceed.
-
-Thanks,
-Matthias
 
