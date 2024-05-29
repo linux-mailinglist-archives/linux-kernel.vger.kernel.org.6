@@ -1,115 +1,176 @@
-Return-Path: <linux-kernel+bounces-193605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D1B8D2E89
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601DB8D2E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4549CB25624
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:41:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7661F2410F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16459169360;
-	Wed, 29 May 2024 07:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772C716A369;
+	Wed, 29 May 2024 07:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cXmzgQLN"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="OWwgYptm"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EB4167D97
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7F4169399;
+	Wed, 29 May 2024 07:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968445; cv=none; b=sMlEQ8MIlMvjBN8UJS7vs8dDnbplv3xo+iFM4FoIWTETnyl1UEhyn4GgRsPI1/mS1+gPpI9602QuazXdgtVMQWxTG9NUf2Zy8wYfP/+E4VNu3lyZpv0cPhfXs15OYwnVepklq3jhbYmPZJ2FcNRxVy4yvu8fiVlMyLRlZXbiD7Q=
+	t=1716968449; cv=none; b=OrEd654x+STlPc95PwAK0OJS+o0nuSjzonLfjiK7HC5A3+FANQq50L0pgHbtgKB8k5aHXG8SBEGpLRTLqn4HUPCHAF3re7R2NZ1mGCGur9fPA4Y5XDiB6NX+Zxv6Ei3teUU/g8mp/GTeUSJWd+9Hb1sJFg0s5VSFo7vSuR187iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968445; c=relaxed/simple;
-	bh=Kq75PX3R0lwU8jkUE+730+MzES2MK6LfrzI3HXbTdic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CnZQTMBzLdiiQVKqBjvhv9jWOpcYmEintkULhJe3A1gedgWoj0Onb4QHhBD2A4kO4W2ws9AZpVokw2HNDdbXf3OLgzXnWrIfQxWxjuRqou9Qu+C9DKT4I46sQw9CnqgavZ621E05Uz19VXmHWp9XmygL6e3uQ7QUrHBbC53nm50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cXmzgQLN; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dee72970df8so498909276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:40:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716968443; x=1717573243; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qi3rq/lKfkTKHCFllxIMfEiNIgwb77QXH8sn4XLhppg=;
-        b=cXmzgQLN+TZjCNGfO3XylDs6ogpLcAFtR0AzNJ802+aOO5gSNJRNPDxrYnHgt0AVUN
-         k+tLVxMhNpZft7XEjGw8X4hB1D/sf7D+C+eOvNp6il5ABnO6VMZkPH7hQ1yz+qGz76o8
-         ajjLmm+SxjJRXcI0Y4tnylhTAB8xaE0Ia6JMf5UxA7Mj/NG74d0QlcUQxRVaOSMZ63Qy
-         6s4FyVAAYhoE/2JcR9oJoi9yvLbVXTwf9gByKNcUeMXOiEZ9E5jj6oKqTsK9fvfGmRQT
-         HW6trY4WKkFWG9zVhALnOCMH9nYl1AU1zxwX4bX6G/1CuoM788bQ0s9W4FHSfzze4emn
-         pIow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716968443; x=1717573243;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qi3rq/lKfkTKHCFllxIMfEiNIgwb77QXH8sn4XLhppg=;
-        b=Uzb7Dkh3Ud1jzK+TcOicpsEBguAcuKJN3zT86yzyRp+9IaIGzbsXOIGJrGOTqACjHO
-         IxYp6bMt4EJdT2zbHQ0rYNW8n064dW2H7qqqCP75yIyIJELxynsw3koDfjzStI5DUNPR
-         71wcaACP/Wbw4CcEjXq3oAVZYLLz3Tefz9tgfxORhihZRfctB8NTC7RRIIwf0DtdTj5a
-         TVHKh7NTRy9Vpy1ATQ4tYJkYTJ5qpQluw2A4REaXiK0mct06wJTHn3HeI6N3l61eLsc5
-         ZAHI6PkrHE5JXnOZlgob11z/Z5BUSeNlEEr8dTVq+sffNjBaxhXoq/jaceR1/opzvPA7
-         EcjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcrktA4R2BbiyfzKnVdA3ItPcJq2/40iOesFv0a+fS3OuV9KFt1N1sN6Vrk63viH/LOzbEpji+FCVXd8Go5jwOLtzHOtEvjkrCdB9B
-X-Gm-Message-State: AOJu0YziFHLCI5y2FSKDAAWwC+hjaZJjjPwRv0nHw3fsEYDiiyh5Z9c6
-	TBIbFNMC2O9Yp4gSQQ7B/n5dOo+vykmthukMgOEMzSepfzSm4eyeCzpLY4zrkGxnKKw7e5h+yiK
-	StPLjpjrxerD23xoGvm8p6Q5XMCV29OCmIm//iQ==
-X-Google-Smtp-Source: AGHT+IFvNvlDRb0RRyGJLPid0eBANNAt5GYyAHLtB+VTyIBGbkRANVmJBbGXYfdU28+FTfNGN7gmsi891v5NwqN4/Ys=
-X-Received: by 2002:a25:4bc2:0:b0:de6:162f:c71c with SMTP id
- 3f1490d57ef6-dfa4649391emr876301276.18.1716968442860; Wed, 29 May 2024
- 00:40:42 -0700 (PDT)
+	s=arc-20240116; t=1716968449; c=relaxed/simple;
+	bh=BmWczAvYIeY9VwvByXvG9gzCDUlCbbCoQ+eCq6ftLcc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L/qepRrZQdqcbETqA73PUf8XmjfALa/oRtd0NR8RBS1srg0xd7EgX3pFcQKPEybnralVJJWqx7ttzBYFHaBz+meZLG1jiPw1RyFo11GbJtt96fwLv+n6Ztczl+ZDjfIWYeFpNIEw8EKB0HBaFfRwk9/TGSUTCvkCEv2qxIlaEvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=OWwgYptm; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T61TAL007720;
+	Wed, 29 May 2024 00:40:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=3
+	y7USUWFIL48Kqj676CFLy76yOo1qxAqx2O8QrwalVM=; b=OWwgYptmQKzMbGSLv
+	VWmdlbnAfNDMQpapjDKRM8CRtASmg8pN21FTnHxPuyzplhnUVOBXF3ar0oVXqv/+
+	EL/JcAieR18Qy8nYuh9JbmiMuxnY4lQ5V7rpF4x1vPq0kYkOEl2p0Ps2Jpi3l9a2
+	buRB80HESk+oREw808bVIedRprwwBfNkVX1m2M7Yc5oDx3tD9+XbBUvaEQxtAQdO
+	s9n7DFAmM+BBr66Ed4jNptG5EetTimez0Op+FEBqt+jkt6Oa8/fkAio8usKy15RT
+	vNru0ihhxHUtF7utzf8SBZQqZZrSiQeeIK4vmbtfakA28YOMP266xIzx4520RFYt
+	k9xLg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3ydxqq0977-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 00:40:42 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 29 May 2024 00:40:40 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 29 May 2024 00:40:40 -0700
+Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
+	by maili.marvell.com (Postfix) with ESMTP id 7722F5B6949;
+	Wed, 29 May 2024 00:40:40 -0700 (PDT)
+From: Witold Sadowski <wsadowski@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <broonie@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
+Subject: [PATCH v6 1/5] spi: cadence: Ensure data lines set to low during dummy-cycle period
+Date: Wed, 29 May 2024 00:40:32 -0700
+Message-ID: <20240529074037.1345882-2-wsadowski@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240529074037.1345882-1-wsadowski@marvell.com>
+References: <20240529074037.1345882-1-wsadowski@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528-qcom-gdscs-v1-0-03cf1b102a4f@linaro.org>
- <20240528-qcom-gdscs-v1-5-03cf1b102a4f@linaro.org> <a893eb89-1956-4ba2-84cc-e9b64b87524a@kernel.org>
-In-Reply-To: <a893eb89-1956-4ba2-84cc-e9b64b87524a@kernel.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 29 May 2024 10:40:31 +0300
-Message-ID: <CAA8EJprwQ0N_PfPjTHFppZ2SdQVCXxPrZmVZ0B8+gybm_75toA@mail.gmail.com>
-Subject: Re: [PATCH 05/10] dt-bindings: clock: qcom,gcc-nopd.yaml: force node name
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Robert Marko <robimarko@gmail.com>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: XM9EtSmt13a7HSU8gCyqIt74a_QkVHYM
+X-Proofpoint-ORIG-GUID: XM9EtSmt13a7HSU8gCyqIt74a_QkVHYM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
 
-On Wed, 29 May 2024 at 10:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 28/05/2024 22:43, Dmitry Baryshkov wrote:
-> > Force GCC device nodes to have the name 'clock-controller'. Several
-> > platforms used 'gcc' here.
->
-> Well, only ones coming from Qualcomm being downstream-based:
->
-> Author: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Date:   Thu Jun 29 11:48:33 2017 +0530
->
-> Author: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Date:   Sun Jan 19 18:43:20 2020 +0530
->
-> (and there was also older with node name qcom,gcc, so clearly copy-paste
-> from downstream sources)
->
-> yet still we do not enforce names in individual schemas. You add it now
-> and next month turns out there is a power-reset-clock-controller which
-> could use gcc.yaml, but cannot because of node name enforcement.
+During dummy-cycles xSPI will switch GPIO into Hi-Z mode. In that dummy
+period voltage on data lines will slowly drop, what can cause
+unintentional modebyte transmission. Value send to SPI memory chip will
+depend on last address, and clock frequency.
+To prevent unforeseen consequences of that behaviour, force send
+single modebyte(0x00).
+Modebyte will be send only if number of dummy-cycles is not equal
+to 0. Code must also reduce dummycycle byte count by one - as one byte
+is send as modebyte.
 
-Ok, please ignore this patch, I'll drop it from the next iteration
+Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
+---
+ drivers/spi/spi-cadence-xspi.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
+index 8648b8eb080d..cdce2e280f66 100644
+--- a/drivers/spi/spi-cadence-xspi.c
++++ b/drivers/spi/spi-cadence-xspi.c
+@@ -145,6 +145,9 @@
+ #define CDNS_XSPI_STIG_DONE_FLAG		BIT(0)
+ #define CDNS_XSPI_TRD_STATUS			0x0104
+ 
++#define MODE_NO_OF_BYTES			GENMASK(25, 24)
++#define MODEBYTES_COUNT			1
++
+ /* Helper macros for filling command registers */
+ #define CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_1(op, data_phase) ( \
+ 	FIELD_PREP(CDNS_XSPI_CMD_INSTR_TYPE, (data_phase) ? \
+@@ -157,9 +160,10 @@
+ 	FIELD_PREP(CDNS_XSPI_CMD_P1_R2_ADDR3, ((op)->addr.val >> 24) & 0xFF) | \
+ 	FIELD_PREP(CDNS_XSPI_CMD_P1_R2_ADDR4, ((op)->addr.val >> 32) & 0xFF))
+ 
+-#define CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_3(op) ( \
++#define CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_3(op, modebytes) ( \
+ 	FIELD_PREP(CDNS_XSPI_CMD_P1_R3_ADDR5, ((op)->addr.val >> 40) & 0xFF) | \
+ 	FIELD_PREP(CDNS_XSPI_CMD_P1_R3_CMD, (op)->cmd.opcode) | \
++	FIELD_PREP(MODE_NO_OF_BYTES, modebytes) | \
+ 	FIELD_PREP(CDNS_XSPI_CMD_P1_R3_NUM_ADDR_BYTES, (op)->addr.nbytes))
+ 
+ #define CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_4(op, chipsel) ( \
+@@ -173,12 +177,12 @@
+ #define CDNS_XSPI_CMD_FLD_DSEQ_CMD_2(op) \
+ 	FIELD_PREP(CDNS_XSPI_CMD_DSEQ_R2_DCNT_L, (op)->data.nbytes & 0xFFFF)
+ 
+-#define CDNS_XSPI_CMD_FLD_DSEQ_CMD_3(op) ( \
++#define CDNS_XSPI_CMD_FLD_DSEQ_CMD_3(op, dummybytes) ( \
+ 	FIELD_PREP(CDNS_XSPI_CMD_DSEQ_R3_DCNT_H, \
+ 		((op)->data.nbytes >> 16) & 0xffff) | \
+ 	FIELD_PREP(CDNS_XSPI_CMD_DSEQ_R3_NUM_OF_DUMMY, \
+ 		  (op)->dummy.buswidth != 0 ? \
+-		  (((op)->dummy.nbytes * 8) / (op)->dummy.buswidth) : \
++		  (((dummybytes) * 8) / (op)->dummy.buswidth) : \
+ 		  0))
+ 
+ #define CDNS_XSPI_CMD_FLD_DSEQ_CMD_4(op, chipsel) ( \
+@@ -351,6 +355,7 @@ static int cdns_xspi_send_stig_command(struct cdns_xspi_dev *cdns_xspi,
+ 	u32 cmd_regs[6];
+ 	u32 cmd_status;
+ 	int ret;
++	int dummybytes = op->dummy.nbytes;
+ 
+ 	ret = cdns_xspi_wait_for_controller_idle(cdns_xspi);
+ 	if (ret < 0)
+@@ -365,7 +370,12 @@ static int cdns_xspi_send_stig_command(struct cdns_xspi_dev *cdns_xspi,
+ 	memset(cmd_regs, 0, sizeof(cmd_regs));
+ 	cmd_regs[1] = CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_1(op, data_phase);
+ 	cmd_regs[2] = CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_2(op);
+-	cmd_regs[3] = CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_3(op);
++	if (dummybytes != 0) {
++		cmd_regs[3] = CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_3(op, 1);
++		dummybytes--;
++	} else {
++		cmd_regs[3] = CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_3(op, 0);
++	}
+ 	cmd_regs[4] = CDNS_XSPI_CMD_FLD_P1_INSTR_CMD_4(op,
+ 						       cdns_xspi->cur_cs);
+ 
+@@ -375,7 +385,7 @@ static int cdns_xspi_send_stig_command(struct cdns_xspi_dev *cdns_xspi,
+ 		cmd_regs[0] = CDNS_XSPI_STIG_DONE_FLAG;
+ 		cmd_regs[1] = CDNS_XSPI_CMD_FLD_DSEQ_CMD_1(op);
+ 		cmd_regs[2] = CDNS_XSPI_CMD_FLD_DSEQ_CMD_2(op);
+-		cmd_regs[3] = CDNS_XSPI_CMD_FLD_DSEQ_CMD_3(op);
++		cmd_regs[3] = CDNS_XSPI_CMD_FLD_DSEQ_CMD_3(op, dummybytes);
+ 		cmd_regs[4] = CDNS_XSPI_CMD_FLD_DSEQ_CMD_4(op,
+ 							   cdns_xspi->cur_cs);
+ 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
