@@ -1,145 +1,253 @@
-Return-Path: <linux-kernel+bounces-194689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFE08D3FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:04:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95828D4001
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011F628839B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23BF71F2425D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B699A1C8FBB;
-	Wed, 29 May 2024 21:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF65F1C8FCA;
+	Wed, 29 May 2024 21:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ai8QAR5e"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fDVwffn9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD631C8FB0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A200B1C8FB0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717016643; cv=none; b=UttrgA6So6rYNqmRy34Ri89vRlNivvT2IVN/xlhbYS1+NVtlxBw5g/m89Dbz3b+E6FBNbEiU7msN1OR9JsB8lfCw5eCibjsPg5ER0SG6T2p934GVfGdQAgl9mVbKk1H8I4N/1/DhglUmK/wmlDxavdxs9fz1Bh+gdEhuxpYMCD8=
+	t=1717016665; cv=none; b=G5UAvbdsFdSjL0vd5dxHM3AQh3XEPci60cYbvGwc/ejmYbgIIEtoGsmaKuL3/fddEHS/cWb5zQgwqK4vi2djDxRdaJSWCaezUtw3Tag6RQxnG2YS4dsJAn/7gdAabbnYe4cdJktX7DnAa5tHeDOwKCiEMLQL7XUYwyCTJuv63Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717016643; c=relaxed/simple;
-	bh=BCBSe826+nKw2daLQ4TIlXiD2I054RSipXGDwuLppXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=egTcnN1UqHFtNdpncIU8I8EhkATSJhoSqvPOl400kLGxA8qrKy3sKAS24/XsKDEMpBJxnE/jW2MmEjHDzBBb/7tB+2ZnoGTQZKX20kL0/Y+eX9MTAs3xoWIgMSP2OlQG+srnEHSGAbDFdZ1TsiNX0XGwRYH9GtW2Z9+9OSA7M8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ai8QAR5e; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-41ff3a5af40so4465e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717016639; x=1717621439; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BCBSe826+nKw2daLQ4TIlXiD2I054RSipXGDwuLppXE=;
-        b=Ai8QAR5eD9hE58FabJ7IUan77gGrx6D9fzz2qxEFjH7BAjMx043mI+Q/AODvtvW6bH
-         K0jSGe6lL9GDzAm09ShQ36vXHRSLZdBHjSNZYe8UxsDEa3UNgMuvk0RtQjslJqg/fz3F
-         gcQ2Ddimuml9EDcGtDjDqu0ML7QxQSAkMj8B9NQNdT6A+UgFdv/BOE5/TecWhF4u9e22
-         2F+OmDNQI7fxpm80Jvni853aOc9uuTqUbk53wz+j8rmuQHoPPzgVnVWvno6o93Wujv3P
-         L5PZorKBHjn+rEUcCAW3/nc6v2k+Gzl2V6RqqBbMVsUjFe/lGh3gm5dURiXQAOYtLFCa
-         vPXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717016639; x=1717621439;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BCBSe826+nKw2daLQ4TIlXiD2I054RSipXGDwuLppXE=;
-        b=iuXG2k7Bmv5TNwhVXsutQkEaKOjOgIUeAq86LJ6w23HLpof+vKSoc8pVBmNNYds11+
-         zY794ouC3+WSEImBY8RdYdKXFBkFRe5RBDkdoR0ytaHslX8Pp1+f5DVKSSxA4sxxBADs
-         ueO3i1jm/49Ics206pVpIGYbrFjvGvTMVtDSWWIdJdy9ff4/1iGWusVs6foJqRRhcco3
-         d651H7xYDU2F19je96ChVAot7pG0GxIvwZa+UkV06J1mBc9kwLvetOAREcRJnAvDlGmW
-         Z9huOJgww7HghAcisACOMg+N4x5aNDKjS0CAw1KK7zpdk7r7dELoY0w/3jAelVzjRZLo
-         TiLw==
-X-Forwarded-Encrypted: i=1; AJvYcCU10TSnWj38OdpQBE+Tgmm6TrCtURz7CuDBByDE/KFErPY5pKNLGLW4zafNZqbWJeq8Wa8GRUfYRW6QOkhhvr2sr60rvJqcId+L1NEy
-X-Gm-Message-State: AOJu0Yxf/UqKtLe2g82QHJPc6whHjYCPtycPHp8pIhaYpIZk1L5OYHke
-	g2pu+Q8ZEGVOSDS2I6dQohOFGIc8Juvbnnf+lqfRE3vuoJA4d5UDkJlv7pGo1BeEj9tyfTWQT1u
-	X8+nh2H6FzlRd5f0nx5RS3pzCctg43OM41LFg
-X-Google-Smtp-Source: AGHT+IHwVBgFo5das5shZb/z5hgC8KCkV+Jkj5w99z9LyfmWhmSM4ldtkdm2dxotNGGlvICz4N/Nu5ZLrwoOjjiw7Io=
-X-Received: by 2002:a05:600c:3b85:b0:41b:4c6a:de7a with SMTP id
- 5b1f17b1804b1-42127ec7dbdmr148185e9.3.1717016639372; Wed, 29 May 2024
- 14:03:59 -0700 (PDT)
+	s=arc-20240116; t=1717016665; c=relaxed/simple;
+	bh=iMtIvobYI0H9G7tHBc7YyOTeHwx/p57qqvfNbF270pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IVdk7UFpDLXc4d6MhbaiBkeH1uyyOOE/IUfDssMuCXVyFRyS9nGy/CM2AREVpXtkFzVPhH2JIOlWDV16FttXNbGiynGeVVYtbmAE2nbPNXCdw/97GcHyhtFrq0zpCcelh7sDdQalW2leuXUCiyxjtBNWPIKfLUydrxHVLvSzNr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fDVwffn9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717016662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tupnB1YLeLXMhE46LR4yaeakn/pWQ8hjwTVAwcgO5mI=;
+	b=fDVwffn9ERfWvR486BGabJ73yeDwDkeIumayAi2kS9TkntUwGOkBtF9K1Dad5pD9Kl7qS4
+	zz9NnSquIYV+yDFbyq6+r/gJjMgYW3YGdDtX0sOPcucdK9kNG8YB8N7UNLLHwOxVIEAmjN
+	zJZBayxqHholNTbaCiZybWFyOhA8gUg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-100-Hki8t8H2MDKypt6_4pUH6g-1; Wed, 29 May 2024 17:04:19 -0400
+X-MC-Unique: Hki8t8H2MDKypt6_4pUH6g-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D82DD8016E9;
+	Wed, 29 May 2024 21:04:18 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.18.140])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5AA511C0D100;
+	Wed, 29 May 2024 21:04:18 +0000 (UTC)
+Date: Wed, 29 May 2024 17:04:16 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Lukas Hruska <lhruska@suse.cz>
+Cc: pmladek@suse.com, mbenes@suse.cz, jpoimboe@kernel.org,
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, mpdesouza@suse.com,
+	Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v2 2/6] livepatch: Add klp-convert tool
+Message-ID: <ZleYUN4z4jizCteM@redhat.com>
+References: <20240516133009.20224-1-lhruska@suse.cz>
+ <20240516133009.20224-3-lhruska@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529180510.2295118-1-jthoughton@google.com> <20240529180510.2295118-3-jthoughton@google.com>
-In-Reply-To: <20240529180510.2295118-3-jthoughton@google.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Wed, 29 May 2024 15:03:21 -0600
-Message-ID: <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
- in aging
-To: James Houghton <jthoughton@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Ankit Agrawal <ankita@nvidia.com>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Bibo Mao <maobibo@loongson.cn>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Sean Christopherson <seanjc@google.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516133009.20224-3-lhruska@suse.cz>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Wed, May 29, 2024 at 12:05=E2=80=AFPM James Houghton <jthoughton@google.=
-com> wrote:
->
-> Secondary MMUs are currently consulted for access/age information at
-> eviction time, but before then, we don't get accurate age information.
-> That is, pages that are mostly accessed through a secondary MMU (like
-> guest memory, used by KVM) will always just proceed down to the oldest
-> generation, and then at eviction time, if KVM reports the page to be
-> young, the page will be activated/promoted back to the youngest
-> generation.
+Hi Lukas,
 
-Correct, and as I explained offline, this is the only reasonable
-behavior if we can't locklessly walk secondary MMUs.
+As mentioned offlist, reviewing and testing this is on my TODO list, but
+here are some early notes ...
 
-Just for the record, the (crude) analogy I used was:
-Imagine a large room with many bills ($1, $5, $10, ...) on the floor,
-but you are only allowed to pick up 10 of them (and put them in your
-pocket). A smart move would be to survey the room *first and then*
-pick up the largest ones. But if you are carrying a 500 lbs backpack,
-you would just want to pick up whichever that's in front of you rather
-than walk the entire room.
+On Thu, May 16, 2024 at 03:30:05PM +0200, Lukas Hruska wrote:
+> Livepatches need to access external symbols which can't be handled
+> by the normal relocation mechanism. It is needed for two types
+> of symbols:
+> 
+>   + Symbols which can be local for the original livepatched function.
+>     The alternative implementation in the livepatch sees them
+>     as external symbols.
+> 
+>   + Symbols in modules which are exported via EXPORT_SYMBOL*(). They
+>     must be handled special way otherwise the livepatch module would
+>     depend on the livepatched one. Loading such livepatch would cause
+>     loading the other module as well.
+> 
+> The address of these symbols can be found via kallsyms. Or they can
+> be relocated using livepatch specific relocation sections as specified
+> in Documentation/livepatch/module-elf-format.txt.
+> 
+> Currently, there is no trivial way to embed the required information as
+> requested in the final livepatch elf object. klp-convert solves this
+> problem by using annotations in the elf object to convert the relocation
+> accordingly to the specification, enabling it to be handled by the
+> livepatch loader.
+> 
+> Given the above, create scripts/livepatch to hold tools developed for
+> livepatches and add source files for klp-convert there.
+> 
+> Allow to annotate such external symbols in the livepatch by a macro
+> KLP_RELOC_SYMBOL(). It will create symbol with all needed
+> metadata. For example:
+> 
+>   extern char *saved_command_line \
+>                  KLP_RELOC_SYMBOL(vmlinux, vmlinux, saved_command_line, 0);
 
-MGLRU should only scan (or lookaround) secondary MMUs if it can be
-done lockless. Otherwise, it should just fall back to the existing
-approach, which existed in previous versions but is removed in this
-version.
+Nit: should this be KLP_RELOC_SYMBOL_POS if it including the 0 position?
+(Or KLP_RELOC_SYMBOL and omit the implied 0-th position.)
 
-> Do not do look around if there is a secondary MMU we have to interact
-> with.
->
-> The added feature bit (0x8), if disabled, will make MGLRU behave as if
-> there are no secondary MMUs subscribed to MMU notifiers except at
-> eviction time.
->
-> Suggested-by: Yu Zhao <yuzhao@google.com>
-> Signed-off-by: James Houghton <jthoughton@google.com>
+> diff --git a/scripts/livepatch/elf.c b/scripts/livepatch/elf.c
+> --- /dev/null
+> +++ b/scripts/livepatch/elf.c
+> +static int update_shstrtab(struct elf *elf)
+> +{
+> +	struct section *shstrtab, *sec;
+> +	size_t orig_size, new_size = 0, offset, len;
+> +	char *buf;
+> +
+> +	shstrtab = find_section_by_name(elf, ".shstrtab");
+> +	if (!shstrtab) {
+> +		WARN("can't find .shstrtab");
+> +		return -1;
+> +	}
+> +
+> +	orig_size = new_size = shstrtab->size;
+> +
+> +	list_for_each_entry(sec, &elf->sections, list) {
+> +		if (sec->sh.sh_name != ~0U)
+> +			continue;
+> +		new_size += strlen(sec->name) + 1;
+> +	}
+> +
+> +	if (new_size == orig_size)
+> +		return 0;
+> +
+> +	buf = malloc(new_size);
+> +	if (!buf) {
+> +		WARN("malloc failed");
+> +		return -1;
+> +	}
+> +	memcpy(buf, (void *)shstrtab->data, orig_size);
 
-This is not what I suggested, and it would have been done in the first
-place if it hadn't regressed the non-lockless case.
+While reviewing klp-convert v7 [1], Alexey Dobriyan notes here,
 
-NAK.
+"This code is called realloc(). :-)"
+
+[1] https://lore.kernel.org/live-patching/4ce29654-4e1e-4680-9c25-715823ff5e02@p183/
+
+> +static int update_strtab(struct elf *elf)
+> +{
+> +	struct section *strtab;
+> +	struct symbol *sym;
+> +	size_t orig_size, new_size = 0, offset, len;
+> +	char *buf;
+> +
+> +	strtab = find_section_by_name(elf, ".strtab");
+> +	if (!strtab) {
+> +		WARN("can't find .strtab");
+> +		return -1;
+> +	}
+> +
+> +	orig_size = new_size = strtab->size;
+> +
+> +	list_for_each_entry(sym, &elf->symbols, list) {
+> +		if (sym->sym.st_name != ~0U)
+> +			continue;
+> +		new_size += strlen(sym->name) + 1;
+> +	}
+> +
+> +	if (new_size == orig_size)
+> +		return 0;
+> +
+> +	buf = malloc(new_size);
+> +	if (!buf) {
+> +		WARN("malloc failed");
+> +		return -1;
+> +	}
+> +	memcpy(buf, (void *)strtab->data, orig_size);
+
+I think Alexey's realloc suggestion would apply here, too.
+
+> +static int write_file(struct elf *elf, const char *file)
+> +{
+> +	int fd;
+> +	Elf *e;
+> +	GElf_Ehdr eh, ehout;
+> +	Elf_Scn *scn;
+> +	Elf_Data *data;
+> +	GElf_Shdr sh;
+> +	struct section *sec;
+> +
+> +	fd = creat(file, 0664);
+> +	if (fd == -1) {
+> +		WARN("couldn't create %s", file);
+> +		return -1;
+> +	}
+> +
+> +	e = elf_begin(fd, ELF_C_WRITE, NULL);
+
+Alexy also found an ELF coding bug:
+
+"elf_end() doesn't close descriptor, so there is potentially corrupted
+data. There is no unlink() call if writes fail as well."
+
+> +void elf_close(struct elf *elf)
+> +{
+> +	struct section *sec, *tmpsec;
+> +	struct symbol *sym, *tmpsym;
+> +	struct rela *rela, *tmprela;
+> +
+> +	list_for_each_entry_safe(sym, tmpsym, &elf->symbols, list) {
+> +		list_del(&sym->list);
+> +		free(sym);
+> +	}
+> +	list_for_each_entry_safe(sec, tmpsec, &elf->sections, list) {
+> +		list_for_each_entry_safe(rela, tmprela, &sec->relas, list) {
+> +			list_del(&rela->list);
+> +			free(rela);
+> +		}
+> +		list_del(&sec->list);
+> +		free(sec);
+> +	}
+> +	if (elf->fd > 0)
+> +		close(elf->fd);
+
+Alexy found another ELF coding bug here:
+
+"Techically, it is "fd >= 0"."
+
+
+I had coded fixes for these in a v8-devel that I never finished.  It
+shouldn't be too hard to fix these up in the minimal version of the
+patchset, but lmk if you'd like a patch.
+
+That's all for now.  My plan is to try and turn off kpatch-build's
+klp-relocation code and see how passing through to klp-convert fares.
+That would give us a good comparison of real-world examples that need to
+be handled and tested.
+
+--
+Joe
+
 
