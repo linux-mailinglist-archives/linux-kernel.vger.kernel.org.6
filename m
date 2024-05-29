@@ -1,105 +1,142 @@
-Return-Path: <linux-kernel+bounces-193296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B717B8D29F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:28:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70758D29D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F002891D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781AF1F257B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB8C15ADA3;
-	Wed, 29 May 2024 01:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1872D15A863;
+	Wed, 29 May 2024 01:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fBFPbQ6U"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqWK6XrZ"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AC015A841;
-	Wed, 29 May 2024 01:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E36C632;
+	Wed, 29 May 2024 01:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716946122; cv=none; b=N02NJuVDiKBMtrus7u2Sxi4XDhOJUi6mRQSYK6P6XbBVLQwxmLLKYqATe3qQ720RuDtGl6daa1Vlm/lIPanSmDOdRTy3kAL+kj6WNf2Gy1d1o4fS6SNwt+72mCE84d7w/ug0Hv4MFQcnHxs9ur9pW0n6RPRPE5a+L31ISdJvnHY=
+	t=1716945357; cv=none; b=QoGJCmKXoSPVUL06lSV1pjGyY1HikuPkg3DjMnd5MLfDmHwqEi7i7DDA3/Egr2XgKWEMUItxUVZZZhKdIspRi5Gx/aBTmvHE7CWHzXPYPyyROFTeV40ZBaMk99sFVre0WKFhzh3UbTtjpJITdk8abywCPNyg2HxttiBWdW9Yu8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716946122; c=relaxed/simple;
-	bh=j3htC+RmfS/MluEVClfrUS0wbKNXXr8GUemPYhAO0v0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=NJe+8n9uiODh8P+O2qxXUIkXyQGqnXYYoy7VcYCFZ8KDYctkKI/Ex96EXIk4lDM2jXBDGq+x9LU6HxqJGlyY8eDzqtQ82yJnLTVNNH2hhVmnJtswTTcYxW5UL9dgZqODTwunL4Ku/Fvdq95LBVOHUnMCar0Y1lRvjIRl1iC+e8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fBFPbQ6U; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1716946109; bh=OOjVQMK7W8tJWIF171tEGyp2a8xk0aKQ+MIa3W0Xb6s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fBFPbQ6UAMbL/dqr0GXJu81N8umE1vc+k/9ZGL5SQQeODA9v2iIO8XHU1jqB+HuDO
-	 iWavkQyDfmJHgn5Gau0YEJ/nFBe4xxJCKPIPMEHXEqzRp/b1bcF8StrVJr+6knuW1D
-	 SMinDgrh41Mn+5j6jyuLS34xgecrnLH2FoYBqLao=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id 3C1310D4; Wed, 29 May 2024 09:15:01 +0800
-X-QQ-mid: xmsmtpt1716945301tgjycg6rl
-Message-ID: <tencent_72297DA3B4444FF762977666C65361437E05@qq.com>
-X-QQ-XMAILINFO: M/NR0wiIuy70guOsM/HY0pDqYQRhlhcRAMO0baPQfpwTWUVC+XwO2+YZXLXkCd
-	 Ah6koRaVDbU5rMY7FURDqchAGTGzGkBCmgMe8MfydY2uIYFBzk/2WOnWW8gdnxzPbf1/HmnPVnZc
-	 vqFgrJqQye4W4tgTDazT6I0ityKM52D0mryV2A+eVamH8ciEL+OCwCg4+Oi2gAQwAURbk5DARsaS
-	 /kg5HoSn+sNuqkwP1/NACkkHHvYOhOzF/NylHkNJk1P5wDtQxDMcnQ1n+Pmuybdi9Mw6leQhtXDo
-	 VpK3dRWO2QjxQCtS8cSKOyaBN2K+UDQkly23VTjA2avWrATAeH7X/0jbrBsgxOgA/sGomb/LhUlh
-	 tHKW8lNq56zg3s8t29JFMDsumsBcTx8nFHOUF3xy2kLIbwOweUIbTyr9Yi5IYHWVomCM6O84GY9l
-	 0QEN1Q3ff5H9+TewKblnCYgBmRf7SKqRcwesH0YCylGHk6FMD278Dm65FAs5rzbakFQYnUX82bGp
-	 K9YNFRV67GSmBHRVE4AZxPN1aQytbWh14EnMLU0x5EBNvf4rCr7VwoTfXg0nozRvsks+eiB8h0iZ
-	 bLjdDhXUZpBtgzEBNd/1GDbTScGv6OPYNf2jxVZIsr9MCFFplFi2qAnooKACTtnTH+4Lu4Q6lVH0
-	 tYJarfKD3zHh4zXm1rMs4RNM1MeVe5vN+hcL24DZD+nFOxQrTJ3yRGgpk8Ebu4h33lLD2D1OB5WX
-	 p2fOrT/krxe5STcSyxLOAZBLvzfygbmHvmIShFzyPrjqtUqGhATsG8p+B2AWKHX7paQc/4FZ/D4G
-	 DzHwwdk9sD46F4aZ/in7SfJ8tMYzIqSPfD6IdyiHPHNvALPsbY/ulXnuDMTzQMCvEfCAiZB465ti
-	 /xIYWvgSSHIzh/eeOMKtWU42CyV5VVnqP9ouZidC9Sggwg5BiGWewwCcyDVn9eWZBuITLpkXRT
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+fe42a669c87e4a980051@syzkaller.appspotmail.com
-Cc: adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: [PATCH] fs/dcache: fix warning in ext4_xattr_inode_lookup_create
-Date: Wed, 29 May 2024 09:15:02 +0800
-X-OQ-MSGID: <20240529011501.2190031-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000002b03350619853096@google.com>
-References: <0000000000002b03350619853096@google.com>
+	s=arc-20240116; t=1716945357; c=relaxed/simple;
+	bh=fu5h1VLTePpmxGzHtWBWm8qsfXfU3OcS0nx2N9r/Z20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cwFFKRE0YHWb5YBj5PnI1nqtH6PiIuu0sDoQrtrmfkwHszl2mUtMJk8oNyKqC9ckJA1DMlt+bJYfW/bdsQH4U4P1cmzfgIsVsBqaNWwIHQHfs3IWNe4AIEuBJGlwyOFFHEcSpbuWX+mXrxmJ7oxYSw3/jHIVx8CJ+wLQRhdTdmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqWK6XrZ; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5785e443cf4so1491128a12.3;
+        Tue, 28 May 2024 18:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716945354; x=1717550154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dkttBqYur5VmeYZbcuQ4bNxlcQKOfUsclUNLqJlUw/0=;
+        b=DqWK6XrZNDKSX1BURG61tvVg3bDsW/Qp2YczHv1uuEZoHbZSJWpOXgG5G8K4fy+OFK
+         KBGMpAQrkF0vo+oCXsNE2iLM90yaHvH0lRt2yX19wOiG1l5RG0bqTJV68qjSWe3R3xoS
+         aYg+4g96rvFzB8mKjuI77vJw6tKpSKQzrwGHzHFZIi3OYIBAVbQ0C7GRFpOrtjHw5FzT
+         Zvu8NwRJdCPXeJP4sumnS3kPJO5R/B7YwR8VIfTCjqQAhe87k1UL1CYBY0FlZ9qOI7jS
+         Fa801gOHmJpxJFCpORLZRyxNqlNSSeEtGt8wNRbQ/QHPFpT0mCm23xZREJeFQfiq6fHo
+         zbDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716945354; x=1717550154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dkttBqYur5VmeYZbcuQ4bNxlcQKOfUsclUNLqJlUw/0=;
+        b=fvG6yujCOaue4hGev0Lx5MxHeIvQ8nneMkpMIhwWV67RAPQjtqvKfnElBXgxfWUYmR
+         ezhQoMsDUbmUigtk1PyK7QNJpUyGII4FsReRYAUjOmEFTdDs8DUAiZOO0xdClL7k5HHS
+         7a6q/XPsCFPKrpr6QGaFIVy/n6jaQNVUeLdIVvVETWnOg+UKNBjlIs8pCOTemGNLdJ2n
+         zyd1uhf3t4DmxCM8xv2W66TqJO2lQF9ip5OC7CPSLSQTyhvT7/bib1B2RdFBiWcWcYFz
+         utCTpFs0f6TAidLN8hMpXFv4AWnwufdk6YqlnRk+21fHFZSY+U4Sm6Wa/oOFsBHC9CRl
+         4+/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVG8O/cWpSxlRyFPlVqgtonR5Yw158zmOuS+BA6mxNqu7/U1yVVwA7byDV2TGTIgPBTNeONy6Bcm3OFZrCfSHnPriO28Vr8EiGaqx8MLh2ARZVdTUFD3PUQFGKvz7uUwQSUjPdWR4GKJHfcIx511QRNspVvSbZ0pLLHC1MBwNj6JGKrDsg=
+X-Gm-Message-State: AOJu0YzepHV6jfN1pA2gEUgHV0irzLAjgCalOaBzXjE4MxGNPcG3pwjY
+	2rv6jXqTnFuWt8gr9WnO/7b6bAT+kjKRCD6py4tmMu2Yp/kF7aRLfhy0/MONZfu5tFZYp0EOB+c
+	RYdPWNB8+0LkcbZ0P6za0GpADPWZAng==
+X-Google-Smtp-Source: AGHT+IHyxyhKthaWgMwE6kMyfK+bLZ11R28UBPmFZV6BzjKc6hhsxMuv7nztpRo3OH+U9Y+ASwIkM7c0M+DokgYcKJg=
+X-Received: by 2002:a50:cd4d:0:b0:578:5245:3296 with SMTP id
+ 4fb4d7f45d1cf-57852453300mr9164565a12.28.1716945353450; Tue, 28 May 2024
+ 18:15:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240527022036.31985-1-user@blabla> <CACRpkdY99LACAUsg_S4ww4U7-KU_EtkLZ+c8dsa0M85i9eJZbA@mail.gmail.com>
+ <CAMhs-H-3yM3sLvgtOn1KWPF-Ch52hqZZXbFPe2YP=xgFjZLDug@mail.gmail.com>
+In-Reply-To: <CAMhs-H-3yM3sLvgtOn1KWPF-Ch52hqZZXbFPe2YP=xgFjZLDug@mail.gmail.com>
+From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
+Date: Wed, 29 May 2024 09:15:41 +0800
+Message-ID: <CAPEOAkSH7hRJQ2duHDcUZY-0jRjcwRDks+u6KzzJ6wesgo8UCw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: ralink: mt76x8: fix pinmux function
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, arinc.unal@arinc9.com, sean.wang@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ext4_xattr_inode_lookup_create() will use s_root, so set it to NULL
-after do_one_tree().
+Sergio Paracuellos <sergio.paracuellos@gmail.com> =E4=BA=8E2024=E5=B9=B45=
+=E6=9C=8828=E6=97=A5=E5=91=A8=E4=BA=8C 22:20=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, May 28, 2024 at 3:54=E2=80=AFPM Linus Walleij <linus.walleij@lina=
+ro.org> wrote:
+> >
+> > On Mon, May 27, 2024 at 4:21=E2=80=AFAM liweihao <cn.liweihao@gmail.com=
+> wrote:
+> >
+> > > From: Weihao Li <cn.liweihao@gmail.com>
+> > >
+> > > The current version of the pinctrl driver has some issues:
+> > >
+> > > 1. Duplicated "gpio" pmx function
+> > >
+> > > The common code will add a "gpio" pmx functon to every pin group, so
+> > > it's not necessary to define a separate "gpio" pmx function in pin
+> > > groups.
+> > >
+> > > 2. Duplicated pmx function name
+> > >
+> > > There are some same function name in different pin groups, which will
+> > > cause some problems. For example, when we want to use PAD_GPIO0 as
+> > > refclk output function, the common clk framework code will search the
+> > > entire pin function lists, then return the first one matched, in this
+> > > case the matched function list only include the PAD_CO_CLKO pin group
+> > > because there are three "refclk" pin function, which is added by
+> > > refclk_grp, spi_cs1_grp and gpio_grp.
+> > >
+> > > To solve this problem, a simple way is just add a pingrp refix to
+> > > function name like mt7620 pinctrl driver does.
+> > >
+> > > 3. Useless "-" or "rsvd" functon
+> > >
+> > > It's really unnecessary to add a reserved pin mux function to the
+> > > function lists, because we never use it.
+> > >
+> > > Signed-off-by: Weihao Li <cn.liweihao@gmail.com>
+> >
+> > The patch looks good to me and Sergio: patch applied so
+> > it gets some testing in linux-next.
+> >
+> > If Arinc has issues with it or something else occurs I can
+> > always drop it again.
+>
+> Thanks, Linus :)
+>
+> Best regards,
+>     Sergio Paracuellos
 
-Reported-and-tested-by: syzbot+fe42a669c87e4a980051@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/dcache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for reviewing the code.
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 407095188f83..e2f1a3f92ce9 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1551,8 +1551,8 @@ void shrink_dcache_for_umount(struct super_block *sb)
- 	WARN(down_read_trylock(&sb->s_umount), "s_umount should've been locked");
- 
- 	dentry = sb->s_root;
--	sb->s_root = NULL;
- 	do_one_tree(dentry);
-+	sb->s_root = NULL;
- 
- 	while (!hlist_bl_empty(&sb->s_roots)) {
- 		dentry = dget(hlist_bl_entry(hlist_bl_first(&sb->s_roots), struct dentry, d_hash));
--- 
-2.43.0
-
+Best regards,
+Weihao Li
 
