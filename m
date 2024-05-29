@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-194573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49D18D3E69
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:34:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015C68D3E6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5058DB22B2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:34:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA1C1F24502
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29811C0DE9;
-	Wed, 29 May 2024 18:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755ED1C0DC4;
+	Wed, 29 May 2024 18:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="OgZhJ1v3"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="nKazFgMu"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C8B15CD55
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1D813D8A6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717007663; cv=none; b=Q/ZZRmdnHj89pAUBVM7KK3EvNHR6dljbs0wNKZ6AxjuVG2BTXxY6uowFqDEvEf6LekyVMkjORDCjR1a5M9I9GDvYNs1Q7xWbJKNx5a31xFFtMgsn0WWUKVYeq0Pz6qcdyVonU1bPcUlm+mBqDl+n7JwuxLwVdL80eKPXEMd84uc=
+	t=1717007774; cv=none; b=XxsdcjHaOZlaAWErr8pOjhtchTY2QRHbzfsj4+p1PLrFC8nC8KCXTgCgYvBrUUe92bsi4LMEW4TBlgaaYWvLeivIL2J+brbKv25jdETjS/Ej5DUIstAD7ON4lK00rPrsbs52c8MKMFRs/5HwGdeHi9HrepOOmGaBp0ePl0bodMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717007663; c=relaxed/simple;
-	bh=/LUGPZ8sRhOa4AmLVDY/nkUbCDAoK3NG9aCU9NfcpLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=itc3JihCd5xjukFHOZuOwUai1wlQoPSSkDB1s0cpqxqCVci5gRxjI+udABGGc1IPCw3tCWZBAkoWlET7KRvsK6UjTyU7wlBKKVVU5wMMa8PKZDx/zBDNf9DOtIyg3VAsLTvC+ve4DYSnrDIOK355z0XZsmkHbxd8LzcBB4qC/YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=OgZhJ1v3; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-579cd80450fso528056a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:34:20 -0700 (PDT)
+	s=arc-20240116; t=1717007774; c=relaxed/simple;
+	bh=6f0OKuDc4xwKhf8DbPPMe4W1MttTNxW/9P8EiCBR1J4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WGd3SD0eK0cpEaZ0R2ZNpCLXX0GPO2nFgdvnNsiOQq/gGkJJAixBB8fHpAr+wsbOJgmC1mff56D7YFPxLD6wySqYSxXx/MizyvB0YkN4ebS5uU66cr021XGzQrhLsbrKa/hUbrg9NeVZHlFrX0wIu71UxULh4L11yMgy/xuwe+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=nKazFgMu; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43fe05d6bc9so7716631cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717007659; x=1717612459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hD6ZFR8cVhkF2jyWECX8kqG1Td4lUwUC/HVkt49WWDc=;
-        b=OgZhJ1v3llbSl+P7ybHZpo77dFkoRJCUzreIynVyMlYFmB8JN1xCZfZtq4+H3R3kLf
-         Q87UWZtausi4A9hi4rPQ4LeW628vpUkJznLoo8zp5g2ZdlB1iZSdPnGlFxY6CuSTVkIG
-         VHnASZeLtUDC+eAqzVcx012e+3s5fLzgAmJLJeN7sNHJX8To3hLQeu0brJ9UwKgrA0E1
-         ZOx6gAs23Q6hzFNNPu+VkNNipJ7f5gNwinK9kZxKyxLTDXHDVcxjsjSMtUOGr9SdQuWq
-         VfvSda0Z3ccvlOPOp1qO22lickpvUPkjtjeZYy6r643JqSE2KET1gJ03R3hLsUYuWyH1
-         cqcg==
+        d=citrix.com; s=google; t=1717007772; x=1717612572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IzU5m9p0hW+uIvBBACeY6l1fdcE0COmEg3DhD8s4LKQ=;
+        b=nKazFgMuPoVhc11uLX6HRLwRaW39cLYgdMP09MSA9t3qvM/D9KmH23ikFjmI/S6MuB
+         6+GPQnVu6OKQlftsBbyn4nBF5andYm5XuXPnnxR0DBttmCWTtRfEPtn63ihi9JjoAcx5
+         2Ul8m48F1A02kPAxWzYC0vQqjE6Q/TvqKg5u8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717007659; x=1717612459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hD6ZFR8cVhkF2jyWECX8kqG1Td4lUwUC/HVkt49WWDc=;
-        b=HE29nxdS8SEL4zX5t9cBacd4j7U7NqzGLd4p3GVJUu5lRXHnJP3CM06+/jJOn/8L1h
-         g2MbJCB7bj44oOGAYVeBkhubh3vweDFu4wyO5mpsTQmmXRYkVvkFjHUk/inQXlp1xBU7
-         NT43cJCapRFZ39Pt942FHSxQDnZ+uHVWyRwqJqCKABoAS7K7Bvecp/HrmKi6s8TUtuaE
-         tQiC5kbzWoarpldEn+6WTRfxFasKPepHe05Su26MlyZr4gjF82Ob4qxQDaFIQnX/22oN
-         erpA9stN5vRjntt1NDoOqnjov4yVtDCobc9gZ2gUMm2UzTJKIPrQuLYWCxJQN9/PYkqh
-         jlmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1SeV1M/wrctIZx+HFL4MTncWD+3/H77GImlWEqoG2hzG5IEWFwK0hI/BNNdKBlTA1nuSr3Tynul1tRrQniVVlRlCir0M7zK/EN857
-X-Gm-Message-State: AOJu0YxTY7VFb5P1BeyL7tr4Wx4jR7Pzbf4YKDHtDbDAFVOLVtfmHnFE
-	mkrc+Lpy+bhRL1vR20SkAuI9YCaArxXKpl2DqGjqbJ0j7ZgG+XgG7tyv61IbaEZjNTsYZZaFf46
-	jLuF3vTauMjWWLkGn2z3egLhwFZtL0iiCaUJ4LA==
-X-Google-Smtp-Source: AGHT+IFfrfi+FZNye+Mi5cT1d9Y5frgn3oR/psuzmdDX57yFj6cbdF7CKYfEIUYsI39iYQu9pPkVIxjamQlqxGS+pZo=
-X-Received: by 2002:a17:906:66d0:b0:a59:be21:3587 with SMTP id
- a640c23a62f3a-a642d2780fbmr270278866b.8.1717007658800; Wed, 29 May 2024
- 11:34:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717007772; x=1717612572;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IzU5m9p0hW+uIvBBACeY6l1fdcE0COmEg3DhD8s4LKQ=;
+        b=q29iLFm6SGmkihdsQllzGf2FjYHChnxz6sI/JhNIEYp/oo99FW/l53YjqH63/uLPPN
+         8M+2dDXBgR9z6aYnHxu04ThN0n1FHVBUAhcbpciLtwllgNeTzEQxGsupPcAlZV58SLtD
+         0MKbVE27BKcy+3KueJPPAdHuf2szLFzJ+qU5ZxpKEax3eJV2tZFOrE7esuPLBghuXqZA
+         z91wlebfGNJLcskFd3H6EJ9OTP+/u3LG4MQUK0PkFX+g/LoxwpdOMrfTHXdmKDHksvsK
+         xr+rzCaFAi6ERKHLgh737hpPJPzg36mEYzTETaz/sY81z0b4A/Fd+rjzzJPHGnOfcgRS
+         /hCQ==
+X-Gm-Message-State: AOJu0YzuLOTI8iCoiaXI0LARCKwpaS5uRiZOKykprVXsTa8dOdJzw8Y8
+	Dc30RYArwKF6yZGzptcauV/neJWeVNue55amflVRC1Gi6VeR0fciutP70vzgijC5OPBLHTdgA4e
+	K63M=
+X-Google-Smtp-Source: AGHT+IGK2EaJq8xTq5YX8FECXjkU83ooRyKqStSYH41hZ4iz47ckmSjtwhF7cxHO9/usWdOChGgaSA==
+X-Received: by 2002:ac8:5f0c:0:b0:43a:ef50:e6f1 with SMTP id d75a77b69052e-43fe92c217amr1050951cf.33.1717007771517;
+        Wed, 29 May 2024 11:36:11 -0700 (PDT)
+Received: from andrew-laptop.. (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb16b792esm57101801cf.9.2024.05.29.11.36.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 11:36:11 -0700 (PDT)
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ashok Raj <ashok.raj@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>
+Subject: [PATCH] x86/cpu/intel: Drop stray FAM6 check with new Intel CPU model defines
+Date: Wed, 29 May 2024 19:36:05 +0100
+Message-Id: <20240529183605.17520-1-andrew.cooper3@citrix.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_1E3506F09D08066B8F3BAEE136C4F887540A@qq.com> <tencent_01F8E0050FB4B11CC170C3639E43F41A1709@qq.com>
-In-Reply-To: <tencent_01F8E0050FB4B11CC170C3639E43F41A1709@qq.com>
-From: Evan Green <evan@rivosinc.com>
-Date: Wed, 29 May 2024 11:33:42 -0700
-Message-ID: <CALs-Hst_TpjuQw0t-p9GbcCY4FAwXSjWziHJJuToi3rWXo7mJw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] RISC-V: hwprobe: not treat KEY_CPUPERF_0 as bitmask
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: linux-riscv@lists.infradead.org, Elliott Hughes <enh@google.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 23, 2024 at 8:36=E2=80=AFPM Yangyu Chen <cyy@cyyself.name> wrot=
-e:
->
-> Since the value in KEY_CPUPERF_0 is not bitmask, remove the wrong code
-> in hwprobe.h.
->
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+The outer if () should have been dropped when switching to c->x86_vfm.
 
-I'd expect a Fixes tag, and ideally some discussion on the reasoning
-and ramifications of this change.
+Fixes: 6568fc18c2f6 ("x86/cpu/intel: Switch to new Intel CPU model defines")
+Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+---
+CC: Tony Luck <tony.luck@intel.com>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: x86@kernel.org
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ashok Raj <ashok.raj@intel.com>
+CC: Andrew Cooper <andrew.cooper3@citrix.com>
+CC: Alison Schofield <alison.schofield@intel.com>
+CC: linux-kernel@vger.kernel.org
+---
+ arch/x86/kernel/cpu/intel.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-I posted the other possible fix, declaring a new key, at [1], mostly
-so we could see the two options and discuss. I'm okay with either
-patch.
--Evan
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index a813089ca408..a9ea0dba6f0c 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -294,17 +294,13 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	}
+ 
+ 	/* Penwell and Cloverview have the TSC which doesn't sleep on S3 */
+-	if (c->x86 == 6) {
+-		switch (c->x86_vfm) {
+-		case INTEL_ATOM_SALTWELL_MID:
+-		case INTEL_ATOM_SALTWELL_TABLET:
+-		case INTEL_ATOM_SILVERMONT_MID:
+-		case INTEL_ATOM_AIRMONT_NP:
+-			set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC_S3);
+-			break;
+-		default:
+-			break;
+-		}
++	switch (c->x86_vfm) {
++	case INTEL_ATOM_SALTWELL_MID:
++	case INTEL_ATOM_SALTWELL_TABLET:
++	case INTEL_ATOM_SILVERMONT_MID:
++	case INTEL_ATOM_AIRMONT_NP:
++		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC_S3);
++		break;
+ 	}
+ 
+ 	/*
+-- 
+2.34.1
 
-[1] https://lore.kernel.org/lkml/20240529182649.2635123-1-evan@rivosinc.com=
-/T/#u
-
-> ---
->  arch/riscv/include/asm/hwprobe.h | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hw=
-probe.h
-> index 630507dff5ea..f24cad22bbe1 100644
-> --- a/arch/riscv/include/asm/hwprobe.h
-> +++ b/arch/riscv/include/asm/hwprobe.h
-> @@ -20,7 +20,6 @@ static inline bool hwprobe_key_is_bitmask(__s64 key)
->         switch (key) {
->         case RISCV_HWPROBE_KEY_BASE_BEHAVIOR:
->         case RISCV_HWPROBE_KEY_IMA_EXT_0:
-> -       case RISCV_HWPROBE_KEY_CPUPERF_0:
->                 return true;
->         }
->
-> --
-> 2.45.1
->
 
