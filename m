@@ -1,157 +1,204 @@
-Return-Path: <linux-kernel+bounces-194500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EC18D3D32
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:09:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4203A8D3D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE549B23B41
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:09:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 657371C22555
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AA417DE18;
-	Wed, 29 May 2024 17:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9A7184115;
+	Wed, 29 May 2024 17:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a6US2YVd"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dUJZ52DZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E583B1B810
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4511B810;
+	Wed, 29 May 2024 17:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717002547; cv=none; b=bJCX6ee7Uk2kfIEJn/RB527Y6IDH83VRpBS18xNYDvzbsY2GNxZ7mDvt9PFFNcdsM0yzCvu2Gac92J78GnOwgQsC7HO0K00B/3Gkligc0r1E9q8QlFopHovk1NPiZueZA6p9bWqsdJgrlpZD16NL5gXkD/IEbpfY9JEqwrn1Y8U=
+	t=1717002613; cv=none; b=WM5G1vT1LdRL7PnkZkVjI4D6Ckejnu4w4YGDmuE/O6b/u78cft/s3ppNqxhYtC5DS0lXSGh0U3Ul3nUEpd+Ib8Imm9hEETC+wbiJ7XQxlsaxl2fBfrH8MCUWDBmJgwfSSdRTz/O0IbSwxQOmMEw6gO3Dcm15OEoKoJMqk0b9jYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717002547; c=relaxed/simple;
-	bh=8sAXQPl1bUZJD0jxm7tbfpREHEJIbUabOFHca6tTZUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D4+SqyImZBq/gCTjkq3+6z7T1B4y+egJx/sKZle674UZ9UuJmP695D9l4zhp2U/sC5YCyQdcyWidTZZtRjYBXViw1o8Y/Lpomvo8xGyUrdVoCX3bTL8lhtY0VC25bLqIZez0vePBjxt8oN02RAUtQG2Wl/fgjl6N40vEWN/9//4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a6US2YVd; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: roman.gushchin@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717002541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZCyl+E3MJ9UNj67UrMAAlRB5ugKBQHQxC1sMp2jyKYU=;
-	b=a6US2YVdl7pQ30ccWBeJx7P8rObolUkRlZPTlrWaVFW9Za+sSLp7IPwgQud2q5KqOH5rCp
-	ZtK/3TzaBlWaS4qYfsU2qINVjL6CTXJC3wmfXtuiKiqNOFlYFisWGLw2fQ6O6lIiqMu6u5
-	PNMmDV3kyI3Gt9tQFWlfGYej0alrY1U=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: riel@surriel.com
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: kernel-team@fb.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
-Date: Wed, 29 May 2024 10:08:56 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Rik van Riel <riel@surriel.com>, 
-	Michal Hocko <mhocko@kernel.org>, Facebook Kernel Team <kernel-team@fb.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm: vmscan: reset sc->priority on retry
-Message-ID: <3rtsgmhjxlaafdw7zeasyt4voa77mzpb32s6tsdz4pj4jglq4p@uuekegdnsolw>
-References: <20240529154911.3008025-1-shakeel.butt@linux.dev>
- <ZldV3pNL6ArlgPyU@P9FQF9L96D>
+	s=arc-20240116; t=1717002613; c=relaxed/simple;
+	bh=kPElXjTyALelD2PjbmCrxdvQKXiKQUMyw8XpUw8IG0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZTAQKC9+Usz7IJGTQV8f+84Lta3r4AIYbUprA0xpklN0hNzgE5s6+ML/QtsOe+hyiZFmA0q1duZEXcKNMp4pUoALqzOKnnxWSy5R1H32010CvDJNKTdpuAVx5ske6TN0G6vEECYCvZ+j5qMF/yr7H7Xd1yfanfrDyzDRCf2pBwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dUJZ52DZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T9quR7012513;
+	Wed, 29 May 2024 17:10:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	klUASvIa6B0YT5WNKDJ/OP5jG1HK4jt/YQPai7lt6FQ=; b=dUJZ52DZfdw4ua8G
+	pKFvu09aJwbSrtUxY5ptdTalfb/evYeREUDOfhbOOytMurQaLADNVKV029oKRkZr
+	MvgfoRngeOJXeavrDR2RLdBTCg+cFyanuhrr0Q0Jvx0nWNAsOzzQ/YLkNwwML4Bn
+	HD9gUPdLVNgkQhdF9d7MlyGljdxRQsQ/qVJD040dbbfwtxTjEgbe9LmdMmvE5DEK
+	MJ3l7WEpSAtK0opQAeUrBs++KBnk0T5enkyQFei/zetbJ7W5ENxfj13dD4wy/7du
+	jZwbvC2GPk7JP1gKk741Azvxs3kruz2c6tYDd6XA3FB5IjKJsg01iIVeCX9Fpwzl
+	hvWjNA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qhkaa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 17:10:06 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44THA5gG023095
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 17:10:05 GMT
+Received: from [10.110.40.14] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 10:10:01 -0700
+Message-ID: <e68a08a5-3b9e-4522-8f7c-1e3def5e0791@quicinc.com>
+Date: Wed, 29 May 2024 10:09:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZldV3pNL6ArlgPyU@P9FQF9L96D>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/5] soc: qcom: llcc: Add regmap for Broadcast_AND
+ region
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Bjorn Andersson <quic_bjorande@quicinc.com>
+References: <cover.1716228054.git.quic_uchalich@quicinc.com>
+ <2c7654492ee436b41acddf2edc65d6722c3ad6aa.1716228054.git.quic_uchalich@quicinc.com>
+ <xykcsrfq7mpu7fkjvvhfcew2x2522xmq6poua5utcn2uu5h5ub@j45xpqkedgwa>
+Content-Language: en-US
+From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+In-Reply-To: <xykcsrfq7mpu7fkjvvhfcew2x2522xmq6poua5utcn2uu5h5ub@j45xpqkedgwa>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Dg809O33S7eyAzir7H8zn34w6jRNIDfI
+X-Proofpoint-ORIG-GUID: Dg809O33S7eyAzir7H8zn34w6jRNIDfI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_13,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290119
 
-On Wed, May 29, 2024 at 09:20:46AM GMT, Roman Gushchin wrote:
-> On Wed, May 29, 2024 at 08:49:11AM -0700, Shakeel Butt wrote:
-> > The commit 6be5e186fd65 ("mm: vmscan: restore incremental cgroup
-> > iteration") added a retry reclaim heuristic to iterate all the cgroups
-> > before returning an unsuccessful reclaim but missed to reset the
-> > sc->priority. Let's fix it.
-> > 
-> > Reported-and-tested-by: syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
-> > Fixes: 6be5e186fd65 ("mm: vmscan: restore incremental cgroup iteration")
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On 5/26/2024 8:11 PM, Bjorn Andersson wrote:
+> On Mon, May 20, 2024 at 02:00:14PM GMT, Unnathi Chalicheemala wrote:
+>> Define new regmap structure for Broadcast_AND region and initialize
+>> this regmap when HW block version is greater than 4.1, otherwise
+>> initialize as a NULL pointer for backwards compatibility.
+>>
+>> Switch from broadcast_OR to broadcast_AND region (when defined in DT)
+>> for checking status bit 1 as Broadcast_OR region checks only for bit 0.
+>>
 > 
-> Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+> This is a good technical description of the change you're making. But
+> it's been long enough since we discussed this that I've forgotten which
+> problem it solves, and the commit message doesn't tell me.
 > 
-> Good catch!
+> Please add a paragraph on the top describing the actual problem this
+> solves?
+>
+Yes understood, I'll append this to the commit message:
 
-Thanks.
+To support CSR programming, a broadcast interface is used to program all
+channels in a single command. Until SM8450 there was only one broadcast
+region (Broadcast_OR) used to broadcast write and check for status bit
+0.
+From SM8450 onwards another broadcast region (Broadcast_AND) has been
+added which checks for status bit 1. This hasn't been updated and
+Broadcast_OR region was wrongly being used to check for status bit 1 all
+along.
 
+Thank you Bjorn.
+> Regards,
+> Bjorn
 > 
-> > ---
-> >  mm/vmscan.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index b9170f767353..731b009a142b 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -6317,6 +6317,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
-> >  	 * meaningful forward progress. Avoid false OOMs in this case.
-> >  	 */
-> >  	if (!sc->memcg_full_walk) {
-> > +		sc->priority = initial_priority;
-> >  		sc->memcg_full_walk = 1;
-> >  		goto retry;
-> >  	}
-> > -- 
-> > 2.43.0
-> > 
-> 
-> I wonder if it makes sense to refactor things to be more robust like this:
-
-Oh I like this as it will make sc->priority values explicit. I hope we
-don't have any hidden dependency on do-while semantics for this code
-path.
-
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index d3ae6bf1b65c7..f150e79f736da 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -6246,7 +6246,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
->         if (!cgroup_reclaim(sc))
->                 __count_zid_vm_events(ALLOCSTALL, sc->reclaim_idx, 1);
-> 
-> -       do {
-> +       for (sc->priority = initial_priority; sc->priority >= 0; sc->priority--) {
->                 if (!sc->proactive)
->                         vmpressure_prio(sc->gfp_mask, sc->target_mem_cgroup,
->                                         sc->priority);
-> @@ -6265,7 +6265,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
->                  */
->                 if (sc->priority < DEF_PRIORITY - 2)
->                         sc->may_writepage = 1;
-> -       } while (--sc->priority >= 0);
-> +       }
-> 
->         last_pgdat = NULL;
->         for_each_zone_zonelist_nodemask(zone, z, zonelist, sc->reclaim_idx,
-> @@ -6318,7 +6318,6 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
->          * good, and retry with forcible deactivation if that fails.
->          */
->         if (sc->skipped_deactivate) {
-> -               sc->priority = initial_priority;
->                 sc->force_deactivate = 1;
->                 sc->skipped_deactivate = 0;
->                 goto retry;
-> @@ -6326,7 +6325,6 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
-> 
->         /* Untapped cgroup reserves?  Don't OOM, retry. */
->         if (sc->memcg_low_skipped) {
-> -               sc->priority = initial_priority;
->                 sc->force_deactivate = 0;
->                 sc->memcg_low_reclaim = 1;
->                 sc->memcg_low_skipped = 0;
+>> Signed-off-by: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+>> Reviewed-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+>> ---
+>>  drivers/soc/qcom/llcc-qcom.c       | 16 +++++++++++++++-
+>>  include/linux/soc/qcom/llcc-qcom.h |  4 +++-
+>>  2 files changed, 18 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+>> index cbef0dea1d5d..5eac6aa567e7 100644
+>> --- a/drivers/soc/qcom/llcc-qcom.c
+>> +++ b/drivers/soc/qcom/llcc-qcom.c
+>> @@ -821,6 +821,7 @@ EXPORT_SYMBOL_GPL(llcc_slice_putd);
+>>  static int llcc_update_act_ctrl(u32 sid,
+>>  				u32 act_ctrl_reg_val, u32 status)
+>>  {
+>> +	struct regmap *regmap;
+>>  	u32 act_ctrl_reg;
+>>  	u32 act_clear_reg;
+>>  	u32 status_reg;
+>> @@ -849,7 +850,8 @@ static int llcc_update_act_ctrl(u32 sid,
+>>  		return ret;
+>>  
+>>  	if (drv_data->version >= LLCC_VERSION_4_1_0_0) {
+>> -		ret = regmap_read_poll_timeout(drv_data->bcast_regmap, status_reg,
+>> +		regmap = drv_data->bcast_and_regmap ?: drv_data->bcast_regmap;
+>> +		ret = regmap_read_poll_timeout(regmap, status_reg,
+>>  				      slice_status, (slice_status & ACT_COMPLETE),
+>>  				      0, LLCC_STATUS_READ_DELAY);
+>>  		if (ret)
+>> @@ -1284,6 +1286,18 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>>  
+>>  	drv_data->version = version;
+>>  
+>> +	/* Applicable only when drv_data->version >= 4.1 */
+>> +	if (drv_data->version >= LLCC_VERSION_4_1_0_0) {
+>> +		drv_data->bcast_and_regmap = qcom_llcc_init_mmio(pdev, i + 1, "llcc_broadcast_and_base");
+>> +		if (IS_ERR(drv_data->bcast_and_regmap)) {
+>> +			ret = PTR_ERR(drv_data->bcast_and_regmap);
+>> +			if (ret == -EINVAL)
+>> +				drv_data->bcast_and_regmap = NULL;
+>> +			else
+>> +				goto err;
+>> +		}
+>> +	}
+>> +
+>>  	llcc_cfg = cfg->sct_data;
+>>  	sz = cfg->size;
+>>  
+>> diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+>> index 1a886666bbb6..9e9f528b1370 100644
+>> --- a/include/linux/soc/qcom/llcc-qcom.h
+>> +++ b/include/linux/soc/qcom/llcc-qcom.h
+>> @@ -115,7 +115,8 @@ struct llcc_edac_reg_offset {
+>>  /**
+>>   * struct llcc_drv_data - Data associated with the llcc driver
+>>   * @regmaps: regmaps associated with the llcc device
+>> - * @bcast_regmap: regmap associated with llcc broadcast offset
+>> + * @bcast_regmap: regmap associated with llcc broadcast OR offset
+>> + * @bcast_and_regmap: regmap associated with llcc broadcast AND offset
+>>   * @cfg: pointer to the data structure for slice configuration
+>>   * @edac_reg_offset: Offset of the LLCC EDAC registers
+>>   * @lock: mutex associated with each slice
+>> @@ -129,6 +130,7 @@ struct llcc_edac_reg_offset {
+>>  struct llcc_drv_data {
+>>  	struct regmap **regmaps;
+>>  	struct regmap *bcast_regmap;
+>> +	struct regmap *bcast_and_regmap;
+>>  	const struct llcc_slice_config *cfg;
+>>  	const struct llcc_edac_reg_offset *edac_reg_offset;
+>>  	struct mutex lock;
+>> -- 
+>> 2.34.1
+>>
 
