@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-193850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9900F8D3317
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1145D8D331A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2EF11C23E50
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:33:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411001C23E3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B70169AF2;
-	Wed, 29 May 2024 09:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89D516A379;
+	Wed, 29 May 2024 09:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MTXWrx/T"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="cG3RWrcA"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F94B15AAB8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF51169AD9
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716975224; cv=none; b=u4OQ9N/e0g5fPNeb/IwbBhdvs8s1EFaQCWQenhQcnw52bNpYZsnauU/v56kD/opkRYwvnoH8ymsZDyZWtO3s2lTSgFQ4JoOuA0DkdSFd4VG1CDI/Y3XOoRxsCDJeQkE+8RwRaAnjpgJi3lcpKMB1gbAMjSYW/R4eqH5PI6vCoyI=
+	t=1716975239; cv=none; b=SrP9+1s7GEVvFs61pRD7XKE2ksoQ4M/3gNgdke5klerwCVDJwU0Ti8DY+/7UxRDQEBQPPriFq1jV/tHd9ReWMV14q7saE5pLe1YqkZxvFcSFsg4ZJlBVJYUJRYm+XnWhvBQYhQzjM/KyZx8hP5VvD/DI0OwDgEpKM3gYEaTHSMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716975224; c=relaxed/simple;
-	bh=oy2sM9E9I28X4sqiqOUHF7G+ZKdVaxkvEWZkR6GjuF0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qFm2H8WX38G2gn64PwW3zlOiaIorBm50zfo9/AlP/g70oUA381PcJtlrPvm+OlwL9xwDos9qEm8o/TtkHPemR+oc7+DN89rvTcZNKsXXCThZYsbMJLMGw4gaxicQCdwFda6z+jXwUMnBhUjJldfpNswXMSyIqrfTLtUQOT/WwuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MTXWrx/T; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a3dec382eso7726667b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 02:33:42 -0700 (PDT)
+	s=arc-20240116; t=1716975239; c=relaxed/simple;
+	bh=l5QrRv4O9i6/p49Rq5SZv/lStE6jQlyT9WYDPbvrkcw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JooOv3T7z5L2OhpGZUKKNqF3zxBYgbVvN/w11Cg6hkeqUqjVKRFM31Aa2pNhl/VyN05h5h/tPod6rvgoCvfmSi2v2Dv+sjsYHA8iYzLm2rIEvkSEzt1mGHOREcdP7GVnP85k5qOUikt9kLD9CmbxgevaKEGJnOuNfElcbguqyEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=cG3RWrcA; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b96a78639aso978270eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 02:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716975222; x=1717580022; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=A7jFrnYLPr4qszl6iKNvj0kihvPlgpEbfCiq9QGfEb4=;
-        b=MTXWrx/TTOh848PoKDFOKcbzSm4J7/r3PgJgTCHMO39eD3Y3rPafClGBFLxNwLIKIl
-         ZVoKygkl5y3QGNEUXnSehKMDWhimYfp0BXOq5F5srZhNKrWQoz55dc/6LAB58sYviqe7
-         biI6qejfRn1ZZ/6aOQWl818S4FXbOu1Lb/wAy9t09iMJCvJA3pIZbs8TY0mHWYa7AeSK
-         QwcDnRGkxX0EJe11Oz2bv5izfdC0x14jTr3EvqwBu7bL2GuGlqLdzVCwQck2bH74K5ir
-         qKHiAHnwm+C1q2FtaNvrZsZfEEP5DO61tTFDhnhbhpWuD9P609zb0RaKvgHNpHy7u0Il
-         ayvw==
+        d=sifive.com; s=google; t=1716975236; x=1717580036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pa54c7QY45UehqcsWmO/45EGLoGqHOsodal/OABdWYY=;
+        b=cG3RWrcABgDahNg8ywT7PPrRY8CYd5dqrP7erVFMYgXUZPh4LEn6MB6XGTQRA03kKP
+         fnaKz5lhIymR+FUjsHehIhB6GOGIzFEDCyr54IWadeSVxp/OebtSDKc1BIidCPoKDTdY
+         tKaARzM8Q/IaaP6O+74n+Zd0fStTN5IZDykofNp3ill2A2vjZZt/iUVy82YqtZyOsFvG
+         JLG1mPXYNB5SAyqmtwLuwKIeOjoDnJ+bNH6eC33K1NrtJ90O8vAGFg5A8dzyCVlSqqqy
+         k5Vg1eeU1pdMLfQ7H13PJRLzI7hQJKzNXCL1d2HM4iDePHS7vaAJ8ucVhK02KKxQv9tf
+         08/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716975222; x=1717580022;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A7jFrnYLPr4qszl6iKNvj0kihvPlgpEbfCiq9QGfEb4=;
-        b=bx49m4ZGREwgwAPTjc1R7ophnzVfvK76dObrusvxsrxFwNScvWyxIp92/2ew7U/r76
-         FAR9HG60OERGmU+uE+x2vmOMmDPdaOEt1M2CreCA5wSu6KmnYLVW9QLudPbXN979KmJU
-         gb9oW29pLx/9L7AdBeMTJDPHk5UAZJDRPD/MN7EN6konX+OF0hhp/zecIu8piwHPZ7wM
-         k/c7x1ZT6h/E8I6FSsqAPshWOp1IRfYBZib9wqirGEdfgEUTYRTzRbEwmF+28dC0CGLL
-         aDKJ4WReMF92n+qx+ve2Nm8J2GkI93AWi4kksif/01TxXESON9KCMfkPDNqrHWzXODbi
-         5zKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJigQ3LdSMyFS44Hi67aGtGiZ2nNmHS6p6Mz9jyEl9kjR94xLyAEfizmlw9ltIC9r/CO4CfTsXddjlDnxE0M+qdo++Rkcx7SInPpVZ
-X-Gm-Message-State: AOJu0YzS8W1CZhbW3SOCKnbdcNl1BGOp2miYS0f7K6POZRhbE3MD1Mft
-	XXivYEdAvJN2tT2L8X2gtwbTbSTrCPIDwIOBpg8pe+7K4WTx0btCvHddD0dYay0CdsDdLD7xZWw
-	F8D83UpcIww==
-X-Google-Smtp-Source: AGHT+IHxdg2ya01s660665HE7gx0TzIhtq+AMegN495R/PRhtdyxXJThsqXUppWR5I/ihiLisAVQ7G09XOsdQg==
-X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
- (user=davidgow job=sendgmr) by 2002:a81:924c:0:b0:627:edcb:cbe2 with SMTP id
- 00721157ae682-62c5d5d451bmr2897097b3.5.1716975222191; Wed, 29 May 2024
- 02:33:42 -0700 (PDT)
-Date: Wed, 29 May 2024 17:33:35 +0800
+        d=1e100.net; s=20230601; t=1716975236; x=1717580036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pa54c7QY45UehqcsWmO/45EGLoGqHOsodal/OABdWYY=;
+        b=trlZNInZ0njk9CDapPw31uboMcDx0Xmt/vWDCh8/BJq5azRGwcEJmkZ32p9A6JbJrM
+         2s+xFMmd9GmNYT46O8MFRBMjAGn6piWHFYEZMpe8s9kjMEtF5rXLCZ/iKDiTZR2d85RO
+         4p3e8hhHKY9gGGpYLcGADoL//mZcn6U5QWNcYSQS7vueqgH1LXsgWfHWfYhSwVuL73rn
+         rlRqv6oWLARE7Uql4zevU6PeDMuyrsNtrTXald3XPiM+/feAcnE7oTh6FKnhV6POvifo
+         8J/h66AAjrwTt58bo3lM44mmfGIZfgK9y3romOscFzSrixyEnolJxzZEgP++O+zEXqjp
+         43MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRLsYgRgQYQzwRAOF3ZMTTF9F4J2H0eF3QZU2LkX9kNXnpaxLlOEEvOusNFdR5KNeUS4+l3gBCBdxSxMzw8YrukYNIZDbx/MHPDHmX
+X-Gm-Message-State: AOJu0YzGJvJmsrGmqWPQw9/SjYPbPGNJH7jlrVwF8HQtIdfFpY2acywq
+	wm7ur4c78mtUGjOTJp0uhlbClZyQRapQvc32oVwkw3ae6SFQGaBOZZyS+TMwdRdTqoLkNW0OEC8
+	DYaS4M1yyHsjlWlG7qhS6iFdECJ5AG/xSSK/JbQ==
+X-Google-Smtp-Source: AGHT+IEFckLl6SgF2ZIIsWM6r/IfyUxXDxJs1rCuhc04QaE6m5836ItC1YeowXBKeV4tdyQW4ZvMZo8zPmFUl/VM1Ec=
+X-Received: by 2002:a4a:dcc4:0:b0:5b9:8dd6:3d62 with SMTP id
+ 006d021491bc7-5b98dd649e1mr8998720eaf.0.1716975236516; Wed, 29 May 2024
+ 02:33:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240529093336.4075206-1-davidgow@google.com>
-Subject: [PATCH] arch: um: rust: Use the generated target.json again
-From: David Gow <davidgow@google.com>
-To: Rae Moar <rmoar@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>
-Cc: David Gow <davidgow@google.com>, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, x86@kernel.org, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>
+MIME-Version: 1.0
+References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
+ <20240524103307.2684-3-yongxuan.wang@sifive.com> <20240527-widely-goatskin-bb5575541aed@spud>
+In-Reply-To: <20240527-widely-goatskin-bb5575541aed@spud>
+From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Date: Wed, 29 May 2024 17:33:45 +0800
+Message-ID: <CAMWQL2jHLVtGA3RzPG-Qp5k8qhzDttNQjkSp5X2EMYCyFWKwLA@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 2/5] dt-bindings: riscv: Add Svadu Entry
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com, 
+	cleger@rivosinc.com, alex@ghiti.fr, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Rust compiler can take a target config from 'target.json', which is
-generated by scripts/generate_rust_target.rs. It used to be that all
-Linux architectures used this to generate a target.json, but now
-architectures must opt-in to this, or they will default to the Rust
-compiler's built-in target definition.
+Hi Conor,
 
-This is mostly okay for (64-bit) x86 and UML, except that it can
-generate SSE instructions, which we can't use in the kernel. So
-re-instate the custom target.json, which disables SSE (and generally
-enables the 'soft-float' feature). This fixes the following compile
-error:
+On Mon, May 27, 2024 at 11:09=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Fri, May 24, 2024 at 06:33:02PM +0800, Yong-Xuan Wang wrote:
+> > Add an entry for the Svadu extension to the riscv,isa-extensions proper=
+ty.
+> >
+> > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+>
+> I'm going to un-ack this, not because you did something wrong per se,
+> but because there's some discussion on the OpenSBI list about what is
+> and what is not backwards compatible and how an OS should interpret
+> svade and svadu:
+> https://lists.infradead.org/pipermail/opensbi/2024-May/006949.html
+>
+> Thanks,
+> Conor.
+>
 
-error: <unknown>:0:0: in function _RNvMNtCs5QSdWC790r4_4core3f32f7next_up float (float): SSE register return with SSE disabled
+ok. I will remove it in the next version.
 
-Fixes: f82811e22b48 ("rust: Refactor the build target to allow the use of builtin targets")
-Signed-off-by: David Gow <davidgow@google.com>
----
- arch/x86/Makefile.um | 1 +
- 1 file changed, 1 insertion(+)
+Regards,
+Yong-Xuan
 
-diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
-index 2106a2bd152b..a46b1397ad01 100644
---- a/arch/x86/Makefile.um
-+++ b/arch/x86/Makefile.um
-@@ -9,6 +9,7 @@ core-y += arch/x86/crypto/
- #
- ifeq ($(CONFIG_CC_IS_CLANG),y)
- KBUILD_CFLAGS += -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx
-+KBUILD_RUSTFLAGS += --target=$(objtree)/scripts/target.json
- KBUILD_RUSTFLAGS += -Ctarget-feature=-sse,-sse2,-sse3,-ssse3,-sse4.1,-sse4.2,-avx,-avx2
- endif
- 
--- 
-2.45.1.288.g0e0cd299f1-goog
-
+> > ---
+> >  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/=
+Documentation/devicetree/bindings/riscv/extensions.yaml
+> > index 468c646247aa..598a5841920f 100644
+> > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > @@ -153,6 +153,12 @@ properties:
+> >              ratified at commit 3f9ed34 ("Add ability to manually trigg=
+er
+> >              workflow. (#2)") of riscv-time-compare.
+> >
+> > +        - const: svadu
+> > +          description: |
+> > +            The standard Svadu supervisor-level extension for hardware=
+ updating
+> > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull=
+ request
+> > +            #25 from ved-rivos/ratified") of riscv-svadu.
+> > +
+> >          - const: svinval
+> >            description:
+> >              The standard Svinval supervisor-level extension for fine-g=
+rained
+> > --
+> > 2.17.1
+> >
 
