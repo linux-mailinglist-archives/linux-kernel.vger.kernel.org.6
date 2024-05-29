@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-194232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E5D8D38B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:08:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5EF58D38D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A4291F24BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3433DB24CE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1850B1E53A;
-	Wed, 29 May 2024 14:07:53 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 2DE661CFB5
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDEE537F0;
+	Wed, 29 May 2024 14:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GUF8ZPN9"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99BD1CD00;
+	Wed, 29 May 2024 14:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716991672; cv=none; b=W1UP/wPq4QxT2235xGR13OFSaC6OM1uoA3K6Kaqj9NqSlmbJhi8LvK7pz4GFOczK2a3aSneF3C8wvdEK9EKDDBGsvtW6aZ7hat+tpAbW1b6v1wYMWWbjUkkKvlw2SHBYJ1mndfruLFGjGEqBmYbr8enz9X3thEV8Od77TkByS5U=
+	t=1716991782; cv=none; b=nc25p3nlc0QPVRxBFSLRTbGAlOT9Vqbrgpp0DW06jCI5iWa+7mzmPdmCnwFJLUCzG3/uCLB9R9qVe6CU9sXQdhhI2yiMUjArFNmpgmcRcxE7YuBtS0K0SlGBsOm8JiaYo75AAYWPRxNwRDSnxJ2eytrsOZPcJ2hOEzMFEeqdiBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716991672; c=relaxed/simple;
-	bh=tDRMZ/xjppcv17Vv7I7IS1EiKe3ccUEx8QOpa9SHJOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nrqvq1Z/pmWYJ6ED12/QjkVZx2M2EbXPA/h0yWXBFbUVd2W5BM9icFqVAcnrpr14BoUz+e35oDxYXKgl/nT5f2/cw0LmghJmGzo6F4B0yGtqoo98MHuIJsoOeCIgWeXY9eZOSln1jssGTf2HYn2DrmQyCc4pOs8/xN6GvcMxrOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 724132 invoked by uid 1000); 29 May 2024 10:07:44 -0400
-Date: Wed, 29 May 2024 10:07:44 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Andrea Parri <parri.andrea@gmail.com>,
-  Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>, will@kernel.org,
-  peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
-  j.alglave@ucl.ac.uk, luc.maranget@inria.fr, paulmck@kernel.org,
-  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-  linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-Message-ID: <b54575b9-ab29-4bcd-ae7a-6132d1e36195@rowland.harvard.edu>
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
- <ZlSKYA/Y/daiXzfy@andrea>
- <41bc01fa-ce02-4005-a3c2-abfabe1c6927@huaweicloud.com>
- <ZlYbXZSLPmjTKtaE@boqun-archlinux>
- <7e2963a3-d471-4593-9170-7f59aa1ce038@huaweicloud.com>
+	s=arc-20240116; t=1716991782; c=relaxed/simple;
+	bh=BukAmjTSMdl4GuW6eUVOoMcpg7Q+WrXFpcdl8mIHzLM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LaqD5p/DkcQpNCqI1b/Z9QMTzjywb5CVtJd0enKGoZuUbKNpaHsTeQ61cUqtfFDso0i1lrYjKCM9tUdI44WJyH6sCvw0rnaauXeSf8ApI8/UO+UoP4OgzlUXCZxTJXZUkKlUmjUuu3tpjNmPKdwYlsyA+Lwtlns9D0Qe59PIN6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GUF8ZPN9; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AF41240004;
+	Wed, 29 May 2024 14:09:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716991775;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KoB8X5jisUebu5WDGHopNzSEI6k685dh5SMNh+rV5WI=;
+	b=GUF8ZPN9VAsgzFC5bQBCe+CbhQqfeyIaf6fWSguVZ+TwqB2dpUSWZYjonfoA3jjEFXXEfT
+	5lB4VVukIp3F5B4pCa2B/0c8bf/YAyULK9NWpvqBaauT/w+e+nBl6p0U4qH5XNMtefRZGF
+	BK9ZR+x5i+hYzmWT3nz/WF6RB6QZzdZgz8Cc2ZWS7hW2NTXqENf09D2pwiuW6XHXBsgRgD
+	VZ+HMSpHok00Lo415eF3D6mGZJzFFnif2nh2bPp0tpTEjRMe6FtQ1cFGVpPFnFGTx1VbiL
+	J8EQNTfGKtlvjHPl8Hb7gAC52u0eRzOwDQNbYQCuEWhPsULqjOKBC5ZzytpSTg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH 0/8] net: pse-pd: Add new PSE c33 features
+Date: Wed, 29 May 2024 16:09:27 +0200
+Message-Id: <20240529-feature_poe_power_cap-v1-0-0c4b1d5953b8@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e2963a3-d471-4593-9170-7f59aa1ce038@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABc3V2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDEyNT3bTUxJLSotT4gnwQLk8tik9OLNA1tEi1NEhKNDeyNElSAuotKEp
+ Ny6wAmxsdW1sLAHXCzjVnAAAA
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, 
+ Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
+ Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.14-dev
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, May 29, 2024 at 02:37:30PM +0200, Jonas Oberhauser wrote:
-> 
-> 
-> Am 5/28/2024 um 7:58 PM schrieb Boqun Feng:
-> > This may not be trivial. Note that cmpxchg() is an expression (it has a
-> > value), so in .def, we want to define it as an expression. However, the
-> > C-like multiple-statement expression is not supported by herd parser, in
-> > other words we want:
-> > 
-> > 	{
-> > 		__fence{mb-successful-rmw};
-> > 		int tmp = __cmpxchg{once}(...);
-> > 		__fence{mb-successful-rmw};
-> > 		tmp;
-> > 	}
-> 
-> Oh, you're right. Then probably the rule I was violating is that
-> value-returning macros can not be defined with {} at all.
-> 
-> Given herd's other syntactic limitations, perhaps the best way would be to
-> introduce these macros as
-> 
-> 	x = cmpxchg(...) {
-> 		__fence{mb-successful-rmw};
->  		x = __cmpxchg{once}(...);
->  		__fence{mb-successful-rmw};
-> 	}
-> 
-> since I think x = M(...) is the only way we are allowed to use these macros
-> anyways.
+From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
 
-If we did this, how would the .cat file know to ignore the fence events 
-when the cmpxchg() fails?  It doesn't look like there's anything to 
-connect the two of them.
+This patch series adds new c33 features to the PSE API.
+- Expand the PSE PI informations status with power, class and failure
+  reason
+- Add the possibility to get and set the PSE PIs power limit
 
-Adding the MB tag to the cmpxchg itself seems like the only way forward.
+Jakub could you check if patchwork works correctly with this patch series.
 
-Alan
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Kory Maincent (8):
+      net: pse-pd: Use EOPNOTSUPP error code instead of ENOTSUPP
+      net: ethtool: pse-pd: Expand C33 PSE status with class, power and status message
+      netlink: specs: Expand the PSE netlink command with C33 new features
+      net: pse-pd: pd692x0: Expand ethtool status message
+      net: pse-pd: Add new power limit get and set c33 features
+      net: ethtool: Add new power limit get and set features
+      netlink: specs: Expand the PSE netlink command with C33 pw-limit attributes
+      net: pse-pd: pd692x0: Enhance with new current limit and voltage read callbacks
+
+ Documentation/netlink/specs/ethtool.yaml |  20 +++
+ drivers/net/pse-pd/pd692x0.c             | 261 ++++++++++++++++++++++++++++++-
+ drivers/net/pse-pd/pse_core.c            | 169 ++++++++++++++++++--
+ include/linux/pse-pd/pse.h               |  48 +++++-
+ include/uapi/linux/ethtool_netlink.h     |   4 +
+ net/ethtool/pse-pd.c                     |  63 +++++++-
+ 6 files changed, 544 insertions(+), 21 deletions(-)
+---
+base-commit: c7309fc9b716c653dc37c8ebcdc6e9132c370076
+change-id: 20240425-feature_poe_power_cap-18e90ba7294b
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
