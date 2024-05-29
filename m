@@ -1,158 +1,120 @@
-Return-Path: <linux-kernel+bounces-193823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C881E8D32B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:17:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC3A8D32BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84377283631
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:17:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494321F23F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92855169AC2;
-	Wed, 29 May 2024 09:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18C616A361;
+	Wed, 29 May 2024 09:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="OBwd7COA";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tu8OT6rM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cAG55kEX"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CCA6F079
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D245A15CD41;
+	Wed, 29 May 2024 09:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716974220; cv=none; b=B7uSPvvWA6YAs0fG/e010bsqV+h2l/aECv5zy9CBimVMQFCxPf5TkXhh+QSs1KvE/V8idXu8XchMbGQAMu78lx7CDfG0epF9ueq4Iiy/+ewtCv09L3ak1HeUUby/xlLP0aB4WgYrCojwJ7fzWR7dyCPLgacBPpR4EfBif/sEURc=
+	t=1716974272; cv=none; b=ncCRvnEVItE8xSaRKs81jMgtQ+e9fPQ+Np/ubNi42Gh/qiz2Nu1kOuBIbV5YGr92mGZVehi2UHo9sV63o33Ua1Xu1Cem/KoqOgwt+hGQnMlkmJGwVOsVeNkKgI8VoBriNn9Q6U+S00WrxY5z1aFR8vaMG/QKLJ6mkJlQvWf7YjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716974220; c=relaxed/simple;
-	bh=g+v8I5RS5Rx3vW6PyLEYjBK98J13/Fvd9jdUMa+sqsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UvNocw+r3ApVhfpAzDE2eTYnDytBumHIg7EYqKbVASOYP4iKG4nWIMBmjxZC/xe8jDNT+zcM+UbYrNcSS5+bwTqPSNeVeg9KKousq/tGVHVhtKtzNFsQDKblSU95NZ6leMMVSoFmtXxAlVnSEuiT8yKicpsW3vjVLrDfXByqcHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=OBwd7COA; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tu8OT6rM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CBD3F229ED;
-	Wed, 29 May 2024 09:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716974217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=drsjYDhKr/t1LAl2BAdlMhkJ1IEJgrd0Ng+4OFdPbmA=;
-	b=OBwd7COAQnOiMDeJuo2vxc2pmkPCg2GLFhMXAp0qIDQnhPtjjTmae/UggwkRPMVzjKcBoR
-	RLWHjre8fRDz8f9pWn/9bTBjTA4MlGmqh7bMJTJMxeg6PTfUHBvwmYxcVXXesTf1vF9fNq
-	6HThrSWikRwLLBW+RHEEmo4S0buH8P0=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=tu8OT6rM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716974216; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=drsjYDhKr/t1LAl2BAdlMhkJ1IEJgrd0Ng+4OFdPbmA=;
-	b=tu8OT6rM1QvKJsWHdBsrZuYnoqNjKJ9mN4DG8b155lWQim62knoTjOks0AMAWQ6IKYjZ9K
-	fjSA/XtcW0buJ61w51DHjvZaKhIsUwh50+L0Uu4qOrxHNgnZTnm5WAtCkpWmoNGCIyfIJ6
-	T27ZviTngtAqAQMYiDfJz4OyFF3Rk2M=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7F1A13A6B;
-	Wed, 29 May 2024 09:16:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g1wcJojyVmbxdgAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Wed, 29 May 2024 09:16:56 +0000
-Date: Wed, 29 May 2024 11:16:56 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] memcg: Remove the lockdep assert from
- __mod_objcg_mlstate().
-Message-ID: <ZlbyiMnd4x24bR8F@tiehlicka>
-References: <20240528121928.i-Gu7Jvg@linutronix.de>
- <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
- <20240528134027.OxDASsS3@linutronix.de>
- <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
- <20240528141341.rz_rytN_@linutronix.de>
+	s=arc-20240116; t=1716974272; c=relaxed/simple;
+	bh=pVcY8brKHTTyuvaNTRKSX1bJjN/WbvVqShR0h/341m4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q2RVD5htkHflKESIaJ9i47X6zcNXtE6UdxwAppnFO3KWYCrwl1koyp3dcw0iLd5dSHgiiJ25gFmaNm1HPJ+Ocuv3sQpsxos4sDnPyA15wNxltwp5Tlv0g8W3kvJ5Swr2zoMf+p/L7NHydIA9mD/1s1tezSguLTq45VqFyvo5y3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cAG55kEX; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 90F1E40005;
+	Wed, 29 May 2024 09:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716974262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VGSu2junM166eo2ekTBWdX+3iGwIta7UqT2TDo+DFpA=;
+	b=cAG55kEXfs3opX//eb+q+Gv8b9IHUT756AwPP+NJYsTAFV4jdEOe5Jb75+7KDFD8+Ae85h
+	6R14laBVFnhrJljzK17lzT5rKj9w3bz/7GtSRyvnrmcxLrHCricipGTSsKLuLfJHamAex2
+	D1/mtvF4op74J5dtJoEuVM7GYntfiwQTACzzg17Em09c3m7BejRp4frZe2rh99YujEp/Vo
+	OE1h7VxxkhJumfKYKnjhBK0E9p2WY7sIRQrjp59+JD+xSZc0X+0zhzR9V0ZRYH+NjWzUBC
+	TrsFqtU4kgAdAhrxK0KSHz6h14kn3LMjEYKMd8a2mxc9614cz5Xs2Pmth6uOxw==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Peter Rosin <peda@axentia.se>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Korsgaard <peter.korsgaard@barco.com>,
+	Wolfram Sang <wsa@kernel.org>
+Cc: linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH v2 0/3] i2c: mux: gpio: Add 'transition-delay-us' property
+Date: Wed, 29 May 2024 11:17:36 +0200
+Message-ID: <20240529091739.10808-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528141341.rz_rytN_@linutronix.de>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-2.99)[99.97%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,linutronix.de:email,suse.com:dkim,suse.com:email];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: CBD3F229ED
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Tue 28-05-24 16:13:41, Sebastian Andrzej Siewior wrote:
-> The assert was introduced in the commit cited below as an insurance that
-> the semantic is the same after the local_irq_save() has been removed and
-> the function has been made static.
-> 
-> The original requirement to disable interrupt was due the modification
-> of per-CPU counters which require interrupts to be disabled because the
-> counter update operation is not atomic and some of the counters are
-> updated from interrupt context.
-> 
-> All callers of __mod_objcg_mlstate() acquire a lock
-> (memcg_stock.stock_lock) which disables interrupts on !PREEMPT_RT and
-> the lockdep assert is satisfied. On PREEMPT_RT the interrupts are not
-> disabled and the assert triggers.
-> 
-> The safety of the counter update is already ensured by
-> VM_WARN_ON_IRQS_ENABLED() which is part of __mod_memcg_lruvec_state() and
-> does not require yet another check.
-> 
-> Remove the lockdep assert from __mod_objcg_mlstate().
-> 
-> Fixes: 91882c1617c15 ("memcg: simple cleanup of stats update functions")
-> Link: https://lore.kernel.org/r/20240528121928.i-Gu7Jvg@linutronix.de
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Hi all,
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+The i2c-gpio-mux can be used to describe a multiplexer built upon
+several i2c isolators having an enable pin (such as LTC4310):
+
+ +---------------+                     +------+  +------+
+ | +-----------+ |                     | dev  |  | dev  |
+ | | GPIO_EN_A |-|-----------|         +------+  +------+
+ | +-----------+ |     +-----+---+         |         |
+ |               |  |--| isol. A |---------+---------+
+ |     +-----+   |  |  +---------+
+ | SOC | I2C |---|--|
+ |     +-----+   |  |  +---------+
+ |               |  |--| isol. B |------+---------+---------+
+ | +-----------+ |     +-----+---+      |         |         |
+ | | GPIO_EN_B |-|-----------|      +------+  +------+  +------+
+ | +-----------+ |                  | dev  |  | dev  |  | dev  |
+ +---------------+                  +------+  +------+  +------+
+
+These isolators often need some time between their enable pin's
+assertion and the first i2c transfer. If the first i2c transfer
+happens before this enabling time is reached, transfer fails.
+
+There is no available option to configure such a time in the
+i2c-gpio-mux driver.
+
+Add a optional property in the bindings called 'transition-delay-us'.
+If present, driver waits for this delay every time a new bus is
+selected, i.e. before returning from the bus_select() callback.
+
+Changes in v2:
+ * Rewrite bindings' commit log
+ * Express the 'transition delay' in us instead of ms
+
+Bastien Curutchet (3):
+  dt-bindings: i2c: gpio: Add 'transition-delay-us' property
+  i2c: mux: gpio: Re-order #include to match alphabetic order
+  i2c: mux: gpio: Add support for the 'transition-delay-us' property
+
+ .../devicetree/bindings/i2c/i2c-mux-gpio.yaml      |  3 +++
+ drivers/i2c/muxes/i2c-mux-gpio.c                   | 14 ++++++++++----
+ include/linux/platform_data/i2c-mux-gpio.h         |  2 ++
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.44.0
+
 
