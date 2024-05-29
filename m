@@ -1,181 +1,133 @@
-Return-Path: <linux-kernel+bounces-194581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EE18D3E8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:48:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B17D8D3E8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969821F24007
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB64D2864C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9CE1C2300;
-	Wed, 29 May 2024 18:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YYNj6qob"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB661CFB6;
-	Wed, 29 May 2024 18:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051571C230B;
+	Wed, 29 May 2024 18:50:39 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4CE1386A7;
+	Wed, 29 May 2024 18:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717008526; cv=none; b=SZ70ViqkfAk8R7X9xI7alwkLqTkNK9dG7of1bELXU+C4+QSEf927WWN3U/ae1EyKkxgTbGiPqf5dS2HSweZSca+m4oNHCzd7K1TUByIBEaAnLk/wItzdb4/JrCN2sx1jmNanh0CsyBaz87EU/WLp2NGbNrbk7bMk2U1PSK28BLw=
+	t=1717008638; cv=none; b=lx1Id/sQvwwvR/NbQcF1Yo8IEs8vN8moGb+xUpJmPlxf7ryWFWA2qg9n3GGzY4FYgWN7y4cc4AnM2NDr0H0eZPLwVrSh40489RHcygQM0UtFUN255ozYJAocpU5TeG0L0jmEiA0WZR9feuXmxdjY9ybIlxhzKKyHhjhoBdCUrIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717008526; c=relaxed/simple;
-	bh=3N+yRNwAaot4RWsGxxpAHkl1rZ3X19BsknvqkoXEID8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oVv1Tise8qYUGM6cBSx/x2Zk4TL/P36uArpefySp6120n77g6uhmlKnCNLXarG5ZsUZTF+LMRPybXhVMVVdweuBin/4cSPoIp0I915Ez0njU+dBOkG1GPF2+kGbos3WAfoXamd4cGSV/N0Qce32+KPHF84yjYvJZmz210Qvf7Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YYNj6qob; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TBVbJQ012157;
-	Wed, 29 May 2024 18:48:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ab81luCQi39eJfDPVl2fNVgypINjt9s7zOvtaAtxDg8=; b=YYNj6qobyCffIr2g
-	WnEBNc1XeMzQROmhvtKSiBwUJBZkv1vdyqn44Jc71ALpmMOAi04pP0GbJp6kd+wk
-	wu1ZZkRYC0ISAIF1zla//7Nw8rpn0yy2iowAa0pFsACqPQyo6EgxFmZjo26jUYs/
-	NtukDGd3MB68iJGDZT6UtytdIZOcvM1qEvLHRxjBBFBi4xPDpgu2okLRMpbAEgC4
-	MWe6T8KLTaQVLwQQC2/lBrVKU0HR+p98SJcNBW8GqY1Qk2fQQoh28a0dNt8YMFOX
-	YJed9XiOy830qKYWp5poffWMYkJQ116MsI5fo3nzPujVoAwawVtjt6+4HpBHbTYt
-	hO5XAg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yja498-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 18:48:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TImGmU026691
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 18:48:16 GMT
-Received: from [10.71.110.249] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
- 2024 11:48:10 -0700
-Message-ID: <05306686-922c-6646-3308-ebd6bc3e1219@quicinc.com>
-Date: Wed, 29 May 2024 11:48:01 -0700
+	s=arc-20240116; t=1717008638; c=relaxed/simple;
+	bh=4zhxO8s80sghmwZ6xTs9Tn3DwRhHd0HONhAed0apv1A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eOe44F64YrF5JbvU6FQxi5IYyu1RfY4EK8kKeayOgO9wyRX5vMAivWLOpEzxhJ5lcbCYaYcS17JME1D4okR3PpkrdY559rR/6rY9N0SK1KNEIEGRr4Fy9zXInuL6Xie8VIQkm+Xy7Md861j4yCFYKcPk8pr1TbAMafVyN4fL9MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 2B10892009C; Wed, 29 May 2024 20:50:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 23E9192009B;
+	Wed, 29 May 2024 19:50:28 +0100 (BST)
+Date: Wed, 29 May 2024 19:50:28 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
+    Arnd Bergmann <arnd@arndb.de>, 
+    Richard Henderson <richard.henderson@linaro.org>, 
+    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Marc Zyngier <maz@kernel.org>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    linux-kernel@vger.kernel.org, Michael Cree <mcree@orcon.net.nz>, 
+    Frank Scheiner <frank.scheiner@web.de>
+Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
+In-Reply-To: <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
+Message-ID: <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk>
+References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de> <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 4/6] drm/ci: uprev IGT
-To: Vignesh Raman <vignesh.raman@collabora.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: <dri-devel@lists.freedesktop.org>, <daniels@collabora.com>,
-        <helen.koike@collabora.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <robdclark@gmail.com>, <david.heidelberg@collabora.com>,
-        <guilherme.gallo@collabora.com>, <sergi.blanch.torne@collabora.com>,
-        <mcanal@igalia.com>, <linux-mediatek@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <amd-gfx@lists.freedesktop.org>,
-        <linux-arm-msm@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
-        <virtualization@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240529024049.356327-1-vignesh.raman@collabora.com>
- <20240529024049.356327-5-vignesh.raman@collabora.com>
- <bj6mpegmxo6i5o34xyxwiytdaokv2u6p5iu4eoek3ctqimwviy@jbo5aw7gy4ue>
- <12f14064-fd1c-4e9c-94ee-ba7d492a4056@collabora.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <12f14064-fd1c-4e9c-94ee-ba7d492a4056@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yAOcEUDxqMb3ILGVj-wikK1cqOlETKxm
-X-Proofpoint-ORIG-GUID: yAOcEUDxqMb3ILGVj-wikK1cqOlETKxm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_15,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405290129
+Content-Type: text/plain; charset=US-ASCII
 
+On Tue, 28 May 2024, Paul E. McKenney wrote:
 
-
-On 5/29/2024 2:48 AM, Vignesh Raman wrote:
-> Hi Dmitry,
+> > > > This topic came up again when Paul E. McKenney noticed that
+> > > > parts of the RCU code already rely on byte access and do not
+> > > > work on alpha EV5 reliably, so I refreshed my series now for
+> > > > inclusion into the next merge window.
+> > > 
+> > > Hrrrm? That sounds like like Paul ran tests on EV5, did he?
+> > 
+> >  What exactly is required to make it work?
 > 
-> On 29/05/24 13:39, Dmitry Baryshkov wrote:
->> On Wed, May 29, 2024 at 08:10:47AM +0530, Vignesh Raman wrote:
->>> test-list.txt and test-list-full.txt are not generated for
->>> cross-builds and they are required by drm-ci for testing
->>> arm32 targets. This is fixed in igt-gpu-tools. So uprev
->>> IGT to include the commit which fixes this issue. Also
->>> disable building xe driver tests for non-intel platforms.
->>>
->>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->>> ---
->>>
->>> v2:
->>>    - Split IGT uprev to seperate patch.
->>>
->>> v3:
->>>    - No changes.
->>>
->>> ---
->>>   drivers/gpu/drm/ci/build-igt.sh  | 4 ++++
->>>   drivers/gpu/drm/ci/gitlab-ci.yml | 2 +-
->>>   2 files changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/ci/build-igt.sh 
->>> b/drivers/gpu/drm/ci/build-igt.sh
->>> index b7d2a49a6db3..eddb5f782a5e 100644
->>> --- a/drivers/gpu/drm/ci/build-igt.sh
->>> +++ b/drivers/gpu/drm/ci/build-igt.sh
->>> @@ -45,6 +45,10 @@ 
->>> MESON_OPTIONS="-Doverlay=disabled                    \
->>>                  -Dlibunwind=enabled                   \
->>>                  -Dprefix=/igt"
->>> +if [[ "$KERNEL_ARCH" = "arm64" ]] || [[ "$KERNEL_ARCH" = "arm" ]]; then
->>> +    MESON_OPTIONS="$MESON_OPTIONS -Dxe_driver=disabled"
->>> +fi
->>> +
->>>   mkdir -p /igt
->>>   meson build $MESON_OPTIONS $EXTRA_MESON_ARGS
->>>   ninja -C build -j${FDO_CI_CONCURRENT:-4} || ninja -C build -j 1
->>> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml 
->>> b/drivers/gpu/drm/ci/gitlab-ci.yml
->>> index 8f32de63d92e..1b29c3b6406b 100644
->>> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
->>> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
->>> @@ -5,7 +5,7 @@ variables:
->>>     UPSTREAM_REPO: git://anongit.freedesktop.org/drm/drm
->>>     TARGET_BRANCH: drm-next
->>> -  IGT_VERSION: d2af13d9f5be5ce23d996e4afd3e45990f5ab977
->>> +  IGT_VERSION: 0df7b9b97f9da0e364f5ee30fe331004b8c86b56
->>
->> Let's land this, then I'll ask to uprev to
->> dc2d7fb4f978048b87707ea9ec32da748b01b378, which fixes an issue with the
->> writeback tests on MSM devices.
+> Whatever changes are needed to prevent the data corruption that can
+> currently result in code generated by single-byte stores.  For but one
+> example, consider a pair of tasks (or one task and an interrupt handler
+> in the CONFIG_SMP=n case) do a single-byte store to a pair of bytes
+> in the same machine word.  As I understand it, in code generated for
+> older Alphas, both "stores" will load the word containing that byte,
+> update their own byte, and store the updated word.
 > 
-> Sure. Once this is merged, we can uprev to the latest IGT.
-> 
-> Regards,
-> Vignesh
-> 
+> If two such single-byte stores run concurrently, one or the other of those
+> two stores will be lost, as in overwritten by the other.  This is a bug,
+> even in kernels built for single-CPU systems.  And a rare bug at that, one
+> that tends to disappear as you add debug code in an attempt to find it.
 
-Thanks, yes moving to latest IGT after this is merged will be great.
+ Thank you for the detailed description of the problematic scenario.
 
->>
->>>     DEQP_RUNNER_GIT_URL: 
->>> https://gitlab.freedesktop.org/anholt/deqp-runner.git
->>>     DEQP_RUNNER_GIT_TAG: v0.15.0
->>> -- 
->>> 2.40.1
->>>
->>
+ I hope someone will find it useful, however for the record I have been 
+familiar with the intricacies of the Alpha architecture as well as their 
+implications for software for decades now.  The Alpha port of Linux was 
+the first non-x86 Linux platform I have used and actually (and I've chased 
+that as a matter of interest) my first ever contribution to Linux was for 
+Alpha platform code:
+
+On Mon, 30 Mar 1998, Jay.Estabrook@digital.com wrote:
+
+> Hi, sorry about the delay in answering, but you'll be happy to know, I took
+> your patches and merged them into my latest SMP patches, and submitted them
+> to Linus just last night. He promises them to (mostly) be in 2.1.92, so we
+> can look forward to that... :-)
+
+so I find the scenario you have described more than obvious.
+
+ Mind that the read-modify-write sequence that software does for sub-word 
+write accesses with original Alpha hardware is precisely what hardware 
+would have to do anyway and support for that was deliberately omitted by 
+the architecture designers from the ISA to give it performance advantages 
+quoted in the architecture manual.  The only difference here is that with 
+hardware read-modify-write operations atomicity for sub-word accesses is 
+guaranteed by the ISA, however for software read-modify-write it has to be 
+explictly coded using the usual load-locked/store-conditional sequence in 
+a loop.  I don't think it's a big deal really, it should be trivial to do 
+in the relevant accessors, along with the memory barriers that are needed 
+anyway for EV56+ and possibly other ports such as the MIPS one.
+
+ What I have been after actually is: can you point me at a piece of code 
+in our tree that will cause an issue with a non-BWX Alpha as described in 
+your scenario, so that I have a starting point?  Mind that I'm completely 
+new to RCU as I didn't have a need to research it before (though from a 
+skim over Documentation/RCU/rcu.rst I understand what its objective is).
+
+ FWIW even if it was only me I think that depriving the already thin Alpha 
+port developer base of any quantity of the remaining manpower, by dropping 
+support for a subset of the hardware available, and then a subset that is 
+not just as exotic as the original i386 became to the x86 platform at the 
+time support for it was dropped, is only going to lead to further demise 
+and eventual drop of the entire port.
+
+ And I think it would be good if we kept the port, just as we keep other 
+ports of historical significance only, for educational reasons if nothing 
+else, such as to let people understand based on an actual example, once 
+mainstream, the implications of weakly ordered memory systems.
+
+  Maciej
 
