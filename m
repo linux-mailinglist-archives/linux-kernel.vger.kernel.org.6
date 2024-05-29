@@ -1,184 +1,129 @@
-Return-Path: <linux-kernel+bounces-193301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033CD8D2A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:30:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47E18D2A08
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70FFA1F26E3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2151C23CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952C815AAD3;
-	Wed, 29 May 2024 01:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A1E15AAB1;
+	Wed, 29 May 2024 01:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="XcXcHwRX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MZvuoPm/"
-Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ek0oGbVX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB687F6;
-	Wed, 29 May 2024 01:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631D57F6;
+	Wed, 29 May 2024 01:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716946248; cv=none; b=se2UxX4DsgmNpRHYCNcNIlOZqAytkwPpvSwHt3hnnipnpexG5d5IXhjY/0TJaQ9mVlo1I7kRkwr3Y1KoV9K20XNgD2FijmudUtXYrZvQ/JrON9sSeYzx6h7vkR/4g1Y0Xigi6XBiKYIJqJKEhP72TUrTGct0pi3QTaga7rfiH2k=
+	t=1716946304; cv=none; b=hNFA6HthDb/HZr0ME4OB1BfHTDceFt+a7/y+kJABHfhZZ34hEAJagypVwZsKntj6wLwE9KnkXy05gvtkT/+OXUy8eeRUKhryRvjjmupHXyaiSTyU1lN5HtQJ1yKOFMTj9oNTLSpLWNJ/A8OBvXmHsjEEoFRWCMf7tNahtnHvTXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716946248; c=relaxed/simple;
-	bh=Zxowav663I4us3VlL74j5SzvZntOcAZwBh3FnfjX6mk=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Ih0tw7z9mSZfDgxZKlhnApdzArz8wBbh1/g+CQCJ8Ky5eem+f+BkV88BlW1TjDPB5BLw8J1zLMHsm0DSdxTlK/CaJKY+sAFxnZqa6BrNfiLmdSa2M46TwtHIzjCvN+MsQBtm0Y7K4Oqtb183uDLwdp9CCDGSvZwwVoNfwzI1DLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=XcXcHwRX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MZvuoPm/; arc=none smtp.client-ip=64.147.123.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.west.internal (Postfix) with ESMTP id 18CF21C00190;
-	Tue, 28 May 2024 21:30:46 -0400 (EDT)
-Received: from imap41 ([10.202.2.91])
-  by compute2.internal (MEProxy); Tue, 28 May 2024 21:30:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1716946245; x=1717032645; bh=b+Ph6oLBNu
-	d09yeKziOGHOeZzPdVlwgT/NYdwJyJwDc=; b=XcXcHwRXWdw+cGws0gjW5HMN/X
-	JgiA0zx3fiOoMp2sZn82GHBKG963xwnaUgs7LMe/VeDepST5FvegKWJaVJqem1WF
-	eeSrERESb1CkbWQu9HRaRELmyTLMRgCzyINNDqkn/gyvZXUSzlQ1X5b1NJ7K77Ao
-	8/EQUW5tppNiLlibAErE9kFR15B68tUTOwQvUua3tQ/6xf+YAyZZLnmaYbaWEZw0
-	TQakQr9WW8lz8Uki931s4e9q00+8lrihGzyLyxzW/cEx62U4hsAS5MFYXedUj+IR
-	hBPV2rU7+EGOdrBGmW2ZkiBYBzpBMd40biSJGQEZJSgcRC6f5pFdjbVihhtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716946245; x=1717032645; bh=b+Ph6oLBNud09yeKziOGHOeZzPdV
-	lwgT/NYdwJyJwDc=; b=MZvuoPm/2aY3dqSWunai1Nr0VkKYDCg/L7o48vZov6vo
-	FFn3ud2Wu0mq+aXSmEoL8tABaSzSW8QfkNuciUrqbPruJONox10JAJw50/sTNX6q
-	LRpyWop+8/vGjt6PmNJrHkhiY4k7GejCf+4DYkYIY5QvON3oYo+8Cik8+WBujGRn
-	fr7GBL8ymDuebIl+/7ub9mjPFTdw2VlBlyIB1Q7EIE9DX6hV7Pg7NU+1fTYft+NY
-	T809Gcxu36yNDYpXN3FeqF2hNyoG5mHlTK7Pkp1SPWsDS8w8WIlALftaDhvq359U
-	DNS+qk0oO8ev4v9wadWW/vhaxo7jp4d1Hx1L5U18zQ==
-X-ME-Sender: <xms:RYVWZlrPUZ8LxAHXXgJz6t1MMPgyVgXDhCgvTMCXczFXtVfbaXkRIQ>
-    <xme:RYVWZnpBDtEEkgokPX0Jaki6eupWjsIv04IT5m9_ud7vAeLCLWu8-ih9q8bZzuugr
-    2fsfJBUe_nlOG6Nms0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejledggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfnfhu
-    khgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
-    gvrhhnpeelffevveffhfeuteetteevteelteduudfgjedvleejteetlefhieeiudfgveel
-    feenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:RYVWZiPVvfGozuM2YK_JEDE--85jLbd2E904Bj6M0tJkes_8Yu1djw>
-    <xmx:RYVWZg6eeJYLioh7JlYLlmCYHs0LINHV-o4JTY1al1pnuvBtN_krbg>
-    <xmx:RYVWZk6kh4SEO78lRHG29cZ1qC3Kd5PAkveIXAxjZKzWoyt_8oUMzw>
-    <xmx:RYVWZoilLehXndgvcUKzL4BlWVTLqvT5Ymr6G9dTC8iF3h1FLDFQzA>
-    <xmx:RYVWZhu_mXetrOLay7fc5IGoYLl-jGPuxQSxcKKWfP7b7_IkqAtoFxfT>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 6C8322340080; Tue, 28 May 2024 21:30:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716946304; c=relaxed/simple;
+	bh=XWJd0u7jf4+kwWI2PlUYNjKVj7V3MZrSBbXD0e50dGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=drLnb53XhGGpqWfTKEDmdU0VxdcH85oBu4SJcBbMUlA1/17yWLvAqRINmuzGDAgETTBoo7623Tc+NEcExzMqnavG6TCWzAuwMwuELHZW+8HFp62cA5FmENXuj8EVLE8Z8Ik0GkTr8roB8VBGvhj6n+883yc8FegjjbMgK4pPdHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ek0oGbVX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716946299;
+	bh=sYIwi1Me3rXEzjWBIGPWij+mjxNI1SFRGHLiv03UBqU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ek0oGbVXYN8bWjZR3HzHk4WuKizlTPQKyeec8Bm5RISeoTh/BXZJj6w8Qh54izcoN
+	 zFcDZeVQIm9e3IVwbCFwPvX1yBJQ1kYne2gz3WpESNpMUSImj1ELavI9sbGniDLZH9
+	 CJxI1ChqnIqS14bKUApHJVOav1kXcnuMYX6dq+Yjy68acDxDCYLrhlvrKg/wr69Bk7
+	 spuY2uKjhgGq5AesSOo3EJSfZ6dnVL3ALMiwZuH2m9n8UCm2RV0A72iIT0ta9cT632
+	 99PG2OsGfLovWjOVGSNClaW+9aj9BzhrMb689Ujq78XeJdhn8yhBcHUo/WsDnbAiNH
+	 /mnx+QuRBB6+g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpsL34J4Zz4wbr;
+	Wed, 29 May 2024 11:31:39 +1000 (AEST)
+Date: Wed, 29 May 2024 11:31:38 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Jiri Slaby (SUSE)"
+ <jirislaby@kernel.org>, John Ogness <john.ogness@linutronix.de>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the printk tree with Linus' tree
+Message-ID: <20240529113138.323f48d6@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ea9262bc-3b5a-4f7a-be99-871361a544e3@app.fastmail.com>
-In-Reply-To: <20240529012447.145088-2-luke@ljones.dev>
-References: <20240529012447.145088-1-luke@ljones.dev>
- <20240529012447.145088-2-luke@ljones.dev>
-Date: Wed, 29 May 2024 13:30:25 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: "Jiri Kosina" <jikos@kernel.org>
-Cc: "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- corentin.chary@gmail.com, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, bentiss@kernel.org
-Subject: Re: [PATCH v1 2/2] hid-asus: change the report_id used for HID LED control
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/id9/qOf4mqjq9Ewt487Rki=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Sorry about the doubleup. Wifi is spotty and it looked like the initial send didn't work.
+--Sig_/id9/qOf4mqjq9Ewt487Rki=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-See https://lore.kernel.org/linux-input/20240529012827.146005-1-luke@ljones.dev/T/#t for cover-letter
+Hi all,
 
-On Wed, 29 May 2024, at 1:24 PM, Luke D. Jones wrote:
-> On some laptops the report_id used for LED brightness control must be
-> 0x5D instead of 0x5A.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
-> drivers/hid/hid-asus.c | 26 +++++++++++++++++++++++++-
-> 1 file changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 4cba8e143031..ec3556cc4eef 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -94,6 +94,8 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->  
-> #define TRKID_SGN       ((TRKID_MAX + 1) >> 1)
->  
-> +static const char * const use_alt_led_report_id[] = { "GU605", "GA403" };
-> +
-> struct asus_kbd_leds {
-> struct led_classdev cdev;
-> struct hid_device *hdev;
-> @@ -101,6 +103,7 @@ struct asus_kbd_leds {
-> unsigned int brightness;
-> spinlock_t lock;
-> bool removed;
-> + int report_id;
-> };
->  
-> struct asus_touchpad_info {
-> @@ -473,7 +476,7 @@ static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
-> static void asus_kbd_backlight_work(struct work_struct *work)
-> {
-> struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
-> - u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4, 0x00 };
-> + u8 buf[] = { led->report_id, 0xba, 0xc5, 0xc4, 0x00 };
-> int ret;
-> unsigned long flags;
->  
-> @@ -513,6 +516,23 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
-> return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
-> }
->  
-> +static bool asus_kbd_is_input_led(void)
-> +{
-> + const char *product;
-> + int i;
-> +
-> + product = dmi_get_system_info(DMI_PRODUCT_NAME);
-> + if (!product)
-> + return false;
-> +
-> + for (i = 0; i < ARRAY_SIZE(use_alt_led_report_id); i++) {
-> + if (strstr(product, use_alt_led_report_id[i]))
-> + return true;
-> + }
-> +
-> + return false;
-> +}
-> +
-> static int asus_kbd_register_leds(struct hid_device *hdev)
-> {
-> struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-> @@ -555,6 +575,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
-> if (!drvdata->kbd_backlight)
-> return -ENOMEM;
->  
-> + drvdata->kbd_backlight->report_id = FEATURE_KBD_REPORT_ID;
-> + if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_kbd_is_input_led())
-> + drvdata->kbd_backlight->report_id = FEATURE_KBD_LED_REPORT_ID1;
-> +
-> drvdata->kbd_backlight->removed = false;
-> drvdata->kbd_backlight->brightness = 0;
-> drvdata->kbd_backlight->hdev = hdev;
-> -- 
-> 2.45.1
-> 
-> 
+Today's linux-next merge of the printk tree got a conflict in:
+
+  include/linux/serial_core.h
+
+between commit:
+
+  1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+
+from Linus' tree and commit:
+
+  e18c650e4653 ("serial: core: Implement processing in port->lock wrapper")
+
+from the printk tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/serial_core.h
+index 8cb65f50e830,fe91234d5b7c..000000000000
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@@ -11,6 -11,9 +11,8 @@@
+  #include <linux/compiler.h>
+  #include <linux/console.h>
+  #include <linux/interrupt.h>
+ -#include <linux/circ_buf.h>
++ #include <linux/lockdep.h>
++ #include <linux/printk.h>
+  #include <linux/spinlock.h>
+  #include <linux/sched.h>
+  #include <linux/tty.h>
+
+--Sig_/id9/qOf4mqjq9Ewt487Rki=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZWhXsACgkQAVBC80lX
+0GwGNQf/bJqM0AARD5DyUy94FVT9yp+dc+Y+/qHdNghnd326ijfjKqNToeBl6Qzg
+pQStHytYW3i9WJer7hbNIiqIPXtIpeKReQm1Q94fAsH50FmUejiHUw+XY1x0iHL0
+iHUN0MbXVw6Ad+f9FO6XPXOAQA7hQqFXqlniWtsNm3m6bOGcBoscLE3cc+QdnETB
+xe2AgQqIFvVHbJnbnD3CPbi7KI6x0IHlJzlgAYJ4lb651r1ovzYYq/HIgz9ZjjBT
+qS3lfR2FW2zh9aGe1SKyDmSn6QtAvEWXyYwqP83/emBp1D3ZDLNA+pA+WsLq3uh+
+pQtv9WMtJHGlHn4nSwdXqpQOyE+1kg==
+=TyRp
+-----END PGP SIGNATURE-----
+
+--Sig_/id9/qOf4mqjq9Ewt487Rki=--
 
