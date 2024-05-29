@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-193321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BFE8D2A47
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:01:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC948D2A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F1228AD2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:01:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA131C23DE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF1E15CD6E;
-	Wed, 29 May 2024 01:59:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E58115ADBB;
+	Wed, 29 May 2024 02:00:26 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D850415B133;
-	Wed, 29 May 2024 01:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF7822324;
+	Wed, 29 May 2024 02:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716947966; cv=none; b=erMads7Ne+vnuT437dKvz5x6SCa3cWcP2KK6hcpklOv0CrELLCvyiElMVt7K9RitpJK4k29fjtLIimvrREXb9LsS4uYodxOlRt8CeuR893kWak2OjpRhKKmtl6rmk5yEfFE5KtqtoMinRdWUEyt8moUXo2LajgCSzB5V71xMZKY=
+	t=1716948025; cv=none; b=SkCQfImEihzqJNSLCkTi0s9uzQnk6MTSFIv6aBCQ/5fki0nqcXkM7/k6eC++z7xpN896TeSvSArxY+8l/Za1zAFFks+eWT0d9g9O/RaNO+3LcfnXP7scZKDR1yPArVkI92J5cnZB6HtmVQrxq3m4sNtlbu+kI9soRBH3xH69f64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716947966; c=relaxed/simple;
-	bh=VGPSucUzbA/c3S9u7oVAQpYgV06MZBi1HmmrATX/mE8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n3MUwbIq0txjRfrOqisLSEW8/9vF3E+qrZ/RKrL6vm/YO0Dj4qq/77C3w/hic2gfGuVWqcx539wMM3ud7fVmLur6/3BBzOf7jhcCnMXPYrVkTR7ReJMWdHSFEcdLwA2sK1MoZ1M/hrrL04aC5vGJINiLY8HQoduesKye5ZF8xg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	s=arc-20240116; t=1716948025; c=relaxed/simple;
+	bh=MLY6d+dey32u/YtCdHWv2+v7aHSlG95uLNl6Wt1dpk4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R2nFfjqu30tSIvDhrDaSO9YDARq/wAPapAdZQCsJdHw6fnXtCeO0b1626FzPSxG88gk8BLlpmj49gu9ACeppG3ko5UUBVsSH8rrb3OJyHp2rlO6xw+042RiUfxaDvXKt5IlDuCG4AwxbviMXtToGfNHejAOnnf1Dl/m+N8H35Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vpsxv0V0Jz4f3m8h;
-	Wed, 29 May 2024 09:59:15 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vpsyz12mZz4f3jcv;
+	Wed, 29 May 2024 10:00:11 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 1EE1B1A01B9;
-	Wed, 29 May 2024 09:59:21 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 6E2C01A01B9;
+	Wed, 29 May 2024 10:00:20 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g7wi1Zmr3XbNw--.12147S12;
-	Wed, 29 May 2024 09:59:20 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	willy@infradead.org,
+	by APP1 (Coremail) with SMTP id cCh0CgBHGBEzjFZm5ofbNw--.62628S4;
+	Wed, 29 May 2024 10:00:20 +0800 (CST)
+From: linan666@huaweicloud.com
+To: ming.lei@redhat.com,
+	axboe@kernel.dk,
+	ZiyangZhang@linux.alibaba.com
+Cc: czhong@redhat.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linan666@huaweicloud.com,
+	yukuai3@huawei.com,
 	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [RFC PATCH v4 8/8] xfs: improve truncate on a realtime inode with huge extsize
-Date: Wed, 29 May 2024 17:52:06 +0800
-Message-Id: <20240529095206.2568162-9-yi.zhang@huaweicloud.com>
+	houtao1@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] ublk_drv: fix NULL pointer dereference in ublk_ctrl_start_recovery()
+Date: Wed, 29 May 2024 17:53:13 +0800
+Message-Id: <20240529095313.2568595-1-linan666@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,117 +59,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g7wi1Zmr3XbNw--.12147S12
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFy8AryDtw43JF47urW5trb_yoW5Zr4DpF
-	Z7J3WrGr4kG342kayvvF4jqw1akas2kr4UCFWrXr17Zwn8Jr1ftrn7t34rWw4Utr40ga90
-	gFn8C3y7Z3W3AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2048vs2IY02
-	0E87I2jVAFwI0_JF0E3s1l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0
-	rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6x
-	IIjxv20xvEc7CjxVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK
-	6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4
-	xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8
-	JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20V
-	AGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
-	c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4U
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUv
-	cSsGvfC2KfnxnUUI43ZEXa7sRilksDUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-CM-TRANSID:cCh0CgBHGBEzjFZm5ofbNw--.62628S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFy3JF47uFyUKw18Kr4rZrb_yoW8tFyUpF
+	W5Gw1Ykrs5tF4rZF4kA3srJryrJ3WrKry7WrZ3ZF1Fva98ArZxZ3y7Ca1YvFZ7GFyfWFyU
+	AF4q934Ikw1UCF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
+	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE
+	52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAV
+	WUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAK
+	I48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwAKzVCY07
+	xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRy
+	89tUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+From: Li Nan <linan122@huawei.com>
 
-If we truncate down a realtime inode which extsize is too large, zeroing
-out the entire aligned EOF extent could be very slow. Fortunately,
-__xfs_bunmapi() would align the unmapped range to rtextsize, split and
-convert the extra blocks to unwritten state. So, adjust the blocksize to
-the filesystem blocksize if the rtextsize is large enough, let
-__xfs_bunmapi() to convert the tail blocks to unwritten, this could
-improve the truncate performance significantly.
+When two UBLK_CMD_START_USER_RECOVERY commands are submitted, the
+first one sets 'ubq->ubq_daemon' to NULL, and the second one triggers
+WARN in ublk_queue_reinit() and subsequently a NULL pointer dereference
+issue.
 
- # mkfs.xfs -f -rrtdev=/dev/pmem1s -f -m reflink=0,rmapbt=0, \
-            -d rtinherit=1 -r extsize=1G /dev/pmem2s
- # for i in {1..5}; \
-   do dd if=/dev/zero of=/mnt/scratch/$i bs=1M count=1024; done
- # sync
- # time for i in {1..5}; \
-   do xfs_io -c "truncate 4k" /mnt/scratch/$i; done
+Continuing execution after WARN is incorrect, as 'ubq->ubq_daemon' is
+known to be NULL. Fix it by return directly if the WARN is triggered.
 
-Before:
- real    0m16.762s
- user    0m0.008s
- sys     0m16.750s
+Note that WARN will still be triggered after the fix if anyone tries to
+start recovery twice.
 
-After:
- real    0m0.076s
- user    0m0.010s
- sys     0m0.069s
+  BUG: kernel NULL pointer dereference, address: 0000000000000028
+  RIP: 0010:ublk_ctrl_start_recovery.constprop.0+0x82/0x180
+  Call Trace:
+   <TASK>
+   ? __die+0x20/0x70
+   ? page_fault_oops+0x75/0x170
+   ? exc_page_fault+0x64/0x140
+   ? asm_exc_page_fault+0x22/0x30
+   ? ublk_ctrl_start_recovery.constprop.0+0x82/0x180
+   ublk_ctrl_uring_cmd+0x4f7/0x6c0
+   ? pick_next_task_idle+0x26/0x40
+   io_uring_cmd+0x9a/0x1b0
+   io_issue_sqe+0x193/0x3f0
+   io_wq_submit_work+0x9b/0x390
+   io_worker_handle_work+0x165/0x360
+   io_wq_worker+0xcb/0x2f0
+   ? finish_task_switch.isra.0+0x203/0x290
+   ? finish_task_switch.isra.0+0x203/0x290
+   ? __pfx_io_wq_worker+0x10/0x10
+   ret_from_fork+0x2d/0x50
+   ? __pfx_io_wq_worker+0x10/0x10
+   ret_from_fork_asm+0x1a/0x30
+   </TASK>
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Fixes: c732a852b419 ("ublk_drv: add START_USER_RECOVERY and END_USER_RECOVERY support")
+Reported-and-tested-by: Changhui Zhong <czhong@redhat.com>
+Closes: https://lore.kernel.org/all/CAGVVp+UvLiS+bhNXV-h2icwX1dyybbYHeQUuH7RYqUvMQf6N3w@mail.gmail.com
+Signed-off-by: Li Nan <linan122@huawei.com>
 ---
- fs/xfs/xfs_inode.c |  2 +-
- fs/xfs/xfs_inode.h | 12 ++++++++++++
- fs/xfs/xfs_iops.c  |  9 +++++++++
- 3 files changed, 22 insertions(+), 1 deletion(-)
+ drivers/block/ublk_drv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index db35167acef6..c0c1ab310aae 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -1513,7 +1513,7 @@ xfs_itruncate_extents_flags(
- 	 * the page cache can't scale that far.
- 	 */
- 	first_unmap_block = XFS_B_TO_FSB(mp, (xfs_ufsize_t)new_size);
--	if (xfs_inode_has_bigrtalloc(ip))
-+	if (xfs_inode_has_bigrtalloc(ip) && !xfs_inode_has_hugertalloc(ip))
- 		first_unmap_block = xfs_rtb_roundup_rtx(mp, first_unmap_block);
- 	if (!xfs_verify_fileoff(mp, first_unmap_block)) {
- 		WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 292b90b5f2ac..4eed5b0c57c0 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -320,6 +320,18 @@ static inline bool xfs_inode_has_bigrtalloc(struct xfs_inode *ip)
- 	return XFS_IS_REALTIME_INODE(ip) && ip->i_mount->m_sb.sb_rextsize > 1;
- }
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 4e159948c912..99b621b2d40f 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -2630,7 +2630,8 @@ static void ublk_queue_reinit(struct ublk_device *ub, struct ublk_queue *ubq)
+ {
+ 	int i;
  
-+/*
-+ * Decide if this file is a realtime file whose data allocation unit is larger
-+ * than default.
-+ */
-+static inline bool xfs_inode_has_hugertalloc(struct xfs_inode *ip)
-+{
-+	struct xfs_mount *mp = ip->i_mount;
-+
-+	return XFS_IS_REALTIME_INODE(ip) &&
-+	       mp->m_sb.sb_rextsize > XFS_B_TO_FSB(mp, XFS_DFL_RTEXTSIZE);
-+}
-+
- /*
-  * Return the buftarg used for data allocations on a given inode.
-  */
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index c53de5e6ef66..d5fc84e5a37c 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -870,6 +870,15 @@ xfs_setattr_size(
- 	if (newsize < oldsize) {
- 		unsigned int blocksize = xfs_inode_alloc_unitsize(ip);
+-	WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq)));
++	if (WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq))))
++		return;
  
-+		/*
-+		 * If the extsize is too large on a realtime inode, zeroing
-+		 * out the entire aligned EOF extent could be slow, adjust the
-+		 * blocksize to the filesystem blocksize, let __xfs_bunmapi()
-+		 * to convert the tail blocks to unwritten.
-+		 */
-+		if (xfs_inode_has_hugertalloc(ip))
-+			blocksize = i_blocksize(inode);
-+
- 		/*
- 		 * Zeroing out the partial EOF block and the rest of the extra
- 		 * aligned blocks on a downward truncate.
+ 	/* All old ioucmds have to be completed */
+ 	ubq->nr_io_ready = 0;
 -- 
 2.39.2
 
