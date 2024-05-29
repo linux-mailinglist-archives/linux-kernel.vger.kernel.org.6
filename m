@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-193955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB7F8D3488
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:28:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245538D348A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7733FB22E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6AA61F242DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD212178CE8;
-	Wed, 29 May 2024 10:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D7813DDC9;
+	Wed, 29 May 2024 10:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CmWYY7kT"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Y6hQRlzp"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75173167D87
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369AB13D29A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716978491; cv=none; b=S6trpQNK7gQEVeVvvXLG46KYx04Lf2RyxpuvRbakTb+KS9N23bW1sHQmd6umzl71ntKNV1HeDebaxEsLZylZ+kF13S0aSOZXOF9qhwiXca1HH9q0XMP5BbWXVFdiSnVdjF7CXOGq7Qzo6jQkebgpMLaViaC+RDah/9aDh3KRDI8=
+	t=1716978612; cv=none; b=WhuKHpGGWud2mUWC70/JuGEDb4b9xbYOlHmw8Ks1p20tVtS80/1gS/6FI1U3vCuvRrtwbS1mJ6zvAjjF6IutgyuWwKe69pxD4rdfM3IeXPBLQ1SZNklHQCZ1OnrIGQ8CIKVDXaFsuSP/c+ok0UyZmcmJoK78w10HUFYKk0pThZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716978491; c=relaxed/simple;
-	bh=y7p3l0oglWACzgxbaMPo7wp3eRe7SuiZC//urcH+c2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYF36+ThNCUvPcM3Vy9uB73csAgju2/vgSbqhNx6y/witLrSnzxnX+YzadK1D6QVgdtsfNCAkzczFxwPvqzO2GC8QhY/cc3+KgZOsc4gKmk0U11VOd4JlR/mzIqWEenuwJyUT8lcM+83RM0Ld26m2bml9xBHz5tDDIwWVps7yLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CmWYY7kT; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=y7p3
-	l0oglWACzgxbaMPo7wp3eRe7SuiZC//urcH+c2c=; b=CmWYY7kTC2Es21bZ+ioW
-	ahGY/I29AG5zamKjk2waZoZ+WBHMkHOdazG0wMXWKCdWJxlYpsffH8Zx6+ISbutQ
-	+ebCYp2XelrRSarYPImNiyTyyn1FhneH7wYKRQykQYhdi3vVd0Fs+zHUTfyA11fC
-	zp2xj8qaWYBEf9+yihl0cnvdOpBIYOkUXCrD8zVxI7KN0JAtrcqN24dOV4F1R1Un
-	bbIuH55DYqux8cqTqir3E/izIK6gJkeyoWu91fj9oZpOTGzkZeUaTynZZijUeesl
-	gseEjJgNBB9opIBB4/8gL+q1IlDtXm3rstZ/TPbCBY5zge2P8e1zgah0J+9uo+kn
-	Eg==
-Received: (qmail 536340 invoked from network); 29 May 2024 12:28:04 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 May 2024 12:28:04 +0200
-X-UD-Smtp-Session: l3s3148p1@VOCjNJUZ4McgAwDPXwS5AFh1mWvQq9Po
-Date: Wed, 29 May 2024 12:28:03 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: egyszeregy@freemail.hu, devicetree@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c-dev: Introduce "linux,i2c-dev-name" property for
- device tree of I2C controller.
-Message-ID: <mnzj5bqbiuwt4dqnenwctejdnqccqzk2x4tkz2ukqssrmdmsxc@7srnfnfjym26>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	egyszeregy@freemail.hu, devicetree@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-References: <20240519165504.19627-1-egyszeregy@freemail.hu>
+	s=arc-20240116; t=1716978612; c=relaxed/simple;
+	bh=qcp2kwhYNvSXNHuKmDzEkKmUrhJ2Xale8EsYaXmmv8g=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=J8LN6q6Nwf7a4x1PrCEurUgZ1gXfM7jNBnXCDmBZsC91J6vXHh7U0wlAj/zgpc9kBb4M9mK5RfO3qnAFsPp74LRYM5AGjWz79LQ2k1on/x7AKyZ4QJq1peve6m8rN4tQh9gmnyGd+LFkpYrBGtVsbE1yuXZq30UFInnKsdG4h2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Y6hQRlzp; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5785f7347cdso2058837a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:30:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716978609; x=1717583409; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ac4qZfdkZfTNTl8ckvJUCvNWHqeRhzm0yO5BK/O6hjU=;
+        b=Y6hQRlzpiAKT/flJwoCW42HnkDY4X94dnt/9wR7WaCGNXIj0eV7ONDiGp/WWSjIp56
+         3XWi3r5X066jRidKn7V+gP14pZWbfGbHfFT+DrQ8KV9x/34UJLpQaoXs1fo/JKeVsIOE
+         /6p/UFskcFv2V3gKIXu0TNQZDP30Xw0y/OurUDcf+FHttaomdxryUX1vjvcSJ0+YC+Ap
+         RhEUfZc8VlfNyMnTnYlM1RAl6g1W1vaZ5ojDQqMy5D1FdHDOC2/79Tpvl77n59nykrqY
+         dtzadVTB2tagbcJxtpZrjsyPxfWo6GnYvAIX9Th6CZW1vMJNlC8bStR+bHQf28qf7Qss
+         3F6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716978609; x=1717583409;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ac4qZfdkZfTNTl8ckvJUCvNWHqeRhzm0yO5BK/O6hjU=;
+        b=qmSiI4oUGRYdF2bpTGAKNGeM+JdOlX8xi4GuVktPBfUUZ0WqZ83dBuDj2EtkiqkOIW
+         NgXK35uyn+eOZAbq5nNV077p9glRzibCREoRA0AG6CihmHfsmjc/Fnz83H1cy19lLPzd
+         Ej7iD4YSHaSlVGVIUh7EJs9idsTLpDXqAZDlOmVh6Yhnt6sUudStFEe5tpE8d+f78qjo
+         HRVxtHChlHO/Lm4WyKDNp2J7qvOVVU7Z7+L3dp2Fd3xRdp4MIeOkgSedmcll0HYuWgey
+         pSotVwjBhTRSHeWuMfBzqFpVvT9ZJl9DxRnItP28m5Uj26ALTRzCggx9LNv4noNnbQLG
+         /8Sg==
+X-Gm-Message-State: AOJu0YzeTEYOX0l1ZYIrgyRNa0XefMkvxLKOagJ3dD75sCrT8wiNR53a
+	JRZ1sTnZFQ3Jyo1MvvfuWD9+4R4PTsEJJhgD+vy8fRJgmz8CoGSqLWx535asiYA=
+X-Google-Smtp-Source: AGHT+IFcl7qIqIRKKgPOn0ZagLrucn8zYBaKRAwOJ9MONdyl90Fi/kvHFIn2wvxXfDrvkFTQMpUP8g==
+X-Received: by 2002:a50:d64f:0:b0:56e:238e:372c with SMTP id 4fb4d7f45d1cf-57851a5cc47mr10109372a12.26.1716978609536;
+        Wed, 29 May 2024 03:30:09 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:aa3:5c01:cd2:ba1a:442b:4269])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a111f8b3fsm65426a12.85.2024.05.29.03.30.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2024 03:30:09 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="adz2efxtjrrak72e"
-Content-Disposition: inline
-In-Reply-To: <20240519165504.19627-1-egyszeregy@freemail.hu>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [RESEND PATCH] w1: Add missing newline and fix typos in
+ w1_bus_master comment
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <38eae3e5-cb91-436f-a422-0d03d4c8cc95@kernel.org>
+Date: Wed, 29 May 2024 12:29:57 +0200
+Cc: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <C058E8F5-3F00-44FC-8294-93E0B767F13E@toblux.com>
+References: <20240515101150.3289-2-thorsten.blum@toblux.com>
+ <20240527092746.263038-2-thorsten.blum@toblux.com>
+ <38eae3e5-cb91-436f-a422-0d03d4c8cc95@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
+On 27. May 2024, at 13:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 27/05/2024 11:27, Thorsten Blum wrote:
+>> - Add missing newline before @return
+>> - s/bytes/byte/
+>> - s/handles/handle/
+>> 
+>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> 
+> Do not attach (thread) your patchsets to some other threads (unrelated
+> or older versions). This buries them deep in the mailbox and might
+> interfere with applying entire sets.
+> 
+> 
+> Applying: w1: Add missing newline and fix typos in w1_bus_master comment
+> Applying: w1: Add missing newline and fix typos in w1_bus_master comment
+> Patch failed at 0002 w1: Add missing newline and fix typos in
+> w1_bus_master comment
+> When you have resolved this problem, run "git am --continue".
+> If you prefer to skip this patch, run "git am --skip" instead.
+> To restore the original branch and stop patching, run "git am --abort".
+> error: patch failed: include/linux/w1.h:85
+> error: include/linux/w1.h: patch does not apply
+> hint: Use 'git am --show-current-patch=diff' to see the failed patch
 
---adz2efxtjrrak72e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Krzysztof,
 
+just to clarify: do you want me to submit the patch again or did you run 
+"git am --skip" to skip the identical, but threaded resend?
 
-> Optionally, an I2C controller may have a "linux,i2c-dev-name" property.
-> This is a string which is defining a custom suffix name for I2C device
-> in /dev/i2c-<name> format. It helps to improve software portability betwe=
-en
-> various SoCs and reduce complexities of hardware related codes in SWs.
-
-(I thought I already replied to this?)
-
-Highly similar to [1] from 2021. I don't have a super clear opinion
-about this, so I'd need help from the DT maintainers. But the discussion
-=66rom back then stalled.
-
-[1] http://patchwork.ozlabs.org/project/linux-i2c/list/?series=3D237908
-
-
---adz2efxtjrrak72e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZXAy0ACgkQFA3kzBSg
-KbakWBAAm1IkX0tO/4Y5kwTdx3ODo6eOVGSZO6RkRmuFikw9lq17+6pWLiiOMEKN
-U9WQzznDplV1jl1yqsPeL8XjZqJL1K9QqOkJdYiZtWxIpdl6jkrOOFKmPwTbRspZ
-dTQ8hYXyJRrpMAVbaBgak+EtTYJSI3e3cAR+1oTNlR0M+PEwQ+Oz2hBhflFgGwox
-Z2znGpDjZuWKsDdXX64bMOhjlYUltHq6hgaShm1LpX3QCA6EJttcOlgD+mN1/zKZ
-wOMcFHtzmz3TShUfkFyOhqE6Lg72Ir9iNk5+HqC81h/VqUT0ohisMbI/MGAjsNNB
-uQTHO92DmELJJRii6u1zRPy4Cfk6Unc/sRrlv0YNZJTCKk8EH1HdJqIw0xhdl/jj
-BSRslNmsv/Ae+wkFM205AeDgtcwMS/+HqKIgM5Zs5lmydhOPUa1UxtEqCvqkSrRi
-cdaOVPyNzYfZC9TBpzhzb7vBvRbS3IEqkyWwCknlTQtO5D+02+mysYifFhvpSUMW
-csaBEVFXWguDCX3F2G/2q+hZsjw2TRzYTT46CEyiImytvzIrl4o90X7RkV09evQX
-1Yzn2rZ3G9rbI4Of5/CshmPUIlJJJJ/OqznaKr9+kFMxB0/bNytjLE91YsGfXef3
-gG9XG33MrXnJPgQl8if/kk2Rf1bLTvLM+JPP9ZNvHRQACUWi0yo=
-=3BAA
------END PGP SIGNATURE-----
-
---adz2efxtjrrak72e--
+Thanks,
+Thorsten
 
