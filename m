@@ -1,322 +1,274 @@
-Return-Path: <linux-kernel+bounces-193980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4818D34E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:50:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C601C8D34E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327CE1C224DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5022C1F25194
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1E717B515;
-	Wed, 29 May 2024 10:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABD517BB2F;
+	Wed, 29 May 2024 10:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct3sZf7c"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hqs7mfza"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC42A167DB9;
-	Wed, 29 May 2024 10:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716979850; cv=none; b=lYIceaYpygKDC0rdEiND/UXCuUEGq4l9J6v20J+SXnxfA0d7xT4XCXFtQsylGW+jyM49ZmnncLr6WPUBb4xYQC8YBF3xQ9Hy+2hAMMNmMDiLrSgsmgQkQCK8rPaLSY/qgT8qMMOBI+6uNCxGqMbNl2wzjTf74XF7kwV0kzZR1YI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716979850; c=relaxed/simple;
-	bh=ON8VbFksVmbIPG/lyhHTYgnpBNOyPvXdvZ1EVrZ290Y=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=GxlPw9jdHr+6VOnLFwpSuaYecEpXQcY7IwvY3bkHS34B/Ruha4L+xqAO0NTStAuQ/ALWueWKFbu/rKNfi/QsXC2CuHaTZMsuCbm4vdNAiEu2W9BSKPZSoDBty6pGks12LcCT6opDJTX3EE91ZcaRvzwqwCWGM9NUCvTJkzs8ctc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ct3sZf7c; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-24fda23b9f2so950453fac.0;
-        Wed, 29 May 2024 03:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716979848; x=1717584648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ON8VbFksVmbIPG/lyhHTYgnpBNOyPvXdvZ1EVrZ290Y=;
-        b=ct3sZf7c07HfXTpd5JFiBSSqq1HC3TJcJTQDrtdcCl086Ers9G74FTHEvClyC3FpJv
-         PDxwHLZ+shrG4M63umT5JSHYo3Ii06tSnCR1Tc9vbOPPW2lOxigyxd31WnGlSXl0RnYT
-         UljaqlQIMoHCWyAKebcWCI75dfYZ+LQyjPlym0d74cA9bWeE9+ZWi9D2e1ChmnsznTcO
-         kafHoTVCQAoVh8LpkiAOSApbWJIbestFc02sPbC61Qloiyt/2raD3rFV0aAqF9R5/45U
-         T8lA9Wx/kJMuWUhf3dqGuLUAvq2aMeDT8Fs7rjW/EFkkPEbUbdmi7LwANVkezehjBO5G
-         ogPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716979848; x=1717584648;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ON8VbFksVmbIPG/lyhHTYgnpBNOyPvXdvZ1EVrZ290Y=;
-        b=ZFqiJlLlgtwDY16KKsFINMU79xXAd2NpHsT8jpE++/r4P6ffQp2sqAXX3s5xdNbfju
-         Dn8NULHGt7O1OvW6YPl4pFtYru5RbzsdaXKjBPUCvail/hK8Y7Wlj9HlwCaSPDi9JIPF
-         uE0Irv5ta2LjLKUgTk3ruZ+V2f/OgbYtzOXUXSv6B6bPcTefNVk5kzNe05u+5cjiHPGa
-         GhiVuJ0D+ioMoS+87oj9z4cRRjaYr0q1KrVsbQK6mwCgjtwmW7jX9HfAhIGGVHKGv7Y6
-         eEWAzSNOCb0/kOckJ6YYB8mZh/XlsP8xUE2UN+zxpldWxa6PjfrAueVrjr3yGYSl8IZw
-         JX0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBVaW2hPxFsfxHDjMuoGc5HrAQe8UPVVvfwMDIX+XxmAfjB0ErmdArgsGBrXI6V1dM16OjI0Wb536xAGj4g8KwRGgV13GcUS7sxrJKdttV23O/OZUyXZShEXM/QMIJrgdVmMf6wK6O+g==
-X-Gm-Message-State: AOJu0Yz4A2mOEt2msADztSZ70Hh34+yGxGiaqjg6QIYOn4sp52KE3s7K
-	NXDR8SgdspRh9LgCpWi7+akW/7zaCN3zm6LDmRC+K3WzRh18za9I
-X-Google-Smtp-Source: AGHT+IEDsGCiyN149iX9lU2bvkB1z7h9rA7d3r9gRWABUoCAZd/4EOHcw9C0uBV4EXJZJiYtYzmp4A==
-X-Received: by 2002:a05:6870:55c9:b0:24f:e1be:39b4 with SMTP id 586e51a60fabf-24fe1be4a39mr14171911fac.46.1716979847520;
-        Wed, 29 May 2024 03:50:47 -0700 (PDT)
-Received: from [127.0.0.1] ([106.194.121.206])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd4dcde6sm7780536b3a.211.2024.05.29.03.50.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 03:50:47 -0700 (PDT)
-Date: Wed, 29 May 2024 16:20:41 +0530 (GMT+05:30)
-From: Shresth Prasad <shresthprasad7@gmail.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: robh@kernel.org, saravanak@google.com,
-	DRI mailing list <dri-devel@lists.freedesktop.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
-	julia.lawall@inria.fr
-Message-ID: <06a5901b-a2f1-4e3f-9744-bbcb3a34f666@gmail.com>
-In-Reply-To: <8d95757c-fd05-4a48-ae9d-24d78d04d663@samsung.com>
-References: <20240515202915.16214-3-shresthprasad7@gmail.com> <CGME20240529101246eucas1p1266853c07f5178c7e3e4b8a264eb436e@eucas1p1.samsung.com> <8d95757c-fd05-4a48-ae9d-24d78d04d663@samsung.com>
-Subject: Re: [PATCH][next] of: property: Remove calls to of_node_put
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8158F17B50C;
+	Wed, 29 May 2024 10:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716979863; cv=fail; b=BSqi+Tjnkj4xHfywXRnLxZgisB41vKHSun2oXbxayo3Z7NZ3SQSu661oyLPkgJp/txbUZ3kLLTCHEHmJY93CI7XSroQj6Y/iS04djkNb2QamMdcv82PF6T4a5O3hLba2Otz8ys2HT6K+nxbCqxbq3CMgGsKkzbHV4Vav1euTf2A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716979863; c=relaxed/simple;
+	bh=WAuqbneYpqfCPkKmo7X4KbRUYPtmq2ITGPGsTMLTmKg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=TEGBtK2GIr1AiS6VbsTpuLISrznYtV2YTga3kqak12b1FoJGkX+vhEv43nrtB4lXuuM5K0sJ5eUddUab01TmxdXPGMns/BFrhlsUo4kCdGVfs3gaY8P1EhuDwwDB+BrvQ6YIQrIxox3XQLk/QtpGZFB0oPrqmcxt4bKEYS8OyXw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hqs7mfza; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716979862; x=1748515862;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=WAuqbneYpqfCPkKmo7X4KbRUYPtmq2ITGPGsTMLTmKg=;
+  b=hqs7mfzavI2huzWsB1a/OW/E3RlRJjGe+wl1DgDxAPOUKVsE6b5EUoUz
+   QzmHAlfpogmkERGXmgVVUmv0fbH46VR21pmEed02QTiXfAnNIijQkE6aX
+   z+S7sQP3na0CIAdhPzBJJ0gPwIa9WD3OutoOmgRtQ2bAFyrg/phK3ngqE
+   luHgiWUVAonEoPtNgEgvx/I0L/mcfiVxTZ5b84r+xuUKK7Zzfzwt5s8I+
+   EYfU1wkO7lc9KGz9Ak8KjF8nM9HK5iEQg0vk5mf18byhfAPzaixVWRK9M
+   DHmvywuI+4yTAOJlZVvoBGwY9fi8zAIln9+ECvejvsF8c8FPQTpAj6RmC
+   g==;
+X-CSE-ConnectionGUID: F8SiJsVbTVWECoiWhedKGw==
+X-CSE-MsgGUID: Hwcv3IMxTS27sI6Mrfq7nQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13495705"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="13495705"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 03:51:01 -0700
+X-CSE-ConnectionGUID: dRKfLXMxTk+IHSn3ZluApQ==
+X-CSE-MsgGUID: BfPfubCsRs+qY8j3u5Q+Ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="66270587"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 May 2024 03:51:01 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 29 May 2024 03:51:00 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 29 May 2024 03:50:59 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 29 May 2024 03:50:59 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.101)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 29 May 2024 03:50:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z6W+GFxDRJANMMYx2rTi1STVdkr7P1gmcand7Ho1hwcmDt6cU8ksgHBxRcBqhJ0yuwRVQ67MdftlCNyqwDwmvqZj/r08x7XM97mxyDPBGQBAbFqY3V4+OsVEE5r1d3U12g3b37CFpPj0sWQdcJfhvvpROSQrxkNgeuTeRim9JGg+fC2cTsEhKvrOG3zYeTW+YB6t8XQe28a9DLm5U8GNn9j3e+XeXRV5+o1K9DQRLLCYAneZttYXgOmEJSpOGzPT9Hqz91A9wDaPIW/qsHxuOTOarl8XnXmN7qtbzlBz4M+pLe+hqlmI7nE6Fd+3J42HCojNynr99sN54a+QQlD4Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WAuqbneYpqfCPkKmo7X4KbRUYPtmq2ITGPGsTMLTmKg=;
+ b=Npk4eAyaFFrPJoyE8FMp1hfIaZF7UzLjCzyCMFzQAKdVfk280ndrkTVp0rKgVcLZiSGLfOT2UkiCHE6pIp5vtXJYM0JmU83Xw6wbOppZRn9Lmh1UcMGEL9GL9zupwMPBNDAaXBIIR89P/WsNSv3VsYBxQA/7ygE7c6JtuD3NvPdGj/8G+XqQNitYMBDgP9FQFv2KrE+cMyFb3Zl4H+Vcu4CeNcjAvHo/gQvn6r3Z7btfNsmcXx+6VU8ZxW9PYjRP8Tts1JYGnTZmU9qLQnlmz8JsRDU9fM8pvU2G7dIMGTsTMqo/HWnzGJX3d2hhGK8GOz5Fpg0akTQRgtXJBp2d2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by SA2PR11MB4956.namprd11.prod.outlook.com (2603:10b6:806:112::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Wed, 29 May
+ 2024 10:50:57 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7611.030; Wed, 29 May 2024
+ 10:50:57 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "seanjc@google.com" <seanjc@google.com>
+CC: "chenhuacai@kernel.org" <chenhuacai@kernel.org>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "maz@kernel.org" <maz@kernel.org>,
+	"frankja@linux.ibm.com" <frankja@linux.ibm.com>, "borntraeger@linux.ibm.com"
+	<borntraeger@linux.ibm.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "palmer@dabbelt.com"
+	<palmer@dabbelt.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "loongarch@lists.linux.dev"
+	<loongarch@lists.linux.dev>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>,
+	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
+	"zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-mips@vger.kernel.org"
+	<linux-mips@vger.kernel.org>, "anup@brainfault.org" <anup@brainfault.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2 3/6] KVM: x86: Fold kvm_arch_sched_in() into
+ kvm_arch_vcpu_load()
+Thread-Topic: [PATCH v2 3/6] KVM: x86: Fold kvm_arch_sched_in() into
+ kvm_arch_vcpu_load()
+Thread-Index: AQHaq+kvNSE54PKrvEmweOF4RZvjhrGlbnoAgAegs4CAAQUoAA==
+Date: Wed, 29 May 2024 10:50:57 +0000
+Message-ID: <2a221116a03f57dca8274b6bc2da7541b21d86bb.camel@intel.com>
+References: <20240522014013.1672962-1-seanjc@google.com>
+	 <20240522014013.1672962-4-seanjc@google.com>
+	 <c77f3931-31b2-4695-bd74-c69cba9b96c1@intel.com>
+	 <ZlYte16cvQpPGHkx@google.com>
+In-Reply-To: <ZlYte16cvQpPGHkx@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|SA2PR11MB4956:EE_
+x-ms-office365-filtering-correlation-id: 7cf63ac3-31db-4a7b-8be1-08dc7fcd3867
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?YzVQYkFYeGJIT1NlcG5Zd1JkNDduaGxKWGQramQ3d29ZTXhrZmtscFNxNHZr?=
+ =?utf-8?B?TlJOVmU1Q0V4U3hWUjQ2MGNUaVZIZmdMK2VnemMxNzV0aEpIemY2QjY4UnZZ?=
+ =?utf-8?B?Ym5zQzhMaXgxaWJLKzBTT3BxbVlZTVR1ZEtXQ1ErMTBuUm9raEMrNWZ0RE5k?=
+ =?utf-8?B?TE4ybjFwZ0JweEtrb1Zqd1FQaEkyanNjZ2kyVFFURGozUGo2WU5TZ2dGL21J?=
+ =?utf-8?B?SFU0NmcrU083U3BYL0lvdlorVXFHNTY1c3lGNUlIK1RNWm1yZllKTTRObG9T?=
+ =?utf-8?B?MmVVZmliQ1RsOUs3ZDVQelVXNFU1aWE3VStZMFd2UnRRSTFqaGxSS2lSUWJP?=
+ =?utf-8?B?U1I3RHdvcmw4TmQ4T3FITUJEc3RNVXVZWFdqUlptUnJ2YVhVUzJ1bjlMVVY5?=
+ =?utf-8?B?Uy9FSnFCMlI4U3NoaU5CVHpIaDJqSWRQQ1Y1emVNNzcwZmFaNkxIYmo1WENm?=
+ =?utf-8?B?SEwwazd2UHN0Mno1QVVEMFB1TU1aMnRERlZjWVlqeW9mWXZyU243KzNSZ0FH?=
+ =?utf-8?B?ZHFxZlJlN0FBSnZSK0tyYTF1bzgwdVo0dmNiaWxEYTJWeTFFVVlDckdMYVk3?=
+ =?utf-8?B?TTVTUTJRK1ZlbU82emdxVFhBV3JlbGxHMzVrVWxWMFl0VjEyUng3QkRoemho?=
+ =?utf-8?B?dlgwU0ljNzFOUGRuTWJhVmpjTHRHMGNsOW8zV3laSWlsaHY3WGV3anVlc0ZY?=
+ =?utf-8?B?N01VUHB1RksrNlZTUGpYbDJCSDc2NHlqZC9Ia1V6T1NoaTlsdzNVM1F2V2hL?=
+ =?utf-8?B?QmtqZnpHbWdkN1hxMW9CUFMydUp2YXJwNUN2dU9PTi9uNEFsNDVVWGJQME1u?=
+ =?utf-8?B?emN6cEltdjBkeXRhWWhJVmtWYWxlWHkwSkhvMFI2eTh0SkRORWNHK2xSQzQv?=
+ =?utf-8?B?bjFIZ24vSmwyMnBYYTVTOEUwZUJDdTRhZEhyOXpucXV5RW1ieFNpckVHbnNr?=
+ =?utf-8?B?SVFmUENiaHBod2RFT29xVXBiYks0NFo3MThtZ0UyanpZT3MvdHRnd1BnOHRn?=
+ =?utf-8?B?c1Jic2hSN0JHenp4MmE1UnpIYlArcG5BVHhBYVl0UDM1Y0RmWHIrcXlzZlRq?=
+ =?utf-8?B?aWw3Skt3cVFySVI5MnJBVEZlcTAraUo1eWFSNUFzeHQxREF1alBuUUV5V2pi?=
+ =?utf-8?B?enJ2bFp1ZGVQeG9jYWs2S1RGRTg2cnJWZzVTT2RMRm90YlJJcDNYUFh3QzdM?=
+ =?utf-8?B?MUxPZkhNYk1IM21SSzYvY0dHQVFscW9VZHFMN0ViTStaT0hKZmNPQXNCdTNy?=
+ =?utf-8?B?d0k0cFlzMVBhOVVJNlFMbGc1VlRTakk5Y1VhNllDSTlPZFNRemdZQUIvN0Zx?=
+ =?utf-8?B?aitGcy9tMVhwN0pwMDNGVXZ2NSt0ZGx3RjZSb1ZFNitYRHFCY3VZWTNVSEd5?=
+ =?utf-8?B?WWZ3ZXczc25EMEV6eGRXYTFBcnE2aVdmV0RmME03b0ZPQkZTMVBOOEYxS2VQ?=
+ =?utf-8?B?SXVSUU9kNnd5WFZMYjZHNzUzblF6RUlZbktEZWNsUU5hZU5TUGtoaTYyL1NZ?=
+ =?utf-8?B?eGY3d2k1QXJDZTBoNHBIWHh1ZUV4TlRpekxuaU9CVjljNzZUUGdMY0dCMXl6?=
+ =?utf-8?B?RUwxUm1zMzQ2YU85Z3NEMFl5a3QvN3IwS2I2aGpLSGNnSmxSc2hYSlZCdk5L?=
+ =?utf-8?B?ME8vTFhic1hDbnVSaEpUQUhCL3NsNzBRTENJaWp4L2I5U1J1eThBR3NBOWxJ?=
+ =?utf-8?B?WmQxVHRNRUxXN0RPSUF6TVVtVmx0RnZPcWtpWENqNmpOSElkdFBraUxIa0I3?=
+ =?utf-8?B?UlYxc1luT0k2d094Z25tTkx0alBOaElkQlJkcjVyWEtXbmU4L2wvNzZwbmkw?=
+ =?utf-8?B?bGpoNk1sbTduWmlYMHV0QT09?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VmtuOFpDNE5La2pjUmtVSGdMbEQ3SHFQM053WUxvSDAwTWNMa3NTQ2E1bHYr?=
+ =?utf-8?B?OVJZZXJKRVZwemtPazBXMTVrS1hSM2NjTGVHR0xoMTRNLy9NdnNmMklhN3d4?=
+ =?utf-8?B?Wi9HeDQwNXlreEZiZFhrbDJNa2ZyclVGWWxOUm01dCsxeUIvei9GdnFZUlR3?=
+ =?utf-8?B?V0l1Z3hqMnk5M3h0SVBXZjNicndCV2hBVmswZVR5MU1JL0lodU5nYmd1cDRj?=
+ =?utf-8?B?Mm1jRU5sendVWE9teEpsRGlIOFpFUmtmV1dCaXQrZHBkellzeGtlUVNpTGpW?=
+ =?utf-8?B?b21WNFc2ZUowcXJWbktNd2FDRGlpRUdSaHRrWS9LTzIyK3hEZm9MUWtLcFdy?=
+ =?utf-8?B?czRTbHZKQnRJMm1HZ2hZcVV1M3RoWVVoSlVwcWdzeG5jSXN6cHhoYlJxM21D?=
+ =?utf-8?B?N0tmbmEzbW5wS2RnTUoxVGsvWnFMbEFKSnd6TmxnQ3Z1Qldad1RMbnliZ01m?=
+ =?utf-8?B?YXZ1Nm1DK1pNbGhveFZJaUE5SWNZNTY2NHUxU2xydkpRYUhGQmdMWmtLVys2?=
+ =?utf-8?B?SkhneHI1SVdvMjR5T09USjlsT0wzZi9yYXBtYUxjMGJKSy9hc2M5RDZhYlpO?=
+ =?utf-8?B?bThjMS9ydWRTZENOd3FaYnlVR3BGclg4bnNZUmk1dDZremZXVUtJV0tTcmty?=
+ =?utf-8?B?cTdzZlM5anZUYytQc2J5WS9BSXo0V2pJbXExYXVlSHVJUnRZSml2djNmcklq?=
+ =?utf-8?B?bGo5MFhBaFJLS2VDRGNnQVdMejRjbEN2Y2ZrVzljbFdybFVCekV3ZTRKY0Jm?=
+ =?utf-8?B?bHEzemNXenVjYTRYU2RBTnBKWEQ3WXpnTk0vRks3NkxoWmowZFcreFlmd2Fa?=
+ =?utf-8?B?T0JRVUVCUTZ3cFFwQ2crRlEyNTR5dmxWM1NoakJMWXFrYVV6SFNqM2R4SGh6?=
+ =?utf-8?B?U3NKNWt1YTFoakdONEJWZmJuakM0NVJJdFg2MU1mUk5NOVJGVTBvTlY0WVhG?=
+ =?utf-8?B?ajJlUnhxdVZ0RWtPSGs3ZjF5S2NoQkMvcXI2UEhjZ2Z4dmFxdEZSWGRyOXIv?=
+ =?utf-8?B?a2JSbnRYWFVCMmM1OWVMK2tPMUlLWXZCVGZFWlRXRmFEaEVGd1NsNzIvN3Fv?=
+ =?utf-8?B?SFA4MFFBUFBCd3NDRnNOYzdMMitPUjV3cytRTys3Z2ZFbHpTSUdnSUE5RWpj?=
+ =?utf-8?B?Tm9qeWk3UEtqSithc0dmK1FSMVVuZjV6RTVJdm9hamJxTWkxRmVOZGE4eXFQ?=
+ =?utf-8?B?VExrRk5OSDI2VkNSeEQwTXJIZGg4K2lrTVBNWnpxaExEbWVqdmE5dmpFMmVx?=
+ =?utf-8?B?eU1kc2FmdmdlZG41N2ZoUHVGdXU1ZitxV3dueHpzaXBDZklpVHhjbm1YSTdh?=
+ =?utf-8?B?bkp3Zm54eCtvSm45dDJaQURIUTAyVnUzMXlsdnkzQWRyaEhJdTZPc3ZzYnN1?=
+ =?utf-8?B?YjhUWmR2SU05SW14bWhFdmNINk1ncjVqd0ZudGllTDFiTDAvTFZRQVJYTWoz?=
+ =?utf-8?B?MnM2bmZzZWpSWFo1SHpodjl1UzRjeEp2TnUzcExFeC82d2hyQStVcWNzYkox?=
+ =?utf-8?B?MVVjdTJEYlZTY1NWT0l1Wm5nMVBDRTBSNDdDWGdIRE9lZ2NNYTFrTjVlY2M2?=
+ =?utf-8?B?Zzd5NC93ekNYZ1JsMzhGU1p6S0lDV0YyZjhLeTRCUE5mOXRTMDloNlJIRWhG?=
+ =?utf-8?B?OGhkbGNKNnozK2ZwZ3JvNzErbjJYLy9UQktUckVFSjU5eG1hajJReUlXQlJZ?=
+ =?utf-8?B?a3B5TCtUTmp6bS9Ta2xqSWd1T3RMeG5taHlocTJlK1RMb2pXbkpUOEp4S3pB?=
+ =?utf-8?B?NFdEVzN3TkR4UFVtQnQwYzNVTjJTNm5aVnJOUHZnVndwRHRVQnV3OFc3Lys4?=
+ =?utf-8?B?RXF0YU5PTndRSDdMQUJzQ3NRVkJ5RmhXN2hFaCtnU28vMFd3SGdvdE95eENF?=
+ =?utf-8?B?NXZTYm8rNURoNDhUcFppeFl0OGtNOXE4Ky8wa0J1ZUJBUzZoUTVydThIVk5q?=
+ =?utf-8?B?S0djYzIwVnE5L3dxVlNjWm1hazFCa1V5cTVlZmF0WEFSTGQvamlpdXlmbTdz?=
+ =?utf-8?B?ayt4citabnNCazBPaVJ2d2c3RHpLQkdCR21zUjFLbXlTMG5Ya3luWHYvUU8r?=
+ =?utf-8?B?ejNYLzdVb0tlbU03OXdxNXJjV08vU0s4OGJxY0ZnWFdYSnMyajY4U011Uzds?=
+ =?utf-8?Q?y+4lHuu0Qj5aW37zD3bCBQgbZ?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <631E382FB1C5D74A8A59B6B59663346A@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <06a5901b-a2f1-4e3f-9744-bbcb3a34f666@gmail.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cf63ac3-31db-4a7b-8be1-08dc7fcd3867
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2024 10:50:57.0856
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2kfCcSuoEjZg6W7iD8m5BSjtjsH2bY6AcbtyLdQVKVYHTlDHfeMc9dDRyNtBrMrydKG7uutenDephrVvv+779Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4956
+X-OriginatorOrg: intel.com
 
-29 May 2024 3:42:48=E2=80=AFpm Marek Szyprowski <m.szyprowski@samsung.com>:
-
-> On 15.05.2024 22:29, Shresth Prasad wrote:
->> Add __free cleanup handler to some variable initialisations, which
->> ensures that the resource is freed as soon as the variable goes out of
->> scope. Thus removing the need to manually free up the resource using
->> of_node_put.
->>=20
->> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
->> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
->> ---
->=20
-> This patch landed in today's linux-next as commit b94d24c08ee1 ("of:
-> property: Remove calls to of_node_put"). I found that it triggers the
-> following warning while booting of the Samsung Exynos5800 based Pi
-> Chromebook (arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts):
->=20
-> OF: ERROR: of_node_release() detected bad of_node_put() on /panel
-> CPU: 2 PID: 68 Comm: kworker/u36:1 Not tainted
-> 6.10.0-rc1-00001-gb94d24c08ee1 #8619
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> Workqueue: events_unbound deferred_probe_work_func
-> tps65090 20-0048: No cache defaults, reading back from HW
-> Call trace:
-> =C2=A0unwind_backtrace from show_stack+0x10/0x14
-> =C2=A0show_stack from dump_stack_lvl+0x50/0x64
-> =C2=A0dump_stack_lvl from of_node_release+0x110/0x138
-> =C2=A0of_node_release from kobject_put+0x98/0x108
-> =C2=A0kobject_put from drm_of_find_panel_or_bridge+0x94/0xd8
-> =C2=A0drm_of_find_panel_or_bridge from exynos_dp_probe+0xf0/0x158 [exynos=
-drm]
-> =C2=A0exynos_dp_probe [exynosdrm] from platform_probe+0x80/0xc0
-> =C2=A0platform_probe from really_probe+0xc8/0x288
-> =C2=A0really_probe from __driver_probe_device+0x8c/0x190
-> =C2=A0__driver_probe_device from driver_probe_device+0x30/0xd0
-> =C2=A0driver_probe_device from __device_attach_driver+0x8c/0xbc
-> =C2=A0__device_attach_driver from bus_for_each_drv+0x74/0xc0
-> =C2=A0bus_for_each_drv from __device_attach+0xe8/0x184
-> =C2=A0__device_attach from bus_probe_device+0x88/0x8c
-> =C2=A0bus_probe_device from deferred_probe_work_func+0x7c/0xa8
-> =C2=A0deferred_probe_work_func from process_scheduled_works+0xe8/0x41c
-> =C2=A0process_scheduled_works from worker_thread+0x14c/0x35c
-> =C2=A0worker_thread from kthread+0xd0/0x104
-> =C2=A0kthread from ret_from_fork+0x14/0x28
-> Exception stack(0xf0a81fb0 to 0xf0a81ff8)
->=20
-> OF: ERROR: next of_node_put() on this node will result in a kobject
-> warning 'refcount_t: underflow; use-after-free.'
-> ------------[ cut here ]------------
-> WARNING: CPU: 3 PID: 68 at lib/refcount.c:25 kobject_get+0xa0/0xa4
-> refcount_t: addition on 0; use-after-free.
-> Modules linked in: i2c_cros_ec_tunnel(+) cros_ec_keyb cros_ec_dev
-> cros_ec_spi cros_ec snd_soc_i2s snd_soc_idma snd_soc_max98090
-> snd_soc_snow snd_soc_s3c_dma snd_soc_core tpm_i2c_infineon ac97_bus
-> snd_pcm_dmaengine tpm exynosdrm libsha256 libaescfb snd_pcm analogix_dp
-> ecdh_generic samsung_dsim ecc snd_timer atmel_mxt_ts snd libaes
-> soundcore exynos_gsc s5p_jpeg s5p_mfc v4l2_mem2mem spi_s3c64xx
-> videobuf2_dma_contig exynos_adc pwm_samsung videobuf2_memops
-> videobuf2_v4l2 videodev phy_exynos_usb2 videobuf2_common ohci_exynos
-> ehci_exynos mc exynos_ppmu rtc_s3c exynos_rng s3c2410_wdt s5p_sss
-> phy_exynos_mipi_video phy_exynos_dp_video
-> CPU: 3 PID: 68 Comm: kworker/u36:1 Not tainted
-> 6.10.0-rc1-00001-gb94d24c08ee1 #8619
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> Workqueue: events_unbound deferred_probe_work_func
-> Call trace:
-> =C2=A0unwind_backtrace from show_stack+0x10/0x14
-> =C2=A0show_stack from dump_stack_lvl+0x50/0x64
-> =C2=A0dump_stack_lvl from __warn+0x108/0x12c
-> =C2=A0__warn from warn_slowpath_fmt+0x118/0x17c
-> =C2=A0warn_slowpath_fmt from kobject_get+0xa0/0xa4
-> =C2=A0kobject_get from of_node_get+0x14/0x1c
-> =C2=A0of_node_get from of_get_next_parent+0x24/0x50
-> =C2=A0of_get_next_parent from of_graph_get_port_parent.part.1+0x58/0xa4
-> =C2=A0of_graph_get_port_parent.part.1 from
-> of_graph_get_remote_port_parent+0x1c/0x38
-> =C2=A0of_graph_get_remote_port_parent from of_graph_get_remote_node+0x10/=
-0x6c
-> =C2=A0of_graph_get_remote_node from drm_of_find_panel_or_bridge+0x50/0xd8
-> =C2=A0drm_of_find_panel_or_bridge from exynos_dp_probe+0xf0/0x158 [exynos=
-drm]
-> =C2=A0exynos_dp_probe [exynosdrm] from platform_probe+0x80/0xc0
-> =C2=A0platform_probe from really_probe+0xc8/0x288
-> =C2=A0really_probe from __driver_probe_device+0x8c/0x190
-> =C2=A0__driver_probe_device from driver_probe_device+0x30/0xd0
-> =C2=A0driver_probe_device from __device_attach_driver+0x8c/0xbc
-> =C2=A0__device_attach_driver from bus_for_each_drv+0x74/0xc0
-> =C2=A0bus_for_each_drv from __device_attach+0xe8/0x184
-> =C2=A0__device_attach from bus_probe_device+0x88/0x8c
-> =C2=A0bus_probe_device from deferred_probe_work_func+0x7c/0xa8
-> =C2=A0deferred_probe_work_func from process_scheduled_works+0xe8/0x41c
-> =C2=A0process_scheduled_works from worker_thread+0x14c/0x35c
-> =C2=A0worker_thread from kthread+0xd0/0x104
-> =C2=A0kthread from ret_from_fork+0x14/0x28
-> Exception stack(0xf0a81fb0 to 0xf0a81ff8)
->=20
-> ---[ end trace 0000000000000000 ]---
-> ------------[ cut here ]------------
->=20
-> If I got this right, this points to the drm_of_find_panel_or_bridge()
-> function. I briefly scanned it, but I don't see any obvious
-> of_node_put() related issue there.
->=20
->=20
->> I had submitted a similar patch a couple weeks ago addressing the same
->> issue, but as it turns out I wasn't thorough enough and had left a coupl=
-e
->> instances.
->>=20
->> I hope this isn't too big an issue.
->> ---
->> =C2=A0 drivers/of/property.c | 27 +++++++++++----------------
->> =C2=A0 1 file changed, 11 insertions(+), 16 deletions(-)
->>=20
->> diff --git a/drivers/of/property.c b/drivers/of/property.c
->> index 17b294e16c56..96a74f6a8d64 100644
->> --- a/drivers/of/property.c
->> +++ b/drivers/of/property.c
->> @@ -773,15 +773,14 @@ EXPORT_SYMBOL(of_graph_get_port_parent);
->> =C2=A0 struct device_node *of_graph_get_remote_port_parent(
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct device_node *node)
->> =C2=A0 {
->> -=C2=A0=C2=A0 struct device_node *np, *pp;
->> +=C2=A0=C2=A0 struct device_node *pp;
->> =C2=A0
->> =C2=A0=C2=A0=C2=A0 /* Get remote endpoint node. */
->> -=C2=A0=C2=A0 np =3D of_graph_get_remote_endpoint(node);
->> +=C2=A0=C2=A0 struct device_node *np __free(device_node) =3D
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 of_graph_get_remote_endpoint(node);
->> =C2=A0
->> =C2=A0=C2=A0=C2=A0 pp =3D of_graph_get_port_parent(np);
->> =C2=A0
->> -=C2=A0=C2=A0 of_node_put(np);
->> -
->> =C2=A0=C2=A0=C2=A0 return pp;
->> =C2=A0 }
->> =C2=A0 EXPORT_SYMBOL(of_graph_get_remote_port_parent);
->> @@ -835,17 +834,18 @@ EXPORT_SYMBOL(of_graph_get_endpoint_count);
->> =C2=A0 struct device_node *of_graph_get_remote_node(const struct device_=
-node *node,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u3=
-2 port, u32 endpoint)
->> =C2=A0 {
->> -=C2=A0=C2=A0 struct device_node *endpoint_node, *remote;
->> +=C2=A0=C2=A0 struct device_node *endpoint_node __free(device_node) =3D
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 of_graph_get_endpoint_by_regs(node, port, endpoint);
->> +
->> +=C2=A0=C2=A0 struct device_node *remote __free(device_node) =3D
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 of_graph_get_remote_port_parent(endpoint_node);
->> =C2=A0
->> -=C2=A0=C2=A0 endpoint_node =3D of_graph_get_endpoint_by_regs(node, port=
-, endpoint);
->> =C2=A0=C2=A0=C2=A0 if (!endpoint_node) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_debug("no valid endpoint (=
-%d, %d) for node %pOF\n",
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- port, endpoint, node);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
->> =C2=A0=C2=A0=C2=A0 }
->> =C2=A0
->> -=C2=A0=C2=A0 remote =3D of_graph_get_remote_port_parent(endpoint_node);
->> -=C2=A0=C2=A0 of_node_put(endpoint_node);
->> =C2=A0=C2=A0=C2=A0 if (!remote) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_debug("no valid remote nod=
-e\n");
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
->> @@ -853,7 +853,6 @@ struct device_node *of_graph_get_remote_node(const s=
-truct device_node *node,
->> =C2=A0
->> =C2=A0=C2=A0=C2=A0 if (!of_device_is_available(remote)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_debug("not available for r=
-emote node\n");
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_put(remote);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
->> =C2=A0=C2=A0=C2=A0 }
->> =C2=A0
->> @@ -1064,19 +1063,15 @@ static void of_link_to_phandle(struct device_nod=
-e *con_np,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_node *sup_np,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 flags)
->> =C2=A0 {
->> -=C2=A0=C2=A0 struct device_node *tmp_np =3D of_node_get(sup_np);
->> +=C2=A0=C2=A0 struct device_node *tmp_np __free(device_node) =3D of_node=
-_get(sup_np);
->> =C2=A0
->> =C2=A0=C2=A0=C2=A0 /* Check that sup_np and its ancestors are available.=
- */
->> =C2=A0=C2=A0=C2=A0 while (tmp_np) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (of_fwnode_handle(tmp_np)->dev)=
- {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_pu=
-t(tmp_np);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (of_fwnode_handle(tmp_np)->dev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break=
-;
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!of_device_is_available(tmp_np=
-)) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_pu=
-t(tmp_np);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!of_device_is_available(tmp_np=
-))
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retur=
-n;
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmp_np =3D of_get_next_parent=
-(tmp_np);
->> =C2=A0=C2=A0=C2=A0 }
->=20
-> Best regards
-> --=20
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-
-Thanks for letting me know.
-
-It seems this has already been fixed by Alexander Stein here:
-https://lore.kernel.org/all/20240529073246.537459-1-alexander.stein@ew.tq-g=
-roup.com/
-
-Regards,
-Shresth
+T24gVHVlLCAyMDI0LTA1LTI4IGF0IDEyOjE2IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiBPbiBGcmksIE1heSAyNCwgMjAyNCwgS2FpIEh1YW5nIHdyb3RlOg0KPiA+ID4gQEAg
+LTE1NDgsNiArMTU0OCw5IEBAIHN0YXRpYyB2b2lkIHN2bV92Y3B1X2xvYWQoc3RydWN0IGt2bV92
+Y3B1ICp2Y3B1LCBpbnQgY3B1KQ0KPiA+ID4gICAJc3RydWN0IHZjcHVfc3ZtICpzdm0gPSB0b19z
+dm0odmNwdSk7DQo+ID4gPiAgIAlzdHJ1Y3Qgc3ZtX2NwdV9kYXRhICpzZCA9IHBlcl9jcHVfcHRy
+KCZzdm1fZGF0YSwgY3B1KTsNCj4gPiA+ICsJaWYgKHZjcHUtPnNjaGVkdWxlZF9vdXQgJiYgIWt2
+bV9wYXVzZV9pbl9ndWVzdCh2Y3B1LT5rdm0pKQ0KPiA+ID4gKwkJc2hyaW5rX3BsZV93aW5kb3co
+dmNwdSk7DQo+ID4gPiArDQo+ID4gDQo+ID4gWy4uLl0NCj4gPiANCj4gPiA+IEBAIC0xNTE3LDYg
+KzE1MTcsOSBAQCB2b2lkIHZteF92Y3B1X2xvYWQoc3RydWN0IGt2bV92Y3B1ICp2Y3B1LCBpbnQg
+Y3B1KQ0KPiA+ID4gICB7DQo+ID4gPiAgIAlzdHJ1Y3QgdmNwdV92bXggKnZteCA9IHRvX3ZteCh2
+Y3B1KTsNCj4gPiA+ICsJaWYgKHZjcHUtPnNjaGVkdWxlZF9vdXQgJiYgIWt2bV9wYXVzZV9pbl9n
+dWVzdCh2Y3B1LT5rdm0pKQ0KPiA+ID4gKwkJc2hyaW5rX3BsZV93aW5kb3codmNwdSk7DQo+ID4g
+PiArDQo+ID4gDQo+ID4gTml0OiAgUGVyaGFwcyB3ZSBuZWVkIGEga3ZtX3g4Nl9vcHM6OnNocmlu
+a19wbGVfd2luZG93KCk/ICA6LSkNCj4gDQo+IEhlaCwgdGhhdCBkdXBsaWNhdGUgY29kZSBhbm5v
+eXMgbWUgdG9vLiAgVGhlIHByb2JsZW0gaXMgdGhlICJvbGQiIHdpbmRvdyB2YWx1ZQ0KPiBjb21l
+cyBmcm9tIHRoZSBWTUNTL1ZNQ0IsIHNvIGVpdGhlciB3ZSdkIGVuZCB1cCB3aXRoIG11bHRpcGxl
+IGt2bV94ODZfb3BzLCBvcg0KPiB3ZSdkIG9ubHkgYmUgYWJsZSB0byBjb25zb2xpZGF0ZSB0aGUg
+c2NoZWR1bGVkX291dCArIGt2bV9wYXVzZV9pbl9ndWVzdCgpIGNvZGUsDQo+IHdoaWNoIGlzbid0
+IGFsbCB0aGF0IGludGVyZXN0aW5nLg0KDQpBZ3JlZWQgb25seSBjb25zb2xpZGF0aW5nIHNjaGVk
+dWxlZF9vdXQgKyBrdm1fcGF1c2VfaW5fZ3Vlc3QoKSBpc24ndCBxdWl0ZQ0KaW50ZXJlc3Rpbmcu
+DQoNCj4gDQo+IEFoYSEgIEFjdHVhbGx5LCBWTVggYWxyZWFkeSBvcGVuIGNvZGVzIHRoZSBmdW5j
+dGlvbmFsaXR5IHByb3ZpZGVkIGJ5IFZDUFVfRVhSRUdfKiwNCj4gZS5nLiBoYXMgdm14LT5wbGVf
+d2luZG93X2RpcnR5LiAgSWYgd2UgYWRkIFZDUFVfRVhSRUdfUExFX1dJTkRPVywgdGhlbiB0aGUg
+aW5mbw0KPiBnZXQgYmUgbWFkZSBhdmFpbGFibGUgdG8gY29tbW9uIHg4NiBjb2RlIHdpdGhvdXQg
+aGF2aW5nIHRvIGFkZCBuZXcgaG9va3MuICBBbmQNCj4gdGhhdCB3b3VsZCBhbHNvIGFsbG93IG1v
+dmluZyB0aGUgZ3V0cyBvZiBoYW5kbGVfcGF1c2UoKS9wYXVzZV9pbnRlcmNlcHRpb24oKSB0bw0K
+PiBjb21tb24gY29kZSwgaS5lLiB3aWxsIGFsc28gYWxsb3cgZGVkdXBsaWNhdGluZyB0aGUgImdy
+b3ciIHNpZGUgb2YgdGhpbmdzLg0KDQpTb3VuZHMgZmVhc2libGUuICBJIGFtIG5vdCBzdXJlIHdo
+ZXRoZXIgd2Ugc2hvdWxkIHVzZQ0KVkNQVV9FWFJFR19QTEVfV0lORE9XLCB0aG91Z2guICBXZSBj
+YW4ganVzdCBoYXZlICJwbGVfd2luZG93IiArDQoicGxlX3dpbmRvd19kaXJ0eSIgY29uY2VwdCBp
+biB0aGUgdmNwdToNCg0KCXZjcHUtPnBsZV93aW5kb3c7DQoJdmNwdS0+cGxlX3dpbmRvd19kaXJ0
+eTsNCg0KSS5lLiwga2luZGEgbWFrZSBjdXJyZW50IFZNWCdzIHZlcnNpb24gb2Yge2dyb3d8c2hy
+aW5rfV9wbGVfd2luZG93KCkgYXMNCmNvbW1vbiBjb2RlLiANCg0KSSBhbSBub3QgZmFtaWxpYXIg
+d2l0aCBTVk0sIGJ1dCBpdCBzZWVtcyB0aGUgcmVsZXZhbnQgcGFydHMgYXJlOg0KDQoJY29udHJv
+bC0+cGF1c2VfZmlsdGVyX2NvdW50Ow0KCXZtY2JfbWFya19kaXJ0eShzdm0tPnZtY2IsIFZNQ0Jf
+SU5URVJDRVBUUyk7DQoNCkFuZCBpdCBzZWVtcyB0aGV5IGFyZSBkaXJlY3RseSByZWxhdGVkIHRv
+IHByb2dyYW1taW5nIHRoZSBoYXJkd2FyZSwgaS5lLiwNCnRoZXkgZ290IGF1dG9tYXRpY2FsbHkg
+bG9hZGVkIHRvIGhhcmR3YXJlIGR1cmluZyBWTVJVTi4NCg0KVGhleSBuZWVkIHRvIGJlIHVwZGF0
+ZWQgaW4gdGhlIFNWTSBzcGVjaWZpYyBjb2RlIHdoZW4gQHBsZV93aW5kb3dfZGlydHkgaXMNCnRy
+dWUgaW4gdGhlIHJlbGV2YW50IGNvZGUgcGF0aC4NCg0KQW55d2F5LCBldmVuIGl0IGlzIGZlYXNp
+YmxlIGFuZCB3b3J0aCB0byBkbywgd2Ugc2hvdWxkIGRvIGluIGEgc2VwYXJhdGUNCnBhdGNoc2V0
+Lg0KDQo=
 
