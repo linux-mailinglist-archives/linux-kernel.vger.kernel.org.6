@@ -1,111 +1,149 @@
-Return-Path: <linux-kernel+bounces-194131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF818D3724
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD008D3727
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07C11C2196A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF6501C21A9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79085DF58;
-	Wed, 29 May 2024 13:09:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A34C2FD;
-	Wed, 29 May 2024 13:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12318DF58;
+	Wed, 29 May 2024 13:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMwr4x20"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70A9DDAD
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988191; cv=none; b=Llg//98Zt14ElLGqnebD7uqd9dMXpDwCqL6sz9tjEkG9cx73SeNOU2/OFCXrCXnNeT9b1WdTlziv7eDhkVQKVi9W/pI0XwbbI/mUokftF1n2Wc8AUwptYxoWsypm4OPBqXmlakrm9BGjBEpMxAMitOpas3u6qTt3y+wUDB7Y/QQ=
+	t=1716988244; cv=none; b=UUm+l2nep5EwDK7ys6Rz5h/pX3PRllj4TZrr8PpFXUUFV8oY7ArKn5BNZyEBJfTdBR8r25m9MXZOCy1xIRlWLXEEpfk9XoSpu7l99nJ2r97SmSUVYcav+6YAEV5Lwyu9EYzKDIc9OWRqghRnA9uCLrcor/teWwEbnciACLgpkDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988191; c=relaxed/simple;
-	bh=w+pe0Z5laKPVOoSBdhBVIHrvGnyev/AXTveXL/veo0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ROKQ1es2FmqK7XbEJ8nW/DVGv+pIx7ad9Wk+ja4Hof174Ly48FfkYwc89GPY13fzVCITj0renVJv3BkKf3VyRMp8E+q2rdzyoDNcJ6UpfKEOSORJQDzqn2Sr2aVsBMKe8CjmN55Dpa8nkDiwpHcbCHUZDaqizxD8zZ2zDeqY6tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F55B339;
-	Wed, 29 May 2024 06:10:12 -0700 (PDT)
-Received: from [10.57.3.125] (unknown [10.57.3.125])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CC253F792;
-	Wed, 29 May 2024 06:09:45 -0700 (PDT)
-Message-ID: <4cd905e8-594e-4858-89df-a501184ee521@arm.com>
-Date: Wed, 29 May 2024 14:09:44 +0100
+	s=arc-20240116; t=1716988244; c=relaxed/simple;
+	bh=cLMWqTZ4eP4dETUfafvDYBzH6ujk3BWpl5aJZcG0BWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pEF+ZXBn23+fpYhNb/sIBwbMZFQu8ttSP6TDgeqhDidlOd5aLphK9ksA5kI2ckiyjzea0xTclywPZwWumjQ8LpqqKBd2i7brBS50BhwFvj+TQdmspPxanD/lmgWsjjjHWpP9u3WXoAWSP53hQ2tjIZQvEW+Mf6xbbYn5u9ekZ94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMwr4x20; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4211fb904a8so2843985e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:10:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716988241; x=1717593041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9dyAFBwewJ+RHjYJS8brY7i+iKSDpb+pqY0B3wakOdQ=;
+        b=SMwr4x20r+cpyxpq22s/pXt0e1geWqQsR9cVjS1DatdlIl8BRx+fANBywZVbQkIE1S
+         aQZz7GM6sq4Gj7u24OydHLUa7v73yOo7+waNeVTTgp3r4R1OIECF0GNFGIDpuTElJxuN
+         E2vzgLhQ6NH3qOnXGvmN1G4jGRpiiaq3Y0v3ZTGCQiUkfCQ7Wf7lYSsDb5FjlpEe82uq
+         YjGjJO9nQ+7sVLR44zUC7DkAQsK3hBbYekuqjZYcb48KXHHz+ISniLkrcO9bRppMG7jS
+         O98+WoTuDeuZKsHVKJ025Kd/Aj+OLbwG7NJjNZPYHHIth0Pygj0Vtlx/Guo7LBJxSqZf
+         d6pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716988241; x=1717593041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9dyAFBwewJ+RHjYJS8brY7i+iKSDpb+pqY0B3wakOdQ=;
+        b=HNHoN7f46WitOk9PTz9CwanwatPRSdjeR5mY1fZrMJgFIhyraz3w/+Fc2YlyJ4JWgn
+         xnkakMgRTb/uWa7RDEpDWPyB2jR5/d/1/LsrnZkGnc7J5rR+ydN+WyPksVBhcdBthkJX
+         siSyyhcV43qOdMgvVvlozcCFnvxhavYRoOFyyWPjchLM+lrCZ/loDnjMxpce087YcFQt
+         8wJ+N6fbznTZcV19lrbsEprfh294VEE4BQci1RmT0dQ9rTpapfWGrB4luz6FSn+hYyeH
+         y9rHDtKvzFEoIRyZ+vN6jzCPaGql2aOcHIlUe1TnxMSeLDp5WSv0WcXETH6CUw8sfUGR
+         52tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXf3QmMvONXEUCMURjnT3z9TCJcASGiBSgdobyn/ObTiAlN5D/Tq5gU12wkA3r/8XhdkBf5noBZGMtFWHD/ooZgmkDczZOkaPCxgQkd
+X-Gm-Message-State: AOJu0Yxy8WhBs0OZ8GtKpT11L8DunrMs0Trc+f7vCNBkst7sJ26dz8vg
+	vf+ddTTYCFSScWDZ3hwipGzSVkk9RXAI/Ma5J+pFkNxkMDiwmSHSjhTPj6i/QSBpVB6VAkJhgoc
+	oQjZWB0vxKBUo8p3xEsxUvlKpmqc=
+X-Google-Smtp-Source: AGHT+IGA/M/hJXwlEOyt6h3DY7L4fXZNrF3jZ9FvZ6aVVsxzgoo9H8gw3knpd8eHwKo0UObNN/izdY73yxFYV9PdCyE=
+X-Received: by 2002:a5d:5309:0:b0:34d:b5d6:fe4b with SMTP id
+ ffacd0b85a97d-3552fe02ee8mr10973005f8f.4.1716988241174; Wed, 29 May 2024
+ 06:10:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
-To: Vincent Guittot <vincent.guittot@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>
-Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org,
- daniel.lezcano@linaro.org, Dietmar.Eggemann@arm.com, dsmythies@telus.net,
- yu.chen.surf@gmail.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Qais Yousef <qyousef@layalina.io>
-References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
- <20230105145159.1089531-3-kajetan.puchalski@arm.com>
- <20230711175814.zfavcn7xn3ia5va4@airbuntu>
- <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com>
- <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
- <20230917010516.54dgcmms44wyfrvx@airbuntu>
- <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
- <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com>
- <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <ZlM_Ndng_JstAee3@kernel.org> <Zk9UCsZdizqC1_36@kernel.org>
+ <ZkxN0yQ7Fb0X26hT@kernel.org> <20240521023957.2587005-1-jaewon31.kim@samsung.com>
+ <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
+ <20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
+ <20240524090715epcms1p274939a1d5954be3423f6ce14a3df6f92@epcms1p2>
+ <20240527013504epcms1p22bec7b83f2a42e76877b97ed0d769009@epcms1p2>
+ <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p7>
+ <20240529095119epcms1p73f0e9ff756bcb2ee6a14db459128a644@epcms1p7> <20240529113519.jupuazcf754zjxzy@master>
+In-Reply-To: <20240529113519.jupuazcf754zjxzy@master>
+From: Jaewon Kim <jaewon31.kim@gmail.com>
+Date: Wed, 29 May 2024 22:10:29 +0900
+Message-ID: <CAJrd-UuiDq-o=r7tK=CG6Q3yeARQBEAtaov2yqO6e6tBwJZoqQ@mail.gmail.com>
+Subject: Re: (2) [RESEND PATCH 00/10] memblock: introduce memsize showing
+ reserved memory
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: Jaewon Kim <jaewon31.kim@samsung.com>, Mike Rapoport <rppt@kernel.org>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tkjos@google.com" <tkjos@google.com>, 
+	Pintu Agarwal <pintu.ping@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/28/24 15:07, Vincent Guittot wrote:
-> On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
->>
->> Hi Vincent,
->>
->> On 5/28/24 10:29, Vincent Guittot wrote:
->>> Hi All,
->>>
->>> I'm quite late on this thread but this patchset creates a major
->>> regression for psci cpuidle driver when using the OSI mode (OS
->>> initiated mode).  In such a case, cpuidle driver takes care only of
->>> CPUs power state and the deeper C-states ,which includes cluster and
->>> other power domains, are handled with power domain framework. In such
->>> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
->>> and others states that include the clusters, are managed by genpd and
->>> its governor.
->>>
->>> This patch selects cpuidle c-state N-1 as soon as the utilization is
->>> above CPU capacity / 64 which means at most a level of 16 on the big
->>> core but can be as low as 4 on little cores. These levels are very low
->>> and the main result is that as soon as there is very little activity
->>> on a CPU, cpuidle always selects WFI states whatever the estimated
->>> sleep duration and which prevents any deeper states. Another effect is
->>> that it also keeps the tick firing every 1ms in my case.
->>
->> Thanks for reporting this.
->> Could you add what regression it's causing, please?
->> Performance or higher power?
-> 
-> It's not a perf but rather a power regression. I don't have a power
-> counter so it's difficult to give figures but I found it while running
-> a unitary test below on my rb5:
-> run 500us every 19457ms on medium core (uclamp_min: 600).
+(Sorry I might forget to change to be plain text)
 
-Is that supposed to say 19.457ms?
-(Because below you say idle time is >18ms and total test time 5sec)
-Is the utilisation more like 1/20000 or 1/20?
-In any case what you describe is probably an issue, I'll try to reproduce.
-Note also my findings here:
-https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
+Oh good thing, I did not know this patch. Thanks.
 
-Kind Regards,
-Christian
+By the way, I've tried to get memblock/memory and kernel log from a
+device based on
+v6.6.17 kernel device, to see upstream patches above.
+memblok/memory does not show region for
+0x00000000_80000000..0x0x00000000_8195ffff.
 
+   0: 0x0000000081960000..0x00000000819fffff    0 NONE
+
+The kernel log shows information for 0x0000000080000000..0x00000000813fffff=
+, but
+we don't see information for 0x0000000081400000..0x000000008195ffff
+from kernel log.
+
+(I removed the name.)
+<6>[    0.000000][    T0] OF: reserved mem:
+0x0000000080000000..0x0000000080dfffff (14336 KiB) nomap non-reusable
+AAA
+<6>[    0.000000][    T0] OF: reserved mem:
+0x0000000080e00000..0x00000000811fffff (4096 KiB) nomap non-reusable
+BBB
+<6>[    0.000000][    T0] OF: reserved mem:
+0x0000000081200000..0x00000000813fffff (2048 KiB) nomap non-reusable
+CCC
+<6>[    0.000000][    T0] OF: reserved mem:
+0x0000000081a00000..0x0000000081a3ffff (256 KiB) nomap non-reusable DD
+
+A smart parser should gather these kernel log and memblock/memory log
+and should show
+log like my memsize logic shows below.
+0x0000000081400000-0x0000000081960000 0x00560000 (    5504 KB ) nomap
+unusable unknown
+
+Thank you
+Jaewon
+
+On Wed, May 29, 2024 at 8:35=E2=80=AFPM Wei Yang <richard.weiyang@gmail.com=
+> wrote:
+>
+> On Wed, May 29, 2024 at 06:51:19PM +0900, Jaewon Kim wrote:
+> ><!DOCTYPE html>
+> ><html>
+> ><head>
+> ...
+>
+> Would you mind sending it in pure text again?
+>
+> --
+> Wei Yang
+> Help you, Help me
 
