@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-194644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA828D3F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:12:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10838D3F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4EE2B23B37
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222BE1F257E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5871C68A3;
-	Wed, 29 May 2024 20:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0021C8FA2;
+	Wed, 29 May 2024 20:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Euqumq09"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="wpN4y1a9"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C9115B0EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE7126AD3;
 	Wed, 29 May 2024 20:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717013565; cv=none; b=cfcM3qR6SD38nvEW8VKbf4EaT4JKVhDh/gLAwQMbWrXq1Za3DRTQWHyHi82cPZ2upFealqV+fkiWMmnol1K6LjjMZ9Sc6JibIetHuPB6FrucCZ20eTMlEClm5e3hzhwDYIv1bEzyyoWf5fv0M/HJVyD1A6GMRnZZIaKxPxT1DIs=
+	t=1717013566; cv=none; b=b8CSKJ6u0oDNp9G+pUtmuGZbVTe2Dk/W4tybCI4H2MjaPJSJ4yNkfaPr5a1bZyW3w8MtiAWe0gABrgI+upYeUlR1OjSFvPnS38iZxCyunI2VDGY1grmLAssYLstcet0P+UkhAnsPV0c/dRjM9nRVmneR7ObjrLIt55Bx2P6PFkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717013565; c=relaxed/simple;
-	bh=ysCwz58Upl2+SUOx/6vsLRR2nSew8pOkk+LFvAR6jo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ea8PObb5Nljrgf98W8eJcOcrPCYesVHQDxcYgU83yTlOOpXwLB+0TtX5i5Wm3dLLTp8paERayENjjIMF8/3RB8LZk2YAyIcxHV82rhCMctNSkwIXS2I3CSnlXsemdckPkJNzAs8kaa4urv4Y2fJpGh/lrxt/YPol+LQAWzXsSAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Euqumq09; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D746C113CC;
-	Wed, 29 May 2024 20:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717013564;
-	bh=ysCwz58Upl2+SUOx/6vsLRR2nSew8pOkk+LFvAR6jo8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Euqumq09cLjpnx8EZ8oUdtj/5v61cRzBRK0ZVEaqYAlpQ4Nxidu16U3ksfRfTkSpT
-	 7GccizxyewNpSYiP8b0L4kMIzbiSRS1DgT/h2v48Vp/d6wuCcU6BQvfdE7nffwyScR
-	 4Zhc4NefJq1n4mSY0weNvgtVWRD2lI3306QTjDv4HKmPp0DEWuLAHh/yS5Dldi6067
-	 MbzcOEKdx2D6MB1oDV2N33YShMkOAq/sp0suvQPQ3DDcXVPjn66aflA4/XFEaSwg1Z
-	 Wr/Vy75uJoXRSG7GOkDF9cqn3fcl2zgZtUFSanEKQspr4pAi8+kzfcEaCBI3qHCQbw
-	 NIMo0ZJn8ZBgw==
-Date: Wed, 29 May 2024 21:12:28 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 5/5] iio: pressure: bmp280: Add triggered buffer
- support
-Message-ID: <20240529211228.2d7fbd93@jic23-huawei>
-In-Reply-To: <20240512230524.53990-6-vassilisamir@gmail.com>
-References: <20240512230524.53990-1-vassilisamir@gmail.com>
-	<20240512230524.53990-6-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717013566; c=relaxed/simple;
+	bh=1bhLZpjpBAAkJRT8AqeZYTCxTGjw//XFZbioD/g1dEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oiNh0ehgusKgysMdMKadPLj4+jlxfUTaCERY5J9s6DT7V+rH4+QOhzQW5Qt3D+6RMjhx+EJQ1D/k+HnBpWWbiKd3z0N809OXupt7/uU6/OC9bqGV56rSQ8UUFOEb1+X8U7iHAc0+GburpNY41UijajQkB9LP6ibYkf4j4ti6e6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=wpN4y1a9; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VqLCc2DZvz6Cnk98;
+	Wed, 29 May 2024 20:12:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1717013562; x=1719605563; bh=sYFO1Oabf5gp0E80FPASdVqP
+	HBMAvbLEasvnOxSrWEA=; b=wpN4y1a9SYlb8ekZfZy9MDBShPQRKTgmXkXP1Yyk
+	SNLcg8KCd9ZHOyxvSEylU9UDX9E0l361iFZtdv2xbtsnaFzNUaiMCvZPr4VFseGg
+	WtAMo01W8TW0h4uZnI2Ck3jnePIOlNq8WKi57YMl905CDoEO1WiyJdmJbMizI1Ph
+	ESYNdEEwRaumSSeK5r9XsPSIiGDxQ/46stnrUhr38jzJPLRwRJW1JZHdgQRs2+Qy
+	pGSm6bQe3I932PYbshEG6MW4/UPtT3Y/DqZryigKjvhfLk62pwG9ZI89d46hVJpP
+	bMLc8Wcl/QgzI8ioWuJMllrYiBLLJHR6vT8sWMU+hCslUg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id yqIE7em82E3h; Wed, 29 May 2024 20:12:42 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VqLCX5zTyz6Cnk97;
+	Wed, 29 May 2024 20:12:40 +0000 (UTC)
+Message-ID: <0555169e-2552-41d8-a515-8c394118cec7@acm.org>
+Date: Wed, 29 May 2024 13:12:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] scsi: ufs: Maximum RTT supported by the host
+ driver
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240526081636.2064-1-avri.altman@wdc.com>
+ <20240526081636.2064-3-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240526081636.2064-3-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 13 May 2024 01:05:24 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-
-> BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
-> temperature, pressure and humidity readings. This facilitates the
-> use of burst/bulk reads in order to acquire data faster. The
-> approach is different from the one used in oneshot captures.
-> 
-> BMP085 & BMP1xx devices use a completely different measurement
-> process that is well defined and is used in their buffer_handler().
-> 
-> Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> ---
-
+On 5/26/24 01:16, Avri Altman wrote:
+> -	rtt = min_t(int, dev_info->rtt_cap, hba->nortt);
+> +	if (hba->vops && hba->vops->max_num_rtt)
+> +		rtt = hba->vops->max_num_rtt;
+> +	else
+> +		rtt = min_t(int, dev_info->rtt_cap, hba->nortt);
 > +
-> +const struct iio_buffer_setup_ops bmp280_buffer_setup_ops = {
-0-day noted that this isn't actually used.
-I'll add it to the buffer setup where it's currently passed as null.
-> +	.preenable = bmp280_buffer_preenable,
-> +	.postdisable = bmp280_buffer_postdisable,
-> +};
-> +
+
+Shouldn't what the controller supports be compared with what the device supports,
+e.g. as follows?
+
+min_t(int, dev_info->rtt_cap, hba->vops->max_num_rtt ? : hba->nortt);
+
+>   struct ufs_hba_variant_ops {
+>   	const char *name;
+> +	int	max_num_rtt;
+
+Hmm ... why 'int' instead of an unsigned type? If the type would be changed
+into 'u8' (the type of rtt_cap) then the above min_t() can be changed into
+min().
+
+Thanks,
+
+Bart.
+
 
