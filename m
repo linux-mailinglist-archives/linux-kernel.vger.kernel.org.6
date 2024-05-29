@@ -1,127 +1,164 @@
-Return-Path: <linux-kernel+bounces-194369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5778D3B19
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFDC8D3B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0568289A82
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CF0287A9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C09181B9C;
-	Wed, 29 May 2024 15:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0519418132A;
+	Wed, 29 May 2024 15:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ag4PmfHY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XNsa17zi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9691512E6D;
-	Wed, 29 May 2024 15:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF5D1B947
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716996998; cv=none; b=GQTG/9mAOlBJmtGbHr9zx40mnYTtuRIoV4b/0uAfKlYR4k2S5VMT5VT4jwl1Hnyh/e/J8o+dHC7a0Q92GjmyLspW6/pTXCUu6lQUm0SFpYc8qsKfOmTQiF/rLAONHZeZvPkp6R5kD/Ik+qgb1JXi9GgFvwcVuSJkzT7xar44e+w=
+	t=1716996975; cv=none; b=d/5R0JdNLNI/my4iRXCA/3OodD2l/q0VKi44SGLN4CZ8KWauH8Bfie9MyIcRSaZPbfiIUPGZGqaCHZbgz6In1JNUSZdi+e1iyCtW3Bsb/Pi62KYDlZ9bcnAZxZDh6d3CQJA7HgAojJPLstlktgSmpStrDlqOuEwGnc43jMQYOHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716996998; c=relaxed/simple;
-	bh=I9Ahn/+h00hCUWkvBWfYzTXY046q29tNeC1ScUsgsUE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ll0ZcrTWnEQMLYMyvGNlXf0DIwVdOuKi6y22URrcoa01t2VQVuKG9ALsvAKTuyovnPRG6Ld+5GoCQc6/Cpv8reRGUz7YHizk0uNJVSO+AwBE+7lv9xd3Ucdjwh0YfhdfI9NX4GAjEfz7kFsn533zdyslTosp5rCiaM4Ccqgbhsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ag4PmfHY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T4wxPf018858;
-	Wed, 29 May 2024 15:34:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=FVdnVq3ipkYI9+1Mcny9tHtm
-	UES65spcVP9oAAxc4yg=; b=ag4PmfHYb1LHffY1H4y1/Cl37T6YSGdLMoEB2fco
-	/WY/4r4XfJBlXHS/WLb96j7foVeTiFdMBLjaTS+KPu65DoReLQAgPBbn5NIUlIBl
-	Qwi+X1uxvgrXJlhglAUd+o2aqcU7XhZjunHTTTzC2faQcGW1HhNycdMifurOGFpD
-	5+e4OZsmRnp541dY27YGAVi9H6e9GE6mOQ/x1J7t4i9opIqabQiDiRKFhRcY7fkt
-	f/O/HyOTzX9BiLEzkbHJoaeB6o7yq3Nk9cseLWd+t39kLan5ln81t4fwViasYehB
-	ViSAqhGZIKZXOnPqgNFrW7XEw71V1iYD0cwbPgxCXk7q0A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ybadx9cd7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 15:34:13 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TFYCN7009905
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 15:34:12 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 29 May 2024 08:34:11 -0700
-Date: Wed, 29 May 2024 08:34:11 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Amrit Anand <quic_amrianan@quicinc.com>,
-        "Peter
- Griffin" <peter.griffin@linaro.org>,
-        Caleb Connolly
-	<caleb.connolly@linaro.org>,
-        Andy Gross <agross@kernel.org>, Doug Anderson
-	<dianders@chromium.org>,
-        Simon Glass <sjg@chromium.org>, Chen-Yu Tsai
-	<wenst@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        "Humphreys,
- Jonathan" <j-humphreys@ti.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        "Jon
- Hunter" <jonathanh@nvidia.org>,
-        Michal Simek <michal.simek@amd.com>,
-        <boot-architecture@lists.linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH RFC v3 4/9] dt-bindings: arm: qcom: Update Devicetree
- identifiers
-Message-ID: <20240529083401317-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
- <20240521-board-ids-v3-4-e6c71d05f4d2@quicinc.com>
- <20240525-bountiful-reprogram-929d3bd18aed@spud>
+	s=arc-20240116; t=1716996975; c=relaxed/simple;
+	bh=6JX0bcSygA8SohlvD/rPbKhtNBZVT2R1agnaXyctjDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GZ9836t9rqMauLa5F7jvv8dkrBAhHnkpBBiWGTAj4izQ5XS8T8nxJNk2PQW5HWn1Yaj8CBnB4fpNyiZQMNp9cD9asXfcA5l9Ralcne0utRDccFfxVQIU4x0thm9Ta0fmqvo4n2gFAzQCRWlwlaP/FymiCAgX3qOtY87qqGVLLlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XNsa17zi; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716996973; x=1748532973;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6JX0bcSygA8SohlvD/rPbKhtNBZVT2R1agnaXyctjDs=;
+  b=XNsa17zi7lgd4niS4btjLHGfsx9FBBZLuGOIkEXPeSgzeAKESSUanQfk
+   r7mXXGqfN/EyTGNrEK7oiW74rdnKdEE1qooZqogOLD6IQ5shXowqs8UJf
+   eOucBvRJiTALabKoOBkV2e2O/MXK0JLuHbjfN2PHJbabKKtgYNv8/CJBC
+   e//nx9DzpSG3o/Maf64DV4MVgkEDfBwXy8VBDPs+g1Ct5xMZNhN+atmRM
+   own2qkPjcJyuGlTdGvkIZec6mgkKII/wrnBEov6r+3y/AB3htmoTYP05D
+   5Dz8Nw0Oln93yvPJFT9fBEirj+mGRtcxCwtKwRnhiU1mpK9tACsopcb7f
+   Q==;
+X-CSE-ConnectionGUID: iS7OTR+pQhSoqfyUwkOJsg==
+X-CSE-MsgGUID: ifKWnFCmSDiMo6f+tUrXCg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="35930097"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="35930097"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:36:12 -0700
+X-CSE-ConnectionGUID: TVMu6kHxQJWlOH2On8comw==
+X-CSE-MsgGUID: rgOdKNTaR9+eMmMJij8tkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="35536778"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.111.96]) ([10.125.111.96])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:36:12 -0700
+Message-ID: <e33ec69b-21e0-46e3-9b70-6d89548a145b@intel.com>
+Date: Wed, 29 May 2024 08:36:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240525-bountiful-reprogram-929d3bd18aed@spud>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: G-pMPXrUWDjwNsFs6bkg_iDDgVjNHXND
-X-Proofpoint-GUID: G-pMPXrUWDjwNsFs6bkg_iDDgVjNHXND
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_12,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- impostorscore=0 bulkscore=0 mlxlogscore=619 malwarescore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2405290107
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/NUMA: don't pass MAX_NUMNODES to memblock_set_node()
+To: Jan Beulich <jbeulich@suse.com>, lkml <linux-kernel@vger.kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+ Andrew Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+References: <abadb736-a239-49e4-ab42-ace7acdd4278@suse.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <abadb736-a239-49e4-ab42-ace7acdd4278@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 25, 2024 at 06:21:32PM +0100, Conor Dooley wrote:
-> On Tue, May 21, 2024 at 11:38:01AM -0700, Elliot Berman wrote:
-> >  #define QCOM_BOARD_ID(a, major, minor) \
-> > -	(((major & 0xff) << 16) | ((minor & 0xff) << 8) | QCOM_BOARD_ID_##a)
-> > +	(((major & 0xff) << 16) | ((minor & 0xff) << 8) | ((QCOM_BOARD_ID_##a) & 0xff))
+On 5/29/24 00:42, Jan Beulich wrote:
+> On an (old) x86 system with SRAT just covering space above 4Gb:
 > 
-> I assume there's no devices that have a >8 bit QCOM_BOARD_ID that would
-> end up with a different value in their dtb due to this change?
+>     ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000-0xfffffffff] hotplug
 
-That's correct.
+OK, so you've got a system with buggy NUMA information.  It _used_ to
+"refuse" the NUMA configuration.  Now it tries to move forward and
+eventually does a NULL deref in memmap_init().
 
+Right?
+
+> the commit referenced below leads to this NUMA configuration no longer
+> being refused by a CONFIG_NUMA=y kernel (previously
+> 
+>     NUMA: nodes only cover 6144MB of your 8185MB e820 RAM. Not used.
+>     No NUMA configuration found
+>     Faking a node at [mem 0x0000000000000000-0x000000027fffffff]
+> 
+> was seen in the log directly after the message quoted above), because of
+> memblock_validate_numa_coverage() checking for NUMA_NO_NODE (only). This
+> in turn led to memblock_alloc_range_nid()'s warning about MAX_NUMNODES
+> triggering, followed by a NULL deref in memmap_init() when trying to
+> access node 64's (NODE_SHIFT=6) node data.
+
+This is a really oblique way of saying:
+
+	... followed by a NULL deref in memmap_init() of
+	NODE_DATA(MAX_NUMNODES).
+
+> To compensate said change, avoid passing MAX_NUMNODES to
+> memblock_set_node(). In turn numa_clear_kernel_node_hotplug()'s check
+> then also needs adjusting.
+> 
+> Fixes: ff6c3d81f2e8 ("NUMA: optimize detection of memory with no node id assigned by firmware")
+
+I was expecting to see MAX_NUMNODES checks in ff6c3d81f2e8 somewhere.
+But I don't see any in the numa_meminfo_cover_memory() or
+__absent_pages_in_range().
+
+In other words, it's not completely clear why ff6c3d81f2e8 introduced
+this problem.
 
