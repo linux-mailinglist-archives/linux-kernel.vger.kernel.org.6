@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-194036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082E78D35C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7F38D35C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988E91F2365B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06E4A283497
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4029B180A61;
-	Wed, 29 May 2024 11:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12ED1802CD;
+	Wed, 29 May 2024 11:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="CAgrDmOI"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OPfGpurK"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAE54CB28;
-	Wed, 29 May 2024 11:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F3B1BC57
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716983161; cv=none; b=iYywe0IcFPU/APzpyaW5amTTClUyvHW5ZThuFroCPPMaAPa3bHwRLsqAKhAFiHdHPJe0m48MkLgYS6qUq4WuZo840fITuaoMfCgnvG7WVVkBU+mTQ2ijFYMFjHUhbRjwAr/wnX8Gc6jLzl0yVaCLzWMSv6BE/WXdUgTKK+0c7Hg=
+	t=1716983197; cv=none; b=dAOSK2vTQzs1i5pLS0xUn8DAoFP8oxqJB/O63M/lZtiazduFxBa5FMZoI73Qa0i/N9z7Pd0OeTo3ltCr0ksjggNwFN2xu3Qlz8jo8oyrAz1Y5Pf6RfG9sSTE4V1iQEP8kDUPMpNfb2O/lTrzKOK8M6Mkeh+MabXRvGcZQuPgIZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716983161; c=relaxed/simple;
-	bh=IZsIRbka6hFiTImC0U/pupNdosJ64JWjzl9chiZ04wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqblx3sj+oJMtt4INJU0spB8JWlr8t6iJSvFee+N+tP43nAu/1pEa2xUILAlZv4/UpyDkc8ITAdPAi3KIFufePgdexmDy7HNE3/VP3dQ8u+w5kBCnPf+d7thuJClPDdXzv/wgRCXNQHWPc1q4acqmPSoHPATftK0LbSfRo4HAZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=CAgrDmOI; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=t9VEsDGggAajKUcBvvIqqFyyn1ptDDc/e1Pdzy7eih8=; b=CAgrDmOI+j7qTDWZBNYH1V2VD2
-	3hgkUKuzCDEe8o1v7blMzcPmjFQpbBFzar2oT/yQAcXE41S6F01fHUvYcba1BfiQ0zLdNx8xooY7Q
-	fZtqlHftT4h43YqNE7VdGtcBb1Jqx9VX1GpL0dJNQY9O1uUXnSS53yC/v8DhRCsET2G8g3HAjJ95g
-	d/htt57vezpzviF6xTJJaYZ3KLyzT+ZGYB9hIEOM8lqvgDwI3GTVsDMkjj8vDc0mDPGcUreX3DTxI
-	eOlSd2rr8v7u+Dy0YcOaJeZyBin9mUey83Mlkq6YdOhHjPRIzehNnwBDccWNbWu8Cyum5Afw22AO0
-	Iva+zk6A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39870)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCHkT-00063H-1S;
-	Wed, 29 May 2024 12:45:41 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCHkQ-0004BJ-Fn; Wed, 29 May 2024 12:45:38 +0100
-Date: Wed, 29 May 2024 12:45:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: xiaolei wang <xiaolei.wang@windriver.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [net PATCH] net: stmmac: update priv->speed to SPEED_UNKNOWN
- when link down
-Message-ID: <ZlcVYjOEBGm79Yc9@shell.armlinux.org.uk>
-References: <20240528092010.439089-1-xiaolei.wang@windriver.com>
- <Zlbrf8ixl9jeTTIv@shell.armlinux.org.uk>
- <d857ff81-a49c-4dd2-b07d-f17f9019bed1@windriver.com>
+	s=arc-20240116; t=1716983197; c=relaxed/simple;
+	bh=2c2yRV+OWwmNPEk+pMImYM0aXvGX2seOsoanbiZFV/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H5AzDqd/2GVq/J8EJyHCy6fgEJp7LzKzrKxV/8tZPtVN/3bLkTidN73DwdFE5Vwv9TArdtSKXqH/OsAThM1ROoPNRAeXdP7IbYVa0cpzz3LxkHkYqGSYPqiJ1Ndhr9MSE+pkHI/s272TkT5fMdmanT8GIJwHZG9kTDdlFVbQJO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OPfGpurK; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=setKG9FGDtL/mG
+	82WsX06rmtzy5NTTWcpcUdplSUhcc=; b=OPfGpurKNBji1cepO43EY2TXOKHYaR
+	bmXQRx/Ac8ic5PCsnBCjeQYk3CcO6j94J0A2CogKuX+mMYvdYmUfAKP4cKQfj80m
+	2A3XYVVEJxktTREcfrs4r3P1X1GXO0H2XW+2oVXaWweHJoSDg5KDCYc9MOwW4QMS
+	COR2/g4oQSF/r/RXGeXjuCzX10D0c8JMkrn8ACRJIi2G7qWSnAkX2wA4c/aMP4VJ
+	5oAWkcIxpO2cWg9rDFGYjd+doA9uanlYezo2pgU+OTyAltzBzNDc2xOU77+Yr7XE
+	XmD5SJ/TFfeHFfT21i+FrAFT4oyVAjvqoV3tsh0MDOYnRd57UyZX8H1w==
+Received: (qmail 558637 invoked from network); 29 May 2024 13:46:28 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 May 2024 13:46:28 +0200
+X-UD-Smtp-Session: l3s3148p1@tDcGTZYZvLwgAwDPXwS5AFh1mWvQq9Po
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Evan Quan <quanliangl@hotmail.com>,
+	amd-gfx@lists.freedesktop.org
+Subject: [PATCH] MAINTAINERS: update email for Evan Quan
+Date: Wed, 29 May 2024 13:46:03 +0200
+Message-ID: <20240529114621.11795-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d857ff81-a49c-4dd2-b07d-f17f9019bed1@windriver.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 06:55:21PM +0800, xiaolei wang wrote:
-> On 5/29/24 16:46, Russell King (Oracle) wrote:
-> > To me, commit 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
-> > just looks very buggy.
-> 
-> This makes sense. I think it is necessary to update the parameters after
-> linking up.
-> 
-> Does anyone have a better suggestion?
+The old email address bounced. I found the newer one in recent git history,
+update MAINTAINERS accordingly.
 
-Any setup that a phylink-based MAC driver does which is dependent on
-the negotiated media parameters (e.g. speed, duplex etc) _should_
-always be done from the .mac_link_up method.
+Cc: Evan Quan <quanliangl@hotmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-So, from a phylink perspective, what you propose is the correct and
-only way.
+Against v6.10-rc1. Still needs ack from Evan Quan
 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d6c90161c7bf..b2fd2a19277e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1092,7 +1092,7 @@ F:	Documentation/ABI/testing/sysfs-amd-pmf
+ F:	drivers/platform/x86/amd/pmf/
+ 
+ AMD POWERPLAY AND SWSMU
+-M:	Evan Quan <evan.quan@amd.com>
++M:	Evan Quan <quanliangl@hotmail.com>
+ L:	amd-gfx@lists.freedesktop.org
+ S:	Supported
+ T:	git https://gitlab.freedesktop.org/agd5f/linux.git
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.43.0
+
 
