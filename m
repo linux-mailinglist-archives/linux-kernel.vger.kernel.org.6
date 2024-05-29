@@ -1,123 +1,148 @@
-Return-Path: <linux-kernel+bounces-194034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774C78D35B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:39:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078058D35BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 062C5282B7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2621C2333B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4881802DB;
-	Wed, 29 May 2024 11:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567651802CA;
+	Wed, 29 May 2024 11:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gucEyGED"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXBqQuv6"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178A61802A8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6C1BDCF;
+	Wed, 29 May 2024 11:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716982780; cv=none; b=kcjDtRr2ZQ9x1leF+VSWIkaXbDprRVXL7Ujv04xG4n+ZU8OiKtsw3ES9QIH0cmxfTxVurIL7+MmXqTxcxRmIcMZmBsc30oTlLLW8xP7t4iAznsIqZaTafTAhowHim+4RC7oP9RiSRvH+HKYGumr04vH3/5Pw4R5dibdVTpnBpzI=
+	t=1716983072; cv=none; b=rogWFJHVFbEaZCeb8Q+b1l5QYcyiFzHy8c5tYmUg0W4g1bew95VLLzuWz94BjS6N9jkItLRjHZuKNKC8KZvDTLvZV0Atu2TAQ/nVvCuxmnS1CHWBSjryxYa4dzUpKbpC44c7daLaUW4BgCs0hBaPL+D964qq3P5RHp7xyjpG/xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716982780; c=relaxed/simple;
-	bh=ydja5ABopWv3H3E435qacVly16lftEf0fcwfsjpRf8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AqyuR2zdSgp+bMAQOAUagBZWZRRv9X3hYJqPCnwo0eraL2X2vFUSClw7TaDHaOUrI0fmYrzQqt8QlygFyaZs9byYMx9Gda1/OZFqtpMwSlCAvzME8gI1vwPJY4iSaFcIW7/loGTswFnBuyPVXdDgkVCtTjTQiIMmPkQMtQHYfBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gucEyGED; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42125bfa28fso1190425e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:39:37 -0700 (PDT)
+	s=arc-20240116; t=1716983072; c=relaxed/simple;
+	bh=2fuiUji9HQx4FsRAY1Cn/pZd6osThZezfnKd5JaqgZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1g/GHXNK6umIPUDAm6yqkdiGakyxR18hWoWI43D2DZJ2qYWop9e8q4eQgzGud699Zuts7tzjU6K44uhMAcPx/h+AFCaVAqPhGpJjpBR2uR2BKFUh9P5URTJozkoWyq2WJunNAIVu+vuTWxzrD+YLMBL37vIEDWfNk92c4XYM+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXBqQuv6; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f480624d04so16633155ad.2;
+        Wed, 29 May 2024 04:44:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716982776; x=1717587576; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EdFeXZ0iZQwHyJpJ9sEUFEvxz5pnqM5Lhk7k33g54Ts=;
-        b=gucEyGEDBr4+17MeUfIyWpapTdoZUGFkq7sJUPEX5qLfvB37BuOdznOrkykyQxEDiQ
-         qjZJ0A5kFHAVor7oU6aaUk6oYMnv2x6/sP+8qeexusOT7wNUqvVTEc783c1KdjL96Jr/
-         8iSTSzvNejMqGduLqo5SM3Y0F5Dcltm1fPbOY9t6Ucu/pPi927nqyTIuC2CWdCd3gYEA
-         /Bpoy2xknX8tFadJCHlAXMoc1YwJv5EBOl6gfA/Cb0agkS8VNz2ZsCrplSj+8PR4O41O
-         4RDsIn2mW6LuDnMPFU5PifDxYIFEmIbNOF/aGfKea8+Y1B4AnNe3MovqQzWW14JYnPkk
-         t0mg==
+        d=gmail.com; s=20230601; t=1716983070; x=1717587870; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Fqyvl/SvhAn+m86+zGmNblTjPk+aKV8ab9/H2jbsASU=;
+        b=MXBqQuv6rflJLIXUGBGGwm55+tYhDogCGkWyyws8rPhuMtk1ZooGY4UKYnnczHUyom
+         k0ENx9fxxl+u8RT7g0AZKFZ5cItMw5dfgrdZ3ZazBP83NDftagGVrkcKeb5DLEJzvePm
+         8xGcQpOh3IlbnoEgcKkole8WBcc9L3oSb8WGgL227IxAiscWNvbtWnhwEjc8lCVfIR+Z
+         Hxc5QL6F//zTipukB2s1MBCYdxTMciev3MzARldJ+3HpGZZK8lAQeU4vJQwAKg89e1at
+         3RK77aYCk2te1ry4PspJhwoQ/G5wTfKEm9zl5rdsVsSPKfd/S6fC+ZPEFeH+i/FY66k1
+         Gipw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716982776; x=1717587576;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1716983070; x=1717587870;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EdFeXZ0iZQwHyJpJ9sEUFEvxz5pnqM5Lhk7k33g54Ts=;
-        b=QOac8i2ZGe6/26Kcf9Xnv7r2X3X2EeUwVQmtaQU85IiAZsR/3B0nj0c++2HprvTqo3
-         wKl2gf0QEIIveflE6bopbyuD+dmTzz0bd3mXJSwUB1gcHRfIsvh7lD7b3mhgpFgZJ8Pc
-         9Z1ZJ1r3NNUFJ+Vvjey83+doRt4eZQ2AYAQv7YGw0/bmE3SWQzEEUDHBnL7iqpv30HwA
-         fich7BEydxxMUtGhROsm/xJV0FASVOdSDlrJzGRFsh2hzYsskw7w93VmqNWt99cTDQmE
-         RFg6cbKI40j3RAlm03p87JrBurABK1hbKeh3q6XNV1KOjJ333itOGl4u7yM5+G3cnvk6
-         wCDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZLMQXbYYHNXghfknPQtxkgZtd6TytdGZeJYOF2t7itJXI7rFsm8xGWbJiZi20QBOIY/E1TnrSg2wT2vA7PZK5KVFuxlDYDKvAmlhD
-X-Gm-Message-State: AOJu0YyRUrbGh7wUMITq9Bh9LzZJX6jdPxP3RdAjNPMk/dpHWI/oF8hI
-	bp3pZ0HVRNQW/39xQh5rhx0C1xX348erIqlLFLPT0t655ZHreAg1Gi/lVH28BWk=
-X-Google-Smtp-Source: AGHT+IGhbyPCV7mhFEb+wa2zxVQsRfFFyIuyAeyXPnnporhcsU+et7sVZoAC9sjK3Qz8qHTU2qJsiQ==
-X-Received: by 2002:a5d:62cc:0:b0:354:d098:8d67 with SMTP id ffacd0b85a97d-3552fe179a1mr12680946f8f.57.1716982776439;
-        Wed, 29 May 2024 04:39:36 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:5de0:ca17:8dd8:7313:d6fd? ([2a10:bac0:b000:5de0:ca17:8dd8:7313:d6fd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c93a5sm14633282f8f.70.2024.05.29.04.39.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 04:39:36 -0700 (PDT)
-Message-ID: <46ddc54e-f7bb-4de3-b311-faee12e5a6b9@suse.com>
-Date: Wed, 29 May 2024 14:39:33 +0300
+        bh=Fqyvl/SvhAn+m86+zGmNblTjPk+aKV8ab9/H2jbsASU=;
+        b=uMn/Y3TfTmhmFPq+AnP06SoSWxkA+MXruhfGjkS1hn+R6/xMekqAmCvLzhdNAacboH
+         ZUe4omD/jVCCv9DzxdFwpIBkouuAjFeOJOUYfw37pVYQXhfMYmzE23C8rVHUzUA4Hy9g
+         XoHqjc0b2zapTPceCXI9AGizzFddljIWOTCFDNjVwN4wAYoMphOIyjpDHF0yXbgAbEw4
+         6m+zakQuXwWdfuY7tE0dbQ1R72lDYYWfMHOeO5w/KHZg9GOQRRsfJCT5RdRILa0/esyZ
+         xlE2ToSxfBCJoYehBNcDZvwsT/FzIuAjnvNZRTNU5VKp2oA3PwaDty33rOht4GS+p3Kk
+         r/Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWH8/tV7Fqy0z4NhtI6raLaO86O4ofsToNj//lrLguygqFSWjtrkeACE58KX4V1j/lz9t0yUNaSe3eHM4iJrZ6aTTPVQstvJkB0dw==
+X-Gm-Message-State: AOJu0YzDTN3kWBE1uIhFjfOfKCS1ilQi5sjTbIFfJKvGgM+PERT+ld1h
+	XhpIlIxKw3gHhD5TK620/yp2vJ3+dFn3w7/XM28UFBW3abtjCMaO
+X-Google-Smtp-Source: AGHT+IEwrwxx1l6iXOnAv8xocO+x91EOVBjJSmxN8vgNyjMPv5e63EXnOmFZvf4yZscUKRlPa7lnug==
+X-Received: by 2002:a17:902:e883:b0:1f4:5b00:401 with SMTP id d9443c01a7336-1f45b0008c4mr129982935ad.54.1716983070451;
+        Wed, 29 May 2024 04:44:30 -0700 (PDT)
+Received: from rigel (194-223-177-244.tpgi.com.au. [194.223.177.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4ac27c5aasm50378595ad.251.2024.05.29.04.44.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 04:44:30 -0700 (PDT)
+Date: Wed, 29 May 2024 19:44:25 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org
+Subject: Re: [PATCH 3/3] gpiolib: cdev: Cleanup kfifo_out() error handling
+Message-ID: <20240529114425.GA98553@rigel>
+References: <20240527115419.92606-1-warthog618@gmail.com>
+ <20240527115419.92606-4-warthog618@gmail.com>
+ <CAMRc=Me+M5PQfuOE=tqqxJF-Q_TVdFb=wh-=ApBO_2PvTV=ZJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv11 06/19] x86/kexec: Keep CR4.MCE set during kexec for TDX
- guest
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Elena Reshetova <elena.reshetova@intel.com>,
- Jun Nakajima <jun.nakajima@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish"
- <ashish.kalra@amd.com>, Sean Christopherson <seanjc@google.com>,
- "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
- Baoquan He <bhe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
- linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
- <20240528095522.509667-7-kirill.shutemov@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240528095522.509667-7-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Me+M5PQfuOE=tqqxJF-Q_TVdFb=wh-=ApBO_2PvTV=ZJg@mail.gmail.com>
 
+On Wed, May 29, 2024 at 01:24:45PM +0200, Bartosz Golaszewski wrote:
+> On Mon, May 27, 2024 at 1:55 PM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > The handling of kfifo_out() errors in read functions obscures any error.
+> > The error condition should never occur but, while a ret is set to -EIO, it
+> > is subsequently ignored and the read functions instead return the number
+> > of bytes copied to that point, potentially masking the fact that any error
+> > occurred.
+> >
+> > Return -EIO in the case of a kfifo_out() error to make it clear something
+> > very odd is going on here.
+> >
+> > Signed-off-by: Kent Gibson <warthog618@gmail.com>
+> > ---
+> >  drivers/gpio/gpiolib-cdev.c | 47 +++++++++++++++++--------------------
+> >  1 file changed, 21 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> > index c7218c9f2c5e..6a986d7f1f2f 100644
+> > --- a/drivers/gpio/gpiolib-cdev.c
+> > +++ b/drivers/gpio/gpiolib-cdev.c
+> > @@ -1642,16 +1642,13 @@ static ssize_t linereq_read(struct file *file, char __user *buf,
+> >                                         return ret;
+> >                         }
+> >
+> > -                       ret = kfifo_out(&lr->events, &le, 1);
+> > -               }
+> > -               if (ret != 1) {
+> > -                       /*
+> > -                        * This should never happen - we were holding the
+> > -                        * lock from the moment we learned the fifo is no
+> > -                        * longer empty until now.
+> > -                        */
+> > -                       ret = -EIO;
+> > -                       break;
+> > +                       if (kfifo_out(&lr->events, &le, 1) != 1)
+> > +                               /*
+> > +                                * This should never happen - we hold the
+>
+> I'm not a native speaker but this looks odd to me - shouldn't it be
+> "we held the lock from the moment..."?
+>
 
+Unlike the original, it is within the scoped_guard here, and we still hold the
+lock, so using the past tense would be incorrect.
 
-On 28.05.24 г. 12:55 ч., Kirill A. Shutemov wrote:
-> TDX guests run with MCA enabled (CR4.MCE=1b) from the very start. If
-> that bit is cleared during CR4 register reprogramming during boot or
-> kexec flows, a #VE exception will be raised which the guest kernel
-> cannot handle it.
-> 
-> Therefore, make sure the CR4.MCE setting is preserved over kexec too and
-> avoid raising any #VEs.
-> 
-> The change doesn't affect non-TDX-guest environments.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > +                                * lock from the moment we learned the fifo
+> > +                                * is no longer empty until now.
+> > +                                */
+> > +                               return -EIO;
+>
+> Since this is so unlikely maybe a WARN() would be justified here too?
+>
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Yeah, that makes sense.  I'll add them for v2.
+
+Cheers,
+Kent.
 
