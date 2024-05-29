@@ -1,190 +1,115 @@
-Return-Path: <linux-kernel+bounces-193589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6D28D2E45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:32:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B923C8D2E49
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D400B24120
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D81289464
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CC91667CA;
-	Wed, 29 May 2024 07:31:59 +0000 (UTC)
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0BD16729A;
+	Wed, 29 May 2024 07:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BrZRV001"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44721E86E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF8115CD6C;
+	Wed, 29 May 2024 07:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716967918; cv=none; b=QXgm/uSQwETxYEGdhYWYr/OgPdz9aDRDObUY8m7ChDbHU2YB2uyobHfocbQP4zOzK0qBdAYAyUhpvgLCRtxPSAkuSR0gwrTz/VyqutGMwu1x5vHxvU9x/rr9vzSNb24BigXzHIZAYgNR3lAyKuhRe1u8450RY8ACf5XYlPKmDps=
+	t=1716967942; cv=none; b=nNNbMOO22u/dUBVXdcn8+HlNbTw1aYbmIL60DGB6I3i1zYx5mZJSIsXIpZVm6yfVmsWmIey+LF3JjU2QOowBSEcibevqcvdVMkFZtb7c9TQjcQP9jY9zVJowmYXyZ6HAneK4S+OqqcYgY5El19+aEIB2YySoujuCznMg1BOgUa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716967918; c=relaxed/simple;
-	bh=zHUZ3rqsFBRispMR7PUdN9kD316fvW83L93XSnpGX7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0w0h9dNBeQ8aL8dPOr1D1NHd9lKUhXkD2Ld3kNZkLVM1Uw9q8PWs7KeuxOTHnCkyeD+/2bI21hX33kV2bzXI0QxYVaJsZIzgTV284OK2xsbXRj70xINveT4UmBhuUnhbpOKUAlUpIBJxuxoHtKOUbqTYgTc3dM355Bq7bq5c6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (2a02-a420-77-cc79-164f-8aff-fee4-5930.mobile6.kpn.net [IPv6:2a02:a420:77:cc79:164f:8aff:fee4:5930])
+	s=arc-20240116; t=1716967942; c=relaxed/simple;
+	bh=cADutWs2Dsx1o9inKNPez5xFnY+sOuOUeUDqJ44drFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gDONJu1wkrfmtMV1xYr9zuk7MlnNxHFIEyrNZfG0QQGn6uQSk4jlVSYzDMUIZTCEeUxIOJbeTDTay1xxcymskNePcvyiiA4FrvLP4yWnti5Uc5tm/Usbqb1B+LBrJElqaVM96xHhlQDQbqz0ReiXT77GkC0hMYRTQbkKqqbaCE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BrZRV001; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716967939;
+	bh=cADutWs2Dsx1o9inKNPez5xFnY+sOuOUeUDqJ44drFk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BrZRV001CJRtCqhATXy9C/FXVikr+5BdllJGZ2rStBbfQk7E4RecsGhHyLUYYTaIX
+	 DdX1+wJBWQFYV5tjrx9nrd9tQQJymjFfZSy6VjmJioLWGMpiRHvVXQcCdNqEjHg2nc
+	 5Ofxh4snXgHT9f0visanV+QcHJiyJBN05ySKzTc3bXeWPSMtlxnPKH6PZ80J06d8dh
+	 S9WP60/wwTTEDRUGmWqBV3OvWMlJ/QKPqS3N9XUPm0tVd+j32q0IXhPWDAzVjl0jg6
+	 RjMI6caeXqeU15q9tG1E37Yw3kWZXMAASFBGSEMNh/yZchKQ5k8TQK7AdofrfG5BSK
+	 Nino7JsVpA7dA==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 013031F8E2;
-	Wed, 29 May 2024 09:31:52 +0200 (CEST)
-Date: Wed, 29 May 2024 09:31:51 +0200
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Vinod Koul <vkoul@kernel.org>, 
-	Caleb Connolly <caleb@connolly.tech>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v4 3/3] drm/display: split DSC helpers from DP helpers
-Message-ID: <nfo5qbqwuq6zlywayt5pt2xh63wvg6eofjusz2wlelzi76busf@tuj5kaubcznl>
-References: <20240528-panel-sw43408-fix-v4-0-330b42445bcc@linaro.org>
- <20240528-panel-sw43408-fix-v4-3-330b42445bcc@linaro.org>
+	(Authenticated sender: bbrezillon)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0DFB63780627;
+	Wed, 29 May 2024 07:32:18 +0000 (UTC)
+Date: Wed, 29 May 2024 09:32:16 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Dmitry Osipenko
+ <dmitry.osipenko@collabora.com>, Zack Rusin <zack.rusin@broadcom.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v4 0/3] drm: Fix dma_resv deadlock at drm object pin
+ time
+Message-ID: <20240529093216.6640d05d@collabora.com>
+In-Reply-To: <20240523113236.432585-1-adrian.larumbe@collabora.com>
+References: <20240523113236.432585-1-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528-panel-sw43408-fix-v4-3-330b42445bcc@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-05-28 22:39:20, Dmitry Baryshkov wrote:
-> Currently the DRM DSC functions are selected by the
-> DRM_DISPLAY_DP_HELPER Kconfig symbol. This is not optimal, since the DSI
-> code (both panel and host drivers) end up selecting the seemingly
-> irrelevant DP helpers. Split the DSC code to be guarded by the separate
-> DRM_DISPLAY_DSC_HELPER Kconfig symbol.
-> 
-> Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu, 23 May 2024 12:32:16 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+> This is v4 of https://lore.kernel.org/lkml/20240521181817.097af5e1@collab=
+ora.com/T/
+>=20
+> The goal of this patch series is fixing a deadlock upon locking the dma r=
+eservation
+> of a DRM gem object when pinning it, at a prime import operation.
+>=20
+> Changelog:
+> v3:
+>  - Split driver fixes into separate commits for Panfrost and Lima
+>  - Make drivers call drm_gem_shmem_pin_locked instead of drm_gem_shmem_ob=
+ject_pin
+>  - Improved commit message for first patch to explain why dma resv lockin=
+g in the=20
+>  pin callback is no longer necessary.
+> v2:
+>  - Removed comment explaining reason why an already-locked
+> pin function replaced the locked variant inside Panfrost's
+> object pin callback.
+>  - Moved already-assigned attachment warning into generic
+> already-locked gem object pin function
+>=20
+>=20
+> Adri=C3=A1n Larumbe (3):
+>   drm/panfrost: Fix dma_resv deadlock at drm object pin time
+>   drm/lima: Fix dma_resv deadlock at drm object pin time
+>   drm/gem-shmem: Add import attachment warning to locked pin function
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/Kconfig | 1 +
->  drivers/gpu/drm/display/Kconfig    | 6 ++++++
->  drivers/gpu/drm/display/Makefile   | 3 ++-
->  drivers/gpu/drm/i915/Kconfig       | 1 +
->  drivers/gpu/drm/msm/Kconfig        | 1 +
->  drivers/gpu/drm/panel/Kconfig      | 6 +++---
->  6 files changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
-> index 4232ab27f990..5933ca8c6b96 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig
-> +++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
-> @@ -6,6 +6,7 @@ config DRM_AMDGPU
->  	depends on !UML
->  	select FW_LOADER
->  	select DRM_DISPLAY_DP_HELPER
-> +	select DRM_DISPLAY_DSC_HELPER
->  	select DRM_DISPLAY_HDMI_HELPER
->  	select DRM_DISPLAY_HDCP_HELPER
->  	select DRM_DISPLAY_HELPER
-> diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/display/Kconfig
-> index 864a6488bfdf..f524cf95dec3 100644
-> --- a/drivers/gpu/drm/display/Kconfig
-> +++ b/drivers/gpu/drm/display/Kconfig
-> @@ -59,6 +59,12 @@ config DRM_DISPLAY_DP_TUNNEL_STATE_DEBUG
->  
->  	  If in doubt, say "N".
->  
-> +config DRM_DISPLAY_DSC_HELPER
-> +	bool
-> +	depends on DRM_DISPLAY_HELPER
-> +	help
-> +	  DRM display helpers for VESA DSC (used by DSI and DisplayPort).
-> +
->  config DRM_DISPLAY_HDCP_HELPER
->  	bool
->  	depends on DRM_DISPLAY_HELPER
-> diff --git a/drivers/gpu/drm/display/Makefile b/drivers/gpu/drm/display/Makefile
-> index 17d2cc73ff56..2ec71e15c3cb 100644
-> --- a/drivers/gpu/drm/display/Makefile
-> +++ b/drivers/gpu/drm/display/Makefile
-> @@ -6,7 +6,8 @@ drm_display_helper-y := drm_display_helper_mod.o
->  drm_display_helper-$(CONFIG_DRM_DISPLAY_DP_HELPER) += \
->  	drm_dp_dual_mode_helper.o \
->  	drm_dp_helper.o \
-> -	drm_dp_mst_topology.o \
-> +	drm_dp_mst_topology.o
-> +drm_display_helper-$(CONFIG_DRM_DISPLAY_DSC_HELPER) += \
->  	drm_dsc_helper.o
->  drm_display_helper-$(CONFIG_DRM_DISPLAY_DP_TUNNEL) += \
->  	drm_dp_tunnel.o
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index 5932024f8f95..117b84260b1c 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -11,6 +11,7 @@ config DRM_I915
->  	select SHMEM
->  	select TMPFS
->  	select DRM_DISPLAY_DP_HELPER
-> +	select DRM_DISPLAY_DSC_HELPER
->  	select DRM_DISPLAY_HDCP_HELPER
->  	select DRM_DISPLAY_HDMI_HELPER
->  	select DRM_DISPLAY_HELPER
-> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-> index 1931ecf73e32..6dcd26180611 100644
-> --- a/drivers/gpu/drm/msm/Kconfig
-> +++ b/drivers/gpu/drm/msm/Kconfig
-> @@ -111,6 +111,7 @@ config DRM_MSM_DSI
->  	depends on DRM_MSM
->  	select DRM_PANEL
->  	select DRM_MIPI_DSI
-> +	select DRM_DISPLAY_DSC_HELPER
->  	default y
->  	help
->  	  Choose this option if you have a need for MIPI DSI connector
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index 2ae0eb0638f3..3e3f63479544 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -340,7 +340,7 @@ config DRM_PANEL_LG_SW43408
->  	depends on OF
->  	depends on DRM_MIPI_DSI
->  	depends on BACKLIGHT_CLASS_DEVICE
-> -	select DRM_DISPLAY_DP_HELPER
-> +	select DRM_DISPLAY_DSC_HELPER
->  	select DRM_DISPLAY_HELPER
->  	help
->  	  Say Y here if you want to enable support for LG sw43408 panel.
-> @@ -549,7 +549,7 @@ config DRM_PANEL_RAYDIUM_RM692E5
->  	depends on OF
->  	depends on DRM_MIPI_DSI
->  	depends on BACKLIGHT_CLASS_DEVICE
-> -	select DRM_DISPLAY_DP_HELPER
-> +	select DRM_DISPLAY_DSC_HELPER
->  	select DRM_DISPLAY_HELPER
->  	help
->  	  Say Y here if you want to enable support for Raydium RM692E5-based
-> @@ -907,7 +907,7 @@ config DRM_PANEL_VISIONOX_R66451
->  	depends on OF
->  	depends on DRM_MIPI_DSI
->  	depends on BACKLIGHT_CLASS_DEVICE
-> -	select DRM_DISPLAY_DP_HELPER
-> +	select DRM_DISPLAY_DSC_HELPER
->  	select DRM_DISPLAY_HELPER
->  	help
->  	  Say Y here if you want to enable support for Visionox
-> 
-> -- 
-> 2.39.2
-> 
+Queued to drm-misc-fixes.
+
+Thanks!
+
+Boris
 
