@@ -1,126 +1,199 @@
-Return-Path: <linux-kernel+bounces-193887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8022A8D33AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBEE8D33B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2E11F29662
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FDC91F294F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8644A174EE2;
-	Wed, 29 May 2024 09:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5F217554D;
+	Wed, 29 May 2024 09:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qn9mLs/h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yeeX4CeN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TuLERx3o";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="u8+7SfNd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ITls/fBz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C829416F0DC;
-	Wed, 29 May 2024 09:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88CD16A360;
+	Wed, 29 May 2024 09:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716976214; cv=none; b=rdAEJXQ/Y6aZccGDik0MS+nGRy8VSOoN4yqOxA4cDjxBCuMxMJlzbiVsqPAj1l//O27W2dGfVs6NJDpIfbM2ygoGa/zqcz2stW4B6gIi0cvlBOvtNoGleu7y6zNfxaQZrIGzWHaIFN3NhgXYcct9xuyvpUpe/64w9bh7YJzsTDs=
+	t=1716976241; cv=none; b=kOUNuLjdsEqHu0P4nvUYvO4TPqMAJ/+zY7Z08o2+z+498UAwFVHNpTDKuYwg3WNN0BPpPAsK4s1MBEn6dw5ixDoPfHpCuO3otpxZdl0NKb9iMJfWqxKApuoslX3qeoiIoJozpw7SathOvE+uVe1SpL74aSOH/nXrj5f8TLdkWMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716976214; c=relaxed/simple;
-	bh=XDTCDKbgbSdFikKLYa4k25CQJsfLSgfbo73V66b6G+U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X1dLD1ToQbuUF8MgszNHEigqci6jlpbmbrBh5yA2SpghfPuBeSbI4jzW+HhZh4y0V73v7PFh/L7/BsbQ8xMPvaOiruJSahZZo5cd4eL2kCh2sgJ0cxb2Gybn4jh9GGVgx92DN/QG6nFlVLhtTUShdJQ9OnGsdGnqxYvOKXMvCy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qn9mLs/h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD39CC4AF09;
-	Wed, 29 May 2024 09:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716976214;
-	bh=XDTCDKbgbSdFikKLYa4k25CQJsfLSgfbo73V66b6G+U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Qn9mLs/hbrBsdMC+8aNznAml0LfQq1U38SCiFU/dmfyoYUwPKkAXKVDe18wXDM34B
-	 WeoM2NapLrOS/zszVUrQMBzsT2WFvIDaWlvT1nwfT2rvmVXt8Ml3FiLVJiMV7dgBRP
-	 5aD8cIKTYmoOKDc/GgfUnhupXtkPpWLJX5c6rpk6/GeDxQP4Kk8520Q3/IGoQTT7Wc
-	 2TnTAbUjavVbq4frUscC0R0ecvAUWxYiyYV4MvZHIRzEDKj3ZrU8efYVjCAUUDNIu2
-	 QjIzVegNX8cDD3lJpB7KUj5Zj7gcMh/xK5hXSTWCdfFZhvtML8Gw79Jms/ubWeYvUo
-	 51QDJ6SN49gSQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Daniel Scally <djrscally@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: int3472: make common part a separate module
-Date: Wed, 29 May 2024 11:49:55 +0200
-Message-Id: <20240529095009.1895618-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716976241; c=relaxed/simple;
+	bh=nfr/lIzDZ2ptmjXaU71o5YMnL/MYxS1fb0TD4ogVaMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lxzY7IGYIibgjmh8pGRTZiPpDyR1mbLdlsdAmu2ipwlmqg+trFp6va1o6jyjLOn0ugt1nvKS5eIk98m7pPJ6gvcdKtB6/IiKIOip2XAsRfLAwWnu6OIMn6UukBqqjoHNSfm9pgPskF94dhKNCHWstAz1cd3cLFmXIooIxGCgQBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yeeX4CeN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TuLERx3o; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=u8+7SfNd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ITls/fBz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EEA4522D99;
+	Wed, 29 May 2024 09:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716976237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZwwNXTNDYwR0XUlWFA2bgWgdfLGH7rBgdpHiyDCoc0=;
+	b=yeeX4CeN7Sh14+rL6X32bKnLNaJwMqjrpxv7gK6tqQmYvX8s1TK0HIQTtXHMRF6kS/vr/J
+	IRwjPWxZMRt9zy+PUgem24Gke+DirJrMJO+aZAk4f+DcIehHGK1gicvE8+DHtGxHpvMoyM
+	upDMT3cU+vfuEBXLsiVRz8H9TOqNHhY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716976237;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZwwNXTNDYwR0XUlWFA2bgWgdfLGH7rBgdpHiyDCoc0=;
+	b=TuLERx3okrGpScHs94gbtWGa2DKQllhDJMOHY0Ccc5YNHBAnbJYoUTLFPkF3BHP5u4AuN6
+	cxec7IfEurtUWWDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=u8+7SfNd;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="ITls/fBz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716976236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZwwNXTNDYwR0XUlWFA2bgWgdfLGH7rBgdpHiyDCoc0=;
+	b=u8+7SfNdfjIgNTpNENIAEAwzwm9t+73N4eS8UOg3xQkTqzGYwIGmVMscNrEXGt609qWmp1
+	o1ikTogrH7Gob/NIs78SeBo7IcQOghaOoeyzLGniqe8U6PxHU14d6NHriGrFuN7eZ4s/VI
+	Cdv9cVuzeyjx4Tgz7bfnMH1zKjkRmOc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716976236;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZwwNXTNDYwR0XUlWFA2bgWgdfLGH7rBgdpHiyDCoc0=;
+	b=ITls/fBznZWSlj1XwORgrofp+3u0TYUIjeXfhRP5fWwCNsAcyDzzpHaBzO0dF2FIsWjDma
+	mdcmK6HrBEjvocAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E28721372E;
+	Wed, 29 May 2024 09:50:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QlBMN2z6VmbvAgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 29 May 2024 09:50:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 84128A0825; Wed, 29 May 2024 11:50:32 +0200 (CEST)
+Date: Wed, 29 May 2024 11:50:32 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
+	Jan Kara <jack@suse.cz>,
+	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] ext4: fix fast commit inode enqueueing during a
+ full journal commit
+Message-ID: <20240529095032.kax3nwtsofyk6qxz@quack3>
+References: <20240529092030.9557-1-luis.henriques@linux.dev>
+ <20240529092030.9557-2-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529092030.9557-2-luis.henriques@linux.dev>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email,linux.dev:email,suse.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: EEA4522D99
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed 29-05-24 10:20:29, Luis Henriques (SUSE) wrote:
+> When a full journal commit is on-going, any fast commit has to be enqueued
+> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
+> is done only once, i.e. if an inode is already queued in a previous fast
+> commit entry it won't be enqueued again.  However, if a full commit starts
+> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
+> be done into FC_Q_STAGING.  And this is not being done in function
+> ext4_fc_track_template().
+> 
+> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
+> during the fast commit clean-up callback if it has a tid (i_sync_tid)
+> greater than the one being handled.  The STAGING queue will then be spliced
+> back into MAIN.
+> 
+> This bug was found using fstest generic/047.  This test creates several 32k
+> bytes files, sync'ing each of them after it's creation, and then shutting
+> down the filesystem.  Some data may be loss in this operation; for example a
+> file may have it's size truncated to zero.
+> 
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 
-Linking an object file into multiple modules is not supported
-and causes a W=1 warning:
+Looks good to me! Feel free to add:
 
-scripts/Makefile.build:236: drivers/platform/x86/intel/int3472/Makefile: common.o is added to multiple modules: intel_skl_int3472_discrete intel_skl_int3472_tps68470
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Split out the common part here into a separate module to make it
-more reliable.
+Just a typo correction below.
 
-Fixes: a2f9fbc247ee ("platform/x86: int3472: Split into 2 drivers")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/platform/x86/intel/int3472/Makefile | 9 ++++++---
- drivers/platform/x86/intel/int3472/common.c | 7 +++++++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+> index 87c009e0c59a..088bd509b116 100644
+> --- a/fs/ext4/fast_commit.c
+> +++ b/fs/ext4/fast_commit.c
+> @@ -1282,8 +1282,17 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
+>  		list_del_init(&iter->i_fc_list);
+>  		ext4_clear_inode_state(&iter->vfs_inode,
+>  				       EXT4_STATE_FC_COMMITTING);
+> -		if (iter->i_sync_tid <= tid)
+> +		if (iter->i_sync_tid <= tid) {
+>  			ext4_fc_reset_inode(&iter->vfs_inode);
+> +		} else {
+> +			/*
+> +			 * re-enqueue inode into STAGING, which later will be
+> +			 * splice back into MAIN
+			   ^^^ spliced
 
-diff --git a/drivers/platform/x86/intel/int3472/Makefile b/drivers/platform/x86/intel/int3472/Makefile
-index 9f16cb514397..a8aba07bf1dc 100644
---- a/drivers/platform/x86/intel/int3472/Makefile
-+++ b/drivers/platform/x86/intel/int3472/Makefile
-@@ -1,4 +1,7 @@
- obj-$(CONFIG_INTEL_SKL_INT3472)		+= intel_skl_int3472_discrete.o \
--					   intel_skl_int3472_tps68470.o
--intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o led.o common.o
--intel_skl_int3472_tps68470-y		:= tps68470.o tps68470_board_data.o common.o
-+					   intel_skl_int3472_tps68470.o \
-+					   intel_skl_int3472_common.o
-+intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o led.o
-+intel_skl_int3472_tps68470-y		:= tps68470.o tps68470_board_data.o
-+
-+intel_skl_int3472_common-y		+= common.o
-diff --git a/drivers/platform/x86/intel/int3472/common.c b/drivers/platform/x86/intel/int3472/common.c
-index 9db2bb0bbba4..8e4a782b2c35 100644
---- a/drivers/platform/x86/intel/int3472/common.c
-+++ b/drivers/platform/x86/intel/int3472/common.c
-@@ -29,6 +29,7 @@ union acpi_object *skl_int3472_get_acpi_buffer(struct acpi_device *adev, char *i
- 
- 	return obj;
- }
-+EXPORT_SYMBOL_GPL(skl_int3472_get_acpi_buffer);
- 
- int skl_int3472_fill_cldb(struct acpi_device *adev, struct int3472_cldb *cldb)
- {
-@@ -52,6 +53,7 @@ int skl_int3472_fill_cldb(struct acpi_device *adev, struct int3472_cldb *cldb)
- 	kfree(obj);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(skl_int3472_fill_cldb);
- 
- /* sensor_adev_ret may be NULL, name_ret must not be NULL */
- int skl_int3472_get_sensor_adev_and_name(struct device *dev,
-@@ -80,3 +82,8 @@ int skl_int3472_get_sensor_adev_and_name(struct device *dev,
- 
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(skl_int3472_get_sensor_adev_and_name);
-+
-+MODULE_DESCRIPTION("Intel SkyLake INT3472 ACPI Device Driver library");
-+MODULE_AUTHOR("Daniel Scally <djrscally@gmail.com>");
-+MODULE_LICENSE("GPL v2");
+> +			 */
+> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
+> +				      &sbi->s_fc_q[FC_Q_STAGING]);
+> +		}
+> +
+
+								Honza
 -- 
-2.39.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
