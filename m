@@ -1,139 +1,105 @@
-Return-Path: <linux-kernel+bounces-194612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAEC8D3EE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:30:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4188D3EE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457AE2838BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:30:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36693B22942
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8166517B404;
-	Wed, 29 May 2024 19:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9181667DC;
+	Wed, 29 May 2024 19:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="i/SF2/nb"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YWMyRygA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA8115B13E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 19:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4173242045;
+	Wed, 29 May 2024 19:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717011036; cv=none; b=BCXeAz0d+t+SZYJgYjBsmmBnwBX4fwg6kC48bxWViJU5ZVivnoi7Ks7lt8ocuJQwarAjsN9/s5H5EBNW6mhSOSKMnWHh0tdfYWddQUdKnbV5GxdYSD50al91tqN5E0wte47A6rQENX/sr8JCI+DavIrgwiaafcDC+lClNns40t0=
+	t=1717011121; cv=none; b=A01Zt9cFv3w4ja9+J1GKysX/irw440cY2SxLKlL9ZAyKnmo0281VJchr/vxiKNDpfVe+EJAnW6tUgL2C0mo+CMZ7Wq8jckhq9WvmkuEMuJs1iG2UVYxZeadcJLyDOeRo4s0mczztd71D+UIjsVENVviRYW7Nttyw4/vC4d77ms4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717011036; c=relaxed/simple;
-	bh=rbhu2ib/XGwYGFkI1NObBN7OwJKwg7X91DunIKl8pfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q3lzH2vLBeSLLD6FdAN5luWolduBG1SXhEYmIOCNOYoAJhxBt9gJigSxscWbvRvlHMK1e/7gzceg8quSzkHAlq8O1dceiGKSZVI/BknXtE/okbL6sAbk96imdKtqgut8de+z/9rFfXrdXLyW/Tyk4ARdaPf3afoIXrqKQXvCJ8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=i/SF2/nb; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7e8e7b01257so1670739f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:30:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1717011034; x=1717615834; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O/S0KVWXFmOHVQryZxavE2DQTw/tgGX43OLxqtR+UFI=;
-        b=i/SF2/nb//5u8Nge/gcITjzV50QCExCpqS/r/fIFoKuAXiKAxaGTCo0GCOeyGkYPzU
-         0TXStnDNglPAFIErHEqrAcIGCANbKcAQSlGJ+2JqzHgfQBkmvxJDEcGh1rqrrd9tzbD7
-         44pRe2zvN6trQONb5/cyxOy4MAz+DBrGJG05PHtPXt2cPhR6qf0wIkbYDiJ9txqNXprK
-         jeKKIKsRaOTE790Moaui313bMpGiYJKomCnGguLdSEEXS98+10Gm5jvHI2fjMXwReQze
-         IN8swmkUD07OXE5Q5bj3xotBBLa3wSlQGoI24gRqIbI6orxzryCt9s5ZgIheo/UJCTbz
-         0TFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717011034; x=1717615834;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/S0KVWXFmOHVQryZxavE2DQTw/tgGX43OLxqtR+UFI=;
-        b=jVxt4yG3PU8ekMPSKcQfjvKPgacCtqZttmhEvKLGQuU3oRr74+78+htpNK7ro8As/Y
-         JarqGX3YJfAacAz8HW5+Gmqpyp8ybYz/9dlZpWiSJICIc0NsyxwaHHwvhPVYJ2kd9bKG
-         BX69cjuYIpTUzeyf+LoZI2on4Pi7QMjSRxwrLQcuF8gIPij8EawqN3fHI78R0ns956w5
-         ulRHmzUoAVwpV6cfbqWe6ypofiAEq+OQmTTumYlfmvOpN+nWN8MzZvXguVFZTDUMCQhb
-         g0qlD/FvGQVEkc/UboSEoVDD0qBpoY31Y+kUtx/kj63JTvoawKdinoAfcZx+H/C7E7ep
-         +h8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaLgU7BPZrsSkOxtlXGpENCARd1qbtvQD5WIP+qUL24YbchNx1AmSc0p4Zkcmbj4x32nLwVEzsjznP2h4XsYhFslSKPJ3eahVsxdTt
-X-Gm-Message-State: AOJu0YwhsEoXCPOu8R1VOCvgCg2SMV9Cb4BeTTO/vhxGiXKar1GC0Hu1
-	YTyX5vCDIqpIggpvYY4QbjoZ94bXryhF8tct8f0VFMIue264wLktxlVBiXdWbRw=
-X-Google-Smtp-Source: AGHT+IGH/6KegzkUgys9rBPlGXzDuwuB6PvXzY3NlqpGylyoIeQBRNeVmq/3xNj56KnkqbTgj17LXA==
-X-Received: by 2002:a5d:9304:0:b0:7de:cd12:ed2d with SMTP id ca18e2360f4ac-7e8c461533emr1764314239f.3.1717011034379;
-        Wed, 29 May 2024 12:30:34 -0700 (PDT)
-Received: from [100.64.0.1] ([170.85.6.197])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e903e0b783sm263170539f.4.2024.05.29.12.30.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 12:30:34 -0700 (PDT)
-Message-ID: <f18a74a5-330e-402a-93ca-5552faf00e7e@sifive.com>
-Date: Wed, 29 May 2024 14:30:31 -0500
+	s=arc-20240116; t=1717011121; c=relaxed/simple;
+	bh=XknLD++ZbyOxVWUbX5ZNfhHP323YHHho4U/eXqTv2Yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJsbXwtIOWqoog/N27UoDYgvXcJHXl5FYE69U2HWNvITgBc/tp2iRNqvWytXNWb+K8zyxzp+BWirg5MgrPB9xjgRHsk02HqNoctZ2pTjz7XmnQZlizvRdScRef7ajlhpcDmyu9RQFxtFTe5mibHb2+15A+77mxrOGY1/7uZA7xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YWMyRygA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 87CA040E01A3;
+	Wed, 29 May 2024 19:31:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dyeE9Nzyk0oM; Wed, 29 May 2024 19:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717011110; bh=EeR0075bxj700aFxHDQNh71batfPlf0fp9sZmjOxiGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YWMyRygATvPVO4cnKAN5/M61kp9pxWyVX+W0d92nuI4x6WIUCAFgbY/9enuj42Fbt
+	 2lYlrjpTLo+qCOsveJgoRQ1nnu2OgZvWV2MvjyRefGbVAehUNsGHJNZ4oOpi9ptn8Z
+	 CbcKT9xiN9AdeDExDp+DddMtThO6y99cADhcbRF9iCHbiAhARinQYOFQ/icxIVxhFo
+	 sJA9ZJwzcnZjyumP5iPaI3pA3B/Hzh96mtwITmDeK4AJdNqgEQ3KFdNX1aBYsDUJ3N
+	 S6JonM83sFImN3cvJ3oOfmzMH4cIMheKKNPfMXFjB6UTcjwHhSh6QocZMpHU1Zjjrf
+	 tcQLLZhpmT6S6zqSOEOdxzD25rFpF9XJ82HgpV9PY48bJBYDgOuF3vTuoAWPzIPgHB
+	 1c9gNFdUBm48wPxpYqCuRzz3ONq6f3jLTptpG1va6vtko9hb5ZuaVauz/sGfd9c1WT
+	 ilA7CQoCZ5MNZQ0WYZvHCCFqLZMVluOi9JgrC03zKUok332WClWXHC2XBXRPJSZwBW
+	 QC3qGt+7a022AJVTvcNR0DjodpnU+p0EK2zTeHP4KgAxAOyc9xGNG22PrE2YQdWo42
+	 5fcs5kGkS5Y6IrlKcmwsqBYntN7unUxc92HSuwPrhiyGsotDRncO80pe8n96YuUZiw
+	 kP2EfD6nReWwal8oTrAIlriQ=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5246F40E0177;
+	Wed, 29 May 2024 19:31:38 +0000 (UTC)
+Date: Wed, 29 May 2024 21:31:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Marvin Lin <milkfafa@gmail.com>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC, i10nm: make skx_common.o a separate module
+Message-ID: <20240529193127.GEZleCjwyUtnDv_Nc0@fat_crate.local>
+References: <20240529095132.1929397-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] riscv: dts: starfive: Enable Bluetooth on JH7100
- boards
-To: Andreas Schwab <schwab@linux-m68k.org>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, Emil Renner Berthing <kernel@esmil.dk>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>
-References: <20240508111604.887466-1-emil.renner.berthing@canonical.com>
- <87wmo2nmee.fsf@linux-m68k.org>
- <CAJM55Z-F6N6ua5LoqyMFogDtLp=FaRPoDv4osXFDMjR1b8r9nw@mail.gmail.com>
- <87zfsy102h.fsf@igel.home>
- <CAJM55Z8Ce1i==pSUj0z4T2y71g713-675mAYQP5qSN5Euz=rLQ@mail.gmail.com>
- <878qzsbona.fsf@igel.home>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <878qzsbona.fsf@igel.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240529095132.1929397-1-arnd@kernel.org>
 
-Hi Andreas,
-
-On 2024-05-29 10:53 AM, Andreas Schwab wrote:
-> On Mai 29 2024, Emil Renner Berthing wrote:
+On Wed, May 29, 2024 at 11:51:11AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
->> Oddly it doesn't work on my Starlight board either. I was thinking the firmware
->> might set up pinconf differently, but comparing
->>
->>   /sys/kernel/debug/pinctrl/11910000.pinctrl-pinctrl-starfive/pinconf-pins
->>
->> on the two boards shows no differences. I've also not been able to spot any
->> differences in how the AP6236 module is connected in the schematics for the two
->> boards, so not really sure how to proceed.
+> Linking an object file into multiple modules causes a warning:
 > 
-> I see no difference between Starlight and Visionfive boards, both fail
-> the same way.
-> 
-> I also see that sometimes the firmware greeting from brcmfmac occurs
-> _after_ the timeout error from hci0:
-> 
-> # journalctl -b -2 | grep -e brcmf_c_preinit_dcmds -e hci0:
-> May 16 12:01:54 beaglev kernel: Bluetooth: hci0: command 0x1001 tx timeout
-> May 16 12:01:54 beaglev kernel: Bluetooth: hci0: BCM: Reading local version info failed (-110)
-> May 16 12:01:54 beaglev kernel: brcmfmac: brcmf_c_preinit_dcmds: Firmware: BCM43430/1 wl0: Mar 30 2021 01:12:21 version 7.45.98.118 (7d96287 CY) FWID 01-32059766
-> 
-> Is this perhaps a race with the firmware loading?
+> scripts/Makefile.build:236: drivers/edac/Makefile: skx_common.o is added to multiple modules: i10nm_edac skx_edac
 
-brcmfmac is the WiFi driver. The WiFi and Bluetooth parts of the module are
-functionally independent -- different drivers, different firmware, different DT
-nodes. So the brcmfmac line is not relevant to debugging Bluetooth issues.
+What changed?
 
-If the Bluetooth part has some dependency (pinconf, reset pin, clock, regulator,
-etc.), then such dependency must be declared specifically for the Bluetooth in
-the DT. Those seem to be correct, so maybe the issue is the maximum UART
-frequency, if the signal integrity is marginal. Have you tried reducing that?
+This wasn't an issue until now-ish...
 
-Regards,
-Samuel
+> Make this a separate module instead.
 
+..and I'm not crazy about the exported functions either.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
