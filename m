@@ -1,373 +1,205 @@
-Return-Path: <linux-kernel+bounces-194461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2F58D3C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAC9F8D3BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757E72874D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915DF281A18
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7221C8FA7;
-	Wed, 29 May 2024 16:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A9113DB9F;
+	Wed, 29 May 2024 16:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aqMgYRrP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q+CJ7f0x"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRm21IPB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5781A0B08;
-	Wed, 29 May 2024 16:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6367139588;
+	Wed, 29 May 2024 16:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717000185; cv=none; b=XQkjmLmpHwpEbXg7ar9Fq/kYFi/l+2kM39D9yrLlBStWYIPHO1TRzwC2TgOwcohlu7UDXyjLS5q2fmypm1ACI3q8SA4LwNM1C50pC0KAE3JrebErkCZrQGi1cvn4twFbd5BUofQ3bL+s7Mgi5mI4xndKNCwxlTrxW2UTq89E/qc=
+	t=1716998666; cv=none; b=LgUpIjKm+P+cs1dOcp5nu9GsU554Phw5S7QorWQ3MaeSNR0KfK6W5wtdBwvRuWGgmw3vmL5/Fw8f1rYob1Tm7NUqwe8TFj3s6vN9hWHlloc/u450325mq0ux8OdOMrQmZWMFpfE6XyVkeKwCl0k7BWnI6ChPEaBgHwhMqtwEO84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717000185; c=relaxed/simple;
-	bh=K+N7SScThVDvFeOZ74YnMYdDplqfJcdqL7SNISd4pK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ciz42QNHNsp5xl6DvHqXqk4sFcb27/tNneFC/uvGR8BQp+UOa9Z/WfI2fuK/YcdCpUF6MJYK1uLc3B6zAJcmsO2nzoPB3Kp01BBt+RwtEWhd6xI2crnvaPqr6DGg5q5XgkviTwM5LgxFuBZtEBkyNvrTlzCNJAtJqEgRJd56FFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aqMgYRrP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q+CJ7f0x; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717000180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q5Jik/z8apqNPvVA8Qi90r3XumHNfaJX3DcXJHJQJHI=;
-	b=aqMgYRrP64DXOPYtPPQCSWCqPFMeMTjwo5GFvoJXNLlvkR/r1KxZgxYAR9XgTB/C6h4wEM
-	4/SzMjLdBa8SujwpQ2i2tU48Lrz6JQLWaLOE+BB4uHD3L24/LYjakkogordVvvOpilffnD
-	CKI+3wG9PqbLGBXhOpvqfcOcx9+Z8ppXux66gfAOfccoTcs1JI5CYZ2Z5wQJSHVmeWzAN+
-	8yNktZExpm39+A2PfJUur5nRjMM/HOsxKx/G4ZAbSjphPqGmhRfGvNt+QaVLtQMertEkEE
-	ADeDpbKVrAyz9TDs6U2El0bN1PYa4QVJT/Sy5N+wZpOfANfhD+nS97x23yUNFw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717000180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q5Jik/z8apqNPvVA8Qi90r3XumHNfaJX3DcXJHJQJHI=;
-	b=Q+CJ7f0xbTjRfywlvsqTb7BHffgDbBdhPdcv4zOq00FSoxJw5/FGIagrFYl+oloRl9nzLs
-	jCogmtNgyx8r/BBg==
-To: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Hao Luo <haoluo@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	bpf@vger.kernel.org
-Subject: [PATCH v3 net-next 15/15] net: Move per-CPU flush-lists to bpf_net_context on PREEMPT_RT.
-Date: Wed, 29 May 2024 18:02:38 +0200
-Message-ID: <20240529162927.403425-16-bigeasy@linutronix.de>
-In-Reply-To: <20240529162927.403425-1-bigeasy@linutronix.de>
-References: <20240529162927.403425-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1716998666; c=relaxed/simple;
+	bh=DWKbl03/nXco70baKk+AHssQc5Q/D3vG7XftkkCmshk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjhP5r3vwBUFqVeIPsBD1e4lyvxyQAOscokcnHh8mN0GhmVcf5VDzNu/+TieZtBKZdnB2rxNIJTrVol7hZ2IvkFOsWq4wIg2fbTSF+IeG6S5Ik2SKqO5bpGoCyABFMb45EmlUXgRt8jCnlZvcdUXOuMYgDq/NbO+AIFZy+wiSI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRm21IPB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26AE1C113CC;
+	Wed, 29 May 2024 16:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716998666;
+	bh=DWKbl03/nXco70baKk+AHssQc5Q/D3vG7XftkkCmshk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WRm21IPBmyqMapQh1CCFxQSxVoieejoEDj+RAl/vnlmcFMnXq8XWmNsMgR1Ki4N1M
+	 bL3Oyh3kjXr9tdyh2YTqkEUlLgLB56bEEh1nEeTgk+wNxxvivvCKUqc4vOjwJnTYFk
+	 tnsvy8dsaHrv9s5Pqn2SOb2Ipc5frnK9ORnmmKQEGExLlSRwUZH7U6G679vUNQ2P4P
+	 vilpJCEwTGsr8LfOoTS41m03bQtE33isFsLLCjhGCN2cjnqNGn/bNaHeOvw8baQ3Pm
+	 URjRZlPf7kV3G1retDhorzNl9tlVCcE0tsLCEN0+fR03ZGryT/miYM4b1HSQgx7XHf
+	 plyE080/zz/OA==
+Date: Wed, 29 May 2024 17:04:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: adc: ad7173: add support for ad411x
+Message-ID: <20240529-slit-verse-0fb06f3556fb@spud>
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+ <20240527-ad4111-v3-1-7e9eddbbd3eb@analog.com>
+ <20240527-arguably-said-361184ad848e@spud>
+ <d87ae6ef-090d-4e47-bde4-4d08fd445ac1@gmail.com>
+ <20240528-filtrate-cloning-b9152322a3da@spud>
+ <a1c75105-6447-4b67-b7d2-326ad9b19b82@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1fQrEwqMuWGtDjnv"
+Content-Disposition: inline
+In-Reply-To: <a1c75105-6447-4b67-b7d2-326ad9b19b82@gmail.com>
+
+
+--1fQrEwqMuWGtDjnv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-The per-CPU flush lists, which are accessed from within the NAPI callback
-(xdp_do_flush() for instance), are per-CPU. There are subject to the
-same problem as struct bpf_redirect_info.
+On Wed, May 29, 2024 at 04:38:53PM +0300, Ceclan, Dumitru wrote:
+> On 28/05/2024 20:52, Conor Dooley wrote:
+> > On Tue, May 28, 2024 at 03:16:07PM +0300, Ceclan, Dumitru wrote:
+> >> On 27/05/2024 20:48, Conor Dooley wrote:
+> >>> On Mon, May 27, 2024 at 08:02:34PM +0300, Dumitru Ceclan via B4 Relay=
+ wrote:
+> >>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >>>> +      adi,channel-type:
+> >>>> +        description:
+> >>>> +          Used to differentiate between different channel types as =
+the device
+> >>>> +           register configurations are the same for all usage types.
+> >>>> +          Both pseudo-differential and single-ended channels will u=
+se the
+> >>>> +           single-ended specifier.
+> >>>> +        $ref: /schemas/types.yaml#/definitions/string
+> >>>> +        enum:
+> >>>> +          - single-ended
+> >>>> +          - differential
+> >>>> +        default: differential
+> >>>
+> >>> I dunno if my brain just ain't workin' right today, or if this is not
+> >>> sufficiently explained, but why is this property needed? You've got
+> >>> diff-channels and single-channels already, why can you not infer the
+> >>> information you need from them? What should software do with this
+> >>> information?
+> >>> Additionally, "pseudo-differential" is not explained in this binding.
+> >>
+> >> In previous thread we arrived to the conclusion single-ended and
+> >> pseudo-differential channels should be marked with the flag
+> >> "differential=3Dfalse" in the IIO channel struct. This cannot
+> >> really be inferred as any input pair could be used in that
+> >> manner and the only difference would be in external wiring.
+> >>
+> >> Single-channels cannot be used to define such a channel as
+> >> two voltage inputs need to be selected. Also, we are already
+> >> using single-channel to define the current channels.
+> >=20
+> > If I understand correctly, the property could be simplified to a flag
+> > then, since it's only the pseudo differential mode that you cannot be
+> > sure of?
+> > You know when you're single-ended based on single-channel, so the
+> > additional info you need is only in the pseudo-differential case.
+> >=20
+> Yes, it could just be a boolean flag. The only thing I have against
+> that is the awkwardness of having both diff-channels and
+> differential=3Dfalse within a channel definition.
 
-Add the per-CPU lists cpu_map_flush_list, dev_map_flush_list and
-xskmap_map_flush_list to struct bpf_net_context. Add wrappers for the
-access.
+What I was suggesting was more like "adi,pseudo-differential" (you don't
+need to set the =3Dfalse or w/e, flag properties work based on present/not
+present). I think that would avoid the awkwardness?
 
-Cc: "Bj=C3=B6rn T=C3=B6pel" <bjorn@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Hao Luo <haoluo@google.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: Jonathan Lemon <jonathan.lemon@gmail.com>
-Cc: KP Singh <kpsingh@kernel.org>
-Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: Magnus Karlsson <magnus.karlsson@intel.com>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Song Liu <song@kernel.org>
-Cc: Stanislav Fomichev <sdf@google.com>
-Cc: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>
-Cc: bpf@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/filter.h | 32 ++++++++++++++++++++++++++++++++
- kernel/bpf/cpumap.c    | 19 +++----------------
- kernel/bpf/devmap.c    | 11 +++--------
- net/xdp/xsk.c          | 12 ++++--------
- 4 files changed, 42 insertions(+), 32 deletions(-)
+> >> As for explaining the pseudo-differential, should it be explained?
+> >> A voltage channel within the context of these families is actually
+> >> differential(as there are always two inputs selected).
+> >> The single-ended and pseudo-diff use case is actually wiring up a
+> >> constant voltage to the selected negative input.
+> >>
+> >> I did not consider that this should be described, as there is no
+> >> need for an attribute to describe it.
+> >=20
+> > I dunno, adding an explanation of it in the text for the channel type
+> > seems trivial to do. "Both pseudo-differential mode (where the
+> > one of differential inputs is connected to a constant voltage) and
+> > single-ended channels will..."
+> >
+> >>> Also, what does "the device register configurations are the same for
+> >>> all uses types" mean? The description here implies that you'd be read=
+ing
+> >>> the registers to determine the configuration, but as far as I underst=
+and
+> >>> it's the job of drivers to actually configure devices.
+> >>> The only way I could interpret this that makes sense to me is that yo=
+u're
+> >>> trying to say that the device doesn't have registers that allow you to
+> >>> do runtime configuration detection - but that's the norm and I would =
+not
+> >>> call it out here.
+> >>
+> >> No, I meant that the same register configuration will be set for
+> >> both fully differential and single-ended.=20
+> >>
+> >> The user will set diff-channels =3D <0, 1>, bipolar(or not) and
+> >> then they can wire whatever to those pins:=20
+> >> - a differential signal
+> >> - AVSS to 1 and a single-ended signal to 0
+> >> - AVSS+offset to 1 and a single-ended signal to 0
+> >> 	(which is called pseudo-differential in some datasheets)
+> >>
+> >> All these cases will look the same in terms of configuration
+> >=20
+> > In that case, I'd just remove this sentence from the description then.
+> > How you configure the registers to use the device doesn't really have
+> > anything to do with describing the configuration of the hardware.
+> > Given it isn't related to configuration detection at runtime, what
+> > you've got written here just makes it seem like the property is
+> > redundant because the register settings do not change.
+> >
+> > Instead, use the description to talk about when the property should be
+> > used and what software should use it to determine, e.g. "Software can
+> > use vendor,channel-type to determine whether or not the measured voltage
+> > is absolute or relative". I pulled that outta my ass, it might not
+> > be what you're actually doing, but I figure you just want to know if
+> > you're measuring from the origin or either side of it.
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index a0d0ea356f925..f94115d154890 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -746,6 +746,9 @@ struct bpf_redirect_info {
-=20
- struct bpf_net_context {
- 	struct bpf_redirect_info ri;
-+	struct list_head cpu_map_flush_list;
-+	struct list_head dev_map_flush_list;
-+	struct list_head xskmap_map_flush_list;
- };
-=20
- static inline struct bpf_net_context *bpf_net_ctx_set(struct bpf_net_conte=
-xt *bpf_net_ctx)
-@@ -754,6 +757,14 @@ static inline struct bpf_net_context *bpf_net_ctx_set(=
-struct bpf_net_context *bp
-=20
- 	if (tsk->bpf_net_context !=3D NULL)
- 		return NULL;
-+
-+	if (IS_ENABLED(CONFIG_BPF_SYSCALL)) {
-+		INIT_LIST_HEAD(&bpf_net_ctx->cpu_map_flush_list);
-+		INIT_LIST_HEAD(&bpf_net_ctx->dev_map_flush_list);
-+	}
-+	if (IS_ENABLED(CONFIG_XDP_SOCKETS))
-+		INIT_LIST_HEAD(&bpf_net_ctx->xskmap_map_flush_list);
-+
- 	tsk->bpf_net_context =3D bpf_net_ctx;
- 	return bpf_net_ctx;
- }
-@@ -776,6 +787,27 @@ static inline struct bpf_redirect_info *bpf_net_ctx_ge=
-t_ri(void)
- 	return &bpf_net_ctx->ri;
- }
-=20
-+static inline struct list_head *bpf_net_ctx_get_cpu_map_flush_list(void)
-+{
-+	struct bpf_net_context *bpf_net_ctx =3D bpf_net_ctx_get();
-+
-+	return &bpf_net_ctx->cpu_map_flush_list;
-+}
-+
-+static inline struct list_head *bpf_net_ctx_get_dev_flush_list(void)
-+{
-+	struct bpf_net_context *bpf_net_ctx =3D bpf_net_ctx_get();
-+
-+	return &bpf_net_ctx->dev_map_flush_list;
-+}
-+
-+static inline struct list_head *bpf_net_ctx_get_xskmap_flush_list(void)
-+{
-+	struct bpf_net_context *bpf_net_ctx =3D bpf_net_ctx_get();
-+
-+	return &bpf_net_ctx->xskmap_map_flush_list;
-+}
-+
- DEFINE_FREE(bpf_net_ctx_clear, struct bpf_net_context *, bpf_net_ctx_clear=
-(_T));
-=20
- /* flags for bpf_redirect_info kern_flags */
-diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-index 66974bd027109..068e994ed781a 100644
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -79,8 +79,6 @@ struct bpf_cpu_map {
- 	struct bpf_cpu_map_entry __rcu **cpu_map;
- };
-=20
--static DEFINE_PER_CPU(struct list_head, cpu_map_flush_list);
--
- static struct bpf_map *cpu_map_alloc(union bpf_attr *attr)
- {
- 	u32 value_size =3D attr->value_size;
-@@ -709,7 +707,7 @@ static void bq_flush_to_queue(struct xdp_bulk_queue *bq)
-  */
- static void bq_enqueue(struct bpf_cpu_map_entry *rcpu, struct xdp_frame *x=
-dpf)
- {
--	struct list_head *flush_list =3D this_cpu_ptr(&cpu_map_flush_list);
-+	struct list_head *flush_list =3D bpf_net_ctx_get_cpu_map_flush_list();
- 	struct xdp_bulk_queue *bq =3D this_cpu_ptr(rcpu->bulkq);
-=20
- 	if (unlikely(bq->count =3D=3D CPU_MAP_BULK_SIZE))
-@@ -761,7 +759,7 @@ int cpu_map_generic_redirect(struct bpf_cpu_map_entry *=
-rcpu,
-=20
- void __cpu_map_flush(void)
- {
--	struct list_head *flush_list =3D this_cpu_ptr(&cpu_map_flush_list);
-+	struct list_head *flush_list =3D bpf_net_ctx_get_cpu_map_flush_list();
- 	struct xdp_bulk_queue *bq, *tmp;
-=20
- 	list_for_each_entry_safe(bq, tmp, flush_list, flush_node) {
-@@ -775,20 +773,9 @@ void __cpu_map_flush(void)
- #ifdef CONFIG_DEBUG_NET
- bool cpu_map_check_flush(void)
- {
--	if (list_empty(this_cpu_ptr(&cpu_map_flush_list)))
-+	if (list_empty(bpf_net_ctx_get_cpu_map_flush_list()))
- 		return false;
- 	__cpu_map_flush();
- 	return true;
- }
- #endif
--
--static int __init cpu_map_init(void)
--{
--	int cpu;
--
--	for_each_possible_cpu(cpu)
--		INIT_LIST_HEAD(&per_cpu(cpu_map_flush_list, cpu));
--	return 0;
--}
--
--subsys_initcall(cpu_map_init);
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 4e2cdbb5629f2..9a66ac78a22ad 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -83,7 +83,6 @@ struct bpf_dtab {
- 	u32 n_buckets;
- };
-=20
--static DEFINE_PER_CPU(struct list_head, dev_flush_list);
- static DEFINE_SPINLOCK(dev_map_lock);
- static LIST_HEAD(dev_map_list);
-=20
-@@ -408,7 +407,7 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, =
-u32 flags)
-  */
- void __dev_flush(void)
- {
--	struct list_head *flush_list =3D this_cpu_ptr(&dev_flush_list);
-+	struct list_head *flush_list =3D bpf_net_ctx_get_dev_flush_list();
- 	struct xdp_dev_bulk_queue *bq, *tmp;
-=20
- 	list_for_each_entry_safe(bq, tmp, flush_list, flush_node) {
-@@ -422,7 +421,7 @@ void __dev_flush(void)
- #ifdef CONFIG_DEBUG_NET
- bool dev_check_flush(void)
- {
--	if (list_empty(this_cpu_ptr(&dev_flush_list)))
-+	if (list_empty(bpf_net_ctx_get_dev_flush_list()))
- 		return false;
- 	__dev_flush();
- 	return true;
-@@ -453,7 +452,7 @@ static void *__dev_map_lookup_elem(struct bpf_map *map,=
- u32 key)
- static void bq_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
- 		       struct net_device *dev_rx, struct bpf_prog *xdp_prog)
- {
--	struct list_head *flush_list =3D this_cpu_ptr(&dev_flush_list);
-+	struct list_head *flush_list =3D bpf_net_ctx_get_dev_flush_list();
- 	struct xdp_dev_bulk_queue *bq =3D this_cpu_ptr(dev->xdp_bulkq);
-=20
- 	if (unlikely(bq->count =3D=3D DEV_MAP_BULK_SIZE))
-@@ -1156,15 +1155,11 @@ static struct notifier_block dev_map_notifier =3D {
-=20
- static int __init dev_map_init(void)
- {
--	int cpu;
--
- 	/* Assure tracepoint shadow struct _bpf_dtab_netdev is in sync */
- 	BUILD_BUG_ON(offsetof(struct bpf_dtab_netdev, dev) !=3D
- 		     offsetof(struct _bpf_dtab_netdev, dev));
- 	register_netdevice_notifier(&dev_map_notifier);
-=20
--	for_each_possible_cpu(cpu)
--		INIT_LIST_HEAD(&per_cpu(dev_flush_list, cpu));
- 	return 0;
- }
-=20
-diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index 727aa20be4bde..8b0b557408fc2 100644
---- a/net/xdp/xsk.c
-+++ b/net/xdp/xsk.c
-@@ -35,8 +35,6 @@
- #define TX_BATCH_SIZE 32
- #define MAX_PER_SOCKET_BUDGET (TX_BATCH_SIZE)
-=20
--static DEFINE_PER_CPU(struct list_head, xskmap_flush_list);
--
- void xsk_set_rx_need_wakeup(struct xsk_buff_pool *pool)
- {
- 	if (pool->cached_need_wakeup & XDP_WAKEUP_RX)
-@@ -375,7 +373,7 @@ static int xsk_rcv(struct xdp_sock *xs, struct xdp_buff=
- *xdp)
-=20
- int __xsk_map_redirect(struct xdp_sock *xs, struct xdp_buff *xdp)
- {
--	struct list_head *flush_list =3D this_cpu_ptr(&xskmap_flush_list);
-+	struct list_head *flush_list =3D bpf_net_ctx_get_xskmap_flush_list();
- 	int err;
-=20
- 	err =3D xsk_rcv(xs, xdp);
-@@ -390,7 +388,7 @@ int __xsk_map_redirect(struct xdp_sock *xs, struct xdp_=
-buff *xdp)
-=20
- void __xsk_map_flush(void)
- {
--	struct list_head *flush_list =3D this_cpu_ptr(&xskmap_flush_list);
-+	struct list_head *flush_list =3D bpf_net_ctx_get_xskmap_flush_list();
- 	struct xdp_sock *xs, *tmp;
-=20
- 	list_for_each_entry_safe(xs, tmp, flush_list, flush_node) {
-@@ -402,7 +400,7 @@ void __xsk_map_flush(void)
- #ifdef CONFIG_DEBUG_NET
- bool xsk_map_check_flush(void)
- {
--	if (list_empty(this_cpu_ptr(&xskmap_flush_list)))
-+	if (list_empty(bpf_net_ctx_get_xskmap_flush_list()))
- 		return false;
- 	__xsk_map_flush();
- 	return true;
-@@ -1775,7 +1773,7 @@ static struct pernet_operations xsk_net_ops =3D {
-=20
- static int __init xsk_init(void)
- {
--	int err, cpu;
-+	int err;
-=20
- 	err =3D proto_register(&xsk_proto, 0 /* no slab */);
- 	if (err)
-@@ -1793,8 +1791,6 @@ static int __init xsk_init(void)
- 	if (err)
- 		goto out_pernet;
-=20
--	for_each_possible_cpu(cpu)
--		INIT_LIST_HEAD(&per_cpu(xskmap_flush_list, cpu));
- 	return 0;
-=20
- out_pernet:
---=20
-2.45.1
+> >It's more to the "software can this property to correctly mark the chann=
+el
 
+Your quoting is scuffed here, I didn't write this!
+
+> as differential or not". Hope this is acceptable. But got it, thanks.
+
+As long as you've got a description that tells the OS what the property
+actually represents, I'm happy.
+
+--1fQrEwqMuWGtDjnv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZldSBQAKCRB4tDGHoIJi
+0h+hAP9HgtxHzbYOpeOdlInP38k8mCjUNQ1jOet2R9xFvyi7KgD/awfrNzpr6Grq
+gw8D1Luo3VGZOSo+/h2GPMl/zY/iNgQ=
+=GSs9
+-----END PGP SIGNATURE-----
+
+--1fQrEwqMuWGtDjnv--
 
