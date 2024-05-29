@@ -1,116 +1,196 @@
-Return-Path: <linux-kernel+bounces-194633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D90D8D3F47
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A66A8D3F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9931C225A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:02:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0797E1F268F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBE01C68A1;
-	Wed, 29 May 2024 20:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4531C2339;
+	Wed, 29 May 2024 20:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="lWKJhAAF"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDqD2Zlp"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD14DDA1;
-	Wed, 29 May 2024 20:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8E91667D5;
+	Wed, 29 May 2024 20:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717012943; cv=none; b=Vz0E4M6/L3xKhPvjDZXZY/q9/L+qNd0qH14jpvkfUisiTRrm0VKFJTB90qJq7Tlmeb2BzAbPyVm35OtZ9eqJmF0jV/v3LAWqBx5FhGdSdxcanI4NZslUpkYJkGV8aTQ29tiJrubcBgfYRlqC45jvqLZJVqSGT2p5UDwLhQo4kv4=
+	t=1717013005; cv=none; b=EERHIm6uIvg/pFTKuwbcR/US0NwLHs0uPKigiocVjHA1q5ZFIle1239dMJeR/DKJRwmGBCGtGVF2qUVK5OogsCWrMc03Mm8ZLdnd0AYsnOABViIBTy2aBjAWN85mBu/RYJNvUpe1wKvq/O2A2KQ1D+SRt2YxwGiZOOvs26FvnZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717012943; c=relaxed/simple;
-	bh=uoeP/ZwWetQAmYm+NWLIZq1WWa6NvZlKRvH5A7Q7LnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMDuZe73dj+0r2O9Ci5qEv3GEiApnKsKDRX88grWCTtpw4bYqlEJnX8nYEmo8DRh62/c3UtVqPYjG9Wj8d9ZzgFOvp6VNHa+20NsfKDDri3Ur+VxwLfKhUeyoOEEgIkaS4coZHso7L+GMgSmiXnp48hofM9yQu5PZnXQJiPqEJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=lWKJhAAF; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VqKzW3g9Bz6Cnk98;
-	Wed, 29 May 2024 20:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1717012933; x=1719604934; bh=BsBWx6rt7XKTmBO9OqYrip5a
-	lx7g+yyYVBrkP5DYA/c=; b=lWKJhAAFnD4regaOzBo2CMF3nCGaj6EdqB7E9ApF
-	2gc01eXOjhGjZyl97mxzl2+ym7amJo87E7tN0XhzSX6n13fwuF1DCfOBvd+X0aMY
-	t5f3GYJsTYnHBEI1m5N6DU2opnKZ4/Nw+cuxZe3+nzbr0POj3Ob8eEEDe/EtWLtB
-	314xdPe0iOKLbSk0sWQiWbZkccn8Db33m5CmKclAG8iyvE4LN9OSLjVHb6JaN9wF
-	fI7FkQjOAxta3uwEvhcIon5awyek5ZLnijvO+hYatg6FB2IhnQyuOgNSf2YsD1SP
-	oscToafrbu0ME58DjBJRjEIqfZlsFjYjil8mRb/W41LWyw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 2k_xyZiv_lwt; Wed, 29 May 2024 20:02:13 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VqKzR4Tl5z6Cnk97;
-	Wed, 29 May 2024 20:02:11 +0000 (UTC)
-Message-ID: <4251566e-0a1a-48f1-b170-d5987bbabd90@acm.org>
-Date: Wed, 29 May 2024 13:02:09 -0700
+	s=arc-20240116; t=1717013005; c=relaxed/simple;
+	bh=0e9txGHxOrzqpvlxWGC074n3+ZQ2iC9PvcvIrOrFk68=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gQyfBXUsmmNRRtpXEFzAyRjhVj6vMRqwH7JcnsYCcHaklb1mFTonz/+5lyaG88/1/VvRNhkKxfGwiPQtQ7s5bw4zceEjSUFhClFqVzZknt4SUewYhFQaKt3V19S/zb3/hRGBKl82zzqqfii9+icgYD6aAniNJqvA5E0MBGPM618=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDqD2Zlp; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c1a99b75d8so77741a91.3;
+        Wed, 29 May 2024 13:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717013003; x=1717617803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Yw+tyisOoQIVKsFGGfntBjZv+48Mnl1871MjZUM50o=;
+        b=VDqD2ZlptrDQWX69TEbufjHk7oGuqiHAOCmsDz7FYijKmNGe233+0PErghRwRfEqKl
+         bsM3zz3H27m8yihxH3cQzU8FBcAXWj5WbiPs8OTlQuUkKOFxZr7e1yJBDp5mbS4rYpZ+
+         bVT2abDuafhpYoPKH5ymnyyWcY3iPLsH0AJDln4q3lFDZIVz5ifPuVDkMvMaocdEbe23
+         8turRBez51c4Lft3GeGXVJ2EmxyeWR8eXsEtRwU4zGHhGYA0C0WCQ02/nLHWU7+jlx9Q
+         45OYax2Io8Zd9R0aVRp/kp6TI335WGD5tp2yodKpjt2p97qrjrdp9vkrRjK91fNhtaQb
+         IKkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717013003; x=1717617803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3Yw+tyisOoQIVKsFGGfntBjZv+48Mnl1871MjZUM50o=;
+        b=w7noD0vARNPVloc+CsDZxcuxaeXreiPybtvLlUDvK9muyDAngcr90XyNp876linw78
+         yqlZtXiojmX3FRbGr2CF6tqZnilUcS4Wrp0ztESh0Db8G/uPRV0GGHQomSeSm4SwCEE/
+         txM569VCBEBx45AvxTglhSH87SpTjbC7Tch9h4PwCfCeqDUW493EFCZxMH5Y+vd0WUfB
+         vABFS8NfNtkb7clNOnXhv7j11yhnctkP1yqji/rmHqWYIpflyOw4uH2FnHcVW1oUelIv
+         rER5GDKinWhZ246DUgfYWnjtcmdIRpIYSrZlbXN3m4jZsCY8/tk95cxnIWjxR9jedNkS
+         3XTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjqV0Px4bLn0j2YaQOeezZ9o0H5P972Lc+ZxGGjKY5kFjU4l5dhng1N9qeyH31MvVMY+jC/c5e9oRQVn8bMRGkhzRjlurmOfzLDpRHNRZmcM+jc93zLguV/pYhs17D2zUeOr4BidufhA==
+X-Gm-Message-State: AOJu0Yx6y41zjPomHlGC+DEtGa8SNOj0fY4i8PAlo/AGdkq6imZ2gQ2C
+	vQzOz6+UKLVbmXONr4JT4F4kuW2MJC2Eoxo/H/Yckm546zvXlj55
+X-Google-Smtp-Source: AGHT+IG7IdKzoHGQCcegnZ5ZEN+4I3xWMqeAiyKe7kepJv5SgpccOmkronM5R/00B3eceGnBZkfXoA==
+X-Received: by 2002:a17:90b:1883:b0:2c0:1fe6:b10f with SMTP id 98e67ed59e1d1-2c1ab9d9e45mr170095a91.7.1717013003271;
+        Wed, 29 May 2024 13:03:23 -0700 (PDT)
+Received: from mari.. ([2804:431:cfd2:68a4:d1e5:41de:6992:6d45])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a779e835sm192127a91.48.2024.05.29.13.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 13:03:22 -0700 (PDT)
+From: MarileneGarcia <marilene.agarcia@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Julia Lawall <julia.lawall@inria.fr>
+Cc: MarileneGarcia <marilene.agarcia@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-leds@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 linux-next] leds: powernv: replace of_node_put to __free
+Date: Wed, 29 May 2024 17:02:33 -0300
+Message-Id: <20240529200233.1188228-1-marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] scsi: ufs: sysfs: Make max_number_of_rtt
- read-write
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240526081636.2064-1-avri.altman@wdc.com>
- <20240526081636.2064-4-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240526081636.2064-4-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/26/24 01:16, Avri Altman wrote:
-> +static inline void ufshcd_freez_hw_queues(struct ufs_hba *hba)
-> +{
-> +	struct scsi_device *sdev;
-> +
-> +	shost_for_each_device(sdev, hba->host) {
-> +		if (sdev == hba->ufs_device_wlun)
-> +			continue;
-> +		blk_mq_freeze_queue(sdev->request_queue);
-> +		blk_mq_quiesce_queue(sdev->request_queue);
-> +	}
-> +}
-> +
-> +static inline void ufshcd_unfreez_hw_queues(struct ufs_hba *hba)
-> +{
-> +	struct scsi_device *sdev;
-> +
-> +	shost_for_each_device(sdev, hba->host) {
-> +		if (sdev == hba->ufs_device_wlun)
-> +			continue;
-> +		blk_mq_unquiesce_queue(sdev->request_queue);
-> +		blk_mq_unfreeze_queue(sdev->request_queue);
-> +	}
-> +}
+Use __free for device_node values, and thus drop calls to
+of_node_put.
 
-Why have these functions been declared inline? blk_mq_freeze_queue()
-may sleep and hence performance is not an argument to inline these
-functions. Additionally, the WLUN should not be skipped when freezing
-or unfreezing request queues. The blk_mq_quiesce_queue() and
-blk_mq_unquiesce_queue() calls are not necessary in the above code.
-Please remove these.
+The variable attribute __free adds a scope based cleanup to
+the device node. The goal is to reduce memory management issues
+in the kernel code.
 
-Thanks,
+The of_node_put calls were removed, and the
+for_each_available_child_of_node was replaced to the equivalent
+for_each_available_child_of_node_scoped which use the __free.
 
-Bart.
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+Signed-off-by: MarileneGarcia <marilene.agarcia@gmail.com>
+---
+Changes v2:
+It was missing a blank line.
+
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+Signed-off-by: MarileneGarcia <marilene.agarcia@gmail.com>
+---
+ drivers/leds/leds-powernv.c | 28 +++++++++-------------------
+ 1 file changed, 9 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index 4f01acb75727..8f94d2efed9f 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -246,29 +246,25 @@ static int powernv_led_classdev(struct platform_device *pdev,
+ 	const char *cur = NULL;
+ 	int rc = -1;
+ 	struct property *p;
+-	struct device_node *np;
+ 	struct powernv_led_data *powernv_led;
+ 	struct device *dev = &pdev->dev;
+ 
+-	for_each_available_child_of_node(led_node, np) {
++	for_each_available_child_of_node_scoped(led_node, np) {
+ 		p = of_find_property(np, "led-types", NULL);
+ 
+ 		while ((cur = of_prop_next_string(p, cur)) != NULL) {
+ 			powernv_led = devm_kzalloc(dev, sizeof(*powernv_led),
+ 						   GFP_KERNEL);
+-			if (!powernv_led) {
+-				of_node_put(np);
++			if (!powernv_led)
+ 				return -ENOMEM;
+-			}
+ 
+ 			powernv_led->common = powernv_led_common;
+ 			powernv_led->loc_code = (char *)np->name;
+ 
+ 			rc = powernv_led_create(dev, powernv_led, cur);
+-			if (rc) {
+-				of_node_put(np);
++			if (rc)
+ 				return rc;
+-			}
++
+ 		} /* while end */
+ 	}
+ 
+@@ -278,12 +274,11 @@ static int powernv_led_classdev(struct platform_device *pdev,
+ /* Platform driver probe */
+ static int powernv_led_probe(struct platform_device *pdev)
+ {
+-	struct device_node *led_node;
+ 	struct powernv_led_common *powernv_led_common;
+ 	struct device *dev = &pdev->dev;
+-	int rc;
++	struct device_node *led_node __free(device_node) =
++							of_find_node_by_path("/ibm,opal/leds");
+ 
+-	led_node = of_find_node_by_path("/ibm,opal/leds");
+ 	if (!led_node) {
+ 		dev_err(dev, "%s: LED parent device node not found\n",
+ 			__func__);
+@@ -292,20 +287,15 @@ static int powernv_led_probe(struct platform_device *pdev)
+ 
+ 	powernv_led_common = devm_kzalloc(dev, sizeof(*powernv_led_common),
+ 					  GFP_KERNEL);
+-	if (!powernv_led_common) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
++	if (!powernv_led_common)
++		return -ENOMEM;
+ 
+ 	mutex_init(&powernv_led_common->lock);
+ 	powernv_led_common->max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
+ 
+ 	platform_set_drvdata(pdev, powernv_led_common);
+ 
+-	rc = powernv_led_classdev(pdev, led_node, powernv_led_common);
+-out:
+-	of_node_put(led_node);
+-	return rc;
++	return powernv_led_classdev(pdev, led_node, powernv_led_common);
+ }
+ 
+ /* Platform driver remove */
+-- 
+2.34.1
+
 
