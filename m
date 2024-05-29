@@ -1,201 +1,178 @@
-Return-Path: <linux-kernel+bounces-194272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F918D393E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:31:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDB68D3947
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7B61F26BBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2242D2868AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B15015920B;
-	Wed, 29 May 2024 14:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979BF15920B;
+	Wed, 29 May 2024 14:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qz8j8WHN"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZbevLIAn"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1250158DD2
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B201591EE
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716993067; cv=none; b=k+vqZI2wj7FoecHS72gornqTqi3q9WK9kSyCmYydZw9qKgqSrksaSVoi6iSziwxFAsMI1KUN6+2ulSdS8ifR+CsOzJpSDJJcCCk1zuk59cg8BHu3/r+IxylZF4Z88LiBoOV/N5JgqUROBwFiRQcmMPMcYGsdEIOK6UAHKPtv06Q=
+	t=1716993145; cv=none; b=W7Xc5kfj/ZYDMv4k6Ap2BWoWUBfz7+Nd9qW/hUuST2k2t1PUiK4NT/vMB1S8R8MOG5K3rf1lRYdRqjtSZGrEyG+RVTNyV6tZIUl1L8Q3IgMWnjZQzXyevYDf4R9mfETGd3rpIjeTd3Df9KiBGHeru5dNcMHbEasC2H3qcjTULTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716993067; c=relaxed/simple;
-	bh=s7MqhIA2k1o92AFgjBwBqJR3rblBbBM3GWJU414VvXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BXvefO4hdkApWcL31wO+isM+EfH05keBff5o336XyqkshxPTRYG3wKOQnZ1Xdl26+znt8CnZOBXcMBoqj4GT1dP+YoExpFmml+wrP7V0EwQ3wvlsOsB+bTymlRAO4nCRbZYbdwpJ5mOFpBrkKjq3R7CJkhCWyJHqphPux2zabLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qz8j8WHN; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1716993145; c=relaxed/simple;
+	bh=kXs3QsURM2zcPPJpgkgPQdLMqzTx/MGlb/EnXgJ0xMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MKu6fUBqp+TZ8D//l6G5V+XAqa5L9piLO1xF2bwt4+/Jqu/uPnvVOoOFo71SfGDYQaTluz8WccsQwoljZlxHloxxqJ3XLyFUIrRvctNT+f29PjF+pYqqwwfZeiacDUMyTKAkQJR/3Jpr4fRW1uF1acYfx60itQysHuifz1ZvYRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZbevLIAn; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a635a74e0deso175166466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:31:04 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a634e03339dso262128166b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716993063; x=1717597863; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=b5kjUD/BaTzf0mViMsh1tidjf2ba6yZaAKRk9sMmZ0s=;
-        b=qz8j8WHNKPyZYXDBwRMliXVIUiVSb2FrF67OBkcCT6CbscAeu95X96UCCyMhGJ9VOG
-         xkRfqq0Akh0YvcmVelzcZvs9nd9wySZSbi+TEwpStZu6BwNVKXiR+L/NS7JBPjdRSQVQ
-         WJ6ZPhfEIfa/Xv71K2Rbf6Dh/R0PEQQYwZjbmDTOOL2XWkytCEv9xEOi6TBZm/J589RE
-         knMRHZSzkU/VbgAb/j+q1eQKsBLoaO9+s3kiIkV38rrQAvBf3ipIZVoN6erzDYouyV6R
-         c2T1BQBv+kZKnaT0JQEbiI2cYQ9EOCxlJYRwLKasJcTujQvdnQ6b1wV8B1cIWKdfiCWi
-         IyrA==
+        d=linaro.org; s=google; t=1716993141; x=1717597941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vo88FTZD/E59x8F405UuK0CB4Sb3uR967SF1+FjoNhY=;
+        b=ZbevLIAn+L8De152HJyUq7/xchK2Op6E3yi8by00my1TLrARsZkO46StYB/FuonR+D
+         Y9XFbROhCWv3sTqg/G7+f7I7cQdvzQEiCJdHg7IfrygDhtciOXYjYfD/VjW5W7nuHYZP
+         krA4goIlUMJVGAGpTkz6fRMl7oz+Vmu2+NGu1cbJHsRTstY8yxLiX/1RzwpIv4+yxgGK
+         ew4EkLLiFEXCwD0irwwc12MsSD7+kFaufLozyYQyr+raTFFFR5JEB4bQn3Y3EU2SJM6q
+         5fkuTfxTl2lmqd70YUvcA9xG77JjoDTcqlWogvCRqjLqTvI7HNUWtj3pstOBBR99s1mq
+         yiiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716993063; x=1717597863;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b5kjUD/BaTzf0mViMsh1tidjf2ba6yZaAKRk9sMmZ0s=;
-        b=BwagF6YyDhkakrBwj06jhw0GfVctjIUgVb5MN3nAhhW2FfkSvLpQ19F7oJoKRZkix0
-         jh1grtsgHIEHeagQ6WzPeE7FMWq4dmfNrZ0HIXtN4VlvGctKLVs0+Bf2bfdGDSOXDDAV
-         g1bWoHO56KCZZLNCa08jNuTCJxgBqY9yQCyTsIQ7qLoszOkGGV6kcm2x/UGriGxVEN3S
-         wXq/aJR1DsjnleIr1Jr8Sas3rdWeFAzQxJetrR+AXJXOdjl3uiYg+NmcQ1R0uRwkN949
-         zbNLlh32KUMtWZXTig8FNfNwxMQ2rnvbjLa+VZhsi9sU5sW3Lja6HwYvk2ZUErrKu7gO
-         R0Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/dd8OIpwMLX7Ra2BS94Boy4j8CFAbP4g9a4k9R+uMyrn9Nehbb7PnEq7Qlj95yfb6KfnINymjLS8lpUPiCEnh5Nywk5i1Se2pUvgQ
-X-Gm-Message-State: AOJu0Yze17L34mC98sktE5v6JWctRIY4/FqjEpnM7dUE5+95VRu5Gb1i
-	5l2sC4L1pa3C0CYKkdZim8RG6AWvMPsL8+cGicQDt60KaPnXsDVmSEUSZSnu91o=
-X-Google-Smtp-Source: AGHT+IGNekbf4DX5xO5+bF+yGQIK2Xuej3xlH9d3c2+YnRnIm165xIkTt76MLqHe7R9ZaduHt3kQzw==
-X-Received: by 2002:a17:906:a08a:b0:a5c:de6f:87e7 with SMTP id a640c23a62f3a-a6264f0ecd7mr1116596066b.61.1716993063122;
-        Wed, 29 May 2024 07:31:03 -0700 (PDT)
-Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda48e6sm718178466b.203.2024.05.29.07.31.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 07:31:02 -0700 (PDT)
-Message-ID: <1f4b0f72-d0d0-4e09-a8a1-e63cf67db445@linaro.org>
-Date: Wed, 29 May 2024 16:31:01 +0200
+        d=1e100.net; s=20230601; t=1716993141; x=1717597941;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vo88FTZD/E59x8F405UuK0CB4Sb3uR967SF1+FjoNhY=;
+        b=ZJSEH+MUveArZZVHvx89Pj+pBMEBycDviCR6AeDxPZvW7MbSfCt706HIbi82Xl/MEz
+         /rZGexl9E9en07CgV47xKwpNG6mst3TzjQiZQ8rxOC/9TLSbvDdMGdcf0PcDKOCwWaFj
+         Ie+AasiGxHqbc+Sckue8mASTbli9Y8ykHjO3dCk59OX90G1NRZZJCkaWguTOdPdsb7bv
+         YowJvPCM+YCd0Wyo1/NX+z4A3zt4/OPjI+kgr3egEX2yNpOZNGCJQzny5W+39hEYruNG
+         C8wPY6a0riX+LVs4/VlvyC0ynqo26BaLZRDU+D/7L1JifNoLPXO9mlNAVt9Qtyd1IuhR
+         5yAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4rI/NMCxAsX2z5cQFDt0RmQCGW04BHuFlg9zjL/e3NsRpx8fVhB5II/YdKciPpRsC6h5siKSlDdBE1VySDu6TcfDlfZmprx45f0Pt
+X-Gm-Message-State: AOJu0YyyDGQvSeUZI1LNg24Ghkra8qgfCrAhEtassFTSd97r4wwzZhbF
+	icoRQX0gp2rgxtct9b2DcHTGN6mBxfTlkutYyNv/a/uelOacQOaAhCyJ36LHa7A=
+X-Google-Smtp-Source: AGHT+IE7Ire7AcSf7DwSdDRd2wsD87NIfwOXMT5C6rLL+pinwrrV1xj3IIIM9Ua5rWHq6lcOdLYN1A==
+X-Received: by 2002:a17:906:1c12:b0:a63:359b:e5bf with SMTP id a640c23a62f3a-a63359be69cmr333031166b.42.1716993140788;
+        Wed, 29 May 2024 07:32:20 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8b9aasm718951466b.155.2024.05.29.07.32.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 07:32:20 -0700 (PDT)
+Date: Wed, 29 May 2024 17:32:16 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Christian Marangi <ansuelsmth@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Christian Marangi <ansuelsmth@gmail.com>
+Subject: Re: [PATCH v3 3/3] leds: leds-lp5569: Add support for Texas
+ Instruments LP5569
+Message-ID: <1f970609-42fa-4e6d-95d3-7ccdf52d3fee@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: Document
- the SA8775p ADSP, CDSP and GPDSP
-To: Bartosz Golaszewski <brgl@bgdev.pl>, neil.armstrong@linaro.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tengfei Fan <quic_tengfan@quicinc.com>,
- Srini Kandagatla <srinivas.kandagatla@linaro.org>,
- Alex Elder <elder@kernel.org>
-References: <20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org>
- <20240522-topic-lemans-iot-remoteproc-v1-1-af9fab7b27f0@linaro.org>
- <e89c3270-e51f-4d5b-87db-09ff8f0961e6@linaro.org>
- <CAMRc=MczvfcXnEae__LJh47T=vCTbCz9EHOrNP+QmpTDvdarZw@mail.gmail.com>
- <42ba8472-9d63-4125-b538-39d8090203b4@linaro.org>
- <CAMRc=Mcd4qoF-BtHdpHSy5DEDDKYV7RK2hCgegf7_63eRoahTQ@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAMRc=Mcd4qoF-BtHdpHSy5DEDDKYV7RK2hCgegf7_63eRoahTQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527094737.13354-3-ansuelsmth@gmail.com>
 
-On 22.05.2024 3:08 PM, Bartosz Golaszewski wrote:
-> On Wed, May 22, 2024 at 3:06 PM <neil.armstrong@linaro.org> wrote:
->>
->> On 22/05/2024 15:04, Bartosz Golaszewski wrote:
->>> On Wed, May 22, 2024 at 2:42 PM <neil.armstrong@linaro.org> wrote:
->>>>
->>>> On 22/05/2024 14:08, Bartosz Golaszewski wrote:
->>>>> From: Tengfei Fan <quic_tengfan@quicinc.com>
->>>>>
->>>>> Document the compatibles for the components used to boot the ADSP, CDSP0,
->>>>> CDSP1, GPDSP0 and GPDSP1 on the SA8775p SoC.
->>>>>
->>>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>>>> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>> ---
->>>>>    .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 76 +++++++++++++++++++++-
->>>>>    1 file changed, 75 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>> index 73fda7565cd1..9d3a862c39e1 100644
->>>>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>> @@ -16,6 +16,11 @@ description:
->>>>>    properties:
->>>>>      compatible:
->>>>>        enum:
->>>>> +      - qcom,sa8775p-adsp-pas
->>>>> +      - qcom,sa8775p-cdsp0-pas
->>>>> +      - qcom,sa8775p-cdsp1-pas
->>>>> +      - qcom,sa8775p-gpdsp0-pas
->>>>> +      - qcom,sa8775p-gpdsp1-pas
->>>>>          - qcom,sm8550-adsp-pas
->>>>>          - qcom,sm8550-cdsp-pas
->>>>>          - qcom,sm8550-mpss-pas
->>>>> @@ -44,12 +49,13 @@ properties:
->>>>>
->>>>>      firmware-name:
->>>>>        $ref: /schemas/types.yaml#/definitions/string-array
->>>>> +    minItems: 1
->>>>
->>>> This will allow a single firmware name for all compatible,
->>>> which is wrong
->>>>
->>>
->>> So increasing the limit from the default under allOf doesn't seem to
->>> work, should I instead keep this and make the lower limit stricter for
->>> all other models?
->>
->> Yes add minItems in all the allOf:if: and add the missing allOf:if: for
->> the new compatibles to set the minItems, same for memory-region.
->>
->> Or you may simply spin off a new yaml, this one is getting quite large.
->>
-> 
-> Yeah, maybe that's a better idea.
+Hi Christian,
 
-+ if you get rid of the 0/1 in "nsp0/nsp1" you save a couple more lines
+kernel test robot noticed the following build warnings:
 
-Konrad
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-leds-lp55xx-Add-new-ti-lp5569-compatible/20240527-174959
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/20240527094737.13354-3-ansuelsmth%40gmail.com
+patch subject: [PATCH v3 3/3] leds: leds-lp5569: Add support for Texas Instruments LP5569
+config: sparc-randconfig-r071-20240528 (https://download.01.org/0day-ci/archive/20240528/202405280611.QUICzlRj-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 13.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202405280611.QUICzlRj-lkp@intel.com/
+
+New smatch warnings:
+drivers/leds/leds-lp5569.c:378 lp5569_update_program_memory() error: buffer overflow 'pattern' 128 <= 223
+
+vim +/pattern +378 drivers/leds/leds-lp5569.c
+
+ed7ae4f43e228c Christian Marangi 2024-05-27  340  static int lp5569_update_program_memory(struct lp55xx_chip *chip,
+ed7ae4f43e228c Christian Marangi 2024-05-27  341  					const u8 *data, size_t size)
+ed7ae4f43e228c Christian Marangi 2024-05-27  342  {
+ed7ae4f43e228c Christian Marangi 2024-05-27  343  	enum lp55xx_engine_index idx = chip->engine_idx;
+ed7ae4f43e228c Christian Marangi 2024-05-27  344  	u8 pattern[LP5569_PROGRAM_LENGTH] = {0};
+ed7ae4f43e228c Christian Marangi 2024-05-27  345  	unsigned int cmd;
+ed7ae4f43e228c Christian Marangi 2024-05-27  346  	char c[3];
+ed7ae4f43e228c Christian Marangi 2024-05-27  347  	int nrchars;
+ed7ae4f43e228c Christian Marangi 2024-05-27  348  	int ret;
+ed7ae4f43e228c Christian Marangi 2024-05-27  349  	int offset = 0;
+ed7ae4f43e228c Christian Marangi 2024-05-27  350  	int page, i = 0;
+ed7ae4f43e228c Christian Marangi 2024-05-27  351  
+ed7ae4f43e228c Christian Marangi 2024-05-27  352  	while ((offset < size - 1) && (i < LP5569_PROGRAM_LENGTH)) {
+ed7ae4f43e228c Christian Marangi 2024-05-27  353  		/* separate sscanfs because length is working only for %s */
+ed7ae4f43e228c Christian Marangi 2024-05-27  354  		ret = sscanf(data + offset, "%2s%n ", c, &nrchars);
+ed7ae4f43e228c Christian Marangi 2024-05-27  355  		if (ret != 1)
+ed7ae4f43e228c Christian Marangi 2024-05-27  356  			goto err;
+ed7ae4f43e228c Christian Marangi 2024-05-27  357  
+ed7ae4f43e228c Christian Marangi 2024-05-27  358  		ret = sscanf(c, "%2x", &cmd);
+ed7ae4f43e228c Christian Marangi 2024-05-27  359  		if (ret != 1)
+ed7ae4f43e228c Christian Marangi 2024-05-27  360  			goto err;
+ed7ae4f43e228c Christian Marangi 2024-05-27  361  
+ed7ae4f43e228c Christian Marangi 2024-05-27  362  		pattern[i] = (u8)cmd;
+ed7ae4f43e228c Christian Marangi 2024-05-27  363  		offset += nrchars;
+ed7ae4f43e228c Christian Marangi 2024-05-27  364  		i++;
+ed7ae4f43e228c Christian Marangi 2024-05-27  365  	}
+ed7ae4f43e228c Christian Marangi 2024-05-27  366  
+ed7ae4f43e228c Christian Marangi 2024-05-27  367  	/* Each instruction is 16bit long. Check that length is even */
+ed7ae4f43e228c Christian Marangi 2024-05-27  368  	if (i % 2)
+ed7ae4f43e228c Christian Marangi 2024-05-27  369  		goto err;
+ed7ae4f43e228c Christian Marangi 2024-05-27  370  
+ed7ae4f43e228c Christian Marangi 2024-05-27  371  	for (page = 0; page < LP5569_PROGRAM_LENGTH / LP5569_BYTES_PER_PAGE; page++) {
+ed7ae4f43e228c Christian Marangi 2024-05-27  372  		/* Write to the next page each 32 bytes */
+ed7ae4f43e228c Christian Marangi 2024-05-27  373  		lp55xx_write(chip, LP5569_REG_PROG_PAGE_SEL,
+ed7ae4f43e228c Christian Marangi 2024-05-27  374  			     LP5569_PAGE_ENG(idx) + page);
+ed7ae4f43e228c Christian Marangi 2024-05-27  375  
+ed7ae4f43e228c Christian Marangi 2024-05-27  376  		for (i = 0; i < LP5569_PROGRAM_LENGTH; i++) {
+ed7ae4f43e228c Christian Marangi 2024-05-27  377  			ret = lp55xx_write(chip, LP5569_REG_PROG_MEM + i,
+ed7ae4f43e228c Christian Marangi 2024-05-27 @378  					   pattern[i + (page * LP5569_BYTES_PER_PAGE)]);
+                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+i can co up to LP5569_PROGRAM_LENGTH and "page * LP5569_BYTES_PER_PAGE"
+can also go up to LP5569_PROGRAM_LENGTH.  So we're 2x beyond the end of
+the array.
+
+ed7ae4f43e228c Christian Marangi 2024-05-27  379  			if (ret)
+ed7ae4f43e228c Christian Marangi 2024-05-27  380  				return -EINVAL;
+ed7ae4f43e228c Christian Marangi 2024-05-27  381  		}
+ed7ae4f43e228c Christian Marangi 2024-05-27  382  	}
+ed7ae4f43e228c Christian Marangi 2024-05-27  383  
+ed7ae4f43e228c Christian Marangi 2024-05-27  384  
+ed7ae4f43e228c Christian Marangi 2024-05-27  385  	return size;
+ed7ae4f43e228c Christian Marangi 2024-05-27  386  
+ed7ae4f43e228c Christian Marangi 2024-05-27  387  err:
+ed7ae4f43e228c Christian Marangi 2024-05-27  388  	dev_err(&chip->cl->dev, "wrong pattern format\n");
+ed7ae4f43e228c Christian Marangi 2024-05-27  389  	return -EINVAL;
+ed7ae4f43e228c Christian Marangi 2024-05-27  390  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
