@@ -1,294 +1,124 @@
-Return-Path: <linux-kernel+bounces-194506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81478D3D45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:19:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016E08D3D56
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 321F8B23BFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3359F1C23B8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89EA187335;
-	Wed, 29 May 2024 17:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13C21A38DE;
+	Wed, 29 May 2024 17:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uc8Ifmo8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jY3e22WL"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560E715B54B;
-	Wed, 29 May 2024 17:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C75C19DF78;
+	Wed, 29 May 2024 17:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717003169; cv=none; b=oaX8nNcy9Tpj8P8Bx2PCwsz0b8S/Y3egralukCYYEWJc+xGBsujPhvUqfonndeZJi6SDHbcXWkw/N/O4pCW6KM9GWoXfObbhABi6CHOYVeajboyt7WVV4zMfd+qXfumssgxeJ8CoWWRJ8ElcQUIkIjmVJdDwck5rO91T3WO68uY=
+	t=1717003249; cv=none; b=PdHxrUkD4Iz1zp9A7cD5jx7sEMiVb25/HkpG/a+cYpy4dJmecW52G5XiFhuICwT5CqA8jUCzmlzl2a3N1SqH7pJU/VFUfLB+iV6YtIiR/Hp1kA//qAKwU1cOQxGQkvciqFIEd4vAlo1ViGvAhErruEwTbk2kmTdohTVQBgx7ZBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717003169; c=relaxed/simple;
-	bh=lyUdJaNno+zU58CiKeVUgESvZuoscLbK/A8CXCF0nmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZiWfVqJ3YTaXzQO784jMAsNxo31FTD/mGPikOczLtVnBtGNFGRc99vmes0BpqdHlQm9v6xcKTB2zIicOInShTPd5hSE0STGxJKlEDef+IA0k9dq8rvLPfL+fKRr0qh+87UlEsYVWOdfugqYHwBOU1IoPHMQlEL53ma5cCi7aDMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uc8Ifmo8; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717003168; x=1748539168;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lyUdJaNno+zU58CiKeVUgESvZuoscLbK/A8CXCF0nmQ=;
-  b=Uc8Ifmo8fZgJMCXbCTWEoCar2t5y64HzOaribMGvRAGggxmtWLSYU4fU
-   COwO+X8ear1mrqwwPj4dthMBNVYez8nSxCePJy457cuxRJQudfagehWfg
-   Gsof7QFr8t0Tar0KOwlgtpm3bL84tbpwPoEkjcbZNo1CzjHTbZb7tuS5/
-   cyqAHV1Pq3pCHLYvRU/miAKSbDulj/F88NgMK/6pl3YoAXDzw28J4+HTC
-   0204L78StUQJkDbltMQ05vg1tt4pzioWR2Ma0HxOP3+3u3z0Hghfce6ls
-   QJ0kibZhxBtO7e+IuWXPeeu3GfQuhr2eX7U6hEvj7t2rifjVSzewbPAk2
-   g==;
-X-CSE-ConnectionGUID: wewIYwAXTFubponVJphA2w==
-X-CSE-MsgGUID: CWiFjA0fRoumGuTdV+oIZw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="24836861"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="24836861"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 10:19:28 -0700
-X-CSE-ConnectionGUID: 0fP4ctFyQD+OzDmePoDbPQ==
-X-CSE-MsgGUID: pEN7A2qeQBqXSomT9p4/qQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="40023469"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 10:19:28 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Iwona Winiarska <iwona.winiarska@intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH] peci, hwmon: Switch to new Intel CPU model defines
-Date: Wed, 29 May 2024 10:19:20 -0700
-Message-ID: <20240529171920.62571-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1717003249; c=relaxed/simple;
+	bh=6op9aP1HVmzyG+C85+rhjJ60b1XUCq/6cWTD4G15NhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VIwgB1PnSS7HsfY4AsLpVZFAWGg4fjn3lFemq4mgVz07JJqMJiijjpNtHb4ckZWjCYeCs4Qfuwd9Ytcs5MI0IWHpuLKOkw3Lor52jyLxwQtzZDtDqZO9fTnEVO/QAHKK1s0LvrMOje7mj3SdpDkqz9J+HJXynF57l+Zo/rfihkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jY3e22WL; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44THJogj124014;
+	Wed, 29 May 2024 12:19:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717003190;
+	bh=AuBUGle0djl+XDtipQHjTVnybdvyAQCUf4F3ToP1+yQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jY3e22WLdWpR2oXGbMwsRofdEsP9no/g8KcXqdVoLjjlu8yqxDN03cUEM7Ifl+sms
+	 qtfpOAPfjAZg0a4L8ZcoyCOgiO2IhSFi5fpmMaVihjzCRAlvAoby5HTfMCQabZ9C/T
+	 r1vpjg7H0pKJm/XDRRyxSF1SvMz1qlsFVGUNvp/w=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44THJoWj089849
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 29 May 2024 12:19:50 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 29
+ May 2024 12:19:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 29 May 2024 12:19:50 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44THJnHg116710;
+	Wed, 29 May 2024 12:19:49 -0500
+Message-ID: <c2c58229-8623-4765-90ab-9cbc6964ca85@ti.com>
+Date: Wed, 29 May 2024 12:19:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: counter: Add new ti,am62-eqep
+ compatible
+To: Conor Dooley <conor@kernel.org>
+CC: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        David Lechner
+	<david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
+	<vigneshr@ti.com>
+References: <20240523231516.545085-1-jm@ti.com>
+ <20240523231516.545085-3-jm@ti.com>
+ <20240524-wrecker-busybody-2c082b87ddef@spud>
+ <57e4f7b1-2955-4dd5-b9d9-f3b1f27aab75@ti.com>
+ <20240525-tall-cultural-1a3f181d39ac@spud>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240525-tall-cultural-1a3f181d39ac@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Update peci subsystem to use the same vendor-family-model
-combined definition that core x86 code uses.
+Hi Conor,
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
-TIP tree applied the patches that implement the new CPU model number
-macros (and a couple of dozen patches to arch/x86/ files too). So
-v6.10-rc1 has all the necesary code to apply patches to other trees in
-this cycle.
+On 5/25/24 10:23 AM, Conor Dooley wrote:
+> On Fri, May 24, 2024 at 04:30:32PM -0500, Judith Mendez wrote:
+>> On 5/24/24 1:38 PM, Conor Dooley wrote:
+>>> On Thu, May 23, 2024 at 06:15:10PM -0500, Judith Mendez wrote:
+>>>> Add new compatible ti,am62-eqep for TI K3 devices. If a device
+>>>> uses this compatible, require power-domains property.
+>>>>
+>>>> Since there is only one functional and interface clock for eqep,
+>>>> clock-names is not really required. The clock-name also changed
+>>>> for TI K3 SoCs so make clock-names optional for the new compatible
+>>>> since there is only one clock that is routed to the IP.
+>>>
+>>> Really the clock should be named after the function it has in the IP
+>>> block - it looks like "sysoutclk" is more likely the name of the clock
+>>> routed to the IP rather than the role it has?
+>>
+>> It is the name of the clock, though id like to keep sysclkout for
+>> backwards compatibility, even though the name is confusing.
+> 
+> FWIW, I was not suggesting that it be renamed.
 
-The previous posting of this patch[1] had a tiny bit of fuzz due to
-nearby changes in drivers/peci/internal.h. This one applies cleanly
-to v6.10-rc1.
+Understood, thanks.
 
-Iwona, Jean, Guenter: Can you check that it still looks good. If so
-apply it to your tree and kick the process in gear to have it appear in
-the intel-next tree with eventual merge to Linus in next merge window.
-
-Thanks
-
--Tony
-
-[1] https://lore.kernel.org/all/20240520224620.9480-48-tony.luck@intel.com/
-
- include/linux/peci-cpu.h     | 24 ++++++++++++++++++++++++
- include/linux/peci.h         |  6 ++----
- drivers/peci/internal.h      |  6 ++----
- drivers/hwmon/peci/cputemp.c |  8 ++++----
- drivers/peci/core.c          |  5 ++---
- drivers/peci/cpu.c           | 21 +++++++--------------
- drivers/peci/device.c        |  3 +--
- 7 files changed, 42 insertions(+), 31 deletions(-)
-
-diff --git a/include/linux/peci-cpu.h b/include/linux/peci-cpu.h
-index ff8ae9c26c80..601cdd086bf6 100644
---- a/include/linux/peci-cpu.h
-+++ b/include/linux/peci-cpu.h
-@@ -6,6 +6,30 @@
- 
- #include <linux/types.h>
- 
-+/* Copied from x86 <asm/processor.h> */
-+#define X86_VENDOR_INTEL       0
-+
-+/* Copied from x86 <asm/cpu_device_id.h> */
-+#define VFM_MODEL_BIT	0
-+#define VFM_FAMILY_BIT	8
-+#define VFM_VENDOR_BIT	16
-+#define VFM_RSVD_BIT	24
-+
-+#define	VFM_MODEL_MASK	GENMASK(VFM_FAMILY_BIT - 1, VFM_MODEL_BIT)
-+#define	VFM_FAMILY_MASK	GENMASK(VFM_VENDOR_BIT - 1, VFM_FAMILY_BIT)
-+#define	VFM_VENDOR_MASK	GENMASK(VFM_RSVD_BIT - 1, VFM_VENDOR_BIT)
-+
-+#define VFM_MODEL(vfm)	(((vfm) & VFM_MODEL_MASK) >> VFM_MODEL_BIT)
-+#define VFM_FAMILY(vfm)	(((vfm) & VFM_FAMILY_MASK) >> VFM_FAMILY_BIT)
-+#define VFM_VENDOR(vfm)	(((vfm) & VFM_VENDOR_MASK) >> VFM_VENDOR_BIT)
-+
-+#define	VFM_MAKE(_vendor, _family, _model) (	\
-+	((_model) << VFM_MODEL_BIT) |		\
-+	((_family) << VFM_FAMILY_BIT) |		\
-+	((_vendor) << VFM_VENDOR_BIT)		\
-+)
-+/* End of copied code */
-+
- #include "../../arch/x86/include/asm/intel-family.h"
- 
- #define PECI_PCS_PKG_ID			0  /* Package Identifier Read */
-diff --git a/include/linux/peci.h b/include/linux/peci.h
-index 90e241458ef6..3e0bc37591d6 100644
---- a/include/linux/peci.h
-+++ b/include/linux/peci.h
-@@ -59,8 +59,7 @@ static inline struct peci_controller *to_peci_controller(void *d)
-  * struct peci_device - PECI device
-  * @dev: device object to register PECI device to the device model
-  * @info: PECI device characteristics
-- * @info.family: device family
-- * @info.model: device model
-+ * @info.x86_vfm: device vendor-family-model
-  * @info.peci_revision: PECI revision supported by the PECI device
-  * @info.socket_id: the socket ID represented by the PECI device
-  * @addr: address used on the PECI bus connected to the parent controller
-@@ -73,8 +72,7 @@ static inline struct peci_controller *to_peci_controller(void *d)
- struct peci_device {
- 	struct device dev;
- 	struct {
--		u16 family;
--		u8 model;
-+		u32 x86_vfm;
- 		u8 peci_revision;
- 		u8 socket_id;
- 	} info;
-diff --git a/drivers/peci/internal.h b/drivers/peci/internal.h
-index 506bafcccbbf..7a4f6eae2f90 100644
---- a/drivers/peci/internal.h
-+++ b/drivers/peci/internal.h
-@@ -66,13 +66,11 @@ struct peci_request *peci_xfer_ep_mmio64_readl(struct peci_device *device, u8 ba
- /**
-  * struct peci_device_id - PECI device data to match
-  * @data: pointer to driver private data specific to device
-- * @family: device family
-- * @model: device model
-+ * @x86_vfm: device vendor-family-model
-  */
- struct peci_device_id {
- 	const void *data;
--	u16 family;
--	u8 model;
-+	u32 x86_vfm;
- };
- 
- extern const struct device_type peci_device_type;
-diff --git a/drivers/hwmon/peci/cputemp.c b/drivers/hwmon/peci/cputemp.c
-index a812c15948d9..5a682195b98f 100644
---- a/drivers/hwmon/peci/cputemp.c
-+++ b/drivers/hwmon/peci/cputemp.c
-@@ -360,10 +360,10 @@ static int init_core_mask(struct peci_cputemp *priv)
- 	int ret;
- 
- 	/* Get the RESOLVED_CORES register value */
--	switch (peci_dev->info.model) {
--	case INTEL_FAM6_ICELAKE_X:
--	case INTEL_FAM6_ICELAKE_D:
--	case INTEL_FAM6_SAPPHIRERAPIDS_X:
-+	switch (peci_dev->info.x86_vfm) {
-+	case INTEL_ICELAKE_X:
-+	case INTEL_ICELAKE_D:
-+	case INTEL_SAPPHIRERAPIDS_X:
- 		ret = peci_ep_pci_local_read(peci_dev, 0, reg->bus, reg->dev,
- 					     reg->func, reg->offset + 4, &data);
- 		if (ret)
-diff --git a/drivers/peci/core.c b/drivers/peci/core.c
-index 8f8bda2f2a62..8ff3e5d225ae 100644
---- a/drivers/peci/core.c
-+++ b/drivers/peci/core.c
-@@ -163,9 +163,8 @@ EXPORT_SYMBOL_NS_GPL(devm_peci_controller_add, PECI);
- static const struct peci_device_id *
- peci_bus_match_device_id(const struct peci_device_id *id, struct peci_device *device)
- {
--	while (id->family != 0) {
--		if (id->family == device->info.family &&
--		    id->model == device->info.model)
-+	while (id->x86_vfm != 0) {
-+		if (id->x86_vfm == device->info.x86_vfm)
- 			return id;
- 		id++;
- 	}
-diff --git a/drivers/peci/cpu.c b/drivers/peci/cpu.c
-index bd990acd92b8..152bbd8e717a 100644
---- a/drivers/peci/cpu.c
-+++ b/drivers/peci/cpu.c
-@@ -294,38 +294,31 @@ peci_cpu_probe(struct peci_device *device, const struct peci_device_id *id)
- 
- static const struct peci_device_id peci_cpu_device_ids[] = {
- 	{ /* Haswell Xeon */
--		.family	= 6,
--		.model	= INTEL_FAM6_HASWELL_X,
-+		.x86_vfm = INTEL_HASWELL_X,
- 		.data	= "hsx",
- 	},
- 	{ /* Broadwell Xeon */
--		.family	= 6,
--		.model	= INTEL_FAM6_BROADWELL_X,
-+		.x86_vfm = INTEL_BROADWELL_X,
- 		.data	= "bdx",
- 	},
- 	{ /* Broadwell Xeon D */
--		.family	= 6,
--		.model	= INTEL_FAM6_BROADWELL_D,
-+		.x86_vfm = INTEL_BROADWELL_D,
- 		.data	= "bdxd",
- 	},
- 	{ /* Skylake Xeon */
--		.family	= 6,
--		.model	= INTEL_FAM6_SKYLAKE_X,
-+		.x86_vfm = INTEL_SKYLAKE_X,
- 		.data	= "skx",
- 	},
- 	{ /* Icelake Xeon */
--		.family	= 6,
--		.model	= INTEL_FAM6_ICELAKE_X,
-+		.x86_vfm = INTEL_ICELAKE_X,
- 		.data	= "icx",
- 	},
- 	{ /* Icelake Xeon D */
--		.family	= 6,
--		.model	= INTEL_FAM6_ICELAKE_D,
-+		.x86_vfm = INTEL_ICELAKE_D,
- 		.data	= "icxd",
- 	},
- 	{ /* Sapphire Rapids Xeon */
--		.family	= 6,
--		.model	= INTEL_FAM6_SAPPHIRERAPIDS_X,
-+		.x86_vfm = INTEL_SAPPHIRERAPIDS_X,
- 		.data	= "spr",
- 	},
- 	{ }
-diff --git a/drivers/peci/device.c b/drivers/peci/device.c
-index ee01f03c29b7..37ca7dd61807 100644
---- a/drivers/peci/device.c
-+++ b/drivers/peci/device.c
-@@ -100,8 +100,7 @@ static int peci_device_info_init(struct peci_device *device)
- 	if (ret)
- 		return ret;
- 
--	device->info.family = peci_x86_cpu_family(cpu_id);
--	device->info.model = peci_x86_cpu_model(cpu_id);
-+	device->info.x86_vfm = IFM(peci_x86_cpu_family(cpu_id), peci_x86_cpu_model(cpu_id));
- 
- 	ret = peci_get_revision(device, &revision);
- 	if (ret)
--- 
-2.45.0
+> 
+> Thanks,
+> Conor.
 
 
