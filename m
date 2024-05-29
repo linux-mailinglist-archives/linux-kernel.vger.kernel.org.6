@@ -1,170 +1,89 @@
-Return-Path: <linux-kernel+bounces-193573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3E18D2E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:23:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6F68D2E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C46B220E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331CE1F27731
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C878167283;
-	Wed, 29 May 2024 07:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F31416726F;
+	Wed, 29 May 2024 07:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXO41CTm"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NPedPWJc"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A15D1E86E;
-	Wed, 29 May 2024 07:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02066167260;
+	Wed, 29 May 2024 07:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716967415; cv=none; b=r55iKs+L2v51gKztpgwX09GhXU43NDSOE3R6fZuXXAfjd/k8cydnGG/IfQq8KEWVnq+IV/4dlELYRXerkCRL2GhKFwK3gVGxFaeDshWN9dL5XXg9PSd4jqVTsX9CUNOzxRj4lDe7Y2+2SBoX/8tsFk0v8zIHnANyG6R3xwvxIho=
+	t=1716967553; cv=none; b=V9l7DqRy00Ix02M1i/An6mTCXgbR0Pqd7xhBMle9lefN8WLnPrfKxyXhHENmyknfDg+EWZlBoDjAELd2ABoWcEVSWryjmDzaVNYd7l0NbjgDGpclbcAZ3PNQAKlVSm/DSucmrVLYpTgQZ+Z38t3ywiHpqZad0gNPKm+N6XmsRkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716967415; c=relaxed/simple;
-	bh=YbcMUl3Yr21K+Yi7SGoXDwuE6o2cNNmCNjhlm4eRlwM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EHM48LkzjixbxsSZWpbjjhwty8oy0RN5aCI0bVbdlMwgXdq4OxQ1Dd5J+tpjwfUcH2IKOcx1wXHtUgDAM+myZEDt+6avCrsGFKlpNIRZUIRJJrpxFd8XptcOfl6yJ/jQxMUsP0dIjuF2/n0vv3tsuwJSxhkJkK1NisJA6xfRt1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXO41CTm; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-794b1052194so107070485a.1;
-        Wed, 29 May 2024 00:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716967413; x=1717572213; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gI8YKF2Ka4g09jpIM8zfOLygQWEXZLeemxzrmi+Rpio=;
-        b=dXO41CTmiKomR/VS3PYisrGMb9Vkc6v1I2tfYdbPAh0etl70CPfLRpPSijckQhGqcd
-         w35GQqLwEaOVR31abLYTXRY0R5qB1gZhOnrhFOBp2KKPXPgoMxoFLXvRu0Dvi1w2Kf8Z
-         Qc+PtENOyd8A8NUtl/9vG1DbQnEMQilzZ5iKckNTckYemyTnpvQftL4bPNOLSH68S19E
-         OFFJEWz4yKLnqmPJuEadTuS2sR3QKRs3uhEmG4zQpI/ZPKE4x45vkTu1gsQGeavf807t
-         +WU33l153RY1W6qU8wzagUw4FUCq2JU3U6SR0CnZLdoX+q8LhKaQo5Cwli4Get/uaSYD
-         Hqyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716967413; x=1717572213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gI8YKF2Ka4g09jpIM8zfOLygQWEXZLeemxzrmi+Rpio=;
-        b=e2XkkfHaT13XhES4WIJnEPhaxKLdub1vWv8+SZS1P6BYxs7lc7G9VfHBhNxM0dx/9R
-         cUVXaqTp8uQ9s9DMuaNMN2QBoXbAXe1oK93ofAbJrV0kKbPe69ZGK8uUY+q6J56DRQF8
-         +XSW0H9h+8G/yYK3Pv4yV4u309miiGgHkMNu8c4ceWfife58iKspvwb0fRN+5StoYGXT
-         sPJ2K4rDirhylt88PdvK9l3rCuIdrDiuwZ9EGM2666vxkB9Hrt+lPyCcp2olJzR1pFWl
-         1l26Qd8U27oDQSaB8m/XZ4+88FN8dpEBhcZ5AJMiI8XYQ2a48fJiIjib/uBU9krs2gUt
-         Te7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOT3VTj/qolKTJlzcLK1Gwzh9MDvFK5s9X5Bcb2Ke04e4LXqkieXFpjE8XzxBoAQie0i/taBoKiIhlxx6CmemD1/8A1dPwfsgLNcfsaUtSremw9enxHMMnDP2O42JC/zoKRx8b3i6WZ48tImCSzWrImhlNCK41BLhyAJiQQH9NdsXlsTanYE1k5D0tbB7aqqmspoEFg8LHlPBK4Oi+ShiCJA==
-X-Gm-Message-State: AOJu0Yx5ol2YkQhGplZd/BwGevvBXc7GUl5yhEwoaM2ixLqcKf+uFCED
-	zBf8DWyuEutVBQNKK8iAvbi+tPpUu1Q5LoXocvJNBU1+HagA2JQijaKExoo7ZFwx7q6ZQYJQe2Y
-	9jvl4riehuTtbsCBJxcTnkNSb8v8=
-X-Google-Smtp-Source: AGHT+IELOGt9LVPKWDBseYrnLxtudWIlzNW87iewuhSPONjHfoQRkS3n9W6KZs0Ugv5GJ5aWYJ9yBCflxFgGxEuaQ2c=
-X-Received: by 2002:a05:620a:2017:b0:792:93cb:7649 with SMTP id
- af79cd13be357-794ab1360admr1470221085a.68.1716967412804; Wed, 29 May 2024
- 00:23:32 -0700 (PDT)
+	s=arc-20240116; t=1716967553; c=relaxed/simple;
+	bh=Rddsd8MhlvXyzWsz0mlMxYZ4iXWCAYvdf+LHczGrxWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rWFmPCs/hU9erKFEKUr+Tc2D8lSCa5lw/ptD0cDnS1Lro5OMBB+dvPvpS81tILEqdh+htJ1rPZDIxpnPwmcpshGyLMrdtK2AhOv4+FDBOTmI/68Wd4Lymgsi83yjdd8h+uhdIO5YALrl1GbzvkhJvt/+MQbsG4TfOMuhBl3SX50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NPedPWJc; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716967549;
+	bh=Rddsd8MhlvXyzWsz0mlMxYZ4iXWCAYvdf+LHczGrxWg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NPedPWJcv+8ONEP6Fo0xmQRUklb/ltD3jRtAZyR+krWk6iAXC1up9LaxJ6Ehx+lLz
+	 ffmLzB/r9B1ILro0gPmxCwomb3sse3hTtqwp3iHxZgIH4s3Bf0LFi5Ht6hQFq39ana
+	 S0SN9QX/jmiBZzzaMU2bZyHQp+itWvCf3nVkHA6KMbH4GEcXjpr4SKo0IrtnaxQXuB
+	 VBbx2M73L6HcX72Y8B1s9pPCMabAMW1vGuiReemnBHGoKsCP22ubR4pMCZUbMCFcoG
+	 eA/YtLZA8IKpMPgaqavNEY0vnMt51C94ZQ3DFbfucr2JRyIYrcoRsZPcv4vxC+Q0Rb
+	 jUmMFJid/S09w==
+Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C10EE3780627;
+	Wed, 29 May 2024 07:25:36 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com
+Subject: [PATCH 0/4] kselftests: vdso: conform tests to TAP output
+Date: Wed, 29 May 2024 12:24:50 +0500
+Message-Id: <20240529072454.2522495-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org> <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
- <ZlRzNquWNalhYtux@infradead.org> <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
- <ZlS0_DWzGk24GYZA@infradead.org> <20240528101152.kyvtx623djnxwonm@quack3>
- <ZlW4a6Zdt9SPTt80@infradead.org> <ZlZn/fcphsx8u/Ph@dread.disaster.area> <ZlbKEr15IXO2jxXd@infradead.org>
-In-Reply-To: <ZlbKEr15IXO2jxXd@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 29 May 2024 10:23:20 +0300
-Message-ID: <CAOQ4uxiXVX-dJTN0UOjP7Zcfnks_kJoHBE+XFBecnUzzK-e5_w@mail.gmail.com>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to name_to_handle_at(2)
-To: "hch@infradead.org" <hch@infradead.org>
-Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>, 
-	Trond Myklebust <trondmy@hammerspace.com>, "chuck.lever@oracle.com" <chuck.lever@oracle.com>, 
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"alex.aring@gmail.com" <alex.aring@gmail.com>, "cyphar@cyphar.com" <cyphar@cyphar.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jlayton@kernel.org" <jlayton@kernel.org>, 
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 9:24=E2=80=AFAM hch@infradead.org <hch@infradead.or=
-g> wrote:
->
-> On Wed, May 29, 2024 at 09:25:49AM +1000, Dave Chinner wrote:
-> > But no-one has bothered to reply or acknowledge my comments so I'll
-> > point them out again and repeat: Filehandles generated by
-> > the kernel for unprivileged use *must* be self describing and self
-> > validating
+Conform individual tests to TAP output. One patch conform one test. With
+this series, all vDSO tests become TAP conformant.
 
-Very nice requirement for a very strong feature,
-which is far out of scope for the proposed patch IMO.
+Muhammad Usama Anjum (4):
+  kselftests: vdso: vdso_test_clock_getres: conform test to TAP output
+  kselftests: vdso: vdso_test_correctness: conform test to TAP output
+  kselftests: vdso: vdso_test_getcpu: conform test to TAP output
+  kselftests: vdso: vdso_test_gettimeofday: conform test to TAP output
 
-What is "generated by the kernel for unprivileged use"?
-name_to_handle_at() is unprivileged and for example, fanotify unprivileged
-users can use it to compare a marked (i.e. watched) object with an
-object that is the subject of an event.
-This does not break any security model.
+ .../selftests/vDSO/vdso_test_clock_getres.c   |  68 ++++----
+ .../selftests/vDSO/vdso_test_correctness.c    | 146 +++++++++---------
+ .../testing/selftests/vDSO/vdso_test_getcpu.c |  16 +-
+ .../selftests/vDSO/vdso_test_gettimeofday.c   |  23 +--
+ 4 files changed, 126 insertions(+), 127 deletions(-)
 
-> > as the kernel must be able to detect and prevent
-> > unprivelged users from generating custom filehandles that can be
-> > used to access files outside the restricted scope of their
-> > container.
+-- 
+2.39.2
 
-Emphasis on "that can be used to access files".
-The patch in this thread to get a unique 64bit mntid does not make any
-difference wrt to the concern above, so I am having a hard time
-understand what the fuss is about.
-
->
-> We must not generate file handle for unprivileged use at all, as they
-> bypass all the path based access controls.
->
-
-Again, how is "generate file handle for unprivileged use" related to
-the patch in question.
-
-The simple solution to the race that Aleksa is trying to prevent,
-as was mentioned several times in this thread, is to allow
-name_to_handle_at() on an empty path, e.g.:
-fd =3D openat(.., O_PATH); fstatat(fd,..); name_to_handle_at(fd,..);
-
-Aleksa prefers the unique mntid solution to save 2 syscalls.
-Would any of the objections here been called for letting
-name_to_handle_at() take an empty path?
-
-I would like to offer a different solution (also may have been
-mentioned before).
-
-I always disliked the fact that mount_id and mount_fd arguments of
-name_to_handle_at()/open_by_handle_at() are not symmetric, when
-at first glance they appear to be symmetric as the handle argument.
-
-What if we can make them symmetric and save the openat() syscall?
-
-int path_fd;
-int ret =3D name_to_handle_at(dirfd, path, handle, &path_fd,
-                                              AT_HADNLE_PATH_FD);
-
-and then kernel returns an O_PATH fd to the path object
-in addition to the file handle (requires same privilege as
-encoding the fh).
-
-Userspace can use path_fd to query unique mntid, fsid, uuid
-or whatever it needs to know in order to make sure that a
-later call in the future to open_by_handle_at() will use
-a mount_fd from the same filesystem/mount whatever,
-whether in the same boot or after reboot.
-
-If we are doing this, it also makes sense to allow mount_fd argument
-to open_by_handle_at() to accept O_PATH fd, but that makes
-sense anyway, because mount_fd is essentially a reference to
-a path.
-
-Thanks,
-Amir.
 
