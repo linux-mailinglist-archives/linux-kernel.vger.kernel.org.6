@@ -1,84 +1,82 @@
-Return-Path: <linux-kernel+bounces-194313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518CC8D39ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF198D39F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0671E1F262A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:51:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C5EC1C23BC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4561C15AD81;
-	Wed, 29 May 2024 14:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11981802B9;
+	Wed, 29 May 2024 14:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ETPwraHf";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i/AY5GUH"
-Received: from wfout5-smtp.messagingengine.com (wfout5-smtp.messagingengine.com [64.147.123.148])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="C054Z+UV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f4qr6sTU"
+Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DE8D27E;
-	Wed, 29 May 2024 14:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E0A17DE13;
+	Wed, 29 May 2024 14:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716994133; cv=none; b=KbcfdMrEtMrUhEEUbfwGmZE5yYyphN39T+KSbYdFhzg0erAOENcAvB0MuMWAproZT+QohqY6lsETP8n0HeVcarr8m7hxzBZO77Lb8TeexVhA4d837ZL/cx4ijKIEhXLdE6aCF7yyBlAVuRR9aRjKXdqDgiUpAuuwvJGLyE17T5A=
+	t=1716994168; cv=none; b=qss0/dHvzPyzZHcLO9WQFlFfgfPISYazQ0GrLNsKy9cof7fDnRuV+kyOWfMdPorEysD6ICpBXfrMgfBSmJSVNfNkaG78WQg+ZkItTBnb2ittLrdBn0vzQS8cRXs//rNvDt3bUf1kerKl16wTq1waCEnK0ywB5SeX7UriCWSOBGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716994133; c=relaxed/simple;
-	bh=7y0P0CDTFl239vi3bzVOFC5AtctqcwjVbtdER6f+BmE=;
+	s=arc-20240116; t=1716994168; c=relaxed/simple;
+	bh=SF0YKlSyYse+0ka5sLh8OROzBOmqMA2huVE3Mlz5x+w=;
 	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=X/2v8xMN1xbgSSPONKdQFr2dT4LXz8Y8199z3uHEDfzcTlsmKnv1TcLTOEvsqEU9WKm06vO0KjY1mZrwZLtdFKeVYWiNixZr17DVhisMAu36Ue0S74xNQdoqDWqaX+ybQ/2DD1hbOKPxH2dzuL+B2uTRXH9RidQ2sZKGUFYHdSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ETPwraHf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i/AY5GUH; arc=none smtp.client-ip=64.147.123.148
+	 Subject:Content-Type; b=p6GVCBs+lIWlBE6DRjJWJ632KgeDCSFKlqQlen9ilfb3NYl0KdRQmLGNSwXlBSgEevg2/RZDWOOo17qWbNIrxT5blinepEvbWLZFufXOum+OGq9v+L4iGL/LUwNIVwsQKkC6WveR4acNcmPZDiEaENYp2sy5o3MwqMAjQrqWF+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=C054Z+UV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=f4qr6sTU; arc=none smtp.client-ip=64.147.123.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 8EA941C00157;
-	Wed, 29 May 2024 10:48:50 -0400 (EDT)
+	by mailfhigh.west.internal (Postfix) with ESMTP id F12AF18000A9;
+	Wed, 29 May 2024 10:49:24 -0400 (EDT)
 Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 29 May 2024 10:48:51 -0400
+  by compute5.internal (MEProxy); Wed, 29 May 2024 10:49:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1716994130;
-	 x=1717080530; bh=sUWKp0C9FotWW9QV9/CRQdelpobHjogebTFsLlDkrSE=; b=
-	ETPwraHfS/RJSBZkl/5hL7DrtEDger5n/TQhYvRgFytt37ZBvoXdTKrVhjBg9fAI
-	qVvRrNE5der0/f1OCRXlkJPqUojuEpVlj3q1wNWaq0Ya0e/YkMdGflyRVR+oEsb1
-	GzYOnqRw8+XCRSbTb6Axcufs+KkspWPBYx67iv0esIOhhTGhfZZi8+E1gRUA29Ue
-	O/GOazeCQZ7OmIZJpDwcRnjOQKyywgzUVgBCHfvHJhKoKwjfX6EGwNNthr8d8ww8
-	2I/uaTFVwip6oLLjYsyiRS27nxOni701nUmznMbQn2ITlxsAmST99sox7BJBXSPm
-	ElhJjQtAkb1fAQQNitoG4Q==
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716994164; x=1717080564; bh=7IxkuZoVd9
+	WiYU/J/P+geKBX2/pqxBTDvhVab7EsJvA=; b=C054Z+UVY9X47doZ54zeBRGGwN
+	F9Hvhv8YSAyy0Cs2sfztiaDV5H7ojEk4gnaSjOmW3DA5I3ACV6cprjnkS/BNf6JE
+	Fl9wM0xlYGLTiVDtZpbWbxiBHZzX3tE8FNtjqZtSdOE+69e7naViTZ66JuUOHBaA
+	tOPikQA6DcOX1fBtY6XJLp1yPsR3xxOegAhsgjg0wfP0dSvYNOJN6TLSvdU60vuK
+	vMT82/RjtnYnP8iUB7ePbOBYH9ANmaNb+T5g7H8n2pySjG3+c2f03vDV+6QaYFsd
+	KIsa+Ovi4BaSpoHoPNCgWND8/3aEnFxsgRNShsH1T62npJo1NpfvEAYkYJJg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716994130; x=
-	1717080530; bh=sUWKp0C9FotWW9QV9/CRQdelpobHjogebTFsLlDkrSE=; b=i
-	/AY5GUHzaUsmZ1wBaahUxPxJQCnww8dJ6Eg8jiLQ+e2BqiMxao7W2wsAU/dJxRAb
-	LkAogPYZH68HQzsRrAkkGb1nVtblkjQM+3RF0a/Qn58mN2PnJOnT/wPk1TiHLj30
-	2npTOoZZ2WYS/Rci+SaFtLGmauku+Rfsx4st/KMCLB1bAiOyn0uxsXfdMNCw+lzn
-	0G6yJSiDTXtscckZqj9y4EqUyGecwegw65pj/bYVJAph1bbeI7Hf8GpPrV+ziGey
-	eDvRN+eOFvkyI4YaxLa8xfdFsj6P/dAQiK3wQbbQz64xMeLUga7tPm63J2otKw2b
-	XHCcfVtzt4sZ8l78d3Ysw==
-X-ME-Sender: <xms:UUBXZopdEyCccWoaCq9oLb1nDmhjvDE6usHIfBUWxBFRxwmoaRzF_A>
-    <xme:UUBXZurrdj08bn-xxj7MMN8JPxw_jZWrHJqIPzREC5HV-F20i1t8DhrTeQrxoQibj
-    EWh4uY3csSKgBDPa-A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgjeelucetufdoteggodetrfdotf
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716994164; x=1717080564; bh=7IxkuZoVd9WiYU/J/P+geKBX2/pq
+	xBTDvhVab7EsJvA=; b=f4qr6sTUdr0YYry+DQ+/asReNKnqa5DLwhJz3yrCcwb/
+	dC4W0+okPOV6wCxUPT4vO2sqlXL9a7ynalsVTtJS18lgAuddMM9YytS5d1r8Vsbf
+	D9lBcsD6Cub6SYcFDiqAJf7cDfdG2W0LyhC+AvVud8ER5clYCBRO2injczb40UIP
+	g1uFgSNT440xgOFOIDhMBk/l3/KmoV2F03z5R6dctz0xCNiPrwYVY/Juz9DBJFpj
+	Mg1XN3gSJ67GE1RKOas/UBhirl5dEBZg6+N5yyRNwjSMrQl45mauRgLxmAB3HBVw
+	WlcnD6+qxLEBK9iGOoZ2nvom51K7dkxB9fAhCCPz4w==
+X-ME-Sender: <xms:c0BXZhyrcGKBxTw9uPy2g390kPYzcP0f-cJUAkqhdd-u0WdsE6T2Jw>
+    <xme:c0BXZhQfenGsG1noFYlG50F4t7ktFwmfOfFkyAaVkijo7UbM5otUoYcFdyBPa-n03
+    cFWRn32sdCsbhTUDr0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgkedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:UUBXZtMGr2LxdrelyERdrsqg_16mvoNKGPdO3KCf7KU-4exMUoIrBA>
-    <xmx:UUBXZv7lDs79ypzCk5ExfFDqa6tFS2KPnyr7lpTmhgX8R777u8_j2A>
-    <xmx:UUBXZn7lZaUkIT5AxO9rbZKfqtNjXJSbdjN-XQ4REGWUGW6q4elq5Q>
-    <xmx:UUBXZviGoE0mZh0YoUv-VG8OS_QYpLg2H01c6mUHz59Hmti6fNWqCQ>
-    <xmx:UkBXZks5mxnPL4BNiDbwEj3iMnW9NYsoxjzYFPA1ZD_IoqawYk_Gcl7J>
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepvefhffeltdegheeffffhtdegvdehjedtgfekueevgfduffettedtkeekueef
+    hedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:dEBXZrWLu_52h7i_Rl10q5JSSHiyw_sBSPurmHtFhP59vrN76XMypQ>
+    <xmx:dEBXZjiGHvtN03UFwA_q1v-0dK6SuMlqAwJBNkaGGrN66Yf-iM_wFA>
+    <xmx:dEBXZjA6eeA3tQY3dQ-M1spSd8h97nCMvqr1zhEGqcdmgkaM2DUhZQ>
+    <xmx:dEBXZsKCC0O7uDWBbP95Pw9m_1CnId7P63gpDc0HdgesPADldK2Z7A>
+    <xmx:dEBXZn64Yt88Hu70UASVo2bI4IOJPOIRKAn1JInL-TqW456qTsWfZqWh>
 Feedback-ID: i56a14606:Fastmail
 Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A4D48B6008D; Wed, 29 May 2024 10:48:49 -0400 (EDT)
+	id E35D4B6008D; Wed, 29 May 2024 10:49:23 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
@@ -87,46 +85,54 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <3fa493d3-51bb-48bf-b91f-57493be23937@app.fastmail.com>
-In-Reply-To: 
- <CAHp75VcVdwxv5Mm3GEv7SmsCiN3ZACpejNb7V_Ld1NBTxcXixQ@mail.gmail.com>
-References: <20240529095009.1895618-1-arnd@kernel.org>
- <CAHp75VdRuK_sOF=25xP0azp8sOJ8DY_SRpLq9mUSaNEmWj5EAg@mail.gmail.com>
- <436667b5-308a-4a0b-b66e-230667ce0cc3@app.fastmail.com>
- <CAHp75VcVdwxv5Mm3GEv7SmsCiN3ZACpejNb7V_Ld1NBTxcXixQ@mail.gmail.com>
-Date: Wed, 29 May 2024 16:48:26 +0200
+Message-Id: <0aa8873b-d333-4d2a-ba3a-a116623b470a@app.fastmail.com>
+In-Reply-To: <20240529143859.108201-4-thorsten.blum@toblux.com>
+References: <20240529143859.108201-4-thorsten.blum@toblux.com>
+Date: Wed, 29 May 2024 16:49:03 +0200
 From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andy.shevchenko@gmail.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Daniel Scally" <djrscally@gmail.com>,
- "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: int3472: make common part a separate module
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+To: "Thorsten Blum" <thorsten.blum@toblux.com>,
+ "Nicolas Pitre" <nico@fluxnic.net>, "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Andrew Lunn" <andrew@lunn.ch>
+Cc: Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ "kernel test robot" <lkp@intel.com>
+Subject: Re: [RESEND PATCH net-next v3] net: smc91x: Fix pointer types
+Content-Type: text/plain
 
-On Wed, May 29, 2024, at 16:28, Andy Shevchenko wrote:
-> On Wed, May 29, 2024 at 5:14=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
-wrote:
->> On Wed, May 29, 2024, at 15:41, Andy Shevchenko wrote:
->> > On Wed, May 29, 2024 at 12:50=E2=80=AFPM Arnd Bergmann <arnd@kernel=
-org>=20
-> It's different from the exported namespace.
-> The function prefixes are needed due to C language, as we can't have
-> two functions named the same. The export OTOH is what used for linking
-> modules and if there is no need to have it exported globally, if, for
-> example, compiling in this one.
+On Wed, May 29, 2024, at 16:39, Thorsten Blum wrote:
+> Use void __iomem pointers as parameters for mcf_insw() and mcf_outsw()
+> to align with the parameter types of readw() and writew() to fix the
+> following warnings reported by kernel test robot:
 >
-> So, can we move to the exported namespace at the same time?
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect 
+> type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] 
+> __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect 
+> type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] 
+> __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect 
+> type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] 
+> __iomem *
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect 
+> type in argument 1 (different address spaces)
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void *a
+> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void 
+> [noderef] __iomem *
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: 
+> https://lore.kernel.org/oe-kbuild-all/202405160853.3qyaSj8w-lkp@intel.com/
+> Acked-by: Nicolas Pitre <nico@fluxnic.net>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-Maybe you can come up with a patch then? I have no idea
-which namespace to use here, seeing that there are already
-six differnet namespaces in use in drivers/platform/x86/intel/
-but none of them seem to be a good fit for this one.
-
-Are you asking to just define another namespace here?
-How would I define what the rules about using this namespace
-are, and where are they documented?
-
-     Arnd
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
