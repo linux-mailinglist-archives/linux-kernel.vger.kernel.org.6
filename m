@@ -1,83 +1,51 @@
-Return-Path: <linux-kernel+bounces-194329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E6A8D3A49
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:07:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342018D3A4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F261F221A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:07:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1B81F2494E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B3617BB2A;
-	Wed, 29 May 2024 15:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TKGHdjEO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043951B810
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEDD17BB33;
+	Wed, 29 May 2024 15:08:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E211B17BB09
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716995262; cv=none; b=DXOvHIirATo1vczDVEMZGc4UGbQnHzVpnzXOLDYib/2A9POViuQXoVRdLC+WBrUXDVUyeRwhmutjPmg6qmWN80E7OImd+rBZVZB20Bcesd0apUA+3aTNUBqMRzHbrN3IUTrfefJmWTNJcJEreyv9P0Cpi60DljdYeFe7Gt8srR0=
+	t=1716995287; cv=none; b=D389yJleu2FoCRfcYta+kuNTZ5R437ovbRk2DHQhU1aqWm7zjO391tRSp/u2Sdh/j4ZSI3uAI7sDzKw/y6tIZgCP6Go6eHm6Lelcl4DUhcVACNVby68NBYD8Dlotzl/nTlHAmtkN3kAcVm8mljIhsICi9BoNTpBt/Wj0ncUc1qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716995262; c=relaxed/simple;
-	bh=8NCxyuhk/DvRQZs56hKs9VP7H1rlq6S6aGdBa/JK6V8=;
+	s=arc-20240116; t=1716995287; c=relaxed/simple;
+	bh=2VbtYq5JfdkzMFR2Qv2gU2BDULTHXEIM7RnVLfX02G4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=peR9sgEfU6tbh6HfnlUmjLZ4LhmvXvSqYlpmakh47xseaHg5PzzyV5mOqafvBSyP/1galzdUwyQeIKosqpYeC6jlZG1SU2bsJIwB/hmOgkJatdgL8puzzpM7/xNc9+Wn3BjTjS2OdwatKieRbHocFU+vwUv9jAAerfc0gAl3JAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TKGHdjEO; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716995261; x=1748531261;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8NCxyuhk/DvRQZs56hKs9VP7H1rlq6S6aGdBa/JK6V8=;
-  b=TKGHdjEOCGZmGqF0C45c9CYO/F+1TeTa93edX8yesrRA2pIP7OqYF8sc
-   SwYNwsI6ICsm3NrxP90BeBeRkQOASyXE+OleD/CYXL/O63Tqbxs8wq9bK
-   MD78/xiDJ8CWDM/yU5nhMaqYRu81OBZngduP8ar7CNTgyXuHsVe1TnAlH
-   ZfVjF/v4rWfMANXfdOjXAymO//RPHugsjDcmJ8WAYo1YzG0PtQTQAclYG
-   G1mj7PXI0qj0KdOJQREcV8fTIOKydVAUgzgf8f1UXlE8RrcSBto2l8miM
-   xEjpVue3jf0hjXjrFWab9751wNOSV9hQ6GAna8ZlF+HknMtCJGXLHCwvc
-   w==;
-X-CSE-ConnectionGUID: hnziUOaAR46Sf2QWsW53uw==
-X-CSE-MsgGUID: wM68NFaPSQOJow2qqlCYoQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="24819793"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="24819793"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:07:40 -0700
-X-CSE-ConnectionGUID: bnXjTNTmR+mDKtjNtmNCeA==
-X-CSE-MsgGUID: EkBjuKfeSd+OG1JEkKDtyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="40466931"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:07:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sCKtl-0000000Bq8n-3YxA;
-	Wed, 29 May 2024 18:07:29 +0300
-Date: Wed, 29 May 2024 18:07:29 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
-	alsa-devel@alsa-project.org, i-salazar@ti.com,
-	linux-kernel@vger.kernel.org, j-chadha@ti.com,
-	liam.r.girdwood@intel.com, jaden-yue@ti.com,
-	yung-chuan.liao@linux.intel.com, dipa@ti.com, kevin-lu@ti.com,
-	yuhsuan@google.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
-	Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
-	cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
-	savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com
-Subject: Re: [PATCH v3] ASoc: tas2781: Enable RCA-based playback without DSP
- firmware download
-Message-ID: <ZldEsZ7aSFbHOhd_@smile.fi.intel.com>
-References: <20240529103543.2089-1-shenghao-ding@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rb34IAdbS9nVj2iSuKpV/iNu3MW/aeZKzu0Pk6TgSMjrtTZrdmWpM8+9HVhqth00C6lqtZk99QZZbLt+fJ1axp/OoFD2cyVsuH51IGT2iLP5kEB3CF5zISx65CJ1QPrHmSDpmTWhLb4p/ptFF1QKCNo6ddtqZAHKv9GhuD9YSKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E5A8339;
+	Wed, 29 May 2024 08:08:29 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D858F3F762;
+	Wed, 29 May 2024 08:08:03 -0700 (PDT)
+Date: Wed, 29 May 2024 16:08:01 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Baoquan He <bhe@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/io: add constant-argument check
+Message-ID: <ZldE0dp7cBpZl4JY@J2N7QTR9R3.cambridge.arm.com>
+References: <20240528120844.3523915-1-arnd@kernel.org>
+ <ZlcODqVXTDh6n0h-@J2N7QTR9R3>
+ <8ff9bc52-bf2f-4856-9335-14bf659e7e4c@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,76 +54,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529103543.2089-1-shenghao-ding@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <8ff9bc52-bf2f-4856-9335-14bf659e7e4c@app.fastmail.com>
 
-On Wed, May 29, 2024 at 06:35:41PM +0800, Shenghao Ding wrote:
-> In only RCA(Reconfigurable Architecture) binary case, no DSP program will
+On Wed, May 29, 2024 at 02:29:37PM +0200, Arnd Bergmann wrote:
+> On Wed, May 29, 2024, at 13:14, Mark Rutland wrote:
+> >>  {
+> >> -	if (count == 8 || count == 4 || count == 2 || count == 1) {
+> >> +	if (__builtin_constant_p(count) &&
+> >> +	    (count == 8 || count == 4 || count == 2 || count == 1)) {
+> >>  		__const_memcpy_toio_aligned32(to, from, count);
+> >>  		dgh();
+> >>  	} else {
+> >
+> > I don't think this is the right fix.
+> >
+> > The idea was that this was checked in __iowrite32_copy(), which does:
+> >
+> > 	#define __iowrite32_copy(to, from, count)                  \
+> > 	        (__builtin_constant_p(count) ?                     \
+> > 	                 __const_iowrite32_copy(to, from, count) : \
+> > 	                 __iowrite32_copy_full(to, from, count))
+> >
+> > ... and so __const_iowrite32_copy() should really be marked as __always_inline,
+> > and the same for __const_memcpy_toio_aligned32(), to guarantee that both get
+> > inlined and such that __const_memcpy_toio_aligned32() sees a constant.
+> >
+> > The same reasoning applies to __const_iowrite64_copy() and
+> > __const_memcpy_toio_aligned64().
+> >
+> > Checking for a constant in __const_iowrite32_copy() doesn't guarantee
+> > that __const_memcpy_toio_aligned32() is inlined and will actually see a
+> > constant.
+> >
+> > Does diff the below you for you?
+> 
+> Yes, your version addresses both failures I ran into, and
+> I think all other theoretical cases.
+> 
+> I would prefer to combine both though, using __always_inline
+> to force the compiler to pick the inline version over
+> __iowrite32_copy_full() even when it is optimizing for size
+> and it decides the inline version is larger, but removing
+> the extra complexity from the macro.
 
-"...RCA (..."
+Sorry, I'm not sure what you mean here. I don't see anything handling
+optimizing for size today so I'm not sure what change your suggesting to
+force the use of the inline version; AFAICT that'd always be forced for
+a suitable constant size.
 
-> be working inside tas2563/tas2781, that is dsp-bypass mode, do not support
-> speaker protection, and audio acoustic algorithms in this mode.
+What change are you suggesting?
 
-Some minor issues below.
+> According to Jason, he used a macro here to be sure
+> that the compiler can detect an inline function argument
+> as constant when the value is known but it is not
+> a constant value according to the C standard.
+> 
+> This was indeed a problem in older versions of clang
+> that missed a lot of optimizations in the kernel, but
+> clang-8 and higher were changed to have the same behavior
+> as gcc here, so it is no longer necessary now that the
+> older versions are unable to build kernels.
 
-..
+Getting rid of the macro is fine by me.
 
-> -	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
-> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-> +	/*
-> +	 * Only RCA-based Playback can still work with no dsp program running
-> +	 * inside the chip?
-> +	 */
-> +	if (!(tas_priv->fw_state == TASDEVICE_RCA_FW_OK ||
-
-> +		tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK)) {
-
-This line has broken indentation and I already pointed out a few times to
-such issues. It makes harder to read the code.
-
-> +		dev_err(tas_priv->dev, "No firmware loaded\n");
->  		return;
->  	}
-
-..
-
->  	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
->  		tas_priv->dev_name);
-> +
-
-Stray change?
-
->  	ret = tasdevice_dsp_parser(tas_priv);
-
-..
-
-> +	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
-> +		/*If DSP FW fail, DSP kcontrol won't be created */
-
-Mind spaces in the comment.
-
->  		tasdevice_dsp_remove(tas_priv);
->  	}
-
-..
-
-> -	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
-> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-> -		ret = -EINVAL;
-> +	if (!(tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK ||
-
-> +		tas_priv->fw_state == TASDEVICE_RCA_FW_OK)) {
-
-Broken indentation.
-
-> +		dev_err(tas_priv->dev, "Bin file not loaded\n");
-> +		return -EINVAL;
->  	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Mark.
 
