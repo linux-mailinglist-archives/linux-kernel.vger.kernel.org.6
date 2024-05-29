@@ -1,91 +1,113 @@
-Return-Path: <linux-kernel+bounces-193715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C508D3107
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:23:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C13C8D3108
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB811F26B45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8128F1C253E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2631217B505;
-	Wed, 29 May 2024 08:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF5F17BB2E;
+	Wed, 29 May 2024 08:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h5wjrRC4"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BoTz8w7t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LE2Cl4ZK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22ECE179957;
-	Wed, 29 May 2024 08:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AB1179957;
+	Wed, 29 May 2024 08:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970671; cv=none; b=rhVpYljWFm2T9YxCUaFVUSn+HxGaabnWGKXOkfeVzwp6dlF1TvLVMiWwEi6XyL6D+AFSzWw4F8q7yq6FadJILr/8tjVlGE9CiM4QociZQ4zMljPMxOTC29XsdVla4Qon+G/rqyH+yuqGsuUY+HpyJjP4WxMA32NqZLpZ4njq0wY=
+	t=1716970688; cv=none; b=e8NgN6K1aa4/WnHTNqrpT6CZwfk6+r8gSHKGUTRQx6ajGclqT43gdZ3Nk9AjLNjHIkdtcnJ5bU87kU8RK42OA1rfLNGRAL9rw/umskthof9lFnfzOR5eAF20kvPho0l74sSr89dxgpIYVwCWAHbangNlU4uuNzqZ1Pvo6iwrNkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970671; c=relaxed/simple;
-	bh=fHj9eLgnKKslWu+AKFRFaZvuAD6KevAgJPrKaOpy1bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VD2wupIH1EHPmU77j/H9f3uQDoZVjApJfKOFzwEXk3UeeLlkxyuQTCcS45Wr+fZXQcm7yS827/IG7XFWMgjnN7SUfxDeaYq2U1SdxDc1mnX7Pvvb1uUNDjwLQGPKrHsNR81VRqNM0W236TA9EqCgrTvl/73QIN+amyo1FK7qcUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h5wjrRC4; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716970668;
-	bh=fHj9eLgnKKslWu+AKFRFaZvuAD6KevAgJPrKaOpy1bs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h5wjrRC43xN41I3TTIZ62IkvVio6xWo+HzdpIH43StkHbNoBdsoJbGupTbGkQyoWF
-	 93ZrFcbH2ybXrrgQWOuAZrdO4b4EVilLIasEZJKdU60Sbr98lTETbVqtMwfYN4SD8G
-	 0yda7Y3klu/gDIpJAM64kdxamBQcpZszBYigouY6Bxt6qzKB9NAXCaPrgZ0b6NpDRl
-	 Tf+ZX0pMpVx/qPHzH/qj7oRKte5/APkMAXjH+D7qwv5ZthQchKgPehYKjMhpAYrswI
-	 oTtsYZhxpCPTaUvjXrP3cV1Yrb6tta6h4wMDvfJ2LYmHxA9P+4T9LrGrEECQSVcxlL
-	 /eyJcIiiYB8Lg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 87D85378215E;
-	Wed, 29 May 2024 08:17:47 +0000 (UTC)
-Message-ID: <b941ed93-2fe9-40b1-b0c1-343602802685@collabora.com>
-Date: Wed, 29 May 2024 10:17:46 +0200
+	s=arc-20240116; t=1716970688; c=relaxed/simple;
+	bh=PH3g73IUBo++D2q6c/meuMRPW8F0op+ZjovpZ13rJYs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FXWKv4E+BCdU/KoMXimOXIXMxjIbKMdpaTA2fburUQRRMZEAtx7DZXf77RyaVCa4rFt6ZsNf3eoa2A7HibtbLbBMudBPbsyRlmdzuX5TJM46H8s2tqTg+73AnH0vismFh276H5zrBlO9K6Yz7CNXhDug2f4DGvXemEIHeyy/nss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BoTz8w7t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LE2Cl4ZK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716970685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VisuJquPIChpxFSeuXKm3BwthCpocWOziwbjGlkW3mo=;
+	b=BoTz8w7tg+5pAYB3WTkk6jnPjCzUS9z0neRfqMZHzrq9h+LZXnODAKPSUNjExMTjFrP/ce
+	H9jCBY90DjR7iN/BVH4DOQ23kvwi0/pDfliMzNOhHg5+J60YMJvq9GKVSubLijrywm8KjK
+	SfQVRI6Y7uXPnXipACHzqpdfosQejx6RkEpBR7Cw87JqbAaoYfcYvcyA3Sy8icnc43LzC4
+	nmMAGGPgsu+Q7056MyjftnY+X0e7WXcRPs7xiNjr7/nHCwRQCgVSVESc9ey1IgtnnU8nym
+	XYjh9P24bmqXuI5/zp4pyX0XHUtHntvGgzrDdMj2R3DpDgIvoBcdt71ABn6c/g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716970685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VisuJquPIChpxFSeuXKm3BwthCpocWOziwbjGlkW3mo=;
+	b=LE2Cl4ZKSn5lUeDv71XnuhlGbLGoUjoiAiNlV/X+VkyTc0Dm60QzyXAasSVhUphLhPtuYY
+	NoynSjDEiFaegtDA==
+To: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: Justin Stitt <justinstitt@google.com>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Bill Wendling <morbo@google.com>, Nick Desaulniers
+ <ndesaulniers@google.com>, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] ntp: remove accidental integer wrap-around
+In-Reply-To: <ZlRDoyJk2Erzje_z@localhost>
+References: <20240517-b4-sio-ntp-usec-v2-1-d539180f2b79@google.com>
+ <87ed9re7i4.ffs@tglx> <87bk4ve5wc.ffs@tglx> <ZlRDoyJk2Erzje_z@localhost>
+Date: Wed, 29 May 2024 10:18:04 +0200
+Message-ID: <8734q19glf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/6] arm64: dts: mediatek: mt8188: add default thermal
- zones
-To: Julien Panis <jpanis@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Nicolas Pitre <npitre@baylibre.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-References: <20240529-mtk-thermal-mt818x-dtsi-v6-0-0c71478a9c37@baylibre.com>
- <20240529-mtk-thermal-mt818x-dtsi-v6-6-0c71478a9c37@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240529-mtk-thermal-mt818x-dtsi-v6-6-0c71478a9c37@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Il 29/05/24 07:58, Julien Panis ha scritto:
-> From: Nicolas Pitre <npitre@baylibre.com>
-> 
-> Inspired by the vendor kernel but adapted to the upstream thermal
-> driver version.
-> 
-> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> Signed-off-by: Julien Panis <jpanis@baylibre.com>
+On Mon, May 27 2024 at 10:26, Miroslav Lichvar wrote:
+> On Fri, May 24, 2024 at 02:44:19PM +0200, Thomas Gleixner wrote:
+>> On Fri, May 24 2024 at 14:09, Thomas Gleixner wrote:
+>> > So instead of turning the clock back, we might be better off to actually
+>> > put the normalization in place at the assignment:
+>> >
+>> >     time_maxerror = min(max(0, txc->maxerror), NTP_PHASE_LIMIT);
+>> >
+>> > or something like that.
+>
+> Yes, I think that's a better approach. Failing the system call could
+> break existing applications, e.g. ntpd can be configured to accept a
+> large root distance and it doesn't clamp the maxerror value, while
+> updating the PLL offset in the same adjtimex() call.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Thanks for confirming. I suspected that, but the original change logs
+are pretty useless in that regard.
 
+>> So that commit also removed the sanity check for time_esterror, but
+>> that's not doing anything in the kernel other than being reset in
+>> clear_ntp() and being handed back to user space. No idea what this is
+>> actually used for.
+>
+> It's a lower-bound estimate of the clock error, which applications can
+> check if it's acceptable for them. I think it should be clamped too.
+> It doesn't make much sense for it to be larger than the maximum error.
 
+Ok.
+
+> Another possible improvement of adjtimex() would be to set the UNSYNC
+> flag immediately in the call if maxerror >= 16s to avoid the delay of
+> up to 1 second for applications which check only that flag instead of
+> the maxerror value.
+
+That needs to be a seperate change.
+
+Thanks,
+
+        tglx
 
