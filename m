@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-194102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FAC8D369E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A388D36A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AAAC1C21D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:43:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF7E1F2132B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8659181B9B;
-	Wed, 29 May 2024 12:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5688181BBE;
+	Wed, 29 May 2024 12:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="haXplEdo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="UFNDaUIB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="s+2PZqt9"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAF3181B82;
-	Wed, 29 May 2024 12:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F4C17DE23;
+	Wed, 29 May 2024 12:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716986608; cv=none; b=ni3d+qVzXOHl5XpzzrqvJImyPEbS6to02DBnJOch0Q5b+aqP4PDgRP6AqGALFPP7Ad5yufKuvxjv82FiyZFQDXlbmTuKTNJEkthjqnPSjIeHysjG8N+SxDng/0PlxqLbguThK9tJydPLxHFeLkFSak8wTSoCdjrUJdORpTw10Bc=
+	t=1716986689; cv=none; b=e8HLu94r8np5XsmSCcTVr/2a1TbgxvfhRXwt3/r9CZnfz3eA6hHLf54Gyu1+LLtCs2x0oys+xTK8tfZT2/ske5dLqtGsXptSqtTsdy4491/FW75EJgNNUIg1PDaMaULTvjHPFk8usBwhrnwnovpxI5ULWYBf0d0UdFGH94OR3Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716986608; c=relaxed/simple;
-	bh=x7fxx2wAn5tcq/jOn+WYY1FaAla9wHnIEgSCbz76z8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tInl8T6uB7f8fxkVHVXkZ7ZHAK+B5y1OaF37wG0joobkVEqCd8BPY/8oD12Uv8YvXI8UPEusBRSz/XcQEJqALv6lyOfCAqxQUN3VTfMO3cKQPAT9T93Ji47C5WegzcM8LopLhWqfRPGRykksMTs1wSMuRWs6KuZW3EV1bGKoZFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=haXplEdo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE7FC2BD10;
-	Wed, 29 May 2024 12:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716986607;
-	bh=x7fxx2wAn5tcq/jOn+WYY1FaAla9wHnIEgSCbz76z8M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=haXplEdod6jS7AFZF2sK/c3K6vS0KSAQFiWjBun17vQEr8irnXkxVgFHC4zO/7Rie
-	 s4rC9DAJ1EFahMaohYLyQ57TjbLZQ+/lRyHrxphD8sVnouCyMnIopIV0SaEzatfaVn
-	 hF1r9B1JUQUd+QauLPZkfmYvXWR4TL18e96Z5pER9TVMy+lr1Ofgs1xGfKaylb5Mw9
-	 V+9N3Yikbux5juAbnlL2B3AT6nOD9bsn1QANq8M9RZchxzZhUZ7kRcsrT9et+wE+Ii
-	 78CH8GvWxEx1e5cXMm1peHWeVCpn3z/45k6HGMhrAW992MQXsqS4vS2hEOzj0ES4n1
-	 VgwPgXMTF1Tag==
-Message-ID: <1c9c0d78-83c0-4055-83bf-6792b03b6df9@kernel.org>
-Date: Wed, 29 May 2024 14:43:21 +0200
+	s=arc-20240116; t=1716986689; c=relaxed/simple;
+	bh=VulbFFluIY4V+Dq0KwN290O9m54yLfSK+Ucnvv0/x0g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sJChVvGiQhN57VpEp1ngvRsSD60aWfeL1xCj9fM82t2QSJHyufCXqEp3oD3AtF0WQ0uRvcukGe32TwEDvfMn8vzCES+eJD8sK8+4RhzaqsqLT/uZpcVnkBzHejt9paEnMLGzYtdpepna1WL4xXUaiL/R/J9ImEIP38PmkLce4Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=UFNDaUIB; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=s+2PZqt9 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1716986686; x=1748522686;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=VulbFFluIY4V+Dq0KwN290O9m54yLfSK+Ucnvv0/x0g=;
+  b=UFNDaUIBbsWPvapwS0gpfpdkiUPwBs6Joy2jG+QDLwwQwxt5gnkVHshk
+   8xDC3CQivDNWPNB3+bfa5ahDP+6ROnDWfe37vLqkL8Ao3O6PE24DKh2Pz
+   NUCuFRL5yFmpglITOcObvCVbm0DI8jfXfcBqLGq2tCQ5o5YDJA2G8phji
+   28bsncjgWyiXJPD16Rlf7F6VJ6V1XZ8LkD4U0g/hMQf0mRzaMXNN0Ic/f
+   /s8kmJNAMl1nDc8jlla/yyjC7R6Ski0pLtUloZ0oo6cCuio13iAQNLUYk
+   tShKbq7Vj+mjj/Fds5huuEWUIpT1yl720Zu8Ps3n127GRvKm6m/6hlcYs
+   g==;
+X-CSE-ConnectionGUID: CdrFQlHLQlqYJTWEJW+02g==
+X-CSE-MsgGUID: T6nuZhbMQUi7EaBzqO2Srw==
+X-IronPort-AV: E=Sophos;i="6.08,198,1712613600"; 
+   d="scan'208";a="37128982"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 29 May 2024 14:44:43 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 76DB0165652;
+	Wed, 29 May 2024 14:44:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1716986679;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=VulbFFluIY4V+Dq0KwN290O9m54yLfSK+Ucnvv0/x0g=;
+	b=s+2PZqt9EQdYDhMMsaSjzPFT3eobtAweRRgds2WvhjijA+3jopJgMfhP2kCMdNJxUrNnD1
+	Mxg51A02Pi6Pee+YWVIaD93NGRCScWf7Rz56swXL9m2WMGp2OsbZc0GpPby4AHII+x3sH7
+	MBgdS4FDnO547sz6oKZLfv9B/YAF5L7XXA68wanbo8wxMZbEqhDHeuJBXDj63fIxKurWEA
+	A3T/jDQpmlrSyCKht4VFhn033VeeaWVpsp41CG3WMlktx5T46zgNJtJruT7re7GT4YNLWo
+	W2zMUR3UnIFNaOTTaUyovPONZkVPZ3RUAwOVO2nkIFN10JKXkHPzQtP8wSuXaw==
+Message-ID: <954848a9ee2967908bc40069c94cea4407e7de7f.camel@ew.tq-group.com>
+Subject: Re: [PATCH 8/8] gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH
+ interrupt type
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gregor Herburger <gregor.herburger@tq-group.com>, linux@ew.tq-group.com
+Date: Wed, 29 May 2024 14:44:30 +0200
+In-Reply-To: <9f8107e1-4a80-4f20-8862-f85aed578cc6@lunn.ch>
+References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
+	 <2c265b6bcfcde7d2327b94c4f6e3ad6d4f1e2de7.1716967982.git.matthias.schiffer@ew.tq-group.com>
+	 <9f8107e1-4a80-4f20-8862-f85aed578cc6@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: fsl-qdma: Convert to yaml format
-To: Frank Li <Frank.Li@nxp.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, imx@lists.linux.dev, krzk+dt@kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org, vkoul@kernel.org
-References: <20240528163734.2471268-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240528163734.2471268-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 28/05/2024 18:37, Frank Li wrote:
-> Convert binding doc from txt to yaml.
-> 
-> Re-order interrupt-names to align example.
-> Add #dma-cell in example.
-> Change 'reg' in example to 32bit address.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
+On Wed, 2024-05-29 at 14:37 +0200, Andrew Lunn wrote:
+> On Wed, May 29, 2024 at 09:45:20AM +0200, Matthias Schiffer wrote:
+> > The TQMx86 GPIO controller only supports falling and rising edge
+> > triggers, but not both. Fix this by implementing a software both-edge
+> > mode that toggles the edge type after every interrupt.
+>=20
+> Do you have a real use case for this, one that will handle lost
+> interrupts because it cannot swap edge quick enough?
+>=20
+> I personally would not do this, because it is dangerous, it gives the
+> impression the device can do both, when in fact it cannot reliably.
+>=20
+> For me, the correct fix is to return EOPNOTSUPP or EINVAL for BOTH.
+>=20
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This was the first thing I tried as well, but it seems that supporting IRQ_=
+TYPE_EDGE_BOTH is
+mandatory for all GPIO drivers (not doing so results in various error messa=
+ges when attemting to use
+*any* type of interrupt for the GPIO; I don't remember the exact errors). F=
+or this reason, several
+drivers implement a similar software solution when the hardware doesn't sup=
+port it.
 
-Best regards,
-Krzysztof
+Many drivers implement this in a fragile way that will easily break when an=
+ edge is missed. On the
+TQMx86 we are lucky, and this software implementation is actually robust an=
+d will not stop reporting
+edges when one is missed. The reason is explained in detail in the long com=
+ment added by this patch.
+
+Matthias
+
 
 
