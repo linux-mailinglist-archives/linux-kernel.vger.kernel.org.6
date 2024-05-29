@@ -1,182 +1,86 @@
-Return-Path: <linux-kernel+bounces-193293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08D08D29EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:25:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC73F8D29F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD131C22F54
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C25A1F27931
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DBD15ADAF;
-	Wed, 29 May 2024 01:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612C315AAB1;
+	Wed, 29 May 2024 01:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="nOadKEtI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hWb3U2Vd"
-Received: from wfhigh7-smtp.messagingengine.com (wfhigh7-smtp.messagingengine.com [64.147.123.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3yUUzZK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432B215AAD5;
-	Wed, 29 May 2024 01:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99003632;
+	Wed, 29 May 2024 01:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716945904; cv=none; b=dHV6DR86gHvTinC1nfHV23GFrhTP/sN/BxZI8t+TrglKD5i7pDb8LnG59j4IgyO5yqFYAG4AObNJJnFNZH3tDRULQMkQ5XUPMKRrQcemMuUE4TKAeUONrfqUJYYwdkEX60Iy6OV2K7Wr7OnOmowQi3zmq5kAk25M6eB4K2av84M=
+	t=1716945947; cv=none; b=ZVUA6SPt6xuNkNs/38SQ1bIhblRmGV0xS797yqXswQUjviLHnTBVJPN4tP/LphVko7upl3RF/nBps+ANplaY3NzwNVIp4Jk0A/5JX8mn7XUXj9JlVNx3jNJK/zhUHLelW67wBHigVCvUVtGoHK3VemOoQPhGTHwD/u1HUZ0Gk0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716945904; c=relaxed/simple;
-	bh=LDZLCHZzuZFdB9MB2gzeXB2ldjxyM30EyBUTBHEphxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ks297CcRUejt5FCF1YvhR5ixd9OcRSSG9U0bAdwQPYIkY4dkrnOhjOL0eVHr9YqwMFC0u57Et/soM1Enc6KMJEe+DEulQ3Ees37hSaU70vXNUq0ZwNNhRmpiwZ3PGK8vmfGeh0ByDwqj5WtJzhAYYAyO+DHY1+FVKKF3LBYKJq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=nOadKEtI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hWb3U2Vd; arc=none smtp.client-ip=64.147.123.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 0AA3C180006F;
-	Tue, 28 May 2024 21:25:01 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 28 May 2024 21:25:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1716945901; x=
-	1717032301; bh=LNipYAkSRLIdv0+aK0KD7aPesVOUo+kH+La70D2FdvE=; b=n
-	OadKEtI9dfN8TrSk4rPnGFSIm5ymCm0TmEE1vyb/P2ebMW3Z039PTjP0MsyFNWLG
-	TgSWgyhlayjTejTYMoK0blm6gEw/dFwqhVTz5JJI5I9t3Hy/fnrRtcCXZmZCxb1y
-	dCju55qrNppAJV0OAstM4pygPm2O6+VmLsPyiRIFH/LmevxZJE3hph9BnNKIq7K6
-	Qz5CY0PPoo/V8zjORi02PNEXeUwD5Qgu4U85LxAnsmxxqa5RRpiHSTsqstChgA6y
-	bw1zqtiMrE1cs7ZIsTRAdHeXohp6Lp4RTahy8F9FFFTke2uIRiZMcAqXFdfTLNnV
-	BNo8FSbOMSLJ0fOk3Yh+w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716945901; x=
-	1717032301; bh=LNipYAkSRLIdv0+aK0KD7aPesVOUo+kH+La70D2FdvE=; b=h
-	Wb3U2VdjNW2q4ilXZm6OhRujqENsb1qXu+rKMi9yOsJJwjwr7Lc3bFFgY6cTLNGC
-	ORD+Xfds8prs/9MwNdmWvPOlQUJXNInh/z10sFNr+B7gl6Iq7f2/WDugwcmNTscW
-	kPS4TMFgTQ2HA/svEpvEfH+I6fqQi/DW5GxUDlaJR2Sah7GCetrUlKVJ86gUV5QS
-	4J1C5DtCgzzIJLvgz5HJ6sPAsuPCKsgk8Bcb0DC+amOSgi63uCt1in65sBR+cOgV
-	DT8jyGEjSKFh8C1lIqDZaO59BJMP6us3zmPkNs3iJGxS/XgKuQo92dGFJIpmPIdX
-	gOC5Qt74h/e8kwT+EFjbQ==
-X-ME-Sender: <xms:7YNWZrAzUScn_LHtiIsG15ngo4VlMTPcSO9GejXsj7hrdlbM5-Wo2g>
-    <xme:7YNWZhg-OUBQcImYsZp-dyO6_7kbl0CatRkL8rfvsZAhsMd1FBbEv90wjfVp2K9Q4
-    K1nBVGph5tWWsFM5nY>
-X-ME-Received: <xmr:7YNWZmlYqcuzlqbsTuOlmiP-U9NP3cvT3oLJQoSgokKHaXL6cPtji_muzJsM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejledggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
-    ertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehl
-    jhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfetfedugfetudeuheetjefhue
-    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgeptden
-    ucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:7YNWZtxmOLCwM1FADRWkXF0rGS3cf0S0TSJryFWWiNs48uIXPVOCoA>
-    <xmx:7YNWZgQ4gYvBSYRYitlXODypwNCpHzwogNRyUF0vV8PsECGvPViZog>
-    <xmx:7YNWZgYO7xqQIChca8alO2H8zFZaPq4fTAmb_aruM6KMaxehUn-lQg>
-    <xmx:7YNWZhTuh9LTW-3QKA5pTLyKAKWGm5UDFk_xdN71v2Df61M8IiPHxw>
-    <xmx:7YNWZjEt86-hcEwH1qtFsIN5oK0JxIcyAHVWNjUjduRZ6McnDh7kk3he>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 May 2024 21:24:57 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: jikos@kernel.org
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	corentin.chary@gmail.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	bentiss@kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH v1 2/2] hid-asus: change the report_id used for HID LED control
-Date: Wed, 29 May 2024 13:24:47 +1200
-Message-ID: <20240529012447.145088-2-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240529012447.145088-1-luke@ljones.dev>
-References: <20240529012447.145088-1-luke@ljones.dev>
+	s=arc-20240116; t=1716945947; c=relaxed/simple;
+	bh=kYSsGE77H18edFCZ/qJ7N+G3t+QZ2sKhNkQqZvYis4o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=l0FVb6DAdtHbJqZRl4gNBxTyoQv89O/K+KsApD35pgTkFWSjWp9Utz58CEddmS1+0cnm2Uy2VJ5Wzk8btRQKDf/jsQk6exCw+Ah6X3gpZqW5vZvAxq9gQIfxhu6+pdAOU5bp6XZEMSablWs32JMOq6aAUtgh1w6P94FeqbC6sXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3yUUzZK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81B3EC3277B;
+	Wed, 29 May 2024 01:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716945947;
+	bh=kYSsGE77H18edFCZ/qJ7N+G3t+QZ2sKhNkQqZvYis4o=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Q3yUUzZKciCLnR2eeEi7wxqu1gujXTavjGCPMQ/FYBe4d2Gx/wtX+KQ9Ex4F5GgIt
+	 BPx7OYRYaGDTBl+nlfw1dM4joMzq7v6fNMBPkWueXVQ0UdSwlUMzU7jtv+31q/F5nW
+	 mqIa4WdvV/tS7KNIh0PMBLUD82QcYqVQqeUI2SFmg32LMqzmVa/9+hncM5suqS+suo
+	 wEo1+VBFGFlBUTeqPFEsy4LSepsXyIz1uhUhdKn0GD+PDv90I/lvl/9Afg+GZjpgsg
+	 TAmONAcWhtXjI4YDtUeDfzqdwYf4HZmlMOWL25A5soEdIAFKOwrD/DfG/lCnqtmTJT
+	 hV6MEuZOhiX2A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 May 2024 04:25:42 +0300
+Message-Id: <D1LQJH4GRM9K.DH9M2VYX46US@kernel.org>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
+ <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
+ "Lennart Poettering" <lennart@poettering.net>, "David S. Miller"
+ <davem@davemloft.net>, "open list" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 1/5] crypto: rsa-pkcs1pad: export rsa1_asn_lookup()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+X-Mailer: aerc 0.17.0
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-2-jarkko@kernel.org>
+ <12cc5fd9-6537-4a0b-b7d9-1221da3bf9f7@linux.ibm.com>
+In-Reply-To: <12cc5fd9-6537-4a0b-b7d9-1221da3bf9f7@linux.ibm.com>
 
-On some laptops the report_id used for LED brightness control must be
-0x5D instead of 0x5A.
+On Wed May 29, 2024 at 2:20 AM EEST, Stefan Berger wrote:
+>
+>
+> On 5/28/24 17:08, Jarkko Sakkinen wrote:
+> > ASN.1 template is required for TPM2 asymmetric keys, as it needs to be
+> > piggy-packed with the input data before applying TPM2_RSA_Decrypt. This
+>
+> piggy-backed
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/hid/hid-asus.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+Right! I consciously wrote it that way, i.e. have used wrong spelling
+up to this day :-)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 4cba8e143031..ec3556cc4eef 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -94,6 +94,8 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
- 
- #define TRKID_SGN       ((TRKID_MAX + 1) >> 1)
- 
-+static const char * const use_alt_led_report_id[] = { "GU605", "GA403" };
-+
- struct asus_kbd_leds {
- 	struct led_classdev cdev;
- 	struct hid_device *hdev;
-@@ -101,6 +103,7 @@ struct asus_kbd_leds {
- 	unsigned int brightness;
- 	spinlock_t lock;
- 	bool removed;
-+	int report_id;
- };
- 
- struct asus_touchpad_info {
-@@ -473,7 +476,7 @@ static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
- static void asus_kbd_backlight_work(struct work_struct *work)
- {
- 	struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
--	u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4, 0x00 };
-+	u8 buf[] = { led->report_id, 0xba, 0xc5, 0xc4, 0x00 };
- 	int ret;
- 	unsigned long flags;
- 
-@@ -513,6 +516,23 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
- 	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
- }
- 
-+static bool asus_kbd_is_input_led(void)
-+{
-+	const char *product;
-+	int i;
-+
-+	product = dmi_get_system_info(DMI_PRODUCT_NAME);
-+	if (!product)
-+		return false;
-+
-+	for (i = 0; i < ARRAY_SIZE(use_alt_led_report_id); i++) {
-+		if (strstr(product, use_alt_led_report_id[i]))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static int asus_kbd_register_leds(struct hid_device *hdev)
- {
- 	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-@@ -555,6 +575,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
- 	if (!drvdata->kbd_backlight)
- 		return -ENOMEM;
- 
-+	drvdata->kbd_backlight->report_id = FEATURE_KBD_REPORT_ID;
-+	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_kbd_is_input_led())
-+		drvdata->kbd_backlight->report_id = FEATURE_KBD_LED_REPORT_ID1;
-+
- 	drvdata->kbd_backlight->removed = false;
- 	drvdata->kbd_backlight->brightness = 0;
- 	drvdata->kbd_backlight->hdev = hdev;
--- 
-2.45.1
+Thanks for the review! This is not likely to change that much. Would
+not tag any other patches tho before up to p521 have been tested...
 
+BR, Jarkko
 
