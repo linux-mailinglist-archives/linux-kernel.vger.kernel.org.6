@@ -1,196 +1,94 @@
-Return-Path: <linux-kernel+bounces-193519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E428D2D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:34:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C3A8D2D5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904311C23BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E6E285B42
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235CF15CD4C;
-	Wed, 29 May 2024 06:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39BD15ECD9;
+	Wed, 29 May 2024 06:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVpSvj/O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uENoG1Zn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530FE46453;
-	Wed, 29 May 2024 06:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC73515B14D;
+	Wed, 29 May 2024 06:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716964437; cv=none; b=VLQorfdTKSOl2M2MWeaEFHqiERRYoEb9YkrmcCopfcZevSgbtwxsjfQYm+bmXlDUHWjpWZiMDqcwml3Z72L5jhsDkex/v3LPsli6fIP/2rVwG7HPW1VvIQJbtTCwSXxa4NfTSBtYMNsSFVfWp4YaIm9zlMavtB/OoZ/CaeTAptM=
+	t=1716964474; cv=none; b=kWqjYfVIX1IUenJ9BmdGgDZjUppJAuqTafgMSMRWwbiGfsHi5s7FJAmimFrZhJ5Rjwv0nl0Tyw+gLGmw/6MoBRiafP4FkIzwemhfkCMVlvw6C+MCZ4bdI15fusUjU6KbJJdNFrPVK/6QVQnO7REfAT33GmiZMkKK//AeaBSlYH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716964437; c=relaxed/simple;
-	bh=fxXSALfm/c/HrxXm8QMdN0iSEYCmwD7QCKfdmRnr0XQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=faWqiJMtfVSTMoMFzjcMOWP/UMqNatacGRWEPGx7/S4sHu+TVgBwtgxuD4FlA9jptE9wVvY5eCHugmQplHXGUEUJbxTmwb/tVYkFluAFV1JykWxKEirkvL/KhAO4cO9fusSaZz+eUedzYFotSYZdvUrL4ToFfrQRREN6zMzCx7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVpSvj/O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C598EC2BD10;
-	Wed, 29 May 2024 06:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716964436;
-	bh=fxXSALfm/c/HrxXm8QMdN0iSEYCmwD7QCKfdmRnr0XQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tVpSvj/OVQ62qQPEyMQsW3zn89J5ul/51rrXGCGOJHaEr/csM+IwYCN5+qhCh+ThC
-	 DvtCSVC03Xz1TK4K8ExhZ3hXQQ5G2I13SeNE8ZYDBzQV/W+EL/zfsISpOIVk77bDqo
-	 Ak/WIGBHNqxLxkah0IDOtbVUVV9uR/vmnR4RbcKWWlwXGbHXOWMUhwqlbKigHNAfVd
-	 U5jMbbmQeKA5z0a2uIvD6IGD+upkjilFHUWGxyvIdKRw1hpmnouhmZlwh1vYhBLXH8
-	 BpczrsRIz2rFv1Kj8W0iqu8p0RPjNkY0USjjIG9PJHzwzwc1vE+ahJCQ4bcn2Frjjt
-	 CF8bgdn/dHGTg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sCCsk-00GVxc-Hn;
-	Wed, 29 May 2024 07:33:54 +0100
-Date: Wed, 29 May 2024 07:33:54 +0100
-Message-ID: <86bk4pm8j1.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	Saravana Kannan <saravanak@google.com>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
-In-Reply-To: <CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
-References: <20240528164132.2451685-1-maz@kernel.org>
-	<CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1716964474; c=relaxed/simple;
+	bh=UJG3C7EBMDjny9IFJF1bwm2VemwEnL8DukEB9yRxuiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i9cM2oNh7ngOB+I1a8PwEoKXhmKvFlEQ+YIslRxy4pE+lI1l2qHQ0e+jAo5Kcx/ULXhT4m2Eao+c8x+bmpz7qR1xXpk1JAByYhjJFo9H95y2Tl9E6gPgu+hSS+tXW0QteYfagNdZlhRWMiwLIPXsCamtS8fJRlsBbmUQ85qH1oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uENoG1Zn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Rx87dGz3DyMKaLnAETMLgQ1KIZQ/AQu9Pno6waQB1SQ=; b=uENoG1ZnzwGU2je4euK44xlcX/
+	s+rFRqQvb2EDF5T3605za7qYSwhyhGWSqfkrjPFtQwI9hRAl+4EVg1WdlzAMtUg0d2UUbW60qFKRw
+	dsP0DZ5ORvaE80Xt/luLVDa0V6bu55dGz+bkwubLx4CAqYT9kKoCtaxk0Z4npO93Oy+zUT0zUmrlq
+	T2J+5dFzyuvZq+73+t2kWscrX6qyNFjCVLnJrn4ANxdhmbaxSewKl4vQDI1jCdp/J01NUFdMOd+D4
+	QPrKyT8hWL74Ee4SInYYEdYlPimc+djRE4aQdUT4xS3iSEzaMTunAcpE2AVp+DUcJqX/+EKG9qrqd
+	fveMldCg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sCCtI-000000031cF-3Anh;
+	Wed, 29 May 2024 06:34:28 +0000
+Date: Tue, 28 May 2024 23:34:28 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <ZlbMdNiwLsLF-gp0@infradead.org>
+References: <ZlRy7EBaV04F2UaI@infradead.org>
+ <20240527133430.ifjo2kksoehtuwrn@quack3>
+ <ZlSzotIrVPGrC6vt@infradead.org>
+ <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
+ <ZlWVkJwwJ0-B-Zyl@infradead.org>
+ <20240528-gesell-evakuieren-899c08cbfa06@brauner>
+ <ZlW4IWMYxtwbeI7I@infradead.org>
+ <20240528-gipfel-dilemma-948a590a36fd@brauner>
+ <ZlXaj9Qv0bm9PAjX@infradead.org>
+ <CAJfpegvznUGTYxxTzB5QQHWtNrCfSkWvGscacfZ67Gn+6XoD8w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: apatel@ventanamicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, saravanak@google.com, robh@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvznUGTYxxTzB5QQHWtNrCfSkWvGscacfZ67Gn+6XoD8w@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, 29 May 2024 06:15:52 +0100,
-Anup Patel <apatel@ventanamicro.com> wrote:
->=20
-> On Tue, May 28, 2024 at 10:11=E2=80=AFPM Marc Zyngier <maz@kernel.org> wr=
-ote:
-> >
-> > Commit d976c6f4b32c ("of: property: Add fw_devlink support for
-> > interrupt-map property") tried to do what it says on the tin,
-> > but failed on a couple of points:
-> >
-> > - it confuses bytes and cells. Not a huge deal, except when it
-> >   comes to pointer arithmetic
-> >
-> > - it doesn't really handle anything but interrupt-maps that have
-> >   their parent #address-cells set to 0
-> >
-> > The combinations of the two leads to some serious fun on my M1
-> > box, with plenty of WARN-ON() firing all over the shop, and
-> > amusing values being generated for interrupt specifiers.
-> >
-> > Address both issues so that I can boot my machines again.
-> >
-> > Fixes: d976c6f4b32c ("of: property: Add fw_devlink support for interrup=
-t-map property")
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > Cc: Anup Patel <apatel@ventanamicro.com>
-> > Cc: Saravana Kannan <saravanak@google.com>
-> > Cc: Rob Herring (Arm) <robh@kernel.org>
->=20
-> Thanks for the fix patch but unfortunately it breaks for RISC-V.
->=20
-> > ---
-> >  drivers/of/property.c | 16 ++++++++++++++--
-> >  1 file changed, 14 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/of/property.c b/drivers/of/property.c
-> > index 1c83e68f805b..9adebc63bea9 100644
-> > --- a/drivers/of/property.c
-> > +++ b/drivers/of/property.c
-> > @@ -1322,7 +1322,13 @@ static struct device_node *parse_interrupt_map(s=
-truct device_node *np,
-> >         addrcells =3D of_bus_n_addr_cells(np);
-> >
-> >         imap =3D of_get_property(np, "interrupt-map", &imaplen);
-> > -       if (!imap || imaplen <=3D (addrcells + intcells))
-> > +       imaplen /=3D sizeof(*imap);
-> > +
-> > +       /*
-> > +        * Check that we have enough runway for the child unit interrupt
-> > +        * specifier and a phandle. That's the bare minimum we can expe=
-ct.
-> > +        */
-> > +       if (!imap || imaplen <=3D (addrcells + intcells + 1))
-> >                 return NULL;
-> >         imap_end =3D imap + imaplen;
-> >
-> > @@ -1346,8 +1352,14 @@ static struct device_node *parse_interrupt_map(s=
-truct device_node *np,
-> >                 if (!index)
-> >                         return sup_args.np;
-> >
-> > -               of_node_put(sup_args.np);
-> > +               /*
-> > +                * Account for the full parent unit interrupt specifier
-> > +                * (address cells, interrupt cells, and phandle).
-> > +                */
-> > +               imap +=3D of_bus_n_addr_cells(sup_args.np);
->=20
-> This breaks for RISC-V because we don't have "#address-cells"
-> property in interrupt controller DT node and of_bus_n_addr_cells()
-> retrieves "#address-cells" from the parent of interrupt controller.
+On Tue, May 28, 2024 at 03:28:18PM +0200, Miklos Szeredi wrote:
+> > open_by_handle_at looks up the superblock based on that identifier.
+> 
+> The open file needs a specific mount, holding the superblock is not
+> sufficient.
 
-That's a feature, not a bug. #address-cells, AFAICT, applies to all
-child nodes until you set it otherwise.
+A strut file needs a vfsmount, yes.  And it better be reachable by
+the calling process.  And maybe an optional restriction to a specific
+mount by the caller might be useful, but I can't see how it is
+required.
 
->=20
-> The of_irq_parse_raw() looks for "#address-cells" property
-> in the interrupt controller DT node only so we should do a
-> similar thing here as well.
-
-This looks more like a of_irq_parse_raw() bug than anything else.
-
->=20
-> The below change on top of this patch worked for me.
->=20
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index 9adebc63bea9..f54da2989ea9 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -1308,7 +1308,7 @@ static struct device_node
-> *parse_interrupt_map(struct device_node *np,
->  {
->      const __be32 *imap, *imap_end, *addr;
->      struct of_phandle_args sup_args;
-> -    u32 addrcells, intcells;
-> +    u32 addrcells, intcells, paddrcells;
->      int i, imaplen;
->=20
->      if (!IS_ENABLED(CONFIG_OF_IRQ))
-> @@ -1356,7 +1356,8 @@ static struct device_node
-> *parse_interrupt_map(struct device_node *np,
->           * Account for the full parent unit interrupt specifier
->           * (address cells, interrupt cells, and phandle).
->           */
-> -        imap +=3D of_bus_n_addr_cells(sup_args.np);
-> +        if (!of_property_read_u32(sup_args.np, "#address-cells", &paddrc=
-ells))
-> +            imap +=3D paddrcells;
-
-This looks wrong to me for the reason I outlined above: you need to
-look for a valid #address-cells all along the parent chain, not just
-in the interrupt-controller node.
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
 
