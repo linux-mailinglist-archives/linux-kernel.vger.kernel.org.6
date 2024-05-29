@@ -1,104 +1,164 @@
-Return-Path: <linux-kernel+bounces-194334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0138D3A5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:10:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BACE8D3A66
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE8D1C23D6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:10:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250742865CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE35181306;
-	Wed, 29 May 2024 15:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9CC17DE1D;
+	Wed, 29 May 2024 15:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jplFHyjf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d5MuwJyg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B42415B97D;
-	Wed, 29 May 2024 15:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE1115B97D;
+	Wed, 29 May 2024 15:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716995405; cv=none; b=ZdUsW+aNLsZOeN4Th8OAiVN5b9hVO0P6aukGMXpq5m8tgbo/XzDR3Lsnb04ty3HxWNtja+EbJU3N1wW+Joiiyg950waytMLM57nUMI6yIohYnOIVsGdfWRoGcGNxRpPQ66IrfGPG+1xabpqQf5Y5y/TOGXO4aTPK4zT1a2kZ2/o=
+	t=1716995501; cv=none; b=gcuBB76n0Efa03P/Av/HXZJdD68KB5ycN/5gyI9Dlz5MLsktKFy1JlRUe4bwxZOpL6XysRY/aRnacx+AIpwj7VeQoKC5GhHhO+dqLDR4ZT6DAW62og43xonUsb6RZoedAq6xLUzmtpuBQSQSw1nQrelcejn4AI3qHfeEKQfZDW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716995405; c=relaxed/simple;
-	bh=9VTxAFuwXMVGR8QCr9KFqS8UEt1MJDSjeHSXAiGvkYs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WdY7i9LKAP1ETqBCOc9EhoWJ5HtnDKdZnC13Y1xSXPzKNF3Z/9eROqXiSQHQCu02XMmOn77vVO7df+e6DR5B7pSbOM6fiABTk59zG76djJfSBhu0cZOT1EN92nmTxPQq3FcMhe7Ngn50yQEEc6sxe3mNGfogsAogZPNgWx77kUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jplFHyjf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB70C113CC;
-	Wed, 29 May 2024 15:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716995405;
-	bh=9VTxAFuwXMVGR8QCr9KFqS8UEt1MJDSjeHSXAiGvkYs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jplFHyjfl5mKem+XFTnxrZE6kGguINK7gyfk7X2VTV8EEYtSJjek0PSh+3nMxIRHE
-	 Eb076fIMHNUwJID1VmSpSbVJB5ap36XWLKRUQMxqX56s3eJz+6T4F6bzQ0pd6WkZPZ
-	 iWvQVH6BQbpCR9OX7VfmJXCQVqv5YhP2Te0dmSxRdb04cxQkhICDitgtBhsUuAlWkG
-	 Ld6jfJX2qUiKE6l7+BauRKa18C3sk1HMl1x6qi2+CPT0GYsdWf+qBn5wmwI0qUTo5T
-	 VcUN3Q6T5OTUeC4OWJ5/rZuJxXqxyvaSOSt1DWYZksTKt9FVa9yJ/cvBYPrkHXpfGs
-	 jIzYAOg9KzaBQ==
-From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, Witold Sadowski <wsadowski@marvell.com>
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
- pthombar@cadence.com
-In-Reply-To: <20240529074037.1345882-1-wsadowski@marvell.com>
-References: <20240529074037.1345882-1-wsadowski@marvell.com>
-Subject: Re: (subset) [PATCH v6 0/5] Marvell HW overlay support for Cadence
- xSPI
-Message-Id: <171699540330.118008.2661040654002810758.b4-ty@kernel.org>
-Date: Wed, 29 May 2024 16:10:03 +0100
+	s=arc-20240116; t=1716995501; c=relaxed/simple;
+	bh=U9XeYahFP5qM1pI2/zD/me4C9iA60afmuetgFSYYx1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDFpsStGOBDf4Tyb/V0ON5Kqpssumzp6viety5IYz+ujbfSbQpGbS+CGE1IOoG/AQmzjVwiq1NmmnxKegRFCG6OXoGjRtjLK1j9fWKI0hXjsNGs4iqbL5rKkvll58D6XzFuYHtv3LiadMvCcWbY0gTaTiIpKQ2b5ZtpGz5WdWe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d5MuwJyg; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716995501; x=1748531501;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U9XeYahFP5qM1pI2/zD/me4C9iA60afmuetgFSYYx1w=;
+  b=d5MuwJygq5PwoDohvXHbkdRkzN9IOVx6ATbmUXoocbLN/0ldXiYrQu3W
+   LM7/7CoWbc+D0SpRSEA6D6RAVpajBysHN1pVBPrtVF48cx4IXJZ3INEqL
+   bZAG0fXwNWD1O1hMAFtG6j/WJb45KRbWB/F2I/SoIUoGie4YACR7LrBqe
+   c9xGVaevLNJOs6M0dqhYscKAwy2vWnAtsIFoJ8jC2Vu5/hHpaaVLZDBAU
+   dozncKKxjV95uE1IFeH6xifo8FRylLk0Ne/ghayVNGb+jcEflUz8DKZeb
+   xxqkycwl6Bd3m7AYSm7XzJ/QznpkDREN6UGlCp2zvIPquCV/tLHnJm9lj
+   w==;
+X-CSE-ConnectionGUID: SvinpZOpSUG46xRgkZF9Hw==
+X-CSE-MsgGUID: OO4tg4/CTWCP+20mYAWqHw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13355611"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="13355611"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:11:40 -0700
+X-CSE-ConnectionGUID: gVD+VuWSRr2FON0PRyAeAg==
+X-CSE-MsgGUID: 56ZQbB1sTfqsJkbc/Le1pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="35556268"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 08:11:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sCKxh-0000000BqBg-1tq8;
+	Wed, 29 May 2024 18:11:33 +0300
+Date: Wed, 29 May 2024 18:11:33 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
+Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
+	Maksim Kiselev <bigunclemax@gmail.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Liam Beguin <liambeguin@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drivers: iio: adc: add support for ad777x family
+Message-ID: <ZldFpSQPAmAhbW2I@smile.fi.intel.com>
+References: <20240522120005.18197-1-ramona.nechita@analog.com>
+ <Zk3-qxCb0zfR440Q@smile.fi.intel.com>
+ <SN6PR03MB432071701D6A19C3B4C0C33FF3F22@SN6PR03MB4320.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-2ee9f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR03MB432071701D6A19C3B4C0C33FF3F22@SN6PR03MB4320.namprd03.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 29 May 2024 00:40:31 -0700, Witold Sadowski wrote:
-> This patch series adds support for the second version of the Marvell
-> hardware overlay for the Cadence xSPI IP block. The overlay is a hardware
-> change made around the original xSPI block. It extends xSPI features with
-> clock configuration, interrupt masking, and full-duplex, variable-length SPI
-> operations.
+On Wed, May 29, 2024 at 03:01:06PM +0000, Nechita, Ramona wrote:
+
+..
+
+> >> +	/*
+> >> +	 * DMA (thus cache coherency maintenance) requires the
+> >> +	 * transfer buffers to live in their own cache lines.
+> >> +	 */
+> >> +	u8			reg_rx_buf[3] ____cacheline_aligned;
+> >> +	u8			reg_tx_buf[3];
+> >
+> >> +	u8			spidata_rx[32];
+> >> +	u8			spidata_tx[32];
+> >
+> >These will not be cache aligned. Is it a problem?
 > 
-> These functionalities allow the xSPI block to operate not only with memory
-> devices but also with simple SPI devices and TPM devices.
+> No, it should be fine without the alignment.
+
+I.o.w. it means that only reg_*x_buf are supposed to be in the different cache lines, correct?
+
+..
+
+> >Btw, can't you use regmap for IO?
 > 
-> [...]
+> Unfortunately, I don't think regmap could be used, because of the crc and the
+> fact that data is shifted out on the SPI SDO line in the interrupt. I
+> consider perhaps adding regmap to the mix might complicate things a bit. 
 
-Applied to
+Can you add this into the comment area of the patch?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+..
 
-Thanks!
+> >> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_N_LSB, lsb);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_N_MSB, msb);
+> >> +	if (ret)
+> >> +		return ret;
+> >
+> >Can you use 16-bit writes?
+> >Same Q to all similar LSB/MSB write groups.
+> 
+> I cannot do 16-bit writes due to how the spi functions on the chip and
+> because the registers for MSB/LSB are at different addresses.
 
-[1/5] spi: cadence: Ensure data lines set to low during dummy-cycle period
-      commit: 4a69c1264ff41bc5bf7c03101ada0454fbf08868
+They are supposed to be on the different addresses.
+You mean the distance between them > than stride?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+..
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> >> +	ret = devm_add_action_or_reset(&spi->dev,
+> >> +				       ad777x_clk_disable,
+> >> +				       st->mclk);
+> >> +	if (ret)
+> >> +		return ret;
+> >
+> >So, what's wrong with the _enabled() API?
+> 
+> Sorry, I am not sure what you mean here by _enabled() API, is there a
+> different mechanism that can be used for this type of operations?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+devm_clk_get_enabled()
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
-Mark
 
 
