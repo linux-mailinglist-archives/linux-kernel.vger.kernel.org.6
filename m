@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-193700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6096A8D30D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:18:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD7E8D30D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D31A9B2367C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:18:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D319EB29D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B9E181CE8;
-	Wed, 29 May 2024 08:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D7C181D0C;
+	Wed, 29 May 2024 08:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDgymBkU"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iv3lSvSC"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962B016938C;
-	Wed, 29 May 2024 08:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630CD169AC2
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970173; cv=none; b=D5Y/TPQ6s+uNzIX2YaYOlw/qHeoxQ6FPM+PoddITd8zRwCR+firggaZrm1F0xmeC/VPo5EiNaAQaoX9JESyAKUWIOmE8XR5vPFymva7N7F0xK0g7IdIJFQ8QNT96R6mWeWDZtz+X3Tx5ywJ+vZutaH+nMqwoHJ/oI59qGr2BTHc=
+	t=1716970199; cv=none; b=grIAvcdHe2bPH7ScpVEiyQ86OtruYoTY0SFTR9N/NpGtwOOnXUwSkns/Q8C/mxA3JwxcuyLcz5ROY/o3cC/+H6XxbKsSyl20WEBUIGiKUOCwcmJYOerWwHzYzLjUdbCzQJs3Ozxf4oOZ+h9A/m84McaAlqIdECwVmhtPWeFUoVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970173; c=relaxed/simple;
-	bh=i8tU8Ic/k4UuZKzBZDNg1YpkDmhPR4yS0jCvgdiGZq4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iIMgBMcGMj/0+TyDzT9CUp1ARej+EW1JIeQj/3u73mtgikh+oS7DVzVXIDPnIqMNGOuQA2W/eRfZuEKEnOc2F/vulxa94O3uzi4v+nnpShdKxPZ08ekdeCT0gQZe/IPTQ5aTj8GO5dE731b6kaRCA4thJosEKU9ygMBkEhShDU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDgymBkU; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57857e0f465so2223257a12.1;
-        Wed, 29 May 2024 01:09:30 -0700 (PDT)
+	s=arc-20240116; t=1716970199; c=relaxed/simple;
+	bh=WgixO3taSRbE0QziVmAcwTsoz8TFfpyR0rpCo3iNMFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQO76pn4P6Goe7BWRtdz54VX0awYoC0t1TEI+z8Ge4CRhDzB90AEV/jg7fBS/5StGcX+lxP67RVwZ3+U/3NfYBVJw0wZdrqIvdReKQAASpftycF++RKJh0xy8R7UZVubDybdKm3NB+L8N43Xe4F2d4YKFsr9q7p3cWjdObthHYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iv3lSvSC; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b119986f2so298003e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716970169; x=1717574969; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i8tU8Ic/k4UuZKzBZDNg1YpkDmhPR4yS0jCvgdiGZq4=;
-        b=MDgymBkUgKtSqi+yQH3Bxo7SNFhIAzlHIlPzgyvkfXUCGB/yFGsqJ6Cq7EEvBcNlSl
-         zhxgDDhLkzLnDveeRUnq0sY2QxepV755pIeBnnas1xONFELQPLEJverJN+E9ukdf6m85
-         au1bGK9zKRRwflnSu2xuvWnbGPPJgTJF0fqKs/i1WfLo55LVt80Z55ulOevQAUF3WsAc
-         2QkxuLwwqDKvFe6wPaXgIABFLs95gz23uw4HCSKmeNXIc2D0r7Wn1K/QmL+QrL4QL1J5
-         zX3jU2UVNNF+3tD3jtDJ2u6cDbJZez/xH0AraJhMwCXS4p0jABbjZvimAC+oWi+Lm+44
-         qLAQ==
+        d=linaro.org; s=google; t=1716970195; x=1717574995; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=enlxS5GkWub7qfeq6FBQU5uJl3JqVotYfwFdD9Rt9Ng=;
+        b=iv3lSvSC/z0PFnpTx+FY84lC5mmepLlw6H3HBuPcbKK930vVA/rqavJdWTabZGWQar
+         IHk5doCbVcTe0ptr6zcfrXgn6jJxgBu9Fjf54q2QwAftBM9f4orRnObqO092JvqzOeBh
+         Ae6cgYHfSkydMYo0uM+fMXIROAOI1En1hhYC0noPG9JL8pCQkencdfbZ5rVQcQZjkBWg
+         /yJhpgsul0atSYcirNwVqYsftr5afBhO/E8nu48+JS7OfW8dMnqBFJ0CPdqAvFewlnOE
+         kjlDXluHm/Y4zIA/VkyWtHvSrsTMmbb5RScCFGutCQVOMS0+9Vhy7WRBVCRoX2BdBJM2
+         5p2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970169; x=1717574969;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i8tU8Ic/k4UuZKzBZDNg1YpkDmhPR4yS0jCvgdiGZq4=;
-        b=YSs8tONvqN+7xXIiozjhTm+sRwpeTgIzyEtZlcMfzHkMeLqUaoaJDiL+yeRshFnlJP
-         8tEjXlkCteliDiJgFURaSDVkKeSGLtqIXO58ZoShikuXITY/faC8qcI41P7kWR3gPisS
-         vylFAsOX60+9GjzUV+HKnzzlysifARxWbZe133BYZ6HAF8KMKFXp5PhvdVe4B/wccGF4
-         UZvsAT+kxwsCgmjeAChOFeKM6k1I5moS6BwCbHqBnp1k6nUSB4VVsOs4FF7ttABdQU8d
-         OLDvv42LDjcfqRAlBxuCW3Yn/NGZVx5WdRmM36vl+TrRyqhGocaUM+Un2mBRqyYNOhI7
-         PCLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzMYxZ8TXzKKhCsXwZwBd63GMnVV+lZLbP0vp0PbQrIvd6Cj8ojMWDYi8dUSVXYpIJsxBswZmvsCO99E0o7DpHug6zCP1KJlzM3G31OrGC3aWcQscFGP9b3d46vz5KOwSEndSIx8N0
-X-Gm-Message-State: AOJu0YzK3rhl+6cN982zFwYJs1JD9mTNbFodudgvfHuzgiXkoR70vD1V
-	pR//8AZ6eTWA31JijEDsw62DZNnQjbupSU2pUQvlWFUXXyOhKZx+
-X-Google-Smtp-Source: AGHT+IEq6l34HhXrnlWLRvGM2v0fq27OL/+bpjCQdVA04/gtddmggIC7N+1G0ngNMVw4U02/TUo3ZA==
-X-Received: by 2002:a50:d7cc:0:b0:578:33f1:dafb with SMTP id 4fb4d7f45d1cf-578518ec3e4mr9976662a12.4.1716970168941;
-        Wed, 29 May 2024 01:09:28 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579ced17435sm4346473a12.53.2024.05.29.01.09.28
+        d=1e100.net; s=20230601; t=1716970195; x=1717574995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=enlxS5GkWub7qfeq6FBQU5uJl3JqVotYfwFdD9Rt9Ng=;
+        b=t8YlPSBTBK6i5u++8T7tq/7mQaQi+ODph1VMVIHo+ufDv2AFmztRs6OUCRDCmKfZrE
+         7OuSA5SoONIFWPQOqXJQHrU/jiaFXWf4WqA2OHFswW6UYL60JPWGb8vKvVHOH8IDSupJ
+         zptINjHQpAIqiQx2V+/bpiLmAu9pGl1fE06ZvSyUApF3LbnZeXlJ+Y8j5bEPWQX06BZ7
+         fUSwrG93AzJpgNPFpwNacuycnRRDLPXRWEdiDAbjAHKOyWz9EyQJdKvrS5hycly64bvO
+         ncjtjmLqu8QuX5D1n7jq5cx6OceRDJgm20fcHNSztANmVmKEd5grF4j8gt44GcIhRKg2
+         dGYA==
+X-Forwarded-Encrypted: i=1; AJvYcCU62Oiyw27xP3moJRByZgONPRCEKXvqo5dHE6VFIsZLxYV36IL54ZDX1RsdY2AtLnfk7s/J12LGXWDrZscXOrbmuSOqQHgTU1mlktkD
+X-Gm-Message-State: AOJu0YwmStVYAfL5ndEbzB5GkuDlX74zXpZpIludbGHUvuiq5sBaAUQU
+	wWXby3W40mvhqyr7ptSsiZeTUpOCJQ6DGKl4Y/Dsp0xVu83746N5fMPKqU/6bQg=
+X-Google-Smtp-Source: AGHT+IHAAOSe1YF9ohma3qLilcNBhTgUrp5XW+R17Dfxhf/XQBKuTb9CXtbrrq9LBMBwT336LwrXXQ==
+X-Received: by 2002:a05:6512:3128:b0:522:33cd:64bd with SMTP id 2adb3069b0e04-52964aba466mr8988769e87.27.1716970195416;
+        Wed, 29 May 2024 01:09:55 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529aa049e3csm859093e87.167.2024.05.29.01.09.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:09:28 -0700 (PDT)
-Message-ID: <73d7ba0e54a93696aa2c8cab3e6599038bddf533.camel@gmail.com>
-Subject: Re: [PATCH] iio: dac: ad9739a: drop COMPILE_TEST option
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>, Jonathan
- Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>, Anshul
- Dalal <anshulusr@gmail.com>, Andrea Collamati <andrea.collamati@gmail.com>,
-  linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 29 May 2024 10:09:28 +0200
-In-Reply-To: <81ec1d1a-d8de-47e4-a5d4-eeaaf1e806a2@app.fastmail.com>
-References: <20240528121304.3695252-1-arnd@kernel.org>
-	 <539a815398a3c991c1bc1a53967fbcba282dfe3b.camel@gmail.com>
-	 <81ec1d1a-d8de-47e4-a5d4-eeaaf1e806a2@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+        Wed, 29 May 2024 01:09:55 -0700 (PDT)
+Date: Wed, 29 May 2024 11:09:53 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
+	david.heidelberg@collabora.com, guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
+	mcanal@igalia.com, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] drm/ci: uprev IGT
+Message-ID: <bj6mpegmxo6i5o34xyxwiytdaokv2u6p5iu4eoek3ctqimwviy@jbo5aw7gy4ue>
+References: <20240529024049.356327-1-vignesh.raman@collabora.com>
+ <20240529024049.356327-5-vignesh.raman@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529024049.356327-5-vignesh.raman@collabora.com>
 
-On Wed, 2024-05-29 at 09:23 +0200, Arnd Bergmann wrote:
-> On Wed, May 29, 2024, at 09:20, Nuno S=C3=A1 wrote:
-> > On Tue, 2024-05-28 at 14:12 +0200, Arnd Bergmann wrote:
-> > > From: Arnd Bergmann <arnd@arndb.de>
-> > >=20
-> > > Build testing without SPI results in a warning:
-> > >=20
-> > > WARNING: unmet direct dependencies detected for REGMAP_SPI
-> > > =C2=A0 Depends on [n]: SPI [=3Dn]
-> > > =C2=A0 Selected by [m]:
-> > > =C2=A0 - AD9739A [=3Dm] && IIO [=3Dm] && (SPI [=3Dn] || COMPILE_TEST =
-[=3Dy])
-> > >=20
-> > > There is no need for this particular COMPILE_TEST option, as allmodco=
-nfig
-> > > and randconfig testing can just assume that SPI is enabled separately=
-.
-> > >=20
-> > > Drop it to avoid the warning.
-> > >=20
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> >=20
-> > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> >=20
-> > Only for my understanding. When does COMPILE_TEST makes sense to add?
->=20
-> The most common use is to enable building a driver
-> that is platform specific on x86 allmodconfig
-> or on randconfig, e.g.
->=20
-> config LPC18XX_DAC
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tristate "NXP LPC18xx DAC driv=
-er"
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_LPC18XX || COM=
-PILE_TEST
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on HAS_IOMEM
->=20
-> Since ARCH_LPC18XX is only visible on arch/arm, the
-> driver would never be build tested on anything else
-> without the ||COMPILE_TEST.
+On Wed, May 29, 2024 at 08:10:47AM +0530, Vignesh Raman wrote:
+> test-list.txt and test-list-full.txt are not generated for
+> cross-builds and they are required by drm-ci for testing
+> arm32 targets. This is fixed in igt-gpu-tools. So uprev
+> IGT to include the commit which fixes this issue. Also
+> disable building xe driver tests for non-intel platforms.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+> ---
+> 
+> v2:
+>   - Split IGT uprev to seperate patch.
+> 
+> v3:
+>   - No changes.
+> 
+> ---
+>  drivers/gpu/drm/ci/build-igt.sh  | 4 ++++
+>  drivers/gpu/drm/ci/gitlab-ci.yml | 2 +-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
+> index b7d2a49a6db3..eddb5f782a5e 100644
+> --- a/drivers/gpu/drm/ci/build-igt.sh
+> +++ b/drivers/gpu/drm/ci/build-igt.sh
+> @@ -45,6 +45,10 @@ MESON_OPTIONS="-Doverlay=disabled                    \
+>                 -Dlibunwind=enabled                   \
+>                 -Dprefix=/igt"
+>  
+> +if [[ "$KERNEL_ARCH" = "arm64" ]] || [[ "$KERNEL_ARCH" = "arm" ]]; then
+> +    MESON_OPTIONS="$MESON_OPTIONS -Dxe_driver=disabled"
+> +fi
+> +
+>  mkdir -p /igt
+>  meson build $MESON_OPTIONS $EXTRA_MESON_ARGS
+>  ninja -C build -j${FDO_CI_CONCURRENT:-4} || ninja -C build -j 1
+> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+> index 8f32de63d92e..1b29c3b6406b 100644
+> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
+> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+> @@ -5,7 +5,7 @@ variables:
+>    UPSTREAM_REPO: git://anongit.freedesktop.org/drm/drm
+>    TARGET_BRANCH: drm-next
+>  
+> -  IGT_VERSION: d2af13d9f5be5ce23d996e4afd3e45990f5ab977
+> +  IGT_VERSION: 0df7b9b97f9da0e364f5ee30fe331004b8c86b56
 
-Makes sense... Thanks!
+Let's land this, then I'll ask to uprev to
+dc2d7fb4f978048b87707ea9ec32da748b01b378, which fixes an issue with the
+writeback tests on MSM devices.
 
-- Nuno S=C3=A1
+>  
+>    DEQP_RUNNER_GIT_URL: https://gitlab.freedesktop.org/anholt/deqp-runner.git
+>    DEQP_RUNNER_GIT_TAG: v0.15.0
+> -- 
+> 2.40.1
+> 
 
+-- 
+With best wishes
+Dmitry
 
