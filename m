@@ -1,243 +1,140 @@
-Return-Path: <linux-kernel+bounces-193852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CD38D332B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:36:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B3D8D3330
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79CD9B22B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 605481F263DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE0116A386;
-	Wed, 29 May 2024 09:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2641116E865;
+	Wed, 29 May 2024 09:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="O3z2qT01"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YR56hVG+"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C2133CFC;
-	Wed, 29 May 2024 09:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBF516A381;
+	Wed, 29 May 2024 09:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716975357; cv=none; b=S8N87pzervtCDyTZjzlk3XSt3ZZnvOZNEMSW9KYRJVycANT7mIoCg9O8iqVKLJD/+sRG4xKu3L50wMHSlA+uyiB+Vd2Wt0mQ90azQ8Ds90FowNLjXuVO6dy7cSrqLETBDKbctGiHFIJZ53qB+kBaYq7+O5smEeyvkyd8P3s5+Kc=
+	t=1716975500; cv=none; b=Ou1i3bWq6G6+arSHYuVebTB4tlRPxmuj6RKgvWHmEEHKysHFwwyjPUZMyf3DFhTB3iLo3pc+YRv2SfwS4v3hKPMzwQuvwkYP5gv2nbqNWIqnxM+wEPNlClkpyy27NSTnSaqhcdjDve4n0GV4t995mVDiDpoQNuzt/hlhPgow/94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716975357; c=relaxed/simple;
-	bh=hfsNSVa4Iha07dFb1XFlGFqEe5SlCuyXxb6CXKx53OE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gzpGMX3WRZhMVJqQ0LXpy57HY/wzPz04Nna82i9oc1HlWk3Puc4iq/a1ydo09JT8nJrYMA6ylSdPGXnLfoWN4OuwvlyF3PMFceuwQfu6To3wff/OHxkpK4IOUQaRqz3tMzGdvDq8fl7VJ1BKwW1Ddpb9WIDATxsD6mh2Kb8gBlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=O3z2qT01; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 016149CA;
-	Wed, 29 May 2024 11:35:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716975350;
-	bh=hfsNSVa4Iha07dFb1XFlGFqEe5SlCuyXxb6CXKx53OE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O3z2qT01srHW4mUC/aH8rNQbe9GWy68p5BGB6AcEs5orkZFIpgTZbIvltaqoOoylv
-	 V0Ch0Ujm3iOYwR6PQLk3rdCSA8wDC994rL2weam4FcDtGQwwMyFie+BqQloKiAXG+Z
-	 CcwoLkRenJQeauMHmfqSRdRxg1NZc79X1fJC2im4=
-Date: Wed, 29 May 2024 12:35:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Haibo Chen <haibo.chen@nxp.com>
-Subject: Re: [PATCH v2 2/4] mfd: adp5585: Add Analog Devices ADP5585 core
- support
-Message-ID: <20240529093541.GL1436@pendragon.ideasonboard.com>
-References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
- <20240528190315.3865-3-laurent.pinchart@ideasonboard.com>
- <ZlYwJryxeZ2LAKYG@surfacebook.localdomain>
- <20240528201326.GA8500@pendragon.ideasonboard.com>
- <CAHp75VeHA8qH_S=KJjAMv24vGP=hmeN9wSt1_NPsRhBZfEYXXw@mail.gmail.com>
+	s=arc-20240116; t=1716975500; c=relaxed/simple;
+	bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ctky4x/bZQD0GtdVXkDs410Jiccc7OtcIaKp+2rDszebLjQjtqAzNJMt2L6ZRPgxAUDCwHfVc5sEjI4GXVfzhhFKgmkSAizzMx+UjbJ7zpqygJB9soFt7PLi9qAUcGIvefWfSaDoKPblbegH2XNBsrpLYufGhaetwAEcS5TYn5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YR56hVG+; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e6f51f9de4so25522911fa.3;
+        Wed, 29 May 2024 02:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716975497; x=1717580297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
+        b=YR56hVG+45U8zxvkuLUwK+wkrRHivvK1jlcj0kZfzXP2DqzPpRhPgPVTI9x9q9hjRA
+         bTrocIfEzO6ZA191VcWAU4KJXZQroSqAuOqj39TIveN0CYrwhiml/1twtnJ9MSXVt8W2
+         uWjE/ppy1nJ0/XIS6L4KMnMAp2aBRi1MjKVyW8kgESOhuuY0Ca7c+lt9R0ww0zb2YgIo
+         FVmINdYwiqQ2kE2+6Xejey+2r9rUbZY9bASlB+/wcgoSi+j1sKR2RSp4hoiGWbe+u127
+         Gv7OmU8OCNU384w/cTm6+r4PLlYr8VI62j713Vkf8X8qGSdWRIVZrLKENXLf335z7EzX
+         aSKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716975497; x=1717580297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
+        b=fEnxUtRs5MBMFz35UVNi4dMh7ASKhFQuPpqvQu4rXabgZJxvXWLlcBNUNWqyGWN2UI
+         0xVYv2OkQOC88A5JndyG7nqdmlsSdGTVKs5zUVc8UOVtvdwwwZzw4TheFpaTpBCPV0wX
+         2oqarbm3OBGBS1gLFiluXgCuyAQIKLQD4Yhs5TBKEL40rFN7nhVi41T5E22GGdh7BTqk
+         Ua2/Z7Zj25Odgz6C9CtRie7z4+q0elTwtitpkXAMsqKBJAJwS5So8T7HRGAsetDoIhNV
+         GIEdQ8YsTqXf/B6JPEciTYRac65+Xdz7QDkxQrU5LJZ/eCvW6W5eK2WO29AYEMbsptJq
+         NsYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZXmBpLSsLKWbSfIwqhJrneoS8uL+1FmPdG6oNisbQl1tli96Jo+UPCDIB9sq2w+jq1h1G9+l6+6CWIRAeP/Wp6p8QEQGGyW3NrihQve1fTSKxmSKUtDWZr+KW8Hs9rQgB/4U/qO1JVeQqLbk7ayzqD/CP
+X-Gm-Message-State: AOJu0YxftKEe4ULDTFO1ncV2amwVuOGoXJO/G1+akGnM65Hy5wCrgxL7
+	Vh96At4+rRE66kS6KzSFyvAl0RiH9WzTxoISpjrDtQ1xtNDcaNTOAy7562aqB9C7GsTtR7q2+cf
+	z01sO4+BrvJUz2kbF5ERJIMHOLXc=
+X-Google-Smtp-Source: AGHT+IGmab8FsMOO1Mi1C3BhAPxA07HolrdLa1W444dOo1v7T4E8Z9DRX4WhskR3J6/tv+9ZXdM+1wnNxU/f8/8kKLQ=
+X-Received: by 2002:a05:6512:3e19:b0:529:b718:8d00 with SMTP id
+ 2adb3069b0e04-529b7188dc4mr5909595e87.8.1716975496547; Wed, 29 May 2024
+ 02:38:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VeHA8qH_S=KJjAMv24vGP=hmeN9wSt1_NPsRhBZfEYXXw@mail.gmail.com>
+References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com> <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
+ <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com> <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
+ <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com> <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
+ <5c94947b-1f1f-44a7-8b9c-b701c78350b4@canonical.com> <CAGudoHFxma+H_iHPV8+gfEkHc0uwFD8=rJtFy7ZE3TH+7tGiwQ@mail.gmail.com>
+ <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
+In-Reply-To: <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 29 May 2024 11:38:04 +0200
+Message-ID: <CAGudoHGqvAuAYnc75xRhSMYfxRbgpQuCYnxUWiCXJM8YtGJxjQ@mail.gmail.com>
+Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
+ and potential solutions
+To: John Johansen <john.johansen@canonical.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
+	"Shukla, Santosh" <Santosh.Shukla@amd.com>, "Narayan, Ananth" <Ananth.Narayan@amd.com>, 
+	raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com, 
+	paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+On Wed, May 29, 2024 at 2:37=E2=80=AFAM John Johansen
+<john.johansen@canonical.com> wrote:
+> I don't have objections to moving towards percpu refcounts, but the overh=
+ead
+> of a percpu stuct per label is a problem when we have thousands of labels
+> on the system. That is to say, this would have to be a config option. We
+> moved buffers from kmalloc to percpu to reduce memory overhead to reduce
+> contention. The to percpu, to a global pool because the percpu overhead w=
+as
+> too high for some machines, and then from a global pool to a hybrid schem=
+e
+> because of global lock contention. I don't see a way of doing that with t=
+he
+> label, which means a config would be the next best thing.
+>
 
-On Wed, May 29, 2024 at 08:44:26AM +0300, Andy Shevchenko wrote:
-> On Tue, May 28, 2024 at 11:13 PM Laurent Pinchart wrote:
-> > On Tue, May 28, 2024 at 10:27:34PM +0300, Andy Shevchenko wrote:
-> > > Tue, May 28, 2024 at 10:03:12PM +0300, Laurent Pinchart kirjoitti:
-> 
-> ...
-> 
-> > > > +   depends on I2C && OF
-> > >
-> > > Why OF?
-> >
-> > Because the driver works on OF systems only.
-> >
-> > > No COMPILE_TEST?
-> >
-> > The driver won't compile without CONFIG_I2C, so I can use
-> >
-> >         depends on I2C
-> >         depends on OF || COMPILE_TEST
-> >
-> > Do you think that's better ?
-> 
-> I think that dropping OF completely is the best.
-> OF || COMPILE_TEST would work as well, but I still don't know why we need this.
+There was a patchset somewhere which adds counters starting as atomic
+and automagically converting themselves per-cpu if there as enough
+load applied to them. General point being it is plausible this may
+autotune itself.
 
-For the same reason that many drivers depend on specific CONFIG_$ARCH.
-They can't run on other platforms, the dependency hides the symbol for
-users who can't use the driver. This driver works on OF platforms only.
+Another option would be a boot-time tunable.
 
-> ...
-> 
-> > > + array_size.h
-> > > + device.h // e.g., devm_kzalloc()
-> > >
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/moduleparam.h>
-> > > > +#include <linux/init.h>
-> > > > +#include <linux/slab.h>
-> >
-> > I'll drop those 3 headers, there's not needed anymore.
-> >
-> > > > +#include <linux/i2c.h>
-> > >
-> > > > +#include <linux/of.h>
-> > > > +#include <linux/of_device.h>
-> > >
-> > > You don't need them, instead of proxying...
-> >
-> > of.h for of_device_get_match_data() and of_match_ptr(). I'll drop the
-> > former, but I need the latter, so I'll keep of.h
-> 
-> Why do you need of_match_ptr()? What for?
+> Not part of your patch but something to be considered is that the label t=
+ree
+> needs a rework, its locking needs to move to read side a read side lock l=
+ess
+> scheme, and the plan was to make it also use a linked list such that new
+> labels are always queued at the end, allowing dynamically created labels =
+to
+> be lazily added to the tree.
+>
 
-That's actually not needed, I'll drop it.
+It's not *my* patchset. ;)
 
-> > of_device.h for historical reasons probably, I'll drop it.
-> >
-> > > > +#include <linux/mfd/core.h>
-> > > > +#include <linux/mfd/adp5585.h>
-> > >
-> > > m is earlier than 'o', but with above drop no more issue :-)
-> > >
-> > > ...just include mod_devicetable.h.
-> > >
-> > > > +#include <linux/regmap.h>
-> > >
-> > > + types.h // e.g., u8
-> 
-> I assume that all marked with + in my previous reply you agree on?
+> I see the use of the kworker as problematic as well, especially if we are
+> talking using kconfig to switch reference counting modes. I am futzing wi=
+th
+> some ideas, on how to deal with this.
+>
 
-If I don't reply to a particular comment it means I agree with it and
-will address it, yes.
+Thanks for the update. Hopefully this is going to get sorted out in
+the foreseeable future.
 
-> ...
-> 
-> > > > +#define            ADP5585_MAN_ID(v)               (((v) & 0xf0) >> 4)
-> > >
-> > > GENMASK()
-> >
-> > This is not a mask. Or do you mean
-> >
-> >         (((v) & GENMASK(7, 4)) >> 4)
-> >
-> > ?
-> 
-> Yes.
-> 
-> > I think that's overkill.
-> 
-> Why? You have a mask, use it for less error prone code.
-
-I'll change this to
-
-diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
-index fa4092a5c97f..924758b8a3cd 100644
---- a/drivers/mfd/adp5585.c
-+++ b/drivers/mfd/adp5585.c
-@@ -125,7 +125,7 @@ static int adp5585_i2c_probe(struct i2c_client *i2c)
- 		return dev_err_probe(&i2c->dev, ret,
- 				     "Failed to read device ID\n");
- 
--	if (ADP5585_MAN_ID(id) != ADP5585_MAN_ID_VALUE)
-+	if (id & ADP5585_MAN_ID_MASK != ADP5585_MAN_ID_VALUE)
- 		return dev_err_probe(&i2c->dev, -ENODEV,
- 				     "Invalid device ID 0x%02x\n", id);
- 
-diff --git a/include/linux/mfd/adp5585.h b/include/linux/mfd/adp5585.h
-index f06a574afedf..f5776ee844dc 100644
---- a/include/linux/mfd/adp5585.h
-+++ b/include/linux/mfd/adp5585.h
-@@ -12,8 +12,8 @@
- #include <linux/bits.h>
- 
- #define ADP5585_ID			0x00
--#define		ADP5585_MAN_ID(v)		(((v) & 0xf0) >> 4)
--#define		ADP5585_MAN_ID_VALUE		0x02
-+#define		ADP5585_MAN_ID_VALUE		0x20
-+#define		ADP5585_MAN_ID_MASK		GENMASK(7, 4)
- #define ADP5585_INT_STATUS		0x01
- #define ADP5585_STATUS			0x02
- #define ADP5585_FIFO_1			0x03
-
-> ...
-> 
-> > > > +#define            ADP5585_Rx_PULL_CFG_MASK        (3)
-> > >
-> > > GENMASK()
-> >
-> > Not here, as this value is meant to be passed to ADP5585_Rx_PULL_CFG().
-> 
-> Why is it marked as a mask? Rename it to _ALL or alike.
-
-It's a mask, but used as
-
-	ADP5585_Rx_PULL_CFG(ADP5585_Rx_PULL_CFG_MASK)
-
-We're reaching a level of bike-shedding that even I find impressive :-)
-As with a few other of your review comments that I think are related to
-personal taste more than anything else, I'll defer to the subsystem
-maintainer and follow their preference on this one.
-
-> ...
-> 
-> > > > +#define            ADP5585_C4_EXTEND_CFG_MASK      (1U << 6)
-> > >
-> > > > +#define            ADP5585_R4_EXTEND_CFG_MASK      (1U << 5)
-> > >
-> > > > +#define            ADP5585_R3_EXTEND_CFG_MASK      (3U << 2)
-> > >
-> > > > +#define            ADP5585_R0_EXTEND_CFG_MASK      (1U << 0)
-> > >
-> > > > +#define            ADP5585_OSC_FREQ_MASK           (3U << 5)
-> > >
-> > > BIT() / GENMASK()
-> >
-> > I'll use GENMASK for the masks.
-> 
-> For a single bit the BIT() is okay, and TBH I don't remember if
-> GENMASK() supports h == l cases.
-
-I've tested it and it works.
-
--- 
-Regards,
-
-Laurent Pinchart
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
