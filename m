@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-193851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1145D8D331A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:34:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC5F8D333C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411001C23E3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80AE289D6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89D516A379;
-	Wed, 29 May 2024 09:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68156167DB1;
+	Wed, 29 May 2024 09:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="cG3RWrcA"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="Cz6a153t"
+Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF51169AD9
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C21C169AD1;
+	Wed, 29 May 2024 09:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716975239; cv=none; b=SrP9+1s7GEVvFs61pRD7XKE2ksoQ4M/3gNgdke5klerwCVDJwU0Ti8DY+/7UxRDQEBQPPriFq1jV/tHd9ReWMV14q7saE5pLe1YqkZxvFcSFsg4ZJlBVJYUJRYm+XnWhvBQYhQzjM/KyZx8hP5VvD/DI0OwDgEpKM3gYEaTHSMU=
+	t=1716975586; cv=none; b=i94RddPA1Fl/rieEj2Yhb/Y7e4RUSsJ04xNO+k/PKmiTwGtmW+Kpu6VE7Wdk6u0Z9k0bXvEpGnGcG0yOV8OYAC7Kczk7cKflB8gQN0nMy8kg0eqYe51uwOhFj2KDCfnGTrh10ZoYy3DDFPh4T8cgoTMx9UZf4lbB2L4CbKKZswM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716975239; c=relaxed/simple;
-	bh=l5QrRv4O9i6/p49Rq5SZv/lStE6jQlyT9WYDPbvrkcw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JooOv3T7z5L2OhpGZUKKNqF3zxBYgbVvN/w11Cg6hkeqUqjVKRFM31Aa2pNhl/VyN05h5h/tPod6rvgoCvfmSi2v2Dv+sjsYHA8iYzLm2rIEvkSEzt1mGHOREcdP7GVnP85k5qOUikt9kLD9CmbxgevaKEGJnOuNfElcbguqyEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=cG3RWrcA; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b96a78639aso978270eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 02:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1716975236; x=1717580036; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pa54c7QY45UehqcsWmO/45EGLoGqHOsodal/OABdWYY=;
-        b=cG3RWrcABgDahNg8ywT7PPrRY8CYd5dqrP7erVFMYgXUZPh4LEn6MB6XGTQRA03kKP
-         fnaKz5lhIymR+FUjsHehIhB6GOGIzFEDCyr54IWadeSVxp/OebtSDKc1BIidCPoKDTdY
-         tKaARzM8Q/IaaP6O+74n+Zd0fStTN5IZDykofNp3ill2A2vjZZt/iUVy82YqtZyOsFvG
-         JLG1mPXYNB5SAyqmtwLuwKIeOjoDnJ+bNH6eC33K1NrtJ90O8vAGFg5A8dzyCVlSqqqy
-         k5Vg1eeU1pdMLfQ7H13PJRLzI7hQJKzNXCL1d2HM4iDePHS7vaAJ8ucVhK02KKxQv9tf
-         08/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716975236; x=1717580036;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pa54c7QY45UehqcsWmO/45EGLoGqHOsodal/OABdWYY=;
-        b=trlZNInZ0njk9CDapPw31uboMcDx0Xmt/vWDCh8/BJq5azRGwcEJmkZ32p9A6JbJrM
-         2s+xFMmd9GmNYT46O8MFRBMjAGn6piWHFYEZMpe8s9kjMEtF5rXLCZ/iKDiTZR2d85RO
-         4p3e8hhHKY9gGGpYLcGADoL//mZcn6U5QWNcYSQS7vueqgH1LXsgWfHWfYhSwVuL73rn
-         rlRqv6oWLARE7Uql4zevU6PeDMuyrsNtrTXald3XPiM+/feAcnE7oTh6FKnhV6POvifo
-         8J/h66AAjrwTt58bo3lM44mmfGIZfgK9y3romOscFzSrixyEnolJxzZEgP++O+zEXqjp
-         43MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRLsYgRgQYQzwRAOF3ZMTTF9F4J2H0eF3QZU2LkX9kNXnpaxLlOEEvOusNFdR5KNeUS4+l3gBCBdxSxMzw8YrukYNIZDbx/MHPDHmX
-X-Gm-Message-State: AOJu0YzGJvJmsrGmqWPQw9/SjYPbPGNJH7jlrVwF8HQtIdfFpY2acywq
-	wm7ur4c78mtUGjOTJp0uhlbClZyQRapQvc32oVwkw3ae6SFQGaBOZZyS+TMwdRdTqoLkNW0OEC8
-	DYaS4M1yyHsjlWlG7qhS6iFdECJ5AG/xSSK/JbQ==
-X-Google-Smtp-Source: AGHT+IEFckLl6SgF2ZIIsWM6r/IfyUxXDxJs1rCuhc04QaE6m5836ItC1YeowXBKeV4tdyQW4ZvMZo8zPmFUl/VM1Ec=
-X-Received: by 2002:a4a:dcc4:0:b0:5b9:8dd6:3d62 with SMTP id
- 006d021491bc7-5b98dd649e1mr8998720eaf.0.1716975236516; Wed, 29 May 2024
- 02:33:56 -0700 (PDT)
+	s=arc-20240116; t=1716975586; c=relaxed/simple;
+	bh=l7mhXePXHTFDyJUwQC4y7lNYr3qtq/le3v+/Gidrbl0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ClkeP+irobvaamsgZrF5nW/8EbZJkbhZcXikhu6Fhh3oGg7nk1R3i3aB2HZ8YdAB17thww8z7kdVQwhLtL2XvkAlyUzSkFcqXMjW7RfTb4cPP7et3G6Bm0ntSz489yDFFxYaFkINsdt6+1r/PX/4cjEz9kfr5jLpXcoR4l5K5LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=Cz6a153t; arc=none smtp.client-ip=178.154.239.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from mail-nwsmtp-smtp-production-main-92.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-92.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:20a3:0:640:7ed3:0])
+	by forward502b.mail.yandex.net (Yandex) with ESMTPS id CCD715F368;
+	Wed, 29 May 2024 12:34:03 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-92.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1YNEP8GXnKo0-fskH20Jg;
+	Wed, 29 May 2024 12:34:02 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1716975242; bh=l7mhXePXHTFDyJUwQC4y7lNYr3qtq/le3v+/Gidrbl0=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=Cz6a153tsNlUNXCWJA+xj20FfesTujtqIfabhWuo/O35m+IyHW61ET45zp6Xby87C
+	 1VYv/PrXJwOE+b1Tp/R2PV/qgU+XFF4ONVWXk2ha5dVz2W1s29lsVxxeXPMNP3PHAe
+	 LnLrrq9mgp7iFNjP+qd7/iU+vExcRSDOMHzUbAN8=
+Authentication-Results: mail-nwsmtp-smtp-production-main-92.myt.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <5757d0ff5754f537b16ae36f9e7b5c2399c2cb5e.camel@maquefel.me>
+Subject: Re: [PATCH v2 0/3] dmaengine: ioatdma: Fix mem leakage series
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Dave Jiang <dave.jiang@intel.com>, n.shubin@yadro.com, Vinod Koul
+	 <vkoul@kernel.org>, Logan Gunthorpe <logang@deltatee.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux@yadro.com
+Date: Wed, 29 May 2024 12:34:02 +0300
+In-Reply-To: <e3ec5070-abb7-4adc-9cd1-c459ca27b531@intel.com>
+References: <20240528-ioatdma-fixes-v2-0-a9f2fbe26ab1@yadro.com>
+	 <e3ec5070-abb7-4adc-9cd1-c459ca27b531@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
- <20240524103307.2684-3-yongxuan.wang@sifive.com> <20240527-widely-goatskin-bb5575541aed@spud>
-In-Reply-To: <20240527-widely-goatskin-bb5575541aed@spud>
-From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Date: Wed, 29 May 2024 17:33:45 +0800
-Message-ID: <CAMWQL2jHLVtGA3RzPG-Qp5k8qhzDttNQjkSp5X2EMYCyFWKwLA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 2/5] dt-bindings: riscv: Add Svadu Entry
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	cleger@rivosinc.com, alex@ghiti.fr, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Conor,
+Hello Dave!
 
-On Mon, May 27, 2024 at 11:09=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
->
-> On Fri, May 24, 2024 at 06:33:02PM +0800, Yong-Xuan Wang wrote:
-> > Add an entry for the Svadu extension to the riscv,isa-extensions proper=
-ty.
-> >
-> > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
->
-> I'm going to un-ack this, not because you did something wrong per se,
-> but because there's some discussion on the OpenSBI list about what is
-> and what is not backwards compatible and how an OS should interpret
-> svade and svadu:
-> https://lists.infradead.org/pipermail/opensbi/2024-May/006949.html
->
-> Thanks,
-> Conor.
->
-
-ok. I will remove it in the next version.
-
-Regards,
-Yong-Xuan
-
+On Tue, 2024-05-28 at 09:08 -0700, Dave Jiang wrote:
+>=20
+>=20
+> On 5/27/24 11:09 PM, Nikita Shubin via B4 Relay wrote:
+> > Started with observing leakage in patch 3, investigating revealed
+> > much
+> > more problems in probing error path.
+> >=20
+> > Andy you are always welcome to review if you have a spare time.
+> >=20
+> > Thank you Andy and Markus for your comments.
+> >=20
+> > Signed-off-by: Nikita Shubin <n.shubin@yadro.com>
 > > ---
-> >  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/=
-Documentation/devicetree/bindings/riscv/extensions.yaml
-> > index 468c646247aa..598a5841920f 100644
-> > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > @@ -153,6 +153,12 @@ properties:
-> >              ratified at commit 3f9ed34 ("Add ability to manually trigg=
-er
-> >              workflow. (#2)") of riscv-time-compare.
-> >
-> > +        - const: svadu
-> > +          description: |
-> > +            The standard Svadu supervisor-level extension for hardware=
- updating
-> > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull=
- request
-> > +            #25 from ved-rivos/ratified") of riscv-svadu.
-> > +
-> >          - const: svinval
-> >            description:
-> >              The standard Svinval supervisor-level extension for fine-g=
-rained
-> > --
-> > 2.17.1
-> >
+> > Changes in v2:
+> > - dmaengine: ioatdma: Fix error path in ioat3_dma_probe():
+> > =C2=A0 Markus:
+> > =C2=A0=C2=A0=C2=A0 - fix typo
+> >=20
+> > - dmaengine: ioatdma: Fix kmemleak in ioat_pci_probe()
+> > =C2=A0 Andy:
+> > =C2=A0=C2=A0=C2=A0 - s/int/unsigned int/
+> > =C2=A0=C2=A0=C2=A0 - fix spelling errors
+> > =C2=A0=C2=A0=C2=A0 - trimmed kmemleak reports
+> >=20
+> > - Link to v1:
+> > https://lore.kernel.org/r/20240524-ioatdma-fixes-v1-0-b785f1f7accc@yadr=
+o.com
+> >=20
+> > ---
+> > Nikita Shubin (3):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmaengine: ioatdma: Fix leaking on versi=
+on mismatch
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmaengine: ioatdma: Fix error path in io=
+at3_dma_probe()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmaengine: ioatdma: Fix kmemleak in ioat=
+_pci_probe()
+> >=20
+> > =C2=A0drivers/dma/ioat/init.c | 54 ++++++++++++++++++++++++++----------=
+-
+> > ------------
+> > =C2=A01 file changed, 29 insertions(+), 25 deletions(-)
+> > ---
+> > base-commit: 6d69b6c12fce479fde7bc06f686212451688a102
+> > change-id: 20240524-ioatdma-fixes-a8fccda9bd79
+>=20
+> Thanks for the fixes.=20
+
+Glad i could help.
+
+You might find this one useful:
+
+https://patchwork.ozlabs.org/project/qemu-devel/patch/20240524114547.28801-=
+1-nikita.shubin@maquefel.me/
+
+I think sometimes it's much more faster to test something with QEMU
+than tinkering with real hardware.
+
+>=20
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com> for the series
+>=20
+> Would be nice if someone wants to move everything to the devm_*
+> management APIs. Would make this a lot less messy. Probably not worth
+> the effort though given how old the driver is and no more devices are
+> being created to use this driver.=20
+>=20
+> >=20
+> > Best regards,
+
 
