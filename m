@@ -1,91 +1,59 @@
-Return-Path: <linux-kernel+bounces-193277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D138D29B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:57:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09DB8D29B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B2A328410F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5698D1F26BA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21C615A858;
-	Wed, 29 May 2024 00:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5B515AACA;
+	Wed, 29 May 2024 00:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6uXwrdI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="P30Ti1Zl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7F3139CF6;
-	Wed, 29 May 2024 00:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63C15A4B0;
+	Wed, 29 May 2024 00:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716944269; cv=none; b=m5Ggl67Ap+0ahZw3/xvR9Gb7LKgNDEDQocua1/88jTyTWDvt81YjcmGoOXL3m+DG9WgBTQlkvSkISdihFw9pctnLOp2g1qGOxPQQ5G7aOGgCUgGYy+JITrHWwS1g1iHAbDVS+RwgmRSf2rWFBwoPB7gOn7mwOo7G8Ruv1nBWYfI=
+	t=1716944271; cv=none; b=AwJafN4TxBpPsqOvzyBY6/oBYM8m5LYiVzDvFlM91aKyOXpQu7L62sbsD/oV0US9aNwbD3geJ9gmckXrvxucuTGSQX2VkPJ7lnrGcRh6/oDE2lpgmI/5LfwzTVzGp12h2WHGuiqsjzi1e6Vvo3ZlkV9lvLlqFMealnxYtjRCyIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716944269; c=relaxed/simple;
-	bh=9PMDHi0i2X7JYHYfsjL5TSPtAzVp+Z//KwjHgfx3R6M=;
+	s=arc-20240116; t=1716944271; c=relaxed/simple;
+	bh=AraHFqx4I0Qj3E8eWDPfD85mAXFWlrNgrS4CLt0j9Wk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eU6M2BNtd6He87w4SVCrZylVIkmM4bkVnwk29SKgRqMAJ4S/3+RcMmR4VLHWEWStzG5z7nxFw5yc8xXF/wtKySFfyEDBeutg1IsTFXem55HtERx6htkNpqYtqUdtcsz1m6H3MyDQVkrrnwZB4GP58HBphEvmLtwtHSJQBM3JU/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6uXwrdI; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716944267; x=1748480267;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9PMDHi0i2X7JYHYfsjL5TSPtAzVp+Z//KwjHgfx3R6M=;
-  b=g6uXwrdIxHqlF7i0gWIPf4/mJ3jZbdecPCBIMGXfI+IMlXdryPg6OkG0
-   EHiBVelux3MyUwllYdc4UKLIWX5Cw+t3XffbTw1pcD11yADxVRB6O/FYq
-   ZhhhkvSfbUGvkH8g8U2aRhInaJuk09EaPKZeNrrkKi2oEotTxXiy+CuUN
-   NV4Bn1z3cDzJQ/qgB3a/Hcn/r85AZIgqnfWWd5aD/8FCah/Hy2rQJvND7
-   eBo+ojZvK98d4lbPgvHo9RCBwLpzsy9I5EkZAPk+prxM6B7QGiVJxMhTH
-   0BgeYWMkubeDmMTseP0Om800PuLKRlwhf2I6+suqhvWVIY8cwQkSEys+M
-   g==;
-X-CSE-ConnectionGUID: pWa5x9XnQL2Vf6I7JATkXQ==
-X-CSE-MsgGUID: hOY17jcWT/SdN7/rMDeZow==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24738016"
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="24738016"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 17:57:46 -0700
-X-CSE-ConnectionGUID: 9XYhmVTTSMK9lfuGzBmNlA==
-X-CSE-MsgGUID: XvW19c5xTcKwgSa5g6SciA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="35317869"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 28 May 2024 17:57:42 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sC7dL-000Cwn-2I;
-	Wed, 29 May 2024 00:57:39 +0000
-Date: Wed, 29 May 2024 08:57:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chao Wei <chao.wei@sophgo.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Subject: Re: [PATCH 5/5] riscv: dts: sophgo: Add LicheeRV Nano board device
- tree
-Message-ID: <202405290822.4dIYJxLq-lkp@intel.com>
-References: <20240527-sg2002-v1-5-1b6cb38ce8f4@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VJeI0ACiyZ90dHgwKqJsXpennUt97P7JT01JQUpb1nJdM7JHVtlM0WlG0+po2QbeSJhYfD5O59kp5kigbiyM5Mefh8pb51yfy8vzjNiQS+nxCMNXN7uNoGPgp/I5Mx+eKW5FdNuI80Cj9jDEuBXduL3rsqv5jTmNbu9Oogb6F90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=P30Ti1Zl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Uc9wbdSCjB4aRQaMQK3vAbL5GRmBcqg8D+vgFNE/IIo=; b=P30Ti1ZluiSyOk4p3JxX6rPt2u
+	/tmdHiWPoKok8CAOrXsZx+k98mQSzCZi/iOjBLnm097GVh0YiFH6xhQ4VMfHjGIIa6wTrzboxGOXO
+	mdt5FZkuH3elryg7WPX3nPKwold6yyP4n8GJW7aPSQPv+0UqyFZNXeZckVPiIaOfhgGI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sC7d9-00GChD-6g; Wed, 29 May 2024 02:57:27 +0200
+Date: Wed, 29 May 2024 02:57:27 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: xiaolei wang <xiaolei.wang@windriver.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH] net: stmmac: update priv->speed to SPEED_UNKNOWN
+ when link down
+Message-ID: <98e6266f-805c-4da2-b2dc-b25297c53742@lunn.ch>
+References: <20240528092010.439089-1-xiaolei.wang@windriver.com>
+ <775f3274-69b4-4beb-84f3-a796343fc095@lunn.ch>
+ <b499cbcd-a3c9-4f38-a69a-ad465e7f8d5a@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,33 +62,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240527-sg2002-v1-5-1b6cb38ce8f4@bootlin.com>
+In-Reply-To: <b499cbcd-a3c9-4f38-a69a-ad465e7f8d5a@windriver.com>
 
-Hi Thomas,
+On Wed, May 29, 2024 at 08:22:01AM +0800, xiaolei wang wrote:
+> 
+> On 5/28/24 21:20, Andrew Lunn wrote:
+> > CAUTION: This email comes from a non Wind River email account!
+> > Do not click links or open attachments unless you recognize the sender and know the content is safe.
+> > 
+> > On Tue, May 28, 2024 at 05:20:10PM +0800, Xiaolei Wang wrote:
+> > > The CBS parameter can still be configured when the port is
+> > > currently disconnected and link down. This is unreasonable.
+> > This sounds like a generic problem. Can the core check the carrier
+> > status and error out there? Maybe return a useful extack message.
+> > 
+> > If you do need to return an error code, ENETDOWN seems more
+> 
+> Currently cbs does not check link status. If ops->ndo_setup_tc() returns
+> failure, there will only be an output of "Specified device failed to setup
+> cbs hardware offload".
 
-kernel test robot noticed the following build errors:
+So it sounds like we should catch this in the core then, not the
+driver. And cbs_enable_offload() takes an extack, so you can report a
+user friendly reason for failing, the at the carrier is off.
 
-[auto build test ERROR on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+    Andrew
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Bonnefille/dt-bindings-interrupt-controller-Add-SOPHGO-SG2002-plic/20240527-183235
-base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-patch link:    https://lore.kernel.org/r/20240527-sg2002-v1-5-1b6cb38ce8f4%40bootlin.com
-patch subject: [PATCH 5/5] riscv: dts: sophgo: Add LicheeRV Nano board device tree
-config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240529/202405290822.4dIYJxLq-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240529/202405290822.4dIYJxLq-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405290822.4dIYJxLq-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> make[6]: *** No rule to make target 'arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano.dtb', needed by 'arch/riscv/boot/dts/sophgo/'.
-   make[6]: Target 'arch/riscv/boot/dts/sophgo/' not remade because of errors.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+pw-bot: cr
 
