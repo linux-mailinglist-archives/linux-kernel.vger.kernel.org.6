@@ -1,103 +1,183 @@
-Return-Path: <linux-kernel+bounces-194160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4AE88D37A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221228D37B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F2D1F264CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE558286072
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099B71643D;
-	Wed, 29 May 2024 13:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C3B12E5B;
+	Wed, 29 May 2024 13:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="zscgljYt"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5MAzU1A"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008BB14292;
-	Wed, 29 May 2024 13:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B6FC2ED
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716989504; cv=none; b=bj21HYhXi2m31HUcDW43iBijS+CrM8VGNS9Wxf01aPJIzLLSG/Ml6h/2Tb7ZtB4K8Ai22GFZyk4N/8iEEAnMhPKe2xYwMoLC85w3pOpnGp9L/NqJEEyGRODTJlLcpV8RWFE4BaZg+HJiJeUoIZYzc6HgoThTWUEvP4PfG2qOfxQ=
+	t=1716989624; cv=none; b=RfVs6wtj225r4d7pJtEtWu90fg+8foRfTzDM8kc/OnAaMZv5dz+BIGSOWtosvJ5Z79+mqun/0G1nJv3fYvuYQz+rcpETnnPuJzl1TkZiJ1tW0Y8iYpMWTlBu/8QRG5IGJBhBGAvYG5E3QKGyn7I91Dn/YytVrSO9KjtIOzhIB9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716989504; c=relaxed/simple;
-	bh=0P7pXe69+4YQNTzp+01XM7mW8AzJM2VfMIN8IkVeLr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7airbZXD7/djTxlRP/R/YkkrTZaKbbbBnynRY/DG9sT8F6yT0mC/A7MC8rnPXsblxaUzL+sNYPi2WG651FxdQoWjrMTmz2BKtuZSM9+1ywdGCKybUAh4KYaVF6amWZdZ8bJq00e74tDRpflVbNqKVC1wCEdG+b302XtArg7pzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=zscgljYt; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YwVYPPJP91MPMhgrxE4Hs+BEo5W7xjePcgEPmhKjh1w=; b=zscgljYtzLTJlyx/fGphVnJySG
-	bUqRQNp+j7Mfg+4pAii6SajhZMrSNx8POI7e/GLTQJAML08YpEifJVg6FpwQqKf4HJOcyqHIALgBr
-	Hyhx8wVF4IoupXktezL13bFtrLv2VNUSD/FmygUIKDM5nUh4+odtQnH+HdIAIcAwwsniD9aSpF+jm
-	RMWYkgAZ0drA2jfCzH8mxwuMGSj5yALv8qTUonZd5tkw9sBVOfp4B1LVRTUlKMrQksgexc1pe5nZT
-	IG1Eh8pBDGV8fLY40EQP9LVCO1lP6yL3m7vSvDsqXskUpqXjLuky9zrno0LdVC300G+9d2uwLgH1V
-	74sX9bwA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37240)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCJOv-0006Bl-2l;
-	Wed, 29 May 2024 14:31:33 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCJOx-0004Ek-70; Wed, 29 May 2024 14:31:35 +0100
-Date: Wed, 29 May 2024 14:31:35 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Nemanov, Michael" <michael.nemanov@ti.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH wireless-next 4/8] wifi: wlcore: pass "status" to
- wlcore_hw_convert_fw_status()
-Message-ID: <ZlcuNxmpMlHOMPXL@shell.armlinux.org.uk>
-References: <ZlWhH4HleGILuUtN@shell.armlinux.org.uk>
- <E1sBsxx-00E8vi-Gf@rmk-PC.armlinux.org.uk>
- <abbb5c02-6cda-41c6-9900-06e7f4920541@ti.com>
+	s=arc-20240116; t=1716989624; c=relaxed/simple;
+	bh=sa3SsgwWNNcuvc/K/Rval+Kz3Sdsqy57y2eUK4QV1B4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ry4VAw7xQOw0AMJXg6iJp0yz7sKZ5+ryrzR7BhT3o+yJqMEv4ldNomOATVQyQfBJW82fLCa8/20KfQ2b34MMgzDytMG3fJLSyY3T5VCA84EgC3q8d/tcjKi/cjapmkgfAMMaKRH3SJKAQh3APbD+wOt2/J6SVLlcraKSMd746iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5MAzU1A; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f8eba8dcfcso1586637b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:33:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716989623; x=1717594423; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G7ILJRHnZgMzPyXPFW/iuFELnWd2RBDR56tTLeE9Yro=;
+        b=H5MAzU1A9PH2J3QFHzI1z4N7mE0QaPOLG7hXPM//Slg+MeQ79KkHodt/FQu++u8Z+E
+         jwHgzZx14vKlY7hHXtoCT+sNOQ6fLybEMVsrXTDcQ1TlP7TI9soN4BLb0XMooFUAwzeF
+         Tlx9i9QgUU6PL1q6u32sXKNcDnDLsEv+kKc38IOO21Yn+XPDXlNBmPAtcqfAjUM6SAoD
+         37t8rg04x43KwTZmZpm3NMoDpj9GQ/nzBpONstpl/9OwBwl7Vyib190TLbFqVz5Xzn5X
+         NNpZYoFgoX9iyMvuMdh+4XFiQ0NF8qj1vaa/feww3TAE29VuITbJmqT1tnNcFZdmnO7k
+         UoNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716989623; x=1717594423;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G7ILJRHnZgMzPyXPFW/iuFELnWd2RBDR56tTLeE9Yro=;
+        b=Nk64gLPGNfUGBk3VfUgXenDPOfFtPno3hRGxW7iKYFRELbsPxvRlv00W3QoA2YSjt3
+         mJC1EUuivGlrNjCUNwtpIjSWUtiMujHy21bXcFIpFn76yeAJ8P/dfKkLlLrgo9CARpWR
+         MSXDpwwPbVGfBfBKdwnjoP/UoRd7+KTnRuNxgdM+7feogqaDlCHkyRAbPNDV7FcHrxsy
+         F9K8L5yAQPWeG0SsVdLVtajJNzoKUaTkcTIslhri6c1DpLhXDiTIZweZY8FmMcjmgrxa
+         cZZZxd9OJMfZZeQ7cTeMXka9r29vPe4y/KeldMu7kpZYVb36/G3qpghzdJUJLyNQ4gir
+         0nAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXT3uM8fu68OvtCH+bsol3Hg+iAgGq7o5vHKsQBnt1Ipu4QMPIYWqA5i+7nYuYSjG+aR4V+Xs6EGPBEL8wdOJg31DtRcGcmvsnP/C5o
+X-Gm-Message-State: AOJu0Yyfe/LdeWwW6cGZ9XTH7A9ZK1zPOB6rkEDzXrD8fFIcBYHgu5ZF
+	aJkyvmJ4eZchC2yy+nr7b/v5qVVnWibHZTG2+18y7gsYs2TdotpcQHgLKCtaPr558sj0Coid1V/
+	9Jbj5dlIQhq1qRMMQ6al7cKJKDt6mVg==
+X-Google-Smtp-Source: AGHT+IFouSqDbAzwBwM150OLwdPpTSB7m1v7Y6wLzV8Q4/OAKVxtUZrrKGrd7wE1YwGWYAvClEiQIVSFK8A+NznddFk=
+X-Received: by 2002:a17:902:e5c5:b0:1f4:b43f:9c01 with SMTP id
+ d9443c01a7336-1f4b43f9d2bmr86352715ad.64.1716989622493; Wed, 29 May 2024
+ 06:33:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <abbb5c02-6cda-41c6-9900-06e7f4920541@ti.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240528210319.1242-1-mario.limonciello@amd.com>
+In-Reply-To: <20240528210319.1242-1-mario.limonciello@amd.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 29 May 2024 09:33:31 -0400
+Message-ID: <CADnq5_OzPT1MVnsqXs2vjr1L2_6jeM6x7jgs4ZtYpNzdDHM6uA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during initialization
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, Chris Bainbridge <chris.bainbridge@gmail.com>, 
+	hughsient@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 04:15:13PM +0300, Nemanov, Michael wrote:
-> On 5/28/2024 12:17 PM, Russell King (Oracle) wrote:
-> > @@ -392,7 +392,7 @@ static int wlcore_fw_status(struct wl1271 *wl, struct wl_fw_status *status)
-> >    	if (ret < 0)
-> >    		return ret;
-> > -	wlcore_hw_convert_fw_status(wl, wl->raw_fw_status, wl->fw_status);
-> > +	wlcore_hw_convert_fw_status(wl, wl->raw_fw_status, status);
-> >    	wl1271_debug(DEBUG_IRQ, "intr: 0x%x (fw_rx_counter = %d, "
-> >    		     "drv_rx_counter = %d, tx_results_counter = %d)",
-> > -- 
-> > 2.30.2
-> 
-> Agree this is more consistent. Maybe *status shouldn't be an argument to
-> wlcore_fw_status at all? It's called only in one place with wl->fw_status
-> anyway.
+On Tue, May 28, 2024 at 5:03=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
+>
+> If the lid on a laptop is closed when eDP connectors are populated
+> then it remains enabled when the initial framebuffer configuration
+> is built.
+>
+> When creating the initial framebuffer configuration detect the ACPI
+> lid status and if it's closed disable any eDP connectors.
+>
+> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-I did consider that, and if we removed the argument, it would make sense
-to add a local "status" variable at the top of this function anyway,
-otherwise endlessly referring to wl->fw_status.foo instead of
-status->foo becomes quite tiring and needlessly verbose (which means
-less readable.)
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 
-That's something which could be done as a separate patch.
+Do you have drm-misc access or do you need someone to apply this for you?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Alex
+
+> ---
+> Cc: hughsient@gmail.com
+> v1->v2:
+>  * Match LVDS as well
+> ---
+>  drivers/gpu/drm/drm_client_modeset.c | 30 ++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_c=
+lient_modeset.c
+> index 31af5cf37a09..0b0411086e76 100644
+> --- a/drivers/gpu/drm/drm_client_modeset.c
+> +++ b/drivers/gpu/drm/drm_client_modeset.c
+> @@ -8,6 +8,7 @@
+>   */
+>
+>  #include "drm/drm_modeset_lock.h"
+> +#include <acpi/button.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/slab.h>
+> @@ -257,6 +258,34 @@ static void drm_client_connectors_enabled(struct drm=
+_connector **connectors,
+>                 enabled[i] =3D drm_connector_enabled(connectors[i], false=
+);
+>  }
+>
+> +static void drm_client_match_edp_lid(struct drm_device *dev,
+> +                                    struct drm_connector **connectors,
+> +                                    unsigned int connector_count,
+> +                                    bool *enabled)
+> +{
+> +       int i;
+> +
+> +       for (i =3D 0; i < connector_count; i++) {
+> +               struct drm_connector *connector =3D connectors[i];
+> +
+> +               switch (connector->connector_type) {
+> +               case DRM_MODE_CONNECTOR_LVDS:
+> +               case DRM_MODE_CONNECTOR_eDP:
+> +                       if (!enabled[i])
+> +                               continue;
+> +                       break;
+> +               default:
+> +                       continue;
+> +               }
+> +
+> +               if (!acpi_lid_open()) {
+> +                       drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed=
+, disabling\n",
+> +                                   connector->base.id, connector->name);
+> +                       enabled[i] =3D false;
+> +               }
+> +       }
+> +}
+> +
+>  static bool drm_client_target_cloned(struct drm_device *dev,
+>                                      struct drm_connector **connectors,
+>                                      unsigned int connector_count,
+> @@ -844,6 +873,7 @@ int drm_client_modeset_probe(struct drm_client_dev *c=
+lient, unsigned int width,
+>                 memset(crtcs, 0, connector_count * sizeof(*crtcs));
+>                 memset(offsets, 0, connector_count * sizeof(*offsets));
+>
+> +               drm_client_match_edp_lid(dev, connectors, connector_count=
+, enabled);
+>                 if (!drm_client_target_cloned(dev, connectors, connector_=
+count, modes,
+>                                               offsets, enabled, width, he=
+ight) &&
+>                     !drm_client_target_preferred(dev, connectors, connect=
+or_count, modes,
+> --
+> 2.43.0
+>
 
