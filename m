@@ -1,196 +1,154 @@
-Return-Path: <linux-kernel+bounces-194598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C3938D3EB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C4D8D3EBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2FC287328
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:01:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BC2EB23599
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF97E181D09;
-	Wed, 29 May 2024 19:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB3B15D5B9;
+	Wed, 29 May 2024 19:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p7pfhp7K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eg3uY0Bk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KJzs4WlY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k7rsWAh5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="MwBE7Z6b"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211B31B949;
-	Wed, 29 May 2024 19:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B583D6BFBA
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 19:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717009270; cv=none; b=FMdQQ5fiXjt7gmzNfFRNMQzTIcUXFNwW5oYxF5qMS8DZHWoFBSSknfwhjFmwOmZniff4Mzqn4DUMal+L7MAB0HPpvxTOdtx24xDMbxtazJOOxOt2kgCWgIT3PK0uJ19Vmyy2/8TvxEEQnT5CSoYSGgHf04qTF8+3wrFg330gMuw=
+	t=1717009332; cv=none; b=V/RlGOivFDCD9zevIR3sZFoAUYEfjwisPW49AJCQ3hN5J3DWNNIHEkyGqFKb9q2INyfEJqBlE3592RYpI1/u0uUW2R2M4e3p2Il242dYT3VFW7zxI2UkPdCpKo+qWZ1EsABDYK9m8V7gk/bbr/7vXCvEJoEzBTNiAtigIz1A7k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717009270; c=relaxed/simple;
-	bh=+jnnZTUq6/BwkwWF5eJnUty9lyNMM5PD17zS14+zCfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sApgm3SbNikhcVQzwDmJk+kr1yd/DuWa7fBfsgnQK0U1KY6frnbnDxs1JaDuelZtbThL1FNUwN8BaCjR7wr2Xfri2sk+kafDdFw/b7btQi7tgYqjhIi2CaBmNOyCVBVcHJhe6EyS7t76+jeNiI+b7UMfAbgcb41HFhO+aDWFbms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p7pfhp7K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eg3uY0Bk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KJzs4WlY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k7rsWAh5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E2187205F7;
-	Wed, 29 May 2024 19:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717009265;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVHStC3cHDYoUi4IFL9yxFoo6Ze7RvNnT7yV6Vs3l1k=;
-	b=p7pfhp7KON88hEEUVxjiwW0/T4tVa6HXAVcZK+5aapYPR9A7J5cMUo2GLdAxx5QaXxIKO3
-	HFp8JcQY3bfEBLlYFIo/TjbBBP0nyjSsrvCJd2BBL+VWRg0cmloyUr+dCOl0Um34sy6SRQ
-	LBm6sQWGKEtEmwdNRUTLGTgoIQitMwQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717009265;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVHStC3cHDYoUi4IFL9yxFoo6Ze7RvNnT7yV6Vs3l1k=;
-	b=Eg3uY0Bkveqcm7j9TLET/Ba0FSmBScwEvz2tW/D6I1tk/Bx4KvOPeI3SpQ5QrBtaOEZgIo
-	JVWLsuw2uF/2JhAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KJzs4WlY;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=k7rsWAh5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717009264;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVHStC3cHDYoUi4IFL9yxFoo6Ze7RvNnT7yV6Vs3l1k=;
-	b=KJzs4WlY22W7gZ61jZo/UAJz9efmNyoKI9cKQQ9CajuivVV3DDv1+JtdKjRJvlb4SCde3c
-	3XHBAt/9OePpqsHyIi/a2Irtb0gzmiVtgsHHa6oBeZIUZbzHy3rfyVvZbDAHrABNY/cGOs
-	UBmsRhhS8Mq4TCTV452N54x0MyZpWfc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717009264;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVHStC3cHDYoUi4IFL9yxFoo6Ze7RvNnT7yV6Vs3l1k=;
-	b=k7rsWAh5im9Nq6lEscR9Fj003HuhJbCX74kPWK+PDG0UBlw+OrMdWiEYM5x8409AZllUIw
-	k8veQoeQFIJZuGCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6AC013A6B;
-	Wed, 29 May 2024 19:01:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CSZXMHB7V2ZeMgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 29 May 2024 19:01:04 +0000
-Date: Wed, 29 May 2024 21:00:59 +0200
-From: David Sterba <dsterba@suse.cz>
-To: David Hildenbrand <david@redhat.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: 6.9/BUG: Bad page state in process kswapd0 pfn:d6e840
-Message-ID: <20240529190059.GM8631@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <CABXGCsPktcHQOvKTbPaTwegMExije=Gpgci5NW=hqORo-s7diA@mail.gmail.com>
- <CABXGCsOC2Ji7y5Qfsa33QXQ37T3vzdNPsivGoMHcVnCGFi5vKg@mail.gmail.com>
- <0672f0b7-36f5-4322-80e6-2da0f24c101b@redhat.com>
- <CABXGCsN7LBynNk_XzaFm2eVkryVQ26BSzFkrxC2Zb5GEwTvc1g@mail.gmail.com>
- <6b42ad9a-1f15-439a-8a42-34052fec017e@redhat.com>
- <CABXGCsP46xvu3C3Ntd=k5ARrYScAea1gj+YmKYqO+Yj7u3xu1Q@mail.gmail.com>
- <CABXGCsP3Yf2g6e7pSi71pbKpm+r1LdGyF5V7KaXbQjNyR9C_Rw@mail.gmail.com>
- <162cb2a8-1b53-4e86-8d49-f4e09b3255a4@redhat.com>
- <209ff705-fe6e-4d6d-9d08-201afba7d74b@redhat.com>
- <ff29f723-32de-421b-a65e-7b7d2e03162d@redhat.com>
+	s=arc-20240116; t=1717009332; c=relaxed/simple;
+	bh=a0VD/WIcPZ5qaTNMLP3EsRq5AZnfcg/iweV1UsyJlEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c+f7OPXPn1w9yS+RPS+Fa+uEqsUKYUy28UCi6XiKUXY4A8+7siG6yX3z3jziO5KedAsYtXVFOF+NzdwvmN0wYrgB4g5qbmtDTwfmdOLqRFzVBEhNsgRwETTG+7b91AXr6wigfqz6x6FthwbCPmKCfHLhehDtUBsnK+H2pWQ9VmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=MwBE7Z6b; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7930531494aso10547785a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:02:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1717009329; x=1717614129; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8GwTUMXYAxiAKC6EgbG+7U7zjWZSxba/eTmbEIDHYag=;
+        b=MwBE7Z6bngvx1i1AzLX/mmsXre39JH0AMrJNU3L5Z9t8wAh5VoUxhMtjpc6/j9XMJp
+         GcENn05nMW6CVIO55VgW7Sf8Nz4l6V5k1+ILWGvgxX8wVkQ/z4iUHP1M1RNp01EZSK/X
+         /rtoPUSGmX5J/jud897mB4fFHsM7nqLOt6nws=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717009329; x=1717614129;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8GwTUMXYAxiAKC6EgbG+7U7zjWZSxba/eTmbEIDHYag=;
+        b=nD6zFIZ3bGpUoDwpcGHHZvB0tMi7hJWrOOexqhaWHQprqr4FV8BYcmQrQ1/UNIcmKF
+         wwK7Ue0gTW1BPdEgSYiZ2dXz+z5lPydhxU4Ed4WuDmfakekrG+vu2uXl+bbzMVXByMYF
+         L2BmZCchs7eBeoURq+ZSGr1h8UvR3RZiy3RVfRFqmbPIQ7WFwJaKnY1j4bhIxbPujLh6
+         hW79MKnrwMvmcdy4HgTSxVVJAt00qmPwxW75VMf4PfcCKlELkHInjQrFbM9WBWYVOSiN
+         HWQMkOAGHsi3gMS9uQ7ssqQ5dwXZpilqxh3I/Du+wGN5hWGXtMGw8LJ0+1hvvbUj3HXB
+         aqKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRzSM5+Cs+JmAJxEz609B/Oh/a5RpNouSkHDv0i/vXajRghgx9GlzpT3LWApBv30Porer9ir8U9GJYPLOc2Q0DoEa4+TSLYDC8V2Pc
+X-Gm-Message-State: AOJu0YwdGE0zRAoUa44BkqWFsPs1/q39ZO9gsyWqnCvFmNyst9Lsou8Q
+	FWIvQTKCM+k9BKqn/PJj3Sdv9i9BzLFaiEpfaKsHW0O6i6Cl+q/Deq0Ftdt8Pqo=
+X-Google-Smtp-Source: AGHT+IHDrykJ1fMgEjaJg2c9DXIPWFoeHtrr8K89VszE+xmesbuZ4BjPbpmSZgOtjM0g1rprUUfd2g==
+X-Received: by 2002:a05:620a:2982:b0:792:9403:3aa8 with SMTP id af79cd13be357-794e9e0debfmr6863685a.58.1717009329450;
+        Wed, 29 May 2024 12:02:09 -0700 (PDT)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794e0cbb512sm80039185a.51.2024.05.29.12.02.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 12:02:09 -0700 (PDT)
+Message-ID: <3ad4e909-9456-41ed-9fed-906c6c000d5f@citrix.com>
+Date: Wed, 29 May 2024 20:02:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff29f723-32de-421b-a65e-7b7d2e03162d@redhat.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Flag: NO
-X-Spam-Score: -2.71
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: E2187205F7
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org,kvack.org,infradead.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpu/intel: Drop stray FAM6 check with new Intel CPU
+ model defines
+To: "Luck, Tony" <tony.luck@intel.com>, "Hansen, Dave"
+ <dave.hansen@intel.com>, LKML <linux-kernel@vger.kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Raj, Ashok" <ashok.raj@intel.com>,
+ "Schofield, Alison" <alison.schofield@intel.com>
+References: <20240529183605.17520-1-andrew.cooper3@citrix.com>
+ <8ef9d8ad-9236-4254-b819-50832cd05cd9@intel.com>
+ <SJ1PR11MB608327E76C4C90EAA3452D76FCF22@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <SJ1PR11MB608327E76C4C90EAA3452D76FCF22@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 08:57:48AM +0200, David Hildenbrand wrote:
-> On 28.05.24 16:24, David Hildenbrand wrote:
-> > Hmm, your original report mentions kswapd, so I'm getting the feeling someone
-> > does one folio_put() too much and we are freeing a pageache folio that is still
-> > in the pageache and, therefore, has folio->mapping set ... bisecting would
-> > really help.
-> 
-> A little bird just told me that I missed an important piece in the dmesg 
-> output: "aops:btree_aops ino:1" from dump_mapping():
-> 
-> This is btrfs, i_ino is 1, and we don't have a dentry. Is that 
-> BTRFS_BTREE_INODE_OBJECTID?
+On 29/05/2024 7:59 pm, Luck, Tony wrote:
+>>> The outer if () should have been dropped when switching to c->x86_vfm.
+>> FWIW, we are going to need to do a pass over all of arch/x86 looking for
+>> these.  I suspect many of the 'if (c->x86 == ...) ' checks can go away
+>> like this one.
+>>
+>> Thanks for finding this one, though!
+> Yup.
+>
+> Acked-by: Tony Luck <tony.luck@intel.com>
 
-Yes, that's right, inode with number 1 is representing metadata.
+Thanks.  FWIW, none of the other uses of c->x86 I looked at seem trivial
+to convert.
 
-> Summarizing what we know so far:
-> (1) Freeing an order-0 btrfs folio where folio->mapping
->      is still set
-> (2) Triggered by kswapd and kcompactd; not triggered by other means of
->      page freeing so far
-> 
-> Possible theories:
-> (A) folio->mapping not cleared when freeing the folio. But shouldn't
->      this also happen on other freeing paths? Or are we simply lucky to
->      never trigger that for that folio?
-> (B) Messed-up refcounting: freeing a folio that is still in use (and
->      therefore has folio-> mapping still set)
-> 
-> I was briefly wondering if large folio splitting could be involved.
+This one I only happened to notice because it stood out in context.
 
-We do not have large folios enabled for btrfs, the conversion from pages
-to folios is still ongoing.
-
-With increased number of strange reports either from syzbot or others,
-it seems that something got wrong in the 6.10-rc update or maybe
-earlier.
+~Andrew
 
