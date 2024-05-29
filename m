@@ -1,189 +1,190 @@
-Return-Path: <linux-kernel+bounces-193443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489B88D2C6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:26:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F098D2C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E431F22EB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:26:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8AB287790
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E8315B987;
-	Wed, 29 May 2024 05:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1EE15B999;
+	Wed, 29 May 2024 05:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p49MXVqc"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeEZBqXs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162B215B980
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EFE6AB8;
+	Wed, 29 May 2024 05:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716960378; cv=none; b=eucDUCKCLecXre9UdKEL2yuuDxhqRufCLzzhNS0YhCu3pvIy5CCHz7LSNrcr+z8MVBj/h6XtLNOIIVIFp13r5SLoB6qbxB2R8gJGDqTR1IraGgPRFvjzEVUmCU1th2n5nlelmTZ5zsjXzQoz8w8usezlaQ183yH8JKp2eIM0Hk4=
+	t=1716960740; cv=none; b=ewYPDZylUz8Nw1JrHJoSMfHR1qsu6SVXuNaLPl2KCPIC0Scn/vwt6J664LPDgyTXvPWnBulBP/lV7uQdiq1AogdEWu5D5orbB8gJ2WsVx4Z6l5UrWj8VVrAR4js6cgrJMmxcnOlsZttDa8QyqbwSMuuFKALpvmqCvc7s/0Dym80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716960378; c=relaxed/simple;
-	bh=sXgwCUC0sQjZAv8pdBXHiuXTQoFTMkYAXip7NzBwyqI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y9QvFu39H5isUt7n6Eakf8SrLwMgoG+oal6gq1+67zBQMv0ze/930FDBbA1dleBRs/oSlhlJiVssM0bwd1MZgM0xVag8y6uwrg1MD2WwspcxCmj3XwfL27t7O+xbs2aAZK4KblPB3+KFGwfRxbntftNfdrRFKqW9EIrTDENGJH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p49MXVqc; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48ba6ec5435so17703137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:26:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716960376; x=1717565176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=15ENZisTgKP86u3z7+Gtpy0dd++13PTR5V24Sl4v+pI=;
-        b=p49MXVqc63R5H+jkkrJnx3IJSdbZVsbxdeklEXpOAqT1TwQpSH9oyBF0ggUUq3RE9H
-         lWa1IInuTQKV5oPd7QHKIfswbId4F27dCIcJWGCF8ukxuXcDYUU3nl7G/gQRWVbAEjRS
-         7v3WFyPKuJ+4IvwvHTE++YDG0CSlklyTd4toZfKHqLBilBEy5hJBLgzsQkwW20BJnIaw
-         PBywxYI0c9Y/4JF8JN3TIZ/4XKHn3yhDxRbAEbeNW5VRrinSECRKzmESb7+FdHYjppWT
-         /b3oIX+skPsX/ohkGO8UnBzNDYd/uaSqxajRGf4oxBnY1Cm4HkdJrOz2ttBoZrchTclq
-         CSRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716960376; x=1717565176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=15ENZisTgKP86u3z7+Gtpy0dd++13PTR5V24Sl4v+pI=;
-        b=JhYMQ29nQU5RpjjXPmn0/Su4/EOvsXbEI7QFskSFN5cZrhcKi4Civ7QDkjRmNgpEyo
-         yi5kiRCcEWJLkI+M8xqhcl6XKMraTtSr2Svaly4VHmYi7HoA0Y9NiOC3ULResoLwmIJ5
-         iQsPUnTQl9OFPE6RaPUOyeDhBmhnJnG+vXuFtAVy0GwuZsVYCnW7FiJI5q1YsYSo1p4N
-         T4LuZvknwsNDi6UrEf2g3upR0n+Jd3IxvvkVY6qN8EBYNSgR1AkRoxSAroAQWEOoP15I
-         Dlopp1FkT7ml+KWlucOYZBxIW6Xi7hDT/wXy0VsgWo2S9lQNRw2SXmppLEPqFvSThdJA
-         MIGw==
-X-Forwarded-Encrypted: i=1; AJvYcCV14Z6OVivXAp5CTwCbafgc9Sjr90gChPnmxStooMHmL0Nu10BaBzRe/jYcXSThm/NUbgCHMcXdDaNDsneckJ4yap5hAh0m4JqVs1Pd
-X-Gm-Message-State: AOJu0Yx2WRvPaIP7SJDjVTJA4cFirA4L3B10c/VJu0Kofb4r/2/0VgZZ
-	ztAqw++DYX8xBh9cRbwCLuqPB46sbELpnAVHNing9Uy2oixE/jJje9B+ZBECHB7T7B4VFg1j1nP
-	KahLz471m4PAFZkUSAHoaQW2/wsKWpzHlSpE88g==
-X-Google-Smtp-Source: AGHT+IGlTxxgeYGP2YfV8+ZTwt7HTIl+R8Dwu5gdKq4zDJ3MAVZ5rbhlD8FwZvpwmiVig13ibCFackQouSPTKa4Nui4=
-X-Received: by 2002:a05:6102:2404:b0:48b:8f15:8a8f with SMTP id
- ada2fe7eead31-48b9ce2e281mr698247137.8.1716960375838; Tue, 28 May 2024
- 22:26:15 -0700 (PDT)
+	s=arc-20240116; t=1716960740; c=relaxed/simple;
+	bh=aBznwI196mCXdIjypa7AmSwqqkGS5EsYJK31pzgSYXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Anw3k28OxNx+aKzId/IrGt7MpT+Z1/F11WZes45Zq7ao1//Qp5N6AgMOOqD4mBUAMdl5ZrE23wojPI7cbMsx099f5fO9njEODUxyTXVumreJq+NECsE23rRaAkMfNWJAOz25BY7UZ/vi7Hwajacd0h8MTGq1m8CusmrMT8zcuRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeEZBqXs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7FFC2BD10;
+	Wed, 29 May 2024 05:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716960739;
+	bh=aBznwI196mCXdIjypa7AmSwqqkGS5EsYJK31pzgSYXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LeEZBqXsaFwHKqq22xYJkq1anme+3hC9y4dtkgVlEK8L0HpFZWUwdSNmDY9Dkw6NW
+	 jmYzLhjePapm2TqQULKLIdowZXJ5+4rkJdUNI6remV3ooCQ/tnpDnrCOCjxWLhxWUa
+	 wnIWzdQOEkuJE9hEeHvETExo8PPpuO700JnCabxsCN0WeaNU6RsdbqNH06C052cUbz
+	 pcYHVG/nEm6xkBGENDwx7i0hAa/WwhPnHmaFiBu7FRjnOtZfVtTI158ewx8yBQdXzA
+	 2PEUKqEd3KrOUZjq6zO2DU3cPgp149y+59wWRzK4VAWqxaA4LAIaxHdvKkBqK7f830
+	 Q8mHay2aWjJlg==
+Date: Wed, 29 May 2024 08:30:27 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Eric Chanudet <echanude@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nick Piggin <npiggin@gmail.com>, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3] mm/mm_init: use node's number of cpus in
+ deferred_page_init_max_threads
+Message-ID: <Zla9cwSorlNg98F5@kernel.org>
+References: <20240528185455.643227-4-echanude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527121340.3931987-1-jens.wiklander@linaro.org>
- <20240527121340.3931987-5-jens.wiklander@linaro.org> <fc3bfebb-78b7-428e-8da5-5221f4921faa@linaro.org>
- <CAHUa44G0bcK55RxNrN5sXiicBZ-BJtA46KpedfBdUSKsN8eUOA@mail.gmail.com> <ZlWkSCCjJ2fbE2ML@nuoska>
-In-Reply-To: <ZlWkSCCjJ2fbE2ML@nuoska>
-From: Sumit Garg <sumit.garg@linaro.org>
-Date: Wed, 29 May 2024 10:56:04 +0530
-Message-ID: <CAFA6WYOT52fdqgGvDYE91DQ_4MUbAv_1Gnn2fTyMNhrj_Agu=w@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] optee: probe RPMB device using RPMB subsystem
-To: Mikko Rapeli <mikko.rapeli@linaro.org>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, 
-	Jerome Forissier <jerome.forissier@linaro.org>, linux-kernel@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manuel Traut <manut@mecka.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528185455.643227-4-echanude@redhat.com>
 
-Hi Mikko,
+On Tue, May 28, 2024 at 02:54:58PM -0400, Eric Chanudet wrote:
+> When DEFERRED_STRUCT_PAGE_INIT=y, use a node's cpu count as maximum
+> thread count for the deferred initialization of struct pages via padata.
+> This should result in shorter boot times for these configurations by
+> going through page_alloc_init_late() faster as systems tend not to be
+> under heavy load that early in the bootstrap.
+> 
+> Only x86_64 does that now. Make it archs agnostic when
+> DEFERRED_STRUCT_PAGE_INIT is set. With the default defconfigs, that
+> includes powerpc and s390.
+> 
+> It used to be so before offering archs to override the function for
+> tuning with commit ecd096506922 ("mm: make deferred init's max threads
+> arch-specific").
+> 
+> Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64 platforms
+> shows faster deferred_init_memmap completions:
+> |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
+> |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
+> |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
+> |---------|-------------|--------------|-----------------|--------------|
+> | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
+> |---------|-------------|--------------|-----------------|--------------|
+> | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
+> | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
+> 
+> Michael Ellerman on a powerpc machine (1TB, 40 cores, 4KB pages) reports
+> faster deferred_init_memmap from 210-240ms to 90-110ms between nodes.
+> 
+> Signed-off-by: Eric Chanudet <echanude@redhat.com>
+> Tested-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-On Tue, 28 May 2024 at 15:00, Mikko Rapeli <mikko.rapeli@linaro.org> wrote:
->
-> Hi,
->
-> On Mon, May 27, 2024 at 03:24:01PM +0200, Jens Wiklander wrote:
-> > On Mon, May 27, 2024 at 3:00=E2=80=AFPM Jerome Forissier
-> > <jerome.forissier@linaro.org> wrote:
-> > >
-> > > On 5/27/24 14:13, Jens Wiklander wrote:
-> > > > Adds support in the OP-TEE drivers (both SMC and FF-A ABIs) to prob=
-e and
-> > > > use an RPMB device via the RPMB subsystem instead of passing the RP=
-MB
-> > > > frames via tee-supplicant in user space. A fallback mechanism is ke=
-pt to
-> > > > route RPMB frames via tee-supplicant if the RPMB subsystem isn't
-> > > > available.
-> > > >
-> > > > The OP-TEE RPC ABI is extended to support iterating over all RPMB
-> > > > devices until one is found with the expected RPMB key already
-> > > > programmed.
-> > > >
-> > > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > > > Tested-by: Manuel Traut <manut@mecka.net>
-> > > > ---
-> > > >  Documentation/ABI/testing/sysfs-class-tee |  15 ++
-> > > >  MAINTAINERS                               |   1 +
-> > > >  drivers/tee/optee/core.c                  |  96 +++++++++++-
-> > > >  drivers/tee/optee/device.c                |   7 +
-> > > >  drivers/tee/optee/ffa_abi.c               |  14 ++
-> > > >  drivers/tee/optee/optee_ffa.h             |   2 +
-> > > >  drivers/tee/optee/optee_private.h         |  26 +++-
-> > > >  drivers/tee/optee/optee_rpc_cmd.h         |  35 +++++
-> > > >  drivers/tee/optee/optee_smc.h             |   2 +
-> > > >  drivers/tee/optee/rpc.c                   | 177 ++++++++++++++++++=
-++++
-> > > >  drivers/tee/optee/smc_abi.c               |  14 ++
-> > > >  11 files changed, 387 insertions(+), 2 deletions(-)
-> > > >  create mode 100644 Documentation/ABI/testing/sysfs-class-tee
-> > > >
-> > > > diff --git a/Documentation/ABI/testing/sysfs-class-tee b/Documentat=
-ion/ABI/testing/sysfs-class-tee
-> > > > new file mode 100644
-> > > > index 000000000000..c9144d16003e
-> > > > --- /dev/null
-> > > > +++ b/Documentation/ABI/testing/sysfs-class-tee
-> > > > @@ -0,0 +1,15 @@
-> > > > +What:                /sys/class/tee/tee{,priv}X/rpmb_routing_model
-> > >
-> > > Wouldn't /sys/class/tee/teeX/rpmb_routing_model be good enough?
-> >
-> > Doesn't the routing model concern tee-supplicant more than a TEE
-> > client? Then it might make more sense to have
-> > /sys/class/tee/teeprivX/rpmb_routing_model only. Keeping it for both
-> > devices representing the same internal struct optee makes it easier to
-> > find. Anyway, I don't mind removing one. Mikko, what do you prefer?
->
-> As simple as possible. A single sysfs file is enough. Even the existence =
-of the sysfs file
-> could be the needed indicator for userspace to queue tee-supplicant start=
-up.
->
-> Outside of these patches, I think the optee RPC setup with fTPM TA is one=
- area which
-> currently requires tee-supplicant to be started. Detecting the existence =
-of TPM before
-> kernel drivers are loaded is possible via the exported EFI logs from firm=
-ware to kernel
-> or ACPI TPM2 table entry, and detecting optee and thus starting tee-suppl=
-icant in userspace too.
+Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
 
-One thing I am trying to find an answer about is why do we need to
-defer tee-supplicant launch if it's bundled into initrd? Once you
-detect OP-TEE then tee-supplicant should be launched unconditionally.
-As per your example below, the motivation here seems to be the TPM2
-device dependent on RPMB backend but what if other future systemd
-services come up and depend on other services offered by
-tee-supplicant?
+> ---
+> - v1: https://lore.kernel.org/linux-arm-kernel/20240520231555.395979-5-echanude@redhat.com
+> - Changes since v1:
+>  - Make the generic function return the number of cpus of the node as
+>    max threads limit instead overriding it for arm64.
+>  - Drop Baoquan He's R-b on v1 since the logic changed.
+>  - Add CCs according to patch changes (ppc and s390 set
+>    DEFERRED_STRUCT_PAGE_INIT by default).
+> 
+> - v2: https://lore.kernel.org/linux-arm-kernel/20240522203758.626932-4-echanude@redhat.com/
+> - Changes since v2:
+>  - deferred_page_init_max_threads returns unsigned and use max instead
+>    of max_t.
+>  - Make deferred_page_init_max_threads static since there are no more
+>    override.
+>  - Rephrase description.
+>  - Add T-b and report from Michael Ellerman.
+> 
+>  arch/x86/mm/init_64.c    | 12 ------------
+>  include/linux/memblock.h |  2 --
+>  mm/mm_init.c             |  5 ++---
+>  3 files changed, 2 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 7e177856ee4f..adec42928ec1 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1354,18 +1354,6 @@ void __init mem_init(void)
+>  	preallocate_vmalloc_pages();
+>  }
+>  
+> -#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> -int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
+> -{
+> -	/*
+> -	 * More CPUs always led to greater speedups on tested systems, up to
+> -	 * all the nodes' CPUs.  Use all since the system is otherwise idle
+> -	 * now.
+> -	 */
+> -	return max_t(int, cpumask_weight(node_cpumask), 1);
+> -}
+> -#endif
+> -
+>  int kernel_set_to_readonly;
+>  
+>  void mark_rodata_ro(void)
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index e2082240586d..40c62aca36ec 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -335,8 +335,6 @@ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+>  	for (; i != U64_MAX;					  \
+>  	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
+>  
+> -int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask);
+> -
+>  #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+>  
+>  /**
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index f72b852bd5b8..acfeba508796 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -2122,11 +2122,10 @@ deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
+>  	}
+>  }
+>  
+> -/* An arch may override for more concurrency. */
+> -__weak int __init
+> +static unsigned int __init
+>  deferred_page_init_max_threads(const struct cpumask *node_cpumask)
+>  {
+> -	return 1;
+> +	return max(cpumask_weight(node_cpumask), 1U);
+>  }
+>  
+>  /* Initialise remaining memory on a node */
+> -- 
+> 2.44.0
+> 
 
--Sumit
-
->
-> In userspace and systemd it's just important to know that service need to=
- wait for a TPM2
-> device to appear in early initrd and when can things be postponed to main=
- rootfs and later
-> stages. Kernel and udev will bring up the device then once discovered.
-> Knowledge about the RPMB backend is important when something like TPM2 de=
-vice
-> depends on it.
->
-> Hope this helps,
->
-> -Mikko
+-- 
+Sincerely yours,
+Mike.
 
