@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-193744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAA18D316A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:32:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EB58D320D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5CED28DD3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:32:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05365B2E049
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B042168C3A;
-	Wed, 29 May 2024 08:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0DE169396;
+	Wed, 29 May 2024 08:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewyicS+C"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnikDJFI"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E721344C7B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D2E44C7B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716971333; cv=none; b=jfHdnAWTP9ktNf77j/Gnqz5+KUWcE043CrhvwXGqFigyK7h+NE76vv7RpgnnZ/uAwxg5bGYybo5QIsosC2SmSLWJBPYXK0kacFVkWal7AtGJ+2Abmp8E2tCT313DfNRVJVhXcI2i9qr56y2rZLj/4DX9EBsyMGIp3bvfVVsWUfQ=
+	t=1716971341; cv=none; b=VZ4UVkiDsmMyRPe65VXYBOgSO9OwpqIvN0QwEVDp/etrNHm3PtGkynoot8H7+6uB4km9omXTsrTLJxca66xnOKtB5nfzW2si4IX+7VIvBnIyRm9zsUU5lToxxXNZX88zsvCImXReZUZjgMK136/sbQltnoGlL7Z5Q0AMluQZE3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716971333; c=relaxed/simple;
-	bh=08oobRwRz3gaF/temZ05IpZbrn5Dik268m1bTOTym00=;
+	s=arc-20240116; t=1716971341; c=relaxed/simple;
+	bh=u6KL2RcBFKVFA2AMXZl6KLq4qv71vIG0xV+kBBsY/EI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sp+ViFYbDXy4pRbD4R7Cr8jHIqvNWGFkKfLiFcukOffqXstiv0WW3OKvS12eOnP6Mhjo6DP9EvhJagYapF/6TT3ULeW2eOUkswXqJH3+5MA2DXTcvdemai1O+60nwoxIUqRgScKsQ6wiPXoYCNnaqqIPRUV/d5/uueOBWyOgUyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewyicS+C; arc=none smtp.client-ip=209.85.160.54
+	 MIME-Version; b=qFmF7PYSPly/YUUEVzsmReszqI9g9OQ5ZXDPhiiSV4Nh9leuu7hFoWHuX0wVc7xyFDNlBIK6MjcrmEeTLCxZfDx5inBaY9pmwX3WDk36IrxJEyjrG+P7K8UYSyIszQoxa8uIRp3kg4FSw3EwAzeIHo86R/kk+HDEr77gIbhAvUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnikDJFI; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-24fca68b554so727476fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:28:51 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f8e9555eabso1451119b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716971331; x=1717576131; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716971339; x=1717576139; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7k7udukJq/5lufC/QvLOUP0N512BAUWebXH46Q8HtFk=;
-        b=ewyicS+CzMUpq+qTA46ap/qls+3Ujh28I1AS3Y+m42gAw8VCGd5W0zPs93yqo/qBMp
-         yVudo/IJ6f4ScwAn305sa8RGtgG8oJPicMjiKVti2BB1td41PEdGs/CC/KqMabkKHpDu
-         0bHbNxoI6n+SsHDpiULlItiMk4yqm21kHeNjtaQybL5u2NFBG6IkDHwoSEpvWXEUwl2U
-         KgYz20sIL8s/MbOJtuNxri9xVs82lcT9lkhcAP/ULCrukVqSuDz0skqgXwjRSDtv6Ses
-         i+Zz4xliYeYa37CBKH95QZISOLDdq7bEpGR7Nlv3KMXSkcFsgJD0cuAV2ylbDFRW24nQ
-         5CxQ==
+        bh=o8PkNiQW/mkvjIvpLEp+EBywhuNk7TaiPl+XTuB214I=;
+        b=UnikDJFIAHtdFNbDczbB3ft3RhmfXYiHIGP5d3q7NNUV7aibEb7VF+p11b6uo1gt29
+         c6rGSSJfm5Dl56mdtgVccGV1Ksi+03oimjWCWFElNgADGi+Bg8Z1rmADi1dmgq7nHd/D
+         8h/PxBEMeCZWRVY/QKHEGx2fgmK6y/A6jFPr4gX6XFn4E7fVE0bM+e5S2l+B8r+if54a
+         7fYCHyUWQFHWKQkI3q2R7qbRBxBdJDdCh6lFl5Ota+CS2HYu2VioFjrk6QSXYlxjmZTB
+         dg4F6cnxX65DyM19BVJ+g2/JalHbGE7QtPJToVZLcppL/NLwGGax0fHfgkJoPcHABVX1
+         vEFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716971331; x=1717576131;
+        d=1e100.net; s=20230601; t=1716971339; x=1717576139;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7k7udukJq/5lufC/QvLOUP0N512BAUWebXH46Q8HtFk=;
-        b=d17DbSM5Yx8l0VtH7d77VzqDPJKkaTGTBmR3SHfPe8pxI42mgW4D3QmHYt/iFYqmIO
-         daenHd3k6J84XMZPj8aLrnhccKg/j2RdYX7s42FiOVjXGMVLRzImjPyQrwTnX8efcyGm
-         Ra/ppFlwl93Eplb98GzLorm7F1AmTGNkrVlXolsNmAbxIyN/YrWfAQiAX1uqzOgVvq5e
-         IvvyHoZWcS5v+dtGnxJb1IOmSUBc7ao0YMOTixw+JjlFo82Kt6tpAHkuj57K7uMR3/Yt
-         baMoo9ddL0RX2VnELNpjIwYrcx5H4qchd18Ikvt5SMp6ktBoraii5TiHBVXnxQCYyAOU
-         KsTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTnasSD++hlIALFJ/oNx6zd4R7qKrrh3558FoCoyrKyATb7826jl7eKrX1tRTVe/qeg38hQYrobxVGDf5u/TwfU2P/J6EsYqYFiJzi
-X-Gm-Message-State: AOJu0YxLOchNq4ociJ7UsEOExVy6wTmWffrjZzar0UmxSTMc+dBevXGD
-	mZEqg9OaQ/wMLY/809rJYvGnyMT22XCZImOFlt8hEz0O3Vvy45Uh
-X-Google-Smtp-Source: AGHT+IFwms1cBvU+f9ojhWDg3nZKfLTfOVGOcCh0o9BJomwXX1OgvRueLY1XlvYRSI7zo2uCYFeifw==
-X-Received: by 2002:a05:6870:96a2:b0:24c:a414:3eab with SMTP id 586e51a60fabf-24ca41467f3mr15324961fac.32.1716971330911;
-        Wed, 29 May 2024 01:28:50 -0700 (PDT)
+        bh=o8PkNiQW/mkvjIvpLEp+EBywhuNk7TaiPl+XTuB214I=;
+        b=OLjs6iWdb8bd0GP8RaBMD+8skNKK7m4eHsZTUVykelWlFOKSHruqjJwARDq74B6QSr
+         b0J1RQ2DOnZuNhNNFc2qsAig8EB2ivSQqntFHV8xPZFQCNX1k2wG6kJfdgVdLzslVERp
+         pw/ycUsC4iOez5peDpmHrsEdmi4Qdkpse0eBwWOeYaKYVUdmODAdU7AUlipsnu5XAGWE
+         0UOX8CaaaZsLzwygSbOO6z5HLVyX+fZ2V8Htu0+ivv+Y++4+RgTxx+s8nZyBSDYoPhaR
+         q6ZplfcppHeekJ6lJQ4FPPPyVyzuWJuI1zMqkpX/jP94ncaNr+6F2gFvUTqt2kZ3Lnkh
+         iCJg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0Nk7Ezoq2Z+uQSmhXWu+6EhZZOJKuBWW3+SkcKPUu7OaTLddXoFxTVVdu3/qOhdNH2u1gpGW/RwOt4uVWDJWGD0DjXuNBxHYJ5owz
+X-Gm-Message-State: AOJu0YzTIY6KGmn0o+3Xfra75CfqXgLesxHu9iPJxsqCG4RRiHTKWLEW
+	bnslKzgk2IQWiR4k2LQ4J87Z7HnMVeJEq7cvOE83xN/asKjOOThF
+X-Google-Smtp-Source: AGHT+IFIIMwl+a1BFU1LURBAWUDnpnOzYB+DE372n3RJK0yLX+C7PJpG+VjhO1aGqsG0jKGc/xlpAg==
+X-Received: by 2002:a05:6a00:4405:b0:6f8:caf2:8f4f with SMTP id d2e1a72fcca58-6f8f45d2624mr16218543b3a.33.1716971338932;
+        Wed, 29 May 2024 01:28:58 -0700 (PDT)
 Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702220d948bsm174916b3a.131.2024.05.29.01.28.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702220d948bsm174916b3a.131.2024.05.29.01.28.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:28:50 -0700 (PDT)
+        Wed, 29 May 2024 01:28:58 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -85,10 +85,14 @@ Cc: baolin.wang@linux.alibaba.com,
 	ying.huang@intel.com,
 	yosryahmed@google.com,
 	yuzhao@google.com,
-	ziy@nvidia.com
-Subject: [PATCH v5 1/6] mm: swap: introduce swap_free_nr() for batched swap_free()
-Date: Wed, 29 May 2024 20:28:19 +1200
-Message-Id: <20240529082824.150954-2-21cnbao@gmail.com>
+	ziy@nvidia.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v5 2/6] mm: remove the implementation of swap_free() and always use swap_free_nr()
+Date: Wed, 29 May 2024 20:28:20 +1200
+Message-Id: <20240529082824.150954-3-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240529082824.150954-1-21cnbao@gmail.com>
 References: <20240529082824.150954-1-21cnbao@gmail.com>
@@ -100,107 +104,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Chuanhua Han <hanchuanhua@oppo.com>
+From: Barry Song <v-songbaohua@oppo.com>
 
-While swapping in a large folio, we need to free swaps related to the whole
-folio. To avoid frequently acquiring and releasing swap locks, it is better
-to introduce an API for batched free.
-Furthermore, this new function, swap_free_nr(), is designed to efficiently
-handle various scenarios for releasing a specified number, nr, of swap
-entries.
+To streamline maintenance efforts, we propose removing the implementation
+of swap_free(). Instead, we can simply invoke swap_free_nr() with nr
+set to 1. swap_free_nr() is designed with a bitmap consisting of only
+one long, resulting in overhead that can be ignored for cases where nr
+equals 1.
 
-Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
-Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+A prime candidate for leveraging swap_free_nr() lies within
+kernel/power/swap.c. Implementing this change facilitates the adoption
+of batch processing for hibernation.
+
+Suggested-by: "Huang, Ying" <ying.huang@intel.com>
 Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Acked-by: Chris Li <chrisl@kernel.org>
 Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+Acked-by: Chris Li <chrisl@kernel.org>
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Christoph Hellwig <hch@infradead.org>
 ---
- include/linux/swap.h |  5 +++++
- mm/swapfile.c        | 47 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
+ include/linux/swap.h | 10 +++++-----
+ kernel/power/swap.c  |  5 ++---
+ mm/swapfile.c        | 17 ++++-------------
+ 3 files changed, 11 insertions(+), 21 deletions(-)
 
 diff --git a/include/linux/swap.h b/include/linux/swap.h
-index a11c75e897ec..45f76dfe29b1 100644
+index 45f76dfe29b1..3df75d62a835 100644
 --- a/include/linux/swap.h
 +++ b/include/linux/swap.h
-@@ -481,6 +481,7 @@ extern void swap_shmem_alloc(swp_entry_t);
+@@ -480,7 +480,6 @@ extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+ extern void swap_shmem_alloc(swp_entry_t);
  extern int swap_duplicate(swp_entry_t);
  extern int swapcache_prepare(swp_entry_t);
- extern void swap_free(swp_entry_t);
-+extern void swap_free_nr(swp_entry_t entry, int nr_pages);
+-extern void swap_free(swp_entry_t);
+ extern void swap_free_nr(swp_entry_t entry, int nr_pages);
  extern void swapcache_free_entries(swp_entry_t *entries, int n);
  extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
- int swap_type_of(dev_t device, sector_t offset);
-@@ -562,6 +563,10 @@ static inline void swap_free(swp_entry_t swp)
- {
+@@ -559,10 +558,6 @@ static inline int swapcache_prepare(swp_entry_t swp)
+ 	return 0;
  }
  
-+static inline void swap_free_nr(swp_entry_t entry, int nr_pages)
-+{
-+}
-+
- static inline void put_swap_folio(struct folio *folio, swp_entry_t swp)
+-static inline void swap_free(swp_entry_t swp)
+-{
+-}
+-
+ static inline void swap_free_nr(swp_entry_t entry, int nr_pages)
  {
  }
+@@ -611,6 +606,11 @@ static inline void free_swap_and_cache(swp_entry_t entry)
+ 	free_swap_and_cache_nr(entry, 1);
+ }
+ 
++static inline void swap_free(swp_entry_t entry)
++{
++	swap_free_nr(entry, 1);
++}
++
+ #ifdef CONFIG_MEMCG
+ static inline int mem_cgroup_swappiness(struct mem_cgroup *memcg)
+ {
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index d9abb7ab031d..85a8b5f4a081 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -200,12 +200,11 @@ void free_all_swap_pages(int swap)
+ 
+ 	while ((node = swsusp_extents.rb_node)) {
+ 		struct swsusp_extent *ext;
+-		unsigned long offset;
+ 
+ 		ext = rb_entry(node, struct swsusp_extent, node);
+ 		rb_erase(node, &swsusp_extents);
+-		for (offset = ext->start; offset <= ext->end; offset++)
+-			swap_free(swp_entry(swap, offset));
++		swap_free_nr(swp_entry(swap, ext->start),
++			     ext->end - ext->start + 1);
+ 
+ 		kfree(ext);
+ 	}
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index f1e559e216bd..92a045d34a97 100644
+index 92a045d34a97..9c6d8e557c0f 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -1356,6 +1356,53 @@ void swap_free(swp_entry_t entry)
- 		__swap_entry_free(p, entry);
+@@ -1343,19 +1343,6 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+ 	swap_range_free(p, offset, 1);
  }
  
-+static void cluster_swap_free_nr(struct swap_info_struct *sis,
-+		unsigned long offset, int nr_pages)
-+{
-+	struct swap_cluster_info *ci;
-+	DECLARE_BITMAP(to_free, BITS_PER_LONG) = { 0 };
-+	int i, nr;
-+
-+	ci = lock_cluster_or_swap_info(sis, offset);
-+	while (nr_pages) {
-+		nr = min(BITS_PER_LONG, nr_pages);
-+		for (i = 0; i < nr; i++) {
-+			if (!__swap_entry_free_locked(sis, offset + i, 1))
-+				bitmap_set(to_free, i, 1);
-+		}
-+		if (!bitmap_empty(to_free, BITS_PER_LONG)) {
-+			unlock_cluster_or_swap_info(sis, ci);
-+			for_each_set_bit(i, to_free, BITS_PER_LONG)
-+				free_swap_slot(swp_entry(sis->type, offset + i));
-+			if (nr == nr_pages)
-+				return;
-+			bitmap_clear(to_free, 0, BITS_PER_LONG);
-+			ci = lock_cluster_or_swap_info(sis, offset);
-+		}
-+		offset += nr;
-+		nr_pages -= nr;
-+	}
-+	unlock_cluster_or_swap_info(sis, ci);
-+}
-+
-+void swap_free_nr(swp_entry_t entry, int nr_pages)
-+{
-+	int nr;
-+	struct swap_info_struct *sis;
-+	unsigned long offset = swp_offset(entry);
-+
-+	sis = _swap_info_get(entry);
-+	if (!sis)
-+		return;
-+
-+	while (nr_pages) {
-+		nr = min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
-+		cluster_swap_free_nr(sis, offset, nr);
-+		offset += nr;
-+		nr_pages -= nr;
-+	}
-+}
-+
- /*
-  * Called after dropping swapcache to decrease refcnt to swap entries.
-  */
+-/*
+- * Caller has made sure that the swap device corresponding to entry
+- * is still around or has not been recycled.
+- */
+-void swap_free(swp_entry_t entry)
+-{
+-	struct swap_info_struct *p;
+-
+-	p = _swap_info_get(entry);
+-	if (p)
+-		__swap_entry_free(p, entry);
+-}
+-
+ static void cluster_swap_free_nr(struct swap_info_struct *sis,
+ 		unsigned long offset, int nr_pages)
+ {
+@@ -1385,6 +1372,10 @@ static void cluster_swap_free_nr(struct swap_info_struct *sis,
+ 	unlock_cluster_or_swap_info(sis, ci);
+ }
+ 
++/*
++ * Caller has made sure that the swap device corresponding to entry
++ * is still around or has not been recycled.
++ */
+ void swap_free_nr(swp_entry_t entry, int nr_pages)
+ {
+ 	int nr;
 -- 
 2.34.1
 
