@@ -1,106 +1,55 @@
-Return-Path: <linux-kernel+bounces-193650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31178D2F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:04:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C588D322B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302661F28D3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:04:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9A04B2D886
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA47168C28;
-	Wed, 29 May 2024 08:01:54 +0000 (UTC)
-Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CB416F0E8;
-	Wed, 29 May 2024 08:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=153.127.30.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153E7171E64;
+	Wed, 29 May 2024 08:33:26 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D76F16191E
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716969714; cv=none; b=fP0PQqnh4NgiXtg0mj7pjvNady2R8fG0NksG21pSdqa1QiHw2jCj2+rxBSXozxv4OPzAkgPqEvMKIn0YglLUogzD7eK/Sf0AYNyv4rpjXL0NkMKpqkVqYsWSF1wC2lMdFfCP4vf0RVgir2mpoR8UsO12NRxRsFZxSM4EYelAr94=
+	t=1716971605; cv=none; b=UeHHdFy46MHZAPYS73q83f0iv2uCjmRDDKFvuuQZiwZJ8uOnHbEyAl0l6hjBlxXW6M4jY9Ot5eiGuBGFgUmb7fvBFCyZ66T28B2BnKUpjnAmgJSd5lgKRqJyw+3DFn3ZLlMIGSyPsLpqACAxczRVPRQ4CMc17BmOcKfpxzKdoF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716969714; c=relaxed/simple;
-	bh=MMEjeyCSEvlBnkE0HuddEvDMuSlTKCNs+hpF8pPNwDk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oo1FpDUI11HADi2Szupx2g+DnrwW3hb3sVO8GOO8fEISZiDrUgjAsTofH2yylp+nYm75hQwCrJ2ljK90D8eef704cZHoqqZc7kR05BCg81uxukwSYbJju30qF07Y0yRpfzJi8ymCgf8UCDzl4qWT2uaxMuFLM89uOoXafGOMDoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp; spf=fail smtp.mailfrom=users.sourceforge.jp; arc=none smtp.client-ip=153.127.30.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=users.sourceforge.jp
-Received: from SIOS1075.ysato.name (al128006.dynamic.ppp.asahi-net.or.jp [111.234.128.6])
-	by sakura.ysato.name (Postfix) with ESMTPSA id 779261C0BDE;
-	Wed, 29 May 2024 17:01:49 +0900 (JST)
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
-To: linux-sh@vger.kernel.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Lee Jones <lee@kernel.org>,
-	Helge Deller <deller@gmx.de>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Azeem Shaikh <azeemshaikh38@gmail.com>,
-	Guo Ren <guoren@kernel.org>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1716971605; c=relaxed/simple;
+	bh=eMzrml96pA8Rq5XFAWlTKhSLVds9dUPcBcITLrRcHS4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YnlIATIMyEzt9GHUfFA/MBNv7rV7hkNGnIHQjTbDPTDhEjbkyBukJdvy3Hl8kIxbYkRTX394eg1gK0rmJ4xH7pi/5C/A/IfeVAF23tjkrU7iMjY0VF1uSTYj6TJzngZHpoqX8hrcZvtnJbicLHyJk9rieBpaFnhGq9wRjfJWPoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
+	by baptiste.telenet-ops.be with bizsmtp
+	id UwZE2C00S3VPV9V01wZF93; Wed, 29 May 2024 10:33:15 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCEjI-00G8ig-Bx;
+	Wed, 29 May 2024 10:33:14 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCDlm-008nYK-Mv;
+	Wed, 29 May 2024 09:30:46 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-pci@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: [DO NOT MERGE v8 12/36] dt-bindings: pci: pci-sh7751: Add SH7751 PCI
-Date: Wed, 29 May 2024 17:00:58 +0900
-Message-Id: <587a2968539690a240f157ff860e148dea2bd167.1716965617.git.ysato@users.sourceforge.jp>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1716965617.git.ysato@users.sourceforge.jp>
-References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] mailbox: ARM_MHU_V3 should depend on ARM64
+Date: Wed, 29 May 2024 09:30:45 +0200
+Message-Id: <e00498fccf6dcbcf63bd24a137bfc7abd1b98345.1716967720.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,96 +58,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Renesas SH7751 PCI Controller json-schema.
+The ARM MHUv3 controller is only present on ARM64 SoCs.  Hence add a
+dependency on ARM64, to prevent asking the user about this driver when
+configuring a kernel for a different architecture than ARM64.
 
-Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+Fixes: ca1a8680b134b5e6 ("mailbox: arm_mhuv3: Add driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/pci/renesas,sh7751-pci.yaml      | 75 +++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/renesas,sh7751-pci.yaml
+The MHUv3 documentation is unclear about whether this can be present
+only on ARM64, or also on ARM.
+Googling 'site:arm.com MHUv3 "aarch32"' shows no results.
+Googling 'site:arm.com MHUv3 "aarch64"' does show results.
+---
+ drivers/mailbox/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/renesas,sh7751-pci.yaml b/Documentation/devicetree/bindings/pci/renesas,sh7751-pci.yaml
-new file mode 100644
-index 000000000000..3c3e8f9253c3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/renesas,sh7751-pci.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/renesas,sh7751-pci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas SH7751 PCI Host controller
-+
-+maintainers:
-+  - Yoshinori Sato <ysato@users.sourceforge.jp>
-+
-+allOf:
-+  - $ref: /schemas/pci/pci-bus.yaml#
-+
-+properties:
-+  compatible:
-+    const: renesas,sh7751-pci
-+
-+  reg:
-+    minItems: 2
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: PCI Controller
-+      - const: Bus State Controller
-+
-+  interrupt-controller: true
-+
-+  renesas,bus-arbit-round-robin:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Set DMA bus arbitration to round robin.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#interrupt-cells"
-+  - interrupt-map
-+  - interrupt-map-mask
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    pci@fe200000 {
-+            compatible = "renesas,sh7751-pci";
-+            #address-cells = <3>;
-+            #size-cells = <2>;
-+            #interrupt-cells = <1>;
-+            interrupt-controller;
-+            device_type = "pci";
-+            bus-range = <0 0>;
-+            ranges = <0x02000000 0 0xfd000000 0xfd000000 0 0x01000000>,
-+                     <0x01000000 0 0x00000000 0xfe240000 0 0x00040000>;
-+            dma-ranges = <0x03000000 0 0xab000000 0xab000000 0 0x00000001>,
-+                         <0x02000000 0 0x0c000000 0x0c000000 0 0x04000000>,
-+                         <0x02000000 0 0xd0000000 0xd0000000 0 0x00000001>;
-+            reg = <0xfe200000 0x0400>,
-+                  <0xff800000 0x0100>;
-+            interrupt-map = <0x0000 0 0 1 &julianintc 5 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x0000 0 0 2 &julianintc 6 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x0000 0 0 3 &julianintc 7 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x0000 0 0 4 &julianintc 8 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x0800 0 0 1 &julianintc 6 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x0800 0 0 2 &julianintc 7 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x0800 0 0 3 &julianintc 8 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x0800 0 0 4 &julianintc 5 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x1000 0 0 1 &julianintc 7 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x1000 0 0 2 &julianintc 8 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x1000 0 0 3 &julianintc 5 IRQ_TYPE_LEVEL_LOW>,
-+                            <0x1000 0 0 4 &julianintc 6 IRQ_TYPE_LEVEL_LOW>;
-+            interrupt-map-mask = <0x1800 0 0 7>;
-+    };
+diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+index 3b8842c4a3401579..8d4d1cbb1d4ca625 100644
+--- a/drivers/mailbox/Kconfig
++++ b/drivers/mailbox/Kconfig
+@@ -25,6 +25,7 @@ config ARM_MHU_V2
+ 
+ config ARM_MHU_V3
+ 	tristate "ARM MHUv3 Mailbox"
++	depends on ARM64 || COMPILE_TEST
+ 	depends on HAS_IOMEM || COMPILE_TEST
+ 	depends on OF
+ 	help
 -- 
-2.39.2
+2.34.1
 
 
