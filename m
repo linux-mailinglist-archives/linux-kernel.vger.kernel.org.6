@@ -1,166 +1,108 @@
-Return-Path: <linux-kernel+bounces-194484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083908D3CFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835E08D3CFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5DA1F21691
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFF73280339
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0961A38DD;
-	Wed, 29 May 2024 16:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090F0194C96;
+	Wed, 29 May 2024 16:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="PgOBpqIl"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="T1FiufcM"
 Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0A1194C87
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A50F194C76
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717000668; cv=none; b=ow3dTIYMfFvIJgG16sBqobMnYe9I+fa+AL276nNSkUQYrSqtSZI1IP+xkkJXazP0GF7xxJD8brsuYeUfnNnEP90lexAqB610EseKXNmPW40XOnyoOP5+3dJdy/KHpbMzz/Na0DRcOB5dlMLieGNWseC7hG547l/OjhXBV2xDaOk=
+	t=1717000710; cv=none; b=pGI7ebrsmt9SzhnYo59aFoDP8h9pkSp24AJ2kEQ4cbNKgzoZmQ58vA9P0zHeuQKjXtxq29Gv/A3Y/HJjnX3pg0DoS510ujD6dAid6sfQAeMLaJAyEtJtmF/ZE+wfsRQzddv8KQKvXyrFamscf6W8qJiWhTBgdXnuIzvqhSnsNI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717000668; c=relaxed/simple;
-	bh=D5hQleF4je2re4WTabKnBIrdc70AGoD50APXI1WJ4SA=;
+	s=arc-20240116; t=1717000710; c=relaxed/simple;
+	bh=n62JW954QEMEN8kU8631qHanrwdqcccUF5S3VBPtOqo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G7W7mINlreauamVJn9SRTcfOMBZJz0ZBwFlYV8U+sgcE95qx8kJICQaW3mxjJ2Lxw6hE4sbvhZm57pDn2zqV+vkfNB1rcnE4Ry+Z4Y7vvKtHyu6IecJSPQrB9ESGZu3MUCM0jofi706VRMafl6m9vZcbpprcwBdDM3fJ8JSz1WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=PgOBpqIl; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5295dada905so167128e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:37:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=tq6ugkVea+1aEe8LA0bLrZBB/Kx73jlpAO4OMjjRn3vp4wLf3ALysEZHwfOYJJw6quVPmfXzMQ+bRgjgMJ22nRX+zfLSjxoXvBsxdrQJObnZAZD3qlcxCn92xY/zFim6WQAvWoyIao9fbewA/SCM0XFpWtYQN84sUXCEQfuOfEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=T1FiufcM; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b0d25b54eso1400659e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1717000665; x=1717605465; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vhg3PSDLD+pC/Tu5xX3Yt9O/jtF+LQuu+I4tEFxm4GE=;
-        b=PgOBpqIlEgm7O6j5hrl2SrvqM/DRmO8rsrFXF9bQ8Oxk+uEEL0DN3NxXcadUTU8R6W
-         Zy2s+WvYy1Sqw5KRUMUY1MRd3/dduwglqQkKtfr2CIaF2PtY1/szEdJS3Mirr+3q3/x6
-         8whEJzLTvg7qkN7ktuYaBq4GMFfB4TQd1NMTUoVqq2J2l9cgRrXaI9bdIxkBi2n0r4QE
-         bRAxISFuFr9WtHF6TNKt/dqw0p4919TRc7Kc/x7Img0asS2fVGEReEwkkbi9KO0mIL/z
-         61HqoNsuLJ05OhSgVM4n4qdpIU8xiUSB5qwD29Ku70/7kzEFe3e8H6pT7Vg73HgV3jfX
-         dR4g==
+        d=linux-foundation.org; s=google; t=1717000706; x=1717605506; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RCN7EOEnVC70hLcRtdygQ9XQdGWocXnG58vuARKxgkQ=;
+        b=T1FiufcMMm4zpzSdzPwEE3GVl58aEIJGOyc/n+g4gJh/Y7vTNkFGo+Nf9d8aa1pTY+
+         COs3EkuwdTbVq7lkBgTvPOXA4KZL2EXre4QblrvUCCdPC7vUh0uHLrq7ifBLh/++betb
+         SpoIZf7vhuC+CgWEL/hyV7W4m+02U7sCVBD0k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717000665; x=1717605465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vhg3PSDLD+pC/Tu5xX3Yt9O/jtF+LQuu+I4tEFxm4GE=;
-        b=nIZUb76dyNAL0nlZeKXlKpCCfw/Ofnws4O2z92mTywQQhorYuonHRy8WrYNAt5wZl8
-         l3ticQYuXVMYavH2m1PxO/IvGU/JOMGYCuINIWojkFHVbHbvWf/ISpDs2aL/FRliCaQW
-         C04JPHb1lIxqG/myAWTLmpPQ1AG6h/0SfbPtAIxi731HS1+62hQveIDG6ZEI7WH5MPAP
-         bXReCyEJVlXR1MWRtPGKAljBTSKyy3RRNrN1F8E2uD2U5oMwdJ6yMsoxxSS3+hfLzRPe
-         Nkwzw/VAYt33bHq5cR/wJ1+whKfHj3ROw6/5NbSP12Rim/wunLOdpXeqBfk+TbvfeGNO
-         KWeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA735zhPulQxxgbGAzlVZeZ9toH8YfyvxiqcDg9M2jvL7gDuLKfEfiLnySSzZsR2MC78pbdTsDB6bIya/6H/SlyKI2X5bz2Rb3ylvZ
-X-Gm-Message-State: AOJu0Yxv1DeEDG27Hw2vuTFEVxBtS3Fcq51NDSqPVfSn0NJAXz7or70W
-	C341V3f59N3Fn1+waUU/a09vsVm1Oo0xt5jVubRxFcXNqstaQIz/4/KJn+UiIDI9bbPvmJQxmU1
-	JvKG9yQlia1J3SXRsdTEYotZzGcNpo7Cw3kPW+Q==
-X-Google-Smtp-Source: AGHT+IFb7OdP5izYBsFIM8KNbnVSke/aDi57hq/CQb9jSjOOLKEcu+ukVpWtaVdyek30b6o6ySohcFJ0aUZA5z/4PtE=
-X-Received: by 2002:a05:6512:3ed:b0:529:b6d1:572c with SMTP id
- 2adb3069b0e04-52a848cf73bmr728684e87.32.1717000664855; Wed, 29 May 2024
- 09:37:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717000706; x=1717605506;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RCN7EOEnVC70hLcRtdygQ9XQdGWocXnG58vuARKxgkQ=;
+        b=V1TSFc2TdzdGNvSElrqGf86KatKIvMz9w6D41Bk2v62U5iTZHhaWGPPMKd0O5zfuxz
+         Ub1raBqDdnv5Ij/TDVo6KvxK0VFsZi0Skbx0O7I2gsVCx+d/jmqxt1N7sqXpFWCUYVwi
+         Vdj1MdwH6goz4RJj7ZdMLryc8xCOqC+TddaUKUECwQt0YCOqfU8Fvhyqa0BG2v7x1FUT
+         5qFPRvc1J2qf/NoE0gpdbtv+17dFRwOIcUnM02j8mhyXzGOA5vUcHZWblghO2qhrHwjn
+         ceGlJyGQJUcvnQMfklJOgWfDUdxu9h1zmY5JP4GuDSOPvIKSZ+4MlwQ4WluaekoJ8tgv
+         FYtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVarfCfi+9uZ9PfXff60WQ3UXp6eI1P11W0i4JcIu3ZhXYjceN548B2x0RQULWcFVeWQSAf4O68aa0Kya5B2UHdmZ+hW5VdY39E6aHE
+X-Gm-Message-State: AOJu0YySu7xs6KYt5t3JTRScNiFOCjtpHyivBeoEoPxWsNayDWcfZ7pt
+	vsgYd+C62KenbIew2SJPM1NZ/Z2/Pg/TEekPnZKRyOziuEiYsJqJvTi4EPu0q89vJGIBAjwj1Y7
+	bgXEcnQ==
+X-Google-Smtp-Source: AGHT+IGUhMUb8vrMvAq2ztWWZMiSwlLY0ztGVMLo3q6ngs+gIr6DzFkzi0CfOrg0CroSZEmrrnE0LQ==
+X-Received: by 2002:a19:760f:0:b0:520:36ea:9375 with SMTP id 2adb3069b0e04-5296736ba45mr11540092e87.43.1717000706253;
+        Wed, 29 May 2024 09:38:26 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529b6de681bsm782046e87.39.2024.05.29.09.38.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 09:38:25 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b0d25b54eso1400611e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 09:38:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUrSgZPAHTMdNTkTbGFPB84AuWttZJaBdFtpEfeOVkYS6zIN6R/VjBp+fJ/hJqTRpwC8kDd07WEDPpLJ7Q8Byr9bjzgAFfj2x/qC8Yy
+X-Received: by 2002:ac2:454e:0:b0:521:92f6:3d34 with SMTP id
+ 2adb3069b0e04-5296594cf46mr11225856e87.22.1717000705215; Wed, 29 May 2024
+ 09:38:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528164132.2451685-1-maz@kernel.org> <CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
- <86bk4pm8j1.wl-maz@kernel.org> <CAK9=C2XRx==OTPoGW_AHmjq4Th0bv4okwcq6-3L5JYwHwQp97A@mail.gmail.com>
- <86a5k8nbh1.wl-maz@kernel.org> <CAK9=C2Ugq=0y8M86CD75mQccBo=TBLBomb4rqC4i1naKy2LyWQ@mail.gmail.com>
- <868qzsn7zs.wl-maz@kernel.org> <20240529-rust-tile-a05517a6260f@spud>
-In-Reply-To: <20240529-rust-tile-a05517a6260f@spud>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Wed, 29 May 2024 22:07:33 +0530
-Message-ID: <CAK9=C2UvppYBUE8_u+M86KSdtULyMAMA=kPvmb4xS0S1_UJGhQ@mail.gmail.com>
-Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
-To: Conor Dooley <conor@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, Saravana Kannan <saravanak@google.com>, 
-	Rob Herring <robh@kernel.org>
+References: <202405291318.4dfbb352-oliver.sang@intel.com>
+In-Reply-To: <202405291318.4dfbb352-oliver.sang@intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 29 May 2024 09:38:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg29dKaLVo7UQ-0CWhja-XdbDmUOuN7RrY9-X-0i-wZdA@mail.gmail.com>
+Message-ID: <CAHk-=wg29dKaLVo7UQ-0CWhja-XdbDmUOuN7RrY9-X-0i-wZdA@mail.gmail.com>
+Subject: Re: [linus:master] [vfs] 681ce86235: filebench.sum_operations/s -7.4% regression
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Waiman Long <longman@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, Wangkai <wangkai86@huawei.com>, 
+	Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 8:47=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
+On Tue, 28 May 2024 at 22:52, kernel test robot <oliver.sang@intel.com> wrote:
 >
-> On Wed, May 29, 2024 at 01:00:07PM +0100, Marc Zyngier wrote:
-> > > > > In the RISC-V world, there have been quite a few QEMU releases
-> > > > > where the generated DT node of the interrupt controller does not
-> > > > > have the "#address-cells" property. This patch breaks the kernel
-> > > > > for all such QEMU releases.
-> > > >
-> > > > Congratulations, you've forked DT. News at 11.
-> > >
-> > > Can you elaborate how ?
-> >
-> > You've stated it yourself. You are relying on a behaviour that
-> > deviates from the standard by having DTs with missing properties
-> >
-> > And since we can't travel back it time to fix this, the only solution
-> > I can see is to support both behaviours by quirking it.
+> kernel test robot noticed a -7.4% regression of filebench.sum_operations/s on:
 >
-> I'm not convinced that there is any actual production hardware that
-> would get broken by your patch, just QEMU, so I think it should get
-> fixed to output devicetrees that are spec compliant rather than add some
-> riscv-specific hacks that we can't even gate on the "qemu,aplic"
-> compatible because QEMU doesn't use the compatible created for it...
+> commit: 681ce8623567 ("vfs: Delete the associated dentry when deleting a file")
 
-I also did further digging and it turns out the "#address-cells"
-is missing only for APLIC DT nodes and this issue only impacts
-APLIC DT node creation in QEMU RISC-V virt machine. We
-should just go ahead and fix QEMU.
+Well, there we are. I guess I'm reverting this, and we're back to the
+drawing board for some of the other alternatives to fixing Yafang's
+issue.
 
->
-> Spec violations aside, the QEMU aplic nodes in the DT contain a bunch
-> of other issues, including using properties that changed in the
-> upstreaming process. Here's the issues with Alistair's current riscv
-> tree for QEMU w/ -smp 4 -M virt,aia=3Daplic,dumpdtb=3D$(qemu_dtb) -cpu ma=
-x -m 1G -nographic
->
-> qemu.dtb: aplic@d000000: $nodename:0: 'aplic@d000000' does not match '^in=
-terrupt-controller(@[0-9a-f,]+)*$'
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
-> qemu.dtb: aplic@d000000: compatible:0: 'riscv,aplic' is not one of ['qemu=
-,aplic']
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
-> qemu.dtb: aplic@d000000: compatible: ['riscv,aplic'] is too short
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
-> qemu.dtb: aplic@d000000: Unevaluated properties are not allowed ('compati=
-ble' was unexpected)
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
-> qemu.dtb: aplic@c000000: $nodename:0: 'aplic@c000000' does not match '^in=
-terrupt-controller(@[0-9a-f,]+)*$'
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
-> qemu.dtb: aplic@c000000: compatible:0: 'riscv,aplic' is not one of ['qemu=
-,aplic']
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
-> qemu.dtb: aplic@c000000: compatible: ['riscv,aplic'] is too short
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
-> qemu.dtb: aplic@c000000: Unevaluated properties are not allowed ('compati=
-ble', 'riscv,delegate' were unexpected)
->         from schema $id: http://devicetree.org/schemas/interrupt-controll=
-er/riscv,aplic.yaml#
->
-> I guess noone updated QEMU to comply with the bindings that actually got
-> upstreamed for the aplic?
+Al, did you decide on what approach you'd prefer?
 
-Yes, we never bothered to update the QEMU DT generation after
-AIA DT bindings were accepted. Thanks for catching.
-
-Regards,
-Anup
+                     Linus
 
