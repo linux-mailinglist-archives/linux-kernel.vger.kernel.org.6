@@ -1,93 +1,89 @@
-Return-Path: <linux-kernel+bounces-194600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A4D8D3EBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:02:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CECC8D3EBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D2312873AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6760F1C22B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F733181D09;
-	Wed, 29 May 2024 19:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B3C187332;
+	Wed, 29 May 2024 19:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jjwq8F20"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="io8Jw4Ny"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B94CDDA1;
-	Wed, 29 May 2024 19:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F384335C7;
+	Wed, 29 May 2024 19:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717009359; cv=none; b=mLwacKq38HhwPLNR1Huwv6UlrrFWyC7C99dmND3Af67Tz/7RZCnF8MDrlzKytwP+AiGpU7t8VFOgFAHS071jCkh5BJxK2fCr3dcwA1ZZ8LwuJDvTn2PNVRwU3iipgapT4zG+ygdRjxz9TwLSVuK5WEaCspMnPsEfrmFcI2SjFz0=
+	t=1717009413; cv=none; b=gIoni7sKnOeJNxGTkwxC8EZtzGSjL0pn8x+CpQQXGF0xRj2FYw5IRIgN2QHe1i8V+4Z8AQhNRpZoG7A20N2+j5uOpb+KL+HhaYMxl/zpWufT8x777WzmEipu4gpj4OG9LkS+80D3zSiMpoSRTOdbgVkX0KZO2/b5iFYxZ4KU7wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717009359; c=relaxed/simple;
-	bh=bpYNO8LbmJyc05+u4bqQjo0S4lnv0flmzs78GZEnzdI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=WYc6ewdCyH6ef9mnARKuL7RPA5cLSBzFVYDuWie8x+arnNEmH2WWY2vjuzEiAat5gle7Auk99MF18/RTaAqYDo7FnQ5N6QkuYpNZMARJKqrbwjPRUSjutoe0t22PZjlPCPQf5Ho3KXx6aRQVddSIW+lnz5RdZuu5NlKm9olB1II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jjwq8F20; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4202c1d19d5so448295e9.2;
-        Wed, 29 May 2024 12:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717009356; x=1717614156; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bpYNO8LbmJyc05+u4bqQjo0S4lnv0flmzs78GZEnzdI=;
-        b=Jjwq8F20Wfz9QhPBByZ0f/mZUHS4IpjtrFE4LBXycrM7+hdguVdkuaFjKlIVbl2mzl
-         bq70bdA735NFX5bTlSNUzVpuxP2uFTEzlX9d5Krc5zKCR+/cFXCbOy9DZnLPOrsnHHJe
-         ttC+eq7/H6796kpBsr+fiLgVCJggrMa0ZBu+dlKvXSNJh8dmZ30Y4LlB043ero1+UehL
-         qbxx16zHISvxQheiMOIaytvACKRLPQYymtIfmnO07RbSqoeqTV317/Mf5bt+mSOlSKwf
-         5MR9dJwEdhZznsTooVBC4S25AEkq5FJgStSbD9FhiICnCPRd4E31Q8qyXHSksq2DcfB+
-         aREg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717009356; x=1717614156;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bpYNO8LbmJyc05+u4bqQjo0S4lnv0flmzs78GZEnzdI=;
-        b=pw3Vs21apCJh5rF2QYH5yDXmE0b2woB5UsKi7KNpAxSLGk6xVZBSQ+oTZFBHr8yCBH
-         YXg8umOr2NihJOEm+iCOczb0bFjmIAsJ2A89VnIsd//+QeJHvBpG4lkIHnJCKY6Lx3++
-         xKTZRSFKnlyqnUkKSmKcaA+3OzqGTKOYqgLMLsDZOfQq1lXmkg2DsZg7WruBWqAnDPKi
-         mdQoj82YiABMbbH3cFsacDqJp+4ikBvWySlq1qjh6RdrPHXV2ji+sVBKOagMo5rp54s/
-         ePHjhp7mBapDXsJLTdSbL1vZ6oLX+gfaTBDjv5fnt0BiYOAd02df92lz5um/s9WOa5t5
-         H9dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVz7Hh6xt8DRbqP2BECUGrsRrxn4IGM0OMRsJ3LZlTBLmMFKDSYtM/d1CbNxsa2LlQVVrJwZaztxgHDA+RXR3X3oxwHlrp3seoCqZNC
-X-Gm-Message-State: AOJu0YwV6IieqV8bWZsuP3dQUirmiM6EX+NiBgzh9ILOIhnOo+RSd56M
-	I3Az0JmV/1Iv6c9cdNiHYLqI9a35IdfeeDjQPDzqk5Ouo3XGjOOGt8t7BtykFekFIg==
-X-Google-Smtp-Source: AGHT+IGbrXWDERnRAl5ktgVopq2DpLc+hSFTqTn8Vn0pqLKAFK6N+tybPiyTOVxksBZ3QPlBFYRyfg==
-X-Received: by 2002:a05:600c:4f42:b0:41f:e3b0:83ee with SMTP id 5b1f17b1804b1-42127811758mr633645e9.3.1717009356276;
-        Wed, 29 May 2024 12:02:36 -0700 (PDT)
-Received: from localhost ([31.171.153.77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7de7esm15359626f8f.14.2024.05.29.12.02.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 12:02:35 -0700 (PDT)
+	s=arc-20240116; t=1717009413; c=relaxed/simple;
+	bh=Otfy8rES7rvdq+wnb3Wa8AaNEaYXerb7/pwMg3id6Gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d44xLp0sJMKYwHiSbjLPwIvn8Ze1O/eCe71r56bJDouelTPVnegYBNWa0hgPSqO/+TXQVahHYQV3+7SBxHrwaylizV++VK+c9h/JX1h5GGJ08RZOK5WeF61QJ2QSznxxZQYFBDiHPZN+Ok1oxlsS2t3LpGL3tqJNFQf5iFiyuaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=io8Jw4Ny; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cBJ2yfNPFC6AgKPZbvS91mCh/8Bwho3Soao0QI/qyeM=; b=io8Jw4NyaEFkMQ4OAOUWJg0ZyE
+	owa5pwXGFBnAdpTvTFEDDAab75ZSYKih19BbfS7OLZmvJKG8BYb32nBZnWCuPddTKEeE5OVZp1Yc3
+	Acai6StyYj0VIsd/fU6hTwKaC2SfoWV0tWLe5g3HZ1Y4ORQCRIoxMAd+0FBRrTp5cDWSoVbUMGMI9
+	N7UmU8ZZ6i7c75pt8A3TXmfBwDe2d4NkelwNsktROTgthw/LFu8ZssMSjsEDMsjsZAIAGux6tyLBp
+	TnupI9bMmaPf9Zcnu1its8cxpmlNWA2jr/Wf6hoL76XnRQKYUgtco5bF8FPEPoFdJWvdImSIhFdnb
+	T4I87nsg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sCOa8-003Yze-0S;
+	Wed, 29 May 2024 19:03:28 +0000
+Date: Wed, 29 May 2024 20:03:28 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs/file: fix the check in find_next_fd()
+Message-ID: <20240529190328.GP2118490@ZenIV>
+References: <20240529160656.209352-1-yuntao.wang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 May 2024 21:02:34 +0200
-Message-Id: <D1MD0O5LFZZ0.1UAS75ZVQJKOF@gmail.com>
-To: "Alice Ryhl" <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rust: alloc: fix typo in docs for GFP_NOWAIT
-From: "Vincenzo Palazzo" <vincenzopalazzodev@gmail.com>
-X-Mailer: aerc 0.15.2-211-g37d5fc691aff
-References: <20240529083452.779865-1-aliceryhl@google.com>
-In-Reply-To: <20240529083452.779865-1-aliceryhl@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529160656.209352-1-yuntao.wang@linux.dev>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed May 29, 2024 at 10:34 AM CEST, Alice Ryhl wrote:
-> Fix a typo in alloc.rs by replacing Ror with For.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-Reviewed-by: Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
+On Thu, May 30, 2024 at 12:06:56AM +0800, Yuntao Wang wrote:
+> The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
+> maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
+> gives the value of bitbit, which can never be greater than maxfd, it can
+> only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
+> will never be true.
+> 
+> Moreover, when bitbit equals maxfd, it indicates that there are no unused
+> fds, and the function can directly return.
+> 
+> Fix this check.
+
+Hmm...  The patch is correct, AFAICS.  I _think_ what happened is that
+Linus decided to play it safe around the last word.  In the reality
+->max_fds is always a multiple of BITS_PER_LONG, so there's no boundary
+effects - a word can not cross the ->max_fds boundary, so "no zero
+bits in full_fds_bits under max_fds/BITS_PER_LONG" does mean there's
+no point checking in range starting at round_down(max_fds, BITS_PER_LONG).
+
+Perhaps a comment along the lines of
+
+        unsigned int maxfd = fdt->max_fds; // always a multiple of BITS_PER_LONG
+
+would be useful in there...
 
