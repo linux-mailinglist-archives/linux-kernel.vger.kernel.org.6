@@ -1,136 +1,153 @@
-Return-Path: <linux-kernel+bounces-193912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4178D33FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:05:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835498D33FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0DA1C232D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:05:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A9A285BA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734F117A91B;
-	Wed, 29 May 2024 10:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HgjZ8rqT"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF7317B418;
+	Wed, 29 May 2024 10:06:27 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C04331A60
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4CF31A60;
+	Wed, 29 May 2024 10:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977127; cv=none; b=Bjga9swqcZwOsN+QT9z4Byvqmed8Pf6dLfk2NJft2xppz5JSULOFrZ6aUtBCX0oHLSzlLRbeEyLrI+lUSvO/4xvd0rRD0Sd+M7Vjm8cuPwDzdJWA83VxQy5nFCM+ofnzPk4xqMbtR/nVTGaJQFkeNhga560eFnwp7LWAPEm6Lvg=
+	t=1716977187; cv=none; b=jExvA05/sTJWKShe426qj6C9+QZ2O0x+eZZgYmKauFCg2/O36antdn/+AO5UTjJr7pK3mnfkQBT0hBhCqSmbJmNTM7MAuqRfQMOKHVYhcy2Z53IPuqQATgo7jN+c/REXj5dOaTEYCpK/iSsvF10MEBT0v8n2v7j2gN8Qcmo0/GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977127; c=relaxed/simple;
-	bh=jdIfZWjSZqNLyhkQVFjBgRz33vWk9mB2ZcWv52+zLio=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/Xk9Wxd4BL30aGAf5TwLCdqMprXMNKN2OeYWRSyN1qi66Mm/UW3osn5inJiNxTEfjREMt9LgXTZqv8hQHdwnLONZZSUWjQMnUoRye3x8jOOeImbKn+ln7+3XS0USpjlA/jeh6dFPv+RuG0Ghm21rZoxUgELRMl1Smj5ZDdUZRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HgjZ8rqT; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-357d533b744so1886374f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716977124; x=1717581924; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SjBeXRP3NZPNEtnVExWiEQg1GcbJkpp6fTKGUuZKI9Y=;
-        b=HgjZ8rqT5Sz51UcORpAVgY9dMU/4ufJnGkHiT9HTDoW4aQWUGaLDfisQauGiG4WAMz
-         TG/EOZXja5i1dwp243Wh/Qwa0vOVaSn9F/M4nr42TdgfqFipu3BWVb6IG2FR1NDnS7Pk
-         qX9pKNCV9Q8ElTobJ3adYLhjq+rtO5XwTFkklJKQrZBRHFCcSajVjQtrBXfZuQdflnmt
-         GCSIgAOtf7pFIsrUBqltFmTVnocVTckkUcFYs7nYfjPJsHlh+zbBZtoI1dbYxNSzNCsq
-         Glw9L/YVCXGUjnXRWpPgSurUnupX03MuAGOEy4n4us0ksglkBJ3iudEWIbVGf76CuiRS
-         y/kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716977124; x=1717581924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SjBeXRP3NZPNEtnVExWiEQg1GcbJkpp6fTKGUuZKI9Y=;
-        b=DiAm7WVgZIkmGSdyVOR/zDt/GBskjJJFuoK2ywHlmGTXDgKpN4mNmetJhiNuWkB3nv
-         5qjjbjqkj2+xxIm5LO9o5uyUdHP4G3lDlDib22CnHeS2kBfCVwh7Fvhb5szrNOM8fCVS
-         3ar9bh7uyhbmUdJYPcBov/KtoSkiWuy8LBwu6xda0U1JouQtfDfr5FuJtegJwQM+ujdC
-         XjRMg926RCPTQ+SOO2q1UKKtcWrvln1FBltbtQ6HdLqGtmlO/b0mBsHQRQVmF/fsRSO3
-         hYOfc/HL2e29sf1unUtuoGDr2DeLIP4nTlBKqH1KZFMLgfSmUF3NBcPVh4vdyk1n9acd
-         9rZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYzJZX5GcuoyxHGcElIGgyg2gRAbdTsN+N0t20pIKAghQQIYVT2s54V+MM1mnTdLGMNSmB+rhP6P0nm6/+bmtsA5ZaPYBYzUJOqBm5
-X-Gm-Message-State: AOJu0Yz72A+r/mjPK1kCQ6iksPA0HX6MZPAIepLGt+2eL8pv0QUAs7xP
-	5az+cPvNDN+gPepchC4DFnZopPevRvcQhjLzAfbN4zePfTAo/xgQ7acwuubG2FM=
-X-Google-Smtp-Source: AGHT+IEJ9/f6hxMe3hU/z8uaPfO55G1vDC0ZTRYQcECOhnmYBWOWQIQjQ/blRPGbEK5l+LkpPlv2TA==
-X-Received: by 2002:a5d:4748:0:b0:356:a46b:7369 with SMTP id ffacd0b85a97d-356a46b766bmr8129108f8f.24.1716977123830;
-        Wed, 29 May 2024 03:05:23 -0700 (PDT)
-Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7db23sm14697759f8f.23.2024.05.29.03.05.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 03:05:23 -0700 (PDT)
-From: Oscar Salvador <osalvador@suse.com>
-X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
-Date: Wed, 29 May 2024 12:05:21 +0200
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Oscar Salvador <osalvador@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [RFC PATCH v4 13/16] powerpc/e500: Use contiguous PMD instead of
- hugepd
-Message-ID: <Zlb94UyBx0s-Vavj@localhost.localdomain>
-References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
- <56cf925576285e2b97550f4f7317183d98d596c5.1716815901.git.christophe.leroy@csgroup.eu>
- <ZlbsEb_T2eQYO-g4@localhost.localdomain>
- <b95f61ea-b40c-4d7c-9a39-7bf927f7b0cd@csgroup.eu>
+	s=arc-20240116; t=1716977187; c=relaxed/simple;
+	bh=G1Rk+7kEkFD09wELNnRj53zJwtqDGrgnZU8T7fnfjek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KLQdI1tLIJE2JQiMec2wxw0VHutBTF3Yh0jmsoMNqKamK72U+/K2orPm5/A25o4QXcSg/oHCBvjy1FxIPcH23lUD8De6EtNboIidZmkskBwQ1zroQ7uXc5TADuI/9SkFFH58Zw4ciivK1YrS9/jw42UxVhpLgSygWFo/ciX+jG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.3] (ip5f5af7f7.dynamic.kabel-deutschland.de [95.90.247.247])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id ABB5461E5FE01;
+	Wed, 29 May 2024 12:05:43 +0200 (CEST)
+Message-ID: <52ccf0c1-e5dd-412b-9e47-7829ca0f6ffc@molgen.mpg.de>
+Date: Wed, 29 May 2024 12:05:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b95f61ea-b40c-4d7c-9a39-7bf927f7b0cd@csgroup.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] Bluetooth: btnxpuart: Update firmware names
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-bluetooth@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amitkumar.karwar@nxp.com, rohit.fule@nxp.com,
+ sherry.sun@nxp.com, ziniu.wang_1@nxp.com, haibo.chen@nxp.com,
+ LnxRevLi@nxp.com, regressions@lists.linux.dev
+References: <20240529095347.22186-1-neeraj.sanjaykale@nxp.com>
+ <20240529095347.22186-3-neeraj.sanjaykale@nxp.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240529095347.22186-3-neeraj.sanjaykale@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 09:58:35AM +0000, Christophe Leroy wrote:
- 
-> Yes I now have :
+[Cc: regressions@]
+
+Dear Neeraj,
+
+
+Am 29.05.24 um 11:53 schrieb Neeraj Sanjay Kale:
+> This updates the firmware names of 3 chipsets: w8987, w8997, w9098.
+> These changes are been done to standardize chip specific firmware
+> file names.
+
+Can you please describe the new naming schema in the commit message?
+
+> To allow user to use older firmware file names, a new device tree
+> property has been introduced called firmware-name, which will override
+> the hardcoded firmware names in the driver.
+
+So users updating the Linux kernel but not updating the devicetree with 
+the new property are going to see a regression, right? I think this 
+violates Linux’ no regression policy. If so, please implement a way to 
+support old and new names.
+
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> ---
+> v2: Remove "nxp/" from all firmware name definitions to be inline with
+> firware file name read from device tree file. (Krzysztof)
+
+fir*m*ware
+
+> ---
+>   drivers/bluetooth/btnxpuart.c | 28 +++++++++++++++++-----------
+>   1 file changed, 17 insertions(+), 11 deletions(-)
 > 
-> +#define _PAGE_HSIZE_MSK (_PAGE_U0 | _PAGE_U1 | _PAGE_U2 | _PAGE_U3)
-> +#define _PAGE_HSIZE_SHIFT              14
-> +#define _PAGE_HSIZE_SHIFT_OFFSET       20
-> 
-> and have added a helper to avoid doing the calculation at several places:
-> 
-> +static inline unsigned long pte_huge_size(pte_t pte)
-> +{
-> +       pte_basic_t val = pte_val(pte);
-> +
-> +       return 1UL << (((val & _PAGE_HSIZE_MSK) >> _PAGE_HSIZE_SHIFT) + 
-> _PAGE_HSIZE_SHIFT_OFFSET);
-> +}
+> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+> index 0b93c2ff29e4..4442d911eba8 100644
+> --- a/drivers/bluetooth/btnxpuart.c
+> +++ b/drivers/bluetooth/btnxpuart.c
+> @@ -33,16 +33,16 @@
+>   /* NXP HW err codes */
+>   #define BTNXPUART_IR_HW_ERR		0xb0
+>   
+> -#define FIRMWARE_W8987		"nxp/uartuart8987_bt.bin"
+> -#define FIRMWARE_W8997		"nxp/uartuart8997_bt_v4.bin"
+> -#define FIRMWARE_W9098		"nxp/uartuart9098_bt_v1.bin"
+> -#define FIRMWARE_IW416		"nxp/uartiw416_bt_v0.bin"
+> -#define FIRMWARE_IW612		"nxp/uartspi_n61x_v1.bin.se"
+> -#define FIRMWARE_IW624		"nxp/uartiw624_bt.bin"
+> -#define FIRMWARE_SECURE_IW624	"nxp/uartiw624_bt.bin.se"
+> -#define FIRMWARE_AW693		"nxp/uartaw693_bt.bin"
+> -#define FIRMWARE_SECURE_AW693	"nxp/uartaw693_bt.bin.se"
+> -#define FIRMWARE_HELPER		"nxp/helper_uart_3000000.bin"
+> +#define FIRMWARE_W8987		"uart8987_bt_v0.bin"
+> +#define FIRMWARE_W8997		"uart8997_bt_v4.bin"
+> +#define FIRMWARE_W9098		"uart9098_bt_v1.bin"
+> +#define FIRMWARE_IW416		"uartiw416_bt_v0.bin"
+> +#define FIRMWARE_IW612		"uartspi_n61x_v1.bin.se"
+> +#define FIRMWARE_IW624		"uartiw624_bt.bin"
+> +#define FIRMWARE_SECURE_IW624	"uartiw624_bt.bin.se"
+> +#define FIRMWARE_AW693		"uartaw693_bt.bin"
+> +#define FIRMWARE_SECURE_AW693	"uartaw693_bt.bin.se"
+> +#define FIRMWARE_HELPER		"helper_uart_3000000.bin"
+>   
+>   #define CHIP_ID_W9098		0x5c03
+>   #define CHIP_ID_IW416		0x7201
+> @@ -685,13 +685,19 @@ static bool process_boot_signature(struct btnxpuart_dev *nxpdev)
+>   static int nxp_request_firmware(struct hci_dev *hdev, const char *fw_name)
+>   {
+>   	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	const char *fw_name_dt;
+>   	int err = 0;
+>   
+>   	if (!fw_name)
+>   		return -ENOENT;
+>   
+>   	if (!strlen(nxpdev->fw_name)) {
+> -		snprintf(nxpdev->fw_name, MAX_FW_FILE_NAME_LEN, "%s", fw_name);
+> +		if (strcmp(fw_name, FIRMWARE_HELPER) &&
+> +		    !device_property_read_string(&nxpdev->serdev->dev,
+> +						 "firmware-name",
+> +						 &fw_name_dt))
+> +			fw_name = fw_name_dt;
+> +		snprintf(nxpdev->fw_name, MAX_FW_FILE_NAME_LEN, "nxp/%s", fw_name);
+>   
+>   		bt_dev_dbg(hdev, "Request Firmware: %s", nxpdev->fw_name);
+>   		err = request_firmware(&nxpdev->fw, nxpdev->fw_name, &hdev->dev);
 
-Great, this looks much better.
 
-> That's what I did before but it didn't work. The problem is that 
-> pte_advance_pfn() takes a long not a long long:
-> 
-> static inline pte_t pte_advance_pfn(pte_t pte, unsigned long nr)
-> {
-> 	return __pte(pte_val(pte) + (nr << PFN_PTE_SHIFT));
-> }
-> 
-> And when I called it with nr = PMD_SIZE / PAGE_SIZE = 2M / 4k = 512, as 
-> we have PFN_PTE_SHIFT = 24, I got 512 << 24 = 0
+Kind regards,
 
-Ah, I missed that trickery with the types.
-
-Thanks!
-
-
--- 
-Oscar Salvador
-SUSE Labs
+Paul
 
