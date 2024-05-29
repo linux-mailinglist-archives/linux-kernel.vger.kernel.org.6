@@ -1,181 +1,125 @@
-Return-Path: <linux-kernel+bounces-194108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B463C8D36B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:49:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D018D36B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A751F285F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:49:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A681A1C2222E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB025235;
-	Wed, 29 May 2024 12:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDEAF9EC;
+	Wed, 29 May 2024 12:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URZmtme1"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOmHaU+m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18DADDA6;
-	Wed, 29 May 2024 12:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0332D53E;
+	Wed, 29 May 2024 12:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716986956; cv=none; b=V/lZ17FZcu5vlvge5RYtDdUwrIvW3hsySNriSu9aEIlvR9v+cVxKTehlyQr01HlN8SsmQ5RL3pMcA9jUq8wG4By3Vhkd5+Yzz0Ooa2xJzsZOmeAnge59hOmIP6TXHHE8KzQ0xc8H0i8kWIExypGxy+J7oOPVAZQx96DUuPJ7XoU=
+	t=1716986977; cv=none; b=IilxQ+yuW4YVQdjkDvQtMo/5D41MYeW3aWEFK85tpdhygfOSovqCSG/cUa8PR4lWGc0urHk1ToEEryvdg0eB0wydxT5BdJK+8pPZnMwv46dsPMNFOO2grWNmY2T/Jc6VpdUbjopDJzGp2GlswY8wSOd+BrwbHMqJ4owk8NBji24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716986956; c=relaxed/simple;
-	bh=DcKxVZZV+EgA4m/SNpu5gXfJDOpxyV8oN+5zhuZvvR4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ua+q1OCfzmsORxAAxy3nfR3abIvBGCCVtq150gkJRMqiOVBpX01+vU9NAWzbbXBT0iF43yXzLkZd2Amy/E9+gFyk/XRgDB+3xUNT53+FFt2rmbKA5l1nFKqe6mgMdhaR+5q86UKuJk3Yc7gsEVRAcDHyHLwdeWeDxz09L/JhYlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URZmtme1; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6519c6ec7bso73724166b.1;
-        Wed, 29 May 2024 05:49:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716986953; x=1717591753; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hxm5RCkT6Z8eOTgdAgsYs+Y3bbauIPRrHzupKWf9eIw=;
-        b=URZmtme1Zos//ogIf7XYzHXfOjFqfAxBOeMW4kvd8txWHzuA5g1lGxKvQ6TFJYSFps
-         K2IZEpqcE+CYqz5HeKKXHd1+KPO6XJKk+kRKN3eDYulaKHumxdJo/zq5HcSatRYM4FEd
-         1asPYGZh+vnsVodMtOOsIwCrCZbc7E6tGj9pX4ntDJdf/bcNXjyaR6DgngTnT4/HqSLd
-         F05+loohR63YRXvIcqViRAa2+Dr+pCGU8EyS+p/niSuYgGI3Pkf2PwJrjhD/B6sxB5Ls
-         DA32wKF9y+jxt0DTetbnOa1lE7YhmYSQoF86tc/qvSNe32EOXE4UjVt52fEIZpCuhMgt
-         SQjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716986953; x=1717591753;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hxm5RCkT6Z8eOTgdAgsYs+Y3bbauIPRrHzupKWf9eIw=;
-        b=BOhmv/pIeGs+JKP4kxCqpMQaevir11fT04LTZvShC9SRdX/hy7OpYy+vRfgEf7+VHR
-         OnLuN46YUKVOsn3i+0OEdDscr9JVm2Q9cJ0nygVH6/s3DecmbJrAzZMVXsHgYBvmMcao
-         0fFAWgPadLgWpZ9sZQBuj+mcrKBTl/3hnAiy+fQKhcuYzSKXIPrCGA/zh7oGlicONka6
-         pX5UW/rMfK8IA1W2L+h7itOVATxS3nKidFUXpKFsiI8K5NvTs5jS7JdgpBpbz2fG8cZT
-         9Y/IuUrdjnmrVCzdJfcQVpa+5NGn+y9B6jSgE7tUbZwjg+VqBGUsmjo/qC4KondUUVTR
-         SRWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnupsFz8DBCspPkHd9ZN/ziOtgNbM3Ov1bCAGhUwaCdngZBd1sotvxhwNMTL3Tn1+oStQuvdbXAeEoJgvY/szQmEbRqXMD/jxMdDg5X6EpbphY3IYXC2XGbbwoz0EXTkn6zTakn4nnXZVxIiKGhiKjyWUsyQOl7I8i/QvAGjp/XK+mVg==
-X-Gm-Message-State: AOJu0YyXxu8G4KzlyTNJpmZPKfdFsymn6dSkvX+35REtsFjr9Efy0gt+
-	/D9aG6MPYfrzMq/ZHvUUgsLlle7ZgaCenht0Bvtq7xLuyi3VHhAi
-X-Google-Smtp-Source: AGHT+IHFwpbqkz/8c/KOKh2nJyonvUdwIFcztAvT82b2LrqXwJx/RqdJ2bmL5xtZSfqETojujYeOyw==
-X-Received: by 2002:a17:906:6a24:b0:a63:3e99:6565 with SMTP id a640c23a62f3a-a633e996aacmr661119566b.23.1716986952948;
-        Wed, 29 May 2024 05:49:12 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c987cf8sm716081666b.94.2024.05.29.05.49.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 05:49:12 -0700 (PDT)
-Message-ID: <4b704b553282c0689dfef714c49ba97a33198898.camel@gmail.com>
-Subject: Re: [PATCH v3 3/6] iio: adc: ad7173: refactor ain and vref selection
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- David Lechner <dlechner@baylibre.com>,  linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org, Dumitru Ceclan
- <mitrutzceclan@gmail.com>
-Date: Wed, 29 May 2024 14:49:12 +0200
-In-Reply-To: <71452f6882efe6a181d477914488617d28a38e2f.camel@gmail.com>
-References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
-	 <20240527-ad4111-v3-3-7e9eddbbd3eb@analog.com>
-	 <71452f6882efe6a181d477914488617d28a38e2f.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+	s=arc-20240116; t=1716986977; c=relaxed/simple;
+	bh=vzAvCW4q6qzlrTdD4KXojsK4gde4/L8R6f76OUdDKLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X83FDbfYAVLfO317yZ4fqljyv01DtqwsszBZFr5TSy51r2KvfXQwYkYwgoC7QTqrgCAix6ZwNTJWqDbK09a8/fepXsSKqJYMc/A2tmQKbbiXSMbV563HmUCLLMNNKE3vajBs9Wgu+JNz9/tKKK910SGihhlllcweYjxSKMFKrbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOmHaU+m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE45C2BD10;
+	Wed, 29 May 2024 12:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716986976;
+	bh=vzAvCW4q6qzlrTdD4KXojsK4gde4/L8R6f76OUdDKLU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pOmHaU+mWhuoVFMFs814QEui/mzHzpodKA4OwcOoKBImVLt8HUw+kbYKm3vO1mHL+
+	 wmEME1CW1aqifFjeqr7srvQem8amZ2JjD5ClPfjha7r43jz+dgu25adVopDf45/eK9
+	 VVSr2R0YafIe+hPN+WOBsYpTq3KuSt0N5w0iWZgCaZsye3ri2VSTNWwgSz7K935HYT
+	 Jdjrocki/oOlu5OHbD7TiBOl7LdP01lqniA1CIZyNBUHoEE3M0ss06e+6IE1mOdJ+I
+	 FerwmxVqiNON5IfCH00qjLNmSo799F4vVkuawIQVi6i9TvHKk/pl9GkYZBAlDW43P9
+	 E5i/eljKjrG9w==
+Message-ID: <b0804461-aab0-423d-a61d-7c5be6bd446d@kernel.org>
+Date: Wed, 29 May 2024 14:49:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: net: ti: icssg_prueth: Add documentation
+ for PA_STATS support
+To: MD Danish Anwar <danishanwar@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>, r-gunasekaran@ti.com,
+ Roger Quadros <rogerq@kernel.org>
+References: <20240529115225.630535-1-danishanwar@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240529115225.630535-1-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-05-29 at 14:27 +0200, Nuno S=C3=A1 wrote:
-> On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
-> > From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> >=20
-> > Move validation of analog inputs and reference voltage selection to
-> > separate functions to reduce the size of the channel config parsing
-> > function and improve readability.
-> >=20
-> > Reviewed-by: David Lechner <dlechner@baylibre.com>
-> > Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> > ---
-> > =C2=A0drivers/iio/adc/ad7173.c | 62 ++++++++++++++++++++++++++++++++++-=
--------------
-> > =C2=A01 file changed, 44 insertions(+), 18 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> > index 9e507e2c66f0..8a53821c8e58 100644
-> > --- a/drivers/iio/adc/ad7173.c
-> > +++ b/drivers/iio/adc/ad7173.c
-> > @@ -906,6 +906,44 @@ static int ad7173_register_clk_provider(struct iio=
-_dev
-> > *indio_dev)
-> > =C2=A0					=C2=A0=C2=A0 &st->int_clk_hw);
-> > =C2=A0}
-> > =C2=A0
-> > +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
-> > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int ain[2])
+On 29/05/2024 13:52, MD Danish Anwar wrote:
+> Add documentation for ti,pa-stats property which is syscon regmap for
+> PA_STATS registers. This will be used to dump statistics maintained by
+> ICSSG firmware.
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
 
-Pass the pointer and size of it... Also, it should be made 'const'
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> > +{
-> > +	struct device *dev =3D &st->sd.spi->dev;
-> > +
-> > +	for (int i =3D 0; i < 2; i++) {
-
-Use the size in here... At the very least, ARRAY_SIZE() if you keep it like=
- this.
-
-> > +		if (ain[i] < st->info->num_inputs)
-> > +			continue;
-> > +
-> > +		return dev_err_probe(dev, -EINVAL,
-> > +			"Input pin number out of range for pair (%d %d).\n",
-> > +			ain[0], ain[1]);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int ad7173_validate_reference(struct ad7173_state *st, int ref_=
-sel)
-> > +{
-> > +	struct device *dev =3D &st->sd.spi->dev;
-> > +	int ret;
-> > +
-> > +	if (ref_sel =3D=3D AD7173_SETUP_REF_SEL_INT_REF && !st->info->has_int=
-_ref)
-> > +		return dev_err_probe(dev, -EINVAL,
-> > +			"Internal reference is not available on current
-> > model.\n");
-> > +
-> > +	if (ref_sel =3D=3D AD7173_SETUP_REF_SEL_EXT_REF2 && !st->info->has_re=
-f2)
-> > +		return dev_err_probe(dev, -EINVAL,
-> > +			"External reference 2 is not available on current
-> > model.\n");
-> > +
-> > +	ret =3D ad7173_get_ref_voltage_milli(st, ref_sel);
-> > +	if (ret < 0)
-> > +		return dev_err_probe(dev, ret, "Cannot use reference %u\n",
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 ref_sel);
-> > +
-> > +	return 0;
->=20
-> If you need a v4, I would just 'return ad7173_get_ref_voltage_milli(...)'=
- Any
-> error
-> log needed should be done inside ad7173_get_ref_voltage_milli(). Anyways:
->=20
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->=20
-
-In fact, no tag :). Just realized the above in another patch..
-
-- Nuno S=C3=A1
+Best regards,
+Krzysztof
 
 
