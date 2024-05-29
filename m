@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-194771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3648D41C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F738D41C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA5D7B22DAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15D90286F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4E520010F;
-	Wed, 29 May 2024 23:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1A320011D;
+	Wed, 29 May 2024 23:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eTLttC16"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FhI+I0wf"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA8C1CB328
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705DB1CB32A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717024352; cv=none; b=mektOCiJzNgFjQi+we66BOBjxkAs5j1w7EaA1mpIsop09Yg7GWaaouDKgmSq1KBf9hEzd1RcBSSLJOhNtMRqu4vGHSUtK4MknlCUCIzgznUiqdDaytthz8QYAFrN8vz1y9uk9juVfU10DmsZ5JE/PpPHTN6sxyqyeohbvxbOVNM=
+	t=1717024353; cv=none; b=NbLrs5Tf9PE1p1uqYdNmx0CWwAxEW6ZcxaW1EeQ0HVSfbSjkAuF1NeL6PZ5hhHWpoLYtSbiGcNcpoPNJTtEedfdeUvjMJZ5QhiBCNx1pjadYg3WqbwlGVcfxDF034S8nLLQydSo1t3lgMTdAvSK1eQBCcApX+U4gUjd5Hda4Km8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717024352; c=relaxed/simple;
-	bh=AXQkgT8bLCi+J4VLmDhYURPEkLAsLkNbwsYyTx65pa0=;
+	s=arc-20240116; t=1717024353; c=relaxed/simple;
+	bh=tsP9tTDeCAxEsLOY742IzVP85XDz5wvrZItLRYft3O8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mvhZX3jl46NECLQ1VdpEIGEhqvc0vmFiIqlYtJLSdW6AL2CjDUCBiwDusCPElMe6Cqb5UOGfkL5UQbfDeNTb85CHQWT4kNeZw96nSv6JjlPk2Hmw0eCnXvn6HaMY2o1R+g15Ft6osr9oLe4H6WC+9o9OS6sFmsyO7AfsI2WAtG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eTLttC16; arc=none smtp.client-ip=209.85.167.52
+	 In-Reply-To:To:Cc; b=gnyPEON7+olIsj1f+kphSum8/w7/VsDlsbxtR0ORoOT5ey71aUjG/x3mkDr1Rnkefeo5y13klMAxJYlJCqQzrJJXZgmYEU1mI1hVwnfFZZs8Vj6SKQ+spGZd1cnoFkfTDmeZuCYcVc522rL0oy/wJmSUiJ/HMvyhcohOelsLHtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FhI+I0wf; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b7b4812f3so238486e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:12:30 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so2760021fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:12:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1717024349; x=1717629149; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xsWyvZJ7smsYEwcJt3QXuB4RboSifhUzN4Y/+3fVgYs=;
-        b=eTLttC16EBJNdIPG8cKd8aFAxJ9jmVxdKclGbafYQDAaSoMg0NVCqX2mfh44boeNZF
-         QUG14PaoC4iiqZh/2IzzdqXvAeQAgHHH8HtZFcuDIhbPwGsUCbQkSXSuvdC66CrL+iiA
-         kREjxD8MFngJtK7YLjWmbirZOc0R7XUtwfxoh8utRE1yfFBDnnlWsdN7RsabXg+uN5Xt
-         ywjjTj4PG04UQOkUEtgJQ2l90beZRr4L6fK6qIvg22BLK2KmV8rLJ3mOZXDuBS/TxVxx
-         80JvYGn5kZIUlIY1jApa4Zj5ee6vJJ9sGKqvcTLfriIphaUmfecIVt+tlKT8kcdsS121
-         ABrg==
+        bh=LSZZkKIdPjs/3pbTSieRssyY+6F3HyNGApLO69pzaQo=;
+        b=FhI+I0wfltXZ06i0GVrehbLR522sUWHoObOGr9UesSj3EiuTgeTUfA2Nb70BRqg1JN
+         GrAbvn0x/By1H86uWSrEXLxu8VxAGifF6NJ7h6icXW5CDDJygNOLRAA8470HT6KTEtre
+         5xC6artdqeDxKTMMmhYBpNtM/+jv715WvHfWVDtn4R4AgoLEC/X/b0ZDKy3rVGNln6+R
+         Oq5F213M6MNh0GAhBbqABGOHcjR67d3IBrgbIW9mbs2dtdxlrO583SWj6x2fU3HbyiqF
+         +xvm1yiowOA3lY7BMQJBQtoNfI9/d5/2wgZrbXyBUHGGA72m1dXiYnV5nRxlDShKwg5H
+         75PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1717024349; x=1717629149;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xsWyvZJ7smsYEwcJt3QXuB4RboSifhUzN4Y/+3fVgYs=;
-        b=nZipzdjMNsD8e3nG7mDtJdQ5XMh8Vl/MNwe0wI4tIV4OYWrvZEq0bFqrXv6RzOYleU
-         f0Va9e9FVEUH2ZDpj/jG9yWJGSH10PW2FT40C1MCui/e/SPEVsFG2wWpravIP4iEa59d
-         C1D/Fbb6BIpMJTKsYE9Xvt9Jk6vs5cjSntuGuYog/Et21x/dA8GGAr2jYTuvMAvB54Qr
-         u5DkpDZi6CEQHysIE5EnJrz/cg0f6gGjwgYNrh+9/brtt2db5QEHJVYSSmIoIEhQUW66
-         9ZfiVHIQpmshI7Xjky+XdOwvJ0C7YJwYKwiXkn8yCRDwrfDNKhTCYdsFU1/91rjLpZ+S
-         ftSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAynsy5Uejn29FXhGLgQUw6rkMXiB/Er1ftg6QbrhKSUwehi1xl+WPOtSZrzQRr81/vvJ8nM86Au1QxrkNjE9QMgV5pvP9tOGX0WHr
-X-Gm-Message-State: AOJu0YzCRn8cOcC+SJkvqUQwGeNhPy2XqF/vcic3bGOEqtUaY0d06A7Y
-	NdiEXplvm9nrGuOh5AECv9q8vLMx1W/k8lZZM/f0OQ6LN+rEJtPNfBNsLGl/z4g=
-X-Google-Smtp-Source: AGHT+IGR2g9tEjUHRz3sWSg0237KZd0prRiZw5CS2OF0JFp0DTVGONPL8fJFqcllAiRPCR5tE1g7iQ==
-X-Received: by 2002:ac2:41cb:0:b0:51e:e5cf:9940 with SMTP id 2adb3069b0e04-52b7e0ee8b0mr63089e87.4.1717024348995;
-        Wed, 29 May 2024 16:12:28 -0700 (PDT)
+        bh=LSZZkKIdPjs/3pbTSieRssyY+6F3HyNGApLO69pzaQo=;
+        b=PHYH8Jpo3Zz5Ejb/1KiK2cyCUxC8NxcKC5Srm2eEPCPrjEbsR7Za6wBYt3FQz5KoHP
+         3qxT1T4k454EPmDGYDKkIujPJ41G4SZOUHGG+XbsXnCflVCM2czitAN+AhyfKZAHMy4y
+         EKhl1MI2EJTt2eij5acR1QHQlws/MRPrbLkx84Ym2+V6Z2cC1/XnvgNQFPV5MkghB2oW
+         u9166+f8B9jfgiaY53nUrupmo0y5w4ByN3XVCyrtCBRQzPO5p/qsozLsfnLe8FQYCle+
+         7Weew1dgSumPV+VX7U548QaPSMY72IU+rh4Wkgqa3XoyAUC44Yf6JZ7tuuZxHXXlO1Dn
+         yisA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTXCA9QzlLAW2pUOS9KRfw+LgHO8iwJBc3YWvUCrKC5yvC9Y/KEp74+IqODGhQC51EHq9yH+pWP6tiqteW49cbUlcIdHgonQAIj2ns
+X-Gm-Message-State: AOJu0YzBiQVZdEFFYGN/hWiZVl/zyVHFqzgadBzPlGmUC9QtkEYWPeaI
+	qbHPCXE3L2P7vo49LAlvg1lQG9PJxcJ+6QCLteunUkiXL66sfK0WSX0j97kDiHo=
+X-Google-Smtp-Source: AGHT+IHdUiG+DnvSt0qnuwMbT7cQeaKDEpajLmaXOv5WknZU0NyT9BVVqAh79+PYfLzQZdq2zxMdlQ==
+X-Received: by 2002:ac2:523c:0:b0:51f:5d0a:d71a with SMTP id 2adb3069b0e04-52b7d418dbemr278746e87.10.1717024349656;
+        Wed, 29 May 2024 16:12:29 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529acea1ea8sm1015998e87.276.2024.05.29.16.12.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529acea1ea8sm1015998e87.276.2024.05.29.16.12.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 16:12:28 -0700 (PDT)
+        Wed, 29 May 2024 16:12:29 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 30 May 2024 02:12:24 +0300
-Subject: [PATCH v3 1/7] drm/connector: hdmi: accept NULL for Audio
- Infoframe
+Date: Thu, 30 May 2024 02:12:25 +0300
+Subject: [PATCH v3 2/7] drm/bridge-connector: switch to using drmm
+ allocations
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-bridge-hdmi-connector-v3-1-a1d184d68fe3@linaro.org>
+Message-Id: <20240530-bridge-hdmi-connector-v3-2-a1d184d68fe3@linaro.org>
 References: <20240530-bridge-hdmi-connector-v3-0-a1d184d68fe3@linaro.org>
 In-Reply-To: <20240530-bridge-hdmi-connector-v3-0-a1d184d68fe3@linaro.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -94,60 +94,91 @@ Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1693;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2740;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=AXQkgT8bLCi+J4VLmDhYURPEkLAsLkNbwsYyTx65pa0=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmV7ZadQQ/u477cay7r64S0rsMMdpYg2c8F9bsk
- HP74y9RpWGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZle2WgAKCRCLPIo+Aiko
- 1Xz/CACBG8J88iFv44gK5ywM44/nLwAiT0D+h+PopLWugWuGXC0yuvOQ7sSZ/TiE8fpiOzXNghn
- LqQShLj2piBG17rpD08ku2ULumRjKSuGcbAMUkWy7Vr2hEKxIrHv48HEWd4jkWGWw2JtHE1QZR0
- q9ai2atyG3KlWWGVlIEgBSayjXD83ULC38kztI/L6E3YaG7aIITrdW9NfyoSKb0mRuJzLOIwdcj
- K2Q5n8BtQ0jKRJYqInW7Kx4EXVbYwOy160ewSLGEwZBTd0ka7ZcG4UBpIKZt51O2Aq6cpxhN4R7
- U8bkuwdlyNpvpdu4AunLtBCfChGuVdAAJb0UFFgN6lErZjPS
+ bh=tsP9tTDeCAxEsLOY742IzVP85XDz5wvrZItLRYft3O8=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmV7ZasP81Hpao/5n4EYES8nIOWWg/gr7QS2AUm
+ 8cTtD+IRrCJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZle2WgAKCRCLPIo+Aiko
+ 1R3MB/9S4LVRBbtll6+h9QWEz5yMUbV4NHe5Si+KYeQBc6Deeau8a0I5gE6NMyZhX8/JVnemsp0
+ 3oN+WuONb8GN7MXAuFmLKC7vABq5bhEmsVBevmbUbsN+HaeMcPL6myXLoHWINkvRsQNL6aDdHkO
+ yKd9atzEHFBrKmdXLvavoHYA7un/xQFOqyUyPCA80UM+pj9ADO8jKTnlS6VFBHWpN3kP+mwio1y
+ jqqbcH+GYZTvcJ0SAenLuEoVs4yOEN1+WIx3Qo/mjlLKOlyqWrdq4l/jrU6f9AhYbgTcw0PytT/
+ yVToaD/CsmmfEmM4MXGQX+JA6AmidNVgELG8S4eg24GKEsOB
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Allow passing NULL as audio infoframe as a way to disable Audio
-Infoframe generation.
+Turn drm_bridge_connector to using drmm_kzalloc() and
+drmm_connector_init() and drop the custom destroy function. The
+drm_connector_unregister() and fwnode_handle_put() are already handled
+by the drm_connector_cleanup() and so are safe to be dropped.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/display/drm_hdmi_state_helper.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_bridge_connector.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-index ce96837eea65..5356723d21f5 100644
---- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-+++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-@@ -681,7 +681,7 @@ EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update_infoframes);
- /**
-  * drm_atomic_helper_connector_hdmi_update_audio_infoframe - Update the Audio Infoframe
-  * @connector: A pointer to the HDMI connector
-- * @frame: A pointer to the audio infoframe to write
-+ * @frame: A pointer to the audio infoframe to write or NULL to disable sending the frame
-  *
-  * This function is meant for HDMI connector drivers to update their
-  * audio infoframe. It will typically be used in one of the ALSA hooks
-@@ -704,10 +704,16 @@ drm_atomic_helper_connector_hdmi_update_audio_infoframe(struct drm_connector *co
+diff --git a/drivers/gpu/drm/drm_bridge_connector.c b/drivers/gpu/drm/drm_bridge_connector.c
+index 982552c9f92c..e093fc8928dc 100644
+--- a/drivers/gpu/drm/drm_bridge_connector.c
++++ b/drivers/gpu/drm/drm_bridge_connector.c
+@@ -15,6 +15,7 @@
+ #include <drm/drm_connector.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_edid.h>
++#include <drm/drm_managed.h>
+ #include <drm/drm_modeset_helper_vtables.h>
+ #include <drm/drm_probe_helper.h>
  
- 	mutex_lock(&connector->hdmi.infoframes.lock);
+@@ -193,19 +194,6 @@ drm_bridge_connector_detect(struct drm_connector *connector, bool force)
+ 	return status;
+ }
  
--	memcpy(&infoframe->data, frame, sizeof(infoframe->data));
--	infoframe->set = true;
-+	if (frame) {
-+		memcpy(&infoframe->data, frame, sizeof(infoframe->data));
-+		infoframe->set = true;
-+
-+		ret = write_infoframe(connector, infoframe);
-+	} else {
-+		infoframe->set = false;
+-static void drm_bridge_connector_destroy(struct drm_connector *connector)
+-{
+-	struct drm_bridge_connector *bridge_connector =
+-		to_drm_bridge_connector(connector);
+-
+-	drm_connector_unregister(connector);
+-	drm_connector_cleanup(connector);
+-
+-	fwnode_handle_put(connector->fwnode);
+-
+-	kfree(bridge_connector);
+-}
+-
+ static void drm_bridge_connector_debugfs_init(struct drm_connector *connector,
+ 					      struct dentry *root)
+ {
+@@ -224,7 +212,6 @@ static const struct drm_connector_funcs drm_bridge_connector_funcs = {
+ 	.reset = drm_atomic_helper_connector_reset,
+ 	.detect = drm_bridge_connector_detect,
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+-	.destroy = drm_bridge_connector_destroy,
+ 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ 	.debugfs_init = drm_bridge_connector_debugfs_init,
+@@ -328,7 +315,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 	int connector_type;
+ 	int ret;
  
--	ret = write_infoframe(connector, infoframe);
-+		ret = clear_infoframe(connector, infoframe);
-+	}
+-	bridge_connector = kzalloc(sizeof(*bridge_connector), GFP_KERNEL);
++	bridge_connector = drmm_kzalloc(drm, sizeof(*bridge_connector), GFP_KERNEL);
+ 	if (!bridge_connector)
+ 		return ERR_PTR(-ENOMEM);
  
- 	mutex_unlock(&connector->hdmi.infoframes.lock);
+@@ -383,9 +370,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
+-	ret = drm_connector_init_with_ddc(drm, connector,
+-					  &drm_bridge_connector_funcs,
+-					  connector_type, ddc);
++	ret = drmm_connector_init(drm, connector,
++				  &drm_bridge_connector_funcs,
++				  connector_type, ddc);
+ 	if (ret) {
+ 		kfree(bridge_connector);
+ 		return ERR_PTR(ret);
 
 -- 
 2.39.2
