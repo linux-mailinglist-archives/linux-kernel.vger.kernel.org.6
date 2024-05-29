@@ -1,338 +1,139 @@
-Return-Path: <linux-kernel+bounces-193698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17718D30CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:18:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6096A8D30D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786D328D940
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:18:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D31A9B2367C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5CF16937F;
-	Wed, 29 May 2024 08:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B9E181CE8;
+	Wed, 29 May 2024 08:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UEqCNGs+"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDgymBkU"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750D018131C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962B016938C;
+	Wed, 29 May 2024 08:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970124; cv=none; b=BApt6IYjhCBp3VnT4mu8LMPDr1dMywrMLeP2rav8hyYEi7zCreCZMUXIRrmMUQj8qoBdgUs/zEND+68SPq8d3Yw6PPOM+goIk/29/ekVjGUdDhEx81LmB8UPLfdLPCOnaqylbDXOpFNBqH6EYgQ4pzkkOwitYPWvRbfsx0KstiI=
+	t=1716970173; cv=none; b=D5Y/TPQ6s+uNzIX2YaYOlw/qHeoxQ6FPM+PoddITd8zRwCR+firggaZrm1F0xmeC/VPo5EiNaAQaoX9JESyAKUWIOmE8XR5vPFymva7N7F0xK0g7IdIJFQ8QNT96R6mWeWDZtz+X3Tx5ywJ+vZutaH+nMqwoHJ/oI59qGr2BTHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970124; c=relaxed/simple;
-	bh=T3LsNDsQjui6zBSWsbGtzYkzQN8h8gfwvEMkMXJ//Qw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ovJuhBXIKKtP1smQhKj/MdX4aphQ7qx8IXAuKXDZ9EZUDLKqnOhiO57AWYlPU9vlY7XoHjNChjNpiDt1d+h19xz5flSq+Nne7sZ5if/vb0DGJi8Nwf2XdcN58wb64XpCLmOLr4Z60v0iA5+f6KoVDpYtyQPAzsWCd6gCFU9VGAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UEqCNGs+; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42108739ed8so21231905e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:08:42 -0700 (PDT)
+	s=arc-20240116; t=1716970173; c=relaxed/simple;
+	bh=i8tU8Ic/k4UuZKzBZDNg1YpkDmhPR4yS0jCvgdiGZq4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iIMgBMcGMj/0+TyDzT9CUp1ARej+EW1JIeQj/3u73mtgikh+oS7DVzVXIDPnIqMNGOuQA2W/eRfZuEKEnOc2F/vulxa94O3uzi4v+nnpShdKxPZ08ekdeCT0gQZe/IPTQ5aTj8GO5dE731b6kaRCA4thJosEKU9ygMBkEhShDU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDgymBkU; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57857e0f465so2223257a12.1;
+        Wed, 29 May 2024 01:09:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716970121; x=1717574921; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a/JqdadxOtCgPk5Z92J6Iz23Jf3+Y16joj23RLu5HX0=;
-        b=UEqCNGs+fNHoYv50zpSrTx/PiSv4obl+HDUKrrSNy4QdgzTjjO2e7nGSFuzJfkxQni
-         sQtcbBmcwYQvL2Kd0uwlR3YggHK/S1eouMJ6a/vkgJdjc2QQVxVhaMcpxuR2keWz5gkM
-         4VuqMiXAmfO/hsvoA0Tk3rTSV+DA/O6pSzypolQT/wi99XnRs/xjYcS9cVFIw56oOG0Q
-         WvxsKzby+xQKRyD8C5oQWzoFMk9vbcvWpRH0YEEEkVezx9U/ldTn5Pi8r8xuGZDeiR2v
-         +161X7nuHqgGEy5L3vlLqQUsfuo42cxHzVI6w7TKe9unRrIaRm8vnLgyFnVuRNi9/2x8
-         iCRQ==
+        d=gmail.com; s=20230601; t=1716970169; x=1717574969; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=i8tU8Ic/k4UuZKzBZDNg1YpkDmhPR4yS0jCvgdiGZq4=;
+        b=MDgymBkUgKtSqi+yQH3Bxo7SNFhIAzlHIlPzgyvkfXUCGB/yFGsqJ6Cq7EEvBcNlSl
+         zhxgDDhLkzLnDveeRUnq0sY2QxepV755pIeBnnas1xONFELQPLEJverJN+E9ukdf6m85
+         au1bGK9zKRRwflnSu2xuvWnbGPPJgTJF0fqKs/i1WfLo55LVt80Z55ulOevQAUF3WsAc
+         2QkxuLwwqDKvFe6wPaXgIABFLs95gz23uw4HCSKmeNXIc2D0r7Wn1K/QmL+QrL4QL1J5
+         zX3jU2UVNNF+3tD3jtDJ2u6cDbJZez/xH0AraJhMwCXS4p0jABbjZvimAC+oWi+Lm+44
+         qLAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970121; x=1717574921;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a/JqdadxOtCgPk5Z92J6Iz23Jf3+Y16joj23RLu5HX0=;
-        b=BMM2QLNHzGpxhxA77EUkv7ao/90ktxGoSRnIXm2wmJ3MkXaR4Xx8qQDlHUIOL+F228
-         DKRNUcVjfonepV+2+cnb2ltwFCY+ExF3UHJ6HLBThn+JKMrYWSj6PSZA6p+Oha29449A
-         RfmYG58yZpLQ0Bj3Ev2JXWWzUBwS0LnvRXjHKDSdBPyBaMwuWo4hFJ0grsOJ+1VDPyhL
-         Titd5wsqV4b+qP5Sz7oMKYg3SDEaprZxRPOHh8xYIzMnpVbzvq1e3pDLLDIFUkLI90+M
-         A6PhTuq5SgFignQGYqvP8jh+ow3S6pdyCDfRNnkUnwzx9nq6VGqJtrKhB5O76k4Gdqzw
-         raaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGlVa3zBLgGasMDX56RodUcWwQXswzh9oHdeO5YLR3qASO1x8SaJ6RwJY8Kti/UXcMRZadSxFhvYGQkaut1D2TQDa4Fzk2DxNuYZ4F
-X-Gm-Message-State: AOJu0YyKpGWxWrlX84zm9vICWigH6LCASGMWpMPFJlWQlARDZX/NZzO4
-	WLNFE9HDeJGJfWkTL8jqWerAu6AnC/ajwNvARzFs0YuTsA/6LVs/nZNmH2T4vnU=
-X-Google-Smtp-Source: AGHT+IG37BWRZMEjsIkkPqzKrnfVQeOHaDJWHEmylLb4ayfm/w5tbXgAnW+F/WgUw+Xxl6kVsnytaw==
-X-Received: by 2002:a05:600c:5354:b0:420:f8:23d6 with SMTP id 5b1f17b1804b1-42108aa7589mr151469755e9.36.1716970120703;
-        Wed, 29 May 2024 01:08:40 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a090366sm13891799f8f.56.2024.05.29.01.08.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 01:08:40 -0700 (PDT)
-Message-ID: <0f337380-4e43-4ed4-aa05-0c7072ecd112@linaro.org>
-Date: Wed, 29 May 2024 09:08:38 +0100
+        d=1e100.net; s=20230601; t=1716970169; x=1717574969;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i8tU8Ic/k4UuZKzBZDNg1YpkDmhPR4yS0jCvgdiGZq4=;
+        b=YSs8tONvqN+7xXIiozjhTm+sRwpeTgIzyEtZlcMfzHkMeLqUaoaJDiL+yeRshFnlJP
+         8tEjXlkCteliDiJgFURaSDVkKeSGLtqIXO58ZoShikuXITY/faC8qcI41P7kWR3gPisS
+         vylFAsOX60+9GjzUV+HKnzzlysifARxWbZe133BYZ6HAF8KMKFXp5PhvdVe4B/wccGF4
+         UZvsAT+kxwsCgmjeAChOFeKM6k1I5moS6BwCbHqBnp1k6nUSB4VVsOs4FF7ttABdQU8d
+         OLDvv42LDjcfqRAlBxuCW3Yn/NGZVx5WdRmM36vl+TrRyqhGocaUM+Un2mBRqyYNOhI7
+         PCLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzMYxZ8TXzKKhCsXwZwBd63GMnVV+lZLbP0vp0PbQrIvd6Cj8ojMWDYi8dUSVXYpIJsxBswZmvsCO99E0o7DpHug6zCP1KJlzM3G31OrGC3aWcQscFGP9b3d46vz5KOwSEndSIx8N0
+X-Gm-Message-State: AOJu0YzK3rhl+6cN982zFwYJs1JD9mTNbFodudgvfHuzgiXkoR70vD1V
+	pR//8AZ6eTWA31JijEDsw62DZNnQjbupSU2pUQvlWFUXXyOhKZx+
+X-Google-Smtp-Source: AGHT+IEq6l34HhXrnlWLRvGM2v0fq27OL/+bpjCQdVA04/gtddmggIC7N+1G0ngNMVw4U02/TUo3ZA==
+X-Received: by 2002:a50:d7cc:0:b0:578:33f1:dafb with SMTP id 4fb4d7f45d1cf-578518ec3e4mr9976662a12.4.1716970168941;
+        Wed, 29 May 2024 01:09:28 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579ced17435sm4346473a12.53.2024.05.29.01.09.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 01:09:28 -0700 (PDT)
+Message-ID: <73d7ba0e54a93696aa2c8cab3e6599038bddf533.camel@gmail.com>
+Subject: Re: [PATCH] iio: dac: ad9739a: drop COMPILE_TEST option
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>, Jonathan
+ Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>, Anshul
+ Dalal <anshulusr@gmail.com>, Andrea Collamati <andrea.collamati@gmail.com>,
+  linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 29 May 2024 10:09:28 +0200
+In-Reply-To: <81ec1d1a-d8de-47e4-a5d4-eeaaf1e806a2@app.fastmail.com>
+References: <20240528121304.3695252-1-arnd@kernel.org>
+	 <539a815398a3c991c1bc1a53967fbcba282dfe3b.camel@gmail.com>
+	 <81ec1d1a-d8de-47e4-a5d4-eeaaf1e806a2@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] platform: arm64: add Lenovo Yoga C630 WOS EC
- driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>
-References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
- <20240528-yoga-ec-driver-v4-2-4fa8dfaae7b6@linaro.org>
- <2b76f27e-f223-4ff9-880e-9e232ce9ddc6@linaro.org>
- <3gbjbuav5l2td5xrfj46krhgdew42medhfrnkd47iahdv4fm3x@qv6jadf6tkol>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <3gbjbuav5l2td5xrfj46krhgdew42medhfrnkd47iahdv4fm3x@qv6jadf6tkol>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 29/05/2024 00:56, Dmitry Baryshkov wrote:
-> On Wed, May 29, 2024 at 12:51:04AM +0100, Bryan O'Donoghue wrote:
->> On 28/05/2024 21:44, Dmitry Baryshkov wrote:
->>> Lenovo Yoga C630 WOS is a laptop using Snapdragon 850 SoC. Like many
->>> laptops it uses embedded controller (EC) to perform various platform
->>
->> an embedded controller
->>
->>> operations, including, but not limited, to Type-C port control or power
->>> supply handlng.
->>>
->>> Add the driver for the EC, that creates devices for UCSI and power
->>> supply devices.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>>    drivers/platform/arm64/Kconfig                 |  14 ++
->>>    drivers/platform/arm64/Makefile                |   1 +
->>>    drivers/platform/arm64/lenovo-yoga-c630.c      | 279 +++++++++++++++++++++++++
->>>    include/linux/platform_data/lenovo-yoga-c630.h |  42 ++++
->>>    4 files changed, 336 insertions(+)
->>>
->>> diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
->>> index 8fdca0f8e909..8c103b3150d1 100644
->>> --- a/drivers/platform/arm64/Kconfig
->>> +++ b/drivers/platform/arm64/Kconfig
->>> @@ -32,4 +32,18 @@ config EC_ACER_ASPIRE1
->>>    	  laptop where this information is not properly exposed via the
->>>    	  standard ACPI devices.
->>> +config EC_LENOVO_YOGA_C630
->>> +	tristate "Lenovo Yoga C630 Embedded Controller driver"
->>> +	depends on I2C
->>> +	help
->>> +	  Driver for the Embedded Controller in the Qualcomm Snapdragon-based
->>> +	  Lenovo Yoga C630, which provides battery and power adapter
->>> +	  information.
->>> +
->>> +	  This driver provides battery and AC status support for the mentioned
->>> +	  laptop where this information is not properly exposed via the
->>> +	  standard ACPI devices.
->>> +
->>> +	  Say M or Y here to include this support.
->>> +
->>>    endif # ARM64_PLATFORM_DEVICES
->>> diff --git a/drivers/platform/arm64/Makefile b/drivers/platform/arm64/Makefile
->>> index 4fcc9855579b..b2ae9114fdd8 100644
->>> --- a/drivers/platform/arm64/Makefile
->>> +++ b/drivers/platform/arm64/Makefile
->>> @@ -6,3 +6,4 @@
->>>    #
->>>    obj-$(CONFIG_EC_ACER_ASPIRE1)	+= acer-aspire1-ec.o
->>> +obj-$(CONFIG_EC_LENOVO_YOGA_C630) += lenovo-yoga-c630.o
->>> diff --git a/drivers/platform/arm64/lenovo-yoga-c630.c b/drivers/platform/arm64/lenovo-yoga-c630.c
->>> new file mode 100644
->>> index 000000000000..3d1d5acde807
->>> --- /dev/null
->>> +++ b/drivers/platform/arm64/lenovo-yoga-c630.c
->>> @@ -0,0 +1,279 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (c) 2022-2024, Linaro Ltd
->>> + * Authors:
->>> + *    Bjorn Andersson
->>> + *    Dmitry Baryshkov
->>> + */
->>> +#include <linux/auxiliary_bus.h>
->>> +#include <linux/i2c.h>
->>> +#include <linux/module.h>
->>> +#include <linux/notifier.h>
->>> +#include <linux/platform_data/lenovo-yoga-c630.h>
->>> +
->>> +#define LENOVO_EC_RESPONSE_REG		0x01
->>> +#define LENOVO_EC_REQUEST_REG		0x02
->>> +
->>> +#define LENOVO_EC_UCSI_WRITE		0x20
->>> +#define LENOVO_EC_UCSI_READ		0x21
->>> +
->>> +#define LENOVO_EC_READ_REG		0xb0
->>> +#define LENOVO_EC_REQUEST_NEXT_EVENT	0x84
->>> +
->>> +struct yoga_c630_ec {
->>> +	struct i2c_client *client;
->>> +	struct mutex lock;
->>> +	struct blocking_notifier_head notifier_list;
->>> +};
->>> +
->>> +static int yoga_c630_ec_request(struct yoga_c630_ec *ec, u8 *req, size_t req_len,
->>> +				u8 *resp, size_t resp_len)
->>> +{
->>> +	int ret;
->>> +
->>> +	WARN_ON(!mutex_is_locked(&ec->lock));
->>> +
->>> +	ret = i2c_smbus_write_i2c_block_data(ec->client, LENOVO_EC_REQUEST_REG,
->>> +					     req_len, req);
->>> +	if (ret < 0)
->>> +		return ret;
->>> +
->>> +	return i2c_smbus_read_i2c_block_data(ec->client, LENOVO_EC_RESPONSE_REG,
->>> +					     resp_len, resp);
->>> +}
->>> +
->>> +int yoga_c630_ec_read8(struct yoga_c630_ec *ec, u8 addr)
->>> +{
->>> +	u8 req[2] = { LENOVO_EC_READ_REG, };
->>> +	int ret;
->>> +	u8 val;
->>> +
->>> +	mutex_lock(&ec->lock);
->>> +	req[1] = addr;
->>> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &val, 1);
->>> +	mutex_unlock(&ec->lock);
->>> +
->>> +	return ret < 0 ? ret : val;
->>> +}
->>> +EXPORT_SYMBOL_GPL(yoga_c630_ec_read8);
->>> +
->>> +int yoga_c630_ec_read16(struct yoga_c630_ec *ec, u8 addr)
->>> +{
->>> +	u8 req[2] = { LENOVO_EC_READ_REG, };
->>> +	int ret;
->>> +	u8 msb;
->>> +	u8 lsb;
->>> +
->>> +	mutex_lock(&ec->lock);
->>> +
->>> +	req[1] = addr;
->>> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	req[1] = addr + 1;
->>> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
->>> +
->>> +out:
->>> +	mutex_unlock(&ec->lock);
->>> +
->>> +	return ret < 0 ? ret : msb << 8 | lsb;
->>> +}
->>> +EXPORT_SYMBOL_GPL(yoga_c630_ec_read16);
->>> +
->>> +u16 yoga_c630_ec_ucsi_get_version(struct yoga_c630_ec *ec)
->>> +{
->>> +	u8 req[3] = { 0xb3, 0xf2, 0x20};
->>
->> You have a define above for the read_reg and write_reg commands, could you
->> not define 0xb3 as LENOVO_EC_GET_VERSION ?
->>
->> All of the other commands here seem to have a named define.
-> 
-> Because unlike other registers it is not clear what other use cases does
-> 0xb3 support
-> 
->>
->>> +	int ret;
->>> +	u8 msb;
->>> +	u8 lsb;
->>> +
->>> +	mutex_lock(&ec->lock);
->>> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	req[2]++;
->>
->> why not set reg[2] = 0x21;
-> 
-> ack
-> 
->>
->> also is req[2] some kind of address ?
-> 
-> Unfortunately no idea. This is totally based on the AML code in DSDT. I
-> have no documentation on the EC or its programming interface.
-> 
->>
->>> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
->>> +
->>> +out:
->>> +	mutex_unlock(&ec->lock);
->>> +
->>> +	return ret < 0 ? ret : msb << 8 | lsb;
->>> +}
->>> +EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_get_version);
->>> +
->>> +int yoga_c630_ec_ucsi_write(struct yoga_c630_ec *ec,
->>> +			    const u8 req[YOGA_C630_UCSI_WRITE_SIZE])
->>> +{
->>> +	int ret;
->>> +
->>> +	mutex_lock(&ec->lock);
->>> +	ret = i2c_smbus_write_i2c_block_data(ec->client, LENOVO_EC_UCSI_WRITE,
->>> +					     YOGA_C630_UCSI_WRITE_SIZE, req);
->>> +	mutex_unlock(&ec->lock);
->>> +
->>> +	return ret < 0 ? ret : 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_write);
->>> +
->>> +int yoga_c630_ec_ucsi_read(struct yoga_c630_ec *ec,
->>> +			   u8 resp[YOGA_C630_UCSI_READ_SIZE])
->>> +{
->>> +	int ret;
->>> +
->>> +	mutex_lock(&ec->lock);
->>> +	ret = i2c_smbus_read_i2c_block_data(ec->client, LENOVO_EC_UCSI_READ,
->>> +					    YOGA_C630_UCSI_READ_SIZE, resp);
->>> +	mutex_unlock(&ec->lock);
->>> +
->>> +	return ret < 0 ? ret : 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_read);
->>> +
->>> +static irqreturn_t yoga_c630_ec_intr(int irq, void *data)
->>> +{
->>> +	u8 req[] = { LENOVO_EC_REQUEST_NEXT_EVENT };
->>> +	struct yoga_c630_ec *ec = data;
->>> +	u8 event;
->>> +	int ret;
->>> +
->>> +	mutex_lock(&ec->lock);
->>> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &event, 1);
->>> +	mutex_unlock(&ec->lock);
->>> +	if (ret < 0)
->>> +		return IRQ_HANDLED;
->>> +
->>> +	pr_info("NOTIFY %x\n", event);
->>
->> why not dev_info() ?
-> 
-> Argh, debugging code. I should drop it.
-> 
+On Wed, 2024-05-29 at 09:23 +0200, Arnd Bergmann wrote:
+> On Wed, May 29, 2024, at 09:20, Nuno S=C3=A1 wrote:
+> > On Tue, 2024-05-28 at 14:12 +0200, Arnd Bergmann wrote:
+> > > From: Arnd Bergmann <arnd@arndb.de>
+> > >=20
+> > > Build testing without SPI results in a warning:
+> > >=20
+> > > WARNING: unmet direct dependencies detected for REGMAP_SPI
+> > > =C2=A0 Depends on [n]: SPI [=3Dn]
+> > > =C2=A0 Selected by [m]:
+> > > =C2=A0 - AD9739A [=3Dm] && IIO [=3Dm] && (SPI [=3Dn] || COMPILE_TEST =
+[=3Dy])
+> > >=20
+> > > There is no need for this particular COMPILE_TEST option, as allmodco=
+nfig
+> > > and randconfig testing can just assume that SPI is enabled separately=
+.
+> > >=20
+> > > Drop it to avoid the warning.
+> > >=20
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > ---
+> >=20
+> > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> >=20
+> > Only for my understanding. When does COMPILE_TEST makes sense to add?
+>=20
+> The most common use is to enable building a driver
+> that is platform specific on x86 allmodconfig
+> or on randconfig, e.g.
+>=20
+> config LPC18XX_DAC
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tristate "NXP LPC18xx DAC driv=
+er"
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_LPC18XX || COM=
+PILE_TEST
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on HAS_IOMEM
+>=20
+> Since ARCH_LPC18XX is only visible on arch/arm, the
+> driver would never be build tested on anything else
+> without the ||COMPILE_TEST.
 
-Assuming you do all of that in v5
+Makes sense... Thanks!
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+- Nuno S=C3=A1
+
 
