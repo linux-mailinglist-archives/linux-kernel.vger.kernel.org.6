@@ -1,220 +1,163 @@
-Return-Path: <linux-kernel+bounces-194056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C1A8D35F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7248D35FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BB6288423
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3EC428844E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796F9180A85;
-	Wed, 29 May 2024 12:05:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1364B180A97;
+	Wed, 29 May 2024 12:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="deZTP64p"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94115819;
-	Wed, 29 May 2024 12:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59DD7317C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716984311; cv=none; b=EuvzwAa4mjTKJ812SITZERDNhke3K3tRd61Ln8ehLiVA6iP9iqwKc98090Wq4SB+FXKHWCabTTkf7Ct2XdkDWTrNFvjKoF7jecG//YYtoiAy55o7EZ/XcyN4dJKKC2fm/SazAndxrtkjKDuTNAPMYKUye1BHaVVCYjQ1hh/K9Nk=
+	t=1716984389; cv=none; b=uWz0gRxsTh3+xiBCLTTP+5r8+NzMSOSP3qDEtL+x/cWatPX3rPvUqNQMqNOquSKXwSbAjoD0GwqJHR/PqEe8JRz7KkhTcHEBFnTHO13iZ7O2qYGJeh4NtjVqxRgoROfld0GSkVXYCNTNko6RwqQxm5bv00UXusDtcKXdwSLp8J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716984311; c=relaxed/simple;
-	bh=tCvk79juIz9wzKGNptMN3HtzZn7h814QPCNAXxRLxw8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N8ZmCJEaF+sxvsM/XtJw3WKNsSBjGRZae689FD0C3zKemgh/5IT+/jZRjmtb3Ea2bjgGsFVuwZrFjFdx+9a+nRA/b2GfPjXHkklUopW8sOw2dZmWallFUgvetZU13QpunzG/xSO46aOsIKbBcLV3uOzl7Sf3gJTrF1R/zxTMGuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vq7Hy3LVSz6K7B1;
-	Wed, 29 May 2024 20:00:46 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id F401F1400E7;
-	Wed, 29 May 2024 20:04:59 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 29 May
- 2024 13:04:59 +0100
-Date: Wed, 29 May 2024 13:04:58 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Julien Stephan <jstephan@baylibre.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Nuno Sa
-	<nuno.sa@analog.com>
-Subject: Re: [PATCH v2] driver: iio: add missing checks on iio_info's
- callback access
-Message-ID: <20240529130458.000049e6@Huawei.com>
-In-Reply-To: <20240529-iio-core-fix-segfault-v2-1-7b5a5fa6853f@baylibre.com>
-References: <20240529-iio-core-fix-segfault-v2-1-7b5a5fa6853f@baylibre.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1716984389; c=relaxed/simple;
+	bh=HVRgV+LZHE9X1sc52MQrzhSbTAgg+EociwiNNOL0TFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QNtg08Ugc2SlQbzaa/S9/011+nklnCiZIXOTX/qRoZA9NjDm/j7YuRrkvbdlMLt7kRW0gPe758WIHdRhHMm/6MwHYA/UVcM/yzLqV0oeH+QOyhrDPAtUwY8sGJvabkwQAfSwYfMrNV1S4SCPn9HFETZEupHq2Hor0xrxjfX8BeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=deZTP64p; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so14570a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716984386; x=1717589186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=flfC85H1otrtKleLSIReDKcLMqBWb1luLofXQwNP6OM=;
+        b=deZTP64pRfA2l3Xemm7CtVMqp45JZhaj0u1EVF0xJwudlQqNL3x9qvhkUgB2Gm9BFK
+         64hQwhIextD5YRnSU1g7I2aj4zD3eZMivZ2PazC0mJ3ZMix02SPXvwXpq5QP5/WYeVkw
+         6srQf5zTVIzzdWRwHSNx25WLbc8z5MjAkVep/eC0tvRDon/4LAb2S8edE+XrQD5XR+ny
+         FfuhPLQ45zU+t3e9FooSToBHVUy1Oz6xU5Fxm7kEjHSjuYoekgc0/Y6uc6ki84CuCwek
+         cdR+coDx0cqBYKVoTS3lwqbTdgk9VZ0dDRWUAWaxZjiIVQ3xh8YGCNIHrCnJF8YVI4Zv
+         j2Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716984386; x=1717589186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=flfC85H1otrtKleLSIReDKcLMqBWb1luLofXQwNP6OM=;
+        b=CMPoEecYgkLP41rAjtb3YBe63V69wWzjx2toK9h8M0qeoUNVw4lfravBEAZgaTprpw
+         mpNwZK8b7INfx+qjQ9Dk/e1nHS/mHbnLc3tHZU+L0XONRwZz0upVw80Ja/R6DIJvd5Wp
+         niDdNv2jLKkxcq+nqu21xJPfog3G5KlV6YHfYPb8mJXVG581EN9mZtJpY4cNdbCdt7TL
+         mBs5LkF09a8qzy75mT9wD4h+2xhkfQREiXamwbSnPW+8+9hgME2l4fJ1puUHDWl+rYxI
+         jcc2s/9+rLgrFwM8boW7IgUVOswlSblcuu6N7r1zU8HWXCj+IV/SRONDQhpOjE00rMHX
+         iOQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh5xSRsand4Txza83Y06rTAkZNSBVNJ/xASEI5rszFVfhpnBbT/jTSVlP/C3Ta3YqYkOUTD661NjyZpcSaqyz+FZpu9CrnSsr66Z1Z
+X-Gm-Message-State: AOJu0YzPAxebYOOK41sduWQHhNtVAlvI78YusH05V39Cw67GKQQifcdc
+	eoU2A2ajG75XpRrigqkMBqUb1b4WwlZUYN4ZT7b3nt1D9VuDBYJJLwO349adgqLEC2B/9/Ki1Cq
+	/AvN9tcuLmn5cBj1zRqfyRNuTZ+dU45uYjvF2
+X-Google-Smtp-Source: AGHT+IHQJxisSmwewpdLYHn9bYIrrVLVth/4iH1FzycyNVJv2EIWb9vTHg3pLQm025jpZjjFnarObtRvNRurCuWq5ro=
+X-Received: by 2002:aa7:de18:0:b0:578:647d:a27e with SMTP id
+ 4fb4d7f45d1cf-57a05d1e5admr116279a12.1.1716984385821; Wed, 29 May 2024
+ 05:06:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240529095633.613103-1-yuehaibing@huawei.com>
+In-Reply-To: <20240529095633.613103-1-yuehaibing@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 29 May 2024 14:06:11 +0200
+Message-ID: <CANn89i+AxEsmj_9=WYPJ-JP18q9faE1hhQtEdJktAdun7bHzyQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] ipvlan: Dont Use skb->sk in ipvlan_process_v{4,6}_outbound
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	maheshb@google.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 29 May 2024 13:55:52 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
-
-> Some callbacks from iio_info structure are accessed without any check, so
-> if a driver doesn't implement them trying to access the corresponding
-> sysfs entries produce a kernel oops such as:
-> 
-> [ 2203.527791] Unable to handle kernel NULL pointer dereference at virtual address 00000000 when execute
-> [...]
-> [ 2203.783416] Call trace:
-> [ 2203.783429]  iio_read_channel_info_avail from dev_attr_show+0x18/0x48
-> [ 2203.789807]  dev_attr_show from sysfs_kf_seq_show+0x90/0x120
-> [ 2203.794181]  sysfs_kf_seq_show from seq_read_iter+0xd0/0x4e4
-> [ 2203.798555]  seq_read_iter from vfs_read+0x238/0x2a0
-> [ 2203.802236]  vfs_read from ksys_read+0xa4/0xd4
-> [ 2203.805385]  ksys_read from ret_fast_syscall+0x0/0x54
-> [ 2203.809135] Exception stack(0xe0badfa8 to 0xe0badff0)
-> [ 2203.812880] dfa0:                   00000003 b6f10f80 00000003 b6eab000 00020000 00000000
-> [ 2203.819746] dfc0: 00000003 b6f10f80 7ff00000 00000003 00000003 00000000 00020000 00000000
-> [ 2203.826619] dfe0: b6e1bc88 bed80958 b6e1bc94 b6e1bcb0
-> [ 2203.830363] Code: bad PC value
-> [ 2203.832695] ---[ end trace 0000000000000000 ]---
-> 
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-
-How bad would a registration time check look?
-I'd rather catch this early than have drivers with missing hooks
-that we don't notice because no one pokes the file.
-
-The inkern ones are good though.
-
-Jonathan
-
+On Wed, May 29, 2024 at 11:52=E2=80=AFAM Yue Haibing <yuehaibing@huawei.com=
+> wrote:
+>
+> Raw packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device wi=
+ll
+> hit WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path.
+>
+> WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
+> Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg drm=
+_kms_helper
+> CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> RIP: 0010:sk_mc_loop+0x2d/0x70
+> Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 48 8=
+5 ff 74 1c
+> RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
+> RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
+> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
+> RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
+> R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
+> R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
+> FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> <IRQ>
+>  ? __warn (kernel/panic.c:693)
+>  ? sk_mc_loop (net/core/sock.c:760)
+>  ? report_bug (lib/bug.c:201 lib/bug.c:219)
+>  ? handle_bug (arch/x86/kernel/traps.c:239)
+>  ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
+>  ? asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
+>  ? sk_mc_loop (net/core/sock.c:760)
+>  ip6_finish_output2 (net/ipv6/ip6_output.c:83 (discriminator 1))
+>  ? nf_hook_slow (net/netfilter/core.c:626)
+>  ip6_finish_output (net/ipv6/ip6_output.c:222)
+>  ? __pfx_ip6_finish_output (net/ipv6/ip6_output.c:215)
+>  ipvlan_xmit_mode_l3 (drivers/net/ipvlan/ipvlan_core.c:602) ipvlan
+>  ipvlan_start_xmit (drivers/net/ipvlan/ipvlan_main.c:226) ipvlan
+>  dev_hard_start_xmit (net/core/dev.c:3594)
+>  sch_direct_xmit (net/sched/sch_generic.c:343)
+>  __qdisc_run (net/sched/sch_generic.c:416)
+>  net_tx_action (net/core/dev.c:5286)
+>  handle_softirqs (kernel/softirq.c:555)
+>  __irq_exit_rcu (kernel/softirq.c:589)
+>  sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043)
+>
+> The warning triggers as this:
+> packet_sendmsg
+>    packet_snd //skb->sk is packet sk
+>       __dev_queue_xmit
+>          __dev_xmit_skb //q->enqueue is not NULL
+>              __qdisc_run
+>                sch_direct_xmit
+>                  dev_hard_start_xmit
+>                    ipvlan_start_xmit
+>                       ipvlan_xmit_mode_l3 //l3 mode
+>                         ipvlan_process_outbound //vepa flag
+>                           ipvlan_process_v6_outbound
+>                             ip6_local_out
+>                                 __ip6_finish_output
+>                                   ip6_finish_output2 //multicast packet
+>                                     sk_mc_loop //sk->sk_family is AF_PACK=
+ET
+>
+> Call ip{6}_local_out() with NULL sk in ipvlan as other tunnels to fix thi=
+s.
+>
+> Fixes: 2ad7bf363841 ("ipvlan: Initial check-in of the IPVLAN driver.")
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 > ---
-> Changes in v2:
-> - crop dmesg log to show only pertinent info and reduce commit message
-> - Link to v1: https://lore.kernel.org/r/20240529-iio-core-fix-segfault-v1-1-7ff1ba881d38@baylibre.com
-> ---
->  drivers/iio/industrialio-core.c  |  7 ++++++-
->  drivers/iio/industrialio-event.c |  9 +++++++++
->  drivers/iio/inkern.c             | 16 +++++++++++-----
->  3 files changed, 26 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index fa7cc051b4c4..2f185b386949 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -758,9 +758,11 @@ static ssize_t iio_read_channel_info(struct device *dev,
->  							INDIO_MAX_RAW_ELEMENTS,
->  							vals, &val_len,
->  							this_attr->address);
-> -	else
-> +	else if (indio_dev->info->read_raw)
->  		ret = indio_dev->info->read_raw(indio_dev, this_attr->c,
->  				    &vals[0], &vals[1], this_attr->address);
-> +	else
-> +		return -EINVAL;
->  
->  	if (ret < 0)
->  		return ret;
-> @@ -842,6 +844,9 @@ static ssize_t iio_read_channel_info_avail(struct device *dev,
->  	int length;
->  	int type;
->  
-> +	if (!indio_dev->info->read_avail)
-> +		return -EINVAL;
-> +
->  	ret = indio_dev->info->read_avail(indio_dev, this_attr->c,
->  					  &vals, &type, &length,
->  					  this_attr->address);
-> diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industrialio-event.c
-> index 910c1f14abd5..a64f8fbac597 100644
-> --- a/drivers/iio/industrialio-event.c
-> +++ b/drivers/iio/industrialio-event.c
-> @@ -285,6 +285,9 @@ static ssize_t iio_ev_state_store(struct device *dev,
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (!indio_dev->info->write_event_config)
-> +		return -EINVAL;
-> +
->  	ret = indio_dev->info->write_event_config(indio_dev,
->  		this_attr->c, iio_ev_attr_type(this_attr),
->  		iio_ev_attr_dir(this_attr), val);
-> @@ -300,6 +303,9 @@ static ssize_t iio_ev_state_show(struct device *dev,
->  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
->  	int val;
->  
-> +	if (!indio_dev->info->read_event_config)
-> +		return -EINVAL;
-> +
->  	val = indio_dev->info->read_event_config(indio_dev,
->  		this_attr->c, iio_ev_attr_type(this_attr),
->  		iio_ev_attr_dir(this_attr));
-> @@ -318,6 +324,9 @@ static ssize_t iio_ev_value_show(struct device *dev,
->  	int val, val2, val_arr[2];
->  	int ret;
->  
-> +	if (!indio_dev->info->read_event_value)
-> +		return -EINVAL;
-> +
->  	ret = indio_dev->info->read_event_value(indio_dev,
->  		this_attr->c, iio_ev_attr_type(this_attr),
->  		iio_ev_attr_dir(this_attr), iio_ev_attr_info(this_attr),
-> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> index 52d773261828..74f87f6ac390 100644
-> --- a/drivers/iio/inkern.c
-> +++ b/drivers/iio/inkern.c
-> @@ -560,9 +560,11 @@ static int iio_channel_read(struct iio_channel *chan, int *val, int *val2,
->  					vals, &val_len, info);
->  		*val = vals[0];
->  		*val2 = vals[1];
-> -	} else {
-> +	} else if (chan->indio_dev->info->read_raw) {
->  		ret = chan->indio_dev->info->read_raw(chan->indio_dev,
->  					chan->channel, val, val2, info);
-> +	} else {
-> +		return -EINVAL;
->  	}
->  
->  	return ret;
-> @@ -753,8 +755,10 @@ static int iio_channel_read_avail(struct iio_channel *chan,
->  	if (!iio_channel_has_available(chan->channel, info))
->  		return -EINVAL;
->  
-> -	return chan->indio_dev->info->read_avail(chan->indio_dev, chan->channel,
-> -						 vals, type, length, info);
-> +	if (chan->indio_dev->info->read_avail)
-> +		return chan->indio_dev->info->read_avail(chan->indio_dev, chan->channel,
-> +							 vals, type, length, info);
-> +	return -EINVAL;
->  }
->  
->  int iio_read_avail_channel_attribute(struct iio_channel *chan,
-> @@ -917,8 +921,10 @@ EXPORT_SYMBOL_GPL(iio_get_channel_type);
->  static int iio_channel_write(struct iio_channel *chan, int val, int val2,
->  			     enum iio_chan_info_enum info)
->  {
-> -	return chan->indio_dev->info->write_raw(chan->indio_dev,
-> -						chan->channel, val, val2, info);
-> +	if (chan->indio_dev->info->write_raw)
-> +		return chan->indio_dev->info->write_raw(chan->indio_dev,
-> +							chan->channel, val, val2, info);
-> +	return -EINVAL;
->  }
->  
->  int iio_write_channel_attribute(struct iio_channel *chan, int val, int val2,
-> 
-> ---
-> base-commit: 409b6d632f5078f3ae1018b6e43c32f2e12f6736
-> change-id: 20240528-iio-core-fix-segfault-aa74be7eee4a
-> 
-> Best regards,
 
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
