@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-193302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47E18D2A08
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:31:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1E88D2A0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2151C23CCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:31:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E297AB2227F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A1E15AAB1;
-	Wed, 29 May 2024 01:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ek0oGbVX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8034A15AAB8;
+	Wed, 29 May 2024 01:36:49 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631D57F6;
-	Wed, 29 May 2024 01:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E9929A0;
+	Wed, 29 May 2024 01:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716946304; cv=none; b=hNFA6HthDb/HZr0ME4OB1BfHTDceFt+a7/y+kJABHfhZZ34hEAJagypVwZsKntj6wLwE9KnkXy05gvtkT/+OXUy8eeRUKhryRvjjmupHXyaiSTyU1lN5HtQJ1yKOFMTj9oNTLSpLWNJ/A8OBvXmHsjEEoFRWCMf7tNahtnHvTXk=
+	t=1716946609; cv=none; b=XYO0ag/nkVEoSaVJswh+MQuJU+3oNVumrj2Hrtz9YkXEv0Pv1E0TWrsJeuF4qPTskSfPvoxbVX4tz72PVMK/uJt7A/OlMYIc0fdk/KtecDCaBTGrPGW6CIGB329z8ewGAg2dctYzVyFgj0WyzmoOGzqYTdVS4tw4zxZrQqnm7RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716946304; c=relaxed/simple;
-	bh=XWJd0u7jf4+kwWI2PlUYNjKVj7V3MZrSBbXD0e50dGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=drLnb53XhGGpqWfTKEDmdU0VxdcH85oBu4SJcBbMUlA1/17yWLvAqRINmuzGDAgETTBoo7623Tc+NEcExzMqnavG6TCWzAuwMwuELHZW+8HFp62cA5FmENXuj8EVLE8Z8Ik0GkTr8roB8VBGvhj6n+883yc8FegjjbMgK4pPdHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ek0oGbVX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1716946299;
-	bh=sYIwi1Me3rXEzjWBIGPWij+mjxNI1SFRGHLiv03UBqU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Ek0oGbVXYN8bWjZR3HzHk4WuKizlTPQKyeec8Bm5RISeoTh/BXZJj6w8Qh54izcoN
-	 zFcDZeVQIm9e3IVwbCFwPvX1yBJQ1kYne2gz3WpESNpMUSImj1ELavI9sbGniDLZH9
-	 CJxI1ChqnIqS14bKUApHJVOav1kXcnuMYX6dq+Yjy68acDxDCYLrhlvrKg/wr69Bk7
-	 spuY2uKjhgGq5AesSOo3EJSfZ6dnVL3ALMiwZuH2m9n8UCm2RV0A72iIT0ta9cT632
-	 99PG2OsGfLovWjOVGSNClaW+9aj9BzhrMb689Ujq78XeJdhn8yhBcHUo/WsDnbAiNH
-	 /mnx+QuRBB6+g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpsL34J4Zz4wbr;
-	Wed, 29 May 2024 11:31:39 +1000 (AEST)
-Date: Wed, 29 May 2024 11:31:38 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Jiri Slaby (SUSE)"
- <jirislaby@kernel.org>, John Ogness <john.ogness@linutronix.de>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the printk tree with Linus' tree
-Message-ID: <20240529113138.323f48d6@canb.auug.org.au>
+	s=arc-20240116; t=1716946609; c=relaxed/simple;
+	bh=mpEl7XZmp7M1ZOKua3Q8W69E/fOmIpZvLeF8vm3j7CI=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fee3ScCqctSMeMYMJe7W58iK66qYc7uiVnYBW9IgPU0kjzq4/CGZHtz1q49vz08wwe5X+26h655Ln+yoAani3UF8mgRfGuumj7uI1MHNzJ0xB4oNiEvKAQt3q0h/ph3g/CeU8nAmgksApdKOAsa2ZdLZ2DM6D5kUbCwlSWKjjfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VpsMX4sWbzwQck;
+	Wed, 29 May 2024 09:32:56 +0800 (CST)
+Received: from canpemm500007.china.huawei.com (unknown [7.192.104.62])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9AA4B18006E;
+	Wed, 29 May 2024 09:36:43 +0800 (CST)
+Received: from [10.174.179.113] (10.174.179.113) by
+ canpemm500007.china.huawei.com (7.192.104.62) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 29 May 2024 09:36:43 +0800
+Subject: Re: [PATCH net] ipvlan: Dont Use skb->sk in
+ ipvlan_process_v{4,6}_outbound
+To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <hannes@stressinduktion.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240525034231.2498827-1-yuehaibing@huawei.com>
+ <1a1b249e7d53984a3ea094cdf5b362cea3273dc4.camel@redhat.com>
+From: Yue Haibing <yuehaibing@huawei.com>
+Message-ID: <a4a6ab6a-013c-a07a-80c1-506fdefa320f@huawei.com>
+Date: Wed, 29 May 2024 09:36:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/id9/qOf4mqjq9Ewt487Rki=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <1a1b249e7d53984a3ea094cdf5b362cea3273dc4.camel@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ canpemm500007.china.huawei.com (7.192.104.62)
 
---Sig_/id9/qOf4mqjq9Ewt487Rki=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024/5/28 19:15, Paolo Abeni wrote:
+> On Sat, 2024-05-25 at 11:42 +0800, Yue Haibing wrote:
+>> Raw packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device will
+>> hit WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path.
+>>
+>> WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
+>> Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg drm_kms_helper
+>> CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+>> RIP: 0010:sk_mc_loop+0x2d/0x70
+>> Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 48 85 ff 74 1c
+>> RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
+>> RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
+>> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
+>> RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
+>> R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
+>> R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
+>> FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>> <IRQ>
+>>  ? __warn (kernel/panic.c:693)
+>>  ? sk_mc_loop (net/core/sock.c:760)
+>>  ? report_bug (lib/bug.c:201 lib/bug.c:219)
+>>  ? handle_bug (arch/x86/kernel/traps.c:239)
+>>  ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
+>>  ? asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
+>>  ? sk_mc_loop (net/core/sock.c:760)
+>>  ip6_finish_output2 (net/ipv6/ip6_output.c:83 (discriminator 1))
+>>  ? nf_hook_slow (net/netfilter/core.c:626)
+>>  ip6_finish_output (net/ipv6/ip6_output.c:222)
+>>  ? __pfx_ip6_finish_output (net/ipv6/ip6_output.c:215)
+>>  ipvlan_xmit_mode_l3 (drivers/net/ipvlan/ipvlan_core.c:602) ipvlan
+>>  ipvlan_start_xmit (drivers/net/ipvlan/ipvlan_main.c:226) ipvlan
+>>  dev_hard_start_xmit (net/core/dev.c:3594)
+>>  sch_direct_xmit (net/sched/sch_generic.c:343)
+>>  __qdisc_run (net/sched/sch_generic.c:416)
+>>  net_tx_action (net/core/dev.c:5286)
+>>  handle_softirqs (kernel/softirq.c:555)
+>>  __irq_exit_rcu (kernel/softirq.c:589)
+>>  sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043)
+>>
+>> The warning triggers as this:
+>> packet_sendmsg
+>>    packet_snd //skb->sk is packet sk
+>>       __dev_queue_xmit
+>>          __dev_xmit_skb //q->enqueue is not NULL
+>>              __qdisc_run
+>>                sch_direct_xmit
+>>                  dev_hard_start_xmit
+>>                    ipvlan_start_xmit
+>>                       ipvlan_xmit_mode_l3 //l3 mode
+>>                         ipvlan_process_outbound //vepa flag
+>>                           ipvlan_process_v6_outbound
+>>                             ip6_local_out
+>>                                 __ip6_finish_output
+>>                                   ip6_finish_output2 //multicast packet
+>>                                     sk_mc_loop //sk->sk_family is AF_PACKET
+>>
+>> Call ip{6}_local_out() with NULL sk in ipvlan as other tunnels to fix this.
+>>
+>> Fixes: f60e5990d9c1 ("ipv6: protect skb->sk accesses from recursive dereference inside the stack")
+> 
+> The patch LGTM, but the above fixes tag looks incorrect, I think the
+> reproducer should splat even before such commit as the relevant warning
+> will be still there and should be still reachable.
 
-Hi all,
-
-Today's linux-next merge of the printk tree got a conflict in:
-
-  include/linux/serial_core.h
-
-between commit:
-
-  1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-
-from Linus' tree and commit:
-
-  e18c650e4653 ("serial: core: Implement processing in port->lock wrapper")
-
-from the printk tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/serial_core.h
-index 8cb65f50e830,fe91234d5b7c..000000000000
---- a/include/linux/serial_core.h
-+++ b/include/linux/serial_core.h
-@@@ -11,6 -11,9 +11,8 @@@
-  #include <linux/compiler.h>
-  #include <linux/console.h>
-  #include <linux/interrupt.h>
- -#include <linux/circ_buf.h>
-+ #include <linux/lockdep.h>
-+ #include <linux/printk.h>
-  #include <linux/spinlock.h>
-  #include <linux/sched.h>
-  #include <linux/tty.h>
-
---Sig_/id9/qOf4mqjq9Ewt487Rki=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZWhXsACgkQAVBC80lX
-0GwGNQf/bJqM0AARD5DyUy94FVT9yp+dc+Y+/qHdNghnd326ijfjKqNToeBl6Qzg
-pQStHytYW3i9WJer7hbNIiqIPXtIpeKReQm1Q94fAsH50FmUejiHUw+XY1x0iHL0
-iHUN0MbXVw6Ad+f9FO6XPXOAQA7hQqFXqlniWtsNm3m6bOGcBoscLE3cc+QdnETB
-xe2AgQqIFvVHbJnbnD3CPbi7KI6x0IHlJzlgAYJ4lb651r1ovzYYq/HIgz9ZjjBT
-qS3lfR2FW2zh9aGe1SKyDmSn6QtAvEWXyYwqP83/emBp1D3ZDLNA+pA+WsLq3uh+
-pQtv9WMtJHGlHn4nSwdXqpQOyE+1kg==
-=TyRp
------END PGP SIGNATURE-----
-
---Sig_/id9/qOf4mqjq9Ewt487Rki=--
+Yes, it should be Fixes: 2ad7bf363841 ("ipvlan: Initial check-in of the IPVLAN driver."), will post v2.
+> 
+> Cheers,
+> 
+> Paolo
+> 
+> .
+> 
 
