@@ -1,160 +1,198 @@
-Return-Path: <linux-kernel+bounces-194626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD748D3F1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFA38D3F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405B01C21DD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66770285FC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E281C6888;
-	Wed, 29 May 2024 19:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A23C1C6887;
+	Wed, 29 May 2024 19:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkGYnJV2"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0xZvn+S"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237E2522A;
-	Wed, 29 May 2024 19:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D702522A;
+	Wed, 29 May 2024 19:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717012429; cv=none; b=olnJIi1aStju59FkSYGwt+9GTEHtfuMB6dYnbayQ2Gfx6fE4vSEaDYzqbr0gtumiyc1yEFT0kcoQ4lC/z4rkpsAJEOC+akC8bEFCreXXbJFuNBvtwVSE815FXXbz5Anha+O6AeiPKH4+NKm6XCdfF7b1k5FEOYJW/unyGVh8YcQ=
+	t=1717012518; cv=none; b=X2dpG0e323ywms2c2KlEBl8TJRa1UDsqw0ffrscnFVDgcGLnZD2dZ4YNr1abBEw1lsAkcijqR0IwVzelFlipNM6B0K+WE6SIvHDJKgSqNjQkH1L0jeTWx7fZP38tJH0K/iI2JhcXyQMTsv7HqJOb2cG8dCY7C7RuKvJXPIBhLvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717012429; c=relaxed/simple;
-	bh=TgIN2Vko2QSfeAhaQWA7wstejia7wbLXf1FK1ROIXk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JRfYZXFa8wKAXozxybQSonExIS8SBLcTcxCRde5fLBZQ4VuyxdC6Osn3iGCbpO2Izbpn8CYgAhbJFyuzy+SQ5wDWYTqj4APpzvxmsPpS+hOhoyT/zb2f2gz7Frxky8T4+wlbEGfYROImsUOGP9GRS7Vt22fZD8CyVuc5Zr6YrPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hkGYnJV2; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1717012518; c=relaxed/simple;
+	bh=TzClWeB0xIsFlkX+WZ+EHq2q//G+bBcNAWNro8D7QKs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tWTBS+oMxjKpfLq2p/YA67zrU2rg/7iB8b27tNTQFvdKdIvdi7kkqpddvjeYSaF9DJtpl6Rt3rwolE1qXQEE2jjS1FEsLQdJkcA/zNH74VJTEwrQl7GAPAqx91XM+Kds3z3hC8L+N0fLMQ8e1tL5Xem1DTjoGMzIK3QcYA5SMJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K0xZvn+S; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a63359aaaa6so2949066b.2;
-        Wed, 29 May 2024 12:53:47 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f47784a2adso1156625ad.1;
+        Wed, 29 May 2024 12:55:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717012426; x=1717617226; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1m+eJ0+HTX5hevlSV4OPbUaaD5T4sWeJ+vrIGfi1+BU=;
-        b=hkGYnJV2SpsshZiT2LkD5opUJCFkC+gdGYq3PSJIxownC4hdckWUofZJ+1hmAO3+He
-         4mFTbf/Yobv1WCZug5NeiWtvKU6ads8sbAKGydvRXHWZCJ+tmLfNZQK7lboHZT1jVcup
-         fKShumFHCNwOQfKxgTjfBiAmDQnJg3XY/Eb+MtQ+mSOzZ09H+5DV7DLpR9jz0JTBD/8S
-         6bw3vGrNlRgNgfvcCYvW3byNlV4WCY0xA6zcVEVxdHXY9Pw7YSqHBPxkHdD1zJrUNcec
-         ooFwkdy0OE0yRrQxV8mNgS7w5ZtFRhs4iSHZpCF9lMW8+kXs4q9MNyAHQ9nterimdGNn
-         eXdA==
+        d=gmail.com; s=20230601; t=1717012516; x=1717617316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SeUDyLz07Yf4A3ibn/qcJdcShL7dSWLOCdG8yEpv21E=;
+        b=K0xZvn+SWNSFRiOXzV98+W2euSJmOXMuCgeo/NM25b7XJdjIINcq+8H2MLtkw6fVHF
+         fkj2jpDShrtEQcDxVLDyNEQRGdw3WbsSJsb/fLNojVIkYR2yCCG9Z45HC/wYwtFgIM//
+         62EnGxmIAjXHN8sHPbztIXfMDR5TKGDsNJ3QQMKnGP++PSYoMcWMCBH84Z/RxFv5ftW8
+         gbn4aXD4hoyEMfuiWrE+O2wwH7Rprcmn2MpeOhKefAKSmj746zWPL20oxP3lwfgIwCRs
+         Y33LHdW0Gyo85OTZmDpXRtPon5O9dKLQIjqBmcOZJMfF4r03ZMoY8lyV+MCa0HXkVXGq
+         TJaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717012426; x=1717617226;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1m+eJ0+HTX5hevlSV4OPbUaaD5T4sWeJ+vrIGfi1+BU=;
-        b=iBlQcyAEj9m6ZrVp+jla9Ry3FD2lZFSxGhePt+VAnRZPm6UYXIrj5vKoINeJ1xrTZO
-         Vjs381UL4ERDQuXzDj3iRCeGJzS4MwGaPuIAipEsuoLBe+EKh4JGSEoJSZUiEkX2avsc
-         iWU5U4opZhyyEbmHSE7ozJ1Xr8Dtywb2afogbjkUO4OM9C6IEr0qfyfWV8YJxezC3KO4
-         a1cU+LcSV9MJXOgUziAM0flplS30tRzBwZ4+1zAAnT763qwDiZuYaIlhZ+xS1wYZfiC4
-         RyikTpl0PX6LW5yCbQ1XvpZ3lwttI/v39F2AAWXA2MYDkChwFXhAHuWD+fDUFkKnmVBt
-         BRYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUO/O8Pa01AgYY7Tr1F9YLK19GgiiImWJMFaGxPIWxKCqI55m8PTd59dzGnKj7+uxwoMQgC7niZCPnqX+M5gTEu0XEM0cLg/vIh/SAVPdo+e0vU0eVj4Ezl/ZpHe+dBX3BI1ZOY1hyTNA3j1XL+8GKPlZD3XdQHKQ8TVkeAheCLX59KEY5TR1eJKTDwTjYCtiqgXNS23Qzr3ZCUri7bLE+3Qt4V
-X-Gm-Message-State: AOJu0Yyw998Gm6ply0ftDV4AGAFexSL2o9ZCX3H73ZG2BMJYIOA6bSLF
-	JafUNTNsTy7exBEsTAcIR1Vc115cc3YoUGvUdQ94tlqxlZHTiqXuGgGPBFxPeWr44/YhMarq3+6
-	aUlmWXsvVjtGFkUeWQtFZTkJVoes=
-X-Google-Smtp-Source: AGHT+IHdLo2Dle0xvU6wdDZvW+5ygpMdmBCnbICN8kcAYk7je6Y+Ci1/SHIdh8p+ng8bmsjWJmc5zj2MS6lW66x6EsY=
-X-Received: by 2002:a17:906:4087:b0:a5a:896e:d0b4 with SMTP id
- a640c23a62f3a-a65e8e5d2e3mr11830466b.26.1717012426261; Wed, 29 May 2024
- 12:53:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717012516; x=1717617316;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SeUDyLz07Yf4A3ibn/qcJdcShL7dSWLOCdG8yEpv21E=;
+        b=BwwAS+A7PWNHm7TUyaRbB1Ao81oZcD3i6sO31I55M2euvYfVMxnVWprYEqk0CjUR3T
+         uDJyF1QVRGMfecv+WADe4e9YEXaH7IQxX0sY3KjDRwjxUdTvBbS2KCdzldM9jNw/sBed
+         zs+Heo3vyvO0spaA11RkSx7pKckbOtw/X+aqxdux9UL6EWW6AJl9A0VH9KPusYQqQlKL
+         BTIaETHeKMLJc9za3fwMZJf2tpqx30e6QdCm90p3GahtBOmMxvo0nzXUVYXQWFk/oX5V
+         gRjhH9TAIMrtaMRriVmcyIYR6KXopSDJHOp9orSZxT4T8TP0eKTUAtKg/A+nv3ye/NEz
+         eU4w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2F/UUIHcnvoR/MP9RadBI9hOVzQ5Wrf5c9lLpZI9ksKjtbgQvKxjwC0/apCsqp1IVw5dQ+yY1rfCTHVe3S4Z0SCs3KbQMEfZn9q9lCBAkNFAphilp1FJh6Fjcig9EetBId3OOpKuzww==
+X-Gm-Message-State: AOJu0YyOFvdhm0pZQtXzSgf39FXVjyFEaDj0PGz0y7I2Ev3xOcIvLVli
+	I/6D48uUrOckFkcmE5a6v6b1NU5kJYlPP4cf7N+V5mDr4VG/xdlY
+X-Google-Smtp-Source: AGHT+IHhMDqWPEjxt7r+Lc3nVAdOtTDOEBn2i6vof9omWzEupAsWiqDbTT3kDVtrCqWogGRWHq5S4A==
+X-Received: by 2002:a17:903:184:b0:1f4:8bb7:6842 with SMTP id d9443c01a7336-1f6193faa4bmr422435ad.8.1717012516258;
+        Wed, 29 May 2024 12:55:16 -0700 (PDT)
+Received: from mari.. ([2804:431:cfd2:68a4:d1e5:41de:6992:6d45])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9684bfsm103990195ad.140.2024.05.29.12.55.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 12:55:15 -0700 (PDT)
+From: MarileneGarcia <marilene.agarcia@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Julia Lawall <julia.lawall@inria.fr>
+Cc: MarileneGarcia <marilene.agarcia@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-leds@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: powernv: replace of_node_put to __free
+Date: Wed, 29 May 2024 16:53:54 -0300
+Message-Id: <20240529195354.1187882-1-marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529162958.18081-1-johan+linaro@kernel.org> <20240529162958.18081-13-johan+linaro@kernel.org>
-In-Reply-To: <20240529162958.18081-13-johan+linaro@kernel.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 29 May 2024 22:53:09 +0300
-Message-ID: <CAHp75Vcww07EkUDVSMSd+RviQ9_uku=w4pkCWUt8iGTW580eXg@mail.gmail.com>
-Subject: Re: [PATCH v2 12/14] mfd: pm8008: rework driver
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Stephen Boyd <swboyd@chromium.org>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 7:30=E2=80=AFPM Johan Hovold <johan+linaro@kernel.o=
-rg> wrote:
->
-> Rework the pm8008 driver to match the new binding which no longer
-> describes internal details like interrupts and register offsets
-> (including which of the two consecutive I2C addresses the registers
-> belong to).
->
-> Instead make the interrupt controller implementation internal and pass
-> interrupts to the subdrivers using MFD cell resources.
->
-> Note that subdrivers may either get their resources, like register block
-> offsets, from the parent MFD or this can be included in the subdrivers
-> directly.
->
-> In the current implementation, the temperature alarm driver is generic
-> enough to just get its base address and alarm interrupt from the parent
-> driver, which already uses this information to implement the interrupt
-> controller.
->
-> The regulator driver, however, needs additional information like parent
-> supplies and regulator characteristics so in that case it is easier to
-> just augment its table with the regulator register base addresses.
->
-> Similarly, the current GPIO driver already holds the number of pins and
-> that lookup table can therefore also be extended with register offsets.
->
-> Note that subdrivers can now access the two regmaps by name, even if the
-> primary regmap is registered last so that it is returned by default when
-> no name is provided in lookups.
->
-> Finally, note that the temperature alarm and GPIO subdrivers need some
-> minor rework before they can be used with non-SPMI devices like the
-> PM8008. The temperature alarm MFD cell name specifically uses a "qpnp"
-> rather than "spmi" prefix to prevent binding until the driver has been
-> updated.
+Use __free for device_node values, and thus drop calls to
+of_node_put.
 
-..
+The variable attribute __free adds a scope based cleanup to
+the device node. The goal is to reduce memory management issues
+in the kernel code.
 
-> +       dummy =3D devm_i2c_new_dummy_device(dev, client->adapter, client-=
->addr + 1);
-> +       if (IS_ERR(dummy)) {
-> +               ret =3D PTR_ERR(dummy);
-> +               dev_err(dev, "failed to claim second address: %d\n", ret)=
-;
-> +               return ret;
-> +       }
+The of_node_put calls were removed, and the
+for_each_available_child_of_node was replaced to the equivalent
+for_each_available_child_of_node_scoped which use the __free.
 
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+Signed-off-by: MarileneGarcia <marilene.agarcia@gmail.com>
+---
+Changes:
+These changes intend to add the new __free cleanup handler 
+to device_node initialisations, which ensures that the resource is 
+freed as soon as the variable goes out of scope. Thus removing the 
+need to manually free up the resource using of_node_put
 
-> +       ret =3D devm_regmap_add_irq_chip_fwnode(dev, fwnode, regmap, clie=
-nt->irq,
->                                 IRQF_SHARED, 0, &pm8008_irq_chip, &irq_da=
-ta);
-> +       if (ret) {
-> +               dev_err(dev, "failed to add IRQ chip: %d\n", ret);
-> +               return ret;
->         }
+Thank you.
 
-I believe there is no harm to use
+ drivers/leds/leds-powernv.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
-  return dev_err_probe(...);
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index 4f01acb75727..68fe47cd1a4f 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -246,29 +246,25 @@ static int powernv_led_classdev(struct platform_device *pdev,
+ 	const char *cur = NULL;
+ 	int rc = -1;
+ 	struct property *p;
+-	struct device_node *np;
+ 	struct powernv_led_data *powernv_led;
+ 	struct device *dev = &pdev->dev;
+ 
+-	for_each_available_child_of_node(led_node, np) {
++	for_each_available_child_of_node_scoped(led_node, np) {
+ 		p = of_find_property(np, "led-types", NULL);
+ 
+ 		while ((cur = of_prop_next_string(p, cur)) != NULL) {
+ 			powernv_led = devm_kzalloc(dev, sizeof(*powernv_led),
+ 						   GFP_KERNEL);
+-			if (!powernv_led) {
+-				of_node_put(np);
++			if (!powernv_led)
+ 				return -ENOMEM;
+-			}
+ 
+ 			powernv_led->common = powernv_led_common;
+ 			powernv_led->loc_code = (char *)np->name;
+ 
+ 			rc = powernv_led_create(dev, powernv_led, cur);
+-			if (rc) {
+-				of_node_put(np);
++			if (rc)
+ 				return rc;
+-			}
++
+ 		} /* while end */
+ 	}
+ 
+@@ -278,12 +274,10 @@ static int powernv_led_classdev(struct platform_device *pdev,
+ /* Platform driver probe */
+ static int powernv_led_probe(struct platform_device *pdev)
+ {
+-	struct device_node *led_node;
+ 	struct powernv_led_common *powernv_led_common;
+ 	struct device *dev = &pdev->dev;
+-	int rc;
+-
+-	led_node = of_find_node_by_path("/ibm,opal/leds");
++	struct device_node *led_node __free(device_node) =
++							of_find_node_by_path("/ibm,opal/leds");
+ 	if (!led_node) {
+ 		dev_err(dev, "%s: LED parent device node not found\n",
+ 			__func__);
+@@ -292,20 +286,15 @@ static int powernv_led_probe(struct platform_device *pdev)
+ 
+ 	powernv_led_common = devm_kzalloc(dev, sizeof(*powernv_led_common),
+ 					  GFP_KERNEL);
+-	if (!powernv_led_common) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
++	if (!powernv_led_common)
++		return -ENOMEM;
+ 
+ 	mutex_init(&powernv_led_common->lock);
+ 	powernv_led_common->max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
+ 
+ 	platform_set_drvdata(pdev, powernv_led_common);
+ 
+-	rc = powernv_led_classdev(pdev, led_node, powernv_led_common);
+-out:
+-	of_node_put(led_node);
+-	return rc;
++	return powernv_led_classdev(pdev, led_node, powernv_led_common);
+ }
+ 
+ /* Platform driver remove */
+-- 
+2.34.1
 
-for these. But it seems you don't like that API. Whatever, no-one will
-die, just additional work for the future :-)
-
---=20
-With Best Regards,
-Andy Shevchenko
 
