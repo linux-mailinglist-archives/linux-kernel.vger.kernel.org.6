@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-194094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37398D3685
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:37:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39818D3689
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547C728362C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:37:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BF17B23E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FBE181312;
-	Wed, 29 May 2024 12:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CCF181BA3;
+	Wed, 29 May 2024 12:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ayX9n/3u";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kFMiFhMN"
-Received: from wfhigh6-smtp.messagingengine.com (wfhigh6-smtp.messagingengine.com [64.147.123.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bkhT7CTg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9103013F45C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C2A181335;
+	Wed, 29 May 2024 12:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716986233; cv=none; b=ES3XXQRZuFNQr7BjWfSeaIyIu7FxI2HM4C0EI5E3GyhGLdlhpmPDrCuU4FNh2Jqyhuyd0tEvBC6jJfDJPG+2q6cTK1Hn0glkQ8pp5iHBQeXbXDjQmsWhkHT8PokH5LZ7dBo8VNgI2TlcTZldyvrQY5FbSuI+DhRvNUklUvIQlfM=
+	t=1716986237; cv=none; b=jTPEZf7tvLzdUbyYwl9831A0IuQZ8rop4kjdvPFpxKr4yhq8WzWrtEei0WpjPxOROTIPpf/eZ7n7B5kQmjtKZKhuz2sFI06UvpizliUDxw96FHx/+naj7Q4dLgvF70+WQfSPCVkvXosr6z3x+oq7iLxB/cHmuKLgTfE9pQi5KA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716986233; c=relaxed/simple;
-	bh=+qJDyavRqe7gbpZxTRvqO14ih1t6jxl7M7I6K1//B6g=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=XlzozJekOPuRu9QRzmJVYmAPm8T4SgR8NXRoQrc4QDbiZpETYnR7epBgN4vPb8PLtZdnnRZJR+tWszj0LXoI2fHtrgJvosJE9Es24Y5dGS2jbiRH4PNMZETdXIW16GBC53C4PQCBLKsTW+d/xCzSrnyn27xzG+2Vu/qIe3ONv3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ayX9n/3u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kFMiFhMN; arc=none smtp.client-ip=64.147.123.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 3D7921800128;
-	Wed, 29 May 2024 08:37:10 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 29 May 2024 08:37:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716986229; x=1717072629; bh=olMpVwRAcy
-	cNTnwZOlUv/a3tq9UZFjzc3lJy/rkEFNM=; b=ayX9n/3ubzMeXnq46yh8XGVksw
-	sPMw41hfHrkbbn4xrSl/LoJfgU5Cd/AmJvF7tq+0sGVkir0t5aqcwRAd7sEzdvLr
-	08WQy/fslLuMIK/WctgiI5dFuJ1XVloYXBIhTmh2nP2evm1WM0opXEB643m8PO0K
-	EV/mTcTyiCw0nqaAafmvfoZmgdViFe5Iteo8el1kbbdmcssGfILeYACnuajEukO7
-	R0EAprGE1CYmMF2ku7OmY05fB/xIj98u+gpyyIsnhnca0I3v4HUMA0nUYpUJ4je4
-	mRJarSYQt3uCeShPXThkZb/dBIRR5F8Rb83D0LwSsQtHTeK3LevygWMySjjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716986229; x=1717072629; bh=olMpVwRAcycNTnwZOlUv/a3tq9UZ
-	Fjzc3lJy/rkEFNM=; b=kFMiFhMND79jsStvXwmRXofFKdbfI9Lyl7HMYO53TlWq
-	QoLe9Z5DVeyyWSasvshKsGpc0zZQpPMg9APu2boobiuk+b7e9Rib+ShH04q3D1KL
-	QJHKaaPBl+PkZjzyyyRbyhPdUfgWCbXgdQqYigQ6gJXnHzPkVdEnJx3IM9Vdw0jn
-	3919rmb0S5BGafYfoL5TkyZPnvuj/bL5vh+p4BJZYOX0DbX5v9xYtU0VE1p+VIqj
-	CHlPf/ppnEiNiZQnhsYQDSGJiIBDxRF9/IpmLBE3v4cOfpLY1O5znro54NhJYYfZ
-	jkGjgGc1I6QCKz+NKt/vbeLDWbH3nXkOMcLmWNKAvA==
-X-ME-Sender: <xms:dSFXZgsPcq67EZq1snwZAmm1jG6DaeWDimFDCF-jMHUzJugskL9-_w>
-    <xme:dSFXZtdlLnA8vREuisBdgDQGPDKko4fgLCVQ73P9q7BJJzMCWQLYfARbdJjBaJYgy
-    ugbMqReAzBi1PgnQ6w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgheefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:dSFXZrze1L7G-gWEdit6BY7oZHIiRPmOlYMujt-Nbr-coZMImyKoVw>
-    <xmx:dSFXZjMq8yL3GKP-Tup0ssiJ_oBw99uH4TDF43lkgrZCYFuKmvendg>
-    <xmx:dSFXZg-OurZhWXMM8HqmQ3_OWs--CZJ3povMN39eOuN2KcvlHah60A>
-    <xmx:dSFXZrWSyuFXLC2KNUG-RhPidBly9DzIfecDDAuJ6SOWYCdD_ssc8g>
-    <xmx:dSFXZkTuqMKxabg6wlIb-tNzWcsw_E42enT-gCnizjENuBgmxgbzsdMU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5736DB6008D; Wed, 29 May 2024 08:37:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716986237; c=relaxed/simple;
+	bh=rlMTMekw3Ehq4273XEVr2djMOG2nxUGrOGMCVlLYDvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hXtnNlNPDY4e5QsR5n+cvfp2Sp44knH8g8CO4FjJvBcfoGcgDyNAOGhTXQFs34uijNxyTHmWpGVHT/iTX5VPSMVDO9fT8yWaBzSEg+r2be+s7VyxhJNrjgkQMjRcuyAlzKLAn7K+EIqNzkRFxRhnyJpHocZNhikUKCNNQPhRLwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bkhT7CTg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T9xgF5013484;
+	Wed, 29 May 2024 12:37:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SVcFj1tIJtvIRvjJ2upGm8GFXRpx09i0de9qvDHr50A=; b=bkhT7CTgVXiFZnIx
+	vZXjqJ2jcVh0K8dDs1XZu8bqOqxNMQUzxVoggh0EdNb0gevPxpy18WpeYJomP5yp
+	BRHZ/Cv3VlrhQ6fMxItujIMumDCqfiW8LMkH3W5ObiLQdqhmCEFD1SpjDbUenkC7
+	sZlqE1RGPdZtqQo0dDBOVI3UcPDL0UVz+z3bcOApQgLJWDG1xcLIxzn2gQbQz8+5
+	uEThaVVD25mn4yB53hTbFVrT6fP9Qi4WEmMFqdlh9odTQsZhiGHphfPQPOmHh25H
+	atu2fU2dQa6yBzin4dYBpgBB5L0Ixn4WgxYxk769xHM6b9k8pZpodUON/Q4Gbbdc
+	cXw/mA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2n0vn7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 12:37:11 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TCbAuD002717
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 12:37:10 GMT
+Received: from [10.216.41.231] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 05:37:00 -0700
+Message-ID: <8c317b50-c6c0-95e4-7d85-76516a387f85@quicinc.com>
+Date: Wed, 29 May 2024 18:06:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <48738af1-545e-4261-a8b7-fe224071910f@app.fastmail.com>
-In-Reply-To: <20240529141323.7015f3d9@xps-13>
-References: <20240529095049.1915393-1-arnd@kernel.org>
- <20240529141323.7015f3d9@xps-13>
-Date: Wed, 29 May 2024 14:36:46 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>,
- "David Woodhouse" <David.Woodhouse@intel.com>,
- "Akinobu Mita" <akinobu.mita@gmail.com>,
- "Artem Bityutskiy" <artem.bityutskiy@linux.intel.com>,
- linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: make mtd_test.c a separate module
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p: Add IMEM and PIL info
+ region
+Content-Language: en-US
+To: Tengfei Fan <quic_tengfan@quicinc.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240529101929.3167610-1-quic_tengfan@quicinc.com>
+ <20240529101929.3167610-3-quic_tengfan@quicinc.com>
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20240529101929.3167610-3-quic_tengfan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qdxEmPyiVl7TKmt8PqEm8Hv-nVpxD7hE
+X-Proofpoint-ORIG-GUID: qdxEmPyiVl7TKmt8PqEm8Hv-nVpxD7hE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_07,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=633 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290086
 
-On Wed, May 29, 2024, at 14:13, Miquel Raynal wrote:
-> Hi Arnd,
->
-> arnd@kernel.org wrote on Wed, 29 May 2024 11:50:39 +0200:
->
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> This file gets linked into nine different modules, which causes a warning:
->> 
->> scripts/Makefile.build:236: drivers/mtd/tests/Makefile: mtd_test.o is added to multiple modules: mtd_nandbiterrs mtd_oobtest mtd_pagetest mtd_readtest mtd_speedtest mtd_stresstest mtd_subpagetest mtd_torturetest
->
-> I've never experienced this warning myself, how did you produce it?
 
-This warning is currently enabled when building with 'make W=1',
-but there are only a handful of drivers that run into it, so
-I have sent patches for each one, with the plan to enable it
-by default in the future.
 
->> Make it a separate module instead.
->
-> I'm not a total fan of this just because it now requires an additional
-> step to insert these test modules (they are likely used for
-> debugging/development purposes, so not properly installed in the
-> rootfs). Is there any chance we can find another way?
+On 5/29/2024 3:49 PM, Tengfei Fan wrote:
+> Add a simple-mfd representing IMEM on SA8775p and define the PIL
+> relocation info region, so that post mortem tools will be able
+> to locate the loaded remoteprocs.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index 5632fa896b93..eb33b1587802 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -3025,6 +3025,21 @@ tlmm: pinctrl@f000000 {
+>   			wakeup-parent = <&pdc>;
+>   		};
+>   
+> +		sram: sram@146d8000 {
+> +			compatible = "qcom,sa8775p-imem", "syscon", "simple-mfd";
+> +			reg = <0x0 0x146d8000 0x0 0x1000>;
+> +
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			ranges = <0x0 0x0 0x146d8000 0x1000>;
 
-This should only be a problem when using plain 'insmod' instead
-of 'modprobe' for loading the modules. Do you think this is
-commonly used here?
+This could be moved up along with reg region.
 
-Another option would be to turn all the helper functions into
-static inline versions and just include the header, but
-that does not avoid the duplication then.
+-Mukesh
 
-     Arnd
+> +
+> +			pil-reloc@94c {
+> +				compatible = "qcom,pil-reloc-info";
+> +				reg = <0x94c 0xc8>;
+> +			};
+> +		};
+> +
+>   		apps_smmu: iommu@15000000 {
+>   			compatible = "qcom,sa8775p-smmu-500", "qcom,smmu-500", "arm,mmu-500";
+>   			reg = <0x0 0x15000000 0x0 0x100000>;
 
