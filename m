@@ -1,152 +1,183 @@
-Return-Path: <linux-kernel+bounces-193561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303D68D2DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:09:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2EB8D2DD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF2B287B19
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F6B01F25239
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5BB1667DC;
-	Wed, 29 May 2024 07:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56591667CA;
+	Wed, 29 May 2024 07:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zwtn5GH4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qLzVCfvm"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728042F32;
-	Wed, 29 May 2024 07:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AFE15B142
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 07:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716966562; cv=none; b=Rc0LlweO9/H1XVJhVrdTMEJwmOxxgaveJ3JqspcFU5RdY/djzCTHeZ4kXeVOqVuxbi2Tm7CXvmUe0+iktxD4tV3IHQ9BrV2IihhsPqQuvKs7NIkeO7U9hO8aFhBpC62f2vjYFFbEcPhLZnUIwKf4l0tKG1s9XnE7JvL46IJFxzc=
+	t=1716966592; cv=none; b=iNNNjWBS/xoHBgUdPCruFR3x1RuJhTZkrAZMBrSE3KtZQdZLAmqTafKCE0l38z9W/ghGu3YnqRHqTGF4IPIM+CPlXgNjbMuu9kMWHKJf8hN536tHgnp6c2G6BUEcICc0lEbFZDk7iLQ04kJnzmju/AkaLo9e+jWHXA+KNG5/3hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716966562; c=relaxed/simple;
-	bh=f5hieK2dVR8m72dQIfBgiq+09hpzZd5FvWTa+h7XuwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFy7ACFv25O3oEU/81fJclTZeCrJPzq+YQHdjEmJmGcj/OT46SksrMB3ga04AMjYMLf0klrDY2PtiGbIs3w0h2BAWugHt6e5OeGft7sXVDPNg5iBDG5tWyMOWOf6ZxKyJeXOhgliEwD3eHYEVX9skHsS2QJw2hfkomiKhihb2Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zwtn5GH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1946EC32781;
-	Wed, 29 May 2024 07:09:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716966562;
-	bh=f5hieK2dVR8m72dQIfBgiq+09hpzZd5FvWTa+h7XuwE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zwtn5GH46/BmFtgUJT0+jA7hR7JDwcnFzmA0BATIWfjv5BXGGAg/M97xp413hLwKT
-	 ukOAy06EaXNN3N8OkhoYg3jVYB1t4jLpdXiq6UuDHY5V3n44TjahRAU2qrarbPo082
-	 8TZ9B06t1rska/zP7jrW4i+Ualycb5ckwb4r+pyvwdcfQChqaPrxNQ7UCldpUiL8Hl
-	 pXrPuEEHhuXx4y2vNqhrkABsjI15C1rmKMshWdiLHONwpBiXhHtKTVA8VZU2aKWH05
-	 E55qfSlprcDD5Z74HWagCqu7WwqfgoTF4ddF5xUxNnb/5JLV7l7wd854JrjXoE57vv
-	 fMpKi1M340ybg==
-Message-ID: <3531ac76-bcee-4c4d-8396-65b5dfbd8df9@kernel.org>
-Date: Wed, 29 May 2024 09:09:17 +0200
+	s=arc-20240116; t=1716966592; c=relaxed/simple;
+	bh=XfaFWKu7oi4Neymy5/WAUYtnx6Hwuj7EMkKj1osWQxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VytX2wa785bzVwjlYhrg9gxq6TpxD/TjgWuxMl8/ya5eOVzJr3Cc9RvKwqsAtcN6rkBbUYVJ7+WTdy66h6X7CJcWITYJKCUS9zTrVaN0XI4/iKzhZ4rZinvaYxoMeeIn4mxLs2j7heaJ4sC8w//bTdXE/P3Uhf6rmA4AgAlQL3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qLzVCfvm; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f4a6a54416so4555275ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 00:09:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716966590; x=1717571390; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YfBLr2Fq0mXBI98PC9MxWEJ6lX7NEiIePEepGikvn2Q=;
+        b=qLzVCfvmBO50vwXYmETujCr2L5xuJhnhC7GMfYE3N6A7E6Szh4OoKCkIk7PBPuhIjc
+         4pwoRYAVz8kpBo0NLwTalAOX04CZXsE9u/74uIj+BbeW82xithArOGgmr6EFYuZp4RuW
+         PLEYE2/dTe4U+3t8BTtDVWurUtnpav+toBccoTrRWqRUwCXB2tAvcW88/CD1nfpx35rG
+         2wsRn3W6TmrZ4voI3bZcfqyzoqMFenunRQH23FWrLfXlacstx2jH4dri1axY47Lp2CXC
+         9wzPcB4ZBfsdgLSnoHcJ0/KMbgm0dd/lcKeIEv/ME7bIK4O6dTlXVHquGImnjrMArIFz
+         kBzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716966590; x=1717571390;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YfBLr2Fq0mXBI98PC9MxWEJ6lX7NEiIePEepGikvn2Q=;
+        b=Y8SihDkx8fdEM6V1M0Uj6Ol4jeQw8e0JsiPUj3zFaKpmVHogHc47xN/xhsxRjec9B+
+         PBijOnnA1xrZEpGERb4IYPOPpl7zlH+FRDk0dSuOL2ULtuqAwCevTgDFp9t2ZLKkXP0K
+         CajRMREtJuJlgpj75cdP/OqILgULIG+83tbVw9DsnreqHBk2SzRsXSYWA+v9vWe7nuUq
+         e/UcIa+8h9VZVmbmc9K9M7cxLE2Bfcz5+j2iutX2j5lq+T2pgX0A9pMIv/tfBUtW7NXg
+         0si/OlnQ8Qs4wwRcqFLZIeracd1HVgmj79zOI6QIAcjmYMmFTFLZYz8AN43/dIDd28jH
+         PqKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3wW9SkCDC9ukZ2KaxTDBw8Ys8xBrLcUV1JXbOs4ibsKlft/x8i5+4ylM1dcGg+XZp7nYdUXqKQtGsBzUO/1ku2cQ1r4r8bEPTE42T
+X-Gm-Message-State: AOJu0YxTSecIfdPE2ZyEIFOxgCMxc63mEmFoUy4GPY/Lv7MLs9u9AZjM
+	qyRZysFeoF7mdCTlnwet92jS+UATk9aEm5X6dkqu9Zh5Te6btIQrr9mSDwQlglo=
+X-Google-Smtp-Source: AGHT+IHTai1Wf/bfUCzbnNhmze+7eirkLIlslk7bczKV8arj21k0uHlqRjM8dak5Buu6wHOSQM9dhg==
+X-Received: by 2002:a17:902:db09:b0:1f5:e4ea:9869 with SMTP id d9443c01a7336-1f5e4ea9b7bmr3831925ad.9.1716966590325;
+        Wed, 29 May 2024 00:09:50 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f47737d71csm67837305ad.303.2024.05.29.00.09.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 00:09:49 -0700 (PDT)
+Date: Wed, 29 May 2024 12:39:47 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: Questions about transition latency and LATENCY_MULTIPLIER
+Message-ID: <20240529070947.4zxcdnu32d2u7cny@vireshk-i7>
+References: <20240528012110.n6se3mapwxgqa3r2@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] hwmon: (ina2xx) Add device tree support to pass alert
- polarity
-To: Amna Waseem <Amna.Waseem@axis.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@axis.com
-References: <20240529-apol-ina2xx-fix-v1-0-77b4b382190f@axis.com>
- <20240529-apol-ina2xx-fix-v1-2-77b4b382190f@axis.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240529-apol-ina2xx-fix-v1-2-77b4b382190f@axis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528012110.n6se3mapwxgqa3r2@airbuntu>
 
-On 29/05/2024 08:07, Amna Waseem wrote:
->  
-> +static int ina2xx_set_alert_polarity(struct ina2xx_data *data,
-> +				     unsigned long val)
-> +{
-> +	int ret;
-> +
-> +	if (val > INT_MAX || !(val == 0 || val == 1))
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&data->config_lock);
+HI Qais,
 
-Aren't you calling it before registering sysfs interface? Why do you
-need mutex?
+On 28-05-24, 02:21, Qais Yousef wrote:
+> Hi
+> 
+> I am trying to understanding the reason behind the usage of LATENCY_MULTIPLIER
+> to create transition_delay_us. It is set to 1000 by default and when I tried to
+> dig into the history I couldn't reach the original commit as the code has gone
+> through many transformations and I gave up finding the first commit that
+> introduced it.
 
-> +	ret = regmap_update_bits(data->regmap, INA226_MASK_ENABLE,
-> +				 INA226_ALERT_POLARITY_MASK,
-> +				 INA226_SHIFT_ALERT_POLARITY(val));
-> +
-> +	mutex_unlock(&data->config_lock);
-> +	return ret;
-> +}
-> +
->  /*
->   * Calibration register is set to the best value, which eliminates
->   * truncation errors on calculating current register in hardware.
-> @@ -659,6 +679,14 @@ static int ina2xx_probe(struct i2c_client *client)
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to enable vs regulator\n");
->  
-> +	if (!of_property_read_u32(dev->of_node, "alert-polarity", &val)) {
-> +		ret = ina2xx_set_alert_polarity(data, val);
-> +		if (ret < 0)
-> +			return dev_err_probe(
-> +				dev, ret,
-> +				"failed to set APOL bit of Enable/Mask register\n");
+The changes came along with the initial commits for conservative and ondemand
+governors, i.e. before 2005.
 
-That's odd wrapping. Please follow Linux coding style and align these.
+> Generally I am seeing that rate_limit_us in schedutil (which is largely
+> influenced by this multiplier on most/all systems I am working on) is too high
+> compared to the cpuinfo_transition_latency reported by the driver
+> 
+> For example on my M1 mac mini I get 50 and 56us. rate_limit_us is 10ms (on 6.8
+> kernel, should become 2ms after my fix)
+> 
+> 	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
+> 	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:50000
+> 	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:56000
+> 
+> AMD Ryzen it reads 0, and end up with LATENCY_MULTIPLIER (1000 = 1ms) as
+> the rate_limit_us.
+> 
+> On Intel I5 I get 20us but rate_limit is 5ms which is requested explicitly by
+> intel_pstate driver
+> 
+> 	$ grep . /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_transition_latency
+> 	/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_transition_latency:20000
+> 	/sys/devices/system/cpu/cpufreq/policy1/cpuinfo_transition_latency:20000
+> 	/sys/devices/system/cpu/cpufreq/policy2/cpuinfo_transition_latency:20000
+> 	/sys/devices/system/cpu/cpufreq/policy3/cpuinfo_transition_latency:20000
+> 	/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_transition_latency:20000
+> 	/sys/devices/system/cpu/cpufreq/policy5/cpuinfo_transition_latency:20000
+> 	/sys/devices/system/cpu/cpufreq/policy6/cpuinfo_transition_latency:20000
+> 	/sys/devices/system/cpu/cpufreq/policy7/cpuinfo_transition_latency:20000
+> 
+> The question I have is that why so high? If hardware got so good, why can't we
+> leverage the hardware's fast ability to change frequencies more often?
 
-Best regards,
-Krzysztof
+From my understanding, this is about not changing the frequency too often.
+That's all. And it was historical and probably we didn't get better numbers with
+this reduced to a lower value later on as well.
 
+> This is important because due to uclamp usage, we can end up with less gradual
+> transition between frequencies and we can jump up and down more often. And the
+> smaller this value is, this means the better we can handle fast transition to
+> boost or cap frequencies based on task's requirements when it context switches.
+> But the rate limit generally is too high for the hardware and wanted to
+> understand if this is pure historical or we still have reasons to worry about?
+
+Maybe Rafael knows other reasons, but this is all I remember.
+
+> From what I've seen so far, it seems to me this higher rate limit is helping
+> performance as bursty tasks are more likely to find the CPU running at higher
+> frequencies due to this behavior. I think this is something I can help these
+> bursty tasks with without relying accidentally on this being higher.
+> 
+> Is there any worry on using cpuinfo_transition_latency as is if the driver
+> doesn't provide transition_delay_us?
+
+Won't we keep changing the frequency continuously in that case ? Or am I
+misunderstanding something ?
+
+> And does the kernel/driver contract need to cater for errors in driver's
+> ability to serve the request? Can our request silently be ignored by the
+> hardware?
+
+cpufreq core maintains its state machine and the failures are used to inform the
+user and / or stop DVFS. It is useful for a clean approach, not sure what we
+will get / miss by ignoring the errors..
+
+> Not necessarily due to rate limit being ignored, but for any other
+> reason? It is important for Linux to know what frequency we're actually running
+> at.
+
+One is that we report to userspace two frequencies:
+- scaling_cur_freq: The frequency that the software thinks the hardware runs at
+  (last requested freq i.e.)
+
+- cpuinfo_cur_freq: The real frequency hardware is running at. Can be calculated
+  using counters, etc.
+
+And there will be tools which are using them. So these are required.
+
+> Some hardware gives the ability to read a counter to discover that. But
+> a lot of systems rely on the fact that the request we sent is actually
+> honoured. But failures can mean things like EAS will misbehave.
+
+-- 
+viresh
 
