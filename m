@@ -1,149 +1,218 @@
-Return-Path: <linux-kernel+bounces-193291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177878D29E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:24:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650B08D29E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 03:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412C31C22B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E631F27246
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9FE15A872;
-	Wed, 29 May 2024 01:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE33B15A878;
+	Wed, 29 May 2024 01:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jMKXZqRJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="WghErmoU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G/Duu+4L"
+Received: from wfhigh7-smtp.messagingengine.com (wfhigh7-smtp.messagingengine.com [64.147.123.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B737A632;
-	Wed, 29 May 2024 01:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F99632;
+	Wed, 29 May 2024 01:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716945886; cv=none; b=BQC9oah/SlDedKTYyERjH9f4uP3TmCiCK6VQ6ba5iV/rJBX1opmfUzHd026ZmSQPdBwSyL7hB2shgAkTHxTpelywBHhvNeXnnkXzygMwDIkqACUnFLF5DLTzVTr4t+hTA5QGxHuDfqJAEzXlkEM05lUI6CFz0QmMDc6alef9D4I=
+	t=1716945899; cv=none; b=h3Llanbiw0AOkQh23whcjdBUenzLcQ9boPojCFWFfXlvtdrHPf4eKmeddGnuhQijIXOMFM9t6vRBORkDM2Dx3smUGjwOxH57b57Qk8AiPe/XppsojEBK6hkvBdQH3ntRsY7dpV0v+vinYXwJOIAj8vFSDTZzmQbNpjIe5cy0XRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716945886; c=relaxed/simple;
-	bh=h17TCwO7J8oz04t/BLJj158cBfXMx//CHvgnp7zRR30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCv6f7DffjK/BJXFojdlZc6nkhrDfchbW91ZvuedSR2gY5ny7rjsjq+DDKtV79im9Y5vChA0RQJOI1iHCN95H+dJJto3tEG0vfu4lhDPOLDWflBCne6+z9nM33tVucIqeAOQQoe3LFrROk4IqSxkhrjO/QtNCz+jDTp84BDaa6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jMKXZqRJ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716945885; x=1748481885;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=h17TCwO7J8oz04t/BLJj158cBfXMx//CHvgnp7zRR30=;
-  b=jMKXZqRJ8HeQA9n4VsViTxuwlbrJP+kilXXqbjbfa7sTNqPOAUiQvlMe
-   j7SQV5TprMu8dkGP9gIRYobHjB+kwj/nZc3+xh9x5dZp4tmr4CLJKKx4V
-   TkeF04imbEqSjBvHkJd45I50sosnQgjI7PE/NRb/S5RbGM37Y77YAyTg/
-   7zFdhKuotvv5lLVEv4Bh/yrV88N9bv//ZA/bRvte3y6wxDdkkppvrLZyn
-   KMYCFMrN6r8T8Cb+uqPTvzGsfgzoYLXaC1IOMTXwB13/8+62MfWGzHb0c
-   2/UdJq69k3iETLDP1R5vbm4wAS0O9C/5r1alKJEsiJMS2P/uSUyRzenBU
-   g==;
-X-CSE-ConnectionGUID: Lz32YKi7QZC0e7lC5wesCA==
-X-CSE-MsgGUID: Z1QQJdRvRz+iofBfBjs1tA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13509623"
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="13509623"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 18:24:44 -0700
-X-CSE-ConnectionGUID: FxV3x9RcT+GXTtPwt8Htrw==
-X-CSE-MsgGUID: ClJDGNrWQZORNSK9Wv888A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="35727802"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 18:24:44 -0700
-Date: Tue, 28 May 2024 18:24:43 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"sagis@google.com" <sagis@google.com>,
-	"dmatlack@google.com" <dmatlack@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>
-Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
- TDP MMU
-Message-ID: <20240529012443.GE386318@ls.amr.corp.intel.com>
-References: <20240515005952.3410568-1-rick.p.edgecombe@intel.com>
- <20240515005952.3410568-11-rick.p.edgecombe@intel.com>
- <36a1b5d239bdbca588625a75660406c1b5ea952a.camel@intel.com>
+	s=arc-20240116; t=1716945899; c=relaxed/simple;
+	bh=EVmfaLLDsfMymrtcoYmdakMrtp5jtmrZeC5/eg/2iAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ax7L6ON4XL5N8n9Q3tgnmYkE7x1IK39iFFwIExEp5VJLfk1wWA1giKmgfvWdoZ9bBPgZ0deN6tZZdHeVhaf6L+cMm05+0bHAKFrhZBK7Wqif4wwDqmflTzl6MLQGUOaz485IXD58LcAzmfDwm2kF1kwdNJoOa5txpyPhwTiLTYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=WghErmoU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G/Duu+4L; arc=none smtp.client-ip=64.147.123.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.west.internal (Postfix) with ESMTP id DB308180018D;
+	Tue, 28 May 2024 21:24:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 28 May 2024 21:24:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1716945896; x=1717032296; bh=VnB5cSkzbTE+pF/YZXsLR
+	qgiA9IkyhO++Upx0eRciEg=; b=WghErmoUO5OnWBFlnv0okHrkrVGQUExFb7Phi
+	dKVRTr0GDSg5REJyfYT1M5KZ3cAYWJISneGdLH8rSJumsrCvy9uh88fGe4MT/CLE
+	6K1Bsi1PZx5exAVWFlOmPC6T4B6FG/fQHirawrFsfKOu8y/73+q9la0GLyFGqyG1
+	BPtdopstVcTRiTSlAVWrcBNqT7+zzPPzzYzTUlNiT3O0eLCWnrKl66HguhiovyWU
+	HQnSM0hVPPVLOBnF25UjuH6pA2nJzxQEvOWoEHKkqiP9s2sHX103VAT4yn2Rh61G
+	nY7t/zKh+qWgnZqR+ajlFEX5aKXoN7+qNOe41P0yqVhSh73rg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716945896; x=1717032296; bh=VnB5cSkzbTE+pF/YZXsLRqgiA9Ik
+	yhO++Upx0eRciEg=; b=G/Duu+4LHTF1BLs8GagnWEk0fbQdmDsmhnL5GzcQPf9V
+	yTB2nHY0zvjAuz2yWvqzOmqBtbZgs1AutN7D4q6QBT/B65z0XPo9A13UDBmx4u2y
+	TMdmKujWElSvzDYIkSYg3HxCXufF8SomSPKkzydD1QeSYsQFvEcS+gWWnlekgekt
+	Fb53Nj8SZpxzbjEISNF6HbAhdG+ugzXeor1DltBADIMU18cqqht4nK8zf4ByccET
+	DlNz++cm77FLAAwbraYUKQ+IYVyEASVsPa03j8MKaLlv3PdSV7y3QyRjntSamb7k
+	LTDD/sAX2fhL3xeHgsGzLp7BpDxiT9gPXlYVj6HlMQ==
+X-ME-Sender: <xms:6INWZmvwAYxE0aRYaMR-Oym6E2rp_ZMPvVyqsXws3YpCv38pF_jN0w>
+    <xme:6INWZrebbQ8Wr3ZMe_PeTbBtNx1FeNzhTfnCF3jdUibdS86dpR9zfgOQOWDb4D_xl
+    SxRSnnhlRZnQ6IWTYw>
+X-ME-Received: <xmr:6INWZhwPpkFxV4L0Lxr6wscSPfldFzO5EjU9ucF34f8X-XSAu6GHknyvcXXA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejledggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhho
+    nhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthfduudekffefkeeiffdttd
+    dvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:6INWZhMD-5_dLV6VHikbV4nviiEAPpKPIdnRnFvboP3Dkc9XzR6FHg>
+    <xmx:6INWZm8lay5x7XFknHmTohIyu8mEKT6YoqbgDw5Za3b_KWYFybWWaA>
+    <xmx:6INWZpVGe0wuwKH9-Y4-xulhlLdk4cY6_pVGaf7ATW2YSArqFkuHcg>
+    <xmx:6INWZvd84AvJZh7Wujs2iuE2MCadYlcvw19niUsIZEt_Wu3LqMaw0A>
+    <xmx:6INWZqT2poc2frppQFVuSXmdjJN2kyB2yt_o1rKJEBxFANHQvu9188fR>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 May 2024 21:24:52 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: jikos@kernel.org
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	corentin.chary@gmail.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	bentiss@kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH v1 1/2] hid-asus: use hid for brightness control on keyboard
+Date: Wed, 29 May 2024 13:24:46 +1200
+Message-ID: <20240529012447.145088-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <36a1b5d239bdbca588625a75660406c1b5ea952a.camel@intel.com>
 
-On Tue, May 28, 2024 at 08:54:31PM +0000,
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
+On almost all ASUS ROG series laptops the MCU used for the USB keyboard
+also has a HID packet used for setting the brightness. This is usually
+the same as the WMI method. But in some laptops the WMI method either
+is missing or doesn't work, so we should default to the HID control.
 
-> On Tue, 2024-05-14 at 17:59 -0700, Rick Edgecombe wrote:
-> > +static inline int __tdp_mmu_set_spte_atomic(struct kvm *kvm, struct tdp_iter
-> > *iter, u64 new_spte)
-> >  {
-> >         u64 *sptep = rcu_dereference(iter->sptep);
-> >  
-> > @@ -542,15 +671,42 @@ static inline int __tdp_mmu_set_spte_atomic(struct
-> > tdp_iter *iter, u64 new_spte)
-> >          */
-> >         WARN_ON_ONCE(iter->yielded || is_removed_spte(iter->old_spte));
-> >  
-> > -       /*
-> > -        * Note, fast_pf_fix_direct_spte() can also modify TDP MMU SPTEs and
-> > -        * does not hold the mmu_lock.  On failure, i.e. if a different
-> > logical
-> > -        * CPU modified the SPTE, try_cmpxchg64() updates iter->old_spte with
-> > -        * the current value, so the caller operates on fresh data, e.g. if it
-> > -        * retries tdp_mmu_set_spte_atomic()
-> > -        */
-> > -       if (!try_cmpxchg64(sptep, &iter->old_spte, new_spte))
-> > -               return -EBUSY;
-> > +       if (is_private_sptep(iter->sptep) && !is_removed_spte(new_spte)) {
-> > +               int ret;
-> > +
-> > +               if (is_shadow_present_pte(new_spte)) {
-> > +                       /*
-> > +                        * Populating case.
-> > +                        * - set_private_spte_present() implements
-> > +                        *   1) Freeze SPTE
-> > +                        *   2) call hooks to update private page table,
-> > +                        *   3) update SPTE to new_spte
-> > +                        * - handle_changed_spte() only updates stats.
-> > +                        */
-> > +                       ret = set_private_spte_present(kvm, iter->sptep, iter-
-> > >gfn,
-> > +                                                      iter->old_spte,
-> > new_spte, iter->level);
-> > +                       if (ret)
-> > +                               return ret;
-> > +               } else {
-> > +                       /*
-> > +                        * Zapping case.
-> > +                        * Zap is only allowed when write lock is held
-> > +                        */
-> > +                       if (WARN_ON_ONCE(!is_shadow_present_pte(new_spte)))
-> 
-> This inside an else block for (is_shadow_present_pte(new_spte)), so it will
-> always be true if it gets here. But it can't because TDX doesn't do any atomic
-> zapping.
-> 
-> We can remove the conditional, but in regards to the WARN, any recollection of
-> what was might have been going on here originally?
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ drivers/hid/hid-asus.c                     |  6 ++++
+ drivers/platform/x86/asus-wmi.c            | 35 +++++++++++++++++++++-
+ include/linux/platform_data/x86/asus-wmi.h | 10 +++++++
+ 3 files changed, 50 insertions(+), 1 deletion(-)
 
-We had an optimization so that there are other state in addition to present,
-non-present.  When I dropped it, I should've dropped else-sentence.
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+index 02de2bf4f790..4cba8e143031 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -492,12 +492,18 @@ static void asus_kbd_backlight_work(struct work_struct *work)
+  */
+ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+ {
++	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+ 	u32 value;
+ 	int ret;
+ 
+ 	if (!IS_ENABLED(CONFIG_ASUS_WMI))
+ 		return false;
+ 
++	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_use_hid_led()) {
++		hid_info(hdev, "using HID for asus::kbd_backlight\n");
++		return false;
++	}
++
+ 	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
+ 				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
+ 	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 3f9b6285c9a6..54cb07c79fcf 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -144,6 +144,15 @@ module_param(fnlock_default, bool, 0444);
+ 
+ static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
+ 
++static const char * const use_hid_led_matches[] = {
++	"ROG Zephyrus",
++	"ROG Strix",
++	"ROG Flow",
++	"GA403",
++	"GU605",
++	"RC71L",
++};
++
+ static int throttle_thermal_policy_write(struct asus_wmi *);
+ 
+ static bool ashs_present(void)
+@@ -1642,6 +1651,29 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+ 	return err < 0 ? err : 0;
+ }
+ 
++bool asus_use_hid_led(void)
++{
++	const char *product, *board;
++	int i;
++
++	product = dmi_get_system_info(DMI_PRODUCT_FAMILY);
++	if (!product)
++		return false;
++
++	board = dmi_get_system_info(DMI_BOARD_NAME);
++	if (!board)
++		return false;
++
++	for (i = 0; i < ARRAY_SIZE(use_hid_led_matches); i++) {
++		if (strstr(product, use_hid_led_matches[i]))
++			return true;
++		if (strstr(board, use_hid_led_matches[i]))
++			return true;
++	}
++	return false;
++}
++EXPORT_SYMBOL_GPL(asus_use_hid_led);
++
+ static void asus_wmi_led_exit(struct asus_wmi *asus)
+ {
+ 	led_classdev_unregister(&asus->kbd_led);
+@@ -1681,7 +1713,8 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+ 			goto error;
+ 	}
+ 
+-	if (!kbd_led_read(asus, &led_val, NULL)) {
++	if (!kbd_led_read(asus, &led_val, NULL) && !asus_use_hid_led()) {
++		pr_info("using asus-wmi for asus::kbd_backlight\n");
+ 		asus->kbd_led_wk = led_val;
+ 		asus->kbd_led.name = "asus::kbd_backlight";
+ 		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+index 3eb5cd6773ad..6833035f7006 100644
+--- a/include/linux/platform_data/x86/asus-wmi.h
++++ b/include/linux/platform_data/x86/asus-wmi.h
+@@ -160,4 +160,14 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+ }
+ #endif
+ 
++/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
++#if IS_ENABLED(CONFIG_ASUS_WMI)
++bool asus_use_hid_led(void);
++#else
++static inline bool asus_use_hid_led(void)
++{
++	return true;
++}
++#endif
++
+ #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+2.45.1
+
 
