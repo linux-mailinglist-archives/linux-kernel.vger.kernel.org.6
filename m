@@ -1,148 +1,98 @@
-Return-Path: <linux-kernel+bounces-194035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078058D35BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:44:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082E78D35C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2621C2333B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:44:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988E91F2365B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567651802CA;
-	Wed, 29 May 2024 11:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4029B180A61;
+	Wed, 29 May 2024 11:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXBqQuv6"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="CAgrDmOI"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6C1BDCF;
-	Wed, 29 May 2024 11:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAE54CB28;
+	Wed, 29 May 2024 11:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716983072; cv=none; b=rogWFJHVFbEaZCeb8Q+b1l5QYcyiFzHy8c5tYmUg0W4g1bew95VLLzuWz94BjS6N9jkItLRjHZuKNKC8KZvDTLvZV0Atu2TAQ/nVvCuxmnS1CHWBSjryxYa4dzUpKbpC44c7daLaUW4BgCs0hBaPL+D964qq3P5RHp7xyjpG/xE=
+	t=1716983161; cv=none; b=iYywe0IcFPU/APzpyaW5amTTClUyvHW5ZThuFroCPPMaAPa3bHwRLsqAKhAFiHdHPJe0m48MkLgYS6qUq4WuZo840fITuaoMfCgnvG7WVVkBU+mTQ2ijFYMFjHUhbRjwAr/wnX8Gc6jLzl0yVaCLzWMSv6BE/WXdUgTKK+0c7Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716983072; c=relaxed/simple;
-	bh=2fuiUji9HQx4FsRAY1Cn/pZd6osThZezfnKd5JaqgZU=;
+	s=arc-20240116; t=1716983161; c=relaxed/simple;
+	bh=IZsIRbka6hFiTImC0U/pupNdosJ64JWjzl9chiZ04wc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i1g/GHXNK6umIPUDAm6yqkdiGakyxR18hWoWI43D2DZJ2qYWop9e8q4eQgzGud699Zuts7tzjU6K44uhMAcPx/h+AFCaVAqPhGpJjpBR2uR2BKFUh9P5URTJozkoWyq2WJunNAIVu+vuTWxzrD+YLMBL37vIEDWfNk92c4XYM+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXBqQuv6; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f480624d04so16633155ad.2;
-        Wed, 29 May 2024 04:44:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716983070; x=1717587870; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Fqyvl/SvhAn+m86+zGmNblTjPk+aKV8ab9/H2jbsASU=;
-        b=MXBqQuv6rflJLIXUGBGGwm55+tYhDogCGkWyyws8rPhuMtk1ZooGY4UKYnnczHUyom
-         k0ENx9fxxl+u8RT7g0AZKFZ5cItMw5dfgrdZ3ZazBP83NDftagGVrkcKeb5DLEJzvePm
-         8xGcQpOh3IlbnoEgcKkole8WBcc9L3oSb8WGgL227IxAiscWNvbtWnhwEjc8lCVfIR+Z
-         Hxc5QL6F//zTipukB2s1MBCYdxTMciev3MzARldJ+3HpGZZK8lAQeU4vJQwAKg89e1at
-         3RK77aYCk2te1ry4PspJhwoQ/G5wTfKEm9zl5rdsVsSPKfd/S6fC+ZPEFeH+i/FY66k1
-         Gipw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716983070; x=1717587870;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fqyvl/SvhAn+m86+zGmNblTjPk+aKV8ab9/H2jbsASU=;
-        b=uMn/Y3TfTmhmFPq+AnP06SoSWxkA+MXruhfGjkS1hn+R6/xMekqAmCvLzhdNAacboH
-         ZUe4omD/jVCCv9DzxdFwpIBkouuAjFeOJOUYfw37pVYQXhfMYmzE23C8rVHUzUA4Hy9g
-         XoHqjc0b2zapTPceCXI9AGizzFddljIWOTCFDNjVwN4wAYoMphOIyjpDHF0yXbgAbEw4
-         6m+zakQuXwWdfuY7tE0dbQ1R72lDYYWfMHOeO5w/KHZg9GOQRRsfJCT5RdRILa0/esyZ
-         xlE2ToSxfBCJoYehBNcDZvwsT/FzIuAjnvNZRTNU5VKp2oA3PwaDty33rOht4GS+p3Kk
-         r/Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH8/tV7Fqy0z4NhtI6raLaO86O4ofsToNj//lrLguygqFSWjtrkeACE58KX4V1j/lz9t0yUNaSe3eHM4iJrZ6aTTPVQstvJkB0dw==
-X-Gm-Message-State: AOJu0YzDTN3kWBE1uIhFjfOfKCS1ilQi5sjTbIFfJKvGgM+PERT+ld1h
-	XhpIlIxKw3gHhD5TK620/yp2vJ3+dFn3w7/XM28UFBW3abtjCMaO
-X-Google-Smtp-Source: AGHT+IEwrwxx1l6iXOnAv8xocO+x91EOVBjJSmxN8vgNyjMPv5e63EXnOmFZvf4yZscUKRlPa7lnug==
-X-Received: by 2002:a17:902:e883:b0:1f4:5b00:401 with SMTP id d9443c01a7336-1f45b0008c4mr129982935ad.54.1716983070451;
-        Wed, 29 May 2024 04:44:30 -0700 (PDT)
-Received: from rigel (194-223-177-244.tpgi.com.au. [194.223.177.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4ac27c5aasm50378595ad.251.2024.05.29.04.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 04:44:30 -0700 (PDT)
-Date: Wed, 29 May 2024 19:44:25 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org
-Subject: Re: [PATCH 3/3] gpiolib: cdev: Cleanup kfifo_out() error handling
-Message-ID: <20240529114425.GA98553@rigel>
-References: <20240527115419.92606-1-warthog618@gmail.com>
- <20240527115419.92606-4-warthog618@gmail.com>
- <CAMRc=Me+M5PQfuOE=tqqxJF-Q_TVdFb=wh-=ApBO_2PvTV=ZJg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqblx3sj+oJMtt4INJU0spB8JWlr8t6iJSvFee+N+tP43nAu/1pEa2xUILAlZv4/UpyDkc8ITAdPAi3KIFufePgdexmDy7HNE3/VP3dQ8u+w5kBCnPf+d7thuJClPDdXzv/wgRCXNQHWPc1q4acqmPSoHPATftK0LbSfRo4HAZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=CAgrDmOI; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=t9VEsDGggAajKUcBvvIqqFyyn1ptDDc/e1Pdzy7eih8=; b=CAgrDmOI+j7qTDWZBNYH1V2VD2
+	3hgkUKuzCDEe8o1v7blMzcPmjFQpbBFzar2oT/yQAcXE41S6F01fHUvYcba1BfiQ0zLdNx8xooY7Q
+	fZtqlHftT4h43YqNE7VdGtcBb1Jqx9VX1GpL0dJNQY9O1uUXnSS53yC/v8DhRCsET2G8g3HAjJ95g
+	d/htt57vezpzviF6xTJJaYZ3KLyzT+ZGYB9hIEOM8lqvgDwI3GTVsDMkjj8vDc0mDPGcUreX3DTxI
+	eOlSd2rr8v7u+Dy0YcOaJeZyBin9mUey83Mlkq6YdOhHjPRIzehNnwBDccWNbWu8Cyum5Afw22AO0
+	Iva+zk6A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39870)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sCHkT-00063H-1S;
+	Wed, 29 May 2024 12:45:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sCHkQ-0004BJ-Fn; Wed, 29 May 2024 12:45:38 +0100
+Date: Wed, 29 May 2024 12:45:38 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: xiaolei wang <xiaolei.wang@windriver.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH] net: stmmac: update priv->speed to SPEED_UNKNOWN
+ when link down
+Message-ID: <ZlcVYjOEBGm79Yc9@shell.armlinux.org.uk>
+References: <20240528092010.439089-1-xiaolei.wang@windriver.com>
+ <Zlbrf8ixl9jeTTIv@shell.armlinux.org.uk>
+ <d857ff81-a49c-4dd2-b07d-f17f9019bed1@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me+M5PQfuOE=tqqxJF-Q_TVdFb=wh-=ApBO_2PvTV=ZJg@mail.gmail.com>
+In-Reply-To: <d857ff81-a49c-4dd2-b07d-f17f9019bed1@windriver.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, May 29, 2024 at 01:24:45PM +0200, Bartosz Golaszewski wrote:
-> On Mon, May 27, 2024 at 1:55 PM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > The handling of kfifo_out() errors in read functions obscures any error.
-> > The error condition should never occur but, while a ret is set to -EIO, it
-> > is subsequently ignored and the read functions instead return the number
-> > of bytes copied to that point, potentially masking the fact that any error
-> > occurred.
-> >
-> > Return -EIO in the case of a kfifo_out() error to make it clear something
-> > very odd is going on here.
-> >
-> > Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> > ---
-> >  drivers/gpio/gpiolib-cdev.c | 47 +++++++++++++++++--------------------
-> >  1 file changed, 21 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> > index c7218c9f2c5e..6a986d7f1f2f 100644
-> > --- a/drivers/gpio/gpiolib-cdev.c
-> > +++ b/drivers/gpio/gpiolib-cdev.c
-> > @@ -1642,16 +1642,13 @@ static ssize_t linereq_read(struct file *file, char __user *buf,
-> >                                         return ret;
-> >                         }
-> >
-> > -                       ret = kfifo_out(&lr->events, &le, 1);
-> > -               }
-> > -               if (ret != 1) {
-> > -                       /*
-> > -                        * This should never happen - we were holding the
-> > -                        * lock from the moment we learned the fifo is no
-> > -                        * longer empty until now.
-> > -                        */
-> > -                       ret = -EIO;
-> > -                       break;
-> > +                       if (kfifo_out(&lr->events, &le, 1) != 1)
-> > +                               /*
-> > +                                * This should never happen - we hold the
->
-> I'm not a native speaker but this looks odd to me - shouldn't it be
-> "we held the lock from the moment..."?
->
+On Wed, May 29, 2024 at 06:55:21PM +0800, xiaolei wang wrote:
+> On 5/29/24 16:46, Russell King (Oracle) wrote:
+> > To me, commit 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
+> > just looks very buggy.
+> 
+> This makes sense. I think it is necessary to update the parameters after
+> linking up.
+> 
+> Does anyone have a better suggestion?
 
-Unlike the original, it is within the scoped_guard here, and we still hold the
-lock, so using the past tense would be incorrect.
+Any setup that a phylink-based MAC driver does which is dependent on
+the negotiated media parameters (e.g. speed, duplex etc) _should_
+always be done from the .mac_link_up method.
 
-> > +                                * lock from the moment we learned the fifo
-> > +                                * is no longer empty until now.
-> > +                                */
-> > +                               return -EIO;
->
-> Since this is so unlikely maybe a WARN() would be justified here too?
->
+So, from a phylink perspective, what you propose is the correct and
+only way.
 
-Yeah, that makes sense.  I'll add them for v2.
-
-Cheers,
-Kent.
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
