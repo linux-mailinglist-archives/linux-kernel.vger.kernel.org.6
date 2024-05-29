@@ -1,478 +1,130 @@
-Return-Path: <linux-kernel+bounces-193923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2728D341C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:11:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FB28D340C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35DA51C23523
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FAA8280A54
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C731802B1;
-	Wed, 29 May 2024 10:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A4C17A939;
+	Wed, 29 May 2024 10:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nW5gkL9L"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dBtKORgY"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C0B17F389;
-	Wed, 29 May 2024 10:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D22C31A60
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977414; cv=none; b=MqmHOSr8z0kgUlV7fXJIULIk+ZWbbzkTbE55tCp5oUHQ1noI6GwmW6IVMVVYPQPzX+v4c/iRBjIkZ18UwFJQ9juI6nD8lkEtWAkEcD9QyIC38E3Q7dP0GULGEE3zFAlGngBqgg/XlxslQqmbh0VdCWr3s8piYO1CPBmv6pIJlNw=
+	t=1716977402; cv=none; b=XVI3rhkwpC5mEKCa5RCSPVI9mVNas01mu1X/UyR6Ubav7b5L+KpyXvxQAjYpuGnfvb68oUQw6mPBkDaDzKjO2T6AEgOlU+FvruGR+pgE0xRKhjO0fgWmDfGd/GSzRVzKG5l5UJMXQDngrZ7+HjTRK64wS75koAYGtv3oBD8G6aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977414; c=relaxed/simple;
-	bh=5OWuifB/Hk7lCp0LYGkPz20RxzyeA/mHCzJH8/EweMM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R2lLbLBydoO6zVY8ncmSPP2Km/oJlcUClqygjEtaaTi9hV44v/kcM8k1WrpxWHQJxuLjNuz7iGJ62Ob75uNOKQMpjm+UuEt1r6t4F+hbe5aU3RkBKOciORujaSKCna0Xpt07AbR2YbkC31H3ZdLezRwlu7CW0QarvoMvDUSsFCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nW5gkL9L; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T0j4XS018130;
-	Wed, 29 May 2024 10:10:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2HEd3s7k+CpiiqPGmtipkG7oLSYIGUSLC0boPeqm4/8=; b=nW5gkL9LvAduhxMo
-	mYFc1eR05bcWW51HgExM3mhGMpVPBZQlKWlWwbG7LOd6HbfMoZWrTRl79c6r1Jh7
-	lEt8elPF2AW032ox5uvoVXwAzatOGOItp8CC4x64yvmv7pPKq94JTcwSmxc26L1J
-	5xgQoN0YnbRpSj312+iSHHPa0yjjBjpKQPFPANgbZu9Zy+TlGVHglY9Yu7/xVajN
-	AfGEY3eiUmeNg1UDpqhZ1Il2fhLO8Um3z5M5C5gJfH+ClV2Zy9+MFNdXHO17ytpU
-	o2RVSRTcpXFBC2/1q+maesiGaMEWsyTPULidlzz382CLzJP2NUlKmcKTUo2XMxYH
-	1RDa5w==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qgmf7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 10:10:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TAA8Fi017654
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 10:10:08 GMT
-Received: from tengfan-gv.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 29 May 2024 03:10:02 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>,
-        Qiang Yu <quic_qianyu@quicinc.com>,
-        Ziyue Zhang
-	<quic_ziyuzhan@quicinc.com>
-Subject: [PATCH v9 4/4] arm64: dts: qcom: aim300: add AIM300 AIoT
-Date: Wed, 29 May 2024 18:09:26 +0800
-Message-ID: <20240529100926.3166325-5-quic_tengfan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
-References: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
+	s=arc-20240116; t=1716977402; c=relaxed/simple;
+	bh=D4DxX2Xvz9Ek7Q2MsbuAmRNYh9AIsuYdbjeHdEbVh0s=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITY80ilgZEPRdLZilix7jqanGYuV3F7shAEQCK6TDBvRzge6q9a+j3n0Z7135TGcq9rBmQRgdbXjx0ORmoVqP2i1b7ISdfqBDt0re8SwNLSo0hobYf0zkZIxbDWxss+qjxtWaahpIN4GKkPgki2ToKwsRDYuhN4059pGILsZWbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dBtKORgY; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so3514505e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716977398; x=1717582198; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1FTKNsuia3RWpQHnWn/8QDl0FBPSRwXXETwGl7wxFKo=;
+        b=dBtKORgYbGqdlmKFu/1a3LKvnBzwqk068BNTKq4DCLWqxUcKFhY7MvIMsU/NlIH8Rz
+         cz4k4Myjg6E/T1+nvFCS4gd3DZKcF3QWCMmE2BfRw4f77KFeyzWbc1g+UReMv2nwBoaZ
+         2asmuNOuNCulo4n9mOaKYxqhhFE0yfzwoBafyVqsPaEWj2qHZMrsy833iwN0HxRjofXs
+         NDRq1RirQ9iJqB8TnarO40BHVpyz5w24w2xDEIOGdTdYyiIQ8b2OqtnQJwtklE5D6tJT
+         OdclknmW1oRkhtRoQS6wurtHaJRRR7kD0P9e6mufy8RibPef1vy8Nq6P4Ii7VI5EZ6Sc
+         S6Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716977398; x=1717582198;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1FTKNsuia3RWpQHnWn/8QDl0FBPSRwXXETwGl7wxFKo=;
+        b=bmk7yzUVsqYjraSrcr4d1cz57KxEBPMgt1g5BOZgVjIaFrTYIHBqHM5x6vNWtJEzud
+         O3xtN5NJIMf1DZI/WLN8FzWMcTRO6r+Zet8/7xBkpkBbcqWKvw0BLpm+bqV/Xj01cf8Y
+         IEFfNPL2ZPbltOg8IuKvUprqO9xMwJUGoBLWzWD6h2QKmRo2VYAT4ew6Q6II0pPyCgit
+         DM/VZYirMQq9X9neuiySsVyGRCWTUzoNjoQlns3oNx0+8kT9iSBsVTyFOsfJbeT7bUVn
+         ig1YTPNGndsK76zgfJmPAhkjPXgo9QMuw+pEtfViRFEWIQJAZ7uIVYCDabtqliUHFzau
+         FSTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa9UpxGIfF9ZwO1Ue/RcFtdEhIAYO6SqhcjKy5SUtBnO0IPDh9tyX8coEEUoCeCWFpJtcI60+73OFBZ9+YaszUTURkb4/38/LQySWm
+X-Gm-Message-State: AOJu0Yzu9lNeynAQ+zsxJ0F+AvOtRG/tHoBBEb27s3qPBzOj8TO4B4iA
+	K63XW4TLwxwjjP7VOJ0m1prnlscobk4PI/n3uq938ytR7YSJ7e4nrrb+00iB4Kc=
+X-Google-Smtp-Source: AGHT+IH9bfmSIStk/91xm8BYd9HX9NO21rvFMlN/xg/x0L9tsKc+sRpjBrjeX+ypNPkNr6P9URfuKg==
+X-Received: by 2002:a05:600c:4fd1:b0:41b:d6ca:eefa with SMTP id 5b1f17b1804b1-42122b01e91mr13915835e9.16.1716977398527;
+        Wed, 29 May 2024 03:09:58 -0700 (PDT)
+Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42122299300sm26362175e9.42.2024.05.29.03.09.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 03:09:58 -0700 (PDT)
+From: Oscar Salvador <osalvador@suse.com>
+X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
+Date: Wed, 29 May 2024 12:09:56 +0200
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Oscar Salvador <osalvador@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v4 12/16] powerpc/e500: Encode hugepage size in PTE
+ bits
+Message-ID: <Zlb-9DNmRzIYRdJO@localhost.localdomain>
+References: <cover.1716815901.git.christophe.leroy@csgroup.eu>
+ <10eae3c6815e3aba5f624af92321948e4684c95a.1716815901.git.christophe.leroy@csgroup.eu>
+ <Zlbh5Bwsx7WqEEWr@localhost.localdomain>
+ <3cf95f5e-cc8b-4417-a3fa-80dc3b24ac63@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mVNa9BO9HMyalQi0TwG8FNyiB1DCPTAy
-X-Proofpoint-ORIG-GUID: mVNa9BO9HMyalQi0TwG8FNyiB1DCPTAy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_06,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405290068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3cf95f5e-cc8b-4417-a3fa-80dc3b24ac63@csgroup.eu>
 
-Add AIM300 AIoT Carrier board DTS support, including usb, UART, PCIe,
-I2C functions support.
-Here is a diagram of AIM300 AIoT Carrie Board and SoM
- +--------------------------------------------------+
- |             AIM300 AIOT Carrier Board            |
- |                                                  |
- |           +-----------------+                    |
- |power----->| Fixed regulator |---------+          |
- |           +-----------------+         |          |
- |                                       |          |
- |                                       v VPH_PWR  |
- | +----------------------------------------------+ |
- | |                          AIM300 SOM |        | |
- | |                                     |VPH_PWR | |
- | |                                     v        | |
- | |   +-------+       +--------+     +------+    | |
- | |   | UFS   |       | QCS8550|     |PMIC  |    | |
- | |   +-------+       +--------+     +------+    | |
- | |                                              | |
- | +----------------------------------------------+ |
- |                                                  |
- |                    +----+          +------+      |
- |                    |USB |          | UART |      |
- |                    +----+          +------+      |
- +--------------------------------------------------+
+On Wed, May 29, 2024 at 09:49:48AM +0000, Christophe Leroy wrote:
+> Doesn't really matter if it's PUD or PMD at this point. On a 32 bits 
+> kernel it will be all PMD while on a 64 bits kernel it is both PMD and PUD.
+> 
+> At the time being (as implemented with hugepd), Linux support 4M, 16M, 
+> 64M, 256M and 1G (Shifts 22, 24, 26, 28, 30)
+> 
+> The hardware supports the following page sizes, and encodes them on 4 
+> bits allthough it is not directly a shift. Maybe it would be better to 
+> use that encoding after all:
 
-Co-developed-by: Qiang Yu <quic_qianyu@quicinc.com>
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-Co-developed-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 322 ++++++++++++++++++
- 2 files changed, 323 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
+I think so.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 99d606a15449..db093c8e4c1e 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -101,6 +101,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts b/arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
-new file mode 100644
-index 000000000000..49759274fb4a
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
-@@ -0,0 +1,322 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/leds/common.h>
-+#include "qcs8550-aim300.dtsi"
-+#include "pm8010.dtsi"
-+#include "pmr735d_a.dtsi"
-+#include "pmr735d_b.dtsi"
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. QCS8550 AIM300 AIOT";
-+	compatible = "qcom,qcs8550-aim300-aiot", "qcom,qcs8550-aim300", "qcom,qcs8550",
-+		     "qcom,sm8550";
-+
-+	aliases {
-+		serial0 = &uart7;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&volume_up_n>;
-+		pinctrl-names = "default";
-+
-+		key-volume-up {
-+			label = "Volume Up";
-+			debounce-interval = <15>;
-+			gpios = <&pm8550_gpios 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			linux,can-disable;
-+			wakeup-source;
-+		};
-+	};
-+
-+	pmic-glink {
-+		compatible = "qcom,sm8550-pmic-glink", "qcom,pmic-glink";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		orientation-gpios = <&tlmm 11 GPIO_ACTIVE_HIGH>;
-+
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss_in: endpoint {
-+						remote-endpoint = <&redriver_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_sbu: endpoint {
-+						remote-endpoint = <&fsa4480_sbu_mux>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		vdd-bob1-supply = <&vph_pwr>;
-+		vdd-bob2-supply = <&vph_pwr>;
-+	};
-+
-+	regulators-3 {
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+	};
-+
-+	regulators-4 {
-+		vdd-s4-supply = <&vph_pwr>;
-+	};
-+
-+	regulators-5 {
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+	};
-+};
-+
-+&i2c_hub_2 {
-+	status = "okay";
-+
-+	typec-mux@42 {
-+		compatible = "fcs,fsa4480";
-+		reg = <0x42>;
-+
-+		vcc-supply = <&vreg_bob1>;
-+
-+		mode-switch;
-+		orientation-switch;
-+
-+		port {
-+			fsa4480_sbu_mux: endpoint {
-+				remote-endpoint = <&pmic_glink_sbu>;
-+			};
-+		};
-+	};
-+
-+	typec-retimer@1c {
-+		compatible = "onnn,nb7vpq904m";
-+		reg = <0x1c>;
-+
-+		vcc-supply = <&vreg_l15b_1p8>;
-+
-+		orientation-switch;
-+		retimer-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				redriver_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				redriver_ss_in: endpoint {
-+					data-lanes = <3 2 1 0>;
-+					remote-endpoint = <&usb_dp_qmpphy_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dsi0 {
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "visionox,vtdr6130";
-+		reg = <0>;
-+
-+		pinctrl-0 = <&dsi_active>, <&te_active>;
-+		pinctrl-1 = <&dsi_suspend>, <&te_suspend>;
-+		pinctrl-names = "default", "sleep";
-+
-+		reset-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
-+
-+		vci-supply = <&vreg_l13b_3p0>;
-+		vdd-supply = <&vreg_l11b_1p2>;
-+		vddio-supply = <&vreg_l12b_1p8>;
-+
-+		port {
-+			panel0_in: endpoint {
-+				remote-endpoint = <&mdss_dsi0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dsi0_out {
-+	remote-endpoint = <&panel0_in>;
-+	data-lanes = <0 1 2 3>;
-+};
-+
-+&mdss_dsi0_phy {
-+	status = "okay";
-+};
-+
-+&pcie0 {
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	status = "okay";
-+};
-+
-+&pm8550_gpios {
-+	volume_up_n: volume-up-n-state {
-+		pins = "gpio6";
-+		function = "normal";
-+		power-source = <1>;
-+		bias-pull-up;
-+		input-enable;
-+	};
-+};
-+
-+&pon_pwrkey {
-+	status = "okay";
-+};
-+
-+&pon_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+
-+	status = "okay";
-+};
-+
-+&qupv3_id_0 {
-+	status = "okay";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/qcs8550/adsp.mbn",
-+			"qcom/qcs8550/adsp_dtbs.elf";
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/qcs8550/cdsp.mbn",
-+			"qcom/qcs8550/cdsp_dtbs.elf";
-+	status = "okay";
-+};
-+
-+&swr1 {
-+	status = "okay";
-+};
-+
-+&swr2 {
-+	status = "okay";
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <32 8>;
-+
-+	dsi_active: dsi-active-state {
-+		pins = "gpio133";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-disable;
-+	};
-+
-+	dsi_suspend: dsi-suspend-state {
-+		pins = "gpio133";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
-+	te_active: te-active-state {
-+		pins = "gpio86";
-+		function = "mdp_vsync";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
-+	te_suspend: te-suspend-state {
-+		pins = "gpio86";
-+		function = "mdp_vsync";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+};
-+
-+&uart7 {
-+	status = "okay";
-+};
-+
-+&usb_1 {
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_hs_in>;
-+};
-+
-+&usb_1_hsphy {
-+	status = "okay";
-+};
-+
-+&usb_dp_qmpphy {
-+	status = "okay";
-+};
-+
-+&usb_dp_qmpphy_out {
-+	remote-endpoint = <&redriver_ss_in>;
-+};
+> 
+> 0001 4 Kbytes (Shift 12)
+> 0010 16 Kbytes (Shift 14)
+> 0011 64 Kbytes (Shift 16)
+> 0100 256 Kbytes (Shift 18)
+> 0101 1 Mbyte (Shift 20)
+> 0110 4 Mbytes (Shift 22)
+> 0111 16 Mbytes (Shift 24)
+> 1000 64 Mbytes (Shift 26)
+> 1001 256 Mbytes (Shift 28)
+> 1010 1 Gbyte (e500v2 only) (Shift 30)
+> 1011 4 Gbytes (e500v2 only) (Shift 32)
+
+You say hugehages start at 2MB (shift 21), but you say that the smallest hugepage
+Linux support is 4MB (shift 22).?
+
+
 -- 
-2.25.1
-
+Oscar Salvador
+SUSE Labs
 
