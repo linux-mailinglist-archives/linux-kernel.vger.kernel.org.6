@@ -1,155 +1,192 @@
-Return-Path: <linux-kernel+bounces-194207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598548D3864
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:52:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF08D3862
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C63D1F279B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C670286D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7661CA8D;
-	Wed, 29 May 2024 13:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="GiSTHJ1C";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="GiSTHJ1C"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993201CD2D;
-	Wed, 29 May 2024 13:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716990699; cv=none; b=Zh6TiFEPZeHaHjqJJGeFrGClMLGfnfqJcnw4Ow+EG7SQQMM77x/lWHORSI+qd752jtpmQW+YuJAnGbfTDnbAO8YjnCxy35HtNevYSVNXnoNx8GKcBwLDAd6S9PqbZCBr4QelyQJsp2IYwckv9HPXT1yfWGtOAWp/V/B9cvogwj4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716990699; c=relaxed/simple;
-	bh=FlJgSMl3UTJvdZrHju59jcvP+4p0emxzVuYQnLdPvgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FHqwFgPbJXZRVlZRJ+fWyysDRMF4TASVFxAyN3G+ZdmH2R8Aa0QZhZOOdm1uVEcIYKVM33DQ/nxlWq+1Kd1TfWBKVqAsns2gKwdYXIZikkHWSNGsuVYLjNrM7VArP5f6V38mI2h/ndPk2R5bPis+J8nGUcyzxGjoz+6E36SeRXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=GiSTHJ1C; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=GiSTHJ1C; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8D045336AE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5491B7F4;
 	Wed, 29 May 2024 13:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716990694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LNLWJbrRk7hFI6ZyyeUlyaH1ly9aS3REFE1/nnGspLg=;
-	b=GiSTHJ1C0KKUB3CncI1zXYl8Nco/8G/uYbnBtR3TrK7RTLTy1HlI3Ecih7h8ozmkVViWB7
-	o7JDGu5p7v0scVztXmPbn8V+PcOEAJsAim6RsJ5f8iUCkEcnms/C/fj1hX7DTi/Zd5mW2h
-	NGFnSXogTKR+eWEUntSfjuSjQ6FfXP0=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716990694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LNLWJbrRk7hFI6ZyyeUlyaH1ly9aS3REFE1/nnGspLg=;
-	b=GiSTHJ1C0KKUB3CncI1zXYl8Nco/8G/uYbnBtR3TrK7RTLTy1HlI3Ecih7h8ozmkVViWB7
-	o7JDGu5p7v0scVztXmPbn8V+PcOEAJsAim6RsJ5f8iUCkEcnms/C/fj1hX7DTi/Zd5mW2h
-	NGFnSXogTKR+eWEUntSfjuSjQ6FfXP0=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BYLSbycw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 291FF13A6B;
-	Wed, 29 May 2024 13:51:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NA0jOuUyV2Z8UwAAD6G6ig
-	(envelope-from <mpdesouza@suse.com>); Wed, 29 May 2024 13:51:33 +0000
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: mpdesouza@suse.com,
-	live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] samples/livepatch: Add README.rst disclaimer
-Date: Wed, 29 May 2024 10:51:27 -0300
-Message-ID: <20240529135129.16373-1-mpdesouza@suse.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20200721161407.26806-3-joe.lawrence@redhat.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5851CA8D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716990693; cv=none; b=LbI57MERxMg38ROIUpBkv6q+D2yivTCDHwxGZbLigW733jOGKUWqVq466hEqPRg2Q420OnlxnHregy6QidC5tzkFR2+o85PBM1lRV1LDjKVzQfBlTbiLMk0DNwCNBegnoBLIbWvM7bDUnGSvR+iD6b82J4nuXHBcJEkgKnZFTtg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716990693; c=relaxed/simple;
+	bh=4qG4dad29dPTvZyqQLXRikddg2y7NmdD+VTC9hKpIPE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TcfqV2Tvh2ccf8TtzNGY/sRcFIecSm01LHWH8LzsdobOt6dlzmouTbj7IGdBG2zvMM9aJmqJOJieseGPIevlGjuUCXC5u7CwW9160xmICMQxBx91PJYq/nJMePzrEa77+T3nDymwJYYZlgA/0EqPfZkNh2+W3+HlXWsK02ggYa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BYLSbycw; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716990692; x=1748526692;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=4qG4dad29dPTvZyqQLXRikddg2y7NmdD+VTC9hKpIPE=;
+  b=BYLSbycwjVncgClmsRzXsnhBInZ9R/CQlc4+YDZIZp6b9Jarw3RrCiwj
+   Ayn25G+v4Jobl2bGMxkjAKAnJTN3P9Sq1u276Mf37n8IE6eKwfRqDdoey
+   F38I+lLLxDBUluOBk6jaxjy9uSelSwQsFekkrzTv1TA634ZLRJTS7W+Ne
+   K4nlRfBgjYPsO8GAgSi6fKNy+S2sa+cookUT3JZ8W+EGDvGJTUkaYFqdI
+   +k4JcXUzDT2+83KodN8xhnYCanT1JqSZIdZDrT7zEmBDV00WMAhdJOWHs
+   Uk8tY5uNhKjl4yTQir2E8JdZhVCrX0hip9EF1jx0CAN7D6GmQRC3ObuM6
+   A==;
+X-CSE-ConnectionGUID: q/mM9txnTUmMc2ca8jVhKA==
+X-CSE-MsgGUID: T6nw3AB7Szyum471s5FFqQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13558545"
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="13558545"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:51:31 -0700
+X-CSE-ConnectionGUID: aFSTnD87RZ2C1kyGZFNVww==
+X-CSE-MsgGUID: QENQtQuSRL+hs1haaaXu0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
+   d="scan'208";a="35390243"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.86])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:51:26 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Alex Deucher <alexdeucher@gmail.com>, Mario Limonciello
+ <mario.limonciello@amd.com>
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-kernel@vger.kernel.org, Chris Bainbridge
+ <chris.bainbridge@gmail.com>, hughsient@gmail.com
+Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during
+ initialization
+In-Reply-To: <CADnq5_OzPT1MVnsqXs2vjr1L2_6jeM6x7jgs4ZtYpNzdDHM6uA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240528210319.1242-1-mario.limonciello@amd.com>
+ <CADnq5_OzPT1MVnsqXs2vjr1L2_6jeM6x7jgs4ZtYpNzdDHM6uA@mail.gmail.com>
+Date: Wed, 29 May 2024 16:51:35 +0300
+Message-ID: <87r0dkiv4o.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: mpdesouza@suse.com
+On Wed, 29 May 2024, Alex Deucher <alexdeucher@gmail.com> wrote:
+> On Tue, May 28, 2024 at 5:03=E2=80=AFPM Mario Limonciello
+> <mario.limonciello@amd.com> wrote:
+>>
+>> If the lid on a laptop is closed when eDP connectors are populated
+>> then it remains enabled when the initial framebuffer configuration
+>> is built.
+>>
+>> When creating the initial framebuffer configuration detect the ACPI
+>> lid status and if it's closed disable any eDP connectors.
+>>
+>> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>
+> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+>
+> Do you have drm-misc access or do you need someone to apply this for you?
 
-On   Tue, 21 Jul 2020 12:14:07 -0400   Joe Lawrence <joe.lawrence@redhat.com> wrote:
+I've bounced this to intel-gfx and intel-xe lists to get CI testing. I'd
+appreciate holding off on merging until we have results.
 
-> The livepatch samples aren't very careful with respect to compiler
-> IPA-optimization of target kernel functions.
-> 
-> Add a quick disclaimer and pointer to the compiler-considerations.rst
-> file to warn readers.
-> 
-> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> ---
->  samples/livepatch/README.rst | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->  create mode 100644 samples/livepatch/README.rst
+Thanks,
+Jani.
 
-Acked-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+>
+> Alex
+>
+>> ---
+>> Cc: hughsient@gmail.com
+>> v1->v2:
+>>  * Match LVDS as well
+>> ---
+>>  drivers/gpu/drm/drm_client_modeset.c | 30 ++++++++++++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_=
+client_modeset.c
+>> index 31af5cf37a09..0b0411086e76 100644
+>> --- a/drivers/gpu/drm/drm_client_modeset.c
+>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+>> @@ -8,6 +8,7 @@
+>>   */
+>>
+>>  #include "drm/drm_modeset_lock.h"
+>> +#include <acpi/button.h>
+>>  #include <linux/module.h>
+>>  #include <linux/mutex.h>
+>>  #include <linux/slab.h>
+>> @@ -257,6 +258,34 @@ static void drm_client_connectors_enabled(struct dr=
+m_connector **connectors,
+>>                 enabled[i] =3D drm_connector_enabled(connectors[i], fals=
+e);
+>>  }
+>>
+>> +static void drm_client_match_edp_lid(struct drm_device *dev,
+>> +                                    struct drm_connector **connectors,
+>> +                                    unsigned int connector_count,
+>> +                                    bool *enabled)
+>> +{
+>> +       int i;
+>> +
+>> +       for (i =3D 0; i < connector_count; i++) {
+>> +               struct drm_connector *connector =3D connectors[i];
+>> +
+>> +               switch (connector->connector_type) {
+>> +               case DRM_MODE_CONNECTOR_LVDS:
+>> +               case DRM_MODE_CONNECTOR_eDP:
+>> +                       if (!enabled[i])
+>> +                               continue;
+>> +                       break;
+>> +               default:
+>> +                       continue;
+>> +               }
+>> +
+>> +               if (!acpi_lid_open()) {
+>> +                       drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is close=
+d, disabling\n",
+>> +                                   connector->base.id, connector->name);
+>> +                       enabled[i] =3D false;
+>> +               }
+>> +       }
+>> +}
+>> +
+>>  static bool drm_client_target_cloned(struct drm_device *dev,
+>>                                      struct drm_connector **connectors,
+>>                                      unsigned int connector_count,
+>> @@ -844,6 +873,7 @@ int drm_client_modeset_probe(struct drm_client_dev *=
+client, unsigned int width,
+>>                 memset(crtcs, 0, connector_count * sizeof(*crtcs));
+>>                 memset(offsets, 0, connector_count * sizeof(*offsets));
+>>
+>> +               drm_client_match_edp_lid(dev, connectors, connector_coun=
+t, enabled);
+>>                 if (!drm_client_target_cloned(dev, connectors, connector=
+_count, modes,
+>>                                               offsets, enabled, width, h=
+eight) &&
+>>                     !drm_client_target_preferred(dev, connectors, connec=
+tor_count, modes,
+>> --
+>> 2.43.0
+>>
 
-> 
-> diff --git a/samples/livepatch/README.rst b/samples/livepatch/README.rst
-> new file mode 100644
-> index 000000000000..2f8ef945f2ac
-> --- /dev/null
-> +++ b/samples/livepatch/README.rst
-> @@ -0,0 +1,15 @@
-> +.. SPDX-License-Identifier: GPL-2.0+
-> +
-> +==========
-> +Disclaimer
-> +==========
-> +
-> +The livepatch sample programs were written with idealized compiler
-> +output in mind. That is to say that they do not consider ways in which
-> +optimization may transform target kernel functions.
-> +
-> +The samples present only a simple API demonstration and should not be
-> +considered completely safe.
-> +
-> +See the Documentation/livepatching/compiler-considerations.rst file for
-> +more details on compiler optimizations and how they affect livepatching.
-> -- 
-> 2.21.3
+--=20
+Jani Nikula, Intel
 
