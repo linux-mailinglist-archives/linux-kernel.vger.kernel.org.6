@@ -1,142 +1,137 @@
-Return-Path: <linux-kernel+bounces-193964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D94C8D34A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:32:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00D38D34A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B0A286795
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:32:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35F61C23546
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9740917F395;
-	Wed, 29 May 2024 10:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A47E17B4FD;
+	Wed, 29 May 2024 10:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MzNXaqIB"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="2Cp/6dOE"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE5217F36E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAA417A93D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716978697; cv=none; b=dO+yjpK6yITTIEBJ11ZkrBFXZALCTILT5tnBTM4/RGXfNDpwd5XNyfAT3get2arxO+nFhiOXRTXpFMbj9h3Yoya1ZqgjTsnpHWjPkhH2+AMkQxAgO6Oz1P8G2i8DUw+Pn6L9gZxmBt7+llpS2VKi5gnyr7KW2nqRlhmJl/0iBKQ=
+	t=1716978856; cv=none; b=O2jbcNah0RwqpGyNkHpZpb6Nw5ilB7Jj6AMR5goGd9PYOFRWO8QGXOE5DyQ36Us7IxZF3i+cQX3XC2F1RRtdIz1HNPMQDDBZMMEKUgJwXjX3nZfF5hlSqhX+GV1zHsulrpDYb4/C0/cOaiZn27mJ2w+YY7qbRE2U2V6wG6dADGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716978697; c=relaxed/simple;
-	bh=DS+16H0AoYGVFQHMjyOcarJ501kZjn4XcqcccgjkI58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YpYtwssuWRbbbsO6o3r99Gb0aRK2PJefBXT3bELUMylMilfWATHcsmxhuT7LvgYdcsjiZ8Q3pKuqqD3M7CRfmCfCGqjO2K2LEeR00EyC7ZW0rxB4v6GwQyO1Ek7qA1ZrVU8/X8JZwvQDz3vBMiwuc4XmNjEhmBQfyzbjztPDM+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MzNXaqIB; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42012c85e61so65485e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:31:35 -0700 (PDT)
+	s=arc-20240116; t=1716978856; c=relaxed/simple;
+	bh=JqW6S9gLbBT6oNduRIEy9rcuDuL7GJ37WpegUorfK2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGjJxEh+QWygbFDglWB8JL1cVfGFgCBnzl8qtkfORtIt4ttPYJlFXXDT3F35uYDkikezEaeCKfOi5B4ydSVhCkvqeU5DMmQr45txXCjmUf9DzlmUS5+DuArO1p5LapR709YASzlZkQ6WWecIDgjqTnNG+J3al6/jHh93GPuodn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=2Cp/6dOE; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3588cb76276so399301f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716978694; x=1717583494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8T+4C++Ip51NQNCNOm8O3oTdvMVRbk5XM6uYT3Xq7q4=;
-        b=MzNXaqIBR/0xwGgjUKeChJoLpQncynqZ7lvM+p6bSvkUATTGovQ8V16IxcIhjAriRS
-         sAEkmzwJLmjZdew093p/qXys6dvtpHljdqCfFb/MsWHZuB8tKA8BNw4HGViDFewVgv2c
-         vIFye8uYVb+UNlrj3AGodxUZJn92UA1Bxgm4X+pprEij/AzwIZGqtPD2eJbs/XlqmkFr
-         Boixuvy87GkUAEcoSF6vHW0SeX6L2erjQyXoh9LmGlbI5h6tc+PcO6A+b1RjZaYrPcCk
-         4SAkypvQgoJRSjFIVU83Sg6mfEF5EF9rz5/4kCTxqp6BuJrv2Rbtd/Qx956YRPfkcNXA
-         JTWw==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1716978853; x=1717583653; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pWxQqhsuf8BC7pPkaTLgrKW/tD/H2B+jRA3s0q6FfWo=;
+        b=2Cp/6dOE52Iiv81xt1QhwDB7ljPMSLtzss+3QzZEIsV/oW9y6Aep7CH8KUuewu2leE
+         UZmlg03NKSMfqfLTjYtupneCsfNiOM5nN9UhT2XS2YoP1/3cGzuAHx70Bbt2ChkOd1ly
+         lthL2X28g/ewhvSbpkptCVfvS9bVNsxsVcP17Bd7YXcg1vEORenrfcWxW5L5vpXsS7pP
+         FUQtg87Gs3l8cNzgvtVBURctf5sDcE1uKWdQVe7CLuFRyTJKGJ258HmoOoCpOecfRLDn
+         DpOkR+ut38lCvQuvRrM2vpqq3WTv6nYqFpC3qDROaXYZQSRb3kFWE4a0nq1l/vw5kHom
+         m9OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716978694; x=1717583494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8T+4C++Ip51NQNCNOm8O3oTdvMVRbk5XM6uYT3Xq7q4=;
-        b=STJs47WvOa2uph7u7vEr/AeAstEshbWaAaBcgmOeVknCD+Z9UYWV/lG86BSC35GBKq
-         bgv8DD8t8Yf3Bxrez0IdosGztVeyWAaXh0i4eVU92Ioo01Z9Ly9eNQpc0ImJupHaVwTr
-         YMKNiLc7TdFaEXoZjFf1S0RlPwQDDJRRL2igFmTwWFSngY/rdulfWWP/fAfSdEtLGlkX
-         QsBrjCB13g2sff7VGXi/7tfs9lQJF0NdQl/v5+7anmTvEZMMe88NpGoP2vFPNMKhsoN3
-         pWpPpidK1gmPPf+ZMvF46Aj+2qOXoctF5HWyduQzT0SGpcL5ms5j5OlcWeLicf/5b/vl
-         0CSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEIhmT+VbnmricwfippptKM6kBIT23fbFbn8Or5ASEjHjtCqmYRD52nzjGnb8JViV3XOtkiQW2xjxGqh/Hl4qxnkNK3aBrSZryQHx/
-X-Gm-Message-State: AOJu0Yw/3jY+muflvzIkvglNpkSdKXO4xgXC552WA6JKQZAtLNfHAvjl
-	dkAZ6PQTrRimvsyV4QO/tTvNNHZW+SElY31WP1mMTFKTXgM2KhtxlURsUkY+rUohsc5Nuqd0f+P
-	LgveX6gg0//gA5B3bw/cWJkwlStLsYOLph0GCaXld4OLv0svVlxk=
-X-Google-Smtp-Source: AGHT+IF06N0AywzCp/IQE6BefdLVbzE7nu58juaSZM1QzbsQ9KSqgjIx7pyF//JuzfivcCk7P8QZxUDTY6QzUp2n4Jk=
-X-Received: by 2002:a05:600c:3b18:b0:41f:a15d:2228 with SMTP id
- 5b1f17b1804b1-42122909a1cmr1457685e9.0.1716978694494; Wed, 29 May 2024
- 03:31:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716978853; x=1717583653;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pWxQqhsuf8BC7pPkaTLgrKW/tD/H2B+jRA3s0q6FfWo=;
+        b=uxYIU/qTWuS9PY/DrROxt3OpRDlkLWbe/O/0NPly0SawgbYUpHgS9EZR8eS9PU0n9S
+         j2mIUeaFV8cE7K58k5rLYR8KM7Rn0zMsiFLnJ4SgxNKSuh5IHqs0Y/CZdMwX57PoeeJH
+         Usg9clvODqNKz592daDhnUDPRwFVMxLhu4eFMkWgfWrF1WUjNjG5xipzjeBtxLCCwdmc
+         nhTnutdM6skNHZJ/9emw73mU6Ret8k/7X/FmYxpohJ7juMHXTnbrZQf4HP3NXEZSpdlS
+         OFnVPN7VvJL62yOTeiFzYFO8iVrywKvYsJRQTF2jSs8qV9Nijqv2w3CPhsEcq5A6+pnW
+         bvrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe+VQzQbeFRxKkx7e3wEIlzS/FV/S85FivtT0rUQd4w+oVgj1rGmtCENsxRJ1nC19jXdU2IgYbO3oRNmodmK5Tkx09dFj65s8hnuRH
+X-Gm-Message-State: AOJu0YwGNjWVBa7Zw2Mq+gMVr6tZJCv+oR0g35c+9qvNEbdoKUHk0eJo
+	4+B08WnQjnxfGl/DuuuneQJWmFKKB3VuQBSOsyGK98QnLr0yQitPiGOMr4CDlQg=
+X-Google-Smtp-Source: AGHT+IGSszxrKbHSyGgQ7mAClIEtVdH7p9Lx2JOJh6npifDBZVn+xxJ8yW2MTf6yCWOUozN0vx/rZg==
+X-Received: by 2002:a5d:4602:0:b0:34c:fd92:3359 with SMTP id ffacd0b85a97d-35c7af09709mr1539637f8f.21.1716978853406;
+        Wed, 29 May 2024 03:34:13 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c92f8sm14306730f8f.67.2024.05.29.03.34.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 03:34:13 -0700 (PDT)
+Date: Wed, 29 May 2024 11:34:09 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH v2] sched/rt: Clean up usage of rt_task()
+Message-ID: <20240529103409.3iiemroaavv5lh2p@airbuntu>
+References: <20240515220536.823145-1-qyousef@layalina.io>
+ <20240521110035.KRIwllGe@linutronix.de>
+ <20240527172650.kieptfl3zhyljkzx@airbuntu>
+ <20240529082912.gPDpgVy3@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522090158.121797-1-21cnbao@gmail.com>
-In-Reply-To: <20240522090158.121797-1-21cnbao@gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 29 May 2024 03:31:22 -0700
-Message-ID: <CANDhNCqr4MtkEXG4uBOViPAODQnuQOgpdNZCmP4yvVSNwnU5ew@mail.gmail.com>
-Subject: Re: [RFC PATCH] dma-buf: align fd_flags and heap_flags with dma_heap_allocation_data
-To: Barry Song <21cnbao@gmail.com>
-Cc: sumit.semwal@linaro.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com, 
-	Brian.Starkey@arm.com, tjmercier@google.com, christian.koenig@amd.com, 
-	Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240529082912.gPDpgVy3@linutronix.de>
 
-On Wed, May 22, 2024 at 2:02=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> dma_heap_allocation_data defines the UAPI as follows:
->
->  struct dma_heap_allocation_data {
->          __u64 len;
->          __u32 fd;
->          __u32 fd_flags;
->          __u64 heap_flags;
->  };
->
-> However, dma_heap_buffer_alloc() casts them into unsigned int. It's uncle=
-ar
-> whether this is intentional or what the purpose is, but it can be quite
-> confusing for users.
->
-> Adding to the confusion, dma_heap_ops.allocate defines both of these as
-> unsigned long. Fortunately, since dma_heap_ops is not part of the UAPI,
-> it is less of a concern.
->
-> struct dma_heap_ops {
->         struct dma_buf *(*allocate)(struct dma_heap *heap,
->                                     unsigned long len,
->                                     unsigned long fd_flags,
->                                     unsigned long heap_flags);
-> };
->
-> I am sending this RFC in hopes of clarifying these confusions.
->
-> If the goal is to constrain both flags to 32 bits while ensuring the stru=
-ct
-> is aligned to 64 bits, it would have been more suitable to define
-> dma_heap_allocation_data accordingly from the beginning, like so:
->
->  struct dma_heap_allocation_data {
->          __u64 len;
->          __u32 fd;
->          __u32 fd_flags;
->          __u32 heap_flags;
->          __u32 padding;
->  };
+On 05/29/24 10:29, Sebastian Andrzej Siewior wrote:
+> On 2024-05-27 18:26:50 [+0100], Qais Yousef wrote:
+> > > In order to be PI-boosted you need to acquire a lock and the only lock
+> > > you can sleep while acquired without generating a warning is a mutex_t
+> > > (or equivalent sleeping lock) on PREEMPT_RT. 
+> > 
+> > Note we care about the behavior for !PREEMPT_RT. PI issues are important there
+> > too. I assume the fact the PREEMPT_RT changes the locks behavior is what you're
+> > referring to here and not applicable to normal case.
+> 
+> So for !PREEMPT_RT you need a rtmutex for PI. RCU and i2c is using it
+> within the kernel and this shouldn't go via the `slack' API.
+> 
+> The FUTEX API on the other hand is a different story and it might
+> matter. So you have one task running SCHED_OTHER and acquiring a lock in
+> userspace (pthread_mutex_t, PTHREAD_PRIO_INHERIT). Another task running
+> at SCHED_FIFO/ RR/ DL would also acquire that lock, block on it and
+> then inherit its priority.
+> This is the point where the former task has a different policy vs
+> priority considering PI-boosting. You could argue that the task
+> shouldn't sleep or invoke anything possible sleeping with a timeout > 0
+> because it is using an important lock.
+> But then it is userland and has the freedom to do whatever it wants you
+> know…
 
-So here, if I recall, the intent was to keep 64bits for potential
-future heap_flags.
+Yes..
 
-But your point above that we're inconsistent with types in the non
-UAPI arguments is valid.
-So I think your patch makes sense.
+> 
+> So it might be better to forget what I said and keeping the current
 
-Thanks for raising this issue!
-Acked-by: John Stultz <jstultz@google.com>
+Okay I'll drop the patch then in next posting.
+
+> behaviour. But then it is insistent which matters only in the RT case.
+> Puh. Any sched folks regarding policy?
+
+I am not sure I understood you here. Could you rephrase please?
 
