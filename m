@@ -1,86 +1,107 @@
-Return-Path: <linux-kernel+bounces-194436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE768D3C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84928D3C32
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E2A2880AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:24:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D301F23646
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3820184127;
-	Wed, 29 May 2024 16:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/rOC/Db"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49931836E7;
+	Wed, 29 May 2024 16:24:43 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B331836F7;
-	Wed, 29 May 2024 16:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B931181B8B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716999825; cv=none; b=GZT8mKpqr51+8jY/cZRbUn5gkJJGUwWeJNQ9GizxyjROqu6dKQWpj37UU7pmpxDhp22l91TX1Pwk06H3jzOkG0NhbycoReyXekNLPMl9k1y02gPPcbfec8wx0mV4YexZP7IBa0S04UuBEiPdWeI6kxCrrALHtpvR1BGHIKx6oyM=
+	t=1716999883; cv=none; b=hFVnOU7ScUPyhGfvfy19knz1PiyvlpJX+v7a/S+m/ajXBAE2yeeTjaYpNXTdHgHOcwt6QzIE/v1a+FWAQfgIyS7Pn/VjE2bkXhl7HNM5P3/D3WHebSxb7tIkWV7pSAsJwQooPeLAVovjG5pN50KbidjcphokTlO32JtF2KO8fwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716999825; c=relaxed/simple;
-	bh=9N0hJNQXkuQNNa9oA3jB7vdm0xPtdI4OUpNr2YsrghM=;
+	s=arc-20240116; t=1716999883; c=relaxed/simple;
+	bh=BNLah/QDHzx6qCWDqnWrCWU9HLpUvuMNchraD+Ektj4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lm4qA0d/KZ1RFWXvk+Ni16hB/aAiW3EjuRaVH7AlnObso0E1MifSkp6pYF2+9vrEhlwar6peo8DhdLM8jEkivMcJMLjniiH2kD/QTP0SgeTMm2pOUisAMKN+y8EfTzNMQwKNJZzNmBnk4bUsmjAVF3z15BHAKN2/DTGBHcdQjdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/rOC/Db; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D304BC113CC;
-	Wed, 29 May 2024 16:23:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716999824;
-	bh=9N0hJNQXkuQNNa9oA3jB7vdm0xPtdI4OUpNr2YsrghM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A/rOC/Db5W8vhmp9QsdkAryq/olA0nGyKjOjLYVjPWEsS5ZuaaYu5dJIFtgtJvbE/
-	 35qEsFdyZxGkGHJ+FOeCygLb2dqsGJNuNMbE6b8UvjlX+Cy/O9ztEvAoEBbTLUQX6z
-	 nbt9Cy1v3f8rsME+0NY7grhLuJ9Gxeqk8aKz80kqW/UCGLq1iUV/DPpwC1ti8lJ4wH
-	 7iL+Gvsa7AqPvuOtri0HU/Nwdr7Yg3mZs69+8vDghbsxqBnrjwjD1SYwkNU33I+6xz
-	 o6zrOoNVM7FCaAwXhlb3YwxF15ViU35rHkWac3RwswwNexbcG9/RvtQoO3BL3SMedp
-	 xm0fwdOGm53xQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/2] X1E PMICs
-Date: Wed, 29 May 2024 11:23:42 -0500
-Message-ID: <171699981917.603724.8196085781158706393.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240529-topic-x1e_pmic-v1-0-9de0506179eb@linaro.org>
-References: <20240529-topic-x1e_pmic-v1-0-9de0506179eb@linaro.org>
+	 MIME-Version:Content-Type; b=oC5eqseqc+j3lPrSnl2Q/TTfMOBrRBw2iz4sjR6cEkldIdEQbM3ZhxtNn37dVGKgITTesSFtwH5FIr8WpG2qJCKRoaerCywYeyuxMecVqO3Mg34g1qJxWqcYkx85YwoSvSyppfQrkkUoIvsfYIk8tXAicZtFkH5JgHWYasxMD2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a0e.versanet.de ([83.135.90.14] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sCM69-0005AH-Ga; Wed, 29 May 2024 18:24:21 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andy Yan <andyshrk@163.com>, linux-rockchip@lists.infradead.org,
+ Diederik de Haas <didi.debian@cknow.org>, tzimmermann@suse.de,
+ maarten.lankhorst@linux.intel.com
+Cc: mripard@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ hjc@rock-chips.com, dri-devel@lists.freedesktop.org, s.hauer@pengutronix.de,
+ Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH 0/1] Fix the port mux of VP2
+Date: Wed, 29 May 2024 18:24:20 +0200
+Message-ID: <2652218.tIAgqjz4sF@diego>
+In-Reply-To: <2397969.FhQbyb98Gs@bagend>
+References:
+ <20240422101905.32703-1-andyshrk@163.com>
+ <171405838036.2897712.4067984796758491640.b4-ty@sntech.de>
+ <2397969.FhQbyb98Gs@bagend>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-
-On Wed, 29 May 2024 13:17:16 +0200, Konrad Dybcio wrote:
-> These were overlooked during the first submission, plug that hole..
+Am Mittwoch, 29. Mai 2024, 17:55:25 CEST schrieb Diederik de Haas:
+> On Thursday, 25 April 2024 17:19:58 CEST Heiko Stuebner wrote:
+> > On Mon, 22 Apr 2024 18:19:04 +0800, Andy Yan wrote:
+> > > From: Andy Yan <andy.yan@rock-chips.com>
+> > > 
+> > > The port mux bits of VP2 should be defined by
+> > > RK3568_OVL_PORT_SET__PORT2_MUX, this maybe a copy and paste error when
+> > > this driver first introduced.> 
+> > > Hi Heiko:
+> > >    Maybe thi is the problem you met when you porting the dsi2 driver.
+> > > 
+> > 
+> > Applied, thanks!
+> > 
+> > [1/1] drm/rockchip: vop2: Fix the port mux of VP2
+> >       commit: 2bdb481bf7a93c22b9fea8daefa2834aab23a70f
 > 
-> Depends on:
-> * https://lore.kernel.org/linux-arm-msm/20240525-topic-pmc8380_gpio-v2-0-2de50cb28ac1@linaro.org/ merged into next)
-> 
-> 
+> Wasn't this patch supposed to be part of 6.10-rc1?
 
-Applied, thanks!
+Looking at the drm-misc tree, the last tag for the drm-misc to drm-main
+merge is labeled drm-misc-next-2024-04-25, same day as I applied the
+patch.
 
-[2/2] arm64: dts: qcom: x1e80100-pmics: Add the missing PMICs
-      commit: 2559e61e7ef4efe546f081d8bee917e410e8e6a9
+In theory I think -rc6 is the cutoff for drm-misc changes for mainline,
+which would've been the 28th of april, but there might've been simple
+hickups preventing that last merge, resulting in the patch missing an
+early cutoff.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+
+On the other hand, somehow Torvald's tree actually has this commit [0],
+just with a "Notice: this object is not reachable from any branch."
+Possibly some drm-merge-mayhem?
+
+All very confusing.
+
+@Thomas, @Marten: do you possible have an idea what might've happened?
+
+
+Heiko
+
+
+
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2bdb481bf7a93c22b9fea8daefa2834aab23a70f
+
+
 
