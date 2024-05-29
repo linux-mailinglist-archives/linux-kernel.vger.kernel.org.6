@@ -1,206 +1,120 @@
-Return-Path: <linux-kernel+bounces-194221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E664A8D3899
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:04:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51FF8D389C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E74A51C220B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:04:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD511F24814
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1931CD0C;
-	Wed, 29 May 2024 14:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71641CD00;
+	Wed, 29 May 2024 14:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDw5Xi7h"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ekgZviop"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFFC12B95;
-	Wed, 29 May 2024 14:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F721BF3B;
+	Wed, 29 May 2024 14:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716991449; cv=none; b=qTbblvjWsqFFAsF2XJKZhL4Vk6lQjDXtxbzM3rcBroDU88DvSWsJ7obWWXV9sQGiNBv/NIkQ7S1VeOaQtYlK/Y6OxmFCHVU7W9VTjLYH8Je0zuGrx5uhC0ZvO/sfTPA0wYQb8pI16PK6zbdVaDf4Altfe1Ojl8K+/yenWrq7fm0=
+	t=1716991472; cv=none; b=OvMaH24aVqLkSX1Ly4iYGG9aXl0TATr07VRrO4kwB+79nxy8czsiPaKVzQELatN+Y8mhPZsdCIOxwiZCxfRIrx9+DFNs1njpatsVKRfemXuevUHoIxV66piyVQ0fms7r+Tl5HxCZBsSo5JcsRqJHoqQziY7n8YMkS5zYQ3Blt50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716991449; c=relaxed/simple;
-	bh=iJYrtpX9ka5VFZ07GiTH2MWKv9spjWrvU0W38Q3AYDo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=qClsjk8fxNp378nzHhEpnr9JfAJ36fYVLva0LG7+2zmlVGyB8JrIwjVhOMxekQEtYSuiDYjXWbXpqEZXMABqseDXfhuoDKqymNbJIJpOefwtYsJ5FHJBuUBNRYfV0cPBWbuEx9JtprBnMfOCvpN+rwzeR4nZA+onhRCtlV9crhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDw5Xi7h; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ad654913a0so11564986d6.1;
-        Wed, 29 May 2024 07:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716991447; x=1717596247; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4TXrxAfDrmeaY9/60Ysmq8ztm0OX/wGOddNeWUJZZdY=;
-        b=TDw5Xi7hnjxXw03kEHQ0ROpsSNjktX0CogAF95tolSeqef4F9ZmvaGbWEkGDiLCStE
-         TkJOM/NucMN5M5e8sD8rJt8WMXCetD1gmPBq23MYlYXUQYgKW+QC360LSHoEi80F8cbP
-         5LRvSH6rgqliSsPMz347xDP+7+n8lHxB4ejfncLHUaYzaErvCap2mHr8DUhi9KCjYXfd
-         Yx1nGqhD7cMXbD48abuP3sUKVD0Thf3tEaS0UqVV8ZmG2V8Qq8dO6P8+bKeBtR88wWbf
-         W73KE+aiVH8xCcB6v6pCo/cth/Di5wkBWmhYftFVRCSh7/c4+Ae9B73ciJXKvCTGMKWr
-         W7Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716991447; x=1717596247;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4TXrxAfDrmeaY9/60Ysmq8ztm0OX/wGOddNeWUJZZdY=;
-        b=d2kfRyMwD/kZ4SoPZvkscYLVUOSfULRVaYn21BKh3jCgQwHTxqEH0HHvF6AEqBBLPp
-         UJOn8Ab0X/zPfCVLPCDqJ2XGr4EKdQnSFFtljdJbjXpzFGGqpuuSxezdzsK9pnKKlgJo
-         +koRc9n+Is32ESsLxw/3pfhuiHIfEptLHpKRzusEruM0D6d8x3M3IsgtUyQ6wCJd+n1d
-         JPJ/eV366cZLeTjnXQcQHPx1nMNl2seIF+6/V/NFKHJIn13TWt7RyhN8j9mkZQFsOdOu
-         oA38uf5eJCrPVcfEBRx9sE86BeTY4TilrbrUFyVNCeIY9Z9eBtYgLLUofUrMr1su3zV9
-         vxXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkur9L94bh8btjNnN50soK/LnNeANGdSjqC1pLWpcwmf9+vK70BK9wizpKP/VTtQ+/jQia3R1bceroYlPkDskdg7Bz7Irn
-X-Gm-Message-State: AOJu0Yww4spSjlAyj2Js2+8tTv2skZ5W1gKOHK70EEg5Mkep+U00tarT
-	btsWlSbgCgI/+U14wxB5dCumudd4kTQ/xHft7aIBmlpH3h6/SqULum7sAw==
-X-Google-Smtp-Source: AGHT+IFyxiFH4DS8xQoBF1ntUHwzAoeS4Sg/lci/+9tzGl7pl40gu6YoOozl2OmmggDo64waBE1EHQ==
-X-Received: by 2002:a05:6214:459a:b0:6ad:69b1:6577 with SMTP id 6a1803df08f44-6ad69b16652mr154614656d6.28.1716991445263;
-        Wed, 29 May 2024 07:04:05 -0700 (PDT)
-Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ad6f17d7d6sm41111816d6.11.2024.05.29.07.04.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 07:04:04 -0700 (PDT)
-Date: Wed, 29 May 2024 10:04:02 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: =?UTF-8?B?TGVuYSBXYW5nICjnjovlqJwp?= <Lena.Wang@mediatek.com>, 
- "kuba@kernel.org" <kuba@kernel.org>, 
- "willemdebruijn.kernel@gmail.com" <willemdebruijn.kernel@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
- =?UTF-8?B?U2hpbWluZyBDaGVuZyAo5oiQ6K+X5piOKQ==?= <Shiming.Cheng@mediatek.com>, 
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
- "pabeni@redhat.com" <pabeni@redhat.com>, 
- "edumazet@google.com" <edumazet@google.com>, 
- "davem@davemloft.net" <davem@davemloft.net>
-Message-ID: <665735d273a1c_31b267294ce@willemb.c.googlers.com.notmuch>
-In-Reply-To: <782b9eb64af66eba132ac6382305d407e33dd604.camel@mediatek.com>
-References: <20240428142913.18666-1-shiming.cheng@mediatek.com>
- <20240429064209.5ce59350@kernel.org>
- <bc69f8cc4aed8b16daba17c0ca0199fe6d7d24a8.camel@mediatek.com>
- <20240516081110.362cbb51@kernel.org>
- <15675c6e0facd64b1cdc2ec0ded32b84a4e5744b.camel@mediatek.com>
- <664f3aa1847cc_1a64412944f@willemb.c.googlers.com.notmuch>
- <664f59eedbee7_1b5d24294ef@willemb.c.googlers.com.notmuch>
- <782b9eb64af66eba132ac6382305d407e33dd604.camel@mediatek.com>
-Subject: Re: [PATCH net] net: prevent pulling SKB_GSO_FRAGLIST skb
+	s=arc-20240116; t=1716991472; c=relaxed/simple;
+	bh=DdMCRc5EsV5UiaFx4HmAOXxcZCqa946sIQrcpkQtXpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mD9q1wBRHICTdHrm6jkLomCgEG1yA4EsT4wDYA+Vjq0s98T+54uq/9fgMlnxRPcVUt4Te5hG9SjEEI536yfsGmsElbRNQQN5M8W5N6PeKFqmQ6x9LQdUjl2AyCxl0vrD+OHbea6hu78eho+E/w1YFNYAeJ82q8axO4BYfa4wiS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ekgZviop; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=jnTyBxsS5RtHgV77jQhikXeIzn8AQh5mj+B33JmR4+s=;
+	t=1716991470; x=1717423470; b=ekgZviopk162nGrOsq+OK3xgTVve/fMXcIsXl96SUlhHWKz
+	qIjkNmQvOHIa9EuXD+cHvwdxUV4kC8iQQ8mCDSJqeoAdWXWP1XN1mr/cY8pO+P72+Q/eweHQn3rIl
+	O51itnlPqcLm2RBtFC/Lo+AnHel8kkAVFn3Fql2iv6sIjUFHtDOeIoRNyPcPPHPyWtX1W2OPqWXS3
+	HUT6FHJMPYrTAGVZHfoNhRZnBxdZSiIX6bRzphyQ8dhlQY/+ATbYH1GYtaDeivis/dr+np3fftU92
+	UfavS9fhNXZuFSFMUWx3ETkB/Fom6h92MJxUQOjzhWWOXPrgmZZsXfDZaZWty0Yw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sCJuk-0005C2-5J; Wed, 29 May 2024 16:04:26 +0200
+Message-ID: <937e6c6b-7d98-4c9f-b3f7-47e1d6562963@leemhuis.info>
+Date: Wed, 29 May 2024 16:04:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Intermittent inability to type in graphical Plymouth on UEFI VMs
+ since kernel 6.9
+To: Genes Lists <lists@sapience.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Adam Williamson <awilliam@redhat.com>, linux-kernel@vger.kernel.org
+Cc: jforbes@redhat.com, rstrode@redhat.com
+References: <75c17881-68e9-40e7-821c-5655d49d7c0f@redhat.com>
+ <8fee69cc8fdd67fd265790c0fa287cb9566c2349.camel@sapience.com>
+ <165f7cfd-41bc-4c37-b859-a418a3ccece7@leemhuis.info>
+ <c5b3d3ec7701b51dd7b163261c84fb54c778b9bb.camel@sapience.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <c5b3d3ec7701b51dd7b163261c84fb54c778b9bb.camel@sapience.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716991470;0fe3b531;
+X-HE-SMSGID: 1sCJuk-0005C2-5J
 
-Lena Wang (=E7=8E=8B=E5=A8=9C) wrote:
-> On Thu, 2024-05-23 at 10:59 -0400, Willem de Bruijn wrote:
-> >  	 =
+On 29.05.24 15:35, Genes Lists wrote:
+> On Wed, 2024-05-29 at 15:01 +0200, Linux regression tracking (Thorsten
+> Leemhuis) wrote:
+>>>
+>>>     cpu i9-12900K  / Raptor Lake-P [Iris Xe Graphics]
+>   Sorry, this should be:  13th Gen Intel(R) Core(TM) i7-1360P
+>>>
+>>
+>> Does this happen every boot or only sometimes? Could you maybe upload
+>> the full dmesg from a boot where things worked and one where only the
+> For me it is every boot
 
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >  Willem de Bruijn wrote:
-> > > > The problem now is the ethtool in ubuntu can't support "rx-gro-
-> > list"
-> > > > and "rx-udp-gro-forwarding" although it is updated to version 6.7=
+Ahh, good to know. Would you be able to bisect the problem? That would
+help tremendously!
 
-> > from =
+https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.html
 
-> > > > https://mirrors.edge.kernel.org/pub/software/network/ethtool. =
+> - the first few key strokes are accepted but no
+> asterisks are displayed - and it works fine even though fewer asterisks
+> are displayed than characters typed.
 
-> > > > =
+Strange.
 
-> > > > There is another verison in =
+> full dmesg attached.
 
-> > > > =
+Do you by chance also have a dmesg at hand for a boot where everything
+worked normally?
 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/net/ethtool
-> > .
-> > > >  We download the sourcecode but don't know how to compile for
-> > ubuntu as
-> > > > no ./configure there.
-> > > > =
+Adam, do you maybe have dmesg output for the affected cases somewhere?
 
-> > > > Is it the one we should use?  If yes, could you please show me
-> > how to
-> > > > compile and install this ethtool?
-> > > =
+>> P.S.: let me add this to the regression tracking
+>>
+>> #regzbot report: /
+>> #regzbot introduced: v6.8..v6.9
+>> #regzbot summary: Intermittent inability to type in graphical
+>> Plymouth
+>> on UEFI VMs since kernel 6.9
+> 
+> Thank you.
 
-> > > https://git.kernel.org/pub/scm/network/ethtool/ethtool.git is the
-> > > upstream ethtool repo.
-> > > =
+np; but without a bisecting or at least locating the subsystem that is
+causing this we might not get any further. :-/
 
-> > > Since you are testing a custom built kernel, there are other hacky
-> > > ways to configure a feature if you lack a userspace component:
-> > > =
-
-> > > - just hardcode on or off and reboot
-> > > - use YNL ethtool (but features is not implemented yet?)
-> > > - write your own netlink helper
-> > > - abuse some existing kernel API to toggle it, like a rarely uses
-> > systl
-> > =
-
-> > And as shared off-line, virtme-ng (vng) can be a good option for
-> > working on tools/testing/selftests too.
-> > =
-
-> > Ideally
-> > =
-
-> > ```
-> > vng -v -b -f tools/testing/selftests/net
-> > make headers
-> > make -C tools/testing/selftests/net
-> > =
-
-> > vng -v -r arch/x86/boot/bzImage --user root
-> > # inside the VM
-> > make -C tools/testing/selftests TARGETS=3Dnet run_tests
-> > ```
-> > =
-
-> > Though last time I tried I had to use a slightly more roundabout
-> > =
-
-> > ```
-> > make defconfig; make kvm_guest.config
-> > ./scripts/kconfig/merge_config.sh -m .config
-> > tools/testing/selftests/net/config
-> > make olddefconfig
-> > make -j $(nproc) bzImage
-> > make headers
-> > make -C tools/testing/selftests/net
-> > =
-
-> > vng -v -r arch/x86/boot/bzImage --user root
-> > ```
-> > =
-
-> > =
-
-> > =
-
-> https://lpc.events/event/17/contributions/1506/attachments/1143/2441/vi=
-rtme-ng.pdf
-> =
-
-> Dear Willem,
-> In https://github.com/arighi/virtme-ng it needs kernel 6.5 to setup.
-> Current our enviroument doesn't support and we prepare to install a PC
-> with a new ubuntu22.04.
-> =
-
-> Do you know any request for ubuntu version to run vng, Which version is=
-
-> more fit for?
-
-Let's take these configuration questions offline. I've responded.=
+Ciao, Thorsten
 
