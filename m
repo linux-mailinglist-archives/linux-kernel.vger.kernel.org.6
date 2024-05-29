@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-194154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0908D377C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:22:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBC68D3792
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2241C224D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:22:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4A51C22D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D18612B82;
-	Wed, 29 May 2024 13:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F1D12B93;
+	Wed, 29 May 2024 13:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4pgNeyF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l7oxhbXM"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7954511185;
-	Wed, 29 May 2024 13:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CF911CAB;
+	Wed, 29 May 2024 13:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988916; cv=none; b=Iv0wwbrgWpMqCy3QFszHnptB1LozhjnlqV1N5O7pd1CCTiBhgmjOecnuFKNh9DUL+CoqD/9n7eQS+dc2AKlOVNsNnpnm5NJfjKEKvK69rpRIGzaVSKSjjdBRhazbkWo5ElriQLivlB8WEfmzHX0QfS1F699aPC9qJiEjjTF0KXY=
+	t=1716989278; cv=none; b=laZLLRZeyFH0+qmkqk1CLe1bcSLwIQmtQgVoNzJzewMIz6aFdZh0iEH7y5Fw2e0vN91pnvY5mTvUcdnGlijM7XRMrj6aLhMsock0gzg+R3mNR12PduiS2PkEcl8xypVfoSzQNzOkaZzxWLhbx98hHK2dbNqUSVCYvOlsOT0SI9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988916; c=relaxed/simple;
-	bh=FpxFPRp8yPNn8Ngd8ZdEt2mCiE8f6earyUQln/Rb0CQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sqRw8bhkppB2c/ch5PbsfozzTN8FIU3EMaAKiAJnWfDlaeRU56QXDgpRH7qtrFsK1qu9G/amWr4b9RlSDH/sh/ySeyz8mQ0lVhAcIfrns12NMWWflxDrHkQZDHw96FTR4QfP2h1NiLIF+DttVhcYDFJhbJiNg2c0kHAPmMyt69s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4pgNeyF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC540C4AF07;
-	Wed, 29 May 2024 13:21:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716988916;
-	bh=FpxFPRp8yPNn8Ngd8ZdEt2mCiE8f6earyUQln/Rb0CQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d4pgNeyFsGB4iz2l3njE2pOO7qGlrpWslG/r5XGYgR0PRJ+j4KcCUQrwp42svs31L
-	 1x3GLi/3TRsOvbQ7x9mUsymo4fCGSPIGwXlc4/jMuJVKMn/kRLDKbMlepWQSeHMyfE
-	 6LO89YRhipVTja1OWylOM8Afr8DKBGU0tpftjwsQPyAJmmCzgkE+J+OfXJPiA5DNH2
-	 5cd/umDDJGZ+5OR+x/4/R+EeCmGSdkYo9nfqRyl35nrEbMg5rnEDzGDCvc2L9fKPlG
-	 LbQxdxb3AJG0RyvWSMUUHzMlE/EMQ4BUurn1beU+gq1PBOGIq2z0bTSkt1sNG5sn3R
-	 8goRC61yOmNow==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b27afe214so441438e87.1;
-        Wed, 29 May 2024 06:21:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXSjwvdCc0ojFUNcQc/xeAXLTWPhcWZt7VIjpSSt3WDDUq6OfsFG9HrqWN1BZZYM+rA+/icgMkK8CLzG+wWQSaM9uwMDiGC396AjuFqJwZYTO2OkrEcZNWmn6OG6HcxatZxqokoYYSZ9vHQMitBwizXVpoGdO4XQgJvhI0qxd8CH05Gns4zLQ==
-X-Gm-Message-State: AOJu0YyXZFs7gQ5WR/cPaX7HbD3ZqALXoBKRqAmCsdDFC02XLqK5fS+T
-	FyVE1P7fO+7p4yrMqj8HYS+CLAxQmr7VhEYegDXLX08qThIJLaSk5pUHRsEeP/AHJs5ObMqPNgp
-	2Ew1sKlrgi2c2KyQ+aVnpXK4yPg==
-X-Google-Smtp-Source: AGHT+IFXplSoT1DLFl4NUQ8zWQRRW0XvDiFw3ANw9v8lRwpP9IFYRS4Np3FBbmgVr02QNkKdArXMy50Lw+QujeV+Gr0=
-X-Received: by 2002:ac2:5181:0:b0:51f:9a88:be2a with SMTP id
- 2adb3069b0e04-52a829140ccmr708255e87.23.1716988914331; Wed, 29 May 2024
- 06:21:54 -0700 (PDT)
+	s=arc-20240116; t=1716989278; c=relaxed/simple;
+	bh=q/QcWkL0UB/TfKnBBxD16bQnT3JzTfVI78kmbn9Sk7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MGQcR/bcedAvHSXfDVQs8GBGPX9WcRialhPE8d96yUIQHSdlKlsFG5+R/GNFo0k3fXMZOYyVmrEq0VP4FpA+PUGxplGBI0rca6tXUknLUrH3lXA8pMwmTaTBh9Q0vYgDw+WYwf0ucXzTNwVflB+6uYZEGmGnciWrmwcL05rcu1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l7oxhbXM; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4211fb904a8so2870555e9.2;
+        Wed, 29 May 2024 06:27:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716989275; x=1717594075; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TH9AZVvcxUJR/4QUCNHDouLCDuH+SVSmkfVCXWmBq4Q=;
+        b=l7oxhbXMiL2Vl1WY3/xaCvIigZwDbMAHfL95WZ8ROh4JOQ5vmWwnxbHIkzdBEVv8s8
+         S4dRuTWaHCKe9bNzDu/wU7ZvvKkyCNBCG+cCw+iNrP0scxUResY0EtAZhvudiIcZS98o
+         IJMU2TC1/SzeHLEAlMiB1D/YwFClIpZ8yn+8nxoTIYLgkp9RexgKRvbsSB9Iq65n0Ix6
+         v/cH3zr8M/7/H7EoRwA0artA9R74mgwHt+jTvCnBH/841xXS1YfSNjyZnenjyTf4M6+D
+         eZVGg7/+4f55oqqb615kiogcweW8T0jEgjqfK++5nKR1H7STcGw5QXdn13HnEMJpLkf0
+         f/Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716989275; x=1717594075;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TH9AZVvcxUJR/4QUCNHDouLCDuH+SVSmkfVCXWmBq4Q=;
+        b=L6E1PvDtpwn1ChOyu97l0DinF26DANtMAy+FNWqjgC19mte5NgS8LjwNvuMyt6AeSJ
+         +OKic7GivQAoY9kDno3iYgIMFjNqhfrnIDvupxj4h1Sb8xaxiPDQ8/MFBQlktYdI6agF
+         ZksvpN2wn0+4R3qBzXx7bHHnUrJFS3Z+o9ARDOio2AFXZHGsHiR/BJwoMxxDVRweB6Fz
+         m6iFcEIbHmLLlmfgjNJa02DnDviJLoLrlU6/bF5am4qP6JR/nTASLORUomYI2QrNKHN8
+         PD5HswvULaW0mN/oRBQPvuiWQh6XNijO7NPbOverGo9zdoBX3Yqffpp5JUlyEt4y0xWH
+         97Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGg4X3WgLlxpU4pc0FVvoOgze3IWRf+NKTiFlnvr9Qc0g6NpDXV8FERoVI9QK2o6QssfguCBH/Kp/FWrgFswhgFHzVkHnkqQLW4/HX+i8RafQqCP8OUS/U89rkugRBdxfnr/pO4ViMABLfIqMU
+X-Gm-Message-State: AOJu0Yy3zrIgCKU2BooupbNlRo0DqYYdj4Pf+/ddY9P3Vx4pywVq5iqf
+	eWvnAv8NBp/ROsLZyKowJeek5U5mB6K2pADOtXx0rRnp/MsHc27B
+X-Google-Smtp-Source: AGHT+IH/SbtgIvQhfBhQNi+oTOhxI4TBXpdbu6t7iqfcccSs7tfoKygTsnIgdKm44287Hv5UXHMOZA==
+X-Received: by 2002:a05:600c:1d25:b0:419:f241:6336 with SMTP id 5b1f17b1804b1-421089f9e0bmr119003405e9.1.1716989274954;
+        Wed, 29 May 2024 06:27:54 -0700 (PDT)
+Received: from [172.16.102.219] ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ae96bsm179889945e9.35.2024.05.29.06.27.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 06:27:54 -0700 (PDT)
+Message-ID: <11b57fcc-9e30-46c8-96fc-c0d8131a7959@gmail.com>
+Date: Wed, 29 May 2024 14:27:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527-dtbo-check-schema-v1-1-ee1094f88f74@linaro.org>
- <CAL_Jsq+cmNmm4we6B6OdeS_Qty44FxKmtZHDjLBi9f=DaBw4GA@mail.gmail.com>
- <CAA8EJpoeGTitM1vYg712Q2fFPenJJvvA7HS7GBA9pqY87zbOjw@mail.gmail.com> <CAK7LNARXLirGk-rdOUofC9bpKKNiNiiWt9CR8KwyDQgp1X7dAg@mail.gmail.com>
-In-Reply-To: <CAK7LNARXLirGk-rdOUofC9bpKKNiNiiWt9CR8KwyDQgp1X7dAg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 29 May 2024 08:21:40 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+CS1wHV9L+QUDGOiSck=nS_kObhrQN07=JjWX80KQrHQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+CS1wHV9L+QUDGOiSck=nS_kObhrQN07=JjWX80KQrHQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: verify dtoverlay files against schema
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] kunit: Cover 'assert.c' with tests
+To: Rae Moar <rmoar@google.com>
+Cc: brendan.higgins@linux.dev, davidgow@google.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kunit-dev@googlegroups.com, skhan@linuxfoundation.org
+References: <20240516211731.1635930-1-ivan.orlov0322@gmail.com>
+ <CA+GJov7Az+hovuTou=c=SLiB0N9vwT8HD_GDR-h_kA+Nk=TN2w@mail.gmail.com>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <CA+GJov7Az+hovuTou=c=SLiB0N9vwT8HD_GDR-h_kA+Nk=TN2w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 6:31=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Tue, May 28, 2024 at 10:16=E2=80=AFPM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > On Tue, 28 May 2024 at 16:15, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Mon, May 27, 2024 at 6:34=E2=80=AFAM Dmitry Baryshkov
-> > > <dmitry.baryshkov@linaro.org> wrote:
-> > > >
-> > > > Currently only the single part device trees are validated against D=
-T
-> > > > schema. For the multipart schema files only the first file is valid=
-ated.
-> > >
-> > > What do you mean by multipart schema files? Did you mean multipart DT=
-s
-> > > (i.e. base plus overlays)?
-> >
-> > Yes, multipart DT files, dts + dtso =3D> dtb + dtbo =3D> final dtb
-> >
-> > >
-> > > Looks good otherwise and I can fix that up.
-> >
-> > Awesome, thanks!
->
->
->
->
-> This looks equivalent to the former patch rejected by Rob Herring:
->
-> https://lore.kernel.org/lkml/20240225151209.343160-1-alexander.stein@mail=
-box.org/
->
->
->
-> Did he change his mind since then?
+On 5/20/24 22:12, Rae Moar wrote:
+> On Thu, May 16, 2024 at 11:17 PM Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
+>>
+>> There are multiple assertion formatting functions in the `assert.c`
+>> file, which are not covered with tests yet. Implement the KUnit test
+>> for these functions.
+>>
+>> The test consists of 11 test cases for the following functions:
+>>
+>> 1) 'is_literal'
+>> 2) 'is_str_literal'
+>> 3) 'kunit_assert_prologue', test case for multiple assert types
+>> 4) 'kunit_assert_print_msg'
+>> 5) 'kunit_unary_assert_format'
+>> 6) 'kunit_ptr_not_err_assert_format'
+>> 7) 'kunit_binary_assert_format'
+>> 8) 'kunit_binary_ptr_assert_format'
+>> 9) 'kunit_binary_str_assert_format'
+>> 10) 'kunit_assert_hexdump'
+>> 11) 'kunit_mem_assert_format'
+>>
+>> The test aims at maximizing the branch coverage for the assertion
+>> formatting functions.
+>>
+>> As you can see, it covers some of the static helper functions as
+>> well, so mark the static functions in `assert.c` as 'VISIBLE_IF_KUNIT'
+>> and conditionally export them with EXPORT_SYMBOL_IF_KUNIT. Add the
+>> corresponding definitions to `assert.h`.
+>>
+>> Build the assert test when CONFIG_KUNIT_TEST is enabled, similar to
+>> how it is done for the string stream test.
+>>
+>> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> 
+> Hi! This looks great to me!
+> 
+> Reviewed-by: Rae Moar <rmoar@google.com>
+> 
 
-I think I misinterpreted the prior one to be checking just overlays
-rather than base+overlay seeing the 'dtbo' in it.
+Hi Rae,
 
-Of the 2, this patch seems a bit cleaner.
+Thank you so much for the review and sorry for the late reply :)
 
-Rob
+-- 
+Kind regards,
+Ivan Orlov
+
 
