@@ -1,100 +1,79 @@
-Return-Path: <linux-kernel+bounces-193359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BE18D2ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:20:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E688D2ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 04:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EACB32842AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466EB1C2275D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 02:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B2315ADA8;
-	Wed, 29 May 2024 02:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FA115B0E8;
+	Wed, 29 May 2024 02:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1qVvQWR"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M9BAirMw"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBEA15ADB1;
-	Wed, 29 May 2024 02:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A5315ADA8;
+	Wed, 29 May 2024 02:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716949248; cv=none; b=EWblckkG11ZjKmFJutE+iHdPgVA1WFPYUDtS4bClmvMaVysCh0RsxUECqnzFPtYq9iSPEB2kkwjcomhn6Y2Lwie0DasToYJlbh03A5bq+OEWIsH+TiX3WFrmJHtoq9RitcW3nsbb7XowvqyuryNpagmZHrEwYfa5DkfhTtSZ9e8=
+	t=1716949480; cv=none; b=XuvvwOJlhs99JvciDpiRSeYbsyOzu3vq8C/JBwWChYCgFwhMfIKi5K4yrHnZXAUUDxsfqCSgS6i3yGtRpq0hqdvshAtTTch3BkC5HHr3i0QsGrfjDHAYPLuJOa0vaCbLKhdXYynxjMeyIj3WpfdeNB8npXHmL7y1VnO1lDgzM7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716949248; c=relaxed/simple;
-	bh=U+W//EVdx0UAbUQqkIfAMe/SGhPbRP7U+NdtplK/RrA=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=iE9nRB+0DmHzNZgVFm/SEqyOIhxWnQm9P6fPZY/jko7vknEaEzlgYdJYa7UP5RSHzQaa4MDhXYjndKp7a6rusdcvSnXiymVbz8F5QF4efGO77qE/+pU9bXUkB0DV95DFfYSuq/y35FEjQdQQGnwICUDs9tmu80NIqm7nZGV9kY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1qVvQWR; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1716949480; c=relaxed/simple;
+	bh=LD/u7PQH0Qz185qWoqI56yH1j1u5QtJq9nIgw/rdnG4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q/peIiGMRWBru4SZKibrmgb6spRIQ4U9+qa/LwF6gZBsXiZ0HWx//ThvyAhRXyry1GRjedt78CG+cfgw2gEumUWrOAFLJb8eUxVxaWe++MoFoCS/Tg+DuYtx3RT0yZQaZi6i6G7BCt5SpbaR5eyb8OCtocMip9aggtifikUAUU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M9BAirMw; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6fcbd812b33so1366295b3a.3;
-        Tue, 28 May 2024 19:20:46 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2bde4d15867so269327a91.3;
+        Tue, 28 May 2024 19:24:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716949246; x=1717554046; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=347Tv+L36ItrUa9DcwFsT5YsIM2weBtvDOWbMcJm1vI=;
-        b=U1qVvQWRKaxP7cRgOBoKDYOhJkDDfTvEnvXEkYQZygfslqSrvy7URENsqpRWyrwbE2
-         RrcCt9SnSdPxmthf3ebWWz9Cz8CXbHCp4+g4341P6ZomtKi7AxTFCD3yEsceLfP9xMur
-         wqR2VflEypP0+UD825nPAqlKB8cmctXCpKYGHnCZmeL4SPa/9cjwugUz/RKygL0q43Nc
-         cIWKXpZVwzPF4tHQ43YBrTUFTCvFdlkwddqHqEqMA4h84wcqqO3wd5LdQeg0zkEsNNIv
-         KMofHkIDPPD9lkfXqKCK+J2d/2SzBrGUtXyq0KyZJUO4Tec94EZbe0NtYkiBGxOZUwBQ
-         Xqbw==
+        d=gmail.com; s=20230601; t=1716949478; x=1717554278; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A6lxg6L9XPIoxH+sYdGJUuWSOxXCo7mdMoMtsrXkU84=;
+        b=M9BAirMwKGPvwibOsc9fJMyFuYYbecjyU035+C7p2V2xn9KVpxxwPDCI1ddZVf3tDK
+         Yg803iMluR8IM4rFJlLNl/EYr56Uru1Qo0+rDMnYrCilRYp4uWKrk70QlHQGJLq5db01
+         FP1aD0rfptk0Rg01/vUoKwUtGk7WVhQ3e2Rgu5TxTC7XIykqBWhB4dWwumfXTWiJYIA6
+         a+aXqvUCknvxzJ0YQkP0FjVXPsg01AWf93LSiucNdWl8Oe+mNcXHE0ORhcozV9uvbODl
+         8a620F9Gsh0R3IY5iB/KwWHG1lIDWyaEv7CcxXVWzfLDjKHErnFOQPPLJm/KA+JuzROw
+         IKLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716949246; x=1717554046;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=347Tv+L36ItrUa9DcwFsT5YsIM2weBtvDOWbMcJm1vI=;
-        b=FDtFnCevcASMJwlzwNk/3lbRtR+vFTXBCL/PDc+niO863xcKzp9XVuVawB7XTqi93e
-         vpj3Os0GmLj/PfYWqPF9Y3hLfuR/aH00/3yQYs20NqQ4ElBJDtGnJsf6Xu58srBlsHqn
-         018xCg/4n9/W47qcFkHyEpmEWXreCmmRScvqOfMvHQgvISI0GXeOS8TFboS+HCl9ixZW
-         pWp2eZuaQCp8ouiVbqi+3fAEfDWb2imBbKk+KJ7a0N/l1E1xya6mn2MFgG9zIqI5pAR4
-         9llG54yYypgcypua1kYiHRHTRCv2n8SEDw9B1MNQIaud5QY9GyyZBJsY99jfxkimFiD6
-         oyjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYe0bUleE1nWFycPX9E3yqoHZA5gePpsFOob6bFtoxLhhQEF82ejT0806E3zGVxI5do1fHMFfwp28IaEre0sQJO10lFVGQOkvPyTaNmyFDgFKd3IP93mTYiFDwGony6a1gnxTQvpU4QbXeTOQR
-X-Gm-Message-State: AOJu0YxAA2mA4u+XyW0uYbyydzX5M9HmrpDrs9mD/Y5JjX0Owdrw76uA
-	OQqdsPZtl4Bh5eQXaos+lupGSA1ziSvF0VbqW5Sfsg0WrOHrg7uz
-X-Google-Smtp-Source: AGHT+IHoETe02pTx/zsmIpmRrV07oYeWjfDTOvDLsnucWpNSSmY9ikIEOi0eCyGo/VAVReoqmSQpdw==
-X-Received: by 2002:a05:6a20:da8f:b0:1af:aec3:2841 with SMTP id adf61e73a8af0-1b212e5bddbmr15754764637.56.1716949245970;
-        Tue, 28 May 2024 19:20:45 -0700 (PDT)
-Received: from localhost.localdomain ([2604:a880:4:1d0::427:6000])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2bf5f6155b6sm9410812a91.29.2024.05.28.19.20.44
+        d=1e100.net; s=20230601; t=1716949478; x=1717554278;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A6lxg6L9XPIoxH+sYdGJUuWSOxXCo7mdMoMtsrXkU84=;
+        b=CQlAySSti2SorVyP+KJMXkEIwK8Oo+UH29TXRfOBZ1vspqAArgg7pWCfxHJu1SxGiI
+         b8I9FdMZMWU2RZSd82vk3IbqPlA5G1Ked1xrFNby9B9WHvISLJM0wnvPp02qWGoF1VnH
+         Fe50+xkS3Vl5BbtD/RzbL8e23Q/3Nk/xJatSVeAFrS8SxHQaCNCIxDADXSRmSPgIE55g
+         QNT+Uqs6nAt22PGye1KfJfXmo4LC7f+P/dFqT9B+q8tQn5AAQjnf1MdManFMA8RSpXLw
+         KDZXUrKzBKikUisbt+UH9Ywhjt5ggU2ufwvwdGsXvhQ2hGW8yO8klMacTPlzrmwSo9Ou
+         VUkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbekYXobV9TyYXmXlw0M2QsrQuYqfVMRiTXmgx2x4p0jrUggqdVZichkr1tpFAAJtwZZwl2V0xY0xmTmI4tThO1EE97ke4VeDg9ct3Dcn4Cv5CzmOx7XawoiYG6FJc+0YiloAX
+X-Gm-Message-State: AOJu0Yw9YHZ/MVYe9TS1pCjxoki04bOOwbQP+fSpEDeizURtTrDoDxoe
+	eLL9BexEghyxb/uL7NEYLvmMNg7K7sTcK6l9Oc4qxATNgFvXcuCN1Dz7KO5+
+X-Google-Smtp-Source: AGHT+IGvFepMkHKmzZJpa/37FHNiBg5wiyNcezQ4F8iraf2aIl03Ti5h7ik3UOYEMGAfJg3TH9Otww==
+X-Received: by 2002:a17:903:41d0:b0:1f3:453:2c82 with SMTP id d9443c01a7336-1f4498f40c2mr155926845ad.4.1716949478375;
+        Tue, 28 May 2024 19:24:38 -0700 (PDT)
+Received: from localhost.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9c6fd1sm89856375ad.278.2024.05.28.19.24.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 19:20:45 -0700 (PDT)
-From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Kees Cook <keescook@chromium.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Pengfei Xu <pengfei.xu@intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Tue, 28 May 2024 19:24:38 -0700 (PDT)
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] x86/traps: Enable UBSAN traps on x86
-Date: Wed, 29 May 2024 02:20:30 +0000
-Message-Id: <20240529022043.3661757-1-gatlin.newhouse@gmail.com>
+	ki.chiang65@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v3 2/2] xhci: Apply broken streams quirk to Etron EJ188 xHCI host
+Date: Wed, 29 May 2024 10:24:19 +0800
+Message-Id: <20240529022420.9449-1-ki.chiang65@gmail.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -102,219 +81,41 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Bring x86 to parity with arm64, similar to commit 25b84002afb9
-("arm64: Support Clang UBSAN trap codes for better reporting").
-Enable the output of UBSAN type information on x86 architectures
-compiled with clang when CONFIG_UBSAN_TRAP=y. Currently ARM
-architectures output which specific sanitizer caused the trap,
-via the encoded data in the trap instruction. Clang on x86
-currently encodes the same data in ud1 instructions but the x86
-handle_bug() and is_valid_bugaddr() functions currently only look
-at ud2s.
+As described in commit 8f873c1ff4ca ("xhci: Blacklist using streams on the
+Etron EJ168 controller"), EJ188 have the same issue as EJ168, where Streams
+do not work reliable on EJ188. So apply XHCI_BROKEN_STREAMS quirk to EJ188
+as well.
 
-Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
 ---
- MAINTAINERS                  |  2 ++
- arch/x86/include/asm/bug.h   |  8 ++++++++
- arch/x86/include/asm/ubsan.h | 21 +++++++++++++++++++++
- arch/x86/kernel/Makefile     |  1 +
- arch/x86/kernel/traps.c      | 34 ++++++++++++++++++++++++++++------
- arch/x86/kernel/ubsan.c      | 32 ++++++++++++++++++++++++++++++++
- 6 files changed, 92 insertions(+), 6 deletions(-)
- create mode 100644 arch/x86/include/asm/ubsan.h
- create mode 100644 arch/x86/kernel/ubsan.c
+Changes in v3:
+- Fix coding style
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 28e20975c26f..b8512887ffb1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
- L:	linux-hardening@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-+F:	arch/x86/include/asm/ubsan.h
-+F:	arch/x86/kernel/ubsan.c
- F:	Documentation/dev-tools/ubsan.rst
- F:	include/linux/ubsan.h
- F:	lib/Kconfig.ubsan
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index a3ec87d198ac..e3fbed9073f8 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -13,6 +13,14 @@
- #define INSN_UD2	0x0b0f
- #define LEN_UD2		2
- 
-+/*
-+ * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-+ */
-+#define INSN_UD1	0xb90f
-+#define LEN_UD1		2
-+#define INSN_REX	0x67
-+#define LEN_REX		1
-+
- #ifdef CONFIG_GENERIC_BUG
- 
- #ifdef CONFIG_X86_32
-diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
-new file mode 100644
-index 000000000000..5235822eb4ae
---- /dev/null
-+++ b/arch/x86/include/asm/ubsan.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_UBSAN_H
-+#define _ASM_X86_UBSAN_H
-+
-+/*
-+ * Clang Undefined Behavior Sanitizer trap mode support.
-+ */
-+#include <linux/bug.h>
-+#include <linux/ubsan.h>
-+#include <asm/ptrace.h>
-+
-+#ifdef CONFIG_UBSAN_TRAP
-+enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn);
-+#else
-+static inline enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn)
-+{
-+	return BUG_TRAP_TYPE_NONE;
-+}
-+#endif /* CONFIG_UBSAN_TRAP */
-+
-+#endif /* _ASM_X86_UBSAN_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 74077694da7d..fe1d9db27500 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
- 
- obj-$(CONFIG_CFI_CLANG)			+= cfi.o
-+obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
- 
- obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
- 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 4fa0b17e5043..7876449e97a0 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -67,6 +67,7 @@
- #include <asm/vdso.h>
- #include <asm/tdx.h>
- #include <asm/cfi.h>
-+#include <asm/ubsan.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -79,6 +80,9 @@
- 
- DECLARE_BITMAP(system_vectors, NR_VECTORS);
- 
-+/*
-+ * Check for UD1, UD2, with or without REX instructions.
-+ */
- __always_inline int is_valid_bugaddr(unsigned long addr)
- {
- 	if (addr < TASK_SIZE_MAX)
-@@ -88,7 +92,13 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
- 	 * We got #UD, if the text isn't readable we'd have gotten
- 	 * a different exception.
- 	 */
--	return *(unsigned short *)addr == INSN_UD2;
-+	if (*(u16 *)addr == INSN_UD2)
-+		return INSN_UD2;
-+	if (*(u16 *)addr == INSN_UD1)
-+		return INSN_UD1;
-+	if (*(u8 *)addr == INSN_REX && *(u16 *)(addr + 1) == INSN_UD1)
-+		return INSN_REX;
-+	return 0;
- }
- 
- static nokprobe_inline int
-@@ -216,6 +226,7 @@ static inline void handle_invalid_op(struct pt_regs *regs)
- static noinstr bool handle_bug(struct pt_regs *regs)
- {
- 	bool handled = false;
-+	int insn;
- 
- 	/*
- 	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
-@@ -223,7 +234,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 	 * irqentry_enter().
- 	 */
- 	kmsan_unpoison_entry_regs(regs);
--	if (!is_valid_bugaddr(regs->ip))
-+	insn = is_valid_bugaddr(regs->ip);
-+	if (insn == 0)
- 		return handled;
- 
- 	/*
-@@ -236,10 +248,20 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 	 */
- 	if (regs->flags & X86_EFLAGS_IF)
- 		raw_local_irq_enable();
--	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
--	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
--		regs->ip += LEN_UD2;
--		handled = true;
-+
-+	if (insn == INSN_UD2) {
-+		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-+		handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-+			regs->ip += LEN_UD2;
-+			handled = true;
-+		}
-+	} else {
-+		if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
-+			if (insn == INSN_REX)
-+				regs->ip += LEN_REX;
-+			regs->ip += LEN_UD1;
-+			handled = true;
-+		}
+Changes in v2:
+- Porting to latest release
+
+ drivers/usb/host/xhci-pci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index dd8256e4e02a..05881153883e 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -397,8 +397,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 		xhci->quirks |= XHCI_BROKEN_STREAMS;
  	}
- 	if (regs->flags & X86_EFLAGS_IF)
- 		raw_local_irq_disable();
-diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-new file mode 100644
-index 000000000000..6cae11f4fe23
---- /dev/null
-+++ b/arch/x86/kernel/ubsan.c
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Clang Undefined Behavior Sanitizer trap mode support.
-+ */
-+#include <linux/bug.h>
-+#include <linux/string.h>
-+#include <linux/printk.h>
-+#include <linux/ubsan.h>
-+#include <asm/ptrace.h>
-+#include <asm/ubsan.h>
-+
-+/*
-+ * Checks for the information embedded in the UD1 trap instruction
-+ * for the UB Sanitizer in order to pass along debugging output.
-+ */
-+enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn)
-+{
-+	u32 type = 0;
-+
-+	if (insn == INSN_REX) {
-+		type = (*(u16 *)(regs->ip + LEN_REX + LEN_UD1));
-+		if ((type & 0xFF) == 0x40)
-+			type = (type >> 8) & 0xFF;
-+	} else {
-+		type = (*(u16 *)(regs->ip + LEN_UD1));
-+		if ((type & 0xFF) == 0x40)
-+			type = (type >> 8) & 0xFF;
+ 	if (pdev->vendor == PCI_VENDOR_ID_ETRON &&
+-			pdev->device == PCI_DEVICE_ID_EJ188)
++			pdev->device == PCI_DEVICE_ID_EJ188) {
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
++		xhci->quirks |= XHCI_BROKEN_STREAMS;
 +	}
-+	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-+
-+	return BUG_TRAP_TYPE_NONE;
-+}
+ 
+ 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
+ 	    pdev->device == 0x0014) {
 -- 
 2.25.1
 
