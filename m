@@ -1,155 +1,141 @@
-Return-Path: <linux-kernel+bounces-194088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81068D3669
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C138D3670
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 174A51C240ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7755F1F268D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69679181312;
-	Wed, 29 May 2024 12:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0AE181312;
+	Wed, 29 May 2024 12:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IuJVe1Zf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ViFZqJ4b"
-Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqOHqJG6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B962869A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA36363;
+	Wed, 29 May 2024 12:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716985802; cv=none; b=Sx5s30OYF56cQs/NU58jhX/Tp0HKbzzATtGv63eMBbuCQWN3O3Y541y8eMJXUBWKVBf0cxBT/hy98fsVNb9SHCxM2H/1osfjV+b46LRedYfO4PskLazs0ncLqFuicxacd1ZWsgQLx7q7rbLv2/7Gdxk0h5J0qtU2+nls1i62oB0=
+	t=1716985844; cv=none; b=gDQ5dg2rWsMkn4rEsXTV60E9wacVUOU0jdglnpQdX6pYV8PxfcX9jkleZXrPO6voyK4YPn/pZrwkszitWn2+6aDT5WH00oINBDTEB9CxoKHpf+zLuMVKYXcDP8T7gMxkr97G8IR8B13tolKId03YEJ5b7bJnyH43puD6O69Druw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716985802; c=relaxed/simple;
-	bh=ZTtRPXu1uNDYT6LgLq48Uj+HG2fXM4HZEfAeRbVg/S8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=geNje5zKKycp3yH/ABH0kxY3TVOrzFh54E2MizeUaKG8kliSl1Fh4F1d/g5FG8ec3/QVZiByIUIXbHcheEFmZO6qgc3/XdbVo6Xqj5R7lm+ApK+DyrE7bIw2GJ9JS7H7EZIdscTIPRNVHzyVodD6+lBjcSK0gDV0KomPTIKtzjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IuJVe1Zf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ViFZqJ4b; arc=none smtp.client-ip=64.147.123.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id C24351C00099;
-	Wed, 29 May 2024 08:29:58 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 29 May 2024 08:29:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716985798; x=1717072198; bh=sYEH2A6/Fk
-	Kh/OJLUXEHX6R9YKo5fgdDk4asAVIZiks=; b=IuJVe1Zf7fCjzap6H2auKd2dqY
-	7k73pHCYJbWDAJUanYcM9AGs/HNJR/yNPxYc1WkqJH+hkSc3oIMp5Bp0XUCV4uM/
-	tnZhfD4Wg7FfqcJLS1iywUERe0Eu8/pgg+5d+B1eZ9vnS2ac41elIsXCb/DgryvT
-	8J/vbIJyNoYKbv4ixoLAjJYgW3QRNzE9IF/h9RUNuEXU3VrlbOrDhUt/6XMpVeJQ
-	4NQeUjHrdAVVCBPHjZ/5yl2uaJrptDlqG2iFRT+C2djZMhInOphs75V79UsKagT/
-	RuuaGVIbM2mh0eOQxqAU+5kxzz7/aVSJhhA4VXM1RJud+FkiohYIdKHFFe6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716985798; x=1717072198; bh=sYEH2A6/FkKh/OJLUXEHX6R9YKo5
-	fgdDk4asAVIZiks=; b=ViFZqJ4bqYqRAZUaLYl8b9eN/AoyJoD27teUzLcTqKgH
-	rbnX0OKFWV08aKLDLKzVYW6R4ocyiTaQ9bEyK/5Lfd53iD8YsmU5BjpUlshDFew/
-	8/O/IHGGcuZGO2Q3ayOcx8dxXAuRDZl9tRFZzhoBSJjmghVVEOr/svuKnRNNmUOW
-	wf1OqISEQ0ODkVZDSAS5deitJjNylvgMfMqOPEJv62fNK9qkPE3DNFbC0XXzwr6g
-	fCszrE9M36QjG6tRzjV4Iy+opNdE+Boy9qP3m2M800bK5R+nDuBbYlW013ZebWxB
-	n+uRZnmm0zjh240JrjnmkzRTMCsZw+5/YURHArKU3Q==
-X-ME-Sender: <xms:xR9XZkLRlytlGyw4d4A60DnhoP5Z0mhayQaUqevlNAAsEl8-PtorzQ>
-    <xme:xR9XZkKBc2KroIEg_hMnfT4tJQWIwV_KkPYpaZK47UDe0CX5RQYWANO6osvadR325
-    LdEvH56cCG_28a_opw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddghedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:xh9XZkuthw1-7YQQjH4tPQafzhSaYVcFu3a1CRBq4kLZ-Aik_7P-Kw>
-    <xmx:xh9XZhaXfbhpLSASX4oNdbkYVPT9r5YMTXBokUe4-J0zdT4VxN9TFQ>
-    <xmx:xh9XZrbcwvsKW3sL-_8_ahozUP7o2APrIxAtfLAqyJ8dnaAwKpyV7Q>
-    <xmx:xh9XZtAZ8hC2H5fgxF7YxlQh-x8KAl9p91lfOQthPhnDeovrTWtJow>
-    <xmx:xh9XZlmpHqbCLS_ATCbpwQyFkC1K3gVVT2qMx0Egx-kIJJ9vKn6OTcze>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E0E08B6008D; Wed, 29 May 2024 08:29:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716985844; c=relaxed/simple;
+	bh=qysojHCt34lVFTw5o2Qb7u5ZiOetrK6Y8yCv6llDkDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=POtsATQp7g8ClZd6wHQ8716Jrca9s1TCmDpoWxXM/7SDRalJhQVcZ8L7uKt3psV7xZhG60jDTNEMHlqyoU5VeOV2BPR+FPj9OVygt8WTBkT1ShSqMCmovX5tJHsQSxid3uX3f7nbxn5Ixn1h8K/OGfDyTBKRvCY3ZJOlkPv6jVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqOHqJG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28720C2BD10;
+	Wed, 29 May 2024 12:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716985843;
+	bh=qysojHCt34lVFTw5o2Qb7u5ZiOetrK6Y8yCv6llDkDk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rqOHqJG6pDRXPs0fuBXdRkc3NnC+xVkBeSDqxkWl3KxABGtlBElwcfkQW85zquJ7G
+	 jTvcRI+M+3cR3tZHyuhtl6cBwc2rl2NMc1O2bTYQizleqFkbVGkGqI0lZ+vP7iuc06
+	 d5gP5u7BBYEVDFuMjwP/ieHfNp634csCdEoBIxl/hQXok0Me8lFYnn9esa2UTwMYm4
+	 M2xejWyhHH5jJuTXKHFmvu+pi9B7onfIzIhDZSuRdErqLaTOJMH1z8M/72Hi3Oneuj
+	 zIf/1Lz1fspjD8A2vPqvjlCKiCVk1ijHbhgsDVweRU1KCVeAABl1eYRdFH3zE2Sgvp
+	 kUKHOc7ui6X9w==
+Message-ID: <e32117a4-9616-401f-bf50-23312ce15199@kernel.org>
+Date: Wed, 29 May 2024 14:30:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <8ff9bc52-bf2f-4856-9335-14bf659e7e4c@app.fastmail.com>
-In-Reply-To: <ZlcODqVXTDh6n0h-@J2N7QTR9R3>
-References: <20240528120844.3523915-1-arnd@kernel.org>
- <ZlcODqVXTDh6n0h-@J2N7QTR9R3>
-Date: Wed, 29 May 2024 14:29:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mark Rutland" <mark.rutland@arm.com>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "Valentin Schneider" <vschneid@redhat.com>, "Baoquan He" <bhe@redhat.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/io: add constant-argument check
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] dt-bindings: clock: qcom: split the non-PD schema
+ for GCC
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Robert Marko <robimarko@gmail.com>, Konrad Dybcio
+ <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240528-qcom-gdscs-v1-0-03cf1b102a4f@linaro.org>
+ <20240528-qcom-gdscs-v1-1-03cf1b102a4f@linaro.org>
+ <9a1bbcbd-7f46-4266-8f08-5650a42234d4@kernel.org>
+ <CAA8EJppu8kKC_zXRBAK9XAaPZ7SYShiZwpfQGYpC10Aj28Lxjw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAA8EJppu8kKC_zXRBAK9XAaPZ7SYShiZwpfQGYpC10Aj28Lxjw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 29, 2024, at 13:14, Mark Rutland wrote:
->>  {
->> -	if (count == 8 || count == 4 || count == 2 || count == 1) {
->> +	if (__builtin_constant_p(count) &&
->> +	    (count == 8 || count == 4 || count == 2 || count == 1)) {
->>  		__const_memcpy_toio_aligned32(to, from, count);
->>  		dgh();
->>  	} else {
->
-> I don't think this is the right fix.
->
-> The idea was that this was checked in __iowrite32_copy(), which does:
->
-> 	#define __iowrite32_copy(to, from, count)                  \
-> 	        (__builtin_constant_p(count) ?                     \
-> 	                 __const_iowrite32_copy(to, from, count) : \
-> 	                 __iowrite32_copy_full(to, from, count))
->
-> ... and so __const_iowrite32_copy() should really be marked as __always_inline,
-> and the same for __const_memcpy_toio_aligned32(), to guarantee that both get
-> inlined and such that __const_memcpy_toio_aligned32() sees a constant.
->
-> The same reasoning applies to __const_iowrite64_copy() and
-> __const_memcpy_toio_aligned64().
->
-> Checking for a constant in __const_iowrite32_copy() doesn't guarantee
-> that __const_memcpy_toio_aligned32() is inlined and will actually see a
-> constant.
->
-> Does diff the below you for you?
+On 29/05/2024 09:58, Dmitry Baryshkov wrote:
+>>> -    const: 1
+>>> -
+>>> -  '#reset-cells':
+>>> -    const: 1
+>>> +allOf:
+>>> +  - $ref: qcom,gcc-nopd.yaml
+>>>
+>>> +properties:
+>>>    '#power-domain-cells':
+>>>      const: 1
+>>
+>> So what's left here? One property? Not much benefit. Triple-schema
+>> (include something to include something) does not make it readable. Just
+>> do not require power-domain-cells in qcom,gcc.yaml.
+> 
+> And add it to the required list on all relevant platforms? Ack, sounds
+> fine to me.
 
-Yes, your version addresses both failures I ran into, and
-I think all other theoretical cases.
+Yes.
 
-I would prefer to combine both though, using __always_inline
-to force the compiler to pick the inline version over
-__iowrite32_copy_full() even when it is optimizing for size
-and it decides the inline version is larger, but removing
-the extra complexity from the macro.
+Best regards,
+Krzysztof
 
-According to Jason, he used a macro here to be sure
-that the compiler can detect an inline function argument
-as constant when the value is known but it is not
-a constant value according to the C standard.
-
-This was indeed a problem in older versions of clang
-that missed a lot of optimizations in the kernel, but
-clang-8 and higher were changed to have the same behavior
-as gcc here, so it is no longer necessary now that the
-older versions are unable to build kernels.
-
-     Arnd
 
