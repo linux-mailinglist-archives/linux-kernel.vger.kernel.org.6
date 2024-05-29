@@ -1,287 +1,296 @@
-Return-Path: <linux-kernel+bounces-194495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C878D3D29
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B21B8D3D2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E141F2458F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1261C23466
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98100187341;
-	Wed, 29 May 2024 16:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEC715ADA3;
+	Wed, 29 May 2024 17:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AuhPsZll"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MexWv8wR"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C303D1C6B2;
-	Wed, 29 May 2024 16:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA5510A35
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717001963; cv=none; b=QrCi4gM51cuoD4cvNKK1Fa53sNAbhs/MAhID++xErTzUU61Ejw1d816wZ6UOO5uH8kitZJmQWo4oWWLBUuj63U1nn9ubxx2AEbZDGpLRDiPGwLdCfSJRGfQqQYGP5pjlQ8xpizFVzqxZW1UPQT0MCxsQ8dd9AITOzrRS68HyZ3o=
+	t=1717002044; cv=none; b=CQ9JWVyo8phN4wDyRSoN7WJszCbdeE2OfgpwUhVxWZMct0v68IvchH0/Xo+h8bUSGbR8UfjpCeFXZ42RugHP6lZoR7qIlRblDxFxUmyqpBvkIPdKBG0ppbpsGfDvvgHSUxNX275E40nteWZHFtZaqSnAImxMbuEBXDbR4EHC4CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717001963; c=relaxed/simple;
-	bh=3JmITgZLRm7PzrB8DVGRCNYKXDP7KKvUR8Ly1J2HzPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VF/Rbc95PvRuOIxZmRxxxPthj2+3MOo848GB0N/rywdVQV9f3BuMkYM9L13WalGeVrPmzuYcEPdeAfjlAGA0V/f1ZquEzKu4TGMwz8ZcLssywbkw6hYHDDwwIL1xMWxI+0qrhta6kANsBCLYH3QELEPzTrLWbTmXsOPFffa7K/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AuhPsZll; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=u+J7UNedaAitVJ/3TUFXdqiVh6hPSZVkhW52IorTbi0=; b=AuhPsZllPuI7ck4umh5WNFlRM4
-	kjDsDXMQhqShyRjMN84jniKFVV1xgB4Uxj+kuH7+ZQ17fWCTsnKVqBzLoqnrzK5H175Jc35DdhZaz
-	41jV09v9hOtW9JOyYemFejCrsVjrJmwd6svk2O1maclnS8lv/I9Kb4Ab7iJ80fGuZXRtzoZMBqk8a
-	A+7RCy8gUAspOMQS/jKankHGJI6hWDHYzFiG/ZQPfseDgiXwUXKBpnzlNC24uNCy3K0XXitp1sn3D
-	KBPKFd81xny2RqK03UZG8+YgaqrqKsW4SzK4QdyvPXeWk5l3vM24QGqCoQ59r3d4DCztjQgcZAD1f
-	KQ4bz4NQ==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCMdy-000000050Zo-1YlQ;
-	Wed, 29 May 2024 16:59:18 +0000
-Message-ID: <9076abad-01f6-4ff4-a176-c2f4a85eb3fc@infradead.org>
-Date: Wed, 29 May 2024 09:59:17 -0700
+	s=arc-20240116; t=1717002044; c=relaxed/simple;
+	bh=bu7NemNpKFWjO/TMFN45dKSrd4mpHQUTXoAEcBKTrDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xb/MFhFKrQAZdA0g2LSz+f6c0yFp1sKJoo9yHttdMVb37tBOVvMMeavas/cIDgyElE8eRTej5bsbgN83lW5RdioNgYOeYw1zPDqgxe16nKqvG0/EeIyH+AXstosf/3vOVBUIP/2U+7b0zfPnrdTFV7jrv1UqJvE8NPypSwD/TUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MexWv8wR; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso553a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717002041; x=1717606841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CoiH6lwmGs4PCawaoWyQsbF1ZjB3aSEqZRmZUUflfr8=;
+        b=MexWv8wRG+kMBoVgKVpRzGNzcZndfD6xFQI8n/c+n6yi/TnJ8aRPnyi9P7rZpT7FQl
+         gsoCfHkFANgsGQobbUrhAHV15zfDkFXIDXXwpAAJvwG+ZQY/2Fz2+Pg0FXkeYZpEvENB
+         YvjEEu+1gHsyPtgvC1p3qE6bOyNf1sV6Nz0g8pNpRxJiAu3zShFMh8FiJgFIGYojun7Z
+         eOftMXuvKvAtVZRQvFyan0yzV0+wou0MJ3q3G0/I+JhPrJ7XE2uwMCQguUnCKHKO7zc7
+         Y/fpND9QkGt1vTr1dXO0WbMZ7eJwHPyTKfhLGS1siQWkg0jUD4qv/0uZTYAi6mV2yLKl
+         fAuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717002041; x=1717606841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CoiH6lwmGs4PCawaoWyQsbF1ZjB3aSEqZRmZUUflfr8=;
+        b=IsIIEETHWPO2c60nXXI2TvAb9cf7Id7xgb36OeHilfFx5FtqQmjFcLcfDGdVWBKFMT
+         kU3ZenuJZtYo3wF6mY4uaqzxliXajCOSzjMUaw9Kx1/nxLHNUm/ojsGP6vTfVXTcZtOt
+         JnmFbV8+x42Yp62WjW0i4XZTeFQU9PacUGQ4NBhCnb4IbiI3aa4F08EKkjbtYSJhOxMv
+         yioz/gXVKmLBtZFpiY0qje0ARfzOkwdMoYQ6zC/+ipLd7EMvnNam5wLLZb/hsOiRSw2C
+         9x0woAIqK7hoEu9yW6qDvkVPp1nh1Kr2OErp8m+ATCcY8XUhUEmHBoD1WIsiOCU5p3eD
+         Kodg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyCLvN71qZZQXSO+68/oHuCBYfrGlIyv3sxjzJHVx4lL2JCrNNzhus0jlBTmQ+M+a3QqBzAbEiKZgT+SiOGscVFFX0HjnGVG6mLWBN
+X-Gm-Message-State: AOJu0YyKIMoJa0zjRez2ymqTClo/N1bny4TVAkk09UThVo7f4BVe4Yj9
+	gKehVJSL5WHr1VP2FnpI+LI6+tzb3u2QqJZdLFablnSn8naJqFAB1sDjQAjHjJxo3JKaMdNdZKX
+	ybG5Eg+FCCVHRQuLnLvDhPz9lXlKSuLFu3kUZ
+X-Google-Smtp-Source: AGHT+IGiepejwPJySSOJTS8Vdh/jCe6ATC7+zN+DhmTfyw6FDv0F1k25j/gWlegvODKQm49Var2SQjMrbaSqv9YkIEo=
+X-Received: by 2002:a05:6402:290f:b0:578:33c0:f00e with SMTP id
+ 4fb4d7f45d1cf-57a02fcb5dfmr233619a12.0.1717002040619; Wed, 29 May 2024
+ 10:00:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 3/3] doc: new 'mptcp' page in 'networking'
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Gregory Detal <gregory.detal@gmail.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240528-upstream-net-20240520-mptcp-doc-v2-0-47f2d5bc2ef3@kernel.org>
- <20240528-upstream-net-20240520-mptcp-doc-v2-3-47f2d5bc2ef3@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240528-upstream-net-20240520-mptcp-doc-v2-3-47f2d5bc2ef3@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240507-cros_ec-hwmon-v2-0-1222c5fca0f7@weissschuh.net>
+ <20240507-cros_ec-hwmon-v2-1-1222c5fca0f7@weissschuh.net> <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+ <9cf224dd-51eb-4608-abcf-06f337d08178@t-8ch.de> <SY4P282MB306325BB023A95198F25A21DC5F12@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+ <c9b110eb-ff0e-41f2-9492-8a5d8c3c01d0@roeck-us.net> <b8072b36-688f-41b8-8b32-40fc4fa4d148@t-8ch.de>
+ <6824f030-92da-4439-af3b-8c2498f4382e@roeck-us.net> <SY4P282MB30638301303268093B6D1ABFC5F22@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+ <22a16af6-93c4-454c-853b-5959a5c018d3@t-8ch.de> <SY4P282MB30634D9D9873C9C8DC41D4EEC5F22@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+In-Reply-To: <SY4P282MB30634D9D9873C9C8DC41D4EEC5F22@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+From: Guenter Roeck <groeck@google.com>
+Date: Wed, 29 May 2024 10:00:27 -0700
+Message-ID: <CABXOdTcyuR-YJYoMrAh11ksYcL-6LZPFERw94Z8-mTgMUfLP3g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] hwmon: add ChromeOS EC driver
+To: Stephen Horvath <s.horvath@outlook.com.au>
+Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, 
+	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>, 
+	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	Dustin Howett <dustin@howett.net>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Moritz Fischer <mdf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, May 29, 2024 at 12:40=E2=80=AFAM Stephen Horvath
+<s.horvath@outlook.com.au> wrote:
+>
+> Hi Thomas,
+>
+> On 29/5/24 16:23, Thomas Wei=C3=9Fschuh wrote:
+> > On 2024-05-29 10:58:23+0000, Stephen Horvath wrote:
+> >> On 29/5/24 09:29, Guenter Roeck wrote:
+> >>> On 5/28/24 09:15, Thomas Wei=C3=9Fschuh wrote:
+> >>>> On 2024-05-28 08:50:49+0000, Guenter Roeck wrote:
+> >>>>> On 5/27/24 17:15, Stephen Horvath wrote:
+> >>>>>> On 28/5/24 05:24, Thomas Wei=C3=9Fschuh wrote:
+> >>>>>>> On 2024-05-25 09:13:09+0000, Stephen Horvath wrote:
+> >>>>>>>> Don't forget it can also return `EC_FAN_SPEED_STALLED`.
+> >
+> > <snip>
+> >
+> >>>>>>>
+> >>>>>>> Thanks for the hint. I'll need to think about how to
+> >>>>>>> handle this better.
+> >>>>>>>
+> >>>>>>>> Like Guenter, I also don't like returning `-ENODEV`,
+> >>>>>>>> but I don't have a
+> >>>>>>>> problem with checking for `EC_FAN_SPEED_NOT_PRESENT`
+> >>>>>>>> in case it was removed
+> >>>>>>>> since init or something.
+> >>>>>>>
+> >>>>>
+> >>>>> That won't happen. Chromebooks are not servers, where one might
+> >>>>> be able to
+> >>>>> replace a fan tray while the system is running.
+> >>>>
+> >>>> In one of my testruns this actually happened.
+> >>>> When running on battery, one specific of the CPU sensors sporadicall=
+y
+> >>>> returned EC_FAN_SPEED_NOT_PRESENT.
+> >>>>
+> >>>
+> >>> What Chromebook was that ? I can't see the code path in the EC source
+> >>> that would get me there.
+> >>>
+> >>
+> >> I believe Thomas and I both have the Framework 13 AMD, the source code=
+ is
+> >> here:
+> >> https://github.com/FrameworkComputer/EmbeddedController/tree/lotus-zep=
+hyr
+> >
+> > Correct.
+> >
+> >> The organisation confuses me a little, but Dustin has previous said on=
+ the
+> >> framework forums (https://community.frame.work/t/what-ec-is-used/38574=
+/2):
+> >>
+> >> "This one is based on the Zephyr port of the ChromeOS EC, and tracks
+> >> mainline more closely. It is in the branch lotus-zephyr.
+> >> All of the model-specific code lives in zephyr/program/lotus.
+> >> The 13"-specific code lives in a few subdirectories off the main tree =
+named
+> >> azalea."
+> >
+> > The EC code is at [0]:
+> >
+> > $ ectool version
+> > RO version:    azalea_v3.4.113353-ec:b4c1fb,os
+> > RW version:    azalea_v3.4.113353-ec:b4c1fb,os
+> > Firmware copy: RO
+> > Build info:    azalea_v3.4.113353-ec:b4c1fb,os:7b88e1,cmsis:4aa3ff 2024=
+-03-26 07:10:22 lotus@ip-172-26-3-226
+> > Tool version:  0.0.1-isolate May  6 2024 none
+>
+> I can confirm mine is the same build too.
+>
+> >  From the build info I gather it should be commit b4c1fb, which is the
+> > current HEAD of the lotus-zephyr branch.
+> > Lotus is the Framework 16 AMD, which is very similar to Azalea, the
+> > Framework 13 AMD, which I tested this against.
+> > Both share the same codebase.
+> >
+> >> Also I just unplugged my fan and you are definitely correct, the EC on=
+ly
+> >> generates EC_FAN_SPEED_NOT_PRESENT for fans it does not have the capab=
+ility
+> >> to support. Even after a reboot it just returns 0 RPM for an unplugged=
+ fan.
+> >> I thought about simulating a stall too, but I was mildly scared I was =
+going
+> >> to break one of the tiny blades.
+> >
+> > I get the error when unplugging *the charger*.
+> >
+> > To be more precise:
+> >
+> > It does not happen always.
+> > It does not happen instantly on unplugging.
+> > It goes away after a few seconds/minutes.
+> > During the issue, one specific sensor reads 0xffff.
+> >
+>
+> Oh I see, I haven't played around with the temp sensors until now, but I
+> can confirm the last temp sensor (cpu@4c / temp4) will randomly (every
+> ~2-15 seconds) return EC_TEMP_SENSOR_ERROR (0xfe).
+> Unplugging the charger doesn't seem to have any impact for me.
+> The related ACPI sensor also says 180.8=C2=B0C.
+> I'll probably create an issue or something shortly.
+>
+> I was mildly confused by 'CPU sensors' and 'EC_FAN_SPEED_NOT_PRESENT' in
+> the same sentence, but I'm now assuming you mean the temp sensor?
+>
 
-Fix a few run-on sentences:
+Same here. it might not matter as much if the values were the same,
+but EC_FAN_SPEED_NOT_PRESENT =3D=3D 0xffff,  and
+EC_TEMP_SENSOR_NOT_PRESENT=3D=3D0xff, so they must not be confused with
+each other. EC_TEMP_SENSOR_NOT_PRESENT should be static as well,
+though, and not be returned randomly.
 
-On 5/28/24 1:09 AM, Matthieu Baerts (NGI0) wrote:
-> A general documentation about MPTCP was missing since its introduction
-> in v5.6.
-> 
-> Most of what is there comes from our recently updated mptcp.dev website,
-> with additional links to resources from the kernel documentation.
-> 
-> This is a first version, mainly targeting app developers and users.
-> 
-> Link: https://www.mptcp.dev
-> Reviewed-by: Mat Martineau <martineau@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
-> Notes:
->   - v2:
->     - Fix mptcp.dev link syntax.
-> ---
->  Documentation/networking/index.rst |   1 +
->  Documentation/networking/mptcp.rst | 156 +++++++++++++++++++++++++++++++++++++
->  MAINTAINERS                        |   2 +-
->  3 files changed, 158 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-> index 7664c0bfe461..a6443851a142 100644
-> --- a/Documentation/networking/index.rst
-> +++ b/Documentation/networking/index.rst
-> @@ -72,6 +72,7 @@ Contents:
->     mac80211-injection
->     mctp
->     mpls-sysctl
-> +   mptcp
->     mptcp-sysctl
->     multiqueue
->     multi-pf-netdev
-> diff --git a/Documentation/networking/mptcp.rst b/Documentation/networking/mptcp.rst
-> new file mode 100644
-> index 000000000000..ee0ae68ca271
-> --- /dev/null
-> +++ b/Documentation/networking/mptcp.rst
-> @@ -0,0 +1,156 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=====================
-> +Multipath TCP (MPTCP)
-> +=====================
-> +
-> +Introduction
-> +============
-> +
-> +Multipath TCP or MPTCP is an extension to the standard TCP and is described in
-> +`RFC 8684 (MPTCPv1) <https://www.rfc-editor.org/rfc/rfc8684.html>`_. It allows a
-> +device to make use of multiple interfaces at once to send and receive TCP
-> +packets over a single MPTCP connection. MPTCP can aggregate the bandwidth of
-> +multiple interfaces or prefer the one with the lowest latency, it also allows a
+Guenter
 
-                                                         latency. It also
-
-> +fail-over if one path is down, and the traffic is seamlessly reinjected on other
-> +paths.
-> +
-> +For more details about Multipath TCP in the Linux kernel, please see the
-> +official website: `mptcp.dev <https://www.mptcp.dev>`_.
-> +
-> +
-> +Use cases
-> +=========
-> +
-> +Thanks to MPTCP, being able to use multiple paths in parallel or simultaneously
-> +brings new use-cases, compared to TCP:
-> +
-> +- Seamless handovers: switching from one path to another while preserving
-> +  established connections, e.g. to be used in mobility use-cases, like on
-> +  smartphones.
-> +- Best network selection: using the "best" available path depending on some
-> +  conditions, e.g. latency, losses, cost, bandwidth, etc.
-> +- Network aggregation: using multiple paths at the same time to have a higher
-> +  throughput, e.g. to combine fixed and mobile networks to send files faster.
-> +
-> +
-> +Concepts
-> +========
-> +
-> +Technically, when a new socket is created with the ``IPPROTO_MPTCP`` protocol
-> +(Linux-specific), a *subflow* (or *path*) is created. This *subflow* consists of
-> +a regular TCP connection that is used to transmit data through one interface.
-> +Additional *subflows* can be negotiated later between the hosts. For the remote
-> +host to be able to detect the use of MPTCP, a new field is added to the TCP
-> +*option* field of the underlying TCP *subflow*. This field contains, amongst
-> +other things, a ``MP_CAPABLE`` option that tells the other host to use MPTCP if
-> +it is supported. If the remote host or any middlebox in between does not support
-> +it, the returned ``SYN+ACK`` packet will not contain MPTCP options in the TCP
-> +*option* field. In that case, the connection will be "downgraded" to plain TCP,
-> +and it will continue with a single path.
-> +
-> +This behavior is made possible by two internal components: the path manager, and
-> +the packet scheduler.
-> +
-> +Path Manager
-> +------------
-> +
-> +The Path Manager is in charge of *subflows*, from creation to deletion, and also
-> +address announcements. Typically, it is the client side that initiates subflows,
-> +and the server side that announces additional addresses via the ``ADD_ADDR`` and
-> +``REMOVE_ADDR`` options.
-> +
-> +Path managers are controlled by the ``net.mptcp.pm_type`` sysctl knob -- see
-> +mptcp-sysctl.rst. There are two types: the in-kernel one (type ``0``) where the
-> +same rules are applied for all the connections (see: ``ip mptcp``) ; and the
-> +userspace one (type ``1``), controlled by a userspace daemon (i.e. `mptcpd
-> +<https://mptcpd.mptcp.dev/>`_) where different rules can be applied for each
-> +connection. The path managers can be controlled via a Netlink API, see
-
-                                                                 API; see
-
-> +netlink_spec/mptcp_pm.rst.
-> +
-> +To be able to use multiple IP addresses on a host to create multiple *subflows*
-> +(paths), the default in-kernel MPTCP path-manager needs to know which IP
-> +addresses can be used. This can be configured with ``ip mptcp endpoint`` for
-> +example.
-> +
-> +Packet Scheduler
-> +----------------
-> +
-> +The Packet Scheduler is in charge of selecting which available *subflow(s)* to
-> +use to send the next data packet. It can decide to maximize the use of the
-> +available bandwidth, only to pick the path with the lower latency, or any other
-> +policy depending on the configuration.
-> +
-> +Packet schedulers are controlled by the ``net.mptcp.scheduler`` sysctl knob --
-> +see mptcp-sysctl.rst.
-> +
-> +
-> +Sockets API
-> +===========
-> +
-> +Creating MPTCP sockets
-> +----------------------
-> +
-> +On Linux, MPTCP can be used by selecting MPTCP instead of TCP when creating the
-> +``socket``:
-> +
-> +.. code-block:: C
-> +
-> +    int sd = socket(AF_INET(6), SOCK_STREAM, IPPROTO_MPTCP);
-> +
-> +Note that ``IPPROTO_MPTCP`` is defined as ``262``.
-> +
-> +If MPTCP is not supported, ``errno`` will be set to:
-> +
-> +- ``EINVAL``: (*Invalid argument*): MPTCP is not available, on kernels < 5.6.
-> +- ``EPROTONOSUPPORT`` (*Protocol not supported*): MPTCP has not been compiled,
-> +  on kernels >= v5.6.
-> +- ``ENOPROTOOPT`` (*Protocol not available*): MPTCP has been disabled using
-> +  ``net.mptcp.enabled`` sysctl knob, see mptcp-sysctl.rst.
-
-                                  knob; see
-
-> +
-> +MPTCP is then opt-in: applications need to explicitly request it. Note that
-> +applications can be forced to use MPTCP with different techniques, e.g.
-> +``LD_PRELOAD`` (see ``mptcpize``), eBPF (see ``mptcpify``), SystemTAP,
-> +``GODEBUG`` (``GODEBUG=multipathtcp=1``), etc.
-> +
-> +Switching to ``IPPROTO_MPTCP`` instead of ``IPPROTO_TCP`` should be as
-> +transparent as possible for the userspace applications.
-> +
-> +Socket options
-> +--------------
-> +
-> +MPTCP supports most socket options handled by TCP. It is possible some less
-> +common options are not supported, but contributions are welcome.
-> +
-> +Generally, the same value is propagated to all subflows, including the ones
-> +created after the calls to ``setsockopt()``. eBPF can be used to set different
-> +values per subflow.
-> +
-> +There are some MPTCP specific socket options at the ``SOL_MPTCP`` (284) level to
-> +retrieve info. They fill the ``optval`` buffer of the ``getsockopt()`` system
-> +call:
-> +
-> +- ``MPTCP_INFO``: Uses ``struct mptcp_info``.
-> +- ``MPTCP_TCPINFO``: Uses ``struct mptcp_subflow_data``, followed by an array of
-> +  ``struct tcp_info``.
-> +- ``MPTCP_SUBFLOW_ADDRS``: Uses ``struct mptcp_subflow_data``, followed by an
-> +  array of ``mptcp_subflow_addrs``.
-> +- ``MPTCP_FULL_INFO``: Uses ``struct mptcp_full_info``, with one pointer to an
-> +  array of ``struct mptcp_subflow_info`` (including the
-> +  ``struct mptcp_subflow_addrs``), and one pointer to an array of
-> +  ``struct tcp_info``, followed by the content of ``struct mptcp_info``.
-> +
-> +Note that at the TCP level, ``TCP_IS_MPTCP`` socket option can be used to know
-> +if MPTCP is currently being used: the value will be set to 1 if it is.
-> +
-> +
-> +Design choices
-> +==============
-> +
-> +A new socket type has been added for MPTCP for the userspace-facing socket. The
-> +kernel is in charge of creating subflow sockets: they are TCP sockets where the
-> +behavior is modified using TCP-ULP.
-> +
-> +MPTCP listen sockets will create "plain" *accepted* TCP sockets if the
-> +connection request from the client didn't ask for MPTCP, making the performance
-> +impact minimal when MPTCP is enabled by default.
-
-
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+> >>>>>>> Ok.
+> >>>>>>>
+> >>>>>>>> My approach was to return the speed as `0`, since
+> >>>>>>>> the fan probably isn't
+> >>>>>>>> spinning, but set HWMON_F_FAULT for `EC_FAN_SPEED_NOT_PRESENT` a=
+nd
+> >>>>>>>> HWMON_F_ALARM for `EC_FAN_SPEED_STALLED`.
+> >>>>>>>> No idea if this is correct though.
+> >>>>>>>
+> >>>>>>> I'm not a fan of returning a speed of 0 in case of errors.
+> >>>>>>> Rather -EIO which can't be mistaken.
+> >>>>>>> Maybe -EIO for both EC_FAN_SPEED_NOT_PRESENT (which
+> >>>>>>> should never happen)
+> >>>>>>> and also for EC_FAN_SPEED_STALLED.
+> >>>>>>
+> >>>>>> Yeah, that's pretty reasonable.
+> >>>>>>
+> >>>>>
+> >>>>> -EIO is an i/o error. I have trouble reconciling that with
+> >>>>> EC_FAN_SPEED_NOT_PRESENT or EC_FAN_SPEED_STALLED.
+> >>>>>
+> >>>>> Looking into the EC source code [1], I see:
+> >>>>>
+> >>>>> EC_FAN_SPEED_NOT_PRESENT means that the fan is not present.
+> >>>>> That should return -ENODEV in the above code, but only for
+> >>>>> the purpose of making the attribute invisible.
+> >>>>>
+> >>>>> EC_FAN_SPEED_STALLED means exactly that, i.e., that the fan
+> >>>>> is present but not turning. The EC code does not expect that
+> >>>>> to happen and generates a thermal event in case it does.
+> >>>>> Given that, it does make sense to set the fault flag.
+> >>>>> The actual fan speed value should then be reported as 0 or
+> >>>>> possibly -ENODATA. It should _not_ generate any other error
+> >>>>> because that would trip up the "sensors" command for no
+> >>>>> good reason.
+> >>>>
+> >>>> Ack.
+> >>>>
+> >>>> Currently I have the following logic (for both fans and temp):
+> >>>>
+> >>>> if NOT_PRESENT during probing:
+> >>>>     make the attribute invisible.
+> >>>>
+> >>>> if any error during runtime (including NOT_PRESENT):
+> >>>>     return -ENODATA and a FAULT
+> >>>>
+> >>>> This should also handle the sporadic NOT_PRESENT failures.
+> >>>>
+> >>>> What do you think?
+> >>>>
+> >>>> Is there any other feedback to this revision or should I send the ne=
+xt?
+> >>>>
+> >>>
+> >>> No, except I'd really like to know which Chromebook randomly generate=
+s
+> >>> a EC_FAN_SPEED_NOT_PRESENT response because that really looks like a =
+bug.
+> >>> Also, can you reproduce the problem with the ectool command ?
+> >
+> > Yes, the ectool command reports the same issue at the same time.
+> >
+> > The fan affected was always the sensor cpu@4c, which is
+> > compatible =3D "amd,sb-tsi".
+> >
+> >> I have a feeling it was related to the concurrency problems between AC=
+PI and
+> >> the CrOS code that are being fixed in another patch by Ben Walsh, I wa=
+s also
+> >> seeing some weird behaviour sometimes but I *believe* it was fixed by =
+that.
+> >
+> > I don't think it's this issue.
+> > Ben's series at [1], is for MEC ECs which are the older Intel
+> > Frameworks, not the Framework 13 AMD.
+>
+> Yeah sorry, I saw it mentioned AMD and threw it into my kernel, I also
+> thought it stopped the 'packet too long' messages (for
+> EC_CMD_CONSOLE_SNAPSHOT) but it did not.
+>
+> Thanks,
+> Steve
 
