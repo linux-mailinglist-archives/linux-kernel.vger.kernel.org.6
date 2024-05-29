@@ -1,116 +1,86 @@
-Return-Path: <linux-kernel+bounces-193616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFC58D2EB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:44:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572E98D2EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 09:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6746E2845B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4EE21F227FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD881167DAF;
-	Wed, 29 May 2024 07:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6B3168C19;
+	Wed, 29 May 2024 07:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuFc0cXg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PO0OiuaF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q7rgiyBu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1221E167D82;
-	Wed, 29 May 2024 07:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E89D167D82;
+	Wed, 29 May 2024 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968668; cv=none; b=gFhNPInb1Z9vCxDiF5SMUUvof204Rrg9mqWttxc+J+tXJDlVqmQu2cD8plgxDlwEOjuKPMX2UQMFSz6wbmGY/j3enBEV8XFf+M8h4JGo+q/D+Biw3WxQoTMTDAfAXR0flpR7EfJfcI9UYsg+JavDNfzU/ryosjc+bleUrr7plkM=
+	t=1716968673; cv=none; b=pXBfQxUgvBh/1O5hEDJpBmgLXTV1dQBZW7iQOAAk9kKkDJTyeypy9UkbDhf5FI6OHIw5xnQFPyxZymROFSs+9/w1pH93GpRQ+by3l5Ua8wd+tIgl+/AEj9mqn/kAc19CcUh/gtfyAkJ+uM/4c9wZsQT+XML9NHYRY5Z6NSqLFNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968668; c=relaxed/simple;
-	bh=AzzDMJdA28GXgKKNDPed4G6wzS0vsyy1cTbdGo0qXx4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=SQYB5ZuJrbdLDzkWoZiGB8xmKHFsNCGYRoRwVpbsH1NSkZLBa9WolELGvsmaumbp3ISFQWeDAj0Xs92qQQqrGt54CLkxt1DkaAmlmjgcap6WpW+6mxcWVDjNbu1UAvQ9CvHqB2DOoNQh0sxpCJjFmlUoB6q1FhqxSj2+afyKdDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuFc0cXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07FEC32786;
-	Wed, 29 May 2024 07:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716968667;
-	bh=AzzDMJdA28GXgKKNDPed4G6wzS0vsyy1cTbdGo0qXx4=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-	b=IuFc0cXg7QZcBM/e78aPfrhBLd64oyBQbj++bPzquLHjN1El6N7G2cxjH1GnojcRA
-	 UAKgr8AanpQgN8kkqaHAe8P0V7JngaFfbCjhgzUImu22Xgy+mGBaWrA9phVcoHfHqO
-	 UPXcvCCmHqylLRul5mz4vw/TWykgIHybn23Iry3+RSb0wmoETVk5GDR59Vy9XVXEoj
-	 qi2YbSTTRB2zolkkfCW3W6YbxsKuatjmKdN6zpVfi0iYx38TvZehfY2onAdGON1EVG
-	 bx0Iddop5HCFibaQ+9aiEJq4H/zC3vZMNTddS9VtdcCgX5afQqorzRtPF97+YQCRGM
-	 RpgA1b5BXBrsA==
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id BCF861200032;
-	Wed, 29 May 2024 03:44:25 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 29 May 2024 03:44:25 -0400
-X-ME-Sender: <xms:2dxWZp09F_zgveTjUahiJYfxfKwtcrUDlCKk32Euwgn0mJ4j1L61iw>
-    <xme:2dxWZgFm8nF-9Ui0ZZ7M9s3S74-EbNno_ppR7o3eiP9PBwU4VVX9Mwf5E3EFr1T6e
-    b3zKIoYXPnRMYtlWtQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdektddgudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhepvdeviefgtedugeevieelvdfgveeuvdfgteegfeeiieejjeffgeeghedu
-    gedtveehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedt
-    vdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrd
-    guvg
-X-ME-Proxy: <xmx:2dxWZp6sJipIZmP3vYTZHtAJI65-auL8_Lbf2Jz0zwZDFGgV9xRydw>
-    <xmx:2dxWZm3fGByL6p01B6SN1ErYS7B7tw5cia8zk88c15tNPpxLkoY03Q>
-    <xmx:2dxWZsHTEgrpqSJk7YbP9EskBR6ulP_ZET3rojqM-BTs7H52ghit3w>
-    <xmx:2dxWZn8rFkl481g5QNQpWGJcK2hD297RINDbNuaqutcHZ77_zknmiA>
-    <xmx:2dxWZpkwNrdA9PO5hp2wfEY6MB5IcP2qaLlJdlASDuJ4HazGG-WRRemt>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7935EB6008D; Wed, 29 May 2024 03:44:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716968673; c=relaxed/simple;
+	bh=l3e4XGMHeqcaFp3c1alhM0SyyJVOB5RJ7bsPdFCYRN8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eCjxwpoEq4EGHul7hmisiRL+cEo/bC+Va4MyTUdy5nJJtGvoKCCYd2mwaZpeK28CSRZ+KnOT4MwtJQ4z+Q4x/5uEPSeLvNkzfYKQIo4xrMMO4oalhkTl8Igxqd+F+q42TXAXrJQ0aK7C6XD+Sjfr47jvbTC1QarKfknJQVKtIjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PO0OiuaF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q7rgiyBu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716968670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mE7vhuw8E8wyrs8rvI3fGpK9jO0/z9blbeaNe3TtmiY=;
+	b=PO0OiuaFLleooo1+dtSkvMQjkTrFudYxYH5KWj6YOvItGVIGS6JxJZbuq8RCbxWBYaTIx7
+	s21/4z3VbO6X2qMsQtjfU4DWk3GN6/0ejRB7x/gpo2UQKNorZ2lCuMUmlUKLl5apnwQ7ec
+	GQHz3XCGa7m6ILRNSZ86Ij614LFIs44DoJZj0mWP+Ai56Z6HUf3pS8WxMu6lznQbJAvzEh
+	gVtSyeQY9dDR6TE44DoQzIrJY8FMcBrI9cW8YSr8d/8o5nVILoIpgdI8J6GVqHxoMm5Zij
+	h8//lbHMoCfCSI7AQEN2TKeHFSahkCSuJbzSdvGjZw3WpezkxaH0ZRGMJOhrAQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716968670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mE7vhuw8E8wyrs8rvI3fGpK9jO0/z9blbeaNe3TtmiY=;
+	b=Q7rgiyBuaPBuX9ChZ48AH9RKAG5r8XoZwmgSilvIKza7XbFzr6wsuccCBuyuIlvaeuxgTB
+	tplYnc+/FnroHHCg==
+To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, Dave Hansen
+ <dave.hansen@intel.com>, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+ mat.jonczyk@o2.pl, rdunlap@infradead.org, alexandre.belloni@bootlin.com,
+ mario.limonciello@amd.com, yaolu@kylinos.cn, bhelgaas@google.com,
+ justinstitt@google.com, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Cc: CobeChen@zhaoxin.com, TimGuo@zhaoxin.com, LeoLiu-oc@zhaoxin.com, Linus
+ Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+In-Reply-To: <2553dd17-f763-4894-89b7-5f76c03d3a37@zhaoxin.com>
+References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
+ <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com> <87wmnda8mc.ffs@tglx>
+ <2553dd17-f763-4894-89b7-5f76c03d3a37@zhaoxin.com>
+Date: Wed, 29 May 2024 09:44:30 +0200
+Message-ID: <87ikyx9i5d.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <b779241d-36d8-4728-a126-9340bc569a2d@app.fastmail.com>
-In-Reply-To: <0da9785e-ba44-4718-9d08-4e96c1ba7ab2@kernel.org>
-References: <cover.1712080158.git.legion@kernel.org>
- <cover.1713375378.git.legion@kernel.org>
- <e4229fe2933a003341e338b558ab1ea8b63a51f6.1713375378.git.legion@kernel.org>
- <2024041836-most-ablaze-f417@gregkh>
- <0da9785e-ba44-4718-9d08-4e96c1ba7ab2@kernel.org>
-Date: Wed, 29 May 2024 09:44:04 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Jiri Slaby" <jirislaby@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Alexey Gladkov" <legion@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kbd@lists.linux.dev,
- linux-api@vger.kernel.org, linux-fbdev@vger.kernel.org,
- linux-serial@vger.kernel.org, "Alexander Viro" <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v5 1/3] VT: Use macros to define ioctls
 Content-Type: text/plain
 
-On Wed, May 29, 2024, at 09:29, Jiri Slaby wrote:
-> On 18. 04. 24, 8:18, Greg Kroah-Hartman wrote:
->> 
->> This is a nice cleanup, thanks for doing it, I'll just take this one
->> change now if you don't object.
+On Wed, May 29 2024 at 12:39, Tony W Wang-oc wrote:
+> printk deadlock will happened at #A because in_nmi() evaluates to false 
+> on CPU B and CPU B do not enter the panic() AT #A.
 >
-> Unfortunately, _IOC_NONE is 1 on some archs as noted by Arnd, and this 
-> commit changed the kd ioctl values in there which broke stuff as noted 
-> by Al.
->
-> We either:
-> * use _IOC(0, X, Y) in here, instead of _IO(X, Y), or
-> * define KDIOC(X) as _IOC(0, KD_IOCTL_BASE, X), or
-> * revert the commit which landed to -rc1 already.
+> Update user space MCE handler to NMI class context is preferred?
 
-I would prefer a simple revert, as the other options may
-end up more confusing. Another option might be a new
-global macro, if we then go an convert all plain ioctl
-command numbers to that.
-
-      Arnd
+No.
 
