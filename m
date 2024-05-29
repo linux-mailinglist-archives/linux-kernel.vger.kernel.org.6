@@ -1,399 +1,518 @@
-Return-Path: <linux-kernel+bounces-194720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0859F8D40FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28648D4102
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874E11F23548
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:01:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58131C21D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB501CB329;
-	Wed, 29 May 2024 22:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354198BFF;
+	Wed, 29 May 2024 22:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="fQqtc9Db"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KXjriEh5"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599FA15D5A3;
-	Wed, 29 May 2024 22:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6772A15B56D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717020039; cv=none; b=Y4ER0JfMXQPnXScyjdSU7WACp22cJcNYvb/1MKpjEpQXhwQezX8PTUZdvYMqfEylN+JIdRCutFmSzpAYMrVmXkM6E3u+a+ZnUcpTLwrk3ZrJvlcz8Suui9puzMUkrqGocgoEyOFDRYQ5rQkrBqsKOcWzcYN5jI3DVRVImXGZi5g=
+	t=1717020085; cv=none; b=DDeMiRLr6vj8p0MpmMk2ExqZ4rO3cGm7sPyE7AZxd6YiUxSGjue3Q+5vRXbZQqM+dn6xqFYxzbMJ2vNJIGL2HsXleuSIYN+oH9PbqcVYWs62ONTLV8cbfYjAaL3C0GVU1C1mo0LYZmbdPw6CLRi5JQBqflL4fDhAq3BrlXOugpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717020039; c=relaxed/simple;
-	bh=r/aE+f+SQbJG3ozKay0GlDI7/LC67ye9uc0/R7BeTd4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KmkZ/oLDteGnDYi/hnvqkdkDIcrWbqw6RiPm0dx257J2jkkh8XgH0N52aA75oHwqQdAe4oebOdTW2oy94l+ke+MpU4S/cokhNJGlxQ0OqvagawYLB1xYEB1nWp8LlMyP241PO3QooKSwFxQwbCZscNbjlZha1BeWy3+xQCSESGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=fQqtc9Db; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TIdMZ6015558;
-	Wed, 29 May 2024 15:00:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=Z
-	I9+uU4quOo3lWwYZ/skqAd4eQQMLx6FgwuZHgq4ogE=; b=fQqtc9DbE2X0qj3E1
-	/Q7j/Xz2dOlFRWRoRusiqAWww+tR1zcz5Mpb78k+9mMyxM/L8WFXRK9PyDzPGtTn
-	hN3AeSFKz2PcG5Us7RE7DdhURGUvW6gZDE3YVLgqZYUKD6Auuc2jOg7b6B3Fw7sg
-	h92G7J5DAhejhccdo563QhP9WaqTQ3SFQvgcT2HO2xoIfSGPJ7dy+CkvelaMBQUN
-	VowPhAAwlAknit6zIsABoaASFn4sei2JVSvRmoIqkvMytPbW5D/cSHPBVcD4Vda7
-	Okhw++9M+MGuuM6vl/+IhsSMT+DgkBEcxaUHgaZBu+hUHn2mO5ERQ/aAnhPfINV1
-	dZv1Q==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ye1r12k8p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 15:00:32 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 29 May 2024 15:00:31 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 29 May 2024 15:00:31 -0700
-Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
-	by maili.marvell.com (Postfix) with ESMTP id E885E5B6951;
-	Wed, 29 May 2024 15:00:30 -0700 (PDT)
-From: Witold Sadowski <wsadowski@marvell.com>
-To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <broonie@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
-Subject: [PATCH v7 4/4] spi: cadence: Add MRVL overlay xfer operation support
-Date: Wed, 29 May 2024 15:00:26 -0700
-Message-ID: <20240529220026.1644986-5-wsadowski@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240529220026.1644986-1-wsadowski@marvell.com>
-References: <20240529220026.1644986-1-wsadowski@marvell.com>
+	s=arc-20240116; t=1717020085; c=relaxed/simple;
+	bh=/dl3WXZPKEpj6eRb77uairP23Vq/Geuk1+wiQC+1Sv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X/gk4wEAGMXsJ+6LfvoL2hhwJduFY5wduTtGA/+LSunA5vJ9eGDhX894Ah+XSVWFv4xNgQMmzfHy9KOdRJIr1icD6WDfu41NIKVCSa1hbo+uzsQI4x9mSAEbv1FhuvUB/ETrF83JEBdqv6ZW/FfTSCU8WrTFFLyg7JsICHiLQPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KXjriEh5; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52388d9ca98so311992e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 15:01:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717020081; x=1717624881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YPw7pJqGQqGrJdWLiIksVOtxDOglpODROYPG1rIj4Yw=;
+        b=KXjriEh5KiqOIKSexq5mEBZUGnsPbZvvJTn981WLnNeFPAkVa9hkM+uk+UIv0dQefM
+         wnSUxenP391vzQj8CWfkssD73E/VbsS0iO1nZGXe1lTYviPU5/VfyPpDxah3qyz2HZD1
+         oU/9EfQ+9zdY7WhmQ835OCFr2k7RzQO7ndIyA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717020081; x=1717624881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YPw7pJqGQqGrJdWLiIksVOtxDOglpODROYPG1rIj4Yw=;
+        b=W5D3gBErGn31eEf87siFK2KQMedNU6FT7XSG/oCQzHS4gB9UwELQ2Bc2++v9ZPFXtT
+         YVvjy8yxnfPvWhLth3PpgopD88y+PwUC9y4NbXkTVqFN22WwVnZulxsB+xCYjwXvUkdr
+         YNFa3Ai4VjCMZ8nNBfmaRWGsqK4x/I3m7VXS/NvNRqHbvaK1A0YUl7xTh0C9GsfL3jIL
+         SabF8fr7JCR0ryv/59RpAtqEIOcMrB2FPfSbpn7wf/3zmRZFc1/8u3CrLweyGT2wq9Su
+         5YdFqUZt53A2wQB8DLQT20Tsor8zg+DrRbPl3ae11pjCf5bA5Qte8Wk2MoDv3nZ7CAuR
+         6CSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXq5GGUCR9Pc3w6hYw5JvEpDBhGmWuId4sle69D9/s5PFYyOgYDUALhlgVUYD/k0i0enGlyOiIF3G1qs92K6GJPnok1sZgjrzIOgvD1
+X-Gm-Message-State: AOJu0YyFzDMya38SyIi9G0vpKNMoJEJS55Zd+Xs5dJGjryyWKggpPu6W
+	4t4RRnwDQ+V8d483fO3ncrPeZauhxk7P1bBkWJnWVisFrx47/0dDNr+sIvdPANZcxXqCQ3FxKVT
+	C0zZ8v4TWt7U2SkjmM1uB5VFQ1GxXo1TCy2Y=
+X-Google-Smtp-Source: AGHT+IE9rxVvBdqsXdsO6uBeFCRLPqONIOfgsHaycP9IfliPlU3zFsZober53O34T8HYXOnTdDL3lMXcoBb4ujh/9VY=
+X-Received: by 2002:a19:ac49:0:b0:51b:9254:91e7 with SMTP id
+ 2adb3069b0e04-52b7d4b1b12mr256310e87.61.1717020081287; Wed, 29 May 2024
+ 15:01:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: MHEy2aCKKjQWt3xBdsXNKqZygt3Cdgyc
-X-Proofpoint-GUID: MHEy2aCKKjQWt3xBdsXNKqZygt3Cdgyc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
+References: <20240516174357.26755-1-jim.cromie@gmail.com> <CALwA+NZ7Cdd9M2Cus+Lv3yoc+eWNdUjCmECGJbfoin3ikHLbxQ@mail.gmail.com>
+ <CAJfuBxxus5_0=ydNWwQhDNhe1++oh8nBe-+3Egt6mKk_W=0w3w@mail.gmail.com>
+In-Reply-To: <CAJfuBxxus5_0=ydNWwQhDNhe1++oh8nBe-+3Egt6mKk_W=0w3w@mail.gmail.com>
+From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Date: Thu, 30 May 2024 00:01:10 +0200
+Message-ID: <CALwA+NbtX4pkFm35L7bjL0D-c=RMOu7vVC0=cUg4Q6n7uD=u-A@mail.gmail.com>
+Subject: Re: [PATCH v8-RESEND 00/33] Fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y regression
+To: jim.cromie@gmail.com
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
+	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
+	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MRVL Xfer overlay extends xSPI capabilities to support non-memory SPI
-operations. The Marvell overlay, combined with a generic command, allows
-for full-duplex SPI transactions. It also enables transactions with
-undetermined lengths using the cs_hold parameter and the ability to
-extend CS signal assertion, even if the xSPI block requests CS signal
-de-assertion.
+On Mon, May 27, 2024 at 5:45=E2=80=AFPM <jim.cromie@gmail.com> wrote:
+>
+> hi =C5=81ukasz
+>
+> thanks for testing, and with all the config combos
+> that uncovered this problem.
+>
+> On Sun, May 26, 2024 at 4:36=E2=80=AFPM =C5=81ukasz Bartosik <ukaszb@chro=
+mium.org> wrote:
+> >
+> > On Thu, May 16, 2024 at 7:44=E2=80=AFPM Jim Cromie <jim.cromie@gmail.co=
+m> wrote:
+> > >
+> > > hi Greg, Jason,
+> > >
+> > > This patchset fixes the CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy regression,
+> > > Fixes: bb2ff6c27bc9 ("drm: Disable dynamic debug as broken")
+> > >
+> > > Im calling it v8, to keep consistent with previous labels.
+> > > v6 was what got committed, back in 9/2022.
+> > > v7 had at least 2 problems that blocked its submission:
+> > >
+> > >  https://lore.kernel.org/lkml/20231101002609.3533731-1-jim.cromie@gma=
+il.com/
+> > >  https://patchwork.freedesktop.org/series/125066/
+> > >
+> > > 1. missing __align(8) in METATDATA macro, giving too much placement
+> > > freedom to linker, caused weird segvs following non-ptr vals, but for
+> > > builtin modules only. found by lkp-test.
+> > >
+> > > 2. the main patch touched 2 subsystems at once, which would require
+> > > special handling.
+> > >
+> > > What was broken about DYNAMIC_DEBUG ?
+> > >
+> > > Booting a modular kernel with drm.debug=3D0x1ff enabled pr_debugs onl=
+y
+> > > in drm itself, not in the yet-to-be loaded driver + helpers.  Once
+> > > loaded, the driver's pr_debugs are properly enabled by:
+> > >
+> > >    echo 0x1ff > /sys/module/drm/parameters/debug  # still worked
+> > >
+> > > I had tested with scripts doing lots of modprobes with various
+> > > permutations of dyndbg=3D<> option, and I missed that I didn't test
+> > > without them.
+> > >
+> > > The deeper cause was my design error, a violation of the K&R rule:
+> > > "define once, refer many times".
+> > >
+> > > DECLARE_DYNDBG_CLASSMAP defined the classmap, and was used everywhere=
+,
+> > > re-declaring the same static classmap repeatedly. Jani Nikula actuall=
+y
+> > > picked up on this (iirc shortly after committed), but the problem
+> > > hadn't been seen yet in CI.  One patchset across 2 subsystems didn't
+> > > help either.
+> > >
+> > > So the revised classmap API "splits" it to def & ref:
+> > >
+> > > DYNDBG_CLASSMAP_DEFINE fixes & updates the busted macro, EXPORTing th=
+e
+> > > classmap instead.  It gets invoked once per subsystem, by the
+> > > parent/builtin, drm.ko for DRM.
+> > >
+> > > DYNDBG_CLASSMAP_USE in drivers and helpers refer to the classmap by
+> > > name, which links the 2 modules, (like a driver's dependency on exter=
+n
+> > > __drm_debug).
+> > >
+> > > These 2 tell dyndbg to map "class FOO" to the defined FOO_ID, which
+> > > allows it to make those changes via >control, in both class definer
+> > > modules and dependent modules.
+> > >
+> > > DYNDBG_CLASSMAP_PARAM*, defines the controlling kparam, and binds it
+> > > to both the _var, and the _DEFINEd classmap.  So drm uses this to bin=
+d
+> > > the classmap to __drm_debug.
+> > >
+> > > It provides the common control-point for the sub-system; it is applie=
+d
+> > > to the class'd pr_debugs during modprobe of both _DEFINEr and USErs.
+> > > It also enforces the relative nature of LEVEL classmaps, ie V3>V2.
+> > >
+> > > DECLARE_DYNDBG_CLASSMAP is preserved to decouple the DRM patches, so
+> > > they can be applied later.  I've included them for anyone who wants t=
+o
+> > > test against DRM now.
+> > >
+> > > A new struct and elf section contain the _USEs; on modprobe, these ar=
+e
+> > > scanned similarly to the _DEFINEs, but follow the references to their
+> > > defining modules, find the kparam wired to the classmap, and apply it=
+s
+> > > classmap settings to the USEr.  This action is what V1 missed, which
+> > > is why drivers failed to enable debug during modprobe.
+> > >
+> > > In order to recapitulate the regression scenario without involving
+> > > DRM, the patchset adds test_dynamic_debug_submod, which is a duplicat=
+e
+> > > of its parent; _submod.c #defines _SUBMOD, and then includes parent.
+> > >
+> > > This puts _DEFINE and _USE close together in the same file, for
+> > > obviousness, and to guarantee that the submod always has the same
+> > > complement of debug()s, giving consistent output from both when
+> > > classmaps are working properly.
+> > >
+> > > Also ./tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh adds =
+a
+> > > turn-key selftest.  I pulled it forward from a dyndbg-to-trace patchs=
+et
+> > > that I and Lukasz Bartozik have been working out.
+> > >
+> > > It works nicely from virtme-ng:
+> > >
+> > > [jimc@frodo vx]$ vrun_ -- ./tools/testing/selftests/dynamic_debug/dyn=
+dbg_selftest.sh
+> > > doing: vng --verbose --name v6.9-rc5-34-g2f1ace6e1c68 \
+> > >        --user root --cwd ../.. \
+> > >        -a dynamic_debug.verbose=3D2 -p 4 \
+> > >        -- ./tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> > > virtme: waiting for virtiofsd to start
+> > > ...
+> > > [    3.546739] ip (260) used greatest stack depth: 12368 bytes left
+> > > [    3.609288] virtme-init: starting script
+> > > test_dynamic_debug_submod not there
+> > > test_dynamic_debug not there
+> > > # BASIC_TESTS
+> > > ...
+> > > # Done on: Fri Apr 26 20:45:08 MDT 2024
+> > > [    4.765751] virtme-init: script returned {0}
+> > > Powering off.
+> > > [    4.805790] ACPI: PM: Preparing to enter system sleep state S5
+> > > [    4.806223] kvm: exiting hardware virtualization
+> > > [    4.806564] reboot: Power down
+> > > [jimc@frodo vx]$
+> > >
+> > >
+> > > I've been running the kernel on my x86 desktop & laptop, booting with
+> > > drm.debug=3D0x1f, then turning it all-off after sleep 15.
+> > >
+> > > a few highlights from a bare-metal boot:
+> > >
+> > > here modprobe amdgpu; dyndbg applies last bit/class/category, and
+> > > finishes init, then drm and amdgpu start logging as they execute
+> > >
+> > > [    9.019696] gandalf kernel: dyndbg: query 0: "class DRM_UT_ATOMIC =
++p" mod:amdgpu
+> > > [    9.019704] gandalf kernel: dyndbg: class-ref: amdgpu.DRM_UT_ATOMI=
+C  module:amdgpu nd:4754 nc:0 nu:1
+> > > [    9.020012] gandalf kernel: dyndbg: processed 1 queries, with 21 m=
+atches, 0 errs
+> > > [    9.020017] gandalf kernel: dyndbg: bit_4: 21 matches on class: DR=
+M_UT_ATOMIC -> 0x1f
+> > > [    9.020021] gandalf kernel: dyndbg: applied bitmap: 0x1f to: 0x0 f=
+or amdgpu
+> > > [    9.020026] gandalf kernel: dyndbg: attach-client-module:  module:=
+amdgpu nd:4754 nc:0 nu:1
+> > > [    9.020031] gandalf kernel: dyndbg: 4754 debug prints in module am=
+dgpu
+> > > [    9.055065] gandalf kernel: [drm] amdgpu kernel modesetting enable=
+d.
+> > > [    9.055138] gandalf kernel: [drm:amdgpu_acpi_detect [amdgpu]] No m=
+atching acpi device found for AMD3000
+> > > [    9.055564] gandalf kernel: amdgpu: Virtual CRAT table created for=
+ CPU
+> > > [    9.055585] gandalf kernel: amdgpu: Topology: Add CPU node
+> > > [    9.055752] gandalf kernel: amdgpu 0000:0c:00.0: enabling device (=
+0006 -> 0007)
+> > > [    9.055821] gandalf kernel: [drm] initializing kernel modesetting =
+(NAVI10 0x1002:0x731F 0x148C:0x2398 0xC1).
+> > > [    9.055835] gandalf kernel: [drm] register mmio base: 0xFCB00000
+> > > [    9.055839] gandalf kernel: [drm] register mmio size: 524288
+> > > [    9.059148] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [a=
+mdgpu]] number of dies: 1
+> > > [    9.059387] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [a=
+mdgpu]] number of hardware IPs on die0: 39
+> > > [    9.059623] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [a=
+mdgpu]] ATHUB(35) #0 v2.0.0:
+> > > [    9.059856] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [a=
+mdgpu]]         0x00000c00
+> > > [    9.060096] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [a=
+mdgpu]]         0x02408c00
+> > > [    9.060328] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [a=
+mdgpu]] set register base offset for ATHUB
+> > >
+> > > a startup script, after sleep 15, turns off the logging:
+> > >
+> > >   echo 0 > /sys/module/drm/parameters/debug
+> > >
+> > > heres 1st 2 bits/classes/categories being turned off:
+> > >
+> > > [   29.105991] gandalf kernel: [drm:amdgpu_ih_process [amdgpu]] amdgp=
+u_ih_process: rptr 90752, wptr 90784
+> > > [   29.118086] gandalf kernel: dyndbg: bits:0x0 > *.debug
+> > > [   29.118096] gandalf kernel: dyndbg: apply bitmap: 0x0 to: 0x1f for=
+ '*'
+> > > [   29.118102] gandalf kernel: dyndbg: query 0: "class DRM_UT_CORE -p=
+" mod:*
+> > > [   29.118122] gandalf kernel: dyndbg: good-class: drm.DRM_UT_CORE  m=
+odule:drm nd:338 nc:1 nu:0
+> > > [   29.119548] gandalf kernel: dyndbg: class-ref: drm_kms_helper.DRM_=
+UT_CORE  module:drm_kms_helper nd:93
+> > > nc:0 nu:1
+> > > [   29.119552] gandalf kernel: dyndbg: class-ref: drm_display_helper.=
+DRM_UT_CORE  module:drm_display_helper nd:151 nc:0 nu:1
+> > > [   29.119737] gandalf kernel: dyndbg: class-ref: amdgpu.DRM_UT_CORE =
+ module:amdgpu nd:4754 nc:0 nu:1
+> > > [   29.122181] gandalf kernel: [drm:amdgpu_ih_process [amdgpu]] amdgp=
+u_ih_process: rptr 90784, wptr 90816
+> > > [   29.127687] gandalf kernel: dyndbg: processed 1 queries, with 466 =
+matches, 0 errs
+> > > [   29.127690] gandalf kernel: dyndbg: bit_0: 466 matches on class: D=
+RM_UT_CORE -> 0x0
+> > > [   29.127692] gandalf kernel: dyndbg: query 0: "class DRM_UT_DRIVER =
+-p" mod:*
+> > > [   29.127696] gandalf kernel: dyndbg: good-class: drm.DRM_UT_DRIVER =
+ module:drm nd:338 nc:1 nu:0
+> > > [   29.127699] gandalf kernel: dyndbg: class-ref: drm_kms_helper.DRM_=
+UT_DRIVER  module:drm_kms_helper nd:93 nc:0 nu:1
+> > > [   29.127701] gandalf kernel: dyndbg: class-ref: drm_display_helper.=
+DRM_UT_DRIVER  module:drm_display_helper nd:151 nc:0 nu:1
+> > > [   29.127885] gandalf kernel: dyndbg: class-ref: amdgpu.DRM_UT_DRIVE=
+R  module:amdgpu nd:4754 nc:0 nu:1
+> > > [   29.152925] gandalf kernel: dyndbg: processed 1 queries, with 1384=
+ matches, 0 errs
+> > >
+> > >
+> > > The resulting journal is ~14.6k lines, written in the 1st 15 (29)
+> > > seconds of startup.  I'm unsure what the 15/29 discrepancy might
+> > > indicate/betray, besides a lot of logging work.  sleep 15 is not the
+> > > best stopwatch.
+> > >
+> > > Recent spins thru lkp-test have also been SUCCESS-ful.
+> > >
+> > > CC: Lukas Bartosik <ukaszb@chromium.org>
+> > > CC: Kees Cook <keescook@chromium.org>   # recent selftests/ reviews
+> > >
+> > > Jim Cromie (33):
+> > >
+> > > cleanups & preparations:
+> > >   docs/dyndbg: update examples \012 to \n
+> > >   test-dyndbg: fixup CLASSMAP usage error
+> > >   dyndbg: reword "class unknown," to "class:_UNKNOWN_"
+> > >   dyndbg: make ddebug_class_param union members same size
+> > >   dyndbg: replace classmap list with a vector
+> > >   dyndbg: ddebug_apply_class_bitmap - add module arg, select on it
+> > >   dyndbg: split param_set_dyndbg_classes to _module & wrapper fns
+> > >   dyndbg: drop NUM_TYPE_ARRAY
+> > >   dyndbg: reduce verbose/debug clutter
+> > >   dyndbg: silence debugs with no-change updates
+> > >   dyndbg: tighten ddebug_class_name() 1st arg type
+> > >   dyndbg: tighten fn-sig of ddebug_apply_class_bitmap
+> > >   dyndbg: reduce verbose=3D3 messages in ddebug_add_module
+> > >   dyndbg-API: remove DD_CLASS_TYPE_(DISJOINT|LEVEL)_NAMES and code
+> > >
+> > > core fix & selftests:
+> > >   dyndbg-API: fix DECLARE_DYNDBG_CLASSMAP
+> > >   selftests-dyndbg: add tools/testing/selftests/dynamic_debug/*
+> > >   selftests-dyndbg: exit 127 if no facility
+> > >   dyndbg-API: promote DYNDBG_CLASSMAP_PARAM to API
+> > >   dyndbg-doc: add classmap info to howto
+> > >   dyndbg: treat comma as a token separator
+> > >   selftests-dyndbg: add comma_terminator_tests
+> > >   dyndbg: split multi-query strings with %
+> > >   selftests-dyndbg: test_percent_splitting multi-cmds on module class=
+es
+> > >   docs/dyndbg: explain new delimiters: comma, percent
+> > >   selftests-dyndbg: add test_mod_submod
+> > >   selftests-dyndbg: test dyndbg-to-tracefs
+> > >   dyndbg-doc: explain flags parse 1st
+> > >
+> > > DRM parts
+> > >   drm+drivers: adapt to use DYNDBG_CLASSMAP_{DEFINE,USE}
+> > >   drm-dyndbg: adapt to use DYNDBG_CLASSMAP_PARAM
+> > >   drm: use correct ccflags-y spelling
+> > >   drm-drivers: DRM_CLASSMAP_USE in 2nd batch of drivers, helpers
+> > >   drm: restore CONFIG_DRM_USE_DYNAMIC_DEBUG un-BROKEN
+> > >   drm-print: workaround compiler meh
+> > >
+> > >  .../admin-guide/dynamic-debug-howto.rst       |  99 ++-
+> > >  MAINTAINERS                                   |   3 +-
+> > >  drivers/gpu/drm/Kconfig                       |   3 +-
+> > >  drivers/gpu/drm/Makefile                      |   3 +-
+> > >  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  12 +-
+> > >  drivers/gpu/drm/display/drm_dp_helper.c       |  12 +-
+> > >  drivers/gpu/drm/drm_crtc_helper.c             |  12 +-
+> > >  drivers/gpu/drm/drm_gem_shmem_helper.c        |   2 +
+> > >  drivers/gpu/drm/drm_print.c                   |  38 +-
+> > >  drivers/gpu/drm/gud/gud_drv.c                 |   2 +
+> > >  drivers/gpu/drm/i915/i915_params.c            |  12 +-
+> > >  drivers/gpu/drm/mgag200/mgag200_drv.c         |   2 +
+> > >  drivers/gpu/drm/nouveau/nouveau_drm.c         |  12 +-
+> > >  drivers/gpu/drm/qxl/qxl_drv.c                 |   2 +
+> > >  drivers/gpu/drm/radeon/radeon_drv.c           |   2 +
+> > >  drivers/gpu/drm/udl/udl_main.c                |   2 +
+> > >  drivers/gpu/drm/vkms/vkms_drv.c               |   2 +
+> > >  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c           |   2 +
+> > >  include/asm-generic/vmlinux.lds.h             |   1 +
+> > >  include/drm/drm_print.h                       |  10 +
+> > >  include/linux/dynamic_debug.h                 | 127 ++-
+> > >  kernel/module/main.c                          |   3 +
+> > >  lib/Kconfig.debug                             |  24 +-
+> > >  lib/Makefile                                  |   3 +
+> > >  lib/dynamic_debug.c                           | 435 ++++++----
+> > >  lib/test_dynamic_debug.c                      | 131 +--
+> > >  lib/test_dynamic_debug_submod.c               |  17 +
+> > >  tools/testing/selftests/Makefile              |   1 +
+> > >  .../testing/selftests/dynamic_debug/Makefile  |   9 +
+> > >  tools/testing/selftests/dynamic_debug/config  |   2 +
+> > >  .../dynamic_debug/dyndbg_selftest.sh          | 765 ++++++++++++++++=
+++
+> > >  31 files changed, 1391 insertions(+), 359 deletions(-)
+> > >  create mode 100644 lib/test_dynamic_debug_submod.c
+> > >  create mode 100644 tools/testing/selftests/dynamic_debug/Makefile
+> > >  create mode 100644 tools/testing/selftests/dynamic_debug/config
+> > >  create mode 100755 tools/testing/selftests/dynamic_debug/dyndbg_self=
+test.sh
+> > >
+> > > --
+> > > 2.45.0
+> > >
+> >
+> > Jim,
+> >
+> > With the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM self =
+test passes
+> > .../selftests/dynamic_debug# ./dyndbg_selftest.sh
+> > # BASIC_TESTS
+> > # COMMA_TERMINATOR_TESTS
+> > # TEST_PERCENT_SPLITTING - multi-command splitting on %
+> > # TEST_MOD_SUBMOD
+> >
+> > However when (TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY)=
+ or
+> >                          (TEST_DYNAMIC_DEBUG=3DY and
+> > TEST_DYNAMIC_DEBUG_SUBMOD=3DM) self test fails with
+> >
+> > # TEST_PERCENT_SPLITTING - multi-command splitting on %
+> > test_dynamic_debug_submod not there
+> > test_dynamic_debug not there
+> > : ./dyndbg_selftest.sh:240 check failed expected 1 on =3Dpf, got 0
+> >
+> > This happens because module is compiled into kernel and the following
+> > line does not modify classmaps
+> > modprobe test_dynamic_debug
+> > dyndbg=3Dclass,D2_CORE,+pf%class,D2_KMS,+pt%class,D2_ATOMIC,+pm
+> >
+> > Maybe selftest could verify if a module is compiled into a kernel and
+> > in such a case instead of calling modprobe as in the line above
+> > just do:
+> > ddcmd class,D2_CORE,+pf%class,D2_KMS,+pt%class,D2_ATOMIC,+pm
+> >
+> > What do you think ?
+> >
+>
+> You found that problem by manual testing ?
+>
 
-Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
----
- drivers/spi/spi-cadence-xspi.c | 245 +++++++++++++++++++++++++++++++++
- 1 file changed, 245 insertions(+)
+Yes I found it when testing manually.
 
-diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
-index 490bba7a0fc8..7279a73162ce 100644
---- a/drivers/spi/spi-cadence-xspi.c
-+++ b/drivers/spi/spi-cadence-xspi.c
-@@ -219,6 +219,7 @@
- #define CDNS_XSPI_DLL_RST_N BIT(24)
- #define CDNS_XSPI_DLL_LOCK  BIT(0)
- 
-+
- /* Marvell overlay registers - clock */
- #define MRVL_XSPI_CLK_CTRL_AUX_REG   0x2020
- #define MRVL_XSPI_CLK_ENABLE	     BIT(0)
-@@ -232,6 +233,22 @@
- #define MRVL_XSPI_SPIX_INTR_AUX	0x2000
- #define MRVL_MSIX_CLEAR_IRQ	0x01
- 
-+/* Marvell overlay registers - xfer */
-+#define MRVL_XFER_FUNC_CTRL		 0x210
-+#define MRVL_XFER_FUNC_CTRL_READ_DATA(i) (0x000 + 8 * (i))
-+#define MRVL_XFER_SOFT_RESET		 BIT(11)
-+#define MRVL_XFER_CS_N_HOLD		 GENMASK(9, 6)
-+#define MRVL_XFER_RECEIVE_ENABLE	 BIT(4)
-+#define MRVL_XFER_FUNC_ENABLE		 BIT(3)
-+#define MRVL_XFER_CLK_CAPTURE_POL	 BIT(2)
-+#define MRVL_XFER_CLK_DRIVE_POL		 BIT(1)
-+#define MRVL_XFER_FUNC_START		 BIT(0)
-+#define MRVL_XFER_QWORD_COUNT		 32
-+#define MRVL_XFER_QWORD_BYTECOUNT	 8
-+
-+#define MRVL_XSPI_POLL_TIMEOUT_US	1000
-+#define MRVL_XSPI_POLL_DELAY_US		10
-+
- enum cdns_xspi_stig_instr_type {
- 	CDNS_XSPI_STIG_INSTR_TYPE_0,
- 	CDNS_XSPI_STIG_INSTR_TYPE_1,
-@@ -256,6 +273,7 @@ struct cdns_xspi_dev {
- 	void __iomem *iobase;
- 	void __iomem *auxbase;
- 	void __iomem *sdmabase;
-+	void __iomem *xferbase;
- 
- 	int irq;
- 	int cur_cs;
-@@ -270,6 +288,9 @@ struct cdns_xspi_dev {
- 	const void *out_buffer;
- 
- 	u8 hw_num_banks;
-+
-+	bool xfer_in_progress;
-+	int current_xfer_qword;
- };
- 
- struct cdns_xspi_driver_data {
-@@ -836,6 +857,220 @@ static int cdns_xspi_setup(struct spi_device *spi_dev)
- 	return 0;
- }
- 
-+static int cdns_xspi_prepare_generic(int cs, const void *dout, int len, int glue, u32 *cmd_regs)
-+{
-+	u8 *data = (u8 *)dout;
-+	int i;
-+	int data_counter = 0;
-+
-+	memset(cmd_regs, 0x00, 6*4);
-+
-+	if (len > 7) {
-+		for (i = (len >= 10 ? 2 : len - 8); i >= 0 ; i--)
-+			cmd_regs[3] |= data[data_counter++] << (8*i);
-+	}
-+	if (len > 3) {
-+		for (i = (len >= 7 ? 3 : len - 4); i >= 0; i--)
-+			cmd_regs[2] |= data[data_counter++] << (8*i);
-+	}
-+	for (i = (len >= 3 ? 2 : len - 1); i >= 0 ; i--)
-+		cmd_regs[1] |= data[data_counter++] << (8 + 8*i);
-+
-+	cmd_regs[1] |= 96;
-+	cmd_regs[3] |= len << 24;
-+	cmd_regs[4] |= cs << 12;
-+
-+	if (glue == 1)
-+		cmd_regs[4] |= 1 << 28;
-+
-+	return 0;
-+}
-+
-+static unsigned char reverse_bits(unsigned char num)
-+{
-+	unsigned int count = sizeof(num) * 8 - 1;
-+	unsigned int reverse_num = num;
-+
-+	num >>= 1;
-+	while (num) {
-+		reverse_num <<= 1;
-+		reverse_num |= num & 1;
-+		num >>= 1;
-+		count--;
-+	}
-+	reverse_num <<= count;
-+	return reverse_num;
-+}
-+
-+static void cdns_xspi_read_single_qword(struct cdns_xspi_dev *cdns_xspi, u8 **buffer)
-+{
-+	u64 d = readq(cdns_xspi->xferbase +
-+		      MRVL_XFER_FUNC_CTRL_READ_DATA(cdns_xspi->current_xfer_qword));
-+	u8 *ptr = (u8 *)&d;
-+	int k;
-+
-+	for (k = 0; k < 8; k++) {
-+		u8 val = reverse_bits((ptr[k]));
-+		**buffer = val;
-+		*buffer = *buffer + 1;
-+	}
-+
-+	cdns_xspi->current_xfer_qword++;
-+	cdns_xspi->current_xfer_qword %= MRVL_XFER_QWORD_COUNT;
-+}
-+
-+static void cdns_xspi_finish_read(struct cdns_xspi_dev *cdns_xspi, u8 **buffer, u32 data_count)
-+{
-+	u64 d = readq(cdns_xspi->xferbase +
-+		      MRVL_XFER_FUNC_CTRL_READ_DATA(cdns_xspi->current_xfer_qword));
-+	u8 *ptr = (u8 *)&d;
-+	int k;
-+
-+	for (k = 0; k < data_count % MRVL_XFER_QWORD_BYTECOUNT; k++) {
-+		u8 val = reverse_bits((ptr[k]));
-+		**buffer = val;
-+		*buffer = *buffer + 1;
-+	}
-+
-+	cdns_xspi->current_xfer_qword++;
-+	cdns_xspi->current_xfer_qword %= MRVL_XFER_QWORD_COUNT;
-+}
-+
-+static int cdns_xspi_prepare_transfer(int cs, int dir, int len, u32 *cmd_regs)
-+{
-+	memset(cmd_regs, 0x00, 6*4);
-+
-+	cmd_regs[1] |= 127;
-+	cmd_regs[2] |= len << 16;
-+	cmd_regs[4] |= dir << 4; //dir = 0 read, dir =1 write
-+	cmd_regs[4] |= cs << 12;
-+
-+	return 0;
-+}
-+
-+static bool cdns_xspi_stig_ready(struct cdns_xspi_dev *cdns_xspi, bool sleep)
-+{
-+	u32 ctrl_stat;
-+
-+	return readl_relaxed_poll_timeout
-+		(cdns_xspi->iobase + CDNS_XSPI_CTRL_STATUS_REG,
-+		ctrl_stat,
-+		((ctrl_stat & BIT(3)) == 0),
-+		sleep ? MRVL_XSPI_POLL_DELAY_US : 0,
-+		sleep ? MRVL_XSPI_POLL_TIMEOUT_US : 0);
-+}
-+
-+static bool cdns_xspi_sdma_ready(struct cdns_xspi_dev *cdns_xspi, bool sleep)
-+{
-+	u32 ctrl_stat;
-+
-+	return readl_relaxed_poll_timeout
-+		(cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG,
-+		ctrl_stat,
-+		(ctrl_stat & CDNS_XSPI_SDMA_TRIGGER),
-+		sleep ? MRVL_XSPI_POLL_DELAY_US : 0,
-+		sleep ? MRVL_XSPI_POLL_TIMEOUT_US : 0);
-+}
-+
-+static int cdns_xspi_transfer_one_message_b0(struct spi_controller *controller,
-+					   struct spi_message *m)
-+{
-+	struct cdns_xspi_dev *cdns_xspi = spi_controller_get_devdata(controller);
-+	struct spi_device *spi = m->spi;
-+	struct spi_transfer *t = NULL;
-+
-+	const int max_len = MRVL_XFER_QWORD_BYTECOUNT * MRVL_XFER_QWORD_COUNT;
-+	int current_cycle_count;
-+	int cs = spi_get_chipselect(spi, 0);
-+	int cs_change = 0;
-+
-+	/* Enable xfer state machine */
-+	if (!cdns_xspi->xfer_in_progress) {
-+		u32 xfer_control = readl(cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+
-+		cdns_xspi->current_xfer_qword = 0;
-+		cdns_xspi->xfer_in_progress = true;
-+		xfer_control |= (MRVL_XFER_RECEIVE_ENABLE |
-+				 MRVL_XFER_CLK_CAPTURE_POL |
-+				 MRVL_XFER_FUNC_START |
-+				 MRVL_XFER_SOFT_RESET |
-+				 FIELD_PREP(MRVL_XFER_CS_N_HOLD, (1 << cs)));
-+		xfer_control &= ~(MRVL_XFER_FUNC_ENABLE | MRVL_XFER_CLK_DRIVE_POL);
-+		writel(xfer_control, cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+	}
-+
-+	list_for_each_entry(t, &m->transfers, transfer_list) {
-+		u8 *txd = (u8 *) t->tx_buf;
-+		u8 *rxd = (u8 *) t->rx_buf;
-+		u8 data[10];
-+		u32 cmd_regs[6];
-+
-+		if (!txd)
-+			txd = data;
-+
-+		cdns_xspi->in_buffer = txd + 1;
-+		cdns_xspi->out_buffer = txd + 1;
-+
-+		while (t->len) {
-+
-+			current_cycle_count = t->len > max_len ? max_len : t->len;
-+
-+			if (current_cycle_count < 10) {
-+				cdns_xspi_prepare_generic(cs, txd, current_cycle_count,
-+							  false, cmd_regs);
-+				cdns_xspi_trigger_command(cdns_xspi, cmd_regs);
-+				if (cdns_xspi_stig_ready(cdns_xspi, true))
-+					return -EIO;
-+			} else {
-+				cdns_xspi_prepare_generic(cs, txd, 1, true, cmd_regs);
-+				cdns_xspi_trigger_command(cdns_xspi, cmd_regs);
-+				cdns_xspi_prepare_transfer(cs, 1, current_cycle_count - 1,
-+							   cmd_regs);
-+				cdns_xspi_trigger_command(cdns_xspi, cmd_regs);
-+				if (cdns_xspi_sdma_ready(cdns_xspi, true))
-+					return -EIO;
-+				cdns_xspi_sdma_handle(cdns_xspi);
-+				if (cdns_xspi_stig_ready(cdns_xspi, true))
-+					return -EIO;
-+
-+				cdns_xspi->in_buffer += current_cycle_count;
-+				cdns_xspi->out_buffer += current_cycle_count;
-+			}
-+
-+			if (rxd) {
-+				int j;
-+
-+				for (j = 0; j < current_cycle_count / 8; j++)
-+					cdns_xspi_read_single_qword(cdns_xspi, &rxd);
-+				cdns_xspi_finish_read(cdns_xspi, &rxd, current_cycle_count);
-+			} else {
-+				cdns_xspi->current_xfer_qword += current_cycle_count /
-+								 MRVL_XFER_QWORD_BYTECOUNT;
-+				if (current_cycle_count % MRVL_XFER_QWORD_BYTECOUNT)
-+					cdns_xspi->current_xfer_qword++;
-+
-+				cdns_xspi->current_xfer_qword %= MRVL_XFER_QWORD_COUNT;
-+			}
-+			cs_change = t->cs_change;
-+			t->len -= current_cycle_count;
-+		}
-+	}
-+
-+	if (!cs_change) {
-+		u32 xfer_control = readl(cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+
-+		xfer_control &= ~(MRVL_XFER_RECEIVE_ENABLE |
-+				  MRVL_XFER_SOFT_RESET);
-+		writel(xfer_control, cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+		cdns_xspi->xfer_in_progress = false;
-+	}
-+
-+	m->status = 0;
-+	spi_finalize_current_message(controller);
-+
-+	return 0;
-+}
-+
- static int cdns_xspi_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -903,6 +1138,15 @@ static int cdns_xspi_probe(struct platform_device *pdev)
- 		return PTR_ERR(cdns_xspi->auxbase);
- 	}
- 
-+	if (cdns_xspi->mrvl_hw_overlay) {
-+		cdns_xspi->xferbase = devm_platform_ioremap_resource(pdev, 3);
-+		if (IS_ERR(cdns_xspi->xferbase)) {
-+			dev_info(dev, "XFER register base not found, set it\n");
-+			// For compatibility with older firmware
-+			cdns_xspi->xferbase = cdns_xspi->iobase + 0x8000;
-+		}
-+	}
-+
- 	cdns_xspi->irq = platform_get_irq(pdev, 0);
- 	if (cdns_xspi->irq < 0)
- 		return -ENXIO;
-@@ -917,6 +1161,7 @@ static int cdns_xspi_probe(struct platform_device *pdev)
- 	if (drv_data->mrvl_hw_overlay) {
- 		cdns_mrvl_xspi_setup_clock(cdns_xspi, MRVL_DEFAULT_CLK);
- 		cdns_xspi_configure_phy(cdns_xspi);
-+		host->transfer_one_message = cdns_xspi_transfer_one_message_b0;
- 	}
- 
- 	cdns_xspi_print_phy_config(cdns_xspi);
--- 
-2.43.0
+> [jimc@frodo linux.git]$ cat tools/testing/selftests/dynamic_debug/config
+> CONFIG_TEST_DYNAMIC_DEBUG=3Dm
+> CONFIG_TEST_DYNAMIC_DEBUG_SUBMOD=3Dm
+>
+> Im guessing that config file prevents the problem conf from getting teste=
+d in:
+>   make run_tests    # in selftests dir
+>
+> so at least it shouldnt cause CI failures.
+> Is there any regular run-&-report of selftests I can subscribe to ?
+>
+> on defconfig (iirc), I got:
+>
+> [root@v6 linux.git]# ./tools/testing/selftests/dynamic_debug/dyndbg_selft=
+est.sh
+> : kernel not configured for this test
+>
+> [ -e /proc/dynamic_debug/control ] || {
+>     echo -e "${RED}: kernel not configured for this test ${NC}"
+>     exit 127
+> }
+>
+> 1. We could add some more conditions to give up early.
+> 2. Or we could avoid the mod-submod test if both modules arent modular.
+> (those are both easy-outs)
+>
+> Also, builtin test modules are an unlikely choice generally.
+>
+> Or, as you suggest, do something like
+> modprobe_or_apply_control( dyndbg_cmd_arg )
+> rmmod_or_undo_control ( undo_cmd_arg )
+>
+> This is probably most thorough,
+> but it might be a game of whack-a-mole;
+> the test script exits at 1st failure,
+> there may be a bunch of them.
+>
 
+Alternatively there is a kernel configuration option
+CONFIG_IKCONFIG_PROC which enables
+access to .config through /proc/config.gz so for the purpose of dyndbg
+self test it could be required to be enabled.
+With /proc/.config.gz available the information whether a module is Y
+or M is easy to reach.
+
+> at least part of the problem is that rmmod really wipes all the
+> pr-debug settings,
+> which is a pretty strong precondition for the next test.
+>
+> while not as robust as a full prdbg-state wipe,
+> the undo_arg could certainly undo the dyndbg_cmd_arg.
+> its a bit fiddly, but maybe just fiddle-once.
+>
+> Im thinking that a combo of 1, 2 would suffice.
+> And we could probably drop the config constraints,
+> especially if the test avoids failing on configs where a failure is expec=
+ted.
+> IOW - if no test-modules/builtins, run only 1st 3 tests, ending with PERC=
+ENT
+>
+> That said, I wonder if the exit 127 should be success instead ?
+>
+
+I don't follow you here. Could you please elaborate why exit 127
+should be a success ?
+
+> thanks Lukas,
+> ~jimc
+>
+> > Thanks,
+> > Lukasz
 
