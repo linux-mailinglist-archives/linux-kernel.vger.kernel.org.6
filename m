@@ -1,226 +1,158 @@
-Return-Path: <linux-kernel+bounces-194249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650FF8D38EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:14:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F3A8D38F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82AB91C21783
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:14:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4E928B947
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AB5137932;
-	Wed, 29 May 2024 14:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7167145A00;
+	Wed, 29 May 2024 14:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZfdBoOcG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bI1zbr1E";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IVmMjRdp"
+Received: from wfhigh7-smtp.messagingengine.com (wfhigh7-smtp.messagingengine.com [64.147.123.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A2617F5;
-	Wed, 29 May 2024 14:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078121384BF;
+	Wed, 29 May 2024 14:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716992052; cv=none; b=lBQa52qjgl8eysSFJ6ouUJux++rjenF+FyaRjuNC5xhXqAwyu5FF6dYcSYrqOrsKLs7mTp5HbISrbGQZZb6YXEhmm0yJNwuIUvcvRD9QxcqaBSozG+3/W+jU9NQBNLuvnrRBU6nB1bjMlIZX98Xc/uBwmdBNPODJM5Yv1f/MFxU=
+	t=1716992066; cv=none; b=OfaSZExTG1inXzlksJkqHrlTUdxsMLueKC5Hk8twzSJ3cKODY8CgLrhyjKNVq938RPSgX2SFiqucrP2QPuWBNpq4F00A9+258jOQ4c/ooTxFfVdlMWOQ0wrau+PJR2KbAJnth/02HCw5BEe5yFBaE1UTFrtyLFhXEug9htJfcJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716992052; c=relaxed/simple;
-	bh=tvhpmBOBi6PpDi7Y2RpMDy0NHTDN0MtqyAIYHLm0Fow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P7guf+KlfIPw6YpRfwp5YuoYz/nQZtxiO0N0lOqYW6iyeZSaUC6OQZeO6tSwFpu1s4fisVNO8o1mkoPfFV2e9P4AHdhV7Kd2IcHcOBulst5IElCv2Y/4yixTzOoeOIJzrGXz94axP4bptFc6gt7bz55ciAGzPF+KC2ql4EoN02I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZfdBoOcG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T4wxHx018858;
-	Wed, 29 May 2024 14:13:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yqfnQWiiXx8zP47bSxhpWvDYUchRl20DVMApVnujf00=; b=ZfdBoOcGmXDl3dZy
-	FPcOpKHlFYvqkW6k5wzPBS3eF4cXY9lBHrjUBQArvYN6+t2E9HS5hlopLDYAL5GG
-	OBFVjRWR8bb9Bz2qE1xg3O75AR3dM+DMx0SuinjQOYT3M3VyhMWm0k1WAgMsqqj1
-	nQO4K5od/lSXDe3nsyzjqCix/xW6jWwEDzsRypKAQhBOl9fHQ1tjt+Qfoz172yjK
-	su4pR+YAZw3Geggt9wd+ea+ghxezvrHPAEilYN+wfMMfA7YHdAFnfIW6hJkn07X2
-	TzrrXOXw7Fk3Qmt1rbdldRDEmcUotE0ARu6Hhy91nKqZY+mZlYjyP38wu8ruMXRB
-	4JwGzQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ybadx95jk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 14:13:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TEDTZ4029610
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 14:13:29 GMT
-Received: from [10.50.12.173] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
- 2024 07:13:20 -0700
-Message-ID: <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
-Date: Wed, 29 May 2024 19:43:15 +0530
+	s=arc-20240116; t=1716992066; c=relaxed/simple;
+	bh=W22hC2Zv+Foa0qgUlAk4AdngF7rx6T8UVXQlXFr2Ybw=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=FlJkQjbMUCBIVqoglC29OSfv0sI1BM+yC/o0Q8r2yxPIN3Hhl8BdiGuPxPCtPu3sZTOWhEbzKcqYo+Xjmj1QvCpjMU5CmZIGZeqJUXFlViouSI+p5k6gV/FHxy3zQlrHhfw16voQ+oZegmcqoVIw8V/YHDHpkTBlL1eIx3LUjoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bI1zbr1E; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IVmMjRdp; arc=none smtp.client-ip=64.147.123.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id C56691800110;
+	Wed, 29 May 2024 10:14:23 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 29 May 2024 10:14:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1716992063;
+	 x=1717078463; bh=eY7afOORxV4hOLeuj409JKFKJJHZi+ceauiiRURn6p0=; b=
+	bI1zbr1Eb+X1iMahPtzHX/yHgNrHIdjzD3VaSIgED2LkcqzEANSnJ1go5m3UqMGT
+	9+vkPva0paWhLAtf0nXq3Pc1WKmN07H5Z4refYIiZhCCJoT5DBwdtElPP4tI03cY
+	DxnQhbEPjGLZT/nHLk6w7HCIf/9FOeU3W6v13BrJL/0KLnFd+/inGqYqzdLCNsdv
+	wgC+paVBRdzqtdkIuyTiruJPSJ/UGWDTzS2nGFpuZrugrlAn2J0WFGFGQDha5Owu
+	IDKLp3G1NyUVyWI1i9aoosARcXRHiFe/GyCioZcx8TB923OyUTbWIWCwjWNIdGnk
+	+GyU3nf2OIjOEGRzCKOPFQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716992063; x=
+	1717078463; bh=eY7afOORxV4hOLeuj409JKFKJJHZi+ceauiiRURn6p0=; b=I
+	VmMjRdp6zSIXUpPEqQWlVXQCwmiB0e1D1LTqDIN46bb1VsgHQB5z2mLLcF67KwO+
+	SGxniaTxoon8DUR0w7TqGud/g8yqHeHZEP9MLcICCR/YFWIRpZfN2N1RJ40qjE4u
+	KqfD6Mttdvk0F586BCTmac/P2GWRY+LUSsCv3Gkt920hci1zHDv3nl9SHGueBxj/
+	8fd86otV4tdKL5ci3AWhLtbyCYToLgU4Ycp3xPd+pOtrCDs0ebBta+jXICuMElYt
+	2XBkZZhnnOcZORUsJRiyBCFKReDIiYgDSUliNH1ARERcxGY7bZcpuQp5H8jOqSIH
+	kKX2/i6UjldcQp2kHmo2A==
+X-ME-Sender: <xms:PzhXZjZ_xcl8Quhl_JiO65RwGo7KYNl0IBFQh2FFtDlRZ_JRAVTfFg>
+    <xme:PzhXZibKH7u9T7SLRNvYuf4XLG6Bqq5TwPZP0lQIS6v0jLVWZKcH2qYrPbcfqrKXl
+    jxAjuOnl_vZTfbQpVY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgjeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:PzhXZl-Oj4JxwLGV06iFYzauzjMooXMBN45ZIQ5H5DbqtqjVt9Nlyw>
+    <xmx:PzhXZppkgHf-kuSBZSpBmACSe3hSYaMiJwzw8WTMDNqPOJKMCkHdDw>
+    <xmx:PzhXZur1SMKx1xj9mrxPLO0LosZlpwziV2r858lVjq0kohwLebeqeA>
+    <xmx:PzhXZvSMn2YPUWmnEbUBKwAQGD7XWLq1Ce5jIezdu180kdhTw0ch1Q>
+    <xmx:PzhXZvcdCVZPDoVPlmz0R0duefKXkhr4ZgfmvdWbvwHrxdPWFvI02mBx>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id D4196B6008D; Wed, 29 May 2024 10:14:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: stmmac: dwmac-qcom-ethqos: Add support for
- 2.5G SGMII
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20231218071118.21879-1-quic_snehshah@quicinc.com>
- <4zbf5fmijxnajk7kygcjrcusf6tdnuzsqqboh23nr6f3rb3c4g@qkfofhq7jmv6>
- <8b80ab09-8444-4c3d-83b0-c7dbf5e58658@quicinc.com>
- <wvzhz4fmtheculsiag4t2pn2kaggyle2mzhvawbs4m5isvqjto@lmaonvq3c3e7>
- <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
- <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Sneh Shah <quic_snehshah@quicinc.com>
-In-Reply-To: <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ju5-ZsrkPL9R1SA-3neuqWKDaOGhTLpO
-X-Proofpoint-GUID: ju5-ZsrkPL9R1SA-3neuqWKDaOGhTLpO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_11,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- impostorscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2405290097
+Message-Id: <436667b5-308a-4a0b-b66e-230667ce0cc3@app.fastmail.com>
+In-Reply-To: 
+ <CAHp75VdRuK_sOF=25xP0azp8sOJ8DY_SRpLq9mUSaNEmWj5EAg@mail.gmail.com>
+References: <20240529095009.1895618-1-arnd@kernel.org>
+ <CAHp75VdRuK_sOF=25xP0azp8sOJ8DY_SRpLq9mUSaNEmWj5EAg@mail.gmail.com>
+Date: Wed, 29 May 2024 16:13:57 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Daniel Scally" <djrscally@gmail.com>,
+ "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: int3472: make common part a separate module
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 29, 2024, at 15:41, Andy Shevchenko wrote:
+> On Wed, May 29, 2024 at 12:50=E2=80=AFPM Arnd Bergmann <arnd@kernel.or=
+g> wrote:
+>>
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> Linking an object file into multiple modules is not supported
+>> and causes a W=3D1 warning:
+>>
+>> scripts/Makefile.build:236: drivers/platform/x86/intel/int3472/Makefi=
+le: common.o is added to multiple modules: intel_skl_int3472_discrete in=
+tel_skl_int3472_tps68470
+>>
+>> Split out the common part here into a separate module to make it
+>> more reliable.
+>
+> ...
+>
+>>  obj-$(CONFIG_INTEL_SKL_INT3472)                +=3D intel_skl_int347=
+2_discrete.o \
+>> -                                          intel_skl_int3472_tps68470=
+o
+>
+>> +                                          intel_skl_int3472_tps68470=
+o \
+>> +                                          intel_skl_int3472_common.o
+>
+> A nit: Can this be put above instead?
+
+I've changed it like this now, is that what you meant?
 
 
+obj-$(CONFIG_INTEL_SKL_INT3472)         +=3D intel_skl_int3472_common.o \
+                                           intel_skl_int3472_discrete.o \
+                                           intel_skl_int3472_tps68470.o \
 
-On 5/26/2024 9:57 PM, Russell King (Oracle) wrote:
-> On Thu, Dec 21, 2023 at 02:23:57PM +0530, Sneh Shah wrote:
->> On 12/20/2023 9:29 PM, Andrew Halaney wrote:
->>> I'd evaluate if you can update that function to clear the ANE bit when
->>> the ane boolean is false. From the usage I see I feel that makes sense,
->>> but correct me if you think I'm wrong.
->>> At the very least let's use the defines from there, and possibly add a
->>> new function if clearing is not acceptable in dwmac_ctrl_ane().
->>>
->>> Stepping back, I was asking in general is the need to muck with ANE here
->>> is a Qualcomm specific problem, or is that a generic thing that should be
->>> handled in the core (and the phy_set_speed() bit stay here)? i.e. would
->>> any dwmac5 based IP need to do something like this for SPEED_2500?
->> I think disabling ANE for SPEED_2500 is generic not specific to qualcomm.
->> Even in dwxgmac2 versions also we need to disable ANE for SPEED_2500.
->> Autoneg clause 37 stadard doesn't support 2500 speed. So we need to
->> disable autoneg for speed 2500
-> 
-> (Going back over the history of this addition)
-> 
-> What 802.3 Clause 37 says is utterly _irrelevant_ when discussing Cisco
-> SGMII. Cisco took 802.3 1000base-X and modified it for their own
-> purposes, changing the format of the 16-bit control word, adding support
-> for symbol replication to support 100Mbps and 10Mbps, changing the link
-> timer, etc. SGMII is *not* 802.3 Clause 37.
-> 
-> I guess you are getting caught up in the widespread crud where
-> manufacturers stupidly abuse "SGMII" to mean maybe "Cisco SGMII" and
-> maybe "802.3 1000base-X" because both are "serial gigabit MII". Yes,
-> both are serial in nature, but Cisco SGMII is not 1000base-X and it
-> also is not 2500base-X.
-> 
-> What makes this even more difficult is that 2500base-X was never
-> standardised by the 802.3 committees until very late, so we've ended
-> up with manufacturers doing their own thing for years. We've ended up
-> with a mess of different implementations described in different ways
-> many of which boil down to being 2500base-X without inband AN. For
-> example, one manufacturer talks about "HS-SGMII", but doesn't permit
-> the interface to operate at the x10 and x100 symbol replications that
-> conventional Cisco SGMII uses for 100M and 10M speeds respectfully,
-> making it in effect no different from 2500base-X.
-> 
-> Now through into this mess various implementations that do not support
-> inband at 2.5G speeds, those that require inband at 2.5G speeds... one
-> can get into the situation where one pairs a PHY that requires inband
-> with a PCS that doesn't support it and the result doesn't work. This
-> is particularly problematical if the PHY is on a hotpluggable module
-> like a SFP.
-> 
-> It's a total trainwreck.
+intel_skl_int3472_common-y      +=3D common.o
+intel_skl_int3472_discrete-y    :=3D discrete.o clk_and_regulator.o led.o
+intel_skl_int3472_tps68470-y    :=3D tps68470.o tps68470_board_data.o
 
+> ...
+>
+>> +EXPORT_SYMBOL_GPL(skl_int3472_get_sensor_adev_and_name);
+>
+> Are these namespaced?
 
+No, is there any advantage to making them namespaced?
 
-Qualcomm ethernet HW supports 2.5G speed in overclocked SGMII mode.
-we internally term it as OCSGMII.
+It's only a few symbols and they have proper prefixes.
 
-End goal of these patches is to enable SGMII with 2.5G speed support.
-The patch in these series enabled up SGMII with 2.5 for cases where we
-don't have external phy. ( mac-to-mac connectivity)
-The new patch posted extends this for the case when the MAC has an
-external phy connected. ( hence we are advertising fr 2.5G speed by adding
-2500BASEX as supported interface in phylink)
-
-
-> 
-> I do have some work-in-progress patches that attempt to sort this out
-> in phylink and identify incompatible situations.
-> 
-> See http://git.armlinux.org.uk/cgit/linux-arm.git/log/?h=net-queue
-> 
-> commits (I think)...
-> 
-> net: phylink: clean up phylink_resolve()
-> 
-> to:
-> 
-> net: phylink: switch to MLO_AN_PHY when PCS uses outband
-> 
-> and since I'm converting stmmac's hacky PCS that bypasses phylink to
-> a real phylink_pcs, the ethqos code as it stands presents a blocker
-> because of this issue. So, I'm intending to post a series in the next
-> few days (after the bank holiday) and will definitely need to be
-> tested on ethqos hardware.
-> 
-
-I am going over the list of these patches.
-
-> However, first we need to get to the bottom of your latest patch that
-> only sets PHY_INTERFACE_MODE_2500BASEX when plat_dat->flags has the
-> STMMAC_FLAG_HAS_INTEGRATED_PCS flag _set_, but the stmmac code very
-> oddly does _not_ use the built-in PCS if this flag is set. See:
-> 
-> 	stmmac_ethtool_get_link_ksettings()
-> 	stmmac_ethtool_set_link_ksettings()
-> 
-> and their use of pcs_link / pcs_duplex / pcs_speed. Also see
-> 
-> 	stmmac_common_interrupt()
-> 
-> and its use of pcs_link to control the carrier, the dwmac1000 and
-> dwmac4 code that reads the status from the GMAC, updating the
-> pcs_link / pcs_duplex / pcs_speed variables.
-
-In this version of qualcomm ethernet, PCS is not an independent HW
-block. It is integrated to MAC block itself. It has very limited
-configuration.Here PCS doesn't have it's own link speed/duplex
-capabities. Hence we are bypassing all this PCS related functionalities.
-
-
-I will update with more details on the integrated PCS block autoneg
-standard.
-> 
+     Arnd
 
