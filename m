@@ -1,87 +1,154 @@
-Return-Path: <linux-kernel+bounces-194621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F058D3F08
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EE58D3F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC6CDB230D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B68F1F23E52
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 19:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4681C2315;
-	Wed, 29 May 2024 19:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLIfSfyz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52D41C68AB;
+	Wed, 29 May 2024 19:48:30 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14AA1C2329;
-	Wed, 29 May 2024 19:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C981C6880;
+	Wed, 29 May 2024 19:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717012096; cv=none; b=LsTTSLmxEuGnDZ4SwiHn0BkYZ6wfLIGAxc5Dn2TQg14IXUDlx+8UDijISPSnfJ9wN+t+oILWxTNl9QqbWU8s7rwtIduaNov2XpPekcdp7uZpozFT+nYRYJW1XIo3p+J5qiqLzz/DV9NC1Vcp909WU5TMiquk3R6YvIi9bNp8u8g=
+	t=1717012110; cv=none; b=ZqSxaVfLwnrq//5y8NnCnAqmU19SdWWJsZyjRjifEErivTSagX2ixZVxeexxnxhnaDsvCCJmaFSIPv1XzhpRIaBsaCWjJC4hE1ze6ozhBPNnhpfHM8tpukR5FLiR1TuVnT1gViq+I1mZ5OLYtFi3atyM0EPAp/xckDdIOBFn6+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717012096; c=relaxed/simple;
-	bh=qWhEwAr6AYrSEXs8Gky9nRQSfZTamh+Ys9gijsMJcIk=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ar3waaQHaUx+uIGPk9XtGNK4SbrrDhPG4nml+b/Qiosrk8nTTSOmaBLrKYjB8Qb/NywBG0+8+6z31nMVw6Crqax1CERl+GArDWLAvOwE7ITCJmL2ADe9Cz6VpkKzlWbhuxVWZWRumJ0T8UmqX93bmAGoP8Gg5uReh+iZrWrWlLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLIfSfyz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD0BC32781;
-	Wed, 29 May 2024 19:48:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717012096;
-	bh=qWhEwAr6AYrSEXs8Gky9nRQSfZTamh+Ys9gijsMJcIk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TLIfSfyzl/LE6/dXyGaWYNyxHPf99UPq9vGHjqcf4Xz+vTTQgX7DnBaKkN4hF7pb0
-	 VXrW8fvC6x5GHZGpAkeyktSF2Zyxpdi5GTrwFIFFucAj8Ay1uOnMKVRoJgzi0S7bNL
-	 1gQYp+E4Ee5ggdsvZcRzle1QikxlECZ+OZW/eXhZOQk1L91uSZhvYFeLpHz9Q21jYE
-	 wPa5ms2oLOz2eEF9e5diQhElr3D8ll0tEU22hCZvH+RcmU4cP6WW8eb95zLZ47XVWj
-	 /0BSsvItSDZ4Bbtm3Uc/d4YL0QIi8Hx/k0yZx7aIqNJmqxxIph0E5Qb6i3qZEeoshL
-	 AeJET7CYsl9Xw==
-Message-ID: <63d35ddacc113598f1822486b882552a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717012110; c=relaxed/simple;
+	bh=mBYHB0w2lJlfGEgtklPsCNe/hCVdcPJEF9Af5j6pvzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lMPXY6zbgZ0TPHnRBL0iPz0Uv8Bdzzr0qBDd8E23dUCCp5mNCeIemQwwvUj70GnG9HuqC3OCcLv10yR8pyeB1sPdM8q8TyCKNnla21ayL/wxra46Sb2k1piIs71h5UCpXv2+WO9Ps55nccWG2film5cq39nMirBlE/8roPMPAAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D7FC113CC;
+	Wed, 29 May 2024 19:48:28 +0000 (UTC)
+Date: Wed, 29 May 2024 15:48:24 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?= <digirigawa@gmail.com>
+Cc: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>, Linux regressions mailing list
+ <regressions@lists.linux.dev>, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
+ Shutdown/Reboot
+Message-ID: <20240529154824.2db8133a@rorschach.local.home>
+In-Reply-To: <20240529144757.79d09eeb@rorschach.local.home>
+References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
+	<5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
+	<20240527183139.42b6123c@rorschach.local.home>
+	<CAE4VaRHaijpV1CC9Jo_Lg4tNQb_+=LTHwygOp5Bm2z5ErVzeow@mail.gmail.com>
+	<20240528144743.149e351b@rorschach.local.home>
+	<CAE4VaRE3_MYVt+=BGs+WVCmKUiQv0VSKE2NT+JmUPKG0UF+Juw@mail.gmail.com>
+	<20240529144757.79d09eeb@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ssnyujhgz64mbxawb43okjkdidd3tbxwjob36ikgbogy64xuqv@ckvir5vfqo63>
-References: <20240528114254.3147988-1-quic_ajipan@quicinc.com> <20240528114254.3147988-8-quic_ajipan@quicinc.com> <ssnyujhgz64mbxawb43okjkdidd3tbxwjob36ikgbogy64xuqv@ckvir5vfqo63>
-Subject: Re: [PATCH V3 7/8] clk: qcom: Add GPUCC driver support for SM4450
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Vinod Koul <vkoul@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Ajit Pandey <quic_ajipan@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 29 May 2024 12:48:14 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting Dmitry Baryshkov (2024-05-28 06:23:27)
-> On Tue, May 28, 2024 at 05:12:53PM +0530, Ajit Pandey wrote:
-> > Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
-> >=20
-> > Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
-> > ---
-> >  drivers/clk/qcom/Kconfig        |   9 +
-> >  drivers/clk/qcom/Makefile       |   1 +
-> >  drivers/clk/qcom/gpucc-sm4450.c | 805 ++++++++++++++++++++++++++++++++
-> >  3 files changed, 815 insertions(+)
-> >  create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
->=20
-> [trimmed]
->=20
-> > +
-> > +     /* Keep some clocks always enabled */
-> > +     qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
-> > +     qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
-> > +     qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
->=20
-> I pinged Stephen regarding these clocks. LGTM otherwise.
->=20
+On Wed, 29 May 2024 14:47:57 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Looks OK to me. I assume that these clks don't get turned off when the
-GPU power domain is turned off. If that's the case then presumably we
-would need to turn these on and off during power transitions.
+> Let me make a debug patch (that crashes on this issue) for that kernel,
+> and perhaps you could bisect it?
+
+Can you try this on 6.6-rc1 and see if it gives you any other splats?
+
+Hmm, you can switch it to WARN_ON and that way it may not crash the
+machine, and you can use dmesg to get the output.
+
+Thanks,
+
+-- Steve
+
+
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index de5b72216b1a..a090495e78c9 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -39,13 +39,17 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
+ 		return NULL;
+ 
+ 	ti->flags = 0;
++	ti->magic = 20240823;
+ 
+ 	return &ti->vfs_inode;
+ }
+ 
+ static void tracefs_free_inode(struct inode *inode)
+ {
+-	kmem_cache_free(tracefs_inode_cachep, get_tracefs(inode));
++	struct tracefs_inode *ti = get_tracefs(inode);
++
++	BUG_ON(ti->magic != 20240823);
++	kmem_cache_free(tracefs_inode_cachep, ti);
+ }
+ 
+ static ssize_t default_read_file(struct file *file, char __user *buf,
+@@ -147,16 +151,6 @@ static const struct inode_operations tracefs_dir_inode_operations = {
+ 	.rmdir		= tracefs_syscall_rmdir,
+ };
+ 
+-struct inode *tracefs_get_inode(struct super_block *sb)
+-{
+-	struct inode *inode = new_inode(sb);
+-	if (inode) {
+-		inode->i_ino = get_next_ino();
+-		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+-	}
+-	return inode;
+-}
+-
+ struct tracefs_mount_opts {
+ 	kuid_t uid;
+ 	kgid_t gid;
+@@ -384,6 +378,7 @@ static void tracefs_dentry_iput(struct dentry *dentry, struct inode *inode)
+ 		return;
+ 
+ 	ti = get_tracefs(inode);
++	BUG_ON(ti->magic != 20240823);
+ 	if (ti && ti->flags & TRACEFS_EVENT_INODE)
+ 		eventfs_set_ef_status_free(dentry);
+ 	iput(inode);
+@@ -568,6 +563,18 @@ struct dentry *eventfs_end_creating(struct dentry *dentry)
+ 	return dentry;
+ }
+ 
++struct inode *tracefs_get_inode(struct super_block *sb)
++{
++	struct inode *inode = new_inode(sb);
++
++	BUG_ON(sb->s_op != &tracefs_super_operations);
++	if (inode) {
++		inode->i_ino = get_next_ino();
++		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++	}
++	return inode;
++}
++
+ /**
+  * tracefs_create_file - create a file in the tracefs filesystem
+  * @name: a pointer to a string containing the name of the file to create.
+diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+index 69c2b1d87c46..9f6f303a9e58 100644
+--- a/fs/tracefs/internal.h
++++ b/fs/tracefs/internal.h
+@@ -9,6 +9,7 @@ enum {
+ struct tracefs_inode {
+ 	unsigned long           flags;
+ 	void                    *private;
++	unsigned long		magic;
+ 	struct inode            vfs_inode;
+ };
+ 
 
