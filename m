@@ -1,796 +1,145 @@
-Return-Path: <linux-kernel+bounces-194688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A5B8D3FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:01:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFE08D3FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 23:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD5E1B26C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011F628839B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 21:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93BF1C8FAB;
-	Wed, 29 May 2024 21:00:47 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B699A1C8FBB;
+	Wed, 29 May 2024 21:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ai8QAR5e"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A934D15CD6E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD631C8FB0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717016446; cv=none; b=ZuNWrSKuGOyIj5qNCQL4PAVo3YK0VbaFhh8qxNzB84ywdOh32fOvq7OWBeqRdyC6ng+0MtMeF74fyxBPsZZ+hG5kPqmMA63oogHWY09yH9a6+io2PGCEMQi2qf/8DoVMxqRyDDDpea8vF/aDdKUla7j/o/gC5z9KYg1Fgm53NaQ=
+	t=1717016643; cv=none; b=UttrgA6So6rYNqmRy34Ri89vRlNivvT2IVN/xlhbYS1+NVtlxBw5g/m89Dbz3b+E6FBNbEiU7msN1OR9JsB8lfCw5eCibjsPg5ER0SG6T2p934GVfGdQAgl9mVbKk1H8I4N/1/DhglUmK/wmlDxavdxs9fz1Bh+gdEhuxpYMCD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717016446; c=relaxed/simple;
-	bh=O8Ahk0wXb6gkuLSSopcEywFTrHvPk1/FUlRKiJClcAI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f/3dUersQ/zVpIRGGFTamd8zbIXwTpBl5B2Q6d2oMeDYynSEwp6dY6ll4mGmoGMUu3aeC5EFMwLqEn48eRwXHdxUxQjHb7YiF+Hvu/Ni8EIc6IsCvxQwcJhN8cwH+zdn6RQJ5eRWyNHXWNqfi+n8IgWu4lQU0HipX6GRGPHS57U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 7ed9edfc-1dfe-11ef-80c4-005056bdfda7;
-	Thu, 30 May 2024 00:00:36 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 30 May 2024 00:00:35 +0300
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v7] gpio: virtuser: new virtual driver
-Message-ID: <ZleXc6tLbiWQ59i-@surfacebook.localdomain>
-References: <20240527144054.155503-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1717016643; c=relaxed/simple;
+	bh=BCBSe826+nKw2daLQ4TIlXiD2I054RSipXGDwuLppXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=egTcnN1UqHFtNdpncIU8I8EhkATSJhoSqvPOl400kLGxA8qrKy3sKAS24/XsKDEMpBJxnE/jW2MmEjHDzBBb/7tB+2ZnoGTQZKX20kL0/Y+eX9MTAs3xoWIgMSP2OlQG+srnEHSGAbDFdZ1TsiNX0XGwRYH9GtW2Z9+9OSA7M8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ai8QAR5e; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-41ff3a5af40so4465e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 14:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717016639; x=1717621439; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BCBSe826+nKw2daLQ4TIlXiD2I054RSipXGDwuLppXE=;
+        b=Ai8QAR5eD9hE58FabJ7IUan77gGrx6D9fzz2qxEFjH7BAjMx043mI+Q/AODvtvW6bH
+         K0jSGe6lL9GDzAm09ShQ36vXHRSLZdBHjSNZYe8UxsDEa3UNgMuvk0RtQjslJqg/fz3F
+         gcQ2Ddimuml9EDcGtDjDqu0ML7QxQSAkMj8B9NQNdT6A+UgFdv/BOE5/TecWhF4u9e22
+         2F+OmDNQI7fxpm80Jvni853aOc9uuTqUbk53wz+j8rmuQHoPPzgVnVWvno6o93Wujv3P
+         L5PZorKBHjn+rEUcCAW3/nc6v2k+Gzl2V6RqqBbMVsUjFe/lGh3gm5dURiXQAOYtLFCa
+         vPXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717016639; x=1717621439;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BCBSe826+nKw2daLQ4TIlXiD2I054RSipXGDwuLppXE=;
+        b=iuXG2k7Bmv5TNwhVXsutQkEaKOjOgIUeAq86LJ6w23HLpof+vKSoc8pVBmNNYds11+
+         zY794ouC3+WSEImBY8RdYdKXFBkFRe5RBDkdoR0ytaHslX8Pp1+f5DVKSSxA4sxxBADs
+         ueO3i1jm/49Ics206pVpIGYbrFjvGvTMVtDSWWIdJdy9ff4/1iGWusVs6foJqRRhcco3
+         d651H7xYDU2F19je96ChVAot7pG0GxIvwZa+UkV06J1mBc9kwLvetOAREcRJnAvDlGmW
+         Z9huOJgww7HghAcisACOMg+N4x5aNDKjS0CAw1KK7zpdk7r7dELoY0w/3jAelVzjRZLo
+         TiLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU10TSnWj38OdpQBE+Tgmm6TrCtURz7CuDBByDE/KFErPY5pKNLGLW4zafNZqbWJeq8Wa8GRUfYRW6QOkhhvr2sr60rvJqcId+L1NEy
+X-Gm-Message-State: AOJu0Yxf/UqKtLe2g82QHJPc6whHjYCPtycPHp8pIhaYpIZk1L5OYHke
+	g2pu+Q8ZEGVOSDS2I6dQohOFGIc8Juvbnnf+lqfRE3vuoJA4d5UDkJlv7pGo1BeEj9tyfTWQT1u
+	X8+nh2H6FzlRd5f0nx5RS3pzCctg43OM41LFg
+X-Google-Smtp-Source: AGHT+IHwVBgFo5das5shZb/z5hgC8KCkV+Jkj5w99z9LyfmWhmSM4ldtkdm2dxotNGGlvICz4N/Nu5ZLrwoOjjiw7Io=
+X-Received: by 2002:a05:600c:3b85:b0:41b:4c6a:de7a with SMTP id
+ 5b1f17b1804b1-42127ec7dbdmr148185e9.3.1717016639372; Wed, 29 May 2024
+ 14:03:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527144054.155503-1-brgl@bgdev.pl>
-
-Mon, May 27, 2024 at 04:40:54PM +0200, Bartosz Golaszewski kirjoitti:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> The GPIO subsystem used to have a serious problem with undefined behavior
-> and use-after-free bugs on hot-unplug of GPIO chips. This can be
-> considered a corner-case by some as most GPIO controllers are enabled
-> early in the boot process and live until the system goes down but most
-> GPIO drivers do allow unbind over sysfs, many are loadable modules that
-> can be (force) unloaded and there are also GPIO devices that can be
-> dynamically detached, for instance CP2112 which is a USB GPIO expender.
-> 
-> Bugs can be triggered both from user-space as well as by in-kernel users.
-> We have the means of testing it from user-space via the character device
-> but the issues manifest themselves differently in the kernel.
-> 
-> This is a proposition of adding a new virtual driver - a configurable
-> GPIO consumer that can be configured over configfs (similarly to
-> gpio-sim) or described on the device-tree.
-> 
-> This driver is aimed as a helper in spotting any regressions in
-> hot-unplug handling in GPIOLIB.
-
-..
-
-> User must pass exactly the number of values that the array contains
-
-Can't we assume non-active values for the rest if less than needed were
-provided? For more than that, why do we care?
-
-..
-
-> +#include <linux/atomic.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/completion.h>
-> +#include <linux/configfs.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/gpio/machine.h>
-
-> +#include <linux/idr.h>
-
-> +#include <linux/interrupt.h>
-> +#include <linux/irq_work.h>
-
-> +#include <linux/kernel.h>
-
-Do you need this?
-
-> +#include <linux/limits.h>
-> +#include <linux/list.h>
-> +#include <linux/lockdep.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of.h>
-> +#include <linux/overflow.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/printk.h>
-> +#include <linux/property.h>
-> +#include <linux/slab.h>
-
-> +#include <linux/string.h>
-
-Implied by string_helpers.h
-
-> +#include <linux/string_helpers.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/types.h>
-
-..
-
-> +struct gpio_virtuser_line_array_data {
-> +	struct gpio_descs *descs;
-> +	struct kobject *kobj;
-> +	struct attribute_group *attr_group;
-> +};
-> +
-> +struct gpio_virtuser_line_data {
-> +	struct gpio_desc *desc;
-> +	struct kobject *kobj;
-> +	struct attribute_group *attr_group;
-> +	char consumer[GPIO_CONSUMER_NAME_MAX_LEN];
-> +	struct mutex consumer_lock;
-> +	unsigned int debounce;
-> +	atomic_t irq;
-> +	atomic_t irq_count;
-> +};
-
-Maybe
-
-struct gpio_virtuser_sysfs_data {
-	union {
-		struct gpio_desc *desc;
-		struct gpio_descs *descs;
-	};
-	struct kobject *kobj;
-	struct attribute_group *attr_group;
-};
-
-struct gpio_virtuser_line_array_data {
-	struct gpio_virtuser_sysfs_data sd;
-};
-
-struct gpio_virtuser_line_data {
-	struct gpio_virtuser_sysfs_data sd;
-	char consumer[GPIO_CONSUMER_NAME_MAX_LEN];
-	struct mutex consumer_lock;
-	unsigned int debounce;
-	atomic_t irq;
-	atomic_t irq_count;
-};
-
-?
-
-..
-
-> +struct gpio_virtuser_attr_ctx {
-> +	struct device_attribute dev_attr;
-> +	void *data;
-> +};
-
-struct dev_ext_attribute ?
-
-..
-
-> +struct gpio_virtuser_attr_descr {
-> +	const char *name;
-> +	ssize_t (*show)(struct device *, struct device_attribute *, char *);
-> +	ssize_t (*store)(struct device *, struct device_attribute *,
-> +			 const char *, size_t);
-> +};
-
-struct device_attribute ? (Yes, I know that that one is a bit bigger but
-benefit is that we have some code that you may reuse)
-
-..
-
-> +static ssize_t gpio_virtuser_sysfs_emit_value_array(char *buf,
-> +						    unsigned long *values,
-> +						    size_t num_values)
-> +{
-> +	ssize_t len = 0;
-> +	size_t i;
-> +
-> +	for (i = 0; i < num_values; i++)
-> +		len += sysfs_emit_at(buf, len, "%d",
-> +				     test_bit(i, values) ? 1 : 0);
-> +	return len + sysfs_emit_at(buf, len, "\n");
-
-Why not use %pb?
-
-> +}
-
-..
-
-> +static int gpio_virtuser_sysfs_parse_value_array(const char *buf, size_t len,
-> +						 unsigned long *values)
-> +{
-> +	size_t i;
-> +
-> +	for (i = 0; i < len; i++) {
-
-Perhaps
-
-		bool val;
-		int ret;
-
-		ret = kstrtobool(...);
-		if (ret)
-			return ret;
-
-		assign_bit(...); // btw, why atomic?
-
-> +		if (buf[i] == '0')
-> +			clear_bit(i, values);
-> +		else if (buf[i] == '1')
-> +			set_bit(i, values);
-> +		else
-> +			return -EINVAL;
-
-> +	}
-
-BUT, why not bitmap_parse()?
-
-> +	return 0;
-> +}
-
-..
-
-> +	unsigned long *values __free(bitmap) = bitmap_alloc(descs->ndescs,
-> +							    GFP_KERNEL);
-
-Perhaps
-
-	unsigned long *values __free(bitmap) =
-		 bitmap_alloc(descs->ndescs, GFP_KERNEL);
-
-..
-
-> +	unsigned long *values __free(bitmap) = bitmap_zalloc(descs->ndescs,
-> +							     GFP_KERNEL);
-
-In the similar way?
-
-..
-
-> +	unsigned long *values __free(bitmap) = bitmap_zalloc(descs->ndescs,
-> +							     GFP_KERNEL);
-
-Ditto.
-
-..
-
-> +{
-> +	return sysfs_emit(buf, "%s\n",
-> +			  dir == GPIO_LINE_DIRECTION_IN ? "input" : "output");
-
-I think this maybe transformed to something like str_input_output() in
-string_choices.h (and you don't even need to include that as it's implied by
-string_helpers.h)
-
-> +}
-
-..
-
-> +static int gpio_virtuser_parse_direction(const char *buf, int *dir, int *val)
-> +{
-> +	if (sysfs_streq(buf, "input")) {
-> +		*dir = GPIO_LINE_DIRECTION_IN;
-> +		return 0;
-> +	}
-> +
-> +	if (sysfs_streq(buf, "output-high"))
-> +		*val = 1;
-> +	else if (sysfs_streq(buf, "output-low"))
-> +		*val = 0;
-> +	else
-> +		return -EINVAL;
-> +
-> +	*dir = GPIO_LINE_DIRECTION_OUT;
-
-This can be transformed to use sysfs_match_string() with
-
-static const char * const dirs[] = { "output-low", "output-high", "input" };
-
-	int ret;
-
-	ret = sysfs_match_string(...);
-	if (ret < 0)
-		return ret;
-
-	*val = ret;
-	*dir = ret == 2 ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECTION_OUT;
-
-And with this approach it even not clear why do you need dir and val to be
-separated here (esp. if we add a enum like
-
-	GPIO_VIRTUSER_OUT_LOW,
-	GPIO_VIRTUSER_OUT_HIGH,
-	GPIO_VIRTUSER_IN,
-
-(with it the string array can also be indexed).
-
-> +	return 0;
-> +}
-
-..
-
-> +static int gpio_virtuser_parse_value(const char *buf)
-> +{
-> +	int value, ret;
-> +
-> +	value = sysfs_match_string(gpio_virtuser_sysfs_value_strings, buf);
-> +	if (value < 0) {
-> +		/* Can be 0 or 1 too. */
-> +		ret = kstrtoint(buf, 0, &value);
-> +		if (ret)
-> +			return ret;
-
-> +		if (value != 0 && value != 1)
-> +			return -EINVAL;
-
-Why not kstrtobool()?
-
-> +	}
-> +
-> +	return value;
-> +}
-
-..
-
-> +	ret = kstrtouint(buf, 10, &debounce);
-
-Why restrict to decimal?
-
-> +	if (ret)
-> +		return ret;
-
-..
-
-> +static ssize_t
-> +gpio_virtuser_sysfs_consumer_store(struct device *dev,
-> +				   struct device_attribute *attr,
-> +				   const char *buf, size_t len)
-> +{
-> +	struct gpio_virtuser_line_data *data = to_gpio_virtuser_data(attr);
-> +	int ret;
-
-> +	if (strlen(buf) > GPIO_CONSUMER_NAME_MAX_LEN)
-> +		return -EINVAL;
-
-You don't need this if you use strscpy() below and check its returned value.
-
-> +	guard(mutex)(&data->consumer_lock);
-> +
-> +	ret = gpiod_set_consumer_name(data->desc, buf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	sprintf(data->consumer, buf);
-> +
-> +	return len;
-> +}
-
-..
-
-> +	data->attr_group->name = devm_kasprintf(dev, GFP_KERNEL,
-> +						"gpiod:%s", id);
-
-Why two lines?
-
-> +	if (!data->attr_group->name)
-> +		return -ENOMEM;
-
-..
-
-> +	ret = devm_add_action_or_reset(dev, gpio_virtuser_mutex_destroy,
-> +				       &data->consumer_lock);
-
-Don't we have devm_mutex_init() (`git tag --contains` shows v6.10-rc1 to me)
-
-> +		return ret;
-
-..
-
-> +static int gpio_virtuser_prop_is_gpio(struct property *prop)
-> +{
-> +	char *dash = strpbrk(prop->name, "-");
-
-Why not strrchr() ?
-
-> +	return dash && strcmp(dash, "-gpios") == 0;
-
-Can't we reuse the suffix from the array from the gpiolib internal header?
-Also I don't like the form of '-' in the line. "gpios" is good and chance
-that linker deduplicates the same string if it occurs somewhere else in the
-binary (in case this goes with =y in .config).
-
-> +}
-
-..
-
-> +/*
-> + * If this is an OF-based system, then we iterate over properties and consider
-> + * all whose names end in "-gpios". For configfs we expect an additional string
-> + * array property - "gpio-virtuser,ids" - containing the list of all GPIO IDs
-> + * to request.
-
-Why not any other system? What's wrong for having this available for ACPI, for
-example? Okay, I see that this is probably due to absence of API.
-
-OTOH the last call in the function assumes non-OF cases. Why can't we have the
-same approach in both?
-
-> + */
-> +static int gpio_virtuser_count_ids(struct device *dev)
-> +{
-> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
-
-Why? This function is mostly OF one, make it simpler.
-
-	struct device_node *np = dev_of_node(dev);
-
-> +	struct property *prop;
-> +	int ret = 0;
-
-> +	if (is_of_node(fwnode)) {
-
-Instead of this check...
-
-	if (np) {
-
-..can be used.
-
-
-> +		for_each_property_of_node(to_of_node(fwnode), prop) {
-
-	for_each_property_of_node(np, prop) {
-
-> +			if (gpio_virtuser_prop_is_gpio(prop))
-> +				++ret;
-
-Why pre-increment?
-
-> +		}
-
-> +		return ret;
-> +	}
-
-> +	return device_property_string_array_count(dev, "gpio-virtuser,ids");
-> +}
-
-..
-
-> +static int gpio_virtuser_get_ids(struct device *dev, const char **ids,
-> +				 int num_ids)
-> +{
-> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
-> +	struct property *prop;
-> +	size_t pos = 0, diff;
-> +	char *dash, *tmp;
-> +
-> +	if (is_of_node(fwnode)) {
-> +		for_each_property_of_node(to_of_node(fwnode), prop) {
-
-As per above function.
-
-> +			if (!gpio_virtuser_prop_is_gpio(prop))
-> +				continue;
-> +
-> +			dash = strpbrk(prop->name, "-");
-> +			diff = dash - prop->name;
-> +
-> +			tmp = devm_kmemdup(dev, prop->name, diff + 1,
-> +					   GFP_KERNEL);
-
-devm_kstrndup() is not okay? Okay, we don't have it (yet?), but at least I
-would rather expect wrapped kstrndup() than this.
-
-> +			if (!tmp)
-> +				return -ENOMEM;
-> +
-> +			tmp[diff] = '\0';
-> +			ids[pos++] = tmp;
-> +		}
-> +
-> +		return 0;
-> +	}
-> +
-> +	return device_property_read_string_array(dev, "gpio-virtuser,ids",
-> +						 ids, num_ids);
-> +}
-
-..
-
-> +static int gpio_virtuser_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct gpio_descs *descs;
-> +	int ret, num_ids = 0, i;
-> +	const char **ids;
-> +	unsigned int j;
-> +
-> +	num_ids = gpio_virtuser_count_ids(dev);
-> +	if (num_ids < 0)
-> +		return dev_err_probe(dev, num_ids,
-> +				     "Failed to get the number of GPIOs to request\n");
-> +
-> +	if (num_ids == 0) {
-> +		dev_err(dev, "No GPIO IDs specified\n");
-> +		return -EINVAL;
-
-It's okay to
-
-		return dev_err_probe(...);
-
-with know error code.
-
-> +	}
-> +
-> +	ids = devm_kcalloc(dev, num_ids, sizeof(*ids), GFP_KERNEL);
-> +	if (!ids)
-> +		return -ENOMEM;
-> +
-> +	ret = gpio_virtuser_get_ids(dev, ids, num_ids);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to get the IDs of GPIOs to request\n");
-> +
-> +	for (i = 0; i < num_ids; i++) {
-> +		descs = devm_gpiod_get_array(dev, ids[i], GPIOD_ASIS);
-> +		if (IS_ERR(descs))
-> +			return dev_err_probe(dev, PTR_ERR(descs),
-> +					     "Failed to request the '%s' GPIOs\n",
-> +					     ids[i]);
-> +
-> +		ret = gpio_virtuser_sysfs_init_line_array_attrs(dev, descs,
-> +								ids[i]);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Failed to setup the sysfs array interface for the '%s' GPIOs\n",
-> +					     ids[i]);
-> +
-> +		for (j = 0; j < descs->ndescs; j++) {
-> +			ret = gpio_virtuser_sysfs_init_line_attrs(dev,
-> +							descs->desc[j],
-> +							ids[i], j);
-> +			if (ret)
-> +				return dev_err_probe(dev, ret,
-> +						     "Failed to setup the sysfs line interface for the '%s' GPIOs\n",
-> +						     ids[i]);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-..
-
-> +static int gpio_virtuser_bus_notifier_call(struct notifier_block *nb,
-> +					   unsigned long action, void *data)
-> +{
-> +	struct gpio_virtuser_device *vdev;
-> +	struct device *dev = data;
-> +	char devname[32];
-> +
-> +	vdev = container_of(nb, struct gpio_virtuser_device, bus_notifier);
-> +	snprintf(devname, sizeof(devname), "gpio-virtuser.%d", vdev->id);
-> +
-> +	if (strcmp(dev_name(dev), devname))
-
-	if (!device_match_name(...))
-
-> +		return NOTIFY_DONE;
-> +
-> +	switch (action) {
-> +	case BUS_NOTIFY_BOUND_DRIVER:
-> +		vdev->driver_bound = true;
-> +		break;
-> +	case BUS_NOTIFY_DRIVER_NOT_BOUND:
-> +		vdev->driver_bound = false;
-> +		break;
-> +	default:
-> +		return NOTIFY_DONE;
-> +	}
-> +
-> +	complete(&vdev->probe_completion);
-> +	return NOTIFY_OK;
-> +}
-
-..
-
-> +static ssize_t
-> +gpio_virtuser_lookup_entry_config_key_store(struct config_item *item,
-> +					    const char *page, size_t count)
-> +{
-> +	struct gpio_virtuser_lookup_entry *entry =
-> +					to_gpio_virtuser_lookup_entry(item);
-> +	struct gpio_virtuser_device *dev = entry->parent->parent;
-> +
-> +	char *key = kstrndup(skip_spaces(page), count, GFP_KERNEL);
-
-Missing __free() ?
-
-> +	if (!key)
-> +		return -ENOMEM;
-
-> +	strim(key);
-
-> +	guard(mutex)(&dev->lock);
-> +
-> +	if (gpio_virtuser_device_is_live(dev))
-> +		return -EBUSY;
-> +
-> +	kfree(entry->key);
-> +	entry->key = no_free_ptr(key);
-> +
-> +	return count;
-> +}
-
-..
-
-> +	if (sysfs_streq(page, "pull-up")) {
-> +		entry->flags &= ~(GPIO_PULL_DOWN | GPIO_PULL_DISABLE);
-> +		entry->flags |= GPIO_PULL_UP;
-> +	} else if (sysfs_streq(page, "pull-down")) {
-> +		entry->flags &= ~(GPIO_PULL_UP | GPIO_PULL_DISABLE);
-> +		entry->flags |= GPIO_PULL_DOWN;
-> +	} else if (sysfs_streq(page, "pull-disabled")) {
-> +		entry->flags &= ~(GPIO_PULL_UP | GPIO_PULL_DOWN);
-> +		entry->flags |= GPIO_PULL_DISABLE;
-> +	} else if (sysfs_streq(page, "as-is")) {
-> +		entry->flags &= ~(GPIO_PULL_UP | GPIO_PULL_DOWN |
-> +				  GPIO_PULL_DISABLE);
-> +	} else {
-> +		count = -EINVAL;
-
-		return -EINVAL won't (ab)use count semantics.
-> +	}
-> +
-> +	return count;
-
-..
-
-> +	return sprintf(page, "%s\n", flags & GPIO_ACTIVE_LOW ? "1" : "0");
-
-Somewhere above you used %d for very similar situation, why %s here?
-Or why "5d" there?
-
-..
-
-> +	return sprintf(page, "%s\n", flags & GPIO_TRANSITORY ? "1" : "0");
-
-Ditto.
-
-..
-
-> +	return sprintf(page, "%c\n", live ? '1' : '0');
-
-Wow! Third type of the same.
-
-..
-
-> +	struct gpiod_lookup_table *table __free(kfree) =
-> +		kzalloc(struct_size(table, table, num_entries + 1), GFP_KERNEL);
-> +	if (!table)
-> +		return -ENOMEM;
-
-> +	table->dev_id = kasprintf(GFP_KERNEL, "gpio-virtuser.%d",
-> +				  dev->id);
-
-Perfectly one line in comparison with the few lines above).
-
-> +	if (!table->dev_id)
-> +		return -ENOMEM;
-
-..
-
-> +			curr->chip_hwnum = entry->offset < 0
-> +						? U16_MAX : entry->offset;
-
-Can we leave ? on the previous line?
-
-..
-
-> +			++i;
-
-Why pre-increment?
-
-..
-
-> +static struct fwnode_handle *
-> +gpio_virtuser_make_device_swnode(struct gpio_virtuser_device *dev)
-> +{
-> +	struct property_entry properties[2];
-> +	struct gpio_virtuser_lookup *lookup;
-> +	size_t num_ids;
-> +	int i = 0;
-
-Why signed? And in all this kind of case, I would split assignment...
-
-> +	memset(properties, 0, sizeof(properties));
-> +
-> +	num_ids = list_count_nodes(&dev->lookup_list);
-> +	char **ids __free(kfree) = kcalloc(num_ids + 1, sizeof(*ids),
-> +					   GFP_KERNEL);
-> +	if (!ids)
-> +		return ERR_PTR(-ENOMEM);
-> +
-
-To be here, that the reader will see immediately (close enough) what is the
-initial values. Moreover this code will be robuse against changes in between
-(if i become reusable).
-
-> +	list_for_each_entry(lookup, &dev->lookup_list, siblings)
-> +		ids[i++] = lookup->con_id;
-> +
-> +	properties[0] = PROPERTY_ENTRY_STRING_ARRAY_LEN("gpio-virtuser,ids",
-> +							ids, num_ids);
-> +
-> +	return fwnode_create_software_node(properties, NULL);
-> +}
-
-..
-
-> +	guard(mutex)(&dev->lock);
-> +
-> +	if (live == gpio_virtuser_device_is_live(dev))
-> +		ret = -EPERM;
-
-With guard in place, just return directly, ...
-
-> +	else if (live)
-
-..drop 'else'...
-
-> +		ret = gpio_virtuser_device_activate(dev);
-> +	else
-
-..ditto...
-
-> +		gpio_virtuser_device_deactivate(dev);
-> +
-> +	return ret ?: count;
-
-..and simply return count here.
-
-
-..
-
-> +	struct gpio_virtuser_device *dev __free(kfree) = kzalloc(sizeof(*dev),
-> +								 GFP_KERNEL);
-
-	struct gpio_virtuser_device *dev __free(kfree) =
-		kzalloc(sizeof(*dev), GFP_KERNEL);
-
-> +	if (!dev)
-> +		return ERR_PTR(-ENOMEM);
-
-..
-
-> +	ret = platform_driver_register(&gpio_virtuser_driver);
-> +	if (ret) {
-
-> +		pr_err("Failed to register the platform driver: %d\n",
-> +		       ret);
-
-I would keep one line.
-
-> +		return ret;
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+References: <20240529180510.2295118-1-jthoughton@google.com> <20240529180510.2295118-3-jthoughton@google.com>
+In-Reply-To: <20240529180510.2295118-3-jthoughton@google.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Wed, 29 May 2024 15:03:21 -0600
+Message-ID: <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
+ in aging
+To: James Houghton <jthoughton@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Ankit Agrawal <ankita@nvidia.com>, 
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Sean Christopherson <seanjc@google.com>, 
+	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 29, 2024 at 12:05=E2=80=AFPM James Houghton <jthoughton@google.=
+com> wrote:
+>
+> Secondary MMUs are currently consulted for access/age information at
+> eviction time, but before then, we don't get accurate age information.
+> That is, pages that are mostly accessed through a secondary MMU (like
+> guest memory, used by KVM) will always just proceed down to the oldest
+> generation, and then at eviction time, if KVM reports the page to be
+> young, the page will be activated/promoted back to the youngest
+> generation.
+
+Correct, and as I explained offline, this is the only reasonable
+behavior if we can't locklessly walk secondary MMUs.
+
+Just for the record, the (crude) analogy I used was:
+Imagine a large room with many bills ($1, $5, $10, ...) on the floor,
+but you are only allowed to pick up 10 of them (and put them in your
+pocket). A smart move would be to survey the room *first and then*
+pick up the largest ones. But if you are carrying a 500 lbs backpack,
+you would just want to pick up whichever that's in front of you rather
+than walk the entire room.
+
+MGLRU should only scan (or lookaround) secondary MMUs if it can be
+done lockless. Otherwise, it should just fall back to the existing
+approach, which existed in previous versions but is removed in this
+version.
+
+> Do not do look around if there is a secondary MMU we have to interact
+> with.
+>
+> The added feature bit (0x8), if disabled, will make MGLRU behave as if
+> there are no secondary MMUs subscribed to MMU notifiers except at
+> eviction time.
+>
+> Suggested-by: Yu Zhao <yuzhao@google.com>
+> Signed-off-by: James Houghton <jthoughton@google.com>
+
+This is not what I suggested, and it would have been done in the first
+place if it hadn't regressed the non-lockless case.
+
+NAK.
 
