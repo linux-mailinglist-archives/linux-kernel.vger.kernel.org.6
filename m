@@ -1,152 +1,166 @@
-Return-Path: <linux-kernel+bounces-194664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D378D3FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:33:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C33B8D3F95
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33A14B26180
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:33:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D182839AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B57B1C8FBA;
-	Wed, 29 May 2024 20:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4A01C68BD;
+	Wed, 29 May 2024 20:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aKerZ++t"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AaoojB2+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583FE15B14D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298CE14534D;
+	Wed, 29 May 2024 20:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717014776; cv=none; b=NHE2OH7KQxx8CFYUu0bxyCrQqtP07P59PKOAmhmhxo8h5YtLOmxyrIW4saYEz/wXv+E9JNJNEnXzsM9wgnIVUUy0+b5qh5PZIA+M+SMKh8DDz4gkJwqSf3QweRTYoQiNuCzkz7BUmTiiOByFiRjZ8ElBEEMro34ry4zZuF1gT58=
+	t=1717014515; cv=none; b=G4Le+g19btxA9nUIjk+nRz/CzIi+OJlr8ZEmAKw0zIfwN1EMpfDPu+tnKEkp8qS+xq3mW+UAXYHXd2oLQQT+tINRVj9h9C7GrKBcuV1dIhqQN/66pzbBxLC4c2KL1FaG2ZV71tjWd+naBXG7GLk2JcgbA4R3jzX5dAxSEHh4nzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717014776; c=relaxed/simple;
-	bh=15xHBuURqdSRwsX1azBzIX0iqJGwDQgITAweyu6Q/Pc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mPq6RpFe64zA8DE1ilnrRtYdZc9LL4J3ky4B2mRfsq1kQXeONR+A3zSHfwa0PJvcBMzncZddplAnNTVtkhCgoJryQyyHnGjz/9gCWws9P1cWAQIefnvxgY33S9202FHO9A4zdInFSMYz3Bi88Zd1LqB8/UQI8myRgT6YScvtrjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aKerZ++t; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-24c91c46d00so86775fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717014773; x=1717619573; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sJrn7LcIZsw+UO69OvNelbef7yB4N2to/TC1avaTfqU=;
-        b=aKerZ++tMG9KHZrxLismPu9ND4lvUtR67i/Vw2sOCP9hOGLlQrQmG4AeIvFsQrKlE+
-         fzm3FUL92MkFnVykUEQ1ycaaRL3JYccD9o3OmY8q2ZXyow6YaNcK3wsblMSo5Er71Zf4
-         TLe89k1VGXbrgpKE3VUSKSmS3szbl61vUKa7vuYxOX170jJURK+24Oku3d3LU7yoQuTH
-         8dkTYXzVbBryhF4rHNURCyWE+07PuXUgfSUemmsNDlmkmf8u+M+1l0v8FQ/uBVhpGHnp
-         fixxSLce2To+XQWKo84WE+F9RWeLC22D0THx9AFEXSMOx0mVkiAZK0XqyV55XlSGzfZZ
-         ClLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717014773; x=1717619573;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJrn7LcIZsw+UO69OvNelbef7yB4N2to/TC1avaTfqU=;
-        b=eOHE4/0dcTX9nT0asZZz45EKq6kqgXp2PNSM+ph5wuWbzg5au5yEYeovOgGyF5lUpf
-         mehIK2OoypxwafwyBWbhhD09OPpBw0hRWwHoGhBSyWcIGW+K7Z9rkwftaW94zlfhua9c
-         KrPnkJcJD9hu0K0anZAlPT4c03GMbGUsMCR4AzrLkDxL+I2pY0Qeu89btp90Dk6PNOnN
-         JSc9/ZkFhJoxci2bRp+7RlPwLu9dxNzZgHCItR8NrPAyUQS09mu1WMVqyjLbT73ZSHAX
-         PMK8SjKttbzGyw6FfiQF5kZRQu5g9af2XVD44JCjREF3x1qGirgGDCdlFTpGgHTiyLqC
-         BZpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwg/UoCpu1ZOnNXEelphi6mogFWfrI5DvtjoUeX1gfFJp+ikjLhTKqhsiZOdKyfr+84Hus9mlPTq7EZypy77uADWoM4DhSmdJcQPE6
-X-Gm-Message-State: AOJu0YzeehD+5K6ucQfuTpSwzrhZKKH40dPIuDrAGTG4LQuUpYh3CUv7
-	LZAxsSqYJWxxGt1RVgWdjcTegL3FfLq5PLAHm1XBXzJTyOFRLeSZxOey/3Zcq6I=
-X-Google-Smtp-Source: AGHT+IE5NrArO+Z9P37YYWccFEpP/QWBisJ3tCe2lH+0qm+o09xZjPivAHqJ2CRqKo67tYN9YnmH5A==
-X-Received: by 2002:a05:6870:1609:b0:24f:c31a:5c29 with SMTP id 586e51a60fabf-25060d3357dmr371166fac.43.1717014773410;
-        Wed, 29 May 2024 13:32:53 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2502a1a8747sm928176fac.21.2024.05.29.13.32.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 13:32:52 -0700 (PDT)
-Message-ID: <ec2ac6fb-0f08-4e8c-8907-83bd8f0976c8@baylibre.com>
-Date: Wed, 29 May 2024 15:32:51 -0500
+	s=arc-20240116; t=1717014515; c=relaxed/simple;
+	bh=yxO+RouaVjt4hpv26MKV9LGR+GrQJeATy9q/u2t1Va0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bw4IAudmuTj/JNM/S/+PWGGC7pGakaDmfy6Zn7Qmzk+d5GKOC0MuGNX+oYy9lBp7IhtNcohyhttBAp7KQFHtdouPzYSR4NZLlMhUmuBnLRBfCpftth8j/e47zZ7BCurLQ5VzyUnGKSM97Z6orNzzEd6VbBy5mrikpQeOWFLFH6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AaoojB2+; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717014513; x=1748550513;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yxO+RouaVjt4hpv26MKV9LGR+GrQJeATy9q/u2t1Va0=;
+  b=AaoojB2+gPMU0wRUBM/aaK/jsXP2EG1H/L7um2Hgy2aGKjgLC1aqivQ+
+   NUF2puYeraotqq3TQ6MrcIwVIBjbOopQshYWQDV4U0nzzAOylvzirqKqS
+   FihRM+McEskVMdONdzKRtdUzbkqnlZ3fSHF12CxkIJIX5EF1poxO9TqDU
+   zS2rcslI6Nz9NyTuiw4C5mB4yOgqW6md2K9slCRqk+zn2cunHyoXPIIFm
+   a3SAZChf9/RdCTyX0vUz8DL46oySIAaJJPMujo0E7YSS6Gb9HmdgggUxk
+   qdbJH6j5VSnrULNdi/gGYCdjbxme7EX0vDqXUtBEZ4RFJh+uLcEzugA7p
+   Q==;
+X-CSE-ConnectionGUID: rsIHlPHmQAC361o5WTfTFw==
+X-CSE-MsgGUID: zUdlCGePRSGzdZZR/xsJzQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13574522"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="13574522"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 13:28:32 -0700
+X-CSE-ConnectionGUID: HbFkC3PJSHGq0tVkSLmGDg==
+X-CSE-MsgGUID: Olioliv0Sy2umeEC2/k42w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="35491261"
+Received: from jacob-builder.jf.intel.com ([10.54.39.125])
+  by fmviesa007.fm.intel.com with ESMTP; 29 May 2024 13:28:32 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: X86 Kernel <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Ingo Molnar" <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>,
+	linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <andi.kleen@intel.com>,
+	"Xin Li" <xin3.li@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH 0/6] Add support for NMI source reporting
+Date: Wed, 29 May 2024 13:33:19 -0700
+Message-Id: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] iio: adc: ad7173: Reduce device info struct size
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dumitru Ceclan <mitrutzceclan@gmail.com>
-References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
- <20240527-ad4111-v3-6-7e9eddbbd3eb@analog.com>
- <2f26b72970be841279ca00c1b5eb91dcfffabdea.camel@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <2f26b72970be841279ca00c1b5eb91dcfffabdea.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 5/29/24 7:23 AM, Nuno Sá wrote:
-> On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
->> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>
->> Reduce the size used by the device info struct by packing the bool
->>  fields within the same byte. This reduces the struct size from 52 bytes
->>  to 44 bytes.
->>
->> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
->> ---
->>  drivers/iio/adc/ad7173.c | 16 ++++++++--------
->>  1 file changed, 8 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->> index 328685ce25e0..e8357a21d513 100644
->> --- a/drivers/iio/adc/ad7173.c
->> +++ b/drivers/iio/adc/ad7173.c
->> @@ -179,15 +179,15 @@ struct ad7173_device_info {
->>  	unsigned int clock;
->>  	unsigned int id;
->>  	char *name;
->> -	bool has_current_inputs;
->> -	bool has_vcom_input;
->> -	bool has_temp;
->> +	bool has_current_inputs		:1;
->> +	bool has_vcom_input		:1;
->> +	bool has_temp			:1;
->>  	/* ((AVDD1 − AVSS)/5) */
->> -	bool has_common_input;
->> -	bool has_input_buf;
->> -	bool has_int_ref;
->> -	bool has_ref2;
->> -	bool higher_gpio_bits;
->> +	bool has_common_input		:1;
->> +	bool has_input_buf		:1;
->> +	bool has_int_ref		:1;
->> +	bool has_ref2			:1;
->> +	bool higher_gpio_bits		:1;
->>  	u8 num_gpios;
->>  };
->>  
->>
-> 
-> This is really a very micro optimization... I would drop it tbh but no strong
-> feelings about it.
-> 
-> - Nuno Sá
+Hi Thomas and all,
 
-This only considers RAM size and not code size too. At least on ARM arch
-every time we read or write to one of these fields, the code is now
-implicitly `((field & 0x1) >> bits)` so two extra assembly instructions
-for each read and write. This could be bigger than the size saved in
-the structs.
+Non-Maskable Interrupts (NMIs) are routed to the local Advanced Programmable
+Interrupt Controller (APIC) using vector #2. Before the advent of the
+Flexible Return and Event Delivery (FRED)[1], the vector information set by
+the NMI initiator was disregarded or lost within the hardware, compelling
+system software to poll every registered NMI handler to pinpoint the source
+of the NMI[2]. This approach led to several issues:
 
+1.	Inefficiency due to the CPU's time spent polling all handlers.
+2.	Increased latency from the additional time taken to poll all handlers.
+3.	The occurrence of unnecessary NMIs if they are triggered shortly
+	after being processed by a different source.
+
+To tackle these challenges, Intel introduced NMI source reporting as a part
+of the FRED specification (detailed in Chapter 9). This CPU feature ensures
+that while all NMI sources are still aggregated into NMI vector (#2) for
+delivery, the source of the NMI is now conveyed through FRED event data
+(a 16-bit bitmap on the stack). This allows for the selective dispatch
+of the NMI source handler based on the bitmap, eliminating the need to
+invoke all NMI source handlers indiscriminately.
+
+In line with the hardware architecture, various interrupt sources can
+generate NMIs by encoding an NMI delivery mode. However, this patchset
+activates only the local NMI sources that are currently utilized by the
+Linux kernel, which includes:
+
+1.	Performance monitoring.
+2.	Inter-Processor Interrupts (IPIs) for functions like CPU backtrace,
+	machine check, Kernel GNU Debugger (KGDB), reboot, panic stop, and
+	self-test.
+
+Other NMI sources will continue to be handled as previously when the NMI
+source is not utilized or remains unidentified.
+
+
+[1] https://www.intel.com/content/www/us/en/content-details/779982/flexible-return-and-event-delivery-fred-specification.html
+[2] https://lore.kernel.org/lkml/171011362209.2468526.15187874627966416701.tglx@xen13/
+
+Thanks,
+
+Jacob
+
+Jacob Pan (6):
+  x86/irq: Add enumeration of NMI source reporting CPU feature
+  x86/irq: Extend NMI handler registration interface to include source
+  x86/irq: Factor out common NMI handling code
+  x86/irq: Process nmi sources in NMI handler
+  perf/x86: Enable NMI source reporting for perfmon
+  x86/irq: Enable NMI source on IPIs delivered as NMI
+
+ arch/x86/Kconfig                         |  9 +++
+ arch/x86/events/amd/ibs.c                |  2 +-
+ arch/x86/events/core.c                   | 11 ++-
+ arch/x86/events/intel/core.c             |  6 +-
+ arch/x86/include/asm/apic.h              |  1 +
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/include/asm/disabled-features.h |  8 ++-
+ arch/x86/include/asm/irq_vectors.h       | 31 ++++++++
+ arch/x86/include/asm/nmi.h               |  4 +-
+ arch/x86/kernel/apic/hw_nmi.c            |  5 +-
+ arch/x86/kernel/apic/ipi.c               |  4 +-
+ arch/x86/kernel/apic/local.h             | 18 +++--
+ arch/x86/kernel/cpu/cpuid-deps.c         |  1 +
+ arch/x86/kernel/cpu/mce/inject.c         |  4 +-
+ arch/x86/kernel/cpu/mshyperv.c           |  2 +-
+ arch/x86/kernel/kgdb.c                   |  6 +-
+ arch/x86/kernel/nmi.c                    | 92 ++++++++++++++++++++----
+ arch/x86/kernel/nmi_selftest.c           |  7 +-
+ arch/x86/kernel/reboot.c                 |  4 +-
+ arch/x86/kernel/smp.c                    |  4 +-
+ arch/x86/kernel/traps.c                  |  4 +-
+ arch/x86/platform/uv/uv_nmi.c            |  4 +-
+ drivers/acpi/apei/ghes.c                 |  2 +-
+ drivers/char/ipmi/ipmi_watchdog.c        |  2 +-
+ drivers/edac/igen6_edac.c                |  2 +-
+ drivers/watchdog/hpwdt.c                 |  6 +-
+ 26 files changed, 187 insertions(+), 53 deletions(-)
+
+-- 
+2.25.1
 
 
