@@ -1,102 +1,133 @@
-Return-Path: <linux-kernel+bounces-194270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907268D3933
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:29:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115218D392E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69381C22971
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:29:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CAB9B25BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDD8158872;
-	Wed, 29 May 2024 14:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C948158210;
+	Wed, 29 May 2024 14:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h7e/Hk65"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mw8j/CgV"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990791386C6;
-	Wed, 29 May 2024 14:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E516156F38;
+	Wed, 29 May 2024 14:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716992932; cv=none; b=uAN+guZvqJLfXgRH5MTsklZWRczV+6N+qf7lqyc/aDJ678jvCyMkfh/xbP0e5ZkUcDNUA8mhp1tHYeZqfmw1FEoWncU+NezX5ANaqAYgpRcyny2QRzGohjllYDqi2HfSVJPoXBosuOG1P/QtjlOv1YJpm5Pli/OW0lJj2ptS+2w=
+	t=1716992924; cv=none; b=a+C+SIxbfjAqS4LCgnTwjFWZQAuPsYyOJitE8B5Qm9l/ciYlG6hm2qdRD+AS7RsTlmkLy5boYrpAgkLLYbzXUNDESQUKk6oNQ3fm2ceW0OjwoSmV+P7w0B43V1EuQrmyXNhVW3XSf/o1kIg33rFMnrahOAXBHLoLqakBZ+MV3xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716992932; c=relaxed/simple;
-	bh=94w/1FYOY49gVJVMW1Je3xGavCevd8pni3hcKGMgcU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZyVyTn9a9OtPAMUcEGDY41gshTjBea8brYdL+DOP3c8i7oh9QpPMSxzU3RqO2PSezdkM8TnCpZvoa3CEeHfVv1Y77w5RYprnR24Gp1Ci0JU+IFfcbKm5M8qT80tiHOkJeVsJXIhE6GjP1bo4sXIlU1XgsCCAdrimp8phXX1Mew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h7e/Hk65; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=A0djHwkTm9IMDtUZ9E1EkFk0NBl4OKR695dw9cvK5k4=; b=h7e/Hk65uFLg0eujXc54qb2QCT
-	en2K+w/W6N1KiOMFBDKWSbFfUcPW4RG9rhZjrfQui7wQzESKkGovHrfP58wSF5/MPeKBeyHGKsy5F
-	pj3+VNpkPfETsP5kxq2X/i+DQ2JXSCTvL73CAgo9Sa1qyixhXRNdRw6p4F6wvdOrLSbE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sCKHo-00GGQZ-Fq; Wed, 29 May 2024 16:28:16 +0200
-Date: Wed, 29 May 2024 16:28:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sneh Shah <quic_snehshah@quicinc.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: [PATCH net-next] net: stmmac: dwmac-qcom-ethqos: Add support for
- 2.5G SGMII
-Message-ID: <67553944-5d3f-4641-a719-da84554c0a9f@lunn.ch>
-References: <20231218071118.21879-1-quic_snehshah@quicinc.com>
- <4zbf5fmijxnajk7kygcjrcusf6tdnuzsqqboh23nr6f3rb3c4g@qkfofhq7jmv6>
- <8b80ab09-8444-4c3d-83b0-c7dbf5e58658@quicinc.com>
- <wvzhz4fmtheculsiag4t2pn2kaggyle2mzhvawbs4m5isvqjto@lmaonvq3c3e7>
- <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
- <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
- <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
+	s=arc-20240116; t=1716992924; c=relaxed/simple;
+	bh=YMQyhhaP6Gg3VRgatRDCJBiv0lWaUNKjwv78w6uHqZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nmhMu8ikKxP4FwSntfSupSf8/xpxz8NWqAQl/mjgeJ4+TOg9TfZsVz1iiuNWZQaYUup5A+WW6DCR3FGz7yvWpKN83+OqKCCAnxn4EnuS7PSVqKSRHcaNech3Uu9Ur58ZGr6uFmxFNBxFRTBU+xSHtLA2LHXbPhi4u3F/CCDt+eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mw8j/CgV; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716992918; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Oje62Ov6FUBQ4DHAsaEy7GE8Yt2ouQ/knXBYAIm0bWE=;
+	b=mw8j/CgV/4aYJxy1mQgVGQg1YxAhvc0mxSSeSAgQkpRRCd8NaV8RXY7cZHl2bek/h80eaKAK/EREjWe/QcnSstPxHjDX2dqcXNIJM37g8RyFhapq4YpEzqu1IzVW140eEcv6y/OjkaAcJDdiiAYnt+0JiiJ+rh0L30NDQ4zl7Mo=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7U1T.u_1716992916;
+Received: from 192.168.3.4(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7U1T.u_1716992916)
+          by smtp.aliyun-inc.com;
+          Wed, 29 May 2024 22:28:37 +0800
+Message-ID: <2dc48e89-cd3f-4736-8847-4d23bcad27e5@linux.alibaba.com>
+Date: Wed, 29 May 2024 22:28:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/12] cachefiles: some bugfixes and cleanups for
+ ondemand requests
+To: Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org, libaokun@huaweicloud.com
+Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Gao Xiang <xiang@kernel.org>
+References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
+ <20240529-lehrling-verordnen-e5040aa65017@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240529-lehrling-verordnen-e5040aa65017@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Qualcomm ethernet HW supports 2.5G speed in overclocked SGMII mode.
-> we internally term it as OCSGMII.
+Hi Christian,
 
-So it still does SGMII inband signalling? Not 2500BaseX signalling? It
-is not actually compatible with 2500BaseX?
+On 2024/5/29 19:07, Christian Brauner wrote:
+> On Wed, 22 May 2024 19:42:56 +0800, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Hi all!
+>>
+>> This is the third version of this patch series. The new version has no
+>> functional changes compared to the previous one, so I've kept the previous
+>> Acked-by and Reviewed-by, so please let me know if you have any objections.
+>>
+>> [...]
+> 
+> So I've taken that as a fixes series which should probably make it upstream
+> rather sooner than later. Correct?
 
-> End goal of these patches is to enable SGMII with 2.5G speed support.
-> The patch in these series enabled up SGMII with 2.5 for cases where we
-> don't have external phy. ( mac-to-mac connectivity)
+Yeah, many thanks for picking these up!  AFAIK, they've already been
+landed downstream for a while so it'd be much better to address
+these upstream. :-)
 
-So the other end needs to be an over clocked SGMII MAC, not 2500BaseX?
+Thanks,
+Gao Xiang
 
-> The new patch posted extends this for the case when the MAC has an
-> external phy connected. ( hence we are advertising fr 2.5G speed by adding
-> 2500BASEX as supported interface in phylink)
-
-And i assume it does not actually work against a true 2500BaseX
-device, because it is doing SGMII inband signalling?
- 
-Hence Russell frustration with the whole 2.5G mess....
-
-      Andrew
+> 
+> ---
+> 
+> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> Patches in the vfs.fixes branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.fixes
+> 
+> [01/12] cachefiles: add output string to cachefiles_obj_[get|put]_ondemand_fd
+>          https://git.kernel.org/vfs/vfs/c/cc5ac966f261
+> [02/12] cachefiles: remove requests from xarray during flushing requests
+>          https://git.kernel.org/vfs/vfs/c/0fc75c5940fa
+> [03/12] cachefiles: fix slab-use-after-free in cachefiles_ondemand_get_fd()
+>          https://git.kernel.org/vfs/vfs/c/de3e26f9e5b7
+> [04/12] cachefiles: fix slab-use-after-free in cachefiles_ondemand_daemon_read()
+>          https://git.kernel.org/vfs/vfs/c/da4a82741606
+> [05/12] cachefiles: remove err_put_fd label in cachefiles_ondemand_daemon_read()
+>          https://git.kernel.org/vfs/vfs/c/3e6d704f02aa
+> [06/12] cachefiles: add consistency check for copen/cread
+>          https://git.kernel.org/vfs/vfs/c/a26dc49df37e
+> [07/12] cachefiles: add spin_lock for cachefiles_ondemand_info
+>          https://git.kernel.org/vfs/vfs/c/0a790040838c
+> [08/12] cachefiles: never get a new anonymous fd if ondemand_id is valid
+>          https://git.kernel.org/vfs/vfs/c/4988e35e95fc
+> [09/12] cachefiles: defer exposing anon_fd until after copy_to_user() succeeds
+>          https://git.kernel.org/vfs/vfs/c/4b4391e77a6b
+> [10/12] cachefiles: Set object to close if ondemand_id < 0 in copen
+>          https://git.kernel.org/vfs/vfs/c/4f8703fb3482
+> [11/12] cachefiles: flush all requests after setting CACHEFILES_DEAD
+>          https://git.kernel.org/vfs/vfs/c/85e833cd7243
+> [12/12] cachefiles: make on-demand read killable
+>          https://git.kernel.org/vfs/vfs/c/bc9dde615546
 
