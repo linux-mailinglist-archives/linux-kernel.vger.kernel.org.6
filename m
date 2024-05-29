@@ -1,103 +1,115 @@
-Return-Path: <linux-kernel+bounces-194075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D804A8D3647
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:22:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE84C8D364D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E721F266B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:22:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F290A1C220E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C375181326;
-	Wed, 29 May 2024 12:22:16 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3470180A91;
+	Wed, 29 May 2024 12:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUl12+jB"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1714A181306
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0443B295
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716985336; cv=none; b=LAGeoLOHaY+WZHPlQatgbNYNuJrfQsmjC7lcvX7yqjudfHdl+dmS9iiQgF7jyyh7CsyfEt2s/asvH8HUHT02OdTKrf9rVYYteslP6ypKOoCk93RT/iMyqUuEKbiSWpljaHXXU2ETofhnChX5C5oOtEYuhKLVNX1QWULC+bUPYt4=
+	t=1716985413; cv=none; b=iEIzyoi8GwcfyB2u9LZjabqAKaPJLdEIuc+XuL+pOGVESPIBEWObjNAJbTmZlBNJ+t3kA0nMYPjXWky+jEuFQkQ46U7UIIAgq9yApMWLsjzKgbZcwgZqRS4o06m99l9Rttx5zAfIXZda1Llw+6rAlsWRSdm8y8qbqPoGxZKGlrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716985336; c=relaxed/simple;
-	bh=mV1F6L5sqaDjww5uno/FDLOWmQlYZfaJQaMcLbUzZIk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NPob2ORsc/5Jon7kPOldxcWbnkuXmYLFOMllKBnqkptvh9MekfaL/vsYZsbRmFMnk5nywfuRt8ZlF0O5oGv+URORfRzM/s/U/twkNLkyDDjvGvBzOJ5rihS1RP5fYGSiQPVLDamZNkrQniyyhIl6dmE1kPusoqH52/FbrVNX/2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
-	by albert.telenet-ops.be with bizsmtp
-	id V0N82C00a3VPV9V060N8im; Wed, 29 May 2024 14:22:12 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sCIIo-00GdK2-9Y;
-	Wed, 29 May 2024 14:22:08 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sCIJk-009XUA-Md;
-	Wed, 29 May 2024 14:22:08 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1716985413; c=relaxed/simple;
+	bh=SFsdFGM1tKYQjt5FyT4kYb2Qr9hSQyKl3hmka6u3AM4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UwjkTisj1IeurcMPd/9ICJkEx5Zhl1PkSvt2IM8OC3pGLJs7SB9CVClkZTJmuJeNLrxMjs57cNHLakZXiphsr917nBHuQ6K0CW61GumpuRkLbodbw20ZOWaihLbX0x3JTeqEMRWZGL+E1RzQY1TZkHEzSoZimAl8iS2YMElHhqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nUl12+jB; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-65894e58b8aso1456746a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716985411; x=1717590211; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu8X2LCUalqzu3Ya3NkSgnwgrwDIZEosx1eIzHQjc28=;
+        b=nUl12+jBNxcKbDgzGtFZNYSQJFjwct7hD+x07oprx3hG30phMwzGbFiHg73VbyyoP7
+         udbdlLPgjlkQHWdrh7hKJNOQoEhma+Fz6pDg2f30O4GJGPgoV2tJXg80U7kjbQ918nAQ
+         0JExZ4qcFjew3KQewfiSp6M7HO57N5WaYmz2bqbkdJ14DqMWMP015Tjz/SFZQSPVwBQW
+         TwNozyHdpK/iLh6SZazQMyxINCP8RRnFCnvyvyPBEEL0Plgt7ac0TSNQ981zXYqlCNqF
+         l0zkr3ONjsHcFSXbcDVr7hDv214/f59nZa7U5ye/oIU/kmccEVxDamGuTAFCn8I74VDA
+         YnNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716985411; x=1717590211;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bu8X2LCUalqzu3Ya3NkSgnwgrwDIZEosx1eIzHQjc28=;
+        b=LjELYBzY58mysHb2F7gju+PFbS/mvFZd1x2UTHe2gXTlU+CU65GQkuO8v91NAfIcGl
+         kngxnlxJfV9sPRmLrGHTVZ1ret6R/qQqpbOkXm4u3RyDsmZvyAjCWe/YegL/6C762cdO
+         /goQTgzNwLOVZjsppzI/epXT9R26A8ybv+QiCWieukWTKMpOtqm9/kKuVBX1A1GTrgrI
+         T10zF5RtN97cPyh//bgcy3koVKyl3W/u3fnUlP+knybKOz2KE74SlwLXzpUDRTXpBUM+
+         fRpXvQPgpeoh8eGxtoGCF2p8lnSxmTRKiO3yitSCgQDjR53iZKFiIGSlSirID1vpP+VP
+         +zsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbgKyGeDKn+rCzHkBHh2rr0wiRUneSwpA7kUXvOqo2E4v970ATI/Ykfwkik4w1jOK0Ad1IPgn4TlIneEfXEY59Ktnu75UldDvg68i0
+X-Gm-Message-State: AOJu0YyJsNo/klkN7mA4XKx8XKc9TgjXaFOu4gkvTVf8Y7ECbO9BkWvQ
+	3Q68qjXFEHU/osnMHcilP30TbB/B06EFnazOrfIS5lOgYdDTfyn2
+X-Google-Smtp-Source: AGHT+IGpop5Rh0Gl6NPGn+yzSeNeXcyhhaZwMs48bAu4Ha451DIdYSt4ISyatz1BTqz9iqNA8XPlsg==
+X-Received: by 2002:a17:90b:46d3:b0:2ae:7f27:82cd with SMTP id 98e67ed59e1d1-2bf5e171f8amr12877376a91.7.1716985411004;
+        Wed, 29 May 2024 05:23:31 -0700 (PDT)
+Received: from paran-QEMU-Virtual-Machine.. ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5f987248sm9399359a91.44.2024.05.29.05.23.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 05:23:30 -0700 (PDT)
+From: yskelg@gmail.com
+To: Stefano Stabellini <sstabellini@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: skhan@linuxfoundation.org,
+	sj@kernel.org,
+	Austin Kim <austindh.kim@gmail.com>,
+	shjy180909@gmail.com,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 3/3] dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
-Date: Wed, 29 May 2024 14:22:06 +0200
-Message-Id: <de215e00e180c266527b7bd7cff5f75df918da98.1716985096.git.geert+renesas@glider.be>
+	xen-devel@lists.xenproject.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH] xen/xenbus: handle potential dangling pointer issue in xen_pcibk_xenbus_probe
+Date: Wed, 29 May 2024 21:22:33 +0900
+Message-Id: <20240529122232.25360-1-yskelg@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1716985096.git.geert+renesas@glider.be>
-References: <cover.1716985096.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Document support for the Timer Unit (TMU) on R-Car Gen2 SoCs.
+From: Yunseong Kim <yskelg@gmail.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v2:
-  - Add Acked-by, Reviewed-by.
----
- Documentation/devicetree/bindings/timer/renesas,tmu.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+If 'xen_pcibk_init_devices()' fails. This ensures that 'pdev->xdev' does
+not point to 'xdev' when 'pdev' is freed.
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-index cc228ed28ee8a301..b6dd98d956f3e867 100644
---- a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-+++ b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-@@ -34,6 +34,11 @@ properties:
-           - renesas,tmu-r8a774e1 # RZ/G2H
-           - renesas,tmu-r8a7778  # R-Car M1A
-           - renesas,tmu-r8a7779  # R-Car H1
-+          - renesas,tmu-r8a7790  # R-Car H2
-+          - renesas,tmu-r8a7791  # R-Car M2-W
-+          - renesas,tmu-r8a7792  # R-Car V2H
-+          - renesas,tmu-r8a7793  # R-Car M2-N
-+          - renesas,tmu-r8a7794  # R-Car E2
-           - renesas,tmu-r8a7795  # R-Car H3
-           - renesas,tmu-r8a7796  # R-Car M3-W
-           - renesas,tmu-r8a77961 # R-Car M3-W+
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ drivers/xen/xen-pciback/xenbus.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/xen/xen-pciback/xenbus.c b/drivers/xen/xen-pciback/xenbus.c
+index b11e401f1b1e..348d6803b8c0 100644
+--- a/drivers/xen/xen-pciback/xenbus.c
++++ b/drivers/xen/xen-pciback/xenbus.c
+@@ -54,6 +54,7 @@ static struct xen_pcibk_device *alloc_pdev(struct xenbus_device *xdev)
+ 	INIT_WORK(&pdev->op_work, xen_pcibk_do_op);
+ 
+ 	if (xen_pcibk_init_devices(pdev)) {
++		pdev->xdev = NULL;
+ 		kfree(pdev);
+ 		pdev = NULL;
+ 	}
 -- 
 2.34.1
 
