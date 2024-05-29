@@ -1,223 +1,197 @@
-Return-Path: <linux-kernel+bounces-194488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939E88D3D12
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:47:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A60E8D3D16
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9C21F219B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934C01F24A62
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415CA18412E;
-	Wed, 29 May 2024 16:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4088A184132;
+	Wed, 29 May 2024 16:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCkNXUfP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OM4RgOwE"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2086.outbound.protection.outlook.com [40.107.102.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5A11836DB;
-	Wed, 29 May 2024 16:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717001230; cv=none; b=MJzTBufvlzhIWJdmvgHdy+g1yC5yEB3ohOhmC02oieo/EGtvIkKZUaxgVGqYKQkrM04EI612Qfqnh+KPZCbdggM8RTxoexN5fwMwt6RtHvP3vdUZWI76ACA432SMXNGq5AM2V29HmgGal3M//o0uJtkyliwkfs4VjK5wnKMcaRk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717001230; c=relaxed/simple;
-	bh=n7ShnOOdeIWlPrL1n4Qs6VgIfCSCN6l/akX1/ZK9iYo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RWONw/aPYv53ktZdz0KOhV/Abib4IwBhimTgT+lWwJheh7QkiBeP9QpZhCBcaPy+SHklsH5AeuqJhNbcOW6VC/U4FUh41cCnsmN7h+Bv3DXBXfX6KABOKBGBBCs4VnoDL/mdmKSFrBWHRXijA0pXokXNF2z08jG5TybhA+AGqns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCkNXUfP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B9CC2BD10;
-	Wed, 29 May 2024 16:47:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717001229;
-	bh=n7ShnOOdeIWlPrL1n4Qs6VgIfCSCN6l/akX1/ZK9iYo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aCkNXUfPlo3EhRbLwsDwFyRATwLVLUxUtj5wd3U/saK9gL5LhRqc4OABpaV61v8zT
-	 ubUpa9SCgvaGflDHtcC8oDphpTExJvrdJ+lTHVVkOBGjvb5RCZRBTEAnMVwE2kM7ky
-	 DL1TWkTid2Dw77FzPEK/ULvttmd3G6bb8U0Msa1QzIR43ZEhnhfPlO7fYqttmVEd1X
-	 m0kx6PFCQ9hiWY6dGLVwi+TVW0JGQ7hNUH2kXCA1V7vf7fIbrl1+r+ZGIFsLdtL5Hp
-	 TM1sj/29jL/UZBxiuz4r8M6mtqA0FkvfVZTUdoUobAUeaoBZMayRftrVGZolSbCs1v
-	 Lq91EPR1iUUOA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b78ef397bso191000e87.0;
-        Wed, 29 May 2024 09:47:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKjWdIYunNS7nq+gyVDdD3nNA0iBHzuF1LjW8twFBt5nBmD8jUYptFgw5PQdlFENT/OdiiO2+YtfQTINqnuZgkUgU6Sj2my+vJSbh/xWfZEw2Imx2Rz04NwMVArbLlZM4lXQ/JWgAriQ==
-X-Gm-Message-State: AOJu0YyDBjgHbfDbw8FWTZmQYAwTcI194Q8zQmNgEQxp84MiTIT1K/9s
-	GQOaXVJUBDuMbZDTLVTXvOvoZlKPOSCr/2t0bz3R+oLVIzC8SVseGyJX+Qn9nwBJahtJU2qvb9i
-	xszD6KDrpFmUS+8jTFMLGb4tPyg==
-X-Google-Smtp-Source: AGHT+IFE6/+pP8QOr7VDz95upfl9e+YZ3sfN4RgI1zbUAJDDzRKCICanPYQR7UH0Oun/B9qoZvrxOicJ6ZYmtkymUpk=
-X-Received: by 2002:ac2:5a08:0:b0:52a:7742:4593 with SMTP id
- 2adb3069b0e04-52a78c36684mr864211e87.25.1717001228317; Wed, 29 May 2024
- 09:47:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC04513D278;
+	Wed, 29 May 2024 16:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717001431; cv=fail; b=XpJyUYkSnMEyK1Dg8izdQ/0GDkB6Urisqyw8Jb446tn3qDFzUBN8+KwSmuwqxBsLAYGRria7fKJhBwmMheupvRc1fOJmnE8sKzIy1O+RPC3xdPLZaPLNu4927AX2cJauQTHQGgBXHKQziyX7twcWfEmUSPJ8c10LOHvO8SjW1l4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717001431; c=relaxed/simple;
+	bh=zAjNJ838MM1D93Hi3izGb+WzRenrXm0v7VonR+al60Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tAiusEEq91XNFQeI1MwfmzjhUEW2V/fBeF/h/eKSF1VKncO+7DteADUXUlCuWq0Vg04dvxw+2WPHe7e/jZ+BHclRHPQu0xbASq5KkjzetyIPoniYMwA1ooUX5L+0vEwFUylHtFB51paqwwIFWYlg9JBtcbc75gyaSuQGUdfig2Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OM4RgOwE; arc=fail smtp.client-ip=40.107.102.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S0BseoDEVlUTiVQLzdJ8ZyXOhtzeXNexa0B9GxfTwA6xl9bZRDqna8vPC+P7YQh0FcC+i8tZp6bux9ICwbus+DzfdqYYM0DDKuS9IJKC0nSfygSa/gGgPcUKRT++9Cagk8bhGrBhsaiIzvQvOfNwC+kLkxZ9XAdsxOcEJ4C/HBwROu1zMs7D/Xu+Qx0YUqdvzaXD+sZ+E2n0cA+/1A8lJsr1lZ7uTugB/cy/MNW9GrD/PF/Be6Esh6H42Zdre5wgRSzQoOf7qSRf9drUAY1RMAi/on8xUlZ7YjtEyhLlFF1+/0vY91UEt2UK43JlT52JIefE7th/V0h2B9WqoWlhjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z2yXMnL03LHO07+rulsgGA/pUs12kHQ9fN+BmKdgR9c=;
+ b=jIzU1jF1EQAxY7vl6bQxfGrHNKgP/dwaAUctlQ4Ph6Pigqy8l5CmUPc3pWDlBVpbIh0qxbBXlRtkCcemiR8b3P3jh8lG+BD6aM6ErJDCnhzvPiGNe/x3LUd6/GsivdqgbHSeDDpCJYuuCE+Mn32Ogg41vaQ5IKb8hsA1SE2o+bjQMCN3VY5qvNJH4TAvk0VT48t6JJQojLVKiC9c9BO3ZGIYZ4nBzCjZZ9yIoB+bS1FfOQ4bm1eB5VIQCSPr40Aye6YnT2aHzg2REMsXcUMHk27JWF/jS2f6LbgQH9m2TgFnWAS9aKTEth3jHJMhm9e3R+RGqLuqORw5Wqd4a6+cEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z2yXMnL03LHO07+rulsgGA/pUs12kHQ9fN+BmKdgR9c=;
+ b=OM4RgOwEJhkXoAMTQLGLhb26PfJnbzNvJTfvRDmFWNE8R2dOIjuH90Y4TLaAlUN3lVeL+Zqz8amakGD46WXRmyKTZCK3rp5N9l+TbyTTs0qAa6QImSkld2oZtKb9M/cCOhuO1eHMxSrf+HUgilSsHGXBskdZtl5iBsvj572/eAU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
+ by CY8PR12MB8196.namprd12.prod.outlook.com (2603:10b6:930:78::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Wed, 29 May
+ 2024 16:50:26 +0000
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7611.030; Wed, 29 May 2024
+ 16:50:26 +0000
+Message-ID: <e0293a49-3609-a83a-f129-97ead8467057@amd.com>
+Date: Wed, 29 May 2024 11:50:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 2/5] crypto: ccp: Move security attributes to their own
+ file
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "open list:AMD CRYPTOGRAPHIC COPROCESSOR (CCP) DRIVER - DB..."
+ <linux-crypto@vger.kernel.org>, Richard Hughes <hughsient@gmail.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240528210712.1268-1-mario.limonciello@amd.com>
+ <20240528210712.1268-3-mario.limonciello@amd.com>
+ <7f9db4de-635f-6204-d261-3bcd0aac1c25@amd.com>
+ <e29a975a-cb63-43cb-a421-8d7dd5ca36a6@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <e29a975a-cb63-43cb-a421-8d7dd5ca36a6@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN7PR04CA0088.namprd04.prod.outlook.com
+ (2603:10b6:806:121::33) To BL1PR12MB5732.namprd12.prod.outlook.com
+ (2603:10b6:208:387::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528164132.2451685-1-maz@kernel.org> <CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
- <86bk4pm8j1.wl-maz@kernel.org> <CAK9=C2XRx==OTPoGW_AHmjq4Th0bv4okwcq6-3L5JYwHwQp97A@mail.gmail.com>
- <86a5k8nbh1.wl-maz@kernel.org> <CAK9=C2Ugq=0y8M86CD75mQccBo=TBLBomb4rqC4i1naKy2LyWQ@mail.gmail.com>
- <CAL_JsqJE15D-xXxmELsmuD+JQHZzxGzdXvikChn6KFWqk6NzPw@mail.gmail.com>
-In-Reply-To: <CAL_JsqJE15D-xXxmELsmuD+JQHZzxGzdXvikChn6KFWqk6NzPw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 29 May 2024 11:46:55 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL5BwSCZDZPNW2-0kBOw0j9KZZ8WOdnqEmGKhSgquY6Pw@mail.gmail.com>
-Message-ID: <CAL_JsqL5BwSCZDZPNW2-0kBOw0j9KZZ8WOdnqEmGKhSgquY6Pw@mail.gmail.com>
-Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Marc Zyngier <maz@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, Saravana Kannan <saravanak@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|CY8PR12MB8196:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9f500747-acf1-4d14-2a17-08dc7fff70e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SkRNTkorNmQwc2VqT0ZxTUFoaDBET0x4SmdINjdDMm5Fb1hOaXRudCt5aHJB?=
+ =?utf-8?B?MlJQNUlyYWVuV1ZIUkFNK3JId21VeUxJcXIyY1FqcHNMeHA1TElMaEZjVUJP?=
+ =?utf-8?B?TzEyNGtTdlBBelpVZnd5UUVLVEwvR0F5SWkySzhLenJCL3Jhczg4ZEtuRWc5?=
+ =?utf-8?B?eUJON3hrWXNMV29md3N1KzJJbVZpOFV6eDhnR2VPSGVkZFozdmw2MmtoUXZj?=
+ =?utf-8?B?NjRUSDE0VG1kclJrV256S0VZZFBxV01Jb3c0QXNBcHlJQmZ6RHJtN0JOQ1Yv?=
+ =?utf-8?B?eUVtQTdBQmtuM0ZIN2JTTHl5ZHRhU2RpMFpCZFdGeDFTTG5TaHo1Q0k4S29G?=
+ =?utf-8?B?TDdsbXdDa3p0S0hWbEFLSjBLcnI0ZWlpUjhXaXk0OUlGYnZHUzRVMDFzQm9S?=
+ =?utf-8?B?eHhnMjZZQ2l5QW5GSWszblY2cHBvWkxLSGdyTXNqb28ydWdGVkx4U0N4Umpy?=
+ =?utf-8?B?MmpoMTJUd292RUlvb2RtaTBUTnVta3dRV2NocmNsNTFOVUZBcUZDdVhLdkt2?=
+ =?utf-8?B?aHhWMnk1dlR5UTZsZFQxcWxrb2EyeFJNNTY1TisreHdrU0VTNWFQN1RqYXJu?=
+ =?utf-8?B?cVo0SlJVNmRVbTY3VjcrenFoSzJkQ2JTUjNmeHBJM1ltcGEyMXA5UFF5b2gz?=
+ =?utf-8?B?ZHFQeVVSNXRPbkZiemhyZHh4ZmtOV0c5bG5wR1RJUFBUaDNVUVJXRHNtS0ZM?=
+ =?utf-8?B?K21RN3piQ2twd3BxdlVkd1MzVlYrbmhNSSs5Z0ZqcEExY3BBOWM3RHdINUNP?=
+ =?utf-8?B?dU9NTEFCVVlUUElhRVdONkdPZnpDaWxQajk3SGY5YXdlNHowWEN4aUR1Uk1z?=
+ =?utf-8?B?aEFJSENrZ3dwTkxXSGhrY0dxSGpESU5JNGd1K3dDWnNCcXlZNkkxVU03ME5s?=
+ =?utf-8?B?ODlqR1JUaWlBTy9HUDkyblY0NWNYZlJzZXl4em1DcTkvLzhuZXJwbHlwMEo1?=
+ =?utf-8?B?NHhhcGxOSXR3ZDdYWjcrQ2NtZTNoKzdLOHFhbm4vRVBDZWcwNDl0QjArTExF?=
+ =?utf-8?B?a1ZEM3QwNjMveVdDNXJLQk1IWEhzVGpsRkg1RXNBMHNTYVU2YTVkcmZEYkdY?=
+ =?utf-8?B?S01qUUc0V25TdWF0eHZhTUtUN205UWszdGJlQlZEMlBPaXhReXR0UEJ2OFhX?=
+ =?utf-8?B?SmgySVZIMTVEaGEwZW92WVBBV2hwTnhEMmpEOHErZU9vek9UKzJ4MC9uYUl6?=
+ =?utf-8?B?VUI2dXBqQUxuQ2NxQlJoempianJZSEJzN2VKbDBKL21FcHpYV29GM0NQQ3h1?=
+ =?utf-8?B?NmhhSkdOWFBpZjhvcG9jd0ZBaFptMUZEWHNsNzNxbHZRVmRSZzBSbTFmOFUw?=
+ =?utf-8?B?Y1ZhcGY5SXBKWkE0R3NYV2RlQXBENVdnT2c3VVFLWlNEOEZDSHlGa2RpbUNh?=
+ =?utf-8?B?RGk3NnZoQkN6WUd1UjNMd3V2MnlRRThqWjlrQk1qNVBpbzdQdEpObFFhTnhy?=
+ =?utf-8?B?WUY0ZzQvS3BpNjFRU09XRlVOdGpCc3RPNUtYa0ViQVVkZ3JVYVNQUUs0NW5S?=
+ =?utf-8?B?bzl1bEpPanZZQy9BeXJuaGx2a0ZTbHg5ZThvVy9ZTFY0N1h5S0N3UFpCdDls?=
+ =?utf-8?B?NDRjalUweUptRThDN0NYRTFYVnJWbkUrS0ZjdHdFSGtGQXRoQ1BsTUluZU1G?=
+ =?utf-8?B?Ry9UUnQ5d0dsZU1mdE9ZYk9DSUFCeTJWRlVjWm1JV2M3R3FWc3MzalNpZGgz?=
+ =?utf-8?B?dU9QdlNGRWpFd1FaajVOM3FhYXJPTzNtaXp5SlZtMk9yS1U0WEdoajdRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RmxOZGlhTCtpYjl4SDZ4c1hoQXVzcnVvUW9nRkFaZUlNY0tkdksrKy96bi9p?=
+ =?utf-8?B?Mm9USDFzQ09qTFpZWlorTngyazlianhZKzM0dGRINFJjYzVwcnVacFJ4NU1v?=
+ =?utf-8?B?aUN4eXRyNk02MUwyZUFwZGoyU2ZVcm5UbjdJaVBYUFZJakp0U3k2UVBvM0VF?=
+ =?utf-8?B?VWdIeG9qVDU1WTVOb0dPU0N4cDBOTUhrcXdxd0ozK21OMEw5ZVJUdUhLK1M2?=
+ =?utf-8?B?WXlyUndFUHJyc29xdzJPbUs1S3VENE45WVZpSU9DNGk5dzdZTXN1Umk3K0R1?=
+ =?utf-8?B?eEZNZXNYNHQ2TEkzSWpoQWtPWGdQNnFBYVlURkhxY2hud1g1dktOdGR4U0Jw?=
+ =?utf-8?B?ZGZOM2tZblFqYTJqMUNKdVNjZ0M0WkR2QjlCOU1TWFpFYjZXZUZZUG1ncGZR?=
+ =?utf-8?B?U0NObkR0SmdPVlg1REplK2g4YkF4TzhDT2ZEbDY4eXNCYUw0b1Z2MnJzK1h5?=
+ =?utf-8?B?VHV1Tm5Wb0ZFQXFoNW9adm1wYnV3MUNmYnF5SGFia1lIeEZudlN5MDJRS3kx?=
+ =?utf-8?B?bGZYTHhvblZGUTRLcW9Za3RnaENtVGtaeTVnKzU1VE9xWFkrMGZmVHBmcGtu?=
+ =?utf-8?B?cTJFSEhQWEIrTkdzdkpuOXBzYkxmdEd1dlZmNk9yb1NESVVDdVIrd3NBRkgy?=
+ =?utf-8?B?NzdsejdtRWRwTk4vWnNDMldGQmloWkViaFYycGdndHBUNU1GY2Nqb3BaOThS?=
+ =?utf-8?B?NSszcWhYbEZ6U3VVcGkrVVh0cWlhS2RoQkdNZGNXTmR4NGZBdGl5TmxyQXoz?=
+ =?utf-8?B?NGZKYjNLUzZ1Z3N0d0tFcmF2TGlvNXRrVjFKRVFJcDV3UFlDUSttanZxVXBM?=
+ =?utf-8?B?aWZ5U0draUlrT1dRajVHdTFpYVJXZ0NUV2FjVVRsY1VOdTNqM3V5TGdGRDBW?=
+ =?utf-8?B?eDZBVXlWNldYcGRzWXliY3RlT2FYdnFMQ0ZXZENMTTFrMmVwaVp3a1pjQXBT?=
+ =?utf-8?B?Wnp1ZldDWFo0bW1LYTAwU2drUktRSFI3Wjc1WElxUUFrZHNhdUNXRnptYWd6?=
+ =?utf-8?B?SGtPSm5sSXpXV2lXZW8yeHltUUUzNUFXTnV0VEIwbUdleUQvUjVuOUd1VC9X?=
+ =?utf-8?B?RTZkb1NuNjVxR0gzQWEyQzlsSnNCaE5lZzlvQkFETVB4aVBMamJJeW16azdu?=
+ =?utf-8?B?TVhhbStRaUp1a2Nxbm1GZmdObHNnRy85RjNSeCsyNTJqb0VNZ1hmdmxzRC9T?=
+ =?utf-8?B?cXZxVXBSeG94WXg0ZlFvWm1ZeWJrbERaUGZFb1FaL0NQZlB5bjhwVXovWDVR?=
+ =?utf-8?B?UzlqazEvV2ppVHd4bC9hTTNNM00zSHo2WjlFNEpDV0QrNHZzQWVLdllHdlNs?=
+ =?utf-8?B?NHFnMis1OTBWQU51dm9CYmphRVRNMGxCNEJQV0xVSCtGNW1xU0tJZG5CMFNB?=
+ =?utf-8?B?UXNvZmpMSk5oc0Z3Q1dTeVVkNWhVenBtWjJuTGd4Szg0enNURUloSnNtdnBu?=
+ =?utf-8?B?VWwyN2pNczRwWmF2N3RDcWM5OXp4dmlFbGIzOXZ3bmZmbjByaU1nOGIzc0p1?=
+ =?utf-8?B?ajhSaHpnQmk1ajF6MjA1aXJuanM3bmttb0VPRVVXTFJxaThjTWN0ajNLR3d5?=
+ =?utf-8?B?NGR1NjFzenN4N2x2bWorSjBwTzl4YUxwYmMvWTJTWkg1THhOWlVPcU1EdGZx?=
+ =?utf-8?B?UWJxMGVnS2pPOEE1bDZWTlFMK3UzaEQ5cVc0QWVSa3JvYXlQVlNhdCt0dzFq?=
+ =?utf-8?B?S01lRk15dTJYcFhiYkpSTi9LOEh0eWZZOWliSWpWZGxyK2V4VFhOODJqcDhv?=
+ =?utf-8?B?WDVVMWdOVU5WSGkwVUZ2cGVoblJhOGRHWE5nRDNhTlZIRVVPbGFqYzA1QXIw?=
+ =?utf-8?B?M3kxNXlOUG9tdUhPWUZDbDNGRGdVbTVVTzl0SENMb1pwak9QYWp0Y2YyTVNm?=
+ =?utf-8?B?U0V2UXNlcXdVWjJIZUlRaXA5Wmt6VytQdnU2UCsyeHEzaXFJT01POEg3ODI0?=
+ =?utf-8?B?R2xrKzdxOEZlU0lmWFNkSWpOSVprRlB3NVM5TDNiaDlGek91b3lNLzQxSVBE?=
+ =?utf-8?B?cXdkVHd2RFMvbmh1RzdHS056c2Mzbkk5elJXaFFRK0o1RlhRdXRTaUtOa0h0?=
+ =?utf-8?B?L3JyZG9rMXRqS1lhNDJFNG9RSi93OEg2WDV1QWN6bTY3SExnWFVDUVQwbGFJ?=
+ =?utf-8?Q?IATTAdf5vklHoECikBAwK4zGB?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f500747-acf1-4d14-2a17-08dc7fff70e8
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 16:50:26.8820
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BRWtMipMP/uZzfwigcwoswYIeOPNbIEI0nWvl8Kp/ZmTaSz2hM3HUrIqF0vZwwPaTlJVZlyrDh8YPlQwQ2DSkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8196
 
-On Wed, May 29, 2024 at 8:51=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Wed, May 29, 2024 at 6:28=E2=80=AFAM Anup Patel <apatel@ventanamicro.c=
-om> wrote:
-> >
-> > On Wed, May 29, 2024 at 4:15=E2=80=AFPM Marc Zyngier <maz@kernel.org> w=
-rote:
-> > >
-> > > On Wed, 29 May 2024 11:16:30 +0100,
-> > > Anup Patel <apatel@ventanamicro.com> wrote:
-> > > >
-> > > > On Wed, May 29, 2024 at 12:03=E2=80=AFPM Marc Zyngier <maz@kernel.o=
-rg> wrote:
-> > > > >
-> > > > > On Wed, 29 May 2024 06:15:52 +0100,
-> > > > > Anup Patel <apatel@ventanamicro.com> wrote:
-> > > > > >
-> > > > > > On Tue, May 28, 2024 at 10:11=E2=80=AFPM Marc Zyngier <maz@kern=
-el.org> wrote:
-> > > > > > >
-> > > > > > > Commit d976c6f4b32c ("of: property: Add fw_devlink support fo=
-r
-> > > > > > > interrupt-map property") tried to do what it says on the tin,
-> > > > > > > but failed on a couple of points:
-> > > > > > >
-> > > > > > > - it confuses bytes and cells. Not a huge deal, except when i=
-t
-> > > > > > >   comes to pointer arithmetic
-> > > > > > >
-> > > > > > > - it doesn't really handle anything but interrupt-maps that h=
-ave
-> > > > > > >   their parent #address-cells set to 0
-> > > > > > >
-> > > > > > > The combinations of the two leads to some serious fun on my M=
-1
-> > > > > > > box, with plenty of WARN-ON() firing all over the shop, and
-> > > > > > > amusing values being generated for interrupt specifiers.
-> > > > > > >
-> > > > > > > Address both issues so that I can boot my machines again.
-> > > > > > >
-> > > > > > > Fixes: d976c6f4b32c ("of: property: Add fw_devlink support fo=
-r interrupt-map property")
-> > > > > > > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > > > > > > Cc: Anup Patel <apatel@ventanamicro.com>
-> > > > > > > Cc: Saravana Kannan <saravanak@google.com>
-> > > > > > > Cc: Rob Herring (Arm) <robh@kernel.org>
-> > > > > >
-> > > > > > Thanks for the fix patch but unfortunately it breaks for RISC-V=
-.
-> > > > > >
-> > > > > > > ---
-> > > > > > >  drivers/of/property.c | 16 ++++++++++++++--
-> > > > > > >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/of/property.c b/drivers/of/property.c
-> > > > > > > index 1c83e68f805b..9adebc63bea9 100644
-> > > > > > > --- a/drivers/of/property.c
-> > > > > > > +++ b/drivers/of/property.c
-> > > > > > > @@ -1322,7 +1322,13 @@ static struct device_node *parse_inter=
-rupt_map(struct device_node *np,
-> > > > > > >         addrcells =3D of_bus_n_addr_cells(np);
-> > > > > > >
-> > > > > > >         imap =3D of_get_property(np, "interrupt-map", &imaple=
-n);
-> > > > > > > -       if (!imap || imaplen <=3D (addrcells + intcells))
-> > > > > > > +       imaplen /=3D sizeof(*imap);
-> > > > > > > +
-> > > > > > > +       /*
-> > > > > > > +        * Check that we have enough runway for the child uni=
-t interrupt
-> > > > > > > +        * specifier and a phandle. That's the bare minimum w=
-e can expect.
-> > > > > > > +        */
-> > > > > > > +       if (!imap || imaplen <=3D (addrcells + intcells + 1))
-> > > > > > >                 return NULL;
-> > > > > > >         imap_end =3D imap + imaplen;
-> > > > > > >
-> > > > > > > @@ -1346,8 +1352,14 @@ static struct device_node *parse_inter=
-rupt_map(struct device_node *np,
-> > > > > > >                 if (!index)
-> > > > > > >                         return sup_args.np;
-> > > > > > >
-> > > > > > > -               of_node_put(sup_args.np);
-> > > > > > > +               /*
-> > > > > > > +                * Account for the full parent unit interrupt=
- specifier
-> > > > > > > +                * (address cells, interrupt cells, and phand=
-le).
-> > > > > > > +                */
-> > > > > > > +               imap +=3D of_bus_n_addr_cells(sup_args.np);
-> > > > > >
-> > > > > > This breaks for RISC-V because we don't have "#address-cells"
-> > > > > > property in interrupt controller DT node and of_bus_n_addr_cell=
-s()
-> > > > > > retrieves "#address-cells" from the parent of interrupt control=
-ler.
-> > > > >
-> > > > > That's a feature, not a bug. #address-cells, AFAICT, applies to a=
-ll
-> > > > > child nodes until you set it otherwise.
-> > > > >
-> > > > > >
-> > > > > > The of_irq_parse_raw() looks for "#address-cells" property
-> > > > > > in the interrupt controller DT node only so we should do a
-> > > > > > similar thing here as well.
-> > > > >
-> > > > > This looks more like a of_irq_parse_raw() bug than anything else.
-> > > >
-> > > > If we change of_irq_parse_raw() to use of_bus_n_addr_cells()
-> > > > then it would still break for RISC-V.
-> > >
-> > > I'm not trying to "fix" riscv. I'm merely outlining that you are
-> > > relying on both broken DTs and a buggy OS.
-> > >
-> > > >
-> > > > Using of_bus_n_addr_cells() over here forces interrupt controller
-> > > > DT nodes to have a "#address-cells" DT property. There are many
-> > > > interrupt controller (e.g. RISC-V PLIC or RISC-V APLIC) where the
-> > > > DT bindings don't require "#address-cells" DT property and existing
-> > > > DTS files with such interrupt controllers don't have it either.
-> > >
-> > > It forces you to set #address-cells *if you rely on a different
-> > > value in a child node*. It's not like the semantics are new.
-> >
-> > We don't have child nodes under the interrupt controller DT node
-> > (for both RISC-V PLIC and APLIC) so we certainly don't require the
-> > "#address-cells" property in the interrupt controller DT node.
->
-> interrupt controller nodes which are referred to by interrupt-map
-> require #address-cells. Period. Child nodes or not.
+On 5/29/24 11:22, Mario Limonciello wrote:
+> On 5/29/2024 10:20, Tom Lendacky wrote:
+>> On 5/28/24 16:07, Mario Limonciello wrote:
+>>> To prepare for other code that will manipulate security attributes
+>>> move the handling code out of sp-pci.c. No intended functional changes.
+>>>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>> v1->v2:
+>>>   * Only add psp_security_attr_group when PSP support enabled
+>>>     (Fixes lkp robot reported Kconfig issue)
+>>
+>> Just verifying that there's no change in behavior in regards to 
+>> whether the attributes are shown. Previously the attributes were not 
+>> shown if CONFIG_CRYPTO_DEV_SP_PSP was "n" because the psp value would 
+>> be NULL in psp_security_is_visible(), right?
+> 
+> Yes; that's right.
 
-Now that I've re-read the code, the kernel will treat missing
-#address-cells in the interrupt parent as 0. Looking in the parent
-nodes for #address-cells only happens for the input address (i.e. the
-address before the phandle). IOW, the first use of_bus_n_addr_cells()
-was correct, but the 2nd use is not correct. That's not great, but
-that's how this code passed down on stone tablets works...
+Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-As I commented on v1 of the original patch. I don't like parsing
-interrupt-map in 2 places. It leads to problems exactly as this thread
-has shown. The duplication was reduced some, but is still more than
-I'd like. So I'm looking at how to refactor of_irq_parse_raw() to make
-it work for what's needed here. Maybe I'll have a fix quickly. If not,
-I'm going to revert the original commit.
-
-Rob
+> 
 
