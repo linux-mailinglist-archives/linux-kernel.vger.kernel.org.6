@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-194003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4227D8D3552
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:19:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42688D3553
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9293B24A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:19:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51784B24B29
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C1816EBF0;
-	Wed, 29 May 2024 11:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5733516D9AD;
+	Wed, 29 May 2024 11:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rrC07swY"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L3myBUqI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C301B282F0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A9E137903
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981536; cv=none; b=jWOVah8or7OjKC90DoK1j6E0J0RBsDcIMooxbtd3M9rD5Znxu12cQZDdhhiDy+NYJlrNNN0xs1aGmhiQjBltYDHfFrPS8m7cqujNLt/4vL+wsR91gTjqXR0Xq0nBwqTsY7LmRKZOZx9APtdhmcMk6eYxfiaPvjXufnGqhTyp7iI=
+	t=1716981553; cv=none; b=AfatNo+pU1QE0lRKoPeHjZMje6qvtALr6O3ENbi7e/tiw/j4GQg29lBsOAQQW6ztJtcti6tsTUVAM6EgjzLGsO14I516Sy9m5K66Cgtqm+xb48HtdzWtaiflw5Z/nx8G4XyiEapz8PDdQbEBPoXhtP18HQr2S02NWQxXW2+objg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981536; c=relaxed/simple;
-	bh=gjxeQun7tqJlaKIpr3hZCjEJL31ZtfkgnCtA0oYH9GQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EomoZhiPlbtEdV+0zxgHIIpuRj3bFNOnismnx5iUKhVIZzZrzlmduoYB3cCtUyKk8GJZegUpORT7NuTwdY4yOONXwOmx1oIZ5Wx2xm8xW91IPIp4MEdt2XpBqDcVT5d4GjyoUH6hZBsXoGZ1FzlepjHHo+YY+/CG7tH3CKRKctM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rrC07swY; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4202ca70270so22764995e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716981533; x=1717586333; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TPbMsrUw/l6uPe530j31X38fTdExWtJ5rpvDpF4l9bg=;
-        b=rrC07swYYGzzJtcJH111BBDJgUgl9GbndyV61VjEJGSrLFYBriSfPqaPIJPVT75m5R
-         T3OeQvXQJazvOEOun9obJ99+pYQ0AOGxfhYECTjL6BBzbfZlTL/VAPYswtMeFMB+khoy
-         pcCOMxmPWOGuupIvd5OWgRNzR36mwHIIJIihx9ghOxBEv285ARRs4csZSgfFuLTSvoTK
-         eOet4apSGW8ig5fLq1qoNgtUCn2fitfKgweqvl/FuPSPDj8MzTS2GWM2/xR6QwK5NGWu
-         kCaKtiR/tfr6paSiQogkGYKvg5AZjWaOuki55bNi9bxLR6A1WbhNV1GcUPiLwHzsMqmB
-         MC1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716981533; x=1717586333;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TPbMsrUw/l6uPe530j31X38fTdExWtJ5rpvDpF4l9bg=;
-        b=tGD4a4FukamXnf21QPy08Zt7oDQW1RcuFkHBlTxPOscM5/H3jy2pdE745m4ERL02E2
-         96i9Ou1VbOjTK8O0OIatpe2sopfCrU5qwita6cMt4o9boadF9tIyE3ykAXDbTLtV/lG7
-         UAv9BZeoJ0bvx+0TjsSS52/nZ6WX59FyFc02Q/9GUZsj34jWgSsEL9cbqYCs40vq5VG9
-         fAZmV29ejLTklF9PFd/wExPkn1HPVR00IfqOtpT5x1HFFtJbP6R1rKNs8lsAu9+IvR1b
-         tGICpFL3rdEVgPbIfpst/M/ihvz8pdKV9qjMxePfDznxdo6CleZM/s8le4yE7aiSYmJc
-         qqeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAw+eTWqHKK7pbv3cY1CvT9po1AVMg+OJZ9h6Uz4u1Cl99NH+emWVFCFKGjirBWbiowyjclvRjNb9bYhMZckLD0zWm6zqYBdv7HdUu
-X-Gm-Message-State: AOJu0YwCiEqJqSIxfzRumuJeeSySSd3X3GWUggzm+fxY2gjNjtpecYIE
-	7UVNYX6lmOCmRaDlGaexnv5VLlz2o6pr9IDJYs/+09vRLSJtAugWbujVC0TAaYI=
-X-Google-Smtp-Source: AGHT+IG0Ij15J/SBlDpUfTD72vlZeHCExvCOlzN+u5QszYRUIdVXO3E/4Bk8VSxmnDXfJVEw8s51qQ==
-X-Received: by 2002:a05:600c:3b97:b0:418:a706:3209 with SMTP id 5b1f17b1804b1-42108a99e26mr174961145e9.31.1716981533090;
-        Wed, 29 May 2024 04:18:53 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:e6b1:4b58:a920:97c3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421010b9b02sm208360555e9.46.2024.05.29.04.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 04:18:52 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Etienne Buira <etienne.buira@free.fr>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] gpio-syscon: do not report bogus error
-Date: Wed, 29 May 2024 13:18:51 +0200
-Message-ID: <171698152657.19416.4759398595612990949.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <Zktwd4Y8zu6XSGaE@Z926fQmE5jqhFMgp6>
-References: <Zktwd4Y8zu6XSGaE@Z926fQmE5jqhFMgp6>
+	s=arc-20240116; t=1716981553; c=relaxed/simple;
+	bh=IdYZdK+0Kpa8lbkG4W6iZOfgFAUE+8WOlAiZncQqZmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CamgbS+aL34Wgt7U2VNx0Za4fAC4jxeAuMuarAuYzDkVY5ENQUaA3EW3Zaw8/PGjbQ8E3qL5irDv9BCY+LeXmrC1xoOcMEYhx9KXud6YgsQ4FQLCs7gtzyqhRYqeLVUt+Yo7TWSQVor5X8eYF8ab/Adf/Cb8rRVAm3w8gOHc6vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L3myBUqI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716981550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jPxv1H9FEvCkjhG3HJ1KbEh1kIcR6+OYpFhiyO9bfXs=;
+	b=L3myBUqICjG+YFiU/NJfKXtn06fgwmjJdzRQddjFhSRl7Ts/3/SDvRO02Q4dJMZviZfTBp
+	ZPsneu9Bl39qzHf3uTAhDmSxkbL7QcsGoKMiDauK400/V2T0GdqozcLnTSXmJKJqSoIk/I
+	24KnYQ1RaxFMtgCDuC74nKJdVFqDiSU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-336-hdrW9_VDPtqk-vfyiUgC2g-1; Wed, 29 May 2024 07:19:07 -0400
+X-MC-Unique: hdrW9_VDPtqk-vfyiUgC2g-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 12C47800169;
+	Wed, 29 May 2024 11:19:07 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.193.127])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id F0116C15BB1;
+	Wed, 29 May 2024 11:19:04 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Subject: [PATCH v2 0/6] mm: page_type, zsmalloc and page_mapcount_reset()
+Date: Wed, 29 May 2024 13:18:58 +0200
+Message-ID: <20240529111904.2069608-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Wanting to remove the remaining abuser of _mapcount/page_type along with
+page_mapcount_reset(), I stumbled over zsmalloc, which is yet to be
+converted away from "struct page" [1].
 
+Unfortunately, we cannot stop using the page_type field in zsmalloc code
+completely for its own purposes. All other fields in "struct page" are
+used one way or the other. Could we simply store a 2-byte offset value
+at the beginning of each page? Likely, but that will require a bit more
+work; and once we have memdesc we might want to move the offset in there
+(struct zsalloc?) again.
 
-On Mon, 20 May 2024 17:47:03 +0200, Etienne Buira wrote:
-> Do not issue "can't read the data register offset!" when gpio,syscon-dev
-> is not set albeit unneeded.  gpio-syscon is used with rk3328 chip, but
-> this iomem region is documented in
-> Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.yaml and
-> does not require gpio,syscon-dev setting.
-> 
-> v3:
->   - moved from flag to parent regmap detection
-> 
-> [...]
+.. but we can limit the abuse to 16 bit, glue it to a page type that
+must be set, and document it. page_has_type() will always successfully
+indicate such zsmalloc pages, and such zsmalloc pages only.
 
-Applied, thanks!
+We lose zsmalloc support for PAGE_SIZE > 64KB, which should be tolerable.
+We could use more bits from the page type, but 16 bit sounds like a good
+idea for now.
 
-[1/1] gpio-syscon: do not report bogus error
-      commit: ca09ce254a65fa0c09f3369724ee0477a7246247
+So clarify the _mapcount/page_type documentation, use a proper page_type
+for zsmalloc, and remove page_mapcount_reset().
 
-Best regards,
+Briefly tested with zram on x86-64.
+
+[1] https://lore.kernel.org/all/20231130101242.2590384-1-42.hyeyoo@gmail.com/
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+
+v1 -> v2:
+ * Rebased to mm/mm-unstable
+ * "mm: update _mapcount and page_type documentation"
+  -> Minor comment change
+ * "mm: allow reuse of the lower 16 bit of the page type with an actual
+    type"
+  -> Fixup 18 vs 16 in description
+  -> Reduce PAGE_TYPE_BASE to a single bit and hand-out bits from highest
+     to lowest
+  -> Adjust description
+
+RFC -> v1:
+ * Rebased to v6.10-rc1
+ * "mm: update _mapcount and page_type documentation"
+  -> Exchange members and fixup doc as suggested by Mike
+ * "mm: allow reuse of the lower 16bit of the page type with an actual
+    type"
+  -> Remove "highest bit" comment, fixup PG_buddy, extend description
+ * "mm/zsmalloc: use a proper page type"
+  -> Add and use HAVE_ZSMALLOC to fixup compilcation
+  -> Fixup BUILD_BUG_ON
+  -> Add some VM_WARN_ON_ONCE(!PageZsmalloc(page));
+ * "mm/mm_init: initialize page->_mapcount directly
+    in __init_single_page()"
+  -> Fixup patch subject
+
+David Hildenbrand (6):
+  mm: update _mapcount and page_type documentation
+  mm: allow reuse of the lower 16 bit of the page type with an actual
+    type
+  mm/zsmalloc: use a proper page type
+  mm/page_alloc: clear PageBuddy using __ClearPageBuddy() for bad pages
+  mm/filemap: reinitialize folio->_mapcount directly
+  mm/mm_init: initialize page->_mapcount directly in
+    __init_single_page()
+
+ drivers/block/zram/Kconfig |  1 +
+ include/linux/mm.h         | 10 ----------
+ include/linux/mm_types.h   | 33 ++++++++++++++++++++++-----------
+ include/linux/page-flags.h | 25 ++++++++++++++++---------
+ mm/Kconfig                 | 10 ++++++++--
+ mm/filemap.c               |  2 +-
+ mm/mm_init.c               |  2 +-
+ mm/page_alloc.c            |  6 ++++--
+ mm/zsmalloc.c              | 29 +++++++++++++++++++++++++----
+ 9 files changed, 78 insertions(+), 40 deletions(-)
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.45.1
+
 
