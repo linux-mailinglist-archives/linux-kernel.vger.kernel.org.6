@@ -1,196 +1,130 @@
-Return-Path: <linux-kernel+bounces-194016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB1A8D3583
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:25:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5038D3586
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A3D1F22E32
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:25:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953751F23AEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A00717B50F;
-	Wed, 29 May 2024 11:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7C517B42C;
+	Wed, 29 May 2024 11:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2zRylEoV"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWCiGihk"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C6F16DECF
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39DD1802CB;
+	Wed, 29 May 2024 11:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981899; cv=none; b=CAcmun//YIAGxUcFOtS7a/OBpHkBcbdBAgcKURQJ4AUz/KhKQBealempUxffi6RKcx6n6l4WWSuyul8biG8FvwuCkzBWh8Fs0hw59y3eWoYn+l4k74VrR0gb4OLfm0wFStHlqax9XvsWwoQ2rqr/KsDU2D2qK9ckxBLGud0TCrE=
+	t=1716981904; cv=none; b=O6wvBEVbH0AUyvdaH7qvnFcFSeW5oKbduLgraHOljM+VGK6SGXqk2qonLZONUCqvp475hlm7SK35/cHthRONTRgNVCXjisws7cY3Inw+7LXhFTDW+S7On5DmOhVwck9l0U8+4zsHbVgZqRSOSGrLi2uYXtFgEAAGY6xJFB1yWUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981899; c=relaxed/simple;
-	bh=DTCCleyVcSCm/MaSCNeHp3zRfmdlT7E0UJ4lfxfio1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hTJds0NrIXG9fS6XbpqkG/aMcXWyu+UCUTeu3gDOkICkOuohVTJnM6AMD/GDLBYJrI2/2HWrVmToo8lAMlT+4+9C09q/bsHfNfFOJ4pJx2gWoHahIVoBMoRTlsxZF4qAXY1plEffZbnGPIeAznRfqxOG7Z4FLC1gcx1qgLkZYaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2zRylEoV; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e73441edf7so18856481fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:24:57 -0700 (PDT)
+	s=arc-20240116; t=1716981904; c=relaxed/simple;
+	bh=TzZQrzj+WOG1xkO/GYUZ4HiFLMiivXVoPSh1a4x0Q04=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Cl3+hyZPg2YTyW3G9IAoyrvNv49oIW3a/Nrg2liSL51PstGemF5lr97tdXm88+Luvg4E7Z6RRrHsPvzIHzYw9Xkh9lUztEjV/LKdKxQfsSQw5dEzAXO18RgLGeyacVTiJqEHxF5itHDkVbRMwH79grEEt3QGzJ0BL2QzdZhNLnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nWCiGihk; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e95a1d5ee2so1019651fa.0;
+        Wed, 29 May 2024 04:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716981896; x=1717586696; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ewvEYPrJ+34TaqUmmUUdKceBPfIMWuE1wY14k9hWtU=;
-        b=2zRylEoVjQrVWDOYzgXw681+L9XLlfbauG35iudcWqo9qH5WdmpLwWQMxNvKpeHz+9
-         Wrpnl8BtHv/A4WTdxEFnU+kO7EeipPSQTTdtb0hWi4dwsAa2ZKgiVR9QmDUJDkJeD+Uz
-         hQbgsIdwc+t3eM6VSiblhx8laVeLuo4DJes3bkgQ1d+l3LlR2D+EwXsIgLZWm5wJOvXl
-         /tuZd9j4BYGA0uyeIJTXibTMUuB/Ye5HVmso7umQ2Mtbc6OYwiAIxgo2tAzuuK5FWSKk
-         0dYsaSraGRANIgS1IhQs4wqZlxsHmc1PlR3wPjgu4W4wJMf0GrzADvvYlQnwFlCTNTte
-         GPCA==
+        d=gmail.com; s=20230601; t=1716981901; x=1717586701; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=n5uEzMRdxtO7RULJZB7deduoIw+Y3iKQ4EZq8+uKKOA=;
+        b=nWCiGihkAaNbGw7J6WSCHUCT+oArcKhNmrx1SfU0glADSHBFulm7SjHtf+pexR2ZqW
+         0KQ3eAlHpamNcs+ms5QrVagO3U6L607Lle94gg9x0HmhgX/Bx0YKA7wvMojfI+8z3UFJ
+         W61+wvANKzUFplphP+h9De31dwwYfIWuEg4UFhCeSPbP5dYZeKwNsSHvl3+SJWzmcfb3
+         7n+CFaDgYadE3qeyTpCixUyC8ZLIv3cDmmX7QYiJREnsdPkmn3ULtKWO3yRGpnPgNpDg
+         MXjQ2Shux4JNklJVW4iuFGFRYW7hi92c2MjglSf8FAE9YzSwcHCgj7oSBHKrwrFaelWp
+         IHJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716981896; x=1717586696;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ewvEYPrJ+34TaqUmmUUdKceBPfIMWuE1wY14k9hWtU=;
-        b=M+paYgtoI5Gg8EH4HI1MU8eGfnIgvJw5xSIcjahf3VRdd9KK3CGxDIMu/oGZM9MoXl
-         +E43s4/25brWPNcPkWcDcpTNZqh0bbhrM36DlPys89MOHeWxdr2M20SNhs4aL4eGpF6x
-         VoCX5Z4x7z0VlQ40K7XpnVCezD47tMfZnT8qpVLI+Adknp67cgypdMiQWum5JqWruF7F
-         wAH8vJHfOkxlX0s/yAVUiiOvWZHIUMaOsvOsVyQYRN0Yl5pHdJvd8HAPEejyhBhZ/3Dv
-         U34ISN9jTHD+iBUMyXAG/cr4b61+Z3pXFRf6RDB8TitP1O7y3VE2F79ih2fF5HF3qNFd
-         d0rg==
-X-Gm-Message-State: AOJu0YydnhxZcEyAbE+M/PO4LVqxbvgtgQ7+qs1sGLb7v4rkmIm1E9Ef
-	LSaeNDRVfQ5zCpgCDuDRXvwAQyNxgKAu1GavNi7txRRoJQgolwHxdcSi0g5lq5pcLYmQriSFcdu
-	TwjCft3dS3hJgrlww2QXSbNdwuyFie7huWjrR6w==
-X-Google-Smtp-Source: AGHT+IFm3iRWb9vu5ubNNpagZdvyV8acuJn+l1fQIDdCSp825lFbjv/6qsgx7fwxNRjuqTsgL3xXuB70MVb3xq60odk=
-X-Received: by 2002:a2e:bc0e:0:b0:2e9:69ec:f690 with SMTP id
- 38308e7fff4ca-2e969ed0743mr91947531fa.30.1716981896331; Wed, 29 May 2024
- 04:24:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716981901; x=1717586701;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n5uEzMRdxtO7RULJZB7deduoIw+Y3iKQ4EZq8+uKKOA=;
+        b=BsHgWCAUm7luZu8POLkxGCkAK8nwjwonSaNV3Ii8WKkjhzI/Jhx9Yb0xLCS/R5lmHu
+         PGI3eyoJzgp/zDwcKQWFrzKiBCLGGJDWisyQGJhtogLf+8wNCUY2U7JTEXLfdUPtIpch
+         eQJJf051MS6oi/iwLdRDxJ6UP7ZKbRU5W3snJUKgtkRKopaVw/Fx7eRLZLOzNIyC8fgs
+         a/xhbARwvsaK72tRNmB3h0DH7ysnosIxCmFlIedGGX699pUmjr+lzxyG8MgBNkivYyPP
+         yW9L8RCPzoDifXh4qqM78rUHMC1TC1/VzjGvGWPn59OjtTgLc69i1ghBTZi5IDxaJtIq
+         kWeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWu0DEApheNN8kCnvWrX7eRzYBk48kWeG/NSv7dkTE6lgw944DPZaSr89+oaEV5XtmlphrP7urH7+eDreqkXoEaovj7k+RxL8cNUnQs
+X-Gm-Message-State: AOJu0Ywez/PiS+a2cjvsovcHOvIzvB3qEQI7UYapx0y3ldQo4lS5IeA0
+	t0ifapZ7pvTgp6ISe0wKBcpid5H3oJJ0eGvemP/Z9dnscRE48SMG
+X-Google-Smtp-Source: AGHT+IFrPvh7qeKnY8XKng8faeG4RHzsfNVpq2beLpTDGHDt1ahg4B1fMWblmIksy9gHtLUqFTZeQQ==
+X-Received: by 2002:a2e:9810:0:b0:2ea:7d9f:8f62 with SMTP id 38308e7fff4ca-2ea7d9f917bmr10742401fa.10.1716981900672;
+        Wed, 29 May 2024 04:25:00 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8c287sm710848966b.162.2024.05.29.04.25.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 04:25:00 -0700 (PDT)
+Message-ID: <23d5359dca83dd803655b0990479f6fb0eadc61c.camel@gmail.com>
+Subject: Re: [PATCH] staging: iio: adt7316: remove unused struct
+ 'adt7316_limit_regs'
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: linux@treblig.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	jic23@kernel.org
+Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 29 May 2024 13:24:59 +0200
+In-Reply-To: <20240528233008.191403-1-linux@treblig.org>
+References: <20240528233008.191403-1-linux@treblig.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527115419.92606-1-warthog618@gmail.com> <20240527115419.92606-4-warthog618@gmail.com>
-In-Reply-To: <20240527115419.92606-4-warthog618@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 29 May 2024 13:24:45 +0200
-Message-ID: <CAMRc=Me+M5PQfuOE=tqqxJF-Q_TVdFb=wh-=ApBO_2PvTV=ZJg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] gpiolib: cdev: Cleanup kfifo_out() error handling
-To: Kent Gibson <warthog618@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linus.walleij@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 1:55=E2=80=AFPM Kent Gibson <warthog618@gmail.com> =
-wrote:
->
-> The handling of kfifo_out() errors in read functions obscures any error.
-> The error condition should never occur but, while a ret is set to -EIO, i=
-t
-> is subsequently ignored and the read functions instead return the number
-> of bytes copied to that point, potentially masking the fact that any erro=
-r
-> occurred.
->
-> Return -EIO in the case of a kfifo_out() error to make it clear something
-> very odd is going on here.
->
-> Signed-off-by: Kent Gibson <warthog618@gmail.com>
+On Wed, 2024-05-29 at 00:30 +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>=20
+> 'adt7316_limit_regs' has never been used since the original
+> commit 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9
+> driver").
+>=20
+> The comment above it is a copy-and-paste from a different struct.
+>=20
+> Remove both the struct and the comment.
+>=20
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 > ---
->  drivers/gpio/gpiolib-cdev.c | 47 +++++++++++++++++--------------------
->  1 file changed, 21 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index c7218c9f2c5e..6a986d7f1f2f 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -1642,16 +1642,13 @@ static ssize_t linereq_read(struct file *file, ch=
-ar __user *buf,
->                                         return ret;
->                         }
->
-> -                       ret =3D kfifo_out(&lr->events, &le, 1);
-> -               }
-> -               if (ret !=3D 1) {
-> -                       /*
-> -                        * This should never happen - we were holding the
-> -                        * lock from the moment we learned the fifo is no
-> -                        * longer empty until now.
-> -                        */
-> -                       ret =3D -EIO;
-> -                       break;
-> +                       if (kfifo_out(&lr->events, &le, 1) !=3D 1)
-> +                               /*
-> +                                * This should never happen - we hold the
 
-I'm not a native speaker but this looks odd to me - shouldn't it be
-"we held the lock from the moment..."?
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-> +                                * lock from the moment we learned the fi=
-fo
-> +                                * is no longer empty until now.
-> +                                */
-> +                               return -EIO;
+> =C2=A0drivers/staging/iio/addac/adt7316.c | 8 --------
+> =C2=A01 file changed, 8 deletions(-)
+>=20
+> diff --git a/drivers/staging/iio/addac/adt7316.c
+> b/drivers/staging/iio/addac/adt7316.c
+> index 79467f056a05..23d036d2802c 100644
+> --- a/drivers/staging/iio/addac/adt7316.c
+> +++ b/drivers/staging/iio/addac/adt7316.c
+> @@ -209,14 +209,6 @@ struct adt7316_chip_info {
+> =C2=A0#define ADT7316_TEMP_AIN_INT_MASK	\
+> =C2=A0	(ADT7316_TEMP_INT_MASK)
+> =C2=A0
+> -/*
+> - * struct adt7316_chip_info - chip specific information
+> - */
+> -
+> -struct adt7316_limit_regs {
+> -	u16	data_high;
+> -	u16	data_low;
+> -};
+> =C2=A0
+> =C2=A0static ssize_t adt7316_show_enabled(struct device *dev,
+> =C2=A0				=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
 
-Since this is so unlikely maybe a WARN() would be justified here too?
-
-Bart
-
->                 }
->
->                 if (copy_to_user(buf + bytes_read, &le, sizeof(le)))
-> @@ -1995,16 +1992,13 @@ static ssize_t lineevent_read(struct file *file, =
-char __user *buf,
->                                         return ret;
->                         }
->
-> -                       ret =3D kfifo_out(&le->events, &ge, 1);
-> -               }
-> -               if (ret !=3D 1) {
-> -                       /*
-> -                        * This should never happen - we were holding the=
- lock
-> -                        * from the moment we learned the fifo is no long=
-er
-> -                        * empty until now.
-> -                        */
-> -                       ret =3D -EIO;
-> -                       break;
-> +                       if (kfifo_out(&le->events, &ge, 1) !=3D 1)
-> +                               /*
-> +                                * This should never happen - we hold the
-> +                                * lock from the moment we learned the fi=
-fo
-> +                                * is no longer empty until now.
-> +                                */
-> +                               return -EIO;
->                 }
->
->                 if (copy_to_user(buf + bytes_read, &ge, ge_size))
-> @@ -2707,12 +2701,13 @@ static ssize_t lineinfo_watch_read(struct file *f=
-ile, char __user *buf,
->                         if (count < event_size)
->                                 return -EINVAL;
->  #endif
-> -                       ret =3D kfifo_out(&cdev->events, &event, 1);
-> -               }
-> -               if (ret !=3D 1) {
-> -                       ret =3D -EIO;
-> -                       break;
-> -                       /* We should never get here. See lineevent_read()=
- */
-> +                       if (kfifo_out(&cdev->events, &event, 1) !=3D 1)
-> +                               /*
-> +                                * This should never happen - we hold the
-> +                                * lock from the moment we learned the fi=
-fo
-> +                                * is no longer empty until now.
-> +                                */
-> +                               return -EIO;
->                 }
->
->  #ifdef CONFIG_GPIO_CDEV_V1
-> --
-> 2.39.2
->
 
