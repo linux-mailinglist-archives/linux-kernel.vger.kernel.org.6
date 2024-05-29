@@ -1,126 +1,122 @@
-Return-Path: <linux-kernel+bounces-193724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A5D8D3120
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA5B8D3123
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17DE91C20D5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B038D1C21086
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055DA16B75D;
-	Wed, 29 May 2024 08:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640A916D4FC;
+	Wed, 29 May 2024 08:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yMEtW+84"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="XiRW+Zpa"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75733168C27
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 08:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11580168C3D;
+	Wed, 29 May 2024 08:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716970985; cv=none; b=cXADnuYawm/J9ipuBrplCx9SSti6RzKL1MtQ6eE6dI9gz7zEfXAezDCzyTYBG5xqFtVruhQeukM78v6PElTsfWOuOPYusAotfphTerSdXd/RGwRLcplWovcAffRx65floidX8n1EbpY6M5Ht2zPCtGj2TGJw1uAqkk0GJKlhnlQ=
+	t=1716970998; cv=none; b=JuZSA/sqZ1CFpGvHG9O4zRM1vcpnzmX+C8KOO4U4CwaCxeZR5jperAAZPbFlo5km7UJcYOguRUO43nK+UkDmqb0qEUgdqZAvU7I/xXvCKSWJdvtukitFQfQiZSf94D09vzkkzVfs8uzg7ljM/ufEYx6OrFa+Tki0fBQZWXTI+iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716970985; c=relaxed/simple;
-	bh=v1feN2NUrI9P5EUMAciZLEbJjEX1j1A38in4ikzn1wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYapz7Nk1oVqFHwykNGHDfy5/XNtCobp8oIUDMy7lwdMrjF4kNB+uLPMiJ29yEV994+e1sCwUMmbB0U5KmnUgdq96bcYOOxGtBIKjspIcEC1EI0+oTxhU3pj1S4V5qArwIY44SfttGTJqGAM5hpVu4x3j2EqbgblJMdmBcJ5Qt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yMEtW+84; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421124a04d6so15334615e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 01:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716970982; x=1717575782; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cyv9PovJHSSHJvMucpyIOkl77eWjr0heW5XICt5+8X4=;
-        b=yMEtW+84oVmUaG2flLfTP6tMxeq92w9NNWMWzXdcsTo3boft9KnTjJLGGBehofyIVH
-         iDsH5jdVccdpz3WE14xGFcR6GYZCRutEckW4YUjTCSaNAiDtWKB/utXN4Rg3WXDJeeNP
-         mCa0cPB4skWZV4YCTVNR2GmUNHwT6Qidv0E/sQkkjTO0WgCSKQbo+jmKaerx7z6a5Cac
-         wN8j4h/yF/3dOAM88hwLoAQZo3a1KigQv3vdrRqpIEJd7PfT1pWuVn3NdpJeh3cVDxuW
-         ONW/kejCX0nkzRl3MAwWPVEC61lY6M8/y2PNl3t83SfCDWM/CmXO1zR8HHZeM9n/V8NR
-         cJeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970982; x=1717575782;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cyv9PovJHSSHJvMucpyIOkl77eWjr0heW5XICt5+8X4=;
-        b=rhwYWlgEu7UkHJvONCQ0INGUZv/hahjqBY+WsFR3B9hgBFqySXpUk/04N22TPHZmL8
-         D1d3rEYpaTADWGjJ8eO0UiFPtoCsa804hNx3aoDQVntlkPBOiGjQ8y4ac04wlJ4ldrrc
-         YxwU2Q9oHOZ77aevqBD2wDle3iUHESqTehDL9Z9/eeb3xnMdmwTjxfNRu/k4R1MOwVH2
-         sx2d0yTEaAZMvWDIxTD+HCXFYi9OkGiAPGYeqHVwquEQk7OVlJxeHTfnuNTPOj3Zry4E
-         A40We0V4Lxquc+cRmmyx3tFWu4+lJXByguKc3+WlW39v7AEoXb4QSozBRe/URvi+W6oz
-         CnBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ/tJAt5ObjkhlsSlPf6HdLd5YE1I2UvQmY8kxtSEHgkDPqtt2o1l8J/mRaeM2PFp1HcOPbDsIfS4B7GDrcilgMJFBcGcCS2cCVhWF
-X-Gm-Message-State: AOJu0YzUStDDB145HviKMMFjSqyJpytMaCcS2RPVeq+3qYBgNnYyPlnG
-	n6NHeXhQ8ASFB1xmMTgX+EVeUng33tmwPMUcEIlz6CJSE0gZn2Ep3ewIOl79Ehw=
-X-Google-Smtp-Source: AGHT+IH+woaE6GlA+cs5xDP5OfdceRBKfbkhD/cWJbIr1gI4V+CXAq4EQPV6Kc26S2O+apzzp1XHog==
-X-Received: by 2002:a05:600c:474f:b0:421:10e4:7f6b with SMTP id 5b1f17b1804b1-42110e47fd9mr78062025e9.27.1716970981790;
-        Wed, 29 May 2024 01:23:01 -0700 (PDT)
-Received: from [10.1.5.19] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3582917b222sm9606959f8f.93.2024.05.29.01.23.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 01:23:00 -0700 (PDT)
-Message-ID: <1c83bd93-92b3-4986-a154-69ae792e57ba@baylibre.com>
-Date: Wed, 29 May 2024 10:23:00 +0200
+	s=arc-20240116; t=1716970998; c=relaxed/simple;
+	bh=07Xjk5JBFCnOoz1mUgexuqTBZYBeWpziuUZ0TgxpGwg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=p5cnBcoQBDK5PA/8T8XqyHt9G6jTWL8zwQfpmppsZND3NHctddusAfhyFwY0mxFcLwq+c6SzfgEq0irvecqzY/XgEeab1G+XDNBeE+Ufg0n+zKO1aqRkDqWjND5/w4rohuzMseD7JI0NlvSvxFVXU550vGCJ/rI9GD2a8PT0+TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=XiRW+Zpa; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1716970993;
+	bh=6/CD09y2pZU+03thgvTqiTFJgMlhZGZLAYHe+sGMc/g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=XiRW+ZpaTrrP8+qBXRvs8QVm2694mJVod+js/TjyavYOAfMvdoxrvDFDCvmA7Ug+5
+	 BPGqItpjFl4YpQ/QTfGysW31o/qsPexH4o3uZ4+hDMW7fhaJul6jjWny+HE+tydOej
+	 /s55kQXxs7aKjMPJ4FpAyGh2Qu9860h6VPhE2gFnOjcNpRWJeJ1x0D67PRsXAm0qI6
+	 a8HOHEKRZav5u3lCLAaLL8WuO6VJbFWAidqdgISz5xihkORuVmnGLh3sowLCH3X77i
+	 CZxQy/OUHU2+o6FkRFPReiWlqNjP1Yzl/sSvRLLsnc6OV7YY5hZedBJYxKKgOMo+26
+	 mQud2qKn+6DXw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vq2Sx5Vgkz4x20;
+	Wed, 29 May 2024 18:23:13 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] selftests/openat2: Fix build warnings on ppc64
+In-Reply-To: <94964224-1796-4610-a42d-3aacb4d47341@collabora.com>
+References: <20240521030325.58095-1-mpe@ellerman.id.au>
+ <94964224-1796-4610-a42d-3aacb4d47341@collabora.com>
+Date: Wed, 29 May 2024 18:23:13 +1000
+Message-ID: <87bk4p3u32.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] thermal: Add support of multi sensors to
- thermal_core
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, rafael@kernel.org,
- daniel.lezcano@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240524143150.610949-1-abailon@baylibre.com>
- <20240524143150.610949-3-abailon@baylibre.com>
- <834e18c7-21b6-400e-aa61-a4f591027620@linaro.org>
-Content-Language: en-US
-From: Alexandre Bailon <abailon@baylibre.com>
-In-Reply-To: <834e18c7-21b6-400e-aa61-a4f591027620@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Muhammad Usama Anjum <usama.anjum@collabora.com> writes:
+> I was looking at if we can add this flag for ppc64 for all selftests
+> somewhere. But there isn't any suitable place other than in KHDR_INCLUDES.
+> But there is a series already trying to add _GNU_SOURCE to it.
 
+IMHO adding other flags to KHDR_INCLUDES is not the right solution, it
+conflates unrelated things. Some tests may want the kernel headers but
+not _GNU_SOURCE, or vice versa.
 
-On 5/27/24 09:00, Krzysztof Kozlowski wrote:
-> On 24/05/2024 16:31, Alexandre Bailon wrote:
->> This adds support of multi sensors to thermal.
->> Currently, this only support the get_temp operation.
->> This returns an average temperature of all the sensors.
->> If defined, a coefficient is applied to the value read from the sensor
->> before computing the average.
->>
->> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+Adding a separate define for "standard kselftest flags" would be
+preferable, and then something like __SANE_USERSPACE_TYPES__ would make
+sense being added to it.
+
+> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
+Thanks.
+
+cheers
+
+> On 5/20/24 8:03 PM, Michael Ellerman wrote:
+>> Fix warnings like:
+>>=20
+>>   openat2_test.c: In function =E2=80=98test_openat2_flags=E2=80=99:
+>>   openat2_test.c:303:73: warning: format =E2=80=98%llX=E2=80=99 expects =
+argument of type
+>>   =E2=80=98long long unsigned int=E2=80=99, but argument 5 has type =E2=
+=80=98__u64=E2=80=99 {aka =E2=80=98long
+>>   unsigned int=E2=80=99} [-Wformat=3D]
+>>=20
+>> By switching to unsigned long long for u64 for ppc64 builds.
+>>=20
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 >> ---
->>   drivers/thermal/Makefile        |   1 +
->>   drivers/thermal/thermal_core.h  |  15 ++
->>   drivers/thermal/thermal_multi.c | 332 ++++++++++++++++++++++++++++++++
->>   include/uapi/linux/thermal.h    |   5 +
->>   4 files changed, 353 insertions(+)
->>   create mode 100644 drivers/thermal/thermal_multi.c
-> 
-> This does not really build...
-Sorry for that. I have not rebased and tested my patches on the latest 
-master commit. I will be more careful for the V4.
-
-Best regards,
-Alexandre
-> 
-> 
-> ../drivers/thermal/thermal_multi.c:249:38: error: initialization of ‘struct thermal_trip *’ from incompatible pointer type ‘struct thermal_trip_desc *’ [-Werror=incompatible-pointer-types]
-> 
-> Best regards,
-> Krzysztof
-> 
+>>  tools/testing/selftests/openat2/openat2_test.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>=20
+>> diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/test=
+ing/selftests/openat2/openat2_test.c
+>> index 9024754530b2..5790ab446527 100644
+>> --- a/tools/testing/selftests/openat2/openat2_test.c
+>> +++ b/tools/testing/selftests/openat2/openat2_test.c
+>> @@ -5,6 +5,7 @@
+>>   */
+>>=20=20
+>>  #define _GNU_SOURCE
+>> +#define __SANE_USERSPACE_TYPES__ // Use ll64
+>>  #include <fcntl.h>
+>>  #include <sched.h>
+>>  #include <sys/stat.h>
+>
+> --=20
+> BR,
+> Muhammad Usama Anjum
 
