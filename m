@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-194429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE428D3C1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:21:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4E68D3C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 18:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AE41F253BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E2D2864C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 16:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AAA1836DB;
-	Wed, 29 May 2024 16:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984871836E3;
+	Wed, 29 May 2024 16:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NW3NQ93Q"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="X5b6b1au";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g9imyt2P"
+Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A69AE576
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 16:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AA8181B91;
+	Wed, 29 May 2024 16:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716999656; cv=none; b=p03pk2GnECxz9g+Uf5IHDJOxG5cnrwlrdRXzgF163Mc4GqWtS2uCC12RHDi2PR+ZaeRliJVkciTxw4nTR1b8dtuavFTqvxFt6JwcvLj/246Xzd3+hEUe1sJagz6vQCV8G9rgNFvRyZD8z9mmK6xYjrOzEfXM5IyLjaQcl/MZWkk=
+	t=1716999728; cv=none; b=Hp1/cHH04w4dKDZYzy2lmWxPKnKXglw0iLU98BQFiQs0vPRRZelYve7wKh1ri38MJ/EJRG0z+jCicj6j2pFspBEKgAyaOylSquASHJK9G1ZV4sWnJDY+JERjfStuxtDqdN3rybkbYNxRCnPv9KxXN3JQuRbx1vlBwUImdRMPdSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716999656; c=relaxed/simple;
-	bh=7Zm71bZ0gdfUIY18MRDwLirXAVjFm8dJHtioBjyMJYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4DnhR69+pel0w099+ifIURU15LvGZBrcklgqbP43QEUxhUlkEILUKn8EI/h83amYXye7TWXoRYiCE7Qa1hLkFMctIzqjeJmN6a0rPfb+5yynxBOizpj+EPbYTq7FgwxCJyEpXtfjRmkETi1eyRzWMnYPoqcuWECV68wSBQjdTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NW3NQ93Q; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: shakeel.butt@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716999652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CKdtFGY2qvDebu+brZlimiXooxRBw7HUXpJ9H2HyUM8=;
-	b=NW3NQ93Qo3m6BS94m+TO02ezsQNUb0s2NNOWweZX9yjZlp9KVgq6W4e5vvgwPJTdhi4UI9
-	IBNz67RtT9iUmAvGQQFZonQMy/eudmH0OQ/gnlLXWsicse5rAhsYEkf4HptjvV32C5QnpN
-	8ZVkC+dk39FLl+5Vejp2C+3FBqrCeWc=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: riel@surriel.com
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: kernel-team@fb.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
-Date: Wed, 29 May 2024 09:20:46 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Rik van Riel <riel@surriel.com>, Michal Hocko <mhocko@kernel.org>,
-	Facebook Kernel Team <kernel-team@fb.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm: vmscan: reset sc->priority on retry
-Message-ID: <ZldV3pNL6ArlgPyU@P9FQF9L96D>
-References: <20240529154911.3008025-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1716999728; c=relaxed/simple;
+	bh=EDIXZx3IPrf64VApzbWtoRjjXMxwcz0IlemDKC5Su68=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=dBfv3CCcE6ykCxKFAtV13BC0SZXvodKb6bnjCEKcXYqdoGv0tsep4TtAixxtWsZNYBY8MBPjXYmehC4VjC8Bf3QpSr+fCvM938QVb5SnWttsugWwfhB7TTcAhl0dZ/znMY8vZtcMvyIc8g4pcCJrolL9Zi/bGfswYcEHeKZ4ZDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=X5b6b1au; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g9imyt2P; arc=none smtp.client-ip=64.147.123.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id AC4EA1800141;
+	Wed, 29 May 2024 12:22:05 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 29 May 2024 12:22:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716999725; x=1717086125; bh=o9RjPAa9HE
+	pajKmAsJmm5sKFuh+vn34PA2zIfnayZfc=; b=X5b6b1auT1fWZ1GdeIXIsQFsaF
+	ndeJr4MGDDAW8792Fq4GZBaNDE9Qwei/7M2MS9Zz285fvgcG0VAPy2qcoP1kVUdH
+	Xvp1ww1n9ugpkau2ObDrSw5P41RtudOXqlpG9J6Uz3hGC07UF3VFxaaI1uWQaM0l
+	bUupqB3nkYlCwZu5PI2nhjBHtR3fklZPPAFKEIvixQcEJGjqq3FSaOLQBbxQwT6o
+	ZkdTLQ3ElzuqTqDwew+XTDPKvxeBk9sEJb3rz1EGzp0eb66U2GxgTHfN9roocaDW
+	xdSvvzO1sBWrpEAJbGxYeTwWOwUo5hk2rgLR/6u02W4uqQen6TveWRNlIFsw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716999725; x=1717086125; bh=o9RjPAa9HEpajKmAsJmm5sKFuh+v
+	n34PA2zIfnayZfc=; b=g9imyt2PGyu3k6F1VPXdxZnB8CvqDXOt0FxCbpnVx1Oo
+	tillRsdjwIMlJ5N2NwiBjd4qkjIlPQ45KnaFo+f6IhOyvKd4T08W8emLzraCaUFY
+	0muyjOklxh87atj51BwcMc4fTWBY1F9K5QfphuKNA0nkUKzvDgL1yVz986R+YAJd
+	Bd2cExyPmLtqsng2m2BZxP4U3wg/b06iGfXV19L5opcj4bvKIB9b2sSi1nEf2bHM
+	sMhRUTcOH6lKz78esv+q5NgyGmU6Kkv1gzp/202yN2r3muJDiHkwG3FZSQddRJgl
+	MfHJQwTMBvFXS0CA5yayJqm00nf349ef5Pkz7gTSUw==
+X-ME-Sender: <xms:LFZXZpsTXHND3Djz2oIbexavmcpiK0wsnuqMWDMQP3gB0uVKz1hk1w>
+    <xme:LFZXZie3q5xp3lJAPOdM6Crys_Is4mmvMqI7_2bQJxNRGs12kWjEe7OZjJVNVKJQh
+    Y_9EXo9Ic-wmN1gdos>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgleekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:LFZXZsxd_pyAZSUM5-lLhGhr7-ZKL-gKbzCFGL2IWNx_eccN-1ZkJw>
+    <xmx:LFZXZgOkhgVwPjjb_wId8S9atEEEcbuUMnn-RFAfSE5gXgM7wcsD7g>
+    <xmx:LFZXZp9LtlqWLDnzRcuRX6oBT--X146cQQOZQMLIYqcBYcNLZf0haQ>
+    <xmx:LFZXZgWpCYF6vD_rKOSN0FrsC4Ko4OFNIOUVyz7Ewx-UIl6JL_bJ3g>
+    <xmx:LVZXZgUHoIv5-m6Bh6J9yfp6TEIP2s2n9Ys0CdILjx-WlRtty16nRyKS>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BEBD6B6008D; Wed, 29 May 2024 12:22:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529154911.3008025-1-shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Message-Id: <e526fbec-5fc6-4778-b46d-608744a4d7f6@app.fastmail.com>
+In-Reply-To: 
+ <SJ1PR11MB60838B76940188104D57E53FFCF22@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20240529095132.1929397-1-arnd@kernel.org>
+ <SJ1PR11MB60838B76940188104D57E53FFCF22@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Date: Wed, 29 May 2024 18:21:44 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Tony Luck" <tony.luck@intel.com>, "Arnd Bergmann" <arnd@kernel.org>,
+ "Borislav Petkov" <bp@alien8.de>, "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: "James Morse" <james.morse@arm.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Robert Richter" <rric@kernel.org>, "Marvin Lin" <milkfafa@gmail.com>,
+ "Shubhrajyoti Datta" <shubhrajyoti.datta@amd.com>,
+ "Sai Krishna Potthuri" <sai.krishna.potthuri@amd.com>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] EDAC, i10nm: make skx_common.o a separate module
+Content-Type: text/plain
 
-On Wed, May 29, 2024 at 08:49:11AM -0700, Shakeel Butt wrote:
-> The commit 6be5e186fd65 ("mm: vmscan: restore incremental cgroup
-> iteration") added a retry reclaim heuristic to iterate all the cgroups
-> before returning an unsuccessful reclaim but missed to reset the
-> sc->priority. Let's fix it.
-> 
-> Reported-and-tested-by: syzbot+17416257cb95200cba44@syzkaller.appspotmail.com
-> Fixes: 6be5e186fd65 ("mm: vmscan: restore incremental cgroup iteration")
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Wed, May 29, 2024, at 18:14, Luck, Tony wrote:
+>> Linking an object file into multiple modules causes a warning:
+>>
+>> scripts/Makefile.build:236: drivers/edac/Makefile: skx_common.o is added to multiple modules: i10nm_edac skx_edac
+>
+> In this case there is no practical problem from this double link. The 
+> two modules created: skx_edac.ko and i10nm_edac.ko
+> are mutually exclusive. A system may load neither, either, but not both 
+> (enforced by the x86_match_cpu() check in each
+> modules init function).
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+One of the problems here is that each compilation unit implicitly
+knows the name of the module it gets linked into, via the
+KBUILD_MODNAME macro. If it gets linked twice, the macro is
+wrong for at least one of the two, and this can lead to
+incorrect printk formats and other macro expansions using
+that as an identifier.
 
-Good catch!
+A particularly bad case happens when one of the two is
+built-in while the other one is a loadable module. In
+this case, the module infrastructure assumes it's always
+built-in, which can mess up e.g. __exit annotations and
+THIS_MODULE references.
 
-> ---
->  mm/vmscan.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index b9170f767353..731b009a142b 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -6317,6 +6317,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
->  	 * meaningful forward progress. Avoid false OOMs in this case.
->  	 */
->  	if (!sc->memcg_full_walk) {
-> +		sc->priority = initial_priority;
->  		sc->memcg_full_walk = 1;
->  		goto retry;
->  	}
-> -- 
-> 2.43.0
-> 
-
-I wonder if it makes sense to refactor things to be more robust like this:
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index d3ae6bf1b65c7..f150e79f736da 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -6246,7 +6246,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
-        if (!cgroup_reclaim(sc))
-                __count_zid_vm_events(ALLOCSTALL, sc->reclaim_idx, 1);
-
--       do {
-+       for (sc->priority = initial_priority; sc->priority >= 0; sc->priority--) {
-                if (!sc->proactive)
-                        vmpressure_prio(sc->gfp_mask, sc->target_mem_cgroup,
-                                        sc->priority);
-@@ -6265,7 +6265,7 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
-                 */
-                if (sc->priority < DEF_PRIORITY - 2)
-                        sc->may_writepage = 1;
--       } while (--sc->priority >= 0);
-+       }
-
-        last_pgdat = NULL;
-        for_each_zone_zonelist_nodemask(zone, z, zonelist, sc->reclaim_idx,
-@@ -6318,7 +6318,6 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
-         * good, and retry with forcible deactivation if that fails.
-         */
-        if (sc->skipped_deactivate) {
--               sc->priority = initial_priority;
-                sc->force_deactivate = 1;
-                sc->skipped_deactivate = 0;
-                goto retry;
-@@ -6326,7 +6325,6 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
-
-        /* Untapped cgroup reserves?  Don't OOM, retry. */
-        if (sc->memcg_low_skipped) {
--               sc->priority = initial_priority;
-                sc->force_deactivate = 0;
-                sc->memcg_low_reclaim = 1;
-                sc->memcg_low_skipped = 0;
+     Arnd
 
