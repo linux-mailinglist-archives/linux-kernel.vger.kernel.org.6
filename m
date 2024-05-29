@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-193453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0C08D2C8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851168D2C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 07:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CB181C22DB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F17171F24E26
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 05:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B1215CD60;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7071667C7;
 	Wed, 29 May 2024 05:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TpP+mhqc"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bgh5+Uq3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D49015EFBC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA0815F417
 	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716960975; cv=none; b=a5slb1W/Mjkj/6Ezm0qGSxPd+L1cbXNT+3s8POC69Pw7+sUKJjBlDyuwXXo+7dmwm6X82tFmJzEeJ2DdBlX3/VMeXU/rC8+CTg21u8kxKfzopjiVAFnO8dQ5aUZWc/beR9igYNoeYC4LLUa4FEJSvp57qQaHgwf7FrvT4tn+2fg=
+	t=1716960976; cv=none; b=G41QqmFWxKjxTthPTq3nlV9G9Vzcox/DnMSjm0bJ977w0Meya37Wgf1M+HuQtfnqcZmMlOuYkyfz9neuwpPTJFW2ZZ537eQjHrTmT1yY81FXrRh3OI2SbjuQEn3wcZ6pWHIIODl7uq9KMqqbVTCqpTJB0SsuQm2DrJ4bysSaFmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716960975; c=relaxed/simple;
-	bh=ybhIC+9D0FzFiBqGh0zAWkB79mgKE5w60y1oFabl/b8=;
+	s=arc-20240116; t=1716960976; c=relaxed/simple;
+	bh=xf05GvXEO+I215J3GQWK9zqCkzSYPhbVb/+Tz/JkYCQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RyAAJ8WEumtLxLsKL8a3Odfmkn9RkeW5+R6/xwILbMaHjYRx67gFpDoWopWDiiToaq/plIgRxt/Yir2UoGlmysAgT4kVLBbz2/g067PaMRVvWnH9HY9M4wCpQBss5pH0JueN3yUpfqqRdwFtytoFB4iExsL1mZ66gv4hoIdmzEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TpP+mhqc; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=ndpwMs/8BTbk/sxW98MFtHi/ERq4vUPJcIIFX8xI7IwWz7bVj+0VdoxO4C3aMEcrptQMe/8azMFeqreVKFQco3jgrCkRZZPJkgL3yroCSy0ibVYuW7fpoLTRVjaaOwhbjpdsbo+KSFbKWnib/aLOoDyqcuF4AVBbE9GGNu+m7p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bgh5+Uq3; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716960974; x=1748496974;
+  t=1716960975; x=1748496975;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ybhIC+9D0FzFiBqGh0zAWkB79mgKE5w60y1oFabl/b8=;
-  b=TpP+mhqcl5XxarurC0AhOdrZrriImZKgHvXbxqfeS4wd3KpghLKn5Seb
-   anYcpbetdNMmWNgwcUDziKvmS+glrgrvwYesaMy5w9zWrfSjR5fMFuq7+
-   bRFJBsMMsIpOxGxZ2g5ZkT281KuOK/VBXw3YK+VKlZP5lgZ21LU7LUQJy
-   Lp46CEtqcP1yGDn1W0Dzxfa5R8xpPQ5CNI5SWgAbwcL64tLkXza5ffvAt
-   IgAMBJvZR9GWsF3RmXy0lbTH7Nb9mCkKI3VYJSOZmuHEFQ8E2eYhoq8g+
-   beW6Ky+nJVvlmAxSWTmt2nkMDX0QUfrp8jZ66rk5aI2zy3MGhyeRTVG1q
-   A==;
-X-CSE-ConnectionGUID: +w1o833cR0qIt2rWhQ1jWQ==
-X-CSE-MsgGUID: rE1dr/TVTnyws9GpJKlgew==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13568806"
+  bh=xf05GvXEO+I215J3GQWK9zqCkzSYPhbVb/+Tz/JkYCQ=;
+  b=Bgh5+Uq3rfQzo4IujodLM5ApJH6QiUAFgY81W0u2T+C5eQIRSOKgeojc
+   ni4exGqvQDfPFKPX5YAZP7MYcdTqgavCsAcRhkCBwwLexYXaNWcz94lGP
+   BhYpxVJyn+hpdgjhw59L/ybaRVTzq1tF1hS0UOthCi4TCCRmzWKC2BHM8
+   Y+x8M86GZy6EnDx3MiU7z1iqYcvy6fyI2Gfmr2gDT3KU3ovu0hQzHf5XM
+   lT2Y7DZ5IYtcER1TM52yhv08dNUhyUmJF3lgOlBCF3D5qbLHGjKFL1enO
+   82PPxini4UQde6xLIDycvWpOyYMyz8jXRUhvIiHagN9NTiNUPUp5FT54B
+   g==;
+X-CSE-ConnectionGUID: 5J9g22DLRBuUYT/oFcYjnQ==
+X-CSE-MsgGUID: 4WeBitFrSVCR3d4SU0s8Yg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13568825"
 X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="13568806"
+   d="scan'208";a="13568825"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 22:35:20 -0700
-X-CSE-ConnectionGUID: Lx3ESut/QGCW7lfZ/TNLuA==
-X-CSE-MsgGUID: oyY1KD/nRaOxmUib4QeiUg==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 22:35:25 -0700
+X-CSE-ConnectionGUID: WkFEj6PrQYqnAeoLtI1GfQ==
+X-CSE-MsgGUID: eszOZrvySa+kJnN3MKgnnw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,197,1712646000"; 
-   d="scan'208";a="35257522"
+   d="scan'208";a="35257546"
 Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 28 May 2024 22:35:15 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 28 May 2024 22:35:20 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -79,9 +79,9 @@ Cc: Yi Liu <yi.l.liu@intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 04/20] vhost-vdpa: Use iommu_user_domain_alloc()
-Date: Wed, 29 May 2024 13:32:34 +0800
-Message-Id: <20240529053250.91284-5-baolu.lu@linux.intel.com>
+Subject: [PATCH 05/20] iommu: Add iommu_paging_domain_alloc() interface
+Date: Wed, 29 May 2024 13:32:35 +0800
+Message-Id: <20240529053250.91284-6-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240529053250.91284-1-baolu.lu@linux.intel.com>
 References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
@@ -93,47 +93,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace iommu_domain_alloc() with iommu_user_domain_alloc().
+Commit <17de3f5fdd35> ("iommu: Retire bus ops") removes iommu ops from
+bus. The iommu subsystem no longer relies on bus for operations. So the
+bus parameter in iommu_domain_alloc() is no longer relevant.
+
+Add a new interface named iommu_paging_domain_alloc(), which explicitly
+indicates the allocation of a paging domain for DMA managed by a kernel
+driver. The new interface takes a device pointer as its parameter, that
+better aligns with the current iommu subsystem.
 
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/vhost/vdpa.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ include/linux/iommu.h |  6 ++++++
+ drivers/iommu/iommu.c | 20 ++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-index 63a53680a85c..7784218fd9d2 100644
---- a/drivers/vhost/vdpa.c
-+++ b/drivers/vhost/vdpa.c
-@@ -1312,26 +1312,21 @@ static int vhost_vdpa_alloc_domain(struct vhost_vdpa *v)
- 	struct vdpa_device *vdpa = v->vdpa;
- 	const struct vdpa_config_ops *ops = vdpa->config;
- 	struct device *dma_dev = vdpa_get_dma_dev(vdpa);
--	const struct bus_type *bus;
- 	int ret;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 6648b2415474..16401de7802d 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -781,6 +781,7 @@ extern bool device_iommu_capable(struct device *dev, enum iommu_cap cap);
+ extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
+ extern struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus);
+ struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 flags);
++struct iommu_domain *iommu_paging_domain_alloc(struct device *dev);
+ extern void iommu_domain_free(struct iommu_domain *domain);
+ extern int iommu_attach_device(struct iommu_domain *domain,
+ 			       struct device *dev);
+@@ -1092,6 +1093,11 @@ static inline struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u
+ 	return ERR_PTR(-ENODEV);
+ }
  
- 	/* Device want to do DMA by itself */
- 	if (ops->set_map || ops->dma_map)
- 		return 0;
++static inline struct iommu_domain *iommu_paging_domain_alloc(struct device *dev)
++{
++	return ERR_PTR(-ENODEV);
++}
++
+ static inline void iommu_domain_free(struct iommu_domain *domain)
+ {
+ }
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index f1416892ef8e..7df4a021b040 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -2016,6 +2016,10 @@ static int __iommu_domain_alloc_dev(struct device *dev, void *data)
+ 	return 0;
+ }
  
--	bus = dma_dev->bus;
--	if (!bus)
--		return -EFAULT;
--
- 	if (!device_iommu_capable(dma_dev, IOMMU_CAP_CACHE_COHERENCY)) {
- 		dev_warn_once(&v->dev,
- 			      "Failed to allocate domain, device is not IOMMU cache coherent capable\n");
- 		return -ENOTSUPP;
- 	}
++/*
++ * The iommu ops in bus has been retired. Do not use this interface in
++ * new drivers.
++ */
+ struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus)
+ {
+ 	const struct iommu_ops *ops = NULL;
+@@ -2074,6 +2078,22 @@ struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 flags)
+ }
+ EXPORT_SYMBOL_GPL(iommu_user_domain_alloc);
  
--	v->domain = iommu_domain_alloc(bus);
--	if (!v->domain)
--		return -EIO;
-+	v->domain = iommu_user_domain_alloc(dma_dev, 0);
-+	if (IS_ERR(v->domain))
-+		return PTR_ERR(v->domain);
- 
- 	ret = iommu_attach_device(v->domain, dma_dev);
- 	if (ret)
++/**
++ * iommu_paging_domain_alloc() - Allocate a paging domain
++ * @dev: device for which the domain is allocated
++ *
++ * Allocate a paging domain which will be managed by a kernel driver. Return
++ * allocated domain if successful, or a ERR pointer for failure.
++ */
++struct iommu_domain *iommu_paging_domain_alloc(struct device *dev)
++{
++	if (!dev_has_iommu(dev))
++		return ERR_PTR(-ENODEV);
++
++	return __iommu_domain_alloc(dev_iommu_ops(dev), dev, IOMMU_DOMAIN_UNMANAGED);
++}
++EXPORT_SYMBOL_GPL(iommu_paging_domain_alloc);
++
+ void iommu_domain_free(struct iommu_domain *domain)
+ {
+ 	if (domain->type == IOMMU_DOMAIN_SVA)
 -- 
 2.34.1
 
