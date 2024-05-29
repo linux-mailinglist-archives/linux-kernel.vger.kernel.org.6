@@ -1,137 +1,204 @@
-Return-Path: <linux-kernel+bounces-194752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A615F8D4174
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:35:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD958D4177
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62ECA286B88
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE211C22CEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEE61779BD;
-	Wed, 29 May 2024 22:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B493178362;
+	Wed, 29 May 2024 22:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HgrlXmL7"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="oQShsQ+r"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13032169ADC;
-	Wed, 29 May 2024 22:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F36169ADC;
+	Wed, 29 May 2024 22:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717022113; cv=none; b=tMobQCyhZAXvDNERpbgeNvQ16m7IIkZZRqj4rkeofJLUTtsX+FbUnPaRQ+vvBaY3cEHWrr5c3JGHYatLITE8F24xqWAeCkvuZQfxfNa5x/fJYAgR5RFBc2fbUvoHWmtRqv/NSl765EFYb3lhyqGrZYV0nabyXvOGOu6lsIhDQH4=
+	t=1717022335; cv=none; b=GqueN9IgUxYXvt/XoNLncgKiaf3+wA4oqge0w5BSeGqERGtpqYpBFrA6rBmvqJ51x6qRj1ug69GS8/VHPXhrGEB77zk4KR0DAIEiUq2y/M07qoV9rUKe7TQSENItExuAcO7TBCa5/fF5lykV66j3JeWpZRYBvQihU7YwgcxiB0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717022113; c=relaxed/simple;
-	bh=B5hvaFVG7YU+FAqWqO6NYlaM4U8myrItdnQs/64YBLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GuixQpSLOJLR/eswXnPt1OMbhWSsCudK+pSPGkV6dab5x4ReZst6mYX/TV813954ucYpiIRa64ED2rkpEi2Iy0Nb1YUIQYAE9XGG6fLqUbV9vMiE2gut3Tohx1yDWqIRbAdOwiexTTRF3O516xwkJMAmbPl+Xe+NFH9BsKA9jYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HgrlXmL7; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f082d92864so2393515ad.1;
-        Wed, 29 May 2024 15:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717022111; x=1717626911; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8PKXIGJClXO6XAR8p5BSrXpvC9eow4Z4B6WrKMzRXUQ=;
-        b=HgrlXmL77IBlbDM/qXOsRRXDifT5th8zkdU0X7UkJt56h5QsK7VGSzl7+14pskiTg4
-         RMWHfVl4NLd5jytSz4lOOxITutoq57cJ+0N7F73uFvEHr5QXMUuDLDHzpA/HGJkf220D
-         ux1F/u2q/DipatWEfWG+AlmtVOVlathmz3ob15Bp8L248bJpV5spSklmeCIszA0byBab
-         jIt310APGIT6+Cpyt9nlmvQUZ36GpdcD5UJtcxuKsgzKDSiDUdgbc2q9NKaKPHVFl8kh
-         it/2OfKAGqPgQPClGYfxqW+sKOYZ3n1P/lQevKDoFscj8XCnY2WkytI5SUzllrsynHxi
-         JeMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717022111; x=1717626911;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8PKXIGJClXO6XAR8p5BSrXpvC9eow4Z4B6WrKMzRXUQ=;
-        b=ZCcP2i89bEgtg9cq8UTtQWHts3lxPzukv2dSa2iiybLN/va2Lx3Mx0n+GKS2mijDqs
-         FzwyjKgS+3YdfyFRRyic1vTLaarha1fr+jk10TfTmkc8ETJtk+ENDX472+oC4d646JKv
-         8VX+tqFlkKcJFcU9pVbf95qSaOUXqOLICMI22lbqJ4312a7L6ck9VjpADmTqp34BuCkR
-         xPAbTrGebS5yZjNLjZSIItPbQ0dyyQFMwpYWD4wsjOx6W/ZWnFvWOWVxirYgVnt0l2Ks
-         LB5c1xvwYqKt7qXYVpELdgSz4ABe+RMU/xYTv2clRnrfxsfu7uDDti3/4bkWtwgAmcFA
-         Ck3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWtP4uY6RFDyX+h7yIjNe+YuULSNr7XYqlbH/a4YMuO7FuvcLlgnsmJXJEilF0eJMJwOhlFB0R5rOS9CEAv3auAh8aAa97B1Mdl2IHMWuqFIHQT0IbjxanBddxjt35e0qQ7gWbqcMXPS/HnNWxXTLp/sp/xyyq4cofq/LxF7+GCusIPqla7tbg4qbq86J37ewpYEKFZ6aJI8OcBjsh
-X-Gm-Message-State: AOJu0YxMLMytyPAT8iOStetIPyh2qrTJf+xHfrbzZ/4AbOlTba0GnMas
-	bC9HljLbtQaL34fCAmmzC1/KCAwD/w/LwiLWDza7azNNYbwX2DvSkaa8Lg==
-X-Google-Smtp-Source: AGHT+IG1NrCLle47DLbyygolIxX5Tco70P9/XgtD5t9zZDYX0lW5PrdLLaWKjqhcaq4HgMEUKqMrZg==
-X-Received: by 2002:a17:902:c94b:b0:1f4:89e2:b47b with SMTP id d9443c01a7336-1f61992ee59mr4102995ad.50.1717022111255;
-        Wed, 29 May 2024 15:35:11 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75783asm105081475ad.23.2024.05.29.15.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 15:35:10 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 29 May 2024 15:35:09 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] hwmon: (ltc2992) Fix memory leak in
- ltc2992_parse_dt()
-Message-ID: <a44d1612-0731-4f9f-aa93-04864599251c@roeck-us.net>
-References: <20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com>
- <20240523-fwnode_for_each_available_child_node_scoped-v2-1-701f3a03f2fb@gmail.com>
+	s=arc-20240116; t=1717022335; c=relaxed/simple;
+	bh=JFiZ/vr1rm7cLa4a2ftkIuJ6oF1Zj3SgMk+NCrYSJq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iTThiWiRbxY3AS0rXbvLw6FEk90OuqyCIBbXYFuYkF/GdX2U7AaOkSYYe57B3ecdil8KNdkkd/dcU0IP8OD2kGnR7Ybkv8R2ybnPVhv0A9s5wYqANv4N9av8ekPk8S6C4T4ewEcjKi9HofzlfKHlHLg/NGto2q5XiT32Ka6d3yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=oQShsQ+r; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1717022247; x=1717627047; i=quwenruo.btrfs@gmx.com;
+	bh=sh0xK1DLoCdr3LhWiQ/YVo7atV5IjlZ+EcoRVqczCOQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=oQShsQ+rj5nwkhzsmzkqMVSX+TW2yeqrdGhYH1mnHMhpaMZx7vdPUJx5ZrIL9EYW
+	 zMX7adwELr2XI84L0MIcVWw/U6uuxWm1I2sB41oxmHtOnAp8PTgMnPRE/iDKmLiVH
+	 WIukUj0rEvLmbOYO5lzGRNd+StpvjMGheQ2hNbND76vMdDTR98eimMcLTZiKHr+gI
+	 qRgY5t9XDEDxbJTJtdnrPAihkJGDQhVtbi2rZUnwLzC0m3U1r+Fvno+Gh7BrWbX7k
+	 FrHH60urumA4Bdo+r+hYrjcnyN6lAcc396LsyEpncX3q9+Y+hGpwSGkFoNi390nr9
+	 CSlmhL6Z3djUqvPzjA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.219] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N7zBb-1sXXL33ect-0152kW; Thu, 30
+ May 2024 00:37:27 +0200
+Message-ID: <d67dde35-0c14-4da2-8628-f4a27c32417a@gmx.com>
+Date: Thu, 30 May 2024 08:07:19 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523-fwnode_for_each_available_child_node_scoped-v2-1-701f3a03f2fb@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.9/BUG: Bad page state in process kswapd0 pfn:d6e840
+To: David Hildenbrand <david@redhat.com>,
+ Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>
+References: <CABXGCsPktcHQOvKTbPaTwegMExije=Gpgci5NW=hqORo-s7diA@mail.gmail.com>
+ <CABXGCsOC2Ji7y5Qfsa33QXQ37T3vzdNPsivGoMHcVnCGFi5vKg@mail.gmail.com>
+ <0672f0b7-36f5-4322-80e6-2da0f24c101b@redhat.com>
+ <CABXGCsN7LBynNk_XzaFm2eVkryVQ26BSzFkrxC2Zb5GEwTvc1g@mail.gmail.com>
+ <6b42ad9a-1f15-439a-8a42-34052fec017e@redhat.com>
+ <CABXGCsP46xvu3C3Ntd=k5ARrYScAea1gj+YmKYqO+Yj7u3xu1Q@mail.gmail.com>
+ <CABXGCsP3Yf2g6e7pSi71pbKpm+r1LdGyF5V7KaXbQjNyR9C_Rw@mail.gmail.com>
+ <162cb2a8-1b53-4e86-8d49-f4e09b3255a4@redhat.com>
+ <209ff705-fe6e-4d6d-9d08-201afba7d74b@redhat.com>
+ <ff29f723-32de-421b-a65e-7b7d2e03162d@redhat.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <ff29f723-32de-421b-a65e-7b7d2e03162d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:A7Nm64HO8281pK1tOLI4ApY7qFkfLtxwwHP6+vDGV/auwm1+t8Z
+ mLbds0rwyq+7KKzpJVNjO84EclwUhiJg/PnjSJ8J/n7F+smIlOCxWvBnAgu+E3n375O1GIM
+ ecARfq5mq74F/VusyYP7p7OwW8Mxz/tPYjAWGH1jgGmQ8EW6ZTdu+fmjocQbfcvsLh7rrob
+ f9HrdkgJZm7sEgDQQOINg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XPtvCe11CWI=;5zcsxHF7mU3S4ErU4fNM26tBw8h
+ MrZ0XCLn80CzuNHBiJ8AMAOdNQ71dgvhY2GtdG9yfgeCk1N9tTSRvQl8IsFb3OwnzxK1UUQEI
+ PPYg+wv4hXcJfVuXRZakWjDBo7RbbZLAfOjROV1imwLRYyqQtHlaMvkd4PcG+9ggRH4GTeHwh
+ ceIclglt8vOhkh1k/KwbEbrNdlYFGYQhNqgrq6x0udfngTzVhDpL72Qaw1bxkoz2nXYDBODZc
+ 55FU8aw2PWCTGsakTxQfRvShq/oQYg7Hs3QWjyow1HZb2BZOCi4UNVghYNPpOdoDRcoqWx9NE
+ jLHwDVx7NHqrhUsEpa6K6zxDCsNnMLllePbqZPn5144czxO4jKbeC6PD0/LyQ9P+5m6maWJKP
+ vJaO3oPobs7xTF3zA7zNRRVKYXztalay75lMsw5Q4zyIX0CBJ/c9bBHZJ4B3+q7a0jS3QDv98
+ ThYC0+BNKYg0azuJpudst670HpZO3oNWIAr+CY46erNZy14g5agvvnqZnb8moPnGfVX59CYzm
+ godMFRUufaaipaBDBKSXRm67jxT8U+JEijiUsw2l399P37pOO08niwCW1b5W3M0fhWvT5aFma
+ NBBLHGffuLDgN93p8vIf8Hz0qcEvY/U54xsd6oX8kfTKLgc7XKX14aOZOAKUQiVwxYdDNUTJP
+ 6v9G3lpQEno5Ac/WaCQ2eyD4tCViCe0GeQG/pi2upmH3ATlNw9OAYg02Mck/cma7icV3HelKF
+ MlaTS8HOufokb+QD62h45EQekY1/WAkR9ULtvestrgOyW3x2UiCRdfr78k8OxzkzDI3dwwWXZ
+ ZuR+7kbdvSH+Pc0oXGEyd7Faym+X9N3TPdDWFxpbymcq8=
 
-On Thu, May 23, 2024 at 05:47:14PM +0200, Javier Carrasco wrote:
-> A new error path was added to the fwnode_for_each_available_node() loop
-> in ltc2992_parse_dt(), which leads to an early return that requires a
-> call to fwnode_handle_put() to avoid a memory leak in that case.
-> 
-> Add the missing fwnode_handle_put() in the error path from a zero value
-> shunt resistor.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 10b029020487 ("hwmon: (ltc2992) Avoid division by zero")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Applied.
+
+=E5=9C=A8 2024/5/29 16:27, David Hildenbrand =E5=86=99=E9=81=93:
+> On 28.05.24 16:24, David Hildenbrand wrote:
+[...]
+>> Hmm, your original report mentions kswapd, so I'm getting the feeling
+>> someone
+>> does one folio_put() too much and we are freeing a pageache folio that
+>> is still
+>> in the pageache and, therefore, has folio->mapping set ... bisecting
+>> would
+>> really help.
+>>
+>
+> A little bird just told me that I missed an important piece in the dmesg
+> output: "aops:btree_aops ino:1" from dump_mapping():
+>
+> This is btrfs, i_ino is 1, and we don't have a dentry. Is that
+> BTRFS_BTREE_INODE_OBJECTID?
+>
+> Summarizing what we know so far:
+> (1) Freeing an order-0 btrfs folio where folio->mapping
+>  =C2=A0=C2=A0=C2=A0 is still set
+> (2) Triggered by kswapd and kcompactd; not triggered by other means of
+>  =C2=A0=C2=A0=C2=A0 page freeing so far
+
+ From the implementation of filemap_migrate_folio() (and previous
+migrate_page_moving_mapping()), it looks like the migration only involves:
+
+- Migrate the mapping
+- Copy the page private value
+- Copy the contents (if needed)
+- Copy all the page flags
+
+The most recent touch on migration is from v6.0, which I do not believe
+is the cause at all.
+
+>
+> Possible theories:
+> (A) folio->mapping not cleared when freeing the folio. But shouldn't
+>  =C2=A0=C2=A0=C2=A0 this also happen on other freeing paths? Or are we s=
+imply lucky to
+>  =C2=A0=C2=A0=C2=A0 never trigger that for that folio?
+
+Yeah, in fact we never manually clean folio->mapping inside btrfs, thus
+I'm not sure if it's the case.
+
+> (B) Messed-up refcounting: freeing a folio that is still in use (and
+>  =C2=A0=C2=A0=C2=A0 therefore has folio-> mapping still set)
+>
+> I was briefly wondering if large folio splitting could be involved.
+
+Although we have all the metadata support for larger folios, we do not
+yet enable it.
+
+My current guess is, could it be some race with this commit?
+
+09e6cef19c9f ("btrfs: refactor alloc_extent_buffer() to
+allocate-then-attach method")
+
+For example, when we're allocating an extent buffer (btrfs' metadata
+structure), and one page is already attached to the page cache, then the
+page is being migrated meanwhile the remaining pages are not yet attached?
+
+It's first introduced in v6.8, matching the earliest report.
+But that patch is not easy to revert.
+
+
+Do you have any extra reproducibility or extra way to debug the lifespan
+of that specific patch?
+
+Or is there any way to temporarily disable migration?
 
 Thanks,
-Guenter
-
-> ---
->  drivers/hwmon/ltc2992.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/ltc2992.c b/drivers/hwmon/ltc2992.c
-> index 229aed15d5ca..d4a93223cd3b 100644
-> --- a/drivers/hwmon/ltc2992.c
-> +++ b/drivers/hwmon/ltc2992.c
-> @@ -876,9 +876,11 @@ static int ltc2992_parse_dt(struct ltc2992_state *st)
->  
->  		ret = fwnode_property_read_u32(child, "shunt-resistor-micro-ohms", &val);
->  		if (!ret) {
-> -			if (!val)
-> +			if (!val) {
-> +				fwnode_handle_put(child);
->  				return dev_err_probe(&st->client->dev, -EINVAL,
->  						     "shunt resistor value cannot be zero\n");
-> +			}
->  			st->r_sense_uohm[addr] = val;
->  		}
->  	}
+Qu
+>
+> CCing btrfs maintainers.
+>
 
