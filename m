@@ -1,122 +1,182 @@
-Return-Path: <linux-kernel+bounces-193503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BAF8D2D1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:21:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8AD8D2D23
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 08:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 092FAB27FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0AD1F232A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 06:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE3415EFC9;
-	Wed, 29 May 2024 06:20:54 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6807415FA84;
+	Wed, 29 May 2024 06:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L54PR1DW"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49AD1391
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 06:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154022F2A;
+	Wed, 29 May 2024 06:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716963653; cv=none; b=MO83X9/qCjy5f2nFZ/lFvY80h8bk5SdiB6rkV+7UN9ZwznW0MCjGhBIuV+0MMHECbF3qLbTGkQe97zF0Mrp+NnkCQxefUmb2gaG1J/i6Wc1yBHvuvlZONpWghkpcOhPjbZx9/qIj9LA/Xz6/yFKtvdf9pPveq4U1Ij9LVNe8POA=
+	t=1716963813; cv=none; b=dotISFpVBsU5B521/vont6GqOdvmQEWbdo32YiSSUPxuHue3kqT2/wSnyZH4F82AqE6YaSa1gVV8929hl2ZpUuBVi9TV8CGZMN/Z8XFh+wIwdQXLvx8rHaSUW4cONCkb7h4muur40dOFje5Sn8763+yrVv4Pts9AnCVymPOLtEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716963653; c=relaxed/simple;
-	bh=DjbOGAclJVdyRt4mD6ki6T6PGnHsWxWRXoaHnmm0iPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Gq4SlyWkzSwiqtnGxlta8VkuHHeoH2WKt0SxjSp0PCg75gsBaUOUV4Uxg401N/i0w6zQWktLAqRXBiZz1iOxHsdI9zzGyQqzYQxbIXZnDQoAjdZ1eurdld+qpqIgEYa4j0q9Fo1BfRi1HsMEFsP/Nlp79ZTCMW2IQHudcNc8hp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vpzfc4H8hzlWqC;
-	Wed, 29 May 2024 14:16:24 +0800 (CST)
-Received: from kwepemf500005.china.huawei.com (unknown [7.202.181.243])
-	by mail.maildlp.com (Postfix) with ESMTPS id DCAD5180A9C;
-	Wed, 29 May 2024 14:20:46 +0800 (CST)
-Received: from [10.67.111.212] (10.67.111.212) by
- kwepemf500005.china.huawei.com (7.202.181.243) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 29 May 2024 14:20:45 +0800
-Message-ID: <a0969967-c3ed-41ad-b7bb-805227281bbd@huawei.com>
-Date: Wed, 29 May 2024 14:20:45 +0800
+	s=arc-20240116; t=1716963813; c=relaxed/simple;
+	bh=GR+LKrFe+UUZWbY8bdBH7a434nQd0Kv7qhsQXr9RVgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Djj9qPuzO4CTzED+FhPKH628JBayJ9f5UTY8vKR8LBS8h+9crulfJ4Vw65rRydfDbZaMzG3Gm46C34hQiEnUItv23xvlrJzFsvXL2f3lD5taqqPF165SMSaLLpIZfeMqvwXY0dXZ1J58SGwzl136axibKFq2JGxK/WUxfr+W8dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L54PR1DW; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6302bdb54aso229798266b.0;
+        Tue, 28 May 2024 23:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716963810; x=1717568610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1tLcHWmtFvs9Ytz0eoynxFRfwFldga+uWrm7x0FZZsE=;
+        b=L54PR1DWEo8QAXFGRrliNpj8xE2ViPZcDlG5K4og2LBaFrSceetUovJ+ewBJOZ8bs0
+         +Gg5lfElbYfixVkCsP3FOd4xR5K/89F4pe5HcRi1Jn+osGoIQiJNg3nm5WjvS0DukMog
+         8cpIwNYv27kvQl+knWkR7cWFYYMjlZGwKuehVu4/slK1E66JGcxbMbC3irkydagw+i5H
+         MWEjy/rRr+a0AakWdgNOIYjDtnLmvTwBmVopNkCtswp1I7XR22I35BEZ0jVrx1LhHPpp
+         vZKYzKd6qnPBXp+aEqbhZjXjV5H7zB4dclxXjwVlcofmzhNwzoYTG5jYzCOpgBKajUGz
+         XQ/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716963810; x=1717568610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1tLcHWmtFvs9Ytz0eoynxFRfwFldga+uWrm7x0FZZsE=;
+        b=b/gFVqILkGPxKHK4AMX9Z6jnjWX4MwosbSAqOtXEaXZ9aeUZxEeEi+VmGntmaeiWXK
+         IqDax3CqWr4y7CETIudTHH0iXGKGkRSVjQiqUbUhXxGjerpNtLpENwpXnsjQ/gCze7I8
+         5PNsVtCoiJRBQtmhi1hhV3wgYo9MWz7w5zSlHHqYlalRujiYFzj+OqQmZ4HHdEUJJISA
+         AbXL4czWHY9MhIV3P6oYCbuhf7ehA2jxRBp9ovqRN/51uAPCCoB7++TwH05wa8/hytIX
+         o1aLFRGOmqA6DR29bKpO3GsgpviSlmJPGweW2GLYfRNzYlBj0l0k4+/cIUanicZeJccW
+         JGzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8E4YWEhQojFXyH1XTXJnhOmrbkDp82lTWwwHejYAXThtwNf5ozlRBOp6P63sqk5IXLSjrkDoXgwXWe/mVNjyCqdyyglRGrPhDU/mEE/SxDqNeAw3tz230OiCsAC8MWmC9U0+1T619wDkp8jN7/eAk1Ur5RkUpiIgHJ7svsxfzWKs=
+X-Gm-Message-State: AOJu0YxJ/vUWlQ06nxIBkeyaS8Xm6PqZ7gB1DizWoRHcfyBrqxqq0qCE
+	nMgWRc8owTZ2SXLRvQWdvhjxeg0bWPDrPZyksw3aXkiM2/yhIxcVxyfQ1COai63DxQge+Vj18Df
+	gr1MJMcMgg1RJNo/qd63mckaSjE/trWeL
+X-Google-Smtp-Source: AGHT+IG9tZBZb32D7wJefFAQaqxEoTWHfC+q+AoH9WPW4aE941T1sGRfv0CXz76hM9Lhi/j3kfATv7dOpdHufQucW2E=
+X-Received: by 2002:a17:906:314e:b0:a59:c319:f1dc with SMTP id
+ a640c23a62f3a-a62642daa92mr970246166b.4.1716963810113; Tue, 28 May 2024
+ 23:23:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sched/fair: set burst to zero when set max to cpu.max
-To: Benjamin Segall <bsegall@google.com>
-CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <mgorman@suse.de>, <bristot@redhat.com>,
-	<vschneid@redhat.com>, <changhuaixin@linux.alibaba.com>,
-	<shanpeic@linux.alibaba.com>, <dtcccc@linux.alibaba.com>, <tj@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <yusongping@huawei.com>, <zhaowenhui8@huawei.com>,
-	<liaoqixin@huawei.com>
-References: <20240522031007.643498-1-serein.chengyu@huawei.com>
- <20240522031007.643498-3-serein.chengyu@huawei.com>
- <xm268qzt4jnx.fsf@google.com>
-Content-Language: en-US
-From: Cheng Yu <serein.chengyu@huawei.com>
-In-Reply-To: <xm268qzt4jnx.fsf@google.com>
+References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
+ <20240528190315.3865-5-laurent.pinchart@ideasonboard.com> <ZlYzf6mW8RF9w_R7@surfacebook.localdomain>
+ <20240528202705.GD8500@pendragon.ideasonboard.com>
+In-Reply-To: <20240528202705.GD8500@pendragon.ideasonboard.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 29 May 2024 09:22:54 +0300
+Message-ID: <CAHp75VfpNsSnyXBb6Oy2-qCYXPR9ROimWhC7yTosrKf4YXHciQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] pwm: adp5585: Add Analog Devices ADP5585 support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	Alexandru Ardelean <alexandru.ardelean@analog.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Clark Wang <xiaoning.wang@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf500005.china.huawei.com (7.202.181.243)
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/29 7:10, Benjamin Segall wrote:
-> Cheng Yu <serein.chengyu@huawei.com> writes:
-> 
->> In the cgroup v2 cpu subsystem, assuming we have a cgroup named 'test',
->> and we set cpu.max and cpu.max.burst:
->>     # echo 1000000 > /sys/fs/cgroup/test/cpu.max
->>     # echo 1000000 > /sys/fs/cgroup/test/cpu.max.burst
->>
->> Next we remove the restriction on cfs bandwidth:
->>     # echo max > /sys/fs/cgroup/test/cpu.max
->>     # cat /sys/fs/cgroup/test/cpu.max
->>     max 100000
->>     # cat /sys/fs/cgroup/test/cpu.max.burst
->>     1000000
->>
->> Now we expect that the value of burst should be 0. When the burst is 0,
->> it means that the restriction on burst is cancelled.
->>
->> Fixes: f4183717b370 ("sched/fair: Introduce the burstable CFS controller")
->> Reported-by: Qixin Liao <liaoqixin@huawei.com>
->> Signed-off-by: Cheng Yu <serein.chengyu@huawei.com>
-> 
-> Yeah, makes sense. My general assumption would be to put these in one
-> patch, but if there's a convention to separate v1 and v2 that I've
-> missed, I have no opinion.
-> 
-> Reviewed-by: Ben Segall <bsegall@google.com>
-> 
-Thanks for the advice. I will submit a v2 patch that includes both cgroup v1 and v2 modification.
+On Tue, May 28, 2024 at 11:27=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tue, May 28, 2024 at 10:41:51PM +0300, Andy Shevchenko wrote:
+> > Tue, May 28, 2024 at 10:03:14PM +0300, Laurent Pinchart kirjoitti:
 
->> ---
->>  kernel/sched/core.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index e9198e30bb74..982d357b3983 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -11414,8 +11414,11 @@ static ssize_t cpu_max_write(struct kernfs_open_file *of,
->>  	int ret;
->>  
->>  	ret = cpu_period_quota_parse(buf, &period, &quota);
->> -	if (!ret)
->> +	if (!ret) {
->> +		if (quota == RUNTIME_INF)
->> +			burst = 0;
->>  		ret = tg_set_cfs_bandwidth(tg, period, quota, burst);
->> +	}
->>  	return ret ?: nbytes;
->>  }
->>  #endif
+..
+
+> > > +#define ADP5585_PWM_OSC_FREQ_HZ            1000000U
+> >
+> > (1 * HZ_PER_MHZ) ?
+>
+> If we had an MHZ macro I would use 1 * MHZ, but I don't think HZ_PER_MHZ
+> improves readability here.
+
+We have MEGA. HZ is already the suffix in this definition.
+
+> > > +#define ADP5585_PWM_MIN_PERIOD_NS  (2ULL * NSEC_PER_SEC / ADP5585_PW=
+M_OSC_FREQ_HZ)
+> > > +#define ADP5585_PWM_MAX_PERIOD_NS  (2ULL * 0xffff * NSEC_PER_SEC / A=
+DP5585_PWM_OSC_FREQ_HZ)
+> >
+> > Wouldn't be better to use GENMASK() or (BIT(x) - 1) notation to show th=
+at
+> > the limit is due to HW register bits in use?
+>
+> I think that would decrease readability to be honest.
+
+I think it improves the robustness of the code. I always fail to count
+3,4,5,6 f:s in those masks, using BIT()/GENMASK() notation makes it
+better.
+
+..
+
+> > > +   ret =3D regmap_write(regmap, ADP5585_PWM_OFFT_LOW,
+> > > +                      off & 0xff);
+> > > +   if (ret)
+> > > +           return ret;
+> > > +   ret =3D regmap_write(regmap, ADP5585_PWM_OFFT_HIGH,
+> > > +                      (off >> 8) & 0xff);
+> > > +   if (ret)
+> > > +           return ret;
+> > > +   ret =3D regmap_write(regmap, ADP5585_PWM_ONT_LOW,
+> > > +                      on & 0xff);
+> > > +   if (ret)
+> > > +           return ret;
+> > > +   ret =3D regmap_write(regmap, ADP5585_PWM_ONT_HIGH,
+> > > +                      (on >> 8) & 0xff);
+> > > +   if (ret)
+> > > +           return ret;
+> >
+> > Can be proper __le16/__be16 be used in conjunction with regmap bulk API=
+?
+>
+> What I would really like is regmap growing an API similar to
+> include/media/v4l2-cci.h. Any volunteer ? :-)
+
+So, the answer here is yes?
+
+..
+
+> > > +   regmap_read(regmap, ADP5585_PWM_OFFT_LOW, &off);
+> > > +   regmap_read(regmap, ADP5585_PWM_OFFT_HIGH, &val);
+> > > +   off |=3D val << 8;
+> > > +
+> > > +   regmap_read(regmap, ADP5585_PWM_ONT_LOW, &on);
+> > > +   regmap_read(regmap, ADP5585_PWM_ONT_HIGH, &val);
+> > > +   on |=3D val << 8;
+> >
+> > As per above, can it be converted to use proper __le16/__be16 type and
+> > regmap bulk API?
+>
+> As there are only 2 registers, I think that's a bit overkill really.
+
+I do not think so. It increases readability (less LoCs) and improves a
+lot of understanding of the hardware layout from reading the code.
+Please, consider using it.
+
+..
+
+> > > +   device_set_of_node_from_dev(dev, dev->parent);
+> >
+> > Why this one? What's wrong with device_set_node()?
+>
+> See my reply to 3/4.
+
+See additional questions there as well.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
