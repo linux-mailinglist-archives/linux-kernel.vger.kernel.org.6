@@ -1,174 +1,187 @@
-Return-Path: <linux-kernel+bounces-194190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1B18D3827
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346EF8D3834
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0AB1C240C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:44:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAB11C2400C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB961BC43;
-	Wed, 29 May 2024 13:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C031CA81;
+	Wed, 29 May 2024 13:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ldh1lFQN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="URxxrAHb"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4997018EA8;
-	Wed, 29 May 2024 13:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA63118E28;
+	Wed, 29 May 2024 13:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716990263; cv=none; b=aNs8WGrg5DLfd9UfyXWggLVwymFWUXCnBXBoZMDDRW2eRvTjyAt9ZC++1D5Mty51Irs8gvAmKMdeQv4fv4tjj4gbBXmYJgf3t6LRf2+A2h5ZoViRFSZBBPTGr0LS45RSHO2jKMQm5Ue1DoIwkT3pcSj38GuEuiAJs6lZ2OQqfqQ=
+	t=1716990328; cv=none; b=Cm5sOzgH8V/cSEBOIuoEI0Fq6YlWADbMFhtdSfajo82UgH+iXeGItj8WO9qZIYYVeIVAhhz6y5S0to99FoDSWCvJjMeRYm7+it3Ht/CS8EH9BIl9yzRacwKhRfjllHX8WUco9WIBXOATJpr7r/0GP8toc8OWPuVexFeW/Y8iqRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716990263; c=relaxed/simple;
-	bh=VQgHFgqP/4XpqkYAK/f5SZ2pHbIQPnlx3L/xfDABSkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K6yu8XpyX9i5SWL3Cx3N9UyEYad5ybpw+zin4+qgyslcoxSnm0sY+YQ0g9bde85RLIRBHnliRD56J77CXdipLZqgeoE7E47jfI3Qr72B+R2gX6Kvql8sNtSCKdAS3g8FunMapSA+LfMD8PoxZM3WVlVJl5qIJIKafjdoqHiuTdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ldh1lFQN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7183C2BD10;
-	Wed, 29 May 2024 13:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716990262;
-	bh=VQgHFgqP/4XpqkYAK/f5SZ2pHbIQPnlx3L/xfDABSkk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ldh1lFQNlkJoGyhqSYbTknan/c+BczYYSyD6Dl3BgcEUWCOZ87MwiAWLKR4tUy+N4
-	 jUA6HeGMzjStli3t6Q5eBVfzUrSLfn/xpRvEfHXb4JRxbnSwbTYCrRU1ZRauZzLNkF
-	 bWJrRc2F3r3bpb5TDf2V5A5jQaZKYH9JxWdqGMghLxaDhX0qM1APNyXASJO3LMaRWa
-	 /dVznUDRS7a9lQvvbB93Zg92qPDAOlHv8prYAoxsWbDCdKffDpimglaSF/sDYZzhPI
-	 aJrwp/+tL0PgjuOU6tY+ISPVNZv6Pvikg5s+C2tEdihX61SC5626QlZD0vHLZWIEz2
-	 /USnH1kCu+D4Q==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5295dada905so721262e87.1;
-        Wed, 29 May 2024 06:44:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXOQpy82QVKJPd9qU0UyyS2dYRS0oq/HwyJLMyWbeqsJujXLXIr9k/pi4oEMnn4L4uEQ8txxgOkh9udVBWNkyEPLCFVOrdjd7IZa4+HG8GHgUql6BYJxTG6oSm22XXLBETw7ag2qvLBig==
-X-Gm-Message-State: AOJu0YxZXMxkdW08ezpwFz2ecOZIJuBptqDXKOZeXGe9euZ3Is9B9CHj
-	7dpiKVYpbeMvvBjp9Bdpu79SWAbZ5j/eOWsUrgvHSqdREhbbbbqKTrglpPe7bPNghCR+2gw4DbQ
-	eScOcZAsaisE4MXhltNFx9c5Uog==
-X-Google-Smtp-Source: AGHT+IG0Twsuzy3G15biXOtdBIc6ZH3RX7c1OUW5xcm5mEL/8kjZupd/YmgZJOtQEJePvqdfFd0WJ/312vXzKdPlv50=
-X-Received: by 2002:a05:6512:2148:b0:52b:7a62:7600 with SMTP id
- 2adb3069b0e04-52b7a627762mr1520e87.16.1716990261135; Wed, 29 May 2024
- 06:44:21 -0700 (PDT)
+	s=arc-20240116; t=1716990328; c=relaxed/simple;
+	bh=qDPA76C94+7SAXO5Z0jQtl12RhGURITQlHH65KdkrEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=S3ePmQi4THLxOiN+FO9bdxnxeno/66YM/gXh8hK7Z9nLLfZ3hlKtPPmyORAz392QX5CfpMS/nHV8DwnyheZWGtzoiblUJbxVOvBhGXeUTlsCsNUulI9hWO3PYRGBSv36vWRW9EIUWsE4ymyzlwuY6oUBJWdnrXZklqzayRP3cnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=URxxrAHb; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Vq9cX0plSz9spB;
+	Wed, 29 May 2024 15:45:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1716990316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+CJoGU0OwssHcj7466vH7ZJISfAqim3uobE0dzZLFqI=;
+	b=URxxrAHbK+/p2h+K4uaSAa1Uel9A1y92pLPI4nZESePEzLjRneSW01JkMsg7N09YwyD/Di
+	2msruoE9ebJwN8KYpbII89pkMljKDk2gUB0r4QYST4dqJce1pXZdg0Lfk1krFHIiQygjPn
+	KY8qJ3hpw8hAEZuC7VV7wq6va5Gc2tAuuyAY5gZJAn367RnR3Y/pbUOCnHwNPOiLRW+4jh
+	cN5orbhS/cs5s/4Tansf+E2M51/fz7CvAvVgV7IwHdhfLj1MR4CzK6ReJ+2rFY7PDkTj56
+	zaPeHS/lKryvSjppaogY6pEIVPt2iJJPtoIl+eNhNKAHzHLLgqYb3qG2ip0e+A==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com,
+	chandan.babu@oracle.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	willy@infradead.org,
+	djwong@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	hare@suse.de,
+	john.g.garry@oracle.com,
+	gost.dev@samsung.com,
+	yang@os.amperecomputing.com,
+	p.raghav@samsung.com,
+	cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org,
+	hch@lst.de,
+	mcgrof@kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v6 00/11] enable bs > ps in XFS
+Date: Wed, 29 May 2024 15:44:58 +0200
+Message-Id: <20240529134509.120826-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528164132.2451685-1-maz@kernel.org> <CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
- <86bk4pm8j1.wl-maz@kernel.org>
-In-Reply-To: <86bk4pm8j1.wl-maz@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 29 May 2024 08:44:07 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKOxYeNh026wmYH2JDYbR-FGjc=9gv-taB09pC4fyXKCA@mail.gmail.com>
-Message-ID: <CAL_JsqKOxYeNh026wmYH2JDYbR-FGjc=9gv-taB09pC4fyXKCA@mail.gmail.com>
-Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
-To: Marc Zyngier <maz@kernel.org>
-Cc: Anup Patel <apatel@ventanamicro.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, Saravana Kannan <saravanak@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 1:33=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrote=
-:
->
-> On Wed, 29 May 2024 06:15:52 +0100,
-> Anup Patel <apatel@ventanamicro.com> wrote:
-> >
-> > On Tue, May 28, 2024 at 10:11=E2=80=AFPM Marc Zyngier <maz@kernel.org> =
-wrote:
-> > >
-> > > Commit d976c6f4b32c ("of: property: Add fw_devlink support for
-> > > interrupt-map property") tried to do what it says on the tin,
-> > > but failed on a couple of points:
-> > >
-> > > - it confuses bytes and cells. Not a huge deal, except when it
-> > >   comes to pointer arithmetic
-> > >
-> > > - it doesn't really handle anything but interrupt-maps that have
-> > >   their parent #address-cells set to 0
-> > >
-> > > The combinations of the two leads to some serious fun on my M1
-> > > box, with plenty of WARN-ON() firing all over the shop, and
-> > > amusing values being generated for interrupt specifiers.
-> > >
-> > > Address both issues so that I can boot my machines again.
-> > >
-> > > Fixes: d976c6f4b32c ("of: property: Add fw_devlink support for interr=
-upt-map property")
-> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > > Cc: Anup Patel <apatel@ventanamicro.com>
-> > > Cc: Saravana Kannan <saravanak@google.com>
-> > > Cc: Rob Herring (Arm) <robh@kernel.org>
-> >
-> > Thanks for the fix patch but unfortunately it breaks for RISC-V.
-> >
-> > > ---
-> > >  drivers/of/property.c | 16 ++++++++++++++--
-> > >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/of/property.c b/drivers/of/property.c
-> > > index 1c83e68f805b..9adebc63bea9 100644
-> > > --- a/drivers/of/property.c
-> > > +++ b/drivers/of/property.c
-> > > @@ -1322,7 +1322,13 @@ static struct device_node *parse_interrupt_map=
-(struct device_node *np,
-> > >         addrcells =3D of_bus_n_addr_cells(np);
-> > >
-> > >         imap =3D of_get_property(np, "interrupt-map", &imaplen);
-> > > -       if (!imap || imaplen <=3D (addrcells + intcells))
-> > > +       imaplen /=3D sizeof(*imap);
-> > > +
-> > > +       /*
-> > > +        * Check that we have enough runway for the child unit interr=
-upt
-> > > +        * specifier and a phandle. That's the bare minimum we can ex=
-pect.
-> > > +        */
-> > > +       if (!imap || imaplen <=3D (addrcells + intcells + 1))
-> > >                 return NULL;
-> > >         imap_end =3D imap + imaplen;
-> > >
-> > > @@ -1346,8 +1352,14 @@ static struct device_node *parse_interrupt_map=
-(struct device_node *np,
-> > >                 if (!index)
-> > >                         return sup_args.np;
-> > >
-> > > -               of_node_put(sup_args.np);
-> > > +               /*
-> > > +                * Account for the full parent unit interrupt specifi=
-er
-> > > +                * (address cells, interrupt cells, and phandle).
-> > > +                */
-> > > +               imap +=3D of_bus_n_addr_cells(sup_args.np);
-> >
-> > This breaks for RISC-V because we don't have "#address-cells"
-> > property in interrupt controller DT node and of_bus_n_addr_cells()
-> > retrieves "#address-cells" from the parent of interrupt controller.
->
-> That's a feature, not a bug. #address-cells, AFAICT, applies to all
-> child nodes until you set it otherwise.
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-That may be supported in some places, but only because of buggy DTs
-(we're talking 2000 era). Current dtc should warn if an interrupt
-controller node doesn't have #address-cells AND is referred to by
-interrupt-map.
+This is the sixth version of the series that enables block size > page size
+(Large Block Size) in XFS targetted for inclusion in 6.11. 
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would 
+like more context on this effort.
 
-There's also the notion of default root values, but that's broken as
-well. dtc and the kernel don't even agree on the default for some
-arches. Fortunately, that's been a dtc warning longer than I've worked
-on DT.
+The major change on this v6 is max order is respected by the page cache
+and iomap direct IO zeroing will be using 64k buffer instead of looping
+through ZERO_PAGE.
+
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
+
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
+
+No regressions were found with these patches added on top.
+
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
+
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
+
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
+
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+For those who want this in a git tree we have this up on a kdevops
+20240503-large-block-minorder branch [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/tree/large-block-minorder-next-20240528
+
+Changes since v6:
+- Max order is resptected by the page cache
+- No LBS support for V4 format in XFS
+- Use a 64k zeroed buffer for iomap direct io zeroing
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Hannes Reinecke (1):
+  readahead: rework loop in page_cache_ra_unbounded()
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/internal.h                 |   8 +++
+ fs/iomap/buffered-io.c        |   5 ++
+ fs/iomap/direct-io.c          |   9 ++-
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |  11 +++-
+ fs/xfs/xfs_super.c            |  18 +++---
+ include/linux/huge_mm.h       |  14 +++--
+ include/linux/pagemap.h       | 106 +++++++++++++++++++++++++++++-----
+ mm/filemap.c                  |  36 ++++++++----
+ mm/huge_memory.c              |  50 +++++++++++++++-
+ mm/readahead.c                |  98 ++++++++++++++++++++++++-------
+ 15 files changed, 310 insertions(+), 76 deletions(-)
 
 
-> > The of_irq_parse_raw() looks for "#address-cells" property
-> > in the interrupt controller DT node only so we should do a
-> > similar thing here as well.
->
-> This looks more like a of_irq_parse_raw() bug than anything else.
+base-commit: 6dc544b66971c7f9909ff038b62149105272d26a
+-- 
+2.34.1
 
-Nope.
-
-Rob
 
