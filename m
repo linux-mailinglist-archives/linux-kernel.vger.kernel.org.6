@@ -1,93 +1,187 @@
-Return-Path: <linux-kernel+bounces-194383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B068D3B5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:49:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC958D3B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 17:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F774B24513
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D4F1F24EA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D99181CFA;
-	Wed, 29 May 2024 15:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2DF181D13;
+	Wed, 29 May 2024 15:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDY5ndPa"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K+awFn/4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E6B15ADAA;
-	Wed, 29 May 2024 15:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2F8181CEF;
+	Wed, 29 May 2024 15:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716997770; cv=none; b=UPYv9f1ho+3FjF2haPbYjeI2RP7RwjaXsvaU+MZF0B2dp8fHZsWyjogOnJRxb8F9EzHp3ypmkFHDDljcsIOZSvwllYQ2xot3KpFQB9QMFGTEHObyIptvZyEZZe7Wf83i4bvBm0P1B7esiyptE+ETi2NWpl8nHOxRuMbbhTdJ6+8=
+	t=1716997795; cv=none; b=t5zlgHRJhwLdkyIov6oLYu38jnJt2NXt2rl67NTlO2ssx5q8Lwn/WsLwRIaOMWan0AlZXbpU6Q/4Kh01gYdgi6rDPqtzyw52+UeaT875k+Zh+NIVUEkpDxP5cecpOgK5KlLi3cfJUIlHgKFxLOu59/wSYnO+N95YjzBCnKgj9Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716997770; c=relaxed/simple;
-	bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y8YAJl766Ju3Dn2gmeX8Klon32LynA3G2owXaeXYToRt21DOr+MAbNH0RR2l80VkTVxXz7S0ctsOLVNvUUPtw3TqWp8dFjTu2YrF4KoZWoaNYIPTc6UrDh0hC0h6jV+X04r0regyKctbXHSeDXm3RbRGLTqcFFQhMDpMoSKhxZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDY5ndPa; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b59f77670so818965e87.2;
-        Wed, 29 May 2024 08:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716997767; x=1717602567; darn=vger.kernel.org;
-        h=content-transfer-encoding:tested-by:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
-        b=CDY5ndPavxtl/NIVZi+9htvJetk8Xqg0oyoIlCj2Z7GLstlz7eGyM0DMZBSqYPa165
-         6y/S/Varbu8lWetkXbVDjRCyw/z5YatkoSOJk3wIzo95slXB/GBIpnb1Bxkibja0L++Q
-         DFy2u1x9tJbVf2NkGuGipfHu9ACEhM71rueDYlS5GMk+EN+6PqMUv6lvoTMRq9ggDSJj
-         tDWWXP2mlNCllPfSZDVMMvl59Q8MtVShPWu0Im8dxNWR0Ze814ji08LfhtoZI60JoYDt
-         ZdLXA4KnKs/VQdITvFEuut2zH6P3kjJBHQ4kA5IE+kbkDWBAPLrMuEHFYubHo1ZRJ5II
-         I06g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716997767; x=1717602567;
-        h=content-transfer-encoding:tested-by:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YgD513uW9g5gyKhmtZwQOQgCVkLNn4F0KZ+yX20ND5w=;
-        b=Vscys7psr62OTqvrscgg7wDR/wM0VOmBKvPqPBCkEroHCGTPyeYyAuP7W+CGnRQIxh
-         fxaqYOEh7vYyEYqe/lgi0muqBDg3gwGq12HYvFcWZE97g5fEqUrQOX5mBdknDzjkHj9p
-         LoorrXt9eOwThOFeygMvCglLTRE25vA1ECZRFmj9Mbk57TOXvigXvXWyVrYRnzDMu8is
-         sOsOI66Pfoj8FYgehB67MBygrMMllwlvsCDzlrWEth0RZxLFlvawFQiEsjaxYa/G6DsF
-         SR18/1NqVzcvqFzKKZ9uJpHCe3SY0XBZhRepsquMNct0SakHascqMVoj2i85zH8y+sAz
-         yrJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfh27CFDuKfOdH5/UFiJEQJHwnUF5a74J3Ud0hXg8KpAm4m+433riYGqIAdbfb+bOhWTomUy6sF1goQp6JxtMmlhk836sP1J6+5MJ33qWhRI8N7nh0na56Rn+G875lhGEH16KSCskd/84pCOX7MqWuzHCrGnD1E9sq5kgaEC3iFSt0y/Rt7Ek=
-X-Gm-Message-State: AOJu0YyTK78H0EtufHQqAy65JeZLc3NVQQ4Cv5PXt6/S+ngow7lTuP2n
-	WpmmFdrJtCvXy9RnBop/bmuhsCK+hptBPsciPFZ/cRwQC0abnbcN
-X-Google-Smtp-Source: AGHT+IFW79OSamdw/XK/8vhe8hHK9amSGndta1cSuOjiNUAIf5VvMhVDXfV0WLFvZeruXCBTBCr2fg==
-X-Received: by 2002:ac2:5a5e:0:b0:52a:f478:a3fb with SMTP id 2adb3069b0e04-52af478a4e3mr1906096e87.61.1716997767216;
-        Wed, 29 May 2024 08:49:27 -0700 (PDT)
-Received: from michal-Latitude-5420.. ([88.220.73.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c8176c6sm743302366b.18.2024.05.29.08.49.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 08:49:26 -0700 (PDT)
-From: =?UTF-8?q?Sebastian=20=C5=BB=C3=B3=C5=82tek?= <sebek.zoltek@gmail.com>
-To: syzbot+9a3a26ce3bf119f0190b@syzkaller.appspotmail.com
-Cc: jack@suse.com,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: Testing if issue still reproduces
-Date: Wed, 29 May 2024 17:49:14 +0200
-Message-ID: <20240529154914.2008561-1-sebek.zoltek@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007010c50616e169f4@google.com>
-References: <0000000000007010c50616e169f4@google.com>
+	s=arc-20240116; t=1716997795; c=relaxed/simple;
+	bh=PGuq1nWW6Ce4ZkBk0TnI9bG4PCIDGFwjqQ9Xsaj+oGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AFfdwB/NbtlIoBN3vpzGN8o0Mt+bqrkqcEC08okuGZSRMrsue+bYXvxBAOgFHePS3/phAPqH+s4PJD4rdbH+J/ED+EuEeJfTPf3vWEAZV2VFJSiKmS9t8xgF/6p/XojemTZbXWzU8f5+Zt+Q1qkXOiJWqMU1MngFv97UEi8fV04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K+awFn/4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TAWqTs027031;
+	Wed, 29 May 2024 15:49:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	92CTHz0UFZuCUoY3V9kybNrLWakvxNbVMDycuT/J+40=; b=K+awFn/4PE5IyE7D
+	369jN0z2sc+kw7TX6tn8RFKIXRlt/NXFaSfifhQjaWgJ4nON7fA8R+ZuMdyQxjFA
+	Nhytn9cYIYRy3fVUebcuBjvApsACqBlEjrpScKCqhWY5J0qCh0wNkRVF/WY/firo
+	vK2rlYISRA5ixkzeu9rrm4RMitkYJNIsV21CfBOXSlKH6lg4wM4KzFJ2kuDSBLpK
+	ZHPorL+w6PAHnKjrAYLLtjn+F7kVE7/5EimsXSIhYQ9Atit+UMt/IKida9BLKSN2
+	eV8/grz6wkoKBgTFPl04HfJr/adFwOpMdM2/VIvwAT5Q0cVG8j56bj8nrP2R6wcI
+	ZqzpWQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h9b3v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 15:49:27 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TFnQKN005363
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 15:49:26 GMT
+Received: from [10.110.47.143] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 08:49:22 -0700
+Message-ID: <3d04ff60-c01b-4718-ae3d-70d19ee2019a@quicinc.com>
+Date: Wed, 29 May 2024 08:49:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Tested-by: Sebastian Zoltek sebek.zoltek@gmail.com
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: validate SO_TXTIME clockid coming from userspace
+Content-Language: en-US
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Martin
+ KaFai Lau" <martin.lau@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
+CC: <kernel@quicinc.com>,
+        <syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com>,
+        <syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com>
+References: <20240528224935.1020828-1-quic_abchauha@quicinc.com>
+ <665734886e2a9_31b2672946e@willemb.c.googlers.com.notmuch>
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <665734886e2a9_31b2672946e@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TPqcgTNlT5VIe9IKLmb3sa-dxGAbunfC
+X-Proofpoint-ORIG-GUID: TPqcgTNlT5VIe9IKLmb3sa-dxGAbunfC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_12,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290109
 
-#syzbot test
+
+
+On 5/29/2024 6:58 AM, Willem de Bruijn wrote:
+> minor: double space before userspace
+> 
+> Abhishek Chauhan wrote:
+>> Currently there are no strict checks while setting SO_TXTIME
+>> from userspace. With the recent development in skb->tstamp_type
+>> clockid with unsupported clocks results in warn_on_once, which causes
+>> unnecessary aborts in some systems which enables panic on warns.
+>>
+>> Add validation in setsockopt to support only CLOCK_REALTIME,
+>> CLOCK_MONOTONIC and CLOCK_TAI to be set from userspace.
+>>
+>> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+>> Link: https://lore.kernel.org/lkml/20240509211834.3235191-1-quic_abchauha@quicinc.com/
+> 
+> These discussions can be found directly from the referenced commit?
+> If any, I'd like to the conversation we had that arrived at this
+> approach.
+> 
+Not Directly but from the patch series. 
+1. First link is for why we introduced skb->tstamp_type 
+2. Second link points to the series were we discussed on two approach to solve the problem 
+one being limit the skclockid to just TAI,MONO and REALTIME. 
+
+
+
+>> Fixes: 1693c5db6ab8 ("net: Add additional bit to support clockid_t timestamp type")
+>> Reported-by: syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=d7b227731ec589e7f4f0
+>> Reported-by: syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=30a35a2e9c5067cc43fa
+>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>> ---
+>>  net/core/sock.c | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/net/core/sock.c b/net/core/sock.c
+>> index 8629f9aecf91..f8374be9d8c9 100644
+>> --- a/net/core/sock.c
+>> +++ b/net/core/sock.c
+>> @@ -1083,6 +1083,17 @@ bool sockopt_capable(int cap)
+>>  }
+>>  EXPORT_SYMBOL(sockopt_capable);
+>>  
+>> +static int sockopt_validate_clockid(int value)
+> 
+> sock_txtime.clockid has type __kernel_clockid_t.
+> 
+
+ __kernel_clockid_t is typedef of int.  
+
+>> +{
+>> +	switch (value) {
+>> +	case CLOCK_REALTIME:
+>> +	case CLOCK_MONOTONIC:
+>> +	case CLOCK_TAI:
+>> +		return 0;
+>> +	}
+>> +	return -EINVAL;
+>> +}
+>> +
+>>  /*
+>>   *	This is meant for all protocols to use and covers goings on
+>>   *	at the socket level. Everything here is generic.
+>> @@ -1497,6 +1508,11 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+>>  			ret = -EPERM;
+>>  			break;
+>>  		}
+>> +
+>> +		ret = sockopt_validate_clockid(sk_txtime.clockid);
+>> +		if (ret)
+>> +			break;
+>> +
+>>  		sock_valbool_flag(sk, SOCK_TXTIME, true);
+>>  		sk->sk_clockid = sk_txtime.clockid;
+>>  		sk->sk_txtime_deadline_mode =
+>> -- 
+>> 2.25.1
+>>
+> 
+> 
 
