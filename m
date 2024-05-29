@@ -1,81 +1,75 @@
-Return-Path: <linux-kernel+bounces-193994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910CF8D3530
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:11:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311E28D352E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F71428A846
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:11:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0EE1F25F82
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BC517F370;
-	Wed, 29 May 2024 11:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C225F169397;
+	Wed, 29 May 2024 11:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="TzP8QQu6"
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2044.outbound.protection.outlook.com [40.107.15.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C57d/kFL"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A01C17B50F;
-	Wed, 29 May 2024 11:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.15.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716981068; cv=fail; b=Sc+Xwrnh+vhBmQGsISvcs644euemEVvFN5T75fDzwaV2JG6Kl7abdRy/LzeXc5KwXZ0c8E+JFiR2AEGqwnbhEkI9cUH3b2ZmsBPv7ydo8ASQHgtQx+m61L6uiKQjjG+qOaUv/oVPHCoLMPdDJpvPJ02QADolXfjq+LIiJs+cVKQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716981068; c=relaxed/simple;
-	bh=hEIDRc2zaEYXFEK+zWn06OYxPqqG+2TBmSxYWQRAETw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=INhfYxgVS+Du7D0jJyg0Ul5toyB+AUDgwfHsMJMo04Rasd4Xbbg/dOkFC1beHoevMrP6N1FqIADjBrYFfswifmTh3CxYArxskbT1Itvv+1N/Ik79pQVhwVnz4XUs2bVwFfH59ZfDEBcsI41Ijpk9HKTWDIzebTMb9MelhCIKYg4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=TzP8QQu6; arc=fail smtp.client-ip=40.107.15.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZmuHpJ5HI2G48eD2L06QQcJuOpiJzhdPQqWARxdYyADYST6/c0bq2FdeQ+F0LBZupnWv7IeMVeibDeI7l853JgeNM+N8IXq32mmVLAUz8503b7MTi0AH345u+LfhJn0+pc2xycA66iLwjRZcGrShSL1ooeLvyBBndfbS1ZHJKr8WAHIxx62CKXgt/h3KNg74vzs4aaaox5dh4Gi0yXrerC6zVIUGK6ucHFzGwEtjyKZsgD82gFMH3qHrnUvazuhwqYVwK0AKc6rU0y19qRMIh+/Ts0zKcVGLdrWWBVR4kmYuP+T5nG+YorV8iyQE70FDcvmj9OpG9EA0d1P+2+XD/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5xAPXtHYC1yMhS3SpRUDyNtqgGF/jX1ztYHZQt69tNI=;
- b=TALUTjccpJQ9y1Wi1bBalMOXokd9QoaemVqrPHUmJDntkpLvjGnnb3oDx8bAZ8/maVjmVHypOhIuGC1nkHYet6Ps/HPzDNKDYewOxjBhP5EFp5/Bcsoiz95ufRW64hGO4/jr5jDU0uBluHdaWmzzGfHc34tTRNApQAIPZGa3P6k97bi1JejmqY+Bo0ecY7mIZKYSXQa12rmT3jLX8YxxWRSp0YjPnqC7G+/e5mu6lyNacU+dHJ8PLug0IIxhRjuel9kS5OnA4WQoNmzugG0Y5mJI/dyipVKt4y3Zam6/nWi1+exHSwC3oCPUrbs8dZZFLiV0OqGIQi8rghWsfgXIIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.206) smtp.rcpttodomain=redhat.com smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5xAPXtHYC1yMhS3SpRUDyNtqgGF/jX1ztYHZQt69tNI=;
- b=TzP8QQu6wGsE33KJ/kRcvnQXUigWcjZREhHkklDEcqdeW9HM7KdNdzBMr1T4LFY6okdRIB3FDebU05FL2mKcKlZhDwp0VyokjDI5AABzuPHTI0bq2Tx2L4teo+tYGPQuBvmBm9QtLLMG/7YUJHLWITi0p/halq6duNqC0z1MFCHGHcy0tcKDg1wpSpjVcYtJSKvwAL6BCE/ZNeuwyb5wT5vS4OaMyI2f/+gWh7WLHCD5ymSgIAIXFNTw2tOSUWnqSfbx2JMetfRvgFkTSWC/rG3uszlvowSQIfMYSUyMJnln4WBb4159ULMsO4VluFAERjXM4YkbX2NionwaFljilw==
-Received: from DU7PR01CA0037.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50e::27) by AS2PR10MB6998.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:59a::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Wed, 29 May
- 2024 11:11:03 +0000
-Received: from DU6PEPF0000A7E2.eurprd02.prod.outlook.com
- (2603:10a6:10:50e:cafe::f4) by DU7PR01CA0037.outlook.office365.com
- (2603:10a6:10:50e::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
- Transport; Wed, 29 May 2024 11:11:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.206) by
- DU6PEPF0000A7E2.mail.protection.outlook.com (10.167.8.42) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.15 via Frontend Transport; Wed, 29 May 2024 11:11:02 +0000
-Received: from SI-EXCAS2001.de.bosch.com (10.139.217.202) by eop.bosch-org.com
- (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 May
- 2024 13:10:57 +0200
-Received: from [10.34.222.178] (10.139.217.196) by SI-EXCAS2001.de.bosch.com
- (10.139.217.202) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 29 May
- 2024 13:10:56 +0200
-Message-ID: <6dd51d6a-7ad7-40ed-8afa-85a97a808476@de.bosch.com>
-Date: Wed, 29 May 2024 13:10:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6813E15DBC0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716981062; cv=none; b=hbqysiTwuAOrz/djCLb0XHVULzIKoFA7yFifTHudmw9IfHD4MWgIJK6A2rYvD/KWtlCQoPqMUZwoAthSALNb0f7K5GX1apAgTHOIealsmp8rCzVyTchTj8Z6ld6/np6W74eCporSJL3KLh/RXdM1eLVDssmjj+TZzXKcnC4EzgY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716981062; c=relaxed/simple;
+	bh=3yIJpPlvkjyq3/FtJLF1WTVZouvdCIpwG04Fk96eSnU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cqo1Zeb2LUzej/k2E48WwY/iSpkUvAo3y2zb8DuZucNvU+3ugFg7d+PMNYwpShKdhXst9KjYcx7Q0Bv9W8EU4vpn1d7YnHHigyOlks8/g26d0xC6i4cGmYV4+qHh2qVRs4j8mngyLrssp0wStW9cJ79qh4MShe4MCT+lJCbHrMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C57d/kFL; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e72b8931caso19767061fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716981059; x=1717585859; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=2fvApDdk28tUZoHdX8JPSGTmaJiObUPDbeROKw3HflI=;
+        b=C57d/kFLZbQC/5XkxJoBtLtLLS0GO/vRVPM2ZnxK0Bj6kPpVeNb7CTOLPALJjK2YBZ
+         JaBwv/kq7A52+73/BDZbHscei6hXcECwpLrFE1hGDrAYVCE0UROSDXYypvlhCZqZHZ4h
+         9/6ZmplIwyGYYM9b1FfKVIuHcMPesBW6wvBXqMXqvTBjzcvwjqN4cc53rJFzbANu0aEr
+         Ak2tw5tIO/kvv5T0MhBSPj0XQvQbbwWS+zislFSkBZXPmvOrQWoPlbVzygG3lXemeasb
+         5qgEobs7rdcEtDH3o6Iuj/UCy5sKK90N2l+N3NWJ/WfPr67K130uSUnhzjjjf1laIB5k
+         8y1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716981059; x=1717585859;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2fvApDdk28tUZoHdX8JPSGTmaJiObUPDbeROKw3HflI=;
+        b=tQaEdWquEcia0uEaJMS54zcr/lOtbB4aNgeahOBKT2KhwjNfph9dvNWcSMpc/OAH98
+         rlwTndFC4d4ml//jHVzKPFqhxR6vN4Tuh5JgiCLH7bUZI0NyZ1VwIvHuHZ2skDdpmh8S
+         y6EV0QtVW1Z4CSHDiMYbSUAyZliQ80CWblETEe/eh7djdPZHCS6ezluXsdWCdx31ZXBv
+         iEDbpSD9jT9vDWHW5qqwLBPt3G6INTWcnT7XsU9RBVfcds98yuWjm+GBcpoUPmHUrDmK
+         ze+Fd18MsbuS7s6OFuhtR/L7BZGE/ozManFhrTLHHPgefKRCj53gRoq5rd5lnGInDTR3
+         RGmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkIpwrXEzrKRpO98XLQUt6RrfSG/PnS9VF+pM8bhvnxAhLQmIWaXVxl/gUp564lJ2lZroUC6H8pKqPsKIzWQ5xV8bw8SzHinTUss8Z
+X-Gm-Message-State: AOJu0YxsbU6zvEosvWLW9kjENNK9NugghB1O4SUXi2bWzBywWmveBUw3
+	4zNn+GKlwwYhxZlGH0bzrGgbpK7TvHd/OjiGIi1BZJ/vZrEnUJZBUYq4oPuBoxYHvvOw6SvWlro
+	y
+X-Google-Smtp-Source: AGHT+IGc5pejmvOnA5di4LKePUQYwqKNiFpJ2q9YxPmwoeYkYF6iUjEe6SBHea00dmUDmcnUPCp8FQ==
+X-Received: by 2002:a2e:7006:0:b0:2e6:a0b3:24a3 with SMTP id 38308e7fff4ca-2e95b03fbbfmr90290351fa.4.1716981058627;
+        Wed, 29 May 2024 04:10:58 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557dcf0871sm14852984f8f.110.2024.05.29.04.10.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 04:10:57 -0700 (PDT)
+Message-ID: <ae1ab011-2ec2-459c-85ae-8c3be49aace9@linaro.org>
+Date: Wed, 29 May 2024 13:10:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,182 +77,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
-To: Danilo Krummrich <dakr@redhat.com>, <gregkh@linuxfoundation.org>,
-	<rafael@kernel.org>, <bhelgaas@google.com>, <ojeda@kernel.org>,
-	<alex.gaynor@gmail.com>, <wedsonaf@gmail.com>, <boqun.feng@gmail.com>,
-	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
-	<a.hindborg@samsung.com>, <aliceryhl@google.com>, <airlied@gmail.com>,
-	<fujita.tomonori@gmail.com>, <lina@asahilina.net>, <pstanner@redhat.com>,
-	<ajanulgu@redhat.com>, <lyude@redhat.com>
-CC: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-3-dakr@redhat.com>
+Subject: Re: [PATCH v6 2/5] spi: dt-bindings: cadence: Add Marvell overlay
+ bindings documentation for Cadence XSPI
+To: Witold Sadowski <wsadowski@marvell.com>, linux-kernel@vger.kernel.org,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org
+Cc: broonie@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, pthombar@cadence.com
+References: <20240529074037.1345882-1-wsadowski@marvell.com>
+ <20240529074037.1345882-3-wsadowski@marvell.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20240520172554.182094-3-dakr@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240529074037.1345882-3-wsadowski@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7E2:EE_|AS2PR10MB6998:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16325231-5b7e-4048-49aa-08dc7fd00720
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|376005|7416005|36860700004|82310400017|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WXAxVUpRalh2VVZOZnlleVRFbk9vZ3A5Z2tnNlV0SUZ5QkhSbldSdVh2SFN0?=
- =?utf-8?B?eWNMWTBXSDZGbTNabmhJT2NlRE9LTDArdDFRcFV5MWVvZ09lY0x0cVpTeEFa?=
- =?utf-8?B?dU5PNTg0d29wZzFhaGlrOUhHSVgwNTV4Uzl1bG5vTjJwVkhNK05YbXIvNHg5?=
- =?utf-8?B?cWxLS3NZeDdOUU02MEdxbm02V3U1Rkd4TElwVkxOUC9SRGwyT05IMlRzM2ow?=
- =?utf-8?B?bHBBRmZlV3owUy84eFFwZWplOWhmRTRUbXh2ZXNIbjNRamlMSkRXejN2SWhC?=
- =?utf-8?B?Zm5yMTFqTFhxWXovcktJTFh0TTJOWC9hN2VnZzRKdUszaEtGbW5HTy8wOWhN?=
- =?utf-8?B?dEZoY09HN3RuSTE2UjRMMnNFTTFNOFJrc2FMNys2UnhUZjczSGN6eDJaTEwr?=
- =?utf-8?B?ZU9YVW8vSW16SlRKZUwvWjFDbUtlaFlrWS9QRDVJUkI1WCtxcVlvOGZlUmVa?=
- =?utf-8?B?UjdjMjdhUnF2RFVmb24xWnBVbU1ZcGpJTUZWTlRBOXFKTmc3UUJmRlRYbXZ3?=
- =?utf-8?B?NUhjMTREN2MydDNtVkdTMFFpM2ZHalErS21MWUdhRW1rZUNMblpzUnB1UmVJ?=
- =?utf-8?B?NnNpaWF3bFMweE9sRFZNWnl1MnlGMDdSclRoWjhMU2ladVFFVHRKaktQeEVi?=
- =?utf-8?B?ejZucWNzOTJ1SUhBYzVNRzRiZ1Jib3dXM0k2V3BFODcyejFDMEs2b0VSQzFL?=
- =?utf-8?B?UU1mNG9PZm50Q05FSktFSktjZjFuR0Zic3FsejFsaW1PZUhaNUVkQm9ZdjdN?=
- =?utf-8?B?Q1hOUnZCbWp5Rk5zSmxBK05rR1FwOU5yQy9Zd1AvWlpOeHVISER3eVlFOTlr?=
- =?utf-8?B?RlRVd0h3S1REc3pibkh5Y01tc3FDTk9LclRIa2xHRWFhVGtCWXpnUThVYVRO?=
- =?utf-8?B?WTNCMlNmeFh4aEdxa09BdWx6Yy9lK09hOGVWeU8wU0FQMGVqbmUzY3Rla3c5?=
- =?utf-8?B?ZVFvUEFMWHowckpBQTRXWTY5YjliYytEN2ZxNWt2bDFhL2VKeXc5K2NRR3Q1?=
- =?utf-8?B?eGUvYmtScmhlcmlDUlBPQ1R1SmpLRUZZOHVHSjNGTkQvdE5EZ0dhbXhzV3N0?=
- =?utf-8?B?MG9yVkVZWTRtang5a2MvdGVFYnF3OXVKd0U0eWJFTlQ2bmtaU2pFajEySUxY?=
- =?utf-8?B?VG9QMFY4TFA0VU5OZWJlQVNzeGtPS3poVCtrT2NGQWtVZ3ZuZzlNYVVQR01W?=
- =?utf-8?B?NGVjWWRWK01sa3I0TzdVVXVyVGd3Qko2eTNEQkRiQjZqdDZ0cFkrMVMvUUl4?=
- =?utf-8?B?UGR1ellJb2UySy9heDRoTDlMeHo2bkQvYmxaTG1pYjNsc2M1M1R5eCtoamdY?=
- =?utf-8?B?ZlAvdTZGUitic1FWV0FUVlg5Mno3TWFZLzVZelppRHRPVWRMU2VocTFBVTNu?=
- =?utf-8?B?VmRqdTlFZVF5Vis2ZGFPc014djZLQ21QUHk0WDVzdld0RUtwMHdEOUpacFBu?=
- =?utf-8?B?ODlMNVVGb1NCZVIzQmdJMmJYQjBCdkw3K3d5d3d4R09YMDArVUZRamN1NnlT?=
- =?utf-8?B?R2J3cmNzVS81S0dYS2kxSGVxczhFSldmSmRFb2h1Mm82NWVodG5oZ2QvRGl5?=
- =?utf-8?B?NWU0M2REdmRBdGVzQVVhNzN1SGUwMkc1TlNzQ2s2dHRLcFJKdDlZOVlYcDlz?=
- =?utf-8?B?d0J1U0xkZ294Q3l1K05JWE8rU0RxNlVyYUNwZW1uNk43UVd0bXo2by9QVTE4?=
- =?utf-8?B?aEJUaTQwK1c0d1M1Tnk5VUdmNUtXcWZaODlrZGhjZE1XcGxHenJVVnBtNFlC?=
- =?utf-8?B?V2pmK1pqQ00wY0F6N1pGcU1pcFNHZ2RWZHgzTngzcjFKWTYyQkpacmYrbnBK?=
- =?utf-8?B?Q0VxZnBmUktVQWh2c1VXdz09?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(36860700004)(82310400017)(921011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 11:11:02.8155
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16325231-5b7e-4048-49aa-08dc7fd00720
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000A7E2.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB6998
 
-On 20.05.2024 19:25, Danilo Krummrich wrote:
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+On 29/05/2024 09:40, Witold Sadowski wrote:
+> Add new bindings for the v2 Marvell xSPI overlay: marvell,cn10-xspi-nor
+> compatible string. This new compatible string distinguishes between the
+> original and modified xSPI block.
 > 
-> This defines general functionality related to registering drivers with
-> their respective subsystems, and registering modules that implement
-> drivers.
+> Also add an optional base for the xfer register set with an additional
+> reg field to allocate the xSPI Marvell overlay XFER block.
 > 
-> Co-developed-by: Asahi Lina <lina@asahilina.net>
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
 > ---
->   rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
->   rust/kernel/lib.rs           |   4 +-
->   rust/macros/module.rs        |   2 +-
->   samples/rust/rust_minimal.rs |   2 +-
->   samples/rust/rust_print.rs   |   2 +-
->   5 files changed, 498 insertions(+), 4 deletions(-)
->   create mode 100644 rust/kernel/driver.rs
-> 
-> diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-> new file mode 100644
-> index 000000000000..e0cfc36d47ff
-> --- /dev/null
-> +++ b/rust/kernel/driver.rs
-> @@ -0,0 +1,492 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
-> +//!
-> +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
-> +//! using the [`Registration`] class.
-> +
-> +use crate::{
-> +    alloc::{box_ext::BoxExt, flags::*},
-> +    error::code::*,
-> +    error::Result,
-> +    str::CStr,
-> +    sync::Arc,
-> +    ThisModule,
-> +};
-> +use alloc::boxed::Box;
-> +use core::{cell::UnsafeCell, marker::PhantomData, ops::Deref, pin::Pin};
-> +
-> +/// A subsystem (e.g., PCI, Platform, Amba, etc.) that allows drivers to be written for it.
-> +pub trait DriverOps {
-> +    /// The type that holds information about the registration. This is typically a struct defined
-> +    /// by the C portion of the kernel.
-> +    type RegType: Default;
-> +
-> +    /// Registers a driver.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `reg` must point to valid, initialised, and writable memory. It may be modified by this
-> +    /// function to hold registration state.
-> +    ///
-> +    /// On success, `reg` must remain pinned and valid until the matching call to
-> +    /// [`DriverOps::unregister`].
-> +    unsafe fn register(
-> +        reg: *mut Self::RegType,
-> +        name: &'static CStr,
-> +        module: &'static ThisModule,
-> +    ) -> Result;
-> +
-> +    /// Unregisters a driver previously registered with [`DriverOps::register`].
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `reg` must point to valid writable memory, initialised by a previous successful call to
-> +    /// [`DriverOps::register`].
-> +    unsafe fn unregister(reg: *mut Self::RegType);
-> +}
-> +
-> +/// The registration of a driver.
-> +pub struct Registration<T: DriverOps> {
-> +    is_registered: bool,
-> +    concrete_reg: UnsafeCell<T::RegType>,
-> +}
-> +
-> +// SAFETY: `Registration` has no fields or methods accessible via `&Registration`, so it is safe to
-> +// share references to it with multiple threads as nothing can be done.
-> +unsafe impl<T: DriverOps> Sync for Registration<T> {}
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-You might want to check if we additionally need 'Send' due to
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=323617f649c0966ad5e741e47e27e06d3a680d8f
-
-here?
-
-+ unsafe impl<T: DriverOps> Send for Registration<T> {}
-
-This was found re-basing
-
-https://github.com/Rust-for-Linux/linux/commits/staging/rust-device/
-
-to v6.10-rc1.
-
-Sorry if I missed anything ;)
-
-Best regards
-
-Dirk
+Best regards,
+Krzysztof
 
 
