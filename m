@@ -1,204 +1,98 @@
-Return-Path: <linux-kernel+bounces-194072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2474B8D363C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:21:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23368D3640
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 14:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75009B24342
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:21:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB7C1C23BB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A1C180A97;
-	Wed, 29 May 2024 12:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="12nXlH7B"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5595180A91;
+	Wed, 29 May 2024 12:22:13 +0000 (UTC)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF561802CA
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4D23B295
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 12:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716985248; cv=none; b=kpBely1ZrgCjL9jyBOJFNe6enTMOUTXBjDTgNJgsiUqCzwl/CA9DKJ8fo+no90qvJua2NsAY2sKLBtMUu5DrCwl/RnqEQwxIduPckxRBk7zdP7OBM2vyBCEjewBYXkmSxZ76ScB6jA1dhhq5taU6k9pGoWQ2TwkokWbuCIUIczM=
+	t=1716985333; cv=none; b=HDkncjIb1XtHeJ0n3WZJdfKghLUsogPHA7iTxYUKLoQobsUmggPto/jrHjrYCr6e/hbiNhH53uRfe0FWTrLpai9LenuV50tgoBtrtnWz3c5v/S7rEjTO2oIK8xjboBqHaawwaZkC9dGCyYcVAh4XTwUlKypORKaLbjhOL1Kx55c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716985248; c=relaxed/simple;
-	bh=xO5fp7uBa3XCH/X+NfgCayeQBNhqWpmgs+2sqk4vjf4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jwU890Y2uDcgrdUErV3lEPbjTzQdvH4FHxybMH+FOprN1t0n3M5PcupSd8IKFjGEGWED2uzI56rz9i4kP15FHNGxNFY7xHkKnzXmKqjuq9mUdmQAksCLbsgXSbUC5QMqLBiVgrpiYevVWx56ItfLN85pm1ckn9X3ybmZMoY61Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=12nXlH7B; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a635a74e031so175862566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 05:20:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716985245; x=1717590045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FyH5HBgVMHtwGihnpxCP6snZm//fPikPnLspFypYdbE=;
-        b=12nXlH7Bo3OrSn6yxeSqOSXdgebMmUrAa4XyzPp5Es1oPhwY5ZvZgrZWufKb1X/Iul
-         tyMygbId8NXTfhJMMyjp1BQbAXsEypW0XdbgHbVFB6v3WWvsvdo/gyyNHRofXvfACdrT
-         +z2VpvGTRtTMi6NolIb+FPBBVtw76p5XaZ+pADzZbs65un1LfieKVvNyqCi5c6sTRnTZ
-         yfvoaVDGBnc3Dl1RdPDt4xvW003ziyL3Ek/2zstZSPEPUoElV4SrbMUieIfPNRYZ/vqe
-         ZTz7NyhkU3lXsQM9xb+gByAAp3M8P0HelsuOnF5+p/3Ci2dEkLPYIZKRk0WR0T3tJYm0
-         RqGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716985245; x=1717590045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FyH5HBgVMHtwGihnpxCP6snZm//fPikPnLspFypYdbE=;
-        b=llyl+NA/qOCy5tsw1lX41EVJSnbWFY1/6KVScpuBiNoN0oE4vY9B/88mMxHwNf9FWL
-         qvvAqU+7kcKL86LsHNZzyiqckLNo4Vn30vt+5SCVmmVeN2iGLhWvCR1hGJBvdpOB7DDO
-         9Ox7GKPxKiiKGbOBXWw3jBXoDaMNxyEJ8hz5TnfvynT+Qilty+lP430P+h27rrLBEGW+
-         JoVC6ANODlkhB5XzTBVL43+d49fil2Tf0zVTeJsjRq75FFWmoHZyLbEluWC2at6qozzo
-         6MqNpRMjGg93qsIthzy6CQj6BUb4Aw4zGygdnq549D6BXgmJh6CusLjcJ9uKjDfnHkJq
-         hkNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTWDPPwvzA5UdtM66kWbHbGDotsO0zQ0TdGjt8z5M6cmoGVluKSvRdyEZVuNTyaahq6WHZQ5kuqZsZfEd2meWT0rrRzH6M5Qe1MOvW
-X-Gm-Message-State: AOJu0Yzicr92zGLrDcnSDHPehCTLAfhwsw7454eeWYe2oDeDe6HL/XD0
-	L17+ORSjjv/8Pdie//qvAAe9zrnMUu5DlmUskl2NkILngn/kSrZ7nPTzk0Cg3Qb8fgrceImFo2s
-	98EMAJgJOropbNlsapFTKh8C0dGtCv7S0dwMiCw==
-X-Google-Smtp-Source: AGHT+IFC/KMs8gmNj6Vvn/KGAlKw45g7h3EXyl2Z0Axc2c+Mm6KjfYRkin/T4F2URBRtFg5oeh4RMhucp9mDS+H/nTM=
-X-Received: by 2002:a17:906:66c7:b0:a59:ba2b:5915 with SMTP id
- a640c23a62f3a-a6265119463mr1826137066b.50.1716985244596; Wed, 29 May 2024
- 05:20:44 -0700 (PDT)
+	s=arc-20240116; t=1716985333; c=relaxed/simple;
+	bh=R1+FB44QIiomll33cCQtYhYVOAOQBtZwWoKkLynon/0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hXzrVIQZKMMQoN8q1+8IOQCWDJWHmADbv5tW/Nt3iopbSF14gdDgkYraAZHswBfY0bxOMZX+RamGOUMpDub5bp9XayYxdpEJhOTCdYBfMJS8f0MtTzd6i84bpBxXtYR6/Vb4ucX1m+LjiHOHsoMhMKR5WjBZicLTV9kXj+zqWQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
+	by michel.telenet-ops.be with bizsmtp
+	id V0N82C00W3VPV9V060N8uo; Wed, 29 May 2024 14:22:09 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCIIo-00GdJs-89;
+	Wed, 29 May 2024 14:22:08 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCIJk-009XTz-JW;
+	Wed, 29 May 2024 14:22:08 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] dt-bindings: timer: renesas,tmu: Add more SoC families
+Date: Wed, 29 May 2024 14:22:03 +0200
+Message-Id: <cover.1716985096.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528151052.313031-1-alexghiti@rivosinc.com>
- <20240528151052.313031-2-alexghiti@rivosinc.com> <20240528-repaint-graffiti-ec4f0e038e5a@spud>
-In-Reply-To: <20240528-repaint-graffiti-ec4f0e038e5a@spud>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 29 May 2024 14:20:33 +0200
-Message-ID: <CAHVXubjk-2EAJ0U08p7uATkJM1_La94SVcVNLO5yieGbfqUGYw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] riscv: Implement cmpxchg32/64() using Zacas
-To: Conor Dooley <conor@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Conor,
+	Hi all,
 
-On Tue, May 28, 2024 at 5:34=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, May 28, 2024 at 05:10:46PM +0200, Alexandre Ghiti wrote:
-> > This adds runtime support for Zacas in cmpxchg operations.
-> >
-> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > ---
-> >  arch/riscv/Kconfig               | 17 +++++++++++++++++
-> >  arch/riscv/Makefile              | 11 +++++++++++
-> >  arch/riscv/include/asm/cmpxchg.h | 23 ++++++++++++++++++++---
-> >  3 files changed, 48 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > index 8a0f403432e8..b443def70139 100644
-> > --- a/arch/riscv/Kconfig
-> > +++ b/arch/riscv/Kconfig
-> > @@ -579,6 +579,23 @@ config RISCV_ISA_V_PREEMPTIVE
-> >         preemption. Enabling this config will result in higher memory
-> >         consumption due to the allocation of per-task's kernel Vector c=
-ontext.
-> >
-> > +config TOOLCHAIN_HAS_ZACAS
-> > +     bool
-> > +     default y
-> > +     depends on !64BIT || $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_za=
-cas)
-> > +     depends on !32BIT || $(cc-option,-mabi=3Dilp32 -march=3Drv32ima_z=
-acas)
-> > +     depends on AS_HAS_OPTION_ARCH
-> > +
-> > +config RISCV_ISA_ZACAS
-> > +     bool "Zacas extension support for atomic CAS"
-> > +     depends on TOOLCHAIN_HAS_ZACAS
-> > +     default y
-> > +     help
-> > +       Adds support to use atomic CAS instead of LR/SC to implement ke=
-rnel
-> > +       atomic cmpxchg operation.
->
-> If you were a person compiling a kernel, would you be able to read this
-> and realise that this is safe to enable when their system does not
-> support atomic CAS? Please take a look at other how other extensions
-> handle this, or the patch that I have been sending that tries to make
-> things clearer:
-> https://patchwork.kernel.org/project/linux-riscv/patch/20240528-varnish-s=
-tatus-9c22973093a0@spud/
+This patch series documents support for the Timer Unit (TMU) on the
+R-Mobile APE6 SoC, and on various SoCs from the RZ/G1 and R-Car Gen2
+families.
 
-Ok, I will go for: "Enable the use of the Zacas ISA-extension to
-implement atomic cmpxchg operations when it is detected at boot."
-And I will do the same for Zabha.
+Changes compared to v1:
+  - Add Acked-by, Reviewed-by.
 
->
-> > +
-> > +       If you don't know what to do here, say Y.
-> > +
-> >  config TOOLCHAIN_HAS_ZBB
-> >       bool
-> >       default y
-> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> > index 5b3115a19852..d5b60b87998c 100644
-> > --- a/arch/riscv/Makefile
-> > +++ b/arch/riscv/Makefile
-> > @@ -78,6 +78,17 @@ endif
-> >  # Check if the toolchain supports Zihintpause extension
-> >  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZIHINTPAUSE) :=3D $(riscv-march-y)_=
-zihintpause
-> >
-> > +# Check if the toolchain supports Zacas
-> > +ifdef CONFIG_AS_IS_LLVM
-> > +# Support for experimental Zacas was merged in LLVM 17, but the remova=
-l of
-> > +# the "experimental" was merged in LLVM 19.
-> > +KBUILD_CFLAGS +=3D -menable-experimental-extensions
-> > +KBUILD_AFLAGS +=3D -menable-experimental-extensions
-> > +riscv-march-y :=3D $(riscv-march-y)_zacas1p0
-> > +else
-> > +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) :=3D $(riscv-march-y)_zacas
-> > +endif
->
-> I'm almost certain that we discussed this before for vector and it was
-> decided to not enable experimental extensions (particularly as it is a
-> global option), and instead require the non-experimental versions.
-> This isn't even consistent with your TOOLCHAIN_HAS_ZACAS checks, that
-> will only enable the option for the ratified version.
+Thanks for your comments!
 
-Zacas was ratified, hence the removal of "experimental" in LLVM 19.
-But unfortunately Zabha lacks such changes in LLVM, so that will make
-this inconsistent (ratified extension but still experimental).
+Geert Uytterhoeven (3):
+  dt-bindings: timer: renesas,tmu: Add R-Mobile APE6 support
+  dt-bindings: timer: renesas,tmu: Add RZ/G1 support
+  dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
 
-I'll remove the enablement of the experimental extensions then so that
-will fail for LLVM < 19. And for Zabha, I'll try to push the removal
-of experimental from LLVM.
+ .../devicetree/bindings/timer/renesas,tmu.yaml       | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> I think we should
-> continue to avoid enabling experimental extensions, even if that imposes
-> a requirement of having a bleeding edge toolchain to actually use the
-> extension.
+-- 
+2.34.1
 
-Would it make sense to have a
-CONFIG_RISCV_LLVM_ENABLE_EXPERIMENTAL_EXTENSIONS or similar? So that
-people who want to play with those extensions will still be able to do
-so without patching the kernel?
+Gr{oetje,eeting}s,
 
-Thanks,
+						Geert
 
-Alex
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->
-> Thanks,
-> Conor.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
