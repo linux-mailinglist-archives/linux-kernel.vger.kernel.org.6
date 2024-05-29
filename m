@@ -1,166 +1,121 @@
-Return-Path: <linux-kernel+bounces-194153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913888D3778
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0908D377C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 15:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0453B22932
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2241C224D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B9012B93;
-	Wed, 29 May 2024 13:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D18612B82;
+	Wed, 29 May 2024 13:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kgju41kX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4pgNeyF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C617B12B82;
-	Wed, 29 May 2024 13:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7954511185;
+	Wed, 29 May 2024 13:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716988888; cv=none; b=JYXs7KarK1ZkQbuVZ+WhpLEMb8XTaILiNu6WRx8fcvxh9tISx2VXz4RiEN4Dkxo0aliRFgOdb62bS1CeA0WEC0JZ2LXLRM817NXuQAEW7tVxSZBSIjaY29AOBdyGqNCP7xqUOe5iLx0XQ13VBjeXWfcgfJWw8GiiOHa/PZ7MKy8=
+	t=1716988916; cv=none; b=Iv0wwbrgWpMqCy3QFszHnptB1LozhjnlqV1N5O7pd1CCTiBhgmjOecnuFKNh9DUL+CoqD/9n7eQS+dc2AKlOVNsNnpnm5NJfjKEKvK69rpRIGzaVSKSjjdBRhazbkWo5ElriQLivlB8WEfmzHX0QfS1F699aPC9qJiEjjTF0KXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716988888; c=relaxed/simple;
-	bh=fUQHYwNl7zcp4QNb8POCu3jUGN7bcqSedR6ot/+vHPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hy3CE64/RzKPQCW60mL3x+4cf8r8fBV9AovYb5WF4YZDT1wPkFWAdhmKvySTtuanLvBOgPvDf1D5z8YA2kQ7aq+lfKUgscFtmmEUOc4YrNgT20sjOG3KmtZcDBIHm7ipQChLCtOlNWeXZWsBEv3ZyUSQl6EZ/mR+kxhvUYu13fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kgju41kX; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716988887; x=1748524887;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fUQHYwNl7zcp4QNb8POCu3jUGN7bcqSedR6ot/+vHPU=;
-  b=kgju41kXqisu4QG4iA5ZIh1ktXNzQgyDzG00FXD6EGWnDVroYF44PMW6
-   ueHbnfpXyTJqUrKyM6sPkKp5PR8ZJJXLD9y8P1KmEtEs3ABUhun1HcSxL
-   qHrbgs6A9LQaYvByMfNXTbIVTrdmaW7NvBdonPoee4zdLd3t0+GPkcpne
-   Bty/jBD321MQ4TNhE/1oMqT7aw56MqUxCrk6bpmdfL7/VVr+xidtRQnUl
-   cOfKnLfAAYOYpAeu928ez8WOa8aJhSbd+Jdjju0YGBfhzCoAeiYvstplK
-   PNEvYehIMFpVyiDupFCXfzSYc9a7T2mzWRjzRkjKMI4O9CmzJgNUmZYaV
-   w==;
-X-CSE-ConnectionGUID: ka6w4kFcTdWcxv/etIulNw==
-X-CSE-MsgGUID: 5CEZxv0GTvGCtdP8a0/M8g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="24804936"
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="24804936"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 06:21:27 -0700
-X-CSE-ConnectionGUID: pAp8tyZ8QZiCnq4QgPZaJA==
-X-CSE-MsgGUID: 9WHNBzE2RLyKZ166qLkHOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,198,1712646000"; 
-   d="scan'208";a="35406511"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 29 May 2024 06:21:23 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCJF3-000Dh5-1N;
-	Wed, 29 May 2024 13:21:21 +0000
-Date: Wed, 29 May 2024 21:21:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <202405292136.ZyuCa1Fc-lkp@intel.com>
-References: <20240528191823.17775-4-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1716988916; c=relaxed/simple;
+	bh=FpxFPRp8yPNn8Ngd8ZdEt2mCiE8f6earyUQln/Rb0CQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sqRw8bhkppB2c/ch5PbsfozzTN8FIU3EMaAKiAJnWfDlaeRU56QXDgpRH7qtrFsK1qu9G/amWr4b9RlSDH/sh/ySeyz8mQ0lVhAcIfrns12NMWWflxDrHkQZDHw96FTR4QfP2h1NiLIF+DttVhcYDFJhbJiNg2c0kHAPmMyt69s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4pgNeyF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC540C4AF07;
+	Wed, 29 May 2024 13:21:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716988916;
+	bh=FpxFPRp8yPNn8Ngd8ZdEt2mCiE8f6earyUQln/Rb0CQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d4pgNeyFsGB4iz2l3njE2pOO7qGlrpWslG/r5XGYgR0PRJ+j4KcCUQrwp42svs31L
+	 1x3GLi/3TRsOvbQ7x9mUsymo4fCGSPIGwXlc4/jMuJVKMn/kRLDKbMlepWQSeHMyfE
+	 6LO89YRhipVTja1OWylOM8Afr8DKBGU0tpftjwsQPyAJmmCzgkE+J+OfXJPiA5DNH2
+	 5cd/umDDJGZ+5OR+x/4/R+EeCmGSdkYo9nfqRyl35nrEbMg5rnEDzGDCvc2L9fKPlG
+	 LbQxdxb3AJG0RyvWSMUUHzMlE/EMQ4BUurn1beU+gq1PBOGIq2z0bTSkt1sNG5sn3R
+	 8goRC61yOmNow==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b27afe214so441438e87.1;
+        Wed, 29 May 2024 06:21:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXSjwvdCc0ojFUNcQc/xeAXLTWPhcWZt7VIjpSSt3WDDUq6OfsFG9HrqWN1BZZYM+rA+/icgMkK8CLzG+wWQSaM9uwMDiGC396AjuFqJwZYTO2OkrEcZNWmn6OG6HcxatZxqokoYYSZ9vHQMitBwizXVpoGdO4XQgJvhI0qxd8CH05Gns4zLQ==
+X-Gm-Message-State: AOJu0YyXZFs7gQ5WR/cPaX7HbD3ZqALXoBKRqAmCsdDFC02XLqK5fS+T
+	FyVE1P7fO+7p4yrMqj8HYS+CLAxQmr7VhEYegDXLX08qThIJLaSk5pUHRsEeP/AHJs5ObMqPNgp
+	2Ew1sKlrgi2c2KyQ+aVnpXK4yPg==
+X-Google-Smtp-Source: AGHT+IFXplSoT1DLFl4NUQ8zWQRRW0XvDiFw3ANw9v8lRwpP9IFYRS4Np3FBbmgVr02QNkKdArXMy50Lw+QujeV+Gr0=
+X-Received: by 2002:ac2:5181:0:b0:51f:9a88:be2a with SMTP id
+ 2adb3069b0e04-52a829140ccmr708255e87.23.1716988914331; Wed, 29 May 2024
+ 06:21:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528191823.17775-4-admiyo@os.amperecomputing.com>
+References: <20240527-dtbo-check-schema-v1-1-ee1094f88f74@linaro.org>
+ <CAL_Jsq+cmNmm4we6B6OdeS_Qty44FxKmtZHDjLBi9f=DaBw4GA@mail.gmail.com>
+ <CAA8EJpoeGTitM1vYg712Q2fFPenJJvvA7HS7GBA9pqY87zbOjw@mail.gmail.com> <CAK7LNARXLirGk-rdOUofC9bpKKNiNiiWt9CR8KwyDQgp1X7dAg@mail.gmail.com>
+In-Reply-To: <CAK7LNARXLirGk-rdOUofC9bpKKNiNiiWt9CR8KwyDQgp1X7dAg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 29 May 2024 08:21:40 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+CS1wHV9L+QUDGOiSck=nS_kObhrQN07=JjWX80KQrHQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+CS1wHV9L+QUDGOiSck=nS_kObhrQN07=JjWX80KQrHQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: verify dtoverlay files against schema
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, May 29, 2024 at 6:31=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Tue, May 28, 2024 at 10:16=E2=80=AFPM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Tue, 28 May 2024 at 16:15, Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Mon, May 27, 2024 at 6:34=E2=80=AFAM Dmitry Baryshkov
+> > > <dmitry.baryshkov@linaro.org> wrote:
+> > > >
+> > > > Currently only the single part device trees are validated against D=
+T
+> > > > schema. For the multipart schema files only the first file is valid=
+ated.
+> > >
+> > > What do you mean by multipart schema files? Did you mean multipart DT=
+s
+> > > (i.e. base plus overlays)?
+> >
+> > Yes, multipart DT files, dts + dtso =3D> dtb + dtbo =3D> final dtb
+> >
+> > >
+> > > Looks good otherwise and I can fix that up.
+> >
+> > Awesome, thanks!
+>
+>
+>
+>
+> This looks equivalent to the former patch rejected by Rob Herring:
+>
+> https://lore.kernel.org/lkml/20240225151209.343160-1-alexander.stein@mail=
+box.org/
+>
+>
+>
+> Did he change his mind since then?
 
-kernel test robot noticed the following build errors:
+I think I misinterpreted the prior one to be checking just overlays
+rather than base+overlay seeing the 'dtbo' in it.
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.10-rc1 next-20240529]
-[cannot apply to horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Of the 2, this patch seems a bit cleaner.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240529-072116
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20240528191823.17775-4-admiyo%40os.amperecomputing.com
-patch subject: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240529/202405292136.ZyuCa1Fc-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240529/202405292136.ZyuCa1Fc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405292136.ZyuCa1Fc-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/net/mctp/mctp-pcc.c:331:10: error: 'struct acpi_driver' has no member named 'owner'
-     331 |         .owner = THIS_MODULE,
-         |          ^~~~~
-   In file included from include/linux/printk.h:6,
-                    from include/asm-generic/bug.h:22,
-                    from arch/loongarch/include/asm/bug.h:60,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/loongarch/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:79,
-                    from include/linux/spinlock.h:56,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/slab.h:16,
-                    from include/linux/resource_ext.h:11,
-                    from include/linux/acpi.h:13,
-                    from drivers/net/mctp/mctp-pcc.c:7:
->> include/linux/init.h:180:21: error: initialization of 'const char *' from incompatible pointer type 'struct module *' [-Werror=incompatible-pointer-types]
-     180 | #define THIS_MODULE (&__this_module)
-         |                     ^
-   drivers/net/mctp/mctp-pcc.c:331:18: note: in expansion of macro 'THIS_MODULE'
-     331 |         .owner = THIS_MODULE,
-         |                  ^~~~~~~~~~~
-   include/linux/init.h:180:21: note: (near initialization for 'mctp_pcc_driver.drv.name')
-     180 | #define THIS_MODULE (&__this_module)
-         |                     ^
-   drivers/net/mctp/mctp-pcc.c:331:18: note: in expansion of macro 'THIS_MODULE'
-     331 |         .owner = THIS_MODULE,
-         |                  ^~~~~~~~~~~
-   drivers/net/mctp/mctp-pcc.c:322:45: warning: missing braces around initializer [-Wmissing-braces]
-     322 | static struct acpi_driver mctp_pcc_driver = {
-         |                                             ^
-   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_mod_init':
-   drivers/net/mctp/mctp-pcc.c:343:80: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]
-     343 |                 ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error registering driver\n"));
-         |                                                                                ^
-   cc1: some warnings being treated as errors
-
-
-vim +180 include/linux/init.h
-
-f2511774863487e Arjan van de Ven 2009-12-13  177  
-5b20755b7780464 Masahiro Yamada  2023-11-26  178  #ifdef MODULE
-5b20755b7780464 Masahiro Yamada  2023-11-26  179  extern struct module __this_module;
-5b20755b7780464 Masahiro Yamada  2023-11-26 @180  #define THIS_MODULE (&__this_module)
-5b20755b7780464 Masahiro Yamada  2023-11-26  181  #else
-5b20755b7780464 Masahiro Yamada  2023-11-26  182  #define THIS_MODULE ((struct module *)0)
-5b20755b7780464 Masahiro Yamada  2023-11-26  183  #endif
-5b20755b7780464 Masahiro Yamada  2023-11-26  184  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Rob
 
