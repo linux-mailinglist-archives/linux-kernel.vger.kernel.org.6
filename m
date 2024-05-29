@@ -1,270 +1,270 @@
-Return-Path: <linux-kernel+bounces-193917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FBC98D3407
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6798D340F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 12:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA431C22DF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:08:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7A3D1C22D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 10:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1030917B4F9;
-	Wed, 29 May 2024 10:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07A031A60;
+	Wed, 29 May 2024 10:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QfIFY27M"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="no9fW1+0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83AC17B402
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 10:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1297A17A938;
+	Wed, 29 May 2024 10:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716977287; cv=none; b=jBq2JoIoyc4wDPBg/KFnLMCy3vvUCSWTJscEM+uuorX2pRtOPo26R5PIiOaCjsz12h8+I10n1IMJLmuWW6jh+Gtlbh3nBcXHdQxSD7zAX5KMtaSszIJt5/CxQQq76QJchRROWKKyiwru1B28wEbgj9Hw5DiwYV6R9bBxIr948vA=
+	t=1716977404; cv=none; b=Xq8/RzdaPI1+2rUmQxEBQ9ERUwngSr+cS5P+McaNNGMODAzI6EEdQVQgQFSAEArKDbMV8v+q2wVyPrQLjhBtPIuGAWcpmDTjBnpfMbEME5XW9Jb3WFua2z/ozGuTFKPXYRhBipRmz+JnDdPjJyCupjf2GeFGsIkDWDoued02Fj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716977287; c=relaxed/simple;
-	bh=eIo0R35t2QY5j32or05kaLotbvyI4Ohy3UYxx3Q7HTM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qfHPW1MvvCNSKvXPcIksYaamCBhXAKJyVKxYYE3o6v2m0SND5mcuc/BrnzaamzRykHwSADGTp3uvCF20Hc9rwdpeWJEyP49pisAagh43Yhy4FvD1ssSorFuLaXGFiyjXhkKgSNlhgS/hwhm/VKGfXuRfOQ/w5E39j5Y9Wz8pgZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QfIFY27M; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b03d66861so491150e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 03:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716977282; x=1717582082; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4js5JtrO0IQ/vCKIVy0e2SFEkJXg+1uQwnGJtlQuqAw=;
-        b=QfIFY27MVk124mZcpBVuGVTorwdSFoghRxbcl7nf+LSsx0L3PdlWwJ/iCpwxjMv6Gj
-         cmn2MkOKmMeL9wrVp+KA8TFUdS5+St/JBDcEA9BeS0iQuSrcmvY3nQFcSiJw6z9h6gLL
-         R4K/8PtZ3Alz4Uz0ghM9NrLNisTG5tuwKpXc4rViPM87GsqhD64ka7OQbBZhBSoXiOBF
-         x4zVGFaa+CsSBxZexFEIzZFHxGVs52QxKB0a/2yxDi7SMa5qf8hYGd9NJxKOKvIeAoEa
-         xrtldU10Pe6uqwe2F44cpOCj7t2FI89wDi6KAXLY/7vFu/3I+mVC7b91cqnid5gV8A+I
-         jbzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716977282; x=1717582082;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4js5JtrO0IQ/vCKIVy0e2SFEkJXg+1uQwnGJtlQuqAw=;
-        b=V82kuT1TOSVv786ONTHiRdei6bNy1dQkxXaxm+wUWGct3tPXpoGX1NECa6G4Kv7USM
-         HIwx6soy6pQ5u8cTUrKt8ZOn6eHwCFG/gOo++FThKjuXjMEojFXPpDQkmCvkGtHaH/z6
-         wyeIw/vK3hutDGGaeBJTNjT/opdFHCxmFUemNPDbGtQkpU2idDLzre0wkIXTbiebhjYu
-         M4nIlBJYRnDTvn2qDSF76x7Zhsbh92l2gRu32NEZZ6w5fpQvZmnnSPOJiFEDhYGELmFk
-         WsFVeSM0dxgDyivedS/gZp7WPy8pIVmgga24rdu/Y+/AwTfiNGODRT9vvtm25L7y4A+y
-         kQsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWi+Kc8m8FvTNAI/Nvis+MihENJ0EdnHvtoaGHl6e2xSWwMEl2ZFHUR4Tm7G5hFpTVqGKU1gGeGXfsXEKNB2adBE5IZCcc5m1dvsRIM
-X-Gm-Message-State: AOJu0Yyp+YXALmqFVD7gKkbp2v9lgkBo6jTT6u03stsjNKMkmD8MKRY4
-	T5ghhVIXabRPPW+eprhY1m1Q66yGIOA0MQ0ERg1/VYk90o8Qaea/VbFiwk9P89dCAhU3gmMJjdF
-	qeWnLqg==
-X-Google-Smtp-Source: AGHT+IGGe4/Tn5GgretW7j8tNRIXvKGnvpePrcKM5iXg27Qz9sqU2UPT+SDc9TWUfAQxua/O66GT6A==
-X-Received: by 2002:a05:6512:eaa:b0:51c:d6c9:e9a3 with SMTP id 2adb3069b0e04-52964aba890mr10432981e87.17.1716977281883;
-        Wed, 29 May 2024 03:08:01 -0700 (PDT)
-Received: from [192.168.1.63] ([2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f1410csm207019115e9.15.2024.05.29.03.08.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 03:08:01 -0700 (PDT)
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Wed, 29 May 2024 12:07:58 +0200
-Subject: [PATCH] driver: iio: add missing checks on iio_info's callback
- access
+	s=arc-20240116; t=1716977404; c=relaxed/simple;
+	bh=mVuh3sLFYf3dhW7ig6nZKv8dApva04G3jazKkVcIBEk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VUD/ggmEJSEZplZSO8Y80MaLR+R7VZAitOnqi4GjFi8wtsPgFk8LuXEg8k91sAwRUgtpUzyWfTpvp+1txKwo0bVN+cMXlMy9ZxLLxAxsLfHnB9jyajfP2rzoN8xoB3QSttnXQzH7aixmGYAT0nQd+nq3yBBeWkrGn0b/IYK7N7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=no9fW1+0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T9G7pM001837;
+	Wed, 29 May 2024 10:09:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Ne8OJRXeqST9D1XIPRLgh8
+	btohCleqYNYsDL9SG1+v4=; b=no9fW1+09sPLW4TZMzOJcU4U1cBAeuENElNY2n
+	qu0B0VZ2yY7tzDE3Vv8AnZP1PIP65WfFG79VeUSBS9L95cwUlYuqURJBjgUS7zA9
+	X4BnlGu9nAPD4swlRBX+P0M7lkmb5p4SykOVrn0vIb9Zzsl5HRDPKeoQ0XdMtbmi
+	LFTVpv3l9mIjBu9trbwY/rGdPeV5WrjPJQBIZQnJlkTcRa/iN2aU+SPGx7jPyTLY
+	WT2uefAFgFpO/OSXkiSQZ3CFTE32fSBR3Hw2+JF5udW1+3KhiQcheM0lc0voN26u
+	0fxPzerSwxEBOqY+V4xhHSMrWtXMb+P+eQoF224gLlGArz7w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0g8rr8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 10:09:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TA9uoM017117
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 10:09:56 GMT
+Received: from tengfan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 29 May 2024 03:09:50 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <dmitry.baryshkov@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Tengfei Fan
+	<quic_tengfan@quicinc.com>
+Subject: [PATCH v9 0/4] arm64: qcom: add AIM300 AIoT board support
+Date: Wed, 29 May 2024 18:09:22 +0800
+Message-ID: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240529-iio-core-fix-segfault-v1-1-7ff1ba881d38@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAH3+VmYC/x2M0QpAQBQFf0X32S22FfkVebjWwS1Z7SIl/27zO
- E0zD0UERaQ2eyjg0qh+S1DmGblFthmsY2IyhbFFZRpW9ex8AE96c8Q8ybkeLFLbATUAK5TaPSD
- 5/9v17/sBTipsWmcAAAA=
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Julien Stephan <jstephan@baylibre.com>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -bVheU9NI1kwPBHSaj2UHPWxohrLnG23
+X-Proofpoint-ORIG-GUID: -bVheU9NI1kwPBHSaj2UHPWxohrLnG23
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_06,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290068
 
-Some callbacks from iio_info structure are accessed without any check, so
-if a driver doesn't implement them trying to access the corresponding
-sysfs entries produce a kernel oops such as:
+Add AIM300 AIoT support along with usb, ufs, regulators, serial, PCIe,
+and PMIC functions.
+AIM300 Series is a highly optimized family of modules designed to
+support AIoT applications. It integrates QCS8550 SoC, UFS and PMIC
+chip etc.
+Here is a diagram of AIM300 AIoT Carrie Board and SoM
+ +--------------------------------------------------+
+ |             AIM300 AIOT Carrier Board            |
+ |                                                  |
+ |           +-----------------+                    |
+ |power----->| Fixed regulator |---------+          |
+ |           +-----------------+         |          |
+ |                                       |          |
+ |                                       v VPH_PWR  |
+ | +----------------------------------------------+ |
+ | |                          AIM300 SOM |        | |
+ | |                                     |VPH_PWR | |
+ | |                                     v        | |
+ | |   +-------+       +--------+     +------+    | |
+ | |   | UFS   |       | QCS8550|     |PMIC  |    | |
+ | |   +-------+       +--------+     +------+    | |
+ | |                                              | |
+ | +----------------------------------------------+ |
+ |                                                  |
+ |                    +----+          +------+      |
+ |                    |USB |          | UART |      |
+ |                    +----+          +------+      |
+ +--------------------------------------------------+
+The following functions have been verified:
+  - uart
+  - usb
+  - ufs
+  - PCIe
+  - PMIC
+  - display
+  - adsp
+  - cdsp
+  - tlmm
 
-[ 2203.527791] Unable to handle kernel NULL pointer dereference at virtual address 00000000 when execute
-[ 2203.535795] [00000000] *pgd=01e70831, *pte=00000000, *ppte=00000000
-[ 2203.540822] Internal error: Oops: 80000007 [#1] PREEMPT SMP ARM
-[ 2203.552078] CPU: 0 PID: 1286 Comm: cat Not tainted 6.9.0-rc5-ad7380x-mainline-g9bf895a40063-dirty #226
-[ 2203.560079] Hardware name: Xilinx Zynq Platform
-[ 2203.563300] PC is at 0x0
-[ 2203.564523] LR is at iio_read_channel_info_avail+0x48/0xd8
-[ 2203.568716] pc : [<00000000>]    lr : [<c07b52e4>]    psr: a0000013
-[ 2203.573672] sp : e0bade60  ip : 5e861799  fp : 00000001
-[ 2203.577586] r10: c2dcd298  r9 : 00400cc0  r8 : c2dc6000
-[ 2203.581501] r7 : c4339008  r6 : c2dc6000  r5 : 00000000  r4 : c1003fc8
-[ 2203.586718] r3 : e0bade70  r2 : e0bade68  r1 : bf00ac88  r0 : c4339000
-[ 2203.591935] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[ 2203.597761] Control: 18c5387d  Table: 01db804a  DAC: 00000051
-[ 2203.602194] Register r0 information: slab kmalloc-1k start c4339000 pointer offset 0 size 1024
-[ 2203.609520] Register r1 information: 2-page vmalloc region starting at 0xbf00a000 allocated at load_module+0x704/0x1954
-[ 2203.619016] Register r2 information: 2-page vmalloc region starting at 0xe0bac000 allocated at kernel_clone+0xb8/0x368
-[ 2203.628417] Register r3 information: 2-page vmalloc region starting at 0xe0bac000 allocated at kernel_clone+0xb8/0x368
-[ 2203.637808] Register r4 information: non-slab/vmalloc memory
-[ 2203.642166] Register r5 information: NULL pointer
-[ 2203.645559] Register r6 information: slab kmalloc-4k start c2dc6000 pointer offset 0 size 4096
-[ 2203.652886] Register r7 information: slab kmalloc-1k start c4339000 pointer offset 8 size 1024
-[ 2203.660211] Register r8 information: slab kmalloc-4k start c2dc6000 pointer offset 0 size 4096
-[ 2203.667537] Register r9 information: non-paged memory
-[ 2203.671278] Register r10 information: slab vm_area_struct start c2dcd280 pointer offset 24 size 80
-[ 2203.678951] Register r11 information: non-paged memory
-[ 2203.682779] Register r12 information: non-paged memory
-[ 2203.686607] Process cat (pid: 1286, stack limit = 0x354430a3)
-[ 2203.691052] Stack: (0xe0bade60 to 0xe0bae000)
-[ 2203.694105] de60: e0bade6c 00000019 c105fe40 00000001 00000002 5e861799 c4309ec0 c07b529c
-[ 2203.700979] de80: c411b200 c051f1e4 c0b48d30 c2dcd280 c411b200 c02c1fb8 c2dcd280 00020000
-[ 2203.707853] dea0: e0badf20 c0b12d88 7ffff000 c026c944 c1003fc8 00000000 c2dcd2a8 e0badf08
-[ 2203.714728] dec0: b6eaa000 c0206480 00000001 e0badfb0 c2dcda00 c1003fc8 c1e46d80 c02c0ba0
-[ 2203.721602] dee0: c0b12d88 e0badf78 b6eab000 00000000 00000000 c0240114 00000a55 c1dbadb8
-[ 2203.728476] df00: c1dbadb8 00000000 00000000 00000000 b6eab000 00020000 00000001 00000000
-[ 2203.735342] df20: c1e46d80 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[ 2203.742208] df40: 00000000 00000000 00000000 5e861799 c1003fc8 c1003fc8 c1e46d80 00000000
-[ 2203.749074] df60: 00000000 c1e46d80 b6eab000 00020000 00000000 c0240a80 00000000 00000000
-[ 2203.755949] df80: 00028008 5e861799 00000003 b6f10f80 7ff00000 00000003 c01002c4 c6716e80
-[ 2203.762814] dfa0: 00000003 c0100060 00000003 b6f10f80 00000003 b6eab000 00020000 00000000
-[ 2203.769680] dfc0: 00000003 b6f10f80 7ff00000 00000003 00000003 00000000 00020000 00000000
-[ 2203.776546] dfe0: b6e1bc88 bed80958 b6e1bc94 b6e1bcb0 60000010 00000003 00000000 00000000
-[ 2203.783416] Call trace:
-[ 2203.783429]  iio_read_channel_info_avail from dev_attr_show+0x18/0x48
-[ 2203.789807]  dev_attr_show from sysfs_kf_seq_show+0x90/0x120
-[ 2203.794181]  sysfs_kf_seq_show from seq_read_iter+0xd0/0x4e4
-[ 2203.798555]  seq_read_iter from vfs_read+0x238/0x2a0
-[ 2203.802236]  vfs_read from ksys_read+0xa4/0xd4
-[ 2203.805385]  ksys_read from ret_fast_syscall+0x0/0x54
-[ 2203.809135] Exception stack(0xe0badfa8 to 0xe0badff0)
-[ 2203.812880] dfa0:                   00000003 b6f10f80 00000003 b6eab000 00020000 00000000
-[ 2203.819746] dfc0: 00000003 b6f10f80 7ff00000 00000003 00000003 00000000 00020000 00000000
-[ 2203.826619] dfe0: b6e1bc88 bed80958 b6e1bc94 b6e1bcb0
-[ 2203.830363] Code: bad PC value
-[ 2203.832695] ---[ end trace 0000000000000000 ]---
+Documentation for qcs8550[1] and sm8550[2]
+[1] https://docs.qualcomm.com/bundle/publicresource/87-61717-1_REV_A_Qualcomm_QCS8550_QCM8550_Processors_Product_Brief.pdf
+[2] https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/Snapdragon-8-Gen-2-Product-Brief.pdf
 
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
 ---
- drivers/iio/industrialio-core.c  |  7 ++++++-
- drivers/iio/industrialio-event.c |  9 +++++++++
- drivers/iio/inkern.c             | 16 +++++++++++-----
- 3 files changed, 26 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index fa7cc051b4c4..2f185b386949 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -758,9 +758,11 @@ static ssize_t iio_read_channel_info(struct device *dev,
- 							INDIO_MAX_RAW_ELEMENTS,
- 							vals, &val_len,
- 							this_attr->address);
--	else
-+	else if (indio_dev->info->read_raw)
- 		ret = indio_dev->info->read_raw(indio_dev, this_attr->c,
- 				    &vals[0], &vals[1], this_attr->address);
-+	else
-+		return -EINVAL;
- 
- 	if (ret < 0)
- 		return ret;
-@@ -842,6 +844,9 @@ static ssize_t iio_read_channel_info_avail(struct device *dev,
- 	int length;
- 	int type;
- 
-+	if (!indio_dev->info->read_avail)
-+		return -EINVAL;
-+
- 	ret = indio_dev->info->read_avail(indio_dev, this_attr->c,
- 					  &vals, &type, &length,
- 					  this_attr->address);
-diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industrialio-event.c
-index 910c1f14abd5..a64f8fbac597 100644
---- a/drivers/iio/industrialio-event.c
-+++ b/drivers/iio/industrialio-event.c
-@@ -285,6 +285,9 @@ static ssize_t iio_ev_state_store(struct device *dev,
- 	if (ret < 0)
- 		return ret;
- 
-+	if (!indio_dev->info->write_event_config)
-+		return -EINVAL;
-+
- 	ret = indio_dev->info->write_event_config(indio_dev,
- 		this_attr->c, iio_ev_attr_type(this_attr),
- 		iio_ev_attr_dir(this_attr), val);
-@@ -300,6 +303,9 @@ static ssize_t iio_ev_state_show(struct device *dev,
- 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
- 	int val;
- 
-+	if (!indio_dev->info->read_event_config)
-+		return -EINVAL;
-+
- 	val = indio_dev->info->read_event_config(indio_dev,
- 		this_attr->c, iio_ev_attr_type(this_attr),
- 		iio_ev_attr_dir(this_attr));
-@@ -318,6 +324,9 @@ static ssize_t iio_ev_value_show(struct device *dev,
- 	int val, val2, val_arr[2];
- 	int ret;
- 
-+	if (!indio_dev->info->read_event_value)
-+		return -EINVAL;
-+
- 	ret = indio_dev->info->read_event_value(indio_dev,
- 		this_attr->c, iio_ev_attr_type(this_attr),
- 		iio_ev_attr_dir(this_attr), iio_ev_attr_info(this_attr),
-diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-index 52d773261828..74f87f6ac390 100644
---- a/drivers/iio/inkern.c
-+++ b/drivers/iio/inkern.c
-@@ -560,9 +560,11 @@ static int iio_channel_read(struct iio_channel *chan, int *val, int *val2,
- 					vals, &val_len, info);
- 		*val = vals[0];
- 		*val2 = vals[1];
--	} else {
-+	} else if (chan->indio_dev->info->read_raw) {
- 		ret = chan->indio_dev->info->read_raw(chan->indio_dev,
- 					chan->channel, val, val2, info);
-+	} else {
-+		return -EINVAL;
- 	}
- 
- 	return ret;
-@@ -753,8 +755,10 @@ static int iio_channel_read_avail(struct iio_channel *chan,
- 	if (!iio_channel_has_available(chan->channel, info))
- 		return -EINVAL;
- 
--	return chan->indio_dev->info->read_avail(chan->indio_dev, chan->channel,
--						 vals, type, length, info);
-+	if (chan->indio_dev->info->read_avail)
-+		return chan->indio_dev->info->read_avail(chan->indio_dev, chan->channel,
-+							 vals, type, length, info);
-+	return -EINVAL;
- }
- 
- int iio_read_avail_channel_attribute(struct iio_channel *chan,
-@@ -917,8 +921,10 @@ EXPORT_SYMBOL_GPL(iio_get_channel_type);
- static int iio_channel_write(struct iio_channel *chan, int val, int val2,
- 			     enum iio_chan_info_enum info)
- {
--	return chan->indio_dev->info->write_raw(chan->indio_dev,
--						chan->channel, val, val2, info);
-+	if (chan->indio_dev->info->write_raw)
-+		return chan->indio_dev->info->write_raw(chan->indio_dev,
-+							chan->channel, val, val2, info);
-+	return -EINVAL;
- }
- 
- int iio_write_channel_attribute(struct iio_channel *chan, int val, int val2,
+This patch series depends on patch series:
+"[PATCH v2 0/2] arm64: dts: qcom: sm8550: Update some"
+https://lore.kernel.org/linux-arm-msm/20240529100256.3158447-1-quic_tengfan@quicinc.com
 
----
-base-commit: 409b6d632f5078f3ae1018b6e43c32f2e12f6736
-change-id: 20240528-iio-core-fix-segfault-aa74be7eee4a
+v8 -> v9:
+  - Update the patch commit message and some code comments
+v7 -> v8:
+  - rebase patch series on top of:
+    https://lore.kernel.org/linux-arm-msm/20240502-topic-sm8x50-upstream-pcie-1-phy-aux-clk-v5-0-10c650cfeade@linaro.org/
+  - add pinctrl configurations for pcie0 and pcie1 in AIM300 SOM dtsi
+  - move some common usb node settings to SoC dtsi
+  - verified with dtb check, and result is expected, because those
+    warnings are not introduced by current patch series.
+    arch/arm64/boot/dts/qcom/sm8550.dtsi:3037.27-3092.6: Warning
+    (avoid_unnecessary_addr_size): /soc@0/display-subsystem@ae00000/dsi@ae96000: unnecessary
+    #address-cells/#size-cells without "ranges" or child "reg" property
+v6 -> v7:
+  - correct typos in the commit message
+  - move mdss_dsi0, mdss_dsi0_phy, pcie0_phy, pcie1_phy and usb_dp_qmpphy
+    vdda supply to qcs8550-aim300.dtsi
+  - move the perst and wake gpio settings of pcie0 and pcie1 to
+    qcs8550-aim300.dtsi
+  - move the clock frequency settings of pcie_1_phy_aux_clk, sleep_clk
+    and xo_board to qcs8550-aim300.dtsi
+  - verified with dtb check, and result is expected, because those
+    warnings are not introduced by current patch series.
+    arch/arm64/boot/dts/qcom/sm8550.dtsi:3037.27-3092.6: Warning
+    (avoid_unnecessary_addr_size): /soc@0/display-subsystem@ae00000/dsi@ae96000: unnecessary
+    #address-cells/#size-cells without "ranges" or child "reg" property
+    arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dtb:
+    phy@1c0e000: clock-output-names: ['pcie1_pipe_clk'] is too short
+        from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+    arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dtb: phy@1c0e000: #clock-cells:0:0: 1 was expected
+        from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
 
-Best regards,
+v5 -> v6:
+  - move qcs8550 board info bebind sm8550 boards info in qcom.yaml
+
+v4 -> v5:
+  - "2023-2024" instead of "2023~2024" for License
+  - update patch commit message to previous comments and with an updated
+    board diagram
+  - use qcs8550.dtsi instead of qcm8550.dtsi
+  - remove the reserved memory regions which will be handled by
+    bootloader
+  - remove pm8550_flash, pm8550_pwm nodes, Type-C USB/DP function node,
+    remoteproc_mpss function node, audio sound DTS node, new patch will
+    be updated after respective team's end to end full verification
+  - address comments to vph_pwr, move vph_pwr node and related
+    references to qcs8550-aim300-aiot.dts
+  - use "regulator-vph-pwr" instead of "vph_pwr_regulator"
+  - add pcie0I AND pcie1 support together
+  - the following patches were applied, so remove these patches from new
+    patch series:
+      - https://lore.kernel.org/linux-arm-msm/20240119100621.11788-3-quic_tengfan@quicinc.com
+      - https://lore.kernel.org/linux-arm-msm/20240119100621.11788-4-quic_tengfan@quicinc.com
+  - verified with dtb check, and result is expected, because those
+    warnings are not introduced by current patch series.
+    DTC_CHK arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dtb
+    arch/arm64/boot/dts/qcom/sm8550.dtsi:3015.27-3070.6: Warning
+    (avoid_unnecessary_addr_size): /soc@0/display-subsystem@ae00000/dsi@ae96000: unnecessary
+    #address-cells/#size-cells without "ranges" or child "reg" property
+    arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dtb:
+    opp-table: opp-75000000:opp-hz:0: [75000000, 0, 0, 75000000, 0, 0, 0, 0] is too long
+        from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+    arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dtb:
+    opp-table: opp-150000000:opp-hz:0: [150000000, 0, 0, 150000000, 0, 0, 0, 0] is too long
+        from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+    arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dtb:
+    opp-table: opp-300000000:opp-hz:0: [300000000, 0, 0, 300000000, 0, 0, 0, 0] is too long
+        from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+    arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dtb:
+    opp-table: Unevaluated properties are not allowed ('opp-150000000', 'opp-300000000', 'opp-75000000' were unexpected)
+        from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+
+v3 -> v4:
+  - use qcm8550.dtsi instead of qcs8550.dtsi, qcs8550 is a QCS version
+    of qcm8550, another board with qcm8550 will be added later
+  - add AIM300 AIoT board string in qcom.yaml file
+  - add sm8550 and qcm8550 fallback compatible
+  - add qcm8550 SoC id
+  - add reserved memory map codes in qcm8550.dtsi
+  - pm8010 and pmr73d are splited into carrier board DTS file. Because
+    the regulators which in pm8550, pm8550ve and pm8550vs are present
+    on the SoM. The regulators which in pm8010 and pmr73d are present
+    on the carrier board.
+  - stay VPH_PWR at qcs8550-aim300.dtsi file
+      VPH_PWR is obtained by vonverting 12v voltage into 3.7 voltage
+      with a 3.7v buck. VPH_PWR is power supply for regulators in AIM300
+      SOM. VPH_PWR regulator is defined in AIM300 SOM dtsi file.
+
+v2 -> v3:
+  - introduce qcs8550.dtsi
+  - separate fix dtc W=1 warning patch to another patch series
+
+v1 -> v2:
+  - merge the splited dts patches into one patch
+  - update dts file name from qcom8550-aim300.dts to qcs8550-aim300 dts
+  - drop PCIe1 dts node due to it is not enabled
+  - update display node name for drop sde characters
+
+previous discussion here:
+[1] v8: https://lore.kernel.org/linux-arm-msm/20240513090735.1666142-1-quic_tengfan@quicinc.com
+[2] v7: https://lore.kernel.org/linux-arm-msm/20240424024508.3857602-1-quic_tengfan@quicinc.com
+[3] v6 RESEND: https://lore.kernel.org/linux-arm-msm/20240401093843.2591147-1-quic_tengfan@quicinc.com
+[4] v6: https://lore.kernel.org/linux-arm-msm/20240308070432.28195-1-quic_tengfan@quicinc.com
+[5] v5: https://lore.kernel.org/linux-arm-msm/20240301134113.14423-1-quic_tengfan@quicinc.com
+[6] v4: https://lore.kernel.org/linux-arm-msm/20240119100621.11788-1-quic_tengfan@quicinc.com
+[7] v3: https://lore.kernel.org/linux-arm-msm/20231219005007.11644-1-quic_tengfan@quicinc.com
+[8] v2: https://lore.kernel.org/linux-arm-msm/20231207092801.7506-1-quic_tengfan@quicinc.com
+[9] v1: https://lore.kernel.org/linux-arm-msm/20231117101817.4401-1-quic_tengfan@quicinc.com
+
+Tengfei Fan (4):
+  dt-bindings: arm: qcom: Document QCS8550 SoC and the AIM300 AIoT board
+  arm64: dts: qcom: qcs8550: introduce qcs8550 dtsi
+  arm64: dts: qcom: add base AIM300 dtsi
+  arm64: dts: qcom: aim300: add AIM300 AIoT
+
+ .../devicetree/bindings/arm/qcom.yaml         |   8 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 322 ++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs8550-aim300.dtsi  | 405 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs8550.dtsi         | 167 ++++++++
+ 5 files changed, 903 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs8550.dtsi
+
+
+base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
 -- 
-Julien Stephan <jstephan@baylibre.com>
+2.25.1
 
 
