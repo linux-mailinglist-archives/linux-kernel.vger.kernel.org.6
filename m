@@ -1,208 +1,175 @@
-Return-Path: <linux-kernel+bounces-194668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2202F8D3FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:36:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E29E8D3FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 22:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79FDFB22A9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:36:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E57F28393B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 20:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247EF14534D;
-	Wed, 29 May 2024 20:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQqn8HrJ"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076691C8FB9;
+	Wed, 29 May 2024 20:41:22 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0961B960;
-	Wed, 29 May 2024 20:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001C21C68A6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 20:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717015004; cv=none; b=uFUgvJ2XEXcGIt+mFzvcpV4tZtw+pjHC5OrApBxstHgzmauQoUKPFBnDRizwzE3v3OsQUtl5mRn5fNpf6NNTMAmrxHIg4GipFqjPN/M7Bt/kpWBK20UpuvguNXTweXnLbn5VPfy23IhbTI1drMpWBcFJcdNITEoq15CMnMuGavQ=
+	t=1717015281; cv=none; b=hHDxz1J0QKtwByyyN8wfjguvEgyqBs/NgrVtPpiAOIwNh8gNEuBEBXJAGUJEo0YiygrAYPNzOWlzsLxMsat8qg4x8Js6+F095+vSvqyFGfqOt6IX4sCYdvtc1HSiczCi3qFZlROmrsVE5ENZ0nh34yBtxnhqarN3zHJH5pgwrXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717015004; c=relaxed/simple;
-	bh=KAuwmpAQlvgKVAuhQljiF3gBQKzQXSKUp3q7GZNgyAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDFrBKynUVmiodS5gS3DcCDqRjo1p5FRj/4n+2TXV6lzgPkKpq4QavYWGXU1znxQRfhCzlSkT+Uki2kDEc57ASZeIV5QWFsx37u3U3+R6g53Zzb+HAt8maEfvs1tKWOEiuQPeD9trFF/zD00xPhPpHMVpuyMSEfNHjCoYwoPIWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQqn8HrJ; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f480624d0dso1633685ad.1;
-        Wed, 29 May 2024 13:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717015002; x=1717619802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JsDD1NAPFioHO4gLv1AtQFDU2NR/QOFSQPXZbsUyXIQ=;
-        b=hQqn8HrJK04qSpdvyWYymLBpVSatbJ+nu+z3lC2FIW/XjZRpMRwszziyA4cpieiz6u
-         k9evo/5N0omgpREvU/w3Xu5/gExMajk4tT+37+9/e9D4Nu73y9V/ob3eNplitG+Irl+n
-         MA1G2QsRxBvedCdJHXFm1bByc/9M6IqTKQGXG+EwpuYN/2hMVWFRY17R9gy3awkfOwJI
-         KsSs9Nwp+Ywz88eL8FUcusCV4NAasqkierHZ9Qppyo5VTktLmXs9DQo3gZQ2Z0FBoEr+
-         fA+TXtM3TpTHc76qXA37nV9Gn+sTAtkHSpvDOjOfnKVvPpCFUiLpPMCFjibgPKEE4pSs
-         T9Hg==
+	s=arc-20240116; t=1717015281; c=relaxed/simple;
+	bh=vNUZSXvhfyZXrV1PqvZgY4bk+8fmC2eOIfBDamZztuU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sxvs64h473kxXre4aYFp9CmQRbEJqdKwGlMXLr3T+Co1Fr6bt1IIMl0GIeAzT3co5u/Vz3n8kqGAzdfBgwZQUV6T+Y0iKyYBSjp6kFkkMZ/jgrPyJtbD6TyMQYndFWpk+Lm3lvAhwiSzL+ODf+KavbJA8QcyQmppDPUU9mGrRdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1fe2ba2e1so12837539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 13:41:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717015002; x=1717619802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsDD1NAPFioHO4gLv1AtQFDU2NR/QOFSQPXZbsUyXIQ=;
-        b=cjug+sf4QgfwLmvkGqV/JOdlh12DCv33MrThpnMAo9Bpop+tK2PgDq82WqnONB0KD7
-         8+wUmSrJxojkodmh7umaYRnBBEsqQydXN9tQLj54ZVaS0BmjnjLLN+0hlK5M+hKU3xH/
-         y9zY2NvfqHk4fySChBXapNabRIe14f4nqxFCWX+8VzRYvlUR/OCmVuwI+/R/BFJHq3HL
-         0ssTGmOXZTf3VW/Sa4KSYSPMc0GfKGQgfhQT2TzkYyFa+KuNVwDPjZM3VCpsfYb/ob2N
-         4G1ZXJ92mupqeD5sEykeGgYqqNHKTF/eIGoi+pzVEuyK0E0M3YUACVS/DulqYQDhNt8G
-         cyuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpUppc0np4EhmU5hBvF/BEcORMS5aH5BiGsSAO4ESHHCIgFx0U0jc+VVgbvKUGOhVL+A4mvPtheqqx9+2dU0r71F8LFfrgXjtURIO1OWZFiGl23P16+b61A6nBBWDI/9+owhFH4jMOUhPiTKS6
-X-Gm-Message-State: AOJu0YyWmDJcO0pwTO/JyxNqUi5Im3mVZ6uynyu8GfR+O5KaLYILST2O
-	CTM1Phd01c6WpcH4AzI9+xRXdk1AXwQ11HLTv6sgW9l+wq2Svv3j
-X-Google-Smtp-Source: AGHT+IFzfRiiqI8oIBnyBDHVNzQy3TKrU+G1kSritJ5B25V5oeLzSgd4JGxkvl7xiz1uHMCm0UlTbw==
-X-Received: by 2002:a17:903:8c3:b0:1f2:f986:595d with SMTP id d9443c01a7336-1f61a4dd759mr1743215ad.66.1717015001980;
-        Wed, 29 May 2024 13:36:41 -0700 (PDT)
-Received: from Gatlins-MacBook-Pro.local ([131.252.143.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75e579sm103603725ad.35.2024.05.29.13.36.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 13:36:41 -0700 (PDT)
-Date: Wed, 29 May 2024 13:36:39 -0700
-From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-To: Marco Elver <elver@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Changbin Du <changbin.du@huawei.com>, 
-	Pengfei Xu <pengfei.xu@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/traps: Enable UBSAN traps on x86
-Message-ID: <57vgoje4bmrckwqtwnletukcnlvjpj2yp3cjlkym4bfw66a57a@w35yjzcurcis>
-References: <20240529022043.3661757-1-gatlin.newhouse@gmail.com>
- <CANpmjNM2S2whk31nfNGSBO5MFPPUHX7FPuHBJn1nN9zdP63xTw@mail.gmail.com>
- <2j6nkzn2tfdwdqhoal5o56ds2hqg2sqk5diolv23l5nzteypzh@fi53ovwjjl3w>
- <CANpmjNM4pFHYRqmBLi0qUm8K2SroYWg7NFjreHffHvk0WW95kA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1717015279; x=1717620079;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i+7TQmH1QD5ycywdTyCtsUi/9cznvI6RRnPmBYeGhNY=;
+        b=WR5atAeRsZJ5yGEIXiJfaReatYPzyMUyZV92nSrpfCGz0YrxiTYhGH9bFVNYlSKAYK
+         Ky2JhNAJ9BgSyp5xc2sVKunNw77b7PBSxRd3IQt6OV4FeEmNAUOPzTBsZJv8HqetKF1X
+         057KzYNdDcNIT6bzr15WSqshZYhhfihjayGWgLJm8hlAmAX/Y9bABVElJB+dnfMZho67
+         2Kg6db3sjoE9PG/lf4A/DVPFjr2+ualy6Ia8O7l44al0180551IgRVv94MTsqmM8K1aV
+         D7/+NnV9m3nIoik6SWlKBgwksbBZVPEvrY5JTef22/58Dpqoq9JFpCuPiA7Jz9dyBjzd
+         +7Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVf7XHqhs+vchmM+TAFzFYQjQLhHIKZ4o5MK6fD12AUOYUfvnH8ZgftbGjlvhO07wr43bF9wpEBh25fTGe0SK2P7qnm3btPwGBtKhdD
+X-Gm-Message-State: AOJu0Yzrb9rJ3j3rwinIIw7LG+nBU/KNB3GRfN7wCa7k7FlTcZ+9AYnG
+	C1Mn4LbF2sxFf5hsikfTzUQK4Nb9MBUhnwUWIDxSyNngLEbJvifcRsk+oizrUtfY+VBs2Ir401G
+	Ypgl39k9I3/GuElkF+IKd+ETLTbfYH7wAkFxYeWE7wCmTSoCOv2VIRq4=
+X-Google-Smtp-Source: AGHT+IH+6tmCLu8pIgw/Dhplloi6SKh6Te/gU9fAy8vAXL0utPay12W/fDdNdhOPP1pL+7B7RfrRmJyqoHkqnICkuwTB05+ikb2e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNM4pFHYRqmBLi0qUm8K2SroYWg7NFjreHffHvk0WW95kA@mail.gmail.com>
+X-Received: by 2002:a05:6602:3412:b0:7da:6916:b435 with SMTP id
+ ca18e2360f4ac-7eaf5b67173mr259439f.0.1717015279272; Wed, 29 May 2024 13:41:19
+ -0700 (PDT)
+Date: Wed, 29 May 2024 13:41:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cb987006199dc574@google.com>
+Subject: [syzbot] [fscrypt?] WARNING in fscrypt_fname_siphash
+From: syzbot <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, ebiggers@kernel.org, 
+	fw@strlen.de, jaegeuk@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
+	linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pablo@netfilter.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 29, 2024 at 08:30:20PM UTC, Marco Elver wrote:
-> On Wed, 29 May 2024 at 20:17, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
-> >
-> > On Wed, May 29, 2024 at 09:25:21AM UTC, Marco Elver wrote:
-> > > On Wed, 29 May 2024 at 04:20, Gatlin Newhouse <gatlin.newhouse@gmail.com> wrote:
-> > > [...]
-> > > >         if (regs->flags & X86_EFLAGS_IF)
-> > > >                 raw_local_irq_enable();
-> > > > -       if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > > > -           handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > > > -               regs->ip += LEN_UD2;
-> > > > -               handled = true;
-> > > > +
-> > > > +       if (insn == INSN_UD2) {
-> > > > +               if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > > > +               handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > > > +                       regs->ip += LEN_UD2;
-> > > > +                       handled = true;
-> > > > +               }
-> > > > +       } else {
-> > > > +               if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
-> > >
-> > > handle_ubsan_failure currently only returns BUG_TRAP_TYPE_NONE?
-> > >
-> > > > +                       if (insn == INSN_REX)
-> > > > +                               regs->ip += LEN_REX;
-> > > > +                       regs->ip += LEN_UD1;
-> > > > +                       handled = true;
-> > > > +               }
-> > > >         }
-> > > >         if (regs->flags & X86_EFLAGS_IF)
-> > > >                 raw_local_irq_disable();
-> > > > diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-> > > > new file mode 100644
-> > > > index 000000000000..6cae11f4fe23
-> > > > --- /dev/null
-> > > > +++ b/arch/x86/kernel/ubsan.c
-> > > > @@ -0,0 +1,32 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * Clang Undefined Behavior Sanitizer trap mode support.
-> > > > + */
-> > > > +#include <linux/bug.h>
-> > > > +#include <linux/string.h>
-> > > > +#include <linux/printk.h>
-> > > > +#include <linux/ubsan.h>
-> > > > +#include <asm/ptrace.h>
-> > > > +#include <asm/ubsan.h>
-> > > > +
-> > > > +/*
-> > > > + * Checks for the information embedded in the UD1 trap instruction
-> > > > + * for the UB Sanitizer in order to pass along debugging output.
-> > > > + */
-> > > > +enum bug_trap_type handle_ubsan_failure(struct pt_regs *regs, int insn)
-> > > > +{
-> > > > +       u32 type = 0;
-> > > > +
-> > > > +       if (insn == INSN_REX) {
-> > > > +               type = (*(u16 *)(regs->ip + LEN_REX + LEN_UD1));
-> > > > +               if ((type & 0xFF) == 0x40)
-> > > > +                       type = (type >> 8) & 0xFF;
-> > > > +       } else {
-> > > > +               type = (*(u16 *)(regs->ip + LEN_UD1));
-> > > > +               if ((type & 0xFF) == 0x40)
-> > > > +                       type = (type >> 8) & 0xFF;
-> > > > +       }
-> > > > +       pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-> > > > +
-> > > > +       return BUG_TRAP_TYPE_NONE;
-> > > > +}
-> > >
-> > > Shouldn't this return BUG_TRAP_TYPE_WARN?
-> >
-> > So as far as I understand, UBSAN trap mode never warns. Perhaps it does on
-> > arm64, although it calls die() so I am unsure. Maybe the condition in
-> > handle_bug() should be rewritten in the case of UBSAN ud1s? Do you have any
-> > suggestions?
-> 
-> AFAIK on arm64 it's basically a kernel OOPS.
-> 
-> The main thing I just wanted to point out though is that your newly added branch
-> 
-> > if (handle_ubsan_failure(regs, insn) == BUG_TRAP_TYPE_WARN) {
-> 
-> will never be taken, because I don't see where handle_ubsan_failure()
-> returns BUG_TRAP_TYPE_WARN.
->
+Hello,
 
-Initially I wrote this with some symmetry to the KCFI checks nearby, but I
-was unsure if this would be considered handled or not.
+syzbot found the following issue on:
 
-> 
-> That means 'handled' will be false, and the code in exc_invalid_op
-> will proceed to call handle_invalid_op() which is probably not what
-> you intended - i.e. it's definitely not BUG_TRAP_TYPE_NONE, but one of
-> TYPE_WARN of TYPE_BUG.
->
+HEAD commit:    74eca356f6d4 Merge tag 'ceph-for-6.10-rc1' of https://gith..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15460752980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee7b962709a5f5a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=340581ba9dceb7e06fb3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15da8cd8980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14111972980000
 
-This remains a question to me as to whether it should be considered handled
-or not. Which is why I'm happy to change this branch which is never taken to
-something else that still outputs the UBSAN type information before calling
-handle_invalid_op().
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a5f8df213fa4/disk-74eca356.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/864334770567/vmlinux-74eca356.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b30965ded6d8/bzImage-74eca356.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b77754f322c2/mount_0.gz
 
-> 
-> Did you test it and you got the behaviour you expected?
->
+The issue was bisected to:
 
-Testing with LKDTM provided the output I expected. The UBSAN type information
-along with file and offsets are output before an illegal op and trace.
+commit f9006acc8dfe59e25aa75729728ac57a8d84fc32
+Author: Florian Westphal <fw@strlen.de>
+Date:   Wed Apr 21 07:51:08 2021 +0000
+
+    netfilter: arp_tables: pass table pointer via nf_hook_ops
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12dc9ee8980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11dc9ee8980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16dc9ee8980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
+Fixes: f9006acc8dfe ("netfilter: arp_tables: pass table pointer via nf_hook_ops")
+
+EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: writeback.
+fscrypt: AES-256-CBC-CTS using implementation "cts-cbc-aes-aesni"
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5079 at fs/crypto/fname.c:567 fscrypt_fname_siphash+0xc2/0x100 fs/crypto/fname.c:567
+Modules linked in:
+CPU: 1 PID: 5079 Comm: syz-executor422 Not tainted 6.9.0-syzkaller-12358-g74eca356f6d4 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:fscrypt_fname_siphash+0xc2/0x100 fs/crypto/fname.c:567
+Code: 0f b6 04 28 84 c0 75 3d 41 8b 34 24 49 83 c6 40 4c 89 ff 4c 89 f2 5b 41 5c 41 5d 41 5e 41 5f e9 b4 97 52 09 e8 3f 7a 72 ff 90 <0f> 0b 90 eb a8 89 d9 80 e1 07 38 c1 7c 86 48 89 df e8 d8 f0 d4 ff
+RSP: 0018:ffffc90003c7f430 EFLAGS: 00010293
+RAX: ffffffff822399b1 RBX: 0000000000000000 RCX: ffff888022a61e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003c7f5f0 R08: ffffffff82239955 R09: ffffffff82541c38
+R10: 0000000000000007 R11: ffff888022a61e00 R12: ffffc90003c7f580
+R13: dffffc0000000000 R14: ffff88807fcb3000 R15: ffff88807fd0b4b0
+FS:  000055558ddca380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045ede0 CR3: 0000000074e92000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __ext4fs_dirhash+0x3db/0x1530 fs/ext4/hash.c:268
+ ext4fs_dirhash+0x193/0x320 fs/ext4/hash.c:322
+ htree_dirblock_to_tree+0x727/0x10e0 fs/ext4/namei.c:1124
+ ext4_htree_fill_tree+0x744/0x1400 fs/ext4/namei.c:1219
+ ext4_dx_readdir fs/ext4/dir.c:597 [inline]
+ ext4_readdir+0x2b1c/0x3500 fs/ext4/dir.c:142
+ iterate_dir+0x65e/0x820 fs/readdir.c:110
+ __do_sys_getdents64 fs/readdir.c:409 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:394
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f91a3441b99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd41154a58 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 6f72746e6f632f2e RCX: 00007f91a3441b99
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f91a34b55f0 R08: 000055558ddcb4c0 R09: 000055558ddcb4c0
+R10: 000055558ddcb4c0 R11: 0000000000000246 R12: 00007ffd41154a80
+R13: 00007ffd41154ca8 R14: 431bde82d7b634db R15: 00007f91a348a03b
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
