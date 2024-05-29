@@ -1,228 +1,135 @@
-Return-Path: <linux-kernel+bounces-194021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C49A8D358E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:29:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7E48D3591
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 13:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3DC1F2514E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF22282928
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 11:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE7817F365;
-	Wed, 29 May 2024 11:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3FA17F396;
+	Wed, 29 May 2024 11:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="GHxlCekw"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cV5HUW53"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7A616ABEE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 11:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD1D17B42C;
+	Wed, 29 May 2024 11:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716982132; cv=none; b=uXPwlVhEVNIU7URe2DXCBFSvb0C+NX1QgWEHduGLFX42Vm1cq7CpqyBg//fqgoEH8RHCCuvpsFV8fJWM2qfQD4BmYBow9/7qVhsNc+nFnwvZ4D3zVUnjfAqlyzVVwGe/lAmLJgKV8HHiOikL6VjwBKdJsNfMlwQrQqmlL9bhnnk=
+	t=1716982174; cv=none; b=nZTYFHiOXh9hGM5/D4aTesvJpVDTqfnPvzga65HwGQNJReSs4dY6ILYXcDRxz9+PWi5/GEGo78xkVlB8ZcOQroSkHN0/emIPAH8nu6cXSbpZDU/HhwcsT+I4GDNlO3J+FOCHBy2K9zSzFMr0HNqoWrgJwiE4/Rme+TEpsZ+C4k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716982132; c=relaxed/simple;
-	bh=L+HCQ0LzcZIRB2KgGPWG7c3mgRefyka2tZFvVxfHYFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tW21yxxIB4lItRh3jO/SiAwW8G7T51p4pRLKivrWIkJxuTlrCoW3AYusJG1iLZytPzzVrggPRQAKqx9aZj+aT8ctw33GwhUQyQeew04v3vzTWhEFBnC3PP9ClmuK3+wrzSmWGzCJHCarqdsckqTt2ds+KR9t5SE4bm6ZlqOsCRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=GHxlCekw; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e974857588so19996751fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 04:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1716982129; x=1717586929; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zLzGz8ZCVVO6lOpfLPlQp3f813FvHT+QtFRxJi4eyk4=;
-        b=GHxlCekw/UZtSFsXBJaHhSzFFzkHlpE5/Au5mYxakLzdCSt+r12ZzcjQ/SpkTdn9Bv
-         NcS8QMvh+Y+t6+wS9PnhYjxAB6wLChDzSwveD32RHZtr77H685ivjGaAuxamnqzHNM5d
-         YmsZdFULHmGR28+rYPruEAVksVwIHsek0VuEfL28kmaK4tmc47bC0mTPYqZmV249rM9z
-         cLgunvDwuetQEFBWAVbyy1cc2tqild3iclRRFfD+BetRt3yMtdoQoW+/Fd5dMt+LN/t5
-         LsDV3Zc2ZM1zRBlcXUX5HpRdKNSVeLQsOs3i670dcJi4yNjkDVBZNh7gQNPTt1TsqwlM
-         TIhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716982129; x=1717586929;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zLzGz8ZCVVO6lOpfLPlQp3f813FvHT+QtFRxJi4eyk4=;
-        b=INdHGaEvZtBSem9O0VZSrzdsc9XtlUEISci3eVWjqdei+kb0hMkWWbL43s+cNkQ/3s
-         9mHLKs5iRXgNMKmisvoBJ6fGQpEdAUynksjGits3tGK50whYYqzpp6sLuieqMcpS1vA5
-         9ZMBBE+V1PcON0pzR0dh9suU7S8ttcsXzGjtqCa3BMP68oFdT2HqW3Sn57pvUARxYD8l
-         6APqW+DeP4dlu3xsBeZZbOx9NcVpbdUT0S3FZz1KdAO4r5XrJCSD6SMw0aFdn+c5Yp1D
-         JLMMx0UWXgAMmJ0yuOPqOd8+06i6FMoRMHks9V0OKX+NdQVrz63V7OZ3gxp+eWba681H
-         P+xA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIDouOLRDVEPYgXphAxID97PYmN1hqw4I6fBmmpQSXzPJ/vp8fRDTLugMRJeDa5c9EYyQKeCqFKzHDGLxOwzvHMh7UhBO7lxZXU/kJ
-X-Gm-Message-State: AOJu0YxvWSyMJSJzuhPBfeJ7WAOD8BMAspuKHM9SD9yekuwQOUl21c+a
-	BVcQFMo8hPsLTeXbxsg5/fBvGOKIheiOQUH0MwobIz6vm5uMu5RXXnOsks2kv9RjPsHs3ALtien
-	HD05s9UDuJmBcehR4PLDOAHjnx53MDDHmgfkeyA==
-X-Google-Smtp-Source: AGHT+IG2FRfDgIBYznp0vX/GdwMe+FB13qOPo8Ip2JkZkrlYHIyl0PzJ+pURnCwMJsb6hGhYxNOHOf3hmCyJbtpJHrU=
-X-Received: by 2002:a2e:bc08:0:b0:2d6:f69d:c74c with SMTP id
- 38308e7fff4ca-2e95b256308mr100224821fa.38.1716982128754; Wed, 29 May 2024
- 04:28:48 -0700 (PDT)
+	s=arc-20240116; t=1716982174; c=relaxed/simple;
+	bh=0kq3HVd0cRMqqq1TTQn0AHc8TM2K+7ozCdN3/9vOqeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAXQRrHD4GWUzWI5ZQHNMVvkU6/d4FoKhZqgqmzEqkZiP1nE7s09IBwYWrEn24IQp6BGVQfHKNu05B2clBML7N4QB/bAnsTP4Tz9eia3YjUK15LZBxclN4N8Ow3a4lpx/uc25EP4stuwrUpgWbVCGVCtfnX7wHlsvEMv1fZvau4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cV5HUW53; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A795340E0241;
+	Wed, 29 May 2024 11:29:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id HmlNtBqr6uY6; Wed, 29 May 2024 11:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716982166; bh=7UQS7j6CCagVlyJn9Hmk6NwjSsENYGcwi4W7WCTkCBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cV5HUW531EDiz7oQ1FPuK0S/IzSZHeNkt/G9fyB4FwCoZzYhfNZGhG8APJHIv24qe
+	 khz2nZDAkKxcjTfGkC9eVb5l4e070mmcM22lEeNo7kJxFVMeVktFnYLB/sTT7bEKZr
+	 q2x4F4zVZ9l3wiNP0kaQzjBUHkhjdGxAl8BoERiiCG531K7Q3fspKbKSIR1OAZj4C7
+	 VVc4Z7UATXIiJIZALj0I8+GIhy8DGf41W8PBJxQ295Tp618s3W5SdLtIxZPnirCkEY
+	 X15kJQhqPzu+Oljl64c5vWHy+kSDPjCJ4f3tj2T8aQFtTBjaP1jzTuvtgaqcFlkImj
+	 XqyO8dd9b1Tgg+XRWOvwmMiYTtsXg7QT4LQbXtk87ezRnBluiKD/0Y/lszFMz9lwBx
+	 7NaGgzNgdtn1Tv+ksOwVGH6MzqT8+5H0T+wgZSOTU9CIvU78lIZClz9E3DGTIvty2A
+	 GxRLH6houMcYoLFSa2lz6QKo8hRp7baOF+5IAt2cC/T9xlZoI+JTPC91J8aH/j0nLD
+	 tCCvir3LafEQ0VmdfZzm1Fxz/GR2QyfkOvKjDxRgeu3ZahfpZaUVY4XFuohZTBjBNA
+	 3MOy7IP2ggy/U48zEeNtCyRM+Xu9mV016oVlCwGq+tUc/+jIERc09SGV6E+/kfYwUu
+	 Z26oM8yau0Hi7dXabPoG5JJo=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 18D4340E0177;
+	Wed, 29 May 2024 11:28:58 +0000 (UTC)
+Date: Wed, 29 May 2024 13:28:52 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv11 05/19] x86/relocate_kernel: Use named labels for less
+ confusion
+Message-ID: <20240529112852.GBZlcRdI3oqBtjKxAV@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-6-kirill.shutemov@linux.intel.com>
+ <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+ <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528164132.2451685-1-maz@kernel.org> <CAK9=C2XNPJP0X=pg5TSrQbsuouDD3jP-gy2Sm4BXNJp0ZiWp+A@mail.gmail.com>
- <86bk4pm8j1.wl-maz@kernel.org> <CAK9=C2XRx==OTPoGW_AHmjq4Th0bv4okwcq6-3L5JYwHwQp97A@mail.gmail.com>
- <86a5k8nbh1.wl-maz@kernel.org>
-In-Reply-To: <86a5k8nbh1.wl-maz@kernel.org>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Wed, 29 May 2024 16:58:34 +0530
-Message-ID: <CAK9=C2Ugq=0y8M86CD75mQccBo=TBLBomb4rqC4i1naKy2LyWQ@mail.gmail.com>
-Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
-To: Marc Zyngier <maz@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5>
 
-On Wed, May 29, 2024 at 4:15=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote=
-:
->
-> On Wed, 29 May 2024 11:16:30 +0100,
-> Anup Patel <apatel@ventanamicro.com> wrote:
-> >
-> > On Wed, May 29, 2024 at 12:03=E2=80=AFPM Marc Zyngier <maz@kernel.org> =
-wrote:
-> > >
-> > > On Wed, 29 May 2024 06:15:52 +0100,
-> > > Anup Patel <apatel@ventanamicro.com> wrote:
-> > > >
-> > > > On Tue, May 28, 2024 at 10:11=E2=80=AFPM Marc Zyngier <maz@kernel.o=
-rg> wrote:
-> > > > >
-> > > > > Commit d976c6f4b32c ("of: property: Add fw_devlink support for
-> > > > > interrupt-map property") tried to do what it says on the tin,
-> > > > > but failed on a couple of points:
-> > > > >
-> > > > > - it confuses bytes and cells. Not a huge deal, except when it
-> > > > >   comes to pointer arithmetic
-> > > > >
-> > > > > - it doesn't really handle anything but interrupt-maps that have
-> > > > >   their parent #address-cells set to 0
-> > > > >
-> > > > > The combinations of the two leads to some serious fun on my M1
-> > > > > box, with plenty of WARN-ON() firing all over the shop, and
-> > > > > amusing values being generated for interrupt specifiers.
-> > > > >
-> > > > > Address both issues so that I can boot my machines again.
-> > > > >
-> > > > > Fixes: d976c6f4b32c ("of: property: Add fw_devlink support for in=
-terrupt-map property")
-> > > > > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > > > > Cc: Anup Patel <apatel@ventanamicro.com>
-> > > > > Cc: Saravana Kannan <saravanak@google.com>
-> > > > > Cc: Rob Herring (Arm) <robh@kernel.org>
-> > > >
-> > > > Thanks for the fix patch but unfortunately it breaks for RISC-V.
-> > > >
-> > > > > ---
-> > > > >  drivers/of/property.c | 16 ++++++++++++++--
-> > > > >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/of/property.c b/drivers/of/property.c
-> > > > > index 1c83e68f805b..9adebc63bea9 100644
-> > > > > --- a/drivers/of/property.c
-> > > > > +++ b/drivers/of/property.c
-> > > > > @@ -1322,7 +1322,13 @@ static struct device_node *parse_interrupt=
-_map(struct device_node *np,
-> > > > >         addrcells =3D of_bus_n_addr_cells(np);
-> > > > >
-> > > > >         imap =3D of_get_property(np, "interrupt-map", &imaplen);
-> > > > > -       if (!imap || imaplen <=3D (addrcells + intcells))
-> > > > > +       imaplen /=3D sizeof(*imap);
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Check that we have enough runway for the child unit in=
-terrupt
-> > > > > +        * specifier and a phandle. That's the bare minimum we ca=
-n expect.
-> > > > > +        */
-> > > > > +       if (!imap || imaplen <=3D (addrcells + intcells + 1))
-> > > > >                 return NULL;
-> > > > >         imap_end =3D imap + imaplen;
-> > > > >
-> > > > > @@ -1346,8 +1352,14 @@ static struct device_node *parse_interrupt=
-_map(struct device_node *np,
-> > > > >                 if (!index)
-> > > > >                         return sup_args.np;
-> > > > >
-> > > > > -               of_node_put(sup_args.np);
-> > > > > +               /*
-> > > > > +                * Account for the full parent unit interrupt spe=
-cifier
-> > > > > +                * (address cells, interrupt cells, and phandle).
-> > > > > +                */
-> > > > > +               imap +=3D of_bus_n_addr_cells(sup_args.np);
-> > > >
-> > > > This breaks for RISC-V because we don't have "#address-cells"
-> > > > property in interrupt controller DT node and of_bus_n_addr_cells()
-> > > > retrieves "#address-cells" from the parent of interrupt controller.
-> > >
-> > > That's a feature, not a bug. #address-cells, AFAICT, applies to all
-> > > child nodes until you set it otherwise.
-> > >
-> > > >
-> > > > The of_irq_parse_raw() looks for "#address-cells" property
-> > > > in the interrupt controller DT node only so we should do a
-> > > > similar thing here as well.
-> > >
-> > > This looks more like a of_irq_parse_raw() bug than anything else.
-> >
-> > If we change of_irq_parse_raw() to use of_bus_n_addr_cells()
-> > then it would still break for RISC-V.
->
-> I'm not trying to "fix" riscv. I'm merely outlining that you are
-> relying on both broken DTs and a buggy OS.
->
-> >
-> > Using of_bus_n_addr_cells() over here forces interrupt controller
-> > DT nodes to have a "#address-cells" DT property. There are many
-> > interrupt controller (e.g. RISC-V PLIC or RISC-V APLIC) where the
-> > DT bindings don't require "#address-cells" DT property and existing
-> > DTS files with such interrupt controllers don't have it either.
->
-> It forces you to set #address-cells *if you rely on a different
-> value in a child node*. It's not like the semantics are new.
+On Wed, May 29, 2024 at 02:17:29PM +0300, Kirill A. Shutemov wrote:
+> > That jmp 1f becomes redundant now as it simply jumps 1 line below.
+> > 
+> 
+> Nothing changed wrt this jump. It dates back to initial kexec
+> implementation.
+> 
+> See 5234f5eb04ab ("[PATCH] kexec: x86_64 kexec implementation").
+> 
+> But I don't see functional need in it.
+> 
+> Anyway, it is outside of the scope of the patch.
 
-We don't have child nodes under the interrupt controller DT node
-(for both RISC-V PLIC and APLIC) so we certainly don't require the
-"#address-cells" property in the interrupt controller DT node.
+Yap, Kirill did what Nikolay should've done - git archeology. Please
+don't forget to do that next time.
 
->
-> >
-> > In the RISC-V world, there have been quite a few QEMU releases
-> > where the generated DT node of the interrupt controller does not
-> > have the "#address-cells" property. This patch breaks the kernel
-> > for all such QEMU releases.
->
-> Congratulations, you've forked DT. News at 11.
+And back in the day they didn't comment non-obvious things because
+commenting is for losers. :-\
 
-Can you elaborate how ?
+So that unconditional forward jump either flushes branch prediction on
+some old uarch or something else weird, uarch-special.
 
->
-> >
-> > I think we should align the implementation in parse_interrupt_map()
-> > with of_irq_parse_raw() and use of_property_read_u32() instead of
-> > of_bus_n_addr_cells().
->
-> I think we should fix the kernel and quirk riscv as broken, just like
-> PPC or sparc.
->
->         M.
->
-> --
-> Without deviation from the norm, progress is not possible.
+I doubt we can remove it just like that.
 
-Regards,
-Anup
+Lemme add Andy - he should know.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
