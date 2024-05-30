@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-195477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7B28D4D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F558D4D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D6C1F23C54
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:00:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EC991F2327E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E71D176249;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDE317C212;
 	Thu, 30 May 2024 14:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="BbNjEs8z"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="pa02Lxj+"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CF2186E3D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA473D68
 	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077601; cv=none; b=uevOurUgt4CVyHG12YidpOsgKVCUzVKVr9CwnvPoRFbxBhWxdVOpVkz0ILsn1lMmrE7osmYuZhtwItLSHxTjwr3ZvBYbPyCKRbCRKTUV1bsHIssZDh37ygiPutV3EG22XzWS5CbzK++9iDOfXS65vj1CX2TylYV7hXFdqISlaqs=
+	t=1717077601; cv=none; b=bo4GxdbGpzzKaxMEyDtRBqAfjooN3vHvfO0aFlq6lmarHcNfjsIQPE9x2BTczTSWFd5oLY2urzDmqQzqfSNcrBbNGWEyUxgXg5qKphGP1KqwVk2phWYyiP8lGY7QvdmBcOqc89DUAW/GGt71tlGBAy4Vv7bxf9YJSwCoKqwgQy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717077601; c=relaxed/simple;
-	bh=ejSWv/DV7VxeygnIV4oWMHbfw/k5TEp5V7OkPMs99F8=;
+	bh=Nu+pWteWMgH/QEwoWCbIFqPC/H4vkxZKSBzcueZdV10=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u6LYxlVVixkecrtPrn47X8M4ZmqHZUAvBbNr/Fv/lRmXp7BiopQIi93dIRolk7VxlkGR64a0sISm4JYjwMGxusldWUkuImhaSi+lhrHaPlVVtP/qBYpTrXb0wZay641seX3UcezuiWwXgSverRHi5pa6Cj/3v0LmMvchMu+XYxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=BbNjEs8z; arc=none smtp.client-ip=185.67.36.65
+	 MIME-Version; b=UaHxW4SoWGaLXliny7lXH1ZPeyWBWUnVfuc8T0bNa3TZAt+9bC+6eClz483DncPzQgTK9fUl2Y1/Mr29tFKq8wLlZUo5vomMY0Smk44PAgwHev8xlllVWPwKvGITJraAvNwn91jfiXKUCFOUbvIF+2UM5PJG850ZsejV/HIF/s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=pa02Lxj+; arc=none smtp.client-ip=185.67.36.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id C9CF4240028
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:59:51 +0200 (CEST)
+	by mout02.posteo.de (Postfix) with ESMTPS id 80153240104
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:59:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-	t=1717077591; bh=ejSWv/DV7VxeygnIV4oWMHbfw/k5TEp5V7OkPMs99F8=;
+	t=1717077592; bh=Nu+pWteWMgH/QEwoWCbIFqPC/H4vkxZKSBzcueZdV10=;
 	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
 	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
-	b=BbNjEs8z/9ssIAIhTMqmRSWEU69F0MZCi5HqvFUejFqnziY2L/ie7drrXPiRIBQ2V
-	 kfUCPezBzGqnvBxJjpEvHylZ7cSF65v0Cc+MaS2Fbi8+CJwjC/jNpWxnqe20idQa3P
-	 AYfv69rs30L5foboZRWH9wNm/wsZvDNfBvAzeO5tg14ItuiGWRX6ucX6xHsRXxcD+K
-	 bi7i2HHZL0IkTwxlSOpK0SRJ2KHunQBF8Tydn5Iro1kpcp2Prn695Gn25BGab1t/nw
-	 bXibH8EgKVzOF3BdATrXt0IK8sa7Xad2JVoK6e7YT9pZzE2Yzyc33t4bJQ5g1hIsdA
-	 wMNEwUKLn6gWA==
+	b=pa02Lxj+yzDjgdn1wmtFu9GJP6CKpjDMXU2HJfqMtU2yhEieXy4K+vF3Ohh2Sxb2K
+	 +cC0v2krsqfYMYyvGvHisOKi1IlhpaXskYSWdpa/LFGDRFXRvN3bRHrY6zofl2sDQ6
+	 isG5avjVWLgwgbmQHlrOgjm52B6nHAeJDtsm+qxmVZJgs1V0EHKACzh0WG+bAJdvvT
+	 4ZA/m+4E4YzHOljIxSn7cS9exKWXIN5k1OUaW4cAJNiAbnTUjCy1rqNXRAqcEr6963
+	 +jOLqtaz4zXudjKWkjrOZXPlJxoH9v645xt56ETPsXa/U9U963HbrF/IG6SnsxD0MG
+	 Bpo9E8RPZc44A==
 Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Vqntt4mMlz9rxV;
-	Thu, 30 May 2024 15:59:50 +0200 (CEST)
+	by submission (posteo.de) with ESMTPSA id 4Vqntv2gpxz9rxS;
+	Thu, 30 May 2024 15:59:51 +0200 (CEST)
 From: Alexander Reimelt <alexander.reimelt@posteo.de>
 To: andersson@kernel.org,
 	petr.vorel@gmail.com,
@@ -56,9 +56,9 @@ To: andersson@kernel.org,
 Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: arm: qcom: Add LG G4 (h815)
-Date: Thu, 30 May 2024 13:57:41 +0000
-Message-ID: <20240530135922.23326-2-alexander.reimelt@posteo.de>
+Subject: [PATCH v2 2/2] arm64: dts: qcom: msm8992-lg-h815: Initial support for LG G4 (H815)
+Date: Thu, 30 May 2024 13:57:42 +0000
+Message-ID: <20240530135922.23326-3-alexander.reimelt@posteo.de>
 In-Reply-To: <20240530135922.23326-1-alexander.reimelt@posteo.de>
 References: <20240403104415.30636-1-alexander.reimelt@posteo.de>
  <20240530135922.23326-1-alexander.reimelt@posteo.de>
@@ -80,25 +80,268 @@ Autocrypt: addr=alexander.reimelt@posteo.de;
   F51wyGAjYXSmn5qFoNHu3yXyLUkFz1ME
 OpenPGP: url=https://posteo.de/keys/alexander.reimelt@posteo.de.asc
 
-International variant of the LG G4 from 2015.
+To make it easier for downstream projects and avoid duplication of work.
+Makes the device bootable and enables all buttons, hall sensor, eMMC and SD-Card.
 
 Signed-off-by: Alexander Reimelt <alexander.reimelt@posteo.de>
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/Makefile            |   1 +
+ arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts | 234 +++++++++++++++++++
+ 2 files changed, 235 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 66beaac60e1d..76aefd4aac67 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -237,6 +237,7 @@ properties:
-       - items:
-           - enum:
-               - lg,bullhead
-+              - lg,h815
-               - microsoft,talkman
-               - xiaomi,libra
-           - const: qcom,msm8992
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index 7d40ec5e7d21..5b7f8741006f 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -62,6 +62,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8956-sony-xperia-loire-kugo.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8956-sony-xperia-loire-suzu.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-bullhead-rev-10.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-bullhead-rev-101.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-h815.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-msft-lumia-octagon-talkman.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-xiaomi-libra.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-huawei-angler-rev-101.dtb
+diff --git a/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts b/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
+new file mode 100644
+index 000000000000..5f55abec82aa
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
+@@ -0,0 +1,234 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * MSM8992 LG G4 (h815) device tree.
++ *
++ * Copyright (c) 2024, Alexander Reimelt <alexander.reimelt@posteo.de>
++ */
++
++/dts-v1/;
++
++#include "msm8992.dtsi"
++#include "pm8994.dtsi"
++#include "pmi8994.dtsi"
++#include <dt-bindings/leds/common.h>
++
++/* different mapping */
++/delete-node/ &cont_splash_mem;
++
++/* disabled downstream */
++/delete-node/ &dfps_data_mem;
++
++/ {
++	model = "LG G4 (H815)";
++	compatible = "lg,h815", "qcom,msm8992";
++	chassis-type = "handset";
++
++	qcom,msm-id = <251 0>;
++	qcom,pmic-id = <0x10009 0x1000a 0x00 0x00>;
++	qcom,board-id = <0xb64 0>;
++
++	/* psci is broken */
++	/delete-node/ psci;
++
++	chosen {};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		spin-table@6000000 {
++			reg = <0 0x6000000 0 0x1000>;
++			no-map;
++		};
++
++		ramoops@ff00000 {
++			compatible = "ramoops";
++			reg = <0x0 0xff00000 0x0 0x100000>;
++			console-size = <0x20000>;
++			pmsg-size = <0x20000>;
++			record-size = <0x10000>;
++			ecc-size = <0x10>;
++		};
++
++		cont_splash_mem: fb@3400000 {
++			compatible = "framebuffer";
++			reg = <0 0x3400000 0 0xc00000>;
++			no-map;
++		};
++
++		crash_fb_mem: crash-fb@4000000 {
++			reg = <0 0x4000000 0 0xc00000>;
++			no-map;
++		};
++	};
++
++	gpio-hall-sensor {
++		compatible = "gpio-keys";
++
++		pinctrl-0 = <&hall_sensor_default>;
++		pinctrl-names = "default";
++
++		label = "Hall Effect Sensor";
++
++		event-hall-sensor {
++			gpios = <&tlmm 75 GPIO_ACTIVE_LOW>;
++			label = "hall effect sensor";
++			linux,input-type = <EV_SW>;
++			linux,code = <SW_LID>;
++			linux,can-disable;
++			wakeup-source;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		key-vol-up {
++			label = "volume up";
++			gpios = <&pm8994_gpios 3 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEUP>;
++			wakeup-source;
++			debounce-interval = <15>;
++		};
++	};
++};
++
++&CPU0 {
++	enable-method = "spin-table";
++};
++
++&CPU1 {
++	enable-method = "spin-table";
++};
++
++&CPU2 {
++	enable-method = "spin-table";
++};
++
++&CPU3 {
++	enable-method = "spin-table";
++};
++
++&CPU4 {
++	enable-method = "spin-table";
++};
++
++&CPU5 {
++	enable-method = "spin-table";
++};
++
++&pm8994_resin {
++	linux,code = <KEY_VOLUMEDOWN>;
++	status = "okay";
++};
++
++&rpm_requests {
++	regulators-0 {
++		compatible = "qcom,rpm-pm8994-regulators";
++
++		vdd_s3-supply = <&vph_pwr>;
++		vdd_s4-supply = <&vph_pwr>;
++		vdd_s5-supply = <&vph_pwr>;
++		vdd_s7-supply = <&vph_pwr>;
++		vdd_l1-supply = <&pmi8994_s1>;
++		vdd_l2_26_28-supply = <&pm8994_s3>;
++		vdd_l3_11-supply = <&pm8994_s3>;
++		vdd_l4_27_31-supply = <&pm8994_s3>;
++		vdd_l5_7-supply = <&pm8994_s5>;
++		vdd_l6_12_32-supply = <&pm8994_s5>;
++		vdd_l8_16_30-supply = <&vph_pwr>;
++		vdd_l9_10_18_22-supply = <&pmi8994_bby>;
++		vdd_l13_19_23_24-supply = <&pmi8994_bby>;
++		vdd_l14_15-supply = <&pm8994_s5>;
++		vdd_l17_29-supply = <&pmi8994_bby>;
++		vdd_l20_21-supply = <&pmi8994_bby>;
++		vdd_l25-supply = <&pm8994_s5>;
++		vdd_lvs1_2-supply = <&pm8994_s4>;
++
++		pm8994_s3: s3 {
++			regulator-min-microvolt = <1300000>;
++			regulator-max-microvolt = <1300000>;
++		};
++
++		/* sdhc1 vqmmc and bcm */
++		pm8994_s4: s4 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-system-load = <325000>;
++			regulator-allow-set-load;
++		};
++
++		pm8994_s5: s5 {
++			regulator-min-microvolt = <2150000>;
++			regulator-max-microvolt = <2150000>;
++		};
++
++		/* sdhc2 vqmmc */
++		pm8994_l13: l13 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <2950000>;
++			regulator-system-load = <22000>;
++			regulator-allow-set-load;
++		};
++
++		/* sdhc1 vmmc */
++		pm8994_l20: l20 {
++			regulator-min-microvolt = <2950000>;
++			regulator-max-microvolt = <2950000>;
++			regulator-system-load = <570000>;
++			regulator-allow-set-load;
++		};
++
++		/* sdhc2 vmmc */
++		pm8994_l21: l21 {
++			regulator-min-microvolt = <2950000>;
++			regulator-max-microvolt = <2950000>;
++			regulator-system-load = <800000>;
++			regulator-allow-set-load;
++		};
++	};
++
++	regulators-1 {
++		compatible = "qcom,rpm-pmi8994-regulators";
++
++		vdd_s1-supply = <&vph_pwr>;
++		vdd_bst_byp-supply = <&vph_pwr>;
++
++		pmi8994_s1: s1 {
++			regulator-min-microvolt = <1025000>;
++			regulator-max-microvolt = <1025000>;
++		};
++
++		/* S2 & S3 - VDD_GFX */
++
++		pmi8994_bby: boost-bypass {
++			regulator-min-microvolt = <3150000>;
++			regulator-max-microvolt = <3600000>;
++		};
++	};
++};
++
++&sdhc1 {
++	mmc-hs400-1_8v;
++	vmmc-supply = <&pm8994_l20>;
++	vqmmc-supply = <&pm8994_s4>;
++	non-removable;
++	status = "okay";
++};
++
++&sdhc2 {
++	vmmc-supply = <&pm8994_l21>;
++	vqmmc-supply = <&pm8994_l13>;
++	cd-gpios = <&pm8994_gpios 8 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&tlmm {
++	hall_sensor_default: hall-sensor-default-state {
++		pins = "gpio75";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-pull-up;
++	};
++};
 -- 
 2.45.1
 
