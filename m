@@ -1,312 +1,275 @@
-Return-Path: <linux-kernel+bounces-194961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199E88D4507
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:54:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C928D450B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 750EAB244B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:54:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E5D1C22598
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42768143C52;
-	Thu, 30 May 2024 05:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B9A143739;
+	Thu, 30 May 2024 05:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFJkj3go"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OC2Op65D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F69814372C;
-	Thu, 30 May 2024 05:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717048443; cv=none; b=AFK53xYcdjl+7PsqHKE7xedq9rMQ6+RPCW4BKvFNC0vKGsn6u6itm1oikCMeRsoGPvRWxCpH7q0dfdtldgFJr7zsrPVOrCqH1MwX5OWSj2zpPDp47rFtPabyANlkHQXPksc4hoNEiy69DqkXtatqaTMa557K5go0DwENIopdIPo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717048443; c=relaxed/simple;
-	bh=zp259wkXtPz3aX+KSbUFsvWtLVHM6TCoCks217es0Ug=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=M8D7DdZ7pRIj9Rm6KixSZHyogvJgq9qqTPRW6WkvJOuPJFNFHdw0nohAZFogSttNSVndV+zN08tnn0DW2uLEbjRztkKksNSjcCPeO+n6V/hbTfBgFTo699BFOhNm4CbnMO3G1i5q5Dg1Uv0WYT5WWrjn+kVe95YPs4IIuLVu7DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFJkj3go; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFCF8C3277B;
-	Thu, 30 May 2024 05:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717048443;
-	bh=zp259wkXtPz3aX+KSbUFsvWtLVHM6TCoCks217es0Ug=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=IFJkj3goNCaD9gPedH2gZcpYRMcRbXdj71GqNXNmvj1VJ+a+IF6L9vw6KqI8YRxjT
-	 Yc0lEqwByVrurvRKzz4dumjKDl95MRzjIksFNrSP33V1+drP8O8nI+wxPxBzZdLweS
-	 24ocRbOfxerOUnJ0c55KmJFahoBp3V0XyxZX5QihR+MDOptwxv+KFKw4Od7Lat7dBp
-	 9HpIYfdN3lNwhx2VlHlL7q1ayRplEiA/xFGz9UFY8VwLw2H0h2lkr9Jyca7CtEUWE1
-	 eVdaaH09MqaSIlXQjXTxwUuUPXvRD86fJtOpMz/y/3Q+JrJVqNVesuEUZKg7nqaRRP
-	 +54JM5f9YqwGg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41732D792;
+	Thu, 30 May 2024 05:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717048530; cv=fail; b=tJ8HMddKmsruWRsKse4eUDeQZzJeRP558+B8sm8Wwz1XFjiZitK/Ie1Jbtjd87/UwAy7aQnZ436Dl7lH96QCdgSrNbEtoqlw4Zlz2mZoYeA8T4MYlbNoYWHm9XJzZOpsrgIaez7a8FMIBNEtdRNnpiQkidp/Zd4WKVHTyCh5fxE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717048530; c=relaxed/simple;
+	bh=BhEN9WRIsL+98jxHgbofexhtWn5RR5KLM+6ni547/rw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=k6kaLNBL1L8fjG/ICz1pc3pRFBW1LtqxVuVfAfbtVhnXIEbIOMwr8cqGgO7a/DTzRyzPJXboyvixC9vScOQhRcUr9r3OAaCLNEvnAh47pNoJr1BvXw6a0b4S36c7TMS15dx0Z3HrfiL5ewqdZ2SAhJYUTRyC8smDNlZOiGkxGvA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OC2Op65D; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717048529; x=1748584529;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BhEN9WRIsL+98jxHgbofexhtWn5RR5KLM+6ni547/rw=;
+  b=OC2Op65Dwf/RUtQiVhCgmM//azRRr+wete3tjwcgCwd+W1cDJlodcPtL
+   IxZbUA8p57CE3RpFQ0IhiTUktqrITXYGlOKSPjyrtr+WHhqMI9rhDa2Uz
+   G1m1DGW1vmGRINs7pZ1LV3EAIinindeeCqlVBaqMHDorvweQVPXNdhfkD
+   7y1Snl2/2V5BiuGtbQpmnS5M5nV5D5kM4J6ieoGuP8QVjbUMZxpRv/ZQb
+   rxb4HPt8/IeZV+0zA6p+LDoIeGVaKsBvmF/h3sLC86KLEQrJQE1KX58wB
+   4+gFuFv+/KB0fUL9MUGftOasi31iP8xHvXJCQzpo8xNzWep8xrkmUujc1
+   Q==;
+X-CSE-ConnectionGUID: 2xDoEXaxSMOQNSlw9TTq6w==
+X-CSE-MsgGUID: 3kqJGOwgRa6aL4stqiHf+g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13632824"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="13632824"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 22:55:28 -0700
+X-CSE-ConnectionGUID: OpWny8mYQau3jpSOw7tSMw==
+X-CSE-MsgGUID: dN35xzH9TEOicEN2/1vhqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="40566474"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 May 2024 22:55:28 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 29 May 2024 22:55:27 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 29 May 2024 22:55:27 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 29 May 2024 22:55:27 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 29 May 2024 22:55:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HheinCeraptw4nyY69nWwz2TgtZhPrm6fvMYtXW9/nVzvHG3mFhdzJIOKCNfaLuFQmDJIHerQ9N0FRcIuouUaHTMJCHu54QqZphvixkocs4jV45JORslV0dD0uGLtwmdW7n50kLtEy3QAuqtk2KNQXTsHrhxzdjxNsUBJQT2OX3FlAqZEvBadVCzfNflB1ML0rEkZhaz3i09oXQ1cPWeCPZZd/C0e23Sqqy4M+ELe6SOzee/gpTMxO4YJ2NmQHZdz1JKKku9ciCKc4ndCcSNX5KcGaOPl9dufcjE4DQjWunhwLRs7EiMPkW3U4s5m1ZaNboipDdL8VkO98IlQ46Y9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+IuQDAJBvaBhl5j2Yuoe4sCXWUugD7I+j5nTmwYbzdM=;
+ b=ZyLo9ximQQ+fTg1Nd2lh7wQqBvyeTsVzCZJN/wovdWI0g/g533VJyRbbLfTqA+QZGECwTpuT5xuqmFuGKfSrCvj+ElLZltYsCXSl94AgGU3ZkdKt2Zgt0FkXd2EoOVBiA9g84xD7YP9nzZWaKXWoMbSe6DtFxZ4OqPu1GBJOOgmHuoPMPi6PP+B5s+8YR5hXgZMtXR7gRsJMmb8ONOUoXNtCuzvOYnAF7BSCcmfV3u0UvOTbPIzEluJCt3MnRTo3usrqWWJnBBYRFwXmN3e8D6ARHOQcKZWRGxjbqMxq95VZ0KvReQzsYvZUl4icYXIGkU20ASzZ1aepNDyJXyV+yg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CH3PR11MB8313.namprd11.prod.outlook.com (2603:10b6:610:17c::15)
+ by CH3PR11MB7204.namprd11.prod.outlook.com (2603:10b6:610:146::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Thu, 30 May
+ 2024 05:55:25 +0000
+Received: from CH3PR11MB8313.namprd11.prod.outlook.com
+ ([fe80::3251:fc84:d223:79a3]) by CH3PR11MB8313.namprd11.prod.outlook.com
+ ([fe80::3251:fc84:d223:79a3%5]) with mapi id 15.20.7633.018; Thu, 30 May 2024
+ 05:55:25 +0000
+From: "Rout, ChandanX" <chandanx.rout@intel.com>
+To: "Zaremba, Larysa" <larysa.zaremba@intel.com>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"Keller, Jacob E" <jacob.e.keller@intel.com>
+CC: "Fijalkowski, Maciej" <maciej.fijalkowski@intel.com>, "Jesper Dangaard
+ Brouer" <hawk@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Kitszel,
+ Przemyslaw" <przemyslaw.kitszel@intel.com>, John Fastabend
+	<john.fastabend@gmail.com>, Alexei Starovoitov <ast@kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jakub Kicinski
+	<kuba@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Magnus Karlsson <magnus.karlsson@gmail.com>, "Bagnucki,
+ Igor" <igor.bagnucki@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Kuruvinakunnel, George"
+	<george.kuruvinakunnel@intel.com>, "Pandey, Atul" <atul.pandey@intel.com>,
+	"Nagraj, Shravan" <shravan.nagraj@intel.com>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-net 2/3] ice: add flag to
+ distinguish reset from .ndo_bpf in XDP rings config
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-net 2/3] ice: add flag to
+ distinguish reset from .ndo_bpf in XDP rings config
+Thread-Index: AQHapuJXNPjM2NT7gkKDMqhdOCS6ybGvXd1Q
+Date: Thu, 30 May 2024 05:55:25 +0000
+Message-ID: <CH3PR11MB8313799A179A9AD7037D5BFCEAF32@CH3PR11MB8313.namprd11.prod.outlook.com>
+References: <20240515160246.5181-1-larysa.zaremba@intel.com>
+ <20240515160246.5181-3-larysa.zaremba@intel.com>
+In-Reply-To: <20240515160246.5181-3-larysa.zaremba@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR11MB8313:EE_|CH3PR11MB7204:EE_
+x-ms-office365-filtering-correlation-id: ab26c806-ff07-47df-48d8-08dc806d19fd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007|38070700009;
+x-microsoft-antispam-message-info: =?us-ascii?Q?6RvFG7pPHeSol1HFypSJln4oCOpMxfYJ0rd+UQiUOxK5h1Jx5sSusoXhsv+n?=
+ =?us-ascii?Q?ZdLrQGVr8VbWsfTvdMapYDpUtCwrh4XkVC1APEdsqejgaoZ1zHwBAOFD5j+q?=
+ =?us-ascii?Q?9Vm7dLv2mc7tvsHo48T58dT/G5N7GMly3qkNUurkI18qrh3P/grXfnQDAtgu?=
+ =?us-ascii?Q?XPye7Ljt4x2aIt3sYtD6aDi6eYWYu9JKnukhRMtkbu990mM3DCMM3EQE/Yp4?=
+ =?us-ascii?Q?eeEHIC1V9f7OY82wPUUNgAFlFdbxCQpKHQMLyQ7agzfL8IuPfup5dYGiI/V9?=
+ =?us-ascii?Q?LwR2gJDqSprDYlY79DkSDhHMysqIQs9Re3Vh/MKhRPzsCXbop+7uZrvwfVV0?=
+ =?us-ascii?Q?xXxBPErb8UJmK9vrY/WoVQ9ltS5Jvyl66o4pzVcjVhiu6wsrIKokUm5Iq4KF?=
+ =?us-ascii?Q?MlPYLD3UEvIWKAHUdW/01Npk0SYhRil6kgsJrum7XZ0rpXfYF+nSCIqt9wNT?=
+ =?us-ascii?Q?MhXAmbRMfLlTxtRJNypsbPes9Ov7Pj3hZMbWG0H17dXagPRRMJ4i1rRm7/rf?=
+ =?us-ascii?Q?2uYSQpY2Xj91qRefxSNGWDLDJZU/z8EacCyx68DuJ+ubJzbERj87dDL8lFgo?=
+ =?us-ascii?Q?COJnPa+xxI2Bk1ODymXO5jJNiAlXF0jbHb8Gnonr5K7/3vNKI7xJi6tK5tEZ?=
+ =?us-ascii?Q?UKIF0QmqRsidvgZvNgAGSa+i7h7odTTPxyw95meR0ra3w/lXfgVK6D6Eahgj?=
+ =?us-ascii?Q?fQQbG7ogVwcS6g9MIVZ+nHBjUmSfhdRrnbjCgb04bQRzYnhQg35CyxHiM3yk?=
+ =?us-ascii?Q?bHidwpUtREgKaTIe94W8N7/5scGhwu8o+9MhP+UNqDCkDauhN/dKEdFfHjZG?=
+ =?us-ascii?Q?1avXJzlMmN+KOk5kgeO2Vh/1goliQ/kcaRG1BqhZnOtuS39Tp/Qb5qq6VCDk?=
+ =?us-ascii?Q?fdFvA4eXKIFVYHUZ6YpfzdDBqSt8wZdSAR2oQy2AiMiB0DMDNJuaGWL78aA5?=
+ =?us-ascii?Q?cqs3k+JeIjKtFupXiFlwew5TCuVYyYwCjzZ1kXBZyhmzRKLPTX1SDt72M5gR?=
+ =?us-ascii?Q?iBqTqP6anOs/GQOiuPqFSBIprWkpTT4mw8eP2N/m7p+d1RzJ+RVbkKhcKhUB?=
+ =?us-ascii?Q?UVumkLzCmmucDA/lpT76dyp3q3xS94M0aS+Q/6RmvqG5Mn2gTU3eHR3S4w/R?=
+ =?us-ascii?Q?4GJZuSlXTo+ZUn7JjQgJLvV5r2tH7rRZiul6My0sLpOUwYBw42duE5wkATCo?=
+ =?us-ascii?Q?20eCfxTh5jFB9+a//Cnt+tB8Ogqc94fnt49WLTqDFdPW7v3ec85S6YluK9bS?=
+ =?us-ascii?Q?wDugg6QWjkb0aU/71N56qHrW1EfL60rpZXHI4Bn9DriyPSUxHSsquIfTyWd0?=
+ =?us-ascii?Q?ATgjynIH0daO4ARZOYoM6fbsiKMZ3az6Vba08QvRPZru/A=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8313.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?B9tgF4wLfiYrpAuFnSqOfeNmxFpuoEkF+lbVcusDiVENaFPrdMKCCSvTtk1D?=
+ =?us-ascii?Q?nlaYAjHLClALCIEw3eT4w4cKjXzkQ1wzxrkl0VgybD8L8BrZYowKGUcq7sFz?=
+ =?us-ascii?Q?5TrkiS3EkKo8xy4g84e5pGphFKEYfdOh2dbc2G7nUIMNJAbMHJxg/4BxDumC?=
+ =?us-ascii?Q?3RpGA5L9TU7SI9mAjGTirfGOVafLsewVA8EBVWBCSrB9DCusD7EjuS0LGUpM?=
+ =?us-ascii?Q?K2cWmNCXUiAVU86nb77u/G5mH1v56om2BAciYmeoQ1R5Jzsj45Bp2P8zRwNt?=
+ =?us-ascii?Q?ILaM8u1FHeFjSEQNPciMKfokh+llHDYKUo+nMr7S9zGDptecOUruA5KQL9HT?=
+ =?us-ascii?Q?x+ckZy5/23UMApwrvPJlBDAhUDOxvC9PkpHViD1THQU2IzH30GqYzvVxjRw0?=
+ =?us-ascii?Q?0M1IYB4XSYDkDwbs1t6CZi9js6x/DZ53Wug/QtPMsRcpRR7ioHQZ68RJN0Q1?=
+ =?us-ascii?Q?Cxf05JlhFT8mxA1ViBsL9raGEBA16U0WqR02yqYYTbxxz8guyTla1SToC+G/?=
+ =?us-ascii?Q?V6QqO/Xvw+tU6oV0ODLq9fOnhMvoUbFqpd2FX1DDq/4HHPNKX0yGoOW3HA6e?=
+ =?us-ascii?Q?FJ0T9MXcfcM1Vtrg8b496HiIZanx6mRa5mx2TfKkXkoob1nB5nqecXl521+e?=
+ =?us-ascii?Q?H0QXyM0o3Xco1DN6UGKPdVvuV4XO96tTLGRTj5QPhh57sYGIIaiopJ9xSbpo?=
+ =?us-ascii?Q?8lBLqwY2IC7xrsjT/W2gPaUIeCv9DX3wg+E6B+uo5Epo3OIddrX4irYGDEV5?=
+ =?us-ascii?Q?95Ab+WI2+xwhrTGmIbhuM/GQeUTzuau1ZT7yjsappxeYCHqFEXVByvBUBNG3?=
+ =?us-ascii?Q?4EpN7dJWn70wjuHyOSL1075AvO0G3ndH6KsUGpwbR35tLnEC3/JGbGn/OMjg?=
+ =?us-ascii?Q?4m6URzwDv/Vw9drbYXG14+NsV5tPnVnYf9unE42jjtK9GNXeFdXLCt3ZjWJ5?=
+ =?us-ascii?Q?nXa+zYPQ7Hg2zw3V5z5j4ZLGl6Umakao3zqDS/GvILwSpUX/ueUjr7VWI5KO?=
+ =?us-ascii?Q?oj9EzrTDUIVq+9LI23oSPhMxsVSQCDJn8sOvNbdmw6tQ03EDD2GndvEQZhAa?=
+ =?us-ascii?Q?IOfPcJkF6EhKeKNZyvOmy0+6wY4YnYyP0QqGPZjx5TWOu4eq94arpPTYARnp?=
+ =?us-ascii?Q?rDBLA+W1XyA3gVHBUTHfXxmw/ga3/HE3duc8hIujZm8JENETLc3KpnMw3UZy?=
+ =?us-ascii?Q?obdJTdLKFzoBxuzaHyiIO/tjH7TXixB+4Vb3w0617sgW6BolBuF+MSCroFtU?=
+ =?us-ascii?Q?E9z8K5SeVA9pU0mugw9hwSABujT3LznmZCa+4Y+mmSCGCWloKK0o9YxkfaVW?=
+ =?us-ascii?Q?F9EnpoTcUNmAS18PNQ6ECkgAimqSkk3IpIbhG4sMGGNObqUo0sn0539MskUh?=
+ =?us-ascii?Q?J8B/4jY6XnjXa7qWBXEivg5EEP0LVeQrl24l+Cl04IDQucQSr7zF26yFfb/v?=
+ =?us-ascii?Q?fU1AdOpDofheQjbv3PS6Zhu8lVf5xG8Eqla3Of66uB4KIMzfUasEWhOXRkwZ?=
+ =?us-ascii?Q?NP45Iz5HX9QAYujAnc6xF4qEsNGSvYb7NkPJeFa06xE3D0jQRUmw4Vm0UiNc?=
+ =?us-ascii?Q?yjb47mzJtaCo4bphJMYSRQXSUhHs2Zevhieq1gm7?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 30 May 2024 08:53:52 +0300
-Message-Id: <D1MQVCEITGPS.2HU8JUF2MAYQ7@kernel.org>
-Cc: <linux-doc@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <fsverity@lists.linux.dev>,
- <linux-block@vger.kernel.org>, <dm-devel@lists.linux.dev>,
- <audit@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Deven Bowers"
- <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 13/20] ipe: add support for dm-verity as a trust
- provider
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Fan Wu" <wufan@linux.microsoft.com>, "Paul Moore"
- <paul@paul-moore.com>, <corbet@lwn.net>, <zohar@linux.ibm.com>,
- <jmorris@namei.org>, <serge@hallyn.com>, <tytso@mit.edu>,
- <ebiggers@kernel.org>, <axboe@kernel.dk>, <agk@redhat.com>,
- <snitzer@kernel.org>, <mpatocka@redhat.com>, <eparis@redhat.com>
-X-Mailer: aerc 0.17.0
-References: <1716583609-21790-14-git-send-email-wufan@linux.microsoft.com>
- <2ecde610ca3f0cabcbb111e3432f2dd5@paul-moore.com>
- <67da2ff3-e0c4-4552-93dd-cf9cb04d0d78@linux.microsoft.com>
-In-Reply-To: <67da2ff3-e0c4-4552-93dd-cf9cb04d0d78@linux.microsoft.com>
-
-On Thu May 30, 2024 at 6:58 AM EEST, Fan Wu wrote:
->
->
-> On 5/29/2024 6:44 PM, Paul Moore wrote:
-> > On May 24, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
-> >>
-> >> Allows author of IPE policy to indicate trust for a singular dm-verity
-> >> volume, identified by roothash, through "dmverity_roothash" and all
-> >> signed and validated dm-verity volumes, through "dmverity_signature".
-> >>
-> >> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> >> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> >> ---
-> >> v2:
-> >>    + No Changes
-> >>
-> >> v3:
-> >>    + No changes
-> >>
-> >> v4:
-> >>    + No changes
-> >>
-> >> v5:
-> >>    + No changes
-> >>
-> >> v6:
-> >>    + Fix an improper cleanup that can result in
-> >>      a leak
-> >>
-> >> v7:
-> >>    + Squash patch 08/12, 10/12 to [11/16]
-> >>
-> >> v8:
-> >>    + Undo squash of 08/12, 10/12 - separating drivers/md/ from securit=
-y/
-> >>      & block/
-> >>    + Use common-audit function for dmverity_signature.
-> >>    + Change implementation for storing the dm-verity digest to use the
-> >>      newly introduced dm_verity_digest structure introduced in patch
-> >>      14/20.
-> >>
-> >> v9:
-> >>    + Adapt to the new parser
-> >>
-> >> v10:
-> >>    + Select the Kconfig when all dependencies are enabled
-> >>
-> >> v11:
-> >>    + No changes
-> >>
-> >> v12:
-> >>    + Refactor to use struct digest_info* instead of void*
-> >>    + Correct audit format
-> >>
-> >> v13:
-> >>    + Remove the CONFIG_IPE_PROP_DM_VERITY dependency inside the parser
-> >>      to make the policy grammar independent of the kernel config.
-> >>
-> >> v14:
-> >>    + No changes
-> >>
-> >> v15:
-> >>    + Fix one grammar issue in KCONFIG
-> >>    + Switch to use security_bdev_setintegrity() hook
-> >>
-> >> v16:
-> >>    + Refactor for enum integrity type
-> >>
-> >> v17:
-> >>    + Add years to license header
-> >>    + Fix code and documentation style issues
-> >>    + Return -EINVAL in ipe_bdev_setintegrity when passed type is not
-> >>      supported
-> >>    + Use new enum name LSM_INT_DMVERITY_SIG_VALID
-> >>
-> >> v18:
-> >>    + Add Kconfig IPE_PROP_DM_VERITY_SIGNATURE and make both DM_VERITY
-> >>      config auto-selected
-> >>
-> >> v19:
-> >>    + No changes
-> >> ---
-> >>   security/ipe/Kconfig         |  27 ++++++++
-> >>   security/ipe/Makefile        |   1 +
-> >>   security/ipe/audit.c         |  29 ++++++++-
-> >>   security/ipe/digest.c        | 118 +++++++++++++++++++++++++++++++++=
-++
-> >>   security/ipe/digest.h        |  26 ++++++++
-> >>   security/ipe/eval.c          |  93 ++++++++++++++++++++++++++-
-> >>   security/ipe/eval.h          |  12 ++++
-> >>   security/ipe/hooks.c         |  93 +++++++++++++++++++++++++++
-> >>   security/ipe/hooks.h         |   8 +++
-> >>   security/ipe/ipe.c           |  15 +++++
-> >>   security/ipe/ipe.h           |   4 ++
-> >>   security/ipe/policy.h        |   3 +
-> >>   security/ipe/policy_parser.c |  24 ++++++-
-> >>   13 files changed, 449 insertions(+), 4 deletions(-)
-> >>   create mode 100644 security/ipe/digest.c
-> >>   create mode 100644 security/ipe/digest.h
-> >=20
-> > ...
-> >=20
-> >> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-> >> index b68719bf44fb..51f1e63c295c 100644
-> >> --- a/security/ipe/hooks.c
-> >> +++ b/security/ipe/hooks.c
-> >> @@ -191,3 +193,94 @@ void ipe_unpack_initramfs(void)
-> >>   {
-> >>   	ipe_sb(current->fs->root.mnt->mnt_sb)->initramfs =3D true;
-> >>   }
-> >> +
-> >> +#ifdef CONFIG_IPE_PROP_DM_VERITY
-> >> +/**
-> >> + * ipe_bdev_free_security() - Free IPE's LSM blob of block_devices.
-> >> + * @bdev: Supplies a pointer to a block_device that contains the stru=
-cture
-> >> + *	  to free.
-> >> + */
-> >> +void ipe_bdev_free_security(struct block_device *bdev)
-> >> +{
-> >> +	struct ipe_bdev *blob =3D ipe_bdev(bdev);
-> >> +
-> >> +	ipe_digest_free(blob->root_hash);
-> >> +}
-> >> +
-> >> +#ifdef CONFIG_IPE_PROP_DM_VERITY_SIGNATURE
-> >> +static void ipe_set_dmverity_signature(struct ipe_bdev *blob,
-> >> +				       const void *value,
-> >> +				       size_t size)
-> >> +{
-> >> +	blob->dm_verity_signed =3D size > 0 && value;
-> >> +}
-> >> +#else
-> >> +static inline void ipe_set_dmverity_signature(struct ipe_bdev *blob,
-> >> +					      const void *value,
-> >> +					      size_t size)
-> >> +{
-> >> +}
-> >> +#endif /* CONFIG_IPE_PROP_DM_VERITY_SIGNATURE */
-> >> +
-> >> +/**
-> >> + * ipe_bdev_setintegrity() - Save integrity data from a bdev to IPE's=
- LSM blob.
-> >> + * @bdev: Supplies a pointer to a block_device that contains the LSM =
-blob.
-> >> + * @type: Supplies the integrity type.
-> >> + * @value: Supplies the value to store.
-> >> + * @size: The size of @value.
-> >> + *
-> >> + * This hook is currently used to save dm-verity's root hash or the e=
-xistence
-> >> + * of a validated signed dm-verity root hash into LSM blob.
-> >> + *
-> >> + * Return: %0 on success. If an error occurs, the function will retur=
-n the
-> >> + * -errno.
-> >> + */
-> >> +int ipe_bdev_setintegrity(struct block_device *bdev, enum lsm_integri=
-ty_type type,
-> >> +			  const void *value, size_t size)
-> >> +{
-> >> +	const struct dm_verity_digest *digest =3D NULL;
-> >> +	struct ipe_bdev *blob =3D ipe_bdev(bdev);
-> >> +	struct digest_info *info =3D NULL;
-> >> +
-> >> +	if (type =3D=3D LSM_INT_DMVERITY_ROOTHASH) {
-> >> +		if (!value) {
-> >> +			ipe_digest_free(blob->root_hash);
-> >> +			blob->root_hash =3D NULL;
-> >> +
-> >> +			return 0;
-> >> +		}
-> >> +		digest =3D value;
-> >> +
-> >> +		info =3D kzalloc(sizeof(*info), GFP_KERNEL);
-> >> +		if (!info)
-> >> +			return -ENOMEM;
-> >> +
-> >> +		info->digest =3D kmemdup(digest->digest, digest->digest_len,
-> >> +				       GFP_KERNEL);
-> >> +		if (!info->digest)
-> >> +			goto dmv_roothash_err;
-> >> +
-> >> +		info->alg =3D kstrdup(digest->alg, GFP_KERNEL);
-> >> +		if (!info->alg)
-> >> +			goto dmv_roothash_err;
-> >> +
-> >> +		info->digest_len =3D digest->digest_len;
-> >> +
-> >> +		if (blob->root_hash)
-> >> +			ipe_digest_free(blob->root_hash);
-> >=20
-> > The above if/free looks like a new addition from v18 and I'm not quite
-> > sure why the `blob->root_hash` NULL check is necessary as
-> > ipe_digest_free() does a IS_ERR_OR_NULL() check right at the top.
-> >=20
-> > Likely harmless and doubtful to have any noticable performance impact,
-> > but I wanted to mention it just in case ...
-> >=20
->
-> Yes directly call ipe_digest_free() should be enough.
->
-> Also this new free is introduced because the mapped device with an=20
-> existing dm-verity target can be suspended and associated with a new=20
-> dm-verity target. In this case, the root hash associated with the=20
-> security blob will be stale and needs to be freed before setting the new=
-=20
-> data.
->
-> -Fan
->
-> >> +		blob->root_hash =3D info;
-> >> +
-> >> +		return 0;
-> >> +dmv_roothash_err:
-
-Just a nitpick but 9/10 'err' is a prefix...
-
-Also now this patch set uses 'err'' ambiguously given the use
-as name of the variable to store a return code. Similar naming
-pattern would do miracles.
-
-> >> +		ipe_digest_free(info);
-> >> +
-> >> +		return -ENOMEM;
-> >> +	} else if (type =3D=3D LSM_INT_DMVERITY_SIG_VALID) {
-> >> +		ipe_set_dmverity_signature(blob, value, size);
-> >> +
-> >> +		return 0;
-> >> +	}
-> >> +
-> >> +	return -EINVAL;
-> >> +}
-> >> +#endif /* CONFIG_IPE_PROP_DM_VERITY */
-> >=20
-> > --
-> > paul-moore.com
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8313.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab26c806-ff07-47df-48d8-08dc806d19fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2024 05:55:25.5027
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EhuWnfCBAGejk1uaD8v8NWKVP5kC4WSpySpCblePK+706LCof63j7jEPcK2Wu8KdGhDeZoHW6yZWLc+HXNBiDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7204
+X-OriginatorOrg: intel.com
 
 
-BR, Jarkko
+
+>-----Original Message-----
+>From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+>Zaremba, Larysa
+>Sent: Wednesday, May 15, 2024 9:32 PM
+>To: intel-wired-lan@lists.osuosl.org; Keller, Jacob E <jacob.e.keller@inte=
+l.com>
+>Cc: Fijalkowski, Maciej <maciej.fijalkowski@intel.com>; Jesper Dangaard Br=
+ouer
+><hawk@kernel.org>; Daniel Borkmann <daniel@iogearbox.net>; Zaremba,
+>Larysa <larysa.zaremba@intel.com>; Kitszel, Przemyslaw
+><przemyslaw.kitszel@intel.com>; John Fastabend
+><john.fastabend@gmail.com>; Alexei Starovoitov <ast@kernel.org>; David S.
+>Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
+>netdev@vger.kernel.org; Jakub Kicinski <kuba@kernel.org>;
+>bpf@vger.kernel.org; Paolo Abeni <pabeni@redhat.com>; Magnus Karlsson
+><magnus.karlsson@gmail.com>; Bagnucki, Igor <igor.bagnucki@intel.com>;
+>linux-kernel@vger.kernel.org
+>Subject: [Intel-wired-lan] [PATCH iwl-net 2/3] ice: add flag to distinguis=
+h reset
+>from .ndo_bpf in XDP rings config
+>
+>Commit 6624e780a577 ("ice: split ice_vsi_setup into smaller functions") ha=
+s
+>placed ice_vsi_free_q_vectors() after ice_destroy_xdp_rings() in the rebui=
+ld
+>process. The behaviour of the XDP rings config functions is context-depend=
+ent,
+>so the change of order has led to
+>ice_destroy_xdp_rings() doing additional work and removing XDP prog, when =
+it
+>was supposed to be preserved.
+>
+>Also, dependency on the PF state reset flags creates an additional, fortun=
+ately
+>less common problem:
+>
+>* PFR is requested e.g. by tx_timeout handler
+>* .ndo_bpf() is asked to delete the program, calls ice_destroy_xdp_rings()=
+,
+>  but reset flag is set, so rings are destroyed without deleting the
+>  program
+>* ice_vsi_rebuild tries to delete non-existent XDP rings, because the
+>  program is still on the VSI
+>* system crashes
+>
+>With a similar race, when requested to attach a program,
+>ice_prepare_xdp_rings() can actually skip setting the program in the VSI a=
+nd
+>nevertheless report success.
+>
+>Instead of reverting to the old order of function calls, add an enum argum=
+ent
+>to both ice_prepare_xdp_rings() and ice_destroy_xdp_rings() in order to
+>distinguish between calls from rebuild and .ndo_bpf().
+>
+>Fixes: efc2214b6047 ("ice: Add support for XDP")
+>Reviewed-by: Igor Bagnucki <igor.bagnucki@intel.com>
+>Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+>---
+> drivers/net/ethernet/intel/ice/ice.h      | 11 +++++++++--
+> drivers/net/ethernet/intel/ice/ice_lib.c  |  5 +++--
+>drivers/net/ethernet/intel/ice/ice_main.c | 22 ++++++++++++----------
+> 3 files changed, 24 insertions(+), 14 deletions(-)
+>
+
+Tested-by: Chandan Kumar Rout <chandanx.rout@intel.com> (A Contingent Worke=
+r at Intel)
+
 
