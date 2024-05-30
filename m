@@ -1,185 +1,179 @@
-Return-Path: <linux-kernel+bounces-195840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0871C8D529F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:49:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECBEC8D52A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D441C24097
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7848A1F23FD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E785142913;
-	Thu, 30 May 2024 19:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAEA6A016;
+	Thu, 30 May 2024 19:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bmvq8Sgg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Kz9G4chk"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D08433CA;
-	Thu, 30 May 2024 19:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414574D8A0
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 19:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717098578; cv=none; b=nCEt6q0U6ZltiTpKIBiCtEFfVc+nx/EF8R/X7cZm+Akntdd6LQYAyjmGZ+OX63tY5I1r/q3YXZ8PeGyeMgHxr5XtKcSFkwzsSXusy93V0xmwAfhjsYzppzupH14yjW4IiWNIJbUTo4uBUiyDrgRYn8AEvaPozI/WZpl+7+LVnVU=
+	t=1717098618; cv=none; b=jakSo/CQeUAR0dA+sodjQxyuJz24OO6QvLwjYyZQelqEWSi5E0MZltME8LGDqtKWr2W1p1uUB03xaHID+Cwd/gu2O3XQSL2ut0LEo66h/EYHq/1PMmt/l+gvyUSuzdpTMddyLzSQ+sBeiPETAEpXjnffJ12mhCTxlX/wKIFm89M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717098578; c=relaxed/simple;
-	bh=dw6PHAUiKNZynTrJW/bQdeGSnY0/fN0GNkW1qwkTAPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHbvm/EpsXN9yzpFgHEYzhIk7KoALQZUx63UzDhHW6F/qU+oJHkHcdj7cgr8dwjOeKLwDK/HLJqN2Uueb4pQG3J3nv9JF55vHUSBtdldSDx8fyGpRMcigLPOEiBAco1i7LRTPR4m0OZZToqDHIUOiEdt/HGocfgveT+UY0+dgOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bmvq8Sgg; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717098577; x=1748634577;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dw6PHAUiKNZynTrJW/bQdeGSnY0/fN0GNkW1qwkTAPU=;
-  b=Bmvq8SggsjX22zAb3RqmjnhQb9dMwMfchVW6dT7tKiGNfY+Ja45zrJXB
-   5G7vZKJg74LlGrMIZyBHJnfa5wrn76b1DRzEY+EFHiuMEsCDSnsdMj0L7
-   cywmyWLWTlFkQDz7arHu1u6fb7d6HT6pKQ0L+d1Cim2BuR4dpA02CGn/V
-   hSuIivsJhf22bAbgNNJNgHyt5sEDRC74GFhbB99hhOnt2HgulDLxAZUVA
-   QlUyAZ8pWwyjr51WEMi598Eui9GdgmS4mlnkYUQ6KG6VTFCgxlgvhT7Ch
-   i2XIDNu0b2A28xLwCu47g58ZJd2d+P7DeVF8GMmYUDFeocF/lCP04fKJE
-   w==;
-X-CSE-ConnectionGUID: 9bvpDVfUSrWh3YIxR128cQ==
-X-CSE-MsgGUID: HkkLzIBtRdWMzhJTFWtyvA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31107727"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="31107727"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:49:36 -0700
-X-CSE-ConnectionGUID: Jh/LxzXKTK+r0DCwXZWcWQ==
-X-CSE-MsgGUID: FP8yERaSS/2g2CbiwJf7JA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="35850528"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 30 May 2024 12:49:33 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sClmE-000FuR-2y;
-	Thu, 30 May 2024 19:49:30 +0000
-Date: Fri, 31 May 2024 03:48:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Subbaraya Sundeep <sbhatta@marvell.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Subbaraya Sundeep <sbhatta@marvell.com>,
-	Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [net-next PATCH] octeontx2: Improve mailbox tracepoints for
- debugging
-Message-ID: <202405310351.9HtVnVJ5-lkp@intel.com>
-References: <1717070038-18381-1-git-send-email-sbhatta@marvell.com>
+	s=arc-20240116; t=1717098618; c=relaxed/simple;
+	bh=bhuSS6mmp7DUP0HCSY8qYZEvft2ONd9WcIq8daKw6BE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CMxEOCtP5cohFyy6zW1SWAyouW5lbkQ7iUd3eSJzI1hQLMRQhvkuLasRe/6n8yQZBzOjr40x/XcsDdmarS0918zWQoTym2lO35os6h/h0BRaDuq2eojpEmbP7BmKw2BFoaXXwcNPaRlsU1XSwpbM/7efokUI8fRXRcY4ouFkxIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kz9G4chk; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a63036f2daaso137413066b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717098614; x=1717703414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c6wRNe3Cnz+DyCo7wP/3ZRDce4Mvllz18ZChzx9cU4c=;
+        b=Kz9G4chkhIPuUv7ZVgmxWx3xceEa0EA7nxJn/0WAzAzaaGg0bP16hiqykOo5dBC8uv
+         Rn3c6/jgV+pOP/so42aJOAT/A9DwivofAGO7Kn/Tlk5KdaXcxmL0u1RgrgJLnRVYN6Kq
+         MuhhB7O5lkr5tIw+BRIgT2WTJwV2wAhXonYuoYup393oaabV4rS660ULTYn1hTw4yif4
+         TJvqHs92Whx9KwJtOSA9OOjfFzkqy+dK1FlF4fKBIhQmUMXNavO/R/odyStQUCaL4TiY
+         NOw5sitDMpfuCiFMKE7Gbq/V7ugj+e+bsvJhLeUr/B8tE1vL8Mik5YrIJlxRww7tNDDN
+         vITg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717098614; x=1717703414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c6wRNe3Cnz+DyCo7wP/3ZRDce4Mvllz18ZChzx9cU4c=;
+        b=YBvwJbxn58XuGX3JCYnqDoQZfHDDickggMBFg+IhIg1U6AkFgpVoV8sm9oSD+OEU0u
+         tInHz7LJsmBhw5QS2td+XoX2pO06vUuYGLFOSWRRuGz8WG4O+4f8eEgso1Fu3y850BaV
+         3HcKWUhE2wi0om+aHdrQ9G5L2alZMGvtafKQoY++widvZdEyEG0Neb/IpNOMKed9D5Lp
+         vCmbusOUSPMQ7dCKyVGYD1Xm1nlG6xTrpKbp0HplMK+WwnSIdZ/3twXpfAkoqo8dWZEV
+         Y0vlFsqGZc7I4TFhNJBiTtl/DxvrKaYiH/vqQTBxI0zY8fWPXA84yObqY9nIhbhKY3Qg
+         b6qA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9ZCAKj8jTiuybrQJLMXHIC6ODVyrE3N1Ma7Ii5/s3pAmFLcmhb2Na/MaPdjNAi4vjSyLe6885/As2dZYS2sB+DW7dqNWuOmS6h1jt
+X-Gm-Message-State: AOJu0YykVcIytgBpU18FnHW+apwPtw4wwpoqdD8RSZen9bn9YpsvZMGR
+	Y5mq4spK6oLE/xvyzkIbunrQgGW/9tokPA3wwurSUFEvKv2lJfG/DQbOWjQb4b2rmEsTkJXsiqm
+	FdRkJvqzqw15eKgBOE5Slkv1AIEyTyqRDAWYh
+X-Google-Smtp-Source: AGHT+IF1c1eWKrOm8daSYlxTJweKPmwyeDE632pzkKk1rxsIUu5gUd8ChEDGZNeFvJNrqUFCwlz77fCk9SnWFf3XsQs=
+X-Received: by 2002:a17:906:3b98:b0:a67:6bdb:10bf with SMTP id
+ a640c23a62f3a-a676bdb1519mr60256266b.16.1717098613679; Thu, 30 May 2024
+ 12:50:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1717070038-18381-1-git-send-email-sbhatta@marvell.com>
+References: <20240530102126.357438-1-usamaarif642@gmail.com>
+ <20240530102126.357438-2-usamaarif642@gmail.com> <20240530122715.GB1222079@cmpxchg.org>
+ <CAJD7tkYcTV_GOZV3qR6uxgFEvYXw1rP-h7WQjDnsdwM=g9cpAw@mail.gmail.com> <CAKEwX=NX-4dbietxy-25F-OotuGGL0F9h+hwV76b9Ap5nSy9uw@mail.gmail.com>
+In-Reply-To: <CAKEwX=NX-4dbietxy-25F-OotuGGL0F9h+hwV76b9Ap5nSy9uw@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 30 May 2024 12:49:35 -0700
+Message-ID: <CAJD7tkYDjmMLnH_2sQuuMLE0FE5YqZEppNsprCnm5RdaSkGEBQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Usama Arif <usamaarif642@gmail.com>, 
+	akpm@linux-foundation.org, chengming.zhou@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	Hugh Dickins <hughd@google.com>, Huang Ying <ying.huang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Subbaraya,
+On Thu, May 30, 2024 at 12:18=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrot=
+e:
+>
+> On Thu, May 30, 2024 at 9:24=E2=80=AFAM Yosry Ahmed <yosryahmed@google.co=
+m> wrote:
+> >
+> > On Thu, May 30, 2024 at 5:27=E2=80=AFAM Johannes Weiner <hannes@cmpxchg=
+org> wrote:
+> > >
+> > > On Thu, May 30, 2024 at 11:19:07AM +0100, Usama Arif wrote:
+> > > > Approximately 10-20% of pages to be swapped out are zero pages [1].
+> > > > Rather than reading/writing these pages to flash resulting
+> > > > in increased I/O and flash wear, a bitmap can be used to mark these
+> > > > pages as zero at write time, and the pages can be filled at
+> > > > read time if the bit corresponding to the page is set.
+> > > > With this patch, NVMe writes in Meta server fleet decreased
+> > > > by almost 10% with conventional swap setup (zswap disabled).
+> > > >
+> > > > [1]https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258d=
+e3d03d1344dde9fce0@epcms5p1/
+> > > >
+> > > > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> > >
+> > > This is awesome.
+> > >
+> > > > ---
+> > > >  include/linux/swap.h |  1 +
+> > > >  mm/page_io.c         | 86 ++++++++++++++++++++++++++++++++++++++++=
+++--
+> > > >  mm/swapfile.c        | 10 ++++++
+> > > >  3 files changed, 95 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/swap.h b/include/linux/swap.h
+> > > > index a11c75e897ec..e88563978441 100644
+> > > > --- a/include/linux/swap.h
+> > > > +++ b/include/linux/swap.h
+> > > > @@ -299,6 +299,7 @@ struct swap_info_struct {
+> > > >       signed char     type;           /* strange name for an index =
+*/
+> > > >       unsigned int    max;            /* extent of the swap_map */
+> > > >       unsigned char *swap_map;        /* vmalloc'ed array of usage =
+counts */
+> > > > +     unsigned long *zeromap;         /* vmalloc'ed bitmap to track=
+ zero pages */
+> > >
+> > > One bit per swap slot, so 1 / (4096 * 8) =3D 0.003% static memory
+> > > overhead for configured swap space. That seems reasonable for what
+> > > appears to be a fairly universal 10% reduction in swap IO.
+> > >
+> > > An alternative implementation would be to reserve a bit in
+> > > swap_map. This would be no overhead at idle, but would force
+> > > continuation counts earlier on heavily shared page tables, and AFAICS
+> > > would get complicated in terms of locking, whereas this one is pretty
+> > > simple (atomic ops protect the map, swapcache lock protects the bit).
+> > >
+> > > So I prefer this version. But a few comments below:
+> >
+> > I am wondering if it's even possible to take this one step further and
+> > avoid reclaiming zero-filled pages in the first place. Can we just
+> > unmap them and let the first read fault allocate a zero'd page like
+> > uninitialized memory, or point them at the zero page and make them
+> > read-only, or something? Then we could free them directly without
+> > going into the swap code to begin with.
+> >
+> > That's how I thought about it initially when I attempted to support
+> > only zero-filled pages in zswap. It could be a more complex
+> > implementation though.
+>
+> We can aim for this eventually, but yeah the implementation will be
+> more complex. We'll need to be careful in handling shared zero pages,
+> synchronizing accesses and maintaining reference counts. I think we
+> will need to special-case swap cache and swap map for these zero pages
+> (a ghost zero swap device perhaps), or reinvent the wheel to manage
+> these pieces of information.
 
-kernel test robot noticed the following build errors:
+Isn't there an existing mechanism to have read-only mappings pointing
+at the shared zero page, and do COW? Can't we just use that?
 
-[auto build test ERROR on net-next/main]
+I think this is already what we do for mapped areas that were never
+written in some cases (see do_anonymous_page()), so it would be just
+like that (i.e. as if the mappings were never written). Someone with
+more familiarity with this would know better though.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Subbaraya-Sundeep/octeontx2-Improve-mailbox-tracepoints-for-debugging/20240530-195537
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/1717070038-18381-1-git-send-email-sbhatta%40marvell.com
-patch subject: [net-next PATCH] octeontx2: Improve mailbox tracepoints for debugging
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240531/202405310351.9HtVnVJ5-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405310351.9HtVnVJ5-lkp@intel.com/reproduce)
+>
+> Not impossible, but annoying :) For now, I think Usama's approach is
+> clean enough and does the job.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405310351.9HtVnVJ5-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/net/ethernet/marvell/octeontx2/af/mbox.c: In function '__otx2_mbox_reset':
->> drivers/net/ethernet/marvell/octeontx2/af/mbox.c:23:29: warning: unused variable 'msg' [-Wunused-variable]
-      23 |         struct mbox_msghdr *msg;
-         |                             ^~~
-   drivers/net/ethernet/marvell/octeontx2/af/mbox.c: In function 'otx2_mbox_msg_send_data':
->> drivers/net/ethernet/marvell/octeontx2/af/mbox.c:254:9: error: 'msg' undeclared (first use in this function); did you mean 'ndmsg'?
-     254 |         msg = (struct mbox_msghdr *)(hw_mbase + mbox->tx_start + msgs_offset);
-         |         ^~~
-         |         ndmsg
-   drivers/net/ethernet/marvell/octeontx2/af/mbox.c:254:9: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +254 drivers/net/ethernet/marvell/octeontx2/af/mbox.c
-
-   216	
-   217	static void otx2_mbox_msg_send_data(struct otx2_mbox *mbox, int devid, u64 data)
-   218	{
-   219		struct otx2_mbox_dev *mdev = &mbox->dev[devid];
-   220		struct mbox_hdr *tx_hdr, *rx_hdr;
-   221		void *hw_mbase = mdev->hwbase;
-   222		u64 intr_val;
-   223	
-   224		tx_hdr = hw_mbase + mbox->tx_start;
-   225		rx_hdr = hw_mbase + mbox->rx_start;
-   226	
-   227		/* If bounce buffer is implemented copy mbox messages from
-   228		 * bounce buffer to hw mbox memory.
-   229		 */
-   230		if (mdev->mbase != hw_mbase)
-   231			memcpy(hw_mbase + mbox->tx_start + msgs_offset,
-   232			       mdev->mbase + mbox->tx_start + msgs_offset,
-   233			       mdev->msg_size);
-   234	
-   235		spin_lock(&mdev->mbox_lock);
-   236	
-   237		tx_hdr->msg_size = mdev->msg_size;
-   238	
-   239		/* Reset header for next messages */
-   240		mdev->msg_size = 0;
-   241		mdev->rsp_size = 0;
-   242		mdev->msgs_acked = 0;
-   243	
-   244		/* Sync mbox data into memory */
-   245		smp_wmb();
-   246	
-   247		/* num_msgs != 0 signals to the peer that the buffer has a number of
-   248		 * messages.  So this should be written after writing all the messages
-   249		 * to the shared memory.
-   250		 */
-   251		tx_hdr->num_msgs = mdev->num_msgs;
-   252		rx_hdr->num_msgs = 0;
-   253	
- > 254		msg = (struct mbox_msghdr *)(hw_mbase + mbox->tx_start + msgs_offset);
-   255	
-   256		trace_otx2_msg_send(mbox->pdev, tx_hdr->num_msgs, tx_hdr->msg_size,
-   257				    msg->id, msg->pcifunc);
-   258	
-   259		spin_unlock(&mdev->mbox_lock);
-   260	
-   261		/* Check if interrupt pending */
-   262		intr_val = readq((void __iomem *)mbox->reg_base +
-   263			     (mbox->trigger | (devid << mbox->tr_shift)));
-   264	
-   265		intr_val |= data;
-   266		/* The interrupt should be fired after num_msgs is written
-   267		 * to the shared memory
-   268		 */
-   269		writeq(intr_val, (void __iomem *)mbox->reg_base +
-   270		       (mbox->trigger | (devid << mbox->tr_shift)));
-   271	}
-   272	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yeah, I am not against Usama's approach at all. I just want us to
+consider both options before we commit to one. If they are close
+enough in complexity, it may be worth avoiding swap completely.
 
