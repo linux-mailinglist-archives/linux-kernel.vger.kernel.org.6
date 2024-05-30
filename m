@@ -1,208 +1,159 @@
-Return-Path: <linux-kernel+bounces-194841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F2B8D42D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:23:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E608D42DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBCAC1F22353
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:23:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DAC82821B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF8D134AC;
-	Thu, 30 May 2024 01:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E641A18E06;
+	Thu, 30 May 2024 01:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h8QLueQ9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q+mgIIVX"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4EE6AB8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717032222; cv=none; b=mFei1YXGgtDi8YkB8gTGBGRgtLXV5u8rD3H9luYkDNqqLErvJnK9TgkN4gCeY8PU0KIm6NB3WD8ECDS8wIOBzzUFpEyWVMOgtxYISZ//kq3rDY9rXtc3s89BQk+ET+EDIDMGQnCSrNCZ4Lhcu5aK9r70lX3QbGCoeRbPiBmlXcI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717032222; c=relaxed/simple;
-	bh=r17vl0EMybqA5Vhyrp1x//PXknNownAfBkAYntb8XAg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=BLNBbSuF1lBNyZmjT30zDZ+w/qaK1UoFCsphdC6zsxTUfWMuYxkBORJHYujT7KymiGzDQmRjvCGE6UiVq2WvXPkhEod37o3wppw/IJ1HKTokjz9kBs8OGGpwVp9zzC0KaZ7WYMAZ3i7pmuUnlbf0kkaRrgZjDoUI/ITjI6hKyps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h8QLueQ9; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717032220; x=1748568220;
-  h=date:from:to:cc:subject:message-id;
-  bh=r17vl0EMybqA5Vhyrp1x//PXknNownAfBkAYntb8XAg=;
-  b=h8QLueQ9RllBYOfFL/b6PliqCAxZTLebJDa7IMUf+6LIstGpVu3bRaFS
-   cRhlhOjui0CIMlFZvGE5vi8aXpdxzpt0XvlRQfnoES9XaqDttpw2vdleb
-   +juC3t9QWLUrrZmLjB/pSgPuSyXa0e5PPUIUVMFluiRuuDdKgduZUCrg2
-   1cpTUMQvIYSHHk3ZsHp+Etoq2oF4OU+ZiLBHOO6ap9Z5MnQ4s9I1Bdfvo
-   Fb7mdu/QggD7v53Kt8b3tfUFHLFLIkQrFBNRLn+lSyqcft1ohoG7egBzv
-   XO6QtUqA/hFAX79V35YXK4BuaTklvZa3g6dk1hefJfUFSQfRWAXUorIrz
-   Q==;
-X-CSE-ConnectionGUID: hAjy6cfgTn+nds1soufxaw==
-X-CSE-MsgGUID: uzgMeC96Sc6GOBGLqhRWgg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13601104"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13601104"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 18:23:39 -0700
-X-CSE-ConnectionGUID: Owoic4N1SqaPA/nzv7q6Tg==
-X-CSE-MsgGUID: V+6sHd/mQMm/k8bLQWd2Wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="36178062"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 29 May 2024 18:23:38 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCUW0-000EPJ-0f;
-	Thu, 30 May 2024 01:23:36 +0000
-Date: Thu, 30 May 2024 09:22:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 76357cc192acd78b85d4c3380d07f139d906dfe8
-Message-ID: <202405300949.cYmqqQsW-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987E414A8E;
+	Thu, 30 May 2024 01:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717032471; cv=fail; b=XcKnyE+GeEAHX1goiEs3EiMv3S794agDmpkp2Ux81R2NjsFOPhMgIK5FP74479NT8EEpvU269WbG2fv+xG2Y9iXUVn19gEfmhmXQFKhgEtS0sz2XzgnE0JYqA5M96LDwP8LAOBSbcwEFFr8ETRj02ZGZTYqPqGxxe0T1viRuMrk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717032471; c=relaxed/simple;
+	bh=MrBAOBJblcK8qcVCIzUqqRLaoZJZzQJQ5B2820quZPA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GWg79o3OoEE/uHiwHmR5DVmeC/0C+1oSsQhzNBoCcdJFFxgR7Ej4xI8LYDmdQSmR7pAXHt3yp7hrpjLIk73LSRgBR8m8YHN68nGmk4DdQs/Rtg+r2zpb1f7/G5Aaz6sfydzkwHFayxx/JHO33RfScpuJE4tt/6SU7rn0yb0CMv8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q+mgIIVX; arc=fail smtp.client-ip=40.107.93.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=f1G4pVEH1tCeWD1EDnELjzza532eeSal2jPOykZHwBnWz+u142Er5pjWpc/7CkZ5pDrmeI+6vV3IzM0YzMNzs/1HAqi/XXaXaKae9cvvCc4BgWn+BYuEoQrMSyLjsg3nXWR9H1GkfLoRO/P0Xg5JgZLtzp1w/oSC+TUeKC0Q78ohRh1/4vxPXZL04UJspbX6k2M1OsZ25DSKt0eIJOb/M9OZuwWQ/LbZdrV3Q+nK9NBV6+sPbJa60iUQmu04NS3RUGZ220I4uKiV0Qx1WAtR7EaWm6ks0+4GxW5GCIRDxWr/6orq6D/B7i/P9TXpkopTj0pjQAMcf7w5k1OznI/yzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SJRes6ayLFnrb6jczay6SLIKilHAW9pWfNSPG1wkZ+s=;
+ b=DmDSNs3NOcgLr03CTwLf6HAsWzpYAf8n8j8PJNEeDYtA+Ivo7kAU3+KUNgYDcosfLM9mNcmgsrrRLVauziriD0vscs9aCNoeffYat5HjicOq7t9bwzxJDj2vzTe6JchpoZghrlii+H26OMRd+YRMGeWEIDwFHGjgAZs3RSl2VasFU4AlESfHIxbbv+N9/vyvdIO2cjtoqHNvadOUDO4N/uDbI4YXBtfSo7l221obORCMX74X4im/ixMuOBR0WOdTID3DnJGP7tr//tcvh5mvfjnl07rAPYab3O9MgTrnT0kki/1d8HDTOuqmoaXsuLjnv7048ay3LcFnZ6SWfjsS7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SJRes6ayLFnrb6jczay6SLIKilHAW9pWfNSPG1wkZ+s=;
+ b=Q+mgIIVXLt8J7ksEsSgRJDqZougWPD3GgdNaVVB1mywVJbfSXox2T7WCksMb5zjZpFjA5m120u7LZxXOE8b4vfzhnLxaXnPlen6AVvdI9mWvYfY2QvKfBEf17UqsjVBzeVDgAK2FPsWxxz71D4lUUs4CyCzCIbIV5UAJm5Tr6nWWXp03VpzJBpIO4ZJsFhlta/fc+oGZLcvHiQ6m9WWAAzi3V6Jc8erJR1xk11kEJwBbVkzhy2G0zCuMpp2jjd1UbptTsviwDw+UsjLOTdIJ8uZuA5/9MmP/vg85capMzgIAcrZ5M09tjAxX9nvRt6FDPXc/fMHQaoDDdwH+uS5UNQ==
+Received: from SJ0PR05CA0030.namprd05.prod.outlook.com (2603:10b6:a03:33b::35)
+ by MN0PR12MB6078.namprd12.prod.outlook.com (2603:10b6:208:3ca::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.17; Thu, 30 May
+ 2024 01:27:40 +0000
+Received: from SJ5PEPF000001EC.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b:cafe::ac) by SJ0PR05CA0030.outlook.office365.com
+ (2603:10b6:a03:33b::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19 via Frontend
+ Transport; Thu, 30 May 2024 01:27:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001EC.mail.protection.outlook.com (10.167.242.200) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Thu, 30 May 2024 01:27:39 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 29 May
+ 2024 18:27:29 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 29 May
+ 2024 18:27:29 -0700
+Received: from jjang.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 29 May 2024 18:27:28 -0700
+From: Joseph Jang <jjang@nvidia.com>
+To: <shuah@kernel.org>, <jjang@nvidia.com>, <mochs@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>
+Subject: [PATCH 0/1] selftest: drivers: Add support its msi hwirq checking
+Date: Wed, 29 May 2024 18:27:26 -0700
+Message-ID: <20240530012727.324611-1-jjang@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EC:EE_|MN0PR12MB6078:EE_
+X-MS-Office365-Filtering-Correlation-Id: 733cbcdb-dce3-4766-268e-08dc8047b1bb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|376005|36860700004|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Lro8vmWOc6ipVitjtUsbP0hKnp7vQFGL7yhlsofQq6NPE+P5Ln0ZGETlIe8m?=
+ =?us-ascii?Q?ZtztJoyytfbHOWRj/a5c9zuO1Ha772jnOdli/lQe8zuDYCxIvtk+rcUALwu8?=
+ =?us-ascii?Q?J8nZWcyhbPoCvznQ3vVl6Ykt60qV6UtSbvlVUK/PL2JhNTkGLS1jUzPt0uPW?=
+ =?us-ascii?Q?uYCgSWm7SPIu8d0byi083G5EUfscEAWthcpOmk/apzz0OA4NRk/gHfFYPVuZ?=
+ =?us-ascii?Q?ZWHbrsmDMLSJ1M8bCgbC07oDrVV/I6ybR+NZE0SAQLDPz6TBIotqFKk7MxyY?=
+ =?us-ascii?Q?cEQHn9ndyFifmkqwNOatAiD/Bk2xpEueQhRqe9C/pvtnn3tYPfn+JHe6HWUO?=
+ =?us-ascii?Q?8J//YpWSM8ZjTqR0FyhVuy56Rjz8mqPZqN6dEVe/O8bNsWwRa2RzEcEm6Hwf?=
+ =?us-ascii?Q?hCTsFKAornuEtf6ZGKocC4d2KT/Lb2FKVR1rZlDnck6WJH+nGn4+Md7FD3N7?=
+ =?us-ascii?Q?LLa69D9O7E1wJOWzomIyj3v8SPidFVHObLeTLMiLR58KsB3V3wiFYbzYHRXX?=
+ =?us-ascii?Q?qAfKw9Ol6hTwidPIoMuBfGJHSzL8fw4U7f6cZAyBQd53TUN/rRE0ea8a8nGH?=
+ =?us-ascii?Q?KbO6RZk731OtNB+8dh0i+y/JRpDgEKw6Ja38pizxYf6n3ZMMOnHHff+v0CYy?=
+ =?us-ascii?Q?czp8hBR1NFB+ez+NhDgrEwll2tutxeD+DJhVTtHJ+FaSnbVpcPZgRd1jJC3d?=
+ =?us-ascii?Q?fjlCWW1xz8z7M9VQsQOt9ghP9heeimAaGB96/GPSV4KK7fpNRzSx+DB9BxBg?=
+ =?us-ascii?Q?fTKFMAwqlEUuOipyWr79slv0CNzTS3+Aeum4XFpx7XBe5qM3WjR4fVM6GOq3?=
+ =?us-ascii?Q?H4MApsyH4nOkPtsH7yJlzkgrGdL5oDL/LTF/dIinJ9RET3pGPqFZjFWRrxfV?=
+ =?us-ascii?Q?6Xb8DAE0wVX/WKtZSnJgQsEivDPoPAcvkwHE9ueFZseu5tV3VNmCJRabkZPb?=
+ =?us-ascii?Q?zbo/t+LuLd4mZCFrDyfCF6ZE9JADhUhmPEy/hz2fwKSJmQhZEiIUFNUtEjtf?=
+ =?us-ascii?Q?oc6iQb+Esblt0Lu55YkLXjcs902cBMIJrEmFbzRm01ZOd8no9fGNjKvWmG7S?=
+ =?us-ascii?Q?P1QMrNp2UZ6CQpTPIQpuaRaHYg7QEnS7PxPAI3ndKSMTP0oD3U63DHpBcPGq?=
+ =?us-ascii?Q?rzZI5QYslt0VkknDCSJXozjZ2QHnfgVtUXhcYQs+6Uqq7L8uy6ulCGotCkNy?=
+ =?us-ascii?Q?5zH2TTE9r4iX1emu6iU0/Qw2dc8ifkTrOdIJw5QRs7RrM5Ly1L9LFj/p/sDy?=
+ =?us-ascii?Q?zej03EwO1ejlQjPgBtDcx83JNQ2+s676PxZUIIezqy9rCUyiP+n+1V2Q09t6?=
+ =?us-ascii?Q?PRkULw5zJFvOhUL6qJEwHleDK10DQXKjECXhXkUwT03/pnPtWDb8+RpXU6NJ?=
+ =?us-ascii?Q?4JflyG98pbGpTOMiernLrLLPLJeO?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(376005)(36860700004)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 01:27:39.2320
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 733cbcdb-dce3-4766-268e-08dc8047b1bb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6078
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 76357cc192acd78b85d4c3380d07f139d906dfe8  x86/topology/amd: Evaluate SMT in CPUID leaf 0x8000001e only on family 0x17 and greater
+In order to validate ITS-MSI hwirq entry in the /proc/interrupts, we
+have created a shell script to check is there any duplicated ITS-MSI
+hwirq entry.
 
-elapsed time: 940m
+Joseph Jang (1):
+  selftest: drivers: Add support its msi hwirq checking
 
-configs tested: 116
-configs skipped: 136
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240530   gcc  
-arc                   randconfig-002-20240530   gcc  
-arm                            hisi_defconfig   gcc  
-arm                   randconfig-002-20240530   gcc  
-arm                   randconfig-004-20240530   gcc  
-arm                    vt8500_v6_v7_defconfig   gcc  
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-002-20240530   gcc  
-arm64                 randconfig-003-20240530   gcc  
-csky                              allnoconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240530   gcc  
-csky                  randconfig-002-20240530   gcc  
-hexagon                          allmodconfig   clang
-hexagon                          allyesconfig   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240529   clang
-i386         buildonly-randconfig-002-20240529   gcc  
-i386         buildonly-randconfig-003-20240529   gcc  
-i386         buildonly-randconfig-004-20240529   clang
-i386         buildonly-randconfig-005-20240529   gcc  
-i386         buildonly-randconfig-006-20240529   clang
-i386                                defconfig   clang
-i386                  randconfig-001-20240529   clang
-i386                  randconfig-002-20240529   gcc  
-i386                  randconfig-003-20240529   gcc  
-i386                  randconfig-004-20240529   gcc  
-i386                  randconfig-005-20240529   clang
-i386                  randconfig-006-20240529   clang
-i386                  randconfig-011-20240529   clang
-i386                  randconfig-012-20240529   clang
-i386                  randconfig-013-20240529   clang
-i386                  randconfig-014-20240529   gcc  
-i386                  randconfig-015-20240529   clang
-i386                  randconfig-016-20240529   gcc  
-loongarch                        alldefconfig   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240530   gcc  
-loongarch             randconfig-002-20240530   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240530   gcc  
-nios2                 randconfig-002-20240530   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240530   gcc  
-parisc                randconfig-002-20240530   gcc  
-parisc64                            defconfig   gcc  
-powerpc                    adder875_defconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc               randconfig-001-20240530   gcc  
-powerpc               randconfig-003-20240530   gcc  
-powerpc                         wii_defconfig   gcc  
-powerpc64             randconfig-001-20240530   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   clang
-riscv                 randconfig-002-20240530   gcc  
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20240530   gcc  
-sh                    randconfig-002-20240530   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240530   gcc  
-sparc64               randconfig-002-20240530   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                    randconfig-001-20240530   gcc  
-um                    randconfig-002-20240530   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64                              defconfig   gcc  
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
-xtensa                       common_defconfig   gcc  
-xtensa                randconfig-001-20240530   gcc  
-xtensa                randconfig-002-20240530   gcc  
-xtensa                         virt_defconfig   gcc  
+ tools/testing/selftests/drivers/irq/Makefile  |  5 +++++
+ .../selftests/drivers/irq/its-msi-irq-test.sh | 20 +++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+ create mode 100644 tools/testing/selftests/drivers/irq/Makefile
+ create mode 100755 tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
