@@ -1,88 +1,51 @@
-Return-Path: <linux-kernel+bounces-194934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31238D4484
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:28:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB87A8D448F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 288931C21064
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6AC285CA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BEF143C46;
-	Thu, 30 May 2024 04:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N60VcUMT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5F9143894;
+	Thu, 30 May 2024 04:31:54 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC9C143884;
-	Thu, 30 May 2024 04:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8371B37171;
+	Thu, 30 May 2024 04:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717043306; cv=none; b=GV1KLPA4X+k0R1nqacl20VyyDJATUE9b0Try+uX5shEyRJkl4DSyNANdUDNZz+ZNojszUyELbZK+GMtJIXq7x2ipxsA8+PmOxjIQeqoIvA9UZ5mwhIWUMaHjlBU6iUthjfJmbRQDuBKa7oapXV5pI0AC2cUCok9FOep2kTTDWPE=
+	t=1717043514; cv=none; b=lnG/i73ODEfJbjxsXDq4FbPGaxkLJBTBN2JxZNyvMndIpzL+PH/MciywDFS41gCpVfVlCaymMd12r7gZRlHJbciQD79EOKJm+w7SbsBy5I6RM27RMojwqQTpWxMsewjrCOxlaKLTzBBUgissTkx1G6wrz9cDNXw9NLWfDzvaReo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717043306; c=relaxed/simple;
-	bh=v5tjOO9HmCSCEa8MYghEPg07vHQ4gZzTHlkRqnsQfVI=;
+	s=arc-20240116; t=1717043514; c=relaxed/simple;
+	bh=UISANedLyvwh32D5vXLunbfBPBzWbKBm5+TC6Ngp7Es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4WMb+Rrl6ZNuvY9pkYMmmEtbMPvtkQu3cTuNsq9Ue4PC6bfoAOdcdlsfa5HC247wXTRPIGfcJWH+Cn9oNejlzACSJ6TqK/FYEE8sSqLIO15xJGCwSB7g62IVnkHhiR4JuibNBdqIfKw7VhFK3O10MSGMl+K6ocpNO7M24lc0C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N60VcUMT; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717043305; x=1748579305;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=v5tjOO9HmCSCEa8MYghEPg07vHQ4gZzTHlkRqnsQfVI=;
-  b=N60VcUMTipNsICAo4uPnNsUe7V35ywotzXeXppHNycIdVlonNWCJH3JB
-   ai1SpPgZrerTIZUyyuSUTnVPqSul1MwFbgcd6F+Z0zkryjZZ0S6HOn1/f
-   ykGyVZt4H15I7ttNK/MdsLW0aQ3bZS167gl+dJMOGJDoi61sndZ1KhW0D
-   Rlf1CCXGADUQ4DvSsOa0UMQnT+NhAou8yjRsZaMBktIKMPPs/+Q+IyDbL
-   af057F2bhFlGH5pKiJ91uhoZnUj8ZBW+dOK2Rt1/DpNvz4Z0KiPc3+VW5
-   f34WcwrPfRSF28pa4+aDEHlwJiGi40LHl+x+iIJblxkdTR5u8/61bi/BF
-   A==;
-X-CSE-ConnectionGUID: 3LQSmPmuS72zQeC5YNMIvw==
-X-CSE-MsgGUID: J9fMD7oVR1uPuB+oZoAjuA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13340446"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13340446"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 21:28:24 -0700
-X-CSE-ConnectionGUID: 0/ZUuWfvR7qEdHtbyIv6RQ==
-X-CSE-MsgGUID: ehlieuwQQxmSfolO3L8mGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="36153670"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 29 May 2024 21:28:19 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCXOi-000Eo1-3B;
-	Thu, 30 May 2024 04:28:16 +0000
-Date: Thu, 30 May 2024 12:27:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Golle <daniel@makrotopia.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-Subject: Re: [PATCH v2 07/11] pinctrl: imx: Convert to use func member
-Message-ID: <202405301147.XaijPkPT-lkp@intel.com>
-References: <20240528194951.1489887-8-andy.shevchenko@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DOVOKE13MO1wM/0r1oudL8IKk616niPUQySqpQojf+3y6CuPs/Ckk6iW+fwANp07lXOW+5MJUwd2snWccXVnguVevdF3SwXDaluFnTsk+jPVHni9jGkRQcR0ZSk+N0Tu7xvr8To3iG1Klzxoo6sz5cqK13o+IUWLwOU3vlrd0/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sCXRi-003fQ3-1H;
+	Thu, 30 May 2024 12:31:23 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 30 May 2024 12:31:24 +0800
+Date: Thu, 30 May 2024 12:31:24 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: syzbot <syzbot+aeb14e2539ffb6d21130@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, linux-fscrypt@vger.kernel.org
+Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in aes_encrypt (5)
+Message-ID: <ZlgBHEnZQSftdqCv@gondor.apana.org.au>
+References: <0000000000000fe556061725a7be@google.com>
+ <00000000000099249d0618119a0c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,97 +54,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528194951.1489887-8-andy.shevchenko@gmail.com>
+In-Reply-To: <00000000000099249d0618119a0c@google.com>
 
-Hi Andy,
+On Thu, May 09, 2024 at 09:02:27PM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14d9bfdf180000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=617171361dd3cd47
+> dashboard link: https://syzkaller.appspot.com/bug?extid=aeb14e2539ffb6d21130
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1617adb8980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112f45d4980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/232e7c2a73a5/disk-45db3ab7.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/7e9bf7c936ab/vmlinux-45db3ab7.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/5e8f98ee02d8/bzImage-45db3ab7.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/fcc88c919ed9/mount_1.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+aeb14e2539ffb6d21130@syzkaller.appspotmail.com
+> 
+> fscrypt: AES-256-XTS using implementation "xts(ecb(aes-fixed-time))"
+> =====================================================
+> BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:149 [inline]
+> BUG: KMSAN: uninit-value in aes_encrypt+0x15cc/0x1db0 lib/crypto/aes.c:282
+>  subshift lib/crypto/aes.c:149 [inline]
+>  aes_encrypt+0x15cc/0x1db0 lib/crypto/aes.c:282
+>  aesti_encrypt+0x7d/0xf0 crypto/aes_ti.c:31
+>  crypto_ecb_crypt crypto/ecb.c:23 [inline]
+>  crypto_ecb_encrypt2+0x18a/0x300 crypto/ecb.c:40
+>  crypto_lskcipher_crypt_sg+0x36b/0x7f0 crypto/lskcipher.c:228
+>  crypto_lskcipher_encrypt_sg+0x8a/0xc0 crypto/lskcipher.c:247
+>  crypto_skcipher_encrypt+0x119/0x1e0 crypto/skcipher.c:669
+>  xts_encrypt+0x3c4/0x550 crypto/xts.c:269
+>  crypto_skcipher_encrypt+0x1a0/0x1e0 crypto/skcipher.c:671
+>  fscrypt_crypt_data_unit+0x4ee/0x8f0 fs/crypto/crypto.c:144
+>  fscrypt_encrypt_pagecache_blocks+0x422/0x900 fs/crypto/crypto.c:207
+>  ext4_bio_write_folio+0x13db/0x2e40 fs/ext4/page-io.c:526
+>  mpage_submit_folio+0x351/0x4a0 fs/ext4/inode.c:1869
+>  mpage_process_page_bufs+0xb92/0xe30 fs/ext4/inode.c:1982
+>  mpage_prepare_extent_to_map+0x1702/0x22c0 fs/ext4/inode.c:2490
+>  ext4_do_writepages+0x1117/0x62e0 fs/ext4/inode.c:2632
+>  ext4_writepages+0x312/0x830 fs/ext4/inode.c:2768
+>  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+>  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+>  __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+>  file_write_and_wait_range+0x1bf/0x370 mm/filemap.c:788
+>  generic_buffers_fsync_noflush+0x84/0x3e0 fs/buffer.c:602
+>  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+>  ext4_sync_file+0x5ba/0x13a0 fs/ext4/fsync.c:151
+>  vfs_fsync_range+0x20d/0x270 fs/sync.c:188
+>  generic_write_sync include/linux/fs.h:2795 [inline]
+>  ext4_buffered_write_iter+0x9ad/0xaa0 fs/ext4/file.c:305
+>  ext4_file_write_iter+0x208/0x3450
+>  call_write_iter include/linux/fs.h:2110 [inline]
+>  new_sync_write fs/read_write.c:497 [inline]
+>  vfs_write+0xb63/0x1520 fs/read_write.c:590
+>  ksys_write+0x20f/0x4c0 fs/read_write.c:643
+>  __do_sys_write fs/read_write.c:655 [inline]
+>  __se_sys_write fs/read_write.c:652 [inline]
+>  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+>  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Uninit was stored to memory at:
+>  le128_xor include/crypto/b128ops.h:69 [inline]
+>  xts_xor_tweak+0x4ae/0xbf0 crypto/xts.c:123
+>  xts_xor_tweak_pre crypto/xts.c:135 [inline]
+>  xts_encrypt+0x296/0x550 crypto/xts.c:268
+>  crypto_skcipher_encrypt+0x1a0/0x1e0 crypto/skcipher.c:671
+>  fscrypt_crypt_data_unit+0x4ee/0x8f0 fs/crypto/crypto.c:144
+>  fscrypt_encrypt_pagecache_blocks+0x422/0x900 fs/crypto/crypto.c:207
+>  ext4_bio_write_folio+0x13db/0x2e40 fs/ext4/page-io.c:526
+>  mpage_submit_folio+0x351/0x4a0 fs/ext4/inode.c:1869
+>  mpage_process_page_bufs+0xb92/0xe30 fs/ext4/inode.c:1982
+>  mpage_prepare_extent_to_map+0x1702/0x22c0 fs/ext4/inode.c:2490
+>  ext4_do_writepages+0x1117/0x62e0 fs/ext4/inode.c:2632
+>  ext4_writepages+0x312/0x830 fs/ext4/inode.c:2768
+>  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+>  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+>  __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+>  file_write_and_wait_range+0x1bf/0x370 mm/filemap.c:788
+>  generic_buffers_fsync_noflush+0x84/0x3e0 fs/buffer.c:602
+>  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+>  ext4_sync_file+0x5ba/0x13a0 fs/ext4/fsync.c:151
+>  vfs_fsync_range+0x20d/0x270 fs/sync.c:188
+>  generic_write_sync include/linux/fs.h:2795 [inline]
+>  ext4_buffered_write_iter+0x9ad/0xaa0 fs/ext4/file.c:305
+>  ext4_file_write_iter+0x208/0x3450
+>  call_write_iter include/linux/fs.h:2110 [inline]
+>  new_sync_write fs/read_write.c:497 [inline]
+>  vfs_write+0xb63/0x1520 fs/read_write.c:590
+>  ksys_write+0x20f/0x4c0 fs/read_write.c:643
+>  __do_sys_write fs/read_write.c:655 [inline]
+>  __se_sys_write fs/read_write.c:652 [inline]
+>  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+>  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Uninit was created at:
+>  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
+>  alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
+>  alloc_pages mm/mempolicy.c:2335 [inline]
+>  folio_alloc+0x1d0/0x230 mm/mempolicy.c:2342
+>  filemap_alloc_folio+0xa6/0x440 mm/filemap.c:984
+>  __filemap_get_folio+0xa10/0x14b0 mm/filemap.c:1926
+>  ext4_write_begin+0x3e5/0x2230 fs/ext4/inode.c:1159
+>  generic_perform_write+0x400/0xc60 mm/filemap.c:3974
+>  ext4_buffered_write_iter+0x564/0xaa0 fs/ext4/file.c:299
+>  ext4_file_write_iter+0x208/0x3450
+>  call_write_iter include/linux/fs.h:2110 [inline]
+>  new_sync_write fs/read_write.c:497 [inline]
+>  vfs_write+0xb63/0x1520 fs/read_write.c:590
+>  ksys_write+0x20f/0x4c0 fs/read_write.c:643
+>  __do_sys_write fs/read_write.c:655 [inline]
+>  __se_sys_write fs/read_write.c:652 [inline]
+>  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+>  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> CPU: 0 PID: 5048 Comm: syz-executor132 Not tainted 6.9.0-rc7-syzkaller-00056-g45db3ab70092 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> =====================================================
+> 
+> 
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-kernel test robot noticed the following build errors:
+#syz set subsystems: ext4
 
-[auto build test ERROR on linusw-pinctrl/devel]
-[also build test ERROR on linusw-pinctrl/for-next linus/master v6.10-rc1 next-20240529]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+These reports have been coming in for a while, previously they were
+merged incorrectly with reports coming from networking, see for
+example:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/pinctrl-berlin-Make-use-of-struct-pinfunction/20240529-035554
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20240528194951.1489887-8-andy.shevchenko%40gmail.com
-patch subject: [PATCH v2 07/11] pinctrl: imx: Convert to use func member
-config: microblaze-allyesconfig (https://download.01.org/0day-ci/archive/20240530/202405301147.XaijPkPT-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405301147.XaijPkPT-lkp@intel.com/reproduce)
+https://syzkaller.appspot.com/bug?id=6eb713b7107c62e9f6c259adf944c96efc3cd524
+https://syzkaller.appspot.com/text?tag=CrashReport&x=11e16a77a80000
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405301147.XaijPkPT-lkp@intel.com/
+The networking bug disappeared mysteriously in July 2023.
 
-All errors (new ones prefixed by >>):
-
-   drivers/pinctrl/freescale/pinctrl-imx.c: In function 'imx_pinctrl_parse_functions':
->> drivers/pinctrl/freescale/pinctrl-imx.c:603:52: error: 'struct function_desc' has no member named 'ngroups'
-     603 |         group_names = devm_kcalloc(ipctl->dev, func->ngroups, sizeof(*func->func.groups),
-         |                                                    ^~
-
-
-vim +603 drivers/pinctrl/freescale/pinctrl-imx.c
-
-   577	
-   578	static int imx_pinctrl_parse_functions(struct device_node *np,
-   579					       struct imx_pinctrl *ipctl,
-   580					       u32 index)
-   581	{
-   582		struct pinctrl_dev *pctl = ipctl->pctl;
-   583		struct device_node *child;
-   584		struct function_desc *func;
-   585		struct group_desc *grp;
-   586		const char **group_names;
-   587		u32 i;
-   588	
-   589		dev_dbg(pctl->dev, "parse function(%d): %pOFn\n", index, np);
-   590	
-   591		func = pinmux_generic_get_function(pctl, index);
-   592		if (!func)
-   593			return -EINVAL;
-   594	
-   595		/* Initialise function */
-   596		func->func.name = np->name;
-   597		func->func.ngroups = of_get_child_count(np);
-   598		if (func->func.ngroups == 0) {
-   599			dev_info(ipctl->dev, "no groups defined in %pOF\n", np);
-   600			return -EINVAL;
-   601		}
-   602	
- > 603		group_names = devm_kcalloc(ipctl->dev, func->ngroups, sizeof(*func->func.groups),
-   604					   GFP_KERNEL);
-   605		if (!group_names)
-   606			return -ENOMEM;
-   607		i = 0;
-   608		for_each_child_of_node(np, child)
-   609			group_names[i++] = child->name;
-   610		func->func.groups = group_names;
-   611	
-   612		i = 0;
-   613		for_each_child_of_node(np, child) {
-   614			grp = devm_kzalloc(ipctl->dev, sizeof(*grp), GFP_KERNEL);
-   615			if (!grp) {
-   616				of_node_put(child);
-   617				return -ENOMEM;
-   618			}
-   619	
-   620			mutex_lock(&ipctl->mutex);
-   621			radix_tree_insert(&pctl->pin_group_tree,
-   622					  ipctl->group_index++, grp);
-   623			mutex_unlock(&ipctl->mutex);
-   624	
-   625			imx_pinctrl_parse_groups(child, grp, ipctl, i++);
-   626		}
-   627	
-   628		return 0;
-   629	}
-   630	
-
+Thanks,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
