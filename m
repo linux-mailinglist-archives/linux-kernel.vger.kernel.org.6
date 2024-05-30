@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-196002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048558D55E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:02:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2CA8D55E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3572B1C24AA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861D7287965
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF49194C81;
-	Thu, 30 May 2024 23:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68C019069F;
+	Thu, 30 May 2024 23:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mLbA9AUI"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ex5w7TCP"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC0715251B;
-	Thu, 30 May 2024 23:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B1190695;
+	Thu, 30 May 2024 23:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717110061; cv=none; b=DjK22CkMgfmxtNr8cfZJmSTBL2UJTcM3viWMr5+2j0NbzD5IRjL1hC02U0pjJQ+EGdet+oyZWSbRsLYFv9X4ajbGHPsyVZF//f0VoZTkpd5Q1ki2gQoBxe39m2DXGxpmNyKUgAaqQhP5AWxQcMku/zNs4TYFqZJco14ocfYOQlM=
+	t=1717110060; cv=none; b=OfulxRZWZJVWV5++C14XpsEs6n5zw61F/U2vpbA5eaHkWLuwgfe2yHSOOTovkVwcBelQPfxzzk71/DVkcDkOvLPZ5fJMdLgq7suznwBYNorXl+4FJ64yitbhKK/WBHGLYZi9CslFU4J/c0kAcJK1TLsLfOO4YFVGcHbm33WCEu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717110061; c=relaxed/simple;
-	bh=AuYIRZwuv1vWCs2uWjv6nHv7VSkA6+15BzU0BIBlcXI=;
+	s=arc-20240116; t=1717110060; c=relaxed/simple;
+	bh=sA6qI//FTL7pgyGldUMsd1jU+l556RY52OWXWgjHnto=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ErWiOD3Lj/hX6fIcFsVBbM3n0k8FKY337gL/ZMir016SKk+28v1XFPxCUOVFry2o421DmgnGYwXCu7CSVwyCiaZqdYBN+qbwT1gw2111GHmagoJr96l2dj1GhdZfyYW4mssAOzMH9RqDDXDp/JTW7RameXiAa9mGVE1YfDa4qdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mLbA9AUI; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=cMUcDQMPhp9+Zyw+bdY338NjjdjKrC1LipqNDhQLgh1CCMrFui6vpe9jkm57Pe4MbN03QdU7NvA/UxSHAkkzjp/mB5g/Nyv6HdCVflSdJTShchBbCIvbVJUgID6jw5ZcpP58og1xdoKJJSrePa9WUeD4YVYM+trojmZ69pS6ytY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ex5w7TCP; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717110061; x=1748646061;
+  t=1717110060; x=1748646060;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=AuYIRZwuv1vWCs2uWjv6nHv7VSkA6+15BzU0BIBlcXI=;
-  b=mLbA9AUIsITTqfMOJuO53IlybMF9k28J6yt91uaqBAQtRVvpH44Hm9Zh
-   0+1c/ShJxbczINJEJ4I7/ErZkYXHW4V8+XfVAqgH6fx18e9ihlvdrp8yS
-   yfWnEXNzW3Qzv8y7Tx3lAnd0A/86vx+I7abZeqcOArY5WXrRYV7qSKrHT
-   yoN+V+Awj5cpFzZjx/5Z+xHYFJlOu2eCvpMSER2FRWaUqqvOz4mA4PK6A
-   qQMcAdkf0Fpxn5Fk70+VmhOYaVFDLWQygJTkmPTNLH7mI+8vZHUwMdJ14
-   xeQfsOESn0K+GyDLqgcnFHJEDbfyztllXtmD3LIzPoRyrk7JIChCKkCkd
-   Q==;
-X-CSE-ConnectionGUID: Ei6AGBQvQyS2K9fkgntabQ==
-X-CSE-MsgGUID: VR79rSvPRpe0H5J6+W1xtA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24195391"
+  bh=sA6qI//FTL7pgyGldUMsd1jU+l556RY52OWXWgjHnto=;
+  b=ex5w7TCPFJQTcglxysPdFAcYR14/9nxCZEGof8jSt4Qx6P6D9WUEra86
+   CO0t4qhfp7Ufu4E+ctg/jkyLUezo+MKQsknbCK9JPM/aTSmrxocYL66Cc
+   +A6duzntuuymbgtG5hKvWAWfrvR1SM+4ZWEo0N6nhXZv4tJU/foTzPJY2
+   0D8v6uJ50QLFg6I6/WudUfCQDknUzEejzQKWlYKkwvDz6XJzsNVmGGPFW
+   iF5/xvup12yNMSnFIE6sLxM4AmKPWWIMompqpSAr10by0vtVcJP4zICrg
+   EiJ+tf7gEZFowYNKszPhQLAlhaTVfG6Q/lfuz4GMP3k/FbLwMZgLzgJLB
+   A==;
+X-CSE-ConnectionGUID: zNYk+dNpRjmkh7YFOKMzyQ==
+X-CSE-MsgGUID: rMolwGlZSmK1LQHobhUX0Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24195360"
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="24195391"
+   d="scan'208";a="24195360"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 16:01:00 -0700
-X-CSE-ConnectionGUID: sobAkPNVTae+BISEGqSQCg==
-X-CSE-MsgGUID: iCEpUl0ZQQiPRNOUAbqr4A==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 16:00:59 -0700
+X-CSE-ConnectionGUID: shNDdpbZSeqWsVWRt7QFTg==
+X-CSE-MsgGUID: 1ruPcTT0SvuZbWAI61H1sw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="40895353"
+   d="scan'208";a="40895352"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa003.jf.intel.com with ESMTP; 30 May 2024 16:00:50 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 69C1F6AB; Fri, 31 May 2024 02:00:40 +0300 (EEST)
+	id 7DB356CB; Fri, 31 May 2024 02:00:40 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Rob Herring <robh@kernel.org>,
 	Weidong Wang <wangweidong.a@awinic.com>,
@@ -97,9 +97,9 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v1 5/6] ASoC: generic: Replace of_gpio.h by proper one
-Date: Fri, 31 May 2024 01:58:51 +0300
-Message-ID: <20240530230037.1156253-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 6/6] ASoC: samsung: Replace of_gpio.h by proper one
+Date: Fri, 31 May 2024 01:58:52 +0300
+Message-ID: <20240530230037.1156253-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
 References: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
@@ -117,24 +117,26 @@ with what is really being used.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- sound/soc/generic/audio-graph-card2-custom-sample.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/samsung/aries_wm8994.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/audio-graph-card2-custom-sample.c b/sound/soc/generic/audio-graph-card2-custom-sample.c
-index 1b6ccd2de964..8e5a51098490 100644
---- a/sound/soc/generic/audio-graph-card2-custom-sample.c
-+++ b/sound/soc/generic/audio-graph-card2-custom-sample.c
-@@ -5,8 +5,9 @@
- // Copyright (C) 2020 Renesas Electronics Corp.
- // Copyright (C) 2020 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
- //
-+#include <linux/device.h>
-+#include <linux/mod_devicetable.h>
+diff --git a/sound/soc/samsung/aries_wm8994.c b/sound/soc/samsung/aries_wm8994.c
+index a548ac33dd94..01716df0c842 100644
+--- a/sound/soc/samsung/aries_wm8994.c
++++ b/sound/soc/samsung/aries_wm8994.c
+@@ -1,11 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ #include <linux/extcon.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/iio/consumer.h>
+ #include <linux/input-event-codes.h>
+ #include <linux/mfd/wm8994/registers.h>
  #include <linux/module.h>
+ #include <linux/of.h>
 -#include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <sound/graph_card.h>
- 
+ #include <linux/regulator/consumer.h>
+ #include <sound/jack.h>
+ #include <sound/pcm_params.h>
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
