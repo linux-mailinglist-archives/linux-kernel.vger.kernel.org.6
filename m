@@ -1,180 +1,107 @@
-Return-Path: <linux-kernel+bounces-195460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC3B8D4D2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:51:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7318D4D30
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317AC284A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C5E1F231DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAEE17F4F9;
-	Thu, 30 May 2024 13:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8AC186E2E;
+	Thu, 30 May 2024 13:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N8HW/Y2G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe6CvzJz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBB017D8A2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDC9186E20;
+	Thu, 30 May 2024 13:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717076991; cv=none; b=He1HOJ7kIn8w/RapqO+xFTDjh2uGkFR755JcMLNFxWXRs7twrXQsJJo6kbxQWF47UDL3V2zL07G9hLJXvU+cepBok5Eu7i1gVWr8MV3psAdvU43o8yOqQQTuMM8pWuNnwBgUhE9+wGyCspOQYNfWf7bEHdQ0DwpfcgO/TS0Z/GA=
+	t=1717077031; cv=none; b=Dk/eHDTNuU8tceZleTdEYoMx6rIksw/TNMAanV1puU75YXRqqlK1ZqMj5YSdD1vn93ivkvubB0cTHvjYCR9OuT3X1VpM9ZIQl3rZYRYFKi2PplSL91dQaHy74j7bWBpc8JhIpFRCkFh3J6b3JkxK7TC44OnzKZWpx1FUYqRnAig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717076991; c=relaxed/simple;
-	bh=BxQLsWAQxchrkWKnK3ChTnkIylveR7dUnQAn8LahHww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QG+csDGrJTl8TI9ZYXeB+gGTyxw0xG7or1ddnLBP/uXvoHlKb+RyjRHCcNl6EEvcnz2i81KgLzRe4PhsgDWrcwpAGhBtRzSp7q2jSNgSrFBGbrLxW3s08ahwMBGNd3o804Z9vAujD25AEcmqC2URnskNpDP0AP7rWGHKo67n3N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N8HW/Y2G; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717076988;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sdHTFIUqw1UhZaLCSYhv+4vv96KPTgtHy1W4U/Cmx6I=;
-	b=N8HW/Y2GdMXwxTNWoSts5XEgIX05+LK/9+eJJgwkH3eoOc6nSxksm69/kT85pHrgy7PpWf
-	hny0JpMR4Rn1kujZAb+oPGC1DF14FxbbTTiy3QCnRq2f0GFmNSAQYsFwNMl5YuDCAo1WY2
-	gBetKPYGvsnTL0MymmITMK0e2DUalL8=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-335-qnQNB9lYM_6hMWMk9NGfsg-1; Thu,
- 30 May 2024 09:49:45 -0400
-X-MC-Unique: qnQNB9lYM_6hMWMk9NGfsg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ACF4529AA389;
-	Thu, 30 May 2024 13:49:44 +0000 (UTC)
-Received: from [10.22.33.42] (unknown [10.22.33.42])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id B7EB040004D;
-	Thu, 30 May 2024 13:49:43 +0000 (UTC)
-Message-ID: <0de07021-df77-4196-bb75-9ded88b74ce2@redhat.com>
-Date: Thu, 30 May 2024 09:49:43 -0400
+	s=arc-20240116; t=1717077031; c=relaxed/simple;
+	bh=hGckIgNxmv6uBg9y6bc94GELhlfy4ylwodgnmLTBRYc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OvAlYpaHcCWpCCX2twzOhL6QlNAx1OlTmUk+FUIii2vsy5Bk3rv0LXwO8OAaMC/hiMk25IT6m2ickCec4GeFJjvXd1UvX6Vioffd0p5cnxSY4aWa686xOeZgz8Ziodck8dXHWcB1CeQSQKqENisNHAQ1WuRtrMcvO94ogdwVGtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pe6CvzJz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 82709C32786;
+	Thu, 30 May 2024 13:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717077030;
+	bh=hGckIgNxmv6uBg9y6bc94GELhlfy4ylwodgnmLTBRYc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Pe6CvzJzWRrT23IbZT5WW0cTm02LLGRs5fC24vfCYB0xAu8LPrsJ7zT2nDQ4d1qI8
+	 n3rOmW7GwjHakAIF67ZljyEQXkWdWYt8iK/xpITrOmJmop5ccpUQg5/zS29fPrtuLv
+	 33HpsIVAQcyKrUc47lfaJ/OOOGz+XDR86X7xURySrnbxKLDraFpyhmklSlnV8Ze2r+
+	 PPYGMnaFeXc0ZmvNpOZ1sm9+MnXAC8ruosV4OTiI+lzMSUwyd8ENIMf3OTkLWEarvY
+	 YxnRwYej8W5hrnyy6AaNnFMFJfd0M7989JTbMXPvF7YyUv/gs+28mU5HIykH8kKFZv
+	 CqmkiCr25+5HA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 68EA0CF21F3;
+	Thu, 30 May 2024 13:50:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] blk-throttle: Fix incorrect display of io.max
-To: Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dan Schatzberg <schatzberg.dan@gmail.com>,
- Ming Lei <ming.lei@redhat.com>, Justin Forbes <jforbes@redhat.com>,
- Yu Kuai <yukuai3@huawei.com>
-References: <20240530134547.970075-1-longman@redhat.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240530134547.970075-1-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v6 0/3] Introduce switch mode support for ICSSG
+ driver
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171707703042.3699.5639569290133941055.git-patchwork-notify@kernel.org>
+Date: Thu, 30 May 2024 13:50:30 +0000
+References: <20240528113734.379422-1-danishanwar@ti.com>
+In-Reply-To: <20240528113734.379422-1-danishanwar@ti.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: dan.carpenter@linaro.org, jan.kiszka@siemens.com, horms@kernel.org,
+ andrew@lunn.ch, vladimir.oltean@nxp.com, wsa+renesas@sang-engineering.com,
+ schnelle@linux.ibm.com, arnd@arndb.de, diogo.ivo@siemens.com,
+ rogerq@kernel.org, pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+ davem@davemloft.net, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+ vigneshr@ti.com
 
+Hello:
 
-On 5/30/24 09:45, Waiman Long wrote:
-> Commit bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
-> attempts to revert the code change introduced by commit cd5ab1b0fcb4
-> ("blk-throttle: add .low interface").  However, it leaves behind the
-> bps_conf[] and iops_conf[] fields in the throtl_grp structure which
-> aren't set anywhere in the new blk-throttle.c code but are still being
-> used by tg_prfill_limit() to display the limits in io.max. Now io.max
-> always displays the following values if a block queue is used:
->
-> 	<m>:<n> rbps=0 wbps=0 riops=0 wiops=0
->
-> Fix this problem by removing bps_conf[] and iops_conf[] and use bps[]
-> and iops[] instead to complete the revert.
->
-> Fixes: bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
-> Reported-by: Justin Forbes <jforbes@redhat.com>
-> Closes: https://github.com/containers/podman/issues/22701#issuecomment-2120627789
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->   block/blk-throttle.c | 24 ++++++++++++------------
->   block/blk-throttle.h |  8 ++------
->   2 files changed, 14 insertions(+), 18 deletions(-)
->
-> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-> index d907040859f9..da619654f418 100644
-> --- a/block/blk-throttle.c
-> +++ b/block/blk-throttle.c
-> @@ -1347,32 +1347,32 @@ static u64 tg_prfill_limit(struct seq_file *sf, struct blkg_policy_data *pd,
->   	bps_dft = U64_MAX;
->   	iops_dft = UINT_MAX;
->   
-> -	if (tg->bps_conf[READ] == bps_dft &&
-> -	    tg->bps_conf[WRITE] == bps_dft &&
-> -	    tg->iops_conf[READ] == iops_dft &&
-> -	    tg->iops_conf[WRITE] == iops_dft)
-> +	if (tg->bps[READ] == bps_dft &&
-> +	    tg->bps[WRITE] == bps_dft &&
-> +	    tg->iops[READ] == iops_dft &&
-> +	    tg->iops[WRITE] == iops_dft)
->   		return 0;
->   
->   	seq_printf(sf, "%s", dname);
-> -	if (tg->bps_conf[READ] == U64_MAX)
-> +	if (tg->bps[READ] == U64_MAX)
->   		seq_printf(sf, " rbps=max");
->   	else
-> -		seq_printf(sf, " rbps=%llu", tg->bps_conf[READ]);
-> +		seq_printf(sf, " rbps=%llu", tg->bps[READ]);
->   
-> -	if (tg->bps_conf[WRITE] == U64_MAX)
-> +	if (tg->bps[WRITE] == U64_MAX)
->   		seq_printf(sf, " wbps=max");
->   	else
-> -		seq_printf(sf, " wbps=%llu", tg->bps_conf[WRITE]);
-> +		seq_printf(sf, " wbps=%llu", tg->bps[WRITE]);
->   
-> -	if (tg->iops_conf[READ] == UINT_MAX)
-> +	if (tg->iops[READ] == UINT_MAX)
->   		seq_printf(sf, " riops=max");
->   	else
-> -		seq_printf(sf, " riops=%u", tg->iops_conf[READ]);
-> +		seq_printf(sf, " riops=%u", tg->iops[READ]);
->   
-> -	if (tg->iops_conf[WRITE] == UINT_MAX)
-> +	if (tg->iops[WRITE] == UINT_MAX)
->   		seq_printf(sf, " wiops=max");
->   	else
-> -		seq_printf(sf, " wiops=%u", tg->iops_conf[WRITE]);
-> +		seq_printf(sf, " wiops=%u", tg->iops[WRITE]);
->   
->   	seq_printf(sf, "\n");
->   	return 0;
-> diff --git a/block/blk-throttle.h b/block/blk-throttle.h
-> index 32503fd83a84..8c365541a275 100644
-> --- a/block/blk-throttle.h
-> +++ b/block/blk-throttle.h
-> @@ -95,15 +95,11 @@ struct throtl_grp {
->   	bool has_rules_bps[2];
->   	bool has_rules_iops[2];
->   
-> -	/* internally used bytes per second rate limits */
-> +	/* bytes per second rate limits */
->   	uint64_t bps[2];
-> -	/* user configured bps limits */
-> -	uint64_t bps_conf[2];
->   
-> -	/* internally used IOPS limits */
-> +	/* IOPS limits */
->   	unsigned int iops[2];
-> -	/* user configured IOPS limits */
-> -	unsigned int iops_conf[2];
->   
->   	/* Number of bytes dispatched in current slice */
->   	uint64_t bytes_disp[2];
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Add Yu Kuai <yukuai3@huawei.com> to cc.
+On Tue, 28 May 2024 17:07:31 +0530 you wrote:
+> This series adds support for switch-mode for ICSSG driver. This series
+> also introduces helper APIs to configure firmware maintained FDB
+> (Forwarding Database) and VLAN tables. These APIs are later used by ICSSG
+> driver in switch mode.
+> 
+> Now the driver will boot by default in dual EMAC mode. When first ICSSG
+> interface is added to bridge driver will still be in EMAC mode. As soon as
+> second ICSSG interface is added to same bridge, switch-mode will be
+> enabled and switch firmwares will be loaded to PRU cores. The driver will
+> remain in dual EMAC mode if ICSSG interfaces are added to two different
+> bridges or if two different interfaces (One ICSSG, one other) is added to
+> the same bridge. We'll only enable is_switch_mode flag when two ICSSG
+> interfaces are added to same bridge.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v6,1/3] net: ti: icssg-prueth: Add helper functions to configure FDB
+    https://git.kernel.org/netdev/net-next/c/487f7323f39a
+  - [net-next,v6,2/3] net: ti: icssg-switch: Add switchdev based driver for ethernet switch support
+    https://git.kernel.org/netdev/net-next/c/972383aecf43
+  - [net-next,v6,3/3] net: ti: icssg-prueth: Add support for ICSSG switch firmware
+    https://git.kernel.org/netdev/net-next/c/abd5576b9c57
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
