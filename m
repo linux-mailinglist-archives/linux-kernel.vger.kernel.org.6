@@ -1,140 +1,213 @@
-Return-Path: <linux-kernel+bounces-195643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0728D4FAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:14:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2108D4FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57EE51F23F1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D9CB1C232DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8D621A04;
-	Thu, 30 May 2024 16:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FA0210F8;
+	Thu, 30 May 2024 16:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fCUKYoIJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WBY2wW0l"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5287F224D4;
-	Thu, 30 May 2024 16:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A33F22EE4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717085661; cv=none; b=fdEmfOkCuNg4LCfmWSX4igIopYq/p8o7XYWdfiAWcapFYm/FydweADkpRmUxNv4CDvE/lY+t+AlWju4YAG8TUxwygJkJj/1pbiY6AH9c4p2Szp/wfXVh8xDPrCgo2DtVht/DkTjyokAI7yBz4eiYYcn/dQvFWYqiry6aFElH0q4=
+	t=1717086049; cv=none; b=niCJM9WnMfbgonr9v495CIQdu07ed+KxgV4Dv/Gr+rAwbIiU5p1XRskAgUe3lzY0BWxw7y4vTCSxMV7nd/uhPlroY1Zjs/YC/fhtUaXTLzQE7HK9a7bGr54HJ41DBLhKEbKbyffFxpZ4fliB+VnbqqsgSUEEZZy73pCxwHhFi/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717085661; c=relaxed/simple;
-	bh=vO9ICB2yAEetlEsTPbH9D4zJdMe3WF2DAv8xb1Z1tAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S6c+21UD0xETFjBP738WxGoviSz7zp0PlLJFxrf1/DkiJXL4dff/qnrkM7NvTqyR6hbWl3X2r/GUExPyB4U4v+WLQoNGbPKGeaVc+vR35d8IdRCMN3VQVryybOzIyyxqMVVSHfGpCP8HX4VYvuJGHreXUhevq0t5VlSSdGTQbio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fCUKYoIJ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717085660; x=1748621660;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vO9ICB2yAEetlEsTPbH9D4zJdMe3WF2DAv8xb1Z1tAg=;
-  b=fCUKYoIJGUjPujRfKe8EkKJWrrLVO9HJIvGXBjcBsZN7cIGYPu0dTCe4
-   bvopC65I7G4hpuQ9DESyGr32596T4pYzDfhc2OqNj6keByeUYS0cwyhV1
-   A+FjcP8xLiHBwon8+0b53ocqhV1t7lL0l24fS+zrSqsVZSqJvkntn3OMb
-   AD7UQeMO+/8MEqukVxCZfPtcCpAt/5TKio3ZHJMFGaL+aIYG7wWSCUwkT
-   IoSxq5O6TE7qkJIMxzxEpZyBFF/RvUVXuYf4w15b6inwIBOOLjF2JWc8C
-   c6tfvf4XjQLVildhoKv3m54KidNq8kTP8Eu/m5O1oKpwiwWL4vVow3Nbi
-   Q==;
-X-CSE-ConnectionGUID: PkzVj07nRhCpzh+T861L/Q==
-X-CSE-MsgGUID: 6IjnvU9BSR2oeHI+aUMNHA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="17417120"
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="17417120"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:14:20 -0700
-X-CSE-ConnectionGUID: VBEg22EZSgmNrAnc22YIUw==
-X-CSE-MsgGUID: lNUcn36hSAGcvBZ9YFy71A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="36486185"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:14:19 -0700
-Date: Thu, 30 May 2024 09:19:16 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>,
- jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 1/6] x86/irq: Add enumeration of NMI source reporting
- CPU feature
-Message-ID: <20240530091916.54056820@jacob-builder>
-In-Reply-To: <9dabe435-7208-4aa8-886c-a3351ee11e80@zytor.com>
-References: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
-	<20240529203325.3039243-2-jacob.jun.pan@linux.intel.com>
-	<9dabe435-7208-4aa8-886c-a3351ee11e80@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717086049; c=relaxed/simple;
+	bh=3B7ZQyZk5/+5h/jcTSOJgwlHgMzpB3t0tzQ4xhvru0Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R4MgznIPmWJj0qPElrjnEJWLpGBEWdZnI/GPXapTcKwAR19LkNeJJEBMMAA7kMUPHgeMYILk6P47v81QbScqiYYVbqgXJCjgP+MBdYB7ci7q8oZxoUh+KjzhoBLSc4XGcPwGwWLhhX31oOSMdp6HhWpgzQotQMM0PH3XiD6IBfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WBY2wW0l; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a5dcb5a0db4so113920266b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717086046; x=1717690846; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kl/GGM9FEQNmC7lNrCDznGozkd6NHwhfF13Ha04rMtw=;
+        b=WBY2wW0l1DDjIzqCJuEBe2r3/DXZMSt9MYNsmIgTSadfdJEpMuommo/bv12yAykeNc
+         Zpkw/fqy5i/5zQZqk6Nbq5Ay/CfnBa+XXW8GVBa8WLRRbfgEzrn/9PsXavoqcSxLSm+e
+         pRbys0CXx3C6EpoRRi+s+sOPiYZ/nXhQRy0eem92YqvBmiW0RyS0FyTR05n0eEzM8fTE
+         /UlVe5abGYvUFftuOH4O/gu48FW/xRpSZ2wJG7lOANDY1R4KAMWJDhnz3n+20GudfEqg
+         DOq02V/xedD5YZuykRD5OtzV1hOrgETVXUaVb1CeVha3jo8CcR00FkkBXdFljvoEtPzG
+         6KYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717086046; x=1717690846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kl/GGM9FEQNmC7lNrCDznGozkd6NHwhfF13Ha04rMtw=;
+        b=kKmyq7hpZKB6oBmT6O13W59ZYmbEzSQaI2lyVkXktiGzWvqTK8zlRc7sNr+f3ct+4t
+         dt9eXHEGVuUb49GuWSWzj94Xdh/rfOiRuR8iZ+mtpqdIjERyorVxowjHekyqOhVgJAOO
+         mzVnDxYFV++mWqhf/ACUkTsI0eyj5crZolN3VOB2QTXN1nFIHQFHw5qndpJwdPsvOd7D
+         Et6R/axjalbSGv6d1EQ+lGPNamAc9yZQ4Qe7QH6ncWVWKCuglqpxCwRk9y+Y1/3nodMl
+         MOOpshNSBrKa+BcDREsMQ612eAWoLbBoACKjYrX9L/I+3tclDhVwXg7v2H/ZOp5XQ6VB
+         DcJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyO0gNVjWAxKZS2UNOTar45nKlbWqmb54NL4zv8O1Kgl6t8WLcvNHUlvdprG+IysE59ecN8JSo3dCrfhWvsn4cHqCRZni13Npe0frB
+X-Gm-Message-State: AOJu0YywMOTYceRkTNj+uyjJepu9Qnyfx4vYgCzuNp/A3R6cJ+K1F3zi
+	re1xOYk5Th1Sr5Lvb3GlYsddKIHfvsB5wUtVwI5VoJhZX11dEdYdbbZHOsKxZkZEmH7BqnYe0/v
+	oAIri7slGYn28GuK6l1PF9sHLtmOdOjCjRkbf
+X-Google-Smtp-Source: AGHT+IE99vKgOVmVQYgmhzEBWXRWfHbQ0PozVSW5DerT4/50qVdSiaudvPuYP6CQetEqvnOnFqyicngxT1Zw39JQ8gI=
+X-Received: by 2002:a17:906:11d2:b0:a59:c62c:212d with SMTP id
+ a640c23a62f3a-a65e8d36768mr160285466b.14.1717086045429; Thu, 30 May 2024
+ 09:20:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240530102126.357438-1-usamaarif642@gmail.com> <20240530102126.357438-2-usamaarif642@gmail.com>
+In-Reply-To: <20240530102126.357438-2-usamaarif642@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 30 May 2024 09:20:06 -0700
+Message-ID: <CAJD7tkbn-Nb54aiCKQshb9HjBCQAZ_63FH4vic072kcV+ZxHrA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, nphamcs@gmail.com, 
+	chengming.zhou@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, Ying <ying.huang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+On Thu, May 30, 2024 at 3:21=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+> Approximately 10-20% of pages to be swapped out are zero pages [1].
+> Rather than reading/writing these pages to flash resulting
+> in increased I/O and flash wear, a bitmap can be used to mark these
+> pages as zero at write time, and the pages can be filled at
+> read time if the bit corresponding to the page is set.
+> With this patch, NVMe writes in Meta server fleet decreased
+> by almost 10% with conventional swap setup (zswap disabled).
 
-On Wed, 29 May 2024 13:49:40 -0700, "H. Peter Anvin" <hpa@zytor.com> wrote:
+Great work. I thought about doing this after my attempt to drop some
+of the same-filled pages handling in zswap, now we can drop all of it
+:)
 
-> On 5/29/24 13:33, Jacob Pan wrote:
-> > diff --git a/arch/x86/kernel/cpu/cpuid-deps.c
-> > b/arch/x86/kernel/cpu/cpuid-deps.c index b7d9f530ae16..3f1a1a1961fa
-> > 100644 --- a/arch/x86/kernel/cpu/cpuid-deps.c
-> > +++ b/arch/x86/kernel/cpu/cpuid-deps.c
-> > @@ -84,6 +84,7 @@ static const struct cpuid_dep cpuid_deps[] = {
-> >   	{ X86_FEATURE_SHSTK,
-> > X86_FEATURE_XSAVES    }, { X86_FEATURE_FRED,
-> > X86_FEATURE_LKGS      }, { X86_FEATURE_FRED,
-> > X86_FEATURE_WRMSRNS   },
-> > +	{ X86_FEATURE_FRED,
-> > X86_FEATURE_NMI_SOURCE}, {}
-> >   };
-> >     
-> 
-> This is incorrect. FRED does *not* inherently depend on NMI_SOURCE; the 
-> dependency is the reverse, but since it *also* depends on FRED being 
-> dynamically enabled, there is no need to add it to the static table; the 
-> dynamic test:
-> 
-My misunderstanding of the dependency table, thanks for pointing it out.
-Will remove.
+Make sure to CC other non-zswap folks on next iterations like Ying. I
+see Johannes already did that in his response. I suspect
+get_maintainers will give you a few extra names.
 
-> > diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> > index 4fa0b17e5043..465f04e4a79f 100644
-> > --- a/arch/x86/kernel/traps.c
-> > +++ b/arch/x86/kernel/traps.c
-> > @@ -1427,8 +1427,10 @@ early_param("fred", fred_setup);
-> >  
-> >  void __init trap_init(void)
-> >  {
-> > -	if (cpu_feature_enabled(X86_FEATURE_FRED) && !enable_fred)
-> > +	if (cpu_feature_enabled(X86_FEATURE_FRED) && !enable_fred) {
-> >  		setup_clear_cpu_cap(X86_FEATURE_FRED);
-> > +		setup_clear_cpu_cap(X86_FEATURE_NMI_SOURCE);
-> > +	}
-> >  
-> >  	/* Init cpu_entry_area before IST entries are set up */
-> >  	setup_cpu_entry_areas();  
-> 
-> ... suffices just fine on its own.
-I am not following, do you mean checking for FRED is sufficient for NMI
-source? I think it works since NMI source cannot be disabled if FRED is on.
-Just want to use the architectural CPUID bits to the fullest.
+>
+> [1]https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d=
+1344dde9fce0@epcms5p1/
+>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+>  include/linux/swap.h |  1 +
+>  mm/page_io.c         | 86 ++++++++++++++++++++++++++++++++++++++++++--
+>  mm/swapfile.c        | 10 ++++++
+>  3 files changed, 95 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index a11c75e897ec..e88563978441 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -299,6 +299,7 @@ struct swap_info_struct {
+>         signed char     type;           /* strange name for an index */
+>         unsigned int    max;            /* extent of the swap_map */
+>         unsigned char *swap_map;        /* vmalloc'ed array of usage coun=
+ts */
+> +       unsigned long *zeromap;         /* vmalloc'ed bitmap to track zer=
+o pages */
+>         struct swap_cluster_info *cluster_info; /* cluster info. Only for=
+ SSD */
+>         struct swap_cluster_list free_clusters; /* free clusters list */
+>         unsigned int lowest_bit;        /* index of first free in swap_ma=
+p */
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index a360857cf75d..ab043b4ad577 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -172,6 +172,77 @@ int generic_swapfile_activate(struct swap_info_struc=
+t *sis,
+>         goto out;
+>  }
+>
+> +static bool is_folio_page_zero_filled(struct folio *folio, int i)
+> +{
+> +       unsigned long *page;
 
+I just recently renamed this variable in the zswap version of this
+function because it is very confusing, especially when looking for
+struct page references. 'page' is usually used for struct page. Let's
+use a different name here.
 
-Thanks,
+> +       unsigned int pos;
+> +       bool ret =3D false;
+> +
+> +       page =3D kmap_local_folio(folio, i * PAGE_SIZE);
 
-Jacob
+In the zswap version, we compare against the end of the page first
+before the loop, in case the page just has a bunch of zeros at its
+beginning. The patch that added it to zswap reported better
+performance in some cases [1].
+
+You can also use memchr_inv() to compare the range against 0 instead
+of the loop.
+
+[1]https://lore.kernel.org/all/20230205190036.1730134-1-taejoon.song@lge.co=
+m/
+
+> +       for (pos =3D 0; pos < PAGE_SIZE / sizeof(*page); pos++) {
+> +               if (page[pos] !=3D 0)
+> +                       goto out;
+> +       }
+> +       ret =3D true;
+> +out:
+> +       kunmap_local(page);
+> +       return ret;
+> +}
+> +
+> +static bool is_folio_zero_filled(struct folio *folio)
+> +{
+> +       unsigned int i;
+> +
+> +       for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> +               if (!is_folio_page_zero_filled(folio, i))
+> +                       return false;
+> +       }
+> +       return true;
+> +}
+
+Is there value in splitting this into two functions and having a
+separate loop here? Can we just have a single function that kmaps the
+entire folio and loops over it in one go?
+
+> +
+> +static void folio_page_zero_fill(struct folio *folio, int i)
+> +{
+> +       unsigned long *page;
+> +
+> +       page =3D kmap_local_folio(folio, i * PAGE_SIZE);
+> +       memset_l(page, 0, PAGE_SIZE / sizeof(unsigned long));
+> +       kunmap_local(page);
+> +}
+> +
+> +static void folio_zero_fill(struct folio *folio)
+> +{
+> +       unsigned int i;
+> +
+> +       for (i =3D 0; i < folio_nr_pages(folio); i++)
+> +               folio_page_zero_fill(folio, i);
+
+I think you can just use clear_highpage() here and drop
+folio_page_zero_fill(). It should be more optimized as well in some
+cases.
+
+I don't have further comments about the rest beyond Johannes's comments.
 
