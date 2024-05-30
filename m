@@ -1,186 +1,115 @@
-Return-Path: <linux-kernel+bounces-195832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53F08D526D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DA78D526C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEDC1F24D6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EEBD1F24A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C33158A11;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2DB158A0A;
 	Thu, 30 May 2024 19:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EK4W+vtX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kGAodZpT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0747158860;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12651581E6;
 	Thu, 30 May 2024 19:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717097979; cv=none; b=OhMSFGbDLfb8HPiymrC+4n0JzQpbjZwNmKB+/4A5D3PPsv1y+GJwACDQ7TEaVLeFVHYL06nLJjOYLNBB+isPllCVLPmK4sZhRBNXZTlc0+sFtGo/u3EOCOaYwdoqtF2cm/+ymdSSv+gGiCdCVUS2KlSX3ipgAZibxUXrpDyc2z4=
+	t=1717097979; cv=none; b=Pd7U2zrpJhFW/gskCKrfwx1+w1MMdv86EuAMZJiIHcW/0gmtzxVEXzPmx1fzMhmXb/bzB2NylwBJqsaMplpTl2FpmRNpHK1dCUDfFAwKOk2s30uRe3TJCLLOEiyM6zUU7pnYFGMUaB5QlyfqM+4WbkscuXnp1kz0LgrTAfPDKd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717097979; c=relaxed/simple;
-	bh=/lktGtJSvAn4lh7mJGP1VwrQBcfaabMzyjbDYfqQoH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vtyho7r8a+nUQUl7pwyUSL88PtJ4wEFISFUIdNmQ2rhZP5DtUomj4kOT5Fq9sCET1K8e88VDUxfvPooSagBnPPwZQKm/2VwhaAIIrqDC/uAX2N2Qt/hiDJbNlncaCulZqE77J/NlUFipWOoZA1uIsIFNjdRxOmqxtIVUPgMbz9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EK4W+vtX; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717097978; x=1748633978;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/lktGtJSvAn4lh7mJGP1VwrQBcfaabMzyjbDYfqQoH4=;
-  b=EK4W+vtXByrrOyFw/g/tphVt9KMBbx8Xuzq3Qw56O09WATOcx4kB/d5L
-   wegQ+OFH8QERi8cn0RLjqUa390yLk+04IAr4xdwms5YFw9RohckZqOp67
-   mZFt3qDhm3Z1Nv2guVKwATBF3CqLQIbr+JdNjwi2f9RfsYjlfRmnhcxw4
-   XzjIK/jdwce8wwh+y4XFa30hrJY1NlYa1qK4B+7KuknAhBLWPi79VlV1u
-   bXq5P/z6xEkBJtblf1HRqZ8pWHV79UqYxhnxZG4wA1TCiXDbls6C2/u9C
-   e6GaSkKtk1+fDWSfSadujUP9IVxw2SGQKRHjnOwwkap9bVZ1R50029Wx1
-   A==;
-X-CSE-ConnectionGUID: oB5aoEUmT3qI6hzq1B7Dnw==
-X-CSE-MsgGUID: q88UenbTRLSgEb5EnKuuBQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13809271"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="13809271"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:39:36 -0700
-X-CSE-ConnectionGUID: RR6vibQ8SNWT6LNa4FbOmw==
-X-CSE-MsgGUID: X2unkvyYR22oCdxtNCYCrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="40985566"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 30 May 2024 12:39:33 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sClcX-000FuD-1Y;
-	Thu, 30 May 2024 19:39:29 +0000
-Date: Fri, 31 May 2024 03:38:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Witold Sadowski <wsadowski@marvell.com>, linux-kernel@vger.kernel.org,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, broonie@kernel.org,
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, pthombar@cadence.com,
-	Witold Sadowski <wsadowski@marvell.com>
-Subject: Re: [PATCH v7 2/4] spi: cadence: Add Marvell xSPI IP overlay changes
-Message-ID: <202405310322.RIyE2GGE-lkp@intel.com>
-References: <20240529220026.1644986-3-wsadowski@marvell.com>
+	bh=wUld6fDYM1OOaXYHHFwLLRyYEIOykO8t+EULeUJsVwQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=lqHcbIhkehxzqdEYmMDKxnaNfbL/9iHcPgMJ2Ub4EW2qDFdUJvES6zjZ24N6KPFrijGhytcb8JFc1TYW6WX2SX9cQ22/ZRG49oj5DgpQ8BnT8P3jusKzTnYr6usyi6lmCEbGS9izZhl2gpM/HTumrhcFmUqowmTkIFh0Pq6clKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kGAodZpT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGpGxU024728;
+	Thu, 30 May 2024 19:39:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=G3LhfMYXLod+WXyf4kdGO/
+	jHODsxn9J3pVc37hfWDsY=; b=kGAodZpTwWYkwEBVdPEUJz2E1FDOJNwQxzvj6T
+	IFhFCRegim8E8nAlrQ7L7V+Wf6u58oLJEzp2o2xnzaN0xm3eqKBBYpyDrCgCOKSa
+	F8Um25XZwq7hDLwJAWck9qBBt1ZfPpklHN5FhfnUa4F3SUy9i3SnMIvIPXz6BQD+
+	Qh7NIgKDmmho3VKj4GCuzLosKDlerVbk0II1YK5TP/0WR9DwHKMagoDn+DU6peIR
+	XGpaXYXf7KMgn5lNve4iJveErH9sHvMYmxd9mg+lzqo/9qHtOJVwKlioKpb43/Ba
+	8fPddLiDCD5D+hcFZVUtVEwzVAYN4Q+RmRbNxWdXwfvAgG4Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qmyvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 19:39:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UJdVmU011554
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 19:39:31 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 12:39:30 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 12:39:26 -0700
+Subject: [PATCH] kcsan: test: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529220026.1644986-3-wsadowski@marvell.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-md-kernel-kcsan-v1-1-a6f69570fdf6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAO7VWGYC/x3MywrCQAxA0V8pWRuYPgYZf0VczCPa0DZKolIo/
+ XenLs/i3g2MlMng0myg9GXjp1S0pwbyGOVByKUaOtcNzvcOl4ITqdCMU7YoGM7B5+B9W/oEtXo
+ p3Xn9H6+36hSNMGmUPB6fmeWz4hLtTQr7/gMZhQwLgAAAAA==
+To: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
+CC: <kasan-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: p3zlZjerhl5YzVcwUELOeuVp3a5BI-Jf
+X-Proofpoint-ORIG-GUID: p3zlZjerhl5YzVcwUELOeuVp3a5BI-Jf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_13,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300145
 
-Hi Witold,
+Fix the warning reported by 'make C=1 W=1':
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/kcsan/kcsan_test.o
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ kernel/kcsan/kcsan_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[auto build test ERROR on broonie-spi/for-next]
-[also build test ERROR on linus/master v6.10-rc1 next-20240529]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
+index 0c17b4c83e1c..117d9d4d3c3b 100644
+--- a/kernel/kcsan/kcsan_test.c
++++ b/kernel/kcsan/kcsan_test.c
+@@ -1620,5 +1620,6 @@ static struct kunit_suite kcsan_test_suite = {
+ 
+ kunit_test_suites(&kcsan_test_suite);
+ 
++MODULE_DESCRIPTION("KCSAN test suite");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Marco Elver <elver@google.com>");
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Witold-Sadowski/spi-dt-bindings-cadence-Add-Marvell-overlay-bindings-documentation-for-Cadence-XSPI/20240530-060250
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/20240529220026.1644986-3-wsadowski%40marvell.com
-patch subject: [PATCH v7 2/4] spi: cadence: Add Marvell xSPI IP overlay changes
-config: arm-randconfig-004-20240531 (https://download.01.org/0day-ci/archive/20240531/202405310322.RIyE2GGE-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405310322.RIyE2GGE-lkp@intel.com/reproduce)
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240530-md-kernel-kcsan-9795c9551d3b
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405310322.RIyE2GGE-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/spi/spi-cadence-xspi.c:496:15: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                           *buf64++ = readq(addr);
-                                      ^
-   drivers/spi/spi-cadence-xspi.c:499:10: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                           tmp = readq(addr);
-                                 ^
-   drivers/spi/spi-cadence-xspi.c:505:9: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                   tmp = readq(addr);
-                         ^
->> drivers/spi/spi-cadence-xspi.c:520:4: error: call to undeclared function 'writeq'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                           writeq(*buf64++, addr);
-                           ^
-   drivers/spi/spi-cadence-xspi.c:524:4: error: call to undeclared function 'writeq'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                           writeq(tmp, addr);
-                           ^
-   drivers/spi/spi-cadence-xspi.c:530:3: error: call to undeclared function 'writeq'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                   writeq(tmp, addr);
-                   ^
-   6 errors generated.
-
-
-vim +/readq +496 drivers/spi/spi-cadence-xspi.c
-
-   485	
-   486	static void mrvl_ioreadq(void __iomem  *addr, void *buf, int len)
-   487	{
-   488		int i = 0;
-   489		int rcount = len / 8;
-   490		int rcount_nf = len % 8;
-   491		uint64_t tmp;
-   492		uint64_t *buf64 = (uint64_t *)buf;
-   493	
-   494		if (((uint64_t)buf % 8) == 0) {
-   495			for (i = 0; i < rcount; i++)
- > 496				*buf64++ = readq(addr);
-   497		} else {
-   498			for (i = 0; i < rcount; i++) {
-   499				tmp = readq(addr);
-   500				memcpy(buf+(i*8), &tmp, 8);
-   501			}
-   502		}
-   503	
-   504		if (rcount_nf != 0) {
-   505			tmp = readq(addr);
-   506			memcpy(buf+(i*8), &tmp, rcount_nf);
-   507		}
-   508	}
-   509	
-   510	static void mrvl_iowriteq(void __iomem *addr, const void *buf, int len)
-   511	{
-   512		int i = 0;
-   513		int rcount = len / 8;
-   514		int rcount_nf = len % 8;
-   515		uint64_t tmp;
-   516		uint64_t *buf64 = (uint64_t *)buf;
-   517	
-   518		if (((uint64_t)buf % 8) == 0) {
-   519			for (i = 0; i < rcount; i++)
- > 520				writeq(*buf64++, addr);
-   521		} else {
-   522			for (i = 0; i < rcount; i++) {
-   523				memcpy(&tmp, buf+(i*8), 8);
-   524				writeq(tmp, addr);
-   525			}
-   526		}
-   527	
-   528		if (rcount_nf != 0) {
-   529			memcpy(&tmp, buf+(i*8), rcount_nf);
-   530			writeq(tmp, addr);
-   531		}
-   532	}
-   533	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
