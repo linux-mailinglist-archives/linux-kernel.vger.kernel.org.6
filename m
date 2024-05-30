@@ -1,159 +1,112 @@
-Return-Path: <linux-kernel+bounces-195343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A418D4B4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:09:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4898D4B53
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB285284ADA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:09:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E8C21F26131
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B841C6893;
-	Thu, 30 May 2024 12:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ik3hzkB+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B090C1822ED;
+	Thu, 30 May 2024 12:10:42 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B94183A84;
-	Thu, 30 May 2024 12:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD4C176183;
+	Thu, 30 May 2024 12:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070884; cv=none; b=joYqLWpmJ4TtRvjIUdNvmQ2KnLEC83A65v8dB9YS0s5ZQorZK0Y5PJ01yvrInGGpyIK31YhAZbzKEgmlIy9N3JzD/abQ7JKk2vNBH9d3j9mIOwjEE0lf9IT1BuNKk3X7vRXhWASsqBsDXIaoMhOBUyL+YfkNZO+lG8NQ0fvqq/k=
+	t=1717071042; cv=none; b=G1upMTVIg/w3+Wh/tFbehLvwJqtN9RpNgWoCLqCrkkHxS9VwH0VmJCfKTfPtoyuGC4jPkiTO0Bqt+HB/vZbtPuwA+bt4H8DkRffuwLR7GY4MJpHQl/0vQJYigNXB5bkJHtyy/BN2eh2P0V/e0Hpiehfn5DyNxOtk3vycKVz2KuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070884; c=relaxed/simple;
-	bh=NGupSVFAf3w4i+B0v6O8ZHgy6jsWt10FDsN0sCp/Jv0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XEN4YzYyK8kacxtIPLfemilqwiFNxed6r5l3GQxyc40yofwz6hP8HC1o/LgAYlYMhhvHCSHDE4fWENhTRMiaFsYsLafPZ6Rn6VxrpYWF93yV4i/oW7E8J2cKYwqiJaAKYx+Jc6Vi4HFv0AwtjONJziV7I6ToOGHq9LuDSvkMoWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ik3hzkB+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 25E15C4AF0A;
-	Thu, 30 May 2024 12:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717070884;
-	bh=NGupSVFAf3w4i+B0v6O8ZHgy6jsWt10FDsN0sCp/Jv0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Ik3hzkB+9mYBamTB93UN+zjnXx+a/wgxzF7Mm8b9vQBS+pc4Me5N8QrLbcsnoceho
-	 vrrPfHMUMDgfiPhbxVOQ+kKO/fwtPlojRlErrhCU1reQfXg9RwlDtgoLh7d7tVtfm1
-	 vIM9xZCPVrr2LhbZPXMmOMcvFBYOWdgemwTKLqU0wsb6W11QAaLLM3dfWHic6v/eGd
-	 uQmWMKhhAXCm5R7a4cfFcdy++ahXmcOBu5QtFIk0m2FN3la/vmTxzAL81+K4VsW3c4
-	 m/sGa8ajWbjfufjofU+CAFHcTLxyjMnYrMRX6g39POlhaQ+B0WWp2GUuO2aZuBpPha
-	 tgeUXAPuh6hcQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEF3C25B74;
-	Thu, 30 May 2024 12:08:04 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Thu, 30 May 2024 15:07:53 +0300
-Subject: [PATCH v3 5/5] iio: adc: ad7173: Fix sampling frequency setting
+	s=arc-20240116; t=1717071042; c=relaxed/simple;
+	bh=P0RD5wePROwgM93a13nPt0ORKlo981rKnfcaHC63to8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SkdbQGZfkYn4/AsOgz5f468bwu8wf/iTPeFoEcJvEOfGDR++cPSq0e5Jz4E02T7e07IUY0F9hU3lVc2bdtbkHxxq0BaU8RRurGIrIIXZxAQ1SvsPgp/D3E5+yoVfFAymI2pjFNcroRgEGsT2WmtmHcPnKu+bbXFtoYzCnulq1MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6302bdb54aso88117966b.0;
+        Thu, 30 May 2024 05:10:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717071039; x=1717675839;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vn5DeFOwNHbs9/RCnEd5ReZXwUcap9a3NbSMJIIwBVg=;
+        b=J4DX342m5zqywde/HVqj1vu0YSQCb16JDV/G3RWrSMkuy4BQH/jdwON8iQ+rMOBmZK
+         OHbwxMhD74AfqZVCfnSosqrD4lgKHONQUvlFVa1yUxsYA91l43DTND7pyBk5kegYeKdR
+         RUKxeBweh1PWHmchI/hGDUU6l+6xgUKTf5U6GJnKDY8rTCSQ6Azka2ukLIbM3TJ5JGoc
+         rOqo9MW9i8NBPOxC3yveBPcXRz0EhCzeOnJTBD1leuhPORuhkL8KG7JRAnUVXm8TIO6X
+         Jl1x4NYX1xGkSR7H6Wf7iGaXw4pNxwWByRxDeO/R/qA5czPHvoG+Um+TSx4j7Tw03Chk
+         oYWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdX6xNkrvT2PGzRWIREfgVLMj01q0qXCPYOvTMSjOwqx5zAhbNGMwqNseizavqcROtrWPp52M04TJChK6s9uvP5/tuFBYJG7Te6nXG4gtjC4YT/xGAW4K150hT6+35uYOwmi94jEpLMnjzVPCH
+X-Gm-Message-State: AOJu0Yw5OTRJZDwMu+P8FTzkpcB1VSNXvCAp29WMFrAtavOCstYEJycr
+	ic+c8gXhldqKJCn/GUnsWnnsDvX8OhauTw8JmJmqhdy+Cx/S5pYU
+X-Google-Smtp-Source: AGHT+IGZ+uD+C4coiMwyWoJiYb1UO0xSkZytq7e7bAEIaII3ZacuBm3TQ4lF6mFpcEIVH8lflRg3Lg==
+X-Received: by 2002:a17:906:b245:b0:a5a:4705:ad36 with SMTP id a640c23a62f3a-a65e8e34e38mr121799766b.16.1717071038446;
+        Thu, 30 May 2024 05:10:38 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda6cdcsm810394166b.209.2024.05.30.05.10.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 05:10:37 -0700 (PDT)
+Date: Thu, 30 May 2024 05:10:35 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Matteo Croce <technoboy85@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] selftests: net: tests
+ net.core.{r,w}mem_{default,max} sysctls in a netns
+Message-ID: <Zlhsu+9If//CMPv+@gmail.com>
+References: <20240528121139.38035-1-teknoraver@meta.com>
+ <20240528121139.38035-3-teknoraver@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-ad7173-fixes-v3-5-b85f33079e18@analog.com>
-References: <20240530-ad7173-fixes-v3-0-b85f33079e18@analog.com>
-In-Reply-To: <20240530-ad7173-fixes-v3-0-b85f33079e18@analog.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dumitru Ceclan <mitrutzceclan@gmail.com>, 
- Dumitru Ceclan <dumitru.ceclan@analog.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717070881; l=2969;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=SBPCEDIHiCkBTrkchaltcj60L2/HmJ7NW2rt8H7uZxM=;
- b=1yI8EuMNC1kGPCv+tv4qpgt9g1y7ShB+N4rgprlmp+0NraSAwqk4cxA7tfpVxGYlbztHEub0w
- 3gVkgAXonMJAdtMh4xcWYt0oz0VLNdOjvpi2DvO9z3NmxYa60LMCN+Z
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528121139.38035-3-teknoraver@meta.com>
 
-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+On Tue, May 28, 2024 at 02:11:39PM +0200, Matteo Croce wrote:
+> Add a selftest which checks that the sysctl is present in a netns,
+> that the value is read from the init one, and that it's readonly.
+> 
+> Signed-off-by: Matteo Croce <teknoraver@meta.com>
+> ---
+>  tools/testing/selftests/net/Makefile        |  1 +
+>  tools/testing/selftests/net/netns-sysctl.sh | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
+>  create mode 100755 tools/testing/selftests/net/netns-sysctl.sh
+> 
+> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
+> index bd01e4a0be2c..6da63d1831c1 100644
+> --- a/tools/testing/selftests/net/Makefile
+> +++ b/tools/testing/selftests/net/Makefile
+> @@ -53,6 +53,7 @@ TEST_PROGS += bind_bhash.sh
+>  TEST_PROGS += ip_local_port_range.sh
+>  TEST_PROGS += rps_default_mask.sh
+>  TEST_PROGS += big_tcp.sh
+> +TEST_PROGS += netns-sysctl.sh
+>  TEST_PROGS_EXTENDED := toeplitz_client.sh toeplitz.sh
+>  TEST_GEN_FILES =  socket nettest
+>  TEST_GEN_FILES += psock_fanout psock_tpacket msg_zerocopy reuseport_addr_any
+> diff --git a/tools/testing/selftests/net/netns-sysctl.sh b/tools/testing/selftests/net/netns-sysctl.sh
+> new file mode 100755
+> index 000000000000..b948ba67b13a
+> --- /dev/null
+> +++ b/tools/testing/selftests/net/netns-sysctl.sh
+> @@ -0,0 +1,15 @@
+> +#!/bin/bash -e
 
-This patch fixes two issues regarding the sampling frequency setting:
--The attribute was set as per device, not per channel. As such, when
- setting the sampling frequency, the configuration was always done for
- the slot 0, and the correct configuration was applied on the next
- channel configuration call by the LRU mechanism.
--The LRU implementation does not take into account external settings of
- the slot registers. When setting the sampling frequency directly to a
- slot register in write_raw(), there is no guarantee that other channels
- were not also using that slot and now incorrectly retain their config
- as live.
-
-Set the sampling frequency attribute as separate in the channel templates.
-Do not set the sampling directly to the slot register in write_raw(),
-just mark the config as not live and let the LRU mechanism handle it.
-As the reg variable is no longer used, remove it.
-
-Fixes: 8eb903272f75 ("iio: adc: ad7173: add AD7173 driver")
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
----
- drivers/iio/adc/ad7173.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index e66a137a76be..ebf248741b34 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -717,7 +717,7 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
- {
- 	struct ad7173_state *st = iio_priv(indio_dev);
- 	struct ad7173_channel_config *cfg;
--	unsigned int freq, i, reg;
-+	unsigned int freq, i;
- 	int ret;
- 
- 	ret = iio_device_claim_direct_mode(indio_dev);
-@@ -733,16 +733,7 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
- 
- 		cfg = &st->channels[chan->address].cfg;
- 		cfg->odr = i;
--
--		if (!cfg->live)
--			break;
--
--		ret = ad_sd_read_reg(&st->sd, AD7173_REG_FILTER(cfg->cfg_slot), 2, &reg);
--		if (ret)
--			break;
--		reg &= ~AD7173_FILTER_ODR0_MASK;
--		reg |= FIELD_PREP(AD7173_FILTER_ODR0_MASK, i);
--		ret = ad_sd_write_reg(&st->sd, AD7173_REG_FILTER(cfg->cfg_slot), 2, reg);
-+		cfg->live = false;
- 		break;
- 
- 	default:
-@@ -804,8 +795,7 @@ static const struct iio_chan_spec ad7173_channel_template = {
- 	.type = IIO_VOLTAGE,
- 	.indexed = 1,
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
--		BIT(IIO_CHAN_INFO_SCALE),
--	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-+		BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 	.scan_type = {
- 		.sign = 'u',
- 		.realbits = 24,
-@@ -819,8 +809,8 @@ static const struct iio_chan_spec ad7173_temp_iio_channel_template = {
- 	.channel = AD7173_AIN_TEMP_POS,
- 	.channel2 = AD7173_AIN_TEMP_NEG,
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
--		BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_OFFSET),
--	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-+		BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_OFFSET) |
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 	.scan_type = {
- 		.sign = 'u',
- 		.realbits = 24,
-
--- 
-2.43.0
-
+Don't you need to add the SPDX license header?
 
 
