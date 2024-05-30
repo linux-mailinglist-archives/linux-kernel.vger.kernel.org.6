@@ -1,115 +1,155 @@
-Return-Path: <linux-kernel+bounces-195957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A088D54DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:50:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11488D54DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA821C227F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:50:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABA2B2302E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DB51836EC;
-	Thu, 30 May 2024 21:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05126177991;
+	Thu, 30 May 2024 21:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2nHP67P"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbQroQDP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8957EEFD;
-	Thu, 30 May 2024 21:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2CE47A40;
+	Thu, 30 May 2024 21:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717105796; cv=none; b=GhgxlV5Paps9O6kTGDv3wuYZuLnYLbHCK+g2gPSkMA+odezrs/NIK7SjYL3Ary46M0UjQPygu2DLWJLGfB+Jo9BxJ5W+B2bzrVhSqilpXeYZmrxWqhQYsP0Z+2JkqQnhXx+7g5qR7UT1AS1jAURwsLtQb4puQXiyszmmMY1wVS4=
+	t=1717105971; cv=none; b=S3ILWdkKFI0o0FreKWIh83JZ6SAYMbR045lkozu4qtfYNdffidCW7ZHs8D99gUFXI2Vy582F0LkgJm0E4uu2ocfPq42PQsOtkyS2okdrAra5vmaCS5hgwQ/eIgNuAwUHSlU29KSnkcWL/rY6Uk5SrM9K2rTNuNIUSLFxngY7A+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717105796; c=relaxed/simple;
-	bh=f/fW0zdBbzo6W1x0NePO3Pdd4EwO2/UxhM7Z8Y0hb/4=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=lmhIJlFEj+Rm0zkyFc5Ol3cggHDTLH8FosareF9oVnzhWiY8SCLSxVTGkmymEWRNgYZbJeVA9G2Y+zxe3k4mV26Q7MPSZCJ9CoefkEZ0oKw+UTAR1u9o1YzYPyvbSx+1IIEr9sSHTCwSyQsNjy4FVqrw5azPzC7UF0wGJEYDhD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2nHP67P; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7930504b2e2so68640985a.3;
-        Thu, 30 May 2024 14:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717105793; x=1717710593; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9BvXcUI2/ZA1mL53Sma0yFBjzwk4mG3KgVKAtFhZrbI=;
-        b=A2nHP67PJR7xmzOyccYCrUYB6Pmuxx+a/yVCW07TSl+0KkQrRYmH+PxAGwmBof2p4+
-         iu8MIJqYzkpq/JYB3L95cEiVlXIx4iQSMlHcRL4NVGWbz/kVywFPdxsO1jpuRSjBm+dr
-         +ZBtIdLjnc6A5nQ68Z/Il2VZ8ZdJeXCm2H0HF2J8gpQcpR9Wie3Tg3FRbeX0uqocN+PS
-         NnzEnShtvsR3Zbc70Bt/8TWRhBb1Bk1+0p1Fc/tMFhv/XpECaO+ZAmhBiRzS34cW6YIX
-         dLYbfl6RPPe5fWowEG/5O2mdpYQBmibOA9EKgkMPzUmPPYz8tyfskafS2DtlSv4xFdMx
-         7o0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717105793; x=1717710593;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9BvXcUI2/ZA1mL53Sma0yFBjzwk4mG3KgVKAtFhZrbI=;
-        b=lyKj5XQOidAoYLvpIyNst5USBl6DD4HhrOwYA/chKCPgamnwAhfmA0d4tXGLuTZP+U
-         LDs7W5JA8p8TN7ZmPm4uNFlO4Gi1sC8581Vjun4Lip3gGkj2cmMUgdmrMuW0HDv4QOWO
-         0IplxlPLm9zZxwFvuDcvUCDKUFtj06qzSQECQGTxf8jm2jAltMa/eNvQa14HPxiDphRc
-         5QqB5OfGhQ/A+orvPkUYIONmdKJ2oNDb8qs4YYD8KACU8tkF9aSE571PsiSixXjheYek
-         cd6pwtx8UAAsSS5hhdMBEbUTy/XQzLw4lSksfpJMaKqbElS0WFQvS0mDogXvsya8Bt37
-         v0Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6RMwhvxtXTJAMk7kNlw6iKLPD/ZHpcLwxiOz7SiDiwXcYNB8b6xersG+Wv0s93qfZwnAN0j6vOgXgxhMp6RAS0xE8Dk3Onfzx8iMSI5P6
-X-Gm-Message-State: AOJu0Yx3RAXBXVInHAOTnIW1wNZeUBimdfVAqlu2w6a1vwTTbSPxZVkw
-	ETT0jziSgAjpb/AFZQpZZwOEKr/IucU67rmTU3Bp9KKo+L5W4WT5m+Bkm23Q
-X-Google-Smtp-Source: AGHT+IG6qFoattV8jBj2PaP9TutFh3X3DjNscdjl1+wUZwNW5AMFm0+Lhsbh/ryMHTl+5CLzDOWQpA==
-X-Received: by 2002:a05:620a:12e7:b0:792:c199:d318 with SMTP id af79cd13be357-794e9d95e01mr338982385a.12.1717105793270;
-        Thu, 30 May 2024 14:49:53 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-794f329148esm14086285a.127.2024.05.30.14.49.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 14:49:52 -0700 (PDT)
-Message-ID: <e92ecd6b-ce05-41fc-8c8a-588edef551ca@gmail.com>
-Date: Thu, 30 May 2024 14:49:49 -0700
+	s=arc-20240116; t=1717105971; c=relaxed/simple;
+	bh=abZe/dx3WO1a/0KTAitU4WVK162HfcTJ9SvDqgkQNGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZry3vKBhXGl5TtcPuwZw3q57lErIRgmR+gFx1eGE7NwH6lPtWn6hxXutJcugkkM9Sk+Exk4RtNOmudOga/EfgHf3vlzqngUqwZq3sIRiamiZR2W9f44ncRXhBp+YmtbhNdL2DgkNUtrq0L8DbyRFDd15Pn1ViTd2SH/qVWJjxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbQroQDP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16F5C32786;
+	Thu, 30 May 2024 21:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717105970;
+	bh=abZe/dx3WO1a/0KTAitU4WVK162HfcTJ9SvDqgkQNGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UbQroQDPox/NeV/A1CeNS5vY8k7VjI7fDS9fHoThXfLzv41sj3nTeP5yHH/P/I5+N
+	 d0qm6Bj8TB2fveY9smh/5HCu/CeJ2mEWTn4eL8EP6Xc7yNyS8rRdP26tfeQ10Nclca
+	 2+PadPARXAkHvM17cCUoaZ2/0+W2STPddN7PEzyvo8AvhJxJWUBgkzY7F6BnfWVWqL
+	 qrbBw9LfH985G82dHhm1kRXr9l6+R14lyvrfqA9fM0x82rOK7cBjjNdcNU/QijvjqK
+	 VweUByCpyvyat8PG24b35WDDf+zoi1cFDehKaiQKfFVg+MYdCvV2tta3rLaRsZfiZi
+	 zmOPH6QnQE8lg==
+Date: Thu, 30 May 2024 14:52:48 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+	Joel Fernandes <joel@joelfernandes.org>, neeraj.upadhyay@kernel.org,
+	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
+Subject: Re: arm-linux-gnueabihf-ld:
+ kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
+ `__bad_cmpxchg' follow
+Message-ID: <20240530215153.GA466604@thelio-3990X>
+References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
+ <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
+ <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
+ <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
+ <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-bluetooth@vger.kernel.org,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Flood of "Unexpected continuation frame (len 0)" messages
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
 
-Hiya,
+On Thu, May 30, 2024 at 10:24:05AM -0700, Paul E. McKenney wrote:
+> And for an untested first attempt at a fix.
+> 
+> What did I mess up this time?  ;-)
 
-My Sony MDR-ZX770BN headset connected to an USB Bluetooth adapter with 
-the following characteristics:
+An include for cmpxchg-emu.h ;)
 
-         ID 0a5c:4500 Broadcom Corp. BCM2046B1 USB 2.0 Hub (part of 
-BCM2046 Bluetooth)
-         |__ Port 1: Dev 10, If 0, Class=Wireless, Driver=btusb, 12M
-             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
-         |__ Port 1: Dev 10, If 1, Class=Wireless, Driver=btusb, 12M
-             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
-         |__ Port 1: Dev 10, If 2, Class=Vendor Specific Class, Driver=, 12M
-             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
-         |__ Port 1: Dev 10, If 3, Class=Application Specific Interface, 
-Driver=, 12M
-             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
+  In file included from arch/arm/include/asm/atomic.h:16,
+                   from include/linux/atomic.h:7,
+                   from include/asm-generic/bitops/lock.h:5,
+                   from arch/arm/include/asm/bitops.h:245,
+                   from include/linux/bitops.h:63,
+                   from include/linux/log2.h:12,
+                   from kernel/bounds.c:13:
+  arch/arm/include/asm/cmpxchg.h: In function '__cmpxchg':
+  arch/arm/include/asm/cmpxchg.h:167:26: error: implicit declaration of function 'cmpxchg_emu_u8' [-Werror=implicit-function-declaration]
+    167 |                 oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+        |                          ^~~~~~~~~~~~~~
+  cc1: some warnings being treated as errors
 
-keeps flooding my kernel log with:
-
-[2413092.567730] Bluetooth: Unexpected continuation frame (len 0)
-
-Is there a quirk that should be set for this adapter? Audio playback 
-over Bluetooth A2DP works just fine.
-
-Thanks!
--- 
-Florian
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit 6e43483dd111cf1be58b02a45d0ca729ca2634ba
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Thu May 30 10:11:31 2024 -0700
+> 
+>     ARM: Emulate one-byte cmpxchg
+>     
+>     Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on ARM systems
+>     with ARCH < ARMv6K.
+>     
+>     Reported-by: Mark Brown <broonie@kernel.org>
+>     Closes: https://lore.kernel.org/all/54798f68-48f7-4c65-9cba-47c0bf175143@sirena.org.uk/
+>     Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+>     Closes: https://lore.kernel.org/all/CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com/
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>     Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+>     Cc: Arnd Bergmann <arnd@arndb.de>
+>     Cc: Andrew Davis <afd@ti.com>
+>     Cc: Andrew Morton <akpm@linux-foundation.org>
+>     Cc: Linus Walleij <linus.walleij@linaro.org>
+>     Cc: Eric DeVolder <eric.devolder@oracle.com>
+>     Cc: Rob Herring <robh@kernel.org>
+>     Cc: <linux-arm-kernel@lists.infradead.org>
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index ee5115252aac4..a867a7d967aa5 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -34,6 +34,7 @@ config ARM
+>  	select ARCH_MIGHT_HAVE_PC_PARPORT
+>  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+>  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
+> +	select ARCH_NEED_CMPXCHG_1_EMU if CPU_V6
+>  	select ARCH_SUPPORTS_ATOMIC_RMW
+>  	select ARCH_SUPPORTS_CFI_CLANG
+>  	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
+> diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
+> index 44667bdb4707a..fd9b99f4dca46 100644
+> --- a/arch/arm/include/asm/cmpxchg.h
+> +++ b/arch/arm/include/asm/cmpxchg.h
+> @@ -162,7 +162,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
+>  	prefetchw((const void *)ptr);
+>  
+>  	switch (size) {
+> -#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
+> +#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
+> +	case 1:
+> +		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+> +		break;
+> +#else
+>  	case 1:
+>  		do {
+>  			asm volatile("@ __cmpxchg1\n"
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
