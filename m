@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-195125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F658D47F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:03:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B6A8D47F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 344B5B256E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDBFA1F24AA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C93183994;
-	Thu, 30 May 2024 08:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DA4176187;
+	Thu, 30 May 2024 08:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Kjmwhpon"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Om3QX1rq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C54418398D;
-	Thu, 30 May 2024 08:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7826218398D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059574; cv=none; b=pk4nHeQgs8X4dmIuP6UfsrZy9it378fpaJ0JBTWQLr+/7AnYmS14775MWMh20u7V99ATp3+7S1G88fdsGXyP1WpZUocfUo1LPW6Gx+2kQjmmUyZI8NJXNsQFk8j8D56mD3OVRFWiCkG5c+odDCWL1KvGCaFQhk5j9CQ03PU8aQI=
+	t=1717059592; cv=none; b=e0z6VVQ2XxpHjcrmuN7ojZPqv8SHo/V3dkxlYsGx2Sst6fpgLsscBRiBTXJuMMZj10Ya+UfcHyx6eH8tLrxszeAoBZSK8L55rfx4z6dGmh2DF0aE0aAblAIhPSY66sx5LzSHCYVmVZvf8NOzNYfcXZShjzCiSR7OoPjcz3k9dTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059574; c=relaxed/simple;
-	bh=SkjjPhyXR+J9ZYzmle2MoX7KnTUMcyGj3vyfwGgqs9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1to+mjQyMi15Y3cP4Dv1OWdPl+fRVqDDKXxPBLN0z/2AXcmYLWSW42NNtt5P7KRumncNkYs5JX1MtV75Q1Ql+xA3KiplvQvGxZYw9MXvDtlwJ8KH6dVmIXWynZL3rtsdJcrUqUFO9mQQiTdiByngKX++crk5PrBRjT6IXwaduc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Kjmwhpon; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 754FC40E0241;
-	Thu, 30 May 2024 08:59:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id YMUaDw39zA_D; Thu, 30 May 2024 08:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717059564; bh=Pu8wGV8ZGkv6P0zbzP8zgR3tDmcR1UHFjCtSjRmEi6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KjmwhponTNFOHCCFSlJMeG0zaEADk5R7bfkr2V3rM9AIbyrbfS2K+wIaml9LPWKfh
-	 PXQbfKtlwlMXeWFYUPZCxDX2I4yR/LcwnZED41BpIg3lPmRGhYU7+VhzDsGv+YwLmV
-	 yx9yB5T1fJTGwn5kPE7zh1hepNa1nFYuwsykDFEPyfnl5IwfX19Phb8bMyLaM4yY18
-	 Cng6+Wtr76GZuDFMRsgnmt6Svpj9jauPYsrCnrFQvaLDxFgiO3xQyN3fPWuGnNyA9a
-	 0xItRKPhrO3v9Rg1E64xDGKTBT0Hp1BG9GgB4UvVSiMCjB625qxooel3+zTYtqqCjh
-	 sLLVu36QvPL6gbB+bP+UrSaxqLgfw/i9DP1znxdJcYBEyosigs9Kqd8y3x3vJ/mr+3
-	 Us2jHSMH8Bif9fhIco5UfKVcJMGCHYSoU70hIIac9RGNbNKA+DqAzrGOIDXQFzx7oq
-	 t8giJYIPPFmnZXFmuOBGmgMrJWppg8yl4OlhtBG9HjqnCx78zEF6wpwARguGF2dBqo
-	 hdJW0Ebc1OiHe9AcEVwPYkGfcI/gSg1gfiWLx6xSvFVXA91q4Wg6H07BLN/k/ybP/v
-	 efgdGnygHE4UJJzLW6dV1cvtAYKNxVjG7R92zFnXRpACmUE0Nh/SSTSdb/W/tRqHbt
-	 uuYgewoT1TmWfXXU6cH9+v+s=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 92DC640E0177;
-	Thu, 30 May 2024 08:59:20 +0000 (UTC)
-Date: Thu, 30 May 2024 10:59:14 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Christian Heusel <christian@heusel.eu>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [tip: x86/urgent] x86/topology/amd: Evaluate SMT in CPUID leaf
- 0x8000001e only on family 0x17 and greater
-Message-ID: <20240530085914.GAZlg_4lcZIaa83jVb@fat_crate.local>
-References: <7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw6g2jduf6c@7b5pvomauugk>
- <171697474837.10875.6335609575452053884.tip-bot2@tip-bot2>
- <2gj2lkahha4wzyf2ol6xk2ermrmsxaklznrisixdg4m3ogzten@gbrtiyjebeup>
+	s=arc-20240116; t=1717059592; c=relaxed/simple;
+	bh=ToL+POEPulcMMhmLMfYyuoUlouCPWZtIwfrJY+aGc40=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XV3pTErfEddWmWhXye2b9UnjC6cK1KRLJ51qUI8Hhyv5hCkn6QeVAOMuN6Ml6O4XsWc39WlcBv6bi0z1dEdZ2aasHehaQyvMbRbnw1e7vGQRRWyHz+tViV2ClwGVg7QI/5+qSCf5JGnzjY+9F8w8FFv/yam4oSU6DBbmtLrodoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Om3QX1rq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11027C2BBFC;
+	Thu, 30 May 2024 08:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717059592;
+	bh=ToL+POEPulcMMhmLMfYyuoUlouCPWZtIwfrJY+aGc40=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Om3QX1rqgYHkTDu1UjFsHzItLVYlfel+sxir7vFgmtwJV//BwBdJlXd34KKxnZwst
+	 bLofNY4bfsSUX/S4XGlUkHzeI14zrJCIbaV1Udxrkpf/YTH44yn80MAmNI0DFvFQXT
+	 U726MQaoL2ZS67Xk1QKaztQqqPxjv1Rltooad+g9BA8UG1f9VUTW+KYQYgiZV6f5e5
+	 i76UQC6vNsZ0v4FO9dyn9taRavY3+wyDEeSQ08hqvyzvNOQrZndEnhCuf/YMlMFFZk
+	 qLII5yu3GShwpnsrTt/e4mzD2A1v+CvU9Swxi+5+GB50RQDIvz+KqIbG4VfIRASn6D
+	 aCYXTLLBFbDGQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sCbdV-00Gq4k-LV;
+	Thu, 30 May 2024 09:59:49 +0100
+Date: Thu, 30 May 2024 09:59:49 +0100
+Message-ID: <86zfs7lloa.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip/gic: Use smp_wmb() instead of dmb(ishst)
+In-Reply-To: <20240530005254.1495461-1-samuel.holland@sifive.com>
+References: <20240530005254.1495461-1-samuel.holland@sifive.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2gj2lkahha4wzyf2ol6xk2ermrmsxaklznrisixdg4m3ogzten@gbrtiyjebeup>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: samuel.holland@sifive.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, May 30, 2024 at 12:40:50AM +0200, Christian Heusel wrote:
-> it seems like somehow the patch has lost the following two trailers
-> compared to the list variant[0] while being applied:
+On Thu, 30 May 2024 01:52:30 +0100,
+Samuel Holland <samuel.holland@sifive.com> wrote:
 > 
->     Bisected-by: Christian Heusel <christian@heusel.eu>
->     Cc: regressions@lists.linux.dev
+> This is equivalent on ARM, but also works on other architectures.
 > 
-> Did that happen on purpose or did some scripts fail?
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
+> 
+>  drivers/irqchip/irq-gic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> index 98aa383e39db..dc2e4018a40c 100644
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -839,7 +839,7 @@ static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask *mask)
+>  	 * Ensure that stores to Normal memory are visible to the
+>  	 * other CPUs before they observe us issuing the IPI.
+>  	 */
+> -	dmb(ishst);
+> +	smp_wmb();
+>  
+>  	/* this always happens on GIC0 */
+>  	writel_relaxed(map << 16 | d->hwirq, gic_data_dist_base(&gic_data[0]) + GIC_DIST_SOFTINT);
 
-Well, we don't add unknown tags because it was getting unwieldy and
-Bisected-by is not really one we do. I can offer
+Equivalent, sure. But what does it gain us, given that the driver is
+only compiled on ARM systems?
 
-	Reported-by: Christian Heusel <christian@heusel.eu>
+Additionally, you may also want to address the one in the hip04
+driver, which has the same dmb instruction.
 
-as bisection is important work and it should be documented.
+Thanks,
 
-How does that sound?
-
-Thx.
+	M.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Without deviation from the norm, progress is not possible.
 
