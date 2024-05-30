@@ -1,199 +1,206 @@
-Return-Path: <linux-kernel+bounces-194916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3131E8D4436
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:38:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701B88D443C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83B37B24B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:37:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29B09284B7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FEF139D03;
-	Thu, 30 May 2024 03:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08AF139CE3;
+	Thu, 30 May 2024 03:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2JA1JT5/"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB9442AAB;
-	Thu, 30 May 2024 03:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717040269; cv=fail; b=WuLOeTYaQFnrA0Y1ahoSgehFFRYGaOnmR5dA1sWRXTongFer4TpqKpp9yqmh/rfyX+AU7zKve+Bq708uheuH5PiKSP/f4PDPBn5ivUfCITNUbKpnRJiArkGaocWBEMal6PX+KtgLxHb7VYjF7HEkAKFyepqEkeIytaSrfZattQ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717040269; c=relaxed/simple;
-	bh=jWz6e5rgZi5jwCDJ+Gd/9/ZpRt3djwpdddUpUNOLWwk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uN+Jx8WpRyMzVWKH8+Go5kdVoMPXtplGS8HTZB9mHoIcfHuHptscl4xNg9Uikq9ZMPIZKWZbaBXWd70ENLxqn7ZJy/dic/X3ef7DuZJR3f+zJbD+61cU7Mfmg1cbWlGs16A3JjAabbh2AfKq/90eldRIHKQOPIp52crBkO9qFtc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2JA1JT5/; arc=fail smtp.client-ip=40.107.93.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C2/Tw/zXfhe54FXktaUVViZfzOccxYEaQjNt6kt+mm0XbTDYRfakCuz1fOaYRag1l8pv2KzmaVg5dGBL/sspjSsMIHR1Ofq8y5RkjebWZdwyRYfm+dCWlfdsNjL56xuftHxq9kErEs6N9dDl3d267OWfgbvlAFxDyF3lVmrPE1rJT+b7XoWrMh0KVB+nULsAxz2Pg7RjqjQdp0eKhrQzoNJI+d5yflbkuBSZ+ZCblV1h36krw7Qh1Iz8fwV4AS4PbEd0rNcHOeKJf7MBHTlsks8MfsW4gTIeCW+TgeHA22FzDUJYVORirbDJXKVLbgPV+Lzb+ec/E4fyLfTYk//YRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nxWx8I6PlRSQbJZyFg0mT+2rU6HbmqcN4iVEg9ljpyY=;
- b=ADSEiGHGEuYjsrVOXaFHCBfvaGeogJMPOP3DsSySrKda3z5E8USfO7B+XGx25kAyCncYxJD21yNeaf+DNY+YgJtpPKdaDAtL+JBFAueXe1YK5w6e2IEDDhfqgOHF3veDUshkDr5+wOMkqVItjXllPG6+WHH3gTr/4+HTX7ginnneVrAgLeIhzaXx17VbXT5ftcu9q2Gv65DMJVJMdJJdlhJxSuBTHy8UkAwilIpPbw0DnOIn74+/IVI40cRmlnwnkpS32GyueUz5tCI5BHA8oVpHdwwt4um6LzGtTA4lEl7Kwf64/B65WcC3ltN/MjObBC6tuDR9KDdikJQsuHTM8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nxWx8I6PlRSQbJZyFg0mT+2rU6HbmqcN4iVEg9ljpyY=;
- b=2JA1JT5/jkb5r+zhzHB/RX0kaI9cU+OPPC9rU9agwo3KA2NYe81JTi/vkLRm1wDnGZjmtbVacHnpDCz7qV1tkAEgtj+nT9d1SoPUF7Dbo94KmiBMlJbPHxjOKAuCL7JWd99B2i3JaW1PtSM2bCCQ4ji/PxrXb4sGxBy+rvyEcc4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by IA1PR12MB8262.namprd12.prod.outlook.com (2603:10b6:208:3f6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Thu, 30 May
- 2024 03:37:44 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.7633.018; Thu, 30 May 2024
- 03:37:43 +0000
-Message-ID: <75f6aba1-8ed6-4ef8-8811-de40ae40be90@amd.com>
-Date: Thu, 30 May 2024 09:07:30 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86/amd: check event before enable to avoid GPF
-To: George Kennedy <george.kennedy@oracle.com>
-Cc: harshit.m.mogalapalli@oracle.com, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- ravi.bangoria@amd.com
-References: <1716990659-2427-1-git-send-email-george.kennedy@oracle.com>
-Content-Language: en-US
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-In-Reply-To: <1716990659-2427-1-git-send-email-george.kennedy@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0P287CA0002.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:d9::8) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="pCqjkDZk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D55E42AAB;
+	Thu, 30 May 2024 03:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717040325; cv=none; b=a0qncLwnf+HAUOEvD0F0HIRmbbMBEOQnywOijivfFX64gOuhIJ4xlA9Tk5YAIpjACj9pPB+Xjf4MehTLVbr5eIXp1otyZTN2gg447LD0cQJL1cAwJD7z7UbS3Td0KuHr7qRfA3d+xh5xt+Pzx6VSCEmqBxKJMEEyB3pwOhfVVR0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717040325; c=relaxed/simple;
+	bh=0Z+2DCu+nIujQLs3EfHQoGwPrgs21PJ6gT1bOiZx0yI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qrCz/E78RvxCLQVC+d7vkPchIrdVyLkweiN6TMmNTK6OoTNiDsgCjxqurpyITdT02BUhWdEbqra5gFddjyfoWLHujlh6E8/0FWNqXLw6WkCjgeLET4krzsVEJROoxpKDcLkaLQU9MoGd3RTc0zxc1S9/QnXyB5o4D9BmYGeRCGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=pCqjkDZk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [167.220.2.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C4B8220B915A;
+	Wed, 29 May 2024 20:38:41 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C4B8220B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717040321;
+	bh=TLCa5Lp6oUMDlTzuXOnFGatDontTY5GUZPEI/tmIjEw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pCqjkDZkF9FDZNihcL/ShWsnn+No/zPiWEf13D3v2wpDg/tTVVU0zopv71uVpLq+h
+	 Mqq06U7kuSUGZ24nO79MTV1eK87ubwB2yMbC9dvgSi2VXCbBz/t3CpZ7URhit2Ia7s
+	 icM6r86KS1HnZkw2iwTpSNwYShDoCsJ9DZKWtPZo=
+Message-ID: <aed4ed7d-9464-458a-9cc4-5d89ee9d8bb6@linux.microsoft.com>
+Date: Wed, 29 May 2024 20:38:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|IA1PR12MB8262:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5a312e3-2588-495e-76f7-08dc8059dd6d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UkFjanB4WERTSlAyc25JU3lGODFuRC9XeG5MMTRUMXdFSTRTT3BCRkNCVm5h?=
- =?utf-8?B?bUhialhPTzUzbyt2aUk4MERpUlZRU3dJNzZ6S2UwMm13RVpreWw2U3A4M2NE?=
- =?utf-8?B?OEJ0TmhaeFpTOVF2S0pMaTNQckNZZzNDODdiYXFjaFhITkhDM3pWQ2MzNENV?=
- =?utf-8?B?Ri8rMGk0eFo3UWc5NTY5STk2K0RnajZsRHdHM2pmcnBwcXJvYVkvMGFKTUhu?=
- =?utf-8?B?Y0cxSzV1Yk5YKzVyNGZXM1JuZDdteWwvb0dWWDlVd2FkU2d1YTFiR1IySElp?=
- =?utf-8?B?cjNqZS9XcnJWZzNwcnRYNWprUldiZHZ2SjlEWi9kK2wvL1FCRmZyY0UyTm5K?=
- =?utf-8?B?WkRQa29GWmxBUGpEZjBGR1NKSVhXSzIzOTZ5eUdtV1lCbUw0REdtaTV0QzRQ?=
- =?utf-8?B?UDF1ZXlvWE5EZzhhbzVEdmUrZVA0b2xVZ2NOelc0M0xMaUIxTi9rSll1NG1X?=
- =?utf-8?B?N091d1BCVkdySzlVOTNFaDZEeTMxQmI4Z1FENnQ5MTBxQkN1ZkFQOXRHL3Ax?=
- =?utf-8?B?TTRPb2dwbGZjS3NHRUtmOVlNT1lrRmVhOEg1NVJlTXRIMmxDa09Lczk2Y1I4?=
- =?utf-8?B?Vk1OV0krL2RvS0VBQXNFMlgvb3ppZ1hQRDNZYitxUG5wNE54UHl4OXJHSVFB?=
- =?utf-8?B?WldxZGxaSGRJcjlnakJsUWdJMlJtZkhEUmtMblc1Nk9VbkFtUk0ySDQ1OWV6?=
- =?utf-8?B?bGFiMWJaZWpNdDh1NXJCS011THJsREhmcG55ZVhkZmova2V1TElmbnQvUFlD?=
- =?utf-8?B?TUlUQU9RMGpQdU5MdE0rR3c4d3p6bGd3VDRqaS9Ja0dXSlUvUllBSW05b1ZC?=
- =?utf-8?B?ckJIaTkzTUNGVUVrcklLbEk4UXNxdkNiZ0xhMkZjOHdTd1cwQit3MEkwZ1Vy?=
- =?utf-8?B?MVIwRWVYZGFEQjlWTi9LQi83ZUpaVFgwbXRzTUIrSlBiOHpJYk1qNWZrL1Uz?=
- =?utf-8?B?RHo3bE1WNWhobUtkNHhneEdwQnpjaW1lMXVoaWFFSlVMSU9ZR0xPY2dQUFF0?=
- =?utf-8?B?QkVWTTlFdGZoaVZlcWF5TE53dDduSDhOOWNVU1ZwWUIydVpoM2ViM050bTJ3?=
- =?utf-8?B?ZkZROERRQXpyUDhUMVNlQzZudUErSGtEUDh3bWJBbTcrMkllaHVDdm5TTHhN?=
- =?utf-8?B?UUtha0tFTlZNcjMvWVZhL0JTS3lpVTIwQktmUkpkakdnVFQyRDFDaEU1VE8x?=
- =?utf-8?B?MlV4WDlTeGtpamhqSmpwY2hIOC9CYVdGZVRRbGRDUlRNZ2dRK3JpU0JTMGVk?=
- =?utf-8?B?RXVjWE5rN3pqb1JCYU9GSlRtaUVnOE9sTjcrNTVjb2N5N3loOGpicHVubHlN?=
- =?utf-8?B?WkYvOXQ3VFEycmoxTVNjMzZweW45czAvRE4wbElhN1pjU0VpVEg0UDBLM1ZG?=
- =?utf-8?B?SlhWK0xaanVhVjFKUllvR3VPNmcwMXFsTUpicEh4RFNzUHRWdlMvT1lGSHBx?=
- =?utf-8?B?eGtQUS9tcTlZKzJJTS9KMnQ0bFFOVVQrSktmQTRyeU5tRDFzNGovZkI4QnJG?=
- =?utf-8?B?YWpoTW5heCtvRktCb2lZQ1UwL2I5QXVMUjNqa3A4czlvNTZCaEtuQUhqc0pM?=
- =?utf-8?B?aUZMZFRQSlBCWGRaZ1pXaE1LWVVmN24xNUpOSk4rNzlvRllaWitNTittOEtp?=
- =?utf-8?B?cjhWV2R2S2NINERnaFVqWUdRMmg1cllSdTZibVgvUlFlbFRlUy9va0ZtL2tU?=
- =?utf-8?B?MnpBT2JKZUtvcFIva3JRTFp6RGEzMDJPYlV5anVGbjg1VUt4Vk1aVWVnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MkMvaFV1UXRmVmdCdnJUamNxN0o1ZW9WZU9xNERkeWdBeGh6dExzcmZTUXU1?=
- =?utf-8?B?eURWTWc5bUFUWkU5alIwUmEveURBYmxiK2tDbzhkTldWOGh2eUFUcFpyVlVo?=
- =?utf-8?B?cDRHM05ueVlVZXZraTFmRFdSelh4eDhqNUZUN2JTNzlaR1BTM2hiSnhIbFow?=
- =?utf-8?B?cDU2YmRPcnVNOENZSURlZ1RNK3B0eTlqVkdaTjFHbVEyM2I4RlE5ZWtmRGZO?=
- =?utf-8?B?YUtzQ09Pd0gvYmQ5SGJESlZHaTh1YVpSWndvK2JrV1RxL0VQTFdNbGFGMHRz?=
- =?utf-8?B?ajN3TSs2UjNLM3p1ZkFRcVpxV1hmN3JlRHNwNVpDV1B5RzdWR3BsWDJjdXpa?=
- =?utf-8?B?RzA4YUd6MUR2OVhaNG8rVHY0YlZlSTdKM3l6THRhSGJZS3pZcnQ0OGJsSmFY?=
- =?utf-8?B?MGlNZWwwZUVRMktwTUg1Nm1MdjEyalIzQ1pFUHRjWlJUZUZHbExhc0NQT0c4?=
- =?utf-8?B?NlJnOVlUbkc5UlJ5Njl6WHNiU3htN1ZncmpTTHJIUXZNQS9xYkV3VEFCYTRM?=
- =?utf-8?B?YTV6cUJ3OHExdndWcS9La2hSZ3gyZmZzMWFvUndKZjNNeE5NeE9zdm5wOWpy?=
- =?utf-8?B?Uy9CMUp3V20wTE1BbnBvM0xqUjJDOTBFUmltTi9PSUtPcU1rRGY1YllFa3V3?=
- =?utf-8?B?bXExQ3paY1ozSW5lVHF5enNtUUZFY0d6b3B2TXdYa2hvRlJtU3B1WGhmSlB6?=
- =?utf-8?B?WWxqeEIwREpjbDlvblF0amx0N04xOWpkSGVYTUU3RnV1Si9BaGVwbmpSLzVo?=
- =?utf-8?B?aVBKRzNBdUdZNDh0U3B5MVJ3cnMzNHFuSFF2RHpvU2Y5WUQxQVRPbDZpcmVI?=
- =?utf-8?B?SzJLSnQrbi8weHdSYTZSSjZVUTdTVHIyTnl2M3Z2a0w2MVp4YjZReDNYRWRv?=
- =?utf-8?B?N1ROTXZSSnNGVlllbGZJL2swYmh5SlpXSzVySXJ2M1ZxM2lwUzN4blBqRkFX?=
- =?utf-8?B?WUcxa2RiaFpHcy83Z3V4WUY5UGNUT2pxWTBDVmdwYm1QK3BWcTFncDVrTlh6?=
- =?utf-8?B?V1ZhbGR6cnZKV3JOMDhRUG5oOGFnQWpKaTNJVU05bGhXUERnMUpGMlprNzZa?=
- =?utf-8?B?MlNISWJJZzJKTmZLT0g4OXJHbmVqVVdNQmRRSHluODRmWExUMml2UnFaR3Fr?=
- =?utf-8?B?a0d0UEFCTWljV29QN3hZcXk4RG1EZEswWUpiVlhqVkpudzZJU2ZNUEhXdmNB?=
- =?utf-8?B?dU5Udld2UzhvUGFlTnlXdEFlM2JlV2ZEVkpvZkJncGNEMVEvU2JydW5jd0tJ?=
- =?utf-8?B?ZklweWNPaTM0eTRGb01xanVZNFBwWkxyZnRsR3hNUnljbmRYQ0FvbGduQVhy?=
- =?utf-8?B?cEhIRnpSczRQUmthMW5jeUMvV05zcEpHVmNNM2pFVEFrMHhnTUJQOWxXSGRF?=
- =?utf-8?B?WDA3eUhmNG1SVFR6RHJMUzdLek8zL1VDTVVZemsvaDUrKzFqd01tR0JOUzI5?=
- =?utf-8?B?L1NYajlyTjhOY2Z0Zy92ZWJZYy9TM1g2OHpwbitDRGlFT0VlVUgrNkd0T3V6?=
- =?utf-8?B?azBxNC9hdlVDaGJucUc4Q3NkQnlwZXAyZmdtN2hIaEhOTU1PTWhSTkI2ejhJ?=
- =?utf-8?B?eG1EeURiNWlxN0JRNzZaZ05MdmhLYVhZdFNnTHdhQWhreXplWUFUbE9ZYUI4?=
- =?utf-8?B?bWx5SVVKdTd5bm84dGVSUlVraWpabGVRaE94UllZMFc4SUpiSXlSOEFNUHRp?=
- =?utf-8?B?UEVTLzAwb1N5UWV1Wm5DSHM3YzdWVjVFeWNWZ3JZWFM3MjVub0ZITHU5UVE5?=
- =?utf-8?B?VkZEd3hvckZaNzYzQ2ZSc0k2ekk0VndJSTJPRXBRd2Z2OWI5RWZLVTBTbjRr?=
- =?utf-8?B?RkFDVTdPZ2pVb2xTYVlCU0pjMHFlUEJBU21HelpKTDNwY1lOcVVPT2Uzdmh5?=
- =?utf-8?B?V0pzK0ZhazAxMmQycFg0dGdQQlNybjlpdEgrWVpPTnBFdit5NFJOWVNFMGh0?=
- =?utf-8?B?ajh5by9nZzBXeUVuS201eTV5NmdTcHNpa0lGMWRwTG9hZEF1bFlRbU9KM2lQ?=
- =?utf-8?B?ODVWQ215bnVxSUI3N1dCR2duQ2UrUzlaNFNEUjV0QmlmdW5hWkFwTXlqYTlu?=
- =?utf-8?B?VE1rV3pRd1NJQUVTRi9TQWp2anVBc1pOYkV1Nms1cXdtcVBtditrbndZZmNm?=
- =?utf-8?Q?kc4yw8WVeckj+gdKCmeX9QQym?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5a312e3-2588-495e-76f7-08dc8059dd6d
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 03:37:43.8694
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ai26Av4pp+svvaB6QR2kh64OgRcMNsns7QhPtAGhZx9Gh6UjWz3SV8C0ze14xfV9xgpqc2g63fBh9/aXFY1iMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8262
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 15/20] fsverity: expose verified fsverity built-in
+ signatures to LSMs
+To: Eric Biggers <ebiggers@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+ tytso@mit.edu, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, eparis@redhat.com, linux-doc@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ fsverity@lists.linux.dev, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, audit@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
+ <1716583609-21790-16-git-send-email-wufan@linux.microsoft.com>
+ <CAHC9VhRsnGjZATBj7-evK6Gdryr54raTTKMYO_vup8AGXLwjQg@mail.gmail.com>
+ <20240530030605.GA29189@sol.localdomain>
+Content-Language: en-US
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <20240530030605.GA29189@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi George,
 
-> Events can be deleted and the entry can be NULL.
 
-Can you please also explain "how".
-
-> Check event for NULL in amd_pmu_enable_all() before enable to avoid a GPF.
-> This appears to be an AMD only issue.
+On 5/29/2024 8:06 PM, Eric Biggers wrote:
+> On Wed, May 29, 2024 at 09:46:57PM -0400, Paul Moore wrote:
+>> On Fri, May 24, 2024 at 4:46 PM Fan Wu <wufan@linux.microsoft.com> wrote:
+>>>
+>>> This patch enhances fsverity's capabilities to support both integrity and
+>>> authenticity protection by introducing the exposure of built-in
+>>> signatures through a new LSM hook. This functionality allows LSMs,
+>>> e.g. IPE, to enforce policies based on the authenticity and integrity of
+>>> files, specifically focusing on built-in fsverity signatures. It enables
+>>> a policy enforcement layer within LSMs for fsverity, offering granular
+>>> control over the usage of authenticity claims. For instance, a policy
+>>> could be established to permit the execution of all files with verified
+>>> built-in fsverity signatures while restricting kernel module loading
+>>> from specified fsverity files via fsverity digests.
+>>>
+>>> The introduction of a security_inode_setintegrity() hook call within
+>>> fsverity's workflow ensures that the verified built-in signature of a file
+>>> is exposed to LSMs. This enables LSMs to recognize and label fsverity files
+>>> that contain a verified built-in fsverity signature. This hook is invoked
+>>> subsequent to the fsverity_verify_signature() process, guaranteeing the
+>>> signature's verification against fsverity's keyring. This mechanism is
+>>> crucial for maintaining system security, as it operates in kernel space,
+>>> effectively thwarting attempts by malicious binaries to bypass user space
+>>> stack interactions.
+>>>
+>>> The second to last commit in this patch set will add a link to the IPE
+>>> documentation in fsverity.rst.
+>>>
+>>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+>>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+>>>
+>>> ---
+>>> v1-v6:
+>>>    + Not present
+>>>
+>>> v7:
+>>>    Introduced
+>>>
+>>> v8:
+>>>    + Split fs/verity/ changes and security/ changes into separate patches
+>>>    + Change signature of fsverity_create_info to accept non-const inode
+>>>    + Change signature of fsverity_verify_signature to accept non-const inode
+>>>    + Don't cast-away const from inode.
+>>>    + Digest functionality dropped in favor of:
+>>>      ("fs-verity: define a function to return the integrity protected
+>>>        file digest")
+>>>    + Reworded commit description and title to match changes.
+>>>    + Fix a bug wherein no LSM implements the particular fsverity @name
+>>>      (or LSM is disabled), and returns -EOPNOTSUPP, causing errors.
+>>>
+>>> v9:
+>>>    + No changes
+>>>
+>>> v10:
+>>>    + Rename the signature blob key
+>>>    + Cleanup redundant code
+>>>    + Make the hook call depends on CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+>>>
+>>> v11:
+>>>    + No changes
+>>>
+>>> v12:
+>>>    + Add constification to the hook call
+>>>
+>>> v13:
+>>>    + No changes
+>>>
+>>> v14:
+>>>    + Add doc/comment to built-in signature verification
+>>>
+>>> v15:
+>>>    + Add more docs related to IPE
+>>>    + Switch the hook call to security_inode_setintegrity()
+>>>
+>>> v16:
+>>>    + Explicitly mention "fsverity builtin signatures" in the commit
+>>>      message
+>>>    + Amend documentation in fsverity.rst
+>>>    + Fix format issue
+>>>    + Change enum name
+>>>
+>>> v17:
+>>>    + Fix various documentation issues
+>>>    + Use new enum name LSM_INT_FSVERITY_BUILTINSIG_VALID
+>>>
+>>> v18:
+>>>    + Fix typos
+>>>    + Move the inode_setintegrity hook call into fsverity_verify_signature()
+>>>
+>>> v19:
+>>>    + Cleanup code w.r.t inode_setintegrity hook refactoring
+>>> ---
+>>>   Documentation/filesystems/fsverity.rst | 23 +++++++++++++++++++++--
+>>>   fs/verity/signature.c                  | 18 +++++++++++++++++-
+>>>   include/linux/security.h               |  1 +
+>>>   3 files changed, 39 insertions(+), 3 deletions(-)
+>>
+>> Eric, can you give this patch in particular a look to make sure you
+>> are okay with everything?  I believe Fan has addressed all of your
+>> previous comments and it would be nice to have your Ack/Review tag if
+>> you are okay with the current revision.
 > 
-> Syzkaller reported a GPF in amd_pmu_enable_all.
+> Sorry, I've just gotten a bit tired of finding so many basic issues in this
+> patchset even after years of revisions.
+> 
+> This patch in particular is finally looking better.  There are a couple issues
+> that I still see.  (BTW, you're welcome to review it too to help find these
+> things, given that you seem to have an interest in getting this landed...):
+> 
+>> +	err = security_inode_setintegrity(inode,
+>> +					  LSM_INT_FSVERITY_BUILTINSIG_VALID,
+>> +					  signature,
+>> +					  le32_to_cpu(sig_size));
+> 
+> This is doing le32_to_cpu() on a variable of type size_t, which will do the
+> wrong thing on big endian systems and will generate a 'sparse' warning.
+> 
+Sorry for the mistake. As sig_size is already converted in open.c, there 
+is indeed no need to call this function again. I will remove this 
+unnecessary conversion.
 
-Can you please provide a bug report link? Also, any reproducer?
+> Also, the commit message still incorrectly claims that this patch allows
+> "restricting kernel module loading from specified fsverity files via fsverity
+> digests".  As I said before (sigh...), this is not correct as that can be done
+> without this patch.
+> 
+> - Eric
 
-> @@ -760,7 +760,8 @@ static void amd_pmu_enable_all(int added)
->  		if (!test_bit(idx, cpuc->active_mask))
->  			continue;
->  
-> -		amd_pmu_enable_event(cpuc->events[idx]);
-> +		if (cpuc->events[idx])
-> +			amd_pmu_enable_event(cpuc->events[idx]);
-
-What if cpuc->events[idx] becomes NULL after if (cpuc->events[idx]) but
-before amd_pmu_enable_event(cpuc->events[idx])?
-
-Thanks,
-Ravi
+As for the commit message, my intention was to provide an example of a 
+policy that with the patch IPE can enforce, not to claim that this 
+specific restriction requires the patch. However, I will remove it as it 
+seems to be causing confusion.
+-Fan
 
