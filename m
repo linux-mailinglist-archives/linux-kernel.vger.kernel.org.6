@@ -1,64 +1,68 @@
-Return-Path: <linux-kernel+bounces-195729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43678D50F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:24:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B528D50F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D50E1F2441A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C501C22663
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FD246435;
-	Thu, 30 May 2024 17:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EA446421;
+	Thu, 30 May 2024 17:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tf0BEYNB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkIHdkOk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C5045BE6;
-	Thu, 30 May 2024 17:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572633BB2E;
+	Thu, 30 May 2024 17:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717089836; cv=none; b=KDYmffzCkHVZGyqIfj/mlSEi+vpcNNKXfgNx2oyYHZX44OCWJ4WCimR9j3odftJ4BS8Qyb/IWgiYOVGBF1kirW3V6ttxA+Zvn8wEWPi6mqOyMjI9AYpTwGOowaPDVH2OohbhO3qcZ5xn//PJ8kyV0eL/ZJZtc3p4SQ/ySdgzpHU=
+	t=1717089846; cv=none; b=QgJXVhBpLio76Ii3gOyzjIgjc5c5M2y4Of4FVZ+bM52yYt20fQE8yZgmcN7nBD/tdlMjHS+EuYLZUhfPQODlCDbxnbCueqrfLrQN6sZG7rxPuYS6r9OAQMVjeioMcTUIu85UcDVMghJpe0BY8XGIWj5iIDlMoczUP9vZZCUQ3VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717089836; c=relaxed/simple;
-	bh=cYB6EiiLkNAxIFoAwxrhbsyUrl0rJ+/K6flQe9CKBAY=;
+	s=arc-20240116; t=1717089846; c=relaxed/simple;
+	bh=d54xnZcBDV6Dva3qktSnp/JSkQgGLI2/wahpg5F/a6k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MFXVA7IvrIFTVv46P9YV1YJ+rQOnr8Yvq4Rt7RcxftM7a9zX8hr226qji0mq9jusvH+jnrIFJde1UN5EceKk2MfyCPp/4W7yXlAonpVQHetmTf1enbeEoTp1tdPs2kFha3kjWEgCOrd6/bITWFbApbXCmtub64EqIk+l4PECrsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tf0BEYNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD41C2BBFC;
-	Thu, 30 May 2024 17:23:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBx24Zei2E9H4SYbeMfJSrdGEZx2gS+9phXl+0OFc4SNUo/Hj6Y2sZ6YKKxXSQO4iccOtObbat7cMlkSXQ4jEEQC5BklHZCM3ETHVjFfrIq9TDEvwPsKpZoAhcOSVuis2zQu93ND3toMrQfZx+wHWAGgXjZSbKv+xrF3dPnC1g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkIHdkOk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE105C2BBFC;
+	Thu, 30 May 2024 17:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717089835;
-	bh=cYB6EiiLkNAxIFoAwxrhbsyUrl0rJ+/K6flQe9CKBAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tf0BEYNBi5ASvvcfPg4jBosiNwawOtumYHwK8AUfABputiwHAXCURv5C+S/+t7YcQ
-	 POgxjmJQzBHO+27iGpTKZrWnXF8LNo683o83O4qJQ7yt68KYZEQ/YUjmEz840YvzKr
-	 77Lj/i5+Qq9EHpH/FQGJRuj1jIJ9x9+wP33gwNQYUPmxQtsnSSzmBTUqDOe5K3opRh
-	 Wg+/6wu3yE0JPIwNE8He/favJwqjD/dLZxDWSYMeJsT3NPksLjuRmdi6k0rWOi32SI
-	 4tYRMfkDngtG+yuopgM44P/7++ItpELtuqzsYhVa+KR0px0l3E/CuzYunu8r1jUtAl
-	 xzYcw0yNCMwbg==
-Date: Thu, 30 May 2024 10:23:53 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev, patches@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] nvmet-fc: Remove __counted_by from
- nvmet_fc_tgt_queue.fod[]
-Message-ID: <20240530172353.GA3018978@thelio-3990X>
-References: <20240529-drop-counted-by-fod-nvmet-fc-tgt-queue-v1-1-286adbc25943@kernel.org>
- <0b2b4a2a-83df-4b79-a295-4da91c841587@kernel.org>
+	s=k20201202; t=1717089845;
+	bh=d54xnZcBDV6Dva3qktSnp/JSkQgGLI2/wahpg5F/a6k=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=IkIHdkOkn+1A4kxZ7Cg+6kqPmXAgte6LX+aqh0TUJPhYazehdQhOHquJOLR37QYYn
+	 UqVFq+kArC8WSAU91/Z0+5hfxMwcOZ/bZ8tmU/kn4U8mq5af9sasNnQyiiWBxw840Z
+	 gAbEbcU6CKFEgLT1JeEmAI4IwJG4fZO2dxCshyck6+nlK2CzKzPNxW0t69w9byeE+u
+	 cf4UHUbjqLVxl5KvtQ6FqoNSSBY00c4zFKadR57p6NrHQreZeqBI6CJrkHR0+GvNw/
+	 SFBxytRj1VRW8KgJZ7voNnMQZ1sJAfCXANTXoMIT61A2upaMp01qXsffcpOprUXqZe
+	 rmOGL/TBKKZLQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0A786CE075F; Thu, 30 May 2024 10:24:05 -0700 (PDT)
+Date: Thu, 30 May 2024 10:24:05 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+	Joel Fernandes <joel@joelfernandes.org>, eeraj.upadhyay@kernel.org,
+	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
+Subject: Re: arm-linux-gnueabihf-ld:
+ kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
+ `__bad_cmpxchg' follow
+Message-ID: <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
+ <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
+ <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
+ <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,120 +71,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0b2b4a2a-83df-4b79-a295-4da91c841587@kernel.org>
+In-Reply-To: <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
 
-Hi Jiri,
-
-On Thu, May 30, 2024 at 08:41:18AM +0200, Jiri Slaby wrote:
-> On 29. 05. 24, 23:42, Nathan Chancellor wrote:
-> >    drivers/nvme/target/fc.c:151:2: error: 'counted_by' should not be applied to an array with element of unknown size because 'struct nvmet_fc_fcp_iod' is a struct type with a flexible array member.
+On Thu, May 30, 2024 at 09:37:21AM -0700, Paul E. McKenney wrote:
+> On Thu, May 30, 2024 at 03:27:58PM +0200, Arnd Bergmann wrote:
+> > On Thu, May 30, 2024, at 14:26, Russell King (Oracle) wrote:
+> > > On Thu, May 30, 2024 at 05:50:52PM +0530, Naresh Kamboju wrote:
+> > >> The arm builds failed on Linux next with gcc-13 and clang-18.
+> > >> 
+> > >> Config: arm imx_v6_v7_defconfig - failed
+> > >> 
+> > >> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > >> 
+> > >> Build log:
+> > >> -----
+> > >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> > >> `rcu_trc_cmpxchg_need_qs':
+> > >> update.c:(.text+0x348): undefined reference to `__bad_cmpxchg'
+> > >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> > >> `rcu_read_unlock_trace_special':
+> > >> update.c:(.text+0x41c): undefined reference to `__bad_cmpxchg'
+> > >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> > >> `trc_read_check_handler':
+> > >> update.c:(.text+0x4b0): undefined reference to `__bad_cmpxchg'
+> > >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function `trc_inspect_reader':
+> > >> update.c:(.text+0x1518): undefined reference to `__bad_cmpxchg'
+> > >> arm-linux-gnueabihf-ld: update.c:(.text+0x1548): undefined reference
+> > >> to `__bad_cmpxchg'
+> > >> arm-linux-gnueabihf-ld: kernel/rcu/update.o:update.c:(.text+0x1cc4):
+> > >> more undefined references to `__bad_cmpxchg' follow
+> > >> make[3]: *** [/builds/linux/scripts/Makefile.vmlinux:34: vmlinux] Error 1
+> > >
+> > > You get a reference to __bad_cmpxchg() when someone uses cmpxchg() on
+> > > a datatype that there are no CPU instructions to perform the atomic
+> > > compare-and-exchange.
+> > >
+> > > As we support 8-bit, 16-bit and 32-bit, I would expect that we're now
+> > > seeing cmpxchg() being used on 64-bit values, which are unsupportable
+> > > on 32-bit Arm.
+> > 
+> > A 64-bit cmpxchg() would fail on most 32-bit architectures,
+> > other than armv6k+ and i686+. Since this one fails on
+> > an armv6 (non-6k) build, it's probably the added 8-bit
+> > cmpxchg() that Paul talked about using for RCU, though I
+> > don't see that in linux-next here.
+> > 
+> > I htink we need to use the emulated cmpxchg8() in
+> > __cmpxchg() for this case, just like we do on other
+> > architectures that only have word size atomics.
 > 
-> The same as for mxser_port:
+> Thank you all for your testing and analysis!
 > 
-> struct nvmet_fc_fcp_iod {
->         struct nvmefc_tgt_fcp_req       *fcpreq;
-> 
->         struct nvme_fc_cmd_iu           cmdiubuf;
->         struct nvme_fc_ersp_iu          rspiubuf;
->         dma_addr_t                      rspdma;
->         struct scatterlist              *next_sg;
->         struct scatterlist              *data_sg;
->         int                             data_sg_cnt;
->         u32                             offset;
->         enum nvmet_fcp_datadir          io_dir;
->         bool                            active;
->         bool                            abort;
->         bool                            aborted;
->         bool                            writedataactive;
->         spinlock_t                      flock;
-> 
->         struct nvmet_req                req;
->         struct work_struct              defer_work;
-> 
->         struct nvmet_fc_tgtport         *tgtport;
->         struct nvmet_fc_tgt_queue       *queue;
-> 
->         struct list_head                fcp_list;       /* tgtport->fcp_list
-> */
-> };
-> 
-> The error appears to be invalid.
-> 
-> > This will be an error in a future compiler version [-Werror,-Wbounds-safety-counted-by-elt-type-unknown-size]
-> >      151 |         struct nvmet_fc_fcp_iod         fod[] __counted_by(sqsize);
-> >          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >    1 error generated.
+> I will fix this, and also pull the 8046f3005015 ("rcu-tasks: Remove
+> open-coded one-byte cmpxchg() emulation") commit out of my -next pile
+> in the meantime.
 
-My apologies, I should have done the work to fully uncover the flexible
-array member within 'struct nvmet_fc_fcp_iod' from the beginning and put
-it in the commit message. I did not think of using pahole to make my
-life easier until just now and I knew from the other examples that I had
-and clang's code that it was not incorrect. Sure enough, it comes from
-'struct bio' within 'struct nvmet_req'.
+And for an untested first attempt at a fix.
 
-struct nvmet_fc_fcp_iod {
-..
-	struct nvmet_req		req;
-..
-};
+What did I mess up this time?  ;-)
 
-struct nvmet_req {
-..
-	struct bio_vec		inline_bvec[NVMET_MAX_INLINE_BIOVEC];
-	union {
-		struct {
-			struct bio      inline_bio;
-		} b;
-		struct {
-			bool			mpool_alloc;
-			struct kiocb            iocb;
-			struct bio_vec          *bvec;
-			struct work_struct      work;
-		} f;
-		struct {
-			struct bio		inline_bio;
-			struct request		*rq;
-			struct work_struct      work;
-			bool			use_workqueue;
-		} p;
-#ifdef CONFIG_BLK_DEV_ZONED
-		struct {
-			struct bio		inline_bio;
-			struct work_struct	zmgmt_work;
-		} z;
-#endif /* CONFIG_BLK_DEV_ZONED */
-	};
-	int			sg_cnt;
-..
-};
+							Thanx, Paul
 
-struct bio {
-..
-	struct bio_set		*bi_pool;
+------------------------------------------------------------------------
 
-	/*
-	 * We can inline a number of vecs at the end of the bio, to avoid
-	 * double allocations for a small number of bio_vecs. This member
-	 * MUST obviously be kept at the very end of the bio.
-	 */
-	struct bio_vec		bi_inline_vecs[];
-};
+commit 6e43483dd111cf1be58b02a45d0ca729ca2634ba
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Thu May 30 10:11:31 2024 -0700
 
-It sounds like it is already on Gustavo's radar to look into for
--Wflexible-array-member-not-at-end, so he said he would take a look. It
-may not be a quick fix though (I'll let him comment on it further if he
-is so inclined). It will be needed in stable because the patch that
-added __counted_by to this structure is there, so considering this patch
-for that sake may still be worthwhile, then it could be reverted with
-Gustavo's changes.
+    ARM: Emulate one-byte cmpxchg
+    
+    Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on ARM systems
+    with ARCH < ARMv6K.
+    
+    Reported-by: Mark Brown <broonie@kernel.org>
+    Closes: https://lore.kernel.org/all/54798f68-48f7-4c65-9cba-47c0bf175143@sirena.org.uk/
+    Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+    Closes: https://lore.kernel.org/all/CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com/
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+    Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+    Cc: Arnd Bergmann <arnd@arndb.de>
+    Cc: Andrew Davis <afd@ti.com>
+    Cc: Andrew Morton <akpm@linux-foundation.org>
+    Cc: Linus Walleij <linus.walleij@linaro.org>
+    Cc: Eric DeVolder <eric.devolder@oracle.com>
+    Cc: Rob Herring <robh@kernel.org>
+    Cc: <linux-arm-kernel@lists.infradead.org>
 
-I would really like to avoid leaving the build with tip of tree Clang
-broken for a long period of time, as we qualify it against the kernel
-continously so that any fixes needed on the kernel side are merged and
-ready by the time the toolchain is actually releases (such as this one).
-I am fine with waiting some time to see how this plays out but I don't
-want it to be forgotten about.
-
-Cheers,
-Nathan
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index ee5115252aac4..a867a7d967aa5 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -34,6 +34,7 @@ config ARM
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
++	select ARCH_NEED_CMPXCHG_1_EMU if CPU_V6
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_SUPPORTS_CFI_CLANG
+ 	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
+diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
+index 44667bdb4707a..fd9b99f4dca46 100644
+--- a/arch/arm/include/asm/cmpxchg.h
++++ b/arch/arm/include/asm/cmpxchg.h
+@@ -162,7 +162,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
+ 	prefetchw((const void *)ptr);
+ 
+ 	switch (size) {
+-#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
++#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
++	case 1:
++		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
++		break;
++#else
+ 	case 1:
+ 		do {
+ 			asm volatile("@ __cmpxchg1\n"
 
