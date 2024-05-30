@@ -1,135 +1,217 @@
-Return-Path: <linux-kernel+bounces-195427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51AED8D4CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:34:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CD98D4CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838631C21C47
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:34:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8337B22A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052BB17D371;
-	Thu, 30 May 2024 13:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBD917D881;
+	Thu, 30 May 2024 13:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aBKbPCxq"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mXRaK+dv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AKSEw11s"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D295B1667DC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4821617107B;
+	Thu, 30 May 2024 13:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717076084; cv=none; b=pMQ0w2kE3DSgQZv+LhjUx6CEGF6MxWD4DSgviS5XTjwkIX6fm8syBPvbRlhiv8FCFYHugVzz4D7DAzgDR8aH9zUiKiXeM+5polR8SYuXZnmhlW+cYFYK1jxh5Qb4kecQdeIUr8fzYMR09C2rloHgI6tUDKbHS8D0Jc7mqPAWztQ=
+	t=1717076166; cv=none; b=ETEx4w/H7E2e/0/NfVuT9AQiFZEkYoN59V/ZPUimW+XP84FdwURkZ2EdeP6V7z5NiU+7Tcp9LgEX+XchKE6LyR7Xc7zDFUXU4qW6WAfVaq698/F9cSZvZIn+FQII5pMXHmOyWjrzVHLAfZuSNkop4ArmoYUjdSRH2sV4FBGCSZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717076084; c=relaxed/simple;
-	bh=iEY3TKMBR3VjMOO18gro7lwUoFToxzJsoKmK2rYmRAQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SFAK9MuL2DdWZvWC2EQGKi3ChNZ82itYW5NyW8W05mHPDawINiBapAaW/8B8en4qZFLkHF3JY3fn2iHM2W1ZavRUrmivQIJXPn7lMn1MXMyiGwidYqCQrwmc9xWpgmRhuohrJssMoK9rSml4CzK/hhiwQR9KrFznBWsxGsvJTvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aBKbPCxq; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b9817a135aso466314eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717076081; x=1717680881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ekpEHUCDsezH1RNk3+5n/lewOHNyOHOYkS0J9gidF8=;
-        b=aBKbPCxqHwC2dYJcMPzqWL1Xa+xBizSMYD/GHdED2k8s9cnnuUZr4J+NmrwYiey/gY
-         ZE+1TXM0SjfRckd3YiHio0inL2s5vr8BaOm0euzdHcJkfFeIyd71eEnW8h0UrVhrpbSO
-         gOS6x11fHogddAcXuJr9AdjmlNtpE4oR8prVk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717076081; x=1717680881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ekpEHUCDsezH1RNk3+5n/lewOHNyOHOYkS0J9gidF8=;
-        b=mtCb0OvvCf6cWtDGK4RDj9Z3GPm+Q+++VpNjg8SAoyP9P4RYaUVVgtYCokERm14y70
-         crYU/fxkc0oYwF1N3ZzLmTvm8ChOsZolUdpPkTDBdkIt2YsahABCntnhe6PHzURqVt9m
-         5W23Wm3bwGmEAE8VetriwB5Zyy8Ks+x7cVVaZ9w/doFbLiQJ63kKwC8444uE0H3erCNE
-         ivlSp6aGuwxsGEAoMFBPrFGlSBpgNliDK+75aqEqGwz/jeN6AyNdDFq12uqlXO5YFnj1
-         YzxwEk8toaQ3RQD0oOs+1CUOxbdpqM12H3EMQWKfAQA/I0CkrZmvZ24HbdNOEamJYcLM
-         OeGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfNoL0+agLI5L8wj01Nk9xoM+XLjb/2Ko05lglgwggaOFsi84rCk2I4ARa8wDMVDS7FbbpT+WtP8Zysjqwlc6Yk025x3lDvo8Qa/np
-X-Gm-Message-State: AOJu0Yx31hioC/qWdGUN9GPUz4R1oNW4vf7krFIdJIgWL4/jj+AK5LqT
-	3Md0gqxeXrN9fOLWONQ1VWvNzCxhXrswts+SzMzSNzhdWn61aqN0i4KCPTzw5hfCMg0cysi+erM
-	=
-X-Google-Smtp-Source: AGHT+IE9rrE+bCakY8NOUyslRw7XQfER07KnNZww1RwkG7CCqb+rnGZQdrj8K09olHfcVLFTJaAnkQ==
-X-Received: by 2002:a05:6358:138f:b0:197:3d6f:ccf6 with SMTP id e5c5f4694b2df-199b938ff39mr269425455d.1.1717076081204;
-        Thu, 30 May 2024 06:34:41 -0700 (PDT)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com. [209.85.160.170])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae127b343esm4285686d6.116.2024.05.30.06.34.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:34:40 -0700 (PDT)
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-43f87dd6866so363021cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:34:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVOQZZ3ImIRm/7BolcYufJxbnJahdL2yo5ejX17SbCKI6gsttrTQGSvI28tZQgbn8OUUhc9c1qlV4qFyQptS2WKZpJYQPr72tpcE3rB
-X-Received: by 2002:a05:622a:410c:b0:437:b4d9:ddc6 with SMTP id
- d75a77b69052e-43feb50e3a2mr2651001cf.27.1717076079721; Thu, 30 May 2024
- 06:34:39 -0700 (PDT)
+	s=arc-20240116; t=1717076166; c=relaxed/simple;
+	bh=HTcEgZPhvNIqb5QSFsqU4J//bVvYGx934btYPhodD+c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H9u3MlFMSks+I4HcpHuDuPuFhENWGt9d3EMXO5kMe4apY9xl2LDXYNumbegOx1IQii0Phstxhlsotd6L8/Wz5n4xacnXxARYad51wgZ55421Au5P+6Us9sSvdIsZLwdTszX+hJiPcZq5fpzEG/2B+W9nyVfS97llf8OZWSMF5ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mXRaK+dv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AKSEw11s; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717076157;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UKb7c3hZZ1sIQ6Jxj+rYmCRbrY2s6dn/gQHDJs1x228=;
+	b=mXRaK+dvM0pd+6847+YJ2bz6M7XvyjYbBWAiMhE/x3zeStW2CtVORfRkhiabrKeoVBbVk7
+	94eQB/gcL0mlrd7jp4aOdo6e7KuZQ17YJcNXjarAOzXUfzdymzK/zkU/4ho/9e8Vgreve9
+	/+LyRoRYg4BFRProroyS85/VTwuQfkRtk0zMinXT1ksDLFO3G0P4UC5eBLCHS9tae5X2bm
+	z0ZjPY96JiciZbVv+pFiD5fNjyWvqCVMCCmjckTH0AW0af/A7ZieysMWr7O4dNAlESop1N
+	5YbRu2d+Z7FSe7SPUFkyz5a3Iq9laWk+JRlj9S3/uRD1v3Sio/spr3OrFifdkQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717076157;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UKb7c3hZZ1sIQ6Jxj+rYmCRbrY2s6dn/gQHDJs1x228=;
+	b=AKSEw11srme/Q7fBd1EHmHjfHHOeDEnQwOkN40pAnYODx2auL9TKjHTN6XrLd8lz26a4Bh
+	zw3AQrK9lhlRpyCQ==
+To: Peter Schneider <pschneider1968@googlemail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+ stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
+In-Reply-To: <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
+References: <877cffcs7h.ffs@tglx>
+ <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+ <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
+ <87zfs78zxq.ffs@tglx>
+ <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
+Date: Thu, 30 May 2024 15:35:55 +0200
+Message-ID: <87r0dj8ls4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
-In-Reply-To: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 30 May 2024 06:34:28 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UhrCKCv5R-LAAugrLXFp=cDcj2=Pp9-N3qk5pk2=sGEg@mail.gmail.com>
-Message-ID: <CAD=FV=UhrCKCv5R-LAAugrLXFp=cDcj2=Pp9-N3qk5pk2=sGEg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Disable SS instances in park mode for SC7180/ SC7280
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <swboyd@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Kaehlcke <mka@chromium.org>, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi,
+Peter!
 
-On Thu, May 30, 2024 at 1:26=E2=80=AFAM Krishna Kurapati
-<quic_kriskura@quicinc.com> wrote:
+On Thu, May 30 2024 at 12:06, Peter Schneider wrote:
+> Am 30.05.24 um 10:30 schrieb Thomas Gleixner:
 >
-> When working in host mode, in certain conditions, when the USB
-> host controller is stressed, there is a HC died warning that comes up.
-> Fix this up by disabling SS instances in park mode for SC7280 and SC7180.
+>> Can you please apply the debug patch below ad provide the full dmesg
+>> after boot?
 >
-> Krishna Kurapati (2):
->   arm64: dts: qcom: sc7180: Disable SS instances in park mode
->   arm64: dts: qcom: sc7280: Disable SS instances in park mode
+> Here you go... The patch applied cleanly against 6.9.3, which I saw
+> was just released by Greg, so I used that. If you want, I can repeat
+> the test against 6.9.2, too.
+
+3 is fine
+
+> Please note: to be able to boot any kernel >= 6.8.4 on my machine, I also had to apply 
+> this patch by Martin Petersen, fixing another (unrelated SCSI) regression I reported some 
+> time ago, see here:
 >
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 +
->  2 files changed, 2 insertions(+)
+> https://lore.kernel.org/all/20240521023040.2703884-1-martin.petersen@oracle.com/
+>
+> But I think these two issues are not connected in any way. It was during testing the above 
+> patch by Martin that I noticed this new issue in 6.9 BTW.
 
-FWIW, the test case I used to reproduce this:
+Right. It's a seperate problem.
 
-1. Plug in a USB dock w/ Ethernet
-2. Plug a USB 3 SD card reader into the dock.
-3. Use lsusb -t to confirm both Ethernet and card reader are on USB3.
-4. From a shell, run for i in $(seq 5); do dd if=3D/dev/sdb of=3D/dev/null
-bs=3D4M; done to read from the card reader.
-5. At the same time, stress the Internet. If you've got a very fast
-Internet connection then running Google's "Internet speed test" did
-it, but I could also reproduce by just running this from a PC
-connected to the same network as my DUT: ssh ${DUT} "dd of=3D/dev/null"
-< /dev/zero
+> I have attached resulting file dmesg_6.9.3-dirty_Bad_wDebugInfo.txt,
+> and I hope you can make some sense of it.
 
-I would also note that, though I personally reproduced this on sc7180
-and sc7280 boards and thus Krishna posted the patch for those boards,
-there's no reason to believe that this problem doesn't affect all of
-Qualcomm's SoCs. It would be nice if someone at Qualcomm could post a
-followup patch fixing this everywhere.
+It's exactly what I expected but it does not make any sense at all.
 
--Doug
+>     [    0.000000] Legacy: 2 5 5
+
+So that means that during early boot where the topology parameters are
+decoded from CPUID the CPUID evaluation code sees that the maximum
+supported CPUID leaf is 0x02 and it therefore reads complete non-sense.
+
+Later on when the full CPUID evaluation happens it sees the full space
+and uses leaf 0xb.
+
+>     [    1.687649] L:b 0 0 S:1 N:2 T:1
+>     [    1.687652] D: 0
+>     [    1.687653] L:b 1 1 S:5 N:24 T:2
+>     [    1.687655] D: 1
+>     [    1.687656] L:b 2 2 S:0 N:0 T:0
+>     [    1.687658] [Firmware Bug]: CPU0: Topology domain 0 shift 1 != 5
+
+And this obviously sees the proper numbers and complains about the
+inconsistency.
+
+So something on this CPU is broken. The same problem exists on all APs:
+
+>     [    1.790035] .... node  #0, CPUs:        #4
+>     [    1.790312] .... node  #1, CPUs:   #12 #16
+>     [    0.011992] Legacy: 2 5 5
+>     [    0.011992] Legacy: 2 5 5
+>     [    0.011992] Legacy: 2 5 5
+>     [    0.011992] Legacy: 2 5 5
+      .....
+
+Now the million-dollar question is what unlocks CPUID to read the proper
+value of EAX of leaf 0. All I could come up with is to sprinkle a dozen
+of printks into that code. Updated debug patch below.
+
+Thanks,
+
+        tglx
+---
+--- a/arch/x86/kernel/cpu/topology_common.c
++++ b/arch/x86/kernel/cpu/topology_common.c
+@@ -65,6 +65,7 @@ static void parse_legacy(struct topo_sca
+ 		cores <<= smt_shift;
+ 	}
+ 
++	pr_info("Legacy: %u %u %u\n", c->cpuid_level, smt_shift, core_shift);
+ 	topology_set_dom(tscan, TOPO_SMT_DOMAIN, smt_shift, 1U << smt_shift);
+ 	topology_set_dom(tscan, TOPO_CORE_DOMAIN, core_shift, cores);
+ }
+--- a/arch/x86/kernel/cpu/topology_ext.c
++++ b/arch/x86/kernel/cpu/topology_ext.c
+@@ -72,6 +72,9 @@ static inline bool topo_subleaf(struct t
+ 
+ 	cpuid_subleaf(leaf, subleaf, &sl);
+ 
++	pr_info("L:%0x %0x %0x S:%u N:%u T:%u\n", leaf, subleaf, sl.level, sl.x2apic_shift,
++		sl.num_processors, sl.type);
++
+ 	if (!sl.num_processors || sl.type == INVALID_TYPE)
+ 		return false;
+ 
+@@ -97,6 +100,7 @@ static inline bool topo_subleaf(struct t
+ 			     leaf, subleaf, tscan->c->topo.initial_apicid, sl.x2apic_id);
+ 	}
+ 
++	pr_info("D: %u\n", dom);
+ 	topology_set_dom(tscan, dom, sl.x2apic_shift, sl.num_processors);
+ 	return true;
+ }
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1584,22 +1584,30 @@ static void __init early_identify_cpu(st
+ 	/* cyrix could have cpuid enabled via c_identify()*/
+ 	if (have_cpuid_p()) {
+ 		cpu_detect(c);
++		pr_info("MAXL1: %x\n", cpuid_eax(0));
+ 		get_cpu_vendor(c);
++		pr_info("MAXL2: %x\n", cpuid_eax(0));
+ 		get_cpu_cap(c);
++		pr_info("MAXL3: %x\n", cpuid_eax(0));
+ 		setup_force_cpu_cap(X86_FEATURE_CPUID);
+ 		get_cpu_address_sizes(c);
++		pr_info("MAXL4: %x\n", cpuid_eax(0));
+ 		cpu_parse_early_param();
++		pr_info("MAXL5: %x\n", cpuid_eax(0));
+ 
+ 		cpu_init_topology(c);
++		pr_info("MAXL6: %x\n", cpuid_eax(0));
+ 
+ 		if (this_cpu->c_early_init)
+ 			this_cpu->c_early_init(c);
++		pr_info("MAXL7: %x\n", cpuid_eax(0));
+ 
+ 		c->cpu_index = 0;
+ 		filter_cpuid_features(c, false);
+ 
+ 		if (this_cpu->c_bsp_init)
+ 			this_cpu->c_bsp_init(c);
++		pr_info("MAXL8: %x\n", cpuid_eax(0));
+ 	} else {
+ 		setup_clear_cpu_cap(X86_FEATURE_CPUID);
+ 		get_cpu_address_sizes(c);
+@@ -1797,9 +1805,12 @@ static void identify_cpu(struct cpuinfo_
+ #ifdef CONFIG_X86_VMX_FEATURE_NAMES
+ 	memset(&c->vmx_capability, 0, sizeof(c->vmx_capability));
+ #endif
++	pr_info("MAXLG1: %x\n", cpuid_eax(0));
+ 
+ 	generic_identify(c);
+ 
++	pr_info("MAXLG2: %x\n", cpuid_eax(0));
++
+ 	cpu_parse_topology(c);
+ 
+ 	if (this_cpu->c_identify)
 
