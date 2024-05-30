@@ -1,168 +1,182 @@
-Return-Path: <linux-kernel+bounces-194988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2BD8D458E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:41:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA168D4591
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F92283B4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:41:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536801F22977
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48A03DABF1;
-	Thu, 30 May 2024 06:41:23 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379693DABF3;
+	Thu, 30 May 2024 06:45:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085DB7F;
-	Thu, 30 May 2024 06:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5988A79EF
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717051283; cv=none; b=CDXxF3kTAooLtbazO02DfLditp31NKTjGQFv7i+/wHrST+MK3aE6Lc6QABAJplxaXou/uzTdXUI6kuylEd9j4tDBwWcNa6ynHSqxzT0YPjlatZSjxQfkmV+BhzKnw+dNybpJkqCw9/IspS6ddSIt3K4EBXH6HTjbrU21LBrEV8U=
+	t=1717051505; cv=none; b=k/B1pns1Z2ug25zG8Lc/x5WErZcmL6FJUxESJ6plHIe+EvgAaybsZJAYiYLnCVYSyBQBVRRoGBNZeF+ZxSBgJr+Bw65uFNN9mukoSiZ9fQNkfbLmh53fODZe8P1prdRjjyxfAUI6tVxwJEdH89lKJk01wEXtPUJC3d+QLEMT2KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717051283; c=relaxed/simple;
-	bh=D4gXSqADnOk0iOGCbNIKB51H95GuHOPiUKdJBP+R1PI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CFza2RUzLhjj7fUg1RRIC3FDcXBSrTS1uyLKuLFgOvABLt7lZQe/5T1sJQWPcQMcsI2W0ytuJjJTiM52mv/LX3T2Zcf7OUgi0Agauna+6dHkdFnnAWxY6ay+ePgwWPiiiDZLS2SgFvTjzQ/yJoFPs5Jeh29aaZox0751ttZOU1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4211e42e362so6549545e9.1;
-        Wed, 29 May 2024 23:41:21 -0700 (PDT)
+	s=arc-20240116; t=1717051505; c=relaxed/simple;
+	bh=fZ6JVj9FVsmG5Va9ODPnUUwA3gdkY5wqGiOv2twyTaI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ob/eXSqc6VhC2oOMxAtmtRjRQUDY8znZD6zKGxGeByu8JvW8DiJQFLau/7++t+hFWPkVMsqv3yn1QlnCunHZCr31mH2+cyc7L14NazVIPiLf0tAWm7Zftw5gz91T0tj2vU0nNvDmuGW8k1xLzNt3ULtrIOK0PskcxElkeBqwaok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e255f62e6cso60222639f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:45:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717051280; x=1717656080;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1717051503; x=1717656303;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P2UinUncKMG3mfEDsS3Xt/JMMJoyLDA5LlKHUtD/VBs=;
-        b=YA7c2LHMokdc84/oROLTIsuEPfJpyxYrdnFxG0AC23+k+Bek8mUqFsPy8sWM8vFRSc
-         4TXSec9ECL0yJjdK42cuBRvx2oIBXgYQh3FS/Ta85wtiGDl9mcAPWwCer6lHZ1KBsgxH
-         wUUTkDk/oMcPVp0PjaT5UHpsLkmIT8mmgqQMd/q7YL9phJ1eZ9twVSxLRPW4WfwYnc/1
-         ck63T0X+1P8v6WM6WN8orA9e8/GBaZkcZwn3YuNjZ/WTNqmiTrwYhx5qupGwO8YXYqI/
-         1DbwjH/Zzu8emjcRRabCxcV6Vw7kBjm1VHTOsdeCxL9SmU3i85TTFLRe6ztacmudBKPN
-         IyGw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+eZ8cCU7RGA89Kwz/PajPWHOlz/CzbNq1qaoSO24QMvruWvzL3gvAGgLkpCfYMbfTRzu8wlcb431bSpiv/vpSc+GN5Ekl6s8P6C0Ovnb0Ecy4oWGxAYIZumNlF9nGWOIo7CXvnIvO8qDJOvOeNIPNRP+tSSOCx5Ycn34AIq/2gmb3Npn7
-X-Gm-Message-State: AOJu0Yw+gfy7JqK4Hl3UTM1C4KaGXDFheYIYD5FrhuloPPnUU8pnpfMn
-	s7GPvkfVWEPJGszmAMA2k0LQN7I0LvYdfbKttorYourBLAloqCv4
-X-Google-Smtp-Source: AGHT+IHArpXGtxZDQ1OBgqkI9aalQ8VjHT6AsZ0RHXdpUsKojMGevnqYYYdjAWulbOzH8edJo+7aLQ==
-X-Received: by 2002:a05:600c:1d05:b0:421:29b4:532a with SMTP id 5b1f17b1804b1-42129b45590mr1343955e9.16.1717051280198;
-        Wed, 29 May 2024 23:41:20 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c9546sm16439884f8f.82.2024.05.29.23.41.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 23:41:19 -0700 (PDT)
-Message-ID: <0b2b4a2a-83df-4b79-a295-4da91c841587@kernel.org>
-Date: Thu, 30 May 2024 08:41:18 +0200
+        bh=Z9de7HyQccscfkAIwx6rdRHkvZj81cQPTUecwCb2VX8=;
+        b=X+Lfzn0iujD+yJjaEfyuoBX19Ncevqu4t8HeCSDCJsdgC403cdBM6/AFUDk62Goyi7
+         icQonuFv3vWgqGTlOv83raThvxsqS6prAuEN/q4L0h7fVgwo7qlqz2geyLo0zvemQdyk
+         737bcnUXGdblyFt8h827Rbe1cCzwEFpOh4GnwI4SE3GbXJRqpQ1rak43eFXjm5+aBEqQ
+         vqce5ob7DqQA7oEBV7Vst78mJlG0gyOFC6B2FebBpud3EUof5wppV/uBsg5U3mpz1AAj
+         OlanWLBp5j8+WgdPNQMjgM/LX7UzAONO2pPvqzIPDK4smV4QrPRuv6jE7ZhrvTtuoFiN
+         4loQ==
+X-Gm-Message-State: AOJu0YwBiiS6YR3FY9mrjtsRDU8SjvxB1/bpFnNJ0X/LvFG3MOGyCLfK
+	Begpf9VF6xyIl8ohOKy5IQhmFtkvVxjv0ZE7NpfmuWa29EYy+FLg5OylpgevVmocy567odi8CaH
+	H0FyPWLW2FN6OA4ypQbG1pm4IROcH40iTrERgSEoevCnhIZIilzScdtE=
+X-Google-Smtp-Source: AGHT+IGNz91takmQ5WyLwU7XzMo5OOYjgYEZSvIsMwO1oEljHcsRyKdVK/uFoGg9RURYgXXltIuPqMC0UVWMQ/xZp+hY2jD17Ol5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmet-fc: Remove __counted_by from
- nvmet_fc_tgt_queue.fod[]
-To: Nathan Chancellor <nathan@kernel.org>,
- James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Kees Cook <keescook@chromium.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org
-References: <20240529-drop-counted-by-fod-nvmet-fc-tgt-queue-v1-1-286adbc25943@kernel.org>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240529-drop-counted-by-fod-nvmet-fc-tgt-queue-v1-1-286adbc25943@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:3403:b0:7da:bccd:c3e3 with SMTP id
+ ca18e2360f4ac-7eaf5d0930fmr4640439f.1.1717051503612; Wed, 29 May 2024
+ 23:45:03 -0700 (PDT)
+Date: Wed, 29 May 2024 23:45:03 -0700
+In-Reply-To: <20240530063233.3019071-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ef1fb40619a63482@google.com>
+Subject: Re: [syzbot] [fscrypt?] WARNING in fscrypt_fname_siphash
+From: syzbot <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29. 05. 24, 23:42, Nathan Chancellor wrote:
->    drivers/nvme/target/fc.c:151:2: error: 'counted_by' should not be applied to an array with element of unknown size because 'struct nvmet_fc_fcp_iod' is a struct type with a flexible array member.
+Hello,
 
-The same as for mxser_port:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-struct nvmet_fc_fcp_iod {
-         struct nvmefc_tgt_fcp_req       *fcpreq;
+lost connection to test machine
 
-         struct nvme_fc_cmd_iu           cmdiubuf;
-         struct nvme_fc_ersp_iu          rspiubuf;
-         dma_addr_t                      rspdma;
-         struct scatterlist              *next_sg;
-         struct scatterlist              *data_sg;
-         int                             data_sg_cnt;
-         u32                             offset;
-         enum nvmet_fcp_datadir          io_dir;
-         bool                            active;
-         bool                            abort;
-         bool                            aborted;
-         bool                            writedataactive;
-         spinlock_t                      flock;
 
-         struct nvmet_req                req;
-         struct work_struct              defer_work;
 
-         struct nvmet_fc_tgtport         *tgtport;
-         struct nvmet_fc_tgt_queue       *queue;
 
-         struct list_head                fcp_list;       /* 
-tgtport->fcp_list */
-};
 
-The error appears to be invalid.
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.21.4'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build2598401150=3D/tmp/go-build -gno-record-gc=
+c-switches'
 
-> This will be an error in a future compiler version [-Werror,-Wbounds-safety-counted-by-elt-type-unknown-size]
->      151 |         struct nvmet_fc_fcp_iod         fod[] __counted_by(sqsize);
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    1 error generated.
--- 
--- 
-js
-suse labs
+git status (err=3D<nil>)
+HEAD detached at a10a183e2
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Da10a183e260f0ea1a0c37e84ca5c60f28c13e3fd -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240524-152400'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
+ github.com/google/syzkaller/syz-fuzzer
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Da10a183e260f0ea1a0c37e84ca5c60f28c13e3fd -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240524-152400'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++14 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linu=
+x=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"a10a183e260f0ea1a0c37e84ca5c60f28c=
+13e3fd\"
+
+
+
+Tested on:
+
+commit:         74eca356 Merge tag 'ceph-for-6.10-rc1' of https://gith..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
+nux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dee7b962709a5f5a=
+5
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D340581ba9dceb7e06=
+fb3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1220bb3a9800=
+00
 
 
