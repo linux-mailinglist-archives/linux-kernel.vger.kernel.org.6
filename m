@@ -1,175 +1,206 @@
-Return-Path: <linux-kernel+bounces-195322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7CB8D4B11
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150FE8D4B13
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D172A1F23796
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:54:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384201C21377
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CFA17DE1D;
-	Thu, 30 May 2024 11:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1847217D359;
+	Thu, 30 May 2024 11:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BKTBEtfG"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izLM4MDr"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FA017C7A3;
-	Thu, 30 May 2024 11:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A142417C7A3
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070084; cv=none; b=pp1OfIeSmdHLcDwMrUJ7ZRR0u3aAGHIy4Kii6eXCSKp8HNpLRcaLhqjOGii0R6hfMXdJRmb6dsfs9nDwv6/3deP+myJ7FFMOhAByLqd+tgddldVXQcRodPxvWJibQQdsYAIhYCn5gFbmQLPAfkn4mYiXdUdnV9YqEBUv9+Y81wI=
+	t=1717070091; cv=none; b=nkU5fvmFm1n9AS0BGK0onfyPXwyM9Kx+Kn5MyDVn3YxLKCIQsJ790u1EwRIYCF3Lzdv4JBz7wzpkb+49/n+N7Ns/liAtaJvj5Ucxf7XZpuHK14gRgpeILaGqk+M7sJmuNjzehxALz+bSC5NnPTKM1o9H19xfJI+KYx4upDEaDIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070084; c=relaxed/simple;
-	bh=VJ8ehQgUMcvMrXpCfTU6zLOyWgGUXJrd0gzuRb7KicE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=a8jkm5B8j5FssaqUkTzbWjoGSvt93dlS9r+KKJOUHtM6lY341uTEbhW0Juu5wouHrBSF6VD4vb45B4AeC5Pn1+i6VtyyeeL1ZXbcU1d0d7ISIe5nxOPZyFvzOGxSgTMA4eqEc7LJs81rz98bIEUGUVyRswxRsERUhA+D3kybuvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BKTBEtfG; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UBsSqU088153;
-	Thu, 30 May 2024 06:54:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717070068;
-	bh=jKP8XkjZeu2NWJ+EB4DTOArTnnI3l4BiNSQmPohAi9c=;
-	h=Date:From:Subject:To:CC:References:In-Reply-To;
-	b=BKTBEtfGZwzM9oJTCMheKuX68XWlqWkeS0B7w/YHcXQwSl7D1TwreeHKdCob4DXGW
-	 cngo6+RXGEZTi8I4WRKLOT6gZ+e9TtOT1F4SODkync0H49OqMJ/UUNCMOnScNRz4Br
-	 42BlaBmbQzMvdgcWw37iOMTa6vUBiFBOT+CfEDA4=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UBsS33003356
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 30 May 2024 06:54:28 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
- May 2024 06:54:28 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 30 May 2024 06:54:28 -0500
-Received: from [137.167.6.219] (lt5cg1094w5k.dhcp.ti.com [137.167.6.219])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UBsQZD068565;
-	Thu, 30 May 2024 06:54:26 -0500
-Message-ID: <456c8076-1e3a-4cc9-895c-e707e68fe610@ti.com>
-Date: Thu, 30 May 2024 14:54:26 +0300
+	s=arc-20240116; t=1717070091; c=relaxed/simple;
+	bh=I8lM/d0xuu/SsQb7qufJ428dGZRSCPLdGjHg2ycnbxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9tnPImPBOJxRyGTE+Z3Gr3ZWCMl72+Zq4FWwvJa7Uci2lDkWIR7NXNV5AOvpPzAtNEJjUI7mb3zXrK8PO5neNfmd0KEHg5xfYlgd2gz4exvQhBhmYexewzU+tF30H/YJtxxKMPsGxMcAyq2lzC3JXPT37WgyMGSg6sVfQ8+TbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izLM4MDr; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so516361a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717070088; x=1717674888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E9rKDBmL9soASvcn3puSMSoNCTN/9xOU0/NVh1/cveA=;
+        b=izLM4MDro0niGuJ5Yt3CRNy5zKD7lMcjWLdPeyN0gmoVwn+hcEv8pZvxE3ToVT5UPf
+         GmPI/Ggk6ViTCO0i4sBJiwtnyd45jc341XeNBfJGXcEQXcpuCdr3ItVCqif9uXWzd+gH
+         jHmsA0nbppkR44H6LP6wfrI1VmTFdYCh0/PTEONHHSKsL+G18FtChRKQiH57Uw0s8dP+
+         /Xi2hOrZznOC7uSHIKj1L+GIAedj8ezLuHq3qmwSceLqaitBy2gVImiB2kDUlCm8b3wN
+         M5cOWoi6ccztlRjvhPNkTOy2INun3RVeDNZwyu3nobjrFHIU8YXgLxn70nbRIxYGs6qb
+         UZLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717070088; x=1717674888;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E9rKDBmL9soASvcn3puSMSoNCTN/9xOU0/NVh1/cveA=;
+        b=lr8b8o2ojnGLDFO9Mjib+CiKL9O+3FfBwk90T2p2oiY/WxqZWH/t0oUuI9XrS9CYfP
+         Vk+ArzzelJkQXys9iFBKGv0YCjV1U39TGYKgUFiE09fskmprbMJUKU5S94X3WiStJd7/
+         wVzWH4tnbChS0g884O+cumH0BlvXCV9Z8noTPGMY9YzyURUoh43jAomCwyhfsOllqLfx
+         pHOM47BV4EECes2L+P2jIEOHig9/gzaZ9AINM/KuznyVjTb90R8dR1RZqVohkR0AVFe/
+         eib+9SmZad8VDVOoeYdhbDEoi9NuQdYX8EAmVrP8xJYSdU743lQL1O3aRv47O41IQmsw
+         CtCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjpG4k8/Ye0rr0pdajMdSEFs+BeBw47Gx8ULbVm8y7+MTNhcT7sdNsYAg5BLbbH7VxsIFjwOe8YZk3G6f8VjfT6MYegPdmzvQDbDI+
+X-Gm-Message-State: AOJu0YzgnULYKz7frENjAL7fxLWwVwNmN39sOsGId5FoHeVa5gE6fk+E
+	NKuQgYI0eqw3UWlHUiPfTlAoiyEfQ1PTEfXf68HyGuMEJ1GhewUz
+X-Google-Smtp-Source: AGHT+IHcrkRsHVuOzDKSWtKoLJ2lTeSArPw9M/N0SicJ+VQ9WKMaL79ZGbhBaK1qM+IkwbeVnJAhzg==
+X-Received: by 2002:a50:9e05:0:b0:57a:1d5a:9cfa with SMTP id 4fb4d7f45d1cf-57a1d5a9f0bmr849627a12.38.1717070087662;
+        Thu, 30 May 2024 04:54:47 -0700 (PDT)
+Received: from andrea ([151.76.32.59])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578f47126f0sm7346919a12.91.2024.05.30.04.54.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 04:54:47 -0700 (PDT)
+Date: Thu, 30 May 2024 13:54:43 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Leonardo Bras <leobras@redhat.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -fixes] riscv: Fix fully ordered LR/SC xchg[8|16]()
+ implementations
+Message-ID: <ZlhpA9NsgI0z6t/E@andrea>
+References: <20240530075424.380557-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-Subject: Re: [PATCH 08/17] Add main.c
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Breno Leitao <leitao@debian.org>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-9-michael.nemanov@ti.com>
- <cfe33bf1-9df3-4d02-b4ed-e29a430b106d@kernel.org>
-Content-Language: en-US
-In-Reply-To: <cfe33bf1-9df3-4d02-b4ed-e29a430b106d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530075424.380557-1-alexghiti@rivosinc.com>
+
+> -#define _arch_xchg(ptr, new, sfx, prepend, append)			\
+> +#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend, append)		\
+>  ({									\
+>  	__typeof__(ptr) __ptr = (ptr);					\
+>  	__typeof__(*(__ptr)) __new = (new);				\
+> @@ -55,15 +55,15 @@
+>  	switch (sizeof(*__ptr)) {					\
+>  	case 1:								\
+>  	case 2:								\
+> -		__arch_xchg_masked(prepend, append,			\
+> +		__arch_xchg_masked(sc_sfx, prepend, append,		\
+>  				   __ret, __ptr, __new);		\
+>  		break;							\
+>  	case 4:								\
+> -		__arch_xchg(".w" sfx, prepend, append,			\
+> +		__arch_xchg(".w" swap_sfx, prepend, append,		\
+>  			      __ret, __ptr, __new);			\
+>  		break;							\
+>  	case 8:								\
+> -		__arch_xchg(".d" sfx, prepend, append,			\
+> +		__arch_xchg(".d" swap_sfx, prepend, append,		\
+>  			      __ret, __ptr, __new);			\
+>  		break;							\
+>  	default:							\
+> @@ -73,16 +73,16 @@
+>  })
+>  
+>  #define arch_xchg_relaxed(ptr, x)					\
+> -	_arch_xchg(ptr, x, "", "", "")
+> +	_arch_xchg(ptr, x, "", "", "", "")
+>  
+>  #define arch_xchg_acquire(ptr, x)					\
+> -	_arch_xchg(ptr, x, "", "", RISCV_ACQUIRE_BARRIER)
+> +	_arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER)
+>  
+>  #define arch_xchg_release(ptr, x)					\
+> -	_arch_xchg(ptr, x, "", RISCV_RELEASE_BARRIER, "")
+> +	_arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "")
+>  
+>  #define arch_xchg(ptr, x)						\
+> -	_arch_xchg(ptr, x, ".aqrl", "", "")
+> +	_arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n")
+
+This does indeed fix the fully-ordered variant of xchg8/16().  But this
+also changes the fully-ordered xchg32() to
+
+  amoswap.w.aqrl  a4,a5,(s1)
+  fence   rw,rw
+
+(and similarly for xchg64()); we should be able to restore the original
+mapping with the diff below on top of this patch.
+
+  Andrea
+
+P.S. Perhaps expand the width of the macros to avoid newlines (I didn't
+do it keep the diff smaller).
+
+P.S. With Zabha, we'd probably like to pass swap_sfx and swap_append as
+well to __arch_xchg_masked().
 
 
+diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
+index e1e564f5dc7ba..88c8bb7ec1c34 100644
+--- a/arch/riscv/include/asm/cmpxchg.h
++++ b/arch/riscv/include/asm/cmpxchg.h
+@@ -46,7 +46,8 @@
+ 		: "memory");						\
+ })
+ 
+-#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend, append)		\
++#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend,			\
++		   sc_append, swap_append)				\
+ ({									\
+ 	__typeof__(ptr) __ptr = (ptr);					\
+ 	__typeof__(*(__ptr)) __new = (new);				\
+@@ -55,15 +56,15 @@
+ 	switch (sizeof(*__ptr)) {					\
+ 	case 1:								\
+ 	case 2:								\
+-		__arch_xchg_masked(sc_sfx, prepend, append,		\
++		__arch_xchg_masked(sc_sfx, prepend, sc_append,		\
+ 				   __ret, __ptr, __new);		\
+ 		break;							\
+ 	case 4:								\
+-		__arch_xchg(".w" swap_sfx, prepend, append,		\
++		__arch_xchg(".w" swap_sfx, prepend, swap_append,	\
+ 			      __ret, __ptr, __new);			\
+ 		break;							\
+ 	case 8:								\
+-		__arch_xchg(".d" swap_sfx, prepend, append,		\
++		__arch_xchg(".d" swap_sfx, prepend, swap_append,	\
+ 			      __ret, __ptr, __new);			\
+ 		break;							\
+ 	default:							\
+@@ -73,16 +74,16 @@
+ })
+ 
+ #define arch_xchg_relaxed(ptr, x)					\
+-	_arch_xchg(ptr, x, "", "", "", "")
++	_arch_xchg(ptr, x, "", "", "", "", "")
+ 
+ #define arch_xchg_acquire(ptr, x)					\
+-	_arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER)
++	_arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER, RISCV_ACQUIRE_BARRIER)
+ 
+ #define arch_xchg_release(ptr, x)					\
+-	_arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "")
++	_arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "", "")
+ 
+ #define arch_xchg(ptr, x)						\
+-	_arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n")
++	_arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n", "")
+ 
+ #define xchg32(ptr, x)							\
+ ({									\
 
-On 5/22/2024 12:46 PM, Krzysztof Kozlowski wrote:
-> ... > +} > + > +static int read_version_info(struct cc33xx *cc) > +{ > 
-> + int ret; > + > + cc33xx_info("Wireless driver version %s", 
-> DRV_VERSION); Drop > + > + ret = cc33xx_acx_init_get_fw_versions(cc); 
-> > + if (ret < 0) { > + cc33xx_error("Get FW version FAILED!"); > + 
-> return ret; > + } > + > + cc33xx_info("Wireless firmware version 
-> %u.%u.%u.%u", > + cc->all_versions.fw_ver->major_version, > + 
-> cc->all_versions.fw_ver->minor_version, > + 
-> cc->all_versions.fw_ver->api_version, > + 
-> cc->all_versions.fw_ver->build_version); > + > + cc33xx_info("Wireless 
-> PHY version %u.%u.%u.%u.%u.%u", > + 
-> cc->all_versions.fw_ver->phy_version[5], > + 
-> cc->all_versions.fw_ver->phy_version[4], > + 
-> cc->all_versions.fw_ver->phy_version[3], > + 
-> cc->all_versions.fw_ver->phy_version[2], > + 
-> cc->all_versions.fw_ver->phy_version[1], > + 
-> cc->all_versions.fw_ver->phy_version[0]); > + > + 
-> cc->all_versions.driver_ver = DRV_VERSION; Drop
-You mean drop the trace? Will exposing FW/PHY versions via debugfs be OK?
-> > +} > + > +static int cc33xx_remove(struct platform_device *pdev) Why 
-> remove callback is before probe? Please follow standard driver 
-> convention. This goes immediately after probe.
-Will fix
-
-[...]
-> > +{ > + struct cc33xx_platdev_data *pdev_data = 
-> dev_get_platdata(&pdev->dev); > + struct cc33xx *cc = 
-> platform_get_drvdata(pdev); > + > + 
-> set_bit(CC33XX_FLAG_DRIVER_REMOVED, &cc->flags); ?!?! Your code is 
-> seriously buggy if you depend on setting bit in remove callback.
-If removal of the CC33xx driver was caused by the removal of its parent 
-SDIO device then all I/O operations will fail as SDIO transport is no 
-longer available. This will eventually trigger the recovery mechanism 
-which in this case is futile. If this flag is set, no recovery is attempted.
-
-[...]
-> > + return -EINVAL; > + } > + > + hw = 
-> cc33xx_alloc_hw(CC33XX_AGGR_BUFFER_SIZE); > + if (IS_ERR(hw)) { > + 
-> cc33xx_error("can't allocate hw"); Heh? Since when do we print memory 
-> allocation failures? Since when memory allocation returns ERR ptr?
-Will fix
-> > +}; > +MODULE_DEVICE_TABLE(platform, cc33xx_id_table); > + > +static 
-> struct platform_driver cc33xx_driver = { > + .probe = cc33xx_probe, > 
-> + .remove = cc33xx_remove, > + .id_table = cc33xx_id_table, > + 
-> .driver = { > + .name = "cc33xx_driver", > + } > +}; > + > +u32 
-> cc33xx_debug_level = DEBUG_NO_DATAPATH; Why this is global? Why u32? 
-> Why global variable is defined at the end of the file?!?!
-cc33xx_debug_level together with cc33xx_debug/info/error() macros is how 
-all traces were done in drivers/net/wireless/ti/wlcore/ (originally was 
-wl1271_debug/info etc.) It enables / disables traces without rebuilding 
-or even reloading which is very helpful for remote support. These macros 
-map to dynamic_pr_debug / pr_debug. I saw similar wrappers in other 
-wireless drivers (ath12k). This is also why there are plenty of 
-cc33xx_debug() all over the code, most are silent by default.
-> > +
-> > +module_platform_driver(cc33xx_driver);
-> > +
-> > +module_param_named(debug_level, cc33xx_debug_level, uint, 0600);
-> > +MODULE_PARM_DESC(debug_level, "cc33xx debugging level");
-> > +
-> > +MODULE_PARM_DESC(secure_boot_enable, "Enables secure boot and FW downlaod");
->
-> Eh? why secure boot is module param?
->
-> > +
-> > +module_param_named(fwlog, fwlog_param, charp, 0);
-> > +MODULE_PARM_DESC(fwlog, "FW logger options: continuous, dbgpins or disable");
-> > +
-> > +module_param(no_recovery, int, 0600);
-> > +MODULE_PARM_DESC(no_recovery, "Prevent HW recovery. FW will remain stuck.");
-> > +
-> > +module_param_named(ht_mode, ht_mode_param, charp, 0400);
-> > +MODULE_PARM_DESC(ht_mode, "Force HT mode: wide or siso20");
->
-> Does not look like suitable for module params.
-Was useful during development but can be removed
-> > +
-> > +MODULE_LICENSE("GPL v2");
-> > +MODULE_DESCRIPTION("Texas Instruments CC33xx WLAN driver");
-> > +MODULE_AUTHOR("Michael Nemanov <michael.nemanov@ti.com>");
-> > +MODULE_AUTHOR("Sabeeh Khan <sabeeh-khan@ti.com>");
-> > +
-> > +MODULE_VERSION(DRV_VERSION);
->
-> Drop.
-I saw other drivers use this, is it no longer allowed?
-
-Michael.
 
