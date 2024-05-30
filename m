@@ -1,112 +1,295 @@
-Return-Path: <linux-kernel+bounces-195344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4898D4B53
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:10:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737008D4B60
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E8C21F26131
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB1228233B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B090C1822ED;
-	Thu, 30 May 2024 12:10:42 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC811850AD;
+	Thu, 30 May 2024 12:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Xjsqrl1V"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2089.outbound.protection.outlook.com [40.107.94.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD4C176183;
-	Thu, 30 May 2024 12:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717071042; cv=none; b=G1upMTVIg/w3+Wh/tFbehLvwJqtN9RpNgWoCLqCrkkHxS9VwH0VmJCfKTfPtoyuGC4jPkiTO0Bqt+HB/vZbtPuwA+bt4H8DkRffuwLR7GY4MJpHQl/0vQJYigNXB5bkJHtyy/BN2eh2P0V/e0Hpiehfn5DyNxOtk3vycKVz2KuE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717071042; c=relaxed/simple;
-	bh=P0RD5wePROwgM93a13nPt0ORKlo981rKnfcaHC63to8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SkdbQGZfkYn4/AsOgz5f468bwu8wf/iTPeFoEcJvEOfGDR++cPSq0e5Jz4E02T7e07IUY0F9hU3lVc2bdtbkHxxq0BaU8RRurGIrIIXZxAQ1SvsPgp/D3E5+yoVfFAymI2pjFNcroRgEGsT2WmtmHcPnKu+bbXFtoYzCnulq1MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6302bdb54aso88117966b.0;
-        Thu, 30 May 2024 05:10:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717071039; x=1717675839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vn5DeFOwNHbs9/RCnEd5ReZXwUcap9a3NbSMJIIwBVg=;
-        b=J4DX342m5zqywde/HVqj1vu0YSQCb16JDV/G3RWrSMkuy4BQH/jdwON8iQ+rMOBmZK
-         OHbwxMhD74AfqZVCfnSosqrD4lgKHONQUvlFVa1yUxsYA91l43DTND7pyBk5kegYeKdR
-         RUKxeBweh1PWHmchI/hGDUU6l+6xgUKTf5U6GJnKDY8rTCSQ6Azka2ukLIbM3TJ5JGoc
-         rOqo9MW9i8NBPOxC3yveBPcXRz0EhCzeOnJTBD1leuhPORuhkL8KG7JRAnUVXm8TIO6X
-         Jl1x4NYX1xGkSR7H6Wf7iGaXw4pNxwWByRxDeO/R/qA5czPHvoG+Um+TSx4j7Tw03Chk
-         oYWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdX6xNkrvT2PGzRWIREfgVLMj01q0qXCPYOvTMSjOwqx5zAhbNGMwqNseizavqcROtrWPp52M04TJChK6s9uvP5/tuFBYJG7Te6nXG4gtjC4YT/xGAW4K150hT6+35uYOwmi94jEpLMnjzVPCH
-X-Gm-Message-State: AOJu0Yw5OTRJZDwMu+P8FTzkpcB1VSNXvCAp29WMFrAtavOCstYEJycr
-	ic+c8gXhldqKJCn/GUnsWnnsDvX8OhauTw8JmJmqhdy+Cx/S5pYU
-X-Google-Smtp-Source: AGHT+IGZ+uD+C4coiMwyWoJiYb1UO0xSkZytq7e7bAEIaII3ZacuBm3TQ4lF6mFpcEIVH8lflRg3Lg==
-X-Received: by 2002:a17:906:b245:b0:a5a:4705:ad36 with SMTP id a640c23a62f3a-a65e8e34e38mr121799766b.16.1717071038446;
-        Thu, 30 May 2024 05:10:38 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda6cdcsm810394166b.209.2024.05.30.05.10.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 05:10:37 -0700 (PDT)
-Date: Thu, 30 May 2024 05:10:35 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Matteo Croce <technoboy85@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] selftests: net: tests
- net.core.{r,w}mem_{default,max} sysctls in a netns
-Message-ID: <Zlhsu+9If//CMPv+@gmail.com>
-References: <20240528121139.38035-1-teknoraver@meta.com>
- <20240528121139.38035-3-teknoraver@meta.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08EDDA1;
+	Thu, 30 May 2024 12:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717071381; cv=fail; b=JH8siFTSU1M3TR54ND/fxUYM2GkjfYANnNUn9uVaXspAG+Lz9scSXq3GQl9zlTyjKKnAlTUeFqvxm+NQ7USSwPEnBBorb0q+ZbxJbN7oImY4Sjs9AaGnfE0GnPw71YdS+J5QTy39182w5HKEj6Qm9HC9irugirzLLLfc9fw7E0I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717071381; c=relaxed/simple;
+	bh=3mPPMOVWzkQkZ1/Z61ODUMn7MdiEKmIg4WGiCNPdX6E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mVJWvrYQgVJ8w50vNPrIHxmlX2HKmahYWWd1wpAfOpf5KJidEObtc8FixUgeKb06Rnp8qt90oWXXudEaLZdLc0b17/9IslwlZ7l8cuOONBcav17jFv1diOFV1PSPj/0o5rjswMe2xBFJer73RpateDpLsRfW1ZKykW2f7f46yU4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Xjsqrl1V; arc=fail smtp.client-ip=40.107.94.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dZtpwJmG+SAD1obJkxVh3O65CEhS8GUwG5TjZWjPzHi2OCxw/IHsJhqYwSRzj8k9UIXRIiPx+bIJX43r68UD5pOdOgnENGwwznLTyNX1302Bg273fl+nKIN05nVC3ki3px3XF5BwLfponjyvoOmblq4XbtJ2GVGkp8Go5oCHihEWdrCKdX2qi/fSR3MECdarckH55uPUaMPOq8RYAft5wZHT/slDGVTG2CxC2Qthh1LSMylIgB7wSKLgk8keFVqqc99Z7GmP4jxbrH9juV+wqKHU7UGk2+tcuFwYWeT5xENRx0DSh5aXpszCt6lg5QxJZQPmqUThVc96uF44g3B0eA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MRqpnDNBSciK4aHhKY9/lbqdOrosQtKDpOyTbhOrKJU=;
+ b=j1pejDR13toX2TX3Eoy/v4DytBoAZuQlEj35z0M4ohJbAk77UgvUN75eXoCGkZx9iQ3MuipYgCCuHHYE1VGKuLBa8lqjfI/0M2oO0OZocx3q6cBE+YzMmscG7tQjOcUOn0xegb0MgGiKT50Uet09POJUD14L4E22ki98Ep11CxN3TVkuiolvYvVvFF8gm9j+usJyQ+jCeEv95KQ4gIEzX+dCDtnC6RrLmW+15Sa/zY57qMeXk6U7+hIC2PoLYvBUDJZrkfpJd3XIJJfo3czVik66IpnrgaD/CEoUPVJ1AV5BQozycxC3rccXbn8qbv70N4op4QFEJvdknSQ7dc7UVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MRqpnDNBSciK4aHhKY9/lbqdOrosQtKDpOyTbhOrKJU=;
+ b=Xjsqrl1V6D1w5CVMajc7KVLzaNgWX4+ZPl6VTwgK62L8eSro4RBfqI8U5dh3k0cModMOl8QUGw+zdguvG9kEFVafiH4AsByKaespU8NqnDaJrF2+8sMm9Fz32tC2cCfqJEoWK4H8XPm1u9bfpHBZIfPE+EWCn4uGU2RJ+7dvXt4FOO2iAtYsoWP1dMDLaZ0G1RYGzU7iFu5/5uWaZbo7efz1sBbyRlk7MIOwzDU5vTBQYsKfOEJLwB1fFsj3pt+RywLJXrzKdsRVAxgwNhPQbbyRaqagWSq94SlsgEzuAMhGh3MD9mXrwmV5dVJ2bZyHLalE1s34CoACM6rnFTdWsw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ SA1PR12MB8742.namprd12.prod.outlook.com (2603:10b6:806:373::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.22; Thu, 30 May 2024 12:16:15 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3%5]) with mapi id 15.20.7587.035; Thu, 30 May 2024
+ 12:16:15 +0000
+Message-ID: <b2dc17ff-faa6-4ada-a807-ce2a64c9fa29@nvidia.com>
+Date: Thu, 30 May 2024 13:11:47 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
+To: NeilBrown <neilb@suse.de>
+Cc: Chuck Lever III <chuck.lever@oracle.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
+ linux-stable <stable@vger.kernel.org>,
+ "patches@lists.linux.dev" <patches@lists.linux.dev>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck
+ <linux@roeck-us.net>, "shuah@kernel.org" <shuah@kernel.org>,
+ "patches@kernelci.org" <patches@kernelci.org>,
+ "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+ "pavel@denx.de" <pavel@denx.de>, "f.fainelli@gmail.com"
+ <f.fainelli@gmail.com>,
+ "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
+ "srw@sladewatkins.net" <srw@sladewatkins.net>,
+ "rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
+ "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <> <58fa929b-1713-472e-953f-7944be428049@nvidia.com>
+ <171701638769.14261.14189708664797323773@noble.neil.brown.name>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <171701638769.14261.14189708664797323773@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0397.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:189::6) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528121139.38035-3-teknoraver@meta.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|SA1PR12MB8742:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51f92e9d-2bcb-41ef-2290-08dc80a24d8c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2VNbWczbTh2M2dKQ0hhNUp6TUlaVEIvVTk3WCtWT2R3OFh2UFNhamlwWitn?=
+ =?utf-8?B?QjdqcnhNa2E0RExqOUN2cWV3V2daVzBReHFIampLZjFSMHEvekJvb2NXbklD?=
+ =?utf-8?B?dzhodDdFdThDKzI3NU9HT3k2djJaVlpqalRqMlhrNkNtN3ZXalNrbzJMdzEy?=
+ =?utf-8?B?Mkx3N0pxUUlmazlyMXpIZ2ZBZzNycGZNVDd6UmFoaDdlemhnUC81TElzdlJ0?=
+ =?utf-8?B?aC9BRmFnSitCVk5GNEZRQVZydXpBRXhxWnRwRER2czVvQ1R3eXo4U2VzMTZu?=
+ =?utf-8?B?R2pON3hHbXNLL1Zpcy9wd09Yend5ZGNveW9sU2FaaXIyUVFOZ00rMmZRaFR1?=
+ =?utf-8?B?b3BBUW9jTG5JMzZVUmovZWVHYVFXRkNuOTl2aldhZFJPNFE0enp1Wjl1U3ZU?=
+ =?utf-8?B?WHdPRkhOWWg5UU14Q3hhOUxFSDhYRE5CYzBJRmhsMm84bnhib0tiSEhtcGhp?=
+ =?utf-8?B?ZHdnbHdUb1ZMeDVQbjFxR05MU01DSUFsbDRhMEtOVnM1UkFnak5NNTZnK0FO?=
+ =?utf-8?B?L0psRDlZZm1RU09SQUNQaURoRitpSmIxZHZKaFBWMVYxNExPVG9Jb1FjU2Y0?=
+ =?utf-8?B?ZEhJUkNhODNSV1RxaDlhSjJjdWVnbnk3T0pIRm1VeGFtcERGc0xHVUlnSXkv?=
+ =?utf-8?B?cmV4cW4vTnBDYUY3UkNNNldmSVZ0TXlsK0dLdmoxbnd0UDZtOUpURnJNSXZV?=
+ =?utf-8?B?ckZqc0pOdTAvaWlJZ2p0eFlXNTRYZ1RPbXMwQjVlallaVDNJaXV5d3drWlRE?=
+ =?utf-8?B?cXhwZ3VZYThRaVJXNk1rbjZEYzJlM1pxbTRIWU51ZHg2UDErY3o0UlZZMTVp?=
+ =?utf-8?B?TEswYUVyUWNZN09YT3pwOXdMTmtNWG9wNm52UXFxUzRWYm5qanYrTVg1V0xk?=
+ =?utf-8?B?blRpZDZ3ZTNPZTk0dGN5S2tQR291dUp3ZkFidXVEbUxtWlJoYTRXZFlkSnhQ?=
+ =?utf-8?B?SCtGd3g3TGFPdnU1TXkrdjJIMnB4MlNIa2JlcWlseW5tR3JNZWpKMWZJMXlF?=
+ =?utf-8?B?YmdoK3hKU2c0Z2dnR3NWM3J1QmV2VXkzaWU2UmpPQXVJV09YQW1vemI4dDRN?=
+ =?utf-8?B?WlBzNHFKSXJWR3pIbVJ6QktmZ3QvZ0R3Sm9KL3FlUEdXam9DY1dwdGhzaGlS?=
+ =?utf-8?B?WndRVHpKVUhqd3BvRXRRMFFWVHFKcTQ0dUQ1VVdDZ0NjZlRENDZXZUtkUUFk?=
+ =?utf-8?B?aXp1UEtyZlFBOXl5c1ZLd3l3WFhoekxTYkl2YzBDK2oweHpFbEhISUt0OGo1?=
+ =?utf-8?B?L2ordzNSSTVKWXNpb2ZnQldhMHZLeDh5akhaSEQvRWczN2NkSlByZFdHYmNy?=
+ =?utf-8?B?NjhidWphQjJYSERHRmZmaVRSMEgyOWptWEkwMHRzMVg5MDdHY1pEVEtEQ2R2?=
+ =?utf-8?B?Z2JpVDJVQjJab2dRZ2QvRWdqYjNSOWhBSm41TlFrdWYrWGZVYk1GRlVOZUh1?=
+ =?utf-8?B?VmR5VklHeFoyYXNlOGR5Zi9aajJoZlZjdkJRYjRVbGxhSmpWQzZmMW1rOGpV?=
+ =?utf-8?B?QmkwWWlueXNOQWNLZVNSUE9aV2tCNGM1MTdlNExwZmpEVTNVZGRYVi91MExl?=
+ =?utf-8?B?bU0xWkVGaTQwUWdBL1J3SjVPMUw1NmJBU1BFYnFZNDlwSTM4ZHpHbFlwMkpj?=
+ =?utf-8?B?SUZaK2xZa09jUUIrdEFHOVgxVHNyditTSmRBbEJidTlRYVVBbjIybDFQMmV5?=
+ =?utf-8?B?TEVUanFCYzB2U2JJc2FZeXBzc0tlVnY0VUIrbkZOWTljVmRYMmhpRnV3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UFp2dmV2QlBYQUtFWWZCeStVclRhL1RUejdkK2hiSnlKZ24vN1oyT3MxZit5?=
+ =?utf-8?B?cFdIUWN3WG9iL3REaWZ2N1AyTy9JSlhUK1dFa3hyOEhTSFhBcU5UOWw4clR4?=
+ =?utf-8?B?M1NJKzc3V0Q2OS9rcnY5MmVQOWFhNElwWkNmNXBIc1BQRUd2dWN1SDhndzBw?=
+ =?utf-8?B?N3Z0cmw1MFV2UjBVcE5VWGMzUE5aOWlYcDdMN3p2cmpVSDhzcFVnRE9odU92?=
+ =?utf-8?B?RjBOQXVXalRwbjk1bmxiT3cxMGpnM3N3OFMwaVcxV2lOK0FJaFpSZm5LV3RU?=
+ =?utf-8?B?V0w3M2IzS2NGSml2UStiaEhUQUNHZi8xckgyZEZZUkxVVFVuKzQzT2Ztd1BC?=
+ =?utf-8?B?cFRIc0NDMWh1TkpvRTR1cnBvcmZ5Zk5CSzRYcGFpMndDUG9pcDVRSnE0QzFa?=
+ =?utf-8?B?TXF4c2N6eU5zL3FEbXNUTThHL3NIaHgzMUhjdW05cEUzaUhzQ05xUFl2Z0M3?=
+ =?utf-8?B?ZDVIVjJuK0tlemppQi9mNnVxMG1zNFdraVB2SzhmZU02RjNvNWFLZi9BSlBB?=
+ =?utf-8?B?QUowU3VlZ2hZa09TSWkwNmhvaEwxR0Rib0dHcGFkbzllNE9PUDNjbFcyVFpt?=
+ =?utf-8?B?ZzVFKzNBVS9sdFBXMzY5TUtZRXdBRXMzL09CMU1QN3M1dE9WL1FSQXZQZS9a?=
+ =?utf-8?B?MDlIQ1YrZmMvcjNad2VzblMrbVlDaG45OTZCbTVtaUtTUHl0c0ZTempWV3N0?=
+ =?utf-8?B?SnFneEgzSDc4NmNCelk1OVBJTmdDbUdxNW5CK09EbC9MZW1yWGJsc3VLMlg4?=
+ =?utf-8?B?ZSt1L1o4cFkvL1VBQk5KYkQ2L1c1OE9zTUNRbzRuNENDS0JIMzhlMHQvQlc3?=
+ =?utf-8?B?VUp4MnoxcDBGY1FTQnV5V2daRFRNVnVzRFpZQkxDK0l0cUhpdXVXbFA1UGJM?=
+ =?utf-8?B?Zjl4eG84aU1vcDMwbDc0WVBvUFhrYklndUc4NDFyTElqcTV0d3hISDIrbjFY?=
+ =?utf-8?B?NkhmK0tmYVQ0OFFPNE1KSjBVY2RqQmc0b0NHblZIWTJzMCtZYndJMS9DYkRr?=
+ =?utf-8?B?TmJTQ2lZMy84ZjlZeXZ3Sko1VVZsY3NjUkYyU0locEE0RndvUE93K0dXeTRk?=
+ =?utf-8?B?VTI4anBOREIwQTdjQ1NBZjFCUVBXZ29XaUNWWHhzb1N0SHFCV3doMlFLZWtO?=
+ =?utf-8?B?Y1hJU0FBOVdLMlU1Y3d1QU02b0lDL2tCUzZRd0VzQ2FRbUl3NENjQUpXc296?=
+ =?utf-8?B?dzAraEcrWUhhamkvalErVHVQWmR0MXFRMDBvQnpFbTMyTDYvaWp2cytzeno4?=
+ =?utf-8?B?bWhLd1N5MktKcEJ1akMzODVBc0RDdFQ2elV1MGxleWljRFlIUWFFUXR2V0h4?=
+ =?utf-8?B?Zm5DMkwwdk4yQXJBM0Qza25WcnBxeDRPTStiUDFMMXJYK1lTYm1nVm42RElJ?=
+ =?utf-8?B?SXNBOWs1Ujl4VVlVR0NLazhCZjBXU1lhOFhQejNhU1dQTmZLaDRpNlFweEVh?=
+ =?utf-8?B?bXd6Z3NIMDB4WmJrdmp5MHZqNkJtK292NEhIR2U1UHdwOEVZeDdWcy92Ymtj?=
+ =?utf-8?B?VWxybHpMVVpUZjR1Rk1QUlZwK05FRFdET3ZoTHdrNndjNVpNRG5pSEpHbW5E?=
+ =?utf-8?B?TU92UWlVRUp2N3hCbnZITWpNZlBoMnRVV1A2QkhaMkNFeStWZjNGa0t4Q3pJ?=
+ =?utf-8?B?bW1kSGZDUHpKa3JqNGRHdEl1S2hTRHNxczNvYWIySGhJWGJVWnRCVTJKZEN3?=
+ =?utf-8?B?b1V1bEp0Nkk2NkVGZjFJaW1lTEJYZXBsWnhQbURmN0pwVkd1OWNXWXFxQkNT?=
+ =?utf-8?B?WGVrUkRWeW9zc3R6blE5MVJVYXdVc21MdTJaeElaQnZCMFkrUFU4SW9WL21o?=
+ =?utf-8?B?Yzc3SHhlWjBURjVYd1lrTzVKR3FHeVdIM1ZkQ04wbldzS2kvdmZmVnV3cXlY?=
+ =?utf-8?B?UTdLQkNPUCtLOFAzQnN0SXJRRDRJWUNVNEhYV2ZpSllRY2l2b1dFK3NKc0hG?=
+ =?utf-8?B?SWFYVnkrYnFxNEh4TExUQmdXZVRjM2JHT2hkV1VrOG14NVRpZm01Ulh0V3A4?=
+ =?utf-8?B?RXBDRk1PbEkyRi9kZ1gwNlBtZnZ0KzNwODdWQTgxMjdwOVNSSktGcnZwaXZJ?=
+ =?utf-8?B?b2szMStiZVd0Q29oLzQ4QXc5RitjVDJHUm5rWlpXcUxxa2JKYWh6QkdNUnY4?=
+ =?utf-8?Q?Z6Aa5vF90nA3Fl3yho5wyHmMQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51f92e9d-2bcb-41ef-2290-08dc80a24d8c
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 12:16:15.5790
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZvS5b/yKwXZEEkRzntfFI+Roeey5Fy25l5y5RnArvlAYN9W9EWKM37lH6jhYE3hEBn3X3/BLNJww3Y4gv4oP1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8742
 
-On Tue, May 28, 2024 at 02:11:39PM +0200, Matteo Croce wrote:
-> Add a selftest which checks that the sysctl is present in a netns,
-> that the value is read from the init one, and that it's readonly.
+
+On 29/05/2024 21:59, NeilBrown wrote:
+
+..
+
+> Thanks for testing.
+> I can only guess that you had an active NFSv4.1 mount and that the
+> callback thread was causing problems.  Please try this.  I also changed
+> to use freezable_schedule* which seems like a better interface to do the
+> same thing.
 > 
-> Signed-off-by: Matteo Croce <teknoraver@meta.com>
+> If this doesn't fix it, we'll probably need to ask someone who remembers
+> the old freezer code.
+> 
+> Thanks,
+> NeilBrown
+> 
+>  From 518f0c1150f988b3fe8e5e0d053a25c3aa6c7d44 Mon Sep 17 00:00:00 2001
+> From: NeilBrown <neilb@suse.de>
+> Date: Wed, 29 May 2024 09:38:22 +1000
+> Subject: [PATCH] sunrpc: exclude from freezer when waiting for requests:
+> 
+> Prior to v6.1, the freezer will only wake a kernel thread from an
+> uninterruptible sleep.  Since we changed svc_get_next_xprt() to use and
+> IDLE sleep the freezer cannot wake it.  we need to tell the freezer to
+> ignore it instead.
+> 
+> To make this work with only upstream requests we would need
+>    Commit f5d39b020809 ("freezer,sched: Rewrite core freezer logic")
+> which allows non-interruptible sleeps to be woken by the freezer.
+> 
+> Fixes: 9b8a8e5e8129 ("nfsd: don't allow nfsd threads to be signalled.")
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  tools/testing/selftests/net/Makefile        |  1 +
->  tools/testing/selftests/net/netns-sysctl.sh | 15 +++++++++++++++
->  2 files changed, 16 insertions(+)
->  create mode 100755 tools/testing/selftests/net/netns-sysctl.sh
+>   fs/nfs/callback.c     | 2 +-
+>   fs/nfsd/nfs4proc.c    | 3 ++-
+>   net/sunrpc/svc_xprt.c | 4 ++--
+>   3 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-> index bd01e4a0be2c..6da63d1831c1 100644
-> --- a/tools/testing/selftests/net/Makefile
-> +++ b/tools/testing/selftests/net/Makefile
-> @@ -53,6 +53,7 @@ TEST_PROGS += bind_bhash.sh
->  TEST_PROGS += ip_local_port_range.sh
->  TEST_PROGS += rps_default_mask.sh
->  TEST_PROGS += big_tcp.sh
-> +TEST_PROGS += netns-sysctl.sh
->  TEST_PROGS_EXTENDED := toeplitz_client.sh toeplitz.sh
->  TEST_GEN_FILES =  socket nettest
->  TEST_GEN_FILES += psock_fanout psock_tpacket msg_zerocopy reuseport_addr_any
-> diff --git a/tools/testing/selftests/net/netns-sysctl.sh b/tools/testing/selftests/net/netns-sysctl.sh
-> new file mode 100755
-> index 000000000000..b948ba67b13a
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/netns-sysctl.sh
-> @@ -0,0 +1,15 @@
-> +#!/bin/bash -e
+> diff --git a/fs/nfs/callback.c b/fs/nfs/callback.c
+> index 46a0a2d6962e..8fe143cad4a2 100644
+> --- a/fs/nfs/callback.c
+> +++ b/fs/nfs/callback.c
+> @@ -124,7 +124,7 @@ nfs41_callback_svc(void *vrqstp)
+>   		} else {
+>   			spin_unlock_bh(&serv->sv_cb_lock);
+>   			if (!kthread_should_stop())
+> -				schedule();
+> +				freezable_schedule();
+>   			finish_wait(&serv->sv_cb_waitq, &wq);
+>   		}
+>   	}
+> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> index 6779291efca9..e0ff2212866a 100644
+> --- a/fs/nfsd/nfs4proc.c
+> +++ b/fs/nfsd/nfs4proc.c
+> @@ -38,6 +38,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/kthread.h>
+>   #include <linux/namei.h>
+> +#include <linux/freezer.h>
+>   
+>   #include <linux/sunrpc/addr.h>
+>   #include <linux/nfs_ssc.h>
+> @@ -1322,7 +1323,7 @@ static __be32 nfsd4_ssc_setup_dul(struct nfsd_net *nn, char *ipaddr,
+>   
+>   			/* allow 20secs for mount/unmount for now - revisit */
+>   			if (kthread_should_stop() ||
+> -					(schedule_timeout(20*HZ) == 0)) {
+> +					(freezable_schedule_timeout(20*HZ) == 0)) {
+>   				finish_wait(&nn->nfsd_ssc_waitq, &wait);
+>   				kfree(work);
+>   				return nfserr_eagain;
+> diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+> index b19592673eef..3cf53e3140a5 100644
+> --- a/net/sunrpc/svc_xprt.c
+> +++ b/net/sunrpc/svc_xprt.c
+> @@ -705,7 +705,7 @@ static int svc_alloc_arg(struct svc_rqst *rqstp)
+>   			set_current_state(TASK_RUNNING);
+>   			return -EINTR;
+>   		}
+> -		schedule_timeout(msecs_to_jiffies(500));
+> +		freezable_schedule_timeout(msecs_to_jiffies(500));
+>   	}
+>   	rqstp->rq_page_end = &rqstp->rq_pages[pages];
+>   	rqstp->rq_pages[pages] = NULL; /* this might be seen in nfsd_splice_actor() */
+> @@ -765,7 +765,7 @@ static struct svc_xprt *svc_get_next_xprt(struct svc_rqst *rqstp, long timeout)
+>   	smp_mb__after_atomic();
+>   
+>   	if (likely(rqst_should_sleep(rqstp)))
+> -		time_left = schedule_timeout(timeout);
+> +		time_left = freezable_schedule_timeout(timeout);
+>   	else
+>   		__set_current_state(TASK_RUNNING);
+>   
 
-Don't you need to add the SPDX license header?
 
+That did the trick! Suspend is now working again on top of v5.15.160-rc1 
+with this change.
+
+Feel free to add my ...
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks
+Jon
+
+-- 
+nvpublic
 
