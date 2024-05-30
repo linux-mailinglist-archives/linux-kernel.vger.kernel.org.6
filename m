@@ -1,143 +1,167 @@
-Return-Path: <linux-kernel+bounces-195620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D638D4F63
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6540F8D4F69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53EF11C23003
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714C81C228CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC48F208A7;
-	Thu, 30 May 2024 15:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E96200AE;
+	Thu, 30 May 2024 15:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="WVdSqWHi"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VYWHc88Y"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C389E1CD2C
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3391F947
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717084100; cv=none; b=HUmPeZlsq4zHfeULX/jYlNGUqbMranoU/OhGpuSR8lLsBTrZvEF0YzS1f7HcsDHmmNctWaqzKEIyLm0IUVE8qBpuGTQHFNXk3xPvUze36LUNxU4ZZaoGFQro41NDLKlC7YXiuYOG4tzmAq6MrCnuvi2duMqF0ihdGBWZ9HgTf1c=
+	t=1717084148; cv=none; b=manOx4u65eQdXf0xubnJMNWAfcPVjiBoY3VbHY9L1PO+hcYspYSvHUfARUevvhOz3qLN0UQY0eZIT/q94CNlDudlyCi/OT3799AQihtVYMakkz3XlHSf4xvdFrnYeKWNIaFwxtDJrRM3JM9DJ0FzmjtA69ACAvhPrIiQpMivkEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717084100; c=relaxed/simple;
-	bh=uiGOFfneORywVqa7KwbGbVLdPn3xrlFWKiXYGWlSZWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YjLd/PD4OHnts54mVpiszM58VUCPkTdhvyakzaVl7bp0KWebP+F5MY91Nk1Z9ImI0xHVcxzKBYKgoPeTOaMzUL5zOQ5IPnoyOHk0GDfcqLlzlwoxE3nvoaGBms9wp6yn/+Gok16z3MNfzwed1ymygE0dPhJRljt9S3PtW8C4iEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=WVdSqWHi; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f48e9414e9so10205065ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:48:17 -0700 (PDT)
+	s=arc-20240116; t=1717084148; c=relaxed/simple;
+	bh=V496EBsN/8sDzK0xPf/lafp2vL/Y6Qrr0P9nD/nTSvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lq/FbPe5idZfDhTAcf2xRsQzvmoHagPxNTlqgxdPNYzowzsG+58SprCcfFo8TbH13niIXo57XsfdcRO8W8eY1G3bzG40rWAYbB3VBclZvV8Y0Pt4a5Z/2QAQlEDJNFmobL7AqAdh1UFfxNkKyoYpPMtsZLZaTReHIlpcFUv2gEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VYWHc88Y; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f44b42e9a6so8502985ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:49:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717084097; x=1717688897; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=z2/9YXup/8RbMNmyLIVK+PNdaz2WPXgvrHbc/uuCS+s=;
-        b=WVdSqWHiu5sKaDLWZCxaBXUV31ZBsthCdZZZutKEkDcX0e61rFlvsCJTLb3B04m05m
-         dAIH+HyiM647olGbM+CDjUCzUmEg/4RI2zyqBxMj+yoqLTxMhXWbYt9bSf7YKAAtZ/8q
-         1HO5hyaXQilQrcmuveR7lGVHRGN20WpXFNlyoFsjJE0heqSPm1sB+d54c6GmwhKAIfk2
-         G3SHZNVzMW9nmYz1Ah4ZfpOylk9AsCrkiceqrqohFTErQ2RHMvO3JQ445W7+8jY/szIZ
-         b0c3UV0yO7SK/xyD6NBOgb7iuVJC+7Dd4XPGCQsEnGfkEDIUwASlnGrfRigBExCYzm70
-         PKmA==
+        d=chromium.org; s=google; t=1717084146; x=1717688946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KrjPSd85eM16lzQd2l+Jx3zs8iJGA94JtJTphdKIu1w=;
+        b=VYWHc88YFhmzlWLphmiLx3Ty+2A/zi11zvAjO73Zim25Zt+Ngg3aDwj8S4uvXKJlqI
+         9uTokSnAN2NNMIi0OCl5LBR6mlHi1N49O8+IiWOvq8Kxjp4RraInXDnequjqZmm8Xmfy
+         hgb0/XdeGxj4VTZuvOwMrweNZJDpY53a0ByUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717084097; x=1717688897;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z2/9YXup/8RbMNmyLIVK+PNdaz2WPXgvrHbc/uuCS+s=;
-        b=U7NsMH1FIucKPkX/7VnpnVvIF2MDDoLJ5bYsvs9NaeHvKM9POiRJq1yprVwchzJyJm
-         eJchgAE11fVdwfWbDJOjQtOSBZzUibw4nJ2/z7rNw0jRU6NDFewIk3gl+8m78pfbvVEk
-         0RobD8z/OwuRkkgkZ5qzpOG1rVgEo1qrtk6ezepTFDh81B05lr5Kjt0eclQcMAuWJeKD
-         F+OSbf4+LdWL/CBx4N68tCOr/AI+y1UsKrujN83/DQvadhRu0YXr8irfTK5eUXHIeGY9
-         usGs3KKVVmWJo9pI7OAn0gD1yywmkYRze8xcT3tSlDBF7N6aVRs3+1uxR0k4P8tVjcix
-         89NA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsMnqF3GqIceUB9lsE4y4eW+rLdKQvbvQFUoH2zqsumyE7Dz9iFbCHm4EefhvqRR/7Dc8tPJE9SgkP4ATkytoiEjy/9lPHDuFCYkvg
-X-Gm-Message-State: AOJu0YxbikJQk+lVQkdsbYUkvEqTFUUemxvJZ0IcqXRooJpjy5l8Ikgl
-	GqZYtWloKmjgDbCYT4BXGy9G3bQbBAAeJGoMsCPcH15xTIOP4htsn4snW426YQQ=
-X-Google-Smtp-Source: AGHT+IFEoPjpm6Eoux4dPoJuolosadGpX2I41dVnCKtavoFPe5puywtXMZkqH8FzHI7me3wq7SDgqA==
-X-Received: by 2002:a17:902:db09:b0:1f4:9468:38b6 with SMTP id d9443c01a7336-1f61c1ba67dmr29549475ad.34.1717084096975;
-        Thu, 30 May 2024 08:48:16 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4d6fe4775sm49803095ad.257.2024.05.30.08.48.15
+        d=1e100.net; s=20230601; t=1717084146; x=1717688946;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KrjPSd85eM16lzQd2l+Jx3zs8iJGA94JtJTphdKIu1w=;
+        b=lAFKlhHftblOfIbVRwiiivsnQGjweJ/dY7fLnj5wI30U8HV+6hSDZEIeYVBtXo0OFY
+         mxzD5pZ0BHhVRQlUX62BpsnptVZ/ZJ8n1I+yotypFkwQRgrfDtGbhWpjRTpv2pjw9owK
+         9FFGIpIpp94ENmOrHr69nCG8fZInDJa5EgBXhZHLbLkA6mAJ+SLScTCC9RI6n2E1KX6k
+         Mxrq+T5m+JE8HmJf23fiMyMg8HTz8QeRfrfViVDvKJXY7dYjwFyk1a6cR5HzI6s2fJCh
+         BVtsy6yk0Uxb+Nx3xB6mhoms232LtwncnJrVFU4PfTIGPepyHMbd5KgZ7JfhHBVVoZTb
+         lrSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXR/n4MUVn8N7/N8WZ007R11Y64rLP+oXG2P64WCbXs71voTU0kA8KEma9jUdzOEazdn6tEDb/Cj9Qw8gWnbB96wvhnTXGNse/DsMvC
+X-Gm-Message-State: AOJu0YwMzZOsA8FwTYHBH+CtcJbf10uG7BoJBIqyettipGNreQOlWUuQ
+	yVPpn672Z4BR1g9Da+x9ec4Iqz3dLqfnc+3BUDHx/R6mIY3tEwGbKcOAzOFZpw==
+X-Google-Smtp-Source: AGHT+IGn2tzzPa7fMTUghoHMSFR9I59iuxYacjgwwItgbhIUyfqhgbSLtvHe2FUJBmr5tdAjh0x3OQ==
+X-Received: by 2002:a17:902:d512:b0:1f3:1200:ceb3 with SMTP id d9443c01a7336-1f619b2cd29mr28968425ad.51.1717084146231;
+        Thu, 30 May 2024 08:49:06 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:564b:72b6:4827:cf6a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c994a66sm120156915ad.182.2024.05.30.08.49.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 08:48:16 -0700 (PDT)
-Date: Thu, 30 May 2024 08:48:13 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 13/16] riscv: add ISA extension parsing for Zcmop
-Message-ID: <ZlifvXUiHeNnEJqq@ghost>
-References: <20240517145302.971019-1-cleger@rivosinc.com>
- <20240517145302.971019-14-cleger@rivosinc.com>
+        Thu, 30 May 2024 08:49:05 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-arm-msm@vger.kernel.org,
+	Tony Lindgren <tony@atomide.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Guanbing Huang <albanhuang@tencent.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: [PATCH v2] serial: port: Don't block system suspend even if bytes are left to xmit
+Date: Thu, 30 May 2024 08:48:46 -0700
+Message-ID: <20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240517145302.971019-14-cleger@rivosinc.com>
 
-On Fri, May 17, 2024 at 04:52:53PM +0200, Clément Léger wrote:
-> Add parsing for Zcmop ISA extension which was ratified in commit
-> b854a709c00 ("Zcmop is ratified/1.0") of the riscv-isa-manual.
-> 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> ---
->  arch/riscv/include/asm/hwcap.h | 1 +
->  arch/riscv/kernel/cpufeature.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-> index a5836fa6b998..aaaf23f204ac 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -85,6 +85,7 @@
->  #define RISCV_ISA_EXT_ZCB		76
->  #define RISCV_ISA_EXT_ZCD		77
->  #define RISCV_ISA_EXT_ZCF		78
-> +#define RISCV_ISA_EXT_ZCMOP		79
->  
->  #define RISCV_ISA_EXT_XLINUXENVCFG	127
->  
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> index 3bb2ef52a38b..0a40fa1faa04 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -290,6 +290,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->  	__RISCV_ISA_EXT_DATA_VALIDATE(zcb, RISCV_ISA_EXT_ZCB, riscv_ext_zca_depends),
->  	__RISCV_ISA_EXT_DATA_VALIDATE(zcd, RISCV_ISA_EXT_ZCD, riscv_ext_zcd_validate),
->  	__RISCV_ISA_EXT_DATA_VALIDATE(zcf, RISCV_ISA_EXT_ZCF, riscv_ext_zcf_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zcmop, RISCV_ISA_EXT_ZCMOP, riscv_ext_zca_depends),
->  	__RISCV_ISA_EXT_DATA(zba, RISCV_ISA_EXT_ZBA),
->  	__RISCV_ISA_EXT_DATA(zbb, RISCV_ISA_EXT_ZBB),
->  	__RISCV_ISA_EXT_DATA(zbc, RISCV_ISA_EXT_ZBC),
-> -- 
-> 2.43.0
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Recently, suspend testing on sc7180-trogdor based devices has started
+to sometimes fail with messages like this:
 
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+  port a88000.serial:0.0: PM: calling pm_runtime_force_suspend+0x0/0xf8 @ 28934, parent: a88000.serial:0
+  port a88000.serial:0.0: PM: dpm_run_callback(): pm_runtime_force_suspend+0x0/0xf8 returns -16
+  port a88000.serial:0.0: PM: pm_runtime_force_suspend+0x0/0xf8 returned -16 after 33 usecs
+  port a88000.serial:0.0: PM: failed to suspend: error -16
+
+I could reproduce these problems by logging in via an agetty on the
+debug serial port (which was _not_ used for kernel console) and
+running:
+  cat /var/log/messages
+..and then (via an SSH session) forcing a few suspend/resume cycles.
+
+Tracing through the code and doing some printf()-based debugging shows
+that the -16 (-EBUSY) comes from the recently added
+serial_port_runtime_suspend().
+
+The idea of the serial_port_runtime_suspend() function is to prevent
+the port from being _runtime_ suspended if it still has bytes left to
+transmit. Having bytes left to transmit isn't a reason to block
+_system_ suspend, though. If a serdev device in the kernel needs to
+block system suspend it should block its own suspend and it can use
+serdev_device_wait_until_sent() to ensure bytes are sent.
+
+The DEFINE_RUNTIME_DEV_PM_OPS() used by the serial_port code means
+that the system suspend function will be pm_runtime_force_suspend().
+In pm_runtime_force_suspend() we can see that before calling the
+runtime suspend function we'll call pm_runtime_disable(). This should
+be a reliable way to detect that we're called from system suspend and
+that we shouldn't look for busyness.
+
+Fixes: 43066e32227e ("serial: port: Don't suspend if the port is still busy")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+In v1 [1] this was part of a 2-patch series. I'm now just sending this
+patch on its own since the Qualcomm GENI serial driver has ended up
+having a whole pile of problems that are taking a while to unravel.
+It makes sense to disconnect the two efforts. The core problem fixed
+by this patch and the geni problems never had any dependencies anyway.
+
+[1] https://lore.kernel.org/r/20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid/
+
+Changes in v2:
+- Fix "regulator" => "regular" in comment.
+- Fix "PM Runtime" => "runtime PM" in comment.
+- Commit messages says how serdev devices should ensure bytes xfered.
+
+ drivers/tty/serial/serial_port.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/tty/serial/serial_port.c b/drivers/tty/serial/serial_port.c
+index 91a338d3cb34..93ca94426162 100644
+--- a/drivers/tty/serial/serial_port.c
++++ b/drivers/tty/serial/serial_port.c
+@@ -64,6 +64,16 @@ static int serial_port_runtime_suspend(struct device *dev)
+ 	if (port->flags & UPF_DEAD)
+ 		return 0;
+ 
++	/*
++	 * We only want to check the busyness of the port if runtime PM is
++	 * enabled. Specifically runtime PM will be disabled by
++	 * pm_runtime_force_suspend() during system suspend and we don't want
++	 * to block system suspend even if there is data still left to
++	 * transmit. We only want to block regular runtime PM transitions.
++	 */
++	if (!pm_runtime_enabled(dev))
++		return 0;
++
+ 	uart_port_lock_irqsave(port, &flags);
+ 	if (!port_dev->tx_enabled) {
+ 		uart_port_unlock_irqrestore(port, flags);
+-- 
+2.45.1.288.g0e0cd299f1-goog
 
 
