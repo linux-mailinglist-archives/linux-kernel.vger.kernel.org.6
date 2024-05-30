@@ -1,191 +1,159 @@
-Return-Path: <linux-kernel+bounces-195580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA818D4ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:13:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48A68D4ED6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C290D1F253D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624501F25D8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D2B182D1F;
-	Thu, 30 May 2024 15:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D66418756C;
+	Thu, 30 May 2024 15:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M1/c2tLJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="my013GmM"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B975D18629A;
-	Thu, 30 May 2024 15:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089C318755D;
+	Thu, 30 May 2024 15:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717081889; cv=none; b=UB9U6jh6wZkIMoW12YrUj1WdzHwwqNxoufIopzBSeC3/7MG9+cH9gWyc5o7lJKea0OcU+F/Ny/Eh0za7MshZFcjaoiv3RF/kYjeOh0WCyOEhFWVp2oNS7gp1GC/gRZMzpTe8rKLuT42lowi/GXQW2fz+G44v3Vx9a4EfGhedCgk=
+	t=1717082056; cv=none; b=A+pYBfImtomNG+qod+f4ggHOR/8EhLFM7EWhVUBCuTGXSHiHm96Dofkzq+8PB5YYID4J6AIOxvhWdU+Ww366+C42T+CZ4yiYl/m3syZfUPGu8zoVxvP8WOHpez84LdDEJHuOSnpXMBuaGaGItQ1VwIdyKduwy4FS1tQYFl+Jvsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717081889; c=relaxed/simple;
-	bh=7g0FrtRJTKHe6RD7B4mm9xOD9+Ic1TmeKGG546OwPqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nLAY0cTt4g1EfvdLa24VA23XEj6GMEdRO0mlMwpzwppEUMuvneLFJmEjiNulR5gbvRnnvlEzFAjM3nQJiNfX/ymxImFnwwvxBaXzsv+WGPuUywYccu3N2csdes43/uWnLWtK/QdeZJYx5l6Lb48OFaOWdoROeLERbj30OBn2FAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M1/c2tLJ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717081888; x=1748617888;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7g0FrtRJTKHe6RD7B4mm9xOD9+Ic1TmeKGG546OwPqo=;
-  b=M1/c2tLJGgUyPOMOzPvKptWOnKEHzcZUJPOsab9Qv40a4ZT3ee2tnIeJ
-   lLK4PIv0X9aAzsw2g41YzoUUKqYb3V0TxNltPdcQDvHFvLZw3wHTtuj6C
-   CD+ZqVGlO4KoWuEFxPIXBvfao3eNRtfnY58hRBbdg2duBrXnjH8ujcXVY
-   oxyhpczhN5Yz2UZ6j9yMW3ONECgWytXqIFme0iz7bnUrpQG8aozriG9wJ
-   Wr6fXGAU7jRBF6TaIHcwmtOHvxvxCqwKMHmd0a1tm/EluofXx9z5lcZes
-   qELeD9yHF58VlkXpHHC6fteT5sCLrpVkG0dYidiWTfhDZuRB5L2EQOHTT
-   w==;
-X-CSE-ConnectionGUID: RyQuOvnbSsi7pe6myj0UCA==
-X-CSE-MsgGUID: /cqcRdJ0RVerC6cI+bbWCQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31093065"
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="31093065"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 08:11:26 -0700
-X-CSE-ConnectionGUID: k9Eha/fGTpeqrsW1X+0gig==
-X-CSE-MsgGUID: G+4ZTQb/TfC1x49tTGutPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="40288504"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 30 May 2024 08:11:23 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 8E19774F; Thu, 30 May 2024 18:11:19 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+	s=arc-20240116; t=1717082056; c=relaxed/simple;
+	bh=WIbbh2QIEse26jjLM2QZGcRptTEmJwSZHC3dc6xVXTI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=PXzITOVziOh43Dv2zM3ygVcrTBgNXIoXDMelGv4tmbyF8PwVNkuy7RHVNAeJkFdqZI+ZtTE128EyZS5AP6HOfbCq1L0wRA9FooHJwVaqilPydm+7gVpK9JS/7cAoMmJsJzUAXF7eEpPkgPHQvXsEvfM/C3tXSYJNiiKhRJJLNns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=my013GmM; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70231ac9093so743276b3a.3;
+        Thu, 30 May 2024 08:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717082054; x=1717686854; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=POWEYsGteFBsH2FZNkJsEWH+VNGD5DA1v64fZi4BMrU=;
+        b=my013GmM7FWATseWx6v6ZmgH4OZZAsT9IztuiSkjPRmr8mtjqIBzUL0NJK68YHcyZF
+         mzmJLT5io1neE+MLPiqBHTIkFxY093L2XPaIICTmUHso1Vbqu0PyPriENO4tM09id7No
+         Sr3S95yk3A0D5JvaoWxD2MIq/BK18gCEn5Spg2iKjxFajcNuHzd64wb2DZem8dlQNIYI
+         P3ssaNd2TYeh2RTFZ4EnR46H/Mrt2Sve2jCO32WTgczDQf8NMVGMvvrdYxG9A5c37Kml
+         wRbe/8tLdaTodctr2vAxYeKZrw6yXKfOzGVgRGdo7yq7VYMSo9nDUME7OYr6963X8vVv
+         /YmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717082054; x=1717686854;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=POWEYsGteFBsH2FZNkJsEWH+VNGD5DA1v64fZi4BMrU=;
+        b=WXzPRtsaAfE8PwHx1m5LAa5gosND8vOh97qeAHSA9coN9hN6nDyEpXFL+52l/6jwCx
+         XG9vbfXsO2HAAJ4hBI2tFT4JF9xQztD5dPX+eZMvaMhBpzU9BOvjHU4M1xRhJRGxnOQy
+         NutqU/Phkb2lB29DkyUpEjwC5Q/yZnza4A7Q3bRYOVaA0EAyjkYl3QSmANuK0x1Gf8jg
+         OVyRMJ0RqQOpGQOQnUBY5rORf6bYYyxFsE17SK0r+lRA/hTZ9dnBw11aA3GpAAeaN+2p
+         6mubsYyhVHAySsNRIeRMFI3pK7SSk3wPAslUHpwnaxw/ZocakY+ue74gm2Vbgq76OQlD
+         uNxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUI6qbZnqzAhK9P8DeBmVfJv5NVquVklfNK7CIDKBm2s5pDGiU1KzsPK9mywJvRSOwvqP4zVV1fkPs3Q7MgdUhdmlJA9E5gFB0eWglMW8D5IPmRHIclr1CCKjDunjCqALTeM7Qu8kYi
+X-Gm-Message-State: AOJu0YzYqgHBSaYX1tkwTWsi+NEr4PiZqcB2sH7HrrP+4p3eYCROoxcG
+	gYZU/uC8QYUq0dw+Y2CNp6xCjtZMhZCBmQ5ONIz7v7KOke04Adtu
+X-Google-Smtp-Source: AGHT+IGICTP5sklLFqbs/ZwVa6ppaEurwlGt53+Midop+1P6fL/wAwqHWhlksi7i6tSOKUtz3E7Y8Q==
+X-Received: by 2002:a05:6a20:104c:b0:1a7:7ac1:a3ba with SMTP id adf61e73a8af0-1b26460b783mr1963623637.53.1717082054022;
+        Thu, 30 May 2024 08:14:14 -0700 (PDT)
+Received: from localhost ([36.40.187.183])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-68226a133d0sm10738538a12.62.2024.05.30.08.14.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 May 2024 08:14:13 -0700 (PDT)
+From: joswang <joswang1221@gmail.com>
+To: Thinh.Nguyen@synopsys.com
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v2 11/11] spi: pxa2xx: Convert PCI driver to use spi-pxa2xx code directly
-Date: Thu, 30 May 2024 18:10:07 +0300
-Message-ID: <20240530151117.1130792-12-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240530151117.1130792-1-andriy.shevchenko@linux.intel.com>
-References: <20240530151117.1130792-1-andriy.shevchenko@linux.intel.com>
+	joswang <joswang@lenovo.com>
+Subject: [PATCH] usb: dwc3: core: workaround for hibernation D3 entry timeout
+Date: Thu, 30 May 2024 23:13:39 +0800
+Message-Id: <20240530151339.45572-1-joswang1221@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-PCI driver has an additional device layer for enumeration.
-Remove that layer and use spi-pxa2xx code directly.
+From: joswang <joswang@lenovo.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In the case of enable hibernation, there is an issue with
+the DWC31 2.00a and earlier versions where the controller
+link power state transition from P3/P3CPM/P4 to P2 may take
+longer than expected, ultimately resulting in the hibernation
+D3 entering time exceeding the expected 10ms.
+
+Synopsys workaround:
+If the PHY supports direct P3 to P2 transition, program
+GUSB3PIPECTL.P3P2Tran0K=1. However, note that as per PIPE4
+Specification, direct transition from P3 to P2 is illegal.
+
+Therefore, adding p3p2tranok quirk for workaround hibernation
+D3 exceeded the expected entry time.
+
+Signed-off-by: joswang <joswang@lenovo.com>
 ---
- drivers/spi/spi-pxa2xx-pci.c | 39 ++++++++++++------------------------
- 1 file changed, 13 insertions(+), 26 deletions(-)
+ drivers/usb/dwc3/core.c | 5 +++++
+ drivers/usb/dwc3/core.h | 4 ++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/spi/spi-pxa2xx-pci.c b/drivers/spi/spi-pxa2xx-pci.c
-index 6d2efdb0e95f..616d032f1a89 100644
---- a/drivers/spi/spi-pxa2xx-pci.c
-+++ b/drivers/spi/spi-pxa2xx-pci.c
-@@ -10,8 +10,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/pci.h>
--#include <linux/platform_device.h>
--#include <linux/property.h>
-+#include <linux/pm.h>
- #include <linux/sprintf.h>
- #include <linux/string.h>
- #include <linux/types.h>
-@@ -265,10 +264,8 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 		const struct pci_device_id *ent)
- {
- 	const struct pxa_spi_info *info;
--	struct platform_device_info pi;
- 	int ret;
--	struct platform_device *pdev;
--	struct pxa2xx_spi_controller spi_pdata;
-+	struct pxa2xx_spi_controller *pdata;
- 	struct ssp_device *ssp;
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 7ee61a89520b..3a8fbc2d6b99 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -666,6 +666,9 @@ static int dwc3_ss_phy_setup(struct dwc3 *dwc, int index)
+ 	if (dwc->dis_del_phy_power_chg_quirk)
+ 		reg &= ~DWC3_GUSB3PIPECTL_DEPOCHANGE;
  
- 	ret = pcim_enable_device(dev);
-@@ -279,15 +276,17 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 	if (ret)
- 		return ret;
++	if (dwc->p2p3tranok_quirk)
++		reg |= DWC3_GUSB3PIPECTL_P3P2TRANOK;
++
+ 	dwc3_writel(dwc->regs, DWC3_GUSB3PIPECTL(index), reg);
  
--	memset(&spi_pdata, 0, sizeof(spi_pdata));
-+	pdata = devm_kzalloc(&dev->dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return -ENOMEM;
+ 	return 0;
+@@ -1715,6 +1718,8 @@ static void dwc3_get_properties(struct dwc3 *dwc)
  
--	ssp = &spi_pdata.ssp;
-+	ssp = &pdata->ssp;
- 	ssp->dev = &dev->dev;
- 	ssp->phys_base = pci_resource_start(dev, 0);
- 	ssp->mmio_base = pcim_iomap_table(dev)[0];
+ 	dwc->dis_split_quirk = device_property_read_bool(dev,
+ 				"snps,dis-split-quirk");
++	dwc->p2p3tranok_quirk = device_property_read_bool(dev,
++				"snps,p2p3tranok-quirk");
  
- 	info = (struct pxa_spi_info *)ent->driver_data;
--	ret = info->setup(dev, &spi_pdata);
-+	ret = info->setup(dev, pdata);
- 	if (ret)
- 		return ret;
+ 	dwc->lpm_nyet_threshold = lpm_nyet_threshold;
+ 	dwc->tx_de_emphasis = tx_de_emphasis;
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 3781c736c1a1..2810dce8b42e 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -327,6 +327,7 @@
+ #define DWC3_GUSB3PIPECTL_DEP1P2P3_EN	DWC3_GUSB3PIPECTL_DEP1P2P3(1)
+ #define DWC3_GUSB3PIPECTL_DEPOCHANGE	BIT(18)
+ #define DWC3_GUSB3PIPECTL_SUSPHY	BIT(17)
++#define DWC3_GUSB3PIPECTL_P3P2TRANOK	BIT(11)
+ #define DWC3_GUSB3PIPECTL_LFPSFILT	BIT(9)
+ #define DWC3_GUSB3PIPECTL_RX_DETOPOLL	BIT(8)
+ #define DWC3_GUSB3PIPECTL_TX_DEEPH_MASK	DWC3_GUSB3PIPECTL_TX_DEEPH(3)
+@@ -1132,6 +1133,8 @@ struct dwc3_scratchpad_array {
+  *			instances in park mode.
+  * @parkmode_disable_hs_quirk: set if we need to disable all HishSpeed
+  *			instances in park mode.
++ * @p2p3tranok_quirk: set if Controller transitions directly from phy
++ *			power state P2 to P3 or from state P3 to P2.
+  * @gfladj_refclk_lpm_sel: set if we need to enable SOF/ITP counter
+  *                          running based on ref_clk
+  * @tx_de_emphasis_quirk: set if we enable Tx de-emphasis quirk
+@@ -1361,6 +1364,7 @@ struct dwc3 {
+ 	unsigned		ulpi_ext_vbus_drv:1;
+ 	unsigned		parkmode_disable_ss_quirk:1;
+ 	unsigned		parkmode_disable_hs_quirk:1;
++	unsigned		p2p3tranok_quirk:1;
+ 	unsigned		gfladj_refclk_lpm_sel:1;
  
-@@ -298,28 +297,12 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 		return ret;
- 	ssp->irq = pci_irq_vector(dev, 0);
- 
--	memset(&pi, 0, sizeof(pi));
--	pi.fwnode = dev_fwnode(&dev->dev);
--	pi.parent = &dev->dev;
--	pi.name = "pxa2xx-spi";
--	pi.id = ssp->port_id;
--	pi.data = &spi_pdata;
--	pi.size_data = sizeof(spi_pdata);
--
--	pdev = platform_device_register_full(&pi);
--	if (IS_ERR(pdev))
--		return PTR_ERR(pdev);
--
--	pci_set_drvdata(dev, pdev);
--
--	return 0;
-+	return pxa2xx_spi_probe(&dev->dev, ssp);
- }
- 
- static void pxa2xx_spi_pci_remove(struct pci_dev *dev)
- {
--	struct platform_device *pdev = pci_get_drvdata(dev);
--
--	platform_device_unregister(pdev);
-+	pxa2xx_spi_remove(&dev->dev);
- }
- 
- static const struct pci_device_id pxa2xx_spi_pci_devices[] = {
-@@ -341,6 +324,9 @@ MODULE_DEVICE_TABLE(pci, pxa2xx_spi_pci_devices);
- static struct pci_driver pxa2xx_spi_pci_driver = {
- 	.name           = "pxa2xx_spi_pci",
- 	.id_table       = pxa2xx_spi_pci_devices,
-+	.driver = {
-+		.pm	= pm_ptr(&pxa2xx_spi_pm_ops),
-+	},
- 	.probe          = pxa2xx_spi_pci_probe,
- 	.remove         = pxa2xx_spi_pci_remove,
- };
-@@ -349,4 +335,5 @@ module_pci_driver(pxa2xx_spi_pci_driver);
- 
- MODULE_DESCRIPTION("CE4100/LPSS PCI-SPI glue code for PXA's driver");
- MODULE_LICENSE("GPL v2");
-+MODULE_IMPORT_NS(SPI_PXA2xx);
- MODULE_AUTHOR("Sebastian Andrzej Siewior <bigeasy@linutronix.de>");
+ 	unsigned		tx_de_emphasis_quirk:1;
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.17.1
 
 
