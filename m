@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-195809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9868D5218
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:08:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5768D521C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B2B91C21801
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5382850CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872D36E602;
-	Thu, 30 May 2024 19:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344066D1BA;
+	Thu, 30 May 2024 19:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALaMbQNl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ILMPnuhG"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC156BB2F;
-	Thu, 30 May 2024 19:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139666D1BC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 19:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717096111; cv=none; b=QXTYZF0ORaSvkKPdl+/DfP8Yqi7HLGGoV5AUoGBqQoDn/wh5hS484WDvusHsefzkod5F+VURqhioX/YeSnXtHJ+/enrFcsvWWFw3trnQvZ5iI+G3TzecHpxg3c5oRQ2YSb2hLOZEppUgtfQ934VRYwM2MqPeGzUIlhVGEPbMa3Y=
+	t=1717096200; cv=none; b=YLfIUsCxSDpf3yutx3YJ7pJ8At9CcJWjSEJ/tdtL77U/YX5J0jFQEDTTyvHlmCyYcuwxUV1IhKSI7aDOjfJqAKtTz5nnpUQTAqIbHobXq2B6mzWC/3Git3N8hpb1kkXXZd5zzWyHaHygvXarZAZMsKtRvdF7NwEcvAAtAdveHdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717096111; c=relaxed/simple;
-	bh=Qpg5Q2EhMyKmWZjKSiIdY491rX47ZL7A3DH8EIJ+Vgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXdGlfCXbaS6KpSzvLzDBwLfr6RE+Q4OpTkVA31aYue0GroGyF7xl4RkhuWTJQ//mHaDp0KomWiXmgEd29AK951hXBU+klm6ol42hKDma8ThrdHsTWDNl6hnTJOUnsV1PFHCHu4BE+vM0AYsQddoPyRKxARw7YuJfHP5rzOz7gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALaMbQNl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D9CC32781;
-	Thu, 30 May 2024 19:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717096110;
-	bh=Qpg5Q2EhMyKmWZjKSiIdY491rX47ZL7A3DH8EIJ+Vgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ALaMbQNlXrEJh4FlyXErAkh9Gxl0i9dwynxLvpXs2XejNxgjEH7cdj0oDTbunCGW4
-	 pWKk0Rt+wuazccMq6I1v5pCoib0jpYv4WuPbe0kTxlBcKnsY8QWQl74cfalyNqaH1v
-	 lygm5r7ectDDa20bewUtcjdlOzUPBRCrS+roU6XN7YMvn3q8G5/NQ/oCvw1rL3wQQ4
-	 sXAzsIVz+T9QvDdGntcDwXObimFnIh0fyr7341XKEXhiETR2hECJfnpiMxi1a/JANO
-	 wxSG9iRQ8xeTr6WNaOEYug+ZtffCrtl5n7oEjCEWJSBZCTdFDrAr8oIklt8IlaLzYJ
-	 JxfJeH9S8Y4Pw==
-Date: Thu, 30 May 2024 20:08:25 +0100
-From: Simon Horman <horms@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Diogo Ivo <diogo.ivo@siemens.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com,
-	Vignesh Raghavendra <vigneshr@ti.com>, r-gunasekaran@ti.com,
-	Roger Quadros <rogerq@kernel.org>
-Subject: Re: [RFC PATCH net-next 2/2] net: ti: icssg-prueth: Add multicast
- filtering support
-Message-ID: <20240530190825.GC123401@kernel.org>
-References: <20240516091752.2969092-1-danishanwar@ti.com>
- <20240516091752.2969092-3-danishanwar@ti.com>
+	s=arc-20240116; t=1717096200; c=relaxed/simple;
+	bh=xDFSARpGqCzo0/7RFIXaYWJVdeCDcGwisUU1BrK4egA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=beiJgYi5b2pVkorqH9f4QfkBXjriQoOuP0wsYrDaCJBAEDU81yysc48jyv5hPGca5XO1J0NlizKIZpzwdsKixCp8TvB+bWIe65SB26s1gx9k6beuWyAvgItbnSURC01ty3oc0cFDerGedyanz6l1W9/HwlRPByS2GgUHJcR28Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ILMPnuhG; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e22af6fed5so7312439f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:09:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1717096198; x=1717700998; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IcKB/OzN80KdCv2vfgGkfs7hKHO3oNyK2DZlDHQX5Es=;
+        b=ILMPnuhGFVYOy/ypbr/FlTznuN1Y7K8DGO93XpzOsTfj2KsQZ3C2s5cG9R9DU2Ib5e
+         XUcwjvyLDdSHiW5sZ8nCAM4PMeuzH4wpUgNaQr41DUGvzQMVZRJuR/hmpgCq0EkowMVc
+         TFapqL6TRIwDVUmj7jN6MO1lFxpdsRWMvrxC0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717096198; x=1717700998;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IcKB/OzN80KdCv2vfgGkfs7hKHO3oNyK2DZlDHQX5Es=;
+        b=XxCJxbG3emwcuudGwByAucqiRgIv1/EwpIjC9t3tCln6AIMNcDWk6jfieopD2DLJUz
+         W2jk0oYD/RxK+rLhcWemfZQw7qP77zkuZ7Q4SKzDlgWqlqQzltfJY2HAUDXpb9WrYM1z
+         VA9bnSjs937vMFOlnlBO4Hk8DpaQGOJihZ/jD4OiChBqCSvT0BPwQ7Hq8NJXCZVegjOz
+         jhXbAyuwSUebuo7n8mToWMFPFwk3ENVcmtxFfTOK9CkOLN12i2ydaPsgi0wkd2SLGF7P
+         D3kh+QkkPSjU1oDoeJJRZi847I25m0E0qNyYegzhgCaOtkdyWqEISE+Za8imYeKng0Zm
+         js0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcDWBEOyUat54NzaH5Cr8dtX5X/AwA8TQOcOC+vfqPYTXWuHdkBAr1CvoO2r65QGZSNZOik7xmD15yLhW5ALKTeFNKLYTCLhoEjqQN
+X-Gm-Message-State: AOJu0YwoBm9BWgmC65tMCDaN+RD30oZzOTrjpP1QtUbOTXuDpe71YkT7
+	6p1ZJHsyv53rCx7szWEDiShV6g3nUFmc2Lu8ajNI1W2BsvESUqMfDBnvCQmxaLM=
+X-Google-Smtp-Source: AGHT+IFkN8Ai4VWwR2PnmlSq/IYFOdiHtE3kJJIeH5v5Cghihl734+b5MpoKYjTzHOlYkXDDq77yvQ==
+X-Received: by 2002:a05:6602:6426:b0:7e1:8829:51f6 with SMTP id ca18e2360f4ac-7eaff5e2ca8mr14707139f.1.1717096198165;
+        Thu, 30 May 2024 12:09:58 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b488e4b35asm67021173.79.2024.05.30.12.09.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 12:09:57 -0700 (PDT)
+Message-ID: <a56e4c6e-fffe-4c88-9bb2-8bcafbd91fa6@linuxfoundation.org>
+Date: Thu, 30 May 2024 13:09:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516091752.2969092-3-danishanwar@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] selftests/futex: clang-inspired fixes
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Edward Liaw <edliaw@google.com>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ "Nysal Jan K . A" <nysal@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240529022938.129624-1-jhubbard@nvidia.com>
+ <b6641940-f10a-4ed4-a672-69c6d51125a7@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <b6641940-f10a-4ed4-a672-69c6d51125a7@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 02:47:52PM +0530, MD Danish Anwar wrote:
-> Add multicast filtering support for ICSSG Driver.
+On 5/30/24 08:23, Shuah Khan wrote:
+> On 5/28/24 20:29, John Hubbard wrote:
+>> Hi,
+>>
+>> Here's a few fixes that are part of my effort to get all selftests
+>> building cleanly under clang. Plus one that I noticed by inspection.
+>>
+>> Changes since the first version:
+>>
+>> 1) Rebased onto Linux 6.10-rc1
+>> 2) Added Reviewed-by's.
+>>
+>> ...and it turns out that all three patches are still required, on -rc1,
+>> in order to get a clean clang build.
 > 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
->  drivers/net/ethernet/ti/icssg/icssg_config.c | 16 +++++--
->  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 50 ++++++++++++++++++--
->  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  3 ++
->  3 files changed, 62 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> index 2213374d4d45..4e30bb995078 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> @@ -318,17 +318,27 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
->  
->  static void icssg_init_emac_mode(struct prueth *prueth)
->  {
-> +	u32 addr = prueth->shram.pa + VLAN_STATIC_REG_TABLE_OFFSET;
->  	/* When the device is configured as a bridge and it is being brought
->  	 * back to the emac mode, the host mac address has to be set as 0.
->  	 */
->  	u8 mac[ETH_ALEN] = { 0 };
-> +	int i;
->  
->  	if (prueth->emacs_initialized)
->  		return;
->  
-> -	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1,
-> -			   SMEM_VLAN_OFFSET_MASK, 0);
-> -	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, 0);
-> +	/* Set VLAN TABLE address base */
-> +	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
-> +			   addr <<  SMEM_VLAN_OFFSET);
-> +	/* Configure CFG2 register */
-> +	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, (FDB_PRU0_EN | FDB_PRU1_EN | FDB_HOST_EN));
-> +
-> +	prueth->vlan_tbl = prueth->shram.va + VLAN_STATIC_REG_TABLE_OFFSET;
-> +	for (i = 0; i < SZ_4K - 1; i++) {
-> +		prueth->vlan_tbl[i].fid = i;
-> +		prueth->vlan_tbl[i].fid_c1 = 0;
-> +	}
+> Thank you. I will apply these for the next rc.
 
-Hi MD,
 
-This isnot a full review, but I did notice one thing.
+John Hubbard (3):
+   selftests/futex: don't redefine .PHONY targets (all, clean)
+   selftests/futex: don't pass a const char* to asprintf(3)
 
-According to Sparse, prueth->shram.va is __iomem.
-I don't think it is portable to directly access __iomem like this.
-Rather, I suspect that either ioremap(), or writel() or similar should be used.
+Patch 1/3 and 2/3 please see changes requested.
 
->  	/* Clear host MAC address */
->  	icssg_class_set_host_mac_addr(prueth->miig_rt, mac);
->  }
+Applied to linux-kselftest fixes branch
+   selftests/futex: pass _GNU_SOURCE without a value to the compiler
 
-..
+thanks,
+-- Shuah
 
