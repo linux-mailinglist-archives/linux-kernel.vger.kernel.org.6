@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-194981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68EF8D4563
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729FF8D4569
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82C31C224C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 281FB1F23035
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5457F143751;
-	Thu, 30 May 2024 06:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB75C155353;
+	Thu, 30 May 2024 06:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r53BVgUU"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eeRdja3p"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2369926AD3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939F51552EC;
+	Thu, 30 May 2024 06:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717049786; cv=none; b=h0IqN2Eue3Go3rSRcB2xl76+t2jasUwmQapsiwI/+2AIlzclakvZbse7Ep+r3pG8+txFt/WfNTXypdKuusTDEADRifvb1qB1T1r4RqegFqZYv6j511d89/5nh6qDqLexsZI8R8pzm3UU3QuUWI1oJI9t8CtqZCNkVa/rdKA3RrA=
+	t=1717049872; cv=none; b=Uyu2h4E/KnHFOxBmTLOA4yBzL/mSX2OX0A/dZ+1TTjheg9mYCh2yasPG7GNHPLKMcJ6u72wWvvpmbYRTIbxOw3zBqXVPatqd7qTszf9WCxR+37ENBEV9g9Am+d1JTDf2vxoStP4K97lJdHIp5JcTpClRBMw+zl0RildN5KI4qOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717049786; c=relaxed/simple;
-	bh=cJlNRabZ63c4rwDvW/6pW/RB3/AqAq1C0anVNyFoUqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=th2v8Rj0Y/w9gnRQS3k84AQineq4DayCFXon7vGqRhybzAnEnjvdPY+3J/T1lbHDXLNg/aE1oZoQMvbNK2wb/indvhn28AWjqtxbx37salYzJgVcUtft4u8PPZ8/Yf3z43oXFtERZbwR+zI4P30q8GNjZQgTsiN/KLoXMLu1L0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r53BVgUU; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c19bba897bso388607a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 23:16:24 -0700 (PDT)
+	s=arc-20240116; t=1717049872; c=relaxed/simple;
+	bh=mdgAiKbstfN1gUB5L/EsCiO3AyOoRXRVi2nIvdixAow=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aFcL3PrphYPOGYLjBDty6dB8rLnvW4Z1AF1qSzSEItYuaLf/KYeBpd7LppARYG0QYRd46luLHaXGymd9ZFjzOdkL2qztBY3KGhNWAQD/Ttrn4KjzG3XD58+YpZ93C+jPMFZH4c8H74yx5dvia6e85brnCewLFcc+MHwgJNgPzk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eeRdja3p; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35dc0472b7eso500415f8f.2;
+        Wed, 29 May 2024 23:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717049784; x=1717654584; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9x8sXCDajpYUsltQRGScSRDo95HG23BSUbceELtrjcw=;
-        b=r53BVgUUpHkQIk0DeEAoAWZLDKKsIBUdpcSjQCEQdbgcdb137UipjVLQc11U3dtZDO
-         7BrOGf+EHAPQjEu00Yow6w48yq8XI67/AGTJIfPJiLDDcVzlzn2XBMNpWYLaDTJEVMuU
-         +BdgvdhujYCy5Bpta2rw2OvHcOf+cJNR6CyRBJ4FGbElxiif/9NT2LEr//FFxxqyqp9V
-         qCuyj1vxEt3Odg/y1U0cdan3c3qNTm0/NZP7HehTTfI9UlEv0gKcfvVU2OPSoPMT9f8g
-         RzDwLdnNp22l3TryPj/sJk3bSTpXE6jJ4+hNpx9vdSQ3NSE5s6ulUKVby9ifssKBlYTj
-         d4Nw==
+        d=gmail.com; s=20230601; t=1717049869; x=1717654669; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WSdHxLbmp97ia1G10K4CxsZgTHCb548EU1TzMRh6otw=;
+        b=eeRdja3prnSVoisVedZOOgZkPV9l9OgWbRrXGAyHVKS4Cnln19f6U5Lu4NtIN58lCI
+         VgWIo8gmAtYlhy6q6WQFRmytTl4H2W6a+LG672Y+Ui681A67i7eKCr86sjlw0PWolr6o
+         Xc7VyrH1M90r/elFypoJLIZ+gGFwRIv1nNVuSAUaVd+M4LUazMMK5jzsJlao5jMGWmHY
+         u6h05di0Sb0JAs6T2LvAaG3R2+iK0jKS8N+rb+7ZaMOicXJu9NaBCzUDmN/pIpBGybMy
+         BQScjDlrq1En1sw0V7KL9P7a0ygxkc8smQa6HrA/05inq4xw9Jg7WY5GW+6umE4s0S1w
+         P71A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717049784; x=1717654584;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9x8sXCDajpYUsltQRGScSRDo95HG23BSUbceELtrjcw=;
-        b=jg8vxn90Fy+FAkj1E7KVYrlaF5oXeYyTYuCK/RuqjQ2f1WYiJPX9r9sUg66fzqpmLx
-         KEiAyFHfGPeemKnTfdqwRSwOYMERyvqBFOxbrT2Icu3tVuwuP6YXfWJUmyvSvNHjxWPC
-         ViqdBPkR/kFMJTtGPQhXq4cjOXkR39UkUkT5zBWPoXZyDoUnUheHN19r7qlRmkaODZuZ
-         CUNnFahiiSA6bcB4GvOJ77O+0VT6bhIKKiMb0Vw8JNMj/hpBhubSiDsRHoNrF7jqRIM1
-         TFoWm7fXcxinDI6hqFD2ubTcLs/kfFM4eylzXFJvHRd6HXJS6F03edo91ihaO1MUFLIU
-         Pj6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXuxis4VtI5YX7sjedLzBCgE8+jeXUksFAu7AQnEhAeQHqXbnkSVDCH9gkK2rkoDzLEKGb8V0vj3WzO9H489f+0I1Gzr1jZYKCx2DNR
-X-Gm-Message-State: AOJu0YyXilKM+U4r0QGp6bJs3aGGnqhSaqfuv9KvOXiAnoo1C3WOK3b9
-	YWkGiuPd/D6EnvUfJzqcysUNkq9NW4vlkG4BSWZxaAoMjKA5mCKEtaBKXFq2o5Q=
-X-Google-Smtp-Source: AGHT+IH6pbLwPJIs+k7aqwTxKi4mh3rtMT7+SWv2j5qj/8dKBkbaRat6jBUKRChGlBm8+KPJ5BBhcQ==
-X-Received: by 2002:a17:90a:bb12:b0:2bf:ee29:1a64 with SMTP id 98e67ed59e1d1-2c1abc328d9mr1296620a91.23.1717049784218;
-        Wed, 29 May 2024 23:16:24 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a77afb24sm850173a91.46.2024.05.29.23.16.22
+        d=1e100.net; s=20230601; t=1717049869; x=1717654669;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WSdHxLbmp97ia1G10K4CxsZgTHCb548EU1TzMRh6otw=;
+        b=QKrHQI+b/B9Eq/XJsxYpVoH6fruJdq+DUnuvBXsSDELmQZsJbuOOzbbl1VHOPbXJnw
+         man98p4oNZKye2+N460izNwTGM5IJ56mVWnxdztBlYandnSoaHbl2Q0VIXlHa+zunNot
+         CHMhz8yTC5+xBD9LtEcAJvm2kYypdU8z37HENOC06Vh+N7dICNStEIxXfyUTV8qTwZy5
+         ws6bxhkYyDCHSgH2UBoD5RXPWtBy8Trj5uTNg3eClx3xIS1EF0ljNtapRtVssMV+Pc0c
+         D9rpIvo44/VnutEaKx3sXCEXZzvcnhP0VuI1uDZBWDwgiwrVTDchE8xpg3Rzg/U2NrE+
+         sNeA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9xKd52CAgvJbDRbOZ5daXrkMcISy3F2t5a1JI/dhhBfMwICCpW8IgWtoGiXG2uJDFYe+mfExJHVYphSUD8bDzvZJ3XexfkuGBtPC7Tkxazgf02n+WPSsGpWgLg8DOcpeQJE+UpNRlUCgeJ9dU7JJwR6RsvXhlTtAiEQIRQ2ZB2phb4g==
+X-Gm-Message-State: AOJu0Yz4L+mSS/926RybyPWYa1XtsrGk4WhLU68/EffKTXWnZ44XQIAz
+	mwcAVeqz43V6qyGYadD/a0D4Q3NrP46BsCnTxBlKRFDcGLgJzdhd
+X-Google-Smtp-Source: AGHT+IEkvn6YatjYVdSD+3mc2CY6smDx1erwxzGTzsxu2qJeg0ghrQ208yqof63hV9b736/V0cIgdA==
+X-Received: by 2002:a05:6000:106:b0:354:f8a9:345 with SMTP id ffacd0b85a97d-35dc00845ebmr636222f8f.14.1717049868617;
+        Wed, 29 May 2024 23:17:48 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a08a88esm16397009f8f.41.2024.05.29.23.17.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 23:16:23 -0700 (PDT)
-Date: Thu, 30 May 2024 11:46:21 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Riwen Lu <luriwen@hotmail.com>
-Cc: Ionela Voinescu <ionela.voinescu@arm.com>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Hoan Tran <hotran@apm.com>, rafael@kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Riwen Lu <luriwen@kylinos.cn>
-Subject: Re: [PATCH v2] cpufreq/cppc: Take policy->cur into judge when set
- target
-Message-ID: <20240530061621.36byo5a2iqc6o2az@vireshk-i7>
-References: <TYCP286MB24861BA890594C119892FB3DB1F22@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
- <20240529053652.pzcjoyor7i23qc4i@vireshk-i7>
- <TYCP286MB248669BCAD7A7E54C5071EF9B1F22@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
- <20240529071244.vwognqagaa4347dm@vireshk-i7>
- <TYCP286MB2486B1D734F8E2D74BFBEEB1B1F32@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
- <20240530055624.quutkzdd44l3oevc@vireshk-i7>
- <TYCP286MB2486A0F14AE38F83F425F506B1F32@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
+        Wed, 29 May 2024 23:17:48 -0700 (PDT)
+Message-ID: <3dc83aa5c1d138ef70dd64ba4154acb52b65a8a3.camel@gmail.com>
+Subject: Re: [PATCH v3 6/6] iio: adc: ad7173: Reduce device info struct size
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
+Date: Thu, 30 May 2024 08:17:47 +0200
+In-Reply-To: <ec2ac6fb-0f08-4e8c-8907-83bd8f0976c8@baylibre.com>
+References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
+	 <20240527-ad4111-v3-6-7e9eddbbd3eb@analog.com>
+	 <2f26b72970be841279ca00c1b5eb91dcfffabdea.camel@gmail.com>
+	 <ec2ac6fb-0f08-4e8c-8907-83bd8f0976c8@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYCP286MB2486A0F14AE38F83F425F506B1F32@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
 
-On 30-05-24, 14:02, Riwen Lu wrote:
-> 在 2024/5/30 13:56, Viresh Kumar 写道:
-> > Cc'ing few more people.
-> > 
-> > On 30-05-24, 09:06, Riwen Lu wrote:
-> > > 在 2024/5/29 15:12, Viresh Kumar 写道:
-> > > > On 29-05-24, 14:53, Riwen Lu wrote:
-> > > > > Yes, you are right， I didn't think it through. In this circumstance, the
-> > > > > policy->cur is the highest frequency, desired_perf converted from
-> > > > > target_freq is the same with cpu_data->perf_ctrls.desired_perf which
-> > > > > shouldn't.
-> > > > 
-> > > > Please investigate more and see where the real problem is.
-> > > > 
-> > > The boot CPU's frequency would be configured to the highest perf when
-> > > powered on from S3 even though the policy governor is powersave.
-> > > 
-> > > In cpufreq resume process, the booting CPU's new_freq obtained via .get() is
-> > > the highest frequency, while the policy->cur and
-> > > cpu->perf_ctrls.desired_perf are in the lowest level(powersave governor).
-> > > Causing the warning: "CPU frequency out of sync:", and set policy->cur to
-> > > new_freq. Then the governor->limits() calls cppc_cpufreq_set_target() to
-> > > configures the CPU frequency and returns directly because the desired_perf
-> > > converted from target_freq and cpu->perf_ctrls.desired_perf are the same and
-> > > both are the lowest_perf.
-> > > 
-> > > The problem is that the cpu->perf_ctrls.desired_perf is the lowest_perf but
-> > > it should be the highest_perf.
-> > > 
-> > > In my opinion, desired_perf and cpu->perf_ctrls.desired_perf represent the
-> > > target_freq and policy->cur respectively. Since target_freq and policy->cur
-> > > have been compared in __cpufreq_driver_target(), there's no need to compare
-> > > desired_perf and cpu->perf_ctrls.desired_perf again in
-> > > cppc_cpufreq_set_target().
-> > > So, maybe we can remove the following logic in cppc_cpufreq_set_target().
-> > > /* Return if it is exactly the same perf */
-> > > if (desired_perf == cpu_data->perf_ctrls.desired_perf)
-> > > 	return ret;
-> > 
-> > This is what I was thinking as well yesterday.
-> > 
-> OK, I'll push a V3 patch.
+On Wed, 2024-05-29 at 15:32 -0500, David Lechner wrote:
+> On 5/29/24 7:23 AM, Nuno S=C3=A1 wrote:
+> > On Mon, 2024-05-27 at 20:02 +0300, Dumitru Ceclan via B4 Relay wrote:
+> > > From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> > >=20
+> > > Reduce the size used by the device info struct by packing the bool
+> > > =C2=A0fields within the same byte. This reduces the struct size from =
+52 bytes
+> > > =C2=A0to 44 bytes.
+> > >=20
+> > > Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> > > ---
+> > > =C2=A0drivers/iio/adc/ad7173.c | 16 ++++++++--------
+> > > =C2=A01 file changed, 8 insertions(+), 8 deletions(-)
+> > >=20
+> > > diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> > > index 328685ce25e0..e8357a21d513 100644
+> > > --- a/drivers/iio/adc/ad7173.c
+> > > +++ b/drivers/iio/adc/ad7173.c
+> > > @@ -179,15 +179,15 @@ struct ad7173_device_info {
+> > > =C2=A0	unsigned int clock;
+> > > =C2=A0	unsigned int id;
+> > > =C2=A0	char *name;
+> > > -	bool has_current_inputs;
+> > > -	bool has_vcom_input;
+> > > -	bool has_temp;
+> > > +	bool has_current_inputs		:1;
+> > > +	bool has_vcom_input		:1;
+> > > +	bool has_temp			:1;
+> > > =C2=A0	/* ((AVDD1 =E2=88=92 AVSS)/5) */
+> > > -	bool has_common_input;
+> > > -	bool has_input_buf;
+> > > -	bool has_int_ref;
+> > > -	bool has_ref2;
+> > > -	bool higher_gpio_bits;
+> > > +	bool has_common_input		:1;
+> > > +	bool has_input_buf		:1;
+> > > +	bool has_int_ref		:1;
+> > > +	bool has_ref2			:1;
+> > > +	bool higher_gpio_bits		:1;
+> > > =C2=A0	u8 num_gpios;
+> > > =C2=A0};
+> > > =C2=A0
+> > >=20
+> >=20
+> > This is really a very micro optimization... I would drop it tbh but no =
+strong
+> > feelings about it.
+> >=20
+> > - Nuno S=C3=A1
+>=20
+> This only considers RAM size and not code size too. At least on ARM arch
+> every time we read or write to one of these fields, the code is now
+> implicitly `((field & 0x1) >> bits)` so two extra assembly instructions
+> for each read and write. This could be bigger than the size saved in
+> the structs.
+>=20
+>=20
 
-Please CC everyone from this email.
+very good point...
 
--- 
-viresh
+- Nuno S=C3=A1
 
