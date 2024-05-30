@@ -1,126 +1,268 @@
-Return-Path: <linux-kernel+bounces-195680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B338D5035
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13ECB8D5038
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72881F22B67
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:54:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923A21F24C32
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104FB42076;
-	Thu, 30 May 2024 16:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D6B3D579;
+	Thu, 30 May 2024 16:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PM14k4+J"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="acEm+MoT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57243D3BC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA22746421
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088067; cv=none; b=RHMe5gj6mtGlBEb7n6Fhz5GO57Af2UEJFeCYpw+j1NFOZcA9lyFJM6DyRtNlpaQ1zQqwHEgKHIU9siwg+hxt+w4873AzwjR9ilnRTZKA6aTA1njICKdGyGRCx9D7CvMekGsj3dG82F9WNn0i7pj8sCR5X7y5VMEOkfDkLNl0iLY=
+	t=1717088074; cv=none; b=uzaREkgqJy/vK6dHLP3Sa//qYOUykPuAoJJ54XP0nGiqJ0dycfpEScUofwaqvAQf9CVW4xKLdRGC3Ikq/qkmRRBtuiFHX+DNbAeJwBPPMru9DtqELnPlYmI5bLbd1sroqDpwEUj6l8a0In66EugM7SgSX7IzF6tyb6n9dW0ykx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088067; c=relaxed/simple;
-	bh=a8sg9QTyplboNTrKOhv/w/6hif25nD32F5MILHI4K7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScDtYKyoqEOYqgjb1Yd4U2KsYSaNxf9ttauiHuDGxww5ckiNmvUPHeTUUEv7LW2KFuIq42Qjsrj2I41oMbyayodfIEFYlmtvJV80JRyswog+eI1iJ6Xh+KHPyFYdwI9uEegf59YKCM64g4vtxrfJStXM1pLFqXAULSbyrscHybI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PM14k4+J; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52a6ef5e731so1738658e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717088063; x=1717692863; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n6LNvxkoy0S023YUaZNBzbBMkhCatYAvcuQSRFoBJJs=;
-        b=PM14k4+JxqKjRW/qbX1cz2oeTE7cpcQgAqPHroJRLSf98vw1iXqugWlJNShXGeLZlR
-         p8nopPOIwg1jrg589hB76TVToeziPtY0S4Qwe+as+AarEo15LYtG57FOXz9geV9iGOuo
-         u1S6e3nk7sxm6m75u5sHMof1OwHXVU2WHjn4+gGAbKYq1KuIUFrecwq35Cb2l4LU6oUn
-         MpJHLzb3hoIw9qKYF1/mazhH6wpFIcOslfvheEW569WNmuILrQVlT6Ivoz/dh6IsocfI
-         gi3sq4FzXr8VlWWzSEl+pE5jJBIlmVAXhHBEdiCLAPFVcJofq1cfYp75QPzCaoqf9rM/
-         oGvg==
+	s=arc-20240116; t=1717088074; c=relaxed/simple;
+	bh=7QBBdc2gEBL0gQR+6v66Er2YlxfWZgsfdu8zbdBsWcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GrKLdNQqBhHqBPPwBH5VXzdmFIfpMXHQ5uvrw4hxwjI+SOPb9VaMKhnb2T/LZyKrkyPHG3pmBA8Y4Oj98zZHBNn50w6qzq8c/iV95mCZzwOEuYcCEhKIi1SwKS9vaonTlXof4g4Ahum300P0lN1q1J+7mHulaj4XUmBG9983X+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=acEm+MoT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717088070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68Kurr4BfZ1gyKcBEcfRtfQBSGTTMRg2Hw69vW65Lfg=;
+	b=acEm+MoTtLvhoxgfyuY5qbHzjr4H+I3nmLLpF17xn/eLhebk6+IBsr4t6jjJagcS4IwjK7
+	ZrH/vm4LquuyOBtpg57nA8nST/EddziB2LyUbo1m17oCDRFMDU9UjoOmqjAxzeSdpYr9QR
+	611Q/GtUvgg5S04OOdSjMfHYwbMCa5k=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-519-VI-9L79UN0GmdSuHe1zW5g-1; Thu, 30 May 2024 12:54:28 -0400
+X-MC-Unique: VI-9L79UN0GmdSuHe1zW5g-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ea881fa7ebso6179461fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:54:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717088063; x=1717692863;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n6LNvxkoy0S023YUaZNBzbBMkhCatYAvcuQSRFoBJJs=;
-        b=q4lxc1VeTFowl9Kgpth9JbeGpSgFc7SE8MqoWATq291G9e7SLa9rg5dPHpQ6PCRo1M
-         TZC6uYR7yJfsSjM5jPZY8JpPhRkOa1uRmN8PmlbQ3DWpuAMheJ5SNr/U34uULk9+JRbo
-         GMCRGiB5DoBnpDMGxzEfWip+YrznvtYonOrurkJqE1+8oTkoAGHcUTax4KNHsCMvUlcQ
-         TlRccN1UhcJjWNwtKTK2+1lNGeLsIWLzfN3ZdEJ03PP1wEtCL/l7eEqi5coe+ztkNwSD
-         2L8UAOWV04LxTvp8RwVihvWvQNqu0zAHNbsfbZORPFHHXa/laOlffvw6x0PizdtYHX0r
-         eFmw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6HCtpo+KanKR67qlVxBfamtWsbCUuBlIY1dVvE8Kde9Apu+f3CTHeQtQREAHGbVXdXnO+4F3p9gvIx8zZQYJGV5TWV2Q1L5F6SnN3
-X-Gm-Message-State: AOJu0YynDu29owN/cUyy53ynCUhVQ0c+CiEWqw4mt8UHOvcc8VSnsNoE
-	6epok5NIIFhw17iSsKZtGVQJEjit4qigY42Zk5zzS5W1yp4Ej2IbP3A5g9ebchQ=
-X-Google-Smtp-Source: AGHT+IGI11AkAlwOFYsrZqUBEjeKz3Hh9GHzqhIMLLWeSXfJyW604vmdHhKgFSquh5pUmO0QVhFywA==
-X-Received: by 2002:ac2:4d0f:0:b0:51c:6c59:627e with SMTP id 2adb3069b0e04-52b7d479c7dmr1718878e87.42.1717088062860;
-        Thu, 30 May 2024 09:54:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d75fd6sm14030e87.157.2024.05.30.09.54.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 09:54:22 -0700 (PDT)
-Date: Thu, 30 May 2024 19:54:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Alexander Reimelt <alexander.reimelt@posteo.de>
-Cc: andersson@kernel.org, petr.vorel@gmail.com, konrad.dybcio@linaro.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] arm64: Add basic support for LG H815
-Message-ID: <ociudng4ubdmxnzxiwxsvrlstg7fheaq3jxgwcfqih7s35qi43@k247c3x77jrb>
-References: <20240403104415.30636-1-alexander.reimelt@posteo.de>
- <20240530135922.23326-1-alexander.reimelt@posteo.de>
+        d=1e100.net; s=20230601; t=1717088066; x=1717692866;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=68Kurr4BfZ1gyKcBEcfRtfQBSGTTMRg2Hw69vW65Lfg=;
+        b=xKEiyMHvcNA7r8+4gN8qJi/i6zHqJoOZNP0ZIb+o2GMMmBwU+RwEdZ8VFGUUd9v0BC
+         eAsLbncUjKu9A0seLRKGEOL5NrHfYfkXvCvhQr0AHEqhp0kevnVUoki7urOHu0/TwwDn
+         zzHU47w5S3ciiCNw4R7WsenA18tEh303hW2lXQtVhdtQquW9VLRwI00W7R3kumgmbBI6
+         Qw1gFt5Hvm7fjtfvJAKCknHTO3A7HYL1GZzUoENG5ptK58k+f5xu/RzENaDixspku01U
+         0iQKEMbks82VJauGz6pU7o0RNrLIRTNm5XswTbXY+7lLpqY/HYYtmh+z0U/hNKFLdUnQ
+         QKrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYMxz++0mzS0zsMz54/bMF4ciJ2HUlBRV1onv+a3KUyQCcjp8UgWV6YcgIj0GXEorczbIC5sAEWcAkCHipsCdHodOMC+X/NQL0hL+p
+X-Gm-Message-State: AOJu0Yw6/xZBBaM30HbIOSV2gtzg0zFXt1Dd8jV6/Hx1AyNy8ss9dfU3
+	owwuiEcPXhEnHgaVU2bT9qyik22mB97qEEkEulNcuEmSv/KAvV7AuTycK8cFSooUft0Lb8io1Pc
+	manh0MOohRgufHMgB42C5aPuKJ4y1Bw4Di/j/q8N35TOmlswVuPhZdIblfOyk8FYYEWw+mw==
+X-Received: by 2002:a2e:a318:0:b0:2d9:eb66:6d39 with SMTP id 38308e7fff4ca-2ea8479eb34mr16313001fa.19.1717088066228;
+        Thu, 30 May 2024 09:54:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCtFrOcPal8gAxUzgThmctkJuMxxVUPJIUlJQceyvgsmxOQyKiZljTKA1Z03FHpKV6NGPlpw==
+X-Received: by 2002:a2e:a318:0:b0:2d9:eb66:6d39 with SMTP id 38308e7fff4ca-2ea8479eb34mr16312801fa.19.1717088065773;
+        Thu, 30 May 2024 09:54:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:59e:9d80:527b:9dff:feef:3874? ([2a01:e0a:59e:9d80:527b:9dff:feef:3874])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b83d4e2sm531185e9.2.2024.05.30.09.54.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 09:54:25 -0700 (PDT)
+Message-ID: <cea5b9e9-99c1-47cb-bb2f-cdb922f4d349@redhat.com>
+Date: Thu, 30 May 2024 18:54:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530135922.23326-1-alexander.reimelt@posteo.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] KVM: arm64: unify code to prepare traps
+Content-Language: en-US
+To: Sebastian Ott <sebott@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ James Morse <james.morse@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+References: <20240514072252.5657-1-sebott@redhat.com>
+ <20240514072252.5657-2-sebott@redhat.com>
+From: Eric Auger <eauger@redhat.com>
+In-Reply-To: <20240514072252.5657-2-sebott@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 01:57:40PM +0000, Alexander Reimelt wrote:
-> Hello
-> 
-> Thanks for your time reviewing my first revision.
-> Changes:
-> - status is now the last property
-> - corrected the node order
-> - droped bootargs
-> - corrected subject prefix
-> - removed unused regulators
-> 
-> Sorry for the delay, I lost access to my device for a while.
+Hi Sebastian,
 
-Please don't send new versions of the patch as a reply to the previous
-iteration. It messes up threading and might result in the patchset being
-mishandled or ignored by the tools.
+On 5/14/24 09:22, Sebastian Ott wrote:
+> There are 2 functions to calculate traps via HCR_EL2:
+> * kvm_init_sysreg() called via KVM_RUN (before the 1st run or when
+>   the pid changes)
+> * vcpu_reset_hcr() called via KVM_ARM_VCPU_INIT
+> 
+> To unify these 2 and to support traps that are dependent on the
+> ID register configuration, move the code from vcpu_reset_hcr()
+> to sys_regs.c and call it via kvm_init_sysreg().
+> 
+> We still have to keep the non-FWB handling stuff in vcpu_reset_hcr().
+> Also the initialization with HCR_GUEST_FLAGS is kept there but guarded
+> by !vcpu_has_run_once() to ensure that previous calculated values
+> don't get overwritten.
+> 
+> While at it rename kvm_init_sysreg() to kvm_calculate_traps() to
+> better reflect what it's doing.
+> 
+> Signed-off-by: Sebastian Ott <sebott@redhat.com>
 
-> 
-> Best regards
-> Alex
-> 
-> Alexander Reimelt (2):
->   dt-bindings: arm: qcom: Add LG G4 (h815)
->   arm64: dts: qcom: msm8992-lg-h815: Initial support for LG G4 (H815)
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |   1 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts  | 234 ++++++++++++++++++
->  3 files changed, 236 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
-> 
-> -- 
-> 2.45.1
-> 
+Looks good to me
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
--- 
-With best wishes
-Dmitry
+Eric
+
+> ---
+>  arch/arm64/include/asm/kvm_emulate.h | 40 +++++++---------------------
+>  arch/arm64/include/asm/kvm_host.h    |  2 +-
+>  arch/arm64/kvm/arm.c                 |  2 +-
+>  arch/arm64/kvm/sys_regs.c            | 34 +++++++++++++++++++++--
+>  4 files changed, 43 insertions(+), 35 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index 501e3e019c93..84dc3fac9711 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -69,39 +69,17 @@ static __always_inline bool vcpu_el1_is_32bit(struct kvm_vcpu *vcpu)
+>  
+>  static inline void vcpu_reset_hcr(struct kvm_vcpu *vcpu)
+>  {
+> -	vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
+> -	if (has_vhe() || has_hvhe())
+> -		vcpu->arch.hcr_el2 |= HCR_E2H;
+> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
+> -		/* route synchronous external abort exceptions to EL2 */
+> -		vcpu->arch.hcr_el2 |= HCR_TEA;
+> -		/* trap error record accesses */
+> -		vcpu->arch.hcr_el2 |= HCR_TERR;
+> -	}
+> +	if (!vcpu_has_run_once(vcpu))
+> +		vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
+>  
+> -	if (cpus_have_final_cap(ARM64_HAS_STAGE2_FWB)) {
+> -		vcpu->arch.hcr_el2 |= HCR_FWB;
+> -	} else {
+> -		/*
+> -		 * For non-FWB CPUs, we trap VM ops (HCR_EL2.TVM) until M+C
+> -		 * get set in SCTLR_EL1 such that we can detect when the guest
+> -		 * MMU gets turned on and do the necessary cache maintenance
+> -		 * then.
+> -		 */
+> +	/*
+> +	 * For non-FWB CPUs, we trap VM ops (HCR_EL2.TVM) until M+C
+> +	 * get set in SCTLR_EL1 such that we can detect when the guest
+> +	 * MMU gets turned on and do the necessary cache maintenance
+> +	 * then.
+> +	 */
+> +	if (!cpus_have_final_cap(ARM64_HAS_STAGE2_FWB))
+>  		vcpu->arch.hcr_el2 |= HCR_TVM;
+> -	}
+> -
+> -	if (cpus_have_final_cap(ARM64_HAS_EVT) &&
+> -	    !cpus_have_final_cap(ARM64_MISMATCHED_CACHE_TYPE))
+> -		vcpu->arch.hcr_el2 |= HCR_TID4;
+> -	else
+> -		vcpu->arch.hcr_el2 |= HCR_TID2;
+> -
+> -	if (vcpu_el1_is_32bit(vcpu))
+> -		vcpu->arch.hcr_el2 &= ~HCR_RW;
+> -
+> -	if (kvm_has_mte(vcpu->kvm))
+> -		vcpu->arch.hcr_el2 |= HCR_ATA;
+>  }
+>  
+>  static inline unsigned long *vcpu_hcr(struct kvm_vcpu *vcpu)
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 8170c04fde91..212ae77eefaf 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -1122,7 +1122,7 @@ int __init populate_nv_trap_config(void);
+>  bool lock_all_vcpus(struct kvm *kvm);
+>  void unlock_all_vcpus(struct kvm *kvm);
+>  
+> -void kvm_init_sysreg(struct kvm_vcpu *);
+> +void kvm_calculate_traps(struct kvm_vcpu *);
+>  
+>  /* MMIO helpers */
+>  void kvm_mmio_write_buf(void *buf, unsigned int len, unsigned long data);
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 9996a989b52e..6b217afb4e8e 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -797,7 +797,7 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+>  	 * This needs to happen after NV has imposed its own restrictions on
+>  	 * the feature set
+>  	 */
+> -	kvm_init_sysreg(vcpu);
+> +	kvm_calculate_traps(vcpu);
+>  
+>  	ret = kvm_timer_enable(vcpu);
+>  	if (ret)
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 22b45a15d068..41741bf4d2b2 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -4041,11 +4041,33 @@ int kvm_vm_ioctl_get_reg_writable_masks(struct kvm *kvm, struct reg_mask_range *
+>  	return 0;
+>  }
+>  
+> -void kvm_init_sysreg(struct kvm_vcpu *vcpu)
+> +static void vcpu_set_hcr(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm *kvm = vcpu->kvm;
+>  
+> -	mutex_lock(&kvm->arch.config_lock);
+> +	if (has_vhe() || has_hvhe())
+> +		vcpu->arch.hcr_el2 |= HCR_E2H;
+> +	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
+> +		/* route synchronous external abort exceptions to EL2 */
+> +		vcpu->arch.hcr_el2 |= HCR_TEA;
+> +		/* trap error record accesses */
+> +		vcpu->arch.hcr_el2 |= HCR_TERR;
+> +	}
+> +
+> +	if (cpus_have_final_cap(ARM64_HAS_STAGE2_FWB))
+> +		vcpu->arch.hcr_el2 |= HCR_FWB;
+> +
+> +	if (cpus_have_final_cap(ARM64_HAS_EVT) &&
+> +	    !cpus_have_final_cap(ARM64_MISMATCHED_CACHE_TYPE))
+> +		vcpu->arch.hcr_el2 |= HCR_TID4;
+> +	else
+> +		vcpu->arch.hcr_el2 |= HCR_TID2;
+> +
+> +	if (vcpu_el1_is_32bit(vcpu))
+> +		vcpu->arch.hcr_el2 &= ~HCR_RW;
+> +
+> +	if (kvm_has_mte(vcpu->kvm))
+> +		vcpu->arch.hcr_el2 |= HCR_ATA;
+>  
+>  	/*
+>  	 * In the absence of FGT, we cannot independently trap TLBI
+> @@ -4054,6 +4076,14 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
+>  	 */
+>  	if (!kvm_has_feat(kvm, ID_AA64ISAR0_EL1, TLB, OS))
+>  		vcpu->arch.hcr_el2 |= HCR_TTLBOS;
+> +}
+> +
+> +void kvm_calculate_traps(struct kvm_vcpu *vcpu)
+> +{
+> +	struct kvm *kvm = vcpu->kvm;
+> +
+> +	mutex_lock(&kvm->arch.config_lock);
+> +	vcpu_set_hcr(vcpu);
+>  
+>  	if (cpus_have_final_cap(ARM64_HAS_HCX)) {
+>  		vcpu->arch.hcrx_el2 = HCRX_GUEST_FLAGS;
+
 
