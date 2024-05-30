@@ -1,102 +1,104 @@
-Return-Path: <linux-kernel+bounces-195781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593DE8D51C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:29:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5837E8D51C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EADD1F243EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9A11F24355
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5101D50286;
-	Thu, 30 May 2024 18:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+mkWtRa"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFD64D9FB;
+	Thu, 30 May 2024 18:29:20 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303244D117;
-	Thu, 30 May 2024 18:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB074CE05
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 18:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717093761; cv=none; b=H7ckkOWaoGRpvQRYljJ3ky5pGTBFHzNnC2vlpxCqiJvgDYH0Kv7UNmDGTtx9yephR/SGoLClyJr9+w2ArA6sYTcFKDyrk5BoRQ4mCp6CWyGI2pd4BLmFbNz0566b4UlVVD1M9lk5hWE97SxvBsi3r+OZzms5hynmZ6QL7AL0fc4=
+	t=1717093760; cv=none; b=UnzpzzPAS5nvjyC4TxXbLrSyiwCZ70oyt1Ylc6iyicn1CUylnmKikPDsf6ZSKIHSsdp0C5IWUGfMNrwEHHxwVz8sIS6CJPe7UUOOvsfGNx7kOpiFGORidCcy3xufouBaK6MCobFcYc3jaVRVqALTtblS35i8JLF02/HHXEH/3lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717093761; c=relaxed/simple;
-	bh=ZTWJJtOnoCEjjDR1YvgdBuP7PEVdi3wWf+FmqRugq7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pbm9W8dDdMUQRiYzQ58go2qNtyEKyiVpAJc8dR0gBCKaKRr/bH905Dq++AJWblmc0bj5d4v0BQaIyrGYt0pnZh2wtCpiOgBONjDrz1u/bxPixX/HiwGhYawcR95M5OOOQSgdUucbsSuit6wt3O5x4jLKuvhjkuPuas6IMAxGfG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+mkWtRa; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f480624d10so10459045ad.1;
-        Thu, 30 May 2024 11:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717093759; x=1717698559; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nhnjgQ6rE1XRAEbHs7A8p+fYG6USGpWs0Q0HH94k2uE=;
-        b=c+mkWtRaiUJyN47Ego5ly7waU0aqiK6aEP6VHakjPZZIUOXCMR9/VMfJhWjSDoGvbO
-         GN/fao30gw9pbfV2ebN3ORvHrlLvfaXxjDTInMe8vWbGONPwTHCUyC+LTlhovoYwP76B
-         Ade1j2Fx8M9ZZYvzKIeHaVTmTFyEU49FGFiCnbiQrJj36lGpbJZwYLu8jfomArnGqBTu
-         7d1YpI+I5SppIq5nouUCa6AL5bDwRn7a8/t5ye9NjSo1ubv8oiYUvLUFP6gaQuU4/xwt
-         n4y4rH2+Vx5oXqoErXmJYLgOCanVYB0izFPK9DAxxFG9zBLM1OxeGudJBZ4KjRIcMZIR
-         Bk9A==
+	s=arc-20240116; t=1717093760; c=relaxed/simple;
+	bh=UzKx2uEzqgslDAiwUDJyVu5c/uy6CYD26vc1Ic3/26A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iE8vX2QnUdpjc9/HGmXAogXo2NAPIWlDpuSTpVXs9ZU/O4T9at5UMZ6+MDRLx6YD5NfN9fxhyPDf2JNBIBM9fG285eDqyyYrN2Qd+N9UkXJ7sPTTamIXtUvKlPHUavw4fiwoo4nWWFRgVjhQDLpkF9JuKNWT3vwKHwRLoq9q08k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36db3bbf931so12311065ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:29:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717093759; x=1717698559;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nhnjgQ6rE1XRAEbHs7A8p+fYG6USGpWs0Q0HH94k2uE=;
-        b=hiefzF8nF6VcxFYcqZhYQcm9wMkZTH4RUW3NaiPApFTwm+Ok6shVvZuXanDaJbvyDd
-         ATm9/+O0Pw4s3CdRgIoiCIoJ/fktCWOnOAWkK2SgHEOhM5pp9t1Prp9pXWRNi55Yi6Su
-         suUpVuRVkSwkt8jjDhMecBEaACgbvgy4di6d4N89VZjy4keExBO0VU8umY1Bp9Ku93YS
-         lvKksB4YLDBVYZPYFEzmeA6+NTra75MCVn698ra5CuckOtDo8y427sp15kM+2qxWDBzw
-         Iio2RwHX0VbtfOfyESVId0BSoioUDDgXvl06bvMeZWmBwqY6oX5ntPKk6ERhveM7syFh
-         RFsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqsM29MxFgibpFjrbCSkSoQ5I+0Z+7TLJR869BrncL2iOhdpdk2rah8brqxvNNos8ddt/RIVKACxtdmXRf5C39ZHU/J6dydmxUp6zRXsaBh8W9UdTJQwJmVJ9DxPe7jasUscXVUYaRchg5nQ==
-X-Gm-Message-State: AOJu0YxD6Bez8NMVpO+WNJrE9B+Y8prGeSm4CcbOlxCr3V0pcwFO7IPx
-	pmIY7/JLJEBNlIUfEXOhZ67lcGw722MrWnaZC5gPWcHyXzf13Ol6
-X-Google-Smtp-Source: AGHT+IEIvSA83Fm1beIcN7N5DqFxEn0p2FT7DfcpBfoR0l5W7lY+eiAwMxWAF/z92+SPWST9SQlwig==
-X-Received: by 2002:a17:902:e547:b0:1f5:e635:21e3 with SMTP id d9443c01a7336-1f6195f6418mr32102755ad.27.1717093759360;
-        Thu, 30 May 2024 11:29:19 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235a619sm970975ad.69.2024.05.30.11.29.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 11:29:19 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 30 May 2024 08:29:17 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] writeback: factor out wb_dirty_freerun to remove
- more repeated freerun code
-Message-ID: <ZljFffFosO0qxE1T@slm.duckdns.org>
-References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
- <20240514125254.142203-6-shikemeng@huaweicloud.com>
+        d=1e100.net; s=20230601; t=1717093758; x=1717698558;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UzKx2uEzqgslDAiwUDJyVu5c/uy6CYD26vc1Ic3/26A=;
+        b=KWDeDCWL2GjPVmBU98UtRZV/h0biomiRpNLVjnR2VO3mi6Il9L4Y/InKwnMU5md/Df
+         ht4m22UI7tNBZKiSQ3KhKWis2h3y8B0PMNs7Xr/POvgo5e4+aSOr8wEUIG+n63qTdTVc
+         GrMavwuScI/0G9k6PKoM/ECNZHpSM5Y35sq4icc3E86PdALNkoimpYqTyrp/zdG+o6yk
+         qIUsXnM7nqBgpgo0gqD3aCIaQImmKZZgPX4t5689N5gJfBSqawxLyZ6GjzAjZExvRS0F
+         cm7Lg2Izb9JwRea7+NEYby6oPLkihkHSKEOCfOYS2Jb3TrhED+nik7MC0kROUNpl1G6P
+         AlXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZDAAYBYjCHNiCo1GEpzQgKnPI5VXj+cyLu9S6joGTzRNxU/41WRbNG2XmEUHH4tnzPHAit1TGpEwwFN6WBOGsHV+KylbUFTfE4t+v
+X-Gm-Message-State: AOJu0YydycDYfoQxzQ+xeVgA74JU2c3endUh3ayG0509cVbUqkckSYc1
+	jYdd42OUqGHlGr5zj+jvDdRYHmEoxBWtouRZTYQvFcytHStfikjefTH0zd5CacTwWAW6Rlv6xHd
+	uDPyQLQBOlJHzRocOZwAjvyWEYj86Cl6ExGsML1fLPk4nixla7qt8fgk=
+X-Google-Smtp-Source: AGHT+IH1x3XrkPu1Mun4/eKZJ6gO0mFlPM7u5zN+ddEqmLrd9PtY15ot44oqSZaViQplKE0oLXI5P3hmpwbureOGoiGHSxU3Udsb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514125254.142203-6-shikemeng@huaweicloud.com>
+X-Received: by 2002:a05:6e02:b26:b0:369:f7ca:a361 with SMTP id
+ e9e14a558f8ab-3747df50c66mr2025035ab.1.1717093758401; Thu, 30 May 2024
+ 11:29:18 -0700 (PDT)
+Date: Thu, 30 May 2024 11:29:18 -0700
+In-Reply-To: <000000000000a62351060e363bdc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000840b4e0619b00b9b@google.com>
+Subject: Re: [syzbot] memory leak in ___neigh_create (2)
+From: syzbot <syzbot+42cfec52b6508887bbe8@syzkaller.appspotmail.com>
+To: alexander.mikhalitsyn@virtuozzo.com, davem@davemloft.net, den@openvz.org, 
+	dsahern@kernel.org, edumazet@google.com, f.fainelli@gmail.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	nogikh@google.com, pabeni@redhat.com, razor@blackwall.org, 
+	syzkaller-bugs@googlegroups.com, thomas.zeitlhofer+lkml@ze-it.at, 
+	thomas.zeitlhofer@ze-it.at, wangyuweihx@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 14, 2024 at 08:52:51PM +0800, Kemeng Shi wrote:
-> Factor out wb_dirty_freerun to remove more repeated freerun code.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+This bug is marked as fixed by commit:
+net: stop syzbot
 
-Acked-by: Tejun Heo <tj@kernel.org>
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-Thanks.
+#syz fix: exact-commit-title
 
--- 
-tejun
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
+
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=42cfec52b6508887bbe8
+
+---
+[1] I expect the commit to be present in:
+
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
