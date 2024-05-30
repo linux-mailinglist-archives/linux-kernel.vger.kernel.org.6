@@ -1,225 +1,241 @@
-Return-Path: <linux-kernel+bounces-195471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0583D8D4D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:55:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5734F8D4D50
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5F41C225F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:55:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626B7285ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DB3186E36;
-	Thu, 30 May 2024 13:55:50 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54229171B6;
-	Thu, 30 May 2024 13:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC32B186E3E;
+	Thu, 30 May 2024 13:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gwB01mVZ"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2C2186E2D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077350; cv=none; b=MZZ5Ml58Z8LxNJfkmJflLBvn9S806m9t2dxTgSsm+5KcVpizXJL7QLsZoAOvGlRaE0ZEvy/rx5DmY7YQsI92/l789Bz2w2tSH5z4ogaecGgV/dNlrxxlCkt50EACwFuRPpFjpl4nygWI5aZKnsrRhiLnP4Mtu0ocPNJwrq87dZU=
+	t=1717077387; cv=none; b=TnzSpBBy/VbtiDtxdtmnG7kHGlgDtQGgtZCkRhCMWu4JShnqXCyuH2f7FKwOkcQ2DDcIqZDAMYnxT5RyMs8HOGyvJzJXWFU+b8VUFTdMvCk075jMG4RlL6s4Eulhq2lj3IsFWEVU1FRod0oYaXlqtj3/wW2PYXDZFfZ5is5BLko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077350; c=relaxed/simple;
-	bh=R2T6febTmbLJBN50SoMzp5xW9MDsIkxEZ0Ij0wYsPTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CQGPErvssDYZep9PiCbIHu4aK12o3paSdRop9TzSuwdJ+iRLnKlSpGAuQVn4lcgJM/FqZaWtcZO3gftVcJocMWL5TlwyljaWS3EiuwI4Pbruu2pRivqw8dMHDRO06AEUo9WLFDOA/eOoKr/4EyJI27bASTLLgatn/E5IP/cD+Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.08,201,1712588400"; 
-   d="asc'?scan'208";a="206182912"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 May 2024 22:55:45 +0900
-Received: from [10.226.92.220] (unknown [10.226.92.220])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 098AB44211B1;
-	Thu, 30 May 2024 22:55:41 +0900 (JST)
-Message-ID: <77a16dba-5d62-4086-adf0-fcc2eb276795@bp.renesas.com>
-Date: Thu, 30 May 2024 14:55:40 +0100
+	s=arc-20240116; t=1717077387; c=relaxed/simple;
+	bh=FGBSQOuAb0NlB6ZQthzXYAirwmMW8u3SD2gpZJepyxc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZZmrl5DVVoOU/lmg+T6+SbisGVzNzIh7VQ+4FV0UCeaNtFHmV9GQAErtUJnrL/6ZLD2jZFceX9YGqM90SLPbnKfGiil1Jb223aePNu2kld8Mmr5dGFzQUAKJucVFmbEQhoCmowkMZczd3n1uHWgFIPtaDDuhgLnrKwhI3VKLUBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gwB01mVZ; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-80ac778563fso316735241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717077384; x=1717682184; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EXUCNy99zkbik9zLqKW1CEH6iQfLDGzfWLNIvH5uY+0=;
+        b=gwB01mVZcr7JkwK/+Cu5gtOt+gyDgQ6wQUvNEaL1//euAn58VwbBmF4cKoCTRBCmBz
+         IiGapOLjJPNyvU+sp+qCIuoX0x4obuxy+fiXL78DZlhcTE+wTQV2SPS9zowxxdFsYc0F
+         n5WKgXTv+yT0fYufXs7PxG2EvqNdIbPWEggbIqPeeBI4KICBKoLgsxqk2aphzHZm3oSX
+         2z7v+Cq9QvLPHjEtKel6Hi0ZkTAZu8SDJhIYpGeiShG7ZdBlscDFtwCmF/W1j39K6akT
+         r1qif0zJIC/uj3Od9e2Ut1zuExIUfSXLBE+QMXMQZEHVE+RZ5QsR9SA0QozOYWlypQWl
+         cbfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717077384; x=1717682184;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EXUCNy99zkbik9zLqKW1CEH6iQfLDGzfWLNIvH5uY+0=;
+        b=is+EXCU0LGUySvmqJggi3zpaDfI7DvL+wPqynciKX7y0yjX0DS6Hf48pz81ifMMtr3
+         Hy2EAIc22rXCOQJNH2mW6tsXyhelCW28khp+QpPz+CTwaLOvbA+NUDBNQEHSfrlt3+U2
+         Jt4LFFoh7AcLpraU2QI4OMbCgCAGx7S9Pm2TQ6TAuDG1F9g7ceNDMvhT7FDMQiLsKwkT
+         d3ZpgyfhIQRdPZZWYsutmxYTDXi7xAPLHuRJ93aebQDh2eVMPDqjPpqy26luQZjq5h3V
+         8cgU7MEK0Cf6DXWPcaWrJBJCAr15nRg201jsjFYlI4PVczf2upd9WMauEy6XpYgwnXST
+         Lldg==
+X-Gm-Message-State: AOJu0Ywob+DC9sSt0DRmS/fgkdevUytTADWpW+2lwE7CA1r9frGqdXml
+	/KvjeYncllOYlAyJ9QEyzV0fhGISlenTbER4C9mHoI3qKvzPv+mGTpdUyKcInvCJEPd2lV9H1gW
+	D8ZhiU++XOul8EW7e7kyKjTzEpFa0Ur39KpnyCKF2FNX7osi2aZM=
+X-Google-Smtp-Source: AGHT+IHtMCQyGfRZVl+J4B/Ueb8+BlAQuJC8en+4dH/bryuo8aki4OV0HUSb9FEfVVIkSlPkZD7ersSE7iRVsS8Zn9A=
+X-Received: by 2002:a05:6122:319c:b0:4d4:1ec7:76e5 with SMTP id
+ 71dfb90a1353d-4eaf248dd21mr2295414e0c.16.1717077384478; Thu, 30 May 2024
+ 06:56:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] pinctrl: renesas: rzg2l: Refactor pin to OEN bit
- translation
-Content-Language: en-GB
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240524094603.988-1-paul.barker.ct@bp.renesas.com>
- <20240524094603.988-3-paul.barker.ct@bp.renesas.com>
- <CAMuHMdUJsNBw7oYyEYLfyN4JohPGD0ONMv2zrhy3U4MUV4MzQA@mail.gmail.com>
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-Organization: Renesas Electronics Corporation
-In-Reply-To: <CAMuHMdUJsNBw7oYyEYLfyN4JohPGD0ONMv2zrhy3U4MUV4MzQA@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------oqLi0t6XyYUW8ytuM6iJgUPP"
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 30 May 2024 19:26:12 +0530
+Message-ID: <CA+G9fYvJjAqf1pxMZpsm6rO_UVqhKOpB=0SUpBec8UhQBOXSrA@mail.gmail.com>
+Subject: BUG: kernel NULL pointer dereference, address: 000000000000002c -
+ RIP: 0010:alloc_extent_buffer
+To: open list <linux-kernel@vger.kernel.org>, Linux btrfs <linux-btrfs@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------oqLi0t6XyYUW8ytuM6iJgUPP
-Content-Type: multipart/mixed; boundary="------------80sRyUscXVq85KVUgtJxjQK7";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <77a16dba-5d62-4086-adf0-fcc2eb276795@bp.renesas.com>
-Subject: Re: [PATCH 2/9] pinctrl: renesas: rzg2l: Refactor pin to OEN bit
- translation
-References: <20240524094603.988-1-paul.barker.ct@bp.renesas.com>
- <20240524094603.988-3-paul.barker.ct@bp.renesas.com>
- <CAMuHMdUJsNBw7oYyEYLfyN4JohPGD0ONMv2zrhy3U4MUV4MzQA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUJsNBw7oYyEYLfyN4JohPGD0ONMv2zrhy3U4MUV4MzQA@mail.gmail.com>
+The following kernel BUG: and kernel crash noticed while running xfstests btfs
+filesystem testing on qemu-x86_64 with loop back.
 
---------------80sRyUscXVq85KVUgtJxjQK7
-Content-Type: multipart/mixed; boundary="------------eHgISoLx04v0zomq5F9VvJi0"
+Steps to reproduce link provided.
 
---------------eHgISoLx04v0zomq5F9VvJi0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Test details:
+----
+  Tests:  xfstests-btrfs  btrfs/232
+  SKIP_INSTALL='true'
+  TEST_DEV='/dev/loop0'
+  SCRATCH_DEV='/dev/loop1'
+  TEST_DIR='/mnt/test'
+  SCRATCH_DIR='/mnt/scratch'
+  FILESYSTEM='btrfs'
+  T_SIZE='5G'
+  S_SIZE='8G'
 
-On 30/05/2024 13:51, Geert Uytterhoeven wrote:
-> Hi Paul,
->=20
-> On Fri, May 24, 2024 at 11:46=E2=80=AFAM Paul Barker
-> <paul.barker.ct@bp.renesas.com> wrote:
->> We currently support setting OEN (Output ENable) bits only for the
->> RZ/G3S SoC and so the functions rzg2l_oen_is_supported() and
->> rzg2l_pin_to_oen_bit() are hardcoded for the RZ/G3S. To prepare for
->> supporting OEN on SoCs in the RZ/G2L family, we need to make this code=
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
->> more flexible.
->>
->> So, the rzg2l_oen_is_supported() and rzg2l_pin_to_oen_bit() functions
->> are replaced with a single translation function which is called via a
->> pin_to_oen_bit function pointer and returns an error code if OEN is no=
-t
->> supported for the given pin.
->>
->> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
->=20
-> Thanks for your patch!
->=20
->> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> @@ -256,6 +256,8 @@ struct rzg2l_pinctrl_data {
->>         const struct rzg2l_hwcfg *hwcfg;
->>         const struct rzg2l_variable_pin_cfg *variable_pin_cfg;
->>         unsigned int n_variable_pin_cfg;
->> +       int (*pin_to_oen_bit)(const struct rzg2l_hwcfg *hwcfg,
->> +                             u32 caps, u32 offset, u8 pin);
->>  };
->=20
-> This definitely needs synchronization with Prabhakar, as he introduces
-> a different set of function pointers to distinguish RZ/G2L (G3S) and
-> RZ/V2H.  We really like to end up with something that is consistent,
-> and works for all.
+Test log:
+-------
+ <12>[ 6457.571628] run fstests btrfs/232 at 2024-05-29 16:31:29
 
-Apologies that we missed this conflict!
+<6>[ 6464.685165] BTRFS: device fsid
+50147eec-0761-4d75-8e77-df9c50ac385e devid 1 transid 6 /dev/loop1
+(7:1) scanned by mount (152729)
+<6>[ 6464.715051] BTRFS info (device loop1): first mount of filesystem
+50147eec-0761-4d75-8e77-df9c50ac385e
+<6>[ 6464.719266] BTRFS info (device loop1): using crc32c
+(crc32c-generic) checksum algorithm
+<6>[ 6464.724996] BTRFS info (device loop1): using free-space-tree
+<6>[ 6464.789867] BTRFS info (device loop1): checking UUID tree
+<6>[ 6499.694309] BTRFS info (device loop1): qgroup scan completed
+(inconsistency flag cleared)
+<6>[ 6499.766172] BTRFS info (device loop1): qgroup scan completed
+(inconsistency flag cleared)
+<1>[ 6572.421678] BUG: kernel NULL pointer dereference, address:
+000000000000002c
+<1>[ 6572.423036] #PF: supervisor read access in kernel mode
+<1>[ 6572.423070] #PF: error_code(0x0000) - not-present page
+<6>[ 6572.423143] PGD 0 P4D 0
+<4>[ 6572.424555] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+<4>[ 6572.424814] CPU: 0 PID: 152772 Comm: fsstress Not tainted
+6.10.0-rc1-next-20240529 #1
+<4>[ 6572.424946] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+<4>[ 6572.425062] RIP: 0010:alloc_extent_buffer+0x253/0x820
+<4>[ 6572.427387] Code: 00 49 8b 7d 08 4c 89 e9 40 f6 c7 01 0f 85 dc
+03 00 00 0f 1f 44 00 00 4c 89 ef 48 8b 07 f6 c4 40 0f 84 f7 00 00 00
+48 8b 57 28 <8b> 42 2c 85 c0 0f 84 ac 00 00 00 8d 70 01 f0 0f b1 72 2c
+75 ee 48
+<4>[ 6572.427577] RSP: 0018:ffffae9403eaf700 EFLAGS: 00000202
+<4>[ 6572.427613] RAX: 010000000000412d RBX: ffff9eb00d8c5000 RCX:
+ffffec4001110700
+<4>[ 6572.427663] RDX: 0000000000000000 RSI: ffff9eaf3ad5b918 RDI:
+ffffec4001110700
+<4>[ 6572.427705] RBP: 000000000000dec8 R08: ffff9eaf3ad5b918 R09:
+0000000000000001
+<4>[ 6572.427730] R10: 0000000000000001 R11: 0000000000000001 R12:
+ffff9eaf0c92b318
+<4>[ 6572.427752] R13: ffffec4001110700 R14: 0000000000000000 R15:
+ffff9eb00f1f82e8
+<4>[ 6572.428675] FS:  00007f6ad5d8f740(0000)
+GS:ffff9eb07bc00000(0000) knlGS:0000000000000000
+<4>[ 6572.428756] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[ 6572.428772] CR2: 000000000000002c CR3: 00000001013ba000 CR4:
+00000000000006f0
+<4>[ 6572.428905] Call Trace:
+<4>[ 6572.430288]  <TASK>
+<4>[ 6572.430561]  ? __die+0x1e/0x60
+<4>[ 6572.433138]  ? page_fault_oops+0x17b/0x4b0
+<4>[ 6572.433156]  ? search_extable+0x26/0x30
+<4>[ 6572.434025]  ? alloc_extent_buffer+0x253/0x820
+<4>[ 6572.434035]  ? search_module_extables+0x14/0x50
+<4>[ 6572.435608]  ? exc_page_fault+0x6b/0x150
+<4>[ 6572.436133]  ? asm_exc_page_fault+0x26/0x30
+<4>[ 6572.436889]  ? alloc_extent_buffer+0x253/0x820
+<4>[ 6572.436917]  read_tree_block+0x1a/0x80
+<4>[ 6572.438475]  read_block_for_search+0x211/0x320
+<4>[ 6572.439418]  btrfs_search_slot+0x2db/0xe20
+<4>[ 6572.439905]  ? kmem_cache_alloc_noprof+0x1cb/0x240
+<4>[ 6572.439928]  find_parent_nodes+0xee/0x1f20
+<4>[ 6572.441382]  btrfs_find_all_roots_safe+0x97/0x170
+<4>[ 6572.441397]  btrfs_qgroup_trace_extent_post+0x70/0xf0
+<4>[ 6572.441881]  add_delayed_ref+0x514/0x750
+<4>[ 6572.442757]  btrfs_free_tree_block+0xcd/0x290
+<4>[ 6572.442783]  btrfs_force_cow_block+0x329/0x7e0
+<4>[ 6572.442800]  btrfs_cow_block+0xd7/0x280
+<4>[ 6572.442814]  btrfs_search_slot+0x523/0xe20
+<4>[ 6572.442832]  btrfs_insert_empty_items+0x35/0x70
+<4>[ 6572.442845]  btrfs_insert_orphan_item+0x7a/0xb0
+<4>[ 6572.443343]  btrfs_orphan_add+0x18/0xa0
+<4>[ 6572.443863]  btrfs_unlink+0x166/0x180
+<4>[ 6572.443887]  vfs_unlink+0x10d/0x2a0
+<4>[ 6572.444369]  do_unlinkat+0x28c/0x310
+<4>[ 6572.444390]  __x64_sys_unlink+0x3c/0x70
+<4>[ 6572.444433]  do_syscall_64+0x9e/0x1a0
+<4>[ 6572.444924]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+<4>[ 6572.447843] RIP: 0033:0x7f6ad5e8ba07
+<4>[ 6572.448529] Code: f0 ff ff 73 01 c3 48 8b 0d f6 83 0d 00 f7 d8
+64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 57 00
+00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d c9 83 0d 00 f7 d8 64
+89 01 48
+<4>[ 6572.448541] RSP: 002b:00007ffd8a455818 EFLAGS: 00000202
+ORIG_RAX: 0000000000000057
+<4>[ 6572.448693] RAX: ffffffffffffffda RBX: 00000000000003ae RCX:
+00007f6ad5e8ba07
+<4>[ 6572.448723] RDX: 0000000000353166 RSI: 0000000000000000 RDI:
+0000558cb0972bf0
+<4>[ 6572.448735] RBP: 00007ffd8a455970 R08: 00007f6ad5f64c60 R09:
+00007ffd8a45595c
+<4>[ 6572.448744] R10: 00007ffd8a455586 R11: 0000000000000202 R12:
+0000558c873925c0
+<4>[ 6572.448750] R13: 028f5c28f5c28f5c R14: 8f5c28f5c28f5c29 R15:
+0000558c87388cc0
+<4>[ 6572.448797]  </TASK>
+<4>[ 6572.448863] Modules linked in:
+<4>[ 6572.449908] CR2: 000000000000002c
+<4>[ 6572.450833] ---[ end trace 0000000000000000 ]---
+<4>[ 6572.485615] RIP: 0010:alloc_extent_buffer+0x253/0x820
+<4>[ 6572.488121] Code: 00 49 8b 7d 08 4c 89 e9 40 f6 c7 01 0f 85 dc
+03 00 00 0f 1f 44 00 00 4c 89 ef 48 8b 7 f6 c4 40 0f 84 f7 00 00 00 48
+8b 57 28 <8b> 42 2c 85 c0 0f 84 ac 00 00 00 8d 70 01 f0 0f b1 72 2c 75
+ee 48
+<4>[ 6572.489657] RSP: 0018:ffffae9403eaf700 EFLAGS: 00000202
+<4>[ 6572.490176] RAX: 010000000000412d RBX: ffff9eb00d8c5000 RCX:
+ffffec4001110700
+<4>[ 6572.490823] RDX: 0000000000000000 RSI: ffff9eaf3ad5b918 RDI:
+ffffec4001110700
+<4>[ 6572.491363] RBP: 000000000000dec8 R08: ffff9eaf3ad5b918 R09:
+0000000000000001
+<4>[ 6572.491951] R10: 0000000000000001 R11: 0000000000000001 R12:
+ffff9eaf0c92b318
+<4>[ 6572.492404] R13: ffffec4001110700 R14: 0000000000000000 R15:
+ffff9eb00f1f82e8
+<4>[ 6572.493249] FS:  00007f6ad5d8f740(0000)
+GS:ffff9eb07bc00000(0000) knlGS:0000000000000000
+<4>[ 6572.493710] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[ 6572.494410] CR2: 000000000000002c CR3: 00000001013ba000 CR4:
+00000000000006f0
 
-We will have to use Prabhakar's approach. The methods for RZ/G2L &
-RZ/G3S are similar enough to share read/write functions and just have
-separate functions for determining which bit to set, but for RZ/V2H
-we're writing to a completely different register.
+metadata:
+----
+  git_describe: next-20240529
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_short_log: 9d99040b1bc8 ("Add linux-next specific files for 20240529")
 
-So, please proceed with Prabhakar's patches. I'll rebase this series on
-top of his and re-work the relevant bits.
+Steps to reproduce:
+-------
+ - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2h94944uxKleGblX7rjXwtV0PBv/reproducer
 
-Thanks,
+Links:
+-----
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131454/suite/log-parser-test/test/check-kernel-bug/log
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131454/suite/log-parser-test/tests/
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2h945RbifdV6peYDNNBeBffjQtu/
+ - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2h94944uxKleGblX7rjXwtV0PBv
 
---=20
-Paul Barker
---------------eHgISoLx04v0zomq5F9VvJi0
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
-
---------------eHgISoLx04v0zomq5F9VvJi0--
-
---------------80sRyUscXVq85KVUgtJxjQK7--
-
---------------oqLi0t6XyYUW8ytuM6iJgUPP
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZliFXAUDAAAAAAAKCRDbaV4Vf/JGvUqD
-AQD+BiWIpoKdWhUVJuVTpF1xxSJlJH8hT7zBGd/uUWIfawD/TsajZsJu+ExiHlafRJAEDaLS5Eu9
-QAzHeZrzIF7yLgk=
-=LIBw
------END PGP SIGNATURE-----
-
---------------oqLi0t6XyYUW8ytuM6iJgUPP--
+--
+Linaro LKFT
+https://lkft.linaro.org
 
