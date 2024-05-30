@@ -1,86 +1,105 @@
-Return-Path: <linux-kernel+bounces-195520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7D98D4DF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:27:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CCF8D4D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACCB31F234C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675AB285146
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B9D18397E;
-	Thu, 30 May 2024 14:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B839817623F;
+	Thu, 30 May 2024 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oI9ksBTr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HWamFT3x"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158B17C21E;
-	Thu, 30 May 2024 14:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED749186E32;
+	Thu, 30 May 2024 14:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079170; cv=none; b=tM9xMyWLwcajHb1MjoeT2EHB4xObL8QjLbKj6VRNd3TzRjDEiO6WavLBwH8Xm74DyMu82GZMoS6FAnqhg6hbBJK1pBUyDcIDd5xCjBg7JLS7y4HNgfJalVp02sD9Vv+2NO6ukEREsmp3JLu1ReRZ446Ou+iMWJ5nJPM6gIAb8UI=
+	t=1717077901; cv=none; b=JKzvPYIA1UySOmKe+6SSQ4FFklbjYyaZCBTzG/X7g8kcX9iVjElSn/lA9eR5nBurLAub06eYxu5BFel2hEVbVEBaHEu4cmOmi+bvFMpLp9V1OWQ1R3UpsvZTgfXGNFxf+7ZBZTo+RGCyHeYm1SQ/WZWgL+zAfgCtEtqxRSZ7tKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079170; c=relaxed/simple;
-	bh=NMBkiX/tpRTQn8tO+rvKwcvAOh4EYfEUhO6DHWLQxrE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=im5QxAbzUxrZK4FirznrgRv/JeZi1fX0gDLMwORPGvzKSi6N7Mmcl0w/QuEU8o/jOHkUKjneQ1kJalOJnjCZXoURWWo62jyG+AFctS8MLxs1k4UAKjyNerCRMOM8qfqeZN3pbNZh19kO+71fuC0M2FpuWbYCb3LMKaAHgpSFaMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oI9ksBTr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9056C2BBFC;
-	Thu, 30 May 2024 14:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717079170;
-	bh=NMBkiX/tpRTQn8tO+rvKwcvAOh4EYfEUhO6DHWLQxrE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=oI9ksBTrcVOOG5b/Lh2uKEclvuQeV3+cNs7x/L5CxxCMpL801jpLKVdwcU+uQJsR/
-	 es4uDePsVygRXEKWUwf+fg0ZgTvXezsWKRQBDVYNXvYGVXhrutmLIA4rr2jNBqvK6c
-	 hYCbL6gykexOP1dr2MoxLgiS6bITfQn9dg9+VCh4bpzL7bnG1erdESeZqYv7YSvcTm
-	 j/DGb8m4zahAr1KnZcjX1V2JmeebGgtZTr/HxdR6nTPYjrQkX1ZOuJvBub89L/juWw
-	 nFrswFKMN0H1Aq9SUAm8IaiFY9lfuBsxjQwpBy4BhqjqAWCvmlVR26Z8tUA4QbhJvR
-	 27GWurqQSChEA==
-From: Leon Romanovsky <leon@kernel.org>
-To: kotaranov@microsoft.com, sharmaajay@microsoft.com, longli@microsoft.com, 
- jgg@ziepe.ca, Konstantin Taranov <kotaranov@linux.microsoft.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1716366242-558-1-git-send-email-kotaranov@linux.microsoft.com>
-References: <1716366242-558-1-git-send-email-kotaranov@linux.microsoft.com>
-Subject: Re: [PATCH rdma-next v3 0/3] RDMA/mana_ib: Add support of RC QPs
-Message-Id: <171707207901.117187.16600242304842683763.b4-ty@kernel.org>
-Date: Thu, 30 May 2024 15:27:59 +0300
+	s=arc-20240116; t=1717077901; c=relaxed/simple;
+	bh=ABBWcpkh87HumHDzf2KDobuTBk2N1d8JJ4fjNpzoS1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHV+3AYye6yIjEIc3FWeAPzlhCLFzPWd0ggAjBSbmQFPudXxD1nT2puL27aDjlaNSnygz15/UdhcsBXm/3MTn19x07SngXm0507BtsjWFnVU0dvHC4O9ZfQjUEgeskhCVtmgCsG2a4B9VCYMF8zkISEfMVthdViAjWf9V7P400c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HWamFT3x; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9B66840E0192;
+	Thu, 30 May 2024 14:04:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id YZgOyo_Wrz23; Thu, 30 May 2024 14:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717077886; bh=W8SfD8cqXYbhTm+gZa2gaKivt8VGV0aD4jBoQKBjeQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HWamFT3xq6BM3221ZEQ5AeSuK9RmAYRXxAiMHDnH8F8QEux7ofTHAQ0CleIMBVGPH
+	 uT0hmU9mT73sC7RTh62KfWMMn5/VUujUfykifGmXZU0+FdTOEb8AmwCPTlwjJmvyr8
+	 cty/2NijG9RvutLHRNtAM6l+AqJSAQRAau+DVkuk4S0CwlMCuDSDXaN6mqdAdrq70a
+	 PJJxN4BQoUd7B+2TAb1ftbxm8vq4kCsi8NmzDxkhotsFPOMqNPVhOTl5vhCZQHRt+C
+	 jiASZ8MLq4DsvveYmicZS4knEchxmvCrlYBmQvklRqZ5Srx5qa3B4bHbuQvw7sjIgL
+	 gPoGMnYl0dnPZ7VSMb4nVA3xWt34QlQEB5SJeFoKQa1qd4KoyVl78stg5Xe3UetYSc
+	 XsWxyyLnX4y3pB6yuv0bMm/IfAR3zZiyOA3Bf+7C7Jc62HyXIeQNxTccbKUYOaGNFj
+	 hWGlqoLDErmZk82oWuoZXnTyqCacLVtiAFTJmgkO40dyVtITuMzMSOotH4qUB/IriL
+	 vfxYiEPwVSmCTN60GBc3oRTtZW+h5ZWUuAiu3d9YamvFU6uYRC/AQs97EwzRqaSzZC
+	 eXwYAN4RkThJUdvJDIZZD+e5dNXD9fNpnVu2cqvEMngc6Amih3mW3gKBpYKmTEI5cQ
+	 bGoWI+oSLdMVaNmL0a0DuZ0U=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5F9E940E0177;
+	Thu, 30 May 2024 14:04:42 +0000 (UTC)
+Date: Thu, 30 May 2024 16:04:36 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Christian Heusel <christian@heusel.eu>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [tip: x86/urgent] x86/topology/amd: Evaluate SMT in CPUID leaf
+ 0x8000001e only on family 0x17 and greater
+Message-ID: <20240530140436.GCZliHdFXy1VkMdgAP@fat_crate.local>
+References: <7skhx6mwe4hxiul64v6azhlxnokheorksqsdbp7qw6g2jduf6c@7b5pvomauugk>
+ <171697474837.10875.6335609575452053884.tip-bot2@tip-bot2>
+ <2gj2lkahha4wzyf2ol6xk2ermrmsxaklznrisixdg4m3ogzten@gbrtiyjebeup>
+ <20240530085914.GAZlg_4lcZIaa83jVb@fat_crate.local>
+ <xoof7q7s6gak5iyvp3x6lgksqlpmw6sfiqvyjqc53m7egrvuya@vb7w6uoq25w7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <xoof7q7s6gak5iyvp3x6lgksqlpmw6sfiqvyjqc53m7egrvuya@vb7w6uoq25w7>
 
-
-On Wed, 22 May 2024 01:23:59 -0700, Konstantin Taranov wrote:
-> From: Konstantin Taranov <kotaranov@microsoft.com>
+On Thu, May 30, 2024 at 02:21:28PM +0200, Christian Heusel wrote:
+> Sounds good! I thought it was a thing because I saw it used in a few
+> places, i.e. here:
 > 
-> This patch series enables creation and destruction of RC QPs.
-> The RC QP can be transitioned to RTS and be used by rdma-core.
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=e37617c8e53a1f7fcba6d5e1041f4fd8a2425c27
+
+Yeah, I'm polling internally whether we should add this new tag. But
+Reported-by pretty much does it...
+
+> I'll keep it in mind for future bug reports! :)
 > 
-> RDMA-CORE: https://github.com/linux-rdma/rdma-core/pull/1461
-> 
-> [...]
+> Have a nice week,
 
-Applied, thanks!
+Thanks and ditto. :-)
 
-[1/3] RDMA/mana_ib: Create and destroy RC QP
-      https://git.kernel.org/rdma/rdma/c/53657a0419ef44
-[2/3] RDMA/mana_ib: Implement uapi to create and destroy RC QP
-      https://git.kernel.org/rdma/rdma/c/fdefb918496235
-[3/3] RDMA/mana_ib: Modify QP state
-      https://git.kernel.org/rdma/rdma/c/e095405b45bbbd
-
-Best regards,
 -- 
-Leon Romanovsky <leon@kernel.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
