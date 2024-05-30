@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-195829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61298D525E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:34:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8B48D5261
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2119A1C23685
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD7A282092
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD100158877;
-	Thu, 30 May 2024 19:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8889158874;
+	Thu, 30 May 2024 19:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="OmDLroNq"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="RTP/6QD1"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C66846433;
-	Thu, 30 May 2024 19:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836D614D428;
+	Thu, 30 May 2024 19:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717097660; cv=none; b=Sss425NCmRfCQy/6ejQy0uuDdDSjwb1CIHc/ojsi+TvEZrdSYbirwyCWS66hs7c7SD7MCX2rKwb65MtX5zmgt1gerUzhNjmQ4YPSVcH1UhFQeviCrNDlJXKOUut2M+f1zkh3K5eu6TDPiJgBObc5aBGuCzOV4nw87JJMSbq+AdY=
+	t=1717097745; cv=none; b=IgLAK2W8tLFn8CTT4ue19HY9PCuLUYEC5PotyAI0ATMipxJOHlzhifjqXOi8bEC04hFGXguyjj8tJgMF33vpnLbc7sjw03WIL6b42N6oVAWEcV64OweZQ0JqtuJevZA3cfOCspzYm+7+jsN5MdKh9O126HDGpO8P1UMGL0KQbvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717097660; c=relaxed/simple;
-	bh=wm/Bo5gpyU2MWACRe9RWzANZe4lLTtb4K7qdjMH+xPk=;
+	s=arc-20240116; t=1717097745; c=relaxed/simple;
+	bh=zZ95PbAGHDZITMHqBFl4Fcs/YNpUG8IRO3W6hR/wDOA=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cTsJlaFRxrsTu69cvPiu8OfKGTHidZ96D3SCz5ToXtNlfGlOWGHt57xbhwR/yyE2EQ9PfT6DTwMy4/CALxX7G/E56NeV4O3FmZfQ4Vvvki1rNubwbppYU1nhEK4NOiQyib1XDfBo5IUcgDTYpNNvDsCpJKFBh8PFJc4P5CYzibk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=OmDLroNq; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=gw0x4I7uAf74+/S2oiRFKLOowBXIeCcBRI0wK6T0MMR1hl8a9urn6Iaj4vq+8uG6b6ZUbVtiTIL5mOkKtH8z1sZOgXDOs7BTqQqWLy454svLyeReVAQoWNprrM5vcGBTYBv/Gy3cAzgXLEHsehkPBPRwK3YKIqf9Z9JWN2ow/Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=RTP/6QD1; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6A56E47C39
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CE61247C39
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1717097652; bh=pbBSGU39oenKQ+SleKq6L+P/aT6z045AIZm5hbh/ASI=;
+	t=1717097743; bh=EJcE2U0fTyieXXqvhCcgmZrobv5ZLgZuvcLqFu5r9Jg=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OmDLroNqIo1PEB8by0sazTWLDGfzYd3OpBGDqH11F+bJG0LgWmPd9xc1aZzq1q5no
-	 lvku5bIrXWYb3w9W6I1HoAcfQIFT6k1nWs/yFZU2bMgxO4z4Pa7frEVYUDLovPOpFd
-	 CaNikeNRdI1hmJSZrOuQNuFphVz7JZL/iLWRnX1oIlPpOzgak3ezKAo+7yjRV6L8Wc
-	 ltMiwZwRiUsphaMT7ONBaVYe6AAaN8/UsyRZkkjo4JoB52vS362PifbfTLi64WEook
-	 wlqdS5x4pg32tWbeoYr+G052GIgg3jVN5l46n/GcysX+XMZtwvQGII/qF/04n+qqmv
-	 nR7kpkV0xHQxg==
+	b=RTP/6QD1F55Ia6jC+xzKTthycw4g+OhaGPQJDjW6loRLP0ZSayfOY4yHR6esSsBg9
+	 LR/y5/93RpN7QIxdyrsCBYZ2uwmRGPuikN7DUe9U6k9cujN8BRHBt0yBeiYYBP5tSn
+	 RH/EaWYrjS7IC28u/rsy9yOBLmXIcPVi6rWP2AIy3ctc5m8ESNUxa7CRXjVZ5pVkwG
+	 O24NqloKuNXSsJjkePIDOKEKTmHBe3fUbmAp8sNWJUZjUfRa3fv38bR+4TtdwZk9e3
+	 Ubr4HGuLFFJhlzbE4xIuF6T0RZ99TIScwVMlD3ZfwU9hweEygrTXe/pp7T11lLQFTM
+	 aOzSaU6GSvQKQ==
 Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 6A56E47C39;
-	Thu, 30 May 2024 19:34:12 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id CE61247C39;
+	Thu, 30 May 2024 19:35:42 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, bilbao@vt.edu
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: Extend and refactor index of further kernel docs
-In-Reply-To: <fdf68be7-875a-421d-8bc3-034a21990679@gmail.com>
-References: <fdf68be7-875a-421d-8bc3-034a21990679@gmail.com>
-Date: Thu, 30 May 2024 13:34:11 -0600
-Message-ID: <87ikyvccwc.fsf@meer.lwn.net>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] doc-guide: kernel-doc: document Returns: spelling
+In-Reply-To: <20240522224726.10498-1-rdunlap@infradead.org>
+References: <20240522224726.10498-1-rdunlap@infradead.org>
+Date: Thu, 30 May 2024 13:35:42 -0600
+Message-ID: <87ed9jcctt.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Carlos Bilbao <carlos.bilbao.osdev@gmail.com> writes:
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-> Extend the Index of Further Kernel Documentation by adding entries for the
-> Rust for Linux website, the Linux Foundation's YouTube channel, and notes
-> on the second edition of Billimoria's kernel programming book. Also,
-> perform some refactoring: format the text to 75 characters per line and
-> sort per-section content in chronological order of publication.
+> scripts/kernel-doc accepts "Return:" or "Returns:" for describing the
+> return value of a function or function-like macro, so document this
+> alternative spelling and use it in an example.
 >
-> Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
 > ---
-> =C2=A0Documentation/process/kernel-docs.rst | 68 +++++++++++++++++-------=
----
-> =C2=A01 file changed, 44 insertions(+), 24 deletions(-)
+>  Documentation/doc-guide/kernel-doc.rst |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-So I was going to apply this but ... it doesn't apply.  It looks like
-some sort of weird whitespace damage?
+Applied, thanks.
 
 jon
 
