@@ -1,139 +1,229 @@
-Return-Path: <linux-kernel+bounces-195706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCF38D5087
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:07:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D9C8D5084
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038D3284318
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:07:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C838C1C20B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A796433C2;
-	Thu, 30 May 2024 17:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AC94436A;
+	Thu, 30 May 2024 17:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="kClFoaZw"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r1cAix2s"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7898645BF3;
-	Thu, 30 May 2024 17:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17661224DE;
+	Thu, 30 May 2024 17:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088849; cv=none; b=bMKvb37jwNeh0kwYeKRHRJ3VjSWI0YPzktYLhoNMlMVEJU/AMLntEfneubaIW8Z0jRFuUR6Fqk8THeFwjzMr63JlGS2eavNsKPwkkuiPNymJD0z5Qf7XqE2OpgXH2sC1s+nRie1U3M4i8kF/5VVo6Hm/77//xBoet9pjRpKn0E0=
+	t=1717088842; cv=none; b=jdq54Vs1KkMpJzEysoagBMAUtWLBM3zUyDJOFx4xpceiwLRCqAo/0WhBsQP5pI2T+w0PSGhHRC5KZdFF+VbVanV2Hmay+klATJ7YXXa69tfvDZ8dvSFXCMRyylsERV5gstKBGZG/kPpAG60DS7yrkY24yH8iv/L7q3VnuaWvi3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088849; c=relaxed/simple;
-	bh=eaWBU/Gs0AVqYWKI7fIzfvj87upg7eVwzFYEt+kQATc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jkyi7ISG5IH16PfTlFK1J7wzLNsLJYHOU/sWILcKv1DvyGHI26xxhqQ4UH7g98sTqDHzdPOvZt8NWLYkVrWkaGccIayQVsMd41sMXp+eRI6susUnR9T8g6/E2sGnem++YuPD12yWgrXz/+MOu0J/nduA53Up/kuO9Fd/VC25kNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=kClFoaZw; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1717088818; x=1717693618; i=w_armin@gmx.de;
-	bh=eaWBU/Gs0AVqYWKI7fIzfvj87upg7eVwzFYEt+kQATc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=kClFoaZweyHzYDbr0riKqN3XxIn8HiskIzI/mhgGAjaGiChxbjgcDOX2sC3splHX
-	 CLZg9fwq/5e1IqQgTu26KL9nCZ8Ethx6qBEsYeBA7f3K1xHcM0aVOUHxYK3+hUITd
-	 R2soy7QkCdM7/5f5DE/X0KL5BZiLBMSFpW/Vg0zQx2fcYBDC07PxYWHesSJhlilEN
-	 25ldGgt/DusHjcYfY1B5sdLX2a2/qXBJLCma14NdbhjzWm/KoWst2miW8wxrA/eAN
-	 nLbN3VI1YpI+ys9edGoaJUCPXHu7PcX/Vyi4/DXANa5Tht3m7QzGRLYMPFRTkfz3+
-	 ODA+F9omcs0cr5GAnA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MC30Z-1sKgO440gX-00CO0l; Thu, 30
- May 2024 19:06:58 +0200
-Message-ID: <dd3ee875-f6be-40ec-a40e-0733de9b9981@gmx.de>
-Date: Thu, 30 May 2024 19:06:56 +0200
+	s=arc-20240116; t=1717088842; c=relaxed/simple;
+	bh=2iVwbMMUbOM9n/CFhJHEkyhA69N23s8LiCcG1LOOwMk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iNTHR+zRNGt98zVbb3sozRL/tXKAo7/qwVEdMz7cGRm9qY+LBhLomASyNcRrbU9M8zSIA3e61zIKJLsliePkF5FJ/wndBfIt2BztHzX7I0MdGZrvX9svwCjSjB50CtPNbhBhppVAbifKGLyoGzG7G+0cCRN18Eub6fpVvJ1TuO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r1cAix2s; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UH7BZq086432;
+	Thu, 30 May 2024 12:07:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717088832;
+	bh=pDXaFrZNsFbzg111mB1tj844P1eOk1scANJi1dNprZU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=r1cAix2s0CRqtSl8gNb2jLlUmONrAt31qwgujEwbjpAKcLMFHvJBpI3brkhdw8ZYV
+	 emWVt+L+f/jY2FNbkw16SoW3l4wFrTbw6JqiSZGGwJPA30BqYPeB07Ls+UtjiKsEz3
+	 LbpfPj/KhggkDTfbFRWpIPI7TA1V9QMoec58cZF0=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UH7Bw3124816
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 12:07:11 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 12:07:11 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 12:07:11 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UH7AwG048811;
+	Thu, 30 May 2024 12:07:11 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>
+Subject: [PATCH v10 01/11] media: dt-bindings: Add Imagination E5010 JPEG Encoder
+Date: Thu, 30 May 2024 22:37:10 +0530
+Message-ID: <20240530170710.2735503-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240530165925.2715837-1-devarsht@ti.com>
+References: <20240530165925.2715837-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
- sensors
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
-References: <20240529205204.81208-1-linux@roeck-us.net>
- <20240529205204.81208-3-linux@roeck-us.net>
- <fa79f3c2-666f-48b8-b39a-f598107b2293@gmx.de>
- <0dc7a7c6-a426-424a-8321-471569ee6835@roeck-us.net>
- <bd197671-4fef-4cdb-8472-b46151e9008b@roeck-us.net>
- <5b9e47cb-3d9a-4d12-9d48-fc03111a0240@gmx.de>
- <f0b2c682-ce43-426c-92f9-008256f08eff@roeck-us.net>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <f0b2c682-ce43-426c-92f9-008256f08eff@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MB6Iceh72pLeWW7gTfUXGLV5THTLNb6+8pLlsvweBdIRrJvZwv5
- 1ogaC7ErGd5JtWlcMI0FcjN22P9NvuIiLeMLYj3P6UyzSE78TqIuwWON6L0b1RuKzd0Gugb
- +dI7PZXc0fPdxdiNedOEIhe1Prtcd2sle81UP/Zq4BZ3h33wuK2DzWBj0jBLTM8dkf9ub3X
- dckry6Re89HKZACTyuxhQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:s/YkqP0Ujzo=;swc+mr3mQl7ygdI6UwHn9d70FnZ
- FMsnF99Sf1E0xVU2oigKnsnJExPhGh3wO4UOikooOMhNYNLdYqtljmNwPQE1q9kkKQgAb4Sog
- Hl+nndHSoCDCknDHEzHBRXU0rA0FY9LvuCGBu/eNJ3YA+sRkpfoODif9HQ6AJS0Sh0JTawluY
- F7FGvF2ke4/UQ/HI7KKe3xUrEHqF5uUg8mqWWCWiQBURrSGWm3wT7V1tuDHmap9qneI6RJg5J
- Qr88mXqwswGxprPsoajEPcwK3mBRCWgNSOOQov6xi3mouTihQNG+Du+6O7PyO5FD5JQxZj4pC
- fRE9oysM1Nua2qnH90icUVVBVTHSuBNf/o+mFI3KvMUSPqT3d8XQTewUJnerISJ1bAy9ZvrVE
- Sn66liUCe7YYyNw1StMjzPKiEteS728lSQAr0RuZALTAPLq2Yrcr5ecuFTWdv+eVBZ7kXSjzV
- vDJh5BqIa4NWrkBXvfu0xT7mKGlpImgddDT15Ivy+E4L1eJlWWzkuwr67EPNEqmht84f9f+8K
- 1QPSJxzdP6kJHBOZrfSVQ37P4WLANUXYZVbzqnWY5pE0An7HnqnC/BBU1ejgsPdNffTchzHCz
- 2HZjZWkWeGlUkRsRVMGo0nfsqVaNpa3NVJd375O8xzKo0kwAidDfxBmfwkRyCL9wXJ9Jj28BW
- 6H3i73+1lZtaw+Aenl+TNA/jCVCGbpUX93TKcLugXBUqyxqhyl0gu3qxcj+knQ8533H7OI2yo
- zLT2RZwFrLopNSoHIO4oA/FFKW1I/NY3soteyXaTjFXBChczRQNGlhbTLoSnKpG8uCViTRc1d
- D9RQct+v4Ijgv8Tx4MZjNPlaXsiehsJwtN0a2QAazIyac=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Am 30.05.24 um 18:51 schrieb Guenter Roeck:
+Add dt-bindings for Imagination E5010 JPEG Encoder [1] which is implemented
+as stateful V4L2 M2M driver.
 
-> Hi Armin,
->
-> On 5/30/24 09:45, Armin Wolf wrote:
-> [ ... ]
->>>
->> # i2cdump 1 0x51
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0 1=C2=A0 2=C2=A0 3=C2=A0 4=C2=A0 =
-5=C2=A0 6=C2=A0 7=C2=A0 8=C2=A0 9=C2=A0 a=C2=A0 b=C2=A0 c=C2=A0 d=C2=A0 e=
-=C2=A0 f 0123456789abcdef
->> 00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 3c 00 00 Q???2?2......<..
->> 10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00 ............p?..
->> 20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 P?..............
->> 30: 00 c0 01 00 00 00 00 00 00 00 00 00 00 00 00 00 .??.............
->> 40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->> 80: 30 10 12 02 04 00 40 42 00 00 00 00 b2 12 0d 00 0????.@B....???.
->> 90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e ....????z?....?>
->> a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00 ?>?>.}??0u'??.?.
->> b0: 00 00 00 00 00 00 d4 00 00 00 d4 00 00 00 d4 00 ......?...?...?.
->> c0: 00 00 d4 00 00 00 88 13 08 88 13 08 20 4e 20 10 ..?...?????? N ?
->> d0: 27 10 1a 41 28 10 27 10 c4 09 04 4c 1d 0c 00 00 '??A(?'????L??..
->> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->>
->
-> Thanks a lot. This is again Montage Technology's M88SPD5118.
-> What is your DDR module vendor ?
->
-> Thanks,
-> Guenter
->
-Kingston Fury KF552C40BBK2-16, a 2x8GB DDR5 5200 kit.
+The device supports baseline encoding with two different quantization
+tables and compression ratio as demanded.
 
-Thanks,
-Armin Wolf
+Minimum resolution supported is 64x64 and Maximum resolution supported is
+8192x8192.
+
+[1]:  AM62A TRM (Section 7.6 is for JPEG Encoder)
+Link: https://www.ti.com/lit/pdf/spruj16
+
+Co-developed-by: David Huang <d-huang@ti.com>
+Signed-off-by: David Huang <d-huang@ti.com>
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+V10:
+ - No change
+V9:
+ - No change
+V8:
+ - No change
+V7:
+ - No change
+V6:
+ - No change
+V5:
+ - Add Reviewed-By tag
+V4:
+ - Use ti-specific compatible ti,am62a-jpeg-enc as secondary one
+ - Update commit message and title
+ - Remove clock-names as only single clock
+V3:
+- Add vendor specific compatible
+- Update reg names
+- Update clocks to 1
+- Fix dts example with proper naming
+V2: No change
+---
+ .../bindings/media/img,e5010-jpeg-enc.yaml    | 75 +++++++++++++++++++
+ MAINTAINERS                                   |  5 ++
+ 2 files changed, 80 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+
+diff --git a/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+new file mode 100644
+index 000000000000..085020cb9e61
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/img,e5010-jpeg-enc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Imagination E5010 JPEG Encoder
++
++maintainers:
++  - Devarsh Thakkar <devarsht@ti.com>
++
++description: |
++  The E5010 is a JPEG encoder from Imagination Technologies implemented on
++  TI's AM62A SoC. It is capable of real time encoding of YUV420 and YUV422
++  inputs to JPEG and M-JPEG. It supports baseline JPEG Encoding up to
++  8Kx8K resolution.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: ti,am62a-jpeg-enc
++          - const: img,e5010-jpeg-enc
++      - const: img,e5010-jpeg-enc
++
++  reg:
++    items:
++      - description: The E5010 core register region
++      - description: The E5010 mmu register region
++
++  reg-names:
++    items:
++      - const: core
++      - const: mmu
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/soc/ti,sci_pm_domain.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++      jpeg-encoder@fd20000 {
++          compatible = "img,e5010-jpeg-enc";
++          reg = <0x00 0xfd20000 0x00 0x100>,
++                <0x00 0xfd20200 0x00 0x200>;
++          reg-names = "core", "mmu";
++          clocks = <&k3_clks 201 0>;
++          power-domains = <&k3_pds 201 TI_SCI_PD_EXCLUSIVE>;
++          interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++      };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dbc5d9ec3d20..f68e1a5757b5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10767,6 +10767,11 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/auxdisplay/img,ascii-lcd.yaml
+ F:	drivers/auxdisplay/img-ascii-lcd.c
+ 
++IMGTEC JPEG ENCODER DRIVER
++M:	Devarsh Thakkar <devarsht@ti.com>
++S:	Supported
++F:	Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
++
+ IMGTEC IR DECODER DRIVER
+ S:	Orphan
+ F:	drivers/media/rc/img-ir/
+-- 
+2.39.1
 
 
