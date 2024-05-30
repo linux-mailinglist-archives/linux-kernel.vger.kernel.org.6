@@ -1,148 +1,169 @@
-Return-Path: <linux-kernel+bounces-195538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BE78D4E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:41:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5AA8D4E36
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B5E1F243F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7D81C2180F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C640C17C217;
-	Thu, 30 May 2024 14:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD9E17C230;
+	Thu, 30 May 2024 14:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7k4EgZF"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMqCm59j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F6F186E41;
-	Thu, 30 May 2024 14:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8B9186E41;
+	Thu, 30 May 2024 14:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717080051; cv=none; b=m5HylEPwVQJfLbaxA5PVNq1qqrZc9htSPJnkh+kzSuI+P+wwvJ0nRlmHuL9GWxdOnh7RXrXob2Gpa53Qae+PDT77AnYVslYyvzHxthozP7k7ijAfNkUD9TXyRP019WTZBJTNjEmIc/FOKeEHnYY47rwgn/pet7eP0TlR0QRTAN8=
+	t=1717080198; cv=none; b=doygKFInDFA6VDRWJi0EO1nF6VlzdvT5HDTkxMSERUTZfbulUCq0TerToNFWgLPDozZh0EY1nD61EJTSX4RtB2k7Aqod86jor2n8lj9Ze+vskCwGxgOIBIO35nFKjaRM5+ZdRe0d+pyA8QCAJICO3eYgMT/5Ioz4QmYDwT7ERx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717080051; c=relaxed/simple;
-	bh=XWlxAnuC/u9UwVSre4Bh7CKn2L/WZWSl+q4IsHzdHg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O+FwoD0hG46yW1cUgfWZ0coGCKP94Qhu6hOobfliBTlHvfH2AZKEcWegurMbrDBGwtsCs7FXA6Q3W96jSaOTvCVp0G5H3DPjmWMohquYLk0btWR0y0C4jfgltc9vfPBrAFH3XkBkLm/pPetRLilbBKx/dwQcWI3QP//jLXbe8Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7k4EgZF; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b79447c58so1368664e87.1;
-        Thu, 30 May 2024 07:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717080047; x=1717684847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MiUZAyRllirKKzsD89/yIKCX3SIy5qsFBAtFuiUEDms=;
-        b=X7k4EgZFA2ZOU1fNksV7NmNlzXAmfMbX8++wQQ3wxibs/OAJjhxNcfFxJJNU1oxaqn
-         o118YyNLk5Q8E3InBOJPZH+s9sFjZxRkQqlm4LLEXI6grZ3++quj38w98KYdpsYT1Y8J
-         K/jotjBrFV3TXCTyr9CBqhytGG4mT/TaLUj0eBx+ACWj2XyUuBPlMCZiM+hPW0Y6OzSu
-         rMuLZMtJiv4zTVjlEaXAHCBY2nVfGaBKWKXOfccwI3P3aRSC6nbgAR2fxBKgBBUcwq/U
-         4phxfu9mXLb0dUC4oTY1klYLc7V/8RELWdFzxByAOeQ7TFIiY17u1LgZiqarGZ4Qc2HM
-         wYsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717080047; x=1717684847;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MiUZAyRllirKKzsD89/yIKCX3SIy5qsFBAtFuiUEDms=;
-        b=jBfqzpBT4HH0W2rq4Br2Zpvn+UHhngst+LCB74HK9xMyxbR+xxIIAmW5BD07/ZoSt1
-         Merl6qh3WgT8tA6TVRlECFbtxuvEkFa+mPhYTO97IgKggG1kFLell0gE5PC9uquHRDKL
-         sIFUz2LYo0Dk4yO8jc/ypZqeLoVENkEc3kIYWAzQjGQtK6Al2BdoZoceJ5ucHqPnaTp/
-         wKqAfAf48YzegBa1Ph3WuHVOjScxdkOdDlVoGrWHvBUbwhJsB6Vcmz8xELUS0plZneIJ
-         ik+Fywfje9TQX+s4gOEGXntXUSq4yaYCirWBVXQ/9SqbYzYTFHdWkW+U4ug5HXpF5lcz
-         blSQ==
-X-Gm-Message-State: AOJu0YwTDpvykcwkz9PkG8jpw/X4iq8fFzsrpWdzgHV46singNoGknW0
-	jAYrVq8U1mhbRMJcrnlZZYLy92w+SYYlN27nhSWv/kbFP9f7Evh8jmUXoTk5
-X-Google-Smtp-Source: AGHT+IG7nJ/NQimAb6ENu+Mt1IVoSFruIV2XJFdrCKecJVtj80xQ6v5uM62Ivd1eYoeWqqIfmUtOdQ==
-X-Received: by 2002:a19:430e:0:b0:52a:a91e:3f55 with SMTP id 2adb3069b0e04-52b7d499782mr1658316e87.47.1717080047196;
-        Thu, 30 May 2024 07:40:47 -0700 (PDT)
-Received: from f.. (cst-prg-8-232.cust.vodafone.cz. [46.135.8.232])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a66dbfc4ca6sm27932366b.165.2024.05.30.07.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:40:46 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	paul@paul-moore.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] cred: plug a hole in struct cred
-Date: Thu, 30 May 2024 16:40:40 +0200
-Message-ID: <20240530144041.569927-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717080198; c=relaxed/simple;
+	bh=e1+5dT8+B+5U3e3Q8tyccbJPxgYrjn+AJggCEUN5eR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pofB/bvF0PQcMnu7+MYUYGB2bb1dxHc8P8bsojgAJp9Sz2oiqfr9oG4J4EoyfC2ISPtHGjE/ZDctrak0yXmWkwL6LkFUslcyDvfPphHXcEOP5WufBcZXTHHP1vfDKHk56hnLVxyDhGxFLlQzoet9qUQFVN/wbE326/ZY8OX/Bc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMqCm59j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BCAFC2BBFC;
+	Thu, 30 May 2024 14:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717080197;
+	bh=e1+5dT8+B+5U3e3Q8tyccbJPxgYrjn+AJggCEUN5eR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rMqCm59jdJJs3oe/iUw0G8iGrR/MRYfg69+6CWrnvOzeO0sSmDV/qSTn4JOsREbqt
+	 ioiNo2ilbyZh2ide5ehezgb6vZaOkWF82CKYvPEk5i6M55/5BCCZMuPRdlIyrVyrRX
+	 YnJv3AAYzvK4+bMCdvVwWHIg/iNW94vqH0BBKJ/MoiHh/DtXB65jEuzVvptnjsD/q8
+	 7OFIehwtJih9AEKdH/Tv/6a6wQGuaoKogH2S6gikRrqW1sELiWG43d5N+1ANytAD7M
+	 L1PRhAtMU3r7ZJg78e95yOCCDzx5IK+r970c2em+lQesDcVAMygRm2c0R1U+GFTzJZ
+	 RW2gQ1yTRFwZw==
+Date: Thu, 30 May 2024 15:43:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH 1/7] riscv: Implement cmpxchg32/64() using Zacas
+Message-ID: <20240530-swear-espresso-563e3a19d7e7@spud>
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-2-alexghiti@rivosinc.com>
+ <20240528-repaint-graffiti-ec4f0e038e5a@spud>
+ <CAHVXubjk-2EAJ0U08p7uATkJM1_La94SVcVNLO5yieGbfqUGYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="z9kbXMXV8iYZ4uhg"
+Content-Disposition: inline
+In-Reply-To: <CAHVXubjk-2EAJ0U08p7uATkJM1_La94SVcVNLO5yieGbfqUGYw@mail.gmail.com>
 
-/*     40      |       4 */    unsigned int securebits;
-/* XXX  4-byte hole      */
-/*     48      |       8 */    kernel_cap_t cap_inheritable;
-[snip]
-/*     88      |       1 */    unsigned char jit_keyring;
-/* XXX  7-byte hole      */
-/*     96      |       8 */    struct key *session_keyring;
 
-jit_keyring can be moved up to the 4-byte hole.
+--z9kbXMXV8iYZ4uhg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Size goes down from 184 to 176 bytes.
+On Wed, May 29, 2024 at 02:20:33PM +0200, Alexandre Ghiti wrote:
+> On Tue, May 28, 2024 at 5:34=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> > On Tue, May 28, 2024 at 05:10:46PM +0200, Alexandre Ghiti wrote:
 
-Note total memory usage does not go down because the struct remains
-backed by 192-byte chunks, but space is made for future expansion.
+> > >  config TOOLCHAIN_HAS_ZBB
+> > >       bool
+> > >       default y
+> > > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> > > index 5b3115a19852..d5b60b87998c 100644
+> > > --- a/arch/riscv/Makefile
+> > > +++ b/arch/riscv/Makefile
+> > > @@ -78,6 +78,17 @@ endif
+> > >  # Check if the toolchain supports Zihintpause extension
+> > >  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZIHINTPAUSE) :=3D $(riscv-march-y=
+)_zihintpause
+> > >
+> > > +# Check if the toolchain supports Zacas
+> > > +ifdef CONFIG_AS_IS_LLVM
+> > > +# Support for experimental Zacas was merged in LLVM 17, but the remo=
+val of
+> > > +# the "experimental" was merged in LLVM 19.
+> > > +KBUILD_CFLAGS +=3D -menable-experimental-extensions
+> > > +KBUILD_AFLAGS +=3D -menable-experimental-extensions
+> > > +riscv-march-y :=3D $(riscv-march-y)_zacas1p0
+> > > +else
+> > > +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) :=3D $(riscv-march-y)_zacas
+> > > +endif
+> >
+> > I'm almost certain that we discussed this before for vector and it was
+> > decided to not enable experimental extensions (particularly as it is a
+> > global option), and instead require the non-experimental versions.
+> > This isn't even consistent with your TOOLCHAIN_HAS_ZACAS checks, that
+> > will only enable the option for the ratified version.
+>=20
+> Zacas was ratified, hence the removal of "experimental" in LLVM 19.
+> But unfortunately Zabha lacks such changes in LLVM, so that will make
+> this inconsistent (ratified extension but still experimental).
+>=20
+> I'll remove the enablement of the experimental extensions then so that
+> will fail for LLVM < 19. And for Zabha, I'll try to push the removal
+> of experimental from LLVM.
 
-No functional changes.
+Ye, as Nathan mentioned there may yet be some time. It'd be great if you
+could.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+> > I think we should
+> > continue to avoid enabling experimental extensions, even if that imposes
+> > a requirement of having a bleeding edge toolchain to actually use the
+> > extension.
+>=20
+> Would it make sense to have a
+> CONFIG_RISCV_LLVM_ENABLE_EXPERIMENTAL_EXTENSIONS or similar? So that
+> people who want to play with those extensions will still be able to do
+> so without patching the kernel?
 
-I have some plans to hack up distributed reference counting for this
-struct, soon(tm). Should it land it is going to add at least 8 bytes.
+Maybe, but I think something like that should depend on BROKEN and only
+be done when the extension hasn't had its experimental status removed by
+a released version of LLVM and is not supported by a release of GCC.
+Given we only allow frozen extensions into the kernel, actually having to
+do this would be rather rare.
 
-But even if nothing comes out of it this looks like a trivial clean up
-worth including.
+I think we should also reserve the right to drop support for the
+experimental version as soon as it does get its status changed, and
+depending on BROKEN would let us do that without any regressions in terms
+of toolchain version support.
 
- include/linux/cred.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Yes, making the option depend on BROKEN would require patching a Kconfig
+file but this would be a facility for kernel developers to test prior to
+the release of a toolchain that actually supports the extension, and the
+"hard" part in the Makefile to hook it up would already be done. I think
+if you're capable of messing about with experimental extensions in the
+kernel you're capable of also modifying a Kconfig file locally ;)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..a936a291e9b1 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -107,6 +107,9 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-  * that task is going to act upon another object.  This may be overridden
-  * temporarily to point to another security context, but normally points to the
-  * same context as task->real_cred.
-+ *
-+ * NOTE: some fields have placement picked to plug alignment gaps -- don't
-+ * shuffle things around without looking at output of pahole(1).
-  */
- struct cred {
- 	atomic_long_t	usage;
-@@ -119,14 +122,16 @@ struct cred {
- 	kuid_t		fsuid;		/* UID for VFS ops */
- 	kgid_t		fsgid;		/* GID for VFS ops */
- 	unsigned	securebits;	/* SUID-less security management */
-+#ifdef CONFIG_KEYS
-+	unsigned char	jit_keyring;	/* default keyring to attach requested
-+					 * keys to */
-+#endif
- 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
- 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
- 	kernel_cap_t	cap_effective;	/* caps we can actually use */
- 	kernel_cap_t	cap_bset;	/* capability bounding set */
- 	kernel_cap_t	cap_ambient;	/* Ambient capability set */
- #ifdef CONFIG_KEYS
--	unsigned char	jit_keyring;	/* default keyring to attach requested
--					 * keys to */
- 	struct key	*session_keyring; /* keyring inherited over fork */
- 	struct key	*process_keyring; /* keyring private to this process */
- 	struct key	*thread_keyring; /* keyring private to this thread */
--- 
-2.39.2
+Cheers,
+Conor.
 
+--z9kbXMXV8iYZ4uhg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZliQgAAKCRB4tDGHoIJi
+0meaAP4hpp+ON/+4CUCouNiEU6Wr4S461QKuus3DdOd3JDRNQwEAr3sv/LmPdRsa
+sUgsKALjJuli5YHzz/dQq7PlVqqiyw4=
+=WxZU
+-----END PGP SIGNATURE-----
+
+--z9kbXMXV8iYZ4uhg--
 
