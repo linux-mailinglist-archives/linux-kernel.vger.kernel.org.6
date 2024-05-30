@@ -1,78 +1,67 @@
-Return-Path: <linux-kernel+bounces-195663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836F98D4FF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:37:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E118D4FF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A746C1C2257F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8F11F23A20
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0395E2E859;
-	Thu, 30 May 2024 16:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317832C6AE;
+	Thu, 30 May 2024 16:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jhceymwd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOy4Yn0m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B4A2CCBE
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690AF23741;
+	Thu, 30 May 2024 16:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087013; cv=none; b=CSt6q4TNLCwhPHAN3gw0BrXXBiLyUcEsfHHGQNR7JPtMSwhdXkMhoLZ9grakjWRhvp2iyrn6vDzkgOW6LcVTx4EEesAoR3V0JtmuFmY3dkYZHJhdejfzU6UrPkT1y2N/cuM/dfXOORtYKdZ28bCpqj4uP7KnOZeGNMGarb3l6+w=
+	t=1717087043; cv=none; b=NIZQGkGCNePVmN3RZQj0HOGRuHPKEaxAY0x4FOcMfhUpZ3HD6IthNpT2Fjlhl3qMnFPmTqpC79jwmPudJttwqv52ks//tQ+cv9I8M4aIvqOFcU1jRUUNafEn4q31DCZmtvcDa1GVsE5ghEGwa6Hd7ykPWBO5Krp/mqOnphO3DMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087013; c=relaxed/simple;
-	bh=6sXrUOOyEizRFbd17/Di8hFMxQsHdChcWlX/tTCPTic=;
+	s=arc-20240116; t=1717087043; c=relaxed/simple;
+	bh=yn/fdYmK8PBhu+ABX0prZnKWA3P66CT5Svzdiz0nc4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oL5aMKRkFPQiEmkDsf076Y6pZISZx/x7ZizsyvybsU2/cuJSGGLpA480VosIyq7kVpUnNJ4TXsZ5f5T37O2AYjyf+2h9xEap+2kdo0ZRfkWx9dcu8TsZNwUYsS3KDCPrp/5j4q/B/Cplu4YGsGGElM8EnuTFakQ38K+Ho6G54pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jhceymwd; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717087012; x=1748623012;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6sXrUOOyEizRFbd17/Di8hFMxQsHdChcWlX/tTCPTic=;
-  b=jhceymwd0n2uaEEZCjXuPK+pIYPkz/6kHRAwI+cWsIJFBZdS22QlBhsd
-   rm/n4TFpz5yTc5q0k/xZr44Ap5dG2dFc7OKoOUbVtTX2qYs77Xu+X7sD9
-   O/sBPOI0sLvx+JRhAUR9/tPElyP2iZZyW4Oc0ifz+2BW/ePrMr1ReBLi8
-   t4lZWYFw/iUwzwwHVSfarEh6ch4jmMdQrLD6Lr8simlGz3icvj356juEt
-   8D2tVh46cpJoCTUqh74fdxjCFT+rHrSeYEnPtwG2+GfR7LdAn4p1F9z3D
-   DWon1RXoMxp+o6VBjFjPp23c6okTntvXQaLwa2bGvNYr9EFnjOrZkSpdM
-   g==;
-X-CSE-ConnectionGUID: D9rUO23/SbueC/XwLHRqCg==
-X-CSE-MsgGUID: qUJ0SaDLTrGMjWNPt15LyA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24707710"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="24707710"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:36:51 -0700
-X-CSE-ConnectionGUID: EAP1kPC6QTu3NnjQF0hFdA==
-X-CSE-MsgGUID: wghjxJLASyWE4jUhhrhtsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="59043046"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:36:51 -0700
-Date: Thu, 30 May 2024 09:36:49 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v19 00/20] Add support for Sub-NUMA cluster (SNC) systems
-Message-ID: <ZlirIUbLw8fLHe0j@agluck-desk3.sc.intel.com>
-References: <20240528222006.58283-1-tony.luck@intel.com>
- <08ca8fe7-9da6-41da-aad2-0081b789326c@intel.com>
- <ZleODtL_6D-Q_OMX@agluck-desk3.sc.intel.com>
- <a4d37f57-328f-4456-92bc-5e6469d092c8@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uA4ErYO3FrlzrYVu/nq3Pzl3ySdkP2a4uU15p/XCClqcgrEm/HLjSixQuEHtOK9YuQ+Fbw+jk0nP2BfBVq5QxUEIJzYfFyXpj6D6RmpDWdRAAQCWVINeQlJZhucdd8RxdRHW/FvCqWSRivfSLPf0NfhRANm/PV9/czkv15bDeKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOy4Yn0m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B7BC2BBFC;
+	Thu, 30 May 2024 16:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717087042;
+	bh=yn/fdYmK8PBhu+ABX0prZnKWA3P66CT5Svzdiz0nc4E=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=rOy4Yn0mcZbZiwb6wl8NQ+3quZ45J/4XqfNlIlEtIdQEVGDz1/KLnAJBj5fbBHtv/
+	 sGoBY8/Pc7gVUN3XC7ghhjvQdvH5W5ZeMYz5f5QbKPVxwTsXNLTvTlQGb9zJ2q4g2p
+	 xq7fUE0jzsmncvEet5XVnO4Ag+MlTZ/6kTjvqpErepo4gz1wc1HebABrn78oWSXDFy
+	 nCQfrVU/a9/10y7EICUyK3ylKgA27WoPP7lQtFMFtUzw8tVQ3Cr0dQvHVtOnaO8UaG
+	 x4Y7RImOb44aOxuuoO5DleDBdPnIaxo5SuOLz9k5wmLttutdy14ErA4C8u/a756+E/
+	 DecZls107cLoA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id EB5BBCE075F; Thu, 30 May 2024 09:37:21 -0700 (PDT)
+Date: Thu, 30 May 2024 09:37:21 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+	Joel Fernandes <joel@joelfernandes.org>, eeraj.upadhyay@kernel.org,
+	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
+Subject: Re: arm-linux-gnueabihf-ld:
+ kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
+ `__bad_cmpxchg' follow
+Message-ID: <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
+ <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
+ <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,121 +70,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a4d37f57-328f-4456-92bc-5e6469d092c8@intel.com>
+In-Reply-To: <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
 
-On Wed, May 29, 2024 at 07:46:27PM -0700, Reinette Chatre wrote:
-> Hi Tony,
+On Thu, May 30, 2024 at 03:27:58PM +0200, Arnd Bergmann wrote:
+> On Thu, May 30, 2024, at 14:26, Russell King (Oracle) wrote:
+> > On Thu, May 30, 2024 at 05:50:52PM +0530, Naresh Kamboju wrote:
+> >> The arm builds failed on Linux next with gcc-13 and clang-18.
+> >> 
+> >> Config: arm imx_v6_v7_defconfig - failed
+> >> 
+> >> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >> 
+> >> Build log:
+> >> -----
+> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> >> `rcu_trc_cmpxchg_need_qs':
+> >> update.c:(.text+0x348): undefined reference to `__bad_cmpxchg'
+> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> >> `rcu_read_unlock_trace_special':
+> >> update.c:(.text+0x41c): undefined reference to `__bad_cmpxchg'
+> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> >> `trc_read_check_handler':
+> >> update.c:(.text+0x4b0): undefined reference to `__bad_cmpxchg'
+> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function `trc_inspect_reader':
+> >> update.c:(.text+0x1518): undefined reference to `__bad_cmpxchg'
+> >> arm-linux-gnueabihf-ld: update.c:(.text+0x1548): undefined reference
+> >> to `__bad_cmpxchg'
+> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o:update.c:(.text+0x1cc4):
+> >> more undefined references to `__bad_cmpxchg' follow
+> >> make[3]: *** [/builds/linux/scripts/Makefile.vmlinux:34: vmlinux] Error 1
+> >
+> > You get a reference to __bad_cmpxchg() when someone uses cmpxchg() on
+> > a datatype that there are no CPU instructions to perform the atomic
+> > compare-and-exchange.
+> >
+> > As we support 8-bit, 16-bit and 32-bit, I would expect that we're now
+> > seeing cmpxchg() being used on 64-bit values, which are unsupportable
+> > on 32-bit Arm.
 > 
-> On 5/29/24 1:20 PM, Tony Luck wrote:
-> > On Tue, May 28, 2024 at 03:55:29PM -0700, Reinette Chatre wrote:
-> > > Hi Tony,
-> > > > 13:	Wordsmith commit into imperative.
-> > > > 	I looked at using kobject_has_children() to check for empty
-> > > > 	directory, but it needs a "struct kobject *" and all I have
-> > > > 	is "struct kernfs_node *". I'm now checking how many CPUs
-> > > 
-> > > Consider how kobject_has_children() uses that struct kobject *.
-> > > Specifically:
-> > > 	return kobj->sd && kobj->sd->dir.subdirs
-> > > 
-> > > It operates on kobj->sd, which is exactly what you have: struct kernfs_node.
-> > 
-> > So right. My turn to grumble about other peoples choice of names. If
-> > that field was named "kn" instead of "sd" I would have spotted this
-> > too.
-> > 
-> > > > 	remain in ci->shared_cpu_map to detect whether this is the
-> > > > 	last SNC node.
-> > > 
-> > > hmmm, ok, will take a look ... but please finalize discussion of a patch series
-> > > before submitting a new series that rejects feedback without discussion and
-> > > does something completely different in new version.
-> > 
-> > Reinette,
-> > 
-> > So here's what rmdir_mondata_subdir_allrdtgrp() looks like using the
-> > subdirs check. It might need an update/better header comment.
-> > 
-> > -Tony
-> > 
-> > ---
-> > 
-> > /*
-> >   * Remove all subdirectories of mon_data of ctrl_mon groups
-> >   * and monitor groups with given domain id.
+> A 64-bit cmpxchg() would fail on most 32-bit architectures,
+> other than armv6k+ and i686+. Since this one fails on
+> an armv6 (non-6k) build, it's probably the added 8-bit
+> cmpxchg() that Paul talked about using for RCU, though I
+> don't see that in linux-next here.
 > 
-> (note comment still considers that domain id is parameter)
+> I htink we need to use the emulated cmpxchg8() in
+> __cmpxchg() for this case, just like we do on other
+> architectures that only have word size atomics.
 
-Will fix.
+Thank you all for your testing and analysis!
 
-> >   */
-> > static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
-> > 					   struct rdt_mon_domain *d)
-> > {
-> > 	struct rdtgroup *prgrp, *crgrp;
-> > 	struct kernfs_node *kn;
-> > 	char subname[32];
-> 
-> I wonder if static checkers will know that this cannot be used
-> uninitialized?
+I will fix this, and also pull the 8046f3005015 ("rcu-tasks: Remove
+open-coded one-byte cmpxchg() emulation") commit out of my -next pile
+in the meantime.
 
-I wondered that too. There are no complaints from gcc. How do people
-deal with false positives from static checkers? Simplest would be to
-provide an initializer:
-
-	char subname[32] = "";
-
-While that might shut up the static check, it would be more confusing
-for human readers.
-
-> > 	char name[32];
-> > 
-> > 	sprintf(name, "mon_%s_%02d", r->name, d->ci->id);
-> > 	if (r->mon_scope != RESCTRL_L3_CACHE) {
-> > 		/*
-> > 		 * SNC mode: Unless the last domain is being removed must
-> > 		 * just remove the SNC subdomain.
-> > 		 */
-> > 		sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
-> > 	}
-> > 
-> > 	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
-> > 		kn = kernfs_find_and_get(prgrp->mon.mon_data_kn, name);
-> > 		if (!kn)
-> > 			continue;
-> > 
-> > 		if (kn->dir.subdirs <= 1)
-> > 			kernfs_remove(kn);
-> > 		else
-> > 			kernfs_remove_by_name(kn, subname);
-> > 
-> > 		list_for_each_entry(crgrp, &prgrp->mon.crdtgrp_list, mon.crdtgrp_list) {
-> > 			kn = kernfs_find_and_get(crgrp->mon.mon_data_kn, name);
-> > 			if (!kn)
-> > 				continue;
-> > 
-> > 			if (kn->dir.subdirs <= 1)
-> > 				kernfs_remove(kn);
-> > 			else
-> > 				kernfs_remove_by_name(kn, subname);
-> > 		}
-> > 	}
-> > }
-> 
-> This solution looks more intuitive to me. I do think that it may be
-> missing some kernfs_put()'s?
-
-There aren't any kernfs_put()'s in the existing code.  Resctrl takes
-an extra hold on the CTRL_MON and MON directories and jumps though some
-hoops to drop that after the directory has been removed. But the monitor
-directories have nothing like that.
-
-> Reinette
-> 
-> ps. Please do give me a couple of days more with this series before you
->     submit a new version.
-
-Sure. Will do.
-
--Tony
+							Thanx, Paul
 
