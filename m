@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-195834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F8A8D527B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:44:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 998088D527D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1C711C23DFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA7FA1C23E77
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D26158A00;
-	Thu, 30 May 2024 19:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB91158A14;
+	Thu, 30 May 2024 19:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F4ZrBZSt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDxI+qfb"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4312F12E6D;
-	Thu, 30 May 2024 19:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8011581E6;
+	Thu, 30 May 2024 19:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717098247; cv=none; b=CXCk9/+hfYk9kVxfhzMEgOOurxsGENEgMMxFldysilXI6RqCL87Ha5UGROrs6s8Y4igKsR1/EM6ThJ1qGs9U0lu0juhgVm2opwl+PWxSnG3pbv0JP9ypv4iHQGwvKmWWjibwnY2bKP6u5RK+9uVd75+sWaNfEzUGf/BFaAjxHP4=
+	t=1717098248; cv=none; b=OU6wcZCtE/h15Wrvl4njNA560ILBxqmbz1V/TnAdCrYjyVcswJTZPc5upFys9DVZw48xidlmVzuBS/i2t7Z9jmevNy+lfVhVhqY9O0zYbxSdYydCL1TS/YgCWN1b8V+N++Kj8zzFA/EC9R8cbqPiBq9BMoEi50SMJGkRB+gZ8Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717098247; c=relaxed/simple;
-	bh=Jmwxt8bWquRc2Bo8nA6dbosFgYTM5uelPHKc3KAchq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XH4w2FCBZO/rbVS8+Un+L7PYLsPynHSPtxhtIUNPILW0FrMLx20Fo6/0RWRuWCHxJJIFo/ZBCGh0qZfB5Tt6uR9khZXUW/0oRDvQxNthyZY4Dj6oJMXxjAtw1PfLw7CWIqK4QFsMYICRZsiwqpvLlNvE7lcXps8APENdw35iQiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F4ZrBZSt; arc=none smtp.client-ip=192.198.163.8
+	s=arc-20240116; t=1717098248; c=relaxed/simple;
+	bh=CnFfuT0jo0I1WjsR5p2mZIX46ezAkhpyqYpDYsd/kAs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DXM0YcPhG42hlvv4NouJ7ilhwhRzKp6SCjNd2IlMXyHHF0wYZ1/y3SdABAndWWAbQMQFTizj0Ctl03bwSZ/cxlHfpxPWTLRWIm7DR0R60fJnKHS1H7CD5FE9M9vtdH2Gqnh0afAT4djD3TCvplWmOy83E3aWHCE7+07v/CYdGd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RDxI+qfb; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717098246; x=1748634246;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Jmwxt8bWquRc2Bo8nA6dbosFgYTM5uelPHKc3KAchq0=;
-  b=F4ZrBZStxB6pRcxfkqMoVKCdf/EwVIWEbGcuWllBX05fl7xizh5Hl9a6
-   WFDjXHKFTCTacm+qFJvw/G/ZC/4E1KLzNpMtiZ+HJJ4f1kof9eJYVsVr4
-   Mvc7eV/32AtAUCudt3hQ3auG7pNCy5NJ5l49BEjhuxIwgVrtu5mzby8EX
-   VMTvddpKNV1diM7B6b90dcSwEzoRVhEQSxKenISSzywwVPGonT5HTjzyk
-   unTNGfi6ry/7NdphxBMjCnHIyKbaQMu4giSB2pUpTJfzckrhmHIqs5dAP
-   x3wbWfDjN95QlQSlRFqBGu7xPzoveJglWzwmKYBJpN716EkadnC4TgwqX
-   g==;
-X-CSE-ConnectionGUID: F10TKrOHSbicWOallAGjDQ==
-X-CSE-MsgGUID: wj6iL/PRSRKqssLKXJq4ww==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31143988"
+  t=1717098247; x=1748634247;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=CnFfuT0jo0I1WjsR5p2mZIX46ezAkhpyqYpDYsd/kAs=;
+  b=RDxI+qfb1A/bLnDjAQPAsz1pYqB9Q+eMcHTnJicx+ceiSzOV4qTs84Kb
+   iWTVnJhrVhlzlgnM+T+O2eNlqghONJvlSRFEIOEWLdWg36AX6+KPAmSru
+   hxm6U4r18vnI4sJPKq1Ie64XKCIrUZBUJ4+/jURmo34aaLwZQ0MjzvMJs
+   2Xust8N4ZH+nKQwzY4eS/3wm93b1CP8jcByh1LHGQ0Hq0NbbyD1Gh4NeA
+   qgxpwIfVV/8TGEIJaX2Rbfz8jUojbAVQnra+bFO/X83n2tpF4etCI9LGE
+   7sKqUXuQdOgIdz+GOEYBqRgBmqmYYzOWt8jcLCjjLCCHXIDX2ofpyGlrf
+   Q==;
+X-CSE-ConnectionGUID: fiwPgeySQOygrb9r82/YOA==
+X-CSE-MsgGUID: ITTbUd/KTiOBVU9uy97bgQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31143991"
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="31143988"
+   d="scan'208";a="31143991"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:44:05 -0700
-X-CSE-ConnectionGUID: 1/AsBVNGRi6pdfTq65GHFQ==
-X-CSE-MsgGUID: Z7wdXs2VRU2fjDeKfAmLVA==
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:44:06 -0700
+X-CSE-ConnectionGUID: zrMYwOzdQi26eBxHzSQIRQ==
+X-CSE-MsgGUID: ZF0bPGayRrKFF54U7vRZNw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="36027619"
+   d="scan'208";a="36027622"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.177])
-  by orviesa009.jf.intel.com with ESMTP; 30 May 2024 12:44:06 -0700
+  by orviesa009.jf.intel.com with ESMTP; 30 May 2024 12:44:07 -0700
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,
@@ -71,10 +72,12 @@ Cc: x86@kernel.org,
 	jithu.joseph@intel.com,
 	sathyanarayanan.kuppuswamy@linux.intel.com,
 	chang.seok.bae@intel.com
-Subject: [PATCH v3 0/3] x86/fpu: Allow the In-Field Scan driver to initialize FPU state
-Date: Thu, 30 May 2024 12:27:36 -0700
-Message-Id: <20240530192739.172566-1-chang.seok.bae@intel.com>
+Subject: [PATCH v3 1/3] x86/fpu: Rename fpu_reset_fpregs() to fpu_reset_fpstate_regs()
+Date: Thu, 30 May 2024 12:27:37 -0700
+Message-Id: <20240530192739.172566-2-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240530192739.172566-1-chang.seok.bae@intel.com>
+References: <20240530192739.172566-1-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,37 +86,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This revision switches to a new approach by providing a helper to
-initialize user FPU states for the driver, which is considerably simpler.
-This approach could serve as an example for addressing similar situations
-from a non-critical path.
+The term 'fpregs' typically refers to FPU registers. The function copies
+init values to the task's memory image, not hardware registers. Rename it
+to reflect what it does.
 
-I thought fpu_reset_fpregs() as the helper name. There is already one
-with this name. Then, I realized the existing one is a bit misaligned, so
-renamed it first here.
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+---
+V2 -> V3: New patch to avoids conflict with the upcoming new wrapper.
+---
+ arch/x86/kernel/fpu/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks to Dave for the reviews and the suggestion.
-
-Thanks,
-Chang
-
-The previous postings:
-V2: https://lore.kernel.org/all/20240507235344.249103-1-chang.seok.bae@intel.com
-V1: https://lore.kernel.org/all/20240430212508.105117-1-chang.seok.bae@intel.com
-
-Chang S. Bae (3):
-  x86/fpu: Rename fpu_reset_fpregs() to fpu_reset_fpstate_regs()
-  x86/fpu: Allow FPU users to initialize FPU state
-  platform/x86/intel/ifs: Initialize FPU states for the scan test
-
- arch/x86/include/asm/fpu/api.h           |  2 ++
- arch/x86/kernel/fpu/core.c               | 17 ++++++++++++++---
- drivers/platform/x86/intel/ifs/ifs.h     |  1 +
- drivers/platform/x86/intel/ifs/runtest.c |  7 +++++++
- 4 files changed, 24 insertions(+), 3 deletions(-)
-
-
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 1209c7aebb21..2e6f43dfe98b 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -709,7 +709,7 @@ static inline void restore_fpregs_from_init_fpstate(u64 features_mask)
+ /*
+  * Reset current->fpu memory state to the init values.
+  */
+-static void fpu_reset_fpregs(void)
++static void fpu_reset_fpstate_regs(void)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+@@ -744,7 +744,7 @@ void fpu__clear_user_states(struct fpu *fpu)
+ 
+ 	fpregs_lock();
+ 	if (!cpu_feature_enabled(X86_FEATURE_FPU)) {
+-		fpu_reset_fpregs();
++		fpu_reset_fpstate_regs();
+ 		fpregs_unlock();
+ 		return;
+ 	}
+@@ -774,7 +774,7 @@ void fpu__clear_user_states(struct fpu *fpu)
+ void fpu_flush_thread(void)
+ {
+ 	fpstate_reset(&current->thread.fpu);
+-	fpu_reset_fpregs();
++	fpu_reset_fpstate_regs();
+ }
+ /*
+  * Load FPU context before returning to userspace.
 -- 
 2.34.1
 
