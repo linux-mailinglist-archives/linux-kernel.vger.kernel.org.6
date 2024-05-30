@@ -1,168 +1,151 @@
-Return-Path: <linux-kernel+bounces-195508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7078D4DC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8DF8D4DCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFA7F1F222A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:23:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E751F22539
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7950517C206;
-	Thu, 30 May 2024 14:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k8XiSSZW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EQ+qXVOy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1152617C23B;
+	Thu, 30 May 2024 14:24:03 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E9E16F0E8;
-	Thu, 30 May 2024 14:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D876A176245;
+	Thu, 30 May 2024 14:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078991; cv=none; b=SEigUmNf/Ne5Ygtnsfd3RKIc1BGKp/Choj/Y12gEP5TQscd4wGj449Z7nFITcP36+d5HZYnFaqAhy1WiYhs+/As1+TeeFHMyOWPVMOIz1O994ZLS/TSUFRgIFJKNjXfTq3PeKc2OsZbF4DWDTUj8pwjoOUG93Yv4MVUprDOd7tg=
+	t=1717079042; cv=none; b=PdctRi9BUxBL25m6yy4zVsl+wPAibNLwDS71pMj8UA2DAWDqUTvPgFg2l8GUBpLEBjCwNAl+W3w1dhFFoREGc2ZoporlGu9zUnvAASSPlyzSSIMPeg3uBum1i2bvn5NhvW7zzDPOhnHI67/L9UwkY38WLulmgYHJLDC7iYdRRD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078991; c=relaxed/simple;
-	bh=Ma2+AjcMTkp5RLd/ciOGT8prx/Hs5elb2xMQ7KCXs0w=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=d5eOVxLNFIVlynF2hWC1cKOckpj4npB8Qp1Sc6yT3RPuPTKUKB3T6BR3wZ5gd4kLZmjvMWk5zzFnxOfKXxDW1tCyCKWRO/dyVPOIgvLgAaz9F+qsHBIPM8u42k2NucMaoEpgPW1t+lIdEcn+tUC9mkmrThLvUgaCGCsTmM9DV9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k8XiSSZW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EQ+qXVOy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 30 May 2024 14:23:08 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717078988;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=vV/t6fERSzKTZ1gs6ufW5FSStbU7Wr1/KJqbwL6JUuo=;
-	b=k8XiSSZWrClnkmcAPNM5LkIB/G0rTppK5txjMp4knRF2eiJWtei0mn+WjzFyiWggBwpvOR
-	JANQ28DnZJlBTvK0O9dyeqR8iZkv/CU1kF85QvUIHdGzH9lvj5pWvKnO3sZFc+nFtbaMtQ
-	f0MxZA1ulKCGgFsHXPFaD/34vbabBCenmMJ8YaDQ/42zTD7vUEFeiy7I5U736lZLjGXfBZ
-	/MF0XtORaeAcK7h9Far2PZgTsw1m350cIGgTIQm2fyrlX+DOyczihU4m+5kgZeIUVHEiBq
-	eghs2/yV/zDSu3Hy5iw3l2YFWZBymGNxABrxYEdZyutbIg+x/xfOSAPhjyrNVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717078988;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=vV/t6fERSzKTZ1gs6ufW5FSStbU7Wr1/KJqbwL6JUuo=;
-	b=EQ+qXVOy09/t5qsR1C3X8uAUOKhw6nHO1IUOrbPbzLlrpsxr0KKdva7JOV3A0FJKcNMYqM
-	egU4bZ+JLhmfxJDg==
-From: "tip-bot2 for Dave Hansen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/cpu: Provide default cache line size if not enumerated
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, osmanx@heusipp.de,
- stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1717079042; c=relaxed/simple;
+	bh=Xyc2rNGQkBIoytoNx9NltNfdasu9Z7LNs9pIWdvTaII=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dZwo9LnklZYNBoYY3beUu8C7yUV4gVs4WIUUFg77200vnkDLSBAix5Kdc04IVxn/HTpbjoCd7+iZ4W0SoLmszI077plDufTBYR8qQ1I42Q1wuV9E3j9cFBqebXeIPNRCT+HIfLY9TzMElX0QS+GvruuE6JK+MtQO8yJlM4jbgXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6303e13ffeso104341366b.3;
+        Thu, 30 May 2024 07:24:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717079039; x=1717683839;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=shat5omApnTzBZPJY3cC2DRYw1h9HRTYA0PI/kmlTfI=;
+        b=Gvnp4dIIC9pfr9mF4dhxD1iFLu3kV2xv/2Rh2EG2p0IoosU1yYJvkJkuwUavvLRKYk
+         IPcxbxGzDkcb71bfg9QSBPadJOxnsCIQ2x+Lg7s8+FcQmkqGvnTt9hqNaPxCtJYMTfPW
+         PpLZJO7rBE5wHxLKFi5JL8mDHRNoRddmQ9oyxsDNyEqKav1lBsIAoqA3D8Qw8sjISYo9
+         uP8o+TmxSaBekmr2nDkxsQDiKsfPCWKo0O9fQo+dpMemwA2hqxBHQlaBQRzNx+91rEc8
+         Kk3shrLzVg8MOXFlGsdy/Cb5ii5eROq/M1PIVWdVuJMD9XXawRcSQEzyHD/rOl1IFgdG
+         PI2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWdh/Z1iEaI+YrpT8Y9vAyLkvm3PfCB0CXQb4zw7o2ABG0k1zA55cGgO3hbocGKA3K7Ho6DS2RBrT7rk2dFCCMO+lNvzjLGQ6IyEBiXgpfEQsO/cGxfBzrL8lulvF4zjUGPB4hXTd0=
+X-Gm-Message-State: AOJu0YwYMtSBIh2A18Fz+dMJJxja6KF+lTau3Ng0S2IPpTWoJbdL+ISX
+	AbrJr2IrmsvG+/7jjMvv5e+XrM0WENhX1oEiFKquWH+yEhph9BNG
+X-Google-Smtp-Source: AGHT+IHOkFnlaA12dhEmT4K29ll4g3MGkOHbHoD/CJXHhaz5/8cLtCJKS2IxAs3HNrpK5QaVRhCugw==
+X-Received: by 2002:a17:906:9e15:b0:a59:8786:3850 with SMTP id a640c23a62f3a-a65e923ee72mr119650366b.72.1717079038899;
+        Thu, 30 May 2024 07:23:58 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a647b827400sm176500666b.69.2024.05.30.07.23.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 07:23:58 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: leit@meta.com,
+	io-uring@vger.kernel.org (open list:IO_URING),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] io_uring/rw: Free iovec before cleaning async data
+Date: Thu, 30 May 2024 07:23:39 -0700
+Message-ID: <20240530142340.1248216-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171707898810.10875.17950546903678321366.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+kmemleak shows that there is a memory leak in io_uring read operation,
+where a buffer is allocated at iovec import, but never de-allocated.
 
-Commit-ID:     b9210e56d71d9deb1ad692e405f6b2394f7baa4d
-Gitweb:        https://git.kernel.org/tip/b9210e56d71d9deb1ad692e405f6b2394f7=
-baa4d
-Author:        Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate:    Fri, 17 May 2024 13:05:34 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Thu, 30 May 2024 07:14:27 -07:00
+The memory is allocated at io_async_rw->free_iovec, but, then
+io_async_rw is kfreed, taking the allocated memory with it. I saw this
+happening when the read operation fails with -11 (EAGAIN).
 
-x86/cpu: Provide default cache line size if not enumerated
+This is the kmemleak splat.
 
-tl;dr: CPUs with CPUID.80000008H but without CPUID.01H:EDX[CLFSH]
-will end up reporting cache_line_size()=3D=3D0 and bad things happen.
-Fill in a default on those to avoid the problem.
+    unreferenced object 0xffff8881da591c00 (size 256):
+..
+      backtrace (crc 7a15bdee):
+	[<00000000256f2de4>] __kmalloc+0x2d6/0x410
+	[<000000007a9f5fc7>] iovec_from_user.part.0+0xc6/0x160
+	[<00000000cecdf83a>] __import_iovec+0x50/0x220
+	[<00000000d1d586a2>] __io_import_iovec+0x13d/0x220
+	[<0000000054ee9bd2>] io_prep_rw+0x186/0x340
+	[<00000000a9c0372d>] io_prep_rwv+0x31/0x120
+	[<000000001d1170b9>] io_prep_readv+0xe/0x30
+	[<0000000070b8eb67>] io_submit_sqes+0x1bd/0x780
+	[<00000000812496d4>] __do_sys_io_uring_enter+0x3ed/0x5b0
+	[<0000000081499602>] do_syscall_64+0x5d/0x170
+	[<00000000de1c5a4d>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Long Story:
+This occurs because the async data cleanup functions are not set for
+read/write operations. As a result, the potentially allocated iovec in
+the rw async data is not freed before the async data is released,
+leading to a memory leak.
 
-The kernel dies a horrible death if c->x86_cache_alignment (aka.
-cache_line_size() is 0.  Normally, this value is populated from
-c->x86_clflush_size.
+With this following patch, kmemleak does not show the leaked memory
+anymore, and all liburing tests pass.
 
-Right now the code is set up to get c->x86_clflush_size from two
-places.  First, modern CPUs get it from CPUID.  Old CPUs that don't
-have leaf 0x80000008 (or CPUID at all) just get some sane defaults
-from the kernel in get_cpu_address_sizes().
-
-The vast majority of CPUs that have leaf 0x80000008 also get
-->x86_clflush_size from CPUID.  But there are oddballs.
-
-Intel Quark CPUs[1] and others[2] have leaf 0x80000008 but don't set
-CPUID.01H:EDX[CLFSH], so they skip over filling in ->x86_clflush_size:
-
-	cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
-	if (cap0 & (1<<19))
-		c->x86_clflush_size =3D ((misc >> 8) & 0xff) * 8;
-
-So they: land in get_cpu_address_sizes() and see that CPUID has level
-0x80000008 and jump into the side of the if() that does not fill in
-c->x86_clflush_size.  That assigns a 0 to c->x86_cache_alignment, and
-hilarity ensues in code like:
-
-        buffer =3D kzalloc(ALIGN(sizeof(*buffer), cache_line_size()),
-                         GFP_KERNEL);
-
-To fix this, always provide a sane value for ->x86_clflush_size.
-
-Big thanks to Andy Shevchenko for finding and reporting this and also
-providing a first pass at a fix. But his fix was only partial and only
-worked on the Quark CPUs.  It would not, for instance, have worked on
-the QEMU config.
-
-1. https://raw.githubusercontent.com/InstLatx64/InstLatx64/master/GenuineInte=
-l/GenuineIntel0000590_Clanton_03_CPUID.txt
-2. You can also get this behavior if you use "-cpu 486,+clzero"
-   in QEMU.
-
-[ dhansen: remove 'vp_bits_from_cpuid' reference in changelog
-	   because bpetkov brutally murdered it recently. ]
-
-Fixes: fbf6449f84bf ("x86/sev-es: Set x86_virt_bits to the correct value stra=
-ight away, instead of a two-phase approach")
-Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: J=C3=B6rn Heusipp <osmanx@heusipp.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20240516173928.3960193-1-andriy.shevchenko@=
-linux.intel.com/
-Link: https://lore.kernel.org/lkml/5e31cad3-ad4d-493e-ab07-724cfbfaba44@heusi=
-pp.de/
-Link: https://lore.kernel.org/all/20240517200534.8EC5F33E%40davehans-spike.os=
-tc.intel.com
+Fixes: a9165b83c193 ("io_uring/rw: always setup io_async_rw for read/write requests")
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- arch/x86/kernel/cpu/common.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ io_uring/opdef.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2b170da..373b16b 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1070,6 +1070,10 @@ void get_cpu_address_sizes(struct cpuinfo_x86 *c)
- 			    cpu_has(c, X86_FEATURE_PSE36))
- 				c->x86_phys_bits =3D 36;
- 		}
-+
-+		/* Provide a sane default if not enumerated: */
-+		if (!c->x86_clflush_size)
-+			c->x86_clflush_size =3D 32;
- 	} else {
- 		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-=20
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index 2de5cca9504e..2e3b7b16effb 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -516,10 +516,12 @@ const struct io_cold_def io_cold_defs[] = {
+ 	},
+ 	[IORING_OP_READ_FIXED] = {
+ 		.name			= "READ_FIXED",
++		.cleanup		= io_readv_writev_cleanup,
+ 		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_WRITE_FIXED] = {
+ 		.name			= "WRITE_FIXED",
++		.cleanup		= io_readv_writev_cleanup,
+ 		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_POLL_ADD] = {
+@@ -582,10 +584,12 @@ const struct io_cold_def io_cold_defs[] = {
+ 	},
+ 	[IORING_OP_READ] = {
+ 		.name			= "READ",
++		.cleanup		= io_readv_writev_cleanup,
+ 		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_WRITE] = {
+ 		.name			= "WRITE",
++		.cleanup		= io_readv_writev_cleanup,
+ 		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_FADVISE] = {
+@@ -692,6 +696,7 @@ const struct io_cold_def io_cold_defs[] = {
+ 	},
+ 	[IORING_OP_READ_MULTISHOT] = {
+ 		.name			= "READ_MULTISHOT",
++		.cleanup		= io_readv_writev_cleanup,
+ 	},
+ 	[IORING_OP_WAITID] = {
+ 		.name			= "WAITID",
+-- 
+2.43.0
+
 
