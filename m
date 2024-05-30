@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-195513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAAF8D4DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:25:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8CA8D4DE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A310284892
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:25:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB8F1F235A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE55C17C206;
-	Thu, 30 May 2024 14:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A439817C230;
+	Thu, 30 May 2024 14:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RN2FEnIx"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="DXUjjBvd"
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3021C176257
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BE4186E59;
+	Thu, 30 May 2024 14:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.143.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079077; cv=none; b=LfrAmYh7CMbRzS8XY0N3eFVRXQarfnH5SHINaC1UAu7lq+GHvm+iY/0BzLrxxVxKdrmBy34GMBtvXkxUW4AedRyIV3/cGqOvtwA4hEhUvnN/VDAepsCNWtLcpujNUIc6Ef/sgEKx3m6BCmyzN5bePQOUvAWtt7qvPykx+z6WXTg=
+	t=1717079124; cv=none; b=krUw0QsJNtvvBiHQLAZzX0TbkTvUmCOeeDHlzjialw1zRMYGbsYr32ZfpxhgEPrT9yYnH6rlEWtD/9KhFVqm4jG9Jzz6a+LVI5GC3Gin9kPzJ8ozae4MSJ9TFBGdMlv3q9mRHdg19iorikH2dy7+pOzHSmf2LPPqe1CKz7Q7AK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079077; c=relaxed/simple;
-	bh=3E5LoxECipLvfS2AgwSGX6u07NVAc3OVyjKRraCxLtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AwjF60o/3kKjtZ7R+7idyBBPCLrcYw+Y49bWp2Met1f10lXBfRTMl6zH6aXBy+r1eVxutmnkkgNGfoIX+03NqgGi5NgiUkny+/otoVopILw6hID9yRVPejYBgImTOFDYEysBC+dALsEbujn6NtzwwV79CQcSA3qI3CaHngN/owA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RN2FEnIx; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b840a001dso137218e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717079074; x=1717683874; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A05XxoAt0LbeaH967nkgJpVk8uAg3uaftb22v/uUOsU=;
-        b=RN2FEnIx2dCUkcmviMo6oP/pL/0NYjmheUMJy4Pk8eqNqGZYMRt9ePp/biXLAu23wk
-         xJazbOIvd17lVcZ7TaZJZ8vmQ7BxSR+q5K116QnF248hD7KCll4/CKCBLOkQytg7+QLs
-         +RbRBocxqJg8UwamkAMRlRV9nA84/q2nU/o2OVDOJztmQAd7++dHVp9CKNS5BwL9m7nb
-         5fW/O3lQ9TU9uhNCnjkjaoiywfDaMPX/fueuW19NCf8Hr7qUwYrv3nZ9kBIqh1MKimnx
-         EZLD0K3iXVQsJhmBa0YRS917azA/PVD/LPDl0MY1QUOhfr1kwgqDaw11+YEe+w+iYSVb
-         UpLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717079074; x=1717683874;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A05XxoAt0LbeaH967nkgJpVk8uAg3uaftb22v/uUOsU=;
-        b=aNH/Qy+J6wgb/vOg/9zRa2C5kP+n4rPNcEQEo+DGJHp5ydsYHKH85vGFc7HpgHA2zk
-         29Ks503Aebn+na49HZFOU8AAw0cZxve104TMIYvCPnhwoR8CiZuYZIzuYejJvZlIGnp0
-         GTDlWu8jTHaWlR/CQGcE7u0moLrSzIV76J02pyNE3EBays2MwOsHlqgansMEWIP97bRJ
-         dOrCF1ICE4SIQWzTuWGdyoZK75H1Z6Jit5veO7Fdpljl+1Ah7vGOK6gztkC282zKOd0f
-         RHv77zf2FcqxL6PZ9GKGy3Xfh8jczSeBLYG8nEz29IcpQSH/Vjsdfzm1HvvAZom+25jG
-         97PA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8xulrcDUktD9IJJfsEtJwKyyMzdj13KCvRvjcRzK0TP38mDsKujncrJc0TjQn3PqyHl+l7aagMiV6KZKHZe4jeg55CbR3FnXX6/Zn
-X-Gm-Message-State: AOJu0YzMIIzLIpkgIJQJTgsPBnekRYzjy9JIaWbc8h8Fr29QqQ0I5bJ3
-	P1G838NLKOCAmTuauFiv0OjLokzVzwj9sY695IABtSY5yq/z7nu9aywojnkwE0k=
-X-Google-Smtp-Source: AGHT+IF3IPCOHPkCufej0E3S4vIkJZN0bwr+uOjkvz4pFX2pYHg8b+tGuvTkupUA/Cc6jzgAiPesyQ==
-X-Received: by 2002:a19:381d:0:b0:52b:8419:db27 with SMTP id 2adb3069b0e04-52b8419db72mr77706e87.35.1717079072333;
-        Thu, 30 May 2024 07:24:32 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52970c3343esm1600677e87.214.2024.05.30.07.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:24:31 -0700 (PDT)
-Date: Thu, 30 May 2024 17:24:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	DRI Development List <dri-devel@lists.freedesktop.org>, Linux Kernel List <linux-kernel@vger.kernel.org>, 
-	Sam Ravnborg <sam@ravnborg.org>, Thierry Reding <treding@nvidia.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>, 
-	Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>, 
-	Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH v2 1/9] drm/bridge: cdns-dsi: Fix OF node pointer
-Message-ID: <mgl6dxypfj6mwzdj3l3xsb63vctxyoa3y32vuykzrojv5fuevr@akvrnmgdqwyg>
-References: <20240530093621.1925863-1-a-bhatia1@ti.com>
- <20240530093621.1925863-2-a-bhatia1@ti.com>
+	s=arc-20240116; t=1717079124; c=relaxed/simple;
+	bh=lI93q7XNVx+d7jqN8ZADdFt2wY3bkSBhba8PZ5lEbdI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Td7qpvRCmwLlXpm62o37fnnzZB7bIfPjoeW34HbVPMGRvpPOGHaHXRIL+E5IlFKW52PvF1LNuEXWqe1IphO93CRYG3Zd3G1YtV0MeVciBWj0Ek3t7bZLnBqTWN4vUrtSYa/k2+NSobfGWKfZm/DNDsvSyB3b97FN9BuEsjSekVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=DXUjjBvd; arc=none smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1717079121; x=1748615121;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lI93q7XNVx+d7jqN8ZADdFt2wY3bkSBhba8PZ5lEbdI=;
+  b=DXUjjBvdx2VKd4TZe0eaiJIZ6klx/Bd7DG0yDRV9YEajAQQThiONQgrt
+   xh/LgSeD/1p/iWqUiMzYXeBpVIVYQxjArUPvdhrY7vWKMekqABoXby6BH
+   Ve8dfJcyXQtpiBJe+BxuNXN7+5FO8llEpGjD4gm9j46d2zl4MUegDWiwc
+   S561hNHZH3lXfmaLFkHfGcEUeC8h1Jkc3nN5LaNt4QN/D0TdWbrAs+xhP
+   uM7MEY/CiLaWUwGvgmI6C6Vitwp2UhSazF7nzJ1NFwXV2RgtIbjMjxDaG
+   SQKIbMmH8tLBvpzFbrwtlxx8ocL+4B61+Ps/0ACX0CjqdpjM9BvNzW/kF
+   A==;
+X-CSE-ConnectionGUID: Dugq8QkmTZC5jZwOoUtRuA==
+X-CSE-MsgGUID: 8xoCSTJQRLiRzgrFQztK+Q==
+X-IronPort-AV: E=Sophos;i="6.08,201,1712592000"; 
+   d="scan'208";a="17740314"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 30 May 2024 22:25:15 +0800
+IronPort-SDR: 66587ea5_3Z2Kl8XGDs9fQ2b9UQTG94faoSRyLE4vBTSyLxh9pkgCGEV
+ HYiR1EVbTE5eq0qxvAR9gyG2yEoFGm4zAjAxupQ==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 May 2024 06:27:02 -0700
+WDCIronportException: Internal
+Received: from bxygm33.ad.shared ([10.45.31.229])
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 May 2024 07:25:14 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>,
+	Bean Huo <beanhuo@micron.com>,
+	Peter Wang <peter.wang@mediatek.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v7 0/3] scsi: ufs: Allow RTT negotiation
+Date: Thu, 30 May 2024 17:25:06 +0300
+Message-ID: <20240530142510.734-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530093621.1925863-2-a-bhatia1@ti.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 30, 2024 at 03:06:13PM +0530, Aradhya Bhatia wrote:
-> Fix the OF node pointer passed to the of_drm_find_bridge() call to find
-> the next bridge in the display chain.
+The rtt-upiu packets precede any data-out upiu packets, thus
+synchronizing the data input to the device: this mostly applies to write
+operations, but there are other operations that requires rtt as well.
 
-Please describe why, not what. In other words, please describe why you
-have to pass np, no device's of_node.
+There are several rules binding this rtt - data-out dialog, specifically
+There can be at most outstanding bMaxNumOfRTT such packets.  This might
+have an effect on write performance (sequential write in particular), as
+each data-out upiu must wait for its rtt sibling.
 
-> 
-> Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
->  drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> index 7457d38622b0..b016f2ba06bb 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> @@ -952,7 +952,7 @@ static int cdns_dsi_attach(struct mipi_dsi_host *host,
->  		bridge = drm_panel_bridge_add_typed(panel,
->  						    DRM_MODE_CONNECTOR_DSI);
->  	} else {
-> -		bridge = of_drm_find_bridge(dev->dev.of_node);
-> +		bridge = of_drm_find_bridge(np);
->  		if (!bridge)
->  			bridge = ERR_PTR(-EINVAL);
->  	}
-> -- 
-> 2.34.1
-> 
+UFSHCI expects bMaxNumOfRTT to be min(bDeviceRTTCap, NORTT). However,
+as of today, there does not appear to be no-one who sets it: not the
+host controller nor the driver.  It wasn't an issue up to now:
+bMaxNumOfRTT is set to 2 after manufacturing, and wasn't limiting the
+write performance.
+
+UFS4.0, and specifically gear 5 changes this, and requires the device to
+be more attentive.  This doesn't come free - the device has to allocate
+more resources to that end, but the sequential write performance
+improvement is significant. Early measurements shows 25% gain when
+moving from rtt 2 to 9. Therefore, set bMaxNumOfRTT to be
+min(bDeviceRTTCap, NORTT) as UFSHCI expects.
+
+v6 -> v7:
+Some more comments to patches 2 & 3 (Bart)
+
+v5 -> v6:
+Use blk_mq_<un>freeze_queue to drain the queues (Bart)
+Replace the rtt_set() vop by a max_num_rtt constant (Cristoph/Bart)
+
+v4 -> v5:
+Quiesce the queues before writing bMaxNumOfRTT (Bart)
+Make bDeviceRTTCap available in ufshcd_device_params_init() (Bart)
+
+v3 -> v4:
+Allow bMaxNumOfRTT to be configured via sysfs (Bart)
+
+v2 -> v3:
+Allow platform vendors to take precedence having their own rtt
+negotiation mechanism (Peter)
+
+v1 -> v2:
+bMaxNumOfRTT is a Persistent attribute - do not override if it was
+written (Bean)
+
+Avri Altman (3):
+  scsi: ufs: Allow RTT negotiation
+  scsi: ufs: Maximum RTT supported by the host driver
+  scsi: ufs: sysfs: Make max_number_of_rtt read-write
+
+ Documentation/ABI/testing/sysfs-driver-ufs | 14 +++--
+ drivers/ufs/core/ufs-sysfs.c               | 73 +++++++++++++++++++++-
+ drivers/ufs/core/ufshcd.c                  | 41 ++++++++++++
+ drivers/ufs/host/ufs-mediatek.c            |  1 +
+ drivers/ufs/host/ufs-mediatek.h            |  3 +
+ include/ufs/ufs.h                          |  2 +
+ include/ufs/ufshcd.h                       |  4 ++
+ include/ufs/ufshci.h                       |  1 +
+ 8 files changed, 132 insertions(+), 7 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
