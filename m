@@ -1,150 +1,263 @@
-Return-Path: <linux-kernel+bounces-194838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19858D42C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:13:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8093B8D42C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E15C2851B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CEB1C210AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB051078B;
-	Thu, 30 May 2024 01:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E589175AA;
+	Thu, 30 May 2024 01:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZFbD/Bos"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EezWnhBV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC40FBE8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FC117545
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717031623; cv=none; b=MMnJuMk5pe1NBfkRqbgeaZ0pvgHc/3OofMFqj8W6uj4cDQ3x0KnQ+wSg+Fyivx/26/RZXpvWhmgtLSSCRNnjCUldwPgteqG09sBZvemZFe28DY0Qt5u1Blz5nVb5dQ8itamYzT7Mb3777x9zpk+jb29Gtq+/b8qnLA9RC+68hE0=
+	t=1717031627; cv=none; b=aQNqQiCov2d6sAGkUu9Qbs3LzIRsPAPe3Qa3dZsEGuEy11GDQbDXQOa9me232OKiKNv0VhSdlSX8WZm1GlN19weOZMa2mJzfB+JEcl0EtfkUWgjSb5KCPgPSAAfTsll102mEQqajfgrr6yTSKpslmHgz0PS9ZJuZRWLJLAw8yJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717031623; c=relaxed/simple;
-	bh=Xb/f8BPIVFm2prTA2+dSu7ceaxOD559xDuyFlDo1qyM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OtizuxnEdDAE9OKUCFmGWF2lq3WlPklZqd8dF1P3f92K0vbZ4BSlZx+LkjLbfyo7O5iKy0ZrUviW8meTJOwe4g60bUKkGwON4kjKzcgVcpnzOGVY0SoMqZgdaYzuCpbEvidxifAMAy4rgJ3p78ne2WaE6Iy9g3knpAwJ5sPDJwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZFbD/Bos; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717031623; x=1748567623;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Xb/f8BPIVFm2prTA2+dSu7ceaxOD559xDuyFlDo1qyM=;
-  b=ZFbD/Bosse/mFJp8RqOdgiQxJwq+M77MRm1q5+ihm/CucbNynEPj0dof
-   l5GCISFld48kFm29DYKwDpPavcSA+578CkgxJROZLaTdm2Tc5jtol4w1F
-   jYQklMNV5dHP/Vj2R6DAXfD8D17Cx3PThyHqBgG7nuAn6LWCPN7Tufoqi
-   DCbjO6nw3O/wdwU12gMdN/i+g02fou6u3oDEREifWgGGC+oGLjSrUKSAq
-   2WAJYC7hZb2EpTMzAd4ELHetCSGy60kXV+KSMTBEG7IIKZyYcfOFoTho9
-   nGuU19c7Z9LsxjmSRtqajk737a2/bA9xUhbIKkz9Su70XhglQKPOLXuDd
-   g==;
-X-CSE-ConnectionGUID: xpPiMVdsQSuMw4vjnmf6MA==
-X-CSE-MsgGUID: ZmSfEsRQR/i1IXcCgjjPDQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13606679"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13606679"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 18:13:42 -0700
-X-CSE-ConnectionGUID: l6BtNFyOTeGtb2h7wudBRA==
-X-CSE-MsgGUID: tHIEmQFBS/uxjVreWIwDeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="66834201"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 18:13:37 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Byungchul Park <byungchul@sk.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,  <linux-kernel@vger.kernel.org>,
-  <linux-mm@kvack.org>,  <kernel_team@skhynix.com>,
-  <akpm@linux-foundation.org>,  <vernhao@tencent.com>,
-  <mgorman@techsingularity.net>,  <hughd@google.com>,
-  <willy@infradead.org>,  <david@redhat.com>,  <peterz@infradead.org>,
-  <luto@kernel.org>,  <tglx@linutronix.de>,  <mingo@redhat.com>,
-  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,  <rjgolo@gmail.com>
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-In-Reply-To: <20240530005026.GA47476@system.software.com> (Byungchul Park's
-	message of "Thu, 30 May 2024 09:50:26 +0900")
-References: <20240510065206.76078-1-byungchul@sk.com>
-	<982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
-	<20240527015732.GA61604@system.software.com>
-	<8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<44e4f2fd-e76e-445d-b618-17a6ec692812@intel.com>
-	<20240529050046.GB20307@system.software.com>
-	<961f9533-1e0c-416c-b6b0-d46b97127de2@intel.com>
-	<20240530005026.GA47476@system.software.com>
-Date: Thu, 30 May 2024 09:11:45 +0800
-Message-ID: <87a5k814tq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717031627; c=relaxed/simple;
+	bh=lcfwicAIhv+K0jpxdsaL8YKqGVirMg2TDZNQUpc39lk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDkoSXfNg9gp5vCbodmcYxR3svBEtKGyp38pyZhrcPq8q5RuuYtWA4A/Lf5ZwZDQNh/q3iXVIIrkPNVz/vvehCYAo2C1piUb/TpAx57tLzBCLYI+jRwFJi/JwGhkeOATVgYwbySOis2bf2CdGRcoicXDpNHs9ntsOUSyQosOsFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EezWnhBV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BEAEC113CC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717031627;
+	bh=lcfwicAIhv+K0jpxdsaL8YKqGVirMg2TDZNQUpc39lk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EezWnhBVWI+faDkkufEkaa6+L3V4/PGXv7l/i9xzhdTyWur/63vBrPFySd73ylpOt
+	 mNbhvKPCpuhXgp1uEiACJHtNoi2r93fVyUEew11XhXDv/OhwGlYKoGX84LnYFG9Uw1
+	 hftqJS7tDZuri6oPiErTSZTmUvJwpIxrIYQAmAeWjXNENjXWsqpRiKLCnGlULzAqOa
+	 EqYkN9hvLxxndn9zerf3Vwwa2uH7iWDT+OyP/sfE9G8ojUReJtHtWwYppUGeA54JzS
+	 hp5wb8m5369TK2QwWCYOpYJD5pKrBQ8JW9N2qALY8Qm+fagsiMv41nvk+3n/PQI7Z3
+	 ZjfDMndSFqy+g==
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e8dcad116fso21571139f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:13:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKv5t9kO9VkWytwBJtiUJiTL7e3+02OIGpSI2ldJ9pIEbxoFOaD6GZWDY9jIW0TvHuQ2sbspjrxGd1JmtElEZUucCA2ehZymM5y9iO
+X-Gm-Message-State: AOJu0Yw4gkJdfUkT/rXwK+lvQTlKAQfWbk+zmg6ZzQ6vxBAhf8eT8Wcs
+	1sf1bBWwaEjuOnLk80L+T4/LaxZRzyk5vplCiEW07TP3At21zwXXM620KVDFlQkONYbX7ch3v/m
+	9qJLZKpO2y1WcmqfOu4o/Zd7KJPjVBbeabpmY
+X-Google-Smtp-Source: AGHT+IFJlbAmTUHyMZPyp0uxyaBN5bKFFMlEsD8pvP89Kez4hnrjtLgIpLQMGASW/1AJqfbpoEBzJzNmRO1vToTUEwM=
+X-Received: by 2002:a05:6602:29c5:b0:7dd:c59c:83a5 with SMTP id
+ ca18e2360f4ac-7eaf6d2e5f4mr47171039f.9.1717031626540; Wed, 29 May 2024
+ 18:13:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+ <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com> <87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 29 May 2024 18:13:33 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
+Message-ID: <CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster order
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Byungchul Park <byungchul@sk.com> writes:
+Hi Ying,
 
-> On Wed, May 29, 2024 at 09:41:22AM -0700, Dave Hansen wrote:
->> On 5/28/24 22:00, Byungchul Park wrote:
->> > All the code updating ptes already performs TLB flush needed in a safe
->> > way if it's inevitable e.g. munmap.  LUF which controls when to flush in
->> > a higer level than arch code, just leaves stale ro tlb entries that are
->> > currently supposed to be in use.  Could you give a scenario that you are
->> > concering?
->> 
->> Let's go back this scenario:
->> 
->>  	fd = open("/some/file", O_RDONLY);
->>  	ptr1 = mmap(-1, size, PROT_READ, ..., fd, ...);
->>  	foo1 = *ptr1;
->> 
->> There's a read-only PTE at 'ptr1'.  Right?  The page being pointed to is
->> eligible for LUF via the try_to_unmap() paths.  In other words, the page
->> might be reclaimed at any time.  If it is reclaimed, the PTE will be
->> cleared.
->> 
->> Then, the user might do:
->> 
->> 	munmap(ptr1, PAGE_SIZE);
->> 
->> Which will _eventually_ wind up in the zap_pte_range() loop.  But that
->> loop will only see pte_none().  It doesn't do _anything_ to the 'struct
->> mmu_gather'.
->> 
->> The munmap() then lands in tlb_flush_mmu_tlbonly() where it looks at the
->> 'struct mmu_gather':
->> 
->>         if (!(tlb->freed_tables || tlb->cleared_ptes ||
->> 	      tlb->cleared_pmds || tlb->cleared_puds ||
->> 	      tlb->cleared_p4ds))
->>                 return;
->> 
->> But since there were no cleared PTEs (or anything else) during the
->> unmap, this just returns and doesn't flush the TLB.
->> 
->> We now have an address space with a stale TLB entry at 'ptr1' and not
->> even a VMA there.  There's nothing to stop a new VMA from going in,
->> installing a *new* PTE, but getting data from the stale TLB entry that
->> still hasn't been flushed.
+On Wed, May 29, 2024 at 1:57=E2=80=AFAM Huang, Ying <ying.huang@intel.com> =
+wrote:
 >
-> Thank you for the explanation.  I got you.  I think I could handle the
-> case through a new flag in vma or something indicating LUF has deferred
-> necessary TLB flush for it during unmapping so that mmu_gather mechanism
-> can be aware of it.  Of course, the performance change should be checked
-> again.  Thoughts?
+> Chris Li <chrisl@kernel.org> writes:
+>
+> > I am spinning a new version for this series to address two issues
+> > found in this series:
+> >
+> > 1) Oppo discovered a bug in the following line:
+> > +               ci =3D si->cluster_info + tmp;
+> > Should be "tmp / SWAPFILE_CLUSTER" instead of "tmp".
+> > That is a serious bug but trivial to fix.
+> >
+> > 2) order 0 allocation currently blindly scans swap_map disregarding
+> > the cluster->order.
+>
+> IIUC, now, we only scan swap_map[] only if
+> !list_empty(&si->free_clusters) && !list_empty(&si->nonfull_clusters[orde=
+r]).
+> That is, if you doesn't run low swap free space, you will not do that.
 
-I suggest you to start with the simple case.  That is, only support page
-reclaiming and migration.  A TLB flushing can be enforced during unmap
-with something similar as flush_tlb_batched_pending().
+You can still swap space in order 0 clusters while order 4 runs out of
+free_cluster
+or nonfull_clusters[order]. For Android that is a common case.
 
---
-Best Regards,
-Huang, Ying
+>
+> > Given enough order 0 swap allocations(close to the
+> > swap file size) the order 0 allocation head will eventually sweep
+> > across the whole swapfile and destroy other cluster order allocations.
+> >
+> > The short term fix is just skipping clusters that are already assigned
+> > to higher orders.
+>
+> Better to do any further optimization on top of the simpler one.  Need
+> to evaluate whether it's necessary to add more complexity.
+
+I agree this needs more careful planning and discussion. In Android's
+use case, the swapfile is always almost full. It will run into this
+situation after long enough swap time.
+Once the order 0 swap entry starts to pollute the higher order
+cluster, there is no going back(until the whole cluster is 100% free).
+
+> > In the long term, I want to unify the non-SSD to use clusters for
+> > locking and allocations as well, just try to follow the last
+> > allocation (less seeking) as much as possible.
+>
+> I have thought about that too.  Personally, I think that it's good to
+> remove swap_map[] scanning.  The implementation can be simplified too.
+
+Agree. I look at the commit that introduces the SSD cluster. The
+commit message indicates a lot of CPU time spent in swap_map scanning,
+especially when the swapfile is almost full. The main motivation to
+introduce the cluster in HDD is to simplify and unify the code.
+
+> I don't know whether do we need to consider the performance of HDD swap
+> now.
+
+I am not sure about that either. We can make the best effort to reduce the =
+seek.
+
+Chris
+
+> --
+> Best Regards,
+> Huang, Ying
+>
+> > On Fri, May 24, 2024 at 10:17=E2=80=AFAM Chris Li <chrisl@kernel.org> w=
+rote:
+> >>
+> >> This is the short term solutiolns "swap cluster order" listed
+> >> in my "Swap Abstraction" discussion slice 8 in the recent
+> >> LSF/MM conference.
+> >>
+> >> When commit 845982eb264bc "mm: swap: allow storage of all mTHP
+> >> orders" is introduced, it only allocates the mTHP swap entries
+> >> from new empty cluster list. That works well for PMD size THP,
+> >> but it has a serius fragmentation issue reported by Barry.
+> >>
+> >> https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp=
++Ah+NSgNQ@mail.gmail.com/
+> >>
+> >> The mTHP allocation failure rate raises to almost 100% after a few
+> >> hours in Barry's test run.
+> >>
+> >> The reason is that all the empty cluster has been exhausted while
+> >> there are planty of free swap entries to in the cluster that is
+> >> not 100% free.
+> >>
+> >> Address this by remember the swap allocation order in the cluster.
+> >> Keep track of the per order non full cluster list for later allocation=
+.
+> >>
+> >> This greatly improve the sucess rate of the mTHP swap allocation.
+> >> While I am still waiting for Barry's test result. I paste Kairui's tes=
+t
+> >> result here:
+> >>
+> >> I'm able to reproduce such an issue with a simple script (enabling all=
+ order of mthp):
+> >>
+> >> modprobe brd rd_nr=3D1 rd_size=3D$(( 10 * 1024 * 1024))
+> >> swapoff -a
+> >> mkswap /dev/ram0
+> >> swapon /dev/ram0
+> >>
+> >> rmdir /sys/fs/cgroup/benchmark
+> >> mkdir -p /sys/fs/cgroup/benchmark
+> >> cd /sys/fs/cgroup/benchmark
+> >> echo 8G > memory.max
+> >> echo $$ > cgroup.procs
+> >>
+> >> memcached -u nobody -m 16384 -s /tmp/memcached.socket -a 0766 -t 32 -B=
+ binary &
+> >>
+> >> /usr/local/bin/memtier_benchmark -S /tmp/memcached.socket \
+> >>         -P memcache_binary -n allkeys --key-minimum=3D1 \
+> >>         --key-maximum=3D18000000 --key-pattern=3DP:P -c 1 -t 32 \
+> >>         --ratio 1:0 --pipeline 8 -d 1024
+> >>
+> >> Before:
+> >> Totals      48805.63         0.00         0.00         5.26045        =
+ 1.19100        38.91100        59.64700     51063.98
+> >> After:
+> >> Totals      71098.84         0.00         0.00         3.60585        =
+ 0.71100        26.36700        39.16700     74388.74
+> >>
+> >> And the fallback ratio dropped by a lot:
+> >> Before:
+> >> hugepages-32kB/stats/anon_swpout_fallback:15997
+> >> hugepages-32kB/stats/anon_swpout:18712
+> >> hugepages-512kB/stats/anon_swpout_fallback:192
+> >> hugepages-512kB/stats/anon_swpout:0
+> >> hugepages-2048kB/stats/anon_swpout_fallback:2
+> >> hugepages-2048kB/stats/anon_swpout:0
+> >> hugepages-1024kB/stats/anon_swpout_fallback:0
+> >> hugepages-1024kB/stats/anon_swpout:0
+> >> hugepages-64kB/stats/anon_swpout_fallback:18246
+> >> hugepages-64kB/stats/anon_swpout:17644
+> >> hugepages-16kB/stats/anon_swpout_fallback:13701
+> >> hugepages-16kB/stats/anon_swpout:18234
+> >> hugepages-256kB/stats/anon_swpout_fallback:8642
+> >> hugepages-256kB/stats/anon_swpout:93
+> >> hugepages-128kB/stats/anon_swpout_fallback:21497
+> >> hugepages-128kB/stats/anon_swpout:7596
+> >>
+> >> (Still collecting more data, the success swpout was mostly done early,=
+ then the fallback began to increase, nearly 100% failure rate)
+> >>
+> >> After:
+> >> hugepages-32kB/stats/swpout:34445
+> >> hugepages-32kB/stats/swpout_fallback:0
+> >> hugepages-512kB/stats/swpout:1
+> >> hugepages-512kB/stats/swpout_fallback:134
+> >> hugepages-2048kB/stats/swpout:1
+> >> hugepages-2048kB/stats/swpout_fallback:1
+> >> hugepages-1024kB/stats/swpout:6
+> >> hugepages-1024kB/stats/swpout_fallback:0
+> >> hugepages-64kB/stats/swpout:35495
+> >> hugepages-64kB/stats/swpout_fallback:0
+> >> hugepages-16kB/stats/swpout:32441
+> >> hugepages-16kB/stats/swpout_fallback:0
+> >> hugepages-256kB/stats/swpout:2223
+> >> hugepages-256kB/stats/swpout_fallback:6278
+> >> hugepages-128kB/stats/swpout:29136
+> >> hugepages-128kB/stats/swpout_fallback:52
+> >>
+> >> Reported-by: Barry Song <21cnbao@gmail.com>
+> >> Tested-by: Kairui Song <kasong@tencent.com>
+> >> Signed-off-by: Chris Li <chrisl@kernel.org>
+> >> ---
+> >> Chris Li (2):
+> >>       mm: swap: swap cluster switch to double link list
+> >>       mm: swap: mTHP allocate swap entries from nonfull list
+> >>
+> >>  include/linux/swap.h |  18 ++--
+> >>  mm/swapfile.c        | 252 +++++++++++++++++-------------------------=
+---------
+> >>  2 files changed, 93 insertions(+), 177 deletions(-)
+> >> ---
+> >> base-commit: c65920c76a977c2b73c3a8b03b4c0c00cc1285ed
+> >> change-id: 20240523-swap-allocator-1534c480ece4
+> >>
+> >> Best regards,
+> >> --
+> >> Chris Li <chrisl@kernel.org>
+> >>
+>
 
