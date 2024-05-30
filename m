@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-195701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443198D5074
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:05:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD048D5078
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06A1728944A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6901F2222B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751A5433CF;
-	Thu, 30 May 2024 17:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86170433D4;
+	Thu, 30 May 2024 17:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PH7rV5EQ"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fTWebbH5"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390683FBB2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CEA45BE7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088699; cv=none; b=QZE42AazCTorw7h4ZWaZSlN8VnWzT6QRvGPD1af89edG1avOmynTJHjh01kwiL7SDfUefNLFTdJQvhB6Y41csQOH3QOZJiLd9HW0N3zLfTL80FE3lQoVXAcg0Cj+vrrWFD5fRYEBi0AgSuKng/iPvMtW8GKOut08EHPl8wOsMUI=
+	t=1717088729; cv=none; b=kvO62GujthnNUKSZ5JTOKYpo7XzDHt1/W/Md7IIcDBujRdUVnB18zdOwWxkQAmGxaAEJSn+r+tzU519uoFLB3x8Sn93PRkyRLMktL0w4HyijGMpQaZvwZxyJ+i4X4Kip68ZBnOoTkd9e7l8dYP4C1H7GGNrb8umCb7SxXjvC83I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088699; c=relaxed/simple;
-	bh=DAtbp+Udo51/ggghY8Ta/nQKZ1Qn63T/N+XvPyQlNIk=;
+	s=arc-20240116; t=1717088729; c=relaxed/simple;
+	bh=8HOW6GEFXN5JaVE9Dz+NHTsMgKt/6EQJMGeGB7Hdfv4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vld4/vcg7KHeQG1fgu8UQk9zEx+RAo6Q4AUhQ0XMp6Q1N72O3lDaBxl1iCMy/3IHccr9PMQ9H9vuoWsMiWF1xd93VCXuWbwIgcMMpC/eZdnDN7I5ut/FRJoYbB1knaLFvVh8vJ+gDZeo+0qriTlwdpirKgQrtwnhKeU7O/dnrp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PH7rV5EQ; arc=none smtp.client-ip=209.85.167.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jm3ZjnJ3K1/qFiWlwvP5zsEhbNmfWAF9ppizPSGCnpTSoLZMpRmRvlrR7Fxjp8t35evjRqrkwQ5pb+X6QSFZ4ncj1bfWCrS5lCSi7eFD1Yqq+PlFRmSpEvNGIIGgt82Mef23Zc3pu9B+8sqnaOzQBZ0W6FghkMgzI6cL3alKgfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fTWebbH5; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b6ccfdf28so233695e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:04:57 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso14210471fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717088696; x=1717693496; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717088726; x=1717693526; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FqM5oBlvWmtQCy/vmQxQErg1+TLSJYV7HsRivxfdSao=;
-        b=PH7rV5EQX9zjEQIF0t16yyaSQ+rBaT+CWhdOjroUum1wApUpvqRIsO39B10BSNoeKy
-         Zcebm/rE0VtbuHy/FYxnrsUSXUbRsqihu0N8z1h1II4TByeUhLNdffYd+syZ4KJpVds7
-         pd4cM7tg1kDou0alZfwcmI5UgA31aHvmqR/XUmADZ6X9Q0ZYsStLbU3470Uu3kRpsN9O
-         BlKW9cm6LZpiyrKOJLEt4K2xjY4C/sLFDxbNGHWjo17V5VVh8NH2QU0JYTgni7CSrFGg
-         9GOE/uSdY6LzQJKO1gVuroc7Ar2pQvq5z+8AlK9FbvMyuyAyNDrCjlUr/hWXhbFmtYIZ
-         KXHQ==
+        bh=6VGY34RF4O6pMILzq+WOgO73UQreTXk+gL6EU4uzeq0=;
+        b=fTWebbH51keZckXkMXsurwVrSf00xwtciarnauSQNG17dY8jE4L06/t1L6UCYo2fd0
+         fRAUwmRgkUMgmXw/0u8EWME/1kGy3RuhFsTjOpyhfVuSJQOLVJXB/G9j41DJTDxxQqkN
+         dVJ7BOk8/bbtT/dmKVs5H5e7YI7gtzThZagbiE1n6YS2hWDsmY7uo7SvAcGqCR4Jtq/f
+         mu5utYoBzCKNVlug3UpcPTs3HJn7yQj9/5JnV/OIsmjIVFlyciwoC8suNGPKNd5MwJ0M
+         E6/XmAgq/KUtE2EoxvSbGL3zmcdou49IGQc2QKMI9iIUl2mhXd6WC5ss2LPbN1XiX3hD
+         MATA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717088696; x=1717693496;
+        d=1e100.net; s=20230601; t=1717088726; x=1717693526;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FqM5oBlvWmtQCy/vmQxQErg1+TLSJYV7HsRivxfdSao=;
-        b=pcVTEVKN99dmOoH31KCtRne1hdWotaIKZBbxEdaa6TBZCgihWvZb2b9QfQakAu8sd7
-         TVAYH8AFt3B4WJxKtuRfBTfB7WswHZpE7GsO/70qYJS+B9griCKBTOr7cNphSG+oSLr0
-         d0r66LGyqy/kxXntW4OkH4C1Xq8vfd3AyinGr5NWYqmj9HxfqnY4Ima1LztO2H5z062X
-         ePNRtv2Es/ENPaQYk5zc5Zs9QPoZ9e1vVSn5LbSYsPKDJtzKCJKiZTBI52DA+uqsE1pE
-         X2muKZAm1mZXwsLRwsiR4ZbUcEFgkc3GFObECSlEbE6ei1CzSt+TshSIAZk+6hngNWes
-         LLnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlOOhwF9d7XgTTO2pvgV6LMSnZUP/EifP/8EC6O/53eEcvf8DD5gSQVUvSExmFx86/WS/uVoVYv1szahJeW9x0sdCNC8UNuWK4p0Bh
-X-Gm-Message-State: AOJu0YxFnwtzNWUJKZ/gYcoHakixX3XMCOvoy0pvaQz859J8143+qrHk
-	1OseWMT8j5Zg7heVGPw1DbAZX1TxpdoOdrv+Ec60Cbzj0bNiAP0ao23jlsPYwO8=
-X-Google-Smtp-Source: AGHT+IE1ehckPaW3Xm4BfgQOz2B6cKjcXdpFlrcjgJ5MmxIm0U32yV97sJl9mZHeHxviYNkiJCitEQ==
-X-Received: by 2002:ac2:457b:0:b0:51b:5c40:da74 with SMTP id 2adb3069b0e04-52b7d418ed1mr1803340e87.1.1717088696524;
-        Thu, 30 May 2024 10:04:56 -0700 (PDT)
+        bh=6VGY34RF4O6pMILzq+WOgO73UQreTXk+gL6EU4uzeq0=;
+        b=jkQ06i5Pc6h43I1dYzEWKOo7FJxbPGuSO7kOA/7DkB8UPB9ajHaz4/MCsY/0bQG5gp
+         ZpiXRChKSGNX5FArcTJ9FxO5Kvcq3/mQRNMQRVuti2fERP2XyM3m6XaB4CRyJsFGTGhr
+         nqXhbuFZob3wL7YC/RjV8a+BddN89Dl2r4DlLowVAJNHcfFcpWDPnLBY8RHI1aWepz/X
+         VAC76qruHaN6tPP3KGp5YWW6wkNirLiOV46Ma/UvvYRBc5dSpMQmgQZ8JUeouAKmrFYv
+         /iEanmDYKlWVwfHTQxAAiUkhFoL2QighTTHStxjj4MivyIWlnkg2HbiGs9JgYcUDY86m
+         Sj1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVbvwomQAr0KRWXzWntIbRop01NNKb8szLX0ttRI06AV2BeTy63mAIK9k7TFYIWrOQ/Wg+pAt0E4SFh7TTScbydV3ztlSmaixnAb+kH
+X-Gm-Message-State: AOJu0YwCuS2I7i6Zd0HQ5B/EKeNrFWRG1bFxgThQzT00M95eo5uUiNVm
+	j7/25ADUmh6cfj0aR+4rsin4QlKS2+1/V6UqELzXUWpRjX45mrnJE7AYPbdkJsM=
+X-Google-Smtp-Source: AGHT+IFdCZbwsZD5EOzE5VWuAXheRKV6XgmzQffRyarcmaHOpjPCbh9gz0yocfEyBSB1R1/SZN19MQ==
+X-Received: by 2002:a05:651c:336:b0:2e3:186d:45a7 with SMTP id 38308e7fff4ca-2ea847ee49bmr14379151fa.22.1717088726299;
+        Thu, 30 May 2024 10:05:26 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d3465asm19038e87.44.2024.05.30.10.04.55
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91d1c998sm157191fa.130.2024.05.30.10.05.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 10:04:55 -0700 (PDT)
-Date: Thu, 30 May 2024 20:04:54 +0300
+        Thu, 30 May 2024 10:05:25 -0700 (PDT)
+Date: Thu, 30 May 2024 20:05:24 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Abel Vesa <abel.vesa@linaro.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -73,11 +73,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
 	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Fix USB PHYs
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-qcp: Fix USB PHYs
  regulators
-Message-ID: <qn64iunks32jlaevjdr5lsdpishsk7cmygdodpekdkgwtwxt24@6oy4kfmuqgo7>
+Message-ID: <wp5yehw77bnniablt45utbonlivxxnsvrs6zxo5gzv76zrquej@plabphdqiqih>
 References: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-0-6eb72a546227@linaro.org>
- <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-1-6eb72a546227@linaro.org>
+ <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-2-6eb72a546227@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,16 +86,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-1-6eb72a546227@linaro.org>
+In-Reply-To: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-2-6eb72a546227@linaro.org>
 
-On Thu, May 30, 2024 at 07:35:45PM +0300, Abel Vesa wrote:
+On Thu, May 30, 2024 at 07:35:46PM +0300, Abel Vesa wrote:
 > The 1.2v HS PHY shared regulator is actually LDO2 from PM8550ve id J.
 > Also add the missing supplies to QMP PHYs.
 > 
-> Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
+> Fixes: 22b82135c02d ("arm64: dts: qcom: x1e80100-qcp: Enable more support")
 > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 15 ++++++++++++---
+>  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 15 ++++++++++++---
 >  1 file changed, 12 insertions(+), 3 deletions(-)
 > 
 
