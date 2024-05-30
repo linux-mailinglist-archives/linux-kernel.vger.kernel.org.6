@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-195074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539098D4742
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:37:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AD38D4745
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838A21C22885
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:37:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355A61F21A30
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC681761AE;
-	Thu, 30 May 2024 08:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCB8176185;
+	Thu, 30 May 2024 08:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I64wiQ3U"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d5+BVswU"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86E7176195
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BDD176183
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058143; cv=none; b=HkomrTsHjCx550pZBCIm7a4hIx2qYbXNrfNBrhtIevJijcPx7HLnQQItM/kf7vUEcDg/Xkd2BYIA0HyYJwmtIFIskXttTj43fEP33uYuVW+ES29PQ5m9oFixS2OoSIzkF91plDYfRuuQs5qtBwyODK/lKG/z9biw3FJbnedC8MQ=
+	t=1717058266; cv=none; b=tz03bJmBy3GFSp0zwMkD42Vp+d0VDY/TFvt8cT0zUu77sTA7AMOQYf6ki6MbwWwg78kRohJfK1BYTpWEPlAUKxlOznydQVkjnkc0aX4otAt4LEWdq13MP2+giTVTvWAS3B324/pL4hYOqwJ2qhl+MpFX9pNUMfFUMlk9ezuxyGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058143; c=relaxed/simple;
-	bh=3sS+9gSsossoY+rGrRHB96KNj3HXC+IUQnbd1IFwUWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fWv4ycFV7vIMCUtG3cO/CA2j+c0sEb7Kqvxl2F6J1JD2/5Dq7M43ADIhdhFs/iPVtcZxuVjd26+DS8kxmWJ0ESdoyEZQzBbjdkiVfyAfFGT90jIGRyR2jfCm2h6K9wxfik4H3QYQQVBjbzPuCCrou+byPMOINUYVqNIAytCve7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I64wiQ3U; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-702323ea6b2so332725b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:35:41 -0700 (PDT)
+	s=arc-20240116; t=1717058266; c=relaxed/simple;
+	bh=bZa/G5FiTxfBvV+gWC27jKqObZig5zyLCTlZJ8J4XPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hY3qSmw+/X3WTXXMM0rNF5W4Ih2dNsEnrnr0gBx2W11Sa9TL2Gv4GUwex6dnUXBY/X6zDxPE+vE/HbhVppgfW0NUE0VgWNBtQtvu3twWzFUDA6HuRJk4+uBi1rD1DWwsWGuttNWw526c4Nky0NNROoPMp1yqre3v8JVLTPE9+4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d5+BVswU; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ab11ecdbaso745190e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:37:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717058141; x=1717662941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P3dPYP7w2xcwwD4ezxBwzChfzLxfVatZgNqWhWYFewg=;
-        b=I64wiQ3Ub+DvAtsc0QmifTY54MOf3Tm8Q8CG4wE3gJARTBLhbTMb0MU65Rg52+OHDB
-         BkrqLi07nIiPIDvle4VjDFDyrhhmGb7PoUJXZueHZyQngQh280nL1dG1svOKqKjC9K5/
-         qIyPxBruLj61waIabnYZlKTUG3PELMCspqlus=
+        d=linaro.org; s=google; t=1717058263; x=1717663063; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZ5RLDbLQezuGZD6WW3IWTonXC6axeGUQvN38zFd42s=;
+        b=d5+BVswUkYezmLuvS/enUPy7snpY7gUhE21FcztTHwijAOgMOzd/ZSHE4u8mxa3SD/
+         o3/iK7/4zCsy1w9TjByCcoHIQJgO5F39UHSgcaZk3Dnms8rh2avkLg//s5X8RyO6fbyk
+         /Wpp9RnJe936EPFHputO0W86y/K/xvn28n7Ztv3NilO55T6VuietEcrqHezsq2+rPNhM
+         gLSP0qsaTfJKFz21ft0XNSMCL8rAh3szCvfiMY2XLe3Rhcsp/cVzrYbVxTgP0AV4RZG1
+         SQLigYj7VTjBwF3WYyhVVRDePHq6fDYvzE7uzaaD6FTo2BriaZtb7LFo1l8nfW1BBVEE
+         rhDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717058141; x=1717662941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P3dPYP7w2xcwwD4ezxBwzChfzLxfVatZgNqWhWYFewg=;
-        b=gqbPdpuTPwRE3f+hq3Zyr8SukUuxsujNUCjvOpYG7Wz9+NKUwepVe+sqRzlclZHa5Y
-         +j0pb8VgxOSw4CuMKQ1r+64DEr6zKPOnCBs5rKhek3pbssPUTeS8IfhSeiSY4BfgxDc8
-         HIptxcf2dCqhFHMhmbPHKWpdk4swd+PNXLd7eFFvUobZqnrTgfBzWGbOlYfIkXKtmijD
-         LOJaQXPUEk7dCkmnfD6noIZocpUTp18DBOSZEFX2xBmb0/8UYxxRrtGev6avwKQwu1Sy
-         7qV7Fa6P6Mq0XIpqym50oqILqD+7wai3p6Z6Xf5pHkPzT+/reQXUgQZeG6SimjoxU2o9
-         /EsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbrLB9hzxyOvWi7nUVpDhdHBj36xpQHBfiOB46BlH3Rp2XplF9/C8tN+sG6tvAzWOctXCmLEHG5zd1NJsob4enntOvrt+8j2XvNmBP
-X-Gm-Message-State: AOJu0YyTqmaazlEfkMy7/l53KxkeoA7GR3UnvdE3jVxSA2UKZ+a+t8UR
-	gnf7c0qKuMCoZNFFXDZ6YreK6LBwSAVD34uMrpHMP2b7/pnXUFSiriIiDGJDLg==
-X-Google-Smtp-Source: AGHT+IFl9n7DktKEcpEJ4WGQz7AcjFouxFiRzMPk6dDKBcDqPpXqbxbt5Utw0hXKMF4XUXofIeg46w==
-X-Received: by 2002:a05:6a21:99a3:b0:1b1:ec17:e59c with SMTP id adf61e73a8af0-1b264618a95mr1679425637.61.1717058141165;
-        Thu, 30 May 2024 01:35:41 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:65f0:63a9:90bb:50b8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f617390fe7sm10950635ad.146.2024.05.30.01.35.38
+        d=1e100.net; s=20230601; t=1717058263; x=1717663063;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GZ5RLDbLQezuGZD6WW3IWTonXC6axeGUQvN38zFd42s=;
+        b=UcODUqNAFLckXpPC0V6UmCm0qVefVrTmPaROH2tTMvs+GhuVWqlq71zP8r6C3nWcVc
+         Tj4aaL94/eKVPo4GIapcQA/3iqi+Rj/FVLi1QcT/6MM/7DgwHJWDVcZGUTH4fp083fno
+         t5Eh66F+xShjd73t5kRmEGpfhZK0EdiyUlb/5COdbQegNcH0OS9Y9ErZGCthfBUhM8c0
+         7T2cSz+uATiaCHgXxtiDGyroDudaqbWmWjzFRbYl3M4iqla3A2iUF0/DT6A3aFaIBc3h
+         bX+ocewsUUW0TwlH3kSF2OT4OBHJZdcioDRDB3DEQ8sSjBXPaH56bov28eoi8RMLfZFQ
+         9SPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDEopIBWRrvHb5pLe5EYftIKE3PKkY79wg+FVHxiBRW6U3lxUC7RtsUxITzwRTiy2J8g2QZgCDoCU9q9SYxmxD1DgIoJ+0kbMznfnR
+X-Gm-Message-State: AOJu0YxRuF8EDEhZFc/8zseLbcxttTIoRlepA/FHHYjOk9sO9kAIz46o
+	GSD6S0ok0otLcFEgbh+7euWTPNOFDjd3iIurUXdEFI1H6IESJTO0sERqS3bmUII=
+X-Google-Smtp-Source: AGHT+IHqo30gINH2FhSbzfIFtkvloEFgqOZkIOuXdkc9A1pHSZQJGV0RkZavzDi9N+AT7QqSl3Trxg==
+X-Received: by 2002:a19:a405:0:b0:523:8a79:ed62 with SMTP id 2adb3069b0e04-52b7d419e09mr868817e87.3.1717058263092;
+        Thu, 30 May 2024 01:37:43 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b7baf3982sm192241e87.161.2024.05.30.01.37.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:35:40 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: mediatek: mt8173: Add GPU device nodes
-Date: Thu, 30 May 2024 16:35:05 +0800
-Message-ID: <20240530083513.4135052-7-wenst@chromium.org>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-In-Reply-To: <20240530083513.4135052-1-wenst@chromium.org>
-References: <20240530083513.4135052-1-wenst@chromium.org>
+        Thu, 30 May 2024 01:37:42 -0700 (PDT)
+Date: Thu, 30 May 2024 11:37:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <swboyd@chromium.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Kaehlcke <mka@chromium.org>, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	quic_ppratap@quicinc.com, quic_jackp@quicinc.com, Doug Anderson <dianders@google.com>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sc7180: Disable SS instances in
+ park mode
+Message-ID: <tziambdwgp4nrgrhr6z2hl7crrw32ztpv63wcsc3h3hthformm@ylc7la6jrqr7>
+References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
+ <20240530082556.2960148-2-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530082556.2960148-2-quic_kriskura@quicinc.com>
 
-The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
-of the Series6XT, another variation of the Rogue family of GPUs.
+On Thu, May 30, 2024 at 01:55:55PM +0530, Krishna Kurapati wrote:
+> On SC7180, in host mode, it is observed that stressing out controller
+> in host mode results in HC died error and only restarting the host
+> mode fixes it. Disable SS instances in park mode for these targets to
+> avoid host controller being dead.
 
-On top of the GPU is a glue layer that handles some clock and power
-signals.
+Just out of curiosity, what is the park mode?
 
-Add device nodes for both.
+> 
+> Reported-by: Doug Anderson <dianders@google.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 0b766e7fe5a2 ("arm64: dts: qcom: sc7180: Add USB related nodes")
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 2b481e20ae38..cc93b5675d5d 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -3063,6 +3063,7 @@ usb_1_dwc3: usb@a600000 {
+>  				iommus = <&apps_smmu 0x540 0>;
+>  				snps,dis_u2_susphy_quirk;
+>  				snps,dis_enblslpm_quirk;
+> +				snps,parkmode-disable-ss-quirk;
+>  				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
+>  				phy-names = "usb2-phy", "usb3-phy";
+>  				maximum-speed = "super-speed";
+> -- 
+> 2.34.1
+> 
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 136b28f80cc2..3d7b9cc20a16 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -993,6 +993,30 @@ u2port1: usb-phy@11291000 {
- 			};
- 		};
- 
-+		gpu: gpu@13000000 {
-+			compatible = "mediatek,mt8173-gpu", "img,powervr-6xt";
-+			reg = <0 0x13000000 0 0x10000>;
-+			interrupts = <GIC_SPI 217 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&mfgtop CLK_MFG_G3D>,
-+				 <&mfgtop CLK_MFG_MEM>,
-+				 <&mfgtop CLK_MFG_AXI>;
-+			clock-names = "core", "mem", "sys";
-+			power-domains = <&mfgtop>;
-+		};
-+
-+		mfgtop: clock-controller@13fff000 {
-+			compatible = "mediatek,mt8173-mfgtop";
-+			reg = <0 0x13fff000 0 0x1000>;
-+			clocks = <&topckgen CLK_TOP_AXI_MFG_IN_SEL>,
-+				 <&topckgen CLK_TOP_MEM_MFG_IN_SEL>,
-+				 <&topckgen CLK_TOP_MFG_SEL>,
-+				 <&clk26m>;
-+			clock-names = "sys", "mem", "core", "clk26m";
-+			power-domains = <&spm MT8173_POWER_DOMAIN_MFG>;
-+			#clock-cells = <1>;
-+			#power-domain-cells = <0>;
-+		};
-+
- 		mmsys: syscon@14000000 {
- 			compatible = "mediatek,mt8173-mmsys", "syscon";
- 			reg = <0 0x14000000 0 0x1000>;
 -- 
-2.45.1.288.g0e0cd299f1-goog
-
+With best wishes
+Dmitry
 
