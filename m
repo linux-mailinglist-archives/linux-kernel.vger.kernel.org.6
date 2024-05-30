@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-195171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12888D4875
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D41D88D4878
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6451F23BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749B11F2369E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B536F318;
-	Thu, 30 May 2024 09:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A726F313;
+	Thu, 30 May 2024 09:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ck6Yt9J7"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i6ouBkYa"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A596183962;
-	Thu, 30 May 2024 09:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FC76F301
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717061348; cv=none; b=jjUncfO6OGRvXAlnXghQS/UbUK7nXO/+hj0ZWfwWqzeXFWbN/HDeLd1GDhi5V8B3/NXJYat92muWMTG6pyZMLRf8ffHM8Ka0KXUar+zliVzWjGw+KeAPY8HqHAaWvwAvH+kkY4EmkF1Zy3SKuH6U26p/HdHW47YqOXRSPHdi3l0=
+	t=1717061370; cv=none; b=FlIJev4nW00xgTnCGf00LNXyuKTZ9L5BJEHXi1PGsNnGU7R1xitB8g7CCQRYPEMODcbWZtM3/G+jReg5tN2+r/fUA4L4JyLC3ioXZgaWV8aGKKpqJOeM/3fcARU3OlI+B1Yhxu8o4N3o4Q4keFPQ/qMbsumrJiJXjXot2E+KPws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717061348; c=relaxed/simple;
-	bh=wKVeJ7fnKd8NgFHLtf7JG/ayXhsMMo5mAdUL+9cYU7s=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zk7U7L97WMFy0OBM3xhXa1dkqEL1PiZax6bPW2v3dQswanFc4ywT0eMkvrTYEZACH1kqb/DdruNdDr6pgEc+L44FGPS+HM/HNjfvuTgGqWL+yTvqYG5NRziNOuXVY8KXnRZP+lJZiL9994NP0kW4U7f+/gkZkS33S9z9siDK0Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ck6Yt9J7; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U4Twj5005420;
-	Thu, 30 May 2024 05:28:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=S92jPjeTNLSbmePD/QfgtR6nvo1
-	nMlMgTlN0fWIXkno=; b=ck6Yt9J7l57Tezypk1LTLvHkdjtRdYpR5/9f0A2y1O1
-	DjrbM5grjnk4RDafuxRze2y/6D4B303NvGQZQlpwYKxDq4SPNIJvLhqUHmEkyAb4
-	mFP2gPDcN2/wGP1LbfotCqmzcat3l5aSRsK1BzBar/V3L4byVbCVc3VqADtsZf+j
-	67v92Tgu62xj16ZzCAjO1luVpxy4d0soNS50iF4PuFlFNJm/OeJVQHO7N++5W1K7
-	m9IobQvFyonSoVzvKvy2dOYHDQ2fLxHxzk2ndFs1+oghnReI42V2U6SyLbr5k+Tm
-	Tb9emJYALej+u1bGSSvhr/JALTeSaEI5RIgwWsTndCA==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3yeddx200q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 05:28:52 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44U9SpVG054265
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 30 May 2024 05:28:51 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 30 May 2024 05:28:50 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 30 May 2024 05:28:50 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 30 May 2024 05:28:50 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.151])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44U9SdKb007810;
-	Thu, 30 May 2024 05:28:42 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        Lars-Peter Clausen
-	<lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        "Jonathan Cameron" <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] iio: frequency: adrf6780: rm clk provider include
-Date: Thu, 30 May 2024 12:28:34 +0300
-Message-ID: <20240530092835.36892-1-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717061370; c=relaxed/simple;
+	bh=Mzwpc9HSOPfDS9J1k9xeAWmoD+azW6P9PFcyGQzLf1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uH5tJoeYl8mO6Lt1F1luYCHZIfADr2IEAUVK6fGz9/J3uW8ksR+xRuxa//GUsz0N8H8C5wG3vY4HOSWUcV9YetgtRl3/Xbazox6nYU+JlNAU9WQMbzpo4Zvd4KIS655EKAY1WpmS6UIyU2/lP4qZPrSsSluLxwpm/nxpTeDi85M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i6ouBkYa; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42121d28664so7063845e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717061366; x=1717666166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ma+zkUDMFmRGmAdFFiltA3V8CcE1ips8EycBhVAAsJk=;
+        b=i6ouBkYaspgGtfIfk9V8EzysRUqBkF7Tze4Ln7E81PyZ2euksDTMy7lgltvNfT76S4
+         LSYhCEllVMqjhOC5QKGRNLcb9rur5xEBaU7xXYiuzm1Jm0YSpqivutwqu65/gYm2koM9
+         pIlmvJ0ekR+jwEuj1SHCjZkLmZM5MFiDLizJtRcB6hU27+HX6ZwHA4xumMy0WfjEAeNk
+         i80zmMnmEwZg1e7mesbDXWW2aTIea8AKujRMn8KjeMuhUaH+y701PqkKDaZ5geo/huiN
+         FP8EHkMighRauxgEZqLYP5uAg3wa9uSdO3NhLKrFsunfWWvNmVqnSjH/WIdAbnJOr6Ii
+         r7+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717061366; x=1717666166;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ma+zkUDMFmRGmAdFFiltA3V8CcE1ips8EycBhVAAsJk=;
+        b=efA8yzxBZSWmxCvNvOiJBHr9rmYabAn16NUmPb6gXt8iVpkVxNGkMk4NPFTaTHBj/t
+         1BMyZ9FendRgCNL/yc+whStPWfZ86h/0D8BKN0pnnFJwES4qGuTJtM2RRh86MxJ7VFed
+         z6tf/8xn3ET+mvoeb+1lKj2Y3ewUfm427UppDobc09ggHfZS1HVqf1WNFrM3tFfrYAmG
+         guR786IdEexotkumDfGlNh+KwlN3JXVmOuxiGHHbO14W2WB50vVNFdXTdYPbeSh6HgA/
+         /oN7ACDm9LYswu+zPzA3BTs8f6PhwIxjK8pM5Blq+0vRTQ338jXqVSVnbs/TqFLI0zjR
+         WdwQ==
+X-Gm-Message-State: AOJu0YwjKji7Mqo1UsY+Yoe/namDZPMr1BLQXdjVYqLQqFsbplpOaYxP
+	4NNGQKvuSPIc73xiWx8++vnJJ/39xwxUxxUrTDAEIgcvLCJZfTHIOpd0mGXPALgoY2Vox/dlIoc
+	U
+X-Google-Smtp-Source: AGHT+IF/nthLELANpgmLRmO6xyVsD7IA/WH2LIwNU2QgfY56qcIKeDpZWXMGEctQ+ahsgnu6FOq7dA==
+X-Received: by 2002:a05:600c:45c4:b0:421:c8a:424e with SMTP id 5b1f17b1804b1-4212781ac4emr19165455e9.10.1717061366464;
+        Thu, 30 May 2024 02:29:26 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:aae:8a32:91fa:6bf5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42127059901sm19369075e9.3.2024.05.30.02.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 02:29:26 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	brgl@bgdev.pl,
+	linus.walleij@linaro.org,
+	Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 0/3] gpiolib: cdev: tidy up kfifo handling
+Date: Thu, 30 May 2024 11:29:25 +0200
+Message-ID: <171706136138.33273.12296733431611345251.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240529131953.195777-1-warthog618@gmail.com>
+References: <20240529131953.195777-1-warthog618@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: 11PDa0Vonh-z80a56N4JX0SRcgys9VmT
-X-Proofpoint-ORIG-GUID: 11PDa0Vonh-z80a56N4JX0SRcgys9VmT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_06,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- clxscore=1011 mlxlogscore=898 priorityscore=1501 adultscore=0 bulkscore=0
- phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2405300070
 
-The driver has no clock provider implementation, therefore remove the
-include.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Fixes: 63aaf6d06d87 ("iio: frequency: adrf6780: add support for ADRF6780")
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
- drivers/iio/frequency/adrf6780.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/iio/frequency/adrf6780.c b/drivers/iio/frequency/adrf6780.c
-index b4defb82f37e..3f46032c9275 100644
---- a/drivers/iio/frequency/adrf6780.c
-+++ b/drivers/iio/frequency/adrf6780.c
-@@ -9,7 +9,6 @@
- #include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
--#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/iio/iio.h>
+On Wed, 29 May 2024 21:19:50 +0800, Kent Gibson wrote:
+> This series is a follow up to my recent kfifo initialisation fix[1].
+> 
+> Patch 1 adds calling INIT_KFIFO() on the event kfifo in order to induce
+> an oops if the kfifo is accessed prior to being allocated.  Not calling
+> INIT_KFIFO() could be considered an abuse of the kfifo API. I don't
+> recall, but it is possible that it was not being called as we also make
+> use of kfifo_initialized(), and the assumption was that it would return
+> true after the INIT_KFIFO() call. In fact it only returns true once
+> the kfifo has been allocated.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/3] gpiolib: cdev: Add INIT_KFIFO() for linereq events
+      commit: 35d848e7a1cbba2649ed98cf58e0cdc7ee560c7a
+[2/3] gpiolib: cdev: Refactor allocation of linereq events kfifo
+      commit: 4ce5ca654a761462a222164e96b8ab953b8cacab
+[3/3] gpiolib: cdev: Cleanup kfifo_out() error handling
+      commit: 2ba4746b418dcffadb3b135657fea8d3e62b4c30
+
+Best regards,
 -- 
-2.45.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
