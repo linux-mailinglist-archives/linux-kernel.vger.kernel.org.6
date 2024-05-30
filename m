@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-194873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B13F8D4352
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:05:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426118D4354
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3822E283613
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2C228108C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584B1B80F;
-	Thu, 30 May 2024 02:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C472C36B0D;
+	Thu, 30 May 2024 02:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XypK4/JW"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iDIdPX/F"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A9A22EED
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32EB2561B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717034691; cv=none; b=oX6ZHva4eAhG0yFGqF6HmyLekqwxUhIWiUwvdWqOqVK6rXJ8rqGj7qQO/dIMPApV7p1wZATnwJn71Td2UE5zfOcqU76efTF6fBND6A7pvnFDM1GI0IaX2f8D5wve7WI35D6BG6OIpKUMzzLXkJQ26cusvoymW+KbwFkvhP5/Qac=
+	t=1717034692; cv=none; b=VQbj6Jkvl2hsAEyPIAEJsanfyZlBMjXuT/irt8IdiVka+Ku4BtC7wVUte8mEZiyYVXJPRSf8pcYe/CquGX91Y3b+3ME7NaOKMTjuXQHlcC2VIfXSASZh9AgWg9m5GOBz/P0aXnI7S3DNdraPsPOSLCTbv4zMq5LGPC6isOkOT9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717034691; c=relaxed/simple;
-	bh=DCLpbiumVdaZe+rSZntSUm/RXQvdQ4mbHP4ZLPPiJzY=;
+	s=arc-20240116; t=1717034692; c=relaxed/simple;
+	bh=olbTV7Fu3Lpl24wdQWYrkOtU+2SdBNDLdeupk40G+v0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XhiJcyuwlPs7AlTqdBTTb78217duxwKy1zkFEFxqgNrAlDXQjVwhOBuO+Z790phYy7BsQpMM3v0YZOnmdjC6whCOvf6xJzyNrraf2xWsAwtxP2KPhUi31QXMwq9UhryaSfEo2x3YxyJC93olxPeMf3jX8fgo2VSd2kC0mKufV+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XypK4/JW; arc=none smtp.client-ip=115.124.30.100
+	 MIME-Version; b=Q4Q24Yj307FqGg8wrb/J0mSn8bgkhydq6MwEeOfzYt/o4VamdJO8U01DAtNGzRYfe55+AYpCa5Mkq+nEUacdJUZAaN0mljR9ik6KXn+ENEgOkF+Rqt3OYDB8274N/tSkUggyB1bW4GtptsSFpUETUCEcv95GhhHMON1ywy78Nbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iDIdPX/F; arc=none smtp.client-ip=115.124.30.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1717034681; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=OpKbZmXRrURMX+/QsaD7+TkYK79RF0tdTg/q8PuO7h4=;
-	b=XypK4/JWee0Alk9Dp1YxzwUyqWQRv1drfxnEnzpZy50yvbcyg5h+GsSs7+GS6MgxEnFsZkE/Z3ETrncSO+eU8tmO5STBbjQoi0ntP8FL+tNwUG09AVAeVN5On1/2LxgE9YWz6Nq9nI67f+JNzSQyVOwRkkwb/FKHjrH/sZsGoaE=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7V1J68_1717034679;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7V1J68_1717034679)
+	t=1717034682; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ptAk81AGNsYnCqrfWiyusE+CUxd4N7JUTOqMyRP+zl4=;
+	b=iDIdPX/FFE6LVEsTBotYyeL0trHPIbAalt0Vwjn28aIHpAxHSGajmT4B30rRLojiWOEJVI6Mn5jqnbI0qCQs+kOhUf3Y5OPqIyJDVNsJ8hZ5zKLEF2fl43ILgFJ4QvtN0FL8Tp3DdogDFuo6sdEcZptvX5kGypH/wcD04S0vae8=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7V3uQV_1717034680;
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7V3uQV_1717034680)
           by smtp.aliyun-inc.com;
-          Thu, 30 May 2024 10:04:39 +0800
+          Thu, 30 May 2024 10:04:40 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -56,9 +56,9 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/6] mm: shmem: add mTHP size alignment in shmem_get_unmapped_area
-Date: Thu, 30 May 2024 10:04:16 +0800
-Message-Id: <4d0b226f2a14f93d156a01855db32ff562547bcc.1717033868.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH v3 6/6] mm: shmem: add mTHP counters for anonymous shmem
+Date: Thu, 30 May 2024 10:04:17 +0800
+Message-Id: <f2989a856b48bafefad5d545f395a78387ce1a4c.1717033868.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
 References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
@@ -70,104 +70,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Although the top-level hugepage allocation can be turned off, anonymous shmem
-can still use mTHP by configuring the sysfs interface located at
-'/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled'. Therefore,
-add alignment for mTHP size to provide a suitable alignment address in
-shmem_get_unmapped_area().
+Add mTHP counters for anonymous shmem.
 
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Tested-by: Lance Yang <ioworker0@gmail.com>
 ---
- mm/shmem.c | 36 +++++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 9 deletions(-)
+ include/linux/huge_mm.h |  3 +++
+ mm/huge_memory.c        |  6 ++++++
+ mm/shmem.c              | 18 +++++++++++++++---
+ 3 files changed, 24 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 909cfc67521d..212cca384d7e 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -281,6 +281,9 @@ enum mthp_stat_item {
+ 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+ 	MTHP_STAT_SWPOUT,
+ 	MTHP_STAT_SWPOUT_FALLBACK,
++	MTHP_STAT_FILE_ALLOC,
++	MTHP_STAT_FILE_FALLBACK,
++	MTHP_STAT_FILE_FALLBACK_CHARGE,
+ 	__MTHP_STAT_COUNT
+ };
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1360a1903b66..3fbcd77f5957 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+ DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
++DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
++DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
++DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
+ 
+ static struct attribute *stats_attrs[] = {
+ 	&anon_fault_alloc_attr.attr,
+@@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] = {
+ 	&anon_fault_fallback_charge_attr.attr,
+ 	&swpout_attr.attr,
+ 	&swpout_fallback_attr.attr,
++	&file_alloc_attr.attr,
++	&file_fallback_attr.attr,
++	&file_fallback_charge_attr.attr,
+ 	NULL,
+ };
+ 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 493873d7246c..efc093ee7d4d 100644
+index efc093ee7d4d..cdcc3b919bca 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -2394,6 +2394,7 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 	unsigned long inflated_len;
- 	unsigned long inflated_addr;
- 	unsigned long inflated_offset;
-+	unsigned long hpage_size;
+@@ -1773,6 +1773,9 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
  
- 	if (len > TASK_SIZE)
- 		return -ENOMEM;
-@@ -2412,8 +2413,6 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 
- 	if (shmem_huge == SHMEM_HUGE_DENY)
- 		return addr;
--	if (len < HPAGE_PMD_SIZE)
--		return addr;
- 	if (flags & MAP_FIXED)
- 		return addr;
- 	/*
-@@ -2425,8 +2424,11 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 	if (uaddr == addr)
- 		return addr;
- 
-+	hpage_size = HPAGE_PMD_SIZE;
- 	if (shmem_huge != SHMEM_HUGE_FORCE) {
- 		struct super_block *sb;
-+		unsigned long __maybe_unused hpage_orders;
-+		int order = 0;
- 
- 		if (file) {
- 			VM_BUG_ON(file->f_op != &shmem_file_operations);
-@@ -2439,18 +2441,34 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 			if (IS_ERR(shm_mnt))
- 				return addr;
- 			sb = shm_mnt->mnt_sb;
-+
-+			/*
-+			 * Find the highest mTHP order used for anonymous shmem to
-+			 * provide a suitable alignment address.
-+			 */
+ 			if (pages == HPAGE_PMD_NR)
+ 				count_vm_event(THP_FILE_FALLBACK);
 +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			hpage_orders = READ_ONCE(huge_anon_shmem_orders_always);
-+			hpage_orders |= READ_ONCE(huge_anon_shmem_orders_within_size);
-+			hpage_orders |= READ_ONCE(huge_anon_shmem_orders_madvise);
-+			hpage_orders |= READ_ONCE(huge_anon_shmem_orders_inherit);
-+			order = highest_order(hpage_orders);
-+			hpage_size = PAGE_SIZE << order;
++			count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
++#endif
+ 			order = next_order(&suitable_orders, order);
+ 		}
+ 	} else {
+@@ -1792,9 +1795,15 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 		if (xa_find(&mapping->i_pages, &index,
+ 				index + pages - 1, XA_PRESENT)) {
+ 			error = -EEXIST;
+-		} else if (pages == HPAGE_PMD_NR) {
+-			count_vm_event(THP_FILE_FALLBACK);
+-			count_vm_event(THP_FILE_FALLBACK_CHARGE);
++		} else if (pages > 1) {
++			if (pages == HPAGE_PMD_NR) {
++				count_vm_event(THP_FILE_FALLBACK);
++				count_vm_event(THP_FILE_FALLBACK_CHARGE);
++			}
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
++			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
 +#endif
  		}
--		if (SHMEM_SB(sb)->huge == SHMEM_HUGE_NEVER)
-+		if (SHMEM_SB(sb)->huge == SHMEM_HUGE_NEVER && !order)
- 			return addr;
+ 		goto unlock;
  	}
- 
--	offset = (pgoff << PAGE_SHIFT) & (HPAGE_PMD_SIZE-1);
--	if (offset && offset + len < 2 * HPAGE_PMD_SIZE)
-+	if (len < hpage_size)
-+		return addr;
-+
-+	offset = (pgoff << PAGE_SHIFT) & (hpage_size - 1);
-+	if (offset && offset + len < 2 * hpage_size)
- 		return addr;
--	if ((addr & (HPAGE_PMD_SIZE-1)) == offset)
-+	if ((addr & (hpage_size - 1)) == offset)
- 		return addr;
- 
--	inflated_len = len + HPAGE_PMD_SIZE - PAGE_SIZE;
-+	inflated_len = len + hpage_size - PAGE_SIZE;
- 	if (inflated_len > TASK_SIZE)
- 		return addr;
- 	if (inflated_len < len)
-@@ -2463,10 +2481,10 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 	if (inflated_addr & ~PAGE_MASK)
- 		return addr;
- 
--	inflated_offset = inflated_addr & (HPAGE_PMD_SIZE-1);
-+	inflated_offset = inflated_addr & (hpage_size - 1);
- 	inflated_addr += offset - inflated_offset;
- 	if (inflated_offset > offset)
--		inflated_addr += HPAGE_PMD_SIZE;
-+		inflated_addr += hpage_size;
- 
- 	if (inflated_addr > TASK_SIZE - len)
- 		return addr;
+@@ -2168,6 +2177,9 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+ 		if (!IS_ERR(folio)) {
+ 			if (folio_test_pmd_mappable(folio))
+ 				count_vm_event(THP_FILE_ALLOC);
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
++#endif
+ 			goto alloced;
+ 		}
+ 		if (PTR_ERR(folio) == -EEXIST)
 -- 
 2.39.3
 
