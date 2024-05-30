@@ -1,71 +1,56 @@
-Return-Path: <linux-kernel+bounces-195774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34028D51B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:21:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD3D8D51B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A521F24155
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0782853D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49884D131;
-	Thu, 30 May 2024 18:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED5D4D5B0;
+	Thu, 30 May 2024 18:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHO0V89L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQFwHd9n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EF645BE7;
-	Thu, 30 May 2024 18:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE4F45BE7;
+	Thu, 30 May 2024 18:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717093302; cv=none; b=n7eQ2LYT1SXR1tXQ6lw69TDCZLBzJqkBLnE6tD1QZCPuqb+S010NU8iwFHEsMaZC003LRFed1FRRbJCpbceBvaXoN1XTzh8npC195kj58d1BzKzYeCYz7e5WtsAryi5Xuk7pqBjNBZtvpARZuxPY05h1v8PJy4OTjIhckd9Z6oE=
+	t=1717093405; cv=none; b=VL7zGP/odIfJrMhFcuJMPNIFjAql+eLfrw8SYnMy6lo0AP+IfEJEtgl+80qvLFYnpY/smd2jsiN0nW9l1x6eVGjL4lOFqJH/B+qqlqfMCgVj8vm8OZujeNqpoOivmJJo795AYZtMqMY7rw/h/M+UHsiWTEMAzVKuKlaU48/TaN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717093302; c=relaxed/simple;
-	bh=6dQOO04MinyW9E4u0n2nsSoky25+ryVk4N7a+/FDhrA=;
+	s=arc-20240116; t=1717093405; c=relaxed/simple;
+	bh=UFD4h93+j16vWqtu35EKx3VSnv6aiNL7yfTJXeQSQM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSnyWMGxtWo+Q+w0ykxKyMUQVgSrd/nzkDliBlvFi2i348+kUF2GouEE+3KQR5P++qZouPqBNtSc1yiwdyX6fg5tAefH8dpHYHCDRP7D04NmUjnWYeuEntwN0QRuB/AK5KRjrv9WAdc1YKDaO1Q3BD16F4V7+S+g//0oWbL1lJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHO0V89L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4E2C2BBFC;
-	Thu, 30 May 2024 18:21:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=U65zIROFSfPiYZnkocVHfO2KwW5zwCLxlEjJEoHpzr0veON43pCQSaNkJDjp48SSBRr1idVvx6UpAyUnVff4EQ4y02jdEkgsgGQqfKjx9gVt1D/umsuoyDbbf4bnAQXVP6xOm6KMuvuFoPecRoasWnNGvIl6F51YBZvAox2mg2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQFwHd9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC1BC32781;
+	Thu, 30 May 2024 18:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717093301;
-	bh=6dQOO04MinyW9E4u0n2nsSoky25+ryVk4N7a+/FDhrA=;
+	s=k20201202; t=1717093405;
+	bh=UFD4h93+j16vWqtu35EKx3VSnv6aiNL7yfTJXeQSQM8=;
 	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=CHO0V89LGzH5wFW93SZ9frknnlgZbTYyC0kuz5CuCNsartYushh+EUK85l3CaPFCL
-	 dAFds4FTeTS8nUelvZkafpGbWA81+jL+KgGNItHPgnMrVPWzUzIhm56CCTxsklCzjW
-	 IxooqP2t2iyr40g0K9VT5/H5NuDG1iIpjFB39QQZ89mnq1muVPnny3At9/7QBdZi/3
-	 fOhBtN+aDuKiKZquVdjPScywGHppo3dkMLVcxFB0bpNa2MD8akLR00eGGZzaBbk4f2
-	 uZ56gVc6LPAv6y9t2B6D9KpJ11jpwSRoxATs7txqITSvQ3mV9mF888ki5fpeFWfcai
-	 Bsr5BdcOeYR7w==
+	b=MQFwHd9ndaJYZq5AsMeFhLirahmWH/J+FAO6wdmu/D8w5NMLFiRn5M09+JEEa1lXj
+	 GjYF+/vj2Z0BBG9aRu6IWwOF/AJLFwMK2GmJMdCitFhN1ie06Ol+pDJY/wr5NnTuq3
+	 1eU9OKG0LWXSylqtE2OYvvpGve7bswz/1jeAjcdBmKSUHXLu5u7WuTgSGw+IIxiM28
+	 Z7nF0n6umkQHfGa4MlyfEi8WN07v7QucYhBxKqFmtOY6R9GNmTJPyjDKhC6R+cImjp
+	 zWGutLSLn9/uq5qEIZSHK5g0db5ceRgw8rwarWT/5LvI8YgiPJcUjZJ5m2bXw7/bNj
+	 NFONAHfzzd8jA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D583ACE075F; Thu, 30 May 2024 11:21:40 -0700 (PDT)
-Date: Thu, 30 May 2024 11:21:40 -0700
+	id 7CD02CE075F; Thu, 30 May 2024 11:23:24 -0700 (PDT)
+Date: Thu, 30 May 2024 11:23:24 -0700
 From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
-	Joel Fernandes <joel@joelfernandes.org>, eeraj.upadhyay@kernel.org,
-	John Ogness <john.ogness@linutronix.de>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: arm-linux-gnueabihf-ld:
- kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
- `__bad_cmpxchg' follow
-Message-ID: <2e2038d2-00b5-4f54-884f-d04d7165bbf5@paulmck-laptop>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the rcu tree
+Message-ID: <f4304c77-7b1e-49d3-8a32-70f40f2d068d@paulmck-laptop>
 Reply-To: paulmck@kernel.org
-References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
- <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
- <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
- <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
- <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
- <38442e3d-1e43-4894-b126-b4258d331a32@app.fastmail.com>
+References: <20240529081011.6f8c3366@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,56 +59,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <38442e3d-1e43-4894-b126-b4258d331a32@app.fastmail.com>
+In-Reply-To: <20240529081011.6f8c3366@canb.auug.org.au>
 
-On Thu, May 30, 2024 at 08:05:50PM +0200, Arnd Bergmann wrote:
-> On Thu, May 30, 2024, at 19:24, Paul E. McKenney wrote:
-> > On Thu, May 30, 2024 at 09:37:21AM -0700, Paul E. McKenney wrote:
-> >> On Thu, May 30, 2024 at 03:27:58PM +0200, Arnd Bergmann wrote:
+On Wed, May 29, 2024 at 08:10:11AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > And for an untested first attempt at a fix.
-> >
-> > What did I mess up this time?  ;-)
-> >
+> In commit
 > 
-> I think only the comment:
+>   6bfd01c430b9 ("rcu/nocb: Don't use smp_processor_id() in preemptible code")
 > 
-> > 
-> >  	switch (size) {
-> > -#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-> > +#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-> > +	case 1:
-> > +		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-> > +		break;
-> > +#else
+> Fixes tag
 > 
-> "min ARCH >= ARMv6K" now applies to the #else side, while the
-> #if side is the early ARMv6 (pre-v6K).
+>   Fixes: 8feeeba60711 ("rcu/nocb: Use kthread parking instead of ad-hoc implementation")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> Maybe you meant
+> 
+> Fixes: a1ae3280882c ("rcu/nocb: Use kthread parking instead of ad-hoc implementation")
 
-Good catch!
-
-I plan to fold the following into the original with attribution.
+Thank you for catching this, and will fix in a few days.
 
 							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
-index fd9b99f4dca46..34674a4118755 100644
---- a/arch/arm/include/asm/cmpxchg.h
-+++ b/arch/arm/include/asm/cmpxchg.h
-@@ -162,11 +162,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
- 	prefetchw((const void *)ptr);
- 
- 	switch (size) {
--#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-+#ifdef CONFIG_CPU_V6	/* min ARCH < ARMv6K */
- 	case 1:
- 		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
- 		break;
--#else
-+#else /* min ARCH >= ARMv6K */
- 	case 1:
- 		do {
- 			asm volatile("@ __cmpxchg1\n"
 
