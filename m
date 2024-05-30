@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-195550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35468D4E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856208D4E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB461F229BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61E21C20A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BECB17D893;
-	Thu, 30 May 2024 14:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DED617F50A;
+	Thu, 30 May 2024 14:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEiRWGzA"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwT4UPMa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B310F143C40;
-	Thu, 30 May 2024 14:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709DF17D8BC;
+	Thu, 30 May 2024 14:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717080592; cv=none; b=QD6CePrAiv0o5mF28TlZCUIrj02llQsfCe2HavoRriRctk0f61sruAbXI0CPAHpBSj6kxTjL1SktJgNU2/KmNuC4uT5lbd+W9Z3qyL/oaZOHmWMoYBvDFLzSe3G9GGaLm+iocC7KGZA1tXBdmwzEjNAkcCsAZTNDZVpBlc7YOEE=
+	t=1717080627; cv=none; b=uWw3Gk+prYbPAJ+VdOn825hSZqZZiQz2Dq4ZYS4pFcbaJPmI8vx+Jgzbyw3PzTLJQ9J3gb1c2Soi1zOdEkK1EairPQVy+FI1Ym03lzAy+iKbbVKc2YVKUZIad8Y80R7ExW9BC0wJRkv/U+p2V7Xh2OLLYzSV8YFOw7eOwo8Zogk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717080592; c=relaxed/simple;
-	bh=hi5q5eR3luXu0JMBSCQpSKn2pC1+yDtt03BNLMulJM0=;
+	s=arc-20240116; t=1717080627; c=relaxed/simple;
+	bh=prxNjWcocA1xfeZ7ScnSmd77MXh4m2kvHooi1WN7euE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ocHkHR0ER51wpOVJ/eC7I2XHcankHZBSeh0ATND9eKpnbGxyKTPDxFIUHvTUCrJ+v/RlD0pEMlcQRM0fI79fkANbINEVrXvXixTrtm1R4gbPggQGKyLAmF9DBzcePpLUX3bKgficagpGiNjFY6+8HLey2wPyOvckcMTtWplRkKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEiRWGzA; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a673a60f544so23441766b.3;
-        Thu, 30 May 2024 07:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717080589; x=1717685389; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IFZxm9XZ09eTU3EN3teoJoprrvy9B6+gk/P+tYdPxNs=;
-        b=NEiRWGzAst3mqbe5+4waZhP4XK1YKIYyE83FbMHAE9sSzNM30yPyBpzTvO7x7/gp/P
-         PEiAGcYm+fynaxRuEOkiSnMcarVpSqrpuwG2Z39RPa4qARsAR1lnXAFZR+qYDQdzTNYh
-         yYQQ6RXV4XfPnjdCH8pT1cDDpEPZc6DtsN+kqPFkhhEu1D6TwooFI9JZuJyXju6T69N1
-         ebODmnF3WuyTFI487t7wzu0pD7nL6Mw0ejwABUNm5VzJysHzOMVwyA8qGZlhBftRT81c
-         GGcHaWpNNG8sVKr1WA/IFtgP13sd9NoIzbZD6SBmV8E9gARCDVSZXnIKx+koMLz5YmSf
-         cxDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717080589; x=1717685389;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IFZxm9XZ09eTU3EN3teoJoprrvy9B6+gk/P+tYdPxNs=;
-        b=VY3ZzYTVdUXV/AeUtn5rhAP6vKvieJMi1I/VfOv786W0sjg27MEabnY8HppRe3aT/V
-         QOyE/2exLH/38hxUenIR/+SH0GhNrTHlBKm0WTUFnSkwAP42iovykLqp/S9Uj9+/Np53
-         lsQ1FnPpMTbh9mjM1I+S8v0hrFxRmyTGVZuYkI5OdL9CVcCMmE9DXPqnxCrlL0i8a9MQ
-         i5ymlFk68u6SIaAuJXLH0woE1ru4AH/tZUwJO8xpLQgfORMru06FNJZbbEUMp4e1sHOu
-         jlW3SmRrz71IVEoVI1U+tnr1wKRI4jROvab7PsBhEjUxpRB3tQTpPvyq+Eh4gkoE1Jjr
-         KDsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsLHPNo2pX/UURUnXa9DTmZq8ynvFs9yBwZcFTMaPM2gpc66ihp1lg9dKvgokt/lix7yHvSCJzxSRoMoaP1cJCYRifGARcXLc4l/A8m+GhDjJgOW73Q/hWsv6CAeCtKUVoFYFATNXtkl+C1C7vbGoCtj9Wir1lrpoSQzurdeDJP6gIF0bsxCM=
-X-Gm-Message-State: AOJu0YwPDN8C9tK02XogT2zZ+v53fT1bSYKxrw7XSJmz6RNhvGHzkyiW
-	0MWg4j4RHOCL7PdFqG4ul9A6T+h/kO9UbujxQSRSq6lvMlQ/G3cu
-X-Google-Smtp-Source: AGHT+IEjTFZLB1C4nSOWFYxlPMd96XW7noVUv2mE3O+pRtIwQ0MefglECcJHcYxto5VQTRAUD9SZvA==
-X-Received: by 2002:a17:906:845:b0:a59:ba2b:590e with SMTP id a640c23a62f3a-a65e9100ea0mr147055766b.48.1717080588763;
-        Thu, 30 May 2024 07:49:48 -0700 (PDT)
-Received: from pevik ([37.48.49.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a637f1349efsm210047866b.210.2024.05.30.07.49.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:49:48 -0700 (PDT)
-Date: Thu, 30 May 2024 16:49:45 +0200
-From: Petr Vorel <petr.vorel@gmail.com>
-To: Alexander Reimelt <alexander.reimelt@posteo.de>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: qcom: Add LG G4 (h815)
-Message-ID: <20240530144945.GA513050@pevik>
-Reply-To: Petr Vorel <petr.vorel@gmail.com>
-References: <20240403104415.30636-1-alexander.reimelt@posteo.de>
- <20240530135922.23326-1-alexander.reimelt@posteo.de>
- <20240530135922.23326-2-alexander.reimelt@posteo.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q5lZBJImWNzKBAoNNo2pFn8ti02HCZ4j6tsfRwsohR0nqJFx+xmNrnysKtFMHsaIabkvhBmHEeW0PsDW/SOtssR+vvyOxtgJTGhCS2woVWIQl4JvxdX/+/H3xa6SJL1ef4Vmksbrhaaq/Ucy83xPeRawrb/FpwDJbzNyHZPucsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwT4UPMa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B722FC32781;
+	Thu, 30 May 2024 14:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717080627;
+	bh=prxNjWcocA1xfeZ7ScnSmd77MXh4m2kvHooi1WN7euE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QwT4UPMaJuQ/heKtWMpOUvSL1X8vkyCwSBGw93uC47juM1xpIzMmM5UBHX29dBNj8
+	 1YovjBI0ayS/MdIfZe6mjOINDM6wClHOdJ6JeqzwqKY+Ep/bXZOu8S3mUHeN5JsGSb
+	 9vKot8OxUBW+M4V34CJZVLpnCCWe0CtSarAsStqTOlD612CPlX4rtRs9eSdMuovoqU
+	 dsxYcEj1K2AUXSsEJgpeDWTnwRncXCs13xqWs239orTbguXBShIrZ+xX1q5w27/rnv
+	 e24U8jr8ggj7YW8H1DAQY81lhYtRLVjKWeUgMNXLv1qTNBVM++mTqTGT2ptsMrNkHr
+	 fNSw5INnqt2kA==
+Date: Thu, 30 May 2024 17:49:59 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
+	lcherian@marvell.com, richardcochran@gmail.com
+Subject: Re: [net-next,v3 5/8] cn10k-ipsec: Add SA add/delete support for
+ outb inline ipsec
+Message-ID: <20240530144959.GC3884@unreal>
+References: <20240528135349.932669-1-bbhushan2@marvell.com>
+ <20240528135349.932669-6-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,32 +61,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240530135922.23326-2-alexander.reimelt@posteo.de>
+In-Reply-To: <20240528135349.932669-6-bbhushan2@marvell.com>
 
-Hi all,
-
-> International variant of the LG G4 from 2015.
-
-> Signed-off-by: Alexander Reimelt <alexander.reimelt@posteo.de>
+On Tue, May 28, 2024 at 07:23:46PM +0530, Bharat Bhushan wrote:
+> This patch adds support to add and delete Security Association
+> (SA) xfrm ops. Hardware maintains SA context in memory allocated
+> by software. Each SA context is 128 byte aligned and size of
+> each context is multiple of 128-byte. Add support for transport
+> and tunnel ipsec mode, ESP protocol, aead aes-gcm-icv16, key size
+> 128/192/256-bits with 32bit salt.
+> 
+> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
 > ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> v2->v3:
+>  - Removed memset to zero wherever possible
+>   (comment from Kalesh Anakkur Purayil)
+>  - Corrected error hanlding when setting SA for inbound
+>    (comment from Kalesh Anakkur Purayil)
+>  - Move "netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;" to this patch
+>    This fix build error with W=1
+> 
+>  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 452 ++++++++++++++++++
+>  .../marvell/octeontx2/nic/cn10k_ipsec.h       | 114 +++++
+>  2 files changed, 566 insertions(+)
 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index 66beaac60e1d..76aefd4aac67 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -237,6 +237,7 @@ properties:
->        - items:
->            - enum:
->                - lg,bullhead
-> +              - lg,h815
->                - microsoft,talkman
->                - xiaomi,libra
->            - const: qcom,msm8992
+<...>
 
-Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+> +static int cn10k_ipsec_validate_state(struct xfrm_state *x)
+> +{
+> +	struct net_device *netdev = x->xso.dev;
+> +
+> +	if (x->props.aalgo != SADB_AALG_NONE) {
+> +		netdev_err(netdev, "Cannot offload authenticated xfrm states\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->props.ealgo != SADB_X_EALG_AES_GCM_ICV16) {
+> +		netdev_err(netdev, "Only AES-GCM-ICV16 xfrm state may be offloaded\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->props.calgo != SADB_X_CALG_NONE) {
+> +		netdev_err(netdev, "Cannot offload compressed xfrm states\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->props.flags & XFRM_STATE_ESN) {
+> +		netdev_err(netdev, "Cannot offload ESN xfrm states\n");
+> +		return -EINVAL;
+> +	}
 
-Kind regards,
-Petr
+I afraid that this check will cause for this offload to be unusable in
+real life scenarios. It is hard to imagine that someone will use offload
+which requires rekeying every 2^32 packets.
+
+> +	if (x->props.family != AF_INET && x->props.family != AF_INET6) {
+> +		netdev_err(netdev, "Only IPv4/v6 xfrm states may be offloaded\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->props.mode != XFRM_MODE_TRANSPORT &&
+> +	    x->props.mode != XFRM_MODE_TUNNEL) {
+> +		dev_info(&netdev->dev, "Only tunnel/transport xfrm states may be offloaded\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->id.proto != IPPROTO_ESP) {
+> +		netdev_err(netdev, "Only ESP xfrm state may be offloaded\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->encap) {
+> +		netdev_err(netdev, "Encapsulated xfrm state may not be offloaded\n");
+> +		return -EINVAL;
+> +	}
+> +	if (!x->aead) {
+> +		netdev_err(netdev, "Cannot offload xfrm states without aead\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (x->aead->alg_icv_len != 128) {
+> +		netdev_err(netdev, "Cannot offload xfrm states with AEAD ICV length other than 128bit\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->aead->alg_key_len != 128 + 32 &&
+> +	    x->aead->alg_key_len != 192 + 32 &&
+> +	    x->aead->alg_key_len != 256 + 32) {
+> +		netdev_err(netdev, "Cannot offload xfrm states with AEAD key length other than 128/192/256bit\n");
+> +		return -EINVAL;
+> +	}
+> +	if (x->tfcpad) {
+> +		netdev_err(netdev, "Cannot offload xfrm states with tfc padding\n");
+> +		return -EINVAL;
+> +	}
+> +	if (!x->geniv) {
+> +		netdev_err(netdev, "Cannot offload xfrm states without geniv\n");
+> +		return -EINVAL;
+> +	}
+> +	if (strcmp(x->geniv, "seqiv")) {
+> +		netdev_err(netdev, "Cannot offload xfrm states with geniv other than seqiv\n");
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
+
+I don't see check for supported offload type among these checks.
+if (x->xso.type != XFRM_DEV_OFFLOAD_CRYPTO) {
+ ....
 
