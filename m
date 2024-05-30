@@ -1,118 +1,108 @@
-Return-Path: <linux-kernel+bounces-195331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D42378D4B2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:58:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB488D4B32
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EEF1285E09
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C462F1F2405B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3478017FAD1;
-	Thu, 30 May 2024 11:57:58 +0000 (UTC)
-Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128F9181CF0;
+	Thu, 30 May 2024 11:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mqg3IB16"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323B217FACC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5FA339AC;
+	Thu, 30 May 2024 11:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070277; cv=none; b=BjWuAh5GLxlIZfbI6aFj/6Q1wAmcYNvERQKwuJHJJxyGgBEywVP8Sf5MuXk5ywEkqvGl575L60M+f+FlOhbDuCjC/3UaCMf9yZ1AZmkK/dV871Pe0pljduZcOeNUmBjpiFuD/obTuW0MVebXAKGS210PrFw4qZyxCpWxtVy3Yqo=
+	t=1717070384; cv=none; b=VxphU/Vn/VwdJTrrlQ/1rANEuuZwUPr/A97mRLQz4eqNzBR8ENc44v8L2PzNZaELxZJu9iYuBTdyl9QpufmHaZ75e3jKxr4nm5BCay040ssF4JfXp0KM46ViaxI2f66RbzpxyNa8tETB6WyK6zQdWduhQrdwhNeEBalVCcdImSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070277; c=relaxed/simple;
-	bh=qM8jmV9rQExnfzLYmOc5G2jyjto1w9Z/eyBvilTd+aQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pppTcCPzXeWIEsvWJJmxC01Fu+mvMhZg1Vtv48HIY5J1BKWAI6A+vfWS37LNJX8l8op7E6z9x4k6qo4wwQMimtxOOLzI6KxQsJLrixHkuqmX/PL6rag5UOEwywPg8RQyNy/P6NLPs19fxKQA2HORgmH1zQMTONJbyFFaWuUtm6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.5])
-	by sina.com (10.185.250.21) with ESMTP
-	id 665869AF00005C02; Thu, 30 May 2024 19:57:37 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8080313408455
-X-SMAIL-UIID: 008BA0A009C64C32BE6D3B37009A59D9-20240530-195737-1
-From: Hillf Danton <hdanton@sina.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: syzbot <syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com>,
-	edumazet@google.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	radoslaw.zielonek@gmail.com,
-	syzkaller-bugs@googlegroups.com,
-	vinicius.gomes@intel.com
-Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
-Date: Thu, 30 May 2024 19:57:26 +0800
-Message-Id: <20240530115726.3151-1-hdanton@sina.com>
-In-Reply-To: <20240530003325.h35jkwdm7mifcnc2@skbuf>
-References: 
+	s=arc-20240116; t=1717070384; c=relaxed/simple;
+	bh=8kTTWP9KKerLOBH7sOJ6kRkd4l+zeLLm8E8cdaSboqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pj7qrUk4UuS3nHWiDev6yzIYiCr29dwQd4wU5ktywrhg1nuua13BWaIRdH+ZFb9il7hczE8o1D6RmiNt4+tlH93ZybovlS4zy7zkY1FF8AoZ+UVkaypCyOXiJKA//eYM7JOVIkKfavZtmyO2HOwHbZTdxI91uF9LSajvG2SVtvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mqg3IB16; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 234A9C2BBFC;
+	Thu, 30 May 2024 11:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717070383;
+	bh=8kTTWP9KKerLOBH7sOJ6kRkd4l+zeLLm8E8cdaSboqw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mqg3IB16KCl4iVocK2ANNDet9sKxP/D79issOs52V4nylRTLMcYW5Sadf2dCM89Ea
+	 oe+lEU+VT8Ne+JUOwW78a/nnoTjigbrxhc+G85t00kpKd6qYFCIALfsI7o5rpaowvU
+	 GKK4GnibMg+2ejVQZlQVG9AOA1d6OsVe0oxGqpob+iwjhZrA/dRYbNyd5j+xMtj9MV
+	 XP+RAidre1R6cTdhwoVkuf5gdGCac2GfSM/jTbiHHHE4AvTQ+hu5G+npa7bbxH7fDs
+	 fyE2rtDDApUdFRI/kuSYfr+qnAJXo7lLYpYP0PlYd8UC0Kshzb5ZA18Koo7WAjT3N3
+	 99NH0dFwBvqzg==
+Date: Thu, 30 May 2024 12:59:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 13/14] regulator: add pm8008 pmic regulator driver
+Message-ID: <9f126943-2d73-491a-9267-6585e10aea8d@sirena.org.uk>
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
+ <20240529162958.18081-14-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0mJZbpVe58dxAH3V"
+Content-Disposition: inline
+In-Reply-To: <20240529162958.18081-14-johan+linaro@kernel.org>
+X-Cookie: To err is human, to moo bovine.
 
-On Thu, 30 May 2024 03:33:25 +0300 Vladimir Oltean <vladimir.oltean@nxp.com>
-> 
-> What is the fact that you submitted only my patch 1/2 for syzbot testing
-> supposed to prove? It is the second patch (2/2) that addresses what has
-> been reported here;
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  main
+--0mJZbpVe58dxAH3V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---- x/net/sched/sch_taprio.c
-+++ y/net/sched/sch_taprio.c
-@@ -1151,11 +1151,6 @@ static int parse_taprio_schedule(struct
- 		list_for_each_entry(entry, &new->entries, list)
- 			cycle = ktime_add_ns(cycle, entry->interval);
- 
--		if (!cycle) {
--			NL_SET_ERR_MSG(extack, "'cycle_time' can never be 0");
--			return -EINVAL;
--		}
--
- 		if (cycle < 0 || cycle > INT_MAX) {
- 			NL_SET_ERR_MSG(extack, "'cycle_time' is too big");
- 			return -EINVAL;
-@@ -1164,6 +1159,11 @@ static int parse_taprio_schedule(struct
- 		new->cycle_time = cycle;
- 	}
- 
-+	if (new->cycle_time < new->num_entries * length_to_duration(q, ETH_ZLEN)) {
-+		NL_SET_ERR_MSG(extack, "'cycle_time' is too small");
-+		return -EINVAL;
-+	}
-+
- 	taprio_calculate_gate_durations(q, new);
- 
- 	return 0;
-@@ -1848,6 +1848,9 @@ static int taprio_change(struct Qdisc *s
- 	}
- 	q->flags = taprio_flags;
- 
-+	/* Needed for length_to_duration() during netlink attribute parsing */
-+	taprio_set_picos_per_byte(dev, q);
-+
- 	err = taprio_parse_mqprio_opt(dev, mqprio, extack, q->flags);
- 	if (err < 0)
- 		return err;
-@@ -1907,7 +1910,6 @@ static int taprio_change(struct Qdisc *s
- 	if (err < 0)
- 		goto free_sched;
- 
--	taprio_set_picos_per_byte(dev, q);
- 	taprio_update_queue_max_sdu(q, new_admin, stab);
- 
- 	if (FULL_OFFLOAD_IS_ENABLED(q->flags))
---
+On Wed, May 29, 2024 at 06:29:57PM +0200, Johan Hovold wrote:
+> The Qualcomm PM8008 is an I2C-controlled PMIC containing seven LDO
+> regulators.
+>=20
+> The driver is based on a driver submitted by Satya Priya, but it has
+> been cleaned up and reworked to match the new devicetree binding which
+> no longer describes each regulator as a separate device.
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--0mJZbpVe58dxAH3V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZYaigACgkQJNaLcl1U
+h9DPVQf/XpPDBDoyoV/qBv6jdSFnaUIVIhIJ4t3WR8qJ42MxLVJrRWkbEAhgShfN
+vsROxh3DsaBpC64ahrFPKK7Opv61SdIVtfAf6anp/jYW1yxFaHZa8GKyATVvgRYp
+iC+iwOY6AiJKtVjXRc6a4cXbWUclQ1bqDOTgLaGeZ/HkrAB8mAXEOM+vaX4JXqPN
+TAFCxBWMzBdeOFAghdfOukV0024rkqMKNw1BqOFLkdk0IKtzvt+/34eq/6kgD3V7
+2ALbIM/GdGcU+9VRj+YVsh8TOXKPchwSnBNnYPGWBca9X/83i5jgNIz1HpqNfJDd
+0RziAuWoiECj/mAekCSP56G4wjnRVg==
+=VPPI
+-----END PGP SIGNATURE-----
+
+--0mJZbpVe58dxAH3V--
 
