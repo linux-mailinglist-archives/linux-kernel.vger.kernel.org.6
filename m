@@ -1,179 +1,118 @@
-Return-Path: <linux-kernel+bounces-195666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A768D5004
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:44:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B64C8D5007
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C531C21031
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE03285B45
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3742C6AE;
-	Thu, 30 May 2024 16:44:16 +0000 (UTC)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6942B9AA;
+	Thu, 30 May 2024 16:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="RMbYVeyh"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDF823741;
-	Thu, 30 May 2024 16:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60263187576
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087456; cv=none; b=QkD2Gy+lnCvyUl25USI/kk2l6+FpUdMymr+CfjhdIRo9mAAbuDToro85I7K4GoC+rE+t1B3N4ma9SRWNYG+cscNu7XPHvqiteJc4LdJlYKt7eku10Q4ikT7pHhHD6XYGJfmA9xxyBwV5QEXzpNkHyMPE/tbFOTh453GAP3+jR60=
+	t=1717087512; cv=none; b=unFfpG717grYaOB5QA8uQPwtwa+Z9cEcYKdmHfwQTDIhBjeNHkQHFA68kSR8eeAUpM0mdiW/thCi1/wpkWJw3GTkRXpeI1E0rlmHV0tQ/K0qDp3NPMY3lUtJKPHY4dAmH6Vo0tuHrzL5l40rPXJrM6kpgCrlFvaq3Z5HfGLFyNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087456; c=relaxed/simple;
-	bh=DErZGw60vY5VVok3vqsO3s4NbZA0aegd2r/sMDdVj8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e3/iUga0Qrzzw0kvRUz5me6MWw+CC88aTKoRfp2wUmb4S5mzXt2c+pFS95a3IEIyiptOFZbkPFulCREA8/HgFSeMTuHrt+BINIQYgnsLBj6i4Ght2RvjrVXQI27D/tsfetbsN3SOkwESC8DGGM6NC3HWlCjzKE1BuHPvEDAkaUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2bf59b781d6so908976a91.0;
-        Thu, 30 May 2024 09:44:14 -0700 (PDT)
+	s=arc-20240116; t=1717087512; c=relaxed/simple;
+	bh=jaOnjIsa3zYdoKF/Q2lphz2sDuejOa+Pdpx933cy7jc=;
+	h=Subject:Date:Message-ID:MIME-Version:Cc:From:To; b=FHffwSQrbBT6Ga3sJs1XjA/V1+vXGcOYS3SW7r84dDwArdImD8QNt2eC4MWtyC2FExd+yPVTHLYwuFY2cqFXhbgCejeGQXLewJRpADwZCfDMV8GU3q+ozTHPjaDdMQ2w2RU5F/ZP4aCkmKjnuuENh3zLYqs5FPqWN7vIUPPByFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=RMbYVeyh; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f480624d0fso8926035ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717087509; x=1717692309; darn=vger.kernel.org;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=xOzegM0vd+pENLEU3lhD32Gn7D6Mcf1VzkpF3e85750=;
+        b=RMbYVeyhzSK6PKZ834f39L3+SXK7+TailuwHAfaaKm60Jf87DjEXeviIgscmCmwr32
+         Tya/oNqlJV1xWbuu9a72UomeJOTyC5DV0qYE+QUcABTGmWSrc98mSFiT4EUh/4As0Qj/
+         5pEHNhklkKiLGNqrGQAqzrbr/lpeEYJPrHr9Z2JJLuRkiErodvXuzgWuKEE8EFSgVMOL
+         cggnGNQMW71gjpHtheX5bt1jO8UOzaGV4pReihaLKaBabsCPxq3mxonNlKSPgcix2DhB
+         5lg3B3WIWYxsMHq85eXJiddCVEOUeC3yUcFLTTmV7GdvckW83N9VlirKXLRuk/UdDILT
+         FVFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717087454; x=1717692254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NZDMlH3wwmcKVtEagfPCH0RxE62sWqc/UQQgjvFYOqg=;
-        b=L7yAeD49JSEGcItP8/52NQxa+YFZdSGQHOyVfUqNN5KX2+dBk6mbZwcCWlOeBTrn4p
-         868uzoPfQa21RKto8XOcSISash1a2/kQvZxz+BbVrU2wy8K+EnJcmn3SvxqGQYK223hT
-         r2q613EeBkQfDZrE0jT7I/Blv+vImx3Wi8x9j3UQUXIhlzaktnenuUHUfMV8+FDx9wlS
-         32yFaSTcG5LQIsCX9sA04gTLTdUsBAeqosV65PtsP/pnvrHBSHtxpcCU0ACJqNxd1700
-         iE5WvLHfzlMQVmfC+O6+ZACYS/4HuCxLgxIdKJa5RyGJ09GkdI2EwMWdvFgY6CP0PajG
-         QRQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoTD4R5/A0O0yL0InuLWfzfNBPG8KTJwfR+apjxFw2Tfzl4bhaj1n0BsKncxQNzpUg1gUolCGRPR72K0h70uhG0AP7wxAZK9/r/fVN1E+csJVyRP2G1C3OM7c2C8ALV6jj4YD7ZLABVSUV77V1pA==
-X-Gm-Message-State: AOJu0Yxbl3cyKmQHrINRtxZdSA5+m1HSnc1IsLwaNe/24sLB5X4CgzUu
-	z9EXa9o4PoF7q/ezmahuQmtZHT4WPk7TFf38pk5dydA/6yjwpPvAbzlFYqDgFNLjVO4FV5oAcfb
-	M1Z696JJJy0jASKWXbWGu8KeRUvD72Pa1
-X-Google-Smtp-Source: AGHT+IEV6Z1GyPQC65et0ns8EenUP8n/Nn7bmvhurfzmdkcm8aYVGTKtHm8BBAO+hJCrQFmwVLAua91DtAutkmN9fTc=
-X-Received: by 2002:a17:90a:b884:b0:2b3:28df:96b1 with SMTP id
- 98e67ed59e1d1-2c1ab9ddda7mr2613497a91.7.1717087453788; Thu, 30 May 2024
- 09:44:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717087509; x=1717692309;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xOzegM0vd+pENLEU3lhD32Gn7D6Mcf1VzkpF3e85750=;
+        b=YDo2pq0cQq0YAN/JN6RD3VlgxQtzygQnW0d5TzfASTM2+hLqluhDNnN5qlvihJ6C4o
+         WJ438RFb85avMCV0s47HFjJF6YvcPdXeekXZQjDN5iuJtvE/mTVS6XsxmzgXcSr94Q4+
+         uWXy9hRncT32n0NEeIiL5VcAjJN4zJwTmtgWLAusIZeCfDgOpMN/RWyudIPQCEaMM9jk
+         N/DHn9YCWxK9Yl0cpLqkeaIa8+7Z2qBsQuihiYBMBbh1DOzpT4WpW6ZjKKQTc5LOTtCz
+         O3skeopG1WRkhVJqF/442ajeAbV/qQCARds0v9eYb6C93aMCG3EIf+yXLhKx32WXeYxc
+         Q7+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXUdpQrq8Og4Sfuq+/1EyYnw0lO1096t0v1oZRhi37HemPwwwDMVWtPHwA0mwJFS6dgP+knbE9TzElGRf6Uz79AcDI+P8D/GahGpPvz
+X-Gm-Message-State: AOJu0YwKLIusQvuwJmaSfIu89B1T/rqcUKEXNGCEGXwNEcUt47PcyODc
+	RjcyLZ7jR9CRXu1hShW9tElVcO5cJc8bYN7L5I5HI57Qr53ncq4XiDfbRSvtMAs=
+X-Google-Smtp-Source: AGHT+IF5ZCUTHA4RbuWZrUM95v4mHrXe0BsCSWZE2Kc+Ge5l/lR0EiQ15vA/YZsp2wheVERfoRTC2Q==
+X-Received: by 2002:a17:902:cec3:b0:1f4:8190:33c3 with SMTP id d9443c01a7336-1f61962ed55mr31844515ad.40.1717087509402;
+        Thu, 30 May 2024 09:45:09 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6312b1fd5sm472665ad.172.2024.05.30.09.45.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 09:45:09 -0700 (PDT)
+Subject: [PATCH] Revert "riscv: mm: accelerate pagefault when badaccess"
+Date: Thu, 30 May 2024 09:44:51 -0700
+Message-ID: <20240530164451.21336-1-palmer@rivosinc.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240519181716.4088459-1-irogers@google.com> <CAM9d7chxsyZ+vnPXj0gc-mbADzwzQYi3qUwUohW-7He5KwMvHg@mail.gmail.com>
- <CAP-5=fXME3cjNK-P9qk+kY0dA1Xkwvz6Su=99nY7CgcKrQTb2w@mail.gmail.com>
-In-Reply-To: <CAP-5=fXME3cjNK-P9qk+kY0dA1Xkwvz6Su=99nY7CgcKrQTb2w@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 30 May 2024 09:44:02 -0700
-Message-ID: <CAM9d7ch7GidVscUxQh+CZRuo1U1KiDiFiuOZN3FnqbrPDbaVNw@mail.gmail.com>
-Subject: Re: [PATCH v1] tools api io: Move filling the io buffer to its own function
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+  aou@eecs.berkeley.edu, surenb@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com,
+  wangkefeng.wang@huawei.com, jszhang@kernel.org, ben@decadent.org.uk, Bjorn Topel <bjorn@rivosinc.com>,
+  willy@infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+  Palmer Dabbelt <palmer@rivosinc.com>
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To:         linux-riscv@lists.infradead.org
 
-On Thu, May 23, 2024 at 9:47=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Thu, May 23, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > On Sun, May 19, 2024 at 11:17=E2=80=AFAM Ian Rogers <irogers@google.com=
-> wrote:
-> > >
-> > > In general a read fills 4kb so filling the buffer is a 1 in 4096
-> > > operation, move it out of the io__get_char function to avoid some
-> > > checking overhead and to better hint the function is good to inline.
-> > >
-> > > For perf's IO intensive internal (non-rigorous) benchmarks there's a
-> > > near 8% improvement to kallsyms-parsing with a default build.
-> >
-> > Oh, is it just from removing the io->eof check?  Otherwise I don't
-> > see any difference.
->
-> I was hoping that by moving the code out-of-line then the hot part of
-> the function could be inlined into things like reading the hex
-> character. I didn't see that, presumably there are too many callers
-> and so that made the inliner think sharing would be best even though
-> the hot code is a compare, pointer dereference and an increment. I
-> tried forcing inlining but it didn't seem to win over just having the
-> code out-of-line. The eof check should be very well predicted. The
-> out-of-line code was branched over forward, which should be 1
-> mispredict but again not a huge deal. I didn't do a more thorough
-> analysis as I still prefer to have the cold code out-of-line.
+From: Palmer Dabbelt <palmer@rivosinc.com>
 
-Ok, I don't see much difference with this change.  But the change itself
-looks fine.
+I accidentally picked up an earlier version of this patch, which had
+already landed via mm.  The patch  I picked up contains a bug, which I
+kept as I thought it was a fix.  So let's just revert it.
 
-Thanks,
-Namhyung
+This reverts commit 4c6c0020427a4547845a83f7e4d6085e16c3e24f.
 
+Fixes: 4c6c0020427a ("riscv: mm: accelerate pagefault when badaccess")
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ arch/riscv/mm/fault.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Before:
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index b3fcf7d67efb..5224f3733802 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -293,8 +293,8 @@ void handle_page_fault(struct pt_regs *regs)
+ 	if (unlikely(access_error(cause, vma))) {
+ 		vma_end_read(vma);
+ 		count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
+-		tsk->thread.bad_cause = SEGV_ACCERR;
+-		bad_area_nosemaphore(regs, code, addr);
++		tsk->thread.bad_cause = cause;
++		bad_area_nosemaphore(regs, SEGV_ACCERR, addr);
+ 		return;
+ 	}
+ 
+-- 
+2.45.1
 
-# Running internals/synthesize benchmark...
-Computing performance of single threaded perf event synthesis by
-synthesizing events on the perf process itself:
-  Average synthesis took: 237.274 usec (+- 0.066 usec)
-  Average num. events: 24.000 (+- 0.000)
-  Average time per event 9.886 usec
-  Average data synthesis took: 241.126 usec (+- 0.087 usec)
-  Average num. events: 128.000 (+- 0.000)
-  Average time per event 1.884 usec
-
-# Running internals/kallsyms-parse benchmark...
-  Average kallsyms__parse took: 184.374 ms (+- 0.022 ms)
-
-# Running internals/inject-build-id benchmark...
-  Average build-id injection took: 20.096 msec (+- 0.115 msec)
-  Average time per event: 1.970 usec (+- 0.011 usec)
-  Average memory usage: 11574 KB (+- 29 KB)
-  Average build-id-all injection took: 13.477 msec (+- 0.100 msec)
-  Average time per event: 1.321 usec (+- 0.010 usec)
-  Average memory usage: 11160 KB (+- 0 KB)
-
-# Running internals/evlist-open-close benchmark...
-  Number of cpus:    64
-  Number of threads:    1
-  Number of events:    1 (64 fds)
-  Number of iterations:    100
-evlist__open: Permission denied
-
-# Running internals/pmu-scan benchmark...
-Computing performance of sysfs PMU event scan for 100 times
-  Average core PMU scanning took: 135.880 usec (+- 0.249 usec)
-  Average PMU scanning took: 816.745 usec (+- 48.293 usec)
-
-
-After:
-
-# Running internals/synthesize benchmark...
-Computing performance of single threaded perf event synthesis by
-synthesizing events on the perf process itself:
-  Average synthesis took: 235.711 usec (+- 0.067 usec)
-  Average num. events: 24.000 (+- 0.000)
-  Average time per event 9.821 usec
-  Average data synthesis took: 240.992 usec (+- 0.058 usec)
-  Average num. events: 128.000 (+- 0.000)
-  Average time per event 1.883 usec
-
-# Running internals/kallsyms-parse benchmark...
-  Average kallsyms__parse took: 179.664 ms (+- 0.043 ms)
-
-# Running internals/inject-build-id benchmark...
-  Average build-id injection took: 19.901 msec (+- 0.117 msec)
-  Average time per event: 1.951 usec (+- 0.011 usec)
-  Average memory usage: 12163 KB (+- 10 KB)
-  Average build-id-all injection took: 13.627 msec (+- 0.086 msec)
-  Average time per event: 1.336 usec (+- 0.008 usec)
-  Average memory usage: 11160 KB (+- 0 KB)
-
-# Running internals/evlist-open-close benchmark...
-  Number of cpus:    64
-  Number of threads:    1
-  Number of events:    1 (64 fds)
-  Number of iterations:    100
-evlist__open: Permission denied
-
-# Running internals/pmu-scan benchmark...
-Computing performance of sysfs PMU event scan for 100 times
-  Average core PMU scanning took: 136.540 usec (+- 0.294 usec)
-  Average PMU scanning took: 819.415 usec (+- 48.437 usec)
 
