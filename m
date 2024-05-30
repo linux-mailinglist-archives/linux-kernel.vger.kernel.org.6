@@ -1,153 +1,150 @@
-Return-Path: <linux-kernel+bounces-195713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072008D509F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 802FF8D50B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7004CB261DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:11:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1742B2637D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299194596F;
-	Thu, 30 May 2024 17:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D134EB24;
+	Thu, 30 May 2024 17:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMV1UhCL"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="pDdrsLN3"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDE94653C;
-	Thu, 30 May 2024 17:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC3A45BE4;
+	Thu, 30 May 2024 17:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717089076; cv=none; b=bR+Zr0e7Zo8gRtq3bkkqWgY19QBbt8eENnOYZIDkqVy75pZCyaeIKz0IkHBqoR+qslLXjTEaCuAGQrAGHTH2Zg+otC0JyGFNIUvjcT4DaHA8V9SaSNK1BQg8+7X72431Q6x2xW3rsfHCPGE5O/sIaQ+GiCuvfpRZhb9O8ghJ/mA=
+	t=1717089091; cv=none; b=gUdfIh8OT6X+brsgPk2x0c3TdubG9/HbDpT8UpSDJvhh+ofIIw8GTFpnVPkBP8yoyu5kY392HVG9uiLaAlyIup/OWUDnXuu9/FUrNHIGsTqn8yKjadnllQnGn02CGYP16Df0CI3MzGuYtoPCZEMX1yoB3oku19byljw6zlYq0HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717089076; c=relaxed/simple;
-	bh=w1P9GtWTZiHFljha6+hHxilF9/Ml0j8wVOwBBGlUVKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNu+bgo4MCselEaJDzQO4m8v62Yr2W/5wPMFQDMxqa1GqjFDxw4HS1DpDtoC3O8E/Wx3XXTNDWKgMvhATvP9Ocah6EvfoveH9B/3Xw/7j0dk8uNwiQTQhJff6VH8Z61TwF6GSpQd98p8jneQJF2VCzDC947KGWDmhURmYKkTC0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMV1UhCL; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f61f775738so6362865ad.2;
-        Thu, 30 May 2024 10:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717089074; x=1717693874; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=b5dMIK+YmRjKcd+w3hKSLG4KLhKC/IhFM8M8zHEuCAE=;
-        b=hMV1UhCLwlKxQjhs6r8tmhQMgu61oo8J5jwJFpDBAlq3ec9zZsrynG+aYyHTEQZbXn
-         KIG42d8cQLeBKwqPBK5pTiCMegaiysg5zgiVC3IW7cqQR8Hc2yLDgCgPzJ9pWlq0eEri
-         jxGS42BTCR3unVO5qyime7FKXurFSTUM6RQtb3KuSCQZN8lf+3sNN4zGxKoqK3KiCnjq
-         u4nfj0K4xpbtBlLG6NLpT/k/VZ1ZAVeJx5VqVRBK/wdQ+YoOllW085K3QQq6BRu8oyT5
-         f37NnnHNAzFDD+71I49hkzMcVP1TrhR0cSbo0A32OEyaX9Avwp0j9SX4mOWZG0k7zk8P
-         MlUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717089074; x=1717693874;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b5dMIK+YmRjKcd+w3hKSLG4KLhKC/IhFM8M8zHEuCAE=;
-        b=AVhcHGnaDEu05WxJHV6xTh2FFTljODLqOaYhFn5zQtFqeD722JXF4zZkkgF01xDpGC
-         XEldUxksEaFSlyRHN4Hij+1NRVlLDyuXAHwLMHomD5TboI7ypUPyrp1bErZwQjyw8YA6
-         6lu0S9sRw8tXo4lAGcGuKnX9kCgDHKuOlWSq2PkI5DrGcQHX+nWpf6VuKDueAJUvZACC
-         zUUEFIxONrfxt48Aq+aBKZrmcGmKPBVA0G7yfLLPLaMh69/VL8jf4+CHfsZFPkwEeO0R
-         WiKnoD4ji0dt/LOy+NckHoE89m515q0L80Hw85V8hdzr729CbGGL/k3JXnky7lVmGx84
-         3gtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgoYfDCGX7YthnArIzmCDwcPDl2MGVok6fM30fxa7co+GXFEzxvbueWtqFxBBWAW8x56498JAqCCjJ9SZ8KhvjsriMuL06Pd6HCENyUOg6bKF63aG9EtSazG5FdBC9o5MHmvno
-X-Gm-Message-State: AOJu0YzIuv536NXXANqPIHFQo1sR8wRa27TRdlzFk4oyjhFn+w21IGR5
-	dBhGSwdBoIhGfNIa4eEjubiOr07IWE5HGl7wKy/xr/6uc+BTed3a
-X-Google-Smtp-Source: AGHT+IEBj73siAJfZoLiX9gqpPn+nv1DxMqUBBrc8uKp//jC475DsqApjM9Y16BLcPTu9eoocFrNUA==
-X-Received: by 2002:a17:902:c7d2:b0:1f3:a14:5203 with SMTP id d9443c01a7336-1f61962bd45mr20087525ad.38.1717089074324;
-        Thu, 30 May 2024 10:11:14 -0700 (PDT)
-Received: from localhost ([216.228.127.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd824sm203895ad.128.2024.05.30.10.11.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 10:11:13 -0700 (PDT)
-Date: Thu, 30 May 2024 10:11:11 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexander Potapenko <glider@google.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 13/21] bitmap: make bitmap_{get,set}_value8()
- use bitmap_{read,write}()
-Message-ID: <ZlizL6d1_ePq-eKs@yury-ThinkPad>
-References: <20240327152358.2368467-1-aleksander.lobakin@intel.com>
- <20240327152358.2368467-14-aleksander.lobakin@intel.com>
- <5a18f5ac-4e9a-4baf-b720-98eac7b6792f@arm.com>
+	s=arc-20240116; t=1717089091; c=relaxed/simple;
+	bh=go0cYzcDqydRtutKma5FUwv79zZ3P7zOWhGl/8O+3OI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CkVKFvLxaJsigiQ7RfCmp0CXKIatuPkMJ3ptN6HMGuXul6xUF3h6XZFT1jHUaR6QgZO1oJBnnDcvNGr2MwLexL2u2SSiL3EE1Wb4fjSoNtOt9UZ93vUqwPEym7NshI0Mupmx6sh1vEQm7l5bnukrFtMHSfyCSP2xsoPooxj65Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=pDdrsLN3; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vqt812W1wz6Cnk9F;
+	Thu, 30 May 2024 17:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1717089079; x=1719681080; bh=Ul8tShPV3DUMrLj4E7kNdLyB
+	ZmST2o57Jd5aN0FDWYg=; b=pDdrsLN3JZPbFaUtLRbj37cnYuTv29wYsaoWbWPX
+	0jAfS4sWOekodOat3cJMbqn2RuFn9uq1dvv60rD84RsGZNOhy608uxLLU+fhbyly
+	eKTbCc9wykATpOsmXQs1/utBwypcCkWl3KNU2MCRI5q96GhEKAOJtbitLN7/YNmG
+	3Mn9taXV/EfZN1zWvkxJYjfq7QJgcsxlE8NwOH4KI1q7OAQMt6CrARV53oLIJ5CE
+	jigej7/3tFmHOi5xt9zZPOhIruRk26PiBfPzT3bdqB0Juw5GHorv14poLk5Hg7m/
+	4sx7azLGVHPrQJdDegiabUIRkEKLqqQMji0NKTMLKSNjWA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id T0Ifl3ssZIoq; Thu, 30 May 2024 17:11:19 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vqt7l6w1zz6Cnk97;
+	Thu, 30 May 2024 17:11:15 +0000 (UTC)
+Message-ID: <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
+Date: Thu, 30 May 2024 10:11:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5a18f5ac-4e9a-4baf-b720-98eac7b6792f@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+ <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+ <20240529061736.rubnzwkkavgsgmie@nj.shetty@samsung.com>
+ <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+ <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+ <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 04:12:25PM +0100, Robin Murphy wrote:
-> Hi Alexander,
-> 
-> On 27/03/2024 3:23 pm, Alexander Lobakin wrote:
-> > Now that we have generic bitmap_read() and bitmap_write(), which are
-> > inline and try to take care of non-bound-crossing and aligned cases
-> > to keep them optimized, collapse bitmap_{get,set}_value8() into
-> > simple wrappers around the former ones.
-> > bloat-o-meter shows no difference in vmlinux and -2 bytes for
-> > gpio-pca953x.ko, which says the optimization didn't suffer due to
-> > that change. The converted helpers have the value width embedded
-> > and always compile-time constant and that helps a lot.
-> 
-> This change appears to have introduced a build failure for me on arm64
-> (with GCC 9.4.0 from Ubuntu 20.04.02) - reverting b44759705f7d makes
-> these errors go away again:
-> 
-> In file included from drivers/gpio/gpio-pca953x.c:12:
-> drivers/gpio/gpio-pca953x.c: In function ‘pca953x_probe’:
-> ./include/linux/bitmap.h:799:17: error: array subscript [1, 1024] is outside array bounds of ‘long unsigned int[1]’ [-Werror=array-bounds]
->   799 |  map[index + 1] &= BITMAP_FIRST_WORD_MASK(start + nbits);
->       |                 ^~
-> In file included from ./include/linux/atomic.h:5,
->                  from drivers/gpio/gpio-pca953x.c:11:
-> drivers/gpio/gpio-pca953x.c:1015:17: note: while referencing ‘val’
->  1015 |  DECLARE_BITMAP(val, MAX_LINE);
->       |                 ^~~
-> ./include/linux/types.h:11:16: note: in definition of macro ‘DECLARE_BITMAP’
->    11 |  unsigned long name[BITS_TO_LONGS(bits)]
->       |                ^~~~
-> In file included from drivers/gpio/gpio-pca953x.c:12:
-> ./include/linux/bitmap.h:800:17: error: array subscript [1, 1024] is outside array bounds of ‘long unsigned int[1]’ [-Werror=array-bounds]
->   800 |  map[index + 1] |= (value >> space);
->       |  ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
-> In file included from ./include/linux/atomic.h:5,
->                  from drivers/gpio/gpio-pca953x.c:11:
-> drivers/gpio/gpio-pca953x.c:1015:17: note: while referencing ‘val’
->  1015 |  DECLARE_BITMAP(val, MAX_LINE);
->       |                 ^~~
-> ./include/linux/types.h:11:16: note: in definition of macro ‘DECLARE_BITMAP’
->    11 |  unsigned long name[BITS_TO_LONGS(bits)]
->       |                ^~~~
-> 
-> I've not dug further since I don't have any interest in the pca953x
-> driver - it just happened to be enabled in my config, so for now I've
-> turned it off. However I couldn't obviously see any other reports of
-> this, so here it is.
+On 5/30/24 00:16, Nitesh Shetty wrote:
+> +static inline bool blk_copy_offload_attempt_combine(struct request_que=
+ue *q,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+struct bio *bio)
+> +{
+> +=C2=A0=C2=A0=C2=A0 struct blk_plug *plug =3D current->plug;
+> +=C2=A0=C2=A0=C2=A0 struct request *rq;
+> +
+> +=C2=A0=C2=A0=C2=A0 if (!plug || rq_list_empty(plug->mq_list))
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return false;
+> +
+> +=C2=A0=C2=A0=C2=A0 rq_list_for_each(&plug->mq_list, rq) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rq->q =3D=3D q) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if =
+(!blk_copy_offload_combine(rq, bio))
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return true;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bre=
+ak;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Only keep iterating=
+ plug list for combines if we have multiple
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * queues
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!plug->multiple_queues)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bre=
+ak;
+> +=C2=A0=C2=A0=C2=A0 }
+> +=C2=A0=C2=A0=C2=A0 return false;
+> +}
 
-It's a compiler false-positive. The straightforward fix is to disable the warning
-For gcc9+, and it's in Andrew Morton's tree alrady. but there's some discussion 
-ongoing on how it should be mitigated properlu:
+This new approach has the following two disadvantages:
+* Without plug, REQ_OP_COPY_SRC and REQ_OP_COPY_DST are not combined. The=
+se two
+   operation types are the only operation types for which not using a plu=
+g causes
+   an I/O failure.
+* A loop is required to combine the REQ_OP_COPY_SRC and REQ_OP_COPY_DST o=
+perations.
 
-https://lore.kernel.org/all/0ab2702f-8245-4f02-beb7-dcc7d79d5416@app.fastmail.com/T/
+Please switch to the approach Hannes suggested, namely bio chaining. Chai=
+ning
+REQ_OP_COPY_SRC and REQ_OP_COPY_DST bios before these are submitted elimi=
+nates the
+two disadvantages mentioned above.
 
 Thanks,
-YUry
+
+Bart.
 
