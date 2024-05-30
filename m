@@ -1,151 +1,101 @@
-Return-Path: <linux-kernel+bounces-195597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D958D4F08
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D6B8D4F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD65287A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044841F216F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB75839E4;
-	Thu, 30 May 2024 15:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9117C214;
+	Thu, 30 May 2024 15:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IVhT6Y7U"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="bOaTeblV"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6002313212C
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30891187557;
+	Thu, 30 May 2024 15:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717082785; cv=none; b=iVUaWKITLxWbcVRVIiS8xHrLogYb8LbuJy8PHzm3HnL7oKVE42Jl6oamstSUGxVONG4PiDaexPKWU7k8qQMnsSbfxk5Fy50MLkG7JAokxawXxQviksQZ+b6BOGse3G9+Lp95n0mW/5XA2LXt4RSrmDy33WJ8omgXLk9UntUS1JA=
+	t=1717082933; cv=none; b=jV4Ydv5WA4nKoPA7egG0XHyuFBIsU3aHJuDqx5AGC6Nsm5kPxXEf/wyx0YvsUS0SwtxlzGpnEw+qaP/KYNeBmZEZC4RbzWCwAhiCNQSmfo6oX1bA6cfrwBdIA7/XvjkIpbLJh63Pg9YguYyaEPhfltGi6POwpTSN5f0wNYTI43E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717082785; c=relaxed/simple;
-	bh=HsHUzub0lSnVn0gJzJ62v1Lo3pYfUjxINEn/xRpZA1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c7UaS/BIZKduFyyTuK9dVHsZKtLRd86X8zePVOz9PgDYwOvPFxDpSnDudWRmTZPZ3D67/2Mwd3Ou0cRbsrkf3LJrxj22MUp2hGhkWMcqqSnPo/VjUrNQ9nE9wK+Yy8pSIfjDq9NNB1G9YAzLMTdLsS6LTPZLReInZ73tdDHk99I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IVhT6Y7U; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a2ed9af7dso239130a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717082782; x=1717687582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qK1eODKr+VZ1mrDwGWRLYcMsvv09/V4hpP4+d6jQWaE=;
-        b=IVhT6Y7U/l/ZLWy6ekEuwSmJF/hdRxqaGsHskAfpFeVl5xDvVk+jEtzpYzCak+YvCr
-         jxitQ7eLgDdy6HFmShdOLTnmWwOdh7o8BupBbK8C9kBlRgxluIa6RScl7jpzGm8howxJ
-         6e1vaCcLX41hOVIKse6eOLlfKv+I+w6zyGGoSR92DNtx8FYpEocmRt7Bl3kcSEXSqlYn
-         QhGPqjgMNOVKmKo9m8uTX+KnGEvj3SesRgEDxrkINrCozrJ6o4py26G6Ay/Y5nMd9IW8
-         Px/2lhNlzgnPquZmD2RmZQhpB/QU+Hb/owLTEiZjvf/pepSAcIIm+WvC/5xvGwe8GMDX
-         9ICw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717082782; x=1717687582;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qK1eODKr+VZ1mrDwGWRLYcMsvv09/V4hpP4+d6jQWaE=;
-        b=BqjQV0khFULDNa8bA6834sCKTdndv74DjLQLFMoUQyyK5mvfqDKvehYT3IFkHZt/UQ
-         EOhw8Cb1HWUEWzyvsbMRmRwL/PpXKN7pxxDsiZSwpIni4M+kLXncojqhgO3AVTdL9PjU
-         lyisGpMNy0YHJ4q9qzMfsGr3fIp6v8bjzOyqQ86amkIpsps2g5y4lWDWXM+v5sRhbq+6
-         CxqkddCs+UGgGo3lz+5oNxF8+ZeoNKFQvPKG7h8CaCTlaj0Q0M1i9hDjAFJ4iDVZLqcj
-         1XpG8obc2SjAS0Cd0eGRJTiuyCWMrj4wTHfCueIhio7d1lR/kxMls5NQAsgsvt13vDOZ
-         dsHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVld86tz5rbbF9YllkKyo73rHVzTQSJbKGTO9nX5TpfzsRNoCl8viNlI142uClZ70ETVExyGLRSFBNBHoW/Tl37pzBkiy5RCGRtqsdc
-X-Gm-Message-State: AOJu0Yyq1ARV7ffrITbsgMnGDYh2Y5hbNUtczRylPjUXrhW84yFqXYFT
-	IwVS77CaD6b/TGfkPixoxFpq+N1jjTyQClnjmDR9g+2bBYGI5eAa9l2gNWMO0Co=
-X-Google-Smtp-Source: AGHT+IEGJs5iV6eowXaXUOY1I4Kqd8HU+3A8SA2bF/WmOFUpd4Db6ocMdV5zunNQPrP0uHwh5JzBDg==
-X-Received: by 2002:a17:907:9495:b0:a59:cc9b:d6f8 with SMTP id a640c23a62f3a-a65e8e797f5mr310825966b.39.1717082781615;
-        Thu, 30 May 2024 08:26:21 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:5de0:a23:f1c3:862a:5eac? ([2a10:bac0:b000:5de0:a23:f1c3:862a:5eac])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4f969sm827690066b.101.2024.05.30.08.26.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 08:26:21 -0700 (PDT)
-Message-ID: <ca6c512a-c9cd-4210-bd71-c72c729c95a9@suse.com>
-Date: Thu, 30 May 2024 18:26:19 +0300
+	s=arc-20240116; t=1717082933; c=relaxed/simple;
+	bh=vKjA6hVfENF/Su+nYdGbvb6QjMyg+WQq9tgX0z+nFGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sPM6ebaSkgQLOL6V+o8CaB/oEaDAo/eCVm6oBr9ITIITR2oIZNbgU03JT3ZSzaDK/sAesp+mRKZTSD7x3FAGY+XWcoRhVqBROVOrTodCXaflA/MTlJAbffZe84IeFr1ORb+It/BS/eta+6i0rny1KYbG4n40Nmy4OSb8ns70N6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=bOaTeblV; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=hJEc9qgsKI9oJR5GoUF4NbJ97SV2VDBCHpvtbgyIXrM=; b=bOaTeblVbHHfOyIt
+	ksWtj3H8PV45PxF0qbo0Z/+x9xjhTg0Z9eP/RMh8av+64NxrwDdZWodv1l8cCWu2Au7rWLzLuyorS
+	1dEqssU9YmE9ntFM0i7y6HdNf5ershSeoaQWOeO8RJ9XzaXDOHubMrsyIkihowUKLZvUJR8/BS/vo
+	EFbn/1CehRDgad7GFRC6/jZ19tNj1SgFPpV2AfJyNWcJWcOZeP1rWkp/Pc9zwTR4bS6GPx2BFKmkp
+	Ot1A6u2FCCzUSI8qYaHfMwLqCLKJiAx58GEsO8Ihn+pXoiil2NKOoPIVG14ydncYXrSraO5VIEpDG
+	p9W1N/s8Ltm+GZKUdg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sChhs-003OgR-2M;
+	Thu, 30 May 2024 15:28:44 +0000
+Date: Thu, 30 May 2024 15:28:44 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
+	digetx@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] media: tegra-vde: remove unused struct
+ 'tegra_vde_h264_frame'
+Message-ID: <ZlibLIhBeILqV-LR@gallifrey>
+References: <20240530132619.71103-1-linux@treblig.org>
+ <20240530132619.71103-4-linux@treblig.org>
+ <D1N2H4X8ZL1D.18140DCI2SH8X@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86: Remove the prefetch() specific implementation on
- x86_64
-To: Youling Tang <youling.tang@linux.dev>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- Mateusz Guzik <mjguzik@gmail.com>, Youling Tang <tangyouling@kylinos.cn>
-References: <20240529032059.899347-1-youling.tang@linux.dev>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240529032059.899347-1-youling.tang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <D1N2H4X8ZL1D.18140DCI2SH8X@gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 15:28:31 up 22 days,  2:42,  1 user,  load average: 0.00, 0.00, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-
-
-On 29.05.24 г. 6:20 ч., Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
+* Thierry Reding (thierry.reding@gmail.com) wrote:
+> On Thu May 30, 2024 at 3:26 PM CEST,  wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > 'tegra_vde_h264_frame' has been unused since
+> > commit 313db7d235a0 ("media: staging: tegra-vde: Remove legacy UAPI
+> > support").
+> >
+> > Remove it.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  drivers/media/platform/nvidia/tegra-vde/h264.c | 5 -----
+> >  drivers/media/platform/nvidia/tegra-vde/vde.h  | 1 -
+> >  2 files changed, 6 deletions(-)
 > 
-> After commit ab483570a13b ("x86 & generic: change to __builtin_prefetch()"),
-> x86_64 directly uses __builtin_prefetch() without the specific implementation
-> of prefetch(). Also, x86_64 use a generic definition until commit ae2e15eb3b6c
-> ("x86: unify prefetch operations"). So remove it.
-
-
-So this patch just ensures the x86-specific prefetch() implementation is 
-defined only for 32bit case, otherwise we have it defined for the 64bit 
-case as well but effectively it's not used since ARCH_HAS_PREFETCH is 
-not defined for 64bit, meaning in the 64bit case prefetch() is still 
-defined to __builtint_prefetch in include/linux/prefetch.h.
-
-
-In essence this is a purely cosmetic cleanup , am I right?
-
-
-I compiled a file that utilizes prefetch with and without your patch and 
-the generated assembly is identical.
-
-
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-
-
+> Not that you really need it, but since I'm here:
 > 
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> ---
->   arch/x86/include/asm/processor.h | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> index cb4f6c513c48..44371bdcc59d 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -599,9 +599,6 @@ extern char			ignore_fpu_irq;
->   #ifdef CONFIG_X86_32
->   # define BASE_PREFETCH		""
->   # define ARCH_HAS_PREFETCH
-> -#else
-> -# define BASE_PREFETCH		"prefetcht0 %1"
-> -#endif
->   
->   /*
->    * Prefetch instructions for Pentium III (+) and AMD Athlon (+)
-> @@ -616,6 +613,10 @@ static inline void prefetch(const void *x)
->   			  "m" (*(const char *)x));
->   }
->   
-> +#else
-> +# define BASE_PREFETCH		"prefetcht0 %1"
-> +#endif
-> +
->   /*
->    * 3dnow prefetch to get an exclusive cache line.
->    * Useful for spinlocks to avoid one state transition in the
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Thanks!
+
+Dave
+
+
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
