@@ -1,186 +1,123 @@
-Return-Path: <linux-kernel+bounces-194819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A7D8D427F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7DC8D4287
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9413B25029
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:50:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1B06B241C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6765FC11;
-	Thu, 30 May 2024 00:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A287CA40;
+	Thu, 30 May 2024 00:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F24FSipB"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SfOCw/vZ"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0876AA1;
-	Thu, 30 May 2024 00:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4EE10A1A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717030239; cv=none; b=Tlsd7GVOLzJXryfX4Tzw/G5Dtpk5flsJkqr7/SKSgtuMmuSlNdBkXuY7KQWtPl3t5S7OPctXjRzrH/Y3X+cRgwqF8qwDPftWmpxPUz6Uj5AgvDhu8ySvdVXsWTHXSU1qQ+GDP7WtVy6L3H4AWo/F7eSeDE3BJpDoNYZ0AbnAQxI=
+	t=1717030284; cv=none; b=ox7HlcqinmS/v6wuX+gCZK575gGLP/WjcHX4csSGACcjnVM1BUOgno1wnSKrv7rKMVV4B/rULKfRrigqs4sTU5gxMF+S9zZdvqE5yfKGr4j1UiZwRN+tM/RIYDZETfFn/5yMWZHAHDmNf6/KW6GVDMIkEAJDMwcTUAj7pf9uykE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717030239; c=relaxed/simple;
-	bh=w0M2NwYr/14Mvs7l87d7yBk8eY17sbC7zcA+FobWwQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bv2QXBNs+ta3OR5SuYpRy7RLX3tu/8zqoPlQNvORabGWmpBl4I+WzBpOp3zt6J0njLVWhD6K47Vj8n11pkQ7chwhMooVyy5Jr/uXWQ2CpmAIbjP8BD0plZGiJg3ASQ91PIFJmi3mUHnnDr7AwPkdZliNNcBQHJoEcKtQpO3tlNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F24FSipB; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f4ed9dc7beso199691b3a.1;
-        Wed, 29 May 2024 17:50:38 -0700 (PDT)
+	s=arc-20240116; t=1717030284; c=relaxed/simple;
+	bh=qSscqI2jnEaKNqN3eGGmydizc4eKU3xik0L5S+IZ06Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U5Q3djrx0kRbx8wZwSTGZo5uHEVDCAJbA58rJkk07MLPiSIRmc5JWFeoVh7+RPfaKfmCyN1MeLTwV3FjSfBYapJTuFzwyk/V3yeEzNVg7mH4crCA2XvavGRfMeMLtO58TslmMOUzN4ybeWkS3bR2KTs+2IqMU21NgfAJ0HhKNT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SfOCw/vZ; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b119986f2so372750e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:51:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717030238; x=1717635038; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=k8+O8xhY+pxJWdqeW2KaJVJjVRnx1SFKpe5mCJ/JMA4=;
-        b=F24FSipBFdAKBQ1pwHupzNe/aaBgnlfzwW6J3wyDyAJRHhMPvB9ccvyBeDDiI+JUP3
-         +I5niiuefXkKIhumab3qU8vqatW7gimYNj5/mMjXtwFVGvr5b1Nr1Cs40n3QqSBzIo5T
-         XBxNaFwNe4cb9egClaXYd9jouKS39L1E+Mo+BmjXbfNYsxoR3xU1NcOUGFbe71QkZAW0
-         YdihjVyuFjHR45spuL61ZDY7oYl7sCzAIyZpNZg4NDvmhciUlaH2nLg9RPXdiRXXCPEo
-         P7ogpyxD+O30/Vpv1pvcXr3AS+VLlBpTK7lc80zedOR4CpiMLhez2pfxXbS9SNdI0qiY
-         YEUw==
+        d=linaro.org; s=google; t=1717030281; x=1717635081; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rz7l99uPeINg02KJ5xTzBJjdXsp8Ze3vOgXKzSKH2IQ=;
+        b=SfOCw/vZgONaXKqfUNbD5Cjd6GL7yLdt6oUMm+AXBf5ieM6UUdYwc1wJS1DmnrtO+I
+         T/JjYvGZ8Otc9htnuv79MkCj3d1DAN5QQsP/XjJxFJKJIDdHJA6silbVQ5swEcWvXEwg
+         UTcLBX62jsOhcQPHbwGkvF6TNQVXob0cbMcmhvJFV6d25LHbS/rbWdeYnjMqS0JpbvHt
+         DjP9yvp4lnMYOAyQ34YF6i6YL29L0lcZxt3BjN44/LIm7rQdn1M74olvoWblwu7hs52A
+         45LaIWTdoqrM57mihuqgIf1KO0rLZard/rVY7OlLxezVclPELt+3URrIuw/e38slf5FN
+         0UoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717030238; x=1717635038;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k8+O8xhY+pxJWdqeW2KaJVJjVRnx1SFKpe5mCJ/JMA4=;
-        b=ZPIHzqKJSWyohIuDgX0pcV7EFl5GEQZbBN9x8BId0hCNeN3s8elzGZdG64ZC89D17q
-         utTPghO3YNN9fWolJEMgx7EP6wPDMdHr6SfuFWZ7MgVbY/Nd/PiKmmaBGTcQ4Dy5nafc
-         uaxRcCsmPACcKLAOYf+f45EXPl62S9pvDC8afhtglL/dwCdsQSzF+VYtvDRWbLW9QIQk
-         aBQ+wjk6i1k8GJvFqiknZesin2CK7U1SqiVYusQmqhlNSPAdTmV13ASn/CdzL2g8oWku
-         78zGzfofNFK+GYA6zHHKpSuPr11t/bhmqqYLKIpkudrGBPF85buOh2Cez5h40H3+dykh
-         NWYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4OmjLT1qC0UUwwArf28CofcyO3w8igHoi3DHlj6j2pNnHPWlZNC0oT4fbzlt+fZZ56vxR9yiMl9zSXdlpndHsn0Q2XXxu+h8MktreQWaSdMQoTB3ySnqNUqwrd0UDjwGX5G10V1bCYNRZe6Z58fkUZww1n2BPVDSrG3dzZ/nXvsY/2wyX6LMsG8Ts
-X-Gm-Message-State: AOJu0YzJvm4f0EYpiCiP/Ca3NHT01tZZzCxY24XShbV/d6wDmBxvPvJn
-	did9Z8c7yIe0hVeOQITkge17Y0X9c5bOC9YVTOGxqFcYyiOzUl3IND5pq06u
-X-Google-Smtp-Source: AGHT+IEYDfQxP1oHkh5ta+MZE51Ikrl8Y36qaiEgsMUgYNELNTiBc5MpFMcJovRpYRv1UkeiFSflbw==
-X-Received: by 2002:a62:f201:0:b0:701:c944:ae75 with SMTP id d2e1a72fcca58-70231a867d5mr652385b3a.4.1717030237502;
-        Wed, 29 May 2024 17:50:37 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc3552ffsm8593308b3a.80.2024.05.29.17.50.36
+        d=1e100.net; s=20230601; t=1717030281; x=1717635081;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rz7l99uPeINg02KJ5xTzBJjdXsp8Ze3vOgXKzSKH2IQ=;
+        b=rJhaNYHW4nHTM8tt4Ysm0em5r1y+kZWsrHnUKcgEeZTvzu9s1Jm7O0zoEglQoJEhLl
+         krzsjDkYdfwShqBZKMxZ9yDdm4fmFEtXNV9blfq5Ha35wYyN4JBjAaV1nRYRpFlyrg35
+         jB1ITCsG21NYmGoxGR8El4vPltNgURgxpfVqmX+WjW7/UrY7KB2VfdCUUFyzRvjyzNuQ
+         wm0I2UYK43Jeu74Ec+DnlPFuh/lyPJO4DTnXN7nfjyyaGSUOpfF1tcMiDRgFhzyhIMm7
+         e8Ay1zIuGLkqpMBrHIQGixwT/tuxYVMdSVQQc7mZigJsSqivjAYn63CEF48ODiaSxKJd
+         QTMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVvkOQFhZSQw22QYP8RYDInkRmCIZD+V2kroe5Xdx9iRAujsTMTK2QgXfbQpb7QlkLMoKFtuI33W1vntzxsvXkCF9jG6qrUCEvbNyl
+X-Gm-Message-State: AOJu0YyNtvJdX8IlfAEmWZ5tZ0y+Nph8eeKAdb2ManCYtqfcwZxJHq1W
+	jxPbiewwvxMZh1skiBlgiD/wQt4qlGike7QuSASESNQk05mBCfmmFCGzjoPGcgc=
+X-Google-Smtp-Source: AGHT+IEIQngqhGpjdAJ/DjkazcW5Xs4Brbjw8XK/yqQEIjBE77nR1RptiDJjg9LmtRHYLmq1pdlJhw==
+X-Received: by 2002:a05:6512:48c:b0:528:9d15:240e with SMTP id 2adb3069b0e04-52b7d47a523mr332225e87.43.1717030280909;
+        Wed, 29 May 2024 17:51:20 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b233sm1396534e87.135.2024.05.29.17.51.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 17:50:37 -0700 (PDT)
-Date: Wed, 29 May 2024 18:50:34 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	outreachy@lists.linux.dev, netdev@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Jann Horn <jannh@google.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
- restrictions
-Message-ID: <ZlfNWtyEnIAw99ne@tahera-OptiPlex-5000>
-References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
- <20240401.ieC2uqua5sha@digikod.net>
- <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
- <20240411.ahgeefeiNg4i@digikod.net>
+        Wed, 29 May 2024 17:51:20 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/2] arm64: defconfig: fix config issues on Qualcomm SM8350
+ platform
+Date: Thu, 30 May 2024 03:51:12 +0300
+Message-Id: <20240530-8350-config-v1-0-d6e871236ed4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240411.ahgeefeiNg4i@digikod.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIDNV2YC/x3MQQqAIBBA0avIrBNGzaiuEi3ERpuNhkIE0t2Tl
+ m/xf4NKhanCKhoUurlyTh1qEOBPlyJJPrpBox7RGpSzsSh9ToGjVC6oxUwKiTT04ioU+Plv2/6
+ +Hy4bV0hdAAAA
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=584;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=qSscqI2jnEaKNqN3eGGmydizc4eKU3xik0L5S+IZ06Y=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmV82Hcx4jM2awZXO5tVolhFR9cQtF7qsw9zQpb
+ pYtL0c64LiJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlfNhwAKCRCLPIo+Aiko
+ 1aRaB/4rYJXXzW3dj87Q9Rq+egkSpvErKwTcQlpQKJfS0VUhoXAO17JGwrDnFCH2nv0bdEG6Me5
+ A1luxqzKPRw/m1/XCm9TgB9PQD1bPckn6PBerRIqRtIOInhcNJHzauMuGefcINd+b9E5qOjqA/H
+ rLQErtAYXRVZNIpkXTirPKpmUs6Qu/eabg9dsRZhwt59T5zABx9J0nGtMzoP3Jpkn9en0uza80p
+ o6cgSyazldAOF4G99sxxY8fE9RY8RGI5EjTWj07AXsbedlKWW/snoi9vIjhkLzxwdfGJVWc9C8H
+ mUeB2dOkmPOLFhYv0vcC42y4A6I6c07zJEbyMSl/Ahe74XnB
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
-> On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
-> > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
-> > > Thanks for this patch.  Please CC the netdev mailing list too, they may
-> > > be interested by this feature. I also added a few folks that previously
-> > > showed their interest for this feature.
-> > > 
-> > > On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
-> > > > Abstract unix sockets are used for local interprocess communication without
-> > > > relying on filesystem. Since landlock has no restriction for connecting to
-> > > > a UNIX socket in the abstract namespace, a sandboxed process can connect to
-> > > > a socket outside the sandboxed environment. Access to such sockets should
-> > > > be scoped the same way ptrace access is limited.
-> > > 
-> > > This is good but it would be better to explain that Landlock doesn't
-> > > currently control abstract unix sockets and that it would make sense for
-> > > a sandbox.
-> > > 
-> > > 
-> > > > 
-> > > > For a landlocked process to be allowed to connect to a target process, it
-> > > > must have a subset of the target process’s rules (the connecting socket
-> > > > must be in a sub-domain of the listening socket). This patch adds a new
-> > > > LSM hook for connect function in unix socket with the related access rights.
-> > > 
-> > > Because of compatibility reasons, and because Landlock should be
-> > > flexible, we need to extend the user space interface.  As explained in
-> > > the GitHub issue, we need to add a new "scoped" field to the
-> > > landlock_ruleset_attr struct. This field will optionally contain a
-> > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
-> > > ruleset will deny any connection from within the sandbox to its parents
-> > > (i.e. any parent sandbox or not-sandboxed processes).
-> 
-> > Thanks for the feedback. Here is what I understood, please correct me if
-> > I am wrong. First, I should add another field to the
-> > landlock_ruleset_attr (a field like handled_access_net, but for the unix
-> > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
-> > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
-> 
-> That was the initial idea, but after thinking more about it and talking
-> with some users, I now think we can get a more generic interface.
-> 
-> Because unix sockets, signals, and other IPCs are fully controlled by
-> the kernel (contrary to inet sockets that get out of the system), we can
-> add ingress and egress control according to the source and the
-> destination.
-> 
-> To control the direction we could add an
-> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE and a
-> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND rights (these names are a bit
-> long but at least explicit).  To control the source and destination, it
-> makes sense to use Landlock domain (i.e. sandboxes):
-> LANDLOCK_DOMAIN_HIERARCHY_PARENT, LANDLOCK_DOMAIN_HIERARCHY_SELF, and
-> LANDLOCK_DOMAIN_HIERARCHY_CHILD.  This could be used by extending the
-> landlock_ruleset_attr type and adding a new
-> landlock_domain_hierarchy_attr type:
-> 
-> struct landlock_ruleset_attr ruleset_attr = {
->   .handled_access_dom = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
->                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
-> }
-> 
-> // Allows sending data to and receiving data from processes in the same
-> // domain or a child domain, through abstract unix sockets.
-> struct landlock_domain_hierarchy_attr dom_attr = {
->   .allowed_access = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
->                     LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
->   .relationship = LANDLOCK_DOMAIN_HIERARCHY_SELF | \
->                   LANDLOCK_DOMAIN_HIERARCHY_CHILD,
-> };
-> 
-> It should also work with other kind of IPCs:
-> * LANDLOCK_ACCESS_DOM_UNIX_PATHNAME_RECEIVE/SEND (signal)
-> * LANDLOCK_ACCESS_DOM_SIGNAL_RECEIVE/SEND (signal)
-> * LANDLOCK_ACCESS_DOM_XSI_RECEIVE/SEND (XSI message queue)
-> * LANDLOCK_ACCESS_DOM_MQ_RECEIVE/SEND (POSIX message queue)
-> * LANDLOCK_ACCESS_DOM_PTRACE_RECEIVE/SEND (ptrace, which would be
->   limited)
-> 
-> What do you think?
-Indeed, in the case of abstract Unix sockets, both parties can send and
-receive data when a connection is established. Therefore, we can define
-a single LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT to represent the right to
-share data, regardless of direction. However, we should still retain
-LANDLOCK_DOMAIN_HIERARCHY for SELF, PARENT, and CHILD, as the source and
-destination are important. 
-As you said, I believe we should have receive and send rights for
-another kind of IPCs (which will be used for landlock#8 issue)
+Fix two issues observed with the kernels using defconfig on the devices
+using Qualcomm SM8350 SoC.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (2):
+      arm64: defconfig: enable CONFIG_SM_GPUCC_8350
+      arm64: defconfig: make CONFIG_INTERCONNECT_QCOM_SM8350 built-in
+
+ arch/arm64/configs/defconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+---
+base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
+change-id: 20240530-8350-config-1af193610ee2
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
