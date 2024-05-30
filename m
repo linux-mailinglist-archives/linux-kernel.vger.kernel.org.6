@@ -1,228 +1,174 @@
-Return-Path: <linux-kernel+bounces-195675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02BA8D5022
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:49:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D838D5028
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A77B24D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:49:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9141C210CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177143F9ED;
-	Thu, 30 May 2024 16:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE902F873;
+	Thu, 30 May 2024 16:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoT2rBvW"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8idBfHv"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3AA42071;
-	Thu, 30 May 2024 16:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6129A2E859;
+	Thu, 30 May 2024 16:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087745; cv=none; b=c5s0KLxYKrdGNOeQUdt4XAGtujDy8b6hnrRWbHQ/LyZHJ4K2+UsJEmN8Fk1lMuLszv943FkQt5dRRipi5zK0ndjX2LSbqG3qdl6tPb7x0KuF0S/VlyVO166nLOjE96BSg/OpwmBvBKVRExtcmQ7HDUrtnlTH0c7PoZuxGWkSd5o=
+	t=1717087869; cv=none; b=atEk78fQyIMIeUnNqSFGp8PS9zraAq+yytHi+x7jPXEUkC03cwAVfO89zSMAXdFTirkhMnmN9xuNai3d/KexHNZCuT1ywihAvXoEJyVAeplMMKA7CiQseDhGB0cPpE324GOCMroAAS4f7jdsrrpsk2V8wBbvpBhrk+F2VHlYe3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087745; c=relaxed/simple;
-	bh=I6BERmi5nPEKmxHL2HMDaClEL9MyjT47g54+Sy/rblo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2TwhwiAcDg5+r+MWid4ZyMTFPeBbtR7dk6QzEczQSLeepTsBR0+8xGMmmZ/AlcwOotnVEYWUEtC5oFglxq4Hyt8VUewmVdIeGPt6iWGt+5QVbhEWytSZDjRYIz2FSFsUym7fn9hgHs8zUS9nNy4ZAcvAkGPIBBWw6JVdcEa4zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoT2rBvW; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1717087869; c=relaxed/simple;
+	bh=Cqa3IcNO1G7aG2ZtMHv+vFOnMk+bocKk1NucDnJXoBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fiPz3RezlIYytMHEqAnemEK0l0dBLPdIK9aHxtF7xjvDPhSCJH8e7y+CkMBcP+anaoR53ANy9fMN+jH69c7QVi2JzzgYU1ZZAg1Mlt2RVP2yfNRisxb4NOLqvVt8Eu48HV6xhlV2v5VjIbh+C9RcMFBtXEPGULwKYdFU5Zm2IYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8idBfHv; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6bce380eb9cso915618a12.0;
-        Thu, 30 May 2024 09:49:03 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2bda9105902so154391a91.0;
+        Thu, 30 May 2024 09:51:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717087743; x=1717692543; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J/Ld2nqzB5x279KNvsmiD2HC7Uop3I6bxq/cd3hya74=;
-        b=NoT2rBvWXpIilks1IjAo+zjyJDpfLMzHI/kl7eKaUXI3ZLiffMSUoZRAXjW1L5ymzP
-         aBj8NIrCExrmNryhttMst8q5YPgrY3pi9Ve1IyrVEr398uisrpMw7laR3Kb7Zbrvv8pJ
-         Wh5uhiF8hv9wR1F7l2p3UFIlkCFyGdt22xqwIM0SrJXLvKdFuuf5myJd5uZ76SmA3nQC
-         lp4up8/dr9FSWiWjuVT5FFgMDCZLYyH2VjLvU2nMTMuh54axGFgqkKpQqJC1RVGBtYYS
-         1ZxMpPAy76tQ/8iwokHe0TxjUOB+tp5wJrhs3s3LLev7TvHVH6l+OAgb2keMtXEG3TvM
-         H/6A==
+        d=gmail.com; s=20230601; t=1717087868; x=1717692668; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=O0YornlgzDiHU0b1iyt2cYQQUi/emeKM3MOtCSfqTII=;
+        b=S8idBfHviN1GDc0Tq9ZFNBLjVUQaq4WlnG8wscZqG2L0cGezFVpoaWawRayvNEY8ww
+         fXd9NxXCwfg0hE1r42U/XEHKyfthkqQcqhL6Y63pIZWrbu7ZH/c7q20tXJUMesInaiZc
+         d9DChY8Tz4hcvtZpxnHTGqfOdATicRrRitMAL3tLyusamHivokQB92SZLBn0NlrtI1GW
+         azy3SS+b0rD6tsU73W3q5ectx29H2IWXwlvdk+HoIvRKWvGOXDhIi9L9vbuOuLtnb7Lb
+         CjIOJSKTenLLYPpaHYBRKk92nr+O5zhnGQwFz0nlvep27wpWUa2HDjxDKq+GPyQ8YZys
+         Yikg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717087743; x=1717692543;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J/Ld2nqzB5x279KNvsmiD2HC7Uop3I6bxq/cd3hya74=;
-        b=w/NlElIixSD3gDeQuRBvv3RXUwfGZAliKFX4J9T+NrceOMlw5VN/RrOoCEfk+AV1YW
-         KpLaqNI6jXR8v9htWY8HWaRKtwuohCqbpHfsIhKEOGV6SpmXf+cDAV0qTKy/3CjVmE+5
-         SGNf/V7f5/wfGNFNLtXT4FywXtxn42xpkM9DuWrK4UvLTT889OV/SN/tSkzfaqvArjmA
-         f3wuJBdm9YFQCTXygqSjEU8WMCbDg8LwhMPp45tphcg0INUBaXvM5SuJOA83m90GI7rl
-         ToOGwavucIzJBCBV9C17fkS0WfRNLfiNFw3KgY+3l/QDNGnqTE8r55DHlxc86zrVwTyB
-         IyNw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+agFYdMVv8Bl7QJoNyE+NAIJrbbOfFTWRdL1h523QD0iCIlpzLwkXzP9lQofGt81+LCHOpaGMs+3RZppzCMQJdqgFrZbIh183/hfKHHnhh6rKpPNY8Y5klpjcsOMdEVkD
-X-Gm-Message-State: AOJu0YwXRFs8hUnEDj8xWcDGxzwCBWqIeGmU1wI436cTFf36q9Qk2rM1
-	S4e1PZZGnUq0bvTtGDV60xpcCuLZWBX2/8dWT1d2CGrISNYE0zuf
-X-Google-Smtp-Source: AGHT+IHHbgLpocARyPawPF9UimvIl95SLEOKH1LFA/5BleZpLidB5rwVY+xFA/y/tRBULCttMeXsPg==
-X-Received: by 2002:a17:902:c614:b0:1f4:7713:8f6 with SMTP id d9443c01a7336-1f619b2cbe3mr19999725ad.52.1717087742726;
-        Thu, 30 May 2024 09:49:02 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323554a3sm87295ad.63.2024.05.30.09.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 09:49:02 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 30 May 2024 06:49:01 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <Zlit_RUFPparkS3h@slm.duckdns.org>
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240502084800.GY30852@noisy.programming.kicks-ass.net>
- <ZjPnb1vdt80FrksA@slm.duckdns.org>
- <20240503085232.GC30852@noisy.programming.kicks-ass.net>
- <ZjgWzhruwo8euPC0@slm.duckdns.org>
- <20240513080359.GI30852@noisy.programming.kicks-ass.net>
- <ZkUd7oUr11VGme1p@slm.duckdns.org>
- <ZkvoqvY00UDDcKJU@slm.duckdns.org>
+        d=1e100.net; s=20230601; t=1717087868; x=1717692668;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O0YornlgzDiHU0b1iyt2cYQQUi/emeKM3MOtCSfqTII=;
+        b=c4LMj+7PPKDmfauROfWcD7O+SoeRerZG/+pJbZT9UBFZwp6MWwzqSXHU0OMZC+w084
+         nt2X6yxvNqGj4ER3AiO7nlZkK9hQcVfADw/D0zho3NL7PauF9wSkKoqIJYyErgA8YcLR
+         VSVYEzbDilB9vHN+8gziDb26VXmZ0aV6PAVT4+HVjwq1eXXFgrAdI7S4y2pW0FBZeBFd
+         z5GmzBKuDHxF4dMvCFZ7/YYxh7AcOo5MAQH6qRRq9ToWXTbbZYgUnI/swcvUiCYw3CVG
+         sTRNnWN5bvtxnR29WUxd+C0JctyMhtm5XokqVWoanY6AcI85tE1Bv06whdgq4t0pdaXd
+         kvIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnEHq39E6C/YtpjD6gj0pWLESEE0YDUm123CXhBg7U5bnQGdKiwUv4zi0ZCZp0+VOsiTcjlQX59swWad7NmYRVblxEYfdYRqoiO0/XFtLf3Hu9ivZuHEhQsuIVASkoRA5ck4C7HgQkhmsVvWDtkL6jYqmJSh6ZJW9mHaKIzgjwApe5eM6s
+X-Gm-Message-State: AOJu0YxMHm8bdE2MHCtiNhcvWxqPookVNxKSn0kNY6UrAd6fmKUkyzFF
+	qugBeyn8uEc3fQ/DsChv/ELuBg1mFcng7Oqssep/lPRtOQajhtwjWk58GQ==
+X-Google-Smtp-Source: AGHT+IHdd+OgjxcLPJ7VubuHsbn7ZmU+jx6myTo6XOWQrRp3RplJlG5tQHXuY6cwwqpIoVQ2IZRQEA==
+X-Received: by 2002:a17:90a:9205:b0:2bd:ebd5:8bf5 with SMTP id 98e67ed59e1d1-2c1abc43045mr2734190a91.32.1717087867550;
+        Thu, 30 May 2024 09:51:07 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a775ccedsm1913563a91.1.2024.05.30.09.51.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 09:51:07 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f0b2c682-ce43-426c-92f9-008256f08eff@roeck-us.net>
+Date: Thu, 30 May 2024 09:51:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
+ sensors
+To: Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org
+Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
+ <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
+References: <20240529205204.81208-1-linux@roeck-us.net>
+ <20240529205204.81208-3-linux@roeck-us.net>
+ <fa79f3c2-666f-48b8-b39a-f598107b2293@gmx.de>
+ <0dc7a7c6-a426-424a-8321-471569ee6835@roeck-us.net>
+ <bd197671-4fef-4cdb-8472-b46151e9008b@roeck-us.net>
+ <5b9e47cb-3d9a-4d12-9d48-fc03111a0240@gmx.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <5b9e47cb-3d9a-4d12-9d48-fc03111a0240@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkvoqvY00UDDcKJU@slm.duckdns.org>
 
-Hello,
+Hi Armin,
 
-It has been a couple weeks, so I take it that you aren't intending to
-respond. I think it'd be useful to summarize the arguments against sched_ext
-and list the counter-points.
+On 5/30/24 09:45, Armin Wolf wrote:
+[ ... ]
+>>
+> # i2cdump 1 0x51
+>       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
+> 00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 3c 00 00    Q???2?2......<..
+> 10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
+> 20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
+> 30: 00 c0 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .??.............
+> 40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+> 80: 30 10 12 02 04 00 40 42 00 00 00 00 b2 12 0d 00    0????.@B....???.
+> 90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
+> a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
+> b0: 00 00 00 00 00 00 d4 00 00 00 d4 00 00 00 d4 00    ......?...?...?.
+> c0: 00 00 d4 00 00 00 88 13 08 88 13 08 20 4e 20 10    ..?...?????? N ?
+> d0: 27 10 1a 41 28 10 27 10 c4 09 04 4c 1d 0c 00 00    '??A(?'????L??..
+> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+> 
 
-(1) Merging sched_ext will weaken the incentive to contribute.
+Thanks a lot. This is again Montage Technology's M88SPD5118.
+What is your DDR module vendor ?
 
-While this may partially be true, it isn't looking at the whole picture.
-This argument looks at the costs of sched_ext while ignoring the benefits,
-and it ignores the costs of funneling all scheduler work through one
-codebase.
+Thanks,
+Guenter
 
-If you look at the whole picture, I think you’ll see that:
-
-- The problem space of CPU scheduling is too big for a single code base to
-  be effective. Hardware has changed a lot and so have the workloads. There
-  are many areas that we haven't mapped out. It's difficult to try anything
-  radical in a code base which has to satisfy everyone all the time, but
-  holding the bar so high that experimentation is suppressed means we will
-  all be worse off.
-
-- The bar for contribution is too high, driving away potential contributors.
-  Many vendors and users carry internal patches as the upstreaming cost is
-  too high. We are already seeing multiple developers who have not
-  previously contributed to fair.c actively participating in and driving
-  sched_ext schedulers. It’s possible those developers will eventually
-  contribute to fair.c, but if sched_ext didn’t exist this would be less
-  likely.
-
-The constraint of only one scheduler codebase makes it very difficult to
-contribute. You say that this constraint is necessary to force
-collaboration, but I think the opposite is happening - many people don't
-bother trying to contribute because the bar is too high. If sched_ext is
-merged, the scheduler code base may lose some of the enforcement. However,
-in the longer term, I believe we will gain more talented and motivated
-engineers working in the problem space and some of them will surely find it
-worthwhile to contribute to fair.c. It will be the most widely used
-scheduler in the world no matter what, and will be attractive for people to
-work on.
-
-EEVDF worked out because you have worked on the scheduler for a long time
-and have gained a ton of context on what works and doesn't. It also worked
-out because you were more confident that it'd get merged. How do we build
-confidence in other developers who want to explore whatever comes after
-EEVDF without worrying that it is hopeless to try? sched_ext provides an
-outlet for people who aren't already established to take a smaller risk
-first, which is likely to lead to more people contributing.
-
-(2) Efforts and developments out of the kernel tree are worthless.
-
-I believe this is too narrow a view. Direct contribution is one form of
-contribution but there are many others, including research. EEVDF itself is
-based on a research paper. Figuring out what works and sharing them seems as
-important as anything to me.
-
-One reason cited for the uselessness is that out-of-tree efforts are often
-throw-away and don't build up to anything. There is some truth to this but
-the main reason is the difficulty of working with out-of-tree kernel
-modifications. Rebase is painful and there is no convenient way to
-distribute to users. Some still power through but it's near impossible to
-build a user base and community for things that are out-of-tree. sched_ext
-solves these problems and the umbrella repo serves as the central repository
-for the developers to collaborate and learn from each other. This isn’t a
-prediction for the future, it is something which is already actively
-happening.
-
-Given the right environment, they will keep flourishing and finding new ways
-to improve scheduling. Many of them won't be applicable to the built-in
-scheduler, but some will. It's also likely that, in the long term, the
-larger scheduler developer base will be directly beneficial to the built-in
-scheduler too.
-
-(3) This will lead to vendor-specific fragmentation.
-
-This is already happening with or without sched_ext whether that's in the
-form of out-of-tree scheduler patches or people trying to circumvent the
-scheduler with creative uses of the RT class.
-
-sched_ext will introduce a different mode of doing it. There are scenarios
-where the situation can become a bit worse but I don't believe the
-difference would be drastic. Because all sched_ext schedulers have to be
-under the GPL, any vendor shipping a sched_ext scheduler to a customer will
-have to publish the code. If there are useful ideas we'll be just as free to
-take them as now. Also, users would have the benefit that it's a lot easier
-to opt out of the vendor's scheduler.
-
-On balance, yes, sched_ext may lead to more or at least different types of
-fragmentation, but that seems like a minor downside compared to the overall
-benefits especially given that we have to live with some level of
-fragmentation no matter what.
-
-(4) sched_ext is a debug tool and we don't merge debug tools.
-
-I think both parts of the above claim are wrong. sched_ext can be used
-purely as a debug tool but it's also performant and flexible enough to
-readily enable non-trivial practical use cases. We are using it in
-production today, and as stated elsewhere in this thread, there are multiple
-other companies in various stages of rolling it out to production. It can be
-a debug tool, a temporary bridge to field early ideas while working on
-something more permanent, a proper solution to specific problems which don't
-quite fit the general scheduler (an extreme example would be
-standard-dictated scheduling for avionics), and so on.
-
-Also, we merge debug tools all the time. Lockdep is a debug tool. The code
-base is full of debug features and components. Why wouldn't we merge
-something if it makes the lives of the developers and users better by making
-it easier to understand and debug problems? We don't merge printks someone
-sprinkled over the code base to debug one particular problem. We do and
-should merge tools and frameworks which improve visibility and debugging.
-
-
-To reiterate our proposition: Let’s please open it up. Scheduling doesn’t
-have to be this closed. Many open subsystems survive fine and often thrive
-thanks to their openness. sched_ext hooks into the core scheduling but the
-contact surface is limited, and, if they ever get in the way, we’ll do our
-best to resolve them. The balance in the trade-offs seems pretty obvious.
-
-Thanks.
-
---
-tejun
 
