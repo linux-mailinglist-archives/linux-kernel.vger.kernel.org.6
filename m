@@ -1,142 +1,160 @@
-Return-Path: <linux-kernel+bounces-194899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BE48D43E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:54:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CA38D43E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EC91C2195E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:54:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06B4E1C23277
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A111C693;
-	Thu, 30 May 2024 02:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F7A1CA9E;
+	Thu, 30 May 2024 02:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C4Zw8rY1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vk9h0nUo"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4650D8F4A
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8CBF9F7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717037657; cv=none; b=KSeX+A2qbrnWVZuG/aujAa//5aZbwP/vQ4Oy8J+EyIXoK3BZH5rn/pv6HHZGio69KfK4s4bzYymmd5GAscd9rPP5r6kCHRIyk9Z1minJ/yYKJeTmpEI4GP/3pWjk11s1kI+at3xClrceArc3H6Vg/sidWQtPGrYhhp9Op0P1v+I=
+	t=1717037814; cv=none; b=HKYkBjGqVObe016wawpFrqKOF0raG7AcZwUyVTIxgy6aKsKDS9S70qyDp4zxE/eYLZhqJIS6As4lRY7fHoqUH/i/hS/Yn3sPmvm1ijXmzLhx1h++ozEYMYHmR0/7N+IkypFaNeX6JSakHEE9kmzoZ+gRbXJxHCD49UV7SRXZG6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717037657; c=relaxed/simple;
-	bh=d8md9x7SBiL3q1zi6EOHY9MD8rjpR2Ja26NCg5WpPq0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FXObMppWzl3xK9UgnEe2lZ23OfzYLeC+VRRg7V3BCSJjVTV78T6yMCV8Kb7Har12oJlru2J4NF1zjocsigcWm2WGIrqOKGtvkyDT90NA3UpLCdF2TTIaumcP2oM2Y/op8VF7pXK5TiIUKGdkgu+hBRccpDjCp32B/1rcTOtLAy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C4Zw8rY1; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717037656; x=1748573656;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=d8md9x7SBiL3q1zi6EOHY9MD8rjpR2Ja26NCg5WpPq0=;
-  b=C4Zw8rY1XnyFMT8QPxz1m03kTxZLpWwEb+z9g/HxNdZOkZSitrSyk5CR
-   gpbiJL7przKYZkYnRMLDoMcaxvlAyxpSZIuJTjvqaSrhtRiZPuJ3dJQYX
-   NQsocr10JQY0yjqFnvzMqA13AeXq7VFdQyHf0NNwq0ER1OHjUjoEUx6/m
-   KW4UdOychoJsmg5C/m1QTYuKsJ2z2rAARMBfBMeIegx2EbNCDI0VwzNZ0
-   bpAjnT5pZWa8XG4TDfnmCrlw7lP1nEaZ7lAuF7QJLF1mHYLmkcXLhclBh
-   FOnrD4rkY4uF5g0FJzk/ctDKC8dU0Hn4DenGUX9tZIy5RNpmFm+iitVSG
-   g==;
-X-CSE-ConnectionGUID: OAFFsIdxS8OoKUoedI4TCQ==
-X-CSE-MsgGUID: QeKzn+ZBQm2nTnb5qbottg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13368282"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13368282"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 19:54:16 -0700
-X-CSE-ConnectionGUID: 83EShAK2R5G2dyN3IJXvew==
-X-CSE-MsgGUID: ANFGCL9WR1qERbEhYS7Gfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="40561289"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 19:54:14 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Kairui Song
- <kasong@tencent.com>,  Ryan Roberts <ryan.roberts@arm.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster
- order
-In-Reply-To: <CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
-	(Chris Li's message of "Wed, 29 May 2024 18:13:33 -0700")
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
-	<CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
-	<87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
-Date: Thu, 30 May 2024 10:52:21 +0800
-Message-ID: <875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717037814; c=relaxed/simple;
+	bh=d9/ahd5YF85nH46FuwMEbEAhWjNPf6Zo4Qqtup6Yddk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YY/rWqY/lqq7CnF/sJ6K2Q30q5ztC9SR4TEgcEix/tguqpAeBkSpK9CtfobzGQMINXfLVU7uLlfN5NS4EtoRCUXeA0fGKVBgUmEZiFN9rnAkPHeZHbT8YiRK7MDBJUGDDSIKcHlKtxliaAQocHfoj0hpg/EGWYF6p6FIDBVGGpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vk9h0nUo; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e95a1f9c53so4375241fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 19:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717037810; x=1717642610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uKswQv9vOWbij26jBLWYSo21fHi9SD5RXG5TtneGY0w=;
+        b=Vk9h0nUoLiWKkgqtdKhj27SnyIVyJBBZJq+0ICdxMkPqz6OGHMj+rmZLa62JBUoJQV
+         yQqnPeT1DlhLTzBupUm7gSrIST6SOL+7N7l+R71t+dqkZJQahjsuQ+gdtuJEcvwGQ4IV
+         3YqXjJ67557h+xiqwlzn9qfct5CCwzabMbw7U5gmpp8gpGe+tZnV96boVYPeMsbHAD5L
+         0p2bwZGAz3qIYtLB6JdaO0KkO61yqjNFmygkWxqJVQvMsvoZLOvpbeA78zIRAVRlKl8+
+         RW91oON8nKaOmlDFmSdJ0WwfPEoHAQc9Uzg71kZKWofAx35X7k/QxfwWCFT1Jv9bx0g4
+         rhTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717037810; x=1717642610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uKswQv9vOWbij26jBLWYSo21fHi9SD5RXG5TtneGY0w=;
+        b=h/I5S0x5ppv3nVqWpLCVCRtq2keARBrE17RJZ4l2hoYFblB2Vt6e5EXeXs0IWPia+K
+         Vw7rVpOfhiheYAWw1K+gSYJb74KeVH0plMQ9Jnq5CRxXjK2lfkd4135Cf05MaJt0Brah
+         h6pVUPkht8l9LkiY0Yw7xrH5VaBhxqnCs+aV/6pDwSeLZonC1tKSIbmrL5dX3v5bgdEh
+         IfXMmqY8hoE6MJFuRfCAZnHPtQo43rdytDZEcmGZgUb+ByznB9FIsZ3itHnfJ0nzNPqh
+         6tZXuiJaYY8WVjGCe62wKhJIummGYWgLbUx9dybA+73/FlE+gIHNFoXF0B0IMKBqLxB3
+         s2ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUx1vsWYgHzDsP/Yxe+6WHEvTmR1dqb0c+H49JHnSwmplwvpCFUxlDJoGkRC1PJctzq7gy8LSS7Jmlj7PiveQCdbvMCU41SHHr6OmLi
+X-Gm-Message-State: AOJu0YyAhQCZSaff56b9Gu2RhLSAoR0Kun9359Nw2GyB5qguvtfqefr+
+	3OrRiugODy9QhsO5u52RAjAeLLRvUZB4tSQL0YnI7IsV5awVmOvitEzs1PdbeNZvKnPv+UJ7kaM
+	J7FoDyHPeHddhEqnsIaKe7CV0Z0w=
+X-Google-Smtp-Source: AGHT+IFHdaPznOOwq25PGPvHah0rs3J8h66WFAhG7pqRuuNSsQIKCVf40+wZoXITYhppyxfdypQ8COsBCyVi/lmTGMM=
+X-Received: by 2002:a2e:9c91:0:b0:2ea:7def:46d0 with SMTP id
+ 38308e7fff4ca-2ea84782d1dmr3354241fa.9.1717037810182; Wed, 29 May 2024
+ 19:56:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240530025144.1570865-1-zhaoyang.huang@unisoc.com>
+In-Reply-To: <20240530025144.1570865-1-zhaoyang.huang@unisoc.com>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Thu, 30 May 2024 10:56:39 +0800
+Message-ID: <CAGWkznGnOn9+5Uk9Lu+p++FdJ3KiP6y6t5BSMpmZ=FTTO1w7CA@mail.gmail.com>
+Subject: Re: [PATCH] mm: fix incorrect vbq reference in purge_fragmented_block
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Chris Li <chrisl@kernel.org> writes:
+loop Thomas
 
-> Hi Ying,
+On Thu, May 30, 2024 at 10:52=E2=80=AFAM zhaoyang.huang
+<zhaoyang.huang@unisoc.com> wrote:
 >
-> On Wed, May 29, 2024 at 1:57=E2=80=AFAM Huang, Ying <ying.huang@intel.com=
-> wrote:
->>
->> Chris Li <chrisl@kernel.org> writes:
->>
->> > I am spinning a new version for this series to address two issues
->> > found in this series:
->> >
->> > 1) Oppo discovered a bug in the following line:
->> > +               ci =3D si->cluster_info + tmp;
->> > Should be "tmp / SWAPFILE_CLUSTER" instead of "tmp".
->> > That is a serious bug but trivial to fix.
->> >
->> > 2) order 0 allocation currently blindly scans swap_map disregarding
->> > the cluster->order.
->>
->> IIUC, now, we only scan swap_map[] only if
->> !list_empty(&si->free_clusters) && !list_empty(&si->nonfull_clusters[ord=
-er]).
->> That is, if you doesn't run low swap free space, you will not do that.
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 >
-> You can still swap space in order 0 clusters while order 4 runs out of
-> free_cluster
-> or nonfull_clusters[order]. For Android that is a common case.
-
-When we fail to allocate order 4, we will fallback to order 0.  Still
-don't need to scan swap_map[].  But after looking at your below reply, I
-realized that the swap space is almost full at most times in your cases.
-Then, it's possible that we run into scanning swap_map[].
-list_empty(&si->free_clusters) &&
-list_empty(&si->nonfull_clusters[order]) will become true, if we put too
-many clusters in si->percpu_cluster.  So, if we want to avoid to scan
-swap_map[], we can stop add clusters in si->percpu_cluster when swap
-space runs low.  And maybe take clusters out of si->percpu_cluster
-sometimes.
-
-Another issue is nonfull_cluster[order1] cannot be used for
-nonfull_cluster[order2].  In definition, we should not fail order 0
-allocation, we need to steal nonfull_cluster[order>0] for order 0
-allocation.  This can avoid to scan swap_map[] too.  This may be not
-perfect, but it is the simplest first step implementation.  You can
-optimize based on it further.
-
-And, I checked your code again.  It appears that si->percpu_cluster may
-be put in si->nonfull_cluster[], then be used by another CPU.  Please
-check it.
-
---
-Best Regards,
-Huang, Ying
-
-[snip]
+> Broken vbq->free reported on a v6.6 based system which is caused
+> by invalid vbq->lock protect over vbq->free in purge_fragmented_block.
+> This should be introduced by the Fixes below which ignored vbq->lock
+> matter.
+>
+> Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized bl=
+ocks")
+>
+> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> ---
+>  mm/vmalloc.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 22aa63f4ef63..112b50431725 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2614,9 +2614,10 @@ static void free_vmap_block(struct vmap_block *vb)
+>  }
+>
+>  static bool purge_fragmented_block(struct vmap_block *vb,
+> -               struct vmap_block_queue *vbq, struct list_head *purge_lis=
+t,
+> -               bool force_purge)
+> +               struct list_head *purge_list, bool force_purge)
+>  {
+> +       struct vmap_block_queue *vbq;
+> +
+>         if (vb->free + vb->dirty !=3D VMAP_BBMAP_BITS ||
+>             vb->dirty =3D=3D VMAP_BBMAP_BITS)
+>                 return false;
+> @@ -2625,6 +2626,8 @@ static bool purge_fragmented_block(struct vmap_bloc=
+k *vb,
+>         if (!(force_purge || vb->free < VMAP_PURGE_THRESHOLD))
+>                 return false;
+>
+> +       vbq =3D container_of(addr_to_vb_xa(vb->va->va_start),
+> +               struct vmap_block_queue, vmap_blocks);
+>         /* prevent further allocs after releasing lock */
+>         WRITE_ONCE(vb->free, 0);
+>         /* prevent purging it again */
+> @@ -2664,7 +2667,7 @@ static void purge_fragmented_blocks(int cpu)
+>                         continue;
+>
+>                 spin_lock(&vb->lock);
+> -               purge_fragmented_block(vb, vbq, &purge, true);
+> +               purge_fragmented_block(vb, &purge, true);
+>                 spin_unlock(&vb->lock);
+>         }
+>         rcu_read_unlock();
+> @@ -2801,7 +2804,7 @@ static void _vm_unmap_aliases(unsigned long start, =
+unsigned long end, int flush)
+>                          * not purgeable, check whether there is dirty
+>                          * space to be flushed.
+>                          */
+> -                       if (!purge_fragmented_block(vb, vbq, &purge_list,=
+ false) &&
+> +                       if (!purge_fragmented_block(vb, &purge_list, fals=
+e) &&
+>                             vb->dirty_max && vb->dirty !=3D VMAP_BBMAP_BI=
+TS) {
+>                                 unsigned long va_start =3D vb->va->va_sta=
+rt;
+>                                 unsigned long s, e;
+> --
+> 2.25.1
+>
 
