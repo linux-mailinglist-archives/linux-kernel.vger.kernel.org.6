@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-195172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41D88D4878
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:29:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76858D487F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749B11F2369E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:29:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A0A1C2350C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A726F313;
-	Thu, 30 May 2024 09:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAA4152180;
+	Thu, 30 May 2024 09:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i6ouBkYa"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vvr3ccyV"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FC76F301
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973336F314
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717061370; cv=none; b=FlIJev4nW00xgTnCGf00LNXyuKTZ9L5BJEHXi1PGsNnGU7R1xitB8g7CCQRYPEMODcbWZtM3/G+jReg5tN2+r/fUA4L4JyLC3ioXZgaWV8aGKKpqJOeM/3fcARU3OlI+B1Yhxu8o4N3o4Q4keFPQ/qMbsumrJiJXjXot2E+KPws=
+	t=1717061394; cv=none; b=VGdDc7Q9RNCI/5CQWVDjHXeHXFYnnjeHWC0T6simH4XQSNW+nnDQv8qBqCknurmBWnpyR9BVQAyIonoi9zJyRAI1Nb7w2xlxiikzJ4uuJECRVv0nBYZHfNSWSd6RYB28Ctz0VogF+D+VSJ0NM34ciOkDS+Iwxtk3VL78tvWqHxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717061370; c=relaxed/simple;
-	bh=Mzwpc9HSOPfDS9J1k9xeAWmoD+azW6P9PFcyGQzLf1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uH5tJoeYl8mO6Lt1F1luYCHZIfADr2IEAUVK6fGz9/J3uW8ksR+xRuxa//GUsz0N8H8C5wG3vY4HOSWUcV9YetgtRl3/Xbazox6nYU+JlNAU9WQMbzpo4Zvd4KIS655EKAY1WpmS6UIyU2/lP4qZPrSsSluLxwpm/nxpTeDi85M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i6ouBkYa; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42121d28664so7063845e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:29:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717061366; x=1717666166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ma+zkUDMFmRGmAdFFiltA3V8CcE1ips8EycBhVAAsJk=;
-        b=i6ouBkYaspgGtfIfk9V8EzysRUqBkF7Tze4Ln7E81PyZ2euksDTMy7lgltvNfT76S4
-         LSYhCEllVMqjhOC5QKGRNLcb9rur5xEBaU7xXYiuzm1Jm0YSpqivutwqu65/gYm2koM9
-         pIlmvJ0ekR+jwEuj1SHCjZkLmZM5MFiDLizJtRcB6hU27+HX6ZwHA4xumMy0WfjEAeNk
-         i80zmMnmEwZg1e7mesbDXWW2aTIea8AKujRMn8KjeMuhUaH+y701PqkKDaZ5geo/huiN
-         FP8EHkMighRauxgEZqLYP5uAg3wa9uSdO3NhLKrFsunfWWvNmVqnSjH/WIdAbnJOr6Ii
-         r7+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717061366; x=1717666166;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ma+zkUDMFmRGmAdFFiltA3V8CcE1ips8EycBhVAAsJk=;
-        b=efA8yzxBZSWmxCvNvOiJBHr9rmYabAn16NUmPb6gXt8iVpkVxNGkMk4NPFTaTHBj/t
-         1BMyZ9FendRgCNL/yc+whStPWfZ86h/0D8BKN0pnnFJwES4qGuTJtM2RRh86MxJ7VFed
-         z6tf/8xn3ET+mvoeb+1lKj2Y3ewUfm427UppDobc09ggHfZS1HVqf1WNFrM3tFfrYAmG
-         guR786IdEexotkumDfGlNh+KwlN3JXVmOuxiGHHbO14W2WB50vVNFdXTdYPbeSh6HgA/
-         /oN7ACDm9LYswu+zPzA3BTs8f6PhwIxjK8pM5Blq+0vRTQ338jXqVSVnbs/TqFLI0zjR
-         WdwQ==
-X-Gm-Message-State: AOJu0YwjKji7Mqo1UsY+Yoe/namDZPMr1BLQXdjVYqLQqFsbplpOaYxP
-	4NNGQKvuSPIc73xiWx8++vnJJ/39xwxUxxUrTDAEIgcvLCJZfTHIOpd0mGXPALgoY2Vox/dlIoc
-	U
-X-Google-Smtp-Source: AGHT+IF/nthLELANpgmLRmO6xyVsD7IA/WH2LIwNU2QgfY56qcIKeDpZWXMGEctQ+ahsgnu6FOq7dA==
-X-Received: by 2002:a05:600c:45c4:b0:421:c8a:424e with SMTP id 5b1f17b1804b1-4212781ac4emr19165455e9.10.1717061366464;
-        Thu, 30 May 2024 02:29:26 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:aae:8a32:91fa:6bf5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42127059901sm19369075e9.3.2024.05.30.02.29.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 02:29:26 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	brgl@bgdev.pl,
-	linus.walleij@linaro.org,
-	Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 0/3] gpiolib: cdev: tidy up kfifo handling
-Date: Thu, 30 May 2024 11:29:25 +0200
-Message-ID: <171706136138.33273.12296733431611345251.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240529131953.195777-1-warthog618@gmail.com>
-References: <20240529131953.195777-1-warthog618@gmail.com>
+	s=arc-20240116; t=1717061394; c=relaxed/simple;
+	bh=JKzSnQecgd7u4K89EAQFL82K4hnMXOXK390++g7jjcs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CJAp7SeJHXLv0uODqk10OMlumSwcjRIK9HPa8OkcNNyD1C/YepxiVPP2xMIdGFcEcX1vUGjexa0yZVFnZv9DYJXAYDmSv+Z5ljgbNpB0ZQWjljP6ur5jqc1e117q+6vJ1EDTrx3uft2/FKcCRReZSgs6ZzZM5E/8ofFk0Aac8Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vvr3ccyV; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U9TVb0054130;
+	Thu, 30 May 2024 04:29:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717061371;
+	bh=2hYA47DOvcDeTkKm028dYBABl6cBIAITymbjUen38/Y=;
+	h=From:To:CC:Subject:Date;
+	b=vvr3ccyVZvfrtqQvNHF9KJapDGYjEeYxAZ1h5VElEjNXCSDF/z68UTlE1RpgdQfRF
+	 gHLl+MtwNwFtcubIM+qle3st1V3L/+0Hw+XDnti9D5AIBFbBsyeCCUWd8syUuQb16T
+	 G7WgWHmgM2InkE4IYkLsao52U/+3eHbrS0vV3i8I=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U9TVmB050427
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 04:29:31 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 04:29:31 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 04:29:31 -0500
+Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.102])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U9TUZt074178;
+	Thu, 30 May 2024 04:29:31 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <mripard@kernel.org>, <sam@ravnborg.org>, <j-choudhary@ti.com>
+CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
+        <airlied@gmail.com>, <daniel@ffwll.ch>, <a-bhatia1@ti.com>,
+        <dri-devel@lists.freedesktop.org>
+Subject: [PATCH v4 0/2] Add mode_valid and atomic_check hooks for sii902x bridge
+Date: Thu, 30 May 2024 14:59:28 +0530
+Message-ID: <20240530092930.434026-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Move the mode_valid hook to drm_bridge_funcs structure to take care
+of the case when the encoder attaches the bridge chain with the
+DRM_BRIDGE_ATTACH_NO_CONNECTOR flag in which case, the connector is not
+initialized in the bridge's attach call and mode_valid is not called.
 
+Also add this check to the atomic_check call as suggested by Maxime in
+v1 patch.
 
-On Wed, 29 May 2024 21:19:50 +0800, Kent Gibson wrote:
-> This series is a follow up to my recent kfifo initialisation fix[1].
-> 
-> Patch 1 adds calling INIT_KFIFO() on the event kfifo in order to induce
-> an oops if the kfifo is accessed prior to being allocated.  Not calling
-> INIT_KFIFO() could be considered an abuse of the kfifo API. I don't
-> recall, but it is possible that it was not being called as we also make
-> use of kfifo_initialized(), and the assumption was that it would return
-> true after the INIT_KFIFO() call. In fact it only returns true once
-> the kfifo has been allocated.
-> 
-> [...]
+Changelog v3->v4:
+- Remove mode_valid hook from connector_helper_funcs as it is not needed.
 
-Applied, thanks!
+v3 patch:
+<https://lore.kernel.org/all/20240524093509.127189-1-j-choudhary@ti.com/>
 
-[1/3] gpiolib: cdev: Add INIT_KFIFO() for linereq events
-      commit: 35d848e7a1cbba2649ed98cf58e0cdc7ee560c7a
-[2/3] gpiolib: cdev: Refactor allocation of linereq events kfifo
-      commit: 4ce5ca654a761462a222164e96b8ab953b8cacab
-[3/3] gpiolib: cdev: Cleanup kfifo_out() error handling
-      commit: 2ba4746b418dcffadb3b135657fea8d3e62b4c30
+Changelog v2->v3:
+- Remove newline that was introduced in [1/2] and later deleted in [2/2]
+  in v2
 
-Best regards,
+v2 patch:
+<https://lore.kernel.org/all/20240524073305.107293-1-j-choudhary@ti.com/>
+
+Changelog v1->v2:
+- Add KHZ suffix in the macros to be more clear
+- Add the hook for drm_bridge_funcs as well
+- Add check in atomic_check dunction call (in a separate patch)
+
+v1 patch:
+<https://lore.kernel.org/all/20240408081435.216927-1-j-choudhary@ti.com/>
+
+Jayesh Choudhary (2):
+  drm/bridge: sii902x: Fix mode_valid hook
+  drm/bridge: Add pixel clock check in atomic_check
+
+ drivers/gpu/drm/bridge/sii902x.c | 38 ++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 9 deletions(-)
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.25.1
+
 
