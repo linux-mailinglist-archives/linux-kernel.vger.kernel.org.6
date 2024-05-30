@@ -1,210 +1,288 @@
-Return-Path: <linux-kernel+bounces-195697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FEC8D506A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:03:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206C38D505F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1627A1F24E52
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFD01F276AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5AE3FBB2;
-	Thu, 30 May 2024 17:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5DF405FB;
+	Thu, 30 May 2024 16:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XizQfk3r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ShGtPagx"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B7F4596F;
-	Thu, 30 May 2024 17:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A123D3BC;
+	Thu, 30 May 2024 16:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088580; cv=none; b=hMbw6N8gvZluZn/9Ck9te1Va9xJ7Xq7JuQIiHyzpMYXdqblo3hmM0O7DVM1/St0lkSXEQVDPeIT+/ASVTBtYjv3B+XZmPOC0jhGDDMwHTP5cPXTDznUbOk85tvCaZcexacp70ZrFkDs7zqcbapLP9q4nryyZFnULn4i0jSH5yno=
+	t=1717088397; cv=none; b=o839jWvXG6TqgqbZYcRgy65ntTMtRu63PkbEAUAx7QG8ynP8+7Ujm0wPzME+JyYcde/irdNF5WKSoie8h69TWd5wEP8Cqh1A2yAgN/AbLjIGnOHUIDx/QCMKdmiuv4fmXyDEVH51b/aCwqc0Yvzweu/gPtyOW2HfFgR0VcaYuK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088580; c=relaxed/simple;
-	bh=GzKBrhX5Mrx9Fgc9D6BndebC2wOUB3k5OXpy4LjwLAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQ16UypkJZAFviK+YMFV2atez0DKt0H9DrRCcsXXzXDVWX97J7NHhI8UOUr+p2hYhbTiawV2r+Z3yvEnnyBgsg5IU4dZDqPNi+tGEC3dLy4zybxcFql01TLO7QIA1hT8SXOOtH+/3EumDaqLDD2F4gLnv5KKU571sYuyt8i7pUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XizQfk3r; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717088579; x=1748624579;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GzKBrhX5Mrx9Fgc9D6BndebC2wOUB3k5OXpy4LjwLAI=;
-  b=XizQfk3rwPdG7H1XhHzikjCqPO/SKI2xi5oIRL95CuOA7Gl11VEQpYnZ
-   dUkYhwY6ZXRzidEdL6BjwUR/qBXl7gMauULPxyiVAXjl359gKvggTQLGv
-   bd9LXXkeNR9RTGFZXPFHxPUMFcvzKJXIVOAqEwSWh4IRMVQezYDhsG3T2
-   N3+s1/j5fQSuL4Weg0xez5SQ7oZehA0DscG0bKD0+9LglS8UYFJ4d+I1A
-   2MEKi6S9D4KKuQ9EqcJstHH9s1Oha/e/vd27MVPGUBN5VxA0qikxvBE/Z
-   Xd56sDP/FnijvDqvjSOCLajt5fUB9CKSu7JrC/ALZdxEqR66cKQaTSpX1
-   g==;
-X-CSE-ConnectionGUID: y06dZQmlRXKFIjdIZaD2IQ==
-X-CSE-MsgGUID: 2UAwSuzGSPCfDJcabOji4w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13427037"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="13427037"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 10:02:58 -0700
-X-CSE-ConnectionGUID: uT4hl57ESmGK08yFumAB6w==
-X-CSE-MsgGUID: kWjRMTdeSHSE/jmK1rO54Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="66746145"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 30 May 2024 10:02:55 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCjAn-000Fl7-1F;
-	Thu, 30 May 2024 17:02:51 +0000
-Date: Fri, 31 May 2024 00:59:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andy.shevchenko@gmail.com,
-	lars@metafoo.de, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nuno.a@analog.com,
-	swboyd@chromium.org, u.kleine-koenig@pengutronix.de,
-	yasin.lee.x@gmail.com, yasin.lee.x@outlook.com
-Subject: Re: [PATCH v3 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor
- driver
-Message-ID: <202405310010.dSPEpCuu-lkp@intel.com>
-References: <SN7PR12MB81019AB7F38806097F2C8A34A4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1717088397; c=relaxed/simple;
+	bh=ZmewMy/J48g7zeSgTaAlaDabbdez0NdBnKOUTQSkdN0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ahS7K7dmQ6D6OUDzVn3hGWNh/E+ZItQTCt1ftP3YXd/1PoZWPy/9dxNsL2ukq2BM5o+Ug29kT9twl+OPfSLIaLlc6o+FHgWtkIThbA29Rm0D7Ef5HPna51z4sCtRQ5JUBUoQ3rHvym3GpkSQFZSjhSxlDfX27FlT1KWElBFcX6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ShGtPagx; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UGxRfI084779;
+	Thu, 30 May 2024 11:59:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717088367;
+	bh=NWzO6PifBfl4VTshOed7kvLZcKauKBveekB4GRW4id4=;
+	h=From:To:CC:Subject:Date;
+	b=ShGtPagxvcfJ7Yhs1iaDY+Wlw9QXxafr3XKlUfAptXKA03XgaIClChXgzPG8tAhkW
+	 vQ8gxXSpovCZRTlDx7EDGwRyw/0NKZiOZqpni++AQKQbzxYmDpNwD6FxM6Mh3Soo6o
+	 4fLPor5orc9v7qtvGMODNv+/0fLfMe4x5YAWGthk=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UGxQPN066441
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 11:59:27 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 11:59:26 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 11:59:26 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UGxPmf119255;
+	Thu, 30 May 2024 11:59:26 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
+        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
+        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <jani.nikula@intel.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-rockchip@lists.infradead.org>, <davidgow@google.com>,
+        <dlatypov@google.com>
+Subject: [PATCH v10 00/11] Add V4L2 M2M Driver for E5010 JPEG Encoder
+Date: Thu, 30 May 2024 22:29:25 +0530
+Message-ID: <20240530165925.2715837-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN7PR12MB81019AB7F38806097F2C8A34A4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Yasin,
+This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
+which is a stateful JPEG encoder from Imagination technologies
+and is present in TI AM62A SoC.
 
-kernel test robot noticed the following build errors:
+While adding support for it, following additional framework changes were
+made:
+ - Moved reference quantization and huffman tables provided in
+   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
+ - Add macros to round to closest integer (either higher or lower) while
+   rounding in order of 2.
+ - Add KUnit tests for math functions.
 
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on robh/for-next linus/master v6.10-rc1 next-20240529]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+v4l2-compliance test :
+Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/iio-proximity-hx9023s-Add-TYHX-HX9023S-sensor-driver/20240529-170307
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/SN7PR12MB81019AB7F38806097F2C8A34A4F22%40SN7PR12MB8101.namprd12.prod.outlook.com
-patch subject: [PATCH v3 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor driver
-config: hexagon-randconfig-r062-20240530 (https://download.01.org/0day-ci/archive/20240531/202405310010.dSPEpCuu-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405310010.dSPEpCuu-lkp@intel.com/reproduce)
+E5010 JPEG Encoder Manual tests :
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405310010.dSPEpCuu-lkp@intel.com/
+Performance:
+Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
 
-All errors (new ones prefixed by >>):
+Functionality:
+Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
 
-   In file included from drivers/iio/proximity/hx9023s.c:10:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-                                                     ^
-   In file included from drivers/iio/proximity/hx9023s.c:10:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-                                                     ^
-   In file included from drivers/iio/proximity/hx9023s.c:10:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
->> drivers/iio/proximity/hx9023s.c:556:9: error: implicit declaration of function 'FIELD_GET' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           *val = FIELD_GET(HX9023S_PROX_DEBOUNCE_MASK, *val);
-                  ^
-   drivers/iio/proximity/hx9023s.c:570:9: error: implicit declaration of function 'FIELD_GET' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           *val = FIELD_GET(HX9023S_PROX_DEBOUNCE_MASK, *val);
-                  ^
-   6 warnings and 2 errors generated.
+Compression Quality:
+Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
+
+Multi Instance:
+Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
+
+Crop support:
+Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
+
+Runtime PM:
+Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
+
+Math lib KUnit tests:
+Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876
+
+[1]: 
+https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
+
+Changelog:
+V9->V10:
+ - Update commenting style in math.h and add notes for new jpeg header
+   macros
+ - Add KUnit dependency for math_kunit
+
+V8->V9:
+ - Remove kernel.h header file
+ - Remove stale filler data on jpeg header in E5010 jpeg driver
+
+V7->V8:
+ - Add KUnit tests for math functions
+ - Add roundclosest() for supporting rounding for non-multiple of 2
+ - Update commit message as suggested
+ - Add Reviewed-by and Acked-by tags to patches as received
+
+V6->V7:
+ - Fix cropping support
+ - Move reference huffman and quantization tables to v4l2-jpeg.c
+ - Fix suspend/resume use-case
+ - Add Reviewed-by
+
+V5->V6:
+ - Fix sparse warnings
+
+V4->V5:
+ - Sort the #includes in driver file alphabetically
+ - Rename huffman and quantization tables to not use '_'
+ - Add Reviewed-by tag
+
+V3->V4:
+- Use ti-specific compatible ti,am62a-jpeg-enc as secondary one in
+  dt-binding
+- Remove clock-names as only single clock in dt-binding
+- Fix issue with default params setting
+- Correct v4l2 error prints
+- Simplify register write functions with single statement return values
+- Remove unrequired error checks from get_queue()
+- Drop explicit device_caps setting as it is already taken care by v4l2
+  core
+- Remove unrequired multiplanar checks and memset from s_fmt, g_fmt
+  callback functions
+- Fix try_fmt callback to not update the queues
+- Remove unrequired contiguous format attribute from queue_init
+- Use dynamic allocation for video_device and remove unrequired
+  assignments in probe()
+- Remove unrequired checks from queue_setup function
+- Return queued buffers back if start_streaming fails
+- Use ARRAY_SIZE in place of hard-coding
+- Use huffman and quantization tables from reference header file
+
+V2->V3:
+- Add DONOTMERGE patches for dts and defconfig
+- Update driver with below changes :
+  - Correct license headers
+  - Use more generic name core instead of jasper for base registers
+  - Add Comment for forward declarations
+  - Simplify quantization table calculations
+  - Use v4l2_apply_frmsize_constraints for updating framesize and remove
+    unrequired functions
+  - Place TODO at top of file and in commit message too
+  - Use dev_err_probe helper in probe function
+  - Fix return value checking for failure scenarios in probe function
+  - Use v4l2_err/info/warn helpers instead of dev_err/info/warn helpers
+  - Fix unexpected indentation
+  - Correct commit message
+- Update dt-bindings with below changes :
+  - Add vendor specific compatible 
+  - Fix commit title and message
+  - Update reg names
+  - Update clocks to 1
+  - Fix dts example with proper naming
+
+V1->V2:
+ - Send dt-bindings and driver together
+
+Patch-Diff between the series :
+V9->V10 Range diff :
+https://gist.github.com/devarsht/b446acee460b8c65fb577d06b7bbc1da
+
+V8->V9 Range diff :
+https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
+
+V6->V7 Range diff :
+https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
+
+V5->V6 Range diff :
+https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
+
+V4->V5 Range diff :
+https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
+
+V3->V4 Range diff :
+https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
+
+Previous patch series:
+V9: https://lore.kernel.org/all/20240526175655.1093707-1-devarsht@ti.com/
+V8: https://lore.kernel.org/all/20240517171532.748684-1-devarsht@ti.com/
+V7: https://lore.kernel.org/all/20240510082603.1263256-1-devarsht@ti.com/
+V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
+V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
+V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
+V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
+V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
 
 
-vim +/FIELD_GET +556 drivers/iio/proximity/hx9023s.c
+Daniel Latypov (1):
+  lib: add basic KUnit test for lib/math
 
-   545	
-   546	static int hx9023s_read_far_debounce(struct hx9023s_data *data, int *val)
-   547	{
-   548		int ret;
-   549	
-   550		ret = regmap_read(data->regmap, HX9023S_PROX_INT_LOW_CFG, val);
-   551		if (ret < 0) {
-   552			dev_err(&data->client->dev, "i2c read failed\n");
-   553			return ret;
-   554		}
-   555	
- > 556		*val = FIELD_GET(HX9023S_PROX_DEBOUNCE_MASK, *val);
-   557		return IIO_VAL_INT;
-   558	}
-   559	
+Devarsh Thakkar (10):
+  media: dt-bindings: Add Imagination E5010 JPEG Encoder
+  media: imagination: Add E5010 JPEG Encoder driver
+  media: v4l2-jpeg: Export reference quantization and huffman tables
+  media: imagination: Use exported tables from v4l2-jpeg core
+  media: verisilicon : Use exported tables from v4l2-jpeg for hantro
+    codec
+  math.h: Add macros for rounding to closest value
+  Documentation: core-api: Add math.h macros and functions
+  lib: math_kunit: Add tests for new macros related to rounding to
+    nearest value
+  media: imagination: Round to closest multiple for cropping region
+  gpu: ipu-v3: Use generic macro for rounding closest to specified value
+
+ Documentation/core-api/kernel-api.rst         |    6 +
+ .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
+ MAINTAINERS                                   |    7 +
+ drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/imagination/Kconfig    |   12 +
+ drivers/media/platform/imagination/Makefile   |    3 +
+ .../platform/imagination/e5010-core-regs.h    |  585 ++++++
+ .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
+ .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
+ .../platform/imagination/e5010-jpeg-enc.c     | 1644 +++++++++++++++++
+ .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
+ .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
+ .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
+ drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
+ include/linux/math.h                          |   72 +
+ include/media/v4l2-jpeg.h                     |   28 +
+ lib/math/Kconfig                              |   14 +
+ lib/math/Makefile                             |    1 +
+ lib/math/math_kunit.c                         |  325 ++++
+ 21 files changed, 3738 insertions(+), 118 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+ create mode 100644 drivers/media/platform/imagination/Kconfig
+ create mode 100644 drivers/media/platform/imagination/Makefile
+ create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
+ create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
+ create mode 100644 lib/math/math_kunit.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.1
+
 
