@@ -1,295 +1,695 @@
-Return-Path: <linux-kernel+bounces-195349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737008D4B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:16:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83178D4B55
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB1228233B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659021F26628
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC811850AD;
-	Thu, 30 May 2024 12:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Xjsqrl1V"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2089.outbound.protection.outlook.com [40.107.94.89])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189401822EE;
+	Thu, 30 May 2024 12:12:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08EDDA1;
-	Thu, 30 May 2024 12:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717071381; cv=fail; b=JH8siFTSU1M3TR54ND/fxUYM2GkjfYANnNUn9uVaXspAG+Lz9scSXq3GQl9zlTyjKKnAlTUeFqvxm+NQ7USSwPEnBBorb0q+ZbxJbN7oImY4Sjs9AaGnfE0GnPw71YdS+J5QTy39182w5HKEj6Qm9HC9irugirzLLLfc9fw7E0I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717071381; c=relaxed/simple;
-	bh=3mPPMOVWzkQkZ1/Z61ODUMn7MdiEKmIg4WGiCNPdX6E=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mVJWvrYQgVJ8w50vNPrIHxmlX2HKmahYWWd1wpAfOpf5KJidEObtc8FixUgeKb06Rnp8qt90oWXXudEaLZdLc0b17/9IslwlZ7l8cuOONBcav17jFv1diOFV1PSPj/0o5rjswMe2xBFJer73RpateDpLsRfW1ZKykW2f7f46yU4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Xjsqrl1V; arc=fail smtp.client-ip=40.107.94.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dZtpwJmG+SAD1obJkxVh3O65CEhS8GUwG5TjZWjPzHi2OCxw/IHsJhqYwSRzj8k9UIXRIiPx+bIJX43r68UD5pOdOgnENGwwznLTyNX1302Bg273fl+nKIN05nVC3ki3px3XF5BwLfponjyvoOmblq4XbtJ2GVGkp8Go5oCHihEWdrCKdX2qi/fSR3MECdarckH55uPUaMPOq8RYAft5wZHT/slDGVTG2CxC2Qthh1LSMylIgB7wSKLgk8keFVqqc99Z7GmP4jxbrH9juV+wqKHU7UGk2+tcuFwYWeT5xENRx0DSh5aXpszCt6lg5QxJZQPmqUThVc96uF44g3B0eA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MRqpnDNBSciK4aHhKY9/lbqdOrosQtKDpOyTbhOrKJU=;
- b=j1pejDR13toX2TX3Eoy/v4DytBoAZuQlEj35z0M4ohJbAk77UgvUN75eXoCGkZx9iQ3MuipYgCCuHHYE1VGKuLBa8lqjfI/0M2oO0OZocx3q6cBE+YzMmscG7tQjOcUOn0xegb0MgGiKT50Uet09POJUD14L4E22ki98Ep11CxN3TVkuiolvYvVvFF8gm9j+usJyQ+jCeEv95KQ4gIEzX+dCDtnC6RrLmW+15Sa/zY57qMeXk6U7+hIC2PoLYvBUDJZrkfpJd3XIJJfo3czVik66IpnrgaD/CEoUPVJ1AV5BQozycxC3rccXbn8qbv70N4op4QFEJvdknSQ7dc7UVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MRqpnDNBSciK4aHhKY9/lbqdOrosQtKDpOyTbhOrKJU=;
- b=Xjsqrl1V6D1w5CVMajc7KVLzaNgWX4+ZPl6VTwgK62L8eSro4RBfqI8U5dh3k0cModMOl8QUGw+zdguvG9kEFVafiH4AsByKaespU8NqnDaJrF2+8sMm9Fz32tC2cCfqJEoWK4H8XPm1u9bfpHBZIfPE+EWCn4uGU2RJ+7dvXt4FOO2iAtYsoWP1dMDLaZ0G1RYGzU7iFu5/5uWaZbo7efz1sBbyRlk7MIOwzDU5vTBQYsKfOEJLwB1fFsj3pt+RywLJXrzKdsRVAxgwNhPQbbyRaqagWSq94SlsgEzuAMhGh3MD9mXrwmV5dVJ2bZyHLalE1s34CoACM6rnFTdWsw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- SA1PR12MB8742.namprd12.prod.outlook.com (2603:10b6:806:373::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.22; Thu, 30 May 2024 12:16:15 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ae68:3461:c09b:e6e3%5]) with mapi id 15.20.7587.035; Thu, 30 May 2024
- 12:16:15 +0000
-Message-ID: <b2dc17ff-faa6-4ada-a807-ce2a64c9fa29@nvidia.com>
-Date: Thu, 30 May 2024 13:11:47 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
-To: NeilBrown <neilb@suse.de>
-Cc: Chuck Lever III <chuck.lever@oracle.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
- linux-stable <stable@vger.kernel.org>,
- "patches@lists.linux.dev" <patches@lists.linux.dev>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck
- <linux@roeck-us.net>, "shuah@kernel.org" <shuah@kernel.org>,
- "patches@kernelci.org" <patches@kernelci.org>,
- "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
- "pavel@denx.de" <pavel@denx.de>, "f.fainelli@gmail.com"
- <f.fainelli@gmail.com>,
- "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
- "srw@sladewatkins.net" <srw@sladewatkins.net>,
- "rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
- "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <> <58fa929b-1713-472e-953f-7944be428049@nvidia.com>
- <171701638769.14261.14189708664797323773@noble.neil.brown.name>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <171701638769.14261.14189708664797323773@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0397.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:189::6) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2266F2F1;
+	Thu, 30 May 2024 12:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717071132; cv=none; b=p87LdCshGdT3fAr1SnuYT78ECQtPhXUinqgKo6kGRZUdril8fc0BFf4CYJfVVthC36J/2eQrezdevARH5Ct7PGPTYvf6kmg7VgjoNfHf9xDgluETStvqgTcfOEXVfKo5os4BGGVhXYN9JCOjO8CpsfXynhvtRPRsd67EtkaP0L0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717071132; c=relaxed/simple;
+	bh=Qm0tg7F1TaFKNAWzIQeCsUCkE3+d8VmIls+vCRIc5wY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fHoYpRtBWrgDfpd7Q2pgK73JvDOxTFW9dpqYGN/u6kaX+vbhHTNpujvipCoy9RJDb1yaKGMUAJsWVw/rJ/fMVn+/og4iqvi+xo3ebHSPRwVmCcp+uI3R9Ik3LljAeq691HSWYhLAi25HkHuOh7jOh9YU00j7XB//i9m0Kc6oWbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89786C2BBFC;
+	Thu, 30 May 2024 12:12:11 +0000 (UTC)
+Message-ID: <93c26479-9cb4-45c2-9408-91412d1eaadd@xs4all.nl>
+Date: Thu, 30 May 2024 14:12:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|SA1PR12MB8742:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51f92e9d-2bcb-41ef-2290-08dc80a24d8c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z2VNbWczbTh2M2dKQ0hhNUp6TUlaVEIvVTk3WCtWT2R3OFh2UFNhamlwWitn?=
- =?utf-8?B?QjdqcnhNa2E0RExqOUN2cWV3V2daVzBReHFIampLZjFSMHEvekJvb2NXbklD?=
- =?utf-8?B?dzhodDdFdThDKzI3NU9HT3k2djJaVlpqalRqMlhrNkNtN3ZXalNrbzJMdzEy?=
- =?utf-8?B?Mkx3N0pxUUlmazlyMXpIZ2ZBZzNycGZNVDd6UmFoaDdlemhnUC81TElzdlJ0?=
- =?utf-8?B?aC9BRmFnSitCVk5GNEZRQVZydXpBRXhxWnRwRER2czVvQ1R3eXo4U2VzMTZu?=
- =?utf-8?B?R2pON3hHbXNLL1Zpcy9wd09Yend5ZGNveW9sU2FaaXIyUVFOZ00rMmZRaFR1?=
- =?utf-8?B?b3BBUW9jTG5JMzZVUmovZWVHYVFXRkNuOTl2aldhZFJPNFE0enp1Wjl1U3ZU?=
- =?utf-8?B?WHdPRkhOWWg5UU14Q3hhOUxFSDhYRE5CYzBJRmhsMm84bnhib0tiSEhtcGhp?=
- =?utf-8?B?ZHdnbHdUb1ZMeDVQbjFxR05MU01DSUFsbDRhMEtOVnM1UkFnak5NNTZnK0FO?=
- =?utf-8?B?L0psRDlZZm1RU09SQUNQaURoRitpSmIxZHZKaFBWMVYxNExPVG9Jb1FjU2Y0?=
- =?utf-8?B?ZEhJUkNhODNSV1RxaDlhSjJjdWVnbnk3T0pIRm1VeGFtcERGc0xHVUlnSXkv?=
- =?utf-8?B?cmV4cW4vTnBDYUY3UkNNNldmSVZ0TXlsK0dLdmoxbnd0UDZtOUpURnJNSXZV?=
- =?utf-8?B?ckZqc0pOdTAvaWlJZ2p0eFlXNTRYZ1RPbXMwQjVlallaVDNJaXV5d3drWlRE?=
- =?utf-8?B?cXhwZ3VZYThRaVJXNk1rbjZEYzJlM1pxbTRIWU51ZHg2UDErY3o0UlZZMTVp?=
- =?utf-8?B?TEswYUVyUWNZN09YT3pwOXdMTmtNWG9wNm52UXFxUzRWYm5qanYrTVg1V0xk?=
- =?utf-8?B?blRpZDZ3ZTNPZTk0dGN5S2tQR291dUp3ZkFidXVEbUxtWlJoYTRXZFlkSnhQ?=
- =?utf-8?B?SCtGd3g3TGFPdnU1TXkrdjJIMnB4MlNIa2JlcWlseW5tR3JNZWpKMWZJMXlF?=
- =?utf-8?B?YmdoK3hKU2c0Z2dnR3NWM3J1QmV2VXkzaWU2UmpPQXVJV09YQW1vemI4dDRN?=
- =?utf-8?B?WlBzNHFKSXJWR3pIbVJ6QktmZ3QvZ0R3Sm9KL3FlUEdXam9DY1dwdGhzaGlS?=
- =?utf-8?B?WndRVHpKVUhqd3BvRXRRMFFWVHFKcTQ0dUQ1VVdDZ0NjZlRENDZXZUtkUUFk?=
- =?utf-8?B?aXp1UEtyZlFBOXl5c1ZLd3l3WFhoekxTYkl2YzBDK2oweHpFbEhISUt0OGo1?=
- =?utf-8?B?L2ordzNSSTVKWXNpb2ZnQldhMHZLeDh5akhaSEQvRWczN2NkSlByZFdHYmNy?=
- =?utf-8?B?NjhidWphQjJYSERHRmZmaVRSMEgyOWptWEkwMHRzMVg5MDdHY1pEVEtEQ2R2?=
- =?utf-8?B?Z2JpVDJVQjJab2dRZ2QvRWdqYjNSOWhBSm41TlFrdWYrWGZVYk1GRlVOZUh1?=
- =?utf-8?B?VmR5VklHeFoyYXNlOGR5Zi9aajJoZlZjdkJRYjRVbGxhSmpWQzZmMW1rOGpV?=
- =?utf-8?B?QmkwWWlueXNOQWNLZVNSUE9aV2tCNGM1MTdlNExwZmpEVTNVZGRYVi91MExl?=
- =?utf-8?B?bU0xWkVGaTQwUWdBL1J3SjVPMUw1NmJBU1BFYnFZNDlwSTM4ZHpHbFlwMkpj?=
- =?utf-8?B?SUZaK2xZa09jUUIrdEFHOVgxVHNyditTSmRBbEJidTlRYVVBbjIybDFQMmV5?=
- =?utf-8?B?TEVUanFCYzB2U2JJc2FZeXBzc0tlVnY0VUIrbkZOWTljVmRYMmhpRnV3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UFp2dmV2QlBYQUtFWWZCeStVclRhL1RUejdkK2hiSnlKZ24vN1oyT3MxZit5?=
- =?utf-8?B?cFdIUWN3WG9iL3REaWZ2N1AyTy9JSlhUK1dFa3hyOEhTSFhBcU5UOWw4clR4?=
- =?utf-8?B?M1NJKzc3V0Q2OS9rcnY5MmVQOWFhNElwWkNmNXBIc1BQRUd2dWN1SDhndzBw?=
- =?utf-8?B?N3Z0cmw1MFV2UjBVcE5VWGMzUE5aOWlYcDdMN3p2cmpVSDhzcFVnRE9odU92?=
- =?utf-8?B?RjBOQXVXalRwbjk1bmxiT3cxMGpnM3N3OFMwaVcxV2lOK0FJaFpSZm5LV3RU?=
- =?utf-8?B?V0w3M2IzS2NGSml2UStiaEhUQUNHZi8xckgyZEZZUkxVVFVuKzQzT2Ztd1BC?=
- =?utf-8?B?cFRIc0NDMWh1TkpvRTR1cnBvcmZ5Zk5CSzRYcGFpMndDUG9pcDVRSnE0QzFa?=
- =?utf-8?B?TXF4c2N6eU5zL3FEbXNUTThHL3NIaHgzMUhjdW05cEUzaUhzQ05xUFl2Z0M3?=
- =?utf-8?B?ZDVIVjJuK0tlemppQi9mNnVxMG1zNFdraVB2SzhmZU02RjNvNWFLZi9BSlBB?=
- =?utf-8?B?QUowU3VlZ2hZa09TSWkwNmhvaEwxR0Rib0dHcGFkbzllNE9PUDNjbFcyVFpt?=
- =?utf-8?B?ZzVFKzNBVS9sdFBXMzY5TUtZRXdBRXMzL09CMU1QN3M1dE9WL1FSQXZQZS9a?=
- =?utf-8?B?MDlIQ1YrZmMvcjNad2VzblMrbVlDaG45OTZCbTVtaUtTUHl0c0ZTempWV3N0?=
- =?utf-8?B?SnFneEgzSDc4NmNCelk1OVBJTmdDbUdxNW5CK09EbC9MZW1yWGJsc3VLMlg4?=
- =?utf-8?B?ZSt1L1o4cFkvL1VBQk5KYkQ2L1c1OE9zTUNRbzRuNENDS0JIMzhlMHQvQlc3?=
- =?utf-8?B?VUp4MnoxcDBGY1FTQnV5V2daRFRNVnVzRFpZQkxDK0l0cUhpdXVXbFA1UGJM?=
- =?utf-8?B?Zjl4eG84aU1vcDMwbDc0WVBvUFhrYklndUc4NDFyTElqcTV0d3hISDIrbjFY?=
- =?utf-8?B?NkhmK0tmYVQ0OFFPNE1KSjBVY2RqQmc0b0NHblZIWTJzMCtZYndJMS9DYkRr?=
- =?utf-8?B?TmJTQ2lZMy84ZjlZeXZ3Sko1VVZsY3NjUkYyU0locEE0RndvUE93K0dXeTRk?=
- =?utf-8?B?VTI4anBOREIwQTdjQ1NBZjFCUVBXZ29XaUNWWHhzb1N0SHFCV3doMlFLZWtO?=
- =?utf-8?B?Y1hJU0FBOVdLMlU1Y3d1QU02b0lDL2tCUzZRd0VzQ2FRbUl3NENjQUpXc296?=
- =?utf-8?B?dzAraEcrWUhhamkvalErVHVQWmR0MXFRMDBvQnpFbTMyTDYvaWp2cytzeno4?=
- =?utf-8?B?bWhLd1N5MktKcEJ1akMzODVBc0RDdFQ2elV1MGxleWljRFlIUWFFUXR2V0h4?=
- =?utf-8?B?Zm5DMkwwdk4yQXJBM0Qza25WcnBxeDRPTStiUDFMMXJYK1lTYm1nVm42RElJ?=
- =?utf-8?B?SXNBOWs1Ujl4VVlVR0NLazhCZjBXU1lhOFhQejNhU1dQTmZLaDRpNlFweEVh?=
- =?utf-8?B?bXd6Z3NIMDB4WmJrdmp5MHZqNkJtK292NEhIR2U1UHdwOEVZeDdWcy92Ymtj?=
- =?utf-8?B?VWxybHpMVVpUZjR1Rk1QUlZwK05FRFdET3ZoTHdrNndjNVpNRG5pSEpHbW5E?=
- =?utf-8?B?TU92UWlVRUp2N3hCbnZITWpNZlBoMnRVV1A2QkhaMkNFeStWZjNGa0t4Q3pJ?=
- =?utf-8?B?bW1kSGZDUHpKa3JqNGRHdEl1S2hTRHNxczNvYWIySGhJWGJVWnRCVTJKZEN3?=
- =?utf-8?B?b1V1bEp0Nkk2NkVGZjFJaW1lTEJYZXBsWnhQbURmN0pwVkd1OWNXWXFxQkNT?=
- =?utf-8?B?WGVrUkRWeW9zc3R6blE5MVJVYXdVc21MdTJaeElaQnZCMFkrUFU4SW9WL21o?=
- =?utf-8?B?Yzc3SHhlWjBURjVYd1lrTzVKR3FHeVdIM1ZkQ04wbldzS2kvdmZmVnV3cXlY?=
- =?utf-8?B?UTdLQkNPUCtLOFAzQnN0SXJRRDRJWUNVNEhYV2ZpSllRY2l2b1dFK3NKc0hG?=
- =?utf-8?B?SWFYVnkrYnFxNEh4TExUQmdXZVRjM2JHT2hkV1VrOG14NVRpZm01Ulh0V3A4?=
- =?utf-8?B?RXBDRk1PbEkyRi9kZ1gwNlBtZnZ0KzNwODdWQTgxMjdwOVNSSktGcnZwaXZJ?=
- =?utf-8?B?b2szMStiZVd0Q29oLzQ4QXc5RitjVDJHUm5rWlpXcUxxa2JKYWh6QkdNUnY4?=
- =?utf-8?Q?Z6Aa5vF90nA3Fl3yho5wyHmMQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51f92e9d-2bcb-41ef-2290-08dc80a24d8c
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 12:16:15.5790
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZvS5b/yKwXZEEkRzntfFI+Roeey5Fy25l5y5RnArvlAYN9W9EWKM37lH6jhYE3hEBn3X3/BLNJww3Y4gv4oP1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8742
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] media: mgb4: Add support for V4L2_CAP_TIMEPERFRAME
+To: tumic@gpxsee.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Martin_T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
+References: <20240426141619.8866-1-tumic@gpxsee.org>
+ <20240426141619.8866-3-tumic@gpxsee.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20240426141619.8866-3-tumic@gpxsee.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi Martin,
 
-On 29/05/2024 21:59, NeilBrown wrote:
-
-..
-
-> Thanks for testing.
-> I can only guess that you had an active NFSv4.1 mount and that the
-> callback thread was causing problems.  Please try this.  I also changed
-> to use freezable_schedule* which seems like a better interface to do the
-> same thing.
+On 26/04/2024 16:16, tumic@gpxsee.org wrote:
+> From: Martin Tůma <martin.tuma@digiteqautomotive.com>
 > 
-> If this doesn't fix it, we'll probably need to ask someone who remembers
-> the old freezer code.
+> Recent mgb4 firmwares have support for setting a variable framerate independent
+> of the signal framerate. Add/fix (the mgb4 driver already did promote
+> V4L2_CAP_TIMEPERFRAME, but it didn't work) support for V4L2_CAP_TIMEPERFRAME to
+> the driver to enable this feature.
 > 
-> Thanks,
-> NeilBrown
+> Additionally add support for the DV timings API (VIDIOC_G_DV_TIMINGS,
+> VIDIOC_ENUM_DV_TIMINGS, ...) for the outputs that was missing. The timings info
+> is required/used for implementing the V4L2_CAP_TIMEPERFRAME functionality.
 > 
->  From 518f0c1150f988b3fe8e5e0d053a25c3aa6c7d44 Mon Sep 17 00:00:00 2001
-> From: NeilBrown <neilb@suse.de>
-> Date: Wed, 29 May 2024 09:38:22 +1000
-> Subject: [PATCH] sunrpc: exclude from freezer when waiting for requests:
-> 
-> Prior to v6.1, the freezer will only wake a kernel thread from an
-> uninterruptible sleep.  Since we changed svc_get_next_xprt() to use and
-> IDLE sleep the freezer cannot wake it.  we need to tell the freezer to
-> ignore it instead.
-> 
-> To make this work with only upstream requests we would need
->    Commit f5d39b020809 ("freezer,sched: Rewrite core freezer logic")
-> which allows non-interruptible sleeps to be woken by the freezer.
-> 
-> Fixes: 9b8a8e5e8129 ("nfsd: don't allow nfsd threads to be signalled.")
-> Signed-off-by: NeilBrown <neilb@suse.de>
+> Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
 > ---
->   fs/nfs/callback.c     | 2 +-
->   fs/nfsd/nfs4proc.c    | 3 ++-
->   net/sunrpc/svc_xprt.c | 4 ++--
->   3 files changed, 5 insertions(+), 4 deletions(-)
+>  drivers/media/pci/mgb4/mgb4_core.c      |   2 +-
+>  drivers/media/pci/mgb4/mgb4_core.h      |   2 +
+>  drivers/media/pci/mgb4/mgb4_io.h        |  24 ++-
+>  drivers/media/pci/mgb4/mgb4_sysfs_out.c |   4 +-
+>  drivers/media/pci/mgb4/mgb4_vin.c       |  86 ++++++++---
+>  drivers/media/pci/mgb4/mgb4_vin.h       |   3 +-
+>  drivers/media/pci/mgb4/mgb4_vout.c      | 190 +++++++++++++++++++++++-
+>  drivers/media/pci/mgb4/mgb4_vout.h      |   3 +-
+>  8 files changed, 278 insertions(+), 36 deletions(-)
 > 
-> diff --git a/fs/nfs/callback.c b/fs/nfs/callback.c
-> index 46a0a2d6962e..8fe143cad4a2 100644
-> --- a/fs/nfs/callback.c
-> +++ b/fs/nfs/callback.c
-> @@ -124,7 +124,7 @@ nfs41_callback_svc(void *vrqstp)
->   		} else {
->   			spin_unlock_bh(&serv->sv_cb_lock);
->   			if (!kthread_should_stop())
-> -				schedule();
-> +				freezable_schedule();
->   			finish_wait(&serv->sv_cb_waitq, &wq);
->   		}
->   	}
-> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> index 6779291efca9..e0ff2212866a 100644
-> --- a/fs/nfsd/nfs4proc.c
-> +++ b/fs/nfsd/nfs4proc.c
-> @@ -38,6 +38,7 @@
->   #include <linux/slab.h>
->   #include <linux/kthread.h>
->   #include <linux/namei.h>
-> +#include <linux/freezer.h>
->   
->   #include <linux/sunrpc/addr.h>
->   #include <linux/nfs_ssc.h>
-> @@ -1322,7 +1323,7 @@ static __be32 nfsd4_ssc_setup_dul(struct nfsd_net *nn, char *ipaddr,
->   
->   			/* allow 20secs for mount/unmount for now - revisit */
->   			if (kthread_should_stop() ||
-> -					(schedule_timeout(20*HZ) == 0)) {
-> +					(freezable_schedule_timeout(20*HZ) == 0)) {
->   				finish_wait(&nn->nfsd_ssc_waitq, &wait);
->   				kfree(work);
->   				return nfserr_eagain;
-> diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
-> index b19592673eef..3cf53e3140a5 100644
-> --- a/net/sunrpc/svc_xprt.c
-> +++ b/net/sunrpc/svc_xprt.c
-> @@ -705,7 +705,7 @@ static int svc_alloc_arg(struct svc_rqst *rqstp)
->   			set_current_state(TASK_RUNNING);
->   			return -EINTR;
->   		}
-> -		schedule_timeout(msecs_to_jiffies(500));
-> +		freezable_schedule_timeout(msecs_to_jiffies(500));
->   	}
->   	rqstp->rq_page_end = &rqstp->rq_pages[pages];
->   	rqstp->rq_pages[pages] = NULL; /* this might be seen in nfsd_splice_actor() */
-> @@ -765,7 +765,7 @@ static struct svc_xprt *svc_get_next_xprt(struct svc_rqst *rqstp, long timeout)
->   	smp_mb__after_atomic();
->   
->   	if (likely(rqst_should_sleep(rqstp)))
-> -		time_left = schedule_timeout(timeout);
-> +		time_left = freezable_schedule_timeout(timeout);
->   	else
->   		__set_current_state(TASK_RUNNING);
->   
+> diff --git a/drivers/media/pci/mgb4/mgb4_core.c b/drivers/media/pci/mgb4/mgb4_core.c
+> index 9bcf10a77fd3..e028d5ce789b 100644
+> --- a/drivers/media/pci/mgb4/mgb4_core.c
+> +++ b/drivers/media/pci/mgb4/mgb4_core.c
+> @@ -302,7 +302,7 @@ static int init_i2c(struct mgb4_dev *mgbdev)
+>  	/* create dummy clock required by the xiic-i2c adapter */
+>  	snprintf(clk_name, sizeof(clk_name), "xiic-i2c.%d", id);
+>  	mgbdev->i2c_clk = clk_hw_register_fixed_rate(NULL, clk_name, NULL,
+> -						     0, 125000000);
+> +						     0, MGB4_HW_FREQ);
+>  	if (IS_ERR(mgbdev->i2c_clk)) {
+>  		dev_err(dev, "failed to register I2C clock\n");
+>  		return PTR_ERR(mgbdev->i2c_clk);
+> diff --git a/drivers/media/pci/mgb4/mgb4_core.h b/drivers/media/pci/mgb4/mgb4_core.h
+> index 2a946e46aec1..b52cd67270b5 100644
+> --- a/drivers/media/pci/mgb4/mgb4_core.h
+> +++ b/drivers/media/pci/mgb4/mgb4_core.h
+> @@ -13,6 +13,8 @@
+>  #include <linux/dmaengine.h>
+>  #include "mgb4_regs.h"
+>  
+> +#define MGB4_HW_FREQ 125000000
+> +
+>  #define MGB4_VIN_DEVICES  2
+>  #define MGB4_VOUT_DEVICES 2
+>  
+> diff --git a/drivers/media/pci/mgb4/mgb4_io.h b/drivers/media/pci/mgb4/mgb4_io.h
+> index 204613a6685c..dd8696d7df31 100644
+> --- a/drivers/media/pci/mgb4/mgb4_io.h
+> +++ b/drivers/media/pci/mgb4/mgb4_io.h
+> @@ -7,11 +7,9 @@
+>  #ifndef __MGB4_IO_H__
+>  #define __MGB4_IO_H__
+>  
+> +#include <linux/math64.h>
+>  #include <media/v4l2-dev.h>
+> -
+> -#define MGB4_DEFAULT_WIDTH     1280
+> -#define MGB4_DEFAULT_HEIGHT    640
+> -#define MGB4_DEFAULT_PERIOD    (125000000 / 60)
+> +#include "mgb4_core.h"
+>  
+>  /* Register access error indication */
+>  #define MGB4_ERR_NO_REG        0xFFFFFFFE
+> @@ -20,6 +18,9 @@
+>  #define MGB4_ERR_QUEUE_EMPTY   0xFFFFFFFC
+>  #define MGB4_ERR_QUEUE_FULL    0xFFFFFFFB
+>  
+> +#define MGB4_PERIOD(numerator, denominator) \
+> +	((u32)div_u64((MGB4_HW_FREQ * (u64)(numerator)), (denominator)))
+> +
+>  struct mgb4_frame_buffer {
+>  	struct vb2_v4l2_buffer vb;
+>  	struct list_head list;
+> @@ -30,11 +31,24 @@ static inline struct mgb4_frame_buffer *to_frame_buffer(struct vb2_v4l2_buffer *
+>  	return container_of(vbuf, struct mgb4_frame_buffer, vb);
+>  }
+>  
+> -static inline bool has_yuv(struct mgb4_regs *video)
+> +static inline bool has_yuv_and_timeperframe(struct mgb4_regs *video)
+>  {
+>  	u32 status = mgb4_read_reg(video, 0xD0);
+>  
+>  	return (status & (1U << 8));
+>  }
+>  
+> +#define has_yuv(video) has_yuv_and_timeperframe(video)
+> +#define has_timeperframe(video) has_yuv_and_timeperframe(video)
+> +
+> +static inline u32 pixel_size(struct v4l2_dv_timings *timings)
+> +{
+> +	struct v4l2_bt_timings *bt = &timings->bt;
+> +
+> +	u32 height = bt->height + bt->vfrontporch + bt->vsync + bt->vbackporch;
+> +	u32 width = bt->width + bt->hfrontporch + bt->hsync + bt->hbackporch;
+> +
+> +	return width * height;
+> +}
+> +
+>  #endif
+> diff --git a/drivers/media/pci/mgb4/mgb4_sysfs_out.c b/drivers/media/pci/mgb4/mgb4_sysfs_out.c
+> index 9f6e81c57726..f67ff2a48329 100644
+> --- a/drivers/media/pci/mgb4/mgb4_sysfs_out.c
+> +++ b/drivers/media/pci/mgb4/mgb4_sysfs_out.c
+> @@ -231,7 +231,7 @@ static ssize_t frame_rate_show(struct device *dev,
+>  	u32 period = mgb4_read_reg(&voutdev->mgbdev->video,
+>  				   voutdev->config->regs.frame_period);
+>  
+> -	return sprintf(buf, "%u\n", 125000000 / period);
+> +	return sprintf(buf, "%u\n", MGB4_HW_FREQ / period);
+>  }
+>  
+>  /*
+> @@ -252,7 +252,7 @@ static ssize_t frame_rate_store(struct device *dev,
+>  		return ret;
+>  
+>  	mgb4_write_reg(&voutdev->mgbdev->video,
+> -		       voutdev->config->regs.frame_period, 125000000 / val);
+> +		       voutdev->config->regs.frame_period, MGB4_HW_FREQ / val);
+>  
+>  	return count;
+>  }
+> diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
+> index 7fb14e867e8d..422e77fec1c1 100644
+> --- a/drivers/media/pci/mgb4/mgb4_vin.c
+> +++ b/drivers/media/pci/mgb4/mgb4_vin.c
+> @@ -34,8 +34,8 @@ ATTRIBUTE_GROUPS(mgb4_fpdl3_in);
+>  ATTRIBUTE_GROUPS(mgb4_gmsl_in);
+>  
+>  static const struct mgb4_vin_config vin_cfg[] = {
+> -	{0, 0, 0, 6, {0x10, 0x00, 0x04, 0x08, 0x1C, 0x14, 0x18, 0x20, 0x24, 0x28}},
+> -	{1, 1, 1, 7, {0x40, 0x30, 0x34, 0x38, 0x4C, 0x44, 0x48, 0x50, 0x54, 0x58}}
+> +	{0, 0, 0, 6, {0x10, 0x00, 0x04, 0x08, 0x1C, 0x14, 0x18, 0x20, 0x24, 0x28, 0xE8}},
+> +	{1, 1, 1, 7, {0x40, 0x30, 0x34, 0x38, 0x4C, 0x44, 0x48, 0x50, 0x54, 0x58, 0xEC}}
+>  };
+>  
+>  static const struct i2c_board_info fpdl3_deser_info[] = {
+> @@ -384,6 +384,7 @@ static int vidioc_enum_frameintervals(struct file *file, void *priv,
+>  {
+>  	struct mgb4_vin_dev *vindev = video_drvdata(file);
+>  	struct mgb4_regs *video = &vindev->mgbdev->video;
+> +	struct v4l2_dv_timings timings;
+>  
+>  	if (ival->index != 0)
+>  		return -EINVAL;
+> @@ -394,12 +395,15 @@ static int vidioc_enum_frameintervals(struct file *file, void *priv,
+>  	    ival->height != vindev->timings.bt.height)
+>  		return -EINVAL;
+>  
+> -	ival->type = V4L2_FRMIVAL_TYPE_CONTINUOUS;
+> -	ival->stepwise.min.denominator = 60;
+> -	ival->stepwise.min.numerator = 1;
+> -	ival->stepwise.max.denominator = 1;
+> -	ival->stepwise.max.numerator = 1;
+> -	ival->stepwise.step = ival->stepwise.max;
+> +	get_timings(vindev, &timings);
 
+Hmm, if get_timings returns an error (no link or lock), then the
+code below will return garbage (timings is uninitialized).
 
-That did the trick! Suspend is now working again on top of v5.15.160-rc1 
-with this change.
+Shouldn't this just use vindev->timings instead?
 
-Feel free to add my ...
+> +
+> +	ival->type = V4L2_FRMIVAL_TYPE_STEPWISE;
+> +	ival->stepwise.max.denominator = MGB4_HW_FREQ;
+> +	ival->stepwise.max.numerator = 0xFFFFFFFF;
+> +	ival->stepwise.min.denominator = timings.bt.pixelclock;
+> +	ival->stepwise.min.numerator = pixel_size(&timings);
+> +	ival->stepwise.step.denominator = MGB4_HW_FREQ;
+> +	ival->stepwise.step.numerator = 1;
+>  
+>  	return 0;
+>  }
+> @@ -558,24 +562,60 @@ static int vidioc_g_input(struct file *file, void *priv, unsigned int *i)
+>  	return 0;
+>  }
+>  
+> -static int vidioc_parm(struct file *file, void *priv,
+> -		       struct v4l2_streamparm *parm)
+> +static int vidioc_g_parm(struct file *file, void *priv,
+> +			 struct v4l2_streamparm *parm)
+>  {
+>  	struct mgb4_vin_dev *vindev = video_drvdata(file);
+>  	struct mgb4_regs *video = &vindev->mgbdev->video;
+> -	const struct mgb4_vin_regs *regs = &vindev->config->regs;
+> -	struct v4l2_fract timeperframe = {
+> -		.numerator = mgb4_read_reg(video, regs->frame_period),
+> -		.denominator = 125000000,
+> -	};
+> +	struct v4l2_fract *tpf = &parm->parm.output.timeperframe;
+> +	struct v4l2_dv_timings timings;
+> +	u32 timer;
+>  
+>  	parm->parm.capture.readbuffers = 2;
+> -	parm->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
+> -	parm->parm.capture.timeperframe = timeperframe;
+> +
+> +	if (has_timeperframe(video)) {
+> +		timer = mgb4_read_reg(video, vindev->config->regs.timer);
+> +		if (timer < 0xFFFF) {
+> +			get_timings(vindev, &timings);
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Ditto.
 
-Thanks
-Jon
+> +			tpf->numerator = pixel_size(&timings);
+> +			tpf->denominator = timings.bt.pixelclock;
+> +		} else {
+> +			tpf->numerator = timer;
+> +			tpf->denominator = MGB4_HW_FREQ;
+> +		}
+> +
+> +		parm->parm.output.capability = V4L2_CAP_TIMEPERFRAME;
+> +	}
+>  
+>  	return 0;
+>  }
+>  
+> +static int vidioc_s_parm(struct file *file, void *priv,
+> +			 struct v4l2_streamparm *parm)
+> +{
+> +	struct mgb4_vin_dev *vindev = video_drvdata(file);
+> +	struct mgb4_regs *video = &vindev->mgbdev->video;
+> +	struct v4l2_fract *tpf = &parm->parm.output.timeperframe;
+> +	struct v4l2_dv_timings timings;
+> +	u32 period, timer;
+> +
+> +	if (has_timeperframe(video)) {
+> +		timer = tpf->denominator ?
+> +			MGB4_PERIOD(tpf->numerator, tpf->denominator) : 0;
+> +		if (timer) {
+> +			get_timings(vindev, &timings);
 
--- 
-nvpublic
+Ditto.
+
+> +			period = MGB4_PERIOD(pixel_size(&timings),
+> +					     timings.bt.pixelclock);
+> +			if (timer < period)
+> +				timer = 0;
+> +		}
+> +
+> +		mgb4_write_reg(video, vindev->config->regs.timer, timer);
+> +	}
+> +
+> +	return vidioc_g_parm(file, priv, parm);
+> +}
+
+I noticed that fh_open also calls get_timings without checking the error
+code. It is OK that fh_open calls it (on first open), but if it returns an
+error, then vindev->timings must be set to some timings (for example:
+V4L2_DV_BT_CEA_1920X1080P60).
+
+Without that, VIDIOC_G_DV_TIMINGS can return invalid timings. It must
+return something valid, even if it doesn't match what is seen on the actual
+video link.
+
+> +
+>  static int vidioc_s_dv_timings(struct file *file, void *fh,
+>  			       struct v4l2_dv_timings *timings)
+>  {
+> @@ -659,8 +699,8 @@ static const struct v4l2_ioctl_ops video_ioctl_ops = {
+>  	.vidioc_expbuf = vb2_ioctl_expbuf,
+>  	.vidioc_streamon = vb2_ioctl_streamon,
+>  	.vidioc_streamoff = vb2_ioctl_streamoff,
+> -	.vidioc_g_parm = vidioc_parm,
+> -	.vidioc_s_parm = vidioc_parm,
+> +	.vidioc_g_parm = vidioc_g_parm,
+> +	.vidioc_s_parm = vidioc_s_parm,
+>  	.vidioc_dv_timings_cap = vidioc_dv_timings_cap,
+>  	.vidioc_enum_dv_timings = vidioc_enum_dv_timings,
+>  	.vidioc_g_dv_timings = vidioc_g_dv_timings,
+> @@ -843,10 +883,16 @@ static void debugfs_init(struct mgb4_vin_dev *vindev)
+>  	vindev->regs[7].offset = vindev->config->regs.signal2;
+>  	vindev->regs[8].name = "PADDING_PIXELS";
+>  	vindev->regs[8].offset = vindev->config->regs.padding;
+> +	if (has_timeperframe(video)) {
+> +		vindev->regs[9].name = "TIMER";
+> +		vindev->regs[9].offset = vindev->config->regs.timer;
+> +		vindev->regset.nregs = 10;
+> +	} else {
+> +		vindev->regset.nregs = 9;
+> +	}
+>  
+>  	vindev->regset.base = video->membase;
+>  	vindev->regset.regs = vindev->regs;
+> -	vindev->regset.nregs = ARRAY_SIZE(vindev->regs);
+>  
+>  	debugfs_create_regset32("registers", 0444, vindev->debugfs,
+>  				&vindev->regset);
+> diff --git a/drivers/media/pci/mgb4/mgb4_vin.h b/drivers/media/pci/mgb4/mgb4_vin.h
+> index 0249b400ad4d..9693bd0ce180 100644
+> --- a/drivers/media/pci/mgb4/mgb4_vin.h
+> +++ b/drivers/media/pci/mgb4/mgb4_vin.h
+> @@ -25,6 +25,7 @@ struct mgb4_vin_regs {
+>  	u32 signal;
+>  	u32 signal2;
+>  	u32 padding;
+> +	u32 timer;
+>  };
+>  
+>  struct mgb4_vin_config {
+> @@ -59,7 +60,7 @@ struct mgb4_vin_dev {
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *debugfs;
+>  	struct debugfs_regset32 regset;
+> -	struct debugfs_reg32 regs[9];
+> +	struct debugfs_reg32 regs[sizeof(struct mgb4_vin_regs) / 4];
+>  #endif
+>  };
+>  
+> diff --git a/drivers/media/pci/mgb4/mgb4_vout.c b/drivers/media/pci/mgb4/mgb4_vout.c
+> index 2ee9606d9072..d98b6e87d71f 100644
+> --- a/drivers/media/pci/mgb4/mgb4_vout.c
+> +++ b/drivers/media/pci/mgb4/mgb4_vout.c
+> @@ -16,6 +16,7 @@
+>  #include <media/v4l2-ioctl.h>
+>  #include <media/videobuf2-v4l2.h>
+>  #include <media/videobuf2-dma-sg.h>
+> +#include <media/v4l2-dv-timings.h>
+>  #include "mgb4_core.h"
+>  #include "mgb4_dma.h"
+>  #include "mgb4_sysfs.h"
+> @@ -23,12 +24,16 @@
+>  #include "mgb4_cmt.h"
+>  #include "mgb4_vout.h"
+>  
+> +#define DEFAULT_WIDTH     1280
+> +#define DEFAULT_HEIGHT    640
+> +#define DEFAULT_PERIOD    (MGB4_HW_FREQ / 60)
+> +
+>  ATTRIBUTE_GROUPS(mgb4_fpdl3_out);
+>  ATTRIBUTE_GROUPS(mgb4_gmsl_out);
+>  
+>  static const struct mgb4_vout_config vout_cfg[] = {
+> -	{0, 0, 8, {0x78, 0x60, 0x64, 0x68, 0x74, 0x6C, 0x70, 0x7c}},
+> -	{1, 1, 9, {0x98, 0x80, 0x84, 0x88, 0x94, 0x8c, 0x90, 0x9c}}
+> +	{0, 0, 8, {0x78, 0x60, 0x64, 0x68, 0x74, 0x6C, 0x70, 0x7C, 0xE0}},
+> +	{1, 1, 9, {0x98, 0x80, 0x84, 0x88, 0x94, 0x8C, 0x90, 0x9C, 0xE4}}
+>  };
+>  
+>  static const struct i2c_board_info fpdl3_ser_info[] = {
+> @@ -40,6 +45,49 @@ static const struct mgb4_i2c_kv fpdl3_i2c[] = {
+>  	{0x05, 0xFF, 0x04}, {0x06, 0xFF, 0x01}, {0xC2, 0xFF, 0x80}
+>  };
+>  
+> +static const struct v4l2_dv_timings_cap video_timings_cap = {
+> +	.type = V4L2_DV_BT_656_1120,
+> +	.bt = {
+> +		.min_width = 320,
+> +		.max_width = 4096,
+> +		.min_height = 240,
+> +		.max_height = 2160,
+> +		.min_pixelclock = 1843200, /* 320 x 240 x 24Hz */
+> +		.max_pixelclock = 530841600, /* 4096 x 2160 x 60Hz */
+> +		.standards = V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+> +			V4L2_DV_BT_STD_CVT | V4L2_DV_BT_STD_GTF,
+> +		.capabilities = V4L2_DV_BT_CAP_PROGRESSIVE |
+> +			V4L2_DV_BT_CAP_CUSTOM,
+> +	},
+> +};
+> +
+> +static void get_timings(struct mgb4_vout_dev *voutdev,
+> +			struct v4l2_dv_timings *timings)
+> +{
+> +	struct mgb4_regs *video = &voutdev->mgbdev->video;
+> +	const struct mgb4_vout_regs *regs = &voutdev->config->regs;
+> +
+> +	u32 hsync = mgb4_read_reg(video, regs->hsync);
+> +	u32 vsync = mgb4_read_reg(video, regs->vsync);
+> +	u32 resolution = mgb4_read_reg(video, regs->resolution);
+> +
+> +	memset(timings, 0, sizeof(*timings));
+> +	timings->type = V4L2_DV_BT_656_1120;
+> +	timings->bt.width = resolution >> 16;
+> +	timings->bt.height = resolution & 0xFFFF;
+> +	if (hsync & (1U << 31))
+> +		timings->bt.polarities |= V4L2_DV_HSYNC_POS_POL;
+> +	if (vsync & (1U << 31))
+> +		timings->bt.polarities |= V4L2_DV_VSYNC_POS_POL;
+> +	timings->bt.pixelclock = voutdev->freq * 1000;
+> +	timings->bt.hsync = (hsync & 0x00FF0000) >> 16;
+> +	timings->bt.vsync = (vsync & 0x00FF0000) >> 16;
+> +	timings->bt.hbackporch = (hsync & 0x0000FF00) >> 8;
+> +	timings->bt.hfrontporch = hsync & 0x000000FF;
+> +	timings->bt.vbackporch = (vsync & 0x0000FF00) >> 8;
+> +	timings->bt.vfrontporch = vsync & 0x000000FF;
+> +}
+> +
+>  static void return_all_buffers(struct mgb4_vout_dev *voutdev,
+>  			       enum vb2_buffer_state state)
+>  {
+> @@ -336,11 +384,128 @@ static int vidioc_enum_output(struct file *file, void *priv,
+>  		return -EINVAL;
+>  
+>  	out->type = V4L2_OUTPUT_TYPE_ANALOG;
+> +	out->capabilities = V4L2_OUT_CAP_DV_TIMINGS;
+>  	strscpy(out->name, "MGB4", sizeof(out->name));
+>  
+>  	return 0;
+>  }
+>  
+> +static int vidioc_enum_frameintervals(struct file *file, void *priv,
+> +				      struct v4l2_frmivalenum *ival)
+> +{
+> +	struct mgb4_vout_dev *voutdev = video_drvdata(file);
+> +	struct mgb4_regs *video = &voutdev->mgbdev->video;
+> +	struct v4l2_dv_timings timings;
+> +
+> +	if (ival->index != 0)
+> +		return -EINVAL;
+> +	if (!(ival->pixel_format == V4L2_PIX_FMT_ABGR32 ||
+> +	      ((has_yuv(video) && ival->pixel_format == V4L2_PIX_FMT_YUYV))))
+> +		return -EINVAL;
+> +	if (ival->width != voutdev->width || ival->height != voutdev->height)
+> +		return -EINVAL;
+> +
+> +	get_timings(voutdev, &timings);
+> +
+> +	ival->type = V4L2_FRMIVAL_TYPE_STEPWISE;
+> +	ival->stepwise.max.denominator = MGB4_HW_FREQ;
+> +	ival->stepwise.max.numerator = 0xFFFFFFFF;
+> +	ival->stepwise.min.denominator = timings.bt.pixelclock;
+> +	ival->stepwise.min.numerator = pixel_size(&timings);
+> +	ival->stepwise.step.denominator = MGB4_HW_FREQ;
+> +	ival->stepwise.step.numerator = 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int vidioc_g_parm(struct file *file, void *priv,
+> +			 struct v4l2_streamparm *parm)
+> +{
+> +	struct mgb4_vout_dev *voutdev = video_drvdata(file);
+> +	struct mgb4_regs *video = &voutdev->mgbdev->video;
+> +	struct v4l2_fract *tpf = &parm->parm.output.timeperframe;
+> +	struct v4l2_dv_timings timings;
+> +	u32 timer;
+> +
+> +	parm->parm.output.writebuffers = 2;
+> +
+> +	if (has_timeperframe(video)) {
+> +		timer = mgb4_read_reg(video, voutdev->config->regs.timer);
+> +		if (timer < 0xFFFF) {
+> +			get_timings(voutdev, &timings);
+> +			tpf->numerator = pixel_size(&timings);
+> +			tpf->denominator = timings.bt.pixelclock;
+> +		} else {
+> +			tpf->numerator = timer;
+> +			tpf->denominator = MGB4_HW_FREQ;
+> +		}
+> +
+> +		parm->parm.output.capability = V4L2_CAP_TIMEPERFRAME;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int vidioc_s_parm(struct file *file, void *priv,
+> +			 struct v4l2_streamparm *parm)
+> +{
+> +	struct mgb4_vout_dev *voutdev = video_drvdata(file);
+> +	struct mgb4_regs *video = &voutdev->mgbdev->video;
+> +	struct v4l2_fract *tpf = &parm->parm.output.timeperframe;
+> +	struct v4l2_dv_timings timings;
+> +	u32 timer, period;
+> +
+> +	if (has_timeperframe(video)) {
+> +		timer = tpf->denominator ?
+> +			MGB4_PERIOD(tpf->numerator, tpf->denominator) : 0;
+> +		if (timer) {
+> +			get_timings(voutdev, &timings);
+> +			period = MGB4_PERIOD(pixel_size(&timings),
+> +					     timings.bt.pixelclock);
+> +			if (timer < period)
+> +				timer = 0;
+> +		}
+> +
+> +		mgb4_write_reg(video, voutdev->config->regs.timer, timer);
+> +	}
+> +
+> +	return vidioc_g_parm(file, priv, parm);
+> +}
+> +
+> +static int vidioc_g_dv_timings(struct file *file, void *fh,
+> +			       struct v4l2_dv_timings *timings)
+> +{
+> +	struct mgb4_vout_dev *voutdev = video_drvdata(file);
+> +
+> +	get_timings(voutdev, timings);
+> +
+> +	return 0;
+> +}
+> +
+> +static int vidioc_s_dv_timings(struct file *file, void *fh,
+> +			       struct v4l2_dv_timings *timings)
+> +{
+> +	struct mgb4_vout_dev *voutdev = video_drvdata(file);
+> +
+> +	get_timings(voutdev, timings);
+> +
+> +	return 0;
+> +}
+> +
+> +static int vidioc_enum_dv_timings(struct file *file, void *fh,
+> +				  struct v4l2_enum_dv_timings *timings)
+> +{
+> +	return v4l2_enum_dv_timings_cap(timings, &video_timings_cap, NULL, NULL);
+> +}
+> +
+> +static int vidioc_dv_timings_cap(struct file *file, void *fh,
+> +				 struct v4l2_dv_timings_cap *cap)
+> +{
+> +	*cap = video_timings_cap;
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct v4l2_ioctl_ops video_ioctl_ops = {
+>  	.vidioc_querycap = vidioc_querycap,
+>  	.vidioc_enum_fmt_vid_out = vidioc_enum_fmt,
+> @@ -348,8 +513,15 @@ static const struct v4l2_ioctl_ops video_ioctl_ops = {
+>  	.vidioc_s_fmt_vid_out = vidioc_s_fmt,
+>  	.vidioc_g_fmt_vid_out = vidioc_g_fmt,
+>  	.vidioc_enum_output = vidioc_enum_output,
+> +	.vidioc_enum_frameintervals = vidioc_enum_frameintervals,
+>  	.vidioc_g_output = vidioc_g_output,
+>  	.vidioc_s_output = vidioc_s_output,
+> +	.vidioc_g_parm = vidioc_g_parm,
+> +	.vidioc_s_parm = vidioc_s_parm,
+> +	.vidioc_dv_timings_cap = vidioc_dv_timings_cap,
+> +	.vidioc_enum_dv_timings = vidioc_enum_dv_timings,
+> +	.vidioc_g_dv_timings = vidioc_g_dv_timings,
+> +	.vidioc_s_dv_timings = vidioc_s_dv_timings,
+>  	.vidioc_reqbufs = vb2_ioctl_reqbufs,
+>  	.vidioc_create_bufs = vb2_ioctl_create_bufs,
+>  	.vidioc_prepare_buf = vb2_ioctl_prepare_buf,
+> @@ -492,10 +664,10 @@ static void fpga_init(struct mgb4_vout_dev *voutdev)
+>  
+>  	mgb4_write_reg(video, regs->config, 0x00000011);
+>  	mgb4_write_reg(video, regs->resolution,
+> -		       (MGB4_DEFAULT_WIDTH << 16) | MGB4_DEFAULT_HEIGHT);
+> +		       (DEFAULT_WIDTH << 16) | DEFAULT_HEIGHT);
+>  	mgb4_write_reg(video, regs->hsync, 0x00102020);
+>  	mgb4_write_reg(video, regs->vsync, 0x40020202);
+> -	mgb4_write_reg(video, regs->frame_period, MGB4_DEFAULT_PERIOD);
+> +	mgb4_write_reg(video, regs->frame_period, DEFAULT_PERIOD);
+>  	mgb4_write_reg(video, regs->padding, 0x00000000);
+>  
+>  	voutdev->freq = mgb4_cmt_set_vout_freq(voutdev, 70000 >> 1) << 1;
+> @@ -526,12 +698,18 @@ static void debugfs_init(struct mgb4_vout_dev *voutdev)
+>  	voutdev->regs[4].offset = voutdev->config->regs.vsync;
+>  	voutdev->regs[5].name = "FRAME_PERIOD";
+>  	voutdev->regs[5].offset = voutdev->config->regs.frame_period;
+> -	voutdev->regs[6].name = "PADDING";
+> +	voutdev->regs[6].name = "PADDING_PIXELS";
+>  	voutdev->regs[6].offset = voutdev->config->regs.padding;
+> +	if (has_timeperframe(video)) {
+> +		voutdev->regs[7].name = "TIMER";
+> +		voutdev->regs[7].offset = voutdev->config->regs.timer;
+> +		voutdev->regset.nregs = 8;
+> +	} else {
+> +		voutdev->regset.nregs = 7;
+> +	}
+>  
+>  	voutdev->regset.base = video->membase;
+>  	voutdev->regset.regs = voutdev->regs;
+> -	voutdev->regset.nregs = ARRAY_SIZE(voutdev->regs);
+>  
+>  	debugfs_create_regset32("registers", 0444, voutdev->debugfs,
+>  				&voutdev->regset);
+> diff --git a/drivers/media/pci/mgb4/mgb4_vout.h b/drivers/media/pci/mgb4/mgb4_vout.h
+> index b163dee711fd..ab9b58b1deb7 100644
+> --- a/drivers/media/pci/mgb4/mgb4_vout.h
+> +++ b/drivers/media/pci/mgb4/mgb4_vout.h
+> @@ -23,6 +23,7 @@ struct mgb4_vout_regs {
+>  	u32 hsync;
+>  	u32 vsync;
+>  	u32 padding;
+> +	u32 timer;
+>  };
+>  
+>  struct mgb4_vout_config {
+> @@ -55,7 +56,7 @@ struct mgb4_vout_dev {
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *debugfs;
+>  	struct debugfs_regset32 regset;
+> -	struct debugfs_reg32 regs[7];
+> +	struct debugfs_reg32 regs[sizeof(struct mgb4_vout_regs) / 4];
+>  #endif
+>  };
+>  
+
+Regards,
+
+	Hans
 
