@@ -1,174 +1,213 @@
-Return-Path: <linux-kernel+bounces-195676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D838D5028
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:51:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9E58D502B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9141C210CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0FC1F22937
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE902F873;
-	Thu, 30 May 2024 16:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3239383A5;
+	Thu, 30 May 2024 16:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8idBfHv"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZBeCFjZA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6129A2E859;
-	Thu, 30 May 2024 16:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFF52E859
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087869; cv=none; b=atEk78fQyIMIeUnNqSFGp8PS9zraAq+yytHi+x7jPXEUkC03cwAVfO89zSMAXdFTirkhMnmN9xuNai3d/KexHNZCuT1ywihAvXoEJyVAeplMMKA7CiQseDhGB0cPpE324GOCMroAAS4f7jdsrrpsk2V8wBbvpBhrk+F2VHlYe3E=
+	t=1717087995; cv=none; b=p7LmlicVR+Eb/V0gF0PdKk7BeSo4oeQoPyTFwKb/JANLJZFyIxFU7sGGjjoauURMGdFVc7NnCra3DQqkvQXEYrU6TOOTcvAOwsdfhY87WFl+VBiLpi5XXkF5BCJE77OdXIGep0/9fVI0P5fgLIU3jP0ohrLu71uIJ6EQc8GSHts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087869; c=relaxed/simple;
-	bh=Cqa3IcNO1G7aG2ZtMHv+vFOnMk+bocKk1NucDnJXoBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fiPz3RezlIYytMHEqAnemEK0l0dBLPdIK9aHxtF7xjvDPhSCJH8e7y+CkMBcP+anaoR53ANy9fMN+jH69c7QVi2JzzgYU1ZZAg1Mlt2RVP2yfNRisxb4NOLqvVt8Eu48HV6xhlV2v5VjIbh+C9RcMFBtXEPGULwKYdFU5Zm2IYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8idBfHv; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2bda9105902so154391a91.0;
-        Thu, 30 May 2024 09:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717087868; x=1717692668; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=O0YornlgzDiHU0b1iyt2cYQQUi/emeKM3MOtCSfqTII=;
-        b=S8idBfHviN1GDc0Tq9ZFNBLjVUQaq4WlnG8wscZqG2L0cGezFVpoaWawRayvNEY8ww
-         fXd9NxXCwfg0hE1r42U/XEHKyfthkqQcqhL6Y63pIZWrbu7ZH/c7q20tXJUMesInaiZc
-         d9DChY8Tz4hcvtZpxnHTGqfOdATicRrRitMAL3tLyusamHivokQB92SZLBn0NlrtI1GW
-         azy3SS+b0rD6tsU73W3q5ectx29H2IWXwlvdk+HoIvRKWvGOXDhIi9L9vbuOuLtnb7Lb
-         CjIOJSKTenLLYPpaHYBRKk92nr+O5zhnGQwFz0nlvep27wpWUa2HDjxDKq+GPyQ8YZys
-         Yikg==
+	s=arc-20240116; t=1717087995; c=relaxed/simple;
+	bh=eS4QSfXNcIjbZGqC+93+6RUlp/THEJ6yY+bMr61+D+U=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RFc5AViiA83+MKQ2n/AkUntGgu0AKodePm97V1MulMyufEWP+Xkp2rsWTMp1Hv8r3CGZ9+eRQc6Wj+cBmk+IT4fmZu8tOBoJPhme+H+dBLDRGm2P+A0GAF/t6sfuzs6ZQZA85ye9dx5peqmW2PlthLr9HYiYjVRqvfcyUT1w33s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZBeCFjZA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717087992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FWRZoiUvFuxX1OnzeVNicOYUmBU2rijcyvy6xzKbRWc=;
+	b=ZBeCFjZAc+46K6mElNKcSBmuP53F2OCen0rTCfWyb/Tp5EnRJir6mc2KY8mAcv6bmqSh9k
+	pnvLRmXfpqdBwZjo//Vr/4MqxUy9lBwxE5uV4T/JCPwurfIE8mh8fu4Jp5gFjDf8Fn4jsO
+	TAuf5OlkKSfdI4ZSLprkpb2m4ALOn9c=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-Rkn4M4e8OVGAdW7xsilJEw-1; Thu, 30 May 2024 12:53:11 -0400
+X-MC-Unique: Rkn4M4e8OVGAdW7xsilJEw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-35dc0949675so840739f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:53:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717087868; x=1717692668;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1717087990; x=1717692790;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O0YornlgzDiHU0b1iyt2cYQQUi/emeKM3MOtCSfqTII=;
-        b=c4LMj+7PPKDmfauROfWcD7O+SoeRerZG/+pJbZT9UBFZwp6MWwzqSXHU0OMZC+w084
-         nt2X6yxvNqGj4ER3AiO7nlZkK9hQcVfADw/D0zho3NL7PauF9wSkKoqIJYyErgA8YcLR
-         VSVYEzbDilB9vHN+8gziDb26VXmZ0aV6PAVT4+HVjwq1eXXFgrAdI7S4y2pW0FBZeBFd
-         z5GmzBKuDHxF4dMvCFZ7/YYxh7AcOo5MAQH6qRRq9ToWXTbbZYgUnI/swcvUiCYw3CVG
-         sTRNnWN5bvtxnR29WUxd+C0JctyMhtm5XokqVWoanY6AcI85tE1Bv06whdgq4t0pdaXd
-         kvIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnEHq39E6C/YtpjD6gj0pWLESEE0YDUm123CXhBg7U5bnQGdKiwUv4zi0ZCZp0+VOsiTcjlQX59swWad7NmYRVblxEYfdYRqoiO0/XFtLf3Hu9ivZuHEhQsuIVASkoRA5ck4C7HgQkhmsVvWDtkL6jYqmJSh6ZJW9mHaKIzgjwApe5eM6s
-X-Gm-Message-State: AOJu0YxMHm8bdE2MHCtiNhcvWxqPookVNxKSn0kNY6UrAd6fmKUkyzFF
-	qugBeyn8uEc3fQ/DsChv/ELuBg1mFcng7Oqssep/lPRtOQajhtwjWk58GQ==
-X-Google-Smtp-Source: AGHT+IHdd+OgjxcLPJ7VubuHsbn7ZmU+jx6myTo6XOWQrRp3RplJlG5tQHXuY6cwwqpIoVQ2IZRQEA==
-X-Received: by 2002:a17:90a:9205:b0:2bd:ebd5:8bf5 with SMTP id 98e67ed59e1d1-2c1abc43045mr2734190a91.32.1717087867550;
-        Thu, 30 May 2024 09:51:07 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a775ccedsm1913563a91.1.2024.05.30.09.51.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 09:51:07 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f0b2c682-ce43-426c-92f9-008256f08eff@roeck-us.net>
-Date: Thu, 30 May 2024 09:51:05 -0700
+        bh=FWRZoiUvFuxX1OnzeVNicOYUmBU2rijcyvy6xzKbRWc=;
+        b=LM9TCizoBRYZV5TiGKN3jyXduSkyGSURuduw5nzP6iNGN7lRUnvVRWKkO5+BN4JlSz
+         z8B2TUktWRjXWd1nvAtfuMfukNYMwOhwIwjLXgfh7sLumoa6n7d2YlbZspTVq+MO7ybj
+         IYuQtCFCQ57bea0U2aDDq0gQGh6LCS9zS4KW6FAvDUrrEZNiBnkLSlhnEQ9pOTs3bqlm
+         V3nWp8jYeSIZBe0uF/cHraay8c5UaE+vPrxInzlEhc5E7wgMkHFAhURCvdhsi9/RjC91
+         YiBiDFIEQ0DxD/vE/YHO6hjQefRI2niSsa48P+hFLKu+AjN3TAL5keaTLRlRUKRI92U0
+         hCuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWboLXejH5GZia5U0XZBdpPI9qWnaaEiMpROqr2ZTDcgU/dHvqwZMYkfJOiCKnnpyhMGT/v+ABaK4hGkIcYaGfnaUJKRaBXqfDyoQik
+X-Gm-Message-State: AOJu0YwSckISMXXeWQHsI5e7HtDqlFg9MABxVsjiF482nGsAsLjKoMyv
+	Y4neVdURzKgprtnUfdwdrQlIItJjqAWdaH1rETWL3nUe8jObrZntWqbw1SqIWzN3sr4s+xVfOPu
+	0uXto8tRhmfgXdPg0NQdN8FOmJjevezLQ8nQ98PZfV2ig+DVXjRwsnoJpWZ/ihA==
+X-Received: by 2002:a05:6000:928:b0:34a:35c7:22a3 with SMTP id ffacd0b85a97d-35dc008ddf8mr2545310f8f.20.1717087989883;
+        Thu, 30 May 2024 09:53:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTBqsPusLnEDK/xy012HXBOJUvyUShnfqv5puMOaj9W8uNpidMef17LWF0sLBQG6LCmTiC/Q==
+X-Received: by 2002:a05:6000:928:b0:34a:35c7:22a3 with SMTP id ffacd0b85a97d-35dc008ddf8mr2545284f8f.20.1717087989425;
+        Thu, 30 May 2024 09:53:09 -0700 (PDT)
+Received: from redhat.com ([212.20.115.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7dba2sm17723525f8f.17.2024.05.30.09.53.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 09:53:09 -0700 (PDT)
+From: Oleg Nesterov <onestero@redhat.com>
+X-Google-Original-From: Oleg Nesterov <oleg@redhat.com>
+Date: Thu, 30 May 2024 12:52:38 -0400
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Chris von Recklinghausen <crecklin@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tick/nohz_full: don't abuse smp_call_function_single()
+ in tick_setup_device()
+Message-ID: <Zliu1qVoUB3Y1rTE@redhat.com>
+References: <20240522151742.GA10400@redhat.com>
+ <20240528122019.GA28794@redhat.com>
+ <ZliSt-RDyxf1bZ_t@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
- sensors
-To: Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org
-Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
-References: <20240529205204.81208-1-linux@roeck-us.net>
- <20240529205204.81208-3-linux@roeck-us.net>
- <fa79f3c2-666f-48b8-b39a-f598107b2293@gmx.de>
- <0dc7a7c6-a426-424a-8321-471569ee6835@roeck-us.net>
- <bd197671-4fef-4cdb-8472-b46151e9008b@roeck-us.net>
- <5b9e47cb-3d9a-4d12-9d48-fc03111a0240@gmx.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <5b9e47cb-3d9a-4d12-9d48-fc03111a0240@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZliSt-RDyxf1bZ_t@localhost.localdomain>
 
-Hi Armin,
+Frederic,
 
-On 5/30/24 09:45, Armin Wolf wrote:
-[ ... ]
->>
-> # i2cdump 1 0x51
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 3c 00 00    Q???2?2......<..
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
-> 20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
-> 30: 00 c0 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .??.............
-> 40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 80: 30 10 12 02 04 00 40 42 00 00 00 00 b2 12 0d 00    0????.@B....???.
-> 90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
-> a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
-> b0: 00 00 00 00 00 00 d4 00 00 00 d4 00 00 00 d4 00    ......?...?...?.
-> c0: 00 00 d4 00 00 00 88 13 08 88 13 08 20 4e 20 10    ..?...?????? N ?
-> d0: 27 10 1a 41 28 10 27 10 c4 09 04 4c 1d 0c 00 00    '??A(?'????L??..
-> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+Thanks for review.
+
+On 05/30, Frederic Weisbecker wrote:
+>
+> Looks good, but can we have a WARN_ONCE(tick_do_timer_cpu != tick_do_timer_boot_cpu)
+> right before that, just to make sure our assumptions above are right forever and
+> the boot CPU hasn't stopped the tick up to that point?
+
+Sure, I thought about the additional sanity checks too. Although I had something
+different in mind.
+
+Frederic, et al, I am on private trip again without my working laptop, can't read
+the code. I'll reply on Saturday, OK?
+
+Oleg.
+
 > 
-
-Thanks a lot. This is again Montage Technology's M88SPD5118.
-What is your DDR module vendor ?
-
-Thanks,
-Guenter
+> And after all, pushing a bit further your subsequent patch, can we get rid of
+> tick_do_timer_boot_cpu and ifdefery altogether? Such as:
+> 
+> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+> index fb0fdec8719a..63a7bd405de7 100644
+> --- a/kernel/time/tick-common.c
+> +++ b/kernel/time/tick-common.c
+> @@ -48,14 +48,6 @@ ktime_t tick_next_period;
+>   *    procedure also covers cpu hotplug.
+>   */
+>  int tick_do_timer_cpu __read_mostly = TICK_DO_TIMER_BOOT;
+> -#ifdef CONFIG_NO_HZ_FULL
+> -/*
+> - * tick_do_timer_boot_cpu indicates the boot CPU temporarily owns
+> - * tick_do_timer_cpu and it should be taken over by an eligible secondary
+> - * when one comes online.
+> - */
+> -static int tick_do_timer_boot_cpu __read_mostly = -1;
+> -#endif
+>  
+>  /*
+>   * Debugging: see timer_list.c
+> @@ -177,26 +169,6 @@ void tick_setup_periodic(struct clock_event_device *dev, int broadcast)
+>  	}
+>  }
+>  
+> -#ifdef CONFIG_NO_HZ_FULL
+> -static void giveup_do_timer(void *info)
+> -{
+> -	int cpu = *(unsigned int *)info;
+> -
+> -	WARN_ON(tick_do_timer_cpu != smp_processor_id());
+> -
+> -	tick_do_timer_cpu = cpu;
+> -}
+> -
+> -static void tick_take_do_timer_from_boot(void)
+> -{
+> -	int cpu = smp_processor_id();
+> -	int from = tick_do_timer_boot_cpu;
+> -
+> -	if (from >= 0 && from != cpu)
+> -		smp_call_function_single(from, giveup_do_timer, &cpu, 1);
+> -}
+> -#endif
+> -
+>  /*
+>   * Setup the tick device
+>   */
+> @@ -211,29 +183,28 @@ static void tick_setup_device(struct tick_device *td,
+>  	 * First device setup ?
+>  	 */
+>  	if (!td->evtdev) {
+> +		int timekeeper = READ_ONCE(tick_do_timer_cpu);
+>  		/*
+>  		 * If no cpu took the do_timer update, assign it to
+>  		 * this cpu:
+>  		 */
+> -		if (tick_do_timer_cpu == TICK_DO_TIMER_BOOT) {
+> +		if (timekeeper == TICK_DO_TIMER_BOOT) {
+>  			tick_do_timer_cpu = cpu;
+>  			tick_next_period = ktime_get();
+> -#ifdef CONFIG_NO_HZ_FULL
+> +		} else if (timekeeper == TICK_DO_TIMER_NONE) {
+> +			if (WARN_ON_ONCE(tick_nohz_full_enabled()))
+> +				WRITE_ONCE(tick_do_timer_cpu, cpu);
+> +		} else if (tick_nohz_full_cpu(timekeeper) && !tick_nohz_full_cpu(cpu)) {
+>  			/*
+> -			 * The boot CPU may be nohz_full, in which case set
+> -			 * tick_do_timer_boot_cpu so the first housekeeping
+> -			 * secondary that comes up will take do_timer from
+> -			 * us.
+> +			 * The boot CPU will stay in periodic (NOHZ disabled)
+> +			 * mode until clocksource_done_booting() called after
+> +			 * smp_init() selects a high resolution clocksource and
+> +			 * timekeeping_notify() kicks the NOHZ stuff alive.
+> +			 *
+> +			 * So this WRITE_ONCE can only race with the READ_ONCE
+> +			 * check in tick_periodic() but this race is harmless.
+>  			 */
+> -			if (tick_nohz_full_cpu(cpu))
+> -				tick_do_timer_boot_cpu = cpu;
+> -
+> -		} else if (tick_do_timer_boot_cpu != -1 &&
+> -						!tick_nohz_full_cpu(cpu)) {
+> -			tick_take_do_timer_from_boot();
+> -			tick_do_timer_boot_cpu = -1;
+> -			WARN_ON(tick_do_timer_cpu != cpu);
+> -#endif
+> +			WRITE_ONCE(tick_do_timer_cpu, cpu);
+>  		}
+>  
+>  		/*
+> 
 
 
