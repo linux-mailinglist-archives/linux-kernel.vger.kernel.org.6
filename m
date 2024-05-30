@@ -1,167 +1,143 @@
-Return-Path: <linux-kernel+bounces-196023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491178D562E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:20:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4503F8D562F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5D201F22FE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 041141F2596A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0460917E441;
-	Thu, 30 May 2024 23:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5298A17E441;
+	Thu, 30 May 2024 23:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ou7/XSLz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="IPxHxbWD"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4224F4D8C3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902324D8C3
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717111233; cv=none; b=is5ceSs1sXBcck5t30nc1vHgUTzpdKbeppdFLPxiwH2Tlixv+YIHN4HDnDdg9x+xe6oqOEDgujwXLYvGa95BYKAcFK1VNdkA9m4wgwx7EgboTkoKQn8rrtASW0V09DR/hvTE2j4c/u6I+wCDkJ/82Q8IMoRsRZIBofFJdeNXB7c=
+	t=1717111265; cv=none; b=WqbAD3eK5PKitFaP36jZ/IQBl6v7m/xFLHdr2n7ikKIyT2cS1OpxhAo6MmvKiZhbyEGMk2fWPO9rpKucA3NZNqZE5PCTuFt/zkPbfsboq2/eqiMsBJ2mzEmUbG57Z6+6j+cJD6oaL/FvqWjOkEEcZVK3FpznrJDftNkfCcHJcpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717111233; c=relaxed/simple;
-	bh=XhvThE/+JuRA8Pp1EUt7hg24P1MzvKOA3s/VoNCpliI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bH+6DPYSis3+t0c9lfALHOaV3ewb76FfGOHrFHMSY+d/5kgxmkFwfkqiOYnwmzWQQxoziRE3LZt8Gu2JqcQNr5H5LxzE5jr7KxaaRALTonaa/aWrEaZdoll9MnXuLd7pOi9cNjjehdet06lS8ctOkUglN8+yqJjBYsetrxSnjcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ou7/XSLz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E270C2BBFC;
-	Thu, 30 May 2024 23:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717111232;
-	bh=XhvThE/+JuRA8Pp1EUt7hg24P1MzvKOA3s/VoNCpliI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ou7/XSLzeOe50jbGtA1OMlu+yEZAuk6jmIQrFbGuivXe+aY+7rbXn1QqS3SQ8ljnB
-	 UNWIPewZ0+3cCfqml/oLg34UXKnOp2qkUg9E+ezH7ZhpJ0ERRkRmCVqUB75uNRg2+B
-	 5DIzFeKnJgaeJgQDnV43QLVlwnrkNQwT9q6ZTuFZXjNmH2VMYCTcDtcax6EXu9eMVO
-	 swDk32c/rOIy7R6sxVQ81zCzT2Au/FMzw0HezWh/cf9CYkASVc+eBvZz4F++BfTe47
-	 kwYN4iq9H+7aFvX/QpRFiY8iGS+qctmsb02I7H6uFaFZAidjbKYkJwxcLdgpg/o4pk
-	 Iy4TMMTuX2GYQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 96EFFCE095C; Thu, 30 May 2024 16:20:26 -0700 (PDT)
-Date: Thu, 30 May 2024 16:20:26 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, torvalds@linux-foundation.org,
-	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
-	joel@joelfernandes.org, raghavendra.kt@amd.com,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2 16/35] preempt,rcu: warn on PREEMPT_RCU=n, preempt=full
-Message-ID: <c6b5a5e4-e14e-4fbb-84af-75d4035ced32@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-17-ankur.a.arora@oracle.com>
- <20240529081404.GI26599@noisy.programming.kicks-ass.net>
- <8734py6gvq.fsf@oracle.com>
+	s=arc-20240116; t=1717111265; c=relaxed/simple;
+	bh=jzhCryJW5JtNI2X+iLQwWD6k73DG4yDa1rDTIWEKIZU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A4Kaul9xpb19mr5mWUHDZiYL0tfPuE40rkm7MSOVurjjO3pvJtH5mgcwMFYmx6OuVyh1Tg8mNN3L1PhtNohLiZyk9gIU/a5uM/e9u3ltDnCl4pquA4z/N0/IrbuPyCZ4fDBGOQEGYOVzvhrUhZdtOBcRep72/7WAjdCWejEpVjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=IPxHxbWD; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9F97F2C00CF;
+	Fri, 31 May 2024 11:20:59 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1717111259;
+	bh=ju9yTVd43srfUJ18SKWRLayOxfYeLI5ol3mcv7TLf3M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IPxHxbWDOEfDLuXgWZvHoY/TiBUNet6uR0RyRSWt99Mbm/VtmI+G7Mylqmzrb74rg
+	 /BLFaUxgMT56nIIAwpJVotEwiF7Emni98z89gJ9xDg5zqOBCuv+mXD+IY0utEdwqAr
+	 PIxwPoxC5uxnPGBQd5QD2accuVPvk9PC/oPhjXhlDsd4lvxyo+GXfzAvEFTFkS6BpA
+	 bz+LmNVKIjQrMJ8uwQ9aWdQ/mGFCMIORxDQFsK7EQ17pVKb78Tne8/y2zxNGueBLAc
+	 NMFDDVBEGqu3E6xRcn7J8sboxSTuBnsMAcE8ytnN9y8ms4XTfgt0YY6poD7G5oUNCT
+	 Gn/BL9FZKN5vw==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B665909db0000>; Fri, 31 May 2024 11:20:59 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 6A08613EDFA;
+	Fri, 31 May 2024 11:20:59 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 657FB280481; Fri, 31 May 2024 11:20:59 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andy@kernel.org,
+	geert@linux-m68k.org,
+	tzimmermann@suse.de,
+	ojeda@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH] auxdisplay: linedisp: Support configuring the boot message
+Date: Fri, 31 May 2024 11:20:54 +1200
+Message-ID: <20240530232054.3559043-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8734py6gvq.fsf@oracle.com>
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=665909db a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=TpHVaj0NuXgA:10 a=mV-LYs_grPyxVDLXzvUA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Thu, May 30, 2024 at 04:04:41PM -0700, Ankur Arora wrote:
-> 
-> Peter Zijlstra <peterz@infradead.org> writes:
-> 
-> > On Mon, May 27, 2024 at 05:35:02PM -0700, Ankur Arora wrote:
-> >> The combination of PREEMPT_RCU=n and (PREEMPT_AUTO=y, preempt=full)
-> >> works at cross purposes: the RCU read side critical sections disable
-> >> preemption, while preempt=full schedules eagerly to minimize
-> >> latency.
-> >>
-> >> Warn if the user is switching to full preemption with PREEMPT_RCU=n.
-> >>
-> >> Cc: Ingo Molnar <mingo@redhat.com>
-> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >> Cc: Juri Lelli <juri.lelli@redhat.com>
-> >> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> >> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> >> Link: https://lore.kernel.org/lkml/842f589e-5ea3-4c2b-9376-d718c14fabf5@paulmck-laptop/
-> >> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> >> ---
-> >>  kernel/sched/core.c | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> >> index d7804e29182d..df8e333f2d8b 100644
-> >> --- a/kernel/sched/core.c
-> >> +++ b/kernel/sched/core.c
-> >> @@ -8943,6 +8943,10 @@ static void __sched_dynamic_update(int mode)
-> >>  		break;
-> >>
-> >>  	case preempt_dynamic_full:
-> >> +		if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
-> >> +			pr_warn("%s: preempt=full is not recommended with CONFIG_PREEMPT_RCU=n",
-> >> +				PREEMPT_MODE);
-> >> +
-> >
-> > Yeah, so I don't believe this is a viable strategy.
-> >
-> > Firstly, none of these RCU patches are actually about the whole LAZY
-> > preempt scheme, they apply equally well (arguably better) to the
-> > existing PREEMPT_DYNAMIC thing.
-> 
-> Agreed.
-> 
-> > Secondly, esp. with the LAZY thing, you are effectively running FULL at
-> > all times. It's just that some of the preemptions, typically those of
-> > the normal scheduling class are somewhat delayed. However RT/DL classes
-> > are still insta preempt.
-> 
-> Also, agreed.
-> 
-> > Meaning that if you run anything in the realtime classes you're running
-> > a fully preemptible kernel. As such, RCU had better be able to deal with
-> > it.
-> 
-> So, RCU can deal with (PREEMPT_RCU=y, PREEMPT_AUTO=y, preempt=none/voluntary/full).
-> Since that's basically what PREEMPT_DYNAMIC already works with.
-> 
-> The other combination, (PREEMPT_RCU=n, PREEMPT_AUTO,
-> preempt=none/voluntary) would generally be business as usual, except, as
-> you say, it is really PREEMPT_RCU=n, preempt=full in disguise.
-> 
-> However, as Paul says __rcu_read_lock(), for PREEMPT_RCU=n is defined as:
-> 
-> static inline void __rcu_read_lock(void)
-> {
->         preempt_disable();
-> }
-> 
-> So, this combination -- though non standard -- should also work.
-> 
-> The reason for adding the warning was because Paul had warned in
-> discussions earlier (see here for instance:
-> https://lore.kernel.org/lkml/842f589e-5ea3-4c2b-9376-d718c14fabf5@paulmck-laptop/)
-> 
-> that the PREEMPT_FULL=y and PREEMPT_RCU=n is basically useless. But at
-> least in my understanding that's primarily a performance concern not a
-> correctness concern. But, Paul can probably speak to that more.
-> 
->   "PREEMPT_FULL=y plus PREEMPT_RCU=n appears to be a useless
->   combination.  All of the gains from PREEMPT_FULL=y are more than lost
->   due to PREEMPT_RCU=n, especially when the kernel decides to do something
->   like walk a long task list under RCU protection.  We should not waste
->   people's time getting burned by this combination, nor should we waste
->   cycles testing it."
+Like we do for charlcd, allow the configuration of the initial message
+on line-display devices.
 
-My selfish motivation here is to avoid testing this combination unless
-and until someone actually has a good use for it.  I do not think that
-anyone will ever need it, but perhaps I am suffering from a failure
-of imagination.  If so, they hit that WARN, complain and explain their
-use case, and at that point I start testing it (and fixing whatever bugs
-have accumulated in the meantime).  But until that time, I save time by
-avoiding testing it.
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ drivers/auxdisplay/Kconfig        |  2 +-
+ drivers/auxdisplay/line-display.c | 10 +++++++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-							Thanx, Paul
+diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+index 69d2138d7efb..21545ffba065 100644
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -316,7 +316,7 @@ endif # PARPORT_PANEL
+=20
+ config PANEL_CHANGE_MESSAGE
+ 	bool "Change LCD initialization message ?"
+-	depends on CHARLCD
++	depends on CHARLCD || LINEDISP
+ 	help
+ 	  This allows you to replace the boot message indicating the kernel ver=
+sion
+ 	  and the driver version with a custom message. This is useful on appli=
+ances
+diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-=
+display.c
+index e2b546210f8d..837ca63c8368 100644
+--- a/drivers/auxdisplay/line-display.c
++++ b/drivers/auxdisplay/line-display.c
+@@ -8,7 +8,9 @@
+  * Copyright (C) 2021 Glider bv
+  */
+=20
++#ifndef CONFIG_PANEL_BOOT_MESSAGE
+ #include <generated/utsrelease.h>
++#endif
+=20
+ #include <linux/container_of.h>
+ #include <linux/device.h>
+@@ -312,6 +314,12 @@ static int linedisp_init_map(struct linedisp *linedi=
+sp)
+ 	return 0;
+ }
+=20
++#ifdef CONFIG_PANEL_BOOT_MESSAGE
++#define LINE_DISP_INIT_TEXT CONFIG_PANEL_BOOT_MESSAGE
++#else
++#define LINE_DISP_INIT_TEXT "Linux " UTS_RELEASE "       "
++#endif
++
+ /**
+  * linedisp_register - register a character line display
+  * @linedisp: pointer to character line display structure
+@@ -359,7 +367,7 @@ int linedisp_register(struct linedisp *linedisp, stru=
+ct device *parent,
+ 		goto out_del_timer;
+=20
+ 	/* display a default message */
+-	err =3D linedisp_display(linedisp, "Linux " UTS_RELEASE "       ", -1);
++	err =3D linedisp_display(linedisp, LINE_DISP_INIT_TEXT, -1);
+ 	if (err)
+ 		goto out_del_dev;
+=20
+--=20
+2.45.1
+
 
