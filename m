@@ -1,154 +1,132 @@
-Return-Path: <linux-kernel+bounces-194859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A498D432F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EACF8D4331
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE72F283CC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C732B284EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CFD179BD;
-	Thu, 30 May 2024 01:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B0018054;
+	Thu, 30 May 2024 01:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W7kod+94"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="CR4n58z9"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0C17548
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FB71798F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717033931; cv=none; b=UWTGQNUkn6P9tdFpKHcIbQi+3CWnoHUwIw53cjjkuGVIlHp7HVfQc3LM8G5AzUyCTl3nR4C/klMnSbR4gJxyoO6LBEtl9omQ41aQgGsmph4KSsB+dadSwLFAzzVQwbg917oF5bK2bJDC0OP+sOU33iDfUxsHkt3thTxd6gBF7kM=
+	t=1717033995; cv=none; b=DLZbhiuK6EPF3JDUTD5QT0qZdrTZ2CIwsDGKRvDtLs/1FX88G3fjSGA14Nn7gfoOewRfhpyRguS/2LKu2wkzjH1Ali6EtaywegmT7OBz/BCAxvAaqK9y3zqfUwgwolI063rXso6ywG7BqVpp5fEJB1ambfH78vX+TgmhJn3ANMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717033931; c=relaxed/simple;
-	bh=nB+XZsKWpc5ljgyHSuCbpjXbGBBDLp4qCe63FFC/UZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eL4twSsJjMHsH2DlfM97PSD0LEscZdG556mZR3zdwH1QWEsiyiBhudjAhismq5jSBLHAGAbl09l9J+GfKB0KLujrrfwOlyc3EtkDDolrIx7hZhOz2/4jbKQp3j0zLmtn4CP9tU9AgCQiq6BJM9Sq68AgYtMt1tFJLD0YLy0Bfok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W7kod+94; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: lkp@intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717033927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w9ZCYefeTQLGp7iJxKwNqZXF5uN8/nAqbBuXiFWgfDI=;
-	b=W7kod+94OfQQlV0ikrrzDr3hlo7avGo9tOpU2Ut077MJS0/ke0UDyXpRvOKOBvwH+pgGmh
-	1j8UrbHksws73QBmjn2DAH5GScKxHXGqJfSgXztt2h9IoRxK+kxe3g8ADWrwWXG8CwB2gP
-	YSXMemj8uaFx1iDaz3Zgi6PImgQ70mY=
-X-Envelope-To: tglx@linutronix.de
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: bp@alien8.de
-X-Envelope-To: dave.hansen@linux.intel.com
-X-Envelope-To: oe-kbuild-all@lists.linux.dev
-X-Envelope-To: x86@kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: mjguzik@gmail.com
-X-Envelope-To: tangyouling@kylinos.cn
-Message-ID: <6969a97f-4c2b-4c59-bff7-78ad126eb1e2@linux.dev>
-Date: Thu, 30 May 2024 09:51:38 +0800
+	s=arc-20240116; t=1717033995; c=relaxed/simple;
+	bh=9BOfbVH8YA2QTNgwedZWI9JmpJBM9n4R4yer8Ay9b1k=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ncQXq1rgWWF9vz93aR+LCct5RDEzHWuUyS72MzhxpILiZmp/d0BtRjd/mZnImK/+e2UhTs4Ol1DfE+y5CEXWXUtEWfASI2i5NlsV3GBCYGqBEeeGZbXwxO8jUudY/eg9Tp3+GPTK5LcAihtq4p5u1E5dV+8DEQ/f58U9J813zM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=CR4n58z9; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35b6467754cso260893f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717033992; x=1717638792; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9BOfbVH8YA2QTNgwedZWI9JmpJBM9n4R4yer8Ay9b1k=;
+        b=CR4n58z9nNcoh/v/nEYdkjCOjHcVvnFezAmpaQ5ILSa1/OWAiCnq1mrx5dYVfLpgYt
+         6SzlVrfBmmnSSxlC48EL08MqfA13eSuV9COK58Ej9Nk+ulLi0AgLlBRCOwuXqI6/pQAK
+         yN4XF1+9urH48Te+oKerprAJhYwt8XwLzgBkDk7TD7kv3m5q691NxTOSjkJRk7kSyH9Q
+         VG84ROawH7FtDdHI2GKPClwerTXTZv/bWcN32sY6/QPmpsKW9vb04AjzzVzXEmsOzGyv
+         F0cz0HwLlfTNfwySVNyzbXABiP7Wbk+mRVXUYZ8loEyaSGsCX7UYrgtMxtjHiPteTHox
+         V/eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717033992; x=1717638792;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9BOfbVH8YA2QTNgwedZWI9JmpJBM9n4R4yer8Ay9b1k=;
+        b=Xs+VVuVEZfhjIyJUqnukY8jpskHxgTd7SI+6Lka/X9XvuCgvKRPC54TQLn0EXNNjLQ
+         zPigkHRyX6YJmB7SL0KoIFkMCpiK/5zDpJ+F3f4e8smPpnHFR/2EvGRjh00Mm4EiOZFI
+         qAIZRXry0Wre7cmH7RupT5xfwb4/EDpmSJvKPZbPYYGMaWZO/KnLCucI04E+dzDO59bz
+         c/3jSWOedJRLilnGQxATYM+Kq/ILteE0OLxXdmHLVhd9cdCARMqpmnsS+yvVwJTJhd6Q
+         rfLL+V9zMohkSZ+6GPT/sND5tptheQTrvLj+RMFFhb7Qe5PwvQqJqqDex6bTg5zc/CBy
+         IBBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPc0iPhTgA4jrGUyg1xjeBYOKM/Y/ZIsYG+oO+2ebi/Lek4OucTjaR92L5mTQICSTjPGC9pPkKfQ0rO+jJlnKGFOmEUZx/80wBeZVj
+X-Gm-Message-State: AOJu0YwZ5ucVimC0AHLyFL7NyFzlOUsbdX3+ayMzuw117NJ71C0qawss
+	tP5Gp+7YAVORiq1C/GWvbQ3ozZw7RvpJ7Tmgq3kWV/7sKVK+74xpRj9zB1J1Fd8=
+X-Google-Smtp-Source: AGHT+IFoU4QteZZNYP/I6fo4kLvwP2gOPoNDRwhPgjxxb+EGXffmiDaGtONVEP08x0ijp1efXdcInw==
+X-Received: by 2002:a05:600c:4ed3:b0:420:e4b:d9df with SMTP id 5b1f17b1804b1-42127819e09mr10547205e9.13.1717033992346;
+        Wed, 29 May 2024 18:53:12 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:1083:f101:dcff:2f3d:64d3:d269])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5786450bb13sm7415110a12.72.2024.05.29.18.53.11
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2024 18:53:12 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] x86: Remove the prefetch() specific implementation on
- x86_64
-To: kernel test robot <lkp@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, x86@kernel.org,
- linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>,
- Youling Tang <tangyouling@kylinos.cn>
-References: <20240529032059.899347-1-youling.tang@linux.dev>
- <202405300328.eZmSYZrP-lkp@intel.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <202405300328.eZmSYZrP-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH net-next] net: smc91x: Refactor SMC_* macros
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <20240529171740.0643a5a1@kernel.org>
+Date: Thu, 30 May 2024 03:53:00 +0200
+Cc: Nicolas Pitre <nico@fluxnic.net>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Breno Leitao <leitao@debian.org>,
+ =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Andrew Lunn <andrew@lunn.ch>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Arnd Bergmann <arnd@arndb.de>,
+ netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A004D09E-E9CC-4DD4-ADE7-791D63D962D3@toblux.com>
+References: <20240528104421.399885-3-thorsten.blum@toblux.com>
+ <20240529171740.0643a5a1@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On 30/05/2024 04:03, kernel test robot wrote:
+On 30. May 2024, at 02:17, Jakub Kicinski <kuba@kernel.org> wrote:
+> On Tue, 28 May 2024 12:44:23 +0200 Thorsten Blum wrote:
+>> Use the macro parameter lp directly instead of relying on ioaddr =
+being
+>> defined in the surrounding scope.
+>=20
+> Have you tested this, or just compile tested (please mention what
+> testing has been done in the commit message in the future)?
 
-> Hi Youling,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on tip/master]
-> [also build test ERROR on linus/master v6.10-rc1 next-20240529]
-> [cannot apply to tip/auto-latest tip/x86/core bp/for-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Youling-Tang/prefetch-Add-ARCH_HAS_PREFETCH-definition-when-the-architecture-is-not-defined/20240529-112345
-> base:   tip/master
-> patch link:    https://lore.kernel.org/r/20240529032059.899347-1-youling.tang%40linux.dev
-> patch subject: [PATCH 1/2] x86: Remove the prefetch() specific implementation on x86_64
-> config: x86_64-buildonly-randconfig-006-20240530 (https://download.01.org/0day-ci/archive/20240530/202405300328.eZmSYZrP-lkp@intel.com/config)
-> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405300328.eZmSYZrP-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405300328.eZmSYZrP-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->     drivers/soc/fsl/dpio/dpio-service.c: In function 'dpaa2_io_store_next':
->>> drivers/soc/fsl/dpio/dpio-service.c:745:17: error: implicit declaration of function 'prefetch'; did you mean 'prefetchw'? [-Werror=implicit-function-declaration]
->       745 |                 prefetch(&s->vaddr[s->idx]);
->           |                 ^~~~~~~~
->           |                 prefetchw
->     cc1: some warnings being treated as errors
-> --
->     drivers/soc/fsl/dpio/qbman-portal.c: In function 'qbman_swp_dqrr_next_direct':
->>> drivers/soc/fsl/dpio/qbman-portal.c:1213:17: error: implicit declaration of function 'prefetch'; did you mean 'prefetchw'? [-Werror=implicit-function-declaration]
->      1213 |                 prefetch(qbman_get_cmd(s,
->           |                 ^~~~~~~~
->           |                 prefetchw
->     cc1: some warnings being treated as errors
-This problem is caused by not including the linux/prefetch.h file. There 
-were
-no build errors earlier because the definitions in processor.h were used
-indirectly. (For architectures that do not implement prefetch, this build
-error can occur without the patch).
+Just compile tested.
 
-We can fix it in the following way:
-diff --git a/drivers/soc/fsl/dpio/dpio-service.c 
-b/drivers/soc/fsl/dpio/dpio-service.c
-index b811446e0fa5..a4692b9ad8d7 100644
---- a/drivers/soc/fsl/dpio/dpio-service.c
-+++ b/drivers/soc/fsl/dpio/dpio-service.c
-@@ -9,6 +9,7 @@
-  #include <soc/fsl/dpaa2-io.h>
-  #include <linux/init.h>
-  #include <linux/module.h>
-+#include <linux/prefetch.h>
-  #include <linux/platform_device.h>
-  #include <linux/interrupt.h>
-  #include <linux/dma-mapping.h>
-diff --git a/drivers/soc/fsl/dpio/qbman-portal.c 
-b/drivers/soc/fsl/dpio/qbman-portal.c
-index 0a3fb6c115f4..1c0bf04b101c 100644
---- a/drivers/soc/fsl/dpio/qbman-portal.c
-+++ b/drivers/soc/fsl/dpio/qbman-portal.c
-@@ -7,6 +7,7 @@
+> What's the motivation - cleanup or this helps remove some warnings?
+> (again, please mention in the commit message)
 
-  #include <asm/cacheflush.h>
-  #include <linux/io.h>
-+#include <linux/prefetch.h>
-  #include <linux/slab.h>
+It's a cleanup suggested by Andrew Lunn [1][2]. His suggestion might=20
+have been for SMC_PUSH_DATA() and SMC_PULL_DATA() only; or to add=20
+another macro param for ioaddr if lp->base and ioaddr are different (as=20=
+
+in smc_probe()).
+
+> AFAICT this will break smc_probe().
+
+Yes, it does break smc_probe(). I'll fix it and submit a v2.
 
 Thanks,
-Youling.
+Thorsten
+
+[1] =
+https://lore.kernel.org/linux-kernel/0efd687d-3df5-49dd-b01c-d5bd977ae12e@=
+lunn.ch/
+[2] =
+https://lore.kernel.org/linux-kernel/f192113c-9aee-47be-85f6-cd19fcb81a5e@=
+lunn.ch/=
 
