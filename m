@@ -1,67 +1,83 @@
-Return-Path: <linux-kernel+bounces-195664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E118D4FF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:37:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE04A8D4FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8F11F23A20
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:37:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE8601C22ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317832C6AE;
-	Thu, 30 May 2024 16:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B98A2CCBE;
+	Thu, 30 May 2024 16:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOy4Yn0m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1/gpBVA"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690AF23741;
-	Thu, 30 May 2024 16:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296E921350;
+	Thu, 30 May 2024 16:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087043; cv=none; b=NIZQGkGCNePVmN3RZQj0HOGRuHPKEaxAY0x4FOcMfhUpZ3HD6IthNpT2Fjlhl3qMnFPmTqpC79jwmPudJttwqv52ks//tQ+cv9I8M4aIvqOFcU1jRUUNafEn4q31DCZmtvcDa1GVsE5ghEGwa6Hd7ykPWBO5Krp/mqOnphO3DMk=
+	t=1717087298; cv=none; b=WQILxH+2wJAMz6NEELFSpsokFeLuTpd3mymYg+8ZoAJTucjIOAjgGSawo8DE2Myb/qwTeNcwu28hO2zsz7OKDITGrHgG/NRuHlI0r7shNHXxhW2FUDzbtRhfjtbk4wcbuh9+3fEY69tIMy1VoXlvZd7VXTBzQdcVNCaRmKfcpj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087043; c=relaxed/simple;
-	bh=yn/fdYmK8PBhu+ABX0prZnKWA3P66CT5Svzdiz0nc4E=;
+	s=arc-20240116; t=1717087298; c=relaxed/simple;
+	bh=h+sgsRXRgywtulA6yP05p7p5SlkPSUmpREB4pxqGy0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uA4ErYO3FrlzrYVu/nq3Pzl3ySdkP2a4uU15p/XCClqcgrEm/HLjSixQuEHtOK9YuQ+Fbw+jk0nP2BfBVq5QxUEIJzYfFyXpj6D6RmpDWdRAAQCWVINeQlJZhucdd8RxdRHW/FvCqWSRivfSLPf0NfhRANm/PV9/czkv15bDeKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOy4Yn0m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B7BC2BBFC;
-	Thu, 30 May 2024 16:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717087042;
-	bh=yn/fdYmK8PBhu+ABX0prZnKWA3P66CT5Svzdiz0nc4E=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=rOy4Yn0mcZbZiwb6wl8NQ+3quZ45J/4XqfNlIlEtIdQEVGDz1/KLnAJBj5fbBHtv/
-	 sGoBY8/Pc7gVUN3XC7ghhjvQdvH5W5ZeMYz5f5QbKPVxwTsXNLTvTlQGb9zJ2q4g2p
-	 xq7fUE0jzsmncvEet5XVnO4Ag+MlTZ/6kTjvqpErepo4gz1wc1HebABrn78oWSXDFy
-	 nCQfrVU/a9/10y7EICUyK3ylKgA27WoPP7lQtFMFtUzw8tVQ3Cr0dQvHVtOnaO8UaG
-	 x4Y7RImOb44aOxuuoO5DleDBdPnIaxo5SuOLz9k5wmLttutdy14ErA4C8u/a756+E/
-	 DecZls107cLoA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id EB5BBCE075F; Thu, 30 May 2024 09:37:21 -0700 (PDT)
-Date: Thu, 30 May 2024 09:37:21 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
-	Joel Fernandes <joel@joelfernandes.org>, eeraj.upadhyay@kernel.org,
-	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
-Subject: Re: arm-linux-gnueabihf-ld:
- kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
- `__bad_cmpxchg' follow
-Message-ID: <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
- <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
- <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTzEYScx9zbsdmfoez7m+QHJKEEv0bD5m67qXbz2opqzc7N7gtq/7qRNsjUP707i58RGGOWydF+Qp0lcRAoUNOfWSJgmurm0R9vG8t6cRA9lsfXmndql7ma3CUB3p2gZ+P0fp/GbwLrQs78gT1waw2Q/ps1pZY3tvbeNYmLF0/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1/gpBVA; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70223dffaf6so1056058b3a.1;
+        Thu, 30 May 2024 09:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717087296; x=1717692096; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G7FTH0c3tG+Ht3s1Gg8KhD3HVk6ceCg/0HWZJM2Xej0=;
+        b=i1/gpBVAk/HuKoYSgQg/i8TlOwcN5vwamPBLwxpzoQadKdudKaHsLUhWcb1tuoNUWV
+         10KZ/dtOBlldYut0AGMdHPju3Nea0HlUnlQkJbZsKPzxopoSSF8RCo3gvJZzV52BpI5Y
+         2b/sy/7IHJWmE0KjQDj5T9xecWIYdKYrcAvWs2rQcI4HCEIOXDKRQan7hS+uryMu2XIa
+         WK5q4UjSjbl9lcs4RFc+t11HoMxE5SEXDtcfJHBsgh7Ki/3r1Pwn5o4jmR0vAr2oKq93
+         whCUCYceQHhgeEaL+gczhcvSgg7ul9VKDVRxQCnr064Bcv0cahFIyijFo9Txiw28Cwks
+         X2Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717087296; x=1717692096;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G7FTH0c3tG+Ht3s1Gg8KhD3HVk6ceCg/0HWZJM2Xej0=;
+        b=kBK48p8bBbJ98f16IhHxHdUpWU827yQmrwnETGCgo1wDrgwIhrxYubmr0DTCu4JRjs
+         I0sstCXkW4cXx5lfmABoqiJbl+RNeW7WH5gH4ZE+ozwIFvVUhcqG0bLJY4Q7TQS8g2XD
+         7sikeuhEjZsTMxf1SBzmM53/Veta9RRxDsRlY3mZMyafx5LyJtA1qdQOFvbTjhOwVTkd
+         iSEyc8PojIl4oOwC5+j8CR6J75A1D0NzW4lVqMB8bl5VYR6xMQObuYoHGBkgks4SHQ8d
+         V+52jQRd7I69sEiCrYb2qASK8CVJdpUhKwzi5G0cVEYXg/jTVkcsi1S5pBEYRp9jQ3O2
+         R3rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKaHwoMwl/hONt5pwiRNpeCXSjsX5FcSHave3DEhQzu2fRZo0HAcicrkWj3G0jWDmDY5+WsKkjlBIO3NvSf8/irmQ6Oybw3Qz105rCszY6T8R23gr81CI3GUWChXYoCH5odceZCKPoe0Yaxf+Gpi62mH+0qG9FcRw61CC1eV6AeHtZ
+X-Gm-Message-State: AOJu0YxklA1DyZu9/9joH17ff4Sc9vLYL/Ocpk0tVkQoneBwx+m+0RPj
+	d6eMjuQSmVHlAaE2bzmMQxzlpb8CTH4xDeoqwD0Gtl3qthTSng+7AEkBzg==
+X-Google-Smtp-Source: AGHT+IFEJ//Wt6NvtnyBumLbOBeR6lFNrkSrlEpAyGaWElUnMBNdmB9QqiOM1sO+S3CYJAoG642hyQ==
+X-Received: by 2002:a05:6a00:2d81:b0:702:3b69:9e6e with SMTP id d2e1a72fcca58-7023b6a0c7cmr1352847b3a.14.1717087296127;
+        Thu, 30 May 2024 09:41:36 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7022a5c2cc8sm2100730b3a.108.2024.05.30.09.41.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 09:41:35 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 30 May 2024 06:41:34 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Ming Lei <ming.lei@redhat.com>, Justin Forbes <jforbes@redhat.com>
+Subject: Re: [PATCH] blk-throttle: Fix incorrect display of io.max
+Message-ID: <ZlisPiR1CGLRq6PT@slm.duckdns.org>
+References: <20240530134547.970075-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,59 +86,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
+In-Reply-To: <20240530134547.970075-1-longman@redhat.com>
 
-On Thu, May 30, 2024 at 03:27:58PM +0200, Arnd Bergmann wrote:
-> On Thu, May 30, 2024, at 14:26, Russell King (Oracle) wrote:
-> > On Thu, May 30, 2024 at 05:50:52PM +0530, Naresh Kamboju wrote:
-> >> The arm builds failed on Linux next with gcc-13 and clang-18.
-> >> 
-> >> Config: arm imx_v6_v7_defconfig - failed
-> >> 
-> >> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >> 
-> >> Build log:
-> >> -----
-> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
-> >> `rcu_trc_cmpxchg_need_qs':
-> >> update.c:(.text+0x348): undefined reference to `__bad_cmpxchg'
-> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
-> >> `rcu_read_unlock_trace_special':
-> >> update.c:(.text+0x41c): undefined reference to `__bad_cmpxchg'
-> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
-> >> `trc_read_check_handler':
-> >> update.c:(.text+0x4b0): undefined reference to `__bad_cmpxchg'
-> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function `trc_inspect_reader':
-> >> update.c:(.text+0x1518): undefined reference to `__bad_cmpxchg'
-> >> arm-linux-gnueabihf-ld: update.c:(.text+0x1548): undefined reference
-> >> to `__bad_cmpxchg'
-> >> arm-linux-gnueabihf-ld: kernel/rcu/update.o:update.c:(.text+0x1cc4):
-> >> more undefined references to `__bad_cmpxchg' follow
-> >> make[3]: *** [/builds/linux/scripts/Makefile.vmlinux:34: vmlinux] Error 1
-> >
-> > You get a reference to __bad_cmpxchg() when someone uses cmpxchg() on
-> > a datatype that there are no CPU instructions to perform the atomic
-> > compare-and-exchange.
-> >
-> > As we support 8-bit, 16-bit and 32-bit, I would expect that we're now
-> > seeing cmpxchg() being used on 64-bit values, which are unsupportable
-> > on 32-bit Arm.
+On Thu, May 30, 2024 at 09:45:47AM -0400, Waiman Long wrote:
+> Commit bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
+> attempts to revert the code change introduced by commit cd5ab1b0fcb4
+> ("blk-throttle: add .low interface").  However, it leaves behind the
+> bps_conf[] and iops_conf[] fields in the throtl_grp structure which
+> aren't set anywhere in the new blk-throttle.c code but are still being
+> used by tg_prfill_limit() to display the limits in io.max. Now io.max
+> always displays the following values if a block queue is used:
 > 
-> A 64-bit cmpxchg() would fail on most 32-bit architectures,
-> other than armv6k+ and i686+. Since this one fails on
-> an armv6 (non-6k) build, it's probably the added 8-bit
-> cmpxchg() that Paul talked about using for RCU, though I
-> don't see that in linux-next here.
+> 	<m>:<n> rbps=0 wbps=0 riops=0 wiops=0
 > 
-> I htink we need to use the emulated cmpxchg8() in
-> __cmpxchg() for this case, just like we do on other
-> architectures that only have word size atomics.
+> Fix this problem by removing bps_conf[] and iops_conf[] and use bps[]
+> and iops[] instead to complete the revert.
+> 
+> Fixes: bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
+> Reported-by: Justin Forbes <jforbes@redhat.com>
+> Closes: https://github.com/containers/podman/issues/22701#issuecomment-2120627789
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-Thank you all for your testing and analysis!
+Acked-by: Tejun Heo <tj@kernel.org>
 
-I will fix this, and also pull the 8046f3005015 ("rcu-tasks: Remove
-open-coded one-byte cmpxchg() emulation") commit out of my -next pile
-in the meantime.
+Thanks.
 
-							Thanx, Paul
+-- 
+tejun
 
