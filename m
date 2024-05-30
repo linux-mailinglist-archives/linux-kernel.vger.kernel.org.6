@@ -1,197 +1,166 @@
-Return-Path: <linux-kernel+bounces-195650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C2C8D4FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:24:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF168D4FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53085B21769
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A8A81C2319F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C26122619;
-	Thu, 30 May 2024 16:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F145322619;
+	Thu, 30 May 2024 16:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="/DkbkW7T";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="Vti+mgL7"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xeBf/g4V"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F64022EE4;
-	Thu, 30 May 2024 16:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717086232; cv=fail; b=nQOM/sB38lSKiaEM9bC3zF8Emd7mxpS4cf4GVPlxsSbcQRUPT/9Tyk/jZiAdkb8Wr1CMlIVEc6zq7HZaRUAVow6+9RcIsCxSBXb8K5aYQQUU+N0KrGxJHeEWJ3XAiR3uOvDBy4sbvk2pRmqbuQkTYY69Kbpcc4cp8inCLABFZ8U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717086232; c=relaxed/simple;
-	bh=pgv/sBueGj0uNKfB+M0Djeywb+8H0C+WrvypBsXAPEM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KXqH7tUxVkwuVzSB1l+bpw1+6nObsCC5x8X81HLD5Ph06vItDoYZ47tEaol7L0SYpwPB0MFQKlzROYTHCMkM+oK91kIZ4PztBwHrHAK9GazTnii9NGGKbMq61+atlI3y1I3IO9A/anWnvUlzUpEuxiD4bQf3xpu9+78+HkJD/8I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=/DkbkW7T; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=Vti+mgL7; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id B10AE480A32;
-	Thu, 30 May 2024 12:23:49 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717086229;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=dYO5M/SWP6VTWCO+9ICoA/oxJGt9BK5VSGvf7uIy8bc=;
- b=/DkbkW7TFBSmFsKekzbJJja6XCq5dkQNCaLQDvp1dWYwANzxAC0716JGFC2K2l8IejIwz
- d51zu9L9Amb4+cTAw==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717086229;
-	cv=none; b=iB1cd9emc9n5onI2zUhwk8DjlZMTziCi1/Dg9luEFk0NgnW/PrqpdX93atHlebk+woIX9zsrFGgqLwxyTAwdKA58Vb4n6tKN+Wim0e9HQS79XSDjgr6+qc9r+ShjzMhxHBm2pjmWpETTmUT/9PxFoah3RXEqaCmj8yjK7lzbDCFVigviSteDa7nUPwzXFondOGeeDYvIgHhMGq9GacTGb72JFzWqLSebfQldV8IIy3CmJKGtC4c34/MPijKOvR343B/bNbgMjRhgC22E6zfAKpvnW1+EMHrQaJ+3lWjczkwN7wNt8D6eZ40F9K6pVndjiCni9u2K/v9WCBNoJlQP1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1717086229; c=relaxed/simple;
-	bh=pgv/sBueGj0uNKfB+M0Djeywb+8H0C+WrvypBsXAPEM=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=IYCYOgQLJx9CCBURcnxT8AQIE3O/hWUgQqL+J3L/4/Ctcy8i5u8pOMHCWthQT51bU4RqcZxwSDmSecv5QcHnd3bJp4ELuayzX48uFXIgCV1v6xbxSJwtuk++DHxH3FAgVLUu+IpeKkQi9KnMatlnT3FMU3vZhrPPIBhzr7Ejk4jcO2pqApcfsjwnvfKqw3bPEAEEIRwvtx6b1C6mCxfAyPMIYHd+oJJCVQv7JgChrT3SHVNxqXhNlrE3mEapG5JHYmiBc4oIK/7y9df3JkXfKjOMxt43qlh8zCwzNmU1H7pLeusiWIoYUWzR+vBiytO6KFa2nK90s+RSSwv3u1ZPJA==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717086229;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=dYO5M/SWP6VTWCO+9ICoA/oxJGt9BK5VSGvf7uIy8bc=;
- b=Vti+mgL7eSBgug5ZK5bUA6iNFjXba5Yv3b/txFC9eYAN91R3i3ZO91/tHG/2Cx4DO5NCr
- Qw1v8ShCt15IzglKOrX3p2rVfmykD85j5Xu5P9s9ui/PSExgFhKwR8J0j8hRylwdUenuqgf
- MM6/AEe1/DFp0c5jvomDmV6dqWGXK2jIBrfYMSDg0i+r9rLegGZDZLuKf5vznP7AwQNJVwY
- Iv2gxhVGJ40F2O+iQETVMrwvMqfeK1ih3Ye4Un1m6GgTq/XAPnxFApjsKmAnq/an8W+tlgp
- eoONbi1eSQ1yoX5MTBYI5j+uF4nyo8Q0xRQXNoa/4OssHTPDJnys+Gv8Mekg==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id 7C04228004B;
-	Thu, 30 May 2024 12:23:49 -0400 (EDT)
-Message-ID: <73d37ff63ee7cd88772fc0767f4474317b56a0a8.camel@sapience.com>
-Subject: Re: 6.9.3 Hung tasks
-From: Genes Lists <lists@sapience.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch, 
- hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org,  pabeni@redhat.com, johanneswueller@gmail.com, Thorsten
- Leemhuis <linux@leemhuis.info>
-Date: Thu, 30 May 2024 12:23:48 -0400
-In-Reply-To: <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
-	 <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
-	 <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-+QEfLFhrShG4Mf1bhoXy"
-User-Agent: Evolution 3.52.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B0020B3E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717086300; cv=none; b=QMiNeNLm5f5OI/kPFSlmsjTlAUl0t8yS2fGN4Wvx/oRBa/krqFHw4OOyWsFxphGAfjzmauDJaJPGPN5+DBF9ulhw8m+mdcpL9SnRt0Tq3fTCGtPmeSJaGOhgU3KXlqw1cXHqjhM7IMv7q+qzSWzWas7xetMI8j306qtBIdVHhGM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717086300; c=relaxed/simple;
+	bh=8o0ZIK2d5CAvM/zF5h5sybmXtMx4wa2NagpYFQt5FTQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cLzONU7EJdujgUeK2j95fLI2wqAl+UuDsf53oPAnw9HSDDseviXLHY9qQj03nxFV63Oo8XudaYZQKSjUg73CxcwTsuCfAoy9FtYK7JPBNj8X2FHno0SRFN+pv+ZBqRv/VSWcuumk0E6prHMb0RwKb6SVrA/2eydpURXPuyMKJwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xeBf/g4V; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a352bbd9so174901066b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717086297; x=1717691097; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5FNesVw/sAj7Em9Zy23GdchPLFbPVXVlEFF3WazTuoo=;
+        b=xeBf/g4VNEmcG5qnve1j3Hs4brvsuNRt3w5anaZUN+7liuix5UeRzbIZIB/0699Ku4
+         s4ZnMuETvVrIoDdp5ojcw7b52/GHeRCt8UvHHUfuL/ZS6NpzaFgR4uMAZHFtNYGBX7QB
+         DYl5O2MPIz9nzJa31IiDhUBsXdtc0bWMlvTjcplpT+EwN8hPDBXF+9uQhguJ+t6EZ+10
+         6IkQsDOpA8RTVwc4OHE6AWPGShQocTJtN3tGJKc7zoSwXeUUbKM9vqmnG3ZXyHIvvhEw
+         IN0CmR+wlYdDhQf1tLD7HEk7WDczrmFy6sTNK2YfdZ+FkMxSNj6ugZyK/L/noNGHNLuD
+         Q3dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717086297; x=1717691097;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5FNesVw/sAj7Em9Zy23GdchPLFbPVXVlEFF3WazTuoo=;
+        b=no8shPb+a317Ra6iOuzdsmt9uEhAN3lfNvVUAvPGc8Ujgt9QxAafSYvv+18oF8FYaQ
+         A2H6JpIi4BMgcOPds5NBDcNsI1Pfg7GQ4U1Z/GLh6DIk/Jb89xfJmD9kvii2HNAtQIh8
+         vU7H0dYQd/YwtqdTZX/5wtXWBtjuMAHnjyhfv0qbJPDVuTl7k3Ro7RiygDVZtYISPpry
+         FWkfPqBpOz0pEsxygS8JdwFZEBBzXXTTAZLG2G3yNFbtgu6La12/nayr0H4Y+aM9Bidk
+         XHjHJEGJgM/zKVeMdoPKeTZ8a46/K40GOOdRSa4bX8VeVemyg9PS9ufXVMfNN8hTF3+W
+         O1gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOnM8Qza/SYBJq80biK5WFXr+DADX+dWDqO38SIT7GfHNvT8mjA3R91FLzFPeJfp7N8ihJQhloCR+XA1Nd2yfAskgjq3G/0P0pJaZj
+X-Gm-Message-State: AOJu0Yyz0xsCBdO05RuPcuGCaUFstI4g8zKHJMEMZNyCU/IUpZ9jCHjO
+	lpX382CENnXBh5syootlWn76njr6I2n0SKz5LciIQVHw+03nqSbX6TbZXCjSPYKkKjdldNab93M
+	Tj0FRplR3Si6uf3/AlDLzLifeMVBuRnYw6gUX
+X-Google-Smtp-Source: AGHT+IFwLT2oLWqkwAVjuKHT0oAS13N6O5emKTnqOQ4nc8/3wmrmPqfIXiLZwyctW/dHf5j6sSQb8/kI/xPKl5Vb++s=
+X-Received: by 2002:a17:906:f143:b0:a59:be21:3587 with SMTP id
+ a640c23a62f3a-a65f0918c9cmr184816566b.8.1717086296523; Thu, 30 May 2024
+ 09:24:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-+QEfLFhrShG4Mf1bhoXy
-Content-Type: multipart/alternative; boundary="=-2wjINsonf24vl+/OcDje"
-
---=-2wjINsonf24vl+/OcDje
+References: <20240530102126.357438-1-usamaarif642@gmail.com>
+ <20240530102126.357438-2-usamaarif642@gmail.com> <20240530122715.GB1222079@cmpxchg.org>
+In-Reply-To: <20240530122715.GB1222079@cmpxchg.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 30 May 2024 09:24:20 -0700
+Message-ID: <CAJD7tkYcTV_GOZV3qR6uxgFEvYXw1rP-h7WQjDnsdwM=g9cpAw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, nphamcs@gmail.com, 
+	chengming.zhou@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, Hugh Dickins <hughd@google.com>, Huang Ying <ying.huang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-05-30 at 15:04 +0100, Russell King (Oracle) wrote:
-> ...
-> And then we get to pid 858. This is in set_device_name(), which
-> was called from led_trigger_set() and led_trigger_register().
-> We know from pid 663 that led_trigger_register() can take a read
-> on leds_list_lock, and indeed it does and then calls
-> led_match_default_trigger(), which then goes on to call
-> led_trigger_set(). Bingo, this is why pid 666 is blocked, which
-> then blocks pid 663. pid 663 takes the rtnl lock, which blocks
-> everything else _and_ also blocks pid 858 in set_device_name().
->=20
-> Lockdep would've found this... this is a classic AB-BA deadlock
-> between the leds_list_lock rwsem and the rtnl mutex.
->=20
-> I haven't checked to see how that deadlock got introduced, that's
-> for someone else to do.
->=20
+On Thu, May 30, 2024 at 5:27=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
+> wrote:
+>
+> On Thu, May 30, 2024 at 11:19:07AM +0100, Usama Arif wrote:
+> > Approximately 10-20% of pages to be swapped out are zero pages [1].
+> > Rather than reading/writing these pages to flash resulting
+> > in increased I/O and flash wear, a bitmap can be used to mark these
+> > pages as zero at write time, and the pages can be filled at
+> > read time if the bit corresponding to the page is set.
+> > With this patch, NVMe writes in Meta server fleet decreased
+> > by almost 10% with conventional swap setup (zswap disabled).
+> >
+> > [1]https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d0=
+3d1344dde9fce0@epcms5p1/
+> >
+> > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>
+> This is awesome.
+>
+> > ---
+> >  include/linux/swap.h |  1 +
+> >  mm/page_io.c         | 86 ++++++++++++++++++++++++++++++++++++++++++--
+> >  mm/swapfile.c        | 10 ++++++
+> >  3 files changed, 95 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+> > index a11c75e897ec..e88563978441 100644
+> > --- a/include/linux/swap.h
+> > +++ b/include/linux/swap.h
+> > @@ -299,6 +299,7 @@ struct swap_info_struct {
+> >       signed char     type;           /* strange name for an index */
+> >       unsigned int    max;            /* extent of the swap_map */
+> >       unsigned char *swap_map;        /* vmalloc'ed array of usage coun=
+ts */
+> > +     unsigned long *zeromap;         /* vmalloc'ed bitmap to track zer=
+o pages */
+>
+> One bit per swap slot, so 1 / (4096 * 8) =3D 0.003% static memory
+> overhead for configured swap space. That seems reasonable for what
+> appears to be a fairly universal 10% reduction in swap IO.
+>
+> An alternative implementation would be to reserve a bit in
+> swap_map. This would be no overhead at idle, but would force
+> continuation counts earlier on heavily shared page tables, and AFAICS
+> would get complicated in terms of locking, whereas this one is pretty
+> simple (atomic ops protect the map, swapcache lock protects the bit).
+>
+> So I prefer this version. But a few comments below:
 
+I am wondering if it's even possible to take this one step further and
+avoid reclaiming zero-filled pages in the first place. Can we just
+unmap them and let the first read fault allocate a zero'd page like
+uninitialized memory, or point them at the zero page and make them
+read-only, or something? Then we could free them directly without
+going into the swap code to begin with.
 
-Thank you for the analysis - hopefully someone can track down the
-culprit.
+That's how I thought about it initially when I attempted to support
+only zero-filled pages in zswap. It could be a more complex
+implementation though.
 
-cc: =C2=A0thorsten
+[..]
+> > +
+> > +static void swap_zeromap_folio_set(struct folio *folio)
+> > +{
+> > +     struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> > +     swp_entry_t entry;
+> > +     unsigned int i;
+> > +
+> > +     for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> > +             entry =3D page_swap_entry(folio_page(folio, i));
+> > +             bitmap_set(sis->zeromap, swp_offset(entry), 1);
+>
+> This should be set_bit(). bitmap_set() isn't atomic, so it would
+> corrupt the map on concurrent swapping of other zero pages. And you
+> don't need a range op here anyway.
 
---=20
-Gene
-
-
---=-2wjINsonf24vl+/OcDje
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><style>pre,code,address {
-  margin: 0px;
-}
-h1,h2,h3,h4,h5,h6 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-ol,ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-blockquote {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-</style></head><body><div>On Thu, 2024-05-30 at 15:04 +0100, Russell King (=
-Oracle) wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; b=
-order-left:2px #729fcf solid;padding-left:1ex"><div>...</div><div>And then =
-we get to pid 858. This is in set_device_name(), which<br></div><div>was ca=
-lled from led_trigger_set() and led_trigger_register().<br></div><div>We kn=
-ow from pid 663 that led_trigger_register() can take a read<br></div><div>o=
-n leds_list_lock, and indeed it does and then calls<br></div><div>led_match=
-_default_trigger(), which then goes on to call<br></div><div>led_trigger_se=
-t(). Bingo, this is why pid 666 is blocked, which<br></div><div>then blocks=
- pid 663. pid 663 takes the rtnl lock, which blocks<br></div><div>everythin=
-g else _and_ also blocks pid 858 in set_device_name().<br></div><div><br></=
-div><div>Lockdep would've found this... this is a classic AB-BA deadlock<br=
-></div><div>between the leds_list_lock rwsem and the rtnl mutex.<br></div><=
-div><br></div><div>I haven't checked to see how that deadlock got introduce=
-d, that's<br></div><div>for someone else to do.<br></div><div><br></div></b=
-lockquote><div><br></div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8=
-ex; border-left:2px #729fcf solid;padding-left:1ex"></blockquote><div>Thank=
- you for the analysis - hopefully someone can track down the culprit.</div>=
-<div><br></div><div>cc: &nbsp;thorsten</div><div><br></div><div><span><pre>=
--- <br></pre><div><span style=3D"background-color: inherit;">Gene</span></d=
-iv><div><br></div></span></div></body></html>
-
---=-2wjINsonf24vl+/OcDje--
-
---=-+QEfLFhrShG4Mf1bhoXy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZlioFAAKCRA5BdB0L6Ze
-2ztUAP9jIfYUH867epX9kme9kL3SIae0lnrtM3DSeYE1axiCawD7BDiTCWFUP3i/
-i0ulDQ52DV3I490ratrq6pxYUlXj1w0=
-=Jxt6
------END PGP SIGNATURE-----
-
---=-+QEfLFhrShG4Mf1bhoXy--
+It's a shame there is no range version of set_bit(). I suspect we can
+save a few atomic operations on large folios if we write them in
+chunks rather than one by one.
 
