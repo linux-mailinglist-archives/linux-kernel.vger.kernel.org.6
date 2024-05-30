@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-195617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6473B8D4F59
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:44:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86D18D4F5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 229BA282360
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193911F23B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE27A1862A4;
-	Thu, 30 May 2024 15:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13AC1C68B4;
+	Thu, 30 May 2024 15:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="srWMMuT5"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MOSw0XBF"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6489518309D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249E6186291
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717083836; cv=none; b=WjsdVNyJz0L18ZK0RjxL+XAPiMfw1BGh5TX02Fn25ALEBc8xHU7FCpC63Dpy+YD5Ar6UnwxXtEBLWPC/WSpDTxvVBHi/rwd41pqEVVVejPrI3OkeMeha+BvQ8Q4Jm27okZLbCjm2b9O+zFOcfa62tn3GYf9zZz+v86uQx/cRsc4=
+	t=1717083838; cv=none; b=AysJDtLx5WAt4QhBWQq/Jiz/4sv+vIeBs5vk72HmKGpAEJ5Agbp+CmI/I0/+cdx6OSL2JJlV9LtUGLLKu3MqIrR9Il7XJWhhbrg6HXj++kgFhcsuzh3CVqJ4VZwKJiKbHaJSZNq6cMtzryCGOeuVkc7R1N5jzHmD9zX4fIXU6Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717083836; c=relaxed/simple;
-	bh=GyiMM+dAIAnQ+06S/bZkT8QMDDiz6YgGkXyHGZZYv8A=;
+	s=arc-20240116; t=1717083838; c=relaxed/simple;
+	bh=1LTJ1ZbHYVIiunTosxnkif5rOzcNdAVdISpvTDGmP+4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dLK1eCFk3snfN+TtZ8sdy7ezgiaNiolqS+cTQRoU+mSwSYRdYFDqJtFSuZ+n03mAanjDqtyYlNSA8pj7UT8PT3AN/5AGClSb1kq2VKz43rhlM41fIltCsyOK/cQac08asj2eFMAqfh6abhgJz6FUGD+3Nc5ZhsrbeltOtxN0xks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=srWMMuT5; arc=none smtp.client-ip=209.85.208.41
+	 In-Reply-To:To:Cc; b=OHYMv9KdNVWjcsz2DZBRtUF77tbIQqope4S7eoqvGph8dR4FTWj8H92LS9hNJVxEn3m5BEa5W1dlnJc/rS/Y7jcUd1/vzRK1wLBNY3QUcCz0pvrARHJucZTn42DJpqQsPLFGxm9im8+sXwR9R1/iCcbmOdsi5tz8i0ceFRadXXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MOSw0XBF; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a033c2ec2so1093649a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:43:54 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e72224c395so9258951fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717083833; x=1717688633; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717083834; x=1717688634; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=o/EitmxAsyzTzEzD4CEr43TovKYsnsXlvhYZYAkIRko=;
-        b=srWMMuT5t+6jNO0SbYW4vFZDjWmOAHF824qY4lbfdYg8fkkCDJzgekcGuF9GDgO+5O
-         4KzotA/IWeFSrlOhD+Vl5h/p6pFc9MHHqPw4ffNdKaWayyudUnk7fZG6Qdr2n4okMLWw
-         2qRIsavFRUv7JDiKhFVdKlh9If8758NAtn+dWLjC8pMKPxBA8cQZiyoV+YR+Ss6QOWvS
-         EcSnDtdxHZsCJnOn746YLmOi7mpQrzFTrgWsgpOV9/n7HgEIvPlzJn6o1dlBVblnzh/E
-         r2LMEgmfk89ggcXLVaK3J25B42HABmxi918TgHGPKkfyb0j5AqN2u07li3iTAD+YOTVd
-         W/Iw==
+        bh=EB2qCn5UGV9aqEQdkg+7453N3Kl73IeR9N5SJgjDlZA=;
+        b=MOSw0XBFxKosNI7CmEuiyqnisXNwCoPWoY1+ypwgQg5f6RwCvGAiEsBPzLc9SnMHyW
+         3UXC+SEeXmM9/g19zIMVF06tfj22G2/XJEEkc/bKUkjejGJXk3gto0winJ+1t/NYVEH9
+         ushOzckZQOnkDqbRBAWMQbNMecuIIwsPx3FreQqigppjCHumdOcbVubVdjb1Rv3psZQf
+         lhcb4U8La6NZA99YXK2KtdvOObN5dGxSWRkmHI6Alw+G1nHZL6ZctKJI5wxokeLFTV+y
+         Th4OWaQzjn3E4z2s5kEWKLc5BrzwMcieQ4x69SX4rOXLhjLQoNTYFjVa71EyVslLztme
+         +SGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717083833; x=1717688633;
+        d=1e100.net; s=20230601; t=1717083834; x=1717688634;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o/EitmxAsyzTzEzD4CEr43TovKYsnsXlvhYZYAkIRko=;
-        b=EnGd52494TBDWtfErDVnIFtkWiGDAQaRAidxWWVm+20JTaUZgvhdN9kty/6ArQCM/7
-         0RS717JkzjqSqIBPG46PMUjjOdHeGpk9ku1uEsB6YkEPWi3vA+qQlkdSzgOyhbjPP3wO
-         xLueL7dj+LpRQQ3tjwtCZaxAr6LfFQbHgFUraakWoO6osbv7cniPJFWrczvcWIEUqJp8
-         iWQxBLgfnrSe/fPlPwj6o1cUOf1bvGnSXHzZTCgrIob3FqKHcbrl8FKAxhYRHWpsGWC3
-         1Mp9K4iUTgfK6nMTM1FVyPaNO3PwDVrJz0WIBjdZbdIzsnhsnOuaSfQoQG88USlXWSLG
-         guZg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7apEf4SieeqT1M0LOyeh8vsHRLiLEEYOMs94egzBp3fQfCFLCCqZR2tHRaxuaUt64X9TX+kWWzfCPST4TMZKqTf+k/Iy4DV1CrVm9
-X-Gm-Message-State: AOJu0YzUfnqQaw1l1Xhn0VfENosxkuSLVO6uAa41oyBUJSpfA+MafuUh
-	CGhmpq2fUWrkVPOr1hlmFLTNkFU9FFj/riztFofFnzIAt00sdszSjtuV3AI3IgE=
-X-Google-Smtp-Source: AGHT+IFcgDEc2SQAN6dKOstr+NgbiOD1TO3PqsGm+H1JUaIEdhg8fPRbH1J6Ksgrt+PPLpOGCC7kmg==
-X-Received: by 2002:a50:ba8e:0:b0:572:3bcc:8370 with SMTP id 4fb4d7f45d1cf-57a17716475mr1588856a12.0.1717083832574;
-        Thu, 30 May 2024 08:43:52 -0700 (PDT)
+        bh=EB2qCn5UGV9aqEQdkg+7453N3Kl73IeR9N5SJgjDlZA=;
+        b=r9yiscrptBj5QW0RxIH2kwx2uJCCWf++SxlhkGtMuafzmy0gXmc3sxSyv8xutoTLIZ
+         rgHGKIEyllYWi1JcAVOT3ATSopyy+LuxD9+h8lGwjYR/ssTG2P4kdAsDLpNxE9WPsgze
+         x6MeOBa1v3eHldgX200yi1bvu6GRLDFz9A/qZKqLxU2yXDNkGSi4NoUCjdaEOTGIjyZx
+         MygJyMuCJ3Q1lAzl1lkx5UOfJVJO0VUjvMUbTPOjTbRL7bH2lkqNWYdY9WDpe3OzdsHE
+         1Tgy4FI/p0osbJWMXxYu22azHHyKKzEw/ISH6T/oSd8SrVhfw2QEYKv7lwQAXmBAg50f
+         JY/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXccozUJ/DXgpAL6gcpYk2ldwDBfEiYgAeBSLDcPk415+4//jnH0x0m8sVZMBfmRIX4Em5bU0pEf+8caOF9iZuHjwDsGYXC2qDEfHw7
+X-Gm-Message-State: AOJu0YxpQ0J8IdbZso2P52zK1oYtdo+tw3JjHVzAE+9Vzvo822rNn47h
+	qcTFcO13UcTLYkc29gM01IdTLzMStALgIf0U2x3DBJSvAgMAzyVyGmCXXGzANgg=
+X-Google-Smtp-Source: AGHT+IE9RqDBgAa9w5lbGC/woJK3bS0VJZz4UwnYIRaetdKK7Bsv/24VfWtedXzFLf8LE6feJRopIA==
+X-Received: by 2002:a19:9107:0:b0:52b:8435:8f22 with SMTP id 2adb3069b0e04-52b84358fb1mr159455e87.36.1717083833902;
+        Thu, 30 May 2024 08:43:53 -0700 (PDT)
 Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579deb8f406sm4879700a12.34.2024.05.30.08.43.51
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579deb8f406sm4879700a12.34.2024.05.30.08.43.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 08:43:52 -0700 (PDT)
+        Thu, 30 May 2024 08:43:53 -0700 (PDT)
 From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 30 May 2024 18:43:40 +0300
-Subject: [PATCH 2/3] arm64: dts: qcom: x1e80100-qcp: Fix the PHY regulator
- for PCIe 6a
+Date: Thu, 30 May 2024 18:43:41 +0300
+Subject: [PATCH 3/3] arm64: dts: qcom: x1e80100: Describe the PCIe 6a
+ resources
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-x1e80100-dts-pcie6a-v1-2-ee17a9939ba5@linaro.org>
+Message-Id: <20240530-x1e80100-dts-pcie6a-v1-3-ee17a9939ba5@linaro.org>
 References: <20240530-x1e80100-dts-pcie6a-v1-0-ee17a9939ba5@linaro.org>
 In-Reply-To: <20240530-x1e80100-dts-pcie6a-v1-0-ee17a9939ba5@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -89,44 +89,187 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=752; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=GyiMM+dAIAnQ+06S/bZkT8QMDDiz6YgGkXyHGZZYv8A=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWJ6yezLieSjidJtP53yUudxkcU/pV1tOfM8Vq
- Q7XzPe2oCaJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZliesgAKCRAbX0TJAJUV
- VgkOD/9Y38gXEr/nOrKtw+zdUYCLp3JxBDf1xit1O0CwUggv4D+B+33J1yckVoatDoNEuTJptMA
- eqpkTmk/m1SDPQRn/VGVAxr5xDF3NCz1+GwLrpE83+oYOybhHDwZQjsu7hoOAX9g09Wl0mQ8qpR
- zbmM/aw7r0+2ni0pgkzjP1XiogF30hJVROzNyDHDjt/1O4G3xxs+56vklgQF1f2c8aRQleczRnd
- XLBPRFbMTSJXXmqGKJzOi9P7fvtYWC24AKQeTF5WcGzWH0mGghcYnkfHSY9cijJ/bLfp8WooHKm
- n0fIBB4Tv/s9zvm6mg7kcxRwX1b123XUdSQcZYfZZLTn/s/pCYwyw/E7NHe1EZb11EqoYrbjdyr
- MsJQqHyUr0WzVFM0/gIG0D58+mB58bxFdo4FNZ/4jr57a0U118E9XmXUdWvp9FrDTFbfCRubeO/
- 4DJmEjTL5E3IJmnbb855O8g+8LKE3g2B1cgosxvfLjh3GCGUbchdaad+7aeR8FegLbZmOWFEP9f
- D/dzG3n5t64VbCJ5OczzGmEmBRDC6uxV8D21+fsdokQSfC9yvcJAwSDwZoHk/SEvrL9ria+mynd
- HQOFQDmsB4hAYnqDuSK0bbPNN2SozUm/AXrD0mJhMrjKRmm3/JA8sM4rDi9OmPaLeayd0LKvbzg
- 3Q3z6GKbfZex7Mg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3861; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=1LTJ1ZbHYVIiunTosxnkif5rOzcNdAVdISpvTDGmP+4=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWJ6zBz/myBiTnzwAi5HLTb6p8fI3Q7PU4Wm4R
+ KK7hJ76asSJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZlieswAKCRAbX0TJAJUV
+ VnGaD/9Ia2Vi5BnGohM0XdArqmAz+X5XQeQ0Mqd3Cljv5YYfZVhAwscEanXwSYbDMZf2ZXpnHrs
+ suNKoS3MtEgCLYxirTIMG427DOxCk1EVlzj8gv1I8EY9/4hQ6LfYSoK59w4033YiVHZw+Ay0RKN
+ IoOhPP5bEu/gM17W5nY5fMY9boFYSWIEM53WyCyzz6HmirklhjzBJW5ouIG16hAyE5jBKo6E7G4
+ siFPLQWqEfcFiSENAu1qqvH0hOfWDxBsvcDVXxGbyRETIRNbOVMVyiMIttbwYSUvUTC5bvTnft2
+ Pgv1AVP3DtxxHkCyF/205qNUe1TsA6JtuYOAUCXkE5YIjysucznE5ARODt8ZlKvpP8jbIDQco3r
+ 36QZ3vdEX8+jPllbll934E8PcYHkG++DsyhMG26VOZLoCexx3nM7SoGQyAnKH8/zD8Si1p3ZThE
+ 1E2/86D2unl3PmduOSPy3QeYX4gy2UH7QmZ5W27k8yL6o+LDuRpvESpwvt1zTsIwztOVIHM9ODS
+ yqGXYGKJzB/3ZPSOPDcuuNRuxVI0bbkkFuzZKzgDfYp6sUOVFpq/KmPq4TqT+5yL4FTB8Hc8JIJ
+ 5vc6P7zvIFN7F2WeYA3QTrCfclVvt309NxKcEbOiNMmrL3Kppdi1mIn2vEiTlgfkIKZQlojIg2W
+ LW3uIDxWnIQ4k1Q==
 X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
  fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-The actual PHY regulator is L1d instead of L3j, so fix it accordingly.
+On both the CRD and QCP, on PCIe 6a sits the NVMe. Add the 3.3V
+gpio-controlled regulator and the clkreq, perst and wake gpios as
+resources for the PCIe 6a.
 
-Fixes: f9a9c11471da ("arm64: dts: qcom: x1e80100-qcp: Enable more support")
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 52 +++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 52 +++++++++++++++++++++++++++++++
+ 2 files changed, 104 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 3de7565dda19..e1b19177523f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -470,7 +470,7 @@ &pcie6a {
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+index 3ce2c8a841ec..10ec40a193fb 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+@@ -173,6 +173,20 @@ vreg_edp_3p3: regulator-edp-3p3 {
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 	};
++
++	vreg_nvme: regulator-nvme {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VREG_NVME_3P3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&tlmm 18 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&nvme_reg_en>;
++	};
  };
  
- &pcie6a_phy {
--	vdda-phy-supply = <&vreg_l3j_0p8>;
-+	vdda-phy-supply = <&vreg_l1d_0p8>;
- 	vdda-pll-supply = <&vreg_l2j_1p2>;
+ &apps_rsc {
+@@ -655,6 +669,14 @@ &pcie4_phy {
+ };
  
+ &pcie6a {
++	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
++	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
++
++	vddpe-3v3-supply = <&vreg_nvme>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie6a_default>;
++
  	status = "okay";
+ };
+ 
+@@ -804,6 +826,36 @@ kybd_default: kybd-default-state {
+ 		bias-disable;
+ 	};
+ 
++	nvme_reg_en: nvme-reg-en-state {
++		pins = "gpio18";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
++	pcie6a_default: pcie2a-default-state {
++		clkreq-n-pins {
++			pins = "gpio153";
++			function = "pcie6a_clk";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++
++		perst-n-pins {
++			pins = "gpio152";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-pull-down;
++		};
++
++		wake-n-pins {
++		       pins = "gpio154";
++		       function = "gpio";
++		       drive-strength = <2>;
++		       bias-pull-up;
++	       };
++	};
++
+ 	tpad_default: tpad-default-state {
+ 		pins = "gpio3";
+ 		function = "gpio";
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+index e1b19177523f..ab02a6e35eb6 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+@@ -59,6 +59,20 @@ vreg_edp_3p3: regulator-edp-3p3 {
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 	};
++
++	vreg_nvme: regulator-nvme {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VREG_NVME_3P3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&tlmm 18 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&nvme_reg_en>;
++	};
+ };
+ 
+ &apps_rsc {
+@@ -466,6 +480,14 @@ &pcie4_phy {
+ };
+ 
+ &pcie6a {
++	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
++	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
++
++	vddpe-3v3-supply = <&vreg_nvme>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie6a_default>;
++
+ 	status = "okay";
+ };
+ 
+@@ -528,6 +550,36 @@ edp_reg_en: edp-reg-en-state {
+ 		drive-strength = <16>;
+ 		bias-disable;
+ 	};
++
++	nvme_reg_en: nvme-reg-en-state {
++		pins = "gpio18";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
++	pcie6a_default: pcie2a-default-state {
++		clkreq-n-pins {
++			pins = "gpio153";
++			function = "pcie6a_clk";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++
++		perst-n-pins {
++			pins = "gpio152";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-pull-down;
++		};
++
++		wake-n-pins {
++		       pins = "gpio154";
++		       function = "gpio";
++		       drive-strength = <2>;
++		       bias-pull-up;
++	       };
++	};
+ };
+ 
+ &uart21 {
 
 -- 
 2.34.1
