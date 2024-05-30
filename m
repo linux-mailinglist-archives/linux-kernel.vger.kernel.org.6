@@ -1,171 +1,159 @@
-Return-Path: <linux-kernel+bounces-195947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879B98D54B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:44:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F418D54BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B891C22533
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:44:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C51AB22F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED043182D37;
-	Thu, 30 May 2024 21:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9501D182D25;
+	Thu, 30 May 2024 21:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owt5AtDP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="FcquoAme"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0CD1DFE8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE9E21A0D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717105487; cv=none; b=nnBoKtdBXsBqlQ5tIojqeyM/7aoABACXtfNbaGNwozaZI/3G3adG9sGWWTXfYC1Q1TSY+vwmydjJ8L6a7cyVQ96ZEd++Y/029NZFTKKN7gVQJouAIw+W2Ee6R5c3iGUpU21TaYDMAFa7v2Lh3TQsyGaJK6FwuA9NUGhP5n8bXIw=
+	t=1717105618; cv=none; b=jjhjiXgG0Q3OWvNzS7Ae2Ne2JTOANxAB4zFEnqDouoQLn+laVzrQH8fudN7E5yo0UfH4R6PQjwPeICPYUSwhSwg5rABWjQvZ1l4MFC+RSpH/YwXdWTsKi0WKQrFWz1VNjr8bEANwLrbuNAWMY957vWW9RfxgdL5cEG+a9lylZV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717105487; c=relaxed/simple;
-	bh=xTexikey00ziqD7XJK4HEWwkPAY00DaKANovgGshqUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mntq4V1KplicdVbyi/CVF7fFxhFbTCDNtxSlMKF518tkMJqnraaSbYOEPRDrXDnN5qmASyhEtf1GXh5vm33dzD5cvM2A9R/XZP3Qms7HA1zDl8Y3DFjW6HNjsd/KpJLnLTieEa8kYFQ0k1RqtY8cXTe/POfTfYNGVjZvvuTOzlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owt5AtDP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3C5C4AF08
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717105486;
-	bh=xTexikey00ziqD7XJK4HEWwkPAY00DaKANovgGshqUU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=owt5AtDP0wNSjgi0Zswu5c21HOigfQTehcqvsSECcuIOuIkDD2cMFKxfXWjkaWtgz
-	 wFd4mYXKZndr9kFTRCO3Rmis+oPLxjjFf3HcYrDSoRz6l1GrI40gPjb7rd5ZVj11Jj
-	 zxWHNxgSdYSEHjLuV7+gLb5f93iRLLMW6SGl/fVrAadpDBdJqc5rN4LbG9LvIPUREM
-	 m9UXSgOkEqeuprILJrQlChLpEmyuaRbyzLKrP0gJyudDvWibpzaHiE7VQT0NQLvrRO
-	 zwjeeFYN3Lp6xvFY6s3wo4UxSNDHbvKp9ZEVjrDKHXLFrzR+x7lhpe2daVHM4bFxnK
-	 AXO4GmqlB8v9w==
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7e238fa7b10so59271039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:44:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6UClrdw6k5c1NWwPu3T1TSNAEFJERmPI5RUXyre8d6zDkvPxJFfPkFpgbQO9G407MgIykLJdVGO8hruWvFMwydzEEZfPp2KBZHAiJ
-X-Gm-Message-State: AOJu0YxAGTpuMVn6fg9vZVO1v9jEsRycqKNOyaY/RRgU3ESBio4ZAfUP
-	Yn7oedazy0z+NnWWPpNuCFz8PvUfCqfcvk2CrIRjYNNb+bfx8nbrlcgrhctZjRujiuDqOu0AIkP
-	8Kydtw/W9gdc63aHEI4JuDmm36AtEn9elv8eb
-X-Google-Smtp-Source: AGHT+IFgh/hCmDagsMpqF5f3V6G+qeag0qBtPz0QRClQj3b89J2Y6GBYeekuWfw5IEO0MFd1gKKTizXvAz9poDtU3rU=
-X-Received: by 2002:a05:6602:14c5:b0:7e6:eb37:173c with SMTP id
- ca18e2360f4ac-7eafff2d9d0mr22681139f.14.1717105485912; Thu, 30 May 2024
- 14:44:45 -0700 (PDT)
+	s=arc-20240116; t=1717105618; c=relaxed/simple;
+	bh=PCtXbe0h4/GG8mxMBQ8PPq48bwhyZuUXEWugmZ3umHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LjgcWRNgHBtIgoXVG0hiF1oZoyrZj7FB/r4A9qfj9LB0DQcYuKqiTr82zftGTnNaMQp8k/P2l3sNJVHoZFRHJWYEIjCt6xrfFOO6qgyOLkFYX1CWGLhxi7z2vIVmCDYOLJ5cUEk6M6Z4aVgIiNXNru+VW69URCcIgeohpnDvQxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=FcquoAme; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6ae60725ea1so1218776d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1717105616; x=1717710416; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U+hGbEM+fsi1EeTk/F7iSCEszhWuMBnEsqNB1vusLac=;
+        b=FcquoAmetY6eldxavbnVAF07BtjHgnzejL4f69WW+2gTxQEhHoDVFOINCpfMhvZRmi
+         wC3LPS8yuv8BIYvcEBs3LgbcKRFGKgFoPWEAqrNAY+ORRX15J/0cRPrErK/dXOyN7qKn
+         8QO6T3JHBxsxzDPLVEfq+bU8CJ5Q0+1XVurJiSQViNTgAoX19S5m5xmyejgpbvQP1j0k
+         NEPKk7BW2O5XzTFXkgVg8KJjIW5dpnft0Mg1ih5osk0QbMKQyEJ4ueJX+VVxmy0wqzFJ
+         JrgCF8J0CeZDEoWydJDvc/frNram9keTG5MWrkK66jYv8XX1dRYfpBFJTT11n3aAiboq
+         AYmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717105616; x=1717710416;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+hGbEM+fsi1EeTk/F7iSCEszhWuMBnEsqNB1vusLac=;
+        b=Ao9qIWA6sUJdg6zDlhQEGft9Oupd819KGaIfQsyP5uO+gF1SPYgMP7tdteQzEAcKma
+         /k+LXa4FROivN7MDccCCCm6/SkeEMmibEQ/YYYDEeddUgzjJhgP3NTEdXeh43ETdfp22
+         0ZIUjFr93SW2lrG/9TuDpmSnooJwSLIPcOnsLNe+0+rYd00GSpb+zABSKAF0tr51Kh2a
+         k4oobipca0nNX3LxKl1zD/uTtTjlswLXIN2HSC8Mscu/Q33NVDU3V5v9/owJiAkf2jnq
+         QeOLswOGw+mgwTNG5aNtlZD0JkRdik0s/OwaUqu9d5C5pxPvda82yaQ+/l8paIgCZHYx
+         jgAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvH4fGNz2kefqDgx3eLYKnLw29mO8+MigVWNHrXYhfd20sH0Pjw0keQoXuXBNdcrCK1r6KbsQdIdsU0vP1mlBdmcMN2vBhfuK/B3qz
+X-Gm-Message-State: AOJu0YxPD+PDoHE3zC4+VDhCFgxYpuPWZZd3mO1mGoB9CX+F12FryoQS
+	/FQhiizmNHrRp0Lnioeu8MTPYjhEiL5vhypQugzfRmiQ0BhVLQdtR3Wm95NYD90=
+X-Google-Smtp-Source: AGHT+IGA+5z8EvlVM17m7A1gpNDDe3MH79lfJJS0F7/GHSOlJrV/5W7j0m+nQ9GfYwwVDjefFUWvsw==
+X-Received: by 2002:a05:6214:440b:b0:6ad:9e54:e70f with SMTP id 6a1803df08f44-6aecd6f08aamr1779126d6.50.1717105616070;
+        Thu, 30 May 2024 14:46:56 -0700 (PDT)
+Received: from debian.debian ([2a09:bac5:7a49:f9b::18e:1c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4a7466a7sm1908696d6.44.2024.05.30.14.46.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 14:46:55 -0700 (PDT)
+Date: Thu, 30 May 2024 14:46:53 -0700
+From: Yan Zhai <yan@cloudflare.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Florian Westphal <fw@strlen.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	David Howells <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
+	Jesper Dangaard Brouer <hawk@kernel.org>
+Subject: [RFC net-next 0/6] net: pass receive socket to drop tracepoint
+Message-ID: <cover.1717105215.git.yan@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
- <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
- <87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
- <875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 30 May 2024 14:44:33 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
-Message-ID: <CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster order
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, May 29, 2024 at 7:54=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Chris Li <chrisl@kernel.org> writes:
->
-> > Hi Ying,
-> >
-> > On Wed, May 29, 2024 at 1:57=E2=80=AFAM Huang, Ying <ying.huang@intel.c=
-om> wrote:
-> >>
-> >> Chris Li <chrisl@kernel.org> writes:
-> >>
-> >> > I am spinning a new version for this series to address two issues
-> >> > found in this series:
-> >> >
-> >> > 1) Oppo discovered a bug in the following line:
-> >> > +               ci =3D si->cluster_info + tmp;
-> >> > Should be "tmp / SWAPFILE_CLUSTER" instead of "tmp".
-> >> > That is a serious bug but trivial to fix.
-> >> >
-> >> > 2) order 0 allocation currently blindly scans swap_map disregarding
-> >> > the cluster->order.
-> >>
-> >> IIUC, now, we only scan swap_map[] only if
-> >> !list_empty(&si->free_clusters) && !list_empty(&si->nonfull_clusters[o=
-rder]).
-> >> That is, if you doesn't run low swap free space, you will not do that.
-> >
-> > You can still swap space in order 0 clusters while order 4 runs out of
-> > free_cluster
-> > or nonfull_clusters[order]. For Android that is a common case.
->
-> When we fail to allocate order 4, we will fallback to order 0.  Still
-> don't need to scan swap_map[].  But after looking at your below reply, I
-> realized that the swap space is almost full at most times in your cases.
-> Then, it's possible that we run into scanning swap_map[].
-> list_empty(&si->free_clusters) &&
-> list_empty(&si->nonfull_clusters[order]) will become true, if we put too
-> many clusters in si->percpu_cluster.  So, if we want to avoid to scan
-> swap_map[], we can stop add clusters in si->percpu_cluster when swap
-> space runs low.  And maybe take clusters out of si->percpu_cluster
-> sometimes.
+Greeting!
 
-One idea after reading your reply. If we run out of the
-nonfull_cluster[order], we should be able to use other cpu's
-si->percpu_cluster[] as well. That is a very small win for Android,
-because android does not have too many cpu. We are talking about a
-handful of clusters, which might not justify the code complexity. It
-does not change the behavior that order 0 can pollut higher order.
+We set up our production packet drop monitoring around the kfree_skb
+tracepoint. While this tracepoint is extremely valuable for diagnosing
+critical problems, we find some limitation with drops on the local
+receive path: this tracepoint can only inspect the dropped skb itself,
+but such skb might not carry enough information to:
 
->
-> Another issue is nonfull_cluster[order1] cannot be used for
-> nonfull_cluster[order2].  In definition, we should not fail order 0
-> allocation, we need to steal nonfull_cluster[order>0] for order 0
-> allocation.  This can avoid to scan swap_map[] too.  This may be not
-> perfect, but it is the simplest first step implementation.  You can
-> optimize based on it further.
+1. determine in which netns/container this skb gets dropped
+2. determine by which socket/service this skb oughts to be received
 
-Yes, that is listed as the limitation of this cluster order approach.
-Initially we need to support one order well first. We might choose
-what order that is, 16K or 64K folio. 4K pages are too small, 2M pages
-are too big. The sweet spot might be some there in between.  If we can
-support one order well, we can demonstrate the value of the mTHP. We
-can worry about other mix orders later.
+The 1st issue is because skb->dev is the only member field with valid
+netns reference. But skb->dev can get cleared or reused. For example,
+tcp_v4_rcv will clear skb->dev and in later processing it might be reused
+for OFO tree.
 
-Do you have any suggestions for how to prevent the order 0 polluting
-the higher order cluster? If we allow that to happen, then it defeats
-the goal of being able to allocate higher order swap entries. The
-tricky question is we don't know how much swap space we should reserve
-for each order. We can always break higher order clusters to lower
-order, but can't do the reserves. The current patch series lets the
-actual usage determine the percentage of the cluster for each order.
-However that seems not enough for the test case Barry has. When the
-app gets OOM kill that is where a large swing of order 0 swap will
-show up and not enough higher order usage for the brief moment. The
-order 0 swap entry will pollute the high order cluster. We are
-currently debating a "knob" to be able to reserve a certain % of swap
-space for a certain order. Those reservations will be guaranteed and
-order 0 swap entry can't pollute them even when it runs out of swap
-space. That can make the mTHP at least usable for the Android case.
+The 2nd issue is because there is no reference on an skb that reliably
+points to a receiving socket. skb->sk usually points to the local
+sending socket, and it only points to a receive socket briefly after
+early demux stage, yet the socket can get stolen later. For certain drop
+reason like TCP OFO_MERGE, Zerowindow, UDP at PROTO_MEM error, etc, it
+is hard to infer which receiving socket is impacted. This cannot be
+overcome by simply looking at the packet header, because of
+complications like sk lookup programs. In the past, single purpose
+tracepoints like trace_udp_fail_queue_rcv_skb, trace_sock_rcvqueue_full,
+etc are added as needed to provide more visibility. This could be
+handled in a more generic way.
 
-Do you see another way to protect the high order cluster polluted by
-lower order one?
+In this change set we propose a new 'kfree_skb_for_sk' call as a drop-in
+replacement for kfree_skb_reason at various local input path. It accepts
+an extra receiving socket argument, and places the socket in skb->cb for
+tracepoint consumption. With an rx socket, it can easily deal with both
+issues above. Using cb field is more of a concern that a tracepoint
+signature might be a part of stable ABI, but please advise if otherwise.
 
->
-> And, I checked your code again.  It appears that si->percpu_cluster may
-> be put in si->nonfull_cluster[], then be used by another CPU.  Please
-> check it.
+Yan Zhai (6):
+  net: add kfree_skb_for_sk function
+  ping: pass rx socket on rcv drops
+  net: raw: pass rx socket on rcv drops
+  tcp: pass rx socket on rcv drops
+  udp: pass rx socket on rcv drops
+  af_packet: pass rx socket on rcv drops
 
-Ah, good point. I think it does. Let me take a closer look.
+ include/linux/skbuff.h | 48 ++++++++++++++++++++++++++++++++++++++++--
+ net/core/dev.c         | 21 +++++++-----------
+ net/core/skbuff.c      | 29 +++++++++++++------------
+ net/ipv4/ping.c        |  2 +-
+ net/ipv4/raw.c         |  4 ++--
+ net/ipv4/syncookies.c  |  2 +-
+ net/ipv4/tcp_input.c   |  2 +-
+ net/ipv4/tcp_ipv4.c    |  4 ++--
+ net/ipv4/udp.c         |  6 +++---
+ net/ipv6/raw.c         |  8 +++----
+ net/ipv6/syncookies.c  |  2 +-
+ net/ipv6/tcp_ipv6.c    |  4 ++--
+ net/ipv6/udp.c         |  6 +++---
+ net/packet/af_packet.c |  6 +++---
+ 14 files changed, 93 insertions(+), 51 deletions(-)
 
-Chris
+-- 
+2.30.2
 
 
-Chris
 
