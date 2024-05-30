@@ -1,218 +1,94 @@
-Return-Path: <linux-kernel+bounces-195392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060FE8D4C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:54:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9039C8D4C1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B14CB23375
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:54:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C273A1C22AC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0DD17CA0B;
-	Thu, 30 May 2024 12:54:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA5D17CA06;
-	Thu, 30 May 2024 12:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EC417C9FF;
+	Thu, 30 May 2024 12:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exG2cj4Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55FB17C9F5
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717073685; cv=none; b=QLOhCR4ML4o+7IdfqvZVGpHZrMY4ntSxqhLeQ9kzuwkk8RZzghO3FZiat9n41agxbMgfRx4bO65qD6d+A+ZjXH4V8S/5+IRwvD+qeYshfzN6vUQloMkmVhby+AQy9pYYPJs5K0FnCx8ciyHc1zxGJ+8lnTW1bsrI9X5XoPNCVq8=
+	t=1717073711; cv=none; b=f52SuoCY9B2A1QIOW4GJlWslW1XxNHfeRNwKDZM95nal2+WXlhQ8Ov/DcGIFoxcE5ovmBvxf4ry0MYxH3Dnew5eTgvjhIb35n0dk9iI7c7mQI+r8J5GtfRQojNmxX/RCuy7DNsQgQU5F+Sg0XoROOqvo09SPNoJWW3+MpIZYVaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717073685; c=relaxed/simple;
-	bh=bIrMEs5NYdtb9T9UOCr6ZAsNT8glRmdAXyGs2MUvXok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yn7zUG00PG7OtiHv0D2vKhWJXKp7Ave/KHcX0agnET7SXG46fOe6iEmOJntD8W31JcMZy6+W+nCocagrB+8Ucf/cSvH21fasfJOnVuHJyVZMYbWB2TItZGWNUWdLQFYGhnSURi54ZFxpFpAQbAzKjn2klh/a/88bIBrJ//nwnPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BD35339;
-	Thu, 30 May 2024 05:55:06 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 628EF3F792;
-	Thu, 30 May 2024 05:54:40 -0700 (PDT)
-Message-ID: <193884e6-0911-4a5f-9676-74e1630f9a28@arm.com>
-Date: Thu, 30 May 2024 13:54:42 +0100
+	s=arc-20240116; t=1717073711; c=relaxed/simple;
+	bh=MinsSWjPSdrlpjgaxrEZgiCjGpaf7eGd+tElRl/ywBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4K7dlC32wZltiyIEjKcztJPX/9LwvL1qpS/Wxaik/+gw635XW0FybiIu99DubL0vlwIEic7x38sdegpzkGPDdCYIDhNt0+ouD97BAxxoZT9piC5bo8zNw8qJpszht+IjMymVRrO6n6fxdySdlt+4VfuQueflzrAC3q3aHRlxjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exG2cj4Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6FDC2BBFC;
+	Thu, 30 May 2024 12:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717073711;
+	bh=MinsSWjPSdrlpjgaxrEZgiCjGpaf7eGd+tElRl/ywBo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=exG2cj4ZIq4S7BuBx/5J/W4qrYP3cOOpwPtXm1tFTeGBxhKCeP9A0Tk8pskIPH5Ww
+	 bRE+V76ch8HHCT0lPdGGxQS7ubm3MT8PX87AAPhNzv1its6TbhVqj0fU31voOvkFjr
+	 LaBPL9MyL/bCM2S8aoSLa32GG9/Kd4Q/Q6QLk9z1Y7fxRo/VvqS0fiTsv6FHqF1Utq
+	 d2F3OeqE9iL+FUvNU96n7nCKpQo2ZpBokpvsYl1Psa44IOWFLLAjNxGFXVPEmVk7ej
+	 rqiQK779z1r2YpeUu7JxE5f8lHBma8Wzhed6/EK97hOnLlbaA8lN6bfuWls6whSqFj
+	 ckjwr1SIPaFpg==
+Date: Thu, 30 May 2024 13:55:06 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] regulator: bd96801: ROHM BD96801 PMIC regulators
+Message-ID: <6ba7f20c-623b-4e63-9273-e1c5def44b16@sirena.org.uk>
+References: <cover.1716533790.git.mazziesaccount@gmail.com>
+ <f9e26bc6973f45079476b3ea77f25772b48e835f.1716533790.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/4] tools/perf: Allow inherit + PERF_SAMPLE_READ when
- opening events
-To: Namhyung Kim <namhyung@kernel.org>, Ben Gainey <Ben.Gainey@arm.com>
-Cc: "alexander.shishkin@linux.intel.com"
- <alexander.shishkin@linux.intel.com>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "acme@kernel.org" <acme@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
- "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
- "irogers@google.com" <irogers@google.com>,
- "jolsa@kernel.org" <jolsa@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
- Mark Rutland <Mark.Rutland@arm.com>
-References: <20240521133029.83654-1-ben.gainey@arm.com>
- <20240521133029.83654-5-ben.gainey@arm.com>
- <CAM9d7chssov_fW3ZbpYqGRyhS=xuHLyJ7=rkxTNnJ6fkgEdGJQ@mail.gmail.com>
- <a12573d18f7c8bf73c24c572e43965e3f250acea.camel@arm.com>
- <e114bf8d2e7b6c0874fffdf8867c954a08772da3.camel@arm.com>
- <CAM9d7cjmH=nkEt-z_XpZ1J0oL-EY2d52oz70-KpN+uzM5SEk6A@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <CAM9d7cjmH=nkEt-z_XpZ1J0oL-EY2d52oz70-KpN+uzM5SEk6A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5L+PetDXiL6dNsds"
+Content-Disposition: inline
+In-Reply-To: <f9e26bc6973f45079476b3ea77f25772b48e835f.1716533790.git.mazziesaccount@gmail.com>
+X-Cookie: To err is human, to moo bovine.
 
 
+--5L+PetDXiL6dNsds
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 29/05/2024 20:18, Namhyung Kim wrote:
-> Hello,
-> 
-> On Wed, May 29, 2024 at 10:48 AM Ben Gainey <Ben.Gainey@arm.com> wrote:
->>
->> On Mon, 2024-05-27 at 18:47 +0100, Ben Gainey wrote:
->>> On Thu, 2024-05-23 at 18:41 -0700, Namhyung Kim wrote:
->>>> On Tue, May 21, 2024 at 6:30 AM Ben Gainey <ben.gainey@arm.com>
->>>> wrote:
->>>>>
->>>>> The tool will now default to this new mode if the user specifies
->>>>> a
->>>>> sampling group when not in system-wide mode, and when --no-
->>>>> inherit
->>>>> is not specified.
->>>>>
->>>>> This change updates evsel to allow the combination of inherit
->>>>> and PERF_SAMPLE_READ.
->>>>>
->>>>> A fallback is implemented for kernel versions where this feature
->>>>> is
->>>>> not
->>>>> supported.
->>>>
->>>> But I'm afraid the test would fail on old kernels.  Maybe we need
->>>> to
->>>> put it in the selftests.
->>>>
->>>
->>> Sorry, not clear what you mean?
->>>
->>> Is the issue that the fallback on older kernels fails, or that the
->>> "perf test" tests fail?
->>>
->>> Thanks
->>> Ben
->>
->> Just to follow up, I've rechecked the fallback on an unmodified 6.9.1
->> kernel with the following:
->>
->>     perf record -vv -e '{cycles,instructions}:S' ls
->>
->> With an unpatched version of perf running on an unpatched kernel, the
->> cycles event is opened as:
->>
->>     ------------------------------------------------------------
->>     perf_event_attr:
->>       type                             0 (PERF_TYPE_HARDWARE)
->>       size                             136
->>       config                           0 (PERF_COUNT_HW_CPU_CYCLES)
->>       { sample_period, sample_freq }   4000
->>       sample_type                      IP|TID|TIME|READ|ID|PERIOD
->>       read_format                      ID|GROUP|LOST
->>       disabled                         1
->>       exclude_kernel                   1
->>       exclude_hv                       1
->>       mmap                             1
->>       comm                             1
->>       freq                             1
->>       enable_on_exec                   1
->>       task                             1
->>       sample_id_all                    1
->>       exclude_guest                    1
->>       mmap2                            1
->>       comm_exec                        1
->>       ksymbol                          1
->>       bpf_event                        1
->>     ------------------------------------------------------------
->>
->> whereas with these patches applied to perf, on an unpatched kernel, the
->> output is as follows
->>
->>     ------------------------------------------------------------
->>     perf_event_attr:
->>       type                             0 (PERF_TYPE_HARDWARE)
->>       size                             136
->>       config                           0 (PERF_COUNT_HW_CPU_CYCLES)
->>       { sample_period, sample_freq }   4000
->>       sample_type                      IP|TID|TIME|READ|ID|PERIOD
->>       read_format                      ID|GROUP|LOST
->>       disabled                         1
->>       inherit                          1
->>       exclude_kernel                   1
->>       exclude_hv                       1
->>       mmap                             1
->>       comm                             1
->>       freq                             1
->>       enable_on_exec                   1
->>       task                             1
->>       sample_id_all                    1
->>       exclude_guest                    1
->>       mmap2                            1
->>       comm_exec                        1
->>       ksymbol                          1
->>       bpf_event                        1
->>     ------------------------------------------------------------
->>     sys_perf_event_open: pid 3442954  cpu 0  group_fd -1  flags 0x8
->>     sys_perf_event_open failed, error -22
->>     Using PERF_SAMPLE_READ / :S modifier is not compatible with
->> inherit, falling back to no-inherit.
->>     ------------------------------------------------------------
->>     perf_event_attr:
->>       type                             0 (PERF_TYPE_HARDWARE)
->>       size                             136
->>       config                           0 (PERF_COUNT_HW_CPU_CYCLES)
->>       { sample_period, sample_freq }   4000
->>       sample_type                      IP|TID|TIME|READ|ID|PERIOD
->>       read_format                      ID|GROUP|LOST
->>       disabled                         1
->>       exclude_kernel                   1
->>       exclude_hv                       1
->>       mmap                             1
->>       comm                             1
->>       freq                             1
->>       enable_on_exec                   1
->>       task                             1
->>       sample_id_all                    1
->>       exclude_guest                    1
->>       mmap2                            1
->>       comm_exec                        1
->>       ksymbol                          1
->>       bpf_event                        1
->>     ------------------------------------------------------------
->>
->> The command falls back to the same configuration as was previously
->> used. The same is true for the instructions event.
->>
->> `perf test` fails on an unpatched kernel in "15: Setup struct
->> perf_event_attr" for the test "test-record-group-sampling1" but that is
->> surely expected for unpatched kernels?
->>
->> Is there some very-old kernel version where this would be expected to
->> succeed by accident?
-> 
-> I don't think so but I don't want the test to fail depending on the
-> kernel version.  Maybe we can check the allowed combination
-> first and skip the test if perf_event_open() fails.  And then it can
-> verify if the kernel rejects the unsupported combinations.  Not
-> sure if it's easy to do that in the current attr test framework.
-> 
-> Thanks,
-> Namhyung
+On Fri, May 24, 2024 at 11:17:48AM +0300, Matti Vaittinen wrote:
+> The ROHM BD96801 "Scalable PMIC" is an automotive grade PMIC which can
+> scale to different applications by allowing chaining of PMICs. The PMIC
+> also supports various protection features which can be configured either
+> to fire IRQs - or to shut down power outputs when failure is detected.
 
-I added the kernel version feature to the attr tests. Seems like you can
-add two tests, one for before and one for after.
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-Search "kernel_until" in tests/attr
+--5L+PetDXiL6dNsds
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZYdykACgkQJNaLcl1U
+h9A+1gf/XF+qlIhOFhJecGpJydlowbw54VbtfkKcy5tz5t40VoPdG6YAEt5I+WRz
+CY7sAhY/pcQmvd4GcEnnO4RDVv+emX8NjRd5JiIeWR3XYRUoRs2QtAZF9bj2etKh
++rI0K9wXnQzcf1CQ1Y7hrms+GWO57kik1jgCMCX1hNhqb4whjNOzl8RcuVtWuS5k
+5MlqUh5Kp31q9Tijql4jt79GzRl2TY9BvZD+/W7BTYlSiRYcplyAhnAKhf0H3m6U
+sBXYKiaXrlUdZy9SWetPHoqtAEJW8qzo+81VR6JHv1tqxfZTx3wvbDEaVAgyRIIQ
+R3vzfwXFUcGe8G8tOL65DnT+LVbXkA==
+=3s3x
+-----END PGP SIGNATURE-----
+
+--5L+PetDXiL6dNsds--
 
