@@ -1,162 +1,176 @@
-Return-Path: <linux-kernel+bounces-196012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091198D560C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:11:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CB48D560F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398B91C2294E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABAD71F2730B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA2B183A7D;
-	Thu, 30 May 2024 23:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F9118411A;
+	Thu, 30 May 2024 23:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BnrSDldG"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NXOPQRE7"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E959374042;
-	Thu, 30 May 2024 23:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E0318399D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717110656; cv=none; b=ul/uKCyyTj62jvSzJ5SFaWjaI4S+Ue+9R6uzLA/CtEkGL9wMVlGvBw9nkedc23UZojplThGasth0r5D0Hc0KAN9T0reMDprPeF7wOiCi1pyNI5mKMQ2jNQlRZNaXhNh7HDNMcfhtLDMdGoWqBHxfIDYePBGtLBuUyEgr37QwdFM=
+	t=1717110676; cv=none; b=jegBGdZjSqseysRy77xKrsTNIDSTCvU/tWHYriwONHlikGKEH0w8VVJ9oEkR9NpJXeLvSGOipdG8nHerQFC0j4I7SuPw/l933CHucgeToDogvuTf3zyf82MHuZkEDRu0yKnY/hAFSYonroC0R/bjoNt0yRIAgmUWVy5DfxcS54Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717110656; c=relaxed/simple;
-	bh=YNalXi1tlMIwiWUtgeVlV33Nwzp4FhDLUFPpBV//veI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prxiRI8Q3k1o5WAcdFKTS5bPCLI5hZnO3KcImzyOpbqdjgyVeq7P3uqnv8xtduJ4+gE8/02c74/SuryJaYb8JLudzk5EXfqS50UqBnZEGYDyXDehZAxtlFBAdTQzRf8SBj2lENPY2L9qJAz8EYzw8T5LgTJVnV2+ef17oIcm77g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BnrSDldG; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c1b9152848so696011a91.1;
-        Thu, 30 May 2024 16:10:54 -0700 (PDT)
+	s=arc-20240116; t=1717110676; c=relaxed/simple;
+	bh=MBFCW274J0YqTTxvu3B4tCqGsCfhBgX47D2Q/GYGEqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQwC9l9L/SCqVholmU+eDDEX0CChrlfLe+UyNGiiWRLpjm5nSMWIPTv9YoZ+5hFMfTYNL4Xt1fC7U0e5qJuym/qAzXuC5Cag91UkaM5TYgf+MuvPAZADKDQSRkyuzzGWq+unrAhk2kJQEwRlg8WEWm3m0AaShXXHL/vv7kBFPhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NXOPQRE7; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52b0d25b54eso2102301e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:11:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717110654; x=1717715454; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=iuYDubQbfgS6ImA1IZHh/wPkk8r2wQoxsv5vRntBlN4=;
-        b=BnrSDldG7BT6RseaxWTz/b8o+t6VmuNNXL0cXKFkPfevyLDLfH33nq5DLZAajN/NWs
-         PqcfQIKvaFQNk49eximeg6sPkarSavnKEKqnIU90x2Q6FGFJB5/vSMpQ1/T2Sx9Xc9vS
-         2wenDFebRES++T6zo0TFYwfuGDjONYk/gxb0K19yC8pouoA6KS5Kv5+0jK2IYlgMD9yT
-         ONbe0IL/8FWXk8fO161XEHdiEt0KI+cq2qqdsDfyKCXMeYp2DZVaQfYp25EXEQ5yZGP/
-         10MDwQSgGaSJ5e/7ZnmHmyE3sA3ofic18T9tnIFtRJrAB/AavuKe/Wtfzr1HiucC71lf
-         qi3w==
+        d=linaro.org; s=google; t=1717110672; x=1717715472; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5rtVeYQ5u84CD0AA2JcRrrPlaJCkNb/Fj7mnCC/lgjg=;
+        b=NXOPQRE7bVcUXqATFyFTvlycGAV6aTQ25lNZHPJbocPea2960r7zbxoUyBxEq16yQy
+         /t4rhX1Htr7vkIL/KOu5EEh9Xd3dD34B4vll3RRAQgG8ItPS79ux2GFFboukoaS9FrMR
+         JPPXZ9W6TpN4zAAqKPKqOjqJrUtzqnxsloTAcnKXT6vXRtKFO+vkFuoH/09auRITC+lR
+         TjpXSroDPgXzDi4CxzJPXkeQT2FZZNEIzrW5O4B4faT/RqjRfbUHvh6VYxvEt0qERXER
+         aNdFGe6zXJBjokYMKZo272/8y6i8jbkXLAr0gPGl65prRiea3JOmCK83Lxuap8TSsdEp
+         UI9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717110654; x=1717715454;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iuYDubQbfgS6ImA1IZHh/wPkk8r2wQoxsv5vRntBlN4=;
-        b=eXdlFukB1cVFFE0yaR4lI3gpkyhHKB+f+bitfU7nNEKdWvxKW2dEC4Fx/n0PCnBVJY
-         r8HiG6s8fZsUGgkFggnR21J0ILhXppZD3OVwR/gX/HGON8MRQF+ddqdo4n8gZlp/RCzO
-         IblW+1C/kZ12q8G2mvXAgGk16MazZtAVVCfwFublic3HFF2Rp+HweiftITsY0myfgoEN
-         EjNWu1MHIhH42WXYzjcExpI7UOFo1cAjUau//fEm0JIc651k3OBW8eN0aHIaI04hGBBm
-         JeGxL9NyIdqMNRlD4wVoNkLZ3xG2f4G5dOjgvSoEI8r87WPMtSc7h5FwCqvsegaUu+FQ
-         kQDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaVoKQBn9XnrxK15bgPJeWGOSSTAB20ZvC8XQFFzM68exUIxKuhZKk/IUsVD7vnKw3shwvf8rXPrqQQg0vR76aHfM2oGlCqI6MB6YH
-X-Gm-Message-State: AOJu0Ywt5pULllEZCYFLgSgdqj+ArlwpNNoBs858ng8XY0JCz9tdL87i
-	A/n5FWgeLG7GuloxHbfccos8CEjm5oIZNThsMniKMyWKYHpaH9ByWSStNw==
-X-Google-Smtp-Source: AGHT+IGBT+UgqcOvSiVj0Yr/nBYWvgHyWVtyNRNzJkL9IRXCU8N6xhpTn7uk37i6a2qtz5X2enjFMQ==
-X-Received: by 2002:a17:90a:7e13:b0:2bd:efad:88d with SMTP id 98e67ed59e1d1-2c1dc587db7mr160665a91.28.1717110654213;
-        Thu, 30 May 2024 16:10:54 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1ac24c02dsm1831528a91.33.2024.05.30.16.10.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 16:10:53 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c9de8d07-90dc-496a-9d7f-e7f0c00a934e@roeck-us.net>
-Date: Thu, 30 May 2024 16:10:52 -0700
+        d=1e100.net; s=20230601; t=1717110672; x=1717715472;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5rtVeYQ5u84CD0AA2JcRrrPlaJCkNb/Fj7mnCC/lgjg=;
+        b=r1XOZHCVGmzH5DORYNpLjPcZSWXCVBjU8xLAvZ/+yuZwlfXDyZr6VjkcmsxW/2olU1
+         pnCUK+SC120RoN85pBTeYlbY/d/4RfhZfzXO3s/mf+mhGU0/q028gRANkLlCCItY5t3f
+         S9BAmaVmLdj2D/sSYItzw8eWheSChhpDsw5aNdh7yK2B0p76IgiXjhU5zvDYOV0MmFCy
+         e17lj3lPOHXlZO3kz5jbGethtQ1UCS8wkkw+BDUDbucAYrFK5Zvyh4BjDmqFNBcuGJtT
+         y+vfJQ6c96OgEpXK4EhjB2jyrrbVATMxAU8sPsc9uoazIvvG2D1WuevTczovBeDvr+Dk
+         d/Og==
+X-Forwarded-Encrypted: i=1; AJvYcCVT/tJb12W7EpJaISfNdGUgmRvwBnRPsSV6lZ2L0j+dhN8pLH6jepR9qDqazFWMR8kglPrpmbwmXYtsLcE/agp56V08S0yz4qI/dRkN
+X-Gm-Message-State: AOJu0YxKtLPP31h9wyBrQmwkifCeO1nVRnWDo6k+q5H/4WIMRdOYwCA2
+	27HTAk06gHJ3BJdNFTXQwiJh4oDooupSmXCqW041aPA1FVbxYURtXx1BQaP53t0=
+X-Google-Smtp-Source: AGHT+IG0t3rZTPhtJybKaUF15LVmYhDBWgz6POuiQcknG9wUsiCJYYjByHxxMrF/IH17dhoIvEgTyA==
+X-Received: by 2002:ac2:51b0:0:b0:51f:9549:9c0d with SMTP id 2adb3069b0e04-52b895a4043mr42465e87.48.1717110671620;
+        Thu, 30 May 2024 16:11:11 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d34d76sm120623e87.10.2024.05.30.16.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 16:11:11 -0700 (PDT)
+Date: Fri, 31 May 2024 02:11:09 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	Jeffrey Hugo <quic_jhugo@quicinc.com>
+Subject: Re: [PATCH v2 1/3] drm/panel-edp: add fat warning against adding new
+ panel compatibles
+Message-ID: <kxfuvsmi6eblpavtevwllqmkdnzdih7kfc73wlos7yozikerjv@si6jshczffjy>
+References: <20240529-edp-panel-drop-v2-0-fcfc457fc8dd@linaro.org>
+ <20240529-edp-panel-drop-v2-1-fcfc457fc8dd@linaro.org>
+ <CAD=FV=Uw+KYQQ2xFLhNdWSW0sNX9uV_zSAVO2uBWY4JEcaO2bA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: piix4: Register SPDs
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20240530-piix4-spd-v1-1-9cbf1abebf41@weissschuh.net>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240530-piix4-spd-v1-1-9cbf1abebf41@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=Uw+KYQQ2xFLhNdWSW0sNX9uV_zSAVO2uBWY4JEcaO2bA@mail.gmail.com>
 
-On 5/30/24 14:49, Thomas Weißschuh wrote:
-> The piix4 I2C bus can carry SPDs, register them if present.
+On Thu, May 30, 2024 at 07:33:59AM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
-> For my test setup see [0].
-> While the spd5118 driver in that form shouldn't be probed this way, the
-> general principle holds true for the other SPD drivers.
+> On Tue, May 28, 2024 at 4:52 PM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > Add a fat warning against adding new panel compatibles to the panel-edp
+> > driver. All new users of the eDP panels are supposed to use the generic
+> > "edp-panel" compatible device on the AUX bus. The remaining compatibles
+> > are either used by the existing DT or were used previously and are
+> > retained for backwards compatibility.
+> >
+> > Suggested-by: Doug Anderson <dianders@chromium.org>
+> > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/gpu/drm/panel/panel-edp.c | 18 +++++++++++++++++-
+> >  1 file changed, 17 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+> > index 6db277efcbb7..95b25ec67168 100644
+> > --- a/drivers/gpu/drm/panel/panel-edp.c
+> > +++ b/drivers/gpu/drm/panel/panel-edp.c
+> > @@ -1776,7 +1776,23 @@ static const struct of_device_id platform_of_match[] = {
+> >         {
+> >                 /* Must be first */
+> >                 .compatible = "edp-panel",
+> > -       }, {
+> > +       },
+> > +       /*
+> > +        * Do not add panels to the list below unless they cannot be handled by
+> > +        * the generic edp-panel compatible.
+> > +        *
+> > +        * The only two valid reasons are:
+> > +        * - because of the panel issues (e.g. broken EDID or broken
+> > +        *   identification),
+> > +        * - because the platform which uses the panel didn't wire up the AUX
+> > +        *   bus properly.
+> > +        *
+> > +        * In all other cases the platform should use the aux-bus and declare
+> > +        * the panel using the 'edp-panel' compatible as a device on the AUX
+> > +        * bus. The lack of the aux-bus support is not a valid case. Platforms
+> > +        * are urged to be converted to declaring panels in a proper way.
 > 
-> Guenter offered to test it, too.
+> I'm still at least slightly confused by the wording. What is "the lack
+> of the aux-bus support". I guess this is different from the valid
+> reason of "the platform which uses the panel didn't wire up the AUX
+> bus properly" but I'm not sure how. Maybe you can explain?
 > 
+> I guess I'd write it like this:
+> 
+>     /*
+>      * Do not add panels to the list below unless they cannot be handled by
+>      * the generic edp-panel compatible.
+>      *
+>      * The only two valid reasons are:
+>      * - because of the panel issues (e.g. broken EDID or broken
+>      *   identification).
+>      * - because the platform which uses the panel didn't wire up the AUX
+>      *   bus properly. NOTE that, though this is a marginally valid reason,
+>      *   some justification needs to be made for why the platform can't
+>      *   wire up the AUX bus properly.
+>      *
+>      * In all other cases the platform should use the aux-bus and declare
+>      * the panel using the 'edp-panel' compatible as a device on the AUX
+>      * bus.
+>      */
+> 
+> What do you think? In any case, it probably doesn't matter much. The
+> important thing is some sort of warning here telling people not to add
+> to the table. In that sense:
 
-Perfect. With this patch in place, I see:
+Ack, I'l update the wording in a similar way.
 
-[    6.679772] i2c i2c-0: Successfully instantiated SPD at 0x50
-[    6.680341] i2c i2c-0: Successfully instantiated SPD at 0x51
-[    6.680905] i2c i2c-0: Successfully instantiated SPD at 0x52
-[    6.681466] i2c i2c-0: Successfully instantiated SPD at 0x53
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-on multiple AMD based systems with DDR4.
-
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
-Thanks!
-
-Guenter
-
+-- 
+With best wishes
+Dmitry
 
