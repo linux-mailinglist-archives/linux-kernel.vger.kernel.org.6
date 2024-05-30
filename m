@@ -1,167 +1,200 @@
-Return-Path: <linux-kernel+bounces-195431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4CB8D4CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:37:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCD88D4CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F3EB20FD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:37:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674961F22D7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F178517D37E;
-	Thu, 30 May 2024 13:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="HnIDdblh";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="lGZ47/Hk"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579D517D882;
+	Thu, 30 May 2024 13:38:21 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB72C17C203;
-	Thu, 30 May 2024 13:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717076213; cv=fail; b=sTKVtszzGW90Eg1rEEG/IVqwWR0I/nOJajtyMxIspinvB5xSxWtM+Zycsv/PN1XN6PJlubfWlEzkC3FgMEfm1YeMczZaEUNT7wO7mM5GGofObnvrsXDrp6A/M3HCtqrkgG5d318u2m1Rb2JFDrRo4amV20hbA97bnNKeveCp9m4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717076213; c=relaxed/simple;
-	bh=mGCv4VKK5XsF9Y+N0F91VPdDKV2jLIuC8ZGdirIZ3is=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E0fc6RsHamvfO7IWTG7OvaY8kDe7Snxx9VjI8jBnbKtcgUVHvGZdw5OpjKggn4GFKruDe7ID3VfNVD0l1fa1CM9C0vPbzzPIdHAMMlAWHh0OcVNI/tgJGPILb+u1SAazCrLKwyKiCQ+ZbeZH47aXEHrgPjEWbE9B2x3yosKght8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=HnIDdblh; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=lGZ47/Hk; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id A9708480A23;
-	Thu, 30 May 2024 09:36:45 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717076205;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=uJLBVLrBdtWY6uAKA9XSmGJdkkXv2yCkXTg9bREeGNs=;
- b=HnIDdblh48CD0Bui5cln41o4zkH5nNNu8O1A5Fk8q7Rwrezphj4GHDvN5eUPlj717LFt+
- f7NRLM7GVCLGzl3Cg==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717076205;
-	cv=none; b=T4Ap8aFN8656IBqpIvsOpK5rsECHtWqkRvo0+Tjrac+vG4y3CM2TFQPDLpvnzrojs8RIkmTPxUGQP/Ls7gb+M6CmLc70Nqqyt/LO77ENH4owUv1WvefCXnTKqSJkWXYPMnbyL5IxtnPnaE/DPUE8D1JyBQVEgaWSsJmH3oO5e2oMwsGJUEq70WK8r9qemg1d7ZkFlHRNTV78tFjt8Tf7FiJpJpcbF5wGL01XEXSm3HOPWHkgT6Ygfly6ycR2vnjUW+Zh3+gJXW7ukiZ8md0hIDEoRiuok40Ya9gw66oCXAFOrnPdjrjp0fV3JjTydvdxzYDfzL1qwuGfdR0jPaNZrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1717076205; c=relaxed/simple;
-	bh=mGCv4VKK5XsF9Y+N0F91VPdDKV2jLIuC8ZGdirIZ3is=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=kdgz11ZHw1by/iCPpJ5SQIs0YStcl9VhZ0Nsn681u12aReBZmw5ViyzDqDOLoMPpEBVH90cJ6byPbenWiCt8yPAy3IcbQoUV4kS4tSjk1GUlau1GSXQ6zAN5D0uxrUSG3P0znwYJSOukM2lfnlJlI8Py/Lwl+fvMoRYgkvOMM4fDEpfanv9IE6Ztr7ULfO/uHiYY4cev9jflOYcXv+wLC/bfrxh3sO+54HJFg44NFarnIG4ucnrnNDAGWfVVdDjfipTeKLGlBAsC+fxiqFybBEIZcx7BivQfm53THnKPFD6eyS2pNv6qr4uFjUkCYeG/bCZMp3uL1l3DRBDV3Asf6w==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717076205;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=uJLBVLrBdtWY6uAKA9XSmGJdkkXv2yCkXTg9bREeGNs=;
- b=lGZ47/HkodmWJDyJPLzkPRb1Nwx8AyJKHvvyBKlZnfc/kU/79yUc/Kw922f5aVtybGXau
- grS825fKMewhfOt3WFL3471ZPd+I0o4CUmrSqPfIcbP6NrnqMby6YSmk74Nb7r+pXAFCVut
- TILYAgUcRkXnaSIohExD6HsIVYuyre4IPwF8MeAKxCuh592jfdcbL9lZuVW0napGQq7HgVG
- drLbKgJJHp5LL42WkJYY9jeqEr+25RJ5/b6r2wm9Ma6rK9yfRwETWQF9ObKFCfMo+FF5Sbn
- 5X9VNpILWv//m8mrK18pWC8itXq+u3u2IGSrQG/Z+HXvr0ye35w5bNW+IQ0w==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id 7AEDC280576;
-	Thu, 30 May 2024 09:36:45 -0400 (EDT)
-Message-ID: <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
-Subject: Re: 6.9.3 Hung tasks
-From: Genes Lists <lists@sapience.com>
-To: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com, 
- linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org,  pabeni@redhat.com, johanneswueller@gmail.com
-Date: Thu, 30 May 2024 09:36:45 -0400
-In-Reply-To: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-qbG4pyrmHWxUgOTNQHox"
-User-Agent: Evolution 3.52.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87D917C203;
+	Thu, 30 May 2024 13:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717076300; cv=none; b=toUj4qYCt3TcP64Os3ekaBTJkEVPzMWv7pJ/Oc/Teu+BInjCupy0Y2z0Q68D2MUe8LypFAgjhk7iW5Z+iK2t5WhPU1cJldihe5M6UDR+2fHpxQHfx3tFvl/4K11KvslVWL+IFpXuNK9PAXnpJ/DmU5fszmBQWQ5SNz4yfsnsCWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717076300; c=relaxed/simple;
+	bh=S55mCDwB/L5bdVzNJdlQckiADHtrRU057V4YeMUyCks=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mBsm+uY0bq0rwFqLyE5eXJd2LThWuHFmYS2Z9k4PneqpDvtrTfCZETVFkLrPQdl7TJ2/AiqEsDW8Su5vEPpDh4LyMO8p7ykq2+1OvrUKSGKM9VoFc229/G/qGRAGluuCkGjbLND7/NP0nhvz+1i9jicjkKDXm2O8hOlxP+S77G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VqnKK2qwNz6J9yY;
+	Thu, 30 May 2024 21:34:13 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 61233140B38;
+	Thu, 30 May 2024 21:38:15 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 30 May
+ 2024 14:38:14 +0100
+Date: Thu, 30 May 2024 14:38:13 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Dongsheng Yang <dongsheng.yang@easystack.cn>
+CC: Gregory Price <gregory.price@memverge.com>, Dan Williams
+	<dan.j.williams@intel.com>, John Groves <John@groves.net>, <axboe@kernel.dk>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>, <james.morse@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+Message-ID: <20240530143813.00006def@Huawei.com>
+In-Reply-To: <5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
+References: <20240503105245.00003676@Huawei.com>
+	<5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
+	<20240508131125.00003d2b@Huawei.com>
+	<ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+	<20240508164417.00006c69@Huawei.com>
+	<3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
+	<20240509132134.00000ae9@Huawei.com>
+	<a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
+	<664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
+	<ZldIzp0ncsRX5BZE@memverge.com>
+	<5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-qbG4pyrmHWxUgOTNQHox
-Content-Type: multipart/alternative; boundary="=-g1Wi9ash6TmDBQLLwDML"
-
---=-g1Wi9ash6TmDBQLLwDML
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu, 2024-05-30 at 08:53 -0400, Genes Lists wrote:
+On Thu, 30 May 2024 14:59:38 +0800
+Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
+
+> =E5=9C=A8 2024/5/29 =E6=98=9F=E6=9C=9F=E4=B8=89 =E4=B8=8B=E5=8D=88 11:25,=
+ Gregory Price =E5=86=99=E9=81=93:
+> > On Wed, May 22, 2024 at 02:17:38PM +0800, Dongsheng Yang wrote: =20
+> >>
+> >>
+> >> =E5=9C=A8 2024/5/22 =E6=98=9F=E6=9C=9F=E4=B8=89 =E4=B8=8A=E5=8D=88 2:4=
+1, Dan Williams =E5=86=99=E9=81=93: =20
+> >>> Dongsheng Yang wrote:
+> >>>
+> >>> What guarantees this property? How does the reader know that its local
+> >>> cache invalidation is sufficient for reading data that has only reach=
+ed
+> >>> global visibility on the remote peer? As far as I can see, there is
+> >>> nothing that guarantees that local global visibility translates to
+> >>> remote visibility. In fact, the GPF feature is counter-evidence of the
+> >>> fact that writes can be pending in buffers that are only flushed on a
+> >>> GPF event. =20
+> >>
+> >> Sounds correct. From what I learned from GPF, ADR, and eADR, there wou=
+ld
+> >> still be data in WPQ even though we perform a CPU cache line flush in =
+the
+> >> OS.
+> >>
+> >> This means we don't have a explicit method to make data puncture all c=
+aches
+> >> and land in the media after writing. also it seems there isn't a expli=
+cit
+> >> method to invalidate all caches along the entire path.
+> >> =20
+> >>>
+> >>> I remain skeptical that a software managed inter-host cache-coherency
+> >>> scheme can be made reliable with current CXL defined mechanisms. =20
+> >>
+> >>
+> >> I got your point now, acorrding current CXL Spec, it seems software ma=
+naged
+> >> cache-coherency for inter-host shared memory is not working. Will the =
+next
+> >> version of CXL spec consider it? =20
+> >>> =20
+> >=20
+> > Sorry for missing the conversation, have been out of office for a bit.
+> >=20
+> > It's not just a CXL spec issue, though that is part of it. I think the
+> > CXL spec would have to expose some form of puncturing flush, and this
+> > makes the assumption that such a flush doesn't cause some kind of
+> > race/deadlock issue.  Certainly this needs to be discussed.
+> >=20
+> > However, consider that the upstream processor actually has to generate
+> > this flush.  This means adding the flush to existing coherence protocol=
+s,
+> > or at the very least a new instruction to generate the flush explicitly.
+> > The latter seems more likely than the former.
+> >=20
+> > This flush would need to ensure the data is forced out of the local WPQ
+> > AND all WPQs south of the PCIE complex - because what you really want to
+> > know is that the data has actually made it back to a place where remote
+> > viewers are capable of percieving the change.
+> >=20
+> > So this means:
+> > 1) Spec revision with puncturing flush
+> > 2) Buy-in from CPU vendors to generate such a flush
+> > 3) A new instruction added to the architecture.
+> >=20
+> > Call me in a decade or so.
+> >=20
+> >=20
+> > But really, I think it likely we see hardware-coherence well before thi=
+s.
+> > For this reason, I have become skeptical of all but a few memory sharing
+> > use cases that depend on software-controlled cache-coherency. =20
 >=20
+> Hi Gregory,
 >=20
-This report for 6.9.1 could well be the same issue:
+> 	From my understanding, we actually has the same idea here. What I am=20
+> saying is that we need SPEC to consider this issue, meaning we need to=20
+> describe how the entire software-coherency mechanism operates, which=20
+> includes the necessary hardware support. Additionally, I agree that if=20
+> software-coherency also requires hardware support, it seems that=20
+> hardware-coherency is the better path.
+> >=20
+> > There are some (FAMFS, for example). The coherence state of these
+> > systems tend to be less volatile (e.g. mappings are read-only), or
+> > they have inherent design limitations (cacheline-sized message passing
+> > via write-ahead logging only). =20
+>=20
+> Can you explain more about this? I understand that if the reader in the=20
+> writer-reader model is using a readonly mapping, the interaction will be=
+=20
+> much simpler. However, after the writer writes data, if we don't have a=20
+> mechanism to flush and invalidate puncturing all caches, how can the=20
+> readonly reader access the new data?
 
-https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-872b-d8e541f4cf60@gmail.com=
-/
+There is a mechanism for doing coarse grained flushing that is known to
+work on some architectures. Look at cpu_cache_invalidate_memregion().
+On intel/x86 it's wbinvd_on_all_cpu_cpus()
+on arm64 it's a PSCI firmware call CLEAN_INV_MEMREGION (there is a
+public alpha specification for PSCI 1.3 with that defined but we
+don't yet have kernel code.)
+
+These are very big hammers and so unsuited for anything fine grained.
+In the extreme end of possible implementations they briefly stop all
+CPUs and clean and invalidate all caches of all types.  So not suited
+to anything fine grained, but may be acceptable for a rare setup event,
+particularly if the main job of the writing host is to fill that memory
+for lots of other hosts to use.
+
+At least the ARM one takes a range so allows for a less painful
+implementation.  I'm assuming we'll see new architecture over time
+but this is a different (and potentially easier) problem space
+to what you need.
+
+Jonathan
 
 
---=20
-Gene
 
+> > ~Gregory
+> >  =20
 
---=-g1Wi9ash6TmDBQLLwDML
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><style>pre,code,address {
-  margin: 0px;
-}
-h1,h2,h3,h4,h5,h6 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-ol,ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-blockquote {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-</style></head><body><div>On Thu, 2024-05-30 at 08:53 -0400, Genes Lists wr=
-ote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-left=
-:2px #729fcf solid;padding-left:1ex"><div><br></div><div><br></div></blockq=
-uote><div>This report for 6.9.1 could well be the same issue:</div><div><br=
-></div><div><a href=3D"https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-872b=
--d8e541f4cf60@gmail.com/">https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-8=
-72b-d8e541f4cf60@gmail.com/</a></div><div><br></div><div><br></div><div><sp=
-an><pre>-- <br></pre><div><span style=3D"background-color: inherit;">Gene</=
-span></div><div><br></div></span></div></body></html>
-
---=-g1Wi9ash6TmDBQLLwDML--
-
---=-qbG4pyrmHWxUgOTNQHox
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZliA7QAKCRA5BdB0L6Ze
-24u+AP9YDJu73eqxoS8KTNr6R4IAxyGJmI+dCtD4HZLf8grcNwD/faRWsT2CWPN+
-lLGX3KaqEt8bkCfLRD6d8JukWlMF2AA=
-=0xJF
------END PGP SIGNATURE-----
-
---=-qbG4pyrmHWxUgOTNQHox--
 
