@@ -1,153 +1,154 @@
-Return-Path: <linux-kernel+bounces-195994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F43B8D55D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:57:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A468D55E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BABBFB22F95
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:57:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE8F3B24A82
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289B7182D3C;
-	Thu, 30 May 2024 22:57:40 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58FE17545;
-	Thu, 30 May 2024 22:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973AA1862BB;
+	Thu, 30 May 2024 23:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JZZPwUwn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E446183991;
+	Thu, 30 May 2024 23:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717109859; cv=none; b=qviG6vNQLC7KbELeCelYH/19d0PnnVu+Gk2WiNPJOADb4hDFEcZwY6n4Qz06jorBPstDjOQXbA6p56/hjov+58xJs3MyRgAyoYYlNMxA33MU3i6eQbEtTDw2K0Y2mtZZCzXBb6BUCi3pZ2pY5OYlRx9GvpH3NLBErZpsYYDjisw=
+	t=1717110053; cv=none; b=BkwkzROW/DHPdWyVInlT5VMsPhKFR9ibpEedkq/nodCeudPvIugIOnmdxXB1NPRUEuh5BqAP1PHNijqfmMCf7hWAcG4/98cl2j737OY8Ui0EeOQ2da+W3yFltFhdhZhXdKfR2eeYWUxXE7sT2ZoF61D8c0T0UKqkwh2FT7D/iGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717109859; c=relaxed/simple;
-	bh=NQrd95QoApaEs9fJihobolQ+Eb73I7LZq0li/uDFwv0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VI2+7YW4sGcU9EBGVkSWFEMtKUQolWQBW1naxb6XZg+pz1vRquPI1gvDabzkApqb17wo3v1dKC+qk5wz/WhL1L+Gr2NYmfHvZoG1ZIga+qjfPIqBJRQ4zEt8eFIrWR0aryBg11rL1cHuxy6DXyQSZNVmLHN3mkZx4ngmdZmOGJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id F388A92009C; Fri, 31 May 2024 00:57:29 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id EC40692009B;
-	Thu, 30 May 2024 23:57:29 +0100 (BST)
-Date: Thu, 30 May 2024 23:57:29 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: "Paul E. McKenney" <paulmck@kernel.org>, 
-    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-    Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
-    Arnd Bergmann <arnd@arndb.de>, 
-    Richard Henderson <richard.henderson@linaro.org>, 
-    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
-    Michael Cree <mcree@orcon.net.nz>, Frank Scheiner <frank.scheiner@web.de>
-Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
-In-Reply-To: <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2405302115130.23854@angie.orcam.me.uk>
-References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de> <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
- <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk> <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1717110053; c=relaxed/simple;
+	bh=/9NwactfLrDdcsSkAc55CTXJmcNkzXYPFHItVyZLdX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qh8nIafhBKPSNAq/enHhNZNAE+XqHEdan3S7BxPrg9m5+6oHet2fXtrJlu/SS0V68HGLFS57NIBO7GusznTeYbgCbp2mBRtYRpz4MPhTEeE6M8o0OnjjG48b6pIqiwTGYO1bz/YfBq7+bDP7W10tdzFkei0F1IF66WhLHAVWWA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JZZPwUwn; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717110054; x=1748646054;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/9NwactfLrDdcsSkAc55CTXJmcNkzXYPFHItVyZLdX0=;
+  b=JZZPwUwngQgl+Rm0crCf+ymTPTyLqinoWPx9vttbWh1E84dxVV202kVR
+   EawMl5wd5hHkv+TEj1UEvKqn4X+tAtJFYFbG5aJUkh2nBdUmIfW+51tnR
+   hL6l/UNNg5idDAytCEf3wTiQuJPXuaDHaTObKmdRZ3kkWWMZs/rJoM4pD
+   NNlvWSAT5dZMOM/2/fVgsPPFUPAVYQK9tRG/nSWMi5jNYtv88l9tp4BDX
+   6NyV7Aw49/QHOx8h2sLdpBWlz1f05kBL5aj0PaclAaaJl1Dl/6BMRJ8GM
+   gY1HpvJU1xPLICOCHWAbfHmOtT8kPQQ5jkc/sZkFTAr26JwltS1LIcKTK
+   A==;
+X-CSE-ConnectionGUID: HvV76FjdT0C9n4zj8o+ExA==
+X-CSE-MsgGUID: rCI0kDK/TlKPk3FfIdOrTQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24195296"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="24195296"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 16:00:51 -0700
+X-CSE-ConnectionGUID: oJBYKXTMS6y/WfORsCy0/A==
+X-CSE-MsgGUID: eLPKab+gQAunLOPngcKojQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="40895193"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 30 May 2024 16:00:41 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id E52A11A3; Fri, 31 May 2024 02:00:39 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rob Herring <robh@kernel.org>,
+	Weidong Wang <wangweidong.a@awinic.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Shenghao Ding <shenghao-ding@ti.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+	Chancel Liu <chancel.liu@nxp.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	patches@opensource.cirrus.com,
+	linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	James Schulman <james.schulman@cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v1 0/6] ASoC: Drop or replace of_gpio.h
+Date: Fri, 31 May 2024 01:58:46 +0300
+Message-ID: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Wed, 29 May 2024, Linus Torvalds wrote:
+Replace or drop the legacy header that is subject to remove.
+Not all of them were compile-tested, the series might have
+hidden compilation errors.
 
-> >              The only difference here is that with
-> > hardware read-modify-write operations atomicity for sub-word accesses is
-> > guaranteed by the ISA, however for software read-modify-write it has to be
-> > explictly coded using the usual load-locked/store-conditional sequence in
-> > a loop.
-> 
-> I have some bad news for you: the old alpha CPU's not only screwed up
-> the byte/word design, they _also_ screwed up the
-> load-locked/store-conditional.
-> 
-> You'd think that LL/SC would be done at a cacheline level, like any
-> sane person would do.
-> 
-> But no.
-> 
-> The 21064 actually did atomicity with an external pin on the bus, the
-> same way people used to do before caches even existed.
+Andy Shevchenko (6):
+  ASoC: codecs: Remove unused of_gpio.h
+  ASoC: fsl: Remove unused of_gpio.h
+  ASoC: rockchip: Remove unused of_gpio.h
+  ASoC: codecs: Replace of_gpio.h by proper one
+  ASoC: generic: Replace of_gpio.h by proper one
+  ASoC: samsung: Replace of_gpio.h by proper one
 
- Umm, 8086's LOCK#, anyone?
+ sound/soc/codecs/ak4118.c                           | 1 -
+ sound/soc/codecs/ak4458.c                           | 1 -
+ sound/soc/codecs/aw88395/aw88395.c                  | 2 +-
+ sound/soc/codecs/aw88399.c                          | 1 -
+ sound/soc/codecs/cs53l30.c                          | 1 -
+ sound/soc/codecs/max98390.c                         | 1 -
+ sound/soc/codecs/pcm3168a.c                         | 1 -
+ sound/soc/codecs/rk817_codec.c                      | 1 -
+ sound/soc/codecs/tas2552.c                          | 1 -
+ sound/soc/codecs/tas2764.c                          | 1 -
+ sound/soc/codecs/tas2770.c                          | 1 -
+ sound/soc/codecs/tas2780.c                          | 1 -
+ sound/soc/codecs/tas2781-comlib.c                   | 1 -
+ sound/soc/codecs/tas2781-fmwlib.c                   | 1 -
+ sound/soc/codecs/tas2781-i2c.c                      | 1 -
+ sound/soc/codecs/tlv320adc3xxx.c                    | 1 -
+ sound/soc/codecs/tlv320adcx140.c                    | 1 -
+ sound/soc/codecs/tlv320aic31xx.c                    | 1 -
+ sound/soc/codecs/ts3a227e.c                         | 1 -
+ sound/soc/codecs/wsa883x.c                          | 1 -
+ sound/soc/fsl/imx-es8328.c                          | 1 -
+ sound/soc/fsl/imx-rpmsg.c                           | 2 --
+ sound/soc/generic/audio-graph-card2-custom-sample.c | 3 ++-
+ sound/soc/rockchip/rockchip_i2s.c                   | 1 -
+ sound/soc/rockchip/rockchip_spdif.c                 | 1 -
+ sound/soc/samsung/aries_wm8994.c                    | 2 +-
+ 26 files changed, 4 insertions(+), 27 deletions(-)
 
-> Yes, it has an internal L1 D$, but it is a write-through cache, and
-> clearly things like cache coherency weren't designed for. In fact,
-> LL/SC is even documented to not work in the external L2 cache
-> ("Bcache" - don't ask me why the odd naming).
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
- Board cache, I suppose.
-
-> So LL/SC on the 21064 literally works on external memory.
-> 
-> Quoting the reference manual:
-> 
->   "A.6 Load Locked and Store Conditional
->   The 21064 provides the ability to perform locked memory accesses through
->   the LDxL (Load_Locked) and STxC (Store_Conditional) cycle command pair.
->   The LDxL command forces the 21064 to bypass the Bcache and request data
->   directly from the external memory interface. The memory interface logic must
->   set a special interlock flag as it returns the data, and may
-> optionally keep the
->   locked address"
-> 
-> End result: a LL/SC pair is very very slow. It was incredibly slow
-> even for the time. I had benchmarks, I can't recall them, but I'd like
-> to say "hundreds of cycles". Maybe thousands.
-
- Interesting and disappointing, given how many years the Alpha designers 
-had to learn from the MIPS R4000.  Which they borrowed from already after 
-all and which they had first-hand experience with present onboard, from 
-the R4000 DECstation systems built at their WSE facility.  Hmm, I wonder 
-if there was patent avoidance involved.
-
-> So actual reliable byte operations are not realistically possible on
-> the early alpha CPU's. You can do them with LL/SC, sure, but
-> performance would be so horrendously bad that it would be just sad.
-
- Hmm, performance with a 30 years old system?  Who cares!  It mattered 30 
-years ago, maybe 25.  And the performance of a system that runs slowly is 
-still infinitely better than one of a system that doesn't boot anymore, 
-isn't it?
-
-> The 21064A had some "fast lock" mode which allows the data from the
-> LDQ_L to come from the Bcache. So it still isn't exactly fast, and it
-> still didn't work at CPU core speeds, but at least it worked with the
-> external cache.
-> 
-> Compilers will generate the sequence that DEC specified, which isn't
-> thread-safe.
-> 
-> In fact, it's worse than "not thread safe". It's not even safe on UP
-> with interrupts, or even signals in user space.
-
- Ouch, I find it a surprising oversight.  Come to think of it indeed the 
-plain unlocked read-modify-write sequences are unsafe.  I don't suppose 
-any old DECies are still around, but any idea how this was sorted in DEC's 
-own commercial operating systems (DU and OVMS)?
-
- So this seems like something that needs to be sorted in the compiler, by 
-always using a locked sequence for 8-bit and 16-bit writes with non-BWX 
-targets.  I can surely do it myself, not a big deal, and I reckon such a 
-change to GCC should be pretty compact and self-contained, as all the bits 
-are already within `alpha_expand_mov_nobwx' anyway.
-
- I'm not sure if Richard will be happy to accept it, but it seems to me 
-the right thing to do at this point and with that in place there should be 
-no safety concern for RCU or anything with the old Alphas, with no effort 
-at all on the Linux side as all the burden will be on the compiler.  We 
-may want to probe for the associated compiler option though and bail out 
-if unsupported.
-
- Will it be enough to keep Linux support at least until the next obstacle?
-
-  Maciej
 
