@@ -1,112 +1,146 @@
-Return-Path: <linux-kernel+bounces-195732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF28F8D5101
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:28:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB0F8D5103
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83F2D28591A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9665428593E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC7446B83;
-	Thu, 30 May 2024 17:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4308046444;
+	Thu, 30 May 2024 17:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLERB+W8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="TdOth+r9"
+Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5204446421;
-	Thu, 30 May 2024 17:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDD2481AA
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717090072; cv=none; b=KHKvmAqnLiTZ4K44NaT8MjG5gUEpH31zruUA4aNuSk1P0QmGry3x3NQR5IlZZWA5p5UnFK+7tfQV8ZyQJulpED4vLwComjKR+COLV3LrH5lefpI6pwhiE4YnZK5swm6xeK8QQuMsDpc93U5bcCY2FGeUOILPEfq+l9yXg/i5ZQo=
+	t=1717090087; cv=none; b=T0C0aug99Uw0LUI1gSLRmtxngpCtuPOf2Xb6IFhhRZ2et9qVy5+/CnPQSKz9dCiqQJ/U71LGjOdj4ts/fQB++WEt3gcSIsEjm8UixwVMIaBYn4jm8KWuKombDYZK40FoS0DTwVz0FLB9L2XJVUHv7IFfaxk7/KStp7XScbDaBiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717090072; c=relaxed/simple;
-	bh=EkqPzNjUDQoN8lPfXqwKVpp8+X0/wVz+5NkoJWj35ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Xb8isxAO6+HFq/qkT1WQeTJlTAvHwyN2xabtOEMpvIn/9HcBlat2ysBFOpuH55yu1W4b94EcfPLXeRWhJgVPm2FUUQ5OQNKMnFbFvpKZRusmJgvneTrz5cKNev30XlFTyPm+s+cmbPdLbUEvX/iae8FmE4nerf98t0HSTRtgfcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLERB+W8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AACBC2BBFC;
-	Thu, 30 May 2024 17:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717090071;
-	bh=EkqPzNjUDQoN8lPfXqwKVpp8+X0/wVz+5NkoJWj35ko=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=lLERB+W86acD27TYDzKVQXQn1QMtGGWa3wwzsNOnVvZNcpsS+eXwViREODp86cbJI
-	 rSJe96C7mr2uk7xEx2WcAWaFri7i5u7e/PgmXIaWd19TSaJf9xcagmzCgg4hwS09kq
-	 hxySEa23v54kQxPNYOiJ7LK5ZMkwq+6ZXJTI8QFOcKQu0C4DdWnK57+kTEbnmPxQf2
-	 P1waAtfMiozVsWzyLACVBQ6mxVU6MSbvpz1d5y8ZWCELAxxSmkovDqU95WZ8fGpq2K
-	 KWa0Ny/gIzNGzi6NoZo+xzMnoiKxHlfpNyBJ4yfnEAYP0fweLpMy2hOamY7a0KRwEB
-	 MqR2BFyNUnTxQ==
-Date: Thu, 30 May 2024 12:27:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org, Jason Liu <jason.hui.liu@nxp.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v5 00/12] PCI: imx6: Fix\rename\clean up and add lut
- information for imx95
-Message-ID: <20240530172749.GA552716@bhelgaas>
+	s=arc-20240116; t=1717090087; c=relaxed/simple;
+	bh=PI46eCB4yZKtLa8v3+mNZJr2ivbez7uXjw8+2tdM4wQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Qe9MCstCFmVmV98gt7B2Pn/H2xj2Q6w1lZe8Vs/Yi4tUDtMBwb0uUwZ/9w8YRQNJONV3WXdIHyXhDO7w5G0MHaPfQIXjJYm0BdFM34cEXVr9rhAasVw1LQQ8Rv8jG7YxjpMN5V6G7rrzXdvmuQA8ibv882H2OAPBUNOQSIcQk+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=TdOth+r9; arc=none smtp.client-ip=208.125.0.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
+	d=auristor.com; s=MDaemon; r=y; t=1717090084; x=1717694884;
+	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
+	MIME-Version:User-Agent:From:Subject:To:Cc:References:
+	Content-Language:Organization:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding; bh=4dDEKgqaFMRPywzm35viCF7BQid0GTM7Vc
+	2BfcyQt3U=; b=TdOth+r9pnnrgT689WLDeVGlenC6hSyknYw26sLo/BARRrYu/U
+	t0iICoBHuR9g4Ppmvwo3lqhM3o10zDn4RAzYEBFJt7yvXDWRw4gY2E4YHMH6NMAz
+	zyJnSQRxvtRoOkvIa6Hd204Kdadsnw5FxDnXwkpFfBbO+MLubCJcLT+F0=
+X-MDAV-Result: clean
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 30 May 2024 13:28:04 -0400
+Received: from [IPV6:2603:7000:73c:bb00:15fd:52c:fc39:4205] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v24.0.0) 
+	with ESMTPSA id md5001003957181.msg; Thu, 30 May 2024 13:28:03 -0400
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 30 May 2024 13:28:03 -0400
+	(not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 2603:7000:73c:bb00:15fd:52c:fc39:4205
+X-MDHelo: [IPV6:2603:7000:73c:bb00:15fd:52c:fc39:4205]
+X-MDArrival-Date: Thu, 30 May 2024 13:28:03 -0400
+X-MDOrigin-Country: US, NA
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=18808d123f=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-kernel@vger.kernel.org
+Message-ID: <4afd6e76-6542-4452-bc92-7798f64c986d@auristor.com>
+Date: Thu, 30 May 2024 13:28:02 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZldDIabPAa7NEmDQ@lizhi-Precision-Tower-5810>
+User-Agent: Mozilla Thunderbird
+From: Jeffrey E Altman <jaltman@auristor.com>
+Subject: Re: [PATCH] afs: Don't cross .backup mountpoint from backup volume
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Henrik Sylvester <jan.henrik.sylvester@uni-hamburg.de>,
+ Markus Suvanto <markus.suvanto@gmail.com>,
+ Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stable <stable@vger.kernel.org>, David Howells <dhowells@redhat.com>
+References: <768760.1716567475@warthog.procyon.org.uk>
+Content-Language: en-US
+Organization: AuriStor, Inc.
+In-Reply-To: <768760.1716567475@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MDCFSigsAdded: auristor.com
 
-On Wed, May 29, 2024 at 11:00:49AM -0400, Frank Li wrote:
-> On Tue, May 28, 2024 at 05:31:36PM -0500, Bjorn Helgaas wrote:
-> > On Tue, May 28, 2024 at 03:39:13PM -0400, Frank Li wrote:
-> ...
+On 5/24/2024 12:17 PM, David Howells wrote:
+> Hi Christian,
+>
+> Can you pick this up, please?
+>
+> Thanks,
+> David
+> ---
+> From: Marc Dionne<marc.dionne@auristor.com>
+>
+> afs: Don't cross .backup mountpoint from backup volume
+>
+> Don't cross a mountpoint that explicitly specifies a backup volume
+> (target is <vol>.backup) when starting from a backup volume.
+>
+> It it not uncommon to mount a volume's backup directly in the volume
+> itself.  This can cause tools that are not paying attention to get
+> into a loop mounting the volume onto itself as they attempt to
+> traverse the tree, leading to a variety of problems.
+>
+> This doesn't prevent the general case of loops in a sequence of
+> mountpoints, but addresses a common special case in the same way
+> as other afs clients.
+>
+> Reported-by: Jan Henrik Sylvester<jan.henrik.sylvester@uni-hamburg.de>
+> Link:http://lists.infradead.org/pipermail/linux-afs/2024-May/008454.html
+> Reported-by: Markus Suvanto<markus.suvanto@gmail.com>
+> Link:http://lists.infradead.org/pipermail/linux-afs/2024-February/008074.html
+> Signed-off-by: Marc Dionne<marc.dionne@auristor.com>
+> Signed-off-by: David Howells<dhowells@redhat.com>
+> Reviewed-by: Jeffrey Altman<jaltman@auristor.com>
+> cc:linux-afs@lists.infradead.org
+> ---
+>   fs/afs/mntpt.c |    5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
+> index 97f50e9fd9eb..297487ee8323 100644
+> --- a/fs/afs/mntpt.c
+> +++ b/fs/afs/mntpt.c
+> @@ -140,6 +140,11 @@ static int afs_mntpt_set_params(struct fs_context *fc, struct dentry *mntpt)
+>   		put_page(page);
+>   		if (ret < 0)
+>   			return ret;
+> +
+> +		/* Don't cross a backup volume mountpoint from a backup volume */
+> +		if (src_as->volume && src_as->volume->type == AFSVL_BACKVOL &&
+> +		    ctx->type == AFSVL_BACKVOL)
+> +			return -ENODEV;
+>   	}
+>   
+>   	return 0;
 
-> > > Base on linux-pci/controller/imx
-> > 
-> > This applies cleanly to the pci/controller/gpio branch, which has some
-> > minor rework in pci-imx6.c.
-> > 
-> > When we apply this, I think we should do it on a a pci/controller/imx6
-> > branch that is based on "main" (v6.10-rc1).
-> > 
-> > I can resolve the conflicts with pci/controller/gpio when building
-> > pci/next.
-> 
-> Sorry, I forget update this. It should be base on linux-pci/next
-> (e3fca37312892122d73f8c5293c0d1cc8c34500b). 
+Please add
 
-I prefer patches that are based on -rc1, i.e., the pci/main branch,
-not on the pci/next branch.
+   cc: stable@vger.kernel.org
 
-If a series *requires* functionality that is already on a topic
-branch, you can base it on that branch instead of on pci/main.
+when it is applied to vfs-fixes.
 
-This series happens to touch some of the same code as
-pci/controller/gpio, but it doesn't require those gpio changes, so it
-does not need to be based on pci/controller/gpio.
+Thank you.
 
-Having this series based on pci/main means that if we update or drop
-the gpio branch for some reason, this series will still make sense.
+Jeffrey Altman
 
-Bjorn
+
+
 
