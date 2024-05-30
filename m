@@ -1,163 +1,150 @@
-Return-Path: <linux-kernel+bounces-194837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E137C8D42BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E19858D42C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6C028584E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E15C2851B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DC0FC18;
-	Thu, 30 May 2024 01:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB051078B;
+	Thu, 30 May 2024 01:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DIUV9itN"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZFbD/Bos"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD2EE57E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC40FBE8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717031352; cv=none; b=pjfpaux9XMRFjiZnwekp4ceeyuL6nDL9k353RW7Ex647RCUN8HAz3ZDv+KW863slMMishbD2huZOTiqkcvlo7QrekQBqPWoCm/Nkx9phxfp+g95hv6KlQBwUzCkgInNMWSCYUTRBWcMKS5/5NNpithilh8AKWVrNcmOKP5S4tVI=
+	t=1717031623; cv=none; b=MMnJuMk5pe1NBfkRqbgeaZ0pvgHc/3OofMFqj8W6uj4cDQ3x0KnQ+wSg+Fyivx/26/RZXpvWhmgtLSSCRNnjCUldwPgteqG09sBZvemZFe28DY0Qt5u1Blz5nVb5dQ8itamYzT7Mb3777x9zpk+jb29Gtq+/b8qnLA9RC+68hE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717031352; c=relaxed/simple;
-	bh=r1WLIYqwEcFl1zxpSruq17uincpEIe2QAM/Tkg8t+yY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GKo3J3Gk/quwAw96RZmw24w00QBBKtAAI89ojsFjf6nv5NA0/5oTJALjacKK20IR56tKckql9kd6TZa38FflUQBv093naenvL+oWJoaF6Yc1Q9QSVebM56QKYpXppkZFcBxvYROtRA4CuDbX+YP18G/bvBb/tOASbWHWylpmYVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DIUV9itN; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59a352bbd9so47058666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1717031348; x=1717636148; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pc8AzCw2itqlchY2iNLylrW0HG92I3q/DnK9Zsb7BQY=;
-        b=DIUV9itNhbg8EfKLtpnHuKH1pEUDR/trubtVF2Pcu4Z2lDAl5gF9rVTS+Ts6Kk8+Eq
-         0PnNYawFbqcd7oo1KeIFL9Mq7uc98o7+69ELep2M+FKQDxUE7PHC0gPRNrOdoflb4CyU
-         dJkWdqUo/ovPZPD+gjAyrYMac6zoBKYhanCvY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717031348; x=1717636148;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pc8AzCw2itqlchY2iNLylrW0HG92I3q/DnK9Zsb7BQY=;
-        b=KrFGxtPnqAhgDSqQGzF1XPpkNIG8cejKCWDiZ/muRQg08CAqFxdBMYkIbp7dl8urqT
-         NI3RHNbCJnZzqIrbE7d+IMC2BlodFUfJSzi338C+AQG/iPqqn46pkypWm7gJrWuy1rDy
-         SrAfLcy8gvep8Tx11zK3TT3RhVgZbjmx8s4Upz/4e5k9aM3OsRP6RmGBn1RFSXZMNrPV
-         Li4Q1j0ODLM+gRYqCimfEdAhSAcAjcjmt9RYW58DOwdUKWvRQ7CJGY9erXin9Dxy8FtA
-         YLOO8KajP7v2bKrFD8g+YygOWNU6sGM2rIqDMED32Ay9QFJxEmcZLB+prp8q5mIqPD5h
-         Y57A==
-X-Forwarded-Encrypted: i=1; AJvYcCUfV9d2bwe8178Ek9eJPQQbOrrLlRibBjf0gAtD3EE5I2GlQGMfTUbQ9ZNt6mX9xETVcsxSTZMKRpgiV5+NAoytxyDKtj0SofGUZYt4
-X-Gm-Message-State: AOJu0YwL27HUT2AS16Kh8r1ID/RlePIzQ6Icl2JKIIWcaE7NrPr/4WX7
-	onBMQuMDJwEtO0O/F0eG3uIQmKdf49RaZ3Y843HAWuKSYZhQSx0LFzkBzuhBHp8rFQbdhtssoOR
-	0cFh8yg==
-X-Google-Smtp-Source: AGHT+IH32JF9eGSOVtjZd87FyZ7+H5u6pRkZ2ANtmLMi39Durq2GeB5GvevK1lGpSp6lej4m9TuLFQ==
-X-Received: by 2002:a17:907:384:b0:a59:ccc3:544 with SMTP id a640c23a62f3a-a65f091103emr30767166b.2.1717031348393;
-        Wed, 29 May 2024 18:09:08 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8d606sm778026666b.176.2024.05.29.18.09.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 18:09:07 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5789733769dso926838a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:09:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVogebV2cjGLs7Ya1tqhtACTnOTsjJHbGhevtEgpM8/P3+hW0B/dHQSUvepvJXolMxHQfV/8pw3H7OeIwO4jp5bmVxAUq8SJEeTQPZ6
-X-Received: by 2002:a17:906:cb90:b0:a5c:dce0:9f4e with SMTP id
- a640c23a62f3a-a65f0bd7b2bmr31381166b.28.1717031346663; Wed, 29 May 2024
- 18:09:06 -0700 (PDT)
+	s=arc-20240116; t=1717031623; c=relaxed/simple;
+	bh=Xb/f8BPIVFm2prTA2+dSu7ceaxOD559xDuyFlDo1qyM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OtizuxnEdDAE9OKUCFmGWF2lq3WlPklZqd8dF1P3f92K0vbZ4BSlZx+LkjLbfyo7O5iKy0ZrUviW8meTJOwe4g60bUKkGwON4kjKzcgVcpnzOGVY0SoMqZgdaYzuCpbEvidxifAMAy4rgJ3p78ne2WaE6Iy9g3knpAwJ5sPDJwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZFbD/Bos; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717031623; x=1748567623;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Xb/f8BPIVFm2prTA2+dSu7ceaxOD559xDuyFlDo1qyM=;
+  b=ZFbD/Bosse/mFJp8RqOdgiQxJwq+M77MRm1q5+ihm/CucbNynEPj0dof
+   l5GCISFld48kFm29DYKwDpPavcSA+578CkgxJROZLaTdm2Tc5jtol4w1F
+   jYQklMNV5dHP/Vj2R6DAXfD8D17Cx3PThyHqBgG7nuAn6LWCPN7Tufoqi
+   DCbjO6nw3O/wdwU12gMdN/i+g02fou6u3oDEREifWgGGC+oGLjSrUKSAq
+   2WAJYC7hZb2EpTMzAd4ELHetCSGy60kXV+KSMTBEG7IIKZyYcfOFoTho9
+   nGuU19c7Z9LsxjmSRtqajk737a2/bA9xUhbIKkz9Su70XhglQKPOLXuDd
+   g==;
+X-CSE-ConnectionGUID: xpPiMVdsQSuMw4vjnmf6MA==
+X-CSE-MsgGUID: ZmSfEsRQR/i1IXcCgjjPDQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13606679"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="13606679"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 18:13:42 -0700
+X-CSE-ConnectionGUID: l6BtNFyOTeGtb2h7wudBRA==
+X-CSE-MsgGUID: tHIEmQFBS/uxjVreWIwDeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="66834201"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 18:13:37 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,  <linux-kernel@vger.kernel.org>,
+  <linux-mm@kvack.org>,  <kernel_team@skhynix.com>,
+  <akpm@linux-foundation.org>,  <vernhao@tencent.com>,
+  <mgorman@techsingularity.net>,  <hughd@google.com>,
+  <willy@infradead.org>,  <david@redhat.com>,  <peterz@infradead.org>,
+  <luto@kernel.org>,  <tglx@linutronix.de>,  <mingo@redhat.com>,
+  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,  <rjgolo@gmail.com>
+Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+In-Reply-To: <20240530005026.GA47476@system.software.com> (Byungchul Park's
+	message of "Thu, 30 May 2024 09:50:26 +0900")
+References: <20240510065206.76078-1-byungchul@sk.com>
+	<982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
+	<20240527015732.GA61604@system.software.com>
+	<8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<44e4f2fd-e76e-445d-b618-17a6ec692812@intel.com>
+	<20240529050046.GB20307@system.software.com>
+	<961f9533-1e0c-416c-b6b0-d46b97127de2@intel.com>
+	<20240530005026.GA47476@system.software.com>
+Date: Thu, 30 May 2024 09:11:45 +0800
+Message-ID: <87a5k814tq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de>
- <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
- <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk>
-In-Reply-To: <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 29 May 2024 18:08:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
-Message-ID: <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
-Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Arnd Bergmann <arnd@kernel.org>, 
-	linux-alpha@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
-	Michael Cree <mcree@orcon.net.nz>, Frank Scheiner <frank.scheiner@web.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-On Wed, 29 May 2024 at 11:50, Maciej W. Rozycki <macro@orcam.me.uk> wrote:
+Byungchul Park <byungchul@sk.com> writes:
+
+> On Wed, May 29, 2024 at 09:41:22AM -0700, Dave Hansen wrote:
+>> On 5/28/24 22:00, Byungchul Park wrote:
+>> > All the code updating ptes already performs TLB flush needed in a safe
+>> > way if it's inevitable e.g. munmap.  LUF which controls when to flush in
+>> > a higer level than arch code, just leaves stale ro tlb entries that are
+>> > currently supposed to be in use.  Could you give a scenario that you are
+>> > concering?
+>> 
+>> Let's go back this scenario:
+>> 
+>>  	fd = open("/some/file", O_RDONLY);
+>>  	ptr1 = mmap(-1, size, PROT_READ, ..., fd, ...);
+>>  	foo1 = *ptr1;
+>> 
+>> There's a read-only PTE at 'ptr1'.  Right?  The page being pointed to is
+>> eligible for LUF via the try_to_unmap() paths.  In other words, the page
+>> might be reclaimed at any time.  If it is reclaimed, the PTE will be
+>> cleared.
+>> 
+>> Then, the user might do:
+>> 
+>> 	munmap(ptr1, PAGE_SIZE);
+>> 
+>> Which will _eventually_ wind up in the zap_pte_range() loop.  But that
+>> loop will only see pte_none().  It doesn't do _anything_ to the 'struct
+>> mmu_gather'.
+>> 
+>> The munmap() then lands in tlb_flush_mmu_tlbonly() where it looks at the
+>> 'struct mmu_gather':
+>> 
+>>         if (!(tlb->freed_tables || tlb->cleared_ptes ||
+>> 	      tlb->cleared_pmds || tlb->cleared_puds ||
+>> 	      tlb->cleared_p4ds))
+>>                 return;
+>> 
+>> But since there were no cleared PTEs (or anything else) during the
+>> unmap, this just returns and doesn't flush the TLB.
+>> 
+>> We now have an address space with a stale TLB entry at 'ptr1' and not
+>> even a VMA there.  There's nothing to stop a new VMA from going in,
+>> installing a *new* PTE, but getting data from the stale TLB entry that
+>> still hasn't been flushed.
 >
->              The only difference here is that with
-> hardware read-modify-write operations atomicity for sub-word accesses is
-> guaranteed by the ISA, however for software read-modify-write it has to be
-> explictly coded using the usual load-locked/store-conditional sequence in
-> a loop.
+> Thank you for the explanation.  I got you.  I think I could handle the
+> case through a new flag in vma or something indicating LUF has deferred
+> necessary TLB flush for it during unmapping so that mmu_gather mechanism
+> can be aware of it.  Of course, the performance change should be checked
+> again.  Thoughts?
 
-I have some bad news for you: the old alpha CPU's not only screwed up
-the byte/word design, they _also_ screwed up the
-load-locked/store-conditional.
+I suggest you to start with the simple case.  That is, only support page
+reclaiming and migration.  A TLB flushing can be enforced during unmap
+with something similar as flush_tlb_batched_pending().
 
-You'd think that LL/SC would be done at a cacheline level, like any
-sane person would do.
-
-But no.
-
-The 21064 actually did atomicity with an external pin on the bus, the
-same way people used to do before caches even existed.
-
-Yes, it has an internal L1 D$, but it is a write-through cache, and
-clearly things like cache coherency weren't designed for. In fact,
-LL/SC is even documented to not work in the external L2 cache
-("Bcache" - don't ask me why the odd naming).
-
-So LL/SC on the 21064 literally works on external memory.
-
-Quoting the reference manual:
-
-  "A.6 Load Locked and Store Conditional
-  The 21064 provides the ability to perform locked memory accesses through
-  the LDxL (Load_Locked) and STxC (Store_Conditional) cycle command pair.
-  The LDxL command forces the 21064 to bypass the Bcache and request data
-  directly from the external memory interface. The memory interface logic must
-  set a special interlock flag as it returns the data, and may
-optionally keep the
-  locked address"
-
-End result: a LL/SC pair is very very slow. It was incredibly slow
-even for the time. I had benchmarks, I can't recall them, but I'd like
-to say "hundreds of cycles". Maybe thousands.
-
-So actual reliable byte operations are not realistically possible on
-the early alpha CPU's. You can do them with LL/SC, sure, but
-performance would be so horrendously bad that it would be just sad.
-
-The 21064A had some "fast lock" mode which allows the data from the
-LDQ_L to come from the Bcache. So it still isn't exactly fast, and it
-still didn't work at CPU core speeds, but at least it worked with the
-external cache.
-
-Compilers will generate the sequence that DEC specified, which isn't
-thread-safe.
-
-In fact, it's worse than "not thread safe". It's not even safe on UP
-with interrupts, or even signals in user space.
-
-It's one of those "technically valid POSIX", since there's
-"sig_atomic_t" and if you do any concurrent signal stuff you're
-supposed to only use that type. But it's another of those "Yeah, you'd
-better make sure your structure members are either 'int' or bigger, or
-never accessed from signals or interrupts, or they might clobber
-nearby values".
-
-           Linus
+--
+Best Regards,
+Huang, Ying
 
