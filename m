@@ -1,203 +1,133 @@
-Return-Path: <linux-kernel+bounces-195039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E7A8D46AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:07:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A2F8D46B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3ACF1C21DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:07:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690711F22B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70FE14535A;
-	Thu, 30 May 2024 08:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EF51474CA;
+	Thu, 30 May 2024 08:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="QCPLY2q3"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bgBZ8BNU"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063B17407F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6582614535A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717056430; cv=none; b=oj9C3ZIHjcAZsOR4jtEV004PoudMVOKOW2mh0meAdEYx4uCpC6HJWmqOmhkqgc7wpsmI0zVu2oQIdGnOGtp2DzcJuuk13zt93phab2uKLildd8dRS0mI4XGjW2gOGonGFUzpn17Oy+zulJJsTxeuecDEqKEd0KiqjQK8s+2s6Vo=
+	t=1717056487; cv=none; b=KuYNsjligqgTHMZjcLxAxrl6HSh+Q+reuIbRZeARbGLcpC7NR59Gto5A+7lnZC5v/n3T0jjy4DCVYU87hxFh8CH0ugF6T1rob8HvGVw6/jC7Du6kP+N/HVQINgsuYq8AnGjBgDGbgpOmatAbRG7GaRvJSaHaS/Vo1DOTjyv799o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717056430; c=relaxed/simple;
-	bh=DPXVfv9gCin27padQl0N45iKeyrBxgpvV3TGvylxXTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=imzgHFC8p2acx7jO8pLTBMYPNSm6/GC7dRrhn+wZ6hAV/M8oeMSiT6hxiGscDkvzApR8iSD4kcpZw4SXysa/o59Iu/FawDFHrwAQURwN5ex89MjKR0WZWmyj2hv1S5oi9vOTgmi/vWeCnuwUGqpHTR8cV5cQVx8xc3B3aR0w6GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=QCPLY2q3; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42108856c33so4152525e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:07:08 -0700 (PDT)
+	s=arc-20240116; t=1717056487; c=relaxed/simple;
+	bh=BKFupsJftGMs6W6ZZIn49gRpZlGuTWZ9PfyykZzrqn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NbHSxLw/mPOv3Qjut6WpXA41rl6LZKQotMrMke8Mo4CNuQHD7PmP2nNed+w6Ugzam/haf2QKHbDqIvmRV1m0Z9gJpC/ughhUse3zW/CQIdTmQVko8MtVdfC/2RSwmgMaXzjmzzvrxg70FPdyNZRx8Q2UvIAP7ZNdJJ6yt6yIN2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bgBZ8BNU; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa4ad7f6dfso517027276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:08:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1717056427; x=1717661227; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=imJe00y9Y1CwcN7JN2PUg+7wMYdo2Jj6de/HwT6F9Uc=;
-        b=QCPLY2q3GcI5tFtaVSPXqFkCCCnIuYskWM76DbjGl6ML363nOeq4cRK3lAPwrhCQtS
-         x0C3qFGXrQ9GkAvd+mcs9U1aX8sCw7ThmoVcytSyi9lvTLV5cUH7bHsG42uFR/ic5KWx
-         2E2Tb2x4jpncHZSEzy1dJlAbGpE+1fHt5BfnexSY4DKvR2/JI+S2cRMEbL+qpYjDL9Pu
-         hd+XiIpY4abWE0R+7kKKeGGV2DrNud4ExkkxvmC7izzHxunEMmJAVVpMRKjaVwsZEPBp
-         hIKvNrc7+3YBVwMNhKpNqJFZ8YZXccx1M07dhKCk2T5vcZj9QwJ10dN3JnLz5iYIqcKR
-         P9Lg==
+        d=linaro.org; s=google; t=1717056485; x=1717661285; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ea398ookltKnMcZe9XrXhw80TYHn5RUehEf25oaXTj0=;
+        b=bgBZ8BNUj0eDg8oL2AFWY9kHE4TP6RtHeJXgfzCvA1pJ4VnoiGiRJjIX8Nyeh7XbS0
+         GNA0uGA483S2wfG30ERpev70wFm3r0E2ZSX5hfGZvaH1S0xNYzUvKSy98eKMSq+ObLhe
+         OxgShayuHRDO4Zl0KI9RES8Ud+EYvwbzjSX2wacIPdprMJie3X0oO58O/WF9An4z1CeW
+         yXT7otZkQrKIYozDupREMnF5OzhK7YKJx7ygWuZXnjY8Q8T2YHhD4wbLwZMMHYq0a2Z4
+         lkQGmz12mkLsW+v+m/bAx/y+zs1SDbzJdxqaJSlqUN6C1EGb1iGewf8/U6NyBUkP6XoJ
+         jdnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717056427; x=1717661227;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=imJe00y9Y1CwcN7JN2PUg+7wMYdo2Jj6de/HwT6F9Uc=;
-        b=EVcsduh7P0zhqhMTyIhGNGdrqlSQ4vLEU9yQHWeaPLjfQVmXBhZKNVeDOq1eao//KX
-         mFyD0pr4di6YBBWhEMs7eib5dTqybiT0npsq+1S8UlrrzvvDM1VCNKijZFS5SjpNe8X0
-         rzIhxAJkKcv0wGe5+9Ukez6GLPhnJShgm1u5bgFhW6COKaL5JjdHZfsYDnTbtJmUpLCh
-         +O6HbK9+t3yojdVjxkCsPEeyz/jTy4uJR2scDLL5vco0WDdH/kd6zW39PrnyPpgd5HNj
-         8sl62xecS7DZpQJP3iQdI7Qmlt2cDIz9hl+QKhto/d2jsFtyShdLhQcSgI87utUZD16q
-         LASQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjEkQELxSb/myi/yYqzzT2WWwIYUEdlFXKJ+tDpyBIrlCqK9HKBJ7Ghw16JlveLCg8cdUSV+LoN911OY16wgMTqWJA5Eohh0BkC3IU
-X-Gm-Message-State: AOJu0YyTXz0jLzlE5QtA0TVmg2r/6r1fEMJGBjMSBAzFOx4pMOLGkXSL
-	64pQk52hEUkeSn7J5+vk8DOunm69ZW+r4VDggmCr6m41y23nI2Ztv6mcwIbIC8g=
-X-Google-Smtp-Source: AGHT+IFz86hjWVwDP/dkomv8c6/5Rk3tvlfabY/M/AgBKzpkM/zbIEiVEW4Mio38VYNi7sJ39diFGA==
-X-Received: by 2002:a05:600c:1c9b:b0:421:2985:559a with SMTP id 5b1f17b1804b1-4212985574cmr4252445e9.7.1717056426856;
-        Thu, 30 May 2024 01:07:06 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42127059769sm17110705e9.5.2024.05.30.01.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:07:06 -0700 (PDT)
-Date: Thu, 30 May 2024 10:07:05 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Evan Green <evan@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Andy Chiu <andy.chiu@sifive.com>, 
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] RISC-V: hwprobe: Add MISALIGNED_PERF key
-Message-ID: <20240530-ae9f7725d4566a72e895f8fa@orel>
-References: <20240529182649.2635123-1-evan@rivosinc.com>
+        d=1e100.net; s=20230601; t=1717056485; x=1717661285;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ea398ookltKnMcZe9XrXhw80TYHn5RUehEf25oaXTj0=;
+        b=cdc5nmSKJh96/Jy0aUMzHSZQiLxBs45D96hfbge/SqzF44SC7Dd9vWk4pgvm9GsnHl
+         TbP/y1a3hcX+iKbFbk2LO25Q8rL0D9Ytpbg2hgdP9Xl2x5xELUY2EVfoyWOHhqvDYY6t
+         e6bsb1hEeVhCYOVQorKZxw86Jdmb0QIsNSReDUxuYeroC9SLOLYzv8xxMw6ZrY5RN83A
+         +0F9XW8re165TWbhU/JFZg4Hx/b9xjEBsqC+453/RIuqt8yqt+beTyW/QGmadIrpDNqP
+         M7KK3nZoDZFWbKoygJXb9MYqiwrqg9xghGWdzZ7kfteWKka1pFSaTud5ROVj/eRuliOt
+         +Aag==
+X-Forwarded-Encrypted: i=1; AJvYcCXmc44PJiGVTnDOVDueHlzVwfBNbWTd5/uMA/ZObSLkBQ8wwSmWCvqpjCkyAoqpG3rY449gaDw6xubcbiUkeaOK7+gKfQBcDOJV9qt9
+X-Gm-Message-State: AOJu0Yyfp48yqcYSTRvyHAnMmkFthOb2zUZ6J+mmTdZxlo3BKY+LEn2B
+	Y5qR/J1BaRv7FPswkCb6lDF//j4cYMJTIkvu24HPE1iM+HX5om98dyCmv7byoFm7LCA8QGVFsWx
+	DQBjzw1XI6h/tIGDVrKNByo68MRTPLWWlj5Yc7Q==
+X-Google-Smtp-Source: AGHT+IGz+ZsfJJB5VdBGOljgIkzRdHhgei+gaKgI65RBquJxbv4kncJ2bpBR1QliVBmCJF1PLzPJlIZVnBu5WHt6piI=
+X-Received: by 2002:a25:ac92:0:b0:dca:c369:fac2 with SMTP id
+ 3f1490d57ef6-dfa5a5baeb4mr1629327276.3.1717056485217; Thu, 30 May 2024
+ 01:08:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529182649.2635123-1-evan@rivosinc.com>
+References: <20240528210319.1242-1-mario.limonciello@amd.com>
+ <Zlc4V1goFvU2antl@intel.com> <197d195f-9206-41dd-8ff1-f4bb4988fb9b@amd.com>
+ <ZldMKZ1MzSDXOheJ@intel.com> <g34f3sdk22grheq2vaaonkl543dtk7nb5sffqgmkl5ywtj5skk@p5ht5ug33q4z>
+ <873b7a7b-139d-498e-89da-098cb3d7599d@amd.com>
+In-Reply-To: <873b7a7b-139d-498e-89da-098cb3d7599d@amd.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 30 May 2024 11:07:53 +0300
+Message-ID: <CAA8EJpqODpGX-RthQ8qu3oU80qXp8a-N1Chz-dcQXjKYoDfEgw@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during initialization
+To: "Limonciello, Mario" <mario.limonciello@amd.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, Chris Bainbridge <chris.bainbridge@gmail.com>, 
+	hughsient@gmail.com, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 29, 2024 at 11:26:48AM GMT, Evan Green wrote:
-> RISCV_HWPROBE_KEY_CPUPERF_0 was mistakenly flagged as a bitmask in
-> hwprobe_key_is_bitmask(), when in reality it was an enum value. This
-> causes problems when used in conjunction with RISCV_HWPROBE_WHICH_CPUS,
-> since SLOW, FAST, and EMULATED have values whose bits overlap with
-> each other. If the caller asked for the set of CPUs that was SLOW or
-> EMULATED, the returned set would also include CPUs that were FAST.
-> 
-> Introduce a new hwprobe key, RISCV_HWPROBE_KEY_MISALIGNED_PERF, which
-> returns the same values in response to a direct query (with no flags),
-> but is properly handled as an enumerated value. As a result, SLOW,
-> FAST, and EMULATED are all correctly treated as distinct values under
-> the new key when queried with the WHICH_CPUS flag.
-> 
-> Leave the old key in place to avoid disturbing applications which may
-> have already come to rely on the broken behavior.
-
-I appreciate the paranoia, even if I think we could probably get away
-with fixing CPUPERF_0.
-
-> 
-> Fixes: e178bf146e4b ("RISC-V: hwprobe: Introduce which-cpus flag")
-> Signed-off-by: Evan Green <evan@rivosinc.com>
-> 
-> ---
-> 
-> 
-> Note: Yangyu also has a fix out for this issue at [1]. That fix is much
-> tidier, but comes with the slight risk that some very broken userspace
-> application may break now that FAST cpus are not included for the query
-> of which cpus are SLOW or EMULATED. I wanted to get this fix out so that
-> we have both as options, and can discuss. These fixes are mutually
-> exclusive, don't take both.
-> 
-> [1] https://lore.kernel.org/linux-riscv/tencent_01F8E0050FB4B11CC170C3639E43F41A1709@qq.com/
-> 
-> ---
->  Documentation/arch/riscv/hwprobe.rst  | 8 ++++++--
->  arch/riscv/include/asm/hwprobe.h      | 2 +-
->  arch/riscv/include/uapi/asm/hwprobe.h | 1 +
->  arch/riscv/kernel/sys_hwprobe.c       | 1 +
->  4 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> index 204cd4433af5..616ee372adaf 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -192,8 +192,12 @@ The following keys are defined:
->         supported as defined in the RISC-V ISA manual starting from commit
->         d8ab5c78c207 ("Zihintpause is ratified").
->  
-> -* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
-> -  information about the selected set of processors.
-> +* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated. Returns similar values to
-> +     :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`, but the key was mistakenly
-> +     classified as a bitmask rather than a value.
-> +
-> +* :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`: An enum value describing the
-> +  performance of misaligned scalar accesses on the selected set of processors.
->  
->    * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
->      accesses is unknown.
-> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
-> index 630507dff5ea..150a9877b0af 100644
-> --- a/arch/riscv/include/asm/hwprobe.h
-> +++ b/arch/riscv/include/asm/hwprobe.h
-> @@ -8,7 +8,7 @@
->  
->  #include <uapi/asm/hwprobe.h>
->  
-> -#define RISCV_HWPROBE_MAX_KEY 6
-> +#define RISCV_HWPROBE_MAX_KEY 7
->  
->  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
->  {
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-> index dda76a05420b..bc34e33fef23 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -68,6 +68,7 @@ struct riscv_hwprobe {
->  #define		RISCV_HWPROBE_MISALIGNED_UNSUPPORTED	(4 << 0)
->  #define		RISCV_HWPROBE_MISALIGNED_MASK		(7 << 0)
-
-Can we also remove the unnecessary ( << 0) shifts for each of the
-MISALIGNED_* values? The shifts imply bits of a bitmask (to me).
-
->  #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE	6
-> +#define RISCV_HWPROBE_KEY_MISALIGNED_PERF	7
->  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
->  
->  /* Flags */
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-> index 969ef3d59dbe..c8b7d57eb55e 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -208,6 +208,7 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
->  		break;
->  
->  	case RISCV_HWPROBE_KEY_CPUPERF_0:
-> +	case RISCV_HWPROBE_KEY_MISALIGNED_PERF:
->  		pair->value = hwprobe_misaligned(cpus);
->  		break;
->  
-> -- 
-> 2.34.1
+On Thu, 30 May 2024 at 07:41, Limonciello, Mario
+<mario.limonciello@amd.com> wrote:
 >
+>
+> >> Also a direct acpi_lid_open() call seems a bit iffy. But I guess if
+> >> someone needs this to work on non-ACPI system they get to figure out
+> >> how to abstract it better. acpi_lid_open() does seem to return != 0
+> >> when ACPI is not supported, so at least it would err on the side
+> >> of enabling everything.
+> >
+> > Thanks. I was going to comment, but you got it first. I think a proper
+> > implementation should check for SW_LID input device instead of simply
+> > using acpi_lid_open(). This will handle the issue for other,
+> > non-ACPI-based laptops.
+> >
+>
+> Can you suggest how this would actually work?  AFAICT the only way to
+> discover if input devices support SW_LID would be to iterate all the
+> input devices in the kernel and look for whether ->swbit has SW_LID set.
+>
+> This then turns into a dependency problem of whether any myriad of
+> drivers have started to report SW_LID.  It's also a state machine
+> problem because other drivers can be unloaded at will.
+>
+> And then what do you if more than one sets SW_LID?
 
-Otherwise,
+It might be easier to handle this in the input subsystem. For example
+by using a refcount-like variable which handles all the LIDs and
+counts if all of them are closed. Or if any of the LIDs is closed.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+>
+> IOW - a lot of complexity for a non-ACPI system.  Does such a problem
+> exist in non-ACPI systems?
 
-Thanks,
-drew
+There are non-ACPI laptops. For example Chromebooks. Or Lenovo X13s,
+Lenovo Yoga C630, Lenovo Flex5G, etc. We are expecting more to come in
+the next few months. And I don't see why they won't have the same
+problem.
+
+
+-- 
+With best wishes
+Dmitry
 
