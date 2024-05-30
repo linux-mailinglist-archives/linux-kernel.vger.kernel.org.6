@@ -1,142 +1,216 @@
-Return-Path: <linux-kernel+bounces-195681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951B08D5037
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041D28D5045
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C333D1C21AE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A92B9280A69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F25445BE7;
-	Thu, 30 May 2024 16:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFD43F9ED;
+	Thu, 30 May 2024 16:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPtk3GpS"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vt1b5BwQ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2D6433C2;
-	Thu, 30 May 2024 16:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A87D3BB2E;
+	Thu, 30 May 2024 16:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088069; cv=none; b=JSxWGS6DfexlKcZjJfQ4Nyy/N0LvbQxK3Y0LE1ulkRiS7vZVBm/Mgtly2xPxzw6PgqFqQYq58raDUXbknzQEufPxppsD7APuH9TokaMIl455hfdWfX67IQS5n5SOBZK+oHUtvOZVtP5XhWZg24Ov2Z6ayZBfaWSiX6ThE+RO3zU=
+	t=1717088140; cv=none; b=nIyugSQiXoKOZlwGvv546bF7zEHMA4JLABFylEEC2o0ADCoL6n8Yg/SDiQLy3p4TkYkY3tOBs8v//RwduQEKJ7n/9gZ7jqFLF7iE43dzsPf8GOJEIBwNRYGRylO0pacFVFLdxPGKmJ8HKz26Vfbk0rypy3Cj8huwkQG6SmMAhB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088069; c=relaxed/simple;
-	bh=9tKL8SGE/wYVNI0sBabNN+oqhf9BaFHlmjky12d5y8Q=;
-	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=iE6rbKQrNR2Mw7aJsspjU/8hPegQASJ5kxgsYU2KHujw/4Y7Bqhj9HGRO2WN46SezBFNowlogiWPhOHmIXek67hlB8+Rt8ylBCJfUBDs0bE8j/p5tqKqvhLdeqP+BPFAsgx3+ZAmN2t2YPjX94VLHbD/6caNM/MjnWHFyBAvF3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPtk3GpS; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35a264cb831so928624f8f.2;
-        Thu, 30 May 2024 09:54:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717088066; x=1717692866; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9zqU8JnmYAjrDHWI6QwaCI3aTg0IhkQKhlHefZwcxU=;
-        b=kPtk3GpSYONhl9Wuypr1YtxluZCHZT8Qj+X/0d2NQ0jTI0+d6T+yVpy5h7ZYsEw8HT
-         Q3knJKrI0F7J1svP22e+hhdnl/4WlCV1p150snM5GqUEfdv5o3z+/Sg3SPvz4xWD3RAG
-         8EkN+iITNWLki8r6IGFSbgnVavDscXQdxvIK32HLzhLynlhgfVHESxcykF4/KanOWM0P
-         e/QQt5OaCu3/T9Q4Zda6eNoBlTGhHjeSbovdVMj5egSU4X3jXvgdzSntntbxM0PGr5u2
-         tgJjTM4iHboZM7r0LVkoS/08bZVNNVlLPlY04z1tQh2R3OHFmccGmZqMqMayNmygUDVo
-         sDfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717088066; x=1717692866;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v9zqU8JnmYAjrDHWI6QwaCI3aTg0IhkQKhlHefZwcxU=;
-        b=edPZFWALAgZHJahRkd0yj07c0Kruh4PODegM9c87sc60VQq3jlX90YiW5AcTvEtKh2
-         opNgUkHAC+OVbAhk0JwZDS9gAX6xL0cG2mo9QDlHbDGYkJjrvRWe9mDbWXey7+FOq+5d
-         J/05RNbgjV2oVoZ4LyIRm4h+bP3RFs42EJhUupUuQyTu0vW5i2aRLDbUUI+3jZHDDMCU
-         QizwutMTINnxHzZvsKHwwrCWwSzjftTzdRTPhK+C1NIit4byQuKcfU80cgcYLr1I8D+K
-         TEx/rIK0/DHwOeeJ/NriEmvT3ZOhOrJRtFNNIPCw7eKLcspEl77LUoUH8aA63wIMDw/i
-         51tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNIP2pjt00WoynlENZTp0Rkq/QVMK1WdUTl5vvUY+C5DiEHG3/gkO075nLhHwxtqjUD88ij/eCOEpJ4Gx4ND+QCEbDIITKehVy4h31WPUjxphreNlQzuApIzEh+HXIpxajgVptAO6elMkf0A==
-X-Gm-Message-State: AOJu0YxyKvHtGb63yHDTPl5pGMOQLakPRgfpgsjxuuUoLpqfpeMSOL51
-	STNZHQWv4XwESDizCa6/ur3AghcTvDHSjxukEr//CKuNItVqg2Gm
-X-Google-Smtp-Source: AGHT+IFEfBLTzmjmcG32USMXfmcuN3/ok4lb789rZYIugWZrptHh8T6N9Opj4wdIck7hY3jhiBhxzg==
-X-Received: by 2002:adf:ec45:0:b0:355:21d:ab9d with SMTP id ffacd0b85a97d-35dc00c70a6mr1886123f8f.65.1717088066020;
-        Thu, 30 May 2024 09:54:26 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dcbb0965dsm1626683f8f.91.2024.05.30.09.54.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 09:54:25 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=357c9420193d77c21cae851122d418a2d2433a7d1bb8c98af37a194714df;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	s=arc-20240116; t=1717088140; c=relaxed/simple;
+	bh=tCkHJUiWVp34QgTZuninP//WmPuka/jpuBZokKDdlwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QkWzgiDs6hTufT4c1AWkpxwaVdw6M8CXr+SLMh9yseGr1GI9rPgYiwI/yji3SXdP0MMb6j/fmbtMJHCnyO6HKWyezj68WFC9KJ3xjZYK5pBUH0EEe554ntLfiiKJtOfx7FfqVvUG4OmsmdVReSzrTCybxuC6mHspiS9ObS2lkzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vt1b5BwQ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=E4Et8IsTqKEjB0VKgfn0i10/CIt14tSmicrHni37u2I=; b=vt1b5BwQEsBhb0MJSh/BT73Kob
+	pGD5KZ7UtoJRwdt9gjlUj8jztY4K4pGKr5EvDoixdrgvaw7CbpFKyCZ+rdiQ9PTOz7HfZuOrmtQCN
+	zIV1i5dNDY1ulh+YoaqNoKW8divQ2hc1oIA7joKQA1OsldI3mGB+02GgHb06FPdEbsloO4k9VzjyJ
+	KFF9QGtLFp5kevCXlqIjr9lyr/3Opds0tBqYB+wfUvTnCwvwHSFE9rT19y2zyG+gTWlXJSP13BHkz
+	VPO/55MX0M3JWR+4qGRtA0jF3xfay8wCJ9BlhRw4jXablECkDkVe21W6l9XiwkB09apvqUL+LfIFi
+	JkDS50ew==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34142)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sCj3p-0007dO-0b;
+	Thu, 30 May 2024 17:55:29 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sCj3p-0005IQ-7e; Thu, 30 May 2024 17:55:29 +0100
+Date: Thu, 30 May 2024 17:55:29 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
+Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH net-next v5 5/5] net: phy: add driver for built-in 2.5G
+ ethernet PHY on MT7988
+Message-ID: <ZlivgVpycflhLUcl@shell.armlinux.org.uk>
+References: <20240530034844.11176-1-SkyLake.Huang@mediatek.com>
+ <20240530034844.11176-6-SkyLake.Huang@mediatek.com>
+ <ZlhWfua01SCOor80@shell.armlinux.org.uk>
+ <0707897b44cfbc479cd08a092829a8bfc480281b.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 30 May 2024 18:54:24 +0200
-Message-Id: <D1N4X37C55M8.PW8BXBL6ZHN4@gmail.com>
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Abhinav Kumar" <quic_abhinavk@quicinc.com>,
- <freedreno@lists.freedesktop.org>, "Rob Clark" <robdclark@gmail.com>,
- "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>, "Sean Paul"
- <sean@poorly.run>, "Marijn Suijten" <marijn.suijten@somainline.org>, "David
- Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>
-Cc: <dri-devel@lists.freedesktop.org>, <seanpaul@chromium.org>,
- <swboyd@chromium.org>, <quic_jesszhan@quicinc.com>,
- <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
-In-Reply-To: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0707897b44cfbc479cd08a092829a8bfc480281b.camel@mediatek.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
---357c9420193d77c21cae851122d418a2d2433a7d1bb8c98af37a194714df
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Thu, May 30, 2024 at 04:25:56PM +0000, SkyLake Huang (黃啟澤) wrote:
+> On Thu, 2024-05-30 at 11:35 +0100, Russell King (Oracle) wrote:
+> >  	 
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >  On Thu, May 30, 2024 at 11:48:44AM +0800, Sky Huang wrote:
+> > > +static int mt798x_2p5ge_phy_config_aneg(struct phy_device *phydev)
+> > > +{
+> > > +bool changed = false;
+> > > +u32 adv;
+> > > +int ret;
+> > > +
+> > > +/* In fact, if we disable autoneg, we can't link up correctly:
+> > > + *  2.5G/1G: Need AN to exchange master/slave information.
+> > > + *  100M: Without AN, link starts at half duplex(According to IEEE
+> > 802.3-2018),
+> > > + *        which this phy doesn't support.
+> > > + *   10M: Deprecated in this ethernet phy.
+> > > + */
+> > > +if (phydev->autoneg == AUTONEG_DISABLE)
+> > > +return -EOPNOTSUPP;
+> > 
+> > We have another driver (stmmac) where a platform driver is wanting to
+> > put a hack in the ksettings_set() ethtool path to error out on
+> > disabling AN for 1G speeds. This sounds like something that is
+> > applicable to more than one hardware (and I've been wondering whether
+> > it is universally true that 1G copper links and faster all require
+> > AN to function.)
+> > 
+> > Thus, I'm wondering whether this is something that the core code
+> > should
+> > be doing.
+> > 
+> Yeah..As far as I know, 1G/2.5G/5G/10G speed require AN to decide
+> master/slave role. Actually I can use force mode by calling
+> genphy_c45_pma_set_forced, which will set correspoding C45 registers.
+> However, after that, this 2.5G PHY can't still link up with partners.
+> 
+> I'll leave EOPNOTSUPP here temporarily. Hope phylib can be patched
+> someday.
 
-On Wed May 8, 2024 at 1:04 AM CEST, Abhinav Kumar wrote:
-> Since commit 5acf49119630 ("drm/msm: import gen_header.py script from Mes=
-a"),
-> compilation is broken on machines having python versions older than 3.9
-> due to dependency on argparse.BooleanOptionalAction.
->
-> Switch to use simple bool for the validate flag to remove the dependency.
->
-> Fixes: 5acf49119630 ("drm/msm: import gen_header.py script from Mesa")
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/registers/gen_header.py | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+Please no. "someday" tends to never happen, and you're basically
+throwing the problem over the wall to other people to solve who
+then have to spot your hack and eventually remove it.
 
-Irrespective of whether we want to allow Python as a build dependency or
-not, it already is since v6.10-rc1, so in the meantime I'm going to
-apply this to drm-misc-fixes to unbreak things.
+We need this solved properly, not by people hacking drivers. This
+is open source, you can propose a patch to phylib to fix this for
+everyone.
 
-If we decide that we don't want the extra dependency we need revert the
-whole generation infrastructure.
+> > > +/* This phy can't handle collision, and neither can (XFI)MAC it's
+> > connected to.
+> > > + * Although it can do HDX handshake, it doesn't support CSMA/CD
+> > that HDX requires.
+> > > + */
+> > 
+> > What the MAC can and can't do really has little bearing on what link
+> > modes the PHY driver should be providing. It is the responsibility of
+> > the MAC driver to appropriately change what is supported when
+> > attaching
+> > to the PHY. If using phylink, this is done by phylink via the MAC
+> > driver
+> > telling phylink what it is capable of via mac_capabilities.
+> > 
+> > > +static int mt798x_2p5ge_phy_get_rate_matching(struct phy_device
+> > *phydev,
+> > > +      phy_interface_t iface)
+> > > +{
+> > > +if (iface == PHY_INTERFACE_MODE_XGMII)
+> > > +return RATE_MATCH_PAUSE;
+> > 
+> > You mention above XFI...
+> > 
+> > XFI is 10GBASE-R protocol to XFP module electrical standards.
+> > SFI is 10GBASE-R protocol to SFP+ module electrical standards.
+> > 
+> > phy_interface_t is interested in the protocol. So, given that you
+> > mention XFI, why doesn't this test for PHY_INTERFACE_MODE_10GBASER?
+> > 
+> We have 2 XFI-MAC on mt7988 platform. One is connected to internal
+> 2.5Gphy(SoC built-in), as we discussed here (We don't test this phy for
+> 10G speed.) Another one is connected to external 10G phy.
 
-Thierry
+I can't parse your response in a meaningful way, to me it doesn't
+address my point.
 
---357c9420193d77c21cae851122d418a2d2433a7d1bb8c98af37a194714df
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> > > +static int mt798x_2p5ge_phy_probe(struct phy_device *phydev)
+> > > +{
+> > > +struct mtk_i2p5ge_phy_priv *priv;
+> > > +
+> > > +priv = devm_kzalloc(&phydev->mdio.dev,
+> > > +    sizeof(struct mtk_i2p5ge_phy_priv), GFP_KERNEL);
+> > > +if (!priv)
+> > > +return -ENOMEM;
+> > > +
+> > > +switch (phydev->drv->phy_id) {
+> > > +case MTK_2P5GPHY_ID_MT7988:
+> > > +/* The original hardware only sets MDIO_DEVS_PMAPMD */
+> > > +phydev->c45_ids.mmds_present |= (MDIO_DEVS_PCS | MDIO_DEVS_AN |
+> > > + MDIO_DEVS_VEND1 | MDIO_DEVS_VEND2);
+> > 
+> > No need for parens on the RHS. The RHS is an expression in its own
+> > right, and there's no point in putting parens around the expression
+> > to turn it into another expression!
+> > 
+> > -- 
+> > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> > FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> 
+> Do you mean these two line?
+> +phydev->c45_ids.mmds_present |= (MDIO_DEVS_PCS | MDIO_DEVS_AN |
+> + MDIO_DEVS_VEND1 | MDIO_DEVS_VEND2);
+> 
+> What do you mean by "RHS is an expression in its own right"?
+> I put parens here to enhance readability so we don't need check
+> operator precedence again.
 
------BEGIN PGP SIGNATURE-----
+|= one of the assignment operators, all of which have one of the
+lowest precedence. Only the , operator has a lower precedence.
+Therefore, everything except , has higher precedence. Therefore,
+the parens on the right hand side of |= make no difference.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZYr0EACgkQ3SOs138+
-s6H0qA//VtOBk1k9qHZdQF+5oC1HaKmclp+MFecexS2w1fOic7SRCaXXaVe+yLTh
-d+rY3ge9/sxGxL8vBHnpDPty4yg37cu77XbF0GntvjvB81PWoIqazUK3fX45qHTF
-B67gyZDV/5HvLQXSk8XjAodp1yoMBcBSxiCgm9WM3oYbwrs6iI5mBrbWQX0WLX3A
-o+2X+XppsqlTlXBnFPHtWQS+DoxMPXTbKC8IotqP6Oi0YHthDAC0L8urYJgJa/VY
-vXHImnoJoFJkP9z1H3uoHOFE7kaVNK0WNoNPejHPls7Rr9AkCMhWKBmzOfOVMw/t
-Lv0hVK03TrDTu4jZYUL15yqHRR9MZrVgwYeaTbxNHriHBFZMIkATWS6gu43bnXDI
-Sj4PXeuttsi0MQHBrE184IkjGC/VQ4gC3pxuuurqAVs5uaXICwb8DYU2fkaIiIdr
-lWnyZZwmmWkzaDd1T7w7mF149Mid+kHrueNJFAigRjGE02BNZzXnjCfKLoyYgeom
-EIDx6QAUSyV1qSAjfG1J8dV4Ag6joFiBAdsO8yk7teOtaH8JuPWQauoPC7Q+7BF7
-89UgDVkWPjJUuaktWqyPhUPpcINzJ7IQZ8sF2DdgPkq+Z9vbCP/jZs0VEVSpMF6d
-DStI+QzysQhcpHFpT7DqaR7ryeMbS1/AtHkkKgaXJP2mKXmXyoU=
-=eLTd
------END PGP SIGNATURE-----
-
---357c9420193d77c21cae851122d418a2d2433a7d1bb8c98af37a194714df--
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
