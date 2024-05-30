@@ -1,127 +1,134 @@
-Return-Path: <linux-kernel+bounces-195328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71038D4B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:56:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F46E8D4B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567F81F236ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51ABD2834F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97BF1822E7;
-	Thu, 30 May 2024 11:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F04617E442;
+	Thu, 30 May 2024 11:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sFzBlGkh"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B834C17D357;
-	Thu, 30 May 2024 11:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IT2yQxNG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBD317276E;
+	Thu, 30 May 2024 11:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070126; cv=none; b=Es6O1ZK6ogXvcNymrFDYEdvvJSKaI01P8CuqQK5NcGmD9X2jr6KdWyKn62yUY7j49w+Qck/1ZlEe8S/qAZ9BSd+1qymMxV7LPiKpVEdCezYOQAMd9q+48vYutx9NcP5N7r8NLRBFdO8PVJSZEyQIOHTf/IPWDA7M9miJXvFSeAY=
+	t=1717070185; cv=none; b=r95p+ag+paQdhe5SgCsV1ZWqoSHlXT0QAGn5lg/UvVBkFpygQfbQFlpltwoh0f+yIDOf3Z/q0QEq90CLzqF6XeAYb6sF8QlUIBlqq7Cu6pyl6PzxadymlEDFkIICBLtIHmZdRydZBVuI5XLflEl4b448EkkMkoPuGtY948MU8Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070126; c=relaxed/simple;
-	bh=Tka6UiC1uoB3TRMiDul+wp8wRtb86hr277VqYplsCxc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=eS3G66lnjIz+xvU5g/bDy0YGB1M2wHK22wJO3yb/c+UzYiGUxwkQBJmQ30VpuCUn6tWVrsqZUVBsYAoiZ6A3g5cX2S9av/TJ1707Me/GNILHMAkqKJrW/W8gbzbXQRA07oQMz4p4pwNZ6f5jYCp2FAW6fnioeW13Fnwwzf1bdWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sFzBlGkh; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6F59B20B9260;
-	Thu, 30 May 2024 04:55:23 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6F59B20B9260
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1717070123;
-	bh=M3K5XGSDfWbI4lB7ESD4sp7zphrlBgbkJOr4pru6vAk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sFzBlGkh2b/X90BdWWE4n3KeHDs6wSuxAmIQJbtw6/LXmCS/uLxFZDcopYIU9ZQSl
-	 cFxIhrZJJljW83qBtnNUiavB596sD26CrQ3xjfIF2Q+sZVPskNChZvZC1WTP5Ci2Zy
-	 FVQLZ/eR3PRnoxpucdyCTmedbsCWs0CB6xdDMbds=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	sharmaajay@microsoft.com,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rdma-next v2 2/2] RDMA/mana_ib: extend query device
-Date: Thu, 30 May 2024 04:55:17 -0700
-Message-Id: <1717070117-1234-3-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1717070117-1234-1-git-send-email-kotaranov@linux.microsoft.com>
-References: <1717070117-1234-1-git-send-email-kotaranov@linux.microsoft.com>
+	s=arc-20240116; t=1717070185; c=relaxed/simple;
+	bh=Kf5urJElw/MAhUVK6/I8Nf7RBE+hhlvwpip9R7CJZmE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fA9YRBF2xWhKVVgpTRXjCuHMMnNZRXiIQVojVot51irdkQk0182hpXw5Dtu3zyZ+m4FGZ4W9fJTep5jn5I+vcMLEkS+UMOhMjheR0pBzonkUusOkIQezUx8HhsmCSCOt6OZJRzhwjZUW+FDZk+TjiSB8nzkm8RpM1PmOkbphtpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IT2yQxNG; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717070184; x=1748606184;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=Kf5urJElw/MAhUVK6/I8Nf7RBE+hhlvwpip9R7CJZmE=;
+  b=IT2yQxNGZWx7Gvo0VyBfCIqCPb/nIFFDiHFlOa2t2tuYZNImqMBrDoVc
+   ci63FwJd0Xat2PbpMhBC9UCMKoGa6Qs7BmbFlUhI6ATcDEDQyGPe/R4hS
+   N7zudVI4R7qoCZqAeNYL5VXawL4A7fhL86RNkQw55DS3QtpPgbKvQehXt
+   epUF0wXzbTyqe82hTnN7lBOhKHRIxZnQcwUi7eJb21ARc7n5xgDvXOdUt
+   e43fGUo4yozK9I84mwWSwZDyAr4JcPuuCrTJq6GF+erKF/7hWvGxNNkw5
+   0ZZcb/2ry/lLzZROfPuuILGSgtJmFK+yOrDltpB+UyGzqnjYcaHE3hf3o
+   Q==;
+X-CSE-ConnectionGUID: J7oc/xn/Thyu0cyerwuWSQ==
+X-CSE-MsgGUID: TZcXRTluTOSxcCHLFI9OwA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13730237"
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="13730237"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 04:56:23 -0700
+X-CSE-ConnectionGUID: r51jObzNTHqgQUsRGGP9+g==
+X-CSE-MsgGUID: SuG7wB0TQZGU8VkEhESf8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="40325621"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.150])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 04:56:20 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 30 May 2024 14:56:16 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
+    Babu Moger <babu.moger@amd.com>, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>, 
+    Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v4 14/16] selftests/resctrl: Remove mongrp from MBA
+ test
+In-Reply-To: <f2a8e8ad-311c-4302-a200-03fc9f02b20b@intel.com>
+Message-ID: <feec5ce3-cad9-6ace-3588-67e7da9641d6@linux.intel.com>
+References: <20240520123020.18938-1-ilpo.jarvinen@linux.intel.com> <20240520123020.18938-15-ilpo.jarvinen@linux.intel.com> <f2a8e8ad-311c-4302-a200-03fc9f02b20b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="8323328-1244305515-1717062694=:1113"
+Content-ID: <ad75cbad-443e-d9d9-5090-23354f3468f7@linux.intel.com>
 
-From: Konstantin Taranov <kotaranov@microsoft.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Fill in properties of the ib device.
-Order the assignment in the order of fields in the struct ib_device_attr.
+--8323328-1244305515-1717062694=:1113
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <dc718522-6640-a0a6-7777-2864c166fa6f@linux.intel.com>
 
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
-Reviewed-by: Long Li <longli@microsoft.com>
----
- drivers/infiniband/hw/mana/main.c    | 19 ++++++++++++++++---
- drivers/infiniband/hw/mana/mana_ib.h |  5 +++++
- 2 files changed, 21 insertions(+), 3 deletions(-)
+On Wed, 29 May 2024, Reinette Chatre wrote:
+> On 5/20/24 5:30 AM, Ilpo J=E4rvinen wrote:
+> > Nothing during MBA test uses mongrp even if it has been defined ever
+> > since the introduction of the MBA test in the commit 01fee6b4d1f9
+> > ("selftests/resctrl: Add MBA test").
+> >=20
+> > Remove the mongrp from MBA test.
+> >=20
+> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> > ---
+> >   tools/testing/selftests/resctrl/mba_test.c | 1 -
+> >   1 file changed, 1 deletion(-)
+> >=20
+> > diff --git a/tools/testing/selftests/resctrl/mba_test.c
+> > b/tools/testing/selftests/resctrl/mba_test.c
+> > index 9c9a4f22e529..5e0b1e794295 100644
+> > --- a/tools/testing/selftests/resctrl/mba_test.c
+> > +++ b/tools/testing/selftests/resctrl/mba_test.c
+> > @@ -166,7 +166,6 @@ static int mba_run_test(const struct resctrl_test *=
+test,
+> > const struct user_param
+> >   =09struct resctrl_val_param param =3D {
+> >   =09=09.resctrl_val=09=3D MBA_STR,
+> >   =09=09.ctrlgrp=09=3D "c1",
+> > -=09=09.mongrp=09=09=3D "m1",
+> >   =09=09.filename=09=3D RESULT_FILE_NAME,
+> >   =09=09.init=09=09=3D mba_init,
+> >   =09=09.setup=09=09=3D mba_setup,
+>=20
+> This may explain the unexpected checks that are removed in final patch?
 
-diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
-index 2a41135..814a61e 100644
---- a/drivers/infiniband/hw/mana/main.c
-+++ b/drivers/infiniband/hw/mana/main.c
-@@ -547,14 +547,27 @@ int mana_ib_query_device(struct ib_device *ibdev, struct ib_device_attr *props,
- 	struct mana_ib_dev *dev = container_of(ibdev,
- 			struct mana_ib_dev, ib_dev);
- 
-+	memset(props, 0, sizeof(*props));
-+	props->max_mr_size = MANA_IB_MAX_MR_SIZE;
-+	props->page_size_cap = PAGE_SZ_BM;
- 	props->max_qp = dev->adapter_caps.max_qp_count;
- 	props->max_qp_wr = dev->adapter_caps.max_qp_wr;
-+	props->device_cap_flags = IB_DEVICE_RC_RNR_NAK_GEN;
-+	props->max_send_sge = dev->adapter_caps.max_send_sge_count;
-+	props->max_recv_sge = dev->adapter_caps.max_recv_sge_count;
-+	props->max_sge_rd = dev->adapter_caps.max_recv_sge_count;
- 	props->max_cq = dev->adapter_caps.max_cq_count;
- 	props->max_cqe = dev->adapter_caps.max_qp_wr;
- 	props->max_mr = dev->adapter_caps.max_mr_count;
--	props->max_mr_size = MANA_IB_MAX_MR_SIZE;
--	props->max_send_sge = dev->adapter_caps.max_send_sge_count;
--	props->max_recv_sge = dev->adapter_caps.max_recv_sge_count;
-+	props->max_pd = dev->adapter_caps.max_pd_count;
-+	props->max_qp_rd_atom = dev->adapter_caps.max_inbound_read_limit;
-+	props->max_res_rd_atom = props->max_qp_rd_atom * props->max_qp;
-+	props->max_qp_init_rd_atom = dev->adapter_caps.max_outbound_read_limit;
-+	props->atomic_cap = IB_ATOMIC_NONE;
-+	props->masked_atomic_cap = IB_ATOMIC_NONE;
-+	props->max_ah = INT_MAX;
-+	props->max_pkeys = 1;
-+	props->local_ca_ack_delay = MANA_CA_ACK_DELAY;
- 
- 	return 0;
- }
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index 68c3b4f..59a7a35 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -27,6 +27,11 @@
-  */
- #define MANA_IB_MAX_MR		0xFFFFFFu
- 
-+/*
-+ * The CA timeout is approx. 260ms (4us * 2^(DELAY))
-+ */
-+#define MANA_CA_ACK_DELAY	16
-+
- struct mana_ib_adapter_caps {
- 	u32 max_sq_id;
- 	u32 max_rq_id;
--- 
-2.43.0
+While possible, I just have gotten a feeling that not much thought has=20
+been put on generality until now. Because of that, the solution had always=
+=20
+been adding new ifs, no matter the place, instead of thinking how to=20
+parametrize things properly instead. It has lead to fully overlapping=20
+checks, dead code, and incomplete error handling which is hopefully now=20
+slowly getting less and less.
 
+> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
+--=20
+ i.
+--8323328-1244305515-1717062694=:1113--
 
