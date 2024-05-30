@@ -1,90 +1,121 @@
-Return-Path: <linux-kernel+bounces-194974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567558D4539
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C869C8D453C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC851F237A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64679285C47
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B50143751;
-	Thu, 30 May 2024 06:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C8014372F;
+	Thu, 30 May 2024 06:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBRp6eqv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YXUhH0kQ"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A635C7F;
-	Thu, 30 May 2024 06:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0687F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717048883; cv=none; b=VQ3/uxPl71O00/L+RqBslCvi2/fs4TAN9q0WZnCotXxr6tXTJiDGes7jd/HRfTRnBDJCVIHmoBBonwgCopZ3ibbiNn4m9C8sM7rEmD8C7gf1oZp8KzSw1dWpNDkUsRublxPpRC+N/aE1ETrZMMdmO/PuADEdko7UiniSTF4GCsc=
+	t=1717048967; cv=none; b=cffEm7ostbS0HaG4QEFlVloLNNM6/4Da6SMKO1NsHZKpc+/iLcUiYI7XpvO36G1FhGZuK3hmNAD2J51GHdPiMnQirJlBRroMZQnFis28fjpmFqzYP5/4/KjwdA6+FFtWj4OW36BT5c/NRe3uILwTFQLN/Nr+/XA6EiY28tru2Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717048883; c=relaxed/simple;
-	bh=sMQhmPMrxDqBb+GMiCUWSmUfWbT6ZYt7eWULOCQH4DM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYUz4xk7MYnx6qAHzx7SdDhLuox7ruguZNkDyijUlalHEYw1sHjATnitMGXOuy+hugr16JTKB0+w301VDTF9iqLj1EKAzNfA6fdxG9WouZf1YxgC+8sJsVGm1zj4N50RfidotHjUPoE7KM9Xge5G2QKZTDiQ2k3gxx6P9a6HZbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBRp6eqv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9A3C2BBFC;
-	Thu, 30 May 2024 06:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717048883;
-	bh=sMQhmPMrxDqBb+GMiCUWSmUfWbT6ZYt7eWULOCQH4DM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UBRp6eqvNI28qzwp3VBZgtvsj6HNY6LqJJqqMJ3gkdd1e+NoHnhowjTUJml9Zz5mr
-	 xE0qa1rHiSRi52Clr720vSw5vX4kGfKkb7j54/uTuQME/7h8/yv4aSDG+BM5o2vpPE
-	 Wcdev3k7FILnPoC8D4SOrnsc71JsMiXOIPrChlA81EXYJJK9QTm2VayLusgGfm906a
-	 O7qnPrSxnxecjtir+BjogId3A4iY+lnb9V0SUjzE2OyfwbXNN6tm+H8Fqk031gje34
-	 KcXa9IrzZtJENw/hLh6myIXWnrLuu966vCIRmpTJdMz156ZpVpkIKihdlhlVnR9Wac
-	 hLKSG2T2MsKEg==
-Date: Wed, 29 May 2024 23:01:20 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Fan Wu <wufan@linux.microsoft.com>,
-	corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-	serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, eparis@redhat.com,
-	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 15/20] fsverity: expose verified fsverity built-in
- signatures to LSMs
-Message-ID: <20240530060120.GB29189@sol.localdomain>
-References: <1716583609-21790-16-git-send-email-wufan@linux.microsoft.com>
- <06bb61dc838eeff63bb5f11cea6d4b53@paul-moore.com>
- <D1MQTEW77RY8.36THC7YDK7CZO@kernel.org>
+	s=arc-20240116; t=1717048967; c=relaxed/simple;
+	bh=/i1m66s0EfCscMPh83u0s2InZy1Wj4FCUw7VnWimfgA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S6UcuKn4LcYMAEcgl+5kinNSj6uHMNgo+7RG22xqrtisd0wxvFVzsdJIrhDh1rKi5yrpvH+p8s+4IvaTa6/B55AnlBZdvMop4eCAQHjuQ7wkXIUIyBRQ8wn4x+NOhcuogyp/JLQZxGuucULREaM/qDHjv94QOsyJt2eIEYwbfFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YXUhH0kQ; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: roy.pledge@nxp.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717048962;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oIBMH1m3ZhE+OQ4EQa7OLK0X4q+1xx+6DaOvj7nfR6c=;
+	b=YXUhH0kQp6h+U2qVsMeMrBTVsfKQBFt0YL6U6891H9252W3fDBdnIVl1C1vvtChqmm2N3z
+	os3xR/vo545lDdkDef6SNKJTjdpNsZmxVK1zB3Qgh9VgF32U+7xKV8n+MWbna7RPcFuuVR
+	qlLH0Av5/7xjDii+zmUgeqVP51nau9s=
+X-Envelope-To: leoyang.li@nxp.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: lkp@intel.com
+X-Envelope-To: tangyouling@kylinos.cn
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+To: Roy Pledge <Roy.Pledge@nxp.com>
+Cc: Li Yang <leoyang.li@nxp.com>,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: [PATCH] soc: fsl: dpio: Add prefetch.h includes fixing potential build errors
+Date: Thu, 30 May 2024 14:02:09 +0800
+Message-Id: <20240530060209.1074031-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D1MQTEW77RY8.36THC7YDK7CZO@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, May 30, 2024 at 08:51:21AM +0300, Jarkko Sakkinen wrote:
-> On Thu May 30, 2024 at 4:44 AM EEST, Paul Moore wrote:
-> > > +	err = security_inode_setintegrity(inode,
-> > > +					  LSM_INT_FSVERITY_BUILTINSIG_VALID,
-> > > +					  signature,
-> > > +					  le32_to_cpu(sig_size));
-> >
-> > I like this much better without the explicit inode cast :)
-> 
-> Would be nice btw if that was 'ret' or 'rc' because err is such
-> a common name for exception handler alike goto-labels... Looks
-> confusing just because of that :-)
-> 
+From: Youling Tang <tangyouling@kylinos.cn>
 
-A lot of kernel code, including the rest of fs/verity/, uses the convention that
-"0 or negative errno" return values are named 'err' (and return values that
-aren't necessarily an errno are named something else).  So it's fine as-is.
+If the architecture does not implement prefetch() specifically, the
+following build error occurs:
+   drivers/soc/fsl/dpio/dpio-service.c: In function 'dpaa2_io_store_next':
+>> drivers/soc/fsl/dpio/dpio-service.c:745:17: error: implicit declaration of function 'prefetch'; did you mean 'prefetchw'? [-Werror=implicit-function-declaration]
+     745 |                 prefetch(&s->vaddr[s->idx]);
+         |                 ^~~~~~~~
+         |                 prefetchw
+   cc1: some warnings being treated as errors
+--
+   drivers/soc/fsl/dpio/qbman-portal.c: In function 'qbman_swp_dqrr_next_direct':
+>> drivers/soc/fsl/dpio/qbman-portal.c:1213:17: error: implicit declaration of function 'prefetch'; did you mean 'prefetchw'? [-Werror=implicit-function-declaration]
+    1213 |                 prefetch(qbman_get_cmd(s,
+         |                 ^~~~~~~~
+         |                 prefetchw
+   cc1: some warnings being treated as errors
 
-- Eric
+Include the correct header file to fix the problem.
+
+Fixes: f1e250bf3659 ("soc: fsl: dpio: Add prefetch instruction")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202405300328.eZmSYZrP-lkp@intel.com/
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+---
+ drivers/soc/fsl/dpio/dpio-service.c | 1 +
+ drivers/soc/fsl/dpio/qbman-portal.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/soc/fsl/dpio/dpio-service.c b/drivers/soc/fsl/dpio/dpio-service.c
+index b811446e0fa5..a4692b9ad8d7 100644
+--- a/drivers/soc/fsl/dpio/dpio-service.c
++++ b/drivers/soc/fsl/dpio/dpio-service.c
+@@ -9,6 +9,7 @@
+ #include <soc/fsl/dpaa2-io.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
++#include <linux/prefetch.h>
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
+ #include <linux/dma-mapping.h>
+diff --git a/drivers/soc/fsl/dpio/qbman-portal.c b/drivers/soc/fsl/dpio/qbman-portal.c
+index 0a3fb6c115f4..1c0bf04b101c 100644
+--- a/drivers/soc/fsl/dpio/qbman-portal.c
++++ b/drivers/soc/fsl/dpio/qbman-portal.c
+@@ -7,6 +7,7 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <linux/io.h>
++#include <linux/prefetch.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <soc/fsl/dpaa2-global.h>
+-- 
+2.34.1
+
 
