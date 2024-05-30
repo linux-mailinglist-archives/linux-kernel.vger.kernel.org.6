@@ -1,178 +1,148 @@
-Return-Path: <linux-kernel+bounces-196039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7300C8D5657
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:39:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1B78D5664
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27BFF284496
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16036286F59
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D548A180A71;
-	Thu, 30 May 2024 23:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D8918399B;
+	Thu, 30 May 2024 23:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dh2h9nBd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I1rKgK37"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121BA6F31E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D0517C7B7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717112367; cv=none; b=CZ4sS3JMKtEzsbLZBkjgwrRbbz4YNzWfa43xKZ60RthL3xGrkyIlZNqanIaT+xl7AZsy1xV7zsXEQ07W42V5+TACoi5v28eIqkmPiRWvoAhtDF+xCGUCfBm9zoXHCSuRFj+luZhkOE7T3uXU4QIgAO35LY1TNsn2aTr4+biICcw=
+	t=1717112613; cv=none; b=nhOTq++2xy0ZzDfawn8SWjTDjBAsKU0ygXM9eZn7dxJad3pRIlruejFLAVztpm+kLetKgIyZplPUDaoa7wOGFt1gfKnt4rE3o74/j5bhLpnlUKVIhqCqzZT0rjk2l7XF0xGs9g5MLqqfSn6i79dTpTWVJCVolQRGCGLyBGdHEgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717112367; c=relaxed/simple;
-	bh=sVv/oR9gef/2s1T5b+tAfBDYtP0ALpovcy0y5xS7bFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MpgeHG9IHZkjDaBsT5+WX3HNxpkSy0C3ZuS5fe2AsCaj1G9OQOryGvykb6BNC5RVrTNIZi+WhictGuhnNQ2U8pbRI1i0GPqvc/fpc8/OtCLlOm8bJgMGvJr7S705mOdGuTwT14I5flL/Vx+BYfos7eDC27RUoprBSte2il9R5do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dh2h9nBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62815C2BBFC;
-	Thu, 30 May 2024 23:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717112366;
-	bh=sVv/oR9gef/2s1T5b+tAfBDYtP0ALpovcy0y5xS7bFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dh2h9nBdEwLpAg8aiHA6n8oZ6P6LUJMFVKCYqrLXQWgduD7reb0Gijcw9JZCkd2qP
-	 rxs8aGaOz/W4rCfZCtSPkkUqKYNmTlGqAeA53+UAU/w+TG0RTS8QUqvfz1nLYVLVPH
-	 KYqHTIpOvKbuM7SmpWlKrL2sujfBXTXXpuiOLxInJwdOk5IVLL2HocfBkb2R/e3J20
-	 Qa8Jp+UpKVh8yT8N5cNE0GwYAQochQ/X7rpyLI97UemOW6xl+gdhgUWtA7f75PgQwE
-	 tqaVyZk5fbQn+QSLqJ28S+GqMJQINd0bQzwjLuVUUtoSjV3fwpPC7HfA0DLY0urqGo
-	 NBCRNTIQwTRvg==
-Date: Thu, 30 May 2024 23:39:24 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: use per-log target_bitmap to
- improve lookup performace of ssr allocation
-Message-ID: <ZlkOLN0BugwQ2p5p@google.com>
-References: <20240411082354.1691820-1-chao@kernel.org>
- <11d5d736-bae5-4a71-b400-087b8722893c@kernel.org>
- <03647897-8b1f-4c82-b2b6-0aa0704bed05@kernel.org>
+	s=arc-20240116; t=1717112613; c=relaxed/simple;
+	bh=uUh0scWgAAnBxAOdDHx9RouN1dRcQ02724YXzEXjoLY=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=alaWDCEVJeT0lVzFXj0v/ta0NbYHL+6E71xlMO9z+Cs9KkXPURvKjgmO/CH1NXwEzdPfMKOZ9cRtNi66YhzGRFD0aMA7dJtDph3YvB+T7y1q++kMi7bvD4vwhy57xHQ/W6A2pV6V/l31oU48uYmrGjvsJ8kZ5Ub5UeunEgd65Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I1rKgK37; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f48b825d8cso12004175ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717112611; x=1717717411; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:subject:cc:to:from
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=213yq+FHXchIlGeobquZB8jFxU/5d0H9yaCh+D4OtRk=;
+        b=I1rKgK37fIlXWZIsGetzPmix8j3X1QZosRNbTiMumTfRBJYCsI1TJ/mmHzCtHOOAws
+         MQr5/S2mct+n6XG66oO7eDXX9l8KEkqn+7lRS24rHrpCkIWxpKiu1gGq8Z3rZa8zjUp9
+         s7OPpAW9FhJTZg7Rstkpt9BuH2ZgVNPYyo1zY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717112611; x=1717717411;
+        h=content-transfer-encoding:mime-version:date:subject:cc:to:from
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=213yq+FHXchIlGeobquZB8jFxU/5d0H9yaCh+D4OtRk=;
+        b=TL+8qxegFAVDZ8T1tCxXI7HMTWAp7p/r5icMc7FssdU/yljGeVBSqlG6mL7vNlziQ2
+         rZPXJ6QHKJ4dTp6Q2wuJEf2MhP1bBsGLUOqqT1ROmU+jSJuEZUgRtOyh32M4psOy6mWr
+         +yeUhsvDPQO0mY7pePDL27B19roPOAD0tOiclbaNUkjOkoOrv1yhp9xHyoN1QOqrnC7W
+         lcOOON61kbyumFRtuVKixFY3min6zLgRceCcj4ikO2W0PRCQf4wPgnkXEtBZCxsW0PWT
+         hleYM7U0M3AAc/cJ4JROsdENjC3MUlG6ItukX+biMGZvomjAi0v3bujWKB94Y087wVks
+         tBRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6u2rpIGXYfQjd2/KsnOwOup0YLgNwaQRyQ6fnYLBYJtggxWqbNaHb0MY2nYxjzeufxvR9PbOvg8B66g6bX6tEt79pKVtuiunAW3b+
+X-Gm-Message-State: AOJu0YyfudrSlPpE8DUcfWdxBPObzz6eu0MnepjkLbrB7pTqf3UqjzpL
+	WXsJ711JD+alRR8o8Zeu6JCtkO+0WsnYlSGIFjt+mLjtEvZPWjBit+S43fnXZQ==
+X-Google-Smtp-Source: AGHT+IHIzulL1B1l4HrbVqXV+F8H37u4frOFnXNzNFoAa36TIVDnW/yMHkJcvalkHwod+UBLfL46Ig==
+X-Received: by 2002:a17:902:f646:b0:1f4:ae25:3d07 with SMTP id d9443c01a7336-1f6370e6510mr3732175ad.60.1717112611373;
+        Thu, 30 May 2024 16:43:31 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:564b:72b6:4827:cf6a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632416d90sm3459275ad.285.2024.05.30.16.43.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 16:43:30 -0700 (PDT)
+Message-ID: <66590f22.170a0220.8b5ad.1750@mx.google.com>
+X-Google-Original-Message-ID: <20240530164304.REPOST net-next.1.Ibeda5c0772812ce18953150da5a0888d2d875150@changeid>
+From: Douglas Anderson <dianders@chromium.org>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Hayes Wang <hayeswang@realtek.com>
+Cc: danielgeorgem@google.com,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Grant Grundler <grundler@chromium.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH REPOST net-next 1/2] r8152: If inaccessible at resume time, issue a reset
+Date: Thu, 30 May 2024 16:43:08 -0700
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <03647897-8b1f-4c82-b2b6-0aa0704bed05@kernel.org>
 
-On 05/29, Chao Yu wrote:
-> Ping,
+If we happened to get a USB transfer error during the transition to
+suspend then the usb_queue_reset_device() that r8152_control_msg()
+calls will get dropped on the floor. This is because
+usb_lock_device_for_reset() (which usb_queue_reset_device() uses)
+silently fails if it's called when a device is suspended or if too
+much time passes.
 
-Chao, sorry, I might need some time to take a look at the change cautiously.
+Let's resolve this by resetting the device ourselves in r8152's
+resume() function.
 
-> 
-> On 2024/4/23 10:07, Chao Yu wrote:
-> > Jaegeuk, any comments for this serials?
-> > 
-> > On 2024/4/11 16:23, Chao Yu wrote:
-> > > After commit 899fee36fac0 ("f2fs: fix to avoid data corruption by
-> > > forbidding SSR overwrite"), valid block bitmap of current openned
-> > > segment is fixed, let's introduce a per-log bitmap instead of temp
-> > > bitmap to avoid unnecessary calculation overhead whenever allocating
-> > > free slot w/ SSR allocator.
-> > > 
-> > > Signed-off-by: Chao Yu <chao@kernel.org>
-> > > ---
-> > > v2:
-> > > - rebase to last dev-test branch.
-> > >   fs/f2fs/segment.c | 30 ++++++++++++++++++++++--------
-> > >   fs/f2fs/segment.h |  1 +
-> > >   2 files changed, 23 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > > index 6474b7338e81..af716925db19 100644
-> > > --- a/fs/f2fs/segment.c
-> > > +++ b/fs/f2fs/segment.c
-> > > @@ -2840,31 +2840,39 @@ static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
-> > >       return 0;
-> > >   }
-> > > -static int __next_free_blkoff(struct f2fs_sb_info *sbi,
-> > > -                    int segno, block_t start)
-> > > +static void __get_segment_bitmap(struct f2fs_sb_info *sbi,
-> > > +                    unsigned long *target_map,
-> > > +                    int segno)
-> > >   {
-> > >       struct seg_entry *se = get_seg_entry(sbi, segno);
-> > >       int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
-> > > -    unsigned long *target_map = SIT_I(sbi)->tmp_map;
-> > >       unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
-> > >       unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
-> > >       int i;
-> > >       for (i = 0; i < entries; i++)
-> > >           target_map[i] = ckpt_map[i] | cur_map[i];
-> > > +}
-> > > +
-> > > +static int __next_free_blkoff(struct f2fs_sb_info *sbi, unsigned long *bitmap,
-> > > +                    int segno, block_t start)
-> > > +{
-> > > +    __get_segment_bitmap(sbi, bitmap, segno);
-> > > -    return __find_rev_next_zero_bit(target_map, BLKS_PER_SEG(sbi), start);
-> > > +    return __find_rev_next_zero_bit(bitmap, BLKS_PER_SEG(sbi), start);
-> > >   }
-> > >   static int f2fs_find_next_ssr_block(struct f2fs_sb_info *sbi,
-> > > -        struct curseg_info *seg)
-> > > +                    struct curseg_info *seg)
-> > >   {
-> > > -    return __next_free_blkoff(sbi, seg->segno, seg->next_blkoff + 1);
-> > > +    return __find_rev_next_zero_bit(seg->target_map,
-> > > +                BLKS_PER_SEG(sbi), seg->next_blkoff + 1);
-> > >   }
-> > >   bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno)
-> > >   {
-> > > -    return __next_free_blkoff(sbi, segno, 0) < BLKS_PER_SEG(sbi);
-> > > +    return __next_free_blkoff(sbi, SIT_I(sbi)->tmp_map, segno, 0) <
-> > > +                            BLKS_PER_SEG(sbi);
-> > >   }
-> > >   /*
-> > > @@ -2890,7 +2898,8 @@ static int change_curseg(struct f2fs_sb_info *sbi, int type)
-> > >       reset_curseg(sbi, type, 1);
-> > >       curseg->alloc_type = SSR;
-> > > -    curseg->next_blkoff = __next_free_blkoff(sbi, curseg->segno, 0);
-> > > +    curseg->next_blkoff = __next_free_blkoff(sbi, curseg->target_map,
-> > > +                            curseg->segno, 0);
-> > >       sum_page = f2fs_get_sum_page(sbi, new_segno);
-> > >       if (IS_ERR(sum_page)) {
-> > > @@ -4635,6 +4644,10 @@ static int build_curseg(struct f2fs_sb_info *sbi)
-> > >                   sizeof(struct f2fs_journal), GFP_KERNEL);
-> > >           if (!array[i].journal)
-> > >               return -ENOMEM;
-> > > +        array[i].target_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
-> > > +                                GFP_KERNEL);
-> > > +        if (!array[i].target_map)
-> > > +            return -ENOMEM;
-> > >           if (i < NR_PERSISTENT_LOG)
-> > >               array[i].seg_type = CURSEG_HOT_DATA + i;
-> > >           else if (i == CURSEG_COLD_DATA_PINNED)
-> > > @@ -5453,6 +5466,7 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
-> > >       for (i = 0; i < NR_CURSEG_TYPE; i++) {
-> > >           kfree(array[i].sum_blk);
-> > >           kfree(array[i].journal);
-> > > +        kfree(array[i].target_map);
-> > >       }
-> > >       kfree(array);
-> > >   }
-> > > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> > > index e1c0f418aa11..10f3e44f036f 100644
-> > > --- a/fs/f2fs/segment.h
-> > > +++ b/fs/f2fs/segment.h
-> > > @@ -292,6 +292,7 @@ struct curseg_info {
-> > >       struct f2fs_summary_block *sum_blk;    /* cached summary block */
-> > >       struct rw_semaphore journal_rwsem;    /* protect journal area */
-> > >       struct f2fs_journal *journal;        /* cached journal info */
-> > > +    unsigned long *target_map;        /* bitmap for SSR allocator */
-> > >       unsigned char alloc_type;        /* current allocation type */
-> > >       unsigned short seg_type;        /* segment type like CURSEG_XXX_TYPE */
-> > >       unsigned int segno;            /* current segment number */
-> > 
-> > 
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+NOTE: due to timing, it's _possible_ that we could end up with two USB
+resets: the one queued previously and the one called from the resume()
+patch. This didn't happen in test cases I ran, though it's conceivably
+possible. We can't easily know if this happened since
+usb_queue_reset_device() can just silently drop the reset request. In
+any case, it's not expected that this is a problem since the two
+resets can't run at the same time (because of the device lock) and it
+should be OK to reset the device twice. If somehow the double-reset
+causes problems we could prevent resets from being queued up while
+suspend is running.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+Reposting now that the merge window is open as per [1].
+
+[1] https://lore.kernel.org/r/75651199a933427a7fc3980ef8a2139f5f1f1695.camel@redhat.com
+
+ drivers/net/usb/r8152.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 19df1cd9f072..6a3f4b2114ee 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -8554,6 +8554,19 @@ static int rtl8152_system_resume(struct r8152 *tp)
+ 		usb_submit_urb(tp->intr_urb, GFP_NOIO);
+ 	}
+ 
++	/* If the device is RTL8152_INACCESSIBLE here then we should do a
++	 * reset. This is important because the usb_lock_device_for_reset()
++	 * that happens as a result of usb_queue_reset_device() will silently
++	 * fail if the device was suspended or if too much time passed.
++	 *
++	 * NOTE: The device is locked here so we can directly do the reset.
++	 * We don't need usb_lock_device_for_reset() because that's just a
++	 * wrapper over device_lock() and device_resume() (which calls us)
++	 * does that for us.
++	 */
++	if (test_bit(RTL8152_INACCESSIBLE, &tp->flags))
++		usb_reset_device(tp->udev);
++
+ 	return 0;
+ }
+ 
+-- 
+2.45.1.288.g0e0cd299f1-goog
+
 
