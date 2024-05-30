@@ -1,288 +1,173 @@
-Return-Path: <linux-kernel+bounces-195691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206C38D505F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF158D5060
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFD01F276AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:00:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14601C21F8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5DF405FB;
-	Thu, 30 May 2024 16:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEC33FB94;
+	Thu, 30 May 2024 17:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ShGtPagx"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ym5uA+he"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A123D3BC;
-	Thu, 30 May 2024 16:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C172A2E620;
+	Thu, 30 May 2024 17:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088397; cv=none; b=o839jWvXG6TqgqbZYcRgy65ntTMtRu63PkbEAUAx7QG8ynP8+7Ujm0wPzME+JyYcde/irdNF5WKSoie8h69TWd5wEP8Cqh1A2yAgN/AbLjIGnOHUIDx/QCMKdmiuv4fmXyDEVH51b/aCwqc0Yvzweu/gPtyOW2HfFgR0VcaYuK4=
+	t=1717088451; cv=none; b=i0QsWnRHfMlimBctmYbsOeoyUyzMMIzpLgmMNsbGXUt3HHvGzPOyeLqBFaNEV5xd8XBDYtqzJfsfT14g2qqlV3VQdbFzTaxWlvaIaaH2N+UPB/sB5pb7XsT8DYuVDtzYAl2H76OE4AlO2jIo05plEQkkl+FKi/BLeUfET7PEOV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088397; c=relaxed/simple;
-	bh=ZmewMy/J48g7zeSgTaAlaDabbdez0NdBnKOUTQSkdN0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ahS7K7dmQ6D6OUDzVn3hGWNh/E+ZItQTCt1ftP3YXd/1PoZWPy/9dxNsL2ukq2BM5o+Ug29kT9twl+OPfSLIaLlc6o+FHgWtkIThbA29Rm0D7Ef5HPna51z4sCtRQ5JUBUoQ3rHvym3GpkSQFZSjhSxlDfX27FlT1KWElBFcX6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ShGtPagx; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UGxRfI084779;
-	Thu, 30 May 2024 11:59:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717088367;
-	bh=NWzO6PifBfl4VTshOed7kvLZcKauKBveekB4GRW4id4=;
-	h=From:To:CC:Subject:Date;
-	b=ShGtPagxvcfJ7Yhs1iaDY+Wlw9QXxafr3XKlUfAptXKA03XgaIClChXgzPG8tAhkW
-	 vQ8gxXSpovCZRTlDx7EDGwRyw/0NKZiOZqpni++AQKQbzxYmDpNwD6FxM6Mh3Soo6o
-	 4fLPor5orc9v7qtvGMODNv+/0fLfMe4x5YAWGthk=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UGxQPN066441
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 30 May 2024 11:59:27 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
- May 2024 11:59:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 30 May 2024 11:59:26 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UGxPmf119255;
-	Thu, 30 May 2024 11:59:26 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
-        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
-        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <jani.nikula@intel.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-rockchip@lists.infradead.org>, <davidgow@google.com>,
-        <dlatypov@google.com>
-Subject: [PATCH v10 00/11] Add V4L2 M2M Driver for E5010 JPEG Encoder
-Date: Thu, 30 May 2024 22:29:25 +0530
-Message-ID: <20240530165925.2715837-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
+	s=arc-20240116; t=1717088451; c=relaxed/simple;
+	bh=bbdJwx1WdI6hxVv7zkvFnNMBwDtodR0O+WkjCEAlr2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXfGopdgksEEm7a33YtBkTWQ9RhJx5LI4Bh8X9hRSeom8mZqFT2Sx96ja77UKcwuIF3tHeHrJOOY9ui+XvonPLGqJGzK73nMEBJhLldKMHUrV+KXQLNZW/rHqRN12GwWJhFWtf4WQB8ea+y3tj7R/z2nSXLt1JSldK5wvKy5v94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ym5uA+he; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-794ba2d4d82so55421185a.0;
+        Thu, 30 May 2024 10:00:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717088448; x=1717693248; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JSxUji88N/0NxFl9gX5AHTL6yyOqY2Ahz7gjZDA3w2s=;
+        b=Ym5uA+heeRTMZcRrSGGutokPsRIUohHxraqlivzO02FG2yafHsZ7YlGK8hw8HLn73d
+         hty1rjlA4yzzNRwlE44Knah52SNh3ijydS0nz2IWM7XgAWlktbfVZ7NolUidL4yLEMCB
+         r5H6utrA9u6MpRB3X+JZ6Rr17czar8jVyNcUDaNlYhMjTSqa8TNPtHnnkeN2S26zGC50
+         P4kzwVLCHyGGLb6igtyLgVwHyc1wgpSV4fxR7MGLCvyKJu+yBtYQzCysfiSjwBhQKyNE
+         5pX5ztqSObToGQeYzTCMejWDR6jBgycv5VsZFdBPugf495v18RfTN/ZKZ34YB/5NCrg0
+         LcpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717088448; x=1717693248;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JSxUji88N/0NxFl9gX5AHTL6yyOqY2Ahz7gjZDA3w2s=;
+        b=T0R4GgsUwPSa9ImRlL4RcfDUYEir+A00T3GHCwLKEc4tAhjrJMiMGdQXvSAMZbbyuD
+         bo0KfkS6IrZUIEvYL3ucFvvx0JNcjO+UoyUObAryQR7gjzC6eisF9oAbM5TS+EOQwEBU
+         AHYuOCGgzOKXM9Fk6wJ/XfyWlNRmXezkyFvssn0WGyK6fdhV6ZJTprptsFtSrwufX9w3
+         3Blb4kbaUjqbxoYTlOJsokWGeziAhF5jNyHyMgk44oRmLRCiQ2WmzTGUM0M72tjv3+zl
+         QaRSEqoYCjbryFVBEJTJskjYQ4elQa4FD/i96dsmqyHFGIILnoYzTb6AeGTFwBQbjY2J
+         RJcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUe09rulD3i7Q0/cmCzlKtN/qgqae50/hYl7gq1QJFR1h6YF2EybmcM2zCnp3tT0nU/2SelyEs2n5/tXzRsLdD6MSYw/FXlM7XjtDBfafC5p+Uc8E94GDmeOEj1B+SZD4uvJBB/krGkIWKXYo4=
+X-Gm-Message-State: AOJu0YzWEnqQEC25uLA+3FG76mtLjDtEzzAlL+Ag73J+CQO+6/YhAfZ/
+	rtM1xojb4KS9MTATKsxLqESBuLBg08pgx86wjmdzq+ykLKVlYaid
+X-Google-Smtp-Source: AGHT+IHwxOQVjX4jjMP5xINeb0ZRE7/H4u3Ev9hJuE7HJA0tJskyy/XS+vI2s8I6LF4ZaPYlPA+CLw==
+X-Received: by 2002:a05:620a:210b:b0:794:99f3:d407 with SMTP id af79cd13be357-794e9da1730mr288097885a.19.1717088448277;
+        Thu, 30 May 2024 10:00:48 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abcd9673sm560623285a.55.2024.05.30.10.00.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 10:00:47 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id E8A291200082;
+	Thu, 30 May 2024 13:00:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 30 May 2024 13:00:46 -0400
+X-ME-Sender: <xms:vrBYZp5KRn6Yokrmm4wUm8MbLiDC2d2vDB34oYRw-8gseOQ-u3xAQw>
+    <xme:vrBYZm7VlQBIPFw_6yc8qpiFkcBDzved8K32D9x63EutaKeI3SV53a2ru7JVcWPRS
+    Qe90z7fLTHh4s4gWQ>
+X-ME-Received: <xmr:vrBYZgcMVfpUQ74zHxzzVgKZM5QMp_1mromfpYUDowwJWgwduOi7lGPKTTw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedguddthecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:vrBYZiLVW2wH-IWwI4iJ3qIkVixnuJ33bEe0hbyC6OgmmnlXqQtFRg>
+    <xmx:vrBYZtIPMtjYzViOTIKer1KuHoFXaKwa2EhHxeOsYUmVsp0CfdAUiA>
+    <xmx:vrBYZrwEBjqOnwSGWM4O6vcH6zacpSfL_OXiVkmSfgoCmhqiN0bH1g>
+    <xmx:vrBYZpJ9vvRL5BtBH6BEIfilMhuVETT94Lq5OSKBS05-3znEN6hjfQ>
+    <xmx:vrBYZgZwNcEGSZh2yW_WcnB51C1Fb65gEeMQqO0a7KBH9hLGayeOq1Ye>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 May 2024 13:00:45 -0400 (EDT)
+Date: Thu, 30 May 2024 10:00:00 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: David Gow <davidgow@google.com>
+Cc: Rae Moar <rmoar@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org, rust-for-linux@vger.kernel.org,
+	x86@kernel.org, Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>
+Subject: Re: [PATCH] arch: um: rust: Use the generated target.json again
+Message-ID: <ZliwkPY-psgVNhZY@boqun-archlinux>
+References: <20240529093336.4075206-1-davidgow@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529093336.4075206-1-davidgow@google.com>
 
-This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
-which is a stateful JPEG encoder from Imagination technologies
-and is present in TI AM62A SoC.
+On Wed, May 29, 2024 at 05:33:35PM +0800, David Gow wrote:
+> The Rust compiler can take a target config from 'target.json', which is
+> generated by scripts/generate_rust_target.rs. It used to be that all
+> Linux architectures used this to generate a target.json, but now
+> architectures must opt-in to this, or they will default to the Rust
+> compiler's built-in target definition.
+> 
+> This is mostly okay for (64-bit) x86 and UML, except that it can
+> generate SSE instructions, which we can't use in the kernel. So
+> re-instate the custom target.json, which disables SSE (and generally
+> enables the 'soft-float' feature). This fixes the following compile
+> error:
+> 
+> error: <unknown>:0:0: in function _RNvMNtCs5QSdWC790r4_4core3f32f7next_up float (float): SSE register return with SSE disabled
+> 
+> Fixes: f82811e22b48 ("rust: Refactor the build target to allow the use of builtin targets")
+> Signed-off-by: David Gow <davidgow@google.com>
 
-While adding support for it, following additional framework changes were
-made:
- - Moved reference quantization and huffman tables provided in
-   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
- - Add macros to round to closest integer (either higher or lower) while
-   rounding in order of 2.
- - Add KUnit tests for math functions.
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 
-v4l2-compliance test :
-Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
+Regards,
+Boqun
 
-E5010 JPEG Encoder Manual tests :
-
-Performance:
-Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
-
-Functionality:
-Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
-
-Compression Quality:
-Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
-
-Multi Instance:
-Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
-
-Crop support:
-Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
-
-Runtime PM:
-Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
-
-Math lib KUnit tests:
-Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876
-
-[1]: 
-https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
-
-Changelog:
-V9->V10:
- - Update commenting style in math.h and add notes for new jpeg header
-   macros
- - Add KUnit dependency for math_kunit
-
-V8->V9:
- - Remove kernel.h header file
- - Remove stale filler data on jpeg header in E5010 jpeg driver
-
-V7->V8:
- - Add KUnit tests for math functions
- - Add roundclosest() for supporting rounding for non-multiple of 2
- - Update commit message as suggested
- - Add Reviewed-by and Acked-by tags to patches as received
-
-V6->V7:
- - Fix cropping support
- - Move reference huffman and quantization tables to v4l2-jpeg.c
- - Fix suspend/resume use-case
- - Add Reviewed-by
-
-V5->V6:
- - Fix sparse warnings
-
-V4->V5:
- - Sort the #includes in driver file alphabetically
- - Rename huffman and quantization tables to not use '_'
- - Add Reviewed-by tag
-
-V3->V4:
-- Use ti-specific compatible ti,am62a-jpeg-enc as secondary one in
-  dt-binding
-- Remove clock-names as only single clock in dt-binding
-- Fix issue with default params setting
-- Correct v4l2 error prints
-- Simplify register write functions with single statement return values
-- Remove unrequired error checks from get_queue()
-- Drop explicit device_caps setting as it is already taken care by v4l2
-  core
-- Remove unrequired multiplanar checks and memset from s_fmt, g_fmt
-  callback functions
-- Fix try_fmt callback to not update the queues
-- Remove unrequired contiguous format attribute from queue_init
-- Use dynamic allocation for video_device and remove unrequired
-  assignments in probe()
-- Remove unrequired checks from queue_setup function
-- Return queued buffers back if start_streaming fails
-- Use ARRAY_SIZE in place of hard-coding
-- Use huffman and quantization tables from reference header file
-
-V2->V3:
-- Add DONOTMERGE patches for dts and defconfig
-- Update driver with below changes :
-  - Correct license headers
-  - Use more generic name core instead of jasper for base registers
-  - Add Comment for forward declarations
-  - Simplify quantization table calculations
-  - Use v4l2_apply_frmsize_constraints for updating framesize and remove
-    unrequired functions
-  - Place TODO at top of file and in commit message too
-  - Use dev_err_probe helper in probe function
-  - Fix return value checking for failure scenarios in probe function
-  - Use v4l2_err/info/warn helpers instead of dev_err/info/warn helpers
-  - Fix unexpected indentation
-  - Correct commit message
-- Update dt-bindings with below changes :
-  - Add vendor specific compatible 
-  - Fix commit title and message
-  - Update reg names
-  - Update clocks to 1
-  - Fix dts example with proper naming
-
-V1->V2:
- - Send dt-bindings and driver together
-
-Patch-Diff between the series :
-V9->V10 Range diff :
-https://gist.github.com/devarsht/b446acee460b8c65fb577d06b7bbc1da
-
-V8->V9 Range diff :
-https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
-
-V6->V7 Range diff :
-https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
-
-V5->V6 Range diff :
-https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
-
-V4->V5 Range diff :
-https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
-
-V3->V4 Range diff :
-https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
-
-Previous patch series:
-V9: https://lore.kernel.org/all/20240526175655.1093707-1-devarsht@ti.com/
-V8: https://lore.kernel.org/all/20240517171532.748684-1-devarsht@ti.com/
-V7: https://lore.kernel.org/all/20240510082603.1263256-1-devarsht@ti.com/
-V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
-V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
-V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
-V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
-V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
-
-
-Daniel Latypov (1):
-  lib: add basic KUnit test for lib/math
-
-Devarsh Thakkar (10):
-  media: dt-bindings: Add Imagination E5010 JPEG Encoder
-  media: imagination: Add E5010 JPEG Encoder driver
-  media: v4l2-jpeg: Export reference quantization and huffman tables
-  media: imagination: Use exported tables from v4l2-jpeg core
-  media: verisilicon : Use exported tables from v4l2-jpeg for hantro
-    codec
-  math.h: Add macros for rounding to closest value
-  Documentation: core-api: Add math.h macros and functions
-  lib: math_kunit: Add tests for new macros related to rounding to
-    nearest value
-  media: imagination: Round to closest multiple for cropping region
-  gpu: ipu-v3: Use generic macro for rounding closest to specified value
-
- Documentation/core-api/kernel-api.rst         |    6 +
- .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
- MAINTAINERS                                   |    7 +
- drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
- drivers/media/platform/Kconfig                |    1 +
- drivers/media/platform/Makefile               |    1 +
- drivers/media/platform/imagination/Kconfig    |   12 +
- drivers/media/platform/imagination/Makefile   |    3 +
- .../platform/imagination/e5010-core-regs.h    |  585 ++++++
- .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
- .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
- .../platform/imagination/e5010-jpeg-enc.c     | 1644 +++++++++++++++++
- .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
- .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
- .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
- drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
- include/linux/math.h                          |   72 +
- include/media/v4l2-jpeg.h                     |   28 +
- lib/math/Kconfig                              |   14 +
- lib/math/Makefile                             |    1 +
- lib/math/math_kunit.c                         |  325 ++++
- 21 files changed, 3738 insertions(+), 118 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
- create mode 100644 drivers/media/platform/imagination/Kconfig
- create mode 100644 drivers/media/platform/imagination/Makefile
- create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
- create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
- create mode 100644 lib/math/math_kunit.c
-
--- 
-2.39.1
-
+> ---
+>  arch/x86/Makefile.um | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
+> index 2106a2bd152b..a46b1397ad01 100644
+> --- a/arch/x86/Makefile.um
+> +++ b/arch/x86/Makefile.um
+> @@ -9,6 +9,7 @@ core-y += arch/x86/crypto/
+>  #
+>  ifeq ($(CONFIG_CC_IS_CLANG),y)
+>  KBUILD_CFLAGS += -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx
+> +KBUILD_RUSTFLAGS += --target=$(objtree)/scripts/target.json
+>  KBUILD_RUSTFLAGS += -Ctarget-feature=-sse,-sse2,-sse3,-ssse3,-sse4.1,-sse4.2,-avx,-avx2
+>  endif
+>  
+> -- 
+> 2.45.1.288.g0e0cd299f1-goog
+> 
 
