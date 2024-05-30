@@ -1,168 +1,248 @@
-Return-Path: <linux-kernel+bounces-195207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB398D48D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:45:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBAF8D48DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40AC2B2590D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:45:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE94AB20759
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9278A152169;
-	Thu, 30 May 2024 09:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="qCKBPvXr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Io9/L6Sl"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127E916DEBD;
+	Thu, 30 May 2024 09:46:11 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEED1482F1;
-	Thu, 30 May 2024 09:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32EA6F2F5;
+	Thu, 30 May 2024 09:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717062301; cv=none; b=TEPy1fYdWTqGv4J39PLKeYFVBIyukvEPr5ez4P4E22ZIuYmY+UsDPsfurj06tVpu5qk5dcXNCLxXk94pmX6kaH/c3UG/iRd1/XJ/qgXY2K+N3BWC/x9RDX33JHqw/0ypa2DjBLlUctOoAlRFf7KDQhXUdLJyE5x4Yf0MXiecvqk=
+	t=1717062370; cv=none; b=Ef9nZlnv5pWVF/3Z9DA+m71rQq0x4Ehiu703T6uexiOS1sHRwwrGfdYuDQzIJTv1aDAxkqJMMk1VcP6JZ4Tx502LQmO6j9he/LCFtfXFfLKlDDsx+1uDFSLIPNC0FiorcHbF/YPuB6h5RMKQD4zPWSPt+v961mGGHVRKJI9k2X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717062301; c=relaxed/simple;
-	bh=45Zwg9DgZghxI7ptVhk8WNm4u73Vh0h462KoZAA/+Xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7lIivPMk5Bg6XbvOWH6BluPzWb45NCyJ2fRYinKILVlef3ywt1yPrdyZuS+lpzrNC4833ibydbR96UP4NDYcDkxt6nBH0CPYjQcjnFL6e0xEscrXrCIHvhhHwRA6dpcz5uMTjUNB3CAVbZ3b2uQFGKj34poBdV9T4EJeXO9lrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=qCKBPvXr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Io9/L6Sl; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 6FBE518000FA;
-	Thu, 30 May 2024 05:44:58 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 30 May 2024 05:44:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1717062298; x=1717148698; bh=vNMVNuaWek
-	S6eTivwMmlyaG4mzIb2gEf+EB3oXFipww=; b=qCKBPvXrrGDBaxGbKi70yi5+zW
-	SEgbhNI2r2sh2iDj+/1VyFxtTi5FNdNZwqTaDl5yYxR68fYVZKi/X7srZ9LwRULz
-	OcjwsZXdTvl+qzp53hziR/PpHadSM3EKmvJMrpa3h7PsoabmOfq5pAOdjNIcIQLn
-	S0T2nYl0t8aRKU/Jw51WdqTpwBeWE/wdYrM39t190zm0e4DWLfPe9b5phYi5QCE9
-	lMNnLC/De8d1QC3t/+fldRFV4tjhdYjKPQp0OE0y2uX7nQCCt3KN9fJxaj235X8I
-	lLxE5iBudGeewRhVAwCoWsLAaVIOE82jJ4nBXeDiN/iiZsp0OFjf3g4ADDNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717062298; x=1717148698; bh=vNMVNuaWekS6eTivwMmlyaG4mzIb
-	2gEf+EB3oXFipww=; b=Io9/L6Sl5JvJ/O9EbcAjk9tOOWhupWSyAM7+KM0Bcc7F
-	B0ldUBx+gtxpdOQ55AGw3M056QQi1oHPYxwwWaqErojdpluMAEKkddQ5ThIz7McE
-	gjwbc9rC1xSx0ImdxOfXAW7IsULU5gaHFpKU8vS38J2y1b3CCAw+Uu70A7khaH74
-	H1+B04xF/W2KyVZbM46X9KqjjO3WoVva7/M7nmegYlDRssjdH6DfTPiDrG2kqfSW
-	mCdOzJQz84xV4q0SgQVjlaiL43Dy5TR5e/xRcA5APUrsCnEMJzv7lQzMym3jKEAe
-	q2fTZcaGOMc1jBU4tG8vIEx4Jc0Xu9YhkGBftpJQMg==
-X-ME-Sender: <xms:mUpYZrnuaCw9wKng4hYzTd26oH4vnbU2eEVOjB8Lw6CZbY4pjauVEA>
-    <xme:mUpYZu32qfez0nO8vHiPP190T7_EZViRhpILLwy72EZUVJVemBZ4wSvu6_G_Q9_er
-    S8bDLWttK4Aug>
-X-ME-Received: <xmr:mUpYZhppE0d8FeFgl9MmKtmRif0Q2ZeV8ysYhByXp_wmsYmZbPev9yl6rlUh>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttd
-    ertddttddvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
-    qeenucggtffrrghtthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekje
-    euhfdtueefhffgheekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:mUpYZjmIjGgWj58tZf6X_n_Ug1FuA0v0SExSKRC8QaxQpHFfSRhsWg>
-    <xmx:mUpYZp36CAUM2okC8xDMZDRISthUruTuIGn8R6IR0xzqf6UcPmPPsw>
-    <xmx:mUpYZitfnuWdZ-brJUUrYqUcuHAElGLtdnwuU-p0PJplVcqt_E8oyg>
-    <xmx:mUpYZtW4MIbLxGiwA8mt-SACvBPfZYkW3IjwPwjwcWQon5pgYZZSnA>
-    <xmx:mkpYZjPptq01Kl3IRxPTBkYVqu78atWivYpM0W_le3n8GLUkQz4Ct_th>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 May 2024 05:44:57 -0400 (EDT)
-Date: Thu, 30 May 2024 11:45:03 +0200
-From: Greg KH <greg@kroah.com>
-To: linux@treblig.org
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: iio: adt7316: remove unused struct
- 'adt7316_limit_regs'
-Message-ID: <2024053049-repossess-moonwalk-4235@gregkh>
-References: <20240529160055.28489-1-linux@treblig.org>
+	s=arc-20240116; t=1717062370; c=relaxed/simple;
+	bh=siU9n+ySC/Y7TUW4DmeeVPzXm8qvQ54pCkuLEa6YVgw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L3v1f7LMAvxZt3NNxGS88SfO/fIN75ow+8XZMvPW7MlYL8/VYtMWhutKzBT3wPwR2POSjxcpVtn9FxZa8ycwuwOe86C353/7cIBHvlLIbISEkk40qHB5b4RerlspSqxU5EWk6BaMDpLstxp0aMJJT2j19ZjCW05w3cqiLjZclcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 67a292d61e6911ef9305a59a3cc225df-20240530
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:a80e30b7-a9e0-4fb8-9f79-85c58cc587e5,IP:15,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:1,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:16
+X-CID-INFO: VERSION:1.1.38,REQID:a80e30b7-a9e0-4fb8-9f79-85c58cc587e5,IP:15,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:1,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:16
+X-CID-META: VersionHash:82c5f88,CLOUDID:deb744165e424aa1f15ec8f25a081fac,BulkI
+	D:240530174554D4HSWDAG,BulkQuantity:0,Recheck:0,SF:19|43|74|66|38|24|72|10
+	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
+	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-UUID: 67a292d61e6911ef9305a59a3cc225df-20240530
+X-User: mengfanhui@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.255)] by mailgw.kylinos.cn
+	(envelope-from <mengfanhui@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1761454286; Thu, 30 May 2024 17:45:53 +0800
+From: mengfanhui <mengfanhui@kylinos.cn>
+To: kashyap.desai@broadcom.com,
+	sumit.saxena@broadcom.com,
+	shivasharan.srikanteshwara@broadcom.com,
+	chandrakanth.patil@broadcom.com,
+	mengfanhui@kylinos.cn
+Cc: liuyun01@kylinos.cn,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	geliang@kernel.org
+Subject: [PATCH 1/2] scsi: megaraid_sas: Fix DCMD issue command handling
+Date: Thu, 30 May 2024 17:45:13 +0800
+Message-Id: <20240530094514.2750723-1-mengfanhui@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529160055.28489-1-linux@treblig.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 05:00:55PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'adt7316_limit_regs' has never been used since the original
-> commit 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9
-> driver").
-> 
-> The comment above it is a copy-and-paste from a different struct.
-> 
-> Remove both the struct and the comment.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/staging/iio/addac/adt7316.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-> index 79467f056a05..f4260786d50a 100644
-> --- a/drivers/staging/iio/addac/adt7316.c
-> +++ b/drivers/staging/iio/addac/adt7316.c
-> @@ -209,15 +209,6 @@ struct adt7316_chip_info {
->  #define ADT7316_TEMP_AIN_INT_MASK	\
->  	(ADT7316_TEMP_INT_MASK)
->  
-> -/*
-> - * struct adt7316_chip_info - chip specific information
-> - */
-> -
-> -struct adt7316_limit_regs {
-> -	u16	data_high;
-> -	u16	data_low;
-> -};
-> -
->  static ssize_t adt7316_show_enabled(struct device *dev,
->  				    struct device_attribute *attr,
->  				    char *buf)
-> -- 
-> 2.45.1
-> 
-> 
+If DCMD timeout not handled, the next interaction between the driver and firmware will still
+result in DCMD timeout, which may cause system crashes or hang up
 
-Hi,
+This patch will do proper error handling for DCMD command
+for Fusion adapters:
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+1. What action needs to be taken in case of DCMD timeout is decided by
+function dcmd_timeout_ocr_possible().  DCMD timeout causing OCR is
+applicable to the following situation:
+    INITIATE_OCR
+    KILL_ADAPTER
+    IGNORE_TIMEOUT
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+2. If those DCMDs fail, driver bails out.
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+Error log:
+[ 201.689759] megaraid_sas 0001:05:00.0: megasas_sync_pd_seq_num DCMD timed out, continue without JBOD sequence map
+[ 242.649061] [] megasas_init+0x114/0x4000 [megaraid_sas]
+[ 363.481009] [] megasas_issue_blocked_cmd+0x1d8/0x268 [megaraid_sas]
+[ 363.481159] [] megasas_get_pd_list+0x548/0x688 [megaraid_sas]
+[ 363.481309] [] megasas_init_fw+0xb38/0x1104 [megaraid_sas]
+[ 363.481459] [] megasas_probe_one+0x1f4/0x5c4 [megaraid_sas]
+[ 363.482419] [] megasas_init+0x114/0x4000 [megaraid_sas]
+[ 381.912298] megaraid_sas 0001:05:00.0: DCMD(opcode: 0x2010100) is timed out, func:megasas_issue_blocked_cmd
+[ 381.912979] megaraid_sas 0001:05:00.0: Ignore DCMD timeout: megasas_get_pd_list 4727
+[ 484.313526] [] megasas_init+0x114/0x4000 [megaraid_sas]
+[ 562.136294] megaraid_sas 0001:05:00.0: DCMD(opcode: 0x3010100) is timed out, func:megasas_issue_blocked_cmd
+[ 562.137074] megaraid_sas 0001:05:00.0: Ignore DCMD timeout: megasas_ld_list_query 4973
+[ 562.137081] megaraid_sas 0001:05:00.0: failed to get LD list
+[ 562.137425] megaraid_sas 0001:05:00.0: megasas_init_fw: megasas_get_device_list failed
+[ 562.137767] megaraid_sas 0001:05:00.0: megasas_disable_intr_fusion is called outbound_intr_mask:0x40000009
+[ 562.139232] megaraid_sas 0001:05:00.0: Failed from megasas_init_fw 6572
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+Co-developed-by: Jackie Liu <liuyun01@kylinos.cn>
+Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
+Signed-off-by: mengfanhui <mengfanhui@kylinos.cn>
+Suggested-by: Geliang Tang <geliang@kernel.org>
+---
+ drivers/scsi/megaraid/megaraid_sas.h        |  1 +
+ drivers/scsi/megaraid/megaraid_sas_base.c   |  4 +-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 71 +++++++++++++++++----
+ 3 files changed, 62 insertions(+), 14 deletions(-)
 
-thanks,
+diff --git a/drivers/scsi/megaraid/megaraid_sas.h b/drivers/scsi/megaraid/megaraid_sas.h
+index 5680c6cdb221..91570c5e8456 100644
+--- a/drivers/scsi/megaraid/megaraid_sas.h
++++ b/drivers/scsi/megaraid/megaraid_sas.h
+@@ -2760,5 +2760,6 @@ void megasas_exit_debugfs(void);
+ void megasas_setup_debugfs(struct megasas_instance *instance);
+ void megasas_destroy_debugfs(struct megasas_instance *instance);
+ int megasas_blk_mq_poll(struct Scsi_Host *shost, unsigned int queue_num);
++int dcmd_timeout_ocr_possible(struct megasas_instance *instance);
+ 
+ #endif				/*LSI_MEGARAID_SAS_H */
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 170b38f04655..ba8061ea2078 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -4518,8 +4518,8 @@ int megasas_alloc_cmds(struct megasas_instance *instance)
+  * Return 0 for only Fusion adapter, if driver load/unload is not in progress
+  * or FW is not under OCR.
+  */
+-inline int
+-dcmd_timeout_ocr_possible(struct megasas_instance *instance) {
++int dcmd_timeout_ocr_possible(struct megasas_instance *instance)
++{
+ 
+ 	if (instance->adapter_type == MFI_SERIES)
+ 		return KILL_ADAPTER;
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index 6c1fb8149553..f0aeb1ee83a2 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -1363,17 +1363,42 @@ megasas_sync_pd_seq_num(struct megasas_instance *instance, bool pend) {
+ 			"driver supports max %d JBOD, but FW reports %d\n",
+ 			MAX_PHYSICAL_DEVICES, le32_to_cpu(pd_sync->count));
+ 		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+-	if (ret == DCMD_TIMEOUT)
+-		dev_warn(&instance->pdev->dev,
+-			 "%s DCMD timed out, continue without JBOD sequence map\n",
+-			 __func__);
+-
+-	if (ret == DCMD_SUCCESS)
++	switch (ret) {
++	case DCMD_SUCCESS:
+ 		instance->pd_seq_map_id++;
++		break;
++	case DCMD_TIMEOUT:
++		switch (dcmd_timeout_ocr_possible(instance)) {
++		case INITIATE_OCR:
++			cmd->flags |= DRV_DCMD_SKIP_REFIRE;
++			mutex_unlock(&instance->reset_mutex);
++			megasas_reset_fusion(instance->host,
++					     MFI_IO_TIMEOUT_OCR);
++			mutex_lock(&instance->reset_mutex);
++			break;
++		case KILL_ADAPTER:
++			megaraid_sas_kill_hba(instance);
++			break;
++		case IGNORE_TIMEOUT:
++			dev_info(&instance->pdev->dev, "Ignore DCMD timeout: %s %d\n",
++				 __func__, __LINE__);
++			break;
++		}
++		break;
++	case DCMD_FAILED:
++		dev_err(&instance->pdev->dev,
++			"%s: MR_DCMD_SYSTEM_PD_MAP_GET_INFO failed\n",
++			__func__);
++		break;
++	}
++
++out:
++	if (ret != DCMD_TIMEOUT)
++		megasas_return_cmd(instance, cmd);
+ 
+-	megasas_return_cmd(instance, cmd);
+ 	return ret;
+ }
+ 
+@@ -1449,12 +1474,34 @@ megasas_get_ld_map_info(struct megasas_instance *instance)
+ 	else
+ 		ret = megasas_issue_polled(instance, cmd);
+ 
+-	if (ret == DCMD_TIMEOUT)
+-		dev_warn(&instance->pdev->dev,
+-			 "%s DCMD timed out, RAID map is disabled\n",
+-			 __func__);
++	switch (ret) {
++	case DCMD_TIMEOUT:
++		switch (dcmd_timeout_ocr_possible(instance)) {
++		case INITIATE_OCR:
++			cmd->flags |= DRV_DCMD_SKIP_REFIRE;
++			mutex_unlock(&instance->reset_mutex);
++			megasas_reset_fusion(instance->host,
++					     MFI_IO_TIMEOUT_OCR);
++			mutex_lock(&instance->reset_mutex);
++			break;
++		case KILL_ADAPTER:
++			megaraid_sas_kill_hba(instance);
++			break;
++		case IGNORE_TIMEOUT:
++			dev_info(&instance->pdev->dev, "Ignore DCMD timeout: %s %d\n",
++				 __func__, __LINE__);
++			break;
++		}
++		break;
++	case DCMD_FAILED:
++		dev_err(&instance->pdev->dev,
++			"%s: MR_DCMD_LD_MAP_GET_INFO failed\n",
++			__func__);
++		break;
++	}
+ 
+-	megasas_return_cmd(instance, cmd);
++	if (ret != DCMD_TIMEOUT)
++		megasas_return_cmd(instance, cmd);
+ 
+ 	return ret;
+ }
+-- 
+2.25.1
 
-greg k-h's patch email bot
 
