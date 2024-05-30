@@ -1,198 +1,164 @@
-Return-Path: <linux-kernel+bounces-195507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DF48D4DC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:23:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812A98D4DBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B31A6B22605
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96201F21B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F9317624D;
-	Thu, 30 May 2024 14:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F6E17C20C;
+	Thu, 30 May 2024 14:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kqbnRjX+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="GuxQ7xrz"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FCA1DA53
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A381DA53
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078976; cv=none; b=Hbs95mE4mDGtEyPiOhbvynVOnGZO3aiHf0FaLo4z9eZHzzzjv9diodMnH25hP22hFGPchb03tecMgaqeEDXWFEscXvt4EM+jwgu9KRgNJCHSquBiw8izn81F0HbaGnNTvtONsdx9Jq8ERkxQVi4gDnwFs679Yo9KAPJ0JpvCD04=
+	t=1717078911; cv=none; b=oow/tznyX1Z3dY6RWP4NAJ0XWBycpBF0KBTliXd9f52Vt1BSoV2e3tN9bQfVlk/+LwI7dYnxF/fVGqthQvMcDtQGLhpAW/hgG8kBBlJ2IxAKW0IVIwDjE0oL3LoFpaykDduPx2aQgDWcgrJw4rKVbfBquW2ky9MzKroG10/zuok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078976; c=relaxed/simple;
-	bh=0TzI08c66avPZJEdsDRUEmen7CFRPyXzgnULJsKiuKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHT/+mEDB2Jk/PfT7XEqrzCRaW57Mp5F1uocq/X6ALhmoa/xSy98napuvJr5iJGQhLVmc2CxBDnrqO9Wc490C8/alJeR+Q3vkSTSsz3b9qaoksVZ8ScP4MOE8SCCtJTgHA27GoHjx2Q/mlB6ToEFK0+dyOCkE7833nqe0hIl8sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kqbnRjX+; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717078975; x=1748614975;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=0TzI08c66avPZJEdsDRUEmen7CFRPyXzgnULJsKiuKw=;
-  b=kqbnRjX+2f0TBU6qs8g8aXFlsVlQCQzOhC8rcOeiBvRM5OR8Bi8C+nin
-   /ebm4rGeDhQ1HaWKqkPgfXE8BZxZNXPjmocCRDRataSqBHXXBWyA8Kmhr
-   m8KAGAcD0j9XUjUI5R7Mb9skHJiwpUpDYPbCse+sCMONMzNpyhw0qE5au
-   Q50FBHbi+YO7bxQWtIVSvzxQGpcjABn9I1gw+5OENtgfRFIXIym5tHGSU
-   CjzhfPOZKlq2ewGbqMfSsmjKrOk2AyjYvhrzXaJ30e2jE1JMBrZfQrYTP
-   0mopdSZ8U37tv5dWhdPDvk3v/zL6qnxdafLomEq0dZpLqq4s8FbmwBh0B
-   Q==;
-X-CSE-ConnectionGUID: +3HjSxEuSe2/efsvVaTMeg==
-X-CSE-MsgGUID: susdLsW9SaSP5X0Pr4X3PQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24971280"
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="24971280"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 07:22:54 -0700
-X-CSE-ConnectionGUID: JU4D+hkIS5GrqJb6iNRbeg==
-X-CSE-MsgGUID: cDohpN6KSJ2/DX72oY4GmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="35764100"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 30 May 2024 07:22:52 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCgfx-000FY4-2t;
-	Thu, 30 May 2024 14:22:47 +0000
-Date: Thu, 30 May 2024 22:19:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Andy Chiu <andy.chiu@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	Matthew Bystrin <dev.mbstr@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH 4/4] riscv: entry: Save a frame record for exceptions
-Message-ID: <202405302207.M9bDz8l3-lkp@intel.com>
-References: <20240530001733.1407654-5-samuel.holland@sifive.com>
+	s=arc-20240116; t=1717078911; c=relaxed/simple;
+	bh=RqN47ZM5bKCA/FGdPPZEAuL99IE1ghaZ06QREC2L+nE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VO2Vvhv1PgVbJj/eNxHugMB/Vm9NY2Gj8tB1zyGv0y7iga/CXqEhFfHxchO4UCzia5vUaUAj3jytgDn1JEvbkYaUPbKO01+vKFpxN0zsp7/VNuEUSSC6S76kdeoDUbtUKxF39WUe20RVYY/kY7jRmaz9mwe1nz7Sazmn9OxxdZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=GuxQ7xrz; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 60B2A3F8EB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1717078899;
+	bh=B2vGdF2dGkt21QsIPszG+5j1gbhrGScywHg+DXLmaj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=GuxQ7xrz1nI0Dvkc8cIa3qufBmJFpGHQwIEark+91R7hevP3vvODWrGeZ6cwY2DQ+
+	 rod0ErNiU8L1WSEj8xeDLH3qkCSePSCxfJ4DIQR5mSkMvi9gerA4RKJW+ynnrFxFMO
+	 aGYofT4Aoq7UGl4c2kO6ABwnMCvSqw1gW+jDcW7VwwF+kQdHLkh7eA0ixUQEarpdyX
+	 tj8lGAQ++ot4yYHmnf+bXme3mNR64KxIPmYoWxHnnXR7J6dQXcCzODPcNbLiJjFE5H
+	 zc3b00fUNnShTk60em/T7mB791H0+BDmYyWbw4lPs/VtWvlEnUbJqGE9JhvrxLTJMb
+	 ii69fxePczU/w==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1f4f00cff60so9516275ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:21:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717078897; x=1717683697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B2vGdF2dGkt21QsIPszG+5j1gbhrGScywHg+DXLmaj8=;
+        b=Hts7Laj1IVHYFYt3GbSke1GlySMV/qaQo8ttpWB4QaOxMVUhHkpwQ09nuvJh8wQDvm
+         B6EpGsmewXl+UevkoE3nKjIO8pkaSUfnmroQePMA/9PrTwQ2/fClnmS2cnCbrgyWF6Um
+         +cYUEHlXx2BrKnuRXY3F4YwlqtG1k/aOnBVMkbNFKV700dOxcOX8KPXlzwnOFO+XqpPz
+         HKFOmMsYwVL41snlZMAeSAU2pl7Nm/vgXA9g2iTU+kbxuIDiRWpLClXiS5k4wTQ/UJwz
+         GiS9A1Bm0hFOiuscbiYGH++L9vP0J0YconnNYZ7Cq8SwhBIw1vzbsk4u6VZZYE3YFTEO
+         eXzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6VQxSU9vN0CxYdn+bC9sh0yC7189M0zeZxZQ+l8L4422wL8isFhjWtbUqVVeAHXRxfVcQ0CBH8EPgTOzSTYYohMttLAHKwuepfzFw
+X-Gm-Message-State: AOJu0Ywt3c7HaS4APUa9DFUZ1ydOz7wIGyOKxllSFY2+z9OjpmeqpLYW
+	jn49gJ92s+jUOv7XavhtqEVBRknwMnX08IiIa04CXRkB6fsgL93vlPynUwjfol9Dx7lxDa/kO2G
+	KxN3WAirsneqDXO/64wRJk5BkJmeGD3eo59kPoYImRnc1QRujZiv1OOHqcI3faxTFiNqeKC4D4N
+	GI/Q==
+X-Received: by 2002:a17:903:234f:b0:1f4:6252:dba9 with SMTP id d9443c01a7336-1f6192ed35bmr21911595ad.9.1717078897717;
+        Thu, 30 May 2024 07:21:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFj4WhAEo6jH3/j42l91y2guETPciufxMGGZdNuOrkvNj5+sjOxoLTEayUXIdr7icIln7gdog==
+X-Received: by 2002:a17:903:234f:b0:1f4:6252:dba9 with SMTP id d9443c01a7336-1f6192ed35bmr21911375ad.9.1717078897341;
+        Thu, 30 May 2024 07:21:37 -0700 (PDT)
+Received: from rickywu0421-ThinkPad-X1-Carbon-Gen-11.. ([150.116.44.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c967cd2sm118577925ad.166.2024.05.30.07.21.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 07:21:37 -0700 (PDT)
+From: Ricky Wu <en-wei.wu@canonical.com>
+To: jesse.brandeburg@intel.com
+Cc: anthony.l.nguyen@intel.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rickywu0421@gmail.com,
+	en-wei.wu@canonical.com,
+	wojciech.drewek@intel.com,
+	michal.swiatkowski@linux.intel.com,
+	pmenzel@molgen.mpg.de,
+	Cyrus Lien <cyrus.lien@canonical.com>
+Subject: [PATCH net,v2] ice: avoid IRQ collision to fix init failure on ACPI S3 resume
+Date: Thu, 30 May 2024 22:21:31 +0800
+Message-ID: <20240530142131.26741-1-en-wei.wu@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240530001733.1407654-5-samuel.holland@sifive.com>
 
-Hi Samuel,
+A bug in https://bugzilla.kernel.org/show_bug.cgi?id=218906 describes
+that irdma would break and report hardware initialization failed after
+suspend/resume with Intel E810 NIC (tested on 6.9.0-rc5).
 
-kernel test robot noticed the following build errors:
+The problem is caused due to the collision between the irq numbers
+requested in irdma and the irq numbers requested in other drivers
+after suspend/resume.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.10-rc1 next-20240529]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The irq numbers used by irdma are derived from ice's ice_pf->msix_entries
+which stores mappings between MSI-X index and Linux interrupt number.
+It's supposed to be cleaned up when suspend and rebuilt in resume but
+it's not, causing irdma using the old irq numbers stored in the old
+ice_pf->msix_entries to request_irq() when resume. And eventually
+collide with other drivers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/riscv-Fix-32-bit-call_on_irq_stack-frame-pointer-ABI/20240530-081923
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240530001733.1407654-5-samuel.holland%40sifive.com
-patch subject: [PATCH 4/4] riscv: entry: Save a frame record for exceptions
-config: riscv-randconfig-001-20240530 (https://download.01.org/0day-ci/archive/20240530/202405302207.M9bDz8l3-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405302207.M9bDz8l3-lkp@intel.com/reproduce)
+This patch fixes this problem. On suspend, we call ice_deinit_rdma() to
+clean up the ice_pf->msix_entries (and free the MSI-X vectors used by
+irdma if we've dynamically allocated them). On resume, we call
+ice_init_rdma() to rebuild the ice_pf->msix_entries (and allocate the
+MSI-X vectors if we would like to dynamically allocate them).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405302207.M9bDz8l3-lkp@intel.com/
+Fixes: f9f5301e7e2d ("ice: Register auxiliary device to provide RDMA")
+Tested-by: Cyrus Lien <cyrus.lien@canonical.com>
+Signed-off-by: Ricky Wu <en-wei.wu@canonical.com>
+---
+Changes in v2:
+- Change title
+- Add Fixes and Tested-by tags
+- Fix typo
+---
+ drivers/net/ethernet/intel/ice/ice_main.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-All errors (new ones prefixed by >>):
-
->> arch/riscv/kernel/probes/rethook_trampoline.S:79:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
-    addi sp, sp, -(PT_SIZE_ON_STACK)
-                 ^
-   arch/riscv/kernel/probes/rethook_trampoline.S:90:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
-    addi sp, sp, PT_SIZE_ON_STACK
-                 ^
-
-
-vim +79 arch/riscv/kernel/probes/rethook_trampoline.S
-
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17   9  
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  10  	.text
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  11  	.altmacro
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  12  
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  13  	.macro save_all_base_regs
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  14  	REG_S x1,  PT_RA(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  15  	REG_S x3,  PT_GP(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  16  	REG_S x4,  PT_TP(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  17  	REG_S x5,  PT_T0(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  18  	REG_S x6,  PT_T1(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  19  	REG_S x7,  PT_T2(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  20  	REG_S x8,  PT_S0(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  21  	REG_S x9,  PT_S1(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  22  	REG_S x10, PT_A0(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  23  	REG_S x11, PT_A1(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  24  	REG_S x12, PT_A2(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  25  	REG_S x13, PT_A3(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  26  	REG_S x14, PT_A4(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  27  	REG_S x15, PT_A5(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  28  	REG_S x16, PT_A6(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  29  	REG_S x17, PT_A7(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  30  	REG_S x18, PT_S2(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  31  	REG_S x19, PT_S3(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  32  	REG_S x20, PT_S4(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  33  	REG_S x21, PT_S5(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  34  	REG_S x22, PT_S6(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  35  	REG_S x23, PT_S7(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  36  	REG_S x24, PT_S8(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  37  	REG_S x25, PT_S9(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  38  	REG_S x26, PT_S10(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  39  	REG_S x27, PT_S11(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  40  	REG_S x28, PT_T3(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  41  	REG_S x29, PT_T4(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  42  	REG_S x30, PT_T5(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  43  	REG_S x31, PT_T6(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  44  	.endm
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  45  
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  46  	.macro restore_all_base_regs
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  47  	REG_L x3,  PT_GP(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  48  	REG_L x4,  PT_TP(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  49  	REG_L x5,  PT_T0(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  50  	REG_L x6,  PT_T1(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  51  	REG_L x7,  PT_T2(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  52  	REG_L x8,  PT_S0(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  53  	REG_L x9,  PT_S1(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  54  	REG_L x10, PT_A0(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  55  	REG_L x11, PT_A1(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  56  	REG_L x12, PT_A2(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  57  	REG_L x13, PT_A3(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  58  	REG_L x14, PT_A4(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  59  	REG_L x15, PT_A5(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  60  	REG_L x16, PT_A6(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  61  	REG_L x17, PT_A7(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  62  	REG_L x18, PT_S2(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  63  	REG_L x19, PT_S3(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  64  	REG_L x20, PT_S4(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  65  	REG_L x21, PT_S5(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  66  	REG_L x22, PT_S6(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  67  	REG_L x23, PT_S7(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  68  	REG_L x24, PT_S8(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  69  	REG_L x25, PT_S9(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  70  	REG_L x26, PT_S10(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  71  	REG_L x27, PT_S11(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  72  	REG_L x28, PT_T3(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  73  	REG_L x29, PT_T4(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  74  	REG_L x30, PT_T5(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  75  	REG_L x31, PT_T6(sp)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  76  	.endm
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  77  
-76329c693924d8 arch/riscv/kernel/probes/rethook_trampoline.S Clément Léger 2023-10-24  78  SYM_CODE_START(arch_rethook_trampoline)
-c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17 @79  	addi sp, sp, -(PT_SIZE_ON_STACK)
-
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index f60c022f7960..ec3cbadaa162 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -5544,7 +5544,7 @@ static int ice_suspend(struct device *dev)
+ 	 */
+ 	disabled = ice_service_task_stop(pf);
+ 
+-	ice_unplug_aux_dev(pf);
++	ice_deinit_rdma(pf);
+ 
+ 	/* Already suspended?, then there is nothing to do */
+ 	if (test_and_set_bit(ICE_SUSPENDED, pf->state)) {
+@@ -5624,6 +5624,10 @@ static int ice_resume(struct device *dev)
+ 	if (ret)
+ 		dev_err(dev, "Cannot restore interrupt scheme: %d\n", ret);
+ 
++	ret = ice_init_rdma(pf);
++	if (ret)
++		dev_err(dev, "Reinitialize RDMA during resume failed: %d\n", ret);
++
+ 	clear_bit(ICE_DOWN, pf->state);
+ 	/* Now perform PF reset and rebuild */
+ 	reset_type = ICE_RESET_PFR;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
