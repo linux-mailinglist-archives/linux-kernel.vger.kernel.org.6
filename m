@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-195685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9608D5048
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E70398D504B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE1C1C21FC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21ECB1C2150F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73663B295;
-	Thu, 30 May 2024 16:55:50 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A3C46435;
+	Thu, 30 May 2024 16:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwjFQjzh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E233D3BC;
-	Thu, 30 May 2024 16:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13E545BF0;
+	Thu, 30 May 2024 16:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088150; cv=none; b=MrkKUoETFqg8BJYJ6IzAcjz84k8AnJeb9fsi4VpYvT7uteRtB0RsK572MoiieJTeZL5Gzb3oWhm24Tg3zxQJjGGZSLmAQT2iueMKvuferlzMmZldMHbOOV2KOUSEo6BmAFN/tYnYb4o6C622ZVaRcd3+vZPU+CUA15MqzhzDNyE=
+	t=1717088156; cv=none; b=nqzr+EZIQPO/aEXwXudp4yGag1C1rVuiTSgrJjqM2tSCtyc656aEAd58YCqK+nxM2vKZBLW8IKAmqQKExHhU8D1yXhy1Xk9OLUESb9ZJYvxta6DuwPeF7IHyeO1SnVExlYs9CSmn10nYwwvOfJ70RbuBXZGFpRPRV9dN1OZn3UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088150; c=relaxed/simple;
-	bh=Mcypc3pzcyEC4RX3ymnP/LrTxcRTAOg0i4UVWCMrfXI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZOGXL2F/jsSX7XqfoMlBNh5xuPX94TBGFORfGIaQzD3QlgIwYyMt0WbLPJ0AUEfS52jU8+GJU7kUonewYy6/YWy7d0Wlu22h49BQirptL5VaiY33TdvPCbRsjCqFagtFUCm7giJfF4PU5lx0QtsOVqWjM5t5VfUGbdKqKBUpa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2bdb61c5fdbso863821a91.2;
-        Thu, 30 May 2024 09:55:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717088148; x=1717692948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PuVxUJ7dDTO9+WhdwYly/1XYJlY4BFEohmb9si0wW0M=;
-        b=aqWXQPyCE4iYahTmQpynyzuN7BS9ydf5tTjDXJPKpsQmhPkvgHECTVqMIcMSljflQ+
-         D1yKguG+iNKbO2vfJRzBN4rujfY0Vr87hH6A4PgU1pGXFrUO9fwzZ6p0OrMuQUQwZC+o
-         3oBGSkTUpHfVUN9vnmPFZAniepRpC/71e+hFMcCv3QWhfDkhTJ5bwUAHvyIn1C4WmNeq
-         tp1x6lj4RH0L8NCbBXeMu6rX6B1dn63Gm1Mh36sfTHa3A+Ho4xY6wy1wGr2jV4SaQxQs
-         Gz+5DXfCDZ/b5LjML4PqvM9nDHlggVESl8gVawthE5Sr3Nwgo7/eZo7s+Soyc1CvlzIX
-         eb0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFgPjkMVrI7EqnR7PX7+rr3ge38S812/VOt71HllQ67NlKMjpZ9JkRQcwmAfk+Wp5kudai8tqb/VkiNZ1xVNdfTTGDF5xyPDQ4nNvoUVyvW2OWJPvlC0ftGRTGUCOuXjR+XH/UDpplW9WyoTtrgg==
-X-Gm-Message-State: AOJu0Yw5q3PJ/1XzlfVCSRT9+GGwdfUJt98GakdL7jZN7dYpQPibj+nO
-	KJAoUhTqDXnvwW7tpicUgb/+GEReBKIXA7fk2FtMR2p3i2dlyI8rAWJzmnw9YDNJUpN6ca+gDOz
-	VnQgRJJ6N5zH05j+zLCpVc0G5Nl4=
-X-Google-Smtp-Source: AGHT+IGbj7jQTNlYra84R0JTmsJ9T/6olo4gSHh6yJ3sDUSG8y2XJ22fez+UQNyD+hLB8nARNoZ3W0OU3r4FlUhr4Ic=
-X-Received: by 2002:a17:90b:1643:b0:2b2:a1d0:b61c with SMTP id
- 98e67ed59e1d1-2c1abd732b8mr2221362a91.47.1717088148414; Thu, 30 May 2024
- 09:55:48 -0700 (PDT)
+	s=arc-20240116; t=1717088156; c=relaxed/simple;
+	bh=y9NCFZ2r7d1RUlF0MdnMJsnplEp0MXxCrVSUOSZQRC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYKczpVxjs3lsd1bjJwoAY3crkjJGkB73QNGhdtpZvM5tWJpKhvyPEaFH4jyEOsODaqV2gn1YwyKaFfcW87tnTD1rSyOZ+bjCBw4jknF8E1sdU2+05qha+RpvcjoXw9jM/XgUp1m3VdByMBDtSOx0FE9fc5oCXhxTYwa6Ta5y40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwjFQjzh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 350D5C2BBFC;
+	Thu, 30 May 2024 16:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717088156;
+	bh=y9NCFZ2r7d1RUlF0MdnMJsnplEp0MXxCrVSUOSZQRC4=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=HwjFQjzh27GeUw64vzkp+R2RQfD9cS2BWClNN+muvviU1GUsUzKkxI6aLXiCXvj5O
+	 6kzm0mkIhqbpis4AUlw5nRtjE2SCflJCCEQAiZka/7S1olX/wppKf/2b8lqO9skDDi
+	 ExSsfy7wj2x9f6qhRTyKt7UnrmIX1sEjcZhfeblJhcGfsFH+AUF3D0kG8zmswE1oVp
+	 zOeqfX/u7L0eLHRCNJJI7UQ8uvtEFUtXWiWzDdwzhT0BWyP2cJ3TeJBNKnK2Yhe8hn
+	 C/Ce7G1Qnd+OSiI4PAtFA6LJCZpYkiYXEbyY2IdVZhTjmimLE+Ffcuw14kYIvlYCDS
+	 TzI1P3eULcFgQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 32A06CE075F; Thu, 30 May 2024 09:55:55 -0700 (PDT)
+Date: Thu, 30 May 2024 09:55:55 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: sfr@canb.auug.org.au, Rob Clark <robdclark@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Jon Hunter <jonathanh@nvidia.com>, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [BUG] Build failure and alleged fix for next-20240523
+Message-ID: <4f821c7f-6201-470f-b39d-ba689ca027d9@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <287206c0-b53d-4aa1-b35c-0725adc5e9ef@paulmck-laptop>
+ <28db820c-860d-be1c-bb94-ed534622fdc8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240526182212.544525-1-sesse@google.com> <CAM9d7chY7CzMx9sSYeagDK81PsE=soGmn4AUxXAE7rHp=jmx3Q@mail.gmail.com>
- <ZlczO4D8J1lgWBZj@x1>
-In-Reply-To: <ZlczO4D8J1lgWBZj@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 30 May 2024 09:55:37 -0700
-Message-ID: <CAM9d7ch5YSYEadbVV+LRGvppUr76rjfxMnOp2Q2AqgTBAff7Xg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] perf report: Support LLVM for addr2line()
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: "Steinar H. Gunderson" <sesse@google.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, irogers@google.com, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <28db820c-860d-be1c-bb94-ed534622fdc8@quicinc.com>
 
-On Wed, May 29, 2024 at 6:53=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Tue, May 28, 2024 at 08:56:47PM -0700, Namhyung Kim wrote:
-> > On Sun, May 26, 2024 at 11:22=E2=80=AFAM Steinar H. Gunderson <sesse@go=
-ogle.com> wrote:
-> > > +#elif defined(HAVE_LIBBFD_SUPPORT)
->
-> > Hmm.. it's unfortunate that we have only one addr2line
-> > implementation at a time.  Maybe we can do the same thing
-> > like in annotate with objdump so that it can fallback to another
-> > method when failing.  But it'd require more changes beyond
-> > this work and I'm not sure if it's really worth it.
->
-> Right, I think we shouldn't delay processing these patches because of
-> that, we can do it as follow up patches, both for fallbacks in case we
-> can detect problems like we did with capstone -> objdump disasm and also
-> to be able to compare outputs in 'perf test' shell scripts, discounting
-> known/expected minor differences.
+On Fri, May 24, 2024 at 12:57:58PM -0700, Abhinav Kumar wrote:
+> Hello
+> 
+> On 5/24/2024 12:55 PM, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > I get the following allmodconfig build error on x86 in next-20240523:
+> > 
+> > Traceback (most recent call last):
+> >    File "drivers/gpu/drm/msm/registers/gen_header.py", line 970, in <module>
+> >      main()
+> >    File "drivers/gpu/drm/msm/registers/gen_header.py", line 951, in main
+> >      parser.add_argument('--validate', action=argparse.BooleanOptionalAction)
+> > AttributeError: module 'argparse' has no attribute 'BooleanOptionalAction'
+> > 
+> > The following patch allows the build to complete successfully:
+> > 
+> > https://patchwork.kernel.org/project/dri-devel/patch/20240508091751.336654-1-jonathanh@nvidia.com/#25842751
+> > 
+> > As to whether this is a proper fix, I must defer to the DRM folks on CC.
+> 
+> Thanks for the report.
+> 
+> I have raised a merge request for
+> https://patchwork.freedesktop.org/patch/593057/ to make it available for the
+> next fixes release for msm.
 
-Yep, I don't want to delay it unnecessarily.  But I just want more
-people to review and/or test the patches. :)
+Thank you!
 
-Thanks,
-Namhyung
+This still is not in -next, so I am putting it into -rcu just to silence
+the diagnostic.  Or should I push this to mainline via -rcu?
+
+							Thanx, Paul
 
