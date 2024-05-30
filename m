@@ -1,149 +1,101 @@
-Return-Path: <linux-kernel+bounces-195556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141878D4E7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E088D4E81
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469AC1C22AA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 389471C234A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A33817D89A;
-	Thu, 30 May 2024 14:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3089417D892;
+	Thu, 30 May 2024 14:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BH3o7go5"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AVtW63z+"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E9E17D892
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E30186E33
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717081100; cv=none; b=G5hQRCZaFjIGZrJNjEgGvfi1ASaK9nZzSzfECPOLWR+6o4GLRz5+DHoMRbqQbIIRl5XluurNVPxaPDutON/qHPBDD/tU1gpVXOoafx0okrA68tMxq3kuKP6Zt14aj6OKkqcfbouUI4yTdj9hP3i0CzZZlRUd6Ku2/spVutPCSjc=
+	t=1717081153; cv=none; b=bERpTkpS5xekeUBMbH92XrgYn4Z/haAYDlctRVtidhCm7iLULmXwfcAs8EEdileJMhIb/baoILTk/fXy5X1tJV53rJP0bxAvk22e9zLh7C9E54AKtCWsNoPSk22AWsPnKb7Z8ckYGQ6xenPGGir6v5iiKTvWeeImel1Pvdapcgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717081100; c=relaxed/simple;
-	bh=6frT2cUqOy2QZwW8Jb/ICL917q3xtkQYsWty0q3A7EM=;
+	s=arc-20240116; t=1717081153; c=relaxed/simple;
+	bh=To7Obkom+Eu+b5CzCZMTNz1Zon//K/3BLINJ/4Jzzjw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=esePtTkw4JxRHswyRrrtMMYD5ilQZqHZaAdGW2QO6/e6hs8O3mWYhgsbKJaf33dyXL9zPY/KO5xIn7QEkeWwYSybI0qxsc0uTetJQ5wxNPtUuaFfKSwpyrmiwCnQybBZKk/Tv6IfqbJiXI+EwTfhGlBtyiToZJ0n2/ywrzoAu5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BH3o7go5; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7e3b1981fe5so4942639f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:58:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717081097; x=1717685897; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UYQWkDbOOCMyq/o0QgNOHjrEjyrRmklhwNgybQNhet8=;
-        b=BH3o7go5uU9GFxLELhp5muo6xJ8S7whMvwe1K3VaD4bBzmCMSMv7mwDr3ulgp2Fm/y
-         Z69oQUoGnQ/Spq7svVv9cpB/Lj14DPzZfkUaRdz3rFVgbpeZntqUjAX8vnA2Is8TRkpG
-         nulYZLF2D0lNMgZW3sUT0coM3zHucQpq1oyK8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717081097; x=1717685897;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYQWkDbOOCMyq/o0QgNOHjrEjyrRmklhwNgybQNhet8=;
-        b=OW7sXDwlqLq+TQkiB6TgZWqFoI4RotFJFLHFpFtRsWggzbvGghgj2nFbvi7IITWYob
-         DSAwoUlYJx0vuc5ZeEB5X+a3ZgNOmHPI9tqN12tw1b84OeBnK10sPrNkSlh0WaE9+eUL
-         jEnN+ytTvwH79BrIzbSmO8JG6Tiyx+HMQ2xryDlnQ9a+He/LwbPywFgwxemLMLZPgxJY
-         vCFzKztATcCWt4EoWhplHuL9eCJbfQuwrCMO5v6586lEdnpo5cMKXzZ3LXm7XFdW6irA
-         Q/Ke3rWHVykRbUSYUmdtD6W0ncdrJyr2BYD2Bajv/4bzpaAaqsY5w7RyebIvpTZanbrJ
-         GqZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwctZjq3I2m6RYk6N3LmqvFiqsejhJzSepmQxxxOsWxXTv7sdNOOqqqLsYST6iZYrMzwhL8nST82Qhwh7g6Ym0QybATSQ/S2gr5F2w
-X-Gm-Message-State: AOJu0YyKe0j5QcLrWVno15E2x2ilLyrmrEOTfHIAMhgnBaoPczpI6JpY
-	Y7tdtBId4NFbvr94JJ6Cn4qT8X8SR46P6WtGvtsLLpf4MkUu8iRI+xuwC6Yi5IA=
-X-Google-Smtp-Source: AGHT+IF+c5SyF4FomowgTAfuj5YYGj0MkoKjfwfa0To8fH/UHJshVIcQ2oirqjk7Q32H9m4sYBF/7A==
-X-Received: by 2002:a5d:970c:0:b0:7e1:d865:e700 with SMTP id ca18e2360f4ac-7eaf5d9611amr259019339f.2.1717081097098;
-        Thu, 30 May 2024 07:58:17 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b0f152442asm1842750173.173.2024.05.30.07.58.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 07:58:16 -0700 (PDT)
-Message-ID: <f4877afd-dc2c-4e54-8b53-c681d3eed045@linuxfoundation.org>
-Date: Thu, 30 May 2024 08:58:15 -0600
+	 In-Reply-To:Content-Type; b=HAVFPcvmei+4v3tOeoqRN6xAPncVwBbXExB2SSBzt/k96I2ysUzHjVvsoqTLT6wRtP9wx3KyCRWVZuuvd5+xsekpfVMY2Yq5Zq4iPBy+31lrJavuA3ox1tFj5h9XoIwpVcBlQtbsAAH7GyHo4rGaMBAcyEv5M0F+O9V9AjZ5x0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AVtW63z+; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: linux@treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717081147;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YmuU//dkJp7/bqMDC5bYlhcDNvJuvWDepZNNFMpTHfQ=;
+	b=AVtW63z+BFg+N+i/VwF6voyhpXmTsIdi4tudn1OlsR1k9zDPA1VMDUJWt76QSW0eWIQkO6
+	rq9EIF1DH6yZF4KtAQhnn/d9675jDbbrrxE8CZIB8j/PUfeIVRR5Mu1nghvPPznYxZW2Yh
+	XLbrQnF24ylVS2WvPMpMZDkNCZwoezQ=
+X-Envelope-To: camelia.groza@nxp.com
+X-Envelope-To: linuxppc-dev@lists.ozlabs.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <336239e6-4369-44ea-a60c-d300cf6e6f81@linux.dev>
+Date: Thu, 30 May 2024 10:59:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] selftests/x86: fix build errors and warnings found
- via clang
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>,
- Ingo Molnar <mingo@kernel.org>
-Cc: angquan yu <angquan21@gmail.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, Alexey Dobriyan
- <adobriyan@gmail.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Sohil Mehta <sohil.mehta@intel.com>, Yu-cheng Yu <yu-cheng.yu@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev, x86@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240527210042.220315-1-jhubbard@nvidia.com>
+Subject: Re: [PATCH] soc/fsl/qbman: remove unused struct 'cgr_comp'
+To: linux@treblig.org, camelia.groza@nxp.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240528231123.136664-1-linux@treblig.org>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240527210042.220315-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20240528231123.136664-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 5/27/24 15:00, John Hubbard wrote:
-> Hi,
+On 5/28/24 19:11, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Just a bunch of build and warnings fixes that show up when
-> building with clang. Some of these depend on each other, so
-> I'm sending them as a series.
+> 'cgr_comp' has been unused since
+> commit 96f413f47677 ("soc/fsl/qbman: fix issue in
+> qman_delete_cgr_safe()").
 > 
-> Changes since the first version:
+> Remove it.
 > 
-> 1) Rebased onto Linux 6.10-rc1
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/soc/fsl/qbman/qman.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
+> index 7e9074519ad2..4dc8aba33d9b 100644
+> --- a/drivers/soc/fsl/qbman/qman.c
+> +++ b/drivers/soc/fsl/qbman/qman.c
+> @@ -2546,11 +2546,6 @@ int qman_delete_cgr(struct qman_cgr *cgr)
+>  }
+>  EXPORT_SYMBOL(qman_delete_cgr);
+>  
+> -struct cgr_comp {
+> -	struct qman_cgr *cgr;
+> -	struct completion completion;
+> -};
+> -
+>  static void qman_delete_cgr_smp_call(void *p)
+>  {
+>  	qman_delete_cgr((struct qman_cgr *)p);
 
-x86 test patches usually go through x86 tree.
-
-This series requires x86 maintainer review and ack for me
-to take this through kselftest tree.
-
-
-> 
-> Enjoy!
-> 
-> thanks,
-> John Hubbard
-> 
-> John Hubbard (6):
->    selftests/x86: build test_FISTTP.c with clang
->    selftests/x86: build fsgsbase_restore.c with clang
->    selftests/x86: build sysret_rip.c with clang
->    selftests/x86: avoid -no-pie warnings from clang during compilation
->    selftests/x86: remove (or use) unused variables and functions
->    selftests/x86: fix printk warnings reported by clang
-> 
->   tools/testing/selftests/x86/Makefile          | 10 +++++++
->   tools/testing/selftests/x86/amx.c             | 16 -----------
->   .../testing/selftests/x86/clang_helpers_32.S  | 11 ++++++++
->   .../testing/selftests/x86/clang_helpers_64.S  | 28 +++++++++++++++++++
->   tools/testing/selftests/x86/fsgsbase.c        |  6 ----
->   .../testing/selftests/x86/fsgsbase_restore.c  | 11 ++++----
->   tools/testing/selftests/x86/sigreturn.c       |  2 +-
->   .../testing/selftests/x86/syscall_arg_fault.c |  1 -
->   tools/testing/selftests/x86/sysret_rip.c      | 20 ++++---------
->   tools/testing/selftests/x86/test_FISTTP.c     |  8 +++---
->   tools/testing/selftests/x86/test_vsyscall.c   | 15 ++++------
->   tools/testing/selftests/x86/vdso_restorer.c   |  2 ++
->   12 files changed, 72 insertions(+), 58 deletions(-)
->   create mode 100644 tools/testing/selftests/x86/clang_helpers_32.S
->   create mode 100644 tools/testing/selftests/x86/clang_helpers_64.S
-> 
-> 
-> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-> prerequisite-patch-id: 39d606b9b165077aa1a3a3b0a3b396dba0c20070
-
-thanks,
--- Shuah
-
+Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
 
