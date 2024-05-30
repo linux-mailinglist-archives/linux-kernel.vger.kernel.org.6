@@ -1,218 +1,106 @@
-Return-Path: <linux-kernel+bounces-194857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E2D8D432A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:49:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51C38D432C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FFE61C20A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:49:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D881C2273D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2160917BA8;
-	Thu, 30 May 2024 01:49:29 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9FF1798F;
+	Thu, 30 May 2024 01:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kTuOxVbY"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BA518036;
-	Thu, 30 May 2024 01:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25968C13
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717033768; cv=none; b=paW6rtYwUR7EgUA+ssJ9fCRl8wCEiB/mKZZKKjdC367xYEUVSE69vOUcvDHpW1Ki36MKjFjiynbm0/r9/rTZ59iLY2vzlisCnimfkbNT8JmGM1wmN6IeeZpmHB2Ra26k+HCFZnJPpTPQ6Z5PuoksOIaP7dOSxAAnZadj+ISCbTk=
+	t=1717033821; cv=none; b=Ald8LhBJDRZBSQTbLHlelzo/C2ZsPCdAxYD+eAYlR5VwqY1ySj5EM9Iv34BdiVUkpgdt+Rr02WuQgsEQ37z79raOBbPo0joqhpD6TH1DYDFfZceUYljnBsADXbLki0aY2acZdkm/ebw1CdF0fyxeN4IEYi0FJEq3V20Gip0Cz90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717033768; c=relaxed/simple;
-	bh=mY/foS7cc/9Dxh6P5MjKPvofzIufEuNdePlyuqwblYg=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=k7cYtxz1lqPXoADJeN7KehsXg9EpKtchWB0purjGRoCYj5nxQueLJpFGE3k2GU/S89g95Bu/8iPe3aNZUTF79eXUzlQKzdZF6B7pwIzQhYhVplbt8ed0LG2AezVbtS+4Wlj7rH+PTewUiYS6O1QhFJ3OxD/yOmeKfnprji0Ibqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VqTgj3rbWz4f3jMd;
-	Thu, 30 May 2024 09:49:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id DBC851A0189;
-	Thu, 30 May 2024 09:49:14 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBEZ21dmGhI4OA--.43211S3;
-	Thu, 30 May 2024 09:49:14 +0800 (CST)
-Subject: Re: [RFC PATCH] sbitmap: fix io hung due to race on
- sbitmap_word::cleared
-To: Yang Yang <yang.yang@vivo.com>, Jens Axboe <axboe@kernel.dk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240527042654.2404-1-yang.yang@vivo.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <bd176002-90e8-030d-f8d8-9388d3b40241@huaweicloud.com>
-Date: Thu, 30 May 2024 09:49:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1717033821; c=relaxed/simple;
+	bh=dJzhMKWwI+p3fkyvY8ReszvnKdJxHAls86oOxh6MzBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CitJ7oSuakMiiK+Wc4fBHp4Q4VkWD//H5l+oGuuXoc62f65+FzsKNN+aYDu1FVg4NP+GdDLmTshnxW+Zr2Bur5ADhdWqg+lVQlVgP5eCAJ6ih5Oe+Zq3lMtLu3P1eE+pteP3aQ8rFfxdduiMAySYS19e1s+pOPqLxQsxFMCOPec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kTuOxVbY; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: viro@zeniv.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717033815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CfMw9tHy0aaB3TSiLd6z9f6QlIhExqYTyd8E+3PAqVs=;
+	b=kTuOxVbYol232cWSsWqR7clknZ080/pkBgkwBM0aNmpo4MirTY1k+9TzbkG2yq+LG3q0Re
+	4EcUyYeIgsbWdTw+fh60oB39sx7eYNDRUV29yxSTFzHc/+AEzoBsBFsr808fb3ctbYV7RK
+	3zXhkDgNKqZ9c4pHVGGatnuHOV7dLI0=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: yuntao.wang@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yuntao Wang <yuntao.wang@linux.dev>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yuntao.wang@linux.dev
+Subject: Re: [PATCH] fs/file: fix the check in find_next_fd()
+Date: Thu, 30 May 2024 09:50:03 +0800
+Message-ID: <20240530015003.237210-1-yuntao.wang@linux.dev>
+In-Reply-To: <20240529190328.GP2118490@ZenIV>
+References: <20240529190328.GP2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240527042654.2404-1-yang.yang@vivo.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXKBEZ21dmGhI4OA--.43211S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWrWDCw4DJryDAw45tr1UJrb_yoWrGF4rpF
-	WUKFyxKFWYqr17ursxJ3y8A3WSvws7t39rJr1xK343C3W7Kr9xJF4rKFW3twn3AFWktF4U
-	XF4rJrWkCw1q9FJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On Wed, 29 May 2024 20:03:28 +0100, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-ÔÚ 2024/05/27 12:26, Yang Yang Ð´µÀ:
-> Configuration for sbq:
->    depth=64, wake_batch=6, shift=6, map_nr=1
+> On Thu, May 30, 2024 at 12:06:56AM +0800, Yuntao Wang wrote:
+> > The maximum possible return value of find_next_zero_bit(fdt->full_fds_bits,
+> > maxbit, bitbit) is maxbit. This return value, multiplied by BITS_PER_LONG,
+> > gives the value of bitbit, which can never be greater than maxfd, it can
+> > only be equal to maxfd at most, so the following check 'if (bitbit > maxfd)'
+> > will never be true.
+> > 
+> > Moreover, when bitbit equals maxfd, it indicates that there are no unused
+> > fds, and the function can directly return.
+> > 
+> > Fix this check.
 > 
-> 1. There are 64 requests in progress:
->    map->word = 0xFFFFFFFFFFFFFFFF
-> 2. After all the 64 requests complete, and no more requests come:
->    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
-> 3. Now two tasks try to allocate requests:
->    T1:                                       T2:
->    __blk_mq_get_tag                          .
->    __sbitmap_queue_get                       .
->    sbitmap_get                               .
->    sbitmap_find_bit                          .
->    sbitmap_find_bit_in_word                  .
->    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
->    sbitmap_deferred_clear                    __sbitmap_queue_get
->    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
->      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
->        return false;                         __sbitmap_get_word -> nr=-1
->      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
->      atomic_long_andnot()                    /* map->cleared=0 */
->                                                if (!(map->cleared))
->                                                  return false;
->                                       /*
->                                        * map->cleared is cleared by T1
->                                        * T2 fail to acquire the tag
->                                        */
+> Hmm...  The patch is correct, AFAICS.  I _think_ what happened is that
+> Linus decided to play it safe around the last word.  In the reality
+> ->max_fds is always a multiple of BITS_PER_LONG, so there's no boundary
+> effects - a word can not cross the ->max_fds boundary, so "no zero
+> bits in full_fds_bits under max_fds/BITS_PER_LONG" does mean there's
+> no point checking in range starting at round_down(max_fds, BITS_PER_LONG).
 
-This looks correct.
+Yes.
 
+> Perhaps a comment along the lines of
 > 
-> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
-> up due to the wake_batch being set at 6. If no more requests come, T1
-> will wait here indefinitely.
+>         unsigned int maxfd = fdt->max_fds; // always a multiple of BITS_PER_LONG
 > 
-> Fix this issue by adding a new flag swap_inprogress to indicate whether
-> the swap is ongoing.
-> 
-> Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
-> Signed-off-by: Yang Yang <yang.yang@vivo.com>
-> ---
->   include/linux/sbitmap.h |  5 +++++
->   lib/sbitmap.c           | 22 ++++++++++++++++++++--
->   2 files changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-> index d662cf136021..b88a9e4997ab 100644
-> --- a/include/linux/sbitmap.h
-> +++ b/include/linux/sbitmap.h
-> @@ -36,6 +36,11 @@ struct sbitmap_word {
->   	 * @cleared: word holding cleared bits
->   	 */
->   	unsigned long cleared ____cacheline_aligned_in_smp;
-> +
-> +	/**
-> +	 * @swap_inprogress: set to 1 when swapping word <-> cleared
-> +	 */
-> +	atomic_t swap_inprogress;
->   } ____cacheline_aligned_in_smp;
->   
->   /**
-> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-> index 1e453f825c05..d4bb258fe8b0 100644
-> --- a/lib/sbitmap.c
-> +++ b/lib/sbitmap.c
-> @@ -62,10 +62,19 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
->    */
->   static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
->   {
-> -	unsigned long mask;
-> +	unsigned long mask, flags;
-> +	int zero = 0;
->   
-> -	if (!READ_ONCE(map->cleared))
-> +	if (!READ_ONCE(map->cleared)) {
-> +		if (atomic_read(&map->swap_inprogress))
-> +			goto out_wait;
->   		return false;
-> +	}
-> +
-> +	if (!atomic_try_cmpxchg(&map->swap_inprogress, &zero, 1))
-> +		goto out_wait;
-> +
-> +	local_irq_save(flags);
->   
->   	/*
->   	 * First get a stable cleared mask, setting the old mask to 0.
-> @@ -77,6 +86,15 @@ static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
->   	 */
->   	atomic_long_andnot(mask, (atomic_long_t *)&map->word);
->   	BUILD_BUG_ON(sizeof(atomic_long_t) != sizeof(map->word));
-> +
-> +	atomic_set(&map->swap_inprogress, 0);
-> +	smp_mb__after_atomic();
-> +	local_irq_restore(flags);
-> +	return true;
-> +
-> +out_wait:
-> +	while (atomic_read(&map->swap_inprogress))
-> +		;
+> would be useful in there...
 
-However, I really don't like this change.
+Actually, we can simplify this issue. When 'bitbit >= maxfd', it indicates that
+there are no unused fds in 'fdt->open_fds', and we can directly return maxfd,
+regardless of whether maxfd is a multiple of BITS_PER_LONG or not. Therefore, I
+think this comment may not be very necessary.
 
-How about following patch? I think it can fix the prblem as well.
-
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index 1e453f825c05..d1b9bd61d296 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -175,12 +175,14 @@ static int sbitmap_find_bit_in_word(struct 
-sbitmap_word *map,
-         int nr;
-
-         do {
-+               bool clear = READ_ONCE(map->cleared) != 0;
-+
-                 nr = __sbitmap_get_word(&map->word, depth,
-                                         alloc_hint, wrap);
--               if (nr != -1)
--                       break;
--               if (!sbitmap_deferred_clear(map))
-+               if (nr != -1 || !clear)
-                         break;
-+
-+               sbitmap_deferred_clear(map);
-         } while (1);
-
-         return nr;
-
-Thanks,
-Kuai
->   	return true;
->   }
->   
-> 
-
+Of course, I don't oppose adding this comment.
 
