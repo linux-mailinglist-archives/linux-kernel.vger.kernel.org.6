@@ -1,372 +1,433 @@
-Return-Path: <linux-kernel+bounces-195238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29C98D4968
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:16:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E518D4970
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D151C21F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1852B283100
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E20B176ACC;
-	Thu, 30 May 2024 10:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57DA176ACC;
+	Thu, 30 May 2024 10:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="QLHSLCh4"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TspVXms4"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7F3150996;
-	Thu, 30 May 2024 10:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DDC1761BD
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717064156; cv=none; b=tyb7Nk9ZumjJJZ+lwxgcF5pT4W8QXxuZMX3WQHu97KDpmYb3ap2qklotqqmTOaULdFxQ2ogNM55/hCjD2ORQ3ijsz0CVQZIJlIHOwsXQ8ZwRfxRVcBVwRLRKXn6K6hG5PxfQ8YqdVMQkWBvE2HZHTZMg7o4eLozR7hMnZCBIRmA=
+	t=1717064201; cv=none; b=fIg/7Kh8JuWoS3MLDKD/ITVZhk21tDFPxpnnT+KpUREZcfPl8OPh7i14a5jsdd4migF0CHAJ7CDAFXucz8UFcnw948OkrT/tN6eu2C3h2/5f3FGElfLuUedUd4A+nfUS+kjv0p6NOi20yPLYiH6USyGZOdnVC6jtI92Q1TWLhnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717064156; c=relaxed/simple;
-	bh=YH2XkaoEdJ+AHqkW8rxPrO1JMcXQk5JQ/vteSohx728=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f5SKdo0ai1FLaEZ/LUa1TWB/hp/mstLAsKf/gltP2Y7xHFf/OoTfSrQE/J40g9qagh8G+oULd37QiKee07SZG75q7f+AgMG1QaDCzj0Zy7q6bt7G8+vckGUTliBmod6HccPbIt+fljvmSqM9vQp6paCi0P5SI2JOF/j1rcFqCew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=QLHSLCh4; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U9a1LZ025821;
-	Thu, 30 May 2024 03:15:33 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=zS3puPiYhkGRjwXr6REOZk0
-	0sFlvLYNXz+LxCZZ5KJ4=; b=QLHSLCh4aUPCrAP4lgxG6PEGCV80oz6Yo3zXnz9
-	Gf9tqEsTlqmBFsoH7bvSQCFZhOjMZIwLf9F2cxh7ecVd6kdqYI9pi3oJ1zeGa15V
-	Urg5F0FuotluecQNflyLsQiqjGz7gedCjs+owOCLS2sxITU4OT3Kk6bqVFrVqXBM
-	3FVLKfqjPza7pDGfhVNeYL0Nq1xVGO4qYQ9rhksLM0v5wwFnIsFOz/HN7YSQZ8qJ
-	7OciQyade330vw4T8+Zofr3JrVWmNUOMhzJNdzNpPyaqDGXdYyY5UIEu9me71dYr
-	oMEIDIJ4kUhNuhvYFUmfpglhtCJKlNwvlCmV5vU9JDV2wvg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3yegkn19tq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 03:15:33 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 30 May 2024 03:15:32 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 30 May 2024 03:15:32 -0700
-Received: from hyd1425.marvell.com (unknown [10.29.37.152])
-	by maili.marvell.com (Postfix) with ESMTP id 2D7B53F70B6;
-	Thu, 30 May 2024 03:15:28 -0700 (PDT)
-From: Sai Krishna <saikrishnag@marvell.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <hkelam@marvell.com>, <sbhatta@marvell.com>
-CC: Sai Krishna <saikrishnag@marvell.com>
-Subject: [net-next PATCH v3] octeontx2-pf: Add ucast filter count configurability via devlink.
-Date: Thu, 30 May 2024 15:45:15 +0530
-Message-ID: <20240530101515.201635-1-saikrishnag@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717064201; c=relaxed/simple;
+	bh=O+bfZPNgR+5cgx22z1M6wTZNIFfEPtzPEK1LR2N9awc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XJhSwf4tiixpJE2Oa/MEyu0a088DmXlR+2TFrTxX+1zQFuLxiLi6xcs8ZzdDREar/qAd3Iqtc4PuDsT4vBMBvRiTQh71h85r+E60rSZ3P4he2Uk1BWfJ4sL+rxAvLCgPeMO4qJ2tpacjNyQBODXAfv1e1uAxXLI/oeessr9eZnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TspVXms4; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b7e693b8aso464974e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 03:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717064197; x=1717668997; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DzT5yCSvV57mMTYhBGzUgbIbwkfE5KRalJPYyg3Db1Q=;
+        b=TspVXms413+ULQrpfS8L9w1jZC4LN8VHIvcxwqbLQoyxYQoYG44E/dszpe+z2CVchm
+         NRvrVbFOpX+67jON8+qCwtReBmVAIQpZQCBK3Fa4ECSEyeLtXsf4Tg/lBm2mUjlhnwyo
+         a9bNsz68nhcsn/jXXrCb30vePrXWPv1xaHnUU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717064197; x=1717668997;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DzT5yCSvV57mMTYhBGzUgbIbwkfE5KRalJPYyg3Db1Q=;
+        b=s2O+wSbGSNudGgnZ4l6GiJ+JozwQQx7bmP3tqF69cCflJxTv1BuZyIyUAZ+ALH8nS1
+         ZadH/bOeEFiVVqHZ8YSIFB/QVmshmXVHsiiojEBVB/WrQ9oAOGKta/CJzhvNNlGUKD0G
+         USJHVrsOimg/sk/7Ji7+httx9C/WCyU35cm00Si9rbmE+bPxPSNVg7u35bFdPtZxKcCE
+         UrF4AayRFbxd4SNvWwOy+ymxWFpKkcIBEiKoQSxh3hf/f3ygzH6KpcqSufVa1MfSRiQD
+         HH0mPxZKoyAkNIYy0+yW3ES0EHdVIzXMyc2DSXqEXwbzrIYM0eIPTVMNituJPM2Y0q0n
+         oghw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYXDpkK1T6NNSEXRFBqxtpQyNuQqmelKRpEUrfBUwvZj9PmK4t5ryLwegfOQTW7l1nx1LayTQih3kBUQ2eaddwIs0M4IY+wof/DVQ8
+X-Gm-Message-State: AOJu0YxXHhoZzjuUwpZIkTmAVFxPFEGU1zjsCBQ2HnZ1p8sp7Smb3/XH
+	yMm4H6sv4Z+GwY3nP9eT+TR1nBwBbBYT9naH9Ky3gUMJ+1bOEYfiVe8Dqnx9mDgsNRvJzv+Ln7d
+	Q3Ufe4RgQIq5lDr90nJ8laZg+yyLAiUqcZFL9
+X-Google-Smtp-Source: AGHT+IFQ1k/efBlxIyxFB1csG13ig4X/Xag1QwXMyDgIYBVAydIEN4a9Cvp5XFm54Ap13GSLIFikgOr4c5wgUFxmhYc=
+X-Received: by 2002:a05:6512:505:b0:52b:2b11:a574 with SMTP id
+ 2adb3069b0e04-52b7e10cc61mr331899e87.15.1717064196733; Thu, 30 May 2024
+ 03:16:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: sIcIhZHaVv-7j9wzkKfkx8-Cx00GaYsi
-X-Proofpoint-GUID: sIcIhZHaVv-7j9wzkKfkx8-Cx00GaYsi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_07,2024-05-28_01,2024-05-17_01
+References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-3-wenst@chromium.org>
+ <5a5842d7-adad-410b-bac2-9e5cb03ae18c@collabora.com>
+In-Reply-To: <5a5842d7-adad-410b-bac2-9e5cb03ae18c@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 30 May 2024 18:16:24 +0800
+Message-ID: <CAGXv+5E5zFWVi+QmZj+mMb5jRfv138kz1FQyXiuzpe5Zz2KbZQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] clk: mediatek: Add mt8173-mfgtop driver
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Added a devlink param to set/modify unicast filter count. Currently
-it's hardcoded with a macro.
+On Thu, May 30, 2024 at 5:59=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 30/05/24 10:35, Chen-Yu Tsai ha scritto:
+> > The MFG (GPU) block on the MT8173 has a small glue layer, named MFG_TOP
+> > in the datasheet, that contains clock gates, some power sequence signal
+> > delays, and other unknown registers that get toggled when the GPU is
+> > powered on.
+> >
+> > The clock gates are exposed as clocks provided by a clock controller,
+> > while the power sequencing bits are exposed as one singular power domai=
+n.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > ---
+> >   drivers/clk/mediatek/Kconfig             |   9 +
+> >   drivers/clk/mediatek/Makefile            |   1 +
+> >   drivers/clk/mediatek/clk-mt8173-mfgtop.c | 240 ++++++++++++++++++++++=
++
+> >   3 files changed, 250 insertions(+)
+> >   create mode 100644 drivers/clk/mediatek/clk-mt8173-mfgtop.c
+> >
+> > diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfi=
+g
+> > index 70a005e7e1b1..9e279c739f1c 100644
+> > --- a/drivers/clk/mediatek/Kconfig
+> > +++ b/drivers/clk/mediatek/Kconfig
+> > @@ -500,6 +500,15 @@ config COMMON_CLK_MT8173_IMGSYS
+> >       help
+> >         This driver supports MediaTek MT8173 imgsys clocks.
+> >
+> > +config COMMON_CLK_MT8173_MFGTOP
+> > +     tristate "Clock and power driver for MediaTek MT8173 mfgtop"
+> > +     depends on COMMON_CLK_MT8173
+> > +     default COMMON_CLK_MT8173
+> > +     select PM_GENERIC_DOMAINS
+> > +     select PM_GENERIC_DOMAINS_OF
+> > +     help
+> > +       This driver supports MediaTek MT8173 mfgtop clocks and power do=
+main.
+> > +
+> >   config COMMON_CLK_MT8173_MMSYS
+> >          tristate "Clock driver for MediaTek MT8173 mmsys"
+> >          depends on COMMON_CLK_MT8173
+> > diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makef=
+ile
+> > index eeccfa039896..fdd3a76e12a1 100644
+> > --- a/drivers/clk/mediatek/Makefile
+> > +++ b/drivers/clk/mediatek/Makefile
+> > @@ -77,6 +77,7 @@ obj-$(CONFIG_COMMON_CLK_MT8167_VDECSYS) +=3D clk-mt81=
+67-vdec.o
+> >   obj-$(CONFIG_COMMON_CLK_MT8173) +=3D clk-mt8173-apmixedsys.o clk-mt81=
+73-infracfg.o \
+> >                                  clk-mt8173-pericfg.o clk-mt8173-topckg=
+en.o
+> >   obj-$(CONFIG_COMMON_CLK_MT8173_IMGSYS) +=3D clk-mt8173-img.o
+> > +obj-$(CONFIG_COMMON_CLK_MT8173_MFGTOP) +=3D clk-mt8173-mfgtop.o
+> >   obj-$(CONFIG_COMMON_CLK_MT8173_MMSYS) +=3D clk-mt8173-mm.o
+> >   obj-$(CONFIG_COMMON_CLK_MT8173_VDECSYS) +=3D clk-mt8173-vdecsys.o
+> >   obj-$(CONFIG_COMMON_CLK_MT8173_VENCSYS) +=3D clk-mt8173-vencsys.o
+> > diff --git a/drivers/clk/mediatek/clk-mt8173-mfgtop.c b/drivers/clk/med=
+iatek/clk-mt8173-mfgtop.c
+> > new file mode 100644
+> > index 000000000000..85fa7a7453ed
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-mt8173-mfgtop.c
+> > @@ -0,0 +1,240 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2024 Google LLC
+> > + * Author: Chen-Yu Tsai <wenst@chromium.org>
+> > + *
+> > + * Based on driver in downstream ChromeOS v5.15 kernel.
+> > + *
+> > + * Copyright (c) 2014 MediaTek Inc.
+> > + * Author: Chiawen Lee <chiawen.lee@mediatek.com>
+> > + */
+> > +
+> > +#include <dt-bindings/clock/mt8173-clk.h>
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/mfd/syscon.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_domain.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/regmap.h>
+> > +
+> > +#include "clk-gate.h"
+> > +#include "clk-mtk.h"
+> > +
+> > +static const struct mtk_gate_regs mfg_cg_regs =3D {
+> > +     .sta_ofs =3D 0x0000,
+> > +     .clr_ofs =3D 0x0008,
+> > +     .set_ofs =3D 0x0004,
+> > +};
+> > +
+> > +#define GATE_MFG(_id, _name, _parent, _shift, _flags)        \
+> > +             GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs, _shift,=
+ &mtk_clk_gate_ops_setclr, _flags)
+>
+> Extra tabulation: please fix
 
-commands:
+One tab instead of two? OK.
 
-To get the current unicast filter count
- # devlink dev param show pci/0002:02:00.0 name unicast_filter_count
+> > +
+> > +/* TODO: The block actually has dividers for the core and mem clocks. =
+*/
+> > +static const struct mtk_gate mfg_clks[] =3D {
+> > +     GATE_MFG(CLK_MFG_AXI, "mfg_axi", "axi_mfg_in_sel", 0, CLK_SET_RAT=
+E_PARENT),
+> > +     GATE_MFG(CLK_MFG_MEM, "mfg_mem", "mem_mfg_in_sel", 1, CLK_SET_RAT=
+E_PARENT),
+> > +     GATE_MFG(CLK_MFG_G3D, "mfg_g3d", "mfg_sel", 2, CLK_SET_RATE_PAREN=
+T),
+> > +     GATE_MFG(CLK_MFG_26M, "mfg_26m", "clk26m", 3, 0),
+> > +};
+> > +
+> > +static const struct mtk_clk_desc mfg_desc =3D {
+> > +     .clks =3D mfg_clks,
+> > +     .num_clks =3D ARRAY_SIZE(mfg_clks),
+> > +};
+> > +
+> > +struct mt8173_mfgtop_data {
+> > +     struct clk_hw_onecell_data *clk_data;
+> > +     struct regmap *regmap;
+> > +     struct generic_pm_domain genpd;
+> > +     struct of_phandle_args parent_pd, child_pd;
+> > +     struct clk *clk_26m;
+> > +};
+> > +
+> > +static const struct of_device_id of_match_clk_mt8173_mfgtop[] =3D {
+> > +     { .compatible =3D "mediatek,mt8173-mfgtop", .data =3D &mfg_desc }=
+,
+> > +     { /* sentinel */ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, of_match_clk_mt8173_mfgtop);
+>
+> Please move of_match_clk_mt8173_mfgtop before clk_mt8173_mfgtop_drv for c=
+onsistency
+> with all the other clock drivers.
 
-To change/set the unicast filter count
- # devlink dev param  set  pci/0002:02:00.0  name unicast_filter_count
- value 5 cmode runtime
+Ack.
 
-Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
----
-v3:
-    - Addressed review comments given by Jakub Kicinski
-        1. Documented unicast_filter_count devlink param
-        2. Minor change to match upstream code base
-v2:
-    - Addressed review comments given by Simon Horman
-	1. Updated the commit message with example commads
-        2. Modified/optimized conditions
+> > +
+> > +/* Delay count in clock cycles */
+> > +#define MFG_ACTIVE_POWER_CON0        0x24
+> > + #define RST_B_DELAY_CNT     GENMASK(7, 0)   /* pwr_rst_b de-assert de=
+lay during power-up */
+> > + #define CLK_EN_DELAY_CNT    GENMASK(15, 8)  /* CLK_DIS deassert delay=
+ during power-up */
+> > + #define CLK_DIS_DELAY_CNT   GENMASK(23, 16) /* CLK_DIS assert delay d=
+uring power-down */
+>
+> The reason why I had EVT_FORCE_ABORT and ACTIVE_PWRCTL_EN in my driver is=
+ to
+> document that we're keeping the event force abort disabled and, more impo=
+rtantly,
+> we are keeping the "active power control" feature disabled.
+>
+> Please, add those two - or at least the ACTIVE_PWRCTL_EN - to keep that d=
+ocumented,
+> or this information will be lost for sure.
+> If in the future the ACTIVE_PWRCTL feature will become usable, it's going=
+ to be
+> just a 30 seconds change, as the info is already there.
 
- .../networking/devlink/octeontx2.rst          | 16 +++++
- .../marvell/octeontx2/nic/otx2_common.h       |  7 +-
- .../marvell/octeontx2/nic/otx2_devlink.c      | 64 +++++++++++++++++++
- .../marvell/octeontx2/nic/otx2_flows.c        | 20 +++---
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |  2 +-
- 5 files changed, 95 insertions(+), 14 deletions(-)
+OK.
 
-diff --git a/Documentation/networking/devlink/octeontx2.rst b/Documentation/networking/devlink/octeontx2.rst
-index 610de99b728a..5910289b4d4e 100644
---- a/Documentation/networking/devlink/octeontx2.rst
-+++ b/Documentation/networking/devlink/octeontx2.rst
-@@ -40,3 +40,19 @@ The ``octeontx2 AF`` driver implements the following driver-specific parameters.
-      - runtime
-      - Use to set the quantum which hardware uses for scheduling among transmit queues.
-        Hardware uses weighted DWRR algorithm to schedule among all transmit queues.
-+
-+The ``octeontx2 PF`` driver implements the following driver-specific parameters.
-+
-+.. list-table:: Driver-specific parameters implemented
-+   :widths: 5 5 5 85
-+
-+   * - Name
-+     - Type
-+     - Mode
-+     - Description
-+   * - ``unicast_filter_count``
-+     - u8
-+     - runtime
-+     - Used to Set/modify unicast filter count, which helps in better utilization of
-+       resources against possible wastage(un-used) with current scheme of hardcoded
-+       unicast count.
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-index 24fbbef265a6..f27a3456ae64 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-@@ -346,12 +346,9 @@ struct otx2_flow_config {
- 	u16			*def_ent;
- 	u16			nr_flows;
- #define OTX2_DEFAULT_FLOWCOUNT		16
--#define OTX2_MAX_UNICAST_FLOWS		8
-+#define OTX2_DEFAULT_UNICAST_FLOWS	4
- #define OTX2_MAX_VLAN_FLOWS		1
- #define OTX2_MAX_TC_FLOWS	OTX2_DEFAULT_FLOWCOUNT
--#define OTX2_MCAM_COUNT		(OTX2_DEFAULT_FLOWCOUNT + \
--				 OTX2_MAX_UNICAST_FLOWS + \
--				 OTX2_MAX_VLAN_FLOWS)
- 	u16			unicast_offset;
- 	u16			rx_vlan_offset;
- 	u16			vf_vlan_offset;
-@@ -365,6 +362,7 @@ struct otx2_flow_config {
- 	u16                     max_flows;
- 	refcount_t		mark_flows;
- 	struct list_head	flow_list_tc;
-+	u8			ucast_flt_cnt;
- 	bool			ntuple;
- };
- 
-@@ -1067,6 +1065,7 @@ int otx2_handle_ntuple_tc_features(struct net_device *netdev,
- int otx2_smq_flush(struct otx2_nic *pfvf, int smq);
- void otx2_free_bufs(struct otx2_nic *pfvf, struct otx2_pool *pool,
- 		    u64 iova, int size);
-+int otx2_mcam_entry_init(struct otx2_nic *pfvf);
- 
- /* tc support */
- int otx2_init_tc(struct otx2_nic *nic);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
-index 99ddf31269d9..79cd8f1777d4 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
-@@ -64,9 +64,68 @@ static int otx2_dl_mcam_count_get(struct devlink *devlink, u32 id,
- 	return 0;
- }
- 
-+static int otx2_dl_ucast_flt_cnt_set(struct devlink *devlink, u32 id,
-+				     struct devlink_param_gset_ctx *ctx,
-+				     struct netlink_ext_ack *extack)
-+{
-+	struct otx2_devlink *otx2_dl = devlink_priv(devlink);
-+	struct otx2_nic *pfvf = otx2_dl->pfvf;
-+	int err;
-+
-+	pfvf->flow_cfg->ucast_flt_cnt = ctx->val.vu8;
-+
-+	otx2_mcam_flow_del(pfvf);
-+	err = otx2_mcam_entry_init(pfvf);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int otx2_dl_ucast_flt_cnt_get(struct devlink *devlink, u32 id,
-+				     struct devlink_param_gset_ctx *ctx)
-+{
-+	struct otx2_devlink *otx2_dl = devlink_priv(devlink);
-+	struct otx2_nic *pfvf = otx2_dl->pfvf;
-+
-+	ctx->val.vu8 = pfvf->flow_cfg ? pfvf->flow_cfg->ucast_flt_cnt : 0;
-+
-+	return 0;
-+}
-+
-+static int otx2_dl_ucast_flt_cnt_validate(struct devlink *devlink, u32 id,
-+					  union devlink_param_value val,
-+					  struct netlink_ext_ack *extack)
-+{
-+	struct otx2_devlink *otx2_dl = devlink_priv(devlink);
-+	struct otx2_nic *pfvf = otx2_dl->pfvf;
-+
-+	/* Check for UNICAST filter support*/
-+	if (!(pfvf->flags & OTX2_FLAG_UCAST_FLTR_SUPPORT)) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Unicast filter not enabled");
-+		return -EINVAL;
-+	}
-+
-+	if (!pfvf->flow_cfg) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "pfvf->flow_cfg not initialized");
-+		return -EINVAL;
-+	}
-+
-+	if (pfvf->flow_cfg->nr_flows) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Cannot modify count when there are active rules");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- enum otx2_dl_param_id {
- 	OTX2_DEVLINK_PARAM_ID_BASE = DEVLINK_PARAM_GENERIC_ID_MAX,
- 	OTX2_DEVLINK_PARAM_ID_MCAM_COUNT,
-+	OTX2_DEVLINK_PARAM_ID_UCAST_FLT_CNT,
- };
- 
- static const struct devlink_param otx2_dl_params[] = {
-@@ -75,6 +134,11 @@ static const struct devlink_param otx2_dl_params[] = {
- 			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
- 			     otx2_dl_mcam_count_get, otx2_dl_mcam_count_set,
- 			     otx2_dl_mcam_count_validate),
-+	DEVLINK_PARAM_DRIVER(OTX2_DEVLINK_PARAM_ID_UCAST_FLT_CNT,
-+			     "unicast_filter_count", DEVLINK_PARAM_TYPE_U8,
-+			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
-+			     otx2_dl_ucast_flt_cnt_get, otx2_dl_ucast_flt_cnt_set,
-+			     otx2_dl_ucast_flt_cnt_validate),
- };
- 
- static const struct devlink_ops otx2_devlink_ops = {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
-index bc5819237ed7..98c31a16c70b 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
-@@ -12,8 +12,6 @@
- 
- #define OTX2_DEFAULT_ACTION	0x1
- 
--static int otx2_mcam_entry_init(struct otx2_nic *pfvf);
--
- struct otx2_flow {
- 	struct ethtool_rx_flow_spec flow_spec;
- 	struct list_head list;
-@@ -161,7 +159,7 @@ int otx2_alloc_mcam_entries(struct otx2_nic *pfvf, u16 count)
- }
- EXPORT_SYMBOL(otx2_alloc_mcam_entries);
- 
--static int otx2_mcam_entry_init(struct otx2_nic *pfvf)
-+int otx2_mcam_entry_init(struct otx2_nic *pfvf)
- {
- 	struct otx2_flow_config *flow_cfg = pfvf->flow_cfg;
- 	struct npc_get_field_status_req *freq;
-@@ -172,7 +170,7 @@ static int otx2_mcam_entry_init(struct otx2_nic *pfvf)
- 	int ent, count;
- 
- 	vf_vlan_max_flows = pfvf->total_vfs * OTX2_PER_VF_VLAN_FLOWS;
--	count = OTX2_MAX_UNICAST_FLOWS +
-+	count = flow_cfg->ucast_flt_cnt +
- 			OTX2_MAX_VLAN_FLOWS + vf_vlan_max_flows;
- 
- 	flow_cfg->def_ent = devm_kmalloc_array(pfvf->dev, count,
-@@ -214,7 +212,7 @@ static int otx2_mcam_entry_init(struct otx2_nic *pfvf)
- 	flow_cfg->vf_vlan_offset = 0;
- 	flow_cfg->unicast_offset = vf_vlan_max_flows;
- 	flow_cfg->rx_vlan_offset = flow_cfg->unicast_offset +
--					OTX2_MAX_UNICAST_FLOWS;
-+					flow_cfg->ucast_flt_cnt;
- 	pfvf->flags |= OTX2_FLAG_UCAST_FLTR_SUPPORT;
- 
- 	/* Check if NPC_DMAC field is supported
-@@ -255,6 +253,7 @@ static int otx2_mcam_entry_init(struct otx2_nic *pfvf)
- 	refcount_set(&flow_cfg->mark_flows, 1);
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_mcam_entry_init);
- 
- /* TODO : revisit on size */
- #define OTX2_DMAC_FLTR_BITMAP_SZ (4 * 2048 + 32)
-@@ -302,6 +301,8 @@ int otx2_mcam_flow_init(struct otx2_nic *pf)
- 	INIT_LIST_HEAD(&pf->flow_cfg->flow_list);
- 	INIT_LIST_HEAD(&pf->flow_cfg->flow_list_tc);
- 
-+	pf->flow_cfg->ucast_flt_cnt = OTX2_DEFAULT_UNICAST_FLOWS;
-+
- 	/* Allocate bare minimum number of MCAM entries needed for
- 	 * unicast and ntuple filters.
- 	 */
-@@ -314,7 +315,7 @@ int otx2_mcam_flow_init(struct otx2_nic *pf)
- 		return 0;
- 
- 	pf->mac_table = devm_kzalloc(pf->dev, sizeof(struct otx2_mac_table)
--					* OTX2_MAX_UNICAST_FLOWS, GFP_KERNEL);
-+					* pf->flow_cfg->ucast_flt_cnt, GFP_KERNEL);
- 	if (!pf->mac_table)
- 		return -ENOMEM;
- 
-@@ -356,7 +357,7 @@ static int otx2_do_add_macfilter(struct otx2_nic *pf, const u8 *mac)
- 		return -ENOMEM;
- 
- 	/* dont have free mcam entries or uc list is greater than alloted */
--	if (netdev_uc_count(pf->netdev) > OTX2_MAX_UNICAST_FLOWS)
-+	if (netdev_uc_count(pf->netdev) > pf->flow_cfg->ucast_flt_cnt)
- 		return -ENOMEM;
- 
- 	mutex_lock(&pf->mbox.lock);
-@@ -367,7 +368,7 @@ static int otx2_do_add_macfilter(struct otx2_nic *pf, const u8 *mac)
- 	}
- 
- 	/* unicast offset starts with 32 0..31 for ntuple */
--	for (i = 0; i <  OTX2_MAX_UNICAST_FLOWS; i++) {
-+	for (i = 0; i <  pf->flow_cfg->ucast_flt_cnt; i++) {
- 		if (pf->mac_table[i].inuse)
- 			continue;
- 		ether_addr_copy(pf->mac_table[i].addr, mac);
-@@ -410,7 +411,7 @@ static bool otx2_get_mcamentry_for_mac(struct otx2_nic *pf, const u8 *mac,
- {
- 	int i;
- 
--	for (i = 0; i < OTX2_MAX_UNICAST_FLOWS; i++) {
-+	for (i = 0; i < pf->flow_cfg->ucast_flt_cnt; i++) {
- 		if (!pf->mac_table[i].inuse)
- 			continue;
- 
-@@ -1394,6 +1395,7 @@ int otx2_destroy_mcam_flows(struct otx2_nic *pfvf)
- 	}
- 
- 	pfvf->flags &= ~OTX2_FLAG_MCAM_ENTRIES_ALLOC;
-+	flow_cfg->max_flows = 0;
- 	mutex_unlock(&pfvf->mbox.lock);
- 
- 	return 0;
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index f5bce3e326cc..ff05ea20409a 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -1714,7 +1714,7 @@ static void otx2_do_set_rx_mode(struct otx2_nic *pf)
- 		return;
- 
- 	if ((netdev->flags & IFF_PROMISC) ||
--	    (netdev_uc_count(netdev) > OTX2_MAX_UNICAST_FLOWS)) {
-+	    (netdev_uc_count(netdev) > pf->flow_cfg->ucast_flt_cnt)) {
- 		promisc = true;
- 	}
- 
--- 
-2.25.1
+> > +
+> > +#define MFG_ACTIVE_POWER_CON1        0x28
+> > + #define PWR_ON_S_DELAY_CNT  GENMASK(7, 0)   /* pwr_on_s assert delay =
+during power-up */
+> > + #define ISO_DELAY_CNT               GENMASK(15, 8)  /* ISO assert del=
+ay during power-down */
+> > + #define ISOOFF_DELAY_CNT    GENMASK(23, 16) /* ISO de-assert delay du=
+ring power-up */
+> > + #define RST__DELAY_CNT              GENMASK(31, 24) /* pwr_rsb_b asse=
+rt delay during power-down */
+> > +
+> > +static int clk_mt8173_mfgtop_power_on(struct generic_pm_domain *domain=
+)
+> > +{
+> > +     struct mt8173_mfgtop_data *data =3D container_of(domain, struct m=
+t8173_mfgtop_data, genpd);
+> > +
+> > +     /* drives internal power management */
+> > +     clk_prepare_enable(data->clk_26m);
+> > +
+> > +     /* Power on/off delays for various signals */
+> > +     regmap_write(data->regmap, MFG_ACTIVE_POWER_CON0,
+> > +                  FIELD_PREP(RST_B_DELAY_CNT, 77) |
+> > +                  FIELD_PREP(CLK_EN_DELAY_CNT, 61) |
+> > +                  FIELD_PREP(CLK_DIS_DELAY_CNT, 60));
+>
+> I get that this is kinda odd to read, but still...
+>
+> FIELD_PREP(CLK_DIS_DELAY_CNT, 60) |
+> FIELD_PREP(ACTIVE_PWRCTL_EN, 0));
+>
+> ...please :-)
 
+Sure.
+
+> > +     regmap_write(data->regmap, MFG_ACTIVE_POWER_CON1,
+> > +                  FIELD_PREP(PWR_ON_S_DELAY_CNT, 11) |
+> > +                  FIELD_PREP(ISO_DELAY_CNT, 68) |
+> > +                  FIELD_PREP(ISOOFF_DELAY_CNT, 69) |
+> > +                  FIELD_PREP(RST__DELAY_CNT, 77));
+> > +
+> > +     /* Magic numbers related to core switch sequence and delays */
+> > +     regmap_write(data->regmap, 0xe0, 0x7a710184);
+> > +     regmap_write(data->regmap, 0xe4, 0x835f6856);
+> > +     regmap_write(data->regmap, 0xe8, 0x002b0234);
+> > +     regmap_write(data->regmap, 0xec, 0x80000000);
+> > +     regmap_write(data->regmap, 0xa0, 0x08000000);
+>
+> Is there any way to retrieve information about what those registers are?
+
+I asked. They said the project was too long ago, and they could only
+figure out that it had something to do with core switch sequencing and
+delays between each core, which is what I put in the comment there.
+
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int clk_mt8173_mfgtop_power_off(struct generic_pm_domain *domai=
+n)
+> > +{
+> > +     struct mt8173_mfgtop_data *data =3D container_of(domain, struct m=
+t8173_mfgtop_data, genpd);
+> > +
+> > +     /* Magic numbers related to core switch sequence and delays */
+> > +     regmap_write(data->regmap, 0xec, 0);
+> > +
+> > +     /* drives internal power management */
+> > +     clk_disable_unprepare(data->clk_26m);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int clk_mt8173_mfgtop_probe(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev =3D &pdev->dev;
+> > +     struct device_node *node =3D dev->of_node;
+> > +     struct mt8173_mfgtop_data *data;
+> > +     int ret;
+> > +
+> > +     data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> > +     if (!data)
+> > +             return -ENOMEM;
+> > +
+> > +     platform_set_drvdata(pdev, data);
+> > +
+> > +     data->clk_data =3D mtk_devm_alloc_clk_data(dev, ARRAY_SIZE(mfg_cl=
+ks));
+> > +     if (!data->clk_data)
+> > +             return -ENOMEM;
+> > +
+> > +     /* MTK clock gates also uses regmap */
+> > +     data->regmap =3D device_node_to_regmap(node);
+> > +     if (IS_ERR(data->regmap))
+> > +             return dev_err_probe(dev, PTR_ERR(data->regmap), "Failed =
+to get regmap\n");
+> > +
+> > +     data->child_pd.np =3D node;
+> > +     data->child_pd.args_count =3D 0;
+> > +     ret =3D of_parse_phandle_with_args(node, "power-domains", "#power=
+-domain-cells", 0,
+> > +                                      &data->parent_pd);
+> > +     if (ret)
+> > +             return dev_err_probe(dev, ret, "Failed to parse power dom=
+ain\n");
+> > +
+> > +     devm_pm_runtime_enable(dev);
+> > +     /*
+> > +      * Do a pm_runtime_resume_and_get() to workaround a possible
+> > +      * deadlock between clk_register() and the genpd framework.
+> > +      */
+> > +     ret =3D pm_runtime_resume_and_get(dev);
+> > +     if (ret) {
+> > +             dev_err_probe(dev, ret, "Failed to runtime resume device\=
+n");
+> > +             goto put_of_node;
+> > +     }
+> > +
+> > +     ret =3D mtk_clk_register_gates(dev, node, mfg_clks, ARRAY_SIZE(mf=
+g_clks),
+> > +                                  data->clk_data);
+> > +     if (ret) {
+> > +             dev_err_probe(dev, ret, "Failed to register clock gates\n=
+");
+> > +             goto put_pm_runtime;
+> > +     }
+> > +
+> > +     data->clk_26m =3D clk_hw_get_clk(data->clk_data->hws[CLK_MFG_26M]=
+, "26m");
+> > +     if (IS_ERR(data->clk_26m)) {
+> > +             dev_err_probe(dev, PTR_ERR(data->clk_26m), "Failed to get=
+ 26 MHz clock\n");
+> > +             goto unregister_clks;
+> > +     }
+> > +
+> > +     ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data-=
+>clk_data);
+> > +     if (ret) {
+> > +             dev_err_probe(dev, ret, "Failed to add clk OF provider\n"=
+);
+> > +             goto put_26m_clk;
+> > +     }
+> > +
+> > +     data->genpd.name =3D "mfg_apm";
+>
+> "mfg-apm" or "mfg-pwr" please!
+
+Ack.
+
+> Everything else looks good.
+>
+> Thanks for taking care of that, I started this work way too much time ago=
+ and
+> realistically I wouldn't have been able to finish it due to time constrai=
+nts.
+>
+> It's great to see that *finally* we can get some GPU upstream on this old=
+ SoC.
+> As its CPUs are really slow, LLVMPipe is quite unusable from a UX perspec=
+tive
+> hence its only big issue was the lack of 3D HW acceleration.
+
+I think there's still more work on the GPU driver side. I was digging
+through the mailing list to find ways to get it running, and evidently
+it doesn't fully support zink yet.
+
+> This makes machines embedding this SoC usable, and that's simply awesome.
+
+I'll give the patches a week to simmer while I go work on some
+other stuff.
+
+ChenYu
 
