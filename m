@@ -1,177 +1,248 @@
-Return-Path: <linux-kernel+bounces-195413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846C58D4C8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33958D4C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C3F71C2162F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:24:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BFF284C0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265AB18308D;
-	Thu, 30 May 2024 13:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F20418308E;
+	Thu, 30 May 2024 13:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYl2pK/E"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TNJTr5I1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5rQzeFmB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.de header.i=@suse.de header.b="evRYP/yB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4V9RjjSf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32F4183085
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185F11C2A8;
+	Thu, 30 May 2024 13:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717075460; cv=none; b=IqtnCLE7v46lXkwI0xDn8852s33ZdZRlMObCX40YfNRRqBcxDenSAjZQRxFtppTPRLT+X82FgQ4Sqf+isVnusVfHr137uu8yx24rsJFlXSBQ+Z31WwFy2fujRZLZD09pD6TPMCfgTzW4V99qURQqu/12O0OLwDCYAzoohRV6EgA=
+	t=1717075507; cv=none; b=cRVcEG0DWTqR90X+RDTvL2PBqejxqI+j1O9VIa9n8D1oOVJxqx++dGHs+ljFdbO0zCS9JIK32vDpQ9StRgTtwUzhReUqonuGS4c12ooWi7ztXgnzs5N7Vmd5oVt+wRNve4u6R8nOkvLh5/JfQWb/r+RZJzgHDbDDCGWDTeW8ih0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717075460; c=relaxed/simple;
-	bh=voq/P7MD5XEk9VZEE0aFQJuFPPTRpMyL6TD4WBoaDyQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=o5p9XwXGdXy9uTF4zBO2+JxXsSbw8dA4f2FDU7wGigLslMlyyZag45dUjkr128uFYu7UAIAQ4jAtijPc1BRelHvRUFPRqKl5NlWj6UQ+VjEeUZ6qAH/Ty3Jh9287iQ26FFVpmzfKoM1bJTZjmVhQmG2EBCUNfvenrPb403aj0Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYl2pK/E; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4df550a4d4fso274623e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717075457; x=1717680257; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z1wf86rhc//hrXTmx06EkBUykqafTMVQ7bFCGB2R5oc=;
-        b=LYl2pK/E6cn1W2V8DiPud8iCW7VtCQXshjro88tQOpOZNMwvT58Y3hwIC65hyFV6vF
-         3YiIPetgUXH5HNcjsisKg6kCDnuW0X6/Lw26LRrVosCcJa3KqFzqUcUQMDu4Wsj2z65f
-         5vQ8p32wcuQwTlwBQHtGrCDKRqaKTkB6vDQbGLy5pZLIpqAlAv0nfNfWRnSabe/6iuUm
-         cA7S5qnZ410TRbVodDjrWSMC6I6tB90cGpsOvknudEkWIVHXfwlx/cmY2Kt3JRP6ywAa
-         xHWfD5Jd/w84F6wkfgnYLpedYjoXKvTRERzJ5gijLy2ZmPdaYJwhJ8vFvflkcW5I0WU4
-         d74g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717075457; x=1717680257;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1wf86rhc//hrXTmx06EkBUykqafTMVQ7bFCGB2R5oc=;
-        b=L3Ss75znF2Y8iIzSBUvcwDjH+T0nuDCyPTuhMV7X3f8imeXXTCjLq3205C9g6wqkdM
-         8ksldZmTvDl+yzfgZN47dfJ89o0QogZGTuXBse6jDJeTvRnb6O7Uqg3m9AX1Esn4KlXV
-         iDCqTQR802pUApDsJ7hjAxXAA/SNq0vQOWh5Nth1e6JTJ1HZerM8oPC8lJnS/HFcNno3
-         F3nfGqzN6nl6ZSwW5tXYaqoV6V+9sDrAKS7OYd3AVLcqpzKzyDivauLlZjYC8C7dFRYI
-         szJmNuo1/rQPPWA4yN27cW3F3xCyEG+JRIPzlFzLB+P4tAEZZvTOpdDvWroo/3btGkej
-         9aPg==
-X-Gm-Message-State: AOJu0YyOnhSMUMMfzKeumHc4uDZBgP1fM1YFtUikfwY8jUuswTiYpGR1
-	CgOLxdMXvgHU/y52pyyzxGWzMf0MIU/ErEESO5msyfCoQwVkmkqA/dcP8iP9ObBKa9lElq2CNKk
-	qoUA41GSwJy2aqil5v3oEPGyz96vLncoC4kF3uIrXe57tbDHJJg0=
-X-Google-Smtp-Source: AGHT+IGkpezCmFIsSNHIXWWg711MfwaflaRlyGo0iVwc0c38BOJYKlEcuRFsht2/xa2Si8cst7kM/ZupsnWV43DFYAM=
-X-Received: by 2002:a05:6122:d0d:b0:4da:a82e:95f5 with SMTP id
- 71dfb90a1353d-4eaf21af5b3mr2676650e0c.5.1717075456991; Thu, 30 May 2024
- 06:24:16 -0700 (PDT)
+	s=arc-20240116; t=1717075507; c=relaxed/simple;
+	bh=CTNp3tSmoZu517100oC9N7M79WsRcBjopPTx2HtKEXM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AKfZhyL/JKwC/tvU3/Y6VvCEiI2S+R95JqSBSHJxrTAIGGwyx4XzH5uFJotertqVZSLynlxSm4uDfLnPWNhf6Rs5YphYbLX1RmGYav2QvkZymk6ulaYObIV0U5KnayZQk2B2hH5E/AQ9vI4cCdCWaqrSd65xdDNIFtoaQJutcAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TNJTr5I1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5rQzeFmB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=evRYP/yB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4V9RjjSf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CED7B33876;
+	Thu, 30 May 2024 13:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717075503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/fTnH1k9PCe7lPHHa/LlxqVdBbmwOs57Vq5J6smfmlM=;
+	b=TNJTr5I1t+cnIehLm2KgzziHKQPwH5vTSXmK33XrrgB/+8EaIyGUhr8//iLCeNWPqrrGJ6
+	w+eytJ1mgt51hTeI/OAnLh7UEmnZbKbMc6DHkrss9bXVLhKKZKjgZMnXJ4WlvnU6EPDYIX
+	Ohf5t0FJwfE/RaJGyCt0y2H6CHxYPOQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717075503;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/fTnH1k9PCe7lPHHa/LlxqVdBbmwOs57Vq5J6smfmlM=;
+	b=5rQzeFmBSWr15givsFXgqUzwF3ZzFjZbtftuarFvHsENz+CPkeZ2SkYcojsKFe/mNO4g+1
+	rwwmUyirkftzeyAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="evRYP/yB";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4V9RjjSf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717075501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/fTnH1k9PCe7lPHHa/LlxqVdBbmwOs57Vq5J6smfmlM=;
+	b=evRYP/yBCgDxIgKu9Ci+mIiBD1yl4baeB8Hl8zYyDKQYs233xess4LS9eZu5OluldW5xJC
+	j5//fDIDonU4cQ+MO1y2C0o8OTnaqEWR1nJ/s3VKXg9Ordk6+KzdzJ5D/L15yuX7UizRbX
+	JN7VabjMw9avMuTYzscWuow2eSVRAmg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717075501;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/fTnH1k9PCe7lPHHa/LlxqVdBbmwOs57Vq5J6smfmlM=;
+	b=4V9RjjSfyyeR5QrFeTMzS4dq+FJHVbbFL2E95ay6EB+eUN6bz2GoatzZM5rxLXjeX8+dyT
+	TlQ3jjBMca800fAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE5F813A83;
+	Thu, 30 May 2024 13:25:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D5STLyx+WGaEVgAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Thu, 30 May 2024 13:25:00 +0000
+Message-ID: <1e626d93f4220cc348300bbc61089de32300122d.camel@suse.de>
+Subject: Re: [PATCH] i2c: smbus: fix NULL function pointer dereference
+From: Jean Delvare <jdelvare@suse.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-renesas-soc@vger.kernel.org
+Cc: Baruch Siach <baruch@tkos.co.il>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>
+Date: Thu, 30 May 2024 15:24:58 +0200
+In-Reply-To: <20240426064408.7372-1-wsa+renesas@sang-engineering.com>
+References: <20240426064408.7372-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 30 May 2024 18:54:05 +0530
-Message-ID: <CA+G9fYuzd9Cz2Ndwc7HFOimJPRZL7w376N=2R2cV-d0mjzT+nw@mail.gmail.com>
-Subject: WARNING: at fs/nfs/nfs3xdr.c:188 encode_filename3 on rk3399
-To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, linux-nfs@vger.kernel.org
-Cc: NeilBrown <neilb@suse.de>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, kasong@tencent.com, 
-	LTP List <ltp@lists.linux.it>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	TAGGED_RCPT(0.00)[renesas];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sang-engineering.com:email,suse.de:dkim,tkos.co.il:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: CED7B33876
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
 
-The following kernel warning has been noticed while running LTP statvfs01
-testcase on arm64 device rk3399-rock-pi-4b with NFS mounted test setup and
-started from Linux next-20240522 tag and till next-20240529.
+Hi Wolfram, Baruch, Peter,
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On Fri, 2024-04-26 at 08:44 +0200, Wolfram Sang wrote:
+> Brauch reported an OOPS when using the designware controller as target
+> only. Target-only modes break the assumption of one transfer function
+> always being available. Fix this by always checking the pointer in
+> __i2c_transfer.
 
-Test log:
------
-mke2fs 1.47.0 (5-Feb-2023)
-tst_test.c:1131: TINFO: Mounting /dev/loop0 to /scratch/ltp-9gvw[
-5211.161721] EXT4-fs (loop0): mounting ext2 file system using the ext4
-subsystem
-F2L8n6/LTP_stadLH0F7/mntpoint fstyp=ext2 flags=0
-[ 5211.169391] EXT4-fs (loop0): mounted filesystem
-af9dfac2-88f6-453d-9d02-c14cc888a51d r/w without journal. Quota mode:
-none.
-statvfs01.c:32: TPASS: statvfs(TEST_PATH, &buf) passed
-[ 5211.175518] ------------[ cut here ]------------
-statvfs01.c:44: TPASS: creat(valid_fname, 0444) returned fd 3
-[ 5211.175938] WARNING: CPU: 5 PID: 786885 at fs/nfs/nfs3xdr.c:188
-encode_filename3+0x4c/0x60
-[ 5211.175962] Modules linked in: tun overlay btrfs blake2b_generic
-libcrc32c xor xor_neon raid6_pq zstd_compress hantro_vpu
-snd_soc_hdmi_codec brcmfmac panfrost v4l2_vp9 snd_soc_simple_card
-dw_hdmi_i2s_audio dw_hdmi_cec crct10dif_ce snd_soc_audio_graph_card
-snd_soc_spdif_tx brcmutil drm_shmem_helper v4l2_h264
-snd_soc_simple_card_utils gpu_sched rockchipdrm hci_uart analogix_dp
-btqca v4l2_mem2mem dw_mipi_dsi btbcm videobuf2_dma_contig dw_hdmi cec
-phy_rockchip_pcie cfg80211 rtc_rk808 bluetooth videobuf2_memops
-snd_soc_rockchip_i2s drm_display_helper drm_dma_helper videobuf2_v4l2
-rfkill rockchip_saradc videobuf2_common drm_kms_helper snd_soc_es8316
-industrialio_triggered_buffer rockchip_thermal kfifo_buf
-coresight_cpu_debug pcie_rockchip_host fuse drm backlight dm_mod
-ip_tables x_tables
-[ 5211.176075] CPU: 5 PID: 786885 Comm: statvfs01 Not tainted
-6.10.0-rc1-next-20240529 #1
-[ 5211.176083] Hardware name: Radxa ROCK Pi 4B (DT)
-[ 5211.176086] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ 5211.176092] pc : encode_filename3+0x4c/0x60
-[ 5211.176100] lr : nfs3_xdr_enc_create3args+0x4c/0x108
-[ 5211.176109] sp : ffff80008b1ab7a0
-[ 5211.176111] x29: ffff80008b1ab7a0 x28: ffff80008b1abc40 x27: 0000000000000001
-[ 5211.176120] x26: 0000000000440040 x25: 0000000000000000 x24: ffff800081492c70
-[ 5211.176128] x23: 0000000000000100 x22: ffff00000a274010 x21: ffff00002d1b9800
-[ 5211.176136] x20: ffff00000a274010 x19: 0000000000000100 x18: 0000000000000000
-[ 5211.176143] x17: 0000000000000000 x16: 0000000000000000 x15: 6262626262626262
-[ 5211.176150] x14: 6262626262626262 x13: 90d1d5e100000000 x12: 40a645896bf3b486
-[ 5211.176158] x11: a16c80bf234c2437 x10: 5702b6d600000000 x9 : ffff80008059040c
-[ 5211.176165] x8 : a16c80bf234c2437 x7 : 5702b6d600000000 x6 : 600aa44181070001
-[ 5211.176173] x5 : ffff00003109d080 x4 : ffff0000661a4232 x3 : ffff8000805903c0
-[ 5211.176180] x2 : 0000000000000100 x1 : ffff00000a274010 x0 : ffff80008b1ab828
-[ 5211.176187] Call trace:
-[ 5211.176190]  encode_filename3+0x4c/0x60
-[ 5211.176198]  nfs3_xdr_enc_create3args+0x4c/0x108
-[ 5211.176206]  rpcauth_wrap_req_encode+0x24/0x40
-[ 5211.176216]  rpcauth_wrap_req+0x28/0x40
-[ 5211.176223]  call_encode+0x130/0x358
-[ 5211.176231]  __rpc_execute+0xb4/0x638
-[ 5211.176238]  rpc_execute+0x168/0x1e8
-[ 5211.176244]  rpc_run_task+0x12c/0x1d8
-[ 5211.176251]  rpc_call_sync+0x70/0xe0
-[ 5211.176257]  nfs3_rpc_wrapper+0x48/0x98
-[ 5211.176264]  nfs3_proc_create+0xb8/0x2d0
-[ 5211.176272]  nfs_do_create+0x9c/0x1f0
-[ 5211.176280]  nfs_atomic_open_v23+0x98/0xd8
-[ 5211.176288]  path_openat+0x6d4/0xf50
-[ 5211.176296]  do_filp_open+0xa4/0x160
-[ 5211.176301]  do_sys_openat2+0xcc/0x108
-[ 5211.176310]  __arm64_sys_openat+0x6c/0xc0
-[ 5211.176317]  invoke_syscall+0x50/0x128
-[ 5211.176327]  el0_svc_common.constprop.0+0x48/0xf0
-[ 5211.176335]  do_el0_svc+0x24/0x38
-[ 5211.176342]  el0_svc+0x3c/0x108
-[ 5211.176351]  el0t_64_sync_handler+0x120/0x130
-[ 5211.176355]  el0t_64_sync+0x190/0x198
-[ 5211.176361] ---[ end trace 0000000000000000 ]---
-statvfs01.c:48: TFAIL: creat(toolong_fname, 0444) expected ENAMETOOLONG: EIO (5)
-[ 5211.432692] EXT4-fs (loop0): unmounting filesystem
-af9dfac2-88f6-453d-9d02-c14cc888a51d.
+I was asked to backport this fix to our oldest kernel branches, so I
+looked into it and I have comments and a question.
 
-metadata:
-----
-  git_describe: next-20240522 and next-20240529
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  arch: arm64
-  test: LTP syscalls statvfs01
+> Reported-by: Baruch Siach <baruch@tkos.co.il>
+> Closes: https://lore.kernel.org/r/4269631780e5ba789cf1ae391eec1b959def7d99.1712761976.git.baruch@tkos.co.il
+> Fixes: 4b1acc43331d ("i2c: core changes for slave support")
 
-Links:
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131502/suite/log-parser-test/test/check-kernel-exception/log
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131502/suite/log-parser-test/test/check-kernel-warning-4a4050f2ba224c26acd76ee5aebc8fa78eb1cf8c315c763fd7b55e6a1d6e38b7/history/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131502/suite/log-parser-test/tests/
+I have a hard time establishing a formal link between the reported bug
+and the commit listed above. I do understand that it wouldn't make
+sense to register an i2c_adapter with neither .master_xfer nor
+smbus_xfer set before .reg_slave was added to struct i2c_algorithm,
+but there were no checks in i2c-core preventing it from happening.
+
+It was also possible for any (broken) device driver to call
+__i2c_transfer() without first checking if plain I2C transfers were
+actually supported by the i2c_adapter. I would argue that such an issue
+should have been fixed at the device driver level by checking for the
+I2C_FUNC_I2C functionality flag before calling __i2c_transfer(). That's
+a theoretical issue though as I'm not aware of any device driver having
+this issue.
+
+The call stack in Baruch's report shows that the real issue is with
+i2c_smbus_xfer_emulated() being called with the i2c bus lock already
+held, and thus having to call __i2c_transfer() instead of
+i2c_transfer(). This code path did not exist before commit 63453b59e411
+("i2c: smbus: add unlocked __i2c_smbus_xfer variant"), which was added
+in kernel v4.19. Therefore I claim that CVE-2024-35984 only affects
+kernel v4.19 and newer. Do we agree on that?
+
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/i2c-core-base.c  | 12 ++++++------
+>  drivers/i2c/i2c-core-smbus.c |  2 +-
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> index ff5c486a1dbb..db0d1ac82910 100644
+> --- a/drivers/i2c/i2c-core-base.c
+> +++ b/drivers/i2c/i2c-core-base.c
+> @@ -2200,13 +2200,18 @@ static int i2c_check_for_quirks(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>   * Returns negative errno, else the number of messages executed.
+>   *
+>   * Adapter lock must be held when calling this function. No debug logging
+> - * takes place. adap->algo->master_xfer existence isn't checked.
+> + * takes place.
+>   */
+>  int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+>  {
+>         unsigned long orig_jiffies;
+>         int ret, try;
+>  
+> +       if (!adap->algo->master_xfer) {
+> +               dev_dbg(&adap->dev, "I2C level transfers not supported\n");
+> +               return -EOPNOTSUPP;
+> +       }
+> +
+
+Not related specifically to this commit, as it is only moving a check
+which already existed before, but this looks inefficient to me.
+
+We end up performing the check with every I2C-level transfer, while the
+availability of such support can almost always be checked once and for
+all in the I2C device driver (i2c-dev and i2c_smbus_xfer_emulated being
+the exceptions).
+
+I see two ways for us to reach this check:
+* __i2c_transfer() or i2c_transfer() gets called directly by a device
+driver. This driver should have checked for the I2C_FUNC_I2C
+functionality flag before calling either function. If they did not,
+it's a driver bug, which should be fixed in the driver in question.
+Note that i2c-dev currently lacks this check, I think it should be
+added.
+* __i2c_transfer() gets called by i2c_smbus_xfer_emulated(). We should
+add a check for I2C_FUNC_I2C in __i2c_smbus_xfer() before calling this
+function. This is more or less what Baruch proposed initially, and I
+think it would have been a more efficient fix.
+
+And if you are concerned about functionality flags not being set
+properly (specifically I2C_FUNC_I2C being set while .master_xfer isn't
+set [1]) then we should add a consistency check at i2c_adapter
+registration time, so again it's done once and for all and we don't
+have to check again and again at transfer time.
+
+Or is this optimization not worth it?
+
+[1] BTW, looking at the only two in-tree slave-only I2C adapter
+drivers, i2c-at91-slave and i2c-designware-slave, both are setting
+functionality flags other than I2C_FUNC_SLAVE. Unless I don't
+understand how the slave functionality works, this is a bug. I'll
+prepare and post patches later today.
 
 
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Jean Delvare
+SUSE L3 Support
 
