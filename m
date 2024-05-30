@@ -1,67 +1,62 @@
-Return-Path: <linux-kernel+bounces-195096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9378D478B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:53:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E648D47CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50163B24A0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2AA1F2221A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609B814A4E2;
-	Thu, 30 May 2024 08:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="pEI9ecVH"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390D11649CD;
+	Thu, 30 May 2024 08:58:03 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19AA6F30A;
-	Thu, 30 May 2024 08:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A96515B573
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059184; cv=none; b=NvnQaa48Wq7HmNSCVLiU8pM863oOxUj+wdRFksxmpIXFvL+UgCLkv7z46q5XfQI0AMulwicBm4sOIzhnYRDQRkww4csU6zthdl3B2Ti2RhjZYZSc0/hMoWWEDlo2ha0BFfLT71UNEepI5Ns4iahhp7pxXyf86XSxKUmPvIgRBo0=
+	t=1717059482; cv=none; b=nokW0pj+GguAicBAp1dssTC9XE1819x7oyCDV9nGU5iT5JTZYacD6UoTKFaFkD3nBx6tQCkbInaiywRVXP2czLEncPx/w0Eqox8bglty4Gi2rcW4k0dDaxIbf8DiFCeclrW/0tib64SwHmbyVg69QQ9nWWXwugZO66palUwqRNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059184; c=relaxed/simple;
-	bh=zcF8ynwfqox6lFxPsAnNwptrPXvGztX8lAU2EObi2J8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dcKzY1yxF1ndTZS9uz4dpQxbsvucjKka+k7gep+mQxhBsEEdkj4kYKRqXPtAGTir20uwXuLV2b54VTpmqYrK5kFW294YWFo+WMS6kDzXXPI8Go3vETl64c1x+vw0MoyTBvyMXqDX/vxuoSAAZjFtvVfv8GA8MaIR4M9nO2ztbHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=pEI9ecVH; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from localhost.localdomain (1.general.khfeng.us.vpn [10.172.68.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id BE5F940F62;
-	Thu, 30 May 2024 08:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1717059180;
-	bh=4vdjuyTFJSa1yvWPwCMbJNz87HxC5Wp+l/buNmOANr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version;
-	b=pEI9ecVHNzV6y71mg4De+Vrswoxdj0S4+0ENDn0XxEDAVz80hj8K5CnUIjnkheY1D
-	 vjXOftX0sKOISXQ101kPgGL6w1kbw3kk+93JbU8AVUuQnj7Uxy1EbsPnb913iqJVrh
-	 bRirUCTT6g5rz+eftvlSDce0jK+1rZt802WbSlRTg18eeWVJ1XwTVtVBdv/DotwP1O
-	 xkvxUvsQp6E7+2pTBHi/Qmy7OCXurvzIOxDJrPiXRAisjz8VhfyFQiggqP16lM696R
-	 w9lSzo/klwhK+w/oOimobujvmWoVd6eJa2ZxkSLZ8dQn4Ckw5IXDF25DWeZx030YRI
-	 wgkLAgavYaFOw==
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: bhelgaas@google.com
-Cc: linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1717059482; c=relaxed/simple;
+	bh=rMtuf0zcS3kB8x7D/HT0/cZ54ltIPRIKq3ttpS2CiSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VqKbMIDrpSyLYw2kevs+/cn2doGrwk8TUy092ezlm6wKZHsugf92fF4qugJKvidn3x0eSVs8wuQfBFDMj1aXqHmiusQSq2xWI9X870mKEao83Cb1EtFehJ03uvCg56T2DVLKky257iVqh7yFqJfVPV9w6As56BPwoVYgAfQrgfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id b11f2cc6-1e62-11ef-8d3e-005056bd6ce9;
+	Thu, 30 May 2024 11:57:52 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	nirmal.patel@linux.intel.com,
-	jonathan.derrick@linux.dev,
-	ilpo.jarvinen@linux.intel.com,
-	david.e.box@linux.intel.com,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 2/2] PCI: vmd: Let OS control ASPM for devices under VMD domain
-Date: Thu, 30 May 2024 16:52:27 +0800
-Message-ID: <20240530085227.91168-2-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240530085227.91168-1-kai.heng.feng@canonical.com>
-References: <20240530085227.91168-1-kai.heng.feng@canonical.com>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-mips@vger.kernel.org
+Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v3 00/11] pinctrl: pinmux: Embed and reuse struct
+Date: Thu, 30 May 2024 11:55:09 +0300
+Message-ID: <20240530085745.1539925-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,33 +65,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Intel SoC cannot reach lower power states when mapped VMD PCIe bridges
-and NVMe devices don't have ASPM configured.
+As promised to Linus W. there is a series that converts struct function_desc
+to use struct pinfunction. With this it both struct group_desc and struct
+function_desc will rely on the generic data types (struct pingroup and struct
+pinfunction respectively). I haven't compiled everything, some builds might
+fail. Anyway, comments, reviews, testing are all appreciated. 
 
-So set aspm_os_control attribute to let OS really enable ASPM for those
-devices.
+In v3:
+- added 'moore' to the mediatek patches summary (AngeloGioacchino)
+- added tags (AngeloGioacchino)
+- fixed build error in IMX driver (LKP)
 
-Fixes: f492edb40b54 ("PCI: vmd: Add quirk to configure PCIe ASPM and LTR")
-Link: https://lore.kernel.org/linux-pm/218aa81f-9c6-5929-578d-8dc15f83dd48@panix.com/
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/pci/controller/vmd.c | 2 ++
- 1 file changed, 2 insertions(+)
+In v2:
+- fixed compilation problems found so far by LKP
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 87b7856f375a..1dbc525c473f 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -751,6 +751,8 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
- 	if (!(features & VMD_FEAT_BIOS_PM_QUIRK))
- 		return 0;
- 
-+	pdev->aspm_os_control = 1;
-+
- 	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
- 
- 	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_LTR);
+Andy Shevchenko (11):
+  pinctrl: berlin: Make use of struct pinfunction
+  pinctrl: equilibrium: Make use of struct pinfunction
+  pinctrl: ingenic: Provide a helper macro INGENIC_PIN_FUNCTION()
+  pinctrl: mediatek: moore: Provide a helper macro
+    PINCTRL_PIN_FUNCTION()
+  pinctrl: pinmux: Add a convenient define PINCTRL_FUNCTION_DESC()
+  pinctrl: pinmux: Embed struct pinfunction into struct function_desc
+  pinctrl: imx: Convert to use func member
+  pinctrl: ingenic: Convert to use func member
+  pinctrl: keembay: Convert to use func member
+  pinctrl: mediatek: moore: Convert to use func member
+  pinctrl: pinmux: Remove unused members from struct function_desc
+
+ drivers/pinctrl/berlin/berlin.c           |  21 +-
+ drivers/pinctrl/berlin/berlin.h           |   6 -
+ drivers/pinctrl/core.h                    |   2 +-
+ drivers/pinctrl/freescale/pinctrl-imx.c   |  14 +-
+ drivers/pinctrl/mediatek/pinctrl-moore.c  |  10 +-
+ drivers/pinctrl/mediatek/pinctrl-moore.h  |   6 +
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c |  32 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7623.c |  42 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7629.c |  20 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7981.c |  34 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c |  24 +-
+ drivers/pinctrl/pinctrl-equilibrium.c     |  24 +-
+ drivers/pinctrl/pinctrl-equilibrium.h     |  12 -
+ drivers/pinctrl/pinctrl-ingenic.c         | 707 +++++++++++-----------
+ drivers/pinctrl/pinctrl-keembay.c         |  22 +-
+ drivers/pinctrl/pinmux.c                  |  19 +-
+ drivers/pinctrl/pinmux.h                  |  19 +-
+ 17 files changed, 503 insertions(+), 511 deletions(-)
+
 -- 
-2.43.0
+2.45.1
 
 
