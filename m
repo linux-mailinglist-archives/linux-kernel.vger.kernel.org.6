@@ -1,90 +1,114 @@
-Return-Path: <linux-kernel+bounces-195590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0C28D4EE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:17:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CDC8D4EE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5271F25DE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:17:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0F721F25E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586D01CAB0;
-	Thu, 30 May 2024 15:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B182D18755D;
+	Thu, 30 May 2024 15:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqM9B8lg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e6xAZ3UG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F32187540;
-	Thu, 30 May 2024 15:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9921CAB0;
+	Thu, 30 May 2024 15:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717082215; cv=none; b=aKfPl5jdNpEXl9tojErftjSBNQn6VQz2cjSaanLaYIkAGERLn42hIuBS9xjdGyS3G+UxMKkZ+09LhEfkMD6viaC8AGmp5a/yfP+QRpWVCbJ6pKIOVeBHzVDYu+1imUDYSEziwHU318gsrWPPfyzk7Wtms+9yzxZyEitoKiJy/bQ=
+	t=1717082235; cv=none; b=rGYtSjWGrY/tHMTtQAq0JDBiZR7zohR0nnUAv0So/mYUvUfRUvrnCYTp81UxcRT8BQL3RodDqcN4I5zQUFpcCc8II3meVUEUfnwb1APhPE3x1mRzw7kvawnRy8aa/Ys5R4AczOJ4NYqkLBLQHbVE9fRJFWqwksKpjjjR4gOcJZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717082215; c=relaxed/simple;
-	bh=fa0yMmxC2QPbMThwYz+/xLlUrjogilIctWdLDj2RcM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JQQIP/SX9hj7Ayuwfctm0ZEBhpE3wWv05lPlbN70eLOpa7IX/aX6U3M4sr9vZV8AGqqw0QWPZkUGDUSiVWBWmxCRJkUe8oSGuTBiyMm84Rbvqmbw9A/vKlayo7fOs0e0E6UyuXDO9edgpYkovDscOnjkuEG7LBY/FxdYlPBtqiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqM9B8lg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE0DFC32781;
-	Thu, 30 May 2024 15:16:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717082215;
-	bh=fa0yMmxC2QPbMThwYz+/xLlUrjogilIctWdLDj2RcM0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JqM9B8lgLMEU14G4JMKkVxyi0rQSZ0GgNxBmdZ31ubamsPc3dAsXAPpNIsH/KHkIg
-	 mKhYPU5eqT0XEfOdVIfwx3e1xJ/9bslazZjlL6GJRYiLyzFI5/FHsgY5alz4vsg+Yl
-	 uxYZhauXnZkjj18On86xNKMvuypSdlN9XZ341erSw5lylEkj7AtuXzWoOTsLAA+uAH
-	 7cpnm2s5ZS9XFX+TsFyPGXV0a2VoFX87MeUHrFZVnrfpcZvwi7/vMGjOioJSAemWNm
-	 n8Cx1Mty3Qw/sNkVaN07nYH353czFcdFcGpoJvTruWwqicqmEXb6+4VLuvZiMVxAbv
-	 lNJWpwXOdPpJw==
-Date: Thu, 30 May 2024 08:16:53 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: <davem@davemloft.net>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Alexander Duyck
- <alexander.duyck@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
- <linux-mm@kvack.org>
-Subject: Re: [PATCH net-next v5 01/13] mm: page_frag: add a test module for
- page_frag
-Message-ID: <20240530081653.769e4377@kernel.org>
-In-Reply-To: <1cba403b-a2c7-5706-78b7-91ccc6caa53b@huawei.com>
-References: <20240528125604.63048-1-linyunsheng@huawei.com>
-	<20240528125604.63048-2-linyunsheng@huawei.com>
-	<20240529172938.3a83784d@kernel.org>
-	<1cba403b-a2c7-5706-78b7-91ccc6caa53b@huawei.com>
+	s=arc-20240116; t=1717082235; c=relaxed/simple;
+	bh=1nmm7YiAoX/ocuW2WnnDnFAgCxIVQe6oLetLQWQBVw0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UhVrnl+ay/FFVocWLTRXK2kaGYmT2tv31tdEQ0QcrM8iPF3oh5lF+L7JIvZ9NhnCUJt5iLqifrCY2UPAlVPwuT0TrwQWLJmAP/Mc1MT9y5lPoyaqN2Cn/WS02qo7Dx1iXyi3IlyRcomrlRVOAEfeHa/9rdgFnHfU6W3HddEplCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e6xAZ3UG; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717082234; x=1748618234;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1nmm7YiAoX/ocuW2WnnDnFAgCxIVQe6oLetLQWQBVw0=;
+  b=e6xAZ3UGP0+OFhoDl2GPwGvcw+BAFrjpPCIlp6KwGm1/7GOfRDCosJui
+   C48mQMyuLLIb30EqcORoJHIQzIFccnKLnfLfaC8FaN9sdOMrHvFvMWlU8
+   X3MWE2NMYEa8n7fAJq9rStIT7IN4lVdBI/f1axqIaH3Jhl60IGahx7i57
+   HtrzzV5dip1Oq3rdOCfik2CP2XIhjqT3q8/cZfy/uuBEC2RkyWd2WiyI6
+   iN8pA5IK/a7cSCkofSpbhw/e9Yduzzo3P354KfPEACWyqv7Bz2nyBMdDu
+   l1sDpMLGdoruhOx0FXeT0nbl+GkUAPv9b9bTiMmdmYlxf3MJ44xtuZ2nj
+   Q==;
+X-CSE-ConnectionGUID: Mdud6dLUT3+HTvrv8Qooag==
+X-CSE-MsgGUID: FORB/arqQiKnAkLy7YRfDA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24696441"
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="24696441"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 08:17:13 -0700
+X-CSE-ConnectionGUID: YmSLElaNSsaNISLgVU6JTA==
+X-CSE-MsgGUID: adjQl1brQ0mllVZN+NW0vQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="36418618"
+Received: from jianmeit-mobl.ccr.corp.intel.com (HELO rzhang1-mobl7.ccr.corp.intel.com) ([10.249.173.202])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 08:17:11 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: rafael.j.wysocki@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	pmenzel@molgen.mpg.de,
+	len.brown@intel.com
+Subject: [PATCH] thermal: intel: intel_pch: Improve cooling log
+Date: Thu, 30 May 2024 23:17:04 +0800
+Message-Id: <20240530151704.282453-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 30 May 2024 17:17:17 +0800 Yunsheng Lin wrote:
-> > Is this test actually meaningfully testing page_frag or rather
-> > the objpool construct and the scheduler? :S  
-> 
-> For the objpool part, I guess it is ok to say that it is a
-> meaningfully testing for both page_frag and objpool if there is
-> changing to either of them.
+The intel_pch_thermal cooling mechanism currently only provides one of
+the following final conclusions:
+1. intel_pch_thermal 0000:00:12.0: CPU-PCH is cool [48C]
+2. intel_pch_thermal 0000:00:12.0: CPU-PCH is cool [49C] after 30700 ms delay
+3. intel_pch_thermal 0000:00:12.0: CPU-PCH is hot [60C] after 60000 ms delay. S0ix might fail
+4. intel_pch_thermal 0000:00:12.0: Wakeup event detected, abort cooling
 
-Why guess when you can measure it. 
-Slow one down and see if it impacts the benchmark.
+This does not provide sufficient context about what is happening,
+especially for case 4.
 
-> For the scheduler part, this test provides the below module param
-> to avoid the the noise from scheduler.
-> 
-> +static int test_push_cpu;
-> +module_param(test_push_cpu, int, 0600);
-> +MODULE_PARM_DESC(test_push_cpu, "test cpu for pushing fragment");
-> +
-> +static int test_pop_cpu;
-> +module_param(test_pop_cpu, int, 0600);
-> +MODULE_PARM_DESC(test_pop_cpu, "test cpu for popping fragment");
-> 
-> Or is there any better idea for testing page_frag?
+Add one line log to indicate when PCH overheats and the cooling delay
+has started.
+
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+---
+ drivers/thermal/intel/intel_pch_thermal.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/thermal/intel/intel_pch_thermal.c b/drivers/thermal/intel/intel_pch_thermal.c
+index f5be2c389351..fc326985796c 100644
+--- a/drivers/thermal/intel/intel_pch_thermal.c
++++ b/drivers/thermal/intel/intel_pch_thermal.c
+@@ -298,6 +298,11 @@ static int intel_pch_thermal_suspend_noirq(struct device *device)
+ 	/* Get the PCH current temperature value */
+ 	pch_cur_temp = GET_PCH_TEMP(WPT_TEMP_TSR & readw(ptd->hw_base + WPT_TEMP));
+ 
++	if (pch_cur_temp >= pch_thr_temp)
++		dev_warn(&ptd->pdev->dev,
++			"CPU-PCH current temp [%dC] higher than the threshold temp [%dC], S0ix might fail. Start cooling...\n",
++			pch_cur_temp, pch_thr_temp);
++
+ 	/*
+ 	 * If current PCH temperature is higher than configured PCH threshold
+ 	 * value, run some delay loop with sleep to let the current temperature
+-- 
+2.34.1
+
 
