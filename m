@@ -1,188 +1,151 @@
-Return-Path: <linux-kernel+bounces-195596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC1D8D4F07
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:26:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D958D4F08
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED7E31F2661C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:26:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD65287A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F4B17C222;
-	Thu, 30 May 2024 15:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB75839E4;
+	Thu, 30 May 2024 15:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="z5CDVYIG"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IVhT6Y7U"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03521E890
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6002313212C
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717082749; cv=none; b=e+ft5sI5qidDnnqVKYuYo75c/fwQN/ZzhhdIUu11TUhUiaNnIB1RGDc68PQRkppvz6/iaZ3L5HZnrwrjuOeGXPG4ouS/m3CBber4yFy2RBQ7hGowcdTOmqezHb3VbblG/kwKSTFPKrRVZoKpcQTFi1WoGe7GkEg0Xjx5m6wxe3E=
+	t=1717082785; cv=none; b=iVUaWKITLxWbcVRVIiS8xHrLogYb8LbuJy8PHzm3HnL7oKVE42Jl6oamstSUGxVONG4PiDaexPKWU7k8qQMnsSbfxk5Fy50MLkG7JAokxawXxQviksQZ+b6BOGse3G9+Lp95n0mW/5XA2LXt4RSrmDy33WJ8omgXLk9UntUS1JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717082749; c=relaxed/simple;
-	bh=fd1CgIjmBOyomD+Pnh5fnNX6kDghini1LPZ3u8UMMJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Va2QU/K2mbWttKZaY74piHZJHBc8e4VX3WfG5rdB7M6fuEMZmjmhxoGyxkeOjPmS/bNBoNNCxVS+REVASGTHe/7VSymNAiHaOVQPZ9grueUnWKGOPiB4IVglNT8u42zgL5saBXBOhgxqqBAfHuVP8bjq8S1FjUjaaJbyu2gkMqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=z5CDVYIG; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70231ac9093so758600b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:25:46 -0700 (PDT)
+	s=arc-20240116; t=1717082785; c=relaxed/simple;
+	bh=HsHUzub0lSnVn0gJzJ62v1Lo3pYfUjxINEn/xRpZA1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c7UaS/BIZKduFyyTuK9dVHsZKtLRd86X8zePVOz9PgDYwOvPFxDpSnDudWRmTZPZ3D67/2Mwd3Ou0cRbsrkf3LJrxj22MUp2hGhkWMcqqSnPo/VjUrNQ9nE9wK+Yy8pSIfjDq9NNB1G9YAzLMTdLsS6LTPZLReInZ73tdDHk99I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IVhT6Y7U; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a2ed9af7dso239130a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717082746; x=1717687546; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xpRgYa4dwqPbFkBgIi25CyTHChxu5ecl64Veh8E6qX4=;
-        b=z5CDVYIGJaC+PaiHOtHpimys4OtLCvMq1Xt9BUH52nOFAV+n0m4vDksVaiVxw9dTpI
-         frKxKTV0r8vJzMm/QWiO5/uX3zQ1QVPwubKsWADQdDCD9jPQ1zdpBeIgaVW/T9EprtfL
-         Hn+GzLB1CFXHa1ABRVi7od3cXprMdWBhXRMjujapkM57HCazxof29NpONN+xO7m6g6MU
-         QGLdp/Vytz9aKgZNinWw9lDG/2Py9ZCc54kUDcktkq34PmY1KqlB/lQteUWdkIaQX5H0
-         3508GfU81bGwEXEbJ88tawmfBeCRlAPMNCG8FfBkfRy1rmte1o16aOX1ERfiunTxBprG
-         jqEg==
+        d=suse.com; s=google; t=1717082782; x=1717687582; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qK1eODKr+VZ1mrDwGWRLYcMsvv09/V4hpP4+d6jQWaE=;
+        b=IVhT6Y7U/l/ZLWy6ekEuwSmJF/hdRxqaGsHskAfpFeVl5xDvVk+jEtzpYzCak+YvCr
+         jxitQ7eLgDdy6HFmShdOLTnmWwOdh7o8BupBbK8C9kBlRgxluIa6RScl7jpzGm8howxJ
+         6e1vaCcLX41hOVIKse6eOLlfKv+I+w6zyGGoSR92DNtx8FYpEocmRt7Bl3kcSEXSqlYn
+         QhGPqjgMNOVKmKo9m8uTX+KnGEvj3SesRgEDxrkINrCozrJ6o4py26G6Ay/Y5nMd9IW8
+         Px/2lhNlzgnPquZmD2RmZQhpB/QU+Hb/owLTEiZjvf/pepSAcIIm+WvC/5xvGwe8GMDX
+         9ICw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717082746; x=1717687546;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1717082782; x=1717687582;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xpRgYa4dwqPbFkBgIi25CyTHChxu5ecl64Veh8E6qX4=;
-        b=UwpeV6gvKP6SegcJsGiYKEFIhtfZdrk0EZNnEZ5iyAlsA7FsWnboA7viiOzXlbZdYv
-         Ez6rjhy9uxbcA7rUEQZ5K1T2jlrv51/cli4tWMfMJHbOUJjUJCrHW0j/FxRvgoi+rsuE
-         toO4HLjY2vYM2iqKGewZWaS+ZRVQsxS/RPDUzG3t/+o7zafZjSOvZKI2WfhI+FtU6F6h
-         V7lGUWQJz722VbDqeHACwUze4AedylT+2Im5c9h/jCqFEP0axXm3w9z0BQZlXnuRYBap
-         jL8BY1WP3s21Kxy2DhUUijoRf7KMO83Ej9N9O3Iv6+CgMrhHQ1JZez7bD3QXpu2dUhvT
-         x8IA==
-X-Forwarded-Encrypted: i=1; AJvYcCURMw7IFj4DmbaW3BtSZPGsiELwuR3SNyjncVH8zB2a93fmkXF7bFkMpx9Ult9yrnJhLgRGo1rTtQcfQ6QrX8rolyf8YwkFBc9xxrl0
-X-Gm-Message-State: AOJu0Yx9/r1v/8PjmEqrYx0YUP0LmUheGeuRcJYe0htdimy/vEep88wJ
-	sHavuCUKG7vo62K8vnWBmsjyvOdRCYIpcNwQ/kQSch8QaG3RpUuwvjYNMMk6Ekw=
-X-Google-Smtp-Source: AGHT+IEborn6L609viyJY6HL00IRTeefiOYqFrtGZGbG+Un7sype/7J809TXJhOL2x2fa0cmRNR4eg==
-X-Received: by 2002:a05:6a20:5647:b0:1ad:5325:d9b7 with SMTP id adf61e73a8af0-1b26460b6bbmr2226154637.52.1717082746244;
-        Thu, 30 May 2024 08:25:46 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7022b6c6047sm1848587b3a.46.2024.05.30.08.25.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 08:25:45 -0700 (PDT)
-Date: Thu, 30 May 2024 08:25:42 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 09/16] riscv: hwprobe: export Zca, Zcf, Zcd and Zcb
- ISA extensions
-Message-ID: <ZliadoA5v5obWNYn@ghost>
-References: <20240517145302.971019-1-cleger@rivosinc.com>
- <20240517145302.971019-10-cleger@rivosinc.com>
+        bh=qK1eODKr+VZ1mrDwGWRLYcMsvv09/V4hpP4+d6jQWaE=;
+        b=BqjQV0khFULDNa8bA6834sCKTdndv74DjLQLFMoUQyyK5mvfqDKvehYT3IFkHZt/UQ
+         EOhw8Cb1HWUEWzyvsbMRmRwL/PpXKN7pxxDsiZSwpIni4M+kLXncojqhgO3AVTdL9PjU
+         lyisGpMNy0YHJ4q9qzMfsGr3fIp6v8bjzOyqQ86amkIpsps2g5y4lWDWXM+v5sRhbq+6
+         CxqkddCs+UGgGo3lz+5oNxF8+ZeoNKFQvPKG7h8CaCTlaj0Q0M1i9hDjAFJ4iDVZLqcj
+         1XpG8obc2SjAS0Cd0eGRJTiuyCWMrj4wTHfCueIhio7d1lR/kxMls5NQAsgsvt13vDOZ
+         dsHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVld86tz5rbbF9YllkKyo73rHVzTQSJbKGTO9nX5TpfzsRNoCl8viNlI142uClZ70ETVExyGLRSFBNBHoW/Tl37pzBkiy5RCGRtqsdc
+X-Gm-Message-State: AOJu0Yyq1ARV7ffrITbsgMnGDYh2Y5hbNUtczRylPjUXrhW84yFqXYFT
+	IwVS77CaD6b/TGfkPixoxFpq+N1jjTyQClnjmDR9g+2bBYGI5eAa9l2gNWMO0Co=
+X-Google-Smtp-Source: AGHT+IEGJs5iV6eowXaXUOY1I4Kqd8HU+3A8SA2bF/WmOFUpd4Db6ocMdV5zunNQPrP0uHwh5JzBDg==
+X-Received: by 2002:a17:907:9495:b0:a59:cc9b:d6f8 with SMTP id a640c23a62f3a-a65e8e797f5mr310825966b.39.1717082781615;
+        Thu, 30 May 2024 08:26:21 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:5de0:a23:f1c3:862a:5eac? ([2a10:bac0:b000:5de0:a23:f1c3:862a:5eac])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4f969sm827690066b.101.2024.05.30.08.26.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 08:26:21 -0700 (PDT)
+Message-ID: <ca6c512a-c9cd-4210-bd71-c72c729c95a9@suse.com>
+Date: Thu, 30 May 2024 18:26:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] x86: Remove the prefetch() specific implementation on
+ x86_64
+To: Youling Tang <youling.tang@linux.dev>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ Mateusz Guzik <mjguzik@gmail.com>, Youling Tang <tangyouling@kylinos.cn>
+References: <20240529032059.899347-1-youling.tang@linux.dev>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240529032059.899347-1-youling.tang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240517145302.971019-10-cleger@rivosinc.com>
 
-On Fri, May 17, 2024 at 04:52:49PM +0200, Clément Léger wrote:
-> Export Zca, Zcf, Zcd and Zcb ISA extension through hwprobe.
+
+
+On 29.05.24 Ð³. 6:20 Ñ‡., Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
 > 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> After commit ab483570a13b ("x86 & generic: change to __builtin_prefetch()"),
+> x86_64 directly uses __builtin_prefetch() without the specific implementation
+> of prefetch(). Also, x86_64 use a generic definition until commit ae2e15eb3b6c
+> ("x86: unify prefetch operations"). So remove it.
+
+
+So this patch just ensures the x86-specific prefetch() implementation is 
+defined only for 32bit case, otherwise we have it defined for the 64bit 
+case as well but effectively it's not used since ARCH_HAS_PREFETCH is 
+not defined for 64bit, meaning in the 64bit case prefetch() is still 
+defined to __builtint_prefetch in include/linux/prefetch.h.
+
+
+In essence this is a purely cosmetic cleanup , am I right?
+
+
+I compiled a file that utilizes prefetch with and without your patch and 
+the generated assembly is identical.
+
+
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+
+
+> 
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 > ---
->  Documentation/arch/riscv/hwprobe.rst  | 20 ++++++++++++++++++++
->  arch/riscv/include/uapi/asm/hwprobe.h |  4 ++++
->  arch/riscv/kernel/sys_hwprobe.c       |  4 ++++
->  3 files changed, 28 insertions(+)
+>   arch/x86/include/asm/processor.h | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> index 48be38e0b788..cad84f51412d 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -196,6 +196,26 @@ The following keys are defined:
->         supported as defined in the RISC-V ISA manual starting from commit
->         58220614a5f ("Zimop is ratified/1.0").
->  
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZCA`: The Zca extension part of Zc* standard
-> +       extensions for code size reduction, as ratified in commit 8be3419c1c0
-> +       ("Zcf doesn't exist on RV64 as it contains no instructions") of
-> +       riscv-code-size-reduction.
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> index cb4f6c513c48..44371bdcc59d 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -599,9 +599,6 @@ extern char			ignore_fpu_irq;
+>   #ifdef CONFIG_X86_32
+>   # define BASE_PREFETCH		""
+>   # define ARCH_HAS_PREFETCH
+> -#else
+> -# define BASE_PREFETCH		"prefetcht0 %1"
+> -#endif
+>   
+>   /*
+>    * Prefetch instructions for Pentium III (+) and AMD Athlon (+)
+> @@ -616,6 +613,10 @@ static inline void prefetch(const void *x)
+>   			  "m" (*(const char *)x));
+>   }
+>   
+> +#else
+> +# define BASE_PREFETCH		"prefetcht0 %1"
+> +#endif
 > +
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZCB`: The Zcb extension part of Zc* standard
-> +       extensions for code size reduction, as ratified in commit 8be3419c1c0
-> +       ("Zcf doesn't exist on RV64 as it contains no instructions") of
-> +       riscv-code-size-reduction.
-> +
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZCD`: The Zcd extension part of Zc* standard
-> +       extensions for code size reduction, as ratified in commit 8be3419c1c0
-> +       ("Zcf doesn't exist on RV64 as it contains no instructions") of
-> +       riscv-code-size-reduction.
-> +
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZCF`: The Zcf extension part of Zc* standard
-> +       extensions for code size reduction, as ratified in commit 8be3419c1c0
-> +       ("Zcf doesn't exist on RV64 as it contains no instructions") of
-> +       riscv-code-size-reduction.
-> +
->  * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
->    information about the selected set of processors.
->  
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-> index 3b16a12204b1..652b2373729f 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -61,6 +61,10 @@ struct riscv_hwprobe {
->  #define		RISCV_HWPROBE_EXT_ZICOND	(1ULL << 35)
->  #define		RISCV_HWPROBE_EXT_ZIHINTPAUSE	(1ULL << 36)
->  #define		RISCV_HWPROBE_EXT_ZIMOP		(1ULL << 37)
-> +#define		RISCV_HWPROBE_EXT_ZCA		(1ULL << 38)
-> +#define		RISCV_HWPROBE_EXT_ZCB		(1ULL << 39)
-> +#define		RISCV_HWPROBE_EXT_ZCD		(1ULL << 40)
-> +#define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 41)
->  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
->  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
->  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-> index fc6f4238f0b3..11def345a42d 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -113,6 +113,8 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
->  		EXT_KEY(ZICOND);
->  		EXT_KEY(ZIHINTPAUSE);
->  		EXT_KEY(ZIMOP);
-> +		EXT_KEY(ZCA);
-> +		EXT_KEY(ZCB);
->  
->  		if (has_vector()) {
->  			EXT_KEY(ZVBB);
-> @@ -133,6 +135,8 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
->  			EXT_KEY(ZFH);
->  			EXT_KEY(ZFHMIN);
->  			EXT_KEY(ZFA);
-> +			EXT_KEY(ZCD);
-> +			EXT_KEY(ZCF);
->  		}
->  #undef EXT_KEY
->  	}
-> -- 
-> 2.43.0
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-
+>   /*
+>    * 3dnow prefetch to get an exclusive cache line.
+>    * Useful for spinlocks to avoid one state transition in the
 
