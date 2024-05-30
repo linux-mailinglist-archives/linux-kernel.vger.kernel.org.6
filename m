@@ -1,139 +1,208 @@
-Return-Path: <linux-kernel+bounces-195260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CDC8D499E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:25:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9648D49A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C792A1F21683
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B21A1F241EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E85E17C7B5;
-	Thu, 30 May 2024 10:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="aWhB0q8F"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD97176AAE;
-	Thu, 30 May 2024 10:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA88F176ADE;
+	Thu, 30 May 2024 10:29:16 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D63433B3;
+	Thu, 30 May 2024 10:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717064655; cv=none; b=Btm+RTJwfkQrmanek3mQ5Ym+SLb9+Eeb4PSV9Zo6XAT3AI95EyVRRE8wJWTxnT0gxXSg3YXprspGXYR6mOabiEGStoFXxgxTEglZS/rcDEJjRMCe2ZAQb38EQLVctj3VL5txIySkId5z+hSBCB7UeqFZFWB0bjzz3VVIX5cSIU8=
+	t=1717064956; cv=none; b=MQu01ExpYWd3tX/vV/fTMd5AFkMbgcB/ptggR0SSDU/V9kPVQ9Vk3SOome32ieRmpjII2eX9AiH2DM0vjKWcSLbYxSlwbq3I/wQm1eFG7675wK8UUyPQGtzWimqgwI3msvlgt0hou5hRQ02ANpak5r/upAwIvxi/IdSrhzqb14g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717064655; c=relaxed/simple;
-	bh=HeUGkiaEEtwv7kBlE3o/lEprM8J67nEM4mfW/LV/zzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AM0cNrFK6NkodCW5C3PEOT3rgcJiBCnXGxpombFFkVJzad9DVj4d83S3/+62csUzQ7+x3KESMiTGWkLA6nI+CzZAUnn65K4j1q+3ppSM8nddzVb1hfo5lTpcONRkOgaHfnGh0lZ94xvS2TjSz1o23qsYP68fHQhzh20oa3YIQXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=aWhB0q8F; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=J8pf6YD6PYPOxhuxnDNwdGpGAeMHzezf+cUCwL+fh0o=; b=aWhB0q8FGQSlqKpGjJIcrnT3F7
-	Zx/XgjYvWTYLMXoHUeY8mv0PKp85aDgd8vJDRO0Fk1T9t9mc409SY5JpH350Izgo+CFy8ePIF4yDU
-	Vl0Dpi4nCJNm3K1qIk78HHqkPICKrFp9IHwh65eynTxZk1R6AoSxnaqUXmvEVehq4klMP7DZU6MWx
-	N9iwij8balZT7Ly1MLxQq+TnRIYoXkQaQ9GjC9FyXA9pq9wVsXMotY8zUmMAfvR/1dj/zQ3udRX3q
-	C5b2WwFnaS2DyuTgXgamN/N8sjbUnING7J9ih0sVJkqNhV5wsGy5UHGMG7gHU5852NdzAu7IQZXu2
-	UmqcMNbg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40714)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCcwo-0007FG-2a;
-	Thu, 30 May 2024 11:23:50 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCcwn-00054M-LC; Thu, 30 May 2024 11:23:49 +0100
-Date: Thu, 30 May 2024 11:23:49 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v5 4/5] net: phy: mediatek: Extend 1G TX/RX link
- pulse time
-Message-ID: <ZlhTtSHRVrjWO0KD@shell.armlinux.org.uk>
-References: <20240530034844.11176-1-SkyLake.Huang@mediatek.com>
- <20240530034844.11176-5-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1717064956; c=relaxed/simple;
+	bh=dqXFzIy34r9alYikOtvaZBp/VtCNyiGN2Z42QiwgkOc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uqBnlPrAIJ3haxOQ5inFo8ZOa1VWkBdOruo5lga6/Ao19zyCiBW9DeSnFu7JH48uMcfkpos9DS6zWSgnHemCUrIoclauyz9enNNuGsXLAmywlu3tGLUnyUi6vI51thGSImFLLqdI0D9dIJUwesrIY/zTeuhl9SoqTFCtZlkjYAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.08,201,1712588400"; 
+   d="asc'?scan'208";a="210129620"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 30 May 2024 19:29:05 +0900
+Received: from [10.226.92.220] (unknown [10.226.92.220])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E44FB4010DF9;
+	Thu, 30 May 2024 19:29:01 +0900 (JST)
+Message-ID: <b6d03e9a-8889-4fbd-a388-c168d1547e24@bp.renesas.com>
+Date: Thu, 30 May 2024 11:29:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530034844.11176-5-SkyLake.Huang@mediatek.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH v4 7/7] net: ravb: Allocate RX buffers via page
+ pool
+Content-Language: en-GB
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
+ <20240528150339.6791-8-paul.barker.ct@bp.renesas.com>
+ <eefce0af-2771-a56c-753d-85fe991fdf31@omp.ru>
+ <e7cf9dd8-9c67-476b-a892-b8dbe9312c4c@bp.renesas.com>
+Organization: Renesas Electronics Corporation
+In-Reply-To: <e7cf9dd8-9c67-476b-a892-b8dbe9312c4c@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------tMLKLiVDOLIictAzyrx8ObJN"
 
-Hi,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------tMLKLiVDOLIictAzyrx8ObJN
+Content-Type: multipart/mixed; boundary="------------DRJUhX0cQajqiJhTTYTqEnsN";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <b6d03e9a-8889-4fbd-a388-c168d1547e24@bp.renesas.com>
+Subject: Re: [net-next PATCH v4 7/7] net: ravb: Allocate RX buffers via page
+ pool
+References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
+ <20240528150339.6791-8-paul.barker.ct@bp.renesas.com>
+ <eefce0af-2771-a56c-753d-85fe991fdf31@omp.ru>
+ <e7cf9dd8-9c67-476b-a892-b8dbe9312c4c@bp.renesas.com>
+In-Reply-To: <e7cf9dd8-9c67-476b-a892-b8dbe9312c4c@bp.renesas.com>
 
-A few suggestions:
+--------------DRJUhX0cQajqiJhTTYTqEnsN
+Content-Type: multipart/mixed; boundary="------------JTNDfQ0jYDB0WNTP7QO0aKQ4"
 
-On Thu, May 30, 2024 at 11:48:43AM +0800, Sky Huang wrote:
-> +static int extend_an_new_lp_cnt_limit(struct phy_device *phydev)
-> +{
-> +	int mmd_read_ret;
-> +	u32 reg_val;
-> +	int timeout;
-> +
-> +	timeout = read_poll_timeout(mmd_read_ret = phy_read_mmd, reg_val,
-> +				    (mmd_read_ret < 0) || reg_val & MTK_PHY_FINAL_SPEED_1000,
-> +				    10000, 1000000, false, phydev,
-> +				    MDIO_MMD_VEND1, MTK_PHY_LINK_STATUS_MISC);
+--------------JTNDfQ0jYDB0WNTP7QO0aKQ4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-	timeout = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-					    MTK_PHY_LINK_STATUS_MISC,
-					    reg_val,
-					    reg_val & MTK_PHY_FINAL_SPEED_1000,
-					    10000, 1000000, false);
+On 30/05/2024 10:21, Paul Barker wrote:
+> On 29/05/2024 21:52, Sergey Shtylyov wrote:
+>> On 5/28/24 6:03 PM, Paul Barker wrote:
+>>> @@ -865,7 +894,16 @@ static int ravb_rx_gbeth(struct net_device *ndev=
+, int budget, int q)
+>>>  				stats->rx_bytes +=3D skb->len;
+>>>  				napi_gro_receive(&priv->napi[q], skb);
+>>>  				rx_packets++;
+>>> +
+>>> +				/* Clear rx_1st_skb so that it will only be
+>>> +				 * non-NULL when valid.
+>>> +				 */
+>>> +				if (die_dt =3D=3D DT_FEND)
+>>> +					priv->rx_1st_skb =3D NULL;
+>>
+>>    Hm, can't we do this under *case* DT_FEND above?
+>=20
+> It makes more logical sense to me to do this as the last step, but I
+> guess it's a little more optimal to do it earlier. I'll move it.
 
-> +	if (mmd_read_ret < 0)
-> +		return mmd_read_ret;
+Actually, this doesn't even need to be conditional. If die_dt is
+DT_FSINGLE, priv->rx_1st_skb will already be NULL so this will be a
+no-op. So I'll just simplify this.
 
-So, what if the poll times out (timeout == -ETIMEDOUT) ? If you want to
-ignore that, then:
+Thanks,
 
-	if (timeout < 0 && timeout != -ETIMEDOUT)
-		return timeout;
+--=20
+Paul Barker
+--------------JTNDfQ0jYDB0WNTP7QO0aKQ4
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-> +int mtk_gphy_cl22_read_status(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +
-> +	ret = genphy_read_status(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (phydev->autoneg == AUTONEG_ENABLE && !phydev->autoneg_complete) {
-> +		ret = phy_read(phydev, MII_CTRL1000);
-> +		if ((ret & ADVERTISE_1000FULL) || (ret & ADVERTISE_1000HALF)) {
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-This is equivalent to:
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
 
-		if (ret & (ADVERTISE_1000FULL | ADVERTISE_1000HALF)) {
+--------------JTNDfQ0jYDB0WNTP7QO0aKQ4--
 
-which is easier to read.
+--------------DRJUhX0cQajqiJhTTYTqEnsN--
 
-Thanks.
+--------------tMLKLiVDOLIictAzyrx8ObJN
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZlhU7AUDAAAAAAAKCRDbaV4Vf/JGvdxd
+AP42vywr81zonb/12KZ8LCRoem+tbUVaUTzQrfUWOP35hwD/S9XQoDc13SPUgUVW88rmA+rx86a+
+6NsXKWGAtJNSwwo=
+=/DKM
+-----END PGP SIGNATURE-----
+
+--------------tMLKLiVDOLIictAzyrx8ObJN--
 
