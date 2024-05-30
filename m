@@ -1,288 +1,226 @@
-Return-Path: <linux-kernel+bounces-194930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD688D4478
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:22:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404E98D447A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B361F22DE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:22:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6E91C21424
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC73143883;
-	Thu, 30 May 2024 04:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF0C14387E;
+	Thu, 30 May 2024 04:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iqjch8gA"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ji7GdU54"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361DA28E7;
-	Thu, 30 May 2024 04:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7307D41A92
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717042921; cv=none; b=JxfTzlA3vuLeEE4vcT0DmXQpiFtO0/krHOVGgC+9zg78q6mtSS1gP2cXQUX9fAu9pQqdHBz5vTeneqT5IaoZJXMbc05Mzbdg7qVjqok8rsCELE8WYOccYOWV8hNKvjA3kSkTFXSEgdFSIJzjjl0Xf9AXEdqdpFyLboNiq+8rZz4=
+	t=1717042967; cv=none; b=sqTwz0XrCDP2U40n3FI8ZHs6MOZ4Vu0BasVHWH+ZRk55ZxpvbBuZbF/kh3bovIIRooSx+6/ezbrBRt2IbYM+0G3Dve67Mt+lZeLVzJiSvcyYI4k8awAuE3BRB6XnV5Hc+gOPi2N+Uk89/WXI2ZxsCrvJHX1kg6MnFH8Ou0v0cag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717042921; c=relaxed/simple;
-	bh=HvHUlYrVomARIHnkZekH0LjPMDAiqzdro3h1eChDqfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HTJq0cMqHaPpN9vc9PQVsHnxJsai4Dk3LhV9UrMsDNIqHvWndsGxOxf8zMKcqHhnLSCHj7yLMCl2fYJHdo0iS3L8qAvcbg5a/QW3IGFIRBcqhOevpSyXGkgxb2SThLGTyCWmnoShh3irhgaH8KkoiqD71mkfwVXjrVMto3O65ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iqjch8gA; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6ff6fe215c6so412709b3a.3;
-        Wed, 29 May 2024 21:21:59 -0700 (PDT)
+	s=arc-20240116; t=1717042967; c=relaxed/simple;
+	bh=mOpnmGaWkVaDABcJIM+ohz2/IlMdB2KvDHck5ouGpTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HMU10CeE+5Uok8AEuSAo1ahRgC8BaIAMt8NK3WdhKt9iWEoSNKOcgyb/lSr91GXs/VepnIrtTntP2tuCum4y6BTk7hhi0f6ShEuzs2Mej31FRibXzSQW3e+nCgHjEQLKvjMFadmMr0kCausotnZaMeHDIM8gF/t7cLQiVifPrTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ji7GdU54; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-43dfe020675so200731cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:22:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717042919; x=1717647719; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=xBLzkMhspMVVnxkqgoE5gR4vmWralf60H1wWDRcdvnw=;
-        b=Iqjch8gAdpDFQc2wGFFyaniJISMOGOUypXQINqYXKhwTtBmPxdf3jidkJwAsnKpi9D
-         sTNGB1GQ3c7wqlN59eYXhqVbCrJxVx9QOw8HTWrYQeyNiIO8c+BwOSjv6FBOQWpozQZl
-         G2q2EckXgfwL+hluvoivv8bqufqCXzjUAMqGfOCB1xKGOBfmoZADzDXz/PCEow6f/kdX
-         ynSVx3MEru5BFAh/10CdOa0ghZkb0g34SyReiBv7MtQQviRJ3bccKAIhs2kjWEbLXyAS
-         0ojL6rRtb1JJKG3Mdz1T/g/KoRBB1htFgOZ4YpTyyCdRiekJFarSxzP3Kn3JC+rsxf8H
-         nBFA==
+        d=google.com; s=20230601; t=1717042965; x=1717647765; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CJuF21QYBMVxdrOKhVxCMb/fcP73Nr7m20Qtxaatf80=;
+        b=ji7GdU54/b/X0YDCagJMHEvvZ9WlnqAnmW9kWtjVabIBq7wBPaZPLWIvKtqlYckCHD
+         h1MvonOSRksOyBUlXbTLFScBGYgNXC0TseFdthyRTwhxH/2/K0m0LMLSEZxvjauWQThE
+         0AE9B/5m4ffut0v3MBr+far3u3rcESaVsjx6DmNIB75i4WGBPrUJJ2J2S/6FX531wBqB
+         oXKqVlQjowz6ZIUV4iVq5UtbLXlaF6bUMZ22t+td+FbmmXX6uIEGg9J15NXbodqTLHK8
+         aVIBt76CVBFTuvpc5dPK4v99EqZUDYx/krWGDsiVRZbzJwe8ZkoXz+iD8w7F4ycyzQ+x
+         Y8xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717042919; x=1717647719;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xBLzkMhspMVVnxkqgoE5gR4vmWralf60H1wWDRcdvnw=;
-        b=kMAEaZem/PAQc/K4ZLwL+DVIrfMVvxpgUWqdeF6r1158Nc3WuWTtUgakNQpZg5qVjD
-         u7sEt6UktRzOvSNcr5THpTulbQs7Re1EHqPseJe5mYJnPI7WkHcDDC9imsc+d35HuH/c
-         SYZ4fxQjgxFUKalAvG0zfrh1GtIfqY8U8pY6adDMRI5a4D5eVQ3rETIlVknpP1jOCcnc
-         DaQlpxZoW3IzXAkw+jTNcO1ftdu1cUbcMQMj4kGUP0/v91ljFxg4i+Pn6SON9+aQBbHK
-         A+GF4mlD9UJjmKDgRWT5l9/d35leNipKih7bh6agbH4Hf7LvgodclKLt/c9W5VsnBmeZ
-         WADw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYew8L5VwEDgcx2sqzesygo/m6qstR+BX/kEezT1TCQrpGF3WL8j9k8p4g17AfKQS1I55HAJRxqCcFDRHz4Wu4LMtQfkc91Leq4f7ef5JM86GJOAoD4Hzc/s3J/cBxJAo7Pr+n
-X-Gm-Message-State: AOJu0YwRlrg7qevM2WHoCp84tHrtjw3FKviGCNpFAZ0yh6tmTtC8Hvuj
-	Ao19qhi9HkZjq+OCB+EvPxdu4TI/nVR5LTbVcy4cozcGclL0FUza
-X-Google-Smtp-Source: AGHT+IELWc+Ian0RzmubNr/PJ38WEIz0KL3Ieb7m/tuYvJNFgMjfxZG8fmC9atETuYx6gTQgx8Gu6Q==
-X-Received: by 2002:a05:6a00:3485:b0:6f8:effd:7942 with SMTP id d2e1a72fcca58-702310daf06mr1253461b3a.2.1717042919124;
-        Wed, 29 May 2024 21:21:59 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fcfe6cd2sm8765866b3a.162.2024.05.29.21.21.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 21:21:58 -0700 (PDT)
-Message-ID: <ce9fe740-8c9a-4fc0-a65d-464f2c7da377@gmail.com>
-Date: Wed, 29 May 2024 21:21:54 -0700
+        d=1e100.net; s=20230601; t=1717042965; x=1717647765;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CJuF21QYBMVxdrOKhVxCMb/fcP73Nr7m20Qtxaatf80=;
+        b=oSC76ydET92uNUILbFOjA6HDLN66rFEDqXmJakUwimw4U+ZTkuYygejoibgRcrjA5b
+         ddb9cyUhesuzy/FpnFZn7m6tnrpvka+qXJDNzALREIdke9dY90gULfhvlaLVR0Cm/KKL
+         +VzAxPN2MKz0Q8iPnGGWPxhF0vIYwPfuZyNpEIybzQtCa16E1NNNSpNqag7BxDvq6G0j
+         nPABEcqbaT0lfthSf0ObP3oFqr9RJQe1XpB95h5x4hmMBd1h2YcZ5S04TyBcQdKWEmkS
+         3md4qZC5ovOhVtmEUe2au3y8pTE8icbJzHd2GCjZs2h0nWWIYtD3HO4nHn+ATuhkKZPF
+         Ldyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPNR29EfwOFYACqLVLvgG6aKomiU4o4JXqY+vFTy6Al7inBmx52ojPmH9jA7V6B44aYFfQ3skaNImHz3FMLCJ72g1Gp2yemRfosEpA
+X-Gm-Message-State: AOJu0YwevINMvwlaa8ul7+7rgPeF2jIp2mqXILv943e7xNGWK4pLpviD
+	llvyPd74U12zVHYaLv4CCYzvHESl3+Pc0XZjlIZrQexFF/3fck5DVuBUBzd42SeHuHE5zE9sDR6
+	b5+huMShM7lti4FWC5lvbJmrC3Qr25vwYYsBr
+X-Google-Smtp-Source: AGHT+IHCkFzf2/etPUWs8QgM9kINz0Ajf33AWvBIbvxwx7hwW1jESougvmtnULBz0vUWfEzxUZLiTyZOCNmalNRIi8A=
+X-Received: by 2002:a05:622a:4809:b0:43d:dc3b:518c with SMTP id
+ d75a77b69052e-43feb3a3342mr1005361cf.11.1717042965087; Wed, 29 May 2024
+ 21:22:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net v2] net: ethernet: mtk_eth_soc: handle dma buffer size soc
- specific
-To: =?UTF-8?B?QmMtYm9jdW4gQ2hlbiAo6Zmz5p+P5p2RKQ==?=
- <bc-bocun.chen@mediatek.com>, "daniel@makrotopia.org"
- <daniel@makrotopia.org>, "sgoutham@marvell.com" <sgoutham@marvell.com>
-Cc: =?UTF-8?B?TWFyay1NQyBMZWUgKOadjuaYjuaYjCk=?= <Mark-MC.Lee@mediatek.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- =?UTF-8?B?U2t5TGFrZSBIdWFuZyAo6buD5ZWf5r6kKQ==?=
- <SkyLake.Huang@mediatek.com>, =?UTF-8?B?U2FtIFNoaWggKOWPsueiqeS4iSk=?=
- <Sam.Shih@mediatek.com>, "linux@fw-web.de" <linux@fw-web.de>,
- "john@phrozen.org" <john@phrozen.org>, "nbd@nbd.name" <nbd@nbd.name>,
- "lorenzo@kernel.org" <lorenzo@kernel.org>,
- "frank-w@public-files.de" <frank-w@public-files.de>,
- Sean Wang <Sean.Wang@mediatek.com>, "kuba@kernel.org" <kuba@kernel.org>,
- "edumazet@google.com" <edumazet@google.com>,
- "pabeni@redhat.com" <pabeni@redhat.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- =?UTF-8?B?U3RldmVuIExpdSAo5YqJ5Lq66LGqKQ==?= <steven.liu@mediatek.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "angelogioacchino.delregno@collabora.com"
- <angelogioacchino.delregno@collabora.com>
-References: <20240527142142.126796-1-linux@fw-web.de>
- <BY3PR18MB4737D0ED774B14833353D202C6F02@BY3PR18MB4737.namprd18.prod.outlook.com>
- <kbzsne4rm4232w44ph3a3hbpgr3th4xvnxazdq3fblnbamrloo@uvs3jyftecma>
- <395096cbf03b25122b710ba684fb305e32700bba.camel@mediatek.com>
- <BY3PR18MB4737EC8554AA453AF4B332E8C6F22@BY3PR18MB4737.namprd18.prod.outlook.com>
- <4611828c0f2a4e9c8157e583217b7bc5072dc4ea.camel@mediatek.com>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <4611828c0f2a4e9c8157e583217b7bc5072dc4ea.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240516211731.1635930-1-ivan.orlov0322@gmail.com>
+In-Reply-To: <20240516211731.1635930-1-ivan.orlov0322@gmail.com>
+From: David Gow <davidgow@google.com>
+Date: Thu, 30 May 2024 12:22:31 +0800
+Message-ID: <CABVgOSkFt5beXua-DsFPzebSm1S=o3rqnctzzHHtg-pZC=zssA@mail.gmail.com>
+Subject: Re: [PATCH v5] kunit: Cover 'assert.c' with tests
+To: Ivan Orlov <ivan.orlov0322@gmail.com>
+Cc: brendan.higgins@linux.dev, rmoar@google.com, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kunit-dev@googlegroups.com, skhan@linuxfoundation.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000000747f40619a43825"
 
+--0000000000000747f40619a43825
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 17 May 2024 at 05:17, Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
+>
+> There are multiple assertion formatting functions in the `assert.c`
+> file, which are not covered with tests yet. Implement the KUnit test
+> for these functions.
+>
+> The test consists of 11 test cases for the following functions:
+>
+> 1) 'is_literal'
+> 2) 'is_str_literal'
+> 3) 'kunit_assert_prologue', test case for multiple assert types
+> 4) 'kunit_assert_print_msg'
+> 5) 'kunit_unary_assert_format'
+> 6) 'kunit_ptr_not_err_assert_format'
+> 7) 'kunit_binary_assert_format'
+> 8) 'kunit_binary_ptr_assert_format'
+> 9) 'kunit_binary_str_assert_format'
+> 10) 'kunit_assert_hexdump'
+> 11) 'kunit_mem_assert_format'
+>
+> The test aims at maximizing the branch coverage for the assertion
+> formatting functions.
+>
+> As you can see, it covers some of the static helper functions as
+> well, so mark the static functions in `assert.c` as 'VISIBLE_IF_KUNIT'
+> and conditionally export them with EXPORT_SYMBOL_IF_KUNIT. Add the
+> corresponding definitions to `assert.h`.
+>
+> Build the assert test when CONFIG_KUNIT_TEST is enabled, similar to
+> how it is done for the string stream test.
+>
+> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> ---
 
-On 5/29/2024 6:46 PM, Bc-bocun Chen (陳柏村) wrote:
-> On Wed, 2024-05-29 at 17:50 +0000, Sunil Kovvuri Goutham wrote:
->>   	
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>   On Mon, 2024-05-27 at 17:13 +0100, Daniel Golle wrote:
->>>> On Mon, May 27, 2024 at 03:55:55PM GMT, Sunil Kovvuri Goutham
->>> wrote:
->>>>>>
->>>>>>
->>>>>>>> -----Original Message-----
->>>>>>>> From: Frank Wunderlich <linux@fw-web.de>
->>>>>>>> Sent: Monday, May 27, 2024 7:52 PM
->>>>>>>> To: Felix Fietkau <nbd@nbd.name>; Sean Wang <
->>>>>>>> sean.wang@mediatek.com>;
->>>>>>>> Mark Lee <Mark-MC.Lee@mediatek.com>; Lorenzo Bianconi
->>>>>>>> <lorenzo@kernel.org>; David S. Miller <
->> davem@davemloft.net>
->>>>> ; Eric
->>>>>>>> Dumazet
->>>>>>>> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>;
->>>>> Paolo
->>>>>>>> Abeni
->>>>>>>> <pabeni@redhat.com>; Matthias Brugger <
->>>>> matthias.bgg@gmail.com>;
->>>>>>>> AngeloGioacchino Del Regno <
->>>>>>>> angelogioacchino.delregno@collabora.com>
->>>>>>>> Cc: Frank Wunderlich <frank-w@public-files.de>; John
->>>>> Crispin
->>>>>>>> <john@phrozen.org>; netdev@vger.kernel.org;
->>>>>>>> linux-kernel@vger.kernel.org;
->>>>>>>> linux-arm-kernel@lists.infradead.org;
->>>>>>>> linux-mediatek@lists.infradead.org;
->>>>>>>> Daniel Golle <daniel@makrotopia.org>
->>>>>>>> Subject: [net v2] net: ethernet: mtk_eth_soc: handle dma
->>>>> buffer
->>>>>>>> size soc specific
->>>>>>>>
->>>>>>>> From: Frank Wunderlich <frank-w@public-files.de>
->>>>>>>>
->>>>>>>> The mainline MTK ethernet driver suffers long time from
->>>>> rarly but
->>>>>>>> annoying tx
->>>>>>>> queue timeouts. We think that this is caused by fixed dma
->>>>> sizes
->>>>>>>> hardcoded for
->>>>>>>> all SoCs.
->>>>>>>>
->>>>>>>> Use the dma-size implementation from SDK in a per SoC
->>>>> manner.
->>>>>>>>
->>>>>>>> Fixes: 656e705243fd ("net-next: mediatek: add support for
->>>>> MT7623
->>>>>>>> ethernet")
->>>>>>>> Suggested-by: Daniel Golle <daniel@makrotopia.org>
->>>>>>>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->>>>
->>>>>>
->>>>>> ..............
->>>>>>>>
->>>>>>>> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
->>>>>>>> b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
->>>>>>>> index cae46290a7ae..f1ff1be73926 100644
->>>>>>>> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
->>>>>>>> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
->>>>
->>>>>>
->>>>>> .............
->>>>>>>> @@ -1142,40 +1142,46 @@ static int mtk_init_fq_dma(struct
->>>>> mtk_eth
->>>>>>>> *eth)
->>>>>>>>                              cnt * soc-
->>>>>>>>> tx.desc_size,
->>>>>>>>                              &eth-
->>>>>>>>> phy_scratch_ring,
->>>>>>>>                              GFP_KERNEL);
->>>>
->>>>>>
->>>>>> ..............
->>>>>>>> -  for (i = 0; i < cnt; i++) {
->>>>>>>> -      dma_addr_t addr = dma_addr + i *
->> MTK_QDMA_PAGE_SIZE;
->>>>>>>> -      struct mtk_tx_dma_v2 *txd;
->>>>>>>> +      dma_addr = dma_map_single(eth->dma_dev,
->>>>>>>> +                  eth->scratch_head[j], len *
->>>>>>>> MTK_QDMA_PAGE_SIZE,
->>>>>>>> +                  DMA_FROM_DEVICE);
->>>>>>>>
->>>>
->>>>>>
->>>>>> As per commit msg, the fix is for transmit queue timeouts.
->>>>>> But the DMA buffer changes seems for receive pkts.
->>>>>> Can you please elaborate the connection here.
->>>
->>>>
->>>> *I guess* the memory window used for both, TX and RX DMA
->>> descriptors
->>>> needs to be wisely split to not risk TX queue overruns, depending
->>> on
->>>> the
->>>> SoC speed and without hurting RX performance...
->>>>
->>>> Maybe someone inside MediaTek (I've added to Cc now) and more
->>>> familiar
->>>> with the design can elaborate in more detail.
->>   
->>> We've encountered a transmit queue timeout issue on the MT79888 and
->>> have identified it as being related to the RSS feature.
->>> We suspect this problem arises from a low level of free TX DMADs,
->> the
->>> TX Ring alomost full.
->>> Since RSS is enabled, there are 4 Rx Rings, with each containing
->> 2048
->>> DMADs, totaling 8192 for Rx. In contrast, the Tx Ring has only 2048
->>> DMADs. Tx DMADs will be consumed rapidly during a 10G LAN to 10G WAN
->>> forwarding test, subsequently causing the transmit queue to stop.
->>> Therefore, we reduced the number of Rx DMADs for each ring to
->> balance
->>> both Tx and Rx DMADs, which resolves this issue.
->>
->> Okay, but it’s still not clear why it’s resulting in a transmit
->> timeout.
->> When transmit queue is stopped and after some Tx pkts in the pipeline
->> are flushed out, isn’t
->> Tx queue wakeup not happening ?
->>   
-> Yes, the transmit timeout is caused by the Tx queue not waking up.
-> The Tx queue stops when the free counter is less than ring->thres, and
-> it will wake up once the free counter is greater than ring->thres.
-> If the CPU is too late to wake up the Tx queues, it may cause a
-> transmit timeout.
-> Therefore, we balanced the TX and RX DMADs to improve this error
-> situation.
+This looks good to me, and passes all of my tests locally.
 
-All of this needs to go into the commit message please, thanks!
--- 
-Florian
+Note that this does have some checkpatch warnings:
+
+WARNING: Using vsprintf specifier '%px' potentially exposes the kernel
+memory layout, if you don't really need the address please consider
+using '%p'.
+#426: FILE: lib/kunit/assert_test.c:250:
++       snprintf(addr_var_a, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_a);
+
+WARNING: Using vsprintf specifier '%px' potentially exposes the kernel
+memory layout, if you don't really need the address please consider
+using '%p'.
+#427: FILE: lib/kunit/assert_test.c:251:
++       snprintf(addr_var_b, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_b);
+
+These are necessary, as KUnit _does_ expose the kernel memory layout
+(on purpose), as it's useful for debugging. This is one of the reasons
+why KUnit tests taint the kernel: to make it clear that this could be
+a problem.
+
+Acked-by: David Gow <davidgow@google.com>
+
+Cheers,
+-- David
+
+--0000000000000747f40619a43825
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIPJNBL0CBdD08nNFOwOa0t1eOlhQH1BaGHQBuBBB0ltDMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDUzMDA0MjI0NVowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQA5VAkN
+SpfI+XwKcn7YEu5RyPIxIp7kDDxVnna/b0JgXwP9lhVIcWsEq6SptDSbUu5nF9atNteedRXHy4JW
+YMuXcQN2aw9ZLg4VHPn5f8QTxe/DpT5V4yR3RKgy76j4bM07CYNB9JSlhBq2K35W6J6Bk2p2ho8m
+jbCY8NHzRWj5vX0YtOrJjOtA/Dd8A6bEOkVyRtOvYIAaNDRkH5CCCGlDSfACSM7xsr5aZG3cte3u
+p51AfkslLQYza81mAyCf8wlHYyF0B11bvaXxcZfdewjn4K1/T6b5z86CjDOURlwtSxo8MZo1VBVM
+vZh9ePpwO4INCYq1TKuYsGJfBArhp+TE
+--0000000000000747f40619a43825--
 
