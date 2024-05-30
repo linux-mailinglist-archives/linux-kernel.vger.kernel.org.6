@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-194847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA88F8D4302
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:39:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2768D4308
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5CAB2379C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F021D1C227CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2CD17BA8;
-	Thu, 30 May 2024 01:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1661C2AD;
+	Thu, 30 May 2024 01:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Mmj9kcDd"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="WvwVfVTi"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991DE17588;
-	Thu, 30 May 2024 01:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F0D1BF50;
+	Thu, 30 May 2024 01:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717033187; cv=none; b=X8i8XQxhpNZVnzIZgJgMGvm1l+Y9NqzcQwi41NMB3zzQbennmhddgPFU9BBXmz83YiH3t8vMX+TFS8APQvF1Q5A+dmOt70YgDEabfCoM8fZTVSX3HURSmEPA48GHrbwvrmRWSTE4VjJRMmMGdII1BmjVki6ZPZdAXSAkFCdSLQg=
+	t=1717033222; cv=none; b=BRl3niBM+7uZVNLq8CYamfRehIQsUJgDwW23qYwkaVRYprLXwQUSEI8bWw7FbSWiHz3NK28UWjGUpSNacVwAbREV8lWAdAHVfCAP+Hj9PUySSx/mRPHfcCAFZh7AyaFnGEecYneHMLu1jgZVptbvSirdQBttXcuY9KodQD5bWbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717033187; c=relaxed/simple;
-	bh=mz4RT6hveuJ2IUTffPJMhhSR3xpExYc7bL9BHeP9LPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OBC9dprHbgv5Okb8Q4W0gee0ntiZpPLGPOKQtwjQ+dAS2PN5eq+l1NITa0LahV4AeCGOafXwMwjb7rK7LIOR+0hNfsExH9f5d9dH0XrSOhth5H5Sz19/AixwmJDYUdvkYvtpju3SKyDHyrAH538ffWGEWsO89NhJ9ZyGOtmiJ24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Mmj9kcDd; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717033173;
-	bh=mz4RT6hveuJ2IUTffPJMhhSR3xpExYc7bL9BHeP9LPw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Mmj9kcDd8Oh/sOzHJ3sm8e3o3T9Of950UPUQvk5SlCd1Hmr6GpaoTYsNJBTzcc9PN
-	 AGFB4/wABwbt4cUAgcS1yhBVevU7Fk8DehLDJarKyDzXw/6OoZJZDFG6x+xNdeXdXZ
-	 ypdgmAE7VI69HZczNAYZk3kxGARnUMFsSlpaJ7t+Dz4ydryZxf4cPZ0mvcv7Qryg8l
-	 gT3mmvUjIqa1BKbzY1JQ2v0tI1udhmQH0lHCJqFf8+poR5jrE/zHvjJ01gtOfao7pW
-	 EqZVhcCWyLzV1kMcvtaAOVEFEVt47ODFC5/cxk5Kc2c2sbRPZ1GsoSWl+yHALYcJyK
-	 dsjuHt6OzzC1g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VqTSj0kYmz4wp3;
-	Thu, 30 May 2024 11:39:33 +1000 (AEST)
-Date: Thu, 30 May 2024 11:39:30 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: no release today
-Message-ID: <20240530113930.3bc514ef@canb.auug.org.au>
+	s=arc-20240116; t=1717033222; c=relaxed/simple;
+	bh=humXagFzp2TTUo1KCImBwgXocgMGATB8oAoKFBnou04=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LwKN/hNQf5KW2GoJTIRgmXDbSF6cG0uYpOaW9jcifq6uNH0wlu1fVbyMdXhpES8I/WNdetl1Oj6rMFj5ikNbP9Z9LJIO3HTJmuqTvvR9MSCqqZL85Moj94+wdokN4MNLm4cjzwGJUMY8yBgc3z5sA3U/w2oTMsBOhnC+4IPFD1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=WvwVfVTi; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [127.0.1.1] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E47652012A;
+	Thu, 30 May 2024 09:40:17 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1717033218;
+	bh=EnpgvCQ83VB8g74TESGnxZOig6hO4zozd7+EDbYaZdE=;
+	h=From:Subject:Date:To:Cc;
+	b=WvwVfVTijD1agLB40N6LiGES8bNqb6Zrj+GTlB3LCCXAxk8zVRoSt+qSfCWcI8iwE
+	 Nm9Y1MB3tjp54zgB2PSZf9/xyoOGZS40+xrOxtHSygWk8OD8iEZ1MPMRwQQTrSvZq2
+	 1kfaLVzkaZBndUiedAxv7FZt/pJVRA0zk9O9B7rbc5Y5Etnk0CwRURgXymHtLFtPrZ
+	 bs8Ea+/z8Sej7Qnn54llR6+7PXmvQuCm9rz6qNP2OPuLnODAzCDQW00KR5ug4Re9Os
+	 T++Wd9abvPhay84WSAl28ecfJIsG0DIB6iaNE0QNNoObNQ23MZxHPpuR4VoMFswW9L
+	 J5SKo1HEu0SXA==
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+Subject: [PATCH v2 0/2] dt-bindings: gpio: aspeed,sgpio: Miscellaneous
+ cleanups
+Date: Thu, 30 May 2024 11:09:47 +0930
+Message-Id: <20240530-dt-warnings-gpio-sgpio-interrupt-cells-v2-0-912cd16e641f@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Zm.wPoikpwxrPqA91=G_l5Q";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOPYV2YC/43NTQ6CMBCG4auYrh1Syo/gynsYFtAOMAm2pFNQQ
+ 7i7lcS9m0neWXzPJhg9IYvraRMeV2JyNoY6n4QeWzsgkIktlFS5LFQFJsCz9ZbswDDM5ICPSza
+ g98scQOM0MZRV0UrsjdKyE3Fs9tjT64DuTeyRODj/Ptw1/X5/RP0vsaYgoU51rupLWWVZd9POo
+ HaWg190SLR7JO0imn3fP6FgIb3nAAAA
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
 
---Sig_/Zm.wPoikpwxrPqA91=G_l5Q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+This short series fixes some SGPIO-related devicetree warnings currently
+emitted by `make dtbs_check` for Aspeed devicetrees.
 
-There will be no linux-next release today and most likely not
-tomorrow either.
+Please review!
 
---=20
-Cheers,
-Stephen Rothwell
+Andrew
 
---Sig_/Zm.wPoikpwxrPqA91=G_l5Q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+---
+Changes in v2:
+- Dropped 1/4 from v1 as it was considered noise (Krzysztof)
+- Squashed 4/4 into 3/4 from v1 (Krzysztof)
+- Addressed remaining comments and applied tags (Krzysztof)
+- Link to v1: https://lore.kernel.org/r/20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-0-91c42976833b@codeconstruct.com.au
 
------BEGIN PGP SIGNATURE-----
+---
+Andrew Jeffery (2):
+      dt-bindings: gpio: aspeed,sgpio: Specify gpio-line-names
+      dt-bindings: gpio: aspeed,sgpio: Specify #interrupt-cells
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZX2NIACgkQAVBC80lX
-0GwgyQf7BlXzQ/mWeNU4BgdgbBcCO2jCiLYoDGs31DKyUCpdBQ1DO6lb0nZlrcg6
-Zyw5AWJtX3FdXeLQCUzOfaBCWk6Ip7oaE29GEyP/bXXaQUumAvrUnQa3XYDYAOXJ
-05rOMf9ACucqHxnNfWpo+3nsY8EfiwF+Worx4PMnLFjbjz2839sK21BI5sZZtnby
-YMKzEjmy6cihF3RQApCNMC5J8aSbE5jlUdDUNA1YQTu1Zu2ZZ67MDUPSp8sclCR3
-wre4T1vt0mc0ZsEcKjinOoaMLojP2K6vgmcwYTkY8a5VAwn7dv8n3XbrpT/+jvx6
-NQHh4y91U9yxXE4hemuJAw2G3WZBlw==
-=s2yd
------END PGP SIGNATURE-----
+ Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240528-dt-warnings-gpio-sgpio-interrupt-cells-685a0efd2c0b
 
---Sig_/Zm.wPoikpwxrPqA91=G_l5Q--
+Best regards,
+-- 
+Andrew Jeffery <andrew@codeconstruct.com.au>
+
 
