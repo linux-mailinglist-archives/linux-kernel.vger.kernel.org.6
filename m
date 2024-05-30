@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-195224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7008D4934
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2EF8D4936
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC5A1F2142E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6921F23020
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F264E176AA1;
-	Thu, 30 May 2024 10:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB23176AAE;
+	Thu, 30 May 2024 10:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="en3bq4pT"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FVVMBItQ"
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3AF157E74;
-	Thu, 30 May 2024 10:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDFB6F2E6;
+	Thu, 30 May 2024 10:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717063423; cv=none; b=qpaNUlF5ybj0PreWUYO0yVakOSm802MQ690ObYc7iz+EacGWB/XL6Adg3kkCpl9YGHSQ5nOAENErQpG3y0w4kswJ6nhsWk0AE97UDBgDdFBTSKAMtbBbGG+mLDzaBemxRJTsFtovsChcZcmclUC0/gFdPm3xDWV1tBhCHP/AYzI=
+	t=1717063423; cv=none; b=Gq9Rm5MEFy8bKCdBdGjvwY+vrrXVS31tUMARK6nWYd5BNhJel53j+rb9XMDRHYCIH8n2qRy5BSMAOW1cO1w/mi8aiPVdnEfgrnZJ6D6NjItRGyOWY+YMgBw8cfLBdZKtt1tw2fKwhGErr3Fg24RrzdeGvow6Ls9KLeypy8kf1VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717063423; c=relaxed/simple;
-	bh=bwJjFeyzBTMV6+dpXNKXktvgWL+phVmXZH4aj9xRd3A=;
+	bh=BpUdyerGMQW9Se3tgD7/uJMkpsV4naRte+uiUHQllLY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jL/NaPh6A8k2FEpQG7mF+Ym+VbqpJ9vLy6SpzbgcgISsIPdO32RdfLCCdWrUItDTqk4iOOK8kIj1CSmoBRjFIaNcem92qLVxGIHpnKHppRNV1yRGz4/tgBR86eg3VVqFiNwz4WDSuMxpR44vRflnbBNlgSOxpvXh61U70vtvx0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=en3bq4pT; arc=none smtp.client-ip=46.235.227.194
+	 In-Reply-To:Content-Type; b=kyZa8rwEzpaapzEitVc+L0F7HJOAZQTEL6SNvjiBFZHSVtI1Rz+za6Iz2WS8rQBx1rwjNnNslf9j8ohNE0d9h+Pwd6wnPWx7AvKXXVUW8vRj4Xab8rae0F1UrFF6iskc5kbtIEaISwXdUMAyirq8JFmuu5nxcbZkLtA2QLYPs+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FVVMBItQ; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717063419;
-	bh=bwJjFeyzBTMV6+dpXNKXktvgWL+phVmXZH4aj9xRd3A=;
+	s=mail; t=1717063420;
+	bh=BpUdyerGMQW9Se3tgD7/uJMkpsV4naRte+uiUHQllLY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=en3bq4pTZ9qiSymwfShbESCLgG/446i3zs7x8XSG7XPwH0YJAVT/b+AQbZ/VdJBb4
-	 NVT08gO+VHH6JCHBHnCMYwtoct5QLYmDw7/1iO4mABP8OE6q62m4G7moA2TOKy33CL
-	 49Nphd7a6pGYyPLdIKfqWMd0NLLZ49l8hb6mRFqETEUK+Jq3yPtl0uG0Go8p1k4Ztm
-	 rL57F6x/IzOLXxZsDqbYKz0ZBHnSFW0/m33GQa5Fmu90d92FwjKff1n2rAbOacDqPe
-	 i2CM3BkqxM1+87oLnaQ0+shS1UG2ifg3YWBwX6zPTIWNGYKXa9xBRxuqFoYx4VfX5u
-	 vYA9p/iuwZRsg==
+	b=FVVMBItQvMb1UhpUr7ebic/YB6pHY3UA731RCaqXSDX6Ey0J0NFZYVbxAY6iOhZ0E
+	 TwtYYvd0kM620CTeGenKPjK67V+BECV0wC+OjkifLFYNkP/6VTTh8ZPxA/oYnHZR9s
+	 xp8YGyyPYIcZ4ESwoByZyhKp/MU84+h3f/S6NU1kZFYkqTStMSd6F5yOfOjWAh1THQ
+	 rXxGOk9Y9RgZJLcbh2dBkJkT8BpAdxe7acPNTVx93AwW32lWXWl4N0HfYcb5wforfl
+	 WW/lPWx80YecqcpyZHlIcPCblugLeGIpKlO4dVgcm6wZXK/FbEYNsUy53jKIQvGKyf
+	 cNCubjJ3jpz+Q==
 Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id EF91137821A7;
-	Thu, 30 May 2024 10:03:37 +0000 (UTC)
-Message-ID: <f833747f-71de-4537-861a-8758fa350846@collabora.com>
-Date: Thu, 30 May 2024 12:03:37 +0200
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3EE5C37821AB;
+	Thu, 30 May 2024 10:03:39 +0000 (UTC)
+Message-ID: <d2118c18-af98-4e3a-8113-1cb519677495@collabora.com>
+Date: Thu, 30 May 2024 12:03:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,8 +56,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173
- GPU
+Subject: Re: [PATCH 4/6] drm/imagination: Add compatible string entry for
+ Series6XT
 To: Chen-Yu Tsai <wenst@chromium.org>, Frank Binns <frank.binns@imgtec.com>,
  Matt Coster <matt.coster@imgtec.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -70,26 +70,16 @@ Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240530083513.4135052-1-wenst@chromium.org>
- <20240530083513.4135052-4-wenst@chromium.org>
+ <20240530083513.4135052-5-wenst@chromium.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20240530083513.4135052-4-wenst@chromium.org>
+In-Reply-To: <20240530083513.4135052-5-wenst@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 30/05/24 10:35, Chen-Yu Tsai ha scritto:
-> The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-> of the Series6XT GPUs, another sub-family of the Rogue family.
-> 
-> This was part of the very first few versions of the PowerVR submission,
-> but was later dropped. The compatible string has been updated to follow
-> the new naming scheme adopted for the AXE series.
-> 
-> In a previous iteration of the PowerVR binding submission [1], the
-> number of clocks required for the 6XT family was mentioned to be
-> always 3. This is also reflected here.
-> 
-> [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793a43c79c2a.camel@imgtec.com/
+> The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
+> of the Series6XT, another variation of the Rogue family of GPUs.
 > 
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
