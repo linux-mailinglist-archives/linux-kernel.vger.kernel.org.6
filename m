@@ -1,231 +1,163 @@
-Return-Path: <linux-kernel+bounces-194836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6438D42B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E137C8D42BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 798901C2100B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6C028584E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1868E1758F;
-	Thu, 30 May 2024 01:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DC0FC18;
+	Thu, 30 May 2024 01:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0CxcI6FD"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DIUV9itN"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C9BFC18
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD2EE57E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717031327; cv=none; b=NKhmqoETAO9AjNs8cQ+e5GGHU7OkNMkEhGZHImi2BJjmYtvsMhh2OgvrpQf9LBrhMIdgjPZL5mxjCCJ/scV+j74JAnJ4MRWE0gVQbm9nxEgIYJtdLKq69Tkqb9ukKb+j3BnP8MRkqOoOtsT4YPIO0XPkLczLfLaA4iZC7WunGf0=
+	t=1717031352; cv=none; b=pjfpaux9XMRFjiZnwekp4ceeyuL6nDL9k353RW7Ex647RCUN8HAz3ZDv+KW863slMMishbD2huZOTiqkcvlo7QrekQBqPWoCm/Nkx9phxfp+g95hv6KlQBwUzCkgInNMWSCYUTRBWcMKS5/5NNpithilh8AKWVrNcmOKP5S4tVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717031327; c=relaxed/simple;
-	bh=HUAN0/h1uUnwVHvw5+gjjvN2wmVD3N2hYhH/W+fSmng=;
+	s=arc-20240116; t=1717031352; c=relaxed/simple;
+	bh=r1WLIYqwEcFl1zxpSruq17uincpEIe2QAM/Tkg8t+yY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tpjUns5GN0k027J71G/CByflM/nxQsukblVZ+9ykzqnj5fh3mXtfpKgw9ECUGnTltx1oqsFwRzTRXuAsFK6YkqODpoZLfhvsI7R9fivG6PTG9YA2AKz23DK84+cCBrDs2kIxjfCMIY0bps6GzgqqhIcxujNVMUPZHbVycziE4Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0CxcI6FD; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43f87dd6866so167871cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:08:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=GKo3J3Gk/quwAw96RZmw24w00QBBKtAAI89ojsFjf6nv5NA0/5oTJALjacKK20IR56tKckql9kd6TZa38FflUQBv093naenvL+oWJoaF6Yc1Q9QSVebM56QKYpXppkZFcBxvYROtRA4CuDbX+YP18G/bvBb/tOASbWHWylpmYVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DIUV9itN; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59a352bbd9so47058666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717031324; x=1717636124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RNCYiTPJ+jmwqf05JMT+AdSr7J72TbIz2CKFhve3Jy0=;
-        b=0CxcI6FDl7jFDQxcpUYxZt5vBPgkc6u9I8kDHvOF1t4nxhy5YdkqiDc92+E1QFjBKt
-         YCnld08mSd/EPuEkf9cN83p9ZGJJdSW1vvAqiO/uDlNSvEm0FQt2Jy2+4B9UXiqUcGEJ
-         OMmxgGvT/L6gqZ+1JZL5PvL6gN2g0y/Kmaeikr1QToKJV8EDaLiGXPfNpYax2gnxj1yJ
-         srEhKv09Q2KyuZNzA3YxHQ/f5WAHQYjlh24DdofT0tWdgnqQb0JPldGS8QQrXG7IqGQJ
-         wUN35PyD3tV/2alPCcwAPx4CXGaiPkWVQyS5BbJM15JNAZk9NnU+TDEmQCLy9iKPRlmS
-         u8dA==
+        d=linux-foundation.org; s=google; t=1717031348; x=1717636148; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pc8AzCw2itqlchY2iNLylrW0HG92I3q/DnK9Zsb7BQY=;
+        b=DIUV9itNhbg8EfKLtpnHuKH1pEUDR/trubtVF2Pcu4Z2lDAl5gF9rVTS+Ts6Kk8+Eq
+         0PnNYawFbqcd7oo1KeIFL9Mq7uc98o7+69ELep2M+FKQDxUE7PHC0gPRNrOdoflb4CyU
+         dJkWdqUo/ovPZPD+gjAyrYMac6zoBKYhanCvY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717031324; x=1717636124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RNCYiTPJ+jmwqf05JMT+AdSr7J72TbIz2CKFhve3Jy0=;
-        b=JCBdlGEdJCGAIZEyfTjk+MaXKxotOBGJix/WkyNGozjbI4zemzIfAErXcey2jSu3SK
-         Cmp6mNFOoRRl0v2DVy9tHDb3udLXDBgR1n+lDMsksx37KoUV4Us/czZOTEy9/af4irsP
-         62IqDw2iTC4+w6Ry37KTeAApqtwGIWpYnzvb9LAmTsTctheYXX6/dfbjPtXEAMnJFCTY
-         VV7fL9dFJnA70xxh5vySEjUW6cbbpIwruuZjstWmJW+tIw4khREWX8Bdf/ar7m5Hz7T7
-         JuD6RoR4RHMhRT6HARr1O0Vmedvyl3gFGdoUbMyVZSR1LMGNSjC140nS7vC5DuI5a+cx
-         C1jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEzRfCIHamHV+1WtmY7YfRz0AKDcai+nJA/5PD9v8BhIiaWphLuZVDba1gx3yvLHqArttnzLGcTwrVnf7+lTinu1IrUoBRYSCbWioh
-X-Gm-Message-State: AOJu0Yzj2l4wajWWGu0hJLmCFkVxJj/iqANZ5WdxE9xBHlvJ16KTgoLh
-	uFb6kBnPdmtUFvvAWv+v1RixJgsAZPwCLU41/mrEmaAHrHeaCBN5BD3FeL4ETTgDHHwoGGm/Lww
-	DeUJNJu1MDjJ5xbMLM8TMp55AQHPJquoopFOt
-X-Google-Smtp-Source: AGHT+IFJBPRQlkDyYJeSsGM/RxiiiLg1VsLLsha8SGwYsobiZXs39Abfff+lsGr1GDYLgVu96Cm8k7GvNnaVZDK3Ruk=
-X-Received: by 2002:a05:622a:5509:b0:43b:6b6:8cad with SMTP id
- d75a77b69052e-43fe8e0b1dfmr1268341cf.10.1717031323987; Wed, 29 May 2024
- 18:08:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717031348; x=1717636148;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pc8AzCw2itqlchY2iNLylrW0HG92I3q/DnK9Zsb7BQY=;
+        b=KrFGxtPnqAhgDSqQGzF1XPpkNIG8cejKCWDiZ/muRQg08CAqFxdBMYkIbp7dl8urqT
+         NI3RHNbCJnZzqIrbE7d+IMC2BlodFUfJSzi338C+AQG/iPqqn46pkypWm7gJrWuy1rDy
+         SrAfLcy8gvep8Tx11zK3TT3RhVgZbjmx8s4Upz/4e5k9aM3OsRP6RmGBn1RFSXZMNrPV
+         Li4Q1j0ODLM+gRYqCimfEdAhSAcAjcjmt9RYW58DOwdUKWvRQ7CJGY9erXin9Dxy8FtA
+         YLOO8KajP7v2bKrFD8g+YygOWNU6sGM2rIqDMED32Ay9QFJxEmcZLB+prp8q5mIqPD5h
+         Y57A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfV9d2bwe8178Ek9eJPQQbOrrLlRibBjf0gAtD3EE5I2GlQGMfTUbQ9ZNt6mX9xETVcsxSTZMKRpgiV5+NAoytxyDKtj0SofGUZYt4
+X-Gm-Message-State: AOJu0YwL27HUT2AS16Kh8r1ID/RlePIzQ6Icl2JKIIWcaE7NrPr/4WX7
+	onBMQuMDJwEtO0O/F0eG3uIQmKdf49RaZ3Y843HAWuKSYZhQSx0LFzkBzuhBHp8rFQbdhtssoOR
+	0cFh8yg==
+X-Google-Smtp-Source: AGHT+IH32JF9eGSOVtjZd87FyZ7+H5u6pRkZ2ANtmLMi39Durq2GeB5GvevK1lGpSp6lej4m9TuLFQ==
+X-Received: by 2002:a17:907:384:b0:a59:ccc3:544 with SMTP id a640c23a62f3a-a65f091103emr30767166b.2.1717031348393;
+        Wed, 29 May 2024 18:09:08 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8d606sm778026666b.176.2024.05.29.18.09.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 18:09:07 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5789733769dso926838a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:09:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVogebV2cjGLs7Ya1tqhtACTnOTsjJHbGhevtEgpM8/P3+hW0B/dHQSUvepvJXolMxHQfV/8pw3H7OeIwO4jp5bmVxAUq8SJEeTQPZ6
+X-Received: by 2002:a17:906:cb90:b0:a5c:dce0:9f4e with SMTP id
+ a640c23a62f3a-a65f0bd7b2bmr31381166b.28.1717031346663; Wed, 29 May 2024
+ 18:09:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529180510.2295118-1-jthoughton@google.com>
- <20240529180510.2295118-3-jthoughton@google.com> <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
- <ZlelW93_T6P-ZuSZ@google.com> <CAOUHufZdEpY6ra73SMHA33DegKxKaUM=Os7A7aDBFND6NkbUmQ@mail.gmail.com>
- <Zley-u_dOlZ-S-a6@google.com>
-In-Reply-To: <Zley-u_dOlZ-S-a6@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Wed, 29 May 2024 18:08:06 -0700
-Message-ID: <CADrL8HXHWg_MkApYQTngzmN21NEGNWC6KzJDw_Lm63JHJkR=5A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
- in aging
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Ankit Agrawal <ankita@nvidia.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Bibo Mao <maobibo@loongson.cn>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, James Morse <james.morse@arm.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev
+References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de>
+ <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
+ <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 29 May 2024 18:08:50 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
+Message-ID: <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
+Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Arnd Bergmann <arnd@kernel.org>, 
+	linux-alpha@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
+	Michael Cree <mcree@orcon.net.nz>, Frank Scheiner <frank.scheiner@web.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 3:58=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
+On Wed, 29 May 2024 at 11:50, Maciej W. Rozycki <macro@orcam.me.uk> wrote:
 >
-> On Wed, May 29, 2024, Yu Zhao wrote:
-> > On Wed, May 29, 2024 at 3:59=E2=80=AFPM Sean Christopherson <seanjc@goo=
-gle.com> wrote:
-> > >
-> > > On Wed, May 29, 2024, Yu Zhao wrote:
-> > > > On Wed, May 29, 2024 at 12:05=E2=80=AFPM James Houghton <jthoughton=
-@google.com> wrote:
-> > > > >
-> > > > > Secondary MMUs are currently consulted for access/age information=
- at
-> > > > > eviction time, but before then, we don't get accurate age informa=
-tion.
-> > > > > That is, pages that are mostly accessed through a secondary MMU (=
-like
-> > > > > guest memory, used by KVM) will always just proceed down to the o=
-ldest
-> > > > > generation, and then at eviction time, if KVM reports the page to=
- be
-> > > > > young, the page will be activated/promoted back to the youngest
-> > > > > generation.
-> > > >
-> > > > Correct, and as I explained offline, this is the only reasonable
-> > > > behavior if we can't locklessly walk secondary MMUs.
-> > > >
-> > > > Just for the record, the (crude) analogy I used was:
-> > > > Imagine a large room with many bills ($1, $5, $10, ...) on the floo=
-r,
-> > > > but you are only allowed to pick up 10 of them (and put them in you=
-r
-> > > > pocket). A smart move would be to survey the room *first and then*
-> > > > pick up the largest ones. But if you are carrying a 500 lbs backpac=
-k,
-> > > > you would just want to pick up whichever that's in front of you rat=
-her
-> > > > than walk the entire room.
-> > > >
-> > > > MGLRU should only scan (or lookaround) secondary MMUs if it can be
-> > > > done lockless. Otherwise, it should just fall back to the existing
-> > > > approach, which existed in previous versions but is removed in this
-> > > > version.
-> > >
-> > > IIUC, by "existing approach" you mean completely ignore secondary MMU=
-s that
-> > > don't implement a lockless walk?
-> >
-> > No, the existing approach only checks secondary MMUs for LRU folios,
-> > i.e., those at the end of the LRU list. It might not find the best
-> > candidates (the coldest ones) on the entire list, but it doesn't pay
-> > as much for the locking. MGLRU can *optionally* scan MMUs (secondary
-> > included) to find the best candidates, but it can only be a win if the
-> > scanning incurs a relatively low overhead, e.g., done locklessly for
-> > the secondary MMU. IOW, this is a balance between the cost of
-> > reclaiming not-so-cold (warm) folios and that of finding the coldest
-> > folios.
->
-> Gotcha.
->
-> I tend to agree with Yu, driving the behavior via a Kconfig may generate =
-simpler
-> _code_, but I think it increases the overall system complexity.  E.g. dis=
-tros
-> will likely enable the Kconfig, and in my experience people using KVM wit=
-h a
-> distro kernel usually aren't kernel experts, i.e. likely won't know that =
-there's
-> even a decision to be made, let alone be able to make an informed decisio=
-n.
->
-> Having an mmu_notifier hook that is conditionally implemented doesn't see=
-m overly
-> complex, e.g. even if there's a runtime aspect at play, it'd be easy enou=
-gh for
-> KVM to nullify its mmu_notifier hook during initialization.  The hardest =
-part is
-> likely going to be figuring out the threshold for how much overhead is to=
-o much.
+>              The only difference here is that with
+> hardware read-modify-write operations atomicity for sub-word accesses is
+> guaranteed by the ISA, however for software read-modify-write it has to be
+> explictly coded using the usual load-locked/store-conditional sequence in
+> a loop.
 
-Hi Yu, Sean,
+I have some bad news for you: the old alpha CPU's not only screwed up
+the byte/word design, they _also_ screwed up the
+load-locked/store-conditional.
 
-Perhaps I "simplified" this bit of the series a little bit too much.
-Being able to opportunistically do aging with KVM (even without
-setting the Kconfig) is valuable.
+You'd think that LL/SC would be done at a cacheline level, like any
+sane person would do.
 
-IIUC, we have the following possibilities:
-- v4: aging with KVM is done if the new Kconfig is set.
-- v3: aging with KVM is always done.
-- v2: aging with KVM is done when the architecture reports that it can
-probably be done locklessly, set at KVM MMU init time.
-- Another possibility?: aging with KVM is only done exactly when it
-can be done locklessly (i.e., mmu_notifier_test/clear_young() called
-such that it will not grab any locks).
+But no.
 
-I like the v4 approach because:
-1. We can choose whether or not to do aging with KVM no matter what
-architecture we're using (without requiring userspace be aware to
-disable the feature at runtime with sysfs to avoid regressing
-performance if they don't care about proactive reclaim).
-2. If we check the new feature bit (0x8) in sysfs, we can know for
-sure if aging is meant to be working or not. The selftest changes I
-made won't work properly unless there is a way to be sure that aging
-is working with KVM.
+The 21064 actually did atomicity with an external pin on the bus, the
+same way people used to do before caches even existed.
 
-For look-around at eviction time:
-- v4: done if the main mm PTE was young and no MMU notifiers are subscribed=
-.
-- v2/v3: done if the main mm PTE was young or (the SPTE was young and
-the MMU notifier was lockless/fast).
+Yes, it has an internal L1 D$, but it is a write-through cache, and
+clearly things like cache coherency weren't designed for. In fact,
+LL/SC is even documented to not work in the external L2 cache
+("Bcache" - don't ask me why the odd naming).
 
-I made this logic change as part of removing batching.
+So LL/SC on the 21064 literally works on external memory.
 
-I'd really appreciate guidance on what the correct thing to do is.
+Quoting the reference manual:
 
-In my mind, what would work great is: by default, do aging exactly
-when KVM can do it locklessly, and then have a Kconfig to always have
-MGLRU to do aging with KVM if a user really cares about proactive
-reclaim (when the feature bit is set). The selftest can check the
-Kconfig + feature bit to know for sure if aging will be done.
+  "A.6 Load Locked and Store Conditional
+  The 21064 provides the ability to perform locked memory accesses through
+  the LDxL (Load_Locked) and STxC (Store_Conditional) cycle command pair.
+  The LDxL command forces the 21064 to bypass the Bcache and request data
+  directly from the external memory interface. The memory interface logic must
+  set a special interlock flag as it returns the data, and may
+optionally keep the
+  locked address"
 
-I'm not sure what the exact right thing to do for look-around is.
+End result: a LL/SC pair is very very slow. It was incredibly slow
+even for the time. I had benchmarks, I can't recall them, but I'd like
+to say "hundreds of cycles". Maybe thousands.
 
-Thanks for the quick feedback.
+So actual reliable byte operations are not realistically possible on
+the early alpha CPU's. You can do them with LL/SC, sure, but
+performance would be so horrendously bad that it would be just sad.
+
+The 21064A had some "fast lock" mode which allows the data from the
+LDQ_L to come from the Bcache. So it still isn't exactly fast, and it
+still didn't work at CPU core speeds, but at least it worked with the
+external cache.
+
+Compilers will generate the sequence that DEC specified, which isn't
+thread-safe.
+
+In fact, it's worse than "not thread safe". It's not even safe on UP
+with interrupts, or even signals in user space.
+
+It's one of those "technically valid POSIX", since there's
+"sig_atomic_t" and if you do any concurrent signal stuff you're
+supposed to only use that type. But it's another of those "Yeah, you'd
+better make sure your structure members are either 'int' or bigger, or
+never accessed from signals or interrupts, or they might clobber
+nearby values".
+
+           Linus
 
