@@ -1,255 +1,120 @@
-Return-Path: <linux-kernel+bounces-195258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9488D499A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A858D497C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60BE91F24310
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD01281C73
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A57517D36F;
-	Thu, 30 May 2024 10:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F36E17C7AC;
+	Thu, 30 May 2024 10:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AFmAxhTm"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="S6NyaUD8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="WwjLXAwx"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8F117D354
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0888183998;
+	Thu, 30 May 2024 10:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717064509; cv=none; b=SrbEuBL9MCAVyj9Y1NkgULYLfKXSqwXISIF6ubYlw+6jljOdnVnTrZcxgd7tGLNvet0kDAShjfSmwm++jnCHL5VwgLwtSlKdhWcwgLPuykxDlQ8llk8jHKm/2+eyAzpZkDqVWsfXY+oAHSZxhyxpxA4roHTM1OV6d8MIiIoXnWA=
+	t=1717064449; cv=none; b=CNhb8wQ/W2PIRJe6rtltp5io5g354P3H3mfceHPHrJ+4EC6siUimtEWjf/TwPRGP4Qpjune6cc8SBXYYOmpKAdrGvwlSjRwGvE1u6gnyyvFphTEavU/cLhP0ri8Yx0FGRpxkhTknZbYAIaBJOdiV1hCT8FpEggr3Vt/72HpmzNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717064509; c=relaxed/simple;
-	bh=FzOjSWF8jC9Mn0zbpKpMbjI6I3RxJXwXykNKxdZDtBU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QhIbR+LYfVpLs6Q0nSivQ87H74zl/F24ZFexmFOqYgwlPTqA4kkCEMnpE2uzUhyAnVVUbnihZzVRTM+5YlT/9dr2q4WDqlgOruBIVGQ3RWljB8jcROdTRq6hH3y5KZ0/XzhipMOJWj4SrroNqmcC/YuEPjSA3h4JRmLekzHJthw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AFmAxhTm; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6ae1471db80so1578656d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 03:21:47 -0700 (PDT)
+	s=arc-20240116; t=1717064449; c=relaxed/simple;
+	bh=5N+0iLZLf3giOaOopWVWUw8ciQFVuhv3DVoABzuZXNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d7D/cqWc6sI0fgJtk4/hPXV67PTWRBLWqU93LX1jxazh42nDol96bZ7nEMVAC44jODpZd8wi54vmKtC/didI37qMN30kEgHi474oClMPGla6kWdotDATIZp3ipIT9oUI1utMVynXkZdZK9yOpr5zqVCn3qu5Fu1bbvWKZI2XdwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=S6NyaUD8; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=WwjLXAwx reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717064507; x=1717669307; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r8d6cDNDU6GShGq9eK0Fgxfj+4gyetgt78E216drysY=;
-        b=AFmAxhTmSf7YR267Abr1OeOI4xIqpXgJWSYkQpNoN1nW5fVWdiYwopqgwSPxCscteu
-         hHVKDypjvXEp/5m1zR7nPOLDN1QnQukRCchEDw4lCFwn1V7sQalnvClMY3Q/OwAvGKbe
-         P1QwBt2K639CAbqtmndGM0s00DyVlXCHQekuMxERKV74nzxTyV1FGy6z12P9TKcYRzyb
-         bFFtwHY3YBkeWJPG2FKnePG8dlvW1MlZAXFo1vcPb+YW/fIsWZpn0m7GlyfsKgCrlLjD
-         ZnBdwCA38hF7Leh/oWjZ0gIsvBRShG6MicBf7cy3yOmu0+9sSx7zmwmA/98c+IoJkgj2
-         hJ2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717064507; x=1717669307;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r8d6cDNDU6GShGq9eK0Fgxfj+4gyetgt78E216drysY=;
-        b=p16nJOMO0lwKusocO3dv8QoFNkNAMq64SMOTKA0FsnYVvr+lOHUS9It9iu525b+Fd7
-         bFKxDqkH0JfwfFCZfvwaQXkpkdZ2SvvDQ/6yYtQVDXG9e9bCFlkl0qtcitRxBRQ0QiYS
-         5afABHsEuiGru0b4NJrAcMtFXTOmY/q2j80LlXC2MukwDa+S2+0rCc90LtWa6OxTWjlV
-         Yz2Pshxf6mAWnITl5tGuRel+W+apyRM27aE9obzaX6Nz/eUsfrfAOiLpEvb4+QZl1blx
-         IoY5fTWZ7ctENPOrF69mF9f4hR4yDBgHwBDCE3FhiXYRW9TeguZomTQv9zZMrWDujROI
-         koOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAsKiZVdO/r3vBy9cWWwVu4dj4KCn6+0wVF+RXrSR63sjB8LtiF0RXcXLF+vFCskpej7GxR74X2PK2iK39iGByiWKqibQgS/gNcjiH
-X-Gm-Message-State: AOJu0YxKC2YfnKa013kQHpUFzSiKbDxVrQyKhxK4D4nYyOe32q52CBYy
-	6KCS+XSIDQOModPqIpCJIAnPhRPsLBjSyZuNCo+SXPyUR/V6MjX9
-X-Google-Smtp-Source: AGHT+IF6BgR0E1H6Yi7Z0olWyUfqvRPLWZXsZcDuztfZzFojo07FrRO9l8l3SwT6pG7Yaa1MM+8V+g==
-X-Received: by 2002:a05:6214:4189:b0:6ab:6ddc:4ba1 with SMTP id 6a1803df08f44-6ae0ccd3deamr16187306d6.60.1717064506651;
-        Thu, 30 May 2024 03:21:46 -0700 (PDT)
-Received: from localhost (fwdproxy-nao-008.fbsv.net. [2a03:2880:23ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae12306f5bsm3351556d6.118.2024.05.30.03.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 03:21:46 -0700 (PDT)
-From: Usama Arif <usamaarif642@gmail.com>
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	linux-mm@kvack.org,
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1717064445; x=1748600445;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rFJOBqLzaB2TF9ek2VMd5YV6VYsS4t+ViJ7NioVqqj8=;
+  b=S6NyaUD8AOPfhGo5xcdH9EbBLJ1m9YHlrzP2xTs5XDe2TQDAVhC9SUGg
+   3hbc7FwIP1pbd10OD15viM3zsoUD21UDLBtfHo5xkUOOtPnkpYWZPnAMT
+   k4BpycQEw7NgYYPAsHiuMBbgdXVpm4fHNrHdFmYEnDNCJyRGVF7Bqy8zn
+   3L0Dqyavz8zt4FuA5h9no9QctDB9h5LhccOcBBlF+CaENjV1xSO3ABu+J
+   IU611EXwpNHeMgwTn+hWP22Jq4WWAnN4i+F3E0YqDd/+l7CYJ8JlAIlPc
+   a8O1dyDkOt3ffIjVSNI9OQ1aIyOcGKHXu0SQGru6pTz14Rl5WcPt5qzqr
+   w==;
+X-CSE-ConnectionGUID: Gf+5FU12TfCtjDiSf9lIBA==
+X-CSE-MsgGUID: xOudEmUgSxS67gnKuxdWcw==
+X-IronPort-AV: E=Sophos;i="6.08,201,1712613600"; 
+   d="scan'208";a="37142998"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 30 May 2024 12:20:41 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC85A16126A;
+	Thu, 30 May 2024 12:20:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1717064437;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=rFJOBqLzaB2TF9ek2VMd5YV6VYsS4t+ViJ7NioVqqj8=;
+	b=WwjLXAwxXmJetayFBy2IVUpzr5+aTuTqVlAioRDZTkcREXjlQS1M5eo6lVFFE/PgB2nkAY
+	y79DfGVyB1Ap1kiYdGSYBQZxlK6K7nGvZtbtEAgTIUJOxYLQ4/oWZhA02B/eDBLl/Mhgse
+	ucZlHD3U7tM93ar0qGLEjm38kU21WIr/e7avZYdvSxRP3Rufh7hVkZ/HL7fNogJEx2WY6/
+	lMc2kcVHqVSoSGR/bVCjO9SPUDx5E50AUP/EQ2qBsUlwQjToVnRp78fv8xx1AEnUdm4Gs2
+	1Q6hwHsgMjUyOzYf4MWM9Iv5URCR3dUDOa8sejk6t0UUNe/xAo9Y0jERir7RUQ==
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH 2/2] mm: remove code to handle same filled pages
-Date: Thu, 30 May 2024 11:19:08 +0100
-Message-ID: <20240530102126.357438-3-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240530102126.357438-1-usamaarif642@gmail.com>
-References: <20240530102126.357438-1-usamaarif642@gmail.com>
+	Gregor Herburger <gregor.herburger@tq-group.com>,
+	linux@ew.tq-group.com,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v2 1/4] gpio: tqmx86: fix typo in Kconfig label
+Date: Thu, 30 May 2024 12:19:59 +0200
+Message-ID: <e0e38c9944ad6d281d9a662a45d289b88edc808e.1717063994.git.matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-With an earlier commit to handle zero-filled pages in swap directly,
-and with only 1% of the same-filled pages being non-zero, zswap no
-longer needs to handle same-filled pages and can just work on compressed
-pages.
+From: Gregor Herburger <gregor.herburger@tq-group.com>
 
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+Fix description for GPIO_TQMX86 from QTMX86 to TQMx86.
+
+Fixes: b868db94a6a7 ("gpio: tqmx86: Add GPIO from for this IO controller")
+Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- mm/zswap.c | 79 +++++-------------------------------------------------
- 1 file changed, 7 insertions(+), 72 deletions(-)
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index b9b35ef86d9b..50c8d402516f 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -44,8 +44,6 @@
- **********************************/
- /* The number of compressed pages currently stored in zswap */
- atomic_t zswap_stored_pages = ATOMIC_INIT(0);
--/* The number of same-value filled pages currently stored in zswap */
--static atomic_t zswap_same_filled_pages = ATOMIC_INIT(0);
+v2: added Reviwed-by
+
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 3dbddec070281..1c28a48915bb2 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1576,7 +1576,7 @@ config GPIO_TPS68470
+ 	  are "output only" GPIOs.
  
- /*
-  * The statistics below are not protected from concurrent access for
-@@ -182,11 +180,9 @@ static struct shrinker *zswap_shrinker;
-  *
-  * swpentry - associated swap entry, the offset indexes into the red-black tree
-  * length - the length in bytes of the compressed page data.  Needed during
-- *          decompression. For a same value filled page length is 0, and both
-- *          pool and lru are invalid and must be ignored.
-+ *          decompression.
-  * pool - the zswap_pool the entry's data is in
-  * handle - zpool allocation handle that stores the compressed page data
-- * value - value of the same-value filled pages which have same content
-  * objcg - the obj_cgroup that the compressed memory is charged to
-  * lru - handle to the pool's lru used to evict pages.
-  */
-@@ -194,10 +190,7 @@ struct zswap_entry {
- 	swp_entry_t swpentry;
- 	unsigned int length;
- 	struct zswap_pool *pool;
--	union {
--		unsigned long handle;
--		unsigned long value;
--	};
-+	unsigned long handle;
- 	struct obj_cgroup *objcg;
- 	struct list_head lru;
- };
-@@ -814,13 +807,9 @@ static struct zpool *zswap_find_zpool(struct zswap_entry *entry)
-  */
- static void zswap_entry_free(struct zswap_entry *entry)
- {
--	if (!entry->length)
--		atomic_dec(&zswap_same_filled_pages);
--	else {
--		zswap_lru_del(&zswap_list_lru, entry);
--		zpool_free(zswap_find_zpool(entry), entry->handle);
--		zswap_pool_put(entry->pool);
--	}
-+	zswap_lru_del(&zswap_list_lru, entry);
-+	zpool_free(zswap_find_zpool(entry), entry->handle);
-+	zswap_pool_put(entry->pool);
- 	if (entry->objcg) {
- 		obj_cgroup_uncharge_zswap(entry->objcg, entry->length);
- 		obj_cgroup_put(entry->objcg);
-@@ -1262,11 +1251,6 @@ static unsigned long zswap_shrinker_count(struct shrinker *shrinker,
- 	 * This ensures that the better zswap compresses memory, the fewer
- 	 * pages we will evict to swap (as it will otherwise incur IO for
- 	 * relatively small memory saving).
--	 *
--	 * The memory saving factor calculated here takes same-filled pages into
--	 * account, but those are not freeable since they almost occupy no
--	 * space. Hence, we may scale nr_freeable down a little bit more than we
--	 * should if we have a lot of same-filled pages.
- 	 */
- 	return mult_frac(nr_freeable, nr_backing, nr_stored);
- }
-@@ -1370,42 +1354,6 @@ static void shrink_worker(struct work_struct *w)
- 	} while (zswap_total_pages() > thr);
- }
- 
--/*********************************
--* same-filled functions
--**********************************/
--static bool zswap_is_folio_same_filled(struct folio *folio, unsigned long *value)
--{
--	unsigned long *data;
--	unsigned long val;
--	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
--	bool ret = false;
--
--	data = kmap_local_folio(folio, 0);
--	val = data[0];
--
--	if (val != data[last_pos])
--		goto out;
--
--	for (pos = 1; pos < last_pos; pos++) {
--		if (val != data[pos])
--			goto out;
--	}
--
--	*value = val;
--	ret = true;
--out:
--	kunmap_local(data);
--	return ret;
--}
--
--static void zswap_fill_folio(struct folio *folio, unsigned long value)
--{
--	unsigned long *data = kmap_local_folio(folio, 0);
--
--	memset_l(data, value, PAGE_SIZE / sizeof(unsigned long));
--	kunmap_local(data);
--}
--
- /*********************************
- * main API
- **********************************/
-@@ -1450,13 +1398,6 @@ bool zswap_store(struct folio *folio)
- 		goto reject;
- 	}
- 
--	if (zswap_is_folio_same_filled(folio, &value)) {
--		entry->length = 0;
--		entry->value = value;
--		atomic_inc(&zswap_same_filled_pages);
--		goto store_entry;
--	}
--
- 	/* if entry is successfully added, it keeps the reference */
- 	entry->pool = zswap_pool_current_get();
- 	if (!entry->pool)
-@@ -1522,13 +1463,9 @@ bool zswap_store(struct folio *folio)
- 	return true;
- 
- store_failed:
--	if (!entry->length)
--		atomic_dec(&zswap_same_filled_pages);
--	else {
--		zpool_free(zswap_find_zpool(entry), entry->handle);
-+	zpool_free(zswap_find_zpool(entry), entry->handle);
- put_pool:
--		zswap_pool_put(entry->pool);
--	}
-+	zswap_pool_put(entry->pool);
- freepage:
- 	zswap_entry_cache_free(entry);
- reject:
-@@ -1682,8 +1619,6 @@ static int zswap_debugfs_init(void)
- 			    zswap_debugfs_root, NULL, &total_size_fops);
- 	debugfs_create_atomic_t("stored_pages", 0444,
- 				zswap_debugfs_root, &zswap_stored_pages);
--	debugfs_create_atomic_t("same_filled_pages", 0444,
--				zswap_debugfs_root, &zswap_same_filled_pages);
- 
- 	return 0;
- }
+ config GPIO_TQMX86
+-	tristate "TQ-Systems QTMX86 GPIO"
++	tristate "TQ-Systems TQMx86 GPIO"
+ 	depends on MFD_TQMX86 || COMPILE_TEST
+ 	depends on HAS_IOPORT_MAP
+ 	select GPIOLIB_IRQCHIP
 -- 
-2.43.0
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
 
 
