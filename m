@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-195122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BE78D47E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5B78D47EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC5781F24681
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4276F1F23669
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AEF1850B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67D517D346;
 	Thu, 30 May 2024 08:58:40 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A9E18508F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8261185094
 	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059520; cv=none; b=LkGKIHkUfNFIRh54s24YbtX6G8bklPGaVp/VOedKcPzmgiLj32gtxBbIen2znErwWjU1sVDvyF9BZWg9vJtxrRax06P2yzQHW8wrePqi/r8VCHVfmxmZ7UkEvwrE44QZCkCti/p+uFM9IHCdxExhfNz5umFIL4yYt2DGfoAxoc0=
+	t=1717059520; cv=none; b=DTRu/BaTa7k2fAjGDfSEDYMQQ/ihWasWOaG/hE/JsR+9/TfyDFG997HcpnV2CpeHnJkoNDwdEHwqvSImBgaDO0mcO7W/FuT8XhKGnvP2a9mWm0B04XzwAnkbeInmAHdVRv+jeiGTdYcahmgRj122/E9eX4T4Wf9rVxKRaAbUn0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717059520; c=relaxed/simple;
-	bh=/LiSEQG+njMYAteIWAP1DID2MkGU7RNK5JsYIWD5POA=;
+	bh=xSiYxLlED4E+roogEfx5wbGd2XP9vUElO72j0ePBgtA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cV/C9dUNFaC2alJvPK2BLsgLkvcf3l/yduIUS6D4Pln7pO3+So6HcR/1iNWnjf9NyligRKt9OUPxc8rdgYJouV1G3biKpAlNHS1umS2g2iRtHHakiFBM6/GOJMyKf2OI1+/ZYh5c5TDaV5hRPp5qj3b+4PeiAcOe+GFkJf3Lnmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+	 MIME-Version; b=DHLqE4fYGcuLaBxXgOsRRFGJfmFPhYcJLjpdBdoSgZc3xSZLWoramNI3HAeqwNNNHIyGL5tjEH0qaxfO709KRRODkXFkj0cCHyupEwiZl7G0WfR3FqcwF6hJjbPk4KSQ2REOzRIpJocAhYKaBeHSj8ZEw+u/UozyjwDAUV/nj2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id cc94fb57-1e62-11ef-8e2e-005056bdf889;
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id ccf349f8-1e62-11ef-aaf9-005056bdd08f;
 	Thu, 30 May 2024 11:58:36 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -54,9 +54,9 @@ Cc: Dong Aisheng <aisheng.dong@nxp.com>,
 	Paul Cercueil <paul@crapouillou.net>,
 	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v3 09/11] pinctrl: keembay: Convert to use func member
-Date: Thu, 30 May 2024 11:55:18 +0300
-Message-ID: <20240530085745.1539925-10-andy.shevchenko@gmail.com>
+Subject: [PATCH v3 10/11] pinctrl: mediatek: moore: Convert to use func member
+Date: Thu, 30 May 2024 11:55:19 +0300
+Message-ID: <20240530085745.1539925-11-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240530085745.1539925-1-andy.shevchenko@gmail.com>
 References: <20240530085745.1539925-1-andy.shevchenko@gmail.com>
@@ -72,73 +72,58 @@ Convert drivers to use func member embedded in struct function_desc,
 because other members will be removed to avoid duplication and
 desynchronisation of the generic pin function description.
 
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/pinctrl/pinctrl-keembay.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-moore.c | 10 +++++-----
+ drivers/pinctrl/mediatek/pinctrl-moore.h |  4 +---
+ 2 files changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
-index b1349ee22799..245a74ed97ee 100644
---- a/drivers/pinctrl/pinctrl-keembay.c
-+++ b/drivers/pinctrl/pinctrl-keembay.c
-@@ -1566,7 +1566,7 @@ static int keembay_add_functions(struct keembay_pinctrl *kpc,
- 		unsigned int grp_idx = 0;
- 		int j;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+index d972584c0519..aad4891223d3 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+@@ -56,7 +56,7 @@ static int mtk_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
  
--		group_names = devm_kcalloc(kpc->dev, func->num_group_names,
-+		group_names = devm_kcalloc(kpc->dev, func->func.ngroups,
- 					   sizeof(*group_names), GFP_KERNEL);
- 		if (!group_names)
- 			return -ENOMEM;
-@@ -1576,20 +1576,20 @@ static int keembay_add_functions(struct keembay_pinctrl *kpc,
- 			struct keembay_mux_desc *mux;
+ 	dev_dbg(pctldev->dev, "enable function %s group %s\n",
+-		func->name, grp->grp.name);
++		func->func.name, grp->grp.name);
  
- 			for (mux = pdesc->drv_data; mux->name; mux++) {
--				if (!strcmp(mux->name, func->name))
-+				if (!strcmp(mux->name, func->func.name))
- 					group_names[grp_idx++] = pdesc->name;
- 			}
- 		}
+ 	for (i = 0; i < grp->grp.npins; i++) {
+ 		const struct mtk_pin_desc *desc;
+@@ -620,12 +620,12 @@ static int mtk_build_functions(struct mtk_pinctrl *hw)
+ 	int i, err;
  
--		func->group_names = group_names;
-+		func->func.groups = group_names;
+ 	for (i = 0; i < hw->soc->nfuncs ; i++) {
+-		const struct function_desc *func = hw->soc->funcs + i;
++		const struct function_desc *function = hw->soc->funcs + i;
++		const struct pinfunction *func = &function->func;
+ 
+ 		err = pinmux_generic_add_function(hw->pctrl, func->name,
+-						  func->group_names,
+-						  func->num_group_names,
+-						  func->data);
++						  func->groups, func->ngroups,
++						  function->data);
+ 		if (err < 0) {
+ 			dev_err(hw->dev, "Failed to register function %s\n",
+ 				func->name);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.h b/drivers/pinctrl/mediatek/pinctrl-moore.h
+index 5945e4fe021f..229d19561e22 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.h
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.h
+@@ -45,9 +45,7 @@
+ 
+ #define PINCTRL_PIN_FUNCTION(_name_, id)							\
+ 	{											\
+-		.name = _name_,									\
+-		.group_names = id##_groups,							\
+-		.num_group_names = ARRAY_SIZE(id##_groups),					\
++		.func = PINCTRL_PINFUNCTION(_name_, id##_groups, ARRAY_SIZE(id##_groups)),	\
+ 		.data = NULL,									\
  	}
  
- 	/* Add all functions */
- 	for (i = 0; i < kpc->nfuncs; i++) {
- 		pinmux_generic_add_function(kpc->pctrl,
--					    functions[i].name,
--					    functions[i].group_names,
--					    functions[i].num_group_names,
-+					    functions[i].func.name,
-+					    functions[i].func.groups,
-+					    functions[i].func.ngroups,
- 					    functions[i].data);
- 	}
- 
-@@ -1619,17 +1619,17 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
- 			struct function_desc *fdesc;
- 
- 			/* Check if we already have function for this mux */
--			for (fdesc = keembay_funcs; fdesc->name; fdesc++) {
--				if (!strcmp(mux->name, fdesc->name)) {
--					fdesc->num_group_names++;
-+			for (fdesc = keembay_funcs; fdesc->func.name; fdesc++) {
-+				if (!strcmp(mux->name, fdesc->func.name)) {
-+					fdesc->func.ngroups++;
- 					break;
- 				}
- 			}
- 
- 			/* Setup new function for this mux we didn't see before */
- 			if (!fdesc->name) {
--				fdesc->name = mux->name;
--				fdesc->num_group_names = 1;
-+				fdesc->func.name = mux->name;
-+				fdesc->func.ngroups = 1;
- 				fdesc->data = &mux->mode;
- 				kpc->nfuncs++;
- 			}
 -- 
 2.45.1
 
