@@ -1,161 +1,228 @@
-Return-Path: <linux-kernel+bounces-195674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D768D501E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:49:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02BA8D5022
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0134F2831E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:49:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A77B24D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0D83B182;
-	Thu, 30 May 2024 16:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177143F9ED;
+	Thu, 30 May 2024 16:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wIsyQRLi"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoT2rBvW"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C676836AF8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3AA42071;
+	Thu, 30 May 2024 16:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087736; cv=none; b=EfQaZCCaUk2N5+BudcWoAPNpW8CxHF2FVgflSucfCmBmwnGLbYcQFYH923nPMwVLcHlNJLe+AhsbWamcijpV9r3qkpK4XxrMKCq4U24nBid5QhDgN68q4eHIgOaDHUfadm6FTmLaZjoTzfnuw/TFzwAmi/av/eiaXUK1vWpUCTI=
+	t=1717087745; cv=none; b=c5s0KLxYKrdGNOeQUdt4XAGtujDy8b6hnrRWbHQ/LyZHJ4K2+UsJEmN8Fk1lMuLszv943FkQt5dRRipi5zK0ndjX2LSbqG3qdl6tPb7x0KuF0S/VlyVO166nLOjE96BSg/OpwmBvBKVRExtcmQ7HDUrtnlTH0c7PoZuxGWkSd5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087736; c=relaxed/simple;
-	bh=Ly2L242GxHMIF6bws/UEb4G+Luoe3LUDH/lBlpCDr0Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qf+lnYk7fylyd12Z0Ckst2CeX//TsAP0bMatqdv0OrVq3NJB1+hK8M1G+R9ACS38eYZ+Q+6SVrOJoB1yMDd5NEvjReGsjq4FanI2GtDU8Tr3MvcHNCxxVaPwwVwnW3rsV3af2/ef4RJCw3v82dSNfoh2W7KKBFucyR/dVH8Cq08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wIsyQRLi; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a66e9eac48fso50897666b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:48:54 -0700 (PDT)
+	s=arc-20240116; t=1717087745; c=relaxed/simple;
+	bh=I6BERmi5nPEKmxHL2HMDaClEL9MyjT47g54+Sy/rblo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z2TwhwiAcDg5+r+MWid4ZyMTFPeBbtR7dk6QzEczQSLeepTsBR0+8xGMmmZ/AlcwOotnVEYWUEtC5oFglxq4Hyt8VUewmVdIeGPt6iWGt+5QVbhEWytSZDjRYIz2FSFsUym7fn9hgHs8zUS9nNy4ZAcvAkGPIBBWw6JVdcEa4zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoT2rBvW; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6bce380eb9cso915618a12.0;
+        Thu, 30 May 2024 09:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717087733; x=1717692533; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Om7hhoOcUSUWV8gAap1fMTgLyjeDTgTrOUFgaKi03cU=;
-        b=wIsyQRLi0emGlIpAzN3LA0ClAocAaD72is0N3Pf4UU7dx/+1Sjm2y9kd55db/tBp/3
-         QbIiXSeoqnrIzmvAi8s9a54moTugdiOr0zO+7LNgXdYWGXkrVBavjbuj9gDodkvRaDIi
-         TzG3YlVI2VDIYoVEj3ljJaZqFLALi9scR0IiiBbgGddVNSA1+hTwUGwCsGPXROE7CUHX
-         MYzt/tHViTVk+Q+vbgAmGyQZ3/LZoACfFVs7LHaBd9VBBLTsQD/rAeJfEFY7TWxX1KUX
-         423N1JrrBKRPczcqPpX6hv6OX17oKTncz6V9qf2GJauyLCTUafL4m64ShUwB10r9aK/D
-         1qNg==
+        d=gmail.com; s=20230601; t=1717087743; x=1717692543; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J/Ld2nqzB5x279KNvsmiD2HC7Uop3I6bxq/cd3hya74=;
+        b=NoT2rBvWXpIilks1IjAo+zjyJDpfLMzHI/kl7eKaUXI3ZLiffMSUoZRAXjW1L5ymzP
+         aBj8NIrCExrmNryhttMst8q5YPgrY3pi9Ve1IyrVEr398uisrpMw7laR3Kb7Zbrvv8pJ
+         Wh5uhiF8hv9wR1F7l2p3UFIlkCFyGdt22xqwIM0SrJXLvKdFuuf5myJd5uZ76SmA3nQC
+         lp4up8/dr9FSWiWjuVT5FFgMDCZLYyH2VjLvU2nMTMuh54axGFgqkKpQqJC1RVGBtYYS
+         1ZxMpPAy76tQ/8iwokHe0TxjUOB+tp5wJrhs3s3LLev7TvHVH6l+OAgb2keMtXEG3TvM
+         H/6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717087733; x=1717692533;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Om7hhoOcUSUWV8gAap1fMTgLyjeDTgTrOUFgaKi03cU=;
-        b=YjpcWe7juTFb0afcxGcQqzP4uInkAOczdzHVtAbEH4vXn/FwJzT0XQvVGflbIejmz6
-         X2CdMJRuWN5TrgV0X/Pn/3dGbthrGenWESpY5W3xQ5SciIzb2pv9MYzDzZh79zRisGXA
-         i404dH9JEBTMzouHzxDnsdg+3iEfvL1PIfKimbzNc2VkjqFi5laG86XR5NC/GprdsTiA
-         2bp1pU89HCyuqBiSYzDfYlutPZZGPQZkEpQUXSrF70bBPNEbuGD4OOsem3I62K3XutRD
-         WTQezd3KJ0457jXrNB5f/azwmeULl5Q3kGmHwb5zo82Je1OKoQemebH3wEVX0AQ+iTtZ
-         +qfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhWL6I6W/APxK/gjwDWe4nC/QeBNDg/YxxHy99lyR+u5a6n2tOaD5JJI2G7eCY0fzSvWW8chWEKywwqvx8eHUhJBJeeVnrqb1bhKXh
-X-Gm-Message-State: AOJu0YwgbLuv/cq9+OaaC6cd4rtFFp1VDESjnZg6p0izdjc1xmyBaG0X
-	0oAJKk5i8u1GEU07PvkvGh1q/ZFVnO3055bFEFSD2xSRJwWrdQXJgyNHvd/VAOg=
-X-Google-Smtp-Source: AGHT+IGOdW0rL+CG+2TxT+B5IJwuYU4JCsP/KJ3DZR0Uqrkb20mrEsEOuuSMX9bBLg43COFnBMG4eQ==
-X-Received: by 2002:a17:906:f5a9:b0:a63:3702:def0 with SMTP id a640c23a62f3a-a65e8e4083amr240447366b.30.1717087732909;
-        Thu, 30 May 2024 09:48:52 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6555bc091asm164155566b.138.2024.05.30.09.48.51
+        d=1e100.net; s=20230601; t=1717087743; x=1717692543;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J/Ld2nqzB5x279KNvsmiD2HC7Uop3I6bxq/cd3hya74=;
+        b=w/NlElIixSD3gDeQuRBvv3RXUwfGZAliKFX4J9T+NrceOMlw5VN/RrOoCEfk+AV1YW
+         KpLaqNI6jXR8v9htWY8HWaRKtwuohCqbpHfsIhKEOGV6SpmXf+cDAV0qTKy/3CjVmE+5
+         SGNf/V7f5/wfGNFNLtXT4FywXtxn42xpkM9DuWrK4UvLTT889OV/SN/tSkzfaqvArjmA
+         f3wuJBdm9YFQCTXygqSjEU8WMCbDg8LwhMPp45tphcg0INUBaXvM5SuJOA83m90GI7rl
+         ToOGwavucIzJBCBV9C17fkS0WfRNLfiNFw3KgY+3l/QDNGnqTE8r55DHlxc86zrVwTyB
+         IyNw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+agFYdMVv8Bl7QJoNyE+NAIJrbbOfFTWRdL1h523QD0iCIlpzLwkXzP9lQofGt81+LCHOpaGMs+3RZppzCMQJdqgFrZbIh183/hfKHHnhh6rKpPNY8Y5klpjcsOMdEVkD
+X-Gm-Message-State: AOJu0YwXRFs8hUnEDj8xWcDGxzwCBWqIeGmU1wI436cTFf36q9Qk2rM1
+	S4e1PZZGnUq0bvTtGDV60xpcCuLZWBX2/8dWT1d2CGrISNYE0zuf
+X-Google-Smtp-Source: AGHT+IHHbgLpocARyPawPF9UimvIl95SLEOKH1LFA/5BleZpLidB5rwVY+xFA/y/tRBULCttMeXsPg==
+X-Received: by 2002:a17:902:c614:b0:1f4:7713:8f6 with SMTP id d9443c01a7336-1f619b2cbe3mr19999725ad.52.1717087742726;
+        Thu, 30 May 2024 09:49:02 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323554a3sm87295ad.63.2024.05.30.09.49.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 09:48:52 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 30 May 2024 19:48:44 +0300
-Subject: [PATCH] clk: qcom: gcc-x1e80100: Fix halt_check for all 3 USB PHY
- pipe clocks
+        Thu, 30 May 2024 09:49:02 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 30 May 2024 06:49:01 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+Message-ID: <Zlit_RUFPparkS3h@slm.duckdns.org>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240502084800.GY30852@noisy.programming.kicks-ass.net>
+ <ZjPnb1vdt80FrksA@slm.duckdns.org>
+ <20240503085232.GC30852@noisy.programming.kicks-ass.net>
+ <ZjgWzhruwo8euPC0@slm.duckdns.org>
+ <20240513080359.GI30852@noisy.programming.kicks-ass.net>
+ <ZkUd7oUr11VGme1p@slm.duckdns.org>
+ <ZkvoqvY00UDDcKJU@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAOutWGYC/x2N0QrCMBAEf6XcswuX1kjxV8SH5rw0oaUNiUql9
- N+NPg7s7OxUNEctdG12yvqOJa5LBXNqSMKwjIr4qEwtt2e2HWMz2rNhhswTRhH4uCEM8xMSVCb
- 4NeNVHFL4IMWkv12B+l68dfbSGUf1O2Wt3r97ux/HF+D383OHAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1839; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=Ly2L242GxHMIF6bws/UEb4G+Luoe3LUDH/lBlpCDr0Q=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWK3tl6uah8YmriTt3lwjpsK8x6CjrQVSP9BIS
- odeQ7reUGaJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZlit7QAKCRAbX0TJAJUV
- VuptEAC5WMgOjmsUB8qckUbsaskWG7PgeQwoMiZftXJw1gCuaEOOw6UtJJeSxGc5kVgvMgR2hft
- JvEvmNOZswIN/m0gTBcZcpC8DnGiIInTfbMDKkdkGP9/0EMG9VMJ4JpptjS//XrQUN6pAKMv42U
- tuioLIWwfrgCpFheWQhw4XSToWBzFgvuqJMYLhsqBvFDt5AApOXl9L+43b7rwoJMKXeCYK9jAPS
- fBdi6Fd1rfLHs1IwPzGQNSsWXI7QLcdLHlGqTzyAas/QLfKMAk+2lxBc1OWyHyaNTopyOPzCzfb
- LWnE+1IS6gvDy0iG4eYwxwmWF9JGSgI2DBs5sRXrjzWAVtREb7u6wbv9NfSFW6YZcQX8s06BarG
- yN9Go/2Pcd0RlcWcs56zpAIcMO4nKr3JlNU/CxWAOB9ne+Cphpw+DvThX7ZE9LNHI+RCwMnDjNi
- g1e8qkKLsuIDKa+m6spe0+qZRi0qmSucPahTkZJm7hWFciku+Et8rEKDSLLF1c+1xqcX1HdOD3e
- JjmdwKua3RK6tww7/e9iLWpTXUoHJ7sEQ2v3tAg4yTL1rZ82KXU6fGKglSSDjkP50KWrxFfJ7PZ
- LAE6s1iZ7QbLcIDEb4+B0BUVzsolewU7DY1P34exI+9XI+aq+vNuiv4LFgY/9HxV/eL8zdDDbsm
- KZVA65W0E073lHw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZkvoqvY00UDDcKJU@slm.duckdns.org>
 
-Since the pipe clocks are fed by the QMP PHYs, they are not under the
-GCC control, therefore the halt bit might not get. This will lead to
-the clock driver reporting the clock as stuck, but that is inaccurate.
-So instead of waiting for the halt bit to get set, just use the
-HALT_DELAY flag.
+Hello,
 
-Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/clk/qcom/gcc-x1e80100.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It has been a couple weeks, so I take it that you aren't intending to
+respond. I think it'd be useful to summarize the arguments against sched_ext
+and list the counter-points.
 
-diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-index 1404017be918..afff7cd14848 100644
---- a/drivers/clk/qcom/gcc-x1e80100.c
-+++ b/drivers/clk/qcom/gcc-x1e80100.c
-@@ -5186,7 +5186,7 @@ static struct clk_regmap_mux gcc_usb3_prim_phy_pipe_clk_src = {
- 
- static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
- 	.halt_reg = 0x39068,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_DELAY,
- 	.hwcg_reg = 0x39068,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -5257,7 +5257,7 @@ static struct clk_regmap_mux gcc_usb3_sec_phy_pipe_clk_src = {
- 
- static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
- 	.halt_reg = 0xa1068,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_DELAY,
- 	.hwcg_reg = 0xa1068,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -5327,7 +5327,7 @@ static struct clk_regmap_mux gcc_usb3_tert_phy_pipe_clk_src = {
- 
- static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
- 	.halt_reg = 0xa2068,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_DELAY,
- 	.hwcg_reg = 0xa2068,
- 	.hwcg_bit = 1,
- 	.clkr = {
+(1) Merging sched_ext will weaken the incentive to contribute.
 
----
-base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
-change-id: 20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-ef8cf5b5631b
+While this may partially be true, it isn't looking at the whole picture.
+This argument looks at the costs of sched_ext while ignoring the benefits,
+and it ignores the costs of funneling all scheduler work through one
+codebase.
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+If you look at the whole picture, I think you’ll see that:
 
+- The problem space of CPU scheduling is too big for a single code base to
+  be effective. Hardware has changed a lot and so have the workloads. There
+  are many areas that we haven't mapped out. It's difficult to try anything
+  radical in a code base which has to satisfy everyone all the time, but
+  holding the bar so high that experimentation is suppressed means we will
+  all be worse off.
+
+- The bar for contribution is too high, driving away potential contributors.
+  Many vendors and users carry internal patches as the upstreaming cost is
+  too high. We are already seeing multiple developers who have not
+  previously contributed to fair.c actively participating in and driving
+  sched_ext schedulers. It’s possible those developers will eventually
+  contribute to fair.c, but if sched_ext didn’t exist this would be less
+  likely.
+
+The constraint of only one scheduler codebase makes it very difficult to
+contribute. You say that this constraint is necessary to force
+collaboration, but I think the opposite is happening - many people don't
+bother trying to contribute because the bar is too high. If sched_ext is
+merged, the scheduler code base may lose some of the enforcement. However,
+in the longer term, I believe we will gain more talented and motivated
+engineers working in the problem space and some of them will surely find it
+worthwhile to contribute to fair.c. It will be the most widely used
+scheduler in the world no matter what, and will be attractive for people to
+work on.
+
+EEVDF worked out because you have worked on the scheduler for a long time
+and have gained a ton of context on what works and doesn't. It also worked
+out because you were more confident that it'd get merged. How do we build
+confidence in other developers who want to explore whatever comes after
+EEVDF without worrying that it is hopeless to try? sched_ext provides an
+outlet for people who aren't already established to take a smaller risk
+first, which is likely to lead to more people contributing.
+
+(2) Efforts and developments out of the kernel tree are worthless.
+
+I believe this is too narrow a view. Direct contribution is one form of
+contribution but there are many others, including research. EEVDF itself is
+based on a research paper. Figuring out what works and sharing them seems as
+important as anything to me.
+
+One reason cited for the uselessness is that out-of-tree efforts are often
+throw-away and don't build up to anything. There is some truth to this but
+the main reason is the difficulty of working with out-of-tree kernel
+modifications. Rebase is painful and there is no convenient way to
+distribute to users. Some still power through but it's near impossible to
+build a user base and community for things that are out-of-tree. sched_ext
+solves these problems and the umbrella repo serves as the central repository
+for the developers to collaborate and learn from each other. This isn’t a
+prediction for the future, it is something which is already actively
+happening.
+
+Given the right environment, they will keep flourishing and finding new ways
+to improve scheduling. Many of them won't be applicable to the built-in
+scheduler, but some will. It's also likely that, in the long term, the
+larger scheduler developer base will be directly beneficial to the built-in
+scheduler too.
+
+(3) This will lead to vendor-specific fragmentation.
+
+This is already happening with or without sched_ext whether that's in the
+form of out-of-tree scheduler patches or people trying to circumvent the
+scheduler with creative uses of the RT class.
+
+sched_ext will introduce a different mode of doing it. There are scenarios
+where the situation can become a bit worse but I don't believe the
+difference would be drastic. Because all sched_ext schedulers have to be
+under the GPL, any vendor shipping a sched_ext scheduler to a customer will
+have to publish the code. If there are useful ideas we'll be just as free to
+take them as now. Also, users would have the benefit that it's a lot easier
+to opt out of the vendor's scheduler.
+
+On balance, yes, sched_ext may lead to more or at least different types of
+fragmentation, but that seems like a minor downside compared to the overall
+benefits especially given that we have to live with some level of
+fragmentation no matter what.
+
+(4) sched_ext is a debug tool and we don't merge debug tools.
+
+I think both parts of the above claim are wrong. sched_ext can be used
+purely as a debug tool but it's also performant and flexible enough to
+readily enable non-trivial practical use cases. We are using it in
+production today, and as stated elsewhere in this thread, there are multiple
+other companies in various stages of rolling it out to production. It can be
+a debug tool, a temporary bridge to field early ideas while working on
+something more permanent, a proper solution to specific problems which don't
+quite fit the general scheduler (an extreme example would be
+standard-dictated scheduling for avionics), and so on.
+
+Also, we merge debug tools all the time. Lockdep is a debug tool. The code
+base is full of debug features and components. Why wouldn't we merge
+something if it makes the lives of the developers and users better by making
+it easier to understand and debug problems? We don't merge printks someone
+sprinkled over the code base to debug one particular problem. We do and
+should merge tools and frameworks which improve visibility and debugging.
+
+
+To reiterate our proposition: Let’s please open it up. Scheduling doesn’t
+have to be this closed. Many open subsystems survive fine and often thrive
+thanks to their openness. sched_ext hooks into the core scheduling but the
+contact surface is limited, and, if they ever get in the way, we’ll do our
+best to resolve them. The balance in the trade-offs seems pretty obvious.
+
+Thanks.
+
+--
+tejun
 
