@@ -1,224 +1,128 @@
-Return-Path: <linux-kernel+bounces-195337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446298D4B3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 279298D4B48
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0C31C22D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 579C51C22F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F2E17FAAB;
-	Thu, 30 May 2024 12:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514B6183A7D;
+	Thu, 30 May 2024 12:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NLJy8k+4"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etUfoNDH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6773017B420
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5E614AD3B;
+	Thu, 30 May 2024 12:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070749; cv=none; b=q3J9gPp9NpgrtUpUz2hHaVDFmmGSHsTwCmb3gMRDP16XIMVnKQBIr1wS277W9FoReZQGewGPvlDxXsgmThXanr+PFe8+Nkkjjh/lRxgA9lZ4ALcyrcOp8hnwb2u4sUydP3fawh2PRfqj8XE7z3ZxhwYDEpAFNknDPB9MCyj4G5E=
+	t=1717070883; cv=none; b=IHmZl5hvqFEqPkgp6LqdnCOX2NC1HTG8f6o8XkK6v8oy1h1WstX1yap6KwSIfcJ4ZrI4/Mm83Bw7GECx/FDJtTB2i9lliq5TD4CMRFqAF1eqTHpAqPTSu+uUL2t2f4tNg9JAnMZtelkh7CnyWyVxDMP9VR7rmmjb+9NsWBLy/Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070749; c=relaxed/simple;
-	bh=6DUJ8tsgfrpE7dMN5xMdCi4IdduLwN5+kaoGzysiLws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C5Mhh90lE2hLxu/FIub/I19yMP7tTksW9bjtmUpRwChykD2SsuhzhNLKg7ejmyh3GOGb5h0a+XPHQyvazf01cpeeMY1qRRVW/LAWNelPbndpF25BftBCw1/Mv0scXr2iozUUN4OM1zKrOtKOmrscCxFG2DNuTu6K+34Sd/mqmhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NLJy8k+4; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5a89787ea4so64917966b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 05:05:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717070744; x=1717675544; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Sz6gimwf1g/uM/VSKdjbih5l18TxYGdFz1hq8H1cc4=;
-        b=NLJy8k+4nm+KGyY8I6C8gQYzhbfHVEhNlOgQX5NggMNeZENLtziBPvrD1xRC4cx6L1
-         lA+IGNWZL7Axe1wpirFLOF0IFZtLOs9JIuqr9SIba6tlsp0YbzJ9mmVkeQ/+nFa5miB6
-         jP61DyDmKqQ/cWi81In3RHkL2tymFiA+3K2Eu/byHjSXIiCmA/noRUP97R+TK6jxRx0L
-         g0FPcatqI7KeDPPJVH5A1CPrL7uJOFz8tkG+BXyBPsLTXtr8wbNH0rI1O1ycSt9Zd58H
-         HE1ACQL5vexebymvKAeuknNjSq/LfUyh8j6/44/IP8zCJAWWyNsyhNJ9jxFDeEp8atup
-         T1Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717070744; x=1717675544;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Sz6gimwf1g/uM/VSKdjbih5l18TxYGdFz1hq8H1cc4=;
-        b=ozEWxpRCmai1YhixidDrNQNawAPCClLER1e7jv+ptYCsCRur6V1HknQ/EOYWoL5oZ/
-         sLEWR8m+pSM6OVqRGuMocPk3W+Jq960chrJqtG1xG1ovui9hpW3RsN1dYHK5VWQFLtLY
-         LKNtuM54AeAoprgcO4y6EE/UQPzcTwhyVjF7ZqnHyOHgHsAWa2q2cV+QeIEb0v+rKu5h
-         kB19tDyiRBCXxI3FLV6Hbl7r2DuHVv5zn8nREL106fyTl4zL1byP+GKcv/PHb+wAyfet
-         SfygHNSobLv4J1/rp1482tKVFNmwFrjD7sQOhQwbwk3zq2I9hK34TUDhVIyKjS8VBfEw
-         rQsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdEl60ff9vLCcT+xDe0mr5uLCRiO4mz0sgnZaT4Gq4b0M0jcoBsBwDpMFTOuB+ndLT8fjMWTa+CzhSDy3Ysmdyv1+Hi2yy0rkGjkZW
-X-Gm-Message-State: AOJu0Yz6NzQ7tvW2jRFyWEnhyKmAXpYuFcs/udQV6KrD98BdtxCQTYYP
-	LjkHuG5H7R1dN9jS7aJM2WnPhA2hVVoPWysiFWxN3RKKHaBqMjswpfMVUzKP6fUTvg+CodRE/nJ
-	PsUE3vJB9jijBJUhFsYsrdtmSyXDGoShKuLsSFw==
-X-Google-Smtp-Source: AGHT+IG/YXSYNiT6o3H60M0bRLCqTArznAl+myxGGWTw4/86wdJCt5jT5bYBWxWt9IjzAEOIedJ5eSNcM/ArO6iW/iM=
-X-Received: by 2002:a17:906:d784:b0:a59:b88c:2b2a with SMTP id
- a640c23a62f3a-a65e925021dmr114248066b.50.1717070744574; Thu, 30 May 2024
- 05:05:44 -0700 (PDT)
+	s=arc-20240116; t=1717070883; c=relaxed/simple;
+	bh=a2Nv0nM1QFck0HLI7Wyar8ElOhaHIMfdrqsrvPCL3Y4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PQdT3n7Cxioi7NAjMO7u11yVk/GR7T9MNE18wngcXcmzMXN350zBUsfxtuAY63sGYPuA7zBEOAI7RR6CkU9C2/CW8J1DDQIei8SpPi0bAqlW+mijQv4oOOEI4LH8pt89QlEfwhZUNrbyCi96mx3xNJG2x69LwbeJhB8niqJH2po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etUfoNDH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2C09EC2BBFC;
+	Thu, 30 May 2024 12:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717070883;
+	bh=a2Nv0nM1QFck0HLI7Wyar8ElOhaHIMfdrqsrvPCL3Y4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=etUfoNDHppRWrBaKepB5wo7+ONA5VLzYRUxWP5y8uQYgmwi1ew6n420B5K5krNp9a
+	 DLMR4fwSXnCOabvOfDXBO8fga8LDKYejM6KdR80+LLSq795bu+t8Ah/iu+3Enlb0jn
+	 4mqWOBYoUChRyy7CZLsrG/3NDc+uQkiTESiuJamZt7k3nwumgGF+HM2iqJEEhURIny
+	 clh3ggNTzso3iWYCD5miiC5YUxwpxvyQ63biktSAtgzLIScMKkYrQySScS5sekDO8g
+	 8YNrZ3az6RyEFlPWiFsANF8uVRQ7H6ilWMbX4dh8763Uq7mRksUYApRzlFjVD3xJut
+	 q2Jyg25OQLJeg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AF6C25B74;
+	Thu, 30 May 2024 12:08:03 +0000 (UTC)
+From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Subject: [PATCH v3 0/5] AD7173 fixes
+Date: Thu, 30 May 2024 15:07:48 +0300
+Message-Id: <20240530-ad7173-fixes-v3-0-b85f33079e18@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530075424.380557-1-alexghiti@rivosinc.com> <ZlhpA9NsgI0z6t/E@andrea>
-In-Reply-To: <ZlhpA9NsgI0z6t/E@andrea>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Thu, 30 May 2024 14:05:32 +0200
-Message-ID: <CAHVXubi+XW=v=MKDov5j0v2QG-cAMjWxdqMRhgfLmo1JhCkryQ@mail.gmail.com>
-Subject: Re: [PATCH -fixes] riscv: Fix fully ordered LR/SC xchg[8|16]() implementations
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Leonardo Bras <leobras@redhat.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABRsWGYC/3XMQQ7CIBCF4as0rMUwQwvGlfcwLigMLYkWA4Zom
+ t5d2pWauHwz+f6ZZUqBMjs2M0tUQg5xqkPuGmZHMw3Eg6ubocBWdAjcOA1ach+elHlLSJ0RCsg
+ jq+SeaHtUcb7UPYb8iOm11Qus1z+hAlzwAyiwVntpHJzMZK5x2Nt4Y2up4KfWPxpX3QnolTKuB
+ /+ll2V5A1WTe6rnAAAA
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dumitru Ceclan <mitrutzceclan@gmail.com>, 
+ Dumitru Ceclan <dumitru.ceclan@analog.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717070881; l=1703;
+ i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
+ bh=a2Nv0nM1QFck0HLI7Wyar8ElOhaHIMfdrqsrvPCL3Y4=;
+ b=NRguLoiKT+O+Qi5WkKw/aEGTWSXghee5MxGlf4svNKtOkkARVnLaBpARyZ4N8u3gSKIlCiMvL
+ vn22Ao8yR7/Aay0QuUOSZHt7+JXkYKOPFJJoB7ILLUyLOkQNKWSJOJf
+X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
+ pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
+X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
+ with auth_id=140
+X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Reply-To: dumitru.ceclan@analog.com
 
-Andrea,
+This patch series adds fixes for ad7173 driver that were originally
+sent along AD411x series. To ensure that they are included in this
+current rc cycle they are sent in a separate series with the Fixes tag.
 
-On Thu, May 30, 2024 at 1:54=E2=80=AFPM Andrea Parri <parri.andrea@gmail.co=
-m> wrote:
->
-> > -#define _arch_xchg(ptr, new, sfx, prepend, append)                   \
-> > +#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend, append)       =
-       \
-> >  ({                                                                   \
-> >       __typeof__(ptr) __ptr =3D (ptr);                                 =
- \
-> >       __typeof__(*(__ptr)) __new =3D (new);                            =
- \
-> > @@ -55,15 +55,15 @@
-> >       switch (sizeof(*__ptr)) {                                       \
-> >       case 1:                                                         \
-> >       case 2:                                                         \
-> > -             __arch_xchg_masked(prepend, append,                     \
-> > +             __arch_xchg_masked(sc_sfx, prepend, append,             \
-> >                                  __ret, __ptr, __new);                \
-> >               break;                                                  \
-> >       case 4:                                                         \
-> > -             __arch_xchg(".w" sfx, prepend, append,                  \
-> > +             __arch_xchg(".w" swap_sfx, prepend, append,             \
-> >                             __ret, __ptr, __new);                     \
-> >               break;                                                  \
-> >       case 8:                                                         \
-> > -             __arch_xchg(".d" sfx, prepend, append,                  \
-> > +             __arch_xchg(".d" swap_sfx, prepend, append,             \
-> >                             __ret, __ptr, __new);                     \
-> >               break;                                                  \
-> >       default:                                                        \
-> > @@ -73,16 +73,16 @@
-> >  })
-> >
-> >  #define arch_xchg_relaxed(ptr, x)                                    \
-> > -     _arch_xchg(ptr, x, "", "", "")
-> > +     _arch_xchg(ptr, x, "", "", "", "")
-> >
-> >  #define arch_xchg_acquire(ptr, x)                                    \
-> > -     _arch_xchg(ptr, x, "", "", RISCV_ACQUIRE_BARRIER)
-> > +     _arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER)
-> >
-> >  #define arch_xchg_release(ptr, x)                                    \
-> > -     _arch_xchg(ptr, x, "", RISCV_RELEASE_BARRIER, "")
-> > +     _arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "")
-> >
-> >  #define arch_xchg(ptr, x)                                            \
-> > -     _arch_xchg(ptr, x, ".aqrl", "", "")
-> > +     _arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n")
->
-> This does indeed fix the fully-ordered variant of xchg8/16().  But this
-> also changes the fully-ordered xchg32() to
->
->   amoswap.w.aqrl  a4,a5,(s1)
->   fence   rw,rw
->
-> (and similarly for xchg64()); we should be able to restore the original
-> mapping with the diff below on top of this patch.
+Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+---
+Changes in v3:
+iio: adc: ad7173: Fix sampling frequency setting
+-Remove IIO_CHAN_INFO_SAMP_FREQ from the shared mask
+iio: adc: ad7173: Clear append status bit
+iio: adc: ad7173: Remove index from temp channel
+iio: adc: ad7173: Add ad7173_device_info names
+iio: adc: ad7173: fix buffers enablement for ad7176-2
+-No changes
 
-And you already told me that privately...Sorry, my mind has been
-elsewhere lately...I'll fix that right now.
+- Link to v2: https://lore.kernel.org/r/20240527-ad7173-fixes-v2-0-8501b66adb1f@analog.com
 
-Sorry again and thanks,
+Changes in v2:
+iio: adc: ad7173: Fix sampling frequency setting
+-Patch created
+iio: adc: ad7173: Clear append status bit
+-Patch created
+iio: adc: ad7173: Remove index from temp channel
+iio: adc: ad7173: Add ad7173_device_info names
+iio: adc: ad7173: fix buffers enablement for ad7176-2
+-No changes
 
-Alex
+- Link to v1: https://lore.kernel.org/r/20240521-ad7173-fixes-v1-0-8161cc7f3ad1@analog.com
 
->
->   Andrea
->
-> P.S. Perhaps expand the width of the macros to avoid newlines (I didn't
-> do it keep the diff smaller).
->
-> P.S. With Zabha, we'd probably like to pass swap_sfx and swap_append as
-> well to __arch_xchg_masked().
->
->
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cm=
-pxchg.h
-> index e1e564f5dc7ba..88c8bb7ec1c34 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -46,7 +46,8 @@
->                 : "memory");                                            \
->  })
->
-> -#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend, append)         =
-       \
-> +#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend,                 =
-       \
-> +                  sc_append, swap_append)                              \
->  ({                                                                     \
->         __typeof__(ptr) __ptr =3D (ptr);                                 =
- \
->         __typeof__(*(__ptr)) __new =3D (new);                            =
- \
-> @@ -55,15 +56,15 @@
->         switch (sizeof(*__ptr)) {                                       \
->         case 1:                                                         \
->         case 2:                                                         \
-> -               __arch_xchg_masked(sc_sfx, prepend, append,             \
-> +               __arch_xchg_masked(sc_sfx, prepend, sc_append,          \
->                                    __ret, __ptr, __new);                \
->                 break;                                                  \
->         case 4:                                                         \
-> -               __arch_xchg(".w" swap_sfx, prepend, append,             \
-> +               __arch_xchg(".w" swap_sfx, prepend, swap_append,        \
->                               __ret, __ptr, __new);                     \
->                 break;                                                  \
->         case 8:                                                         \
-> -               __arch_xchg(".d" swap_sfx, prepend, append,             \
-> +               __arch_xchg(".d" swap_sfx, prepend, swap_append,        \
->                               __ret, __ptr, __new);                     \
->                 break;                                                  \
->         default:                                                        \
-> @@ -73,16 +74,16 @@
->  })
->
->  #define arch_xchg_relaxed(ptr, x)                                      \
-> -       _arch_xchg(ptr, x, "", "", "", "")
-> +       _arch_xchg(ptr, x, "", "", "", "", "")
->
->  #define arch_xchg_acquire(ptr, x)                                      \
-> -       _arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER)
-> +       _arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER, RISCV_ACQUI=
-RE_BARRIER)
->
->  #define arch_xchg_release(ptr, x)                                      \
-> -       _arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "")
-> +       _arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "", "")
->
->  #define arch_xchg(ptr, x)                                              \
-> -       _arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n")
-> +       _arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n", "")
->
->  #define xchg32(ptr, x)                                                 \
->  ({                                                                     \
->
+---
+Dumitru Ceclan (5):
+      iio: adc: ad7173: fix buffers enablement for ad7176-2
+      iio: adc: ad7173: Add ad7173_device_info names
+      iio: adc: ad7173: Remove index from temp channel
+      iio: adc: ad7173: Clear append status bit
+      iio: adc: ad7173: Fix sampling frequency setting
+
+ drivers/iio/adc/ad7173.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
+---
+base-commit: 5ab61121a34759eb2418977f0b3589b7edc57776
+change-id: 20240521-ad7173-fixes-4e2e5a061ef2
+
+Best regards,
+-- 
+Dumitru Ceclan <dumitru.ceclan@analog.com>
+
+
 
