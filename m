@@ -1,122 +1,97 @@
-Return-Path: <linux-kernel+bounces-195810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5768D521C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:10:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487EC8D5226
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5382850CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 043FD28582B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344066D1BA;
-	Thu, 30 May 2024 19:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE655770E9;
+	Thu, 30 May 2024 19:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ILMPnuhG"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cvsPxgf3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139666D1BC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 19:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1E7581D;
+	Thu, 30 May 2024 19:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717096200; cv=none; b=YLfIUsCxSDpf3yutx3YJ7pJ8At9CcJWjSEJ/tdtL77U/YX5J0jFQEDTTyvHlmCyYcuwxUV1IhKSI7aDOjfJqAKtTz5nnpUQTAqIbHobXq2B6mzWC/3Git3N8hpb1kkXXZd5zzWyHaHygvXarZAZMsKtRvdF7NwEcvAAtAdveHdM=
+	t=1717096466; cv=none; b=DLag8l9/w7mV8XsVSCeJ8+Xy1i8GpxzBdqUNXh2W+0xdfjEUSKcFOlxkJHERsz4hy+449k3qsQyFgJ9PVvssFJGpdtWchqHi8IYyPsFRuYIuj5hDgLJRZaFQA4ccucFTsgTYuvJi6rIV/eCpQxohTST+urnT4U+E+yDSQcXYBxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717096200; c=relaxed/simple;
-	bh=xDFSARpGqCzo0/7RFIXaYWJVdeCDcGwisUU1BrK4egA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=beiJgYi5b2pVkorqH9f4QfkBXjriQoOuP0wsYrDaCJBAEDU81yysc48jyv5hPGca5XO1J0NlizKIZpzwdsKixCp8TvB+bWIe65SB26s1gx9k6beuWyAvgItbnSURC01ty3oc0cFDerGedyanz6l1W9/HwlRPByS2GgUHJcR28Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ILMPnuhG; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e22af6fed5so7312439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717096198; x=1717700998; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IcKB/OzN80KdCv2vfgGkfs7hKHO3oNyK2DZlDHQX5Es=;
-        b=ILMPnuhGFVYOy/ypbr/FlTznuN1Y7K8DGO93XpzOsTfj2KsQZ3C2s5cG9R9DU2Ib5e
-         XUcwjvyLDdSHiW5sZ8nCAM4PMeuzH4wpUgNaQr41DUGvzQMVZRJuR/hmpgCq0EkowMVc
-         TFapqL6TRIwDVUmj7jN6MO1lFxpdsRWMvrxC0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717096198; x=1717700998;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IcKB/OzN80KdCv2vfgGkfs7hKHO3oNyK2DZlDHQX5Es=;
-        b=XxCJxbG3emwcuudGwByAucqiRgIv1/EwpIjC9t3tCln6AIMNcDWk6jfieopD2DLJUz
-         W2jk0oYD/RxK+rLhcWemfZQw7qP77zkuZ7Q4SKzDlgWqlqQzltfJY2HAUDXpb9WrYM1z
-         VA9bnSjs937vMFOlnlBO4Hk8DpaQGOJihZ/jD4OiChBqCSvT0BPwQ7Hq8NJXCZVegjOz
-         jhXbAyuwSUebuo7n8mToWMFPFwk3ENVcmtxFfTOK9CkOLN12i2ydaPsgi0wkd2SLGF7P
-         D3kh+QkkPSjU1oDoeJJRZi847I25m0E0qNyYegzhgCaOtkdyWqEISE+Za8imYeKng0Zm
-         js0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcDWBEOyUat54NzaH5Cr8dtX5X/AwA8TQOcOC+vfqPYTXWuHdkBAr1CvoO2r65QGZSNZOik7xmD15yLhW5ALKTeFNKLYTCLhoEjqQN
-X-Gm-Message-State: AOJu0YwoBm9BWgmC65tMCDaN+RD30oZzOTrjpP1QtUbOTXuDpe71YkT7
-	6p1ZJHsyv53rCx7szWEDiShV6g3nUFmc2Lu8ajNI1W2BsvESUqMfDBnvCQmxaLM=
-X-Google-Smtp-Source: AGHT+IFkN8Ai4VWwR2PnmlSq/IYFOdiHtE3kJJIeH5v5Cghihl734+b5MpoKYjTzHOlYkXDDq77yvQ==
-X-Received: by 2002:a05:6602:6426:b0:7e1:8829:51f6 with SMTP id ca18e2360f4ac-7eaff5e2ca8mr14707139f.1.1717096198165;
-        Thu, 30 May 2024 12:09:58 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b488e4b35asm67021173.79.2024.05.30.12.09.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 12:09:57 -0700 (PDT)
-Message-ID: <a56e4c6e-fffe-4c88-9bb2-8bcafbd91fa6@linuxfoundation.org>
-Date: Thu, 30 May 2024 13:09:56 -0600
+	s=arc-20240116; t=1717096466; c=relaxed/simple;
+	bh=7ks52cu97HF3ZwSWzL6+SV9D+EkX6wp45bOJTJPx1MY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LhEOt7whGNrzYtyhBP9QlemEdi33ZemRtDmOAbF+OSmz8t6G2Z9UlDva1c/WVLBaDpL0bthwwZvsmgMkgvrDtjjCnnNQhVa7ino70w8uF3bxiC/WfqSdaLorJYIf2mpSt2irOvNOC1tAwnFq7jJZKcwqES+7eehyLgdVrhclTqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cvsPxgf3; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717096465; x=1748632465;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7ks52cu97HF3ZwSWzL6+SV9D+EkX6wp45bOJTJPx1MY=;
+  b=cvsPxgf3HcZgbdNqr3pFZdANRncc4ubJkCvm29yRWP1FosfsG2KDoA0Q
+   PC/QgkAPfqwhkk5A89tLZsTwsF8bSFVn/LQ2MBihfKGoo+sd9QFM6uPaC
+   kB9NCPxPwBseGVF+tVqrTIuLQbRzx/Mld3dyYRK5rjtHHmVe7reDrbSsZ
+   wdGC7jEH+QqLYcuAYLbERx0LhcygpXRbah5XIscDW+kUeG7ZCS3pCR2xe
+   o3D70TrxmGVdglkLz0y/riscnH5s/UMPs1k6raLvQXspMmH9arHtJpoeO
+   V3bVSEgNiOiJWTGuKfZWimqx5JCUklzdZNS3Y0PRIqapttBQNTbej5EFr
+   g==;
+X-CSE-ConnectionGUID: 5asaoB0nQWurSP4Q6MIjvw==
+X-CSE-MsgGUID: Z+i7yrnrTWe6lA8ZZ6F8EQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13779058"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="13779058"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:14:23 -0700
+X-CSE-ConnectionGUID: BCOldhEOTvu6vlVYnxXAKA==
+X-CSE-MsgGUID: KQsCxVCjTpWYZjtA3frELQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="40978619"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 30 May 2024 12:14:21 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 999EC1A3; Thu, 30 May 2024 22:14:19 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 0/2] gpiolib: Show IRQ line in debugfs
+Date: Thu, 30 May 2024 22:12:28 +0300
+Message-ID: <20240530191418.1138003-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] selftests/futex: clang-inspired fixes
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Edward Liaw <edliaw@google.com>,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- "Nysal Jan K . A" <nysal@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240529022938.129624-1-jhubbard@nvidia.com>
- <b6641940-f10a-4ed4-a672-69c6d51125a7@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <b6641940-f10a-4ed4-a672-69c6d51125a7@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/30/24 08:23, Shuah Khan wrote:
-> On 5/28/24 20:29, John Hubbard wrote:
->> Hi,
->>
->> Here's a few fixes that are part of my effort to get all selftests
->> building cleanly under clang. Plus one that I noticed by inspection.
->>
->> Changes since the first version:
->>
->> 1) Rebased onto Linux 6.10-rc1
->> 2) Added Reviewed-by's.
->>
->> ...and it turns out that all three patches are still required, on -rc1,
->> in order to get a clean clang build.
-> 
-> Thank you. I will apply these for the next rc.
+Couple of patches to show IRQ only (when it's not requested as GPIO)
+lines in the debugfs.
 
+In v2:
+- joined two separate patches
+- rebased on top of latest GPIO for-next (Bart)
 
-John Hubbard (3):
-   selftests/futex: don't redefine .PHONY targets (all, clean)
-   selftests/futex: don't pass a const char* to asprintf(3)
+Andy Shevchenko (2):
+  gpiolib: Return label, if set, for IRQ only line
+  gpiolib: Show more info for interrupt only lines in debugfs
 
-Patch 1/3 and 2/3 please see changes requested.
+ drivers/gpio/gpiolib.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Applied to linux-kselftest fixes branch
-   selftests/futex: pass _GNU_SOURCE without a value to the compiler
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-thanks,
--- Shuah
 
