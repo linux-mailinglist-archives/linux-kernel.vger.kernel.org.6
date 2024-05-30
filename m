@@ -1,148 +1,185 @@
-Return-Path: <linux-kernel+bounces-195839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515588D5290
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0871C8D529F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B39C1C23FA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D441C24097
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC4D136673;
-	Thu, 30 May 2024 19:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E785142913;
+	Thu, 30 May 2024 19:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wp05puD4"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bmvq8Sgg"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416A6482FF;
-	Thu, 30 May 2024 19:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D08433CA;
+	Thu, 30 May 2024 19:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717098383; cv=none; b=ZPP3knOGlSTm/PuR4SIvHANGvWKqyVYt/FwjLwQtqoGdNuRckgAf95DsSA4fzWvz3/fXzN57DDKoX8/bDqwiguM7b8ZXc5/IYs+CtSZ0bqVnwb+eg9qi2mdTUUpR1vStOjKyOLaGDoTBAquwxNxvbWkpgiQvHVEVGZM/Czf1/aQ=
+	t=1717098578; cv=none; b=nCEt6q0U6ZltiTpKIBiCtEFfVc+nx/EF8R/X7cZm+Akntdd6LQYAyjmGZ+OX63tY5I1r/q3YXZ8PeGyeMgHxr5XtKcSFkwzsSXusy93V0xmwAfhjsYzppzupH14yjW4IiWNIJbUTo4uBUiyDrgRYn8AEvaPozI/WZpl+7+LVnVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717098383; c=relaxed/simple;
-	bh=4IDw+U0NYGggxxvx7zM6B2lBbkSgCFEokG3fZQ5dkpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nyrjklDTKxLUMe7D4w6yRA7UKchLiWbMQkziMJr1oiUfHnJALvVaVJ2wXJrxp+AdgvVlfWdVTHMx6AjjTGqA99wuQj53QgULvXPkdMmKbN4J8KMIETtTjvBP84QgpgE7ozi0JEuH1hMms5qs2JlaNKZddGWibyGfNAdbyVus+yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wp05puD4; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1717098578; c=relaxed/simple;
+	bh=dw6PHAUiKNZynTrJW/bQdeGSnY0/fN0GNkW1qwkTAPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHbvm/EpsXN9yzpFgHEYzhIk7KoALQZUx63UzDhHW6F/qU+oJHkHcdj7cgr8dwjOeKLwDK/HLJqN2Uueb4pQG3J3nv9JF55vHUSBtdldSDx8fyGpRMcigLPOEiBAco1i7LRTPR4m0OZZToqDHIUOiEdt/HGocfgveT+UY0+dgOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bmvq8Sgg; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717098382; x=1748634382;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4IDw+U0NYGggxxvx7zM6B2lBbkSgCFEokG3fZQ5dkpU=;
-  b=Wp05puD4Mp2cnokma8Nn6pMJro9xxXQJvJ4jMet43zYB8xdu2LLnh6RU
-   x4IkQkS4PDIw3ybyu9iCY+uTGCOkPfRWh4Ot4hXBG6D1/ng4p1CqfAb8a
-   0qvaLsaHTbSaNbyYll7UfsPEZB95efU7YStpRQYR6uG2UOfMX34ZlqU9k
-   G0FFz4neY8W1uUoLidsdcgJ428z8NztQVZYTBtmL3I5nd2T8MYt9YgogD
-   aUj+D8ADv3eD4eY9xlW/0hGjS9ovle0QorTHVgNJ2y169n8d1gxovVIV9
-   27FxpA6Nt4mbEdjMhgkR8CIIU17dWZ2usqzhi/P6GeYgRBDEVxnVYy7F0
+  t=1717098577; x=1748634577;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dw6PHAUiKNZynTrJW/bQdeGSnY0/fN0GNkW1qwkTAPU=;
+  b=Bmvq8SggsjX22zAb3RqmjnhQb9dMwMfchVW6dT7tKiGNfY+Ja45zrJXB
+   5G7vZKJg74LlGrMIZyBHJnfa5wrn76b1DRzEY+EFHiuMEsCDSnsdMj0L7
+   cywmyWLWTlFkQDz7arHu1u6fb7d6HT6pKQ0L+d1Cim2BuR4dpA02CGn/V
+   hSuIivsJhf22bAbgNNJNgHyt5sEDRC74GFhbB99hhOnt2HgulDLxAZUVA
+   QlUyAZ8pWwyjr51WEMi598Eui9GdgmS4mlnkYUQ6KG6VTFCgxlgvhT7Ch
+   i2XIDNu0b2A28xLwCu47g58ZJd2d+P7DeVF8GMmYUDFeocF/lCP04fKJE
    w==;
-X-CSE-ConnectionGUID: SyUqLT8dRWe5euqNM48O5A==
-X-CSE-MsgGUID: Tf6qnYNgTVe8jeCkYgKURQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31107110"
+X-CSE-ConnectionGUID: 9bvpDVfUSrWh3YIxR128cQ==
+X-CSE-MsgGUID: HkkLzIBtRdWMzhJTFWtyvA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31107727"
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="31107110"
+   d="scan'208";a="31107727"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:46:22 -0700
-X-CSE-ConnectionGUID: cGuxMnMoRXaToZK4VCxdrA==
-X-CSE-MsgGUID: gtHbfsiwTXqwyROoZftCWg==
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:49:36 -0700
+X-CSE-ConnectionGUID: Jh/LxzXKTK+r0DCwXZWcWQ==
+X-CSE-MsgGUID: FP8yERaSS/2g2CbiwJf7JA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="35849719"
-Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.111.178]) ([10.125.111.178])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:46:21 -0700
-Message-ID: <4d2c93e8-5ab0-4b28-af24-c00d57f359fe@intel.com>
-Date: Thu, 30 May 2024 12:46:20 -0700
+   d="scan'208";a="35850528"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 30 May 2024 12:49:33 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sClmE-000FuR-2y;
+	Thu, 30 May 2024 19:49:30 +0000
+Date: Fri, 31 May 2024 03:48:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Subbaraya Sundeep <sbhatta@marvell.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Subbaraya Sundeep <sbhatta@marvell.com>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [net-next PATCH] octeontx2: Improve mailbox tracepoints for
+ debugging
+Message-ID: <202405310351.9HtVnVJ5-lkp@intel.com>
+References: <1717070038-18381-1-git-send-email-sbhatta@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] selftests/x86: fix build errors and warnings found
- via clang
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: angquan yu <angquan21@gmail.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Binbin Wu <binbin.wu@linux.intel.com>,
- Alexey Dobriyan <adobriyan@gmail.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Sohil Mehta <sohil.mehta@intel.com>, Yu-cheng Yu <yu-cheng.yu@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev, x86@kernel.org,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-References: <20240527210042.220315-1-jhubbard@nvidia.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240527210042.220315-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1717070038-18381-1-git-send-email-sbhatta@marvell.com>
 
-On 5/27/24 14:00, John Hubbard wrote:
-> John Hubbard (6):
->   selftests/x86: build test_FISTTP.c with clang
->   selftests/x86: build fsgsbase_restore.c with clang
->   selftests/x86: build sysret_rip.c with clang
->   selftests/x86: avoid -no-pie warnings from clang during compilation
->   selftests/x86: remove (or use) unused variables and functions
->   selftests/x86: fix printk warnings reported by clang
+Hi Subbaraya,
 
-John, could you and Muhammad have a chat and perhaps settle on a series
-series that gets acks from both of you?
+kernel test robot noticed the following build errors:
 
-> https://lore.kernel.org/all/20240501122918.3831734-1-usama.anjum@collabora.com/
+[auto build test ERROR on net-next/main]
 
-I had Muhammad's in my queue and didn't realize we had two overlapping
-series' bouncing around until now.
+url:    https://github.com/intel-lab-lkp/linux/commits/Subbaraya-Sundeep/octeontx2-Improve-mailbox-tracepoints-for-debugging/20240530-195537
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/1717070038-18381-1-git-send-email-sbhatta%40marvell.com
+patch subject: [net-next PATCH] octeontx2: Improve mailbox tracepoints for debugging
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240531/202405310351.9HtVnVJ5-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405310351.9HtVnVJ5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405310351.9HtVnVJ5-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/net/ethernet/marvell/octeontx2/af/mbox.c: In function '__otx2_mbox_reset':
+>> drivers/net/ethernet/marvell/octeontx2/af/mbox.c:23:29: warning: unused variable 'msg' [-Wunused-variable]
+      23 |         struct mbox_msghdr *msg;
+         |                             ^~~
+   drivers/net/ethernet/marvell/octeontx2/af/mbox.c: In function 'otx2_mbox_msg_send_data':
+>> drivers/net/ethernet/marvell/octeontx2/af/mbox.c:254:9: error: 'msg' undeclared (first use in this function); did you mean 'ndmsg'?
+     254 |         msg = (struct mbox_msghdr *)(hw_mbase + mbox->tx_start + msgs_offset);
+         |         ^~~
+         |         ndmsg
+   drivers/net/ethernet/marvell/octeontx2/af/mbox.c:254:9: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +254 drivers/net/ethernet/marvell/octeontx2/af/mbox.c
+
+   216	
+   217	static void otx2_mbox_msg_send_data(struct otx2_mbox *mbox, int devid, u64 data)
+   218	{
+   219		struct otx2_mbox_dev *mdev = &mbox->dev[devid];
+   220		struct mbox_hdr *tx_hdr, *rx_hdr;
+   221		void *hw_mbase = mdev->hwbase;
+   222		u64 intr_val;
+   223	
+   224		tx_hdr = hw_mbase + mbox->tx_start;
+   225		rx_hdr = hw_mbase + mbox->rx_start;
+   226	
+   227		/* If bounce buffer is implemented copy mbox messages from
+   228		 * bounce buffer to hw mbox memory.
+   229		 */
+   230		if (mdev->mbase != hw_mbase)
+   231			memcpy(hw_mbase + mbox->tx_start + msgs_offset,
+   232			       mdev->mbase + mbox->tx_start + msgs_offset,
+   233			       mdev->msg_size);
+   234	
+   235		spin_lock(&mdev->mbox_lock);
+   236	
+   237		tx_hdr->msg_size = mdev->msg_size;
+   238	
+   239		/* Reset header for next messages */
+   240		mdev->msg_size = 0;
+   241		mdev->rsp_size = 0;
+   242		mdev->msgs_acked = 0;
+   243	
+   244		/* Sync mbox data into memory */
+   245		smp_wmb();
+   246	
+   247		/* num_msgs != 0 signals to the peer that the buffer has a number of
+   248		 * messages.  So this should be written after writing all the messages
+   249		 * to the shared memory.
+   250		 */
+   251		tx_hdr->num_msgs = mdev->num_msgs;
+   252		rx_hdr->num_msgs = 0;
+   253	
+ > 254		msg = (struct mbox_msghdr *)(hw_mbase + mbox->tx_start + msgs_offset);
+   255	
+   256		trace_otx2_msg_send(mbox->pdev, tx_hdr->num_msgs, tx_hdr->msg_size,
+   257				    msg->id, msg->pcifunc);
+   258	
+   259		spin_unlock(&mdev->mbox_lock);
+   260	
+   261		/* Check if interrupt pending */
+   262		intr_val = readq((void __iomem *)mbox->reg_base +
+   263			     (mbox->trigger | (devid << mbox->tr_shift)));
+   264	
+   265		intr_val |= data;
+   266		/* The interrupt should be fired after num_msgs is written
+   267		 * to the shared memory
+   268		 */
+   269		writeq(intr_val, (void __iomem *)mbox->reg_base +
+   270		       (mbox->trigger | (devid << mbox->tr_shift)));
+   271	}
+   272	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
