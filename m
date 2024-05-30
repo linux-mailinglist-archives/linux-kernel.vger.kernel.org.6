@@ -1,138 +1,124 @@
-Return-Path: <linux-kernel+bounces-195928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281D48D546B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:15:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D075A8D546E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D31FD2849A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:15:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CF511F22B82
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2F7183084;
-	Thu, 30 May 2024 21:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6166318399C;
+	Thu, 30 May 2024 21:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="TZMhwOHw"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KVM+6TUw"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE970181D0E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2B247A5D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717103594; cv=none; b=giAHs5G0kpVystpfBM8/y60e/DKV4K2rwq6KJAyzCeXUU8txQpjmy2DUr6Jz99PcEiUC0EPU80TQ0dgfLd5xBBw8VP2+jKBV2TScbsTvyIbA+LRu1Vo+y+/ly4GNt1mJWOThYv1zBxTH8/vsrdKbd/D0S/u+oWtUSGmtyNBfT10=
+	t=1717103623; cv=none; b=SrrIQ4Hl5ydzwA7y3dkUBTRfziccgiskeUMRJSW/CFk3QMI8xKspBeC2E8sxmBqturHdu7AcodIv9jBF6p3agVKkVWMbXTdFkB5INHdzhrT+nQ8tl5gNeiNNxN7lRiqMt4c+4jIaQ9IvAR7Y5lhdBJ6NTuNSfWqp4G22oq5dERA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717103594; c=relaxed/simple;
-	bh=ce8FpwxqQD62UnVP0DyeeRdfMHWhf0s5UptEAbc9/II=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=MGs1jFJQzzCvRy5x8cPm+Ppuet2x3ePrJp2UQXWLyL31m8rdNA//U/ttxaIFVm8NhngxpH2TDxhBHeAM5vjMtklgkSDWpVi2lMoqW8Q5JTd9XPTFNMuG2NfwcnZG413pkoAZB3muF0Vm48Id6mqvgkEjXAo9LwqNBHbSh3hgD1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=TZMhwOHw; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2c19bba897bso1061806a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:13:11 -0700 (PDT)
+	s=arc-20240116; t=1717103623; c=relaxed/simple;
+	bh=KF2KZFt7KqXZHK0uvHeIz9ZPa10L9lrpUZ+5YMf1XCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oXPbGmBYi3tjCC9BAgwVIGZHJx13pjrE8BMvjjM94TrerM3YSw+8XWm4oaSLyMl4sfFZArOIj6yf3tXuF76aimDEVPqUGTkyHvtgBmlGnPQGwZ1Oemc00WFVF/Ix5zdDU1O9YfQ/CGRi7hQP2qvkkVGaAC56EyQd/G04LpRnOLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KVM+6TUw; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-36dd6cbad62so783465ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:13:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1717103591; x=1717708391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MUpctKvfevQrHdaGpIcM44yzfFl2nDayUUMZ29nidi4=;
-        b=TZMhwOHwL9xF06fxbDZGgA/VlawJJeQ29ON4WsqrPqKbjILG+KlemVZNwLaglA4MWL
-         u/f/Xj/pvrhVr2Jj9u6o+1NzRlAM1HVk7SgJhZiYkCwBi8CN3DRRKx8CvoYv/Bc2aeXf
-         /DnUwhbdVQm97auyxTzMFzLo5ATLu9IPGzFEaqbWE8f6Fto72tUurZCzKmt7WOIiKH8y
-         FxqiKhK7FXF2jfNFXpGT7jH4qcU1/zQLH+cET2/+6hw/R4Yg9RxlAJAmkQDFR1Qy6hkV
-         wi2S2TfVtayi/LOi0uoUkz7+nD2hGF7xNVz6Oq6s7bCFncTQ0MfBJuYfkKRTrOHLlql7
-         pBgg==
+        d=linuxfoundation.org; s=google; t=1717103621; x=1717708421; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Cc22q3I70MPueAnmKsTkHjW1R6pGbLRcvceT5HSMS2c=;
+        b=KVM+6TUw6xdnmceVB0rErUcS9g/1AO1COXURsAf1VgLUtQO5dT0QmULqG8z+aM8M2U
+         7+INoD6TSlybTgr97yQ/BQ1zfl6lKOnHMO+Omhj64+mG0fFYEBd9Cbj2DKEbYwzb8dU1
+         69/xwTzULZB/JpOhb3YDvUjwxob13AdMEQ89g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717103591; x=1717708391;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MUpctKvfevQrHdaGpIcM44yzfFl2nDayUUMZ29nidi4=;
-        b=kyvbeWmPaxOVKb2sBO2UJSRvwDMDwu79lojl/fbdThRsm5i0QivC5+KUGafx+HnpOW
-         /3/QbZFxOMAm6hXauhCHbrQE6NwZ+YzEa/G35JVPlkisEnGE53Jl8xIPo+/nVm9RuwSt
-         /P/yvMBovRhAoCazYXnbUFgMtwxfk0K6e6OsUoFMCiD5CDCWOhh9P5fb7X/R8dfMznHD
-         T+no6nns2x2TQ1gglVE9gIspvRHNjYyn6BiiCmyyI+vpq8YELMfewDg3Mb8Gl1qoIoxi
-         vPa2ULsFQRRxWak+lj64cIwdbvU9/yG9iHSKgGq+dYJNOSNh1g/84aPDWrrKxR4888vp
-         QeuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCzsuzyPNB7szduIfnXRsY/cR+4Talj+ru7WO/ASYkiK+6yYhzygTQ5mLN84MRU1FFkQTEjkfrypdCaMNSuUDRhrczDG2e6cRGF31c
-X-Gm-Message-State: AOJu0YwMTipMFqiannoKDhd6aWEtwWfduayjs27B1AQrPDSbLHasJmc4
-	CVtSSxv6euGK5x2A8r5fvxrS3gtiosJL4bHssgmo9NPdyF8SjzJDjYWJoRKhAE0=
-X-Google-Smtp-Source: AGHT+IG5bEF7vqEE2pvUr7TZyQpWPRiOExDqlbLZlE02H6bgGUcM0bCR65XCXs/V68DITptuE8d6Mg==
-X-Received: by 2002:a17:90a:c914:b0:2c1:b66c:d414 with SMTP id 98e67ed59e1d1-2c1b66cd54dmr2280707a91.36.1717103591073;
-        Thu, 30 May 2024 14:13:11 -0700 (PDT)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1c27e3a5asm210516a91.30.2024.05.30.14.13.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 14:13:10 -0700 (PDT)
-Date: Thu, 30 May 2024 14:13:10 -0700 (PDT)
-X-Google-Original-Date: Thu, 30 May 2024 14:13:08 PDT (-0700)
-Subject:     Re: [PATCH v5 08/16] riscv: add ISA parsing for Zca, Zcf, Zcd and Zcb
-In-Reply-To: <de2c9064-bb01-42b2-9c0f-884dcabf7c40@rivosinc.com>
-CC: Conor Dooley <conor@kernel.org>, corbet@lwn.net,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-  anup@brainfault.org, shuah@kernel.org, atishp@atishpatra.org, linux-doc@vger.kernel.org,
-  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kvm@vger.kernel.org,
-  kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: cleger@rivosinc.com
-Message-ID: <mhng-d5016935-99b6-4dc6-bbd2-ed84eb834f98@palmer-ri-x1c9a>
+        d=1e100.net; s=20230601; t=1717103621; x=1717708421;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cc22q3I70MPueAnmKsTkHjW1R6pGbLRcvceT5HSMS2c=;
+        b=RnaOyeFBlvIGLxvnSzOMM+ikXgXEYSUeN7T+ekO15DkYB2lY9go0BGpDYH98zmifrT
+         kjgfWvEa93KEqE+bDcZ1WCVWvDFa0AEoAjIQBMruuUiDIYgzqUanXvmnmXuREDiKboUV
+         AEDJkuokOOwcD1Nm1natUr4190C4on7i3kp4oNzHt5t6nXF3mbx10pUqRx3MfB0TQlu5
+         oaCh4bW+StzOvuDOhf4E3elaSNdl9dhmBjYKmJ9GtoTwZ9Rn2QzR1bN12ShSCR7XY4Ih
+         gOy9BA7jnuWXZQfKckrJt1Rcb96l0+If1VAFgJHFUxJ3/nslcUyjxaB6ZlzdKSjlys6J
+         vaXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXjU1AMZRIovut76CUc7ZyoUO1si8iqda/9WVn8Lg3p4KoOLDtopAgCSOMvu/xyuMsHNmKJ+iJei7ENfPA7R+0f7R8uEsg93hLA7aB
+X-Gm-Message-State: AOJu0Yy5NBFJfsSqneYzXKwg9tefy15inqInl7v4R2w6R/wLWeaxAhBR
+	XD/66DQ6b/PegYMEBOYILhyHatGSmMYosWRTojPBo9rig46cEpD8FnCIoxOW5nY=
+X-Google-Smtp-Source: AGHT+IEpQILx8LWmHPHqM2sy4iJv5pqIjurHEv49PTQSqq85xRqucuPLELtBfibS3cv3oIO0UwlOVQ==
+X-Received: by 2002:a05:6e02:1d07:b0:374:88c6:385b with SMTP id e9e14a558f8ab-3748b9d096bmr894325ab.2.1717103621456;
+        Thu, 30 May 2024 14:13:41 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b48cd014dcsm115065173.157.2024.05.30.14.13.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 14:13:41 -0700 (PDT)
+Message-ID: <b245cd0a-8a87-4169-b0de-e4f6ce6984c6@linuxfoundation.org>
+Date: Thu, 30 May 2024 15:13:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] selftests/futex: don't pass a const char* to
+ asprintf(3)
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Edward Liaw <edliaw@google.com>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ "Nysal Jan K . A" <nysal@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240529022938.129624-1-jhubbard@nvidia.com>
+ <20240529022938.129624-3-jhubbard@nvidia.com>
+ <94fe2649-8def-4f2a-ba5f-19ae8a4226bf@linuxfoundation.org>
+ <f0a1ca78-f94e-4f02-a5e0-ef9d610fac07@nvidia.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <f0a1ca78-f94e-4f02-a5e0-ef9d610fac07@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Wed, 22 May 2024 00:20:09 PDT (-0700), cleger@rivosinc.com wrote:
->
->
-> On 21/05/2024 21:49, Conor Dooley wrote:
->> On Fri, May 17, 2024 at 04:52:48PM +0200, Clément Léger wrote:
+On 5/30/24 13:16, John Hubbard wrote:
+> On 5/30/24 12:04 PM, Shuah Khan wrote:
+>> On 5/28/24 20:29, John Hubbard wrote:
+>>> When building with clang, via:
+>>>
+>>>      make LLVM=1 -C tools/testing/selftests
+>>>
+>>> ...clang issues a warning, because test_name is passed into asprintf(3),
+>>> which then changes it.
 >>
->>> +static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *data,
->>> +				 const unsigned long *isa_bitmap)
->>> +{
->>> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) ? 0 : -EPROBE_DEFER;
->>> +}
->>> +static int riscv_ext_zcd_validate(const struct riscv_isa_ext_data *data,
->>> +				  const unsigned long *isa_bitmap)
->>> +{
->>> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
->>> +	       __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_d) ? 0 : -EPROBE_DEFER;
->>> +}
->>
->> Could you write the logic in these out normally please? I think they'd
->> be more understandable (particular this second one) broken down and with
->> early return.
->
-> Yes sure. I'll probably make the same thing for zcf_validate as well as
-> removing the #ifdef and using IS_ENABLED():
->
-> static int riscv_ext_zcf_validate(const struct riscv_isa_ext_data *data,
-> 				  const unsigned long *isa_bitmap)
-> {
-> 	if (IS_ENABLED(CONFIG_64BIT))
-> 		return -EINVAL;
->
-> 	if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
-> 	    __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_f))
-> 	       return 0;
->
-> 	return -EPROBE_DEFER;
-> }
+>> Please include the warning in the commit log.
+> 
+> Ah, OK, the warning is:
+> 
+> futex_requeue_pi.c:403:17: warning: passing 'const char **' to parameter
+> of type 'char **' discards qualifiers in nested pointer types
+> [-Wincompatible-pointer-types-discards-qualifiers]
+> 
+> 
+> Please let me know if you'd prefer a v3, or if you'd rather fix it
+> up, whatever seems easiest for you.
+> 
 
-Are you going to send a v6 (sorry if I missed it, I'm trying to untangle 
-all these ISA parsing patch sets).
+Yes please send me v3.
 
->
->>
->> Otherwise,
->> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->>
->> Cheers,
->> Conor.
+thanks,
+-- Shuah
+
 
