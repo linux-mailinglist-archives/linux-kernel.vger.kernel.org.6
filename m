@@ -1,81 +1,68 @@
-Return-Path: <linux-kernel+bounces-196033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8148D564A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F298D5649
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376491C23067
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25131C21F2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016CC184124;
-	Thu, 30 May 2024 23:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686D917C7B0;
+	Thu, 30 May 2024 23:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xsZwkpy+"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xpi48WWg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A8417D346
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E3455896;
+	Thu, 30 May 2024 23:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717111859; cv=none; b=fqxBfuoakkc1MrbUFHDbt8Z5wskjVaWDS177WGHELUEAW/72zkku5TEKNkbAh/zY3cHuYqH5EkMyHmqkY+nxDwKBdZBpV8t7DQpHXpTaE/cm+Ngb6DdwobkaaLlwQuHdzxAU5KknaUI5rDqGaq2Qhqw6Y+Jse3hu7WcZcyW91NI=
+	t=1717111856; cv=none; b=XdOJ9KYS8yTI8Eb9E7RLXv4rtGAXSunVDH93isAQ7CXeX8VoNvbf1vi9bsX/+qmwmBftRv20d14e31I515LI1yxNibSOAVlyybtwHAjcEcYjoNj8XNktgzwzNcD4QIJY06ybS5fKuuGC95aGTLMhvk8TjRFKLntcZLMZFjjbwWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717111859; c=relaxed/simple;
-	bh=KSRSDmHQyX2bSI500aqnRNknWla/y1id5hPtxj9FCZY=;
+	s=arc-20240116; t=1717111856; c=relaxed/simple;
+	bh=Zw6cDfQf5VbvhXG1V2J4XmsCsJdE0FaVJA1swU9GMUs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rv6ghu8KjWsqnzo6LKKwUDvPaUGBtsYxRZbTM0Z5E+3OE+kvRWN2JztdArTnTIPx/wxQqrIUDqfajn6ePWLFF99pAx3Qeq2sgkEo0XPnavI6jE4s1cAexXP1ZCNwmGfiR0Sd6k1aYYk60y+6QbAMtS564kZmkGQLE5OrNbxrkdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xsZwkpy+; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b78ef397bso1491365e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717111856; x=1717716656; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yy768pJR9cLFIdd6Yx5kMuhYcotmFOIkzIsvZV+Yils=;
-        b=xsZwkpy+ww+Ulb4TucEZ/+rvFxPJ7Fo4aCxgjUJTEs3/N6dWfBsTYSCGtApbKJtTUs
-         q1gP1eIBXEJmDzMrWsqMM0cxfaLbU8AREBVkCkthPoD8Mpd3mPB/qdWr/Fmzayt1U9HC
-         Lk0VlV3EGplzOgXo2Zs6FJCOQj0DH/KomFvefCNnjFs07E8S3CGeqqX4DqpwhBQRkbCl
-         OEwIaygI3hRL8Eea+d1JZYdDa0PCMt7zlXetM6OJ0b3abZLMuWlx3CwCsXsTPX1Pa6RT
-         fXmmLLK8IGlWNSrR2DuA5XFAZhI2jJJm4rvin+QE3afH02Ey+d4f8fWXZi2zRp4I9N6q
-         Obuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717111856; x=1717716656;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yy768pJR9cLFIdd6Yx5kMuhYcotmFOIkzIsvZV+Yils=;
-        b=FGPkEVV8uLgQe3Chy6vovqdOB565zpskU5ikK6tLVHPUl/rbpx10Ch7DWzjUDk6pzE
-         sX/2zvPpfLLa34CzAsSV90CW8PhFHMFEsxmU4T4Ritu3ykbnrAUnK++BEABTc4qL1EGr
-         IfXXqCZRsekzbn98Mh+nrHJpdTYFuuvpDguctEoUtLU9U/5y6aM12LCA5iQrMuhLxjFr
-         NnM4s25kWGGrOfZhEtOTYyoClvQbY/rwp7A8YswqwpmGatjWmHGZdVCc2UI+3wVjRrcS
-         Rcq0NPoPtMf2zJJtosCFtOZV4GMZBZKnt2CJ3ohv5GOdQecbevWwg51dmdd2fdjLUSln
-         vsEg==
-X-Gm-Message-State: AOJu0YwpcWeMD66yXfxt5kTh6zLsDqbLg8rSC6W09xcd6J8Ag61O8rtX
-	IqBEVgn1+vromay3w3GvKeDOSBxiH5rtWeSSeVuJ5vvJN/KLvvw291rhkGPlln8=
-X-Google-Smtp-Source: AGHT+IGsB/ugPpgy96+NIEx08Z2+CgvenCRumuYN/yJDk0qMmI250mrqJk9/efH0D//O6Mmos4Qqaw==
-X-Received: by 2002:a19:5504:0:b0:52b:6a18:5b00 with SMTP id 2adb3069b0e04-52b8878cc6bmr104632e87.34.1717111855617;
-        Thu, 30 May 2024 16:30:55 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d75fa0sm123961e87.143.2024.05.30.16.30.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 16:30:55 -0700 (PDT)
-Date: Fri, 31 May 2024 02:30:53 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jayesh Choudhary <j-choudhary@ti.com>, Chris Healy <cphealy@gmail.com>
-Cc: linux-kernel@vger.kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	mripard@kernel.org, sam@ravnborg.org, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	a-bhatia1@ti.com, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 1/2] drm/bridge: sii902x: Fix mode_valid hook
-Message-ID: <qiu6rar4ebaxceufmy6rppxetjqi7goajc46c63aadd5o2uwjw@ctsfmqk5fdvb>
-References: <20240530092930.434026-1-j-choudhary@ti.com>
- <20240530092930.434026-2-j-choudhary@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozk0bMx6BrbV7rilFaQmL3D4DT2qWMkUtjxuUXHzwwPjOtB63ET4fvb1ASPbyCCpa3Ba/htwFXWUJJcDw8Olbueytq/RWAWa6xkXJmBLe5uSm0DA8wjSbBIPBzJYRODpHQq1kOVEj0ASCo5zEU8ZdEcR3vspzxHFpFonwq4TtbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xpi48WWg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 584DFC2BBFC;
+	Thu, 30 May 2024 23:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717111856;
+	bh=Zw6cDfQf5VbvhXG1V2J4XmsCsJdE0FaVJA1swU9GMUs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xpi48WWg2RTfz2qnKxQ7nYoSBACvnHLuLZ0koxoO8Mb1bETvD9q2ztwSqnSQuuEU6
+	 oJfAUxDBwMs3l48E1dmLGy1CYvEIr8b4jAkYYGavX0UvIUE95cOjQcbZbZIFhfY4ai
+	 GpnzX3bfCNqy8gi9Rfclz2sI9b0bEGwJkLsQ3+/WvDtPqsPIJxnr2TBEz3Kq10lsQM
+	 fykm+SGT5dX5qnGftk3X0kGMNZl6QAk2qjZ3yNbolLub9q5W8qobBFJFjjnZ5nsMss
+	 Eanj4GhuRJVaoyLFD1djnSKu5R8Lr8+oDkoAFZGTBgdC+zsWjRNt/KClIuXeF8SbfN
+	 w2ZP0n+6Bv+Hw==
+Date: Thu, 30 May 2024 16:30:53 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+	Joel Fernandes <joel@joelfernandes.org>, neeraj.upadhyay@kernel.org,
+	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
+Subject: Re: arm-linux-gnueabihf-ld:
+ kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
+ `__bad_cmpxchg' follow
+Message-ID: <20240530233053.GA1601862@thelio-3990X>
+References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
+ <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
+ <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
+ <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
+ <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
+ <20240530215153.GA466604@thelio-3990X>
+ <583e2476-50c5-4f9c-85af-f4489a53083b@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,27 +71,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240530092930.434026-2-j-choudhary@ti.com>
+In-Reply-To: <583e2476-50c5-4f9c-85af-f4489a53083b@paulmck-laptop>
 
-On Thu, May 30, 2024 at 02:59:29PM +0530, Jayesh Choudhary wrote:
-> Currently, mode_valid hook returns all mode as valid and it is
-> defined only in drm_connector_helper_funcs. With the introduction of
-> 'DRM_BRIDGE_ATTACH_NO_CONNECTOR', connector is not initialized in
-> bridge_attach call for cases when the encoder has this flag enabled.
-> So move the mode_valid hook to drm_bridge_funcs with proper clock
-> checks for maximum and minimum pixel clock supported by the bridge.
+On Thu, May 30, 2024 at 03:05:21PM -0700, Paul E. McKenney wrote:
+> On Thu, May 30, 2024 at 02:52:48PM -0700, Nathan Chancellor wrote:
+> > On Thu, May 30, 2024 at 10:24:05AM -0700, Paul E. McKenney wrote:
+> > > And for an untested first attempt at a fix.
+> > > 
+> > > What did I mess up this time?  ;-)
+> > 
+> > An include for cmpxchg-emu.h ;)
+> > 
+> >   In file included from arch/arm/include/asm/atomic.h:16,
+> >                    from include/linux/atomic.h:7,
+> >                    from include/asm-generic/bitops/lock.h:5,
+> >                    from arch/arm/include/asm/bitops.h:245,
+> >                    from include/linux/bitops.h:63,
+> >                    from include/linux/log2.h:12,
+> >                    from kernel/bounds.c:13:
+> >   arch/arm/include/asm/cmpxchg.h: In function '__cmpxchg':
+> >   arch/arm/include/asm/cmpxchg.h:167:26: error: implicit declaration of function 'cmpxchg_emu_u8' [-Werror=implicit-function-declaration]
+> >     167 |                 oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+> >         |                          ^~~~~~~~~~~~~~
+> >   cc1: some warnings being treated as errors
 > 
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> ---
->  drivers/gpu/drm/bridge/sii902x.c | 32 +++++++++++++++++++++++---------
->  1 file changed, 23 insertions(+), 9 deletions(-)
+> Good catch, and thank you for testing this!  Does the updated version
+> shown below do better?
+
+Yes, that matches what I tested locally before I replied initially.
+
+Thanks for the quick fix!
+
+Cheers,
+Nathan
+
+> 							Thanx, Paul
 > 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Chris, you might be interested in testing this series.
-
--- 
-With best wishes
-Dmitry
+> ------------------------------------------------------------------------
+> 
+> commit 74e3470afacaa9d2f37db4773a5fef887ac4ef56
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Thu May 30 10:11:31 2024 -0700
+> 
+>     ARM: Emulate one-byte cmpxchg
+>     
+>     Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on ARM systems
+>     with ARCH < ARMv6K.
+>     
+>     [ paulmck: Apply Arnd Bergmann and Nathan Chancellor feedback. ]
+>     
+>     Reported-by: Mark Brown <broonie@kernel.org>
+>     Closes: https://lore.kernel.org/all/54798f68-48f7-4c65-9cba-47c0bf175143@sirena.org.uk/
+>     Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+>     Closes: https://lore.kernel.org/all/CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com/
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>     Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+>     Cc: Arnd Bergmann <arnd@arndb.de>
+>     Cc: Andrew Davis <afd@ti.com>
+>     Cc: Andrew Morton <akpm@linux-foundation.org>
+>     Cc: Linus Walleij <linus.walleij@linaro.org>
+>     Cc: Eric DeVolder <eric.devolder@oracle.com>
+>     Cc: Rob Herring <robh@kernel.org>
+>     Cc: <linux-arm-kernel@lists.infradead.org>
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index ee5115252aac4..a867a7d967aa5 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -34,6 +34,7 @@ config ARM
+>  	select ARCH_MIGHT_HAVE_PC_PARPORT
+>  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+>  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
+> +	select ARCH_NEED_CMPXCHG_1_EMU if CPU_V6
+>  	select ARCH_SUPPORTS_ATOMIC_RMW
+>  	select ARCH_SUPPORTS_CFI_CLANG
+>  	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
+> diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
+> index 44667bdb4707a..a428e06fe94ee 100644
+> --- a/arch/arm/include/asm/cmpxchg.h
+> +++ b/arch/arm/include/asm/cmpxchg.h
+> @@ -5,6 +5,7 @@
+>  #include <linux/irqflags.h>
+>  #include <linux/prefetch.h>
+>  #include <asm/barrier.h>
+> +#include <linux/cmpxchg-emu.h>
+>  
+>  #if defined(CONFIG_CPU_SA1100) || defined(CONFIG_CPU_SA110)
+>  /*
+> @@ -162,7 +163,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
+>  	prefetchw((const void *)ptr);
+>  
+>  	switch (size) {
+> -#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
+> +#ifdef CONFIG_CPU_V6	/* min ARCH < ARMv6K */
+> +	case 1:
+> +		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+> +		break;
+> +#else /* min ARCH >= ARMv6K */
+>  	case 1:
+>  		do {
+>  			asm volatile("@ __cmpxchg1\n"
 
