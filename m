@@ -1,290 +1,294 @@
-Return-Path: <linux-kernel+bounces-195203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E878D48C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC378D48D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D832B2147D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E631C21B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCD613B290;
-	Thu, 30 May 2024 09:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5A9148841;
+	Thu, 30 May 2024 09:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="YTf+OeRz"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XGNk4hJY"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F902B9A6
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CCC18396D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717062088; cv=none; b=O2zpvutLe3DEqNuXbmig0DPX0lVq22h+qY4ldF2GkawCxO+P6UFe2oJfQ+QzY38FtoT5bs7hlDk9oLRNsk0Yx5e2YSXVJQC3MuUDj2aaJQU9w4H547Pp7MZuBvDrS/P3lb8lf8qEPMFkyRhpNA2gkzCRltXQwrr3ZkoQxPDFZ3k=
+	t=1717062267; cv=none; b=UXml2hrXbiM++YMzmaLD9AM4MSRHbH0T1V8mPZeZJB+SB5uXkI6XKQTsavWnWMpN5QCnhypKTdxOik0iZBRQxjC17MnxDOOGqiU8aeO11fPBXRb3kOkOJs+Kz3Bl8eZ4v3lzeqBA5QI4ZoBbzDjKp8/eqUy/8FXEbd9QjnXBHGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717062088; c=relaxed/simple;
-	bh=0Iqsq+M00t2+tehyQ70ELjWVv+y/7Jo4pD85rhygNH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WOLMOX3YS15FGH+EkncIbl+2VVXr8wMxDYuH0vyy57WtL4g4ozHoJ53GLAYqK9rsdWNacbeU0UrVrZHoIBruaqeXSX8FikEw8zptOmVQfi7vhalnF8yTpY5ZMuTi6gsHPGI47crKdjDDRcENIfsdRTeXX87fFXhQqNM6XVWWjYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=YTf+OeRz; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b970e90ab8so371090eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1717062086; x=1717666886; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Ap2dugGmP5WE2E5FcASCxui6sxizua7AcbrO2mdh8Y=;
-        b=YTf+OeRzs0eo7M1pCgIZZzIb6bNZmi/m1uj7L95xMRqVyvNLm59JcHb1vZ0T7EeF1p
-         CWeuQU+BC7HvBBoMeQV/XEnTBg8TWmIJiD6E2dxPRNi+mOUlaBzKfigEEorxZuwGaxx4
-         ya2x+BkCDBTXySqratze/nmpoAOcVDLfEpeFfz1kHBItN9JBYjEwaVrkWqEPfp+00iio
-         AnhQXApiPsKaKDpfijbxQf8yoU4+SzzXy5br2Ls5tRDGTSFy70WLJEuZBwO+s2ZvnYB1
-         rifldwi+uZ4wyyDeZ6/tGK0Hyp3ddueH4If2n8PimV1eV2L3UzMIbEiwn5P9lM3FMcqq
-         LCoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717062086; x=1717666886;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Ap2dugGmP5WE2E5FcASCxui6sxizua7AcbrO2mdh8Y=;
-        b=NzYu10zLOekrbOHXhBiBdtQUsFfIspgofAlNYI8cmqn0HEtizSGxPlQE9hIDNYj3LK
-         eWKzrxJ2AW7grroDaHCYbtBLK+rY/aElK+KPujr8FAeXvEpcIRLdTcYms3JYVGpJBIVr
-         9CjdH2jzJ2Ow6bNtoiXr7Dxn9S8jo5rJ8zctYPZyiU2R6yvJZNbwVoCmyDCizoZH9btW
-         T7aCwauhO04x+tt2sfF65ANimsWV6DGbWORta8qxOzBo8S6tI9pN43zmeA/XJscJW1TD
-         AbE65WGN8AzzjWKosSUMrGr2lnfZyXiZLBN7xhPFjI8pxdFf3ANjbYdbjj1VCmU4riSk
-         MRxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUx6FtJfTESvW8X1C3UnnlPzg1uNUMekJr723Ww7XWTRF83aNo7Ql9uhCjMaf2KMTYp11Ddi673ZNPW5kVlXWc1MM0WcHFOsKaFmLI
-X-Gm-Message-State: AOJu0YxjPh4DEjp2utMnIQgy7Em0Y9pHwIiqIeJvB3Mp+aIwO+mvr9TZ
-	OKlQAUkAzIAcRz27rGG8WJiu7pWp4Snzhx073eQ6lGhZysuW7EttRmBYyiVgvE3PygCEeS7zVuW
-	gKZkeVf8/SVJTbs8A7w8Hf3u15EBRM0hDsDloRA==
-X-Google-Smtp-Source: AGHT+IGs8c+j/SX1TKRu2grSTFbKjYgLZf2leGT/SdcfsZ4CQqrfPAwFqljLFAvGYqp/iOrNutq7K/dJ1Cm5fQG1ADA=
-X-Received: by 2002:a05:6820:2216:b0:5b9:8a06:4e84 with SMTP id
- 006d021491bc7-5b9ec554fd3mr2313780eaf.2.1717062085690; Thu, 30 May 2024
- 02:41:25 -0700 (PDT)
+	s=arc-20240116; t=1717062267; c=relaxed/simple;
+	bh=Ah8T+DbZaMK310fcA0Lv4Scw3Ix1e0dohjdOJ3aSqj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lYKh2YFImuzwKT5pRAAU+7eJ1ns3OJZXRjjKFeAW4Zxm1oMYXTWrKBXX/wizP0xVMVxPzjK+R+Z3YyxG86Yo1lXpmxLb2Bsb8EtbJaTza5q/OyryKWuYO4VVE5pq68LHbafI9/hSK/HAFmSWGnRlylkMWAED7qlyFvg4AEbyTiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XGNk4hJY; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U9hplk108023;
+	Thu, 30 May 2024 04:43:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717062231;
+	bh=cVkiqLAx26wTUKDADQCPLftPp08NYweVhmUaWKz3dhg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=XGNk4hJYYWvoixVg968XV3BYNcrzC1Rp1FBtMC3SKjEkHLykpAOPj8E04/sUg9pRX
+	 iUqKjPgYaGR9YoxtDBeAI3dV4gPq0cf3QJvPwlag8wmEy/4CXKUJgRpwlzpaAErm/N
+	 MRVcmvKohTFWM8lD/QsqhJlrk2GeBdEpx41u1ENY=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U9hpPf108094
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 04:43:51 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 04:43:50 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 04:43:50 -0500
+Received: from [172.24.227.31] (uda0496377.dhcp.ti.com [172.24.227.31])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U9hhQV010017;
+	Thu, 30 May 2024 04:43:43 -0500
+Message-ID: <fa97de63-7657-4810-b5c3-1b9f8512e027@ti.com>
+Date: Thu, 30 May 2024 15:13:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
- <20240524103307.2684-2-yongxuan.wang@sifive.com> <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
- <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr>
-In-Reply-To: <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr>
-From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Date: Thu, 30 May 2024 17:41:14 +0800
-Message-ID: <CAMWQL2g7sgt9-_4YTbRg3SRrUJE_4HEsqEUO44oA4=vHZA4L9A@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 1/5] RISC-V: Detect and Enable Svadu Extension Support
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
-	vincent.chen@sifive.com, cleger@rivosinc.com, Jinyu Tang <tjytimi@163.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Samuel Ortiz <sameo@rivosinc.com>, 
-	Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Leonardo Bras <leobras@redhat.com>, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] drm/bridge: Introduce early_enable and late disable
+To: Maxime Ripard <mripard@kernel.org>
+CC: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Andrzej Hajda
+	<andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert
+ Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Thomas
+ Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>,
+        DRI Development List
+	<dri-devel@lists.freedesktop.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Thierry
+ Reding <treding@nvidia.com>,
+        Kieran Bingham
+	<kieran.bingham+renesas@ideasonboard.com>,
+        Boris Brezillon
+	<boris.brezillon@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Jayesh Choudhary
+	<j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240511153051.1355825-1-a-bhatia1@ti.com>
+ <20240511153051.1355825-7-a-bhatia1@ti.com>
+ <20240516-bipedal-keen-taipan-eedbe7@penduick>
+ <ba8d0b98-67d2-41e2-b568-a40543a9b0fa@ti.com>
+ <20240521-realistic-imposing-lemur-aac3ad@houat>
+ <1a6b8a83-b378-4869-b536-0fca76e428bf@ti.com>
+ <20240528-encouraging-gray-lionfish-54ca83@houat>
+Content-Language: en-US
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <20240528-encouraging-gray-lionfish-54ca83@houat>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Alexandre,
+Hi Maxime,
 
-On Thu, May 30, 2024 at 4:19=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
-te:
->
-> Hi Yong-Xuan,
->
-> On 27/05/2024 18:25, Andrew Jones wrote:
-> > On Fri, May 24, 2024 at 06:33:01PM GMT, Yong-Xuan Wang wrote:
-> >> Svadu is a RISC-V extension for hardware updating of PTE A/D bits.
-> >>
-> >> In this patch we detect Svadu extension support from DTB and enable it
-> >> with SBI FWFT extension. Also we add arch_has_hw_pte_young() to enable
-> >> optimization in MGLRU and __wp_page_copy_user() if Svadu extension is
-> >> available.
->
->
-> So we talked about this yesterday during the linux-riscv patchwork
-> meeting. We came to the conclusion that we should not wait for the SBI
-> FWFT extension to enable Svadu but instead, it should be enabled by
-> default by openSBI if the extension is present in the device tree. This
-> is because we did not find any backward compatibility issues, meaning
-> that enabling Svadu should not break any S-mode software. This is what
-> you did in your previous versions of this patchset so the changes should
-> be easy. This behaviour must be added to the dtbinding description of
-> the Svadu extension.
->
-> Another thing that we discussed yesterday. There exist 2 schemes to
-> manage the A/D bits updates, Svade and Svadu. If a platform supports
-> both extensions and both are present in the device tree, it is M-mode
-> firmware's responsibility to provide a "sane" device tree to the S-mode
-> software, meaning the device tree can not contain both extensions. And
-> because on such platforms, Svadu is more performant than Svade, Svadu
-> should be enabled by the M-mode firmware and only Svadu should be
-> present in the device tree.
->
-> I hope that clearly explains what we discussed yesterday, let me know if
-> you (or anyone else) need more explanations. If no one is opposed to
-> this solution, do you think you can implement this behaviour? If not, I
-> can deal with it, just let me know.
->
-> Thanks
->
->
+On 28/05/24 17:13, Maxime Ripard wrote:
+> On Fri, May 24, 2024 at 04:38:13PM GMT, Aradhya Bhatia wrote:
+>> Hi Maxime,
+>>
+>> On 21/05/24 18:45, Maxime Ripard wrote:
+>>> Hi,
+>>>
+>>> On Thu, May 16, 2024 at 03:10:15PM GMT, Aradhya Bhatia wrote:
+>>>>>>  	/**
+>>>>>>  	 * @pre_enable:
+>>>>>>  	 *
+>>>>>> @@ -285,6 +319,26 @@ struct drm_bridge_funcs {
+>>>>>>  	 */
+>>>>>>  	void (*enable)(struct drm_bridge *bridge);
+>>>>>>  
+>>>>>> +	/**
+>>>>>> +	 * @atomic_early_enable:
+>>>>>> +	 *
+>>>>>> +	 * This callback should enable the bridge. It is called right before
+>>>>>> +	 * the preceding element in the display pipe is enabled. If the
+>>>>>> +	 * preceding element is a bridge this means it's called before that
+>>>>>> +	 * bridge's @atomic_early_enable. If the preceding element is a
+>>>>>> +	 * &drm_crtc it's called right before the crtc's
+>>>>>> +	 * &drm_crtc_helper_funcs.atomic_enable hook.
+>>>>>> +	 *
+>>>>>> +	 * The display pipe (i.e. clocks and timing signals) feeding this bridge
+>>>>>> +	 * will not yet be running when this callback is called. The bridge can
+>>>>>> +	 * enable the display link feeding the next bridge in the chain (if
+>>>>>> +	 * there is one) when this callback is called.
+>>>>>> +	 *
+>>>>>> +	 * The @early_enable callback is optional.
+>>>>>> +	 */
+>>>>>> +	void (*atomic_early_enable)(struct drm_bridge *bridge,
+>>>>>> +				    struct drm_bridge_state *old_bridge_state);
+>>>>>> +
+>>>>>>  	/**
+>>>>>>  	 * @atomic_pre_enable:
+>>>>>>  	 *
+>>>>>> @@ -361,6 +415,21 @@ struct drm_bridge_funcs {
+>>>>>>  	void (*atomic_post_disable)(struct drm_bridge *bridge,
+>>>>>>  				    struct drm_bridge_state *old_bridge_state);
+>>>>>>  
+>>>>>> +	/**
+>>>>>> +	 * @atomic_late_disable:
+>>>>>> +	 *
+>>>>>> +	 * This callback should disable the bridge. It is called right after the
+>>>>>> +	 * preceding element in the display pipe is disabled. If the preceding
+>>>>>> +	 * element is a bridge this means it's called after that bridge's
+>>>>>> +	 * @atomic_late_disable. If the preceding element is a &drm_crtc it's
+>>>>>> +	 * called right after the crtc's &drm_crtc_helper_funcs.atomic_disable
+>>>>>> +	 * hook.
+>>>>>> +	 *
+>>>>>> +	 * The @atomic_late_disable callback is optional.
+>>>>>> +	 */
+>>>>>> +	void (*atomic_late_disable)(struct drm_bridge *bridge,
+>>>>>> +				    struct drm_bridge_state *old_bridge_state);
+>>>>>> +
+>>>>>
+>>>>> But more importantly, I don't quite get the use case you're trying to
+>>>>> solve here.
+>>>>>
+>>>>> If I got the rest of your series, the Cadence DSI bridge needs to be
+>>>>> powered up before its source is started. You can't use atomic_enable or
+>>>>> atomic_pre_enable because it would start the source before the DSI
+>>>>> bridge. Is that correct?
+>>>>>
+>>>>
+>>>> That's right. I cannot use bridge_atomic_pre_enable /
+>>>> bridge_atomic_enable here. But that's because my source is CRTC, which
+>>>> gets enabled via crtc_atomic_enable.
+>>>>
+>>>>
+>>>>> If it is, then how is it different from what
+>>>>> drm_atomic_bridge_chain_pre_enable is doing? The assumption there is
+>>>>> that it starts enabling bridges last to first, to it should be enabled
+>>>>> before anything starts.
+>>>>>
+>>>>> The whole bridge enabling order code starts to be a bit of a mess, so it
+>>>>> would be great if you could list all the order variations we have
+>>>>> currently, and why none work for cdns-dsi.
+>>>>>
+>>>>
+>>>> Of course! I can elaborate on the order.
+>>>>
+>>>> Without my patches (and given there isn't any bridge setting the
+>>>> "pre_enable_prev_first" flag) the order of enable for any single display
+>>>> chain, looks like this -
+>>>>
+>>>> 	crtc_enable
+>>>> 	
+>>>> 	bridge[n]_pre_enable
+>>>> 	---
+>>>> 	bridge[1]_pre_enable
+>>>>
+>>>> 	encoder_enable
+>>>>
+>>>> 	bridge[1]_enable
+>>>> 	---
+>>>> 	bridge[n]_enable
+>>>>
+>>>> The tidss enables at the crtc_enable level, and hence is the first
+>>>> entity with stream on. cdns-dsi doesn't stand a chance with
+>>>> bridge_atmoic_pre_enable / bridge_atmoic_enable hooks. And there is no
+>>>> bridge call happening before crtc currently.
+>>>
+>>> Thanks for filling the blanks :)
+>>>
+>>> I assume that since cdns-dsi is a bridge, and it only has a simple
+>>> encoder implementation, for it to receive some video signal we need to
+>>> enable the CRTC before the bridge.
+>>>
+>>> If so, I think that's the original intent between the bridge pre_enable.
+>>> The original documentation had:
+>>>
+>>>   pre_enable: this contains things needed to be done for the bridge
+>>>   before this contains things needed to be done for the bridge before
+>>>   this contains things needed to be done for the bridge before.
+>>>
+>>> and the current one has:
+>>>
+>>>   The display pipe (i.e. clocks and timing signals) feeding this bridge
+>>>   will not yet be running when this callback is called. The bridge must
+>>>   not enable the display link feeding the next bridge in the chain (if
+>>>   there is one) when this callback is called.
+>>>
+>>> I would say the CRTC is such a source, even more so now that the encoder
+>>> is usually transparent, so I think we should instead move the crtc
+>>> enable call after the bridge pre_enable.
+>>
+>> Hmm, if I understand you right, the newer sequence of calls will look
+>> like this,
+>>
+>> 	bridge[n]_pre_enable
+>> 	---
+>> 	bridge[1]_pre_enable
+>>
+>> 	crtc_enable
+>> 	encoder_enable
+>>
+>> 	bridge[1]_enable
+>> 	---
+>> 	bridge[n]_enable
+> 
+> Yes :)
+> 
+>> I do agree with this. This makes sense. CRTC is indeed such a source,
+>> and should ideally be enabled after the bridges are pre_enabled.
+>>
+>>>
+>>> Would that work?
+>>>
+>>
+>> So, this could potentially work, yes. The cdns-dsi would get pre_enabled
+>> after all bridges after cdns-dsi are pre_enabled. But over a quick test
+>> with BBAI64 + RPi Panel, I don't see any issue.
+>>
+>> However, the one concern that I have right now, is about breaking any
+>> existing (albeit faulty) implementation which relies on CRTC being
+>> enabled before the bridges are pre_enabled. =)
+> 
+> I don't think it'll be a big deal. If there was a proper encoder driver,
+> it was probably gating the signal until it's enabled. If there isn't,
+> then yeah it might disrupt things, but it mostly means that the driver
+> wasn't properly split between pre_enable and enable.
+> 
+> So I think it's worth trying, and we'll see the outcome.
+> 
 
-Sure, I can do it. Just to confirm, which extension should be removed
-when both Svade and Svadu are present in the DT?
+Alright! =)
 
-Regards,
-Yong-Xuan
+Have made the changes as per your suggestions in v2. Thanks!
 
-> >>
-> >> Co-developed-by: Jinyu Tang <tjytimi@163.com>
-> >> Signed-off-by: Jinyu Tang <tjytimi@163.com>
-> >> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> >> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> > I think this patch changed too much to keep r-b's. We didn't have the
-> > FWFT part before.
-> >
-> >> ---
-> >>   arch/riscv/Kconfig               |  1 +
-> >>   arch/riscv/include/asm/csr.h     |  1 +
-> >>   arch/riscv/include/asm/hwcap.h   |  1 +
-> >>   arch/riscv/include/asm/pgtable.h |  8 +++++++-
-> >>   arch/riscv/kernel/cpufeature.c   | 11 +++++++++++
-> >>   5 files changed, 21 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> >> index be09c8836d56..30fa558ee284 100644
-> >> --- a/arch/riscv/Kconfig
-> >> +++ b/arch/riscv/Kconfig
-> >> @@ -34,6 +34,7 @@ config RISCV
-> >>      select ARCH_HAS_PMEM_API
-> >>      select ARCH_HAS_PREPARE_SYNC_CORE_CMD
-> >>      select ARCH_HAS_PTE_SPECIAL
-> >> +    select ARCH_HAS_HW_PTE_YOUNG
-> >>      select ARCH_HAS_SET_DIRECT_MAP if MMU
-> >>      select ARCH_HAS_SET_MEMORY if MMU
-> >>      select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
-> >> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr=
-h
-> >> index 2468c55933cd..2ac270ad4acd 100644
-> >> --- a/arch/riscv/include/asm/csr.h
-> >> +++ b/arch/riscv/include/asm/csr.h
-> >> @@ -194,6 +194,7 @@
-> >>   /* xENVCFG flags */
-> >>   #define ENVCFG_STCE                        (_AC(1, ULL) << 63)
-> >>   #define ENVCFG_PBMTE                       (_AC(1, ULL) << 62)
-> >> +#define ENVCFG_ADUE                 (_AC(1, ULL) << 61)
-> >>   #define ENVCFG_CBZE                        (_AC(1, UL) << 7)
-> >>   #define ENVCFG_CBCFE                       (_AC(1, UL) << 6)
-> >>   #define ENVCFG_CBIE_SHIFT          4
-> >> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/h=
-wcap.h
-> >> index e17d0078a651..8d539e3f4e11 100644
-> >> --- a/arch/riscv/include/asm/hwcap.h
-> >> +++ b/arch/riscv/include/asm/hwcap.h
-> >> @@ -81,6 +81,7 @@
-> >>   #define RISCV_ISA_EXT_ZTSO         72
-> >>   #define RISCV_ISA_EXT_ZACAS                73
-> >>   #define RISCV_ISA_EXT_XANDESPMU            74
-> >> +#define RISCV_ISA_EXT_SVADU         75
-> >>
-> >>   #define RISCV_ISA_EXT_XLINUXENVCFG 127
-> >>
-> >> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm=
-/pgtable.h
-> >> index 9f8ea0e33eb1..1f1b326ccf63 100644
-> >> --- a/arch/riscv/include/asm/pgtable.h
-> >> +++ b/arch/riscv/include/asm/pgtable.h
-> >> @@ -117,6 +117,7 @@
-> >>   #include <asm/tlbflush.h>
-> >>   #include <linux/mm_types.h>
-> >>   #include <asm/compat.h>
-> >> +#include <asm/cpufeature.h>
-> >>
-> >>   #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE=
-_PFN_SHIFT)
-> >>
-> >> @@ -285,7 +286,6 @@ static inline pte_t pud_pte(pud_t pud)
-> >>   }
-> >>
-> >>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
-> >> -#include <asm/cpufeature.h>
-> >>
-> >>   static __always_inline bool has_svnapot(void)
-> >>   {
-> >> @@ -621,6 +621,12 @@ static inline pgprot_t pgprot_writecombine(pgprot=
-_t _prot)
-> >>      return __pgprot(prot);
-> >>   }
-> >>
-> >> +#define arch_has_hw_pte_young arch_has_hw_pte_young
-> >> +static inline bool arch_has_hw_pte_young(void)
-> >> +{
-> >> +    return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
-> >> +}
-> >> +
-> >>   /*
-> >>    * THP functions
-> >>    */
-> >> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufea=
-ture.c
-> >> index 3ed2359eae35..b023908c5932 100644
-> >> --- a/arch/riscv/kernel/cpufeature.c
-> >> +++ b/arch/riscv/kernel/cpufeature.c
-> >> @@ -93,6 +93,16 @@ static bool riscv_isa_extension_check(int id)
-> >>                      return false;
-> >>              }
-> >>              return true;
-> >> +    case RISCV_ISA_EXT_SVADU:
-> >> +            if (sbi_probe_extension(SBI_EXT_FWFT) > 0) {
-> > I think we've decided the appropriate way to prove for SBI extensions i=
-s
-> > to first ensure the SBI version and then do the probe, like we do for S=
-TA
-> > in has_pv_steal_clock()
-> >
-> >> +                    struct sbiret ret;
-> >> +
-> >> +                    ret =3D sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,=
- SBI_FWFT_PTE_AD_HW_UPDATING,
-> >> +                                    1, 0, 0, 0, 0);
-> >> +
-> >> +                    return ret.error =3D=3D SBI_SUCCESS;
-> >> +            }
-> >> +            return false;
-> >>      case RISCV_ISA_EXT_INVALID:
-> >>              return false;
-> >>      }
-> >> @@ -301,6 +311,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =
-=3D {
-> >>      __RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
-> >>      __RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
-> >>      __RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
-> >> +    __RISCV_ISA_EXT_SUPERSET(svadu, RISCV_ISA_EXT_SVADU, riscv_xlinux=
-envcfg_exts),
-> > We do we need XLINUXENVCFG?
-> >
-> > Thanks,
-> > drew
-> >
-> >>      __RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
-> >>      __RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
-> >>      __RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
-> >> --
-> >> 2.17.1
-> >>
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+Regards
+Aradhya
 
