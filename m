@@ -1,162 +1,241 @@
-Return-Path: <linux-kernel+bounces-195045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3CB8D46C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364A88D46CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2111F22E99
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591141C20F56
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704B9149C43;
-	Thu, 30 May 2024 08:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47490149C76;
+	Thu, 30 May 2024 08:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="TrhXUW4X"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C6t/r9e7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFFE142E78
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9E91487F1;
+	Thu, 30 May 2024 08:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717056739; cv=none; b=JU0xX/W1jd5hfP1avVGja3QaGHEetFypI2ro+X5UKsRnjZkBCs9swMTUlSeBP5gbAF1+rHGv6KW68gMXkgPUcQQYNUS+jlOWmsyxPWEGRKE+AqRpcjD0/tXfnHtpHKJyjH/xnH1709kQ/x9J4gQZwgiB56DH4E7pluReKf5iZa8=
+	t=1717056759; cv=none; b=mTtL9U9akKKGXS3swfIaD/4aCcxWgOLRPQAPJoFdKNvvjgu0IgEcZmWH5Iyf8JjEYg5nTksETFxHBVDCnchf8N3Nmg0v8KAxaf2hNOnFrxScTbuljLfZj59uG1ZcdmqTTnVXu85lcPTzqCXnTjbvy5uhT9Ffiynz+afoLS9zLrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717056739; c=relaxed/simple;
-	bh=b36ptOrZLbp9VgClGgn062bTf6HSEnqFNMuWkc2DGak=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=rgjv4RCCrolxVMxaIpSNNJp1Tdn3MnrOoijjJkIb/wSkGVrNNygyjwbUXsaSotvRQx1y+FnmhMulnyRjfduumNrheLVyEj7wJtREiyvDbXxoShuiZj7iZ7bHX6oyhWORi1/ABfs/ckLxvTPaAjZcTNqBHowb2X7cALf4iv0lS64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=TrhXUW4X; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f12eb91ec7so352456a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google; t=1717056737; x=1717661537; darn=vger.kernel.org;
-        h=to:cc:date:message-id:subject:mime-version
-         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mk8s2JgIgahnLhxv8haFG9bKYTOSppYDnekfr0DIiA4=;
-        b=TrhXUW4X4AolxoNmvUFmUItC2cajjchb8tyPxpqKi/eEz7woeV15HG0hZI5uZ2hOwi
-         krvLDDQ1AhWYVn0Sfgo/CHsO8qS19eT3p9VXJYDxBS8YSLEPZSwKC86nHhgjilusZ2aS
-         T3ZstMBgXW28nF4Va5wtb6xfxGTEGj4kLuYiw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717056737; x=1717661537;
-        h=to:cc:date:message-id:subject:mime-version
-         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mk8s2JgIgahnLhxv8haFG9bKYTOSppYDnekfr0DIiA4=;
-        b=ax0rb5zFf4uZdPnnrnGrvyp0AP8vO3Fbw7GqkAsayssWbopwRPv+a0nHW3MOE14CXm
-         1Cu4GKjoF0WS+F9hGK0D+6f5D8VHcKHkf0bq/crgHsNOkdPuIfp61fuyrQw5HvxgZL3u
-         2xacQr+SKV8NGNxyx3xtKqvqWCCSHcVcZVTDoQuRpRzidC39suJpEtTMnGLSedqYhfb7
-         lAzlb0dm+EMBCp5bxe3GsOXQwjuGLHiDzyMytG/JhUnvCBCE0M2JdWlCWWGyKy860NK3
-         c9S688gT1jRynifKcw6CyHAw4HQgEBuA80ldgW97snlOkPSt9T4K4rLwTuvUYNiqcyNW
-         auWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIXzaW5j84eQa5A38xGQpHBWJJE//37kcFkpXaQCEb/mEvXPRtPvf0XvyhZYoVPk++UQ/s4U0agFBLSXjLq8HwVErDF8uv4Rqni1co
-X-Gm-Message-State: AOJu0Yxo+r6K3oyYZoxH1p9/DkOFDpH5V4/0zqkAgcL5bVqIAJLlx0u6
-	ZDztIyR0turKHNp3hcub7qkHH3Ed22ohYTOdEJFbdvYTMpaZPc0s5CrOZLeZvqk=
-X-Google-Smtp-Source: AGHT+IFK4mB7zaoLDcur2cxaiz3r49gqRI/eWfg8N/RgZbGgE7M/Gjpol66O2D0g+WZ1JMs9CRYt9Q==
-X-Received: by 2002:a05:6830:2083:b0:6f0:e7da:6637 with SMTP id 46e09a7af769-6f90af28fd1mr1528286a34.31.1717056737174;
-        Thu, 30 May 2024 01:12:17 -0700 (PDT)
-Received: from smtpclient.apple ([50.35.64.139])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f8f1f8cdf1sm1238165a34.35.2024.05.30.01.12.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2024 01:12:16 -0700 (PDT)
-From: Yaohui Hu <yhu@digitalocean.com>
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1717056759; c=relaxed/simple;
+	bh=uLA4wCaq7A2u/eyrQk8XHfRRjmbUeF0S9C9i4nJzoyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZ3lDtz+RkpsIyxVrqY28MbDhctzKQU5YnUMeiWwZYtou4jETyjlCsw74i1nAOl/PA5O6yXOlDrigp8sRjk9l+DoEbHGTEyM78oE8KE8HYxZR7cAWjgGW8SK5I2afYbWsKLdiDNGxlvdVeB6VYD2v6kHoc06EMkLYt2Rv9B5Y/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C6t/r9e7; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717056757; x=1748592757;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uLA4wCaq7A2u/eyrQk8XHfRRjmbUeF0S9C9i4nJzoyc=;
+  b=C6t/r9e7s7cCDivHk/6SLNoYOSXrDaFxqVQyeW5GQV5vh05ebEeeLmhc
+   yu5gc2+Gex4/0qTDvo3QRJSTanXyJi3k/YtdXop1Mky+L3UQ+3fjhFIqn
+   8cT9AsH0vdy9XQrPQuP+VEDywgyHtHtLMiuvWX2jUN93o3W3P6u6Ja0gz
+   49Yae8bFcf3fuBA45gdq4fGYIVowbqTK9rUOJ/1z6eCdfoMTZJW4J8RpC
+   MyIradlU8RzZr9OrFXWscUAdChV911yHqpYt8u56Cs1eeGZ8naYRgF/96
+   6NYm+gsDNyWEbm/f1DoOZj2WxwQme/CrvnGehYsO5KdE9xe7zt8jEIIsv
+   Q==;
+X-CSE-ConnectionGUID: xwccT18YSNyahXu1A2I8pw==
+X-CSE-MsgGUID: 7jU3fpDVS9SBflGGmLsyUw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="17315060"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="17315060"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 01:12:36 -0700
+X-CSE-ConnectionGUID: hZ7dxmihRoSeywTi4GgBJQ==
+X-CSE-MsgGUID: Fypt2OqRRbuYKw1Z1ny1Yw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="36216189"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 30 May 2024 01:12:34 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sCati-000Ezu-1l;
+	Thu, 30 May 2024 08:12:30 +0000
+Date: Thu, 30 May 2024 16:12:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aditya Nagesh <adityanagesh@linux.microsoft.com>,
+	adityanagesh@microsoft.com, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Aditya Nagesh <adityanagesh@linux.microsoft.com>
+Subject: Re: [PATCH v5] Drivers: hv: Cosmetic changes for hv.c and balloon.c
+Message-ID: <202405301550.DKuS2OzK-lkp@intel.com>
+References: <1716998695-32135-1-git-send-email-adityanagesh@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: md_raid: mdX_raid6 looping after sync_action "check" to "idle"
- transition
-Message-Id: <E5A94FC9-E0E4-4A82-AA51-CBFC766231A4@digitalocean.com>
-Date: Thu, 30 May 2024 01:12:04 -0700
-Cc: buczek@molgen.mpg.de,
- dragan@stancevic.com,
- guoqing.jiang@linux.dev,
- it+raid@molgen.mpg.de,
- linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org,
- msmith626@gmail.com,
- song@kernel.org,
- yangerkun@huawei.com,
- yukuai3@huawei.com
-To: yukuai1@huaweicloud.com
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1716998695-32135-1-git-send-email-adityanagesh@linux.microsoft.com>
 
-Hi,
+Hi Aditya,
 
-After applied suggested 7 commits to kernel v6.1. There are still =
-deadlocks in raid456 such as following. Do we have other follow up patch =
-to fix this issue?=20
+kernel test robot noticed the following build errors:
 
-[2378440.310330] INFO: task systemd-journal:1415 blocked for more than =
-120 seconds.
-[2378440.318649]       Tainted: G           OE K    =
-6.1.51-0digitalocean2-generic #0digitalocean2
-[2378440.328327] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" =
-disables this message.
-[2378440.337306] task:systemd-journal state:D stack:0     pid:1415  =
-ppid:1      flags:0x00000006
-[2378440.337310] Call Trace:
-[2378440.337312]  <TASK>
-[2378440.337315]  __schedule+0x1f5/0x5c0
-[2378440.337324]  schedule+0x53/0xb0
-[2378440.337327]  io_schedule+0x42/0x70
-[2378440.337329]  folio_wait_bit_common+0x11f/0x310
-[2378440.337335]  ? filemap_invalidate_unlock_two+0x40/0x40
-[2378440.337338]  ? ext4_da_map_blocks.constprop.0+0x370/0x370
-[2378440.337342]  block_page_mkwrite+0x113/0x160
-[2378440.337346]  ext4_page_mkwrite+0x233/0x6d0
-[2378440.337349]  do_page_mkwrite+0x4d/0xe0
-[2378440.337352]  do_wp_page+0x1d9/0x440
-[2378440.337355]  __handle_mm_fault+0x50a/0x5d0
-[2378440.337358]  handle_mm_fault+0xe3/0x2e0
-[2378440.337359]  do_user_addr_fault+0x187/0x560
-[2378440.337363]  exc_page_fault+0x6c/0x150
-[2378440.337366]  asm_exc_page_fault+0x22/0x30
-[2378440.337371] RIP: 0033:0x7f2b4b7c9e7a
-[2378440.337377] RSP: 002b:00007ffcd6387340 EFLAGS: 00010202
-[2378440.337379] RAX: 0000000004725c68 RBX: 000056420cb077f0 RCX: =
-00007f2b3a7983b0
-[2378440.337381] RDX: 00007f2b3fb25c68 RSI: 000056420cb077f0 RDI: =
-00007f2b3a7983d8
-[2378440.337382] RBP: 000056420caca8f0 R08: 00000000003983b0 R09: =
-00007ffcd6387370
-[2378440.337383] R10: 86c0275e98fea605 R11: 0000000000244a4c R12: =
-000000000000000a
-[2378440.337384] R13: e4bdb9e57ca6925c R14: 0000000000000000 R15: =
-00007ffcd6387378
-[2378440.337386]  </TASK>
-[2378440.337587] INFO: task md8_resync:3952093 blocked for more than 120 =
-seconds.
-[2378440.345699]       Tainted: G           OE K    =
-6.1.51-0digitalocean2-generic #0digitalocean2
-[2378440.355371] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" =
-disables this message.
-[2378440.364359] task:md8_resync      state:D stack:0     pid:3952093 =
-ppid:2      flags:0x00004000
-[2378440.364362] Call Trace:
-[2378440.364363]  <TASK>
-[2378440.364364]  __schedule+0x1f5/0x5c0
-[2378440.364368]  schedule+0x53/0xb0
-[2378440.364372]  raid5_get_active_stripe+0x1f6/0x290 [raid456]
-[2378440.364381]  ? destroy_sched_domains_rcu+0x30/0x30
-[2378440.364385]  raid5_sync_request+0x289/0x2c0 [raid456]
-[2378440.364392]  ? is_mddev_idle+0xb5/0x115
-[2378440.364395]  md_do_sync.cold+0x3eb/0x96b
-[2378440.364398]  ? destroy_sched_domains_rcu+0x30/0x30
-[2378440.364400]  md_thread+0xa9/0x160
-[2378440.364406]  ? super_90_load.part.0+0x300/0x300
-[2378440.364408]  kthread+0xb9/0xe0
-[2378440.364412]  ? kthread_complete_and_exit+0x20/0x20
-[2378440.364414]  ret_from_fork+0x1f/0x30
-[2378440.364418]  </TASK>
+[auto build test ERROR on next-20240529]
+[cannot apply to linus/master v6.10-rc1 v6.9 v6.9-rc7 v6.10-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks=
+url:    https://github.com/intel-lab-lkp/linux/commits/Aditya-Nagesh/Drivers-hv-Cosmetic-changes-for-hv-c-and-balloon-c/20240530-000928
+base:   next-20240529
+patch link:    https://lore.kernel.org/r/1716998695-32135-1-git-send-email-adityanagesh%40linux.microsoft.com
+patch subject: [PATCH v5] Drivers: hv: Cosmetic changes for hv.c and balloon.c
+config: arm64-randconfig-002-20240530 (https://download.01.org/0day-ci/archive/20240530/202405301550.DKuS2OzK-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405301550.DKuS2OzK-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405301550.DKuS2OzK-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/hv/hv_balloon.c: In function 'hot_add_req':
+>> drivers/hv/hv_balloon.c:998:9: warning: "/*" within comment [-Wcomment]
+     998 |         /*
+         |          
+>> drivers/hv/hv_balloon.c:980: error: unterminated #ifdef
+     980 | #ifdef CONFIG_MEMORY_HOTPLUG
+         | 
+>> drivers/hv/hv_balloon.c:978:39: error: expected declaration or statement at end of input
+     978 |         resp.hdr.size = sizeof(struct dm_hot_add_response);
+         |                                       ^~~~~~~~~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:974:34: warning: unused variable 'dm' [-Wunused-variable]
+     974 |         struct hv_dynmem_device *dm = &dm_device;
+         |                                  ^~
+   drivers/hv/hv_balloon.c: At top level:
+>> drivers/hv/hv_balloon.c:575:13: warning: 'post_status' declared 'static' but never defined [-Wunused-function]
+     575 | static void post_status(struct hv_dynmem_device *dm);
+         |             ^~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:577:13: warning: 'enable_page_reporting' declared 'static' but never defined [-Wunused-function]
+     577 | static void enable_page_reporting(void);
+         |             ^~~~~~~~~~~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:579:13: warning: 'disable_page_reporting' declared 'static' but never defined [-Wunused-function]
+     579 | static void disable_page_reporting(void);
+         |             ^~~~~~~~~~~~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:967:13: warning: 'hot_add_req' defined but not used [-Wunused-function]
+     967 | static void hot_add_req(struct work_struct *dummy)
+         |             ^~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:496:22: warning: 'ha_pages_in_chunk' defined but not used [-Wunused-variable]
+     496 | static unsigned long ha_pages_in_chunk;
+         |                      ^~~~~~~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:494:13: warning: 'balloon_up_send_buffer' defined but not used [-Wunused-variable]
+     494 | static __u8 balloon_up_send_buffer[HV_HYP_PAGE_SIZE];
+         |             ^~~~~~~~~~~~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:493:13: warning: 'recv_buffer' defined but not used [-Wunused-variable]
+     493 | static __u8 recv_buffer[HV_HYP_PAGE_SIZE];
+         |             ^~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:478:12: warning: 'dm_ring_size' defined but not used [-Wunused-variable]
+     478 | static int dm_ring_size = VMBUS_RING_SIZE(16 * 1024);
+         |            ^~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:476:17: warning: 'trans_id' defined but not used [-Wunused-variable]
+     476 | static atomic_t trans_id = ATOMIC_INIT(0);
+         |                 ^~~~~~~~
+>> drivers/hv/hv_balloon.c:469:12: warning: 'hv_hypercall_multi_failure' defined but not used [-Wunused-variable]
+     469 | static int hv_hypercall_multi_failure;
+         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:467:22: warning: 'last_post_time' defined but not used [-Wunused-variable]
+     467 | static unsigned long last_post_time;
+         |                      ^~~~~~~~~~~~~~
+>> drivers/hv/hv_balloon.c:455:13: warning: 'do_hot_add' defined but not used [-Wunused-variable]
+     455 | static bool do_hot_add;
+         |             ^~~~~~~~~~
+>> drivers/hv/hv_balloon.c:453:13: warning: 'allow_hibernation' defined but not used [-Wunused-variable]
+     453 | static bool allow_hibernation;
+         |             ^~~~~~~~~~~~~~~~~
+
+
+vim +980 drivers/hv/hv_balloon.c
+
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   966  
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  @967  static void hot_add_req(struct work_struct *dummy)
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   968  {
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   969  	struct dm_hot_add_response resp;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   970  #ifdef CONFIG_MEMORY_HOTPLUG
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   971  	unsigned long pg_start, pfn_cnt;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   972  	unsigned long rg_start, rg_sz;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   973  #endif
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  @974  	struct hv_dynmem_device *dm = &dm_device;
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14   975  
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14   976  	memset(&resp, 0, sizeof(struct dm_hot_add_response));
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14   977  	resp.hdr.type = DM_MEM_HOT_ADD_RESPONSE;
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  @978  	resp.hdr.size = sizeof(struct dm_hot_add_response);
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14   979  
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  @980  #ifdef CONFIG_MEMORY_HOTPLUG
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   981  	pg_start = dm->ha_wrk.ha_page_range.finfo.start_page;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   982  	pfn_cnt = dm->ha_wrk.ha_page_range.finfo.page_cnt;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   983  
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   984  	rg_start = dm->ha_wrk.ha_region_range.finfo.start_page;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   985  	rg_sz = dm->ha_wrk.ha_region_range.finfo.page_cnt;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   986  
+1aa0ebde593dfb1 Aditya Nagesh    2024-05-29   987  	if (rg_start == 0 && !dm->host_specified_ha_region) {
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   988  		/*
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   989  		 * Based on the hot-add page range being specified,
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   990  	}
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   991  
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18   992  	if (do_hot_add)
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   993  		resp.page_count = process_hot_add(pg_start, pfn_cnt,
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   994  						  rg_start, rg_sz);
+549fd280b145e21 Vitaly Kuznetsov 2015-02-28   995  
+549fd280b145e21 Vitaly Kuznetsov 2015-02-28   996  	dm->num_pages_added += resp.page_count;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15   997  #endif
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  @998  	/*
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18   999  	 * The result field of the response structure has the
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1000  	 * following semantics:
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1001  	 *
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1002  	 * 1. If all or some pages hot-added: Guest should return success.
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1003  	 *
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1004  	 * 2. If no pages could be hot-added:
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1005  	 *
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1006  	 * If the guest returns success, then the host
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1007  	 * will not attempt any further hot-add operations. This
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1008  	 * signifies a permanent failure.
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1009  	 *
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1010  	 * If the guest returns failure, then this failure will be
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1011  	 * treated as a transient failure and the host may retry the
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1012  	 * hot-add operation after some delay.
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1013  	 */
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  1014  	if (resp.page_count > 0)
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  1015  		resp.result = 1;
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1016  	else if (!do_hot_add)
+7f4f2302a11173d K. Y. Srinivasan 2013-03-18  1017  		resp.result = 1;
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  1018  	else
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  1019  		resp.result = 0;
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  1020  
+25bd2b2f1f05347 Dexuan Cui       2019-11-19  1021  	if (!do_hot_add || resp.page_count == 0) {
+25bd2b2f1f05347 Dexuan Cui       2019-11-19  1022  		if (!allow_hibernation)
+223e1e4d2c16fed Vitaly Kuznetsov 2018-03-04  1023  			pr_err("Memory hot add failed\n");
+25bd2b2f1f05347 Dexuan Cui       2019-11-19  1024  		else
+25bd2b2f1f05347 Dexuan Cui       2019-11-19  1025  			pr_info("Ignore hot-add request!\n");
+25bd2b2f1f05347 Dexuan Cui       2019-11-19  1026  	}
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  1027  
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  1028  	dm->state = DM_INITIALIZED;
+20138d6cb838aa0 K. Y. Srinivasan 2013-07-17  1029  	resp.hdr.trans_id = atomic_inc_return(&trans_id);
+1cac8cd4d146b60 K. Y. Srinivasan 2013-03-15  1030  	vmbus_sendpacket(dm->dev->channel, &resp,
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  1031  			sizeof(struct dm_hot_add_response),
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  1032  			(unsigned long)NULL,
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  1033  			VM_PKT_DATA_INBAND, 0);
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  1034  }
+9aa8b50b2b3d3a7 K. Y. Srinivasan 2012-11-14  1035  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
