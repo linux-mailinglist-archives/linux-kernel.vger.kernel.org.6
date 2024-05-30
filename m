@@ -1,126 +1,115 @@
-Return-Path: <linux-kernel+bounces-195956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73EA28D54DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A088D54DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A3F1C22D20
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA821C227F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ADD2E85A;
-	Thu, 30 May 2024 21:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DB51836EC;
+	Thu, 30 May 2024 21:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="moreprzY"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2nHP67P"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C650183974;
-	Thu, 30 May 2024 21:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8957EEFD;
+	Thu, 30 May 2024 21:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717105781; cv=none; b=A7edI5JHsSZp9rSHjWuMFSO9rHecE7s0A5KaGxsLhSfehLPcEXeDkiEMWejiU9XWM2nyYW1XEfwTEp8vp8Srq+l1K2NJQ7GxnqiHIGOlktguqHco7L81SCmlaLa7LnkPB8jwQ340RXoZXMissc6XE1918YBKMdvXfjqzDPCdTNw=
+	t=1717105796; cv=none; b=GhgxlV5Paps9O6kTGDv3wuYZuLnYLbHCK+g2gPSkMA+odezrs/NIK7SjYL3Ary46M0UjQPygu2DLWJLGfB+Jo9BxJ5W+B2bzrVhSqilpXeYZmrxWqhQYsP0Z+2JkqQnhXx+7g5qR7UT1AS1jAURwsLtQb4puQXiyszmmMY1wVS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717105781; c=relaxed/simple;
-	bh=VEA6I6S308h6wwm8d3f0nPjCMiKHG7T59SSbsMfJrvY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xr3GVRRHigDkGyi0R2GPVSfXyU5zG2wfV2R5yfdSyFrf7CncT4QQHMfZJo6wHeDJQ68W9/1YG+5NP+sI1JbTLKugTKc+WZkOf4E1n5Ai5p6KOC2MO1dSHagfaQcbGdnm0x4/G49phB9T4n5Q0Rr5c4m5slFp/Us9LSYSasJeEC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=moreprzY; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717105772;
-	bh=VEA6I6S308h6wwm8d3f0nPjCMiKHG7T59SSbsMfJrvY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=moreprzYqci9cA9kBjB+U6WC85Kr32RuoALqsHauOkB1TsXO/S4zp95T/WDhZCqMP
-	 h3BB/a6rwMqWnuBxgqUfUpfIEDrFX3ccLqtgq0anyyZbtco1IHwOfyZBTxpKjJVjYZ
-	 2IFSxL3pHDP45oJ3/ZGfJAhOyCr9E6WkdtMVY3yk=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 30 May 2024 23:49:27 +0200
-Subject: [PATCH] i2c: piix4: Register SPDs
+	s=arc-20240116; t=1717105796; c=relaxed/simple;
+	bh=f/fW0zdBbzo6W1x0NePO3Pdd4EwO2/UxhM7Z8Y0hb/4=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=lmhIJlFEj+Rm0zkyFc5Ol3cggHDTLH8FosareF9oVnzhWiY8SCLSxVTGkmymEWRNgYZbJeVA9G2Y+zxe3k4mV26Q7MPSZCJ9CoefkEZ0oKw+UTAR1u9o1YzYPyvbSx+1IIEr9sSHTCwSyQsNjy4FVqrw5azPzC7UF0wGJEYDhD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2nHP67P; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7930504b2e2so68640985a.3;
+        Thu, 30 May 2024 14:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717105793; x=1717710593; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9BvXcUI2/ZA1mL53Sma0yFBjzwk4mG3KgVKAtFhZrbI=;
+        b=A2nHP67PJR7xmzOyccYCrUYB6Pmuxx+a/yVCW07TSl+0KkQrRYmH+PxAGwmBof2p4+
+         iu8MIJqYzkpq/JYB3L95cEiVlXIx4iQSMlHcRL4NVGWbz/kVywFPdxsO1jpuRSjBm+dr
+         +ZBtIdLjnc6A5nQ68Z/Il2VZ8ZdJeXCm2H0HF2J8gpQcpR9Wie3Tg3FRbeX0uqocN+PS
+         NnzEnShtvsR3Zbc70Bt/8TWRhBb1Bk1+0p1Fc/tMFhv/XpECaO+ZAmhBiRzS34cW6YIX
+         dLYbfl6RPPe5fWowEG/5O2mdpYQBmibOA9EKgkMPzUmPPYz8tyfskafS2DtlSv4xFdMx
+         7o0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717105793; x=1717710593;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9BvXcUI2/ZA1mL53Sma0yFBjzwk4mG3KgVKAtFhZrbI=;
+        b=lyKj5XQOidAoYLvpIyNst5USBl6DD4HhrOwYA/chKCPgamnwAhfmA0d4tXGLuTZP+U
+         LDs7W5JA8p8TN7ZmPm4uNFlO4Gi1sC8581Vjun4Lip3gGkj2cmMUgdmrMuW0HDv4QOWO
+         0IplxlPLm9zZxwFvuDcvUCDKUFtj06qzSQECQGTxf8jm2jAltMa/eNvQa14HPxiDphRc
+         5QqB5OfGhQ/A+orvPkUYIONmdKJ2oNDb8qs4YYD8KACU8tkF9aSE571PsiSixXjheYek
+         cd6pwtx8UAAsSS5hhdMBEbUTy/XQzLw4lSksfpJMaKqbElS0WFQvS0mDogXvsya8Bt37
+         v0Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6RMwhvxtXTJAMk7kNlw6iKLPD/ZHpcLwxiOz7SiDiwXcYNB8b6xersG+Wv0s93qfZwnAN0j6vOgXgxhMp6RAS0xE8Dk3Onfzx8iMSI5P6
+X-Gm-Message-State: AOJu0Yx3RAXBXVInHAOTnIW1wNZeUBimdfVAqlu2w6a1vwTTbSPxZVkw
+	ETT0jziSgAjpb/AFZQpZZwOEKr/IucU67rmTU3Bp9KKo+L5W4WT5m+Bkm23Q
+X-Google-Smtp-Source: AGHT+IG6qFoattV8jBj2PaP9TutFh3X3DjNscdjl1+wUZwNW5AMFm0+Lhsbh/ryMHTl+5CLzDOWQpA==
+X-Received: by 2002:a05:620a:12e7:b0:792:c199:d318 with SMTP id af79cd13be357-794e9d95e01mr338982385a.12.1717105793270;
+        Thu, 30 May 2024 14:49:53 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-794f329148esm14086285a.127.2024.05.30.14.49.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 14:49:52 -0700 (PDT)
+Message-ID: <e92ecd6b-ce05-41fc-8c8a-588edef551ca@gmail.com>
+Date: Thu, 30 May 2024 14:49:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240530-piix4-spd-v1-1-9cbf1abebf41@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAGb0WGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDU2MD3YLMzAoT3eKCFF1jy2RDU7MkIyNLU0sloPqCotS0zAqwWdGxtbU
- AJxcSxFsAAAA=
-To: Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Guenter Roeck <linux@roeck-us.net>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717105772; l=1804;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=VEA6I6S308h6wwm8d3f0nPjCMiKHG7T59SSbsMfJrvY=;
- b=pyYw+TFK5MQuixmvcFuURwBwRg/D+ubjiN1atO4F/dTZZF2vGikO3bHqzXbhQY4fWPakAarcd
- qTSqc4rcNIlChIQj75ovJnONgq4oKZvINkHcBMQHIHANsgteEoiL9D/
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-bluetooth@vger.kernel.org,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Marcel Holtmann <marcel@holtmann.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Flood of "Unexpected continuation frame (len 0)" messages
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The piix4 I2C bus can carry SPDs, register them if present.
+Hiya,
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-For my test setup see [0].
-While the spd5118 driver in that form shouldn't be probed this way, the
-general principle holds true for the other SPD drivers.
+My Sony MDR-ZX770BN headset connected to an USB Bluetooth adapter with 
+the following characteristics:
 
-Guenter offered to test it, too.
+         ID 0a5c:4500 Broadcom Corp. BCM2046B1 USB 2.0 Hub (part of 
+BCM2046 Bluetooth)
+         |__ Port 1: Dev 10, If 0, Class=Wireless, Driver=btusb, 12M
+             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
+         |__ Port 1: Dev 10, If 1, Class=Wireless, Driver=btusb, 12M
+             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
+         |__ Port 1: Dev 10, If 2, Class=Vendor Specific Class, Driver=, 12M
+             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
+         |__ Port 1: Dev 10, If 3, Class=Application Specific Interface, 
+Driver=, 12M
+             ID 0a5c:2111 Broadcom Corp. ANYCOM Blue USB-UHE 200/250
 
-[0] https://lore.kernel.org/lkml/34a4292e-c4db-4b40-822e-b892e1444045@t-8ch.de/
----
- drivers/i2c/busses/Kconfig     | 1 +
- drivers/i2c/busses/i2c-piix4.c | 3 +++
- 2 files changed, 4 insertions(+)
+keeps flooding my kernel log with:
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index fe6e8a1bb607..ff66e883b348 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -195,6 +195,7 @@ config I2C_ISMT
- config I2C_PIIX4
- 	tristate "Intel PIIX4 and compatible (ATI/AMD/Serverworks/Broadcom/SMSC)"
- 	depends on PCI && HAS_IOPORT
-+	select I2C_SMBUS
- 	help
- 	  If you say yes to this option, support will be included for the Intel
- 	  PIIX4 family of mainboard I2C interfaces.  Specifically, the following
-diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-index 6a0392172b2f..f8d81f8c0cb3 100644
---- a/drivers/i2c/busses/i2c-piix4.c
-+++ b/drivers/i2c/busses/i2c-piix4.c
-@@ -29,6 +29,7 @@
- #include <linux/stddef.h>
- #include <linux/ioport.h>
- #include <linux/i2c.h>
-+#include <linux/i2c-smbus.h>
- #include <linux/slab.h>
- #include <linux/dmi.h>
- #include <linux/acpi.h>
-@@ -982,6 +983,8 @@ static int piix4_add_adapter(struct pci_dev *dev, unsigned short smba,
- 		return retval;
- 	}
- 
-+	i2c_register_spd(adap);
-+
- 	*padap = adap;
- 	return 0;
- }
+[2413092.567730] Bluetooth: Unexpected continuation frame (len 0)
 
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-piix4-spd-39c156b22959
+Is there a quirk that should be set for this adapter? Audio playback 
+over Bluetooth A2DP works just fine.
 
-Best regards,
+Thanks!
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+Florian
 
