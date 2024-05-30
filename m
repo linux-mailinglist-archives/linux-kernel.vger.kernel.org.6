@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-194851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202FE8D430E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:40:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E868D4304
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 513F51C226CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F50F1F23D37
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7D8208A9;
-	Thu, 30 May 2024 01:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C77217753;
+	Thu, 30 May 2024 01:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="GJCyeMjh"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVS0zkBC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AC11BF3A;
-	Thu, 30 May 2024 01:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B887D299;
+	Thu, 30 May 2024 01:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717033223; cv=none; b=CyUJn9WeZ6CR4Llb4S6CyH13DoxFoy2GgBK1O7+LvVKnpus8s3vQI5qj9ofrzwliK6fvKlA0IUwpHsrUlerVlQYhB0ViJuXkGI86LzjV/0LGjhsnNBW4wFZU6f3s+SCp3d/cyF4BM50u+g8HCVY4aydWjpMuTjUAzPBA7QOJNPo=
+	t=1717033214; cv=none; b=H6oGW4SblIOPztHnsDcE8jwTrbzE2U4eMOqaTkRRZpFW1uGNnDT/QAfJDoHsDw6VeGAlvPMExwRuJSGY86qZbK8fBINuZKVg5jjRLGE5AQXU4pHtpa36jlXTAa0DjChhSUVVQi7LN22ZaLSmIs6pt1XPXJOp77orgAMzZ/HFpXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717033223; c=relaxed/simple;
-	bh=omFm5ce2AOlS/lYSLsthVtR85tT7UUbDCXpxWCjYZQE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IJTFThYEJ8uAvjpUNsdcFzJu0tQx0AVtkjB5Ol8QuF4BjPsVGTAAf4VuVvQt1SinJATFoQuFBN6Ycfue2r6ywb7Wqr5Q7lNInnuPqc1xV27KbqDV6k8HneS0+hzSXhl4VIWDJ+3Yy6RCEjjMsFkDRzgGWYDVNv+0zWMNd5BpklI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=GJCyeMjh; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [127.0.1.1] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 67395201EE;
-	Thu, 30 May 2024 09:40:19 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1717033220;
-	bh=ErLapQqkYUF70ZPHEVqq7CYbi3OWaCay12uuoAyOF+o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=GJCyeMjhaKZQp+DVyfyn+RCjNQk5fZnevTUN4H4qvXsc9qwy5dtqaJiNzHgi2eDBt
-	 NcHGJA0u5NKxi9LuO010j1YdBnRPcS0zVTN3/TZbEjtNbkfdw0denWFu63IWIiOpuv
-	 B19qQMDM2i8KAzpVRzuwy8aTUO7/kMqGrsfnvSoeZiPiv5O+Z09dQ2cN/9onQaz3cH
-	 GBdiSRbcLUqtw/Ped02fX8RD9Qot/OmMz+ZD3wrTGrzxigVKA2JAz4xtZmOjGyv0FI
-	 aXs8cU6YRZ6hrJEt5FFllY14G5bZEDa61U2MKNJ4HhD5o8cf8z46VO6bBJ6rcH1n0k
-	 8DHVJ+NwCmwDA==
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-Date: Thu, 30 May 2024 11:09:49 +0930
-Subject: [PATCH v2 2/2] dt-bindings: gpio: aspeed,sgpio: Specify
- #interrupt-cells
+	s=arc-20240116; t=1717033214; c=relaxed/simple;
+	bh=/a3OkwfELwxb5Ut+MgxOZAlCZBTT6NvlJfjqQmhTdWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aAchHOBNSx3v6MO8NraB3u7FmS/SSCRPPeO/ngAlDM0Y3r3m6U9CducDJ0E0O5choeTHTZdKvYBwLB5HF03zwArWuSuTi057+Batp92Kp15YWNHtqZMdKx9UG/sQREmPOuMR3d6k8VmvdaYhfUMCaniMceldOgqVBaHGOqHAgv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVS0zkBC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9478EC113CC;
+	Thu, 30 May 2024 01:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717033214;
+	bh=/a3OkwfELwxb5Ut+MgxOZAlCZBTT6NvlJfjqQmhTdWM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OVS0zkBChjBRfxjrk8h/Y2AmlnvdB+d8eGeHKJMORQ8Bjl8Xa/rn/45y/Q52ptF7V
+	 Td7y4bX6N1H8YykoITZLPrmj+d6vPHa1DrqcrRrDsX/l47Z9LwW13399gZftI465pU
+	 V56yNHpriGlaYYgoEjDD/saXWZiuazVXuJB4zTC+G5n+ZWTBR2HqL8P5Totxofpzn5
+	 26JOioMSPfyw8J89E6RZIwphvXgp3tOltPD8krCXb2xpKzYmdtwWt00nOzbFD6HJ/e
+	 EySqqyIOuNHU6aXi/NIcVxeWzErvWXkXovJVoAcJlwLPvZM1CHLjiRXI7bGhVWHen/
+	 GPyjGMqrwsTVg==
+Date: Wed, 29 May 2024 18:40:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Mina
+ Almasry <almasrymina@google.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH iwl-next 11/12] idpf: convert header split mode to
+ libeth + napi_build_skb()
+Message-ID: <20240529184012.5e999a93@kernel.org>
+In-Reply-To: <20240528134846.148890-12-aleksander.lobakin@intel.com>
+References: <20240528134846.148890-1-aleksander.lobakin@intel.com>
+	<20240528134846.148890-12-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-dt-warnings-gpio-sgpio-interrupt-cells-v2-2-912cd16e641f@codeconstruct.com.au>
-References: <20240530-dt-warnings-gpio-sgpio-interrupt-cells-v2-0-912cd16e641f@codeconstruct.com.au>
-In-Reply-To: <20240530-dt-warnings-gpio-sgpio-interrupt-cells-v2-0-912cd16e641f@codeconstruct.com.au>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
 
-Squash warnings such as:
+On Tue, 28 May 2024 15:48:45 +0200 Alexander Lobakin wrote:
+> Currently, idpf uses the following model for the header buffers:
+> 
+> * buffers are allocated via dma_alloc_coherent();
+> * when receiving, napi_alloc_skb() is called and then the header is
+>   copied to the newly allocated linear part.
+> 
+> This is far from optimal as DMA coherent zone is slow on many systems
+> and memcpy() neutralizes the idea and benefits of the header split. Not
+> speaking of that XDP can't be run on DMA coherent buffers, but at the
+> same time the idea of allocating an skb to run XDP program is ill.
+> Instead, use libeth to create page_pools for the header buffers, allocate
+> them dynamically and then build an skb via napi_build_skb() around them
+> with no memory copy. With one exception...
+> When you enable header split, you except you'll always have a separate
 
-    arch/arm/boot/dts/aspeed/aspeed-ast2500-evb.dtb: sgpio@1e780200: '#interrupt-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
+                                    accept
 
-Also, mark #interrupt-cells as required. The kernel devicetrees already
-specified it where compatible nodes were defined, and u-boot pulls in
-the kernel devicetrees, so this should have minimal practical impact.
+> header buffer, so that you could reserve headroom and tailroom only
+> there and then use full buffers for the data. For example, this is how
+> TCP zerocopy works -- you have to have the payload aligned to PAGE_SIZE.
+> The current hardware running idpf does *not* guarantee that you'll
+> always have headers placed separately. For example, on my setup, even
+> ICMP packets are written as one piece to the data buffers. You can't
+> build a valid skb around a data buffer in this case.
+> To not complicate things and not lose TCP zerocopy etc., when such thing
+> happens, use the empty header buffer and pull either full frame (if it's
+> short) or the Ethernet header there and build an skb around it. GRO
+> layer will pull more from the data buffer later. This W/A will hopefully
+> be removed one day.
 
-Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
----
- Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
-index 34cdf1ad9c73..1046f0331c09 100644
---- a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
-@@ -46,6 +46,9 @@ properties:
- 
-   interrupt-controller: true
- 
-+  '#interrupt-cells':
-+    const: 2
-+
-   clocks:
-     maxItems: 1
- 
-@@ -60,6 +63,7 @@ required:
-   - '#gpio-cells'
-   - interrupts
-   - interrupt-controller
-+  - '#interrupt-cells'
-   - ngpios
-   - clocks
-   - bus-frequency
-@@ -77,6 +81,7 @@ examples:
-         reg = <0x1e780200 0x0100>;
-         clocks = <&syscon ASPEED_CLK_APB>;
-         interrupt-controller;
-+        #interrupt-cells = <2>;
-         ngpios = <80>;
-         bus-frequency = <12000000>;
-     };
-
--- 
-2.39.2
-
+Hopefully soon, cause it will prevent you from mapping data buffers to
+user space or using DMABUF memory :(
 
