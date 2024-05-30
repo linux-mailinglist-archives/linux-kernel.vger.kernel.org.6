@@ -1,143 +1,354 @@
-Return-Path: <linux-kernel+bounces-195317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A7A8D4B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:49:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73078D4B04
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4432B228BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E57C1F237F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B84176AAA;
-	Thu, 30 May 2024 11:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7E317799F;
+	Thu, 30 May 2024 11:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Vx2R8thY"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05B4183964
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="uwT3vHvd"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7417183964;
+	Thu, 30 May 2024 11:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717069778; cv=none; b=W1nmKYzsDVyhpLd4QLCYrcu+zU1j/eE1qH59IzI2J+lDoJ6khdgsicZzX+DhljfPxFq8lyQ35F0VdvxPZIVTwNc0V17nByjZP/PlL+UW+QbN9zCm5HqxpaGLzt5Sxg/pPITDGZLv4qb/8qPzC/F0RPt/+z7nqQdERtELXVxhSDg=
+	t=1717069820; cv=none; b=CBtCjlJZB5nfV5iySWWwUWC8Zbes99cRxY5OafblvJGnA5lO+lg8M3/+L5gpVA+iSyrseyMoz6T41wuOWT4hA0v7SP1qmc5TiiJvaAxYJiLwmRmAnduP1exshEPT+tNDOMS61Y8NO3yiAgwKPe09xce0bIj0ZfzRUM/NBFRrHpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717069778; c=relaxed/simple;
-	bh=cTzUY6jSVP0z3DdLxZ3a8PW6ByaAklUFEgH+9kaYB0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hmS6pZuUcletxCg4cHkRQC2pkgt61hIeOjQgYiMznmRCK1HOFxCe9VvQoNDmRmAnvm+nCh9Ip0j70POkPo68FxWOpOzZSDw4RQnDQUvYISBJTtvtIFeKm1fPE1NgKYb+hsyrbvHOvmL8i1qpn/qL37YNDF/+8pxIx8LCTF1bFQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Vx2R8thY; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=jzdIn
-	PFoiQE79oz0FAxRgBjy+bhSglkdU1VhG3eJOdY=; b=Vx2R8thYWi/C6XTLOdFmq
-	1yqWNS1K+XRbnxjKB7E/USXvNKfrggghRt96Ds7z8pw8NcjcuwCRbmffavTbCEVg
-	9Q7gfZIvEpv7Kbpc1qBK/r2PK4z084gNsgyz6JrxaHPSuvZ9E4NakhBSrOF6fAuy
-	WVyFboqTKGz6VDTjns+wBE=
-Received: from localhost.localdomain (unknown [111.35.185.173])
-	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wDH72GzZ1hmcv3zGQ--.22468S4;
-	Thu, 30 May 2024 19:49:12 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: sivanich@hpe.com,
-	kevin.tian@intel.com,
-	baolu.lu@linux.intel.co,
-	jroedel@suse.de
-Cc: linux-kernel@vger.kernel.org,
-	00107082@163.com
-Subject: [Regression] 6.10-rc1: Fail to resurrect from suspend.
-Date: Thu, 30 May 2024 19:49:07 +0800
-Message-Id: <20240530114907.4836-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717069820; c=relaxed/simple;
+	bh=VrYT1OEB6ocFlr6hvtBUzSwJ47Co1zYWFR3HE7zzLsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qIZue+8gSu5X/8Rf/ThePK128QtkZuyLEYs/tLG45Bdlm1EdPfNxIN7I4UrVIBgjUMyQPOgwiyw4KquLCi6tXIBjFS3bar7P+oJmFdMhIPPCI5uB7Ofe7hbkFzUYGFTYg35YjCC7nGSVz4ot48t4Jdxs6f8sPzorW9fI7McRo4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=uwT3vHvd; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 3C38F120003;
+	Thu, 30 May 2024 14:50:05 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 3C38F120003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1717069805;
+	bh=xhZ0LuzpL57JCIpP9rLdpiSgKgNXZfSC8qE7zYal93Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=uwT3vHvdaZTnWKPz++UZ0FvWeM1zcQNvm3+q4Gprab2eR/VLeYQ83HVH+y1/QMe1n
+	 BBStF1+XHoMT8346FWJ6OL38z8WjsmtmgrK6c2VEwnkz6AWvG7kWlElQ5Ii76iMI/c
+	 sIQ/ezzQPu1nMAv9kLILZlwk6CsDGvMXey+cIXvzCXN3UkfPpO+6bmhUf8Cio6LAxp
+	 HItFD3CF732bqeDWIy7yzUAW/gk9HvD71FrMVrEkBt3wSUn2vamjJJX1sseXEzU68z
+	 8ALpW/4n/aE4iAEw7DTqax/j6h7CrRhV3NPTTcTRvjLdcJ1hINCZiW1AKOVIEJRSXl
+	 WXAx8O9yq7f5g==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 30 May 2024 14:50:05 +0300 (MSK)
+Received: from [192.168.1.143] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 30 May 2024 14:50:04 +0300
+Message-ID: <4cc234db-b795-4cfc-8e47-e89642f932f5@salutedevices.com>
+Date: Thu, 30 May 2024 14:50:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDH72GzZ1hmcv3zGQ--.22468S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Wr1UCryxJFy5tr4kCw18AFb_yoW7GFyxpr
-	yxWFnI9r43Xry8X3Wjgw47u3ZxG3s8Ar43u3y5Kw45AF98Gr9YqFsIqrW3Wry8ZF4UGay7
-	Xa4DZrn0934DZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEb4SnUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxnuqmXAlhzFfAAAs4
-
-Hi,
-
-My system fails to resurrect after `systemctl suspend` with 6.10-rc1,
-when pressing power button, the machine "sounds" starting(fans roaring),
-but my keyboard/mouse/monitor is not powered, and I have nothing to
-do but powering cycle the system.
-
-I run a bisect session, and narrows it down to following commit:
-
-	commit d74169ceb0d2e32438946a2f1f9fc8c803304bd6
-	Author: Dimitri Sivanich <sivanich@hpe.com>
-	Date:   Wed Apr 24 15:16:29 2024 +0800
-
-	    iommu/vt-d: Allocate DMAR fault interrupts locally
-	    
-	    The Intel IOMMU code currently tries to allocate all DMAR fault interrupt
-	    vectors on the boot cpu.  On large systems with high DMAR counts this
-	    results in vector exhaustion, and most of the vectors are not initially
-	    allocated socket local.
-	    
-	    Instead, have a cpu on each node do the vector allocation for the DMARs on
-	    that node.  The boot cpu still does the allocation for its node during its
-	    boot sequence.
-	    
-	    Signed-off-by: Dimitri Sivanich <sivanich@hpe.com>
-	    Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-	    Link: https://lore.kernel.org/r/Zfydpp2Hm+as16TY@hpe.com
-	    Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-	    Signed-off-by: Joerg Roedel <jroedel@suse.de>
- 
-And I have confirmed that reverting this commit can fix my problem.
-
-Following is my bisect logs:
-	$ git bisect log
-	git bisect start
-	# status: waiting for both good and bad commits
-	# good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
-	git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-	# status: waiting for bad commit, 1 good commit known
-	# bad: [1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0] Linux 6.10-rc1
-	git bisect bad 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-	# good: [db5d28c0bfe566908719bec8e25443aabecbb802] Merge tag 'drm-next-2024-05-15' of https://gitlab.freedesktop.org/drm/kernel
-	git bisect good db5d28c0bfe566908719bec8e25443aabecbb802
-	# good: [db5d28c0bfe566908719bec8e25443aabecbb802] Merge tag 'drm-next-2024-05-15' of https://gitlab.freedesktop.org/drm/kernel
-	git bisect good db5d28c0bfe566908719bec8e25443aabecbb802
-	# bad: [a90f1cd105c6c5c246f07ca371d873d35b78c7d9] Merge tag 'turbostat-for-Linux-6.10-merge-window' of git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux
-	git bisect bad a90f1cd105c6c5c246f07ca371d873d35b78c7d9
-	# good: [8b35a3bb33b57bc2cb2694a50e49e0ea01b9ff6f] Merge tag 'pmdomain-v6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm
-	git bisect good 8b35a3bb33b57bc2cb2694a50e49e0ea01b9ff6f
-	# bad: [619b92b9c8fe5369503ae948ad4e0a9c195c2c4a] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
-	git bisect bad 619b92b9c8fe5369503ae948ad4e0a9c195c2c4a
-	# good: [91b6163be404e36baea39fc978e4739fd0448ebd] Merge tag 'sysctl-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl
-	git bisect good 91b6163be404e36baea39fc978e4739fd0448ebd
-	# bad: [0cc6f45cecb46cefe89c17ec816dc8cd58a2229a] Merge tag 'iommu-updates-v6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu
-	git bisect bad 0cc6f45cecb46cefe89c17ec816dc8cd58a2229a
-	# good: [89721e3038d181bacbd6be54354b513fdf1b4f10] Merge tag 'net-accept-more-20240515' of git://git.kernel.dk/linux
-	git bisect good 89721e3038d181bacbd6be54354b513fdf1b4f10
-	# good: [89721e3038d181bacbd6be54354b513fdf1b4f10] Merge tag 'net-accept-more-20240515' of git://git.kernel.dk/linux
-	git bisect good 89721e3038d181bacbd6be54354b513fdf1b4f10
-	# good: [de111f6b4f6a3010020825d22a068f416bc29c95] iommu/amd: Enable Guest Translation after reading IOMMU feature register
-	git bisect good de111f6b4f6a3010020825d22a068f416bc29c95
-	# good: [da55da5a42d4247d7a48b843fa5fcd9a4a10f4fe] iommu/arm-smmu-v3: Make the kunit into a module
-	git bisect good da55da5a42d4247d7a48b843fa5fcd9a4a10f4fe
-	# bad: [ba00196ca41c4f6d0b0d3c4a6748a133577abe05] iommu/vt-d: Decouple igfx_off from graphic identity mapping
-	git bisect bad ba00196ca41c4f6d0b0d3c4a6748a133577abe05
-	# bad: [446a68c58d2e5b8140d474f1a74082aebeee9bb0] iommu/vt-d: Add trace events for cache tag interface
-	git bisect bad 446a68c58d2e5b8140d474f1a74082aebeee9bb0
-	# bad: [cc9e49d35b4de47d6b656ac144cb22b11dc65c2e] iommu/vt-d: Remove debugfs use of private data field
-	git bisect bad cc9e49d35b4de47d6b656ac144cb22b11dc65c2e
-	# good: [9e7ee0f045395dc8aa55fbdc164c062484f4c88d] iommu/vt-d: Use try_cmpxchg64{,_local}() in iommu.c
-	git bisect good 9e7ee0f045395dc8aa55fbdc164c062484f4c88d
-	# bad: [d74169ceb0d2e32438946a2f1f9fc8c803304bd6] iommu/vt-d: Allocate DMAR fault interrupts locally
-	git bisect bad d74169ceb0d2e32438946a2f1f9fc8c803304bd6
-	# first bad commit: [d74169ceb0d2e32438946a2f1f9fc8c803304bd6] iommu/vt-d: Allocate DMAR fault interrupts locally
+User-Agent: Mozilla Thunderbird
+Subject: Re: [DMARC error][DKIM error] [PATCH v6 2/2] arm64: dts: amlogic: Add
+ Amlogic S4 PWM
+To: <kelvin.zhang@amlogic.com>
+CC: Jerome Brunet <jbrunet@baylibre.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+	<devicetree@vger.kernel.org>, Junyi Zhao <junyi.zhao@amlogic.com>, Rob
+ Herring <robh@kernel.org>, "kernel@salutedevices.com"
+	<kernel@salutedevices.com>
+References: <20240529-s4-pwm-v6-0-270f63049f20@amlogic.com>
+ <20240529-s4-pwm-v6-2-270f63049f20@amlogic.com>
+Content-Language: en-US
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <20240529-s4-pwm-v6-2-270f63049f20@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185613 [May 30 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/30 07:20:00 #25352518
+X-KSMG-AntiVirus-Status: Clean, skipped
 
 
-FYI
-David
 
+On 5/29/24 13:00, Kelvin Zhang via B4 Relay wrote:
+> From: Junyi Zhao <junyi.zhao@amlogic.com>
+> 
+> Add device nodes for PWM_AB, PWM_CD, PWM_EF, PWM_GH and PWM_IJ
+> along with GPIO PIN configs of each channel.
+> 
+> Signed-off-by: Junyi Zhao <junyi.zhao@amlogic.com>
+> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+> ---
+>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 207 ++++++++++++++++++++++++++++++
+>   1 file changed, 207 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> index 10896f9df682..98f554577bae 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> @@ -312,6 +312,168 @@ mux {
+>   					};
+>   				};
+>   
+> +				pwm_a_pins1: pwm-a-pins1 {
+> +					mux {
+> +						groups = "pwm_a_d";
+> +						function = "pwm_a";
+> +					};
+> +				};
+> +
+> +				pwm_a_pins2: pwm-a-pins2 {
+> +					mux {
+> +						groups = "pwm_a_x";
+> +						function = "pwm_a";
+> +					};
+> +				};
+> +
+> +				pwm_a_pins: pwm-a-pins {
+> +					mux {
+> +						groups = "pwm_a_d";
+> +						function = "pwm_a";
+> +					};
+> +				};
+pwm_a_pins is just a copy of pwm_a_pins1 node
+> +
+> +				pwm_b_pins1: pwm-b-pins1 {
+> +					mux {
+> +						groups = "pwm_b_d";
+> +						function = "pwm_b";
+> +					};
+> +				};
+> +
+> +				pwm_b_pins2: pwm-b-pins2 {
+> +					mux {
+> +						groups = "pwm_b_x";
+> +						function = "pwm_b";
+> +					};
+> +				};
+> +
+> +				pwm_c_pins1: pwm-c-pins1 {
+> +					mux {
+> +						groups = "pwm_c_d";
+> +						function = "pwm_c";
+> +					};
+> +				};
+> +
+> +				pwm_c_pins2: pwm-c-pins2 {
+> +					mux {
+> +						groups = "pwm_c_x";
+> +						function = "pwm_c";
+> +					};
+> +				};
+> +
+> +				pwm_d_pins1: pwm-d-pins1 {
+> +					mux {
+> +						groups = "pwm_d_d";
+> +						function = "pwm_d";
+> +					};
+> +				};
+> +
+> +				pwm_d_pins2: pwm-d-pins2 {
+> +					mux {
+> +						groups = "pwm_d_h";
+> +						function = "pwm_d";
+> +					};
+> +				};
+> +
+> +				pwm_e_pins1: pwm-e-pins1 {
+> +					mux {
+> +						groups = "pwm_e_x";
+> +						function = "pwm_e";
+> +						drive-strength-microamp = <500>;
+AFAIU GPIOX_16 (groups = "pwm_e_x") is frequently used to generate
+clock for wifi module and drive-strength-microamp property here is 
+needed only for that special case. If so then should that property be 
+put in board dts file instead?
+> +					};
+> +				};
+> +
+> +				pwm_e_pins2: pwm-e-pins2 {
+> +					mux {
+> +						groups = "pwm_e_z";
+> +						function = "pwm_e";
+> +					};
+> +				};
+> +
+> +				pwm_f_pins1: pwm-f-pins1 {
+> +					mux {
+> +						groups = "pwm_f_x";
+> +						function = "pwm_f";
+> +					};
+> +				};
+> +
+> +				pwm_f_pins2: pwm-f-pins2 {
+> +					mux {
+> +						groups = "pwm_f_z";
+> +						function = "pwm_f";
+> +					};
+> +				};
+> +
+> +				pwm_g_pins1: pwm-g-pins1 {
+> +					mux {
+> +						groups = "pwm_g_d";
+> +						function = "pwm_g";
+> +					};
+> +				};
+> +
+> +				pwm_g_pins2: pwm-g-pins2 {
+> +					mux {
+> +						groups = "pwm_g_z";
+> +						function = "pwm_g";
+> +					};
+> +				};
+> +
+> +				pwm_h_pins: pwm-h-pins {
+> +					mux {
+> +						groups = "pwm_h";
+> +						function = "pwm_h";
+> +					};
+> +				};
+> +
+> +				pwm_i_pins1: pwm-i-pins1 {
+> +					mux {
+> +						groups = "pwm_i_d";
+> +						function = "pwm_i";
+> +					};
+> +				};
+> +
+> +				pwm_i_pins2: pwm-i-pins2 {
+> +					mux {
+> +						groups = "pwm_i_h";
+> +						function = "pwm_i";
+> +					};
+> +				};
+> +
+> +				pwm_j_pins: pwm-j-pins {
+> +					mux {
+> +						groups = "pwm_j";
+> +						function = "pwm_j";
+> +					};
+> +				};
+> +
+> +				pwm_a_hiz_pins: pwm-a-hiz-pins {
+> +					mux {
+> +						groups = "pwm_a_hiz";
+> +						function = "pwm_a_hiz";
+> +					};
+> +				};
+> +
+> +				pwm_b_hiz_pins: pwm-b-hiz-pins {
+> +					mux {
+> +						groups = "pwm_b_hiz";
+> +						function = "pwm_b_hiz";
+> +					};
+> +				};
+> +
+> +				pwm_c_hiz_pins: pwm-c-hiz-pins {
+> +					mux {
+> +						groups = "pwm_c_hiz";
+> +						function = "pwm_b_hiz";
+Should it be function = "pwm_c_hiz"?
+> +					};
+> +				};
+> +
+> +				pwm_g_hiz_pins: pwm-g-hiz-pins {
+> +					mux {
+> +						groups = "pwm_g_hiz";
+> +						function = "pwm_g_hiz";
+> +					};
+> +				};
+> +
+>   				spicc0_pins_x: spicc0-pins_x {
+>   					mux {
+>   						groups = "spi_a_mosi_x",
+> @@ -399,6 +561,51 @@ spicc0: spi@50000 {
+>   				status = "disabled";
+>   			};
+>   
+> +			pwm_ab: pwm@58000 {
+> +				compatible = "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x58000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_A>,
+> +						<&clkc_periphs CLKID_PWM_B>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_cd: pwm@5a000 {
+> +				compatible = "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x5a000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_C>,
+> +						<&clkc_periphs CLKID_PWM_D>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_ef: pwm@5c000 {
+> +				compatible = "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x5c000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_E>,
+> +						<&clkc_periphs CLKID_PWM_F>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_gh: pwm@5e000 {
+> +				compatible = "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x5e000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_G>,
+> +						<&clkc_periphs CLKID_PWM_H>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_ij: pwm@60000 {
+> +				compatible = "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x60000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_I>,
+> +						<&clkc_periphs CLKID_PWM_J>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+>   			i2c0: i2c@66000 {
+>   				compatible = "amlogic,meson-axg-i2c";
+>   				reg = <0x0 0x66000 0x0 0x20>;
+> 
+
+-- 
+Best regards
+George
 
