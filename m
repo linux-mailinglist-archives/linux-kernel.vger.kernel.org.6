@@ -1,175 +1,224 @@
-Return-Path: <linux-kernel+bounces-195740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4558D512A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:41:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71F88D5127
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687391F2214F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:41:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF732841FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A167447A58;
-	Thu, 30 May 2024 17:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="R5oBB0t/"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F61446556;
-	Thu, 30 May 2024 17:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB5247796;
+	Thu, 30 May 2024 17:41:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9516946B80;
+	Thu, 30 May 2024 17:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717090895; cv=none; b=p1RgvSmqBWeYFMoXCjCfO1SJWCOiAXdlC6OvHg5Z2xrfYJywQsjrbL6a6yc2oXPoIqy+GSvksFoXDgym6X6xuD5S3SS7ZmePHNQUY0ULM1kI2mmG53voZDexafYZ0z+gRx6rBzjLgCo7wEItoReuKb5htsMIVQQEXq7AhL6Cg20=
+	t=1717090883; cv=none; b=tlKr4yir4jKbihcu3z4qxKW61hwh1t4XW/6lzMPjtGNfe3l+sH47wOHYQFiD2bsMbIE+yvuNOk3tXcOTIKFYSJ7FYPQWwCzy/VfZVmf1ep8JI+xrQDSHZsNSCfF9BzJommvSD3VT3TF49tENgzlRQvTBHs8iY56eBK4vOtsVki8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717090895; c=relaxed/simple;
-	bh=PN12H3vukIEUvh92k02PFG+Hv5AE+f0Wb7EmKyT6t+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OJ1QpmYi8K1pHSrZw11XL4MHBBAdrPaZkKYh+fr9Vy3m7qvVPmn6OmsNBTz+3Ye1ObiLojfZWHUzFGCjVkSSDMKc8yi7I6pWGAHzy55xqQffnfOFRnzi1V+IwW1ER+JmK55JkvC9qAK2y0G/d2WM7Sl0he76YJROn1mIboXWD2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=R5oBB0t/; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1717090861; x=1717695661; i=w_armin@gmx.de;
-	bh=PN12H3vukIEUvh92k02PFG+Hv5AE+f0Wb7EmKyT6t+k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=R5oBB0t//IvSpkl7HJ2NoPH46s2VOu8fbNZn2ybZ4BTCZQqAbKQuasdUd1RC3XZ6
-	 T1f/sbjSJAHaS1aMLomARyE3jZdDtyj1XDxbMwLmqNr5mityZo0WfH9EledvB4zK0
-	 1EzcB8SzafP4dyi7OcB6XMFXrHELUQtMhSNQ+RYhxU9+H47cIpP7pzJ6WSGGiZPIe
-	 0aw/8/B3QTlBZ9JNiXpF4UjRukY8A4bKMw5XAKPFctXI2K3hZn6TgZeVPRwUV6jd6
-	 zQooaxHvQ0XEFtJuT0ZkcQobcMY7tFxh1eFry2HGIj1/wdINLnlXawsATv6aNaftB
-	 tUF8RLuyUv6005hi5A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MmlXA-1swDON03ZW-00jn0W; Thu, 30
- May 2024 19:41:01 +0200
-Message-ID: <78c58496-78b2-48a5-b5df-74545fd58dc3@gmx.de>
-Date: Thu, 30 May 2024 19:41:00 +0200
+	s=arc-20240116; t=1717090883; c=relaxed/simple;
+	bh=+5ZRUANTEIFrVyEyZnCY/GGZi2TOl1WPU+VLIwb8Vog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fHV+bGCsKFETdPFk17O0QUMfx+F7vHSOxQ4LyNubsREkCe8OzAadXTogw4MrpReF6mX3TX0X7KVIQF1ixsU85kG+s8/2cwy+0hoOREn7xoZGUOa4LHqbdtFer+kQglxtLi8TJ0UJ3w/xTwOnl04PQ9Yv8nyDC0JNt75HUkYuUzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 142491424;
+	Thu, 30 May 2024 10:41:45 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D60633F792;
+	Thu, 30 May 2024 10:41:17 -0700 (PDT)
+Date: Thu, 30 May 2024 18:41:14 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: James Clark <james.clark@arm.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Suzuki Poulose <suzuki.poulose@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	will@kernel.org, catalin.marinas@arm.com
+Subject: Re: [PATCH V17 0/9] arm64/perf: Enable branch stack sampling
+Message-ID: <Zli6Ot0TwK3Qy-ee@J2N7QTR9R3>
+References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
+ <80d33844-bdd2-4fee-81dd-9cd37c63d42c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
- sensors
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
-References: <20240529205204.81208-1-linux@roeck-us.net>
- <20240529205204.81208-3-linux@roeck-us.net>
- <6f1ffb83-a64f-469d-b981-f0da0d2f02ac@gmx.de>
- <b8aa563a-5ca1-4624-a1c7-25744f15cfa9@roeck-us.net>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <b8aa563a-5ca1-4624-a1c7-25744f15cfa9@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:50jYUZgJk05eSRj+dxdH12Nn8+NWXvjBbT/6mYeS+B5sN6BYufr
- rIe1hkHMideIRM91OMvZX5lV2zKwvkEDEHQBc5/lmZJ2InBeakTFzxS//fBPOG68jxRBZh3
- TKaCoVn9Jy5cZXAk0Um3VMqobFRVxJVBb67KL1WNTyOrEYu50hJjPqTnw0BZrJtrRL2xTq0
- RuF+T3T2uaryUM9Yb+ieg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lRtdwUgQvfo=;TKo1J+5irFvECnFjnhSYXPepOyf
- LTJOtA+Lj+KwmxVUPzIfTkxgAqFwP8yHG8zRCBu79R9mTOb+X2/PL7E4DMTiVq6DYzrexC83y
- eF6rpzWjz/hADw0O7zN433KD82XlZ+gm4LcGU0s3s23hu83XFKE88amr0GytEZjMQ0sxX5Knr
- 1P1ggI4Ew72hD3pBlAuJHIuLhVnkyIuXF7jbeMRECQ5TmWDGIeXDXpVpX5Lc5Kuzo9HisJtRJ
- eRulCFM2DHXglDizy8o3vcwzOSZO6++rG4FMAr0BwxC+R3P+/+fES/6x2pBMxqEvPM7S2qK6i
- xF2d+mUPuloLrdwkq8lwAf82wXS8B3WxKWmomCgoYPZ28eEZXSaZo8kROsxDhcONgh/9XoW5J
- YRO2uJnZz2IW057AjqayYPH1VgCrVIOb3gjHIyQMkx6iPCB1kOtuebOIp7Q1ZG99Y5v+L3JVe
- jth4sIX10GCUATMUwOXqMJ4JiiicBOuuOR41hvbkoJKA/1wxq3qkpdlsUs7K7EbvY2/3cm6tT
- ApG5bIKrGGimXdzW6QWqSG17uE4Iy2QvatgoA/snJPYtH8a/aSgNETsI7mVzV3NhHTBo7Cnbg
- gNu12BmA7HujxUyKSAC5E367/47sDVem2Bta2lLM/0XsTpcYw1DrLhACiU4sZzLU9H0BBkVq0
- 12HRuiA2zFhcppU7dt8LDlmJtq+g7tVJuqCgLQu4RrOQHWwNKaLIvQ8DzKWamdqkMKx+XlIZP
- 2gdoeiEqhNbkcI0m50TPmdX2eAlMm17feLoeAPUjBR5+BEFUsvZdPQRq+sZZL+86sGwMq4u4e
- 4Q84OS/JAQoEIjWFCYVmKZ0FGVwvAQidTIx3PWqLVaytQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80d33844-bdd2-4fee-81dd-9cd37c63d42c@arm.com>
 
-Am 30.05.24 um 19:33 schrieb Guenter Roeck:
+On Thu, May 30, 2024 at 10:47:34AM +0100, James Clark wrote:
+> On 05/04/2024 03:46, Anshuman Khandual wrote:
+> > This series enables perf branch stack sampling support on arm64 platform
+> > via a new arch feature called Branch Record Buffer Extension (BRBE). All
+> > the relevant register definitions could be accessed here.
+> > 
+> > https://developer.arm.com/documentation/ddi0601/2021-12/AArch64-Registers
+> > 
+> > This series applies on 6.9-rc2.
+> > 
+> > Also this series is being hosted below for quick access, review and test.
+> > 
+> > https://git.gitlab.arm.com/linux-arm/linux-anshuman.git (brbe_v17)
+> > 
+> > There are still some open questions regarding handling multiple perf events
+> > with different privilege branch filters getting on the same PMU, supporting
+> > guest branch stack tracing from the host etc. Finally also looking for some
+> > suggestions regarding supporting BRBE inside the guest. The series has been
+> > re-organized completely as suggested earlier.
+> > 
+> > - Anshuman
+> > 
+> [...]
+> > 
+> > ------------------ Possible 'branch_sample_type' Mismatch -----------------
+> > 
+> > Branch stack sampling attributes 'event->attr.branch_sample_type' generally
+> > remain the same for all the events during a perf record session.
+> > 
+> > $perf record -e <event_1> -e <event_2> -j <branch_filters> [workload]
+> > 
+> > event_1->attr.branch_sample_type == event_2->attr.branch_sample_type
+> > 
+> > This 'branch_sample_type' is used to configure the BRBE hardware, when both
+> > events i.e <event_1> and <event_2> get scheduled on a given PMU. But during
+> > PMU HW event's privilege filter inheritance, 'branch_sample_type' does not
+> > remain the same for all events. Let's consider the following example
+> > 
+> > $perf record -e cycles:u -e instructions:k -j any,save_type ls
+> > 
+> > cycles->attr.branch_sample_type != instructions->attr.branch_sample_type
+> > 
+> > Because cycles event inherits PERF_SAMPLE_BRANCH_USER and instruction event
+> > inherits PERF_SAMPLE_BRANCH_KERNEL. The proposed solution here configures
+> > BRBE hardware with 'branch_sample_type' from last event to be added in the
+> > PMU and hence captured branch records only get passed on to matching events
+> > during a PMU interrupt.
+> > 
+> 
+> Hi Anshuman,
+> 
+> Surely because of this example we should merge? At least we have to try
+> to make the most common basic command lines work. Unless we expect all
+> tools to know whether the branch buffer is shared between PMUs on each
+> architecture or not. The driver knows though, so can merge the settings
+> because it all has to go into one BRBE.
 
-> On 5/30/24 10:03, Armin Wolf wrote:
->> Am 29.05.24 um 22:52 schrieb Guenter Roeck:
->>
-> [ ... ]
->
->>> +
->>> +temp1_lcrit_alarm=C2=A0=C2=A0=C2=A0 Temperature low critical alarm
->>> +temp1_min_alarm=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Temperature=
- low alarm
->>> +temp1_max_alarm=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Temperature=
- high alarm
->>> +temp1_crit_alarm=C2=A0=C2=A0=C2=A0 Temperature critical alarm
->>
->> Maybe it would be a good idea to tell users that the alarm attributes
->> are sticky.
->>
->
-> The driver auto-clears them after read, so they are only sticky in the
-> sense
-> that they will remain active until read. This is quite common for
-> hardware
-> monitoring devices. However, sure, I'll add a note.
->
-> [ ... ]
->
->>> +static int spd5118_write_enable(struct regmap *regmap, u32 attr,
->>> long val)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 if (val && val !=3D 1)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return regmap_update_bits(regmap, SPD5118_REG_TEMP=
-_CONFIG,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SPD5118_TS_DISABLE,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val ? 0 : SPD5118_TS_DISABLE);
->>
->> The spd5118 spec says that we have to wait 10ms after enabling the
->> sensors before
->> we start reading temperature values, maybe we need a delay + locking
->> here?
->>
->
-> I don't think that would add much if any value but a lot of complexity
-> for little gain. I find it acceptable that the sensor returns 0 for a
-> few ms
-> after enabling it. Pretty much all chips have the same problem, so I am
-> really not concerned about it.
->
->>> +
->>> +static struct i2c_driver spd5118_driver =3D {
->>> +=C2=A0=C2=A0=C2=A0 .class=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-=3D I2C_CLASS_HWMON,
->>> +=C2=A0=C2=A0=C2=A0 .driver =3D {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name=C2=A0=C2=A0=C2=A0 =
-=3D "spd5118",
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .of_match_table =3D spd511=
-8_of_ids,
->>
->> The driver is missing suspend support, without it hibernation/S4
->> sleep will cause the
->> limit and config registers to be out of sync with the regmap cache.
->>
->
-> Good point. Do you have a means to test this if I add suspend support ?
-> I have not been able to figure out how to put my system into suspend.
->
-> Thanks,
-> Guenter
->
-I think so, at least i can verify if S3 sleep works, but S4 sleep should w=
-ork fine too.
+The difficulty here is that these are opened as independent events (not
+in the same event group), and so from the driver's PoV, this is no
+different two two users independently doing:
 
-Thanks,
-Armin Wolf
+	perf record -e event:u -j any,save_type -p ${SOME_PID}
 
+	perf record -e event:k -j any,save_type -p ${SOME_PID}
+
+.. where either would be surprised to get the merged result.
+
+So, if we merge the filters into the most permissive set, we *must*
+filter them when handing them to userspace so that each event gets the
+expected set of branch records.
+
+Assuming we do that, for Anshuman's case above:
+
+	perf record -e cycles:u -e instructions:k -j any,save_type ls	
+
+.. the overflow of the cycles evnt will only record user branch
+records, and the overflow of the instructions event will only record
+kernel branch records.
+
+I think it's arguable either way as to whether users want that or merged
+records; we should probably figure out with the tools folk what the
+desired behaviour is for that command line, but as above I don't think
+that we can have the kernel give both events merged records unless
+userspace asks for that explicitly.
+
+> Merging the settings in tools would be a much harder problem.
+
+I can see that it'd be harder to do that up-front when parsing each
+event independently, but there is a phase where the tool knows about all
+of the events and *might* be able to do that, where the driver doesn't
+really know at any point that these events are related.
+
+Regardless, I assume that if the user passes:
+
+	perf record -e cycles:u -e instructions:k -k any,u,k,save_type ls
+
+.. both events will be opened with PERF_SAMPLE_BRANCH_USER and
+PERF_SAMPLE_BRANCH_KERNEL, so maybe that's good, and in-kernel filtering
+is sufficient.
+
+> Any user that doesn't have permission for anything in the merged result
+> can continue to get nothing.
+> 
+> And we can always add filtering in the kernel later on if we want to to
+> make it appear to behave even more normally.
+
+As above, I think if we merge the HW filters in the kernel then the
+kernel must do SW filtering. I don't think that's something we can leave
+for later.
+
+> > static int
+> > armpmu_add(struct perf_event *event, int flags)
+> > {
+> > 	........
+> > 	if (has_branch_stack(event)) {
+> > 		/*
+> > 		 * Reset branch records buffer if a new task event gets
+> > 		 * scheduled on a PMU which might have existing records.
+> > 		 * Otherwise older branch records present in the buffer
+> > 		 * might leak into the new task event.
+> > 		 */
+> > 		if (event->ctx->task && hw_events->brbe_context != event->ctx) {
+> > 			hw_events->brbe_context = event->ctx;
+> > 			if (armpmu->branch_reset)
+> > 				armpmu->branch_reset();
+> > 		}
+> > 		hw_events->brbe_users++;
+> > Here ------->	hw_events->brbe_sample_type = event->attr.branch_sample_type;
+> > 	}
+> > 	........
+> > }
+> > 
+> > Instead of overriding existing 'branch_sample_type', both could be merged.
+> > 
+> 
+> I can't see any use case where anyone would want the override behavior.
+> Especially if you imagine multiple users not even aware of each other.
+
+I completely agree that one event overriding another is not an
+acceptable solution.
+
+> Either the current "no records for mismatches" or the merged one make sense.
+
+I think our options are:
+
+1) Do not allow events with conflicting HW filters to be scheduled (e.g.
+   treating this like a counter constraint).
+
+2) Allow events with conflicting HW filters to be scheduled, merge the
+   active HW filters, and SW filter the records in the kernel.
+
+3) Allow events with conflicting branch filters to be scheduled, but
+   only those which match the "active" filter get records.
+
+So far (2) seems to me like the best option, and IIUC that's what x86
+does with LBR. I suspect that also justifies discarding records at
+context switch time, since we can't know how many relevant records were
+discarded due to conflicting records (and so cannot safely stitch
+records), and users have to expect that they may get fewer records than
+may exist in HW anyway.
+
+Mark.
 
