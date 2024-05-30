@@ -1,137 +1,127 @@
-Return-Path: <linux-kernel+bounces-195216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B478D48ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:50:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0885A8D48EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040DC1F228BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:50:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC8EB26580
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98AF155381;
-	Thu, 30 May 2024 09:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DC3155335;
+	Thu, 30 May 2024 09:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="IHVWIpq+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g9HeyhDu"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jNNl3YLE"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37C614D71B;
-	Thu, 30 May 2024 09:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB04B18396D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717062651; cv=none; b=DOnK0Fvh+Awzixabho8+fAiPaL+qjACuFExFYXiws4dE5ktBTk7+zrJDUt/Z1U1d53VmAMMPlpc8aPJ0DR1QhDri1LkdEOzSDn8nZSfC1YP6vTOksSajoXSTe/0VCY91r4CokCa5A6coJItJZIEv67fCST5rVYPlbwwNEaE+8rc=
+	t=1717062658; cv=none; b=Dt2m++9/tbeeehNKOi2TFm6iwK5/LNK5NrGsBgi4xE0vrNxcf7x/S+tsX7VpAHxoZya0o1nX0UIEJkfxOr4WtwNxPFM7VLD5le75u8s4fhXgp7BBK1qXu4NohGn3mvBh9UlHf+KCajjnStXq8Baxk0sbUs/5ExIyuEhdDQkaC6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717062651; c=relaxed/simple;
-	bh=TYAa6LrsH4ZpL/6JA7vVWCjcf2hW1D1GbSww//UmSu8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=eoCJ903fuHLlKARafAJxWsX9zsFEy6tzwsvDvSfYP06QmeTq314ZJ3RwDzdp9VFH7jAjc32Mrh/5eoYslkv0cAQD+8xApd1eOd5uHf0GxknjJnTbsAK5+YTL8524oUiSxFX5R8YAJ6qeGkJT45cak3eTT0z9mzXdYzJwgJjFlTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=IHVWIpq+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g9HeyhDu; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id F092D1800124;
-	Thu, 30 May 2024 05:50:47 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Thu, 30 May 2024 05:50:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1717062647;
-	 x=1717149047; bh=EoCF9CEsDQuWFBvfe+ol3H4MmAOovrJ/lqBuRsL+qrY=; b=
-	IHVWIpq+4MC3JbXynRj67WVI5IDA6ZfPq2aA2lOFyyc/zeO5Q0j0PbzhR9FIgn4U
-	NsCPgYvFnRF66lA9CNOqYXirnBUdC3fl1yBxMdHN+bRO61kogSv1aEO4t6KFwVh2
-	KItd2Q7h4SEM0qAMkZ5yB+e34zSYBVksl3PD/be6T1sCfOEILWcVCQr0FbS7q94P
-	7r5K9vjLxrMszQmuuwPlOPqHZUm2BaWPTx0L+N4Lcx0DFxKQhHmZ6VjtIPqeLeLf
-	gS2wzVbPX809PKl9vm1+cAxY4N/NUQP3x7WSfGqaeyqRPpudA3OrhTV5BvWz4yrH
-	Jt+BbJQZo8ivtK0VnB8T+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717062647; x=
-	1717149047; bh=EoCF9CEsDQuWFBvfe+ol3H4MmAOovrJ/lqBuRsL+qrY=; b=g
-	9HeyhDuhRnwF4cqgc9xluXiTWjS4yRJ8jIbJTwp8mcBrub6ysbVpZEANthgymuFc
-	/t/y4sq4uexrNQed+DnaA9lTsgr6V+AW9FG0bplSlYlhsjFDpQSVSG/Hd9ReQa6Y
-	VhKdOI9n9WOuzNUuRV0MaXkTainj8FScAW4El/C2UIbw0Uv3DD0qfY6ZvCHUIhX3
-	NY1qXqr8Ds8w7TwKlwmi8NUtLAfzLGfmyPVu+6t+WUKjPsGh3ch6LmFuvzIORwvU
-	8KRZApTEYbSunoVlH5IzV3HOF93NZ8Wy7KYbTLA9HGjno9fUMGDjgRjoZ6jelc7a
-	EZybXeykhg3EdrwH0T8HQ==
-X-ME-Sender: <xms:90tYZlu7qQGD3oqWeWfLbvTiXMaM6f71qDrrrtRKBqixvZp4CazHfg>
-    <xme:90tYZuejch2GzeXAJVKm4NF8ngwAzuNYe42KXBCTcP0lMFebpQTh4e8574gJW9EzV
-    NlyBYVOXsDKDhUpov4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedgudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:90tYZoyrZesAnpVcCjeKkSPpwiRuufK5eZ8LE0Ch5rWbknTgm0lr0w>
-    <xmx:90tYZsM-XWT2lBvcUEn-VsCcf2CXnYoayg5-_Rk1PQiDIPkgqGXFgg>
-    <xmx:90tYZl-vHrTufnERdg9BSRoiIv3j4VVn5SU4WpgC3kDFpG_d9MTTeQ>
-    <xmx:90tYZsWhGtHvBQnw3vtbS-KgXzKXI-RScbEZS2pxiyXgFgJDHRARqA>
-    <xmx:90tYZonkFlVI5r00elI4uWDNsyt_KNay1xBPJ-PLjJYG062D9aKLrFTj>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5723E36A0076; Thu, 30 May 2024 05:50:47 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1717062658; c=relaxed/simple;
+	bh=1sgCNFfhsLJPmuD7eeGzunJ4rWvci9DlA10mhqBH0wg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HnYbbY74yCup6axv01WH/cLa+cnRiogeHJbmSmLhdMmgtSk7QiV6EV/Z5O9YYynKlAStExXsWSTsxYRj0hWJ9LWab2f3p0lWzIYspK8bGHi7vDDysk6TFnkzfnBwpGRIrZzp3v6DBwLzG482s9NFqmzQizJOL8cnS538wA2ukR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jNNl3YLE; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U9ofeI000674;
+	Thu, 30 May 2024 04:50:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717062641;
+	bh=uxW3c1qum3YvbkJyiB8ZfNCsUxF/LLwa29zaFh9WBSo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jNNl3YLEEGo1noulLDWchtMGhwcqU7HMX4oBAWoqivxTgbaVDdQjrkC1FEbSjSyEc
+	 U+FNpjwRkzY0WqCFIYlhJyggeLdQaktZUp7u2GxJQCJdZSwYc2GRrX96GyNz4Y9eY8
+	 CWQBpVgeHc26dww5Kkvbmnx6cw+8YHJmuqX0gjh4=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U9ofST063338
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 04:50:41 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 04:50:41 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 04:50:41 -0500
+Received: from [172.24.227.102] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.102])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U9oZbA020286;
+	Thu, 30 May 2024 04:50:36 -0500
+Message-ID: <d03478b9-bcfb-41e3-bdbd-7427577a70a0@ti.com>
+Date: Thu, 30 May 2024 15:20:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <173627fe-3370-413b-8f9c-50c65892cef9@app.fastmail.com>
-In-Reply-To: 
- <CAHirt9hbzVxcKzwnSF_5jpwma+kr-WJHBQjc47ojB95Ph9SnqA@mail.gmail.com>
-References: <20240522-loongarch-booting-fixes-v3-0-25e77a8fc86e@flygoat.com>
- <20240522-loongarch-booting-fixes-v3-3-25e77a8fc86e@flygoat.com>
- <CAHirt9hbzVxcKzwnSF_5jpwma+kr-WJHBQjc47ojB95Ph9SnqA@mail.gmail.com>
-Date: Thu, 30 May 2024 10:50:28 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "WANG Rui" <wangrui@loongson.cn>
-Cc: "Huacai Chen" <chenhuacai@kernel.org>,
- "Binbin Zhou" <zhoubinbin@loongson.cn>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 3/4] LoongArch: Fix entry point in image header
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] drm/bridge: Add pixel clock check in atomic_check
+To: Maxime Ripard <mripard@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <sam@ravnborg.org>, <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
+        <airlied@gmail.com>, <daniel@ffwll.ch>, <a-bhatia1@ti.com>,
+        <dri-devel@lists.freedesktop.org>
+References: <20240530092930.434026-1-j-choudhary@ti.com>
+ <20240530092930.434026-3-j-choudhary@ti.com>
+ <20240530-spiked-psychedelic-monkey-ddd0b0@houat>
+Content-Language: en-US
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <20240530-spiked-psychedelic-monkey-ddd0b0@houat>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hello Maxime,
 
-
-=E5=9C=A82024=E5=B9=B45=E6=9C=8830=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8A=E5=
-=8D=886:01=EF=BC=8CWANG Rui=E5=86=99=E9=81=93=EF=BC=9A
-[...]
->>  /*
->>   * Put .bss..swapper_pg_dir as the first thing in .bss. This will
->> @@ -142,6 +143,7 @@ SECTIONS
+On 30/05/24 15:04, Maxime Ripard wrote:
+> Hi,
+> 
+> On Thu, May 30, 2024 at 02:59:30PM GMT, Jayesh Choudhary wrote:
+>> Check the pixel clock for the mode in atomic_check and ensure that
+>> it is within the range supported by the bridge.
 >>
->>  #ifdef CONFIG_EFI_STUB
->>         /* header symbols */
->> +       _kernel_entry_phys =3D kernel_entry & TO_PHYS_MASK;
->
->  -       _kernel_entry_phys =3D kernel_entry & TO_PHYS_MASK;
->  +       _kernel_entry_phys =3D ABSOLUTE(kernel_entry & TO_PHYS_MASK);
->
-
-Thanks Rui!
-
-Huacai, do you mind committing this fix?
-
-Thanks
-[...]
+>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>> ---
+>>   drivers/gpu/drm/bridge/sii902x.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
 >>
->>
->
-> - Rui
+>> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+>> index 6a6055a4ccf9..1bf2f14a772d 100644
+>> --- a/drivers/gpu/drm/bridge/sii902x.c
+>> +++ b/drivers/gpu/drm/bridge/sii902x.c
+>> @@ -494,6 +494,12 @@ static int sii902x_bridge_atomic_check(struct drm_bridge *bridge,
+>>   				       struct drm_crtc_state *crtc_state,
+>>   				       struct drm_connector_state *conn_state)
+>>   {
+>> +	if (crtc_state->mode.clock < SII902X_MIN_PIXEL_CLOCK_KHZ)
+>> +		return MODE_CLOCK_LOW;
+>> +
+>> +	if (crtc_state->mode.clock > SII902X_MAX_PIXEL_CLOCK_KHZ)
+>> +		return MODE_CLOCK_HIGH;
+>> +
+> 
+> atomic_check doesn't return drm_mode_status but regular error codes (0
+> on success, negative error code on failure)
 
---=20
-- Jiaxun
+Okay.
+
+Will club together both conditions and return -EINVAL.
+
+Warm Regards,
+Jayesh
+
+> 
+> Maxime
 
