@@ -1,221 +1,144 @@
-Return-Path: <linux-kernel+bounces-195273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807118D49E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:49:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B938D4A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8EF0B22C84
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 354FA1F226F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1862317C7CB;
-	Thu, 30 May 2024 10:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A5116F271;
+	Thu, 30 May 2024 11:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fzZpxCw8"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b="tQsviuRK"
+Received: from sonic307-53.consmr.mail.ir2.yahoo.com (sonic307-53.consmr.mail.ir2.yahoo.com [87.248.110.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7F26F2F8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA0A16EBE7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.248.110.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717066175; cv=none; b=ZebLCfDNhJPDXdqxlRfgjHWybDPsLUnd32qAXli1PD68J2552uV1vHEFvm4uyzydvKRH5lRKqyBGxtVogl1JVSS9NE69A6BiiHfe3YpXTu3oSF+VPLX3Bs+7KokR46lgBK61wB6IvrZdGD+QvzTHFM7mUFFTKfx6ANJVfbHvd7w=
+	t=1717067415; cv=none; b=IxgEe2wY/i76Y7zjU9toAS/ShYrWzippEV85XuYOFmA+e4L2xomWcqhaLn/e2EJ/YbVmWahlSLaZfeOeRQ38FBXjPKiz8ShBW1scLPfUWX8kjbO3Y97B0DBMJbATOM6gOca2WiiKiEhEbNjF3WiqXOFX/WBEWj1KdtG3u4sr6Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717066175; c=relaxed/simple;
-	bh=TJ2qCM+mvdP0g9i+4Q2nIXBFeAvuhiAMDG4DILKDI/c=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=uKQehd90chfSWU8z8CwwzoJQGulPavfpDX0WNqom0hpWLLygqaTm+wMuV6Qkosn+4t8dCdCil/86mDSzHsmIZnrz8ST7Gsf62ejpBzYnL9oPTRU+neXtHkpyNcVvdLA8Mmp/EqGCxKpCpUvtNVkNwck+XKtxbKhEJdD0uLz8HOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fzZpxCw8; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240530104930epoutp03bfab6ffbb63d9f261b235136668037c7~UPpWmumab2671726717epoutp03j
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:49:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240530104930epoutp03bfab6ffbb63d9f261b235136668037c7~UPpWmumab2671726717epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717066170;
-	bh=bayhkHJWgnKx9EEPIcgFg/m+eMAFCDXeiFRm7E7Mg78=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=fzZpxCw8497u8+hZRoz9tVsA75m8B+Vb0bZEyYmewijeqCgPKE7wMXkgvaGfxWMbn
-	 ezvBF0O7Ljh/OoxVC8Whn4bmMYmN8An2Qn9lnztcmgorb+2iRyyT/m2lG4YUkSGnZV
-	 9HF7pHmijKG7GSjDDjgByxSdonvrpjB9nkosv5wg=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240530104929epcas1p1f8ec89fe5f632a0a0e2b2754ca585aa3~UPpWGF9do2008220082epcas1p1k;
-	Thu, 30 May 2024 10:49:29 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.243]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VqjgF3PJtz4x9Pt; Thu, 30 May
-	2024 10:49:29 +0000 (GMT)
-X-AuditID: b6c32a4c-bb9ff70000004a73-91-665859b9ece6
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6C.75.19059.9B958566; Thu, 30 May 2024 19:49:29 +0900 (KST)
+	s=arc-20240116; t=1717067415; c=relaxed/simple;
+	bh=7aybtSefWX7qOkDAv6IB5StKPRuL/tJxPJ6SrdpSMbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o4REXCeteFcRIOQFyENz9jx/OowSrsWeK5A7TIxVoyo+WbI9KtYZj/SWdEcgHzR3V/oXNLsOJduobVGV+RRJlJpSgSj/ouSymA1L//hJ+BJY8rUI5RST7LXi78Fy8gwCxbb9wWKZyybePcOCL8Ncian2zxFL3AJ7vz4UYgXqfjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de; spf=pass smtp.mailfrom=yahoo.de; dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b=tQsviuRK; arc=none smtp.client-ip=87.248.110.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.de; s=s2048; t=1717067412; bh=iETrNB+qFsCwf3l9yJ7zi5gWG9hU7iH9KF33EbrTrnc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tQsviuRK13MGbntOGC2XtLT0hydg2pz0gDccNoTsXaeUwyPMxGs7WsgSG86aJBsgln/xB2OWvQE5VDfIk7+nm4xdM45DCYQWihXKWAg4P/8qySsXoWe/65d6qKwkTZZUviHHy0nABx7DPvxfi5CgLTx0FaVIIQnnc63216aKmBJtjOrVfJ1ZzGNni4tFOQTyP2ozoD2NbulfrdVvfz0TJrmUfL5fXeYzX5R4jdWBg5OYVRVFRY5Lf1Y/sFCfcQpSUzuhnQydidCF+ykbTTqZFl86agG2h7RDcnVhY7ZhHw7Yxk+Fc9ObNvg/Ja3rhLBAkfQhcn5YqocwJq6MuKwyVQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717067412; bh=EvTrYQuZ1VkLhVCP3Y66UvxCLjhbo3HLOT9JXEopdnn=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iQBOWdfO7yWBKFyGDQpdbV8+QQh8qwXb9PC6GpMVxH12S1t40DIADIXN2SnVXp/97U5X5PXwJBNHlD9pA8USv9Jb8UaNyj9TxJLK71lxCVx+W86grirNjlfJF37B2GK6aed56FlLQ0PmhpXMYrrQdXBARtEXUE76EQZsPC60s17VFLqe+aAj62L0Kl7Mza0ECZgwVxhK7CzYTD+WlzXRJGm2Egn5gMlO92ic07Aje6EqUEZQq5JzeK4pclFXDSk8yQhULd4jZPsAtYIkTopGidPZB1xq+9hGeDflsq3Rx+ptHFfBYFPnEtOIG7U3UBDDpG9b1gq2VPC2VF8ya9ny3Q==
+X-YMail-OSG: jPnIlbUVM1kGJcHFvgbED0RbmTTs1gsxA9pBsgR.7GO5JuGivNQxYdwwJcvB7EM
+ 0nOzIplJ5Xg96BJLjK9gvt8IGk2v3XB77CicaN1FzkMxKWY6FnVskGKH8wBg4t8nfUrg7FmnxURA
+ .LS0iEIgVOD84GvWZwGBVhBH2DZRUe7Xp9Wh.44gCG8PuTuwHU_bs8N1b1VszVnexIS_bXUZFBfu
+ _.XjLZHG8DLl6fhFUDCYyxF0lR4EoNmu53bObpy.I4kUBFYyHRHqUfO8gQCFQ1tENUfzZ4RYJN5d
+ Yb.pM1FfmF8UJPJjETtMS5LekawUVKHy2galJ20meJ_9E5G5C4ShQep3mgnhCpALSop5kn5sWKdW
+ zM.IF2FOyxmd8m0cZZczVTmPwcg809CJF8vTHcj9uxCx8HkEt4S541__u9X15SNNogCz9zykJY2b
+ dzOMxrMUSd9OG2aWyKNXUPtIh_8wtaSuCww.hm91YdnW.69aIqjEocNIFt7XZ.NLcYNQG4w.c7Ov
+ _qE9_N1c0GeEjcVchfrJQHFUCCcvbIv7UMvh2hKaE4MPnvWI8ZrH1E7xcSiZJ1yyoDuklQUvDlf7
+ uMkwVdNok0jJFzREALmgMd6oKf1fBxlEtPtjSjvPXPeQFtDQrnOCdlSJIhqvXGStzFOOMYF0gTBe
+ yDIFwQZmdgraoQJDwRw3nFB856ziOPWHDHQiGmnVQFhcA6xZ95XJ6Y3a12xrWb2nqsijzaARZeC7
+ .wGwI8W646x9VQgPDtO0wIC5jRKExiKq3iVsbsC6IcYfPahJzzNXbj4ubIA.HHSq8fJ5xFsRQd6v
+ FKoUsj3WdqlUXF44ys9Ao_G9j3UL41y_8VH99KIT8QO23W84rHkDWhQ_Hs_wXFy4VxgSFQRza8.x
+ Re9cA0vm_bxPyix9lqIGNqdcGuiPAMjNGyegC6U.w.ukiqPM.HybvPmpuApQXTrOdiFvdt.lPNQO
+ X71Q32m3_GPh5e9.JqRcRKhT60ZAJG_MAXmuJoZfKuvc_ZYjB9gPhjfR05vYMIBVR3Ca9N3xapB3
+ ZkZhWPZH4t40zSbUUIUsL0Tu0LtyKP50BgIz_2dXmWjVzc_MCOaqytkGnEUygn9ZUW8ruKD63e.I
+ JjMusee0NV1ZHZ9Op_KVZpS3.wzf0aq9_zPlH7oq6D9W76og.GyKek59abR3E0os7UAy1Kscr0Nb
+ Rh1MWnMrxiytEc.ZxbFxZra4gK5x.O8PbPNZwkKh5b33kNokdN7Ci67qkkjtcwaLzieGHGjcuTp1
+ OMfNRIm2P1rbzbJ7wjiSytQHfgqZtoNnFP39reDUWpIawhGY3PUM2Q1KTiHkjKokb5efGHjbSzm1
+ r1bh4A6S7di6VwkEH8kgn6PWZI2RR1.2GsEgjn6ISsNhR2kws8mVTjLnySGKXtMlfLEqrT6c1u1J
+ j2K_nripyC6wcZxueWuTqD3HTuE5LVyA6MnlESR4kDg0Kg9fzKdNAd9RygZi_SAGArbIVsnwIvNs
+ ac6bDYuv9RTS_Un7IqRpHoR9xWf0FisbUHhFvtEoMnSwPv3AS45d..QNplndD68xkCuyLPzREvB.
+ 7AQbzBwAYoNyb02CexkvTr9.5MJQZ0jwwOkosLtdfdhfBGw4ZqicRLcES.loP5gJcL1HwttNMJsk
+ _uhPPSD8xgM4QBaNbCuWa4tIfyjootj2.lI0Z1WvNF8.xUFg2ckFXE7khrnA1f8OwhsCKlKUUj0A
+ LavwfR8.KD2Juclegt0.33OPjw086LZUSkJerbo64uTFo0092Ke2Hh2ysAKVGDSmfw6oUemiUjsg
+ yRUNRkdWGCeBE9E8Abq4KxHugijQyNr_Gz4EPgcHQDfU2byos8xuSHE9XuBuZvC9VfuDk.oMGPCe
+ olGnNvKl1BgYnJhIkXljLxokGeLYqb7AAoTA8IXsAbHaGb..Baw4tXmuZrhgzeodmD.jH7Hpcg4Z
+ VH78LRQCX1rkqh7E6eG4oA82PXsePZRR98F6NXX5LZEan7D7tIzYrtjcvpWOkStmNWE4xqmIA7zW
+ SXNrSfFe0sMSpDlNSoMUk7n7d4DDDkzF9xauV6Dd5_E7BUxioxXlnBkQmFuD2_y62BWhH08xKOhY
+ 6eoAa9nxA4zYRaMhBxpE434DOyRW2anJs76kZShlFwtsSE_Ky55fnPoQJo1VDtgNXX139pclpSMi
+ 4uQhki2uoJA1Lgl_lwPMQWP8YIKZXdsMuiGwpx4vRMLKaxgi1WpJSEFPmKEU0cQKfJYHGOrdj8Oa
+ .L5Xn_eGK91xqa0W46mApHG67EyvW1iEet_esvZR0MOolmwd8CcUgOao7wRCT
+X-Sonic-MF: <fhortner@yahoo.de>
+X-Sonic-ID: a515d68d-f75a-4e76-824e-73db09aabddf
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ir2.yahoo.com with HTTP; Thu, 30 May 2024 11:10:12 +0000
+Received: by hermes--production-ir2-7b99fc9bb6-hcsdk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d50324578d537739bc53c7e42086909d;
+          Thu, 30 May 2024 10:49:53 +0000 (UTC)
+Message-ID: <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de>
+Date: Thu, 30 May 2024 12:49:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE:(2) (2) [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Reply-To: jaewon31.kim@samsung.com
-Sender: Jaewon Kim <jaewon31.kim@samsung.com>
-From: Jaewon Kim <jaewon31.kim@samsung.com>
-To: "richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, Jaewon Kim
-	<jaewon31.kim@gmail.com>
-CC: Jaewon Kim <jaewon31.kim@samsung.com>, Mike Rapoport <rppt@kernel.org>,
-	"vbabka@suse.cz" <vbabka@suse.cz>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tkjos@google.com" <tkjos@google.com>, Pintu Agarwal <pintu.ping@gmail.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20240530000301.zvirmigx3pdw474w@master>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240530104928epcms1p8108ece61c39c6e3d0361d445c15352d1@epcms1p8>
-Date: Thu, 30 May 2024 19:49:28 +0900
-X-CMS-MailID: 20240530104928epcms1p8108ece61c39c6e3d0361d445c15352d1
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression, thermal: core: battery reading wrong after wake from
+ S3 [Was: Bug Report according to thermal_core.c]
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
+ <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de>
+ <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
+Content-Language: de-CH
+From: "fhortner@yahoo.de" <fhortner@yahoo.de>
+In-Reply-To: <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmnu7OyIg0g9XHJCzmrF/DZvHykKZF
-	9+aZjBa9718xWVzeNYfN4t6a/6wW119OY7G40/eKxeLI+u1MFu8nF1vMbuxjdOD22DnrLrvH
-	gk2lHptWdbJ5bPo0id3jxIzfLB59W1YxepxZcITd4/MmuQCOqGybjNTElNQihdS85PyUzLx0
-	WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKAzlRTKEnNKgUIBicXFSvp2NkX5pSWp
-	Chn5xSW2SqkFKTkFZgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGd/nNzEXdMhUfPom1MD4R6yL
-	kZNDQsBEYkv/WvYuRi4OIYE9jBIXr89n6mLk4OAVEJT4u0MYxBQWiJPoXBcKUi4koCRx9scV
-	dhBbWEBXoql7NQuIzSagLfF+wSRWEFtEIEli7/HpYDazwFMmif4/YRCreCVmtD9lgbClJbYv
-	38oIYnMKmEo09DSxQ8RFJW6ufgtnvz82nxHCFpFovXeWGcIWlHjwczcjzJw/x5+zQdjFEss6
-	HzBB2DUSK86tgoqbSzS8XQlm8wr4Snx6sxysl0VAVWLHjiaoeheJpx+/sEPcLC+x/e0cZpDX
-	mQU0Jdbv0ocI80m8+9rDCvNKw8bf7NjYO+Y9gRqpJtHy7CtUvYzE33/PoGwPibvXdrNMYFSc
-	hQjnWUgWz0JYvICReRWjVGpBcW56arJhgaFuXmo5PHaT83M3MYKTrJbPDsbv6//qHWJk4mA8
-	xCjBwawkwntmUmiaEG9KYmVValF+fFFpTmrxIUZToLcnMkuJJucD03xeSbyhiaWBiZmRiYWx
-	pbGZkjjvmStlqUIC6YklqdmpqQWpRTB9TBycUg1MLL1nnyjs+r9OM9/88EwL54N570wTJ7Wp
-	1//Xrdu4Y0btpfMMnP8ZLz3OYHAxE9hZFXCsOIalrS3DYcq3Ent+Vac5Wx6di5q16dHWy1L7
-	c6TfxnydyRn38ltkEpu7j8TXx0U/XaXeTU9Wf76Gp/R1otfBedtuXZi5MSd+SjjjQaszO86b
-	TmGMbrr3eM314k+K7eZzKjfcTbe4x5C7J640bNrSvkWpnTOKF61m1szmVgr3NngbP+O5+w/h
-	32+Sz1z5tF/1+bfrdcdfuP04tlIuQPlJeYra4U01L3SNlaTT2xfOvTsj2FC07kJf/YJ7OY+L
-	bjH3m2bLM0ncfPci/YnIct6wWVa+h9/IVy1NXbC5R4mlOCPRUIu5qDgRAMkaXSo7BAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76
-References: <20240530000301.zvirmigx3pdw474w@master>
-	<ZkxN0yQ7Fb0X26hT@kernel.org>
-	<20240521023957.2587005-1-jaewon31.kim@samsung.com>
-	<20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
-	<20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
-	<20240524090715epcms1p274939a1d5954be3423f6ce14a3df6f92@epcms1p2>
-	<20240527013504epcms1p22bec7b83f2a42e76877b97ed0d769009@epcms1p2>
-	<20240529095119epcms1p73f0e9ff756bcb2ee6a14db459128a644@epcms1p7>
-	<20240529113519.jupuazcf754zjxzy@master>
-	<CAJrd-UuiDq-o=r7tK=CG6Q3yeARQBEAtaov2yqO6e6tBwJZoqQ@mail.gmail.com>
-	<CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p8>
+X-Mailer: WebService/1.1.22356 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
->On Wed, May 29, 2024 at 10:10:29PM +0900, Jaewon Kim wrote:
->>(Sorry I might forget to change to be plain text)
->>
->>Oh good thing, I did not know this patch. Thanks.
->>
->>By the way, I've tried to get memblock/memory and kernel log from a
->>device based on
->>v6.6.17 kernel device, to see upstream patches above.
->>memblok/memory does not show region for
+Thanks Thorsten for the side note.
+
+I have compiled kernel 6.8.11 with reverted commit 
+5a5efdaffda5d23717d9117cf36cda9eafcf2fae.
+
+Battery Status works fine now with reverted commit after S3 Sleep and 
+Wake cycles.
+
+Best, Reinhard
+
+
+Am 30.05.24 um 12:21 schrieb Linux regression tracking (Thorsten Leemhuis):
+> [adding the culprits author, LKML, and the regression mailing list to
+> the list of recipients; changing subject, too]
 >
->memblock/memory only shows ranges put in "memory".
->memblock/reserved shows ranges put in "reserved".
+> On 29.05.24 21:52, fhortner@yahoo.de wrote:
+>> After bisection I have reported a bug according to thermal_core.c:
+>> After "Resume thermal zones asynchronously" commit: Wrong Battery
+>> Reading after Wake from S3 Sleep - Lenovo Thinkpad P1 Gen2
+>>
+>> https://bugzilla.kernel.org/show_bug.cgi?id=218881
+>> Could you please have a look at it
+>>
+>> I have performed a bisection and the culprit is this commit: Resume
+>> thermal zones asynchronously
+>> git bisect bad 5a5efdaffda5d23717d9117cf36cda9eafcf2fae
+>> # first bad commit: [5a5efdaffda5d23717d9117cf36cda9eafcf2fae] thermal:
+>> core: Resume thermal zones asynchronously
+>>
+>> I have also verified it by compiling a kernel
+> Side note: not critical at all, but would have been good if you had
+> specified which kernel version you build.
 >
->If we just put them in "reserved", it will not displayed in "memory".
+>> without this commit.
+> Thanks for the report. To be sure the issue doesn't fall through the
+> cracks unnoticed, I'm adding it to regzbot, the Linux kernel regression
+> tracking bot:
 >
-
-
-Hi
-Let me explain more.
-
-In this case, the intially passed memory starts from 0000000081960000 so memblock/memory shows as it is.
-
-# xxd -g 8 /proc/device-tree/memory/reg
-00000000: 0000000081960000 00000000000a0000  ................
-00000010: 0000000081a40000 00000000001c0000  ................
-
-# cat sys/kernel/debug/memblock/memory
-   0: 0x0000000081960000..0x00000000819fffff    0 NONE
-   1: 0x0000000081a40000..0x0000000081bfffff    0 NONE
-
-# cat sys/kernel/debug/memblock/reserved
-   0: 0x0000000082800000..0x00000000847fffff    0 NONE
-
-The memblock information in the kernel log may report like it allocated those memblock regions, as there was not overlapped even though it is already no-map.
-
-(I removed the name.)
-<6>[    0.000000][    T0] OF: reserved mem: 0x0000000080000000..0x0000000080dfffff (14336 KiB) nomap non-reusable AAA
-<6>[    0.000000][    T0] OF: reserved mem: 0x0000000080e00000..0x00000000811fffff (4096 KiB) nomap non-reusable BBB
-<6>[    0.000000][    T0] OF: reserved mem: 0x0000000081200000..0x00000000813fffff (2048 KiB) nomap non-reusable CCC
-<6>[    0.000000][    T0] OF: reserved mem: 0x0000000081a00000..0x0000000081a3ffff (256 KiB) nomap non-reusable DDD
-
-So a smart parser should combine the krenel log and the memblock/memory log.
-
-In my memsize feature shows it like this though.
-
-0x0000000081400000-0x0000000081960000 0x00560000 (    5504 KB ) nomap unusable unknown
-
-BR
-
->>0x00000000_80000000..0x0x00000000_8195ffff.
->>
->>   0: 0x0000000081960000..0x00000000819fffff    0 NONE
->>
->>The kernel log shows information for 0x0000000080000000..0x00000000813fffff, but
->>we don't see information for 0x0000000081400000..0x000000008195ffff
->>from kernel log.
->>
->>(I removed the name.)
->><6>[    0.000000][    T0] OF: reserved mem:
->>0x0000000080000000..0x0000000080dfffff (14336 KiB) nomap non-reusable
->>AAA
->><6>[    0.000000][    T0] OF: reserved mem:
->>0x0000000080e00000..0x00000000811fffff (4096 KiB) nomap non-reusable
->>BBB
->><6>[    0.000000][    T0] OF: reserved mem:
->>0x0000000081200000..0x00000000813fffff (2048 KiB) nomap non-reusable
->>CCC
->><6>[    0.000000][    T0] OF: reserved mem:
->>0x0000000081a00000..0x0000000081a3ffff (256 KiB) nomap non-reusable DD
->>
+> #regzbot ^introduced 5a5efdaffda5d23717d9117cf36cda9eafcf2
+> #regzbot dup: https://bugzilla.kernel.org/show_bug.cgi?id=218881
+> #regzbot title
+> #regzbot ignore-activity
 >
->I guess those ranges are only put into "reserved"? Have those ranges put in
->"memory"? Would you mind point the code where those messages are printed?
->
->>A smart parser should gather these kernel log and memblock/memory log
->>and should show
->>log like my memsize logic shows below.
->>0x0000000081400000-0x0000000081960000 0x00560000 (    5504 KB ) nomap
->>unusable unknown
->>
->>Thank you
->>Jaewon
->>
->>On Wed, May 29, 2024 at 8:35?PM Wei Yang <richard.weiyang@gmail.com> wrote:
->>>
->>> On Wed, May 29, 2024 at 06:51:19PM +0900, Jaewon Kim wrote:
->>> ><!DOCTYPE html>
->>> ><html>
->>> ><head>
->>> ...
->>>
->>> Would you mind sending it in pure text again?
->>>
->>> --
->>> Wei Yang
->>> Help you, Help me
->
->-- 
->Wei Yang
->Help you, Help me
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> That page also explains what to do if mails like this annoy you.
+
 
