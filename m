@@ -1,369 +1,233 @@
-Return-Path: <linux-kernel+bounces-196018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A0A8D561E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F6188D5621
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B951F27CFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157851F27F9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACBF18734A;
-	Thu, 30 May 2024 23:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE8F19069B;
+	Thu, 30 May 2024 23:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T2vONxer"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXsrmrkl"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A944183A9D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B0418629F;
+	Thu, 30 May 2024 23:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717110783; cv=none; b=hTnh8Y8Oq4iterEsIs+1nTahw5ca+nx59aZ8Nduv31kICrT+VhHYuv1lHFKsxv2CtHYWc7PfEXozCOs9pZDGo+VIUCZACY0hrhVywa7vYhlD5LXKLVqgC3qAZfjVcLhNlgH6BEun+J4S7YmjzCH6EuTsWI1Mr0kfqOC+ui6/xyw=
+	t=1717110789; cv=none; b=DoYBZc/O8KYRF1XmKVw+ejEch9IdGnTckLxPFC//q6I3ALmnvi91bhPm0vhTN5cPqhAInqoITAVSGjuHRZbxk8K43FloE8XFp1Z8O0unzcrh7R27IPNtWK8D0z3JyqJH+QBsXOQxYeYBFcpVEV5Xd79+9aoyGFbDd6H9KvzMDr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717110783; c=relaxed/simple;
-	bh=KHtSKai0pDM4VS5bgZCbe+P/cd/RkoPhPxoBXQvSaoc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bkumhDVY/yiRFq4VnquADUYtXM9QAOLOJeNxtYnpUM812ahh2y6wd9h0k/JcreInd96KBpqvWlsQ8IjVjoOHbsd9veaIphCeG2aCHDmyKeYEJ1u02h22AZxLeRgjRh8G8391KHJnPEBC6DE6mv6CTaCzlC66cTfU1fB3IG8mzh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T2vONxer; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52965199234so1406868e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:13:01 -0700 (PDT)
+	s=arc-20240116; t=1717110789; c=relaxed/simple;
+	bh=po7DAgy8YTC2bJzT7s/B+fFjRETSLdi28cWfqH3P/sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAFE2fdCk4yCVXsBk2ExhmnZuGVegDrjxM6t24H8QSLkIkVadwfprHf0ctChkzoLDD090HT8cMuTB+3Z0mRde1VbW49RLCtxDUy151PUFnadZOu2Fvxj6+5+zXZhr/O74r+nDWLufn3magwuIkiMoJJD5t8o2pzekpal7uKgk+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXsrmrkl; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f6134df05fso13532375ad.1;
+        Thu, 30 May 2024 16:13:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717110780; x=1717715580; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lhBHPUZLF3YIdDcb/ahdftpXzh5XIgh1+ZCXZdZsjMw=;
-        b=T2vONxerEmNkwe86wdTMMgIm2dINAdPeK+WLJyiVcHDyNb4QgbNN4BMUJzh8cr+1Er
-         /6NX85ZzFj1dV/pg/qA67gAlCxjm3QPMdxFZgr1qw+ATQgt5hq58eoUy/gCwyy9osOZC
-         QwqAs8RMJ0VgkPVdbyPaFakx7WJx7bv9Uauf3c4ntDVX3pyWVgr9XzBoUedHhuLNw2Ua
-         7dn4pw1BpfaX4hH86X2IlJJejYl5/ChDAkbsRzt7m9vWE5hs0SCdI5sJPP8FzskGCLto
-         H1w7ML+wiumCOAtUVjwaVwTPAPoozvGrOkeFGECAW6/r9SQfyitmTqGue7M+JUsDkcc3
-         s3ZQ==
+        d=gmail.com; s=20230601; t=1717110787; x=1717715587; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FuqdMEwY6ApcjLMbdp1tLuV20KDvi7MGyAlyHkkts5I=;
+        b=SXsrmrklZ1RMGL+v9Ewg7AUrrnpV3NsJsqWlH9pymMEPNIJKrwCk9IHvpxmcDT58m8
+         J2Areu5sFc+rEa0uSYQNRSc0fyVMBIohXGqWhqNnIihZygW6f9haAMJ9lWEFhy3YBjNx
+         ObF+nH4Z3Oo4v/MvozyeOzmsnxHLPVCUTfT2zuUThDnBvRhhaq9M0c/fOOZJ4IlQZj4A
+         z0FOGhqWGwj3jBjx8hhe+Qr5I+ImfAzb3/HzKpg1/scyyWVXNu0ima1ZpPYGBdAgMHbk
+         Wj08F0ig3Rnna46k634F2booSJ+6StMQqaVw1Tu5k4NT9lZ0YOBO2Sh/MAetrbh5O11o
+         TtXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717110780; x=1717715580;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lhBHPUZLF3YIdDcb/ahdftpXzh5XIgh1+ZCXZdZsjMw=;
-        b=GdX46GyetrXHl9y0QLpqvjiQ59HXT5BAuwF3cQUHZjOUYU1Ct6OmYi0ICpfu9NyIT5
-         8iXtwPAJpvuwQNfFZe4Wru8N/QgRLED6hxkLEpY9QBUMZcXL1WeeOhm+kDte7LV1t61s
-         UCAInnrmbobvdrQJx8ilSQZ6LoxF/2G1ugp/zhMuvvc8F50Ut0rKWT/UXOkpYSZA9bGG
-         dLAzOhCImO1WnprvgeHoh270tMdX/QCjIeztBjELPO5AwLiAWy3Ln1pgg40A6MXCq2xp
-         521cmiG9VSG2BzvtIIiwKvmZVFD67ra6WJltlXZ9E5dFnacOqUUREGUo10u7w6UMSRiC
-         qEgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHkmnIdaJ2zx7LQF3ePsk8o+j2hzst6AEAkesszRI6WtZqGwDArjqb8qcYC2dVlZoI/o7JggVhS9TTGopv5elsQSpjIMDBrHhVOcjY
-X-Gm-Message-State: AOJu0YxNleZz6mGPmafnhFN5tMxcTG6Qm01VRtILUGx83ytdqoHX27yH
-	jTjWGYnVku2Ds1OgOPPEtdPB92r8Cx0dFsk8p91Ci/S45fXaZ4/7W3kYfObwWzmWS4NscZq7ap7
-	P
-X-Google-Smtp-Source: AGHT+IE9ND/0fkLm5FJJdIYQVd33IKLcJTOhUto0CqySS45XJxwfuCKJGkgAIr6Ocx9hm/auCRlgxg==
-X-Received: by 2002:ac2:5053:0:b0:52b:84bd:3456 with SMTP id 2adb3069b0e04-52b896bff1bmr30276e87.50.1717110779720;
-        Thu, 30 May 2024 16:12:59 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d75d96sm119005e87.120.2024.05.30.16.12.58
+        d=1e100.net; s=20230601; t=1717110787; x=1717715587;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FuqdMEwY6ApcjLMbdp1tLuV20KDvi7MGyAlyHkkts5I=;
+        b=omrMY1XI8/1ezWNsGKDtyH5xCWxaxRfnkk701bule8byOuPVkRxdoDqK2liuOmQ1Qv
+         1iCqAEYfwFV4jchUpPpCGARy++vD7h220K5rEwfBNQa87k4+0FMC608jdILbl1otlUMH
+         QhYkLnQ9iBezgJ7yiAvUYpnsO6ZTd7d4qq7F88C4wBxdDM/KjMbo1S9/9zwERHFCVWR6
+         tDVDOToMYuZfi4E7NdcBcfbmlG6CV23d2nooSMLFZu0birJWHvb/AG2PLmKPTGbE36UI
+         s86ULWIW6YbhpFYXuFeURyByKx+3d4bYcFGpFgMDUuwZX2qSHg5Aou4n5WRgSCvFCdJr
+         tiDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD/1im+nGiquY/R9bNDmJTLrNQwHxp+PIBCqgqB8RCgm9pRMBC+lmZCDYLcHADcQPrVGW5xZDHtCxoberAHdI2WBV7YD0bCd/XEKGbKi0zm/2z7mppySn6Gb+r8RfR3B0F9uNYBGXMpjMLNTPpOPQuGJ65UpsFjIDN3VKLpzeR/beFbpb1hqkGG/A/
+X-Gm-Message-State: AOJu0YykGCeSfjFaH3+h/lEOermLRSVoWuCJgzCVA0pHsSrEdX3WZCiR
+	f+7yYeXv5oZ+5qs4Bph2gqL8ht9kc5OkeAKVkOnk8MMAaWCFtvdH
+X-Google-Smtp-Source: AGHT+IFiG5YeKzz45vQv3iDZc2S0tQYYcLWdJy2aRjmI2ti60UDng2VinTyifoaD9XAnyO4R0PyYFQ==
+X-Received: by 2002:a17:902:e851:b0:1f4:947b:b7b6 with SMTP id d9443c01a7336-1f6370320c1mr2748675ad.39.1717110787217;
+        Thu, 30 May 2024 16:13:07 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323e9f2csm3160285ad.200.2024.05.30.16.13.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 16:12:58 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 31 May 2024 02:12:57 +0300
-Subject: [PATCH v3 3/3] drm/panel-edp: drop several legacy panels
+        Thu, 30 May 2024 16:13:06 -0700 (PDT)
+Date: Thu, 30 May 2024 17:13:04 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E.Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev, netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
+ restrictions
+Message-ID: <ZlkIAIpWG/l64Pl9@tahera-OptiPlex-5000>
+References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
+ <20240401.ieC2uqua5sha@digikod.net>
+ <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+ <20240411.ahgeefeiNg4i@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240531-edp-panel-drop-v3-3-4c98b2b95e3a@linaro.org>
-References: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
-In-Reply-To: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
-To: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- Jeffrey Hugo <quic_jhugo@quicinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7181;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=KHtSKai0pDM4VS5bgZCbe+P/cd/RkoPhPxoBXQvSaoc=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmWQf4Pgh6trwpQujTSN3Aoy5x8bELzq+8AMkPf
- L91C5FJRSmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlkH+AAKCRCLPIo+Aiko
- 1UeqB/wIgK+VSSbx1aEHBxEs6cIt8HrRA3TPr2LR9q4sVODOIRlUU5bfRi8/V3sh96n2SyAEeCT
- 6UWonlU/+Yee6igJOY2bliXn2QWwcLFVV05MqJGMgw5ZPNYt/PBsaySCNnTHf/UDD01yrIO95Wu
- wmcdH+1IP4FNWnM4gahogPnJ+EhtgNd+5SD71EjjWn5m/X46066dM8hrtmidnAKVqoBUFvL0Huq
- UEdqyOT1BjzcuqI7kl8d4bKQRwaOam8avX4q5m7837cCiePbVDe7cGFusU1uiKfClBQDeR41Fuk
- 0zRTJ5NyJ/iVAeyh+7ecfHzb4eXapw3kPKdCbyxKOOC/aFOv
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240411.ahgeefeiNg4i@digikod.net>
 
-The panel-edp driver supports legacy compatible strings for several eDP
-panels which were never used in DT files present in Linux tree and most
-likely have never been used with the upstream kernel. Drop compatibles
-for these panels in favour of using a generic "edp-panel" device on the
-AUX bus.
+On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
+> On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
+> > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
+> > > Thanks for this patch.  Please CC the netdev mailing list too, they may
+> > > be interested by this feature. I also added a few folks that previously
+> > > showed their interest for this feature.
+> > > 
+> > > On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
+> > > > Abstract unix sockets are used for local interprocess communication without
+> > > > relying on filesystem. Since landlock has no restriction for connecting to
+> > > > a UNIX socket in the abstract namespace, a sandboxed process can connect to
+> > > > a socket outside the sandboxed environment. Access to such sockets should
+> > > > be scoped the same way ptrace access is limited.
+> > > 
+> > > This is good but it would be better to explain that Landlock doesn't
+> > > currently control abstract unix sockets and that it would make sense for
+> > > a sandbox.
+> > > 
+> > > 
+> > > > 
+> > > > For a landlocked process to be allowed to connect to a target process, it
+> > > > must have a subset of the target process’s rules (the connecting socket
+> > > > must be in a sub-domain of the listening socket). This patch adds a new
+> > > > LSM hook for connect function in unix socket with the related access rights.
+> > > 
+> > > Because of compatibility reasons, and because Landlock should be
+> > > flexible, we need to extend the user space interface.  As explained in
+> > > the GitHub issue, we need to add a new "scoped" field to the
+> > > landlock_ruleset_attr struct. This field will optionally contain a
+> > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
+> > > ruleset will deny any connection from within the sandbox to its parents
+> > > (i.e. any parent sandbox or not-sandboxed processes).
+> 
+> > Thanks for the feedback. Here is what I understood, please correct me if
+> > I am wrong. First, I should add another field to the
+> > landlock_ruleset_attr (a field like handled_access_net, but for the unix
+> > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
+> > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
+> 
+> That was the initial idea, but after thinking more about it and talking
+> with some users, I now think we can get a more generic interface.
+> 
+> Because unix sockets, signals, and other IPCs are fully controlled by
+> the kernel (contrary to inet sockets that get out of the system), we can
+> add ingress and egress control according to the source and the
+> destination.
+> 
+> To control the direction we could add an
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE and a
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND rights (these names are a bit
+> long but at least explicit).  To control the source and destination, it
+> makes sense to use Landlock domain (i.e. sandboxes):
+> LANDLOCK_DOMAIN_HIERARCHY_PARENT, LANDLOCK_DOMAIN_HIERARCHY_SELF, and
+> LANDLOCK_DOMAIN_HIERARCHY_CHILD.  This could be used by extending the
+> landlock_ruleset_attr type and adding a new
+> landlock_domain_hierarchy_attr type:
+> 
+> struct landlock_ruleset_attr ruleset_attr = {
+>   .handled_access_dom = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+>                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> }
+> 
+> // Allows sending data to and receiving data from processes in the same
+> // domain or a child domain, through abstract unix sockets.
+> struct landlock_domain_hierarchy_attr dom_attr = {
+>   .allowed_access = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+>                     LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+>   .relationship = LANDLOCK_DOMAIN_HIERARCHY_SELF | \
+>                   LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+> };
+> 
+> It should also work with other kind of IPCs:
+> * LANDLOCK_ACCESS_DOM_UNIX_PATHNAME_RECEIVE/SEND (signal)
+> * LANDLOCK_ACCESS_DOM_SIGNAL_RECEIVE/SEND (signal)
+> * LANDLOCK_ACCESS_DOM_XSI_RECEIVE/SEND (XSI message queue)
+> * LANDLOCK_ACCESS_DOM_MQ_RECEIVE/SEND (POSIX message queue)
+> * LANDLOCK_ACCESS_DOM_PTRACE_RECEIVE/SEND (ptrace, which would be
+>   limited)
+> 
+> What do you think?
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/panel/panel-edp.c | 173 ++------------------------------------
- 1 file changed, 7 insertions(+), 166 deletions(-)
+I was wondering if you expand your idea on the following example. 
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index ce2ea204a41e..696f0f6412a5 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1059,33 +1059,6 @@ static const struct panel_desc auo_b116xak01 = {
- 	},
- };
- 
--static const struct drm_display_mode auo_b133han05_mode = {
--	.clock = 142600,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 58,
--	.hsync_end = 1920 + 58 + 42,
--	.htotal = 1920 + 58 + 42 + 60,
--	.vdisplay = 1080,
--	.vsync_start = 1080 + 3,
--	.vsync_end = 1080 + 3 + 5,
--	.vtotal = 1080 + 3 + 5 + 54,
--};
--
--static const struct panel_desc auo_b133han05 = {
--	.modes = &auo_b133han05_mode,
--	.num_modes = 1,
--	.bpc = 8,
--	.size = {
--		.width = 293,
--		.height = 165,
--	},
--	.delay = {
--		.hpd_reliable = 100,
--		.enable = 20,
--		.unprepare = 50,
--	},
--};
--
- static const struct drm_display_mode auo_b133htn01_mode = {
- 	.clock = 150660,
- 	.hdisplay = 1920,
-@@ -1135,33 +1108,6 @@ static const struct panel_desc auo_b133xtn01 = {
- 	},
- };
- 
--static const struct drm_display_mode auo_b140han06_mode = {
--	.clock = 141000,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 16,
--	.hsync_end = 1920 + 16 + 16,
--	.htotal = 1920 + 16 + 16 + 152,
--	.vdisplay = 1080,
--	.vsync_start = 1080 + 3,
--	.vsync_end = 1080 + 3 + 14,
--	.vtotal = 1080 + 3 + 14 + 19,
--};
--
--static const struct panel_desc auo_b140han06 = {
--	.modes = &auo_b140han06_mode,
--	.num_modes = 1,
--	.bpc = 8,
--	.size = {
--		.width = 309,
--		.height = 174,
--	},
--	.delay = {
--		.hpd_reliable = 100,
--		.enable = 20,
--		.unprepare = 50,
--	},
--};
--
- static const struct drm_display_mode boe_nv101wxmn51_modes[] = {
- 	{
- 		.clock = 71900,
-@@ -1428,33 +1374,6 @@ static const struct panel_desc innolux_p120zdg_bf1 = {
- 	},
- };
- 
--static const struct drm_display_mode ivo_m133nwf4_r0_mode = {
--	.clock = 138778,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 24,
--	.hsync_end = 1920 + 24 + 48,
--	.htotal = 1920 + 24 + 48 + 88,
--	.vdisplay = 1080,
--	.vsync_start = 1080 + 3,
--	.vsync_end = 1080 + 3 + 12,
--	.vtotal = 1080 + 3 + 12 + 17,
--	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
--};
--
--static const struct panel_desc ivo_m133nwf4_r0 = {
--	.modes = &ivo_m133nwf4_r0_mode,
--	.num_modes = 1,
--	.bpc = 8,
--	.size = {
--		.width = 294,
--		.height = 165,
--	},
--	.delay = {
--		.hpd_absent = 200,
--		.unprepare = 500,
--	},
--};
--
- static const struct drm_display_mode kingdisplay_kd116n21_30nv_a010_mode = {
- 	.clock = 81000,
- 	.hdisplay = 1366,
-@@ -1703,75 +1622,6 @@ static const struct panel_desc sharp_lq123p1jx31 = {
- 	},
- };
- 
--static const struct drm_display_mode sharp_lq140m1jw46_mode[] = {
--	{
--		.clock = 346500,
--		.hdisplay = 1920,
--		.hsync_start = 1920 + 48,
--		.hsync_end = 1920 + 48 + 32,
--		.htotal = 1920 + 48 + 32 + 80,
--		.vdisplay = 1080,
--		.vsync_start = 1080 + 3,
--		.vsync_end = 1080 + 3 + 5,
--		.vtotal = 1080 + 3 + 5 + 69,
--		.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
--	}, {
--		.clock = 144370,
--		.hdisplay = 1920,
--		.hsync_start = 1920 + 48,
--		.hsync_end = 1920 + 48 + 32,
--		.htotal = 1920 + 48 + 32 + 80,
--		.vdisplay = 1080,
--		.vsync_start = 1080 + 3,
--		.vsync_end = 1080 + 3 + 5,
--		.vtotal = 1080 + 3 + 5 + 69,
--		.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
--	},
--};
--
--static const struct panel_desc sharp_lq140m1jw46 = {
--	.modes = sharp_lq140m1jw46_mode,
--	.num_modes = ARRAY_SIZE(sharp_lq140m1jw46_mode),
--	.bpc = 8,
--	.size = {
--		.width = 309,
--		.height = 174,
--	},
--	.delay = {
--		.hpd_absent = 80,
--		.enable = 50,
--		.unprepare = 500,
--	},
--};
--
--static const struct drm_display_mode starry_kr122ea0sra_mode = {
--	.clock = 147000,
--	.hdisplay = 1920,
--	.hsync_start = 1920 + 16,
--	.hsync_end = 1920 + 16 + 16,
--	.htotal = 1920 + 16 + 16 + 32,
--	.vdisplay = 1200,
--	.vsync_start = 1200 + 15,
--	.vsync_end = 1200 + 15 + 2,
--	.vtotal = 1200 + 15 + 2 + 18,
--	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
--};
--
--static const struct panel_desc starry_kr122ea0sra = {
--	.modes = &starry_kr122ea0sra_mode,
--	.num_modes = 1,
--	.size = {
--		.width = 263,
--		.height = 164,
--	},
--	.delay = {
--		/* TODO: should be hpd-absent and no-hpd should be set? */
--		.hpd_reliable = 10 + 200,
--		.enable = 50,
--		.unprepare = 10 + 500,
--	},
--};
--
- static const struct of_device_id platform_of_match[] = {
- 	{
- 		/* Must be first */
-@@ -1799,18 +1649,12 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "auo,b116xa01",
- 		.data = &auo_b116xak01,
--	}, {
--		.compatible = "auo,b133han05",
--		.data = &auo_b133han05,
- 	}, {
- 		.compatible = "auo,b133htn01",
- 		.data = &auo_b133htn01,
- 	}, {
- 		.compatible = "auo,b133xtn01",
- 		.data = &auo_b133xtn01,
--	}, {
--		.compatible = "auo,b140han06",
--		.data = &auo_b140han06,
- 	}, {
- 		.compatible = "boe,nv101wxmn51",
- 		.data = &boe_nv101wxmn51,
-@@ -1838,9 +1682,6 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "innolux,p120zdg-bf1",
- 		.data = &innolux_p120zdg_bf1,
--	}, {
--		.compatible = "ivo,m133nwf4-r0",
--		.data = &ivo_m133nwf4_r0,
- 	}, {
- 		.compatible = "kingdisplay,kd116n21-30nv-a010",
- 		.data = &kingdisplay_kd116n21_30nv_a010,
-@@ -1871,12 +1712,6 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "sharp,lq123p1jx31",
- 		.data = &sharp_lq123p1jx31,
--	}, {
--		.compatible = "sharp,lq140m1jw46",
--		.data = &sharp_lq140m1jw46,
--	}, {
--		.compatible = "starry,kr122ea0sra",
--		.data = &starry_kr122ea0sra,
- 	}, {
- 		/* sentinel */
- 	}
-@@ -1928,6 +1763,12 @@ static const struct panel_delay delay_200_500_e80_d50 = {
- 	.disable = 50,
- };
- 
-+static const struct panel_delay delay_80_500_e50 = {
-+	.hpd_absent = 80,
-+	.unprepare = 500,
-+	.enable = 50,
-+};
-+
- static const struct panel_delay delay_100_500_e200 = {
- 	.hpd_absent = 100,
- 	.unprepare = 500,
-@@ -2129,7 +1970,7 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('S', 'D', 'C', 0x416d, &delay_100_500_e200, "ATNA45AF01"),
- 
- 	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140M1JW48"),
--	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &sharp_lq140m1jw46.delay, "LQ140M1JW46"),
-+	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M1JW46"),
- 	EDP_PANEL_ENTRY('S', 'H', 'P', 0x154c, &delay_200_500_p2e100, "LQ116M1JW10"),
- 
- 	EDP_PANEL_ENTRY('S', 'T', 'A', 0x0100, &delay_100_500_e200, "2081116HHD028001-51D"),
+Considering P1 with the rights that you mentioned in your email, forks a
+new process (P2). Now both P1 and P2 are on the same domain and are
+allowed to send data to and receive data from processes in the same
+domain or a child domain. 
+/*
+ *         Same domain (inherited)
+ * .-------------.
+ * | P1----.     |      P1 -> P2 : allow
+ * |        \    |      P2 -> P1 : allow
+ * |         '   |
+ * |         P2  |
+ * '-------------'
+ */
+(P1 domain) = (P2 domain) = {
+		.allowed_access =
+			LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | 
+			LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+		.relationship = 
+			LANDLOCK_DOMAIN_HIERARCHY_SELF | 
+			LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+		}
 
--- 
-2.39.2
+In another example, if P1 has the same domain as before but P2 has
+LANDLOCK_DOMAIN_HIERARCHY_PARENT in their domain, so P1 still can 
+connect to P2. 
+/*
+ *        Parent domain
+ * .------.
+ * |  P1  --.           P1 -> P2 : allow
+ * '------'  \          P2 -> P1 : allow
+ *            '
+ *            P2
+ */
+
+(P1 domain) = {
+                .allowed_access =
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE |
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+                .relationship = 
+                        LANDLOCK_DOMAIN_HIERARCHY_SELF |
+                        LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+                }
+(P2 domain) = {
+                .allowed_access =
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE |
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+                .relationship = 
+                        LANDLOCK_DOMAIN_HIERARCHY_SELF |
+                        LANDLOCK_DOMAIN_HIERARCHY_CHILD |
+			LANDLOCK_DOMAIN_HIERARCHY_PARENT,
+		}
+ 
 
 
