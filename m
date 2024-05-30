@@ -1,96 +1,82 @@
-Return-Path: <linux-kernel+bounces-194946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A7A8D44BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:21:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7756D8D44B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D781A1C21BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D821C21560
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0309143C50;
-	Thu, 30 May 2024 05:21:19 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC22322083;
-	Thu, 30 May 2024 05:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D71143C45;
+	Thu, 30 May 2024 05:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="miPpxzI4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFBB21A19;
+	Thu, 30 May 2024 05:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717046479; cv=none; b=KsE4jMO37YMsb+LARAEgdvL4sU4CKH4QmSJTtcpGgHXs/XMSf3+/P9sF/fF0mhOjQZUgkJ8IFweszKLCYfqI6J2TsccqcbOkatxa/Ej+X1AUOny5GoWBGuutyj48U/1tAqacK9gthycaZB0nQ0egqRs3QsCIYQ3XhUaXSJYqeNA=
+	t=1717046338; cv=none; b=hmS2dMkFbK4nd6qjyxseaqe86CPJOHu2PCB1ToSa6NwACova+KvYdctPzG1Fd7ycFle03EvcGRs+mDZtIo0x+MxmVwwztSutuvQUFrJUaxYHI4ucEHIBmmtUW0q4SD8xJ1DTLFP85Aj9OL41TK40ncBt9Xl31T+TfzmYpRWcDZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717046479; c=relaxed/simple;
-	bh=voXBnrcbnkL+4T/r4d8V6UCbguNk1JucGqtbll/LvAY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Yjq9vSHQf3z2zDAf99rPHBabsAQGxrNjBUv9T5h1Bbq/K21jOxR3+Npi+w4MJhe9c2oRemUkRdjq9IiwDj41Byy3mLaZFY2Bcz4YOcafjVPPh96N+ZLFhl5AMkzY7Cut3POvyQk98nL64059scauxtRIMkTHRNcVKCYkxk81l/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from ubuntu.localdomain (unknown [183.95.249.235])
-	by mail-app2 (Coremail) with SMTP id by_KCgA3VKPuC1hmh8uRAQ--.14318S2;
-	Thu, 30 May 2024 13:17:36 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-hams@vger.kernel.org,
-	pabeni@redhat.com,
-	kuba@kernel.org,
-	edumazet@google.com,
-	jreuter@yaina.de,
-	davem@davemloft.net,
-	dan.carpenter@linaro.org,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH net] ax25: Replace kfree() in ax25_dev_free() with ax25_dev_put()
-Date: Thu, 30 May 2024 13:17:33 +0800
-Message-Id: <20240530051733.11416-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:by_KCgA3VKPuC1hmh8uRAQ--.14318S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFy3Gry8Gr1kCrWxXF15XFb_yoW3Krc_uF
-	97CF4xWw4UJr1UCw4rCF4rJrW7uw1Ygw1fGryfAFZ7t34jy3WUJrWkWr18ZF1UWrW7CrWS
-	qrn5Zr4fAF4fKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbTxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j
-	6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUb66wtUUUUU==
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwMRAWZXToxxdgA2sS
+	s=arc-20240116; t=1717046338; c=relaxed/simple;
+	bh=pB/96JTuRoro7LJvuDUAX1gz1MMHuzk0wvh4zz3qcYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayaDVTCvxTyqIgZOb7LGZB3PSHdPz4oSBwKpeJnlaevLb0lJuA4VK0fsKDqYAZSX5bsGPoj5V56/vl3hJK91zJFBQQutLTRlo7ON6bzm8BrJ+egwrI5HKEfcxejMjQTBWF/pHyA0REp3hLuJTxOLN/8gRfWvfVsEjSOOT8Ltvu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=miPpxzI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC56C2BBFC;
+	Thu, 30 May 2024 05:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717046337;
+	bh=pB/96JTuRoro7LJvuDUAX1gz1MMHuzk0wvh4zz3qcYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=miPpxzI4OTYb1l3r1n90qJsxQVL+atcvaro2og/zgPEzy4uEfNng1Rwqx3ZfRf/ny
+	 LwtTWMX99mHCz/L85on2LtNJPS6fAj2E7HkXgDiOudZN/RoG5DhIleC4+hw03ofWYA
+	 q0GoJksCAdGY4VdJziGDG0geh3X/WTcBecxxQUzQ=
+Date: Thu, 30 May 2024 07:19:02 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Kuzey Arda Bulut <kuzeyb.business@gmail.com>
+Cc: security@kernel.org, jirislaby@kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: Subject: [SECURITY] Vulnerability in Linux Kernel
+Message-ID: <2024053036-villain-backlight-d92b@gregkh>
+References: <CAKmisHAUUqQ-7F+7BOymY7_3XBT1FE=gskraKDC1OmySZgS0yA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKmisHAUUqQ-7F+7BOymY7_3XBT1FE=gskraKDC1OmySZgS0yA@mail.gmail.com>
 
-The object "ax25_dev" is managed by reference counting. Thus it should
-not be directly released by kfree(), replace with ax25_dev_put().
+On Wed, May 29, 2024 at 08:25:18PM +0300, Kuzey Arda Bulut wrote:
+> Dear Linux Kernel Security Team,
+> 
+> I have discovered a null-ptr-deref security vulnerability in tty driver in
+> the Linux kernel. You can find the detailed descriptions of the
+> vulnerability in report.md.
+> 
+> If you have any questions or need further information, please do not
+> hesitate to contact me.
 
-Fixes: d01ffb9eee4a ("ax25: add refcount in ax25_dev to avoid UAF bugs")
-Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
- net/ax25/ax25_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As the n_gsm is full of known issues by the developers, and the ldisc is
+not allowed to be loaded by a non-root user, this isn't all that serious
+of an issue.  See this thread for a list of problems that I think you
+might have already found here:
+	https://lore.kernel.org/r/DB9PR10MB5881D2170678C169FB42A423E0082@DB9PR10MB5881.EURPRD10.PROD.OUTLOOK.COM
 
-diff --git a/net/ax25/ax25_dev.c b/net/ax25/ax25_dev.c
-index 742d7c68e7e..9efd6690b34 100644
---- a/net/ax25/ax25_dev.c
-+++ b/net/ax25/ax25_dev.c
-@@ -196,7 +196,7 @@ void __exit ax25_dev_free(void)
- 	list_for_each_entry_safe(s, n, &ax25_dev_list, list) {
- 		netdev_put(s->dev, &s->dev_tracker);
- 		list_del(&s->list);
--		kfree(s);
-+		ax25_dev_put(s);
- 	}
- 	spin_unlock_bh(&ax25_dev_lock);
- }
--- 
-2.17.1
+Note, 2 fixes have landed in 6.10-rc2 for this driver, can you verify if
+these fix the issue you are reporting here?
 
+And do you have a proposed fix for this issue?
+
+thanks,
+
+greg k-h
 
