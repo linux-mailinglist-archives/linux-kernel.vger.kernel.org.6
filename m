@@ -1,129 +1,126 @@
-Return-Path: <linux-kernel+bounces-195403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781928D4C42
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:06:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03138D4C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D631F218C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:06:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A46EEB22792
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6F3183065;
-	Thu, 30 May 2024 13:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC42A183072;
+	Thu, 30 May 2024 13:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bs4nvmNv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0OOtwVHB"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FFB17FACF
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CBB17C9ED;
+	Thu, 30 May 2024 13:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717074384; cv=none; b=CFkoXGFKEEHglBaDUeO7qF+DdVWlmRCAM1Zo+Rld774h/Keg/YBEJECqFA8sXOpT2/iEb1PH+kG8A9Rc5EtQzSe4BjCNsBLGP6OG4w7qxuhoStBaj9QxumH00T8Zbu0mc9ha8R4tDTsoXXlTWhMgtTxZOT0lMv1x/SjAzYTlQe0=
+	t=1717074433; cv=none; b=R0nZE570zG+Gy3X/kVJ5/PFPm8Z9nE2m+5urSV0rILuvUmMlTn/y06KzDBYa9918ZoFo8UgNWWIZPf5v+vcGtLYQOcrLYVQo0O5QXzdh+PkvUUKpMUmmaIndQpruNRXTR6I5GReGM/xqW3i80/3IBLBrQXDV/FBzPnSYZID7oDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717074384; c=relaxed/simple;
-	bh=9ClmaagelsVL0EN9hfbNdsOe4rCK0jF6VJvnl24H9iE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=beOrJAlxp6LKlrEI4ANZI2PmG6rbrYTZ2O+3lzagvL/ezWUE15pMqriBCIzypSM0kW56diUck9YjQmDHzd/AeHCrYFa0iuW/X3Kcly9lv/cGV+/ftIhS0/7NZPf04kz6HvBbRqyEyo3iosSaQPJvlizHvfSVpLKuxL2LG/kFMvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bs4nvmNv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717074382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jvA0ryzzUt3roYMRqzP5tcnOVKXZ+dglyNSsf/+sPrc=;
-	b=Bs4nvmNvxB1oG2AnvigdRHHBgr4ktDs3f14WgHdQeTn4Y7QjsK5QAmtE7yX/VhcXa+NjxS
-	NXYlYrOnapuFRUsuu6r5bESIMzsBCRhRfQ8q7B9iLOPecszpWG228rW+k1gfSyAdgS5CDE
-	ujDIyN5DkxcRj52ko5VuAGZyxOy4q8M=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-657-7BNzUJs5OoWjOvYo-WkqMg-1; Thu, 30 May 2024 09:06:20 -0400
-X-MC-Unique: 7BNzUJs5OoWjOvYo-WkqMg-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6ad75327e0cso7936466d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:06:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717074380; x=1717679180;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvA0ryzzUt3roYMRqzP5tcnOVKXZ+dglyNSsf/+sPrc=;
-        b=id2iPOhBaU84RaEixKcIWIlHvRQ0Rn++J8+6rQIW4sXewHhnnEqvcSV/jw/OKdASv1
-         fPoGYtITx2+jSDMgXCcGUjBYRY93yqQuKxYJe/gx1EJERq8A7Q2+Y6IZKTXy+gRPpqvT
-         E9DYTZOe9Wf4j8ehciFvGt7YwC6lbarJpW1WjlqJnAqs3dp++AYucAnSae43czU1Ygrs
-         yMfn9AkhxI1LSSDvK0XUX4KTMm0M4Y/8hqm/j+6z2P6wuw6As/SvZhSOtQKIcCa29Qw9
-         GADl62PExWa1XQhX11gTC8kZSaSVIYktIG/VO1Efq2c1LPLjqlEgRnjJec+61z0RDS20
-         wvHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVH0zihzPfEM2HhDzprjHzQ3NMPSmAQaN4VvT4F+App6igca+InU5as/VGvGBlUVhcEAZ5bJWDxqSX2c6xPkwAGmD0CTuEbeFtbtKm
-X-Gm-Message-State: AOJu0YzHUWa673fQqyaunKU52L+dyWUPX3m4jIgg2gEHqqFeIrAssUje
-	o7Od2h+SydgfYr3lq3jo4q6djT0wYP+7YUR5axueJOOYJduV7wDrvF5PQLqPKadDWY2RfRj576+
-	u9/Dtx565gn5Crksxn8tr3plY18mXz4xUMxCGbjG7FIId3i2lysrKS1iVHCngsw==
-X-Received: by 2002:a05:6214:328e:b0:6ae:aa5:7f6b with SMTP id 6a1803df08f44-6ae0cb37645mr22842556d6.34.1717074379965;
-        Thu, 30 May 2024 06:06:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgjLeINZAgLWz2gTTl6s/+ViKd4/Ddlih3N/x2boBgxfykUZQvC57xL0+8+w6vA4N0jLzi3w==
-X-Received: by 2002:a05:6214:328e:b0:6ae:aa5:7f6b with SMTP id 6a1803df08f44-6ae0cb37645mr22842176d6.34.1717074379443;
-        Thu, 30 May 2024 06:06:19 -0700 (PDT)
-Received: from [10.26.1.93] ([66.187.232.136])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac16308238sm63418416d6.119.2024.05.30.06.06.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:06:18 -0700 (PDT)
-Message-ID: <cb4c5fd0-9629-4362-918a-cb044eb9e558@redhat.com>
-Date: Thu, 30 May 2024 09:06:17 -0400
+	s=arc-20240116; t=1717074433; c=relaxed/simple;
+	bh=gzsjYTP3/WlWKHVnMyU/5TNINiOjsAjfhSkIRf8Yo7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9tWQMFG/VyjKnwsQNvcna35lB+dPNJ7k0bDEYg/TaKH2o+/e1mjXCAiKZTpRopUVdxlnLBCUIAn5B/t/dNmPCJmAnVzJLaK2/NWf7/h1qXOLBRaRKPndF3VyZXeepbqbKgT7NgiJeXHLA/jO2UAgU/b+phW96y2ARdmXibtSzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0OOtwVHB; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=laI44R9CkvkoWL5j55C7oR7usS/DpKOSclK7hV4WnUk=; b=0OOtwVHBs60a+zPox/sQdd+j7R
+	4bmjQkip08Y8wnmyY0Tv1JWfy6VONeDDGxl9RQuZzxekHgjLXZ/SAZY65R0/D0rdvoNud2G/eOYNA
+	nSOfKWU6wfi0ZPgrrNzM1W8NZku2IaiNbGk4OfSMlDlhRKcUnKPKTAQHOcajzcV8CcGs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sCfUb-00GLeo-8d; Thu, 30 May 2024 15:06:53 +0200
+Date: Thu, 30 May 2024 15:06:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Piergiorgio Beruto <Pier.Beruto@onsemi.com>
+Cc: Selvamani Rajagopal <Selvamani.Rajagopal@onsemi.com>,
+	"Parthiban.Veerasooran@microchip.com" <Parthiban.Veerasooran@microchip.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"saeedm@nvidia.com" <saeedm@nvidia.com>,
+	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"Horatiu.Vultur@microchip.com" <Horatiu.Vultur@microchip.com>,
+	"ruanjinjie@huawei.com" <ruanjinjie@huawei.com>,
+	"Steen.Hegelund@microchip.com" <Steen.Hegelund@microchip.com>,
+	"vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
+	"UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
+	"Thorsten.Kummermehr@microchip.com" <Thorsten.Kummermehr@microchip.com>,
+	"Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
+	"benjamin.bigler@bernformulastudent.ch" <benjamin.bigler@bernformulastudent.ch>,
+	Viliam Vozar <Viliam.Vozar@onsemi.com>,
+	Arndt Schuebel <Arndt.Schuebel@onsemi.com>
+Subject: Re: [PATCH net-next v4 00/12] Add support for OPEN Alliance
+ 10BASE-T1x MACPHY Serial Interface
+Message-ID: <70cf84d1-99ad-4c30-9811-f796f21e6391@lunn.ch>
+References: <2d9f523b-99b7-485d-a20a-80d071226ac9@microchip.com>
+ <6ba7e1c8-5f89-4a0e-931f-3c117ccc7558@lunn.ch>
+ <8b9f8c10-e6bf-47df-ad83-eaf2590d8625@microchip.com>
+ <44cd0dc2-4b37-4e2f-be47-85f4c0e9f69c@lunn.ch>
+ <b941aefd-dbc5-48ea-b9f4-30611354384d@microchip.com>
+ <BYAPR02MB5958A4D667D13071E023B18F83F52@BYAPR02MB5958.namprd02.prod.outlook.com>
+ <6e4c8336-2783-45dd-b907-6b31cf0dae6c@lunn.ch>
+ <BY5PR02MB6786619C0A0FCB2BEDC2F90D9DF52@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <0581b64a-dd7a-43d7-83f7-657ae93cefe5@lunn.ch>
+ <BY5PR02MB6786FC4808B2947CA03977429DF32@BY5PR02MB6786.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: Do not enable ACPI SPCR console by default on arm64
-To: Liu Wei <liuwei09@cestc.cn>, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- liuwei09.cestc.cn@cecloud.com
-References: <20240530015332.7305-1-liuwei09@cestc.cn>
-Content-Language: en-US
-From: Prarit Bhargava <prarit@redhat.com>
-In-Reply-To: <20240530015332.7305-1-liuwei09@cestc.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BY5PR02MB6786FC4808B2947CA03977429DF32@BY5PR02MB6786.namprd02.prod.outlook.com>
 
-On 5/29/24 21:53, Liu Wei wrote:
-> Consistency with x86 and loongarch, don't enable ACPI SPCR console
-> by default on arm64
+On Thu, May 30, 2024 at 09:43:56AM +0000, Piergiorgio Beruto wrote:
+> Hello Andrew,
 > 
-> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
-> ---
->   arch/arm64/kernel/acpi.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> I was reading back into the MACPHY specifications in OPEN Alliance, and it seems like MMS 10 to MMS 15 are actually allowed as vendor specific registers. See page 50.
+> The specifications further say that vendor specific registers of the PHY that would normally be in MMD30-31 (ie, excluding the PLCA registers and the other OPEN standard registers) would go into MMS10 to MMS15.
 > 
-> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-> index dba8fcec7f33..1deda3e5a0d2 100644
-> --- a/arch/arm64/kernel/acpi.c
-> +++ b/arch/arm64/kernel/acpi.c
-> @@ -227,7 +227,8 @@ void __init acpi_boot_table_init(void)
->   		if (earlycon_acpi_spcr_enable)
->   			early_init_dt_scan_chosen_stdout();
->   	} else {
-> -		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
-> +		/* Do not enable ACPI SPCR console by default */
-> +		acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
->   		if (IS_ENABLED(CONFIG_ACPI_BGRT))
->   			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
->   	}
+> So I'm wondering, why is it bad to have vendor specific registers into MMD10 to MMD15?
+> I think the framework should allow non-standard stuff to be mapped into these, no?
 
-It's been a while, and the status of arm hardware may have changed. 
-IIRC the choice to force enable this is that most arm hardware is 
-headless and this was a _required_ option for booting.
+From an architecture perspicuity, PHY vendor specific registers should
+be in the PHY register address space. MAC vendor specific registers
+should be in the MAC register address space.
 
-I'm not sure if that's still the case as it's been a long time.
+It seems like the Microchip device has some PHY vendor specific
+registers in the MAC address space. That is bad.
 
-Can anyone from the ARM community provide an approval here?
+Both your and Microchip device is a single piece of silicon. But i
+doubt there is anything in the standard which actually requires
+this. The PHY could be discrete, on the end of an MDIO bus and an MII
+bus. That is the typical design for the last 30 years, and what linux
+is built around. The MAC should not assume anything about the PHY, the
+PHY should not assume anything about the MAC, because they are
+interchangeable.
 
-P.
+The framework does allow you to poke any register anywhere. But i
+would strongly avoid breaking the layering, it is going to cause you
+long term maintenance problems, and is ugly.
 
+	Andrew
 
