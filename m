@@ -1,210 +1,464 @@
-Return-Path: <linux-kernel+bounces-195283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ED58D4A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:03:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672E58D4A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904272816B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:03:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3901C22220
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6CC183998;
-	Thu, 30 May 2024 11:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FDC16F0ED;
+	Thu, 30 May 2024 11:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLdPuVuL"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqiic8Xa"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DB46F2F2;
-	Thu, 30 May 2024 11:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C5C161302
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717066984; cv=none; b=NWMngKIfnYYsGfl5SuPnDVZt4nDmifQZe8eooeg6JdPI+gT57eWBPA21hMvCGpIBnkpnYb8iNKMNYk8MBz//i9zcjH7r3iNVzhphmkE+kpSQkhi0Ge78uxNBoGl9hz75sRiuoaLSM0otWBRlHkzGTgw0Qme+YETVP4CgXuyVczY=
+	t=1717067074; cv=none; b=KkOJGj3j7FVZ7Ge8QforrEOi+fa0RiSmjQpmAHmB9eDIxiF9oqNbJhdY6yy5nS9xVPSJtj8ysclH9M/FiNHfoC/ax2/cVDaAQr1I1jkcSLkJJ5qh0oM6K1A1H1G4/r67hsiqwUwFgCsKLarapfsCKF0g9/fOW/Ck5uNVI7JWZbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717066984; c=relaxed/simple;
-	bh=i/cH1Oed34nB4rUVqJOO34KFhysDv2OP2yNOxaD2bRU=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=RxYW4olWE6l0n6dfOY84Kb2Nh8jyx2hdL+W9DZBuSsZzniq7k9fnmBE5TTGhkrLzhi4DmYSUCV2j7GKmcLnp+HJLqItVVced/Ky38on7RWObUMgwyZU+yPRbnMR3j8NUFGeP6OpQbSDPoQC+hY+C77vrWWfiHP3wcYN0jb0hics=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLdPuVuL; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6341cf2c99so63679266b.0;
-        Thu, 30 May 2024 04:03:02 -0700 (PDT)
+	s=arc-20240116; t=1717067074; c=relaxed/simple;
+	bh=j8t1IDHBfbZrDTk0a3VFZXXPA3Q6Ry6baCh8GrC4Is8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTJ0O8Tc4etHx6GAOSwSLuS3RLCkPvtPbD/DYSABoWD2GXZlCVu+hQEUUyaGF8aSbisFSVBVoMAJROR4Z1dYK3Qg6hcCCD/ilTIqWGxUKIF0Q72USWBkh5wTrnIe5gd/InOYkcBJX2iXmmB6e1WONW1tefW8GsuKLIi/aNHSITU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aqiic8Xa; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ae14e78e5so805649e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:04:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717066981; x=1717671781; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IN8Ag9dsU+qcO8AbayqXPvzgIuVH1q2hLdD6f3uNqMk=;
-        b=PLdPuVuLMpPEuBlz2ngydR/wIwv7l1URk0hp4qdYwad4+js7nkeY+xabgx0/oovPTQ
-         etCxX51iMRl+yXuizHT4/HLgfrEmxC06X9NxSylcdLj8gPdi5y/LiB30jTtF5ewMIAhr
-         W0fEpJohPrg75ZZIl6kwEZsF6oSWAGodRb1Esf6MgiI1DHBcthcZ6qjUZRvcopba6mRb
-         gWWzM2gqsiqV79K+/8C+BCA20bGdK09e9cKmOU1GRwliGt7Cxy4fjH8en0prlEsW3Jmh
-         gDk9IJhZZD7p9vEQ0dn27/zEDuD24nHJYEsAZdjVwWdKBrtmK4Zv64nt3iB+wZDl1mNl
-         K7/A==
+        d=linaro.org; s=google; t=1717067070; x=1717671870; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u35KwFFrk5otVU6exhXdwQqr/XhSn0MEkEW/FOP8hLs=;
+        b=aqiic8XavNu6/w46GjLUn8PYE0yLVZ/iwXkImZ4mE9eVcnb6alSjmc25z9F4fX4gvs
+         WfzHLTViGa7F9wkVRC6k4rtMB27xlKurMV7/NQh0V8zrWFlsaSstIvD2grEiZrz4NNs5
+         JVaMpHosjSopGTDGPJ/1rASE3Q7Sb4A0eRIZkyUSilIVzW93Y8IceCSfo9Fq3hJuT26M
+         9LXHF8Ohx6IQ4f58bGPoCzpOniYm90N4w3qhI85l5jD07Mi2XxyR+T+zHfEQwTtr9io4
+         F61D/S3U5OLvPLBEZD4my4AaoXNwZNf3m+3l4EagGcj4ZwGjSghOS0dOTQr57wcGz/uv
+         H2HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717066981; x=1717671781;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IN8Ag9dsU+qcO8AbayqXPvzgIuVH1q2hLdD6f3uNqMk=;
-        b=rMakkOPpeSRDrHXt9AB1phvqSiFAm+OZNy4Ld5lFsGcy6u7+vgQKQZ5knjI+u11vvC
-         ZEmlFYIxlyvrSpFH+QadGF43FzYaEe72HFfz4vEY8vSskWzmoReBz7BCxKPRqfWtFNNp
-         RGSkFcMEsxaotv6bn4fxuneZ/w/5kYbBEKLTvSb2JmAbxoCiOE2/+mqkq+dLoqadeXsS
-         3KQGxWVcVRwidyeISwXjR7Rj6hOQx+Kxa8BGgqxRTd9tX8PGBSvCCKOpyLfwQU2Q29yP
-         6hbuMnGHJuHJoV9zlkyl1Iw8dB+dnIxdg9OEFDno6Gvu8wnHGquGOLGiB4LzDbSMEmGM
-         IlWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEhWu0R2zWfTR5kGDaa2p+2SEQ8urwaIXBABJzDCrjC9056WustSDZVqCmafA1UWUogpJrK29owUKpMwZosXp+QrTOHnsfqixy7MJQ9/L7y+omM5R6fZlwxdwNMO+pIIx0SsiVewA1sWY=
-X-Gm-Message-State: AOJu0Yz9o22PXSwJY/8ZkWgbfs4xlv3go2ppdjHIHZMIkDyqS+qoME99
-	yV+czAW06wv7WiC88ybygEo1urBR9aKDY1oRj99CsvBOrpMDd3/c
-X-Google-Smtp-Source: AGHT+IHcCmk/btCzRhf9yemPdTTGPMH1O3rBjgm7CRQKcXYJ1AMKlRTHe3fRaWloMB1fhTa7FypVIA==
-X-Received: by 2002:a17:907:cc19:b0:a65:d7f7:f3f5 with SMTP id a640c23a62f3a-a65e8d3653amr95250066b.8.1717066980545;
-        Thu, 30 May 2024 04:03:00 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8c1a1sm807898066b.166.2024.05.30.04.02.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 04:03:00 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=b04e15e85d503ad3de99a862da1f51c734f1e4825c9724c1f5249d05531d;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        d=1e100.net; s=20230601; t=1717067070; x=1717671870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u35KwFFrk5otVU6exhXdwQqr/XhSn0MEkEW/FOP8hLs=;
+        b=G7VoJ9e9eNh/mgGvmvSbtjnFPTSdPP4xHerjt2SJ5ImG49GnAXc4ws6A0dQgzeimT7
+         qjC5yCl6ppCmc/YObiY2iNlpm4sr5BLujUBprOstfwlbUCBkM7+n9gtiD7KW//iqcJeX
+         QDWh/m9F6KWFjUxgzPbae0cXupnynJl0nIwHk8VyPWbIb8iImtsy1zdVG2usA3CmJTe5
+         eKdqLp3U2QoKGf/K8G/QxGAYrOWyaOokcjw73l62AwWwpjLxc625eBWm7EBo3Uzqf95p
+         6Re84LKV40TZzbBjoZAMm4uCvRZdTfjWgu2ius/zZwqCXzcvOU1UXCdTqcDeX36E7xSD
+         NzZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYaY4PmOQw3s8NwOVmc26mZQx8/TCdyPjo6IFVqXcyqBpYwdQs8R5p1EL0sCCfMBa7JjgSnOE+BvdGkTNrjM/mtl9aTdWEi1wFzS7K
+X-Gm-Message-State: AOJu0Yz4a+g6Il8U7QeKavdJsXjxffh2Hwi/p5hGUCLZFNoYv8P+Pc4B
+	32QXZN1Y+EGeRLGoTBP2B6mQ/W+aVsw6HdZWE5l74MHL9lMUlyzqoUEOdgMD/Sg=
+X-Google-Smtp-Source: AGHT+IF20XZbUvVbqHSV/GBfRHJt80+Y8KA3UFuBgRiW25g7u3wcu1LTN5dHypLI//emGT4W8aigKg==
+X-Received: by 2002:ac2:5608:0:b0:523:aeaa:7df1 with SMTP id 2adb3069b0e04-52b7d434dcdmr951664e87.34.1717067070327;
+        Thu, 30 May 2024 04:04:30 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529a62f301dsm1275583e87.188.2024.05.30.04.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 04:04:29 -0700 (PDT)
+Date: Thu, 30 May 2024 14:04:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
+	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
+	quic_chennak@quicinc.com
+Subject: Re: [PATCH v3 4/9] misc: fastrpc: Add static PD restart support
+Message-ID: <alobvljd7dshv5z6lvnnuolete45s7jhdhz56by4yav5gfxzxk@u64suvcwxdze>
+References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
+ <20240530102032.27179-5-quic_ekangupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 30 May 2024 13:02:59 +0200
-Message-Id: <D1MXG0PGXQW8.2GBRKOVBQM49H@gmail.com>
-Cc: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <lgirdwood@gmail.com>, <jonathanh@nvidia.com>, <mkumard@nvidia.com>
-Subject: Re: [PATCH v2 1/2] ASoC: simple-card-utils: Split
- simple_fixup_sample_fmt func
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Sameer Pujar" <spujar@nvidia.com>, <broonie@kernel.org>,
- <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240527125608.2461300-1-spujar@nvidia.com>
- <20240527125608.2461300-2-spujar@nvidia.com>
-In-Reply-To: <20240527125608.2461300-2-spujar@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530102032.27179-5-quic_ekangupt@quicinc.com>
 
---b04e15e85d503ad3de99a862da1f51c734f1e4825c9724c1f5249d05531d
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Thu, May 30, 2024 at 03:50:22PM +0530, Ekansh Gupta wrote:
+> Static PDs on the audio and sensor domains are expected to support
+> PD restart. The kernel resource handling for the PDs are expected
+> to be handled by fastrpc driver. For this, there is a requirement
+> of PD service locator to get the event notifications for static PD
+> services. Also when events are received, the driver needs to handle
+> based on PD states. Added changes to add service locator for audio
+> and sensor domain static PDs and handle the PD restart sequence.
 
-On Mon May 27, 2024 at 2:56 PM CEST, Sameer Pujar wrote:
-> From: Mohan Kumar <mkumard@nvidia.com>
->
-> Split the simple_fixup_sample_fmt() into two functions by adding
-> one more function named simple_util_get_sample_fmt() to return
-> the sample format value.
->
-> This is useful for drivers that wish to simply get the sample format
-> without setting the mask.
->
-> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Let me repeat a comment from v2:
+
+Please see Documentation/process/submitting-patches.rst for a suggested
+language.
+
+Please extend the commit message with the description of why sensors and
+audio are handled in a different way.
+
+> 
+> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
 > ---
->  include/sound/simple_card_utils.h     |  2 ++
->  sound/soc/generic/simple-card-utils.c | 26 ++++++++++++++++++++------
->  2 files changed, 22 insertions(+), 6 deletions(-)
->
-> diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_car=
-d_utils.h
-> index ad67957b7b48..2c2279d082ec 100644
-> --- a/include/sound/simple_card_utils.h
-> +++ b/include/sound/simple_card_utils.h
-> @@ -174,6 +174,8 @@ void simple_util_parse_convert(struct device_node *np=
-, char *prefix,
->  			       struct simple_util_data *data);
->  bool simple_util_is_convert_required(const struct simple_util_data *data=
-);
-> =20
-> +int simple_util_get_sample_fmt(struct simple_util_data *data);
+>  drivers/misc/Kconfig   |   2 +
+>  drivers/misc/fastrpc.c | 205 ++++++++++++++++++++++++++++++++++++++---
+>  2 files changed, 195 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index faf983680040..e2d83cd085b5 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -280,8 +280,10 @@ config QCOM_FASTRPC
+>  	tristate "Qualcomm FastRPC"
+>  	depends on ARCH_QCOM || COMPILE_TEST
+>  	depends on RPMSG
+> +	depends on NET
+>  	select DMA_SHARED_BUFFER
+>  	select QCOM_SCM
+> +	select QCOM_PDR_HELPERS
+>  	help
+>  	  Provides a communication mechanism that allows for clients to
+>  	  make remote method invocations across processor boundary to
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 3e1ab58038ed..d115860fc356 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/firmware/qcom/qcom_scm.h>
+>  #include <uapi/misc/fastrpc.h>
+>  #include <linux/of_reserved_mem.h>
+> +#include <linux/soc/qcom/pdr.h>
+>  
+>  #define ADSP_DOMAIN_ID (0)
+>  #define MDSP_DOMAIN_ID (1)
+> @@ -29,6 +30,7 @@
+>  #define CDSP_DOMAIN_ID (3)
+>  #define FASTRPC_DEV_MAX		4 /* adsp, mdsp, slpi, cdsp*/
+>  #define FASTRPC_MAX_SESSIONS	14
+> +#define FASTRPC_MAX_SPD		4
+>  #define FASTRPC_MAX_VMIDS	16
+>  #define FASTRPC_ALIGN		128
+>  #define FASTRPC_MAX_FDLIST	16
+> @@ -105,6 +107,18 @@
+>  
+>  #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
+>  
+> +#define AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME   "audio_pdr_adsp"
+> +#define AUDIO_PDR_ADSP_SERVICE_NAME              "avs/audio"
+> +#define ADSP_AUDIOPD_NAME                        "msm/adsp/audio_pd"
 > +
->  int simple_util_parse_routing(struct snd_soc_card *card,
->  				      char *prefix);
->  int simple_util_parse_widgets(struct snd_soc_card *card,
-> diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/si=
-mple-card-utils.c
-> index 81077d16d22f..f1f5a1c025fc 100644
-> --- a/sound/soc/generic/simple-card-utils.c
-> +++ b/sound/soc/generic/simple-card-utils.c
-> @@ -13,12 +13,11 @@
->  #include <sound/pcm_params.h>
->  #include <sound/simple_card_utils.h>
-> =20
-> -static void simple_fixup_sample_fmt(struct simple_util_data *data,
-> -					 struct snd_pcm_hw_params *params)
-> +int simple_util_get_sample_fmt(struct simple_util_data *data)
->  {
->  	int i;
-> -	struct snd_mask *mask =3D hw_param_mask(params,
-> -					      SNDRV_PCM_HW_PARAM_FORMAT);
-> +	int val =3D -EINVAL;
+> +#define SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME   "sensors_pdr_adsp"
+> +#define SENSORS_PDR_ADSP_SERVICE_NAME              "tms/servreg"
+> +#define ADSP_SENSORPD_NAME                       "msm/adsp/sensor_pd"
 > +
->  	struct {
->  		char *fmt;
->  		u32 val;
-> @@ -33,11 +32,26 @@ static void simple_fixup_sample_fmt(struct simple_uti=
-l_data *data,
->  	for (i =3D 0; i < ARRAY_SIZE(of_sample_fmt_table); i++) {
->  		if (!strcmp(data->convert_sample_format,
->  			    of_sample_fmt_table[i].fmt)) {
-> -			snd_mask_none(mask);
-> -			snd_mask_set(mask, of_sample_fmt_table[i].val);
-> +			val =3D of_sample_fmt_table[i].val;
->  			break;
->  		}
->  	}
-> +	return val;
-> +}
-> +EXPORT_SYMBOL_GPL(simple_util_get_sample_fmt);
+> +#define SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME "sensors_pdr_slpi"
+> +#define SENSORS_PDR_SLPI_SERVICE_NAME            SENSORS_PDR_ADSP_SERVICE_NAME
+> +#define SLPI_SENSORPD_NAME                       "msm/slpi/sensor_pd"
 > +
-> +static void simple_fixup_sample_fmt(struct simple_util_data *data,
-> +				    struct snd_pcm_hw_params *params)
+>  static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
+>  						"sdsp", "cdsp"};
+>  struct fastrpc_phy_page {
+> @@ -259,6 +273,15 @@ struct fastrpc_session_ctx {
+>  	bool valid;
+>  };
+>  
+> +struct fastrpc_static_pd {
+> +	char *servloc_name;
+> +	char *spdname;
+> +	void *pdrhandle;
+> +	struct fastrpc_channel_ctx *cctx;
+> +	struct fastrpc_user *fl;
+> +	bool ispdup;
+> +};
+> +
+>  struct fastrpc_channel_ctx {
+>  	int domain_id;
+>  	int sesscount;
+> @@ -266,6 +289,7 @@ struct fastrpc_channel_ctx {
+>  	struct qcom_scm_vmperm vmperms[FASTRPC_MAX_VMIDS];
+>  	struct rpmsg_device *rpdev;
+>  	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
+> +	struct fastrpc_static_pd spd[FASTRPC_MAX_SPD];
+>  	spinlock_t lock;
+>  	struct idr ctx_idr;
+>  	struct list_head users;
+> @@ -297,10 +321,12 @@ struct fastrpc_user {
+>  	struct fastrpc_channel_ctx *cctx;
+>  	struct fastrpc_session_ctx *sctx;
+>  	struct fastrpc_buf *init_mem;
+> +	struct fastrpc_static_pd *spd;
+>  
+>  	int tgid;
+>  	int pd;
+>  	bool is_secure_dev;
+> +	char *servloc_name;
+>  	/* Lock for lists */
+>  	spinlock_t lock;
+>  	/* lock for allocations */
+> @@ -1230,12 +1256,33 @@ static bool is_session_rejected(struct fastrpc_user *fl, bool unsigned_pd_reques
+>  	return false;
+>  }
+>  
+> +static struct fastrpc_static_pd *fastrpc_get_spd_session(
+> +				struct fastrpc_user *fl)
 > +{
-> +	int val;
-> +	struct snd_mask *mask =3D hw_param_mask(params,
-> +					      SNDRV_PCM_HW_PARAM_FORMAT);
+> +	int i;
+> +	struct fastrpc_static_pd *spd = NULL;
+> +	struct fastrpc_channel_ctx *cctx = fl->cctx;
 > +
-> +	val =3D simple_util_get_sample_fmt(data);
-> +	if (val >=3D 0) {
+> +	for (i = 0; i < FASTRPC_MAX_SPD ; i++) {
+> +		if (!cctx->spd[i].servloc_name)
+> +			continue;
+> +		if (!strcmp(fl->servloc_name, cctx->spd[i].servloc_name)) {
+> +			spd = &cctx->spd[i];
+> +			spd->fl = fl;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return spd;
+> +}
+> +
+>  static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>  					      char __user *argp)
+>  {
+>  	struct fastrpc_init_create_static init;
+>  	struct fastrpc_invoke_args *args;
+>  	struct fastrpc_phy_page pages[1];
+> +	struct fastrpc_static_pd *spd = NULL;
+>  	char *name;
+>  	int err;
+>  	struct {
+> @@ -1270,6 +1317,19 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>  		goto err_name;
+>  	}
+>  
+> +	fl->servloc_name = AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME;
+> +
+> +	spd = fastrpc_get_spd_session(fl);
+> +	if (!spd) {
+> +		err = -EUSERS;
+> +		goto err_name;
+> +	}
+> +
+> +	if (!spd->ispdup) {
+> +		err = -ENOTCONN;
+> +		goto err_name;
+> +	}
+> +	fl->spd = spd;
+>  	if (!fl->cctx->remote_heap) {
+>  		err = fastrpc_remote_heap_alloc(fl, fl->sctx->dev, init.memlen,
+>  						&fl->cctx->remote_heap);
+> @@ -1645,6 +1705,7 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
+>  static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
+>  {
+>  	struct fastrpc_invoke_args args[1];
+> +	struct fastrpc_static_pd *spd = NULL;
+>  	int tgid = fl->tgid;
+>  	u32 sc;
+>  
+> @@ -1654,6 +1715,22 @@ static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
+>  	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
+>  	fl->pd = pd;
+>  
+> +	if (pd == SENSORS_PD) {
+> +		if (fl->cctx->domain_id == ADSP_DOMAIN_ID)
+> +			fl->servloc_name = SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME;
+> +		else if (fl->cctx->domain_id == SDSP_DOMAIN_ID)
+> +			fl->servloc_name = SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME;
+> +
+> +		spd = fastrpc_get_spd_session(fl);
+> +		if (!spd)
+> +			return -EUSERS;
+> +
+> +		if (!spd->ispdup)
+> +			return -ENOTCONN;
+> +
+> +		fl->spd = spd;
+> +	}
+> +
+>  	return fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
+>  				       sc, &args[0]);
+>  }
+> @@ -2129,6 +2206,64 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
+>  	return err;
+>  }
+>  
+> +static void fastrpc_notify_users(struct fastrpc_user *user)
+> +{
+> +	struct fastrpc_invoke_ctx *ctx;
+> +
+> +	spin_lock(&user->lock);
+> +	list_for_each_entry(ctx, &user->pending, node) {
+> +		ctx->retval = -EPIPE;
+> +		complete(&ctx->work);
+> +	}
+> +	spin_unlock(&user->lock);
+> +}
+> +
+> +static void fastrpc_notify_pdr_drivers(struct fastrpc_channel_ctx *cctx,
+> +		char *servloc_name)
+> +{
+> +	struct fastrpc_user *fl;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&cctx->lock, flags);
+> +	list_for_each_entry(fl, &cctx->users, user) {
+> +		if (fl->servloc_name && !strcmp(servloc_name, fl->servloc_name))
+> +			fastrpc_notify_users(fl);
+> +	}
+> +	spin_unlock_irqrestore(&cctx->lock, flags);
+> +}
+> +
+> +static void fastrpc_pdr_cb(int state, char *service_path, void *priv)
+> +{
+> +	struct fastrpc_static_pd *spd = (struct fastrpc_static_pd *)priv;
+> +	struct fastrpc_channel_ctx *cctx;
+> +
+> +	if (!spd)
+> +		return;
+> +
+> +	cctx = spd->cctx;
+> +	switch (state) {
+> +	case SERVREG_SERVICE_STATE_DOWN:
+> +		dev_info(&cctx->rpdev->dev,
+> +			"%s: %s (%s) is down for PDR on %s\n",
+> +			__func__, spd->spdname,
+> +			spd->servloc_name,
+> +			domains[cctx->domain_id]);
+> +		spd->ispdup = false;
+> +		fastrpc_notify_pdr_drivers(cctx, spd->servloc_name);
+> +		break;
+> +	case SERVREG_SERVICE_STATE_UP:
+> +		dev_info(&cctx->rpdev->dev,
+> +			"%s: %s (%s) is up for PDR on %s\n",
+> +			__func__, spd->spdname,
+> +			spd->servloc_name,
+> +			domains[cctx->domain_id]);
+> +		spd->ispdup = true;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +}
+> +
+>  static const struct file_operations fastrpc_fops = {
+>  	.open = fastrpc_device_open,
+>  	.release = fastrpc_device_release,
+> @@ -2248,6 +2383,39 @@ static int fastrpc_device_register(struct device *dev, struct fastrpc_channel_ct
+>  	return err;
+>  }
+>  
+> +static int fastrpc_setup_service_locator(struct fastrpc_channel_ctx *cctx, char *client_name,
+> +			char *service_name, char *service_path, int domain, int spd_session)
+> +{
+> +	int err = 0;
+> +	struct pdr_handle *handle = NULL;
+> +	struct pdr_service *service = NULL;
+> +
+> +	/* Register the service locator's callback function */
+> +	handle = pdr_handle_alloc(fastrpc_pdr_cb, &cctx->spd[spd_session]);
+> +	if (IS_ERR(handle)) {
+> +		err = PTR_ERR(handle);
+> +		goto bail;
+> +	}
+> +	cctx->spd[spd_session].pdrhandle = handle;
+> +	cctx->spd[spd_session].servloc_name = client_name;
+> +	cctx->spd[spd_session].spdname = service_path;
+> +	cctx->spd[spd_session].cctx = cctx;
+> +	service = pdr_add_lookup(handle, service_name, service_path);
+> +	if (IS_ERR(service)) {
+> +		err = PTR_ERR(service);
+> +		goto bail;
+> +	}
+> +	pr_info("fastrpc: %s: pdr_add_lookup enabled for %s (%s, %s)\n",
+> +		__func__, service_name, client_name, service_path);
+> +
+> +bail:
+> +	if (err) {
+> +		pr_warn("fastrpc: %s: failed for %s (%s, %s)with err %d\n",
+> +				__func__, service_name, client_name, service_path, err);
+> +	}
+> +	return err;
+> +}
+> +
+>  static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  {
+>  	struct device *rdev = &rpdev->dev;
+> @@ -2326,6 +2494,25 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  		goto fdev_error;
+>  	}
+>  
+> +	if (domain_id == ADSP_DOMAIN_ID) {
+> +		err = fastrpc_setup_service_locator(data, AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME,
+> +			AUDIO_PDR_ADSP_SERVICE_NAME, ADSP_AUDIOPD_NAME, domain_id, 0);
+> +		if (err)
+> +			goto populate_error;
+> +
+> +		err = fastrpc_setup_service_locator(data,
+> +			SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME,
+> +			SENSORS_PDR_ADSP_SERVICE_NAME, ADSP_SENSORPD_NAME, domain_id, 1);
+> +		if (err)
+> +			goto populate_error;
+> +	} else if (domain_id == SDSP_DOMAIN_ID) {
+> +		err = fastrpc_setup_service_locator(data,
+> +			SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME,
+> +			SENSORS_PDR_SLPI_SERVICE_NAME, SLPI_SENSORPD_NAME, domain_id, 0);
+> +		if (err)
+> +			goto populate_error;
+> +	}
+> +
+>  	kref_init(&data->refcount);
+>  
+>  	dev_set_drvdata(&rpdev->dev, data);
+> @@ -2355,24 +2542,13 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  	return err;
+>  }
+>  
+> -static void fastrpc_notify_users(struct fastrpc_user *user)
+> -{
+> -	struct fastrpc_invoke_ctx *ctx;
+> -
+> -	spin_lock(&user->lock);
+> -	list_for_each_entry(ctx, &user->pending, node) {
+> -		ctx->retval = -EPIPE;
+> -		complete(&ctx->work);
+> -	}
+> -	spin_unlock(&user->lock);
+> -}
+> -
+>  static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
+>  {
+>  	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(&rpdev->dev);
+>  	struct fastrpc_buf *buf, *b;
+>  	struct fastrpc_user *user;
+>  	unsigned long flags;
+> +	int i;
+>  
+>  	/* No invocations past this point */
+>  	spin_lock_irqsave(&cctx->lock, flags);
+> @@ -2393,6 +2569,11 @@ static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
+>  	if (cctx->remote_heap)
+>  		fastrpc_buf_free(cctx->remote_heap);
+>  
+> +	for (i = 0; i < FASTRPC_MAX_SPD; i++) {
+> +		if (cctx->spd[i].pdrhandle)
+> +			pdr_handle_release(cctx->spd[i].pdrhandle);
+> +	}
+> +
+>  	of_platform_depopulate(&rpdev->dev);
+>  
+>  	fastrpc_channel_ctx_put(cctx);
+> -- 
+> 2.43.0
+> 
 
-Maybe nothing that we need to worry about, but this could be potentially
-a problem if the snd_pcm_format_t ever outgrows the non-negative number
-space. snd_pcm_format_t is defined to be an int as well, so any very
-large number would wrap into a negative value and then would be
-considered an error in this check.
-
-Then again, if that ever were to happen, we'd likely get a compiler
-error for the snd_pcm_format_t overflowing, so we'd probably notice and
-rewrite at that point.
-
-So I suppose:
-
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-
---b04e15e85d503ad3de99a862da1f51c734f1e4825c9724c1f5249d05531d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZYXOMACgkQ3SOs138+
-s6Hq1Q/+O1LuOBIU5Ga0AXMC62PY26RnEsxrv6TJtxcqwaolgwRpZlyOUDAzVvsg
-ltAPTkzGEK3kTTeilIIMN2ZXK6fmMYH9qwF8AebVBUtNhRqIo/UnQsz9O6gzxPMa
-ZbpfwO/MZGm06ZcKidnTDmLtRotFEx/6o0LW/tJhabOow998nCrD1yGdq3oXGFRC
-lqovd9U1RoeI5IP4r3zJpJ5GbYSc/a9K04vqwq9nkvClx2xNoA03KuHce2FtkjAj
-R6xknIHgcSKHIoh82lQE6pDOPt26+/Fd80b5UwqRtr74IRiUmJOboRxWKMqoJNiY
-TQgIE5PN0R1OGKzrBLb/0kMLXM+VYa5LJKQMxI9FWTWNVx0B79Vyrb1lE8hMpcgE
-yRuvzBHWeYedzriZDJgwEdVVayBf2u2rAoXTRGRtuBAmywtoek3oakbPxYArfnXb
-fjtgV3wq9x/37DJZtPVKBU57IOxu/Pbz2SqWdw81b8DfT931IPeq4sMn+0rnv15m
-zXuIMuqKefis9QMHAEmLjsCfPCnDmZCdXQdELspUMXNBprZNYrOmFctd4xStilvs
-WKsKuAk0Kgox0qGDKM8fPH2F8LexSIZc41UT1EgLTlO1bZ9keROIUCoFpReQg0ET
-xv/16iwcHORl2WGuLvkvBIWQ/AISHDJB8czKV3OB15j2vWTwxz8=
-=dpDb
------END PGP SIGNATURE-----
-
---b04e15e85d503ad3de99a862da1f51c734f1e4825c9724c1f5249d05531d--
+-- 
+With best wishes
+Dmitry
 
