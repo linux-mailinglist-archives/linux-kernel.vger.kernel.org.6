@@ -1,211 +1,192 @@
-Return-Path: <linux-kernel+bounces-194935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB87A8D448F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D0F8D4492
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6AC285CA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:32:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86FA28602A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5F9143894;
-	Thu, 30 May 2024 04:31:54 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12188143893;
+	Thu, 30 May 2024 04:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="L/d1naLT"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2047.outbound.protection.outlook.com [40.107.237.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8371B37171;
-	Thu, 30 May 2024 04:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717043514; cv=none; b=lnG/i73ODEfJbjxsXDq4FbPGaxkLJBTBN2JxZNyvMndIpzL+PH/MciywDFS41gCpVfVlCaymMd12r7gZRlHJbciQD79EOKJm+w7SbsBy5I6RM27RMojwqQTpWxMsewjrCOxlaKLTzBBUgissTkx1G6wrz9cDNXw9NLWfDzvaReo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717043514; c=relaxed/simple;
-	bh=UISANedLyvwh32D5vXLunbfBPBzWbKBm5+TC6Ngp7Es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOVOKE13MO1wM/0r1oudL8IKk616niPUQySqpQojf+3y6CuPs/Ckk6iW+fwANp07lXOW+5MJUwd2snWccXVnguVevdF3SwXDaluFnTsk+jPVHni9jGkRQcR0ZSk+N0Tu7xvr8To3iG1Klzxoo6sz5cqK13o+IUWLwOU3vlrd0/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sCXRi-003fQ3-1H;
-	Thu, 30 May 2024 12:31:23 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 30 May 2024 12:31:24 +0800
-Date: Thu, 30 May 2024 12:31:24 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: syzbot <syzbot+aeb14e2539ffb6d21130@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, linux-fscrypt@vger.kernel.org
-Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in aes_encrypt (5)
-Message-ID: <ZlgBHEnZQSftdqCv@gondor.apana.org.au>
-References: <0000000000000fe556061725a7be@google.com>
- <00000000000099249d0618119a0c@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD4225763;
+	Thu, 30 May 2024 04:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717043746; cv=fail; b=GDxs0DHGA9ByTRAFngIXCrZWWa2m/iKxbSvGBsys0G4/6Lw2dbri69UoregnXvPlWzS7cUgHcw59lO9ICsgtzdBMBOOQbWZAaA+oxzgOjpTr6oRKinRE4MNawDlZ3R80/HxrP7VU/schILscopOyHfZma3Cnx9GUwuntSkpP/1s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717043746; c=relaxed/simple;
+	bh=gDi/e2D+l0QAIkotOCiVMNQ89jUMieVWCwmY8H7TKTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uYN5SyMF4cJmfLLbakTaU0q0ghrw2jnOQLT76Pg7nz3WCh8iUAyJbRl9z9nWBMr6/EScAZrzqV8aNg9j87WAjxVlXx9aqeNfv65JA4Q2dpsDc/pNDUlb7jr7cRKWqZDjUxkAXEWrqzCojwJ14ujkYPP53z2aaRx0UZdeYt5rG3E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=L/d1naLT; arc=fail smtp.client-ip=40.107.237.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YrowZJYmpXLYwbWxabBNrXSGpt/7otDAf2/B4HtkXIdO8wM9JsU+8jXwqPe3dj+Nb7jgvOs0JGyd37J3ogPFdfuYtpfV/mw9CqPxWsbbYVXYcNow9mvmzbifsngM9Eg5V1gvPSZVJfrvrJWEvErbDHbtjIt8Xq/dBsEhVQ2NcKtaWwceUo2n9roRi9zI8k4OiaMtd/E1KTw8sRow2UXVCVqryfk/RTN8bRBISMV6eQZFvMbr4AcR7GzF96O9zAoIA3s9KTZ3HEwolt+BrNojtIi1gW7Xgm3PjPTb3AeYaDON6yuPWct6AedZ+irWmQ5Qb/bJ/XXGOK5upNMqWT0ygA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ICHkA+rgHLsdzrhOy0BNyuCm+gO86Dn8VkXXJGazIHA=;
+ b=KQDSsnrvwo5R5gwyekq+ZiBcXmtDnQzQSwp0k3guL89aWvB/i3q+ihOomKoQYfhsqrcfcP+lG8MvkqGmONqCQPDUAHnSTaq8sX8DZ7VvSi0FVQ8KSqZbrKnVF+5b8OwPIEZ/cv/mpx6dArmJAQ255f9YgTn8p4cVhePKAZ6vLffteBLGM6ysnmTQVCgfruTzGtjyuagxMHZH0gE1FMdwZRoM7FE9gIZ/yPZeGtmoy9MPRViAudn+UPR/6/p3DsozXsxukgF4mCkTpRUbG5CCPFA6VsxMwtCF9pzLoCe8tvY2Z2PVnbfIUKv138SvAVq2OzqPNtBpWgMOEPBG0wtB+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=collabora.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ICHkA+rgHLsdzrhOy0BNyuCm+gO86Dn8VkXXJGazIHA=;
+ b=L/d1naLTForH5rMFdLFT80V+dxzEva1eWmXgClYTKSzVUiQgWQV+hc2vV17kNEynpN86SqgxAVxEJMLSZJXAOkYkCI8YF/6i1lQXg1z/upkJsVsXShyh3Hqg7E59KTSw/6oyulH6Muj5k7E0G4seYB/nrXFeMIAHNHd5uujCa1U+p3yz8+uIiBGw1WmewOjiHyV9UW8Rl2nJPoqQ/T0fQ9pUA7McwTuoesjAZGjScviXK4sXIfiskZl0c9lC7IONEaYlji0wya/zobMPFi01At8Uyomj7xrpqpqLwyhAwcxPK7Z9iBS4IAzgwbm18QvRPBbWx2aeqVrloEkZwKj+ow==
+Received: from SN7PR04CA0180.namprd04.prod.outlook.com (2603:10b6:806:125::35)
+ by SJ2PR12MB7944.namprd12.prod.outlook.com (2603:10b6:a03:4c5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
+ 2024 04:35:39 +0000
+Received: from SA2PEPF00001504.namprd04.prod.outlook.com
+ (2603:10b6:806:125:cafe::be) by SN7PR04CA0180.outlook.office365.com
+ (2603:10b6:806:125::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
+ Transport; Thu, 30 May 2024 04:35:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF00001504.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Thu, 30 May 2024 04:35:39 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 29 May
+ 2024 21:35:26 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 29 May
+ 2024 21:35:26 -0700
+Message-ID: <00ba2d8c-6b0f-46f4-bd19-bce19842c356@nvidia.com>
+Date: Wed, 29 May 2024 21:35:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000099249d0618119a0c@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests/openat2: fix clang build failures:
+ -static-libasan, LOCAL_HDRS
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>, Maciej Wieczor-Retman
+	<maciej.wieczor-retman@intel.com>, Christian Brauner <brauner@kernel.org>,
+	Alexey Gladkov <legion@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
+	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Shuah Khan
+	<shuah@kernel.org>
+References: <20240504044336.14411-1-jhubbard@nvidia.com>
+ <c406383d-e08a-4a12-9e25-1c987b0d678f@arm.com>
+ <f715719a-c835-496c-9e99-d249e5607a0b@nvidia.com>
+ <1aec9470-9af2-4113-9cbb-9930ccd92a0b@collabora.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <1aec9470-9af2-4113-9cbb-9930ccd92a0b@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001504:EE_|SJ2PR12MB7944:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf35b0f5-0b26-4b43-9732-08dc8061f53f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|7416005|1800799015|82310400017|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RFdkS1h3cks4dDcwcU16blNyVkczNmFFYjd6L2swMkVwdFlUeUV2UHlXaHpS?=
+ =?utf-8?B?RGZORmN0b29qZjZkYzEzSmFZbzJEdkUvTTJJRDR5ampIZ29VSEU3UFdMc0Js?=
+ =?utf-8?B?RkhBMEVEb0Evb0xndEFGcHQ5cFErYUhMNk1GL3RaQ3JBblk0bUpPNWJhNGdU?=
+ =?utf-8?B?VEFFTTJoakhTbCs1SFpoVnRaVnMzWkVCb05rbXcrcklKQUlkNUxVMUkwb25i?=
+ =?utf-8?B?enFaTTIwQm1FMmZlcXJJYkROYUFxcmVCR0JvMm1SeWFtalBCbkEzTWF5Q043?=
+ =?utf-8?B?ZCs4eFBGSHBONDhNay85WmNvLzJnSDVITlcvbnR4Yk9pRll4RU83QTVSekZ3?=
+ =?utf-8?B?dlJzVXB2YWloS290VVhHYWZKVTZSUVVERUlObVNpanNrUUFtYXM1VTNvbmVU?=
+ =?utf-8?B?cm5lc1cvTVZiTzFRS2RibVY3UlNNcWw2T2h4YmFGbDZaRjZPVkR1bmZVVVZq?=
+ =?utf-8?B?S01NQXJ5dE9JSXQzOHV3dGVRR1kxYXNmVUd3a0J6TmplYzNTMlQvaGdrNlda?=
+ =?utf-8?B?Q2JnRUhpY2JWQVVORDJ6M01tNEkwVUNicmlRYXRNZ0dIRUhhdDJZMnMxWE1Q?=
+ =?utf-8?B?N0F4SFFRVjJJcUhmaHVOYVV2aCtDUmZVb0ZEMnRoOTZ4QkFlZDFhSklEZnlF?=
+ =?utf-8?B?TEhabnNRamV5ei9uMm1jRUZ4dVFQbnBYR21RMnl1WVZtQjB3MG5QUzYxN2Uy?=
+ =?utf-8?B?cXA0cUVJd3paZjZvZkNrb0dkRll0a1l6eVcrdDZiaWxjTyswbmwwYTVRTkNQ?=
+ =?utf-8?B?L2FEYXFjWGYxRVFRKzRFblZWN0RGcjhCbWxqNDJoTDhSdTVURU1QMUVncXBj?=
+ =?utf-8?B?QXQwdENDaCtzTkljSUZBODhrb3ZhbXYxU0RGU1N3d2d5NjAzOERRV0dnZTJF?=
+ =?utf-8?B?c1lNMXNIRmtHZG9rSGlBKy9aKzI5Wktmc0lZeDdNRzRNb2J2QjF1dVc4SWUx?=
+ =?utf-8?B?cUR0eWRDVXRScXYzNCtPRWd1d1QzNW1rSUlIR0k4RHVsNDQ3ZWF1SFlKODhr?=
+ =?utf-8?B?Q2lFcmJjaFJDVnZyYnRpczNhN1Zua0M0c1BkSTBkcXFIOU5tUlFrYjRrc3Ew?=
+ =?utf-8?B?VVdDa0ZwbEtwRjNXbnIvU25nYlJtSWQ3SlRGeE5zYjhYTFZsTFFZKzk5S1F0?=
+ =?utf-8?B?NzJYSlJWeWdLYXZLUmU5SnlNMmlMV2VHcHpDQ2tHQjZTL2lMVTFGNVM2NzBK?=
+ =?utf-8?B?cXc4SXloZm90aEplYjRNNmZnNXhyL2RVOWpvcFAxbWpPOWV3aVdMdFR4eTVv?=
+ =?utf-8?B?QWJIQVgydk5DcjU2SjYycndROVc4bFhhUGJtUVlwVEhYTzlsOGc2dDJ4TDhW?=
+ =?utf-8?B?cjF5c2QvR0RnelpDRlcyblBDTnorNkxNZS96dGRjV0w5VDRjSmJESnpDNUM5?=
+ =?utf-8?B?MEJUd3BOR1NPODlUaldyTnJQWGxWUFdtSDNQZGd0Vi9oT29wbW9IaHhvWERs?=
+ =?utf-8?B?cUJhSThlbkhESEllUmhseUFZNlo4T1hqa2lqR2YzaEtOdlVkMC9yTGJzbmlX?=
+ =?utf-8?B?ZnNKMmU4V1JyTGtac2hkaHcvY0lIU3JOZC9ISmp1RFVrQmNXOVFkK0c1YmMr?=
+ =?utf-8?B?cHVBQjkvbFRFcmRXRjlUSHNOQ01TSFhsbzdZbkVyUTdDVU9obk5rTmc3NnhC?=
+ =?utf-8?B?d05pQ0RHY09kY2FQRDZpakRzYVZybUpyVDFzR0JyV01yN3pWeGZ3RS9hMTI1?=
+ =?utf-8?B?bUJRbi9ubENBVjBHSkpSeUdwV05qemQ0ZnRJN25yQVZUaEExUDJ4NDFUK2Ez?=
+ =?utf-8?B?Zk45VURqTENCLzMrcnlqSW9mTVBjQVlwYnlrdkFrWjF2SzFmZmVyVTVEdkNC?=
+ =?utf-8?Q?9+fCGoKEry4uIlJamebiHrE1WzFgTAkkXyjms=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(7416005)(1800799015)(82310400017)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 04:35:39.3129
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf35b0f5-0b26-4b43-9732-08dc8061f53f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001504.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7944
 
-On Thu, May 09, 2024 at 09:02:27PM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
+On 5/29/24 8:58 PM, Muhammad Usama Anjum wrote:
+> On 5/10/24 10:56 PM, John Hubbard wrote:
+>> On 5/10/24 4:52 AM, Ryan Roberts wrote:
+>>> On 04/05/2024 05:43, John Hubbard wrote:
+>> ...
+>> In Make, the arguments to functions include *all* spaces, so it's good
+>> practice to not add spaces in most function calls, unless they are
+>> definitely desired.
+>>
+>> Also, you only ever want one of those $(CC) options, so saying so is a
+>> nice touch. Neither of these is a functional issue in [2], but you could
+>> do this on top of the patch (I'm only showing the openat2 case):
+> I was building with CC=clang and build was still failing. We should be able
+> to build by CC=clang and LLVM=1 both. It seems like patches still haven't
+> been accepted. Let's get a v2 out to fix this.
 > 
-> HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14d9bfdf180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=617171361dd3cd47
-> dashboard link: https://syzkaller.appspot.com/bug?extid=aeb14e2539ffb6d21130
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1617adb8980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112f45d4980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/232e7c2a73a5/disk-45db3ab7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/7e9bf7c936ab/vmlinux-45db3ab7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/5e8f98ee02d8/bzImage-45db3ab7.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/fcc88c919ed9/mount_1.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+aeb14e2539ffb6d21130@syzkaller.appspotmail.com
-> 
-> fscrypt: AES-256-XTS using implementation "xts(ecb(aes-fixed-time))"
-> =====================================================
-> BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:149 [inline]
-> BUG: KMSAN: uninit-value in aes_encrypt+0x15cc/0x1db0 lib/crypto/aes.c:282
->  subshift lib/crypto/aes.c:149 [inline]
->  aes_encrypt+0x15cc/0x1db0 lib/crypto/aes.c:282
->  aesti_encrypt+0x7d/0xf0 crypto/aes_ti.c:31
->  crypto_ecb_crypt crypto/ecb.c:23 [inline]
->  crypto_ecb_encrypt2+0x18a/0x300 crypto/ecb.c:40
->  crypto_lskcipher_crypt_sg+0x36b/0x7f0 crypto/lskcipher.c:228
->  crypto_lskcipher_encrypt_sg+0x8a/0xc0 crypto/lskcipher.c:247
->  crypto_skcipher_encrypt+0x119/0x1e0 crypto/skcipher.c:669
->  xts_encrypt+0x3c4/0x550 crypto/xts.c:269
->  crypto_skcipher_encrypt+0x1a0/0x1e0 crypto/skcipher.c:671
->  fscrypt_crypt_data_unit+0x4ee/0x8f0 fs/crypto/crypto.c:144
->  fscrypt_encrypt_pagecache_blocks+0x422/0x900 fs/crypto/crypto.c:207
->  ext4_bio_write_folio+0x13db/0x2e40 fs/ext4/page-io.c:526
->  mpage_submit_folio+0x351/0x4a0 fs/ext4/inode.c:1869
->  mpage_process_page_bufs+0xb92/0xe30 fs/ext4/inode.c:1982
->  mpage_prepare_extent_to_map+0x1702/0x22c0 fs/ext4/inode.c:2490
->  ext4_do_writepages+0x1117/0x62e0 fs/ext4/inode.c:2632
->  ext4_writepages+0x312/0x830 fs/ext4/inode.c:2768
->  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
->  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
->  __filemap_fdatawrite_range mm/filemap.c:430 [inline]
->  file_write_and_wait_range+0x1bf/0x370 mm/filemap.c:788
->  generic_buffers_fsync_noflush+0x84/0x3e0 fs/buffer.c:602
->  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
->  ext4_sync_file+0x5ba/0x13a0 fs/ext4/fsync.c:151
->  vfs_fsync_range+0x20d/0x270 fs/sync.c:188
->  generic_write_sync include/linux/fs.h:2795 [inline]
->  ext4_buffered_write_iter+0x9ad/0xaa0 fs/ext4/file.c:305
->  ext4_file_write_iter+0x208/0x3450
->  call_write_iter include/linux/fs.h:2110 [inline]
->  new_sync_write fs/read_write.c:497 [inline]
->  vfs_write+0xb63/0x1520 fs/read_write.c:590
->  ksys_write+0x20f/0x4c0 fs/read_write.c:643
->  __do_sys_write fs/read_write.c:655 [inline]
->  __se_sys_write fs/read_write.c:652 [inline]
->  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
->  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Uninit was stored to memory at:
->  le128_xor include/crypto/b128ops.h:69 [inline]
->  xts_xor_tweak+0x4ae/0xbf0 crypto/xts.c:123
->  xts_xor_tweak_pre crypto/xts.c:135 [inline]
->  xts_encrypt+0x296/0x550 crypto/xts.c:268
->  crypto_skcipher_encrypt+0x1a0/0x1e0 crypto/skcipher.c:671
->  fscrypt_crypt_data_unit+0x4ee/0x8f0 fs/crypto/crypto.c:144
->  fscrypt_encrypt_pagecache_blocks+0x422/0x900 fs/crypto/crypto.c:207
->  ext4_bio_write_folio+0x13db/0x2e40 fs/ext4/page-io.c:526
->  mpage_submit_folio+0x351/0x4a0 fs/ext4/inode.c:1869
->  mpage_process_page_bufs+0xb92/0xe30 fs/ext4/inode.c:1982
->  mpage_prepare_extent_to_map+0x1702/0x22c0 fs/ext4/inode.c:2490
->  ext4_do_writepages+0x1117/0x62e0 fs/ext4/inode.c:2632
->  ext4_writepages+0x312/0x830 fs/ext4/inode.c:2768
->  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
->  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
->  __filemap_fdatawrite_range mm/filemap.c:430 [inline]
->  file_write_and_wait_range+0x1bf/0x370 mm/filemap.c:788
->  generic_buffers_fsync_noflush+0x84/0x3e0 fs/buffer.c:602
->  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
->  ext4_sync_file+0x5ba/0x13a0 fs/ext4/fsync.c:151
->  vfs_fsync_range+0x20d/0x270 fs/sync.c:188
->  generic_write_sync include/linux/fs.h:2795 [inline]
->  ext4_buffered_write_iter+0x9ad/0xaa0 fs/ext4/file.c:305
->  ext4_file_write_iter+0x208/0x3450
->  call_write_iter include/linux/fs.h:2110 [inline]
->  new_sync_write fs/read_write.c:497 [inline]
->  vfs_write+0xb63/0x1520 fs/read_write.c:590
->  ksys_write+0x20f/0x4c0 fs/read_write.c:643
->  __do_sys_write fs/read_write.c:655 [inline]
->  __se_sys_write fs/read_write.c:652 [inline]
->  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
->  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Uninit was created at:
->  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
->  alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
->  alloc_pages mm/mempolicy.c:2335 [inline]
->  folio_alloc+0x1d0/0x230 mm/mempolicy.c:2342
->  filemap_alloc_folio+0xa6/0x440 mm/filemap.c:984
->  __filemap_get_folio+0xa10/0x14b0 mm/filemap.c:1926
->  ext4_write_begin+0x3e5/0x2230 fs/ext4/inode.c:1159
->  generic_perform_write+0x400/0xc60 mm/filemap.c:3974
->  ext4_buffered_write_iter+0x564/0xaa0 fs/ext4/file.c:299
->  ext4_file_write_iter+0x208/0x3450
->  call_write_iter include/linux/fs.h:2110 [inline]
->  new_sync_write fs/read_write.c:497 [inline]
->  vfs_write+0xb63/0x1520 fs/read_write.c:590
->  ksys_write+0x20f/0x4c0 fs/read_write.c:643
->  __do_sys_write fs/read_write.c:655 [inline]
->  __se_sys_write fs/read_write.c:652 [inline]
->  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
->  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> CPU: 0 PID: 5048 Comm: syz-executor132 Not tainted 6.9.0-rc7-syzkaller-00056-g45db3ab70092 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-> =====================================================
-> 
-> 
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
 
-#syz set subsystems: ext4
+Yes, these are about next on the list, and I expect to post a v2 or its moral
+equivalent tomorrow or the next day at the latest.
 
-These reports have been coming in for a while, previously they were
-merged incorrectly with reports coming from networking, see for
-example:
+For the CC=clang vs. LLVM=1 issue in particular, I've already posted a
+fix, please see my "[PATCH 0/2] selftests/lib.mk: LLVM=1, CC=clang, and
+warnings" [1] that went out just yesterday.
 
-https://syzkaller.appspot.com/bug?id=6eb713b7107c62e9f6c259adf944c96efc3cd524
-https://syzkaller.appspot.com/text?tag=CrashReport&x=11e16a77a80000
+[1] https://lore.kernel.org/20240529020842.127275-1-jhubbard@nvidia.com
 
-The networking bug disappeared mysteriously in July 2023.
-
-Thanks,
+thanks,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+John Hubbard
+NVIDIA
+
 
