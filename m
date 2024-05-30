@@ -1,154 +1,136 @@
-Return-Path: <linux-kernel+bounces-194816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58B38D4277
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:46:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5158D427B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F5F1F23DBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05BD1C22AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A84E556;
-	Thu, 30 May 2024 00:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7730DD520;
+	Thu, 30 May 2024 00:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="I1VaVCsd"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="DcdFYA/Z"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE186134A9
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0ECC12C;
+	Thu, 30 May 2024 00:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717029951; cv=none; b=YFZTsiTGN3L8Q/fRYqMrGOmSAZpZDfOOTMaXpE6+dlaufc6xJiyvcl0jrro2nUQgmCD4lghGgx1ykclt43rVcsgNuk+CigUgr8g+c0W9jPxp76aVOSMR/b3i4s8FVRD1isR492EaXFtY30ff1afiS5ft4+JcSQfdU7/yd+BY3IM=
+	t=1717030105; cv=none; b=uy3KJtfeXS4o6AsR8GB3WLLYagTEDGRIPZuVy2tG3jbJgF4EYmEY4uPsToHIgt0C2KmndcteldP2/ugK94LOxX0kMhoPFgX51GqJms4x5i1tFw8fb8mX+PXG1JqDOxcdyIiWz4ISt2xiFVK6WlpiyjwrbUAl6vMM/ICtKBLCW6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717029951; c=relaxed/simple;
-	bh=wBz2qZopS6FfLTe4ZSNt9bUuEFegNutb19fG4EI+yAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CjcWhOUkes0r5l8uIgsuRKHykcY1Z7KpLlKdkw+UWgwvzQ2QEtjNzxzmOrYimBeU5ghmt8pcaeFOHqkiXcC4Fr8KcaxQF7f5XI460TGzX2TEpKqUrCwr/kSnbkYlenSGGvhaUN4exIhXGF1mNp2sY6DLg4SuhN5EyoQSOrQRev4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=I1VaVCsd; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2bda9105902so261627a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:45:49 -0700 (PDT)
+	s=arc-20240116; t=1717030105; c=relaxed/simple;
+	bh=C0dhth9kpR94j1l7Mfkz8buHZB7swFp/TtH4qXE8Ig4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sQmNuoPzZc2seh82LfdwlT/tLaNsztUdlHwUCxw7rp3z6GLO46lcYBstCZYlZN1X55W8ojjGPwBXXYQyMkjjiLDHQNcUFNiITqICFfWjXbNIfkoR7qLbhoDfoO3uEPf/29zAYZFQzIT38t0DskgSfuknEJJ2qbYC6+zHgRm237g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=DcdFYA/Z; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A76CF2012A;
+	Thu, 30 May 2024 08:48:11 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1717029949; x=1717634749; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UzT4rsaryvD4HsIjsYHJczNs+fMyCNVp7/lsR9UttHw=;
-        b=I1VaVCsdIl1m5FsHcC0pBBxjAMfa/ng+p4U17H1mLGQ8MfCwLEuTEHNWoSIZtBWMRc
-         cVJEHhaHfR06d6kal2VJvwF12gG5KQFGpjEKYTsjPg/y0OwlhEUt6YOzhxgEMkeFkWK9
-         e0NMv/noYBftZ2dxACbNPzgD55I8vytIG4jYw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717029949; x=1717634749;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UzT4rsaryvD4HsIjsYHJczNs+fMyCNVp7/lsR9UttHw=;
-        b=QM4OIwzv2QZP3QEYOhw8GroevbUbTAchc9BfnggNRq/+hKaYj7Pcat8rQH/KSr3/VV
-         Dx7LlSI1/++2qbyiXUI0bQ80dkBG0dD2U8ap1hxzYsOXqfXG0MwvwEcNGr55Pytk4DBI
-         zRt2COORbTeHgMS2WLgqaK3vJRHc+bqeS/+Xygb/ylk1rYx1Nw6axPy0H9Z/JU+aOhrP
-         p39bY8AMvgNF2mzoLNgnGILUvTVJqEgePSXWfzsErY18o9jVWzZSjXXO9QoGOJrEtrnn
-         TNgGiD8Sepb5q1sFslTrZ6lK4URISjVuo58ElCQDURiiNDvAXp8Un1lYNUciApAvLEPc
-         oclg==
-X-Gm-Message-State: AOJu0YxOuEDng4t3WFsdZcGBw/aScufWhbkfezNjQS7wHB/qLkk0WRLD
-	q/flgguQKJqEoYLRVJclgythCV6hHGSpBK9/DypKZiY0HiDDl9Cr8ShwDurl3Q==
-X-Google-Smtp-Source: AGHT+IGw/uQweGpiOxtSfYPC7LJBdJ2zJ1rqH+pim/ho7+uhpHOfv5xU/GTUkOAC13zAozamcR+7Gw==
-X-Received: by 2002:a17:90a:de93:b0:2c1:a9da:8344 with SMTP id 98e67ed59e1d1-2c1ab9e32c6mr750050a91.9.1717029948937;
-        Wed, 29 May 2024 17:45:48 -0700 (PDT)
-Received: from [10.66.192.68] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1abe3d4d7sm288005a91.44.2024.05.29.17.45.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 17:45:48 -0700 (PDT)
-Message-ID: <bcbe13ec-839c-4061-895c-8188bcd03841@broadcom.com>
-Date: Wed, 29 May 2024 17:45:43 -0700
+	d=codeconstruct.com.au; s=2022a; t=1717030094;
+	bh=BL3VSBZFjB9LfmhW9pMux5iQFs+tV59KattgzjY68gk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=DcdFYA/ZptlfMYfcV4NO4o+KF/gifV+wKQ4sSxRqP95G0dKtp6DtmTY41Wz+SekIB
+	 zftLO4U3716/mBRT/9X8IImKRWNy04vYIW+Y/0sz3vRYh5qEJqHBimFY7UOUsOIino
+	 XNu+eOmv869hLH0yeykwSsFuOdcjqZ4JB7rWds0rVlB79n6pTjqTZ7pfbaisT6MI30
+	 cb95f+y96/sp3CGwy7yyGJ2II3Um1HJQFjDYHLgq5sbUOZb+BUkom92ufY+eIVG11E
+	 2Si31f036oeodXxYnt82tZwX+adjOU11ZohZFf9MjlQIfcU5PB9Yavnz9DK+z0353e
+	 Vh5I59nlhomyg==
+Message-ID: <1bcaba5063820df7fd87d887835c42e2faad9d86.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/4] dt-bindings: gpio: aspeed,sgpio: Order properties
+ by DTS style
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 30 May 2024 10:18:10 +0930
+In-Reply-To: <080c4c05-e795-49d8-a547-d39d10ed8333@kernel.org>
+References: 
+	<20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-0-91c42976833b@codeconstruct.com.au>
+	 <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-1-91c42976833b@codeconstruct.com.au>
+	 <080c4c05-e795-49d8-a547-d39d10ed8333@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 6/8] x86/vmware: Correct macro names
-To: Markus Elfring <Markus.Elfring@web.de>,
- linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
- virtualization@lists.linux.dev, dri-devel@lists.freedesktop.org,
- linux-input@vger.kernel.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, x86@kernel.org,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ajay Kaher <akaher@vmware.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simon Horman <horms@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Tim Merrifield
- <timothym@vmware.com>, Zack Rusin <zackr@vmware.com>
-References: <20240523191446.54695-7-alexey.makhalov@broadcom.com>
- <448230a6-1afd-416f-a430-3fc83d81908f@web.de>
-Content-Language: en-US
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
- 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 EuY0
-In-Reply-To: <448230a6-1afd-416f-a430-3fc83d81908f@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+On Wed, 2024-05-29 at 09:26 +0200, Krzysztof Kozlowski wrote:
+> On 29/05/2024 07:13, Andrew Jeffery wrote:
+> > Tidy up the list of required properties and the example node by orderin=
+g
+> > the properties in terms of the DTS coding style.
+> >=20
+> > Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+> > ---
+> >  Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml | 12 ++++++--=
+----
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml b=
+/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+> > index 46bb121360dc..6b15a3a3fb66 100644
+> > --- a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+> > +++ b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+> > @@ -51,12 +51,12 @@ properties:
+> >  required:
+> >    - compatible
+> >    - reg
+> > -  - gpio-controller
+> > -  - '#gpio-cells'
+> > +  - clocks
+> >    - interrupts
+> >    - interrupt-controller
+> > +  - gpio-controller
+> > +  - '#gpio-cells'
+> >    - ngpios
+> > -  - clocks
+> >    - bus-frequency
+>=20
+> No, this should have the same order as properties are listed.
+>=20
+> Don't change it.
 
+Ack.
 
-On 5/25/24 8:53 AM, Markus Elfring wrote:
->> VCPU_RESERVED and LEGACY_X2APIC are not VMware hypercall commands.
->> These are bits in return value of VMWARE_CMD_GETVCPU_INFO command.
->> Change VMWARE_CMD_ prefix to GETVCPU_INFO_ one. …
-> 
-> Can such information be relevant for the addition of the tag “Fixes”?
-> 
+>=20
+> > =20
+> >  additionalProperties: false
+> > @@ -65,13 +65,13 @@ examples:
+> >    - |
+> >      #include <dt-bindings/clock/aspeed-clock.h>
+> >      sgpio: sgpio@1e780200 {
+> > -        #gpio-cells =3D <2>;
+> >          compatible =3D "aspeed,ast2500-sgpio";
+> > -        gpio-controller;
+> > -        interrupts =3D <40>;
+> >          reg =3D <0x1e780200 0x0100>;
+> >          clocks =3D <&syscon ASPEED_CLK_APB>;
+> > +        interrupts =3D <40>;
+> >          interrupt-controller;
+> > +        gpio-controller;
+> > +        #gpio-cells =3D <2>;
+>=20
+> That's just example. I don't find this change useful but churn.
 
-Makes sense! Thanks, --Alexey
+Sure, I'll drop the patch.
+
+Thanks,
+
+Andrew
 
