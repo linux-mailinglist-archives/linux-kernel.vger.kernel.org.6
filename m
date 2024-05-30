@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-195482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A948D4D6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:05:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149378D4D72
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5FE2851F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:05:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5757B240B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61777186E5A;
-	Thu, 30 May 2024 14:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF63186E4B;
+	Thu, 30 May 2024 14:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="cofttuqi"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/B8RX2Y"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A85186E3F;
-	Thu, 30 May 2024 14:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA23E186E49
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077900; cv=none; b=ot4vzJKP1rBCwNXCRrQ3T45Ik4TbPeIRdqeSViIkEjIzaBGEwepayGda1vQ/i4q2YcPa1+ej9ElDjIRmIEZe5t3GI2iJ/L16m6PTFo2iInfTEuL0Jz0FF6tcWc1hE4cUtHPtf58SFZ6tuVSaTYA9ld0BI6w17AjdlbB9idIB6Ic=
+	t=1717077934; cv=none; b=Xw93MJ3BFVbakMx2oAlumy0IPUwsrYvx5b17vbf4Hmv+epf2MNj2b3fCQnp1KMG/3tXjplibFbuB4iFbNHf1c2Xz6Ncomx6npWB2azN7/Nbpy6vLGRjTOY+6q/tY7YJ4ujhmsoXiN1vXBjorL4aIc1s/KUsIzUgEqbDPDvrGYHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077900; c=relaxed/simple;
-	bh=pkETTqo1L5i6dCsPGWBv/kZtFquPctFL/nrgQUNQSpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrDfj9ayhW/+p3iwHZ1OdCl5fAHrusSZT3wnD/ShoGJZMn/AcsWY8bZHOLUAA7pPmZRsSJWcsBYu0xaYEVLSdkhy8k9bNPILAhIW2fW1SGpUN5O9Cbvq0LSwt6w+ZpB3bS+CMzor3wLSDyjjGL5S7mi/O5YLc9H0rgW2kxrYQqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=cofttuqi; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YExquJyePSJqGdpvuFBG7W8z98CXju9/UOTlH9NVOl8=; b=cofttuqiyGIhomNYnWGBSr8MmL
-	6mIBkRfYIdUFvXTqWwoX/drO71MRJc83E1wB85RV/he+IGneNJXatZV/KrGzA5SFVZoButqjbUoBI
-	XA3cmjY9gKKwl3U30gWj/pIj641RzXMK1WM8xJ46Q/bu1zItiyBmg5M7csBgiETK/J//0UPTxVdSH
-	LiEMd/ZdwcXn6A2+/6G5m1GluM0H1bExOvVRlYAPeCzV3slsJWB2y24VUWCVTvxkabfaMzCH99F7d
-	LmPE9kIzWqnNRiJaN00kQfTWXxYLR5B4PMCxX2ylqRzUaQNHoMxguxBLViAlwUX6rnH0+x+zHiEv/
-	zbS9eOww==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49300)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCgOh-0007Sx-1f;
-	Thu, 30 May 2024 15:04:51 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCgOj-0005C4-5L; Thu, 30 May 2024 15:04:53 +0100
-Date: Thu, 30 May 2024 15:04:53 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Genes Lists <lists@sapience.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
-	hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, johanneswueller@gmail.com
-Subject: Re: 6.9.3 Hung tasks
-Message-ID: <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
- <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
+	s=arc-20240116; t=1717077934; c=relaxed/simple;
+	bh=ESd0gNsxszqbQaloGtME7oCQ3PNGImKH+e9qTcBH1qk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JqXqQeAqqg3K/aoM0Ty7lhELz/b6XEomhajvzaRYjrIna7Y2fzoMbvj27sj6DbMklzFftwWRxzoGw5LgX7/Er8l1E3aV3ptZSI2oKgjHYm9KPUmmBYC7MfzJfhxrg1F0KctAEbxyAssAF2yu6eooxIpaVCtb86HIOR6W9qwVkLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/B8RX2Y; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a63036f2daaso97405266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717077931; x=1717682731; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ozNVAnxqE0lL+qF5HV2h+4/UhN7PSqlhKtJqHseh0HI=;
+        b=L/B8RX2YxSaggGp7tw6FdKibbb1unU3VPPON/2IXs3mh+d50C+Fs6Olj3BGQGD5L6q
+         /+38Nkwht8CgJhrrK4NZqszbRS0XqIy7lnEX8y28t6KB5wGKH7bFwYyyPLY0hJip9wlX
+         u2GWI2xeVoilzIsioojVNWS+ECDBzLr+CErKNjDMm/ms5IK+b5Vd4s+dfNWQ/He8Pykb
+         TAUvNL+U4Zu6JVBo6hwwywcE/s50PqlHsN9A5v6AdnQxvmZH/L7dw6HAWtl7wxwY1IxA
+         nsGT43SXv9v+CpJTwqXu5nKuym1H7+P81ND8iVhXqJbP0lZDsJyJ5XX2+BKyAeSr3jni
+         Xojg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717077931; x=1717682731;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ozNVAnxqE0lL+qF5HV2h+4/UhN7PSqlhKtJqHseh0HI=;
+        b=mJGnieRY2NOm2UAFVISzBV/Mu1QnJJzPcvcQfoSO6NSVslGOu3ER8F2ORIW/Sh/IEH
+         E1IJD55n45j8TZh3ovohZYIeiTPA0QG/GPxmEHRzzVFkzSQrK3XRXqMGP4TMqz86OSqA
+         wic4q6o7KW8oUEKSxIb1oAFyFpPoqo3UGKLQm9v7HCGyj+jmgKClh/UnpzgOBkZCJ1qC
+         8FkfUzJ74MUazZdj6wgHVK3i3R8xVoPuBsO8licpooJ0/rchJVn3ABnflyHDOn7zXr0f
+         94LcwxybAIIB08uCaGvCH6tCoAZd4resF5YntFcmuNIv3g6tmuDC5x9iqS2Co83Q7Qo/
+         SWEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs79nfplZ5mpp6Dy3sUK7sdOuDiaAPYOrKtL56h25lVWgnj9fC/m/sNTRyhufC97KJct8kq7mfBo+aPZ5hMeomKiseFUDzP0H6abrE
+X-Gm-Message-State: AOJu0YzRrElQT6z5ux4k84553QQPlgZAQ+wX4yCCsT0W2abmMAMf18Vt
+	039+r1rcxFO3/s5FLuYVtyCQ27H/c3AJPoLbBtPOXOfeZ61L2MKIzcM5PYkuo+A=
+X-Google-Smtp-Source: AGHT+IF/EgUdnO2R7u5brYgNfOJ73YaN+O9YN+pDX7gvTyYiHIa/WTphpHtPpGYtAukA9aMRxwrvhw==
+X-Received: by 2002:a17:906:2550:b0:a66:7666:fc64 with SMTP id a640c23a62f3a-a667666ffcemr88422766b.4.1717077930807;
+        Thu, 30 May 2024 07:05:30 -0700 (PDT)
+Received: from [127.0.1.1] ([188.27.161.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a663848c9aasm49630566b.207.2024.05.30.07.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 07:05:30 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Thu, 30 May 2024 17:05:24 +0300
+Subject: [PATCH] clk: qcom: gcc-x1e80100: Set parent rate for USB3 sec and
+ tert PHY pipe clks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-v1-1-7b2b04cad545@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKOHWGYC/x2NwQrCMBAFf6Xs2YXdpAX1V8RDTF9rUGLZpFIo/
+ XeDt5nLzE4FllDo2u1k+KaSPrmJnjqKz5BncBqbkxPXy+CFN8VZVITj+8VzjLyWh+eCyBVWG1R
+ egiFXtlDBvZNwgVP1o1KLLoYpbf/h7X4cPxJIJf+AAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1259; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=ESd0gNsxszqbQaloGtME7oCQ3PNGImKH+e9qTcBH1qk=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWIel1xURmFNij+ie/FjjZdjHt5Q7HW7elDTa7
+ lANeTceYDSJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZliHpQAKCRAbX0TJAJUV
+ VnMiEACLXvkhX7K/Kz112drtLnDhAMbNb6HDLeh++fS2QCXs9qI+bIjcbdPR6/30p/LtLiLWIJb
+ cNK46wGJVKbF2oXJlCr4ESUl0lbRlFXM5RRafqQl8DUWiFpYkRDkqpDa3l3nSf+ola7xybzXgsY
+ F5V7jgqIRTeYb4HjYsJ/3TB+YLEgejcaVhksIHEbi2Nk8Cczc0X4M9TkJYWl2oRg7frJtffiC2K
+ VJAbg3WTVGwFP0a/cUK9AEqaAWLHfD4z8gk8qZDHylXYu0vbC5wtb58lpmfXTB8v3hws6qJR9H8
+ O6aqeWGh8Y/L+4+O+cwtKri95vnQEmRPsTUoQrqi2SA/qhEGfTH4uctL4HXkmgLHh9HJMp6Vs5Y
+ GOyiB8b8PhFXXV3W3S42oGLE194Pq/kBlNI3gWhM8a12+SUfwIwAtwrfgmEWm7E3gC12+rNLAhg
+ oHqyu7C0FyXM4Bm1fM7y5WWNGdbL8tpPUQBxc6OmWe5DzwGHKTwzZL2XtNAUemLc7uGrwCimIFa
+ +2dmQChazyn6oDAWyUQ8MeUOJE+jRWOwGfY+oFUOm1NpeTr0TKdXRpgosj1/eUdKjkkmtmsn4xt
+ w6YLx9za4BQJKWqHIcGMX++JtUCMcrJJe+CnkZG5vp54+8ENcD/LNr13FAE1Jx/b0BIxgrdZbyl
+ zWF9Hj8ix0ZoohQ==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Thu, May 30, 2024 at 09:36:45AM -0400, Genes Lists wrote:
-> On Thu, 2024-05-30 at 08:53 -0400, Genes Lists wrote:
-> > 
-> > 
-> This report for 6.9.1 could well be the same issue:
-> 
-> https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-872b-d8e541f4cf60@gmail.com/
+Allow the USB3 second and third GCC PHY pipe clocks to propagate the
+rate to the pipe clocks provided by the QMP combo PHYs. The first
+instance is already doing that.
 
-The reg_check_chans_work() thing in pid 285 is likely stuck on the
-rtnl lock. The same is true of pid 287.
+Fixes: ("161b7c401f4b clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-That will be because of the thread (pid 663) that's stuck in
-__dev_open()...led_trigger_register(), where the rtnl lock will have
-been taken in that path. It looks to me like led_trigger_register()
-is stuck waiting for read access with the leds_list_lock rwsem.
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index 1404017be918..8c72fdc99fd9 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -5269,6 +5269,7 @@ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+ 				&gcc_usb3_sec_phy_pipe_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -5339,6 +5340,7 @@ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
+ 				&gcc_usb3_tert_phy_pipe_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
 
-There are only two places that take that rwsem in write mode, which
-are led_classdev_register_ext() and led_classdev_unregister(). None
-of these paths are blocking in v6.9.
+---
+base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
+change-id: 20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-420a9e2113d1
 
-Pid 641 doesn't look significant (its probably waiting for either
-pid 285 or 287 to complete its work.)
-
-Pid 666 looks like it is blocked waiting for exclusive write-access
-on the leds_list_lock - but it isn't holding that lock. This means
-there must already be some other reader or writer holding this lock.
-
-Pid 722 doesn't look sigificant (same as pid 641).
-
-Pid 760 is also waiting for the rtnl lock.
-
-Pid 854, 855 also doesn't look sigificant (as pid 641).
-
-And then we get to pid 858. This is in set_device_name(), which
-was called from led_trigger_set() and led_trigger_register().
-We know from pid 663 that led_trigger_register() can take a read
-on leds_list_lock, and indeed it does and then calls
-led_match_default_trigger(), which then goes on to call
-led_trigger_set(). Bingo, this is why pid 666 is blocked, which
-then blocks pid 663. pid 663 takes the rtnl lock, which blocks
-everything else _and_ also blocks pid 858 in set_device_name().
-
-Lockdep would've found this... this is a classic AB-BA deadlock
-between the leds_list_lock rwsem and the rtnl mutex.
-
-I haven't checked to see how that deadlock got introduced, that's
-for someone else to do.
-
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Abel Vesa <abel.vesa@linaro.org>
+
 
