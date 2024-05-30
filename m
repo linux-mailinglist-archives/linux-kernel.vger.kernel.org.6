@@ -1,166 +1,150 @@
-Return-Path: <linux-kernel+bounces-195398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF9D8D4C2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:00:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB4A8D4C2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F621C23685
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F42284A00
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82203183068;
-	Thu, 30 May 2024 13:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C2C183060;
+	Thu, 30 May 2024 13:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tde9RP/a"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ED8paIrY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DA21E488
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5855617CA10
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717074009; cv=none; b=ElKmM13HvxD/67tUis4RXMFdMJ8fgLA2SG4mV/ddl/Ghg62eDf+UUSzahpIu7gRwTGB1/aTEljUVc+3GsYjC30nS4ubaeyfBH62XsULI8UYKxoSPAv9e+qGcR3IZVGnbilBpn1AmTlKsr+3RDUxoqhko7hZ34CzEPIaVwJgw97I=
+	t=1717074067; cv=none; b=cjh9VRsQvsyIgbcvp3TAbfAQGTId/qUyfqsxO6N5+zI3djmBdYqoM3PeJpTsHoC6TghAywRzq4PTClAYMZ5DCjcsv8xK7VhqJJITUhKlFcjaCiC+Kyj2OaFw4gHDBLylbPornX1Lk2xjFYPMtbN/noBNNzn7Mjwk1jcVkdxtvxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717074009; c=relaxed/simple;
-	bh=pj0nrIN3Qs7jpx+J/3Wt1XvGRkbyRR2Eq5pw8utiL9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpbY1I2Uf51pRz5JB+12IMuIr50KsLg6DGLWOtXH2Bb+am1mU/pq720b+VnK/2NsxkQOd8X0zRZTlvlb6LoS/kGhXuJOHC2SxJKixejWtY18yTutDF9GuEX6KmLUE3G/XA+OL2PsF3YBwobM6fydDavYcr4qF0yXdVPWe4YdOQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tde9RP/a; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-794ba2d4579so58551385a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:00:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717074007; x=1717678807; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oTphgebvOjeWdN1xBiIRxM6zg0yoJ4DRfXlzkZveD5Q=;
-        b=Tde9RP/a8xtlAHidSAH9ff4C7X4uMe2oNKfo2PANm7hO5tEJHQ+VGRFOzibhdO34p6
-         kFAaCG8hCZeuGkTLGxotqQEPUs3bRUwK8VBDgDKHBVox3N0YsdqlkY3TOz/Gm+biMd8D
-         hYifLEcGcLRUFCXE/bOr+pFd709J73EeZnHTk=
+	s=arc-20240116; t=1717074067; c=relaxed/simple;
+	bh=QbG0ygvFhemxwXbo8UH3vbamKCGJA+4BeTD1i2CVlnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mySV7eKe/Cjmt8CZ+hMT9/Xjob2pvHt+e4iLAr0zH8b93ryCDFvLfx1hySyWPVtiP3Jpm54lQhZL8ChyS23slVIm/P+Wv7xrEj5lsXCjWZ/d8Y3s93qxlz4fEqWMxGkRTXc2/XQ4EdQKSCemmEuvDFSOyOW4V090IKJXOnqPgqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ED8paIrY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717074065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qH6bqXZWDj2VvkhQa8r0x2CDiDZr/N+uYFn9yj//1U=;
+	b=ED8paIrYZWhr4SIW2g1q+PCn8bQ7osKJaRdKp8lT4MvvwYdT/ydcskt2lk+LJpnaoxDWxV
+	LVCpyXtamtEEbTJDvFQM25zQamDPAJhs85LptYY+QsZPnbm1hzNojN2s332h1qHMWMi69M
+	0iE+zYKFttKEEqEgdV+7dLlUcxJXNqw=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-151-bls7KdYsPWmsqtLQu_quZw-1; Thu, 30 May 2024 09:01:03 -0400
+X-MC-Unique: bls7KdYsPWmsqtLQu_quZw-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-43fb02db6d2so8923751cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:01:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717074007; x=1717678807;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oTphgebvOjeWdN1xBiIRxM6zg0yoJ4DRfXlzkZveD5Q=;
-        b=lFJAxNPLUVUBXJqUVi+WrkrH8uzTfkWDnBUcM5VvXM3oxQ2wq80oCrFe2CJVVWhFdo
-         TSGejzcyArdMismqd1LOt0W9ruCgg02mftYQqJXVOr/c0ZyPWY7KAOVHDrJbbLxBj0EP
-         NKk9dox3eL7/WsE6PSDq+rTpI9Z8AmpedGaHvY1lrCrY8n4uWh3kJUZCfxdsU+gE9yjU
-         hHrTlmXbH72z2nyLWMX+c7lUoJ/q1vpl0ZWs1XfZDBPCHLZi13RsiWv1vwSka//X4SD4
-         PvsxAnmDD5/mUceXmtEYb5hdR+N9lDCSOMafib8/mstDkb52Ju9zk2qBIGkhy0uBfDdi
-         /s2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXV24bMsfQsQrOtLnMgCGNj5FD05B1EPd813zeb2UxLy3BgFzml4IfM+b60UvqRLDVUquXA+Pm+Vso8S2hh1lE3x9f6TkrGTGmHNBSB
-X-Gm-Message-State: AOJu0YwGilzR0vgcFkH88EH2SAwEmwf3lOPIeG24pcNg5a8q7bAPF5kt
-	BMP/7cdhNv+84+MBJ8PYKVTPHxaFkE0Lz+2uvktcXU1ETqi7hbJ9UFMyziX6Cnq3n3u9H74zN+c
-	kpg==
-X-Google-Smtp-Source: AGHT+IFu+EQazI9ObMoLnlR8eMjaMYtWhTgjDut6OL2jYG3NlH7N5HO/QRtWnCLgY15A8N8y7OM0rA==
-X-Received: by 2002:a05:620a:1478:b0:794:847c:9030 with SMTP id af79cd13be357-794e9da182dmr211049685a.27.1717074006622;
-        Thu, 30 May 2024 06:00:06 -0700 (PDT)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com. [209.85.219.51])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abcdb784sm552575885a.65.2024.05.30.06.00.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:00:05 -0700 (PDT)
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6ae0bf069f3so4095456d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:00:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWpi/UyyHZPZXrmgvfSKbfAHOo8Ru81U8ADpC+mEGpwIcr3Ul+YRTIFAkxOKYzWS2JIFH2/8bnGK4w1o+WwdV7zryKEs9yFP4jxFYje
-X-Received: by 2002:a05:6214:3b82:b0:6ae:5b:c181 with SMTP id
- 6a1803df08f44-6ae0cce1c83mr25263506d6.63.1717074003733; Thu, 30 May 2024
- 06:00:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717074063; x=1717678863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9qH6bqXZWDj2VvkhQa8r0x2CDiDZr/N+uYFn9yj//1U=;
+        b=Fr91aO6a2rkG5/2+D8/4b2TEr5LbFRkWUntgp3E3GZ1YE3nH1fPbmU/mTXYBixUNxV
+         eUkeiePCYORR7XVZZNbPdScXMs+dY8M9+Qlj0HMKUdS90/ZfvsCrCDj2+ObbrYbZLHu1
+         c5YarWy59RfUwZHwDvMea0CzsmePPPnevbg0uCQrmi4s/0SbyIuFyotPIuSqM+LctNjH
+         Sb1nKuSidhPF9kMagscSTD1HwmGD4BEcV65+xNMe87y9FC8LGe3Nd1fE5JpyZqrLWq4Y
+         GWLxPzWurnl7UXyzuVVRPtvI9PrTCrSacHxh69FD9cGopqh2Ag1ibHLvDRkbBdgxgi7R
+         VYww==
+X-Forwarded-Encrypted: i=1; AJvYcCVhAoLYLhMVk1MsJJ4M1ljG+9dBCl+XNKPMrnS2sBdfHQSHgAD4mkZgIUXfEO45ZyQ2lUC/3ZzdfGgSEhZfoBLxNdJ2ztxFkdLcE5gt
+X-Gm-Message-State: AOJu0Yz3SvFNB/+0fnFjrIfd/zJIFO4wOJZ2FvQZd2ymdTekKPbIpTwY
+	/GrjNSwph71bQjNyZl1dtB6m43c/UCv8jn31SYIbsMKx4/peWJQ5vAVq0t+pRhddGdI5+b37yur
+	s71usGrjw0+Wz5MnNI0iIW6WSNSmXGlajWTS/Cm1nlov82wk7ot1qyE+gKwL/FdsMrD1vWw==
+X-Received: by 2002:a05:622a:83:b0:43e:3d8b:b6b9 with SMTP id d75a77b69052e-43fe930e9e0mr21741941cf.44.1717074061989;
+        Thu, 30 May 2024 06:01:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmqMkYgzTY+K+MR+AsBjg7npPdMxiUXyD3C6fsmskBzvTeam+eNVGfcssNbpZMomvAfvLBqQ==
+X-Received: by 2002:a05:622a:83:b0:43e:3d8b:b6b9 with SMTP id d75a77b69052e-43fe930e9e0mr21741561cf.44.1717074061340;
+        Thu, 30 May 2024 06:01:01 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb18b0e3bsm65135651cf.68.2024.05.30.06.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 06:01:00 -0700 (PDT)
+Date: Thu, 30 May 2024 08:00:58 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
+	Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Jochen Henneberg <jh@henneberg-systemdesign.com>, linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: dwmac-qcom-ethqos: Configure host DMA width
+Message-ID: <busrdvbjh7eigqgpgwl4k5tergt263gfjcpti7jutdyk37cnse@iotdvflbsca6>
+References: <20240529-configure_ethernet_host_dma_width-v1-1-3f2707851adf@quicinc.com>
+ <7w5bibuejmd5kg3ssozaql4urews26kpj57zvsaoq2pva3vrlo@agfxwq5i65pc>
+ <d8ad4e59-5725-4a7d-a2ad-ce5d92553525@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527-cocci-flexarray-v3-0-cda09c535816@chromium.org>
- <20240527-cocci-flexarray-v3-3-cda09c535816@chromium.org> <6823bc58-9461-4a54-b5b3-7ea5c46fc68b@xs4all.nl>
-In-Reply-To: <6823bc58-9461-4a54-b5b3-7ea5c46fc68b@xs4all.nl>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 30 May 2024 14:59:47 +0200
-X-Gmail-Original-Message-ID: <CANiDSCt0PXTP63=dkNpUvH6mYSJ2_mr5xiOd9=RpLqVoD4YY_g@mail.gmail.com>
-Message-ID: <CANiDSCt0PXTP63=dkNpUvH6mYSJ2_mr5xiOd9=RpLqVoD4YY_g@mail.gmail.com>
-Subject: Re: [PATCH v3 03/18] media: dvb-frontend/mxl5xx: Refactor struct MBIN_FILE_T
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Michael Tretter <m.tretter@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
-	Andy Walls <awalls@md.metrocast.net>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8ad4e59-5725-4a7d-a2ad-ce5d92553525@lunn.ch>
 
-Hi Hans
+On Thu, May 30, 2024 at 12:22:52AM GMT, Andrew Lunn wrote:
+> On Wed, May 29, 2024 at 03:50:28PM -0500, Andrew Halaney wrote:
+> > $Subject should be have [PATCH net] since this targets the net tree:
+> > 
+> > https://docs.kernel.org/process/maintainer-netdev.html
+> > 
+> > On Wed, May 29, 2024 at 11:39:04AM GMT, Sagar Cheluvegowda wrote:
+> > > Fixes: 070246e4674b ("net: stmmac: Fix for mismatched host/device DMA address width")
+> > > Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> 
+> > Also, I think the Fixes: here would be for adding support for this SoC
+> > in the driver, not what's listed? Might make more sense after you have a
+> > proper body though.
+> 
+> This is a tricky one. 
+> 
+> Fixes: 070246e4674b ("net: stmmac: Fix for mismatched host/device DMA
+> address width") is when support for different DMA address widths was
+> added. This fix cannot easily be back ported past that.
+> 
+> 070246e4674b first appears in v6.3-rc4.
+> 
+> dwmac-qcom-ethqos.c first appears in v5.1-rc1. However, Qualcomm did
+> not start hacking on it until v6.7-rc6. It is unclear to me without a
+> deep dive when Qualcomm actually started using this driver.
+> 
+> We might actually be looking at this the wrong way, and should in fact
+> be looking at when a DT patch was added that made use of the driver,
+> not the driver itself. If it was not used, it cannot be broken....
+> 
 
-On Thu, 30 May 2024 at 14:33, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->
-> On 27/05/2024 23:08, Ricardo Ribalda wrote:
-> > Replace a single element array, with a single element field.
-> >
-> > The following cocci warning is fixed:
-> > drivers/media/dvb-frontends/mxl5xx_defs.h:171:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/dvb-frontends/mxl5xx.c      | 2 +-
-> >  drivers/media/dvb-frontends/mxl5xx_defs.h | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/media/dvb-frontends/mxl5xx.c b/drivers/media/dvb-frontends/mxl5xx.c
-> > index 91e9c378397c..a15c0438b07a 100644
-> > --- a/drivers/media/dvb-frontends/mxl5xx.c
-> > +++ b/drivers/media/dvb-frontends/mxl5xx.c
-> > @@ -893,7 +893,7 @@ static int do_firmware_download(struct mxl *state, u8 *mbin_buffer_ptr,
-> >       status = write_register(state, FW_DL_SIGN_ADDR, 0);
-> >       if (status)
-> >               return status;
-> > -     segment_ptr = (struct MBIN_SEGMENT_T *) (&mbin_ptr->data[0]);
-> > +     segment_ptr = (struct MBIN_SEGMENT_T *)(&mbin_ptr->data);
-> >       for (index = 0; index < mbin_ptr->header.num_segments; index++) {
-> >               if (segment_ptr->header.id != MBIN_SEGMENT_HEADER_ID) {
-> >                       dev_err(state->i2cdev, "%s: Invalid segment header ID (%c)\n",
-> > diff --git a/drivers/media/dvb-frontends/mxl5xx_defs.h b/drivers/media/dvb-frontends/mxl5xx_defs.h
-> > index 097271f73740..3c5d75ed8fea 100644
-> > --- a/drivers/media/dvb-frontends/mxl5xx_defs.h
-> > +++ b/drivers/media/dvb-frontends/mxl5xx_defs.h
-> > @@ -168,7 +168,7 @@ struct MBIN_FILE_HEADER_T {
-> >
-> >  struct MBIN_FILE_T {
-> >       struct MBIN_FILE_HEADER_T header;
-> > -     u8 data[1];
-> > +     u8 data;
->
-> From what I can tell, shouldn't this be 'data[]'? It really appears to be a flexible array.
+I should have been more specific, sorry.
 
-The field is mainly used to ease the data parsing. There was only
-data[0] used, so I decided to make it into a single element array to
-avoid changing the size of the structure....
+I think this should be:
 
-But you are correct, it looks more clear as a flex array and there is
-no allocation or sizeof() so I think it is safe to change its size.
+    Fixes: 8c4d92e82d500 ("net: stmmac: dwmac-qcom-ethqos: add support for emac4 on sa8775p platforms")
 
-Will squash with the MBIN_SEGMENT_T patch also
+Which appears after 070246e4674b ("net: stmmac: Fix for mismatched host/device DMA address width").
 
-Thanks!
+Reason being that specifically Sagar's patch is indicating that for the
+SoC's/compatibles that currently use emac_v4_0_0_data structure, the DMA
+address width needs to be specified.
 
+If we were modifying structs that were added prior to 070246e4674b then
+I agree, but at least the change as is I think could indicate the above
+Fixes.
 
->
-> Regards,
->
->         Hans
->
-> >  };
-> >
-> >  struct MBIN_SEGMENT_HEADER_T {
-> >
->
+Thanks,
+Andrew
 
-
--- 
-Ricardo Ribalda
 
