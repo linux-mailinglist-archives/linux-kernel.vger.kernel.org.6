@@ -1,176 +1,129 @@
-Return-Path: <linux-kernel+bounces-196013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CB48D560F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 070B68D5611
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABAD71F2730B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B7D1F2751F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F9118411A;
-	Thu, 30 May 2024 23:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9931118509C;
+	Thu, 30 May 2024 23:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NXOPQRE7"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mb9IFab9"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E0318399D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F9018399B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717110676; cv=none; b=jegBGdZjSqseysRy77xKrsTNIDSTCvU/tWHYriwONHlikGKEH0w8VVJ9oEkR9NpJXeLvSGOipdG8nHerQFC0j4I7SuPw/l933CHucgeToDogvuTf3zyf82MHuZkEDRu0yKnY/hAFSYonroC0R/bjoNt0yRIAgmUWVy5DfxcS54Q=
+	t=1717110768; cv=none; b=SbJcHrbbFiAnelbVdm/jYEPCjhKTSv33gFMJH4C1n8JAFTGoem7YzrdpfDc15/fZg+U9Tlek2OxNpIVzeRbiM23rMVh5ln4ImQ/n1ggTp+2srwFUU2DuWOkE6u2iY9BY6CHuJhc45cY7g2khQMe+PFAID9G1t/AE6fPeNRWIcVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717110676; c=relaxed/simple;
-	bh=MBFCW274J0YqTTxvu3B4tCqGsCfhBgX47D2Q/GYGEqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQwC9l9L/SCqVholmU+eDDEX0CChrlfLe+UyNGiiWRLpjm5nSMWIPTv9YoZ+5hFMfTYNL4Xt1fC7U0e5qJuym/qAzXuC5Cag91UkaM5TYgf+MuvPAZADKDQSRkyuzzGWq+unrAhk2kJQEwRlg8WEWm3m0AaShXXHL/vv7kBFPhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NXOPQRE7; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52b0d25b54eso2102301e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:11:13 -0700 (PDT)
+	s=arc-20240116; t=1717110768; c=relaxed/simple;
+	bh=eTliIFmIq5hD6o87LUn9o7uoz31PWHrz5z33kKfUKVw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=t14Zjhonuk/2EFgmbQm3il9kPUXilfZ0017l7lzt+rv3ya57ILBOFZnhRPS9pumMqBm5H/yT41NgQEXCV9uhvPndkzLjwQadizIZJEMi7JHqLIjIaTk/nAWt4cCm0U9k5AHY5bnxg5GoggibVG5/ix49z0NfWpPiKSRhpuR7WNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mb9IFab9; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df77196089eso2186949276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:12:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717110672; x=1717715472; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5rtVeYQ5u84CD0AA2JcRrrPlaJCkNb/Fj7mnCC/lgjg=;
-        b=NXOPQRE7bVcUXqATFyFTvlycGAV6aTQ25lNZHPJbocPea2960r7zbxoUyBxEq16yQy
-         /t4rhX1Htr7vkIL/KOu5EEh9Xd3dD34B4vll3RRAQgG8ItPS79ux2GFFboukoaS9FrMR
-         JPPXZ9W6TpN4zAAqKPKqOjqJrUtzqnxsloTAcnKXT6vXRtKFO+vkFuoH/09auRITC+lR
-         TjpXSroDPgXzDi4CxzJPXkeQT2FZZNEIzrW5O4B4faT/RqjRfbUHvh6VYxvEt0qERXER
-         aNdFGe6zXJBjokYMKZo272/8y6i8jbkXLAr0gPGl65prRiea3JOmCK83Lxuap8TSsdEp
-         UI9Q==
+        d=google.com; s=20230601; t=1717110766; x=1717715566; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ujQILWXT37aY3kE457ngW3RW7Zg+FC2HbFYHJC4pvU=;
+        b=Mb9IFab9AbS7uPGRhsGuyWeIM2h975b5GA4RLtTqQyW62Fe2XkrI1v9tfxcfjm5PN1
+         UNs4CQqax3Ipr9l47lxRCibKuSZtzbH1j8CZasFYgCr8NwImBmkRiB3SSMTo3W+tUHDH
+         lQGp7thJIWMItWVWuMrP4VH7pIjW4vFFkXE7EY0iJYHhAYdZH1IRGsIVttV2S0uvPGbH
+         VgazKCrggw+PXMvFy5LSEWS6x1VMvUr9HhFDmJvjCoTWZ8Hs0Jprj0EKvM6P4U1nsmUK
+         eKDbjZvjPTJpZM6PMkwcWeXenw8oYxJ5LTEzdbxlEUNK1pNxWM9E0HseEV/OITDDh0Ly
+         FQeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717110672; x=1717715472;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5rtVeYQ5u84CD0AA2JcRrrPlaJCkNb/Fj7mnCC/lgjg=;
-        b=r1XOZHCVGmzH5DORYNpLjPcZSWXCVBjU8xLAvZ/+yuZwlfXDyZr6VjkcmsxW/2olU1
-         pnCUK+SC120RoN85pBTeYlbY/d/4RfhZfzXO3s/mf+mhGU0/q028gRANkLlCCItY5t3f
-         S9BAmaVmLdj2D/sSYItzw8eWheSChhpDsw5aNdh7yK2B0p76IgiXjhU5zvDYOV0MmFCy
-         e17lj3lPOHXlZO3kz5jbGethtQ1UCS8wkkw+BDUDbucAYrFK5Zvyh4BjDmqFNBcuGJtT
-         y+vfJQ6c96OgEpXK4EhjB2jyrrbVATMxAU8sPsc9uoazIvvG2D1WuevTczovBeDvr+Dk
-         d/Og==
-X-Forwarded-Encrypted: i=1; AJvYcCVT/tJb12W7EpJaISfNdGUgmRvwBnRPsSV6lZ2L0j+dhN8pLH6jepR9qDqazFWMR8kglPrpmbwmXYtsLcE/agp56V08S0yz4qI/dRkN
-X-Gm-Message-State: AOJu0YxKtLPP31h9wyBrQmwkifCeO1nVRnWDo6k+q5H/4WIMRdOYwCA2
-	27HTAk06gHJ3BJdNFTXQwiJh4oDooupSmXCqW041aPA1FVbxYURtXx1BQaP53t0=
-X-Google-Smtp-Source: AGHT+IG0t3rZTPhtJybKaUF15LVmYhDBWgz6POuiQcknG9wUsiCJYYjByHxxMrF/IH17dhoIvEgTyA==
-X-Received: by 2002:ac2:51b0:0:b0:51f:9549:9c0d with SMTP id 2adb3069b0e04-52b895a4043mr42465e87.48.1717110671620;
-        Thu, 30 May 2024 16:11:11 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d34d76sm120623e87.10.2024.05.30.16.11.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 16:11:11 -0700 (PDT)
-Date: Fri, 31 May 2024 02:11:09 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	Jeffrey Hugo <quic_jhugo@quicinc.com>
-Subject: Re: [PATCH v2 1/3] drm/panel-edp: add fat warning against adding new
- panel compatibles
-Message-ID: <kxfuvsmi6eblpavtevwllqmkdnzdih7kfc73wlos7yozikerjv@si6jshczffjy>
-References: <20240529-edp-panel-drop-v2-0-fcfc457fc8dd@linaro.org>
- <20240529-edp-panel-drop-v2-1-fcfc457fc8dd@linaro.org>
- <CAD=FV=Uw+KYQQ2xFLhNdWSW0sNX9uV_zSAVO2uBWY4JEcaO2bA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1717110766; x=1717715566;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ujQILWXT37aY3kE457ngW3RW7Zg+FC2HbFYHJC4pvU=;
+        b=kHGsR3AurK+6ZZ7fDGVQ9zbV371Rccs7bkoG58OkSNdZmKKY9gy9FXd5BNaydteOPm
+         pVjO3DkapdE4RMdWi4+2gndIzvNDu2mP08Ohwb3ob3xB4tRhLIEbI1OHP292rV8lXDc/
+         nZjqvKmz8I+CJDewxHrOAtXFwKJ+M3rrPxhBdWOk54YV25QhGAxrsna1IpGNM3iB9CGr
+         l1cbpe4wO30RFjGQR8bh3T+3QmO/xijN5aF+u2WhyOT6wEAws+5FsCjT5/CbWMR9J+hX
+         k9VsumCfpLTJH4PZJ0xLDEAn4xbZOk2QoR8CGrYGM3V4AUt6LaLyCMU0v7EtuiCsiJqM
+         qU/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVxloY6zPS/vpFpdiUxkDsgPN/9/sSy/PKh1ZgBY11IQref03DQ8hJq0A9yYxdGaVVqANG/Ac2uO6D6wE6/Y4ySDwC/Lv/ghJxmLFyc
+X-Gm-Message-State: AOJu0YywuTcitILm/M/uZSlzUv0hUwnCulMopYDseYyUthCq39H/WTly
+	14kHIdhgldk64dDaqM03II4yseaRoGL+1+ZTO+qcey0f7xvDgYcXSQ0E+NIwpV8MJI8ZNpTeBwz
+	jiQ==
+X-Google-Smtp-Source: AGHT+IEAQHQsziEnFHzzDoTXb1hDyQWDXePK8y3omtZyZP05+3DME7KShTXce2KWXPCtCEuE7AfCdcVqpzc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1003:b0:df7:62ec:c517 with SMTP id
+ 3f1490d57ef6-dfa73dba365mr10840276.11.1717110766469; Thu, 30 May 2024
+ 16:12:46 -0700 (PDT)
+Date: Thu, 30 May 2024 16:12:44 -0700
+In-Reply-To: <f2952ae37a2bdaf3eb53858e54e6cc4986c62528.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=Uw+KYQQ2xFLhNdWSW0sNX9uV_zSAVO2uBWY4JEcaO2bA@mail.gmail.com>
+Mime-Version: 1.0
+References: <9bd868a287599eb2a854f6983f13b4500f47d2ae.1708933498.git.isaku.yamahata@intel.com>
+ <Zjz7bRcIpe8nL0Gs@google.com> <5ba2b661-0db5-4b49-9489-4d3e72adf7d2@intel.com>
+ <Zj1Ty6bqbwst4u_N@google.com> <49b7402c-8895-4d53-ad00-07ce7863894d@intel.com>
+ <20240509235522.GA480079@ls.amr.corp.intel.com> <Zj4phpnqYNoNTVeP@google.com>
+ <50e09676-4dfc-473f-8b34-7f7a98ab5228@intel.com> <Zle29YsDN5Hff7Lo@google.com>
+ <f2952ae37a2bdaf3eb53858e54e6cc4986c62528.camel@intel.com>
+Message-ID: <ZliUecH-I1EhN7Ke@google.com>
+Subject: Re: [PATCH v19 037/130] KVM: TDX: Make KVM_CAP_MAX_VCPUS backend specific
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Tina Zhang <tina.zhang@intel.com>, 
+	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>, Hang Yuan <hang.yuan@intel.com>, 
+	Bo Chen <chen.bo@intel.com>, "sagis@google.com" <sagis@google.com>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, Erdem Aktas <erdemaktas@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, May 30, 2024 at 07:33:59AM -0700, Doug Anderson wrote:
-> Hi,
+On Thu, May 30, 2024, Kai Huang wrote:
+> On Wed, 2024-05-29 at 16:15 -0700, Sean Christopherson wrote:
+> > In the unlikely event there is a legitimate reason for max_vcpus_per_td being
+> > less than KVM's minimum, then we can update KVM's minimum as needed.  But AFAICT,
+> > that's purely theoretical at this point, i.e. this is all much ado about nothing.
 > 
-> On Tue, May 28, 2024 at 4:52 PM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > Add a fat warning against adding new panel compatibles to the panel-edp
-> > driver. All new users of the eDP panels are supposed to use the generic
-> > "edp-panel" compatible device on the AUX bus. The remaining compatibles
-> > are either used by the existing DT or were used previously and are
-> > retained for backwards compatibility.
-> >
-> > Suggested-by: Doug Anderson <dianders@chromium.org>
-> > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/panel/panel-edp.c | 18 +++++++++++++++++-
-> >  1 file changed, 17 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-> > index 6db277efcbb7..95b25ec67168 100644
-> > --- a/drivers/gpu/drm/panel/panel-edp.c
-> > +++ b/drivers/gpu/drm/panel/panel-edp.c
-> > @@ -1776,7 +1776,23 @@ static const struct of_device_id platform_of_match[] = {
-> >         {
-> >                 /* Must be first */
-> >                 .compatible = "edp-panel",
-> > -       }, {
-> > +       },
-> > +       /*
-> > +        * Do not add panels to the list below unless they cannot be handled by
-> > +        * the generic edp-panel compatible.
-> > +        *
-> > +        * The only two valid reasons are:
-> > +        * - because of the panel issues (e.g. broken EDID or broken
-> > +        *   identification),
-> > +        * - because the platform which uses the panel didn't wire up the AUX
-> > +        *   bus properly.
-> > +        *
-> > +        * In all other cases the platform should use the aux-bus and declare
-> > +        * the panel using the 'edp-panel' compatible as a device on the AUX
-> > +        * bus. The lack of the aux-bus support is not a valid case. Platforms
-> > +        * are urged to be converted to declaring panels in a proper way.
-> 
-> I'm still at least slightly confused by the wording. What is "the lack
-> of the aux-bus support". I guess this is different from the valid
-> reason of "the platform which uses the panel didn't wire up the AUX
-> bus properly" but I'm not sure how. Maybe you can explain?
-> 
-> I guess I'd write it like this:
-> 
->     /*
->      * Do not add panels to the list below unless they cannot be handled by
->      * the generic edp-panel compatible.
->      *
->      * The only two valid reasons are:
->      * - because of the panel issues (e.g. broken EDID or broken
->      *   identification).
->      * - because the platform which uses the panel didn't wire up the AUX
->      *   bus properly. NOTE that, though this is a marginally valid reason,
->      *   some justification needs to be made for why the platform can't
->      *   wire up the AUX bus properly.
->      *
->      * In all other cases the platform should use the aux-bus and declare
->      * the panel using the 'edp-panel' compatible as a device on the AUX
->      * bus.
->      */
-> 
-> What do you think? In any case, it probably doesn't matter much. The
-> important thing is some sort of warning here telling people not to add
-> to the table. In that sense:
+> I am afraid we already have a legitimate case: TD partitioning.  Isaku
+> told me the 'max_vcpus_per_td' is lowed to 512 for the modules with TD
+> partitioning supported.  And again this is static, i.e., doesn't require
+> TD partitioning to be opt-in to low to 512.
 
-Ack, I'l update the wording in a similar way.
+So what's Intel's plan for use cases that creates TDs with >512 vCPUs?
 
+> So AFAICT this isn't a theoretical thing now.
 > 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Also, I want to say I was wrong about "MAX_VCPUS" in the TD_PARAMS is part
+> of attestation.  It is not.  TDREPORT dosen't include the "MAX_VCPUS", and
+> it is not involved in the calculation of the measurement of the guest.
+> 
+> Given "MAX_VCPUS" is not part of attestation, I think there's no need to
+> allow user to change kvm->max_vcpus by enabling KVM_ENABLE_CAP ioctl() for
+> KVM_CAP_MAX_VCPUS.
 
--- 
-With best wishes
-Dmitry
+Sure, but KVM would still need to advertise the reduced value for KVM_CAP_MAX_VCPUS
+when queried via KVM_CHECK_EXTENSION.  And userspace needs to be conditioned to
+do a VM-scoped check, not a system-scoped check.
+
+> So we could just once for all adjust kvm->max_vcpus for TDX in the
+> tdx_vm_init() for TDX guest:
+> 
+> 	kvm->max_vcpus = min(kvm->max_vcpus, tdx_info->max_vcpus_per_td);
+> 
+> AFAICT no other change is needed.
+> 
+> And in KVM_TDX_VM_INIT (where TDH.MNG.INIT is done) we can just use kvm-
+> >max_vcpus to fill the "MAX_VCPUS" in TD_PARAMS.
 
