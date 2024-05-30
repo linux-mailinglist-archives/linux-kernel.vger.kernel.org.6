@@ -1,54 +1,70 @@
-Return-Path: <linux-kernel+bounces-195003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334D38D45EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:19:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0053E8D45EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB631F228A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFA21F22FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C99142E60;
-	Thu, 30 May 2024 07:19:06 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E01F1C6B2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6497155386;
+	Thu, 30 May 2024 07:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="coaD3JiQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACCB13DB9F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717053546; cv=none; b=tLTFRtjV1WG+A6iS8isUgmKwQ/yk0WV2SxmMuSiINAAW6uLdJURuimMFyy4pspWa2HpDWew1FLvSRIY4sP9710oALy7uKyan25KLXGFIII0iLoiyfUcGGHXmfN7uIu9ybhTwPL11oPqhCKkkbA7z1E3ixY6fz/DDeDj1rUOX564=
+	t=1717053548; cv=none; b=Am7yfSKm9BjCZSTyQrrqpQu/Yh6sWz46KhP8KoZTH4zeSGs+IzodaRAtQPO+bldUDygsNHAd338apw9dzdbfPpc91EgHUw7l+qI9LOLxwwijsRYDRFVz5MynWJjpRq18G2/FS7lMIjaUWVVBFE8VLMBeVIeFQ1n6YLvLGXmNhQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717053546; c=relaxed/simple;
-	bh=03Kur33G3pe5wMVo8g1FerhGv3CMmf5VEPLSYIk9zco=;
+	s=arc-20240116; t=1717053548; c=relaxed/simple;
+	bh=7hPshm6CVQPCR0OThFXAcce1IaqHYN9wkAS6qfiOh4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gR504B/HCUlah4kSmNdoyJhXJiJulIyR7wjLU86pTFkx947iM88cdqN2zjq12tsKneHkwRWsvmlT2JIY8v5/G7tSnBAseKbzP00qIsKgXebhbizcxlPn1XNJ9TJZFfHo3bUCU5mFYkKJKdya+8lAWL4ldB7bz2hiiOuHD64IdWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-8c-6658285c933b
-Date: Thu, 30 May 2024 16:18:47 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com,
-	akpm@linux-foundation.org, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240530071847.GA15344@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
- <20240527015732.GA61604@system.software.com>
- <8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <44e4f2fd-e76e-445d-b618-17a6ec692812@intel.com>
- <20240529050046.GB20307@system.software.com>
- <961f9533-1e0c-416c-b6b0-d46b97127de2@intel.com>
- <20240530005026.GA47476@system.software.com>
- <87a5k814tq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+LHfNw3/3oSPKjRKWp9eIRbuiwnJzcyh/lx6pyTKMoqrvCnhDFt2g1w09+9DfPU/WgyboEw5V/W6imuqL16TXTNuqZ2tMG9uKgEcz/BsE2qvvDNQWTFWvLaWra8vjtl/CGttiEDos5r/l6RUnRpapRFVhFRMkYjC9mOVFinf0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=coaD3JiQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717053545;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iZGq8sKKqv0GQPGpX0nqEsoomt5Fgw2t8XRl12KY1wg=;
+	b=coaD3JiQ9bvgko+w0R+skcBDCeuY2HcUhrScDb5J05/6PxqgfTaDmPYFmpTCaiMYaAd91g
+	IuszAF8x//u7oFt06IoEYK+8OxAN+Mp47Pa1gicPNiaSmzPJDL7VQifUUdMbuRkyXH4RIS
+	oo6cdjDKsbut6twN6dIqx7vF4hzpZBo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-221-u-EL3OrGOryN3zr2_1fd2w-1; Thu, 30 May 2024 03:19:00 -0400
+X-MC-Unique: u-EL3OrGOryN3zr2_1fd2w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B28E4101A52C;
+	Thu, 30 May 2024 07:18:59 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.34])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id D138D3C27;
+	Thu, 30 May 2024 07:18:58 +0000 (UTC)
+Date: Thu, 30 May 2024 15:18:55 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
+Subject: Re: [PATCH] mm: fix incorrect vbq reference in purge_fragmented_block
+Message-ID: <ZlgoX1E4/juuP7+o@MiWiFi-R3L-srv>
+References: <20240530025144.1570865-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,108 +73,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87a5k814tq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsXC9ZZnkW6sRkSawe00iznr17BZfN7wj83i
-	08sHjBYvNrQzWnxd/4vZ4umnPhaLy7vmsFncW/Of1eL8rrWsFjuW7mOyuHRgAZPF8d4DTBbz
-	731ms9i8aSqzxfEpUxktfv8AKj45azKLg6DH99Y+Fo+ds+6yeyzYVOqxeYWWx+I9L5k8Nq3q
-	ZPPY9GkSu8e7c+fYPU7M+M3iMe9koMf7fVfZPLb+svNonHqNzePzJrkAvigum5TUnMyy1CJ9
-	uwSujAutU9gLtkpUvD90gaWB8btQFyMnh4SAicTvq2fZYOxdu58zg9gsAqoSV/88Zwex2QTU
-	JW7c+AkWFxHQkPi0cDlQnIuDWaCPWWLN4kOMIAlhgRCJaR/WMIHYvAIWEucf7wQrEhI4zCzR
-	d2YHVEJQ4uTMJywgNrOAlsSNfy+B4hxAtrTE8n8cIGFOATuJY1emgM0UFVCWOLDtOBPIHAmB
-	TewSz6bfZYa4VFLi4IobLBMYBWYhGTsLydhZCGMXMDKvYhTKzCvLTczMMdHLqMzLrNBLzs/d
-	xAiMyWW1f6J3MH66EHyIUYCDUYmHd8en8DQh1sSy4srcQ4wSHMxKIrxnJoWmCfGmJFZWpRbl
-	xxeV5qQWH2KU5mBREuc1+laeIiSQnliSmp2aWpBaBJNl4uCUamCcLy/UyDszb+epZWqLfgt7
-	KIqdujjNmWWWTlNGR3no7YdbZNNKpTOuuKdc0/KK4nua25zpJbpU5o7Uz5Na9oubt0zPe2vX
-	pfNxXur0mZE7X9i+ibiw6t6JO/p7P762WsS0JOSWXarBZL+HYfzr/iZ5PPmo0JHu/4q3u4vh
-	ZMquh/Vxa5Mm75dTYinOSDTUYi4qTgQA6vu2XMUCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsXC5WfdrBujEZFmMHm1psWc9WvYLD5v+Mdm
-	8enlA0aLFxvaGS2+rv/FbPH0Ux+LxeG5J1ktLu+aw2Zxb81/Vovzu9ayWuxYuo/J4tKBBUwW
-	x3sPMFnMv/eZzWLzpqnMFsenTGW0+P0DqPjkrMksDkIe31v7WDx2zrrL7rFgU6nH5hVaHov3
-	vGTy2LSqk81j06dJ7B7vzp1j9zgx4zeLx7yTgR7v911l81j84gOTx9Zfdh6NU6+xeXzeJBfA
-	H8Vlk5Kak1mWWqRvl8CVcaF1CnvBVomK94cusDQwfhfqYuTkkBAwkdi1+zkziM0ioCpx9c9z
-	dhCbTUBd4saNn2BxEQENiU8LlwPFuTiYBfqYJdYsPsQIkhAWCJGY9mENE4jNK2Ahcf7xTrAi
-	IYHDzBJ9Z3ZAJQQlTs58wgJiMwtoSdz49xIozgFkS0ss/8cBEuYUsJM4dmUK2ExRAWWJA9uO
-	M01g5J2FpHsWku5ZCN0LGJlXMYpk5pXlJmbmmOoVZ2dU5mVW6CXn525iBMbYsto/E3cwfrns
-	fohRgINRiYf3gER4mhBrYllxZe4hRgkOZiUR3jOTQtOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ
-	83qFpyYICaQnlqRmp6YWpBbBZJk4OKUaGBkCn3u3q8t5pk947pUekuXzeb6AEGexXqHq4ls9
-	TEzcD/caZ3Zw+vqtEHLp5t8+SyjENqflzpc7HwJF78k98rCOuubDlpCwQy27bNmU1xv1Ax23
-	RSv8Pv+oKXht5UXTA64NhS+nlE7vn540YZrr9sZbgiyN+wpPuB5onFJ9OvnxrK+/3D53KbEU
-	ZyQaajEXFScCAEWhZeCtAgAA
-X-CFilter-Loop: Reflected
+In-Reply-To: <20240530025144.1570865-1-zhaoyang.huang@unisoc.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Thu, May 30, 2024 at 09:11:45AM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul@sk.com> writes:
+On 05/30/24 at 10:51am, zhaoyang.huang wrote:
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 > 
-> > On Wed, May 29, 2024 at 09:41:22AM -0700, Dave Hansen wrote:
-> >> On 5/28/24 22:00, Byungchul Park wrote:
-> >> > All the code updating ptes already performs TLB flush needed in a safe
-> >> > way if it's inevitable e.g. munmap.  LUF which controls when to flush in
-> >> > a higer level than arch code, just leaves stale ro tlb entries that are
-> >> > currently supposed to be in use.  Could you give a scenario that you are
-> >> > concering?
-> >> 
-> >> Let's go back this scenario:
-> >> 
-> >>  	fd = open("/some/file", O_RDONLY);
-> >>  	ptr1 = mmap(-1, size, PROT_READ, ..., fd, ...);
-> >>  	foo1 = *ptr1;
-> >> 
-> >> There's a read-only PTE at 'ptr1'.  Right?  The page being pointed to is
-> >> eligible for LUF via the try_to_unmap() paths.  In other words, the page
-> >> might be reclaimed at any time.  If it is reclaimed, the PTE will be
-> >> cleared.
-> >> 
-> >> Then, the user might do:
-> >> 
-> >> 	munmap(ptr1, PAGE_SIZE);
-> >> 
-> >> Which will _eventually_ wind up in the zap_pte_range() loop.  But that
-> >> loop will only see pte_none().  It doesn't do _anything_ to the 'struct
-> >> mmu_gather'.
-> >> 
-> >> The munmap() then lands in tlb_flush_mmu_tlbonly() where it looks at the
-> >> 'struct mmu_gather':
-> >> 
-> >>         if (!(tlb->freed_tables || tlb->cleared_ptes ||
-> >> 	      tlb->cleared_pmds || tlb->cleared_puds ||
-> >> 	      tlb->cleared_p4ds))
-> >>                 return;
-> >> 
-> >> But since there were no cleared PTEs (or anything else) during the
-> >> unmap, this just returns and doesn't flush the TLB.
-> >> 
-> >> We now have an address space with a stale TLB entry at 'ptr1' and not
-> >> even a VMA there.  There's nothing to stop a new VMA from going in,
-> >> installing a *new* PTE, but getting data from the stale TLB entry that
-> >> still hasn't been flushed.
-> >
-> > Thank you for the explanation.  I got you.  I think I could handle the
-> > case through a new flag in vma or something indicating LUF has deferred
-> > necessary TLB flush for it during unmapping so that mmu_gather mechanism
-> > can be aware of it.  Of course, the performance change should be checked
-> > again.  Thoughts?
+> Broken vbq->free reported on a v6.6 based system which is caused
+> by invalid vbq->lock protect over vbq->free in purge_fragmented_block.
+> This should be introduced by the Fixes below which ignored vbq->lock
+> matter.
+
+It will be helpful to provide more details, what's the symptom of the
+brekage, and in which case vbq->free is broken.
+
 > 
-> I suggest you to start with the simple case.  That is, only support page
-> reclaiming and migration.  A TLB flushing can be enforced during unmap
-> with something similar as flush_tlb_batched_pending().
+> Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
+> 
+> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> ---
+>  mm/vmalloc.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 22aa63f4ef63..112b50431725 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2614,9 +2614,10 @@ static void free_vmap_block(struct vmap_block *vb)
+>  }
+>  
+>  static bool purge_fragmented_block(struct vmap_block *vb,
+> -		struct vmap_block_queue *vbq, struct list_head *purge_list,
+> -		bool force_purge)
+> +		struct list_head *purge_list, bool force_purge)
+>  {
+> +	struct vmap_block_queue *vbq;
+> +
+>  	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
+>  	    vb->dirty == VMAP_BBMAP_BITS)
+>  		return false;
+> @@ -2625,6 +2626,8 @@ static bool purge_fragmented_block(struct vmap_block *vb,
+>  	if (!(force_purge || vb->free < VMAP_PURGE_THRESHOLD))
+>  		return false;
+>  
+> +	vbq = container_of(addr_to_vb_xa(vb->va->va_start),
+> +		struct vmap_block_queue, vmap_blocks);
+>  	/* prevent further allocs after releasing lock */
+>  	WRITE_ONCE(vb->free, 0);
+>  	/* prevent purging it again */
+> @@ -2664,7 +2667,7 @@ static void purge_fragmented_blocks(int cpu)
+>  			continue;
+>  
+>  		spin_lock(&vb->lock);
+> -		purge_fragmented_block(vb, vbq, &purge, true);
+> +		purge_fragmented_block(vb, &purge, true);
+>  		spin_unlock(&vb->lock);
+>  	}
+>  	rcu_read_unlock();
+> @@ -2801,7 +2804,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
+>  			 * not purgeable, check whether there is dirty
+>  			 * space to be flushed.
+>  			 */
+> -			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
+> +			if (!purge_fragmented_block(vb, &purge_list, false) &&
+>  			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
+>  				unsigned long va_start = vb->va->va_start;
+>  				unsigned long s, e;
+> -- 
+> 2.25.1
+> 
+> 
 
-While reading flush_tlb_batched_pending(mm), I found it already performs
-TLB flush for the target mm, if set_tlb_ubc_flush_pending(mm) has been
-hit at least once since the last flush_tlb_batched_pending(mm).
-
-Since LUF also relies on set_tlb_ubc_flush_pending(mm), it's going to
-perform TLB flush required, in flush_tlb_batched_pending(mm) during
-munmap().  So it looks safe to me with regard to munmap() already.
-
-Is there something that I'm missing?
-
-JFYI, regarding to mmap(), I have reworked on fault handler to give up
-luf when needed in a better way.
-
-	Byungchul
-
-> --
-> Best Regards,
-> Huang, Ying
 
