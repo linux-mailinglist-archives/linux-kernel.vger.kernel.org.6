@@ -1,110 +1,102 @@
-Return-Path: <linux-kernel+bounces-195466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50668D4D43
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E77A8D4D46
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B2A284FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03051F22019
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5FD186E47;
-	Thu, 30 May 2024 13:52:14 +0000 (UTC)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2722D17624C;
+	Thu, 30 May 2024 13:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ur4nqItg"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D019B186E3B;
-	Thu, 30 May 2024 13:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8955C17623B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077134; cv=none; b=pDuW37QvOr9AtI6mXCZQJLAR9qnYsJcLUdUOrcLN9HAbaf53Gi8+nM42ZmJqtbwPWd4rkyojBHm6DiJcyDfdfgOVFdD9kdkIaHwqXmuq53zFQvuFzciH3VZdDSzkrH7QxjFZ9WfM/lZbsZFKodoF/ucTND1dD/epjQsTzuZlZxQ=
+	t=1717077149; cv=none; b=XYX1PX5EZF9TK5Uhe8O97boA2FYc5LgIB8hlJmz5R5FfSSJAX+g7Ivg6BFQOaITCB5NNBHblV8IIghpu4vBY89BDhNTupiPE+IZGbMbWasX1TtGVR2tTe8EV4zk++g9QMMnigVmi1jMCvWBSYH5i/5fC0k4xpoirAlkuJ9+F2c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077134; c=relaxed/simple;
-	bh=GHE1EL6MHnqe/31WsFV6zBz1mm7AL9MVE/m3nlEW6/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cmKa4FpzrqY3S4vLLzlq3UydH6dtsR4G5Dy8HUdQY7x5UnHd1+E9Oq2vfeQFGyPtZfpZ6Spxcy6McAWOkwze24z+P9vDu+nBgvfmRG/xKaXdiEsZ2Vc9VL7wfEJWnqJGqg/8jVTGzU+Blcic8i8KvmdXym280jPAamYjOfdWgTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62a2424ecb8so9896147b3.1;
-        Thu, 30 May 2024 06:52:12 -0700 (PDT)
+	s=arc-20240116; t=1717077149; c=relaxed/simple;
+	bh=r7Nq+l30WnAPJMcoY9sAdA5J4veJVYeW/rCzNbYA8To=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JkCq0rbX+g5S5Ac2fSEkVgMknMj9WYGBDewhzyoM/wcTLm8WwhcGTmB7QzQlHS3bHzsFIoyF6JxT/2cFE19CwEhxGwmLcWR9W5Qogk4IPPhEBmw5L6UaSaQ5O/PuqFy/w/dbendK8VuJYh07juX7zEFRRKxMWHavKhW5hCsgNLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ur4nqItg; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35dcd34a69bso232618f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717077145; x=1717681945; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z5xCJKQ4ugEjWsoL7YroP9b14wp/Gl8VnioYQ/OGksw=;
+        b=Ur4nqItgT5FN41pNzH3cNluCsLUW42sh+9pI6jIt2sIgGw9jk4mPVXBNIb1JWr8ZAi
+         qXSP2VwlGiUDh5igso93zJbEG8kPccH23sjpCcU1cEk8vR1JIYqScax7FU9IxMgS2g5+
+         D35KHeNHA0m+oZyQ0IVWagzlGPbP/8N7oyPg0vlqC4Qn3VKUpE3PlGMFDZ4gqqDk/QY+
+         Gu6ydYQcGghV8AvRSrlEHfppfSioCxxF+M9Xw7lAb2DnGrBuiqjTbZIZeJzUQfSyESZ9
+         Hoaxt2hw6JVeIdiP8yvzrv+7krvdt6HEHSzElAfJQzo5lvXz9Lqd+vucwFGFgT23otuH
+         NHHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717077131; x=1717681931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GP1KhiC6F/2HojFBJNH7yktUkTnEzhuECM6OWCHaHRw=;
-        b=tYm3oM87wGgcecaJG/ecCKIexN6ZBNNdwb0KgM9dOwfW8nBqLs7SzUlTh5Fw9aMydk
-         fnRS54AGyqe8K+WeA1nXMYSuezrZ7zQLZkCTbnwOMndmaASxBrwlqUe9pJtKyuYUKRiP
-         GRPeFc5Ecdgo11NgqeUFMytFSIJ65vRLrO0r/VVdnZNZlJNVphgHZ8kpD/HAAopQaOsH
-         uK0DEZq3DqrTEiCpBIkvlrY3rQjww4fmfSo1ypaTM8bzQfm01Nir4omWRFL5XAf5LZis
-         iOX6j5CVSTWLzReliheX2C3q0HtP63hYJhrquQys/xGYLl+uPItAHTr+5QMzCxBUQmT/
-         f/ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVO7K9qjGwfiacM+YV7KHl+pXtqIbeULumZiUxvLhWVnWqCRoy7o0I/TlpeNY6WG2FXcqj51/aSTqtJ/T9FEwVIMNJXGAbnhcRTnUf1cGb0cEd8FTG0E74MtEOBnLJ4TevMO24NAcvPKat3aMENaFVwFuY4IAo0nvscymnoGBCZNTRIlU0VwgZa5wL/zNAw1jfMuuTYazi7zs1R5sN34N+D5F06OFXCg==
-X-Gm-Message-State: AOJu0YwAzNZDk8toUSU1KMPRBu8qopOSyLJb5b0ItuRjLz4Bb5H/MalI
-	NzNg59P+CzCMvPFgRdaOiK/D2mxiAO/lGMzGzacviswmH0I2z60xu9N+RkOi
-X-Google-Smtp-Source: AGHT+IEp1qEDlKkpqqMqzMk0gmCZfSZkY6m90lEJqg4qvohnEUi3t82J/L3B15k+ns0r+wvUlIhhGg==
-X-Received: by 2002:a81:f003:0:b0:615:225e:ac13 with SMTP id 00721157ae682-62c6bbf99e7mr21406467b3.18.1717077131260;
-        Thu, 30 May 2024 06:52:11 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a56f409sm27793837b3.139.2024.05.30.06.52.10
+        d=1e100.net; s=20230601; t=1717077145; x=1717681945;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z5xCJKQ4ugEjWsoL7YroP9b14wp/Gl8VnioYQ/OGksw=;
+        b=MxeCTqdStNLyC1Z4/TUOdtM4SBwWwkGhgT7kyQxMQ+keyKfZnOQZm78A2lWkzUwelh
+         35B2ikwfTHmUwS9nfgKB2apooNcz79duoS/2iSEpcQ1oaB4M86SKztMcAPalW8WXfTAg
+         V0JgbUp2FdufbSR4zH5iAX/oOx/8+6GTHBwaqpbCgZorjBJGzOuvZWBM1GcG4ZL8fHHh
+         fg0Vg/9VGz32s1O3xTpd0uGMuSPbWlJ7A3aISXqCRd4Sv/8J96DhB+mof+CFpazhqc3J
+         uyhhqFcfkQlGUFU4BpsdgfVWV1YBy251q3RBNdcjSbH4haGtiuR8weLfGD4NybEjF/7f
+         8URA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTcGXfBQOy2+/DhooMIHsaUbW3sRqu8pw1wi1TYGMtLuXgLMbqzMU/LQmkPiXrtHVumNVXDB0e93WZsViSxxsgptGqv1uOnc6YdnP3
+X-Gm-Message-State: AOJu0YwVWHIBLvNi236th7rfdkB6v5Kq3kk+cnVm2cR5YoWJqS7CjWXe
+	M5/RGqqjupam4e/ZFJOhjmnGZzxpBhock35ovEYyrzZJjomqVL7y+DI8YFv/Ppo=
+X-Google-Smtp-Source: AGHT+IFc1suDxNrUDOh2i/f0r05vdv6ugqX8mGy8cQBMw1VGOc/OpcHdjJLyHRt+fpRtRE8s9RTS+g==
+X-Received: by 2002:adf:fed1:0:b0:354:f815:8b85 with SMTP id ffacd0b85a97d-35dc02bd8c2mr1521286f8f.67.1717077144893;
+        Thu, 30 May 2024 06:52:24 -0700 (PDT)
+Received: from [192.168.1.172] ([93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dbdb6f34fsm2471094f8f.73.2024.05.30.06.52.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:52:10 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-df771db8b24so881434276.3;
-        Thu, 30 May 2024 06:52:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWsYVxL9SOY4VJkNyA00P6l/xcLPTklwRZKL71Ose5zYv5/tjPhsMgUmJsBhEHcaRBO6E88C/I67pUrQz2iRhDQ5XI7MaDrr4O6cx9QnQU5f5SH3UdiFhnvZLTsPZeYnJyxJxKiEztD0jj9KVQ8ljKc6ofjayi6RQGABC2orzyJSPj4kTQaNJs/3lYvlODxCbQ+M7LgYO5D+Of9NRt4cyuQvV0vgYzP0A==
-X-Received: by 2002:a25:cecf:0:b0:df7:887b:abfb with SMTP id
- 3f1490d57ef6-dfa5a5dec31mr2492369276.15.1717077130579; Thu, 30 May 2024
- 06:52:10 -0700 (PDT)
+        Thu, 30 May 2024 06:52:23 -0700 (PDT)
+Message-ID: <27d42cbd-5985-4b05-80cc-59ab21b3435d@baylibre.com>
+Date: Thu, 30 May 2024 15:52:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524094603.988-1-paul.barker.ct@bp.renesas.com> <20240524094603.988-10-paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20240524094603.988-10-paul.barker.ct@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 May 2024 15:51:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVaOZjr6kUO2TebD6=x5wogE1=xyzFty0Jy8=8fSsU-7A@mail.gmail.com>
-Message-ID: <CAMuHMdVaOZjr6kUO2TebD6=x5wogE1=xyzFty0Jy8=8fSsU-7A@mail.gmail.com>
-Subject: Re: [PATCH 9/9] arm64: dts: renesas: rzg2ul: Set Ethernet PVDD to 1.8V
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: Add a module description where missing
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ sboyd@kernel.org
+Cc: quic_jjohnson@quicinc.com, mturquette@baylibre.com,
+ matthias.bgg@gmail.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+From: Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 24, 2024 at 11:47=E2=80=AFAM Paul Barker
-<paul.barker.ct@bp.renesas.com> wrote:
-> On the RZ/G2UL & RZ/Five SMARC SOMs, the RGMII interface between the SoC
-> and the Ethernet PHY operates at 1.8V.
->
-> The power supply for this interface may be correctly configured in
-> u-boot, but the kernel should not be relying on this. Now that the
-> RZ/G2L pinctrl driver supports configuring the Ethernet power supply
-> voltage, we can simply specify the desired voltage in the device tree.
->
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Gr{oetje,eeting}s,
+On 28/05/2024 14:13, AngeloGioacchino Del Regno wrote:
+> Add a MODULE_DESCRIPTION() on all drivers that miss it to avoid
+> modpost warnings.
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Regards,
+Alexandre
 
