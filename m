@@ -1,145 +1,118 @@
-Return-Path: <linux-kernel+bounces-195330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64A98D4B29
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:57:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42378D4B2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23BC01C235D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EEF1285E09
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BB317FAD6;
-	Thu, 30 May 2024 11:57:31 +0000 (UTC)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3478017FAD1;
+	Thu, 30 May 2024 11:57:58 +0000 (UTC)
+Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71CF17D364;
-	Thu, 30 May 2024 11:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323B217FACC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070250; cv=none; b=Yehkx8tQezj/5Rt49byjvMaSV8LiGSfosZaOEeIQry9CUSm7GDHvLG3RCrP9lG8b7dUGzSepAq27hZ5uYoiIzqSWQPQS/usOxp75i/vC+NxQPgCd/BWjKMgWFsz/cYitW53fRURuqgGyqiWYoeRxjs0PmJ3KnupbN0SwIJePpaA=
+	t=1717070277; cv=none; b=BjWuAh5GLxlIZfbI6aFj/6Q1wAmcYNvERQKwuJHJJxyGgBEywVP8Sf5MuXk5ywEkqvGl575L60M+f+FlOhbDuCjC/3UaCMf9yZ1AZmkK/dV871Pe0pljduZcOeNUmBjpiFuD/obTuW0MVebXAKGS210PrFw4qZyxCpWxtVy3Yqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070250; c=relaxed/simple;
-	bh=ox6f2Bib795DIR4D9OYeOchPTQ0ajdXcI1Ql4e0zKA8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ha3295g3aQZqCw929znedUyYS3H2HvEWGJVjx62Qym/MxJwBf10ohpNB3g3chU2lQt2cXrJ1gkUnChqQM7iqFqI7Ds6SlV0hyU5R0+VVrq2T+eOfCXygH1z70708n+g/F/ZSzwXoigmw5xqkx9zO9YCX8r1RTsOxm3kEJWwSFSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa5b9274feso861935276.2;
-        Thu, 30 May 2024 04:57:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717070247; x=1717675047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UjHdVTNPfpZSE5mw/0S4dwLQIRvAN8JureryKLiLrHw=;
-        b=iMUN4Qe/rDHT03ecx2Xmccze4e2c/8jZS8jFbvzbrvoDRAPe7S2t0c64qX+VGnTB+W
-         falddhJ81cmMFfZj6wVWAGX2s8o8zy+JpuX9hRq6DsIQ4UnYqvHnGTj+2d3vF2po9+CT
-         xLS/zVLNawExEiI3295iDb8YzfN61qTGHle0h95meUIsqzsJKD8c4OorlD7fXMfSL3+9
-         NlRRBr5UU6ittCEN3u+bAUfk97HYYhhQnsacNw4LLmTFOQdPcDRtTqP/gBazHfAU9cyL
-         liAgyEJCLGenHuAZKegMHpnsQz9bxpc5K9gDJTbsGUVNmZCZ0FFfsg4QVOZOrOC04mFv
-         sWwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtbyrB/luAXkeQmssT9gsYKsdlDa37lTOz5Jm3KnBvGN/qs9LCgCNawGwW1sm/Dj4qeTvMl5Ltw+fbswZt0KTJSpqQYQcUnlgXTdTJ24zA4tRInp1jKM2ST9FlZx5VdA4n8T46CDAZXPFG85+Kp0Ivy++oqRp64UfA2/8jbjN259FIXPm5LLhaWY0pZjO5Tv9Bg4lI3giVxHIOJtZ8wOSQAElXxI9SvnGKfbZEKsNBeURfil/Z1zPaKswvTeuyiyx6jvqEa9U97xMKtg==
-X-Gm-Message-State: AOJu0Ywy0LE9Hyz74HWgiRjAfSoYGJ0Oig4xqgJVUhzN517NJV9ixVOw
-	/c0r7J588VrhdiHlRuIttGIrmTvybo6K+oe6mGf5uuaUo4QvT+WsbrrXJj1G
-X-Google-Smtp-Source: AGHT+IHbMZqQOUAX0wpSZOpCsDEy5+/wimXfVioRFqT5E5NDFtRjHUfODqZjvcGeUY7FprwKgPyYmw==
-X-Received: by 2002:a25:fb05:0:b0:dfa:5a2f:9e56 with SMTP id 3f1490d57ef6-dfa5a5c1b26mr2125913276.6.1717070246747;
-        Thu, 30 May 2024 04:57:26 -0700 (PDT)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abd32207sm548900685a.112.2024.05.30.04.57.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 04:57:26 -0700 (PDT)
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7930504b2e2so40784185a.3;
-        Thu, 30 May 2024 04:57:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVKbTCd8R8RrhMKXYN32KfpzxK053W8HG11pdTwWUGBnKSoYIbLqLqJrSxQ4k19agMx4n7oKWoHgqY+35mW4gLKl6O1Y+54i6W68MPIfPcugNu1bZ5d2z00Wp+MnXJAtbwxqvCUnZCxuKQ/HaI1dqZQ9VmLDXa5L5H+GlnxiPx9gnU+/wvmLIP6jJoOKisncj1SB/Wsw1zBEAHUaVaQxDY+adJ+iJvDPJWsiKZbpXRwZ7DPLMv+ZAEL6m77xz7zRK5TkNaFFoChs1C3GA==
-X-Received: by 2002:a25:6842:0:b0:dfa:48f3:2253 with SMTP id
- 3f1490d57ef6-dfa5a619bd3mr2110161276.32.1717070226150; Thu, 30 May 2024
- 04:57:06 -0700 (PDT)
+	s=arc-20240116; t=1717070277; c=relaxed/simple;
+	bh=qM8jmV9rQExnfzLYmOc5G2jyjto1w9Z/eyBvilTd+aQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pppTcCPzXeWIEsvWJJmxC01Fu+mvMhZg1Vtv48HIY5J1BKWAI6A+vfWS37LNJX8l8op7E6z9x4k6qo4wwQMimtxOOLzI6KxQsJLrixHkuqmX/PL6rag5UOEwywPg8RQyNy/P6NLPs19fxKQA2HORgmH1zQMTONJbyFFaWuUtm6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.9.5])
+	by sina.com (10.185.250.21) with ESMTP
+	id 665869AF00005C02; Thu, 30 May 2024 19:57:37 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8080313408455
+X-SMAIL-UIID: 008BA0A009C64C32BE6D3B37009A59D9-20240530-195737-1
+From: Hillf Danton <hdanton@sina.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: syzbot <syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com>,
+	edumazet@google.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	radoslaw.zielonek@gmail.com,
+	syzkaller-bugs@googlegroups.com,
+	vinicius.gomes@intel.com
+Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
+Date: Thu, 30 May 2024 19:57:26 +0800
+Message-Id: <20240530115726.3151-1-hdanton@sina.com>
+In-Reply-To: <20240530003325.h35jkwdm7mifcnc2@skbuf>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
-In-Reply-To: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 May 2024 13:56:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVprgpjDP6PDn7appofJv8Tv30nRA4+7n4sR8n6n4qy+g@mail.gmail.com>
-Message-ID: <CAMuHMdVprgpjDP6PDn7appofJv8Tv30nRA4+7n4sR8n6n4qy+g@mail.gmail.com>
-Subject: Re: [PATCH v2 00/20] pinctrl: Use scope based of_node_put() cleanups
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Peng,
+On Thu, 30 May 2024 03:33:25 +0300 Vladimir Oltean <vladimir.oltean@nxp.com>
+> 
+> What is the fact that you submitted only my patch 1/2 for syzbot testing
+> supposed to prove? It is the second patch (2/2) that addresses what has
+> been reported here;
 
-On Sat, May 4, 2024 at 3:12=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
-> wrote:
-> Use scope based of_node_put() to simplify code. It reduces the chance
-> of forgetting of_node_put(), and also simplifies error handling path.
-> I not able to test the changes on all the hardwares, so driver owners,
-> please help review when you have time.
->
-> This patchset was inspired from Dan's comments on pinctrl-scmi-imx.c,
-> thanks.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  main
 
-Andy's question about code generation on a related patch made me
-wonder, too.
-
-On arm32, a conversion to for_each_child_of_node_scoped() seems to
-cost ca. 48 bytes of additional code, regardless of whether there were
-explicit cleanups before or not.
-
-I checked "pinctrl: renesas: Use scope based of_node_put() cleanups",
-and all but the conversions in *_dt_node_to_map() cost 48 bytes each.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--- x/net/sched/sch_taprio.c
++++ y/net/sched/sch_taprio.c
+@@ -1151,11 +1151,6 @@ static int parse_taprio_schedule(struct
+ 		list_for_each_entry(entry, &new->entries, list)
+ 			cycle = ktime_add_ns(cycle, entry->interval);
+ 
+-		if (!cycle) {
+-			NL_SET_ERR_MSG(extack, "'cycle_time' can never be 0");
+-			return -EINVAL;
+-		}
+-
+ 		if (cycle < 0 || cycle > INT_MAX) {
+ 			NL_SET_ERR_MSG(extack, "'cycle_time' is too big");
+ 			return -EINVAL;
+@@ -1164,6 +1159,11 @@ static int parse_taprio_schedule(struct
+ 		new->cycle_time = cycle;
+ 	}
+ 
++	if (new->cycle_time < new->num_entries * length_to_duration(q, ETH_ZLEN)) {
++		NL_SET_ERR_MSG(extack, "'cycle_time' is too small");
++		return -EINVAL;
++	}
++
+ 	taprio_calculate_gate_durations(q, new);
+ 
+ 	return 0;
+@@ -1848,6 +1848,9 @@ static int taprio_change(struct Qdisc *s
+ 	}
+ 	q->flags = taprio_flags;
+ 
++	/* Needed for length_to_duration() during netlink attribute parsing */
++	taprio_set_picos_per_byte(dev, q);
++
+ 	err = taprio_parse_mqprio_opt(dev, mqprio, extack, q->flags);
+ 	if (err < 0)
+ 		return err;
+@@ -1907,7 +1910,6 @@ static int taprio_change(struct Qdisc *s
+ 	if (err < 0)
+ 		goto free_sched;
+ 
+-	taprio_set_picos_per_byte(dev, q);
+ 	taprio_update_queue_max_sdu(q, new_admin, stab);
+ 
+ 	if (FULL_OFFLOAD_IS_ENABLED(q->flags))
+--
 
