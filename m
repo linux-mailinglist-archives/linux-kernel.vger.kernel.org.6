@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-195604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3F08D4F28
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFFB18D4F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D42FEB25FF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD131F217B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0510182D12;
-	Thu, 30 May 2024 15:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OIM/F4At"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B494818755D;
-	Thu, 30 May 2024 15:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5F918307E;
+	Thu, 30 May 2024 15:37:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC6A187558;
+	Thu, 30 May 2024 15:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717083202; cv=none; b=scUbXPRgUA+rOXbK5/rOaHBmb+VcErnVLstUPk/gcvSUvC6cex6oWj4y+OGbflFZBccRA4wGeSiZH7QYYnJFYaSmYdR8dsfMJilluy7cJHU56LQLyFq4xzHvebFSfxCJQhN3uLwN3GeVZQrToR3ZCQMDXPgV2O+/DuBtkqN29TY=
+	t=1717083429; cv=none; b=q6EVOCf5e7eNLGTtYl9Iit6eU3G8/YIcv/FEvLe2LW/ENqda9PYctNYPecWgu2pFmCSXF20sDimbswxfk+AmCS6PYwfN1MKhDIRjgsadCORWGplJLSFTJVGljLcW6QXTYO+Tw7coXOlyaQAKmo7X5OVlNo8kqkIhZyuK9yEPUxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717083202; c=relaxed/simple;
-	bh=t9rCtR888zCMmrHzZcCvAT1velIWgffOm4gsLVTlhw4=;
+	s=arc-20240116; t=1717083429; c=relaxed/simple;
+	bh=ExfIXLMBUM1f2pzxBtViuvAn+rixBWzQ9TdXfr5rOFs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ANoZTi/5rq58wh2Lp9kxwFsnsXV9c+azyd/TC3/rZQKFVvAUfy+DaYtEE0tSJHzeQG8V71hwYUQnbeGGvpEQmOjNWXEQdkzSDDWibpJ36+3Vtkd6R/5FuqvdxAKos4x3vvnld0wgLz+0saaRGwzamQawOc/V8+2h34o/mJX7KFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OIM/F4At; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717083200; x=1748619200;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=t9rCtR888zCMmrHzZcCvAT1velIWgffOm4gsLVTlhw4=;
-  b=OIM/F4AtG4gI4nRMh7lq5kM64e5SV0x1aVnItN6wO1ncrRIvxNlpfWvo
-   1HEmWm23daHv/aGngeXafFi8VQYFWjsM2ShXX7uTq3M42ICBeZ6VvklUH
-   PtLrMZcTdhRYoAfQ2J23Q3AbGDn+Yb2Gelqtq/TZxNghdSfgSv0JFzb28
-   DzjYkFX7KnFAS0VHwUvNzskxpWZg2zAdT16Ih1jIyVTXB2asbnM7uPvUn
-   huTQKR6+eDdn10/bjJ8o6v8ZpkaWF1MG/40JnyZG3fsHq0x7x3zUddITf
-   yhROV074a5VKrfzKq1PsvLyub/hwqqxzWOKCOaagUlznKkEGpfc8tJIcp
-   A==;
-X-CSE-ConnectionGUID: uwGej9ZcTxy8tblFdF2DmA==
-X-CSE-MsgGUID: Wa/TXlsqQ5upksJupzQtEw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24239948"
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="24239948"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 08:33:19 -0700
-X-CSE-ConnectionGUID: jqniPc5cRDugYYYRAiK0+g==
-X-CSE-MsgGUID: E3TRIy5tQCCBHZBQQvtwSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="40763385"
-Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.111.178]) ([10.125.111.178])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 08:33:19 -0700
-Message-ID: <86c8a026-4df7-4ba8-b0e5-6289ae584289@intel.com>
-Date: Thu, 30 May 2024 08:33:18 -0700
+	 In-Reply-To:Content-Type; b=lZr3rrwxBtVqnRfVtNFrGgJXBAN45xjZJaHz96WRMt1VFIMGdQgzQLHx06M/0jZ9ot8Py7o3dgpY5fdxLvoBgGfXCFe+Exyl2/U3t1yKawdT8jOxcbi6wPnVodjHqUsDTobbIXn/mZQNAsKjG6pghwVgD5Crgf0ECRUBHQAIFAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 099F4339;
+	Thu, 30 May 2024 08:37:29 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDE783F641;
+	Thu, 30 May 2024 08:37:02 -0700 (PDT)
+Message-ID: <3d4edff4-0052-4996-b8e8-61764988f4dd@arm.com>
+Date: Thu, 30 May 2024 16:37:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,85 +41,217 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: x86/urgent] x86/cpu: Provide default cache line size if not
- enumerated
-To: =?UTF-8?Q?J=C3=B6rn_Heusipp?= <osmanx@heusipp.de>,
- linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- stable@vger.kernel.org, x86@kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Adam Dunlap <acdunlap@google.com>
-References: <171707898810.10875.17950546903678321366.tip-bot2@tip-bot2>
- <f12ab64f-fd59-491e-a44a-6ae570a81ada@heusipp.de>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
+ PMUs
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240525152927.665498-1-irogers@google.com>
+ <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
+ <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
+ <20240527105842.GB33806@debian-dev>
+ <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
+ <ZlY0F_lmB37g10OK@x1>
+ <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
+ <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com>
+ <CAP-5=fV7AGJLCKv0yhcCNSTywBSOiPV8j8aHi5eniXHaRZWA0Q@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <f12ab64f-fd59-491e-a44a-6ae570a81ada@heusipp.de>
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <CAP-5=fV7AGJLCKv0yhcCNSTywBSOiPV8j8aHi5eniXHaRZWA0Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 5/30/24 08:05, Jörn Heusipp wrote:
+
+
+On 29/05/2024 18:33, Ian Rogers wrote:
+> On Wed, May 29, 2024 at 7:50 AM James Clark <james.clark@arm.com> wrote:
 >>
->> +        /* Provide a sane default if not enumerated: */
->> +        if (!c->x86_clflush_size)
->> +            c->x86_clflush_size = 32;
->>       } else {
->>           cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
+>> On 28/05/2024 20:51, Ian Rogers wrote:
+>>> On Tue, May 28, 2024 at 12:44 PM Arnaldo Carvalho de Melo
+>>> <acme@kernel.org> wrote:
+>>>>
+>>>> On Mon, May 27, 2024 at 10:36:45PM -0700, Ian Rogers wrote:
+>>>>> On Mon, May 27, 2024 at 3:58 AM Leo Yan <leo.yan@linux.dev> wrote:
+>>>>>> On Sat, May 25, 2024 at 02:14:26PM -0700, Linus Torvalds wrote:
+>>>>>>> On Sat, 25 May 2024 at 09:43, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>>>>
+>>>>>>>> This makes 'perf record' work for me again.
+>>>>
+>>>>>>> Oh, wait, no it doesn't.
+>>>>
+>>>>>>> It makes just the plain "perf record" without any arguments work,
+>>>>>>> which was what I was testing because I was lazy.
+>>>>
+>>>>>>> So now
+>>>>
+>>>>>>>     $ perf record sleep 1
+>>>>
+>>>>>>> works fine. But
+>>>>
+>>>>>>>     $ perf record -e cycles:pp sleep 1
+>>>>
+>>>>>>> is still completely broken (with or without ":p" and ":pp").
+>>>>
+>>>>>> Seems to me that this patch fails to check if a PMU is a core-attached
+>>>>>> PMU that can support common hardware events. Therefore, we should
+>>>>>> consider adding the following check.
+>>>>
+>>>>>> +++ b/tools/perf/util/parse-events.c
+>>>>>> @@ -1594,6 +1594,9 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>>>>>>         while ((pmu = perf_pmus__scan(pmu)) != NULL) {
+>>>>>>                 bool auto_merge_stats;
+>>>>>>
+>>>>>> +               if (hw_config != PERF_COUNT_HW_MAX && !pmu->is_core)
+>>>>>> +                       continue;
+>>>>>> +
+>>>>>>                 if (parse_events__filter_pmu(parse_state, pmu))
+>>>>>>                         continue;
+>>>>
+>>>>>> To be clear, I only compiled this change but I have no chance to test
+>>>>>> it. @Ian, could you confirm this?
+>>>>
+>>>>> Hi Leo,
+>>>>
+>>>>> so the code is working as intended. I believe it also agrees with what
+>>>>> Arnaldo thinks.
+>>>>
+>>>>> If you do:
+>>>>
+>>>>> $ perf stat -e cycles ...
+>>>>
+>>>>> and you have
+>>>>
+>>>>> /sys/devices/pmu1/events/cycles
+>>>>> /sys/devices/pmu2/events/cycles
+>>>>
+>>>>> The output of perf stat should contain counts for pmu1 and pmu2. Were
+>>>>> the event 'data_read' or 'inst_retired.any' we wouldn't be having the
+>>>>
+>>>> Sure, what is being asked is to count events and if those two events in
+>>>> those two PMUs can count, then do what the user asked.
+>>>>
+>>>> For 'perf record' we're asking for sampling, if the event has the name
+>>>> specified and can't be sampled, skip it, warn the user and even so
+>>>> only if verbose mode is asked, something like:
+>>>>
+>>>>   root@x1:~# perf record -e cycles -a sleep 1
+>>>>   [ perf record: Woken up 1 times to write data ]
+>>>>   [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
+>>>>   root@x1:~# perf evlist
+>>>>   cpu_atom/cycles/
+>>>>   cpu_core/cycles/
+>>>>   dummy:u
+>>>>   root@x1:~#
+>>>>
+>>>> Cool, there are two 'cycles' events, one in a PMU named 'cpu_atom',
+>>>> another in a 'cpu_core' one, both can be sampled, my workload may
+>>>> run/use resources on then, I'm interested, sample both.
+>>>>
+>>>> But if we had some other PMU, to use a name Jiri uses in tests/fake
+>>>> PMUs, the 'krava' PMU and it has a 'cycles' event, so 'krava/cycles/'
+>>>> and for some reason it doesn't support sampling, skip it, then the
+>>>> result should be the same as above.
+>>>>
+>>>> If the user finds it strange after looking at sysfs that 'krava/cycles/'
+>>>> isn't being sampled, the usual workflow is to ask perf for more
+>>>> verbosity, using -v (or multiple 'v' letters to get increasing levels of
+>>>> verbosity), in which case the user would see:
+>>>>
+>>>>   root@x1:~# perf record -v -e cycles -a sleep 1
+>>>>   WARNING: skipping 'krava/cycles/' event, it doesn't support sampling.
+>>>>   [ perf record: Woken up 1 times to write data ]
+>>>>   [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
+>>>>   root@x1:~# perf evlist
 >>
+>> This makes sense to me. I like keeping the old apparent behavior unless
+>> -v is used and it will feel like the tool "just works".
+>>
+>> In the context of the commit summary "perf parse-events: Prefer
+>> sysfs/JSON hardware events over legacy":
+>>
+>> I don't follow why that should be "Prefer, even if it's an event that
+>> can't be opened, sysfs/JSON...".
+>>
+>> Surely it should be "Prefer sysfs/JSON, unless it can't be opened, then
+>> use legacy". If all events can be opened, sure go and open them all. If
+>> only core events can be opened, do that too. If only uncore events can
+>> be opened... etc.
 > 
-> That honestly looks like a mis-merge to me. This is not what I did test.
-> x86_clflush_size needs to get set in the top-level else branch in which
-> it is not already set. commit 95bfb35269b2e85cff0dd2c957b2d42ebf95ae5f
-> had switched the if branches around.
 
-You're totally right.  Thank you for catching that.
+[...]
 
-I think a variable removal flipped that code around and it confused me
-when I did the rebase.  It should be fixed up now.
+> So great, ignoring the revert, that fixed everything? Well no. The
+> tool in places was hard coding 'struct perf_event_attr' which is of
+> course broken were things to be hybrid or BIG.little. So the fix for
+> that was to not hard code things. We need a set of 'struct
+> perf_event_attr', ah I know a way to get that let's just use our event
+> parsing logic. So a 'struct perf_event_attr' hard coding type to
+> PERF_TYPE_HARDWARE, the config to PERF_COUNT_HW_CPU_CYCLES and also
+> setting the precision to maximum was changed into parsing the string
+> "cycles:P". Sounds good, no? Well no. Somebody decided to create an
+> ARM event called cycles (Intel's name to avoid conflicts is
+> clockticks) and now that event was getting added to our set. Although
+> the patch sat for weeks (months?) on linux-next nobody had discovered
+> a fairly obvious breakage.
+> 
 
-Again, thanks a bunch for the report, the testing, and catching my
-screwup quickly!
+We did see the test failure on our Ampere test machine 7 days ago, but
+for some reason only on mainline (I was also on holiday at the same
+time). I'm checking if that machine is running all the branches and will
+make sure it does from now on.
+
+We are running perf-tools-next on other machines and I try to look at
+all the test failures. Just this one had a bit of an obscure combination
+of needing the DSU PMU.
+
+One thing we don't have in CI is any Apple M hardware. I can look into
+it but I wouldn't have high hopes for anything soon.
+
+[...]
+
+> It isn't new behavior for perf to scan all PMUs, it always has, the
+> new behavior is around legacy events. We want multiple PMU scanning
+> for hybrid, we want all PMU scanning for uncore. The legacy changes
+> happened because of the Apple M? PMU with me being complained at by
+> folks at ARM who have now created this mess by their arm_dsu event
+> name. Shouldn't it be a 1 liner fix to change "DSU_EVENT_ATTR(cycles,
+> 0x11)," to "DSU_EVENT_ATTR(clockticks, 0x11),":
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/perf/arm_dsu_pmu.c#n177
+> that's up to ARM but it would make sense to me.
+> 
+
+Not sure about that one, that would break anyone's scripts or tools that
+are looking at DSU cycles. And it wouldn't fix the issue in the future
+if there were other reasons the event doesn't open (like non sampling
+core events, or someone's brand new uncore PMU that also has a cycles
+event).
+
+It seems like we're converging one something that works though in the
+other threads, but I'm still digesting the problems a bit.
+
+>> Because the user could always use the defaults (no argument) or -e
+>> cycles and historically Perf correctly picked the one that could be
+>> opened. Or if they want the DSU one they could specify it. That can all
+>> still work _and_ we can support "prefer sysfs/JSON" as long as we don't
+>> prefer it when opening the event doesn't work.
+> 
+> Hopefully this is all explained above.
+> 
+> Thanks,
+> Ian
+> 
+>> Thanks
+>> James
+>>
+>>> Thanks,
+>>> Ian
+>>>
+>>>> - Arnaldo
 
