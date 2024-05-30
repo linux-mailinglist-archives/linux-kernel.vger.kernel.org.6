@@ -1,178 +1,193 @@
-Return-Path: <linux-kernel+bounces-195077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7C28D474D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:39:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D898D4751
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6D1C229D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73B01F21AFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4007F17619A;
-	Thu, 30 May 2024 08:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9812C1761AD;
+	Thu, 30 May 2024 08:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="mbC/a8pI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KWohFM7s"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJIGStRC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F1A6F2E3;
-	Thu, 30 May 2024 08:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568AC17618F;
+	Thu, 30 May 2024 08:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058377; cv=none; b=E3h6xqVhy+r69VJji/KzA75i9vaGiN3+0zCwAL5ngXzAF+fuLtOJ0mCHZM1M/JgwrG3tPFM7sF8vv/UVpzPOVbRiV/9Mt60YnD6c6LYKY6FC6yi4f96ItPUr1TzjtFdLMyE3copDrE2NK5qCxntRz0lEtwT84R6VrNU8oTFgtTk=
+	t=1717058378; cv=none; b=KrhvlnIlotMI9r0zB5kzbNZxROsCEBqj6X9SOeg/SsxhHMaypTdgZOntesziLdpwq5hQPOsOCCVTEWZDdAffuvajaxLOwuKLJTWjbEQg6UBjt6nXBrwBofsjXZ2COqm/2siD1GC+8A5gQbGNjrdt+IqB7GmMZBW8jsQzH98nzxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058377; c=relaxed/simple;
-	bh=8lx3iwi2ZdzA7P9y37vTbfzubXE+VC87ZBbfGF1Ttng=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HIz/WOGRcnTn7Gp2h3rW1D+zNjArUfPyxBdDYjN4BIyxWWPsBi56xmr8ivo5ji5IyRIyoinMG4NPgcPHh75rUoS0yMGEaNlQYCtd4g2TqF/wUy0Q2oVjAuSSs99kyQHcidUTz7N8YWYSPzjWAoXOjd4kWgMTDgi9wJyp6p8IduU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=mbC/a8pI; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KWohFM7s reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1717058373; x=1748594373;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=ds8q6ImbzOAZZkTodVkRMD3hpsgSJkBCC76qc2Z+5m8=;
-  b=mbC/a8pIikvceqhU4XuxMOmgnmPsWiUoSPu6CQSIQT382kQilw3ZVhSs
-   3L+ocy3Erv0mUNB8oq7omdC7dNYwGSAQFFDp+5yDUqBgh9gwr2ff72E9R
-   M3RKqDeoEnvmXhq8wmSvv3mnGsiVWCWJnhGiabtJsz6JQWDPoPZ8o+C/G
-   oT+DgGAOmKLEBl9ANR1MKUAArc0Fv+T5CBvRZTX1/lgdmJvL5CyU1vBoA
-   3XhDh6wWWvLEtrrXOdJsl46GnW3R5K/voLhlGhrDs+kuhfKtzK2MzbMsP
-   xKa1zFMVCOPlQTG1A/OfS3glRQXHqIV9I19DxpQBTy1FuaPheNLBBWxtF
+	s=arc-20240116; t=1717058378; c=relaxed/simple;
+	bh=+6wqFV+fVmgT6YJ8xvq3emSM9txSCJKU/7cgriphvwA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=c4WyVpUAx7N67C1jWxlQEijM2/rBBWhkOvLaudwZ6MtUg+j4wOXcFXoAqIv04W54SKSip7KSceD0EeMEuRg7mJtHFTnMvl4Qd8oWyiQPhcAj4sQ6RtLXE0A8y7VmvjTAbPxsRY9cvS/L4ZHtVhbiCm9GlATdbYvPUNE/cKVS8Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJIGStRC; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717058377; x=1748594377;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=+6wqFV+fVmgT6YJ8xvq3emSM9txSCJKU/7cgriphvwA=;
+  b=NJIGStRCyiUObcSI6VtmGxtzAW95bLeKwLysZHjxGDtwWESe8tq7NNNb
+   BWu9qQur2LNGJxuHTm2jQ5qS+gRRF2WfzOLgtF25SsA+y+RS03oUyKQNa
+   ZIHvNorUUHkufvxTFel31JP7RLGzjFKq2zFYgGvKblU9wtllU1Iq2geTL
+   Gj5Smg5fNwIP8w16oRVmDZu9nOvhP9rzwEC8fZlVPeDC62PuvVcI5+WHe
+   fnfquJmyGr17F2r1Jz02K068LnFwR669ztHH1IVihl+fH06MnhS185KsN
+   4TdrHzZaY5MmDXpvEiASD0aJMLF0Efmokpb+zFTF+/kbQ55TBKQCXmj1I
    w==;
-X-CSE-ConnectionGUID: ole4zRrkRFavvihEnDhujg==
-X-CSE-MsgGUID: gJYRVWOqQfCt/xi6Ko08fA==
-X-IronPort-AV: E=Sophos;i="6.08,199,1712613600"; 
-   d="scan'208";a="37141848"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 30 May 2024 10:39:30 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E4F4B166106;
-	Thu, 30 May 2024 10:39:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1717058366;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ds8q6ImbzOAZZkTodVkRMD3hpsgSJkBCC76qc2Z+5m8=;
-	b=KWohFM7sGESJ16IFS1fW65UQQLr2/K36mj13iOHWyjVgfnyPWIiGOYwUIbl7GEH13eysro
-	v9YYW4V+nL5X1Adw63Vog1+93KsCnLpr2OKxW6suzCnnmCbhuKSM0shXY54IorNbUayQur
-	1gaJqpE+/SntpPttc90Q4FLNFhA7uBFPxrWuW6kf2waexeyx4ACMP7tH9+a6QpxBKPIWji
-	OfIFOtCo2u6309ddtiSiBDBreUSJ7tVurBbdWtz/51mF2gI7sdSAWtfCeT3pE0fgPARNOy
-	nqvHGLx52dtaHxZwUGSWA26FVL+762BMiroKcv1P0UjWPC7H9tN3Knsq4t9Shw==
-Message-ID: <0e971f0b885bd360e33ef472d96e3d9e0ab56405.camel@ew.tq-group.com>
-Subject: Re: [PATCH 8/8] gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH
- interrupt type
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gregor Herburger
- <gregor.herburger@tq-group.com>,  linux@ew.tq-group.com
-Date: Thu, 30 May 2024 10:39:25 +0200
-In-Reply-To: <8689fbcd-3fa3-410b-8fc9-7a699bf163b8@moroto.mountain>
-References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
-	 <2c265b6bcfcde7d2327b94c4f6e3ad6d4f1e2de7.1716967982.git.matthias.schiffer@ew.tq-group.com>
-	 <8689fbcd-3fa3-410b-8fc9-7a699bf163b8@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+X-CSE-ConnectionGUID: Sm4Rzu91T96xeqFyd4MbVg==
+X-CSE-MsgGUID: 4MFxCdhlQ7CmwFyBzgU89A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13684370"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="13684370"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 01:39:37 -0700
+X-CSE-ConnectionGUID: A/hUfKVDQdOZXjpD85tTIA==
+X-CSE-MsgGUID: rFPcwyvNToqyHguBiDrLrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="66937674"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.150])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 01:39:32 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 30 May 2024 11:39:27 +0300 (EEST)
+To: Lyndon Sanche <lsanche@lyndeno.ca>
+cc: mario.limonciello@amd.com, pali@kernel.org, W_Armin@gmx.de, 
+    srinivas.pandruvada@linux.intel.com, lkp@intel.com, 
+    Hans de Goede <hdegoede@redhat.com>, Yijun.Shen@dell.com, 
+    Matthew Garrett <mjg59@srcf.ucam.org>, 
+    Vegard Nossum <vegard.nossum@oracle.com>, 
+    AceLan Kao <acelan.kao@canonical.com>, 
+    Heiner Kallweit <hkallweit1@gmail.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH v8 3/3] platform/x86: dell-pc: Implement
+ platform_profile
+In-Reply-To: <20240529174843.13226-4-lsanche@lyndeno.ca>
+Message-ID: <db3191b5-2f42-5075-a493-dedb34e578ad@linux.intel.com>
+References: <20240425172758.67831-1-lsanche@lyndeno.ca> <20240529174843.13226-1-lsanche@lyndeno.ca> <20240529174843.13226-4-lsanche@lyndeno.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 2024-05-29 at 17:38 +0300, Dan Carpenter wrote:
->=20
-> On Wed, May 29, 2024 at 09:45:20AM +0200, Matthias Schiffer wrote:
-> > diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
-> > index c957be3341774..400415676ad5d 100644
-> > --- a/drivers/gpio/gpio-tqmx86.c
-> > +++ b/drivers/gpio/gpio-tqmx86.c
-> > @@ -126,9 +126,15 @@ static void _tqmx86_gpio_irq_config(struct tqmx86_=
-gpio_data *gpio, int hwirq)
-> >  	unsigned int offset =3D hwirq - TQMX86_NGPO;
-> >  	u8 type =3D TQMX86_INT_TRIG_NONE, mask, val;
-> > =20
-> > -	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED)
-> > +	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED) {
-> >  		type =3D gpio->irq_type[hwirq] & TQMX86_INT_TRIG_MASK;
-> > =20
-> > +		if (type =3D=3D TQMX86_INT_TRIG_BOTH)
-> > +			type =3D tqmx86_gpio_get(&gpio->chip, hwirq)
->                                                             ^^^^^
->=20
-> > +				? TQMX86_INT_TRIG_FALLING
-> > +				: TQMX86_INT_TRIG_RISING;
-> > +	}
-> > +
-> >  	mask =3D TQMX86_GPII_MASK(offset);
->                                 ^^^^^^
-> >  	val =3D TQMX86_GPII_CONFIG(offset, type);
->                                  ^^^^^^
-> >  	_tqmx86_gpio_update_bits(gpio, TQMX86_GPIIC, mask, val);
->=20
-> The offset stuff wasn't beautiful and I'm glad you are deleting it.  My
-> understanding is that a hwirq is 0-3 for output or 4-7 input.  An offset
-> is "hwirq % 4"?
->=20
-> There are a bunch of places which are still marked as taking an offset
-> but they all actually take a hwirq.  For example, tqmx86_gpio_get()
-> above.  The only things which still actually take an offset are the
-> TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() macros.
->=20
-> Could you:
-> 1) Modify TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() to take a hwirq?
-> 2) Rename all the "offset" variables to "hwirq"?
+On Wed, 29 May 2024, Lyndon Sanche wrote:
 
-Unfortunately, the TQMx86 GPIO is a huge mess, and the mapping between GPIO=
- numbers and IRQ numbers
-depends on the hardware generation/variant. I don't think it is possible to=
- have GPIO numbers and
-hwirq numbers differ, is it?
+> Some Dell laptops support configuration of preset fan modes through
+> smbios tables.
+> 
+> If the platform supports these fan modes, set up platform_profile to
+> change these modes. If not supported, skip enabling platform_profile.
+> 
+> Signed-off-by: Lyndon Sanche <lsanche@lyndeno.ca>
+> ---
+>  MAINTAINERS                                  |   6 +
+>  drivers/platform/x86/dell/Kconfig            |  13 +
+>  drivers/platform/x86/dell/Makefile           |   1 +
+>  drivers/platform/x86/dell/dell-pc.c          | 307 +++++++++++++++++++
+>  drivers/platform/x86/dell/dell-smbios-base.c |   1 +
+>  drivers/platform/x86/dell/dell-smbios.h      |   1 +
+>  6 files changed, 329 insertions(+)
+>  create mode 100644 drivers/platform/x86/dell/dell-pc.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6c90161c7bf..09ff0dfd65cb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6116,6 +6116,12 @@ F:	Documentation/ABI/obsolete/procfs-i8k
+>  F:	drivers/hwmon/dell-smm-hwmon.c
+>  F:	include/uapi/linux/i8k.h
+>  
+> +DELL PC DRIVER
+> +M:	Lyndon Sanche <lsanche@lyndeno.ca>
+> +L:	platform-driver-x86@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/platform/x86/dell/dell-pc.c
+> +
+>  DELL REMOTE BIOS UPDATE DRIVER
+>  M:	Stuart Hayes <stuart.w.hayes@gmail.com>
+>  L:	platform-driver-x86@vger.kernel.org
+> diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
+> index 195a8bf532cc..85a78ef91182 100644
+> --- a/drivers/platform/x86/dell/Kconfig
+> +++ b/drivers/platform/x86/dell/Kconfig
+> @@ -91,6 +91,19 @@ config DELL_RBTN
+>  	  To compile this driver as a module, choose M here: the module will
+>  	  be called dell-rbtn.
+>  
+> +config DELL_PC
+> +	tristate "Dell PC Extras"
+> +	default m
+> +	depends on ACPI
+> +	depends on DMI
+> +	depends on DELL_SMBIOS
+> +	select ACPI_PLATFORM_PROFILE
+> +	help
+> +	This driver adds support for controlling the fan modes via platform_profile
+> +	on supported Dell systems regardless of formfactor.
+> +	Module will simply do nothing if thermal management commands are not
+> +	supported.
+> +
+>  #
+>  # The DELL_SMBIOS driver depends on ACPI_WMI and/or DCDBAS if those
+>  # backends are selected. The "depends" line prevents a configuration
+> diff --git a/drivers/platform/x86/dell/Makefile b/drivers/platform/x86/dell/Makefile
+> index 8176a257d9c3..79d60f1bf4c1 100644
+> --- a/drivers/platform/x86/dell/Makefile
+> +++ b/drivers/platform/x86/dell/Makefile
+> @@ -9,6 +9,7 @@ obj-$(CONFIG_DCDBAS)			+= dcdbas.o
+>  obj-$(CONFIG_DELL_LAPTOP)		+= dell-laptop.o
+>  obj-$(CONFIG_DELL_RBTN)			+= dell-rbtn.o
+>  obj-$(CONFIG_DELL_RBU)			+= dell_rbu.o
+> +obj-$(CONFIG_DELL_PC)			+= dell-pc.o
+>  obj-$(CONFIG_DELL_SMBIOS)		+= dell-smbios.o
+>  dell-smbios-objs			:= dell-smbios-base.o
+>  dell-smbios-$(CONFIG_DELL_SMBIOS_WMI)	+= dell-smbios-wmi.o
+> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/dell/dell-pc.c
+> new file mode 100644
+> index 000000000000..a86ad921d4ee
+> --- /dev/null
+> +++ b/drivers/platform/x86/dell/dell-pc.c
+> @@ -0,0 +1,307 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + *  Driver for Dell laptop extras
+> + *
+> + *  Copyright (c) Lyndon Sanche <lsanche@lyndeno.ca>
+> + *
+> + *  Based on documentation in the libsmbios package:
+> + *  Copyright (C) 2005-2014 Dell Inc.
+> + */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/err.h>
+> +#include <linux/dmi.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/platform_profile.h>
+> +#include <linux/slab.h>
 
-Currently, the driver only supports COM Express modules, where IRQs 0-3 cor=
-respond to GPIOs 4-7,
-while GPIOs 0-3 don't have interrupt support. We will soon be mainlining su=
-pport for our SMARC
-modules, which have up to 14 GPIOs, and (on some families) IRQ support for =
-all GPIOs (IRQs 0-13
-correspond to GPIOs 0-13).
+Thanks for the update. I've now applied this into review-ilpo branch.
 
-New interrupt config and status registers have been introduced to support m=
-ore IRQs - up to 4 config
-registers (2 bits for each IRQ) and 3 status registers (IRQs 0-3 in the fir=
-st one, 4-11 in the
-second one, 12-13 in the third one... so this part is a bit more convoluted=
- than just "hwirq % 4")=20
+I reordered those headers into alphabetical order while applying. In 
+future, when adding new headers, try adhere to the alphabetical order.
 
-As the mapping between GPIOs and IRQs will become dynamic with these change=
-s, I'd rather keep
-TQMX86_GPII_* using IRQ numbers instead of GPIO numbers. We will be introdu=
-cing helpers for
-accessing the interrupt registers; the macros deal with individual register=
- bits, and I think they
-should be agnostic of the mapping to GPIO/hwirq numbers.
+-- 
+ i.
 
-Matthias
-
-
-
->=20
-> regards,
-> dan carpenter
->=20
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
