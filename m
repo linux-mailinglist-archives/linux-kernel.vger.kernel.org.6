@@ -1,155 +1,177 @@
-Return-Path: <linux-kernel+bounces-195412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC048D4C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:24:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846C58D4C8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02732B228D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C3F71C2162F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1012718308D;
-	Thu, 30 May 2024 13:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265AB18308D;
+	Thu, 30 May 2024 13:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCTYoUA/"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYl2pK/E"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E150A1C2A8;
-	Thu, 30 May 2024 13:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32F4183085
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717075437; cv=none; b=pS1/zivkICnlF5IuztMYm5iIypIxxU2Iqhquxanhv0QyrHac/FozRElg03D0DRhFiAbREm6tvPKEc2G3rA3fxDxmI1BK25av+lw3MLFXPhijmQ1XZKKErbGVNEyVW4luuFi8NVZRe5oyPR6Rqi5MNLgKEKwd0jB2WR5g3a3bJOM=
+	t=1717075460; cv=none; b=IqtnCLE7v46lXkwI0xDn8852s33ZdZRlMObCX40YfNRRqBcxDenSAjZQRxFtppTPRLT+X82FgQ4Sqf+isVnusVfHr137uu8yx24rsJFlXSBQ+Z31WwFy2fujRZLZD09pD6TPMCfgTzW4V99qURQqu/12O0OLwDCYAzoohRV6EgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717075437; c=relaxed/simple;
-	bh=xONszUrVqqTaz3rHoBN/EgLU1TfgteCYQ4hvXms8O3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FeUQxEh4HS2arxpA6nzaq6CwXDgyRSHO1X67MZt9DFECg1ox22Cq+I5hzSx7y301CrNlj2lbKHLDfSJ+Xzlvn9c5FmzIlGbjvXtxUGd1BRhrC6vYp4uIs1X9E79Iwh0x8GdLlmDJ9x4AObEwPS1Er5uAREIepe0WmO4Ghv44VCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCTYoUA/; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c1a4192d55so655719a91.2;
-        Thu, 30 May 2024 06:23:55 -0700 (PDT)
+	s=arc-20240116; t=1717075460; c=relaxed/simple;
+	bh=voq/P7MD5XEk9VZEE0aFQJuFPPTRpMyL6TD4WBoaDyQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=o5p9XwXGdXy9uTF4zBO2+JxXsSbw8dA4f2FDU7wGigLslMlyyZag45dUjkr128uFYu7UAIAQ4jAtijPc1BRelHvRUFPRqKl5NlWj6UQ+VjEeUZ6qAH/Ty3Jh9287iQ26FFVpmzfKoM1bJTZjmVhQmG2EBCUNfvenrPb403aj0Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYl2pK/E; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4df550a4d4fso274623e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:24:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717075435; x=1717680235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=ImD0UBSVfyZ145gJUca1+9U0Y3caaSo5guTa1bYc1as=;
-        b=eCTYoUA/tdOzxA50/TlaWfA2qd8CUKMZKU88R77hAcNMifPLCpg2z3ByQgMcMdcTJH
-         hUN4k+ocWjqoEsGfBfh4rQOD99INSe331LO5AVOYCmO/yTkbv2XDlJX33ubKDDv7EcvK
-         grEhFhM2QUYSh1319kKeQsXwpt9sIDmx0LdFu3xUGPWdS8peUgzh5jgCb2VxA7T36rv+
-         waa6Nd3C66y1jeVGchpLfMeGeRlyIMdn8jenqJDI+zlYm8X84Hw00llQIrr2rFC3hto5
-         s4XYVfMpSw8YoVVIl6KLjcO7IUWOrwve+cWWRRsKN80jLyI234VHkqJ4JFvBdhUvMAxM
-         +KKA==
+        d=linaro.org; s=google; t=1717075457; x=1717680257; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z1wf86rhc//hrXTmx06EkBUykqafTMVQ7bFCGB2R5oc=;
+        b=LYl2pK/E6cn1W2V8DiPud8iCW7VtCQXshjro88tQOpOZNMwvT58Y3hwIC65hyFV6vF
+         3YiIPetgUXH5HNcjsisKg6kCDnuW0X6/Lw26LRrVosCcJa3KqFzqUcUQMDu4Wsj2z65f
+         5vQ8p32wcuQwTlwBQHtGrCDKRqaKTkB6vDQbGLy5pZLIpqAlAv0nfNfWRnSabe/6iuUm
+         cA7S5qnZ410TRbVodDjrWSMC6I6tB90cGpsOvknudEkWIVHXfwlx/cmY2Kt3JRP6ywAa
+         xHWfD5Jd/w84F6wkfgnYLpedYjoXKvTRERzJ5gijLy2ZmPdaYJwhJ8vFvflkcW5I0WU4
+         d74g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717075435; x=1717680235;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ImD0UBSVfyZ145gJUca1+9U0Y3caaSo5guTa1bYc1as=;
-        b=u6DZsWxP1ddCQFJxQ4WwDEK49v6PHsrCbK4VxSvRwXTYhNaxa/nS7O60sUCNlTN0f7
-         jFu0GXWNmVnBc2899yMDcIEkPq7s28iPL6taGaBbiGhLsa8K8owK49BUgFeqSRLFP8yC
-         mNKZxsz26zGlLnIxCp9H8hN6BZStw8vx+8/68FQ2P2teKdI7rp81q5mfY6/etqq7coFK
-         Cei6yAs4OiJTJtCBcpmMkih1waswE3/3vkchSNmx5ZAyn0itver3gjlrgbfV164oy+lC
-         mi39/K8EWk+VjMG3Aeyx7jglTTLNwm1dUiy/ucpG3x1btxxIipsy1/qqNiH82DUzJUv5
-         pjyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuPoZMj/OhL44p/wDOetvy3nPTWkwBTf+YHWMeAB+looE3/rSXdr6yyQ/gZePVVDX43jD97FfTENjKTzXzUCMYMu55+/F/qGSG+x3A0a9tWRer3PXa+jFzbgV6uDt7+FzasXmkWfyF6iR4tDlNUNuWds3Udf2uZngJgxmkcpdcAeAGRz0t
-X-Gm-Message-State: AOJu0YwToz22USlH+kFIrxttoUcjyWaVGjmxjQ4sod+rzBhdgIxw063/
-	WfLZTCo0NyAb+CvhCoTy8kygIeZM4hUZt/FEMy3LlkbnBfBoUJan
-X-Google-Smtp-Source: AGHT+IGCETvoLYiwn+eba06qb8LJMEeTQrIZQoZYFYsZiWjeMZEjZScxshN6LN6HtgqhWazCLD+BTA==
-X-Received: by 2002:a17:90a:5d0d:b0:2ad:6294:7112 with SMTP id 98e67ed59e1d1-2c1ab9f704bmr2244752a91.14.1717075435058;
-        Thu, 30 May 2024 06:23:55 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a779e835sm1622945a91.48.2024.05.30.06.23.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:23:54 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <0dc7a7c6-a426-424a-8321-471569ee6835@roeck-us.net>
-Date: Thu, 30 May 2024 06:23:53 -0700
+        d=1e100.net; s=20230601; t=1717075457; x=1717680257;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z1wf86rhc//hrXTmx06EkBUykqafTMVQ7bFCGB2R5oc=;
+        b=L3Ss75znF2Y8iIzSBUvcwDjH+T0nuDCyPTuhMV7X3f8imeXXTCjLq3205C9g6wqkdM
+         8ksldZmTvDl+yzfgZN47dfJ89o0QogZGTuXBse6jDJeTvRnb6O7Uqg3m9AX1Esn4KlXV
+         iDCqTQR802pUApDsJ7hjAxXAA/SNq0vQOWh5Nth1e6JTJ1HZerM8oPC8lJnS/HFcNno3
+         F3nfGqzN6nl6ZSwW5tXYaqoV6V+9sDrAKS7OYd3AVLcqpzKzyDivauLlZjYC8C7dFRYI
+         szJmNuo1/rQPPWA4yN27cW3F3xCyEG+JRIPzlFzLB+P4tAEZZvTOpdDvWroo/3btGkej
+         9aPg==
+X-Gm-Message-State: AOJu0YyOnhSMUMMfzKeumHc4uDZBgP1fM1YFtUikfwY8jUuswTiYpGR1
+	CgOLxdMXvgHU/y52pyyzxGWzMf0MIU/ErEESO5msyfCoQwVkmkqA/dcP8iP9ObBKa9lElq2CNKk
+	qoUA41GSwJy2aqil5v3oEPGyz96vLncoC4kF3uIrXe57tbDHJJg0=
+X-Google-Smtp-Source: AGHT+IGkpezCmFIsSNHIXWWg711MfwaflaRlyGo0iVwc0c38BOJYKlEcuRFsht2/xa2Si8cst7kM/ZupsnWV43DFYAM=
+X-Received: by 2002:a05:6122:d0d:b0:4da:a82e:95f5 with SMTP id
+ 71dfb90a1353d-4eaf21af5b3mr2676650e0c.5.1717075456991; Thu, 30 May 2024
+ 06:24:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
- sensors
-To: Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org
-Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
-References: <20240529205204.81208-1-linux@roeck-us.net>
- <20240529205204.81208-3-linux@roeck-us.net>
- <fa79f3c2-666f-48b8-b39a-f598107b2293@gmx.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <fa79f3c2-666f-48b8-b39a-f598107b2293@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 30 May 2024 18:54:05 +0530
+Message-ID: <CA+G9fYuzd9Cz2Ndwc7HFOimJPRZL7w376N=2R2cV-d0mjzT+nw@mail.gmail.com>
+Subject: WARNING: at fs/nfs/nfs3xdr.c:188 encode_filename3 on rk3399
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, linux-nfs@vger.kernel.org
+Cc: NeilBrown <neilb@suse.de>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, 
+	Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, kasong@tencent.com, 
+	LTP List <ltp@lists.linux.it>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/30/24 01:08, Armin Wolf wrote:
-[ ... ]
->> +obj-$(CONFIG_SENSORS_SPD51118)    += spd5118.o
-> 
-> Hi,
-> 
-> thank you for working on this, i am currently testing the driver on my machine.
-> I already noticed the kconfig option is wrong, the correct one would be CONFIG_SENSORS_SPD5118.
-> 
+The following kernel warning has been noticed while running LTP statvfs01
+testcase on arm64 device rk3399-rock-pi-4b with NFS mounted test setup and
+started from Linux next-20240522 tag and till next-20240529.
 
-Oops. Thanks for noticing!
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Guenter
+Test log:
+-----
+mke2fs 1.47.0 (5-Feb-2023)
+tst_test.c:1131: TINFO: Mounting /dev/loop0 to /scratch/ltp-9gvw[
+5211.161721] EXT4-fs (loop0): mounting ext2 file system using the ext4
+subsystem
+F2L8n6/LTP_stadLH0F7/mntpoint fstyp=ext2 flags=0
+[ 5211.169391] EXT4-fs (loop0): mounted filesystem
+af9dfac2-88f6-453d-9d02-c14cc888a51d r/w without journal. Quota mode:
+none.
+statvfs01.c:32: TPASS: statvfs(TEST_PATH, &buf) passed
+[ 5211.175518] ------------[ cut here ]------------
+statvfs01.c:44: TPASS: creat(valid_fname, 0444) returned fd 3
+[ 5211.175938] WARNING: CPU: 5 PID: 786885 at fs/nfs/nfs3xdr.c:188
+encode_filename3+0x4c/0x60
+[ 5211.175962] Modules linked in: tun overlay btrfs blake2b_generic
+libcrc32c xor xor_neon raid6_pq zstd_compress hantro_vpu
+snd_soc_hdmi_codec brcmfmac panfrost v4l2_vp9 snd_soc_simple_card
+dw_hdmi_i2s_audio dw_hdmi_cec crct10dif_ce snd_soc_audio_graph_card
+snd_soc_spdif_tx brcmutil drm_shmem_helper v4l2_h264
+snd_soc_simple_card_utils gpu_sched rockchipdrm hci_uart analogix_dp
+btqca v4l2_mem2mem dw_mipi_dsi btbcm videobuf2_dma_contig dw_hdmi cec
+phy_rockchip_pcie cfg80211 rtc_rk808 bluetooth videobuf2_memops
+snd_soc_rockchip_i2s drm_display_helper drm_dma_helper videobuf2_v4l2
+rfkill rockchip_saradc videobuf2_common drm_kms_helper snd_soc_es8316
+industrialio_triggered_buffer rockchip_thermal kfifo_buf
+coresight_cpu_debug pcie_rockchip_host fuse drm backlight dm_mod
+ip_tables x_tables
+[ 5211.176075] CPU: 5 PID: 786885 Comm: statvfs01 Not tainted
+6.10.0-rc1-next-20240529 #1
+[ 5211.176083] Hardware name: Radxa ROCK Pi 4B (DT)
+[ 5211.176086] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 5211.176092] pc : encode_filename3+0x4c/0x60
+[ 5211.176100] lr : nfs3_xdr_enc_create3args+0x4c/0x108
+[ 5211.176109] sp : ffff80008b1ab7a0
+[ 5211.176111] x29: ffff80008b1ab7a0 x28: ffff80008b1abc40 x27: 0000000000000001
+[ 5211.176120] x26: 0000000000440040 x25: 0000000000000000 x24: ffff800081492c70
+[ 5211.176128] x23: 0000000000000100 x22: ffff00000a274010 x21: ffff00002d1b9800
+[ 5211.176136] x20: ffff00000a274010 x19: 0000000000000100 x18: 0000000000000000
+[ 5211.176143] x17: 0000000000000000 x16: 0000000000000000 x15: 6262626262626262
+[ 5211.176150] x14: 6262626262626262 x13: 90d1d5e100000000 x12: 40a645896bf3b486
+[ 5211.176158] x11: a16c80bf234c2437 x10: 5702b6d600000000 x9 : ffff80008059040c
+[ 5211.176165] x8 : a16c80bf234c2437 x7 : 5702b6d600000000 x6 : 600aa44181070001
+[ 5211.176173] x5 : ffff00003109d080 x4 : ffff0000661a4232 x3 : ffff8000805903c0
+[ 5211.176180] x2 : 0000000000000100 x1 : ffff00000a274010 x0 : ffff80008b1ab828
+[ 5211.176187] Call trace:
+[ 5211.176190]  encode_filename3+0x4c/0x60
+[ 5211.176198]  nfs3_xdr_enc_create3args+0x4c/0x108
+[ 5211.176206]  rpcauth_wrap_req_encode+0x24/0x40
+[ 5211.176216]  rpcauth_wrap_req+0x28/0x40
+[ 5211.176223]  call_encode+0x130/0x358
+[ 5211.176231]  __rpc_execute+0xb4/0x638
+[ 5211.176238]  rpc_execute+0x168/0x1e8
+[ 5211.176244]  rpc_run_task+0x12c/0x1d8
+[ 5211.176251]  rpc_call_sync+0x70/0xe0
+[ 5211.176257]  nfs3_rpc_wrapper+0x48/0x98
+[ 5211.176264]  nfs3_proc_create+0xb8/0x2d0
+[ 5211.176272]  nfs_do_create+0x9c/0x1f0
+[ 5211.176280]  nfs_atomic_open_v23+0x98/0xd8
+[ 5211.176288]  path_openat+0x6d4/0xf50
+[ 5211.176296]  do_filp_open+0xa4/0x160
+[ 5211.176301]  do_sys_openat2+0xcc/0x108
+[ 5211.176310]  __arm64_sys_openat+0x6c/0xc0
+[ 5211.176317]  invoke_syscall+0x50/0x128
+[ 5211.176327]  el0_svc_common.constprop.0+0x48/0xf0
+[ 5211.176335]  do_el0_svc+0x24/0x38
+[ 5211.176342]  el0_svc+0x3c/0x108
+[ 5211.176351]  el0t_64_sync_handler+0x120/0x130
+[ 5211.176355]  el0t_64_sync+0x190/0x198
+[ 5211.176361] ---[ end trace 0000000000000000 ]---
+statvfs01.c:48: TFAIL: creat(toolong_fname, 0444) expected ENAMETOOLONG: EIO (5)
+[ 5211.432692] EXT4-fs (loop0): unmounting filesystem
+af9dfac2-88f6-453d-9d02-c14cc888a51d.
+
+metadata:
+----
+  git_describe: next-20240522 and next-20240529
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  arch: arm64
+  test: LTP syscalls statvfs01
+
+Links:
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131502/suite/log-parser-test/test/check-kernel-exception/log
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131502/suite/log-parser-test/test/check-kernel-warning-4a4050f2ba224c26acd76ee5aebc8fa78eb1cf8c315c763fd7b55e6a1d6e38b7/history/
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240529/testrun/24131502/suite/log-parser-test/tests/
 
 
+--
+Linaro LKFT
+https://lkft.linaro.org
 
