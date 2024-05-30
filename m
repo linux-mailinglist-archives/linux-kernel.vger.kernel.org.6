@@ -1,226 +1,283 @@
-Return-Path: <linux-kernel+bounces-194931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404E98D447A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0EB8D447E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6E91C21424
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F4AA1F22E84
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF0C14387E;
-	Thu, 30 May 2024 04:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76386143883;
+	Thu, 30 May 2024 04:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ji7GdU54"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gUv0ujCo"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2053.outbound.protection.outlook.com [40.107.237.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7307D41A92
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717042967; cv=none; b=sqTwz0XrCDP2U40n3FI8ZHs6MOZ4Vu0BasVHWH+ZRk55ZxpvbBuZbF/kh3bovIIRooSx+6/ezbrBRt2IbYM+0G3Dve67Mt+lZeLVzJiSvcyYI4k8awAuE3BRB6XnV5Hc+gOPi2N+Uk89/WXI2ZxsCrvJHX1kg6MnFH8Ou0v0cag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717042967; c=relaxed/simple;
-	bh=mOpnmGaWkVaDABcJIM+ohz2/IlMdB2KvDHck5ouGpTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HMU10CeE+5Uok8AEuSAo1ahRgC8BaIAMt8NK3WdhKt9iWEoSNKOcgyb/lSr91GXs/VepnIrtTntP2tuCum4y6BTk7hhi0f6ShEuzs2Mej31FRibXzSQW3e+nCgHjEQLKvjMFadmMr0kCausotnZaMeHDIM8gF/t7cLQiVifPrTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ji7GdU54; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-43dfe020675so200731cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 21:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717042965; x=1717647765; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJuF21QYBMVxdrOKhVxCMb/fcP73Nr7m20Qtxaatf80=;
-        b=ji7GdU54/b/X0YDCagJMHEvvZ9WlnqAnmW9kWtjVabIBq7wBPaZPLWIvKtqlYckCHD
-         h1MvonOSRksOyBUlXbTLFScBGYgNXC0TseFdthyRTwhxH/2/K0m0LMLSEZxvjauWQThE
-         0AE9B/5m4ffut0v3MBr+far3u3rcESaVsjx6DmNIB75i4WGBPrUJJ2J2S/6FX531wBqB
-         oXKqVlQjowz6ZIUV4iVq5UtbLXlaF6bUMZ22t+td+FbmmXX6uIEGg9J15NXbodqTLHK8
-         aVIBt76CVBFTuvpc5dPK4v99EqZUDYx/krWGDsiVRZbzJwe8ZkoXz+iD8w7F4ycyzQ+x
-         Y8xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717042965; x=1717647765;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CJuF21QYBMVxdrOKhVxCMb/fcP73Nr7m20Qtxaatf80=;
-        b=oSC76ydET92uNUILbFOjA6HDLN66rFEDqXmJakUwimw4U+ZTkuYygejoibgRcrjA5b
-         ddb9cyUhesuzy/FpnFZn7m6tnrpvka+qXJDNzALREIdke9dY90gULfhvlaLVR0Cm/KKL
-         +VzAxPN2MKz0Q8iPnGGWPxhF0vIYwPfuZyNpEIybzQtCa16E1NNNSpNqag7BxDvq6G0j
-         nPABEcqbaT0lfthSf0ObP3oFqr9RJQe1XpB95h5x4hmMBd1h2YcZ5S04TyBcQdKWEmkS
-         3md4qZC5ovOhVtmEUe2au3y8pTE8icbJzHd2GCjZs2h0nWWIYtD3HO4nHn+ATuhkKZPF
-         Ldyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPNR29EfwOFYACqLVLvgG6aKomiU4o4JXqY+vFTy6Al7inBmx52ojPmH9jA7V6B44aYFfQ3skaNImHz3FMLCJ72g1Gp2yemRfosEpA
-X-Gm-Message-State: AOJu0YwevINMvwlaa8ul7+7rgPeF2jIp2mqXILv943e7xNGWK4pLpviD
-	llvyPd74U12zVHYaLv4CCYzvHESl3+Pc0XZjlIZrQexFF/3fck5DVuBUBzd42SeHuHE5zE9sDR6
-	b5+huMShM7lti4FWC5lvbJmrC3Qr25vwYYsBr
-X-Google-Smtp-Source: AGHT+IHCkFzf2/etPUWs8QgM9kINz0Ajf33AWvBIbvxwx7hwW1jESougvmtnULBz0vUWfEzxUZLiTyZOCNmalNRIi8A=
-X-Received: by 2002:a05:622a:4809:b0:43d:dc3b:518c with SMTP id
- d75a77b69052e-43feb3a3342mr1005361cf.11.1717042965087; Wed, 29 May 2024
- 21:22:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708CD28E7;
+	Thu, 30 May 2024 04:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717043202; cv=fail; b=NdWHGf42FcxSdK0BO/CMtOzWow4f8BoljQCZvlmlR5/UT4pw/Q27BbB1DoN1Dy224lJ7Cc5PdGzgEIY5Mfn51PgU4ru2X8yTeOVK10oXe5tRtnAmG/v9CpOmlnXGKA+estgGRs6VcAVWWNOfFPK/XDOZbhqVkdnCfj6iaMP4sIc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717043202; c=relaxed/simple;
+	bh=kZ5tPw9opuECfynNHKL+9Scet2JSpuF+GHRuOORPKdQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXiRFfe2xMIXMdTJYS7VviTzOSZ0jPROQcDMznkjvV4TxX67OJ+gyRXFbW2hc5zSThjGIBh4PbvshJXRiLhsA9wQRHgSm8MSeJFC/SDOW4c6Gm3eUiRbf0Prx7ou8d1kkrDsnIHy206/yV+4QCRsttqvOt6j9DVjO3Y+dLj2PN8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gUv0ujCo; arc=fail smtp.client-ip=40.107.237.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Qe3XckZniUh8FWIRI7tLwD6YirFheUscQ0rTLqE56aQRKARMzdEd99KTO+ZgEMPauywBc0hOvlezgWi6f5TTWq2+2dYVg3Mi5K19m6CE9wAuLFkAmorVMi5jEkJL+F3IZiD1vxyhsSt1UcNz+PET4DRQh/7oGv+qbaG5kPeFJhHo3oFyZ4YTnT4s4l8u+uNwh9XLhnY3NYElP285SML6KNlIA9V+f0AaflvHePNyRYvtv2yOaHP2lSTpOoEgH6n9Jy61vWYJMLcMYwcbYNyNZN6HwYQkfehGyMRH3ZGF4YoepEzd/9B/Qw7ZNj8OgKNSvshsiT6sP+bTyDlih8CZ5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/ah2TLIMjiuLK6mRcusicIApJCfYyCL8/JQJKbAyPTQ=;
+ b=TPMk+/c3I+fLqmU4I9lEkCA2cKE5rZ3nCQWJgIQ58MFECD9VwnYw+6Uih6Ztg5W4VjMCa1Jq2TsdJVGnYrm/Y+kG5tmAprwpVAO+Ciqd5LOCf4lJcEdqbVHcJOGZ7jHzYDyynaLur6VZ2G15/ssUCc/O8MdD7K9qhWCirXkrI0ZgWWZPSuoMO/vsKiJ4CBWt7EjFvBGimHkbEif4OO9ON1/T/wsI56m/VTPYG+F8QYLD7tiqonJzNQzQB0qJo//ahe/CDXC/Gjuq2NmtKDnm2CmQmDomCYlW/Lp42tyJzTBehuZnWvfm43Yf7zk6/FjyUmahx9bvhLUglhYFLlOQSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/ah2TLIMjiuLK6mRcusicIApJCfYyCL8/JQJKbAyPTQ=;
+ b=gUv0ujCohG7yy2GZ/8yhb3n32ChvbeUSUIzEg9H11b+asJlKHfbmz/A/gznJJcTCmM0wUENR4AxbWPkgSF5OlS/bikZCAXnznWBquMFh/m1NSQaKiBK6lbtUqIonNVVBU9+sUFIUvHTXxqajN/xqKunvaJn6mHxExTksDQc5e05oyXyEa7r4tYopXkWF6FHRqPVqQm/2BnRABeVVZzIv1p8rbyAdlEGVSLUe2JUGtwk3L/u0RXQYug6VKpGYw8P8QqdA8NErVVfpiWDtC70j0JS6hNYm9nKl3ivTSps5+aAQru4ag3OUKTQ2zyRuoyrei78xIDFx9/nB53IlON6jyQ==
+Received: from DS7PR05CA0040.namprd05.prod.outlook.com (2603:10b6:8:2f::33) by
+ SA1PR12MB7038.namprd12.prod.outlook.com (2603:10b6:806:24d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Thu, 30 May
+ 2024 04:26:36 +0000
+Received: from DS3PEPF000099DD.namprd04.prod.outlook.com
+ (2603:10b6:8:2f:cafe::22) by DS7PR05CA0040.outlook.office365.com
+ (2603:10b6:8:2f::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19 via Frontend
+ Transport; Thu, 30 May 2024 04:26:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DS3PEPF000099DD.mail.protection.outlook.com (10.167.17.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Thu, 30 May 2024 04:26:36 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 29 May
+ 2024 21:26:30 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 29 May 2024 21:26:29 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 29 May 2024 21:26:29 -0700
+Date: Wed, 29 May 2024 21:26:27 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
+	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
+	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
+Message-ID: <Zlf/84H+cfAfaZj6@Asurada-Nvidia>
+References: <ZlAoN3s96HL7ROth@nvidia.com>
+ <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240524131912.GT20229@nvidia.com>
+ <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlY886FT3HHLC8Cf@nvidia.com>
+ <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlafEktUu5znDsNt@Asurada-Nvidia>
+ <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
+ <BN9PR11MB5276DC3F8F085FE0E699D9448CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516211731.1635930-1-ivan.orlov0322@gmail.com>
-In-Reply-To: <20240516211731.1635930-1-ivan.orlov0322@gmail.com>
-From: David Gow <davidgow@google.com>
-Date: Thu, 30 May 2024 12:22:31 +0800
-Message-ID: <CABVgOSkFt5beXua-DsFPzebSm1S=o3rqnctzzHHtg-pZC=zssA@mail.gmail.com>
-Subject: Re: [PATCH v5] kunit: Cover 'assert.c' with tests
-To: Ivan Orlov <ivan.orlov0322@gmail.com>
-Cc: brendan.higgins@linux.dev, rmoar@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kunit-dev@googlegroups.com, skhan@linuxfoundation.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000000747f40619a43825"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BN9PR11MB5276DC3F8F085FE0E699D9448CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099DD:EE_|SA1PR12MB7038:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6b122e4-2a5e-4166-b197-08dc8060b1a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|1800799015|36860700004|7416005|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OVYvWlBuZ240VEdEZlJUQTBQUUdRUzVmOG5EZk9kcld1STZUQ2FmbHM5bHRP?=
+ =?utf-8?B?ZDhUOWRBUHRCZjFHOGZiSEFWcGw3aTJET3c1YmZobndBdmJrSUNvT3dGWWN4?=
+ =?utf-8?B?NWtETEp3b1l6SFR2SXB5V1YrUmJSYzA1MFlYQ3JiZjNTY2FiZlY0bWJrWThY?=
+ =?utf-8?B?REsrUE83Z3o4T09wNkFkV3NtVitFNXhKMmszeDducEE1dWp6UVArRExINmtV?=
+ =?utf-8?B?V2dpSU9xRS9HUjN1TExPZForeUM5YnJZRUV0V3RMT1dEYXlPQkthd2dTRmJO?=
+ =?utf-8?B?K0xOTGVQaG83LysxcE1TdW4vQWk0VXhLTnQrT3J0VEJFdGFxSmV6RllXbnJ2?=
+ =?utf-8?B?SkthY0dKeUJsWUFDajNYR3JCR0dITGh0WDJENUxMR2pORzZIbXRUU3FmNlk5?=
+ =?utf-8?B?V3Q1akZhazBzMnlTQnRRclQrTUFQSXZLbnJWRE10TzE3bVBtN2Vsdjk2QktO?=
+ =?utf-8?B?T1pjRzBHbUpjWmVUK2ZpVUQ4bzJtSWhJTzlRdFg4MjZ6eStqblNQOXNXZmdn?=
+ =?utf-8?B?WjlOU2pIVFF6M1pLUlZERGtvaE9HTmplc2xuK1YraUJCNEtQL2FmV3hYZlRS?=
+ =?utf-8?B?cE92MDI4c1ViR2NSdlRXd01ENlgrV3BsY0IzZDFPbXlQR2VjMnVxM1FQR2hH?=
+ =?utf-8?B?NDRlNkhJU0ZyZ1VMejVmNkZGTENzdEREeHA0dklNVnhEMThCQ1N0bHEyRm52?=
+ =?utf-8?B?ZmxQYlB0dWxHMmU5R0wxUlc5b2pRRGthKzY5NmZUbFAyVVkyeHNuZWFYWFkx?=
+ =?utf-8?B?MDV0Uk0wLzV3dC9wQ1phRm5abHlkbmsyWXE0NGMyay9QNkJQUjNEeURUOVFn?=
+ =?utf-8?B?R3JBSWNqMHcwU29aakRkQUVwWnArL0xCa3R0MnNWN2pYK043MENUL29wbGhZ?=
+ =?utf-8?B?SzU2ZFlaQVp6U1JycnhuYThLQkR3bisrdk5BVU5JMVFZV3V4YXFIdnVITGFj?=
+ =?utf-8?B?bXhKVENhY0ZMVEJ2aUh4VzBMS1NIVVg3SGJKQnNkc3dndXRtaGRDbnVpRVkv?=
+ =?utf-8?B?cUNYUVhjMDNnNkZDaHgzYlNXK2NqLzRZOTBnekhLVmZxTmRQQjYyNStZSExm?=
+ =?utf-8?B?bjlQcjVpWTFiS3o1WG02aHdVVUVzQTBDTjAwTkR2cjJQQW4xS1pHWk5nbEo4?=
+ =?utf-8?B?RkZwVUM1OFlkOUVwdEhVc2NxaWprZ2tWUnplNU8wSitma0hnUDVpMHlYYzQ4?=
+ =?utf-8?B?NVdwZVdKbHMvVlM4RGF0OWVVMHhLdWdxQmw4SnpXcS8xL0wyOW5rMWoyaWNh?=
+ =?utf-8?B?ejZmMWlZdmhlL3dFMlJrWVRydFlqZWxlQnZWWGcramk0Zys4eHZ1Zk5IekFW?=
+ =?utf-8?B?VjhaMWJ1MEtnMVlpZFFVWkExNWN6Y3k2ZFpoazZuZS9aMFlvODFSc1hvNTJn?=
+ =?utf-8?B?RzZkN2JOY0JoTzlKQXV6RWIxZlc5Z054TDBZL2hiQlJCSUEyRDdMb25uOEo1?=
+ =?utf-8?B?cE5wNUxHazRwZVk4ZFFCVmIyWDdMZnYzUm5OWGtESG45cXF1R0hTbmpwQnk2?=
+ =?utf-8?B?dGoxZDIyeVIxSmxrZVY5Nyt3MnJWZWdWb3FKTHRtM0ZNZ2VlSC83ajFMR3JH?=
+ =?utf-8?B?cGphc1pYb0pMK1gzZjdlWHhXVk9QYkRvaHRDRWhhc0pQeGRjYlNFNkZtdjA5?=
+ =?utf-8?B?ZkVqS0tCc29vTll2bnY2VXoxaEtyOUVWYlBucEhwci9mTGlQSjBlT1E2TWZx?=
+ =?utf-8?B?Vzd6dHg1UGwxdDFWNzVLQmdTUUJCMTJtTi9hUEdOUmFxQ2laMXY5YmNoUnJq?=
+ =?utf-8?B?Wk16SkNYeDBuSHFsRHVFNTc1anBsaEJDNHdibi80NXY1WkpyRWkyS2t0cWJF?=
+ =?utf-8?B?UUJEZ1BVQ1I0cDVQemtsYTNMT2NmcVliUFJiU1Zyblp4TlRyTFlCaWNKOUpT?=
+ =?utf-8?Q?YHl2BrLEQm6Qo?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(1800799015)(36860700004)(7416005)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 04:26:36.3872
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6b122e4-2a5e-4166-b197-08dc8060b1a3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099DD.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7038
 
---0000000000000747f40619a43825
-Content-Type: text/plain; charset="UTF-8"
+On Thu, May 30, 2024 at 03:05:05AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Thursday, May 30, 2024 8:59 AM
+> > On Thu, May 30, 2024 at 12:28:43AM +0000, Tian, Kevin wrote:
+> > > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > > Sent: Wednesday, May 29, 2024 11:21 AM
+> > > > On Wed, May 29, 2024 at 02:58:11AM +0000, Tian, Kevin wrote:
+> > > > > My question is why that option is chosen instead of going with 1:1
+> > > > > mapping between vSMMU and viommu i.e. letting the kernel to
+> > > > > figure out which pSMMU should be sent an invalidation cmd to, as
+> > > > > how VT-d is virtualized.
+> > > > >
+> > > > > I want to know whether doing so is simply to be compatible with
+> > > > > what VCMDQ requires, or due to another untold reason.
+> > > >
+> > > > Because we use viommu as a VMID holder for SMMU. So a pSMMU must
+> > > > have its own viommu to store its VMID for a shared s2_hwpt:
+> > > >         |-- viommu0 (VMIDx) --|-- pSMMU0 --|
+> > > >  vSMMU--|-- viommu1 (VMIDy) --|-- pSMMU1 --|--s2_hwpt
+> > > >         |-- viommu2 (VMIDz) --|-- pSMMU2 --|
+> > > >
+> > >
+> > > there are other options, e.g. you can have one viommu holding multiple
+> > > VMIDs each associating to a pSMMU.
+> >
+> > Well, possibly. But everything previously in a viommu would have
+> > to be a list (for number of VMIDs) in the kernel level: not only
+> > a VMID list, but also a 2D virtual ID lists, something like:
+> >
+> > struct xarray vdev_ids[num_of_vmid]; // per-IOMMU vID to pID lookup
+> 
+> ah does it mean that dev ID space on ARM is local to SMMU?
+> 
+> It's not the case on x86 platforms where the RID is platform-wise.
 
-On Fri, 17 May 2024 at 05:17, Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
->
-> There are multiple assertion formatting functions in the `assert.c`
-> file, which are not covered with tests yet. Implement the KUnit test
-> for these functions.
->
-> The test consists of 11 test cases for the following functions:
->
-> 1) 'is_literal'
-> 2) 'is_str_literal'
-> 3) 'kunit_assert_prologue', test case for multiple assert types
-> 4) 'kunit_assert_print_msg'
-> 5) 'kunit_unary_assert_format'
-> 6) 'kunit_ptr_not_err_assert_format'
-> 7) 'kunit_binary_assert_format'
-> 8) 'kunit_binary_ptr_assert_format'
-> 9) 'kunit_binary_str_assert_format'
-> 10) 'kunit_assert_hexdump'
-> 11) 'kunit_mem_assert_format'
->
-> The test aims at maximizing the branch coverage for the assertion
-> formatting functions.
->
-> As you can see, it covers some of the static helper functions as
-> well, so mark the static functions in `assert.c` as 'VISIBLE_IF_KUNIT'
-> and conditionally export them with EXPORT_SYMBOL_IF_KUNIT. Add the
-> corresponding definitions to `assert.h`.
->
-> Build the assert test when CONFIG_KUNIT_TEST is enabled, similar to
-> how it is done for the string stream test.
->
-> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> ---
+Actually I had a second thought after I replied. Yea, we only
+support PCI devices at this moment, so their RIDs come from BDF
+numbers, and then should be platform-wise as you pointed out:
 
-This looks good to me, and passes all of my tests locally.
+|<-------VMM-------->|<--------------- kernel ------------>|
+ vRID_a --|                       |-- VMIDx / SMMU0 -- pRID_A
+ vRID_b --| => vSMMU => viommu => |-- VMIDy / SMMU1 -- pRID_B
+ vRID_c --|                       |-- VMIDz / SMMU2 -- pRID_C
 
-Note that this does have some checkpatch warnings:
+# x/y/z can be identical, while a/b/c and A/B/C must be unique.
 
-WARNING: Using vsprintf specifier '%px' potentially exposes the kernel
-memory layout, if you don't really need the address please consider
-using '%p'.
-#426: FILE: lib/kunit/assert_test.c:250:
-+       snprintf(addr_var_a, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_a);
+So likely a single lookup list can be enough. That still can't
+avoid the list of per-pIOMMU objects for some driver feature
+though. So, I think having a per-pIOMMU viommu also adds a bit
+of flexibility for the kernel.
 
-WARNING: Using vsprintf specifier '%px' potentially exposes the kernel
-memory layout, if you don't really need the address please consider
-using '%p'.
-#427: FILE: lib/kunit/assert_test.c:251:
-+       snprintf(addr_var_b, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_b);
+Overall, indeed an implementation choice, as you mentioned :)
 
-These are necessary, as KUnit _does_ expose the kernel memory layout
-(on purpose), as it's useful for debugging. This is one of the reasons
-why KUnit tests taint the kernel: to make it clear that this could be
-a problem.
+> > And a driver in this case would be difficult to get a complete
+> > concept of a viommu object since it's core object and shared by
+> > all kernel-level IOMMU instances. If a driver wants to extend a
+> > viommu object for some additional feature, e.g. VINTF in this
+> > series, it would likely have to create another per-driver object
+> > and again another list of this kind of objects in struct viommu.
+> >
+> > At the end of day, we have to duplicate it one way or another for
+> > the amount of physical IOMMUs. And it seems to cleaner by doing
+> > it with multiple viommu objects.
+> >
+> > > so it's really an implementation choice that you want a same viommu
+> > > topology scheme w/ or w/o VCMDQ.
+> > >
+> > > we all know there are some constraints of copying the physical topology,
+> > > e.g. hotplugging a device or migration. for VCMDQ it's clearly an
+> > > acceptable tradeoff for performance. w/o VCMDQ I'm not sure whether
+> > > you want to keep more flexibility for the user. 😊
+> >
+> > Oh. With regular nested SMMU, there is only one virtual SMMU in
+> > the guest VM. No need of copying physical topology. Just the VMM
+> > needs to allocate three viommus to add them to a list of its own.
+> >
+> 
+> Okay I missed this point. Then the number of viommus is really about
+> the contract between the vmm and the kernel, which is invisible to
+> the guest or the admin who launches the Qemu.
 
-Acked-by: David Gow <davidgow@google.com>
+Yes. Everything should be behind the scene, since VMM can trap
+and select, unlike VCMDQ doing direct MMIO to the HW without a
+chance of VM Exits.
 
-Cheers,
--- David
+> but wait, isn't there another problem - does the VMM have the
+> permission to enumerate the topology of physical SMMUs? Or probably
+> the VMM only needs to know the number of relevant SMMUs for
+> assigned devices and such info can be indirectly composed by extending  GET_HW_INFO...
 
---0000000000000747f40619a43825
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I think VMM already has some kinda permission reading the number
+of IOMMUs from "/sys/class/iommu"?
 
-MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
-dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
-6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
-c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
-I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
-AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
-CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
-AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
-MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
-My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
-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
-JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
-BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
-BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
-Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
-FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
-YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
-AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
-DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
-4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
-GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
-kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
-MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
-IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIPJNBL0CBdD08nNFOwOa0t1eOlhQH1BaGHQBuBBB0ltDMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDUzMDA0MjI0NVowaQYJKoZIhvcNAQkPMVww
-WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQA5VAkN
-SpfI+XwKcn7YEu5RyPIxIp7kDDxVnna/b0JgXwP9lhVIcWsEq6SptDSbUu5nF9atNteedRXHy4JW
-YMuXcQN2aw9ZLg4VHPn5f8QTxe/DpT5V4yR3RKgy76j4bM07CYNB9JSlhBq2K35W6J6Bk2p2ho8m
-jbCY8NHzRWj5vX0YtOrJjOtA/Dd8A6bEOkVyRtOvYIAaNDRkH5CCCGlDSfACSM7xsr5aZG3cte3u
-p51AfkslLQYza81mAyCf8wlHYyF0B11bvaXxcZfdewjn4K1/T6b5z86CjDOURlwtSxo8MZo1VBVM
-vZh9ePpwO4INCYq1TKuYsGJfBArhp+TE
---0000000000000747f40619a43825--
+That being said, in a regular nesting case w/o VCMDQ, there is
+no need to instantiate all vSMMUs to the number of pSMMUs unless
+there is at least one device behind each pSMMU attaches.
+
+So, the current implementation allocates an s2_hwpt/viommu only
+on demand, when the first device from a physical SMMU attaches,
+meaning there'll be only one viommu in the list until the other
+first device from another pSMMU attaches. And the actual attach
+logical always tries attaching a device to the existing viommus
+from the list, and only allocates a new viommu (or s2_hwpt) when
+all of them failed. FWIW, host-kernel/driver has a full control
+against these attaches.
+
+Thanks
+Nicolin
 
