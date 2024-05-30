@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-194972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB248D4530
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C488D4532
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921501F23550
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:59:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C50F1F21D94
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E0B143737;
-	Thu, 30 May 2024 05:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64445143726;
+	Thu, 30 May 2024 05:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="e9kQC59G"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2049.outbound.protection.outlook.com [40.107.104.49])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="trTpsidG"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE1B142E8C;
-	Thu, 30 May 2024 05:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717048740; cv=fail; b=H8FybejQM4QUabRl+svbZZI1OvS3LMJ11HF54sQpsW6VaRrceZ6iOCQyw2olLQOnL9QQeNPmk7sWk2HH5YtZioX08zPOiOCDPYLOpHdOeAuwUg6+4MipoQKrIbqECd5pYH2WjnFdaC0SNjZWCPfbl9aSKzrLT9svEB4p8oXf4ag=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717048740; c=relaxed/simple;
-	bh=3IjoqU1iZjUHDmFN0iuoaRpJ97lmCCdJuDVihgTVCpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RiL2bL3nRw4gPm8Diguk1ztOR4t4u8JxYGyor8L4aSn8kuELNh4AcwFxOd5UBSisqCNkz6L3DMLQU/nF78yVP2LmOUvsEKR6LXP1LAaBsuuOqakedHd+xkjK//ZmC49031nrwdt8rrrYtrfd0ui3mwQH/lsALy7C6CDRzg8ziPU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=e9kQC59G; arc=fail smtp.client-ip=40.107.104.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X59SxuOyqWRJj/jpOhlOjX4yiseBWzLjmXJzZ3QpItKdyf5XpIf95yh8x6TW0T6mFLC6Zd4rEZjoZ+Wyn2e51HwRtU7le9SQiG0aVQVpxXzcA7cG/T+7I/Z15EN4IyKkXRiaamPocQ0OocRJxDPlZOCy/OdSo8ek5a4nBIl7GDn0sS+3CGhLt7mD2c5+nfnOjGcksKuwpDxKBO4iK3Ey/Zj42Ckrrbr51uDJ012SRS/ZrC+ke+mqc+3Awf87pd7gkgC0zA1CxuxsIVSfchCNAtFBwkVphWjvi09h7AR+/wvMJxHLU6Qg8DzjCZFv/Pv9BAR54kXzjEXEOZJxCGIavg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Six0rx9M6uBQ4xVN+dsG5EpITI6rCgK6jw6kvfgajTM=;
- b=HbUVX+DX0sCnvvedar+KBr7Jc+FBBxRuJ+dpiqkLXpmEmQVg/eM23lKcRffxJrYCr/iy/PnjxBOtdj7dfaxE0yvLeFk2skVJo0VIdGhJbj6PotEFCfOL90RBujsNn0jyeguT4aG4QwTZEjgk5hbV/gz15qIM4cmvqMcUPlqeBXOxnUCRUv7homy7lRXsWvuM4XkPYn6e2SrXs63zjgXE+khnRn/j3qQtSMnrjJECjyxGo/OjWZDj8NvypcXMlWLpKjWgfJBEBG70DgYnCP2CvVZXNxL2kkzJrdSysbvuOduYw060VPWEbWUuZ87nTp0e8By9j708Az2f79xRut+wUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.205) smtp.rcpttodomain=redhat.com smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Six0rx9M6uBQ4xVN+dsG5EpITI6rCgK6jw6kvfgajTM=;
- b=e9kQC59GCwY02ltsYqMkNCMgXxE/UvVIBckexRjIBv0ENH5X5s7Gz0ZgbvvIF32SBe2FsLrDXXHyh1AwRKnWOJEEJS1PrzDepCyhM9DQfyY0N4w78FHY3XxeFwRE7XHND0WHHf1Qwsx/AE0CvZtRaV4dC/fNpGQy3SVjtBVJx1MqRTYjO78j4qla91PYJLm++5IyytzDHzVFiPNJLx8IEbovLBWObReTwYi73PaCbo8OnsF3WnT48Ayv+dC0LoYZJoJ4g2eS/DyM5dqZG8HeoCkASAwpCnpbrNQThQL/+PP//jjXtzpVvXg3clgpG8xvY4HLCuUiozlze1Mw0gjbZQ==
-Received: from DB8P191CA0006.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:130::16)
- by PAVPR10MB6961.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:30d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
- 2024 05:58:53 +0000
-Received: from DB5PEPF00014B88.eurprd02.prod.outlook.com
- (2603:10a6:10:130:cafe::33) by DB8P191CA0006.outlook.office365.com
- (2603:10a6:10:130::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.18 via Frontend
- Transport; Thu, 30 May 2024 05:58:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.205) by
- DB5PEPF00014B88.mail.protection.outlook.com (10.167.8.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.15 via Frontend Transport; Thu, 30 May 2024 05:58:53 +0000
-Received: from FE-EXCAS2000.de.bosch.com (10.139.217.199) by eop.bosch-org.com
- (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 May
- 2024 07:58:48 +0200
-Received: from [10.34.222.178] (10.139.217.196) by FE-EXCAS2000.de.bosch.com
- (10.139.217.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 30 May
- 2024 07:58:47 +0200
-Message-ID: <393a0a3f-9142-47c1-8422-40abd688363b@de.bosch.com>
-Date: Thu, 30 May 2024 07:58:36 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB52142E8C;
+	Thu, 30 May 2024 05:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717048782; cv=none; b=UCEvGz2QbRv41nUeEXHXgQTSD0egunuVPwndyZJm8ULXb0bNQNy8ugh2ZFm9wbtEuWKJraHLy+FQCRY92k37+whlOyWKcZ2piZ7pF5NEUd2li/ajiVDbCENqD04J2ZgHDFcxDjBgDbcHcDGr9SITxCsz67l/Zuu8kqiHkxQCQwU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717048782; c=relaxed/simple;
+	bh=MulVND32Z0MMDTTR+8QOaZUrYlVuVU29cuj0Px125ZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TrbwxJpLgXRlkfF9RtJL/+Vq+YXnGuSFI0KQYQyjiCnMzos/7MMam/MZQvw5DE8kMKkSM+9vAxGZlixaGZpzckhU7fqf3GcqBwez4mG4rYxEJVycPAy/8lkrIADK0x6y7t6OiK4H9fS76t2b9inMVFfN4aK56S0rB5Me688EVtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=trTpsidG; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.85] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6F6363F27F;
+	Thu, 30 May 2024 05:59:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1717048772;
+	bh=iKIrKm+xfqbafQtN0sjQyozgN9+tcnXLbx0e6bOxTSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=trTpsidGVsMnxcOvLZJU5tvCApakflXkqvAJcZanzGAQ9wHchvuwJYQblNCC6q8Kd
+	 dl3uxFp2COokYcye18lqUHPpBGBpWftAM5wjZhlr7FTggQOV3beZf9BubSYyeWogVm
+	 N3S0tp30EzhzWQ3kCsi3jkfPNUcRAxms44ItvdT44X+53KAfW+JqsmHk1M0fJxgPEU
+	 bAvxlwonXqODuxtILG/NyuRt5jT83xkNKmLGS56qh96iUQOiRD9QbipScCK7mJVU2V
+	 HQnf9g04bgogs7noT8ndIY3I01BfpnBnEZlqDEuC/co3PGJZmc+oIbAPcORXu7A6Q9
+	 dd4PQsyY6Ykug==
+Message-ID: <f9215243-5610-4838-a31c-5894b75905e6@canonical.com>
+Date: Wed, 29 May 2024 22:59:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,292 +56,219 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
-To: Danilo Krummrich <dakr@redhat.com>, <gregkh@linuxfoundation.org>,
-	<rafael@kernel.org>, <bhelgaas@google.com>, <ojeda@kernel.org>,
-	<alex.gaynor@gmail.com>, <wedsonaf@gmail.com>, <boqun.feng@gmail.com>,
-	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
-	<a.hindborg@samsung.com>, <aliceryhl@google.com>, <airlied@gmail.com>,
-	<fujita.tomonori@gmail.com>, <lina@asahilina.net>, <pstanner@redhat.com>,
-	<ajanulgu@redhat.com>, <lyude@redhat.com>, Fabien Parent
-	<fabien.parent@linaro.org>
-CC: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-3-dakr@redhat.com>
+Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
+ and potential solutions
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Mateusz Guzik <mjguzik@gmail.com>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ "Shukla, Santosh" <Santosh.Shukla@amd.com>,
+ "Narayan, Ananth" <Ananth.Narayan@amd.com>,
+ raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com,
+ paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
+References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
+ <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
+ <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com>
+ <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
+ <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com>
+ <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
+ <5c94947b-1f1f-44a7-8b9c-b701c78350b4@canonical.com>
+ <CAGudoHFxma+H_iHPV8+gfEkHc0uwFD8=rJtFy7ZE3TH+7tGiwQ@mail.gmail.com>
+ <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
+ <82556a16-3390-4867-89b6-23e5ff168b89@amd.com>
 Content-Language: en-US
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20240520172554.182094-3-dakr@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5PEPF00014B88:EE_|PAVPR10MB6961:EE_
-X-MS-Office365-Filtering-Correlation-Id: bbced7f9-2dba-4be4-330c-08dc806d95e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|376005|82310400017|7416005|1800799015|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MkpzRkVnV0tEcU9GOVNub3oxY1IzR0IxR29mK1pZOHNXQ2ZEYmVJK1pXR0l2?=
- =?utf-8?B?SmVSZ3VRSEJ3UFRmYUtWQWQzVGJMbDdUMDVaS24zT3BJL1ozSnlYMjZJc1kx?=
- =?utf-8?B?YW4wZElON1ptbWtjMWZuZ1ltUjRBNVNXY0JCTzlEVkJmWDBjSzRlWW8xUVdo?=
- =?utf-8?B?UFdUOXB5UmRuLzdvRytkNEpJTnM5ZWpHbGVhZStrOWhJd1Y3eW5WRXlucHVY?=
- =?utf-8?B?RTUwVGZzakxIelkvNnpGYUE1dGtSQ05pYXVSR1VOY3BoNGFWb3ZuaTBiRDJQ?=
- =?utf-8?B?dWxpdENCWW4vNlRERDNaVTdwUDJRNVJmb0Jmdm5rbEdYazJGSDRndmM3djQ2?=
- =?utf-8?B?bmR0SHJQNCt5M1VNc2JwbTB6SHlaS2t3d29Fd1BjKzNTb1VuZGRwQ0lyT2hL?=
- =?utf-8?B?RVZsWWxiak1Jc3Q2SXhacGJueVg5S1RnaFlXaEJ5ZWh4SkcxY05JSTBmV2xX?=
- =?utf-8?B?K2dwQXA2blZJZ1cyanhobXQvMFU1ZVdXTWN6VWZBaWd0TUR0eXY1S0ZwWWZO?=
- =?utf-8?B?bnRZbXFsWEhoQ0dvZk5RSGhoZ3dHM0dBbEdyYXladlpNWTRFdi9SRUVYNE1E?=
- =?utf-8?B?K01QaXA4WDYydUlOZVpDdzUrVEZ4VkpoMEFINzBnZm1nSTROanNWUkcwTXow?=
- =?utf-8?B?Ujc2K2k0N21vc2Ywb2phSm56eEVBS25rSTA3L2lsek5QRUFNaE1GdC9IY1Ny?=
- =?utf-8?B?cGlvQ3doQjk1TCtxNnBSZndFUE8xMmQ0T0FmT0ZiRllNdjZEUHFISUZ4NjZt?=
- =?utf-8?B?em1iRzlBUTdGbEJ6cERxQVNRY3hCVDkxN0JOR0pXVzI0bWV1R0RTNE8vTjM2?=
- =?utf-8?B?SzhRdmxmUDVXY0RibXc4ZW8ySzVaazBmemR5SVBvVE8rcU15TXVRckZ2aE43?=
- =?utf-8?B?QlFTUytnWGJUQWVtYlFpRmwvbjNHcnROVi9vZ2NIdS9NUXByaFdQNkRTYklv?=
- =?utf-8?B?U3FrVVJpOGtMdGJHL1BuVW9JeE15eXQrbEdFMngvN1M3OVJVT2c5RDdTYlcy?=
- =?utf-8?B?NTVsUjJSN2M1a0ZzcjFkK25hNzgvbmI5bHNrTEVITllMVE9Wa3NHOHg3SlNU?=
- =?utf-8?B?ZmJGU00yWlRmbkRTYVNjbDdabmJsUlRCaDJBMDhmaU9DZHZURHJvdmZWTGdj?=
- =?utf-8?B?bU4ycU5LYVZiV2lhc1o3bTNjTllEZTJyZXNnU3ExOWplblBpR0k5eEhMalZS?=
- =?utf-8?B?RzVqN3FTNXpHZmlLQnd2ZmIxVjJ5Rmp4NlB2VGdET2ovV3dBRnZVeHRZZEhH?=
- =?utf-8?B?MGF0RDdPZGdMV1l1aWc2ZkRWWG1OZGQ0VzJyWFlQQkhaUXRMbmE0bi94djVM?=
- =?utf-8?B?WFVHMGpCaDZ4V0dHNVpXM0NXTzhmc0RRWUUrMVBWaEF3K01WenBXQmkycnd4?=
- =?utf-8?B?bmVoYmZHRXQvMEFnWnAxZ2xRQURKL2EyZlVya3BiUWVZdUQyNXVIdTZSaFlO?=
- =?utf-8?B?a1lEZGRBbVpJMG9rRWFzSEV6bVpWQmVLekNVUFJWck5sc3Z5RWNEeVZaQjJX?=
- =?utf-8?B?TUZvS3JWbU5iakFIMEtqVHZRcExsMnNaOGhpZmRDcUI4Z2Z2Nys2QkZrb1VR?=
- =?utf-8?B?SkgzYnhpWGpQYU0yVzZVdGhOY1F4L3hkR09hK0ZnMWhRODBTaWt1SEtyRGJj?=
- =?utf-8?B?UEkrMk9rbTNWZEdEOXZwdjZHZHEvRjA0YkFHaXU4K2xDU1RmcFRYN0xZMk1u?=
- =?utf-8?B?Zkx5bHQyekg0WFUraVR0NUVSWjVxR2Z5U1hnNjRPY0FzQ3J5VkxFZ29EeThB?=
- =?utf-8?B?RFR0eGNEcXpNbWxNTGovaUUwN2JQRVIrTWYzT1RDa0ZVNDd5TU1SSi9OSi84?=
- =?utf-8?B?VEVBN2RmQ09vYUFqWG9Hdz09?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(82310400017)(7416005)(1800799015)(921011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 05:58:53.3446
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbced7f9-2dba-4be4-330c-08dc806d95e5
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B88.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB6961
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <82556a16-3390-4867-89b6-23e5ff168b89@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 20.05.2024 19:25, Danilo Krummrich wrote:
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+On 5/29/24 21:19, Neeraj Upadhyay wrote:
+> Hi John,
 > 
-> This defines general functionality related to registering drivers with
-> their respective subsystems, and registering modules that implement
-> drivers.
+> Thanks for taking a look at the series!
 > 
-> Co-developed-by: Asahi Lina <lina@asahilina.net>
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> ---
->   rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
->   rust/kernel/lib.rs           |   4 +-
->   rust/macros/module.rs        |   2 +-
->   samples/rust/rust_minimal.rs |   2 +-
->   samples/rust/rust_print.rs   |   2 +-
->   5 files changed, 498 insertions(+), 4 deletions(-)
->   create mode 100644 rust/kernel/driver.rs
+> On 5/29/2024 6:07 AM, John Johansen wrote:
+>> On 5/28/24 06:29, Mateusz Guzik wrote:
+>>> On Fri, May 24, 2024 at 11:52 PM John Johansen
+>>> <john.johansen@canonical.com> wrote:
+>>>>
+>>>> On 5/24/24 14:10, Mateusz Guzik wrote:
+>>>>> On Fri, Mar 8, 2024 at 9:09 PM John Johansen
+>>>>> <john.johansen@canonical.com> wrote:
+>>>>>>
+>>>>>> On 3/2/24 02:23, Mateusz Guzik wrote:
+>>>>>>> On 2/9/24, John Johansen <john.johansen@canonical.com> wrote:
+>>>>>>>> On 2/6/24 20:40, Neeraj Upadhyay wrote:
+>>>>>>>>> Gentle ping.
+>>>>>>>>>
+>>>>>>>>> John,
+>>>>>>>>>
+>>>>>>>>> Could you please confirm that:
+>>>>>>>>>
+>>>>>>>>> a. The AppArmor refcount usage described in the RFC is correct?
+>>>>>>>>> b. Approach taken to fix the scalability issue is valid/correct?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hi Neeraj,
+>>>>>>>>
+>>>>>>>> I know your patchset has been waiting on review for a long time.
+>>>>>>>> Unfortunately I have been very, very busy lately. I will try to
+>>>>>>>> get to it this weekend, but I can't promise that I will be able
+>>>>>>>> to get the review fully done.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Gentle prod.
+>>>>>>>
+>>>>>>> Any chances of this getting reviewed in the foreseeable future? Would
+>>>>>>> be a real bummer if the patchset fell through the cracks.
+>>>>>>>
+>>>>>>
+>>>>>> yes, sorry I have been unavailable for the last couple of weeks. I am
+>>>>>> now back, I have a rather large backlog to try catching up on but this
+>>>>>> is has an entry on the list.
+>>>>>>
+>>>>>
+>>>>> So where do we stand here?
+>>>>>
+>>>> sorry I am still trying to dig out of my backlog, I will look at this,
+>>>> this weekend.
+>>>>
+>>>
+>>> How was the weekend? ;)
+>>>
+>>
+>> lets say it was busy. Have I looked at this, yes. I am still digesting it.
+>> I don't have objections to moving towards percpu refcounts, but the overhead
+>> of a percpu stuct per label is a problem when we have thousands of labels
+>> on the system. That is to say, this would have to be a config option. We
+>> moved buffers from kmalloc to percpu to reduce memory overhead to reduce
+>> contention. The to percpu, to a global pool because the percpu overhead was
+>> too high for some machines, and then from a global pool to a hybrid scheme
+>> because of global lock contention. I don't see a way of doing that with the
+>> label, which means a config would be the next best thing.
+>>
 > 
-> diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-> new file mode 100644
-> index 000000000000..e0cfc36d47ff
-> --- /dev/null
-> +++ b/rust/kernel/driver.rs
-> @@ -0,0 +1,492 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
-> +//!
-> +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
-> +//! using the [`Registration`] class.
-> +
-> +use crate::{
-> +    alloc::{box_ext::BoxExt, flags::*},
-> +    error::code::*,
-> +    error::Result,
-> +    str::CStr,
-> +    sync::Arc,
-> +    ThisModule,
-> +};
-> +use alloc::boxed::Box;
-> +use core::{cell::UnsafeCell, marker::PhantomData, ops::Deref, pin::Pin};
-> +
-> +/// A subsystem (e.g., PCI, Platform, Amba, etc.) that allows drivers to be written for it.
-> +pub trait DriverOps {
-> +    /// The type that holds information about the registration. This is typically a struct defined
-> +    /// by the C portion of the kernel.
-> +    type RegType: Default;
-> +
-> +    /// Registers a driver.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `reg` must point to valid, initialised, and writable memory. It may be modified by this
-> +    /// function to hold registration state.
-> +    ///
-> +    /// On success, `reg` must remain pinned and valid until the matching call to
-> +    /// [`DriverOps::unregister`].
-> +    unsafe fn register(
-> +        reg: *mut Self::RegType,
-> +        name: &'static CStr,
-> +        module: &'static ThisModule,
-> +    ) -> Result;
-> +
-> +    /// Unregisters a driver previously registered with [`DriverOps::register`].
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `reg` must point to valid writable memory, initialised by a previous successful call to
-> +    /// [`DriverOps::register`].
-> +    unsafe fn unregister(reg: *mut Self::RegType);
-> +}
-> +
-> +/// The registration of a driver.
-> +pub struct Registration<T: DriverOps> {
-> +    is_registered: bool,
-> +    concrete_reg: UnsafeCell<T::RegType>,
-> +}
-> +
-> +// SAFETY: `Registration` has no fields or methods accessible via `&Registration`, so it is safe to
-> +// share references to it with multiple threads as nothing can be done.
-> +unsafe impl<T: DriverOps> Sync for Registration<T> {}
-> +
-> +impl<T: DriverOps> Registration<T> {
-> +    /// Creates a new instance of the registration object.
-> +    pub fn new() -> Self {
-> +        Self {
-> +            is_registered: false,
-> +            concrete_reg: UnsafeCell::new(T::RegType::default()),
-> +        }
-> +    }
-> +
-> +    /// Allocates a pinned registration object and registers it.
-> +    ///
-> +    /// Returns a pinned heap-allocated representation of the registration.
-> +    pub fn new_pinned(name: &'static CStr, module: &'static ThisModule) -> Result<Pin<Box<Self>>> {
-> +        let mut reg = Pin::from(Box::new(Self::new(), GFP_KERNEL)?);
-> +        reg.as_mut().register(name, module)?;
-> +        Ok(reg)
-> +    }
-> +
-> +    /// Registers a driver with its subsystem.
-> +    ///
-> +    /// It must be pinned because the memory block that represents the registration is potentially
-> +    /// self-referential.
-> +    pub fn register(
-> +        self: Pin<&mut Self>,
-> +        name: &'static CStr,
-> +        module: &'static ThisModule,
-> +    ) -> Result {
-> +        // SAFETY: We never move out of `this`.
-> +        let this = unsafe { self.get_unchecked_mut() };
-> +        if this.is_registered {
-> +            // Already registered.
-> +            return Err(EINVAL);
-> +        }
-> +
-> +        // SAFETY: `concrete_reg` was initialised via its default constructor. It is only freed
-> +        // after `Self::drop` is called, which first calls `T::unregister`.
-> +        unsafe { T::register(this.concrete_reg.get(), name, module) }?;
-> +
-> +        this.is_registered = true;
-> +        Ok(())
-> +    }
-> +}
-> +
-> +impl<T: DriverOps> Default for Registration<T> {
-> +    fn default() -> Self {
-> +        Self::new()
-> +    }
-> +}
-> +
-> +impl<T: DriverOps> Drop for Registration<T> {
-> +    fn drop(&mut self) {
-> +        if self.is_registered {
-> +            // SAFETY: This path only runs if a previous call to `T::register` completed
-> +            // successfully.
-> +            unsafe { T::unregister(self.concrete_reg.get()) };
-> +        }
-> +    }
-> +}
-> +
-> +/// Conversion from a device id to a raw device id.
-> +///
-> +/// This is meant to be implemented by buses/subsystems so that they can use [`IdTable`] to
-> +/// guarantee (at compile-time) zero-termination of device id tables provided by drivers.
-> +///
-> +/// Originally, RawDeviceId was implemented as a const trait. However, this unstable feature is
-> +/// broken/gone in 1.73. To work around this, turn IdArray::new() into a macro such that it can use
-> +/// concrete types (which can still have const associated functions) instead of a trait.
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that:
-> +///   - [`RawDeviceId::ZERO`] is actually a zeroed-out version of the raw device id.
-> +///   - [`RawDeviceId::to_rawid`] stores `offset` in the context/data field of the raw device id so
-> +///     that buses can recover the pointer to the data.
+> For the buffers, what was the percpu overhead roughly? For
+> thousands of labels, I think, the extra memory overhead roughly would
+> be in the range of few MBs (need to be profiled though). This extra
+> label overhead would be considered high for the machines where percpu
+> buffer overhead was considered high?
+> 
 
-In his I2C branch Fabien has a patch [1] [2] to remove the 
-RawDeviceId::to_rawid part above. Maybe it could be aligned that that 
-patch isn't required any more?
+It of course varies. It was fixed at 2-8K per cpu core depending on the buffer
+size. So on a 192 cpu machine you we are talking a couple MBs. Obviously more
+on bigger machines. The problem here is say the percpu refcount while smaller
+per label, will be more in situations with lots of cpus. Which is fine if that
+is what it needs to be, but for other use cases tuning it to be smaller would
+be nice.
 
-Best regards
 
-Dirk
+> Please correct me here, so you are proposing that we use a kconfig to
+> use either 'struct percpu_ref' or a 'struct kref' (using a union maybe)
+> inside the 'struct aa_label' and update the refcount operations accordingly?
+> If yes, I will work on a patch with this kconfig based selection of
+> refcounting mode to see how it pans out.
+> 
+possibly, I am still mulling over how we want to approach this
 
-[1] 
-https://github.com/Fabo/linux/commit/4b65b8d7ffe07057672b8eb89d376759d67bf060
+> @Mateusz can you share the dynamic switching counter mode patch series please?
+> 
+yes I am interested in looking at this as well.
 
-[2]
+> In addition, for long term, there is an ongoing work (by Paul, Boqun and myself)
+> on implementing hazard pointers as a scalable refcounting scheme [1] in kernel,
+> which would not have memory usage overhead as in percpu refcount. At this point the
+> API design/implementation is in early prototype stage.
+> 
+> 
+> [1] https://docs.google.com/document/d/113WFjGlAW4m72xNbZWHUSE-yU2HIJnWpiXp91ShtgeE/edit?usp=sharing
 
- From 4b65b8d7ffe07057672b8eb89d376759d67bf060 Mon Sep 17 00:00:00 2001
-From: Fabien Parent <fabien.parent@linaro.org>
-Date: Sun, 28 Apr 2024 11:12:46 -0700
-Subject: [PATCH] fixup! rust: add driver abstraction
+okay, I will take a look
 
-RawDeviceId::to_rawid is not part of the RawDeviceId trait. Nonetheless
-this function must be defined by the type that will implement
-RawDeviceId, but to keep `rustdoc` from throwing a warning, let's just
-remove it from the docs.
+> 
+>> Not part of your patch but something to be considered is that the label tree
+>> needs a rework, its locking needs to move to read side a read side lock less
+>> scheme, and the plan was to make it also use a linked list such that new
+>> labels are always queued at the end, allowing dynamically created labels to
+>> be lazily added to the tree.
+>>
+> 
+> Read side would be rcu read lock protected in this scheme?
+> The linked list would store the dynamically created compound labels?
+> What is the advantage of using this lazy addition to the tree? We optimize
+> on the label search, addition/deletion for dynamic labels? The lazy addition
+> to the tree is done when a label find operation on the list succeeds?
+> 
+there are contexts where we are creating labels, and do not want to wait on
+some of the longer tree walk profile updates/replacements. If a replacement is
+on going the idea is to just add the label to the end of a list and let the
+process that is doing the tree update take the hit of inserting and rebalancing
+the tree.
 
-	warning: unresolved link to `RawDeviceId::to_rawid`
-	   --> rust/kernel/driver.rs:120:11
-	    |
-	120 | ///   - [`RawDeviceId::to_rawid`] stores `offset` in the 
-context/data field of the raw device id so
-	    |           ^^^^^^^^^^^^^^^^^^^^^ the trait `RawDeviceId` has no 
-associated item named `to_rawid`
-	    |
-	    = note: `#[warn(rustdoc::broken_intra_doc_links)]` on by default
 
-	warning: 1 warning emitted
----
-  rust/kernel/driver.rs | 2 --
-  1 file changed, 2 deletions(-)
+>> I see the use of the kworker as problematic as well, especially if we are
+>> talking using kconfig to switch reference counting modes. I am futzing with
+>> some ideas, on how to deal with this.
+>>
+> 
+> We can disable queuing of label reclaim work for non-percpu case?
+> 
+maybe, I am pondering ways we can deal with this. I have been pondering the
+if we might be able to leverage a seqlock here, but I will also take a look
+at hazard pointers.
 
-diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-index c1258ce0d041af..d141e23224d3db 100644
---- a/rust/kernel/driver.rs
-+++ b/rust/kernel/driver.rs
-@@ -128,8 +128,6 @@ impl<T: DriverOps> Drop for Registration<T> {
-  ///
-  /// Implementers must ensure that:
-  ///   - [`RawDeviceId::ZERO`] is actually a zeroed-out version of the 
-raw device id.
--///   - [`RawDeviceId::to_rawid`] stores `offset` in the context/data 
-field of the raw device id so
--///     that buses can recover the pointer to the data.
-  pub unsafe trait RawDeviceId {
-      /// The raw type that holds the device id.
-      ///
-
+>> Like I said I am still digesting.
+>>
+> 
+> Thank you!
+> 
+> 
+> Thanks
+> Neeraj
+> 
 
 
