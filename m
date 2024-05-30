@@ -1,247 +1,374 @@
-Return-Path: <linux-kernel+bounces-194968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694458D4526
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:58:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB248D4530
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93805285BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:58:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921501F23550
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C71143C62;
-	Thu, 30 May 2024 05:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E0B143737;
+	Thu, 30 May 2024 05:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZW4NPNSf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="e9kQC59G"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2049.outbound.protection.outlook.com [40.107.104.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9D9143743;
-	Thu, 30 May 2024 05:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE1B142E8C;
+	Thu, 30 May 2024 05:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717048646; cv=fail; b=dlnMfa9Qszte5NDQlSlJaDEs+MOOa0eRzmYFvXPFdmaA8WWDiUHEs2m+n+vfKNYOJ97BY5+4M7FrSuLhzNi6WYzkzqvzCoFEhmJ9MOiXeqRFvQgrRVQfphRMr7DHrP7uGlmcHTe6SrA3JWqEOD0oLImTJXzPr5IIEy6RgMvzPPY=
+	t=1717048740; cv=fail; b=H8FybejQM4QUabRl+svbZZI1OvS3LMJ11HF54sQpsW6VaRrceZ6iOCQyw2olLQOnL9QQeNPmk7sWk2HH5YtZioX08zPOiOCDPYLOpHdOeAuwUg6+4MipoQKrIbqECd5pYH2WjnFdaC0SNjZWCPfbl9aSKzrLT9svEB4p8oXf4ag=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717048646; c=relaxed/simple;
-	bh=/8knkel7pMjm6F15/k1mXHFhcQAujwISgCEaJX5vIrI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EfrL8YIA578pBg68KHhnmIfrYqcakly3R3s9GpIEq2NkbSb4dNfWyC6LZbybsrAvxE/rv1K5fmxQwEVPT0JbF/h+bed314iCW4xExfV+aMgoG6a4AqxEpOfe4WESizm/G/1vWOr2vqWiu0Bo4x4hC2BDsTM39MxqZU/XvKqbvD8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZW4NPNSf; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717048645; x=1748584645;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=/8knkel7pMjm6F15/k1mXHFhcQAujwISgCEaJX5vIrI=;
-  b=ZW4NPNSfmkzJM8gYQ9GxkxjaxISgYHsu3HHPuz5whZTMUTCNfZ+DM/gt
-   LSjo4AmFeYkfEJJOh1hwULeW2jv5hO3cUxyZHSgHGpEQESPTY2MSYx+33
-   hgPtq8ken/HbfC2E/V4+Zj/TWmWh3t9AqX4+3+giBdC6bdQlU6FNx4tdK
-   6lV4B8TT+nWtjnhPC6ZigszhWlA2Tq4unhO1a3OEBEKr+SdQuMx4TZfkm
-   n3ADWMmO4lf6A21tDMu1PSpRQL5iHfrCd5T72ieq/eE850tahzHXqjnda
-   uMMTaMy4myoHMviUXTzc0zVFu+NEktiGdH/URKLbdGuPyS84SUHq2MNK9
-   A==;
-X-CSE-ConnectionGUID: oPwvkfdBSUi+UG05T//VDg==
-X-CSE-MsgGUID: q6G2u8BsSzCAu5wWE/ZfNw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13633031"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13633031"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 22:57:24 -0700
-X-CSE-ConnectionGUID: 9M1fKmSmTbun/zBRG8jdpg==
-X-CSE-MsgGUID: Rtb4YV7QTKavZhRBaK782A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="40566825"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 May 2024 22:57:24 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 29 May 2024 22:57:23 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 29 May 2024 22:57:23 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.40) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 29 May 2024 22:57:23 -0700
+	s=arc-20240116; t=1717048740; c=relaxed/simple;
+	bh=3IjoqU1iZjUHDmFN0iuoaRpJ97lmCCdJuDVihgTVCpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RiL2bL3nRw4gPm8Diguk1ztOR4t4u8JxYGyor8L4aSn8kuELNh4AcwFxOd5UBSisqCNkz6L3DMLQU/nF78yVP2LmOUvsEKR6LXP1LAaBsuuOqakedHd+xkjK//ZmC49031nrwdt8rrrYtrfd0ui3mwQH/lsALy7C6CDRzg8ziPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=e9kQC59G; arc=fail smtp.client-ip=40.107.104.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S5Z265/0RGQDdgaFraVB3tHz+UBaaKbntI2Qive9zIxNbvD4Psfx5pp+jzuUdlFVcC1Msz5NgdGf15zpRwaqReF3atQN0Kbxm2kDOh7Pou4S8YTVqqmspIuAruVmPwlKN0zBXfh19d3EvMxXbYCtHxEyJgAstlZsck8GpoWN31TWM5dEUpWjTsAGqFvZOGmdUfjWorhElEFPDQ7BpxvmQjKEzl5PM7X18zRyeouV9s7fxC+UtiLwQq4VtHd2aWdCJCU1sToequFTED4WiZz9rn5KXfa/vWf6G00JY9baXqqL0HISHHLKmvJ7ZhSjRDbhaRnuGoFguh2i8qArXnwhww==
+ b=X59SxuOyqWRJj/jpOhlOjX4yiseBWzLjmXJzZ3QpItKdyf5XpIf95yh8x6TW0T6mFLC6Zd4rEZjoZ+Wyn2e51HwRtU7le9SQiG0aVQVpxXzcA7cG/T+7I/Z15EN4IyKkXRiaamPocQ0OocRJxDPlZOCy/OdSo8ek5a4nBIl7GDn0sS+3CGhLt7mD2c5+nfnOjGcksKuwpDxKBO4iK3Ey/Zj42Ckrrbr51uDJ012SRS/ZrC+ke+mqc+3Awf87pd7gkgC0zA1CxuxsIVSfchCNAtFBwkVphWjvi09h7AR+/wvMJxHLU6Qg8DzjCZFv/Pv9BAR54kXzjEXEOZJxCGIavg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LxJTHB/1hTL4Aw5P2fL8q5y33PH+9SaA8zdTmWIrzR0=;
- b=fEgxKsDcnNJkavBbU4Zb9skg7B2+ASTNXgs3/M271d6HB0jjVtz6OT1KTkYtj7XE1utENgqI8N707/zQpPGPZaYnafluNvY/EnNaAufB05UCV+yfLJI2Wg3ps1/WYllXIcOqGpJjCXlFxNqX1xmrKjpDAyMt5llcDupC0J/woUn948G3u/dxNb80IFP5Ss2nuREnwmVde8J+w7Ep2Ru+lmDXmGSPyUqPIIMC40sUhegL/r8EGZ8zUfq4jgQbJw/n/mIejtrGS3sTqzT7I/2RbyWRfy7qx2J9hxy7vhigqRvdzrb/HI4KEGMyR8gwLNYO1A+WZYe0bZ0ZL6R12soG1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CH3PR11MB8313.namprd11.prod.outlook.com (2603:10b6:610:17c::15)
- by CH3PR11MB7204.namprd11.prod.outlook.com (2603:10b6:610:146::21) with
+ bh=Six0rx9M6uBQ4xVN+dsG5EpITI6rCgK6jw6kvfgajTM=;
+ b=HbUVX+DX0sCnvvedar+KBr7Jc+FBBxRuJ+dpiqkLXpmEmQVg/eM23lKcRffxJrYCr/iy/PnjxBOtdj7dfaxE0yvLeFk2skVJo0VIdGhJbj6PotEFCfOL90RBujsNn0jyeguT4aG4QwTZEjgk5hbV/gz15qIM4cmvqMcUPlqeBXOxnUCRUv7homy7lRXsWvuM4XkPYn6e2SrXs63zjgXE+khnRn/j3qQtSMnrjJECjyxGo/OjWZDj8NvypcXMlWLpKjWgfJBEBG70DgYnCP2CvVZXNxL2kkzJrdSysbvuOduYw060VPWEbWUuZ87nTp0e8By9j708Az2f79xRut+wUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=redhat.com smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Six0rx9M6uBQ4xVN+dsG5EpITI6rCgK6jw6kvfgajTM=;
+ b=e9kQC59GCwY02ltsYqMkNCMgXxE/UvVIBckexRjIBv0ENH5X5s7Gz0ZgbvvIF32SBe2FsLrDXXHyh1AwRKnWOJEEJS1PrzDepCyhM9DQfyY0N4w78FHY3XxeFwRE7XHND0WHHf1Qwsx/AE0CvZtRaV4dC/fNpGQy3SVjtBVJx1MqRTYjO78j4qla91PYJLm++5IyytzDHzVFiPNJLx8IEbovLBWObReTwYi73PaCbo8OnsF3WnT48Ayv+dC0LoYZJoJ4g2eS/DyM5dqZG8HeoCkASAwpCnpbrNQThQL/+PP//jjXtzpVvXg3clgpG8xvY4HLCuUiozlze1Mw0gjbZQ==
+Received: from DB8P191CA0006.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:130::16)
+ by PAVPR10MB6961.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:30d::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Thu, 30 May
- 2024 05:57:17 +0000
-Received: from CH3PR11MB8313.namprd11.prod.outlook.com
- ([fe80::3251:fc84:d223:79a3]) by CH3PR11MB8313.namprd11.prod.outlook.com
- ([fe80::3251:fc84:d223:79a3%5]) with mapi id 15.20.7633.018; Thu, 30 May 2024
- 05:57:17 +0000
-From: "Rout, ChandanX" <chandanx.rout@intel.com>
-To: "Zaremba, Larysa" <larysa.zaremba@intel.com>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"Keller, Jacob E" <jacob.e.keller@intel.com>
-CC: "Fijalkowski, Maciej" <maciej.fijalkowski@intel.com>, "Jesper Dangaard
- Brouer" <hawk@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Kitszel,
- Przemyslaw" <przemyslaw.kitszel@intel.com>, John Fastabend
-	<john.fastabend@gmail.com>, Alexei Starovoitov <ast@kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jakub Kicinski
-	<kuba@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Magnus Karlsson <magnus.karlsson@gmail.com>, "Bagnucki,
- Igor" <igor.bagnucki@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Kuruvinakunnel, George"
-	<george.kuruvinakunnel@intel.com>, "Pandey, Atul" <atul.pandey@intel.com>,
-	"Nagraj, Shravan" <shravan.nagraj@intel.com>
-Subject: RE: [Intel-wired-lan] [PATCH iwl-net 3/3] ice: map XDP queues to
- vectors in ice_vsi_map_rings_to_vectors()
-Thread-Topic: [Intel-wired-lan] [PATCH iwl-net 3/3] ice: map XDP queues to
- vectors in ice_vsi_map_rings_to_vectors()
-Thread-Index: AQHapuJhTByGvJMbykuLo11n4VFJRLGvXlKA
-Date: Thu, 30 May 2024 05:57:16 +0000
-Message-ID: <CH3PR11MB83136BED89135F5F702B2756EAF32@CH3PR11MB8313.namprd11.prod.outlook.com>
-References: <20240515160246.5181-1-larysa.zaremba@intel.com>
- <20240515160246.5181-4-larysa.zaremba@intel.com>
-In-Reply-To: <20240515160246.5181-4-larysa.zaremba@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR11MB8313:EE_|CH3PR11MB7204:EE_
-x-ms-office365-filtering-correlation-id: c1ea5151-0171-4887-dc12-08dc806d5c6e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?s8eGgW0KZmQweJaVXQ1jXGLVoAgZkozuMqoVj+i5gn3b9eDnuUm4hF885KMO?=
- =?us-ascii?Q?wW5lAf164y2Wse3SUbJmBFgEmDNH8w4E/lnPysR6nLZXGSwPjxHk+aThneik?=
- =?us-ascii?Q?RSi8Jde3DCNeFt9sNgQlHgIIArSQaRVVFlcyex2cTnf7o5gPP2L51m8t4L86?=
- =?us-ascii?Q?zpm54JbXOHHpGTmklj8yfw7cNdtPCtMlYlfRm5y6VCxth9xFwZSxJWKcwtvC?=
- =?us-ascii?Q?mkXAm+oemFfeh/gEY/CSp263RzqaXRHhqS6dWMcFvQCJaeVo8+zz5O9ZSMHm?=
- =?us-ascii?Q?+mdBotJcZw6qy5oG/Do/XeNTIv5dY8T4Jf56CRUAupCG2w8WEN+rVmK7/cTr?=
- =?us-ascii?Q?LyGgVTG2dYyBAibDXkeGyPahJbeyexO/dOSROELZw9PQ6UDPRky46axraQnG?=
- =?us-ascii?Q?OoN/j+IfammqgAj1EzeSsajLqstr57e9re/NSEVRqw5AILGMdMmTV0dxWQ5e?=
- =?us-ascii?Q?kw+Ll+MtL/2G+Wrz3RjTsAQuJTqJjH/RTMOn+uTO9UYfqp1+Pty3uB9Bkr6f?=
- =?us-ascii?Q?aTVB5VczE3mkc+iDMF21nLneVBkrgGlGUuse0RAYCmNzlwa53b/N/U08LUtQ?=
- =?us-ascii?Q?H5nlmz1VIBlJafSExgwSmJFR1gexQ640QmVWn21BTSIhn6QGJvOuBIaGrikt?=
- =?us-ascii?Q?eEZGtA8x71aJ31ShjRUvK3ASuUcTFWCcXpiNKhiaDAVIQ37B6bl3y2qfIt1Z?=
- =?us-ascii?Q?cux/oALAJshvU++rxntzYVv67nYNk3kRWRyxzYnC+kvlHcFiFsZEMyHbOW+e?=
- =?us-ascii?Q?BJcpIyLV///f25rViAa0sByh5NO7OEPUVRiKav3f6KM/tzF34J8NP1F+0qPy?=
- =?us-ascii?Q?uXTa90WVHcKW0zyQyp3VHQ+uunR7WCn7kd2QbYhzkKpFWj2XFQMkOmNeOJdY?=
- =?us-ascii?Q?9DdFpy62S/Ic+7VXo81dpoTPPC677DOGqcJuzjvCe77qlfNYbXQejKN0xV6Y?=
- =?us-ascii?Q?lkQ7RW1MhywRKhQ1JVpcSE0edexdNi8k1vVPTSdlYR+VrDngvhZGN8oHNMzK?=
- =?us-ascii?Q?hRUukxuwZHkP6HMIGcREVxbDPaQAWRpJ9iwbT8WvxBgEmkkZQY0oqJuxod/J?=
- =?us-ascii?Q?UP7M6ZerdEBWYzTyx5b1pExiv+7La5mYX0XvjNZ/o6jsP28eMcPFbO3c9g4W?=
- =?us-ascii?Q?1FnEInLfALjxjR0Cp9J1lHGQWk8auFsMiGwekxlNuWB4BBl61ffz3QM0MK+2?=
- =?us-ascii?Q?PPd5ZvKA/JhNzc7Of2SMk2FivCY/N4vijMSHdvKTX58f4tcWjTWMUa7rdnlV?=
- =?us-ascii?Q?62DiTWipJ8q081YFncGqT9koewyfXdNjKpPs3N1zS/OQNpCVTy7XJxau4gZT?=
- =?us-ascii?Q?mXYZRLlldrasPUz7kI2BJ+ve?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8313.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?kuwIQ3APXBGxn6L606Bvv7b+jI2X+rEp7bDJAswNLYxIh7DWqNfQkv1IC+zk?=
- =?us-ascii?Q?5cShLFYbaK73+UtFrsB2twjgDeY67JH2LrMA1Q0UaxiZofQoRlEYDytpu78B?=
- =?us-ascii?Q?Kjj8s9SiszZeT/bnfuTDw2F3kq0DVE514tFc12lTNKwGQCDLOzKXjWlsSdQM?=
- =?us-ascii?Q?uABFkcj3uvNKDaxB1/PDxSXFJFj9U6z/AJva7VLfDOyIBEeWI331rr43Pd8p?=
- =?us-ascii?Q?ZME3khZ0W3tufU1jE6mg6yWl+2YbDkUSC1mMWczFHxCjiloGb/ssM431zXUE?=
- =?us-ascii?Q?zPKq3LF3fP+m4gFgnwTKmyxy63QbNouZVxd6NU9YSKpH6lxi6SFe4Hh7vKE9?=
- =?us-ascii?Q?Rpsv3cGEVBWb+YgnDvrgSLh3O2FALd3Qr3+d2VvOpfZurSxq4B1Me5kvhj8M?=
- =?us-ascii?Q?vYuQb4RK6i+xSOfuD+4CgOrftYpoTa6lxWICXe5CYx+QIYykblI976ujpyon?=
- =?us-ascii?Q?t1QiPLX+bjNWPBqbuiBxBwh4B7hJQdzJOEax0pjzKTkKiijZCxbG69MydG98?=
- =?us-ascii?Q?ftIj00Y/ildbHDPgpfJTHu/MDgHXT9Nm5bYbMlnOER2atfWold32rgx6CXva?=
- =?us-ascii?Q?v8VbomSP0QA7S7jbrtW3xyAQQqkMwu9PFKBJa0xt+qHTH/MmnBwxArauqva+?=
- =?us-ascii?Q?zgHqmZ6STLd4ZOZUvmcc7RKsvW2YHogcmD5IfQGK9mHrrLHUMPp6uvLemBtx?=
- =?us-ascii?Q?CK5mhCm66lB7lJmV0oHO3YYXuj4sgSkl4uRnwvNYR+yj1dN1j2lIxyzOz1fG?=
- =?us-ascii?Q?9nF6h/oiAacViCLLcgYeg6rhZYdpFqHiKy9DvvH3874yKIaBMgL6cdIR/JsL?=
- =?us-ascii?Q?puT/ui3IItkLGVO8e9/rRpy7iGbnP0ghFrmaXcLu/+bk7C9gkrj12QfKLdiF?=
- =?us-ascii?Q?D4FoCuxPDmLKQuK/ka0RTvCKPlcRq+OK6qI+wA+E1Thfm7VQu4O4duWtnqDQ?=
- =?us-ascii?Q?OgAejbMkL83VnT7o+Wz7qzhf+nZRfEguA1GVsDjFmet013W+6jxyeIYSjIVY?=
- =?us-ascii?Q?5sOJwbBHYTg1We6AP9ym3GbkL9Wr3QSIy0mmwel9xTD3TrxPjYUOK3Ct6blS?=
- =?us-ascii?Q?76ePmoWbx8vo/YzUhVPTnArGt9CnKCOPGrNrW9/vddVysMFSi/gK3QS8Flao?=
- =?us-ascii?Q?+XWDWPD4eKcTRaq3/J7kKsI+m7qPWt0HMjuZDNE06d/T7HTPd6QbFHIZzI3a?=
- =?us-ascii?Q?tvNBb74/hEE9IqGDwlK3qI/SXWXG+E5MbYFtddH1uhOWcBe+ckh24F+uRqRM?=
- =?us-ascii?Q?IUoQ5eTRMrBtty+HahKNmzxxhtA4HN0BA60Hc0ENQv6NA6MdiFixF8NtJftZ?=
- =?us-ascii?Q?XT0WTU4U/t3GokEckmDP9W7qdDtcof/QS85toY7afJxK/1iQTncW9l5ISGLh?=
- =?us-ascii?Q?DdcOS/2RkErPsiiyMKfwndCln6eauKy8CmQ07vTETVlEEgUjUCFkGXwrQiwU?=
- =?us-ascii?Q?dtZlyXtCYvKyTvj5lQ+64fHGq5ptSjiIfQ1peVEIIeVewkYiYacOeMZs7izj?=
- =?us-ascii?Q?Kz/exCeKV8dy9B8893FNuYJq4coJ1EKpVdHl+F9vGICY7MgOxJuQw3FoRhCR?=
- =?us-ascii?Q?XRC0k2bU6MNVZTcVWd+ef/hKkzJhAMHFIBQ+jO9H?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
+ 2024 05:58:53 +0000
+Received: from DB5PEPF00014B88.eurprd02.prod.outlook.com
+ (2603:10a6:10:130:cafe::33) by DB8P191CA0006.outlook.office365.com
+ (2603:10a6:10:130::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.18 via Frontend
+ Transport; Thu, 30 May 2024 05:58:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ DB5PEPF00014B88.mail.protection.outlook.com (10.167.8.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Thu, 30 May 2024 05:58:53 +0000
+Received: from FE-EXCAS2000.de.bosch.com (10.139.217.199) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 May
+ 2024 07:58:48 +0200
+Received: from [10.34.222.178] (10.139.217.196) by FE-EXCAS2000.de.bosch.com
+ (10.139.217.199) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 30 May
+ 2024 07:58:47 +0200
+Message-ID: <393a0a3f-9142-47c1-8422-40abd688363b@de.bosch.com>
+Date: Thu, 30 May 2024 07:58:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8313.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1ea5151-0171-4887-dc12-08dc806d5c6e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2024 05:57:16.9971
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
+To: Danilo Krummrich <dakr@redhat.com>, <gregkh@linuxfoundation.org>,
+	<rafael@kernel.org>, <bhelgaas@google.com>, <ojeda@kernel.org>,
+	<alex.gaynor@gmail.com>, <wedsonaf@gmail.com>, <boqun.feng@gmail.com>,
+	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
+	<a.hindborg@samsung.com>, <aliceryhl@google.com>, <airlied@gmail.com>,
+	<fujita.tomonori@gmail.com>, <lina@asahilina.net>, <pstanner@redhat.com>,
+	<ajanulgu@redhat.com>, <lyude@redhat.com>, Fabien Parent
+	<fabien.parent@linaro.org>
+CC: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <20240520172554.182094-3-dakr@redhat.com>
+Content-Language: en-US
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <20240520172554.182094-3-dakr@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B88:EE_|PAVPR10MB6961:EE_
+X-MS-Office365-Filtering-Correlation-Id: bbced7f9-2dba-4be4-330c-08dc806d95e5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|376005|82310400017|7416005|1800799015|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MkpzRkVnV0tEcU9GOVNub3oxY1IzR0IxR29mK1pZOHNXQ2ZEYmVJK1pXR0l2?=
+ =?utf-8?B?SmVSZ3VRSEJ3UFRmYUtWQWQzVGJMbDdUMDVaS24zT3BJL1ozSnlYMjZJc1kx?=
+ =?utf-8?B?YW4wZElON1ptbWtjMWZuZ1ltUjRBNVNXY0JCTzlEVkJmWDBjSzRlWW8xUVdo?=
+ =?utf-8?B?UFdUOXB5UmRuLzdvRytkNEpJTnM5ZWpHbGVhZStrOWhJd1Y3eW5WRXlucHVY?=
+ =?utf-8?B?RTUwVGZzakxIelkvNnpGYUE1dGtSQ05pYXVSR1VOY3BoNGFWb3ZuaTBiRDJQ?=
+ =?utf-8?B?dWxpdENCWW4vNlRERDNaVTdwUDJRNVJmb0Jmdm5rbEdYazJGSDRndmM3djQ2?=
+ =?utf-8?B?bmR0SHJQNCt5M1VNc2JwbTB6SHlaS2t3d29Fd1BjKzNTb1VuZGRwQ0lyT2hL?=
+ =?utf-8?B?RVZsWWxiak1Jc3Q2SXhacGJueVg5S1RnaFlXaEJ5ZWh4SkcxY05JSTBmV2xX?=
+ =?utf-8?B?K2dwQXA2blZJZ1cyanhobXQvMFU1ZVdXTWN6VWZBaWd0TUR0eXY1S0ZwWWZO?=
+ =?utf-8?B?bnRZbXFsWEhoQ0dvZk5RSGhoZ3dHM0dBbEdyYXladlpNWTRFdi9SRUVYNE1E?=
+ =?utf-8?B?K01QaXA4WDYydUlOZVpDdzUrVEZ4VkpoMEFINzBnZm1nSTROanNWUkcwTXow?=
+ =?utf-8?B?Ujc2K2k0N21vc2Ywb2phSm56eEVBS25rSTA3L2lsek5QRUFNaE1GdC9IY1Ny?=
+ =?utf-8?B?cGlvQ3doQjk1TCtxNnBSZndFUE8xMmQ0T0FmT0ZiRllNdjZEUHFISUZ4NjZt?=
+ =?utf-8?B?em1iRzlBUTdGbEJ6cERxQVNRY3hCVDkxN0JOR0pXVzI0bWV1R0RTNE8vTjM2?=
+ =?utf-8?B?SzhRdmxmUDVXY0RibXc4ZW8ySzVaazBmemR5SVBvVE8rcU15TXVRckZ2aE43?=
+ =?utf-8?B?QlFTUytnWGJUQWVtYlFpRmwvbjNHcnROVi9vZ2NIdS9NUXByaFdQNkRTYklv?=
+ =?utf-8?B?U3FrVVJpOGtMdGJHL1BuVW9JeE15eXQrbEdFMngvN1M3OVJVT2c5RDdTYlcy?=
+ =?utf-8?B?NTVsUjJSN2M1a0ZzcjFkK25hNzgvbmI5bHNrTEVITllMVE9Wa3NHOHg3SlNU?=
+ =?utf-8?B?ZmJGU00yWlRmbkRTYVNjbDdabmJsUlRCaDJBMDhmaU9DZHZURHJvdmZWTGdj?=
+ =?utf-8?B?bU4ycU5LYVZiV2lhc1o3bTNjTllEZTJyZXNnU3ExOWplblBpR0k5eEhMalZS?=
+ =?utf-8?B?RzVqN3FTNXpHZmlLQnd2ZmIxVjJ5Rmp4NlB2VGdET2ovV3dBRnZVeHRZZEhH?=
+ =?utf-8?B?MGF0RDdPZGdMV1l1aWc2ZkRWWG1OZGQ0VzJyWFlQQkhaUXRMbmE0bi94djVM?=
+ =?utf-8?B?WFVHMGpCaDZ4V0dHNVpXM0NXTzhmc0RRWUUrMVBWaEF3K01WenBXQmkycnd4?=
+ =?utf-8?B?bmVoYmZHRXQvMEFnWnAxZ2xRQURKL2EyZlVya3BiUWVZdUQyNXVIdTZSaFlO?=
+ =?utf-8?B?a1lEZGRBbVpJMG9rRWFzSEV6bVpWQmVLekNVUFJWck5sc3Z5RWNEeVZaQjJX?=
+ =?utf-8?B?TUZvS3JWbU5iakFIMEtqVHZRcExsMnNaOGhpZmRDcUI4Z2Z2Nys2QkZrb1VR?=
+ =?utf-8?B?SkgzYnhpWGpQYU0yVzZVdGhOY1F4L3hkR09hK0ZnMWhRODBTaWt1SEtyRGJj?=
+ =?utf-8?B?UEkrMk9rbTNWZEdEOXZwdjZHZHEvRjA0YkFHaXU4K2xDU1RmcFRYN0xZMk1u?=
+ =?utf-8?B?Zkx5bHQyekg0WFUraVR0NUVSWjVxR2Z5U1hnNjRPY0FzQ3J5VkxFZ29EeThB?=
+ =?utf-8?B?RFR0eGNEcXpNbWxNTGovaUUwN2JQRVIrTWYzT1RDa0ZVNDd5TU1SSi9OSi84?=
+ =?utf-8?B?VEVBN2RmQ09vYUFqWG9Hdz09?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(82310400017)(7416005)(1800799015)(921011);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 05:58:53.3446
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: THcErkv4XhZxMF4JmYY0h2PV/0QdY9cgRonD0X0LqMqLc4dOF0JClkZbfBzOBDbjxi5ZRJFnBsLjiu8kzuuF+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7204
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbced7f9-2dba-4be4-330c-08dc806d95e5
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B88.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB6961
 
+On 20.05.2024 19:25, Danilo Krummrich wrote:
+> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+> 
+> This defines general functionality related to registering drivers with
+> their respective subsystems, and registering modules that implement
+> drivers.
+> 
+> Co-developed-by: Asahi Lina <lina@asahilina.net>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> ---
+>   rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
+>   rust/kernel/lib.rs           |   4 +-
+>   rust/macros/module.rs        |   2 +-
+>   samples/rust/rust_minimal.rs |   2 +-
+>   samples/rust/rust_print.rs   |   2 +-
+>   5 files changed, 498 insertions(+), 4 deletions(-)
+>   create mode 100644 rust/kernel/driver.rs
+> 
+> diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+> new file mode 100644
+> index 000000000000..e0cfc36d47ff
+> --- /dev/null
+> +++ b/rust/kernel/driver.rs
+> @@ -0,0 +1,492 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
+> +//!
+> +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
+> +//! using the [`Registration`] class.
+> +
+> +use crate::{
+> +    alloc::{box_ext::BoxExt, flags::*},
+> +    error::code::*,
+> +    error::Result,
+> +    str::CStr,
+> +    sync::Arc,
+> +    ThisModule,
+> +};
+> +use alloc::boxed::Box;
+> +use core::{cell::UnsafeCell, marker::PhantomData, ops::Deref, pin::Pin};
+> +
+> +/// A subsystem (e.g., PCI, Platform, Amba, etc.) that allows drivers to be written for it.
+> +pub trait DriverOps {
+> +    /// The type that holds information about the registration. This is typically a struct defined
+> +    /// by the C portion of the kernel.
+> +    type RegType: Default;
+> +
+> +    /// Registers a driver.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `reg` must point to valid, initialised, and writable memory. It may be modified by this
+> +    /// function to hold registration state.
+> +    ///
+> +    /// On success, `reg` must remain pinned and valid until the matching call to
+> +    /// [`DriverOps::unregister`].
+> +    unsafe fn register(
+> +        reg: *mut Self::RegType,
+> +        name: &'static CStr,
+> +        module: &'static ThisModule,
+> +    ) -> Result;
+> +
+> +    /// Unregisters a driver previously registered with [`DriverOps::register`].
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `reg` must point to valid writable memory, initialised by a previous successful call to
+> +    /// [`DriverOps::register`].
+> +    unsafe fn unregister(reg: *mut Self::RegType);
+> +}
+> +
+> +/// The registration of a driver.
+> +pub struct Registration<T: DriverOps> {
+> +    is_registered: bool,
+> +    concrete_reg: UnsafeCell<T::RegType>,
+> +}
+> +
+> +// SAFETY: `Registration` has no fields or methods accessible via `&Registration`, so it is safe to
+> +// share references to it with multiple threads as nothing can be done.
+> +unsafe impl<T: DriverOps> Sync for Registration<T> {}
+> +
+> +impl<T: DriverOps> Registration<T> {
+> +    /// Creates a new instance of the registration object.
+> +    pub fn new() -> Self {
+> +        Self {
+> +            is_registered: false,
+> +            concrete_reg: UnsafeCell::new(T::RegType::default()),
+> +        }
+> +    }
+> +
+> +    /// Allocates a pinned registration object and registers it.
+> +    ///
+> +    /// Returns a pinned heap-allocated representation of the registration.
+> +    pub fn new_pinned(name: &'static CStr, module: &'static ThisModule) -> Result<Pin<Box<Self>>> {
+> +        let mut reg = Pin::from(Box::new(Self::new(), GFP_KERNEL)?);
+> +        reg.as_mut().register(name, module)?;
+> +        Ok(reg)
+> +    }
+> +
+> +    /// Registers a driver with its subsystem.
+> +    ///
+> +    /// It must be pinned because the memory block that represents the registration is potentially
+> +    /// self-referential.
+> +    pub fn register(
+> +        self: Pin<&mut Self>,
+> +        name: &'static CStr,
+> +        module: &'static ThisModule,
+> +    ) -> Result {
+> +        // SAFETY: We never move out of `this`.
+> +        let this = unsafe { self.get_unchecked_mut() };
+> +        if this.is_registered {
+> +            // Already registered.
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        // SAFETY: `concrete_reg` was initialised via its default constructor. It is only freed
+> +        // after `Self::drop` is called, which first calls `T::unregister`.
+> +        unsafe { T::register(this.concrete_reg.get(), name, module) }?;
+> +
+> +        this.is_registered = true;
+> +        Ok(())
+> +    }
+> +}
+> +
+> +impl<T: DriverOps> Default for Registration<T> {
+> +    fn default() -> Self {
+> +        Self::new()
+> +    }
+> +}
+> +
+> +impl<T: DriverOps> Drop for Registration<T> {
+> +    fn drop(&mut self) {
+> +        if self.is_registered {
+> +            // SAFETY: This path only runs if a previous call to `T::register` completed
+> +            // successfully.
+> +            unsafe { T::unregister(self.concrete_reg.get()) };
+> +        }
+> +    }
+> +}
+> +
+> +/// Conversion from a device id to a raw device id.
+> +///
+> +/// This is meant to be implemented by buses/subsystems so that they can use [`IdTable`] to
+> +/// guarantee (at compile-time) zero-termination of device id tables provided by drivers.
+> +///
+> +/// Originally, RawDeviceId was implemented as a const trait. However, this unstable feature is
+> +/// broken/gone in 1.73. To work around this, turn IdArray::new() into a macro such that it can use
+> +/// concrete types (which can still have const associated functions) instead of a trait.
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers must ensure that:
+> +///   - [`RawDeviceId::ZERO`] is actually a zeroed-out version of the raw device id.
+> +///   - [`RawDeviceId::to_rawid`] stores `offset` in the context/data field of the raw device id so
+> +///     that buses can recover the pointer to the data.
 
+In his I2C branch Fabien has a patch [1] [2] to remove the 
+RawDeviceId::to_rawid part above. Maybe it could be aligned that that 
+patch isn't required any more?
 
->-----Original Message-----
->From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
->Zaremba, Larysa
->Sent: Wednesday, May 15, 2024 9:32 PM
->To: intel-wired-lan@lists.osuosl.org; Keller, Jacob E <jacob.e.keller@inte=
-l.com>
->Cc: Fijalkowski, Maciej <maciej.fijalkowski@intel.com>; Jesper Dangaard Br=
-ouer
-><hawk@kernel.org>; Daniel Borkmann <daniel@iogearbox.net>; Zaremba,
->Larysa <larysa.zaremba@intel.com>; Kitszel, Przemyslaw
-><przemyslaw.kitszel@intel.com>; John Fastabend
-><john.fastabend@gmail.com>; Alexei Starovoitov <ast@kernel.org>; David S.
->Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
->netdev@vger.kernel.org; Jakub Kicinski <kuba@kernel.org>;
->bpf@vger.kernel.org; Paolo Abeni <pabeni@redhat.com>; Magnus Karlsson
-><magnus.karlsson@gmail.com>; Bagnucki, Igor <igor.bagnucki@intel.com>;
->linux-kernel@vger.kernel.org
->Subject: [Intel-wired-lan] [PATCH iwl-net 3/3] ice: map XDP queues to vect=
-ors
->in ice_vsi_map_rings_to_vectors()
->
->ice_pf_dcb_recfg() re-maps queues to vectors with
->ice_vsi_map_rings_to_vectors(), which does not restore the previous state =
-for
->XDP queues. This leads to no AF_XDP traffic after rebuild.
->
->Map XDP queues to vectors in ice_vsi_map_rings_to_vectors().
->Also, move the code around, so XDP queues are mapped independently only
->through .ndo_bpf().
->
->Fixes: 6624e780a577 ("ice: split ice_vsi_setup into smaller functions")
->Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
->Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
->---
-> drivers/net/ethernet/intel/ice/ice.h      |  1 +
-> drivers/net/ethernet/intel/ice/ice_base.c |  3 +
->drivers/net/ethernet/intel/ice/ice_lib.c  | 14 ++--
->drivers/net/ethernet/intel/ice/ice_main.c | 96 ++++++++++++++---------
-> 4 files changed, 68 insertions(+), 46 deletions(-)
->
+Best regards
 
-Tested-by: Chandan Kumar Rout <chandanx.rout@intel.com> (A Contingent Worke=
-r at Intel)
+Dirk
+
+[1] 
+https://github.com/Fabo/linux/commit/4b65b8d7ffe07057672b8eb89d376759d67bf060
+
+[2]
+
+ From 4b65b8d7ffe07057672b8eb89d376759d67bf060 Mon Sep 17 00:00:00 2001
+From: Fabien Parent <fabien.parent@linaro.org>
+Date: Sun, 28 Apr 2024 11:12:46 -0700
+Subject: [PATCH] fixup! rust: add driver abstraction
+
+RawDeviceId::to_rawid is not part of the RawDeviceId trait. Nonetheless
+this function must be defined by the type that will implement
+RawDeviceId, but to keep `rustdoc` from throwing a warning, let's just
+remove it from the docs.
+
+	warning: unresolved link to `RawDeviceId::to_rawid`
+	   --> rust/kernel/driver.rs:120:11
+	    |
+	120 | ///   - [`RawDeviceId::to_rawid`] stores `offset` in the 
+context/data field of the raw device id so
+	    |           ^^^^^^^^^^^^^^^^^^^^^ the trait `RawDeviceId` has no 
+associated item named `to_rawid`
+	    |
+	    = note: `#[warn(rustdoc::broken_intra_doc_links)]` on by default
+
+	warning: 1 warning emitted
+---
+  rust/kernel/driver.rs | 2 --
+  1 file changed, 2 deletions(-)
+
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index c1258ce0d041af..d141e23224d3db 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -128,8 +128,6 @@ impl<T: DriverOps> Drop for Registration<T> {
+  ///
+  /// Implementers must ensure that:
+  ///   - [`RawDeviceId::ZERO`] is actually a zeroed-out version of the 
+raw device id.
+-///   - [`RawDeviceId::to_rawid`] stores `offset` in the context/data 
+field of the raw device id so
+-///     that buses can recover the pointer to the data.
+  pub unsafe trait RawDeviceId {
+      /// The raw type that holds the device id.
+      ///
+
 
 
