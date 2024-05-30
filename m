@@ -1,436 +1,162 @@
-Return-Path: <linux-kernel+bounces-195737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7DC48D5117
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:36:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6938D511A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6F11C22C88
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9A41F22E5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3162246B91;
-	Thu, 30 May 2024 17:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E049E47796;
+	Thu, 30 May 2024 17:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="FhkG6ijz"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B78bPN2E"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E2F17F5
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B244218757F;
+	Thu, 30 May 2024 17:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717090589; cv=none; b=tvKoPOhamAHUPOpoBuGsX+PDepOfSnuzyZ5TnWga4uwRvYgb96pb2FjpHw9OAZ/srpXQfpQsvMnNO/9kjuPdMaUYyD6bg5CGN9VBLG/1B3mYF+Lanz6YF/o8yuNHVkXHoehR7LY1VYzn4xk7TK4IibCqJib55gP9eGSN1ZIrWww=
+	t=1717090608; cv=none; b=J0WkiycIlc2L6DdB4/XKOXWwx+ktqS6OMTU9NdT1Y0WtT348mQefiR0uhgHc6LaqI1hgyNDjodXIczpSpvae/WPZlYaty4taU1fV5b3IkjqOh9JXOJm+pzw3dwS3sH1UZawocnHyd30KZNsYYs3svYD2IHrb0RfmGPkJ/bXNpMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717090589; c=relaxed/simple;
-	bh=8t2MOCm+Rs8GjZcqMV/EBJ7gbOAabr3rirhoVUSSxK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YTykmKyWV+CmicWRPylYR3MMKLps0LHVfhbslb3JfFZD2/U5StN82VJSo2n4ozbDGt3dGfnCW9bPws/Ik2FitEIp5IOM5XgdU0b1FaQAbyYCTBHszao7bjpUOvmKzXuwc5qElEYT/efCLPZYB+tQe/4Ev79Q/yvn31KJ95nYeVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=FhkG6ijz; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6755523803so38959266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:36:26 -0700 (PDT)
+	s=arc-20240116; t=1717090608; c=relaxed/simple;
+	bh=CuX/2pe9cApqXm2bXTN+MVTVzW69PBsZLZPGpMZ03mA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=diqUjvsFimKf+Zz/vA+5dBzT11DN4ftHSMpUCCS5EwwK5PqHm6mzcsUn8LtXf5co9fGwd8DlJPLHhdw8+Ppx2qw6CBbO5lP4eBzc0O6ta/tpRSLji7QGDJJyZjkpmxPe7IQ4ABipw7B+zFIWR6z6EO7j6nDZROCUGbLzMV4IHik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B78bPN2E; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2bfff08fc29so942204a91.1;
+        Thu, 30 May 2024 10:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks.com; s=google; t=1717090585; x=1717695385; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+giz79CJG0jCLqzrbl/tvd652oA04/HxWrM79eY0LuU=;
-        b=FhkG6ijzS3KlT/XP8ziR4rcQRZup3by2guVUr0oDWItMJNZfbXRnRGNESbBcxERql3
-         d5kyCxELslaNqpOCf8ACS5gMINU4Scr/k2IypD+ZMqNmJf7S1gZQ9HF4yb+LzSj3UgTG
-         LNeVFx2+vzFiB1/+AaE4E3c3bfAnNxK+a4FLejKLhqsf2hpLq6NwuNoI6h2hqBF7WZDr
-         LneB3CMGVDGrYKkhS1mryyL7RbQGtTf8YsGIS4mh6woUG+qip4JFmbKJIt2uH4hSbENk
-         wb75+gBmpjDUSg4Ioe5ffWjk+bwreQkzpVwqSF7WCXNInRAgc0ls1UgPZSdu8WRFBmff
-         MCfg==
+        d=gmail.com; s=20230601; t=1717090606; x=1717695406; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=+/FMefgpt3TfnKLLfewARfo5DV/oEmmnytLZ55pc/RM=;
+        b=B78bPN2EpJxVfu9mqfoHiH72oyRIBQj9xaribZ+ONRishNCupTld/CHtH6pbbJBD2w
+         rfao1BomEI1No/tzr9RyOxdNfBBl79ufVfsj9IYcQZDb6qTI9d8Ad0lIue/uVdkWOXSy
+         8rse7YfZHNrUeGkraGb6JIv4QviX/KYU0VgZeX1TY6FR8r6bE7OVJ0B9FouC2pZMQlK5
+         lv2oPHblh7l+95cUgi+ykQw+Z/u1L5NzXM8/tHfaYzwyC4Gt7xEqb/u7fQvnqN5FRsOa
+         gwHdplLsyPvEv+UtoZK/XeTsxztaZKYM6ZozP/o/JahXemwUKxQSSXCgAQWRZvwOQPVs
+         +tbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717090585; x=1717695385;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+giz79CJG0jCLqzrbl/tvd652oA04/HxWrM79eY0LuU=;
-        b=FHs8SmGkNh1QiX235WjkK9n8EwJLNHephs/C91ph9+uepFNSH3mVqgDGqemdVBc2B+
-         Rfe2Y2k9BJ7f0KykRbjNBUggruTr5KkmxOdlMrWi9dY64Lh2OJdrggDbjv3fa5yweLeq
-         JoTA6wjucfJkZHZAmUbcG6mwzu3T6GW6sC9lwOeAdaj41wnEZKize4mdFWJZZZTbyIS0
-         bQtubJJMiLPHsYihgI6N/LLAq6Fu8EkshfzkCwrbLpBBk3oMZUG1cPgb1MAL8elme9ge
-         KvnrsZVEBX9chLmdY/RRVMJzUlzD6k3lWf6kJEsn8iEjKGQuxLDw93CdBYLjsrnf3IA4
-         3FwA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+cnzre31QzNxWQUt+W/IQO7Sbj8GqthdnsOmIB8aBXASAh5LKojyM8HM+8djEpn+4lgbobD5ZwLQ9/rqaQaHmfB1+96tCiEeS3WCK
-X-Gm-Message-State: AOJu0YwBLe869T4ZcrVkq3uA6OXR2XcOwT0F/pm1x8owEWAEpSb1Q3hv
-	LaFj8dpzgqdMQFYQhSeCF/adWBXAaOUQXIvt5RF1zLdvhoojVL9p7QXVbXrIaX1NYSZwOt6G6dq
-	66DjK4xanRYjgmL7bLCUYzsU7c8dfFVsQcfzFRw==
-X-Google-Smtp-Source: AGHT+IHbO1ffXw5PEt2FSPHxjhTEkqIJgxX8wMuh16h/NSE/pfx6O7fFre+ZbekU3cA5AwkNUDHizBQMCtTiSDL0q1g=
-X-Received: by 2002:a17:906:29d5:b0:a63:555d:db01 with SMTP id
- a640c23a62f3a-a65e8e50e20mr273797466b.30.1717090585365; Thu, 30 May 2024
- 10:36:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717090606; x=1717695406;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+/FMefgpt3TfnKLLfewARfo5DV/oEmmnytLZ55pc/RM=;
+        b=Q824la1UMJEeD6cx3U5e52WCWrZHFx5Nax2wdgyQnu9yCRiO/soF5EVjRPW1/C507D
+         y4gHFeXCWuHi/ldeXFynGFZJNSAef8E0Tektj0sr/iOBzTeJ2mP2nNUkIRM75Satpryh
+         mFLzYFXN2VJ3DUTUX0utqgmvuLIchzrunhpgMISQpFiziwboAXpFKPQX93Z4fCwU4rOZ
+         39jO6anolTUQdb804CQoR2k0MibKOImL6sdHm11oDtEzwbpmRV3hDNpkCyIm82o2X9LJ
+         MlBkvmgP9YLaSkAlfniuQrXSc+dxNTJypWzRk6HwF10EM+AujUWhOnCc7kfzJ2AyTrdz
+         QuDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfs3KAW28h/edrJzU6BSwS/jH+fH41F29UAIjVACtnLK17AeQXu9O2NjBHbB2XlukFDrGtIxbuy3GmlkrLlA4VlkdJk1F8n91KcGejGZ7NJBvvi6WwIGImy8v1OVTW4M2t1UEbP7q04N9KBbAN6JrSwrOYfPNhyZa+iZuphjeNJjcT4Ru5
+X-Gm-Message-State: AOJu0Ywvd6HtSPggkC8Kvo1oqLCrfenIQ8ImlBH4NxD8lkWRRpeA6avC
+	uSPhQMe4Wq3Yl/0OKBNMh/oGMeAUy18WcEw1e1px0umOugYf1VVX
+X-Google-Smtp-Source: AGHT+IEcXZTirNtSqz6/4ItK2+CQVcicOieBc01XxfrGxwvX5ArAu7zFmCdxD5LyIhVavsW8h/ElBw==
+X-Received: by 2002:a17:90a:ad6:b0:2bf:dcba:a3c1 with SMTP id 98e67ed59e1d1-2c1abc3e316mr3493160a91.34.1717090605862;
+        Thu, 30 May 2024 10:36:45 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a777f7d8sm1788193a91.31.2024.05.30.10.36.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 10:36:45 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <be9a987d-9fca-4ef9-be58-58d7b4d8f26d@roeck-us.net>
+Date: Thu, 30 May 2024 10:36:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522215043.3747651-1-tharvey@gateworks.com>
- <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org> <20240523-vividly-sequester-d85ac7bccbbd@spud>
- <CAJ+vNU3fQt=6t3a_QFU_3jb5mTVLGJiptPnGEmWvvXZYGEPOFQ@mail.gmail.com>
- <20240524-cavalier-outthink-51805f49c8fb@spud> <8007abef-38bb-4d7d-a453-00bb5e6bede5@linaro.org>
- <CAJ+vNU3Rh6f-HrFbBLxNXVP1PwsGh8OyGmmGJBv6+GRwZaTXgw@mail.gmail.com>
- <20240528155808.GA695520-robh@kernel.org> <CAJ+vNU225kyG7+AmXU8MTDArj8_6ibD-DkogXg89YpWS57ai=g@mail.gmail.com>
- <20240530-powwow-outpour-ca48b1f22a3e@spud>
-In-Reply-To: <20240530-powwow-outpour-ca48b1f22a3e@spud>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Thu, 30 May 2024 10:36:13 -0700
-Message-ID: <CAJ+vNU1Vu9oM1W8RhBo1H+ddHUovmJGSPhmmW0aaTEfYgVoerQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
+ sensors
+To: Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org
+Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
+ <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
+References: <20240529205204.81208-1-linux@roeck-us.net>
+ <20240529205204.81208-3-linux@roeck-us.net>
+ <6f1ffb83-a64f-469d-b981-f0da0d2f02ac@gmx.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <6f1ffb83-a64f-469d-b981-f0da0d2f02ac@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 9:54=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, May 28, 2024 at 09:23:10AM -0700, Tim Harvey wrote:
-> > On Tue, May 28, 2024 at 8:58=E2=80=AFAM Rob Herring <robh@kernel.org> w=
-rote:
-> > >
-> > > On Sat, May 25, 2024 at 12:58:18PM -0700, Tim Harvey wrote:
-> > > > On Sat, May 25, 2024 at 11:34=E2=80=AFAM Krzysztof Kozlowski
-> > > > <krzysztof.kozlowski@linaro.org> wrote:
-> > > > >
-> > > > > On 24/05/2024 20:40, Conor Dooley wrote:
-> > > > > > On Thu, May 23, 2024 at 04:04:50PM -0700, Tim Harvey wrote:
-> > > > > >> On Thu, May 23, 2024 at 7:47=E2=80=AFAM Conor Dooley <conor@ke=
-rnel.org> wrote:
-> > > > > >>>
-> > > > > >>> On Thu, May 23, 2024 at 09:02:46AM +0200, Krzysztof Kozlowski=
- wrote:
-> > > > > >>>> On 22/05/2024 23:50, Tim Harvey wrote:
-> > > > > >>>>> The GW7905 was renamed to GW7500 before production release.
-> > > > > >>>>>
-> > > > > >>>>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> > > > > >>>>> ---
-> > > > > >>>>>  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
-> > > > > >>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > >>>>>
-> > > > > >>>>> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml=
- b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > > >>>>> index 0027201e19f8..d8bc295079e3 100644
-> > > > > >>>>> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > > >>>>> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > > >>>>> @@ -920,8 +920,8 @@ properties:
-> > > > > >>>>>                - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 E=
-VK Board
-> > > > > >>>>>                - fsl,imx8mm-evk            # i.MX8MM EVK Bo=
-ard
-> > > > > >>>>>                - fsl,imx8mm-evkb           # i.MX8MM EVKB B=
-oard
-> > > > > >>>>> +              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gatew=
-orks Board
-> > > > > >>>>
-> > > > > >>>> That's not even equivalent. You 7500 !=3D 75xx.
-> > > > > >>>>
-> > > > > >>>
-> > > > > >>>>>                - gateworks,imx8mm-gw7904
-> > > > > >>>>> -              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gatew=
-orks Board
-> > > > > >>>>
-> > > > > >>>> Compatibles do not change. It's just a string. Fixed string.
-> > > > > >>>
-> > > > > >>> I think there's justification here for removing it, per the c=
-ommit
-> > > > > >>> message, the rename happened before the device was available =
-to
-> > > > > >>> customers.
-> > > > > >>> Additionally, I think we can give people that upstream things=
- before they're
-> > > > > >>> publicly available a bit of slack, otherwise we're just disco=
-uraging
-> > > > > >>> people from upstreaming early.
-> > > > > >>
-> > > > > >> Hi Conor,
-> > > > > >>
-> > > > > >> Thanks for understanding - that's exactly what happened. I'm i=
-n the
-> > > > > >> habit of submitting patches early and often and it's no fun wh=
-en
-> > > > > >> something like a silly product name gets changed and breaks al=
-l the
-> > > > > >> hard work.
-> > > > > >>
-> > > > > >> The board model number is stored in an EEPROM at manufacturing=
- time
-> > > > > >> and that EEPROM model is used to build a dt name. So instead o=
-f GW7905
-> > > > > >> which would be a one-off custom design it was decided to chang=
-e the
-> > > > > >> product to a GW75xx. The difference between GW7500 and GW75xx =
-is
-> > > > > >> because we subload components on boards between GW7500/GW7501/=
-GW7502
-> > > > > >> etc but the dt is the same.
-> > > > > >>
-> > > > > >> If there is resistance to a patch that renames it then I guess=
- I'll
-> > > > > >> have to submit a patch that removes the obsolete board, then a=
-dds back
-> > > > > >> the same board under a different name. Shall I do that?
-> > > > > >
-> > > > > > I think this patch is fine - other than the inconsistency that =
-Krzysztof
-> > > > > > pointed out between the "renamed to gw7500" and the "gw75xx" in=
- the new
-> > > > > > compatible.
-> > > > >
-> > > > > I am not a fan of renaming compatibles because of marketing chang=
-e,
-> > > > > because compatible does not have to reflect the marketing name, b=
-ut
-> > > > > there was already precedent from Qualcomm which I did not nak, so=
- fine
-> > > > > here as well. Double wildcard 75xx is however a bit worrying.
-> > > > >
-> > > >
-> > > > Hi Krzysztof,
-> > > >
-> > > > Thanks for understanding. The double-wildcard is again a marketing
-> > > > tool. All GW75** use the same device-tree by design. The boot firmw=
-are
-> > > > that chooses the device-tree understands this and for a GW7521 for
-> > > > example would look for gw7521 first, gw752x next, gw75xx last.
->
-> When it is doing this matching, does it actually apply a wildcard, or
-> does it look for "x"? IOW, if your eeprom said "gw7521" and there were
-> no devicetrees matching "gw7521" but there was one with "gw7500" would
-> it match?
+On 5/30/24 10:03, Armin Wolf wrote:
+[ ... ]
+>> +
+>> +
+>> +PEC configuration
+>> +-----------------
+>> +
+>> +If the I2C/SMBus controller supports PEC, it can be enabled or disabled using
+>> +the 'pec' sysfs attribute attached to the i2c device.
+>> +
+> 
+> Hi,
+> 
+> the spd5118 only supports PEC when in i3c basic mode, so afaik we cannot use PEC here.
+> 
 
-I attempt to explain the algorithm used in the comment of the U-Boot
-code used by U-Boot to both choose the DTB it uses as well as the
-bootscript to choose the DTB used for Linux when booting Linux:
-https://elixir.bootlin.com/u-boot/latest/source/board/gateworks/venice/eepr=
-om.c#L164
+Thanks for noticing. I misread the spec and associated the note with PAR_DIS,
+not PEC_EN. I'll drop this and the PEC patch. Good that I kept it separate.
 
-Consider a GW7001-F.1 SOM married to a GW7201-G.2 Baseboard (the
-letter at len-2 is the PCB revision and the number is a BOM revision
-and those are the full model strings in the EEPROM's of the boards):
-fdt_file1=3Dimx8mm-venice-gw72xx-0x-g2f1.dtb
-fdt_file2=3Dimx8mm-venice-gw72xx-0x-g2f.dtb
-fdt_file3=3Dimx8mm-venice-gw72xx-0x-gf.dtb
-fdt_file4=3Dimx8mm-venice-gw72xx-0x.dtb
+Thanks,
+Guenter
 
-The script that loads the fdt for booting Linux looks for fdt_file1
-first, then fdt_file2, etc etc so that if needed a 'more specific' dtb
-could exist with base-board and som-revision fixups. However to answer
-your question the algorithm already assumes that baseboards have 2
-digits worth of don't care and match specifically an 'x' for that.
-Including the SOM and Baseboard PCB revision and BOM revision was a
-safeguard that has never been needed so in practice we always just end
-up with the last most generic dtb above which is the case of
-'imx8mm-venice-gw72xx-0x.dtb' case means a 'gw72xx' baseboard married
-to a 'gw700x' SOM. The 'gw70' is removed from the dtb name as all
-Venice SOM's start are GW70**.
-
-So in my mind the dt for the baseboard above is called
-'imx8mm-venice-gw72xx' where 'xx' is part of the name but does have
-implied meaning. It certainly helps our customers know that the last
-two digits of a baseboard are don't-cares.
-
-This is nothing new... I did this for the imx6 based Gateworks Ventana
-boards as well most of which have been upstream since Linux 4.x:
-$ ls -1 arch/arm/boot/dts/nxp/imx/imx6*gw*.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw51xx.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw52xx.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw53xx.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw54xx.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw551x.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw552x.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw553x.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw560x.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw5903.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw5904.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw5907.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw5910.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw5912.dts
-arch/arm/boot/dts/nxp/imx/imx6dl-gw5913.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw51xx.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw52xx.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw53xx.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw5400-a.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw54xx.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw551x.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw552x.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw553x.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw560x.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw5903.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw5904.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw5907.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw5910.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw5912.dts
-arch/arm/boot/dts/nxp/imx/imx6q-gw5913.dts
-
-$ git grep gw,imx6q-gw5 Documentation/devicetree/bindings/arm/fsl.yaml
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-1xx
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-2xx
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-3xx
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-400-a
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-4xx
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-51x
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-52x
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-53x
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-60x
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-903
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-904
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-907
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-910
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-912
-Documentation/devicetree/bindings/arm/fsl.yaml:              - gw,imx6q-gw5=
-913
-
-So the formula we use here at Gateworks is the first number is the
-product family (5=3Dimx6q/dl ventana, 7=3Dimx8m/n/p venice), the next
-digit (or digits) is the baseboard and if the 9xx model numbers are
-1-off designs that will never have variations.
-
-So here is what currently exists for the Venice family:
-$ git grep gw,imx8 Documentation/devicetree/bindings/arm/fsl.yaml
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gw,imx8mm-gw71xx-0x       # i.MX8MM Gateworks Development Kit
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gw,imx8mm-gw72xx-0x       # i.MX8MM Gateworks Development Kit
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gw,imx8mm-gw73xx-0x       # i.MX8MM Gateworks Development Kit
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gw,imx8mm-gw7901          # i.MX8MM Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gw,imx8mm-gw7902          # i.MX8MM Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gw,imx8mm-gw7903          # i.MX8MM Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gw,imx8mn-gw7902          # i.MX8MM Gateworks Board
-$ git grep gateworks,imx8 Documentation/devicetree/bindings/arm/fsl.yaml
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gateworks,imx8mm-gw7904
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gateworks,imx8mp-gw71xx-2x # i.MX8MP Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gateworks,imx8mp-gw72xx-2x # i.MX8MP Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gateworks,imx8mp-gw73xx-2x # i.MX8MP Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gateworks,imx8mp-gw74xx   # i.MX8MP Gateworks Board
-Documentation/devicetree/bindings/arm/fsl.yaml:              -
-gateworks,imx8mp-gw7905-2x # i.MX8MP Gateworks Board
-
-All that I'm trying to do is correct the fact that during the point I
-had boards in the lab and created the device-tree and the point at
-which we shipped the boards it was decided that the GW7905 should not
-just be a 1-off board and that we wanted to make it a more widely
-available baseboard with room for changes thus it was renamed from
-GW7905 to GW7500 with expected GW7501, GW7502, GW7503 revisions
-coming.
-
-My whole point here is that in reference to the product naming scheme
-I'm not doing anything different than what has been accepted before.
-We have our reasons for naming this board combination
-'gateworks,imx8mp-gw75xx-2x' instead of the original name
-'gateworks,imx8mp-gw7905-2x'. Isn't the whole point that this is a
-vendor defined string? I get that it is a string that should not
-change but this name change was made before product was shipped so it
-seems fair to make the change. If gateworks changed the company name
-we would not be allowed to 'change' the existing strings but could
-create a new one and start using it (perfect example was when someone
-(not us!) decided the vendor name abbreviation of 'gw' should be
-replaced with 'gateworks'.
-
-I could stick with the idea that 'gateworks,imx8mp-gw7905-2x' is set
-in stone and leave it there and just create a new
-'gateworks,imx8mp-gw75xx-2x' but I hate to just duplicate the actual
-dts files as that is just a waste and the reason for the 2nd patch of
-this series.
-
-Looking for guidance...
-
-Best Regards,
-
-Tim
-
->
-> > > You haven't documented the other 2 though.
-> > >
-> > > How do "all GW75** use the same device-tree", but then there are 3
-> > > possible DTs for just 1 board?
-> > >
-> > > Selecting a DT is not a unique problem. We don't need unique
-> > > solutions. There's the QCom board-id proposal[1] and OS provided DT[2=
-]
-> > > which are addressing similar issues.
-> > >
-> >
-> > Hi Rob,
-> >
-> > I'm not sure those links are really able to address all needs. I see
-> > some similarity with the concept of a board-id taking the place of the
-> > don't-cares used in our names but not the concept of marrying a
-> > baseboard to a SOM with the two different boards creating a named
-> > combination (both which may have some don't cares). The Gateworks
-> > Venice product family of boards (imx8m{m,n,p}-gw7***-*x) boards have
-> > been in the kernel for quite some time now as has been the U-Boot code
-> > that determines the device tree using a baseboard model number
-> > combined with a SOM model number.
-> >
-> > A baseboard with an model of GW7301 (programmed into an EERPOM at mfg
-> > time) gets coupled with a SOM with the model of GW7000 and this uses a
-> > device-tree of gw73xx-0x (prepended by the SoC name of imx8mm, imx8mn,
-> > imx8mp). The don't care's here and the naming convention has been
-> > chosen by us, the board manufacturer, leaving enough significant
-> > digits for component subloads that was desired at the time. So a
-> > GW7300 and a GW7301 are the same schematic, they just have some
-> > different loading options.
->
-> By "loading options" do you mean "we changed the supplier for the 12v
-> barrel jack" rather than something that is actually visible to an OS?
->
-> > I really don't understand the issue here. A board was originally named
-> > gw7905 when I brought up the prototype in the lab and created its
-> > device-tree but between then and when it shipped it got moved to the
-> > more generic 'family' of gw75xx baseboards which get coupled with a
-> > SOM. I already have a gw71xx, gw72xx, gw73xx out there for years that
-> > function this way.
-> >
-> > Device trees describe hardware using a name... the name changed :(
-> >
-> > Quite simply there are no boards out there with a GW7905 in the EEPROM
-> > that need to be supported... they all have a GW7500 programmed in them
-> > (and some may in the future have a GW7501, GW7502, etc).
-> >
-> > Is the problem here the fact that I use don't-cares in the names or
-> > the fact that a name changed?
->
-> IMO, getting hung up on the name changing before a released product is
-> rather silly, but straightening out what exactly your selection method
-> is worthwhile.
->
-> Thanks,
-> Conor.
 
