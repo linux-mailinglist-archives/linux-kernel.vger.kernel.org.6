@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-195437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABED8D4CFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BCFB8D4CFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3161C1F22F28
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB4D61C226BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A3A1527B3;
-	Thu, 30 May 2024 13:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32621667D1;
+	Thu, 30 May 2024 13:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SgfxEis1"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKcPZu6x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39A43D68
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6DB3D68;
+	Thu, 30 May 2024 13:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717076740; cv=none; b=GuVAXSmL8CFx5Y0wqemB2BHYn0wZivdoZPkvF4G4rou5ItLd0TJ444ADAQ5HUMmAEG+6TfNvRtdhr331CpT9oZW/4TTjIRoRaW9S068LYr3cgYjCdcdDbRBbFLYV3XmkQkTKBnJz1I/G5RIo/x5k2IYgVb1vska30gTeAYlmXgM=
+	t=1717076761; cv=none; b=NKNk3Kyr3ukkeqI2HqzS2p+YY+QKsJ20HSAD4fWtxd1W9iMf9hVIziBC6AL9Gc/diLVac3dS8DYl8ZpArsNhf9UtKbTRrRC0EaloZw36zrO1QE+fuolGmx1eJYG7VuKmyHPQZSFP9bC4RD9vXpN/lflaQbzP5+/MQMcPoYWvF9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717076740; c=relaxed/simple;
-	bh=Iyf593fiF264KxDvYfa2uUVWLRbVv1B2mOqmFHbtPJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zs8YxXFo+Z6EkUSudA2F3Nm/44JM5yJs+oHND15pVNZ9S1jDIgKz9sdq7sIqBSWv9D+r4Ywy5cIOEIyOr7ekKZgh30EfjOPLjpMQKao6ySYWF/T4fOPgZElYEDteEBCPf624oy53mX12BoP0rMWVygNBqjOW0OrriHeoAHA+4gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SgfxEis1; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 334651C0009;
-	Thu, 30 May 2024 13:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717076735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iyf593fiF264KxDvYfa2uUVWLRbVv1B2mOqmFHbtPJw=;
-	b=SgfxEis1K/Yhj7kE3wKEjYarAcY1Pp9MxlNawPpgWayYNmrriLNzSGhXQTKFukmiR30zPs
-	P4Ehg+NAbQMYLTk6TyYDjca/17pD3ZpAGxi77lXshHAVwL9zq5GaC9FRnWPQeWA4aCp9BJ
-	uC5lyChhYNTTEzehRRr3LKDbCEDnJ1LnoOwwBD1bZTHmJHop3PgT6RgEJtb4G69OUYhTd2
-	ZPws4tMkdwAlPFacMYykdBit3AuO0yJ3flg3fPsWcy5OJzPo3GSRRifJSUSkTXian1Z8Mi
-	xyhsgDVFi/hMY40xVlnX8ClbuLeM60pP5tcKqNilI+TTNFvIVHLdzFgDNM+58w==
-Date: Thu, 30 May 2024 15:45:26 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Richard Weinberger"
- <richard@nod.at>, "Vignesh Raghavendra" <vigneshr@ti.com>, "David
- Woodhouse" <David.Woodhouse@intel.com>, "Akinobu Mita"
- <akinobu.mita@gmail.com>, "Artem Bityutskiy"
- <artem.bityutskiy@linux.intel.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: make mtd_test.c a separate module
-Message-ID: <20240530154526.25c3ae17@xps-13>
-In-Reply-To: <48738af1-545e-4261-a8b7-fe224071910f@app.fastmail.com>
-References: <20240529095049.1915393-1-arnd@kernel.org>
-	<20240529141323.7015f3d9@xps-13>
-	<48738af1-545e-4261-a8b7-fe224071910f@app.fastmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717076761; c=relaxed/simple;
+	bh=lN0Jd+emoQsfNHfUuQGeGM64FiQzitT5VmVytjiJLqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aLMWFLISz8pVObz8y1aLWArbwJbsMT2VDkoASvMkfbwuKHXNN8gZ50P7sM+utgfgN0ihBjvwugf83CM6q7jd4sNRyHSAwWpnLRKlzPGkkFoA+UxSP6HJt+6L4McfFzpCYHlM8OcEV3hMTRIpf0F8ISk0iRNSfSQbEYupG8fRK4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKcPZu6x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14805C2BBFC;
+	Thu, 30 May 2024 13:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717076760;
+	bh=lN0Jd+emoQsfNHfUuQGeGM64FiQzitT5VmVytjiJLqM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DKcPZu6x6ZDOQSnwjf1knRBhFe8sUJl66+u1mp5Oi/6G0sInEE+S59NuJjMXhl1pl
+	 Jbn2VqYYKzQre+POsFszMw0VJv3iyf3s5fmrOK6T6BUqpK7R8S4KNzm371U+qf6D3n
+	 2ZkC35fPG8OUOmnggYUODhwONny7WFCD8svC4rh2BX7tBrT7HUxrHUMw4VqfUwKRDh
+	 CmLQR47st6nr6kfj3eFDPLBhzAYQQazw//q4WWi4kRzjTUNVHpB5Ucfv6GQykHbMzQ
+	 /XLRpfXN3r1vd9hJCBI1Oick34uZ9bbdWF61B/II4tOY/g4Xv9POfHXQkLdzVP/uQc
+	 GRHNsXw+93HYQ==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	rcu <rcu@vger.kernel.org>
+Subject: [PATCH 00/11] rcu/nocb: (De-)offloading on offline CPUs
+Date: Thu, 30 May 2024 15:45:41 +0200
+Message-ID: <20240530134552.5467-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+Last LPC's debates seem to have raised general agreement that nohz_full
+cpusets interface should operate on offline CPUs to simplify the picture.
+And since the only known future user of NOCB (de-)offloading is going
+to be nohz_full cpusets, its transitions need to operate on offline
+CPUs as well.
 
-arnd@arndb.de wrote on Wed, 29 May 2024 14:36:46 +0200:
+The good news is that it simplifies a bit the (de-)offloading code, as
+the diffstat testifies.
 
-> On Wed, May 29, 2024, at 14:13, Miquel Raynal wrote:
-> > Hi Arnd,
-> >
-> > arnd@kernel.org wrote on Wed, 29 May 2024 11:50:39 +0200:
-> > =20
-> >> From: Arnd Bergmann <arnd@arndb.de>
-> >>=20
-> >> This file gets linked into nine different modules, which causes a warn=
-ing:
-> >>=20
-> >> scripts/Makefile.build:236: drivers/mtd/tests/Makefile: mtd_test.o is =
-added to multiple modules: mtd_nandbiterrs mtd_oobtest mtd_pagetest mtd_rea=
-dtest mtd_speedtest mtd_stresstest mtd_subpagetest mtd_torturetest =20
-> >
-> > I've never experienced this warning myself, how did you produce it? =20
->=20
-> This warning is currently enabled when building with 'make W=3D1',
+Thanks.
 
-Ok. I didn't pay attention.
+Frederic Weisbecker (11):
+  rcu/nocb: Introduce RCU_NOCB_LOCKDEP_WARN()
+  rcu/nocb: Move nocb field at the end of state struct
+  rcu/nocb: Assert no callbacks while nocb kthread allocation fails
+  rcu/nocb: Introduce nocb mutex
+  rcu/nocb: (De-)offload callbacks on offline CPUs only
+  rcu/nocb: Remove halfway (de-)offloading handling from bypass
+  rcu/nocb: Remove halfway (de-)offloading handling from rcu_core()'s QS
+    reporting
+  rcu/nocb: Remove halfway (de-)offloading handling from rcu_core
+  rcu/nocb: Remove SEGCBLIST_RCU_CORE
+  rcu/nocb: Remove SEGCBLIST_KTHREAD_CB
+  rcu/nocb: Simplify (de-)offloading state machine
 
-> but there are only a handful of drivers that run into it, so
-> I have sent patches for each one, with the plan to enable it
-> by default in the future.
->=20
-> >> Make it a separate module instead. =20
-> >
-> > I'm not a total fan of this just because it now requires an additional
-> > step to insert these test modules (they are likely used for
-> > debugging/development purposes, so not properly installed in the
-> > rootfs). Is there any chance we can find another way? =20
->=20
-> This should only be a problem when using plain 'insmod' instead
-> of 'modprobe' for loading the modules. Do you think this is
-> commonly used here?
+ include/linux/rcu_segcblist.h |   6 +-
+ include/linux/rcupdate.h      |   7 +
+ kernel/rcu/rcu_segcblist.c    |  11 --
+ kernel/rcu/rcu_segcblist.h    |  11 +-
+ kernel/rcu/tree.c             |  45 +-----
+ kernel/rcu/tree.h             |   6 +-
+ kernel/rcu/tree_nocb.h        | 266 +++++++++++++---------------------
+ kernel/rcu/tree_plugin.h      |   5 +-
+ 8 files changed, 122 insertions(+), 235 deletions(-)
 
-These test modules have been slowly deprecated in favor of the user
-space tools but when I had to use them, I was often using an initramfs
-with the modules just copy/pasted and inserted with insmod. There is no
-real point I guess in embedding these modules in a final rootfs.
+-- 
+2.45.1
 
-> Another option would be to turn all the helper functions into
-> static inline versions and just include the header, but
-> that does not avoid the duplication then.
-
-Indeed.=20
-
-Is there any chance to just silence the warning by flagging these
-modules as "test" or "development" modules? Because TBH it feels like
-the warning is just useless in this case. These modules should not be
-enabled in a production environment anyway.
-
-If not, then let's just keep your current patch. As I said, these
-modules are kind of deprecated anyway.
-
-Thanks,
-Miqu=C3=A8l
 
