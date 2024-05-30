@@ -1,185 +1,180 @@
-Return-Path: <linux-kernel+bounces-195707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CFD8D508F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:08:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89388D5090
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6421C22EC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502241F2534E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D32D45BF3;
-	Thu, 30 May 2024 17:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPSnDGvK"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB93244C76;
+	Thu, 30 May 2024 17:08:12 +0000 (UTC)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967D045BE4;
-	Thu, 30 May 2024 17:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA0141A94;
+	Thu, 30 May 2024 17:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088876; cv=none; b=uZCA2Z0vOQgqliflV1//kDIRJWCUOdKtfJ9kWfolGUY0edbDv70hAnL+QH9ikmM5D609sljQx9IDRiTtSoM7aRnKgW1CI4cc3099GLK8UyMWWpju0qNSlAIUwwQg8oZDJiKQKx5Ff9EbNp6vIgGKD7NKEjeqs17GCTDjr++Ny6A=
+	t=1717088892; cv=none; b=fPGcWt8rl8uQO5uEWbPAh8x7OnjUXVEM6pomsTaMgIw7JXM+chzoiEyU01uu8eksnfwjG2Y+dT7x5XgaxmduxqJXcyZeGl0ZHZ45/TSGWQuTuEsLLKS5di8MI3yhDsAR6AFWKaDy+gg0hgkRwI6pYHkTslDp3M/IL+lcPcYl28w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088876; c=relaxed/simple;
-	bh=WcBgmLB800gWG14w0nx6MPzcQdMu6AzZ6ketuWKY9+s=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ibOYoVYU2TG/XUstubGx8gBpxRHsFpXoSTtnd1VVnp2VHtJjq5NKgBoKd9gxfcXofniS7YeueiRVofExwN/Pd0w1Z47aBUd65jLMxqx5wcv0Jn39RZajb0WuDtzxIEHQ9STX+Q33PEoehyEq2GzVZj35Hov4ubkuf1sqP9WJ/cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gPSnDGvK; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1717088892; c=relaxed/simple;
+	bh=U0JAITmVlruEvFktXlP10wzX6bVnrYcndvpUGt7xU9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dPqtpNEEHgCTb3KpxNmK+IxusEAGW9vQpsxMpb/OEsj6iRtPYD2ODY9UacEcS3/Mz97IEBVP+aL8S31+XkHI38grZsn9aUEqsDEeLHpTIfjHMOVOlxDIHW1hgobSncUlZDSBD8EH2W0IN4/u3owxlACPjOeEiYU7kQA/dHbEA8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso11519951fa.2;
-        Thu, 30 May 2024 10:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717088873; x=1717693673; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S754fL6eVqgTIUZX2+nFqHKkShFVnRKXXFJgDcc1ZDI=;
-        b=gPSnDGvKQav99DE9NlpcI4PYeaAMSdL8r8Y1cpOJfRm0qNw4EXxaE2ltpfVmiY9NQF
-         pQg3snkuEU/p9i+ylooLVLTAnPZNiGchXduEMxiEOAA18CUsSEDCECT9hVz3erYM7DTl
-         6xCAiEYAsypc3leqHyUq2mmsbS/R3SqbOKbfT+aIOCauT4lKTrn6iX/oLjfnB3ii0aq1
-         OEgpNTCe6Xr0LXI2Y8JRznyIrlZLh6p4llfPAC5DCmJoza/UHWSki1dVokG3fG9bSECX
-         fv6j6uSY3fdXM2rrxy+svePxZqLiWy7ZgvWjZ17i/nejbBxwOcHnvwrG0sPx8ohzpf99
-         J2SA==
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6570bd6c3d7so718772a12.0;
+        Thu, 30 May 2024 10:08:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717088873; x=1717693673;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S754fL6eVqgTIUZX2+nFqHKkShFVnRKXXFJgDcc1ZDI=;
-        b=L5s24eHkdTpnb9+euTsS0NLSwiX+/reudZnwIy1jyyJVAsizqSl+57BRiT/BVEqT1a
-         YjBBKOeG5XPOVcmyH7u4oJ+chAVX7OfJPQ1tT7NEYHDf4dpCVlJ9xuqKQDbDGkzHVVxo
-         SSETwOgWmXA30/e5EoY8CkLMF5M9BZQoDBJTEZPc1rkIqEdsqbbKt3DAhNTL0MquSk8r
-         uDNXL+LJKjdwWt1jOdNH2JkC5UE10wbFbHI1WKg/uItSz3FEJvOahtqNtmbOherkeo/c
-         tmsVj/buRKRwY5fk+tMmVSnp7MXqbspjCktSNLYWHRxiLZPZ8/HNqmkGzzI+KHQt+Ag4
-         00YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfMF3jv/MUAo/1OHRcEYh+RX8b0LC57SK4S0H8o/aH6j2EcbbzLoKEJVbxeKLdW98BGmzlTuTioXM1J4QZO0aLIluFe7atH5axhetQ58kPcJ5r0wUUPbXAX86lD+TmIyiXB8id7xP8Do81jorlflfufLdybUKrhN4XuVKseRpsZn29yBzG2Z8oUtZ9mAIn1VuYXOmT824iIIOPHr9UNN7zhg==
-X-Gm-Message-State: AOJu0Yx76JdIMSiL3GRTGMpB7TIqnNLwVtwTUAq5+/zwmm5pYlcIEZ/5
-	zqzikU3QLHA/O3YBXsHOI1aG5M8yTdbV3F6q8XSrvMqTIcTY9ZaB
-X-Google-Smtp-Source: AGHT+IHwjTCFVGR50yNchGzCdFfdFMN0b/atDi7Tr/wiD7aw8w8AAvWmC3KTr7YpU1+nPKK4cCRg1g==
-X-Received: by 2002:a2e:a417:0:b0:2ea:844b:1b16 with SMTP id 38308e7fff4ca-2ea84830962mr16211881fa.34.1717088872356;
-        Thu, 30 May 2024 10:07:52 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421270ad410sm30167835e9.45.2024.05.30.10.07.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 10:07:51 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=e8d29550c8c6ecc345e96308e31e05adf5d0599eed8c116befc5ef55e617;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        d=1e100.net; s=20230601; t=1717088890; x=1717693690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mJs+BqLl3GEpbeHEz0AUVZacbmEagKEINcpOIf6Dfb8=;
+        b=I8IlElouoGk1znUy5ihX0GS9z50ps0NPm5P+TMRvmcx/nZ7pCmap/jR0YYYWwhcVD1
+         5xfQGtaG7e6AM/WYqw3ateg7jqENGFcDRvH7ELUP6O3yY4YjNmUTqdSXOSYwkYbU6/sL
+         EpnxY7R6mZHq4aRYwlJ261dm54xbz21E2RvhGNtm7aFxkpd3c8CNLv1mhK8zbeq6LpI1
+         M3ac8UoUjFs5y0a5exoq2FmINhA6tu7dMdYTMNHhLttf4sOr9RL93IfmDdfGrvg7Wm7K
+         fLZ3m0czw9pbodPPTaFI9WHJ9zvzLHY4bz15yBbf1wWbrFUfxXJ+PLIAVn7KUnkpsoHA
+         g5+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUNaSom3QJ34LWCnbgM2WMOfchhTF0QHORxX+kkm6pLo6FFIGPARp5OItypYNg+JmQKCFtuTvobkKCCSdHIIGKxOr3OwXuhLs6KHX2k3RL/nRhmygCGGc/PazgG0N2xBxRV709q5wGg7AmSfGKUVw==
+X-Gm-Message-State: AOJu0Yz8ih9CqL4JuH2UM7FWZPEawO5FZo7uClwhMbcQkoXHdJqI1WCQ
+	S6c7084YwF2IghAifaUce//d6XvbI/4Vlz3XdRqGI1d7NLvpO3Zvkv/0Tf5x64Lw2A5ZkkRKILZ
+	UwgprW6FlTI7gXMEvIRz8dYgKp/A=
+X-Google-Smtp-Source: AGHT+IEQwAr+WQBfo43dtj3LV7XTvnZBHx7RxwF1JdAU8GMnGX7kt6+5tImKtWnVisgs7G6k7WPplMAxUrSQ6Nap/0s=
+X-Received: by 2002:a17:90a:7086:b0:2c1:99a7:3cb with SMTP id
+ 98e67ed59e1d1-2c1abc6f897mr2724064a91.38.1717088890100; Thu, 30 May 2024
+ 10:08:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 30 May 2024 19:07:51 +0200
-Message-Id: <D1N57DK5Z2XU.2VP8OXFUMC709@gmail.com>
-Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Dmitry Baryshkov"
- <dmitry.baryshkov@linaro.org>, "Jonathan Corbet" <corbet@lwn.net>, "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>, "Sean Paul" <sean@poorly.run>, "Marijn
- Suijten" <marijn.suijten@somainline.org>, <workflows@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Masahiro
- Yamada" <masahiroy@kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>
-Subject: Re: [PATCH] docs: document python version used for compilation
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Rob Clark" <robdclark@gmail.com>, "Jani Nikula" <jani.nikula@intel.com>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
- <878r0ijdh5.fsf@intel.com> <20240510102036.3ea40b37@sal.lan>
- <87o79ehtbz.fsf@intel.com>
- <CAF6AEGvTkL=JxGDaOab9XpJ4htWQnBA1dTEOUxBUTAavM0DB4w@mail.gmail.com>
-In-Reply-To: <CAF6AEGvTkL=JxGDaOab9XpJ4htWQnBA1dTEOUxBUTAavM0DB4w@mail.gmail.com>
-
---e8d29550c8c6ecc345e96308e31e05adf5d0599eed8c116befc5ef55e617
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240519181716.4088459-1-irogers@google.com> <CAM9d7chxsyZ+vnPXj0gc-mbADzwzQYi3qUwUohW-7He5KwMvHg@mail.gmail.com>
+ <CAP-5=fXME3cjNK-P9qk+kY0dA1Xkwvz6Su=99nY7CgcKrQTb2w@mail.gmail.com>
+ <CAM9d7ch7GidVscUxQh+CZRuo1U1KiDiFiuOZN3FnqbrPDbaVNw@mail.gmail.com> <CAP-5=fV9a2CrM0suQ7_VgG=6DoAAi+A6JyTK=kVivNmSZmg7aQ@mail.gmail.com>
+In-Reply-To: <CAP-5=fV9a2CrM0suQ7_VgG=6DoAAi+A6JyTK=kVivNmSZmg7aQ@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 30 May 2024 10:07:59 -0700
+Message-ID: <CAM9d7cjM+rUrTcd4juwUcjVAewhczCyoupko_bHZidWfOv6dpg@mail.gmail.com>
+Subject: Re: [PATCH v1] tools api io: Move filling the io buffer to its own function
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Fri May 10, 2024 at 10:04 PM CEST, Rob Clark wrote:
-> On Fri, May 10, 2024 at 3:09=E2=80=AFAM Jani Nikula <jani.nikula@intel.co=
-m> wrote:
-> >
-> > On Fri, 10 May 2024, Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
-> > > Em Fri, 10 May 2024 11:08:38 +0300
-> > > Jani Nikula <jani.nikula@intel.com> escreveu:
-> > >
-> > >> On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =
-wrote:
-> > >> > The drm/msm driver had adopted using Python3 script to generate re=
-gister
-> > >> > header files instead of shipping pre-generated header files. Docum=
-ent
-> > >> > the minimal Python version supported by the script.
-> > >> >
-> > >> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > >> > ---
-> > >> >  Documentation/process/changes.rst | 1 +
-> > >> >  1 file changed, 1 insertion(+)
-> > >> >
-> > >> > diff --git a/Documentation/process/changes.rst b/Documentation/pro=
-cess/changes.rst
-> > >> > index 5685d7bfe4d0..8d225a9f65a2 100644
-> > >> > --- a/Documentation/process/changes.rst
-> > >> > +++ b/Documentation/process/changes.rst
-> > >> > @@ -63,6 +63,7 @@ cpio                   any              cpio --v=
-ersion
-> > >> >  GNU tar                1.28             tar --version
-> > >> >  gtags (optional)       6.6.5            gtags --version
-> > >> >  mkimage (optional)     2017.01          mkimage --version
-> > >> > +Python (optional)      3.5.x            python3 --version
-> > >>
-> > >> Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the poi=
-nt in
-> > >> using anything older than the oldest supported version of Python,
-> > >> i.e. 3.8 at this time?
-> > >
-> > > What's the point of breaking compilation with on older distros?
-> > > The idea of minimal versions here is to specify the absolute minimum
-> > > version that it is required for the build to happen. If 3.5 is
-> > > the minimal one, then be it.
-> >
-> > AFAICT 3.5 was an arbitrary rather than a deliberate choice. We should
-> > at least be aware *why* we'd be sticking to old versions.
-> >
-> > Minimum versions here also means sticking to features available in said
-> > versions, for Python just as well as for GCC or any other tool. That's
-> > not zero cost.
+On Thu, May 30, 2024 at 10:02=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
 >
-> At this point, the cost to having a lower minimum version is pretty
-> small, so I'm not worrying too much about it.
+> On Thu, May 30, 2024 at 9:44=E2=80=AFAM Namhyung Kim <namhyung@kernel.org=
+> wrote:
+> >
+> > On Thu, May 23, 2024 at 9:47=E2=80=AFPM Ian Rogers <irogers@google.com>=
+ wrote:
+> > >
+> > > On Thu, May 23, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel=
+org> wrote:
+> > > >
+> > > > On Sun, May 19, 2024 at 11:17=E2=80=AFAM Ian Rogers <irogers@google=
+com> wrote:
+> > > > >
+> > > > > In general a read fills 4kb so filling the buffer is a 1 in 4096
+> > > > > operation, move it out of the io__get_char function to avoid some
+> > > > > checking overhead and to better hint the function is good to inli=
+ne.
+> > > > >
+> > > > > For perf's IO intensive internal (non-rigorous) benchmarks there'=
+s a
+> > > > > near 8% improvement to kallsyms-parsing with a default build.
+> > > >
+> > > > Oh, is it just from removing the io->eof check?  Otherwise I don't
+> > > > see any difference.
+> > >
+> > > I was hoping that by moving the code out-of-line then the hot part of
+> > > the function could be inlined into things like reading the hex
+> > > character. I didn't see that, presumably there are too many callers
+> > > and so that made the inliner think sharing would be best even though
+> > > the hot code is a compare, pointer dereference and an increment. I
+> > > tried forcing inlining but it didn't seem to win over just having the
+> > > code out-of-line. The eof check should be very well predicted. The
+> > > out-of-line code was branched over forward, which should be 1
+> > > mispredict but again not a huge deal. I didn't do a more thorough
+> > > analysis as I still prefer to have the cold code out-of-line.
+> >
+> > Ok, I don't see much difference with this change.  But the change itsel=
+f
+> > looks fine.
+> >
+> > Thanks,
+> > Namhyung
+> >
+> >
+> > Before:
+> >
+> > # Running internals/synthesize benchmark...
+> > Computing performance of single threaded perf event synthesis by
+> > synthesizing events on the perf process itself:
+> >   Average synthesis took: 237.274 usec (+- 0.066 usec)
+> >   Average num. events: 24.000 (+- 0.000)
+> >   Average time per event 9.886 usec
+> >   Average data synthesis took: 241.126 usec (+- 0.087 usec)
+> >   Average num. events: 128.000 (+- 0.000)
+> >   Average time per event 1.884 usec
+> >
+> > # Running internals/kallsyms-parse benchmark...
+> >   Average kallsyms__parse took: 184.374 ms (+- 0.022 ms)
+> >
+> > # Running internals/inject-build-id benchmark...
+> >   Average build-id injection took: 20.096 msec (+- 0.115 msec)
+> >   Average time per event: 1.970 usec (+- 0.011 usec)
+> >   Average memory usage: 11574 KB (+- 29 KB)
+> >   Average build-id-all injection took: 13.477 msec (+- 0.100 msec)
+> >   Average time per event: 1.321 usec (+- 0.010 usec)
+> >   Average memory usage: 11160 KB (+- 0 KB)
+> >
+> > # Running internals/evlist-open-close benchmark...
+> >   Number of cpus:    64
+> >   Number of threads:    1
+> >   Number of events:    1 (64 fds)
+> >   Number of iterations:    100
+> > evlist__open: Permission denied
+> >
+> > # Running internals/pmu-scan benchmark...
+> > Computing performance of sysfs PMU event scan for 100 times
+> >   Average core PMU scanning took: 135.880 usec (+- 0.249 usec)
+> >   Average PMU scanning took: 816.745 usec (+- 48.293 usec)
+> >
+> >
+> > After:
+> >
+> > # Running internals/synthesize benchmark...
+> > Computing performance of single threaded perf event synthesis by
+> > synthesizing events on the perf process itself:
+> >   Average synthesis took: 235.711 usec (+- 0.067 usec)
+> >   Average num. events: 24.000 (+- 0.000)
+> >   Average time per event 9.821 usec
+> >   Average data synthesis took: 240.992 usec (+- 0.058 usec)
+> >   Average num. events: 128.000 (+- 0.000)
+> >   Average time per event 1.883 usec
+> >
+> > # Running internals/kallsyms-parse benchmark...
+> >   Average kallsyms__parse took: 179.664 ms (+- 0.043 ms)
 >
-> Maybe once kernel developers discover mako, and start generating more
-> at build time, we'll have to re-evaluate. ;-)
+> So this is still 2%. I was building without options like DEBUG=3D1
+> enabled, so perhaps that'd explain the difference. Anyway, if you're
+> more comfortable with a commit message saying a 2% performance win I
+> don't mind it being updated or I can upload a v2. It's likely this is
+> being over-thought given the change :-)
 
-You're making an interesting point. Does the build dependency here
-denote Python (& standard library) or do we assume that if people have
-Python installed that they can also install arbitrary extra packages?
-Would a Mako dependency need to be explicitly mentioned here?
+Nevermind, I think it's fine and I can touch up the message. :)
 
-Thierry
-
---e8d29550c8c6ecc345e96308e31e05adf5d0599eed8c116befc5ef55e617
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZYsmcACgkQ3SOs138+
-s6GwDhAAk7AgMlJlfnIXUZpOj/rOLWcb600MiHHFNHwSQCe4Uth9OdBvDjdFqsUH
-IOsRHerjzQEwlXmSafIOpXa2PZIdyxpGhW5b3regoBNfy9BeGgQLPyFwcQht6qh2
-VI2nrMek6YghkNYEOJgj/mR3pKgPdubbvenIHKRqjoOVO+dviJfnRCWGyBAmD/A7
-vBa21JJQ8xMZ4+uBFmwGfD6z3wzmNJejyeMTrSEspmmWzp1EouxwEy/gtUPv4xKQ
-zC1HEk/hWUEYaFgY0zgsT+HH80QhfpO2A93RM/DhcON8UPG0zkPXjNGy7PR49kAm
-8dHvyVnT42uD2ziXfp6sDAlCw5StvmPNyEDxltCBmZXWlana1DkQZarfNuBpuTBl
-Uf1C2GBc1I9AjH0Dui+jdzBurfBTRi0p5OTMh4xtfTuBKLQnNwCZ+Loc+Ft4uzX1
-ziaoZtR9q2PpElDhruxNAHH19a7DpfB71HYvcnhkrlpCH85ivsFIGditzYlMxuOK
-uoMZchMwVyzqptRpyKHsfgaIYNWffFB/vmLI27m4HrRYGl5qg4tx7te8FK9RP7cC
-mSM7KS36BA/BlJV9dLePmcKHylabI1HgJRKQ5nwFo5TyCHIh00EEpC01k7hcW/N3
-qrVTwB7kDgm0w1udks5zBp0D9+xquWiRWF9uVpwLQOvTfzcp434=
-=RSh3
------END PGP SIGNATURE-----
-
---e8d29550c8c6ecc345e96308e31e05adf5d0599eed8c116befc5ef55e617--
+Thanks,
+Namhyung
 
