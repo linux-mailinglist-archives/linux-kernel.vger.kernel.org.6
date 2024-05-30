@@ -1,171 +1,137 @@
-Return-Path: <linux-kernel+bounces-195056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC3C8D46F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:20:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8A28D46F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D74CBB238E9
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E2F284005
 	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5294214F131;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7052F14F9E4;
 	Thu, 30 May 2024 08:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DI90/Pa2"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n53RGcdd"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDC314387F;
-	Thu, 30 May 2024 08:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107C21C6A3
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717057240; cv=none; b=Gno7RMyJpqw91sx9y+F0ikofyHsIK15BxMs19wMyRvJF8PmvGrn0jOaY+WYFyrqxn/b9z/OD3hUTluk8vNegSUu1JD4E5/xTpWFQ2LTrHWJwSdeShSf9kEFPiuQDLYmB3R6Y8e9jApqzTqanWcCIr6l8VsKQ17PFIeyEm4T0c/E=
+	t=1717057240; cv=none; b=mubSAQmNq1yoMTgKGP7SdZG8sPveG/6nCvQxQFSvaTFBRG9t2ntTr0YX/TgyCiHGF9XQZ37puGv1BmjjMLvQl7OktDWkZHwbfpSfSo0njJHazMMt0J3A9V02z0qU6MWGShk5Zypnzf1x8y2oVrp1gVVMOHEd6fR5Upes0uoA73U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717057240; c=relaxed/simple;
-	bh=uwAz9qN23oK/OJuve8KxoRRpV5x0vLAL4/ykKXpRrPY=;
+	bh=vEnZFoXzjb5fBRfSjDYm+6RD7lbH9qdIx1YqZQzgPFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SM/uElo1kKWvi/wHK5T5LMpaeXiBvyW26BuPbYGq+Cd2/3CUxWT2qqQtOInQvrkAzzJxH+MPqtt2YtBztb6N+543Rybpq+Ek/jvGzUE6izd1EkyS+HlOoppfrAy/AaLbNuLyJ3n6XMiJZB9L1snOTrBfu5UIFLO2nZO/Q/XgDR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DI90/Pa2; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bYZIpqrQtzaQ8xIM1w25+g3wQxbpxFEBPyGhVKMCX+U=; b=DI90/Pa2/mK1x3SUUOArogPrUM
-	dp5/8NgdELrTAo7BpeljhBPpniaFtG1h1s+BjONSc/PcKe9W8Ycd+GLgqdwM+jmJkaozyEevoLJDE
-	58nktpsStoHpXLQ5O2wjEj+9BwE1nZlG3nxCEukyxwd9So3LuwsxM1s6Z72vVBYtd5fnR4kxsHkLQ
-	8Q3GqjIPzcEYP3YdhMzyKL6Ris2VlQJOUByvqtUBJb/R+NuRpl1S8rOhFNW8N+4hCHNDjbKWwMS2t
-	XKvQcTgk0wSL1138p/8IrGIlwFzx4jNk+1il4AYmCCSsJ079zFWw2XieoFPPSPX5U6kFfN08+fZjJ
-	wR0+3R0Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56108)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sCb1Q-000752-0x;
-	Thu, 30 May 2024 09:20:28 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sCb1Q-00050Q-OI; Thu, 30 May 2024 09:20:28 +0100
-Date: Thu, 30 May 2024 09:20:28 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Nemanov, Michael" <michael.nemanov@ti.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [EXTERNAL] [PATCH wireless-next 6/8] wifi: wlcore: add pn16
- support
-Message-ID: <Zlg2zGb7s7zu6jb+@shell.armlinux.org.uk>
-References: <ZlWhH4HleGILuUtN@shell.armlinux.org.uk>
- <E1sBsy7-00E8vu-Nc@rmk-PC.armlinux.org.uk>
- <e6ae6dfa-6554-4e88-abb0-31dbbd8df03f@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ookvj7HnsXrPCInlVS+ixWMgakZXk5tZtNHThLDoccpdjJtWGQvp7hyG7fC3kvzk8jdmsu1IO7vuL3jBQatHlvp9pq5YHC4nWx9AidWoqXvNRKh5+UjhOt4Q3VLtknVnf0Fg/BT2HZPn9fu3gi3yBfH/ol1Lu8je6IHbMD3ibWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n53RGcdd; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so5768821fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:20:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717057237; x=1717662037; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z1Um35u1qvZuMCq7uXC40E27zn7y41HWRYxq0E1YCHA=;
+        b=n53RGcddqCt2QoB6iP+krQmvEPipBTEr0Mt1HUv4OkwrCAzOE+Rp69aa5jXljbnhh7
+         i2YHXiZR/7UQXMk8zUVtqy91ksmwXgrc1D42NvS4G9D0Gae5W1g2r39pDUlm5n+OAZCc
+         lZgtXzSff9mPJoz6w2opQalNIgLBAQn6IaGcHuquUsRs00v5NsjTW0jqEDhwTZKs9g0V
+         wjQG6Hi2ga/N7EpkL/KmD8NQYCHTlThRAXaMk3Re0evyzWAbfHqvQhl7QBvNNmjxINJL
+         b6dmHed5ZEDDvzD3mm/u4JOgH5Lg1AvaZR3AaDLDaDo9urNxU4myvUlMCV38OqmRrZSk
+         hSwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717057237; x=1717662037;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z1Um35u1qvZuMCq7uXC40E27zn7y41HWRYxq0E1YCHA=;
+        b=Zw4lOlX/2Z4PCk3jSlV1St3kuNGdP9om1Aap5O9j+KyNHHK/7g59kmAxXo/iIcmr5S
+         RLWYb9CzHekxbczb9D+Quw1wJljvR1QkxQoVtH5lnnZ9UTSpJ6yRXPCZu9N2pAebZ1t2
+         zf0jarAI87zlTJEtFuqgWxaul11KVB4UPYXEoO08/0xPeD0th+f4O2TVBzpmxDYCbXPB
+         DrMvLEZPzipXiUmB+dz8ERqlUMd45DXNJ2BC05gjDSmwvpQwwROSYRFJiMPEMfVQLTsL
+         yBuDedsEGjbwjGIw4hTdKvC8FbKvZMsSIX+UfcF19axN63Qtr7t+zIzSt3OvcBx/cTdN
+         6XrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUStOP1vTW8l90O6NLmP52LaIE0qcR6vw9D0X0MtcY581Ee5konuL/mpIQMggDjcI0P6nrjQnf3gfGxQ7IFOh+p6RJy5Ib2LiyjyUZw
+X-Gm-Message-State: AOJu0YyOhP/NthDnxCwYwItoHlWhBzcD/rH/eL2JgCrI3EWkBxuW8IBD
+	IU6nEU+lozb398Hg4XXcCqmfpLsM5Ku5T1Cu9PVgYoY6q+woMfyJUXw0qOh3ObY=
+X-Google-Smtp-Source: AGHT+IG3/pKyXe6kjvzBTBZ+kW9if7vnYQBxUVROYSW9nUw+zsQXQ7KKovh+kC7NueTuWgD/hjgJPA==
+X-Received: by 2002:a2e:b60c:0:b0:2ea:83fb:3e1f with SMTP id 38308e7fff4ca-2ea848844demr7697071fa.37.1717057237335;
+        Thu, 30 May 2024 01:20:37 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea847fbb25sm1282741fa.118.2024.05.30.01.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 01:20:36 -0700 (PDT)
+Date: Thu, 30 May 2024 11:20:35 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ricard Wanderlof <ricardw@axis.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel@axis.com
+Subject: Re: [PATCH] drm: bridge: adv7511: Accept audio sample widths of 32
+ bits via I2S
+Message-ID: <777om4a55azemxmnjnzjeuymtaeg7fvygijnl6uiyfruey63i7@anpkpyotbbhd>
+References: <91472c14-3aeb-766a-1716-8219af6e8782@axis.com>
+ <m7sghjgqtm45yjkpzrekeab7doojagxjts7vmw23a3tqtjltdj@v2oencka3uer>
+ <adac6043-19f1-e965-e9eb-f3f1eaa6e067@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e6ae6dfa-6554-4e88-abb0-31dbbd8df03f@ti.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <adac6043-19f1-e965-e9eb-f3f1eaa6e067@axis.com>
 
-On Thu, May 30, 2024 at 11:06:40AM +0300, Nemanov, Michael wrote:
+On Thu, May 30, 2024 at 09:17:03AM +0200, Ricard Wanderlof wrote:
 > 
-> On 5/28/2024 12:18 PM, Russell King (Oracle) wrote:
+> On Tue, 28 May 2024, Dmitry Baryshkov wrote:
 > 
-> [...]
+> > On Tue, May 28, 2024 at 12:04:49PM +0200, Ricard Wanderlof wrote:
+> > > 
+> > > Even though data is truncated to 24 bits, the I2S interface does
+> > > accept 32 bit data (the slot widths according to the data sheet
+> > > can be 16 or 32 bits) so let the hw_params callback reflect this,
+> > > even if the lowest 8 bits are not used when 32 bits are specified.
+> > ...
+> > > ---
+> > >  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 11 +++++++----
+> > >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > > 
+> > 
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > 
+> > What about:
+> > 
+> > Fixes: ae053fa234f4 ("drm: bridge: adv7511: Support I2S IEC958 encoded PCM format")
+> > 
+> > ?
 > 
-> >    static int wlcore_fw_status(struct wl1271 *wl, struct wl_fw_status *status)
-> >    {
-> > +	struct wl12xx_vif *wlvifsta;
-> > +	struct wl12xx_vif *wlvifap;
-> >    	struct wl12xx_vif *wlvif;
-> >    	u32 old_tx_blk_count = wl->tx_blocks_available;
-> >    	int avail, freed_blocks;
-> > @@ -410,23 +412,100 @@ static int wlcore_fw_status(struct wl1271 *wl, struct wl_fw_status *status)
-> >    		wl->tx_pkts_freed[i] = status->counters.tx_released_pkts[i];
-> >    	}
-> [...]
-> >    	for_each_set_bit(i, wl->links_map, wl->num_links) {
-> > +		u16 diff16, sec_pn16;
-> >    		u8 diff, tx_lnk_free_pkts;
-> > +
-> >    		lnk = &wl->links[i];
-> >    		/* prevent wrap-around in freed-packets counter */
-> >    		tx_lnk_free_pkts = status->counters.tx_lnk_free_pkts[i];
-> >    		diff = (tx_lnk_free_pkts - lnk->prev_freed_pkts) & 0xff;
-> > -		if (diff == 0)
-> > +		if (diff) {
-> > +			lnk->allocated_pkts -= diff;
-> > +			lnk->prev_freed_pkts = tx_lnk_free_pkts;
-> > +		}
-> > +
-> > +		/* Get the current sec_pn16 value if present */
-> > +		if (status->counters.tx_lnk_sec_pn16)
-> > +			sec_pn16 = __le16_to_cpu(status->counters.tx_lnk_sec_pn16[i]);
-> > +		else
-> > +			sec_pn16 = 0;
-> > +		/* prevent wrap-around in pn16 counter */
-> > +		diff16 = (sec_pn16 - lnk->prev_sec_pn16) & 0xffff;
-> > +
-> > +		/* FIXME: since free_pkts is a 8-bit counter of packets that
-> > +		 * rolls over, it can become zero. If it is zero, then we
-> > +		 * omit processing below. Is that really correct?
-> > +		 */
-> > +		if (tx_lnk_free_pkts <= 0)
-> >    			continue;
-> The original code was
->         tx_lnk_free_pkts = status->counters.tx_lnk_free_pkts[i];
->         diff = (tx_lnk_free_pkts - lnk->prev_freed_pkts) & 0xff;
+> IMHO, commit ae053fa234f4 doesn't break anything, so there's nothing to be 
+> fixed. It adds S/PDIF support, which uses a 32 bit format, but the 32 bit 
+> format was not supported at all prior to that commit.
+
+Agreed, let's keep it out of the question.
+
 > 
->         if (diff == 0)
->             continue;
+> I don't really have a problem adding the Fixes tag if you think it's 
+> useful, but it doesn't seem quite right to me.
 > 
-> I wonder if comparing tx_lnk_free_pkts to 0 was added intentionally? This is
-> monotonously incremented counter so 0 is not significant, unlike the diff.
-> Have I missed something?
-
-You are... While you're correct about the original code, your quote is
-somewhat incomplete.
-
-+		if ( (isSta == true) && (i == wlvifSta->sta.hlid) && (test_bit(WLVIF_FLAG_STA_AUTHORIZED, &wlvifSta->flags)) && (status->counters.tx_lnk_free_pkts[i] > 0) )
-..
-+		}
- 
-+		if ( (isAp == true) && (test_bit(i, &wlvifAp->ap.sta_hlid_map[0])) && (test_bit(WLVIF_FLAG_AP_STARTED, &wlvifAp->flags)) && (wlvifAp->inconn_count == 0) && (status->counters.tx_lnk_free_pkts[i] > 0) )
-..
-+		}
- 	}
-
-Note that both of these if() conditions can only be executed if the final
-condition in each is true. Both check for the same thing, which is:
-
-		status->counters.tx_lnk_free_pkts[i] > 0
-
-In my patch, tx_lnk_free_pkts is status->counters.tx_lnk_free_pkts.
-
-Therefore, there is no point in evaluating either of these excessively
-long if() conditions in the original code when tx_lnk_free_pkts is
-less than zero or zero - and thus the logic between TI's original patch
-and my change is preserved.
-
-Whether that condition in the original patch is correct or not is the
-subject of that FIXME comment - I believe TI's code is incorrect, since
-it is possible that tx_lnk_free_pkts, which is a u8 that is incremented
-by the number of free packets, will hit zero at some point just as a
-matter of one extra packet being freed when the counter was 255.
-
-Moving it out of those two if() statements makes the issue very
-obvious. It would be nice to get a view from TI on whether the original
-patch is actually correct in this regard. I believe TI's original patch
-is buggy.
+> /Ricard
+> -- 
+> Ricard Wolf Wanderlof                           ricardw(at)axis.com
+> Axis Communications AB, Lund, Sweden            www.axis.com
+> Phone +46 46 272 2016                           Fax +46 46 13 61 30
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+With best wishes
+Dmitry
 
