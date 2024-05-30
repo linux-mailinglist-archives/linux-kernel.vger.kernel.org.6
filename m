@@ -1,101 +1,109 @@
-Return-Path: <linux-kernel+bounces-195598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D6B8D4F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:29:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536B28D4F1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044841F216F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F971F227DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9117C214;
-	Thu, 30 May 2024 15:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682D017E445;
+	Thu, 30 May 2024 15:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="bOaTeblV"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRP95coT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30891187557;
-	Thu, 30 May 2024 15:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C7C13212C;
+	Thu, 30 May 2024 15:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717082933; cv=none; b=jV4Ydv5WA4nKoPA7egG0XHyuFBIsU3aHJuDqx5AGC6Nsm5kPxXEf/wyx0YvsUS0SwtxlzGpnEw+qaP/KYNeBmZEZC4RbzWCwAhiCNQSmfo6oX1bA6cfrwBdIA7/XvjkIpbLJh63Pg9YguYyaEPhfltGi6POwpTSN5f0wNYTI43E=
+	t=1717082977; cv=none; b=fWDH0+mBgJaGbWUXkEPzMeczg9RCQKtsaSO1oxII0oxGsE2K9FM1L8YcuCNBeJIS7qJedC/xYofSZ7ITnZ74qr+ygNVDr0O7GblTxKiNEzCR7WQf9C26pq/OpFf7lwWPYsk6OrD8abHecFw18LyI7kQtVlOmOG/HqEKO/EqW7So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717082933; c=relaxed/simple;
-	bh=vKjA6hVfENF/Su+nYdGbvb6QjMyg+WQq9tgX0z+nFGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sPM6ebaSkgQLOL6V+o8CaB/oEaDAo/eCVm6oBr9ITIITR2oIZNbgU03JT3ZSzaDK/sAesp+mRKZTSD7x3FAGY+XWcoRhVqBROVOrTodCXaflA/MTlJAbffZe84IeFr1ORb+It/BS/eta+6i0rny1KYbG4n40Nmy4OSb8ns70N6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=bOaTeblV; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=hJEc9qgsKI9oJR5GoUF4NbJ97SV2VDBCHpvtbgyIXrM=; b=bOaTeblVbHHfOyIt
-	ksWtj3H8PV45PxF0qbo0Z/+x9xjhTg0Z9eP/RMh8av+64NxrwDdZWodv1l8cCWu2Au7rWLzLuyorS
-	1dEqssU9YmE9ntFM0i7y6HdNf5ershSeoaQWOeO8RJ9XzaXDOHubMrsyIkihowUKLZvUJR8/BS/vo
-	EFbn/1CehRDgad7GFRC6/jZ19tNj1SgFPpV2AfJyNWcJWcOZeP1rWkp/Pc9zwTR4bS6GPx2BFKmkp
-	Ot1A6u2FCCzUSI8qYaHfMwLqCLKJiAx58GEsO8Ihn+pXoiil2NKOoPIVG14ydncYXrSraO5VIEpDG
-	p9W1N/s8Ltm+GZKUdg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sChhs-003OgR-2M;
-	Thu, 30 May 2024 15:28:44 +0000
-Date: Thu, 30 May 2024 15:28:44 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
-	digetx@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] media: tegra-vde: remove unused struct
- 'tegra_vde_h264_frame'
-Message-ID: <ZlibLIhBeILqV-LR@gallifrey>
-References: <20240530132619.71103-1-linux@treblig.org>
- <20240530132619.71103-4-linux@treblig.org>
- <D1N2H4X8ZL1D.18140DCI2SH8X@gmail.com>
+	s=arc-20240116; t=1717082977; c=relaxed/simple;
+	bh=Gi2b4tAeapnVFAVHATW9DZyWTw7+azG8pibOfQ/C8e8=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=sbQCiKahrisEDEvllruYyrY/HioO2P6h6TAlg5w9m7r5lwEqTkN2VgwDjKqXG4pkhvyYifnRivtCFrVcLy/4cQkdasvBohIvco2W1BWHO01orMfMUrzo0k6Hcchw6foD8sC9ZbjN6X3sD+suIBnO8G9JnrAG3TANr5sF4R+OAbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRP95coT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB4EC2BBFC;
+	Thu, 30 May 2024 15:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717082977;
+	bh=Gi2b4tAeapnVFAVHATW9DZyWTw7+azG8pibOfQ/C8e8=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=vRP95coT68pAHJGBDi9kVMTJ79uAxqNsBKkOE7p29gfV0pBjoJlkwJDsQn8qnUevx
+	 j/BWVwTSOHbEz6cNq3tQ6JsSgd4RNTrmK3YTK4ARwD+WfahSqquHNcXLySqnILMPFQ
+	 SKCLHykULGRWDBwl/LIVAT6TxMXiXIL7qPJPATG+gZVAvfCG0SAGyMQCh0X+b7lZId
+	 Ilau25M9Vr7x40oj/UCveD5JnyisJIUhvp7NmF4PlqzcFCuqNQR2XeHJREN17NwS8K
+	 1arLemDqGbB2LiXhzTlZO+E1Ah3jD+HKdU6Auz53G2IRp9wDBzp+MqYHeie6qncroH
+	 Vu8kMXAzmFpUQ==
+Date: Thu, 30 May 2024 10:29:36 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <D1N2H4X8ZL1D.18140DCI2SH8X@gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 15:28:31 up 22 days,  2:42,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Haylen Chu <heylenay@outlook.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
+ linux-pm@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+ Inochi Amaoto <inochiama@outlook.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Chen Wang <unicorn_wang@outlook.com>, devicetree@vger.kernel.org, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-riscv@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: 
+ <SEYPR01MB4221BD44992A23E2B0061023D7F32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+References: <SEYPR01MB422119B40F4CF05B823F93DCD7F32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <SEYPR01MB4221BD44992A23E2B0061023D7F32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+Message-Id: <171708297616.2297193.3978844021510397590.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: thermal: sophgo,cv180x-thermal: Add
+ Sophgo CV180x thermal
 
-* Thierry Reding (thierry.reding@gmail.com) wrote:
-> On Thu May 30, 2024 at 3:26 PM CEST,  wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >
-> > 'tegra_vde_h264_frame' has been unused since
-> > commit 313db7d235a0 ("media: staging: tegra-vde: Remove legacy UAPI
-> > support").
-> >
-> > Remove it.
-> >
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >  drivers/media/platform/nvidia/tegra-vde/h264.c | 5 -----
-> >  drivers/media/platform/nvidia/tegra-vde/vde.h  | 1 -
-> >  2 files changed, 6 deletions(-)
+
+On Thu, 30 May 2024 13:48:25 +0000, Haylen Chu wrote:
+> Add devicetree binding documentation for thermal sensors integrated in
+> Sophgo CV180X SoCs.
 > 
-> Not that you really need it, but since I'm here:
+> Signed-off-by: Haylen Chu <heylenay@outlook.com>
+> ---
+>  .../thermal/sophgo,cv180x-thermal.yaml        | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv180x-thermal.yaml
 > 
-> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thanks!
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Dave
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/thermal/sophgo,cv180x-thermal.example.dtb: temperature_sensor@30e0000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/thermal/sophgo,cv180x-thermal.yaml#
 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/SEYPR01MB4221BD44992A23E2B0061023D7F32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
