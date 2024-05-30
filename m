@@ -1,166 +1,311 @@
-Return-Path: <linux-kernel+bounces-195479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8768D4D65
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:00:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900E38D4D69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0251F22DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1D31F22B2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9104F186E50;
-	Thu, 30 May 2024 14:00:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CDB186E58;
+	Thu, 30 May 2024 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JyfIwIjy"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2074.outbound.protection.outlook.com [40.107.92.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FED186E32;
-	Thu, 30 May 2024 14:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077628; cv=none; b=Y4arpDiQU0cVrmzoetzNkiD6tIG/W6jgWDbR1xKm6Ww5qtR8YNW1yfgLM4DFYfzNwzrZlO+qI/A6RcaS+BqteMldky8J5rSfrJHUInC9s/+e3UAf/Inw3t8/mhSnD+BbI+MledYIYCbVr/dMmZfmMf4PJc5ZX7KTylp3qtQL9FA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077628; c=relaxed/simple;
-	bh=wCx8iiEp261jvrvjM1hzx6frOs/knK+xtBsnK/gZCnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LJ/8hzh4ZpQ+8TMDwx3V5jeqP6wa0vdSfPu/h3gS6oadKhTBctABQbHIzhy0uuFDfIfzkgcqmXg0eBQ0y5k0SFB1XWQpiBnjE43GRVx/k/SjvDXnz9Tf/eyw1hX9gFmnyq38tYHe8ibE099jJAGjYIJuYZc7ClYHj0Blxp3mUJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F32C3277B;
-	Thu, 30 May 2024 14:00:25 +0000 (UTC)
-Date: Thu, 30 May 2024 09:59:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?= <digirigawa@gmail.com>
-Cc: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>, Linux regressions mailing list
- <regressions@lists.linux.dev>, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
- Shutdown/Reboot
-Message-ID: <20240530095953.0020dff9@rorschach.local.home>
-In-Reply-To: <CAE4VaRGRwsp+KuEWtsUCxjEtgv1FO+_Ey1-A9xr-o+chaUeteg@mail.gmail.com>
-References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
-	<5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
-	<20240527183139.42b6123c@rorschach.local.home>
-	<CAE4VaRHaijpV1CC9Jo_Lg4tNQb_+=LTHwygOp5Bm2z5ErVzeow@mail.gmail.com>
-	<20240528144743.149e351b@rorschach.local.home>
-	<CAE4VaRE3_MYVt+=BGs+WVCmKUiQv0VSKE2NT+JmUPKG0UF+Juw@mail.gmail.com>
-	<20240529144757.79d09eeb@rorschach.local.home>
-	<20240529154824.2db8133a@rorschach.local.home>
-	<CAE4VaRGRwsp+KuEWtsUCxjEtgv1FO+_Ey1-A9xr-o+chaUeteg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84030186E3F;
+	Thu, 30 May 2024 14:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717077827; cv=fail; b=DMxoF/WQ1SvhxKHt85U2fsxQD1YTwCxVgp2byg0vwl1i/w3CJKrAlzVNv3kgyrhXH91E5gpafHeWrVHTExYHHfdxDWym0v+xKMav3JdZT4A97tT6BPHItKUY5jYZzBIzuI1nNB3gRrOAIqYpVXmiyrfVNM+diTGeaQYH8Hu6R1w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717077827; c=relaxed/simple;
+	bh=ixfMpoSBLuLaKRnzApr92OSM1SmJxmJzBtuyK5RTjRU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=C3sQut7+ZknuRXLauhxNQOfuhSp8ofwPUo7edbGP4vc+gDi6/KKrbZK9WNfS5Cz3MBELRkYlAvXLJjR+/4vCLZD9nuCT5Q7yt/ldFYZRuFB1d1LJLJZHYkvlGDaDTGed8cRvpveHFlj9plvBvt+gNofxDX7JtIJHxxy/t66aMPE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JyfIwIjy; arc=fail smtp.client-ip=40.107.92.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=crn7xbhoxLr2GLZohjduf3UizlrscK+K9r3WFhCoRSyHjP1b9uKigek0djCOEYRmnpXEIEGHRx6NN5Udg1yjQZ5Rz+EduifwppQSvv6VaXxUpt78fOrX2ow3jyzJsJxOWWDKAikvbjSJ8ToS3yIoEQOY6ClApT9XPIxLAz+fSymRfuWCkm3rkbiWSycHoFDJW7SWIuYVePafdbg4Ub5NVZyidQFi6Cf7aW6r3sEJOnvfB2P0f2e3nnd8gOoNKL1D1nTlknfcXc6A7LHEhE2cuYnYyPYIwm/ciLSovudU0j+S/qvbTly+FM005O4cQmF2OiYyc4MrueNGKbxt9EeA3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Siuty7IenZFmXYxlbrEl6bCBBSjUqgXbMoEtXM2tgYg=;
+ b=R+FZhUgk2OSdG/piB44BQjYHebnkW9ylzKbsEN3QXXJq9hONLtuNblSGQw4XnYq9/rgR29YtobpgflXAYPakjkUKJfICmi47/mbqdWG6Ee2MXlXmXLgXqc7MjS7F1HH3PIdTU8gMfRyX0PgYs7X1/xkaduKbXJQG0Hgj6qrgB2SqRmFScNSuvPbhskZPdtjWthY9Oz/VFyGdT9JJLzATYTJXCmTCF5JO++VqExP38VggaZ3/m7oBTEvDt5espkvT2D33p7XxaReIsacrk0KdSUGPwDyiIBxnAOWo72SHV3rETK051r23/c9q/FrWW9vRMaxBos8i0atGizgNWMBGCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Siuty7IenZFmXYxlbrEl6bCBBSjUqgXbMoEtXM2tgYg=;
+ b=JyfIwIjydBbJVj6es8PzQA6vJxl6XcffaTxi5rNO9Lkh/zlDQ9fGTR9nuK09S6/gQU1orYn8ji8NrHerEEVbhc3RscDKc7lWiqU77Zstt74FZU55Ue6iFkS0DoFkuZS4pxA77NmEaWWyKWLnsUY8ZHsfSiJcs4TXm15Vtj0UuMM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
+ by CH3PR12MB9124.namprd12.prod.outlook.com (2603:10b6:610:1a7::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Thu, 30 May
+ 2024 14:03:42 +0000
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7611.030; Thu, 30 May 2024
+ 14:03:40 +0000
+Message-ID: <562819b0-2c8a-1344-6090-01f8cdca107e@amd.com>
+Date: Thu, 30 May 2024 09:03:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 3/3] KVM: SEV-ES: Fix LBRV code
+Content-Language: en-US
+To: Ravi Bangoria <ravi.bangoria@amd.com>, seanjc@google.com,
+ pbonzini@redhat.com, nikunj.dadhania@amd.com
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ michael.roth@amd.com, pankaj.gupta@amd.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, santosh.shukla@amd.com
+References: <20240523121828.808-1-ravi.bangoria@amd.com>
+ <20240523121828.808-4-ravi.bangoria@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20240523121828.808-4-ravi.bangoria@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DM6PR02CA0056.namprd02.prod.outlook.com
+ (2603:10b6:5:177::33) To BL1PR12MB5732.namprd12.prod.outlook.com
+ (2603:10b6:208:387::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|CH3PR12MB9124:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f503711-d415-4798-9418-08dc80b14e82
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VVFvMW5PTTUwYUxjcFhnemR2cDVDM20rUHF6ODdzeGI4V3RxS09Pa2c1b0R4?=
+ =?utf-8?B?dTFLU0FWcWRLa0xtQzJUT21UcmJjUS94K2FSMDFBRzFRZGoyZFBFRWR6eEUr?=
+ =?utf-8?B?dDFZcXZWWXg2RHpMRzd2bit4TWRIekZRVmYwMk5CdkdVWjRoeVIwczh5aDFN?=
+ =?utf-8?B?SG1CSEZQblhudSs1djNiSk9iVVBiUVVhM3VGd21VU2xNTlQzK0RWQ21lZjBj?=
+ =?utf-8?B?Y0ZUc3h0VU5GOUVQSEZHNUd3K1ZJZ2NFUE5nbFhHd2U2RDBUWjQ5R1VQTG9B?=
+ =?utf-8?B?TWlSM0pnMDQ5MUN1cVJ2MzNNVlNmTTZiOHUwSENOeWJWMnVLdDJSWXNrajk2?=
+ =?utf-8?B?R2NkSXAvekhyOENlV3lHcWxtOGtLRUJGcGlpQmdvczJhNGFzdWl1S252ZlU5?=
+ =?utf-8?B?OVQ4NlF0ZEhENER2WjNiYk1kRHdQU2R4bjhad1RxaWNGYXkxQjFDRXhtOVBI?=
+ =?utf-8?B?SDBSRHdoSUs2d29qOU1OQitlYVhRaWIyc3J4R2lJUDdEb1VVTlpCYzRuREZG?=
+ =?utf-8?B?NWhvVXR5V0NoNFpUM3k5bTkwNVkzR0d1cDVjdnppZE1pYVltMHhDL2NpeTQ3?=
+ =?utf-8?B?cDNXRFZXRXg1cGJVOUFzQnRPZjg3NjdUYzR6b2FMMHJabkNGTUJlN0pzMS93?=
+ =?utf-8?B?WG9MRzNNbjh1ZlozdmU1a1dPTENOOEtIZ3M1d0krT1VCcVp3eXpiMHAvTkg2?=
+ =?utf-8?B?VUVsdXZ5WDl3ams2K2h0U2hzOGY0bTd3Z2Q4VDZBVHdVbnFuVzdZWWV6ZVow?=
+ =?utf-8?B?bEtvR1ZPS0NtbFZ5bWRhYTIxb1NDT2hoaS9xalp4ZVZxbnAxbzJRVHU3aUhQ?=
+ =?utf-8?B?S1FjYVMrNUNlWkxsdGZMelBGWURJajNPYlJYOU9IODJJVzZlV2Q1YzBHZTZE?=
+ =?utf-8?B?L2ZZcnJxeFlNakxPanFVVVJhNHM4Vk9KV3ZZaFVTZzdYZmFGVDh6QjgvMlYw?=
+ =?utf-8?B?d2Zxc2E5SXRCcVhFVTdlSG83cDhBMlA2K1FpZWpnTE9CdlJGYTJsakhJaUF1?=
+ =?utf-8?B?b09oOU81b3g2dlIwVWRHWHNFWEhLQWFORWI4dXhWdW5VNnZNSkdIZXFyaEx2?=
+ =?utf-8?B?NTVxa0NXcjlySGtiZjcyRXN0bGh0alF3WSswK0hvR1BSb0ZwS0hYNGxLblRt?=
+ =?utf-8?B?UktqRTh3aGowSnYyWUZ4Z2RlbWQzTjc3RkJwbnRUK3dnc2k1cVpZYSswZlNv?=
+ =?utf-8?B?ZFVUemo2RDFGWnUrS08rcnphQStOR1h2TXlkei9WQld0L3VZTUVRYXY0bW9j?=
+ =?utf-8?B?cC94ZGRzenlyb2NxVk1zWXBhZFlhdy9IYmdweE1pUUptYVhSL3MxRE5aamxy?=
+ =?utf-8?B?blU2cjEvbVJkRzFCb2lwckZtaUxRN0RIVUVuODVMN0l3b2NBRDFteHBDSSt0?=
+ =?utf-8?B?K3NSeFdKc1hOTkthQ3BXMndrUys1dU53Z1lzOXFiWjRhUW5wSVI5ZUYwdG5R?=
+ =?utf-8?B?aFdHa29qRjh3ZktCRW1GWXhNc3E3S2VadGxSSlpLNkJaZ242aFhEbnJ0VHpW?=
+ =?utf-8?B?dExOQURWOVkyek1jeUV0Mk0xMTZITVVnbE92a2hFVVI0RC9oUzZ0ZklmUWQ2?=
+ =?utf-8?B?K1VVS2h0Q0FmMkNPdnMyOUl4TWZwVm1VRGdwR1VxSE1zQzdvM3Z4V2VRdXRy?=
+ =?utf-8?Q?pTiMTjqYWkTi5D2YuZZTGpFE+DgSPyYrSA9x8QRSYiHI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WEJRVi9PcDg4UWprVG5XRGcrUElIK2xVWlc0UEpCTzh0bzJxUTJIQVZVdW1L?=
+ =?utf-8?B?c2pBanhRRzc0R21mNWszemhiTk5KQVFnczdLS3JDSFBHdVBheU9ubHVSc3lz?=
+ =?utf-8?B?dHVXNFVMNlQ4MmpEY01xM096d0hEQ2NpQzFMTmFEOForUlpLOG9CdTA5bVdy?=
+ =?utf-8?B?aEhsK3hTS0hFbGE4MlU3VXBYNGhNRHlrbEdlTEJoWGtwQzl1aUlRaEdrRmxI?=
+ =?utf-8?B?V2dlckxQTWpwMnlsKzB1VkdPc0lNVlYwQXRtVUJOUUpiQXZmc094N0RidWdL?=
+ =?utf-8?B?NVVHVFZoNGcwUUJOa25XSG5sOUhlbFJPbGhZSmtqSHFwTzErblY0enZyUThZ?=
+ =?utf-8?B?YTI1a3JoNWMzRloyai85NlVCZ0xzT24yU1phdmgvY0NYVkY2WjVSL1BBd1Ja?=
+ =?utf-8?B?dXZObEx0N2lxcW1GZ0ErUXNmS1dxWHVpK0xoYUdicldRRVpWU3RRZVh0anlT?=
+ =?utf-8?B?L3RkOHZMcll6UFZRUFhhRS9BTGg2bmNnOW9IdFRYVjhtaVBMV3ZRbHMwZzJs?=
+ =?utf-8?B?REVjY3pjZ1ZHWEdvQVZxSXlsR1VKQXVMcEZYS01WUUhqTDlwcDdoQVdxTUtQ?=
+ =?utf-8?B?c3diYlBQSUpUeDIyOXY2WlpjOGVMdGc0ZjloamgzeGtJVFJQeG00eURZZ1Y2?=
+ =?utf-8?B?RnhQMURwWHdORjFqT0tXV0EzTy9FR3RKYmI4YjBoUFdMZ1YwN2l2b0diM3pt?=
+ =?utf-8?B?ZThNZjlKTk5kdWRtNWlZTnFEMFRrOXAyODJLWE5qOW5mdkFmQXB1d3UvNGdV?=
+ =?utf-8?B?QjRObnByTnk5SUlsRlhxV21qQjFaWWd5cFRPbXYwMDBhV2I5emF5R1N5ckJK?=
+ =?utf-8?B?WWZOb1RBb1doeUl2WmtFU003YjRiL2FXV2hPK0toUXJxQysrL0dDQWt4VXBl?=
+ =?utf-8?B?NXVCNW5kZEJBZTdPMTBSbit4QTR6VlYwK1JwTk9wZVZHRlZYYzZnUFArZitj?=
+ =?utf-8?B?RjlteXl0SGZUbW9nWTNVNjNQdGVvTFVpZmZxZDJhT0hOd29IaDFnZzdHZEJS?=
+ =?utf-8?B?UHlUTUJvK3o0aWxNN3cvaTdWREphU1NXK2h5emwwWU9GR2FzNGRxbjkyRlhH?=
+ =?utf-8?B?THkwMm5VMExKMDBPQ1piWFB0UkZYTmJkSUpOeitSdkxLYkpHSk0wS1FKQ2Jw?=
+ =?utf-8?B?bmlHaitLbnNxd1FKUDcrU3A0REZCY2cyZk5yRTNDSERNTXVHd3RBSWkrcncv?=
+ =?utf-8?B?UlhaSW1mVE8wd0pxVEt5MjQ4alJETndzS25XYnVYaEMwL1ZDTG1FSStsRWw4?=
+ =?utf-8?B?Q2xwSmdBSzc0Z2Y4V3RWWlBWRnFzV2FpK0s1cUZBZnlXV29zWVhNcmFiMy9H?=
+ =?utf-8?B?OEtrb3dTZ0hqNTZxZC9rK296QVJZbmk2YVlQR1k4Q1M1YVdOR25KTmZYSWNG?=
+ =?utf-8?B?a0M0VUhCc3MyQk1lemFYaWMvREhlWStQYXUydk9CZ1lNNmg3cHF6VDFycFJ2?=
+ =?utf-8?B?YWoycVM0MlhMaWVCQnVNZWprK09aYlJTb2NzdWlDdVZodm0rNFBselFhdWlW?=
+ =?utf-8?B?SjhYendRK2RZUkh3eXZ4VTB3WlJuazhkaE5lSzFYbHdKcUx2N1ZGTmxjcThl?=
+ =?utf-8?B?Z09pckgxTXpZSHZLN0hISjFUU25tL0daUFZQcUdBTS9FakxJQ0I2cTdTOTZC?=
+ =?utf-8?B?eVE5QXZYRG1vT2FqWksyQkxOd1ZiazAyakY4VXRVU3BFUWx3Zzc4UVQrTTFW?=
+ =?utf-8?B?b2NMMm1BbnlHQzVpWHJxK0NwRnpsNjhqbVRQOGxHY0pPZHNncDJ3bkVxbGVv?=
+ =?utf-8?B?eStjZVYxQXpIR0hUaTNlQ1R2Sk5aNWhSbDNGMmpxanBGWXNOTHdRS1U0VWhN?=
+ =?utf-8?B?MkdnZjAvaVYybkwyN1Z5ek9kQ1pxMFBtd0R3ZEQvU2dmeW12dU9wclkvWUd0?=
+ =?utf-8?B?ejhrT29GcTRROXJlK1hONnNFejY5QjlZcjRRNXFXbHAxOE83OWp1TjFMMHpq?=
+ =?utf-8?B?Q3phZHFaOHBUdkt0ZUNSdWgwWndma2xhUWR2K0pTTzBzMVkwNzA0VWxBNjdQ?=
+ =?utf-8?B?bmZsSURDVXR3R3pXSm9mdUxEdUgvdnB0dlpHNFpmZWhQR1NURlZEY3FIek04?=
+ =?utf-8?B?b0pjeUFZR01SblhXWlhDdGJFb3pqaUJrSEo2ek55SjFtU0Fycll4dFBYazhw?=
+ =?utf-8?Q?g33KCzOsI81HW/VHs38bEM+Fu?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f503711-d415-4798-9418-08dc80b14e82
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 14:03:40.1090
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bNPyu6yva6gcrNxqwl2DwhM3inIIaktTTRFXcjglXPHS508H73850KFpVt85mWZ2915SYlL/p+8Gl26K0o1/yQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9124
 
-On Thu, 30 May 2024 16:02:37 +0300
-Ilkka Naulap=C3=A4=C3=A4 <digirigawa@gmail.com> wrote:
+On 5/23/24 07:18, Ravi Bangoria wrote:
+> As documented in APM[1], LBR Virtualization must be enabled for SEV-ES
+> guests. Although KVM currently enforces LBRV for SEV-ES guests, there
+> are multiple issues with it:
+> 
+> o MSR_IA32_DEBUGCTLMSR is still intercepted. Since MSR_IA32_DEBUGCTLMSR
+>    interception is used to dynamically toggle LBRV for performance reasons,
+>    this can be fatal for SEV-ES guests. For ex SEV-ES guest on Zen3:
+> 
+>    [guest ~]# wrmsr 0x1d9 0x4
+>    KVM: entry failed, hardware error 0xffffffff
+>    EAX=00000004 EBX=00000000 ECX=000001d9 EDX=00000000
+> 
+>    Fix this by never intercepting MSR_IA32_DEBUGCTLMSR for SEV-ES guests.
+>    No additional save/restore logic is required since MSR_IA32_DEBUGCTLMSR
+>    is of swap type A.
+> 
+> o KVM will disable LBRV if userspace sets MSR_IA32_DEBUGCTLMSR before the
+>    VMSA is encrypted. Fix this by moving LBRV enablement code post VMSA
+>    encryption.
+> 
+> [1]: AMD64 Architecture Programmer's Manual Pub. 40332, Rev. 4.07 - June
+>       2023, Vol 2, 15.35.2 Enabling SEV-ES.
+>       https://bugzilla.kernel.org/attachment.cgi?id=304653
+> 
+> Co-developed-by: Nikunj A Dadhania <nikunj@amd.com>
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
 
-> applied your patch and here's the output.
->=20
+Should this have a Fixes: tag, too?
 
-Unfortunately, it doesn't give me any new information. I added one more
-BUG on, want to try this? Otherwise, I'm pretty much at a lost. :-/
+Thanks,
+Tom
 
--- Steve
-
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index de5b72216b1a..a090495e78c9 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -39,13 +39,17 @@ static struct inode *tracefs_alloc_inode(struct super_b=
-lock *sb)
- 		return NULL;
-=20
- 	ti->flags =3D 0;
-+	ti->magic =3D 20240823;
-=20
- 	return &ti->vfs_inode;
- }
-=20
- static void tracefs_free_inode(struct inode *inode)
- {
--	kmem_cache_free(tracefs_inode_cachep, get_tracefs(inode));
-+	struct tracefs_inode *ti =3D get_tracefs(inode);
-+
-+	BUG_ON(ti->magic !=3D 20240823);
-+	kmem_cache_free(tracefs_inode_cachep, ti);
- }
-=20
- static ssize_t default_read_file(struct file *file, char __user *buf,
-@@ -147,16 +151,6 @@ static const struct inode_operations tracefs_dir_inode=
-_operations =3D {
- 	.rmdir		=3D tracefs_syscall_rmdir,
- };
-=20
--struct inode *tracefs_get_inode(struct super_block *sb)
--{
--	struct inode *inode =3D new_inode(sb);
--	if (inode) {
--		inode->i_ino =3D get_next_ino();
--		inode->i_atime =3D inode->i_mtime =3D inode_set_ctime_current(inode);
--	}
--	return inode;
--}
--
- struct tracefs_mount_opts {
- 	kuid_t uid;
- 	kgid_t gid;
-@@ -384,6 +378,7 @@ static void tracefs_dentry_iput(struct dentry *dentry, =
-struct inode *inode)
- 		return;
-=20
- 	ti =3D get_tracefs(inode);
-+	BUG_ON(ti->magic !=3D 20240823);
- 	if (ti && ti->flags & TRACEFS_EVENT_INODE)
- 		eventfs_set_ef_status_free(dentry);
- 	iput(inode);
-@@ -568,6 +563,18 @@ struct dentry *eventfs_end_creating(struct dentry *den=
-try)
- 	return dentry;
- }
-=20
-+struct inode *tracefs_get_inode(struct super_block *sb)
-+{
-+	struct inode *inode =3D new_inode(sb);
-+
-+	BUG_ON(sb->s_op !=3D &tracefs_super_operations);
-+	if (inode) {
-+		inode->i_ino =3D get_next_ino();
-+		inode->i_atime =3D inode->i_mtime =3D inode_set_ctime_current(inode);
-+	}
-+	return inode;
-+}
-+
- /**
-  * tracefs_create_file - create a file in the tracefs filesystem
-  * @name: a pointer to a string containing the name of the file to create.
-diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
-index 69c2b1d87c46..9059b8b11bb6 100644
---- a/fs/tracefs/internal.h
-+++ b/fs/tracefs/internal.h
-@@ -9,12 +9,15 @@ enum {
- struct tracefs_inode {
- 	unsigned long           flags;
- 	void                    *private;
-+	unsigned long		magic;
- 	struct inode            vfs_inode;
- };
-=20
- static inline struct tracefs_inode *get_tracefs(const struct inode *inode)
- {
--	return container_of(inode, struct tracefs_inode, vfs_inode);
-+	struct tracefs_inode *ti =3D container_of(inode, struct tracefs_inode, vf=
-s_inode);
-+	BUG_ON(ti->magic !=3D 20240823);
-+	return ti;
- }
-=20
- struct dentry *tracefs_start_creating(const char *name, struct dentry *par=
-ent);
+> ---
+>   arch/x86/kvm/svm/sev.c | 13 ++++++++-----
+>   arch/x86/kvm/svm/svm.c |  8 +++++++-
+>   arch/x86/kvm/svm/svm.h |  3 ++-
+>   3 files changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 1a2bde579727..3f0c3dbce0c5 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -851,6 +851,14 @@ static int __sev_launch_update_vmsa(struct kvm *kvm, struct kvm_vcpu *vcpu,
+>   	 */
+>   	fpstate_set_confidential(&vcpu->arch.guest_fpu);
+>   	vcpu->arch.guest_state_protected = true;
+> +
+> +	/*
+> +	 * SEV-ES guest mandates LBR Virtualization to be _always_ ON. Enable it
+> +	 * only after setting guest_state_protected because KVM_SET_MSRS allows
+> +	 * dynamic toggling of LBRV (for performance reason) on write access to
+> +	 * MSR_IA32_DEBUGCTLMSR when guest_state_protected is not set.
+> +	 */
+> +	svm_enable_lbrv(vcpu);
+>   	return 0;
+>   }
+>   
+> @@ -4279,7 +4287,6 @@ static void sev_es_init_vmcb(struct vcpu_svm *svm)
+>   	struct kvm_vcpu *vcpu = &svm->vcpu;
+>   
+>   	svm->vmcb->control.nested_ctl |= SVM_NESTED_CTL_SEV_ES_ENABLE;
+> -	svm->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
+>   
+>   	/*
+>   	 * An SEV-ES guest requires a VMSA area that is a separate from the
+> @@ -4331,10 +4338,6 @@ static void sev_es_init_vmcb(struct vcpu_svm *svm)
+>   	/* Clear intercepts on selected MSRs */
+>   	set_msr_interception(vcpu, svm->msrpm, MSR_EFER, 1, 1);
+>   	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_CR_PAT, 1, 1);
+> -	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTBRANCHFROMIP, 1, 1);
+> -	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTBRANCHTOIP, 1, 1);
+> -	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTINTFROMIP, 1, 1);
+> -	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTINTTOIP, 1, 1);
+>   }
+>   
+>   void sev_init_vmcb(struct vcpu_svm *svm)
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index dcb5eb00a4f5..011e8e6c5c53 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -99,6 +99,7 @@ static const struct svm_direct_access_msrs {
+>   	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
+>   	{ .index = MSR_IA32_PRED_CMD,			.always = false },
+>   	{ .index = MSR_IA32_FLUSH_CMD,			.always = false },
+> +	{ .index = MSR_IA32_DEBUGCTLMSR,		.always = false },
+>   	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
+>   	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
+>   	{ .index = MSR_IA32_LASTINTFROMIP,		.always = false },
+> @@ -990,7 +991,7 @@ void svm_copy_lbrs(struct vmcb *to_vmcb, struct vmcb *from_vmcb)
+>   	vmcb_mark_dirty(to_vmcb, VMCB_LBR);
+>   }
+>   
+> -static void svm_enable_lbrv(struct kvm_vcpu *vcpu)
+> +void svm_enable_lbrv(struct kvm_vcpu *vcpu)
+>   {
+>   	struct vcpu_svm *svm = to_svm(vcpu);
+>   
+> @@ -1000,6 +1001,9 @@ static void svm_enable_lbrv(struct kvm_vcpu *vcpu)
+>   	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTINTFROMIP, 1, 1);
+>   	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTINTTOIP, 1, 1);
+>   
+> +	if (sev_es_guest(vcpu->kvm))
+> +		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_DEBUGCTLMSR, 1, 1);
+> +
+>   	/* Move the LBR msrs to the vmcb02 so that the guest can see them. */
+>   	if (is_guest_mode(vcpu))
+>   		svm_copy_lbrs(svm->vmcb, svm->vmcb01.ptr);
+> @@ -1009,6 +1013,8 @@ static void svm_disable_lbrv(struct kvm_vcpu *vcpu)
+>   {
+>   	struct vcpu_svm *svm = to_svm(vcpu);
+>   
+> +	KVM_BUG_ON(sev_es_guest(vcpu->kvm), vcpu->kvm);
+> +
+>   	svm->vmcb->control.virt_ext &= ~LBR_CTL_ENABLE_MASK;
+>   	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTBRANCHFROMIP, 0, 0);
+>   	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTBRANCHTOIP, 0, 0);
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 2d7fd09c08c9..c483d7149420 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -30,7 +30,7 @@
+>   #define	IOPM_SIZE PAGE_SIZE * 3
+>   #define	MSRPM_SIZE PAGE_SIZE * 2
+>   
+> -#define MAX_DIRECT_ACCESS_MSRS	47
+> +#define MAX_DIRECT_ACCESS_MSRS	48
+>   #define MSRPM_OFFSETS	32
+>   extern u32 msrpm_offsets[MSRPM_OFFSETS] __read_mostly;
+>   extern bool npt_enabled;
+> @@ -582,6 +582,7 @@ u32 *svm_vcpu_alloc_msrpm(void);
+>   void svm_vcpu_init_msrpm(struct kvm_vcpu *vcpu, u32 *msrpm);
+>   void svm_vcpu_free_msrpm(u32 *msrpm);
+>   void svm_copy_lbrs(struct vmcb *to_vmcb, struct vmcb *from_vmcb);
+> +void svm_enable_lbrv(struct kvm_vcpu *vcpu);
+>   void svm_update_lbrv(struct kvm_vcpu *vcpu);
+>   
+>   int svm_set_efer(struct kvm_vcpu *vcpu, u64 efer);
 
