@@ -1,181 +1,290 @@
-Return-Path: <linux-kernel+bounces-195204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39198D48CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:42:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E878D48C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4E81F21880
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:42:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D832B2147D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D42915278D;
-	Thu, 30 May 2024 09:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCD613B290;
+	Thu, 30 May 2024 09:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="udMzgw2m"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="YTf+OeRz"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A056F30E;
-	Thu, 30 May 2024 09:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F902B9A6
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717062125; cv=none; b=IS0qPFOJgmMhvbwK19qi/8G0DFnMJS/pwYTaPixp516KkDyzIaeIb0o/BkNmLbIT6JlgXVLUYF4SfU8OVs8ATJIh4PJ8Roh695sL0CgMfqJ09OKvZVQoh1qeJ7aeUzgOyVRM/0s7MaK1SzI7+Oh8oMt2Ous86r6/33bSpyD5Dp8=
+	t=1717062088; cv=none; b=O2zpvutLe3DEqNuXbmig0DPX0lVq22h+qY4ldF2GkawCxO+P6UFe2oJfQ+QzY38FtoT5bs7hlDk9oLRNsk0Yx5e2YSXVJQC3MuUDj2aaJQU9w4H547Pp7MZuBvDrS/P3lb8lf8qEPMFkyRhpNA2gkzCRltXQwrr3ZkoQxPDFZ3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717062125; c=relaxed/simple;
-	bh=XWOyTPNcAS3edgj78RlRWWnGHomKwyWonS/ztRducKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L2Wb4NTbKLJt1dlsJAZKNCHO/OtnAX1Omb9r3CHn6KAMk7nOE2N+OG3gCDQys0mIxInPhfWzmuURIQZwpcQJYySVnki2bUOABpKKKMIk7PuDXzBRQplYeHO8mJqFBVMzD65ZJL5d/NYUJ9SNfYSBAKa6dnpxp26gEccHz5mHARg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=udMzgw2m; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717062046; x=1717666846; i=markus.elfring@web.de;
-	bh=oezbfXsbeaJmwShGUCb+ixc9diIxCFrcJK9McEzg11Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=udMzgw2mYVlwtItRnGV35f3oiE0Oyr3q2Wai5rVR1uBx+YWZq6DJmUB0HJFO7gEg
-	 zHtbjKeZbMdYQsvdMYg12nG+ChB1GmTP1PGCuWx+tCMS5rZiC1+duXb/jiHwkzB4j
-	 syiNZ4mlPm2DiiQ8XjEzFyur696yPd4GXRrreI0h/3tcHoAlAFA1sIbSh3Kt6TiAA
-	 D9LJeu9MW5T1g3BLn1VuEErohRJsWwSGlebj9XoGNB0KuJ815IRkZ8rWBx1cMjYYU
-	 hdIoDl2VHExhUzdr+Mva/03BzeBESiNQo93VyYKqajOHhSFQ0saGgjsPwp5aj9MhI
-	 3c9cFdagTRHOvih9Ig==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MP384-1rpSiH3liG-00XcMK; Thu, 30
- May 2024 11:40:46 +0200
-Message-ID: <5a2f7786-bb02-441a-a60e-a7a548a30a79@web.de>
-Date: Thu, 30 May 2024 11:40:21 +0200
+	s=arc-20240116; t=1717062088; c=relaxed/simple;
+	bh=0Iqsq+M00t2+tehyQ70ELjWVv+y/7Jo4pD85rhygNH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WOLMOX3YS15FGH+EkncIbl+2VVXr8wMxDYuH0vyy57WtL4g4ozHoJ53GLAYqK9rsdWNacbeU0UrVrZHoIBruaqeXSX8FikEw8zptOmVQfi7vhalnF8yTpY5ZMuTi6gsHPGI47crKdjDDRcENIfsdRTeXX87fFXhQqNM6XVWWjYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=YTf+OeRz; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b970e90ab8so371090eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:41:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1717062086; x=1717666886; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Ap2dugGmP5WE2E5FcASCxui6sxizua7AcbrO2mdh8Y=;
+        b=YTf+OeRzs0eo7M1pCgIZZzIb6bNZmi/m1uj7L95xMRqVyvNLm59JcHb1vZ0T7EeF1p
+         CWeuQU+BC7HvBBoMeQV/XEnTBg8TWmIJiD6E2dxPRNi+mOUlaBzKfigEEorxZuwGaxx4
+         ya2x+BkCDBTXySqratze/nmpoAOcVDLfEpeFfz1kHBItN9JBYjEwaVrkWqEPfp+00iio
+         AnhQXApiPsKaKDpfijbxQf8yoU4+SzzXy5br2Ls5tRDGTSFy70WLJEuZBwO+s2ZvnYB1
+         rifldwi+uZ4wyyDeZ6/tGK0Hyp3ddueH4If2n8PimV1eV2L3UzMIbEiwn5P9lM3FMcqq
+         LCoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717062086; x=1717666886;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Ap2dugGmP5WE2E5FcASCxui6sxizua7AcbrO2mdh8Y=;
+        b=NzYu10zLOekrbOHXhBiBdtQUsFfIspgofAlNYI8cmqn0HEtizSGxPlQE9hIDNYj3LK
+         eWKzrxJ2AW7grroDaHCYbtBLK+rY/aElK+KPujr8FAeXvEpcIRLdTcYms3JYVGpJBIVr
+         9CjdH2jzJ2Ow6bNtoiXr7Dxn9S8jo5rJ8zctYPZyiU2R6yvJZNbwVoCmyDCizoZH9btW
+         T7aCwauhO04x+tt2sfF65ANimsWV6DGbWORta8qxOzBo8S6tI9pN43zmeA/XJscJW1TD
+         AbE65WGN8AzzjWKosSUMrGr2lnfZyXiZLBN7xhPFjI8pxdFf3ANjbYdbjj1VCmU4riSk
+         MRxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUx6FtJfTESvW8X1C3UnnlPzg1uNUMekJr723Ww7XWTRF83aNo7Ql9uhCjMaf2KMTYp11Ddi673ZNPW5kVlXWc1MM0WcHFOsKaFmLI
+X-Gm-Message-State: AOJu0YxjPh4DEjp2utMnIQgy7Em0Y9pHwIiqIeJvB3Mp+aIwO+mvr9TZ
+	OKlQAUkAzIAcRz27rGG8WJiu7pWp4Snzhx073eQ6lGhZysuW7EttRmBYyiVgvE3PygCEeS7zVuW
+	gKZkeVf8/SVJTbs8A7w8Hf3u15EBRM0hDsDloRA==
+X-Google-Smtp-Source: AGHT+IGs8c+j/SX1TKRu2grSTFbKjYgLZf2leGT/SdcfsZ4CQqrfPAwFqljLFAvGYqp/iOrNutq7K/dJ1Cm5fQG1ADA=
+X-Received: by 2002:a05:6820:2216:b0:5b9:8a06:4e84 with SMTP id
+ 006d021491bc7-5b9ec554fd3mr2313780eaf.2.1717062085690; Thu, 30 May 2024
+ 02:41:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 04/20] pinctrl: starfive: Use scope based of_node_put()
- cleanups
-To: Peng Fan <peng.fan@nxp.com>, "soc@kernel.org" <soc@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chester Lin <chester62515@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Damien Le Moal <dlemoal@kernel.org>, Dan Carpenter
- <dan.carpenter@linaro.org>, Aisheng Dong <aisheng.dong@nxp.com>,
- Dvorkin Dmitry <dvorkin@tibbo.com>, Emil Renner Berthing <kernel@esmil.dk>,
- Fabio Estevam <festevam@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- "Ghennadi Procopciuc (OSS)" <ghennadi.procopciuc@oss.nxp.com>,
- Hal Feng <hal.feng@starfivetech.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Jacky Bai <ping.bai@nxp.com>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Joel Stanley <joel@jms.id.au>, Jonathan Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Ludovic Desroches <ludovic.desroches@microchip.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Matthias Brugger <mbrugger@suse.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Orson Zhai
- <orsonzhai@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Sean Wang <sean.wang@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>,
- Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Viresh Kumar <vireshk@kernel.org>, Wells Lu <wellslutw@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-stm32@st-md-mailman.stormreply.com"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>
-References: <20240504-pinctrl-cleanup-v2-4-26c5f2dc1181@nxp.com>
- <96beb071-ec2c-475f-8fa2-d519a1b1dc28@web.de>
- <DU0PR04MB9417AEB942C1EDC053B3894288F32@DU0PR04MB9417.eurprd04.prod.outlook.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <DU0PR04MB9417AEB942C1EDC053B3894288F32@DU0PR04MB9417.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
+ <20240524103307.2684-2-yongxuan.wang@sifive.com> <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
+ <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr>
+In-Reply-To: <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr>
+From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Date: Thu, 30 May 2024 17:41:14 +0800
+Message-ID: <CAMWQL2g7sgt9-_4YTbRg3SRrUJE_4HEsqEUO44oA4=vHZA4L9A@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 1/5] RISC-V: Detect and Enable Svadu Extension Support
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
+	vincent.chen@sifive.com, cleger@rivosinc.com, Jinyu Tang <tjytimi@163.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Samuel Ortiz <sameo@rivosinc.com>, 
+	Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Jisheng Zhang <jszhang@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Leonardo Bras <leobras@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4W0m5Oq+1MGYjHuLsVFcBf6DSSPzN7CJwWHOWi5gVfVYTRdIR+K
- 2zyPW5XWeC0waA0XG1o0fva/8mCKTm9879lM0GAJSjUGl41hhETK5f8M2ZBMWQ4g0UJlzpD
- 3fzoJQdfd/ogRUeMGCE2UBUF0SSc9vaIDmdgbQa7eO8DVSGbXX57YkoiUskSCwTn3hiAUkG
- zfKWQK47+ptxj3MqnNU5w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Z0q9Az0GyLU=;t4hmcU2AVRjgCjjXk+b3MHwUa7l
- a/pZvuSsug2vebJJV5Mmmf6xKS18ONuBD+gbm/WB8pgHBLJFkYoysMC0IIhx4I0WWI8wizEKj
- wnwngc3K9jAYAXxT3wClh5EI2lIr7usMKJyuXoUcETJI4md3CnMPaiRQG/yVqlAaqCNcnTEWr
- WWVhMuNEPkeDux1iinsdm+TlQNMfJThu1Ed2/Gr+1xeNpKuIWMppANb5SaTJfrRnR4fWhKAje
- H5Ji01z/5jyqznj5BQqSdQN/HIFX+AuFTNeOOmiNL+Fu6rvGsnjOO3Y/SCvMNzBTzPiH9CDir
- A4M1tTHQ9uQvQBsNIgU0qBKLdJQWQkCNz9rGjEjT7hcfvZGYnOb51PQcD02B6X5AFG9H4e81d
- QQyoEcHJ2iww/oZeEqD01ICHR6Xm75yJLFp+FB2L2ollolZJGerIrqkObBT4DKiDqZh9JL7Ge
- bYgdIs3lszUpzViMOTebYrvSUME/DNU00PRb5jIRktRJ68GikIQOSb9GTM4McCY/8YhgSiKHO
- E0ke83cM8aWyw/aFa3MYwYIMoiR6CkR/JHxXPFGPv0ESsQE+1KqicTxlNRxNNeaC44F87DOhi
- QwekBqSRkfFTYVqJ/rYDwDv7k6JeNQKnGlzFplb3elYjtqMJQJuXX4QBFa8hnO27xq8GaJIkm
- oPQAWSWmyUngO8twTu/hiTut+8wfA2nc5zW1Ivh1KxhFHw1LlL2aUdBN27PkhUzfAZ2+2os0h
- eVnu8MCv4H6B/GiPXrkEj/dv4XcqEBaS34YpYNMsylW8LbTBv3fh0B8rT6BKm1GWYO0GYReRx
- tgV6FpjSt5H6LMZ9sBiv3t8DXZ4h0OzcUDX1owYdJOg1k=
 
->> 1. Exception handling is repeated a few times also according to memory
->> allocation failures.
->>    How do you think about to use a corresponding label like "e_nomem"
->>    so that another bit of duplicate source code can be avoided?
+Hi Alexandre,
+
+On Thu, May 30, 2024 at 4:19=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
+te:
 >
-> I have no plan to rework this series for non-accepted patches. If you ha=
-ve
-> interest and time, feel free to take it.
->>
->> https://wiki.se/
->> i.cmu.edu%2Fconfluence%2Fdisplay%2Fc%2FMEM12-
->> C.%2BConsider%2Busing%2Ba%2Bgoto%2Bchain%2Bwhen%2Bleaving%2Ba%
->> 2Bfunction%2Bon%2Berror%2Bwhen%2Busing%2Band%2Breleasing%2Bresou
->> rces&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C293bafdf40524fa4655b08
->> dc7e58f6b2%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63852
->> 4167804502915%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiL
->> CJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata
->> =3DKb5cz6sVxW1TNfQ8MM2F6YLIIztyjvW4wULEJLYKRM8%3D&reserved=3D0
-
-I became curious how the change acceptance will evolve further
-also according to such a code transformation possibility.
-
-
->> 2. Will development interests grow for the usage of a statement like
->> "guard(mutex)(&sfp->mutex);"?
+> Hi Yong-Xuan,
 >
-> I have no plan on this.
+> On 27/05/2024 18:25, Andrew Jones wrote:
+> > On Fri, May 24, 2024 at 06:33:01PM GMT, Yong-Xuan Wang wrote:
+> >> Svadu is a RISC-V extension for hardware updating of PTE A/D bits.
+> >>
+> >> In this patch we detect Svadu extension support from DTB and enable it
+> >> with SBI FWFT extension. Also we add arch_has_hw_pte_young() to enable
+> >> optimization in MGLRU and __wp_page_copy_user() if Svadu extension is
+> >> available.
+>
+>
+> So we talked about this yesterday during the linux-riscv patchwork
+> meeting. We came to the conclusion that we should not wait for the SBI
+> FWFT extension to enable Svadu but instead, it should be enabled by
+> default by openSBI if the extension is present in the device tree. This
+> is because we did not find any backward compatibility issues, meaning
+> that enabling Svadu should not break any S-mode software. This is what
+> you did in your previous versions of this patchset so the changes should
+> be easy. This behaviour must be added to the dtbinding description of
+> the Svadu extension.
+>
+> Another thing that we discussed yesterday. There exist 2 schemes to
+> manage the A/D bits updates, Svade and Svadu. If a platform supports
+> both extensions and both are present in the device tree, it is M-mode
+> firmware's responsibility to provide a "sane" device tree to the S-mode
+> software, meaning the device tree can not contain both extensions. And
+> because on such platforms, Svadu is more performant than Svade, Svadu
+> should be enabled by the M-mode firmware and only Svadu should be
+> present in the device tree.
+>
+> I hope that clearly explains what we discussed yesterday, let me know if
+> you (or anyone else) need more explanations. If no one is opposed to
+> this solution, do you think you can implement this behaviour? If not, I
+> can deal with it, just let me know.
+>
+> Thanks
+>
+>
 
-Other contributors might get attracted by corresponding design adjustments=
-.
-https://elixir.bootlin.com/linux/v6.10-rc1/source/include/linux/cleanup.h#=
-L124
-
-See also:
-Looking at guard usage (with SmPL)
-https://lore.kernel.org/cocci/2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2024-05/msg00090.html
+Sure, I can do it. Just to confirm, which extension should be removed
+when both Svade and Svadu are present in the DT?
 
 Regards,
-Markus
+Yong-Xuan
+
+> >>
+> >> Co-developed-by: Jinyu Tang <tjytimi@163.com>
+> >> Signed-off-by: Jinyu Tang <tjytimi@163.com>
+> >> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> >> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> >> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> > I think this patch changed too much to keep r-b's. We didn't have the
+> > FWFT part before.
+> >
+> >> ---
+> >>   arch/riscv/Kconfig               |  1 +
+> >>   arch/riscv/include/asm/csr.h     |  1 +
+> >>   arch/riscv/include/asm/hwcap.h   |  1 +
+> >>   arch/riscv/include/asm/pgtable.h |  8 +++++++-
+> >>   arch/riscv/kernel/cpufeature.c   | 11 +++++++++++
+> >>   5 files changed, 21 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> >> index be09c8836d56..30fa558ee284 100644
+> >> --- a/arch/riscv/Kconfig
+> >> +++ b/arch/riscv/Kconfig
+> >> @@ -34,6 +34,7 @@ config RISCV
+> >>      select ARCH_HAS_PMEM_API
+> >>      select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+> >>      select ARCH_HAS_PTE_SPECIAL
+> >> +    select ARCH_HAS_HW_PTE_YOUNG
+> >>      select ARCH_HAS_SET_DIRECT_MAP if MMU
+> >>      select ARCH_HAS_SET_MEMORY if MMU
+> >>      select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+> >> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr=
+h
+> >> index 2468c55933cd..2ac270ad4acd 100644
+> >> --- a/arch/riscv/include/asm/csr.h
+> >> +++ b/arch/riscv/include/asm/csr.h
+> >> @@ -194,6 +194,7 @@
+> >>   /* xENVCFG flags */
+> >>   #define ENVCFG_STCE                        (_AC(1, ULL) << 63)
+> >>   #define ENVCFG_PBMTE                       (_AC(1, ULL) << 62)
+> >> +#define ENVCFG_ADUE                 (_AC(1, ULL) << 61)
+> >>   #define ENVCFG_CBZE                        (_AC(1, UL) << 7)
+> >>   #define ENVCFG_CBCFE                       (_AC(1, UL) << 6)
+> >>   #define ENVCFG_CBIE_SHIFT          4
+> >> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/h=
+wcap.h
+> >> index e17d0078a651..8d539e3f4e11 100644
+> >> --- a/arch/riscv/include/asm/hwcap.h
+> >> +++ b/arch/riscv/include/asm/hwcap.h
+> >> @@ -81,6 +81,7 @@
+> >>   #define RISCV_ISA_EXT_ZTSO         72
+> >>   #define RISCV_ISA_EXT_ZACAS                73
+> >>   #define RISCV_ISA_EXT_XANDESPMU            74
+> >> +#define RISCV_ISA_EXT_SVADU         75
+> >>
+> >>   #define RISCV_ISA_EXT_XLINUXENVCFG 127
+> >>
+> >> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm=
+/pgtable.h
+> >> index 9f8ea0e33eb1..1f1b326ccf63 100644
+> >> --- a/arch/riscv/include/asm/pgtable.h
+> >> +++ b/arch/riscv/include/asm/pgtable.h
+> >> @@ -117,6 +117,7 @@
+> >>   #include <asm/tlbflush.h>
+> >>   #include <linux/mm_types.h>
+> >>   #include <asm/compat.h>
+> >> +#include <asm/cpufeature.h>
+> >>
+> >>   #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE=
+_PFN_SHIFT)
+> >>
+> >> @@ -285,7 +286,6 @@ static inline pte_t pud_pte(pud_t pud)
+> >>   }
+> >>
+> >>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
+> >> -#include <asm/cpufeature.h>
+> >>
+> >>   static __always_inline bool has_svnapot(void)
+> >>   {
+> >> @@ -621,6 +621,12 @@ static inline pgprot_t pgprot_writecombine(pgprot=
+_t _prot)
+> >>      return __pgprot(prot);
+> >>   }
+> >>
+> >> +#define arch_has_hw_pte_young arch_has_hw_pte_young
+> >> +static inline bool arch_has_hw_pte_young(void)
+> >> +{
+> >> +    return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
+> >> +}
+> >> +
+> >>   /*
+> >>    * THP functions
+> >>    */
+> >> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufea=
+ture.c
+> >> index 3ed2359eae35..b023908c5932 100644
+> >> --- a/arch/riscv/kernel/cpufeature.c
+> >> +++ b/arch/riscv/kernel/cpufeature.c
+> >> @@ -93,6 +93,16 @@ static bool riscv_isa_extension_check(int id)
+> >>                      return false;
+> >>              }
+> >>              return true;
+> >> +    case RISCV_ISA_EXT_SVADU:
+> >> +            if (sbi_probe_extension(SBI_EXT_FWFT) > 0) {
+> > I think we've decided the appropriate way to prove for SBI extensions i=
+s
+> > to first ensure the SBI version and then do the probe, like we do for S=
+TA
+> > in has_pv_steal_clock()
+> >
+> >> +                    struct sbiret ret;
+> >> +
+> >> +                    ret =3D sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,=
+ SBI_FWFT_PTE_AD_HW_UPDATING,
+> >> +                                    1, 0, 0, 0, 0);
+> >> +
+> >> +                    return ret.error =3D=3D SBI_SUCCESS;
+> >> +            }
+> >> +            return false;
+> >>      case RISCV_ISA_EXT_INVALID:
+> >>              return false;
+> >>      }
+> >> @@ -301,6 +311,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =
+=3D {
+> >>      __RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
+> >>      __RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
+> >>      __RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
+> >> +    __RISCV_ISA_EXT_SUPERSET(svadu, RISCV_ISA_EXT_SVADU, riscv_xlinux=
+envcfg_exts),
+> > We do we need XLINUXENVCFG?
+> >
+> > Thanks,
+> > drew
+> >
+> >>      __RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
+> >>      __RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+> >>      __RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
+> >> --
+> >> 2.17.1
+> >>
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
