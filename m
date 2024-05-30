@@ -1,141 +1,149 @@
-Return-Path: <linux-kernel+bounces-195891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A0D8D53EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C584E8D53E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E4271F21B23
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:37:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8FE1F22191
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD4784FAE;
-	Thu, 30 May 2024 20:37:38 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558518249B;
+	Thu, 30 May 2024 20:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EdXkL8O4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B4B25634;
-	Thu, 30 May 2024 20:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3D025634;
+	Thu, 30 May 2024 20:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717101458; cv=none; b=VCKvaC/+ir8DncrSgzSRILBJF9nS0Lvt2xGd1x85NcdE6hzsf5qtKEV1gmbnv3EFKXEctvC+9CczTHRUmmUrrFm70l9UNy5vX0LZMi2LqEIU/g715yk0ec6A49LKuAuB30uh0nRMZXUgCxzzRN4icpI0YoImyjhn69Ty6Byfncc=
+	t=1717101304; cv=none; b=B/2CGkBNgIVGb1eG32Rl7URoaTkNG5IrTE5Pw4LtzBK/uPtF55f0et3CpxdSTlaojiXBvH7Zt5nxXYXz51cHEXWKwDcwGM9zwtfW3xIsNp/U6oIAAqTTr+JyZ/zrW8wWtRZsPc1wsEp1+vaUCeQfgaQKbUf2eWVlCuTKySqmXlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717101458; c=relaxed/simple;
-	bh=buOi9I1vq2LMwZO2pL29m6PkOg20BaspyX4JF9qDuhU=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oLN0kTC8prH6BpXJkiQjlKVjU/78rmpQFbWS5j5IKAD0Ux6GhLvRjuVR13MX+TWipX46I+aZAUqV18fA8JAK/JZINjsPCe+BR4YlBBL02E3/wkd3Kc8jOI83s33/xSeyjYD29PRElo8Z6MdC0Skm07MUnD3u+xoGaSyxIcytr80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.75.211) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 30 May
- 2024 23:37:14 +0300
-Subject: Re: [net-next PATCH v4 4/7] net: ravb: Refactor GbEth RX code path
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
- <20240528150339.6791-5-paul.barker.ct@bp.renesas.com>
- <611a49b8-ecdb-6b91-9d3e-262bf3851f5b@omp.ru>
- <908c525b-10e2-464f-ad66-df431d48ca03@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <82f623bc-b8ef-a2b4-2e61-67769e4ce091@omp.ru>
-Date: Thu, 30 May 2024 23:37:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717101304; c=relaxed/simple;
+	bh=kAKen4NyriQ88zKA+tglPnCd/Pr0Xbljz36Nbgay9Qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hZafJWQvSSG77GcdI4QAjSTXYw70UOGgDIhtTu0hX1g9ZPazaa6QeO6CyvQN5FezcJNrUhQAcdvCyZ2+qu/n4KhWfjG61WzhHG1xUTIMWLZlOxw6qxiSriELq9HHLVZuVlSZQHJLvCxpKSfBpnts4b7kg13bwRNwneCIG9y8mZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EdXkL8O4; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717101303; x=1748637303;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=kAKen4NyriQ88zKA+tglPnCd/Pr0Xbljz36Nbgay9Qo=;
+  b=EdXkL8O4rLGjVsPTioHQqVMZ2z/f1NLjtMAPvw6+Na1iyaoPUUa8KSit
+   R8gstQM9NzQx99F0R4Kv6Sk08idCsLr5XoTLf8DWSPd7v7lu6xPatCt7I
+   HnCPNBsTUiiJpsvaCImfkIsv+rxZ7Pm9bQSQK3DMMToVGN/ESXgOC4bfE
+   5h9w7loWD5lGAoeoKL7P/kTi1NveHmG11+tu2MxHA5wW08/y3KiJfqH+6
+   NfhPpMStoXYtZ4M9e4lICLwpReJQskObLjmaDS3+ePPFKnUYQabjV2odM
+   lgqfFBRus2qjYS0ytH3zFKjDNrFV8umX81HWT1oEnay6wT/GUSRhT6e/B
+   Q==;
+X-CSE-ConnectionGUID: NQqhdIpSRvSOrq/B2vdaLA==
+X-CSE-MsgGUID: Q0wEa24ARpqRrLBokVqjVQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13816728"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="13816728"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 13:35:02 -0700
+X-CSE-ConnectionGUID: ZC/1h9rtQlaQZtkVvz9Niw==
+X-CSE-MsgGUID: CT6c8GOnSymlhdPdSxMcbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="40855571"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 13:35:02 -0700
+Date: Thu, 30 May 2024 13:39:58 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>,
+ jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 1/6] x86/irq: Add enumeration of NMI source reporting
+ CPU feature
+Message-ID: <20240530133958.229975d1@jacob-builder>
+In-Reply-To: <20240530091916.54056820@jacob-builder>
+References: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
+	<20240529203325.3039243-2-jacob.jun.pan@linux.intel.com>
+	<9dabe435-7208-4aa8-886c-a3351ee11e80@zytor.com>
+	<20240530091916.54056820@jacob-builder>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <908c525b-10e2-464f-ad66-df431d48ca03@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 05/30/2024 20:21:02
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185622 [May 30 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.75.211 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.75.211
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 05/30/2024 20:25:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 5/30/2024 7:29:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 5/29/24 10:07 PM, Paul Barker wrote:
-[...]
+Hi Jacob,
 
->>> We can reduce code duplication in ravb_rx_gbeth().
->>>
->>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
->> [...]
->>
->>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
->>> index 7df7d2e93a3a..c9c5cc641589 100644
->>> --- a/drivers/net/ethernet/renesas/ravb_main.c
->>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
->>> @@ -817,47 +817,54 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
->>>  				stats->rx_missed_errors++;
->>>  		} else {
->>>  			die_dt = desc->die_dt & 0xF0;
->>> +			skb = ravb_get_skb_gbeth(ndev, entry, desc);
->>>  			switch (die_dt) {
->>
->>    Why not do instead (as I've asked you alraedy):
+On Thu, 30 May 2024 09:19:16 -0700, Jacob Pan
+<jacob.jun.pan@linux.intel.com> wrote:
 
-   Already. :-)
-
->>
->> 			case DT_FSTART:
->> 				priv->rx_1st_skb = skb;
->> 				fallthrough;
+> Hi Peter,
 > 
-> I've avoided that change to keep patch 7/7 simpler (as we have to move
-> the assignment of skb later in that patch). I can change this if you
-> want though.
+> On Wed, 29 May 2024 13:49:40 -0700, "H. Peter Anvin" <hpa@zytor.com>
+> wrote:
+> 
+> > On 5/29/24 13:33, Jacob Pan wrote:  
+> > > diff --git a/arch/x86/kernel/cpu/cpuid-deps.c
+> > > b/arch/x86/kernel/cpu/cpuid-deps.c index b7d9f530ae16..3f1a1a1961fa
+> > > 100644 --- a/arch/x86/kernel/cpu/cpuid-deps.c
+> > > +++ b/arch/x86/kernel/cpu/cpuid-deps.c
+> > > @@ -84,6 +84,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+> > >   	{ X86_FEATURE_SHSTK,
+> > > X86_FEATURE_XSAVES    }, { X86_FEATURE_FRED,
+> > > X86_FEATURE_LKGS      }, { X86_FEATURE_FRED,
+> > > X86_FEATURE_WRMSRNS   },
+> > > +	{ X86_FEATURE_FRED,
+> > > X86_FEATURE_NMI_SOURCE}, {}
+> > >   };
+> > >       
+> > 
+> > This is incorrect. FRED does *not* inherently depend on NMI_SOURCE; the 
+> > dependency is the reverse, but since it *also* depends on FRED being 
+> > dynamically enabled, there is no need to add it to the static table;
+> > the dynamic test:
+> >   
+> My misunderstanding of the dependency table, thanks for pointing it out.
+> Will remove.
+> 
+> > > diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> > > index 4fa0b17e5043..465f04e4a79f 100644
+> > > --- a/arch/x86/kernel/traps.c
+> > > +++ b/arch/x86/kernel/traps.c
+> > > @@ -1427,8 +1427,10 @@ early_param("fred", fred_setup);
+> > >  
+> > >  void __init trap_init(void)
+> > >  {
+> > > -	if (cpu_feature_enabled(X86_FEATURE_FRED) && !enable_fred)
+> > > +	if (cpu_feature_enabled(X86_FEATURE_FRED) && !enable_fred) {
+> > >  		setup_clear_cpu_cap(X86_FEATURE_FRED);
+> > > +		setup_clear_cpu_cap(X86_FEATURE_NMI_SOURCE);
+> > > +	}
+> > >  
+> > >  	/* Init cpu_entry_area before IST entries are set up */
+> > >  	setup_cpu_entry_areas();    
+> > 
+> > ... suffices just fine on its own.  
+> I am not following, do you mean checking for FRED is sufficient for NMI
+> source? I think it works since NMI source cannot be disabled if FRED is
+> on. Just want to use the architectural CPUID bits to the fullest.
+> 
+Nevermind, I got it now, will keep the dynamic test.
 
-   Oh, then please keep it as is! :-)
 
-[...]
+Thanks,
 
-> Thanks for the review!
-
-MBR, Sergey
+Jacob
 
