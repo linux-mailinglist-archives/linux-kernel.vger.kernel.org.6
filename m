@@ -1,155 +1,137 @@
-Return-Path: <linux-kernel+bounces-195958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11488D54DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BA18D54E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABA2B2302E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:52:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411102868F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05126177991;
-	Thu, 30 May 2024 21:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964CE1836DB;
+	Thu, 30 May 2024 21:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbQroQDP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZQ4mxtP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2CE47A40;
-	Thu, 30 May 2024 21:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE94B1F947;
+	Thu, 30 May 2024 21:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717105971; cv=none; b=S3ILWdkKFI0o0FreKWIh83JZ6SAYMbR045lkozu4qtfYNdffidCW7ZHs8D99gUFXI2Vy582F0LkgJm0E4uu2ocfPq42PQsOtkyS2okdrAra5vmaCS5hgwQ/eIgNuAwUHSlU29KSnkcWL/rY6Uk5SrM9K2rTNuNIUSLFxngY7A+M=
+	t=1717106110; cv=none; b=UAQg7JyL5R1sf0y3+1bN8vaHBtZDGGZjcAmY17cGXD5wVHCA3Vku44i6Pf2Ic0dkFg0CRvTGbtnVxcPvzYTnToLeto2vbvhitvncZcfTm/wvLsic/CEZ2FrNxkYLApYZzm/PviteaJPD+h8q2u2FktOFuTMg6HtuXxoeYbuTBNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717105971; c=relaxed/simple;
-	bh=abZe/dx3WO1a/0KTAitU4WVK162HfcTJ9SvDqgkQNGo=;
+	s=arc-20240116; t=1717106110; c=relaxed/simple;
+	bh=/VfaV/85ip1/Lj37F3db092taXFOC4P5Olaax8eSKGA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZry3vKBhXGl5TtcPuwZw3q57lErIRgmR+gFx1eGE7NwH6lPtWn6hxXutJcugkkM9Sk+Exk4RtNOmudOga/EfgHf3vlzqngUqwZq3sIRiamiZR2W9f44ncRXhBp+YmtbhNdL2DgkNUtrq0L8DbyRFDd15Pn1ViTd2SH/qVWJjxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbQroQDP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16F5C32786;
-	Thu, 30 May 2024 21:52:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uK5PSkgJXNyq4oItEe3JlvGil6Gh4lW1w8mJXEH2tZVoWRisRPlA+d9KGy1PlMazf8UF8vGRAu7OrPcQbcqMqwwTztH7R+Skv0Bz99HQledrTM4/FGoByq5glxusuq0EGfX+iWBCrZ0P5ypamj1jKOenUsGvubzADNEFx19dhzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZQ4mxtP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9753CC2BBFC;
+	Thu, 30 May 2024 21:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717105970;
-	bh=abZe/dx3WO1a/0KTAitU4WVK162HfcTJ9SvDqgkQNGo=;
+	s=k20201202; t=1717106109;
+	bh=/VfaV/85ip1/Lj37F3db092taXFOC4P5Olaax8eSKGA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbQroQDPox/NeV/A1CeNS5vY8k7VjI7fDS9fHoThXfLzv41sj3nTeP5yHH/P/I5+N
-	 d0qm6Bj8TB2fveY9smh/5HCu/CeJ2mEWTn4eL8EP6Xc7yNyS8rRdP26tfeQ10Nclca
-	 2+PadPARXAkHvM17cCUoaZ2/0+W2STPddN7PEzyvo8AvhJxJWUBgkzY7F6BnfWVWqL
-	 qrbBw9LfH985G82dHhm1kRXr9l6+R14lyvrfqA9fM0x82rOK7cBjjNdcNU/QijvjqK
-	 VweUByCpyvyat8PG24b35WDDf+zoi1cFDehKaiQKfFVg+MYdCvV2tta3rLaRsZfiZi
-	 zmOPH6QnQE8lg==
-Date: Thu, 30 May 2024 14:52:48 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
-	Joel Fernandes <joel@joelfernandes.org>, neeraj.upadhyay@kernel.org,
-	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
-Subject: Re: arm-linux-gnueabihf-ld:
- kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
- `__bad_cmpxchg' follow
-Message-ID: <20240530215153.GA466604@thelio-3990X>
-References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
- <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
- <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
- <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
- <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
+	b=kZQ4mxtPBvXvCeNYWUR960jdhWfNHrKSc6bPcA7sMKru1eZHTHDJKG3aKjH6LKfRq
+	 BZDEpq8uhdWWPRDT1eD7klYULUHB4lKNmmn32sNNNF00rPzBYMPrCo9UO0EZKwqVNR
+	 C7YrmeptnX5uuJD1i6wlO7W5l6P08k8ii8xOwC8Q/SfjdnSrxqt2fJjgtmtzmHcjO4
+	 gmHytnkZ3BygZJQM+iLZdI3X19qMira65xrhpnNU1o+1bQRaPII/3npFey5IGcZWg5
+	 fTcHGst5oHyNEcR897cFnzW+SF8JIF/wCALlcQB3qQMIusaYlEao9vDCA81l6iQzpG
+	 8MbaiarDzZidg==
+Date: Thu, 30 May 2024 22:55:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: andy.chiu@sifive.com, Paul Walmsley <paul.walmsley@sifive.com>,
+	aou@eecs.berkeley.edu, Conor Dooley <conor.dooley@microchip.com>,
+	Heiko Stuebner <heiko@sntech.de>, guoren@kernel.org,
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, corbet@lwn.net,
+	Evan Green <evan@rivosinc.com>, cleger@rivosinc.com,
+	shuah@kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, vincent.chen@sifive.com,
+	greentime.hu@sifive.com, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 6/8] riscv: hwprobe: add zve Vector subextensions into
+ hwprobe interface
+Message-ID: <20240530-daylong-pelican-74ccadb9811f@spud>
+References: <20240510-zve-detection-v5-6-0711bdd26c12@sifive.com>
+ <mhng-0679629d-d115-44ae-a33a-bf42980c7686@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="54amDOCv5zaovVhC"
+Content-Disposition: inline
+In-Reply-To: <mhng-0679629d-d115-44ae-a33a-bf42980c7686@palmer-ri-x1c9a>
+
+
+--54amDOCv5zaovVhC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 10:24:05AM -0700, Paul E. McKenney wrote:
-> And for an untested first attempt at a fix.
-> 
-> What did I mess up this time?  ;-)
+On Thu, May 30, 2024 at 02:35:51PM -0700, Palmer Dabbelt wrote:
+> On Thu, 09 May 2024 09:26:56 PDT (-0700), andy.chiu@sifive.com wrote:
+> > diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hw=
+probe.c
+> > index 969ef3d59dbe..35390b4a5a17 100644
+> > --- a/arch/riscv/kernel/sys_hwprobe.c
+> > +++ b/arch/riscv/kernel/sys_hwprobe.c
+> > @@ -114,6 +114,11 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe =
+*pair,
+> >  		EXT_KEY(ZIHINTPAUSE);
+> >=20
+> >  		if (has_vector()) {
+> > +			EXT_KEY(ZVE32X);
+> > +			EXT_KEY(ZVE32F);
+> > +			EXT_KEY(ZVE64X);
+> > +			EXT_KEY(ZVE64F);
+> > +			EXT_KEY(ZVE64D);
+> >  			EXT_KEY(ZVBB);
+> >  			EXT_KEY(ZVBC);
+> >  			EXT_KEY(ZVKB);
+>=20
+> Conor left a comment over here <https://lore.kernel.org/all/20240510-zve-=
+detection-v5-6-0711bdd26c12@sifive.com/>.
 
-An include for cmpxchg-emu.h ;)
+This link is to the patch you're replying to, not anything from me.
+I commented on a bunch of stuff in v4, but not this patch - generally I
+ignore hwprobe to be honest...
 
-  In file included from arch/arm/include/asm/atomic.h:16,
-                   from include/linux/atomic.h:7,
-                   from include/asm-generic/bitops/lock.h:5,
-                   from arch/arm/include/asm/bitops.h:245,
-                   from include/linux/bitops.h:63,
-                   from include/linux/log2.h:12,
-                   from kernel/bounds.c:13:
-  arch/arm/include/asm/cmpxchg.h: In function '__cmpxchg':
-  arch/arm/include/asm/cmpxchg.h:167:26: error: implicit declaration of function 'cmpxchg_emu_u8' [-Werror=implicit-function-declaration]
-    167 |                 oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-        |                          ^~~~~~~~~~~~~~
-  cc1: some warnings being treated as errors
+> I think the best bet is to just merge this v5 on for-next now, though --
+> there's a bunch of patch sets touching ISA string parsing and IIUC that
+> sub-extension parsing stuff is a pre-existing issue, and Clement's patch =
+set
+> still has some outstanding feedback to address.
+>=20
+> So I think if we just go with this we're not regressing anything, we just
+> have a bit more to clean up.  Maybe it's a little uglier now that userspa=
+ce
+> can see the sub-extensions, but I'd bet wacky ISA strings will be able to
+> confuse us for a while.
 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit 6e43483dd111cf1be58b02a45d0ca729ca2634ba
-> Author: Paul E. McKenney <paulmck@kernel.org>
-> Date:   Thu May 30 10:11:31 2024 -0700
-> 
->     ARM: Emulate one-byte cmpxchg
->     
->     Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on ARM systems
->     with ARCH < ARMv6K.
->     
->     Reported-by: Mark Brown <broonie@kernel.org>
->     Closes: https://lore.kernel.org/all/54798f68-48f7-4c65-9cba-47c0bf175143@sirena.org.uk/
->     Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
->     Closes: https://lore.kernel.org/all/CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com/
->     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->     Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
->     Cc: Arnd Bergmann <arnd@arndb.de>
->     Cc: Andrew Davis <afd@ti.com>
->     Cc: Andrew Morton <akpm@linux-foundation.org>
->     Cc: Linus Walleij <linus.walleij@linaro.org>
->     Cc: Eric DeVolder <eric.devolder@oracle.com>
->     Cc: Rob Herring <robh@kernel.org>
->     Cc: <linux-arm-kernel@lists.infradead.org>
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index ee5115252aac4..a867a7d967aa5 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -34,6 +34,7 @@ config ARM
->  	select ARCH_MIGHT_HAVE_PC_PARPORT
->  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
->  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
-> +	select ARCH_NEED_CMPXCHG_1_EMU if CPU_V6
->  	select ARCH_SUPPORTS_ATOMIC_RMW
->  	select ARCH_SUPPORTS_CFI_CLANG
->  	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
-> diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
-> index 44667bdb4707a..fd9b99f4dca46 100644
-> --- a/arch/arm/include/asm/cmpxchg.h
-> +++ b/arch/arm/include/asm/cmpxchg.h
-> @@ -162,7 +162,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
->  	prefetchw((const void *)ptr);
->  
->  	switch (size) {
-> -#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-> +#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-> +	case 1:
-> +		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-> +		break;
-> +#else
->  	case 1:
->  		do {
->  			asm volatile("@ __cmpxchg1\n"
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+I wanna do some cleanup stuff w/ Clements series applied, if that's what
+you were talking about, but I don't see much point starting that until
+the cpufeature stuff has calmed down - Charlie's and Clement's series
+really need to be in for-next for it to be worth doing.
+
+> I staged this so I can throw it at the tester, LMK if anyone has issues
+> otherwise it'll show up on for-next.
+
+--54amDOCv5zaovVhC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlj1twAKCRB4tDGHoIJi
+0m7+AQCuLCvXdrPloK2ge546WprTaktc5AJayKqwle2CbRg+qAEAimwmspM+d7gX
+w2SCZjy28pKq6A7bDCxZ9Jlu+kWWdwM=
+=N8Bg
+-----END PGP SIGNATURE-----
+
+--54amDOCv5zaovVhC--
 
