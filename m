@@ -1,194 +1,113 @@
-Return-Path: <linux-kernel+bounces-194904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72EA8D43F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:06:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20EE8D43FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DA5BB23318
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED701F2384B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59601DA4D;
-	Thu, 30 May 2024 03:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8ACD1CD24;
+	Thu, 30 May 2024 03:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYOKCDuR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K7fp5sSH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16FF33C5;
-	Thu, 30 May 2024 03:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C762E1C698
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 03:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717038369; cv=none; b=APt3oW7dDyBK1sVM28hZ8a/wa5ibNQ7QIQWtrt2dFa2qJnmPRS9QIceAzybymw32Y8p43KXD9PsYp55FhaB0j0y73uUqaDs0enbnDuEcg0qo0DshLoQdGVzErjpkXOvpPYHWlYHxqagfIcsJP2C77Qof2EnMAT3QO/ewDA4JGd4=
+	t=1717038718; cv=none; b=J6EJjiwYx03zAbwtrzATI3lmzski0OHEh+d3u+BnnV8oUiWcfNwd3ur/Lrhcan0UKRBSHHwX+hj550GXBQl4yD+Frcx5IlOUaXgUA0FGBja0WgTCmMMMHYRQErt+J75zt++LUzxUMnO0fu4EtZUZCKWjE1soOmKw6DjniNk3g0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717038369; c=relaxed/simple;
-	bh=5WLfsgF8O76R3zxYvopG4iE5lsb1nbAnf+aMSgf9czA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkRY+g3LbhKrpgBoCXOScSa2gAG+WZf+s/f50x8mE8QvQXu1ld+qvU8MqK3auYfTLMaSDmeuL6LSIEhnR9dlEM6BlIZNgHK0594VRO36TkI7lwmdIiUW4MzpmfwJ5g8ZfIaAEuByVqVv5qCM3Moxt8k3aRxSD5cQy91djZwKNhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYOKCDuR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814FDC116B1;
-	Thu, 30 May 2024 03:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717038368;
-	bh=5WLfsgF8O76R3zxYvopG4iE5lsb1nbAnf+aMSgf9czA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PYOKCDuR3jyQbxGiMo/Q46/CE1+8wVKBuqHvfzf3hFccaeCBJf3j8JIyW7yaiSynw
-	 WEzhVw3wMa723xV57cMNVHVcBYTYai/65NHk7xQlm12gIDASpcUNRUs/bejtpZoWpe
-	 bTo4P2EP4t06KxPLw4JHE9yjT5pneQyraz6MTvQVz2mPh2LImVgy8lgyLPpiPHirkz
-	 r+vHZmK5rMg1KFU47P8qKDa4YK71RYWKWY37SWgs5wzx2uJqOPhBEJz3ztPM26DVGz
-	 M9RrTEiLLIYr1EFzS9PqToKqV7qZOg1yyV+hHPOjSjNbg0UgJNxMOEsaQxcpuXrcHy
-	 z3vxSNvzCnXBQ==
-Date: Wed, 29 May 2024 20:06:05 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk,
-	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-	eparis@redhat.com, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 15/20] fsverity: expose verified fsverity built-in
- signatures to LSMs
-Message-ID: <20240530030605.GA29189@sol.localdomain>
-References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
- <1716583609-21790-16-git-send-email-wufan@linux.microsoft.com>
- <CAHC9VhRsnGjZATBj7-evK6Gdryr54raTTKMYO_vup8AGXLwjQg@mail.gmail.com>
+	s=arc-20240116; t=1717038718; c=relaxed/simple;
+	bh=AtVs/mAUfq0zsyGVzKlFt9Vs7GAGvhJdHEZppaw/M7Y=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hlA0+m7GO4PidCK3Fgdi+VxHMtfR3/oPZtLx+jbN9vaqxpLsNAMVVYjibPXyJWG9dbuKUg7adjFeGfz/MGE7XQiR99lAg/GjxtQ1DvfXAZc55Sa/Tj+8ObtRiP/N+DCdBtmPc9zhgWeuzSDe+km351TcpvoZOmYjjX9KzbRLytc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K7fp5sSH; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717038717; x=1748574717;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=AtVs/mAUfq0zsyGVzKlFt9Vs7GAGvhJdHEZppaw/M7Y=;
+  b=K7fp5sSHdCKwaEkkdntLkjarBcuWcavq72747J61ven4MDTL8GR8+H/A
+   +hKgGFNnB9LSNtqDt6EjTK5LiYMwuLLyZ7QvBX5uN86YqNhz6r1WEbNgo
+   1gsOV4h67d5bcXo6kq2mqkm6iWRFs1bE/RoadEMU1Ll6VpukaIDzN78w0
+   hU/g0v3G+zqddaQK/q0KAc+knLtZq1GU1/zwuVvBX8S080lH3mnyk9q0y
+   8wkrUipmUW207OXBE7DSycwn9MWg2EQM1duWePnZCoc/y9byhAnCbHXns
+   xOOIKxyzx0jFOADNPecORvxkIB27Ve3wUwnT8wqBiUBPGkhi1JdH8bFWm
+   Q==;
+X-CSE-ConnectionGUID: bqMs3QsdRDevKOhhq3snPw==
+X-CSE-MsgGUID: RV/RPRpiRuCzgMgtBIh5eg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13334706"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="13334706"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 20:11:57 -0700
+X-CSE-ConnectionGUID: o/wZ19gZRkKu+qUIFx0MAQ==
+X-CSE-MsgGUID: ASzVpoGHRkiecU00cNHKxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="40093824"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa005.fm.intel.com with ESMTP; 29 May 2024 20:11:51 -0700
+Message-ID: <ad3d0781-08aa-4cab-8dc8-eaf753c6671a@linux.intel.com>
+Date: Thu, 30 May 2024 11:09:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRsnGjZATBj7-evK6Gdryr54raTTKMYO_vup8AGXLwjQg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+ Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/20] iommu: Add iommu_paging_domain_alloc() interface
+To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
+ <20240529053250.91284-6-baolu.lu@linux.intel.com>
+ <eedb1df0-e745-4b48-9261-faa0ff320ee9@intel.com>
+ <dc9fa861-628f-4a96-ae37-e419b23c6ea0@linux.intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <dc9fa861-628f-4a96-ae37-e419b23c6ea0@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 29, 2024 at 09:46:57PM -0400, Paul Moore wrote:
-> On Fri, May 24, 2024 at 4:46 PM Fan Wu <wufan@linux.microsoft.com> wrote:
-> >
-> > This patch enhances fsverity's capabilities to support both integrity and
-> > authenticity protection by introducing the exposure of built-in
-> > signatures through a new LSM hook. This functionality allows LSMs,
-> > e.g. IPE, to enforce policies based on the authenticity and integrity of
-> > files, specifically focusing on built-in fsverity signatures. It enables
-> > a policy enforcement layer within LSMs for fsverity, offering granular
-> > control over the usage of authenticity claims. For instance, a policy
-> > could be established to permit the execution of all files with verified
-> > built-in fsverity signatures while restricting kernel module loading
-> > from specified fsverity files via fsverity digests.
-> >
-> > The introduction of a security_inode_setintegrity() hook call within
-> > fsverity's workflow ensures that the verified built-in signature of a file
-> > is exposed to LSMs. This enables LSMs to recognize and label fsverity files
-> > that contain a verified built-in fsverity signature. This hook is invoked
-> > subsequent to the fsverity_verify_signature() process, guaranteeing the
-> > signature's verification against fsverity's keyring. This mechanism is
-> > crucial for maintaining system security, as it operates in kernel space,
-> > effectively thwarting attempts by malicious binaries to bypass user space
-> > stack interactions.
-> >
-> > The second to last commit in this patch set will add a link to the IPE
-> > documentation in fsverity.rst.
-> >
-> > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> >
-> > ---
-> > v1-v6:
-> >   + Not present
-> >
-> > v7:
-> >   Introduced
-> >
-> > v8:
-> >   + Split fs/verity/ changes and security/ changes into separate patches
-> >   + Change signature of fsverity_create_info to accept non-const inode
-> >   + Change signature of fsverity_verify_signature to accept non-const inode
-> >   + Don't cast-away const from inode.
-> >   + Digest functionality dropped in favor of:
-> >     ("fs-verity: define a function to return the integrity protected
-> >       file digest")
-> >   + Reworded commit description and title to match changes.
-> >   + Fix a bug wherein no LSM implements the particular fsverity @name
-> >     (or LSM is disabled), and returns -EOPNOTSUPP, causing errors.
-> >
-> > v9:
-> >   + No changes
-> >
-> > v10:
-> >   + Rename the signature blob key
-> >   + Cleanup redundant code
-> >   + Make the hook call depends on CONFIG_FS_VERITY_BUILTIN_SIGNATURES
-> >
-> > v11:
-> >   + No changes
-> >
-> > v12:
-> >   + Add constification to the hook call
-> >
-> > v13:
-> >   + No changes
-> >
-> > v14:
-> >   + Add doc/comment to built-in signature verification
-> >
-> > v15:
-> >   + Add more docs related to IPE
-> >   + Switch the hook call to security_inode_setintegrity()
-> >
-> > v16:
-> >   + Explicitly mention "fsverity builtin signatures" in the commit
-> >     message
-> >   + Amend documentation in fsverity.rst
-> >   + Fix format issue
-> >   + Change enum name
-> >
-> > v17:
-> >   + Fix various documentation issues
-> >   + Use new enum name LSM_INT_FSVERITY_BUILTINSIG_VALID
-> >
-> > v18:
-> >   + Fix typos
-> >   + Move the inode_setintegrity hook call into fsverity_verify_signature()
-> >
-> > v19:
-> >   + Cleanup code w.r.t inode_setintegrity hook refactoring
-> > ---
-> >  Documentation/filesystems/fsverity.rst | 23 +++++++++++++++++++++--
-> >  fs/verity/signature.c                  | 18 +++++++++++++++++-
-> >  include/linux/security.h               |  1 +
-> >  3 files changed, 39 insertions(+), 3 deletions(-)
+On 5/30/24 9:59 AM, Baolu Lu wrote:
+> On 5/29/24 5:04 PM, Yi Liu wrote:
+>> On 2024/5/29 13:32, Lu Baolu wrote:
+>>> Commit <17de3f5fdd35> ("iommu: Retire bus ops") removes iommu ops from
+>>> bus. The iommu subsystem no longer relies on bus for operations. So the
+>>> bus parameter in iommu_domain_alloc() is no longer relevant.
+>>>
+>>> Add a new interface named iommu_paging_domain_alloc(), which explicitly
+>>> indicates the allocation of a paging domain for DMA managed by a kernel
+>>> driver. The new interface takes a device pointer as its parameter, that
+>>> better aligns with the current iommu subsystem.
+>>
+>> you may want to move this patch before patch 03/04.
 > 
-> Eric, can you give this patch in particular a look to make sure you
-> are okay with everything?  I believe Fan has addressed all of your
-> previous comments and it would be nice to have your Ack/Review tag if
-> you are okay with the current revision.
+> Emm, why?
 
-Sorry, I've just gotten a bit tired of finding so many basic issues in this
-patchset even after years of revisions.
+I see. The commit subject is misleading. It should be "vfio/type1: Use
+iommu_user_domain_alloc()".
 
-This patch in particular is finally looking better.  There are a couple issues
-that I still see.  (BTW, you're welcome to review it too to help find these
-things, given that you seem to have an interest in getting this landed...):
-
-> +	err = security_inode_setintegrity(inode,
-> +					  LSM_INT_FSVERITY_BUILTINSIG_VALID,
-> +					  signature,
-> +					  le32_to_cpu(sig_size));
-
-This is doing le32_to_cpu() on a variable of type size_t, which will do the
-wrong thing on big endian systems and will generate a 'sparse' warning.
-
-Also, the commit message still incorrectly claims that this patch allows
-"restricting kernel module loading from specified fsverity files via fsverity
-digests".  As I said before (sigh...), this is not correct as that can be done
-without this patch.
-
-- Eric
+Best regards,
+baolu
 
