@@ -1,146 +1,94 @@
-Return-Path: <linux-kernel+bounces-195733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB0F8D5103
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0028D510D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9665428593E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:28:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973891C22BD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4308046444;
-	Thu, 30 May 2024 17:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="TdOth+r9"
-Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20223481D1;
+	Thu, 30 May 2024 17:30:35 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDD2481AA
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46167481B9
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717090087; cv=none; b=T0C0aug99Uw0LUI1gSLRmtxngpCtuPOf2Xb6IFhhRZ2et9qVy5+/CnPQSKz9dCiqQJ/U71LGjOdj4ts/fQB++WEt3gcSIsEjm8UixwVMIaBYn4jm8KWuKombDYZK40FoS0DTwVz0FLB9L2XJVUHv7IFfaxk7/KStp7XScbDaBiE=
+	t=1717090234; cv=none; b=loe0/CwaLJHIMKidB55pR39NPdpV8aZuxqmyLZjhy+5nG32fIhPUJJawFPC6MzUaPCp9Kp8aogrLOgrQJhhCJ5vlUPrggiXYuQk73jn5Ne7Pr2dxuWzr+UdjExRCJr9ogim5h3cLxPdAc49atGIFR5B5F83Wig3y3bhcqf/MQds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717090087; c=relaxed/simple;
-	bh=PI46eCB4yZKtLa8v3+mNZJr2ivbez7uXjw8+2tdM4wQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qe9MCstCFmVmV98gt7B2Pn/H2xj2Q6w1lZe8Vs/Yi4tUDtMBwb0uUwZ/9w8YRQNJONV3WXdIHyXhDO7w5G0MHaPfQIXjJYm0BdFM34cEXVr9rhAasVw1LQQ8Rv8jG7YxjpMN5V6G7rrzXdvmuQA8ibv882H2OAPBUNOQSIcQk+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=TdOth+r9; arc=none smtp.client-ip=208.125.0.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
-	d=auristor.com; s=MDaemon; r=y; t=1717090084; x=1717694884;
-	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
-	MIME-Version:User-Agent:From:Subject:To:Cc:References:
-	Content-Language:Organization:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding; bh=4dDEKgqaFMRPywzm35viCF7BQid0GTM7Vc
-	2BfcyQt3U=; b=TdOth+r9pnnrgT689WLDeVGlenC6hSyknYw26sLo/BARRrYu/U
-	t0iICoBHuR9g4Ppmvwo3lqhM3o10zDn4RAzYEBFJt7yvXDWRw4gY2E4YHMH6NMAz
-	zyJnSQRxvtRoOkvIa6Hd204Kdadsnw5FxDnXwkpFfBbO+MLubCJcLT+F0=
-X-MDAV-Result: clean
-X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 30 May 2024 13:28:04 -0400
-Received: from [IPV6:2603:7000:73c:bb00:15fd:52c:fc39:4205] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v24.0.0) 
-	with ESMTPSA id md5001003957181.msg; Thu, 30 May 2024 13:28:03 -0400
-X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 30 May 2024 13:28:03 -0400
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 2603:7000:73c:bb00:15fd:52c:fc39:4205
-X-MDHelo: [IPV6:2603:7000:73c:bb00:15fd:52c:fc39:4205]
-X-MDArrival-Date: Thu, 30 May 2024 13:28:03 -0400
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=18808d123f=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: linux-kernel@vger.kernel.org
-Message-ID: <4afd6e76-6542-4452-bc92-7798f64c986d@auristor.com>
-Date: Thu, 30 May 2024 13:28:02 -0400
+	s=arc-20240116; t=1717090234; c=relaxed/simple;
+	bh=2CJoXfun/q2IWV/Q3b1ITRNNlJr7ILQ8uLSuWvoWBf4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=i7omQj5cKJUqsZ9Fw81L7tSrrVndQXBCHEw1uN22LR1JDt8ydwoWiZFdY9Vg/X+f50VuhezbklPwKmNYxsGdRDfAxvZPi9Sl+idNusmUD3G2RVDLsYya56vWlTvhqNODKJCQ3O0Zak27H5PnEm5WI1T4ddvEX4ikk8D3BC2yoTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7ead5f29d93so101670539f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:30:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717090231; x=1717695031;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GnVbsVSwvxQjCHKqcGTUzj8U08k5vYYwUjGeN/tORlQ=;
+        b=WvVOfXAzBRZoHECjSwJSXSEt7wirPJnNf6q3jbewhKF0RIWgkTEJ2FfRGMixBIloC/
+         cse6jFcN/f6wAnLDz9Xf6sMzLZIrUHNdULQl80V4WkYrHLT608vpxMWYEatcBEuq9lKS
+         5xtJdQkgKRcyVAEqXL9kzCQ6AZshvnRwSRcffkJePfr9Fb4iDdp3aekTLNWNbyXICPPu
+         lGl98YlIZwI2h36Z0SeW9JX5PNoORR3fhsBpCWst0MeQ2A6qMZNi8bsJQCLrm7Sgg1x2
+         N/BFcmW5r4jmTjPb7eFmQ7QEvTzo7D8Ka8ccpZ1fsOj5j/1xI8ZAK+cqfeG+lWXnuucm
+         apvw==
+X-Gm-Message-State: AOJu0YyGFBh/wTthAgIltwRVQJfPDn/6YiVlQPUSpm98sHqB0L7xhlak
+	LHYVFWOCFo2S5KE8/4HnSelJ1hI/FSDdnDt6Gy6++kNAzdg4cAPk19jY9p0jlVRJHSwHOq4lLpG
+	od2XFN/i8x7IdIDzlI9ckRAmGDNKsTGmEPWZxZE/OvfKiy/TxxESeBstWJw==
+X-Google-Smtp-Source: AGHT+IHD/FLLKRtZnbkGbs+d3R9Wwadesba27m46httEayZ0zaQS/vrfAii1paOjEFIhC6IExh9N56ZTdEw7TC1kRrdkuvaG0eZB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jeffrey E Altman <jaltman@auristor.com>
-Subject: Re: [PATCH] afs: Don't cross .backup mountpoint from backup volume
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Henrik Sylvester <jan.henrik.sylvester@uni-hamburg.de>,
- Markus Suvanto <markus.suvanto@gmail.com>,
- Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stable <stable@vger.kernel.org>, David Howells <dhowells@redhat.com>
-References: <768760.1716567475@warthog.procyon.org.uk>
-Content-Language: en-US
-Organization: AuriStor, Inc.
-In-Reply-To: <768760.1716567475@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MDCFSigsAdded: auristor.com
+X-Received: by 2002:a05:6638:9817:b0:4b1:8aa:af6b with SMTP id
+ 8926c6da1cb9f-4b1e4af177cmr101413173.1.1717090231350; Thu, 30 May 2024
+ 10:30:31 -0700 (PDT)
+Date: Thu, 30 May 2024 10:30:31 -0700
+In-Reply-To: <0000000000007a211706185338b0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000498c140619af39bd@google.com>
+Subject: Re: [syzbot] BUG: Bad rss-counter state (5)
+From: syzbot <syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/24/2024 12:17 PM, David Howells wrote:
-> Hi Christian,
->
-> Can you pick this up, please?
->
-> Thanks,
-> David
-> ---
-> From: Marc Dionne<marc.dionne@auristor.com>
->
-> afs: Don't cross .backup mountpoint from backup volume
->
-> Don't cross a mountpoint that explicitly specifies a backup volume
-> (target is <vol>.backup) when starting from a backup volume.
->
-> It it not uncommon to mount a volume's backup directly in the volume
-> itself.  This can cause tools that are not paying attention to get
-> into a loop mounting the volume onto itself as they attempt to
-> traverse the tree, leading to a variety of problems.
->
-> This doesn't prevent the general case of loops in a sequence of
-> mountpoints, but addresses a common special case in the same way
-> as other afs clients.
->
-> Reported-by: Jan Henrik Sylvester<jan.henrik.sylvester@uni-hamburg.de>
-> Link:http://lists.infradead.org/pipermail/linux-afs/2024-May/008454.html
-> Reported-by: Markus Suvanto<markus.suvanto@gmail.com>
-> Link:http://lists.infradead.org/pipermail/linux-afs/2024-February/008074.html
-> Signed-off-by: Marc Dionne<marc.dionne@auristor.com>
-> Signed-off-by: David Howells<dhowells@redhat.com>
-> Reviewed-by: Jeffrey Altman<jaltman@auristor.com>
-> cc:linux-afs@lists.infradead.org
-> ---
->   fs/afs/mntpt.c |    5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
-> index 97f50e9fd9eb..297487ee8323 100644
-> --- a/fs/afs/mntpt.c
-> +++ b/fs/afs/mntpt.c
-> @@ -140,6 +140,11 @@ static int afs_mntpt_set_params(struct fs_context *fc, struct dentry *mntpt)
->   		put_page(page);
->   		if (ret < 0)
->   			return ret;
-> +
-> +		/* Don't cross a backup volume mountpoint from a backup volume */
-> +		if (src_as->volume && src_as->volume->type == AFSVL_BACKVOL &&
-> +		    ctx->type == AFSVL_BACKVOL)
-> +			return -ENODEV;
->   	}
->   
->   	return 0;
+syzbot has found a reproducer for the following issue on:
 
-Please add
+HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b8eeb4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd6024aedb15e15c
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2bbbb592debc978d46d
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114401aa980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107eb5d2980000
 
-   cc: stable@vger.kernel.org
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-4a4be1ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/75957361122b/vmlinux-4a4be1ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6c766b0ec377/Image-4a4be1ad.gz.xz
 
-when it is applied to vfs-fixes.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com
 
-Thank you.
-
-Jeffrey Altman
+BUG: Bad rss-counter state mm:00000000b0f34aa6 type:MM_SWAPENTS val:-78
 
 
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
