@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-195401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2CF8D4C39
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:02:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 781928D4C42
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F97287B06
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:02:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D631F218C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D5E17F51E;
-	Thu, 30 May 2024 13:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6F3183065;
+	Thu, 30 May 2024 13:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nnspboH8"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bs4nvmNv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1A61E488
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FFB17FACF
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717074167; cv=none; b=h6S3+NqXnEVY02CvJpVj54TFw2pAqi+SeVXWz650ZeReDvbtjKyGbEZPfB0zzo2jmAnhUrQ4SpYGtjYK80bHRzPsiEn1aYWoB8ThDrkx22cwDa/FJ8NygsH9Pn8c0y3aAp4DVOskNBS9Ymj3DoPRt+/+BuLPkbQATEFo2Cne6P4=
+	t=1717074384; cv=none; b=CFkoXGFKEEHglBaDUeO7qF+DdVWlmRCAM1Zo+Rld774h/Keg/YBEJECqFA8sXOpT2/iEb1PH+kG8A9Rc5EtQzSe4BjCNsBLGP6OG4w7qxuhoStBaj9QxumH00T8Zbu0mc9ha8R4tDTsoXXlTWhMgtTxZOT0lMv1x/SjAzYTlQe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717074167; c=relaxed/simple;
-	bh=9vnkikzwNsTLhzs4okPcSYMp94jwRq2McQqFXH0Vs+M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rqMU0MOCetGdsyuU5NQlmikiLTgCGxS/kcdXzLMUaBUmSnCK/GdL4FBkpE4Hbsv5ILXeNxkmK61dF9hJVEa+X3BrlFkQ1jxWs3bIEf7DbF+9qNBy9Rmxj7uIqKqa9JN2zPOTQID19qEi66pAUFI1OgaFdW9svUCaarCNpcWxFRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nnspboH8; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3550134ef25so874948f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717074164; x=1717678964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=49+GMxNWhLkVW4rmL96a1CAqr3zak+IQF7tujObyMU8=;
-        b=nnspboH8UBEmVtMl5vk1JbizDmcYIYXXjwI6ezu17RPvlE/h2MlGRP7TcE/5WeDBIS
-         fSRP3DbNrQ+6Y30imZsOdwS1trndR7YhsVr/k+01JyxFDbrNiu+Mc3pz2ZJUTtqkKdKB
-         DTrkPRQ0BUoTA0OMrGrrWYcggcLj19kyfnzD4gvummH9E9L58UKS9uHnXDquJsT2GHEk
-         WqYFRTWwoQbE0yHKhOdwOe3ocbjorMETP4puNRBqFlb0vqkdpNs5929EEkH+RkDOSJzZ
-         5M7rgHJotBW6FIhG8RR426pIdJhYKlTr5jTHLQ0anA25N3ReAjipSQOTjTX9Bp2Y6zh/
-         r51Q==
+	s=arc-20240116; t=1717074384; c=relaxed/simple;
+	bh=9ClmaagelsVL0EN9hfbNdsOe4rCK0jF6VJvnl24H9iE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=beOrJAlxp6LKlrEI4ANZI2PmG6rbrYTZ2O+3lzagvL/ezWUE15pMqriBCIzypSM0kW56diUck9YjQmDHzd/AeHCrYFa0iuW/X3Kcly9lv/cGV+/ftIhS0/7NZPf04kz6HvBbRqyEyo3iosSaQPJvlizHvfSVpLKuxL2LG/kFMvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bs4nvmNv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717074382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jvA0ryzzUt3roYMRqzP5tcnOVKXZ+dglyNSsf/+sPrc=;
+	b=Bs4nvmNvxB1oG2AnvigdRHHBgr4ktDs3f14WgHdQeTn4Y7QjsK5QAmtE7yX/VhcXa+NjxS
+	NXYlYrOnapuFRUsuu6r5bESIMzsBCRhRfQ8q7B9iLOPecszpWG228rW+k1gfSyAdgS5CDE
+	ujDIyN5DkxcRj52ko5VuAGZyxOy4q8M=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-7BNzUJs5OoWjOvYo-WkqMg-1; Thu, 30 May 2024 09:06:20 -0400
+X-MC-Unique: 7BNzUJs5OoWjOvYo-WkqMg-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6ad75327e0cso7936466d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:06:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717074164; x=1717678964;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=49+GMxNWhLkVW4rmL96a1CAqr3zak+IQF7tujObyMU8=;
-        b=UHGpHOf4F5UpiuOwWZFOtIhnS/b5gPJnvZQjLh1eprL668zezdh5+kl8f7sOvNYpHm
-         kCO4CRYclC/uQsVc2vqCYobKoACDlMCH/qwNLW++VIbxs9oT9PPJP34ONcv2rQNF/8aR
-         PY7OHUKdj7zQTDAJbsQZALku+r8otg8dsC8h6piy5nyK+sybhGgRVxtAbqsgEtI72e1l
-         ezW1yH8lHwV9Ps5l21Rl4x05d1xJVkx4Ppr/dM/n7AEQWPdUXgbPXPjrKU3tBp+sz9xf
-         GqTT2kK+Uds9jOYHMO8Jk3BM6y+HtghsTe5kh/xXZx+BW2w2X2uXub6tZK3dNIn9ooyE
-         pduw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOwqjpYPaZnYPejGh9t9vWFlLbAo7I6uoFvo8anoqfbSc75uBvKSVC+RxtHiOGJbWa/p+/nXKm5lQit9ubL5tAz00/ohaeXaevZsUC
-X-Gm-Message-State: AOJu0Yy4UEF4c+ymlHVmNkDV4q9z6osNMavqe43eoThB3TChbxCRITrk
-	QhiacxVEF/YOhgvqTBGMj9JHeiydlrztVTvGPeCbEMZB2rdSqlzOEf4xi6HViD4=
-X-Google-Smtp-Source: AGHT+IHNGCVX8UsXryv51jGEZDjnSTfAQ7QHc5uIJgMOYfUdLU99pXCIdvPzL4LOxkd6BoZkmXFpDA==
-X-Received: by 2002:a5d:58fa:0:b0:354:fb1a:25f5 with SMTP id ffacd0b85a97d-35dc00c9a4cmr1567928f8f.52.1717074163561;
-        Thu, 30 May 2024 06:02:43 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35c19618fa3sm5708331f8f.52.2024.05.30.06.02.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 06:02:43 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Gerald Loacker <gerald.loacker@wolfvision.net>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v2-0-e4821802443d@wolfvision.net>
-References: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v2-0-e4821802443d@wolfvision.net>
-Subject: Re: [PATCH v2 0/3] drm/panel: sitronix-st7789v: fixes for
- jt240mhqs_hwt_ek_e3 panel
-Message-Id: <171707416276.4156460.9937231106022840438.b4-ty@linaro.org>
-Date: Thu, 30 May 2024 15:02:42 +0200
+        d=1e100.net; s=20230601; t=1717074380; x=1717679180;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jvA0ryzzUt3roYMRqzP5tcnOVKXZ+dglyNSsf/+sPrc=;
+        b=id2iPOhBaU84RaEixKcIWIlHvRQ0Rn++J8+6rQIW4sXewHhnnEqvcSV/jw/OKdASv1
+         fPoGYtITx2+jSDMgXCcGUjBYRY93yqQuKxYJe/gx1EJERq8A7Q2+Y6IZKTXy+gRPpqvT
+         E9DYTZOe9Wf4j8ehciFvGt7YwC6lbarJpW1WjlqJnAqs3dp++AYucAnSae43czU1Ygrs
+         yMfn9AkhxI1LSSDvK0XUX4KTMm0M4Y/8hqm/j+6z2P6wuw6As/SvZhSOtQKIcCa29Qw9
+         GADl62PExWa1XQhX11gTC8kZSaSVIYktIG/VO1Efq2c1LPLjqlEgRnjJec+61z0RDS20
+         wvHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVH0zihzPfEM2HhDzprjHzQ3NMPSmAQaN4VvT4F+App6igca+InU5as/VGvGBlUVhcEAZ5bJWDxqSX2c6xPkwAGmD0CTuEbeFtbtKm
+X-Gm-Message-State: AOJu0YzHUWa673fQqyaunKU52L+dyWUPX3m4jIgg2gEHqqFeIrAssUje
+	o7Od2h+SydgfYr3lq3jo4q6djT0wYP+7YUR5axueJOOYJduV7wDrvF5PQLqPKadDWY2RfRj576+
+	u9/Dtx565gn5Crksxn8tr3plY18mXz4xUMxCGbjG7FIId3i2lysrKS1iVHCngsw==
+X-Received: by 2002:a05:6214:328e:b0:6ae:aa5:7f6b with SMTP id 6a1803df08f44-6ae0cb37645mr22842556d6.34.1717074379965;
+        Thu, 30 May 2024 06:06:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgjLeINZAgLWz2gTTl6s/+ViKd4/Ddlih3N/x2boBgxfykUZQvC57xL0+8+w6vA4N0jLzi3w==
+X-Received: by 2002:a05:6214:328e:b0:6ae:aa5:7f6b with SMTP id 6a1803df08f44-6ae0cb37645mr22842176d6.34.1717074379443;
+        Thu, 30 May 2024 06:06:19 -0700 (PDT)
+Received: from [10.26.1.93] ([66.187.232.136])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac16308238sm63418416d6.119.2024.05.30.06.06.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 06:06:18 -0700 (PDT)
+Message-ID: <cb4c5fd0-9629-4362-918a-cb044eb9e558@redhat.com>
+Date: Thu, 30 May 2024 09:06:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: Do not enable ACPI SPCR console by default on arm64
+To: Liu Wei <liuwei09@cestc.cn>, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ liuwei09.cestc.cn@cecloud.com
+References: <20240530015332.7305-1-liuwei09@cestc.cn>
+Content-Language: en-US
+From: Prarit Bhargava <prarit@redhat.com>
+In-Reply-To: <20240530015332.7305-1-liuwei09@cestc.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-Hi,
-
-On Wed, 29 May 2024 16:42:44 +0200, Gerald Loacker wrote:
-> At the jt240mhqs_hwt_ek_e3 panel, noticeable flickering occurs. This is
-> addressed by patch 1, which adjusts the vertical timing. Patch 2 and 3 are
-> two more minor fixes for timing and dimension.
+On 5/29/24 21:53, Liu Wei wrote:
+> Consistency with x86 and loongarch, don't enable ACPI SPCR console
+> by default on arm64
 > 
+> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+> ---
+>   arch/arm64/kernel/acpi.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
+> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+> index dba8fcec7f33..1deda3e5a0d2 100644
+> --- a/arch/arm64/kernel/acpi.c
+> +++ b/arch/arm64/kernel/acpi.c
+> @@ -227,7 +227,8 @@ void __init acpi_boot_table_init(void)
+>   		if (earlycon_acpi_spcr_enable)
+>   			early_init_dt_scan_chosen_stdout();
+>   	} else {
+> -		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
+> +		/* Do not enable ACPI SPCR console by default */
+> +		acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
+>   		if (IS_ENABLED(CONFIG_ACPI_BGRT))
+>   			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
+>   	}
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
+It's been a while, and the status of arm hardware may have changed. 
+IIRC the choice to force enable this is that most arm hardware is 
+headless and this was a _required_ option for booting.
 
-[1/3] drm/panel: sitronix-st7789v: fix timing for jt240mhqs_hwt_ek_e3 panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0e5895ff7fab0fc05ec17daf9a568368828fa6ea
-[2/3] drm/panel: sitronix-st7789v: tweak timing for jt240mhqs_hwt_ek_e3 panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/2ba50582634d0bfe3a333ab7575a7f0122a7cde8
-[3/3] drm/panel: sitronix-st7789v: fix display size for jt240mhqs_hwt_ek_e3 panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b62c150c3bae72ac1910dcc588f360159eb0744a
+I'm not sure if that's still the case as it's been a long time.
 
--- 
-Neil
+Can anyone from the ARM community provide an approval here?
+
+P.
 
 
