@@ -1,156 +1,125 @@
-Return-Path: <linux-kernel+bounces-195757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F72F8D5171
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:45:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C2C8D517D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2D33B26408
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB1E1F24A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB19482D7;
-	Thu, 30 May 2024 17:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UmNWz3Y/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4B9481C6;
-	Thu, 30 May 2024 17:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209CB47F51;
+	Thu, 30 May 2024 17:51:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C65219FD;
+	Thu, 30 May 2024 17:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717091098; cv=none; b=FyJYnKpUDYYP8xjA+9NjPUNx1/CPFM/fsfsOad0R3k/hs4uD48x2BMhuOHDl2PgyFMtO1Q1gGmFSF/feJ0GudKHe7CONfLFaGk/Gm5/s+ui7VTOBNE9/e8BW6ALak5pH8CscfDfYca0fIOOSmZiUg5CqJHhEDNBXUQPkU+A3qrc=
+	t=1717091464; cv=none; b=ia7qqTQnfAz6r3xaHB1pStYsiq0A+oEjYo+dT5/OOoqm4JGx8pokd4mnvAtXEphL1ZGZ/5NUW6AxGdoBDyBWhkSxk7rxU6Aor445RSvZNiDZHUvA1cl0lZBX3q39+wd/SYukJdfMy6vBJgjZAxIu0gINDhO8jF5S1QsKgkJoSx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717091098; c=relaxed/simple;
-	bh=LzU4fduxN0HLuWP2lHcULDPGCQdGRiORLYFoTFRWZUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y+GK1JGbGleOPWECBbQ5iFTlAb23b4aHZXAzWr6VaK9jSm4C2IX57FqUKXbhrOsZ9HJ+X2c01OzZ1aBISTau34q1DAV3b/4ZwF4oipoOEBrkf4IDppg9FkpBGU61PXN+9pKOvWlbIR+J61gSGustFRSI/+ktKGSoX7T3kZ9Xweg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UmNWz3Y/; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717091097; x=1748627097;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LzU4fduxN0HLuWP2lHcULDPGCQdGRiORLYFoTFRWZUM=;
-  b=UmNWz3Y/bfYIOROXFzU3JHjzsnBCMBuRYejENk0S8gA67APS5d32bP32
-   39kqlLQpGIfLiYVobLP1zJJXBO6PKOQOGeSpkXCNG7svA3RvwdHxQiXYL
-   QGoD+UA1JoS9riSCIdzTOpD9mBTUgHULKfIOPy9yaj6uHZcDH2ERAsaXH
-   gjyL3fll89Vh80rUNnyoUFTQ5lzbt4kER77YPyIC6ByTUg/xLdfng/JDu
-   Rd5DnB2Hm8Nd4M0idpZIKWMK29d1Kz202tsjoUN/36daqoLdCr4l2nYrs
-   FqDnaDd6cj+Z0hmz0SgEXGMAoBvz5vLUfuEu5A7TF4cbP1z8wQkzpVYjm
-   A==;
-X-CSE-ConnectionGUID: FYwP2TXbQpmhQ1LQKw+/mQ==
-X-CSE-MsgGUID: R9ugTSE5Ry6P6Berfcys3w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13824684"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="13824684"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 10:44:56 -0700
-X-CSE-ConnectionGUID: JqUZDqpZQP2pc6YeyiQvBw==
-X-CSE-MsgGUID: 2uB/rriYQsSWqE6xZws35w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="40458761"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 10:44:56 -0700
-Date: Thu, 30 May 2024 10:49:52 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>,
- jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 2/6] x86/irq: Extend NMI handler registration interface
- to include source
-Message-ID: <20240530104952.477eab3d@jacob-builder>
-In-Reply-To: <746fecd5-4c79-42f9-919e-912ec415e73f@zytor.com>
-References: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
-	<20240529203325.3039243-3-jacob.jun.pan@linux.intel.com>
-	<746fecd5-4c79-42f9-919e-912ec415e73f@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717091464; c=relaxed/simple;
+	bh=EWIEk0SfL1qoQ87T87n2tHcu+axuW0rhQYyxUX24uEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rsmi7XdxQrsGHPa2xbgCNNQzqun9L68/ls8d/UMeshgw9KRwpglh97pGNvIQBSLY5QwSrTx96zcSlLSDKUY5Qf75wnRJOKo8N7FeLlKcS8RIlgETQYrcQC/y8NF96HBbe/E5DhMnEy/FiMczw99p1eW8z/+nBfc8smwBRYIbMac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 546CB1424;
+	Thu, 30 May 2024 10:51:26 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B93ED3F641;
+	Thu, 30 May 2024 10:51:00 -0700 (PDT)
+Message-ID: <b6632140-f2b0-40db-9d1e-2486ddc5810b@arm.com>
+Date: Thu, 30 May 2024 18:50:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 13/21] bitmap: make bitmap_{get,set}_value8()
+ use bitmap_{read,write}()
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Alexander Potapenko <glider@google.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240327152358.2368467-1-aleksander.lobakin@intel.com>
+ <20240327152358.2368467-14-aleksander.lobakin@intel.com>
+ <5a18f5ac-4e9a-4baf-b720-98eac7b6792f@arm.com>
+ <ZlizL6d1_ePq-eKs@yury-ThinkPad>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZlizL6d1_ePq-eKs@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi H.,
-
-On Wed, 29 May 2024 13:59:51 -0700, "H. Peter Anvin" <hpa@zytor.com> wrote:
-
-> On 5/29/24 13:33, Jacob Pan wrote:
-> > diff --git a/arch/x86/include/asm/irq_vectors.h
-> > b/arch/x86/include/asm/irq_vectors.h index 13aea8fc3d45..b8388bc00cde
-> > 100644 --- a/arch/x86/include/asm/irq_vectors.h
-> > +++ b/arch/x86/include/asm/irq_vectors.h
-> > @@ -105,6 +105,27 @@
-> >   
-> >   #define NR_VECTORS			 256
-> >   
-> > +/*
-> > + * The NMI senders specify the NMI source vector as an 8bit integer in
-> > their
-> > + * vector field with NMI delivery mode. A local APIC receiving an NMI
-> > will
-> > + * set the corresponding bit in a 16bit bitmask, which is accumulated
-> > until
-> > + * the NMI is delivered.
-> > + * When a sender didn't specify an NMI source vector the source vector
-> > will
-> > + * be 0, which will result in bit 0 of the bitmask being set. For out
-> > of
-> > + * bounds vectors >= 16 bit 0 will also be set.
-> > + * When bit 0 is set, system software must invoke all registered NMI
-> > handlers
-> > + * as if NMI source feature is not enabled.
-> > + */
-> > +#define NMI_SOURCE_VEC_UNKNOWN		0
-> > +#define NMI_SOURCE_VEC_PMI		1	/* PerfMon counters
-> > */ +#define NMI_SOURCE_VEC_IPI_BT		2	/* CPU
-> > backtrace */ +#define NMI_SOURCE_VEC_IPI_MCE		3	/*
-> > MCE injection */ +#define NMI_SOURCE_VEC_IPI_KGDB		4
-> > +#define NMI_SOURCE_VEC_IPI_REBOOT	5	/* Crash reboot */
-> > +#define NMI_SOURCE_VEC_IPI_SMP_STOP	6	/* Panic stop CPU
-> > */ +#define NMI_SOURCE_VEC_IPI_TEST		7	/* For
-> > remote and local IPIs*/ +#define NR_NMI_SOURCE_VECTORS		8
-> > +  
+On 30/05/2024 6:11 pm, Yury Norov wrote:
+> On Wed, May 29, 2024 at 04:12:25PM +0100, Robin Murphy wrote:
+>> Hi Alexander,
+>>
+>> On 27/03/2024 3:23 pm, Alexander Lobakin wrote:
+>>> Now that we have generic bitmap_read() and bitmap_write(), which are
+>>> inline and try to take care of non-bound-crossing and aligned cases
+>>> to keep them optimized, collapse bitmap_{get,set}_value8() into
+>>> simple wrappers around the former ones.
+>>> bloat-o-meter shows no difference in vmlinux and -2 bytes for
+>>> gpio-pca953x.ko, which says the optimization didn't suffer due to
+>>> that change. The converted helpers have the value width embedded
+>>> and always compile-time constant and that helps a lot.
+>>
+>> This change appears to have introduced a build failure for me on arm64
+>> (with GCC 9.4.0 from Ubuntu 20.04.02) - reverting b44759705f7d makes
+>> these errors go away again:
+>>
+>> In file included from drivers/gpio/gpio-pca953x.c:12:
+>> drivers/gpio/gpio-pca953x.c: In function ‘pca953x_probe’:
+>> ./include/linux/bitmap.h:799:17: error: array subscript [1, 1024] is outside array bounds of ‘long unsigned int[1]’ [-Werror=array-bounds]
+>>    799 |  map[index + 1] &= BITMAP_FIRST_WORD_MASK(start + nbits);
+>>        |                 ^~
+>> In file included from ./include/linux/atomic.h:5,
+>>                   from drivers/gpio/gpio-pca953x.c:11:
+>> drivers/gpio/gpio-pca953x.c:1015:17: note: while referencing ‘val’
+>>   1015 |  DECLARE_BITMAP(val, MAX_LINE);
+>>        |                 ^~~
+>> ./include/linux/types.h:11:16: note: in definition of macro ‘DECLARE_BITMAP’
+>>     11 |  unsigned long name[BITS_TO_LONGS(bits)]
+>>        |                ^~~~
+>> In file included from drivers/gpio/gpio-pca953x.c:12:
+>> ./include/linux/bitmap.h:800:17: error: array subscript [1, 1024] is outside array bounds of ‘long unsigned int[1]’ [-Werror=array-bounds]
+>>    800 |  map[index + 1] |= (value >> space);
+>>        |  ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+>> In file included from ./include/linux/atomic.h:5,
+>>                   from drivers/gpio/gpio-pca953x.c:11:
+>> drivers/gpio/gpio-pca953x.c:1015:17: note: while referencing ‘val’
+>>   1015 |  DECLARE_BITMAP(val, MAX_LINE);
+>>        |                 ^~~
+>> ./include/linux/types.h:11:16: note: in definition of macro ‘DECLARE_BITMAP’
+>>     11 |  unsigned long name[BITS_TO_LONGS(bits)]
+>>        |                ^~~~
+>>
+>> I've not dug further since I don't have any interest in the pca953x
+>> driver - it just happened to be enabled in my config, so for now I've
+>> turned it off. However I couldn't obviously see any other reports of
+>> this, so here it is.
 > 
-> I would avoid using vector 2; it is at least remotely possible that some 
-> third-party chipset sends NMI messages with a hardcoded vector of 2. As 
-> long as you don't actively need that slot, it is better to avoid it.
+> It's a compiler false-positive. The straightforward fix is to disable the warning
+> For gcc9+, and it's in Andrew Morton's tree alrady. but there's some discussion
+> ongoing on how it should be mitigated properlu:
 > 
-I thought about that as well, then I dropped that when I limit NMIS to
-local interrupts. Not aware the hardcoded case as you mentioned.
+> https://lore.kernel.org/all/0ab2702f-8245-4f02-beb7-dcc7d79d5416@app.fastmail.com/T/
 
-I will reserve vector #2 to avoid future headache.
+Ah, great! Guess I really should have scrolled further down my lore 
+search results - I assumed I was looking for any other reports of a 
+recent regression in mainline, not ones from 6 months ago :)
 
-> Even better is to set the LINT1 (= external NMI) vector to 2 and treat 
-> bit 2 as "other"; use vector 2 for anything that you don't have an 
-> explicit vector for. You can treat a received bit 2 the same as bit 0, 
-> except that you can explicitly trust that any event assigned an explicit 
-> vector number is *NOT* triggered and so do not need to be polled.
-> 
-Make sense, will set LINT1 vector to 2 and avoid polling known sources.
-That is another optimization.
-
-> I would also recommend sorting these in order of decreasing importance 
-> (other than 0 and 2). Although the current intent is there to be 16 
-> vectors indefinitely, defensive design would be to consider that number 
-> to be potentially variable (up to 64, obviously). Since any out-of-range 
-> vector will set bit 0, the code will still Just Work[TM].
-Will sort them.
-
-Thanks,
-
-Jacob
+Cheers,
+Robin.
 
