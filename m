@@ -1,168 +1,110 @@
-Return-Path: <linux-kernel+bounces-195965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57BB8D553F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:05:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF96D8D5541
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7311AB23BB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BE082868C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5D0152169;
-	Thu, 30 May 2024 22:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3xVIumn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F241615A85F;
+	Thu, 30 May 2024 22:07:16 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6405A2B9A6;
-	Thu, 30 May 2024 22:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67192B9A6;
+	Thu, 30 May 2024 22:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717106722; cv=none; b=CqwCrxVl2jXW2Y5VasPvmWTLKc46Xplq7NE3z2Gcusunq2W45jx2rzetOvk0XPPn3bJyPP/wp4U826sMkppNE6zatk6V7M0CqpQ+0eWoAadIUC370lDWVlfkhGt1UQAE8sv6vyPmy2cGXnGRc+zHKBvcmVYhi9sJUv8IBHp3HmY=
+	t=1717106836; cv=none; b=Y1dDY2+hEDG/YGNygAznnfOKYowBuE3ONygvG3CenC4hknCCNpZxerZMC2jIF6ccqCq6aG4+64qlZnuj4S2uzKWV5eDmL3z5X1wL3vksbQJBaCbCIjdYwQxvF8v3+MvX+4L+kWjobUVt47rngBkWBTWpvDS8t3xEBIefb4+kURw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717106722; c=relaxed/simple;
-	bh=KDgY8Hpq/UXiSRV1+dA+4sdL0f8z7YBjBjWwd0a8uro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5jUDLe0RyGIbitbdsS0qDAphGy4vTcAxxMOfqz5KnYJgg0PO9nQTaLxD46Bt8gFnGoIVgou809JuqQeWDL1IECR/89YKwZWpMBAHf8pQyVQapjafleTsqirbdf2fotwEAxZnz+jopbOlCRGH98S3R1ZuySbmqkSafpIPTqM6cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3xVIumn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297E9C2BBFC;
-	Thu, 30 May 2024 22:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717106722;
-	bh=KDgY8Hpq/UXiSRV1+dA+4sdL0f8z7YBjBjWwd0a8uro=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=C3xVIumnBhsoMWLjyGWXXvcKfL1mfgKG0C6UL36chiyQDZMo3QFT8Bgc4y88MCubO
-	 bM/Za1pod0ioX8JEjSdo9at4Q8Tlp/MMI6ctteYcluqWxoGYnayZ6kJl1Xrlt3CiQ8
-	 U6ngPNNUXyK178piD6hXVbDMwvn0UO3qXMQGbyNyWzpHAXto/UfEgZnseMmP0Uuogr
-	 JkaeqEjufl582CEDXTWWhe01On8/1Vs8J1quI5GyL5FgPp0+8HFG7w06lX6uxdp/FP
-	 vCf1BjsIudlSp4qPr/sH1cZxVByHhr20ddQCPmyJd5Qcocvf+Ca+x/oJZBFtb8dmCq
-	 /5VOHCOqZWgHg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 50F6CCE095C; Thu, 30 May 2024 15:05:21 -0700 (PDT)
-Date: Thu, 30 May 2024 15:05:21 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
-	Joel Fernandes <joel@joelfernandes.org>, neeraj.upadhyay@kernel.org,
-	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
-Subject: Re: arm-linux-gnueabihf-ld:
- kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
- `__bad_cmpxchg' follow
-Message-ID: <583e2476-50c5-4f9c-85af-f4489a53083b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
- <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
- <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
- <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
- <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
- <20240530215153.GA466604@thelio-3990X>
+	s=arc-20240116; t=1717106836; c=relaxed/simple;
+	bh=ZixTRPy843E7u6UKUnsux4KdAsvXgadP2Ayx+QBPbe8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kZAlSEN2cNgNDCWdyFSzHYBFSfJrOCxmQGOcaTYamhSe58lAR6cEmh06uuvoRmt747lNg31ptvJ8OAdBh0aklo9BjqUjoCRF7PyTJO2WMpI5yhXWHxDRmbXyRqQZM++FwC+SMZgp9MqfLoR4YqtsdWrxxdmwAhZGiyEDEAUYemM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44UM6vlP068530;
+	Fri, 31 May 2024 07:06:57 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
+ Fri, 31 May 2024 07:06:57 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44UM6uwL068526
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 31 May 2024 07:06:56 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <31a20541-d5a2-43c7-8225-adc6d44f6e41@I-love.SAKURA.ne.jp>
+Date: Fri, 31 May 2024 07:06:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530215153.GA466604@thelio-3990X>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: the fetch of the tomoyo tree failed
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20231017163242.62af10b3@canb.auug.org.au>
+ <20231114144510.49fd3688@canb.auug.org.au>
+ <7c814d59-fd95-40f4-80ba-237bead3de69@I-love.SAKURA.ne.jp>
+ <20231114161611.256f0239@canb.auug.org.au>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20231114161611.256f0239@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 02:52:48PM -0700, Nathan Chancellor wrote:
-> On Thu, May 30, 2024 at 10:24:05AM -0700, Paul E. McKenney wrote:
-> > And for an untested first attempt at a fix.
-> > 
-> > What did I mess up this time?  ;-)
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello.
+
+Since OSDN does not revive, I moved TOMOYO's repository
+to git://git.code.sf.net/p/tomoyo/tomoyo.git .
+
+Regards.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJmWPeMAAoJEEJfEo0MZPUqA30QAJP5Zog3KlNb640PsIf/O2AP
+RiI9FRp4Cgj4W7EexvoZKk4Npu0FM+W0IZUnafwi8r9MTEwkmo1CzMuHAaBkNe6e
+ePmeuPidwBAkhDy4SmcSx9X1wr0DEYqOU9B0256Xv1ptMmmOkPixqmjXgbru5ln+
+yoy9A7V+mahP4k0XC6R6BoICKdVyqBezUqrMoFogp0K1IIa5Bkw5uKV4mkK4rQhe
+wn2sLbps9Yec1dTUeU7Qb1RQehvzGbBwt2+CgnTcFVR1M8xpcBH8EewksMuh/3Hi
+9CAkAjfEs4NqJntOZwhILOaWvIZWvxdS4e9XO6xg/ZqZM8ObSD+6LvrCZNJlNxrV
+9vMcY2sGVqzZxY7rL6WAIT1bQSr18ziDlnPjpHznEmBCCtmoGeuLdaODrtADf8MZ
+5UlZRhdXJgUjOyvJT9gEMq5sHAu4WpWNiBr12giln90+Jzg8kn4hZucbtJZBM4lN
+fWKyxFB5xCCtej4vF/bfxwredWhOSIzHt13mbiWhXGEz4iuttB2EoD3tQILC173G
+lm2thAZjyRNMXRRQRunDrKnWRLFlUpXPiD3wCcsFiFm8zw38mrfVUC6X9HUEm3Ic
+EZK44o4ihJzQu5saWp0VqMSCl0yITpKHVH2fp11ONpKwYpp9ApeY8fxmBzgND9nJ
+xLnk2vM6wDHikx+DX35F
+=gDlk
+-----END PGP SIGNATURE-----
+
+On 2023/11/14 14:16, Stephen Rothwell wrote:
+> Hi Tetsuo,
 > 
-> An include for cmpxchg-emu.h ;)
+> On Tue, 14 Nov 2023 13:49:29 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+>>
+>> Unfortunately, it seems that OSDN became unresponsive after OSDN was acquired by
+>> OSCHINA ( https://www.oschina.net/news/250642/oschina-acquired-osdn ).
 > 
->   In file included from arch/arm/include/asm/atomic.h:16,
->                    from include/linux/atomic.h:7,
->                    from include/asm-generic/bitops/lock.h:5,
->                    from arch/arm/include/asm/bitops.h:245,
->                    from include/linux/bitops.h:63,
->                    from include/linux/log2.h:12,
->                    from kernel/bounds.c:13:
->   arch/arm/include/asm/cmpxchg.h: In function '__cmpxchg':
->   arch/arm/include/asm/cmpxchg.h:167:26: error: implicit declaration of function 'cmpxchg_emu_u8' [-Werror=implicit-function-declaration]
->     167 |                 oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
->         |                          ^~~~~~~~~~~~~~
->   cc1: some warnings being treated as errors
+> Bad luck :-(
+> 
+>> I'm considering migrating to a different platform.
+> 
+> Maybe git.kernel.org? ;-)
+> 
 
-Good catch, and thank you for testing this!  Does the updated version
-shown below do better?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 74e3470afacaa9d2f37db4773a5fef887ac4ef56
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Thu May 30 10:11:31 2024 -0700
-
-    ARM: Emulate one-byte cmpxchg
-    
-    Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on ARM systems
-    with ARCH < ARMv6K.
-    
-    [ paulmck: Apply Arnd Bergmann and Nathan Chancellor feedback. ]
-    
-    Reported-by: Mark Brown <broonie@kernel.org>
-    Closes: https://lore.kernel.org/all/54798f68-48f7-4c65-9cba-47c0bf175143@sirena.org.uk/
-    Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-    Closes: https://lore.kernel.org/all/CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com/
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-    Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-    Cc: Arnd Bergmann <arnd@arndb.de>
-    Cc: Andrew Davis <afd@ti.com>
-    Cc: Andrew Morton <akpm@linux-foundation.org>
-    Cc: Linus Walleij <linus.walleij@linaro.org>
-    Cc: Eric DeVolder <eric.devolder@oracle.com>
-    Cc: Rob Herring <robh@kernel.org>
-    Cc: <linux-arm-kernel@lists.infradead.org>
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index ee5115252aac4..a867a7d967aa5 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -34,6 +34,7 @@ config ARM
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
- 	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
-+	select ARCH_NEED_CMPXCHG_1_EMU if CPU_V6
- 	select ARCH_SUPPORTS_ATOMIC_RMW
- 	select ARCH_SUPPORTS_CFI_CLANG
- 	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
-diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
-index 44667bdb4707a..a428e06fe94ee 100644
---- a/arch/arm/include/asm/cmpxchg.h
-+++ b/arch/arm/include/asm/cmpxchg.h
-@@ -5,6 +5,7 @@
- #include <linux/irqflags.h>
- #include <linux/prefetch.h>
- #include <asm/barrier.h>
-+#include <linux/cmpxchg-emu.h>
- 
- #if defined(CONFIG_CPU_SA1100) || defined(CONFIG_CPU_SA110)
- /*
-@@ -162,7 +163,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
- 	prefetchw((const void *)ptr);
- 
- 	switch (size) {
--#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-+#ifdef CONFIG_CPU_V6	/* min ARCH < ARMv6K */
-+	case 1:
-+		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-+		break;
-+#else /* min ARCH >= ARMv6K */
- 	case 1:
- 		do {
- 			asm volatile("@ __cmpxchg1\n"
 
