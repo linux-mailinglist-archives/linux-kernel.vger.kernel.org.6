@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-195212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BB88D48E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2918D48EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBEBB1F22E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ED0E1F21747
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974FF153569;
-	Thu, 30 May 2024 09:47:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFBF18396D;
-	Thu, 30 May 2024 09:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6E4155336;
+	Thu, 30 May 2024 09:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=heusipp.de header.i=osmanx@heusipp.de header.b="DsWAWnaw"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8691318396D;
+	Thu, 30 May 2024 09:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717062463; cv=none; b=A8TLRE4TJt1N0kL5rpfjy6sn6hKpYsP5Qa9yXG3iaO91gwdGTVYNeP/M+wnnO4M21KAU8g8xdTyW+2wvliy8WvXfJUA34CXUINuMi1QfCmtILqrWs/HJfu7rGlF54Lc6rY2/MyaLHzbIdvWA2pZtkJK+eSxp7jxZgPjWF+waYKY=
+	t=1717062614; cv=none; b=FXVENgJTu+RCQvxI4qudR4+XqX4QjnZrfUEiE6eJa5Flgy7zABN583oMIWZqXPOFYPqLnvH/qTvaFzjA6suWAAUvujWNM9mJy/eFha1ZYgVbA2aUv9PTENhv1gMSMY4YpUxZc9KM5jK0yeQt+oKx+/5dbzx+ns5KcxUBaXizSVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717062463; c=relaxed/simple;
-	bh=oJceATgDva1QgjQ+6MSy7M5QY7VdjFO8E11FvM9DfH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLMgoVhyBtQ2T7E3/dtog0mWMICP7epfPCwSVyOwuuRnmVlGlynw5ZmJ4q+tvmpDVErJTKxS2rt3IQQCTZRfh5VTG+NchFOeUHdU6HO8q32AeJ+08eBxOi4KZC/433QXa4dIQ0zHeK4sQJ4in08BlkxvAmc2zz52/o+FgBygMp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C1B9339;
-	Thu, 30 May 2024 02:47:58 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A4AD3F641;
-	Thu, 30 May 2024 02:47:32 -0700 (PDT)
-Message-ID: <80d33844-bdd2-4fee-81dd-9cd37c63d42c@arm.com>
-Date: Thu, 30 May 2024 10:47:34 +0100
+	s=arc-20240116; t=1717062614; c=relaxed/simple;
+	bh=rJtFgvYvWHNW5N6glbUkLYI5JWdxEzVApMNTJ75qYmA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gZjbDB0HyMmTIIVqH/ozQO05CzCMIxjIcm7fRX3HfoIdACYWPMsQobFPkpgrJLNxQw/1y/gb0fj414Ue7k2vQH1+gt4VxjVGOXdcSRMRYVih1xpAkVrU6rtX2+004zDT/IYavCgD36BT4mYTiJpVc+FXNSuYvzeCZnj/crztLzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusipp.de; spf=pass smtp.mailfrom=heusipp.de; dkim=pass (2048-bit key) header.d=heusipp.de header.i=osmanx@heusipp.de header.b=DsWAWnaw; arc=none smtp.client-ip=212.227.126.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusipp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusipp.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusipp.de;
+	s=s1-ionos; t=1717062591; x=1717667391; i=osmanx@heusipp.de;
+	bh=dj5x0qPMNpYiNhks6W9RvrhVYROulCGUJxQMpvNOkNs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DsWAWnawpvwiMyCOqTAItI7GtFwqyNDy4GwntZWFxFwXywNlBLEEhWiSVre564e7
+	 7xlqXEp7GJgoe9mHOvz6JkAMNhB+/qJ28vJ+CnWpB2CSOituZySJQckp+IYr6a/3T
+	 ez0v+6qQRYCjA8xNNXoL76Gezl+YzLWbLmOgsL5QPw2o0k9eqn+VjP9b46xqxk6+E
+	 sTFbPmlroJN56zMWydKlDnbHUR7I4dTPJp3+I3/ScWSV7EeeN6iSUdpfOxz8TUXAq
+	 s4ZVoyXnHfvw7Ic1dNecIb/J5+0UeoqRMBdXLzHYpCtxKK36aAg6WGzM+zAb4GLCG
+	 lo6VK3pF6lSzI7bO+w==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.178.90] ([91.62.108.110]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MZCSn-1rzfzS1xhZ-00U3br; Thu, 30 May 2024 11:49:51 +0200
+Message-ID: <bd00b65f-d0ab-415a-ad5c-41bcb079ecc1@heusipp.de>
+Date: Thu, 30 May 2024 11:47:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,115 +56,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V17 0/9] arm64/perf: Enable branch stack sampling
-To: Anshuman Khandual <anshuman.khandual@arm.com>, mark.rutland@arm.com
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Suzuki Poulose <suzuki.poulose@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com
-References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
+From: =?UTF-8?Q?J=C3=B6rn_Heusipp?= <osmanx@heusipp.de>
+Subject: Re: [PATCH] x86/cpu: Provide default cache line size if not
+ enumerated
+To: dave.hansen@linux.intel.com
+Cc: andriy.shevchenko@linux.intel.com, bp@alien8.de,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, tglx@linutronix.de,
+ x86@kernel.org
+References: <20240517200534.8EC5F33E@davehans-spike.ostc.intel.com>
 Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <20240405024639.1179064-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20240517200534.8EC5F33E@davehans-spike.ostc.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:I3To5N+GG4wJb7wdsTpIkMtlrr02CcHhd4jpviP6AdZr7mLuhgV
+ 3GPf9v3Jn5LxO8uVsP15HupU39HtBEJ3QdH8edSnkMxreYwjSHnoOyEDC2mk0YC/fJihSRN
+ lX1wRUfOPhl1ZaGm6y9YlBpYL5vSO7gSPwlPUpBg8bjsXeK1ji25YXd82wQCUnB0eUheL6U
+ UgMT2bw0I5CCP0a+XP6wg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:A21ACE0awT8=;+WxS8Gk3pzlSMgHqO4tQHxZW+Pk
+ irbpDGyh4mYLDGiUedcSzbYQsw8QIZgITR8uJROlefgFowpsZnRH2PsizspdupUk0dvodFceC
+ fcacXVEBM+hm+ewRZbtIvIReL0lvWyF1efaPRLI/bVY1edUhR7WxbzqNZhbN5SbLGOOW7WVgq
+ G/KqOY+UllmBXsCo2yW4MJrZdDm9gB2qSffRLtEL0OpEK81lkb08qlbjfNyefOG4gZRP31LTb
+ sLVn8PnsTeseZBbddDkgW5UH+8VpSv258HLJ4ePsUlJWXT5xyqqjT6lqlNJBTNRbvU91sS8Zi
+ 7oHzgTtvBo8YPt0+aPfQq//wjP+Jt7ZtPNqWjzyw8x6xcioGknw3iTljOZWKzMUHnopYWFX1B
+ Nx+bQDuOTcBgJf8T2ME1B7AZ5qQM0Ykw1Od3vFl9Bn6NeCQJF577JUv/AHKQvskqjlP+krTuq
+ EaRDoDVbCGPoCE+zsXhtVYTfYDJUkOz+LmSJ2lEu06se26LGxgZDSt5Ha7/O06/+gMPQPe57z
+ hcyx3sTNYB+SfRYW6/ah4xgE1b/HE9xJIkCF60w++kt/jLPRBwje+Leykwd205yBzX84CNCu7
+ v7q5FNauVlWZ4h2/cIa3ANFh5KYtNPxivrdkzTsffdhjm9A6FWbI7UlH6X5g5F+ZQoowHv2gS
+ PbNMTpEm5LAE3LtxioQfKsbeEhco97Uee2OxfsFi3/8UZ32wN1ypuGjjNi4y7g9aKxY1YGXpS
+ vDfQ0NpSJtTJV0/S4vBTTDuNQwbLHbWLgkYMEcwDe6bBIkONrI2uF8=
 
 
+Hello!
 
-On 05/04/2024 03:46, Anshuman Khandual wrote:
-> This series enables perf branch stack sampling support on arm64 platform
-> via a new arch feature called Branch Record Buffer Extension (BRBE). All
-> the relevant register definitions could be accessed here.
-> 
-> https://developer.arm.com/documentation/ddi0601/2021-12/AArch64-Registers
-> 
-> This series applies on 6.9-rc2.
-> 
-> Also this series is being hosted below for quick access, review and test.
-> 
-> https://git.gitlab.arm.com/linux-arm/linux-anshuman.git (brbe_v17)
-> 
-> There are still some open questions regarding handling multiple perf events
-> with different privilege branch filters getting on the same PMU, supporting
-> guest branch stack tracing from the host etc. Finally also looking for some
-> suggestions regarding supporting BRBE inside the guest. The series has been
-> re-organized completely as suggested earlier.
-> 
-> - Anshuman
-> 
-[...]
-> 
-> ------------------ Possible 'branch_sample_type' Mismatch -----------------
-> 
-> Branch stack sampling attributes 'event->attr.branch_sample_type' generally
-> remain the same for all the events during a perf record session.
-> 
-> $perf record -e <event_1> -e <event_2> -j <branch_filters> [workload]
-> 
-> event_1->attr.branch_sample_type == event_2->attr.branch_sample_type
-> 
-> This 'branch_sample_type' is used to configure the BRBE hardware, when both
-> events i.e <event_1> and <event_2> get scheduled on a given PMU. But during
-> PMU HW event's privilege filter inheritance, 'branch_sample_type' does not
-> remain the same for all events. Let's consider the following example
-> 
-> $perf record -e cycles:u -e instructions:k -j any,save_type ls
-> 
-> cycles->attr.branch_sample_type != instructions->attr.branch_sample_type
-> 
-> Because cycles event inherits PERF_SAMPLE_BRANCH_USER and instruction event
-> inherits PERF_SAMPLE_BRANCH_KERNEL. The proposed solution here configures
-> BRBE hardware with 'branch_sample_type' from last event to be added in the
-> PMU and hence captured branch records only get passed on to matching events
-> during a PMU interrupt.
-> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+>
+> tl;dr: CPUs with CPUID.80000008H but without CPUID.01H:EDX[CLFSH]
+> will end up reporting cache_line_size()=3D=3D0 and bad things happen.
+> Fill in a default on those to avoid the problem.
+>
+> Long Story:
+>
+> The kernel dies a horrible death if c->x86_cache_alignment (aka.
+> cache_line_size() is 0.  Normally, this value is populated from
+> c->x86_clflush_size.
+>
+> Right now the code is set up to get c->x86_clflush_size from two
+> places.  First, modern CPUs get it from CPUID.  Old CPUs that don't
+> have leaf 0x80000008 (or CPUID at all) just get some sane defaults
+> from the kernel in get_cpu_address_sizes().
+>
+> The vast majority of CPUs that have leaf 0x80000008 also get
+> ->x86_clflush_size from CPUID.  But there are oddballs.
+>
+> Intel Quark CPUs[1] and others[2] have leaf 0x80000008 but don't set
+> CPUID.01H:EDX[CLFSH], so they skip over filling in ->x86_clflush_size:
+>
+> 	cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
+> 	if (cap0 & (1<<19))
+> 		c->x86_clflush_size =3D ((misc >> 8) & 0xff) * 8;
+>
+> So they: land in get_cpu_address_sizes(), set vp_bits_from_cpuid=3D0 and
+> never fill in c->x86_clflush_size, assign c->x86_cache_alignment, and
+> hilarity ensues in code like:
+>
+>         buffer =3D kzalloc(ALIGN(sizeof(*buffer), cache_line_size()),
+>                          GFP_KERNEL);
+>
+> To fix this, always provide a sane value for ->x86_clflush_size.
+>
+> Big thanks to Andy Shevchenko for finding and reporting this and also
+> providing a first pass at a fix. But his fix was only partial and only
+> worked on the Quark CPUs.  It would not, for instance, have worked on
+> the QEMU config.
+>
+> 1. https://raw.githubusercontent.com/InstLatx64/InstLatx64/master/Genuin=
+eIntel/GenuineIntel0000590_Clanton_03_CPUID.txt
+> 2. You can also get this behavior if you use "-cpu 486,+clzero"
+>    in QEMU.
 
-Hi Anshuman,
+Tested-by: J=C3=B6rn Heusipp <osmanx@heusipp.de>
 
-Surely because of this example we should merge? At least we have to try
-to make the most common basic command lines work. Unless we expect all
-tools to know whether the branch buffer is shared between PMUs on each
-architecture or not. The driver knows though, so can merge the settings
-because it all has to go into one BRBE.
+See
+https://lore.kernel.org/lkml/5e31cad3-ad4d-493e-ab07-724cfbfaba44@heusipp.=
+de/
 
-Merging the settings in tools would be a much harder problem.
 
-Any user that doesn't have permission for anything in the merged result
-can continue to get nothing.
-
-And we can always add filtering in the kernel later on if we want to to
-make it appear to behave even more normally.
-
-> static int
-> armpmu_add(struct perf_event *event, int flags)
-> {
-> 	........
-> 	if (has_branch_stack(event)) {
-> 		/*
-> 		 * Reset branch records buffer if a new task event gets
-> 		 * scheduled on a PMU which might have existing records.
-> 		 * Otherwise older branch records present in the buffer
-> 		 * might leak into the new task event.
-> 		 */
-> 		if (event->ctx->task && hw_events->brbe_context != event->ctx) {
-> 			hw_events->brbe_context = event->ctx;
-> 			if (armpmu->branch_reset)
-> 				armpmu->branch_reset();
-> 		}
-> 		hw_events->brbe_users++;
-> Here ------->	hw_events->brbe_sample_type = event->attr.branch_sample_type;
-> 	}
-> 	........
-> }
-> 
-> Instead of overriding existing 'branch_sample_type', both could be merged.
-> 
-
-I can't see any use case where anyone would want the override behavior.
-Especially if you imagine multiple users not even aware of each other.
-Either the current "no records for mismatches" or the merged one make sense.
-
-James
+Best regards,
+J=C3=B6rn
 
