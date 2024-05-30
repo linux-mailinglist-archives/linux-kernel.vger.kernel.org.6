@@ -1,100 +1,174 @@
-Return-Path: <linux-kernel+bounces-194940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181878D44A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:01:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614568D44D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D92F1C217F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167EE1F23248
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824E714389B;
-	Thu, 30 May 2024 05:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eI4FrrA6"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8258E634
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 05:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE013143C54;
+	Thu, 30 May 2024 05:35:51 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBA9143881
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 05:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717045290; cv=none; b=GIrw71qJrD6QyDhcFu9ZWc/psMm9jLg5nF0dWSc24g1rq22+aquxuJRXOKijfSz/11aJ3B42rOSuU5beD1oeJ76Ynu1987Wj9Ua/kmpjX10E1AxjKy0aAVnTYZkShPfYWA7Y/LUN9f+Sjdln04w06ZdiiT6A71wWUv2WKkFdGYE=
+	t=1717047351; cv=none; b=bO3G2BGJ4zF9O3KfE0Zy1KH/bgWBS2lyJy9GdJzraT36Uf++sy/UQ9ibx9m7F2G7+QeeOl478ixjRNW8YpycvFrXKYv6mwa9qYOv7ea266pXODXafwHvgxWQ8wkGeR33VJ9H0Bc6txBVSIoXuuKL9YI6Ao5Px9SufU4/uRw4uiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717045290; c=relaxed/simple;
-	bh=vRYRVj2yHwGKHI9c0vlZTFqbZmmt5CpYXco37xWR11U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPb94w4pwhuE4OffrhwGUm48QwkpPfzd5J36jYo3rzY6t5oX0WOG8DAbSpaVdIy3QpPIMfNw6tGMRNfptbjITiAQac3vmhzJVZtCzdaDKuQnGGGn9+gWUG/VoSvjpDhB0WRprotXAEmoqfERAswWHIjDTpUZZJ3PrDh+R+iYI/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eI4FrrA6; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f4a52b9413so4175585ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:01:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717045289; x=1717650089; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dRdNEjxzIM5Rgcd8TIZIbz07ixws27VOZGX4oVc8Qwk=;
-        b=eI4FrrA6ZBnZ4qSJNpM4PajYoOJIMH6VpW3dx5U948jnBCXmJ2jma96LZhpEPh72Cr
-         RoqspLk6ooN0IHw+OMSKoS+u1sVWOUU8p9T+qJU42ju3CbP4wp2kFwL9KNLMeZIwsg0K
-         lt6TrkpehXPGsGofTMzeK3LBq8JHsR+HKmFCM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717045289; x=1717650089;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dRdNEjxzIM5Rgcd8TIZIbz07ixws27VOZGX4oVc8Qwk=;
-        b=rssGiDKqyNbLncf20nWpnmoVCIYCyS2am1TBW/wBHT/Gq+Fesf/2j5qS6x81qQQ9J2
-         IgMDJmJAv6S8nNKC+eHrquetUhWSvOIMxr/jCEmIrSVPf0pythfI71iGwTB91MRef/S3
-         N2aUnlkdtldF7oLoMbeaoXfjGuF9UxhX1Ts0IB6LJJnRZrwYbSDmqs2T+pLxO1govk/e
-         YWvAsgBIhRrJ014jUVowWeQb/ZyFSrhGXQgjm8vDgfhukRTcvvnJ+/EXiloWJcKon35q
-         sHnSGSI3O6ZnnMEXPds4JrUtsQtKcNjR2kmqKDcIF7D29RbxAmzsGWRpUh3WY7MIH23S
-         vnsg==
-X-Gm-Message-State: AOJu0YwHfQ4oFxwCORivmRtjBbQsWbGre3aNh5hKq4UeWbR6jC8vuK39
-	eqBZ8VKvKULlPDDg/gxkdGxesPiCmlHxKh/HqqgJ7uaob7PcQgyYJu/01p6iyg==
-X-Google-Smtp-Source: AGHT+IGBR7/UV6FYMP+J1U4nmRVzd9ysxLjhJ4Lsndbi40JaRdq5hR2YnRps4qFoDo8mocVy6VgchA==
-X-Received: by 2002:a17:902:ecc6:b0:1f6:226f:cc42 with SMTP id d9443c01a7336-1f6226fd024mr1831595ad.43.1717045288628;
-        Wed, 29 May 2024 22:01:28 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:52e7:354b:db96:c366])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c97063asm108726795ad.150.2024.05.29.22.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 22:01:27 -0700 (PDT)
-Date: Thu, 30 May 2024 14:01:23 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mike Rapoport <rppt@kernel.org>, Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: Re: [PATCH v2 3/6] mm/zsmalloc: use a proper page type
-Message-ID: <20240530050123.GA8400@google.com>
-References: <20240529111904.2069608-1-david@redhat.com>
- <20240529111904.2069608-4-david@redhat.com>
+	s=arc-20240116; t=1717047351; c=relaxed/simple;
+	bh=KnUZHp13dS77ruhiqaUUV7kRUy1j62cNhux/gUno07M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LCgaIgM+XfD+nhUNoGX/GGKJcchgQGwr1UUIT1Lgd9Fxsnrf03/Cek+w9R3KiglIUeaaUB+/b8Dj3LH21DsUL3vcsZxhfBhFcEZRmyu69U1oY2bBn8x0bCh+xaUyPeen6WxQoxvE5KQxIlIWlZT9Y6L8H8XgsYKWWWjUsHdFhPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [209.85.222.41])
+	by gateway (Coremail) with SMTP id _____8Ax3eoxEFhmmn8BAA--.6460S3;
+	Thu, 30 May 2024 13:35:46 +0800 (CST)
+Received: from mail-ua1-f41.google.com (unknown [209.85.222.41])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxDMctEFhmNOINAA--.36480S3;
+	Thu, 30 May 2024 13:35:42 +0800 (CST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-804ee8b03afso182360241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 22:35:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUL5jEsDDL23vm6yXhDetmjZhI1t8Pl8F3VPq+o9HURDj32K7a8i6UJnrET7BoUHJ/zFt2OpN+UTh6dhrI03QnpmoP9L4rDSmco6zvQ
+X-Gm-Message-State: AOJu0YxRLaslKwtmvnx1OxGBK5QlZZOB1iD+PCA9C83ux6u2m8MD1Z40
+	lskedCWYp0bQwtz9YddLyIrWgn3EPiEl5AOCLKo17U1FpaRRV60hW1NXo4uU+ehqxVn63NJGWIR
+	lUxmXyKTDHSqwZqNoGmng5g1oluJPB++p6aN++w==
+X-Google-Smtp-Source: AGHT+IHZ8axvx4jJzWGomNL8c+GbmDiaO9PRsPYzYWjOKV+NeSRwIAALP8RQjhFwT0nvL1TaFn2o7uc4LyxEFlKjn9M=
+X-Received: by 2002:a25:6986:0:b0:df4:b01b:3d21 with SMTP id
+ 3f1490d57ef6-dfa5a7db705mr1302353276.49.1717045325049; Wed, 29 May 2024
+ 22:02:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529111904.2069608-4-david@redhat.com>
+References: <20240522-loongarch-booting-fixes-v3-0-25e77a8fc86e@flygoat.com> <20240522-loongarch-booting-fixes-v3-3-25e77a8fc86e@flygoat.com>
+In-Reply-To: <20240522-loongarch-booting-fixes-v3-3-25e77a8fc86e@flygoat.com>
+From: WANG Rui <wangrui@loongson.cn>
+Date: Thu, 30 May 2024 13:01:54 +0800
+X-Gmail-Original-Message-ID: <CAHirt9hbzVxcKzwnSF_5jpwma+kr-WJHBQjc47ojB95Ph9SnqA@mail.gmail.com>
+Message-ID: <CAHirt9hbzVxcKzwnSF_5jpwma+kr-WJHBQjc47ojB95Ph9SnqA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] LoongArch: Fix entry point in image header
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Binbin Zhou <zhoubinbin@loongson.cn>, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:AQAAf8AxDMctEFhmNOINAA--.36480S3
+X-CM-SenderInfo: pzdqw2txl6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxZF1UWF15KF45Gr45GrykJFc_yoW5CryDpa
+	1UAF4DAr48Cr4DJas7Jw45uFyUXwnrW34agasrGFyrCFsFvr18Xr109rZruFyvqw4xK3yS
+	qFn0gF12v3WDJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j
+	6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_
+	JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
+	CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
+	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
+	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
+	0xZFpf9x07jbPEfUUUUU=
 
-On (24/05/29 13:19), David Hildenbrand wrote:
-> We won't be able to support 256 KiB base pages, which is acceptable.
-[..]
-> +config HAVE_ZSMALLOC
-> +	def_bool y
-> +	depends on MMU
-> +	depends on PAGE_SIZE_LESS_THAN_256KB # we want <= 64 KiB
+On Thu, May 23, 2024 at 6:03=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoat.co=
+m> wrote:
+>
+> Currently kernel entry in head.S is in DMW address range,
+> firmware is instructed to jump to this address after loading
+> the image.
+>
+> However kernel should not make any assumption on firmware's
+> DMW setting, thus the entry point should be a physical address
+> falls into direct translation region.
+>
+> Fix by converting entry address to physical and amend entry
+> calculation logic in libstub accordingly.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> v2: Fix efistub
+> v3: Move calculation to linker script
+> ---
+>  arch/loongarch/kernel/head.S             | 2 +-
+>  arch/loongarch/kernel/vmlinux.lds.S      | 2 ++
+>  drivers/firmware/efi/libstub/loongarch.c | 2 +-
+>  3 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+> index c4f7de2e2805..2cdc1ea808d9 100644
+> --- a/arch/loongarch/kernel/head.S
+> +++ b/arch/loongarch/kernel/head.S
+> @@ -22,7 +22,7 @@
+>  _head:
+>         .word   MZ_MAGIC                /* "MZ", MS-DOS header */
+>         .org    0x8
+> -       .dword  kernel_entry            /* Kernel entry point */
+> +       .dword  _kernel_entry_phys      /* Kernel entry point (physical a=
+ddress) */
+>         .dword  _kernel_asize           /* Kernel image effective size */
+>         .quad   PHYS_LINK_KADDR         /* Kernel image load offset from =
+start of RAM */
+>         .org    0x38                    /* 0x20 ~ 0x37 reserved */
+> diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/=
+vmlinux.lds.S
+> index e8e97dbf9ca4..c6f89e51257a 100644
+> --- a/arch/loongarch/kernel/vmlinux.lds.S
+> +++ b/arch/loongarch/kernel/vmlinux.lds.S
+> @@ -6,6 +6,7 @@
+>
+>  #define PAGE_SIZE _PAGE_SIZE
+>  #define RO_EXCEPTION_TABLE_ALIGN       4
+> +#define TO_PHYS_MASK                   0x000fffffffffffff /* 48-bit */
+>
+>  /*
+>   * Put .bss..swapper_pg_dir as the first thing in .bss. This will
+> @@ -142,6 +143,7 @@ SECTIONS
+>
+>  #ifdef CONFIG_EFI_STUB
+>         /* header symbols */
+> +       _kernel_entry_phys =3D kernel_entry & TO_PHYS_MASK;
 
-Can't really say that I'm happy with this, but if mm-folks are
-fine then okay.
+ -       _kernel_entry_phys =3D kernel_entry & TO_PHYS_MASK;
+ +       _kernel_entry_phys =3D ABSOLUTE(kernel_entry & TO_PHYS_MASK);
 
-FWIW
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+>         _kernel_asize =3D _end - _text;
+>         _kernel_fsize =3D _edata - _text;
+>         _kernel_vsize =3D _end - __initdata_begin;
+> diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmware/=
+efi/libstub/loongarch.c
+> index 684c9354637c..60c145121393 100644
+> --- a/drivers/firmware/efi/libstub/loongarch.c
+> +++ b/drivers/firmware/efi/libstub/loongarch.c
+> @@ -41,7 +41,7 @@ static efi_status_t exit_boot_func(struct efi_boot_memm=
+ap *map, void *priv)
+>  unsigned long __weak kernel_entry_address(unsigned long kernel_addr,
+>                 efi_loaded_image_t *image)
+>  {
+> -       return *(unsigned long *)(kernel_addr + 8) - VMLINUX_LOAD_ADDRESS=
+ + kernel_addr;
+> +       return *(unsigned long *)(kernel_addr + 8) - TO_PHYS(VMLINUX_LOAD=
+_ADDRESS) + kernel_addr;
+>  }
+>
+>  efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
+>
+> --
+> 2.43.0
+>
+>
+
+- Rui
+
 
