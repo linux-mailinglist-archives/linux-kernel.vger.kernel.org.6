@@ -1,230 +1,242 @@
-Return-Path: <linux-kernel+bounces-195052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6878D46E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:18:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0567C8D46E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43A93B218E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 280B91C22005
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DC514AD25;
-	Thu, 30 May 2024 08:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPplUFCG"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D24514C5B3;
+	Thu, 30 May 2024 08:19:29 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B2914387F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EEE176AC8;
+	Thu, 30 May 2024 08:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717057127; cv=none; b=FxCQ7E+oci+8DnC2vD+Qph/JpZkg8zFAcX6quh1H80Y5Z1uyVog9ja92VyTA9mojFFysppDmxpq9Bk1X/b9tdtqHUydeXyVP7bmnUToWrOJevdGNWKfayME0fLmjbljEdKyLkzfULAcU/3i+Xwrr7QGCJj8J1UHzwcqBcBsQ8mo=
+	t=1717057168; cv=none; b=umQwF2GsZTlfhJZ6v9DmNxAWBcrhLS6RNS2h8rXvsTJQkrdrn8CqzW5fJQlDQldDb/NdyIeYs0hcFX8DQ0lrkTyXN9xcFK0pafWCjRutmoo/0q6HqPSzvvbCSoaR9iWy2LAoM4Yo/obWf3KCOkv6fePReKUlDLAIXwcpXgopc0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717057127; c=relaxed/simple;
-	bh=rNwHQiH6mmQDwL0U6Z8P3lRAILA5tuVfCPZGLxWRoqI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pQKS0c7ZKDB4UYYslqMLB+3f4CGZ2bthWE7UKDac865prOJociEkmXydjj6ahRhRi1YtKkuH6A+nNrvKcpCtXFL5jzZ11tSE8AK9tB17phzUJKwDDbp34JA9iHDqiCmqA/S432T6Uj7O9O63zU8pu8X440Q6fVQfQP0OIfZnGSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPplUFCG; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e95a1d5ee2so10089901fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717057124; x=1717661924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/zaL5WD7NTrZXgrCgxrS4DuBKHjHniNbKiAgaYsZSm8=;
-        b=aPplUFCGSojkax9RD0WkgnnbXyKdtL8uNYhXiyo/lHmeBMUmfjphVqoC/enAaFHyQl
-         eXeaIeWkWi1pIM2QoIHpzrtHZTKwLY0RQfp9Kwy2eVG3/+BvXykvlLmujyP55HWFS6+A
-         65BQ/HUWJQxqS1zlY3sgtAUhvV6RY8kHLj5yLOkrJ7v9Pg9u9DY2udaowNrSD/EEJMpc
-         SECvw4fJD53Vgbgzy54OyoLpSvIZuwin9nvaWgPnsw8sta+gDXwcSdA4n1rAmQh7vJc2
-         oeMq8wDIov0KdZtMHiELqADlJ6nldpBAksAx3hneh+3i6ygwSs2N65SO3fia9iteeMQD
-         8MnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717057124; x=1717661924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/zaL5WD7NTrZXgrCgxrS4DuBKHjHniNbKiAgaYsZSm8=;
-        b=lhFPNID8HEj00ClPjuxzcI4lfhMqt8AeaRf8/t9bU/xzSudWAiXiNH7D8X/wJMU02L
-         jcLRoCsLLnU17/092oqxOhCL58lZOCOG+w989OuHii4OCfxs5OtLQR/4TDN0c/wiJioS
-         t8ecfHG6iAwFNXu/DOxr6C2vQsqxTmNgV5oRdBvOBJVjiNt+CZ8xLm80aP1s2IVtdXpn
-         Cj9bfVFZKb0XqTb3rccdB3uL5u/3rCtGsjCGZPq9JeWjuFPK+Y0xojh8EinDT1yLpl5v
-         zsQtQ8ziPNkvthKGvBAZSV2snrxRECeeVv+J+78y7JqT/4l35hxsE7HAAEc+1lRKMWVa
-         PFTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv3lcqDS1f+WHSy/B4XKwp664XKDQOkT7TrCKzGI+msEZCMaMaeZYSD3OyTpglBrD7T1d3REm5ILJyUuxV96wzGYWEWl77jVKfg6Un
-X-Gm-Message-State: AOJu0YzfDFpzfuqhtGdDcUcNVbspKL5CSWaY5c76M9XRdTrV3+0dPNBE
-	zxBvusg72IEjV6Fkc3oglCn08DWtXLFgBAUY2GcfqqhlC5YbyMu5C4kLClR176XEr58m6Pdk/Lv
-	ZmBwFDUhxlW2trIKrGExK5T1F4EQ=
-X-Google-Smtp-Source: AGHT+IGfnzM04cgjZOM34LIMfzSs8VxbR1kCAU/6ZNji/seMTGawYM31bLJqAb8oXPM0EjOJ+2axtTo0pFZ0XEobT34=
-X-Received: by 2002:a2e:8ec8:0:b0:2e1:fa3f:67bd with SMTP id
- 38308e7fff4ca-2ea8486d338mr10047371fa.36.1717057123451; Thu, 30 May 2024
- 01:18:43 -0700 (PDT)
+	s=arc-20240116; t=1717057168; c=relaxed/simple;
+	bh=AtyBrt1ShrZf6Sya3/wfDmIitZOKqIwvkNP14l1vYzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rFezi7FhR4SxR4oa+TCCShgcE660v2F/GRlvay2b9JMRU55B3xSvq61TNVJHWpal7Yv4A+VP3sQUsOzQFxoIl5t58IP65XKIPdxY3icIbWlcBwEoBUmpypm7KBK2IRBRhat6Ip2w6RR3XNvwSBriZW2BerRclLyoxxxy5tKcSfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 054A320008;
+	Thu, 30 May 2024 08:19:12 +0000 (UTC)
+Message-ID: <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr>
+Date: Thu, 30 May 2024 10:19:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530025144.1570865-1-zhaoyang.huang@unisoc.com>
- <ZlgoX1E4/juuP7+o@MiWiFi-R3L-srv> <CAGWkznE=akrSBEQyq+f6tDN6fJ_J59WhJ-bvxpfrLUgTJ73h4g@mail.gmail.com>
- <ZlgwxwN3k5vQVVvH@MiWiFi-R3L-srv>
-In-Reply-To: <ZlgwxwN3k5vQVVvH@MiWiFi-R3L-srv>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Thu, 30 May 2024 16:18:32 +0800
-Message-ID: <CAGWkznG5Y2hwJLQk_-U9qVtaYL_g3WgvHYVkD_z-QcTtjzLAkw@mail.gmail.com>
-Subject: Re: [PATCH] mm: fix incorrect vbq reference in purge_fragmented_block
-To: Baoquan He <bhe@redhat.com>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	steve.kang@unisoc.com, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 1/5] RISC-V: Detect and Enable Svadu Extension
+ Support
+Content-Language: en-US
+To: Andrew Jones <ajones@ventanamicro.com>,
+ Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+ kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com,
+ cleger@rivosinc.com, Jinyu Tang <tjytimi@163.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Anup Patel <anup@brainfault.org>, Conor Dooley <conor.dooley@microchip.com>,
+ Mayuresh Chitale <mchitale@ventanamicro.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Samuel Ortiz
+ <sameo@rivosinc.com>, Evan Green <evan@rivosinc.com>,
+ Xiao Wang <xiao.w.wang@intel.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Charlie Jenkins <charlie@rivosinc.com>, Leonardo Bras <leobras@redhat.com>,
+ linux-kernel@vger.kernel.org
+References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
+ <20240524103307.2684-2-yongxuan.wang@sifive.com>
+ <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Thu, May 30, 2024 at 3:54=E2=80=AFPM Baoquan He <bhe@redhat.com> wrote:
->
-> On 05/30/24 at 03:35pm, Zhaoyang Huang wrote:
-> > On Thu, May 30, 2024 at 3:19=E2=80=AFPM Baoquan He <bhe@redhat.com> wro=
-te:
-> > >
-> > > On 05/30/24 at 10:51am, zhaoyang.huang wrote:
-> > > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > > >
-> > > > Broken vbq->free reported on a v6.6 based system which is caused
-> > > > by invalid vbq->lock protect over vbq->free in purge_fragmented_blo=
-ck.
-> > > > This should be introduced by the Fixes below which ignored vbq->loc=
-k
-> > > > matter.
-> > >
-> > > It will be helpful to provide more details, what's the symptom of the
-> > > brekage, and in which case vbq->free is broken.
-> > Vmalloc area runs out in our ARM64 system during an erofs test as
-> > vm_map_ram failed[1]. We find that one vbq->free->next point to
-> > vbq->free which makes list_for_each_entry_rcu can not iterate the list
-> > and find the BUG.
->
-> Thanks for these information which are very helpful and important.
-> They need be put in log for easier understanding.
-ok, I will update the commit message in the next version.
+Hi Yong-Xuan,
 
-> about the vbq->free list breakage by the run out vmalloc area, could
-vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
-to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
-when vbq->free->next points to vbq->free. That is to say, 65536 times
-of page fault after the list's broken will run out of the whole
-vmalloc area.
+On 27/05/2024 18:25, Andrew Jones wrote:
+> On Fri, May 24, 2024 at 06:33:01PM GMT, Yong-Xuan Wang wrote:
+>> Svadu is a RISC-V extension for hardware updating of PTE A/D bits.
+>>
+>> In this patch we detect Svadu extension support from DTB and enable it
+>> with SBI FWFT extension. Also we add arch_has_hw_pte_young() to enable
+>> optimization in MGLRU and __wp_page_copy_user() if Svadu extension is
+>> available.
 
-> you say more about how it's caused? And do you think we need fix that
-> vbq->free list breakage either?
-IMO, the purge_fragmented_block->list_del_rcu could race with
-new_vmap_block->list_add_tail_rcu when vbq is wrongly referenced.
 
+So we talked about this yesterday during the linux-riscv patchwork 
+meeting. We came to the conclusion that we should not wait for the SBI 
+FWFT extension to enable Svadu but instead, it should be enabled by 
+default by openSBI if the extension is present in the device tree. This 
+is because we did not find any backward compatibility issues, meaning 
+that enabling Svadu should not break any S-mode software. This is what 
+you did in your previous versions of this patchset so the changes should 
+be easy. This behaviour must be added to the dtbinding description of 
+the Svadu extension.
+
+Another thing that we discussed yesterday. There exist 2 schemes to 
+manage the A/D bits updates, Svade and Svadu. If a platform supports 
+both extensions and both are present in the device tree, it is M-mode 
+firmware's responsibility to provide a "sane" device tree to the S-mode 
+software, meaning the device tree can not contain both extensions. And 
+because on such platforms, Svadu is more performant than Svade, Svadu 
+should be enabled by the M-mode firmware and only Svadu should be 
+present in the device tree.
+
+I hope that clearly explains what we discussed yesterday, let me know if 
+you (or anyone else) need more explanations. If no one is opposed to 
+this solution, do you think you can implement this behaviour? If not, I 
+can deal with it, just let me know.
+
+Thanks
+
+
+>>
+>> Co-developed-by: Jinyu Tang <tjytimi@163.com>
+>> Signed-off-by: Jinyu Tang <tjytimi@163.com>
+>> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> I think this patch changed too much to keep r-b's. We didn't have the
+> FWFT part before.
 >
-> >
-> > [1]
-> > PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
-> >  #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
-> >  #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
-> >  #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
-> >  #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
-> >  #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
-> >  #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
-> >  #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
-> >  #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
-> >  #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
-> >  #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
-> > #10 [ffffffc08006b420] z_erofs_lz4_decompress at ffffffc0806a49b0
-> > #11 [ffffffc08006b670] z_erofs_decompress_queue at ffffffc0806a8fd0
-> > #12 [ffffffc08006b860] z_erofs_runqueue at ffffffc0806a8744
-> > #13 [ffffffc08006b970] z_erofs_readahead at ffffffc0806a6cfc
-> > #14 [ffffffc08006ba00] read_pages at ffffffc08037ed78
-> > #15 [ffffffc08006ba70] page_cache_ra_unbounded at ffffffc08037eb58
-> > #16 [ffffffc08006bb00] page_cache_ra_order at ffffffc08037f42c
-> > #17 [ffffffc08006bbb0] do_sync_mmap_readahead at ffffffc080371d3c
-> > #18 [ffffffc08006bc40] filemap_fault at ffffffc080371774
-> > #19 [ffffffc08006bd60] handle_mm_fault at ffffffc0803cc118
-> > #20 [ffffffc08006bdc0] do_page_fault at ffffffc08112a618
-> > #21 [ffffffc08006be20] do_translation_fault at ffffffc08112a36c
-> > #22 [ffffffc08006be30] do_mem_abort at ffffffc0800bfbf0
-> > #23 [ffffffc08006be70] el0_ia at ffffffc08111583c
-> > #24 [ffffffc08006bea0] el0t_64_sync_handler at ffffffc0811156a4
-> > #25 [ffffffc08006bfe0] el0t_64_sync at ffffffc080091584
-> >
-> >
-> > >
-> > > >
-> > > > Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utili=
-zed blocks")
-> > > >
-> > > > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > > > ---
-> > > >  mm/vmalloc.c | 11 +++++++----
-> > > >  1 file changed, 7 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > index 22aa63f4ef63..112b50431725 100644
-> > > > --- a/mm/vmalloc.c
-> > > > +++ b/mm/vmalloc.c
-> > > > @@ -2614,9 +2614,10 @@ static void free_vmap_block(struct vmap_bloc=
-k *vb)
-> > > >  }
-> > > >
-> > > >  static bool purge_fragmented_block(struct vmap_block *vb,
-> > > > -             struct vmap_block_queue *vbq, struct list_head *purge=
-_list,
-> > > > -             bool force_purge)
-> > > > +             struct list_head *purge_list, bool force_purge)
-> > > >  {
-> > > > +     struct vmap_block_queue *vbq;
-> > > > +
-> > > >       if (vb->free + vb->dirty !=3D VMAP_BBMAP_BITS ||
-> > > >           vb->dirty =3D=3D VMAP_BBMAP_BITS)
-> > > >               return false;
-> > > > @@ -2625,6 +2626,8 @@ static bool purge_fragmented_block(struct vma=
-p_block *vb,
-> > > >       if (!(force_purge || vb->free < VMAP_PURGE_THRESHOLD))
-> > > >               return false;
-> > > >
-> > > > +     vbq =3D container_of(addr_to_vb_xa(vb->va->va_start),
-> > > > +             struct vmap_block_queue, vmap_blocks);
-> > > >       /* prevent further allocs after releasing lock */
-> > > >       WRITE_ONCE(vb->free, 0);
-> > > >       /* prevent purging it again */
-> > > > @@ -2664,7 +2667,7 @@ static void purge_fragmented_blocks(int cpu)
-> > > >                       continue;
-> > > >
-> > > >               spin_lock(&vb->lock);
-> > > > -             purge_fragmented_block(vb, vbq, &purge, true);
-> > > > +             purge_fragmented_block(vb, &purge, true);
-> > > >               spin_unlock(&vb->lock);
-> > > >       }
-> > > >       rcu_read_unlock();
-> > > > @@ -2801,7 +2804,7 @@ static void _vm_unmap_aliases(unsigned long s=
-tart, unsigned long end, int flush)
-> > > >                        * not purgeable, check whether there is dirt=
-y
-> > > >                        * space to be flushed.
-> > > >                        */
-> > > > -                     if (!purge_fragmented_block(vb, vbq, &purge_l=
-ist, false) &&
-> > > > +                     if (!purge_fragmented_block(vb, &purge_list, =
-false) &&
-> > > >                           vb->dirty_max && vb->dirty !=3D VMAP_BBMA=
-P_BITS) {
-> > > >                               unsigned long va_start =3D vb->va->va=
-_start;
-> > > >                               unsigned long s, e;
-> > > > --
-> > > > 2.25.1
-> > > >
-> > > >
-> > >
-> >
+>> ---
+>>   arch/riscv/Kconfig               |  1 +
+>>   arch/riscv/include/asm/csr.h     |  1 +
+>>   arch/riscv/include/asm/hwcap.h   |  1 +
+>>   arch/riscv/include/asm/pgtable.h |  8 +++++++-
+>>   arch/riscv/kernel/cpufeature.c   | 11 +++++++++++
+>>   5 files changed, 21 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index be09c8836d56..30fa558ee284 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -34,6 +34,7 @@ config RISCV
+>>   	select ARCH_HAS_PMEM_API
+>>   	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+>>   	select ARCH_HAS_PTE_SPECIAL
+>> +	select ARCH_HAS_HW_PTE_YOUNG
+>>   	select ARCH_HAS_SET_DIRECT_MAP if MMU
+>>   	select ARCH_HAS_SET_MEMORY if MMU
+>>   	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+>> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+>> index 2468c55933cd..2ac270ad4acd 100644
+>> --- a/arch/riscv/include/asm/csr.h
+>> +++ b/arch/riscv/include/asm/csr.h
+>> @@ -194,6 +194,7 @@
+>>   /* xENVCFG flags */
+>>   #define ENVCFG_STCE			(_AC(1, ULL) << 63)
+>>   #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
+>> +#define ENVCFG_ADUE			(_AC(1, ULL) << 61)
+>>   #define ENVCFG_CBZE			(_AC(1, UL) << 7)
+>>   #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
+>>   #define ENVCFG_CBIE_SHIFT		4
+>> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+>> index e17d0078a651..8d539e3f4e11 100644
+>> --- a/arch/riscv/include/asm/hwcap.h
+>> +++ b/arch/riscv/include/asm/hwcap.h
+>> @@ -81,6 +81,7 @@
+>>   #define RISCV_ISA_EXT_ZTSO		72
+>>   #define RISCV_ISA_EXT_ZACAS		73
+>>   #define RISCV_ISA_EXT_XANDESPMU		74
+>> +#define RISCV_ISA_EXT_SVADU		75
+>>   
+>>   #define RISCV_ISA_EXT_XLINUXENVCFG	127
+>>   
+>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> index 9f8ea0e33eb1..1f1b326ccf63 100644
+>> --- a/arch/riscv/include/asm/pgtable.h
+>> +++ b/arch/riscv/include/asm/pgtable.h
+>> @@ -117,6 +117,7 @@
+>>   #include <asm/tlbflush.h>
+>>   #include <linux/mm_types.h>
+>>   #include <asm/compat.h>
+>> +#include <asm/cpufeature.h>
+>>   
+>>   #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_PFN_SHIFT)
+>>   
+>> @@ -285,7 +286,6 @@ static inline pte_t pud_pte(pud_t pud)
+>>   }
+>>   
+>>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
+>> -#include <asm/cpufeature.h>
+>>   
+>>   static __always_inline bool has_svnapot(void)
+>>   {
+>> @@ -621,6 +621,12 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
+>>   	return __pgprot(prot);
+>>   }
+>>   
+>> +#define arch_has_hw_pte_young arch_has_hw_pte_young
+>> +static inline bool arch_has_hw_pte_young(void)
+>> +{
+>> +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
+>> +}
+>> +
+>>   /*
+>>    * THP functions
+>>    */
+>> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+>> index 3ed2359eae35..b023908c5932 100644
+>> --- a/arch/riscv/kernel/cpufeature.c
+>> +++ b/arch/riscv/kernel/cpufeature.c
+>> @@ -93,6 +93,16 @@ static bool riscv_isa_extension_check(int id)
+>>   			return false;
+>>   		}
+>>   		return true;
+>> +	case RISCV_ISA_EXT_SVADU:
+>> +		if (sbi_probe_extension(SBI_EXT_FWFT) > 0) {
+> I think we've decided the appropriate way to prove for SBI extensions is
+> to first ensure the SBI version and then do the probe, like we do for STA
+> in has_pv_steal_clock()
 >
+>> +			struct sbiret ret;
+>> +
+>> +			ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET, SBI_FWFT_PTE_AD_HW_UPDATING,
+>> +					1, 0, 0, 0, 0);
+>> +
+>> +			return ret.error == SBI_SUCCESS;
+>> +		}
+>> +		return false;
+>>   	case RISCV_ISA_EXT_INVALID:
+>>   		return false;
+>>   	}
+>> @@ -301,6 +311,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+>>   	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
+>>   	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
+>>   	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
+>> +	__RISCV_ISA_EXT_SUPERSET(svadu, RISCV_ISA_EXT_SVADU, riscv_xlinuxenvcfg_exts),
+> We do we need XLINUXENVCFG?
+>
+> Thanks,
+> drew
+>
+>>   	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
+>>   	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+>>   	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
+>> -- 
+>> 2.17.1
+>>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
