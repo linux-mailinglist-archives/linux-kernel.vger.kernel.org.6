@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-195380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885828D4BDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:45:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003858D4BE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABDA81C20A43
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:45:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB323282301
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EF5132138;
-	Thu, 30 May 2024 12:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6C417F509;
+	Thu, 30 May 2024 12:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOApEJQs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Afups1Pj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8181E492;
-	Thu, 30 May 2024 12:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C561527B3;
+	Thu, 30 May 2024 12:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717073146; cv=none; b=BAZOPFgcrXq1oEHpb0lh9cDSl3WDZZietdqnPHj9IU3MDhImcsEmzZgdVoNY4LbmOvirA2gASjwB7oJCUFLQ1S825uMU5vGmc+wQumKHuIvN9uH7PMj/UIusU7p+X7IbZI7BFtbzN+1R3EnRSwmSeOtoBiLGNRuLtUh2Vg1b87M=
+	t=1717073147; cv=none; b=TbME9yM+j/Lyj0dpSp9hs9PLxfMMutDZWhljvqigeypysLlHeAx14t7/QaRw9eIKsGmeOgadvobQ1RH1aionr6orHHlmioNkzABdivAw22+WMgBAAk4MMxeCohYOLfsdeHynqjzu0M/y/nFupO8ExE1SKWhGlMUlN0O8J2k3vZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717073146; c=relaxed/simple;
-	bh=xoXwZ15smUADprLqqulMhMKFFHjrjeZ9K2+p6YC1+Rg=;
+	s=arc-20240116; t=1717073147; c=relaxed/simple;
+	bh=CF6wj9uwwxJ7t4T/CRYfBis0J60Ov5IUPcDshFPFLlc=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=bS0caGtfyTyMyAQvSdNFp0WSCAV/hNIIxeYN7/c6IhWBIhTtEf9+qttx7Xc8uurNRgFBQ+CiA2nnO6fsp5cZiyeifNEcPn8PGg48BZDSaPwBlF4WHdziXj5g5aNbVYZNgHcGx3/2z72ic15gtPhrg65EG4o9IMHaRKct83tbkcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOApEJQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9828AC2BBFC;
-	Thu, 30 May 2024 12:45:45 +0000 (UTC)
+	 Message-Id:Subject; b=TqVksg2wWfKg9QPj8HMCwSq1uj9Jow41/IdxKRUYjy5SbeS2oYVrGKGSYvrdQfd/sV+aqpZN8ztjKa3K5F6/fGsSANEp5UYW8aoyHmpzWdpCPZZcONVHAd2w9NyRWYx549Z1DzXgR/3ypsUtFeMsIp4tbPs7X0v3RpBSMtRyTf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Afups1Pj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB69BC32786;
+	Thu, 30 May 2024 12:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717073145;
-	bh=xoXwZ15smUADprLqqulMhMKFFHjrjeZ9K2+p6YC1+Rg=;
+	s=k20201202; t=1717073147;
+	bh=CF6wj9uwwxJ7t4T/CRYfBis0J60Ov5IUPcDshFPFLlc=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=FOApEJQs2hHMKxXHGrdoiYlgsX6GLgB4214MgH+NPEpdd0GtjCjSlalQkK+0mGdMj
-	 RNVMfU3fs3+gI2QAn2cAD8+JrVAEjDBqm2L03X9dJcwUX6Kb1CO4rG3fPduOP7w/SR
-	 iidY/r1I1FYZv63t2JCd5MdpfU4XYgodNAsSsSHs3XgwhJmsQyWKlGDEIm9+r1WPwO
-	 uIpC878tWZM4076plTEeaRUdSEafv1GDJlvX1M24f8H5+SHkSpnVAuCkzW4DaEvslk
-	 Cmo7wPzpJbAR/gugFqGc2WQevrZxwZ2I1yQUQ22gaEGH0EMtsNZpID+pjj9XSd+wJH
-	 UE3dlObiaKmWA==
-Date: Thu, 30 May 2024 07:45:44 -0500
+	b=Afups1Pj8vrizdavbZTHDdY8jqH5BqXfqq/LTJqLi2FbeFO6l1/N4uSMbTfqxWiRG
+	 V5suGxISt8I6blPriTNfVuQ/I6Pmr9yDrulVKbqGKPndn+JIKkmA8tzb0s7uN1vQvV
+	 kV5+PDfakVUpF9E7mYnyBHcDkK57maHJKwe7IC5kk4ihspNN1OWY07i/rNRrLcHq7G
+	 Y40CjmHvRESAd+gPkx+t5P82PGaxVMjuo0zNxFP9zx414sQHJPHyeATEIAPv2m+95g
+	 eRjgcqGAp/6QRHdBGSihhfXQlMHiJekrU0nvmO3PcO+wEmGuMA8DvO6Gn5kIyoyp4V
+	 p0mLFEOLjkgHQ==
+Date: Thu, 30 May 2024 07:45:46 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,73 +50,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Caleb Connolly <caleb.connolly@linaro.org>
-Cc: devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, Caleb Connolly <caleb@postmarketos.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexander Martinz <amartinz@shiftphones.com>, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20240530-otter-bringup-v3-0-79e7a28c1b08@linaro.org>
-References: <20240530-otter-bringup-v3-0-79e7a28c1b08@linaro.org>
-Message-Id: <171707307103.1811716.12806393621772090873.robh@kernel.org>
-Subject: Re: [PATCH v3 0/2] qcom: initial support for the SHIFTphone 8
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Scott Branden <sbranden@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Al Cooper <alcooperx@gmail.com>, 
+ Ray Jui <rjui@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, 
+ devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kamal Dasu <kamal.dasu@broadcom.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+In-Reply-To: <cover.1717061147.git.andrea.porta@suse.com>
+References: <cover.1717061147.git.andrea.porta@suse.com>
+Message-Id: <171707307136.1811771.156652831565902028.robh@kernel.org>
+Subject: Re: [PATCH v5 0/4] Add minimal boot support for Raspberry Pi 5
 
 
-On Thu, 30 May 2024 01:39:15 +0200, Caleb Connolly wrote:
-> The SHIFTphone 8 is an upcoming QCM6490 smartphone, it has the following
-> features:
+On Thu, 30 May 2024 12:11:57 +0200, Andrea della Porta wrote:
+> Hi,
 > 
-> * 12GB of RAM, 512GB UFS storage
-> * 1080p display.
-> * Hardware kill switches for cameras and microphones
-> * UART access via type-c SBU pins (enabled by an internal switch)
+> This patchset adds minimal support for the Broadcom BCM2712 SoC and for
+> the on-board SDHCI controller on Broadcom BCM2712 in order to make it
+> possible to boot (particularly) a Raspberry Pi 5 from SD card and get a
+> console through uart.
+> Changes to arm64/defconfig are not needed since the actual options work
+> as they are.
+> This work is heavily based on downstream contributions.
 > 
-> Initial support includes:
+> Tested on Tumbleweed substituting the stock kernel with upstream one,
+> either chainloading uboot+grub+kernel or directly booting the kernel
+> from 1st stage bootloader. Steps to reproduce:
+> - prepare an SD card from a Raspberry enabled raw image, mount the first
+>   FAT partition.
+> - make sure the FAT partition is big enough to contain the kernel,
+>   anything bigger than 64Mb is usually enough, depending on your kernel
+>   config options.
+> - build the kernel and dtbs making sure that the support for your root
+>   fs type is compiled as builtin.
+> - copy the kernel image in your FAT partition overwriting the older one
+>   (e.g. kernel*.img for Raspberry Pi OS or u-boot.bin for Tumbleweed).
+> - copy arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb on FAT partition.
+> - make sure you have a cmdline.txt file in FAT partition with the
+>   following content:
+>   # cat /boot/efi/cmdline.txt
+>   root=/dev/mmcblk0p3 rootwait rw console=tty ignore_loglevel earlycon
+>   console=ttyAMA10,115200
+> - if you experience random SD issues during boot, try to set
+>   initial_turbo=0 in config.txt.
 > 
-> * Framebuffer display
-> * UFS and sdcard storage
-> * Battery monitoring and USB role switching via pmic glink
-> * Bluetooth
-> * Thermals
 > 
-> Wifi works but requires some commits to be reverted to prevent a
-> firmware crash.
+> Changes in V5:
 > 
-> The serial port on the device can be accessed via the usb-cereal
-> adapter, it must first be enabled by flipping the switch under the
-> display. Additional info can be found on the postmarketOS wiki page.
+> DTS:
+> - axi node merged into soc node
+> - redefined the mapping ranges of the soc node to have proper translation,
+>   and a narrower address and size cell number for child nodes.Child nodes
+>   reg properties adjusted accordingly
+> - augemented the comment in 'gio_aon' node
 > 
-> https://wiki.postmarketos.org/wiki/SHIFT_SHIFTphone_8_(shift-otter)
+> sdhci-brcmstb.c:
+> - removed unused 'base_clk_mhz' variable
 > 
-> ---
-> Changes in v3:
-> - Enable wifi
-> - Fix protected-clocks indentation in gcc
-> - Link to v2: https://lore.kernel.org/r/20240520-otter-bringup-v2-0-d717d1dab6b8@linaro.org
 > 
-> Changes in v2:
-> - Fix authorship
-> - Address Luca's feedback
-> - Link to v1: https://lore.kernel.org/r/20240508-otter-bringup-v1-0-c807d3d931f6@linaro.org
+> Changes in V4:
 > 
-> ---
-> Caleb Connolly (2):
->       dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
->       arm64: dts: qcom: add QCM6490 SHIFTphone 8
+> sdhci-brcmstb.c:
+> - dropped the last 4 lines of sdhci_brcmstb_cfginit_2712() function
+>   to avoid setting the SDIO_CFG_CQ_CAPABILITY register. The rationale
+>   behind this can be found in [4] and subsequent comments
 > 
->  Documentation/devicetree/bindings/arm/qcom.yaml  |   1 +
->  arch/arm64/boot/dts/qcom/Makefile                |   1 +
->  arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 926 +++++++++++++++++++++++
->  3 files changed, 928 insertions(+)
-> ---
-> change-id: 20240507-otter-bringup-388cf3aa7ca5
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> DT-bindings:
+> - simplified the compatible item list for 'brcm,bcm2712-sdhci' as per [5]
 > 
-> // Caleb (they/them)
+> 
+> Changes in V3:
+> 
+> DTS:
+> - uart0 renamed to uart10 to reflect the current indexing (ttyAMA10
+>   and serial10)
+> - updated the license to (GPL-2.0 OR MIT)
+> - sd_io_1v8_reg 'states' property have second cells as decimal instead
+>   of hex.
+> - root node has size-cells=<2> now to accommodate for the DRAM controller
+>   and the address bus mapping that goes beyond 4GB. As a consequence,
+>   memory, axi and reserved-memory nodes have also size-cells=<2> and
+>   subnodes reg and ranges properties have been updated accordingly
+> - ranges property in 'axi' node has been fixed, reg properties of sdio1
+>   and gicv2 subnodes have been adjusted according to the new mapping
+> - 'interrupt-controller@7d517000' node is now enabled by default
+> - dropped 'arm,cpu-registers-not-fw-configured' as it is no longer
+>   relevant on A76 core
+> - l2 cache nodes moved under respective cpus, since they are per-cpu
+> - dropped psci cpu functions properties
+> - added the hypervisor EL2 virtual timer interrupt to the 'timer' node
+> - splitted-lines url are now on a single line
+> 
+> sdhci-brcmstb.c:
+> - simplified MMC_CAP_HSE_MASK leveraging already existing definitions
+> - MMC_CAP_UHS_MASK renamed to MMC_CAP_UHS_I_SDR_MASK to better reflect
+>   its purpose. Added also a comment.
+> - sdhci_brcmstb_set_power() replaced with the already existing (and
+>   equivalent) sdhci_set_power_and_bus_voltage()
+> 
+> DT-bindings:
+> - removed the BCM2712 specific example, as per Rob's request
+> 
+> 
+> Changes in V2:
+> 
+> - the patchshet has been considerably simplified, both in terms of dts and
+>   driver code. Notably, the pinctrl/pinmux driver (and associated binding)
+>   was not strictly needed to use the SD card so it has been dropped
+> - dropped the optional SD express support patch
+> - the patches order has been revisited
+> - pass all checks (binding, dtb, checkpatch)
+> 
+> 
+> Many thanks,
+> Andrea
+> 
+> References:
+> [1] - Link to V1: https://lore.kernel.org/all/cover.1713036964.git.andrea.porta@suse.com/
+> [2] - Link to V2: https://lore.kernel.org/all/cover.1715332922.git.andrea.porta@suse.com/
+> [3] - Link to V3: https://lore.kernel.org/all/cover.1716277695.git.andrea.porta@suse.com/
+> [4] - https://lore.kernel.org/all/ZlF5dQbNpZ921e66@apocalypse/
+> [5] - https://lore.kernel.org/all/bc1eb98c-9d49-4424-ab89-16be6c67c3f5@gmx.net/#t
+> 
+> Andrea della Porta (4):
+>   dt-bindings: arm: bcm: Add BCM2712 SoC support
+>   dt-bindings: mmc: Add support for BCM2712 SD host controller
+>   mmc: sdhci-brcmstb: Add BCM2712 support
+>   arm64: dts: broadcom: Add minimal support for Raspberry Pi 5
+> 
+>  .../devicetree/bindings/arm/bcm/bcm2835.yaml  |   6 +
+>  .../bindings/mmc/brcm,sdhci-brcmstb.yaml      |   1 +
+>  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
+>  .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  64 ++++
+>  arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 283 ++++++++++++++++++
+>  drivers/mmc/host/sdhci-brcmstb.c              |  60 ++++
+>  6 files changed, 415 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+>  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> 
+> --
+> 2.35.3
 > 
 > 
 > 
@@ -136,20 +215,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/qcm6490-shift-otter.dtb' for 20240530-otter-bringup-v3-0-79e7a28c1b08@linaro.org:
+New warnings running 'make CHECK_DTBS=y broadcom/bcm2712-rpi-5-b.dtb' for cover.1717061147.git.andrea.porta@suse.com:
 
-arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dtb: pcie@1c08000: interrupts: [[0, 307, 4], [0, 308, 4], [0, 309, 4], [0, 312, 4], [0, 313, 4], [0, 314, 4], [0, 374, 4], [0, 375, 4]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
-arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dtb: pcie@1c08000: interrupt-names:0: 'msi' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
-arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dtb: pcie@1c08000: interrupt-names: ['msi0', 'msi1', 'msi2', 'msi3', 'msi4', 'msi5', 'msi6', 'msi7'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
-arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dtb: phy@88e3000: 'orientation-switch' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
-arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dtb: usb@8cf8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dtb: video-codec@aa00000: iommus: [[65, 8576, 32]] is too short
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7280-venus.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/timer@7c003000: failed to match any schema with compatible: ['brcm,bcm2835-system-timer']
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/local-intc@7cd00000: failed to match any schema with compatible: ['brcm,bcm2836-l1-intc']
 
 
 
