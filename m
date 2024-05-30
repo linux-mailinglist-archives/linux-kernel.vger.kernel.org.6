@@ -1,178 +1,332 @@
-Return-Path: <linux-kernel+bounces-195711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18138D509A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:10:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B524B8D509C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C895284025
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59AB1282845
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4322544C76;
-	Thu, 30 May 2024 17:10:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6963F41A94;
-	Thu, 30 May 2024 17:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382A645BE7;
+	Thu, 30 May 2024 17:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ovXxZHqW"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4736E41A94;
+	Thu, 30 May 2024 17:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717089031; cv=none; b=jyc+NkEFmcWYauUT/JxwkYvuyf643ClEdXMDpyYZ4r0Gbm9GijfDy7VGWmznAAPgBgOGgtPVnf6TAra63Gnbgr3jyVX68UZ5ybZJNlm96iiJnZcPDx/WdlqjuVdgp2Sg2KUJ23+c3Z7CuqG9/ey9QkrRBa2XirGfXzckMGMTryA=
+	t=1717089052; cv=none; b=IE9GLJvgEPH/qb784g07WmWDjUGtSnuVhSnm40kdyTT0+8Vt//m3px1tYk/0Gv30Sl7cFdIwvYPOlPK0soq/yIlgczDwTM23hE8O/oUBXYtIAPqvZQbzOZUCVI2opq2XgMGxqxHGqrdFVWQTtBsrz3LIRehgEd3Mpr3iGXPi7RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717089031; c=relaxed/simple;
-	bh=0Hx1kCDf4CrTRIi/fOADLuEHpwsUT9fMTzXzqZC5WgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xb9gxdEtufVo6H3X9nHtZr6PMLvOOdFGAjYzJC9K5q8RrN/JKJ2DmvWp81TBlcT9A7z8xFp/KOFlFX9THG6Oxymnp+lh3CnbFV8L/5yJOS1x/++EXkIyNuNkrzv0Ind6ksj2C5XxNkb1KJ28GThJhbURPiJBYcdJ8D/jVsFn4pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF5AA339;
-	Thu, 30 May 2024 10:10:51 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 358163F792;
-	Thu, 30 May 2024 10:10:26 -0700 (PDT)
-Date: Thu, 30 May 2024 18:10:22 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Alois Fertl <a.fertl@t-online.de>
-Cc: a.zummo@towertech.it, alexandre.belloni@bootlin.com, wens@csie.org,
- jernej.skrabec@gmail.com, samuel@sholland.org, linux-rtc@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/1] drivers/rtc: rtc-sun6i: AutoCal Internal OSC
-Message-ID: <20240530181022.6fbc5a7d@donnerap.manchester.arm.com>
-In-Reply-To: <20240522182826.6824-1-a.fertl@t-online.de>
-References: <20240522182826.6824-1-a.fertl@t-online.de>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1717089052; c=relaxed/simple;
+	bh=A6w0c2nKOK6eI4ut0v6+by7HX5RkEgju1TuMulKPzic=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SKTJKJEh07CA8tSBNOqWd0o7r2McvZD+vZE1TLhngcIycCr1Ek4W9pi9foLl8eeV/A4ZzHGKUBO5/N7UDPpY9yJnTNMpuZPYm/viUmSXFmFEXeArX2fw2cOD1IHTO7tZqovC+ratLTC1ha0QES01tfnsJgLbvFsp2jFuLA9/EPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ovXxZHqW; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UHAgPs025393;
+	Thu, 30 May 2024 12:10:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717089042;
+	bh=bFeEcttYB/q/Ie9sDuuVn+M04zdo5exztS6MRB4dWpc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ovXxZHqWZ5xUYGNSMYDaLIFSL8410JD2NOOhyouPyUTnCaxTAUCJDTP0ilwB9a/sj
+	 D/m0e3y3aDpInXs6vGyPggqd2+rnKf8CaSAv1M5LZcEh6ZQj1eV+Hu+Ws5LEA8fj15
+	 tctjGsCTQj1x2Bstt+PLrLKYCsoyvhSD+tLzGvHk=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UHAg0q126587
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 12:10:42 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 12:10:42 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 12:10:42 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UHAfqG010336;
+	Thu, 30 May 2024 12:10:42 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>
+Subject: [PATCH v10 03/11] media: v4l2-jpeg: Export reference quantization and huffman tables
+Date: Thu, 30 May 2024 22:40:41 +0530
+Message-ID: <20240530171041.2744646-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240530165925.2715837-1-devarsht@ti.com>
+References: <20240530165925.2715837-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, 22 May 2024 20:28:26 +0200
-Alois Fertl <a.fertl@t-online.de> wrote:
+Export reference quantization and huffman tables as provided in ITU-T.81 so
+that they can be re-used by other JPEG drivers.
 
-> I have a M98-8K PLUS Magcubic TV-Box based on the Allwinner H618 SOC.
-> On board is a Sp6330 wifi/bt module that requires a 32kHz clock to
-> operate correctly. Without this change the clock from the SOC is
-> ~29kHz and BT module does not start up. The patch enables the Internal
-> OSC Clock Auto Calibration of the H616/H618 which than provides the
-> necessary 32kHz and the BT module initializes successfully.
-> Add a flag and set it for H6.
-> Also the code is developed on the H618 board it only modifies the H6 as
-> there is no support for H616/H618 in the current code.
+These are example tables provided in ITU-T.81 as reference tables and the
+JPEG encoders are free to use either these or their own proprietary tables.
 
-I am a bit confused: so this patch doesn't fix your problem then, because
-the code you touch is not used on the H616/H618?
-Actually I would have expected your patch to only change
-drivers/clk/sunxi-ng/ccu-sun6i-rtc.c, since that's the only RTC clock
-driver relevant for the H616.
+Also add necessary prefixes to be used for huffman tables in global header
+file.
 
-> Signed-off-by: Alois Fertl <a.fertl@t-online.de>
-> ---
-> 
-> v1->v2
-> - add flag and activate for H6 AND H616
-> 
-> v2->v3
-> - correct findings from review
-> 
-> v3->v4
-> - adjust to mainline tree
-> 
-> I have also tried to test this using the new driver in sunxi-ng
-> manually injecting the reverted patch
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=60d9f050da63b
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+V10: Add description for new macros introduced in this patchset
+V1->V9: No change (Patch introduced in V7)
+---
+ drivers/media/v4l2-core/v4l2-jpeg.c | 162 +++++++++++++++++++++++++++-
+ include/media/v4l2-jpeg.h           |  28 +++++
+ 2 files changed, 189 insertions(+), 1 deletion(-)
 
-So this was done on a H6 device? Because out of the box rtc-sun6i.c is
-used on the H6 only, and ccu-sun6i-rtc.c is only used on the H616.
-
-Maybe I am missing something here ...
-
-> The code in drivers/clk/sunxi-ng/ccu-sun6i-rtc.c is being called and it
-> initializes the relevant registers to the same values as the old driver,
-> but the change ends up with a system that often hangs during booting and
-> only ocasionally reaches the login state (one out of 10).
-> The main difference I see adhoc is that the old drivers init is done
-> using CLK_OF_DECLARE_DRIVER so initialization is done very early.
-> The new driver does the initialisation via probe which is quite some
-> time later.
-> Can't tell if this is the cause for the problems.
-
-That sounds odd, can you post your changes somewhere?
-
-Generally, without a proper problem and without further testing, I would
-not like to touch the H6 RTC code needlessly.
-For the H616 we have a concrete problem at hand, that justifies a change,
-also it's the proper driver for new devices, so that's where the change
-should happen.
-
-Cheers,
-Andre
-
-> 
-> ---
->  drivers/rtc/rtc-sun6i.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-> index 8e0c66906..57aa52d3b 100644
-> --- a/drivers/rtc/rtc-sun6i.c
-> +++ b/drivers/rtc/rtc-sun6i.c
-> @@ -42,6 +42,11 @@
->  
->  #define SUN6I_LOSC_CLK_PRESCAL			0x0008
->  
-> +#define SUN6I_LOSC_CLK_AUTO_CAL			0x000c
-> +#define SUN6I_LOSC_CLK_AUTO_CAL_16MS		BIT(2)
-> +#define SUN6I_LOSC_CLK_AUTO_CAL_ENABLE		BIT(1)
-> +#define SUN6I_LOSC_CLK_AUTO_CAL_SEL_CAL		BIT(0)
-> +
->  /* RTC */
->  #define SUN6I_RTC_YMD				0x0010
->  #define SUN6I_RTC_HMS				0x0014
-> @@ -126,7 +131,6 @@
->   *     registers (R40, H6)
->   *   - SYS power domain controls (R40)
->   *   - DCXO controls (H6)
-> - *   - RC oscillator calibration (H6)
->   *
->   * These functions are not covered by this driver.
->   */
-> @@ -137,6 +141,7 @@ struct sun6i_rtc_clk_data {
->  	unsigned int has_out_clk : 1;
->  	unsigned int has_losc_en : 1;
->  	unsigned int has_auto_swt : 1;
-> +	unsigned int has_auto_cal : 1;
->  };
->  
->  #define RTC_LINEAR_DAY	BIT(0)
-> @@ -267,6 +272,14 @@ static void __init sun6i_rtc_clk_init(struct device_node *node,
->  	}
->  	writel(reg, rtc->base + SUN6I_LOSC_CTRL);
->  
-> +	if (rtc->data->has_auto_cal) {
-> +		/* Enable internal OSC clock auto calibration */
-> +		reg = SUN6I_LOSC_CLK_AUTO_CAL_16MS |
-> +			SUN6I_LOSC_CLK_AUTO_CAL_ENABLE |
-> +			SUN6I_LOSC_CLK_AUTO_CAL_SEL_CAL;
-> +		writel(reg, rtc->base + SUN6I_LOSC_CLK_AUTO_CAL);
-> +	}
-> +
->  	/* Yes, I know, this is ugly. */
->  	sun6i_rtc = rtc;
->  
-> @@ -374,6 +387,7 @@ static const struct sun6i_rtc_clk_data sun50i_h6_rtc_data = {
->  	.has_out_clk = 1,
->  	.has_losc_en = 1,
->  	.has_auto_swt = 1,
-> +	.has_auto_cal = 1,
->  };
->  
->  static void __init sun50i_h6_rtc_clk_init(struct device_node *node)
+diff --git a/drivers/media/v4l2-core/v4l2-jpeg.c b/drivers/media/v4l2-core/v4l2-jpeg.c
+index 94435a7b6816..b21a78142710 100644
+--- a/drivers/media/v4l2-core/v4l2-jpeg.c
++++ b/drivers/media/v4l2-core/v4l2-jpeg.c
+@@ -16,7 +16,7 @@
+ #include <linux/types.h>
+ #include <media/v4l2-jpeg.h>
+ 
+-MODULE_DESCRIPTION("V4L2 JPEG header parser helpers");
++MODULE_DESCRIPTION("V4L2 JPEG helpers");
+ MODULE_AUTHOR("Philipp Zabel <kernel@pengutronix.de>");
+ MODULE_LICENSE("GPL");
+ 
+@@ -52,6 +52,115 @@ MODULE_LICENSE("GPL");
+ #define COM	0xfffe	/* comment */
+ #define TEM	0xff01	/* temporary */
+ 
++/* Luma and chroma qp tables to achieve 50% compression quality
++ * This is as per example in Annex K.1 of ITU-T.81
++ */
++const u8 luma_qt[] = {
++	16, 11, 10, 16, 24, 40, 51, 61,
++	12, 12, 14, 19, 26, 58, 60, 55,
++	14, 13, 16, 24, 40, 57, 69, 56,
++	14, 17, 22, 29, 51, 87, 80, 62,
++	18, 22, 37, 56, 68, 109, 103, 77,
++	24, 35, 55, 64, 81, 104, 113, 92,
++	49, 64, 78, 87, 103, 121, 120, 101,
++	72, 92, 95, 98, 112, 100, 103, 99
++};
++
++const u8 chroma_qt[] = {
++	17, 18, 24, 47, 99, 99, 99, 99,
++	18, 21, 26, 66, 99, 99, 99, 99,
++	24, 26, 56, 99, 99, 99, 99, 99,
++	47, 66, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99
++};
++
++/* Zigzag scan pattern */
++const u8 zigzag[] = {
++	0,   1,  8, 16,  9,  2,  3, 10,
++	17, 24, 32, 25, 18, 11,  4,  5,
++	12, 19, 26, 33, 40, 48, 41, 34,
++	27, 20, 13,  6,  7, 14, 21, 28,
++	35, 42, 49, 56, 57, 50, 43, 36,
++	29, 22, 15, 23, 30, 37, 44, 51,
++	58, 59, 52, 45, 38, 31, 39, 46,
++	53, 60, 61, 54, 47, 55, 62, 63
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an
++ * interchange format JPEG stream or an abbreviated format table specification
++ * data stream. Specifies the huffman table used for encoding the luminance DC
++ * coefficient differences. The table represents Table K.3 of ITU-T.81
++ */
++const u8 luma_dc_ht[] = {
++	0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01,
++	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an
++ * interchange format JPEG stream or an abbreviated format table specification
++ * data stream. Specifies the huffman table used for encoding the luminance AC
++ * coefficients. The table represents Table K.5 of ITU-T.81
++ */
++const u8 luma_ac_ht[] = {
++	0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03, 0x05, 0x05, 0x04, 0x04,
++	0x00, 0x00, 0x01, 0x7D, 0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
++	0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07, 0x22, 0x71, 0x14, 0x32,
++	0x81, 0x91, 0xA1, 0x08, 0x23, 0x42, 0xB1, 0xC1, 0x15, 0x52, 0xD1, 0xF0,
++	0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0A, 0x16, 0x17, 0x18, 0x19, 0x1A,
++	0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
++	0x3A, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x53, 0x54, 0x55,
++	0x56, 0x57, 0x58, 0x59, 0x5A, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
++	0x6A, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x83, 0x84, 0x85,
++	0x86, 0x87, 0x88, 0x89, 0x8A, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98,
++	0x99, 0x9A, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xB2,
++	0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xC2, 0xC3, 0xC4, 0xC5,
++	0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8,
++	0xD9, 0xDA, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA,
++	0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an interchange format JPEG
++ * stream or an abbreviated format table specification data stream.
++ * Specifies the huffman table used for encoding the chrominance DC coefficient differences.
++ * The table represents Table K.4 of ITU-T.81
++ */
++const u8 chroma_dc_ht[] = {
++	0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
++	0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an
++ * interchange format JPEG stream or an abbreviated format table specification
++ * data stream. Specifies the huffman table used for encoding the chrominance
++ * AC coefficients. The table represents Table K.6 of ITU-T.81
++ */
++const u8 chroma_ac_ht[] = {
++	0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04, 0x07, 0x05, 0x04, 0x04,
++	0x00, 0x01, 0x02, 0x77, 0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
++	0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71, 0x13, 0x22, 0x32, 0x81,
++	0x08, 0x14, 0x42, 0x91, 0xA1, 0xB1, 0xC1, 0x09, 0x23, 0x33, 0x52, 0xF0,
++	0x15, 0x62, 0x72, 0xD1, 0x0A, 0x16, 0x24, 0x34, 0xE1, 0x25, 0xF1, 0x17,
++	0x18, 0x19, 0x1A, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x35, 0x36, 0x37, 0x38,
++	0x39, 0x3A, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x53, 0x54,
++	0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
++	0x69, 0x6A, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x82, 0x83,
++	0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x92, 0x93, 0x94, 0x95, 0x96,
++	0x97, 0x98, 0x99, 0x9A, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9,
++	0xAA, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xC2, 0xC3,
++	0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6,
++	0xD7, 0xD8, 0xD9, 0xDA, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9,
++	0xEA, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA
++};
++
+ /**
+  * struct jpeg_stream - JPEG byte stream
+  * @curr: current position in stream
+@@ -675,3 +784,54 @@ int v4l2_jpeg_parse_huffman_tables(void *buf, size_t len,
+ 	return jpeg_parse_huffman_tables(&stream, huffman_tables);
+ }
+ EXPORT_SYMBOL_GPL(v4l2_jpeg_parse_huffman_tables);
++
++/**
++ * v4l2_jpeg_get_reference_quantization_tables - Get reference quantization
++ *						 tables as defined in ITU-T.81
++ * @*ref_luma_qt: Output variable pointing to luma quantization table
++ * @*ref_chroma_qt: Output variable pointint to chroma quantization table
++ */
++void v4l2_jpeg_get_reference_quantization_tables(const u8 **ref_luma_qt, const
++						 u8 **ref_chroma_qt)
++{
++	if (ref_luma_qt)
++		*ref_luma_qt = luma_qt;
++	if (ref_chroma_qt)
++		*ref_chroma_qt = chroma_qt;
++}
++EXPORT_SYMBOL_GPL(v4l2_jpeg_get_reference_quantization_tables);
++
++/**
++ * v4l2_jpeg_get_zig_zag_scan - Get zigzag scan table as defined in ITU-T.81
++ * @*ref_zigzag: Output variable pointing to zigzag scan table
++ */
++void v4l2_jpeg_get_zig_zag_scan(const u8 **ref_zigzag)
++{
++	if (ref_zigzag)
++		*ref_zigzag = zigzag;
++}
++EXPORT_SYMBOL_GPL(v4l2_jpeg_get_zig_zag_scan);
++
++/**
++ * v4l2_jpeg_get_reference_huffman_tables - Get reference huffman tables as
++ *					    defined in ITU-T.81
++ * @*ref_luma_dc_ht : Output variable pointing to huffman table for luma DC
++ * @*ref_luma_ac_ht : Output variable pointing to huffman table for luma AC
++ * @*ref_chroma_dc_ht : Output variable pointing to huffman table for chroma DC
++ * @*ref_chroma_ac_ht : Output variable pointing to huffman table for chroma AC
++ */
++void v4l2_jpeg_get_reference_huffman_tables(const u8 **ref_luma_dc_ht,
++					    const u8 **ref_luma_ac_ht,
++					    const u8 **ref_chroma_dc_ht,
++					    const u8 **ref_chroma_ac_ht)
++{
++	if (ref_luma_dc_ht)
++		*ref_luma_dc_ht = luma_dc_ht;
++	if (ref_luma_ac_ht)
++		*ref_luma_ac_ht = luma_ac_ht;
++	if (ref_chroma_dc_ht)
++		*ref_chroma_dc_ht = chroma_dc_ht;
++	if (ref_chroma_ac_ht)
++		*ref_chroma_ac_ht = chroma_ac_ht;
++}
++EXPORT_SYMBOL_GPL(v4l2_jpeg_get_reference_huffman_tables);
+diff --git a/include/media/v4l2-jpeg.h b/include/media/v4l2-jpeg.h
+index 2dba843ce3bd..b470bbffb73f 100644
+--- a/include/media/v4l2-jpeg.h
++++ b/include/media/v4l2-jpeg.h
+@@ -14,6 +14,30 @@
+ 
+ #define V4L2_JPEG_MAX_COMPONENTS	4
+ #define V4L2_JPEG_MAX_TABLES		4
++/*
++ * Prefixes used to generate huffman table class and destination identifiers as
++ * described below:
++ *
++ * V4L2_JPEG_LUM_HT | V4L2_JPEG_DC_HT : Prefix for Luma DC coefficients
++ *					huffman table
++ * V4L2_JPEG_LUM_HT | V4L2_JPEG_AC_HT : Prefix for Luma AC coefficients
++ *					huffman table
++ * V4L2_JPEG_CHR_HT | V4L2_JPEG_DC_HT : Prefix for Chroma DC coefficients
++ *					huffman table
++ * V4L2_JPEG_CHR_HT | V4L2_JPEG_AC_HT : Prefix for Chroma AC coefficients
++ *					huffman table
++ */
++#define V4L2_JPEG_LUM_HT		0x00
++#define V4L2_JPEG_CHR_HT		0x01
++#define V4L2_JPEG_DC_HT			0x00
++#define V4L2_JPEG_AC_HT			0x10
++
++/* Length of reference huffman tables as provided in Table K.3 of ITU-T.81 */
++#define V4L2_JPEG_REF_HT_AC_LEN		178
++#define V4L2_JPEG_REF_HT_DC_LEN		28
++
++/* Array size for 8x8 block of samples or DCT coefficient */
++#define V4L2_JPEG_PIXELS_IN_BLOCK	64
+ 
+ /**
+  * struct v4l2_jpeg_reference - reference into the JPEG buffer
+@@ -154,4 +178,8 @@ int v4l2_jpeg_parse_quantization_tables(void *buf, size_t len, u8 precision,
+ int v4l2_jpeg_parse_huffman_tables(void *buf, size_t len,
+ 				   struct v4l2_jpeg_reference *huffman_tables);
+ 
++void v4l2_jpeg_get_reference_quantization_tables(const u8 **luma_qt, const u8 **chroma_qt);
++void v4l2_jpeg_get_zig_zag_scan(const u8 **zigzag);
++void v4l2_jpeg_get_reference_huffman_tables(const u8 **luma_dc_ht, const u8 **luma_ac_ht,
++					    const u8 **chroma_dc_ht, const u8 **chroma_ac_ht);
+ #endif
+-- 
+2.39.1
 
 
