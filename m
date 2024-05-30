@@ -1,96 +1,129 @@
-Return-Path: <linux-kernel+bounces-195855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744BC8D52E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:10:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2E88D52ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31651283E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A571C21A62
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFD774041;
-	Thu, 30 May 2024 20:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9C27EEFD;
+	Thu, 30 May 2024 20:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CJ2HtA/T"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BRoAtNLK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432F355880
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 20:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C346521;
+	Thu, 30 May 2024 20:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717099816; cv=none; b=VyH5pItKGQ60cX8KcnhNhxNOoy9JC92oOL5v1zneRKX1p/cJUj/roU1iNKNbifw9q8vH5cH4b/Xn4rXwALilMsqlIgZVlbwkeXSZpwHScWTjYG6wt9sUcY2Nsk0EoUtNkHAqlKOFMxV+pK9hWRMsTZzWt5nVVJ3YUE1lBxXb/DU=
+	t=1717099977; cv=none; b=bD5YAQeC4XudEGrJJ5yo2C/ib06IdSPSscfNnRuqW9FA7Nxpb570MCAxwlPnzYF8fsZwTy7rsediCqtdH7YeJ5SFYmElcYIRJdZWaoO9v2bhRX8F1Sgk1dgo9kd5mvA6xeiC2upKKjXNSCBviNMUIZXbXfPS5iDKJ/XdUWlr6e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717099816; c=relaxed/simple;
-	bh=1uhCyqyd6OfBJhLOomRnqKGxLhqaf3SVuyATwGnDEOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=S3D3ieC5UnoYa9+5akaEdt5DhrZG3ugl66SpJ5yuo1bA7wwxD+iB04LXAbO/Iz+1CJtjonL92Gv/tJWsZH3uvYCGxavYaTgpdTWlEuolNoLPJRuxgTCWs9Rq+LKA8nC4fUdZA1r5HoLFHfkZ3MgYLUYesD5M3FR7WRj/uMTdJoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CJ2HtA/T; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b97f09cde3so196208eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717099814; x=1717704614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zGOf4m18QTtHJvMQUoDQufLKLE25S3D0AAB4RUkeJfc=;
-        b=CJ2HtA/TQbQLHoY6Q3Q2jSESKaN8LF7RG9OU5RJrawdojER2cxmfylj9Sgb/1tx+1E
-         kQJq18HwPu15UOj72BE94UVY4NC7d+FMA5DJN3HEkLTLOzQN2bbK4sUM4TyVhgdgPZ2G
-         koRe56afcmpSLjUmalD+HeuXlQMLQgxSmbuiZpiA/J2aY9j1Gf23er77EpU0o8dpeFVl
-         cfmiNT2IsYZYUjHFg33fAC9pb/NcCBDz49d03j11rsbyn/srpCiVP8GeieBKhBDsMRVm
-         WaYnNuiHgIkl7xbR9lg/hiaCaCzBBx8Jc5erOddawndf3pzNQP+qN4SvItUvqHYIb5P4
-         KOgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717099814; x=1717704614;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zGOf4m18QTtHJvMQUoDQufLKLE25S3D0AAB4RUkeJfc=;
-        b=UnRO2bjSl08ollGTEMLzG38q6Dxdyraa9YGXhsY5/Ops72QfS2jdfeWmRC9DOgiioc
-         Tj4aq2hyTt9ef0xbpI4uxa6sseIoKp+5RKFZBgeoOMPtwu3288c7XFJNaTXyoOVIPT6Y
-         EKIVVquccAPfF8KvEKw35zch4HJX5LWE1gNgHtJw7eVLViTlMe0ocwFPUwt6x+LD+cLg
-         ECUwy6JjQ4JrQjgVZ2pM9dszLRPVTH8DiX5uKduFIJ+p7BakPNa/tul9YGISknbizFM/
-         laQ6kHnkaN2PdRe3NEwD81Ch7Rw6bHjgXB5zgod1xMcErqaPzRuyoAeNeCKVelj9RrL6
-         fZWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdyu9iweOAi6wADVyE+eEdq0+yPT0919vzToJfz9CGJHySU4gYSVN1Zy0M0SXmteolVcNLOHj1CuxwFRmTJNjI6H7jBBbjOXxGHCfZ
-X-Gm-Message-State: AOJu0YzaScaUffJamK41xAWBQDnqPPgZlFEwH1JcND06Q+3wVAZCUK1X
-	8LXN1FyC93QRaTU97hgtNthMQcSXSPR1pxyxNEQDl0RBHjZXxGVYIP9IqZuFdSuXrWdNnIvekT5
-	f
-X-Google-Smtp-Source: AGHT+IFxtfSha2bFV9Bllh6KjryMKTM6ysYjJaNmwUmfLWw/8WlLkOhLC3srNxELNjFhlNeK1I/WBA==
-X-Received: by 2002:a05:6808:18a5:b0:3d1:d35b:8174 with SMTP id 5614622812f47-3d1dcca6715mr3424509b6e.2.1717099814399;
-        Thu, 30 May 2024 13:10:14 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d1e1a4637esm74809b6e.36.2024.05.30.13.10.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 13:10:13 -0700 (PDT)
-Message-ID: <ecb2472e-b505-42bf-8c02-66567d8c4277@kernel.dk>
-Date: Thu, 30 May 2024 14:10:11 -0600
+	s=arc-20240116; t=1717099977; c=relaxed/simple;
+	bh=1vL07RCqj3kFTFg3bYnNnRy8fhnzA3ra/UaxnGk4vyI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=RmqEFtR5RLNxOeELzDY/NmptztVMgIcClAMPmqR2pRkzzAv65LCtbOa5AlJC+GwJUU5/8cO8FEJ2Rsym2SfSzb/GVPd7VUQTfUtCVCNNqUz19zimTzjMkIB0jkFOOQW6jizo82uvnpAGygH/42tmSy8JWHqjUORQuH0MraDNbso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BRoAtNLK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UDu6Eb006618;
+	Thu, 30 May 2024 20:12:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pq5XmJfJwcsuxLIpo5U6KX
+	z1UY1KjzFzxBckgzVuShM=; b=BRoAtNLKzVEMEJ96rQj66NUURQccCrzvhMCP/x
+	VU2OJADSDYM9zuF8smc4N0hk54/0hE87n0TD9lpfI4hc/KPTkyV9WT+nxjGeKGK7
+	JF8HJms7SOmMBOo8zSAo3Y6yEI3Cu5DMgQDHiOZEnzeDlcIf7oZt+mSedT3u65UU
+	KlX444YgYg191nbFUZSdERLq46K7mcnihe1YxXG77asonK9h1X4CPAgKyrrKCBS5
+	DoC/A8mPQaoq92mFlgV4SE10WsAxmHIp+Rj+NU1c1qtmfl3ct4k83Av0qfU7OpdX
+	ZP96fcEG+JHPfogxLAdlCIwMgEQJrKN6jjeghTeNusNopKkQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ye96bk9hr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 20:12:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UKC5V8008633
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 20:12:05 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 13:12:04 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 13:12:03 -0700
+Subject: [PATCH] perf/x86/rapl: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_cqe_overflow
- (2)
-To: syzbot <syzbot+97d8b31fbab9db1efe55@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000003870370618b861cc@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0000000000003870370618b861cc@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-md-arch-x86-events-v1-1-e45ffa8af99f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJLdWGYC/x3MQQqDMBBA0avIrDuQRiO2VyldJHE0AzUtM1YC4
+ t2bunyL/3dQEiaFe7OD0MbK71xxvTQQk88zIY/VYI3tjGsNLiN6iQnL0CNtlFfFW+tctF0/BDt
+ BDT9CE5dz+nhWB6+EQXyO6b96cf4WXLyuJHAcP9c2A4eDAAAA
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim
+	<namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        "Dave
+ Hansen" <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+        "H. Peter Anvin"
+	<hpa@zytor.com>
+CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qU2X86iXi3KjpsQyUgMtIeztTM9ZL6Hm
+X-Proofpoint-ORIG-GUID: qU2X86iXi3KjpsQyUgMtIeztTM9ZL6Hm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_17,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300150
 
-#syz dup: [syzbot] [io-uring?] KMSAN: uninit-value in io_issue_sqe
+Fix the warning from 'make C=1 W=1':
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/events/rapl.o
 
--- 
-Jens Axboe
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/x86/events/rapl.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index 46e673585560..0c5e7a7c43ac 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -64,6 +64,7 @@
+ #include "perf_event.h"
+ #include "probe.h"
+ 
++MODULE_DESCRIPTION("Support Intel/AMD RAPL energy consumption counters");
+ MODULE_LICENSE("GPL");
+ 
+ /*
+
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240530-md-arch-x86-events-9355c2468b2f
 
 
