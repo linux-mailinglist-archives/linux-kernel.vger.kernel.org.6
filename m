@@ -1,122 +1,196 @@
-Return-Path: <linux-kernel+bounces-195304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796CA8D4AAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:24:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9EE8D4AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A451F22E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DFB9282C05
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4952174EC3;
-	Thu, 30 May 2024 11:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56FE174EE1;
+	Thu, 30 May 2024 11:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PaESKfPj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="xHSGWRVZ"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E62174EE5
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDF3174ED4;
+	Thu, 30 May 2024 11:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717068247; cv=none; b=gHDxFb3QinGNAT5ab7xl4fuOf4uRczI3AhKBBHpewSWC1TOR1Vzvpu4MxVpKiICF7Vh/xLZw6NV8/srOklAaTVSEQKMlo3sRqRrQ+oHz+GDRWGikweSo8S7rEieX7ivXL2HBWHhvhpjAdsB30dmEW9fYaqZNl702MDiCiznmla0=
+	t=1717068344; cv=none; b=PydOes8QRFt0BDLV2oPDja8uKexOHJenOafXqO7NSXRwrImiRAC+cY7oOV4Wemoy7KpBLf180guTVY7h+mi0FIqf360RYuw1Ouxc+9IgMg2WagonxXlf7hXQUjDuQeStVyfwgsGTBsI7Urg9JW/fEADbdpOvdGLCpc7biEkNEoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717068247; c=relaxed/simple;
-	bh=IbiAcFEwpuYaFXmkBXJwg3JefhvhU9je+ScUl5D7G2c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QoQZAlhHd+GVcs6Ut+EjAZOk/09BSiUu52hR7cKjQkisH4wKMr3/QOk1+NIvlOofheZGPuoKxTqRCIKdqBrFYv7ciw9R3YQMmJOPhn8ydfET/NmYUqMZWDTjGRnk/jGW6edL/hgMMnZ6oQ0vp4+vovYEWtmnMQYbptXm3vEmGJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PaESKfPj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717068245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NyFVukIA+6eMErT5jIwX1F/VfLDC/ji7PYywadLXOr0=;
-	b=PaESKfPjSj0XtZvCY38ak9BVj5r994j9GsTQI433VquhQu+OwX0sTvAnR36U8joCD6f1mJ
-	UpxQPyce0+L8jHpLStpfvmPoMu89n/QDabOBturmDQ6wZqb0c6EE8wrnoJIuBFqUKKMtOm
-	7tEEAIYPhhjWEfo0+XgJBkYG3pVtfZw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-ViP1YuCJNY2QNcqsyce-yQ-1; Thu, 30 May 2024 07:24:03 -0400
-X-MC-Unique: ViP1YuCJNY2QNcqsyce-yQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35dcb3f1ab3so239744f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:24:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717068243; x=1717673043;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NyFVukIA+6eMErT5jIwX1F/VfLDC/ji7PYywadLXOr0=;
-        b=nix7P9O03c+ELQ7/1qhgUeFPGRKpgr8WtD56/3hMvIYw2aX5Ml5uqsYPrNqu4O6BnB
-         JCi8XpwoC++BiMglVAvie+KfM8PRerjNYaKQTtGLxcjNzPKqtWh4eemofGLF285hWkwp
-         HyQ+4gNTGjAi18cs9QL5ng3KFo7G2YWXGLvi64lzoBwrnr4ezi3ESCTHN38xMfx0jGff
-         do2/0tie1oKkpruB6s2IebhnPLL7SQFhuddfXmZnzCPEONfpE0Vb2W1rPA56nz2FEBeS
-         f5TS6BaS8xUbPRrmvglHxVRweDjPWl+SJ3MuFi12xPPs6qRon6iSFMiQOdNXDj35qN1r
-         LvMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhgQ2JHga7yXAgoJIy/O4PVxIw30DjFZ2A19eCYKdJKbeUbnevyg95qaJOoWbGW0X3JZbf1llI1xXWs3zBHK7WIGZBfUhOZrnviD3z
-X-Gm-Message-State: AOJu0YypK1n+DPjFgdreIA0/Mf8GrYfoSrCxzExlt+bu2PQ/uR7yFuKa
-	SnXw6QmdramEQRnqTYgwNBx8JZVV7iQtIVwXRlFrJ6QUfRjN+CgWh45VeTS+NjisZgMXNL55VQZ
-	7JahlbbGAUDH8ISPRH1P0B4/t9XFScAjWw4F3sHa+3xgeJ+/YXFjxfN8MrVaZYg==
-X-Received: by 2002:adf:ef0c:0:b0:357:ce05:7533 with SMTP id ffacd0b85a97d-35dc0099613mr1211458f8f.40.1717068242864;
-        Thu, 30 May 2024 04:24:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOLwH0ZFTriyl8uzTdycdGfXdQu8TChCl2APlRFv5WkN/IIPx8ecBsis+IyjdEMOUVvO8E2A==
-X-Received: by 2002:adf:ef0c:0:b0:357:ce05:7533 with SMTP id ffacd0b85a97d-35dc0099613mr1211444f8f.40.1717068242417;
-        Thu, 30 May 2024 04:24:02 -0700 (PDT)
-Received: from rh (p200300c93f02d1004c157eb0f018dd01.dip0.t-ipconnect.de. [2003:c9:3f02:d100:4c15:7eb0:f018:dd01])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3579354abd1sm13832465f8f.59.2024.05.30.04.24.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 04:24:02 -0700 (PDT)
-Date: Thu, 30 May 2024 13:24:01 +0200 (CEST)
-From: Sebastian Ott <sebott@redhat.com>
-To: Eric Auger <eauger@redhat.com>
-cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-    linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>, 
-    Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-    Suzuki K Poulose <suzuki.poulose@arm.com>, 
-    Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v3 2/6] KVM: arm64: maintain per VM value for CTR_EL0
-In-Reply-To: <2dcfc174-9384-4746-833d-1442bcfb6d11@redhat.com>
-Message-ID: <a0295969-eff9-5330-cd1f-1e41b8f43eee@redhat.com>
-References: <20240514072252.5657-1-sebott@redhat.com> <20240514072252.5657-3-sebott@redhat.com> <edbe3039-ed42-432e-8309-5a0a46cc2d5c@redhat.com> <90e53cc7-039f-5abc-f94c-cf53a1602a2a@redhat.com> <2dcfc174-9384-4746-833d-1442bcfb6d11@redhat.com>
+	s=arc-20240116; t=1717068344; c=relaxed/simple;
+	bh=jQVnzAUuOiKydtGaCdk5k3Wo+voTKlo++AyxFkU5rAU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kE0bL/+JrVsjSwt0G4BbCPx8k3zSp42pvHWW4MigWLv/PMV3qn898H+uCUqkoi4+6FQKSKdH/bqZ5lYi5WWWj4+CM38VjaIFhbWxrvwIgWLoQulieU31jtpOnweGI/fJIfgbauHwmnu/GX2/IdG+WZq/IFV7UKQQEEUViuNIDn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=xHSGWRVZ; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U8hPlw030357;
+	Thu, 30 May 2024 07:25:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=8R/jjHCQYhz79Z2NduZjhzneZYu
+	jIUZE3Rkgee7+xtY=; b=xHSGWRVZIyN8KN0xExJeSOLEFHtWosmrAIvqQcx0y7a
+	SOF2Tou641MdcCOBZiIs7Q+Z4kZ1znBFkJalMuRpmLZfBGLDr5NXESfSWWDoEczg
+	IMd0uSUghUP4pzE4ydiGjqGz0Cz++TpwkLCnNEwBzy9uCk+08/PwfJnPS0mNo+jT
+	oohjqAsAF47q4WN0lvBYj0EiiKLLOKEbB8BmKR9Zm1KqrsV88+YqRgkM0IgoT+de
+	Ftwkzy8YfzmXDrASUFm7DvII1aMpcafzKnG5eARGfVrtuwSyMuFdHEBscVES/xki
+	AUDLuf1t50PiaZDUq83+KfvClhqawThTdFtpePuUogw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yep6t8gtt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 07:25:28 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44UBPQN6063409
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 07:25:26 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 30 May 2024 07:25:25 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 30 May 2024 07:25:25 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Thu, 30 May 2024 07:25:25 -0400
+Received: from radu.ad.analog.com ([10.48.65.189])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44UBPEVs013499;
+	Thu, 30 May 2024 07:25:17 -0400
+From: Radu Sabau <radu.sabau@analog.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Radu Sabau <radu.sabau@analog.com>
+Subject: [PATCH v5] drivers: hwmon: max31827: Add PEC support
+Date: Thu, 30 May 2024 14:25:05 +0300
+Message-ID: <20240530112505.14831-1-radu.sabau@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463795790-1183132592-1717068242=:11201"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: h6mLk5h_H1aZEa2BLnfWqmlx-320f5hr
+X-Proofpoint-GUID: h6mLk5h_H1aZEa2BLnfWqmlx-320f5hr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_08,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 spamscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 impostorscore=0 adultscore=0 bulkscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300085
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Add support for PEC by configuring chip accordingly to the hwmon core
+PEC attribute handling.
+Add chip_write function to be used by max31827_write when setting
+the attribute.
 
----1463795790-1183132592-1717068242=:11201
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+---
+Change log:
+v2:
+ *Rebase on top of v6.9
+ *Attach pec attribute only to i2c device
+ *Fix bug to attach pec attribute to i2c device if the device supports it.
+v3:
+ *Use only one variable to write PEC_EN bit in configuration register
+ *Use regmap_set_bits to set PEC_EN bit when requested instead of
+  regmap_update_bits.
+ *Fix typo in commit message.
+v4:
+ *Use regmap_clear_bits to clear PEC_EN bit when requested instead of
+  regmap_update_bits.
+v5:
+ *Adapt driver to the new hwmon PEC attribute handling from the hwmon core.
+---
+ Documentation/hwmon/max31827.rst | 13 ++++++++++---
+ drivers/hwmon/max31827.c         | 17 ++++++++++++++++-
+ 2 files changed, 26 insertions(+), 4 deletions(-)
 
-On Wed, 29 May 2024, Eric Auger wrote:
-> On 5/29/24 17:51, Sebastian Ott wrote:
->> On Wed, 29 May 2024, Eric Auger wrote:
->>>> @@ -3557,6 +3557,13 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
->>>>      struct kvm *kvm = vcpu->kvm;
->>>>      unsigned long i;
->>>>
->>>> +    if (!kvm_vcpu_initialized(vcpu))
->>> at this stage of the reading, why is the above check needed?
->>
->> To make sure that a later call to this function doesn't overwrite
->> the value provided by userspace. (See e016333745c "KVM: arm64: Only
->> reset vCPU-scoped feature ID regs once").
-> but isn't it overwritten through the .reset=reset_ctr() that is
-> populated in next patch?
-
-No, this is done via reset_vcpu_ftr_id_reg() and also guarded by
-kvm_vcpu_initialized().
-
-Sebastian
----1463795790-1183132592-1717068242=:11201--
+diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+index 44ab9dc064cb..9c11a9518c67 100644
+--- a/Documentation/hwmon/max31827.rst
++++ b/Documentation/hwmon/max31827.rst
+@@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive temperature faults must occur
+ before overtemperature or undertemperature faults are indicated in the
+ corresponding status bits.
+ 
+-Notes
+------
++PEC Support
++-----------
++
++When reading a register value, the PEC byte is computed and sent by the chip.
++
++PEC on word data transaction respresents a signifcant increase in bandwitdh
++usage (+33% for both write and reads) in normal conditions.
+ 
+-PEC is not implemented.
++Since this operation implies there will be an extra delay to each
++transaction, PEC can be disabled or enabled through sysfs.
++Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
+diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+index f8a13b30f100..4a5f86afd84e 100644
+--- a/drivers/hwmon/max31827.c
++++ b/drivers/hwmon/max31827.c
+@@ -24,6 +24,7 @@
+ 
+ #define MAX31827_CONFIGURATION_1SHOT_MASK	BIT(0)
+ #define MAX31827_CONFIGURATION_CNV_RATE_MASK	GENMASK(3, 1)
++#define MAX31827_CONFIGURATION_PEC_EN_MASK	BIT(4)
+ #define MAX31827_CONFIGURATION_TIMEOUT_MASK	BIT(5)
+ #define MAX31827_CONFIGURATION_RESOLUTION_MASK	GENMASK(7, 6)
+ #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
+@@ -332,6 +333,18 @@ static int max31827_read(struct device *dev, enum hwmon_sensor_types type,
+ 	return ret;
+ }
+ 
++static int max31827_chip_write(struct *regmap, u32 attr, long val)
++{
++	switch (attr) {
++	case hwmon_chip_pec:
++		return regmap_update_bits(regmap, MAX31827_CONFIGURATION_REG,
++					  MAX38127_CONFIGURATION_PEC_EN_MASK,
++					  val ? MAX38127_CONFIGURATION_PEC_EN_MASK : 0);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
+ static int max31827_write(struct device *dev, enum hwmon_sensor_types type,
+ 			  u32 attr, int channel, long val)
+ {
+@@ -340,6 +353,8 @@ static int max31827_write(struct device *dev, enum hwmon_sensor_types type,
+ 	int ret;
+ 
+ 	switch (type) {
++	case hwmon_chip:
++		return max31827_chip_write(st->regmap, attr, val);
+ 	case hwmon_temp:
+ 		switch (attr) {
+ 		case hwmon_temp_enable:
+@@ -583,7 +598,7 @@ static const struct hwmon_channel_info *max31827_info[] = {
+ 					 HWMON_T_MIN_HYST | HWMON_T_MIN_ALARM |
+ 					 HWMON_T_MAX | HWMON_T_MAX_HYST |
+ 					 HWMON_T_MAX_ALARM),
+-	HWMON_CHANNEL_INFO(chip, HWMON_C_UPDATE_INTERVAL),
++	HWMON_CHANNEL_INFO(chip, HWMON_C_UPDATE_INTERVAL | HWMON_C_PEC),
+ 	NULL,
+ };
+ 
+-- 
+2.34.1
 
 
