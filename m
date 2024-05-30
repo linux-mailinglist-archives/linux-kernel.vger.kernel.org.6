@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-196020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05A98D5626
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:15:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0EF8D5628
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A671F27F38
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8671C24561
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1821145B24;
-	Thu, 30 May 2024 23:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4593F181CE5;
+	Thu, 30 May 2024 23:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fFUyn2LC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="fJEpEHBp"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F4B2E83C
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C5B6F2EB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717110923; cv=none; b=ctTnO/KouhEMZ/ldo6Q/AKaJiNlnucZVfsImAwxPAM6QYdlRxcoMcTi2PQWCAMocV524QHec7C/YuzAFsMDcbfzNi4Ww8NiwmfERHegNaNezS/i1elxGOFSKTATRXeJNbcYEgxqrKw3cOeQ00jLqrWJpD/FrUbWokeGlzK6uKJQ=
+	t=1717110983; cv=none; b=gSNRi7z9JF/dl6z4uyosgVDwTitqrbjCMfjJVGJ3CnNVxepeq0dZBvx2Aiv14HoDn5jdZQJFRdON9sdlRl/qKG8RUrRNgJFouowegvVKZM+cW/vrhLZ9YD1ObKqhrocrrtinPk0e9xvG2bcCLjkFEVNW9XhC3cGN08VArKYE46s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717110923; c=relaxed/simple;
-	bh=sFM5M7qWz/n/MrwT6ILlj0hsZ3huyyn9R8FgilUz+TY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gliQDLHLdd6bTy9RcHUuDkpEcHNJx33gh96mso4GZuBypyZ3H+QtAqaMluYHmSJmVLHN06ikuFQ1xoBFLQnS4d3TLwdTeJducrF0FQi4mkiUxJsYTlG1GvuS5jg4Hg9WG14gD9ZkO/MueBqbRYkQqrZPIwnwY2Fx/wFWTStrnwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fFUyn2LC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BFA8C2BBFC;
-	Thu, 30 May 2024 23:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717110922;
-	bh=sFM5M7qWz/n/MrwT6ILlj0hsZ3huyyn9R8FgilUz+TY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=fFUyn2LCNPc10Zw6sn18vlI1LuQaRS1RaqNGg1z8Q+0Mk4Pa+HlptS6jM9l2+Tj/B
-	 MqKb+0OqREU1djwefCHwJ5WI2I/4mJ8LCtnmS07UKitjO7Ay6Pi7YpZOiqdGr6AXh5
-	 G8KOudRsTYNiKCa6VOXpvNcgvOr15L80yCjniAU12agErpuj6LdrtDRXctCQLqv+uh
-	 Wg00UcipGVtkYygaUYGltV3rrZ26bvE+8IPGghnVqhfmpMx9KrRtzD2OE3y4c7ZJso
-	 Bv4h6yuWi44BcPhQqNKc6lQ9clBD5/fEs24GtTNfA8PEfwFDe0dLAe9T3qrP2DbOrr
-	 +9syjnezEpg0g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id AB4A4CE095C; Thu, 30 May 2024 16:15:21 -0700 (PDT)
-Date: Thu, 30 May 2024 16:15:21 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, torvalds@linux-foundation.org,
-	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
-	joel@joelfernandes.org, raghavendra.kt@amd.com,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2 16/35] preempt,rcu: warn on PREEMPT_RCU=n, preempt=full
-Message-ID: <2b02c501-389e-468b-b6ec-0320fa7c9e7e@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-17-ankur.a.arora@oracle.com>
- <20240529081404.GI26599@noisy.programming.kicks-ass.net>
- <b629f8c9-8900-4317-9ea3-08a8dba7d896@paulmck-laptop>
- <87v82u52a1.fsf@oracle.com>
+	s=arc-20240116; t=1717110983; c=relaxed/simple;
+	bh=S4u2lnOseyQyhqqVEovoQNvutfGLIDIS9kaLR4Y2eCY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iehud5hbIa8Yoc5B67YAZLHl0+XsSTJjV/vTiyqFQUT4E7IDRZkfttxm3I4lAAeeW8Z6s6/61vNYFlUQHhHT+Qe8u+jMQhFaHNlJJ1ELQVX48not2zxhc6bZJsauL/9bOZkw9HGklfGVEIkPkId4sgicVayZ6Tv9QuG7hzboxDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=fJEpEHBp; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 319FC2C00CF;
+	Fri, 31 May 2024 11:16:12 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1717110972;
+	bh=Gt5oLkFJc6qdBQY80zttif5IVTnL3FhtOtbiLIh7m+Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fJEpEHBpT2Kx2gk7VGeYttijlEvtWf8fGGYHaRcinNdDPztfkaQpWy2jyr4VsqxWV
+	 CAEOExpSt9pxkpCcuG+FrYFv/YjRKvziGe0eRxh9xZ2A4ThlQQUaiSlF4GaxIvT5Ri
+	 bd8IATJKc5bHodSREgzb+B1isbj3nbgHl6YDgIf214ssX8WkBtdXH7IxM6Xh1Pjsrb
+	 9uzkaXvj4zPSNas4TR2bCIT76yWyrB3WjTYVgzQtF86tDe2gTvBrFF3y5YtVQzvRI3
+	 Pi1rU6jjFUDCT1CQdan5jd8Hq+5mOf6N4PNFAE8ZRuE+Hcx5aL8EiuiaNP6CIEbYCz
+	 UZeNQCfVe2rrw==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B665908bc0000>; Fri, 31 May 2024 11:16:12 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id F181413EDFA;
+	Fri, 31 May 2024 11:16:11 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id ED746280481; Fri, 31 May 2024 11:16:11 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH] ARM: dts: marvell: Add 7-segment LED display on x530
+Date: Fri, 31 May 2024 11:16:08 +1200
+Message-ID: <20240530231608.3557782-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v82u52a1.fsf@oracle.com>
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=665908bc a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=TpHVaj0NuXgA:10 a=Eze4_Z_RUzIZFoL9sA8A:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Thu, May 30, 2024 at 04:05:26PM -0700, Ankur Arora wrote:
-> 
-> Paul E. McKenney <paulmck@kernel.org> writes:
-> 
-> > On Wed, May 29, 2024 at 10:14:04AM +0200, Peter Zijlstra wrote:
-> >> On Mon, May 27, 2024 at 05:35:02PM -0700, Ankur Arora wrote:
-> >> > The combination of PREEMPT_RCU=n and (PREEMPT_AUTO=y, preempt=full)
-> >> > works at cross purposes: the RCU read side critical sections disable
-> >> > preemption, while preempt=full schedules eagerly to minimize
-> >> > latency.
-> >> >
-> >> > Warn if the user is switching to full preemption with PREEMPT_RCU=n.
-> >> >
-> >> > Cc: Ingo Molnar <mingo@redhat.com>
-> >> > Cc: Peter Zijlstra <peterz@infradead.org>
-> >> > Cc: Juri Lelli <juri.lelli@redhat.com>
-> >> > Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> >> > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> >> > Link: https://lore.kernel.org/lkml/842f589e-5ea3-4c2b-9376-d718c14fabf5@paulmck-laptop/
-> >> > Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> >> > ---
-> >> >  kernel/sched/core.c | 4 ++++
-> >> >  1 file changed, 4 insertions(+)
-> >> >
-> >> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> >> > index d7804e29182d..df8e333f2d8b 100644
-> >> > --- a/kernel/sched/core.c
-> >> > +++ b/kernel/sched/core.c
-> >> > @@ -8943,6 +8943,10 @@ static void __sched_dynamic_update(int mode)
-> >> >  		break;
-> >> >
-> >> >  	case preempt_dynamic_full:
-> >> > +		if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
-> >> > +			pr_warn("%s: preempt=full is not recommended with CONFIG_PREEMPT_RCU=n",
-> >> > +				PREEMPT_MODE);
-> >> > +
-> >>
-> >> Yeah, so I don't believe this is a viable strategy.
-> >>
-> >> Firstly, none of these RCU patches are actually about the whole LAZY
-> >> preempt scheme, they apply equally well (arguably better) to the
-> >> existing PREEMPT_DYNAMIC thing.
-> >>
-> >> Secondly, esp. with the LAZY thing, you are effectively running FULL at
-> >> all times. It's just that some of the preemptions, typically those of
-> >> the normal scheduling class are somewhat delayed. However RT/DL classes
-> >> are still insta preempt.
-> >>
-> >> Meaning that if you run anything in the realtime classes you're running
-> >> a fully preemptible kernel. As such, RCU had better be able to deal with
-> >> it.
-> >>
-> >> So no, I don't believe this is right.
-> >
-> > At one point, lazy preemption selected PREEMPT_COUNT (which I am
-> > not seeing in this version, perhaps due to blindness on my part).
-> > Of course, selecting PREEMPT_COUNT would result in !PREEMPT_RCU kernel's
-> > rcu_read_lock() explicitly disabling preemption, thus avoiding preemption
-> > (including lazy preemption) in RCU read-side critical sections.
-> 
-> That should be still happening, just transitively. PREEMPT_AUTO selects
-> PREEMPT_BUILD, which selects PREEMPTION, and that in turn selects
-> PREEMPT_COUNT.
+The Allied Telesis x530 products have a 7-segment LED display which is
+used for node identification when the devices are stacked. Represent
+this as a gpio-7-segment device.
 
-Ah, I gave up too soon.  Thank you!
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+This was originally sent as part of the series that added the seg-led-gpi=
+o
+driver but wasn't applied with those changes. At the time I said I'd subm=
+it
+this separately but I forgot about it until now.
 
-							Thanx, Paul
+ arch/arm/boot/dts/marvell/armada-385-atl-x530.dts | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/marvell/armada-385-atl-x530.dts b/arch/arm=
+/boot/dts/marvell/armada-385-atl-x530.dts
+index 5a9ab8410b7b..2fb7304039be 100644
+--- a/arch/arm/boot/dts/marvell/armada-385-atl-x530.dts
++++ b/arch/arm/boot/dts/marvell/armada-385-atl-x530.dts
+@@ -43,6 +43,17 @@ uart0: serial@12000 {
+ 			};
+ 		};
+ 	};
++
++	led-7seg {
++		compatible =3D "gpio-7-segment";
++		segment-gpios =3D <&led_7seg_gpio 0 GPIO_ACTIVE_LOW>,
++				<&led_7seg_gpio 1 GPIO_ACTIVE_LOW>,
++				<&led_7seg_gpio 2 GPIO_ACTIVE_LOW>,
++				<&led_7seg_gpio 3 GPIO_ACTIVE_LOW>,
++				<&led_7seg_gpio 4 GPIO_ACTIVE_LOW>,
++				<&led_7seg_gpio 5 GPIO_ACTIVE_LOW>,
++				<&led_7seg_gpio 6 GPIO_ACTIVE_LOW>;
++	};
+ };
+=20
+ &pciec {
+@@ -149,7 +160,7 @@ i2c@3 {
+ 			#size-cells =3D <0>;
+ 			reg =3D <3>;
+=20
+-			gpio@20 {
++			led_7seg_gpio: gpio@20 {
+ 				compatible =3D "nxp,pca9554";
+ 				gpio-controller;
+ 				#gpio-cells =3D <2>;
+--=20
+2.45.1
+
 
