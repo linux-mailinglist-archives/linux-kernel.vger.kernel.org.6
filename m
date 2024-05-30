@@ -1,154 +1,238 @@
-Return-Path: <linux-kernel+bounces-195030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C8E8D4689
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:59:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F7D8D4696
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB2E283E1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:59:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A11F91F22297
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521311459EF;
-	Thu, 30 May 2024 07:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ED8142E78;
+	Thu, 30 May 2024 07:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OYcpfuHv"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="SFmNCB+x"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80BA143745
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03192144D19;
+	Thu, 30 May 2024 07:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717055937; cv=none; b=X34Op5RB0tgo+waxGeh3p/93qIlndQ3atOEeGu0TiUkpZTj28DTcxPFl1khXiVe1oiabKRsKZrGEfc6L7OwwhSoAs22RdaY0S2AQlrJrPwimm9bq1/0SnGCmOFAZohMinrR/1B/kiETiL2BKMKxftEBqKfhUusWIbWKMQXNwjQM=
+	t=1717055994; cv=none; b=KOQTR86qMqN3G8kmi6l2eJxnCH6+5muNn21+w3k4Sx8dPEnIoMkLNUZnILcGbqFuWG6n9Ae9NfUOccwQ/GmqQJwLTzCoupIACGPpD1lREElGGiInkkVJqiKjMXpthgmknxB4ck4iZTkDj4R+E8AINCon9z+GMsUF8qOTK8SXx6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717055937; c=relaxed/simple;
-	bh=lmnS+uhE1B+Xtb3Jn2lTEbYhgqdcwEtClUTNalj/uSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b2l+L9GHzbCN00YSR53D4CfCmB7chF99fKigGOBZkoI5T3XgzsFHt/6JZwyYxrK7H/EHEDna9/Oz6CPBp+wJvxYoTVCjZPwr7qJon+i8eb4yrk6iJ52AwvDtRqHOeC6DNiy/kfN33LfZWRYIDEaQg6lURbsYMNOZeGhjFrcewFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OYcpfuHv; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfa4ad7f6dfso509800276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717055934; x=1717660734; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B+oJ9AQU1WwAFE3BTuASvQX6ynujHPOOLDvZ4IBH4iY=;
-        b=OYcpfuHvJsLG9NS5r6X/psJlgl3kfnafKJ0whTUUKQZ0sHiQBy58S7nqpXG2AnmPZw
-         ylfWbVNxeDJT6bW/ycY9P/f/gyG+/GswhHvyYpgpudop+17tkiaa4bvKK44zwyMh1wJp
-         S+jEAquaum+7hglpejr5aEUDXAJau42VULLimhpTTOpelRBop2bLsldst6B/M2XRON4r
-         W5EFVW9aZlRPPYqrPCgb8Tw4QTOX0p3qEIY/K+RHPn0nErIVt+cC82ky+dsJUrWC5mLd
-         QZc1XkWwFGf5WhIYAPfd9Je9mHZD5n8zOvQn7Z0Z6hnAgTkFIWnYufFjzufuARqiNn5R
-         LG5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717055934; x=1717660734;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B+oJ9AQU1WwAFE3BTuASvQX6ynujHPOOLDvZ4IBH4iY=;
-        b=tEUHspDgt4+ZTcJvpVQrQdheLtta9n4dtXN1EM26yA7Ck6Qq5fb3hVEz9WN+0XYJJ5
-         OBQW5qtAFQqN1Si8pZDZPdznfpoPM1QKGNDNCIvNpeUuzTQqDK2Vj3YYyth9uFp16z6L
-         MH/ahMiMz6aN883A9f/elVz0Zh4no0iDfLIS50awcMdn6/RsIKd4RKjCe51UUNiOJ/2a
-         vDSJ0tH35sQm5vRTIzezWhegb71wG3C5kAhduPm72EuJue/bekgcSeJ1i40gSbMvQQoz
-         CNV8+f2XdYSkc2PSF63fbKwrqa5QD0tSf1rmYuJxupten5k3pciearoxUgh82RjOaMJl
-         9/7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUnKq83PjxEfqcxROOinjnJ1VQa6PBdT6KC44Pyz/FCxG0XKNRSKMho/YkYEI3+umg1EpVVyHqQN3Gj3wNf+N2zLz6yN/5YmYIun6Y7
-X-Gm-Message-State: AOJu0Yx2EME/k3c43wQW3xdxkpep3sx51vqdZTsc4la4qL0QMIATCAMy
-	csfRAV6YVnxBHEKP/eWc+3z82A/bOypVJ847s0YczdYVRuiD5k5ODDASJtSQ9u0vUy0II0ikhgI
-	2INOJQOhPv0JbFwNgiE46i4ahjhaHXxnYpjeg1Q==
-X-Google-Smtp-Source: AGHT+IHWn8jqCUpUtwn4GZB8DSUWhC0pqZv08o7PmbgCc14pEd89tke9BgPzyPGi5xXBW4hatiPVYSqRFMZI/ea2rj8=
-X-Received: by 2002:a25:2e07:0:b0:de5:558c:e9b9 with SMTP id
- 3f1490d57ef6-dfa5a5bb588mr1579742276.11.1717055933851; Thu, 30 May 2024
- 00:58:53 -0700 (PDT)
+	s=arc-20240116; t=1717055994; c=relaxed/simple;
+	bh=y34O+n2cvVg9mI48T2/50GEpCGRBxQck1cOVTU4jgkQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TCyJ/JwuAgC71s5KU+N5CA0YaLsnvMTYcRxdKv40Hngn0v4vOBF6MefCuhjr62iQXqFb/uVjCCbGu/1u5w4bp4VSo2GgqTR4TgUtGTsLLWnN1ukV2zO1A/D7TH4Hzo9tCOwXy1W7x10myxRZYdtzgqlOs4cEwERdsHuBPKeMmS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=SFmNCB+x; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U3iAMq006282;
+	Thu, 30 May 2024 03:59:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=epEtpMGIB0MJj90MgucXLQ+pdPs
+	SY9Ub5laiXEvj9lI=; b=SFmNCB+x1f2vaWwqNQkGJdEUKn2oFSMR6noyntYhfyW
+	rh66THRdjqgeiyZi5xUegv7oXrLHUpGsaA6FGt4BkkYm2h0tOXa23uSCdRc6kNVD
+	eHQeFAiuPtW4R9aNs5LdIqpGokvLTtFNOCDq7dBkpBUWAAcCNRqOD5C7VJm/E52i
+	Qgkoi3NJE2nK0EHHmAuzm5MZ6GqeofFLcdkEJzXxsM23zRbxXKQ0b+2jQnkELqAT
+	mz1xTGCZ8dWg4q5/ytZaHq9zOZGsDm/voVdrTTiIGnosCR4CcqKXzyCw8z33jgEX
+	zBXEx/kRkHxh0N9Pc5X48Y1XhSOxKvm/Hhvh7THHpgA==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yehtj0scj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 03:59:38 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 44U7xapo058364
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 03:59:36 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 30 May 2024 03:59:35 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 30 May 2024 03:59:35 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Thu, 30 May 2024 03:59:35 -0400
+Received: from HYB-hYN1yfF7zRm.ad.analog.com (HYB-hYN1yfF7zRm.ad.analog.com [10.48.65.147])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44U7xMNn003065;
+	Thu, 30 May 2024 03:59:24 -0400
+From: ranechita <ramona.nechita@analog.com>
+To: <linux-iio@vger.kernel.org>
+CC: ranechita <ramona.nechita@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v2] dt-bindings: iio: adc: add a7779 doc
+Date: Thu, 30 May 2024 10:59:08 +0300
+Message-ID: <20240530075914.28080-1-ramona.nechita@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
- <20240529053250.91284-7-baolu.lu@linux.intel.com> <jd7df7jshswukstxwbfoxuswyltyemdmkx272i5mpldlfsk4t7@ad36olyvmw27>
- <960bfc23-22b3-48d1-baa6-2707767875c5@linux.intel.com>
-In-Reply-To: <960bfc23-22b3-48d1-baa6-2707767875c5@linux.intel.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 30 May 2024 10:58:42 +0300
-Message-ID: <CAA8EJppZU5yy4g85oMWzV_O9Qo91-Cr6d+W9Rz+K+mS6tfU8kw@mail.gmail.com>
-Subject: Re: [PATCH 06/20] drm/msm: Use iommu_paging_domain_alloc()
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Yi Liu <yi.l.liu@intel.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com, 
-	Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: Stg18O4oz10w7P7fLMJG8S8WU7zt_RAx
+X-Proofpoint-ORIG-GUID: Stg18O4oz10w7P7fLMJG8S8WU7zt_RAx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_05,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 phishscore=0 mlxscore=0
+ clxscore=1015 mlxlogscore=999 adultscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300058
 
-On Thu, 30 May 2024 at 04:59, Baolu Lu <baolu.lu@linux.intel.com> wrote:
->
-> On 5/29/24 4:21 PM, Dmitry Baryshkov wrote:
-> > On Wed, May 29, 2024 at 01:32:36PM +0800, Lu Baolu wrote:
-> >> The domain allocated in msm_iommu_new() is for the @dev. Replace
-> >> iommu_domain_alloc() with iommu_paging_domain_alloc() to make it explicit.
-> >>
-> >> Update msm_iommu_new() to always return ERR_PTR in failure cases instead
-> >> of NULL.
-> > Please don't mix unrelated changes, because ...
-> >
-> >> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
-> >> ---
-> >>   drivers/gpu/drm/msm/msm_iommu.c | 8 ++++----
-> >>   1 file changed, 4 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
-> >> index d5512037c38b..f7e28d4b5f62 100644
-> >> --- a/drivers/gpu/drm/msm/msm_iommu.c
-> >> +++ b/drivers/gpu/drm/msm/msm_iommu.c
-> >> @@ -407,9 +407,9 @@ struct msm_mmu *msm_iommu_new(struct device *dev, unsigned long quirks)
-> >>      struct msm_iommu *iommu;
-> >>      int ret;
-> >>
-> >> -    domain = iommu_domain_alloc(dev->bus);
-> >> -    if (!domain)
-> >> -            return NULL;
-> >> +    domain = iommu_paging_domain_alloc(dev);
-> >> +    if (IS_ERR(domain))
-> >> +            return ERR_CAST(domain);
-> >>
-> >>      iommu_set_pgtable_quirks(domain, quirks);
-> >>
-> >> @@ -441,7 +441,7 @@ struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gpu, unsig
-> >>      struct msm_mmu *mmu;
-> >>
-> >>      mmu = msm_iommu_new(dev, quirks);
-> >> -    if (IS_ERR_OR_NULL(mmu))
-> >> +    if (IS_ERR(mmu))
-> >>              return mmu;
-> > NAK, not having an IOMMU is a poor but legit usecase for some of devices
-> > which don't have IOMMU support yet (for example because of the buggy
-> > implementation for which we were not able to get all the hooks in).
-> >
-> > Please don't break compatibility for existing platforms.
->
-> Sure. I will remove this line of change. Though I have no idea in which
-> case msm_iommu_new() could return NULL after this patch.
+Add dt bindings for adc ad7779.
 
-So, even without this chunk you are going to break the no-IOMMU case.
-Please don't. This will result in a regression report and a revert.
+Signed-off-by: ranechita <ramona.nechita@analog.com>
+---
+ .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+ .../bindings/iio/adc/adi,ad7779.yaml          | 87 +++++++++++++++++++
+ 2 files changed, 110 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
 
-Instead please provide a way for the existing drivers to continue
-working. For example, something like:
-
-if (IS_ERR(mmu) && ERR_PTR(mmu) == -ENODEV))
-    return NULL;
-
-
-
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+new file mode 100644
+index 000000000000..0a57fda598e6
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+@@ -0,0 +1,23 @@
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Reading returns a list with the possible filter modes. Only supported by
++		AD7771.
++
++		  * "sinc3"	- The digital sinc3 filter implements three main notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another two at the ODR frequency selected to
++				stop noise aliasing into the pass band.
++
++		  * "sinc5"	- The sinc5 filter implements five notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another four at the ODR frequency
++				selected to stop noise aliasing into the pass band.
++
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Set the filter mode of the differential channel. The current sampling_frequency
++		is set according to the filter range. Only supported by AD7771.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+new file mode 100644
+index 000000000000..632e9ec0ab44
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Sampling ADCs
++
++maintainers:
++  - Ramona Nechita <ramona.nechita@analog.com>
++
++description: |
++  The AD777X family consist of 8-channel, simultaneous sampling analog-to-
++  digital converter (ADC). Eight full Σ-Δ ADCs are on-chip. The
++  AD7771 provides an ultralow input current to allow direct sensor
++  connection. Each input channel has a programmable gain stage
++  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
++  outputs into the full-scale ADC input range, maximizing the
++  dynamic range of the signal chain.
++
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7770.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7771.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7779.pdf
++
++$ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - adi,ad7770
++      - adi,ad7771
++      - adi,ad7779
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  spi-max-frequency: true
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  vref-supply:
++    description:
++      ADC reference voltage supply
++
++  start-gpios:
++    description:
++      Pin that controls start synchronization pulse.
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        adc@0 {
++          compatible = "adi,ad7779";
++          reg = <0>;
++          spi-max-frequency = <20000000>;
++          vref-supply = <&vref>;
++          start-gpios = <&gpio0 87 GPIO_ACTIVE_LOW>;
++          reset-gpios = <&gpio0 93 GPIO_ACTIVE_LOW>;
++          clocks = <&adc_clk>;
++        };
++    };
++...
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
