@@ -1,143 +1,128 @@
-Return-Path: <linux-kernel+bounces-196001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2CA8D55E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB898D55DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861D7287965
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47DB1F235A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68C019069F;
-	Thu, 30 May 2024 23:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ex5w7TCP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B1190695;
-	Thu, 30 May 2024 23:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CCA183980;
+	Thu, 30 May 2024 22:59:31 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B7B17545;
+	Thu, 30 May 2024 22:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717110060; cv=none; b=OfulxRZWZJVWV5++C14XpsEs6n5zw61F/U2vpbA5eaHkWLuwgfe2yHSOOTovkVwcBelQPfxzzk71/DVkcDkOvLPZ5fJMdLgq7suznwBYNorXl+4FJ64yitbhKK/WBHGLYZi9CslFU4J/c0kAcJK1TLsLfOO4YFVGcHbm33WCEu8=
+	t=1717109971; cv=none; b=q9QUPeN2tCuETHJLNrtzJVk+MoU0QF6GaKcA8raFDrpPBZ08UfTa4sR0FRnB3yPohzGhjHGJQ0EDpz6Axfhwp3JPulqhNmdZbubmT7LqtzMJMz/6vmxUEn7mWxd4z/rbJ7GRrzc9ovIanJGi73AoY+xTRE5ye5KLP6Hc3sc9mP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717110060; c=relaxed/simple;
-	bh=sA6qI//FTL7pgyGldUMsd1jU+l556RY52OWXWgjHnto=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cMUcDQMPhp9+Zyw+bdY338NjjdjKrC1LipqNDhQLgh1CCMrFui6vpe9jkm57Pe4MbN03QdU7NvA/UxSHAkkzjp/mB5g/Nyv6HdCVflSdJTShchBbCIvbVJUgID6jw5ZcpP58og1xdoKJJSrePa9WUeD4YVYM+trojmZ69pS6ytY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ex5w7TCP; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717110060; x=1748646060;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sA6qI//FTL7pgyGldUMsd1jU+l556RY52OWXWgjHnto=;
-  b=ex5w7TCPFJQTcglxysPdFAcYR14/9nxCZEGof8jSt4Qx6P6D9WUEra86
-   CO0t4qhfp7Ufu4E+ctg/jkyLUezo+MKQsknbCK9JPM/aTSmrxocYL66Cc
-   +A6duzntuuymbgtG5hKvWAWfrvR1SM+4ZWEo0N6nhXZv4tJU/foTzPJY2
-   0D8v6uJ50QLFg6I6/WudUfCQDknUzEejzQKWlYKkwvDz6XJzsNVmGGPFW
-   iF5/xvup12yNMSnFIE6sLxM4AmKPWWIMompqpSAr10by0vtVcJP4zICrg
-   EiJ+tf7gEZFowYNKszPhQLAlhaTVfG6Q/lfuz4GMP3k/FbLwMZgLzgJLB
-   A==;
-X-CSE-ConnectionGUID: zNYk+dNpRjmkh7YFOKMzyQ==
-X-CSE-MsgGUID: rMolwGlZSmK1LQHobhUX0Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24195360"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="24195360"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 16:00:59 -0700
-X-CSE-ConnectionGUID: shNDdpbZSeqWsVWRt7QFTg==
-X-CSE-MsgGUID: 1ruPcTT0SvuZbWAI61H1sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="40895352"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 30 May 2024 16:00:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7DB356CB; Fri, 31 May 2024 02:00:40 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Rob Herring <robh@kernel.org>,
-	Weidong Wang <wangweidong.a@awinic.com>,
-	Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Shenghao Ding <shenghao-ding@ti.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
-	Chancel Liu <chancel.liu@nxp.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	patches@opensource.cirrus.com,
-	linuxppc-dev@lists.ozlabs.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	James Schulman <james.schulman@cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v1 6/6] ASoC: samsung: Replace of_gpio.h by proper one
-Date: Fri, 31 May 2024 01:58:52 +0300
-Message-ID: <20240530230037.1156253-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
-References: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1717109971; c=relaxed/simple;
+	bh=m7Sq2rAhdxuGD38L5CCDAZsnrG/N2vhzCA1ZriqAONs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=PPy0jECMR8JON59tWa4NZas1KLU8+xi5huvTk/11hRsGmvBI9Qn4hzzG265EvsABCuOzU2JsGnIQUbdYdpUuosJs6nEWLu46kq6TK4diKCG/tMf4yw1jJH8ikvbjJtyLuz+R23rPMGkdgrj+Wm7528vTmfZejLxUOn3zvtXvG40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 20C1192009D; Fri, 31 May 2024 00:59:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 1A8BD92009B;
+	Thu, 30 May 2024 23:59:27 +0100 (BST)
+Date: Thu, 30 May 2024 23:59:27 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
+    Arnd Bergmann <arnd@arndb.de>, 
+    Richard Henderson <richard.henderson@linaro.org>, 
+    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Marc Zyngier <maz@kernel.org>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    linux-kernel@vger.kernel.org, Michael Cree <mcree@orcon.net.nz>, 
+    Frank Scheiner <frank.scheiner@web.de>
+Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
+In-Reply-To: <5567ab2e-80af-4c5f-bebb-d979e8a34f49@paulmck-laptop>
+Message-ID: <alpine.DEB.2.21.2405302248550.23854@angie.orcam.me.uk>
+References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de> <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
+ <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk> <5567ab2e-80af-4c5f-bebb-d979e8a34f49@paulmck-laptop>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-of_gpio.h is deprecated and subject to remove.
-The driver doesn't use it directly, replace it
-with what is really being used.
+On Wed, 29 May 2024, Paul E. McKenney wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- sound/soc/samsung/aries_wm8994.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >  What I have been after actually is: can you point me at a piece of code 
+> > in our tree that will cause an issue with a non-BWX Alpha as described in 
+> > your scenario, so that I have a starting point?  Mind that I'm completely 
+> > new to RCU as I didn't have a need to research it before (though from a 
+> > skim over Documentation/RCU/rcu.rst I understand what its objective is).
+> 
+> See the uses of the fields of the current->rcu_read_unlock_special.b
+> anonymous structure for the example that led us here.  And who knows how
+> many other pieces of the Linux kernel that assume that it is possible
+> to atomically store a single byte.
 
-diff --git a/sound/soc/samsung/aries_wm8994.c b/sound/soc/samsung/aries_wm8994.c
-index a548ac33dd94..01716df0c842 100644
---- a/sound/soc/samsung/aries_wm8994.c
-+++ b/sound/soc/samsung/aries_wm8994.c
-@@ -1,11 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0+
- #include <linux/extcon.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/iio/consumer.h>
- #include <linux/input-event-codes.h>
- #include <linux/mfd/wm8994/registers.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/regulator/consumer.h>
- #include <sound/jack.h>
- #include <sound/pcm_params.h>
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+ Thanks, that helps.
 
+> Many of which use a normal C-language store, in which case there are
+> no accessors.  This can be a problem even in the case where there are no
+> data races to either byte, because the need for the read-modify-write
+> sequence on older Alpha systems results in implicit data races at the
+> machine-word level.
+
+ Ack.
+
+> >  FWIW even if it was only me I think that depriving the already thin Alpha 
+> > port developer base of any quantity of the remaining manpower, by dropping 
+> > support for a subset of the hardware available, and then a subset that is 
+> > not just as exotic as the original i386 became to the x86 platform at the 
+> > time support for it was dropped, is only going to lead to further demise 
+> > and eventual drop of the entire port.
+> 
+> Yes, support has been dropped for some of the older x86 CPUs as well,
+> for example, Linux-kernel support for multiprocessor 80386 systems was
+> dropped a great many years ago, in part because those CPUs do not have
+> a cmpxchg instruction.  So it is not like we are picking on Alpha.
+
+ That's what I mentioned (and for the record i386 wasn't dropped for the 
+lack of CMPXCHG, as we never supported i386 SMP, exceedingly rare, anyway, 
+but for the lack of page-level write-protection in the kernel mode, which 
+implied painful manual checks).  At the time our support for the i386 was 
+dropped its population outside embedded use was minuscule and certainly 
+compared to non-i386 x86 Linux user base.  And the supply of modern x86 
+systems was not an issue either.
+
+ Conversely no new Alpha systems are made and I suspect the ratio between 
+BWX and non-BWX Alpha Linux users is not as high as between post-i386 x86 
+and original i386 Linux users at the time of the drop.
+
+> >  And I think it would be good if we kept the port, just as we keep other 
+> > ports of historical significance only, for educational reasons if nothing 
+> > else, such as to let people understand based on an actual example, once 
+> > mainstream, the implications of weakly ordered memory systems.
+> 
+> I don't know of any remaining issues with the newer Alpha systems that do
+> support single-byte and double-byte load and store instructions, and so
+> I am not aware of any reason for dropping Linux-kernel support for them.
+
+ Well, the lack of developers to maintain the port would be the reason I 
+refer to.  If you let developers drop by preventing them from using their 
+hardware to work on the port, then eventually we'll have none.
+
+ Anyway it seems like an issue to be sorted in the compiler, transparently 
+to RCU, so it shouldn't be a reason to drop support for non-BWX Alpha CPUs 
+anymore.  See my reply to Linus in this thread.
+
+ Thank you for your input, always appreciated.
+
+  Maciej
 
