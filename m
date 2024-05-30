@@ -1,264 +1,203 @@
-Return-Path: <linux-kernel+bounces-195037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11578D46A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E7A8D46AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2BC61C21C9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3ACF1C21DFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D4A1474C3;
-	Thu, 30 May 2024 08:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70FE14535A;
+	Thu, 30 May 2024 08:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="hm4DW3XD"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2058.outbound.protection.outlook.com [40.107.241.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="QCPLY2q3"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37534176AD2;
-	Thu, 30 May 2024 08:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717056414; cv=fail; b=kEYMw1Z499669s7618MojDy7iZVRaFIJ44SWHN3pRZHjdOKtOqSwZMSsgBys1W+suDIJpqkAoPk1lnXXwkjImxzuMW48Plx/j2Y1IiG5kvBBcFdPhALig2leIlivMf4MwSulX2+OVW0UhFSAQ4PMfcTjl2vAePhKYEbE+uCg/R4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717056414; c=relaxed/simple;
-	bh=g6o8n3jDxARWG4a3r9hJWV6LOyPNipKq56SpD8OzuA4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SxGeBp83bwoxha5goAiQtRYxwUGaGmyT5ym6+ErIoqex8Lz7a0H9tryMjpTI2+r33PQgW6e33fE1vOOaut/kLUqmzBhXGco2+DRV/p4tlb7HzfaWZjszTx1bXHmx0SqAzQIOd9DN0zEQEJLv16kqEiOIWyJdKAoiDUhXtoFv9is=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=hm4DW3XD; arc=fail smtp.client-ip=40.107.241.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bySWvoCrN8Nq5fpKRG63L598vb01LU9Dk1LWMHmB4t5LIrdXOMtpio74DfOeeKPKZ/2T5t87hBbHD8RyEuVDMIEF1v3/gRksewlH0QX20KA87wXn0QXlfcqzXOgJGI2lgS4kzyEUdcmDZCLQVOz1FlTd4XQpHlQs3juWydy+fevTevnp+C4bBfRUEqXV3l3G+pyBOKOCx1JzVpCLvCrIFrh0YKhL0ITFentKXC4vVMys4onU1P+Yw4E5V4XTYaYfowgo0VtAobtiKRjx87y/4SsNYGnWMEVysH9BXnHTIMGRTHf4YwOS4HKHXWiJW4s0Bh+eoZtwfsprZP9rh7RHGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OPBhOk8/61OC6v1CzOO8GLJu0YSJgUJztceh5fTxHS8=;
- b=n8hvYkqs/uTIyLq/L/uub2wfq199gXMXVrQm8+tVM9cRUE0WvV6Odm4X0WNjs4exWNy02HBLVzXijUtjnKSWmW1GR+TOhEnugGCUavhpRuRbCMhuQR0WSnMbRR8JTsOGuzv1j8edAfB20WKp0J1FQja/nO+u2kfS6UoY6d0mulzllrzcSGhR/aDvastnVMtYzHvZfH0AUB0jcZrsnOlTZLLrn6puPTBoe1R9uV2tNTAnpmADmi8UrleLon+/EJsk0nXoKMwVviffMSOK4ABmUYSRX+MO6e+kxH8JLct6eH8GvlxM90Ldo81KagMZv9GhLnEqs3X5zMkmUINjm2zumg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OPBhOk8/61OC6v1CzOO8GLJu0YSJgUJztceh5fTxHS8=;
- b=hm4DW3XDG+PzxBtMt4564hQi8+7wrtmHVo70yWIPYaMrbm+Vua6t2BPr0Mo1kNDqi/i0WN5ZPEp0hO9hT8WxLmEjfA7EGkxwT/FoFT0c3L5lZ7retYOa+fmIAMMX6SuwyD9Z6hQTs+s0KQievrWSliz3d+aEr4nOChLzbNzt5G0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-Received: from DB9PR02MB9994.eurprd02.prod.outlook.com (2603:10a6:10:462::8)
- by AS8PR02MB8804.eurprd02.prod.outlook.com (2603:10a6:20b:537::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
- 2024 08:06:48 +0000
-Received: from DB9PR02MB9994.eurprd02.prod.outlook.com
- ([fe80::f9a2:77a1:a5aa:8f8b]) by DB9PR02MB9994.eurprd02.prod.outlook.com
- ([fe80::f9a2:77a1:a5aa:8f8b%4]) with mapi id 15.20.7633.018; Thu, 30 May 2024
- 08:06:48 +0000
-Message-ID: <08921791-452a-4bb1-950c-2dd7747a1d14@axis.com>
-Date: Thu, 30 May 2024 10:06:46 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] hwmon: (ina2xx) Add device tree support to pass alert
- polarity
-To: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@axis.com
-References: <20240529-apol-ina2xx-fix-v1-0-77b4b382190f@axis.com>
- <20240529-apol-ina2xx-fix-v1-2-77b4b382190f@axis.com>
- <6f2d2e7e-99b4-4f5d-a2c5-523b5534917b@roeck-us.net>
-Content-Language: en-US
-From: Amna Waseem <Amna.Waseem@axis.com>
-In-Reply-To: <6f2d2e7e-99b4-4f5d-a2c5-523b5534917b@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MM0P280CA0010.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:a::21) To DB9PR02MB9994.eurprd02.prod.outlook.com
- (2603:10a6:10:462::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063B17407F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717056430; cv=none; b=oj9C3ZIHjcAZsOR4jtEV004PoudMVOKOW2mh0meAdEYx4uCpC6HJWmqOmhkqgc7wpsmI0zVu2oQIdGnOGtp2DzcJuuk13zt93phab2uKLildd8dRS0mI4XGjW2gOGonGFUzpn17Oy+zulJJsTxeuecDEqKEd0KiqjQK8s+2s6Vo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717056430; c=relaxed/simple;
+	bh=DPXVfv9gCin27padQl0N45iKeyrBxgpvV3TGvylxXTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=imzgHFC8p2acx7jO8pLTBMYPNSm6/GC7dRrhn+wZ6hAV/M8oeMSiT6hxiGscDkvzApR8iSD4kcpZw4SXysa/o59Iu/FawDFHrwAQURwN5ex89MjKR0WZWmyj2hv1S5oi9vOTgmi/vWeCnuwUGqpHTR8cV5cQVx8xc3B3aR0w6GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=QCPLY2q3; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42108856c33so4152525e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1717056427; x=1717661227; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=imJe00y9Y1CwcN7JN2PUg+7wMYdo2Jj6de/HwT6F9Uc=;
+        b=QCPLY2q3GcI5tFtaVSPXqFkCCCnIuYskWM76DbjGl6ML363nOeq4cRK3lAPwrhCQtS
+         x0C3qFGXrQ9GkAvd+mcs9U1aX8sCw7ThmoVcytSyi9lvTLV5cUH7bHsG42uFR/ic5KWx
+         2E2Tb2x4jpncHZSEzy1dJlAbGpE+1fHt5BfnexSY4DKvR2/JI+S2cRMEbL+qpYjDL9Pu
+         hd+XiIpY4abWE0R+7kKKeGGV2DrNud4ExkkxvmC7izzHxunEMmJAVVpMRKjaVwsZEPBp
+         hIKvNrc7+3YBVwMNhKpNqJFZ8YZXccx1M07dhKCk2T5vcZj9QwJ10dN3JnLz5iYIqcKR
+         P9Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717056427; x=1717661227;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=imJe00y9Y1CwcN7JN2PUg+7wMYdo2Jj6de/HwT6F9Uc=;
+        b=EVcsduh7P0zhqhMTyIhGNGdrqlSQ4vLEU9yQHWeaPLjfQVmXBhZKNVeDOq1eao//KX
+         mFyD0pr4di6YBBWhEMs7eib5dTqybiT0npsq+1S8UlrrzvvDM1VCNKijZFS5SjpNe8X0
+         rzIhxAJkKcv0wGe5+9Ukez6GLPhnJShgm1u5bgFhW6COKaL5JjdHZfsYDnTbtJmUpLCh
+         +O6HbK9+t3yojdVjxkCsPEeyz/jTy4uJR2scDLL5vco0WDdH/kd6zW39PrnyPpgd5HNj
+         8sl62xecS7DZpQJP3iQdI7Qmlt2cDIz9hl+QKhto/d2jsFtyShdLhQcSgI87utUZD16q
+         LASQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjEkQELxSb/myi/yYqzzT2WWwIYUEdlFXKJ+tDpyBIrlCqK9HKBJ7Ghw16JlveLCg8cdUSV+LoN911OY16wgMTqWJA5Eohh0BkC3IU
+X-Gm-Message-State: AOJu0YyTXz0jLzlE5QtA0TVmg2r/6r1fEMJGBjMSBAzFOx4pMOLGkXSL
+	64pQk52hEUkeSn7J5+vk8DOunm69ZW+r4VDggmCr6m41y23nI2Ztv6mcwIbIC8g=
+X-Google-Smtp-Source: AGHT+IFz86hjWVwDP/dkomv8c6/5Rk3tvlfabY/M/AgBKzpkM/zbIEiVEW4Mio38VYNi7sJ39diFGA==
+X-Received: by 2002:a05:600c:1c9b:b0:421:2985:559a with SMTP id 5b1f17b1804b1-4212985574cmr4252445e9.7.1717056426856;
+        Thu, 30 May 2024 01:07:06 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42127059769sm17110705e9.5.2024.05.30.01.07.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 01:07:06 -0700 (PDT)
+Date: Thu, 30 May 2024 10:07:05 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Evan Green <evan@rivosinc.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Andy Chiu <andy.chiu@sifive.com>, 
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] RISC-V: hwprobe: Add MISALIGNED_PERF key
+Message-ID: <20240530-ae9f7725d4566a72e895f8fa@orel>
+References: <20240529182649.2635123-1-evan@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR02MB9994:EE_|AS8PR02MB8804:EE_
-X-MS-Office365-Filtering-Correlation-Id: 124aad85-7b0e-46f5-5b77-08dc807f7472
-X-LD-Processed: 78703d3c-b907-432f-b066-88f7af9ca3af,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Zit3U2RiRGVyQ3ZnNWlKaEpXM01LeStmZTQ3eU9pTzc2T0hxdEkyMlBVQThV?=
- =?utf-8?B?cXF2N2wzZkY3NlZXVExvRXhHVHpwb3QxVlJPUU5SNnZEdEdOSk8xY3pGKytY?=
- =?utf-8?B?T0ZNTmxySldmQlhVR3lDNlkybDNxYmwrZlcrYzlreE9BVDFFdW9oQXIxVi9E?=
- =?utf-8?B?UzdHUEdnTUpERGkzYlZ1ckV6d2pvT3h4dDRmVHdHbFFMSnBUM1pVcU9CbURo?=
- =?utf-8?B?ZVZLREtGZmdFNkovd05ZSWJ1Qmd1WEVWdVBwQjhZZTVURnRIOG1vOEJObVhu?=
- =?utf-8?B?N0NabmU3Znp2MWFzZlR6eTJ4MEhqOXNnTFBMN0Y1YmU0N1NsRzdWb2lLZjVr?=
- =?utf-8?B?anJEZlVmN1VPdGl6RFlkVkVMdVZScE1OZnR6NGllMXR4TjNlbTdkSFUrSmhQ?=
- =?utf-8?B?ckR6dVg1dUZmVlE2dUY3UUJiUTdsQXZjblgzVnpKK2hiNnJaalk2ZzVmcWRJ?=
- =?utf-8?B?ZWpCQlg5SkJFS3IxM2RVdFdqRnhGRXRxUEJlSmdCTDFFWTdVekRqa3lvMlJU?=
- =?utf-8?B?M3IxMHJra2Z5Y1MvWTVyQnJiQUtkMUorQVJtZzJubE56bmtGNnpRclJoZ0ll?=
- =?utf-8?B?TkZqOG9PSkRjRUMxRE5JNWZDY2xQcXIyN3pmUm1JUHlERzJZNENjSmlDOEdI?=
- =?utf-8?B?NEtIamEzMUpVU1l0TjErZm5JNDA0b05MTzUyYVZNbHF6VStHMWFNdjdla1k4?=
- =?utf-8?B?elUveThmN2xPZ1ljaFpQNVFLUVZsZTA3NGVjNGtBbFpyVXR6R0NhWDZWbzJT?=
- =?utf-8?B?ZnFKU3hHZExjQ3FjT1hESmV4M3hnaURtSmZ2eTRwNk5pUDRoTWdTOFFxWkVC?=
- =?utf-8?B?a0hqZlhFTHZqVEEwN3NJZ0kzSVR1L1pkZ3YwMXdEK09BaHNOb1hiQlQ1OW5h?=
- =?utf-8?B?S216Zmlja1dER004aUxDemVuK0MzYTJYZWxnSW81RHR2b2dvaGxWTGs3OHF4?=
- =?utf-8?B?aEtYcmdQNzdmTHd5SktBc3l4Q3dxQWwwQ3hUcUZudThLTWE1NDEzeWZCaUNv?=
- =?utf-8?B?UzE3YWhoMEZEd1NVSk5ZUnVOWVQrREtLTi9LS1dVSWdhQ0lxdEhjalV2alB5?=
- =?utf-8?B?R1BkTTdVQytKdnlqajF1SXcwaEExdFd5U01COVAybWhEZlg2R3dBYjNSaWIv?=
- =?utf-8?B?eUR0YmoxdmJKTWpvMlk1di82UENQeDU5LzJ6TVp4TDdlN3M4S3pSWXo2WGVI?=
- =?utf-8?B?QWI4NWJyY1RPUk5jbmtOdi9PYlhYRCt1anJNOEtmNXRRektLVVBjME12UXZj?=
- =?utf-8?B?OTRZMko5a2dmWjdMcnVGYjI2aC9OeWc4ZmJBcTJWTGV0YTZsdzdtM2dzSWtL?=
- =?utf-8?B?cENrTFRNek83WEg1ckM4cWtCcEh3QXJmTSs0Wk5KQ3lJNk9rYUc2WkM3cStk?=
- =?utf-8?B?RVowN203MThHdmZDMnVGeEpCNTJ4TzdvV2JaWXRGSXJWbkpBd1N3aWFQQW8y?=
- =?utf-8?B?bmE5SXFZZFNxOUpxY0s3bnByMTJIcWNpU0tUN2hCRG4zRk9RQ2lCK2l6K08w?=
- =?utf-8?B?UklUN1ZPc2xzODZVVVV3SFE5WFpUbVViNVZ0ek5xdG5ITG9Xelh0Slo5aFVj?=
- =?utf-8?B?TGV0b09oVUJ5bGRnQStYNjZmTUJMbGhraklMOC9kdXJMWDhYM3B0UlUyTlJu?=
- =?utf-8?B?YndsVW5UYjhsZGRjUG5kd0hhdUNRcTYwdW0ybDcyT2ZEc2VuVnlabDVuVGp0?=
- =?utf-8?B?NEM0TUZQRDAvemhwVm5EcnBSU3RwcjhLZVdnMmsyb2xiMVN1cnMxd2dBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR02MB9994.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z1YzOGFwTk5hdGhTTktJSVN2YWRqNVkvUlVJMFlVME5ma2dkYVh0dTlpdnJ4?=
- =?utf-8?B?ZklVWWh0TVRlcUFiVzZtNXpHYlR5WjUxT2w5UjZjRnJjd1ZyUnBVeWNBK0l2?=
- =?utf-8?B?dEx0UG4wUHU5NHhYOXl1SnFKR085cW5xWVMvZzFHRkMxN1ZhQWJPT0VPeWRm?=
- =?utf-8?B?Z3hzWW90SUJFVk1GbzJGMXloZ3Y4SllxTjE1WngxMDBUYktCUjdGODVsaG50?=
- =?utf-8?B?ZHBkM2xHWEtva1BOTTQ5d1J0cXgxaVIzQU8zNGdIU1ZUekVtaW5hd1d0YnlJ?=
- =?utf-8?B?ZUI4cFJVeDJzd0lkZG5DbklQTVZHYzVXb3JjZ0czWkRKTlVLTDNjcVBHOUxZ?=
- =?utf-8?B?MXZNZnRRWE1LNkxJTnZSQlFKL1p6a2g2Wnh5bzVzdThqNUVWZkZRcE1aZTcz?=
- =?utf-8?B?RmlJdzRuTTFqSm5rMWg1Ym9kekZiTm9LaW03WE5wOUpQU3NzWkZvdUp5TUw3?=
- =?utf-8?B?TnlUbDBjMG9zN2ZJampvTEhSenF1bzNQWU1YSkhpTkhWdUdVMjZXMVdDNUZ3?=
- =?utf-8?B?NEQzOG9VM1Q3cjJmbWExcGJTVm5mZjNIT3NsZjZCQ0wxNUkxWEgrR1N3Znl2?=
- =?utf-8?B?UVkvRDlVZnQvc0xRd2xiM1BFbXQ4NkQrSWNwdWpETDk4bEoveS9ONEpJSERw?=
- =?utf-8?B?bnBCNEtJdDJmdmJXWURLNDIrNkRtR1dwamZaTnUrMmlNOUJ5ZHlUaVhvSEVD?=
- =?utf-8?B?Qm41bVZya0dBUlBVKzZFSzdpL2llbXd5QzNMd0ttZCtMMzhqZWVRbkYrcXZw?=
- =?utf-8?B?OVgyWlAzbzA1OWwvQnhaSGlXNjZVLytWLzQzQnIyeUFaUFVFV3pxRlNnYXZl?=
- =?utf-8?B?cGJzOWlqT0tRNWR5Ukh5ZDlETHlxY1piby9IZnhzZGZtdW5qcWR3WXUrdHRI?=
- =?utf-8?B?UUpMT1ZLbjBUTWpCZlVyL2FjREtYcGxHZXBaSTZCaVcxY2JXQkNUYXgvRUdz?=
- =?utf-8?B?WnhsQUkwYVgvTmEwcWUyWldsSmkwS0RIcm9EeUVQd0wzc1ZXS0YrTFpsSVk2?=
- =?utf-8?B?dFZDc0xFQUxDZHorUmlOaDVuMjJ2U0hXenJ1RkFzUng4UUsxcFg0bE4yV0Qz?=
- =?utf-8?B?Ti9vYmkySW5qNTlnTksyS2xma1ZCKzRBaXdSZC82NHVvdlY4bW5CVVFYWmRv?=
- =?utf-8?B?YzBrVzBjWkpzRXFVVE9NSDBEbTZ5QlNicUcvVHIxQ2E2TnJucTJiNXgrN2Nk?=
- =?utf-8?B?Lys5UFRhOFM2SW5ZQjVWeG1sUUduNnBaRXY2UnFjbUZQT3RYeEVGMUdPUkli?=
- =?utf-8?B?RUVvcXhSTWI0TDJsOW03c2xuQlBlNWhyWWhnQkNCeGt6UGMzbWlEc2pVcTB2?=
- =?utf-8?B?VUs4anN4VDUwS2k5cDA2Z2FIcU9OQWxLdXYwOUpnUTI0QmRhMTdEVmVZaFlQ?=
- =?utf-8?B?U2tLdk5TNkV1bHdDUnFZYnAzU1JZY0tGcHFpVnhtRTA3ZzE2QkZTNmp1ZHgr?=
- =?utf-8?B?TFdMMlY5YnBhTzVsL3hKaTVWcEFMOXhCM0ZhRVJvMXFNY3Y0Tk15RDZmUEti?=
- =?utf-8?B?M3BoS0NpS2dRQnZBcHRkQ05lVVVLUFczV1BHUHJtaVM5bjZIenBGa2JnZEdP?=
- =?utf-8?B?eEZhbThLaStaTWp6M3BmU2ZuQS81endyNHBCbXk1NEFGYXJUOWlvSzNqc1V2?=
- =?utf-8?B?VGw3VmZhdm5OcWJxR2lMbFJaRjcxb2JJcjZ5bjI2VkhzRis0N1dQd2E1a0FO?=
- =?utf-8?B?SWN4MUNNNFYzKzBHcnVHVkUwQXdGUkxseC9teU1BWGlERGM1d285cFhZOVBF?=
- =?utf-8?B?M1FnUWdHNHdWRG8xbTI1dkpoZWl1bkhWVUkwM3o3MktTYk1RL1JNVXZrNjdw?=
- =?utf-8?B?R0ZPeStsbDJabzhob0xlNHo5VlN3UXlQdnZSeDFLeUFOVFRTejVWdUczRkxv?=
- =?utf-8?B?bUdlckVCVmlpS2U0SFJzWmRpaG1sZVhrSENpNHEySlVXVU1IQkRoSGJra0ZI?=
- =?utf-8?B?QWpDZnVPS0VEbXRIOERyUmZ0VjIyWUdKVFBrZWZhSTl5VW9Fa1IyZmwzMDdO?=
- =?utf-8?B?bTlJTDlrMFRaUHZCT1RET3REYnRsUVdMVVpYRkttbCtYVklhTmc1bjJKelFB?=
- =?utf-8?B?SzZxQjFZNFhBL1R5dmZZVDRwekZPa1pCT0d0RWRZSFBKMmwweTFKd0dTMm5M?=
- =?utf-8?Q?uZHE=3D?=
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 124aad85-7b0e-46f5-5b77-08dc807f7472
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR02MB9994.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 08:06:48.3676
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JCJa9HmCb/pzu+wPL4Q/TSV8PhBQfzI5TNQKnnn94aK3+4VyyQF4QpuK1TmniNwe
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR02MB8804
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529182649.2635123-1-evan@rivosinc.com>
 
-On 5/29/24 16:07, Guenter Roeck wrote:
-> On 5/28/24 23:07, Amna Waseem wrote:
->> The INA230 has an Alert pin which is asserted when the alert
->> function selected in the Mask/Enable register exceeds the
->> value programmed into the Alert Limit register. Assertion is based
->> on the Alert Polarity Bit (APOL, bit 1 of the Mask/Enable register).
->> It is default set to value 0 i.e Normal (active-low open collector).
->> However, hardware can be designed in such a way that expects Alert pin
->> to become active high if a user-defined threshold in Alert limit
->> register has been exceeded. This patch adds a way to pass alert polarity
->> value to the driver via device tree.
->>
->> Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
->> ---
->>   drivers/hwmon/ina2xx.c | 28 ++++++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
->> index d8415d1f21fc..b58e795bdc8f 100644
->> --- a/drivers/hwmon/ina2xx.c
->> +++ b/drivers/hwmon/ina2xx.c
->> @@ -73,6 +73,9 @@
->>   #define INA226_READ_AVG(reg)        (((reg) & INA226_AVG_RD_MASK) 
->> >> 9)
->>   #define INA226_SHIFT_AVG(val)        ((val) << 9)
->>   +#define INA226_ALERT_POLARITY_MASK        0x0002
->> +#define INA226_SHIFT_ALERT_POLARITY(val)    ((val) << 1)
->> +
->>   /* bit number of alert functions in Mask/Enable Register */
->>   #define INA226_SHUNT_OVER_VOLTAGE_BIT    15
->>   #define INA226_SHUNT_UNDER_VOLTAGE_BIT    14
->> @@ -178,6 +181,23 @@ static u16 ina226_interval_to_reg(int interval)
->>       return INA226_SHIFT_AVG(avg_bits);
->>   }
->>   +static int ina2xx_set_alert_polarity(struct ina2xx_data *data,
->> +                     unsigned long val)
->> +{
->> +    int ret;
->> +
->> +    if (val > INT_MAX || !(val == 0 || val == 1))
->
->     if (val != 0 && val !=1)
->
-> would be sufficient and much easier to understand.
+On Wed, May 29, 2024 at 11:26:48AM GMT, Evan Green wrote:
+> RISCV_HWPROBE_KEY_CPUPERF_0 was mistakenly flagged as a bitmask in
+> hwprobe_key_is_bitmask(), when in reality it was an enum value. This
+> causes problems when used in conjunction with RISCV_HWPROBE_WHICH_CPUS,
+> since SLOW, FAST, and EMULATED have values whose bits overlap with
+> each other. If the caller asked for the set of CPUs that was SLOW or
+> EMULATED, the returned set would also include CPUs that were FAST.
+> 
+> Introduce a new hwprobe key, RISCV_HWPROBE_KEY_MISALIGNED_PERF, which
+> returns the same values in response to a direct query (with no flags),
+> but is properly handled as an enumerated value. As a result, SLOW,
+> FAST, and EMULATED are all correctly treated as distinct values under
+> the new key when queried with the WHICH_CPUS flag.
+> 
+> Leave the old key in place to avoid disturbing applications which may
+> have already come to rely on the broken behavior.
 
+I appreciate the paranoia, even if I think we could probably get away
+with fixing CPUPERF_0.
 
-Agreed.
+> 
+> Fixes: e178bf146e4b ("RISC-V: hwprobe: Introduce which-cpus flag")
+> Signed-off-by: Evan Green <evan@rivosinc.com>
+> 
+> ---
+> 
+> 
+> Note: Yangyu also has a fix out for this issue at [1]. That fix is much
+> tidier, but comes with the slight risk that some very broken userspace
+> application may break now that FAST cpus are not included for the query
+> of which cpus are SLOW or EMULATED. I wanted to get this fix out so that
+> we have both as options, and can discuss. These fixes are mutually
+> exclusive, don't take both.
+> 
+> [1] https://lore.kernel.org/linux-riscv/tencent_01F8E0050FB4B11CC170C3639E43F41A1709@qq.com/
+> 
+> ---
+>  Documentation/arch/riscv/hwprobe.rst  | 8 ++++++--
+>  arch/riscv/include/asm/hwprobe.h      | 2 +-
+>  arch/riscv/include/uapi/asm/hwprobe.h | 1 +
+>  arch/riscv/kernel/sys_hwprobe.c       | 1 +
+>  4 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 204cd4433af5..616ee372adaf 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -192,8 +192,12 @@ The following keys are defined:
+>         supported as defined in the RISC-V ISA manual starting from commit
+>         d8ab5c78c207 ("Zihintpause is ratified").
+>  
+> -* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
+> -  information about the selected set of processors.
+> +* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated. Returns similar values to
+> +     :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`, but the key was mistakenly
+> +     classified as a bitmask rather than a value.
+> +
+> +* :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`: An enum value describing the
+> +  performance of misaligned scalar accesses on the selected set of processors.
+>  
+>    * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
+>      accesses is unknown.
+> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+> index 630507dff5ea..150a9877b0af 100644
+> --- a/arch/riscv/include/asm/hwprobe.h
+> +++ b/arch/riscv/include/asm/hwprobe.h
+> @@ -8,7 +8,7 @@
+>  
+>  #include <uapi/asm/hwprobe.h>
+>  
+> -#define RISCV_HWPROBE_MAX_KEY 6
+> +#define RISCV_HWPROBE_MAX_KEY 7
+>  
+>  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
+>  {
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> index dda76a05420b..bc34e33fef23 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -68,6 +68,7 @@ struct riscv_hwprobe {
+>  #define		RISCV_HWPROBE_MISALIGNED_UNSUPPORTED	(4 << 0)
+>  #define		RISCV_HWPROBE_MISALIGNED_MASK		(7 << 0)
 
->
->> +        return -EINVAL;
->> +
->> +    mutex_lock(&data->config_lock);
->
-> Pointless lock.
->
->> +    ret = regmap_update_bits(data->regmap, INA226_MASK_ENABLE,
->> +                 INA226_ALERT_POLARITY_MASK,
->> +                 INA226_SHIFT_ALERT_POLARITY(val));
->> +
->> +    mutex_unlock(&data->config_lock);
->> +    return ret;
->> +}
->> +
->>   /*
->>    * Calibration register is set to the best value, which eliminates
->>    * truncation errors on calculating current register in hardware.
->> @@ -659,6 +679,14 @@ static int ina2xx_probe(struct i2c_client *client)
->>       if (ret)
->>           return dev_err_probe(dev, ret, "failed to enable vs 
->> regulator\n");
->>   +    if (!of_property_read_u32(dev->of_node, "alert-polarity", 
->> &val)) {
->> +        ret = ina2xx_set_alert_polarity(data, val);
->> +        if (ret < 0)
->> +            return dev_err_probe(
->> +                dev, ret,
->> +                "failed to set APOL bit of Enable/Mask register\n");
->> +    }
->
-> INA219 and INA220 do not support alert pin configuration (or, naturally,
-> the mask register in the first place). This will need to be validated.
->
-> Guenter
->
-Would "of_property_read_bool" be sufficient to check whether the 
-property exists or not for different chips? It means that if INA219 and 
-INA220 are being used, they will not have a property "alert-polarity" 
-defined in their devicetree so of_property_read_bool will return false 
-and nothing will happen for these chips.
+Can we also remove the unnecessary ( << 0) shifts for each of the
+MISALIGNED_* values? The shifts imply bits of a bitmask (to me).
 
+>  #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE	6
+> +#define RISCV_HWPROBE_KEY_MISALIGNED_PERF	7
+>  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+>  
+>  /* Flags */
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> index 969ef3d59dbe..c8b7d57eb55e 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -208,6 +208,7 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+>  		break;
+>  
+>  	case RISCV_HWPROBE_KEY_CPUPERF_0:
+> +	case RISCV_HWPROBE_KEY_MISALIGNED_PERF:
+>  		pair->value = hwprobe_misaligned(cpus);
+>  		break;
+>  
+> -- 
+> 2.34.1
+>
+
+Otherwise,
+
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+
+Thanks,
+drew
 
