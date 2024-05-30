@@ -1,116 +1,88 @@
-Return-Path: <linux-kernel+bounces-195155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19688D484D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:22:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E1B8D4854
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544CD1F21FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:22:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E022840D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E4A6F30C;
-	Thu, 30 May 2024 09:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="C1N+N03H"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1109B6F2FF;
+	Thu, 30 May 2024 09:21:57 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2416F301
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D8914B084;
+	Thu, 30 May 2024 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717060909; cv=none; b=cd7CXJcN2sHBoM9KHXpPIjtXTys34B+RQpWrE31ZU23d4kg9IeC+UAybkss5uSfio//WnfvDZLVaUu5aVcuP6eOStaV32xabiiwXFezP9vx8VJNAmjHozyrOE0d1tyA5gALuYadJxHRIGHbwGa5/6+6eMjYjqts8NpYs7ihEKww=
+	t=1717060916; cv=none; b=KWDzdVpdjNzxhiS18C8fZwWa+il0s7xYkE7C7Yxg4vfVIjXmmgUOOcFq7k5z/0GpDu80kkkq8rEC3ZaPY/EnGA4Y4qqRmL+uRJTY7EY5vrXTTbt4b5ekQBoNThDwbNItyY8OYd5MY6v7W5pHN2bxf8wFErqEf0I+0CLPgTcuuUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717060909; c=relaxed/simple;
-	bh=LOuk5ngQgDvwGWmTqF8UHa1uZEIcOdoIOKhJeBC24z0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oYA6Ey/cb52ZKuBRr+uXnJ+CodBDTwfZI3+sxDVYiZ/XwlbBelKhomv6+RgKev5eeQKl30/VJ7O7frseKPFHy8FuY+U8FBM1tRzw58dKldJnUCgKq2J1KS07z4mcnAziTlHH98sJND3Wj5P6j8gAWHJvP36dO/+jqhbgcsTTYG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=C1N+N03H; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42017f8de7aso6563115e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717060906; x=1717665706; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J2NdMUTFKCND4TuQAML2rnvjKT/jKwjKz+oofuCTZRU=;
-        b=C1N+N03HSClTf7HDAbAg03esAG0+Hm8TAvrIXn0xEH5owaeDI0RbU8q4kXwKvam6YH
-         6rJ25m5X9RKo1K1EwEidkD4JpcmHehhR3FabH2EOxdr7aBtp/vEiD0wzYkrgcO4HSGRA
-         gKvs/fZ1Cf+zJJDnvOLovhlC9TwqeK0vtppkz6ArotbeipU1Am/gsSuBZIpOnLIYZcPz
-         Yx2squZ9tT4c9XLq1T1swEm9+fYB6X7re+6inPYBToqzoiuiJuDx5PFCMiw5St/bhrbm
-         yygowueKgj/KrRX7pqC55WDPsqKeiAWcESt0Xy6l3iKjpZxqM/OasJU/xJWUpVoVw6V/
-         qsYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717060906; x=1717665706;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J2NdMUTFKCND4TuQAML2rnvjKT/jKwjKz+oofuCTZRU=;
-        b=GSZRVsXsSDbBY9PFW/vTcpItX9+nA/FXWr2kVVkxsX8erNgsVsmW4VPCUge/6eQPkl
-         Ik3qVqwnptWD/KwduIbBXGv4LaAP+czqfsrZAdM4ZSPjDjKYHQeC4fBJNcS9awl2bYIK
-         sQr1M/5n8eeOBku7MX1kJv6Xas6FNgNDj3eyhOQIXBwMlyYU3iPm5O5fLYEgUdiW9TUk
-         4XWCQCCD91taelc5ZwKTv2R5HAghqfMCO/6g3jsHN0wvaIpWpr3A2TINLtCMa9L62Vmq
-         3OKuBPf9Bcqaxpvic8Fi0lm+WOJ37BHGqY5pSKYWZSRXTgzB5sV4ikisslAWidLVPQyh
-         M75w==
-X-Forwarded-Encrypted: i=1; AJvYcCWRwrua/zV2UXA3edyQICIv7JwWJ6lwsHldxduaC3bKtTxfLJZR5CRzRjfLGm38LYovXaO0Ikqy/YTt6hhgcIrKDoA7T85JhNk3ja25
-X-Gm-Message-State: AOJu0YwxMOMzT9P9poMlbnRKLuDFyxq+dxOSsJbwCESlOzvR85B2bsc0
-	w1RAqpqxJHDyUXdlZMba8XuApwyge0hsJIB/SEaQXU54QXNYdVzUvEtcSKvqVsg=
-X-Google-Smtp-Source: AGHT+IGvEkCdARfpYJn7j9uuA7yNxUbgpb8AAl+3ZNngODEN/Wqw/TiTEIYw1nqx7Q6osL9EIgQc7Q==
-X-Received: by 2002:a05:600c:154f:b0:421:b79:93fd with SMTP id 5b1f17b1804b1-4212781b4a7mr13857215e9.21.1717060905592;
-        Thu, 30 May 2024 02:21:45 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:aae:8a32:91fa:6bf5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212706c46fsm19043935e9.28.2024.05.30.02.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 02:21:45 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Baryshkov <dbaryshkov@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to errnos
-Date: Thu, 30 May 2024 11:21:43 +0200
-Message-ID: <171706089866.32720.4484394923188699673.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
-References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1717060916; c=relaxed/simple;
+	bh=psGWNJRYqjINEBH134RHwYSmwoGU/QPKPJFc4GGeHgI=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=c+fHpI50z9vgO4FFEa4PBLr1hz/KffCYymsyuGaQYzzYha4sl26L3TOMcZHOqjLl8fPiURg5cXH2MCAvf0v5zvrHFkIO5UoN1fOD8DWyyvgoOZA2J9xpxyn3D61Fk5NdWqSiyCGIGcxccLfWhKXReaLlwHodp8AhBAIEIimsDlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vqgcx5YB5zmX11;
+	Thu, 30 May 2024 17:17:21 +0800 (CST)
+Received: from dggpemm500005.china.huawei.com (unknown [7.185.36.74])
+	by mail.maildlp.com (Postfix) with ESMTPS id C675318007F;
+	Thu, 30 May 2024 17:21:45 +0800 (CST)
+Received: from [10.69.30.204] (10.69.30.204) by dggpemm500005.china.huawei.com
+ (7.185.36.74) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 30 May
+ 2024 17:21:45 +0800
+Subject: Re: [PATCH net-next v5 10/13] mm: page_frag: introduce
+ prepare/probe/commit API
+To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexander Duyck
+	<alexander.duyck@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-mm@kvack.org>
+References: <20240528125604.63048-1-linyunsheng@huawei.com>
+ <20240528125604.63048-11-linyunsheng@huawei.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <ea2be92c-88cc-79fe-f21f-9c80f2b02ca0@huawei.com>
+Date: Thu, 30 May 2024 17:21:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240528125604.63048-11-linyunsheng@huawei.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500005.china.huawei.com (7.185.36.74)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 2024/5/28 20:56, Yunsheng Lin wrote:
+
+> +#define page_frag_alloc_probe(nc, offset, fragsz, va)			\
+> +({									\
+> +	struct page *__page = NULL;					\
+> +									\
+> +	VM_BUG_ON(!*(fragsz));						\
+
+The above above marco seems to need to include mmdebug.h explicitly
+to avoid compile error for x86 system.
 
 
-On Mon, 27 May 2024 16:23:44 +0300, Ilpo Järvinen wrote:
-> amd_gpio_init() uses pci_read_config_dword() that returns PCIBIOS_*
-> codes. The return code is then returned as is but amd_gpio_init() is
-> a module init function that should return normal errnos.
-> 
-> Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
-> errno before returning it from amd_gpio_init().
-> 
-> [...]
+> +	if (likely((nc)->remaining >= *(fragsz)))			\
+> +		__page = virt_to_page(__page_frag_alloc_probe(nc,	\
+> +							      offset,	\
+> +							      fragsz,	\
+> +							      va));	\
+> +									\
+> +	__page;								\
+> +})
 
-Applied, thanks!
-
-[1/2] gpio: amd8111: Convert PCIBIOS_* return codes to errnos
-      commit: d4cde6e42f2eb56436cab6d1931738ec09e64f74
-[2/2] gpio: rdc321x: Convert PCIBIOS_* return codes to errnos
-      commit: 9a73e037f4b5eb45c9ecccb191d39c280abe7cbd
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
