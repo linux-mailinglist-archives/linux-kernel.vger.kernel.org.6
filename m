@@ -1,211 +1,112 @@
-Return-Path: <linux-kernel+bounces-195253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311BE8D4993
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B12318D4996
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0031F238C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F941F24356
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B99183A8A;
-	Thu, 30 May 2024 10:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9BF18509B;
+	Thu, 30 May 2024 10:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ByCTx+vd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="tRqABsrh"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D9D183A76;
-	Thu, 30 May 2024 10:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662CD183A87;
+	Thu, 30 May 2024 10:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717064472; cv=none; b=IVo8r1IOamSfCgOtRWp9HH4tVViejhZCBWs18+EuieuXq8fMcP6NMV9fcvafcJRNPN5ScKiaEOtYx90IFaQbrtvEKioqZFJxTrd9WHCYxBmbyuhmkLOSoEnp5H0OzYHDLT9tClUXeXxm4ImjZ2AUcKPY6iiJew9DWYACw0dR94k=
+	t=1717064475; cv=none; b=k/ZpVNg1TiwoTWUivhGKYcVS0vupGD9GCmXzx8SINPKJ84b5tcsGKQpkQWbZ4JkTz8JipIouqV6GaDojqO2CuSghHaXCOAiaZKCJztrZdAkFUTgLhbfhwcJx3ZW5nbpHRdWQHGqp5GvrI/h77PyWXUaZ7aVN7PwBwp/Tq8PP/po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717064472; c=relaxed/simple;
-	bh=lWUVovV8diMODE6RkshdgaufNsjzuhV3F8PtdYrCg1w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rpYl54G+7S2hsFEkfeAaqH+tEqk55Bl0VRQ1yv4SiwTfLZtCpubB/mB/vc+fAdvmmhkLkZl24OZQG7PkUQLCEHGA4JjG8YnoYNi8gZcWXbgm2vhs5v1kzPNqupUQchjMqM2dYqM7gVUsbIoDXFSPWqp5OSkl+MsOLjApyBoZjr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ByCTx+vd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U8N5J6025517;
-	Thu, 30 May 2024 10:21:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	luZTosupL6TDya/Gh2MiaCHdLtt1tzOx79R4jtJkzrM=; b=ByCTx+vdiYAjIDDK
-	I3kF5CbK+Ow9Ko3cpbR+YLq5I77cCPzwdiLuF6q/sJzcE3kwbYGKUOCbN0UHXKA+
-	xO2sRi408+u5VeOMq1bqLMgClx71t9zgjJMPXCz55WiA7sqK1YPperXC86ZSD4/3
-	M/yOXfL7m6ArcTxih4mBm0Pif8ZH7HxQGOI2qXU6YWfepNyHnEU5aL3IrPuHZ11g
-	m1oEjGyfePZwj+2KRCxaaO+jUpOZGcKpuUdHr4aTaBFxEiG8K4QGK8A+oobOXsl3
-	+aLl8VEarvrS41TmrHU6DwPNTr67iwNXhkBppSP3e6fZbxvBEhbKw5ZN6NpKMI5u
-	ALwq+A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pur0h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 10:21:08 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UAL8fQ001393
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 10:21:08 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 30 May 2024 03:21:05 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>
-Subject: [PATCH v3 9/9] misc: fastrpc: Add system unsigned PD support
-Date: Thu, 30 May 2024 15:50:27 +0530
-Message-ID: <20240530102032.27179-10-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
-References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1717064475; c=relaxed/simple;
+	bh=OQhhkThCCb6XD1WjJ1Qd/C+fkTC4zhTX508I22a4y1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=sawSPlT2AvvTuipSW8//C+tQeWS5E4Ufh4FxxpIInHwlgE1Kx+Ccii6ZyelEOH01/9tnH3U0GR87HKvERFmgFtFKrcEFznA18AHeqGXSat1u4MKrdnVtZsfo2G8DUS/toLC5E8RsBpGZ3GNR1AaIfmJ7I/XAgZY4U5aS+N3GfdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=tRqABsrh; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:Cc:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=zY0Qu+QJXHc8dveVOi28HDt+6kTfFSXuaXR6SyDV5sM=;
+	t=1717064473; x=1717496473; b=tRqABsrhngFAnpaS10TTwta97E9RwyWF7TIifZyakx6jw0e
+	x/VL1k1qvrsBP8G6WzklZTRYBXqrBuVsx9k82Qpb/ryhcg/ZJZiJ2a52hTCsAnVDcV1+7gtiKs04H
+	i2A/ewVXeL1cYi7Mo0HHgNBr7v8QglrKNYTFXms2SoYSxU4ck4OgMkoBkvqA620IyD9FDpfH4/cUA
+	JE2uGqvXOx7/OqMlM+eZSCBsxzx6s9eo5byVrbY97zee363zGnmNj1B6m0RhDC90Ou2WVQ5RDml9K
+	/oIiwAAncHj3xMMhKnvf5lnMVOgdmzA6289uzFN9oQZL5gjprDH4c6KYABdvbRZw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sCcuE-0008Ss-Jg; Thu, 30 May 2024 12:21:10 +0200
+Message-ID: <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
+Date: Thu, 30 May 2024 12:21:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Qq4so4NFU9_Q5kNRF-_zFc2Bj3Oc3EzU
-X-Proofpoint-ORIG-GUID: Qq4so4NFU9_Q5kNRF-_zFc2Bj3Oc3EzU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 spamscore=0 adultscore=0 clxscore=1015 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405300078
+User-Agent: Mozilla Thunderbird
+Subject: Regression, thermal: core: battery reading wrong after wake from S3
+ [Was: Bug Report according to thermal_core.c]
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
+ <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Cc: "fhortner@yahoo.de" <fhortner@yahoo.de>, linux-pm@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1717064473;aef88e0d;
+X-HE-SMSGID: 1sCcuE-0008Ss-Jg
 
-Trusted CPU applications currently offload to signed PDs on CDSP to
-gain some additional services provided by root PD. Unsigned PDs have
-access to limited root PD services that may not be sufficient for
-all use-cases. Signed PDs have a higher dynamic loading latency
-which impacts the performance of applications. Limited root PD
-services could be opened up for unsigned PDs but that should be
-restricted for untrusted processes. For this requirement, System
-unsigned PD is introduced which will be same as Unsigned PD for
-most part but will have access to more root PD services. Add
-changes to offload trusted applications to System unsigned PD
-when unsigned offload is requested.
+[adding the culprits author, LKML, and the regression mailing list to
+the list of recipients; changing subject, too]
 
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- drivers/misc/fastrpc.c      | 27 +++++++++++++++++++++------
- include/uapi/misc/fastrpc.h |  2 ++
- 2 files changed, 23 insertions(+), 6 deletions(-)
+On 29.05.24 21:52, fhortner@yahoo.de wrote:
+> After bisection I have reported a bug according to thermal_core.c:
+> After "Resume thermal zones asynchronously" commit: Wrong Battery
+> Reading after Wake from S3 Sleep - Lenovo Thinkpad P1 Gen2
+>
+> https://bugzilla.kernel.org/show_bug.cgi?id=218881
+> Could you please have a look at it 
+> 
+> I have performed a bisection and the culprit is this commit: Resume
+> thermal zones asynchronously
+> git bisect bad 5a5efdaffda5d23717d9117cf36cda9eafcf2fae
+> # first bad commit: [5a5efdaffda5d23717d9117cf36cda9eafcf2fae] thermal:
+> core: Resume thermal zones asynchronously
+> 
+> I have also verified it by compiling a kernel
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 32615ccde7ac..fc24653d7b7e 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -119,6 +119,12 @@
- #define SENSORS_PDR_SLPI_SERVICE_NAME            SENSORS_PDR_ADSP_SERVICE_NAME
- #define SLPI_SENSORPD_NAME                       "msm/slpi/sensor_pd"
- 
-+enum fastrpc_userpd_type {
-+	SIGNED_PD			= 1,
-+	UNSIGNED_PD			= 2,
-+	SYSTEM_UNSIGNED_PD		= 3,
-+};
-+
- static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
- 						"sdsp", "cdsp"};
- struct fastrpc_phy_page {
-@@ -327,7 +333,7 @@ struct fastrpc_user {
- 	int tgid;
- 	int pd;
- 	bool is_secure_dev;
--	bool is_unsigned_pd;
-+	enum fastrpc_userpd_type userpd_type;
- 	bool untrusted_process;
- 	char *servloc_name;
- 	/* Lock for lists */
-@@ -1518,14 +1524,22 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
- 		fl->untrusted_process = true;
- 
- 	if (init.attrs & FASTRPC_MODE_UNSIGNED_MODULE)
--		fl->is_unsigned_pd = true;
-+		fl->userpd_type = UNSIGNED_PD;
- 
-+	/* Disregard any system unsigned PD attribute from userspace */
-+	init.attrs &= (~FASTRPC_MODE_SYSTEM_UNSIGNED_PD);
- 
--	if (is_session_rejected(fl, fl->is_unsigned_pd)) {
-+	if (is_session_rejected(fl, fl->userpd_type != SIGNED_PD)) {
- 		err = -EACCES;
- 		goto err;
- 	}
- 
-+	/* Trusted apps will be launched as system unsigned PDs */
-+	if (!fl->untrusted_process && (fl->userpd_type != SIGNED_PD)) {
-+		fl->userpd_type = SYSTEM_UNSIGNED_PD;
-+		init.attrs |= FASTRPC_MODE_SYSTEM_UNSIGNED_PD;
-+	}
-+
- 	if (init.filelen > INIT_FILELEN_MAX) {
- 		err = -EINVAL;
- 		goto err;
-@@ -1718,6 +1732,7 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
- 	fl->tgid = current->tgid;
- 	fl->cctx = cctx;
- 	fl->is_secure_dev = fdevice->secure;
-+	fl->userpd_type = SIGNED_PD;
- 
- 	fl->sctx = fastrpc_session_alloc(cctx);
- 	if (!fl->sctx) {
-@@ -2133,7 +2148,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
- 		return -EFAULT;
- 
- 	if ((req.flags == ADSP_MMAP_ADD_PAGES ||
--		req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) && !fl->is_unsigned_pd) {
-+			req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) && (fl->userpd_type == SIGNED_PD)) {
- 		if (req.vaddrin) {
- 			dev_err(dev, "adding user allocated pages is not supported for signed PD\n");
- 			return -EINVAL;
-@@ -2188,7 +2203,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
- 		dev_dbg(dev, "mmap\t\tpt 0x%09lx OK [len 0x%08llx]\n",
- 			buf->raddr, buf->size);
- 	} else {
--		if ((req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) && fl->is_unsigned_pd) {
-+		if ((req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) && (fl->userpd_type != SIGNED_PD)) {
- 			dev_err(dev, "secure memory allocation is not supported in unsigned PD\n");
- 			return -EINVAL;
- 		}
-@@ -2220,7 +2235,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
- 
- err_copy:
- 	if ((req.flags != ADSP_MMAP_ADD_PAGES &&
--		req.flags != ADSP_MMAP_REMOTE_HEAP_ADDR) || fl->is_unsigned_pd) {
-+		req.flags != ADSP_MMAP_REMOTE_HEAP_ADDR) || fl->userpd_type != SIGNED_PD) {
- 		fastrpc_req_munmap_dsp(fl, map->raddr, map->size);
- 	} else {
- 		spin_lock(&fl->lock);
-diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-index f33d914d8f46..3b3279bb2cf9 100644
---- a/include/uapi/misc/fastrpc.h
-+++ b/include/uapi/misc/fastrpc.h
-@@ -62,6 +62,8 @@ enum fastrpc_proc_attr {
- 	FASTRPC_MODE_SYSTEM_PROCESS	= (1 << 5),
- 	/* Macro for Prvileged Process */
- 	FASTRPC_MODE_PRIVILEGED		= (1 << 6),
-+	/* Macro for system unsigned PD */
-+	FASTRPC_MODE_SYSTEM_UNSIGNED_PD	= (1 << 17),
- };
- 
- /* Fastrpc attribute for memory protection of buffers */
--- 
-2.43.0
+Side note: not critical at all, but would have been good if you had
+specified which kernel version you build.
 
+> without this commit.
+
+Thanks for the report. To be sure the issue doesn't fall through the
+cracks unnoticed, I'm adding it to regzbot, the Linux kernel regression
+tracking bot:
+
+#regzbot ^introduced 5a5efdaffda5d23717d9117cf36cda9eafcf2
+#regzbot dup: https://bugzilla.kernel.org/show_bug.cgi?id=218881
+#regzbot title
+#regzbot ignore-activity
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
 
