@@ -1,216 +1,178 @@
-Return-Path: <linux-kernel+bounces-195076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0388D474C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:39:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7C28D474D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCA94B20FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6D1C229D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6351761A8;
-	Thu, 30 May 2024 08:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4007F17619A;
+	Thu, 30 May 2024 08:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HW5CL7ur"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="mbC/a8pI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KWohFM7s"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C3E176185;
-	Thu, 30 May 2024 08:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F1A6F2E3;
+	Thu, 30 May 2024 08:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058360; cv=none; b=NDNZXnJU2k6lFUlI2svnBVNcN67ud0Gv/8bWkvrwKEgI+QCiBGtF4GBtAekocX98a4QPGpJpHqafXqN1l+Bj3IU/65lb2u3sqcrd0zCqIoVeGS0LpKR4rAR2/HV2rNAAtt3Y9v6+3n2Tk/LzkGzFwkm2eBH8xrzwLDBcTKwVHoQ=
+	t=1717058377; cv=none; b=E3h6xqVhy+r69VJji/KzA75i9vaGiN3+0zCwAL5ngXzAF+fuLtOJ0mCHZM1M/JgwrG3tPFM7sF8vv/UVpzPOVbRiV/9Mt60YnD6c6LYKY6FC6yi4f96ItPUr1TzjtFdLMyE3copDrE2NK5qCxntRz0lEtwT84R6VrNU8oTFgtTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058360; c=relaxed/simple;
-	bh=oBD7vg86GXe+oDTvDJhgKE8cSH7YYaTNNz6p30fZnDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=klitUiQMJxZW7Fr6DjIUjpjmh61NXZzq6UhQvXwMYFZ1PETVIVU3I0FsTvgt2RzwW/aORtiiDIuiKq7RtKzW+EnFnUamjlWHZzwSdz4yKUmFO+AyakNApWVXIQk2v1VqPDrNYcsdRTeHw9w5nqz/SIhzlktFJjl5PxwEeSvlLM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HW5CL7ur; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so254558a12.1;
-        Thu, 30 May 2024 01:39:18 -0700 (PDT)
+	s=arc-20240116; t=1717058377; c=relaxed/simple;
+	bh=8lx3iwi2ZdzA7P9y37vTbfzubXE+VC87ZBbfGF1Ttng=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HIz/WOGRcnTn7Gp2h3rW1D+zNjArUfPyxBdDYjN4BIyxWWPsBi56xmr8ivo5ji5IyRIyoinMG4NPgcPHh75rUoS0yMGEaNlQYCtd4g2TqF/wUy0Q2oVjAuSSs99kyQHcidUTz7N8YWYSPzjWAoXOjd4kWgMTDgi9wJyp6p8IduU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=mbC/a8pI; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KWohFM7s reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717058357; x=1717663157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMJb+X5rFOm/8h5g2VHIevAuWgAsNBn0K9qQmDWI2IA=;
-        b=HW5CL7ur+OFLdF6MgA6e+kzYSqDL6fC7bySQZggl9hSqc/fC7GnKM4qsVyhxr7A0ym
-         iPSjK9pOTWGUiGXxuS1vPw2ycjNJw4ehJIrkSkAILKxELx5sgOqN1esJj3FuL0UppOLu
-         2Aj6lxkBRVHp97RxaMi53M+cxRy7pAB/pmoELlseq3M1YyFEpxFeNCfLRTYCMGNlN7dL
-         XhbUGwTtHO4MDoR0ZoIcGTnWHMqJK5w7vuxUaPlu+XdpY14cryT20Kc+XRh21sWXs/Qn
-         mvKoZmY6UK1O7/nADpxlMcKBxnnc/afPiOlwapJiQpqqpi5WbgMcREABAqX6KEW/+ZQ4
-         QY7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717058357; x=1717663157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tMJb+X5rFOm/8h5g2VHIevAuWgAsNBn0K9qQmDWI2IA=;
-        b=J21yle/ozTiSXhmhboQ9iTYx21UxTG/EX02ZqbONUglOsrVD5zciWYh2ncqZiFd0G7
-         URcpwfPPfkSbaUBxTtZR4/LBdheDfRe1Gx7dOTQOJ5A4onKtFYX9CmBMeNFrV8rfRlN2
-         8tMzmZs7UUWJrN4We++O2OuR163iRpXeW5aGRMJtiDhiBR/5Sm2EOA0e0bZ79lMAXWNA
-         aG/pKYap5yQQDtvEkBAckRcTHnSR1qZPprnfn/IPnh9sV8WhO5tQKGi5S4ux5NwM77yC
-         Ckl1TlYewLTYaIkafKpWbbq0v884hDlS9So1RDsrhr3NNcS2ZlEcV3dwYM0gyTQQOcgh
-         7nrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdCsMHbuah7ddHHKbK+f1q04cUgrFMuFy/fC2ckaSviALYVMq31BuK3TeromHlyWH1rEo1pkAQpjtZQ++vqm+6WfuEsDoHyjcpuH+cb/eHDkq3CjNGb5oGdQXgiLmqiKphVLDYskFweNXwgxsPxNYkNK4IIi1hnbtSjnPEdYDxTk6DRBox0xAoFSLkHDw74qjGcW/GK2bGZ/EF10I=
-X-Gm-Message-State: AOJu0YyPAz+yzx7O3fTAaLWPe3qGhMJO5S0FZcnkeVdWkaCeUKBAmX8x
-	YmPJV+DjglSmAaEIJDQvQR94N2f6Dy/a0/MWAQ+bCjYWMxUBetkPLdmdE82tQ8HZyIC9HqHAw8n
-	h7jFy3Yx9lzS2BP1h4Km1mpdcjEU=
-X-Google-Smtp-Source: AGHT+IG7yOFBPDUV2NHqb1k6mZUOqdzgdMdSZX6ZWJyyabNzowuy9EYpTY9T3kf064PGg0Fz4wHjKlI8QOZpr/4OWWU=
-X-Received: by 2002:a17:907:11cf:b0:a59:c28a:7ec2 with SMTP id
- a640c23a62f3a-a65e8f6f43bmr92418466b.41.1717058357020; Thu, 30 May 2024
- 01:39:17 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1717058373; x=1748594373;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=ds8q6ImbzOAZZkTodVkRMD3hpsgSJkBCC76qc2Z+5m8=;
+  b=mbC/a8pIikvceqhU4XuxMOmgnmPsWiUoSPu6CQSIQT382kQilw3ZVhSs
+   3L+ocy3Erv0mUNB8oq7omdC7dNYwGSAQFFDp+5yDUqBgh9gwr2ff72E9R
+   M3RKqDeoEnvmXhq8wmSvv3mnGsiVWCWJnhGiabtJsz6JQWDPoPZ8o+C/G
+   oT+DgGAOmKLEBl9ANR1MKUAArc0Fv+T5CBvRZTX1/lgdmJvL5CyU1vBoA
+   3XhDh6wWWvLEtrrXOdJsl46GnW3R5K/voLhlGhrDs+kuhfKtzK2MzbMsP
+   xKa1zFMVCOPlQTG1A/OfS3glRQXHqIV9I19DxpQBTy1FuaPheNLBBWxtF
+   w==;
+X-CSE-ConnectionGUID: ole4zRrkRFavvihEnDhujg==
+X-CSE-MsgGUID: gJYRVWOqQfCt/xi6Ko08fA==
+X-IronPort-AV: E=Sophos;i="6.08,199,1712613600"; 
+   d="scan'208";a="37141848"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 30 May 2024 10:39:30 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E4F4B166106;
+	Thu, 30 May 2024 10:39:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1717058366;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ds8q6ImbzOAZZkTodVkRMD3hpsgSJkBCC76qc2Z+5m8=;
+	b=KWohFM7sGESJ16IFS1fW65UQQLr2/K36mj13iOHWyjVgfnyPWIiGOYwUIbl7GEH13eysro
+	v9YYW4V+nL5X1Adw63Vog1+93KsCnLpr2OKxW6suzCnnmCbhuKSM0shXY54IorNbUayQur
+	1gaJqpE+/SntpPttc90Q4FLNFhA7uBFPxrWuW6kf2waexeyx4ACMP7tH9+a6QpxBKPIWji
+	OfIFOtCo2u6309ddtiSiBDBreUSJ7tVurBbdWtz/51mF2gI7sdSAWtfCeT3pE0fgPARNOy
+	nqvHGLx52dtaHxZwUGSWA26FVL+762BMiroKcv1P0UjWPC7H9tN3Knsq4t9Shw==
+Message-ID: <0e971f0b885bd360e33ef472d96e3d9e0ab56405.camel@ew.tq-group.com>
+Subject: Re: [PATCH 8/8] gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH
+ interrupt type
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gregor Herburger
+ <gregor.herburger@tq-group.com>,  linux@ew.tq-group.com
+Date: Thu, 30 May 2024 10:39:25 +0200
+In-Reply-To: <8689fbcd-3fa3-410b-8fc9-7a699bf163b8@moroto.mountain>
+References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
+	 <2c265b6bcfcde7d2327b94c4f6e3ad6d4f1e2de7.1716967982.git.matthias.schiffer@ew.tq-group.com>
+	 <8689fbcd-3fa3-410b-8fc9-7a699bf163b8@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513103813.5666-1-lakshmi.sowjanya.d@intel.com>
- <20240513103813.5666-11-lakshmi.sowjanya.d@intel.com> <ZkH3GP2b9WTz9W3W@smile.fi.intel.com>
- <CY8PR11MB7364D1C85099E4337408EBAFC4F02@CY8PR11MB7364.namprd11.prod.outlook.com>
- <ZlSZ63ST-Pj9CwCh@surfacebook.localdomain> <CY8PR11MB7364118081A77973A9504C4CC4F32@CY8PR11MB7364.namprd11.prod.outlook.com>
-In-Reply-To: <CY8PR11MB7364118081A77973A9504C4CC4F32@CY8PR11MB7364.namprd11.prod.outlook.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 30 May 2024 11:38:40 +0300
-Message-ID: <CAHp75Vevif+oX8Lq9D90ekTSixC6Q2Mfr38HrgVhzq0ab-COyQ@mail.gmail.com>
-Subject: Re: [PATCH v8 10/12] pps: generators: Add PPS Generator TIO Driver
-To: "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "jstultz@google.com" <jstultz@google.com>, 
-	"giometti@enneenne.com" <giometti@enneenne.com>, "corbet@lwn.net" <corbet@lwn.net>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "Dong, Eddie" <eddie.dong@intel.com>, 
-	"Hall, Christopher S" <christopher.s.hall@intel.com>, 
-	"Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>, 
-	"joabreu@synopsys.com" <joabreu@synopsys.com>, 
-	"mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>, "perex@perex.cz" <perex@perex.cz>, 
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
-	"Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, 
-	"peter.hilber@opensynergy.com" <peter.hilber@opensynergy.com>, "N, Pandith" <pandith.n@intel.com>, 
-	"Mohan, Subramanian" <subramanian.mohan@intel.com>, 
-	"T R, Thejesh Reddy" <thejesh.reddy.t.r@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, May 30, 2024 at 8:52=E2=80=AFAM D, Lakshmi Sowjanya
-<lakshmi.sowjanya.d@intel.com> wrote:
-> > -----Original Message-----
-> > From: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Sent: Monday, May 27, 2024 8:04 PM
-> > Mon, May 27, 2024 at 11:48:54AM +0000, D, Lakshmi Sowjanya kirjoitti:
-> > > > -----Original Message-----
-> > > > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > > Sent: Monday, May 13, 2024 4:49 PM
-> > > > On Mon, May 13, 2024 at 04:08:11PM +0530,
-> > > > lakshmi.sowjanya.d@intel.com
-> > > > wrote:
+On Wed, 2024-05-29 at 17:38 +0300, Dan Carpenter wrote:
+>=20
+> On Wed, May 29, 2024 at 09:45:20AM +0200, Matthias Schiffer wrote:
+> > diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
+> > index c957be3341774..400415676ad5d 100644
+> > --- a/drivers/gpio/gpio-tqmx86.c
+> > +++ b/drivers/gpio/gpio-tqmx86.c
+> > @@ -126,9 +126,15 @@ static void _tqmx86_gpio_irq_config(struct tqmx86_=
+gpio_data *gpio, int hwirq)
+> >  	unsigned int offset =3D hwirq - TQMX86_NGPO;
+> >  	u8 type =3D TQMX86_INT_TRIG_NONE, mask, val;
+> > =20
+> > -	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED)
+> > +	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED) {
+> >  		type =3D gpio->irq_type[hwirq] & TQMX86_INT_TRIG_MASK;
+> > =20
+> > +		if (type =3D=3D TQMX86_INT_TRIG_BOTH)
+> > +			type =3D tqmx86_gpio_get(&gpio->chip, hwirq)
+>                                                             ^^^^^
+>=20
+> > +				? TQMX86_INT_TRIG_FALLING
+> > +				: TQMX86_INT_TRIG_RISING;
+> > +	}
+> > +
+> >  	mask =3D TQMX86_GPII_MASK(offset);
+>                                 ^^^^^^
+> >  	val =3D TQMX86_GPII_CONFIG(offset, type);
+>                                  ^^^^^^
+> >  	_tqmx86_gpio_update_bits(gpio, TQMX86_GPIIC, mask, val);
+>=20
+> The offset stuff wasn't beautiful and I'm glad you are deleting it.  My
+> understanding is that a hwirq is 0-3 for output or 4-7 input.  An offset
+> is "hwirq % 4"?
+>=20
+> There are a bunch of places which are still marked as taking an offset
+> but they all actually take a hwirq.  For example, tqmx86_gpio_get()
+> above.  The only things which still actually take an offset are the
+> TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() macros.
+>=20
+> Could you:
+> 1) Modify TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() to take a hwirq?
+> 2) Rename all the "offset" variables to "hwirq"?
 
-..
+Unfortunately, the TQMx86 GPIO is a huge mess, and the mapping between GPIO=
+ numbers and IRQ numbers
+depends on the hardware generation/variant. I don't think it is possible to=
+ have GPIO numbers and
+hwirq numbers differ, is it?
 
-> > > > > +static ssize_t enable_store(struct device *dev, struct
-> > > > > +device_attribute
-> > > > *attr, const char *buf,
-> > > > > +                           size_t count)
-> > > > > +{
-> > > > > +       struct pps_tio *tio =3D dev_get_drvdata(dev);
-> > > > > +       bool enable;
-> > > > > +       int err;
-> > > >
-> > > > (1)
-> > > >
-> > > > > +       err =3D kstrtobool(buf, &enable);
-> > > > > +       if (err)
-> > > > > +               return err;
-> > > > > +
-> > > > > +       guard(spinlock_irqsave)(&tio->lock);
-> > > > > +       if (enable && !tio->enabled) {
-> > > >
-> > > > > +               if (!timekeeping_clocksource_has_base(CSID_X86_AR=
-T)) {
-> > > > > +                       dev_err(tio->dev, "PPS cannot be started =
-as clock is
-> > > > not related
-> > > > > +to ART");
-> > > >
-> > > > Why not simply dev_err(dev, ...)?
-> > > >
-> > > > > +                       return -EPERM;
-> > > > > +               }
-> > > >
-> > > > I'm wondering if we can move this check to (1) above.
-> > > > Because currently it's a good question if we are able to stop PPS
-> > > > which was run by somebody else without this check done.
-> > >
-> > > Do you mean can someone stop the signal without this check?
-> > > Yes, this check is not required to stop.  So, I feel it need not be m=
-oved to (1).
-> > >
-> > > Please, correct me if my understanding is wrong.
-> >
-> > So, there is a possibility to have a PPS being run (by somebody else) e=
-ven if there
-> > is no ART provided?
-> >
-> > If "yes", your check is wrong to begin with. If "no", my suggestion is =
-correct, i.e.
-> > there is no need to stop something that can't be started at all.
->
-> It is a "no", PPS doesn't start without ART.
->
-> We can move the check to (1), but it would always be checking for ART eve=
-n in case of disable.
+Currently, the driver only supports COM Express modules, where IRQs 0-3 cor=
+respond to GPIOs 4-7,
+while GPIOs 0-3 don't have interrupt support. We will soon be mainlining su=
+pport for our SMARC
+modules, which have up to 14 GPIOs, and (on some families) IRQ support for =
+all GPIOs (IRQs 0-13
+correspond to GPIOs 0-13).
 
-Please do,
+New interrupt config and status registers have been introduced to support m=
+ore IRQs - up to 4 config
+registers (2 bits for each IRQ) and 3 status registers (IRQs 0-3 in the fir=
+st one, 4-11 in the
+second one, 12-13 in the third one... so this part is a bit more convoluted=
+ than just "hwirq % 4")=20
 
-> Code readability is better with this approach.
->
->         struct pps_tio *tio =3D dev_get_drvdata(dev);
->         bool enable;
->         int err;
->
->         if (!timekeeping_clocksource_has_base(CSID_X86_ART)) {
->                 dev_err(dev, "PPS cannot be started as clock is not relat=
-ed to ART");
+As the mapping between GPIOs and IRQs will become dynamic with these change=
+s, I'd rather keep
+TQMX86_GPII_* using IRQ numbers instead of GPIO numbers. We will be introdu=
+cing helpers for
+accessing the interrupt registers; the macros deal with individual register=
+ bits, and I think they
+should be agnostic of the mapping to GPIO/hwirq numbers.
 
-started --> used
+Matthias
 
->                 return -EPERM;
->         }
->
->         err =3D kstrtobool(buf, &enable);
->         if (err)
->                 return err;
->
-> > > > I.o.w. this sounds too weird to me and reading the code doesn't giv=
-e
-> > > > any hint if it's even possible. And if it is, are we supposed to
-> > > > touch that since it was definitely *not* us who ran it.
-> > >
-> > > Yes, we are not restricting on who can stop/start the signal.
-> >
-> > See above. It's not about this kind of restriction.
-> >
-> > > > > +               pps_tio_direction_output(tio);
-> > > > > +               hrtimer_start(&tio->timer, first_event(tio),
-> > > > HRTIMER_MODE_ABS);
-> > > > > +               tio->enabled =3D true;
-> > > > > +       } else if (!enable && tio->enabled) {
-> > > > > +               hrtimer_cancel(&tio->timer);
-> > > > > +               pps_tio_disable(tio);
-> > > > > +               tio->enabled =3D false;
-> > > > > +       }
-> > > > > +       return count;
-> > > > > +}
+
+
+>=20
+> regards,
+> dan carpenter
+>=20
 
 --=20
-With Best Regards,
-Andy Shevchenko
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
