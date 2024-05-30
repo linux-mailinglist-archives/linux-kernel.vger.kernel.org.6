@@ -1,76 +1,73 @@
-Return-Path: <linux-kernel+bounces-195498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624AA8D4DA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DB08D4DAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 934161C231A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:13:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FE91C23657
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287014E2FD;
-	Thu, 30 May 2024 14:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B16D17C20C;
+	Thu, 30 May 2024 14:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YjU/3dBI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="e0uiRQtl"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830CC186E26;
-	Thu, 30 May 2024 14:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA2A17C207;
+	Thu, 30 May 2024 14:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078415; cv=none; b=dSLmEiMmzBx+Ffi22BU7Nh1qoF2nSF02X7F91Rn4n/xW9funnAsDcZRYe8WIYZKrfJIByrvHKemRmxHWLG9sya87zBGUSN2tBBgT7SoJ8iQrGd/MhA5/LI1CW6soe8pzkg/PalvQ2h3Js+ZBRx4ZAA7A1mUbgFvicJ4pjbtuRCA=
+	t=1717078505; cv=none; b=CaVbmyqiUsXzQdA+y0k07S+s+W3tbR70rvIlDVk9K2pLG7IRFQJ74GyM+sCzyaDQsLStb/orqMGLIrgi7vPEidcqekAYQnwK6LMpj1576IHdGtQEN1tqMBlS9ojUV9okDt/2f3QtoPHmeZqgYecchReZOqu2kUZDzgmdHrJWqEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078415; c=relaxed/simple;
-	bh=z9Oe7jqbSwx2iocRxL1M7VOvOhXgSU85JZly6jmOudU=;
+	s=arc-20240116; t=1717078505; c=relaxed/simple;
+	bh=Pf2Z/gTyeAc/zbqRUitMbkZeeedv69W+XgEHvJ6Hn3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3ssY8LXldW9MHyDO18YiHEwgFKiu6Nl+xnpbrjvolJlHCg8sLyxr3Wd8LbCjNHMGTiwqS+cqpfloZKx3Hwo/kX7naQKIVB/421ia2qThyVmSAiSfND0mmkNXLmi8+vaKdMck0cI9eeGQQlM2JWqAAo6aqRx3vxIPfikasu4qOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YjU/3dBI; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717078413; x=1748614413;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z9Oe7jqbSwx2iocRxL1M7VOvOhXgSU85JZly6jmOudU=;
-  b=YjU/3dBIUV7Gw3ownTyEYnMoF9SygYlEiV1D00II2U2R3M+fwUKluuxY
-   LB9sDBpteLYEkdPedi3Sl6e3nS4MLBqR6gfYtbb9kipM5zTdYAncgsqsD
-   iCi8aYKZSC52TzXkv5RfA0binK+cgdtqnuh849JeCG9UETa4tRKOvc6uK
-   OBP2OWr7tpsLhECukbiNK0rNWa4ZXKQKwKc5CYj1Zpy3M6+xwJ7/otAWd
-   QlLdn6bZjt2QqUJmfVgRihWhu0GTn6K3yZFL7JQMJIKRzBikZfOj0Z1zE
-   EmWz4BCkpaPRAc/axWJA8H5Fbc8cf5NdSZMfLMcK8L1kY1GVeWqGgZUBe
-   w==;
-X-CSE-ConnectionGUID: lFxtRL+GQyyMUb8vjHpn5Q==
-X-CSE-MsgGUID: BVmvn9rUSQGpOiU4IEhJhg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13327826"
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="13327826"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 07:13:32 -0700
-X-CSE-ConnectionGUID: 4/dRRaIzRKStKyFjZWQwQg==
-X-CSE-MsgGUID: JxYpurK5SliCnGzo8pGCGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="35767692"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 07:13:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sCgX2-0000000C6Jn-0zHu;
-	Thu, 30 May 2024 17:13:28 +0300
-Date: Thu, 30 May 2024 17:13:28 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org,
-	bp@alien8.de, stable@vger.kernel.org
-Subject: Re: [PATCH] x86/cpu: Provide default cache line size if not
- enumerated
-Message-ID: <ZliJiM8g5p-uJSPd@smile.fi.intel.com>
-References: <20240517200534.8EC5F33E@davehans-spike.ostc.intel.com>
- <ZkspXhQFcWvBkL2q@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXfD2LEAjjaHOjtM5z6n/FRDd0lIis4Q3/BjomCm4MkX5heq9MX8RI8tIReSsN2Tc5W4oyHaPInGRpdPKwII9duwEwgG0mCt/nGfKo98bUP+jxSWQN06K+tpoRKUfCZ6CXjRIfOE0ArYj8ISUpMr8KhFF4HnLFBG8KnhJohwUqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=e0uiRQtl; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+qH09HiYQvWvDHiKxS0mFE3pXiGrTTL8Rn/lk654rI4=; b=e0uiRQtl/oGT1CqdT/HnuaUQNj
+	8hR65B6liVHqr0bs4xqi9jIrlrlW41KRyrNxPcSrGvyoL6f13x7T77WxVH3amOOB2xqB4UYfBGgmI
+	zv9T9NSHroW/ii/1Irx3C42i48zqUndGq3YlDriTlbi4ecjY1EfV6+InbUEE6oBgJeZ4BC6GMVTUI
+	68pudN2jU4sGS94EEKUNOp98pdrZWncFcnl+vssSeT21hO4AG1bXnoC8gou9vwyqy6y4LKzhuSukA
+	bUZc1w0cwL3B14G2ckCJr3aZIHfupadRBRBMYApFqyFhfEvvrWlp+su1xxNnoFf0jjhTKkX/9o2bs
+	DlaMI/AA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44048)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sCgYK-0007TP-35;
+	Thu, 30 May 2024 15:14:49 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sCgYK-0005D7-RF; Thu, 30 May 2024 15:14:48 +0100
+Date: Thu, 30 May 2024 15:14:48 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Xiaolei Wang <xiaolei.wang@windriver.com>, Andrew Lunn <andrew@lunn.ch>,
+	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net v2 PATCH] net: stmmac: Update CBS parameters when speed
+ changes after linking up
+Message-ID: <ZliJ2O+bj18jQ0B8@shell.armlinux.org.uk>
+References: <20240530061453.561708-1-xiaolei.wang@windriver.com>
+ <f8b0843f-7900-4ad0-9e70-c16175e893d9@lunn.ch>
+ <20240530132822.xv23at32wj73hzfj@skbuf>
+ <ZliBzo7eETml/+bl@shell.armlinux.org.uk>
+ <20240530135335.yanffjb3ketmoo7u@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,71 +76,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZkspXhQFcWvBkL2q@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240530135335.yanffjb3ketmoo7u@skbuf>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, May 20, 2024 at 01:43:42PM +0300, Andy Shevchenko wrote:
-> On Fri, May 17, 2024 at 01:05:34PM -0700, Dave Hansen wrote:
+On Thu, May 30, 2024 at 04:53:35PM +0300, Vladimir Oltean wrote:
+> On Thu, May 30, 2024 at 02:40:30PM +0100, Russell King (Oracle) wrote:
+> > On Thu, May 30, 2024 at 04:28:22PM +0300, Vladimir Oltean wrote:
+> > > On Thu, May 30, 2024 at 02:50:52PM +0200, Xiaolei Wang wrote:
+> > > > When the port is relinked, if the speed changes, the CBS parameters
+> > > > should be updated, so saving the user transmission parameters so
+> > > > that idle_slope and send_slope can be recalculated after the speed
+> > > > changes after linking up can help reconfigure CBS after the speed
+> > > > changes.
+> > > > 
+> > > > Fixes: 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
+> > > > Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> > > > ---
+> > > > v1 -> v2
+> > > >  - Update CBS parameters when speed changes
+> > > 
+> > > May I ask what is the point of this patch? The bandwidth fraction, as
+> > > IEEE 802.1Q defines it, it a function of idleSlope / portTransmitRate,
+> > > the latter of which is a runtime variant. If the link speed changes at
+> > > runtime, which is entirely possible, I see no alternative than to let
+> > > user space figure out that this happened, and decide what to do. This is
+> > > a consequence of the fact that the tc-cbs UAPI takes the raw idleSlope
+> > > as direct input, rather than something more high level like the desired
+> > > bandwidth for the stream itself, which could be dynamically computed by
+> > > the kernel.
 > > 
-> > From: Dave Hansen <dave.hansen@linux.intel.com>
+> > So what should be the behaviour here? Refuse setting CBS parameters if
+> > the link is down, and clear the hardware configuration of the CBS
+> > parameters each and every time there is a link-down event? Isn't that
+> > going to make the driver's in-use settings inconsistent with what the
+> > kernel thinks have been set? AFAIK, tc qdisc's don't vanish from the
+> > kernel just because the link went down.
 > > 
-> > tl;dr: CPUs with CPUID.80000008H but without CPUID.01H:EDX[CLFSH]
-> > will end up reporting cache_line_size()==0 and bad things happen.
-> > Fill in a default on those to avoid the problem.
-> > 
-> > Long Story:
-> > 
-> > The kernel dies a horrible death if c->x86_cache_alignment (aka.
-> > cache_line_size() is 0.  Normally, this value is populated from
+> > I think what you're proposing leads to the hardware being effectively
+> > "de-programmed" for CBS while "tc qdisc show" will probably report
+> > that CBS is active on the interface - which clearly would be absurd.
 > 
-> Missing ) ?
+> No, just program to hardware right away the idleSlope, sendSlope,
+> loCredit and hiCredit that were communicated by user space. Those were
+> computed for a specific link speed and it is user space's business to
+> monitor that this link speed is maintained for as long as the streams
+> are necessary (otherwise those parameters are no longer valid).
+> One could even recover the portTransmitRate that the parameters were
+> computed for (it should be idleSlope - sendSlope, in Kbps).
 > 
-> > c->x86_clflush_size.
-> > 
-> > Right now the code is set up to get c->x86_clflush_size from two
-> > places.  First, modern CPUs get it from CPUID.  Old CPUs that don't
-> > have leaf 0x80000008 (or CPUID at all) just get some sane defaults
-> > from the kernel in get_cpu_address_sizes().
-> > 
-> > The vast majority of CPUs that have leaf 0x80000008 also get
-> > ->x86_clflush_size from CPUID.  But there are oddballs.
-> > 
-> > Intel Quark CPUs[1] and others[2] have leaf 0x80000008 but don't set
-> > CPUID.01H:EDX[CLFSH], so they skip over filling in ->x86_clflush_size:
-> > 
-> > 	cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
-> > 	if (cap0 & (1<<19))
-> > 		c->x86_clflush_size = ((misc >> 8) & 0xff) * 8;
-> > 
-> > So they: land in get_cpu_address_sizes(), set vp_bits_from_cpuid=0 and
-> > never fill in c->x86_clflush_size, assign c->x86_cache_alignment, and
-> > hilarity ensues in code like:
-> > 
-> >         buffer = kzalloc(ALIGN(sizeof(*buffer), cache_line_size()),
-> >                          GFP_KERNEL);
-> > 
-> > To fix this, always provide a sane value for ->x86_clflush_size.
-> > 
-> > Big thanks to Andy Shevchenko for finding and reporting this and also
-> > providing a first pass at a fix. But his fix was only partial and only
-> > worked on the Quark CPUs.  It would not, for instance, have worked on
-> > the QEMU config.
-> > 
-> > 1. https://raw.githubusercontent.com/InstLatx64/InstLatx64/master/GenuineIntel/GenuineIntel0000590_Clanton_03_CPUID.txt
-> > 2. You can also get this behavior if you use "-cpu 486,+clzero"
-> >    in QEMU.
+> AKA keep the driver as it is.
 > 
-> Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> (as this obviously fixes the issue as it makes a partial revert of the culprit
->  change).
+> I don't see why the CBS parameters would need to be de-programmed from
+> hardware on a link down event. Is that some stmmac specific thing?
 
-What's the status of this? (It seems you have to rebase it on top of the
-existing patches in the same area).
+If the driver is having to do computation on the parameters based on
+the link speed, then when the link speed changes, the parameters
+no longer match what the kernel _thinks_ those parameters were
+programmed with.
+
+What I'm trying to get over to you is that what you propose causes
+an inconsistency between how the hardware is _programmed_ to behave
+for CBS and what the kernel reports the CBS settings are if the
+link speed changes.
+
+For example, if the link was operating at 10G, and the idle slope
+set by userspace is A, and the send slope was B, tc qdisc show
+will report an idle slope of A and send slope of B.
+
+If the link speed now changes to 5G, then, without updating the
+settings in the hardware, the multiplier for the register values
+will have reduced by a factor of two, meaning they're twice as
+large as they should be for values of A and B.
+
+However, tc qdisc show continues to report that values of A and B
+are being used, but the hardware is actually using 2 * A and 2 * B.
+
+It's all very well saying that userspace should basically reconstruct
+the tc settings when the link changes, but not everyone is aware of
+that. I'm saying it's a problem if one isn't aware of this issue with
+this hardware, and one looks at tc qdisc show output, and assumes
+that reflects what is actually being used when it isn't.
+
+It's quality of implmentation - as far as I'm concerned, the kernel
+should *not* mislead the user like this.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
