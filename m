@@ -1,176 +1,371 @@
-Return-Path: <linux-kernel+bounces-195152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B6C8D4840
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18D98D4845
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBBDA1F2197E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF861C215BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C480D6F301;
-	Thu, 30 May 2024 09:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96446F31C;
+	Thu, 30 May 2024 09:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B4/28tsI"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="maGjA+QM"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447DA183999
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5654D2B9A6;
+	Thu, 30 May 2024 09:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717060711; cv=none; b=G2G7JJPZmleXUlykESyO4NBzkEeAywQt+zVfvDzND4bLIZTjjjZ3SIYhf3wcJbOxfZu7dHnrhvskJnHnKzEkYN1E7KHPhP9V7UseOobXhbcWcT2l3YmYVLe0hILayqNrgn9G0tQfgPiJ6apiElTpkKAOIodxZcPHfZfIpkDHE0I=
+	t=1717060830; cv=none; b=uVX6x97EMytOqNcQoBp3EFl6GonOvQNJ6QyJWt04Dsx01dmSALZ0Le4Am70CFiUAQxLGUQvQ8EG+4zOP50I9cczB73ffSvbzxAxM/KmppzqV0j8eGd9H+5pDogwuLdNxI2Zi1hGeWCbpNxINNCdFnnzFbRjlpQHSz/1MosfKyEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717060711; c=relaxed/simple;
-	bh=zO9ShCoFXelPtI8Jo03DMY5HzkzzcN1uFHRTYYZao1I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=brSEWVkegnY8N5lqEoG6Yb39xK44ZKWn5Tu5S7uG+d9fwKCmRInIX3IIjYU2jgvZfm6ry/EHA/GkWVzE8ANO5Uf7n9QOazc+t9U9E30gTl1YewHk+LSLHKjf6fLzBiVicfhvheCirMYaMmEEE7CAOURXgYjaYkwoFrCfcZL59Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B4/28tsI; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U9Hw9v027328;
-	Thu, 30 May 2024 04:17:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717060678;
-	bh=nifFyWavGbEvmrxaSGZKNyaYc2U3Tro+G+/rqBFVG+g=;
-	h=From:To:CC:Subject:Date;
-	b=B4/28tsI/5vt1/dpnbWKj+V5F7NB11k3Da5dfEVdjUhyYuLiZuKDj+EBLRpbliRs+
-	 xU45BkGkAMq6bH2wCHNuU9dr9qvMiFoScY8akAbFXD4MxRavY44xjkHH7nRjq2rGDh
-	 8fOzgUOP41rBAcEANLW7zO4QhZLH99i93g2acRKI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U9HwVH093381
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 30 May 2024 04:17:58 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
- May 2024 04:17:58 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 30 May 2024 04:17:58 -0500
-Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.102])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U9HvjQ058569;
-	Thu, 30 May 2024 04:17:58 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <j-choudhary@ti.com>
-CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <a-bhatia1@ti.com>, <u.kleine-koenig@pengutronix.de>,
-        <javierm@redhat.com>, <jani.nikula@intel.com>,
-        <dri-devel@lists.freedesktop.org>
-Subject: [PATCH v2] drm: bridge: cdns-mhdp8546: Move mode_valid hook to drm_bridge_funcs
-Date: Thu, 30 May 2024 14:47:57 +0530
-Message-ID: <20240530091757.433106-1-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717060830; c=relaxed/simple;
+	bh=AS8FoxNq/3y4juMwXgw0wFGMhWR72c8hGDpfc19TXSk=;
+	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=PeHcxiOyV6rfQwjmrwAuC4ikUNPUwHfM4Kz6JDHUCwOIMbtViXzlrkmjYcYmCMGgdkhsq2FOiv1f1LIxP3eKfQUlQF76oCDnRr5mlciqRzFEcDm0Fcw3gOKuwz90c+gwbjxWgmB889aqyUpFRzEiK6DtqrMVgXHvgUBzA+q3TpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=maGjA+QM; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717060824; h=Content-Type:Message-ID:Date:MIME-Version:To:From:Subject;
+	bh=f4MSym5b4AKHh3k0J9Ynf9t0qQOu2NHa4FMrcrBRobg=;
+	b=maGjA+QMKJ+ap1vYccZXqr2qyVSERqw9gwVsthcW1FfCeMQBVMoYZpPMN7XpWWaMBvBHfjRiIjmxfvRUf34dAwBW2UWiAYcBcLa7GhRB/O56ijoUd47GRG38EUGidSSXIG+PeF2E29Pi4gCs4FZVjQ/FyXvtsz0mZM8FLSen5zg=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W7Wbif1_1717060813;
+Received: from 30.221.130.47(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W7Wbif1_1717060813)
+          by smtp.aliyun-inc.com;
+          Thu, 30 May 2024 17:20:23 +0800
+Content-Type: multipart/mixed; boundary="------------lg3kpQHr1m0Tha1wwCOSWEXb"
+Message-ID: <5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linux.alibaba.com>
+Date: Thu, 30 May 2024 17:20:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+To: Gerd Bayer <gbayer@linux.ibm.com>, Wenjia Zhang <wenjia@linux.ibm.com>,
+ Jan Karcher <jaka@linux.ibm.com>
+Cc: "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+From: Wen Gu <guwen@linux.alibaba.com>
+Subject: Re: [PATCH net v3 2/2] net/smc: Use correct buffer sizes when
+ switching between TCP and SMC
 
-With the support for the 'DRM_BRIDGE_ATTACH_NO_CONNECTOR' case,
-the connector_helper funcs are not initialized if the encoder has this
-flag in its bridge_attach call. Till now we had mode_valid hook only in
-the drm_connector_helper_funcs. Move this hook to drm_bridge_funcs to
-validate the modes.
+This is a multi-part message in MIME format.
+--------------lg3kpQHr1m0Tha1wwCOSWEXb
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
----
+> Tuning of the effective buffer size through setsockopts was working for
+> SMC traffic only but not for TCP fall-back connections even before
+> commit 0227f058aa29 ("net/smc: Unbind r/w buffer size from clcsock and
+> make them tunable"). That change made it apparent that TCP fall-back
+> connections would use net.smc.[rw]mem as buffer size instead of
+> net.ipv4_tcp_[rw]mem.
+> 
+> Amend the code that copies attributes between the (TCP) clcsock and the
+> SMC socket and adjust buffer sizes appropriately:
+> - Copy over sk_userlocks so that both sockets agree on whether tuning
+>   via setsockopt is active.
+> - When falling back to TCP use sk_sndbuf or sk_rcvbuf as specified with
+>   setsockopt. Otherwise, use the sysctl value for TCP/IPv4.
+> - Likewise, use either values from setsockopt or from sysctl for SMC
+>   (duplicated) on successful SMC connect.
+> 
+> In smc_tcp_listen_work() drop the explicit copy of buffer sizes as that
+> is taken care of by the attribute copy.
 
-Changelog v1->v2:
-- Remove mode_valid hook from connector_helper_funcs as it is not required.
-  (Function despite being identical has been moved below with other
-   bridge_funcs instead of keeping it up with drm_connector_helper_funcs)
+[...]
+> +/* if set, use value set by setsockopt() - else use IPv4 or SMC sysctl value */
+> +static void smc_adjust_sock_bufsizes(struct sock *nsk, struct sock *osk,
+> +				     unsigned long mask)
+> +{
+> +	struct net *nnet = sock_net(nsk);
+> +
+> +	nsk->sk_userlocks = osk->sk_userlocks;
+> +	if (osk->sk_userlocks & SOCK_SNDBUF_LOCK) {
+> +		nsk->sk_sndbuf = osk->sk_sndbuf;
+> +	} else {
+> +		if (mask == SK_FLAGS_SMC_TO_CLC)
+> +			WRITE_ONCE(nsk->sk_sndbuf,
+> +				   READ_ONCE(nnet->ipv4.sysctl_tcp_wmem[1]));
 
-v1 patch:
-<https://lore.kernel.org/all/20240524071348.106210-1-j-choudhary@ti.com/>
+Hi Gerd,
 
- .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 39 ++++++++++---------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+I noticed that during TCP connection establishment, tcp_sndbuf_expand()
+will tune sk->sk_sndbuf, that causes clcsock's sk_sndbuf to no longer
+be sysctl_tcp_wmem[1]. But here we set it back to sysctl_tcp_wmem[1].
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-index 8a91ef0ae065..8a6cd00a1443 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-@@ -1617,24 +1617,6 @@ bool cdns_mhdp_bandwidth_ok(struct cdns_mhdp_device *mhdp,
- 	return true;
- }
- 
--static
--enum drm_mode_status cdns_mhdp_mode_valid(struct drm_connector *conn,
--					  struct drm_display_mode *mode)
--{
--	struct cdns_mhdp_device *mhdp = connector_to_mhdp(conn);
--
--	mutex_lock(&mhdp->link_mutex);
--
--	if (!cdns_mhdp_bandwidth_ok(mhdp, mode, mhdp->link.num_lanes,
--				    mhdp->link.rate)) {
--		mutex_unlock(&mhdp->link_mutex);
--		return MODE_CLOCK_HIGH;
--	}
--
--	mutex_unlock(&mhdp->link_mutex);
--	return MODE_OK;
--}
--
- static int cdns_mhdp_connector_atomic_check(struct drm_connector *conn,
- 					    struct drm_atomic_state *state)
- {
-@@ -1678,7 +1660,6 @@ static int cdns_mhdp_connector_atomic_check(struct drm_connector *conn,
- static const struct drm_connector_helper_funcs cdns_mhdp_conn_helper_funcs = {
- 	.detect_ctx = cdns_mhdp_connector_detect,
- 	.get_modes = cdns_mhdp_get_modes,
--	.mode_valid = cdns_mhdp_mode_valid,
- 	.atomic_check = cdns_mhdp_connector_atomic_check,
- };
- 
-@@ -2233,6 +2214,25 @@ static const struct drm_edid *cdns_mhdp_bridge_edid_read(struct drm_bridge *brid
- 	return cdns_mhdp_edid_read(mhdp, connector);
- }
- 
-+static enum drm_mode_status
-+cdns_mhdp_bridge_mode_valid(struct drm_bridge *bridge,
-+			    const struct drm_display_info *info,
-+			    const struct drm_display_mode *mode)
-+{
-+	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
-+
-+	mutex_lock(&mhdp->link_mutex);
-+
-+	if (!cdns_mhdp_bandwidth_ok(mhdp, mode, mhdp->link.num_lanes,
-+				    mhdp->link.rate)) {
-+		mutex_unlock(&mhdp->link_mutex);
-+		return MODE_CLOCK_HIGH;
-+	}
-+
-+	mutex_unlock(&mhdp->link_mutex);
-+	return MODE_OK;
-+}
-+
- static const struct drm_bridge_funcs cdns_mhdp_bridge_funcs = {
- 	.atomic_enable = cdns_mhdp_atomic_enable,
- 	.atomic_disable = cdns_mhdp_atomic_disable,
-@@ -2247,6 +2247,7 @@ static const struct drm_bridge_funcs cdns_mhdp_bridge_funcs = {
- 	.edid_read = cdns_mhdp_bridge_edid_read,
- 	.hpd_enable = cdns_mhdp_bridge_hpd_enable,
- 	.hpd_disable = cdns_mhdp_bridge_hpd_disable,
-+	.mode_valid = cdns_mhdp_bridge_mode_valid,
- };
- 
- static bool cdns_mhdp_detect_hpd(struct cdns_mhdp_device *mhdp, bool *hpd_pulse)
--- 
-2.25.1
+So I did some tests to see if the values of sk_sndbuf and sk_rcvbuf are
+as expected in SMC and fallback cases (see the attached server.c and
+client.c for the reproducer and here are the sysctl values in my environment)
 
+net.ipv4.tcp_wmem = 4096        4096    16777216
+net.ipv4.tcp_rmem = 4096        4096    16777216
+net.smc.wmem = 65536
+net.smc.rmem = 65536
+
+
+1. No additional sk_{snd|rcv}buf settings
+
+1.1 TCP
+
+     ./server
+     ./client -i <serv_ip>
+
+     results:
+     - server: sndbuf_size 87040, rcvbuf_size 4096
+     - client: sndbuf_size 87040, rcvbuf_size 4096
+
+1.2 SMC
+
+     smc_run ./server
+     smc_run ./client -i <serv_ip>
+
+     results:
+     - server: sndbuf_size 131072, rcvbuf_size 131072
+     - client: sndbuf_size 131072, rcvbuf_size 131072
+
+1.3 SMC, but server fallback
+
+     smc_run ./server
+     ./client -i <serv_ip>
+
+     results:
+     - server: sndbuf_size 87040, rcvbuf_size 4096
+     - client: sndbuf_size 87040, rcvbuf_size 4096
+
+1.4 SMC, but client fallback
+
+     ./server
+     smc_run ./client -i <serv_ip>
+
+     results:
+     - server: sndbuf_size 87040, rcvbuf_size 4096
+     - client: sndbuf_size 4096, rcvbuf_size 4096    <--- I think clcsock's sk_sndbuf should
+                                                          be the same as 1.1 after fallback?
+
+
+2. Set server listen sock's and client sock's sk_{snd|rcv}buf
+    as 16KB by setsockopt() before connection establishment.
+
+2.1 TCP
+
+     ./server -s 16384
+     ./client -i <serv_ip> -s 16384
+
+     results:
+     - server: sndbuf_size 32768, rcvbuf_size 32768
+     - client: sndbuf_size 32768, rcvbuf_size 32768
+
+2.2 SMC
+
+     smc_run ./server -s 16384
+     smc_run ./client -i <serv_ip> -s 16384
+
+     results:
+     - server: sndbuf_size 32768, rcvbuf_size 32768
+     - client: sndbuf_size 32768, rcvbuf_size 32768
+
+2.3 SMC, but server fallback
+
+     smc_run ./server -s 16384
+     ./client -i <serv_ip> -s 16384
+
+     results:
+     - server: sndbuf_size 32768, rcvbuf_size 32768
+     - client: sndbuf_size 32768, rcvbuf_size 32768
+
+2.4 SMC, but client fallback
+
+     ./server -s 16384
+     smc_run ./client -i <serv_ip> -s 16384
+
+     results:
+     - server: sndbuf_size 32768, rcvbuf_size 32768
+     - client: sndbuf_size 32768, rcvbuf_size 32768
+
+
+In the above 8 sets of tests, 1.4 does not seem to meet expectations.
+It is because we reset clcsock's sk_sndbuf to sysctl_tcp_wmem[1] in
+smc_copy_sock_settings_to_clc(). I think it should be like 1.1 TCP values
+after fallback. What do you think?
+
+If so, we may need to avoid setting sysctl value to clcsock's sk_sndbuf
+in smc_adjust_sock_bufsizes(). Furthermore, maybe all the setting-sysctl-value
+can be omitted, since smc sock's and clcsock's sk_{snd|rcv}buf have been
+set to sysctl value during their sock initialization (smc_sock_alloc() and
+tcp_init_sock()).
+
+
+And another question is why 1.3 is as expected? The direct cause is that
+server does not call smc_copy_sock_settings_to_clc() when fallback, like the
+client smc_connect_fallback() does. But I didn't figure out what is the
+reason for the different behavior? Do you have any information? Thanks a lot!
+
+
+Best regards,
+Wen Gu
+
+> +		else
+> +			WRITE_ONCE(nsk->sk_sndbuf,
+> +				   2 * READ_ONCE(nnet->smc.sysctl_wmem));
+> +	}
+> +	if (osk->sk_userlocks & SOCK_RCVBUF_LOCK) {
+> +		nsk->sk_rcvbuf = osk->sk_rcvbuf;
+> +	} else {
+> +		if (mask == SK_FLAGS_SMC_TO_CLC)
+> +			WRITE_ONCE(nsk->sk_rcvbuf,
+> +				   READ_ONCE(nnet->ipv4.sysctl_tcp_rmem[1]));
+> +		else
+> +			WRITE_ONCE(nsk->sk_rcvbuf,
+> +				   2 * READ_ONCE(nnet->smc.sysctl_rmem));
+> +	}
+> +}
+> +
+
+[...]
+
+--------------lg3kpQHr1m0Tha1wwCOSWEXb
+Content-Type: text/plain; charset=UTF-8; name="client.c"
+Content-Disposition: attachment; filename="client.c"
+Content-Transfer-Encoding: base64
+
+I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdHJpbmcuaD4KI2luY2x1ZGUgPHN0ZGxp
+Yi5oPgojaW5jbHVkZSA8dW5pc3RkLmg+CiNpbmNsdWRlIDxhcnBhL2luZXQuaD4KI2luY2x1
+ZGUgPHN5cy9zb2NrZXQuaD4KI2luY2x1ZGUgPG5ldGluZXQvaW4uaD4KI2luY2x1ZGUgPHN0
+ZGJvb2wuaD4KI2luY2x1ZGUgPGVycm5vLmg+CiNpbmNsdWRlIDxuZXRpbmV0L3RjcC5oPgoK
+I2lmbmRlZiBBRl9TTUMKI2RlZmluZSBBRl9TTUMgICAgICAgICAgNDMKI2VuZGlmCiNkZWZp
+bmUgTkVUX1BST1RPQ0FMICAgIEFGX0lORVQKI2RlZmluZSBTRVJWX0lQICAgICAgICAgIjEx
+LjIxMy41LjMzIgojZGVmaW5lIFNFUlZfUE9SVCAgICAgICAxMDAxMgoKY2hhciAqaXA7Cgpp
+bnQgbmV0X2NsbnQoaW50IGJ1Zl9zaXplLCBpbnQgcG9ydCkKewogICAgICAgIGludCBzbmRi
+dWZfc2l6ZSwgcmN2YnVmX3NpemU7CiAgICAgICAgc3RydWN0IHNvY2thZGRyX2luIHNfYWRk
+cjsKICAgICAgICBjaGFyIG1zZ1sxMjhdID0geyAwIH07CiAgICAgICAgaW50IG9wdGxlbiA9
+IDQ7CiAgICAgICAgaW50IHNvY2s7CiAgICAgICAgaW50IHJjOwoKICAgICAgICBpZiAoIXBv
+cnQpCiAgICAgICAgICAgICAgICBwb3J0ID0gU0VSVl9QT1JUOwoKICAgICAgICBzb2NrID0g
+c29ja2V0KE5FVF9QUk9UT0NBTCwgU09DS19TVFJFQU0sIDApOwoKICAgICAgICBpZiAoYnVm
+X3NpemUpIHsKICAgICAgICAgICAgICAgIHNuZGJ1Zl9zaXplID0gcmN2YnVmX3NpemUgPSBi
+dWZfc2l6ZTsKICAgICAgICAgICAgICAgIC8qIHNldCBzbmRidWYgYW5kIHJjdmJ1ZiAqLwog
+ICAgICAgICAgICAgICAgaWYgKHNldHNvY2tvcHQoc29jaywgU09MX1NPQ0tFVCwgU09fU05E
+QlVGLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICZzbmRidWZfc2l6ZSwgc2l6
+ZW9mKGludCkpKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIHByaW50Zigic2V0IHNuZGJ1
+ZiBmYWlsZWRcbiIpOwogICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gMDsKICAgICAg
+ICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGlmIChzZXRzb2Nrb3B0KHNvY2ssIFNPTF9T
+T0NLRVQsIFNPX1JDVkJVRiwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmcmN2
+YnVmX3NpemUsIHNpemVvZihpbnQpKSkgewogICAgICAgICAgICAgICAgICAgICAgICBwcmlu
+dGYoInNldCByY3ZidWYgZmFpbGVkXG4iKTsKICAgICAgICAgICAgICAgICAgICAgICAgcmV0
+dXJuIDA7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBtZW1zZXQoJnNf
+YWRkciwgMCwgc2l6ZW9mKHNfYWRkcikpOwogICAgICAgIHNfYWRkci5zaW5fZmFtaWx5ID0g
+TkVUX1BST1RPQ0FMOwogICAgICAgIGlmIChpcCkKICAgICAgICAgICAgICAgIHNfYWRkci5z
+aW5fYWRkci5zX2FkZHIgPSBpbmV0X2FkZHIoaXApOwogICAgICAgIGVsc2UKICAgICAgICAg
+ICAgICAgIHNfYWRkci5zaW5fYWRkci5zX2FkZHIgPSBpbmV0X2FkZHIoU0VSVl9JUCk7CiAg
+ICAgICAgc19hZGRyLnNpbl9wb3J0ID0gaHRvbnMocG9ydCk7CiAgICAgICAgaWYgKGNvbm5l
+Y3Qoc29jaywgKHN0cnVjdCBzb2NrYWRkciopJnNfYWRkciwgc2l6ZW9mKHNfYWRkcikpKXsK
+ICAgICAgICAgICAgICAgIHByaW50ZigiY29ubmVjdCBmYWlsXG4iKTsKICAgICAgICAgICAg
+ICAgIHJldHVybiAwOwogICAgICAgIH0KCiAgICAgICAgc25kYnVmX3NpemUgPSAwOyByY3Zi
+dWZfc2l6ZSA9IDA7CiAgICAgICAgZ2V0c29ja29wdChzb2NrLCBTT0xfU09DS0VULCBTT19T
+TkRCVUYsICZzbmRidWZfc2l6ZSwgJm9wdGxlbik7CiAgICAgICAgZ2V0c29ja29wdChzb2Nr
+LCBTT0xfU09DS0VULCBTT19SQ1ZCVUYsICZyY3ZidWZfc2l6ZSwgJm9wdGxlbik7CiAgICAg
+ICAgcHJpbnRmKCJjbGllbnQ6IHNuZGJ1Zl9zaXplICVkLCByY3ZidWZfc2l6ZSAlZFxuIiwg
+c25kYnVmX3NpemUsIHJjdmJ1Zl9zaXplKTsKCiAgICAgICAgcmVjdihzb2NrLCBtc2csIHNp
+emVvZihtc2cpLCAwKTsKICAgICAgICBwcmludGYoImdldCBtc2c6ICVzXG4iLCBtc2cpOwog
+ICAgICAgIHNlbmQoc29jaywgIlJlc3BvbnNlIiwgc2l6ZW9mKCJSZXNwb25zZSIpLCBNU0df
+Tk9TSUdOQUwpOwoKICAgICAgICBjbG9zZShzb2NrKTsKfQoKaW50IG1haW4oaW50IGFyZ2Ms
+IGNoYXIgKiphcmd2KXsKICAgICAgICBib29sIHdyb25nX3BhcmFtID0gZmFsc2U7CiAgICAg
+ICAgaW50IGJ1Zl9zaXplID0gMCwgcG9ydCA9IDA7CiAgICAgICAgaW50IGM7CiAgICAgICAg
+d2hpbGUoIXdyb25nX3BhcmFtICYmCiAgICAgICAgICAgICAgKC0xICE9IChjID0gZ2V0b3B0
+KGFyZ2MsIGFyZ3YsICJwOnM6aToiKSkpKSB7CiAgICAgICAgICAgICAgICBzd2l0Y2ggKGMp
+IHsKICAgICAgICAgICAgICAgICAgICAgICAgY2FzZSAncyc6CiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgYnVmX3NpemUgPSBhdG9pKG9wdGFyZyk7CiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgICAgICAgICAgICAgIGNhc2Ug
+J2knOgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlwID0gc3RyZHVwKG9wdGFy
+Zyk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAg
+ICAgICAgICAgICAgIGNhc2UgJ3AnOgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHBvcnQgPSBhdG9pKG9wdGFyZyk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+YnJlYWs7CiAgICAgICAgICAgICAgICAgICAgICAgIGNhc2UgJz8nOgogICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHByaW50ZigidXNhZ2U6IC4vY2xpZW50IC1zIDxidWZzaXpl
+PiAtaSA8aXA+IC1wIDxwb3J0PlxuIik7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgd3JvbmdfcGFyYW0gPSB0cnVlOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGJyZWFrOwogICAgICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBpZiAoIXdyb25n
+X3BhcmFtKQogICAgICAgICAgICAgICAgbmV0X2NsbnQoYnVmX3NpemUsIHBvcnQpOwogICAg
+ICAgIHJldHVybiAwOwp9Cg==
+--------------lg3kpQHr1m0Tha1wwCOSWEXb
+Content-Type: text/plain; charset=UTF-8; name="server.c"
+Content-Disposition: attachment; filename="server.c"
+Content-Transfer-Encoding: base64
+
+I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdHJpbmcuaD4KI2luY2x1ZGUgPHN0ZGxp
+Yi5oPgojaW5jbHVkZSA8dW5pc3RkLmg+CiNpbmNsdWRlIDxhcnBhL2luZXQuaD4KI2luY2x1
+ZGUgPHN5cy9zb2NrZXQuaD4KI2luY2x1ZGUgPG5ldGluZXQvaW4uaD4KI2luY2x1ZGUgPGVy
+cm5vLmg+CiNpbmNsdWRlIDxzdGRib29sLmg+CiNpbmNsdWRlIDxuZXRpbmV0L3RjcC5oPgoK
+I2lmbmRlZiBBRl9TTUMKI2RlZmluZSBBRl9TTUMgICAgICAgICAgNDMKI2VuZGlmCiNkZWZp
+bmUgTkVUX1BST1RPQ0FMICAgIEFGX0lORVQKI2RlZmluZSBTRVJWX0lQICAgICAgICAgIjAu
+MC4wLjAiCiNkZWZpbmUgU0VSVl9QT1JUICAgICAgIDEwMDEyCgppbnQgbmV0X3NlcnYoaW50
+IGJ1Zl9zaXplLCBpbnQgcG9ydCkKewogICAgICAgIGludCBzbmRidWZfc2l6ZSwgcmN2YnVm
+X3NpemU7CiAgICAgICAgc3RydWN0IHNvY2thZGRyX2luIHNfYWRkcjsKICAgICAgICBzdHJ1
+Y3Qgc29ja2FkZHJfaW4gY19hZGRyOwogICAgICAgIGNoYXIgbXNnWzEyOF0gPSAiUmVxdWVz
+dCI7CiAgICAgICAgaW50IGxfc29jaywgc19zb2NrOwogICAgICAgIGludCBvcHRsZW4gPSA0
+OwoKICAgICAgICBpZiAoIXBvcnQpCiAgICAgICAgICAgICAgICBwb3J0ID0gU0VSVl9QT1JU
+OwoKICAgICAgICBsX3NvY2sgPSBzb2NrZXQoTkVUX1BST1RPQ0FMLCBTT0NLX1NUUkVBTSwg
+MCk7CgogICAgICAgIGlmIChidWZfc2l6ZSkgewogICAgICAgICAgICAgICAgc25kYnVmX3Np
+emUgPSByY3ZidWZfc2l6ZSA9IGJ1Zl9zaXplOwogICAgICAgICAgICAgICAgLyogc2V0IHNu
+ZGJ1ZiBhbmQgcmN2YnVmICovCiAgICAgICAgICAgICAgICBpZiAoc2V0c29ja29wdChsX3Nv
+Y2ssIFNPTF9TT0NLRVQsIFNPX1NOREJVRiwKICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAmc25kYnVmX3NpemUsIHNpemVvZihpbnQpKSkgewogICAgICAgICAgICAgICAgICAg
+ICAgICBwcmludGYoInNldCBzbmRidWYgZmFpbGVkXG4iKTsKICAgICAgICAgICAgICAgICAg
+ICAgICAgcmV0dXJuIDA7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBpZiAo
+c2V0c29ja29wdChsX3NvY2ssIFNPTF9TT0NLRVQsIFNPX1JDVkJVRiwKICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAmcmN2YnVmX3NpemUsIHNpemVvZihpbnQpKSkgewogICAg
+ICAgICAgICAgICAgICAgICAgICBwcmludGYoInNldCByY3ZidWYgZmFpbGVkXG4iLCByY3Zi
+dWZfc2l6ZSk7CiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAwOwogICAgICAgICAg
+ICAgICAgfQogICAgICAgIH0KCiAgICAgICAgbWVtc2V0KCZzX2FkZHIsIDAsIHNpemVvZihz
+dHJ1Y3Qgc29ja2FkZHJfaW4pKTsKICAgICAgICBzX2FkZHIuc2luX2ZhbWlseSA9IE5FVF9Q
+Uk9UT0NBTDsKICAgICAgICBzX2FkZHIuc2luX2FkZHIuc19hZGRyID0gaW5ldF9hZGRyKFNF
+UlZfSVApOwogICAgICAgIHNfYWRkci5zaW5fcG9ydCA9IGh0b25zKHBvcnQpOwogICAgICAg
+IGlmIChiaW5kKGxfc29jaywgKHN0cnVjdCBzb2NrYWRkciopJnNfYWRkciwgc2l6ZW9mKHNf
+YWRkcikpKSB7CiAgICAgICAgICAgICAgICBwcmludGYoImJpbmQgbGlzdGVuIHNvY2tldCBl
+cnJvciAlZFxuIiwgZXJybm8pOwogICAgICAgICAgICAgICAgcmV0dXJuIDA7CiAgICAgICAg
+fQogICAgICAgIGlmIChsaXN0ZW4obF9zb2NrLCAyMCkpIHsKICAgICAgICAgICAgICAgIHBy
+aW50ZigibGlzdGVuIGVycm9yXG4iKTsKICAgICAgICAgICAgICAgIHJldHVybiAwOwogICAg
+ICAgIH0KCiAgICAgICAgc29ja2xlbl90IGNfYWRkcl9sZW4gPSBzaXplb2YoY19hZGRyKTsK
+ICAgICAgICBzX3NvY2sgPSBhY2NlcHQobF9zb2NrLCAoc3RydWN0IHNvY2thZGRyKikmY19h
+ZGRyLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgJmNfYWRkcl9sZW4pOwogICAgICAg
+IGlmIChzX3NvY2sgPCAwKSB7CiAgICAgICAgICAgICAgICBwcmludGYoImFjY2VwdCBmYWls
+XG4iKTsKICAgICAgICAgICAgICAgIHJldHVybiAwOwogICAgICAgIH0gZWxzZSB7CiAgICAg
+ICAgICAgICAgICBjaGFyIGlwWzE2XSA9IHsgMCB9OwogICAgICAgICAgICAgICAgaW5ldF9u
+dG9wKE5FVF9QUk9UT0NBTCwgJihjX2FkZHIuc2luX2FkZHIpLCBpcCwgSU5FVF9BRERSU1RS
+TEVOKTsKICAgICAgICAgICAgICAgIHByaW50ZigiYWNjZXB0IGNvbm5lY3Rpb246IGlwICVz
+IHBvcnQgJWRcbiIsCiAgICAgICAgICAgICAgICAgICAgICAgIGlwLCBjX2FkZHIuc2luX3Bv
+cnQpOwogICAgICAgIH0KICAgICAgICBnZXRzb2Nrb3B0KHNfc29jaywgU09MX1NPQ0tFVCwg
+U09fU05EQlVGLCAmc25kYnVmX3NpemUsICZvcHRsZW4pOwogICAgICAgIGdldHNvY2tvcHQo
+c19zb2NrLCBTT0xfU09DS0VULCBTT19SQ1ZCVUYsICZyY3ZidWZfc2l6ZSwgJm9wdGxlbik7
+CiAgICAgICAgcHJpbnRmKCJzZXJ2ZXI6IHNuZGJ1Zl9zaXplICVkLCByY3ZidWZfc2l6ZSAl
+ZFxuIiwgc25kYnVmX3NpemUsIHJjdmJ1Zl9zaXplKTsKCiAgICAgICAgc2VuZChzX3NvY2ss
+ICJSZXF1ZXN0Iiwgc2l6ZW9mKCJSZXF1ZXN0IiksIE1TR19OT1NJR05BTCk7CiAgICAgICAg
+cmVjdihzX3NvY2ssIG1zZywgc2l6ZW9mKG1zZyksIDApOwogICAgICAgIHByaW50ZigiZ2V0
+IG1zZzogJXNcbiIsIG1zZyk7CgogICAgICAgIGNsb3NlKHNfc29jayk7CiAgICAgICAgY2xv
+c2UobF9zb2NrKTsKICAgICAgICByZXR1cm4gMDsKfQoKaW50IG1haW4oaW50IGFyZ2MsIGNo
+YXIgKiphcmd2KQp7CiAgICAgICAgYm9vbCB3cm9uZ19wYXJhbSA9IGZhbHNlOwogICAgICAg
+IGludCBidWZfc2l6ZSA9IDAsIHBvcnQgPSAwOwogICAgICAgIGludCBjOwogICAgICAgIHdo
+aWxlKCF3cm9uZ19wYXJhbSAmJgogICAgICAgICAgICAgICgtMSAhPSAoYyA9IGdldG9wdChh
+cmdjLCBhcmd2LCAicDpzOiIpKSkpIHsKICAgICAgICAgICAgICAgIHN3aXRjaCAoYykgewog
+ICAgICAgICAgICAgICAgICAgICAgICBjYXNlICdzJzoKICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBidWZfc2l6ZSA9IGF0b2kob3B0YXJnKTsKICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBicmVhazsKICAgICAgICAgICAgICAgICAgICAgICAgY2FzZSAncCc6
+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcG9ydCA9IGF0b2kob3B0YXJnKTsK
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKICAgICAgICAgICAgICAg
+ICAgICAgICAgY2FzZSAnPyc6CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcHJp
+bnRmKCJ1c2FnZTogLi9zZXJ2ZXIgLXMgPGJ1ZnNpemU+IC1wIDxwb3J0PlxuIik7CiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgd3JvbmdfcGFyYW0gPSB0cnVlOwogICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwogICAgICAgICAgICAgICAgfQogICAg
+ICAgIH0KICAgICAgICBpZiAoIXdyb25nX3BhcmFtKQogICAgICAgICAgICAgICAgbmV0X3Nl
+cnYoYnVmX3NpemUsIHBvcnQpOwogICAgICAgIHJldHVybiAwOwp9Cgo=
+
+--------------lg3kpQHr1m0Tha1wwCOSWEXb--
 
