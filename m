@@ -1,137 +1,172 @@
-Return-Path: <linux-kernel+bounces-195057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8A28D46F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7072C8D4700
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E2F284005
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:20:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C1E1C220EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7052F14F9E4;
-	Thu, 30 May 2024 08:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3A7152787;
+	Thu, 30 May 2024 08:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n53RGcdd"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NLSsaN8k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107C21C6A3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3D615216E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717057240; cv=none; b=mubSAQmNq1yoMTgKGP7SdZG8sPveG/6nCvQxQFSvaTFBRG9t2ntTr0YX/TgyCiHGF9XQZ37puGv1BmjjMLvQl7OktDWkZHwbfpSfSo0njJHazMMt0J3A9V02z0qU6MWGShk5Zypnzf1x8y2oVrp1gVVMOHEd6fR5Upes0uoA73U=
+	t=1717057571; cv=none; b=hSC5gCQEAgWk4rW/hjjeIkp0MziaLvwboJgbc5Z9qaQ8SB7W+Nw4qKbekhakfK34TQEXjlQuKsk8rKdH2DycW71fJ+0Gfh0Yh2wp+vH9991nXSLRSxWEQV+BP4a0L0dibrvvfgtKqrqYkJinMx+V7m3UX3lS06zHQqvFwRoor0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717057240; c=relaxed/simple;
-	bh=vEnZFoXzjb5fBRfSjDYm+6RD7lbH9qdIx1YqZQzgPFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ookvj7HnsXrPCInlVS+ixWMgakZXk5tZtNHThLDoccpdjJtWGQvp7hyG7fC3kvzk8jdmsu1IO7vuL3jBQatHlvp9pq5YHC4nWx9AidWoqXvNRKh5+UjhOt4Q3VLtknVnf0Fg/BT2HZPn9fu3gi3yBfH/ol1Lu8je6IHbMD3ibWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n53RGcdd; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so5768821fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:20:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717057237; x=1717662037; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1Um35u1qvZuMCq7uXC40E27zn7y41HWRYxq0E1YCHA=;
-        b=n53RGcddqCt2QoB6iP+krQmvEPipBTEr0Mt1HUv4OkwrCAzOE+Rp69aa5jXljbnhh7
-         i2YHXiZR/7UQXMk8zUVtqy91ksmwXgrc1D42NvS4G9D0Gae5W1g2r39pDUlm5n+OAZCc
-         lZgtXzSff9mPJoz6w2opQalNIgLBAQn6IaGcHuquUsRs00v5NsjTW0jqEDhwTZKs9g0V
-         wjQG6Hi2ga/N7EpkL/KmD8NQYCHTlThRAXaMk3Re0evyzWAbfHqvQhl7QBvNNmjxINJL
-         b6dmHed5ZEDDvzD3mm/u4JOgH5Lg1AvaZR3AaDLDaDo9urNxU4myvUlMCV38OqmRrZSk
-         hSwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717057237; x=1717662037;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z1Um35u1qvZuMCq7uXC40E27zn7y41HWRYxq0E1YCHA=;
-        b=Zw4lOlX/2Z4PCk3jSlV1St3kuNGdP9om1Aap5O9j+KyNHHK/7g59kmAxXo/iIcmr5S
-         RLWYb9CzHekxbczb9D+Quw1wJljvR1QkxQoVtH5lnnZ9UTSpJ6yRXPCZu9N2pAebZ1t2
-         zf0jarAI87zlTJEtFuqgWxaul11KVB4UPYXEoO08/0xPeD0th+f4O2TVBzpmxDYCbXPB
-         DrMvLEZPzipXiUmB+dz8ERqlUMd45DXNJ2BC05gjDSmwvpQwwROSYRFJiMPEMfVQLTsL
-         yBuDedsEGjbwjGIw4hTdKvC8FbKvZMsSIX+UfcF19axN63Qtr7t+zIzSt3OvcBx/cTdN
-         6XrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUStOP1vTW8l90O6NLmP52LaIE0qcR6vw9D0X0MtcY581Ee5konuL/mpIQMggDjcI0P6nrjQnf3gfGxQ7IFOh+p6RJy5Ib2LiyjyUZw
-X-Gm-Message-State: AOJu0YyOhP/NthDnxCwYwItoHlWhBzcD/rH/eL2JgCrI3EWkBxuW8IBD
-	IU6nEU+lozb398Hg4XXcCqmfpLsM5Ku5T1Cu9PVgYoY6q+woMfyJUXw0qOh3ObY=
-X-Google-Smtp-Source: AGHT+IG3/pKyXe6kjvzBTBZ+kW9if7vnYQBxUVROYSW9nUw+zsQXQ7KKovh+kC7NueTuWgD/hjgJPA==
-X-Received: by 2002:a2e:b60c:0:b0:2ea:83fb:3e1f with SMTP id 38308e7fff4ca-2ea848844demr7697071fa.37.1717057237335;
-        Thu, 30 May 2024 01:20:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea847fbb25sm1282741fa.118.2024.05.30.01.20.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:20:36 -0700 (PDT)
-Date: Thu, 30 May 2024 11:20:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ricard Wanderlof <ricardw@axis.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel@axis.com
-Subject: Re: [PATCH] drm: bridge: adv7511: Accept audio sample widths of 32
- bits via I2S
-Message-ID: <777om4a55azemxmnjnzjeuymtaeg7fvygijnl6uiyfruey63i7@anpkpyotbbhd>
-References: <91472c14-3aeb-766a-1716-8219af6e8782@axis.com>
- <m7sghjgqtm45yjkpzrekeab7doojagxjts7vmw23a3tqtjltdj@v2oencka3uer>
- <adac6043-19f1-e965-e9eb-f3f1eaa6e067@axis.com>
+	s=arc-20240116; t=1717057571; c=relaxed/simple;
+	bh=vgiAh5vIFdBs0VMnES8cHQ74CxqIaKPI5QnJwm7Kn9I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nn2EUvEoGwTArRPkrdkqd8C/YSO+44kxAjCtUBt6dNmA1tUVpvl5ppXcxOpqGl9Xky0+J3RbseqpZQYWbDER4EfBbJVm/6IQ/IrP4gq9F7C0awjQ5jBhqq7xXmtp2ymHqx3GZpPRWI3BQ4k2EUFRNmGn6o2pFz6FpxVsEHoAivQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NLSsaN8k; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717057570; x=1748593570;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=vgiAh5vIFdBs0VMnES8cHQ74CxqIaKPI5QnJwm7Kn9I=;
+  b=NLSsaN8kWj+m90YefP9WsyyI9yV5r9YWBF6dNCMmp3qg1pdkGQ5e3iA9
+   H44W+e4qylJ+bWznLq2eQf7wvYkVnDjZFD/LduEYVpSTKa3T6PvCqQiYB
+   xoHH+lDLMu3OdfF8dDLn7LtNyMUnZa7igHva7sRdyu5P9ZvtvWUv9KhHE
+   qzmwl6rm9E/Gb1zo+QJ1cqJG/7oQITMsV7JuJpTZ+tuXdDASLxjcbWIkz
+   hOD8qjwTdHeCJssUBQE0m6xOyupSYpakDnDcJT475wwrGzscA2qAKtvW7
+   f7l8ixF36QWJV9UuKymGiq7GqFgLLmVXTvRCbWBb/MzjHesVV5el4yVqF
+   Q==;
+X-CSE-ConnectionGUID: n1NDTRWAR8mWlqKs0zIP7g==
+X-CSE-MsgGUID: FS1svEnVR3eR6wnR0/VXGg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="36039793"
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="36039793"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 01:26:09 -0700
+X-CSE-ConnectionGUID: BxO9lYlDReCtZtbm6T1nTg==
+X-CSE-MsgGUID: aDlGNP4OQZajZalKmOnGsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
+   d="scan'208";a="35718839"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 01:26:04 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,  <linux-kernel@vger.kernel.org>,
+  <linux-mm@kvack.org>,  <kernel_team@skhynix.com>,
+  <akpm@linux-foundation.org>,  <vernhao@tencent.com>,
+  <mgorman@techsingularity.net>,  <hughd@google.com>,
+  <willy@infradead.org>,  <david@redhat.com>,  <peterz@infradead.org>,
+  <luto@kernel.org>,  <tglx@linutronix.de>,  <mingo@redhat.com>,
+  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,  <rjgolo@gmail.com>
+Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+In-Reply-To: <20240530071847.GA15344@system.software.com> (Byungchul Park's
+	message of "Thu, 30 May 2024 16:18:47 +0900")
+References: <20240510065206.76078-1-byungchul@sk.com>
+	<982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
+	<20240527015732.GA61604@system.software.com>
+	<8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<44e4f2fd-e76e-445d-b618-17a6ec692812@intel.com>
+	<20240529050046.GB20307@system.software.com>
+	<961f9533-1e0c-416c-b6b0-d46b97127de2@intel.com>
+	<20240530005026.GA47476@system.software.com>
+	<87a5k814tq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<20240530071847.GA15344@system.software.com>
+Date: Thu, 30 May 2024 16:24:12 +0800
+Message-ID: <871q5j1zdf.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adac6043-19f1-e965-e9eb-f3f1eaa6e067@axis.com>
+Content-Type: text/plain; charset=ascii
 
-On Thu, May 30, 2024 at 09:17:03AM +0200, Ricard Wanderlof wrote:
-> 
-> On Tue, 28 May 2024, Dmitry Baryshkov wrote:
-> 
-> > On Tue, May 28, 2024 at 12:04:49PM +0200, Ricard Wanderlof wrote:
-> > > 
-> > > Even though data is truncated to 24 bits, the I2S interface does
-> > > accept 32 bit data (the slot widths according to the data sheet
-> > > can be 16 or 32 bits) so let the hw_params callback reflect this,
-> > > even if the lowest 8 bits are not used when 32 bits are specified.
-> > ...
-> > > ---
-> > >  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 11 +++++++----
-> > >  1 file changed, 7 insertions(+), 4 deletions(-)
-> > > 
-> > 
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > 
-> > What about:
-> > 
-> > Fixes: ae053fa234f4 ("drm: bridge: adv7511: Support I2S IEC958 encoded PCM format")
-> > 
-> > ?
-> 
-> IMHO, commit ae053fa234f4 doesn't break anything, so there's nothing to be 
-> fixed. It adds S/PDIF support, which uses a 32 bit format, but the 32 bit 
-> format was not supported at all prior to that commit.
+Byungchul Park <byungchul@sk.com> writes:
 
-Agreed, let's keep it out of the question.
+> On Thu, May 30, 2024 at 09:11:45AM +0800, Huang, Ying wrote:
+>> Byungchul Park <byungchul@sk.com> writes:
+>> 
+>> > On Wed, May 29, 2024 at 09:41:22AM -0700, Dave Hansen wrote:
+>> >> On 5/28/24 22:00, Byungchul Park wrote:
+>> >> > All the code updating ptes already performs TLB flush needed in a safe
+>> >> > way if it's inevitable e.g. munmap.  LUF which controls when to flush in
+>> >> > a higer level than arch code, just leaves stale ro tlb entries that are
+>> >> > currently supposed to be in use.  Could you give a scenario that you are
+>> >> > concering?
+>> >> 
+>> >> Let's go back this scenario:
+>> >> 
+>> >>  	fd = open("/some/file", O_RDONLY);
+>> >>  	ptr1 = mmap(-1, size, PROT_READ, ..., fd, ...);
+>> >>  	foo1 = *ptr1;
+>> >> 
+>> >> There's a read-only PTE at 'ptr1'.  Right?  The page being pointed to is
+>> >> eligible for LUF via the try_to_unmap() paths.  In other words, the page
+>> >> might be reclaimed at any time.  If it is reclaimed, the PTE will be
+>> >> cleared.
+>> >> 
+>> >> Then, the user might do:
+>> >> 
+>> >> 	munmap(ptr1, PAGE_SIZE);
+>> >> 
+>> >> Which will _eventually_ wind up in the zap_pte_range() loop.  But that
+>> >> loop will only see pte_none().  It doesn't do _anything_ to the 'struct
+>> >> mmu_gather'.
+>> >> 
+>> >> The munmap() then lands in tlb_flush_mmu_tlbonly() where it looks at the
+>> >> 'struct mmu_gather':
+>> >> 
+>> >>         if (!(tlb->freed_tables || tlb->cleared_ptes ||
+>> >> 	      tlb->cleared_pmds || tlb->cleared_puds ||
+>> >> 	      tlb->cleared_p4ds))
+>> >>                 return;
+>> >> 
+>> >> But since there were no cleared PTEs (or anything else) during the
+>> >> unmap, this just returns and doesn't flush the TLB.
+>> >> 
+>> >> We now have an address space with a stale TLB entry at 'ptr1' and not
+>> >> even a VMA there.  There's nothing to stop a new VMA from going in,
+>> >> installing a *new* PTE, but getting data from the stale TLB entry that
+>> >> still hasn't been flushed.
+>> >
+>> > Thank you for the explanation.  I got you.  I think I could handle the
+>> > case through a new flag in vma or something indicating LUF has deferred
+>> > necessary TLB flush for it during unmapping so that mmu_gather mechanism
+>> > can be aware of it.  Of course, the performance change should be checked
+>> > again.  Thoughts?
+>> 
+>> I suggest you to start with the simple case.  That is, only support page
+>> reclaiming and migration.  A TLB flushing can be enforced during unmap
+>> with something similar as flush_tlb_batched_pending().
+>
+> While reading flush_tlb_batched_pending(mm), I found it already performs
+> TLB flush for the target mm, if set_tlb_ubc_flush_pending(mm) has been
+> hit at least once since the last flush_tlb_batched_pending(mm).
+>
+> Since LUF also relies on set_tlb_ubc_flush_pending(mm), it's going to
+> perform TLB flush required, in flush_tlb_batched_pending(mm) during
+> munmap().  So it looks safe to me with regard to munmap() already.
+>
+> Is there something that I'm missing?
+>
+> JFYI, regarding to mmap(), I have reworked on fault handler to give up
+> luf when needed in a better way.
 
-> 
-> I don't really have a problem adding the Fixes tag if you think it's 
-> useful, but it doesn't seem quite right to me.
-> 
-> /Ricard
-> -- 
-> Ricard Wolf Wanderlof                           ricardw(at)axis.com
-> Axis Communications AB, Lund, Sweden            www.axis.com
-> Phone +46 46 272 2016                           Fax +46 46 13 61 30
+If TLB flush is always enforced during munmap(), then your solution can
+only avoid TLB flushing for page reclaiming and migration, not unmap.
+Or do I miss something?
 
--- 
-With best wishes
-Dmitry
+--
+Best Regards,
+Huang, Ying
 
