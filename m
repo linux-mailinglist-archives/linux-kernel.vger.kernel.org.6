@@ -1,246 +1,319 @@
-Return-Path: <linux-kernel+bounces-194814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165F48D426B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:35:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503ED8D4271
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B4C1F22D5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D951F233C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48448C8D7;
-	Thu, 30 May 2024 00:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194CDE556;
+	Thu, 30 May 2024 00:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CYMSZNaR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="V3K1UvYD"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0E08814;
-	Thu, 30 May 2024 00:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717029312; cv=fail; b=PHQsvies+nkzV33kTPkjjswLpOOAzDV1/5Z0kdujkfNV6j9UrwXrrGPn8+eiBAq4xWg44VFLA7NI2J5uxorJWvoh8zhWY5AqR/HBaW6binnNRp+1gFXCzMMO63SBP2gG1XgDXX61Vh43ARqk35P0GuUmREi98bxnHQW/LIn9F7A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717029312; c=relaxed/simple;
-	bh=6GP7LcDzl/QIvSbWC0iHlzbIo/6uaHLq+ugmvghoL5M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rJ3PIp3uZHLRdFUr1n/F6F7qNJU6M7HdBDpM/Qh65dWDugD1EF/eHSopKl2+loy/qTF8UYE0q4hPxx64RPopuQsu/VECub3IfMJ8Lu6DohLc9FFBgMrYEqqmonJf4KXUap84xFiwZgAUMu2GEF137/WGEtN66hWYMZU5YCWpDK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CYMSZNaR; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717029311; x=1748565311;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=6GP7LcDzl/QIvSbWC0iHlzbIo/6uaHLq+ugmvghoL5M=;
-  b=CYMSZNaR849zUUm6SLF5/hbuT6zdwojzbYkJzdSZjqMzJpTGOuKqFolF
-   aBS/EpSAB15UhzEYAwQ0LrQJBvkSB9elpaDONpHG8WX10an9RUtmUL6Lt
-   07C/xDtjVpiIna24A2g4mIl8QsPK83hP+ZOBezVenfriUg40Qm+iOT6u2
-   BduI+WKJafb+CVyQeom9mnJjI07JOjVjlNo8hEoUal0LVQNytjWnKE7GA
-   bj5gpD+GrDoBOZ0VUvd8iA4vLw/fNlAUBVcKKreeiVywdJuC1M5uufAR/
-   M9Yw8jd8xKMFC2RbhSRp/Hgobk3INMmpHtw9n7GvlamGt2Fs5ZWFye9/r
-   g==;
-X-CSE-ConnectionGUID: Jtj7JFi2QYqKMtvIYM4jgw==
-X-CSE-MsgGUID: a0c45R4QTjyIdZ8loUSbNw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13323999"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13323999"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 17:35:09 -0700
-X-CSE-ConnectionGUID: RiqqHjBPRHmLpV1CjcFCRg==
-X-CSE-MsgGUID: PDKKUw7kQ160xQHnIN7U4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="36167246"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 May 2024 17:35:09 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 29 May 2024 17:35:08 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 29 May 2024 17:35:08 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 29 May 2024 17:35:08 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 29 May 2024 17:35:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LQYr0WsAaPqGsiX14bOQ3RWkFdaWQPyMooBmY6vZlKiftO9BcbxD5UH+XpamA41WYaFNoxDWto8tF+nLwcX3IuuzdJlaqydeF7kKlnhZ+78fFtXNMSjBoV6vpA5zv/QUhC1Z4NiUT3AkzMfTRrtKpPTAWzEwEF09Dl67WgVbYDIwhw3wiFu2YgVzdIIKG/VrFfDVDp2zrHzGdq3yKIaGqxzy9d12XNtib9KS3L4OBHvwB5HFuvhIXhFMOAB0VFzhR0pnuApGWRUas8ItWOXxWYLkTBaskGK6JwC8702NRSnSvthcUK/p9xeWrV5NBsrpKVaKN0ogSPUsYkrE/OQFMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SkG1VRCMi14BpWzlBZFT0l6LNUgCwtKNagSFzp/Hhjs=;
- b=l7kw5EGZTIMRNW2Dq9fR2znPpcJKgxCOn7TeBf02GpKXgj2OAq+FtXxQMLkrwYCTjjbdoRUrpviYv6mk2MjKNGYa0OmzAdIwk4jGozfk1oB1qbGKgmQN+tt/Y+IgBTcKpbmdnuIbPxrwod4SeaPt4UxnqqKJCI+xdyzHunhxYOSpYWwC7RrEqyUQyvNIE+eJYxTKB8TzyPv9MtFZhfjKzl8Ups9V27bq6lqM92bJsombVgz9x+AzXv6sCK/ZWlbvFdqJQMd52ijUMRLi7XpHnL0ePglzGgHPyRGokfJc4Hg8uyBdvb6c4WGHX+fUFm1pY3W728OTTosJ3w05bZc7Kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MW5PR11MB5787.namprd11.prod.outlook.com (2603:10b6:303:192::7)
- by SJ0PR11MB6623.namprd11.prod.outlook.com (2603:10b6:a03:479::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
- 2024 00:35:05 +0000
-Received: from MW5PR11MB5787.namprd11.prod.outlook.com
- ([fe80::20f8:8626:d842:9ba3]) by MW5PR11MB5787.namprd11.prod.outlook.com
- ([fe80::20f8:8626:d842:9ba3%4]) with mapi id 15.20.7611.030; Thu, 30 May 2024
- 00:35:05 +0000
-From: "Wu, Wentong" <wentong.wu@intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: Genes Lists <lists@sapience.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>,
-	"hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: RE: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
- nodes
-Thread-Topic: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
- nodes
-Thread-Index: AQHasNtEdHvJWkWu6kOkckIV4/5Qy7Gu8DDg
-Date: Thu, 30 May 2024 00:35:05 +0000
-Message-ID: <MW5PR11MB5787C81ABF0C9FFF5A17E4888DF32@MW5PR11MB5787.namprd11.prod.outlook.com>
-References: <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
- <20240528084413.2624435-1-sakari.ailus@linux.intel.com>
-In-Reply-To: <20240528084413.2624435-1-sakari.ailus@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW5PR11MB5787:EE_|SJ0PR11MB6623:EE_
-x-ms-office365-filtering-correlation-id: 4802cd92-1609-4aef-926c-08dc804059cc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?lDoiC5skQKa7VK0W89YaScCvGppXqXAB3daxw6kKilyZ8mlGIM60Upn+3XoJ?=
- =?us-ascii?Q?J5foA6L5EWZK2SpwURPCQhd/zympj5f+Ti/0UptjfCCy4Dqk+6xeZdEfOJqG?=
- =?us-ascii?Q?D6lqz/70/lmN5alsNmB6BjY77PM+pFsrZPpoRCLWlJFtqg55ZWd2VZuqPVNd?=
- =?us-ascii?Q?KJzmV8Nxca1IQj/ggqELYCMftZ9feej2Zn6MDBF9QGLNrnuDER5OMixaGsYQ?=
- =?us-ascii?Q?RU933ciE3ITgdsqrkxB18H+Znfeg+Zgsu8Yuw4pEHfVsyteT/H9BU89Deiue?=
- =?us-ascii?Q?hIVn89kuRNYfQ8bx8stfbQ6zVfNb124xlcLqGsomZnyZ6mfciGWrJgYninfg?=
- =?us-ascii?Q?SMVgUIC92XPgAGjzOLT9UUL3/a/jKqyb36cmfQTPAFCm6EmVwpHL1jWuYEt/?=
- =?us-ascii?Q?MHMGRYoK14JKy/hy1+QwzgkUq1OhFCTc8+G/qM6tiw3GVBzJxBFt+fqjb0s4?=
- =?us-ascii?Q?aqLNEj/8lX+QXX6SZz//WiYlle/ukTp1MV6Aovh4zqsJdc01TrKARBy7Ne0F?=
- =?us-ascii?Q?Fg7KGpQQCaRDqV1TjX3imsHeZL/Ml1hYwj8ZW9H4605YwIlLnFXuCcyao4Ii?=
- =?us-ascii?Q?pX806+Gk2FTXkpqs/zXcfHnCPj44VuDZIjfnSmEEWcOI8vmAhkPzoCvkC9mI?=
- =?us-ascii?Q?y0PjiVI+jvuHdmbfMDiznbcjqFVWA11C7o6DOdm/h/GJ7bh1lqucWA+gmynA?=
- =?us-ascii?Q?JHSJ0SBc61CLburHcsN0BQP5g5nvcJgZh9oQ5eNzQw+xa1VlXOyEXZ4h7saf?=
- =?us-ascii?Q?0p7oVMyjT4XlgTNCzNWCG8giqJTd9puq5gTwpKtePLXYyzKt64wA2ro5r86K?=
- =?us-ascii?Q?0P7H+IpSfFihfbKX6OQCwNKl5zaZ15hsjRfF/3Px8SVhZJObihi+8IBhuoTK?=
- =?us-ascii?Q?k9XzYULVPTMto6sDsvCMYA7f+tHdu5rMKByhsBMthoHyD27Kcp1txC4tQ1oU?=
- =?us-ascii?Q?gI/3K97GBP4NOuDTzIZt/+K60mO5LDDo547Hk5aQiIhidMZgvf6Csc+IKnw1?=
- =?us-ascii?Q?OmDt85pqqgSl2IdGg6U5O3PXm8mCkJ4efnThuYFWyko52A+wcy3mnASrwqJK?=
- =?us-ascii?Q?EcKbELTUH+2U9zO9hLJU8tqRAuDQfiS5gJwRc+5Jp0k05AG50TsIcH++V0dm?=
- =?us-ascii?Q?0KMhkTh45DVZ9cwK/R3R8lyiHAPo/pQl81t3oR+MoUdQcVtJHbWvBYLQMcV/?=
- =?us-ascii?Q?oJqhQ0YvfqgjXtlxEXdam0XKUw7ZEa5KKJSx6EfjZVjY+7fitpdqHJZ9oTdd?=
- =?us-ascii?Q?8t5Hq1fJygZWr+KU/OEsDvBZfb5BiQCJnxrIXkYl8xzTa/f1H6+bX62OR+B0?=
- =?us-ascii?Q?W1nlsItDdXAPEN08xsQmDgQy?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5787.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0wX7Q1kDIWEuxVT96Pkc4BiC6eawury/MYklBd2PXigHKGUMPfcwO+zJxAkr?=
- =?us-ascii?Q?PH6+bMh3L+geYbyLXKDH1Sr/0KwU/4zErKil1cAUdE+au/Y0lOjZps7AQtV8?=
- =?us-ascii?Q?ClEjGXw2+1Qj5VAfqpkPcFEjk5i5hPXWkuWmpzaMTNBLMopJc7FteMtXAyYf?=
- =?us-ascii?Q?Q5iTW1q7aEWRfBRhHDVuuUJfSWTrRn/oxCznAJoVF1oXdypBNjdvgpMXSTzE?=
- =?us-ascii?Q?sl/qzYhEb59Og9/cpqEaYX2m9ChINYuBOHLIKxLwO0Vb7ra+LDZZnkg902tn?=
- =?us-ascii?Q?OSnet8egU2r5fw1OPqIRxKHYo0bRZfVyzhJcHuGFtk1AGmwdqLL6NR/PNEZT?=
- =?us-ascii?Q?/ATYsxaEffuMtses9yPXDcJpyE6TYGJUNr+BSuE0Vc7wvuEEIFhli/HU4A9d?=
- =?us-ascii?Q?cYANVfhN4ZVUS/6qNRGTDQxuv7SUNdoIEtYloXmaRyhnPqvavsZijuyiN52l?=
- =?us-ascii?Q?Bgi7yiCjzuCNohNst0Ei+QCEdO6ETYMvPKL2V2G0aV1bA+mtKdPMD5i5/fux?=
- =?us-ascii?Q?IqdvR3g375L4jT8u7JqIgPDkDpd//DkBwgu8WbrDm5D8BkeN5YuWZcYNIbXq?=
- =?us-ascii?Q?pjQ/OZyJcBbdpkY9l8g5XAAlkbc/eMvHdqTf2T/eX/VB8n6ygy0VxHd6z+I2?=
- =?us-ascii?Q?Xr3O7SpdkMd/hlCSsltqEjd09S4XlM46MGp4hujpC0fdgdUK+D1cLZTHGCSi?=
- =?us-ascii?Q?Sp75IOVmME+cGi2z1asWV+HtN/UJ2qThNNrCzNmNbfMXvXG6/JAugdM88MrG?=
- =?us-ascii?Q?2SJjQIWfW+13tLmuVKO7FLZds2hrKFJqBrUqhyp6lx35ae2xq8YR2uw78KkW?=
- =?us-ascii?Q?HE+G04Lnbudf2TwNuZIzqZacOjRzub6bh7Lwqt8fOgwosR2BYxx/HtEq0xaR?=
- =?us-ascii?Q?UisV3YHBLhTGJfVo98/5tybMHhHPveKYROLIYAhr8fXeOws5Tl+dqVw50Yga?=
- =?us-ascii?Q?kC18dPAa7/Q+6fw5y8yeg0kXjpqXDaOF+/3ji+3PaeBfiig74DcJZU7QLnya?=
- =?us-ascii?Q?yCd1a2eNeZ5MB601I2D/+QN3AmyO7p7npgj7h7gmSPq9jCD5nh4F5mxQlal6?=
- =?us-ascii?Q?/OHCgAXQTUYoZpUMOZ1YX30ucYkfI9x1prb7p3ZA8ru0L2Sgqi8FgW+rVcvH?=
- =?us-ascii?Q?TwCdsfqbXODsrPZGD7sW4cfmuVKiRhpQdJrpVSrH5W5Tuaq+cOgy02J7ZdG3?=
- =?us-ascii?Q?KMtkOebzgAh9/mv7YlNvTWwSDsPPzS3RqAWF8oAvKmGg/AVkhFY+4vVWrSK1?=
- =?us-ascii?Q?17QV+N8Slk2+kE0wFG/ETdM9vn4icCM380Kb0MzgRMUMj4XrPicnim4VpSYs?=
- =?us-ascii?Q?BxLgDEf9jpa3ipT54hC66xLDNqGuEuWBg9udZu5XY9R0slVPpveGL0dCgt8V?=
- =?us-ascii?Q?JEhmI5wM08ada8xLGJcBkhCmXcNUglPi4iicPKp2U+greSHmJqMzPF5rS9WZ?=
- =?us-ascii?Q?oJssJ/4KWEip2qAkSBwMDZ94WI/Puy+ilCZeUChL+RGAUuQ5uwXuPDJTZN1M?=
- =?us-ascii?Q?qQMKDYt4c8GV31Gjzxps8uPYX+RNDAFAcX7BKeIaOfYp4fab5jeeDfdMVE+j?=
- =?us-ascii?Q?rOVpE1N65COcFY04cn/M319kuj96feU+64CxskEy?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657678C1A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717029881; cv=none; b=t5sf0xbRmalYwj+stOoZ8tPV0v4M9ilqYPyW9RXonDPw467nOuUDwYnKzfjAxieQasSLXmnCbY3aHmCFzi0IEDTbqPYl7rUW1mlDVbFSGBsOCadeWG3SzPj4CTSYWjox5tzzVmzDZiEdA5PAe8F4zbgJvAHH+omFR4gb6RZgVO8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717029881; c=relaxed/simple;
+	bh=dah9ppjnlzlo+61Dpp9M5zKL7GqTZ2DyDyqODY0DSRA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dG5zQj3E82S/Uvq6rG8280oZeNJjP8rJEN6wBLo93let69KMkugmy081sw6iRYt2/rxp8om+B3ldB+hqUvYM+f2fW+EWU1gKvdy0IP9yW6ImX6FARF96LWRDSLP21oS2cHsLPWUzhGPjg9wseLA6cuhS8LPQDHpcAl6pmaVUJKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=V3K1UvYD; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6fbbd937719so315589b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1717029879; x=1717634679; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rCzRJkj1CS92P5UL4N6EIOsMjdv4mGiz9WlXzg9a4rQ=;
+        b=V3K1UvYDe+L++cky8ZEcuukY3Uh6PWTVmMJg+La1kpUqzwNvBgfjOVbxwNvhXcEZaW
+         L26/4MvOrkGeWkRu0YZZajDKVEDaWYTLL/6SE9Q4bzX/tY4TTqzVlumY1CKeESGwU77M
+         w9RK7jvvOyJU9ZFRP/v52BN8MDVa5aApIahiY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717029879; x=1717634679;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rCzRJkj1CS92P5UL4N6EIOsMjdv4mGiz9WlXzg9a4rQ=;
+        b=CjHc2ba9SXp2ZkUz1QZVWWFfLDb86FOmGIOb59Vm11vi5vJABpR27P3cVJMuKpOmwG
+         Iit+nDaIYv6zO9hM7dcD+CPO1ybx6vYDWWP7wz3qdXkZFsAn+0lqwHrW9/UGpwFpbc3a
+         oXFLeAyVj8AXrHeu80szXPEe6/Xs8/pqZxNGWJoera6m/72jJwBLA94qWgCdLc/A4yZ5
+         sXVwya8sq2GwmTtkFvxd+WiKMTMG2cI/s0NaEl7vdL3K4qmY3WsYbn6nXnL39z744SkG
+         Ot3GP+2Tf7N42rRxM+iGckSe0UoY02znws5joB0/FArUQZm5Q+bKKUDEwn8C8/2elJbb
+         T5zw==
+X-Gm-Message-State: AOJu0YwzlaYu8iVSxAmqvb3pmoedY/xXIH1/7DFAXiXVtEnnxT55pkHi
+	Ze/LJHwFGT5ZVJ4vwFNX9+CQczGLfcxSOBRc7oSHqmZligo6L8m0Qq+9gD9ibg==
+X-Google-Smtp-Source: AGHT+IHwDMLSgDYOlyi5QH1JnmlZc4CE2Nq6P0ZJpWRVppHjw0PEH3ZRBVrPALS2TxI2l35Jt0vyPw==
+X-Received: by 2002:a05:6a20:9752:b0:1b1:f6a9:6b31 with SMTP id adf61e73a8af0-1b26460c771mr556508637.61.1717029878514;
+        Wed, 29 May 2024 17:44:38 -0700 (PDT)
+Received: from [10.66.192.68] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f93d308732sm8304742b3a.101.2024.05.29.17.44.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 17:44:38 -0700 (PDT)
+Message-ID: <9ca6230c-740c-4f1a-8fdf-73f74cf025a1@broadcom.com>
+Date: Wed, 29 May 2024 17:44:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5787.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4802cd92-1609-4aef-926c-08dc804059cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2024 00:35:05.2319
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xQUwraSMehpvPesk6Sx1oFFMLm985gEgpZWtrdZ+FIhU12Q1nqpq9y03OOU6nYbK/PHiVUdlxP/eJPgr60PNXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6623
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/8] x86/vmware: Introduce VMware hypercall API
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
+ tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
+ richardcochran@gmail.com, linux-input@vger.kernel.org,
+ dmitry.torokhov@gmail.com, zackr@vmware.com,
+ linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+ timothym@vmware.com, akaher@vmware.com, dri-devel@lists.freedesktop.org,
+ daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, horms@kernel.org,
+ kirill.shutemov@linux.intel.com
+References: <20240523191446.54695-1-alexey.makhalov@broadcom.com>
+ <20240523191446.54695-2-alexey.makhalov@broadcom.com>
+ <20240527170734.GCZlS91uXD68HRN1na@fat_crate.local>
+Content-Language: en-US
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
+ 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 EuY0
+In-Reply-To: <20240527170734.GCZlS91uXD68HRN1na@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> From: Sakari Ailus <sakari.ailus@linux.intel.com>
->=20
-> Ignore camera related graph port nodes on Dell XPS 9320. They data in BIO=
-S
-They -> The
 
-> is buggy, just like it is for Dell XPS 9315. The corresponding software n=
-odes
-> are created by the ipu-bridge.
->=20
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Reviewed-by: Wentong Wu <wentong.wu@intel.com>
+On 5/27/24 10:07 AM, Borislav Petkov wrote:
+> On Thu, May 23, 2024 at 12:14:39PM -0700, Alexey Makhalov wrote:
+>> +#define VMWARE_HYPERCALL						\
+>> +	ALTERNATIVE_3("",						\
+>> +		      "jmp .Lport_call%=", X86_FEATURE_HYPERVISOR,	\
+>> +		      "jmp .Lvmcall%=", X86_FEATURE_VMCALL,		\
+>> +		      "vmmcall\n\t"					\
+>> +		      "jmp .Lend%=", X86_FEATURE_VMW_VMMCALL)		\
+>> +		      "cmpb $"						\
+>> +			__stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL)	\
+>> +			", %[mode]\n\t"					\
+>> +		      "jg .Lvmcall%=\n\t"				\
+>> +		      "je .Lvmmcall%=\n\t"				\
+>> +		      ".Lport_call%=: movw %[port], %%dx\n\t"		\
+>> +		      "inl (%%dx), %%eax\n\t"				\
+>> +		      "jmp .Lend%=\n\t"					\
+>> +		      ".Lvmmcall%=: vmmcall\n\t"			\
+>> +		      "jmp .Lend%=\n\t"					\
+>> +		      ".Lvmcall%=: vmcall\n\t"				\
+>> +		      ".Lend%=:"
+> 
+> So applied (and with minor fixups for the proper indentation, see end of
+> this mail) this looks like this:
+> 
+> .pushsection .altinstructions,"a"
+>   .long 661b - .
+>   .long 6641f - .
+>   .4byte ( 4*32+31)
+>   .byte 663b-661b
+>   .byte 6651f-6641f
+>   .long 661b - .
+>   .long 6642f - .
+>   .4byte ( 8*32+18)
+>   .byte 663b-661b
+>   .byte 6652f-6642f
+>   .long 661b - .
+>   .long 6643f - .
+>   .4byte ( 8*32+19)
+>   .byte 663b-661b
+>   .byte 6653f-6643f
+> .popsection
+> .pushsection .altinstr_replacement, "ax"
+> # ALT: replacement 1
+> 6641:
+>          jmp .Lport_call72
+> 6651:
+> # ALT: replacement 2
+> 6642:
+>          jmp .Lvmcall72
+> 6652:
+> # ALT: replacement 3
+> 6643:
+>          vmmcall
+>          jmp .Lend72
+> 6653:
+> .popsection
+>          cmpb $((((1UL))) << (0)), vmware_hypercall_mode(%rip)   # vmware_hypercall_mode
+>          jg .Lvmcall72
+>          je .Lvmmcall72
+> .Lport_call72:
+>          movw $22104, %dx        #
+>          inl (%dx), %eax
+>          jmp .Lend72
+> .Lvmmcall72:
+>          vmmcall
+>          jmp .Lend72
+> .Lvmcall72:
+>          vmcall
+> .Lend72:
+> 
 > ---
-> Hi,
->=20
-> Could you test this and see whether it fixes the warning?
->=20
-> The camera might work with this change, too.
->=20
-> - Sakari
->=20
->  drivers/acpi/mipi-disco-img.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/acpi/mipi-disco-img.c b/drivers/acpi/mipi-disco-img.=
-c
-> index d05413a0672a..bf9a5cee32ac 100644
-> --- a/drivers/acpi/mipi-disco-img.c
-> +++ b/drivers/acpi/mipi-disco-img.c
-> @@ -732,6 +732,12 @@ static const struct dmi_system_id
-> dmi_ignore_port_nodes[] =3D {
->  			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS
-> 9315"),
->  		},
->  	},
-> +	{
-> +		.matches =3D {
-> +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS
-> 9320"),
-> +		},
-> +	},
->  	{ }
->  };
->=20
-> --
-> 2.39.2
+> 
+> so AFAICT, you want three things:
+> 
+> 1. X86_FEATURE_HYPERVISOR - that is always set when running as a guest.
+>     For that it should do:
+> 
+>          movw $22104, %dx        #
+>          inl (%dx), %eax
+> 
+> 2. X86_FEATURE_VMCALL:
+> 
+> 	vmcall
+> 
+> 3. X86_FEATURE_VMW_VMMCALL:
+> 
+> 	vmmcall
+> 
+> So why don't you simply do that?
+> 
+> vmware_set_capabilities() sets vmware_hypercall_mode *and* those feature
+> flags at the same time.
+> 
+> And you either support VMCALL or VMMCALL so the first thing should be the
+> fallback for some ancient crap.
+> 
+> IOW, your hypercall alternative should simply be:
+> 
+> 	ALTERNATIVE_2("vmcall", "vmmcall", X86_FEATURE_VMW_VMMCALL, "movw %[port], %%dx; "inl (%%dx), %%eax", X86_FEATURE_HYPERVISOR);
+> 
+> without any more silly dance?
+While most of the vmware_hypercall callers are executed after 
+alternative patching applied, there are small amount of hypercalls 
+running before that.
+Only for them we have the logic of analyzing vmware_hypercall_mode as a 
+default alternative code. And there are 2 constraints:
+1. vmcall/vmmcall are not supported by old ESXi/Workstation/Fusion. We 
+have to use in/out instructions. After the end of support of old 
+hypervisors the alternative can be simplified as follow:
+ALTERNATIVE("vmcall", "vmmcall", X86_FEATURE_VMW_VMMCALL);
+2. SEV-ES enabled VMs should use _only_ vmcall/vmmcall as in/out 
+instructions cause faults.
 
+Another approach that we discussed internally was to use
+ALTERNATIVE_2("movw %[port], %%dx; "inl (%%dx), %%eax", "vmcall", 
+X86_FEATURE_VMW_VMCALL, "vmmcall", X86_FEATURE_VMW_VMMCALL) for 
+vmware_hypercallX family of functions, _and_ to have a separate API
+vmware_sev_hypercallX, with the silly dance without an alternative 
+inside, to be used only by early boot code, before alternative 
+application. But, it's error prone when things come to boot time related 
+code movements or rearrangements as it puts additional requirement for 
+SEV-ES understanding/testing for VMware guests.
+
+So, we picked a safe solution until a deprecation of port based 
+hypercalls, which was mentioned above.
+
+
+See also a commit bac7b4e843232 ("x86/vmware: Update platform detection 
+code for VMCALL/VMMCALL hypercalls") where silly dance was introduced 
+with VMWARE_CMD macro.
+
+> 
+> Hmmm?
+> 
+> ---
+> 
+> Fixup indentation for proper .s output:
+> 
+> diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+> index 5114f4c75c54..8be877d8bb7c 100644
+> --- a/arch/x86/include/asm/vmware.h
+> +++ b/arch/x86/include/asm/vmware.h
+> @@ -70,17 +70,18 @@ extern u8 vmware_hypercall_mode;
+>   		      "jmp .Lvmcall%=", X86_FEATURE_VMCALL,		\
+>   		      "vmmcall\n\t"					\
+>   		      "jmp .Lend%=", X86_FEATURE_VMW_VMMCALL)		\
+> -		      "cmpb $"						\
+> -			__stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL)	\
+> -			", %[mode]\n\t"					\
+> +		      "\tcmpb $" __stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL) ", %[mode]\n\t" \
+Noted \t prefix before cmpb, but will keep original 3 lines to fit in 80 
+columns limit.
+
+>   		      "jg .Lvmcall%=\n\t"				\
+> -		      "je .Lvmmcall%=\n\t"				\
+> -		      ".Lport_call%=: movw %[port], %%dx\n\t"		\
+> +		      "je .Lvmmcall%=\n"				\
+> +		      ".Lport_call%=:\n\t"				\
+> +		      "movw %[port], %%dx\n\t"				\
+Noted having labels on a separate line.
+>   		      "inl (%%dx), %%eax\n\t"				\
+> -		      "jmp .Lend%=\n\t"					\
+> -		      ".Lvmmcall%=: vmmcall\n\t"			\
+> -		      "jmp .Lend%=\n\t"					\
+> -		      ".Lvmcall%=: vmcall\n\t"				\
+> +		      "jmp .Lend%=\n"					\
+> +		      ".Lvmmcall%=:\n\t"				\
+> +		      "vmmcall\n\t"					\
+> +		      "jmp .Lend%=\n"					\
+> +		      ".Lvmcall%=:\n\t"					\
+> +		      "vmcall\n"					\
+>   		      ".Lend%=:"
+>   
+>   static inline
+> 
+> 
+Best regards,
+--Alexey
 
