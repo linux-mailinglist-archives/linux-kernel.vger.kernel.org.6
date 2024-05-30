@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-195600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC14E8D4F1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:30:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE9B8D4F24
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33AADB28595
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E73F1C24778
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123DB17F506;
-	Thu, 30 May 2024 15:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA10182D16;
+	Thu, 30 May 2024 15:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RwxRXyhJ"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Bc3mevJp"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9CC176246
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C247D187562;
+	Thu, 30 May 2024 15:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717083021; cv=none; b=pJRLGk27sccETFrBa6ZW4gqxT1SG3oMc/lWkPU9OISaXnjuybxrRxiTeZUkrXqX2EF0aWS61optLoN3nLh5VXuGwGem9BIQSJlg30V4twZ+Ohs4k5xnflaF0GI4qMxJK4dVET1jCeeZVQ0cPRK3H+5D38aO7c3JLjYQTdcLTb+Q=
+	t=1717083146; cv=none; b=LJd7tfxkcFuLB/gUKnZECG0RLTVMixUjZz26iHKalX6qh1bNW4KBqdHy4zRDGf6MNBl+RbVbP5bzAshxhaV3GhGYasMSrWnO1yKa/NIPrj2Z/q639ShO79CqdnbFNMBZIpFHrH0+unRyJka4+xbByEwSwkLJdRu6ttzH2Q/b3Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717083021; c=relaxed/simple;
-	bh=iaQfvQSJKPuqC/g7uIa9elYYZ+csDMb2TH/hJRRLu2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kG8OnY5aywvOGGd+84pbf5mXFSOgk6rAzNicWjoDGofZvo2nk69xiJCKVeYVIHynbD/+8rP+0AqwXsqtLdiFAXKnDNxDbaoN7yvjhB2ja0lw+KcnF3/xICSakZWGpEYHk6aDiCsXpccX7fqLANcK2HdLKlfjg8xuq0idiSw6kgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RwxRXyhJ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-421124a04d6so11061385e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:30:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717083017; x=1717687817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vfRTfm9PXIfDsjwFwFKFqJQ/IgaytwUE/fEPjM3ptoM=;
-        b=RwxRXyhJhkRItncwlXfKJajxvWK4y60x3N+EzuX6Kk62gFA3h1T1X9dDFfuVzRAQsS
-         +h1tAuPkp7DiDB+us1DEpFjc2MUU0arDklSNBr22EoGhwsf5cimeZxMcPGes/NQG83Df
-         eSzLJJuzEjIv/WVrkDrCWKIb541kyddFLhRNs23+LkTcj/IBoqvXVdvrzSGS6MfXDlE7
-         Pq1JXtyfpeqp0zDFm9RPU6Tl0AqEe+/9NcHp5avMdEiNafywN55O9A+PGgWzIE5pJUdZ
-         356DtD4a1uyseP4XUL3G4Iv3pg63PrH4IogdwoU2qb7/UDNkEWIwvW52j6crzEJpZHgq
-         sXVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717083017; x=1717687817;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfRTfm9PXIfDsjwFwFKFqJQ/IgaytwUE/fEPjM3ptoM=;
-        b=m1S6JP2lM0VmAnG6IPk5dQ2/pwOXImRCgttDOOxw0qtxSsRyBWOGdvXMxRgc3A04hV
-         7g/jXcd/K/ThPLj2lAQpfHPy186qRXrHeFs6USrxhUIlszL9uUBXSukU4d1o7agEHAuo
-         pp4SMpXw7tYAmsS3tsjwLQgMe8ptk/Q4sIjX/gwbSM8VDUzjKrenqm4X5ccvbKEz3reO
-         cB/RO95S8Nrc+eDDrti4whpohNNDyqekEp14KDSulcSfYqZXrV6hoTwaFWILX0vNoJrr
-         C9yP+390IY6z4w8Y4OCxg4SkebdH+ARJlQi0t2UDc2cnWqRZACyWkD/pjTCzTmHMWZk5
-         P/jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUyOou67yoV2E5L/43G9Exyrw+8dIHnxkP58KXnwQ/UU7sXwSieKyXAVb5HcoaIlSr+pg1vEzCt/gMMitKBojr6wdsEqxuUffaSjTW
-X-Gm-Message-State: AOJu0YxId96FUVWCE3DTN8ay2xEBZH8a9PwMXWI4tzrP/0/VZOUatyCt
-	idQuNIEieiHKUaa4jldZTPvb666/IXIAUAbfyD3hA/7YqoYVyNGDTxA9lMd4QIc=
-X-Google-Smtp-Source: AGHT+IGG1oTknVJBn2jB+FyeaYyisX4fTAtHZFR8cnWyGDDbZhWRb+CCfMPl6Eoi3fkG0umZ+H0w7g==
-X-Received: by 2002:a05:600c:3d8b:b0:421:29e1:998 with SMTP id 5b1f17b1804b1-42129e10af2mr9062085e9.39.1717083017479;
-        Thu, 30 May 2024 08:30:17 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:5de0:a23:f1c3:862a:5eac? ([2a10:bac0:b000:5de0:a23:f1c3:862a:5eac])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212706c952sm28153545e9.26.2024.05.30.08.30.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 08:30:17 -0700 (PDT)
-Message-ID: <186d2d79-b7c2-4fab-8243-4c7080412074@suse.com>
-Date: Thu, 30 May 2024 18:30:15 +0300
+	s=arc-20240116; t=1717083146; c=relaxed/simple;
+	bh=xU78c35cySFprEs0gAWdyzNuzHJJhmMy0Bc5xuRB+/4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=g7xEV6uQ391hqoURnNFkpzldNCPM8nvy2dNincREMCC81hkzsBPRiUux0FNr3LoUdIEWMP5CZU1d0nToFwRki1WfpaqGYxE/IDttsPT0Zg3KSZDk3FZwP4NP8KUDMk+3gmDv03CKMN+l0vEAbqsvow0gBhs0MgaK1+3UGvoyyqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Bc3mevJp; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UFVLIh035363;
+	Thu, 30 May 2024 10:31:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717083081;
+	bh=U5EUOfv2mrP9qldUr1bHrOoxb/sZHG7SQL8d6HDZlBM=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=Bc3mevJpy/5QCSBtAJAItZ+EAWKAFR+p10nDu9Yjm0hgqb4/HqwsZICaYOIuCfHkv
+	 VWdyrEX9HmqjFMoVWO4duSieEA3QLxdQZJOs+X6H+KtL04oYsNc8ZEpEZJnTtj2rRr
+	 6P1+a5t6BYIsZ87OeD16WBxyP9v9RWQXBXWbaNwk=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UFVLYm010838
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 10:31:21 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 10:31:20 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 10:31:20 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UFVK6Q118224;
+	Thu, 30 May 2024 10:31:20 -0500
+Message-ID: <223d9482-ede8-4f58-b11a-d82f2556c26b@ti.com>
+Date: Thu, 30 May 2024 10:31:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,66 +64,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] prefetch: Add ARCH_HAS_PREFETCH definition when the
- architecture is not defined
-To: Youling Tang <youling.tang@linux.dev>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- Mateusz Guzik <mjguzik@gmail.com>, Youling Tang <tangyouling@kylinos.cn>
-References: <20240529032059.899347-1-youling.tang@linux.dev>
- <20240529032059.899347-2-youling.tang@linux.dev>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [PATCH v2 8/8] arm64: defconfig: Enable TI eQEP Driver
+From: Judith Mendez <jm@ti.com>
+To: Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>
+CC: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        David Lechner
+	<david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, Vignesh
+ Raghavendra <vigneshr@ti.com>
+References: <20240523231516.545085-1-jm@ti.com>
+ <20240523231516.545085-9-jm@ti.com>
+ <20240524055923.zyfthiwcsbwbjg5k@undecided>
+ <ddcab8c0-3772-4134-a3bb-27729e864627@ti.com>
 Content-Language: en-US
-In-Reply-To: <20240529032059.899347-2-youling.tang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <ddcab8c0-3772-4134-a3bb-27729e864627@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hi Nishanth,
 
-
-On 29.05.24 г. 6:20 ч., Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
+On 5/24/24 9:13 AM, Judith Mendez wrote:
+> Hi Nishanth,
 > 
-> After commit ab483570a13b ("x86 & generic: change to __builtin_prefetch()"), the
-> __builtin_prefetch implementation will be used by default, so add its definition
-> to return to a state similar to before commit[1].
+> On 5/24/24 12:59 AM, Nishanth Menon wrote:
+>> On 18:15-20240523, Judith Mendez wrote:
+>>> TI K3 SoC's support eQEP hardware, so enable TI eQEP driver
+>>> to be built as a module.
+>>
+>> All the nodes seem to be only in disabled mode, is there even a single
+>> board that is actually using this? if so, why isn't it enabled?
+> 
+> I will add pinmux and enable in the board level dts file.
 
-I find those references to the past state somewhat confusing and not 
-really adding sustenance to the explanation.
+Question about the above... If I enable eQEP at the board level,
+there will be pinmux conflicts. So, I could:
+1. Leave eQEP disabled
+2. Enable eQEP and disable main_uart1 at the board level dts file
+3. Enable eQEP in an overlay and also disable main_uart1
+
+Let me know which option works for you.
+
+~ Judith
 
 > 
-> Currently prefetch_range() will be empty implemented under the x86_64 architecture,
-> there was a concrete implementation before "x86 & generic: change to
-> __builtin_prefetch()", so fix it.
+>>
+>>>
+>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>> ---
+>>> Changes since v1:
+>>> - No change
+>>> ---
+>>>   arch/arm64/configs/defconfig | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>> index 2c30d617e1802..23d11a1b20195 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -1593,6 +1593,7 @@ CONFIG_INTERCONNECT_QCOM_SM8550=y
+>>>   CONFIG_INTERCONNECT_QCOM_SM8650=y
+>>>   CONFIG_INTERCONNECT_QCOM_X1E80100=y
+>>>   CONFIG_COUNTER=m
+>>> +CONFIG_TI_EQEP=m
+>>>   CONFIG_RZ_MTU3_CNT=m
+>>>   CONFIG_HTE=y
+>>>   CONFIG_HTE_TEGRA194=y
+>>> -- 
+>>> 2.45.1
+>>>
+>>
+> 
+> 
 
-Actually prefetch_range will be empty for every architecture which 
-doesn't defined ARCH_HAS_PREFETCH and since we have a working generic 
-fallback this indeed seems backwards. So defining ARCH_HAS_PREFETCH 
-makes sense.
-
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-
-> 
-> No similar changes have been made to ARCH_HAS_PREFETCHW at this time.
-> 
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/include/linux/prefetch.h?id=8e4f2fd31bf737abb392e694898a1496157623b5
-> 
-> Fixes: ab483570a13b ("x86 & generic: change to __builtin_prefetch()")
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> ---
->   include/linux/prefetch.h | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/prefetch.h b/include/linux/prefetch.h
-> index b068e2e60939..162b7105e37c 100644
-> --- a/include/linux/prefetch.h
-> +++ b/include/linux/prefetch.h
-> @@ -36,6 +36,7 @@ struct page;
->   */
->   
->   #ifndef ARCH_HAS_PREFETCH
-> +#define ARCH_HAS_PREFETCH
->   #define prefetch(x) __builtin_prefetch(x)
->   #endif
->   
 
