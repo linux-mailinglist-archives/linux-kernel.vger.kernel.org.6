@@ -1,186 +1,202 @@
-Return-Path: <linux-kernel+bounces-195652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF648D4FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107F98D4FCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0EC1C21E75
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:24:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E82E283693
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DCD22F17;
-	Thu, 30 May 2024 16:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782D82D05D;
+	Thu, 30 May 2024 16:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1VW6tcj8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dlTcygrV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="zXNufaPs"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2129.outbound.protection.outlook.com [40.107.93.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150A8219F6;
-	Thu, 30 May 2024 16:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717086284; cv=none; b=W055kUA8bkbBkUdfStG3Mw80uj/R75nhrij4wRxkqgS14S7RbovOY5ScT+6+FfirAZqmi8grhLgQ3oBjXMRVbOXCSilVkpQPrpTXQA32KDwkMly6j+2+hALU/Lz9Jkb1fwrZn8IevKKpH4tiJGmqRCG5+NWAFX/8Sd8MCCDtW+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717086284; c=relaxed/simple;
-	bh=vXWTXGZIzOjj6SO56PbBHSdngFth82k1cfiLOtC6JKI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tKUieBYdTzyw99ag/BcpuedkKx2hi+MBbBmzgzp+NK0R/BWbL46xcsqBb0iroImfK0yz/5nqbZymc2Pg5dKWy3Doa+3avtQk8SzkxtJaLvKtP13LANPMEt0RWIMapOLA3YD4X3mQla3Q3Xm9OokqMMwEzLPkOuNd4H/kbWDioyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1VW6tcj8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dlTcygrV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717086281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=su+nBpg+I//Su4qJT5o+I2Xt7bzzHBxGQXv4g2dGYMs=;
-	b=1VW6tcj85D/9Rn/mj6JEpzRAiK5GP8ZWQTlhFkL8PZwhIbwZInZ5VCYIJOWuBCKjQCNCYy
-	7fGWWLd3i305NyzYV0dGY7UqA0Gzl+v3zQKHcRyT65f6xvTnxnNM794z05JFVHbrpYLZFH
-	ZA1COKQJExm9AEQ9e7nhMtQKhSfdYfH6WWxrC5co8Krpo2Y1dJAcuq1OJIWPJ1cHrCkOw5
-	+Em7rhn1IoKGBa880/fjgt7DILsh5XSHg23J1/q/DTnivbYRVMkP+fSZh0S7koFiqGO8Hy
-	AEJHxUabb9+o/31dVH1ZGb53cB0uvTM4bvjaUjyNsyKpoP5QFAuJ+bkixEQJyQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717086281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=su+nBpg+I//Su4qJT5o+I2Xt7bzzHBxGQXv4g2dGYMs=;
-	b=dlTcygrV0LHqp6LzvKBkScrYdBB2Ubuu4Y459H4noqSYzuOyO2U4dEwVtUopkQld0T5RJ9
-	j/DF0JgPa4eUzGDQ==
-To: Peter Schneider <pschneider1968@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
- stable@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
-In-Reply-To: <87o78n8fe2.ffs@tglx>
-References: <877cffcs7h.ffs@tglx>
- <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
- <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
- <87zfs78zxq.ffs@tglx>
- <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
- <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx>
-Date: Thu, 30 May 2024 18:24:39 +0200
-Message-ID: <87le3r8dyw.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A702376A;
+	Thu, 30 May 2024 16:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717086303; cv=fail; b=Hiu6EwcQTSWYjIpp9YfVaFf4irZHD4GObMrl3YLegf29wu+GwYQs2q7HjZxvWCNfUFymeAoC2yGJuIA5sHRIXsKGdw+YqIlBwnwGrc/EI8TPxMs+hgN5ESqp9ZoMzSxduQC5Sjj1LgZMc1QU2iQsh5rslPAgIQbFL+TKoe2R45c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717086303; c=relaxed/simple;
+	bh=k2mMwNEZ/CZMIab1bN+4+fgyFZdJ4MXUageWlnXYQjM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dsx/Km1HjqGryr/16B+YiCJn0UAVcyBaWV18wpU6lbHyXqv4IRMIEmzK/g2bfjnGo5jrigqTMnyiVb4cY5N5O5yXMSe9QJpqCmHEqnVr+ER7Q94aVRBnC7rmQYJPIEY+3FvNHj7coYcSPHALKrzcmYjOh4iP6Nbn4Vzak6kj4fA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=zXNufaPs reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.93.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aWoHymj/vpW+YDWC/HgN81BvWjgeCfZy2//Os/XAMHtJH2coQPp1iz4sOcgqGy4GF2CtfDvW1mtqscMEtNEBBouS7Syj4Jh4jhV0Vjj4GgqGkPvTEQPvoRJJROnOwtMQt3BQGruZBDriTAQvVZTElzHkia/6wQrXBFXM7KZNN4bRFiaSLLKhptNr3LRVuOik9lC5qsn0iaJtOxUp9S9OFs4nlGly7IhVz5SmV+5MAmRuteOLqwVIvX7bQq6VlH6SI/IMdaM3w6SLbELcbe9oxMGg+ZODRutMOAszbhhCHMCf5I1jVaPfa9XY/VqcTxbEPuxs6CglC4aWZlgPt2vygA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bf31ph3G8MTQTtY2CNUF1gzr3KEbmQOJVdyuh0WNncM=;
+ b=fwIBV0vlQCnjHXPNJn8gW0MRQPdFuiSP46FFoGVsHr8OuAoOkzsBzI9OY0NFYt9OfvB8e5pbxcfr8XLj3Pmz29TW0eMr54CZFy9c8fATZlbXivgctktXbgDpziw66WCZxrwnOTizBKiRTuJj8LR7vZbunFUjudzsK8U5MfkMB9LlbH/TbrIpHaLpHz03zYbrj3WASn207gflDhWNliCo/4bT02wGfSpxMt9gY7gOvoQpdZef1fTuoHe14dFnXtLUffVtZnJXm6ZUMM8HrxWvjeOr0lDun/CPsEkt6Il8w7OgSQrf4Lh6KLVo8ZWlEH4FYQbp+awBZ7lFgCsRoCQDhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bf31ph3G8MTQTtY2CNUF1gzr3KEbmQOJVdyuh0WNncM=;
+ b=zXNufaPskBz0zAmBtfABJ+OE5/ZokEXIhsB22qqTschetgAYh1C9fffApa6KbgAH2WUIOaSSfASxstGZMMAZlAUHvKU6tN3Pzw3GBPpBvI5i5L8jAXx/zqMF3eY/MkPWz4dpVi9y/8COaqphjXQ50sfRdj649WB/tHqbKgUz8cI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
+ PH7PR01MB7680.prod.exchangelabs.com (2603:10b6:510:1d7::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.19; Thu, 30 May 2024 16:24:58 +0000
+Received: from SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d%4]) with mapi id 15.20.7611.016; Thu, 30 May 2024
+ 16:24:58 +0000
+Message-ID: <75d4b180-206e-4d48-9506-f0f602b46eca@amperemail.onmicrosoft.com>
+Date: Thu, 30 May 2024 12:24:53 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] mctp pcc: Allow PCC Data Type in MCTP resource.
+To: Ratheesh Kannoth <rkannoth@marvell.com>, admiyo@os.amperecomputing.com
+Cc: Robert Moore <robert.moore@intel.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown
+ <lenb@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
+ <20240528191823.17775-1-admiyo@os.amperecomputing.com>
+ <20240528191823.17775-3-admiyo@os.amperecomputing.com>
+ <20240529032541.GA2452291@maili.marvell.com>
+Content-Language: en-US
+From: Adam Young <admiyo@amperemail.onmicrosoft.com>
+In-Reply-To: <20240529032541.GA2452291@maili.marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BY5PR04CA0021.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::31) To SA0PR01MB6171.prod.exchangelabs.com
+ (2603:10b6:806:e5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|PH7PR01MB7680:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4ae5bfa-68ce-4ea1-808a-08dc80c50c33
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cHRxZHVYMUlzZ29kZXBhNzNVWkJqRFBid3h4NEVUODNUaEwwaG5lMS9kV0lh?=
+ =?utf-8?B?b1VteTk1b043UTk1NDJiblVHNysyTGVyaEFHRTZYbjhoc3RTWGlWOTN2N0oz?=
+ =?utf-8?B?bzBhZWU3OTlzclRaOTBIekEyQ2FkaElwWmw4a0JBcDRDU1JNQXovNm14ZFB0?=
+ =?utf-8?B?YVV6eFU1ckNJZjFlWFduWGp0VTIvR2t6MjNUTDRtU2J6NWVhY080Ym1tejVj?=
+ =?utf-8?B?ZDdTRWtsYUlJSnRZbVltQit4RzVldnpXRHhYY3NKZHE2MWMyRVFqdGN0Zys5?=
+ =?utf-8?B?NU9maUZuZFBPUkUvMHVWMjc1QUtqM0dEY0pqUm1iZHJQclFqV3J2S0w1Umdm?=
+ =?utf-8?B?M0wwNTY5eVZYL1grMnFickdUSlM5Y203VVo3ci9iMlJzWXM3WTdXZ01mOVZT?=
+ =?utf-8?B?QVFoSE5oVWw4b3RkZXhkNVlsdUE4bG0vZ0s2Nm5QRXBLanp6R3k1eEx2Ylpp?=
+ =?utf-8?B?V3NzcTRXTWFXSXF5UExaZU1NTDJaWk85YTRsazZIZ2V6VW1xY05UeHpHd3dn?=
+ =?utf-8?B?UElmMENZTEQvekJSWXBldmhveWI3ai9pVE9Wa1VXYmhPRUZQWXJGNHlHcjFL?=
+ =?utf-8?B?azRENDEwWXJuWHYxVWRRaXNpdXFEZ0hQNnBJMy9HcUZndkUyelNVM05nS0wy?=
+ =?utf-8?B?clhsNDdDa2l4WWlsZk9rL0NvVlYzd2dxYWQyT2kzU1VxU1BTNlN4VUdRTndy?=
+ =?utf-8?B?YkNaN2FnSzNhUnl6YWRJWEl5MkFUSTN5dmJtL0czSlcwZ3RzQUo0a3hvd1Q2?=
+ =?utf-8?B?NXAvOEJ1bkZQZlpsWVVPSkhXMXdLVEZrbU10aUp3ZXBTaDAyajRNYmRRd2dq?=
+ =?utf-8?B?WVhma09xYjZlcmRtR05IZzZsSWg3RVpDdjdEc0QxNCtnVG9IdkRmc05raVdS?=
+ =?utf-8?B?OEZYZk1RLzROcjVDRDV4cGhKU2cvOVJVaGVVRmZLcCtEWGdUamYrMEdKbC94?=
+ =?utf-8?B?RUg3UWEvbFhLMmhjbDRGL05VclJnVnNtcGptS0ZURXpvekx3TGszcGhGaTMy?=
+ =?utf-8?B?QVRFUnhNYVlRRGJTT0lkUTdUckhoWW8wQXBLM3ltNEI1NEpubDVSVnNoS2VK?=
+ =?utf-8?B?SGJud3l1Smd3bGpSWHM4cU9uN2g1MHEzZjUxNEVNMExNazRGQUdHSHpaRE5M?=
+ =?utf-8?B?OWxxYldIdW1nVWxOTTBxeDJPNWtETkNNUm12YWpja3ZxTGt3dTRzLzE4YVdV?=
+ =?utf-8?B?cEIxVW93bktpYm15Rk55bGEzM2lrNVdCL21xUTYzY2FLOWMvZ0pjd04yOHFC?=
+ =?utf-8?B?VnY1NXhhTGYxczZVM1Qva0hGVDAza0dLQk5sTEJzdmRaUm40MDRDT3BoZXZY?=
+ =?utf-8?B?REtzVlltUllXZWhhNUVTeHlyeTBGYjBsMEFTaVh4Q3pEQ2FJMzFnTWgvN3Zs?=
+ =?utf-8?B?djFuMGZyRmRFUVM5eDJpN2hkOFRqNi83QlRKYjdkNXhWZDBDS1ExZnlyeEMx?=
+ =?utf-8?B?dWNtaXRzcGFOaFBHb05MZ0ZPeWJ4UUtuRElxeEZkUFV5alFLZ01qNTU2SnFn?=
+ =?utf-8?B?Mm5tSWpqNEwwOW9neHE4Yk5GTTRTQ2pQcGw1RkN3ZWNYRjV1ODhFS3o3bnRs?=
+ =?utf-8?B?cEJPT0RnajB1OEx0dUI1UUV5N0dzRkpKOTZDUys5NGI0aUtyNW9GQ2s5WXpZ?=
+ =?utf-8?B?eGJOMUVTZDhWQk5iUW1xT0c2SENkWFRuZTFmSXRnSjZWRTNZNGhVYUliODZL?=
+ =?utf-8?B?Ly9ZUExoRVMvZFlJR3dIcTlqQjZQTEwxMUVDWWs5M3dZMzZ2UjJ1bjJBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V1VJekRuYTNDWFpmd1RWSTcvUGxlOWI5bFc4NDBITTIwbDZ6REt6dGFmSTcx?=
+ =?utf-8?B?T1pPR09MdlY5SG80VDZjKzBkZGRJbENmMXo0YWRPVFFxa2hWeFJSeEEvcVJC?=
+ =?utf-8?B?T3VrbGx0Vk9ZYTBpeXVPMUJ0NjNjWlQvS3ByZ1FUblpMOVF1NkNENlR1dm1L?=
+ =?utf-8?B?TGdIMmxSQWRGemNWK1FMdFRSQkpxYjNVSzdidUFzZUxNeE1YTmc4dHVmYUY4?=
+ =?utf-8?B?VkozRkF4ZHlObE5OK3VZSDU0Y3RDaE9nYnVMczlNRW42NGpyVE01NCt0bGtJ?=
+ =?utf-8?B?K3hRcnd1YkRmV3pLZlFaZkNQQXlvYkUvWkhlNUtYS2p1WElSdzZHYno0aGJ0?=
+ =?utf-8?B?NG1FODhjeFB1a3c4RDkySVVvOGJmL1B4VDc2LzY5Rzh5aWZLMjFTd2M1c0hh?=
+ =?utf-8?B?em56OCtzR0N3Y01FZnJkZFFtOWxsVHZxZ0lyRWN3ZzBDbTJCS0FkcGQ1SVEz?=
+ =?utf-8?B?Tms4Q3JUOFliS0Mzc0FySkF3eGdVOUg4c2hNZ2EwaXp4a1RpRkltWU9GbGYy?=
+ =?utf-8?B?M3huTWFWb2ZRVnR0bHltT3lXd1Q2QkxvQzZ5WGphdFJ1TkU0eWU4V1hLdVJo?=
+ =?utf-8?B?VHFwSXRZTXV5aGw4TFdLTXhHL1Rocm4wait5Sy9mY08xRGpVem15cGEyNXpD?=
+ =?utf-8?B?dmJGVGhqaENmYmh4TmpVS2drbi9KVUQxSnV0WmQzVEZGTHpuQ2txOUZRUVJt?=
+ =?utf-8?B?U2FQTk5INkNlc2xiK21GeCtyL3RrSTNUQWV3bllCdnk2WFJSSUpqb0l2bzN1?=
+ =?utf-8?B?YUV2SGV1VGpMYkE1SkhyZlRtT3NwSUFuZVl4VEdTcjdwQ3FhNm9UWTNkSDVO?=
+ =?utf-8?B?VWlRV2dOSHBhUjhvejIyS1RwN1BEZlhBMTQ2eXdoM2xhVldRMXdJUVVqN0w0?=
+ =?utf-8?B?SDBTd1pIWXRiREQ5dWc3SUlJbnFUWitVa05yV3hIazBjYldONFR4QVlNNm5N?=
+ =?utf-8?B?UVNQSVQ5RTE1dGFJUkNrTXFiK3d2RmtYVUZMSTFFRHU2bDdMaHVpbWJqSTNB?=
+ =?utf-8?B?bkhLM0IxOTRZa3BReW8vRldHMDZHVGY5ZG5yc3MzbFh4T0JUNHA1YmtZbnJ2?=
+ =?utf-8?B?Z0J1eFVVanhBZFRKUmc0Mkh3bnpUaFkwNVAwQmJkQ3FJUE9kQ2MrVlBXUTlK?=
+ =?utf-8?B?UEt0T2pHTU9WMFlhbGJkY3NKZFdUSlJoYjhuR0hvTXAvcXNNMHNLbFo0c3NT?=
+ =?utf-8?B?cjNkN3RNbWYreWNLdFI3UEZNdXJKTnRsTWVUMkpmSC9oRUsvUjVyRTZ5Y1JG?=
+ =?utf-8?B?S2JaVW93WUVnZGcwTVFxV3JudkpXRUJpcG9tVTNiQzRLRExKYi9UVFpiNUxn?=
+ =?utf-8?B?cGhVR3JqYUE3cW1aR2drcDVhVEt1RWV1dG9hako1R2o2czVmN3cxWFBibFVF?=
+ =?utf-8?B?aU4xYW5jeGFwSUdaTDd4K0dyVUtmWXd5RnR2emlYN3ZUN05NR3B2UHBYbmx1?=
+ =?utf-8?B?SHJhLzBNSnB2RmE1UVJGVDhMRHhqREFYSHRtemtjVGk2bnI2OTE0bFgxcHJB?=
+ =?utf-8?B?aEVsaFc2bi9EWkI2UUZTaWtreWVNYjI0a2szMk1nMGpPalFFMHFoRmV3dk80?=
+ =?utf-8?B?eTFDcWJaSVFFNVpmbWdjaDFjbDIwTU4wRkZlRnFoVlRkWFJiZE9ZcXpGWS9r?=
+ =?utf-8?B?MWRIM3YvOXR3cEd2RllJUDhtbHhpRk5NN1lWWTRuWUZDdnhEanV5MU9zTnR6?=
+ =?utf-8?B?bmM3cHNkRlJTbWRvQ3VaVHNxS3lOL1NpaUZOcVovZmFjV0hIeVQvRm5LdmpJ?=
+ =?utf-8?B?RUVRelpsaXVQK2g5Vm83cyt4OTBBblJWMitlU1BWZTRqejkyQXdJdzVid0Zp?=
+ =?utf-8?B?SVBwMVJWbndKeHNJWHlYMlI0UXRVMnB5RkdUeXJpM01HcEVPc0p4OFVZc25k?=
+ =?utf-8?B?aGN5Q2czTEg5cldtOW9JME9aQzBDc3FvZzh4YlVLOEswaXVxSndHRDZ3d1o2?=
+ =?utf-8?B?T1JwQlVvWFJtcXRTbUhpbDlLWjgzTC81dGFmY3dsK3pwY1RsNDRseVZwb0xw?=
+ =?utf-8?B?Nmt4NDJhNjVEelc1bnlTVWFlQkZtVGwveUgxNVBrRGRMTE5Ta1JZUjBJRXFT?=
+ =?utf-8?B?c2hXeFpleDhjYm9qcHFuSWVvckM1UzlwTnlrb3VnYmExVUllZnRJVjlhZ1J5?=
+ =?utf-8?B?aUZuODhZMkV4dnF0SFNwcWpkTXpQemNqN2ZJQ1lPQjN3d2QwRzdxMktMZ2Vo?=
+ =?utf-8?B?dThaWXRjclFnVGpHSExYcDhDQ2J2Ry85TDV6eFJvcWgvZUUyd1NYVk9FMTJD?=
+ =?utf-8?Q?0ymStmzYenZhPA8vPHQKNlKK9iGlfiA1jamsDoZQFQ=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4ae5bfa-68ce-4ea1-808a-08dc80c50c33
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 16:24:58.1954
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 76YBSCjZyu8FzfZZK89JU+UbjlXeOkw1oIiO27IoFQzbKG7yvqPWyGnnCrHDc0mi8UnWKzRadA8G5vva/qxMCgDe3XRPxg3EEaUJrGTPRD/bM75q4yqLV3W5GkkgeG+W
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB7680
 
-On Thu, May 30 2024 at 17:53, Thomas Gleixner wrote:
-> On Thu, May 30 2024 at 15:35, Thomas Gleixner wrote:
->> On Thu, May 30 2024 at 12:06, Peter Schneider wrote:
->> Now the million-dollar question is what unlocks CPUID to read the proper
->> value of EAX of leaf 0. All I could come up with is to sprinkle a dozen
->> of printks into that code. Updated debug patch below.
+
+On 5/28/24 23:25, Ratheesh Kannoth wrote:
+> On 2024-05-29 at 00:48:22, admiyo@os.amperecomputing.com (admiyo@os.amperecomputing.com) wrote:
+>> From: Adam Young <admiyo@amperecomputing.com>
+>> --- a/drivers/acpi/acpica/rsaddr.c
+>> +++ b/drivers/acpi/acpica/rsaddr.c
+>> @@ -282,7 +282,7 @@ acpi_rs_get_address_common(struct acpi_resource *resource,
+>>
+>>   	/* Validate the Resource Type */
+>>
+>> -	if ((address.resource_type > 2) && (address.resource_type < 0xC0)) {
+>> +	if ((address.resource_type > 2) && (address.resource_type < 0xC0) && (address.resource_type != 10)) {
+> use macros or enums instead of hard coded numbers. That will improve code readability.
+
+In general I agree, but this code is generated  from ACPICA and will not 
+be directly commited.  The corresponding patch to acpica has already 
+merged. What you see here is what the code will look like post-process 
+from ACPICA conversion.
+
+
 >
-> Don't bother. Dave pointed out to me that this is unlocked in
-> early_init_intel() via MSR_IA32_MISC_ENABLE_LIMIT_CPUID...
->
-> Let me figure out how to fix that sanely.
-
-The original code just worked because it was reevaluating this stuff
-over and over until it magically became "correct".
-
-The proper fix is obviously to unlock CPUID on Intel _before_ anything
-which depends on cpuid_level is evaluated.
-
-Thanks,
-
-        tglx
----
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -969,7 +969,7 @@ static void init_speculation_control(str
- 	}
- }
- 
--void get_cpu_cap(struct cpuinfo_x86 *c)
-+static void get_cpu_cap(struct cpuinfo_x86 *c)
- {
- 	u32 eax, ebx, ecx, edx;
- 
-@@ -1585,6 +1585,7 @@ static void __init early_identify_cpu(st
- 	if (have_cpuid_p()) {
- 		cpu_detect(c);
- 		get_cpu_vendor(c);
-+		intel_unlock_cpuid_leafs(c);
- 		get_cpu_cap(c);
- 		setup_force_cpu_cap(X86_FEATURE_CPUID);
- 		get_cpu_address_sizes(c);
-@@ -1744,7 +1745,7 @@ static void generic_identify(struct cpui
- 	cpu_detect(c);
- 
- 	get_cpu_vendor(c);
--
-+	intel_unlock_cpuid_leafs(c);
- 	get_cpu_cap(c);
- 
- 	get_cpu_address_sizes(c);
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -61,14 +61,15 @@ extern __ro_after_init enum tsx_ctrl_sta
- 
- extern void __init tsx_init(void);
- void tsx_ap_init(void);
-+void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c);
- #else
- static inline void tsx_init(void) { }
- static inline void tsx_ap_init(void) { }
-+static inline void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c) { }
- #endif /* CONFIG_CPU_SUP_INTEL */
- 
- extern void init_spectral_chicken(struct cpuinfo_x86 *c);
- 
--extern void get_cpu_cap(struct cpuinfo_x86 *c);
- extern void get_cpu_address_sizes(struct cpuinfo_x86 *c);
- extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
- extern void init_scattered_cpuid_features(struct cpuinfo_x86 *c);
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -269,19 +269,26 @@ static void detect_tme_early(struct cpui
- 	c->x86_phys_bits -= keyid_bits;
- }
- 
-+void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
-+{
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-+		return;
-+
-+	if (c->x86 < 6 || (c->x86 == 6 && c->x86_model < 0xd))
-+		return;
-+
-+	/*
-+	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
-+	 * enumeration. Unlock it and update the maximum leaf info.
-+	 */
-+	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0)
-+		c->cpuid_level = cpuid_eax(0);
-+}
-+
- static void early_init_intel(struct cpuinfo_x86 *c)
- {
- 	u64 misc_enable;
- 
--	/* Unmask CPUID levels if masked: */
--	if (c->x86 > 6 || (c->x86 == 6 && c->x86_model >= 0xd)) {
--		if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
--				  MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0) {
--			c->cpuid_level = cpuid_eax(0);
--			get_cpu_cap(c);
--		}
--	}
--
- 	if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
- 		(c->x86 == 0x6 && c->x86_model >= 0x0e))
- 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
-
-
-
-
+>>   		return (FALSE);
+>>   	}
+>>
+>> --
+>> 2.34.1
+>>
 
