@@ -1,171 +1,153 @@
-Return-Path: <linux-kernel+bounces-195993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7AB8D55D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:56:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F43B8D55D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365DC1F2397D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:56:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BABBFB22F95
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02308183070;
-	Thu, 30 May 2024 22:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K6mtiSRc"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB1F17545
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 22:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289B7182D3C;
+	Thu, 30 May 2024 22:57:40 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58FE17545;
+	Thu, 30 May 2024 22:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717109777; cv=none; b=V167+wiV0r+dmqVosVe6L03E+eNqIwg7qT4Qa95eCTHKT5pZQAyWKTjrMYkbHe02qxbALSjqn26oakHvnUAmnTAenYQQPchg3sgR34523VW3a5yknl9wMVP7zW5xzsLjJUc2DDpR2SGpBgQFJ4CfhZMNtMzlJjO9YYkdo3jAaCA=
+	t=1717109859; cv=none; b=qviG6vNQLC7KbELeCelYH/19d0PnnVu+Gk2WiNPJOADb4hDFEcZwY6n4Qz06jorBPstDjOQXbA6p56/hjov+58xJs3MyRgAyoYYlNMxA33MU3i6eQbEtTDw2K0Y2mtZZCzXBb6BUCi3pZ2pY5OYlRx9GvpH3NLBErZpsYYDjisw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717109777; c=relaxed/simple;
-	bh=t2b3q3NvivHfKbxWs52/YIC7yc0r0DKyLxE8Ev0azjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s70hC+QNymmqCou+4wbswPtvkHLxVkyc4ah4lxzbdHAkXnCfT6Bq8GxRy99+vsv9tvf83/7/XsBPrDh8HcP7JiUDZFp6SHOiuDZJ5tCOXq75Y9oas6dh/nkYNuX3NaIuhUAZCIo1twAaj1Gjre/D1V8rSnmPcRjFrmGrLMSSLeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K6mtiSRc; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso21997051fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717109773; x=1717714573; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xyzzXBthjiz94idPYhOV9w7TAAGo24N1F5P/VAMGj+w=;
-        b=K6mtiSRcIDInWTWGfn1gHQ9n5QQBlFVicawnbr7AbiSQzWxjd2OeqNAlGuC5Kxf4AL
-         W4+9yypjrIlcPzIE+ltAC2L90ugDOIyih9ofgQM7A9OGcdQplR3DpayXqIXciK1OILdB
-         06te6BqVdaNFb1GwOp1Y6R+yntDUmvu+igTJDawpvSZh0hzGw0WTT+JXs5Ir0yAemE55
-         KXyj2rIxyQFqvHqOJULyPEvimwdgstUvi2jHE00ddKgDqRtyxPQLiFEcqxotnhcGNoL2
-         vRCJso5RQ0YPJ7ZCOgXOghAMQOgVrdAU9jwQWgIhWXdsZ+3Jeq0pXDJeZFZp4jFYbD7l
-         bDpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717109773; x=1717714573;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xyzzXBthjiz94idPYhOV9w7TAAGo24N1F5P/VAMGj+w=;
-        b=Wynr7cJ2JA1+/SMzVuIufLQf1M/GQn04SccddIhn5hBHTBTbIwvqqlyAqv4GeEr9yR
-         A6tNjj7liusYhVnrBYm3VUyYJGQLsaNADHveB/uC6KY4gV2lIPhLTjZ5712Cwlsgz+0m
-         2tXSgaroKE+CmUuTXfpkmIAzapSOez2SLst7CW3+d8HMoM96cJt8X41yw/AmpkXVKnw1
-         3dBjn5KE9RFfY9XVFyx1CsLTGPKflWbESYRDJ34WHVlAABUPc1Yly6/ZWi9bKb9ZjPSp
-         LgiG8Y7HnyFLKEfIUdjg0BTQOLnf1XaGeeZKZ7qswCRI3D9iVt1hGYwJtp1V1lEhKSGf
-         zixQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCTyj/pJeG2G0TNJ3ImYVAdEQ7OATeRFYRojUUof7a2blQmmQTD1xJcxm2/9iQe5y0fzjfAvTGTmZm9WEZWQmSH8j/25GYTGq37EYb
-X-Gm-Message-State: AOJu0Yz/FopDLuWXKQnYjhYWckc1Dg81KhaycWEt9ZIDXlejj7i6pBe7
-	wmPOpZobmXiNhckYdo1MOqhwcRCDukUdrgVKoDwKZfBwtCyT2S+WqEzMh5eiS7fAQJa6sxDrj3x
-	J
-X-Google-Smtp-Source: AGHT+IGsolCfsunFrk+u+BfEK1ofwORxtsBKNx+Vx7U6yTZdYv6NnpXISN5IijgrRZGaS4kqu+n/MQ==
-X-Received: by 2002:a2e:9ec6:0:b0:2e6:935f:b6d3 with SMTP id 38308e7fff4ca-2ea9510e721mr1921981fa.14.1717109773222;
-        Thu, 30 May 2024 15:56:13 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bb6bc7sm1127091fa.56.2024.05.30.15.56.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 15:56:12 -0700 (PDT)
-Date: Fri, 31 May 2024 01:56:11 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, broonie@kernel.org, perex@perex.cz,
-	tiwai@suse.com, lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Andersson <quic_bjorande@quicinc.com>
-Subject: Re: [PATCH v2 0/4] ASoC: qcom: display port changes
-Message-ID: <ZlkEC-X2vzYEZ-Zl@eriador.lumag.spb.ru>
-References: <20240422134354.89291-1-srinivas.kandagatla@linaro.org>
- <ZieihZRKe7OtP-nV@hovoldconsulting.com>
- <92b02fd3-5eba-42a7-a166-21b14724b10c@linaro.org>
+	s=arc-20240116; t=1717109859; c=relaxed/simple;
+	bh=NQrd95QoApaEs9fJihobolQ+Eb73I7LZq0li/uDFwv0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=VI2+7YW4sGcU9EBGVkSWFEMtKUQolWQBW1naxb6XZg+pz1vRquPI1gvDabzkApqb17wo3v1dKC+qk5wz/WhL1L+Gr2NYmfHvZoG1ZIga+qjfPIqBJRQ4zEt8eFIrWR0aryBg11rL1cHuxy6DXyQSZNVmLHN3mkZx4ngmdZmOGJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id F388A92009C; Fri, 31 May 2024 00:57:29 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id EC40692009B;
+	Thu, 30 May 2024 23:57:29 +0100 (BST)
+Date: Thu, 30 May 2024 23:57:29 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: "Paul E. McKenney" <paulmck@kernel.org>, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
+    Arnd Bergmann <arnd@arndb.de>, 
+    Richard Henderson <richard.henderson@linaro.org>, 
+    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
+    Michael Cree <mcree@orcon.net.nz>, Frank Scheiner <frank.scheiner@web.de>
+Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
+In-Reply-To: <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.2405302115130.23854@angie.orcam.me.uk>
+References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de> <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
+ <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk> <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92b02fd3-5eba-42a7-a166-21b14724b10c@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Apr 23, 2024 at 01:38:18PM +0100, Srinivas Kandagatla wrote:
-> 
-> 
-> On 23/04/2024 12:59, Johan Hovold wrote:
-> > On Mon, Apr 22, 2024 at 02:43:50PM +0100, Srinivas Kandagatla wrote:
-> > > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > > 
-> > > This patchset adds support for.
-> > > 	1. parse Display Port module tokens from ASoC topology
-> > > 	2. add support to DP/HDMI Jack events.
-> > > 	3. fixes a typo in function name in sm8250
-> > > 
-> > > Verified these patches on X13s along with changes to tplg in
-> > > https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
-> > > and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
-> > 
-> > It looks like your UCM changes are still muxing the speaker and *each*
-> > displayport output so that you can only use one device at a time (i.e.
-> > only Speaker or DP1 or DP2 can be used).
-> that is true.
-> 
-> What is the use-case to use more than one audio sink devices at the same
-> time for a laptops?
+On Wed, 29 May 2024, Linus Torvalds wrote:
 
-Consider multi-seat setup, with each monitor having its own set of
-keyboard, mouse, headphone and user behind it.
+> >              The only difference here is that with
+> > hardware read-modify-write operations atomicity for sub-word accesses is
+> > guaranteed by the ISA, however for software read-modify-write it has to be
+> > explictly coded using the usual load-locked/store-conditional sequence in
+> > a loop.
+> 
+> I have some bad news for you: the old alpha CPU's not only screwed up
+> the byte/word design, they _also_ screwed up the
+> load-locked/store-conditional.
+> 
+> You'd think that LL/SC would be done at a cacheline level, like any
+> sane person would do.
+> 
+> But no.
+> 
+> The 21064 actually did atomicity with an external pin on the bus, the
+> same way people used to do before caches even existed.
 
-> 
-> How do you test it? I never tested anything like that on a full desktop
-> setup.
-> 
-> May be some manual setup in Wireplumber, but not 100% sure about multiple
-> stream handling.
-> 
-> > 
-> > As we discussed off list last week, this seems unnecessarily limited and
-> > as far as I understood is mostly needed to work around some
-> > implementation details (not sure why DP1 and DP2 can't be used in
-> > parallel either).
-> 
-> It is absolutely possible to run all the streams in parallel from the Audio
-> hardware and DSP point of view.
-> 
-> One thing to note is, On Qualcomm DP IP, we can not read/write registers if
-> the DP port is not connected, which means that we can not send data in such
-> cases.
+ Umm, 8086's LOCK#, anyone?
 
-How is this handled for the native HDMI playback on platforms like
-Dragonboard 820c? As far as I was able to test, playback fails with -EIO
-if HDMI output is not enabled or if the DVI monitor is connected.
+> Yes, it has an internal L1 D$, but it is a write-through cache, and
+> clearly things like cache coherency weren't designed for. In fact,
+> LL/SC is even documented to not work in the external L2 cache
+> ("Bcache" - don't ask me why the odd naming).
 
-> 
-> This makes it challenging to work with sound-servers like pipewire or
-> pulseaudio as they tend to send silence data at very early stages in the
-> full system boot up, ignoring state of the Jack events.
-> 
-> > 
-> > Can you please describe the problem here so that we can discuss this
-> > before merging an unnecessarily restricted solution which may later be
-> > harder to change (e.g. as kernel, topology and ucm may again need to be
-> > updated in lock step).
-> > 
-> >  From what I could tell after a quick look, this series does not
-> > necessarily depend on muxing things this way, but please confirm that
-> > too.
-> 
-> These patches have nothing to do with how we model the muxing in UCM or in
-> tplg.
-> 
-> so these can go as it is irrespective of how we want to model the DP sinks
-> in the UCM or tplg.
-> 
-> 
-> --srini
-> > 
-> > Johan
+ Board cache, I suppose.
 
--- 
-With best wishes
-Dmitry
+> So LL/SC on the 21064 literally works on external memory.
+> 
+> Quoting the reference manual:
+> 
+>   "A.6 Load Locked and Store Conditional
+>   The 21064 provides the ability to perform locked memory accesses through
+>   the LDxL (Load_Locked) and STxC (Store_Conditional) cycle command pair.
+>   The LDxL command forces the 21064 to bypass the Bcache and request data
+>   directly from the external memory interface. The memory interface logic must
+>   set a special interlock flag as it returns the data, and may
+> optionally keep the
+>   locked address"
+> 
+> End result: a LL/SC pair is very very slow. It was incredibly slow
+> even for the time. I had benchmarks, I can't recall them, but I'd like
+> to say "hundreds of cycles". Maybe thousands.
+
+ Interesting and disappointing, given how many years the Alpha designers 
+had to learn from the MIPS R4000.  Which they borrowed from already after 
+all and which they had first-hand experience with present onboard, from 
+the R4000 DECstation systems built at their WSE facility.  Hmm, I wonder 
+if there was patent avoidance involved.
+
+> So actual reliable byte operations are not realistically possible on
+> the early alpha CPU's. You can do them with LL/SC, sure, but
+> performance would be so horrendously bad that it would be just sad.
+
+ Hmm, performance with a 30 years old system?  Who cares!  It mattered 30 
+years ago, maybe 25.  And the performance of a system that runs slowly is 
+still infinitely better than one of a system that doesn't boot anymore, 
+isn't it?
+
+> The 21064A had some "fast lock" mode which allows the data from the
+> LDQ_L to come from the Bcache. So it still isn't exactly fast, and it
+> still didn't work at CPU core speeds, but at least it worked with the
+> external cache.
+> 
+> Compilers will generate the sequence that DEC specified, which isn't
+> thread-safe.
+> 
+> In fact, it's worse than "not thread safe". It's not even safe on UP
+> with interrupts, or even signals in user space.
+
+ Ouch, I find it a surprising oversight.  Come to think of it indeed the 
+plain unlocked read-modify-write sequences are unsafe.  I don't suppose 
+any old DECies are still around, but any idea how this was sorted in DEC's 
+own commercial operating systems (DU and OVMS)?
+
+ So this seems like something that needs to be sorted in the compiler, by 
+always using a locked sequence for 8-bit and 16-bit writes with non-BWX 
+targets.  I can surely do it myself, not a big deal, and I reckon such a 
+change to GCC should be pretty compact and self-contained, as all the bits 
+are already within `alpha_expand_mov_nobwx' anyway.
+
+ I'm not sure if Richard will be happy to accept it, but it seems to me 
+the right thing to do at this point and with that in place there should be 
+no safety concern for RCU or anything with the old Alphas, with no effort 
+at all on the Linux side as all the burden will be on the compiler.  We 
+may want to probe for the associated compiler option though and bail out 
+if unsupported.
+
+ Will it be enough to keep Linux support at least until the next obstacle?
+
+  Maciej
 
