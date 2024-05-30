@@ -1,143 +1,218 @@
-Return-Path: <linux-kernel+bounces-195515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4238D4DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A737A8D4DF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2D8F1C23633
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F048280F11
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9B917C231;
-	Thu, 30 May 2024 14:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B86717C206;
+	Thu, 30 May 2024 14:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RD+Z1RpA"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="NGQ7kVfn"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568FC176248
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC33558B8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079124; cv=none; b=a9aUchAvjkGx6mxhjusvEj7c0Ift2zf6NkbYWGZnLk2Xe1nh8/ehSkfHQ3SwK1B0g2dfrX8p6MQzGmrSBLYPxVOPkH2Mpb5brzS/iiIyX/htc65crfN6Xj0ojDnHNpU6fPa4lUaDh1qJKTDvnqb1FILWBtERcmB1UD6LcVNpPEM=
+	t=1717079318; cv=none; b=g2PvKIxdpRIEAe08z0Xft7XNVRqZ1GIrFSqBNJf5bej1WJ5+kj7Uhd9mUfz/ZF1QHVw7ds9VMEt/heeW5cugemzeq6njXKQpSrAWgkdkCsEIjYvoWcbmH9Arv0eEty8BI27G5rSfozkQ5iTrKzQKrONbsObAn2AQ+FuoRUhSd7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079124; c=relaxed/simple;
-	bh=g/X45uSF6k+HRkBUhwjSpxSxuIqXtM9kMM336BDvTlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XnCiM/86UVwl4VwxIh4dCEarAFojeY7L+dPoowNTD+3qLn3Xc6V4UUJiNuqjHsaEWSNkrSM+lflqdnyZT2TlKOJcvK6VE0WThZC0TqyO8SvdsJtfqc/tJZVWzydHLYi47YeHcOLk2VwezzO1sm2J3zAbIoWZvDCJQK2QRZX+kPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RD+Z1RpA; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7e22af6fed5so4631139f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:25:22 -0700 (PDT)
+	s=arc-20240116; t=1717079318; c=relaxed/simple;
+	bh=F90wLy+KrICjTAlBJGruDZO+sk+znv1dpfv/OBIuDnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SW1MJZDo2pqnzFGQ1sWz66Hk+Fr53xZnnwRHg4vBo1TtQpW2kN2xYfEwKzvHTKrqmX4mFTmpVuGzyJFO6648uOEiNKjg3Qs+NtUKvQpZ80/Ny7pKjPga1B5JUSpSJB+UEvcTRk4HuhffuWzjpeWrNdmQsXI6ZM7xnf2YwUC8tSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=NGQ7kVfn; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-374599be371so3084325ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717079121; x=1717683921; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsdkf/hEokdRbVfsff4bOqv3Tbq/llwdsETViLwX3BI=;
-        b=RD+Z1RpAzQpOdC7U+oHVdomJ6iMeO2XvQo57qkFkRE3lZuzhlcD0OstuzQqPYdcs47
-         G6jY/SqKhOvKL2d+WqHDalzPAy5XSLFvXS2S9il20hED8braufeUBbUNKr7b2VK6O8zf
-         vNj59lLtWXeH0iFIfQvy5CcoKDmguMLLBniek=
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1717079314; x=1717684114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wrFY0VaYKU2vD77g/VQDb0AaoaOV/tz1VO820emrTH8=;
+        b=NGQ7kVfnhtbv7mB7llkuLbRZB/3876gVI22peXo1rTKg30Gpj+aqxI1ik9NNRITn2E
+         4vGHcEmNP3PQHSP6yACYSDh1bWuijZsqhePLC+I+U+lz0KjZ3IHrpb1VHFg7HBnd2ASE
+         pu45xjUMgj9QVUGZdWpzLon5jOpNjC3NagmrkCJNrb0pbB36Tl4RRHy7qMvH30Yn8R3q
+         nBeNUbqcqdl0OgTpqQYaFcXQ5E22jaHKNpchL6cJJ8iAz8jOoCfScly3FXA+OfpAMh/0
+         UzzDLVL2pjfFtPqjEl9hjl9NnRQarJZn0oudzp9BOXvYP1/TxHw485dKI+k4o+ewEzEH
+         3dtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717079121; x=1717683921;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsdkf/hEokdRbVfsff4bOqv3Tbq/llwdsETViLwX3BI=;
-        b=JOywnyrf6K8NUvr/goz4kW6m6i1yE8k+ajBSpz23UhddU1B1Hd/5Hag9s1M0L3YYAo
-         3jOQfOnTV8K6g1iXa8BLHAB2sn2gRwVyH2sA02IJUDrCbg/OBTb62r/bxhWYOXTCOQGt
-         8+P9V5Yelq2VyvbzR+LPIGPVZ+Brk+IpZcUQaU2ZPIIZgKDScAynFVDoMUj19Pj3ad1a
-         KOrFaVWkBujXJEDhxMA1vWtg6R3jZQEJAcOYu6XGR3R+CV1rkqp9jSMOaR4sowg4LXbR
-         IxEgtYvcYHTvdm5xLALyj7xNTHd8sMoj370WEz/toavU/1VVSGv89SIPSvQTnISZYeTX
-         CB5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWaZZaolwgb7tXSNclbjaK6dKRhH0eW9dfYE+hBCZy4Mswc/KoiSQN5H0S+aB3rV9n3+RBrwIq585MD5oC1z4lcSX2L3I7BwAbKHdUM
-X-Gm-Message-State: AOJu0YwNGsP8VKBk5btMsGcSMog/WFLdCFlWaIyupmSBHyKKyQw16MRU
-	Ac9mg1FEgwU7qn7SopMT/L3LeM7tKVDl/5ftJJcFsbxpGvOWK4W8ZH40QAl7B5Eu3a+tXwrBCip
-	B
-X-Google-Smtp-Source: AGHT+IF8O6GPnyWjF5VaTmv02b4u4/S8Ekhuksh/BQkhTKKplAGUx/4CG+uFBabO2++mbMvPZsfKCg==
-X-Received: by 2002:a05:6602:19c9:b0:7e1:8bc8:8228 with SMTP id ca18e2360f4ac-7eaf5b73813mr241539839f.0.1717079120876;
-        Thu, 30 May 2024 07:25:20 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b10cf31917sm1404185173.45.2024.05.30.07.25.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 07:25:20 -0700 (PDT)
-Message-ID: <88c64f5e-4586-4b38-b3c8-0c3af93a71ae@linuxfoundation.org>
-Date: Thu, 30 May 2024 08:25:18 -0600
+        d=1e100.net; s=20230601; t=1717079314; x=1717684114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wrFY0VaYKU2vD77g/VQDb0AaoaOV/tz1VO820emrTH8=;
+        b=QK9cXNeBITwbspTpFRzzvuHPAp2fkNmsAixQjEz0dD2iTc22NcJBMjDa3I2LWoIAA0
+         mqpfgOMoumZYyc3ZpPZUJEtlaX6VMknqwq/Ar58cMcy4LWt60RD7xy3DI+uW0FiHwl1V
+         1PU9ZiooA1svzJsQf1mwz5V1v9lGy7dPgHua7ZKFIRAOyGz462R5FWxyElDdTFVn9aWD
+         wlxmDkLlz2PExB4rVDlweLOgM6mKON6ho1fEAJIQXwJq9uuu8ZZbkoNN3denMlFdq0NS
+         4yTGZwlCmGmHTkstaEPlhTSZAXFjOK63CrfX47gq45PGlmfmmuRvJGp8aKtbXB3M5KSG
+         zYYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjhYBi8Jw0Cec+ytnpJbua0ZVoLgE1M7nZPFJEMKCgJkHFUxqKNe//IfKmb7iMPX+9rKGKhHWsIQ5NmxvAZ6XAonLu9Es6UiuTmWPa
+X-Gm-Message-State: AOJu0YxXg7hrGD5xnN8RmhyBRxXk9tjilJnr8ew5CrgY/zJ8+wP9UabP
+	ZYkdlgBhu8bZweky6uTYUxKNRUCeQFbFCA9apkqPTXOdiRlJgHynjcUB+1DvOeyzNgZVfOzru72
+	YrKOawHaK6fqHb1TH9D/YLDL9hnQL48s9ThZnyw==
+X-Google-Smtp-Source: AGHT+IH7s7fRBncwQz/8YMXyL69aYbbbtWJ7w39VrMU/rk9239KjSERSYxjfvzkXIhh2PcCbFD7ALB2y7Lq+jxLKKk0=
+X-Received: by 2002:a05:6e02:1b0e:b0:373:8d04:28a4 with SMTP id
+ e9e14a558f8ab-3747e239d28mr17072745ab.13.1717079313717; Thu, 30 May 2024
+ 07:28:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] selftests/lib.mk: silence some clang warnings that
- gcc already ignores
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: Beau Belgrave <beaub@linux.microsoft.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mark Brown <broonie@kernel.org>,
- Naresh Kamboju <naresh.kamboju@linaro.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Justin Stitt <justinstitt@google.com>, Bill Wendling <morbo@google.com>,
- sunliming <sunliming@kylinos.cn>, Masami Hiramatsu <mhiramat@kernel.org>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
- Nathan Chancellor <nathan@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240529020842.127275-1-jhubbard@nvidia.com>
- <20240529020842.127275-3-jhubbard@nvidia.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240529020842.127275-3-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240529215458.937817-1-samuel.holland@sifive.com>
+In-Reply-To: <20240529215458.937817-1-samuel.holland@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 30 May 2024 19:58:22 +0530
+Message-ID: <CAAhSdy2kO5TYfh6-h4R3UWNidzYpp-CN7zL=JmAKdt1Q23TrwQ@mail.gmail.com>
+Subject: Re: [PATCH] irqchip/sifive-plic: Chain to parent IRQ after handlers
+ are ready
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/28/24 20:08, John Hubbard wrote:
-> gcc defaults to silence (off) for the following warnings, but clang
-> defaults to the opposite. These warnings are not useful for kselftests,
-> so silence them for the clang builds as well:
+On Thu, May 30, 2024 at 3:25=E2=80=AFAM Samuel Holland
+<samuel.holland@sifive.com> wrote:
+>
+> Now that the PLIC uses a platform driver, the driver probed later in the
+> boot process, where interrupts from peripherals might already be
+> pending. As a result, plic_handle_irq() may be called as early as the
+> call to irq_set_chained_handler(). But this call happens before the
+> per-context handler is completely set up, so there is a window where
+> plic_handle_irq() can see incomplete per-context state and crash. Avoid
+> this by delaying the call to irq_set_chained_handler() until all
+> handlers from all PLICs are initialized.
+>
+> Fixes: 8ec99b033147 ("irqchip/sifive-plic: Convert PLIC driver into a pla=
+tform driver")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/r/CAMuHMdVYFFR7K5SbHBLY-JHhb7YpgGMS_hnRWm=
+8H0KD-wBo+4A@mail.gmail.com/
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 
-Please you add more information on why they aren't useful
-for kselftests.
+LGTM.
 
-> 
->      -Wno-address-of-packed-member
->      -Wno-gnu-variable-sized-type-not-at-end
-> 
-> This eliminates warnings for the net/ and user_events/ kselftest
-> subsystems, in these files:
-> 
->      ./net/af_unix/scm_rights.c
->      ./net/timestamping.c
->      ./net/ipsec.c
->      ./user_events/perf_test.c
-> 
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Thanks for fixing this.
+
+Regards,
+Anup
+
 > ---
->   tools/testing/selftests/lib.mk | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index 2902787b89b2..41e879f3f8a2 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -50,6 +50,12 @@ else
->   CLANG_FLAGS     += --target=$(notdir $(CROSS_COMPILE:%-=%))
->   endif # CROSS_COMPILE
->   
-> +# gcc defaults to silence (off) for the following warnings, but clang defaults
-> +# to the opposite. These warnings are not useful for kselftests, so silence them
-> +# for the clang builds as well.
-> +CFLAGS += -Wno-address-of-packed-member
-> +CFLAGS += -Wno-gnu-variable-sized-type-not-at-end
+>
+>  drivers/irqchip/irq-sifive-plic.c | 34 +++++++++++++++----------------
+>  1 file changed, 17 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifi=
+ve-plic.c
+> index 8fb183ced1e7..9e22f7e378f5 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -85,7 +85,7 @@ struct plic_handler {
+>         struct plic_priv        *priv;
+>  };
+>  static int plic_parent_irq __ro_after_init;
+> -static bool plic_cpuhp_setup_done __ro_after_init;
+> +static bool plic_global_setup_done __ro_after_init;
+>  static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
+>
+>  static int plic_irq_set_type(struct irq_data *d, unsigned int type);
+> @@ -487,10 +487,8 @@ static int plic_probe(struct platform_device *pdev)
+>         unsigned long plic_quirks =3D 0;
+>         struct plic_handler *handler;
+>         u32 nr_irqs, parent_hwirq;
+> -       struct irq_domain *domain;
+>         struct plic_priv *priv;
+>         irq_hw_number_t hwirq;
+> -       bool cpuhp_setup;
+>
+>         if (is_of_node(dev->fwnode)) {
+>                 const struct of_device_id *id;
+> @@ -549,14 +547,6 @@ static int plic_probe(struct platform_device *pdev)
+>                         continue;
+>                 }
+>
+> -               /* Find parent domain and register chained handler */
+> -               domain =3D irq_find_matching_fwnode(riscv_get_intc_hwnode=
+(), DOMAIN_BUS_ANY);
+> -               if (!plic_parent_irq && domain) {
+> -                       plic_parent_irq =3D irq_create_mapping(domain, RV=
+_IRQ_EXT);
+> -                       if (plic_parent_irq)
+> -                               irq_set_chained_handler(plic_parent_irq, =
+plic_handle_irq);
+> -               }
+> -
+>                 /*
+>                  * When running in M-mode we need to ignore the S-mode ha=
+ndler.
+>                  * Here we assume it always comes later, but that might b=
+e a
+> @@ -597,25 +587,35 @@ static int plic_probe(struct platform_device *pdev)
+>                 goto fail_cleanup_contexts;
+>
+>         /*
+> -        * We can have multiple PLIC instances so setup cpuhp state
+> +        * We can have multiple PLIC instances so setup global state
+>          * and register syscore operations only once after context
+>          * handlers of all online CPUs are initialized.
+>          */
+> -       if (!plic_cpuhp_setup_done) {
+> -               cpuhp_setup =3D true;
+> +       if (!plic_global_setup_done) {
+> +               struct irq_domain *domain;
+> +               bool global_setup =3D true;
 > +
->   CC := $(CLANG) $(CLANG_FLAGS) -fintegrated-as
->   else
->   CC := $(CROSS_COMPILE)gcc
-
-thanks,
--- Shuah
-
+>                 for_each_online_cpu(cpu) {
+>                         handler =3D per_cpu_ptr(&plic_handlers, cpu);
+>                         if (!handler->present) {
+> -                               cpuhp_setup =3D false;
+> +                               global_setup =3D false;
+>                                 break;
+>                         }
+>                 }
+> -               if (cpuhp_setup) {
+> +
+> +               if (global_setup) {
+> +                       /* Find parent domain and register chained handle=
+r */
+> +                       domain =3D irq_find_matching_fwnode(riscv_get_int=
+c_hwnode(), DOMAIN_BUS_ANY);
+> +                       if (domain)
+> +                               plic_parent_irq =3D irq_create_mapping(do=
+main, RV_IRQ_EXT);
+> +                       if (plic_parent_irq)
+> +                               irq_set_chained_handler(plic_parent_irq, =
+plic_handle_irq);
+> +
+>                         cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTI=
+NG,
+>                                           "irqchip/sifive/plic:starting",
+>                                           plic_starting_cpu, plic_dying_c=
+pu);
+>                         register_syscore_ops(&plic_irq_syscore_ops);
+> -                       plic_cpuhp_setup_done =3D true;
+> +                       plic_global_setup_done =3D true;
+>                 }
+>         }
+>
+> --
+> 2.44.1
+>
+>
 
