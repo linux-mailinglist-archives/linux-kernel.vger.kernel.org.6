@@ -1,129 +1,72 @@
-Return-Path: <linux-kernel+bounces-195494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1658D4D91
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:10:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06068D4D92
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A670E283BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654FB1F21B50
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF1C17C20E;
-	Thu, 30 May 2024 14:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CF9186E5C;
+	Thu, 30 May 2024 14:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLYeVC8E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B189F186E3E;
-	Thu, 30 May 2024 14:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="jnzqorce"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A9D186E4C
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078174; cv=none; b=tAby/oLyfOAk2SKpxN65OlHT2RmxNaC2VHZTxGYnNctKcNUvMzcXG+hBUVQk5ocZq0FaPBrNZcHyNoXuLq/aDszptWRj+Pxw4TrIkyB/Wb12driyWOgqAr/B8uvyJvahVFj5sbCkjZ/ATBLz8m90nuSasankb+rTex1llwDrmn0=
+	t=1717078215; cv=none; b=L3rEMWk00KbxRrHQfxcE2asuQkCcahgVe6x3JCABbQAdnK4h+8BO9DC1Luupoa+claFJ7tNJevEMP9hllKQLynA2CcyhyHa4hl5hVBULQ0KXt+5qWaoC+MOiYherxN5ibiIEKwN1lnmD6KulKuG12zO7VD6M5es3Ukj1mwMoj7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078174; c=relaxed/simple;
-	bh=0mLim+N0NZXzzifrzM1f9tix9Oup0SLdlMxf8uGQDO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yn730kYlC+kur+UF3YcWzgYDu5zxllI8tW2UOWIPjDi1/kRq6jIU3d+kNxbH/vUl7XA0L/+ZyMUmO3i7IrIf2VStub7+ZnyzId3IUz6bZV4X68+6ddSOYVsnI+5XsYoe/F1YsH0xQv92TpmJQZ5df4RRIuqIsZNRRyZ+zE1/Qc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLYeVC8E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B288EC2BBFC;
-	Thu, 30 May 2024 14:09:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717078174;
-	bh=0mLim+N0NZXzzifrzM1f9tix9Oup0SLdlMxf8uGQDO4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hLYeVC8E5yfVaZZ8IGkMwO7x8cROf0taZhFZkFQlevZy9/aUEvV5+xH5zEzEkIxvv
-	 hSvE/+oo4ENBk/utTU1i4+v8HXZLbgf8YiywK5wPFSA11QM4G+29220m+zVskjZZmM
-	 kKlwzW+tgEvfmNhTRvh9/jU0LLdCVOra+vpWjjtzc7MqTKwUBPv3XgAu0QGiyueSs/
-	 QdpRFss/NfUO2dIHSokoyn9+e2F9w+Hh+yUSx5inayAdjr3Y52rmZ3Be8HdgA5T+hF
-	 pT/0riZYahiPhDhw4D9gZb6WoqBI60rbJr+a3LQrBnIRd32FLQPdzDhVmAifujPE+y
-	 i3GK9l8F4w5UA==
-Message-ID: <1fdae4f8-066e-488a-bf6c-e3f1f4f36984@kernel.org>
-Date: Thu, 30 May 2024 16:09:19 +0200
+	s=arc-20240116; t=1717078215; c=relaxed/simple;
+	bh=lJgkFmQAER2nocbB4Xots0SgtiMUfHc2h2KJ00LgsEU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=BqGT06VWJ4dtx5ZJLXA3H2N7ADAvKlA23b1DxHoM7XCi51cF8iQBp+gMy4n2o65Zx7Mmx+2daL5QVMDZ9XNVfxhW5MbWrRVsRRI72lul0EdWr7ApS/gWRs/fqGvWwcEvJk74sCEu5AzdZAeVaTZGeMhA+n50jNkkfphTO/DF6dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=jnzqorce reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=fqFBptFQdOFCKWxc0MG/C410x89u/n1T/+2yMEieJtc=; b=j
+	nzqorcewGvb/wPhS7wS7UtME3cx76S7C4V89AuAcOyTL8V9anq56eQPCiOxOhrEY
+	N2AG2C1wjDKnwPRJXA5JMIoQ4IyCrADYCCEuGWKFhUMRdsHTyizt01piGm23rE6Q
+	Ez7YCJLFwQtBUTolk42Y/lYXCGzwmhszuYxM09TG4k=
+Received: from 00107082$163.com ( [111.35.185.173] ) by
+ ajax-webmail-wmsvr-40-121 (Coremail) ; Thu, 30 May 2024 22:09:46 +0800
+ (CST)
+Date: Thu, 30 May 2024 22:09:46 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Dimitri Sivanich" <sivanich@hpe.com>
+Cc: kevin.tian@intel.com, baolu.lu@linux.intel.com, jroedel@suse.de, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [Regression] 6.10-rc1: Fail to resurrect from suspend.
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <ZlhtwDqFek7lP+9X@hpe.com>
+References: <20240530120110.22141-1-00107082@163.com>
+ <ZlhtwDqFek7lP+9X@hpe.com>
+X-NTES-SC: AL_Qu2aBfyct0kj4CeYZekXn0oTju85XMCzuv8j3YJeN500kiTT2ScZbWZcDVDzzsWQKgGlqQGGSgBS2N5bTLNoRKlB+nw1TUazE9I3l8InILJS
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next v2 3/3] doc: new 'mptcp' page in 'networking'
-Content-Language: en-GB
-To: Randy Dunlap <rdunlap@infradead.org>, mptcp@lists.linux.dev,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Gregory Detal <gregory.detal@gmail.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240528-upstream-net-20240520-mptcp-doc-v2-0-47f2d5bc2ef3@kernel.org>
- <20240528-upstream-net-20240520-mptcp-doc-v2-3-47f2d5bc2ef3@kernel.org>
- <9076abad-01f6-4ff4-a176-c2f4a85eb3fc@infradead.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <9076abad-01f6-4ff4-a176-c2f4a85eb3fc@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <31f16e4e.afe2.18fc9d5dad0.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3X+ariFhm6JYkAA--.39977W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gvuqmWXyDovmwAEst
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi Randy,
-
-On 29/05/2024 18:59, Randy Dunlap wrote:
-> Fix a few run-on sentences:
-
-Thank you for the review!
-
-I just applied these modifications in the v3:
-
-https://lore.kernel.org/r/20240530-upstream-net-20240520-mptcp-doc-v3-0-e94cdd9f2673@kernel.org
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+CkF0IDIwMjQtMDUtMzAgMjA6MTQ6NTYsICJEaW1pdHJpIFNpdmFuaWNoIiA8c2l2YW5pY2hAaHBl
+LmNvbT4gd3JvdGU6Cj5IaSBEYXZpZCwKPgo+VGhlcmUgaXMgYSBmaXggdG8gY29tbWl0IGQ3NDE2
+OWNlYjAsIHdoaWNoIEknbGwgYmUgcG9zdGluZyBzaG9ydGx5LiAgSG9wZWZ1bGx5Cj50aGF0IHdp
+bGwgcmVzb2x2ZSB5b3VyIGlzc3VlLgo+CgpIaSwgSSBqdXN0IGFwcGxpZWQgdGhhdCBwYXRjaCBv
+biA2LjEwLXJjMSwgaXQgZG9zZSBmaXggbXkgcHJvYmxlbSEKClRoeH4KRGF2aWQKCg==
 
