@@ -1,162 +1,177 @@
-Return-Path: <linux-kernel+bounces-195738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6938D511A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039E88D512F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9A41F22E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26CEA1C2314A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E049E47796;
-	Thu, 30 May 2024 17:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008C048788;
+	Thu, 30 May 2024 17:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B78bPN2E"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qzq7Py3N"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B244218757F;
-	Thu, 30 May 2024 17:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E934AEFD;
+	Thu, 30 May 2024 17:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717090608; cv=none; b=J0WkiycIlc2L6DdB4/XKOXWwx+ktqS6OMTU9NdT1Y0WtT348mQefiR0uhgHc6LaqI1hgyNDjodXIczpSpvae/WPZlYaty4taU1fV5b3IkjqOh9JXOJm+pzw3dwS3sH1UZawocnHyd30KZNsYYs3svYD2IHrb0RfmGPkJ/bXNpMU=
+	t=1717090903; cv=none; b=c4FBXHpuZYdE/nHj7VotXQPwyKKFEXSy+an7+QEfkOJ2WcJikDLUfVbTX6T1r1Lcjpg0/dUj68M69DftG3IUY5Yuf/Ow2XhTWcFQ+3a1iHOk6lc+rR0FnBHWTxcpjoPR36o8kVkMWgIIqnQt9NqWMIJWxyFHfu2qlUNBo0KeZ0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717090608; c=relaxed/simple;
-	bh=CuX/2pe9cApqXm2bXTN+MVTVzW69PBsZLZPGpMZ03mA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diqUjvsFimKf+Zz/vA+5dBzT11DN4ftHSMpUCCS5EwwK5PqHm6mzcsUn8LtXf5co9fGwd8DlJPLHhdw8+Ppx2qw6CBbO5lP4eBzc0O6ta/tpRSLji7QGDJJyZjkpmxPe7IQ4ABipw7B+zFIWR6z6EO7j6nDZROCUGbLzMV4IHik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B78bPN2E; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1717090903; c=relaxed/simple;
+	bh=J5HoT6wvLCEP6PKrxjLxadfzILQKD5XkS7lncw08i3o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rAPbnZQem1UayBmBDWkcZiDN/8VLfcpf0bEEEVhExaHqES52wGCBhXAbRmoEWR2YrL7tFMj0a6Scls7lgPRSUiBgss2iJxYhspgT+LTuVa9bTQJuRlVE9wtE6p0171aHErSkEsrgKW00yoQC8oDvDSYwuPWirYU48LE9lBUbEjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qzq7Py3N; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2bfff08fc29so942204a91.1;
-        Thu, 30 May 2024 10:36:46 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f62217f806so7246765ad.2;
+        Thu, 30 May 2024 10:41:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717090606; x=1717695406; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=+/FMefgpt3TfnKLLfewARfo5DV/oEmmnytLZ55pc/RM=;
-        b=B78bPN2EpJxVfu9mqfoHiH72oyRIBQj9xaribZ+ONRishNCupTld/CHtH6pbbJBD2w
-         rfao1BomEI1No/tzr9RyOxdNfBBl79ufVfsj9IYcQZDb6qTI9d8Ad0lIue/uVdkWOXSy
-         8rse7YfZHNrUeGkraGb6JIv4QviX/KYU0VgZeX1TY6FR8r6bE7OVJ0B9FouC2pZMQlK5
-         lv2oPHblh7l+95cUgi+ykQw+Z/u1L5NzXM8/tHfaYzwyC4Gt7xEqb/u7fQvnqN5FRsOa
-         gwHdplLsyPvEv+UtoZK/XeTsxztaZKYM6ZozP/o/JahXemwUKxQSSXCgAQWRZvwOQPVs
-         +tbA==
+        d=gmail.com; s=20230601; t=1717090901; x=1717695701; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m/ota4vn2GS8aqgXje2STBimgM+Hm93FTRCKMqODBkA=;
+        b=Qzq7Py3NyH1N6ugUBy/k45yVvskWtppUUHAxDsRWfFWwZVaIQCyFJgjTgZl0WGV51o
+         TK5d/GBDpPGJs4JW7MhxWn9/Qjm9ZARsWrIlvMQ3HadOPunpMeASrj3Y0/0b9aJUJh+h
+         HkFFjs3EJpQfPuRk2bPo0Wbh3CxxaB4LkMIhuskyTtXM8ZmG7pb4tpKagTtfUsMgzmPa
+         dIZ+rd6Mu7BJoO2/+obI2rxBnjhDVj1WvQMvnRAkq5DSzVhwPu7oxrHsGoZCjJ1LKmL3
+         1ax4XyjP9EyuYI/7QMZMLuHwxK5vhB0pmqCXPuagcXLyhx6fMMKRr4cwfArWxczWwm6x
+         y9OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717090606; x=1717695406;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+/FMefgpt3TfnKLLfewARfo5DV/oEmmnytLZ55pc/RM=;
-        b=Q824la1UMJEeD6cx3U5e52WCWrZHFx5Nax2wdgyQnu9yCRiO/soF5EVjRPW1/C507D
-         y4gHFeXCWuHi/ldeXFynGFZJNSAef8E0Tektj0sr/iOBzTeJ2mP2nNUkIRM75Satpryh
-         mFLzYFXN2VJ3DUTUX0utqgmvuLIchzrunhpgMISQpFiziwboAXpFKPQX93Z4fCwU4rOZ
-         39jO6anolTUQdb804CQoR2k0MibKOImL6sdHm11oDtEzwbpmRV3hDNpkCyIm82o2X9LJ
-         MlBkvmgP9YLaSkAlfniuQrXSc+dxNTJypWzRk6HwF10EM+AujUWhOnCc7kfzJ2AyTrdz
-         QuDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfs3KAW28h/edrJzU6BSwS/jH+fH41F29UAIjVACtnLK17AeQXu9O2NjBHbB2XlukFDrGtIxbuy3GmlkrLlA4VlkdJk1F8n91KcGejGZ7NJBvvi6WwIGImy8v1OVTW4M2t1UEbP7q04N9KBbAN6JrSwrOYfPNhyZa+iZuphjeNJjcT4Ru5
-X-Gm-Message-State: AOJu0Ywvd6HtSPggkC8Kvo1oqLCrfenIQ8ImlBH4NxD8lkWRRpeA6avC
-	uSPhQMe4Wq3Yl/0OKBNMh/oGMeAUy18WcEw1e1px0umOugYf1VVX
-X-Google-Smtp-Source: AGHT+IEcXZTirNtSqz6/4ItK2+CQVcicOieBc01XxfrGxwvX5ArAu7zFmCdxD5LyIhVavsW8h/ElBw==
-X-Received: by 2002:a17:90a:ad6:b0:2bf:dcba:a3c1 with SMTP id 98e67ed59e1d1-2c1abc3e316mr3493160a91.34.1717090605862;
-        Thu, 30 May 2024 10:36:45 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a777f7d8sm1788193a91.31.2024.05.30.10.36.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 10:36:45 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <be9a987d-9fca-4ef9-be58-58d7b4d8f26d@roeck-us.net>
-Date: Thu, 30 May 2024 10:36:43 -0700
+        d=1e100.net; s=20230601; t=1717090901; x=1717695701;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m/ota4vn2GS8aqgXje2STBimgM+Hm93FTRCKMqODBkA=;
+        b=i8DO3hTWeV1iFmWmyvYJMov4M+dYTYIcTFSbWZdtvag+uf8HOChfoMaa88E6d8huYF
+         qZ/3VblfsNcEDflsAac2NJ+HJZqwXbbem4bXotihCQnOg3dhF66nCYfIltN/vY1X/Y3u
+         GxiSnK8wNSdG9gkvzCN8BvAGEhxfu0FgZV1k0Lt8sjEiWYbN6MCzBb99e1joW7vPjcBA
+         nzJYRXaE9aD6tKdPHUxUk6bl0ayHichY/FrxWCNvRSYlCvjfZ5FABr2kAYGPi3iu4+zS
+         XoyPn+IeIMVchYYVQUPBJ0Qhi9j21xA1HfX2oNsXhgFUYLvm5lhiQUEjPYA9UanKlL5f
+         CQZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOD3H4/v3u38FI3wbn0rWZAwEDi9AtGMEfAd0IHo95jjr7FnxJJyDTx8ZMfh+c0/UlH0xqrpOQ4vg5sB+cFx8LxlMSR10XNdGSQOU/pmFzjZgmuBNLbRrxZJXXCm2+4Q1wBS5Z5MBWfGW31cxSvAXesFtwTJxf3ZzMKPUFo9GQ9BH9x4s=
+X-Gm-Message-State: AOJu0YzmS/qXZ/OAyuYW0+aJLZpBdFE6qRFu/csQ0z6/0qatdVuVbQIn
+	4R2Q+aDjOyFGMU7J3nj7UY92jTgDUuoCxmZiGuB/FvXwVYnWCd3h
+X-Google-Smtp-Source: AGHT+IHZ0dDmSPfX+xofX/WmcrGuZDwcUggoaa+ft3XatTCOde0yruag4R9avDoOo4qe8Wvx6gsKpw==
+X-Received: by 2002:a17:902:c943:b0:1f4:9474:e44d with SMTP id d9443c01a7336-1f61961bcd0mr37074115ad.21.1717090901019;
+        Thu, 30 May 2024 10:41:41 -0700 (PDT)
+Received: from prasmi.. ([2401:4900:1c07:3bcb:e05d:a577:9add:a9ce])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63240c947sm450105ad.269.2024.05.30.10.41.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 10:41:40 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 00/15] Add PFC support for Renesas RZ/V2H(P) SoC
+Date: Thu, 30 May 2024 18:38:42 +0100
+Message-Id: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
- sensors
-To: Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org
-Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
-References: <20240529205204.81208-1-linux@roeck-us.net>
- <20240529205204.81208-3-linux@roeck-us.net>
- <6f1ffb83-a64f-469d-b981-f0da0d2f02ac@gmx.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <6f1ffb83-a64f-469d-b981-f0da0d2f02ac@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/30/24 10:03, Armin Wolf wrote:
-[ ... ]
->> +
->> +
->> +PEC configuration
->> +-----------------
->> +
->> +If the I2C/SMBus controller supports PEC, it can be enabled or disabled using
->> +the 'pec' sysfs attribute attached to the i2c device.
->> +
-> 
-> Hi,
-> 
-> the spd5118 only supports PEC when in i3c basic mode, so afaik we cannot use PEC here.
-> 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for noticing. I misread the spec and associated the note with PAR_DIS,
-not PEC_EN. I'll drop this and the PEC patch. Good that I kept it separate.
+Hi All,
 
-Thanks,
-Guenter
+This patch series aims to add PFC (Pin Function Controller) support for
+Renesas RZ/V2H(P) SoC. The PFC block on RZ/V2H(P) is almost similar to
+one found on the RZ/G2L family with couple of differences. To able to
+re-use the use the existing driver for RZ/V2H(P) SoC function pointers
+are introduced based on the SoC changes.
+
+v2->v3
+- Dropped patch 1/13 [0] as its been already queued up.
+- Updated description for renesas,output-impedance property
+- Added three new patches 02/15, 04/15 and 14/15
+- Updated size for cfg in struct rzg2l_variable_pin_cfg
+- Included RB tags
+- Introduced single function pointer to (un)lock PFC
+- Now passing offset to pmc_writeb() instead of virtual address
+- Renamed read_oen->oen_read
+- Renamed write_oen->oen_write
+- Renamed get_bias_param -> hw_to_bias_param
+- Renamed get_bias_val -> bias_param_to_hw
+- Dropped un-necessary block {}
+- Now reading arg before calling hw_to_bias_param()
+- Added gaurd for custom_conf_items in struct rzg2l_pinctrl_data
+- Renamed PIN_CFG_OPEN_DRAIN->PIN_CFG_NOD
+- Renamed PIN_CFG_SCHMIT_CTRL->PIN_CFG_SMT
+- Introduced PWPR_REGWE_A instead of using PWPR_PFCWE
+- Dropped using pwpr_lock
+- Optimized rzv2h_pin_to_oen_bit()
+
+RFC->v2
+- Fixed review comments pointed by Rob
+- Incorporated changes suggested by Claudiu
+- Fixed build error reported for m68K
+- Dropped IOLH groups as we will be passing register values
+- Fixed configs for dedicated pins
+- Added support for slew-rate and bias settings
+- Added support for OEN
+
+RFC: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240326222844.1422948-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20240423175900.702640-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (15):
+  dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
+  pinctrl: renesas: pinctrl-rzg2l: Rename B0WI to BOWI
+  pinctrl: renesas: pinctrl-rzg2l: Allow more bits for pin configuration
+  pinctrl: renesas: pinctrl-rzg2l: Drop struct rzg2l_variable_pin_cfg
+  pinctrl: renesas: pinctrl-rzg2l: Allow parsing of variable
+    configuration for all architectures
+  pinctrl: renesas: pinctrl-rzg2l: Validate power registers for SD and
+    ETH
+  pinctrl: renesas: pinctrl-rzg2l: Add function pointer for
+    locking/unlocking the PFC register
+  pinctrl: renesas: pinctrl-rzg2l: Add function pointer for writing to
+    PMC register
+  pinctrl: renesas: pinctrl-rzg2l: Add function pointers for
+    reading/writing OEN register
+  pinctrl: renesas: pinctrl-rzg2l: Add support to configure the
+    slew-rate
+  pinctrl: renesas: pinctrl-rzg2l: Add support to set pulling up/down
+    the pins
+  pinctrl: renesas: pinctrl-rzg2l: Pass pincontrol device pointer to
+    pinconf_generic_parse_dt_config()
+  pinctrl: renesas: pinctrl-rzg2l: Add support for custom parameters
+  pinctrl: renesas: pinctrl-rzg2l: Acquire lock in
+    rzg2l_pinctrl_pm_setup_pfc()
+  pinctrl: renesas: pinctrl-rzg2l: Add support for RZ/V2H SoC
+
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  23 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 773 ++++++++++++++----
+ 2 files changed, 619 insertions(+), 177 deletions(-)
+
+-- 
+2.34.1
 
 
