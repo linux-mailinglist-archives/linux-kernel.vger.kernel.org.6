@@ -1,298 +1,288 @@
-Return-Path: <linux-kernel+bounces-194929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D148D4476
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD688D4478
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22421F23200
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B361F22DE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7316F14388D;
-	Thu, 30 May 2024 04:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC73143883;
+	Thu, 30 May 2024 04:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rwxym+tW"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2048.outbound.protection.outlook.com [40.107.236.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iqjch8gA"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A0414387E;
-	Thu, 30 May 2024 04:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717042816; cv=fail; b=K/hjIyRoeUiItFZEGUtDo9y7CrbvaTSiPzxj5PcyXHuS0bSx5eDJnRxER56jXWSyinxSKsIkoqss2p9NvX0u+YLSfT/8MNxiZJx0mlaHvA59VF/1oCLC7/fJF4CsKIx9caiv1a7h5el4cI8N9ILD5wu0knTZl9+UHDZhxHYpIR4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717042816; c=relaxed/simple;
-	bh=rbih0cTvIZXX2q6DW8NMB5OTvyxeZMVxvBNb8Zz0okk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rKOV+CpiTUJeVTAEkEscL1uKU40/IS5xUOYEM6Rw4Q/oJziCmqHjWLY0YH2opS+SA+WFrfpqZehgXUDVx7sVqDz8EALyLA8hreBbELDYqBklGEyfR3HfDzw4Jiibzvd0gTy04KdWT6vBMwjx1EVcYd2iKLCdsnnRSk+VR0xC8Xs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rwxym+tW; arc=fail smtp.client-ip=40.107.236.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WGdcDoUMr1Lpoefqb+ZpciWPBV1NRWsJXslLEbyaAeP4LIk9A6K4LTTdpCBtgJ4dYBrcNmTw4104O0GIBdBbO1KazkQrXS/o/sOGzRVJ28QK+SEjzkYKkbf5aBvKa2jXVLpQ1y48cRloS7SsgWTBtTsGZ6am5Ao86/ogo45gNVYH1Lkd0QANruR6xeKxVI5fya6omyxOarr4gCzGMo8z+dXgEm2ZX3T6goIf89metviMqydh9F2voxMMuj1N2BULeNZcG95PBMW3J9JFqxR5HJcuCGg/pIaXM4GFVPE9yYHAbGUnBfnq9QECAS5k0QGMLimYt7Qj8hcy/kk7l/6m+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3UQ9LwD9ilGWna831h/UKLq0KxgajcJZhH8NSCQ1Mu0=;
- b=dLN4qAEU3LQ3kgcCD1LbqEcrOUaTFU1Xp3J5QNqwqRcO+8ljuPIKEPwPuNkqoOt3SmzXZa+2D64mi8DqC2fY7PKkaEFbpmrCGv4orrjnWd8bJbHlrJMWTtPaj+6BW00ZQDpt8sVnHo2aHRbCfMNil8YV6D19a0hyHYXL0Ej/nZwv3vNdUJVYKDAUX14ZU7ByzNhPMhyi7MfKIuy5kfzPeQjN09WXti/IejtnfQ+Qzx8HyPGHfopJkhjyD/R5pCUxDri9zx5/d3bH/P1xSn9YobkfAhxD0S3ibeH+ctUxtLoTaANrrhblgVWDoTgfoGLREtKpVQ3ZmoyIrg9NEQoQlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3UQ9LwD9ilGWna831h/UKLq0KxgajcJZhH8NSCQ1Mu0=;
- b=rwxym+tWijzdkvHoxgxWn5Icn5rQ3bhgOZ9eYXOTxD3jdO/fhtqweiS6mD3rSFiJyMYtw+E5TSXk2IXRkr1lmzfCnaCuwiOCPXojnEp06TRV+akmMY8Bynr7GFtjpSzsrUkvAL40oWMWNsTCj/sNPPkx1kQRUoGOP7mFRJ2N8+g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
- IA1PR12MB7494.namprd12.prod.outlook.com (2603:10b6:208:41a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
- 2024 04:20:11 +0000
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627%5]) with mapi id 15.20.7633.018; Thu, 30 May 2024
- 04:20:11 +0000
-Message-ID: <82556a16-3390-4867-89b6-23e5ff168b89@amd.com>
-Date: Thu, 30 May 2024 09:49:55 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
- and potential solutions
-To: John Johansen <john.johansen@canonical.com>,
- Mateusz Guzik <mjguzik@gmail.com>
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- "Shukla, Santosh" <Santosh.Shukla@amd.com>,
- "Narayan, Ananth" <Ananth.Narayan@amd.com>,
- raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com,
- paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
-References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
- <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
- <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com>
- <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
- <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com>
- <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
- <5c94947b-1f1f-44a7-8b9c-b701c78350b4@canonical.com>
- <CAGudoHFxma+H_iHPV8+gfEkHc0uwFD8=rJtFy7ZE3TH+7tGiwQ@mail.gmail.com>
- <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
-Content-Language: en-US
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-In-Reply-To: <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN2PR01CA0138.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:6::23) To DS0PR12MB6608.namprd12.prod.outlook.com
- (2603:10b6:8:d0::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361DA28E7;
+	Thu, 30 May 2024 04:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717042921; cv=none; b=JxfTzlA3vuLeEE4vcT0DmXQpiFtO0/krHOVGgC+9zg78q6mtSS1gP2cXQUX9fAu9pQqdHBz5vTeneqT5IaoZJXMbc05Mzbdg7qVjqok8rsCELE8WYOccYOWV8hNKvjA3kSkTFXSEgdFSIJzjjl0Xf9AXEdqdpFyLboNiq+8rZz4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717042921; c=relaxed/simple;
+	bh=HvHUlYrVomARIHnkZekH0LjPMDAiqzdro3h1eChDqfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HTJq0cMqHaPpN9vc9PQVsHnxJsai4Dk3LhV9UrMsDNIqHvWndsGxOxf8zMKcqHhnLSCHj7yLMCl2fYJHdo0iS3L8qAvcbg5a/QW3IGFIRBcqhOevpSyXGkgxb2SThLGTyCWmnoShh3irhgaH8KkoiqD71mkfwVXjrVMto3O65ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iqjch8gA; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6ff6fe215c6so412709b3a.3;
+        Wed, 29 May 2024 21:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717042919; x=1717647719; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xBLzkMhspMVVnxkqgoE5gR4vmWralf60H1wWDRcdvnw=;
+        b=Iqjch8gAdpDFQc2wGFFyaniJISMOGOUypXQINqYXKhwTtBmPxdf3jidkJwAsnKpi9D
+         sTNGB1GQ3c7wqlN59eYXhqVbCrJxVx9QOw8HTWrYQeyNiIO8c+BwOSjv6FBOQWpozQZl
+         G2q2EckXgfwL+hluvoivv8bqufqCXzjUAMqGfOCB1xKGOBfmoZADzDXz/PCEow6f/kdX
+         ynSVx3MEru5BFAh/10CdOa0ghZkb0g34SyReiBv7MtQQviRJ3bccKAIhs2kjWEbLXyAS
+         0ojL6rRtb1JJKG3Mdz1T/g/KoRBB1htFgOZ4YpTyyCdRiekJFarSxzP3Kn3JC+rsxf8H
+         nBFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717042919; x=1717647719;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xBLzkMhspMVVnxkqgoE5gR4vmWralf60H1wWDRcdvnw=;
+        b=kMAEaZem/PAQc/K4ZLwL+DVIrfMVvxpgUWqdeF6r1158Nc3WuWTtUgakNQpZg5qVjD
+         u7sEt6UktRzOvSNcr5THpTulbQs7Re1EHqPseJe5mYJnPI7WkHcDDC9imsc+d35HuH/c
+         SYZ4fxQjgxFUKalAvG0zfrh1GtIfqY8U8pY6adDMRI5a4D5eVQ3rETIlVknpP1jOCcnc
+         DaQlpxZoW3IzXAkw+jTNcO1ftdu1cUbcMQMj4kGUP0/v91ljFxg4i+Pn6SON9+aQBbHK
+         A+GF4mlD9UJjmKDgRWT5l9/d35leNipKih7bh6agbH4Hf7LvgodclKLt/c9W5VsnBmeZ
+         WADw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYew8L5VwEDgcx2sqzesygo/m6qstR+BX/kEezT1TCQrpGF3WL8j9k8p4g17AfKQS1I55HAJRxqCcFDRHz4Wu4LMtQfkc91Leq4f7ef5JM86GJOAoD4Hzc/s3J/cBxJAo7Pr+n
+X-Gm-Message-State: AOJu0YwRlrg7qevM2WHoCp84tHrtjw3FKviGCNpFAZ0yh6tmTtC8Hvuj
+	Ao19qhi9HkZjq+OCB+EvPxdu4TI/nVR5LTbVcy4cozcGclL0FUza
+X-Google-Smtp-Source: AGHT+IELWc+Ian0RzmubNr/PJ38WEIz0KL3Ieb7m/tuYvJNFgMjfxZG8fmC9atETuYx6gTQgx8Gu6Q==
+X-Received: by 2002:a05:6a00:3485:b0:6f8:effd:7942 with SMTP id d2e1a72fcca58-702310daf06mr1253461b3a.2.1717042919124;
+        Wed, 29 May 2024 21:21:59 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fcfe6cd2sm8765866b3a.162.2024.05.29.21.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 21:21:58 -0700 (PDT)
+Message-ID: <ce9fe740-8c9a-4fc0-a65d-464f2c7da377@gmail.com>
+Date: Wed, 29 May 2024 21:21:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|IA1PR12MB7494:EE_
-X-MS-Office365-Filtering-Correlation-Id: c01ec373-23ff-4a09-2892-08dc805fcb9d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|366007|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WmxTQnZES21QS0V2RnZLdytsczZGYkE2U0k5RTRZZ2hObTl3TXBJQ3IvNVRJ?=
- =?utf-8?B?TTMrWWI1TVNGOENmWFU1Wlc2K1AyUEUxMFBjdnZuSWdRK0tWbVdldGdMa3VN?=
- =?utf-8?B?TXJ3eVRDc2xLS1NBZGlFaEI2VGU0cVdTWGRMMjQ0LzZGWUg2OTJsc3ZYZ0NK?=
- =?utf-8?B?Q2tQQ2ZIWkp6bUZpQ1RUb1RDdEdPNjljZnZKbXVzZkI3VkhPUzBXTE93WUYx?=
- =?utf-8?B?aTN3Zy9KT0R3UUxxdXJQKy9sT09WTExlUzlRbVpqK1pMdXo5MkZZdzRiSjR6?=
- =?utf-8?B?TnlSK01IOXdlTGlJc0svdzFUbzdqa0JONDVaWHJjUUJhOTN4Qko4QjlHdzFQ?=
- =?utf-8?B?aTR3UXQ0RE9oVEtxNTB4RWNNWmpvYVNybkpCdUdtMitLTUVQWDhmZnVnRkZI?=
- =?utf-8?B?RnM3WHhqQStEY3VCZXN4UnV6WDg1QzlwektnUG9qTC9vcmV0M0xpTThsSnpB?=
- =?utf-8?B?aU56dXhpM2NNeGV3NHVITEN1ZUZ4UlczYXdnZGhBYW9uOFVLOHZoTXU1Q1U0?=
- =?utf-8?B?WWxUc0RpTmVIYUhtV3pCK0hmaG1BYXQ2d0xpd2JKNG1GQ2ptK2RybTBBcm5R?=
- =?utf-8?B?dFVHSTJDbk1ZVmRRV2w2cDVtaExzbVYzaXQvWVl3NDFkYm9BMWVTNVJsUDU0?=
- =?utf-8?B?ZDdnTEsrSS9vRXdSMjhlbWNITXEvaVpXVmJ0M1VOWlZIQS84Zi9ZQkVSMkRs?=
- =?utf-8?B?clNST0kwV3E0WFg4ZU41T3hOa2E0TTVvZE9qU2NEUTNRRTFVWVJFeFgvNXJh?=
- =?utf-8?B?cGJobncxMGtTV3AxRkJTQk1TanNzeG1GdnVJOE0rVzhXUUdNMGphZ29FZGFi?=
- =?utf-8?B?WkQ3Q1pwT1R6NVhPSmFLekU0a0NHcHo2YVQ1c3BvaEMzSDY4bzMyZnRNYWxQ?=
- =?utf-8?B?QWU3SXExYWF5MW5KNTVscWdyTlBYK09XaUhsQS9ZL1VKM1kyeExyWG9VSWdQ?=
- =?utf-8?B?VHBORUVYUFpyQ2U1QUhUM082UDdsZWFqeTZnb0ZTd2h4OTJ5RUNGUEIwM2RT?=
- =?utf-8?B?YlQ5UHlPdXBTYUprU0tlRVNVa1I5cFJ6ZGtiRTF1YXJVeTFhK2J0Rk5tMkZY?=
- =?utf-8?B?ZkxIS2JjNCt0aXJSbGE2MmlYdE9tb1oxM0pxb3dWYkU2OHpNMlRxSlhsbU5R?=
- =?utf-8?B?dHJ2VnNpVlJJeUJQNnhTc3EraW1QVXlGM0JOd2NQbkJaUnJTTDJvaGFOSWkx?=
- =?utf-8?B?djVXY3JmSy9wZUJkY3M2THFJSDJzc0NFa2tOS3hITHJEbkVOaW9IWWdQM0ZZ?=
- =?utf-8?B?RzZpQ0FyaytpM2ZrMHlUWXljQkRaZTQySmw0MUhpOWFranRXUVpLcS9ZZDNi?=
- =?utf-8?B?eWtJWVM2U2lkbThyNXRMSTJOaXpDSkFIeEFKWDVnQ3VGbzg0NWxDRGk3TkRl?=
- =?utf-8?B?QTdBWFZzdmZHekhiblhSaUhtUkJZcFZZV2R5UXo5MjRybnRzblFNcE5wdkpC?=
- =?utf-8?B?MkRBKzRPQnNldlM2TEFrY21tQnZMUDc0MmsvTk1YVzdKNy9VVU9PMXJZL1ZR?=
- =?utf-8?B?cmNyVlV0Y3E3Y2VJL1JXRmRONFg2b2Zqa2RxNXJCWkgzaXM4M29jMjFGT08x?=
- =?utf-8?B?SmY2cElNVC9LSVduQlo3OVE0d3ZpeW9aUUs0dHRSRjdpSWNOTUt5VmNPbjll?=
- =?utf-8?Q?B2t9g+KlVRojxKC+P53m6JdLaRDhP+VaNqd++1xTyuis=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c1FIWFdBd0k5ZnorbWVzTzR3emQ4cTVFZDhRWHF3RlczVklFdCtmVDloSTVB?=
- =?utf-8?B?SkF1VGswcVhFeUQwR3ZDU0xDQmhPVmxXWXF3NmVsZllHR2tycjM3M3lnNmJE?=
- =?utf-8?B?ZW9xVzFUcjVyVDdqaWU3WUJDUTlNdG9SWEhFS1p6VU1tdUd0THp0RTdkMWpB?=
- =?utf-8?B?RVFuTnNtWC9uS2doQmtZWmgweU80Zm1BV2tiZWx2V2pkK0h4WVRvOXdpdEgw?=
- =?utf-8?B?cy9SMTdWNk80YkVCSDZFaEIrRWV6UFpDeUhOYy9OS2dqaXNTbXNvOEMrTmtp?=
- =?utf-8?B?MGRiMmZRWVBpV1d2cDNOaGxhOWdhLzJiRE5tTityZWZvd2dkODhVRFZ5NmNC?=
- =?utf-8?B?MWlIRlU4ekpobWhTNnd6UnUrWFYwa0xQUFpkVUhQbG9zakNqaFNpbk54ejFO?=
- =?utf-8?B?dnBiSHhGbDlwNUpMbWlSeDAva2RjajhKRHJPODh3Q0xSOW9FR1ZKMVp4Y0Yx?=
- =?utf-8?B?NG5NcWRXd1B5clN2OW0xY2JBdGtMMUFhZm9Lb2M5Q3BKYVl0S3h0Y0pvcE82?=
- =?utf-8?B?aWdXUCthaWZkamZDanpWcU5QUkIrQlJyWXM3UFd6bHIwY29jMTRkTWNkUTdz?=
- =?utf-8?B?VmRHVE1ZRDgra2JPdXpwaUJNTVIvWm1WVDIwdkhzZXpkUEVFSGZqSUtHZTRk?=
- =?utf-8?B?N29BY3YyUUpZTWRYamFDMitTYUdRVVJuZ0ZBWE5sdVo0aDlVMnV0VG1zRTJs?=
- =?utf-8?B?aEFPQVB0Y1lhNTh3VmpQUHpGT2ZKdlh5b1JoUjd4ZllIZWpXSFF6MlRLc1dZ?=
- =?utf-8?B?WjVwR2RzQmN4OWlQakY3bllpOGVnZ2Q4Z3AvRkdqM1U0SVNyb0kzdUZ5TFFw?=
- =?utf-8?B?bGRtTHlkZXpndGJzNitMWW0zeExUYlVhY2c3eEtHQmdRMnZrY0J0UWJtNE1W?=
- =?utf-8?B?UFBkcFp6d1IvQi9OK3lSV2tDeUFmYmpQZVhzdmpHYno1cFY2cVlOQXpUY1FM?=
- =?utf-8?B?dnJ4Mmo1UU1ZVkQ3bUlaT0ozK29OTjBVVkV0TGFJRk9SeENkVHFoem85blA3?=
- =?utf-8?B?QXpyKzJKc2dmMm9WOHVDQXVremtHQ2ZVRFNnVVk0QUZmVy95Ry83b2tZUDV3?=
- =?utf-8?B?cEF6RFBjbzJhWjRaRDJUOHJxWXlzSUc4NEZ2TU1XQ2pDWUl3Zm9USXRQbXZV?=
- =?utf-8?B?RGlheWRvZDNick1kcHd1SVE4aVAxNnBuM01CQVU4cVJJK09RNHF2QS9EKzM0?=
- =?utf-8?B?YmM4djVSLzduVzltaUV1S1l6TjdKMHcvcDVQRkJRWjhlSzRzVUdCNDF2R2tj?=
- =?utf-8?B?K3I3QThLZCtadVkwMDhtTUl2czNlQlQrblloMEd4ZXlxd09vbEx3aVlVbVpa?=
- =?utf-8?B?TWs0OGF3TEZIeVVBaU13K3MxaVFIVXpCUWJkUVpsOEMyRXNzb1hiNTI5aUlK?=
- =?utf-8?B?MjVKUG9mQk1LSUlHajJwWEhwdUVnL2dzMzdGQUZacG4vU0VDbThpQ2ZaclA5?=
- =?utf-8?B?b0xmSjRFYXBjVjM1eVdIMityZ1pYRDM5RmtoMGs2N1NJRUZiN0ZUbHFMZ1Zj?=
- =?utf-8?B?YnlaZEJ4ZWxYL2NQdk83Nkd6RjNoSmNwN3hiWng4NGl3NkpKRGpNdE5oWlR5?=
- =?utf-8?B?TThWa1BTdlB0VTA4Z09UWnM2ditCZG50N3RlWHhyd2loM2xqYXdaNFB4SThm?=
- =?utf-8?B?MUtNeEFlaFlLT1kwZHJsdmRIbVhUeXg0NjlSdlNzN2NaMXMvdGZIRThKbXJC?=
- =?utf-8?B?NUpxN2lsTVoyRSt0NTVDaDZmSlJVWjRzcHRCNVZ3SUNxcGhQKzlpM28xcUo2?=
- =?utf-8?B?d0V0bDkrclY3YmlSTWlZdHNSdmZvYUNLNDRqZEwraHI2NERhWE41UC92WTBT?=
- =?utf-8?B?OEJCbEhFMDlIQU91NkRsVDRZVjlPeWtPRHY4ay84S2JWWlJYWC91NjlVd1k1?=
- =?utf-8?B?eXVpRlhybjFaQUNHbk1hZ1JHdjBLSTZnVzN5K0M4SkFEY21nVXpwbDQ2WmJP?=
- =?utf-8?B?eEg2NXpGUE1MQ25HZ3VBNm9BSFV0eWFHQ1pUcGk0MnRhWDBvcTVOakhFV3dZ?=
- =?utf-8?B?R2NOV04vejZXbUszUWQydkl4SDJnQUNvQzd2WmdDaTlaUVFRV2VaRWhid3oy?=
- =?utf-8?B?KzM2bkJoOW9TbVJVd2trQ3p6T2Q2VnFPL3JMbUI2U2lRWkYwWDZOWmdlT2hJ?=
- =?utf-8?Q?V8IXFm+jCPlkKOHn1PV+VpX4w?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c01ec373-23ff-4a09-2892-08dc805fcb9d
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 04:20:11.0023
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W01iKuXo9ZCSYmQ3jxKK9DVKLKIwXKS1DpvwjyF7mLS8bBOG1Y1qVaOSbFDjWon7hR7FKhRYv79uATbGIp85zA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7494
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net v2] net: ethernet: mtk_eth_soc: handle dma buffer size soc
+ specific
+To: =?UTF-8?B?QmMtYm9jdW4gQ2hlbiAo6Zmz5p+P5p2RKQ==?=
+ <bc-bocun.chen@mediatek.com>, "daniel@makrotopia.org"
+ <daniel@makrotopia.org>, "sgoutham@marvell.com" <sgoutham@marvell.com>
+Cc: =?UTF-8?B?TWFyay1NQyBMZWUgKOadjuaYjuaYjCk=?= <Mark-MC.Lee@mediatek.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ =?UTF-8?B?U2t5TGFrZSBIdWFuZyAo6buD5ZWf5r6kKQ==?=
+ <SkyLake.Huang@mediatek.com>, =?UTF-8?B?U2FtIFNoaWggKOWPsueiqeS4iSk=?=
+ <Sam.Shih@mediatek.com>, "linux@fw-web.de" <linux@fw-web.de>,
+ "john@phrozen.org" <john@phrozen.org>, "nbd@nbd.name" <nbd@nbd.name>,
+ "lorenzo@kernel.org" <lorenzo@kernel.org>,
+ "frank-w@public-files.de" <frank-w@public-files.de>,
+ Sean Wang <Sean.Wang@mediatek.com>, "kuba@kernel.org" <kuba@kernel.org>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "pabeni@redhat.com" <pabeni@redhat.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ =?UTF-8?B?U3RldmVuIExpdSAo5YqJ5Lq66LGqKQ==?= <steven.liu@mediatek.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "angelogioacchino.delregno@collabora.com"
+ <angelogioacchino.delregno@collabora.com>
+References: <20240527142142.126796-1-linux@fw-web.de>
+ <BY3PR18MB4737D0ED774B14833353D202C6F02@BY3PR18MB4737.namprd18.prod.outlook.com>
+ <kbzsne4rm4232w44ph3a3hbpgr3th4xvnxazdq3fblnbamrloo@uvs3jyftecma>
+ <395096cbf03b25122b710ba684fb305e32700bba.camel@mediatek.com>
+ <BY3PR18MB4737EC8554AA453AF4B332E8C6F22@BY3PR18MB4737.namprd18.prod.outlook.com>
+ <4611828c0f2a4e9c8157e583217b7bc5072dc4ea.camel@mediatek.com>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <4611828c0f2a4e9c8157e583217b7bc5072dc4ea.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi John,
 
-Thanks for taking a look at the series!
 
-On 5/29/2024 6:07 AM, John Johansen wrote:
-> On 5/28/24 06:29, Mateusz Guzik wrote:
->> On Fri, May 24, 2024 at 11:52 PM John Johansen
->> <john.johansen@canonical.com> wrote:
->>>
->>> On 5/24/24 14:10, Mateusz Guzik wrote:
->>>> On Fri, Mar 8, 2024 at 9:09 PM John Johansen
->>>> <john.johansen@canonical.com> wrote:
->>>>>
->>>>> On 3/2/24 02:23, Mateusz Guzik wrote:
->>>>>> On 2/9/24, John Johansen <john.johansen@canonical.com> wrote:
->>>>>>> On 2/6/24 20:40, Neeraj Upadhyay wrote:
->>>>>>>> Gentle ping.
->>>>>>>>
->>>>>>>> John,
->>>>>>>>
->>>>>>>> Could you please confirm that:
->>>>>>>>
->>>>>>>> a. The AppArmor refcount usage described in the RFC is correct?
->>>>>>>> b. Approach taken to fix the scalability issue is valid/correct?
->>>>>>>>
->>>>>>>
->>>>>>> Hi Neeraj,
->>>>>>>
->>>>>>> I know your patchset has been waiting on review for a long time.
->>>>>>> Unfortunately I have been very, very busy lately. I will try to
->>>>>>> get to it this weekend, but I can't promise that I will be able
->>>>>>> to get the review fully done.
->>>>>>>
+On 5/29/2024 6:46 PM, Bc-bocun Chen (陳柏村) wrote:
+> On Wed, 2024-05-29 at 17:50 +0000, Sunil Kovvuri Goutham wrote:
+>>   	
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>   On Mon, 2024-05-27 at 17:13 +0100, Daniel Golle wrote:
+>>>> On Mon, May 27, 2024 at 03:55:55PM GMT, Sunil Kovvuri Goutham
+>>> wrote:
 >>>>>>
->>>>>> Gentle prod.
 >>>>>>
->>>>>> Any chances of this getting reviewed in the foreseeable future? Would
->>>>>> be a real bummer if the patchset fell through the cracks.
->>>>>>
->>>>>
->>>>> yes, sorry I have been unavailable for the last couple of weeks. I am
->>>>> now back, I have a rather large backlog to try catching up on but this
->>>>> is has an entry on the list.
->>>>>
+>>>>>>>> -----Original Message-----
+>>>>>>>> From: Frank Wunderlich <linux@fw-web.de>
+>>>>>>>> Sent: Monday, May 27, 2024 7:52 PM
+>>>>>>>> To: Felix Fietkau <nbd@nbd.name>; Sean Wang <
+>>>>>>>> sean.wang@mediatek.com>;
+>>>>>>>> Mark Lee <Mark-MC.Lee@mediatek.com>; Lorenzo Bianconi
+>>>>>>>> <lorenzo@kernel.org>; David S. Miller <
+>> davem@davemloft.net>
+>>>>> ; Eric
+>>>>>>>> Dumazet
+>>>>>>>> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>;
+>>>>> Paolo
+>>>>>>>> Abeni
+>>>>>>>> <pabeni@redhat.com>; Matthias Brugger <
+>>>>> matthias.bgg@gmail.com>;
+>>>>>>>> AngeloGioacchino Del Regno <
+>>>>>>>> angelogioacchino.delregno@collabora.com>
+>>>>>>>> Cc: Frank Wunderlich <frank-w@public-files.de>; John
+>>>>> Crispin
+>>>>>>>> <john@phrozen.org>; netdev@vger.kernel.org;
+>>>>>>>> linux-kernel@vger.kernel.org;
+>>>>>>>> linux-arm-kernel@lists.infradead.org;
+>>>>>>>> linux-mediatek@lists.infradead.org;
+>>>>>>>> Daniel Golle <daniel@makrotopia.org>
+>>>>>>>> Subject: [net v2] net: ethernet: mtk_eth_soc: handle dma
+>>>>> buffer
+>>>>>>>> size soc specific
+>>>>>>>>
+>>>>>>>> From: Frank Wunderlich <frank-w@public-files.de>
+>>>>>>>>
+>>>>>>>> The mainline MTK ethernet driver suffers long time from
+>>>>> rarly but
+>>>>>>>> annoying tx
+>>>>>>>> queue timeouts. We think that this is caused by fixed dma
+>>>>> sizes
+>>>>>>>> hardcoded for
+>>>>>>>> all SoCs.
+>>>>>>>>
+>>>>>>>> Use the dma-size implementation from SDK in a per SoC
+>>>>> manner.
+>>>>>>>>
+>>>>>>>> Fixes: 656e705243fd ("net-next: mediatek: add support for
+>>>>> MT7623
+>>>>>>>> ethernet")
+>>>>>>>> Suggested-by: Daniel Golle <daniel@makrotopia.org>
+>>>>>>>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 >>>>
->>>> So where do we stand here?
+>>>>>>
+>>>>>> ..............
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+>>>>>>>> b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+>>>>>>>> index cae46290a7ae..f1ff1be73926 100644
+>>>>>>>> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+>>>>>>>> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 >>>>
->>> sorry I am still trying to dig out of my backlog, I will look at this,
->>> this weekend.
+>>>>>>
+>>>>>> .............
+>>>>>>>> @@ -1142,40 +1142,46 @@ static int mtk_init_fq_dma(struct
+>>>>> mtk_eth
+>>>>>>>> *eth)
+>>>>>>>>                              cnt * soc-
+>>>>>>>>> tx.desc_size,
+>>>>>>>>                              &eth-
+>>>>>>>>> phy_scratch_ring,
+>>>>>>>>                              GFP_KERNEL);
+>>>>
+>>>>>>
+>>>>>> ..............
+>>>>>>>> -  for (i = 0; i < cnt; i++) {
+>>>>>>>> -      dma_addr_t addr = dma_addr + i *
+>> MTK_QDMA_PAGE_SIZE;
+>>>>>>>> -      struct mtk_tx_dma_v2 *txd;
+>>>>>>>> +      dma_addr = dma_map_single(eth->dma_dev,
+>>>>>>>> +                  eth->scratch_head[j], len *
+>>>>>>>> MTK_QDMA_PAGE_SIZE,
+>>>>>>>> +                  DMA_FROM_DEVICE);
+>>>>>>>>
+>>>>
+>>>>>>
+>>>>>> As per commit msg, the fix is for transmit queue timeouts.
+>>>>>> But the DMA buffer changes seems for receive pkts.
+>>>>>> Can you please elaborate the connection here.
 >>>
+>>>>
+>>>> *I guess* the memory window used for both, TX and RX DMA
+>>> descriptors
+>>>> needs to be wisely split to not risk TX queue overruns, depending
+>>> on
+>>>> the
+>>>> SoC speed and without hurting RX performance...
+>>>>
+>>>> Maybe someone inside MediaTek (I've added to Cc now) and more
+>>>> familiar
+>>>> with the design can elaborate in more detail.
+>>   
+>>> We've encountered a transmit queue timeout issue on the MT79888 and
+>>> have identified it as being related to the RSS feature.
+>>> We suspect this problem arises from a low level of free TX DMADs,
+>> the
+>>> TX Ring alomost full.
+>>> Since RSS is enabled, there are 4 Rx Rings, with each containing
+>> 2048
+>>> DMADs, totaling 8192 for Rx. In contrast, the Tx Ring has only 2048
+>>> DMADs. Tx DMADs will be consumed rapidly during a 10G LAN to 10G WAN
+>>> forwarding test, subsequently causing the transmit queue to stop.
+>>> Therefore, we reduced the number of Rx DMADs for each ring to
+>> balance
+>>> both Tx and Rx DMADs, which resolves this issue.
 >>
->> How was the weekend? ;)
->>
-> 
-> lets say it was busy. Have I looked at this, yes. I am still digesting it.
-> I don't have objections to moving towards percpu refcounts, but the overhead
-> of a percpu stuct per label is a problem when we have thousands of labels
-> on the system. That is to say, this would have to be a config option. We
-> moved buffers from kmalloc to percpu to reduce memory overhead to reduce
-> contention. The to percpu, to a global pool because the percpu overhead was
-> too high for some machines, and then from a global pool to a hybrid scheme
-> because of global lock contention. I don't see a way of doing that with the
-> label, which means a config would be the next best thing.
-> 
+>> Okay, but it’s still not clear why it’s resulting in a transmit
+>> timeout.
+>> When transmit queue is stopped and after some Tx pkts in the pipeline
+>> are flushed out, isn’t
+>> Tx queue wakeup not happening ?
+>>   
+> Yes, the transmit timeout is caused by the Tx queue not waking up.
+> The Tx queue stops when the free counter is less than ring->thres, and
+> it will wake up once the free counter is greater than ring->thres.
+> If the CPU is too late to wake up the Tx queues, it may cause a
+> transmit timeout.
+> Therefore, we balanced the TX and RX DMADs to improve this error
+> situation.
 
-For the buffers, what was the percpu overhead roughly? For
-thousands of labels, I think, the extra memory overhead roughly would
-be in the range of few MBs (need to be profiled though). This extra 
-label overhead would be considered high for the machines where percpu
-buffer overhead was considered high?
-
-Please correct me here, so you are proposing that we use a kconfig to
-use either 'struct percpu_ref' or a 'struct kref' (using a union maybe)
-inside the 'struct aa_label' and update the refcount operations accordingly?
-If yes, I will work on a patch with this kconfig based selection of
-refcounting mode to see how it pans out.
-
-@Mateusz can you share the dynamic switching counter mode patch series please?
-
-In addition, for long term, there is an ongoing work (by Paul, Boqun and myself)
-on implementing hazard pointers as a scalable refcounting scheme [1] in kernel,
-which would not have memory usage overhead as in percpu refcount. At this point the
-API design/implementation is in early prototype stage.
-
-
-[1] https://docs.google.com/document/d/113WFjGlAW4m72xNbZWHUSE-yU2HIJnWpiXp91ShtgeE/edit?usp=sharing
-
-> Not part of your patch but something to be considered is that the label tree
-> needs a rework, its locking needs to move to read side a read side lock less
-> scheme, and the plan was to make it also use a linked list such that new
-> labels are always queued at the end, allowing dynamically created labels to
-> be lazily added to the tree.
-> 
-
-Read side would be rcu read lock protected in this scheme?
-The linked list would store the dynamically created compound labels?
-What is the advantage of using this lazy addition to the tree? We optimize
-on the label search, addition/deletion for dynamic labels? The lazy addition
-to the tree is done when a label find operation on the list succeeds?
-
-> I see the use of the kworker as problematic as well, especially if we are
-> talking using kconfig to switch reference counting modes. I am futzing with
-> some ideas, on how to deal with this.
-> 
-
-We can disable queuing of label reclaim work for non-percpu case?
-
-> Like I said I am still digesting.
-> 
-
-Thank you!
-
-
-Thanks
-Neeraj
-
+All of this needs to go into the commit message please, thanks!
+-- 
+Florian
 
