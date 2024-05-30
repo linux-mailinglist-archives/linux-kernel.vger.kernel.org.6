@@ -1,129 +1,74 @@
-Return-Path: <linux-kernel+bounces-195135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5358D4809
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:05:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D03D78D4813
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871EB287690
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:05:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1618AB264E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1002B1474C8;
-	Thu, 30 May 2024 09:04:40 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4C0161302;
+	Thu, 30 May 2024 09:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O23mOYk4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2234E6F313
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8A8176187;
+	Thu, 30 May 2024 09:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059879; cv=none; b=ZkZ8PPQVrP2zBDdKsXV2LdAvmdsgg37fMaqTCZXIkc4wG+7VRYtdWirchBiRVuVy+VrEsadXflYa0hOPNbe30C8OkbSH65s3FfQ04h5JTuGQgQmvYVgO4Lc92DSluxsIIdA5BBUcCEZJZNfk/tz0M6k4i9/tQJeQGzgmk4Eze4k=
+	t=1717059901; cv=none; b=S8vnF2C+DP97xBRDfi/hMU0qfVHdG95Tp1lhv1W+uKm1W6yK1JJt89voPXKXPspicrnVZ6LxA8tItoTL9v9DObEtct/MZiQ9jw4VtogQHwK5HBAHON1eMKxRHenQTfJmLWIZDEIt1jL5IUzaUjFQSalQHXT/Bsv+PcjIRoPBI1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059879; c=relaxed/simple;
-	bh=hRYXJybvTCdX1i87a/CbDN1b+MJo2gYTetWMREEWjI4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNTK9jyu/F0AmmfwyeTa2uRINiZnBRiYn3XZKwDCA83BHYIwI54jP4SntvvXAO9qN+A/zMzVuxA0gBGFv5tgYLYgoNV5aAjAAEViTA63S5erZpUv0YUJ/Mqlp0BKY3eTgqVvqs1NrcmlJFQ1H8uJ9idgp68U5A5vNBXrmPRX/sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id a254b3f7-1e63-11ef-aaf9-005056bdd08f;
-	Thu, 30 May 2024 12:04:35 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 30 May 2024 12:04:34 +0300
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 08/20] pinctrl: st: Use scope based of_node_put()
- cleanups
-Message-ID: <ZlhBImaUrnddkm-r@surfacebook.localdomain>
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
+	s=arc-20240116; t=1717059901; c=relaxed/simple;
+	bh=58FOPhDGg37DCL3uM5t+hUaE4DGFtdvOm40IzQDdEe0=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=V5YbRc5cB/xDrFJJX2MkpLiwDN3PGeMiweH38hZ1aUrJMvCKn22DP4hFB/t0GpuWZO6I49Vmkb9q6YfsNzgd32HN5QCAmysYDrlXShEAOemMuGuTVl7QTKxUmBOW8QXkQvKzkcQhPod+PI5OqX78XACkHHbhruTWKFTYYHcr6fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O23mOYk4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA16C32786;
+	Thu, 30 May 2024 09:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717059900;
+	bh=58FOPhDGg37DCL3uM5t+hUaE4DGFtdvOm40IzQDdEe0=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=O23mOYk4WWzsOCev8z14+dawmroIIeCufXyf+6euF96z/TJFm+06YEwTnOtXoFQzJ
+	 7QUZkpY8xYAhjL36iLjIUbkzBLQRR8qzvNS5ArqzgmhwAqdQDtSzZY/z36IoVYxkND
+	 zan/dRRgAInLmzkaOxJthGwSEgxko1KgLr6KgiQSk/0XihdpUiJJbX7nrdlogcdr/a
+	 3iD5+kpX+AW+NDk5knxn3crB4NzukoEcUTLVKfx/A6WDVkTEXjuxVLbNmCGAcHLMhf
+	 OFZnRML6JXHCPg6svrXTlgeLR5b6AhBxcy8CeYar+JypYZ5Iix3fDbpg/hsmd2c5wh
+	 dPd8MnZjBrOrA==
+Message-ID: <116e3e2d57d20833fb2b7ae5ac23d9c0@kernel.org>
+Date: Thu, 30 May 2024 09:04:58 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v3 4/7] drm/msm/hdmi: switch to atomic bridge callbacks
+In-Reply-To: <20240530-bridge-hdmi-connector-v3-4-a1d184d68fe3@linaro.org>
+References: <20240530-bridge-hdmi-connector-v3-4-a1d184d68fe3@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>, "David Airlie" <airlied@gmail.com>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marijn
+ Suijten" <marijn.suijten@somainline.org>, "Maxime Ripard" <mripard@kernel.org>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Rob Clark" <robdclark@gmail.com>, "Robert
+ Foss" <rfoss@kernel.org>, "Sean Paul" <sean@poorly.run>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
 
-Sat, May 04, 2024 at 09:20:06PM +0800, Peng Fan (OSS) kirjoitti:
-> From: Peng Fan <peng.fan@nxp.com>
+On Thu, 30 May 2024 02:12:27 +0300, Dmitry Baryshkov wrote:
+> Change MSM HDMI bridge to use atomic_* callbacks in preparation to
+> enablign the HDMI connector support.
 > 
-> Use scope based of_node_put() cleanup to simplify code.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-..
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
->  	struct property *pp;
->  	struct device *dev = info->dev;
->  	struct st_pinconf *conf;
-> -	struct device_node *pins;
-> +	struct device_node *pins __free(device_node) = NULL;
-
-It's better to move it upper to follow reversed xmas tree order (okay, to some
-extent in this case).
-
->  	phandle bank;
->  	unsigned int offset;
-> -	int i = 0, npins = 0, nr_props, ret = 0;
-> +	int i = 0, npins = 0, nr_props;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks!
+Maxime
 
