@@ -1,110 +1,168 @@
-Return-Path: <linux-kernel+bounces-195605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5953E8D4F36
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF258D4F3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1545F28580E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:37:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F023C1F2218A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB21182D2D;
-	Thu, 30 May 2024 15:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D03D182D3F;
+	Thu, 30 May 2024 15:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jCFzdPmN"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JYxu47Zu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PVycF0Nc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29FC17C23F;
-	Thu, 30 May 2024 15:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB70F182D2D;
+	Thu, 30 May 2024 15:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717083422; cv=none; b=WkKmwFFSQhbtjyPesB5CMbgIT0t8mNwbn4rS55x1It9iJRRZlypyNI34ibFH/nyAaPgts5KCCC0ANkIVveY+VYUErFMRSnRMGwAm9ICgG45Fxq3+84nWp4dnWNja1trttyq1DWcj9TGxYDT/JUB0hFVPLEI7lhoTCuqSYypbws0=
+	t=1717083503; cv=none; b=ZWgdGD+5w0o3XKNM9axTNMcmVhaZM7fz3xl1PX7ypjMaCHY40nCWw38rOGSd5uFHF6P+IGRKXKVkg1fMjt8Ep5lW3x5fU5M3CY64x3GRGaKePIgjh7ihi8zxx5reg4ERqupc+/zUYtuccyyjaqjfv5DHu2u22SJ1o9hNa1CE2xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717083422; c=relaxed/simple;
-	bh=qYXmXSvbAlekhnuFdmhAUfv0lEDD1lyfWRJPeN4+j3I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KexeECn0MLG8RTJFtT1RzAEfIhAFEBjOR4NFyPHZFsiHKDeQalFBT91kkRyBKcMmftuC+yIg+pi+r0xr4eziXi19EwdsutMMkUFMmbr81fW2Vh0CwAAg2Qo3aynvV90bi2/gwFlsvU2YFCoIr04l4g0EJAB2zmUqzTrSAR+yneE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jCFzdPmN; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717083419;
-	bh=qYXmXSvbAlekhnuFdmhAUfv0lEDD1lyfWRJPeN4+j3I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jCFzdPmNksdQ6ixasNR8Ax/vf1J5L0nS0DN8hqQ1od/kxeAWAQhHvoirWn5ZVWzSA
-	 A4SxCSz9AkS5vFPP53Fi49ALkuJ2Mi6vOiUGvKOJYRQ0A/MRp9FKfZfwjm2ZpLq/bI
-	 wET07lZV5jWnz1xtsbRG6QelVCm1HLOX1dPAtd4vOfHfvODduh5yMZGgIzo2uAnGo+
-	 OD3viB4EAtyqh0cM82dLt+l8dOLx58aTk67CSU/3TRVx5OAOl4U3Z486Bf/Rq4NLX7
-	 bq8WRUolSB68sUaYp/KP9dAd49pPvPB5M+sCHYobdOURLGbn37faAvllWDQ1GSjIem
-	 zsxukvpuZ3yMA==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 90FF73781104;
-	Thu, 30 May 2024 15:36:58 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: regressions@lists.linux.dev
-Cc: rafael@kernel.org,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: [REGRESSION] probe with driver acpi-fan failed with error -22
-Date: Thu, 30 May 2024 17:37:27 +0200
-Message-Id: <20240530153727.843378-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1717083503; c=relaxed/simple;
+	bh=kJUgEnnB1j6Tpeo+jUM1Mg4mIz8PPZ73v26DSU8OP/A=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=BSJRMJDsBK3Wb1XlcchCFciTpO7IY2wfX5oi/3Z81mbE17/PQCMBl9lyE6t9AFL8+WQzWefNNFhfL66fy/CsJZAEfMpGtei6+O7vmSlRpi+qSwnGlm/Wzii2/j4/zCT/dpP1x+g/TqXT0LRWUEAUARbQMBodYTzBvAIbQoXXbs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JYxu47Zu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PVycF0Nc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 30 May 2024 15:38:19 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717083499;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=VB8BVFevT06lKaWEfV21IkEQ1bl6YGSl1ka9f+ApiMM=;
+	b=JYxu47ZuAb/NdDXUDFB5+N+fBV5Rz/B2dT8/433zltXUaufDXiRSt9pP3gi4S7pIOCKDkK
+	BjXKDr9RXSSHdSYnnRU10iWjbodzxeR4HxOaLZOKzD4SMNy1Wivmf76qmSAr/uKlp5UssV
+	dEgPeqhSHrKjJwoyUWb9EXRI48CMC5WadaYcRFgTKSQ6UUiwZXCQVmNBHGHIisx1kE1gSg
+	vVQJs8T510mOW6Auu0vKnKkTuFiBLnURf6U7bAnagof1+hQd+KAWQwfugIDe/wvSgctIDr
+	6vGMh287FtqZxtWKfqc25oAVbxLPQ+d/zDHPaYG4ETlN/QDmqTvg451T48il1w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717083499;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=VB8BVFevT06lKaWEfV21IkEQ1bl6YGSl1ka9f+ApiMM=;
+	b=PVycF0NcgHXIHpSH2tiFTYdCkiefL1iaQaBZmKg3kSZqXXgV3GQ41lqvp+q2kxFXujSOcB
+	nG1LEqRtwRJ3GZDg==
+From: "tip-bot2 for Dave Hansen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/cpu: Provide default cache line size if not enumerated
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, osmanx@heusipp.de,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <171708349914.10875.4285177308487469311.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-                                                                         
-We have identified a regression in the acpi-fan driver probe between 
-v6.9-rc7 and v6.10-rc1 on some Intel Chromebooks in the Collabora LAVA 
-lab.
+The following commit has been merged into the x86/urgent branch of tip:
 
-For the Acer Chromebook Spin 514 (CP514-2H), the following error is 
-reported in the logs:
+Commit-ID:     2a38e4ca302280fdcce370ba2bee79bac16c4587
+Gitweb:        https://git.kernel.org/tip/2a38e4ca302280fdcce370ba2bee79bac16=
+c4587
+Author:        Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate:    Fri, 17 May 2024 13:05:34 -07:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Thu, 30 May 2024 08:29:45 -07:00
 
-[    0.651202] acpi-fan INTC1044:00: probe with driver acpi-fan failed with error -22
+x86/cpu: Provide default cache line size if not enumerated
 
-Similar errors are reported on other devices with fans compatible with 
-the same driver.
+tl;dr: CPUs with CPUID.80000008H but without CPUID.01H:EDX[CLFSH]
+will end up reporting cache_line_size()=3D=3D0 and bad things happen.
+Fill in a default on those to avoid the problem.
 
-On Acer Chromebox CXI4, ASUS Chromebook Flip C436FA and 
-HP Chromebook x360 14 G1:
+Long Story:
 
-[    0.488001] acpi-fan INT3404:00: probe with driver acpi-fan failed with error -22
+The kernel dies a horrible death if c->x86_cache_alignment (aka.
+cache_line_size() is 0.  Normally, this value is populated from
+c->x86_clflush_size.
 
-On ASUS Chromebook Vero 514 CBV514-1H:
+Right now the code is set up to get c->x86_clflush_size from two
+places.  First, modern CPUs get it from CPUID.  Old CPUs that don't
+have leaf 0x80000008 (or CPUID at all) just get some sane defaults
+from the kernel in get_cpu_address_sizes().
 
-[    1.168905] acpi-fan INTC1048:00: probe with driver acpi-fan failed with error -22
+The vast majority of CPUs that have leaf 0x80000008 also get
+->x86_clflush_size from CPUID.  But there are oddballs.
 
-The issue is still present on next-20240529.
+Intel Quark CPUs[1] and others[2] have leaf 0x80000008 but don't set
+CPUID.01H:EDX[CLFSH], so they skip over filling in ->x86_clflush_size:
 
-I'm sending this report to track the regression while a fix is 
-identified. I'll investigate the issue/run a bisection and report back 
-with the results.
-                                     
-This regression was discovered during some preliminary tests with the 
-ACPI probe kselftest [1] in KernelCI. The config used was the upstream
-x86_64 defconfig with a fragment applied on top [2].
+	cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
+	if (cap0 & (1<<19))
+		c->x86_clflush_size =3D ((misc >> 8) & 0xff) * 8;
 
-Best,
+So they: land in get_cpu_address_sizes() and see that CPUID has level
+0x80000008 and jump into the side of the if() that does not fill in
+c->x86_clflush_size.  That assigns a 0 to c->x86_cache_alignment, and
+hilarity ensues in code like:
 
-Laura
+        buffer =3D kzalloc(ALIGN(sizeof(*buffer), cache_line_size()),
+                         GFP_KERNEL);
 
-[1] https://lore.kernel.org/all/20240308144933.337107-1-laura.nao@collabora.com/
-[2] https://pastebin.com/raw/0tFM0Zyg
+To fix this, always provide a sane value for ->x86_clflush_size.
 
-#regzbot introduced: v6.9-rc7..v6.10-rc1
+Big thanks to Andy Shevchenko for finding and reporting this and also
+providing a first pass at a fix. But his fix was only partial and only
+worked on the Quark CPUs.  It would not, for instance, have worked on
+the QEMU config.
 
+1. https://raw.githubusercontent.com/InstLatx64/InstLatx64/master/GenuineInte=
+l/GenuineIntel0000590_Clanton_03_CPUID.txt
+2. You can also get this behavior if you use "-cpu 486,+clzero"
+   in QEMU.
+
+[ dhansen: remove 'vp_bits_from_cpuid' reference in changelog
+	   because bpetkov brutally murdered it recently. ]
+
+Fixes: fbf6449f84bf ("x86/sev-es: Set x86_virt_bits to the correct value stra=
+ight away, instead of a two-phase approach")
+Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: J=C3=B6rn Heusipp <osmanx@heusipp.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20240516173928.3960193-1-andriy.shevchenko@=
+linux.intel.com/
+Link: https://lore.kernel.org/lkml/5e31cad3-ad4d-493e-ab07-724cfbfaba44@heusi=
+pp.de/
+Link: https://lore.kernel.org/all/20240517200534.8EC5F33E%40davehans-spike.os=
+tc.intel.com
+---
+ arch/x86/kernel/cpu/common.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 2b170da..e31293c 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1075,6 +1075,10 @@ void get_cpu_address_sizes(struct cpuinfo_x86 *c)
+=20
+ 		c->x86_virt_bits =3D (eax >> 8) & 0xff;
+ 		c->x86_phys_bits =3D eax & 0xff;
++
++		/* Provide a sane default if not enumerated: */
++		if (!c->x86_clflush_size)
++			c->x86_clflush_size =3D 32;
+ 	}
+=20
+ 	c->x86_cache_bits =3D c->x86_phys_bits;
 
