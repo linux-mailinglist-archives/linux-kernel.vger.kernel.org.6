@@ -1,102 +1,145 @@
-Return-Path: <linux-kernel+bounces-195468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E77A8D4D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:53:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813E78D4D48
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03051F22019
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:53:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A865DB21BFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2722D17624C;
-	Thu, 30 May 2024 13:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2B186E33;
+	Thu, 30 May 2024 13:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ur4nqItg"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUAgkZaz"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8955C17623B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85AF186E26;
+	Thu, 30 May 2024 13:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077149; cv=none; b=XYX1PX5EZF9TK5Uhe8O97boA2FYc5LgIB8hlJmz5R5FfSSJAX+g7Ivg6BFQOaITCB5NNBHblV8IIghpu4vBY89BDhNTupiPE+IZGbMbWasX1TtGVR2tTe8EV4zk++g9QMMnigVmi1jMCvWBSYH5i/5fC0k4xpoirAlkuJ9+F2c8=
+	t=1717077224; cv=none; b=NqQ/BYjrWACK/CSgviuiM2z7ZONCqyN/i91UPXh1+pILEuSwyvXYbGyKiY5r5YvI4ZmFd6VwpfaPRsm3ZKTb1C+JE3V4FVF0Idq0mc3naeIzZljGQdJe7Cs4bVugsIDsSDTwpgy/U8PIN0XplWzKpm4MyqiAG4PK0paH+Tm0+Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077149; c=relaxed/simple;
-	bh=r7Nq+l30WnAPJMcoY9sAdA5J4veJVYeW/rCzNbYA8To=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JkCq0rbX+g5S5Ac2fSEkVgMknMj9WYGBDewhzyoM/wcTLm8WwhcGTmB7QzQlHS3bHzsFIoyF6JxT/2cFE19CwEhxGwmLcWR9W5Qogk4IPPhEBmw5L6UaSaQ5O/PuqFy/w/dbendK8VuJYh07juX7zEFRRKxMWHavKhW5hCsgNLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ur4nqItg; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35dcd34a69bso232618f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:52:26 -0700 (PDT)
+	s=arc-20240116; t=1717077224; c=relaxed/simple;
+	bh=x6es90Rm3xtGO8dDhmEZEJD8Kav3O2vb6Z6KMM1kzb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwzhTY9nourQDD27w9wb7+i5sIo7UirNn8ReHn0Nj4uo3qQgxhpv4mXpGrRPO+gTUepb6bibGxu7wHjLf14877r/baR9q4bFq9KhIudK6cA+ofH2TCR5fvxmRYw/fZ2RnbEM68yXhL/mOtMMivxEnPWV/srqip1kfE7YWFuB5+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YUAgkZaz; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e719bab882so9935861fa.3;
+        Thu, 30 May 2024 06:53:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717077145; x=1717681945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z5xCJKQ4ugEjWsoL7YroP9b14wp/Gl8VnioYQ/OGksw=;
-        b=Ur4nqItgT5FN41pNzH3cNluCsLUW42sh+9pI6jIt2sIgGw9jk4mPVXBNIb1JWr8ZAi
-         qXSP2VwlGiUDh5igso93zJbEG8kPccH23sjpCcU1cEk8vR1JIYqScax7FU9IxMgS2g5+
-         D35KHeNHA0m+oZyQ0IVWagzlGPbP/8N7oyPg0vlqC4Qn3VKUpE3PlGMFDZ4gqqDk/QY+
-         Gu6ydYQcGghV8AvRSrlEHfppfSioCxxF+M9Xw7lAb2DnGrBuiqjTbZIZeJzUQfSyESZ9
-         Hoaxt2hw6JVeIdiP8yvzrv+7krvdt6HEHSzElAfJQzo5lvXz9Lqd+vucwFGFgT23otuH
-         NHHg==
+        d=gmail.com; s=20230601; t=1717077220; x=1717682020; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mvWDuGZydvfwWw+VcnsyJcShHeGi2zyYheK4PDOMSDM=;
+        b=YUAgkZazkuF0gjm0ZBxTBMtTjwrsrG2Er3yUcpwbIG7ICr1soS+9hFudQUu2cjaK7i
+         AsF8b6a1I0z5zhR8+OMDjS/vSLbx4ASawfIb3y3SRF5hq/nZFOmtmTDopQKPmeknR2Q8
+         RbIvNS+HGv83L6o5ZBHO3hsK9P5Pkzmq6oJOCSQOF6ui8T1EImXgKsZlwdHQctpqqUph
+         yUgQzFdPV+alkS3GhZjkgMu23vPI2HtDpQ95wqMnD5frCNNVAnIfzvePjmpWa8I3e8JP
+         pNO0YZT9j2I5oQmfiX0A28QGISn6nJq5+cpNIHjTfI1Geucpv0F8j1FmQ+yhoBihahke
+         0fhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717077145; x=1717681945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z5xCJKQ4ugEjWsoL7YroP9b14wp/Gl8VnioYQ/OGksw=;
-        b=MxeCTqdStNLyC1Z4/TUOdtM4SBwWwkGhgT7kyQxMQ+keyKfZnOQZm78A2lWkzUwelh
-         35B2ikwfTHmUwS9nfgKB2apooNcz79duoS/2iSEpcQ1oaB4M86SKztMcAPalW8WXfTAg
-         V0JgbUp2FdufbSR4zH5iAX/oOx/8+6GTHBwaqpbCgZorjBJGzOuvZWBM1GcG4ZL8fHHh
-         fg0Vg/9VGz32s1O3xTpd0uGMuSPbWlJ7A3aISXqCRd4Sv/8J96DhB+mof+CFpazhqc3J
-         uyhhqFcfkQlGUFU4BpsdgfVWV1YBy251q3RBNdcjSbH4haGtiuR8weLfGD4NybEjF/7f
-         8URA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTcGXfBQOy2+/DhooMIHsaUbW3sRqu8pw1wi1TYGMtLuXgLMbqzMU/LQmkPiXrtHVumNVXDB0e93WZsViSxxsgptGqv1uOnc6YdnP3
-X-Gm-Message-State: AOJu0YwVWHIBLvNi236th7rfdkB6v5Kq3kk+cnVm2cR5YoWJqS7CjWXe
-	M5/RGqqjupam4e/ZFJOhjmnGZzxpBhock35ovEYyrzZJjomqVL7y+DI8YFv/Ppo=
-X-Google-Smtp-Source: AGHT+IFc1suDxNrUDOh2i/f0r05vdv6ugqX8mGy8cQBMw1VGOc/OpcHdjJLyHRt+fpRtRE8s9RTS+g==
-X-Received: by 2002:adf:fed1:0:b0:354:f815:8b85 with SMTP id ffacd0b85a97d-35dc02bd8c2mr1521286f8f.67.1717077144893;
-        Thu, 30 May 2024 06:52:24 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dbdb6f34fsm2471094f8f.73.2024.05.30.06.52.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:52:23 -0700 (PDT)
-Message-ID: <27d42cbd-5985-4b05-80cc-59ab21b3435d@baylibre.com>
-Date: Thu, 30 May 2024 15:52:22 +0200
+        d=1e100.net; s=20230601; t=1717077220; x=1717682020;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mvWDuGZydvfwWw+VcnsyJcShHeGi2zyYheK4PDOMSDM=;
+        b=VaLMMcnLyyEl8WWzU03k/l4iRrnz/ws8POJv3oLr4iXfljLp7rkLWhBvITVnU3Z/Pu
+         BLIACQU0mbehzv2zq9/3ReEKqc3IGHA0Qp31jOiwrl67MB71NwV7O7a6SBtdBMaLdYph
+         QmwNor/0uBUodamzvMbrTDpVZgTukNLFWTuYk4zI1xLMgD1XHzhr1zZ/JJCKihMT/ptq
+         FT2E003yEDt4x/PlUWYKMtiK7vopZ6i8g8mb7LBtmj5JsbohVHTDBw9YCoeOJzeGhfcO
+         un+UymS7L0SiFgLzECGw6HtZbkK8ETiodnKr9facDV07E1ah7T0Y2ojyJeGaJ2UAetfC
+         jeGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXA0X1cIRawq/njisLA/hbfSzBhe0xdKZYTrF5sYRpIHhAqyVUBKVFqzKclH/vIpst5jqvilWUi58plTcX3FFvdBqASrRELVKZ3TdkvsxmNyjnbMtOErxXsVVa+Y9nIuJM49EmD
+X-Gm-Message-State: AOJu0YzZ/mQYdCq0RLdBomted9SSrE7BBflbkDawN2EStqZ2uDAaejzI
+	vmYEyXPFfitDa4FHAicgRSChAEEYQBOsmrS6XvV5yoQlAU3Q0CIWiugL8eUj
+X-Google-Smtp-Source: AGHT+IEQ3q2ebeicCl5ECrFOc1Y5NMP3EcVlOA2vB1sH5Lg/m8+rLvzw2p8HkitK/FnXeqX9/RPJrw==
+X-Received: by 2002:a2e:9858:0:b0:2d4:54f2:c409 with SMTP id 38308e7fff4ca-2ea84892132mr14288601fa.38.1717077219409;
+        Thu, 30 May 2024 06:53:39 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421270791c7sm25921725e9.31.2024.05.30.06.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 06:53:37 -0700 (PDT)
+Date: Thu, 30 May 2024 16:53:35 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Xiaolei Wang <xiaolei.wang@windriver.com>, Andrew Lunn <andrew@lunn.ch>,
+	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net v2 PATCH] net: stmmac: Update CBS parameters when speed
+ changes after linking up
+Message-ID: <20240530135335.yanffjb3ketmoo7u@skbuf>
+References: <20240530061453.561708-1-xiaolei.wang@windriver.com>
+ <f8b0843f-7900-4ad0-9e70-c16175e893d9@lunn.ch>
+ <20240530132822.xv23at32wj73hzfj@skbuf>
+ <ZliBzo7eETml/+bl@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: Add a module description where missing
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- sboyd@kernel.org
-Cc: quic_jjohnson@quicinc.com, mturquette@baylibre.com,
- matthias.bgg@gmail.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZliBzo7eETml/+bl@shell.armlinux.org.uk>
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+On Thu, May 30, 2024 at 02:40:30PM +0100, Russell King (Oracle) wrote:
+> On Thu, May 30, 2024 at 04:28:22PM +0300, Vladimir Oltean wrote:
+> > On Thu, May 30, 2024 at 02:50:52PM +0200, Xiaolei Wang wrote:
+> > > When the port is relinked, if the speed changes, the CBS parameters
+> > > should be updated, so saving the user transmission parameters so
+> > > that idle_slope and send_slope can be recalculated after the speed
+> > > changes after linking up can help reconfigure CBS after the speed
+> > > changes.
+> > > 
+> > > Fixes: 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
+> > > Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> > > ---
+> > > v1 -> v2
+> > >  - Update CBS parameters when speed changes
+> > 
+> > May I ask what is the point of this patch? The bandwidth fraction, as
+> > IEEE 802.1Q defines it, it a function of idleSlope / portTransmitRate,
+> > the latter of which is a runtime variant. If the link speed changes at
+> > runtime, which is entirely possible, I see no alternative than to let
+> > user space figure out that this happened, and decide what to do. This is
+> > a consequence of the fact that the tc-cbs UAPI takes the raw idleSlope
+> > as direct input, rather than something more high level like the desired
+> > bandwidth for the stream itself, which could be dynamically computed by
+> > the kernel.
+> 
+> So what should be the behaviour here? Refuse setting CBS parameters if
+> the link is down, and clear the hardware configuration of the CBS
+> parameters each and every time there is a link-down event? Isn't that
+> going to make the driver's in-use settings inconsistent with what the
+> kernel thinks have been set? AFAIK, tc qdisc's don't vanish from the
+> kernel just because the link went down.
+> 
+> I think what you're proposing leads to the hardware being effectively
+> "de-programmed" for CBS while "tc qdisc show" will probably report
+> that CBS is active on the interface - which clearly would be absurd.
 
+No, just program to hardware right away the idleSlope, sendSlope,
+loCredit and hiCredit that were communicated by user space. Those were
+computed for a specific link speed and it is user space's business to
+monitor that this link speed is maintained for as long as the streams
+are necessary (otherwise those parameters are no longer valid).
+One could even recover the portTransmitRate that the parameters were
+computed for (it should be idleSlope - sendSlope, in Kbps).
 
-On 28/05/2024 14:13, AngeloGioacchino Del Regno wrote:
-> Add a MODULE_DESCRIPTION() on all drivers that miss it to avoid
-> modpost warnings.
+AKA keep the driver as it is.
 
--- 
-Regards,
-Alexandre
+I don't see why the CBS parameters would need to be de-programmed from
+hardware on a link down event. Is that some stmmac specific thing?
+
+Xiaolei may have a bone to pick with the fact that tc-cbs takes its
+input the way it does, but that's an entirely different matter..
 
