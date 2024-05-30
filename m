@@ -1,185 +1,201 @@
-Return-Path: <linux-kernel+bounces-195662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5BD8D4FF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:36:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836F98D4FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3BD282E98
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:36:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A746C1C2257F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09CF405F7;
-	Thu, 30 May 2024 16:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0395E2E859;
+	Thu, 30 May 2024 16:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SVUdQoQe"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jhceymwd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F8A2E84E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B4A2CCBE
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717086961; cv=none; b=pKqRfYR+GAz8Cb+ySvq/1U+KQR0Mv7AbHZyegkH8ysONAPeRU5pVGYjTetUTJ8sov3gLsH/E/fwH6X5vqQr0wsKN//+/UMJDn2SO+UUc/vfHFfeZORycjgDlrWrQxgypzi1YXGQuRhC2hstlfic2bwFwGEwodlArp/Xjsx+3NiM=
+	t=1717087013; cv=none; b=CSt6q4TNLCwhPHAN3gw0BrXXBiLyUcEsfHHGQNR7JPtMSwhdXkMhoLZ9grakjWRhvp2iyrn6vDzkgOW6LcVTx4EEesAoR3V0JtmuFmY3dkYZHJhdejfzU6UrPkT1y2N/cuM/dfXOORtYKdZ28bCpqj4uP7KnOZeGNMGarb3l6+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717086961; c=relaxed/simple;
-	bh=LEI8NB2yoyJhYOmR3mpKn79Gg22AlJ9hDGKnYrecM28=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OOeRrPaMuff7AxutiA0N5nfSzqWG8ejg3apILjmgmTofOS2dyUkp2xWF0VgRLwp853snDzmqIg55G0oLOs9V1j/FnZbJTigWNWq1HlaNpXev5RrLltiPJyiyy/YuFeKckJBnF8FT//5rxVaVrhc8UhcVrcQP0nwrlFw+ai37fXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SVUdQoQe; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso1750661a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:35:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717086957; x=1717691757; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NwoUKZh6fnUPJSb5Qldq0gQl9yODeDTa7DK/f4E4vZk=;
-        b=SVUdQoQe++KjqmC4XwGOlZM7s3kpfdZTb1vOrMQn69ftTAyjIt+/bLE4sU3NZJPOyU
-         ajmUF1t5J4q6ieMHEPCxC6l93sQAO3NHW+9jnBGS8J38rolzjbWQhEV/m1gesSbQNW6c
-         gia226bYi0/yuxMgMtwAi/GI+zETvgJlGOO+qIEC+QtQRFNacoioSewnlzZzLYXjaADK
-         miGu8PA5s+Io38+9z3wBK9NmT9qv+LNx87HRiBrBNtV6RVAtlAi7K5mppIXemN8KN2te
-         7Lz6dM6s9fHxYvYoO9Ll5Y+NqC2y6G7Vakl8Apn2+M5WfYnxZLAsxrmwt7zz/py4FcTk
-         ufyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717086957; x=1717691757;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NwoUKZh6fnUPJSb5Qldq0gQl9yODeDTa7DK/f4E4vZk=;
-        b=s4EMyb0COYmMCQ9FiPE/jUgYIR5G3p1Dr7COdET7D3YOIWMmUmT1p3grXwwLaz5rX/
-         TuqGX2QBHpXnW8G01WuK1lMKgrviwBYon66tmDPJV3nnp5QLvJGsEbNBtg57Fs3Fyt7k
-         C1aROm0xDj07W5dy8OY5DAj0z1fJfir/FM8z7svtAMw0ALjYEAx2q6vO+BP9cN4WFHlm
-         bABWr8fzhMa9WIsDOYJPItf+aI/Awg/8CD5kz0VDPX6JYxytq/H9FnNeNphfZZ25hHDV
-         VdBAyyi3oC63bdn6hTbHR+8ZlHqcdPQSVBNMk97TsJW27+DzBZ55ndBEkXPDcDoREC6u
-         DGQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBTwOvWQdjAHGyN75BweX5mK3/eFF5V1vVdJWiO1aFFEPrhw0WGogmf8gdB9iQhwOsd3wi1KOakhcs4q8WVSb3XBQ+eYiK4JhIxA7+
-X-Gm-Message-State: AOJu0Yznb8Q2Ap+3J2yW/Wqkrw2nlsf69bbDrXG6AeTz/54S4qhQgOFl
-	JFFe9ZG2zaRa9VDfn+fp1H6xS5M132aDKXiKVmB+i6/Je7QYGJj59icJAsBtgUAb7mnhYwi8q8e
-	h
-X-Google-Smtp-Source: AGHT+IGW3SMB6gAER0sbhRX95NMbuzy/Ew/Tchj0cRc2PxFEi/EKlQzcz1l+B7+tnmoW+SwqD/pNzA==
-X-Received: by 2002:a50:8adc:0:b0:578:57f6:499d with SMTP id 4fb4d7f45d1cf-57a19f6ccf5mr2042134a12.12.1717086957068;
-        Thu, 30 May 2024 09:35:57 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a10670df6sm1888885a12.69.2024.05.30.09.35.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 09:35:56 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 30 May 2024 19:35:46 +0300
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100-qcp: Fix USB PHYs
- regulators
+	s=arc-20240116; t=1717087013; c=relaxed/simple;
+	bh=6sXrUOOyEizRFbd17/Di8hFMxQsHdChcWlX/tTCPTic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oL5aMKRkFPQiEmkDsf076Y6pZISZx/x7ZizsyvybsU2/cuJSGGLpA480VosIyq7kVpUnNJ4TXsZ5f5T37O2AYjyf+2h9xEap+2kdo0ZRfkWx9dcu8TsZNwUYsS3KDCPrp/5j4q/B/Cplu4YGsGGElM8EnuTFakQ38K+Ho6G54pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jhceymwd; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717087012; x=1748623012;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6sXrUOOyEizRFbd17/Di8hFMxQsHdChcWlX/tTCPTic=;
+  b=jhceymwd0n2uaEEZCjXuPK+pIYPkz/6kHRAwI+cWsIJFBZdS22QlBhsd
+   rm/n4TFpz5yTc5q0k/xZr44Ap5dG2dFc7OKoOUbVtTX2qYs77Xu+X7sD9
+   O/sBPOI0sLvx+JRhAUR9/tPElyP2iZZyW4Oc0ifz+2BW/ePrMr1ReBLi8
+   t4lZWYFw/iUwzwwHVSfarEh6ch4jmMdQrLD6Lr8simlGz3icvj356juEt
+   8D2tVh46cpJoCTUqh74fdxjCFT+rHrSeYEnPtwG2+GfR7LdAn4p1F9z3D
+   DWon1RXoMxp+o6VBjFjPp23c6okTntvXQaLwa2bGvNYr9EFnjOrZkSpdM
+   g==;
+X-CSE-ConnectionGUID: D9rUO23/SbueC/XwLHRqCg==
+X-CSE-MsgGUID: qUJ0SaDLTrGMjWNPt15LyA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24707710"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="24707710"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:36:51 -0700
+X-CSE-ConnectionGUID: EAP1kPC6QTu3NnjQF0hFdA==
+X-CSE-MsgGUID: wghjxJLASyWE4jUhhrhtsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="59043046"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:36:51 -0700
+Date: Thu, 30 May 2024 09:36:49 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v19 00/20] Add support for Sub-NUMA cluster (SNC) systems
+Message-ID: <ZlirIUbLw8fLHe0j@agluck-desk3.sc.intel.com>
+References: <20240528222006.58283-1-tony.luck@intel.com>
+ <08ca8fe7-9da6-41da-aad2-0081b789326c@intel.com>
+ <ZleODtL_6D-Q_OMX@agluck-desk3.sc.intel.com>
+ <a4d37f57-328f-4456-92bc-5e6469d092c8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-2-6eb72a546227@linaro.org>
-References: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-0-6eb72a546227@linaro.org>
-In-Reply-To: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-0-6eb72a546227@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Sibi Sankar <quic_sibis@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1782; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=LEI8NB2yoyJhYOmR3mpKn79Gg22AlJ9hDGKnYrecM28=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWKrnTCVOTWrXG13R48OpeoqH187zP5VUETgU1
- Zckz68tZvGJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZliq5wAKCRAbX0TJAJUV
- Vn3YEACDJZfEf5Ph+48/LzUelRz6qqDQmU4vbhrHbOxmUZVk3ea24oIQfHerU3Rlef1Hnbvtn2Y
- OfFSqycHczQAv7VpUbLtFlLHIZMUzDmRdpLhBxuDwDo04I0Lmwyy+4Fw8MK0b5hHxr3Uv6/nPJ5
- Ui2LlFJmfLUSgxmrwD8MTRypc/SluJiNQY4RLFaWgJtNym+4knzs18t0B6YDG5gIfNWyXP1XgIQ
- D6yTHoQM3IWDyWiqfyJfPXgMTotDDfBvps6Nex7xmEBuPKTDamIExH14z5QI33XFYOoOXisyZW/
- gD+XjF62ErlxjbaKkH4vOq9k99r43awKT/vAbPvkYWc+Ryap+JdYe8EKnJ8Z1NlN7Q+nL1aLclx
- 858Wuue7cuK0YLC9hsS6Vch2jA7KZlcT7Fhv+q2TJc6qj2O1tQ/zlfbyLTu2vDBIbkgoLCQI4fb
- cYg878NV9SCj9DxHZsygOn8WUovTRe8pkJ8kZFEX30w2TKSHiNhZm9vnk2I/l5EAHXgc3c22oiX
- 13SyhAi0RcwR30cRMsa1isMSou/PGMvTMOpgYD7K0eYjc7AtHnVRrtvkuFplQ6jCK81GWZbYRMn
- 8wblFaDvOZm5E5mnpEipDQMux8qUunCHqf7bcwoOwP5XzSBg0LKLzkVUh+lt0RTWYkGHdlx2gjh
- MSW9dnIA9LYvD4A==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4d37f57-328f-4456-92bc-5e6469d092c8@intel.com>
 
-The 1.2v HS PHY shared regulator is actually LDO2 from PM8550ve id J.
-Also add the missing supplies to QMP PHYs.
+On Wed, May 29, 2024 at 07:46:27PM -0700, Reinette Chatre wrote:
+> Hi Tony,
+> 
+> On 5/29/24 1:20 PM, Tony Luck wrote:
+> > On Tue, May 28, 2024 at 03:55:29PM -0700, Reinette Chatre wrote:
+> > > Hi Tony,
+> > > > 13:	Wordsmith commit into imperative.
+> > > > 	I looked at using kobject_has_children() to check for empty
+> > > > 	directory, but it needs a "struct kobject *" and all I have
+> > > > 	is "struct kernfs_node *". I'm now checking how many CPUs
+> > > 
+> > > Consider how kobject_has_children() uses that struct kobject *.
+> > > Specifically:
+> > > 	return kobj->sd && kobj->sd->dir.subdirs
+> > > 
+> > > It operates on kobj->sd, which is exactly what you have: struct kernfs_node.
+> > 
+> > So right. My turn to grumble about other peoples choice of names. If
+> > that field was named "kn" instead of "sd" I would have spotted this
+> > too.
+> > 
+> > > > 	remain in ci->shared_cpu_map to detect whether this is the
+> > > > 	last SNC node.
+> > > 
+> > > hmmm, ok, will take a look ... but please finalize discussion of a patch series
+> > > before submitting a new series that rejects feedback without discussion and
+> > > does something completely different in new version.
+> > 
+> > Reinette,
+> > 
+> > So here's what rmdir_mondata_subdir_allrdtgrp() looks like using the
+> > subdirs check. It might need an update/better header comment.
+> > 
+> > -Tony
+> > 
+> > ---
+> > 
+> > /*
+> >   * Remove all subdirectories of mon_data of ctrl_mon groups
+> >   * and monitor groups with given domain id.
+> 
+> (note comment still considers that domain id is parameter)
 
-Fixes: 22b82135c02d ("arm64: dts: qcom: x1e80100-qcp: Enable more support")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Will fix.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 3de7565dda19..f4b47e6b3a2f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -537,7 +537,7 @@ &uart21 {
- 
- &usb_1_ss0_hsphy {
- 	vdd-supply = <&vreg_l2e_0p8>;
--	vdda12-supply = <&vreg_l3e_1p2>;
-+	vdda12-supply = <&vreg_l2j_1p2>;
- 
- 	phys = <&smb2360_0_eusb2_repeater>;
- 
-@@ -545,6 +545,9 @@ &usb_1_ss0_hsphy {
- };
- 
- &usb_1_ss0_qmpphy {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l1j_0p8>;
-+
- 	status = "okay";
- };
- 
-@@ -558,7 +561,7 @@ &usb_1_ss0_dwc3 {
- 
- &usb_1_ss1_hsphy {
- 	vdd-supply = <&vreg_l2e_0p8>;
--	vdda12-supply = <&vreg_l3e_1p2>;
-+	vdda12-supply = <&vreg_l2j_1p2>;
- 
- 	phys = <&smb2360_1_eusb2_repeater>;
- 
-@@ -566,6 +569,9 @@ &usb_1_ss1_hsphy {
- };
- 
- &usb_1_ss1_qmpphy {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l2d_0p9>;
-+
- 	status = "okay";
- };
- 
-@@ -579,7 +585,7 @@ &usb_1_ss1_dwc3 {
- 
- &usb_1_ss2_hsphy {
- 	vdd-supply = <&vreg_l2e_0p8>;
--	vdda12-supply = <&vreg_l3e_1p2>;
-+	vdda12-supply = <&vreg_l2j_1p2>;
- 
- 	phys = <&smb2360_2_eusb2_repeater>;
- 
-@@ -587,6 +593,9 @@ &usb_1_ss2_hsphy {
- };
- 
- &usb_1_ss2_qmpphy {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l2d_0p9>;
-+
- 	status = "okay";
- };
- 
+> >   */
+> > static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+> > 					   struct rdt_mon_domain *d)
+> > {
+> > 	struct rdtgroup *prgrp, *crgrp;
+> > 	struct kernfs_node *kn;
+> > 	char subname[32];
+> 
+> I wonder if static checkers will know that this cannot be used
+> uninitialized?
 
--- 
-2.34.1
+I wondered that too. There are no complaints from gcc. How do people
+deal with false positives from static checkers? Simplest would be to
+provide an initializer:
 
+	char subname[32] = "";
+
+While that might shut up the static check, it would be more confusing
+for human readers.
+
+> > 	char name[32];
+> > 
+> > 	sprintf(name, "mon_%s_%02d", r->name, d->ci->id);
+> > 	if (r->mon_scope != RESCTRL_L3_CACHE) {
+> > 		/*
+> > 		 * SNC mode: Unless the last domain is being removed must
+> > 		 * just remove the SNC subdomain.
+> > 		 */
+> > 		sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
+> > 	}
+> > 
+> > 	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
+> > 		kn = kernfs_find_and_get(prgrp->mon.mon_data_kn, name);
+> > 		if (!kn)
+> > 			continue;
+> > 
+> > 		if (kn->dir.subdirs <= 1)
+> > 			kernfs_remove(kn);
+> > 		else
+> > 			kernfs_remove_by_name(kn, subname);
+> > 
+> > 		list_for_each_entry(crgrp, &prgrp->mon.crdtgrp_list, mon.crdtgrp_list) {
+> > 			kn = kernfs_find_and_get(crgrp->mon.mon_data_kn, name);
+> > 			if (!kn)
+> > 				continue;
+> > 
+> > 			if (kn->dir.subdirs <= 1)
+> > 				kernfs_remove(kn);
+> > 			else
+> > 				kernfs_remove_by_name(kn, subname);
+> > 		}
+> > 	}
+> > }
+> 
+> This solution looks more intuitive to me. I do think that it may be
+> missing some kernfs_put()'s?
+
+There aren't any kernfs_put()'s in the existing code.  Resctrl takes
+an extra hold on the CTRL_MON and MON directories and jumps though some
+hoops to drop that after the directory has been removed. But the monitor
+directories have nothing like that.
+
+> Reinette
+> 
+> ps. Please do give me a couple of days more with this series before you
+>     submit a new version.
+
+Sure. Will do.
+
+-Tony
 
