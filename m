@@ -1,130 +1,216 @@
-Return-Path: <linux-kernel+bounces-195075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94AD38D4745
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:37:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0388D474C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355A61F21A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:37:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCA94B20FD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCB8176185;
-	Thu, 30 May 2024 08:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6351761A8;
+	Thu, 30 May 2024 08:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d5+BVswU"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HW5CL7ur"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BDD176183
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C3E176185;
+	Thu, 30 May 2024 08:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058266; cv=none; b=tz03bJmBy3GFSp0zwMkD42Vp+d0VDY/TFvt8cT0zUu77sTA7AMOQYf6ki6MbwWwg78kRohJfK1BYTpWEPlAUKxlOznydQVkjnkc0aX4otAt4LEWdq13MP2+giTVTvWAS3B324/pL4hYOqwJ2qhl+MpFX9pNUMfFUMlk9ezuxyGY=
+	t=1717058360; cv=none; b=NDNZXnJU2k6lFUlI2svnBVNcN67ud0Gv/8bWkvrwKEgI+QCiBGtF4GBtAekocX98a4QPGpJpHqafXqN1l+Bj3IU/65lb2u3sqcrd0zCqIoVeGS0LpKR4rAR2/HV2rNAAtt3Y9v6+3n2Tk/LzkGzFwkm2eBH8xrzwLDBcTKwVHoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058266; c=relaxed/simple;
-	bh=bZa/G5FiTxfBvV+gWC27jKqObZig5zyLCTlZJ8J4XPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hY3qSmw+/X3WTXXMM0rNF5W4Ih2dNsEnrnr0gBx2W11Sa9TL2Gv4GUwex6dnUXBY/X6zDxPE+vE/HbhVppgfW0NUE0VgWNBtQtvu3twWzFUDA6HuRJk4+uBi1rD1DWwsWGuttNWw526c4Nky0NNROoPMp1yqre3v8JVLTPE9+4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d5+BVswU; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ab11ecdbaso745190e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:37:44 -0700 (PDT)
+	s=arc-20240116; t=1717058360; c=relaxed/simple;
+	bh=oBD7vg86GXe+oDTvDJhgKE8cSH7YYaTNNz6p30fZnDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=klitUiQMJxZW7Fr6DjIUjpjmh61NXZzq6UhQvXwMYFZ1PETVIVU3I0FsTvgt2RzwW/aORtiiDIuiKq7RtKzW+EnFnUamjlWHZzwSdz4yKUmFO+AyakNApWVXIQk2v1VqPDrNYcsdRTeHw9w5nqz/SIhzlktFJjl5PxwEeSvlLM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HW5CL7ur; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so254558a12.1;
+        Thu, 30 May 2024 01:39:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717058263; x=1717663063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GZ5RLDbLQezuGZD6WW3IWTonXC6axeGUQvN38zFd42s=;
-        b=d5+BVswUkYezmLuvS/enUPy7snpY7gUhE21FcztTHwijAOgMOzd/ZSHE4u8mxa3SD/
-         o3/iK7/4zCsy1w9TjByCcoHIQJgO5F39UHSgcaZk3Dnms8rh2avkLg//s5X8RyO6fbyk
-         /Wpp9RnJe936EPFHputO0W86y/K/xvn28n7Ztv3NilO55T6VuietEcrqHezsq2+rPNhM
-         gLSP0qsaTfJKFz21ft0XNSMCL8rAh3szCvfiMY2XLe3Rhcsp/cVzrYbVxTgP0AV4RZG1
-         SQLigYj7VTjBwF3WYyhVVRDePHq6fDYvzE7uzaaD6FTo2BriaZtb7LFo1l8nfW1BBVEE
-         rhDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717058263; x=1717663063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717058357; x=1717663157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GZ5RLDbLQezuGZD6WW3IWTonXC6axeGUQvN38zFd42s=;
-        b=UcODUqNAFLckXpPC0V6UmCm0qVefVrTmPaROH2tTMvs+GhuVWqlq71zP8r6C3nWcVc
-         Tj4aaL94/eKVPo4GIapcQA/3iqi+Rj/FVLi1QcT/6MM/7DgwHJWDVcZGUTH4fp083fno
-         t5Eh66F+xShjd73t5kRmEGpfhZK0EdiyUlb/5COdbQegNcH0OS9Y9ErZGCthfBUhM8c0
-         7T2cSz+uATiaCHgXxtiDGyroDudaqbWmWjzFRbYl3M4iqla3A2iUF0/DT6A3aFaIBc3h
-         bX+ocewsUUW0TwlH3kSF2OT4OBHJZdcioDRDB3DEQ8sSjBXPaH56bov28eoi8RMLfZFQ
-         9SPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDEopIBWRrvHb5pLe5EYftIKE3PKkY79wg+FVHxiBRW6U3lxUC7RtsUxITzwRTiy2J8g2QZgCDoCU9q9SYxmxD1DgIoJ+0kbMznfnR
-X-Gm-Message-State: AOJu0YxRuF8EDEhZFc/8zseLbcxttTIoRlepA/FHHYjOk9sO9kAIz46o
-	GSD6S0ok0otLcFEgbh+7euWTPNOFDjd3iIurUXdEFI1H6IESJTO0sERqS3bmUII=
-X-Google-Smtp-Source: AGHT+IHqo30gINH2FhSbzfIFtkvloEFgqOZkIOuXdkc9A1pHSZQJGV0RkZavzDi9N+AT7QqSl3Trxg==
-X-Received: by 2002:a19:a405:0:b0:523:8a79:ed62 with SMTP id 2adb3069b0e04-52b7d419e09mr868817e87.3.1717058263092;
-        Thu, 30 May 2024 01:37:43 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b7baf3982sm192241e87.161.2024.05.30.01.37.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:37:42 -0700 (PDT)
-Date: Thu, 30 May 2024 11:37:41 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <swboyd@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Kaehlcke <mka@chromium.org>, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	quic_ppratap@quicinc.com, quic_jackp@quicinc.com, Doug Anderson <dianders@google.com>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sc7180: Disable SS instances in
- park mode
-Message-ID: <tziambdwgp4nrgrhr6z2hl7crrw32ztpv63wcsc3h3hthformm@ylc7la6jrqr7>
-References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
- <20240530082556.2960148-2-quic_kriskura@quicinc.com>
+        bh=tMJb+X5rFOm/8h5g2VHIevAuWgAsNBn0K9qQmDWI2IA=;
+        b=HW5CL7ur+OFLdF6MgA6e+kzYSqDL6fC7bySQZggl9hSqc/fC7GnKM4qsVyhxr7A0ym
+         iPSjK9pOTWGUiGXxuS1vPw2ycjNJw4ehJIrkSkAILKxELx5sgOqN1esJj3FuL0UppOLu
+         2Aj6lxkBRVHp97RxaMi53M+cxRy7pAB/pmoELlseq3M1YyFEpxFeNCfLRTYCMGNlN7dL
+         XhbUGwTtHO4MDoR0ZoIcGTnWHMqJK5w7vuxUaPlu+XdpY14cryT20Kc+XRh21sWXs/Qn
+         mvKoZmY6UK1O7/nADpxlMcKBxnnc/afPiOlwapJiQpqqpi5WbgMcREABAqX6KEW/+ZQ4
+         QY7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717058357; x=1717663157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tMJb+X5rFOm/8h5g2VHIevAuWgAsNBn0K9qQmDWI2IA=;
+        b=J21yle/ozTiSXhmhboQ9iTYx21UxTG/EX02ZqbONUglOsrVD5zciWYh2ncqZiFd0G7
+         URcpwfPPfkSbaUBxTtZR4/LBdheDfRe1Gx7dOTQOJ5A4onKtFYX9CmBMeNFrV8rfRlN2
+         8tMzmZs7UUWJrN4We++O2OuR163iRpXeW5aGRMJtiDhiBR/5Sm2EOA0e0bZ79lMAXWNA
+         aG/pKYap5yQQDtvEkBAckRcTHnSR1qZPprnfn/IPnh9sV8WhO5tQKGi5S4ux5NwM77yC
+         Ckl1TlYewLTYaIkafKpWbbq0v884hDlS9So1RDsrhr3NNcS2ZlEcV3dwYM0gyTQQOcgh
+         7nrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdCsMHbuah7ddHHKbK+f1q04cUgrFMuFy/fC2ckaSviALYVMq31BuK3TeromHlyWH1rEo1pkAQpjtZQ++vqm+6WfuEsDoHyjcpuH+cb/eHDkq3CjNGb5oGdQXgiLmqiKphVLDYskFweNXwgxsPxNYkNK4IIi1hnbtSjnPEdYDxTk6DRBox0xAoFSLkHDw74qjGcW/GK2bGZ/EF10I=
+X-Gm-Message-State: AOJu0YyPAz+yzx7O3fTAaLWPe3qGhMJO5S0FZcnkeVdWkaCeUKBAmX8x
+	YmPJV+DjglSmAaEIJDQvQR94N2f6Dy/a0/MWAQ+bCjYWMxUBetkPLdmdE82tQ8HZyIC9HqHAw8n
+	h7jFy3Yx9lzS2BP1h4Km1mpdcjEU=
+X-Google-Smtp-Source: AGHT+IG7yOFBPDUV2NHqb1k6mZUOqdzgdMdSZX6ZWJyyabNzowuy9EYpTY9T3kf064PGg0Fz4wHjKlI8QOZpr/4OWWU=
+X-Received: by 2002:a17:907:11cf:b0:a59:c28a:7ec2 with SMTP id
+ a640c23a62f3a-a65e8f6f43bmr92418466b.41.1717058357020; Thu, 30 May 2024
+ 01:39:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530082556.2960148-2-quic_kriskura@quicinc.com>
+References: <20240513103813.5666-1-lakshmi.sowjanya.d@intel.com>
+ <20240513103813.5666-11-lakshmi.sowjanya.d@intel.com> <ZkH3GP2b9WTz9W3W@smile.fi.intel.com>
+ <CY8PR11MB7364D1C85099E4337408EBAFC4F02@CY8PR11MB7364.namprd11.prod.outlook.com>
+ <ZlSZ63ST-Pj9CwCh@surfacebook.localdomain> <CY8PR11MB7364118081A77973A9504C4CC4F32@CY8PR11MB7364.namprd11.prod.outlook.com>
+In-Reply-To: <CY8PR11MB7364118081A77973A9504C4CC4F32@CY8PR11MB7364.namprd11.prod.outlook.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 30 May 2024 11:38:40 +0300
+Message-ID: <CAHp75Vevif+oX8Lq9D90ekTSixC6Q2Mfr38HrgVhzq0ab-COyQ@mail.gmail.com>
+Subject: Re: [PATCH v8 10/12] pps: generators: Add PPS Generator TIO Driver
+To: "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "jstultz@google.com" <jstultz@google.com>, 
+	"giometti@enneenne.com" <giometti@enneenne.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "Dong, Eddie" <eddie.dong@intel.com>, 
+	"Hall, Christopher S" <christopher.s.hall@intel.com>, 
+	"Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>, 
+	"joabreu@synopsys.com" <joabreu@synopsys.com>, 
+	"mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>, "perex@perex.cz" <perex@perex.cz>, 
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
+	"Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, 
+	"peter.hilber@opensynergy.com" <peter.hilber@opensynergy.com>, "N, Pandith" <pandith.n@intel.com>, 
+	"Mohan, Subramanian" <subramanian.mohan@intel.com>, 
+	"T R, Thejesh Reddy" <thejesh.reddy.t.r@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 01:55:55PM +0530, Krishna Kurapati wrote:
-> On SC7180, in host mode, it is observed that stressing out controller
-> in host mode results in HC died error and only restarting the host
-> mode fixes it. Disable SS instances in park mode for these targets to
-> avoid host controller being dead.
+On Thu, May 30, 2024 at 8:52=E2=80=AFAM D, Lakshmi Sowjanya
+<lakshmi.sowjanya.d@intel.com> wrote:
+> > -----Original Message-----
+> > From: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Sent: Monday, May 27, 2024 8:04 PM
+> > Mon, May 27, 2024 at 11:48:54AM +0000, D, Lakshmi Sowjanya kirjoitti:
+> > > > -----Original Message-----
+> > > > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > Sent: Monday, May 13, 2024 4:49 PM
+> > > > On Mon, May 13, 2024 at 04:08:11PM +0530,
+> > > > lakshmi.sowjanya.d@intel.com
+> > > > wrote:
 
-Just out of curiosity, what is the park mode?
+..
 
-> 
-> Reported-by: Doug Anderson <dianders@google.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: 0b766e7fe5a2 ("arm64: dts: qcom: sc7180: Add USB related nodes")
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 2b481e20ae38..cc93b5675d5d 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -3063,6 +3063,7 @@ usb_1_dwc3: usb@a600000 {
->  				iommus = <&apps_smmu 0x540 0>;
->  				snps,dis_u2_susphy_quirk;
->  				snps,dis_enblslpm_quirk;
-> +				snps,parkmode-disable-ss-quirk;
->  				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
->  				phy-names = "usb2-phy", "usb3-phy";
->  				maximum-speed = "super-speed";
-> -- 
-> 2.34.1
-> 
+> > > > > +static ssize_t enable_store(struct device *dev, struct
+> > > > > +device_attribute
+> > > > *attr, const char *buf,
+> > > > > +                           size_t count)
+> > > > > +{
+> > > > > +       struct pps_tio *tio =3D dev_get_drvdata(dev);
+> > > > > +       bool enable;
+> > > > > +       int err;
+> > > >
+> > > > (1)
+> > > >
+> > > > > +       err =3D kstrtobool(buf, &enable);
+> > > > > +       if (err)
+> > > > > +               return err;
+> > > > > +
+> > > > > +       guard(spinlock_irqsave)(&tio->lock);
+> > > > > +       if (enable && !tio->enabled) {
+> > > >
+> > > > > +               if (!timekeeping_clocksource_has_base(CSID_X86_AR=
+T)) {
+> > > > > +                       dev_err(tio->dev, "PPS cannot be started =
+as clock is
+> > > > not related
+> > > > > +to ART");
+> > > >
+> > > > Why not simply dev_err(dev, ...)?
+> > > >
+> > > > > +                       return -EPERM;
+> > > > > +               }
+> > > >
+> > > > I'm wondering if we can move this check to (1) above.
+> > > > Because currently it's a good question if we are able to stop PPS
+> > > > which was run by somebody else without this check done.
+> > >
+> > > Do you mean can someone stop the signal without this check?
+> > > Yes, this check is not required to stop.  So, I feel it need not be m=
+oved to (1).
+> > >
+> > > Please, correct me if my understanding is wrong.
+> >
+> > So, there is a possibility to have a PPS being run (by somebody else) e=
+ven if there
+> > is no ART provided?
+> >
+> > If "yes", your check is wrong to begin with. If "no", my suggestion is =
+correct, i.e.
+> > there is no need to stop something that can't be started at all.
+>
+> It is a "no", PPS doesn't start without ART.
+>
+> We can move the check to (1), but it would always be checking for ART eve=
+n in case of disable.
 
--- 
-With best wishes
-Dmitry
+Please do,
+
+> Code readability is better with this approach.
+>
+>         struct pps_tio *tio =3D dev_get_drvdata(dev);
+>         bool enable;
+>         int err;
+>
+>         if (!timekeeping_clocksource_has_base(CSID_X86_ART)) {
+>                 dev_err(dev, "PPS cannot be started as clock is not relat=
+ed to ART");
+
+started --> used
+
+>                 return -EPERM;
+>         }
+>
+>         err =3D kstrtobool(buf, &enable);
+>         if (err)
+>                 return err;
+>
+> > > > I.o.w. this sounds too weird to me and reading the code doesn't giv=
+e
+> > > > any hint if it's even possible. And if it is, are we supposed to
+> > > > touch that since it was definitely *not* us who ran it.
+> > >
+> > > Yes, we are not restricting on who can stop/start the signal.
+> >
+> > See above. It's not about this kind of restriction.
+> >
+> > > > > +               pps_tio_direction_output(tio);
+> > > > > +               hrtimer_start(&tio->timer, first_event(tio),
+> > > > HRTIMER_MODE_ABS);
+> > > > > +               tio->enabled =3D true;
+> > > > > +       } else if (!enable && tio->enabled) {
+> > > > > +               hrtimer_cancel(&tio->timer);
+> > > > > +               pps_tio_disable(tio);
+> > > > > +               tio->enabled =3D false;
+> > > > > +       }
+> > > > > +       return count;
+> > > > > +}
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
