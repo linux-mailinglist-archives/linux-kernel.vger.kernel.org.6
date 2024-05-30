@@ -1,187 +1,110 @@
-Return-Path: <linux-kernel+bounces-195535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7B08D4E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:39:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470CD8D4E2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B247A1F23CCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:39:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFB7C282562
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B63117D8B7;
-	Thu, 30 May 2024 14:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8CE17F50F;
+	Thu, 30 May 2024 14:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="sInuQO+n"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ooajDnRj"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2845C17C235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7311A17CA0C
 	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079917; cv=none; b=Wvl0odvyEwV39Pvx5P4gO+KoK+dkIiJ9Oio0c5Z2Y9sv3UFG6NKnutRWGGqNVwE6B+Gjg27RoOSuVfj7p/NyzP6p6e2BrX6NX/pBTkcNs0IyoPsGEyVv6/Q3nuLLVmDXTIHEiH//hD3tLydNlhnNBp5jVPoZp8AOjJmV82S+m/s=
+	t=1717079919; cv=none; b=HeGsveMXH2C/qpQX+yVK3rvnahOBs++k5YcUVTL9F554nbc6CkxRr0hypLMkEcEyO71mBwYhDTuE2Qo3dNqclzxElj5Xuq26AnNFIwkiYoQ+YRq2TDw4EZ5TgtSpeB1YHmzQxehP9Bf6GbrC/LJR3uO44xZgKIn35JGtdsg9zao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079917; c=relaxed/simple;
-	bh=H6kbJAMgSyiK2Mm362YL1uVRFh8mkzI+q2iR1ROJpTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sDBwkZQdmQlV/LWLkThn8XKdu84sMo3B3nHFABGtNsMEnPrusQLrz6XI27rbRYzLmYsqLpWxeBvKWUZ1Hfc/93co+wOml+tHkGNgoG4Lnu2/i+f3Yv0F4NQN2qujxWMSX/JU4Tb7WbZlu1JZ+1uU3bMd0f03j4xZRhZ8iXEyi+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=sInuQO+n; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42111c2892bso1182745e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:38:34 -0700 (PDT)
+	s=arc-20240116; t=1717079919; c=relaxed/simple;
+	bh=rmd9pEkZZkA58dCEx0iuoWDdo80Ziwi7JYACy68wpuY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FDmhrD6OcI8/ZyTigvrt7AyF3W8ARCvMOo4utZsmV5rfXA9j0HOZWha2jPnmvvecqgze2MGN7DzPtcANicH2F6qSCLpXz/xeAqH5ttAKhtUL9ouH2hAmptJHzjtqrMJFMwkHhqb3QeO/z4AMOa6SCsgjm3sNL8afFnbf+RcmnGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ooajDnRj; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d1b8bacf67so103520b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:38:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717079913; x=1717684713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lCqk0Wbl0C/qkffAR5D1GSnGrOBHuEfWLT6qcnFKC74=;
-        b=sInuQO+nBoq3aLpAlYrsQgUkiQrAbbqRyB+9VZ5PVCRag4oWSgZv+NOkyfId//4HDc
-         cjdtbQUp7iXJGaGgYIF2wmPNpjcwhsNVBTUbUWAINectGTciOeBRYx0fNQL/Kx7ZhxRE
-         n7hmKwo7wJdMhyAVdXmKms1mqcELViZZrBA9GpaMn8HkDV9y6EqrS6j8m4RwmEWsS86V
-         iSTnp01nITZoHQ6uIuIfudWS4nnkkWZKnpBKSMhALvDrEitrvSLPN37R6zZQgI+FrQ0L
-         A1ZHU4f8yMXh9hJsPBTLpFSgwWXLSM0A/MK7DF6mbV5dBIzcY0EhA2Z1s0ULeXhyc50Z
-         FisQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717079915; x=1717684715; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vW0pwIYQgwhobA7Ixk7v6IauNiL+EOvg9nYymfAgbb4=;
+        b=ooajDnRj6K9jtPN26Fy9q5dK50MDV/MIoogmsLa4dHuYY66tZbY4KsG5yj8VtDEVnW
+         IQ9zgQHrK8/BvnP0LAxvIQRR2h3fKMI9/vii/Es/cCYVthJfCg8nadPrn5aWIAnwNrvb
+         cDNlxREsa8YS0YZpF0+vGIzpY15V8E8F6OhTwDE8EzmttRnriurE5dQ4qvkMWnVDuDHW
+         ErVKNsPQh0+YVih4yI549fYSc4t6aONw4VMmVWTcL/6rOLBvPbvKP9RU0DV9YYWzjTbv
+         LeEfg9im6nZ3H3Aq6LAy8PZxPQLzEf3lJJtkqCRS0ZHUWrSB+3yckArWwPTtYCCnJCfh
+         JpJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717079913; x=1717684713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCqk0Wbl0C/qkffAR5D1GSnGrOBHuEfWLT6qcnFKC74=;
-        b=pQFkX8BBFPT+XlBhsshosAltoYFQNiGJDahpOS9uJ4zBMz/BdTchyGTgkxSl3DW+bV
-         Pbu96k69mnUuZPS+YvYxHbrTJYa2zowVz9HaxaXZOxyiuDfyDuvP8VkPT0PS5RAMgaFw
-         3FdNKRl3Liduq1Oh9CInRtk9z+nQ5GDK5THhHzV1VKUfJ4v/IM6PYeiPpyZKb6AAQboA
-         a+Q1OysyXYv7alIuIAOqV3ctCME6/16EMaKiL+dupAZQESlH+oPMMBusAvX1M3yD0VSl
-         A0jnTOZhNtB8Hc/is0YYhR6aWYrz59Mxq80K3rAo07zeKV7/FCRFzazYJvL/4QYT5Hw8
-         NnBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbDAuNauuiOpHUWfu7VJGAHW+tgLWtK8ZGUhlWffhj+4N2AgOlEUV+FcxTKanYU6S6/oBqeOKMXTHIyomnndfIDCCBwD4BY3bR65SW
-X-Gm-Message-State: AOJu0YxbOLvQYMF2UDkf15JZ173rN1l8GYtPoFXK0sLOiUkCISnJdWMc
-	od/69HvOFM/5cWm4pxFvkzceAYxVSgd+7SStW2G+KP5CX2TW4VjhHXScEGkezJI=
-X-Google-Smtp-Source: AGHT+IFlbatkP5YNI0+cCdIM7/+OIHMvdLvagld1bA6xjJeK+Uh1NabWQhxIBQr5mw7eUxpTgrJABw==
-X-Received: by 2002:a05:600c:3b99:b0:418:1303:c3d1 with SMTP id 5b1f17b1804b1-4212793612bmr20925615e9.3.1717079913490;
-        Thu, 30 May 2024 07:38:33 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:999:a3a0:1c45:973a:b74b:ef3c? ([2a01:e0a:999:a3a0:1c45:973a:b74b:ef3c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212706ea02sm27143985e9.30.2024.05.30.07.38.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 07:38:33 -0700 (PDT)
-Message-ID: <920cc061-f5bf-4eae-88b9-7b7c2b32ed53@rivosinc.com>
-Date: Thu, 30 May 2024 16:38:31 +0200
+        d=1e100.net; s=20230601; t=1717079915; x=1717684715;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vW0pwIYQgwhobA7Ixk7v6IauNiL+EOvg9nYymfAgbb4=;
+        b=UpNgJclcpwshgCiOmpGbynTb1kHTXlReKLVVzpVyAYuBNtFvSb2jRmXrxxQhdPPJHT
+         79b5M7W/aWEwlNgkf1Gi5/X7pzk0mOKF4WFVPeNmiLRCmDozSV3uHTCWf0NJl+0A6JLx
+         jJkfc/2s9VQPYOW+65s0+gvdO8sOPhAjHoIkpeqO4dUVp+jwPXKjpW7TSdOI5yBgjM4v
+         NNIUzYu6lDjMtJUv/+6G9pDTOj+Lky8OgZg0ACZWoe5L6lDBJI08evibZbfoKyWKuNwx
+         Ttr5A+YsR2IecZUlgjj8vdIvNauHZYRuzLNrKxqbtCBWqlcPx6DHKnOhI8T6H7sj95Xf
+         U/tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJIabL/f1yLz0Q2Z0mnFotAsIxIvGFpXZZmdi+kNJkkHAISNWft/oZ+M6PyG7v/al50aFXbf94tewtrVKFPriAJ1AFx+1qSOsltTBo
+X-Gm-Message-State: AOJu0YwdSadjMncMzlZC0HLUwBZnXtkQRi+/odbCSEwjEn23yfWfIn2S
+	df/3HjMmR+zVm3IcHiAB/IpCIdn9R9pUzEp2FGG7GXVaj9/PkiEEf0y6eXzmMlc=
+X-Google-Smtp-Source: AGHT+IGnpi2ad8K8urnHtPt8UyiK1mRhPi+UP24KEtxd03LWVUtuUqED9tg6oEeYjmLoe7AETXX4Tw==
+X-Received: by 2002:a05:6870:f152:b0:250:6be3:3406 with SMTP id 586e51a60fabf-2506be351f0mr1768209fac.3.1717079915145;
+        Thu, 30 May 2024 07:38:35 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-24ca1ff7c8esm3650660fac.22.2024.05.30.07.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 07:38:34 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Breno Leitao <leitao@debian.org>
+Cc: leit@meta.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240530142340.1248216-1-leitao@debian.org>
+References: <20240530142340.1248216-1-leitao@debian.org>
+Subject: Re: [PATCH] io_uring/rw: Free iovec before cleaning async data
+Message-Id: <171707991426.532351.6222913434182120695.b4-ty@kernel.dk>
+Date: Thu, 30 May 2024 08:38:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/16] riscv: add ISA extension parsing for Zimop
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
- Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kvm@vger.kernel.org,
- kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-References: <20240517145302.971019-1-cleger@rivosinc.com>
- <20240517145302.971019-3-cleger@rivosinc.com> <ZlenZ+NvXxOxvqEO@ghost>
- <ZleqVUhDW+xgiTwu@ghost> <4d23f17e-cc1e-45e3-9ca2-a884baacf207@rivosinc.com>
- <ZliPL4yXBAir5pr2@ghost>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <ZliPL4yXBAir5pr2@ghost>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
 
-
-On 30/05/2024 16:37, Charlie Jenkins wrote:
-> On Thu, May 30, 2024 at 10:12:39AM +0200, Clément Léger wrote:
->>
->>
->> On 30/05/2024 00:21, Charlie Jenkins wrote:
->>> On Wed, May 29, 2024 at 03:08:39PM -0700, Charlie Jenkins wrote:
->>>> On Fri, May 17, 2024 at 04:52:42PM +0200, Clément Léger wrote:
->>>>> Add parsing for Zimop ISA extension which was ratified in commit
->>>>> 58220614a5f of the riscv-isa-manual.
->>>>>
->>>>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->>>>> ---
->>>>>  arch/riscv/include/asm/hwcap.h | 1 +
->>>>>  arch/riscv/kernel/cpufeature.c | 1 +
->>>>>  2 files changed, 2 insertions(+)
->>>>>
->>>>> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
->>>>> index 1f2d2599c655..b1896dade74c 100644
->>>>> --- a/arch/riscv/include/asm/hwcap.h
->>>>> +++ b/arch/riscv/include/asm/hwcap.h
->>>>> @@ -80,6 +80,7 @@
->>>>>  #define RISCV_ISA_EXT_ZFA		71
->>>>>  #define RISCV_ISA_EXT_ZTSO		72
->>>>>  #define RISCV_ISA_EXT_ZACAS		73
->>>>> +#define RISCV_ISA_EXT_ZIMOP		74
->>>>
->>>> Since my changes for removing xandespmu haven't landed here yet I think
->>>> you should keep RISCV_ISA_EXT_XANDESPMU in the diff here and make
->>>> RISCV_ISA_EXT_ZIMOP have a key of 75. Palmer can probably resolve the
->>>> conflicting keys when these two series are merged.
->>>>
->>>> - Charlie
->>>
->>> I missed that other patches in this series were based off my
->>> xtheadvector changes. It's not in the cover letter that there is a
->>> dependency though. What do you need from that series for this series to
->>> work?
->>
->> Hey Charlie, I'm not based directly on any of your series, but on
->> riscv/for-next which probably already contains your patches.
->>
->> Clément
+On Thu, 30 May 2024 07:23:39 -0700, Breno Leitao wrote:
+> kmemleak shows that there is a memory leak in io_uring read operation,
+> where a buffer is allocated at iovec import, but never de-allocated.
 > 
-> There was some churn here so I didn't expect those to be merged, it
-> looks like a subset of the patches were added to riscv/for-next, sorry
-> for the confusion!
-
-No worries, it seems strange indeed that some of them were merged but
-not the other :/
-
+> The memory is allocated at io_async_rw->free_iovec, but, then
+> io_async_rw is kfreed, taking the allocated memory with it. I saw this
+> happening when the read operation fails with -11 (EAGAIN).
 > 
-> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+> [...]
 
-Thanks !
+Applied, thanks!
 
-> 
->>
->>>
->>> - Charlie
->>>
->>>>
->>>>>  
->>>>>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
->>>>>  
->>>>> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
->>>>> index 2993318b8ea2..41f8ae22e7a0 100644
->>>>> --- a/arch/riscv/kernel/cpufeature.c
->>>>> +++ b/arch/riscv/kernel/cpufeature.c
->>>>> @@ -241,6 +241,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->>>>>  	__RISCV_ISA_EXT_DATA(zihintntl, RISCV_ISA_EXT_ZIHINTNTL),
->>>>>  	__RISCV_ISA_EXT_DATA(zihintpause, RISCV_ISA_EXT_ZIHINTPAUSE),
->>>>>  	__RISCV_ISA_EXT_DATA(zihpm, RISCV_ISA_EXT_ZIHPM),
->>>>> +	__RISCV_ISA_EXT_DATA(zimop, RISCV_ISA_EXT_ZIMOP),
->>>>>  	__RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
->>>>>  	__RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
->>>>>  	__RISCV_ISA_EXT_DATA(zfh, RISCV_ISA_EXT_ZFH),
->>>>> -- 
->>>>> 2.43.0
->>>>>
->>>>>
->>>>> _______________________________________________
->>>>> linux-riscv mailing list
->>>>> linux-riscv@lists.infradead.org
->>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
->>>>
+[1/1] io_uring/rw: Free iovec before cleaning async data
+      commit: e112311615a24e1618a591c73506571dc304eb8d
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
