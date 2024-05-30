@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-195805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF84E8D520E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:04:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C668D5210
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32165B22868
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0EE282734
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7DF57C83;
-	Thu, 30 May 2024 19:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829B760DE9;
+	Thu, 30 May 2024 19:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EjI8vXcm"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAGxdkay"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BE65676F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 19:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F60225DD;
+	Thu, 30 May 2024 19:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717095855; cv=none; b=kUDobAz8WMsVVIFtKo9swLiRPzpNE8Hiiw8nOUeea1xrOTI/RbIFeMTFSaxSN7H5B6Yo03z34pkpqOcnkORqE4fiXcZYz7G/pat8qQ3m1Oz6WrAN3YptNqc0yZqSO5NvLiDztmq4UgXwPp92TaNeWYl+EPUNwkeEOXT3BJtCyTk=
+	t=1717096013; cv=none; b=RV2SMSCPIDtlJ9VSq2xEPwCQgZtWf8A7uRq0eNHGjX3eIVFn04TQu2qwY76MuZNT6wB++mz2qIkxTAsxmV5Xb+IJGmOEuulHbk53rllBjpM68+pBxfiGEzehijYZFGtkXec45Qy/tqVYjfdm2pHxhkn2bFPvkf0Oehvcy1gj1KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717095855; c=relaxed/simple;
-	bh=XqkU5JF0xqJNCcqcOzUAWXI74SlBn5htldgYf/jMNnc=;
+	s=arc-20240116; t=1717096013; c=relaxed/simple;
+	bh=bRO6bXFp/dSvbbg7+1i9QIiurfhahhq9QQpyNWZKA9E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XY/rr0ZUaWpS/rH2HAYxIAzJaXvx2echLl7bhKU2VTNgwVGn6QgQndRHai38iNT3cfOCTSyljxPzQ37q4iyr6W/WY5NHXD9ryr3HZZRMxMD4O5sE+G4wANpOEODG93ESvi1gkIBFSLCTvF+dgv4iLiwcJ8C7vQiTh1a7GIH3ZG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EjI8vXcm; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7e3b1981fe5so6615239f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:04:13 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=birJVTjhpMSpz5+Dl9pXmL6V7/0AkNPq999pVxV9D5A08NOEVROZrH0/XnqpgwRHawYjxCxK/5kaoj586uoM1ikCResKZlmQDOXx4wQP9esi9wm9yIW6WJYsN4Ene/5yy+sY93iqJxQaxq1v+Bh9x6Q7C7tljPoThXQZ1uWs5E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAGxdkay; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6341cf2c99so128384866b.0;
+        Thu, 30 May 2024 12:06:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717095853; x=1717700653; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717096010; x=1717700810; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hUBR/IKrUPGm3wyGOLSg3Fiy25XwZdoN4lNos6i64TY=;
-        b=EjI8vXcmq0kmNg7aKKoGoWcV4o9pXlcLcLoR+TD+m1w+SQY8dNtKILjVGozlBH9fjA
-         StTJgAsEct0adGqfTbR11q5HMDuyija/IBXNI7syjQQK1n+Owc3mp5ho9gcj1KHKmB31
-         8QcnWdiO5+GyldLpXRtsQdzuiqobok1qFFD94=
+        bh=8KdgdxWAViskHgUtlX/wf0IITM3i057faalPlY7ezJg=;
+        b=IAGxdkayV4ebQA1G+375DVy/Lwv1Ju3x9ykmaBxcmoW1Bp3+DWaA0uBMXZ48AR5wl/
+         0elIAXuQV7GIkeJi9wGpaSYWZzRoNCovlRRUIjqUe07UKU6L6e6BcSXgxcua9gBRm6rb
+         CoqPMeaQUmi1uuWx3c6KB9XidlKgNwrImAfQrDUiYXwPrd8kiwAuzg9gEEjDs9iw+6ER
+         6xqreYVFpF6TOpOHL9OV58TZcxOeE/l1+lw2iQoggmfYvB56M8TknmvwDMGziTXgd+S8
+         pVSO/VgaybggIxuFS+9O+dzcoY5ic88y8YqeaKi/vLIctJ9apVZR7sROtXJKQwiK/9fh
+         G4jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717095853; x=1717700653;
+        d=1e100.net; s=20230601; t=1717096010; x=1717700810;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hUBR/IKrUPGm3wyGOLSg3Fiy25XwZdoN4lNos6i64TY=;
-        b=jBmdYmaie4OCOJGukyDQ+fEaH8q4rRnGOXerZVxAFd4u840wK9G/Zke3+bXE8duQjJ
-         QlPAxb/OWyucL+0JdadttVkc124G5wAnPDwLWhBwMHZGSE6otpT/z7flb39s8CntlrSp
-         etY+YPlY500hl7pqQgW/pGTckaBb9HZKXqr+DTpzKs+x7tKk4kmuqYZ9GkCkJZLizqyP
-         LnnknBrAkVy64ooHb6toOPnXW1DtcOBW6A4Hj//0cHZ+X1fEWCf4+oYCUzSPrseN3EYG
-         IKF0aMmHjW2bfJTKSDzrFMW+uqfjWGSNcs8pXw+eWZofJ9R8WB7jgDST/BbAJOXiwtdy
-         FXBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYGzbb7uug715Mr+jDOQrbppd8XwYTKG1zAxjZP9WMcNEK1/2I7syb+MYFSx4FDMxtCqpOcu3J51S1T9etSMzGC3KV8mF3bAN5uU13
-X-Gm-Message-State: AOJu0YzkyefTEXzfeeiIPfv1R0B+VVyiv159guFrpVCp684KENLUFMkW
-	6EflmOLBFfARIxchkS8vLeen7NwR9zf1NDCuZ1XpMAtqbr63uF7ClNhPQTdyEeM=
-X-Google-Smtp-Source: AGHT+IHDstNgMVZwtRqmSZtTYuTC1xPHQ6r9uQg6kXwAmLCcW28lA/hy5sidfUmU/JPMFdijGRRXzw==
-X-Received: by 2002:a05:6e02:180a:b0:36c:5440:7454 with SMTP id e9e14a558f8ab-3747df5104cmr34457525ab.1.1717095852742;
-        Thu, 30 May 2024 12:04:12 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3748a27959fsm668615ab.75.2024.05.30.12.04.12
+        bh=8KdgdxWAViskHgUtlX/wf0IITM3i057faalPlY7ezJg=;
+        b=HwgY1T/VK9SpM52pYXRT3L8SVJlMHE3tQm2ZStfq6noN20vvZjliwx3n4SjDMBrxez
+         UYqzKmkzYNZFCzHEqnuwkILS8MPJw1TtKzLhM6P9ZfAVgScIuO+6OfQq8BhC1QqIxdn2
+         3MZiQd+XahPDITdN2tOulgY8T2rZdyztF4ru8yX9X0Ch4QJBjYhbrOKh0tIC7HfaxAQ2
+         3nMCvz0h2xXulhS9ZtaI94/ZbjmuWmDrrI6uthZGcKq59tM9LmHkTsW63izFmT7AChnb
+         dWyUFUjYhf0uk7Chz8b4fwaxVeaQkDc67hFvzP9/GXwyc3zgc6Dxz8N1fNyYoiZuAXmO
+         IxFA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2ZOAJvZl/H0MjpPleAnXOn8fzSaXr9si5ligqIzX6D8VHdioBO2NbFJ5weOiGAmyT4Vd7YB3RCuibj5rD9P0L9zDkp2fz/VU64R6B0sDe3UG923Dr6P2pBaPxfQjCIzgukn63wI3C
+X-Gm-Message-State: AOJu0Yy2MTisRW1x8XIbe7zIXe1YosTRaPDtf4CdfbMzJW9+WFPasaGv
+	h5CMjE+0vtooFSzMjkK8xILe8xuZXurzLnwjUTfKDIJunfsK3mXw
+X-Google-Smtp-Source: AGHT+IE+xojjoDEExzTSAQCLIC250WquxaOaAXAxhHFA61n4DS/WVairKkptsQsahcOYKx0Qr34Uvg==
+X-Received: by 2002:a17:906:b39b:b0:a59:d243:945 with SMTP id a640c23a62f3a-a65e910434amr174855966b.57.1717096009312;
+        Thu, 30 May 2024 12:06:49 -0700 (PDT)
+Received: from ?IPV6:2a02:a466:68ed:1:b231:870c:a9f6:5cdf? (2a02-a466-68ed-1-b231-870c-a9f6-5cdf.fixed6.kpn.net. [2a02:a466:68ed:1:b231:870c:a9f6:5cdf])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eab85c20sm5168566b.152.2024.05.30.12.06.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 12:04:12 -0700 (PDT)
-Message-ID: <94fe2649-8def-4f2a-ba5f-19ae8a4226bf@linuxfoundation.org>
-Date: Thu, 30 May 2024 13:04:11 -0600
+        Thu, 30 May 2024 12:06:48 -0700 (PDT)
+Message-ID: <3ef0d3f2-7949-40e8-86ed-7fcfd37c46c4@gmail.com>
+Date: Thu, 30 May 2024 21:06:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,64 +75,518 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] selftests/futex: don't pass a const char* to
- asprintf(3)
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Edward Liaw <edliaw@google.com>,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- "Nysal Jan K . A" <nysal@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240529022938.129624-1-jhubbard@nvidia.com>
- <20240529022938.129624-3-jhubbard@nvidia.com>
+Subject: Re: [PATCH v4] usb: gadget: u_ether: Replace netif_stop_queue with
+ netif_device_detach
+To: Hardik Gajjar <hgajjar@de.adit-jv.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ gregkh@linuxfoundation.org, s.hauer@pengutronix.de, jonathanh@nvidia.com,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_linyyuan@quicinc.com, paul@crapouillou.net, quic_eserrao@quicinc.com,
+ erosca@de.adit-jv.com, regressions@leemhuis.info
+References: <5dae4b62-24d4-4942-934a-38c548a2fdbc@gmail.com>
+ <20240430153243.GA129136@vmlxhi-118.adit-jv.com>
+ <8041106f-0be0-4ed9-990e-1f62902b30e9@gmail.com>
+ <9dab0c4f-cfae-4212-9a27-518454314eef@gmail.com>
+ <20240502152916.GA7995@vmlxhi-118.adit-jv.com>
+ <64ffb6e4-d0c9-4e53-a314-a174097516b1@gmail.com>
+ <7013cad9-7331-45be-b115-e9e1f253bcea@gmail.com>
+ <20240510094520.GA8362@vmlxhi-118.adit-jv.com>
+ <6f7b11ed-e387-4d51-b0f4-3af8d4e32a16@gmail.com>
+ <fbc1a8c4-a459-4892-af75-d4176e606bd5@gmail.com>
+ <20240528071851.GB188434@HI-C-003YD.hi.de.bosch.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240529022938.129624-3-jhubbard@nvidia.com>
+From: Ferry Toth <fntoth@gmail.com>
+In-Reply-To: <20240528071851.GB188434@HI-C-003YD.hi.de.bosch.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/28/24 20:29, John Hubbard wrote:
-> When building with clang, via:
-> 
->      make LLVM=1 -C tools/testing/selftests
-> 
-> ...clang issues a warning, because test_name is passed into asprintf(3),
-> which then changes it.
+Hi,
 
-Please include the warning in the commit log.
+Op 28-05-2024 om 09:18 schreef Hardik Gajjar:
+> On Sun, May 26, 2024 at 10:52:53PM +0200, Ferry Toth wrote:
+>> Hi
+>>
+>> Op 15-05-2024 om 20:38 schreef Ferry Toth:
+>>> Hi,
+>>>
+>>> Sorry to have kept you waiting, I was away for a short break.
+>>>
+>>> Patch tested below.
+>>>
+>>> Op 10-05-2024 om 11:45 schreef Hardik Gajjar:
+>>>> On Thu, May 02, 2024 at 10:32:16PM +0200, Ferry Toth wrote:
+>>>>> Oops, sorry, wrong file attached . Now correct one.
+>>>>>
+>>>>> Op 02-05-2024 om 22:13 schreef Ferry Toth:
+>>>>>> Op 02-05-2024 om 17:29 schreef Hardik Gajjar:
+>>>>>>> On Tue, Apr 30, 2024 at 11:12:17PM +0200, Ferry Toth wrote:
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> Op 30-04-2024 om 21:40 schreef Ferry Toth:
+>>>>>>>>> Hi,
+>>>>>>>>>
+>>>>>>>>> Op 30-04-2024 om 17:32 schreef Hardik Gajjar:
+>>>>>>>>>> On Sun, Apr 28, 2024 at 11:07:36PM +0200, Ferry Toth wrote:
+>>>>>>>>>>> Hi,
+>>>>>>>>>>>
+>>>>>>>>>>> Op 25-04-2024 om 23:27 schreef Ferry Toth:
+>>>>>>>>>>>> Hi,
+>>>>>>>>>>>>
+>>>>>>>>>>>> Op 17-04-2024 om 17:13 schreef Hardik Gajjar:
+>>>>>>>>>>>>> On Tue, Apr 16, 2024 at 04:48:32PM +0300, Andy Shevchenko wrote:
+>>>>>>>>>>>>>> On Thu, Apr 11, 2024 at 10:52:36PM +0200, Ferry Toth wrote:
+>>>>>>>>>>>>>>> Op 11-04-2024 om 18:39 schreef Andy Shevchenko:
+>>>>>>>>>>>>>>>> On Thu, Apr 11, 2024
+>>>>>>>>>>>>>>>> at 04:26:37PM +0200,
+>>>>>>>>>>>>>>>> Hardik Gajjar wrote:
+>>>>>>>>>>>>>>>>> On Wed, Apr 10, 2024 at
+>>>>>>>>>>>>>>>>> 08:37:42PM +0300, Andy
+>>>>>>>>>>>>>>>>> Shevchenko wrote:
+>>>>>>>>>>>>>>>>>> On Sun, Apr 07, 2024 at 10:51:51PM +0200, Ferry Toth wrote:
+>>>>>>>>>>>>>>>>>>> Op 05-04-2024 om 13:38 schreef Hardik Gajjar:
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> ...
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>> Exactly. And this didn't happen before the 2 patches.
+>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>> To be precise: /sys/class/net/usb0 is not
+>>>>>>>>>>>>>>>>>>> removed and it is a link, the link
+>>>>>>>>>>>>>>>>>>> target /sys/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/gadget.0/net/usb0
+>>>>>>>>>>>>>>>>>>> no
+>>>>>>>>>>>>>>>>>>> longer exists
+>>>>>>>>>>>>>>>>> So, it means that the /sys/class/net/usb0 is
+>>>>>>>>>>>>>>>>> present, but the symlink is
+>>>>>>>>>>>>>>>>> broken. In that case, the dwc3 driver should
+>>>>>>>>>>>>>>>>> recreate the device, and the
+>>>>>>>>>>>>>>>>> symlink should become active again
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Yes, on first enabling gadget (when device mode is activated):
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> root@yuna:~# ls
+>>>>>>>>>>>>>>> /sys/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/gadget.0/
+>>>>>>>>>>>>>>> driver  net  power  sound  subsystem  suspended  uevent
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Then switching to host mode:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> root@yuna:~# ls
+>>>>>>>>>>>>>>> /sys/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/gadget.0/
+>>>>>>>>>>>>>>> ls: cannot access
+>>>>>>>>>>>>>>> '/sys/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/gadget.0/':
+>>>>>>>>>>>>>>> No such file
+>>>>>>>>>>>>>>> or directory
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Then back to device mode:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> root@yuna:~# ls
+>>>>>>>>>>>>>>> /sys/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/gadget.0/
+>>>>>>>>>>>>>>> driver  power  sound  subsystem  suspended  uevent
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> net is missing. But, network functions:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> root@yuna:~# ping 10.42.0.1
+>>>>>>>>>>>>>>> PING 10.42.0.1 (10.42.0.1): 56 data bytes
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Mass storage device is
+>>>>>>>>>>>>>>> created and removed each
+>>>>>>>>>>>>>>> time as expected.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> So, what's the conclusion?
+>>>>>>>>>>>>>> Shall we move towards revert
+>>>>>>>>>>>>>> of those
+>>>>>>>>>>>>>> two changes?
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> As promised, I have the tested
+>>>>>>>>>>>>> the this patch with the dwc3
+>>>>>>>>>>>>> gadget.
+>>>>>>>>>>>>> I could not reproduce
+>>>>>>>>>>>>> the issue.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> I can see the usb0 exist all the
+>>>>>>>>>>>>> time and accessible regardless
+>>>>>>>>>>>>> of
+>>>>>>>>>>>>> the role switching of the USB mode (peripheral <-> host)
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Following are the logs:
+>>>>>>>>>>>>> //Host to device
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> console:/sys/bus/platform/devices/a800000.ssusb
+>>>>>>>>>>>>> # echo "peripheral"
+>>>>>>>>>>>>>> mode
+>>>>>>>>>>>>> console:/sys/bus/platform/devices/a800000.ssusb # ls
+>>>>>>>>>>>>> a800000.dwc3/gadget/net/
+>>>>>>>>>>>>> usb0
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> //device to host
+>>>>>>>>>>>>> console:/sys/bus/platform/devices/a800000.ssusb
+>>>>>>>>>>>>> # echo "host" > mode
+>>>>>>>>>>>>> console:/sys/bus/platform/devices/a800000.ssusb # ls
+>>>>>>>>>>>>> a800000.dwc3/gadget/net/
+>>>>>>>>>>>>> usb0
+>>>>>>>>>>>>
+>>>>>>>>>>>> That is weird. When I switch to host mode (using
+>>>>>>>>>>>> the physical switch),
+>>>>>>>>>>>> the whole gadget directory is removed (now testing 6.9.0-rc5)
+>>>>>>>>>>>>
+>>>>>>>>>>>> Switching back to device mode, that gadget
+>>>>>>>>>>>> directory is recreated. And
+>>>>>>>>>>>> gadget/sound as well, but not gadget/net.
+>>>>>>>>>>>>
+>>>>>>>>>>>>> s a800000.dwc3/gadget/net/usb0
+>>>>>>>>>>>>> <
+>>>>>>>>>>>>> addr_assign_type    duplex             phys_port_name
+>>>>>>>>>>>>> addr_len            flags              phys_switch_id
+>>>>>>>>>>>>> address             gro_flush_timeout  power
+>>>>>>>>>>>>> broadcast           ifalias            proto_down
+>>>>>>>>>>>>> carrier             ifindex            queues
+>>>>>>>>>>>>> carrier_changes     iflink             speed
+>>>>>>>>>>>>> carrier_down_count  link_mode          statistics
+>>>>>>>>>>>>> carrier_up_count    mtu                subsystem
+>>>>>>>>>>>>> dev_id              name_assign_type   tx_queue_len
+>>>>>>>>>>>>> dev_port            netdev_group       type
+>>>>>>>>>>>>> device              operstate          uevent
+>>>>>>>>>>>>> dormant             phys_port_id       waiting_for_supplier
+>>>>>>>>>>>>> console:/sys/bus/platform/devices/a800000.ssusb
+>>>>>>>>>>>>> # ifconfig -a usb0
+>>>>>>>>>>>>> usb0      Link encap:Ethernet  HWaddr 3a:8b:63:97:1a:9a
+>>>>>>>>>>>>>                BROADCAST MULTICAST  MTU:1500  Metric:1
+>>>>>>>>>>>>>                RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+>>>>>>>>>>>>>                TX packets:0
+>>>>>>>>>>>>> errors:0 dropped:0 overruns:0
+>>>>>>>>>>>>> carrier:0
+>>>>>>>>>>>>>                collisions:0 txqueuelen:1000
+>>>>>>>>>>>>>                RX bytes:0 TX bytes:0
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> console:/sys/bus/platform/devices/a800000.ssusb #
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> I strongly advise against
+>>>>>>>>>>>>> reverting the patch solely based
+>>>>>>>>>>>>> on the
+>>>>>>>>>>>>> observed issue of removing the
+>>>>>>>>>>>>> /sys/class/net/usb0 directory
+>>>>>>>>>>>>> while
+>>>>>>>>>>>>> the usb0 interface remains available.
+>>>>>>>>>>>>
+>>>>>>>>>>>> There's more to it. I also mentioned that switching the role or
+>>>>>>>>>>>> unplugging the cable leaves the usb0 connection.
+>>>>>>>>>>>>
+>>>>>>>>>>>> I have while in host mode:
+>>>>>>>>>>>> root@yuna:~# ifconfig -a usb0
+>>>>>>>>>>>> usb0:
+>>>>>>>>>>>> flags=-28605<UP,BROADCAST,RUNNING,MULTICAST,DYNAMIC>
+>>>>>>>>>>>> mtu 1500
+>>>>>>>>>>>>              inet 10.42.0.221  netmask 255.255.255.0  broadcast
+>>>>>>>>>>>> 10.42.0.255
+>>>>>>>>>>>>              inet6 fe80::a8bb:ccff:fedd:eef1  prefixlen 64
+>>>>>>>>>>>> scopeid 0x20<link>
+>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> You don't see that because you didn't create a connection at all.
+>>>>>>>>>>>>
+>>>>>>>>>>>>> Instead, I recommend enabling FTRACE to
+>>>>>>>>>>>>> trace the functions involved
+>>>>>>>>>>>>> and identify which faulty call is responsible for removing usb0.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Switching from device -> host -> device:
+>>>>>>>>>>>>
+>>>>>>>>>>>> root@yuna:~# trace-cmd record -p function_graph -l *gether_*
+>>>>>>>>>>>>        plugin 'function_graph'
+>>>>>>>>>>>> Hit Ctrl^C to stop recording
+>>>>>>>>>>>> ^CCPU0 data recorded at offset=0x1c8000
+>>>>>>>>>>>>          188 bytes in size (4096 uncompressed)
+>>>>>>>>>>>> CPU1 data recorded at offset=0x1c9000
+>>>>>>>>>>>>          0 bytes in size (0 uncompressed)
+>>>>>>>>>>>> root@yuna:~# trace-cmd report
+>>>>>>>>>>>> cpus=2
+>>>>>>>>>>>>           irq/68-dwc3-725   [000]   514.575337:
+>>>>>>>>>>>> funcgraph_entry:      #
+>>>>>>>>>>>> 2079.480 us |  gether_disconnect();
+>>>>>>>>>>>>           irq/68-dwc3-946   [000]   524.263731:
+>>>>>>>>>>>> funcgraph_entry:      +
+>>>>>>>>>>>> 11.640 us  |  gether_disconnect();
+>>>>>>>>>>>>           irq/68-dwc3-946   [000]   524.263743:
+>>>>>>>>>>>> funcgraph_entry:      !
+>>>>>>>>>>>> 116.520 us |  gether_connect();
+>>>>>>>>>>>>           irq/68-dwc3-946   [000]   524.268029:
+>>>>>>>>>>>> funcgraph_entry:      #
+>>>>>>>>>>>> 2057.260 us |  gether_disconnect();
+>>>>>>>>>>>>           irq/68-dwc3-946   [000]   524.270089:
+>>>>>>>>>>>> funcgraph_entry:      !
+>>>>>>>>>>>> 109.000 us |  gether_connect();
+>>>>>>>>>>>
+>>>>>>>>>>> I tried to get a more useful trace:
+>>>>>>>>>>> root@yuna:/sys/kernel/tracing# echo 'gether_*' > set_ftrace_filter
+>>>>>>>>>>> root@yuna:/sys/kernel/tracing# echo 'eem_*' >> set_ftrace_filter
+>>>>>>>>>>> root@yuna:/sys/kernel/tracing# echo function > current_tracer
+>>>>>>>>>>> root@yuna:/sys/kernel/tracing# echo 'reset_config'
+>>>>>>>>>>>>> set_ftrace_filter
+>>>>>>>>>>> -> switch to host mode then back to device
+>>>>>>>>>>> root@yuna:/sys/kernel/tracing# cat trace
+>>>>>>>>>>> # tracer: function
+>>>>>>>>>>> #
+>>>>>>>>>>> # entries-in-buffer/entries-written: 53/53   #P:2
+>>>>>>>>>>> #
+>>>>>>>>>>> #                                _-----=> irqs-off/BH-disabled
+>>>>>>>>>>> #                               / _----=> need-resched
+>>>>>>>>>>> #                              | / _---=> hardirq/softirq
+>>>>>>>>>>> #                              || / _--=> preempt-depth
+>>>>>>>>>>> #                              ||| / _-=> migrate-disable
+>>>>>>>>>>> #                              |||| /     delay
+>>>>>>>>>>> #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+>>>>>>>>>>> #              | |         |   |||||     |         |
+>>>>>>>>>>>          irq/68-dwc3-523     [000] D..3.   133.990254: reset_config
+>>>>>>>>>>> <-__composite_disconnect
+>>>>>>>>>>>          irq/68-dwc3-523     [000] D..3.   133.992274: eem_disable
+>>>>>>>>>>> <-reset_config
+>>>>>>>>>>>          irq/68-dwc3-523     [000] D..3.   133.992276:
+>>>>>>>>>>> gether_disconnect
+>>>>>>>>>>> <-reset_config
+>>>>>>>>>>>          kworker/1:3-443     [001] ...1.   134.022453: eem_unbind
+>>>>>>>>>>> <-purge_configs_funcs
+>>>>>>>>>>>
+>>>>>>>>>>> -> to device mode
+>>>>>>>>>>>
+>>>>>>>>>>>          kworker/1:3-443     [001] ...1.   148.630773: eem_bind
+>>>>>>>>>>> <-usb_add_function
+>>>>>>>>>>>          irq/68-dwc3-734     [000] D..3.   149.155209: eem_set_alt
+>>>>>>>>>>> <-composite_setup
+>>>>>>>>>>>          irq/68-dwc3-734     [000] D..3.   149.155215:
+>>>>>>>>>>> gether_disconnect
+>>>>>>>>>>> <-eem_set_alt
+>>>>>>>>>>>          irq/68-dwc3-734     [000]
+>>>>>>>>>>> D..3.   149.155220: gether_connect
+>>>>>>>>>>> <-eem_set_alt
+>>>>>>>>>>>          irq/68-dwc3-734     [000] D..3.   149.157287: eem_set_alt
+>>>>>>>>>>> <-composite_setup
+>>>>>>>>>>>          irq/68-dwc3-734     [000] D..3.   149.157292:
+>>>>>>>>>>> gether_disconnect
+>>>>>>>>>>> <-eem_set_alt
+>>>>>>>>>>>          irq/68-dwc3-734     [000]
+>>>>>>>>>>> D..3.   149.159338: gether_connect
+>>>>>>>>>>> <-eem_set_alt
+>>>>>>>>>>>          irq/68-dwc3-734     [000] D..2.   149.239625: eem_unwrap
+>>>>>>>>>>> <-rx_complete
+>>>>>>>>>>> ...
+>>>>>>>>>>>
+>>>>>>>>>>> I don't know where to look exactly. Any hints?
+>>>>>>>>>>
+>>>>>>>>>> do you see anything related to
+>>>>>>>>>> gether_cleanup() after eem_unbind() ?
+>>>>>>>>>
+>>>>>>>>> Nope. It's a pitty that the trace formatting got messed up
+>>>>>>>>> above. But as
+>>>>>>>>> you can see I traced gether_* and eem_*. After eem_unbind no traced
+>>>>>>>>> function is called, until I flip the switch to device mode.
+>>>>>>>>> The ... at the end is where I cut uninteresting eem_unwrap
+>>>>>>>>> <-rx_complete
+>>>>>>>>> and eem_wrap <-eth_start_xmit lines.
+>>>>>>>>>
+>>>>>>>>>> If not then, you may try to enable tracing of TCP/IP stack and
+>>>>>>>>>> network side to check who deleting the sysfs entry
+>>>>>>>>>
+>>>>>>>>> Yes, that's a vast amount of functions to trace. And I don't see how
+>>>>>>>>> that would be related to the patch we're
+>>>>>>>>> discussing here. I was hoping
+>>>>>>>>> for a little more targeted hint.
+>>>>>>>>
+>>>>>>>> Now filtering 'gether_*', 'eem_*', '*configfs_*', 'composite_*',
+>>>>>>>> 'usb_fun*',
+>>>>>>>> 'reset_config' and 'device_remove_file' leads me to:
+>>>>>>>>
+>>>>>>>> TIMESTAMP  FUNCTION
+>>>>>>>>       |         |
+>>>>>>>>      49.952477: eem_wrap <-eth_start_xmit
+>>>>>>>>      55.072455: eem_wrap <-eth_start_xmit
+>>>>>>>>      55.072621: eem_unwrap <-rx_complete
+>>>>>>>>      59.011540: configfs_composite_reset <-usb_gadget_udc_reset
+>>>>>>>>      59.011545: composite_reset <-configfs_composite_reset
+>>>>>>>>      59.011548: reset_config <-__composite_disconnect
+>>>>>>>>      59.013565: eem_disable <-reset_config
+>>>>>>>>      59.013567: gether_disconnect <-reset_config
+>>>>>>>>      59.049560: device_remove_file <-device_remove
+>>>>>>>>      59.051185: configfs_composite_disconnect <-usb_gadget_disco
+>>>>>>>>      59.051189: composite_disconnect <-configfs_composite_discon
+>>>>>>>>      59.051195: configfs_composite_unbind <-gadget_unbind_driver
+>>>>>>>>      59.052519: eem_unbind <-purge_configs_funcs
+>>>>>>>>      59.052529: composite_dev_cleanup <-configfs_composite_unbin
+>>>>>>>>      59.052537: device_remove_file <-composite_dev_cleanup
+>>>>>>>>
+>>>>>>>> device_remove_file gets called twice, once by device_remove after
+>>>>>>>> gether_disconnect (that the one). The 2nd time by
+>>>>>>>> composite_dev_cleanup
+>>>>>>>> (removing the gadget)
+>>>>>>>
+>>>>>>> I believe that the device_remove_file function is only removing
+>>>>>>> suspend-specific attributes, not the complete gadget.
+>>>>>>> Typically, when you perform the role switch, the Gadget start/stop
+>>>>>>> function in your UDC driver is called. These functions should not
+>>>>>>> delete the gadget
+>>>>>>>
+>>>>>>> To investigate further, could you please enable the DWC3 functions
+>>>>>>> in ftrace and check who is removing the gadget?
+>>>>>>> I can also enable this on my system and compare the logs with yours,
+>>>>>>> but I will be in PI planning for 1.5 weeks and may not be able to
+>>>>>>> provide immediate support.
+>>>>>>
+>>>>>> Yes, but of course adding dwc3_* (and usb_*) also traces host mode, so
+>>>>>> trace is 600kb. I cut uninteresting stuff before
+>>>>>> configfs_composite_reset <-usb_gadget_udc_reset and after
+>>>>>> __dwc3_set_mode, <https://urldefense.proofpoint.com/v2/url?u=http-3A__300linesremain.Seeattachedtar.gzforyouto&d=DwIDaQ&c=euGZstcaTDllvimEN8b7jXrwqOf-v5A_CdpgnVfiiMM&r=SAhjP5GOmrADp1v_EE5jWoSuMlYCIt9gKduw-DCBPLs&m=zdiBhk-2V5AXxu707QAhbCgWR4qNVRARBmxN17nVB69gVOm-QPqrJeKpo4_trszw&s=ixagWKgLs6wQDJfwh4vIDQNDiy8GZnK9KnUELIfiJz0&e=>
+>>>>>> compare.
+>>>>>>
+>>>> Could you please try with the following patch and see if your issue
+>>>> resolves ?
+>>>>
+>>>> diff --git a/drivers/usb/gadget/function/f_eem.c
+>>>> b/drivers/usb/gadget/function/f_eem.c
+>>>> index 3b445bd88498..c2a904475083 100644
+>>>> --- a/drivers/usb/gadget/function/f_eem.c
+>>>> +++ b/drivers/usb/gadget/function/f_eem.c
+>>>> @@ -247,7 +247,7 @@ static int eem_bind(struct usb_configuration *c,
+>>>> struct usb_function *f)
+>>>>        struct usb_composite_dev *cdev = c->cdev;
+>>>>        struct f_eem        *eem = func_to_eem(f);
+>>>>        struct usb_string    *us;
+>>>> -    int            status;
+>>>> +    int            status = 0;
+>>>>        struct usb_ep        *ep;
+>>>>        struct f_eem_opts    *eem_opts;
+>>>> @@ -260,16 +260,20 @@ static int eem_bind(struct usb_configuration
+>>>> *c, struct usb_function *f)
+>>>>         * with list_for_each_entry, so we assume no race condition
+>>>>         * with regard to eem_opts->bound access
+>>>>         */
+>>>> +    mutex_lock(&eem_opts->lock);
+>>>> +    gether_set_gadget(eem_opts->net, cdev->gadget);
+>>>> +
+>>>>        if (!eem_opts->bound) {
+>>>> -        mutex_lock(&eem_opts->lock);
+>>>> -        gether_set_gadget(eem_opts->net, cdev->gadget);
+>>>>            status = gether_register_netdev(eem_opts->net);
+>>>> -        mutex_unlock(&eem_opts->lock);
+>>>> -        if (status)
+>>>> -            return status;
+>>>> -        eem_opts->bound = true;
+>>>>        }
+>>>> +    mutex_unlock(&eem_opts->lock);
+>>>> +
+>>>> +    if (status)
+>>>> +        goto fail;
+>>>> +
+>>>> +    eem_opts->bound = true;
+>>>> +
+>>>>        us = usb_gstrings_attach(cdev, eem_strings,
+>>>>                     ARRAY_SIZE(eem_string_defs));
+>>>>
+>>>
+>>> After switching from host -> device -> host the usb0 device as seen by
+>>> ifconfig remains "RUNNING" and in the routing table.
+>>>
+>>> FYI This is the regression.
+>>
+>> For us, I don't see any advantages in having this patch and only the
+>> downside. Do you have any further ideas / patches that we could test.
+>>
+>> Otherwise, it might be best to go with the original suggestion and revert
+>> until it gets sorted out?
+> 
+> Hello,
+> 
+> Okay, lets revert the patch till we fix your problem. Would you be able to send the revert ? or shall I ?
+> 
+> However, We are very much intrested to fix your problem and upstream the v2.
+> Therefore could you please share the following details to reproduce the issue
 
-> 
-> Fix this by simply removing the const qualifier. This is a local
-> automatic variable in a very short function, so there is not much need
-> to use the compiler to enforce const-ness at this scope.
-> 
-> [1] https://lore.kernel.org/all/20240329-selftests-libmk-llvm-rfc-v1-1-2f9ed7d1c49f@valentinobst.de/
-> 
-> Fixes: f17d8a87ecb5 ("selftests: fuxex: Report a unique test name per run of futex_requeue_pi")
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->   tools/testing/selftests/futex/functional/futex_requeue_pi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/futex/functional/futex_requeue_pi.c b/tools/testing/selftests/futex/functional/futex_requeue_pi.c
-> index 7f3ca5c78df1..215c6cb539b4 100644
-> --- a/tools/testing/selftests/futex/functional/futex_requeue_pi.c
-> +++ b/tools/testing/selftests/futex/functional/futex_requeue_pi.c
-> @@ -360,7 +360,7 @@ int unit_test(int broadcast, long lock, int third_party_owner, long timeout_ns)
->   
->   int main(int argc, char *argv[])
->   {
-> -	const char *test_name;
-> +	char *test_name;
->   	int c, ret;
->   
->   	while ((c = getopt(argc, argv, "bchlot:v:")) != -1) {
+Instruction to establish the eem connection on the device (connman) and 
+the host (networkmanager) here:
+https://edison-fw.github.io/meta-intel-edison/4.2-networking.html#gadget
 
-thanks,
--- Shuah
+> - How did you created the gadget ? Could you please share the exact commands to create the eem gadget ?
+
+Sure, you can find the u-dev rules and the script here on GH:
+https://github.com/edison-fw/meta-intel-edison/tree/kirkstone/meta-intel-edison-bsp/recipes-support/gadget/files
+
+> - Arch of your test bench (arm, x86)
+
+This is x86_64 although we can just as easily build i686 if needed.
+
+> - How the DWC3 controller connected to your system ? via PCIe slot ? Could you please share the part number of the PCIe card ?
+
+Like Andy mentioned it is in the SOC. It's described in ACPI (in U-Boot 
+together with other SOC level devices) here:
+https://github.com/u-boot/u-boot/blob/ea722aa5eb33740ae77e8816aeb72b385e621cd0/arch/x86/include/asm/arch-tangier/acpi/southcluster.asl#L333
+
+> Hardik
+> 
+>>
+>>> Also /sys/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/gadget.0/net is
+>>> still missing.
+>>>
+>>> After deeper diving into v6.1.0, I found the latter a longer existing
+>>> bug, not caused by your patch.
+>>>
+>>> More over, this doesn't seem to do any harm.
+>>>
+>>> The first issue does, as we try to route traffic over a device that no
+>>> longer exists.
+>>>
+>>>>>>> Additionally, please check if you have any customized DWC patches
+>>>>>>> that may be causing this problem.
+>>>>>>>
+>>>>>>>>
+>>>>>>>>> You may recall the whole issue did not occur before this
+>>>>>>>>> patch got applied.
+>>>>>>>>>
+>>>>>>>>>> Hardik
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>>> According to current kernel architecture of u_ether driver, only
+>>>>>>>>>>>>> gether_cleanup should remove the usb0 interface along with its
+>>>>>>>>>>>>> kobject and sysfs interface.
+>>>>>>>>>>>>> I suggest sharing the analysis
+>>>>>>>>>>>>> here to understand why this
+>>>>>>>>>>>>> practice
+>>>>>>>>>>>>> is not followed in your use case or driver ?
+>>>>>>>>>>>>
+>>>>>>>>>>>> Yes, I'll try to trace where that happens.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Nevertheless, the disappearance of the net/usb0 directory seems
+>>>>>>>>>>>> harmless? But the usb: net device
+>>>>>>>>>>>> remaining after disconnect or role
+>>>>>>>>>>>> switch is not good, as the route remains.
+>>>>>>>>>>>>
+>>>>>>>>>>>> May be they are 2 separate problems.
+>>>>>>>>>>>> Could you try to reproduce what
+>>>>>>>>>>>> happens if you make eem connection and then unplug?
+>>>>>>>>>>>>
+>>>>>>>>>>>>> I am curious why the driver was
+>>>>>>>>>>>>> developed without adhering to
+>>>>>>>>>>>>> the
+>>>>>>>>>>>>> kernel's gadget architecture.
+>>>>>>>>>>>
+>>>>>>>>>>> I don't know what you mean here. Which driver do you mean?
+>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>> I have the dwc3 IP base usb controller, Let me check
+>>>>>>>>>>>>>>>>> with this patch and
+>>>>>>>>>>>>>>>>> share result here.  May be we need some fix in dwc3
+>>>>>>>>>>>>>>> Would have been nice if someone could test on other
+>>>>>>>>>>>>>>> controller as well. But
+>>>>>>>>>>>>>>> another instance of dwc3 is also very welcome.
+>>>>>>>>>>>>>>>> It's quite possible, please test on your side.
+>>>>>>>>>>>>>>>> We are happy to test any fixes if you come up with.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> -- 
+>>>>>>>>>>>>>> With Best Regards,
+>>>>>>>>>>>>>> Andy Shevchenko
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>
+>>>>
+>>>>
+>>>
 
 
