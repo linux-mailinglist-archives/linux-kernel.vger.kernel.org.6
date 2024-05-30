@@ -1,348 +1,149 @@
-Return-Path: <linux-kernel+bounces-195478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F558D4D63
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE608D4D58
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EC991F2327E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:00:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E0728336F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDE317C212;
-	Thu, 30 May 2024 14:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444BA186E46;
+	Thu, 30 May 2024 13:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="pa02Lxj+"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UL5VAAuZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA473D68
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF215186E33
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077601; cv=none; b=bo4GxdbGpzzKaxMEyDtRBqAfjooN3vHvfO0aFlq6lmarHcNfjsIQPE9x2BTczTSWFd5oLY2urzDmqQzqfSNcrBbNGWEyUxgXg5qKphGP1KqwVk2phWYyiP8lGY7QvdmBcOqc89DUAW/GGt71tlGBAy4Vv7bxf9YJSwCoKqwgQy4=
+	t=1717077494; cv=none; b=JhHBZB6YrSnlbzMrSAp4d/jlMPOj0XNqPnaRMZocnGHHk1VfvngtJH+eJrmvZxD/Z73xNa4AII/svivZ3cfzmAdFJOFh5pl/FqTF8GwSEw5aBYmAX9tm/9uBYvc1BZOR+P9orj+L6H3e8P2Mn7K5HUF56WDj3qs/YliXbLFU3gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077601; c=relaxed/simple;
-	bh=Nu+pWteWMgH/QEwoWCbIFqPC/H4vkxZKSBzcueZdV10=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UaHxW4SoWGaLXliny7lXH1ZPeyWBWUnVfuc8T0bNa3TZAt+9bC+6eClz483DncPzQgTK9fUl2Y1/Mr29tFKq8wLlZUo5vomMY0Smk44PAgwHev8xlllVWPwKvGITJraAvNwn91jfiXKUCFOUbvIF+2UM5PJG850ZsejV/HIF/s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=pa02Lxj+; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 80153240104
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:59:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-	t=1717077592; bh=Nu+pWteWMgH/QEwoWCbIFqPC/H4vkxZKSBzcueZdV10=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
-	b=pa02Lxj+yzDjgdn1wmtFu9GJP6CKpjDMXU2HJfqMtU2yhEieXy4K+vF3Ohh2Sxb2K
-	 +cC0v2krsqfYMYyvGvHisOKi1IlhpaXskYSWdpa/LFGDRFXRvN3bRHrY6zofl2sDQ6
-	 isG5avjVWLgwgbmQHlrOgjm52B6nHAeJDtsm+qxmVZJgs1V0EHKACzh0WG+bAJdvvT
-	 4ZA/m+4E4YzHOljIxSn7cS9exKWXIN5k1OUaW4cAJNiAbnTUjCy1rqNXRAqcEr6963
-	 +jOLqtaz4zXudjKWkjrOZXPlJxoH9v645xt56ETPsXa/U9U963HbrF/IG6SnsxD0MG
-	 Bpo9E8RPZc44A==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Vqntv2gpxz9rxS;
-	Thu, 30 May 2024 15:59:51 +0200 (CEST)
-From: Alexander Reimelt <alexander.reimelt@posteo.de>
-To: andersson@kernel.org,
-	petr.vorel@gmail.com,
-	konrad.dybcio@linaro.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] arm64: dts: qcom: msm8992-lg-h815: Initial support for LG G4 (H815)
-Date: Thu, 30 May 2024 13:57:42 +0000
-Message-ID: <20240530135922.23326-3-alexander.reimelt@posteo.de>
-In-Reply-To: <20240530135922.23326-1-alexander.reimelt@posteo.de>
-References: <20240403104415.30636-1-alexander.reimelt@posteo.de>
- <20240530135922.23326-1-alexander.reimelt@posteo.de>
+	s=arc-20240116; t=1717077494; c=relaxed/simple;
+	bh=53UBysYzvpzZjDO72iJt9py9YONleXSWomuMbkZn3l4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dapTaNgIatx8gD9/5jsJR21CDqMvbEHyNsejznqyvtBn1M4OptgUsCdG5psh/M1Ql77V/rotg0FtUE27yzxO469rvcvfXR2OwhdM6IAr4zMUV86Z6pk+XOQHIPdI4ofpJPj8Yg3z9W9eO+X1CqsPMs015MZiD/Mrytky+7xDOEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UL5VAAuZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717077492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/xYHbO4YrM2R0offrTkQuWyL8jjwsXNCg2fkqfbyEmY=;
+	b=UL5VAAuZESa/wMt66YJ8kUjay0ASOYbpi+QCCnOjv5bXynaI/VL17MgCm+RUW9IPfcxkme
+	IcO9vEXUY/JcB9H95Gea963yskgmfa6I+2dae/3NOYd+ot11IUFCbt1I2vpIKNs1cO4G/b
+	EkI5S9UhFBLDC95n/0mAG1gZ8+Cv5UI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-sEOwA1lbPuKvKPKeidpimw-1; Thu, 30 May 2024 09:58:09 -0400
+X-MC-Unique: sEOwA1lbPuKvKPKeidpimw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-421106b1d8fso679945e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 06:58:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717077488; x=1717682288;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/xYHbO4YrM2R0offrTkQuWyL8jjwsXNCg2fkqfbyEmY=;
+        b=ODarJ3XJTnLmb3zC2kuO98Fvu0yXO9AqNr3B2Nbw7K/fXEJd4RR0IAulwAZHvzo/2o
+         /UoYgzk7qMcixTHkKOTsSFAz4axewlNaRMmMI9iyGt1H/OOJcfzMNqngHboWD6vwlrRh
+         Yi784WnfK9pPLnmyT/PZ3Odxf2+LPdZRDl0zuH1nrwvJW0/hBEF/CLGsqpwbKiqrhM9d
+         XAk0clULXXZLVBoiH9YYoVg/BJJcMzyWvYcJUSSrI7SdNLTlVpFp47SBFma6QP9NOVcK
+         l/6V5WrfzdmuRNNE2gYH8Js5dsLyw/dSGRhFodnp1Srk0sz8OJNk90LOX7iC8uXoLC+s
+         5Xjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOha3vAAeA7jCdGtBGO4Smf2JaXqHYdg/6BGirhfz869MvP3tkoja0IZElzFoRopKztfo2tYQB9NLfcZc6CZqEpSPCBThh/2jGqW2b
+X-Gm-Message-State: AOJu0YyoO6NcV2Y7tQH87SY8Or1aTqifKkLWZrM2rD1Pz5kEWn9EWRM/
+	inZD1AGL15F4uDxPrS+LOV45GmxWRb+uvd+P59G79i2GmlLFClekNp6dKqnziCCwuizVHrZoiFx
+	ED816bQOZ+zAs4mDBI0avL6cX0JsV33Vtkb+yiKbOv3/I1C4Nte2WXSTjlW3OTw==
+X-Received: by 2002:a05:600c:444e:b0:421:29b4:533b with SMTP id 5b1f17b1804b1-42129b45721mr9717185e9.0.1717077488417;
+        Thu, 30 May 2024 06:58:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH738BjxDlANns8EfHf0phCQBmsoUtAH/K6IVO7MTanr8w6wX6EPnwcpSPCPZIcNMTQy/37Xw==
+X-Received: by 2002:a05:600c:444e:b0:421:29b4:533b with SMTP id 5b1f17b1804b1-42129b45721mr9716895e9.0.1717077487912;
+        Thu, 30 May 2024 06:58:07 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42126fea343sm26406505e9.0.2024.05.30.06.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 06:58:07 -0700 (PDT)
+Message-ID: <2e58d7f5c493d6f158042fb39f299d24c7b60591.camel@redhat.com>
+Subject: Re: [PATCH net-next 2/2] selftests: net: tests
+ net.core.{r,w}mem_{default,max} sysctls in a netns
+From: Paolo Abeni <pabeni@redhat.com>
+To: Breno Leitao <leitao@debian.org>, Matteo Croce <technoboy85@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Shuah Khan
+ <shuah@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Date: Thu, 30 May 2024 15:58:05 +0200
+In-Reply-To: <Zlhsu+9If//CMPv+@gmail.com>
+References: <20240528121139.38035-1-teknoraver@meta.com>
+	 <20240528121139.38035-3-teknoraver@meta.com> <Zlhsu+9If//CMPv+@gmail.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Autocrypt: addr=alexander.reimelt@posteo.de;
-  keydata=xjMEZg0fSRYJKwYBBAHaRw8BAQdAIcaNTdj3NWDe5HQPCUs6oYyQygAJWP9LCzhr+C7RwMrNG2Fs
-  ZXhhbmRlci5yZWltZWx0QHBvc3Rlby5kZcKZBBMWCgBBFiEEM+Wy6sI/mP5S0zIFHqi3OKk8uRIF
-  AmYNH0kCGwMFCQWjo9cFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQHqi3OKk8uRJ8ogD9
-  EVg4zgfmC2SqXCgms6LETAzVX4CrAS8yMhyd7Md921cA/R8lhm9B96RYgA7MvFPFJb1T6JFY75Jg
-  QLXrtIE5llwHzjgEZg0fSRIKKwYBBAGXVQEFAQEHQBGDuxZLOTvppxyM4G18fSR6xzT0xkkPOia7
-  Bh6L1vAAAwEIB8J+BBgWCgAmFiEEM+Wy6sI/mP5S0zIFHqi3OKk8uRIFAmYNH0kCGwwFCQWjo9cA
-  CgkQHqi3OKk8uRIa1wD8CZDdCAKXstgXY96eeSSP7MecEF5TBdmWOiVgjlEIpoEA/RnGuDaj06B1
-  F51wyGAjYXSmn5qFoNHu3yXyLUkFz1ME
-OpenPGP: url=https://posteo.de/keys/alexander.reimelt@posteo.de.asc
 
-To make it easier for downstream projects and avoid duplication of work.
-Makes the device bootable and enables all buttons, hall sensor, eMMC and SD-Card.
+On Thu, 2024-05-30 at 05:10 -0700, Breno Leitao wrote:
+> On Tue, May 28, 2024 at 02:11:39PM +0200, Matteo Croce wrote:
+> > Add a selftest which checks that the sysctl is present in a netns,
+> > that the value is read from the init one, and that it's readonly.
+> >=20
+> > Signed-off-by: Matteo Croce <teknoraver@meta.com>
+> > ---
+> >  tools/testing/selftests/net/Makefile        |  1 +
+> >  tools/testing/selftests/net/netns-sysctl.sh | 15 +++++++++++++++
+> >  2 files changed, 16 insertions(+)
+> >  create mode 100755 tools/testing/selftests/net/netns-sysctl.sh
+> >=20
+> > diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selft=
+ests/net/Makefile
+> > index bd01e4a0be2c..6da63d1831c1 100644
+> > --- a/tools/testing/selftests/net/Makefile
+> > +++ b/tools/testing/selftests/net/Makefile
+> > @@ -53,6 +53,7 @@ TEST_PROGS +=3D bind_bhash.sh
+> >  TEST_PROGS +=3D ip_local_port_range.sh
+> >  TEST_PROGS +=3D rps_default_mask.sh
+> >  TEST_PROGS +=3D big_tcp.sh
+> > +TEST_PROGS +=3D netns-sysctl.sh
+> >  TEST_PROGS_EXTENDED :=3D toeplitz_client.sh toeplitz.sh
+> >  TEST_GEN_FILES =3D  socket nettest
+> >  TEST_GEN_FILES +=3D psock_fanout psock_tpacket msg_zerocopy reuseport_=
+addr_any
+> > diff --git a/tools/testing/selftests/net/netns-sysctl.sh b/tools/testin=
+g/selftests/net/netns-sysctl.sh
+> > new file mode 100755
+> > index 000000000000..b948ba67b13a
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/net/netns-sysctl.sh
+> > @@ -0,0 +1,15 @@
+> > +#!/bin/bash -e
+>=20
+> Don't you need to add the SPDX license header?
 
-Signed-off-by: Alexander Reimelt <alexander.reimelt@posteo.de>
----
- arch/arm64/boot/dts/qcom/Makefile            |   1 +
- arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts | 234 +++++++++++++++++++
- 2 files changed, 235 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
+Yes, please!
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 7d40ec5e7d21..5b7f8741006f 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -62,6 +62,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8956-sony-xperia-loire-kugo.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8956-sony-xperia-loire-suzu.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-bullhead-rev-10.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-bullhead-rev-101.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-lg-h815.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-msft-lumia-octagon-talkman.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-xiaomi-libra.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-huawei-angler-rev-101.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts b/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
-new file mode 100644
-index 000000000000..5f55abec82aa
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * MSM8992 LG G4 (h815) device tree.
-+ *
-+ * Copyright (c) 2024, Alexander Reimelt <alexander.reimelt@posteo.de>
-+ */
-+
-+/dts-v1/;
-+
-+#include "msm8992.dtsi"
-+#include "pm8994.dtsi"
-+#include "pmi8994.dtsi"
-+#include <dt-bindings/leds/common.h>
-+
-+/* different mapping */
-+/delete-node/ &cont_splash_mem;
-+
-+/* disabled downstream */
-+/delete-node/ &dfps_data_mem;
-+
-+/ {
-+	model = "LG G4 (H815)";
-+	compatible = "lg,h815", "qcom,msm8992";
-+	chassis-type = "handset";
-+
-+	qcom,msm-id = <251 0>;
-+	qcom,pmic-id = <0x10009 0x1000a 0x00 0x00>;
-+	qcom,board-id = <0xb64 0>;
-+
-+	/* psci is broken */
-+	/delete-node/ psci;
-+
-+	chosen {};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		spin-table@6000000 {
-+			reg = <0 0x6000000 0 0x1000>;
-+			no-map;
-+		};
-+
-+		ramoops@ff00000 {
-+			compatible = "ramoops";
-+			reg = <0x0 0xff00000 0x0 0x100000>;
-+			console-size = <0x20000>;
-+			pmsg-size = <0x20000>;
-+			record-size = <0x10000>;
-+			ecc-size = <0x10>;
-+		};
-+
-+		cont_splash_mem: fb@3400000 {
-+			compatible = "framebuffer";
-+			reg = <0 0x3400000 0 0xc00000>;
-+			no-map;
-+		};
-+
-+		crash_fb_mem: crash-fb@4000000 {
-+			reg = <0 0x4000000 0 0xc00000>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-hall-sensor {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&hall_sensor_default>;
-+		pinctrl-names = "default";
-+
-+		label = "Hall Effect Sensor";
-+
-+		event-hall-sensor {
-+			gpios = <&tlmm 75 GPIO_ACTIVE_LOW>;
-+			label = "hall effect sensor";
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_LID>;
-+			linux,can-disable;
-+			wakeup-source;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-vol-up {
-+			label = "volume up";
-+			gpios = <&pm8994_gpios 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			wakeup-source;
-+			debounce-interval = <15>;
-+		};
-+	};
-+};
-+
-+&CPU0 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU1 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU2 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU3 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU4 {
-+	enable-method = "spin-table";
-+};
-+
-+&CPU5 {
-+	enable-method = "spin-table";
-+};
-+
-+&pm8994_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators-0 {
-+		compatible = "qcom,rpm-pm8994-regulators";
-+
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+		vdd_s5-supply = <&vph_pwr>;
-+		vdd_s7-supply = <&vph_pwr>;
-+		vdd_l1-supply = <&pmi8994_s1>;
-+		vdd_l2_26_28-supply = <&pm8994_s3>;
-+		vdd_l3_11-supply = <&pm8994_s3>;
-+		vdd_l4_27_31-supply = <&pm8994_s3>;
-+		vdd_l5_7-supply = <&pm8994_s5>;
-+		vdd_l6_12_32-supply = <&pm8994_s5>;
-+		vdd_l8_16_30-supply = <&vph_pwr>;
-+		vdd_l9_10_18_22-supply = <&pmi8994_bby>;
-+		vdd_l13_19_23_24-supply = <&pmi8994_bby>;
-+		vdd_l14_15-supply = <&pm8994_s5>;
-+		vdd_l17_29-supply = <&pmi8994_bby>;
-+		vdd_l20_21-supply = <&pmi8994_bby>;
-+		vdd_l25-supply = <&pm8994_s5>;
-+		vdd_lvs1_2-supply = <&pm8994_s4>;
-+
-+		pm8994_s3: s3 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+		};
-+
-+		/* sdhc1 vqmmc and bcm */
-+		pm8994_s4: s4 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-system-load = <325000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		pm8994_s5: s5 {
-+			regulator-min-microvolt = <2150000>;
-+			regulator-max-microvolt = <2150000>;
-+		};
-+
-+		/* sdhc2 vqmmc */
-+		pm8994_l13: l13 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-system-load = <22000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		/* sdhc1 vmmc */
-+		pm8994_l20: l20 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-system-load = <570000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		/* sdhc2 vmmc */
-+		pm8994_l21: l21 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-system-load = <800000>;
-+			regulator-allow-set-load;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,rpm-pmi8994-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_bst_byp-supply = <&vph_pwr>;
-+
-+		pmi8994_s1: s1 {
-+			regulator-min-microvolt = <1025000>;
-+			regulator-max-microvolt = <1025000>;
-+		};
-+
-+		/* S2 & S3 - VDD_GFX */
-+
-+		pmi8994_bby: boost-bypass {
-+			regulator-min-microvolt = <3150000>;
-+			regulator-max-microvolt = <3600000>;
-+		};
-+	};
-+};
-+
-+&sdhc1 {
-+	mmc-hs400-1_8v;
-+	vmmc-supply = <&pm8994_l20>;
-+	vqmmc-supply = <&pm8994_s4>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&sdhc2 {
-+	vmmc-supply = <&pm8994_l21>;
-+	vqmmc-supply = <&pm8994_l13>;
-+	cd-gpios = <&pm8994_gpios 8 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&tlmm {
-+	hall_sensor_default: hall-sensor-default-state {
-+		pins = "gpio75";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+};
--- 
-2.45.1
+Additionally, please handle explicitly the sysctl-related I/O errors so
+that the script could output a human readable message in case of
+failure.
+
+Thanks!
+
+Paolo
 
 
