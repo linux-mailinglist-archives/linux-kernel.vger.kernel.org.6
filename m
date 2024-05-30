@@ -1,152 +1,171 @@
-Return-Path: <linux-kernel+bounces-195946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A52618D54B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:42:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879B98D54B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE85281970
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:42:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B891C22533
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD9E182D3C;
-	Thu, 30 May 2024 21:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED043182D37;
+	Thu, 30 May 2024 21:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/k8kniY"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owt5AtDP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77980158DA5;
-	Thu, 30 May 2024 21:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0CD1DFE8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717105324; cv=none; b=nuHfUM8uzvWlAOjn6v2GyNFiZNOxvoLzsLu3tMXASUcfwUz04NM/U/9HuiCgxCGAFN20YM9ZbvGBWmafb/xAKKYsiD4Hygb8UTxicyzCZM/4c5+5hzUiPNWd+vbD261XJpJozXHEcGIMAn4SoDD0TAE5W25FOKo7/5I4BRKsBiU=
+	t=1717105487; cv=none; b=nnBoKtdBXsBqlQ5tIojqeyM/7aoABACXtfNbaGNwozaZI/3G3adG9sGWWTXfYC1Q1TSY+vwmydjJ8L6a7cyVQ96ZEd++Y/029NZFTKKN7gVQJouAIw+W2Ee6R5c3iGUpU21TaYDMAFa7v2Lh3TQsyGaJK6FwuA9NUGhP5n8bXIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717105324; c=relaxed/simple;
-	bh=4BlJ1CcqTMVjS1GSoLyDPsCUgH75tB5sHRSWIKqOKGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uVbPkLDYpmuLxsmsFmlg4yPM3cu0h2SL1H3iSMIeUPTN9XZIL991g2rVQAM443h3z04Pm1PwItC7jvOI67edcOw7Jkdda3h/8jd5gx8WazpI3gL5nUFCeh/HXyi3s98zA5bckPMTOH5Di/QVsVIM3Ig6vbanALganra+oSZkH5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/k8kniY; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2bfb6668ad5so1093539a91.0;
-        Thu, 30 May 2024 14:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717105323; x=1717710123; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kcdy87Tr56c/7LWDyYDPWcrmt8uLd5ZVTSc5H3Gmpyo=;
-        b=c/k8kniYqGgFW9/eGNCnUA5T6YSuQPnXNHk4KiUAXQ43GaP6K4T7E+gVlFOGPoTgB/
-         E8P9oFyP5yTA/O5zZ+Ty7hDCq2DCN84EZ68975O+zqYh1+0XkjQz53fa9iM1I1rL6SFT
-         Sdij+qfByXnNB1AC1sRdgqd0gBTpd+M7eDuCsaOcDMHfsVmF6RH4+s8WP8x5301VlKMR
-         xsLmZ45p+OIA7Zu8Gmi3cFymaZcRfxBC08W1RgN/0mHlUaPq8z8y6YN3AQPD2UlOtRdG
-         0ozRGFWu9et4wPq+2C+XrWFYy1YAlsd2kMd6ovhSzpOYFm/+7LJk+yzngN1XfDnkbSP3
-         vPzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717105323; x=1717710123;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kcdy87Tr56c/7LWDyYDPWcrmt8uLd5ZVTSc5H3Gmpyo=;
-        b=W9WppYwTRwz8Pa7IkTAwy9fpkZnkK+XIJX4RVe3BWhBxUZMRvD0NMkGWbcmauJPLMc
-         U3H/vFx1MOOPa/yqzYoh1u+3GqjwcuFGraGJx8LvARTww5Y6zKWSBv7/ikUNjvQjmREM
-         dpQ+NPqpOAKtiFHVlw6OTz5kJADiE9fLQKZpy7ibtPw7HxM/mlz+r8x4tphhNxCRNUGd
-         rza9AqZfYKz1zsPYw0QV0GLevMf12i+yNBUffEWO2vgE3D0daAp8w7r6BC8vs8HN0wRH
-         OxKc0PJpSGn00coTIqSKmMqx7pncos3PKnBrghNh/pR5a0Feg5rQsqjlaDt48cpn1Ggh
-         P+3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNifpRE1mBY8OBotzcPmloyvQ37zFTlrgCKpCHZDYOUfVYVk8U6MIqO+QzlD89MtHrVNRGsKBYoD67VZffmow0UX6+s8EXnmC5AhKI8LJPqbDa4bW3K5bp3Xr+QYoEA1TCZriT4xCU4A==
-X-Gm-Message-State: AOJu0YzfQ+8EFJYyoTGdL+haWXqNX1tntB2NppQjpW4LbswSLh5TmASx
-	DxjO8CkARRFoWQvr4aKm0DS+NXZ7dWnPZrCdNjT17Vz192V4F1cesFrXBQ==
-X-Google-Smtp-Source: AGHT+IEtovH8ghzqmkQo5Djev6SblWB16GM73mSCJ0gxFHr/C8x0i5acMBO56iQteQz4uJtD+20uzA==
-X-Received: by 2002:a17:90a:cf04:b0:2c1:5e90:1ea6 with SMTP id 98e67ed59e1d1-2c1abd71667mr3032626a91.49.1717105322558;
-        Thu, 30 May 2024 14:42:02 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1c28420e5sm223783a91.47.2024.05.30.14.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 14:42:02 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 30 May 2024 11:42:00 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
-	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
-	RDMA mailing list <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
- worning
-Message-ID: <ZljyqODpCD0_5-YD@slm.duckdns.org>
-References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+	s=arc-20240116; t=1717105487; c=relaxed/simple;
+	bh=xTexikey00ziqD7XJK4HEWwkPAY00DaKANovgGshqUU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mntq4V1KplicdVbyi/CVF7fFxhFbTCDNtxSlMKF518tkMJqnraaSbYOEPRDrXDnN5qmASyhEtf1GXh5vm33dzD5cvM2A9R/XZP3Qms7HA1zDl8Y3DFjW6HNjsd/KpJLnLTieEa8kYFQ0k1RqtY8cXTe/POfTfYNGVjZvvuTOzlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owt5AtDP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3C5C4AF08
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717105486;
+	bh=xTexikey00ziqD7XJK4HEWwkPAY00DaKANovgGshqUU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=owt5AtDP0wNSjgi0Zswu5c21HOigfQTehcqvsSECcuIOuIkDD2cMFKxfXWjkaWtgz
+	 wFd4mYXKZndr9kFTRCO3Rmis+oPLxjjFf3HcYrDSoRz6l1GrI40gPjb7rd5ZVj11Jj
+	 zxWHNxgSdYSEHjLuV7+gLb5f93iRLLMW6SGl/fVrAadpDBdJqc5rN4LbG9LvIPUREM
+	 m9UXSgOkEqeuprILJrQlChLpEmyuaRbyzLKrP0gJyudDvWibpzaHiE7VQT0NQLvrRO
+	 zwjeeFYN3Lp6xvFY6s3wo4UxSNDHbvKp9ZEVjrDKHXLFrzR+x7lhpe2daVHM4bFxnK
+	 AXO4GmqlB8v9w==
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7e238fa7b10so59271039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:44:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6UClrdw6k5c1NWwPu3T1TSNAEFJERmPI5RUXyre8d6zDkvPxJFfPkFpgbQO9G407MgIykLJdVGO8hruWvFMwydzEEZfPp2KBZHAiJ
+X-Gm-Message-State: AOJu0YxAGTpuMVn6fg9vZVO1v9jEsRycqKNOyaY/RRgU3ESBio4ZAfUP
+	Yn7oedazy0z+NnWWPpNuCFz8PvUfCqfcvk2CrIRjYNNb+bfx8nbrlcgrhctZjRujiuDqOu0AIkP
+	8Kydtw/W9gdc63aHEI4JuDmm36AtEn9elv8eb
+X-Google-Smtp-Source: AGHT+IFgh/hCmDagsMpqF5f3V6G+qeag0qBtPz0QRClQj3b89J2Y6GBYeekuWfw5IEO0MFd1gKKTizXvAz9poDtU3rU=
+X-Received: by 2002:a05:6602:14c5:b0:7e6:eb37:173c with SMTP id
+ ca18e2360f4ac-7eafff2d9d0mr22681139f.14.1717105485912; Thu, 30 May 2024
+ 14:44:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+ <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
+ <87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
+ <875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 30 May 2024 14:44:33 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
+Message-ID: <CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster order
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello, Leon. Sorry about the delay.
+On Wed, May 29, 2024 at 7:54=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
+wrote:
+>
+> Chris Li <chrisl@kernel.org> writes:
+>
+> > Hi Ying,
+> >
+> > On Wed, May 29, 2024 at 1:57=E2=80=AFAM Huang, Ying <ying.huang@intel.c=
+om> wrote:
+> >>
+> >> Chris Li <chrisl@kernel.org> writes:
+> >>
+> >> > I am spinning a new version for this series to address two issues
+> >> > found in this series:
+> >> >
+> >> > 1) Oppo discovered a bug in the following line:
+> >> > +               ci =3D si->cluster_info + tmp;
+> >> > Should be "tmp / SWAPFILE_CLUSTER" instead of "tmp".
+> >> > That is a serious bug but trivial to fix.
+> >> >
+> >> > 2) order 0 allocation currently blindly scans swap_map disregarding
+> >> > the cluster->order.
+> >>
+> >> IIUC, now, we only scan swap_map[] only if
+> >> !list_empty(&si->free_clusters) && !list_empty(&si->nonfull_clusters[o=
+rder]).
+> >> That is, if you doesn't run low swap free space, you will not do that.
+> >
+> > You can still swap space in order 0 clusters while order 4 runs out of
+> > free_cluster
+> > or nonfull_clusters[order]. For Android that is a common case.
+>
+> When we fail to allocate order 4, we will fallback to order 0.  Still
+> don't need to scan swap_map[].  But after looking at your below reply, I
+> realized that the swap space is almost full at most times in your cases.
+> Then, it's possible that we run into scanning swap_map[].
+> list_empty(&si->free_clusters) &&
+> list_empty(&si->nonfull_clusters[order]) will become true, if we put too
+> many clusters in si->percpu_cluster.  So, if we want to avoid to scan
+> swap_map[], we can stop add clusters in si->percpu_cluster when swap
+> space runs low.  And maybe take clusters out of si->percpu_cluster
+> sometimes.
 
-On Tue, May 28, 2024 at 11:39:58AM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> The commit 643445531829 ("workqueue: Fix UAF report by KASAN in
-> pwq_release_workfn()") causes to the following lockdep warning.
+One idea after reading your reply. If we run out of the
+nonfull_cluster[order], we should be able to use other cpu's
+si->percpu_cluster[] as well. That is a very small win for Android,
+because android does not have too many cpu. We are talking about a
+handful of clusters, which might not justify the code complexity. It
+does not change the behavior that order 0 can pollut higher order.
 
-KASAN warning?
+>
+> Another issue is nonfull_cluster[order1] cannot be used for
+> nonfull_cluster[order2].  In definition, we should not fail order 0
+> allocation, we need to steal nonfull_cluster[order>0] for order 0
+> allocation.  This can avoid to scan swap_map[] too.  This may be not
+> perfect, but it is the simplest first step implementation.  You can
+> optimize based on it further.
 
->  [ 1818.839405] ==================================================================
->  [ 1818.840636] BUG: KASAN: slab-use-after-free in lockdep_register_key+0x707/0x810
->  [ 1818.841827] Read of size 8 at addr ffff888156864928 by task systemd-udevd/71399
-..
->  [ 1818.846493] Call Trace:
->  [ 1818.846981]  <TASK>
->  [ 1818.847439]  dump_stack_lvl+0x7e/0xc0
->  [ 1818.848089]  print_report+0xc1/0x600
->  [ 1818.850978]  kasan_report+0xb9/0xf0
->  [ 1818.852381]  lockdep_register_key+0x707/0x810
->  [ 1818.855329]  alloc_workqueue+0x466/0x1800
+Yes, that is listed as the limitation of this cluster order approach.
+Initially we need to support one order well first. We might choose
+what order that is, 16K or 64K folio. 4K pages are too small, 2M pages
+are too big. The sweet spot might be some there in between.  If we can
+support one order well, we can demonstrate the value of the mTHP. We
+can worry about other mix orders later.
 
-Can you please map this to the source line?
+Do you have any suggestions for how to prevent the order 0 polluting
+the higher order cluster? If we allow that to happen, then it defeats
+the goal of being able to allocate higher order swap entries. The
+tricky question is we don't know how much swap space we should reserve
+for each order. We can always break higher order clusters to lower
+order, but can't do the reserves. The current patch series lets the
+actual usage determine the percentage of the cluster for each order.
+However that seems not enough for the test case Barry has. When the
+app gets OOM kill that is where a large swing of order 0 swap will
+show up and not enough higher order usage for the brief moment. The
+order 0 swap entry will pollute the high order cluster. We are
+currently debating a "knob" to be able to reserve a certain % of swap
+space for a certain order. Those reservations will be guaranteed and
+order 0 swap entry can't pollute them even when it runs out of swap
+space. That can make the mTHP at least usable for the Android case.
 
->  [ 1818.857997]  ib_mad_init_device+0x809/0x1760 [ib_core]
+Do you see another way to protect the high order cluster polluted by
+lower order one?
 
-..
+>
+> And, I checked your code again.  It appears that si->percpu_cluster may
+> be put in si->nonfull_cluster[], then be used by another CPU.  Please
+> check it.
 
->  [ 1818.907242] Allocated by task 1:
->  [ 1818.907819]  kasan_save_stack+0x20/0x40
->  [ 1818.908512]  kasan_save_track+0x10/0x30
->  [ 1818.909173]  __kasan_slab_alloc+0x51/0x60
->  [ 1818.909849]  kmem_cache_alloc_noprof+0x139/0x3f0
->  [ 1818.910608]  getname_flags+0x4f/0x3c0
->  [ 1818.911236]  do_sys_openat2+0xd3/0x150
->  [ 1818.911878]  __x64_sys_openat+0x11f/0x1d0
->  [ 1818.912554]  do_syscall_64+0x6d/0x140
->  [ 1818.913189]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
->  [ 1818.913996]
->  [ 1818.914359] Freed by task 1:
->  [ 1818.914897]  kasan_save_stack+0x20/0x40
->  [ 1818.915553]  kasan_save_track+0x10/0x30
->  [ 1818.916210]  kasan_save_free_info+0x37/0x50
->  [ 1818.916911]  poison_slab_object+0x10c/0x190
->  [ 1818.917606]  __kasan_slab_free+0x11/0x30
->  [ 1818.918271]  kmem_cache_free+0x12c/0x460
->  [ 1818.918939]  do_sys_openat2+0x102/0x150
->  [ 1818.919586]  __x64_sys_openat+0x11f/0x1d0
->  [ 1818.920264]  do_syscall_64+0x6d/0x140
->  [ 1818.920899]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
->  [ 1818.921699]
->  [ 1818.922059] The buggy address belongs to the object at ffff888156864400
->  [ 1818.922059]  which belongs to the cache names_cache of size 4096
+Ah, good point. I think it does. Let me take a closer look.
 
-This is a dcache name. I'm a bit lost on how we're hitting this.
+Chris
 
-Thanks.
 
--- 
-tejun
+Chris
 
