@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-194943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034C68D44AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:08:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A7A8D44BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 07:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD901F21E09
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:08:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D781A1C21BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5924B143C45;
-	Thu, 30 May 2024 05:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Glcw5yIo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC632BD0F;
-	Thu, 30 May 2024 05:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0309143C50;
+	Thu, 30 May 2024 05:21:19 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC22322083;
+	Thu, 30 May 2024 05:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717045708; cv=none; b=L3VOd8EoXIop0T6bkpL/mNtkcNhj9937DSE6/zTJFgaHUrpfUWcGxRvTnRxY6dN5S0TDt0DnwcrXbMxO8Zya1gIOuHN/faRygsNyHsLQDNVw+DiD4WxXo3ME5kWmS4l1flkXy6kIrL8whSH/ev0Tuzh/wsgkOY1S9U8U+XUip9s=
+	t=1717046479; cv=none; b=KsE4jMO37YMsb+LARAEgdvL4sU4CKH4QmSJTtcpGgHXs/XMSf3+/P9sF/fF0mhOjQZUgkJ8IFweszKLCYfqI6J2TsccqcbOkatxa/Ej+X1AUOny5GoWBGuutyj48U/1tAqacK9gthycaZB0nQ0egqRs3QsCIYQ3XhUaXSJYqeNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717045708; c=relaxed/simple;
-	bh=gBDuLudmfbZqPlaV0ny+HEdAMRPxPbpiX0rPhaTiNrA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Zhew+zYfi/WuJqTcFJMO8WNvlC4kul4o+47VtZkaa/Sa0j6lDVEZN21dWPFU+zjlVycA/mXCLnf5sMYgawTiv4VfsBYYBNipOS0WZUWVqaLrNLtXjK8hkuTnTGHkJ6WavwAElOk4E3IhCu7+dGHgi9OusqquYjfSUDn9qIfCPpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Glcw5yIo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3789C2BBFC;
-	Thu, 30 May 2024 05:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717045708;
-	bh=gBDuLudmfbZqPlaV0ny+HEdAMRPxPbpiX0rPhaTiNrA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Glcw5yIo6MMcWYrzrdTrjkd414NngIclvaDqVWtkot9kMBN4WOCe2Srlm6IUPHuDO
-	 IZLaij8L3CPCUye/e1nYu5RfUx+g7BD8SmGuxJmP8tMjrp/2yrT8xRZJoHLeJ/OadO
-	 OLuYAgFj+GkDjZwDjt+jaPfGBs1iyI6A+yDFDFakdxigEtwXggfhoE2GdXkJn8ZgFB
-	 LxifjrHRZ78ck0v+t5Q5eUbcdS9EsIsw2kbn6EWwWoohyNphIR8yT7m44mNjO3o+iB
-	 Exf68EdfLJrE/Ozy9cKlPPsZ5sV9/zrKfQKOEemzfY43heMMaXUBvLpOA2uXzYNz2I
-	 KnWgBlkqOqVFg==
+	s=arc-20240116; t=1717046479; c=relaxed/simple;
+	bh=voXBnrcbnkL+4T/r4d8V6UCbguNk1JucGqtbll/LvAY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Yjq9vSHQf3z2zDAf99rPHBabsAQGxrNjBUv9T5h1Bbq/K21jOxR3+Npi+w4MJhe9c2oRemUkRdjq9IiwDj41Byy3mLaZFY2Bcz4YOcafjVPPh96N+ZLFhl5AMkzY7Cut3POvyQk98nL64059scauxtRIMkTHRNcVKCYkxk81l/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from ubuntu.localdomain (unknown [183.95.249.235])
+	by mail-app2 (Coremail) with SMTP id by_KCgA3VKPuC1hmh8uRAQ--.14318S2;
+	Thu, 30 May 2024 13:17:36 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-hams@vger.kernel.org,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	edumazet@google.com,
+	jreuter@yaina.de,
+	davem@davemloft.net,
+	dan.carpenter@linaro.org,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH net] ax25: Replace kfree() in ax25_dev_free() with ax25_dev_put()
+Date: Thu, 30 May 2024 13:17:33 +0800
+Message-Id: <20240530051733.11416-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:by_KCgA3VKPuC1hmh8uRAQ--.14318S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFy3Gry8Gr1kCrWxXF15XFb_yoW3Krc_uF
+	97CF4xWw4UJr1UCw4rCF4rJrW7uw1Ygw1fGryfAFZ7t34jy3WUJrWkWr18ZF1UWrW7CrWS
+	qrn5Zr4fAF4fKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j
+	6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUb66wtUUUUU==
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwMRAWZXToxxdgA2sS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 30 May 2024 08:08:22 +0300
-Message-Id: <D1MPWI6C2ZCW.F08I9ILD63L4@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <lukas@wunner.de>
-Subject: Re: [PATCH 0/2] ecdsa: Use ecc_digits_from_bytes to simplify code
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>, <keyrings@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <herbert@gondor.apana.org.au>,
- <davem@davemloft.net>
-X-Mailer: aerc 0.17.0
-References: <20240529230827.379111-1-stefanb@linux.ibm.com>
-In-Reply-To: <20240529230827.379111-1-stefanb@linux.ibm.com>
 
-On Thu May 30, 2024 at 2:08 AM EEST, Stefan Berger wrote:
-> Simplify two functions that were using temporary byte arrays for
-> converting too-short input byte arrays to digits. Use ecc_digits_from_byt=
-es
-> since this function can now handle an input byte array that provides
-> less bytes than what a coordinate of a curve requires - the function
-> provides zeros for the missing (leading) bytes.
->
-> See: c6ab5c915da4 ("crypto: ecc - Prevent ecc_digits_from_bytes from read=
-ing too many bytes")
->
-> Regards,
->    Stefan
->
-> Stefan Berger (2):
->   crypto: ecdsa - Use ecc_digits_from_bytes to create hash digits array
->   crypto: ecdsa - Use ecc_digits_from_bytes to convert signature
->
->  crypto/ecdsa.c | 29 ++++++-----------------------
->  1 file changed, 6 insertions(+), 23 deletions(-)
+The object "ax25_dev" is managed by reference counting. Thus it should
+not be directly released by kfree(), replace with ax25_dev_put().
 
-BTW, would it make sense split ecdsa signature encoding to its own patch
-in my next patch set version and name it ecdsa_* style and put it to
-ecdsa.c?
+Fixes: d01ffb9eee4a ("ax25: add refcount in ax25_dev to avoid UAF bugs")
+Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+---
+ net/ax25/ax25_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Just asking this because the part should be the same same for any ECDSA
-signature. It must scale also to all NIST variants before my patch set
-can land.
+diff --git a/net/ax25/ax25_dev.c b/net/ax25/ax25_dev.c
+index 742d7c68e7e..9efd6690b34 100644
+--- a/net/ax25/ax25_dev.c
++++ b/net/ax25/ax25_dev.c
+@@ -196,7 +196,7 @@ void __exit ax25_dev_free(void)
+ 	list_for_each_entry_safe(s, n, &ax25_dev_list, list) {
+ 		netdev_put(s->dev, &s->dev_tracker);
+ 		list_del(&s->list);
+-		kfree(s);
++		ax25_dev_put(s);
+ 	}
+ 	spin_unlock_bh(&ax25_dev_lock);
+ }
+-- 
+2.17.1
 
-BR, Jarkko
 
