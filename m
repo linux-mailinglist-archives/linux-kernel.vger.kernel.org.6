@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-194797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1DF8D423F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85DA8D4240
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5990E2845C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A06661F22838
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453278836;
-	Thu, 30 May 2024 00:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56728C2E9;
+	Thu, 30 May 2024 00:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IoyQ5TPv"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="DJe4Rq7+"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B1F20EB
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3654C66
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717028258; cv=none; b=EwL6l22nmnVIx1JGPCjwxi2tyLbhThLA9QQW6pwCqMAIFNF/CCUciqYOIbRR/ccpqFo/tb1rBFOIQJoWw2Y1VlrpfL/+4QGzks/Y0LVfIOU+Egtqg1KKx5lOijkaaiy3zlQeNi7W8La6kFne9yph6vHtuH6VY2Z5YDCEKfD28uk=
+	t=1717028259; cv=none; b=IODPyaTpXFkRFeF1GLY4Xa5y7dIF4Z206LcPGIVaIDJSyEgOOmsXjDVcHEXBDnf87gX0X6p1v2Hl3iiasH4ehnGOIRD1T+AJRUXObL8E/qr+PWgsk2k073cMSnBbWAWr8KhVPlI+fKBsWEXwwxKWCscqm3BcwKwZJ+q3Kwxujyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717028258; c=relaxed/simple;
-	bh=5Kwe/U7PxVluGsCYFpMPZL03B/JZXYv8/BfkMbqTtoU=;
+	s=arc-20240116; t=1717028259; c=relaxed/simple;
+	bh=yY/gxEyGxhRFbtdU3MNkfHK5yFxHXxkQvyGAhpiHdzc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WbVi4ekjaIMcx9zUCSTQMQzo4b8iRNiARNOctAmQdEG5tHowHotHj4kG7BZNJXzycUCUlRW47ez6Yt3JdSr6AxY11ptSPpEmWjHZwtpaNxWvKc8L2wzF6dFmrr+pPC2AY7oLwN5KnlEMCFKetjuNA8TRCxNrWY4nEOJojAm5ydA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=IoyQ5TPv; arc=none smtp.client-ip=209.85.210.176
+	 MIME-Version; b=AMwCxN8UAEx0kZJAn3tOhLnmOF6FSFoxXWgCnVmRr93wc2yK/JozO5FgMVNBPxzCahJGUJen90frF7FsX0nkn12aOb5p+Qov7ODrJ5/2bbjyRwz46v6h1OEtL02rJMnMmZQpDx9/LEr3MEkulsfYP9E0Abc1W9M+9FSdAU8JmWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=DJe4Rq7+; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f8e9878514so283188b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:17:36 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c19e6dc3dcso267100a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:17:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1717028256; x=1717633056; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1717028257; x=1717633057; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iGEn7Dcpmrkm/qCwkDxBmXXDS+7v8jGlOPv5lWfc4rI=;
-        b=IoyQ5TPvCb2/+BRu/01JNWfp9xi1CPdxlLw11h1BkrDhdDcPXptoxr81kvyBNrr+bV
-         yCSFVdQWkml8f2/QBjgz5CSiZl6jwJWOvDfUzTnJKyNEgwZUEiJBfJ6iYijEFiSCvCQA
-         A7merkOUVk4MEN14gjdXuxf9xORlT/rgzHVzo09AtOky6n/R2wx1hb198pHqxj4/mBA2
-         w0Iu54ahOnvnUlSIp8Un9vecUEn9fOdflf8xrMwZV9LtSrBvt8/AL3rNE/mheaCtDeps
-         RLKC2A0dTxpGMWoqMGtaqQpgKl7gXGVEQeiKSL4JiYn6S2OLyy9lUnXl3LLfKQTp4QPv
-         Hedg==
+        bh=EQ03pSwu03IPlBKbH+1bfFOAbPC/t45t8cr4rrzecao=;
+        b=DJe4Rq7+hwc9hzaYfMS23pYFxhadXaNFB9kLzPwww6CA/3FBbWdlX7Ss7kclN+13rD
+         H/5b1Bld6MrNOa2VRxoNY8S4CozsNAJSdzLIXJk5BZ4NpecCPXJm4lj6XuXIlwyisuIk
+         7TQ7HK3u6uTPWccQ0DyHYNsGwXqi19kwLzxjxMkF5QZ2TKjIygGKWWacSVP7LA0DNj0V
+         MGMQDBGmuse5IAmBe3jH8P2tP3NZsoM9srPIkQC7JWUnCiBRna+P9MATkuMa0XljuGKJ
+         bRCqhDpP7NJg16+MvacbKtpVstMAUV7J1RZWxwHrXXMo3qvexNaGMbYbGKVlgVMuXuOr
+         gCJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717028256; x=1717633056;
+        d=1e100.net; s=20230601; t=1717028257; x=1717633057;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iGEn7Dcpmrkm/qCwkDxBmXXDS+7v8jGlOPv5lWfc4rI=;
-        b=fH1HfG4TdThKVCjnmZvq2aQ1YSy3w4CWYUBnVA+S+XQ3bX6nd4W+/pJwFEC2MtJwvL
-         u3ZvtBKtA/GkQC/JXuTwxdobzvc55hixYe4BLadVugaDssF97lvY6CfwZCf1XxPJE+Z/
-         GNnVe0mRhSotQ7asoG7/YkjJaZKiqtR4y1oYW69m7lqxyly48JekVX7aPac3vHlWnmld
-         jYurK7yLMLC1LuM41XABVGdO5OEYglXJGTQxLq4D69SyHz0vlWRLLAL24PxjDu6jfFt7
-         Q+7Wubg3hc5eLgMPzAYkcUVW2UU7bBJmOUU3awajumBTXF6/80Esgy2y2hXh5dJIH+So
-         ZI9A==
-X-Gm-Message-State: AOJu0YwWglj72WcIPQm+TTQ5NIdTBGuqJ5W6ti5Ibdrk6qbmrK6y3yEP
-	rgtKGqdIWZ3qBcS8z8UeuDlhU5VFx5Y3tIHEHOis1+kHZdGrqvhL7BiX5F5jQY8=
-X-Google-Smtp-Source: AGHT+IE028Zs3GXZwzDr0NEuUh/9Ff7JfEC5B6eJ6oSGemUdfJZybhS0OU9JqpK9c78Xe9tkO4uwlA==
-X-Received: by 2002:a05:6a20:158f:b0:1af:cd4a:1e1d with SMTP id adf61e73a8af0-1b26470f21bmr645349637.40.1717028256348;
-        Wed, 29 May 2024 17:17:36 -0700 (PDT)
+        bh=EQ03pSwu03IPlBKbH+1bfFOAbPC/t45t8cr4rrzecao=;
+        b=OAeY4MpBnknrJPAxGmBKnB1BJ9u2wMUxLpTZCn/8zbcNK4jYk+QtPOcaDeGzG4WN7b
+         G/pmM8sHpFXmoTJjCHk8MBRV3AmW9eokBjWsDsei1gaciWfsHCz7+e00zH9fmohs004c
+         ZmoFYMYaA9DssXpmbj4apNWEqhuBy4dX4LNQwnpTNIYyg9hDPi0g5yh2EIIhjil3Iczn
+         C/OXpF7DVqX1BK8pqYcqBNbNtgc6Hjb1aclCsFS0cdbTu86k5NUo6XQIzhdbucaNnKHa
+         6tFovR7/y88p4qNe4LK0thwToSgPBLNEftW3V1Ny5vurzbsb8WBNSnPzZwBHO8WZigNQ
+         65GQ==
+X-Gm-Message-State: AOJu0YzCz4YQ5gee3QrbLGCh8l4Y/eaRmNDMunFmf+yxQZ4LMHvnf7AK
+	U6tMLfeP2eqdZz5V/JSxxClIRRfjfXpsI2JRECC+9xnMs1M2RZmCGv77bU2FfVSPvQPheh4WQgO
+	v
+X-Google-Smtp-Source: AGHT+IFV4do0wB/tiDJFQA9Xx1T77rhYSpTqSbv/IzD31/94h2G5nVcdYUOmAGTE5Nch160EFNVFmA==
+X-Received: by 2002:a17:90b:3905:b0:2bd:f968:da46 with SMTP id 98e67ed59e1d1-2c1abb02cf4mr633039a91.27.1717028257563;
+        Wed, 29 May 2024 17:17:37 -0700 (PDT)
 Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a776e206sm432171a91.20.2024.05.29.17.17.35
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a776e206sm432171a91.20.2024.05.29.17.17.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 17:17:35 -0700 (PDT)
+        Wed, 29 May 2024 17:17:37 -0700 (PDT)
 From: Samuel Holland <samuel.holland@sifive.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>
 Cc: linux-kernel@vger.kernel.org,
@@ -73,9 +74,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Matthew Bystrin <dev.mbstr@gmail.com>,
 	Sami Tolvanen <samitolvanen@google.com>,
 	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH 1/4] riscv: Fix 32-bit call_on_irq_stack() frame pointer ABI
-Date: Wed, 29 May 2024 17:15:56 -0700
-Message-ID: <20240530001733.1407654-2-samuel.holland@sifive.com>
+Subject: [PATCH 2/4] riscv: entry: Balance vector context nesting
+Date: Wed, 29 May 2024 17:15:57 -0700
+Message-ID: <20240530001733.1407654-3-samuel.holland@sifive.com>
 X-Mailer: git-send-email 2.44.1
 In-Reply-To: <20240530001733.1407654-1-samuel.holland@sifive.com>
 References: <20240530001733.1407654-1-samuel.holland@sifive.com>
@@ -87,65 +88,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-call_on_irq_stack() uses struct member offsets to set up its link in the
-frame record list. On riscv32, `struct stackframe` is the wrong size to
-maintain stack pointer alignment, so STACKFRAME_SIZE_ON_STACK includes
-padding. However, the ABI requires the frame record to be placed
-immediately below the address stored in s0, so the padding must come
-before the struct members.
+Vector context management is the last thing done before jumping to C
+code, so it should be the first thing done after returning from C code.
+This also improves efficiency: riscv_v_context_nesting_end() clobbers
+the saved value of the status CSR, so currently ret_from_exception()
+must reload it. This is not necessary if riscv_v_context_nesting_end()
+is called first.
 
-Fix the layout by making STACKFRAME_FP and STACKFRAME_RA the negative
-offsets from s0, instead of the positive offsets from sp.
-
-Fixes: 82982fdd5133 ("riscv: Deduplicate IRQ stack switching")
 Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
 
- arch/riscv/kernel/asm-offsets.c | 4 ++--
- arch/riscv/kernel/entry.S       | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/riscv/kernel/entry.S | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
-index b09ca5f944f7..84c056f5ee09 100644
---- a/arch/riscv/kernel/asm-offsets.c
-+++ b/arch/riscv/kernel/asm-offsets.c
-@@ -487,8 +487,8 @@ void asm_offsets(void)
- 	OFFSET(SBI_HART_BOOT_STACK_PTR_OFFSET, sbi_hart_boot_data, stack_ptr);
- 
- 	DEFINE(STACKFRAME_SIZE_ON_STACK, ALIGN(sizeof(struct stackframe), STACK_ALIGN));
--	OFFSET(STACKFRAME_FP, stackframe, fp);
--	OFFSET(STACKFRAME_RA, stackframe, ra);
-+	DEFINE(STACKFRAME_FP, offsetof(struct stackframe, fp) - sizeof(struct stackframe));
-+	DEFINE(STACKFRAME_RA, offsetof(struct stackframe, ra) - sizeof(struct stackframe));
- 
- #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
- 	DEFINE(FREGS_SIZE_ON_STACK, ALIGN(sizeof(struct ftrace_regs), STACK_ALIGN));
 diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 68a24cf9481a..4c5b22cb7381 100644
+index 4c5b22cb7381..d13d1aad7649 100644
 --- a/arch/riscv/kernel/entry.S
 +++ b/arch/riscv/kernel/entry.S
-@@ -246,8 +246,8 @@ SYM_CODE_END(ret_from_fork)
- SYM_FUNC_START(call_on_irq_stack)
- 	/* Create a frame record to save ra and s0 (fp) */
- 	addi	sp, sp, -STACKFRAME_SIZE_ON_STACK
--	REG_S	ra, STACKFRAME_RA(sp)
--	REG_S	s0, STACKFRAME_FP(sp)
-+	REG_S	ra, (STACKFRAME_SIZE_ON_STACK + STACKFRAME_RA)(sp)
-+	REG_S	s0, (STACKFRAME_SIZE_ON_STACK + STACKFRAME_FP)(sp)
- 	addi	s0, sp, STACKFRAME_SIZE_ON_STACK
- 
- 	/* Switch to the per-CPU shadow call stack */
-@@ -265,8 +265,8 @@ SYM_FUNC_START(call_on_irq_stack)
- 
- 	/* Switch back to the thread stack and restore ra and s0 */
- 	addi	sp, s0, -STACKFRAME_SIZE_ON_STACK
--	REG_L	ra, STACKFRAME_RA(sp)
--	REG_L	s0, STACKFRAME_FP(sp)
-+	REG_L	ra, (STACKFRAME_SIZE_ON_STACK + STACKFRAME_RA)(sp)
-+	REG_L	s0, (STACKFRAME_SIZE_ON_STACK + STACKFRAME_FP)(sp)
- 	addi	sp, sp, STACKFRAME_SIZE_ON_STACK
- 
- 	ret
+@@ -120,6 +120,11 @@ ASM_NOKPROBE(handle_exception)
+  *  - ret_from_fork
+  */
+ SYM_CODE_START_NOALIGN(ret_from_exception)
++#ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
++	move a0, sp
++	call riscv_v_context_nesting_end
++#endif
++
+ 	REG_L s0, PT_STATUS(sp)
+ #ifdef CONFIG_RISCV_M_MODE
+ 	/* the MPP value is too large to be used as an immediate arg for addi */
+@@ -143,10 +148,6 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
+ 	 */
+ 	csrw CSR_SCRATCH, tp
+ 1:
+-#ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
+-	move a0, sp
+-	call riscv_v_context_nesting_end
+-#endif
+ 	REG_L a0, PT_STATUS(sp)
+ 	/*
+ 	 * The current load reservation is effectively part of the processor's
 -- 
 2.44.1
 
