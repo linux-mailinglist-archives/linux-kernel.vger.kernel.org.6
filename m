@@ -1,119 +1,107 @@
-Return-Path: <linux-kernel+bounces-195467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD2B8D4D44
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:53:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF0A8D4C24
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18619B21C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A659B1F2182E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE03176228;
-	Thu, 30 May 2024 13:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D4617CA0C;
+	Thu, 30 May 2024 12:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="WZnkqbdb"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M6DNy06I"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F81176222;
-	Thu, 30 May 2024 13:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9E217C9E5;
+	Thu, 30 May 2024 12:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077144; cv=none; b=kvzdxWMYoiWqyngpxmcJT2b1HyLsWtONlcdQT0Ih4t9reqE60hbTP5T6Wiwb+RU1ksMEITNrcYG0Yfwt/Lknljct5mOo7IkI8L0MFsm/A2JGeZrMwUTZa9TbFDQVUrAA3p2TyMFDGr4ZRVaDLZzfa/9gF8QD4SuG5VJJeKgbky4=
+	t=1717073915; cv=none; b=VR5h7ZPxMsGKapHFEX1h1D3YD0+LH/tM4gpeMBvPqB7qtmahrH40YV1wNzscd/w7CnfVKAw48btW420GFWTOG41PaaX20pM/TxinjwuuQ4EeJgh/dOep5YxCp7fa35h0XPjADfAm4n/KyJ3ZQK2xQEgNLVb983UaERPvJ4tSrNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077144; c=relaxed/simple;
-	bh=dJk1hw65s2M5BumD/q/+fzgJ264MkZ64H9w8F8thEdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uIOLy0BTFphkm/bXsSa80oYViWsHcfeRHx6b5lUrfm3Y4ArDVUBO7yF9QJDkus5jJSYnOjfC63j/HsIYwLb0qtgkrMVUD0+VxsZ2ZzPq/bJKJeQpQuhjCh5J0IsaMQbkAdUQ2g0+2bsosbANvpwdX2/6bh7onu5Dqs5E/75drnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=WZnkqbdb; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44UBNCHx009437;
-	Thu, 30 May 2024 12:57:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com;
- h=cc:content-type:date:from:message-id:mime-version:subject:to; s=pps0720;
- bh=tIqaGLJOOjfMcTh/JD+veKn193AI6E0EN44ddHZZtjo=;
- b=WZnkqbdb7JZaqKMOxQc1yTK06IMWbMNeG23paKq3UNBOVABX1ueQFywilAOKZKNIp8H6
- h/bDyzp+pef7PBc3P3HZ2CGqF7o3FA8vSRbEEw4m+sqw52dWwMRChi4HPdtFxGEQ3iNB
- 0FgTzjbxDqGXP4U3L/wHfsk4yvokN+lAGHl+RNtb/kqEjn3qCLts+k9AOLNKZlFT3dip
- 5My52RWHn2Vn8idmBhGGzfnPc19lZvqmZ1YrqPTv2EnuPQZZmURzT/7Z+a1VcDWxj2iB
- jCv2769hSc4vC2UiGkqndYh9F4YsBa7ItiBd/CJAgm2/cJkaR/uvU34Acu7jRfcIuyg4 lw== 
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3yerha0pcn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 12:57:10 +0000
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 21F4912B7C;
-	Thu, 30 May 2024 12:57:08 +0000 (UTC)
-Received: from hpe.com (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 236A28005DD;
-	Thu, 30 May 2024 12:57:04 +0000 (UTC)
-Date: Thu, 30 May 2024 07:57:03 -0500
-From: Dimitri Sivanich <sivanich@hpe.com>
-To: Yi Zhang <yi.zhang@redhat.com>, "Tian, Kevin" <kevin.tian@intel.com>,
-        Vasant Hegde <vasant.hegde@amd.com>,
-        Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        David Wang <00107082@163.com>,
-        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        Dimitri Sivanich <sivanich@hpe.com>, iommu@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, Steve Wahl <steve.wahl@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>
-Subject: [PATCH] iommu/vt-d: Fix panic accessing amd_iommu_enable_faulting
-Message-ID: <Zlh3nz2Ij06TY4cr@hpe.com>
+	s=arc-20240116; t=1717073915; c=relaxed/simple;
+	bh=C2iRBYTREzdjDlGihekO6DW47GYkbW034P8nLnt49xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EsDg1zR23ZiI50uhGzicE225ixVo9ui5mWyaHad5rXRvgObJu64bW+GsKRPVBXqxjqwBI+FmgrdHZeIfxjZTNhOHnsVH8GmonieAX+RqEvrX/NT0FohUeCZ+5Y2fDkIEMsfWWe48Y/XW+XD+z6F3A8565Rw1Vhv9vtxWuGrDURw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M6DNy06I; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CEF5060006;
+	Thu, 30 May 2024 12:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717073904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fNdDLnGODJuYqniJ7vxj1Vy7TfXGXcLGyL2rV05KoB8=;
+	b=M6DNy06IKXgNAxMYAL78NexpTNF8PxuRBkBNcwUiXrj0pg1Vrd7AENMVLaljvnjsDVFtxz
+	S/xp4H5PdPtzss7LrfMpO2SiTkEBtZi6FtTJNmMR/otKBrocVntMn8pCEJf01Tn+aubpnW
+	vWl4HQ38Qv5TBJ7xfrD3+4dperuV+Vf7D+FyXrSaxG6C/jAJNx/dA2xrddwgDI6U5e2hh9
+	u4M+fRZR3W3RcRku5Iz88iI/TiVSw+m2Hh/bvN4m69v8jyszfj7tIe2K+jBPf0uBF4XXE/
+	sH8oefz3ga0jpnGtfJO2P276SVsTvrY6G4AB6AP2g5611GRbGg5TtN6WZr6mUA==
+Date: Thu, 30 May 2024 14:58:23 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Dent Project <dentproject@linuxfoundation.org>,
+ kernel@pengutronix.de
+Subject: Re: [PATCH 2/8] net: ethtool: pse-pd: Expand C33 PSE status with
+ class, power and status message
+Message-ID: <20240530145823.5f6fc44e@kmaincent-XPS-13-7390>
+In-Reply-To: <m2jzjbd1zc.fsf@gmail.com>
+References: <20240529-feature_poe_power_cap-v1-0-0c4b1d5953b8@bootlin.com>
+	<20240529-feature_poe_power_cap-v1-2-0c4b1d5953b8@bootlin.com>
+	<m2jzjbd1zc.fsf@gmail.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-ORIG-GUID: Oq7tHGyOC6XVrpmMOk2OTieqjTrVKiOM
-X-Proofpoint-GUID: Oq7tHGyOC6XVrpmMOk2OTieqjTrVKiOM
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_09,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 spamscore=0 bulkscore=0 clxscore=1011
- mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405300098
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-This fixes a bug introduced by commit d74169ceb0d2 ("iommu/vt-d: Allocate
-DMAR fault interrupts locally").  The panic happens when
-amd_iommu_enable_faulting is called from CPUHP_AP_ONLINE_DYN context.
+On Thu, 30 May 2024 11:32:23 +0100
+Donald Hunter <donald.hunter@gmail.com> wrote:
 
-Signed-off-by: Dimitri Sivanich <sivanich@hpe.com>
-Tested-by: Yi Zhang <yi.zhang@redhat.com>
----
- drivers/iommu/amd/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Kory Maincent <kory.maincent@bootlin.com> writes:
+>=20
+> > From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
+> >
+> > This update expands the status information provided by ethtool for PSE =
+c33.
+> > It includes details such as the detected class, current power delivered,
+> > and a detailed status message.
 
-diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-index a18e74878f68..b02b959d12af 100644
---- a/drivers/iommu/amd/init.c
-+++ b/drivers/iommu/amd/init.c
-@@ -3353,7 +3353,7 @@ int amd_iommu_reenable(int mode)
- 	return 0;
- }
- 
--int __init amd_iommu_enable_faulting(unsigned int cpu)
-+int amd_iommu_enable_faulting(unsigned int cpu)
- {
- 	/* We enable MSI later when PCI is initialized */
- 	return 0;
--- 
-2.35.3
+> > =20
+> >  /**
+> > diff --git a/include/uapi/linux/ethtool_netlink.h
+> > b/include/uapi/linux/ethtool_netlink.h index b49b804b9495..c3f288b737e6
+> > 100644 --- a/include/uapi/linux/ethtool_netlink.h
+> > +++ b/include/uapi/linux/ethtool_netlink.h
+> > @@ -915,6 +915,9 @@ enum {
+> >  	ETHTOOL_A_C33_PSE_ADMIN_STATE,		/* u32 */
+> >  	ETHTOOL_A_C33_PSE_ADMIN_CONTROL,	/* u32 */
+> >  	ETHTOOL_A_C33_PSE_PW_D_STATUS,		/* u32 */
+> > +	ETHTOOL_A_C33_PSE_PW_STATUS_MSG,	/* binary */ =20
+>=20
+> It looks like the type is 'string' ?
+
+Yes, you are totally right, thanks!
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
