@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-195979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85AC98D55A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D71AA8D55A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D221F255C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA5A1F258C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C61B17545;
-	Thu, 30 May 2024 22:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1CF183077;
+	Thu, 30 May 2024 22:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cgv/Q7eC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UgNhswcj"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FD9335A7;
-	Thu, 30 May 2024 22:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B6474042
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 22:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717109102; cv=none; b=uhDW0OvghlN9gEhY1lV5B1jBWajznPBNzQ/YSRX8jWmddqpReIRv8VpnH4M6BjCr5SiILz+etMcL7fnJM0cftcwRhSy5hZ9MHFjhe/71NrSqI9m+WRoLCGAL/PDueOU5WJHOCcV2hc6l1A9lqwXOSN1Q2BRhBVEilkJa/dMxQok=
+	t=1717109182; cv=none; b=UWVvfCRDD0rvU8JQVfpE8ARx62Caj36+gaTzNDeEkkw5NYGEUBw3/1tFitYodwK218SFsgJzpki4OSrxxDf05rAJ4e4PW2sM+/uHHxKiptKkeXMVwVbZ7feq/FF4mCVZoBznMip4IXfzLubPGO6J9MQ3b13lrSv492+7ZoAT5aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717109102; c=relaxed/simple;
-	bh=kdx3TMxJYojAFm5/PbyiKBq8xS46txgT5B+lf63HuzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dk4a2u4O7nDf+Z9GtizgDL+tmjxXOG/12H7mkROVdVaDay+zci/GYg7qup3CTrqMkDK6lpvJfICweaaZqbGUuNBjO/BmySK0OTF685uN0J8oVf5XfzPLhpRUBD4Qk/GXCj0fqynKXc5SIFhqeY0UBrzAktIGFYrECJSnpyfI++8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cgv/Q7eC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=e3NB/mDwRctn3iwAMjuc5/uFGUFjegxDUG7u7jpVJ+s=; b=cgv/Q7eC94kt5eEfPb5w5slwyv
-	RTKpG43piRHMly9hzg+YvIAsIVZI03XQ79HeT3acLdWu8BGSwE3GPOvNHhUw0hG++yfArv0aVVJfr
-	/ji7WJKmORZ0p9dNNwelSs2k4U9+LbZJbH3iQxTrHzPTX1JAS+t+wZm+ck++NOAWCmivP7PTLwCvn
-	5VkBq7r6mxrdOaxy0BM8kOx9dEIL+wxp8TV6yO5QbOsXi23inDrq/1lSo8KS9JgCspxWeTCZzeOOg
-	XMy6YPcjotgXy31GclMpcKiHeu5o+3/1/DGr9czv5/Of9674/JfkLINloooBQYADQTTjYKa7RdvN1
-	Tl3kC3pg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCoVu-00000008b9H-1B8a;
-	Thu, 30 May 2024 22:44:50 +0000
-Message-ID: <4951656c-2d15-49f6-89d8-aa7b5c333ec7@infradead.org>
-Date: Thu, 30 May 2024 15:44:46 -0700
+	s=arc-20240116; t=1717109182; c=relaxed/simple;
+	bh=JSblW4xKQPWmCTufLZRebniB3Jpf5sbepE4eTR9OjBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PnzrFCRafvjO0kEF8l8IAcSbkBVc+8zHAlRIkeP8aCaH2ESsE8gergm2OpQbTzHalOLiW4M+P0qx0ZRc8fgq+a0zwqtUA7yALV86AgqCZPYZpmN6TwVq4CagLO6CVWQjTqnNaiavNvT8NbZJ+l876c80DMZXBnGnLpOVNuz60BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UgNhswcj; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6bfd4b88637so1060194a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:46:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717109179; x=1717713979; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pq4RWLiz1he3jfRd8xNC5uP0QIgGNhSaJwNREYP2LeM=;
+        b=UgNhswcjsELnRyNBJ2rdtm4CDj1v3NkZCUyPqhZ03blFZuXBdoAtzLjAf0dB7JDVPt
+         o76+uFmh7Ozu9I0MluOyyPVxe6WVkPN2qI+GaYvDEYjgbccITmZhG3noCe2GBTclUYrr
+         2I5N+uaLFUhYVAnY3RMXIM15Du2wmo6yZ5/6Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717109179; x=1717713979;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pq4RWLiz1he3jfRd8xNC5uP0QIgGNhSaJwNREYP2LeM=;
+        b=ecGa3jG8rdS0hgwmNNt6KZU/JVWPXHL951HuwMdO6KhFa9JSgkqbWnWUSEP876Tvmm
+         vl/0nHDXug5dFqSlpG0WHn3MnleY2CESPDSuoaCoAY7Bxy2sYqA83RYFGwssqJAN6TAC
+         DitTKDUw6z6E9jzIrbQHihelmPl3EkmJa8t0/OhSVVd7dmlp1pESU2ZnnuwiaNB+aMoG
+         8zzCfpL/MTTILVTKYgTuklPmXdwxZGv+Satq/9EvNHdHsf3MFwJz9XAJ3gsdNgdnpTI/
+         HAKPiRuTBBrnNS7k/rXRaebVccM8e28//m79/qxI9136K6oe0J9I5iN1wTHURbFajvRH
+         KgKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCzB+QpBWt+ja8AKvar+qH1g2DHcOW5eW7utqMQ+Yb4gbxwwzIGitdKTU0YZiC7zkWyAptdL2dyoegOMpBItRNHWz0N30z87NwH09+
+X-Gm-Message-State: AOJu0YwRMY6qrxvJjn3OMtWmd3E004vgp1I/GucsfZgbHMpjfKezbd9u
+	E0N6ZJN0v9jqSKMyisRe9yLpgFz+LpsSPZ3haRZRsMCbKfG6x3+TgHgaVBg3pw==
+X-Google-Smtp-Source: AGHT+IF3nsfazT0Xha9zRO3J7BNzKwddTMzOcBVLAiQtQVBr1ihR/BaRoxVkTobTsMcgIx7QzjN6Bw==
+X-Received: by 2002:a17:903:2285:b0:1f6:2cd2:ab9d with SMTP id d9443c01a7336-1f6370b1254mr1389445ad.55.1717109178630;
+        Thu, 30 May 2024 15:46:18 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:564b:72b6:4827:cf6a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632410b20sm2955795ad.273.2024.05.30.15.46.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 15:46:18 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	John Ogness <john.ogness@linutronix.de>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	linux-serial@vger.kernel.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Rob Herring <robh@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
+Subject: [PATCH v2 0/7] serial: qcom-geni: Overhaul TX handling to fix crashes/hangs
+Date: Thu, 30 May 2024 15:45:52 -0700
+Message-ID: <20240530224603.730042-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 07/11] Documentation: core-api: Add math.h macros and
- functions
-To: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
- sebastian.fricke@collabora.com, akpm@linux-foundation.org,
- gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
- adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
- airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- corbet@lwn.net, broonie@kernel.org, linux-doc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
- vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
- detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
- nicolas@ndufresne.ca, davidgow@google.com, dlatypov@google.com
-References: <20240530165925.2715837-1-devarsht@ti.com>
- <20240530171740.2763221-1-devarsht@ti.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240530171740.2763221-1-devarsht@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
+While trying to reproduce -EBUSY errors that our lab was getting in
+suspend/resume testing, I ended up finding a whole pile of problems
+with the Qualcomm GENI serial driver. I've posted a fix for the -EBUSY
+issue separately [1]. This series is fixing all of the Qualcomm GENI
+problems that I found.
 
-On 5/30/24 10:17 AM, Devarsh Thakkar wrote:
-> Add documentation for rounding, scaling, absolute value and difference,
-> 32-bit division related macros and functions exported by math.h header
-> file.
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> ---
-> V1->V9 (No change)
-> V10: Patch introduced
-> ---
->  Documentation/core-api/kernel-api.rst | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-> index ae92a2571388..fb467783d491 100644
-> --- a/Documentation/core-api/kernel-api.rst
-> +++ b/Documentation/core-api/kernel-api.rst
-> @@ -185,6 +185,12 @@ Division Functions
->  .. kernel-doc:: lib/math/gcd.c
->     :export:
->  
-> +Rounding, absolute value, scaling and 32bit division functions
+As far as I can tell most of the problems have been in the Qualcomm
+GENI serial driver since inception, but it can be noted that the
+behavior got worse with the new kfifo changes. Previously when the OS
+took data out of the circular queue we'd just spit stale data onto the
+serial port. Now we'll hard lockup. :-P
 
-                                         32-bit
-please.
+I've tried to break this series up as much as possible to make it
+easier to understand but the final patch is still a lot of change at
+once. Hopefully it's OK.
 
-> +--------------------------------------------------------------
-> +
-> +.. kernel-doc:: include/linux/math.h
-> +   :internal:
-> +
->  UUID/GUID
->  ---------
->  
+[1] https://lore.kernel.org/r/20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid
+
+Changes in v2:
+- soc: qcom: geni-se: Add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
+- serial: qcom-geni: Fix the timeout in qcom_geni_serial_poll_bit()
+- serial: qcom-geni: Fix arg types for qcom_geni_serial_poll_bit()
+- serial: qcom-geni: Introduce qcom_geni_serial_poll_bitfield()
+- serial: qcom-geni: Just set the watermark level once
+- Totally rework / rename patch to handle suspend while active xfer
+- serial: qcom-geni: Rework TX in FIFO mode to fix hangs/lockups
+
+Douglas Anderson (7):
+  soc: qcom: geni-se: Add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
+  serial: qcom-geni: Fix the timeout in qcom_geni_serial_poll_bit()
+  serial: qcom-geni: Fix arg types for qcom_geni_serial_poll_bit()
+  serial: qcom-geni: Introduce qcom_geni_serial_poll_bitfield()
+  serial: qcom-geni: Just set the watermark level once
+  serial: qcom-geni: Fix suspend while active UART xfer
+  serial: qcom-geni: Rework TX in FIFO mode to fix hangs/lockups
+
+ drivers/tty/serial/qcom_geni_serial.c | 316 ++++++++++++++++----------
+ include/linux/soc/qcom/geni-se.h      |   6 +
+ 2 files changed, 203 insertions(+), 119 deletions(-)
 
 -- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+2.45.1.288.g0e0cd299f1-goog
+
 
