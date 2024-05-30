@@ -1,115 +1,197 @@
-Return-Path: <linux-kernel+bounces-195651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856EB8D4FC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:24:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C2C8D4FC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95B21C2357C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53085B21769
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E419822F11;
-	Thu, 30 May 2024 16:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C26122619;
+	Thu, 30 May 2024 16:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h9H3KcH5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="/DkbkW7T";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="Vti+mgL7"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CF51CF94;
-	Thu, 30 May 2024 16:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717086249; cv=none; b=YPbrfNmijBiJ7QnYaguKxBJaxkCxUSPDNrASTAqoswlXiNywy2bISxQVxxasghy/Xl1Vlj1Ixxz/4m+LvaCrOvcH1gsNXCkFKD45mr2qCLJoNx64f5M8ChGo/+ewVs/zyxLxU40ZNHh0Tc2Ox9MG2F5sU22f1MfbBjA8z0p/SYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717086249; c=relaxed/simple;
-	bh=aJ20LOEycqgOS0ntOQDxPELsgzP44QuoLfi6WOPQlys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oNEsq5UcysLROb6xpjjvbA8GOXXEeurrEQCX7D7WEVWybmDDfKrdy0r/Upv54JKgtF7eXwYkqBrQXNU+I5TAs+pg4eeFE4pZtP9WmyePRBSfZXimXlohimgEtztHOqpUd/ANKsRic43Kbfac0pdZf+T7bTmkZaz9murlydIK8d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h9H3KcH5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U7anR0005158;
-	Thu, 30 May 2024 16:23:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fOZoNt0z7G/qYqANSDfAaU2dNxrMggq0DIG4LNBIFKE=; b=h9H3KcH5D4cuq494
-	y6h0Xjfpxao0mHdUAMtvcoLgXq0HoljKcCKoWWJxosUR3qGXOJtq1aIts4soI+zg
-	jlhApJBY93tn6DvfRhYq8SlLA9jU5aWJVW0hlVdBdUWuVwuHAu7oCP39GAWgDazy
-	9CX/S2WTjL4WY3R7S5KCmhvTbZKqRxFG/B/G6JDIkc4OciSCVVV5dIImWRxRFCij
-	oZ6oN1hunoTSRFfjCbTyTAInYlnIUDAYcM75XlRTPSjsw75JQ3pGczqKVR240Q0I
-	mAQ0+adr5yC7UF8aIregIpMKtAGgIpSLLwrkEDUxXQsuI48KSTiALniu0jFLIZLD
-	vKPFKg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yjcnbq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 16:23:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UGNc9p014949
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 16:23:38 GMT
-Received: from [10.227.110.203] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 09:23:37 -0700
-Message-ID: <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
-Date: Thu, 30 May 2024 09:23:36 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F64022EE4;
+	Thu, 30 May 2024 16:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717086232; cv=fail; b=nQOM/sB38lSKiaEM9bC3zF8Emd7mxpS4cf4GVPlxsSbcQRUPT/9Tyk/jZiAdkb8Wr1CMlIVEc6zq7HZaRUAVow6+9RcIsCxSBXb8K5aYQQUU+N0KrGxJHeEWJ3XAiR3uOvDBy4sbvk2pRmqbuQkTYY69Kbpcc4cp8inCLABFZ8U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717086232; c=relaxed/simple;
+	bh=pgv/sBueGj0uNKfB+M0Djeywb+8H0C+WrvypBsXAPEM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KXqH7tUxVkwuVzSB1l+bpw1+6nObsCC5x8X81HLD5Ph06vItDoYZ47tEaol7L0SYpwPB0MFQKlzROYTHCMkM+oK91kIZ4PztBwHrHAK9GazTnii9NGGKbMq61+atlI3y1I3IO9A/anWnvUlzUpEuxiD4bQf3xpu9+78+HkJD/8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=/DkbkW7T; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=Vti+mgL7; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id B10AE480A32;
+	Thu, 30 May 2024 12:23:49 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717086229;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=dYO5M/SWP6VTWCO+9ICoA/oxJGt9BK5VSGvf7uIy8bc=;
+ b=/DkbkW7TFBSmFsKekzbJJja6XCq5dkQNCaLQDvp1dWYwANzxAC0716JGFC2K2l8IejIwz
+ d51zu9L9Amb4+cTAw==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717086229;
+	cv=none; b=iB1cd9emc9n5onI2zUhwk8DjlZMTziCi1/Dg9luEFk0NgnW/PrqpdX93atHlebk+woIX9zsrFGgqLwxyTAwdKA58Vb4n6tKN+Wim0e9HQS79XSDjgr6+qc9r+ShjzMhxHBm2pjmWpETTmUT/9PxFoah3RXEqaCmj8yjK7lzbDCFVigviSteDa7nUPwzXFondOGeeDYvIgHhMGq9GacTGb72JFzWqLSebfQldV8IIy3CmJKGtC4c34/MPijKOvR343B/bNbgMjRhgC22E6zfAKpvnW1+EMHrQaJ+3lWjczkwN7wNt8D6eZ40F9K6pVndjiCni9u2K/v9WCBNoJlQP1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1717086229; c=relaxed/simple;
+	bh=pgv/sBueGj0uNKfB+M0Djeywb+8H0C+WrvypBsXAPEM=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=IYCYOgQLJx9CCBURcnxT8AQIE3O/hWUgQqL+J3L/4/Ctcy8i5u8pOMHCWthQT51bU4RqcZxwSDmSecv5QcHnd3bJp4ELuayzX48uFXIgCV1v6xbxSJwtuk++DHxH3FAgVLUu+IpeKkQi9KnMatlnT3FMU3vZhrPPIBhzr7Ejk4jcO2pqApcfsjwnvfKqw3bPEAEEIRwvtx6b1C6mCxfAyPMIYHd+oJJCVQv7JgChrT3SHVNxqXhNlrE3mEapG5JHYmiBc4oIK/7y9df3JkXfKjOMxt43qlh8zCwzNmU1H7pLeusiWIoYUWzR+vBiytO6KFa2nK90s+RSSwv3u1ZPJA==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717086229;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=dYO5M/SWP6VTWCO+9ICoA/oxJGt9BK5VSGvf7uIy8bc=;
+ b=Vti+mgL7eSBgug5ZK5bUA6iNFjXba5Yv3b/txFC9eYAN91R3i3ZO91/tHG/2Cx4DO5NCr
+ Qw1v8ShCt15IzglKOrX3p2rVfmykD85j5Xu5P9s9ui/PSExgFhKwR8J0j8hRylwdUenuqgf
+ MM6/AEe1/DFp0c5jvomDmV6dqWGXK2jIBrfYMSDg0i+r9rLegGZDZLuKf5vznP7AwQNJVwY
+ Iv2gxhVGJ40F2O+iQETVMrwvMqfeK1ih3Ye4Un1m6GgTq/XAPnxFApjsKmAnq/an8W+tlgp
+ eoONbi1eSQ1yoX5MTBYI5j+uF4nyo8Q0xRQXNoa/4OssHTPDJnys+Gv8Mekg==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 7C04228004B;
+	Thu, 30 May 2024 12:23:49 -0400 (EDT)
+Message-ID: <73d37ff63ee7cd88772fc0767f4474317b56a0a8.camel@sapience.com>
+Subject: Re: 6.9.3 Hung tasks
+From: Genes Lists <lists@sapience.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch, 
+ hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org,  pabeni@redhat.com, johanneswueller@gmail.com, Thorsten
+ Leemhuis <linux@leemhuis.info>
+Date: Thu, 30 May 2024 12:23:48 -0400
+In-Reply-To: <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
+	 <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
+	 <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-+QEfLFhrShG4Mf1bhoXy"
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Content-Language: en-US
-To: Nikolay Borisov <nik.borisov@suse.com>,
-        Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov
-	<bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-        Kees Cook <keescook@chromium.org>, "H. Peter Anvin" <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+
+
+--=-+QEfLFhrShG4Mf1bhoXy
+Content-Type: multipart/alternative; boundary="=-2wjINsonf24vl+/OcDje"
+
+--=-2wjINsonf24vl+/OcDje
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tGjkCqrB7StA52j-IJboHQcZRhiSojoX
-X-Proofpoint-ORIG-GUID: tGjkCqrB7StA52j-IJboHQcZRhiSojoX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_13,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=817 spamscore=0
- clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405300122
+Content-Transfer-Encoding: quoted-printable
 
-On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
-> 
-> 
-> On 29.05.24 г. 21:09 ч., Jeff Johnson wrote:
->> As discussed in [1] add a prototype for __fortify_panic() to fix the
->> 'make W=1 C=1' warning:
->>
->> arch/x86/boot/compressed/misc.c:535:6: warning: symbol '__fortify_panic' was not declared. Should it be static?
-> 
-> Actually doesn't it make sense to have this defined under ../string.h ? 
-> Actually given that we don't have any string fortification under the 
-> boot/  why have the fortify _* functions at all ?
+On Thu, 2024-05-30 at 15:04 +0100, Russell King (Oracle) wrote:
+> ...
+> And then we get to pid 858. This is in set_device_name(), which
+> was called from led_trigger_set() and led_trigger_register().
+> We know from pid 663 that led_trigger_register() can take a read
+> on leds_list_lock, and indeed it does and then calls
+> led_match_default_trigger(), which then goes on to call
+> led_trigger_set(). Bingo, this is why pid 666 is blocked, which
+> then blocks pid 663. pid 663 takes the rtnl lock, which blocks
+> everything else _and_ also blocks pid 858 in set_device_name().
+>=20
+> Lockdep would've found this... this is a classic AB-BA deadlock
+> between the leds_list_lock rwsem and the rtnl mutex.
+>=20
+> I haven't checked to see how that deadlock got introduced, that's
+> for someone else to do.
+>=20
 
-I'll let Kees answer these questions since I just took guidance from him :)
 
-/jeff
+Thank you for the analysis - hopefully someone can track down the
+culprit.
+
+cc: =C2=A0thorsten
+
+--=20
+Gene
+
+
+--=-2wjINsonf24vl+/OcDje
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Thu, 2024-05-30 at 15:04 +0100, Russell King (=
+Oracle) wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; b=
+order-left:2px #729fcf solid;padding-left:1ex"><div>...</div><div>And then =
+we get to pid 858. This is in set_device_name(), which<br></div><div>was ca=
+lled from led_trigger_set() and led_trigger_register().<br></div><div>We kn=
+ow from pid 663 that led_trigger_register() can take a read<br></div><div>o=
+n leds_list_lock, and indeed it does and then calls<br></div><div>led_match=
+_default_trigger(), which then goes on to call<br></div><div>led_trigger_se=
+t(). Bingo, this is why pid 666 is blocked, which<br></div><div>then blocks=
+ pid 663. pid 663 takes the rtnl lock, which blocks<br></div><div>everythin=
+g else _and_ also blocks pid 858 in set_device_name().<br></div><div><br></=
+div><div>Lockdep would've found this... this is a classic AB-BA deadlock<br=
+></div><div>between the leds_list_lock rwsem and the rtnl mutex.<br></div><=
+div><br></div><div>I haven't checked to see how that deadlock got introduce=
+d, that's<br></div><div>for someone else to do.<br></div><div><br></div></b=
+lockquote><div><br></div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8=
+ex; border-left:2px #729fcf solid;padding-left:1ex"></blockquote><div>Thank=
+ you for the analysis - hopefully someone can track down the culprit.</div>=
+<div><br></div><div>cc: &nbsp;thorsten</div><div><br></div><div><span><pre>=
+-- <br></pre><div><span style=3D"background-color: inherit;">Gene</span></d=
+iv><div><br></div></span></div></body></html>
+
+--=-2wjINsonf24vl+/OcDje--
+
+--=-+QEfLFhrShG4Mf1bhoXy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZlioFAAKCRA5BdB0L6Ze
+2ztUAP9jIfYUH867epX9kme9kL3SIae0lnrtM3DSeYE1axiCawD7BDiTCWFUP3i/
+i0ulDQ52DV3I490ratrq6pxYUlXj1w0=
+=Jxt6
+-----END PGP SIGNATURE-----
+
+--=-+QEfLFhrShG4Mf1bhoXy--
 
