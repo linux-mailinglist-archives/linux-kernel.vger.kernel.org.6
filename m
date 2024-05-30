@@ -1,119 +1,224 @@
-Return-Path: <linux-kernel+bounces-195335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1B38D4B3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446298D4B3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7971F24308
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0C31C22D4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A7C1822C9;
-	Thu, 30 May 2024 12:01:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F2E17FAAB;
+	Thu, 30 May 2024 12:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NLJy8k+4"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31C117C7AA
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6773017B420
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070492; cv=none; b=PzYCVbcZrVSQKWlxvWNdPqUAf21imDbaoky21CtHxkhmxZ1yMIBf9BN5rwg/dbI//f14DMlzIIswkYn071fV5I/yFTbWBFF462zLKrFxKoiy719xMz8CChFwUArvwCu658ksfg2AzRpihclTStUXYgteKhOl1HKI4x2SDceDWL4=
+	t=1717070749; cv=none; b=q3J9gPp9NpgrtUpUz2hHaVDFmmGSHsTwCmb3gMRDP16XIMVnKQBIr1wS277W9FoReZQGewGPvlDxXsgmThXanr+PFe8+Nkkjjh/lRxgA9lZ4ALcyrcOp8hnwb2u4sUydP3fawh2PRfqj8XE7z3ZxhwYDEpAFNknDPB9MCyj4G5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070492; c=relaxed/simple;
-	bh=6agvjoYknHYxKRL+NaQ2AzP9Mpqe70cIuvhtkCdwR8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2BTXdipsGkxMEsFZzvwbdaaMBJbSFik85gUZ2wdpG9JumffPHlErvJJlo4fJQGXxkFdXWxji39b4t2/gO2+/dAPdz0ayuABYkZSv23+u3Zp6tU0k70vax4vF9oMLEUrndT47C3CDSwCi7s7PW9/CBm1maRNNFP9cNMTZGrH4+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sCeTC-0001jR-Ok; Thu, 30 May 2024 14:01:22 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sCeTB-003adJ-PO; Thu, 30 May 2024 14:01:21 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sCeTB-0005pq-2F;
-	Thu, 30 May 2024 14:01:21 +0200
-Date: Thu, 30 May 2024 14:01:21 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH] wifi: mwifiex: fix parsing of more than two AKM suites
-Message-ID: <ZlhqkXIhK7ynrl65@pengutronix.de>
-References: <20240523081428.2852276-1-s.hauer@pengutronix.de>
- <878qzyntg5.fsf@kernel.org>
+	s=arc-20240116; t=1717070749; c=relaxed/simple;
+	bh=6DUJ8tsgfrpE7dMN5xMdCi4IdduLwN5+kaoGzysiLws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C5Mhh90lE2hLxu/FIub/I19yMP7tTksW9bjtmUpRwChykD2SsuhzhNLKg7ejmyh3GOGb5h0a+XPHQyvazf01cpeeMY1qRRVW/LAWNelPbndpF25BftBCw1/Mv0scXr2iozUUN4OM1zKrOtKOmrscCxFG2DNuTu6K+34Sd/mqmhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NLJy8k+4; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5a89787ea4so64917966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 05:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717070744; x=1717675544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Sz6gimwf1g/uM/VSKdjbih5l18TxYGdFz1hq8H1cc4=;
+        b=NLJy8k+4nm+KGyY8I6C8gQYzhbfHVEhNlOgQX5NggMNeZENLtziBPvrD1xRC4cx6L1
+         lA+IGNWZL7Axe1wpirFLOF0IFZtLOs9JIuqr9SIba6tlsp0YbzJ9mmVkeQ/+nFa5miB6
+         jP61DyDmKqQ/cWi81In3RHkL2tymFiA+3K2Eu/byHjSXIiCmA/noRUP97R+TK6jxRx0L
+         g0FPcatqI7KeDPPJVH5A1CPrL7uJOFz8tkG+BXyBPsLTXtr8wbNH0rI1O1ycSt9Zd58H
+         HE1ACQL5vexebymvKAeuknNjSq/LfUyh8j6/44/IP8zCJAWWyNsyhNJ9jxFDeEp8atup
+         T1Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717070744; x=1717675544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Sz6gimwf1g/uM/VSKdjbih5l18TxYGdFz1hq8H1cc4=;
+        b=ozEWxpRCmai1YhixidDrNQNawAPCClLER1e7jv+ptYCsCRur6V1HknQ/EOYWoL5oZ/
+         sLEWR8m+pSM6OVqRGuMocPk3W+Jq960chrJqtG1xG1ovui9hpW3RsN1dYHK5VWQFLtLY
+         LKNtuM54AeAoprgcO4y6EE/UQPzcTwhyVjF7ZqnHyOHgHsAWa2q2cV+QeIEb0v+rKu5h
+         kB19tDyiRBCXxI3FLV6Hbl7r2DuHVv5zn8nREL106fyTl4zL1byP+GKcv/PHb+wAyfet
+         SfygHNSobLv4J1/rp1482tKVFNmwFrjD7sQOhQwbwk3zq2I9hK34TUDhVIyKjS8VBfEw
+         rQsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdEl60ff9vLCcT+xDe0mr5uLCRiO4mz0sgnZaT4Gq4b0M0jcoBsBwDpMFTOuB+ndLT8fjMWTa+CzhSDy3Ysmdyv1+Hi2yy0rkGjkZW
+X-Gm-Message-State: AOJu0Yz6NzQ7tvW2jRFyWEnhyKmAXpYuFcs/udQV6KrD98BdtxCQTYYP
+	LjkHuG5H7R1dN9jS7aJM2WnPhA2hVVoPWysiFWxN3RKKHaBqMjswpfMVUzKP6fUTvg+CodRE/nJ
+	PsUE3vJB9jijBJUhFsYsrdtmSyXDGoShKuLsSFw==
+X-Google-Smtp-Source: AGHT+IG/YXSYNiT6o3H60M0bRLCqTArznAl+myxGGWTw4/86wdJCt5jT5bYBWxWt9IjzAEOIedJ5eSNcM/ArO6iW/iM=
+X-Received: by 2002:a17:906:d784:b0:a59:b88c:2b2a with SMTP id
+ a640c23a62f3a-a65e925021dmr114248066b.50.1717070744574; Thu, 30 May 2024
+ 05:05:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878qzyntg5.fsf@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240530075424.380557-1-alexghiti@rivosinc.com> <ZlhpA9NsgI0z6t/E@andrea>
+In-Reply-To: <ZlhpA9NsgI0z6t/E@andrea>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Thu, 30 May 2024 14:05:32 +0200
+Message-ID: <CAHVXubi+XW=v=MKDov5j0v2QG-cAMjWxdqMRhgfLmo1JhCkryQ@mail.gmail.com>
+Subject: Re: [PATCH -fixes] riscv: Fix fully ordered LR/SC xchg[8|16]() implementations
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Leonardo Bras <leobras@redhat.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 25, 2024 at 12:15:22PM +0300, Kalle Valo wrote:
-> Sascha Hauer <s.hauer@pengutronix.de> writes:
-> 
-> > params->crypto.n_akm_suites seems to be limited to two AKM suites. Once
-> > there are more they will be passed as extra elements of type WLAN_EID_RSN
-> > or WLAN_EID_VENDOR_SPECIFIC.
+Andrea,
+
+On Thu, May 30, 2024 at 1:54=E2=80=AFPM Andrea Parri <parri.andrea@gmail.co=
+m> wrote:
+>
+> > -#define _arch_xchg(ptr, new, sfx, prepend, append)                   \
+> > +#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend, append)       =
+       \
+> >  ({                                                                   \
+> >       __typeof__(ptr) __ptr =3D (ptr);                                 =
+ \
+> >       __typeof__(*(__ptr)) __new =3D (new);                            =
+ \
+> > @@ -55,15 +55,15 @@
+> >       switch (sizeof(*__ptr)) {                                       \
+> >       case 1:                                                         \
+> >       case 2:                                                         \
+> > -             __arch_xchg_masked(prepend, append,                     \
+> > +             __arch_xchg_masked(sc_sfx, prepend, append,             \
+> >                                  __ret, __ptr, __new);                \
+> >               break;                                                  \
+> >       case 4:                                                         \
+> > -             __arch_xchg(".w" sfx, prepend, append,                  \
+> > +             __arch_xchg(".w" swap_sfx, prepend, append,             \
+> >                             __ret, __ptr, __new);                     \
+> >               break;                                                  \
+> >       case 8:                                                         \
+> > -             __arch_xchg(".d" sfx, prepend, append,                  \
+> > +             __arch_xchg(".d" swap_sfx, prepend, append,             \
+> >                             __ret, __ptr, __new);                     \
+> >               break;                                                  \
+> >       default:                                                        \
+> > @@ -73,16 +73,16 @@
+> >  })
 > >
-> > This takes some snippets from the downstream vendor driver to parse
-> > these elements and to set the correct protocol and key_mgmt bits to
-> > enable the desired key managements algorithms in the hardware.
+> >  #define arch_xchg_relaxed(ptr, x)                                    \
+> > -     _arch_xchg(ptr, x, "", "", "")
+> > +     _arch_xchg(ptr, x, "", "", "", "")
 > >
-> > This patch is not a request for inclusion, more a heads up that there's
-> > something missing and the question if the approach taken is the right
-> > one or if there are other preferred ways to fix this issue.
-> 
-> Please mark patches like this as "[PATCH RFC]", that way we maintainers
-> know to drop them automatically.
+> >  #define arch_xchg_acquire(ptr, x)                                    \
+> > -     _arch_xchg(ptr, x, "", "", RISCV_ACQUIRE_BARRIER)
+> > +     _arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER)
+> >
+> >  #define arch_xchg_release(ptr, x)                                    \
+> > -     _arch_xchg(ptr, x, "", RISCV_RELEASE_BARRIER, "")
+> > +     _arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "")
+> >
+> >  #define arch_xchg(ptr, x)                                            \
+> > -     _arch_xchg(ptr, x, ".aqrl", "", "")
+> > +     _arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n")
+>
+> This does indeed fix the fully-ordered variant of xchg8/16().  But this
+> also changes the fully-ordered xchg32() to
+>
+>   amoswap.w.aqrl  a4,a5,(s1)
+>   fence   rw,rw
+>
+> (and similarly for xchg64()); we should be able to restore the original
+> mapping with the diff below on top of this patch.
 
-Yes, will do. I should have known that.
+And you already told me that privately...Sorry, my mind has been
+elsewhere lately...I'll fix that right now.
 
-The question I had with this patch is more like whether the approach is
-fine.
+Sorry again and thanks,
 
-I wonder why I have to parse the WLAN_EID_RSN element in driver specific
-code and why I do not find similar code in other drivers which should
-suffer from the same problem.
+Alex
 
-Looking deeper at it the Kernel by default only supports two AKM suites.
-wiphy->max_num_akm_suites is initialized to NL80211_MAX_NR_AKM_SUITES
-(which is 2). Whenever wpa_supplicant/hostapd specify more AKM suites
-the suites exceeding 2 are encoded in the WLAN_EID_RSN element and I
-would expect other drivers to handle this as well.
-
-I realized that the Kernel can handle up to 10 AKM suites by setting
-wiphy->max_num_akm_suites to CFG80211_MAX_NUM_AKM_SUITES and that
-seems to do the trick as well, at least when I patch wpa_supplicant
-to actually use this increased number.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>
+>   Andrea
+>
+> P.S. Perhaps expand the width of the macros to avoid newlines (I didn't
+> do it keep the diff smaller).
+>
+> P.S. With Zabha, we'd probably like to pass swap_sfx and swap_append as
+> well to __arch_xchg_masked().
+>
+>
+> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cm=
+pxchg.h
+> index e1e564f5dc7ba..88c8bb7ec1c34 100644
+> --- a/arch/riscv/include/asm/cmpxchg.h
+> +++ b/arch/riscv/include/asm/cmpxchg.h
+> @@ -46,7 +46,8 @@
+>                 : "memory");                                            \
+>  })
+>
+> -#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend, append)         =
+       \
+> +#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend,                 =
+       \
+> +                  sc_append, swap_append)                              \
+>  ({                                                                     \
+>         __typeof__(ptr) __ptr =3D (ptr);                                 =
+ \
+>         __typeof__(*(__ptr)) __new =3D (new);                            =
+ \
+> @@ -55,15 +56,15 @@
+>         switch (sizeof(*__ptr)) {                                       \
+>         case 1:                                                         \
+>         case 2:                                                         \
+> -               __arch_xchg_masked(sc_sfx, prepend, append,             \
+> +               __arch_xchg_masked(sc_sfx, prepend, sc_append,          \
+>                                    __ret, __ptr, __new);                \
+>                 break;                                                  \
+>         case 4:                                                         \
+> -               __arch_xchg(".w" swap_sfx, prepend, append,             \
+> +               __arch_xchg(".w" swap_sfx, prepend, swap_append,        \
+>                               __ret, __ptr, __new);                     \
+>                 break;                                                  \
+>         case 8:                                                         \
+> -               __arch_xchg(".d" swap_sfx, prepend, append,             \
+> +               __arch_xchg(".d" swap_sfx, prepend, swap_append,        \
+>                               __ret, __ptr, __new);                     \
+>                 break;                                                  \
+>         default:                                                        \
+> @@ -73,16 +74,16 @@
+>  })
+>
+>  #define arch_xchg_relaxed(ptr, x)                                      \
+> -       _arch_xchg(ptr, x, "", "", "", "")
+> +       _arch_xchg(ptr, x, "", "", "", "", "")
+>
+>  #define arch_xchg_acquire(ptr, x)                                      \
+> -       _arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER)
+> +       _arch_xchg(ptr, x, "", "", "", RISCV_ACQUIRE_BARRIER, RISCV_ACQUI=
+RE_BARRIER)
+>
+>  #define arch_xchg_release(ptr, x)                                      \
+> -       _arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "")
+> +       _arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "", "")
+>
+>  #define arch_xchg(ptr, x)                                              \
+> -       _arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n")
+> +       _arch_xchg(ptr, x, ".rl", ".aqrl", "", "     fence rw, rw\n", "")
+>
+>  #define xchg32(ptr, x)                                                 \
+>  ({                                                                     \
+>
 
