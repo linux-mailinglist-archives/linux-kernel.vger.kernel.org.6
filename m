@@ -1,166 +1,251 @@
-Return-Path: <linux-kernel+bounces-194874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426118D4354
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1478D436F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2C228108C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FEA7283038
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C472C36B0D;
-	Thu, 30 May 2024 02:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iDIdPX/F"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592101CA96;
+	Thu, 30 May 2024 02:06:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32EB2561B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386C8208B8;
+	Thu, 30 May 2024 02:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717034692; cv=none; b=VQbj6Jkvl2hsAEyPIAEJsanfyZlBMjXuT/irt8IdiVka+Ku4BtC7wVUte8mEZiyYVXJPRSf8pcYe/CquGX91Y3b+3ME7NaOKMTjuXQHlcC2VIfXSASZh9AgWg9m5GOBz/P0aXnI7S3DNdraPsPOSLCTbv4zMq5LGPC6isOkOT9M=
+	t=1717034779; cv=none; b=EvHd8B+5Z4iDXX8eZ839ec6cRRFwPbRsYSrQeBBhoZqh/PyyMcJwo9GQM43c48fbdB6hDb8/1UFZeR6vIuxY3Pv5xuZliBkTArDoQ4jFNNuaiJ8+HQ5jILBqiuPCgKpQbkEoLhEHzBoNx95jS9jXNSSCtBYomFq2+5ZMyQbADxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717034692; c=relaxed/simple;
-	bh=olbTV7Fu3Lpl24wdQWYrkOtU+2SdBNDLdeupk40G+v0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q4Q24Yj307FqGg8wrb/J0mSn8bgkhydq6MwEeOfzYt/o4VamdJO8U01DAtNGzRYfe55+AYpCa5Mkq+nEUacdJUZAaN0mljR9ik6KXn+ENEgOkF+Rqt3OYDB8274N/tSkUggyB1bW4GtptsSFpUETUCEcv95GhhHMON1ywy78Nbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iDIdPX/F; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717034682; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ptAk81AGNsYnCqrfWiyusE+CUxd4N7JUTOqMyRP+zl4=;
-	b=iDIdPX/FFE6LVEsTBotYyeL0trHPIbAalt0Vwjn28aIHpAxHSGajmT4B30rRLojiWOEJVI6Mn5jqnbI0qCQs+kOhUf3Y5OPqIyJDVNsJ8hZ5zKLEF2fl43ILgFJ4QvtN0FL8Tp3DdogDFuo6sdEcZptvX5kGypH/wcD04S0vae8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7V3uQV_1717034680;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7V3uQV_1717034680)
-          by smtp.aliyun-inc.com;
-          Thu, 30 May 2024 10:04:40 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	ziy@nvidia.com,
-	ioworker0@gmail.com,
-	da.gomez@samsung.com,
-	p.raghav@samsung.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] mm: shmem: add mTHP counters for anonymous shmem
-Date: Thu, 30 May 2024 10:04:17 +0800
-Message-Id: <f2989a856b48bafefad5d545f395a78387ce1a4c.1717033868.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
-References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1717034779; c=relaxed/simple;
+	bh=I4dthDT81/XC750ot5BC7m03ZhUTSupTYMwzaVFeLUI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Mf2wE9m5PMaLPEBWqxuN41yYy0vIvOKfxu7+W7eLhsEmaIWlnQYGEVKOow4HYiaM7qnH88NiQeRgegU6e90racMV6SfuMzuxxLykJSan9N9KTifAHFA/UEnT45e+Z8NYERFlAVRobdln6Y+m8a5QdPm6Ce2r5RZVKQruwbGY6lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VqV38662xz4f3lg1;
+	Thu, 30 May 2024 10:05:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id AC00A1A0568;
+	Thu, 30 May 2024 10:06:07 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgBXKBEN31dmICw5OA--.43626S3;
+	Thu, 30 May 2024 10:06:07 +0800 (CST)
+Subject: Re: [PATCH V3 for-6.10/block] loop: Fix a race between loop detach
+ and loop open
+To: Gulam Mohamed <gulam.mohamed@oracle.com>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com, hch@lst.de, axboe@kernel.dk,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240529200240.133331-1-gulam.mohamed@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <06c04f8f-5e67-ca57-6764-32d542cb3e90@huaweicloud.com>
+Date: Thu, 30 May 2024 10:06:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240529200240.133331-1-gulam.mohamed@oracle.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBXKBEN31dmICw5OA--.43626S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3WFyrGrW5WFW5Jr45Cw1fCrg_yoW7Xw17pF
+	WrWayjyFZYgFZ8WasFkF1xu345u3Z2y3yrGry3K34a9r9xXr9IvFy0q34Y9ryUWrW8GFWj
+	vF4UXrWUuFW7ArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHU
+	DUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Add mTHP counters for anonymous shmem.
+Hi,
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- include/linux/huge_mm.h |  3 +++
- mm/huge_memory.c        |  6 ++++++
- mm/shmem.c              | 18 +++++++++++++++---
- 3 files changed, 24 insertions(+), 3 deletions(-)
+ÔÚ 2024/05/30 4:02, Gulam Mohamed Ð´µÀ:
+> 1. Userspace sends the command "losetup -d" which uses the open() call
+>     to open the device
+> 2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
+>     function loop_clr_fd()
+> 3. If LOOP_CLR_FD is the first command received at the time, then the
+>     AUTOCLEAR flag is not set and deletion of the
+>     loop device proceeds ahead and scans the partitions (drop/add
+>     partitions)
+> 
+>          if (disk_openers(lo->lo_disk) > 1) {
+>                  lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+>                  loop_global_unlock(lo, true);
+>                  return 0;
+>          }
+> 
+>   4. Before scanning partitions, it will check to see if any partition of
+>      the loop device is currently opened
+>   5. If any partition is opened, then it will return EBUSY:
+> 
+>      if (disk->open_partitions)
+>                  return -EBUSY;
+>   6. So, after receiving the "LOOP_CLR_FD" command and just before the above
+>      check for open_partitions, if any other command
+>      (like blkid) opens any partition of the loop device, then the partition
+>      scan will not proceed and EBUSY is returned as shown in above code
+>   7. But in "__loop_clr_fd()", this EBUSY error is not propagated
+>   8. We have noticed that this is causing the partitions of the loop to
+>      remain stale even after the loop device is detached resulting in the
+>      IO errors on the partitions
+> 
+> Fix:
+> Re-introduce the lo_open() call to restrict any process to open the loop
+> device when its being detached
+> 
+> Test case involves the following two scripts:
+> 
+> script1.sh:
+> 
+> while [ 1 ];
+> do
+>          losetup -P -f /home/opt/looptest/test10.img
+>          blkid /dev/loop0p1
+> done
+> 
+> script2.sh:
+> 
+> while [ 1 ];
+> do
+>          losetup -d /dev/loop0
+> done
+> 
+> Without fix, the following IO errors have been observed:
+> 
+> kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
+> kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
+>          phys_seg 1 prio class 0
+> kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
+>          phys_seg 1 prio class 0
+> kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
+>          read
+> 
+> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+> ---
+> v3<-v2:
+> Re-introduced the loop->lo_refcnt to take care of the case where we race
+> when the Lo_rundown is set after the lo_open() function releases the
+> lo_mutex lock
+> 
+>   drivers/block/loop.c | 31 ++++++++++++++++++++++++++-----
+>   1 file changed, 26 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 28a95fd366fe..60f61bf8dbd1 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -49,6 +49,7 @@ struct loop_func_table;
+>   
+>   struct loop_device {
+>   	int		lo_number;
+> +	atomic_t        lo_refcnt;
+>   	loff_t		lo_offset;
+>   	loff_t		lo_sizelimit;
+>   	int		lo_flags;
+> @@ -1242,7 +1243,7 @@ static int loop_clr_fd(struct loop_device *lo)
+>   	 * <dev>/do something like mkfs/losetup -d <dev> causing the losetup -d
+>   	 * command to fail with EBUSY.
+>   	 */
+> -	if (disk_openers(lo->lo_disk) > 1) {
+> +	if (atomic_read(&lo->lo_refcnt) > 1) {
+>   		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+>   		loop_global_unlock(lo, true);
+>   		return 0;
+> @@ -1717,14 +1718,31 @@ static int lo_compat_ioctl(struct block_device *bdev, blk_mode_t mode,
+>   }
+>   #endif
+>   
+> -static void lo_release(struct gendisk *disk)
+> +static int lo_open(struct gendisk *disk, blk_mode_t mode)
+>   {
+>   	struct loop_device *lo = disk->private_data;
+> +	int err;
+>   
+> -	if (disk_openers(disk) > 0)
+> -		return;
+> +	err = mutex_lock_killable(&lo->lo_mutex);
+> +	if (err)
+> +		return err;
+> +
+> +	if (lo->lo_state == Lo_deleting || lo->lo_state == Lo_rundown)
+> +		err = -ENXIO;
+> +	else
+> +		atomic_inc(&lo->lo_refcnt);
+> +	mutex_unlock(&lo->lo_mutex);
+> +	return err;
+> +}
+> +
+> +static void lo_release(struct gendisk *disk)
+> +{
+> +	struct loop_device *lo = disk->private_data;
+>   
+>   	mutex_lock(&lo->lo_mutex);
+> +	if (atomic_dec_return(&lo->lo_refcnt))
+> +		goto out_unlock;
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 909cfc67521d..212cca384d7e 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -281,6 +281,9 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
-+	MTHP_STAT_FILE_ALLOC,
-+	MTHP_STAT_FILE_FALLBACK,
-+	MTHP_STAT_FILE_FALLBACK_CHARGE,
- 	__MTHP_STAT_COUNT
- };
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1360a1903b66..3fbcd77f5957 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
-+DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-+DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-+DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
- 
- static struct attribute *stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
-@@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] = {
- 	&anon_fault_fallback_charge_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
-+	&file_alloc_attr.attr,
-+	&file_fallback_attr.attr,
-+	&file_fallback_charge_attr.attr,
- 	NULL,
- };
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index efc093ee7d4d..cdcc3b919bca 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1773,6 +1773,9 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 
- 			if (pages == HPAGE_PMD_NR)
- 				count_vm_event(THP_FILE_FALLBACK);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-+#endif
- 			order = next_order(&suitable_orders, order);
- 		}
- 	} else {
-@@ -1792,9 +1795,15 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 		if (xa_find(&mapping->i_pages, &index,
- 				index + pages - 1, XA_PRESENT)) {
- 			error = -EEXIST;
--		} else if (pages == HPAGE_PMD_NR) {
--			count_vm_event(THP_FILE_FALLBACK);
--			count_vm_event(THP_FILE_FALLBACK_CHARGE);
-+		} else if (pages > 1) {
-+			if (pages == HPAGE_PMD_NR) {
-+				count_vm_event(THP_FILE_FALLBACK);
-+				count_vm_event(THP_FILE_FALLBACK_CHARGE);
-+			}
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
-+#endif
- 		}
- 		goto unlock;
- 	}
-@@ -2168,6 +2177,9 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 		if (!IS_ERR(folio)) {
- 			if (folio_test_pmd_mappable(folio))
- 				count_vm_event(THP_FILE_ALLOC);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
-+#endif
- 			goto alloced;
- 		}
- 		if (PTR_ERR(folio) == -EEXIST)
--- 
-2.39.3
+So, both add, dec and test are inside the lo_mutex, then there is no
+need to use atomic value.
+
+Thanks,
+Kuai
+> +
+>   	if (lo->lo_state == Lo_bound && (lo->lo_flags & LO_FLAGS_AUTOCLEAR)) {
+>   		lo->lo_state = Lo_rundown;
+>   		mutex_unlock(&lo->lo_mutex);
+> @@ -1735,6 +1753,7 @@ static void lo_release(struct gendisk *disk)
+>   		__loop_clr_fd(lo, true);
+>   		return;
+>   	}
+> +out_unlock:
+>   	mutex_unlock(&lo->lo_mutex);
+>   }
+>   
+> @@ -1752,6 +1771,7 @@ static void lo_free_disk(struct gendisk *disk)
+>   
+>   static const struct block_device_operations lo_fops = {
+>   	.owner =	THIS_MODULE,
+> +	.open =         lo_open,
+>   	.release =	lo_release,
+>   	.ioctl =	lo_ioctl,
+>   #ifdef CONFIG_COMPAT
+> @@ -2064,6 +2084,7 @@ static int loop_add(int i)
+>   	 */
+>   	if (!part_shift)
+>   		set_bit(GD_SUPPRESS_PART_SCAN, &disk->state);
+> +	atomic_set(&lo->lo_refcnt, 0);
+>   	mutex_init(&lo->lo_mutex);
+>   	lo->lo_number		= i;
+>   	spin_lock_init(&lo->lo_lock);
+> @@ -2158,7 +2179,7 @@ static int loop_control_remove(int idx)
+>   	ret = mutex_lock_killable(&lo->lo_mutex);
+>   	if (ret)
+>   		goto mark_visible;
+> -	if (lo->lo_state != Lo_unbound || disk_openers(lo->lo_disk) > 0) {
+> +	if (lo->lo_state != Lo_unbound || atomic_read(&lo->lo_refcnt) > 0) {
+>   		mutex_unlock(&lo->lo_mutex);
+>   		ret = -EBUSY;
+>   		goto mark_visible;
+> 
 
 
