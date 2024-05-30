@@ -1,197 +1,236 @@
-Return-Path: <linux-kernel+bounces-195291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B935D8D4A20
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:16:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C67518D4A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7549428258D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814AB282A1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B75917165B;
-	Thu, 30 May 2024 11:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557F61761B5;
+	Thu, 30 May 2024 11:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="qtmx7vsK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="K0gen0ZI"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="PD4ux0nO"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2069.outbound.protection.outlook.com [40.92.19.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39266F2F7;
-	Thu, 30 May 2024 11:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717067758; cv=none; b=a8WQjEO+WfMOrEEd2Iq2olpK8paXTiyw5whdzr8j8mQqVG+3ATkftjb9QpdpDp1VmqMpbqZaFyd29naiCRPERKPbiVZdymNKsVFJ8M0ODDFLyeqIBXyLIErEASTA3v7JFw25mnia6MDfQPj1VZ7nimqkrHaTbVN34HZ6z0js7b8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717067758; c=relaxed/simple;
-	bh=R42PczzKa7eac3Uha0vaNmasKPFbkSkUjUaX+LZrDvs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=T2xJwtDkFdd5jWtDdRVcqdji+YJEeTpuHWR+B5E9XJIsTxMTEXx03JAMK8R3H6UBfjysU8E9hJnq3QYq6KNaL4igSfZf6HBeEBcMdu3OmARKqzOAsq9mq4Z4l+vaW3+VPqLLbakQEpX3kO3z7jVDRneHQxShf3hy7DBmk4hUcKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=qtmx7vsK; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=K0gen0ZI reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1717067754; x=1748603754;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=fYu+5t+JlGWTHQASo0nexcuu+v0mU2m4TPdq4G90wkM=;
-  b=qtmx7vsKTtJLwWjjOOdGmThrJVTFiErbNOJIUFkXhk4RneLpxVnlHy3N
-   iApLWxdep0/kvVwKsyxl2bIpRKKG3UXomh0P5dqKuunwsydoH5KS1YiA4
-   79MdvmnanEzI0GneSakn4aSKJLd/51m6P1URxxAeXTIBAG7VumNvSd9MY
-   lB1xgyKpbqI5ZK+9SjMOl/UobXdAu3BkQgit+0sO3DspoxkdO8ceOS6NG
-   DSn1jlA37irP+rCfVqY4EqUL0IrWQNUY7QRk7EBVQNDjISbzlGva0SSqa
-   a4OfWpuaQwo1xbYBEqye+GPBRKHann6rzho3kiEzjfPIRNeDyeu3IQXzl
-   A==;
-X-CSE-ConnectionGUID: 63ckMWUQQ6GWRkpx0NfERw==
-X-CSE-MsgGUID: eVlUc6KDRM6j0/U+nFunSw==
-X-IronPort-AV: E=Sophos;i="6.08,201,1712613600"; 
-   d="scan'208";a="37143491"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 30 May 2024 13:15:51 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ECB3C16622B;
-	Thu, 30 May 2024 13:15:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1717067747;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=fYu+5t+JlGWTHQASo0nexcuu+v0mU2m4TPdq4G90wkM=;
-	b=K0gen0ZID7z+kOT+uc2/wFMwZs08Bcy/C2bbqvjXsVKtPbzy1IcTlt+3wwNQbTB4Bw/RRq
-	gGbAeFDsPq6dgpyqk9fDXKiHmm9OARR4JghFFBw0XLpz8yIOWochETzBjGhOsuotOHmc0a
-	sIgmmgl7rFhNdx9Xrn1YDV+diPB6S0f+B/VK5MBb3RquLS1Z2x2GBcnTihDC8TZAVn1egm
-	/M/lbsKPb6iPJ1DeFdlK1HQ+gPi/vdz1UzgMltggdEOvTa6rtscXGLx8FK8HfPXdyWIoHw
-	jPqG0ySKXlYIC/nRha66SyxAqDWPonJp9dFRn0/NdPtqKPEBl+Xrb+D6Mp/vNA==
-Message-ID: <c76e17c950aae6083b9a75b2080d5e87b8145d14.camel@ew.tq-group.com>
-Subject: Re: [PATCH 8/8] gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH
- interrupt type
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gregor Herburger
- <gregor.herburger@tq-group.com>,  linux@ew.tq-group.com
-Date: Thu, 30 May 2024 13:15:46 +0200
-In-Reply-To: <876eb824-2898-4ffe-9d0e-69dd0781729f@moroto.mountain>
-References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
-	 <2c265b6bcfcde7d2327b94c4f6e3ad6d4f1e2de7.1716967982.git.matthias.schiffer@ew.tq-group.com>
-	 <8689fbcd-3fa3-410b-8fc9-7a699bf163b8@moroto.mountain>
-	 <0e971f0b885bd360e33ef472d96e3d9e0ab56405.camel@ew.tq-group.com>
-	 <876eb824-2898-4ffe-9d0e-69dd0781729f@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F34177992;
+	Thu, 30 May 2024 11:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717067940; cv=fail; b=Vkl900UoYt/hzXxcmKCDZKISvZ7J1QU2WEJU2XghVy9PENmZzcxyrA9zPhRnVo58cLWVf/djVpirudlYvruUNBW8t8cSLM+v1osHD/J/bM6GN94fdQ13Mm+sQeb0r9Zi5YPcMN777BBasaRjKRirSIW91sBJQJKQCWtnPuxXlnc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717067940; c=relaxed/simple;
+	bh=plexqSYVeCU70nZK2wY2GUWJYNmc3QyenGr2Sz+az0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AwicogPzuOTDf4sgGsYtWGaKr/Sf97+5nrGDcshv+8dNU5jsPlAmjGei7SI83wDbEK3uczzAmQ7WcGTUcV0G1oNIXLj1zfUem/W99QRtxBASZKtpZ9I29ueOJPN5xAKj0yc8fnWqtwsX1s5UaVdCEEi64POs7fAwbnWZYzb6v+k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=PD4ux0nO; arc=fail smtp.client-ip=40.92.19.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=X9G8bValoywm89fbKdMFkjniOvaYUBkzEtkNw69fQfPxgURpa9EDxqRuZezF54co5J8CwhOmhUqaRzLPvgAZ+i5Al2rvALJxRApkB2b5rFJzkN8V1AncSWCvcSf3UN85rz3gj/wskSK1isYa1wDQKt38GbTCqxdRqcyIMy9WSqK5GP3sHAlXI4oCWv9GeuchNghwMGca4DkZdy/HllniDVb8M4GOZlHlUmrcYQ3u7w+WZAHpVe0/Z6y3sMNeStcCTk8J2hnxCz+/vsjd2HQjLAIhRtLVGmkbnXpqIpBhlCBB26KZHQ7JjjIMTpQMmv7icDVrLss6+/Xe6FmqHT1Pcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c1g3dcYVIGes9Pbp4hU9DcM/1/dmc5+Ay2jCxUQHq08=;
+ b=az3Lq4BZcFQQhPwLvexqoqyE0zAZ4z9JXPq8slkEed9TZbbm0Ptw8Cky5Ot46lpUKzy3Iu8W/chuW1C7ilPSxq/B8xaUEra9SWjd6e1f+3Pp7gOm2Jrd7kMwLmuCqT8ec4wJAO4nwvEqrn7YvU8YuzIOPMCzg1uYP0EhwrHJk6aIWTepH/1bgXTfdLW8OxM6b/GF+vPrqtewW4YKh7ZZ/TT94PBV7/2FWxR0KS7iPBEP/C4oWGajShT7c2SJMknVsMwyhUfkiRcDyyJG8I3yOcrFymk0s59jqh+2DhUVcEepOzVnPcqNzhgyLrMD0rFdWLL+24HI7ZZjPBMjkZoHkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c1g3dcYVIGes9Pbp4hU9DcM/1/dmc5+Ay2jCxUQHq08=;
+ b=PD4ux0nOzYGSZi497ao/x+wqg4Qa2PUGS58TWKc4bnKA5QWIkY5GfLOO/IdFJEjydgiKXKxOUUsNmaZIWVdbVFdAvm+EONFmnQ/TQGtLxljU+jDqSkJQVYUjkEqW6uBFJpTqQORAE2NjPSZzMFOxnFzf5oXaVdCWMa3vFs2x3n7BiY0eWG8Kq1PmjwPYzwPH+N/QyGRJnWzRvbb5k0dU3XcaQ5H8ttlk17FJ41uWLFaqgRYHjtinDR9zWTuBxc4rZ0AuXiegsXT4y+DSBF2xMprgfWXA6C0gMvm9e0KGIuGSPrhzWalxtmyvSLsZ+sb8N/xewuSF/DzRm9SCiywO1w==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by CH0PR20MB6420.namprd20.prod.outlook.com (2603:10b6:610:191::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
+ 2024 11:18:56 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%5]) with mapi id 15.20.7611.030; Thu, 30 May 2024
+ 11:18:56 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Jisheng Zhang <jszhang@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: Inochi Amaoto <inochiama@outlook.com>,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: dts: thead: th1520: Add PMU event node
+Date: Thu, 30 May 2024 19:18:35 +0800
+Message-ID:
+ <IA1PR20MB4953BA3638A0839FCB0EF86BBBF32@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.45.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [Ybx/Ue/KoV28DTWdmY2k1N2+n6V1EsDwYJn3psc3r/Y=]
+X-ClientProxiedBy: TYAPR01CA0007.jpnprd01.prod.outlook.com (2603:1096:404::19)
+ To IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240530111836.297712-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CH0PR20MB6420:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71d15887-b981-4235-1584-08dc809a4ba4
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|440099019|3412199016|1602099003|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	hIId+rXnGJGDh9GNR+pu/JuIJShmIaFhXi1iGqj1e85J5K7YUA/HI7al0oNjYCJXU1zh07f7nPuX9v4O4OAyGakxT8etqmTlvTWq+mbv2A8MYUOryC1cHJf2wKxQ/+WwoSDyCkPAzGbhAK9yzSHNh7FDKnTq9q8jjYTR+K85tEex9PHKs1OjG2ePn9AxQ+cmo84dvKl3NHayMqJ/Ua3Rr8fz3jXR3CjvsvLN3wIjymPGPtYh90jq0rO0vBJqthGvVhMqexSx45zB69SGIPg12tPqTZVEB9xnkpfA7R133AS9w2Vw3P/g6abtUY2WioCqjJUw/PYl2YSdNBQQ4Q39lNKWQn/tvWhYmO/7owRKbIrbtLcctHjNzZynmM1Kk87YaHJ9+MdA9tdNt/TccwJdXx5bkgKSc+NKiAQgh+ev34xr17jgbPdvBFbt1IYc/orgfeRAvNqYf/coDxBsfMFo4AzhQR+HfkElKUBGM/Q30U98JJzsEsi9P+DxGkOgUi+X4J+ZkmDrDHcUKkHMfOT7WlNSZU1HT+CnCdmUWcCyfsd2C+Mnka/+chPqi93jrrlxbMfqIK6hYdXlcoG39R/DJ9f6W0QHBZdGq/ybXYIVEGLbOQFT6ZUlexRGxlJGi1bF62fGvLwB4XLUt+bpdmhj0hV3HaYgWH1PuPUEVkpzADnQjZB/MyOvxt7vTG0W30aA
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?A/SBS4HDsYcrWpuysI2HVpn+aSbfGuCBhO/b2c+vU5ZLzYT87o489cBWMAI4?=
+ =?us-ascii?Q?KJFg0jVKlT8j2Blh6O504Mmri0vWIX8MWurRujAuAME7wOWP+DZOOucqY3AK?=
+ =?us-ascii?Q?BFORUvMZGDU3/rAy1D/QBV+XeXrwW1SBdq0onlnpwMsurgt6tlU1iE/iqdbc?=
+ =?us-ascii?Q?17hibpqn1AezU4ztefpEuwCIFnbr2VEIJ5/R3tb0QXOCqDteSc+OW0gaymO0?=
+ =?us-ascii?Q?m3fOuUoCfPZUV5w6hvXuGWQ7ENZJmOIDKt60CiEFZ3C3QFJC9egQyRt1bfeh?=
+ =?us-ascii?Q?3FWmm4014c+V2kk8nNzaT11La7IHl5uiphXjVsdQ/fYkIpND5+LbdTuPYk/h?=
+ =?us-ascii?Q?L+bl3QjueKDXsfQdKS4CJmUS+Fmw9WMsSL3QhFdWLCvHps0GNcaJCHg7WStf?=
+ =?us-ascii?Q?4Qy3bkYcvq0bOQmvS/dTi2NhFDXMVzizRHyVltq7BKdYEUVZBo3xO5lk5jo7?=
+ =?us-ascii?Q?2zz+W4oGn1iXRyBVh8HJF/oUWA0IMoewRiSmGGZAD56rSJzO/4RmDufkdrLs?=
+ =?us-ascii?Q?FRr+DyVoQRDqLNO87P5opUb+ddBaxfsooK7u/tTAAOO625RyLZ40nR0uXVm7?=
+ =?us-ascii?Q?NQSkjtC683aKFKV5gPxDBdEmrAuS7hL0grdgT0h4N8w/LkCEUXyKR8+Fcgs8?=
+ =?us-ascii?Q?AsLvtdTu1BzwKrtSDgbLWPMvpH1SRU0cE0Y51IKb48MDJaQiO7Qld1j0KhVW?=
+ =?us-ascii?Q?7I960oHs2F7sqY4M2rvi6NWR3fDc0isw1UnGxwW1ppW1yBvmCGs4MrbsXb61?=
+ =?us-ascii?Q?75zziuVPnYoQyZg95q/r4QJIkNFZt67Z+oDhiSL/SByf3fY/FCHMNqX9rQ3H?=
+ =?us-ascii?Q?jfSc95/ULxSxd+MrS3IvA8eYY943FB5nEO1GxFvP063If71ZutV2TDq4TV4c?=
+ =?us-ascii?Q?WLFgEvN+iiewmXUFakup3B2e0J4Io76ZZwKNnL1RUCzNVDQCCy1BvJ37+S4g?=
+ =?us-ascii?Q?iEUwgaz03DhNB2D3R71vN+0DGOthg6DvU3S6EaQGobl7M8t6N5kBoc44pwWu?=
+ =?us-ascii?Q?fxvvVJICpDZJhbH+wmnHGSvC04FvggRekcBpl+CFd1qOEG3qB9w6VMsWSIs0?=
+ =?us-ascii?Q?Htsd46ssAcGx9jP1KLilqg9RTqRszeHdFg9LrkmdKWNLnDbch752H1EPG8pz?=
+ =?us-ascii?Q?S29Pgw+hBvPbhp1LCaCeMjx1LVZWSpEs5wnCZjpk4fNtlSp9OOaSPxOrmHkx?=
+ =?us-ascii?Q?dE1HsjlPI9zAnoXXT8DyfdkhDL39V8guWY73kRffipQK66xr5L/pxsGAWbe6?=
+ =?us-ascii?Q?PKTlJCqNKbcHysNALEzq?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71d15887-b981-4235-1584-08dc809a4ba4
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 11:18:56.5347
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR20MB6420
 
-On Thu, 2024-05-30 at 13:22 +0300, Dan Carpenter wrote:
->=20
-> On Thu, May 30, 2024 at 10:39:25AM +0200, Matthias Schiffer wrote:
-> > On Wed, 2024-05-29 at 17:38 +0300, Dan Carpenter wrote:
-> > >=20
-> > > On Wed, May 29, 2024 at 09:45:20AM +0200, Matthias Schiffer wrote:
-> > > > diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.=
-c
-> > > > index c957be3341774..400415676ad5d 100644
-> > > > --- a/drivers/gpio/gpio-tqmx86.c
-> > > > +++ b/drivers/gpio/gpio-tqmx86.c
-> > > > @@ -126,9 +126,15 @@ static void _tqmx86_gpio_irq_config(struct tqm=
-x86_gpio_data *gpio, int hwirq)
-> > > >  	unsigned int offset =3D hwirq - TQMX86_NGPO;
-> > > >  	u8 type =3D TQMX86_INT_TRIG_NONE, mask, val;
-> > > > =20
-> > > > -	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED)
-> > > > +	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED) {
-> > > >  		type =3D gpio->irq_type[hwirq] & TQMX86_INT_TRIG_MASK;
-> > > > =20
-> > > > +		if (type =3D=3D TQMX86_INT_TRIG_BOTH)
-> > > > +			type =3D tqmx86_gpio_get(&gpio->chip, hwirq)
-> > >                                                             ^^^^^
-> > >=20
-> > > > +				? TQMX86_INT_TRIG_FALLING
-> > > > +				: TQMX86_INT_TRIG_RISING;
-> > > > +	}
-> > > > +
-> > > >  	mask =3D TQMX86_GPII_MASK(offset);
-> > >                                 ^^^^^^
-> > > >  	val =3D TQMX86_GPII_CONFIG(offset, type);
-> > >                                  ^^^^^^
-> > > >  	_tqmx86_gpio_update_bits(gpio, TQMX86_GPIIC, mask, val);
-> > >=20
-> > > The offset stuff wasn't beautiful and I'm glad you are deleting it.  =
-My
-> > > understanding is that a hwirq is 0-3 for output or 4-7 input.  An off=
-set
-> > > is "hwirq % 4"?
-> > >=20
-> > > There are a bunch of places which are still marked as taking an offse=
-t
-> > > but they all actually take a hwirq.  For example, tqmx86_gpio_get()
-> > > above.  The only things which still actually take an offset are the
-> > > TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() macros.
-> > >=20
-> > > Could you:
-> > > 1) Modify TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() to take a hwirq=
-?
-> > > 2) Rename all the "offset" variables to "hwirq"?
-> >=20
-> > Unfortunately, the TQMx86 GPIO is a huge mess, and the mapping between =
-GPIO numbers and IRQ numbers
-> > depends on the hardware generation/variant. I don't think it is possibl=
-e to have GPIO numbers and
-> > hwirq numbers differ, is it?
-> >=20
-> > Currently, the driver only supports COM Express modules, where IRQs 0-3=
- correspond to GPIOs 4-7,
-> > while GPIOs 0-3 don't have interrupt support.
->=20
-> I'm so confused.
->=20
-> So "offset" is the GPIO number and "hwirq" is the IRQ number?  If the
-> IRQ numbers are 0-3 then why do we subtract 4 to get the GPIO number in
+T-HEAD th1520 uses standard C910 chip and its pmu is already supported
+by OpenSBI.
 
-The current naming in the driver is confusing and I'll fix that in the next=
- round of refactoring
-patches.
+Add the pmu event description for T-HEAD th1520 SoC.
 
-Generally, hwirq =3D=3D GPIO number (I have not found a way to change this =
-mapping - if there is one,
-I'd be interested to try if it makes the code less confusing). "offset" cur=
-rently always refers to
-some shift in a hardware register. In tqmx86_gpio_get and tqmx86_gpio_set, =
-offset is a GPIO number.
-In all functions dealing with IRQs, offset is an IRQ number (which is diffe=
-rent from the hwirq
-number).
+Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+Link: https://www.xrvm.com/product/xuantie/4240217381324001280?spm=xrvm.27140568.0.0.7f979b29nzIa1m
+---
+ arch/riscv/boot/dts/thead/th1520.dtsi | 81 +++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-Matthias
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index d2fa25839012..3c9974062c20 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -122,6 +122,87 @@ l2_cache: l2-cache {
+ 		};
+ 	};
 
++	pmu {
++		compatible = "riscv,pmu";
++		riscv,event-to-mhpmcounters =
++			<0x00003 0x00003 0x0007fff8>,
++			<0x00004 0x00004 0x0007fff8>,
++			<0x00005 0x00005 0x0007fff8>,
++			<0x00006 0x00006 0x0007fff8>,
++			<0x00007 0x00007 0x0007fff8>,
++			<0x00008 0x00008 0x0007fff8>,
++			<0x00009 0x00009 0x0007fff8>,
++			<0x0000a 0x0000a 0x0007fff8>,
++			<0x10000 0x10000 0x0007fff8>,
++			<0x10001 0x10001 0x0007fff8>,
++			<0x10002 0x10002 0x0007fff8>,
++			<0x10003 0x10003 0x0007fff8>,
++			<0x10010 0x10010 0x0007fff8>,
++			<0x10011 0x10011 0x0007fff8>,
++			<0x10012 0x10012 0x0007fff8>,
++			<0x10013 0x10013 0x0007fff8>;
++		riscv,event-to-mhpmevent =
++			<0x00003 0x00000000 0x00000001>,
++			<0x00004 0x00000000 0x00000002>,
++			<0x00006 0x00000000 0x00000006>,
++			<0x00005 0x00000000 0x00000007>,
++			<0x00007 0x00000000 0x00000008>,
++			<0x00008 0x00000000 0x00000009>,
++			<0x00009 0x00000000 0x0000000a>,
++			<0x0000a 0x00000000 0x0000000b>,
++			<0x10000 0x00000000 0x0000000c>,
++			<0x10001 0x00000000 0x0000000d>,
++			<0x10002 0x00000000 0x0000000e>,
++			<0x10003 0x00000000 0x0000000f>,
++			<0x10010 0x00000000 0x00000010>,
++			<0x10011 0x00000000 0x00000011>,
++			<0x10012 0x00000000 0x00000012>,
++			<0x10013 0x00000000 0x00000013>;
++		riscv,raw-event-to-mhpmcounters =
++			<0x00000000 0x00000001 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000002 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000003 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000004 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000005 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000006 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000007 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000008 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000009 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000000a 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000000b 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000000c 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000000d 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000000e 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000000f 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000010 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000011 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000012 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000013 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000014 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000015 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000016 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000017 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000018 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000019 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000001a 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000001b 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000001c 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000001d 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000001e 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000001f 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000020 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000021 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000022 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000023 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000024 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000025 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000026 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000027 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000028 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x00000029 0xffffffff 0xffffffff 0x0007fff8>,
++			<0x00000000 0x0000002a 0xffffffff 0xffffffff 0x0007fff8>;
++	};
++
+ 	osc: oscillator {
+ 		compatible = "fixed-clock";
+ 		clock-output-names = "osc_24m";
+--
+2.45.1
 
-> _tqmx86_gpio_irq_config()?
->=20
-> 	unsigned int offset =3D hwirq - TQMX86_NGPO;
->=20
-> And again, it's just weird to call:
->=20
-> 		type =3D tqmx86_gpio_get(&gpio->chip, hwirq);
->=20
-> where we're passing "hwirq" when tqmx86_gpio_get() takes an "offset" as
-> an argument.
->=20
-> regards,
-> dan carpenter
->=20
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
