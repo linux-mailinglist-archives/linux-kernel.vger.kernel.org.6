@@ -1,184 +1,173 @@
-Return-Path: <linux-kernel+bounces-195294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712CA8D4A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:20:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3245D8D4A61
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C3128308D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:20:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D429B22AF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0493317D36A;
-	Thu, 30 May 2024 11:19:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7E617E460;
+	Thu, 30 May 2024 11:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMnDA+mM"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B7D17836D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF9B6F2E2;
+	Thu, 30 May 2024 11:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717067946; cv=none; b=lZPFCs6ZL3ZLVhBB5vpXGDF1CUJ+02QZrkiOIUmqwA0mmCPD2r7W0tLsLq4ehnOtB+mhIoT6MKyJ+UbvP1yGeg3PB+jANiEMQT3CbFAT2farMDjrKvnedCBisvFnNLULM0ZzO6FaGlgT+gI5US/xJOIOMoboinWFy7Rbseu+JXM=
+	t=1717068007; cv=none; b=N1lCkRokB69P7ZSyrhzXk3R3KRENeRCQlPAD9TBmKE+Lvnk+/+XsNeRz/7GStrb65qKivoK/qgVrX0najGTyGxo4neXAXhL3AVQTfDoabogPEcNbDRYNa0NpURlDYNBEkWa3JF4bZwZVXD73SQDWYzkBScDEZxhIUWDj9vGZGh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717067946; c=relaxed/simple;
-	bh=TZtErRrn9BuJ/shP328m+ALlU8XeK7qyK1b+NpnFhSI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Anq88AQbwLf/KstwvSN+hEYDDCL3JIgFw43sxbpTu5IBahQCA6T83+30Z3YR/hCUjbr7kYdef4s1BKpJ8+oXT0qu+3dAWd+5PBAdxhfmU8k+60GUXOBHQig1FL/aydDX0gr2ETIA7u0CNLTiHx6FFgjsfnGxSpPz075IwsnvgDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eada05bd3bso92300739f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:19:04 -0700 (PDT)
+	s=arc-20240116; t=1717068007; c=relaxed/simple;
+	bh=YDOl/Eq4EU32U8REOXA1aLCIyDHNFvkWJvOdwbcP7JA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gSNyaZY5UfMtt2iyZ8vwLv/yvsUp8OnY96/YHI7yL7NQgMjXDRBNMcQX+kDGZv692jN4FRqFu2cY3cIx5nheC7BiX1RG+tMsk8/KpFZvvnbEhvPZ22RvbgivS/8cB7HDOVNMqsPV1h439SuCZYlW0vnrvaDQTcdTmfeNz89ERNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMnDA+mM; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1f4a52b9413so6390675ad.2;
+        Thu, 30 May 2024 04:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717068005; x=1717672805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z8dJKE69s5+86iqiKT1v7IFgnofzj53z+mkIUUuty68=;
+        b=TMnDA+mMdV4bZkMZAb9nIvcwACBSlOM9kM5GC+yxIzU7+2tgTlhjHgAhpJqHuwHLN6
+         spZOivSs6iQnfZ/uP5ChenUi825P6SY/RkjoUNx64BmRKnmD/ktkwsYvnOS40qebLDCh
+         jCFa9xQ0fsLuZL9JqnxNGXkey+1fV7JtX90cxRnPvryMdYSG6HGQMUQ4rB/Zy9aWx93s
+         /H7xy0c74yPe4jojUHSqQox6t/FPp/6uL9txE2ZuR+80T+jiAV4WPC3O9Q/aXYdja19Q
+         kil8/Ic2es2x3iogpye6zlwN/ynFUBt5eiNeIuTN5gseelL+vgximjSeTyQFYEUVvk4a
+         PZKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717067944; x=1717672744;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r1L0yw6JjJQlCzbvwK7356fjD9g4ArNEcx738vKMeXw=;
-        b=me1Cyk87j7nyaqGMapSIkHdGW3z0apqtZLGMOukoZhDBu0Y2up6yFJzhxCFDj2Ihy7
-         sgRvzgMteuEDk3+cWvWfr4iWrtkZ3fJ3uHGYJKiiv7Nub1LmO1cXBldE63s3uEZXdDWT
-         svwEZsrlpLrNRbUBhAHoQhUg2i8/KvuqEXhAvZXOq2dYpQCk4Rk3VIn/Vl8SU+bGVSxR
-         s235nMOwcn+WXwaim+8412auyOkueb1U1V0RFK5dEy2tbc05GYizhDtezLSdMlGqDqsE
-         UOUpR5/+60hZbkcKBMCLrs69JkUbuPz4miN6Q/zSaavgGaDSkjNGVABgqAew7oKbSQ6Z
-         0XwA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6LffoUnhkFoo/IyJ94KP2Ce4dJQHj4Et3CkIG5YuX4pmo5QREb5ALoRi8WxH4xYk3+8Ig6PV8TIGzbygA/87H6IAWbQpN06w0LOIL
-X-Gm-Message-State: AOJu0Yw2nqZZ7sEmN+r9iBIwBwHiYZvF4qkp518egjyoU7GNGHSvA5yT
-	iePiJR2jrwbZGo8u0MUfuzHzxos32TB5iroxncOTqFxhfe5LzovypeXE3jx0wvVkAdbm3ojtSC+
-	mR/PoPXM/s/Is1VIKM4W1fzXj9NgJ9DAp6Cqsjx/Hs7iapmfC/HlpTGU=
-X-Google-Smtp-Source: AGHT+IGoruQB8wc9P6Fc34Pgy2yGZlJ0WxM82Qhla7Kg4rsoY2Qau3B865zduG5CuwoWwkr18e5imYir+RPrwWNGzzhIQV5BXKPg
+        d=1e100.net; s=20230601; t=1717068005; x=1717672805;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z8dJKE69s5+86iqiKT1v7IFgnofzj53z+mkIUUuty68=;
+        b=RrB/R3HWLt6Ylkj6Hgxxq6KFs3QN6qVtP5f0JzPX/9Ump7iAAksun4tqaATTwpNXzD
+         B/GfsJwf4flzK7GgwcAR2ZnoVhnwJNZwxaB4A7i6zXJ8eB8pE7WP6z4mxg9b3+0aDfBX
+         ubCDx0VacUyTmv31Apji7V7ioczmPy1NEXDiT28zCOmyI02fdixxc9f5F+sXlhEbtEl8
+         D7ax6W+vIcwCY/g7Id8b8DbfuSagRBTN2trEBz1X5JfPELm70ilAne0ytSneuT0Xq/cJ
+         CZXGNKxBdXAiz9DlpJamGeXEShWgXPgDAVaC/fT5BP2WXXkmmSE8Vi5j2DTw6nNpKW9b
+         sqLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUl/N00iNwsLN16HXvBjqyrK82HKbuKKj/LpwSFWXvW2yLihJ6vtKCDVAustQP7a6TAfBcJzjoEEmVdKEa0Rf3P0mN11fzvEruzRZv5zpXZ6mCvLMyHFUNZCz24P1AJ5rxuA+nGuv5cX/0gHe/WiKWvMr+Jw7Hw5kynwCr9HC8j16ReszdX9wcymVPYKoq6BVA9wP+xuf+fCob+58ZpiDydu1CHjAGPLZcSCgCJ0Hg6l8nVZy88uEd1dKGugkCU9S5bEJpqjrEW0ZadcJKZOtp
+X-Gm-Message-State: AOJu0YyselM/f4vGUgJgnNJhLVaURHjlvK4660SXa6kkIz1cPdgoA/X6
+	GJWysucJyLWgFERmRcW8cMdXj1VX9Z6Fvt3EmkwwtyRtC8CilGKT
+X-Google-Smtp-Source: AGHT+IHnnxtV+JRyOSR711uh0rY3WubRdOsfI4Q80RTI+mV/CYp9f7gUkptu0Yhyjwe8jY0JUuOaAA==
+X-Received: by 2002:a17:903:22cb:b0:1f3:50e7:36db with SMTP id d9443c01a7336-1f6199310f7mr20627105ad.48.1717068004916;
+        Thu, 30 May 2024 04:20:04 -0700 (PDT)
+Received: from localhost ([212.107.28.52])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c754d20sm116341765ad.32.2024.05.30.04.20.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 04:20:04 -0700 (PDT)
+From: Celeste Liu <coelacanthushex@gmail.com>
+X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
+To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	Anup Patel <anup@brainfault.org>,
+	Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+	Sven Joachim <svenjoac@gmx.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Mykola Lysenko <mykolal@fb.com>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sh@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lennart Poettering <lennart@poettering.net>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Celeste Liu <CoelacanthusHex@gmail.com>
+Subject: [PATCH 0/6] defconfig: drop RT_GROUP_SCHED=y
+Date: Thu, 30 May 2024 19:19:48 +0800
+Message-ID: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd84:0:b0:36c:5c1b:2051 with SMTP id
- e9e14a558f8ab-3747dff6adcmr1315115ab.6.1717067944216; Thu, 30 May 2024
- 04:19:04 -0700 (PDT)
-Date: Thu, 30 May 2024 04:19:04 -0700
-In-Reply-To: <20240530103435.3077-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dedcea0619aa08aa@google.com>
-Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
-From: syzbot <syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com>
-To: edumazet@google.com, hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, radoslaw.zielonek@gmail.com, 
-	syzkaller-bugs@googlegroups.com, vinicius.gomes@intel.com, 
-	vladimir.oltean@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2134; i=CoelacanthusHex@gmail.com; h=from:subject; bh=YDOl/Eq4EU32U8REOXA1aLCIyDHNFvkWJvOdwbcP7JA=; b=owJ4nJvAy8zAJfY4pvNJRPo6U8bTakkMaREJlycx/Wu4/Y1tQ+K7zVu27px3o+2Lk2ztb/Ozp zgqUpTP2XztKGVhEONikBVTZBHb+fT1stJHH5bxmsyAmcPKBDKEgYtTACbycj7DP527VsIyk9XS 03fzz7u7fEfWj2MbLsg93Phzuu9s68m3tf0Y/jtvNfKVfy57aprVB27vy3ZWNnJqNsYHao9/4hZ SOJ4dzggA3yZObA==
+X-Developer-Key: i=CoelacanthusHex@gmail.com; a=openpgp; fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
+Content-Transfer-Encoding: 8bit
 
-Hello,
+For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+needs an RT budget assigned, otherwise the processes in it will not be able to
+get RT at all. The problem with RT group scheduling is that it requires the
+budget assigned but there's no way we could assign a default budget, since the
+values to assign are both upper and lower time limits, are absolute, and need to
+be sum up to < 1 for each individal cgroup. That means we cannot really come up
+with values that would work by default in the general case.[1]
 
-syzbot tried to test the proposed patch but the build/boot failed:
+For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
+can only be enabled when all RT processes are in the root cgroup. But it will
+lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
 
-lost connection to test machine
+Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
+support it.[2]
 
+I leave tools/testing/selftests/bpf/config.{s390x,aarch64} untouched because
+I don't whether bpf testing requires it.
 
-
-
-
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.21.4'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build1459151336=3D/tmp/go-build -gno-record-gc=
-c-switches'
-
-git status (err=3D<nil>)
-HEAD detached at 4f9530a3b
-nothing to commit, working tree clean
+[1]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+[2]: https://github.com/systemd/systemd/issues/13781#issuecomment-549164383
 
 
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:32: run command via tools/syz-env for best compatibility, see:
-Makefile:33: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D4f9530a3b62297342999c9097c77dde726522618 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20231220-163507'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
- github.com/google/syzkaller/syz-fuzzer
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D4f9530a3b62297342999c9097c77dde726522618 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20231220-163507'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
-og github.com/google/syzkaller/tools/syz-execprog
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D4f9530a3b62297342999c9097c77dde726522618 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20231220-163507'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-stress=
- github.com/google/syzkaller/tools/syz-stress
-mkdir -p ./bin/linux_amd64
-gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -fpermissive -w -DGOOS_linux=3D1 -DGOARCH_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"4f9530a3b62297342999c9097c77dde726=
-522618\"
+Celeste Liu (6):
+  riscv: defconfig: drop RT_GROUP_SCHED=y
+  loongarch: defconfig: drop RT_GROUP_SCHED=y
+  mips: defconfig: drop RT_GROUP_SCHED=y from generic/db1xxx/eyeq5
+  powerpc: defconfig: drop RT_GROUP_SCHED=y from ppc6xx_defconfig
+  sh: defconfig: drop RT_GROUP_SCHED=y from sdk7786/urquell
+  arm: defconfig: drop RT_GROUP_SCHED=y from bcm2855/tegra/omap2plus
 
+ arch/arm/configs/bcm2835_defconfig         | 1 -
+ arch/arm/configs/omap2plus_defconfig       | 1 -
+ arch/arm/configs/tegra_defconfig           | 1 -
+ arch/loongarch/configs/loongson3_defconfig | 1 -
+ arch/mips/configs/db1xxx_defconfig         | 1 -
+ arch/mips/configs/eyeq5_defconfig          | 1 -
+ arch/mips/configs/generic_defconfig        | 1 -
+ arch/powerpc/configs/ppc6xx_defconfig      | 1 -
+ arch/riscv/configs/defconfig               | 1 -
+ arch/sh/configs/sdk7786_defconfig          | 1 -
+ arch/sh/configs/urquell_defconfig          | 1 -
+ 11 files changed, 11 deletions(-)
 
+-- 
+2.45.1
 
-Tested on:
-
-commit:         13c7c941 netdev: add qstat for csum complete
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.=
-git main
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D98a238b2569af6d
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Da7d2b1d5d1af83035=
-567
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-
-Note: no patches were applied.
 
