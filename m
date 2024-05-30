@@ -1,911 +1,472 @@
-Return-Path: <linux-kernel+bounces-195320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EACA8D4B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 063A68D4B0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9581F23064
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867E81F23854
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766BF17836D;
-	Thu, 30 May 2024 11:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9460917C7D3;
+	Thu, 30 May 2024 11:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MvcBNxYE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="G3xJR2wJ"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663F61761BC;
-	Thu, 30 May 2024 11:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8551761BC;
+	Thu, 30 May 2024 11:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717069976; cv=none; b=hWiT5cB4dlTx1IcZw5UrLXofNERAdcYp2lQppLXTC11tjYgWtPvAJtsjATMIzn4LShr9RUHkdmvyWxtZjwiCeCxsUtoQTgaTihf8TnTQJcrzRLDydvDuGfPLVf+pfCpa+fN2vYKnQE1lJGCVJNDzFdT/hORue+po3PhYTNQuglE=
+	t=1717070071; cv=none; b=PqFU9gUPoQICjsfMEmYrplf8StnV0UOsOT635EMJwwiYg4/aJsEPZrFMxdDkpEVfUPym+lB1CnZyqY+ts2ULqZvhqsMD+RwhNDq7IaQIHJ/U0OltO071C0X+vLIsNhOG+O6crrH6Y3k3bsQsibEbRZJyMPlPTYY7fxM1CBBzT3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717069976; c=relaxed/simple;
-	bh=nMmrXCaxc3KaSFvmwDyRIoHhuv/NA0/Bmd0kFyUi/FI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MiHnfXNQ8n0gHLqky3QuCNKNxHnsFZfJEalUYMG5Io+AEWmGAT5+A5OjkZ54D9edb/hfQR7H1uBdAiEDqXclYDDYMV8Ap0RIsrRRNJf03cf1DdcV2wE5oE23OXfA0tflCPNmvV+VTTlZwM7RaIqQObsL5CjHvlFKZ6BCKPHld6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MvcBNxYE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44UBm0sx004516;
-	Thu, 30 May 2024 11:52:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=XTVqWgB0c4/dNqhEW+1/IsW2QiC2CLwwUSsK+gcOehI=;
- b=MvcBNxYEsXpUQhdL/C2oeemp8t81Qa0XLtaaxGKgMLzMepteXMY9yw9u1H50XiP+rFYe
- 7YX0d2U43z3YQIwoP56SOzJHGBsue5xJWE2PwX0cWOOmqJlAdFwTzs4iwd//gp0zL3qU
- UZr+9CAi9NVFXxPptWyoX/mSWqK8gg6iyxYzwoe9EpGBzNQngyTtE/TLT2J0llt99zeN
- Fyvv/ZWZXwFVSJwtqJsX/r5l/WGXJDn31/J2FANGTEIUmmy2ESoM+TQSq8AA7Ba9+VzB
- xQthloDmfOtsJjkxNT6Sb+5pc0cLIA53yQ/ce31dn8WVTD4Uv14FTqzoFHioD7bLNs4h cw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yervy00d4-1
+	s=arc-20240116; t=1717070071; c=relaxed/simple;
+	bh=sBrBheviank98nyxCYkqUp8cD37qJ3oGLGvl9ujFsww=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DD48xBVUDlLXPiGL7o+Qom/M9dN2r6qicZ7PRfGauSKr91mOJjm+PY7kTLR1AF8BmWbGzfMA8lWbiLk5QdWRzj3ZgNNPh7rLRByOBx7HVtxr/sPB5j9wR1Wpx8UtcIy6xXznEPWIP3UZD9HBRQxsLZyg9ydjF2SD28mrrFzwEIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=G3xJR2wJ; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UAQ3db022196;
+	Thu, 30 May 2024 04:54:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=mq51XiFUNLyhh9KmzizgeWmb+bOpNT8yQ/NNebbpw80=; b=G3x
+	JR2wJcyd4MZ/ptMVKcuD+CxiACjMu0WdWP7vOu3PW3AWIFK0JY80fs03yRhjCU4D
+	VusCyhURKSoZ57KW306mC2NUQRLbkJOxmotvP7t1GaXCXt25xrEAOPWtWp0pJDkw
+	QXE3YKTnLT50O39D6ylcTpaieC7Ft3uUPrx5BsOM3jhn266OcbVyq6KGXFKtQ0DY
+	49SngkCWe4SZC+R4HQD8W4BSjsB4YI1lrdXshorkNvp1fPt87JWVPvXvybwSmPD0
+	Rt5YmKJiHwFcLDuzvLEeLxH6Pje95u8SQ3Sln0KwjwTPOcc7pt6m9LraNurcfKf/
+	epef/BExfPy+qq6P+ow==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yeqpx09u7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 11:52:36 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44UBo2di009220;
-	Thu, 30 May 2024 11:52:35 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yervy00d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 11:52:35 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44UBn0is028975;
-	Thu, 30 May 2024 11:52:34 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ydpayspkq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 11:52:34 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44UBqSsF50463038
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 May 2024 11:52:30 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A29D20043;
-	Thu, 30 May 2024 11:52:28 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 61D9520040;
-	Thu, 30 May 2024 11:52:23 +0000 (GMT)
-Received: from [9.43.4.54] (unknown [9.43.4.54])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 30 May 2024 11:52:23 +0000 (GMT)
-Message-ID: <944f47df-96f0-40e8-a8e2-750fb9fa358e@linux.ibm.com>
-Date: Thu, 30 May 2024 17:22:21 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH AUTOSEL 6.9 18/23] powerpc: make fadump resilient with
- memory add/remove events
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>, hbathini@linux.ibm.com,
-        bhe@redhat.com, akpm@linux-foundation.org, bhelgaas@google.com,
-        aneesh.kumar@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Naveen N Rao <naveen@kernel.org>
-References: <20240527155123.3863983-1-sashal@kernel.org>
- <20240527155123.3863983-18-sashal@kernel.org>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <20240527155123.3863983-18-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wW8iT9zFeLOjQczqlsBeS8WUBQcKlkQF
-X-Proofpoint-ORIG-GUID: glIeaNDHGato7hRuSNCjFExNdZ5e4OdE
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	Thu, 30 May 2024 04:54:20 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 30 May 2024 04:54:12 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 30 May 2024 04:54:12 -0700
+Received: from hyd1358.marvell.com (unknown [10.29.37.11])
+	by maili.marvell.com (Postfix) with ESMTP id B79433F70C3;
+	Thu, 30 May 2024 04:54:08 -0700 (PDT)
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Subbaraya Sundeep <sbhatta@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya
+	<gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>, hariprasad
+	<hkelam@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>
+Subject: [net-next PATCH] octeontx2: Improve mailbox tracepoints for debugging
+Date: Thu, 30 May 2024 17:23:57 +0530
+Message-ID: <1717070038-18381-1-git-send-email-sbhatta@marvell.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-GUID: DUjAHjuLY72K-2NJsrHsngJaIe_N4sri
+X-Proofpoint-ORIG-GUID: DUjAHjuLY72K-2NJsrHsngJaIe_N4sri
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_08,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 clxscore=1031 lowpriorityscore=0 adultscore=0
- malwarescore=0 priorityscore=1501 mlxscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405300089
+ definitions=2024-05-30_09,2024-05-28_01,2024-05-17_01
 
-Hello Sasha,
+The tracepoints present currently wrt mailbox do not
+provide enough information to debug mailbox activity.
+For a VF to send a message to AF, VF sends message to PF
+and PF forwards it to AF. This involves stages of
+PF receiving interrupt from VF, forwarding to AF, AF
+processing and sending response back to PF, PF sending back
+the response to VF. This patch adds pcifunc which represents
+PF and VF device to the tracepoints otx2_msg_alloc,
+otx2_msg_send, otx2_msg_process so that it is easier
+to correlate which device allocated the message, which
+device forwarded it and which device processed that message.
+Also add message id in otx2_msg_send tracepoint and new
+tracepoint otx2_msg_status to display the status at each
+stage.
 
-Thank you for considering this patch for the stable tree 6.9, 6.8, 6.6, 
-and 6.1.
+Below is the trace log when a VF sends a message to AF with
+this patch in place:
 
-This patch does two things:
-1. Fixes a potential memory corruption issue mentioned as the third 
-point in the commit message
-2. Enables the kernel to avoid unnecessary fadump re-registration on 
-memory add/remove events
+ifconfig-523 [001] ....   146.134718: otx2_msg_alloc: [0002:05:00.1]
+	msg:(NIX_RSS_FLOWKEY_CFG) size:28 pcifunc:0x1001
 
-To make the second functionality available to users, I request you also 
-consider the upstream patch
-mentioned below along with this patch. Both patches were part of the 
-same patch series.
+ifconfig-523 [001] ...1   146.134719: otx2_msg_send: [0002:05:00.1]
+	sent 1 msg(s) of size:32 msg:(NIX_RSS_FLOWKEY_CFG) pcifunc:0x1001
 
-https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/commit/?id=bc446c5acabadeb38b61b565535401c5dfdd1214
+  <idle>-0 [000] d.h1   146.134722: otx2_msg_interrupt: [0002:05:00.0]
+	mbox interrupt VF(s) to PF (0x1)
 
-Now, there was also a third patch in the same patch series, but that is 
-about a documentation update.
+kworker/u49:2-238 [002] ....   146.134723: otx2_msg_status: [0002:05:00.0]
+	PF-VF down queue handler(forwarding) num_msgs:1
 
-Link to patch series:
-https://lore.kernel.org/all/20240422195932.1583833-1-sourabhjain@linux.ibm.com/
+kworker/u49:2-238 [002] ...1   146.134724: otx2_msg_send: [0002:05:00.0]
+	sent 1 msg(s) of size:32 msg:(NIX_RSS_FLOWKEY_CFG) pcifunc:0x1001
 
-Thanks,
-Sourabh Jain
+  <idle>-0 [000] d.h1   146.134726: otx2_msg_interrupt: [0002:01:00.0]
+	mbox interrupt PF(s) to AF (0x10)
 
+kworker/u49:1-184 [000] ....   146.134739: otx2_msg_process: [0002:01:00.0]
+	msg:(NIX_RSS_FLOWKEY_CFG) error:0 pcifunc:0x1001
 
-On 27/05/24 21:20, Sasha Levin wrote:
-> From: Sourabh Jain <sourabhjain@linux.ibm.com>
->
-> [ Upstream commit c6c5b14dac0d1bd0da8b4d1d3b77f18eb9085fcb ]
->
-> Due to changes in memory resources caused by either memory hotplug or
-> online/offline events, the elfcorehdr, which describes the CPUs and
-> memory of the crashed kernel to the kernel that collects the dump (known
-> as second/fadump kernel), becomes outdated. Consequently, attempting
-> dump collection with an outdated elfcorehdr can lead to failed or
-> inaccurate dump collection.
->
-> Memory hotplug or online/offline events is referred as memory add/remove
-> events in reset of the commit message.
->
-> The current solution to address the aforementioned issue is as follows:
-> Monitor memory add/remove events in userspace using udev rules, and
-> re-register fadump whenever there are changes in memory resources. This
-> leads to the creation of a new elfcorehdr with updated system memory
-> information.
->
-> There are several notable issues associated with re-registering fadump
-> for every memory add/remove events.
->
-> 1. Bulk memory add/remove events with udev-based fadump re-registration
->     can lead to race conditions and, more importantly, it creates a wide
->     window during which fadump is inactive until all memory add/remove
->     events are settled.
-> 2. Re-registering fadump for every memory add/remove event is
->     inefficient.
-> 3. The memory for elfcorehdr is allocated based on the memblock regions
->     available during early boot and remains fixed thereafter. However, if
->     elfcorehdr is later recreated with additional memblock regions, its
->     size will increase, potentially leading to memory corruption.
->
-> Address the aforementioned challenges by shifting the creation of
-> elfcorehdr from the first kernel (also referred as the crashed kernel),
-> where it was created and frequently recreated for every memory
-> add/remove event, to the fadump kernel. As a result, the elfcorehdr only
-> needs to be created once, thus eliminating the necessity to re-register
-> fadump during memory add/remove events.
->
-> At present, the first kernel prepares fadump header and stores it in the
-> fadump reserved area. The fadump header includes the start address of
-> the elfcorehdr, crashing CPU details, and other relevant information. In
-> the event of a crash in the first kernel, the second/fadump boots and
-> accesses the fadump header prepared by the first kernel. It then
-> performs the following steps in a platform-specific function
-> [rtas|opal]_fadump_process:
->
-> 1. Sanity check for fadump header
-> 2. Update CPU notes in elfcorehdr
->
-> Along with the above, update the setup_fadump()/fadump.c to create
-> elfcorehdr and set its address to the global variable elfcorehdr_addr
-> for the vmcore module to process it in the second/fadump kernel.
->
-> Section below outlines the information required to create the elfcorehdr
-> and the changes made to make it available to the fadump kernel if it's
-> not already.
->
-> To create elfcorehdr, the following crashed kernel information is
-> required: CPU notes, vmcoreinfo, and memory ranges.
->
-> At present, the CPU notes are already prepared in the fadump kernel, so
-> no changes are needed in that regard. The fadump kernel has access to
-> all crashed kernel memory regions, including boot memory regions that
-> are relocated by firmware to fadump reserved areas, so no changes for
-> that either. However, it is necessary to add new members to the fadump
-> header, i.e., the 'fadump_crash_info_header' structure, in order to pass
-> the crashed kernel's vmcoreinfo address and its size to fadump kernel.
->
-> In addition to the vmcoreinfo address and size, there are a few other
-> attributes also added to the fadump_crash_info_header structure.
->
-> 1. version:
->     It stores the fadump header version, which is currently set to 1.
->     This provides flexibility to update the fadump crash info header in
->     the future without changing the magic number. For each change in the
->     fadump header, the version will be increased. This will help the
->     updated kernel determine how to handle kernel dumps from older
->     kernels. The magic number remains relevant for checking fadump header
->     corruption.
->
-> 2. pt_regs_sz/cpu_mask_sz:
->     Store size of pt_regs and cpu_mask structure of first kernel. These
->     attributes are used to prevent dump processing if the sizes of
->     pt_regs or cpu_mask structure differ between the first and fadump
->     kernels.
->
-> Note: if either first/crashed kernel or second/fadump kernel do not have
-> the changes introduced here then kernel fail to collect the dump and
-> prints relevant error message on the console.
->
-> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> Link: https://msgid.link/20240422195932.1583833-2-sourabhjain@linux.ibm.com
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   arch/powerpc/include/asm/fadump-internal.h   |  31 +-
->   arch/powerpc/kernel/fadump.c                 | 361 +++++++++++--------
->   arch/powerpc/platforms/powernv/opal-fadump.c |  22 +-
->   arch/powerpc/platforms/pseries/rtas-fadump.c |  34 +-
->   4 files changed, 242 insertions(+), 206 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/fadump-internal.h b/arch/powerpc/include/asm/fadump-internal.h
-> index 27f9e11eda28c..5d706a7acc8a4 100644
-> --- a/arch/powerpc/include/asm/fadump-internal.h
-> +++ b/arch/powerpc/include/asm/fadump-internal.h
-> @@ -42,13 +42,38 @@ static inline u64 fadump_str_to_u64(const char *str)
->   
->   #define FADUMP_CPU_UNKNOWN		(~((u32)0))
->   
-> -#define FADUMP_CRASH_INFO_MAGIC		fadump_str_to_u64("FADMPINF")
-> +/*
-> + * The introduction of new fields in the fadump crash info header has
-> + * led to a change in the magic key from `FADMPINF` to `FADMPSIG` for
-> + * identifying a kernel crash from an old kernel.
-> + *
-> + * To prevent the need for further changes to the magic number in the
-> + * event of future modifications to the fadump crash info header, a
-> + * version field has been introduced to track the fadump crash info
-> + * header version.
-> + *
-> + * Consider a few points before adding new members to the fadump crash info
-> + * header structure:
-> + *
-> + *  - Append new members; avoid adding them in between.
-> + *  - Non-primitive members should have a size member as well.
-> + *  - For every change in the fadump header, increment the
-> + *    fadump header version. This helps the updated kernel decide how to
-> + *    handle kernel dumps from older kernels.
-> + */
-> +#define FADUMP_CRASH_INFO_MAGIC_OLD	fadump_str_to_u64("FADMPINF")
-> +#define FADUMP_CRASH_INFO_MAGIC		fadump_str_to_u64("FADMPSIG")
-> +#define FADUMP_HEADER_VERSION		1
->   
->   /* fadump crash info structure */
->   struct fadump_crash_info_header {
->   	u64		magic_number;
-> -	u64		elfcorehdr_addr;
-> +	u32		version;
->   	u32		crashing_cpu;
-> +	u64		vmcoreinfo_raddr;
-> +	u64		vmcoreinfo_size;
-> +	u32		pt_regs_sz;
-> +	u32		cpu_mask_sz;
->   	struct pt_regs	regs;
->   	struct cpumask	cpu_mask;
->   };
-> @@ -94,6 +119,8 @@ struct fw_dump {
->   	u64		boot_mem_regs_cnt;
->   
->   	unsigned long	fadumphdr_addr;
-> +	u64		elfcorehdr_addr;
-> +	u64		elfcorehdr_size;
->   	unsigned long	cpu_notes_buf_vaddr;
->   	unsigned long	cpu_notes_buf_size;
->   
-> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-> index d14eda1e85896..35254fc1516b2 100644
-> --- a/arch/powerpc/kernel/fadump.c
-> +++ b/arch/powerpc/kernel/fadump.c
-> @@ -53,8 +53,6 @@ static struct kobject *fadump_kobj;
->   static atomic_t cpus_in_fadump;
->   static DEFINE_MUTEX(fadump_mutex);
->   
-> -static struct fadump_mrange_info crash_mrange_info = { "crash", NULL, 0, 0, 0, false };
-> -
->   #define RESERVED_RNGS_SZ	16384 /* 16K - 128 entries */
->   #define RESERVED_RNGS_CNT	(RESERVED_RNGS_SZ / \
->   				 sizeof(struct fadump_memory_range))
-> @@ -373,12 +371,6 @@ static unsigned long __init get_fadump_area_size(void)
->   	size = PAGE_ALIGN(size);
->   	size += fw_dump.boot_memory_size;
->   	size += sizeof(struct fadump_crash_info_header);
-> -	size += sizeof(struct elfhdr); /* ELF core header.*/
-> -	size += sizeof(struct elf_phdr); /* place holder for cpu notes */
-> -	/* Program headers for crash memory regions. */
-> -	size += sizeof(struct elf_phdr) * (memblock_num_regions(memory) + 2);
-> -
-> -	size = PAGE_ALIGN(size);
->   
->   	/* This is to hold kernel metadata on platforms that support it */
->   	size += (fw_dump.ops->fadump_get_metadata_size ?
-> @@ -931,36 +923,6 @@ static inline int fadump_add_mem_range(struct fadump_mrange_info *mrange_info,
->   	return 0;
->   }
->   
-> -static int fadump_exclude_reserved_area(u64 start, u64 end)
-> -{
-> -	u64 ra_start, ra_end;
-> -	int ret = 0;
-> -
-> -	ra_start = fw_dump.reserve_dump_area_start;
-> -	ra_end = ra_start + fw_dump.reserve_dump_area_size;
-> -
-> -	if ((ra_start < end) && (ra_end > start)) {
-> -		if ((start < ra_start) && (end > ra_end)) {
-> -			ret = fadump_add_mem_range(&crash_mrange_info,
-> -						   start, ra_start);
-> -			if (ret)
-> -				return ret;
-> -
-> -			ret = fadump_add_mem_range(&crash_mrange_info,
-> -						   ra_end, end);
-> -		} else if (start < ra_start) {
-> -			ret = fadump_add_mem_range(&crash_mrange_info,
-> -						   start, ra_start);
-> -		} else if (ra_end < end) {
-> -			ret = fadump_add_mem_range(&crash_mrange_info,
-> -						   ra_end, end);
-> -		}
-> -	} else
-> -		ret = fadump_add_mem_range(&crash_mrange_info, start, end);
-> -
-> -	return ret;
-> -}
-> -
->   static int fadump_init_elfcore_header(char *bufp)
->   {
->   	struct elfhdr *elf;
-> @@ -997,52 +959,6 @@ static int fadump_init_elfcore_header(char *bufp)
->   	return 0;
->   }
->   
-> -/*
-> - * Traverse through memblock structure and setup crash memory ranges. These
-> - * ranges will be used create PT_LOAD program headers in elfcore header.
-> - */
-> -static int fadump_setup_crash_memory_ranges(void)
-> -{
-> -	u64 i, start, end;
-> -	int ret;
-> -
-> -	pr_debug("Setup crash memory ranges.\n");
-> -	crash_mrange_info.mem_range_cnt = 0;
-> -
-> -	/*
-> -	 * Boot memory region(s) registered with firmware are moved to
-> -	 * different location at the time of crash. Create separate program
-> -	 * header(s) for this memory chunk(s) with the correct offset.
-> -	 */
-> -	for (i = 0; i < fw_dump.boot_mem_regs_cnt; i++) {
-> -		start = fw_dump.boot_mem_addr[i];
-> -		end = start + fw_dump.boot_mem_sz[i];
-> -		ret = fadump_add_mem_range(&crash_mrange_info, start, end);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	for_each_mem_range(i, &start, &end) {
-> -		/*
-> -		 * skip the memory chunk that is already added
-> -		 * (0 through boot_memory_top).
-> -		 */
-> -		if (start < fw_dump.boot_mem_top) {
-> -			if (end > fw_dump.boot_mem_top)
-> -				start = fw_dump.boot_mem_top;
-> -			else
-> -				continue;
-> -		}
-> -
-> -		/* add this range excluding the reserved dump area. */
-> -		ret = fadump_exclude_reserved_area(start, end);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->   /*
->    * If the given physical address falls within the boot memory region then
->    * return the relocated address that points to the dump region reserved
-> @@ -1073,36 +989,50 @@ static inline unsigned long fadump_relocate(unsigned long paddr)
->   	return raddr;
->   }
->   
-> -static int fadump_create_elfcore_headers(char *bufp)
-> +static void __init populate_elf_pt_load(struct elf_phdr *phdr, u64 start,
-> +			     u64 size, unsigned long long offset)
->   {
-> -	unsigned long long raddr, offset;
-> -	struct elf_phdr *phdr;
-> +	phdr->p_align	= 0;
-> +	phdr->p_memsz	= size;
-> +	phdr->p_filesz	= size;
-> +	phdr->p_paddr	= start;
-> +	phdr->p_offset	= offset;
-> +	phdr->p_type	= PT_LOAD;
-> +	phdr->p_flags	= PF_R|PF_W|PF_X;
-> +	phdr->p_vaddr	= (unsigned long)__va(start);
-> +}
-> +
-> +static void __init fadump_populate_elfcorehdr(struct fadump_crash_info_header *fdh)
-> +{
-> +	char *bufp;
->   	struct elfhdr *elf;
-> -	int i, j;
-> +	struct elf_phdr *phdr;
-> +	u64 boot_mem_dest_offset;
-> +	unsigned long long i, ra_start, ra_end, ra_size, mstart, mend;
->   
-> +	bufp = (char *) fw_dump.elfcorehdr_addr;
->   	fadump_init_elfcore_header(bufp);
->   	elf = (struct elfhdr *)bufp;
->   	bufp += sizeof(struct elfhdr);
->   
->   	/*
-> -	 * setup ELF PT_NOTE, place holder for cpu notes info. The notes info
-> -	 * will be populated during second kernel boot after crash. Hence
-> -	 * this PT_NOTE will always be the first elf note.
-> +	 * Set up ELF PT_NOTE, a placeholder for CPU notes information.
-> +	 * The notes info will be populated later by platform-specific code.
-> +	 * Hence, this PT_NOTE will always be the first ELF note.
->   	 *
->   	 * NOTE: Any new ELF note addition should be placed after this note.
->   	 */
->   	phdr = (struct elf_phdr *)bufp;
->   	bufp += sizeof(struct elf_phdr);
->   	phdr->p_type = PT_NOTE;
-> -	phdr->p_flags = 0;
-> -	phdr->p_vaddr = 0;
-> -	phdr->p_align = 0;
-> -
-> -	phdr->p_offset = 0;
-> -	phdr->p_paddr = 0;
-> -	phdr->p_filesz = 0;
-> -	phdr->p_memsz = 0;
-> -
-> +	phdr->p_flags	= 0;
-> +	phdr->p_vaddr	= 0;
-> +	phdr->p_align	= 0;
-> +	phdr->p_offset	= 0;
-> +	phdr->p_paddr	= 0;
-> +	phdr->p_filesz	= 0;
-> +	phdr->p_memsz	= 0;
-> +	/* Increment number of program headers. */
->   	(elf->e_phnum)++;
->   
->   	/* setup ELF PT_NOTE for vmcoreinfo */
-> @@ -1112,55 +1042,66 @@ static int fadump_create_elfcore_headers(char *bufp)
->   	phdr->p_flags	= 0;
->   	phdr->p_vaddr	= 0;
->   	phdr->p_align	= 0;
-> -
-> -	phdr->p_paddr	= fadump_relocate(paddr_vmcoreinfo_note());
-> -	phdr->p_offset	= phdr->p_paddr;
-> -	phdr->p_memsz	= phdr->p_filesz = VMCOREINFO_NOTE_SIZE;
-> -
-> +	phdr->p_paddr	= phdr->p_offset = fdh->vmcoreinfo_raddr;
-> +	phdr->p_memsz	= phdr->p_filesz = fdh->vmcoreinfo_size;
->   	/* Increment number of program headers. */
->   	(elf->e_phnum)++;
->   
-> -	/* setup PT_LOAD sections. */
-> -	j = 0;
-> -	offset = 0;
-> -	raddr = fw_dump.boot_mem_addr[0];
-> -	for (i = 0; i < crash_mrange_info.mem_range_cnt; i++) {
-> -		u64 mbase, msize;
-> -
-> -		mbase = crash_mrange_info.mem_ranges[i].base;
-> -		msize = crash_mrange_info.mem_ranges[i].size;
-> -		if (!msize)
-> -			continue;
-> -
-> +	/*
-> +	 * Setup PT_LOAD sections. first include boot memory regions
-> +	 * and then add rest of the memory regions.
-> +	 */
-> +	boot_mem_dest_offset = fw_dump.boot_mem_dest_addr;
-> +	for (i = 0; i < fw_dump.boot_mem_regs_cnt; i++) {
->   		phdr = (struct elf_phdr *)bufp;
->   		bufp += sizeof(struct elf_phdr);
-> -		phdr->p_type	= PT_LOAD;
-> -		phdr->p_flags	= PF_R|PF_W|PF_X;
-> -		phdr->p_offset	= mbase;
-> -
-> -		if (mbase == raddr) {
-> -			/*
-> -			 * The entire real memory region will be moved by
-> -			 * firmware to the specified destination_address.
-> -			 * Hence set the correct offset.
-> -			 */
-> -			phdr->p_offset = fw_dump.boot_mem_dest_addr + offset;
-> -			if (j < (fw_dump.boot_mem_regs_cnt - 1)) {
-> -				offset += fw_dump.boot_mem_sz[j];
-> -				raddr = fw_dump.boot_mem_addr[++j];
-> -			}
-> +		populate_elf_pt_load(phdr, fw_dump.boot_mem_addr[i],
-> +				     fw_dump.boot_mem_sz[i],
-> +				     boot_mem_dest_offset);
-> +		/* Increment number of program headers. */
-> +		(elf->e_phnum)++;
-> +		boot_mem_dest_offset += fw_dump.boot_mem_sz[i];
-> +	}
-> +
-> +	/* Memory reserved for fadump in first kernel */
-> +	ra_start = fw_dump.reserve_dump_area_start;
-> +	ra_size = get_fadump_area_size();
-> +	ra_end = ra_start + ra_size;
-> +
-> +	phdr = (struct elf_phdr *)bufp;
-> +	for_each_mem_range(i, &mstart, &mend) {
-> +		/* Boot memory regions already added, skip them now */
-> +		if (mstart < fw_dump.boot_mem_top) {
-> +			if (mend > fw_dump.boot_mem_top)
-> +				mstart = fw_dump.boot_mem_top;
-> +			else
-> +				continue;
->   		}
->   
-> -		phdr->p_paddr = mbase;
-> -		phdr->p_vaddr = (unsigned long)__va(mbase);
-> -		phdr->p_filesz = msize;
-> -		phdr->p_memsz = msize;
-> -		phdr->p_align = 0;
-> +		/* Handle memblock regions overlaps with fadump reserved area */
-> +		if ((ra_start < mend) && (ra_end > mstart)) {
-> +			if ((mstart < ra_start) && (mend > ra_end)) {
-> +				populate_elf_pt_load(phdr, mstart, ra_start - mstart, mstart);
-> +				/* Increment number of program headers. */
-> +				(elf->e_phnum)++;
-> +				bufp += sizeof(struct elf_phdr);
-> +				phdr = (struct elf_phdr *)bufp;
-> +				populate_elf_pt_load(phdr, ra_end, mend - ra_end, ra_end);
-> +			} else if (mstart < ra_start) {
-> +				populate_elf_pt_load(phdr, mstart, ra_start - mstart, mstart);
-> +			} else if (ra_end < mend) {
-> +				populate_elf_pt_load(phdr, ra_end, mend - ra_end, ra_end);
-> +			}
-> +		} else {
-> +		/* No overlap with fadump reserved memory region */
-> +			populate_elf_pt_load(phdr, mstart, mend - mstart, mstart);
-> +		}
->   
->   		/* Increment number of program headers. */
->   		(elf->e_phnum)++;
-> +		bufp += sizeof(struct elf_phdr);
-> +		phdr = (struct elf_phdr *) bufp;
->   	}
-> -	return 0;
->   }
->   
->   static unsigned long init_fadump_header(unsigned long addr)
-> @@ -1175,14 +1116,25 @@ static unsigned long init_fadump_header(unsigned long addr)
->   
->   	memset(fdh, 0, sizeof(struct fadump_crash_info_header));
->   	fdh->magic_number = FADUMP_CRASH_INFO_MAGIC;
-> -	fdh->elfcorehdr_addr = addr;
-> +	fdh->version = FADUMP_HEADER_VERSION;
->   	/* We will set the crashing cpu id in crash_fadump() during crash. */
->   	fdh->crashing_cpu = FADUMP_CPU_UNKNOWN;
-> +
-> +	/*
-> +	 * The physical address and size of vmcoreinfo are required in the
-> +	 * second kernel to prepare elfcorehdr.
-> +	 */
-> +	fdh->vmcoreinfo_raddr = fadump_relocate(paddr_vmcoreinfo_note());
-> +	fdh->vmcoreinfo_size = VMCOREINFO_NOTE_SIZE;
-> +
-> +
-> +	fdh->pt_regs_sz = sizeof(struct pt_regs);
->   	/*
->   	 * When LPAR is terminated by PYHP, ensure all possible CPUs'
->   	 * register data is processed while exporting the vmcore.
->   	 */
->   	fdh->cpu_mask = *cpu_possible_mask;
-> +	fdh->cpu_mask_sz = sizeof(struct cpumask);
->   
->   	return addr;
->   }
-> @@ -1190,8 +1142,6 @@ static unsigned long init_fadump_header(unsigned long addr)
->   static int register_fadump(void)
->   {
->   	unsigned long addr;
-> -	void *vaddr;
-> -	int ret;
->   
->   	/*
->   	 * If no memory is reserved then we can not register for firmware-
-> @@ -1200,18 +1150,10 @@ static int register_fadump(void)
->   	if (!fw_dump.reserve_dump_area_size)
->   		return -ENODEV;
->   
-> -	ret = fadump_setup_crash_memory_ranges();
-> -	if (ret)
-> -		return ret;
-> -
->   	addr = fw_dump.fadumphdr_addr;
->   
->   	/* Initialize fadump crash info header. */
->   	addr = init_fadump_header(addr);
-> -	vaddr = __va(addr);
-> -
-> -	pr_debug("Creating ELF core headers at %#016lx\n", addr);
-> -	fadump_create_elfcore_headers(vaddr);
->   
->   	/* register the future kernel dump with firmware. */
->   	pr_debug("Registering for firmware-assisted kernel dump...\n");
-> @@ -1230,7 +1172,6 @@ void fadump_cleanup(void)
->   	} else if (fw_dump.dump_registered) {
->   		/* Un-register Firmware-assisted dump if it was registered. */
->   		fw_dump.ops->fadump_unregister(&fw_dump);
-> -		fadump_free_mem_ranges(&crash_mrange_info);
->   	}
->   
->   	if (fw_dump.ops->fadump_cleanup)
-> @@ -1416,6 +1357,22 @@ static void fadump_release_memory(u64 begin, u64 end)
->   		fadump_release_reserved_area(tstart, end);
->   }
->   
-> +static void fadump_free_elfcorehdr_buf(void)
-> +{
-> +	if (fw_dump.elfcorehdr_addr == 0 || fw_dump.elfcorehdr_size == 0)
-> +		return;
-> +
-> +	/*
-> +	 * Before freeing the memory of `elfcorehdr`, reset the global
-> +	 * `elfcorehdr_addr` to prevent modules like `vmcore` from accessing
-> +	 * invalid memory.
-> +	 */
-> +	elfcorehdr_addr = ELFCORE_ADDR_ERR;
-> +	fadump_free_buffer(fw_dump.elfcorehdr_addr, fw_dump.elfcorehdr_size);
-> +	fw_dump.elfcorehdr_addr = 0;
-> +	fw_dump.elfcorehdr_size = 0;
-> +}
-> +
->   static void fadump_invalidate_release_mem(void)
->   {
->   	mutex_lock(&fadump_mutex);
-> @@ -1427,6 +1384,7 @@ static void fadump_invalidate_release_mem(void)
->   	fadump_cleanup();
->   	mutex_unlock(&fadump_mutex);
->   
-> +	fadump_free_elfcorehdr_buf();
->   	fadump_release_memory(fw_dump.boot_mem_top, memblock_end_of_DRAM());
->   	fadump_free_cpu_notes_buf();
->   
-> @@ -1632,6 +1590,102 @@ static void __init fadump_init_files(void)
->   	return;
->   }
->   
-> +static int __init fadump_setup_elfcorehdr_buf(void)
-> +{
-> +	int elf_phdr_cnt;
-> +	unsigned long elfcorehdr_size;
-> +
-> +	/*
-> +	 * Program header for CPU notes comes first, followed by one for
-> +	 * vmcoreinfo, and the remaining program headers correspond to
-> +	 * memory regions.
-> +	 */
-> +	elf_phdr_cnt = 2 + fw_dump.boot_mem_regs_cnt + memblock_num_regions(memory);
-> +	elfcorehdr_size = sizeof(struct elfhdr) + (elf_phdr_cnt * sizeof(struct elf_phdr));
-> +	elfcorehdr_size = PAGE_ALIGN(elfcorehdr_size);
-> +
-> +	fw_dump.elfcorehdr_addr = (u64)fadump_alloc_buffer(elfcorehdr_size);
-> +	if (!fw_dump.elfcorehdr_addr) {
-> +		pr_err("Failed to allocate %lu bytes for elfcorehdr\n",
-> +		       elfcorehdr_size);
-> +		return -ENOMEM;
-> +	}
-> +	fw_dump.elfcorehdr_size = elfcorehdr_size;
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Check if the fadump header of crashed kernel is compatible with fadump kernel.
-> + *
-> + * It checks the magic number, endianness, and size of non-primitive type
-> + * members of fadump header to ensure safe dump collection.
-> + */
-> +static bool __init is_fadump_header_compatible(struct fadump_crash_info_header *fdh)
-> +{
-> +	if (fdh->magic_number == FADUMP_CRASH_INFO_MAGIC_OLD) {
-> +		pr_err("Old magic number, can't process the dump.\n");
-> +		return false;
-> +	}
-> +
-> +	if (fdh->magic_number != FADUMP_CRASH_INFO_MAGIC) {
-> +		if (fdh->magic_number == swab64(FADUMP_CRASH_INFO_MAGIC))
-> +			pr_err("Endianness mismatch between the crashed and fadump kernels.\n");
-> +		else
-> +			pr_err("Fadump header is corrupted.\n");
-> +
-> +		return false;
-> +	}
-> +
-> +	/*
-> +	 * Dump collection is not safe if the size of non-primitive type members
-> +	 * of the fadump header do not match between crashed and fadump kernel.
-> +	 */
-> +	if (fdh->pt_regs_sz != sizeof(struct pt_regs) ||
-> +	    fdh->cpu_mask_sz != sizeof(struct cpumask)) {
-> +		pr_err("Fadump header size mismatch.\n");
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static void __init fadump_process(void)
-> +{
-> +	struct fadump_crash_info_header *fdh;
-> +
-> +	fdh = (struct fadump_crash_info_header *) __va(fw_dump.fadumphdr_addr);
-> +	if (!fdh) {
-> +		pr_err("Crash info header is empty.\n");
-> +		goto err_out;
-> +	}
-> +
-> +	/* Avoid processing the dump if fadump header isn't compatible */
-> +	if (!is_fadump_header_compatible(fdh))
-> +		goto err_out;
-> +
-> +	/* Allocate buffer for elfcorehdr */
-> +	if (fadump_setup_elfcorehdr_buf())
-> +		goto err_out;
-> +
-> +	fadump_populate_elfcorehdr(fdh);
-> +
-> +	/* Let platform update the CPU notes in elfcorehdr */
-> +	if (fw_dump.ops->fadump_process(&fw_dump) < 0)
-> +		goto err_out;
-> +
-> +	/*
-> +	 * elfcorehdr is now ready to be exported.
-> +	 *
-> +	 * set elfcorehdr_addr so that vmcore module will export the
-> +	 * elfcorehdr through '/proc/vmcore'.
-> +	 */
-> +	elfcorehdr_addr = virt_to_phys((void *)fw_dump.elfcorehdr_addr);
-> +	return;
-> +
-> +err_out:
-> +	fadump_invalidate_release_mem();
-> +}
-> +
->   /*
->    * Prepare for firmware-assisted dump.
->    */
-> @@ -1651,12 +1705,7 @@ int __init setup_fadump(void)
->   	 * saving it to the disk.
->   	 */
->   	if (fw_dump.dump_active) {
-> -		/*
-> -		 * if dump process fails then invalidate the registration
-> -		 * and release memory before proceeding for re-registration.
-> -		 */
-> -		if (fw_dump.ops->fadump_process(&fw_dump) < 0)
-> -			fadump_invalidate_release_mem();
-> +		fadump_process();
->   	}
->   	/* Initialize the kernel dump memory structure and register with f/w */
->   	else if (fw_dump.reserve_dump_area_size) {
-> diff --git a/arch/powerpc/platforms/powernv/opal-fadump.c b/arch/powerpc/platforms/powernv/opal-fadump.c
-> index 964f464b1b0e3..767a6b19e42a8 100644
-> --- a/arch/powerpc/platforms/powernv/opal-fadump.c
-> +++ b/arch/powerpc/platforms/powernv/opal-fadump.c
-> @@ -513,8 +513,8 @@ opal_fadump_build_cpu_notes(struct fw_dump *fadump_conf,
->   	final_note(note_buf);
->   
->   	pr_debug("Updating elfcore header (%llx) with cpu notes\n",
-> -		 fdh->elfcorehdr_addr);
-> -	fadump_update_elfcore_header(__va(fdh->elfcorehdr_addr));
-> +		 fadump_conf->elfcorehdr_addr);
-> +	fadump_update_elfcore_header((char *)fadump_conf->elfcorehdr_addr);
->   	return 0;
->   }
->   
-> @@ -526,12 +526,7 @@ static int __init opal_fadump_process(struct fw_dump *fadump_conf)
->   	if (!opal_fdm_active || !fadump_conf->fadumphdr_addr)
->   		return rc;
->   
-> -	/* Validate the fadump crash info header */
->   	fdh = __va(fadump_conf->fadumphdr_addr);
-> -	if (fdh->magic_number != FADUMP_CRASH_INFO_MAGIC) {
-> -		pr_err("Crash info header is not valid.\n");
-> -		return rc;
-> -	}
->   
->   #ifdef CONFIG_OPAL_CORE
->   	/*
-> @@ -545,18 +540,7 @@ static int __init opal_fadump_process(struct fw_dump *fadump_conf)
->   		kernel_initiated = true;
->   #endif
->   
-> -	rc = opal_fadump_build_cpu_notes(fadump_conf, fdh);
-> -	if (rc)
-> -		return rc;
-> -
-> -	/*
-> -	 * We are done validating dump info and elfcore header is now ready
-> -	 * to be exported. set elfcorehdr_addr so that vmcore module will
-> -	 * export the elfcore header through '/proc/vmcore'.
-> -	 */
-> -	elfcorehdr_addr = fdh->elfcorehdr_addr;
-> -
-> -	return rc;
-> +	return opal_fadump_build_cpu_notes(fadump_conf, fdh);
->   }
->   
->   static void opal_fadump_region_show(struct fw_dump *fadump_conf,
-> diff --git a/arch/powerpc/platforms/pseries/rtas-fadump.c b/arch/powerpc/platforms/pseries/rtas-fadump.c
-> index b5853e9fcc3c1..214f37788b2dc 100644
-> --- a/arch/powerpc/platforms/pseries/rtas-fadump.c
-> +++ b/arch/powerpc/platforms/pseries/rtas-fadump.c
-> @@ -375,11 +375,8 @@ static int __init rtas_fadump_build_cpu_notes(struct fw_dump *fadump_conf)
->   	}
->   	final_note(note_buf);
->   
-> -	if (fdh) {
-> -		pr_debug("Updating elfcore header (%llx) with cpu notes\n",
-> -			 fdh->elfcorehdr_addr);
-> -		fadump_update_elfcore_header(__va(fdh->elfcorehdr_addr));
-> -	}
-> +	pr_debug("Updating elfcore header (%llx) with cpu notes\n", fadump_conf->elfcorehdr_addr);
-> +	fadump_update_elfcore_header((char *)fadump_conf->elfcorehdr_addr);
->   	return 0;
->   
->   error_out:
-> @@ -389,14 +386,11 @@ static int __init rtas_fadump_build_cpu_notes(struct fw_dump *fadump_conf)
->   }
->   
->   /*
-> - * Validate and process the dump data stored by firmware before exporting
-> - * it through '/proc/vmcore'.
-> + * Validate and process the dump data stored by the firmware, and update
-> + * the CPU notes of elfcorehdr.
->    */
->   static int __init rtas_fadump_process(struct fw_dump *fadump_conf)
->   {
-> -	struct fadump_crash_info_header *fdh;
-> -	int rc = 0;
-> -
->   	if (!fdm_active || !fadump_conf->fadumphdr_addr)
->   		return -EINVAL;
->   
-> @@ -415,25 +409,7 @@ static int __init rtas_fadump_process(struct fw_dump *fadump_conf)
->   		return -EINVAL;
->   	}
->   
-> -	/* Validate the fadump crash info header */
-> -	fdh = __va(fadump_conf->fadumphdr_addr);
-> -	if (fdh->magic_number != FADUMP_CRASH_INFO_MAGIC) {
-> -		pr_err("Crash info header is not valid.\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	rc = rtas_fadump_build_cpu_notes(fadump_conf);
-> -	if (rc)
-> -		return rc;
-> -
-> -	/*
-> -	 * We are done validating dump info and elfcore header is now ready
-> -	 * to be exported. set elfcorehdr_addr so that vmcore module will
-> -	 * export the elfcore header through '/proc/vmcore'.
-> -	 */
-> -	elfcorehdr_addr = fdh->elfcorehdr_addr;
-> -
-> -	return 0;
-> +	return rtas_fadump_build_cpu_notes(fadump_conf);
->   }
->   
->   static void rtas_fadump_region_show(struct fw_dump *fadump_conf,
+kworker/u49:1-184 [000] ...1   146.134740: otx2_msg_send: [0002:01:00.0]
+	sent 1 msg(s) of size:32 msg:(NIX_RSS_FLOWKEY_CFG) pcifunc:0x1001
+
+  <idle>-0 [000] dNh2   146.134742: otx2_msg_interrupt: [0002:05:00.0]
+	mbox interrupt DOWN reply from AF to PF (0x1)
+
+  <idle>-0 [000] dNh2   146.134742: otx2_msg_status: [0002:05:00.0]
+	PF-AF down work queued(interrupt) num_msgs:1
+
+kworker/u49:1-184 [000] ....   146.134743: otx2_msg_status: [0002:05:00.0]
+	PF-AF down queue handler(response) num_msgs:1
+
+  <idle>-0 [000] d.h1   146.135730: otx2_msg_interrupt: [0002:05:00.1]
+	mbox interrupt DOWN reply from PF to VF (0x1)
+
+Signed-off-by: Subbaraya Sundeep <sbhatta@marvell.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/mbox.c   | 17 ++++--
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c    |  2 +-
+ .../net/ethernet/marvell/octeontx2/af/rvu_cgx.c    |  2 +-
+ .../net/ethernet/marvell/octeontx2/af/rvu_trace.c  |  1 +
+ .../net/ethernet/marvell/octeontx2/af/rvu_trace.h  | 62 +++++++++++++++++-----
+ .../ethernet/marvell/octeontx2/nic/otx2_common.h   |  4 +-
+ .../net/ethernet/marvell/octeontx2/nic/otx2_pf.c   | 21 +++++++-
+ .../net/ethernet/marvell/octeontx2/nic/otx2_vf.c   |  2 +-
+ 8 files changed, 91 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.c b/drivers/net/ethernet/marvell/octeontx2/af/mbox.c
+index 1e5aa53..905da00 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.c
+@@ -20,6 +20,7 @@ void __otx2_mbox_reset(struct otx2_mbox *mbox, int devid)
+ 	struct otx2_mbox_dev *mdev = &mbox->dev[devid];
+ 	struct mbox_hdr *tx_hdr, *rx_hdr;
+ 	void *hw_mbase = mdev->hwbase;
++	struct mbox_msghdr *msg;
+ 
+ 	tx_hdr = hw_mbase + mbox->tx_start;
+ 	rx_hdr = hw_mbase + mbox->rx_start;
+@@ -188,14 +189,13 @@ int otx2_mbox_wait_for_rsp(struct otx2_mbox *mbox, int devid)
+ {
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(MBOX_RSP_TIMEOUT);
+ 	struct otx2_mbox_dev *mdev = &mbox->dev[devid];
+-	struct device *sender = &mbox->pdev->dev;
+ 
+ 	while (!time_after(jiffies, timeout)) {
+ 		if (mdev->num_msgs == mdev->msgs_acked)
+ 			return 0;
+ 		usleep_range(800, 1000);
+ 	}
+-	dev_dbg(sender, "timed out while waiting for rsp\n");
++	trace_otx2_msg_wait_rsp(mbox->pdev);
+ 	return -EIO;
+ }
+ EXPORT_SYMBOL(otx2_mbox_wait_for_rsp);
+@@ -251,7 +251,10 @@ static void otx2_mbox_msg_send_data(struct otx2_mbox *mbox, int devid, u64 data)
+ 	tx_hdr->num_msgs = mdev->num_msgs;
+ 	rx_hdr->num_msgs = 0;
+ 
+-	trace_otx2_msg_send(mbox->pdev, tx_hdr->num_msgs, tx_hdr->msg_size);
++	msg = (struct mbox_msghdr *)(hw_mbase + mbox->tx_start + msgs_offset);
++
++	trace_otx2_msg_send(mbox->pdev, tx_hdr->num_msgs, tx_hdr->msg_size,
++			    msg->id, msg->pcifunc);
+ 
+ 	spin_unlock(&mdev->mbox_lock);
+ 
+@@ -445,6 +448,14 @@ const char *otx2_mbox_id2name(u16 id)
+ #define M(_name, _id, _1, _2, _3) case _id: return # _name;
+ 	MBOX_MESSAGES
+ #undef M
++
++#define M(_name, _id, _1, _2, _3) case _id: return # _name;
++	MBOX_UP_CGX_MESSAGES
++#undef M
++
++#define M(_name, _id, _1, _2, _3) case _id: return # _name;
++	MBOX_UP_CPT_MESSAGES
++#undef M
+ 	default:
+ 		return "INVALID ID";
+ 	}
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index ff78251..a5e4888 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -2106,7 +2106,7 @@ static int rvu_process_mbox_msg(struct otx2_mbox *mbox, int devid,
+ 		if (rsp && err)						\
+ 			rsp->hdr.rc = err;				\
+ 									\
+-		trace_otx2_msg_process(mbox->pdev, _id, err);		\
++		trace_otx2_msg_process(mbox->pdev, _id, err, req->pcifunc); \
+ 		return rsp ? err : -ENOMEM;				\
+ 	}
+ MBOX_MESSAGES
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cgx.c
+index 266ecbc..a335404 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cgx.c
+@@ -34,7 +34,7 @@ static struct _req_type __maybe_unused					\
+ 		return NULL;						\
+ 	req->hdr.sig = OTX2_MBOX_REQ_SIG;				\
+ 	req->hdr.id = _id;						\
+-	trace_otx2_msg_alloc(rvu->pdev, _id, sizeof(*req));		\
++	trace_otx2_msg_alloc(rvu->pdev, _id, sizeof(*req), 0);		\
+ 	return req;							\
+ }
+ 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.c
+index 775fd4c..5f69380 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.c
+@@ -11,3 +11,4 @@
+ EXPORT_TRACEPOINT_SYMBOL(otx2_msg_alloc);
+ EXPORT_TRACEPOINT_SYMBOL(otx2_msg_interrupt);
+ EXPORT_TRACEPOINT_SYMBOL(otx2_msg_process);
++EXPORT_TRACEPOINT_SYMBOL(otx2_msg_status);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.h
+index 5704520f..e7c2160 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_trace.h
+@@ -18,33 +18,42 @@
+ #include "mbox.h"
+ 
+ TRACE_EVENT(otx2_msg_alloc,
+-	    TP_PROTO(const struct pci_dev *pdev, u16 id, u64 size),
+-	    TP_ARGS(pdev, id, size),
++	    TP_PROTO(const struct pci_dev *pdev, u16 id, u64 size, u16 pcifunc),
++	    TP_ARGS(pdev, id, size, pcifunc),
+ 	    TP_STRUCT__entry(__string(dev, pci_name(pdev))
+ 			     __field(u16, id)
+ 			     __field(u64, size)
++			     __field(u16, pcifunc)
+ 	    ),
+ 	    TP_fast_assign(__assign_str(dev);
+ 			   __entry->id = id;
+ 			   __entry->size = size;
++			   __entry->pcifunc = pcifunc;
+ 	    ),
+-	    TP_printk("[%s] msg:(%s) size:%lld\n", __get_str(dev),
+-		      otx2_mbox_id2name(__entry->id), __entry->size)
++	    TP_printk("[%s] msg:(%s) size:%lld pcifunc:0x%x\n", __get_str(dev),
++		      otx2_mbox_id2name(__entry->id), __entry->size,
++		      __entry->pcifunc)
+ );
+ 
+ TRACE_EVENT(otx2_msg_send,
+-	    TP_PROTO(const struct pci_dev *pdev, u16 num_msgs, u64 msg_size),
+-	    TP_ARGS(pdev, num_msgs, msg_size),
++	    TP_PROTO(const struct pci_dev *pdev, u16 num_msgs, u64 msg_size,
++		     u16 id, u16 pcifunc),
++	    TP_ARGS(pdev, num_msgs, msg_size, id, pcifunc),
+ 	    TP_STRUCT__entry(__string(dev, pci_name(pdev))
+ 			     __field(u16, num_msgs)
+ 			     __field(u64, msg_size)
++			     __field(u16, id)
++			     __field(u16, pcifunc)
+ 	    ),
+ 	    TP_fast_assign(__assign_str(dev);
+ 			   __entry->num_msgs = num_msgs;
+ 			   __entry->msg_size = msg_size;
++			   __entry->id = id;
++			   __entry->pcifunc = pcifunc;
+ 	    ),
+-	    TP_printk("[%s] sent %d msg(s) of size:%lld\n", __get_str(dev),
+-		      __entry->num_msgs, __entry->msg_size)
++	    TP_printk("[%s] sent %d msg(s) of size:%lld msg:(%s) pcifunc:0x%x\n",
++		      __get_str(dev), __entry->num_msgs, __entry->msg_size,
++		      otx2_mbox_id2name(__entry->id), __entry->pcifunc)
+ );
+ 
+ TRACE_EVENT(otx2_msg_check,
+@@ -81,18 +90,47 @@ TRACE_EVENT(otx2_msg_interrupt,
+ );
+ 
+ TRACE_EVENT(otx2_msg_process,
+-	    TP_PROTO(const struct pci_dev *pdev, u16 id, int err),
+-	    TP_ARGS(pdev, id, err),
++	    TP_PROTO(const struct pci_dev *pdev, u16 id, int err, u16 pcifunc),
++	    TP_ARGS(pdev, id, err, pcifunc),
+ 	    TP_STRUCT__entry(__string(dev, pci_name(pdev))
+ 			     __field(u16, id)
+ 			     __field(int, err)
++			     __field(u16, pcifunc)
+ 	    ),
+ 	    TP_fast_assign(__assign_str(dev);
+ 			   __entry->id = id;
+ 			   __entry->err = err;
++			   __entry->pcifunc = pcifunc;
++	    ),
++	    TP_printk("[%s] msg:(%s) error:%d pcifunc:0x%x\n", __get_str(dev),
++		      otx2_mbox_id2name(__entry->id),
++		      __entry->err, __entry->pcifunc)
++);
++
++TRACE_EVENT(otx2_msg_wait_rsp,
++	    TP_PROTO(const struct pci_dev *pdev),
++	    TP_ARGS(pdev),
++	    TP_STRUCT__entry(__string(dev, pci_name(pdev))
++	    ),
++	    TP_fast_assign(__assign_str(dev, pci_name(pdev))
++	    ),
++	    TP_printk("[%s] timed out while waiting for response\n",
++		      __get_str(dev))
++);
++
++TRACE_EVENT(otx2_msg_status,
++	    TP_PROTO(const struct pci_dev *pdev, const char *msg, u16 num_msgs),
++	    TP_ARGS(pdev, msg, num_msgs),
++	    TP_STRUCT__entry(__string(dev, pci_name(pdev))
++			     __string(str, msg)
++			     __field(u16, num_msgs)
++	    ),
++	    TP_fast_assign(__assign_str(dev, pci_name(pdev))
++			   __assign_str(str, msg)
++			   __entry->num_msgs = num_msgs;
+ 	    ),
+-	    TP_printk("[%s] msg:(%s) error:%d\n", __get_str(dev),
+-		      otx2_mbox_id2name(__entry->id), __entry->err)
++	    TP_printk("[%s] %s num_msgs:%d\n", __get_str(dev),
++		      __get_str(str), __entry->num_msgs)
+ );
+ 
+ #endif /* __RVU_TRACE_H */
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+index 24fbbef..f441103 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+@@ -847,6 +847,7 @@ static struct _req_type __maybe_unused					\
+ *otx2_mbox_alloc_msg_ ## _fn_name(struct mbox *mbox)                    \
+ {									\
+ 	struct _req_type *req;						\
++	u16 pcifunc = mbox->pfvf->pcifunc;				\
+ 									\
+ 	req = (struct _req_type *)otx2_mbox_alloc_msg_rsp(		\
+ 		&mbox->mbox, 0, sizeof(struct _req_type),		\
+@@ -855,7 +856,8 @@ static struct _req_type __maybe_unused					\
+ 		return NULL;						\
+ 	req->hdr.sig = OTX2_MBOX_REQ_SIG;				\
+ 	req->hdr.id = _id;						\
+-	trace_otx2_msg_alloc(mbox->mbox.pdev, _id, sizeof(*req));	\
++	req->hdr.pcifunc = pcifunc;					\
++	trace_otx2_msg_alloc(mbox->mbox.pdev, _id, sizeof(*req), pcifunc); \
+ 	return req;							\
+ }
+ 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+index f5bce3e..77156f4 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+@@ -463,6 +463,9 @@ static void otx2_pfvf_mbox_handler(struct work_struct *work)
+ 
+ 	offset = ALIGN(sizeof(struct mbox_hdr), MBOX_MSG_ALIGN);
+ 
++	trace_otx2_msg_status(pf->pdev, "PF-VF down queue handler(forwarding)",
++			      vf_mbox->num_msgs);
++
+ 	for (id = 0; id < vf_mbox->num_msgs; id++) {
+ 		msg = (struct mbox_msghdr *)(mdev->mbase + mbox->rx_start +
+ 					     offset);
+@@ -471,7 +474,7 @@ static void otx2_pfvf_mbox_handler(struct work_struct *work)
+ 			goto inval_msg;
+ 
+ 		/* Set VF's number in each of the msg */
+-		msg->pcifunc &= RVU_PFVF_FUNC_MASK;
++		msg->pcifunc &= ~RVU_PFVF_FUNC_MASK;
+ 		msg->pcifunc |= (vf_idx + 1) & RVU_PFVF_FUNC_MASK;
+ 		offset = msg->next_msgoff;
+ 	}
+@@ -501,6 +504,9 @@ static void otx2_pfvf_mbox_up_handler(struct work_struct *work)
+ 
+ 	offset = mbox->rx_start + ALIGN(sizeof(struct mbox_hdr), MBOX_MSG_ALIGN);
+ 
++	trace_otx2_msg_status(pf->pdev, "PF-VF up queue handler(response)",
++			      vf_mbox->up_num_msgs);
++
+ 	for (id = 0; id < vf_mbox->up_num_msgs; id++) {
+ 		msg = mdev->mbase + offset;
+ 
+@@ -816,6 +822,9 @@ static void otx2_pfaf_mbox_handler(struct work_struct *work)
+ 	offset = mbox->rx_start + ALIGN(sizeof(*rsp_hdr), MBOX_MSG_ALIGN);
+ 	pf = af_mbox->pfvf;
+ 
++	trace_otx2_msg_status(pf->pdev, "PF-AF down queue handler(response)",
++			      num_msgs);
++
+ 	for (id = 0; id < num_msgs; id++) {
+ 		msg = (struct mbox_msghdr *)(mdev->mbase + offset);
+ 		otx2_process_pfaf_mbox_msg(pf, msg);
+@@ -938,6 +947,9 @@ static void otx2_pfaf_mbox_up_handler(struct work_struct *work)
+ 
+ 	offset = mbox->rx_start + ALIGN(sizeof(*rsp_hdr), MBOX_MSG_ALIGN);
+ 
++	trace_otx2_msg_status(pf->pdev, "PF-AF up queue handler(notification)",
++			      num_msgs);
++
+ 	for (id = 0; id < num_msgs; id++) {
+ 		msg = (struct mbox_msghdr *)(mdev->mbase + offset);
+ 
+@@ -987,6 +999,9 @@ static irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq)
+ 
+ 		trace_otx2_msg_interrupt(pf->pdev, "UP message from AF to PF",
+ 					 BIT_ULL(0));
++
++		trace_otx2_msg_status(pf->pdev, "PF-AF up work queued(interrupt)",
++				      hdr->num_msgs);
+ 	}
+ 
+ 	if (mbox_data & MBOX_DOWN_MSG) {
+@@ -1003,6 +1018,9 @@ static irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq)
+ 
+ 		trace_otx2_msg_interrupt(pf->pdev, "DOWN reply from AF to PF",
+ 					 BIT_ULL(0));
++
++		trace_otx2_msg_status(pf->pdev, "PF-AF down work queued(interrupt)",
++				      hdr->num_msgs);
+ 	}
+ 
+ 	return IRQ_HANDLED;
+@@ -3170,6 +3188,7 @@ static void otx2_vf_link_event_task(struct work_struct *work)
+ 	req = (struct cgx_link_info_msg *)msghdr;
+ 	req->hdr.id = MBOX_MSG_CGX_LINK_EVENT;
+ 	req->hdr.sig = OTX2_MBOX_REQ_SIG;
++	req->hdr.pcifunc = pf->pcifunc;
+ 	memcpy(&req->link_info, &pf->linfo, sizeof(req->link_info));
+ 
+ 	otx2_mbox_wait_for_zero(&pf->mbox_pfvf[0].mbox_up, vf_idx);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+index 99fcc56..cb94dce 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+@@ -134,7 +134,7 @@ static int otx2vf_process_mbox_msg_up(struct otx2_nic *vf,
+ 
+ 		rsp->hdr.id = MBOX_MSG_CGX_LINK_EVENT;
+ 		rsp->hdr.sig = OTX2_MBOX_RSP_SIG;
+-		rsp->hdr.pcifunc = 0;
++		rsp->hdr.pcifunc = req->pcifunc;
+ 		rsp->hdr.rc = 0;
+ 		err = otx2_mbox_up_handler_cgx_link_event(
+ 				vf, (struct cgx_link_info_msg *)req, rsp);
+-- 
+2.7.4
 
 
