@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-195201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F818D48C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:38:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D128D48C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0CDE1F21638
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A039B25A97
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC8817D375;
-	Thu, 30 May 2024 09:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20C517D367;
+	Thu, 30 May 2024 09:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jwIKfK2i"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Oha8PQjl"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE16F155381
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DE1155335
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717061830; cv=none; b=BzbU7uHd7s+Ko3dZupaCLy9FHddUxmTI7kJn2ANajTjGMZ4C8MbNbcSdjx+zrGv0iM1JX9q0LyI3Kg0TRGLCXjt61Tv3QqeunjmoJzJlEO6nGX2PKnY2wqOfgonxhFQEn50pj7+jcmH8SjaqxZSc0elMXKy0ugapndCOIEr76II=
+	t=1717061829; cv=none; b=YEXeSq3614Dv5bl0Int7edjRrLvAN5/Sk4MAkIcTx3rfULP1xT4FY1ArFk2/L6lq10qSEoBNzYVs3vgny/aYIp8yaYO6JeNTdB1B8xGZEDOXgljz1jLrzEUuQTFkoTsvf8U+rWlqsvZMv6EkG+qFxVuNBY432SYWb2SrzHQ6O/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717061830; c=relaxed/simple;
-	bh=Co3NApN5PH0RwrxV3ma4J3plO3ITMnzTINS3wtyhh5U=;
+	s=arc-20240116; t=1717061829; c=relaxed/simple;
+	bh=ssOuzRZz0zhXC/m8+8KE9BJFHCMlcpA1tyE1pbyJusE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u+XJ0T6j0Fg3ZOw4brOhTqSapHTMwvRoLvw8sL9JlDkR8xrBsWnxFDN1lj9RaabyEJhAnvtUHbxWxF9QwwiJuzyyO6xZGCkNxGpha5Czy4XQvZiyUWY6LBSZG7KC4hcvMI50O/sbXNIFPjEvN+pVTeA8NausjmjoCiFo0VQtzPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jwIKfK2i; arc=none smtp.client-ip=198.47.19.142
+	 MIME-Version:Content-Type; b=uBQbgBRFB7GXFilXlZUUGiIl2YyU8jvojKa30RVtISE7Irv1ybyS5G50Whv582NGK32K91kqgS0Sd0WGbS7l1+8JtheBGtlL/F/AD+sOMeocRGO+NFLZNOzuzumK5mmAl/iuEUkakkNM7MZMLpKGIfeP3txBqyY52loa4S9cgds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Oha8PQjl; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U9ab0t030998;
-	Thu, 30 May 2024 04:36:37 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U9adaM055589;
+	Thu, 30 May 2024 04:36:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717061797;
-	bh=BF4OeQ8AnLvIg0Vy2/wLlvEDPShVZWkGdXBbmVkNmes=;
+	s=ti-com-17Q1; t=1717061799;
+	bh=YGuptUSUi6PCUNFepUagbXGzpwxcwb18R5SXcLEni7Y=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=jwIKfK2igZooIYzC3x851LvNhg1dgoxaQO7dAT1uWWhCCFtUzicsAlHhd+Opg56Fb
-	 5b5uSL0JZuhZjMQIN0de3x4ZqTRfOQ27UJNpTmkP3uESHHoo/IwBEs9iL1cCtco+5B
-	 XbCkLrcuZx/PQMWZXpv844HL3th05Ag5gghze4+s=
+	b=Oha8PQjlfEDV/DcneNe98XC/EWOPzqWzol/JGg+cqwkLCyNmrBVKVF6rRTLq8pcRF
+	 XKnroqcEFsZxEg2l2+xbJaqD7QFTiBLd0xj7xe6rztoIURjMIDTwICXhZthI8L8B2R
+	 4aBtO1yQPS6vomNMdolKStA5bNMuwHRG0wvM2wUw=
 Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U9abGo020248
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U9ad0Y104087
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 30 May 2024 04:36:37 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE105.ent.ti.com
+	Thu, 30 May 2024 04:36:39 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
  (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
- May 2024 04:36:36 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ May 2024 04:36:38 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 30 May 2024 04:36:36 -0500
+ Frontend Transport; Thu, 30 May 2024 04:36:38 -0500
 Received: from localhost (uda0496377.dhcp.ti.com [172.24.227.31])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U9aaJH000663;
-	Thu, 30 May 2024 04:36:36 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U9abTP086477;
+	Thu, 30 May 2024 04:36:38 -0500
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
         Andrzej Hajda
@@ -88,9 +88,9 @@ CC: DRI Development List <dri-devel@lists.freedesktop.org>,
  Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>,
         Aradhya Bhatia
 	<a-bhatia1@ti.com>
-Subject: [PATCH v2 8/9] drm/atomic-helper: Re-order bridge chain pre-enable and post-disable
-Date: Thu, 30 May 2024 15:06:20 +0530
-Message-ID: <20240530093621.1925863-9-a-bhatia1@ti.com>
+Subject: [PATCH v2 9/9] drm/bridge: cdns-dsi: Use pre_enable/post_disable to enable/disable
+Date: Thu, 30 May 2024 15:06:21 +0530
+Message-ID: <20240530093621.1925863-10-a-bhatia1@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240530093621.1925863-1-a-bhatia1@ti.com>
 References: <20240530093621.1925863-1-a-bhatia1@ti.com>
@@ -104,139 +104,103 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Move the bridge pre_enable call before crtc enable, and the bridge
-post_disable call after the crtc disable.
+The cdns-dsi controller requires that it be turned on completely before
+the input DPI's source has begun streaming[0]. Not having that, allows
+for a small window before cdns-dsi enable and after cdns-dsi disable
+where the previous entity (in this case tidss's videoport) to continue
+streaming DPI video signals. This small window where cdns-dsi is
+disabled but is still receiving signals causes the input FIFO of
+cdns-dsi to get corrupted. This causes the colors to shift on the output
+display. The colors can either shift by one color component (R->G, G->B,
+B->R), or by two color components (R->B, G->R, B->G).
 
-The sequence of enable after this patch will look like:
+Since tidss's videoport starts streaming via crtc enable hooks, we need
+cdns-dsi to be up and running before that. Now that the bridges are
+pre_enabled before crtc is enabled, and post_disabled after crtc is
+disabled, use the pre_enable and post_disable hooks to get cdns-dsi
+ready and running before the tidss videoport to get pass the color shift
+issues.
 
-	bridge[n]_pre_enable
-	...
-	bridge[1]_pre_enable
-
-	crtc_enable
-	encoder_enable
-
-	bridge[1]_enable
-	...
-	bridge[n]__enable
-
-and vice-versa for the bridge chain disable sequence.
-
-The definition of bridge pre_enable hook says that,
-"The display pipe (i.e. clocks and timing signals) feeding this bridge
-will not yet be running when this callback is called".
-
-Since CRTC is also a source feeding the bridge, it should not be enabled
-before the bridges in the pipeline are pre_enabled. Fix that by
-re-ordering the sequence of bridge pre_enable and bridge post_disable.
+[0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
+     TRM Link: http://www.ti.com/lit/pdf/spruil1
 
 Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
 ---
- drivers/gpu/drm/drm_atomic_helper.c | 70 +++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 3 deletions(-)
+ .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 32 +++----------------
+ 1 file changed, 4 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index fb97b51b38f1..02e093950218 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1186,8 +1186,6 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
- 			else if (funcs->dpms)
- 				funcs->dpms(encoder, DRM_MODE_DPMS_OFF);
- 		}
--
--		drm_atomic_bridge_chain_post_disable(bridge, old_state);
- 	}
- 
- 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
-@@ -1234,6 +1232,49 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
- 		if (ret == 0)
- 			drm_crtc_vblank_put(crtc);
- 	}
-+
-+	for_each_oldnew_connector_in_state(old_state, connector, old_conn_state,
-+					   new_conn_state, i) {
-+		struct drm_encoder *encoder;
-+		struct drm_bridge *bridge;
-+
-+		/*
-+		 * Shut down everything that's in the changeset and currently
-+		 * still on. So need to check the old, saved state.
-+		 */
-+		if (!old_conn_state->crtc)
-+			continue;
-+
-+		old_crtc_state = drm_atomic_get_old_crtc_state(old_state, old_conn_state->crtc);
-+
-+		if (new_conn_state->crtc)
-+			new_crtc_state = drm_atomic_get_new_crtc_state(old_state,
-+								       new_conn_state->crtc);
-+		else
-+			new_crtc_state = NULL;
-+
-+		if (!crtc_needs_disable(old_crtc_state, new_crtc_state) ||
-+		    !drm_atomic_crtc_needs_modeset(old_conn_state->crtc->state))
-+			continue;
-+
-+		encoder = old_conn_state->best_encoder;
-+
-+		/* We shouldn't get this far if we didn't previously have
-+		 * an encoder.. but WARN_ON() rather than explode.
-+		 */
-+		if (WARN_ON(!encoder))
-+			continue;
-+
-+		drm_dbg_atomic(dev, "disabling [ENCODER:%d:%s]\n",
-+			       encoder->base.id, encoder->name);
-+
-+		/*
-+		 * Each encoder has at most one connector (since we always steal
-+		 * it away), so we won't call disable hooks twice.
-+		 */
-+		bridge = drm_bridge_chain_get_first_bridge(encoder);
-+		drm_atomic_bridge_chain_post_disable(bridge, old_state);
-+	}
+diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+index 6a2223ecff7d..1eedc7053ef8 100644
+--- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
++++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+@@ -656,8 +656,8 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+ 	return MODE_OK;
  }
  
- /**
-@@ -1469,6 +1510,30 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
- 	struct drm_connector_state *new_conn_state;
- 	int i;
+-static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
+-					   struct drm_bridge_state *old_bridge_state)
++static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
++						struct drm_bridge_state *old_bridge_state)
+ {
+ 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+@@ -677,15 +677,6 @@ static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
+ 	pm_runtime_put(dsi->base.dev);
+ }
  
-+	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
-+		struct drm_encoder *encoder;
-+		struct drm_bridge *bridge;
-+
-+		if (!new_conn_state->best_encoder)
-+			continue;
-+
-+		if (!new_conn_state->crtc->state->active ||
-+		    !drm_atomic_crtc_needs_modeset(new_conn_state->crtc->state))
-+			continue;
-+
-+		encoder = new_conn_state->best_encoder;
-+
-+		drm_dbg_atomic(dev, "enabling [ENCODER:%d:%s]\n",
-+			       encoder->base.id, encoder->name);
-+
-+		/*
-+		 * Each encoder has at most one connector (since we always steal
-+		 * it away), so we won't call enable hooks twice.
-+		 */
-+		bridge = drm_bridge_chain_get_first_bridge(encoder);
-+		drm_atomic_bridge_chain_pre_enable(bridge, old_state);
-+	}
-+
- 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
- 		const struct drm_crtc_helper_funcs *funcs;
+-static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
+-						struct drm_bridge_state *old_bridge_state)
+-{
+-	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+-	struct cdns_dsi *dsi = input_to_dsi(input);
+-
+-	pm_runtime_put(dsi->base.dev);
+-}
+-
+ static void cdns_dsi_hs_init(struct cdns_dsi *dsi)
+ {
+ 	struct cdns_dsi_output *output = &dsi->output;
+@@ -755,8 +746,8 @@ static void cdns_dsi_init_link(struct cdns_dsi *dsi)
+ 	dsi->link_initialized = true;
+ }
  
-@@ -1514,7 +1579,6 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
- 		 * it away), so we won't call enable hooks twice.
- 		 */
- 		bridge = drm_bridge_chain_get_first_bridge(encoder);
--		drm_atomic_bridge_chain_pre_enable(bridge, old_state);
+-static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
+-					  struct drm_bridge_state *old_bridge_state)
++static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
++					      struct drm_bridge_state *old_bridge_state)
+ {
+ 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+@@ -907,19 +898,6 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
+ 	writel(tmp, dsi->regs + MCTL_MAIN_EN);
+ }
  
- 		if (funcs) {
- 			if (funcs->atomic_enable)
+-static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
+-					      struct drm_bridge_state *old_bridge_state)
+-{
+-	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+-	struct cdns_dsi *dsi = input_to_dsi(input);
+-
+-	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
+-		return;
+-
+-	cdns_dsi_init_link(dsi);
+-	cdns_dsi_hs_init(dsi);
+-}
+-
+ static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
+ 					       struct drm_bridge_state *bridge_state,
+ 					       struct drm_crtc_state *crtc_state,
+@@ -968,9 +946,7 @@ static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
+ static const struct drm_bridge_funcs cdns_dsi_bridge_funcs = {
+ 	.attach = cdns_dsi_bridge_attach,
+ 	.mode_valid = cdns_dsi_bridge_mode_valid,
+-	.atomic_disable = cdns_dsi_bridge_atomic_disable,
+ 	.atomic_pre_enable = cdns_dsi_bridge_atomic_pre_enable,
+-	.atomic_enable = cdns_dsi_bridge_atomic_enable,
+ 	.atomic_post_disable = cdns_dsi_bridge_atomic_post_disable,
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
 -- 
 2.34.1
 
