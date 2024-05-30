@@ -1,140 +1,186 @@
-Return-Path: <linux-kernel+bounces-194818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8708D427E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:50:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A7D8D427F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B231F2837D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:50:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9413B25029
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3B3E56C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6765FC11;
 	Thu, 30 May 2024 00:50:40 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CD75C83
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F24FSipB"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0876AA1;
+	Thu, 30 May 2024 00:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717030239; cv=none; b=ociZoLulNkhtcKVyiD90eA8WaAc5IIRRUHLj7Ncd1jZWJVlNE8Ut52i/YVk+4N4/RjTX+ywNHa19IL3Mi+3Y7XlhWhCHS+StkodOF5jjkE9cPzvAiuG0XKvsLLEpZMDks1jKsHvU+usuzghnQXpKGiXmWRfKFViwGVUy3pM8Jdw=
+	t=1717030239; cv=none; b=Tlsd7GVOLzJXryfX4Tzw/G5Dtpk5flsJkqr7/SKSgtuMmuSlNdBkXuY7KQWtPl3t5S7OPctXjRzrH/Y3X+cRgwqF8qwDPftWmpxPUz6Uj5AgvDhu8ySvdVXsWTHXSU1qQ+GDP7WtVy6L3H4AWo/F7eSeDE3BJpDoNYZ0AbnAQxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717030239; c=relaxed/simple;
-	bh=p7gDlyNVjk3zWfjBzeWurQQOWBTRjMGzOOudmWRdDHw=;
+	bh=w0M2NwYr/14Mvs7l87d7yBk8eY17sbC7zcA+FobWwQY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjhKOQDxk3flbh04JFwcHV4pMVRe5d8x5lTKVN1o62cSchmEZjCyPs4q6Lx4fpyQIv5BF42ERqFKWOAoYspZE0K++0ktVz7b9tNGpV+N3NR04MlVK3jM2MUP2VcW1ZE6lf1hKGKQL4/5lTD/bz9/vcmmiscVx6FRNE5134MryyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-d4-6657cd57fc10
-Date: Thu, 30 May 2024 09:50:26 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com,
-	akpm@linux-foundation.org, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240530005026.GA47476@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
- <20240527015732.GA61604@system.software.com>
- <8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <44e4f2fd-e76e-445d-b618-17a6ec692812@intel.com>
- <20240529050046.GB20307@system.software.com>
- <961f9533-1e0c-416c-b6b0-d46b97127de2@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bv2QXBNs+ta3OR5SuYpRy7RLX3tu/8zqoPlQNvORabGWmpBl4I+WzBpOp3zt6J0njLVWhD6K47Vj8n11pkQ7chwhMooVyy5Jr/uXWQ2CpmAIbjP8BD0plZGiJg3ASQ91PIFJmi3mUHnnDr7AwPkdZliNNcBQHJoEcKtQpO3tlNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F24FSipB; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f4ed9dc7beso199691b3a.1;
+        Wed, 29 May 2024 17:50:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717030238; x=1717635038; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=k8+O8xhY+pxJWdqeW2KaJVJjVRnx1SFKpe5mCJ/JMA4=;
+        b=F24FSipBFdAKBQ1pwHupzNe/aaBgnlfzwW6J3wyDyAJRHhMPvB9ccvyBeDDiI+JUP3
+         +I5niiuefXkKIhumab3qU8vqatW7gimYNj5/mMjXtwFVGvr5b1Nr1Cs40n3QqSBzIo5T
+         XBxNaFwNe4cb9egClaXYd9jouKS39L1E+Mo+BmjXbfNYsxoR3xU1NcOUGFbe71QkZAW0
+         YdihjVyuFjHR45spuL61ZDY7oYl7sCzAIyZpNZg4NDvmhciUlaH2nLg9RPXdiRXXCPEo
+         P7ogpyxD+O30/Vpv1pvcXr3AS+VLlBpTK7lc80zedOR4CpiMLhez2pfxXbS9SNdI0qiY
+         YEUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717030238; x=1717635038;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k8+O8xhY+pxJWdqeW2KaJVJjVRnx1SFKpe5mCJ/JMA4=;
+        b=ZPIHzqKJSWyohIuDgX0pcV7EFl5GEQZbBN9x8BId0hCNeN3s8elzGZdG64ZC89D17q
+         utTPghO3YNN9fWolJEMgx7EP6wPDMdHr6SfuFWZ7MgVbY/Nd/PiKmmaBGTcQ4Dy5nafc
+         uaxRcCsmPACcKLAOYf+f45EXPl62S9pvDC8afhtglL/dwCdsQSzF+VYtvDRWbLW9QIQk
+         aBQ+wjk6i1k8GJvFqiknZesin2CK7U1SqiVYusQmqhlNSPAdTmV13ASn/CdzL2g8oWku
+         78zGzfofNFK+GYA6zHHKpSuPr11t/bhmqqYLKIpkudrGBPF85buOh2Cez5h40H3+dykh
+         NWYA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4OmjLT1qC0UUwwArf28CofcyO3w8igHoi3DHlj6j2pNnHPWlZNC0oT4fbzlt+fZZ56vxR9yiMl9zSXdlpndHsn0Q2XXxu+h8MktreQWaSdMQoTB3ySnqNUqwrd0UDjwGX5G10V1bCYNRZe6Z58fkUZww1n2BPVDSrG3dzZ/nXvsY/2wyX6LMsG8Ts
+X-Gm-Message-State: AOJu0YzJvm4f0EYpiCiP/Ca3NHT01tZZzCxY24XShbV/d6wDmBxvPvJn
+	did9Z8c7yIe0hVeOQITkge17Y0X9c5bOC9YVTOGxqFcYyiOzUl3IND5pq06u
+X-Google-Smtp-Source: AGHT+IEYDfQxP1oHkh5ta+MZE51Ikrl8Y36qaiEgsMUgYNELNTiBc5MpFMcJovRpYRv1UkeiFSflbw==
+X-Received: by 2002:a62:f201:0:b0:701:c944:ae75 with SMTP id d2e1a72fcca58-70231a867d5mr652385b3a.4.1717030237502;
+        Wed, 29 May 2024 17:50:37 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc3552ffsm8593308b3a.80.2024.05.29.17.50.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 17:50:37 -0700 (PDT)
+Date: Wed, 29 May 2024 18:50:34 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev, netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
+ restrictions
+Message-ID: <ZlfNWtyEnIAw99ne@tahera-OptiPlex-5000>
+References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
+ <20240401.ieC2uqua5sha@digikod.net>
+ <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+ <20240411.ahgeefeiNg4i@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <961f9533-1e0c-416c-b6b0-d46b97127de2@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsXC9ZZnkW742fA0g0PTjC3mrF/DZvF5wz82
-	i08vHzBavNjQzmjxdf0vZounn/pYLC7vmsNmcW/Nf1aL87vWslrsWLqPyeLSgQVMFsd7DzBZ
-	zL/3mc1i86apzBbHp0xltPj9A6j45KzJLA6CHt9b+1g8ds66y+6xYFOpx+YVWh6L97xk8ti0
-	qpPNY9OnSewe786dY/c4MeM3i8e8k4Ee7/ddZfPY+svOo3HqNTaPz5vkAviiuGxSUnMyy1KL
-	9O0SuDLWbhEs6BKomH5zH3sD4yqeLkZODgkBE4kTZ5azwdg3915kBbFZBFQlGtbtYAGx2QTU
-	JW7c+MkMYosA2adWLmfvYuTiYBboZ5b4/w7E4eQQFgiRmPZhDROIzStgIbHg22ImkCIhgQdM
-	ErO/PmSESAhKnJz5BGwqs4CWxI1/L4GKOIBsaYnl/zhAwpwCthInFp8CKxcVUJY4sO04E8Rx
-	m9glPjwUh7AlJQ6uuMEygVFgFpKps5BMnYUwdQEj8ypGocy8stzEzBwTvYzKvMwKveT83E2M
-	wIhcVvsnegfjpwvBhxgFOBiVeHgPSISnCbEmlhVX5h5ilOBgVhLhPTMpNE2INyWxsiq1KD++
-	qDQntfgQozQHi5I4r9G38hQhgfTEktTs1NSC1CKYLBMHp1QD45RzflkfSlbcZcq9n71Etn6L
-	z53sf7wCoSy7pnMJP+ThOf3719NvR5h/6mTfZmz+M+/8PXXVuzldS+QZQ7t/Tb8zrbKbU+dg
-	9rU3L7JzmyOuf5KcnTXNZ+MGE02tlVGnW5ZyL5zZkbpWQbbcdrMx9+5ptgenlgV6Lmu+XPk9
-	cN2lM06dDxYuklViKc5INNRiLipOBABnIQgrxAIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsXC5WfdrBt+NjzNoPGqisWc9WvYLD5v+Mdm
-	8enlA0aLFxvaGS2+rv/FbPH0Ux+LxeG5J1ktLu+aw2Zxb81/Vovzu9ayWuxYuo/J4tKBBUwW
-	x3sPMFnMv/eZzWLzpqnMFsenTGW0+P0DqPjkrMksDkIe31v7WDx2zrrL7rFgU6nH5hVaHov3
-	vGTy2LSqk81j06dJ7B7vzp1j9zgx4zeLx7yTgR7v911l81j84gOTx9Zfdh6NU6+xeXzeJBfA
-	H8Vlk5Kak1mWWqRvl8CVsXaLYEGXQMX0m/vYGxhX8XQxcnJICJhI3Nx7kRXEZhFQlWhYt4MF
-	xGYTUJe4ceMnM4gtAmSfWrmcvYuRi4NZoJ9Z4v87EIeTQ1ggRGLahzVMIDavgIXEgm+LmUCK
-	hAQeMEnM/vqQESIhKHFy5hOwqcwCWhI3/r0EKuIAsqUllv/jAAlzCthKnFh8CqxcVEBZ4sC2
-	40wTGHlnIemehaR7FkL3AkbmVYwimXlluYmZOaZ6xdkZlXmZFXrJ+bmbGIERtqz2z8QdjF8u
-	ux9iFOBgVOLhPSARnibEmlhWXJl7iFGCg1lJhPfMpNA0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK
-	4rxe4akJQgLpiSWp2ampBalFMFkmDk6pBsY6kekStporl8bt+6xrMsN0ww/jFWscrCv7J3p9
-	njlZzvvO9Xze3qqOXsk9NVXzs5NyIv3mGS1ra/vm9DRHe95C2aNpfHbLlLU93P1cJ3j+Cwue
-	yZq4o3yTU/vOmi8TT+abz3M5LaHIqmlxVPax9e0t4Z+NVHktVwh/Db5YK742km+J4L8VYUos
-	xRmJhlrMRcWJAD8c/HisAgAA
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240411.ahgeefeiNg4i@digikod.net>
 
-On Wed, May 29, 2024 at 09:41:22AM -0700, Dave Hansen wrote:
-> On 5/28/24 22:00, Byungchul Park wrote:
-> > All the code updating ptes already performs TLB flush needed in a safe
-> > way if it's inevitable e.g. munmap.  LUF which controls when to flush in
-> > a higer level than arch code, just leaves stale ro tlb entries that are
-> > currently supposed to be in use.  Could you give a scenario that you are
-> > concering?
+On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
+> On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
+> > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
+> > > Thanks for this patch.  Please CC the netdev mailing list too, they may
+> > > be interested by this feature. I also added a few folks that previously
+> > > showed their interest for this feature.
+> > > 
+> > > On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
+> > > > Abstract unix sockets are used for local interprocess communication without
+> > > > relying on filesystem. Since landlock has no restriction for connecting to
+> > > > a UNIX socket in the abstract namespace, a sandboxed process can connect to
+> > > > a socket outside the sandboxed environment. Access to such sockets should
+> > > > be scoped the same way ptrace access is limited.
+> > > 
+> > > This is good but it would be better to explain that Landlock doesn't
+> > > currently control abstract unix sockets and that it would make sense for
+> > > a sandbox.
+> > > 
+> > > 
+> > > > 
+> > > > For a landlocked process to be allowed to connect to a target process, it
+> > > > must have a subset of the target process’s rules (the connecting socket
+> > > > must be in a sub-domain of the listening socket). This patch adds a new
+> > > > LSM hook for connect function in unix socket with the related access rights.
+> > > 
+> > > Because of compatibility reasons, and because Landlock should be
+> > > flexible, we need to extend the user space interface.  As explained in
+> > > the GitHub issue, we need to add a new "scoped" field to the
+> > > landlock_ruleset_attr struct. This field will optionally contain a
+> > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
+> > > ruleset will deny any connection from within the sandbox to its parents
+> > > (i.e. any parent sandbox or not-sandboxed processes).
 > 
-> Let's go back this scenario:
+> > Thanks for the feedback. Here is what I understood, please correct me if
+> > I am wrong. First, I should add another field to the
+> > landlock_ruleset_attr (a field like handled_access_net, but for the unix
+> > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
+> > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
 > 
->  	fd = open("/some/file", O_RDONLY);
->  	ptr1 = mmap(-1, size, PROT_READ, ..., fd, ...);
->  	foo1 = *ptr1;
+> That was the initial idea, but after thinking more about it and talking
+> with some users, I now think we can get a more generic interface.
 > 
-> There's a read-only PTE at 'ptr1'.  Right?  The page being pointed to is
-> eligible for LUF via the try_to_unmap() paths.  In other words, the page
-> might be reclaimed at any time.  If it is reclaimed, the PTE will be
-> cleared.
+> Because unix sockets, signals, and other IPCs are fully controlled by
+> the kernel (contrary to inet sockets that get out of the system), we can
+> add ingress and egress control according to the source and the
+> destination.
 > 
-> Then, the user might do:
+> To control the direction we could add an
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE and a
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND rights (these names are a bit
+> long but at least explicit).  To control the source and destination, it
+> makes sense to use Landlock domain (i.e. sandboxes):
+> LANDLOCK_DOMAIN_HIERARCHY_PARENT, LANDLOCK_DOMAIN_HIERARCHY_SELF, and
+> LANDLOCK_DOMAIN_HIERARCHY_CHILD.  This could be used by extending the
+> landlock_ruleset_attr type and adding a new
+> landlock_domain_hierarchy_attr type:
 > 
-> 	munmap(ptr1, PAGE_SIZE);
+> struct landlock_ruleset_attr ruleset_attr = {
+>   .handled_access_dom = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+>                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> }
 > 
-> Which will _eventually_ wind up in the zap_pte_range() loop.  But that
-> loop will only see pte_none().  It doesn't do _anything_ to the 'struct
-> mmu_gather'.
+> // Allows sending data to and receiving data from processes in the same
+> // domain or a child domain, through abstract unix sockets.
+> struct landlock_domain_hierarchy_attr dom_attr = {
+>   .allowed_access = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+>                     LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+>   .relationship = LANDLOCK_DOMAIN_HIERARCHY_SELF | \
+>                   LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+> };
 > 
-> The munmap() then lands in tlb_flush_mmu_tlbonly() where it looks at the
-> 'struct mmu_gather':
+> It should also work with other kind of IPCs:
+> * LANDLOCK_ACCESS_DOM_UNIX_PATHNAME_RECEIVE/SEND (signal)
+> * LANDLOCK_ACCESS_DOM_SIGNAL_RECEIVE/SEND (signal)
+> * LANDLOCK_ACCESS_DOM_XSI_RECEIVE/SEND (XSI message queue)
+> * LANDLOCK_ACCESS_DOM_MQ_RECEIVE/SEND (POSIX message queue)
+> * LANDLOCK_ACCESS_DOM_PTRACE_RECEIVE/SEND (ptrace, which would be
+>   limited)
 > 
->         if (!(tlb->freed_tables || tlb->cleared_ptes ||
-> 	      tlb->cleared_pmds || tlb->cleared_puds ||
-> 	      tlb->cleared_p4ds))
->                 return;
-> 
-> But since there were no cleared PTEs (or anything else) during the
-> unmap, this just returns and doesn't flush the TLB.
-> 
-> We now have an address space with a stale TLB entry at 'ptr1' and not
-> even a VMA there.  There's nothing to stop a new VMA from going in,
-> installing a *new* PTE, but getting data from the stale TLB entry that
-> still hasn't been flushed.
+> What do you think?
+Indeed, in the case of abstract Unix sockets, both parties can send and
+receive data when a connection is established. Therefore, we can define
+a single LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT to represent the right to
+share data, regardless of direction. However, we should still retain
+LANDLOCK_DOMAIN_HIERARCHY for SELF, PARENT, and CHILD, as the source and
+destination are important. 
+As you said, I believe we should have receive and send rights for
+another kind of IPCs (which will be used for landlock#8 issue)
 
-Thank you for the explanation.  I got you.  I think I could handle the
-case through a new flag in vma or something indicating LUF has deferred
-necessary TLB flush for it during unmapping so that mmu_gather mechanism
-can be aware of it.  Of course, the performance change should be checked
-again.  Thoughts?
-
-Thanks again.
-
-	Byungchul
 
