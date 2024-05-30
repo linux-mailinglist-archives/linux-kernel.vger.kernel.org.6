@@ -1,144 +1,89 @@
-Return-Path: <linux-kernel+bounces-195286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B938D4A13
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:10:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D54A8D49E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 354FA1F226F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:10:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9755B20E7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A5116F271;
-	Thu, 30 May 2024 11:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B231417C7D1;
+	Thu, 30 May 2024 10:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b="tQsviuRK"
-Received: from sonic307-53.consmr.mail.ir2.yahoo.com (sonic307-53.consmr.mail.ir2.yahoo.com [87.248.110.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="VJOKR4CJ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA0A16EBE7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.248.110.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB486F2F8;
+	Thu, 30 May 2024 10:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717067415; cv=none; b=IxgEe2wY/i76Y7zjU9toAS/ShYrWzippEV85XuYOFmA+e4L2xomWcqhaLn/e2EJ/YbVmWahlSLaZfeOeRQ38FBXjPKiz8ShBW1scLPfUWX8kjbO3Y97B0DBMJbATOM6gOca2WiiKiEhEbNjF3WiqXOFX/WBEWj1KdtG3u4sr6Yo=
+	t=1717066287; cv=none; b=ulnVVgXLLHX7W9yjbhSzlrPlpCQgcMRPitWijpcD85EeEtsY4V6iZIE8v+6VGw6/ELtAC2gY7zmmqPneWh/TvG7BFNE2zWmb34N0LqI49Bsm48a+ZhUv8T3kE5RPQ7PDSRjIMvsz7WG2RGpSSMEfldYrkE9qJRdpQBMOnAr+ejM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717067415; c=relaxed/simple;
-	bh=7aybtSefWX7qOkDAv6IB5StKPRuL/tJxPJ6SrdpSMbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o4REXCeteFcRIOQFyENz9jx/OowSrsWeK5A7TIxVoyo+WbI9KtYZj/SWdEcgHzR3V/oXNLsOJduobVGV+RRJlJpSgSj/ouSymA1L//hJ+BJY8rUI5RST7LXi78Fy8gwCxbb9wWKZyybePcOCL8Ncian2zxFL3AJ7vz4UYgXqfjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de; spf=pass smtp.mailfrom=yahoo.de; dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b=tQsviuRK; arc=none smtp.client-ip=87.248.110.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.de; s=s2048; t=1717067412; bh=iETrNB+qFsCwf3l9yJ7zi5gWG9hU7iH9KF33EbrTrnc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tQsviuRK13MGbntOGC2XtLT0hydg2pz0gDccNoTsXaeUwyPMxGs7WsgSG86aJBsgln/xB2OWvQE5VDfIk7+nm4xdM45DCYQWihXKWAg4P/8qySsXoWe/65d6qKwkTZZUviHHy0nABx7DPvxfi5CgLTx0FaVIIQnnc63216aKmBJtjOrVfJ1ZzGNni4tFOQTyP2ozoD2NbulfrdVvfz0TJrmUfL5fXeYzX5R4jdWBg5OYVRVFRY5Lf1Y/sFCfcQpSUzuhnQydidCF+ykbTTqZFl86agG2h7RDcnVhY7ZhHw7Yxk+Fc9ObNvg/Ja3rhLBAkfQhcn5YqocwJq6MuKwyVQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717067412; bh=EvTrYQuZ1VkLhVCP3Y66UvxCLjhbo3HLOT9JXEopdnn=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iQBOWdfO7yWBKFyGDQpdbV8+QQh8qwXb9PC6GpMVxH12S1t40DIADIXN2SnVXp/97U5X5PXwJBNHlD9pA8USv9Jb8UaNyj9TxJLK71lxCVx+W86grirNjlfJF37B2GK6aed56FlLQ0PmhpXMYrrQdXBARtEXUE76EQZsPC60s17VFLqe+aAj62L0Kl7Mza0ECZgwVxhK7CzYTD+WlzXRJGm2Egn5gMlO92ic07Aje6EqUEZQq5JzeK4pclFXDSk8yQhULd4jZPsAtYIkTopGidPZB1xq+9hGeDflsq3Rx+ptHFfBYFPnEtOIG7U3UBDDpG9b1gq2VPC2VF8ya9ny3Q==
-X-YMail-OSG: jPnIlbUVM1kGJcHFvgbED0RbmTTs1gsxA9pBsgR.7GO5JuGivNQxYdwwJcvB7EM
- 0nOzIplJ5Xg96BJLjK9gvt8IGk2v3XB77CicaN1FzkMxKWY6FnVskGKH8wBg4t8nfUrg7FmnxURA
- .LS0iEIgVOD84GvWZwGBVhBH2DZRUe7Xp9Wh.44gCG8PuTuwHU_bs8N1b1VszVnexIS_bXUZFBfu
- _.XjLZHG8DLl6fhFUDCYyxF0lR4EoNmu53bObpy.I4kUBFYyHRHqUfO8gQCFQ1tENUfzZ4RYJN5d
- Yb.pM1FfmF8UJPJjETtMS5LekawUVKHy2galJ20meJ_9E5G5C4ShQep3mgnhCpALSop5kn5sWKdW
- zM.IF2FOyxmd8m0cZZczVTmPwcg809CJF8vTHcj9uxCx8HkEt4S541__u9X15SNNogCz9zykJY2b
- dzOMxrMUSd9OG2aWyKNXUPtIh_8wtaSuCww.hm91YdnW.69aIqjEocNIFt7XZ.NLcYNQG4w.c7Ov
- _qE9_N1c0GeEjcVchfrJQHFUCCcvbIv7UMvh2hKaE4MPnvWI8ZrH1E7xcSiZJ1yyoDuklQUvDlf7
- uMkwVdNok0jJFzREALmgMd6oKf1fBxlEtPtjSjvPXPeQFtDQrnOCdlSJIhqvXGStzFOOMYF0gTBe
- yDIFwQZmdgraoQJDwRw3nFB856ziOPWHDHQiGmnVQFhcA6xZ95XJ6Y3a12xrWb2nqsijzaARZeC7
- .wGwI8W646x9VQgPDtO0wIC5jRKExiKq3iVsbsC6IcYfPahJzzNXbj4ubIA.HHSq8fJ5xFsRQd6v
- FKoUsj3WdqlUXF44ys9Ao_G9j3UL41y_8VH99KIT8QO23W84rHkDWhQ_Hs_wXFy4VxgSFQRza8.x
- Re9cA0vm_bxPyix9lqIGNqdcGuiPAMjNGyegC6U.w.ukiqPM.HybvPmpuApQXTrOdiFvdt.lPNQO
- X71Q32m3_GPh5e9.JqRcRKhT60ZAJG_MAXmuJoZfKuvc_ZYjB9gPhjfR05vYMIBVR3Ca9N3xapB3
- ZkZhWPZH4t40zSbUUIUsL0Tu0LtyKP50BgIz_2dXmWjVzc_MCOaqytkGnEUygn9ZUW8ruKD63e.I
- JjMusee0NV1ZHZ9Op_KVZpS3.wzf0aq9_zPlH7oq6D9W76og.GyKek59abR3E0os7UAy1Kscr0Nb
- Rh1MWnMrxiytEc.ZxbFxZra4gK5x.O8PbPNZwkKh5b33kNokdN7Ci67qkkjtcwaLzieGHGjcuTp1
- OMfNRIm2P1rbzbJ7wjiSytQHfgqZtoNnFP39reDUWpIawhGY3PUM2Q1KTiHkjKokb5efGHjbSzm1
- r1bh4A6S7di6VwkEH8kgn6PWZI2RR1.2GsEgjn6ISsNhR2kws8mVTjLnySGKXtMlfLEqrT6c1u1J
- j2K_nripyC6wcZxueWuTqD3HTuE5LVyA6MnlESR4kDg0Kg9fzKdNAd9RygZi_SAGArbIVsnwIvNs
- ac6bDYuv9RTS_Un7IqRpHoR9xWf0FisbUHhFvtEoMnSwPv3AS45d..QNplndD68xkCuyLPzREvB.
- 7AQbzBwAYoNyb02CexkvTr9.5MJQZ0jwwOkosLtdfdhfBGw4ZqicRLcES.loP5gJcL1HwttNMJsk
- _uhPPSD8xgM4QBaNbCuWa4tIfyjootj2.lI0Z1WvNF8.xUFg2ckFXE7khrnA1f8OwhsCKlKUUj0A
- LavwfR8.KD2Juclegt0.33OPjw086LZUSkJerbo64uTFo0092Ke2Hh2ysAKVGDSmfw6oUemiUjsg
- yRUNRkdWGCeBE9E8Abq4KxHugijQyNr_Gz4EPgcHQDfU2byos8xuSHE9XuBuZvC9VfuDk.oMGPCe
- olGnNvKl1BgYnJhIkXljLxokGeLYqb7AAoTA8IXsAbHaGb..Baw4tXmuZrhgzeodmD.jH7Hpcg4Z
- VH78LRQCX1rkqh7E6eG4oA82PXsePZRR98F6NXX5LZEan7D7tIzYrtjcvpWOkStmNWE4xqmIA7zW
- SXNrSfFe0sMSpDlNSoMUk7n7d4DDDkzF9xauV6Dd5_E7BUxioxXlnBkQmFuD2_y62BWhH08xKOhY
- 6eoAa9nxA4zYRaMhBxpE434DOyRW2anJs76kZShlFwtsSE_Ky55fnPoQJo1VDtgNXX139pclpSMi
- 4uQhki2uoJA1Lgl_lwPMQWP8YIKZXdsMuiGwpx4vRMLKaxgi1WpJSEFPmKEU0cQKfJYHGOrdj8Oa
- .L5Xn_eGK91xqa0W46mApHG67EyvW1iEet_esvZR0MOolmwd8CcUgOao7wRCT
-X-Sonic-MF: <fhortner@yahoo.de>
-X-Sonic-ID: a515d68d-f75a-4e76-824e-73db09aabddf
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ir2.yahoo.com with HTTP; Thu, 30 May 2024 11:10:12 +0000
-Received: by hermes--production-ir2-7b99fc9bb6-hcsdk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d50324578d537739bc53c7e42086909d;
-          Thu, 30 May 2024 10:49:53 +0000 (UTC)
-Message-ID: <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de>
-Date: Thu, 30 May 2024 12:49:52 +0200
+	s=arc-20240116; t=1717066287; c=relaxed/simple;
+	bh=SqhDif+E3Mxv94PAv4Se2ZvqYdJF/+qP6n64x1New7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/oe0HieWmfGO9Q52a7o8zuhpx9ItD0fpw1tc5mco23BnIQxB+xry9R2WOAYV3/bJemIIJGuIohgw95RTKPWjPqQjabsTP/Zo10Izcg6nbHlNz1nGzxZJrfpWT0euIJmQI7tc4P/rKk/bcLHFUbw7oLp6t+ytF8IF61PXPXokjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=VJOKR4CJ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1717066282; bh=SqhDif+E3Mxv94PAv4Se2ZvqYdJF/+qP6n64x1New7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VJOKR4CJP1VVxb1tHT9CGt0Ls51eobyWt++FDZYI1fkPve9MCBXP53pczG5qn5sa+
+	 UWfCd5mvhGXi35jAQjliU/nGBRrTO/fORnhQASTyd6HQEQ9LTJljblILLgDTm/8052
+	 e0eczXt/wK7OjvtTdSd0vczxGCD4/tg4ubbjMihc=
+Date: Thu, 30 May 2024 12:51:22 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, Hristo Venev <hristo@venev.name>, 
+	=?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
+Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
+ sensors
+Message-ID: <6d5c2ee5-6e0e-4d13-a977-493d2ee2c0ed@t-8ch.de>
+References: <20240529205204.81208-1-linux@roeck-us.net>
+ <20240529205204.81208-3-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression, thermal: core: battery reading wrong after wake from
- S3 [Was: Bug Report according to thermal_core.c]
-To: Linux regressions mailing list <regressions@lists.linux.dev>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
- <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de>
- <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
-Content-Language: de-CH
-From: "fhortner@yahoo.de" <fhortner@yahoo.de>
-In-Reply-To: <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22356 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240529205204.81208-3-linux@roeck-us.net>
 
-Thanks Thorsten for the side note.
+On 2024-05-29 13:52:03+0000, Guenter Roeck wrote:
+> Add support for SPD5118 (Jedec JESD300-5B.01) compliant temperature
+> sensors. Such sensors are typically found on DDR5 memory modules.
+> 
+> Cc: René Rebe <rene@exactcode.de>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> Tested on MAG B650 TOMAHAWK WIFI with CMH32GX5M2B6000Z30
+> (Corsair Venegance DDR5).
+> 
+> René: I included you as MODULE_AUTHOR since the patch is derived from
+>       your driver. Please let me know if you prefer not to be listed as
+>       author.
+> 
+>  Documentation/hwmon/index.rst   |   1 +
+>  Documentation/hwmon/spd5118.rst |  60 ++++
+>  drivers/hwmon/Kconfig           |  12 +
+>  drivers/hwmon/Makefile          |   1 +
+>  drivers/hwmon/spd5118.c         | 482 ++++++++++++++++++++++++++++++++
+>  5 files changed, 556 insertions(+)
+>  create mode 100644 Documentation/hwmon/spd5118.rst
+>  create mode 100644 drivers/hwmon/spd5118.c
 
-I have compiled kernel 6.8.11 with reverted commit 
-5a5efdaffda5d23717d9117cf36cda9eafcf2fae.
+With the Makefile and detect callback fixed:
 
-Battery Status works fine now with reverted commit after S3 Sleep and 
-Wake cycles.
-
-Best, Reinhard
-
-
-Am 30.05.24 um 12:21 schrieb Linux regression tracking (Thorsten Leemhuis):
-> [adding the culprits author, LKML, and the regression mailing list to
-> the list of recipients; changing subject, too]
->
-> On 29.05.24 21:52, fhortner@yahoo.de wrote:
->> After bisection I have reported a bug according to thermal_core.c:
->> After "Resume thermal zones asynchronously" commit: Wrong Battery
->> Reading after Wake from S3 Sleep - Lenovo Thinkpad P1 Gen2
->>
->> https://bugzilla.kernel.org/show_bug.cgi?id=218881
->> Could you please have a look at it
->>
->> I have performed a bisection and the culprit is this commit: Resume
->> thermal zones asynchronously
->> git bisect bad 5a5efdaffda5d23717d9117cf36cda9eafcf2fae
->> # first bad commit: [5a5efdaffda5d23717d9117cf36cda9eafcf2fae] thermal:
->> core: Resume thermal zones asynchronously
->>
->> I have also verified it by compiling a kernel
-> Side note: not critical at all, but would have been good if you had
-> specified which kernel version you build.
->
->> without this commit.
-> Thanks for the report. To be sure the issue doesn't fall through the
-> cracks unnoticed, I'm adding it to regzbot, the Linux kernel regression
-> tracking bot:
->
-> #regzbot ^introduced 5a5efdaffda5d23717d9117cf36cda9eafcf2
-> #regzbot dup: https://bugzilla.kernel.org/show_bug.cgi?id=218881
-> #regzbot title
-> #regzbot ignore-activity
->
-> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-> --
-> Everything you wanna know about Linux kernel regression tracking:
-> https://linux-regtracking.leemhuis.info/about/#tldr
-> That page also explains what to do if mails like this annoy you.
-
+Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
+Tested-by: Thomas Weißschuh <linux@weissschuh.net>
 
