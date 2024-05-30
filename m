@@ -1,242 +1,365 @@
-Return-Path: <linux-kernel+bounces-195053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0567C8D46E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:19:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AA48D46E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 280B91C22005
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDDB428432D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D24514C5B3;
-	Thu, 30 May 2024 08:19:29 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789E21487F1;
+	Thu, 30 May 2024 08:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="veSF/0Px"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EEE176AC8;
-	Thu, 30 May 2024 08:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15244176AC8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717057168; cv=none; b=umQwF2GsZTlfhJZ6v9DmNxAWBcrhLS6RNS2h8rXvsTJQkrdrn8CqzW5fJQlDQldDb/NdyIeYs0hcFX8DQ0lrkTyXN9xcFK0pafWCjRutmoo/0q6HqPSzvvbCSoaR9iWy2LAoM4Yo/obWf3KCOkv6fePReKUlDLAIXwcpXgopc0Q=
+	t=1717057183; cv=none; b=crL2u/ErRBATKHghTW+1214FIHQO6f4ljUwv2PnBqLjCCkkf/fasgtHnO9Fv51oyJGOrX9uI98v7cnKiAh80C7wSaf7SUHCOt2H++nHk5sTjEZRlFY2hMnaa1RWptd2590EQU+zPzbPmSouKdezDNjMCG6OG4Nc9BZP95vUYH/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717057168; c=relaxed/simple;
-	bh=AtyBrt1ShrZf6Sya3/wfDmIitZOKqIwvkNP14l1vYzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rFezi7FhR4SxR4oa+TCCShgcE660v2F/GRlvay2b9JMRU55B3xSvq61TNVJHWpal7Yv4A+VP3sQUsOzQFxoIl5t58IP65XKIPdxY3icIbWlcBwEoBUmpypm7KBK2IRBRhat6Ip2w6RR3XNvwSBriZW2BerRclLyoxxxy5tKcSfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 054A320008;
-	Thu, 30 May 2024 08:19:12 +0000 (UTC)
-Message-ID: <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr>
-Date: Thu, 30 May 2024 10:19:12 +0200
+	s=arc-20240116; t=1717057183; c=relaxed/simple;
+	bh=LoVZYWM1OrrnecOBIuNFESSkeoUf6MMMEquqSeA10wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNacLKdPQzCKSR5PId9+fyCTXXv5kNaw/EEATkIdQx6flO5+PDpvvB77FdUozbhtbA76yJPYaDJRw4xLhTjPCr8v/L0p/UjI11jd+P06Xtq+lq4jIqxgZE4NqQTchqNZr2UK0YblxgnIitmO5K8sIMrkotrxd50hOGXGI8Zb2wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=veSF/0Px; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ae38957e8so680446e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717057179; x=1717661979; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=afj6OzBOqvdEi0d6NQaP4/krHdqiPria4e/BK0dIFOo=;
+        b=veSF/0PxKr270+IV3mkw08QLvamSmYltTXa2vlq+2rjbZUvX41PparFB0aCm/0L9vC
+         5kbXVAOlcZEFcN1WthzPDuqCUCI0D8RZFIU7aZJxpuI8mzBIx7mMT/JDeKBIC2gBtLT0
+         JEQ/ode4ovLXIbP7j3PzcbwjoEQliX3IbfQsu69ihBGANnRyXh6Mx1UIdYX63lUhuOVO
+         a7VNk/c5G0wnyJSAA9nEAyCZuMGy/axc6+x0J8Gcw6FW1FvS2Nq9z3PxE3CA8AFH8k/a
+         8hCcl3PJWRUmQg5JpHEgk6OR5cIXVzEY08Rd35W1hVEMFoVx4Myev+coZxck81Mw4jtz
+         skKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717057179; x=1717661979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=afj6OzBOqvdEi0d6NQaP4/krHdqiPria4e/BK0dIFOo=;
+        b=IGrgqRp9/Sbn+k3oftbuO7frpsutySMhYQiunSAAK9qT2XVy1kSeZruJjpbSpmgevs
+         fk7P84Ovk+CLD+bvz1N+/Gy1SHwUUM/M+ZKijTfmY1r9MD0r2LyVNvl3ZcOXmIxCLTX1
+         YqoxJUXh2JKQo8JsYgVVXW/rrg5XEljL6xmoUGpPD+piG+aLlKHNE4qpGIoUNTWraSjY
+         vjMuC2a/ag4gTeKMvHOLvry9POsBve7XtCqDocSWrPbBBsWfhYTXWH+zQdwkWEoENv5R
+         d1PhrpcYJPAjYFh5hRPpa3W8CBJfYB5JifeUedvLlhM19gobuz3xNL2sSiG1Orqd/pX3
+         Y8HA==
+X-Forwarded-Encrypted: i=1; AJvYcCWd5sQGQV/n9oHo00Thckchwqhi5lUdWCM7rvJ+LEJZOft/1Sy4M/7cus+M6mUvhfdhl+Avd5BOKyVnqgSoqFcwkHnImUmeUkx07u+G
+X-Gm-Message-State: AOJu0YwTu7TO/zzRqeZK/Z2lkpICox/DBgveM1sn8bnsDCVPoPuQMa+J
+	f4ombG61bDij4Ardpk9fwVGfsLAPOKboVowbSRQDufUrhg2elELCcBucoDA8wlc=
+X-Google-Smtp-Source: AGHT+IH9M9C2L0SObHzssqubhmi/vEtOKa2bWC2StBNUhU9hxA/cmF7vdSlGyde8acJfFMFe0Naxqg==
+X-Received: by 2002:ac2:43af:0:b0:52b:798e:74e8 with SMTP id 2adb3069b0e04-52b7d432421mr767470e87.39.1717057179095;
+        Thu, 30 May 2024 01:19:39 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529715e57c1sm1543529e87.286.2024.05.30.01.19.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 01:19:38 -0700 (PDT)
+Date: Thu, 30 May 2024 11:19:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Revert "drm/msm/dpu: drop
+ dpu_encoder_phys_ops.atomic_mode_set"
+Message-ID: <etc3uqtl7ks2xnumxsr2zqtqi7yp2uxifmpyhiifuffl2frxjd@wfez6zirslnl>
+References: <20240522-dpu-revert-ams-v2-1-b37825d708e1@linaro.org>
+ <d9a502a2-9ad3-3b95-670a-3a67887ef54b@quicinc.com>
+ <2qm32wkjdxynmovw5gd5xh4awy2gh4byt3ddkpvuvi4lq7f67d@y3dntcusfwxs>
+ <961cee30-33fa-5048-901e-b192a735b529@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 1/5] RISC-V: Detect and Enable Svadu Extension
- Support
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>,
- Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
- kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com,
- cleger@rivosinc.com, Jinyu Tang <tjytimi@163.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Anup Patel <anup@brainfault.org>, Conor Dooley <conor.dooley@microchip.com>,
- Mayuresh Chitale <mchitale@ventanamicro.com>,
- Samuel Holland <samuel.holland@sifive.com>, Samuel Ortiz
- <sameo@rivosinc.com>, Evan Green <evan@rivosinc.com>,
- Xiao Wang <xiao.w.wang@intel.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Charlie Jenkins <charlie@rivosinc.com>, Leonardo Bras <leobras@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
- <20240524103307.2684-2-yongxuan.wang@sifive.com>
- <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <961cee30-33fa-5048-901e-b192a735b529@quicinc.com>
 
-Hi Yong-Xuan,
+On Wed, May 29, 2024 at 04:44:59PM -0700, Abhinav Kumar wrote:
+> 
+> 
+> On 5/24/2024 1:22 PM, Dmitry Baryshkov wrote:
+> > On Fri, May 24, 2024 at 12:58:53PM -0700, Abhinav Kumar wrote:
+> > > 
+> > > 
+> > > On 5/22/2024 3:24 AM, Dmitry Baryshkov wrote:
+> > > > In the DPU driver blank IRQ handling is called from a vblank worker and
+> > > > can happen outside of the irq_enable / irq_disable pair. Using the
+> > > > worker makes that completely asynchronous with the rest of the code.
+> > > > Revert commit d13f638c9b88 ("drm/msm/dpu: drop
+> > > > dpu_encoder_phys_ops.atomic_mode_set") to fix vblank IRQ assignment for
+> > > > CMD DSI panels.
+> > > > 
+> > > > Call trace:
+> > > >    dpu_encoder_phys_cmd_control_vblank_irq+0x218/0x294
+> > > >     dpu_encoder_toggle_vblank_for_crtc+0x160/0x194
+> > > >     dpu_crtc_vblank+0xbc/0x228
+> > > >     dpu_kms_enable_vblank+0x18/0x24
+> > > >     vblank_ctrl_worker+0x34/0x6c
+> > > >     process_one_work+0x218/0x620
+> > > >     worker_thread+0x1ac/0x37c
+> > > >     kthread+0x114/0x118
+> > > >     ret_from_fork+0x10/0x20
+> > > > 
+> > > 
+> > > Thanks for the stack.
+> > > 
+> > > Agreed that vblank can be controlled asynchronously through the worker.
+> > > 
+> > > And I am guessing that the worker thread ran and printed this error message
+> > > because phys_enc->irq[INTR_IDX_VSYNC] was not valid as modeset had not
+> > > happened by then?
+> > 
+> > modeset happened, but the vblanks can be enabled and disabled
+> > afterwards.
+> > 
+> > > 
+> > > 272 end:
+> > > 273 	if (ret) {
+> > > 274 		DRM_ERROR("vblank irq err id:%u pp:%d ret:%d, enable %s/%d\n",
+> > > 275 			  DRMID(phys_enc->parent),
+> > > 276 			  phys_enc->hw_pp->idx - PINGPONG_0, ret,
+> > > 277 			  enable ? "true" : "false", refcount);
+> > > 278 	}
+> > > 
+> > > But how come this did not happen even with this revert.
+> > > 
+> > > IOW, I am still missing how moving the irq assignment back to modeset from
+> > > enable is fixing this?
+> > 
+> > It removes clearing of the IRQ fields in the irq_disable path, which
+> > removes a requirement that vblank IRQ manipulations are called only
+> > within the irq_enable/irq_disable brackets. I didn't have time to debug
+> > this further on, so I think it's better to revert it now and return to
+> > this cleanup later.
+> > 
+> 
+> I see your point.
+> 
+> So before we moved the irq assignment to enable/disable, modeset was setting
+> it up but nothing was clearing it.
+> 
+> But after the change, disable was clearing it leading to the error.
+> 
+> Probably should have happened quite easily then?
+> 
+> Then if we kept only the assignment in enable and drop the parts in disable
+> it should have worked too.
 
-On 27/05/2024 18:25, Andrew Jones wrote:
-> On Fri, May 24, 2024 at 06:33:01PM GMT, Yong-Xuan Wang wrote:
->> Svadu is a RISC-V extension for hardware updating of PTE A/D bits.
->>
->> In this patch we detect Svadu extension support from DTB and enable it
->> with SBI FWFT extension. Also we add arch_has_hw_pte_young() to enable
->> optimization in MGLRU and __wp_page_copy_user() if Svadu extension is
->> available.
+Well, one of the points of the original patch was to remove stale
+numbers. I hope to have time to re-review the code at some point.
 
+> 
+> If you would like to post that separately after some more investigation, I
+> am fine with this for now,
+> 
+> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
+> > > 
+> > > > Fixes: d13f638c9b88 ("drm/msm/dpu: drop dpu_encoder_phys_ops.atomic_mode_set")
+> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > ---
+> > > > Changes in v2:
+> > > > - Expanded commit message to describe the reason for revert and added a
+> > > >     call trace (Abhinav)
+> > > > - Link to v1: https://lore.kernel.org/r/20240514-dpu-revert-ams-v1-1-b13623d6cd5f@linaro.org
+> > > > ---
+> > > >    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  2 ++
+> > > >    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h   |  5 ++++
+> > > >    .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c   | 32 ++++++++++++----------
+> > > >    .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   | 13 +++++++--
+> > > >    .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    | 11 +++++++-
+> > > >    5 files changed, 46 insertions(+), 17 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > > index 119f3ea50a7c..a7d8ecf3f5be 100644
+> > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > > @@ -1200,6 +1200,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+> > > >    		phys->hw_ctl = to_dpu_hw_ctl(hw_ctl[i]);
+> > > >    		phys->cached_mode = crtc_state->adjusted_mode;
+> > > > +		if (phys->ops.atomic_mode_set)
+> > > > +			phys->ops.atomic_mode_set(phys, crtc_state, conn_state);
+> > > >    	}
+> > > >    }
+> > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+> > > > index 002e89cc1705..30470cd15a48 100644
+> > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+> > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+> > > > @@ -69,6 +69,8 @@ struct dpu_encoder_phys;
+> > > >     * @is_master:			Whether this phys_enc is the current master
+> > > >     *				encoder. Can be switched at enable time. Based
+> > > >     *				on split_role and current mode (CMD/VID).
+> > > > + * @atomic_mode_set:		DRM Call. Set a DRM mode.
+> > > > + *				This likely caches the mode, for use at enable.
+> > > >     * @enable:			DRM Call. Enable a DRM mode.
+> > > >     * @disable:			DRM Call. Disable mode.
+> > > >     * @control_vblank_irq		Register/Deregister for VBLANK IRQ
+> > > > @@ -93,6 +95,9 @@ struct dpu_encoder_phys;
+> > > >    struct dpu_encoder_phys_ops {
+> > > >    	void (*prepare_commit)(struct dpu_encoder_phys *encoder);
+> > > >    	bool (*is_master)(struct dpu_encoder_phys *encoder);
+> > > > +	void (*atomic_mode_set)(struct dpu_encoder_phys *encoder,
+> > > > +			struct drm_crtc_state *crtc_state,
+> > > > +			struct drm_connector_state *conn_state);
+> > > >    	void (*enable)(struct dpu_encoder_phys *encoder);
+> > > >    	void (*disable)(struct dpu_encoder_phys *encoder);
+> > > >    	int (*control_vblank_irq)(struct dpu_encoder_phys *enc, bool enable);
+> > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > > > index 489be1c0c704..95cd39b49668 100644
+> > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > > > @@ -142,6 +142,23 @@ static void dpu_encoder_phys_cmd_underrun_irq(void *arg)
+> > > >    	dpu_encoder_underrun_callback(phys_enc->parent, phys_enc);
+> > > >    }
+> > > > +static void dpu_encoder_phys_cmd_atomic_mode_set(
+> > > > +		struct dpu_encoder_phys *phys_enc,
+> > > > +		struct drm_crtc_state *crtc_state,
+> > > > +		struct drm_connector_state *conn_state)
+> > > > +{
+> > > > +	phys_enc->irq[INTR_IDX_CTL_START] = phys_enc->hw_ctl->caps->intr_start;
+> > > > +
+> > > > +	phys_enc->irq[INTR_IDX_PINGPONG] = phys_enc->hw_pp->caps->intr_done;
+> > > > +
+> > > > +	if (phys_enc->has_intf_te)
+> > > > +		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_intf->cap->intr_tear_rd_ptr;
+> > > > +	else
+> > > > +		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_pp->caps->intr_rdptr;
+> > > > +
+> > > > +	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
+> > > > +}
+> > > > +
+> > > >    static int _dpu_encoder_phys_cmd_handle_ppdone_timeout(
+> > > >    		struct dpu_encoder_phys *phys_enc)
+> > > >    {
+> > > > @@ -280,14 +297,6 @@ static void dpu_encoder_phys_cmd_irq_enable(struct dpu_encoder_phys *phys_enc)
+> > > >    					  phys_enc->hw_pp->idx - PINGPONG_0,
+> > > >    					  phys_enc->vblank_refcount);
+> > > > -	phys_enc->irq[INTR_IDX_CTL_START] = phys_enc->hw_ctl->caps->intr_start;
+> > > > -	phys_enc->irq[INTR_IDX_PINGPONG] = phys_enc->hw_pp->caps->intr_done;
+> > > > -
+> > > > -	if (phys_enc->has_intf_te)
+> > > > -		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_intf->cap->intr_tear_rd_ptr;
+> > > > -	else
+> > > > -		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_pp->caps->intr_rdptr;
+> > > > -
+> > > >    	dpu_core_irq_register_callback(phys_enc->dpu_kms,
+> > > >    				       phys_enc->irq[INTR_IDX_PINGPONG],
+> > > >    				       dpu_encoder_phys_cmd_pp_tx_done_irq,
+> > > > @@ -318,10 +327,6 @@ static void dpu_encoder_phys_cmd_irq_disable(struct dpu_encoder_phys *phys_enc)
+> > > >    	dpu_core_irq_unregister_callback(phys_enc->dpu_kms, phys_enc->irq[INTR_IDX_UNDERRUN]);
+> > > >    	dpu_encoder_phys_cmd_control_vblank_irq(phys_enc, false);
+> > > >    	dpu_core_irq_unregister_callback(phys_enc->dpu_kms, phys_enc->irq[INTR_IDX_PINGPONG]);
+> > > > -
+> > > > -	phys_enc->irq[INTR_IDX_CTL_START] = 0;
+> > > > -	phys_enc->irq[INTR_IDX_PINGPONG] = 0;
+> > > > -	phys_enc->irq[INTR_IDX_RDPTR] = 0;
+> > > >    }
+> > > >    static void dpu_encoder_phys_cmd_tearcheck_config(
+> > > > @@ -698,6 +703,7 @@ static void dpu_encoder_phys_cmd_init_ops(
+> > > >    		struct dpu_encoder_phys_ops *ops)
+> > > >    {
+> > > >    	ops->is_master = dpu_encoder_phys_cmd_is_master;
+> > > > +	ops->atomic_mode_set = dpu_encoder_phys_cmd_atomic_mode_set;
+> > > >    	ops->enable = dpu_encoder_phys_cmd_enable;
+> > > >    	ops->disable = dpu_encoder_phys_cmd_disable;
+> > > >    	ops->control_vblank_irq = dpu_encoder_phys_cmd_control_vblank_irq;
+> > > > @@ -736,8 +742,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_cmd_init(struct drm_device *dev,
+> > > >    	dpu_encoder_phys_cmd_init_ops(&phys_enc->ops);
+> > > >    	phys_enc->intf_mode = INTF_MODE_CMD;
+> > > > -	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
+> > > > -
+> > > >    	cmd_enc->stream_sel = 0;
+> > > >    	if (!phys_enc->hw_intf) {
+> > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+> > > > index ef69c2f408c3..636a97432d51 100644
+> > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+> > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+> > > > @@ -356,6 +356,16 @@ static bool dpu_encoder_phys_vid_needs_single_flush(
+> > > >    	return phys_enc->split_role != ENC_ROLE_SOLO;
+> > > >    }
+> > > > +static void dpu_encoder_phys_vid_atomic_mode_set(
+> > > > +		struct dpu_encoder_phys *phys_enc,
+> > > > +		struct drm_crtc_state *crtc_state,
+> > > > +		struct drm_connector_state *conn_state)
+> > > > +{
+> > > > +	phys_enc->irq[INTR_IDX_VSYNC] = phys_enc->hw_intf->cap->intr_vsync;
+> > > > +
+> > > > +	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
+> > > > +}
+> > > > +
+> > > >    static int dpu_encoder_phys_vid_control_vblank_irq(
+> > > >    		struct dpu_encoder_phys *phys_enc,
+> > > >    		bool enable)
+> > > > @@ -699,6 +709,7 @@ static int dpu_encoder_phys_vid_get_frame_count(
+> > > >    static void dpu_encoder_phys_vid_init_ops(struct dpu_encoder_phys_ops *ops)
+> > > >    {
+> > > >    	ops->is_master = dpu_encoder_phys_vid_is_master;
+> > > > +	ops->atomic_mode_set = dpu_encoder_phys_vid_atomic_mode_set;
+> > > >    	ops->enable = dpu_encoder_phys_vid_enable;
+> > > >    	ops->disable = dpu_encoder_phys_vid_disable;
+> > > >    	ops->control_vblank_irq = dpu_encoder_phys_vid_control_vblank_irq;
+> > > > @@ -737,8 +748,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_vid_init(struct drm_device *dev,
+> > > >    	dpu_encoder_phys_vid_init_ops(&phys_enc->ops);
+> > > >    	phys_enc->intf_mode = INTF_MODE_VIDEO;
+> > > > -	phys_enc->irq[INTR_IDX_VSYNC] = phys_enc->hw_intf->cap->intr_vsync;
+> > > > -	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
+> > > >    	DPU_DEBUG_VIDENC(phys_enc, "created intf idx:%d\n", p->hw_intf->idx);
+> > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+> > > > index d3ea91c1d7d2..356dca5e5ea9 100644
+> > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+> > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+> > > > @@ -404,6 +404,15 @@ static void dpu_encoder_phys_wb_irq_disable(struct dpu_encoder_phys *phys)
+> > > >    		dpu_core_irq_unregister_callback(phys->dpu_kms, phys->irq[INTR_IDX_WB_DONE]);
+> > > >    }
+> > > > +static void dpu_encoder_phys_wb_atomic_mode_set(
+> > > > +		struct dpu_encoder_phys *phys_enc,
+> > > > +		struct drm_crtc_state *crtc_state,
+> > > > +		struct drm_connector_state *conn_state)
+> > > > +{
+> > > > +
+> > > > +	phys_enc->irq[INTR_IDX_WB_DONE] = phys_enc->hw_wb->caps->intr_wb_done;
+> > > > +}
+> > > > +
+> > > >    static void _dpu_encoder_phys_wb_handle_wbdone_timeout(
+> > > >    		struct dpu_encoder_phys *phys_enc)
+> > > >    {
+> > > > @@ -640,6 +649,7 @@ static bool dpu_encoder_phys_wb_is_valid_for_commit(struct dpu_encoder_phys *phy
+> > > >    static void dpu_encoder_phys_wb_init_ops(struct dpu_encoder_phys_ops *ops)
+> > > >    {
+> > > >    	ops->is_master = dpu_encoder_phys_wb_is_master;
+> > > > +	ops->atomic_mode_set = dpu_encoder_phys_wb_atomic_mode_set;
+> > > >    	ops->enable = dpu_encoder_phys_wb_enable;
+> > > >    	ops->disable = dpu_encoder_phys_wb_disable;
+> > > >    	ops->wait_for_commit_done = dpu_encoder_phys_wb_wait_for_commit_done;
+> > > > @@ -685,7 +695,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_wb_init(struct drm_device *dev,
+> > > >    	dpu_encoder_phys_wb_init_ops(&phys_enc->ops);
+> > > >    	phys_enc->intf_mode = INTF_MODE_WB_LINE;
+> > > > -	phys_enc->irq[INTR_IDX_WB_DONE] = phys_enc->hw_wb->caps->intr_wb_done;
+> > > >    	atomic_set(&wb_enc->wbirq_refcount, 0);
+> > > > 
+> > > > ---
+> > > > base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
+> > > > change-id: 20240514-dpu-revert-ams-9410abc1ee48
+> > > > 
+> > > > Best regards,
+> > 
 
-So we talked about this yesterday during the linux-riscv patchwork 
-meeting. We came to the conclusion that we should not wait for the SBI 
-FWFT extension to enable Svadu but instead, it should be enabled by 
-default by openSBI if the extension is present in the device tree. This 
-is because we did not find any backward compatibility issues, meaning 
-that enabling Svadu should not break any S-mode software. This is what 
-you did in your previous versions of this patchset so the changes should 
-be easy. This behaviour must be added to the dtbinding description of 
-the Svadu extension.
-
-Another thing that we discussed yesterday. There exist 2 schemes to 
-manage the A/D bits updates, Svade and Svadu. If a platform supports 
-both extensions and both are present in the device tree, it is M-mode 
-firmware's responsibility to provide a "sane" device tree to the S-mode 
-software, meaning the device tree can not contain both extensions. And 
-because on such platforms, Svadu is more performant than Svade, Svadu 
-should be enabled by the M-mode firmware and only Svadu should be 
-present in the device tree.
-
-I hope that clearly explains what we discussed yesterday, let me know if 
-you (or anyone else) need more explanations. If no one is opposed to 
-this solution, do you think you can implement this behaviour? If not, I 
-can deal with it, just let me know.
-
-Thanks
-
-
->>
->> Co-developed-by: Jinyu Tang <tjytimi@163.com>
->> Signed-off-by: Jinyu Tang <tjytimi@163.com>
->> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
->> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> I think this patch changed too much to keep r-b's. We didn't have the
-> FWFT part before.
->
->> ---
->>   arch/riscv/Kconfig               |  1 +
->>   arch/riscv/include/asm/csr.h     |  1 +
->>   arch/riscv/include/asm/hwcap.h   |  1 +
->>   arch/riscv/include/asm/pgtable.h |  8 +++++++-
->>   arch/riscv/kernel/cpufeature.c   | 11 +++++++++++
->>   5 files changed, 21 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index be09c8836d56..30fa558ee284 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -34,6 +34,7 @@ config RISCV
->>   	select ARCH_HAS_PMEM_API
->>   	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
->>   	select ARCH_HAS_PTE_SPECIAL
->> +	select ARCH_HAS_HW_PTE_YOUNG
->>   	select ARCH_HAS_SET_DIRECT_MAP if MMU
->>   	select ARCH_HAS_SET_MEMORY if MMU
->>   	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
->> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
->> index 2468c55933cd..2ac270ad4acd 100644
->> --- a/arch/riscv/include/asm/csr.h
->> +++ b/arch/riscv/include/asm/csr.h
->> @@ -194,6 +194,7 @@
->>   /* xENVCFG flags */
->>   #define ENVCFG_STCE			(_AC(1, ULL) << 63)
->>   #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
->> +#define ENVCFG_ADUE			(_AC(1, ULL) << 61)
->>   #define ENVCFG_CBZE			(_AC(1, UL) << 7)
->>   #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
->>   #define ENVCFG_CBIE_SHIFT		4
->> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
->> index e17d0078a651..8d539e3f4e11 100644
->> --- a/arch/riscv/include/asm/hwcap.h
->> +++ b/arch/riscv/include/asm/hwcap.h
->> @@ -81,6 +81,7 @@
->>   #define RISCV_ISA_EXT_ZTSO		72
->>   #define RISCV_ISA_EXT_ZACAS		73
->>   #define RISCV_ISA_EXT_XANDESPMU		74
->> +#define RISCV_ISA_EXT_SVADU		75
->>   
->>   #define RISCV_ISA_EXT_XLINUXENVCFG	127
->>   
->> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
->> index 9f8ea0e33eb1..1f1b326ccf63 100644
->> --- a/arch/riscv/include/asm/pgtable.h
->> +++ b/arch/riscv/include/asm/pgtable.h
->> @@ -117,6 +117,7 @@
->>   #include <asm/tlbflush.h>
->>   #include <linux/mm_types.h>
->>   #include <asm/compat.h>
->> +#include <asm/cpufeature.h>
->>   
->>   #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_PFN_SHIFT)
->>   
->> @@ -285,7 +286,6 @@ static inline pte_t pud_pte(pud_t pud)
->>   }
->>   
->>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
->> -#include <asm/cpufeature.h>
->>   
->>   static __always_inline bool has_svnapot(void)
->>   {
->> @@ -621,6 +621,12 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
->>   	return __pgprot(prot);
->>   }
->>   
->> +#define arch_has_hw_pte_young arch_has_hw_pte_young
->> +static inline bool arch_has_hw_pte_young(void)
->> +{
->> +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
->> +}
->> +
->>   /*
->>    * THP functions
->>    */
->> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
->> index 3ed2359eae35..b023908c5932 100644
->> --- a/arch/riscv/kernel/cpufeature.c
->> +++ b/arch/riscv/kernel/cpufeature.c
->> @@ -93,6 +93,16 @@ static bool riscv_isa_extension_check(int id)
->>   			return false;
->>   		}
->>   		return true;
->> +	case RISCV_ISA_EXT_SVADU:
->> +		if (sbi_probe_extension(SBI_EXT_FWFT) > 0) {
-> I think we've decided the appropriate way to prove for SBI extensions is
-> to first ensure the SBI version and then do the probe, like we do for STA
-> in has_pv_steal_clock()
->
->> +			struct sbiret ret;
->> +
->> +			ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET, SBI_FWFT_PTE_AD_HW_UPDATING,
->> +					1, 0, 0, 0, 0);
->> +
->> +			return ret.error == SBI_SUCCESS;
->> +		}
->> +		return false;
->>   	case RISCV_ISA_EXT_INVALID:
->>   		return false;
->>   	}
->> @@ -301,6 +311,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->>   	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
->>   	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
->>   	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
->> +	__RISCV_ISA_EXT_SUPERSET(svadu, RISCV_ISA_EXT_SVADU, riscv_xlinuxenvcfg_exts),
-> We do we need XLINUXENVCFG?
->
-> Thanks,
-> drew
->
->>   	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
->>   	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
->>   	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
->> -- 
->> 2.17.1
->>
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+With best wishes
+Dmitry
 
