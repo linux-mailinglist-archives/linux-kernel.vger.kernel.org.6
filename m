@@ -1,117 +1,166 @@
-Return-Path: <linux-kernel+bounces-194832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502488D42A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF26A8D42AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D6F9284C54
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662002855F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1E817C64;
-	Thu, 30 May 2024 01:02:55 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD80179BD
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717030974; cv=none; b=AFtslRQlVhzoEn9JL9ngtOmzuIIj1gmiieCN3M1+Hy7K0WO4cezwmeKrsw5F863yj/bdghpu96W2bFXFb3U+M+G9LFazN2NO9+njUACYqlMjJG5iuEzaME6x9e4fZHXGvatfi3nM3ktZLu+zb5Xwis29eUXaQwD9uS8YgW7NK2Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717030974; c=relaxed/simple;
-	bh=CZNRSfPLGQjWHXtJQYBgMZX4aKatL++hkWztde+0DK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZJKAh3Goy3GpPA0yjf5hV951xaz5YZuUaFOp/0MPSh9yzpvqb2oEzqRjYLkr51QdMYssM2rWu8AuYkILJAzl9t+UPgf9OHJeHDENpjKzT0pOvEShmdKz+KVXhC8zyXuLgkIO6+8vWhYYGRNj8PSBN0bQxCoeKbNrAPqTl31kMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-64-6657d03a4331
-Date: Thu, 30 May 2024 10:02:45 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com,
-	akpm@linux-foundation.org, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240530010245.GA66154@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
- <20240527015732.GA61604@system.software.com>
- <a28df276-069c-4d4d-abaf-efc24983211e@intel.com>
- <20240527225843.GA50818@system.software.com>
- <87le3t5pmt.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80216F9F7;
+	Thu, 30 May 2024 01:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="MF7RyiLw"
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2027.outbound.protection.outlook.com [40.92.98.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE58BDDC5;
+	Thu, 30 May 2024 01:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.98.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717031214; cv=fail; b=m9SUQqj2UsKoa4gFs5QUvdujUF5f2t/1nK4vLsujsDIbhkoSx7wxCSdvkUrTzV4MKLkAPM9mimprI84LMp6INPKLFvkv4HWHYX/+4MPsWWcqnCdUaOTLN00XP/h5NQ76DASJsypLRw/DhFiix/nD9YE4ii4SYmBuT7wB4AFORiA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717031214; c=relaxed/simple;
+	bh=03mnA7OV7YVYq/JkrXfDbiaIaiPakOLY3In/uZy1NqY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ghOzqCzazLxwDweY4MvMFifcEgUwpa0ajxeT42ffVYs5G7pOpFTncAdmAUfGT1Rl5kRTgzLKFg/y/E8GSaOrhYnxogrugKLCbYWyNlP7lnBVhnfQiZb0QVPvSchwKkmBi0rixgn1rByFzEAj8M5dxKAn0/pibFL6hLfOFm30C8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=MF7RyiLw; arc=fail smtp.client-ip=40.92.98.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L5UB8ThtMf767xexev7s/g933hee2EKTdrvdJUCpq3ohfy3PM9sHv4DhrqJCC3eEHG0/ayWo2JAups0s0p4s3t8LFsNG4S+6phNLjJsZjq5i7iOCL4DBk3wvFxWgA2XZeoPYW/mNRBeSAh2yODfC5xoL1gxSRGaUIISeoku9sSYse+Xy+2+4gXsExgtaFdkuUMAVuMCHGYBPCGsswJHuHkqbxD8jqqzeus2ETHJbTQ3xxrPcWzKrcsDufDAF4FVSV4FXzeBcjTKwz+THqZqNgikiDgcDBf+oBfXuZrpnqeQnJUuLdied5CrXK6De+jcX5bPKFWjiRSPjoXbVTlWgNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QOZivlHArkNyEr0rq1WxuWTUaO7PLbYnc5pnMXYxESE=;
+ b=Od20RDWvQcHPjyrJEjKjBLk439HmInvN1sIaXRZt71VUqn5eFrHW11BK9RIGDKmlm0TmGKq9OczFjiShMun1IN8ylkfqYyTa4P8rtiSodNfj9zDukxS89OxZlZFLij14cjo6DN/6TIvxW+T8LF2JQzEo0lArMX9ze1Rv219T6BExE4iIb4flucgZb9nQfiNgZNNa/h5ykYV6oX2mkaYdKc7Ll5pZ5bFbX9ak/TxcDG3K3nZRDd55ug6XC57Rh15F5v4vE/P0mKyQw6+EVbM8NUJO23K7PRsPlswwagkLxpES4pWbvXJVBsqZE314StgrxHRAEyFfTdu4a3by5Q3TsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QOZivlHArkNyEr0rq1WxuWTUaO7PLbYnc5pnMXYxESE=;
+ b=MF7RyiLwK4RJQyXe9tIWhaLx/fVe1L41RkHHmbOQW2q3m2fhG+krXNCuXr6uim9tTCR4ROJs0QeT6gr9Q5ibS3EiaibMd8DHPupU5g19BGgmaHixfkkPAecHKvH7IAV1jPrmu6VbLEeE4GZBsMbNqItDiyM2xwnoxTtuP1Z5/WAINUngG+4nnJhXMg7y81Z6dPTN7mcJq75+2rPFHeE7qb7Vr50yE0VZcxT7qCO8DxFRPSPU9o2V//p2aM9N9mqaaNck4Ke96cFbTUmGPNU53VBn6AK/Qv6U9vxNIJSg4AFftx3SfIUHbSGNIx9CUbFeQMq1veN3iDsaJJ/yysgIyA==
+Received: from TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:221::11)
+ by TYVP286MB3168.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2ad::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
+ 2024 01:06:50 +0000
+Received: from TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::8048:573b:c353:1c19]) by TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::8048:573b:c353:1c19%6]) with mapi id 15.20.7633.018; Thu, 30 May 2024
+ 01:06:50 +0000
+Message-ID:
+ <TYCP286MB2486B1D734F8E2D74BFBEEB1B1F32@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
+Date: Thu, 30 May 2024 09:06:43 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cpufreq/cppc: Take policy->cur into judge when set
+ target
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: rafael@kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Riwen Lu <luriwen@kylinos.cn>
+References: <TYCP286MB24861BA890594C119892FB3DB1F22@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
+ <20240529053652.pzcjoyor7i23qc4i@vireshk-i7>
+ <TYCP286MB248669BCAD7A7E54C5071EF9B1F22@TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM>
+ <20240529071244.vwognqagaa4347dm@vireshk-i7>
+Content-Language: en-US
+From: Riwen Lu <luriwen@hotmail.com>
+In-Reply-To: <20240529071244.vwognqagaa4347dm@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [sD+EsY3wpkz8D/ftSxW5ot3dKP9DjZcC]
+X-ClientProxiedBy: SG3P274CA0010.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::22)
+ To TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:221::11)
+X-Microsoft-Original-Message-ID:
+ <11e96f77-7dec-4c38-af87-0703ebf79a88@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87le3t5pmt.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsXC9ZZnoa7VhfA0g+cHdCzmrF/DZvF5wz82
-	i08vHzBavNjQzmjxdf0vZounn/pYLC7vmsNmcW/Nf1aL87vWslrsWLqPyeLSgQVMFsd7DzBZ
-	zL/3mc1i86apzBbHp0xltPj9A6j45KzJLA6CHt9b+1g8ds66y+6xYFOpx+YVWh6L97xk8ti0
-	qpPNY9OnSewe786dY/c4MeM3i8e8k4Ee7/ddZfPY+svOo3HqNTaPz5vkAviiuGxSUnMyy1KL
-	9O0SuDIurpnGXjCXvWLG98vMDYzHWLsYOTkkBEwkLh94xwhjb5txByzOIqAq8fzFG7A4m4C6
-	xI0bP5lBbBEBDYlPC5ezdzFycTAL9DFLrFl8CKxIWCBEYtqHNUwgNq+AhcT2tueMIEVCAmuZ
-	JObM7WaBSAhKnJz5BMxmFtCSuPHvJVADB5AtLbH8HwdImFPATuLK9GtgJaICyhIHth1nApkj
-	IbCNXeLX2YvsEJdKShxccYNlAqPALCRjZyEZOwth7AJG5lWMQpl5ZbmJmTkmehmVeZkVesn5
-	uZsYgVG5rPZP9A7GTxeCDzEKcDAq8fAekAhPE2JNLCuuzD3EKMHBrCTCe2ZSaJoQb0piZVVq
-	UX58UWlOavEhRmkOFiVxXqNv5SlCAumJJanZqakFqUUwWSYOTqkGRo71jpW6qkUn+qT/pb+S
-	Tfm6tCEnvflXNcNKMdfUao6EnU4Hlvhu/Sr1NvjLgb6QhQdPLHzvmRv8mWXBgR17FfbIbD39
-	NnD5fEb93i+z1tydv2ZV1JSOQodG4elfl06/qF2ZzfNsktqjPdwvFMzzEg5P9ZeesthBIrXv
-	tZDrhuub9W//3pJeMVmJpTgj0VCLuag4EQBvUzE4xgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsXC5WfdrGt1ITzN4OBVSYs569ewWXze8I/N
-	4tPLB4wWLza0M1p8Xf+L2eLppz4Wi8NzT7JaXN41h83i3pr/rBbnd61ltdixdB+TxaUDC5gs
-	jvceYLKYf+8zm8XmTVOZLY5Pmcpo8fsHUPHJWZNZHIQ8vrf2sXjsnHWX3WPBplKPzSu0PBbv
-	ecnksWlVJ5vHpk+T2D3enTvH7nFixm8Wj3knAz3e77vK5rH4xQcmj62/7Dwap15j8/i8SS6A
-	P4rLJiU1J7MstUjfLoEr4+KaaewFc9krZny/zNzAeIy1i5GTQ0LARGLbjDtgNouAqsTzF28Y
-	QWw2AXWJGzd+MoPYIgIaEp8WLmfvYuTiYBboY5ZYs/gQWJGwQIjEtA9rmEBsXgELie1tzxlB
-	ioQE1jJJzJnbzQKREJQ4OfMJmM0soCVx499LoAYOIFtaYvk/DpAwp4CdxJXp18BKRAWUJQ5s
-	O840gZF3FpLuWUi6ZyF0L2BkXsUokplXlpuYmWOqV5ydUZmXWaGXnJ+7iREYY8tq/0zcwfjl
-	svshRgEORiUe3gMS4WlCrIllxZW5hxglOJiVRHjPTApNE+JNSaysSi3Kjy8qzUktPsQozcGi
-	JM7rFZ6aICSQnliSmp2aWpBaBJNl4uCUamB84Nmy8u+hU/vClfgY8m4aFWzfNM+yT3yK69un
-	XmYCGj+WpNpM7DuSNtciq2rOm3lzF3tNTbc89TvshdObxf8/fm8VzZG4zSRfs4FVfkEUk/wP
-	x0u7rY1Y1Y6lHqvO5tnN8zrCfEGh6bYosQeJ/3mtenq5ztw+8WGL5aSjWbtkQi+Jyd5VD5+k
-	xFKckWioxVxUnAgA1GH8dq0CAAA=
-X-CFilter-Loop: Reflected
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCP286MB2486:EE_|TYVP286MB3168:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b830da3-5d1f-46e3-1637-08dc8044c8e7
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199019|3412199016|440099019;
+X-Microsoft-Antispam-Message-Info:
+	3R0sEPX7XrdMsQNboWlJPwzXS8V71JQ2vP9QstYmzt5oPEhgrYaIZtNVXmzf3CME33QdiRqmjphS/61lhuKuc8s0tWJKT3yqLvhHuB9jsNCNR4TgfVm98F2i+5PNTZdVATXx/kkA+wKDad8SpfnZm9K2L0GIDZYVKCF83jfc5ULKb+kRreSOSC4Y9nVSMYwvWzCVhA+PdcvcaP7+aJuA5JCpxcnFwv4vTczKOb9oidp/rMtZtz1Q9/J8HofN7rUvIz5cPeoEvg9X5qp+tk8znsaOuLVZYyqoIogREvx9KEcCR9XMOQz2505uEOOsPU3uGT1j5G/pv237UmddgrXcQ2Lr0uIof2oFE9DrBcY0Br+vzAjpEbHEYacIuUOFKzdz1+lvW/rzcETbN93XDEoDg83kG8LALjrlO3ZbAfj8UQekzlgBKG0UNYgYFjmXOUlYgNOI/5kvK0bJndZl3ODMjuixDEK8Yc1WAHOpObRtbDJxeLQJdGIHjr0lpL2+LeDEml1SbwZd8tJC5lQA9+4vHldwJyN3N2FMtyTZhOnl5QpUzBNhU5tarjBpLow3p1Bd
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V1R3dWZXd2NJQUdSbHMzL0p4N2Q4N1BPWTdYN1VPYzRTdzVTNFQzeHRXMVAx?=
+ =?utf-8?B?cVMyNTBSTmN3bytQQzVSME1oVGt2N0hLblZnS0JBeEJQY1ZkR05OcCtqaVky?=
+ =?utf-8?B?c1RrNWRBQU1nd0dLS2pUU3NGb0IrOWVmVGRzYUZsa2oyVkRzQUR2L2JOK0RD?=
+ =?utf-8?B?T3RUdmY4Z1pEc013NDhzMHJLeGhyNWliNlZ3a3o1VGo2MnQvNUVRdTZvUVpG?=
+ =?utf-8?B?akRyWWh6eVRxUzd2d0Y4d1ppa29JelRGZTVyUHFOWUQyaUV1aUJucG94R0xH?=
+ =?utf-8?B?aDh5Vjk3OFg0cm9TZ09QSVJwa09mcVRIekhrNnhMd2dRZjl1RWh5a1oyazhP?=
+ =?utf-8?B?RWFBbFIvUGNHTjNnNWxFZWZBeTF4SjRBUzMzRWhOSVFFb2t3TUNUeU85VFho?=
+ =?utf-8?B?M2J5QWxmTmhXK3ZyVzJVZ1EyL1FRVDE5a2ZqN0Y0em5Sb1VmQkc1bzJPLzlZ?=
+ =?utf-8?B?azlZc1IvQUl6TGZURGZ0S21jNUJjclZFQ0pJT0lnV0pDdzVkcmRVaVVHT0s4?=
+ =?utf-8?B?bWg2c25yRVpqMjRENnY5K2x1ZHk0bHNiYkJYSWplZndINjVBaE1MYnlSRTd4?=
+ =?utf-8?B?Nk1aTlVSM01jZFJJME5CbzNOdnZHa01EYzBKU2RWUEhYMDhJSkt5bmhZY2l0?=
+ =?utf-8?B?c01JSlZFbmVUSndjOGU2cjdZZFdrSTFEeTgwZ09YbTdDczVKOHk4Q1o0ODht?=
+ =?utf-8?B?TTlHSVBEWG51b1ZKc1lxSE9uRk9SbDJodXZnMFZVWmc3QkQ2Z2VsdTlqcmI4?=
+ =?utf-8?B?enJyUkE4QVZyTjdWVE5iVTd2TURHVUlYa3diTjNiVytMZEJDWmpmN1pRQzF2?=
+ =?utf-8?B?L1J6anVVaHF0WVN0TlVnVklCNXg3V0w4RllSc2swbTJDd0xJSFFLN1Q5NHhD?=
+ =?utf-8?B?bGg0cVR5RW0yWXI0Z25peWdJSFUwRVk0THNrRGcrMTlYbkIyYnJKOHk1cDBM?=
+ =?utf-8?B?T1phbXRyYUc2OGNrUWk0MHJVMDFYZVU1MXgwb2ZCVVdCZVlvK0EwUndBVTZ5?=
+ =?utf-8?B?VURMZ3J3alBOMElPUFhjRDRLYU0ycWVHc1g1UjFvVDBibXgzMC9RMXFPOUF5?=
+ =?utf-8?B?S1dEaGdHN21OTVVmVGVNSVpMWE1IdTRFNlo3M2hTaU1mcUROeHNKdHN0Unp3?=
+ =?utf-8?B?cVZHbHZ1YmZLYVFKUEZxRWtVeGhja0h5QUdxZUkySnptVXlRZ2cvcjdFeHRU?=
+ =?utf-8?B?eWZIdTZTK2pEakYvTHVBUDd3MFlnaUdlN2VYRWtvMkxDQkRoZERvQzhjYThm?=
+ =?utf-8?B?eElPUXUzNyt5dERwU0gydmFLM3kvUnE5MTBRYlNpTkJkaG9GSm9jRWNndkM5?=
+ =?utf-8?B?SUpNV2pKcjhQZVZNMFZqajUvUUFuekxzdEcxdldlWTBwQXcyREllRkFIbzBu?=
+ =?utf-8?B?cFdPQTVWaTlqL2ttQ2N6YTV5aVB6cnl2eWF1bk04b1VDL3VpTWNyc2Z2dThl?=
+ =?utf-8?B?c1RUWnFhYVRVSnV5dE9xVEN4ME5aUWs4L1dvUTljc0pJcnRsNmxNTXBmZjJk?=
+ =?utf-8?B?STkzNlFKYkRJMWpySFZQZ0k1bGdnRVRKajcwWmlLSWxEOTkzZmpIeHV5L2JR?=
+ =?utf-8?B?c1IzT0dlWlZsT0dONTBjbGcxY3BuNmtpem5DcVhLNSs2dkRQL3doWWVnZzJH?=
+ =?utf-8?Q?gnFfWF43xVckORAuMF9o3FAPQmXVXBefyEN4Wv2kHEJ4=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-05f45.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b830da3-5d1f-46e3-1637-08dc8044c8e7
+X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB2486.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 01:06:50.0049
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYVP286MB3168
 
-On Wed, May 29, 2024 at 10:16:26AM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul@sk.com> writes:
+在 2024/5/29 15:12, Viresh Kumar 写道:
+> On 29-05-24, 14:53, Riwen Lu wrote:
+>> Yes, you are right， I didn't think it through. In this circumstance, the
+>> policy->cur is the highest frequency, desired_perf converted from
+>> target_freq is the same with cpu_data->perf_ctrls.desired_perf which
+>> shouldn't.
 > 
-> > On Sun, May 26, 2024 at 07:43:10PM -0700, Dave Hansen wrote:
-> >> It has absolutely not been tested nor reviewed enough.  <fud>I hope the
-> >
-> > It has been tested enough on my side, and it should be reviewed enough
-> > for sure.
+> Please investigate more and see where the real problem is.
 > 
-> I believe that you have tested and reviewed the patchset by yourself.
-> But there are some other cases that you haven't thought about enough
-> before, as Dave pointed out.
-> 
-> So, I suggest you to try to find out more possible weakness of your
-> patchset.  Begin with what Dave and David pointed out.
+The boot CPU's frequency would be configured to the highest perf when 
+powered on from S3 even though the policy governor is powersave.
 
-I will.
+In cpufreq resume process, the booting CPU's new_freq obtained via 
+get() is the highest frequency, while the policy->cur and 
+cpu->perf_ctrls.desired_perf are in the lowest level(powersave 
+governor). Causing the warning: "CPU frequency out of sync:", and set 
+policy->cur to new_freq. Then the governor->limits() calls 
+cppc_cpufreq_set_target() to configures the CPU frequency and returns 
+directly because the desired_perf converted from target_freq and 
+cpu->perf_ctrls.desired_perf are the same and both are the lowest_perf.
 
-	Byungchul
+The problem is that the cpu->perf_ctrls.desired_perf is the lowest_perf 
+but it should be the highest_perf.
 
-> > I will respin after rebasing the current mm-unstble and
-> > working on vfs shortly.
-> >
-> > 	Byungchul
-> >
-> >> performance gains stick around once more of the bugs are gone.</fud>
-> 
-> --
-> Best Regards,
-> Huang, Ying
+In my opinion, desired_perf and cpu->perf_ctrls.desired_perf represent 
+the target_freq and policy->cur respectively. Since target_freq and 
+policy->cur have been compared in __cpufreq_driver_target(), there's no 
+need to compare desired_perf and cpu->perf_ctrls.desired_perf again in 
+cppc_cpufreq_set_target().
+So, maybe we can remove the following logic in cppc_cpufreq_set_target().
+/* Return if it is exactly the same perf */
+if (desired_perf == cpu_data->perf_ctrls.desired_perf)
+	return ret;
 
