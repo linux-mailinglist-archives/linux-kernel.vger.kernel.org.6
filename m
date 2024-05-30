@@ -1,178 +1,102 @@
-Return-Path: <linux-kernel+bounces-195531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6EB8D4E1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:37:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372CC8D4E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E1A1F23EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:37:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6291C21789
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEAB17C22D;
-	Thu, 30 May 2024 14:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5114A17D8A7;
+	Thu, 30 May 2024 14:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="XNpmgt/O"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0bNy4Pp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11967186E57
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF7A186E57;
+	Thu, 30 May 2024 14:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079862; cv=none; b=N59uEBboD74HqwtBgHAUpwRKdYvEsYbB9DfuIOzTORB+UDFiM9VCVBvG7npTZeCTx/RVcEyA8U+NjRU9li8UCP7ngryBFabu0vrj/er/66DtY7Hb4FpAeI1Zp736ekzx3SQi0hZulOwwn3U0yFHLXLzrJJ2nZUg1wmECDyo9wvU=
+	t=1717079866; cv=none; b=NXBvM0O4pm0gHNNyj9NVCagngWSZ/MMMhJfqb3uhO1CNWCsB/k/wv0c/yO0HxRBaEQ77kf/cV7hZhj9b6rpv06KMT9mzhTfHWh+k5THFwmZK/cMWLHU/B/0NEU9DpoeapLmRpTYopOW9zRYUEt87YJ3Yu5QKOgXvnMeqTfrgfxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079862; c=relaxed/simple;
-	bh=U3LbKVgqL/u1hQeuo5yC32Kn/VinvVfWfYKY8hhTfFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6CXD6isbdgiQrlSNcsHyOBwcV3KzSqmjKOFO6pWfYUOHtlLwF8fOehJKioUNjrrwZ+mvQ8HrTZRf5m1zwrFIURxxdDpzZzLE08tJgJYhIEyzk7Bm4kcUPi8VtWwA4FHdVeccWycXPw4WrWM3hwiGQ/JboxejZOnmYeqv0MwEwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=XNpmgt/O; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f480624d04so8774105ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:37:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717079860; x=1717684660; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Dr7MGcIZCht+4Sl3Mt64k5vSbdLUfxkiP98jMWV/Dt8=;
-        b=XNpmgt/OCJUPuhZl+INdzQay53hz0AM0dPZfBA7y6E0fMenHxBAnyL63Q+sO5YHZ0c
-         N13gj8ia4eCgTy42l1C/c0/qJnzE/p2bZ+PktrFA5bmpTmKG4pris905n5c/cvx1T5Qq
-         aDZbrBT9r5d6/r4yWEO0rAgmlwMXFXrjFEuQD1/sQiu2pROLCVrDPGraSJTdnWuNAM/M
-         jC1UJJZfLLLmRj1f2Y3cCdRrkVpM9Mu3VlrvGyuBWIFhDeYI80Dhgtg/NcpnrrOGzYlH
-         fwkwj+DeS/UQ6q/NA6+pa7NIzjRGOdXxhbHUh2C645X+cozIdbI6QgL6lrIbVzKRWsHq
-         1Fig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717079860; x=1717684660;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dr7MGcIZCht+4Sl3Mt64k5vSbdLUfxkiP98jMWV/Dt8=;
-        b=wdq3JzShdpo1IMWPJWNxGWLBrv6HNqgQ/fueyQBBmuktjbO8lR9aINCI7REp+BJXUY
-         w8yNjSPSZ6vwnNOYtUR2ZrcH3/31KhgToeYltY9wg7fxkmeUei2mBjW7sY+RRXIlw6DZ
-         RSakt9nFwO4VqX/neKurQGUb66ykEX3mE5xUDZuwhpfTnAKIFbdVtWEp+kqRi9D9Atp+
-         yoe6LymGoyf4iBxP2UR8pyQPuQuCUAbza7Eq4yPYBLF8OEnkP2lDJ8Zlhq9HKVm4AG5T
-         GpEpeSb6Oyj+FPGw9lpkdCNovGiIYjaQWJU/eKzUizAwezpY8smzHacPxSEnmOekYned
-         Bg4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXlGSIQdO3FqQZneZjIZ08HwA2KlEWFi1PRZl1gnIGRmWNLp9tjFAHK27vyPyHKRf0JWMtkC8c7U4rd+S99Zi/sPJGuIO/lc9NWSA/S
-X-Gm-Message-State: AOJu0YyEw2yHz5yDQUV3EwsC3EIdNqE4HmXM39yQ6AHgzLH5OlseXOL3
-	ooJYN62KOUb5vIkIvVMmfm9Fzh6hQZVXOz46TnJLOd6MVFq+eCbJxU7dWAa2uck=
-X-Google-Smtp-Source: AGHT+IG+P79rec/1kndzK6QyUvlapORFmbEhzvdcFqf7CsaBcI6jLUT7w4JzgE6GE/lZheH1bs1ucw==
-X-Received: by 2002:a17:903:2307:b0:1f4:98f4:4763 with SMTP id d9443c01a7336-1f619932a97mr28337145ad.53.1717079860232;
-        Thu, 30 May 2024 07:37:40 -0700 (PDT)
-Received: from ghost (mobile-166-137-160-039.mycingular.net. [166.137.160.39])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f466d30277sm103103765ad.63.2024.05.30.07.37.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:37:39 -0700 (PDT)
-Date: Thu, 30 May 2024 07:37:35 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 02/16] riscv: add ISA extension parsing for Zimop
-Message-ID: <ZliPL4yXBAir5pr2@ghost>
-References: <20240517145302.971019-1-cleger@rivosinc.com>
- <20240517145302.971019-3-cleger@rivosinc.com>
- <ZlenZ+NvXxOxvqEO@ghost>
- <ZleqVUhDW+xgiTwu@ghost>
- <4d23f17e-cc1e-45e3-9ca2-a884baacf207@rivosinc.com>
+	s=arc-20240116; t=1717079866; c=relaxed/simple;
+	bh=PrMYYh8kMW3pruikOzrJKUfG0y7L/m4AXDzs8y5gFXM=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=dU/Ta8KTRJTZN9gNXRobLGPnve65ZZxxGaPFHC7Aws4ghaih2uwvSRhV3sv885Dqb2KtZBPGlTd32zV+IvBjkzpG3R5VgvDyB+MNOjBPc+6JRiKC14+nrAfiQeSk+8l4pdOdDA8sT17aU+sAVulVFmmfbwDIdXay2yZUwpgWJm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0bNy4Pp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BEA9C32781;
+	Thu, 30 May 2024 14:37:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717079865;
+	bh=PrMYYh8kMW3pruikOzrJKUfG0y7L/m4AXDzs8y5gFXM=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=e0bNy4PpJtTgSF9gJUlNkBgM+IPi5zO/WvJd2wycEQrbq5uQnEnfQ/kNtqQmmj9Ux
+	 uqAPiXXMEjvKmzL2faeDkUjO7ZqyHEgtyosglYwbE2ZNdcN+EAkA3QG4uki1DHMPi4
+	 rILg68tyrzYfs8tWig6GHILB0XxehAGqLYZ57rfQTqeyW4vNp47H5WRgK5xFXD9S4Z
+	 ecuxbsu3wcJ8cFPlBdo8EQXLy2t4oEsBk21xasonEHd+xHFM5nPgySSLRD5BIoXwnF
+	 YK+iybUsD7etZDv8OuSdZPnsdJTM2ZnJzGVIPyKJraH/sFgMl1i9kkZYoYmojtQCtl
+	 8jZBSroR2cdUg==
+From: Kalle Valo <kvalo@kernel.org>
+To: "Nemanov, Michael" <michael.nemanov@ti.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,  Johannes Berg
+ <johannes.berg@intel.com>,  Breno Leitao <leitao@debian.org>,  Justin
+ Stitt <justinstitt@google.com>,  Kees Cook <keescook@chromium.org>,
+  <linux-wireless@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  Sabeeh Khan <sabeeh-khan@ti.com>
+Subject: Re: [PATCH 08/17] Add main.c
+References: <20240521171841.884576-1-michael.nemanov@ti.com>
+	<20240521171841.884576-9-michael.nemanov@ti.com>
+	<cfe33bf1-9df3-4d02-b4ed-e29a430b106d@kernel.org>
+	<456c8076-1e3a-4cc9-895c-e707e68fe610@ti.com>
+Date: Thu, 30 May 2024 17:37:41 +0300
+In-Reply-To: <456c8076-1e3a-4cc9-895c-e707e68fe610@ti.com> (Michael Nemanov's
+	message of "Thu, 30 May 2024 14:54:26 +0300")
+Message-ID: <87bk4nwekq.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4d23f17e-cc1e-45e3-9ca2-a884baacf207@rivosinc.com>
+Content-Type: text/plain
 
-On Thu, May 30, 2024 at 10:12:39AM +0200, Clément Léger wrote:
-> 
-> 
-> On 30/05/2024 00:21, Charlie Jenkins wrote:
-> > On Wed, May 29, 2024 at 03:08:39PM -0700, Charlie Jenkins wrote:
-> >> On Fri, May 17, 2024 at 04:52:42PM +0200, Clément Léger wrote:
-> >>> Add parsing for Zimop ISA extension which was ratified in commit
-> >>> 58220614a5f of the riscv-isa-manual.
-> >>>
-> >>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> >>> ---
-> >>>  arch/riscv/include/asm/hwcap.h | 1 +
-> >>>  arch/riscv/kernel/cpufeature.c | 1 +
-> >>>  2 files changed, 2 insertions(+)
-> >>>
-> >>> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-> >>> index 1f2d2599c655..b1896dade74c 100644
-> >>> --- a/arch/riscv/include/asm/hwcap.h
-> >>> +++ b/arch/riscv/include/asm/hwcap.h
-> >>> @@ -80,6 +80,7 @@
-> >>>  #define RISCV_ISA_EXT_ZFA		71
-> >>>  #define RISCV_ISA_EXT_ZTSO		72
-> >>>  #define RISCV_ISA_EXT_ZACAS		73
-> >>> +#define RISCV_ISA_EXT_ZIMOP		74
-> >>
-> >> Since my changes for removing xandespmu haven't landed here yet I think
-> >> you should keep RISCV_ISA_EXT_XANDESPMU in the diff here and make
-> >> RISCV_ISA_EXT_ZIMOP have a key of 75. Palmer can probably resolve the
-> >> conflicting keys when these two series are merged.
-> >>
-> >> - Charlie
-> > 
-> > I missed that other patches in this series were based off my
-> > xtheadvector changes. It's not in the cover letter that there is a
-> > dependency though. What do you need from that series for this series to
-> > work?
-> 
-> Hey Charlie, I'm not based directly on any of your series, but on
-> riscv/for-next which probably already contains your patches.
-> 
-> Clément
+"Nemanov, Michael" <michael.nemanov@ti.com> writes:
 
-There was some churn here so I didn't expect those to be merged, it
-looks like a subset of the patches were added to riscv/for-next, sorry
-for the confusion!
+> On 5/22/2024 12:46 PM, Krzysztof Kozlowski wrote:
+>> ... > +} > + > +static int read_version_info(struct cc33xx *cc) > +{
+>> > + int ret; > + > + cc33xx_info("Wireless driver version %s",
+>> DRV_VERSION); Drop > + > + ret =
+>> cc33xx_acx_init_get_fw_versions(cc);  > + if (ret < 0) { > +
+>> cc33xx_error("Get FW version FAILED!"); > + return ret; > + } > + >
+>> + cc33xx_info("Wireless firmware version %u.%u.%u.%u", > +
+>> cc->all_versions.fw_ver->major_version, > +
+>> cc->all_versions.fw_ver->minor_version, > +
+>> cc->all_versions.fw_ver->api_version, > +
+>> cc->all_versions.fw_ver->build_version); > + > +
+>> cc33xx_info("Wireless PHY version %u.%u.%u.%u.%u.%u", > +
+>> cc->all_versions.fw_ver->phy_version[5], > +
+>> cc->all_versions.fw_ver->phy_version[4], > +
+>> cc->all_versions.fw_ver->phy_version[3], > +
+>> cc->all_versions.fw_ver->phy_version[2], > +
+>> cc->all_versions.fw_ver->phy_version[1], > +
+>> cc->all_versions.fw_ver->phy_version[0]); > + > +
+>> cc->all_versions.driver_ver = DRV_VERSION; Drop
+>
+> You mean drop the trace? Will exposing FW/PHY versions via debugfs be
+> OK?
 
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+I'm guessing the comment was about DRV_VERSION. We don't use any version
+strings for drivers as they are useless.
 
-> 
-> > 
-> > - Charlie
-> > 
-> >>
-> >>>  
-> >>>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
-> >>>  
-> >>> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> >>> index 2993318b8ea2..41f8ae22e7a0 100644
-> >>> --- a/arch/riscv/kernel/cpufeature.c
-> >>> +++ b/arch/riscv/kernel/cpufeature.c
-> >>> @@ -241,6 +241,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
-> >>>  	__RISCV_ISA_EXT_DATA(zihintntl, RISCV_ISA_EXT_ZIHINTNTL),
-> >>>  	__RISCV_ISA_EXT_DATA(zihintpause, RISCV_ISA_EXT_ZIHINTPAUSE),
-> >>>  	__RISCV_ISA_EXT_DATA(zihpm, RISCV_ISA_EXT_ZIHPM),
-> >>> +	__RISCV_ISA_EXT_DATA(zimop, RISCV_ISA_EXT_ZIMOP),
-> >>>  	__RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
-> >>>  	__RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
-> >>>  	__RISCV_ISA_EXT_DATA(zfh, RISCV_ISA_EXT_ZFH),
-> >>> -- 
-> >>> 2.43.0
-> >>>
-> >>>
-> >>> _______________________________________________
-> >>> linux-riscv mailing list
-> >>> linux-riscv@lists.infradead.org
-> >>> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> >>
+BTW please check your quoting style, it is hard to read your replies.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
