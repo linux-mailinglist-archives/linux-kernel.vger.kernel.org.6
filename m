@@ -1,131 +1,193 @@
-Return-Path: <linux-kernel+bounces-195941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D3D8D549F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:28:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700088D54A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7152283EC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:28:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939761C223F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8D3181D1D;
-	Thu, 30 May 2024 21:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C10181315;
+	Thu, 30 May 2024 21:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="s8A23BzC"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Cli5bx6D"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EF4181308
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5802A180A92
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717104525; cv=none; b=UOxkMHTJMkjzLoz91UEDY7YkRrqzODHpskoEnk5TnZ/iUN50H/h40mwwmA2zpzHZUgHgBnShYN+02e2WMoJSwHttUJi0A2kaQMeMUXEW/y+Gd2HZPETxy/u5CCAz74DoUF9djrR20NheCmzRNb2j+AMCo4dZDwaUW1ToFjloYr8=
+	t=1717104956; cv=none; b=bWJOC2iF4XUsl3ilCRpjFp14mvuY75Q72EQn+zZAgQ93d6pdNyprxGxQ6acboK/G/tZiB8aLCMQ0UWBLm/83cU1zBMpI0O//QS3CW0Kj4BEryM6w+XfAtK13GTLa07XrbdK7ce885EwHL/fPvOn5kygkVBd9IB+ZEV69vus0gTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717104525; c=relaxed/simple;
-	bh=Ii7nPjT0HmoX2dUUMXPsYijPQrI71xY9z4qksdC7z3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HI6Eh6/0NbEGtOKJu1YJSpoJsOjzQusGdBa41VOErlrgpO5AyqY0aQW0+zKIvx7ercm0uKD0U5ZsWDzkdaA9MUxWjUHTXtQvsjaZwyl/E4HlZerbEXqLPTXaGhK+8OBm65wleCltDGAXCqK0zGv9Q0sp6UHS2Jq9Wo/PF6idOT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=s8A23BzC; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2507fa7f37aso353465fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:28:42 -0700 (PDT)
+	s=arc-20240116; t=1717104956; c=relaxed/simple;
+	bh=Qgc7fuqJhkQMT7P00M8+eJ9dGTQJzcQfycxbQMKjjKw=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=rLt/hjp6QLKbMhMpuzSiIKgIro6lfv7T5z8xw+ldjx/E4LTtwDRdlU+pOcES2GYF3mj3KzhI/SCP51LJbUT9krBoIM3jceoEKWEMCkNggiCzzIAk8zjv6hFn3W6kpOsCjbOY/MN23ZfT2Y86JeJ7epjp6J6gOpP7yOQYl7rXSL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Cli5bx6D; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6818eea9c3aso273898a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:35:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717104522; x=1717709322; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bxfjwug/dQL/Cf5WKmB4JuVx0NDgqX9YNiFkWriBjgo=;
-        b=s8A23BzC7yuazz2Me5ucQDCLJPfEDfvCHqjMbYN+CvkuCDJJ4P3joHQzGNDup82Tp9
-         V9lGsZYZk7Bqtqt8Vt6B6TsVlkBQV8sAXNSj9n9pjkQtXk/OJcJ0YlxwKNz7vF7kyal1
-         ZEuJiAxATJxZVjXbPwp7qDc90OoTRqGLgK7CrX9SRhsaNDHkPXaKxhqsEuu1osF1Xn7N
-         78aEaS8LBITsRXIecGizcMOeGHxCE5GtlL/65Kn0PV+5TuBLBu1h2+83D7x1PpvloV9x
-         yvAGvNZqWAZBxeuzslMjE2afk0McgAiJSRoxmbzt5hVxujcTGg9wH4M/QIfx6w5nl27W
-         gjpw==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1717104953; x=1717709753; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t9TSHRpBOLH2WAAvUW98eatlSfzIkGIzBEN/BAb+rPI=;
+        b=Cli5bx6DRtsBkOcCImBGZUG4vLimgStnYJ6SKBDzG4wMVEHiF6Ld8+jsKUsIno/xm2
+         siZzCPOQAS2MP5HDzfYm4Nkfn81W1pwvtSvKnF2IuMa7ENGOpDxANkH+jmSmq2MCXjCQ
+         k5kxoEjwzOOMMT4MDbvleLJyCRokLjRI2mf5KzdMtDX1uDh/eFmnZPhlJTfz5rsF/2fl
+         DpjaBdLU/sMPyYWYs+kaXTLGedWD+iYmLjU/OciU8xp4dJNk+YS+BmaqhPx/9Xe+gjyZ
+         fK1QvN6oL8yecAehtY0CJy/2mWInGg26Dwq96/Tit9LGpNJ2nLGYi+5ReFIgcKo1gbqU
+         5Ewg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717104522; x=1717709322;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bxfjwug/dQL/Cf5WKmB4JuVx0NDgqX9YNiFkWriBjgo=;
-        b=U7rm8Cdhn/QVKc4RzBeyp8gBYvvmQvrS/kQnhtWqo+t6aODzVHLnQ6Bm2TKCkQEsl7
-         xln+QfSs5Qve8ExE3Dc7UxEvvJdnjBpXw61mGjSw92NMBHFiGpxs0SYzymJtKZo3u1rb
-         ihfZsV5m0nBTPRUByNA7EW6UKLyu6tOaPRTy8WdWzPzI9pysLpRd/1R8Oms0L8BjdjxO
-         4E2DmCyvUZ0hhuER4NySY9eFrENjKdTk948vz6SGHD2SN2WydlapWPT0bDSNYYgy/zt5
-         DLmdRU6Y30OZvyws3BAEsFOcLyqXF2a9rRoGe0kFz1mnpeQFxOgYMnbahApWA3BUYeD1
-         H4qw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5fs9QlmUziz55Q4L8am2HkibZoSCBQMWKDoSJXkV9HKs1+g65X/mmMeMbqvBiNvIeceox5JYK0lxyObS9ZvFbYgAxiPiNviC1Iq2b
-X-Gm-Message-State: AOJu0YxdURn6ppx51mqIQ30WWnY/H0FLCaTl1PrN1GHqGbhTI0oQdxzk
-	5yu89bBGZhOrYPJScyGPDRoc5+KAhOUwei+c+H6TkIDPYpPh55RxEJYgjtL9thU=
-X-Google-Smtp-Source: AGHT+IGlxaKYIaXhK/Smv+yYJPqvwJWLXND+ndxDhnDRKKX2HZHHL5Z+IK5YwfmGlG8vu3NhMR93Xg==
-X-Received: by 2002:a05:6870:9711:b0:23f:eea9:ae74 with SMTP id 586e51a60fabf-2508bfb57a5mr107949fac.46.1717104521838;
-        Thu, 30 May 2024 14:28:41 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25084ee758fsm135492fac.7.2024.05.30.14.28.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 14:28:39 -0700 (PDT)
-Message-ID: <8ba46ea7-ad57-4ade-9a77-fc605710c14f@baylibre.com>
-Date: Thu, 30 May 2024 16:28:38 -0500
+        d=1e100.net; s=20230601; t=1717104953; x=1717709753;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t9TSHRpBOLH2WAAvUW98eatlSfzIkGIzBEN/BAb+rPI=;
+        b=Q7bTMZfhr0YUxjJZihH6lBhdUwanOnOZ6WTcGI5augSFe8YiYxbeQVLJ+iWpskjOuV
+         llRRAiXuq1zQ1XfOHC3pj/6D9vse/jxmeAkaFBDoipwLOR6Yg21s5cRuswmF1EraZqy+
+         nZQYku8reFvjAoUcIGQPhEdw0Bayz8MoVCEyZM5cRZSIjIQtsFHLW+SWYGKIz9NdQSEY
+         Ewq8nOQWAlWJ4Xrs0/7ZxVyMO5gz5PjJtlMISr/o66QqCYuIVcsWkp5vDwMgGz05PPfp
+         QN/Bpefec9HgItl6AULhgVw/cPRtohGtNXuhrk8GWuh+C5yB+7u3Zh4Nvh7C/7/R07As
+         EqWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlO+aAoZNLlcJm76O7wbWn6NhAw+nb84vnOdZo5R8QC/odA3ua7JGC1TMPcschXfe6TgYPTF6yARrwFdFfz+5BuS1qlEY/dcaHv9Xm
+X-Gm-Message-State: AOJu0YzdoaAVgsZYfVpMOtVnvUOtKluPCQ8EFSd+Eup8iHgfOII9Pg+a
+	szWd3OH3p7aCoeuYY4jLy23lOYJKUo5vc7XgjKIQ03GykL152P8PXabbxTWM+as=
+X-Google-Smtp-Source: AGHT+IH8I+pBT9BtFtI/+2zkM3sGemPywqCkDuR+buuvi7USfNhzJHPLV/HQHzbSgCBFTo4xyfd7hQ==
+X-Received: by 2002:a17:90a:9c13:b0:2bd:d6cc:c305 with SMTP id 98e67ed59e1d1-2c1abc4eda6mr2950107a91.49.1717104953359;
+        Thu, 30 May 2024 14:35:53 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a775ccedsm2159002a91.1.2024.05.30.14.35.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 14:35:51 -0700 (PDT)
+Date: Thu, 30 May 2024 14:35:51 -0700 (PDT)
+X-Google-Original-Date: Thu, 30 May 2024 14:35:49 PDT (-0700)
+Subject:     Re: [PATCH v5 6/8] riscv: hwprobe: add zve Vector subextensions into hwprobe interface
+In-Reply-To: <20240510-zve-detection-v5-6-0711bdd26c12@sifive.com>
+CC: Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+  Conor Dooley <conor.dooley@microchip.com>, Heiko Stuebner <heiko@sntech.de>, andy.chiu@sifive.com, guoren@kernel.org,
+  Conor Dooley <conor@kernel.org>, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, corbet@lwn.net,
+  Evan Green <evan@rivosinc.com>, cleger@rivosinc.com, shuah@kernel.org, linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org, vincent.chen@sifive.com, greentime.hu@sifive.com, devicetree@vger.kernel.org,
+  linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: andy.chiu@sifive.com
+Message-ID: <mhng-0679629d-d115-44ae-a33a-bf42980c7686@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-To: Conor Dooley <conor@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <noname.nuno@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20240514-aspire-ascension-449556da3615@spud>
- <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
- <20240516-rudder-reburial-dcf300504c0a@spud>
- <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
- <20240519-abreast-haziness-096a57ef57d3@spud>
- <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
- <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
- <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
- <20240526-peculiar-panama-badda4f02336@spud>
- <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
- <20240530-petunia-genre-2731493dbd0f@spud>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240530-petunia-genre-2731493dbd0f@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 5/30/24 2:18 PM, Conor Dooley wrote:
+On Thu, 09 May 2024 09:26:56 PDT (-0700), andy.chiu@sifive.com wrote:
+> The following Vector subextensions for "embedded" platforms are added
+> into RISCV_HWPROBE_KEY_IMA_EXT_0:
+>  - ZVE32X
+>  - ZVE32F
+>  - ZVE64X
+>  - ZVE64F
+>  - ZVE64D
+>
+> Extensions ending with an X indicates that the platform doesn't have a
+> vector FPU.
+> Extensions ending with F/D mean that whether single (F) or double (D)
+> precision vector operation is supported.
+> The number 32 or 64 follows from ZVE tells the maximum element length.
+>
+> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
+> Reviewed-by: Clément Léger <cleger@rivosinc.com>
+> ---
+> Changelog v5:
+>  - Rebase thus add ZVE32X after RISCV_HWPROBE_EXT_ZICOND.
+> Changelog v2:
+>  - zve* extensions in hwprobe depends on whether kernel supports v, so
+>    include them after has_vector(). Fix a typo. (Clément)
+> ---
+>  Documentation/arch/riscv/hwprobe.rst  | 15 +++++++++++++++
+>  arch/riscv/include/uapi/asm/hwprobe.h |  5 +++++
+>  arch/riscv/kernel/sys_hwprobe.c       |  5 +++++
+>  3 files changed, 25 insertions(+)
+>
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 204cd4433af5..fc015b452ebf 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -192,6 +192,21 @@ The following keys are defined:
+>         supported as defined in the RISC-V ISA manual starting from commit
+>         d8ab5c78c207 ("Zihintpause is ratified").
+>
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZVE32X`: The Vector sub-extension Zve32x is
+> +    supported, as defined by version 1.0 of the RISC-V Vector extension manual.
+> +
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZVE32F`: The Vector sub-extension Zve32f is
+> +    supported, as defined by version 1.0 of the RISC-V Vector extension manual.
+> +
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZVE64X`: The Vector sub-extension Zve64x is
+> +    supported, as defined by version 1.0 of the RISC-V Vector extension manual.
+> +
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZVE64F`: The Vector sub-extension Zve64f is
+> +    supported, as defined by version 1.0 of the RISC-V Vector extension manual.
+> +
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZVE64D`: The Vector sub-extension Zve64d is
+> +    supported, as defined by version 1.0 of the RISC-V Vector extension manual.
+> +
+>  * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
+>    information about the selected set of processors.
+>
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> index 31c570cbd1c5..6593aedb9d2b 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -60,6 +60,11 @@ struct riscv_hwprobe {
+>  #define		RISCV_HWPROBE_EXT_ZACAS		(1ULL << 34)
+>  #define		RISCV_HWPROBE_EXT_ZICOND	(1ULL << 35)
+>  #define		RISCV_HWPROBE_EXT_ZIHINTPAUSE	(1ULL << 36)
+> +#define		RISCV_HWPROBE_EXT_ZVE32X	(1ULL << 37)
+> +#define		RISCV_HWPROBE_EXT_ZVE32F	(1ULL << 38)
+> +#define		RISCV_HWPROBE_EXT_ZVE64X	(1ULL << 39)
+> +#define		RISCV_HWPROBE_EXT_ZVE64F	(1ULL << 40)
+> +#define		RISCV_HWPROBE_EXT_ZVE64D	(1ULL << 41)
+>  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
+>  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
+>  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> index 969ef3d59dbe..35390b4a5a17 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -114,6 +114,11 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+>  		EXT_KEY(ZIHINTPAUSE);
+>
+>  		if (has_vector()) {
+> +			EXT_KEY(ZVE32X);
+> +			EXT_KEY(ZVE32F);
+> +			EXT_KEY(ZVE64X);
+> +			EXT_KEY(ZVE64F);
+> +			EXT_KEY(ZVE64D);
+>  			EXT_KEY(ZVBB);
+>  			EXT_KEY(ZVBC);
+>  			EXT_KEY(ZVKB);
 
-> 
-> If only we had another user... I suppose you lads are the market leader
-> in these kinds of devices. If I did happen to know if Microchip was
-> working on anything similar (which I don't, I work on FPGAs not these
-> kinds of devices) I couldn't even tell you. I suppose I could ask around
-> and see. Do you know if TI is doing anything along these lines?
-> 
-I think the most popular use case for the performance improvements made
-possible with a SPI offload unrelated to ADCs/DACs is for CAN controllers
-(e.g. the discussion from David Jander a few years ago).
+Conor left a comment over here 
+<https://lore.kernel.org/all/20240510-zve-detection-v5-6-0711bdd26c12@sifive.com/>.  
+I think the best bet is to just merge this v5 on for-next now, though -- 
+there's a bunch of patch sets touching ISA string parsing and IIUC that 
+sub-extension parsing stuff is a pre-existing issue, and Clement's patch 
+set still has some outstanding feedback to address.
 
-I think one of my colleagues was working on one in the last year that we
-might still have lying around. But I don't know what we could use as the
-SPI controller that would have offload support. 
+So I think if we just go with this we're not regressing anything, we 
+just have a bit more to clean up.  Maybe it's a little uglier now that 
+userspace can see the sub-extensions, but I'd bet wacky ISA strings will 
+be able to confuse us for a while.
 
-I suppose we could make something using e.g. the PRU in a BeagleBone, but
-that would take lots of engineering resources and we could design it to fit
-whatever interface we want, so I'm not sure that really helps much. If we
-could find an off-the-shelf SPI controller with offload capabilities that
-would be helpful, but I don't know of any.
-
-
+I staged this so I can throw it at the tester, LMK if anyone has issues 
+otherwise it'll show up on for-next.
 
