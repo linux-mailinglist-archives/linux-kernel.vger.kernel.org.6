@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-195497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF368D4DA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 624AA8D4DA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAF041C22BD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:13:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 934161C231A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB1B176248;
-	Thu, 30 May 2024 14:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287014E2FD;
+	Thu, 30 May 2024 14:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YyqbK50U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YjU/3dBI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C446186E4F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830CC186E26;
+	Thu, 30 May 2024 14:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078392; cv=none; b=NZHM4b6xgAicEWwF9HldqnlPdv2PvOyYRIat/s8fMUNdl1jCTdcb/HC1ZqD40r7PXMMtS8/PUjm/dw1Uqtlw1b3h5RzW2PF7+v9t+dhhRUUsSeocB/5fJg+s1m6v1pM2FpNNiNDTs33V73/1rLOPv5iW226o7s47uWEzWxOPGew=
+	t=1717078415; cv=none; b=dSLmEiMmzBx+Ffi22BU7Nh1qoF2nSF02X7F91Rn4n/xW9funnAsDcZRYe8WIYZKrfJIByrvHKemRmxHWLG9sya87zBGUSN2tBBgT7SoJ8iQrGd/MhA5/LI1CW6soe8pzkg/PalvQ2h3Js+ZBRx4ZAA7A1mUbgFvicJ4pjbtuRCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078392; c=relaxed/simple;
-	bh=r5a0FVlFB8dVilFIOOoYFbQUjONqa/y/kOAP8TysiEk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WQTX7rRAp8WTGSy7w/tSglFtXonguqt6SzXaANSP9bS9T/Sfs257sfDIbT32pWtDdHyui+HQbDkMriMqfjbEwSOFSehZXkRTjIUrxqZO6CHfr7jvEiLq5nbU3eEKBo+/9cpwr4S0oRp22Yj4m0WSQcACVc2pT9XcHxrHmnvSZCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YyqbK50U; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717078390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r5a0FVlFB8dVilFIOOoYFbQUjONqa/y/kOAP8TysiEk=;
-	b=YyqbK50Uf5Xt6oKYmai/VJDgMy4CjKGm6QTrILpyUCKBQ41gC+c2itjY1kFzgFETvRFJxV
-	mvJpIUHCUd3P+vdHKuW3iD9s0AuHPaMBc0L6L7gkA+jcNl135NdzHi03zSFxwRepTY5Vrm
-	rmFK8NCKRpSKoQxi0vveXCfKVo/Wy38=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-obrYYhtqPWON3sCjan7oEA-1; Thu, 30 May 2024 10:13:06 -0400
-X-MC-Unique: obrYYhtqPWON3sCjan7oEA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D47C0800CA5;
-	Thu, 30 May 2024 14:13:05 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.98])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 78FAA40C6CB2;
-	Thu, 30 May 2024 14:13:02 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: yongqin.liu@linaro.org
-Cc: amit.pundir@linaro.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	inventor500@vivaldi.net,
-	jstultz@google.com,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	stable@vger.kernel.org,
-	sumit.semwal@linaro.org
-Subject: Re: [PATCH] net: usb: ax88179_178a: fix link status when link is set to down/up
-Date: Thu, 30 May 2024 16:13:00 +0200
-Message-ID: <20240530141301.434601-1-jtornosm@redhat.com>
-In-Reply-To: <CAMSo37U3Pree8XbHNBOzNXhFAiPss+8FQms1bLy06xeMeWfTcg@mail.gmail.com>
-References: <CAMSo37U3Pree8XbHNBOzNXhFAiPss+8FQms1bLy06xeMeWfTcg@mail.gmail.com>
+	s=arc-20240116; t=1717078415; c=relaxed/simple;
+	bh=z9Oe7jqbSwx2iocRxL1M7VOvOhXgSU85JZly6jmOudU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3ssY8LXldW9MHyDO18YiHEwgFKiu6Nl+xnpbrjvolJlHCg8sLyxr3Wd8LbCjNHMGTiwqS+cqpfloZKx3Hwo/kX7naQKIVB/421ia2qThyVmSAiSfND0mmkNXLmi8+vaKdMck0cI9eeGQQlM2JWqAAo6aqRx3vxIPfikasu4qOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YjU/3dBI; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717078413; x=1748614413;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z9Oe7jqbSwx2iocRxL1M7VOvOhXgSU85JZly6jmOudU=;
+  b=YjU/3dBIUV7Gw3ownTyEYnMoF9SygYlEiV1D00II2U2R3M+fwUKluuxY
+   LB9sDBpteLYEkdPedi3Sl6e3nS4MLBqR6gfYtbb9kipM5zTdYAncgsqsD
+   iCi8aYKZSC52TzXkv5RfA0binK+cgdtqnuh849JeCG9UETa4tRKOvc6uK
+   OBP2OWr7tpsLhECukbiNK0rNWa4ZXKQKwKc5CYj1Zpy3M6+xwJ7/otAWd
+   QlLdn6bZjt2QqUJmfVgRihWhu0GTn6K3yZFL7JQMJIKRzBikZfOj0Z1zE
+   EmWz4BCkpaPRAc/axWJA8H5Fbc8cf5NdSZMfLMcK8L1kY1GVeWqGgZUBe
+   w==;
+X-CSE-ConnectionGUID: lFxtRL+GQyyMUb8vjHpn5Q==
+X-CSE-MsgGUID: BVmvn9rUSQGpOiU4IEhJhg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13327826"
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="13327826"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 07:13:32 -0700
+X-CSE-ConnectionGUID: 4/dRRaIzRKStKyFjZWQwQg==
+X-CSE-MsgGUID: JxYpurK5SliCnGzo8pGCGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="35767692"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 07:13:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sCgX2-0000000C6Jn-0zHu;
+	Thu, 30 May 2024 17:13:28 +0300
+Date: Thu, 30 May 2024 17:13:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org,
+	bp@alien8.de, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/cpu: Provide default cache line size if not
+ enumerated
+Message-ID: <ZliJiM8g5p-uJSPd@smile.fi.intel.com>
+References: <20240517200534.8EC5F33E@davehans-spike.ostc.intel.com>
+ <ZkspXhQFcWvBkL2q@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkspXhQFcWvBkL2q@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello Yongqin,
+On Mon, May 20, 2024 at 01:43:42PM +0300, Andy Shevchenko wrote:
+> On Fri, May 17, 2024 at 01:05:34PM -0700, Dave Hansen wrote:
+> > 
+> > From: Dave Hansen <dave.hansen@linux.intel.com>
+> > 
+> > tl;dr: CPUs with CPUID.80000008H but without CPUID.01H:EDX[CLFSH]
+> > will end up reporting cache_line_size()==0 and bad things happen.
+> > Fill in a default on those to avoid the problem.
+> > 
+> > Long Story:
+> > 
+> > The kernel dies a horrible death if c->x86_cache_alignment (aka.
+> > cache_line_size() is 0.  Normally, this value is populated from
+> 
+> Missing ) ?
+> 
+> > c->x86_clflush_size.
+> > 
+> > Right now the code is set up to get c->x86_clflush_size from two
+> > places.  First, modern CPUs get it from CPUID.  Old CPUs that don't
+> > have leaf 0x80000008 (or CPUID at all) just get some sane defaults
+> > from the kernel in get_cpu_address_sizes().
+> > 
+> > The vast majority of CPUs that have leaf 0x80000008 also get
+> > ->x86_clflush_size from CPUID.  But there are oddballs.
+> > 
+> > Intel Quark CPUs[1] and others[2] have leaf 0x80000008 but don't set
+> > CPUID.01H:EDX[CLFSH], so they skip over filling in ->x86_clflush_size:
+> > 
+> > 	cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
+> > 	if (cap0 & (1<<19))
+> > 		c->x86_clflush_size = ((misc >> 8) & 0xff) * 8;
+> > 
+> > So they: land in get_cpu_address_sizes(), set vp_bits_from_cpuid=0 and
+> > never fill in c->x86_clflush_size, assign c->x86_cache_alignment, and
+> > hilarity ensues in code like:
+> > 
+> >         buffer = kzalloc(ALIGN(sizeof(*buffer), cache_line_size()),
+> >                          GFP_KERNEL);
+> > 
+> > To fix this, always provide a sane value for ->x86_clflush_size.
+> > 
+> > Big thanks to Andy Shevchenko for finding and reporting this and also
+> > providing a first pass at a fix. But his fix was only partial and only
+> > worked on the Quark CPUs.  It would not, for instance, have worked on
+> > the QEMU config.
+> > 
+> > 1. https://raw.githubusercontent.com/InstLatx64/InstLatx64/master/GenuineIntel/GenuineIntel0000590_Clanton_03_CPUID.txt
+> > 2. You can also get this behavior if you use "-cpu 486,+clzero"
+> >    in QEMU.
+> 
+> Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> (as this obviously fixes the issue as it makes a partial revert of the culprit
+>  change).
 
-> is there any message that I could check to make sure if the
-> initialization is finished?
-> or like with adding some printk lines for some kernel functions to hack
->
->> Anyway, I will try to reproduce here and analyze it.
->
-> Thanks very much! And please feel free to let me know if there is
-> anything I could help with on the Android build.
+What's the status of this? (It seems you have to rebase it on top of the
+existing patches in the same area).
 
-I have finally managed to reproduce an error similar to the one mentioned
-during the boot stage. I created a systemd service with a similar
-configuration script to do the same and it works (I can reconfigure the
-mac address at boot time, the ip address is configured and the interface
-works), because the driver is completely initialized. In order to reproduce,
-I have introduced a big delay in the probe operation to get closer in time
-to the configuration script and the problem is there.
-Maybe, the script set_ethaddr.sh could be synchronized with the driver, but
-I think, if possible, it is better to check in a better way in the driver;
-I will try it. When I have something I can comment you, if you can test it,
-to be sure about the solution.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-By the way, I have tried with my other fix to avoid the spurious link
-messages, but it didn't help.
-
-Best regards
-José Ignacio
 
 
