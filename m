@@ -1,180 +1,235 @@
-Return-Path: <linux-kernel+bounces-195267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB8B8D49C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 133F88D49C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04911C22AC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3175D1C228E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B4517C7B7;
-	Thu, 30 May 2024 10:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B6117C7B5;
+	Thu, 30 May 2024 10:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X91e4lnQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWX8aoxk"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3F3176AD8;
-	Thu, 30 May 2024 10:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0981761B1;
+	Thu, 30 May 2024 10:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717065409; cv=none; b=JC9mFG0SSJFSZx1BvwMdUHP4DVAsq2oTWm3/zvQX9AQ5Bk7nytjOg0usXdxZ28FXqViuhjTzFOW9f7lJOr7wMZKpBy/Q3P4CaTI6o0sHPB6at89nvVMrb0SSoQrSh85GFrxwR43c231Dsan0pgtoybSoD+7aKzqCdsTl/g7gyrk=
+	t=1717065499; cv=none; b=YqHoIdB7DacOCVmrQzPxKVegsbC13pFDyhbci/TcNpax50zKA7TS6wwvfArWH1Zqya27Garw3qZ1phW2q7ywDR89lFwJsAQtpqEbwqX7tGoiTDEUUZqqfkr/3kzeDh6EnAOVtM4V7FJ71BsYwAIev8xkA/8JrJaaOSiLIr4qfNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717065409; c=relaxed/simple;
-	bh=HtQkjd8HbGFPhLH8WRqqtICqoILT+VZVoC0M3XmXh5I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P1aDbA55DYAx169XdaYgKicOlWbDJtJw/iTpkt9waYDm9SfxE/rXnM8BFqM1rUBiQ+h3j53PZ7k3IzrJrsukapCVznA5iannQ56oJez2hY/ZAlOMEkf272yUyswk3PCRZLfyMxmD6VId96Q8mPGAWZBj8Ij74625cDIFoMxOgGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X91e4lnQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U7EYDx021301;
-	Thu, 30 May 2024 10:36:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gzOfkFz9gtephlRxc0+JcL
-	G5OjU7gABvXKX433mLQGU=; b=X91e4lnQEJISNSIKvjbX8cP0oxcm10MUW3xuwf
-	CuA3XTW1uwbMID8M094kzSq+pk/A9zk7BkaxlIDBI3ukPOyEYk25BY96MR+gF2G1
-	D1EcP4D97Im/cpPKkN5q++N7zzcMaJ8xaxeA4gvP6o8qBBpbjUBSlC+zzZuUGomk
-	3eky9zdyAmMPw7Rp3fWuBgF4AXnCE9ex9vk7NHrQ73clLd46nBQeXXtduI7wwkTU
-	zuKSIAStluvtwg12eHvzfaG+KFyhk/VP/oavQ28Arbzqj2eB34sF2p/8XKWwcCSD
-	GFwkAlNMeYtiU+/FmlmNdxoJMS9H+btUscnRsX7KgkmEqpNw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0gbve2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 10:36:38 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UAabsG030467
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 10:36:37 GMT
-Received: from hu-sarannya-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 30 May 2024 03:36:32 -0700
-From: Sarannya S <quic_sarannya@quicinc.com>
-To: <quic_bjorande@quicinc.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, Chris Lew <quic_clew@quicinc.com>,
-        Sarannya Sasikumar <quic_sarannya@quicinc.com>,
-        Simon Horman
-	<horms@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "open
- list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: [PATCH V2] net: qrtr: ns: Ignore ENODEV failures in ns
-Date: Thu, 30 May 2024 16:06:17 +0530
-Message-ID: <20240530103617.3536374-1-quic_sarannya@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717065499; c=relaxed/simple;
+	bh=paHIyos98c7Tzrey/YbuwAxiZsj8aHHP8Y0RMacDQ3U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ofLyK7jm95cHK6sNJIldxHgtBUFTjmMUZu04ctT8EKYJEfsqM1sanT/59HwL7z6WuOxUv79bFLBKFPv/CMGi9nz8dhnKvNXygezk2/hkSVghon6P9Lq7UpKdMqWSSq1bXx1jGkPYoq9Nk4DqyME1kZ0y9R7iHKG5IjL7y+Aaee0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWX8aoxk; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4e4f05835b5so545395e0c.0;
+        Thu, 30 May 2024 03:38:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717065497; x=1717670297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0aCM8VS5o1VCn3rq9y/Ep6mH6LHi55hEY6pUD21r+dg=;
+        b=GWX8aoxkL2G/wQ7jt8Ls/PPgWJ/mrP52mXFVPVbPasfC4e2e/PRkNKyAIj7jxRXsE/
+         op5Glh/d7ZHMCil5NZzrmSDQp2Nr9WjIW2pnWC/FA2ziyNHBS8+ZFnrgsbSJqhhHkl/Q
+         UvoTcHWt9LR+0hZq3qhyJQ7dUjiA0CP1kQiOVjg5XReVbSbTOoXYjHO10x6HIkB4E5fo
+         msu5rrk0hYx8mnMKCXk0sW2eGRowCwEXtRH/UJSqc/QtyD41FTTfE2FMfFcn7Zu0Pd3O
+         zxrwrkmdVdWjO583/Szy2nO7IBJxvpBvGeaOrkLf6U+H5ATIRXYYCspd1sYmTsG576vg
+         owdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717065497; x=1717670297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0aCM8VS5o1VCn3rq9y/Ep6mH6LHi55hEY6pUD21r+dg=;
+        b=E/NoOPCODF7XR21PMTZJagwLPdhjkktjU3RPLCwEf5k7RbXezD/LQAhgi1H01s0VC0
+         BXxkH0TohleAuh7hwOYlQAM4pthcOQtg9aLE5FRdAxJD1uBaRVcdr9P7DBsY+vpw+/NC
+         DTKYBmFvxyvhyz/OanbqopFb97MoYfpA2d6xgcVg8ZPPxei+bw2OlrOgEZTNhrGur019
+         cUNGFjS8l74nBHiv2h4nmUu10yhTosBQlkMSKw4Miz4XUyHsotwrghNoZadFklwE/1Pu
+         jbGN9is87SY5UvM5rEpYUR7bwg5L/JWqD8gCmNGKG5SK0tbA7+DQmm+E43p4dbjlxo/w
+         z8Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeK07fWh4pYqZwq116ubI1XzKYs2uJxDTLFJnJ4nW63f9hyfBmAoHJyHnjJBPsXyX3BS5hWppDquUxnO+moGdwQPriNJQ9JLSBxttvQeW9iy8nXQBU56WpHjnXYRDhSgm0TbcI6WpgO+SCwoPgZp5gFZqs3ebhMrKZ+EzJuYBBwzR0ln5XyWShKB7GoMFnOgT/UOe+ew2C/+WMQ4foFz0QcNzSpI3lZQ==
+X-Gm-Message-State: AOJu0YyBqz1H06P1Wy1WDQ9OVAXFWOidQ9IVWb+waNFgIkgBcur0Afse
+	xMg/qGVqfuvPuzgLddChcVk7TD6n3hhPALfM9YO41u8+rj/U6+Xiu9KaZpViVfxqdF8gaCr1RIv
+	jiJEOx05KkUPPc/nBPZozT24OO3U=
+X-Google-Smtp-Source: AGHT+IFWhDim4sUo4i3oHo9nVgGW6PBD+uCPAftoB8U+86YE72uWAOrR+rjRCuwPAPuqA/Z6iIGelU3qj2VSYwPD1GA=
+X-Received: by 2002:a1f:f205:0:b0:4ea:f0ef:a2ef with SMTP id
+ 71dfb90a1353d-4eaf30ac1c2mr1191971e0c.0.1717065495174; Thu, 30 May 2024
+ 03:38:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1dcE_oZy_82EA_e_phq5Cs11fPc76zGN
-X-Proofpoint-ORIG-GUID: 1dcE_oZy_82EA_e_phq5Cs11fPc76zGN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
- mlxlogscore=700 malwarescore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405300080
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240423175900.702640-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <862d7d16-367b-492e-b7be-e2fe71b904c2@tuxon.dev>
+In-Reply-To: <862d7d16-367b-492e-b7be-e2fe71b904c2@tuxon.dev>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 30 May 2024 11:37:48 +0100
+Message-ID: <CA+V-a8smD3EMbDsbGJ0z+Sxuk2E_NrtukLp7kEMam98pyAsZ=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 10/13] pinctrl: renesas: pinctrl-rzg2l: Add support to
+ set pulling up/down the pins
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chris Lew <quic_clew@quicinc.com>
+On Thu, May 30, 2024 at 8:48=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
+>
+> Hi, Prabhakar,
+>
+> On 23.04.2024 20:58, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support to configure bias-disable, bias-pull-up and bias-pull-down
+> > properties of the pin.
+> >
+> > Two new function pointers get_bias_param() and get_bias_val() are
+> > introduced as the values in PUPD register differ when compared to
+> > RZ/G2L family and RZ/V2H(P) SoC,
+> >
+> > Value | RZ/G2L        | RZ/V2H
+> > ---------------------------------
+> > 00b:  | Bias Disabled | Pull up/down disabled
+> > 01b:  | Pull-up       | Pull up/down disabled
+> > 10b:  | Pull-down     | Pull-down
+> > 11b:  | Prohibited    | Pull-up
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > RFC->v2
+> > - New patch
+> > ---
+> >  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 73 +++++++++++++++++++++++++
+> >  1 file changed, 73 insertions(+)
+> >
+> > diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/=
+renesas/pinctrl-rzg2l.c
+> > index 102fa75c71d3..c144bf43522b 100644
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > @@ -122,6 +122,7 @@
+> >  #define IOLH(off)            (0x1000 + (off) * 8)
+> >  #define SR(off)                      (0x1400 + (off) * 8)
+> >  #define IEN(off)             (0x1800 + (off) * 8)
+> > +#define PUPD(off)            (0x1C00 + (off) * 8)
+> >  #define ISEL(off)            (0x2C00 + (off) * 8)
+> >  #define SD_CH(off, ch)               ((off) + (ch) * 4)
+> >  #define ETH_POC(off, ch)     ((off) + (ch) * 4)
+> > @@ -140,6 +141,7 @@
+> >  #define IEN_MASK             0x01
+> >  #define IOLH_MASK            0x03
+> >  #define SR_MASK                      0x01
+> > +#define PUPD_MASK            0x03
+> >
+> >  #define PM_INPUT             0x1
+> >  #define PM_OUTPUT            0x2
+> > @@ -265,6 +267,8 @@ struct rzg2l_pinctrl_data {
+> >       void (*pmc_writeb)(struct rzg2l_pinctrl *pctrl, u8 val, void __io=
+mem *addr);
+> >       u32 (*read_oen)(struct rzg2l_pinctrl *pctrl, u32 caps, u32 offset=
+, u8 pin);
+> >       int (*write_oen)(struct rzg2l_pinctrl *pctrl, u32 caps, u32 offse=
+t, u8 pin, u8 oen);
+> > +     int (*get_bias_param)(u8 val);
+> > +     int (*get_bias_val)(enum pin_config_param param);
+> >  };
+> >
+> >  /**
+> > @@ -1081,6 +1085,38 @@ static int rzg2l_write_oen(struct rzg2l_pinctrl =
+*pctrl, u32 caps, u32 offset, u8
+> >       return 0;
+> >  }
+> >
+> > +static int rzg2l_get_bias_param(u8 val)
+> > +{
+> > +     switch (val) {
+> > +     case 0:
+> > +             return PIN_CONFIG_BIAS_DISABLE;
+> > +     case 1:
+> > +             return PIN_CONFIG_BIAS_PULL_UP;
+> > +     case 2:
+> > +             return PIN_CONFIG_BIAS_PULL_DOWN;
+> > +     default:
+> > +             break;
+> > +     }
+> > +
+> > +     return -EINVAL;
+> > +}
+> > +
+> > +static int rzg2l_get_bias_val(enum pin_config_param param)
+> > +{
+> > +     switch (param) {
+> > +     case PIN_CONFIG_BIAS_DISABLE:
+> > +             return 0;
+> > +     case PIN_CONFIG_BIAS_PULL_UP:
+> > +             return 1;
+> > +     case PIN_CONFIG_BIAS_PULL_DOWN:
+> > +             return 2;
+> > +     default:
+> > +             break;
+> > +     }
+> > +
+> > +     return -EINVAL;
+> > +}
+> > +
+> >  static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+> >                                    unsigned int _pin,
+> >                                    unsigned long *config)
+> > @@ -1139,6 +1175,25 @@ static int rzg2l_pinctrl_pinconf_get(struct pinc=
+trl_dev *pctldev,
+> >               arg =3D rzg2l_read_pin_config(pctrl, SR(off), bit, SR_MAS=
+K);
+> >               break;
+> >
+> > +     case PIN_CONFIG_BIAS_DISABLE:
+> > +     case PIN_CONFIG_BIAS_PULL_UP:
+> > +     case PIN_CONFIG_BIAS_PULL_DOWN: {
+>
+> Block { } can be removed here.
+>
+> > +             if (!(cfg & PIN_CFG_PUPD))
+> > +                     return -EINVAL;
+> > +
+> > +             ret =3D pctrl->data->get_bias_param(rzg2l_read_pin_config=
+(pctrl,
+> > +                                                                     P=
+UPD(off),
+> > +                                                                     b=
+it, PUPD_MASK));
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +
+> > +             if (ret !=3D param)
+> > +                     return -EINVAL;
+>
+> Can this happen? Otherwise it can be removed.
+>
+Yes this can happen (and is needed) as we want to report only the
+current BIAS setting of the pin.
 
-Ignore the ENODEV failures returned by kernel_sendmsg(). These errors
-indicate that either the local port has been closed or the remote has
-gone down. Neither of these scenarios are fatal and will eventually be
-handled through packets that are later queued on the control port.
+For example without this condition I get the below for ET1_RXD3 pin:
+pin 173 (ET1_RXD3): input bias disabled, input bias pull down (0x1
+ohms), input bias pull up (0x1 ohms)
+with the check included:
+pin 173 (ET1_RXD3): input bias disabled
 
-Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-Signed-off-by: Sarannya Sasikumar <quic_sarannya@quicinc.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-
-Changes from previous revision:
-Changed return type of service_announce_del from int to void.
-
- net/qrtr/ns.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-index 654a3cc0d347..e821101e7a4b 100644
---- a/net/qrtr/ns.c
-+++ b/net/qrtr/ns.c
-@@ -132,7 +132,7 @@ static int service_announce_new(struct sockaddr_qrtr *dest,
- 	return kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
- }
- 
--static int service_announce_del(struct sockaddr_qrtr *dest,
-+static void service_announce_del(struct sockaddr_qrtr *dest,
- 				struct qrtr_server *srv)
- {
- 	struct qrtr_ctrl_pkt pkt;
-@@ -157,10 +157,10 @@ static int service_announce_del(struct sockaddr_qrtr *dest,
- 	msg.msg_namelen = sizeof(*dest);
- 
- 	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--	if (ret < 0)
-+	if (ret < 0 && ret != -ENODEV)
- 		pr_err("failed to announce del service\n");
- 
--	return ret;
-+	return;
- }
- 
- static void lookup_notify(struct sockaddr_qrtr *to, struct qrtr_server *srv,
-@@ -188,7 +188,7 @@ static void lookup_notify(struct sockaddr_qrtr *to, struct qrtr_server *srv,
- 	msg.msg_namelen = sizeof(*to);
- 
- 	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--	if (ret < 0)
-+	if (ret < 0 && ret != -ENODEV)
- 		pr_err("failed to send lookup notification\n");
- }
- 
-@@ -207,6 +207,9 @@ static int announce_servers(struct sockaddr_qrtr *sq)
- 	xa_for_each(&node->servers, index, srv) {
- 		ret = service_announce_new(sq, srv);
- 		if (ret < 0) {
-+			if (ret == -ENODEV)
-+				continue;
-+
- 			pr_err("failed to announce new service\n");
- 			return ret;
- 		}
-@@ -369,7 +372,7 @@ static int ctrl_cmd_bye(struct sockaddr_qrtr *from)
- 		msg.msg_namelen = sizeof(sq);
- 
- 		ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--		if (ret < 0) {
-+		if (ret < 0 && ret != -ENODEV) {
- 			pr_err("failed to send bye cmd\n");
- 			return ret;
- 		}
-@@ -443,7 +446,7 @@ static int ctrl_cmd_del_client(struct sockaddr_qrtr *from,
- 		msg.msg_namelen = sizeof(sq);
- 
- 		ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--		if (ret < 0) {
-+		if (ret < 0 && ret != -ENODEV) {
- 			pr_err("failed to send del client cmd\n");
- 			return ret;
- 		}
--- 
-2.25.1
-
+Cheers,
+Prabhakar
 
