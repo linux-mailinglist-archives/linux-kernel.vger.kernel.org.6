@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-195823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497738D5243
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:23:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BF18D5249
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAA681F24DDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:23:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E43B828511F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADC9147C77;
-	Thu, 30 May 2024 19:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75508147C88;
+	Thu, 30 May 2024 19:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jKXyLldW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Nh0qGhKv"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E0912FB20;
-	Thu, 30 May 2024 19:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D313E147C77
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 19:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717097008; cv=none; b=FZFts6y87VOuv+nV8Z6cLsRAGwBq5wH/YwIz/FmgViGBsTt5Z8UgkCgAF5c8C1dKFgCKR+oWK8+CiB9/h4/sJpYvMcHnX4OyUMhNZE0UZLwHqqa7b6FghxI2mG3MwCBAtn1WvOn+NnY1+WK8CI4BSTgSZOk6DDrzbVatxtCfr0w=
+	t=1717097061; cv=none; b=VXGUlkhfqeqgasZQoDqM1aARqEwe2DPZdAkhek9TvlGivcPT/5aMUbryROanU6SN5AxOvNMmlp/uI7jeV/2XcNWUQZjTcj8+RcFWsONI/HEIj4Qj3JE3AW69ZlPRo+JnmFjwte+ihCGD/ZQ1WS7SRlzeIi6Yl9W5iWTnX7tWI/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717097008; c=relaxed/simple;
-	bh=ihTJ7uLAXuHoHPzWTTChN0zHhWzqJH5AOQTbqp1Yttk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8c5bxUOL0faSyNqhtxhq1YCuQ3mj9m5a2xM8cGvgDpDCY+Af2Tx9KCypPr5f/KAunjZGqiVUn2SG86LNg0qmc7Nlmihskf1k6BRdu+0r/dn5N3Yf/SB11pMXOB6NkrrYwN3FliQcBrMNB02l0kylF1t8YKPYaBn1TdbUxSlwig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jKXyLldW; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717097007; x=1748633007;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ihTJ7uLAXuHoHPzWTTChN0zHhWzqJH5AOQTbqp1Yttk=;
-  b=jKXyLldWAO3Bys753PFix8wJse5eSjMLHHN5En6rNmCHKXkeoY6uiz3d
-   4/3+Lrlj6HewLIVQvDM1AcJDzZCatD7cmI5EEJcHynoFIPhvTWi0WnI7B
-   tbjwhtMwtZRqCNMN7Gg1RC7Mw5+ZK9PvvGjGLVnFRRf9//zdUjsRMeCIC
-   Mn9h+lvSdSr0oQYHfIhH/3A1Zw4vOCrkMNWh4T2Ym87PMy70/nq481Vh6
-   W3r33TkZK41+SOyzwbF6DrfOUvZoR8E2Jyt053Hhcs5vbbYhJTK3zS3WI
-   xuPe3v9dRzlUjtLT+sBq/w7M/NHrkNXPzX3fGh4PjqqpMhwigI9FdmVld
-   w==;
-X-CSE-ConnectionGUID: FRdCDmHfSi+xvoJfBhlz+w==
-X-CSE-MsgGUID: u7z6jN8TTP2KNnZbxRAPeg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13569046"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="13569046"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:23:26 -0700
-X-CSE-ConnectionGUID: E4kHBywfSC6jYb+ZzM5PAw==
-X-CSE-MsgGUID: DAyMgrvrTMq/lWdTxpsO0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="36002442"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 12:23:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sClMr-0000000CHV4-0P88;
-	Thu, 30 May 2024 22:23:17 +0300
-Date: Thu, 30 May 2024 22:23:16 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
-	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-	adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
-	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
-	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
-	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com,
-	dlatypov@google.com
-Subject: Re: [PATCH v10 08/11] lib: add basic KUnit test for lib/math
-Message-ID: <ZljSJJtI-ADTUoc7@smile.fi.intel.com>
-References: <20240530165925.2715837-1-devarsht@ti.com>
- <20240530171810.2764623-1-devarsht@ti.com>
+	s=arc-20240116; t=1717097061; c=relaxed/simple;
+	bh=m4Nse25y6EsuGDUh4EtZfvdY5SZs8Aj2Asf9IIe5CPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rlsm3ktFWIEwZD5rzKf5WXqAelRxeTKQkgzlNci7eZv/UUIXr0uWhcWF1slsoyQiW2GY57fxFVdpOaEcThHD+1J365O9nW7PUoaKExk/fb5gjkL4tiQroS5+xYaOb9XHYQEQy3I5x6aeQCe4+X0uaH576IVZBgV3BhDtqz0h2lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Nh0qGhKv; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6f12eda7c7fso657988a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717097059; x=1717701859; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pTv8vl3hBxcvdk6Q4RODEZFm7a5MH4UmFXjV0ydwHe8=;
+        b=Nh0qGhKv3kyCZ4O5E8qWFEWyc9fkrAqkIRD7w/TPkAzhnQhesp8k+A1Q3iawhjPUO/
+         +CIBpjlEGlNUa0z7Ca/sG5/aydO0ZrEiJrQUxYvjnkgMLHtHg7Yeuhri1PsuQLY2xymP
+         8nTmwVbT6W0yzrp20flmPIbDQA3ZgcsTPBLPko0TSIUBTmGb4vY1+cmceyuTRzDzdNdJ
+         RpgDFZOSfJxSz2ldRLovToq4jrNtpnuNiI7IcgqZ2oBn6H56wifIM397YSWWU42CJJUW
+         55U/zB+CKPsZ9oRoP4/jukJF0cfyyQT2cvRwwOYtbWykHeOfMy1OHzK7fcy3+CwgQmFJ
+         5N6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717097059; x=1717701859;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pTv8vl3hBxcvdk6Q4RODEZFm7a5MH4UmFXjV0ydwHe8=;
+        b=RS8bGkqbjzo5MD6JDUfZ5HdyVbCPAP6KMFsUYpkiX1j+whdmru3ORNo9TiKBPTAKpQ
+         lKzexF6pYsnkWA9svRa4bjM5723BMXrr/UQHXk2HWvMJ9grTW5mSM/J5a5x8Cu9O6v+Y
+         vtRb3z78DHEw0xVmo5FQgMrJaqdu47MdGft01Dmp268dSX7e+fcmvPKdZTN//VPoVCy0
+         seb2eHe2p5BBqGaeXU4E/2T2XvFeTLsPDbjV8lU61u+5B4z25zwZT5mFH7uHYuW3CQnY
+         s3f489VASMRseuw7T30VQcn7gPS/evWg++xRs9f+dQlRmER9OklSjOXDnUikRk5Jxa0v
+         i85w==
+X-Forwarded-Encrypted: i=1; AJvYcCWzzBxjFeXcce6NO2z5DHfUjHXui7r6Szp2Pe0nIOVxNTCEhekS7QDaFnc/ZqhOMFUoYKq2QzLijrEy7STZRyDT7ItMhIXb1/yAD8zo
+X-Gm-Message-State: AOJu0YxOEwJCliAt4y2jf3iAtwglSLi0MkTsLhB1c+AXlcAUgek3j3sd
+	OYk2g16jW8aUCvT3l/cQtmHg3YvVBbpIgHlnOkS9tzyxYreq2lBly/RRstKFpic=
+X-Google-Smtp-Source: AGHT+IE21ywEBoUcu4MUr1ZZ9nNBF6Eh1L/o5nvA80dAOPVfZVORqsCVWsrKJNTvL0sdQUlSYOLV0A==
+X-Received: by 2002:a05:6830:1db1:b0:6f0:bf65:9c42 with SMTP id 46e09a7af769-6f90aeb990cmr3295087a34.15.1717097058762;
+        Thu, 30 May 2024 12:24:18 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f91053a3c1sm71347a34.27.2024.05.30.12.24.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 12:24:17 -0700 (PDT)
+Message-ID: <6db8ba66-841b-4425-9dd4-9d6e7b0463bf@baylibre.com>
+Date: Thu, 30 May 2024 14:24:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530171810.2764623-1-devarsht@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20240513-headsman-hacking-d51fcc811695@spud>
+ <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
+ <20240514-aspire-ascension-449556da3615@spud>
+ <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
+ <20240516-rudder-reburial-dcf300504c0a@spud>
+ <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
+ <20240519-abreast-haziness-096a57ef57d3@spud>
+ <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
+ <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
+ <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
+ <20240526-peculiar-panama-badda4f02336@spud>
+ <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 30, 2024 at 10:48:10PM +0530, Devarsh Thakkar wrote:
-> From: Daniel Latypov <dlatypov@google.com>
+On 5/29/24 3:07 AM, Nuno Sá wrote:
+> On Sun, 2024-05-26 at 18:35 +0100, Conor Dooley wrote:
+
+
+>> It might be easy to do it this way right now, but be problematic for a
+>> future device or if someone wants to chuck away the ADI provided RTL and
+>> do their own thing for this device. Really it just makes me wonder if
+>> what's needed to describe more complex data pipelines uses an of_graph,
+>> just like how video pipelines are handled, rather than the implementation
+>> of io-backends that don't really seem to model the flow of data.
+>>
 > 
-> Add basic test coverage for files that don't require any config options:
-> * part of math.h (what seem to be the most commonly used macros)
-> * gcd.c
-> * lcm.c
-> * int_sqrt.c
-> * reciprocal_div.c
-> (Ignored int_pow.c since it's a simple textbook algorithm.)
+> Yeah, backends is more for devices/soft-cores that extend the functionality of the
+> device they are connected too. Like having DACs/ADCs hdl cores for connecting to high
+> speed controllers. Note that in some cases they also manipulate or even create data
+> but since they fit in IIO, having things like the DMA property in the hdl binding was
+> fairly straight.
 > 
-> These tests aren't particularly interesting, but they
-> * provide short and simple examples of parameterized tests
-> * provide a place to add tests for any new files in this dir
-> * are written so adding new test cases to cover edge cases should be
->   easy
->   * looking at code coverage, we hit all the branches in the .c files
+> Maybe having an offload dedicated API (through spi) to get/share a DMA handle would
+> be acceptable. Then we could add support to "import" it in the IIO core. Then it
+> would be up to the controller to accept or not to share the handle (in some cases the
+> controller could really want to have the control of the DMA transfers).
 
-..
+I could see this working for some SPI controllers, but for the AXI SPI Engine
++ DMA currently, the DMA has a fixed word size, so can't be used as a generic
+DMA with arbitrary SPI xfers. For example, if the HDL is compiled with a 32-bit
+word size, then even if we are reading 16-bit sample data, the DMA is going to
+put it in a 32-bit slot. So one could argue that this is still doing some data
+manipulation similar to the CRC checker example.
 
-> +#include <kunit/test.h>
-> +#include <linux/gcd.h>
-> +#include <linux/lcm.h>
-> +#include <linux/reciprocal_div.h>
+> 
+> Not familiar enough with of_graph so can't argue about it but likely is something
+> worth looking at.
+> 
+> - Nuno Sá
+>>>
 
-Really, you ignored my comment a second (?) time? This is road to nowhere.
-You need to update the inclusion bloc in accordance with IWYU principle.
-I see a few headers are missing.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+I did try implementing something using graph bindings when I first started
+working on this, but it didn't seem to really give us any extra useful
+information. It was just describing connections (endpoints) that I thought
+we could just implicitly assume. After this discussion though, maybe worth
+a second look. I'll have to think about it more.
 
