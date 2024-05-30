@@ -1,201 +1,164 @@
-Return-Path: <linux-kernel+bounces-195506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B2498D4DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:22:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 869F58D4DC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3EB1C22F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:22:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366661F21A09
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9211D176257;
-	Thu, 30 May 2024 14:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013B017C206;
+	Thu, 30 May 2024 14:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mecka.net header.i=@mecka.net header.b="B2ffU7hG"
-Received: from mecka.net (mecka.net [159.69.159.214])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C0616F0E8;
-	Thu, 30 May 2024 14:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.159.214
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="y2/YJ0oD"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D440817623B;
+	Thu, 30 May 2024 14:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078944; cv=none; b=E3sKQv7ZNN5rir8jbhv6NBOXWN2zaD1iIxFgwZvQ1Jnt2UMzyybisxUP0HWfiqUZm9jkwyk4pqfwu99mN8FUz4syFEwyZ2Pu/4/ntCapdZGwHqH6dPkdvu/WZ7g/MMXA9o1HLXJOPataaUko5ih9kvKR2krgDfBcOP1wSYybRNQ=
+	t=1717079019; cv=none; b=W9Ut/MtcXewg7OvEiM8YlmhAHPRkHrWh+U2TrgIsttpx1e7+DFvW2E6h+hO0hpvcASa7Ea6tDhYaGcWdn0mn78pKTl5YNvzUyGh1adSlzJ4ZtM5w3cewsCUJbNvy+K+oPKWM1TSPuEo3ildLoPGXR9XZkCs+aUK8xs5Tq4bbvU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078944; c=relaxed/simple;
-	bh=j/5sxtjkE1VMqIsq7Kzk+4jzHYmqSi6AnnqTz+HctSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTIuw/7Ugv1SOeSaekeNpkvK4UPWL3Knawvd3/vg+Pp4EyccIWRcosUegau3DrPIZhTzjN78SGeRqBZdQdmjSffJizNtq2klDJb1eoeM1LCXNj5tCao2Qu7JPdu48Vg/y60QEKUzFnmofgntYU1DSMPYJFcu+Ajsliuhnz+gOww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net; spf=pass smtp.mailfrom=mecka.net; dkim=fail (0-bit key) header.d=mecka.net header.i=@mecka.net header.b=B2ffU7hG reason="key not found in DNS"; arc=none smtp.client-ip=159.69.159.214
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mecka.net
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mecka.net; s=2016.11;
-	t=1717078933; bh=j/5sxtjkE1VMqIsq7Kzk+4jzHYmqSi6AnnqTz+HctSI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B2ffU7hGMxt1l+bCgPf7HV8S/wd6vWGjjPhZ5Db43KsZZwUqr2WUPf9QytevB/EXW
-	 0HDr9Aw53iGoAkXFhFt/TwQmJNJShDcuFVLqebuhJtiFRXpSFcsmibwE0KctuLtRe8
-	 Nf/ZsVclLqyDtXrpeDxt7gOMq0lGz3jM8NPluypl9CqR4v94qt7TcLe8UUquYLx0/X
-	 TsD8KHGAMeBK4VxIeT0BzHaSwWcva735y0tfTryNwfNw960AjFgRyVTgfDYPsyt0ZZ
-	 VsEPSZOsrry5aGa1nJzPjC0SEwW+qwF5VPJnZVazG5snevRxLGxj2Ef7Iwp21Cx1Pc
-	 1rFg0a9ZOBnFg==
-Received: from mecka.net (unknown [185.147.11.134])
-	by mecka.net (Postfix) with ESMTPSA id 29F6450C1EB;
-	Thu, 30 May 2024 16:22:13 +0200 (CEST)
-Date: Thu, 30 May 2024 16:22:11 +0200
-From: Manuel Traut <manut@mecka.net>
-To: Mikko Rapeli <mikko.rapeli@linaro.org>
-Cc: Sumit Garg <sumit.garg@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Jerome Forissier <jerome.forissier@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org,
-	Shyam Saini <shyamsaini@linux.microsoft.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v7 4/4] optee: probe RPMB device using RPMB subsystem
-Message-ID: <ZliLk1VkekBQlyO7@mecka.net>
-References: <20240527121340.3931987-5-jens.wiklander@linaro.org>
- <fc3bfebb-78b7-428e-8da5-5221f4921faa@linaro.org>
- <CAHUa44G0bcK55RxNrN5sXiicBZ-BJtA46KpedfBdUSKsN8eUOA@mail.gmail.com>
- <ZlWkSCCjJ2fbE2ML@nuoska>
- <CAFA6WYOT52fdqgGvDYE91DQ_4MUbAv_1Gnn2fTyMNhrj_Agu=w@mail.gmail.com>
- <ZlbUwI0G3HGvioNm@nuoska>
- <Zlb3fuqvQIO9ghQX@manut.de>
- <Zlc7B6khuhGZ6QOZ@nuoska>
- <ZlgsLibqO59kNQUE@mecka.net>
- <Zlg411JGQJf2zRPe@nuoska>
+	s=arc-20240116; t=1717079019; c=relaxed/simple;
+	bh=rBAOffgbAamuOBpZB11BYdUzR1zoLfsWLjuxRiZ8a18=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y4qOHI+7+za6xU0eGBZsv6tzc3KpdQeYtGM4waIZGWEBiuMFqxeU/e0ienxTAbqvn6w8nuwp875us1wN2w9qw7kkEDlejhLV04OsM/Cg1IJEobvkw/Di+YzMR4PwY0ZkH+sW3q5AccylDSJLxdE1n4efMtSJozlGtJWGyym0L6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=y2/YJ0oD; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=UfJam6jJgDMUma9IbeP8W8ZatgiZnuZGFX5AOvEBySE=; b=y2
+	/YJ0oD1wUGuKD56sIIayH+NUovPwjWC3mPtP+WiTkr+H19FZEiBziqt1EdwIZnop6iefk4S/XIUgX
+	Q54tzMHCKbxF2v2Y8N5TAMQGvcuRNfkl3+e7zI/N/w0GFlLVRKRQwOClgWtAWTDCsWKAn6bMcpMp0
+	V12vmiSH+1s+8LGO+PieKfKxwb1rZdCcyPBtsJEIL1uVxPVCmwKo9+DEmY+k28JvtxmgBZgjR0ZDh
+	xTzgZjBsPdS086bq/KAKMNyNFtAVpF1R32C9wAsknGTO15ZY7Rsoy7cWC8hjqw9jJpH1fCMvsB7+T
+	zRO8/s0XIdLR40vMLh7+TSw2jpJ4l1Nw==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sCggm-00093J-WC; Thu, 30 May 2024 16:23:33 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sCggm-0005k0-2k;
+	Thu, 30 May 2024 16:23:32 +0200
+From: Esben Haabendal <esben@geanix.com>
+Date: Thu, 30 May 2024 16:22:54 +0200
+Subject: [PATCH] ARM: dts: ls1021a: add QUICC Engine node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zlg411JGQJf2zRPe@nuoska>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240530-arm-ls1021a-qe-dts-v1-1-2eda23bdf8c5@geanix.com>
+X-B4-Tracking: v=1; b=H4sIAL2LWGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDU2MD3cSiXN2cYkMDI8NE3cJU3ZSSYl0DS2NjC0NDQwNzS2MloMaCotS
+ 0zAqwodGxtbUAO1PuXGQAAAA=
+To: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717079012; l=2068;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=rBAOffgbAamuOBpZB11BYdUzR1zoLfsWLjuxRiZ8a18=;
+ b=WCcqt0yhrq70I9kt82LvvpMG/EdU+MMZfi1yBiNY+PAZ1A6eQZ1sV2l5g+U3Kf3cNvy4N4aSP
+ ihYoGuQTUwrBdz7jC+8TQSw9o4qPjGDIfPxggukd7NU/9MBByRs2oeI
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27291/Thu May 30 10:29:52 2024)
 
-On Thu, May 30, 2024 at 11:29:11AM +0300, Mikko Rapeli wrote:
-> On Thu, May 30, 2024 at 09:35:10AM +0200, Manuel Traut wrote:
-> > Hi Mikko,
-> > 
-> > On Wed, May 29, 2024 at 05:26:15PM +0300, Mikko Rapeli wrote:
-> > > Hi,
-> > > 
-> > > On Wed, May 29, 2024 at 11:38:06AM +0200, Manuel Traut wrote:
-> > > > Hi Mikko,
-> > > > 
-> > > > On 10:09 Wed 29 May     , Mikko Rapeli wrote:
-> > > > > On Wed, May 29, 2024 at 10:56:04AM +0530, Sumit Garg wrote:
-> > > > > > On Tue, 28 May 2024 at 15:00, Mikko Rapeli <mikko.rapeli@linaro.org> wrote:
-> > > > > > > On Mon, May 27, 2024 at 03:24:01PM +0200, Jens Wiklander wrote:
-> > > > > > > > On Mon, May 27, 2024 at 3:00 PM Jerome Forissier
-> > > > > > > > <jerome.forissier@linaro.org> wrote:
-> > > > > > > > > On 5/27/24 14:13, Jens Wiklander wrote:
-> > > > > > > Outside of these patches, I think the optee RPC setup with fTPM TA is one area which
-> > > > > > > currently requires tee-supplicant to be started. Detecting the existence of TPM before
-> > > > > > > kernel drivers are loaded is possible via the exported EFI logs from firmware to kernel
-> > > > > > > or ACPI TPM2 table entry, and detecting optee and thus starting tee-supplicant in userspace too.
-> > > > > > 
-> > > > > > One thing I am trying to find an answer about is why do we need to
-> > > > > > defer tee-supplicant launch if it's bundled into initrd? Once you
-> > > > > > detect OP-TEE then tee-supplicant should be launched unconditionally.
-> > > > > > As per your example below, the motivation here seems to be the TPM2
-> > > > > > device dependent on RPMB backend but what if other future systemd
-> > > > > > services come up and depend on other services offered by
-> > > > > > tee-supplicant?
-> > > > > 
-> > > > > There is an annoying depedency between firmware side optee and TAs, and kernel optee driver,
-> > > > > tee-supplicant in userspace and kernel TA drivers like fTPM.
-> > > > > 
-> > > > > Kernel fTPM driver and fTPM TA require tee-supplicant in userspace for RPMB, RPC etc.
-> > > > > 
-> > > > > This patch series is adding kernel side support for RPMB handling so that the dependency to
-> > > > > tee-supplicant in userspace can be removed. For fTPM use case, there is still the optee RPC
-> > > > > buffer setup which currently requires tee-supplicant in userspace or fTPM TA will panic.
-> > > > > 
-> > > > > So yes, currently, tee-supplicant must be started. But it would be great if kernel drivers
-> > > > > and firmware optee trusted applications would not depend on tee-supplicant running in userspace.
-> > > > > The startup sequence is really tricky to get right. My fTPM use case is using the TPM device
-> > > > > to encrypt rootfs and thus all SW components including tee-supplicant need to run early in
-> > > > > initramfs. Currently also switch from initramfs to main rootfs requires unloading
-> > > > > fTPM kernel driver and stopping tee-supplicant in initrd, and then starting tee-supplicant
-> > > > > and loading fTPM kernel driver from main rootfs. udev and automatic module loading for
-> > > > > fTPM can not be used due to the tee-supplicant userspace dependency.
-> > > > 
-> > > > I decided to build fTPM as buildin-TA into OP-TEE. RPMB routing is already
-> > > > implemented in u-boot so it can already write PCR registers.
-> > > 
-> > > Is build in TA same as early TA? I presume so.
-> > 
-> > Indeed.. sorry for using the wrong term.
-> 
-> Ok, no problem. Then we have the same fTPM TA setup. I'm using optee 4.1
-> with RPMB kernel support changes from Jens cherry-picked on top.
-> 
-> > > > With this series and the required changes in OP-TEE and a compiled in fTPM
-> > > > kernel driver and systemd v256 it is possible to use the fTPM in the initrd
-> > > > without tee-supplicant.
-> > > > 
-> > > > Maybe this information is helpful to you, regards
-> > > 
-> > > This is very interesting and I'm trying to get to the same state, though with
-> > > fTPM kernel driver as module. With v6 of this patch set and matching optee changes
-> > > I was not able to make this work as fTPM TA was crashing when loading ftpm kernel driver
-> > > due to failing RPC allocation, which tee-supplicant was setting up in the whole chain.
-> > > I'll try to get v7 patches working and test this again on my yocto based setup and kernel 6.6.y.
-> > 
-> > I'll try today also with v7 and 6.10-rc1 on an i.MX8MM. It should also
-> > work with fTPM as kernel module if you use systemd in the initrd
-> > with the new tpm.target in systemd v256.
-> 
-> Thanks for the details. I'm testing on qemu, rockpi4b (Rockchip rk3399 SoC) and synquacer
-> (Socionext Developer Box, SC2A11:Cortex-A53 MPCore 24cores). Kernel and rootfs
-> are from our yocto master branch based Trusted Reference Stack distro
-> ( https://gitlab.com/Linaro/trusted-reference-stack/trs )
-> with kernel 6.6.29 (porting the RPMB v7 patches currently), systemd 255.4 (tpm2.target
-> backported), tee-supplicant 4.1 etc. I'm switching the initramfs from shell scripts
-> to systemd currently, but running into various issues.
+The LS1021A contains a QUICC Engine Block, so add a node to device
+tree describing that.
 
-I just use a mkosi generated Debian/sid image..
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+ arch/arm/boot/dts/nxp/ls/ls1021a.dtsi | 51 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-> UEFI firmware is our Trusted Substrate ( https://gitlab.com/Linaro/trustedsubstrate/meta-ts/ )
+diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi b/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
+index e86998ca77d6..ff7be69acdd5 100644
+--- a/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
++++ b/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
+@@ -460,6 +460,57 @@ gpio3: gpio@2330000 {
+ 			#interrupt-cells = <2>;
+ 		};
+ 
++		uqe: uqe@2400000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			device_type = "qe";
++			compatible = "fsl,qe", "simple-bus";
++			ranges = <0x0 0x0 0x2400000 0x40000>;
++			reg = <0x0 0x2400000 0x0 0x480>;
++			brg-frequency = <150000000>;
++			bus-frequency = <300000000>;
++
++			fsl,qe-num-riscs = <1>;
++			fsl,qe-num-snums = <28>;
++
++			qeic: qeic@80 {
++				compatible = "fsl,qe-ic";
++				reg = <0x80 0x80>;
++				#address-cells = <0>;
++				interrupt-controller;
++				#interrupt-cells = <1>;
++				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++					      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			ucc@2000 {
++				cell-index = <1>;
++				reg = <0x2000 0x200>;
++				interrupts = <32>;
++				interrupt-parent = <&qeic>;
++			};
++
++			ucc@2200 {
++				cell-index = <3>;
++				reg = <0x2200 0x200>;
++				interrupts = <34>;
++				interrupt-parent = <&qeic>;
++			};
++
++			muram@10000 {
++				#address-cells = <1>;
++				#size-cells = <1>;
++				compatible = "fsl,qe-muram", "fsl,cpm-muram";
++				ranges = <0x0 0x10000 0x6000>;
++
++				data-only@0 {
++					compatible = "fsl,qe-muram-data",
++					"fsl,cpm-muram-data";
++					reg = <0x0 0x6000>;
++				};
++			};
++		};
++
+ 		lpuart0: serial@2950000 {
+ 			compatible = "fsl,ls1021a-lpuart";
+ 			reg = <0x0 0x2950000 0x0 0x1000>;
 
-This is a cool project! I was not aware of it. Thanks for sharing.
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240530-arm-ls1021a-qe-dts-093381110793
 
-> ARM System Ready IR compatible with secure boot and TPM support, u-boot
-> 2024.04 (except rockpi4b still on 2023.01), optee 4.1, fTPM etc from meta-arm
-> yocto layer.
+Best regards,
+-- 
+Esben Haabendal <esben@geanix.com>
 
-I am on a Toradex Verdin board with an i.MX8MM SoM. u-boot is still
-2024.01, optee_os from Jens referenced branch, with a little change in:
-
-lib/libutee/include/user_ta_header.h
-
--#define TA_FLAGS_MASK  GENMASK_32(10, 0)
-+#define TA_FLAGS_MASK  GENMASK_32(12, 0)
-
-fTPM is from ms-tpm-20-ref.git on github. Need to check what is in the meta-arm.
-Figured out some problems with this regarding OrPolicies used by
-systemd-cryptenroll..
-
-> Booting without tee-supplicant has so far only resulted in the fTPM TA panic'ing
-> because RPC setup is failing. Also the fTPM TA enumation needs to be changed
-> from current yocto defaults to always discoverable if there is no tee-supplicant:
-> https://git.yoctoproject.org/meta-arm/tree/meta-arm/recipes-security/optee-ftpm/optee-ftpm/0001-add-enum-to-ta-flags.patch
-
-Ah, seems to be the same change than above, just limited to the fTPM TA?
-Shouldn't it be part of optee_os since it is a capability of it?
-
-> I hope to get v7 of these patches into testing today.
-
-Was able to test it. But ended also in TA panic. Will share the details
-in another mail.
-
-Regards
-Manuel
 
