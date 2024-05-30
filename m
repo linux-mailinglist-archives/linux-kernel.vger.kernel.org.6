@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-195800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96258D51FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:49:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDCC8D519E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E69091C23151
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6500C1F2368E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9FA4E1DA;
-	Thu, 30 May 2024 18:49:14 +0000 (UTC)
-Received: from mail-m2411.xmail.ntesmail.com (mail-m2411.xmail.ntesmail.com [45.195.24.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03C14AEF0;
+	Thu, 30 May 2024 18:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LayYkV9W";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F5yW3jNC"
+Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36FE4D595;
-	Thu, 30 May 2024 18:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9EA433D2;
+	Thu, 30 May 2024 18:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717094954; cv=none; b=bMeEfJWxs8LYMycjCMK/HP/dDuQhPtAogPa5OgfEdAD69GxpnFMM76XUNoumO/TrVuZHJ2Xv8ud5v5uHdIAVXjD2HJJZaGs6DijCFUoern4DI7CRS657P3x79Nc2AvTejEKReKnTI5trGzIQSwMahFoqxUWxSfCqUwq/VzicMEQ=
+	t=1717092376; cv=none; b=My46Yxl+ehcWDbnuODfIU/xfua9j31jF2V/rZaVi9RamLBXZC2zy5gnNTwL1xq5nT86Inkuf5+vdq73CGDU+QjIQbp+evgntR8OVDD9yKfCEzdbxpkAKlE71XuXleAGTT3fFMLidM3+mL+Lle922evaBH1+9X/whFsJYOX+FcCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717094954; c=relaxed/simple;
-	bh=P2bO5JWCsGZMtS8zS4ZP9PbUQbMPfPvnLfoGhj5y2VA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rLKuO4GF0WaxwM621f0rwhq6hMIWLKQpiBNqeVkOlU6+3TWPYjTn0IlXLkOB0PCvNc/EFLEATmz9tIrcqVh8Q/cMLL7QdmyQ+uQy+XXObNhRBil+B9hcSOyvmS5ILFV9cBq8vrNjgdHGbI5ZEDO67xjhlW9yv/DwjdQudMZiKqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=45.195.24.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from [192.168.122.189] (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 3882D860313;
-	Thu, 30 May 2024 14:59:39 +0800 (CST)
-Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
-To: Gregory Price <gregory.price@memverge.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, John Groves
- <John@groves.net>, axboe@kernel.dk, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev
-References: <20240503105245.00003676@Huawei.com>
- <5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
- <20240508131125.00003d2b@Huawei.com>
- <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
- <20240508164417.00006c69@Huawei.com>
- <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
- <20240509132134.00000ae9@Huawei.com>
- <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
- <664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
- <ZldIzp0ncsRX5BZE@memverge.com>
-From: Dongsheng Yang <dongsheng.yang@easystack.cn>
-Message-ID: <5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
-Date: Thu, 30 May 2024 14:59:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+	s=arc-20240116; t=1717092376; c=relaxed/simple;
+	bh=ECROXY97FzRRFQfl/vTg9noe1+ys7k0kn2Q+dIUph7Y=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=H3kD1+pyqa25wJyfI6wU7ZqU3zjGGJcC29uv2BIcQdQroOLxNkiJSAi5al5waxoWRIaFTBI0rLKcZzHDTnqfyvlfyfcN8ildxUMd5b9IcUJhXuvQX7vTDAusv3kNwmQhvnKvkLS1pPbUh1EIgtdcEuWHrPQvGL3qz0bdQGwLCgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LayYkV9W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F5yW3jNC; arc=none smtp.client-ip=64.147.123.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id D5CAC1800079;
+	Thu, 30 May 2024 14:06:12 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Thu, 30 May 2024 14:06:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1717092372; x=1717178772; bh=SkLD/QSa35
+	SjDwEkaUt3lwI+SBmwPmQOygwVgmlQz2s=; b=LayYkV9WK4f6u5i7IHuefhADZR
+	SRZx8GYAhJ2vN8neBBjcFYIqov388lwboVrHphim/Sw/W4elUyFixlKtLIXA6/hK
+	vU26MgPk8udNrj5RkyKu3QlbMxUs/VDT4ELPRhVI+I2TzxWLsk21+ezWO+b2B03X
+	JAT2X/BJQ+bkKcLJDD3GRQbRlPpKFiVIz47m/OegB5eDQxtbjIGdpMZnrFtqKhQB
+	Gg10e7BAyGYoRTfls61EWjV+ooItFdbWlZphZZs0dwbpkFZHyq9b+4JznreCfSDX
+	J2fl/147w3JZplclvkTAXJ+/FaohUwhFZ2YsYTtqHy2ByWSNfWGfyf0chYiA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717092372; x=1717178772; bh=SkLD/QSa35SjDwEkaUt3lwI+SBmw
+	PmQOygwVgmlQz2s=; b=F5yW3jNCWi4pf8bFfGOqpfo9+c/c7BOh0lfT5jd+dkvc
+	4sfBpqMbeVGgKaMFKwBB/danWHi9fCWT9VT3QexmMoiPcTrQuGiW+3PM067YTORI
+	2UzyyzW90pn2kHLVNIOQc1cArR8uj8cV3HK8MKpGPcDDhXdHhgTs+voOmJzBAkrs
+	UmRXN4IKO7HhlA6FUjUQW2cfZPgUoT3070RJTjJtiE+3IJ9tMHJVWt8lM1ucvKbZ
+	GAcoX7UO1glDoKWQczit6nDD/oXRwHzJPhOf94I2AyxUoRMXZFYzljwwYQsJckgm
+	nLItEaTgt0Hh9I9MwR4NDt333OorSsOdw5ox1WIC8Q==
+X-ME-Sender: <xms:FMBYZolMBkQ8--FIaWoIg4h6cE5bRL_i8Vvt9xkKn1bfVkpUoaadzA>
+    <xme:FMBYZn3Is0PDuHMAU9Uv9B56vbV91_x56X9DARz34nJxt1-40kga_xEXxNEeneoSo
+    z-VndqrUP7GVXs8llw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:FMBYZmoDSYqASoiDwPn7wqJPHrh-ybvXXxDq28TCC04Ayc_FszcfUw>
+    <xmx:FMBYZkkcw9CdbF9WH9HwSJzMXG4xipkFmlY68RcbmFhhmDVvWvmxkw>
+    <xmx:FMBYZm1lDMybhSKIMrStfnx9ONJx1jZkLSxQo7xdDNqTIXaXsjTz5Q>
+    <xmx:FMBYZru5yYvLFagqIOqC_B4mHlLcZNB-w_R8vyqg9C6X1PQtjh8Xhg>
+    <xmx:FMBYZsP7bYZrJdDZhdOZK9HZH_egqwQIt1lWUyxblVel5xBaPCG3pX-p>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E5E5DB6008D; Thu, 30 May 2024 14:06:11 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZldIzp0ncsRX5BZE@memverge.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaThpMVkxDTENJTR5NQkNCTVUZERMWGhIXJBQOD1
-	lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
-X-HM-Tid: 0a8fc84c11d1023ckunm3882d860313
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OjY6DBw6MDcZPi8fExwQNy4S
-	MQhPCx9VSlVKTEpMS05JSENLSEtLVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
-	V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTUlDTDcG
+Message-Id: <38442e3d-1e43-4894-b126-b4258d331a32@app.fastmail.com>
+In-Reply-To: <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
+References: 
+ <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
+ <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
+ <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
+ <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
+ <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
+Date: Thu, 30 May 2024 20:05:50 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "open list" <linux-kernel@vger.kernel.org>,
+ "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
+ lkft-triage@lists.linaro.org,
+ "Linux Regressions" <regressions@lists.linux.dev>, rcu <rcu@vger.kernel.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Joel Fernandes" <joel@joelfernandes.org>, eeraj.upadhyay@kernel.org,
+ "John Ogness" <john.ogness@linutronix.de>, "Mark Brown" <broonie@kernel.org>
+Subject: Re: arm-linux-gnueabihf-ld: kernel/rcu/update.o:update.c:(.text+0x1cc4): more
+ undefined references to `__bad_cmpxchg' follow
+Content-Type: text/plain
 
+On Thu, May 30, 2024, at 19:24, Paul E. McKenney wrote:
+> On Thu, May 30, 2024 at 09:37:21AM -0700, Paul E. McKenney wrote:
+>> On Thu, May 30, 2024 at 03:27:58PM +0200, Arnd Bergmann wrote:
 
+> And for an untested first attempt at a fix.
+>
+> What did I mess up this time?  ;-)
+>
 
-在 2024/5/29 星期三 下午 11:25, Gregory Price 写道:
-> On Wed, May 22, 2024 at 02:17:38PM +0800, Dongsheng Yang wrote:
->>
->>
->> 在 2024/5/22 星期三 上午 2:41, Dan Williams 写道:
->>> Dongsheng Yang wrote:
->>>
->>> What guarantees this property? How does the reader know that its local
->>> cache invalidation is sufficient for reading data that has only reached
->>> global visibility on the remote peer? As far as I can see, there is
->>> nothing that guarantees that local global visibility translates to
->>> remote visibility. In fact, the GPF feature is counter-evidence of the
->>> fact that writes can be pending in buffers that are only flushed on a
->>> GPF event.
->>
->> Sounds correct. From what I learned from GPF, ADR, and eADR, there would
->> still be data in WPQ even though we perform a CPU cache line flush in the
->> OS.
->>
->> This means we don't have a explicit method to make data puncture all caches
->> and land in the media after writing. also it seems there isn't a explicit
->> method to invalidate all caches along the entire path.
->>
->>>
->>> I remain skeptical that a software managed inter-host cache-coherency
->>> scheme can be made reliable with current CXL defined mechanisms.
->>
->>
->> I got your point now, acorrding current CXL Spec, it seems software managed
->> cache-coherency for inter-host shared memory is not working. Will the next
->> version of CXL spec consider it?
->>>
-> 
-> Sorry for missing the conversation, have been out of office for a bit.
-> 
-> It's not just a CXL spec issue, though that is part of it. I think the
-> CXL spec would have to expose some form of puncturing flush, and this
-> makes the assumption that such a flush doesn't cause some kind of
-> race/deadlock issue.  Certainly this needs to be discussed.
-> 
-> However, consider that the upstream processor actually has to generate
-> this flush.  This means adding the flush to existing coherence protocols,
-> or at the very least a new instruction to generate the flush explicitly.
-> The latter seems more likely than the former.
-> 
-> This flush would need to ensure the data is forced out of the local WPQ
-> AND all WPQs south of the PCIE complex - because what you really want to
-> know is that the data has actually made it back to a place where remote
-> viewers are capable of percieving the change.
-> 
-> So this means:
-> 1) Spec revision with puncturing flush
-> 2) Buy-in from CPU vendors to generate such a flush
-> 3) A new instruction added to the architecture.
-> 
-> Call me in a decade or so.
-> 
-> 
-> But really, I think it likely we see hardware-coherence well before this.
-> For this reason, I have become skeptical of all but a few memory sharing
-> use cases that depend on software-controlled cache-coherency.
+I think only the comment:
 
-Hi Gregory,
+> 
+>  	switch (size) {
+> -#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
+> +#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
+> +	case 1:
+> +		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+> +		break;
+> +#else
 
-	From my understanding, we actually has the same idea here. What I am 
-saying is that we need SPEC to consider this issue, meaning we need to 
-describe how the entire software-coherency mechanism operates, which 
-includes the necessary hardware support. Additionally, I agree that if 
-software-coherency also requires hardware support, it seems that 
-hardware-coherency is the better path.
-> 
-> There are some (FAMFS, for example). The coherence state of these
-> systems tend to be less volatile (e.g. mappings are read-only), or
-> they have inherent design limitations (cacheline-sized message passing
-> via write-ahead logging only).
+"min ARCH >= ARMv6K" now applies to the #else side, while the
+#if side is the early ARMv6 (pre-v6K).
 
-Can you explain more about this? I understand that if the reader in the 
-writer-reader model is using a readonly mapping, the interaction will be 
-much simpler. However, after the writer writes data, if we don't have a 
-mechanism to flush and invalidate puncturing all caches, how can the 
-readonly reader access the new data?
-> 
-> ~Gregory
-> 
+     Arnd
 
