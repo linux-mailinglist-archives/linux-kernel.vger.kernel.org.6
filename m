@@ -1,136 +1,119 @@
-Return-Path: <linux-kernel+bounces-195367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EFD8D4BA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:27:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C867E8D4BAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837931C22F8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6941E1F235D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843C9183089;
-	Thu, 30 May 2024 12:26:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CF4132131;
+	Thu, 30 May 2024 12:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HAi0ODxC"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3CB183097;
-	Thu, 30 May 2024 12:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E878F132120;
+	Thu, 30 May 2024 12:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717071981; cv=none; b=hTwPHmC/r2zJIaBk2pXj2DYaA0N3MtFPGPfTwhQ7J8sqFwLD/SlbxnAJB4+U1E7JhvZLYi72jUlTAQ0kBsdINe2K2haCRO9opbsYODIJfszSD2WeNqxstNrwPqHGxK+ufKSAiqe5DN67TydVRb0bGWfiV++W1JnPJT6zDtJTA1M=
+	t=1717072005; cv=none; b=twMxuLnvAxedO6OzIv7aUcI67107J8DGjE4/99AyOt8myhHcERJs9GR7Q6ejd340vNuP4pBojre17F2+7yg3cGrPfs5uHSebSfEdhmSxuz00MT6/Q1W2zk70AmOsmGUBMZOwQDOtSjZfE46aB7xOrJ8jylZdmwKO9UoHXs6Z3qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717071981; c=relaxed/simple;
-	bh=hCUMVbyeC7mJRppgDdiUtRrZDECb10FExheYtpdKVuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fo/wj7Mq2imYuIVYFPaYj6yQXQn1yOWZ5n67mpJ4d8siaaDQf5UzuY7QnRG5/j+5I40/PVaB3GD1e0GFiuSS4Echf6J6d1QGbk+e8WWpYhDMHsR+zV2sO8HWcOh2uZBGwbXCZ6J7CFf6Nxk9YjggfUxmDtvtQRA8RpGPcWbvUks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBDBC2BBFC;
-	Thu, 30 May 2024 12:26:18 +0000 (UTC)
-Message-ID: <4496bc6e-e5c0-4f86-b9c1-37ad2d2b687d@xs4all.nl>
-Date: Thu, 30 May 2024 14:26:17 +0200
+	s=arc-20240116; t=1717072005; c=relaxed/simple;
+	bh=Ki0PXwDcgKCwKxNmPedJebPKiDnnFLgJd0CWDkQGwlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lxt5ViFLEO5UN6XD6AvWqQEAVnqd1WgodosqbmHOmgpGhGzFzNrUT5Gnrk8xFga5uyJx05XTdhnnUHiqfCdsnvuF6nc6xyWlqeRGD+teRsC7w0o0k2myDZVQon3ZCifkI7+otc3UXhmb2RBLqxaNOGIl3V/XqPKpSeDaWhbTaZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=HAi0ODxC; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xesVBLyk2WRbDcXVWG0pEUYP3V61JmuSdVX8kyL/MGM=; b=HAi0ODxC1fc7rpfK3TIamNoDMg
+	oEvRbbOfGupH4U/eg772GjYV89EKYxfiWHLPeEhV31kx4FNifX89nFjzAyNpSyh3PKxQd+IOp8YAa
+	VZbU7PyIdszPWInRtS65Pi6XwXMz6VnEEkRmd/JHUy0+kb0S32WkJ3gTfUjwnnSqzRmfvNwmEAUY6
+	zOwdabiUEvbVTJI1jt4jEpGHNjoVfZOT7tWis+uLc+HMQhKg+91OIwfhBM7f0rERt7ovM/a7hnTpg
+	YAyKIgt3CUbQs2z4fX9PerPd6ysN7aXjTb/693olm/+sbG/bJN7/HP02c1DME89H+xEOZji+7I/WY
+	AtpbyyDA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47132)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sCerb-0007MG-0r;
+	Thu, 30 May 2024 13:26:35 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sCerc-00058h-BI; Thu, 30 May 2024 13:26:36 +0100
+Date: Thu, 30 May 2024 13:26:35 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	rcu <rcu@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>, eeraj.upadhyay@kernel.org,
+	John Ogness <john.ogness@linutronix.de>
+Subject: Re: arm-linux-gnueabihf-ld:
+ kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
+ `__bad_cmpxchg' follow
+Message-ID: <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
+References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] media: tegra-vde: remove unused struct
- 'tegra_vde_h264_frame'
-To: linux@treblig.org, mchehab@kernel.org, ming.qian@nxp.com,
- eagle.zhou@nxp.com, digetx@gmail.com, jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240525000146.282500-1-linux@treblig.org>
- <20240525000146.282500-4-linux@treblig.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20240525000146.282500-4-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 25/05/2024 02:01, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu, May 30, 2024 at 05:50:52PM +0530, Naresh Kamboju wrote:
+> The arm builds failed on Linux next with gcc-13 and clang-18.
 > 
-> 'tegra_vde_h264_frame' has been unused since
-> commit 313db7d235a0 ("media: staging: tegra-vde: Remove legacy UAPI
-> support").
+> Config: arm imx_v6_v7_defconfig - failed
 > 
-> Remove it.
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 > 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/media/platform/nvidia/tegra-vde/h264.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nvidia/tegra-vde/h264.c b/drivers/media/platform/nvidia/tegra-vde/h264.c
-> index cfea5572a1b8..d8812fc06c67 100644
-> --- a/drivers/media/platform/nvidia/tegra-vde/h264.c
-> +++ b/drivers/media/platform/nvidia/tegra-vde/h264.c
-> @@ -19,11 +19,6 @@
->  #define FLAG_B_FRAME		0x1
->  #define FLAG_REFERENCE		0x2
->  
-> -struct tegra_vde_h264_frame {
-> -	unsigned int frame_num;
-> -	unsigned int flags;
-> -};
-> -
->  struct tegra_vde_h264_decoder_ctx {
->  	unsigned int dpb_frames_nb;
->  	unsigned int dpb_ref_frames_with_earlier_poc_nb;
+> Build log:
+> -----
+> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> `rcu_trc_cmpxchg_need_qs':
+> update.c:(.text+0x348): undefined reference to `__bad_cmpxchg'
+> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> `rcu_read_unlock_trace_special':
+> update.c:(.text+0x41c): undefined reference to `__bad_cmpxchg'
+> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function
+> `trc_read_check_handler':
+> update.c:(.text+0x4b0): undefined reference to `__bad_cmpxchg'
+> arm-linux-gnueabihf-ld: kernel/rcu/update.o: in function `trc_inspect_reader':
+> update.c:(.text+0x1518): undefined reference to `__bad_cmpxchg'
+> arm-linux-gnueabihf-ld: update.c:(.text+0x1548): undefined reference
+> to `__bad_cmpxchg'
+> arm-linux-gnueabihf-ld: kernel/rcu/update.o:update.c:(.text+0x1cc4):
+> more undefined references to `__bad_cmpxchg' follow
+> make[3]: *** [/builds/linux/scripts/Makefile.vmlinux:34: vmlinux] Error 1
 
-There is one more reference to this, that also can be dropped:
+You get a reference to __bad_cmpxchg() when someone uses cmpxchg() on
+a datatype that there are no CPU instructions to perform the atomic
+compare-and-exchange.
 
-$ git grep tegra_vde_h264_frame
-drivers/media/platform/nvidia/tegra-vde/vde.h:struct tegra_vde_h264_frame;
+As we support 8-bit, 16-bit and 32-bit, I would expect that we're now
+seeing cmpxchg() being used on 64-bit values, which are unsupportable
+on 32-bit Arm.
 
-Regards,
-
-	Hans
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
