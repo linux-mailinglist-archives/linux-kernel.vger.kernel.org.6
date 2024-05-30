@@ -1,116 +1,179 @@
-Return-Path: <linux-kernel+bounces-195665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE04A8D4FFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A768D5004
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE8601C22ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C531C21031
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B98A2CCBE;
-	Thu, 30 May 2024 16:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1/gpBVA"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3742C6AE;
+	Thu, 30 May 2024 16:44:16 +0000 (UTC)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296E921350;
-	Thu, 30 May 2024 16:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDF823741;
+	Thu, 30 May 2024 16:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087298; cv=none; b=WQILxH+2wJAMz6NEELFSpsokFeLuTpd3mymYg+8ZoAJTucjIOAjgGSawo8DE2Myb/qwTeNcwu28hO2zsz7OKDITGrHgG/NRuHlI0r7shNHXxhW2FUDzbtRhfjtbk4wcbuh9+3fEY69tIMy1VoXlvZd7VXTBzQdcVNCaRmKfcpj0=
+	t=1717087456; cv=none; b=QkD2Gy+lnCvyUl25USI/kk2l6+FpUdMymr+CfjhdIRo9mAAbuDToro85I7K4GoC+rE+t1B3N4ma9SRWNYG+cscNu7XPHvqiteJc4LdJlYKt7eku10Q4ikT7pHhHD6XYGJfmA9xxyBwV5QEXzpNkHyMPE/tbFOTh453GAP3+jR60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087298; c=relaxed/simple;
-	bh=h+sgsRXRgywtulA6yP05p7p5SlkPSUmpREB4pxqGy0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTzEYScx9zbsdmfoez7m+QHJKEEv0bD5m67qXbz2opqzc7N7gtq/7qRNsjUP707i58RGGOWydF+Qp0lcRAoUNOfWSJgmurm0R9vG8t6cRA9lsfXmndql7ma3CUB3p2gZ+P0fp/GbwLrQs78gT1waw2Q/ps1pZY3tvbeNYmLF0/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1/gpBVA; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1717087456; c=relaxed/simple;
+	bh=DErZGw60vY5VVok3vqsO3s4NbZA0aegd2r/sMDdVj8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e3/iUga0Qrzzw0kvRUz5me6MWw+CC88aTKoRfp2wUmb4S5mzXt2c+pFS95a3IEIyiptOFZbkPFulCREA8/HgFSeMTuHrt+BINIQYgnsLBj6i4Ght2RvjrVXQI27D/tsfetbsN3SOkwESC8DGGM6NC3HWlCjzKE1BuHPvEDAkaUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70223dffaf6so1056058b3a.1;
-        Thu, 30 May 2024 09:41:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717087296; x=1717692096; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G7FTH0c3tG+Ht3s1Gg8KhD3HVk6ceCg/0HWZJM2Xej0=;
-        b=i1/gpBVAk/HuKoYSgQg/i8TlOwcN5vwamPBLwxpzoQadKdudKaHsLUhWcb1tuoNUWV
-         10KZ/dtOBlldYut0AGMdHPju3Nea0HlUnlQkJbZsKPzxopoSSF8RCo3gvJZzV52BpI5Y
-         2b/sy/7IHJWmE0KjQDj5T9xecWIYdKYrcAvWs2rQcI4HCEIOXDKRQan7hS+uryMu2XIa
-         WK5q4UjSjbl9lcs4RFc+t11HoMxE5SEXDtcfJHBsgh7Ki/3r1Pwn5o4jmR0vAr2oKq93
-         whCUCYceQHhgeEaL+gczhcvSgg7ul9VKDVRxQCnr064Bcv0cahFIyijFo9Txiw28Cwks
-         X2Tg==
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2bf59b781d6so908976a91.0;
+        Thu, 30 May 2024 09:44:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717087296; x=1717692096;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717087454; x=1717692254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G7FTH0c3tG+Ht3s1Gg8KhD3HVk6ceCg/0HWZJM2Xej0=;
-        b=kBK48p8bBbJ98f16IhHxHdUpWU827yQmrwnETGCgo1wDrgwIhrxYubmr0DTCu4JRjs
-         I0sstCXkW4cXx5lfmABoqiJbl+RNeW7WH5gH4ZE+ozwIFvVUhcqG0bLJY4Q7TQS8g2XD
-         7sikeuhEjZsTMxf1SBzmM53/Veta9RRxDsRlY3mZMyafx5LyJtA1qdQOFvbTjhOwVTkd
-         iSEyc8PojIl4oOwC5+j8CR6J75A1D0NzW4lVqMB8bl5VYR6xMQObuYoHGBkgks4SHQ8d
-         V+52jQRd7I69sEiCrYb2qASK8CVJdpUhKwzi5G0cVEYXg/jTVkcsi1S5pBEYRp9jQ3O2
-         R3rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKaHwoMwl/hONt5pwiRNpeCXSjsX5FcSHave3DEhQzu2fRZo0HAcicrkWj3G0jWDmDY5+WsKkjlBIO3NvSf8/irmQ6Oybw3Qz105rCszY6T8R23gr81CI3GUWChXYoCH5odceZCKPoe0Yaxf+Gpi62mH+0qG9FcRw61CC1eV6AeHtZ
-X-Gm-Message-State: AOJu0YxklA1DyZu9/9joH17ff4Sc9vLYL/Ocpk0tVkQoneBwx+m+0RPj
-	d6eMjuQSmVHlAaE2bzmMQxzlpb8CTH4xDeoqwD0Gtl3qthTSng+7AEkBzg==
-X-Google-Smtp-Source: AGHT+IFEJ//Wt6NvtnyBumLbOBeR6lFNrkSrlEpAyGaWElUnMBNdmB9QqiOM1sO+S3CYJAoG642hyQ==
-X-Received: by 2002:a05:6a00:2d81:b0:702:3b69:9e6e with SMTP id d2e1a72fcca58-7023b6a0c7cmr1352847b3a.14.1717087296127;
-        Thu, 30 May 2024 09:41:36 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7022a5c2cc8sm2100730b3a.108.2024.05.30.09.41.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 09:41:35 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 30 May 2024 06:41:34 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Ming Lei <ming.lei@redhat.com>, Justin Forbes <jforbes@redhat.com>
-Subject: Re: [PATCH] blk-throttle: Fix incorrect display of io.max
-Message-ID: <ZlisPiR1CGLRq6PT@slm.duckdns.org>
-References: <20240530134547.970075-1-longman@redhat.com>
+        bh=NZDMlH3wwmcKVtEagfPCH0RxE62sWqc/UQQgjvFYOqg=;
+        b=L7yAeD49JSEGcItP8/52NQxa+YFZdSGQHOyVfUqNN5KX2+dBk6mbZwcCWlOeBTrn4p
+         868uzoPfQa21RKto8XOcSISash1a2/kQvZxz+BbVrU2wy8K+EnJcmn3SvxqGQYK223hT
+         r2q613EeBkQfDZrE0jT7I/Blv+vImx3Wi8x9j3UQUXIhlzaktnenuUHUfMV8+FDx9wlS
+         32yFaSTcG5LQIsCX9sA04gTLTdUsBAeqosV65PtsP/pnvrHBSHtxpcCU0ACJqNxd1700
+         iE5WvLHfzlMQVmfC+O6+ZACYS/4HuCxLgxIdKJa5RyGJ09GkdI2EwMWdvFgY6CP0PajG
+         QRQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoTD4R5/A0O0yL0InuLWfzfNBPG8KTJwfR+apjxFw2Tfzl4bhaj1n0BsKncxQNzpUg1gUolCGRPR72K0h70uhG0AP7wxAZK9/r/fVN1E+csJVyRP2G1C3OM7c2C8ALV6jj4YD7ZLABVSUV77V1pA==
+X-Gm-Message-State: AOJu0Yxbl3cyKmQHrINRtxZdSA5+m1HSnc1IsLwaNe/24sLB5X4CgzUu
+	z9EXa9o4PoF7q/ezmahuQmtZHT4WPk7TFf38pk5dydA/6yjwpPvAbzlFYqDgFNLjVO4FV5oAcfb
+	M1Z696JJJy0jASKWXbWGu8KeRUvD72Pa1
+X-Google-Smtp-Source: AGHT+IEV6Z1GyPQC65et0ns8EenUP8n/Nn7bmvhurfzmdkcm8aYVGTKtHm8BBAO+hJCrQFmwVLAua91DtAutkmN9fTc=
+X-Received: by 2002:a17:90a:b884:b0:2b3:28df:96b1 with SMTP id
+ 98e67ed59e1d1-2c1ab9ddda7mr2613497a91.7.1717087453788; Thu, 30 May 2024
+ 09:44:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530134547.970075-1-longman@redhat.com>
+References: <20240519181716.4088459-1-irogers@google.com> <CAM9d7chxsyZ+vnPXj0gc-mbADzwzQYi3qUwUohW-7He5KwMvHg@mail.gmail.com>
+ <CAP-5=fXME3cjNK-P9qk+kY0dA1Xkwvz6Su=99nY7CgcKrQTb2w@mail.gmail.com>
+In-Reply-To: <CAP-5=fXME3cjNK-P9qk+kY0dA1Xkwvz6Su=99nY7CgcKrQTb2w@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 30 May 2024 09:44:02 -0700
+Message-ID: <CAM9d7ch7GidVscUxQh+CZRuo1U1KiDiFiuOZN3FnqbrPDbaVNw@mail.gmail.com>
+Subject: Re: [PATCH v1] tools api io: Move filling the io buffer to its own function
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 09:45:47AM -0400, Waiman Long wrote:
-> Commit bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
-> attempts to revert the code change introduced by commit cd5ab1b0fcb4
-> ("blk-throttle: add .low interface").  However, it leaves behind the
-> bps_conf[] and iops_conf[] fields in the throtl_grp structure which
-> aren't set anywhere in the new blk-throttle.c code but are still being
-> used by tg_prfill_limit() to display the limits in io.max. Now io.max
-> always displays the following values if a block queue is used:
-> 
-> 	<m>:<n> rbps=0 wbps=0 riops=0 wiops=0
-> 
-> Fix this problem by removing bps_conf[] and iops_conf[] and use bps[]
-> and iops[] instead to complete the revert.
-> 
-> Fixes: bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
-> Reported-by: Justin Forbes <jforbes@redhat.com>
-> Closes: https://github.com/containers/podman/issues/22701#issuecomment-2120627789
-> Signed-off-by: Waiman Long <longman@redhat.com>
+On Thu, May 23, 2024 at 9:47=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Thu, May 23, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
+> wrote:
+> >
+> > On Sun, May 19, 2024 at 11:17=E2=80=AFAM Ian Rogers <irogers@google.com=
+> wrote:
+> > >
+> > > In general a read fills 4kb so filling the buffer is a 1 in 4096
+> > > operation, move it out of the io__get_char function to avoid some
+> > > checking overhead and to better hint the function is good to inline.
+> > >
+> > > For perf's IO intensive internal (non-rigorous) benchmarks there's a
+> > > near 8% improvement to kallsyms-parsing with a default build.
+> >
+> > Oh, is it just from removing the io->eof check?  Otherwise I don't
+> > see any difference.
+>
+> I was hoping that by moving the code out-of-line then the hot part of
+> the function could be inlined into things like reading the hex
+> character. I didn't see that, presumably there are too many callers
+> and so that made the inliner think sharing would be best even though
+> the hot code is a compare, pointer dereference and an increment. I
+> tried forcing inlining but it didn't seem to win over just having the
+> code out-of-line. The eof check should be very well predicted. The
+> out-of-line code was branched over forward, which should be 1
+> mispredict but again not a huge deal. I didn't do a more thorough
+> analysis as I still prefer to have the cold code out-of-line.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Ok, I don't see much difference with this change.  But the change itself
+looks fine.
 
-Thanks.
+Thanks,
+Namhyung
 
--- 
-tejun
+
+Before:
+
+# Running internals/synthesize benchmark...
+Computing performance of single threaded perf event synthesis by
+synthesizing events on the perf process itself:
+  Average synthesis took: 237.274 usec (+- 0.066 usec)
+  Average num. events: 24.000 (+- 0.000)
+  Average time per event 9.886 usec
+  Average data synthesis took: 241.126 usec (+- 0.087 usec)
+  Average num. events: 128.000 (+- 0.000)
+  Average time per event 1.884 usec
+
+# Running internals/kallsyms-parse benchmark...
+  Average kallsyms__parse took: 184.374 ms (+- 0.022 ms)
+
+# Running internals/inject-build-id benchmark...
+  Average build-id injection took: 20.096 msec (+- 0.115 msec)
+  Average time per event: 1.970 usec (+- 0.011 usec)
+  Average memory usage: 11574 KB (+- 29 KB)
+  Average build-id-all injection took: 13.477 msec (+- 0.100 msec)
+  Average time per event: 1.321 usec (+- 0.010 usec)
+  Average memory usage: 11160 KB (+- 0 KB)
+
+# Running internals/evlist-open-close benchmark...
+  Number of cpus:    64
+  Number of threads:    1
+  Number of events:    1 (64 fds)
+  Number of iterations:    100
+evlist__open: Permission denied
+
+# Running internals/pmu-scan benchmark...
+Computing performance of sysfs PMU event scan for 100 times
+  Average core PMU scanning took: 135.880 usec (+- 0.249 usec)
+  Average PMU scanning took: 816.745 usec (+- 48.293 usec)
+
+
+After:
+
+# Running internals/synthesize benchmark...
+Computing performance of single threaded perf event synthesis by
+synthesizing events on the perf process itself:
+  Average synthesis took: 235.711 usec (+- 0.067 usec)
+  Average num. events: 24.000 (+- 0.000)
+  Average time per event 9.821 usec
+  Average data synthesis took: 240.992 usec (+- 0.058 usec)
+  Average num. events: 128.000 (+- 0.000)
+  Average time per event 1.883 usec
+
+# Running internals/kallsyms-parse benchmark...
+  Average kallsyms__parse took: 179.664 ms (+- 0.043 ms)
+
+# Running internals/inject-build-id benchmark...
+  Average build-id injection took: 19.901 msec (+- 0.117 msec)
+  Average time per event: 1.951 usec (+- 0.011 usec)
+  Average memory usage: 12163 KB (+- 10 KB)
+  Average build-id-all injection took: 13.627 msec (+- 0.086 msec)
+  Average time per event: 1.336 usec (+- 0.008 usec)
+  Average memory usage: 11160 KB (+- 0 KB)
+
+# Running internals/evlist-open-close benchmark...
+  Number of cpus:    64
+  Number of threads:    1
+  Number of events:    1 (64 fds)
+  Number of iterations:    100
+evlist__open: Permission denied
+
+# Running internals/pmu-scan benchmark...
+Computing performance of sysfs PMU event scan for 100 times
+  Average core PMU scanning took: 136.540 usec (+- 0.294 usec)
+  Average PMU scanning took: 819.415 usec (+- 48.437 usec)
 
