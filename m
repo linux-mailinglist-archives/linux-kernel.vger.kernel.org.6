@@ -1,167 +1,84 @@
-Return-Path: <linux-kernel+bounces-195621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6540F8D4F69
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4728D4F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714C81C228CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5AA1C221CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E96200AE;
-	Thu, 30 May 2024 15:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VYWHc88Y"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3391F947
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A0F1DA4D;
+	Thu, 30 May 2024 15:49:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63DF21345
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717084148; cv=none; b=manOx4u65eQdXf0xubnJMNWAfcPVjiBoY3VbHY9L1PO+hcYspYSvHUfARUevvhOz3qLN0UQY0eZIT/q94CNlDudlyCi/OT3799AQihtVYMakkz3XlHSf4xvdFrnYeKWNIaFwxtDJrRM3JM9DJ0FzmjtA69ACAvhPrIiQpMivkEg=
+	t=1717084162; cv=none; b=FkUvYZDul43iOyEhUrhhchrWJ3rcgZEiAwUlwca/kQka2RCjBCcoBb9G45/fFTeEbJd0QOR6s0GRfBkzKV1b8CeY23e3PN8ITo5x3sukwzppzHELO7AlxVOJvm+PPpLJ6gppvm/7rGI04FpRELF8tWhODIenuBgIy/vX5+JBjfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717084148; c=relaxed/simple;
-	bh=V496EBsN/8sDzK0xPf/lafp2vL/Y6Qrr0P9nD/nTSvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lq/FbPe5idZfDhTAcf2xRsQzvmoHagPxNTlqgxdPNYzowzsG+58SprCcfFo8TbH13niIXo57XsfdcRO8W8eY1G3bzG40rWAYbB3VBclZvV8Y0Pt4a5Z/2QAQlEDJNFmobL7AqAdh1UFfxNkKyoYpPMtsZLZaTReHIlpcFUv2gEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VYWHc88Y; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f44b42e9a6so8502985ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 08:49:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717084146; x=1717688946; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KrjPSd85eM16lzQd2l+Jx3zs8iJGA94JtJTphdKIu1w=;
-        b=VYWHc88YFhmzlWLphmiLx3Ty+2A/zi11zvAjO73Zim25Zt+Ngg3aDwj8S4uvXKJlqI
-         9uTokSnAN2NNMIi0OCl5LBR6mlHi1N49O8+IiWOvq8Kxjp4RraInXDnequjqZmm8Xmfy
-         hgb0/XdeGxj4VTZuvOwMrweNZJDpY53a0ByUg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717084146; x=1717688946;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KrjPSd85eM16lzQd2l+Jx3zs8iJGA94JtJTphdKIu1w=;
-        b=lAFKlhHftblOfIbVRwiiivsnQGjweJ/dY7fLnj5wI30U8HV+6hSDZEIeYVBtXo0OFY
-         mxzD5pZ0BHhVRQlUX62BpsnptVZ/ZJ8n1I+yotypFkwQRgrfDtGbhWpjRTpv2pjw9owK
-         9FFGIpIpp94ENmOrHr69nCG8fZInDJa5EgBXhZHLbLkA6mAJ+SLScTCC9RI6n2E1KX6k
-         Mxrq+T5m+JE8HmJf23fiMyMg8HTz8QeRfrfViVDvKJXY7dYjwFyk1a6cR5HzI6s2fJCh
-         BVtsy6yk0Uxb+Nx3xB6mhoms232LtwncnJrVFU4PfTIGPepyHMbd5KgZ7JfhHBVVoZTb
-         lrSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXR/n4MUVn8N7/N8WZ007R11Y64rLP+oXG2P64WCbXs71voTU0kA8KEma9jUdzOEazdn6tEDb/Cj9Qw8gWnbB96wvhnTXGNse/DsMvC
-X-Gm-Message-State: AOJu0YwMzZOsA8FwTYHBH+CtcJbf10uG7BoJBIqyettipGNreQOlWUuQ
-	yVPpn672Z4BR1g9Da+x9ec4Iqz3dLqfnc+3BUDHx/R6mIY3tEwGbKcOAzOFZpw==
-X-Google-Smtp-Source: AGHT+IGn2tzzPa7fMTUghoHMSFR9I59iuxYacjgwwItgbhIUyfqhgbSLtvHe2FUJBmr5tdAjh0x3OQ==
-X-Received: by 2002:a17:902:d512:b0:1f3:1200:ceb3 with SMTP id d9443c01a7336-1f619b2cd29mr28968425ad.51.1717084146231;
-        Thu, 30 May 2024 08:49:06 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:564b:72b6:4827:cf6a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c994a66sm120156915ad.182.2024.05.30.08.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 08:49:05 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-arm-msm@vger.kernel.org,
-	Tony Lindgren <tony@atomide.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Guanbing Huang <albanhuang@tencent.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: [PATCH v2] serial: port: Don't block system suspend even if bytes are left to xmit
-Date: Thu, 30 May 2024 08:48:46 -0700
-Message-ID: <20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+	s=arc-20240116; t=1717084162; c=relaxed/simple;
+	bh=9mFsdyyM3ElhSR7egIawAprRDmxySE5698Uao7l+NK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iCwtZUtoyjv+zX5goHCj2CEvJjs6KYLhagxGRbr7B85L/+4NOVcH1zpOAS+LMsoXZStCCJCC9oN16vj0ABdVjrkIZfb0Pl2dSh2lF5JPK8FYheySy3Eig/1NYvk1gHY7oBGuy/j3bdq8Aq7Dsiz5UD533ihAzY9cSkvDqkn4R4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E07D339;
+	Thu, 30 May 2024 08:49:44 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F5EB3F792;
+	Thu, 30 May 2024 08:49:19 -0700 (PDT)
+Message-ID: <32921840-43d6-4ad9-99eb-aac32e67e04c@arm.com>
+Date: Thu, 30 May 2024 16:49:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: device_def_domain_type documentation header does not match
+ implementation
+To: Diederik de Haas <didi.debian@cknow.org>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <14311965.TaHA55BQu8@bagend>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <14311965.TaHA55BQu8@bagend>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Recently, suspend testing on sc7180-trogdor based devices has started
-to sometimes fail with messages like this:
+On 30/05/2024 2:57 pm, Diederik de Haas wrote:
+> Hi,
+> 
+> While looking into ``drivers/iommu/intel/iommu.c::device_def_domain_type``
+> function I noticed a discrepancy between the documentation header and the
+> implementation.
+> 
+> ``@startup: true if this is during early boot``
+> 0e31a7266508 ("iommu/vt-d: Remove startup parameter from
+> device_def_domain_type()")
+> removed the ``startup`` function parameter
+> 
+> returns ``IOMMU_DOMAIN_DMA: device requires a dynamic mapping domain``
+> 28b41e2c6aeb ("iommu: Move def_domain type check for untrusted device into
+> core")
+> moved the possible return of ``IOMMU_DOMAIN_DMA`` to ``drivers/iommu/iommu.c``
+> 
+> But neither updated the documentation header.
 
-  port a88000.serial:0.0: PM: calling pm_runtime_force_suspend+0x0/0xf8 @ 28934, parent: a88000.serial:0
-  port a88000.serial:0.0: PM: dpm_run_callback(): pm_runtime_force_suspend+0x0/0xf8 returns -16
-  port a88000.serial:0.0: PM: pm_runtime_force_suspend+0x0/0xf8 returned -16 after 33 usecs
-  port a88000.serial:0.0: PM: failed to suspend: error -16
+TBH it could probably just be deleted now, since the 
+iommu_ops::def_domain_type callback is properly documented in iommu.h, 
+so individual implementations shouldn't need to repeat that. It's also 
+never been actual kerneldoc either, since it's a regular "/*" comment. 
+Feel free to send a patch :)
 
-I could reproduce these problems by logging in via an agetty on the
-debug serial port (which was _not_ used for kernel console) and
-running:
-  cat /var/log/messages
-..and then (via an SSH session) forcing a few suspend/resume cycles.
-
-Tracing through the code and doing some printf()-based debugging shows
-that the -16 (-EBUSY) comes from the recently added
-serial_port_runtime_suspend().
-
-The idea of the serial_port_runtime_suspend() function is to prevent
-the port from being _runtime_ suspended if it still has bytes left to
-transmit. Having bytes left to transmit isn't a reason to block
-_system_ suspend, though. If a serdev device in the kernel needs to
-block system suspend it should block its own suspend and it can use
-serdev_device_wait_until_sent() to ensure bytes are sent.
-
-The DEFINE_RUNTIME_DEV_PM_OPS() used by the serial_port code means
-that the system suspend function will be pm_runtime_force_suspend().
-In pm_runtime_force_suspend() we can see that before calling the
-runtime suspend function we'll call pm_runtime_disable(). This should
-be a reliable way to detect that we're called from system suspend and
-that we shouldn't look for busyness.
-
-Fixes: 43066e32227e ("serial: port: Don't suspend if the port is still busy")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-In v1 [1] this was part of a 2-patch series. I'm now just sending this
-patch on its own since the Qualcomm GENI serial driver has ended up
-having a whole pile of problems that are taking a while to unravel.
-It makes sense to disconnect the two efforts. The core problem fixed
-by this patch and the geni problems never had any dependencies anyway.
-
-[1] https://lore.kernel.org/r/20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid/
-
-Changes in v2:
-- Fix "regulator" => "regular" in comment.
-- Fix "PM Runtime" => "runtime PM" in comment.
-- Commit messages says how serdev devices should ensure bytes xfered.
-
- drivers/tty/serial/serial_port.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/tty/serial/serial_port.c b/drivers/tty/serial/serial_port.c
-index 91a338d3cb34..93ca94426162 100644
---- a/drivers/tty/serial/serial_port.c
-+++ b/drivers/tty/serial/serial_port.c
-@@ -64,6 +64,16 @@ static int serial_port_runtime_suspend(struct device *dev)
- 	if (port->flags & UPF_DEAD)
- 		return 0;
- 
-+	/*
-+	 * We only want to check the busyness of the port if runtime PM is
-+	 * enabled. Specifically runtime PM will be disabled by
-+	 * pm_runtime_force_suspend() during system suspend and we don't want
-+	 * to block system suspend even if there is data still left to
-+	 * transmit. We only want to block regular runtime PM transitions.
-+	 */
-+	if (!pm_runtime_enabled(dev))
-+		return 0;
-+
- 	uart_port_lock_irqsave(port, &flags);
- 	if (!port_dev->tx_enabled) {
- 		uart_port_unlock_irqrestore(port, flags);
--- 
-2.45.1.288.g0e0cd299f1-goog
-
+Thanks,
+Robin.
 
