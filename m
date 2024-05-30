@@ -1,152 +1,118 @@
-Return-Path: <linux-kernel+bounces-195190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D0B8D48AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:35:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6C18D48A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3177DB26901
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBBD286189
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C618317C7C1;
-	Thu, 30 May 2024 09:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A733A1534ED;
+	Thu, 30 May 2024 09:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4FIwHtX7"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJyu+LBg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FF116DEBD;
-	Thu, 30 May 2024 09:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0E6145B38
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717061673; cv=none; b=Mh3UkmURw2StL0fRoxFzMagYnzlOdd+dvtIFCe5v0c2AvLOjCW+J0q53GB1jvEYJ4/xxOq4PpnfW+R45+h+DY36M77ttrNVx1ab1W93mISSRaKG8tzZQVSt2cGAItwY6X4cOcoW3cXfuxS7dD+07tbgZYghR8k0b2KEgPrQqkOs=
+	t=1717061668; cv=none; b=ekOG13ovlWBr3x5ApROXCyy+foKVrzkhutIPEroYiRKMOEjMsKjcyYQdxWQCafAlRyqU0Wl4x3uE24uY07ahcSYO6UvckRiefd6jxtJNwZOctPPG4KvIyVjLThu1cEBwft3kSTLeZ9K73LaziEXuqIcZV74ErrcPfGx1wDfMKoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717061673; c=relaxed/simple;
-	bh=4isRwFg+lFtocx2ttK9dTVWtREPPc/h5BSwfHPf+To0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HY5fvt87GeMPG2jTdBwkwFr1XbsxIGin+6KoCf96yUuOfz7iywNXCw5WsQCZGsxlbJBLSqw3d/2E7ydp8OlhCWB32O1BInDrlRTsIQ/ZydApUmyHunRdvgP1FGki37P5TY0GYIYhiCj0w/AN4kRh4tQz1Hb4rhH6rwwEpo6wtcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4FIwHtX7; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717061669;
-	bh=4isRwFg+lFtocx2ttK9dTVWtREPPc/h5BSwfHPf+To0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=4FIwHtX73FL2IKfENyklA3RqOGZFhuTT6kI+0WxRLTSvzAfyk7NzNYAlGVABpGv0z
-	 irfD92ROMgRL8WQs8oMBuni/z+PCJ7rH6CvKmm0KT7LxigjhlhOoD6x/gw3WfllBbW
-	 rCI9Qm4D7ranhlRqORJXie+W6O8/tJhapF3hxNNT7qg6IyhEll1acVaFnYS2M0Sz9D
-	 sdWKSfwRruPFt7oc92VDqEDNPt04vqCitu/j/JwTaFVKn+4ySf6JzaV2r1c7T2gROP
-	 JMHfsvUojG30Nq04IyUTFsnPikh5dveXQikcykjvrMHWsZc3R0PbQ3vRImus4mRtyN
-	 gO7Cn1xHL98nA==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 832F237821AE;
-	Thu, 30 May 2024 09:34:28 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: jic23@kernel.org
-Cc: lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	lee@kernel.org,
-	andy@kernel.org,
-	nuno.sa@analog.com,
-	bigunclemax@gmail.com,
-	dlechner@baylibre.com,
-	marius.cristea@microchip.com,
-	marcelo.schmitt@analog.com,
-	fr0st61te@gmail.com,
-	mitrutzceclan@gmail.com,
-	mike.looijmans@topic.nl,
-	marcus.folkesson@gmail.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com
-Subject: [PATCH v1 4/4] arm64: dts: mediatek: Add ADC node on MT6357, MT6358, MT6359 PMICs
-Date: Thu, 30 May 2024 11:34:10 +0200
-Message-ID: <20240530093410.112716-5-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
-References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1717061668; c=relaxed/simple;
+	bh=tEQu35CaxhT9+Q6qAEJEskYUshMXy0do6KkUt7ceXLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sb1YxngAwFj2MOBX3vUJ5tGwVLRkeVjn9vKddkK0CH5GmRVVOen69sRMZNR6lrqnQjJmy/1Sxmo7q+eX83gTDZ1fwDIG+H9vHYRv+HPktMYoSUXuXxg9ORLPWmCNIM9b14EjfbtaMzFnxSyXQef635a5CuZv8xljpknMRbXlp4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJyu+LBg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F31D2C2BBFC;
+	Thu, 30 May 2024 09:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717061667;
+	bh=tEQu35CaxhT9+Q6qAEJEskYUshMXy0do6KkUt7ceXLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uJyu+LBgo9JPAAsFFLlXJ1qJFP+qD0BC7jiXxbKMh0txds+0+h8QZeLsZs5yn95tj
+	 rIBoQINUONJ1IgqwfT+eXCz7QwhlNHCdJTj9uHbAcpmwFbhLTzjMbp8PmZ5uQhcJ4q
+	 Y2rlMKe+XYLdEFmN0vvC7xw4YLX68qGDBrUEP1fdvx0mxVGbHVNnh8rOc5145zvEWT
+	 4NEuknsI7Q1I7vpgAC2eBqe2fxpawGQ4UxsKqZo8dMU17QNWb6kjRL/lz8qxfQ50d8
+	 /smnXzxTnDqo2ql3epJ2Hs0c+hYeH615vfDPT43W4MVaqEjCghDVG4XMAtUJ2RlAPl
+	 7JjMDbNIB+hWg==
+Date: Thu, 30 May 2024 11:34:24 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, sam@ravnborg.org, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	a-bhatia1@ti.com, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 2/2] drm/bridge: Add pixel clock check in atomic_check
+Message-ID: <20240530-spiked-psychedelic-monkey-ddd0b0@houat>
+References: <20240530092930.434026-1-j-choudhary@ti.com>
+ <20240530092930.434026-3-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="eqvyt5rrxiedz2k4"
+Content-Disposition: inline
+In-Reply-To: <20240530092930.434026-3-j-choudhary@ti.com>
 
-Add support for the ADC on MT6357/8/9 and keep it default enabled
-as this IP is always present on those PMICs.
-Users may use different IIO channels depending on board-specific
-routing.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt6357.dtsi | 5 +++++
- arch/arm64/boot/dts/mediatek/mt6358.dtsi | 5 +++++
- arch/arm64/boot/dts/mediatek/mt6359.dtsi | 5 +++++
- 3 files changed, 15 insertions(+)
+--eqvyt5rrxiedz2k4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6357.dtsi b/arch/arm64/boot/dts/mediatek/mt6357.dtsi
-index 3330a03c2f74..5fafa842d312 100644
---- a/arch/arm64/boot/dts/mediatek/mt6357.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6357.dtsi
-@@ -10,6 +10,11 @@ &pwrap {
- 	mt6357_pmic: pmic {
- 		compatible = "mediatek,mt6357";
- 
-+		pmic_adc: adc {
-+			compatible = "mediatek,mt6357-auxadc";
-+			#io-channel-cells = <1>;
-+		};
-+
- 		regulators {
- 			mt6357_vproc_reg: buck-vproc {
- 				regulator-name = "vproc";
-diff --git a/arch/arm64/boot/dts/mediatek/mt6358.dtsi b/arch/arm64/boot/dts/mediatek/mt6358.dtsi
-index a1b96013f814..641d452fbc08 100644
---- a/arch/arm64/boot/dts/mediatek/mt6358.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6358.dtsi
-@@ -10,6 +10,11 @@ pmic: pmic {
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 
-+		pmic_adc: adc {
-+			compatible = "mediatek,mt6358-auxadc";
-+			#io-channel-cells = <1>;
-+		};
-+
- 		mt6358codec: mt6358codec {
- 			compatible = "mediatek,mt6358-sound";
- 			mediatek,dmic-mode = <0>; /* two-wires */
-diff --git a/arch/arm64/boot/dts/mediatek/mt6359.dtsi b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-index df3e822232d3..8e1b8c85c6ed 100644
---- a/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-@@ -9,6 +9,11 @@ pmic: pmic {
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 
-+		pmic_adc: adc {
-+			compatible = "mediatek,mt6359-auxadc";
-+			#io-channel-cells = <1>;
-+		};
-+
- 		mt6359codec: mt6359codec {
- 		};
- 
--- 
-2.45.1
+Hi,
 
+On Thu, May 30, 2024 at 02:59:30PM GMT, Jayesh Choudhary wrote:
+> Check the pixel clock for the mode in atomic_check and ensure that
+> it is within the range supported by the bridge.
+>=20
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> ---
+>  drivers/gpu/drm/bridge/sii902x.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/si=
+i902x.c
+> index 6a6055a4ccf9..1bf2f14a772d 100644
+> --- a/drivers/gpu/drm/bridge/sii902x.c
+> +++ b/drivers/gpu/drm/bridge/sii902x.c
+> @@ -494,6 +494,12 @@ static int sii902x_bridge_atomic_check(struct drm_br=
+idge *bridge,
+>  				       struct drm_crtc_state *crtc_state,
+>  				       struct drm_connector_state *conn_state)
+>  {
+> +	if (crtc_state->mode.clock < SII902X_MIN_PIXEL_CLOCK_KHZ)
+> +		return MODE_CLOCK_LOW;
+> +
+> +	if (crtc_state->mode.clock > SII902X_MAX_PIXEL_CLOCK_KHZ)
+> +		return MODE_CLOCK_HIGH;
+> +
+
+atomic_check doesn't return drm_mode_status but regular error codes (0
+on success, negative error code on failure)
+
+Maxime
+
+--eqvyt5rrxiedz2k4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZlhIIAAKCRAnX84Zoj2+
+dmtDAYDKG/BmH6pQDT3/a9jAZw6MLC3PDP1ck88oGHUNjjKiyUhwBwrTl/m0ZG4E
+BnoybWsBgMVO4kmBlXkJ4Ee2H26nQTt68ithsfMMFyxYYmZ6gS2qoV6snRnbJ9SF
+KUcF31qy8g==
+=SvhA
+-----END PGP SIGNATURE-----
+
+--eqvyt5rrxiedz2k4--
 
