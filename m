@@ -1,151 +1,281 @@
-Return-Path: <linux-kernel+bounces-195632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D6A8D4F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:05:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D52E8D4FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D221F24CEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:05:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69945B217CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE7B20B12;
-	Thu, 30 May 2024 16:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0C921A04;
+	Thu, 30 May 2024 16:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f8TK4pCZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="lJwxWxGO"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3194187560;
-	Thu, 30 May 2024 16:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88D620DD2;
+	Thu, 30 May 2024 16:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717085133; cv=none; b=QxIkt2474RGJ4YwaS9O9EkPTDyPwY8vBvQnrBvW7zZ9vgojYFP56PzXFKb0qac27IlVMJ8ftGeNiE8KkgLVor032+0OujPyR0pIJiBEBbhRONx4k8A4Rlc99jqpzfb7NZJFBqetJKehbHrzYso8r3+djSCQGBoLC2XzLPOXtOTQ=
+	t=1717085585; cv=none; b=BPO2Gfo9tuL+RdzhWYjNZ301MsCZAJDmE8/RNY0LGAFk7HjkopuUzWJH5cddnTYeBG7KkwhPjkTxMhjL4yPIb3UVuwKTpIiQ0r0KjpsOK+Ub0ZVFhFehHeQhLveqGW4sahEH+R/raK5g4LPSsmBCnjooDSzbXMPJwOO26YtT8lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717085133; c=relaxed/simple;
-	bh=VWawOdHq3pvRafrtZzhAFuI6fqqdhDNv37/Cz9EPRXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CzqjrI5qohJAxUy48l+hI8UnwyACkVp0ktMJTns+z94bLboYCgsaHg181H/tFnbatw8QrhAjwreq5MJngydMSKyMoJZG2bL+faVgiJpz3ciYcOe5HiXkGVDkm38Iw5fF37mkM9RAcMCNnk4kd5slxFNjkmeWbZa/qkLqKSAIoNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f8TK4pCZ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717085133; x=1748621133;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VWawOdHq3pvRafrtZzhAFuI6fqqdhDNv37/Cz9EPRXM=;
-  b=f8TK4pCZcPlKRLRErE93N7ATpRbdPOIB+y4Sck4wl/pjmiFp+mMbppjv
-   Pn/mAjRi8ZtwCGIYfjOos5FrVwqqBu4mOXiiEB6a8MCHXIavXA03uHFiF
-   R93WUM1tUeMRdb/jylzeq+3t+FM/Zc1gUIEYWC8T3IrMx5SINImPvc+Xt
-   LsUW5Be5Ji5CU8mlW5rGCZ+mQhv9+u80JYlYbiAHa5GeMTKcr/fP+JYbW
-   7OxY4Rspx2vCMfxE4Nzrtpu12dohqgN5zX6ZRuz/+aNd8ST0rqedlcT7v
-   0IYx3/tN1N305wtcg7uYoSiBiUJJa4PSAa2XMQwajP16H+g1vUEcR8mZQ
-   g==;
-X-CSE-ConnectionGUID: 0YwEWJ2gRsKphmSdvTqX9g==
-X-CSE-MsgGUID: oRv51B1lTTKm1kINIHub8w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13533072"
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="13533072"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:05:31 -0700
-X-CSE-ConnectionGUID: cG7ziEy0Qtif4gZxG+QDOA==
-X-CSE-MsgGUID: 8G0md/MaSF6ec6TKm5X+AQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="35893157"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:05:29 -0700
-Date: Thu, 30 May 2024 09:10:25 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>,
- jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 4/6] x86/irq: Process nmi sources in NMI handler
-Message-ID: <20240530091025.60de3227@jacob-builder>
-In-Reply-To: <0bac819f-fdbe-4de2-8a5f-30ded87bb036@zytor.com>
-References: <20240529203325.3039243-1-jacob.jun.pan@linux.intel.com>
-	<20240529203325.3039243-5-jacob.jun.pan@linux.intel.com>
-	<0bac819f-fdbe-4de2-8a5f-30ded87bb036@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717085585; c=relaxed/simple;
+	bh=9IiQGWNiUF7+dAREDCz4G6Tx/dvE6Ah8nqWUgo5hX5U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=egA6dTlbx6YzdVv/EsUAjW235bWEt84PbKThzkf5TYPVDYviLnP/KndK6zFwvQxRVCZDmKfN+ajGMEIQJTWaGTKsyD6XDvL1gbXy3f0yLz+dLU+s4pkeoiBcc/bXUpT3lwYGHl8QOi6r/yrVyzXIn2RI5tmuRKLl+jUpRIYvLhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=lJwxWxGO; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1717085584; x=1748621584;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hNuvAZtuVIi0V3AiB2H74/HiKZYSwDR+SkEuIWPH2Vg=;
+  b=lJwxWxGOTL88Rqsg1macOox4f+SJ1/Ps9vWKiuPBabUsLYuZ794+nzvc
+   PjgDqmoYEUz6+S2doTp6PkByYUEYgUKediG1heFNXdiLRP2823bDM2ucI
+   Swfse6RUaoGIu2xsRujcqdznZTZur8Hk4/I3vGoIyhOVNTaTQgMzPtM7H
+   8=;
+X-IronPort-AV: E=Sophos;i="6.08,201,1712620800"; 
+   d="scan'208";a="729387978"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 16:12:56 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.43.254:25690]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.23:2525] with esmtp (Farcaster)
+ id d04cab1d-b212-4b36-a5e5-f6bd3f0b265f; Thu, 30 May 2024 16:12:54 +0000 (UTC)
+X-Farcaster-Flow-ID: d04cab1d-b212-4b36-a5e5-f6bd3f0b265f
+Received: from EX19D007EUA003.ant.amazon.com (10.252.50.8) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 30 May 2024 16:12:54 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D007EUA003.ant.amazon.com (10.252.50.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 30 May 2024 16:12:54 +0000
+Received: from dev-dsk-fgriffo-1c-69b51a13.eu-west-1.amazon.com
+ (10.13.244.152) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28 via Frontend Transport; Thu, 30 May 2024 16:12:52 +0000
+From: Fred Griffoul <fgriffo@amazon.co.uk>
+To: <fgriffo@amazon.co.uk>
+CC: Alex Williamson <alex.williamson@redhat.com>, Kevin Tian
+	<kevin.tian@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, "Eric
+ Auger" <eric.auger@redhat.com>, Christian Brauner <brauner@kernel.org>, Ye
+ Bin <yebin10@huawei.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] vfio/pci: add msi interrupt affinity support
+Date: Thu, 30 May 2024 16:12:37 +0000
+Message-ID: <20240530161239.73245-1-fgriffo@amazon.co.uk>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Peter,
+The usual way to configure a device interrupt from userland is to write
+the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
+vfio to implement a device driver or a virtual machine monitor, this may
+not be ideal: the process managing the vfio device interrupts may not be
+granted root privilege, for security reasons. Thus it cannot directly
+control the interrupt affinity and has to rely on an external command.
 
-On Wed, 29 May 2024 13:47:09 -0700, "H. Peter Anvin" <hpa@zytor.com> wrote:
+This patch extends the VFIO_DEVICE_SET_IRQS ioctl() with a new data flag
+to specify the affinity of a vfio pci device interrupt.
 
-> On 5/29/24 13:33, Jacob Pan wrote:
-> > +
-> > +	/*
-> > +	 * Per NMI source specification, there is no guarantee that a
-> > valid
-> > +	 * NMI vector is always delivered, even when the source
-> > specified
-> > +	 * one. It is software's responsibility to check all available
-> > NMI
-> > +	 * sources when bit 0 is set in the NMI source bitmap. i.e. we
-> > have
-> > +	 * to call every handler as if we have no NMI source.
-> > +	 * On the other hand, if we do get non-zero vectors, we know
-> > exactly
-> > +	 * what the sources are. So we only call the handlers with the
-> > bit set.
-> > +	 */
-> > +	if (source_bitmask & BIT(NMI_SOURCE_VEC_UNKNOWN)) {
-> > +		pr_warn_ratelimited("NMI received with unknown
-> > source\n");
-> > +		return 0;
-> > +	}
-> > +  
-> 
-> Note: if bit 0 is set, you can process any other bits first (on the 
-> general assumption that if you bother with NMI source then those events 
-> are performance sensitive), and you could even exclude them from the 
-> poll. This is an optimization, and what you have here is correct from a 
-> functional point of view.
-> 
-Yes, it is a good optimization but also a rare case that bit 0 is set. no?
+The affinity argument must be a subset of the process cpuset, otherwise
+an error -EPERM is returned.
 
-> > +	source_bitmask = fred_event_data(regs);
-> > +	if (!source_bitmask) {
-> > +		pr_warn_ratelimited("NMI received without source
-> > information!\n");
-> > +		return 0;
-> > +	}  
-> 
-> If the event data word is 0, it probably should be treated as a 
-> *permanent* failure, as it is a Should Not Happen[TM] situation, and 
-> means there is an implementation (or, perhaps more likely, 
-> virtualization!) bug, and as such it may not be safe to trust the NMI 
-> source information in the future.
-> 
-Good point, I will add a flag to permanently disable NMI source reporting
-for this boot cycle if that happens.
+The vfio_irq_set argument shall be set-up in the following way:
 
-> > +	if (!cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) || type !=
-> > NMI_LOCAL)
-> > +		return 0;  
-> 
-> I'm not sure I understand why you are requiring type to be NMI_LOCAL here?
-> 
-It is just for this current implementation I am not including external
-NMIs. AFAIK, there is no users, i.e. no device MSIs delivered as NMI. I saw
-effort trying to make HPET NMI watchdog but not materialized.
+- the 'flags' field have the new flag VFIO_IRQ_SET_DATA_AFFINITY set
+as well as VFIO_IRQ_SET_ACTION_TRIGGER.
 
-Thanks,
+- the 'start' field is the device interrupt index. Only one interrupt
+can be configured per ioctl().
 
-Jacob
+- the variable-length array consists of one or more CPU index
+encoded as __u32, the number of entries in the array is specified in the
+'count' field.
+
+Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
+---
+ drivers/vfio/pci/vfio_pci_intrs.c | 52 +++++++++++++++++++++++++++++++
+ drivers/vfio/vfio_main.c          | 16 ++++++++--
+ include/uapi/linux/vfio.h         | 12 +++++--
+ 3 files changed, 76 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 8382c5834335..2b672e2164dc 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -19,6 +19,7 @@
+ #include <linux/vfio.h>
+ #include <linux/wait.h>
+ #include <linux/slab.h>
++#include <linux/cpuset.h>
+ 
+ #include "vfio_pci_priv.h"
+ 
+@@ -675,6 +676,54 @@ static int vfio_pci_set_intx_trigger(struct vfio_pci_core_device *vdev,
+ 	return 0;
+ }
+ 
++static int vfio_pci_set_msi_affinity(struct vfio_pci_core_device *vdev,
++				     unsigned int ctx_index, unsigned int count,
++				     uint32_t *cpus)
++{
++	struct vfio_pci_irq_ctx *ctx;
++	cpumask_var_t allowed_mask;
++	cpumask_var_t irq_mask;
++	unsigned int i;
++	int err = 0;
++
++	ctx = vfio_irq_ctx_get(vdev, ctx_index);
++	if (!ctx)
++		return -EINVAL;
++
++	if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL))
++		return -ENOMEM;
++
++	if (!zalloc_cpumask_var(&irq_mask, GFP_KERNEL)) {
++		err = -ENOMEM;
++		goto finish;
++	}
++
++	cpuset_cpus_allowed(current, allowed_mask);
++
++	for (i = 0; i < count; i++) {
++		if (cpus[i] >= nr_cpumask_bits ||
++		    !cpumask_test_cpu(cpus[i], allowed_mask)) {
++			err = -EPERM;
++			goto finish2;
++		}
++		__cpumask_set_cpu(cpus[i], irq_mask);
++	}
++
++	/* need at least 1 online cpu in the mask */
++	if (!cpumask_intersects(irq_mask, cpu_online_mask)) {
++		err = -EPERM;
++		goto finish2;
++	}
++
++	err = irq_set_affinity(ctx->producer.irq, irq_mask);
++
++finish2:
++	free_cpumask_var(irq_mask);
++finish:
++	free_cpumask_var(allowed_mask);
++	return err;
++}
++
+ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
+ 				    unsigned index, unsigned start,
+ 				    unsigned count, uint32_t flags, void *data)
+@@ -691,6 +740,9 @@ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
+ 	if (!(irq_is(vdev, index) || is_irq_none(vdev)))
+ 		return -EINVAL;
+ 
++	if (flags & VFIO_IRQ_SET_DATA_AFFINITY)
++		return vfio_pci_set_msi_affinity(vdev, start, count, data);
++
+ 	if (flags & VFIO_IRQ_SET_DATA_EVENTFD) {
+ 		int32_t *fds = data;
+ 		int ret;
+diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+index e97d796a54fb..5469a6f85822 100644
+--- a/drivers/vfio/vfio_main.c
++++ b/drivers/vfio/vfio_main.c
+@@ -1489,7 +1489,6 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
+ 	minsz = offsetofend(struct vfio_irq_set, count);
+ 
+ 	if ((hdr->argsz < minsz) || (hdr->index >= max_irq_type) ||
+-	    (hdr->count >= (U32_MAX - hdr->start)) ||
+ 	    (hdr->flags & ~(VFIO_IRQ_SET_DATA_TYPE_MASK |
+ 				VFIO_IRQ_SET_ACTION_TYPE_MASK)))
+ 		return -EINVAL;
+@@ -1497,9 +1496,19 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
+ 	if (data_size)
+ 		*data_size = 0;
+ 
+-	if (hdr->start >= num_irqs || hdr->start + hdr->count > num_irqs)
++	if (hdr->start >= num_irqs)
+ 		return -EINVAL;
+ 
++	/* For DATA_AFFINITY count is the number of cpu index */
++	if (hdr->flags & VFIO_IRQ_SET_DATA_AFFINITY) {
++		if (hdr->count > nr_cpumask_bits)
++			return -EINVAL;
++	} else {
++		if ((hdr->count >= (U32_MAX - hdr->start)) ||
++		    (hdr->start + hdr->count > num_irqs))
++			return -EINVAL;
++	}
++
+ 	switch (hdr->flags & VFIO_IRQ_SET_DATA_TYPE_MASK) {
+ 	case VFIO_IRQ_SET_DATA_NONE:
+ 		size = 0;
+@@ -1510,6 +1519,9 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
+ 	case VFIO_IRQ_SET_DATA_EVENTFD:
+ 		size = sizeof(int32_t);
+ 		break;
++	case VFIO_IRQ_SET_DATA_AFFINITY:
++		size = sizeof(uint32_t);
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+index 2b68e6cdf190..af9405060401 100644
+--- a/include/uapi/linux/vfio.h
++++ b/include/uapi/linux/vfio.h
+@@ -548,7 +548,8 @@ struct vfio_irq_info {
+  *
+  * Set signaling, masking, and unmasking of interrupts.  Caller provides
+  * struct vfio_irq_set with all fields set.  'start' and 'count' indicate
+- * the range of subindexes being specified.
++ * the range of subindexes being specified, except for DATA_AFFINITY as
++ * explained below.
+  *
+  * The DATA flags specify the type of data provided.  If DATA_NONE, the
+  * operation performs the specified action immediately on the specified
+@@ -580,6 +581,11 @@ struct vfio_irq_info {
+  *
+  * Note that ACTION_[UN]MASK specify user->kernel signaling (irqfds) while
+  * ACTION_TRIGGER specifies kernel->user signaling.
++ *
++ * DATA_AFFINITY specifies the affinity for an interrupt vector. It must be set
++ * with ACTION_TRIGGER in 'flags'. The 'start' field is the device interrupt
++ * vector. The variable-length 'data' is an array of CPU index encoded as __u32,
++ * the number of entries in the array is given by the 'count' field.
+  */
+ struct vfio_irq_set {
+ 	__u32	argsz;
+@@ -587,6 +593,7 @@ struct vfio_irq_set {
+ #define VFIO_IRQ_SET_DATA_NONE		(1 << 0) /* Data not present */
+ #define VFIO_IRQ_SET_DATA_BOOL		(1 << 1) /* Data is bool (u8) */
+ #define VFIO_IRQ_SET_DATA_EVENTFD	(1 << 2) /* Data is eventfd (s32) */
++#define VFIO_IRQ_SET_DATA_AFFINITY	(1 << 6) /* Data is cpu index (u32) */
+ #define VFIO_IRQ_SET_ACTION_MASK	(1 << 3) /* Mask interrupt */
+ #define VFIO_IRQ_SET_ACTION_UNMASK	(1 << 4) /* Unmask interrupt */
+ #define VFIO_IRQ_SET_ACTION_TRIGGER	(1 << 5) /* Trigger interrupt */
+@@ -599,7 +606,8 @@ struct vfio_irq_set {
+ 
+ #define VFIO_IRQ_SET_DATA_TYPE_MASK	(VFIO_IRQ_SET_DATA_NONE | \
+ 					 VFIO_IRQ_SET_DATA_BOOL | \
+-					 VFIO_IRQ_SET_DATA_EVENTFD)
++					 VFIO_IRQ_SET_DATA_EVENTFD | \
++					 VFIO_IRQ_SET_DATA_AFFINITY)
+ #define VFIO_IRQ_SET_ACTION_TYPE_MASK	(VFIO_IRQ_SET_ACTION_MASK | \
+ 					 VFIO_IRQ_SET_ACTION_UNMASK | \
+ 					 VFIO_IRQ_SET_ACTION_TRIGGER)
+-- 
+2.40.1
+
 
