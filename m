@@ -1,131 +1,92 @@
-Return-Path: <linux-kernel+bounces-194823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB16A8D4288
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:51:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D2D8D4281
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA7A1F24525
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:51:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103EE1F244EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4754018054;
-	Thu, 30 May 2024 00:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13925E556;
+	Thu, 30 May 2024 00:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JGMcEO3W"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="PhjK3SC4"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FDD134BD
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B366A23B1;
+	Thu, 30 May 2024 00:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717030285; cv=none; b=JgPWDge9M47gCzyk9nrCneCSJ6/ST634MmziHat5SHEDefFHTGze65KIEuKY5f+CkNlF687VD2CI6E3GePyox4GSQOWqMHDDh+ratJShxLIoeTqlKi8raHLW3dsDifUy8r6VdE9WVZnFdz412kXO67ZGhxCHyzSMfOb86Ksnqcg=
+	t=1717030280; cv=none; b=D45wu91Sgw6f5NFub7oIazr8jFLTiR1tjorBCvsQ7WsyPoIYqhZ86k50Fn5Prj+R8bQEPry2J7Ye/vwE3KRiVVslFfgmYv3gmjvN76oFozbCb9NYOBCp7ybNeQa2stF+4FtXss+q2lHlvw781ugPdbS5crwSsyHb5rupucQ6ahE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717030285; c=relaxed/simple;
-	bh=kmKy77nhcOHi6YYrTMmhX1IdbFXK68Up4LbunGWp1+M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gPuVcdRGHlAA4++Xr4pbclc+ZNWBRkCsabeWygMmbjNvmu9aE3flxZTqyp9QCRb7uWhSUgYAIVy1p1qu3j1evDaWdaTuCdKZMYKQBP7dkZ99cGYAiGl/8GyPFilHVxNxu2xo7ggQ5IkYbOshGnyCCpv+XgRNbU9WmwMXnF/gIcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JGMcEO3W; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ab11ecdbaso397632e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 17:51:23 -0700 (PDT)
+	s=arc-20240116; t=1717030280; c=relaxed/simple;
+	bh=I+Jt+udxkxLDKi4W/Bzi1caUOt8FQXDEn4VOX4aEVRU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rD9o8sfwJLkc6H8Aepdpw9jZHmV1G//ijtZEQXGIk75sIzDzTtq0LnPSmMLk4vjDF9O4ladS3fJgq80LvON5FTupP2/zJd8efg0GD/LsOM6jLF2DiIuffFw6RSmtyIVBUJOY9Pop8itdEgXR7QAqvMgVUlMzQ6u3D+bLFAcmavA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=PhjK3SC4; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 060912012A;
+	Thu, 30 May 2024 08:51:15 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717030282; x=1717635082; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EQiN1ahCU63uSRq0f1YjoqnbirPzB844yeiZBL32yy0=;
-        b=JGMcEO3WUgGkVqkA8BZnmaC41ibH6CSycHGdyNj97P8Sso96nY2n8Msi3X6v+aVPqM
-         lia13z2yjCi/4h+pVo4O0FvUUvkCRokeOj0JtzI5JemBNt/0yJplKPXzz2/NHgNBhcqp
-         ts4fLwMnulAICI0wwFQb4UjAVQupn4dBHA8kHSebLsPWRbaaUM4mCly/GD8XE24kHoL9
-         vqC9dHxH+ycNcmPytC1TTp6oDLNhqr14Ad5E+CqBLj/lCt2DMC1/FMgvszDY1xl6yLGt
-         zMzEQkZhawCrpHcqFch2/IpGWSPonmbYMfXmJCEsXgg4geHbDeM1RvFVetvZpa2+g4Ro
-         IOrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717030282; x=1717635082;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EQiN1ahCU63uSRq0f1YjoqnbirPzB844yeiZBL32yy0=;
-        b=WJ8M1hzBsurLSkn3C2p8ol7CSoUJUZpg+U/S0cJdsGtC1Sj2g/CECg8vzRaWJxjxJq
-         LdE8Px+/AAXVWMUc9ciuhkrDnAmB/4myMliLlLSdWR0d9ZAFMaHOI72uKqYXHDyV+xVC
-         QiFQlSnFWovNmcBP+a0c2ityiu4PGoe3573I+JYS3zqlBlJnWnnQtMqKkWVzt9O6NkP0
-         zUzJnwqC09OBXzvNzc15mtWHJ4PzSqgVVLFJ4JbnT3F3DeCjFy7CtieM/U5uKKi0KFMF
-         lRGbJ/OjiX/1eG+zrA+8186tN1+NBd/vsLDXxTb0Hcdqi86gYGGLKD2RVyyfjZGNZTTJ
-         E3fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfbXtmN0TTlTstt3EUleE6U2AGj541+Rf/qlYPQ7AFWlqLCszVdainSPnEiN54uKNa5rQ6Tn+fIIOdK2I330xeJle8P8xyQlhjezg3
-X-Gm-Message-State: AOJu0YyemzC+C6R/YIH+WEWp3+oyZjcayE4Jr9rldVLTWxnt4xSHrf5v
-	HEDut5Wdn8yg9slpGfy/NCzrS3eSrnp4aA0RNGqNgMTMmCQblmCurnR6SwEOPr0=
-X-Google-Smtp-Source: AGHT+IE5hnRoCM3vFZL25CCrQ6o/Kjpbvic50SmCRJzBb46WcO+btQXvcH6Ks0O8y8F8NuIbgiVEJA==
-X-Received: by 2002:ac2:5487:0:b0:523:a5b3:5e1d with SMTP id 2adb3069b0e04-52b7d419e1fmr348530e87.10.1717030282137;
-        Wed, 29 May 2024 17:51:22 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b233sm1396534e87.135.2024.05.29.17.51.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 17:51:21 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 30 May 2024 03:51:14 +0300
-Subject: [PATCH 2/2] arm64: defconfig: make CONFIG_INTERCONNECT_QCOM_SM8350
- built-in
+	d=codeconstruct.com.au; s=2022a; t=1717030276;
+	bh=I+Jt+udxkxLDKi4W/Bzi1caUOt8FQXDEn4VOX4aEVRU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=PhjK3SC4A8NA+0dUQW7/PxHfqhTqOmLfS0LUmZtAmYgU9g84HS9NDxLylx2ooEOhq
+	 9QXi0rQiw15L5gh/Uar85HJBRPF/vZCmY95lDQuUETo1KgHf28DI09FXfvFgRa7+Jt
+	 Z4N1eicE90MIkEbJmDGHSkrcasv2rXYahN1+r5ioVz8fFP9nZxUt+aWkcsU9OoGJ7D
+	 sidaVkD8ipqgYheETX7tN0wCwFoczSwdmOUyxjqUwbwSihM5HPc5aHOSyO8qNTStcR
+	 v7HNVtquzssw/CYm6VTWKJamrs7VXmWDoGto4zGnoQ/2zv4XNsAXaJJVjYBZcFpBfQ
+	 33XqJkEXLtEng==
+Message-ID: <91f9d528649b967e7499f1e85b83da03b8a0f5d0.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 2/4] dt-bindings: gpio: aspeed,sgpio: Specify
+ gpio-line-names
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 30 May 2024 10:21:15 +0930
+In-Reply-To: <5d0016f1-ccdc-4645-9840-6f8c2870ef6c@kernel.org>
+References: 
+	<20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-0-91c42976833b@codeconstruct.com.au>
+	 <20240529-dt-warnings-gpio-sgpio-interrupt-cells-v1-2-91c42976833b@codeconstruct.com.au>
+	 <5d0016f1-ccdc-4645-9840-6f8c2870ef6c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-8350-config-v1-2-d6e871236ed4@linaro.org>
-References: <20240530-8350-config-v1-0-d6e871236ed4@linaro.org>
-In-Reply-To: <20240530-8350-config-v1-0-d6e871236ed4@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=917;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=kmKy77nhcOHi6YYrTMmhX1IdbFXK68Up4LbunGWp1+M=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmV82HtXrWBv2+7qo+AmuP4c2ZEsT6rPCAyiOf+
- zL+RRsYImKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlfNhwAKCRCLPIo+Aiko
- 1bPIB/4j2FfkMU/evBkmeCVfszMfVPHTqW29i7LJajJYpyXD5KcidENQXIGK6WOaG5tQHEze/6i
- Ihox0kAc0SG2RKhm0WwWUndwGcjLqMPIlMGtCOauVbdbKqvjPVSH1GknFyYEkOfWBHdf+OG/Mrs
- vlOE8iewaRVIySyXUs683r1onkQjTeGO0dYE32NyQgjysqVet1ADtaZIQooDF1hAsZBes3eZgOi
- oiwRsAc6Co0FlblNpTijUKT01E6Ty04C/vzUEOkQ+KXHHworyMtuvjri9BZ/9AHlnWlVT0v/JqP
- BhMsVttwvvP8qGDffzYMfhrBW/4rjegr4Ng3Vx/QLhB2AAS7
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Building interconnect driver for Qualcomm SM8350 platform can easily
-result in a device hang / reboot because of the resource starvation.
-Move this driver to be built-in to prevent such issues during the boot.
+On Wed, 2024-05-29 at 09:27 +0200, Krzysztof Kozlowski wrote:
+> On 29/05/2024 07:13, Andrew Jeffery wrote:
+> > Some devicetrees specify gpio-line-names in the sgpio node despite it
+> > not being defined by the binding. It's a reasonable thing to do, so
+> > define the property to squash warnings such as:
+> >=20
+> > ```
+>=20
+> No need for ```
+>=20
+> This is just commit log. Not markdown.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/configs/defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm going to do a v2 anyway, so I'll drop the markup.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 63a8e9335efb..9a467dec78b7 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1612,7 +1612,7 @@ CONFIG_INTERCONNECT_QCOM_SDX75=y
- CONFIG_INTERCONNECT_QCOM_SM6115=y
- CONFIG_INTERCONNECT_QCOM_SM8150=m
- CONFIG_INTERCONNECT_QCOM_SM8250=y
--CONFIG_INTERCONNECT_QCOM_SM8350=m
-+CONFIG_INTERCONNECT_QCOM_SM8350=y
- CONFIG_INTERCONNECT_QCOM_SM8450=y
- CONFIG_INTERCONNECT_QCOM_SM8550=y
- CONFIG_INTERCONNECT_QCOM_SM8650=y
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-2.39.2
+Thanks,
 
+Andrew
 
