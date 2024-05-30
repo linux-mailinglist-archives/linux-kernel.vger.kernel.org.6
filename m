@@ -1,193 +1,198 @@
-Return-Path: <linux-kernel+bounces-195504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7AAD8D4DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:17:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DF48D4DC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C7D286C64
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:17:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B31A6B22605
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F8217D8AA;
-	Thu, 30 May 2024 14:16:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F9317624D;
+	Thu, 30 May 2024 14:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kqbnRjX+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1471317623B;
-	Thu, 30 May 2024 14:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FCA1DA53
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078588; cv=none; b=uFgwtoZWrf5mb7xCiGC0nyP5XfFo1XtCuPJaVYalzqye3p8fUcGreojjETLEvNg398fBBvcKgYWd7DRkT7CVEEKSmePymN4Bp4Df9MJG0tFM+hxBHw8y1ikaQJs7X5pKsVOZmzXdGJhF2Eb2W09BKcGVtGVfjvCHKa41uvNjazA=
+	t=1717078976; cv=none; b=Hbs95mE4mDGtEyPiOhbvynVOnGZO3aiHf0FaLo4z9eZHzzzjv9diodMnH25hP22hFGPchb03tecMgaqeEDXWFEscXvt4EM+jwgu9KRgNJCHSquBiw8izn81F0HbaGnNTvtONsdx9Jq8ERkxQVi4gDnwFs679Yo9KAPJ0JpvCD04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078588; c=relaxed/simple;
-	bh=XL8MGduAVbwn1gpxi4V0hN5u03u0LCLTzNM+RF9zS3s=;
+	s=arc-20240116; t=1717078976; c=relaxed/simple;
+	bh=0TzI08c66avPZJEdsDRUEmen7CFRPyXzgnULJsKiuKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgBVfpwzMDh4rZz81MYFXj5+B0xVsPXD8KbAsg/VEsIp1NUSRzY0zc8eUeJTeyoaCqCsZG2TSQdVhetcMVX/STbkI5z7D8HmFmRR7djjfOhKFPFgySYBvyrPpzerPAKSU0xOtwrk0CSaKu4BTw6j3VTJEYh8byERYZtTUimiy5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EBFDC2BBFC;
-	Thu, 30 May 2024 14:16:22 +0000 (UTC)
-Date: Thu, 30 May 2024 19:46:18 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Cc: jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-	andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-	mani@kernel.org, quic_msarkar@quicinc.com,
-	quic_kraravin@quicinc.com,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] PCI: qcom: Refactor common code
-Message-ID: <20240530141618.GB2770@thinkpad>
-References: <20240501163610.8900-1-quic_schintav@quicinc.com>
- <20240501163610.8900-2-quic_schintav@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHT/+mEDB2Jk/PfT7XEqrzCRaW57Mp5F1uocq/X6ALhmoa/xSy98napuvJr5iJGQhLVmc2CxBDnrqO9Wc490C8/alJeR+Q3vkSTSsz3b9qaoksVZ8ScP4MOE8SCCtJTgHA27GoHjx2Q/mlB6ToEFK0+dyOCkE7833nqe0hIl8sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kqbnRjX+; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717078975; x=1748614975;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=0TzI08c66avPZJEdsDRUEmen7CFRPyXzgnULJsKiuKw=;
+  b=kqbnRjX+2f0TBU6qs8g8aXFlsVlQCQzOhC8rcOeiBvRM5OR8Bi8C+nin
+   /ebm4rGeDhQ1HaWKqkPgfXE8BZxZNXPjmocCRDRataSqBHXXBWyA8Kmhr
+   m8KAGAcD0j9XUjUI5R7Mb9skHJiwpUpDYPbCse+sCMONMzNpyhw0qE5au
+   Q50FBHbi+YO7bxQWtIVSvzxQGpcjABn9I1gw+5OENtgfRFIXIym5tHGSU
+   CjzhfPOZKlq2ewGbqMfSsmjKrOk2AyjYvhrzXaJ30e2jE1JMBrZfQrYTP
+   0mopdSZ8U37tv5dWhdPDvk3v/zL6qnxdafLomEq0dZpLqq4s8FbmwBh0B
+   Q==;
+X-CSE-ConnectionGUID: +3HjSxEuSe2/efsvVaTMeg==
+X-CSE-MsgGUID: susdLsW9SaSP5X0Pr4X3PQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24971280"
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="24971280"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 07:22:54 -0700
+X-CSE-ConnectionGUID: JU4D+hkIS5GrqJb6iNRbeg==
+X-CSE-MsgGUID: cDohpN6KSJ2/DX72oY4GmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
+   d="scan'208";a="35764100"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 30 May 2024 07:22:52 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sCgfx-000FY4-2t;
+	Thu, 30 May 2024 14:22:47 +0000
+Date: Thu, 30 May 2024 22:19:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Andy Chiu <andy.chiu@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	Matthew Bystrin <dev.mbstr@gmail.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH 4/4] riscv: entry: Save a frame record for exceptions
+Message-ID: <202405302207.M9bDz8l3-lkp@intel.com>
+References: <20240530001733.1407654-5-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240501163610.8900-2-quic_schintav@quicinc.com>
+In-Reply-To: <20240530001733.1407654-5-samuel.holland@sifive.com>
 
-On Wed, May 01, 2024 at 09:35:32AM -0700, Shashank Babu Chinta Venkata wrote:
-> Refactor common code from RC(Root Complex) and EP(End Point)
-> drivers and move them to a common driver. This acts as placeholder
-> for common source code for both drivers, thus avoiding duplication.
-> 
-> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/Kconfig            |  5 ++
->  drivers/pci/controller/dwc/Makefile           |  1 +
->  drivers/pci/controller/dwc/pcie-qcom-common.c | 76 +++++++++++++++++++
->  drivers/pci/controller/dwc/pcie-qcom-common.h | 12 +++
->  drivers/pci/controller/dwc/pcie-qcom-ep.c     | 39 +---------
->  drivers/pci/controller/dwc/pcie-qcom.c        | 69 +++--------------
->  6 files changed, 108 insertions(+), 94 deletions(-)
->  create mode 100644 drivers/pci/controller/dwc/pcie-qcom-common.c
->  create mode 100644 drivers/pci/controller/dwc/pcie-qcom-common.h
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index 8afacc90c63b..1599550cd628 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -265,12 +265,16 @@ config PCIE_DW_PLAT_EP
->  	  order to enable device-specific features PCI_DW_PLAT_EP must be
->  	  selected.
->  
-> +config PCIE_QCOM_COMMON
-> +	bool
-> +
->  config PCIE_QCOM
->  	bool "Qualcomm PCIe controller (host mode)"
->  	depends on OF && (ARCH_QCOM || COMPILE_TEST)
->  	depends on PCI_MSI
->  	select PCIE_DW_HOST
->  	select CRC8
-> +	select PCIE_QCOM_COMMON
->  	help
->  	  Say Y here to enable PCIe controller support on Qualcomm SoCs. The
->  	  PCIe controller uses the DesignWare core plus Qualcomm-specific
-> @@ -281,6 +285,7 @@ config PCIE_QCOM_EP
->  	depends on OF && (ARCH_QCOM || COMPILE_TEST)
->  	depends on PCI_ENDPOINT
->  	select PCIE_DW_EP
-> +	select PCIE_QCOM_COMMON
->  	help
->  	  Say Y here to enable support for the PCIe controllers on Qualcomm SoCs
->  	  to work in endpoint mode. The PCIe controller uses the DesignWare core
-> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-> index bac103faa523..3f557dd60c38 100644
-> --- a/drivers/pci/controller/dwc/Makefile
-> +++ b/drivers/pci/controller/dwc/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
->  obj-$(CONFIG_PCI_LAYERSCAPE_EP) += pci-layerscape-ep.o
->  obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
->  obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o
-> +obj-$(CONFIG_PCIE_QCOM_COMMON) += pcie-qcom-common.o
->  obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
->  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
->  obj-$(CONFIG_PCIE_ROCKCHIP_DW_HOST) += pcie-dw-rockchip.o
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
-> new file mode 100644
-> index 000000000000..228d9eec0222
-> --- /dev/null
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
-> @@ -0,0 +1,76 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2014-2015, 2020 The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2015, 2021 Linaro Limited.
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + *
-> + */
-> +
-> +#include <linux/pci.h>
-> +#include <linux/interconnect.h>
-> +
-> +#include "../../pci.h"
-> +#include "pcie-designware.h"
-> +#include "pcie-qcom-common.h"
-> +
-> +#define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
-> +		Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
-> +
-> +struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
-> +{
-> +	struct icc_path *icc_mem_p;
-> +
-> +	icc_mem_p = devm_of_icc_get(pci->dev, path);
+Hi Samuel,
 
-Just 'icc_path' since we will be voting for 'cpu-pcie' path as well.
+kernel test robot noticed the following build errors:
 
-Also just return directly since there are error checks performed by the callers.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.10-rc1 next-20240529]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +	if (IS_ERR_OR_NULL(icc_mem_p))
-> +		return PTR_ERR(icc_mem_p);
-> +	return icc_mem_p;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_get_resource);
-> +
-> +int qcom_pcie_common_icc_init(struct dw_pcie *pci, struct icc_path *icc_mem)
+url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/riscv-Fix-32-bit-call_on_irq_stack-frame-pointer-ABI/20240530-081923
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240530001733.1407654-5-samuel.holland%40sifive.com
+patch subject: [PATCH 4/4] riscv: entry: Save a frame record for exceptions
+config: riscv-randconfig-001-20240530 (https://download.01.org/0day-ci/archive/20240530/202405302207.M9bDz8l3-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405302207.M9bDz8l3-lkp@intel.com/reproduce)
 
-You need to take the bandwidth as an argument since the bandwidth varies between
-'cpu-pcie' and 'pcie-mem'.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405302207.M9bDz8l3-lkp@intel.com/
 
-> +{
-> +	int ret;
-> +
-> +	/*
-> +	 * Some Qualcomm platforms require interconnect bandwidth constraints
-> +	 * to be set before enabling interconnect clocks.
-> +	 *
-> +	 * Set an initial peak bandwidth corresponding to single-lane Gen 1
-> +	 * for the pcie-mem path.
-> +	 */
-> +	ret = icc_set_bw(icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
-> +	if (ret) {
-> +		dev_err(pci->dev, "Failed to set interconnect bandwidth: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_init);
-> +
-> +void qcom_pcie_common_icc_update(struct dw_pcie *pci, struct icc_path *icc_mem)
+All errors (new ones prefixed by >>):
 
-s/icc_mem/icc_path
+>> arch/riscv/kernel/probes/rethook_trampoline.S:79:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+    addi sp, sp, -(PT_SIZE_ON_STACK)
+                 ^
+   arch/riscv/kernel/probes/rethook_trampoline.S:90:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+    addi sp, sp, PT_SIZE_ON_STACK
+                 ^
 
-- Mani
+
+vim +79 arch/riscv/kernel/probes/rethook_trampoline.S
+
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17   9  
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  10  	.text
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  11  	.altmacro
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  12  
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  13  	.macro save_all_base_regs
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  14  	REG_S x1,  PT_RA(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  15  	REG_S x3,  PT_GP(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  16  	REG_S x4,  PT_TP(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  17  	REG_S x5,  PT_T0(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  18  	REG_S x6,  PT_T1(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  19  	REG_S x7,  PT_T2(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  20  	REG_S x8,  PT_S0(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  21  	REG_S x9,  PT_S1(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  22  	REG_S x10, PT_A0(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  23  	REG_S x11, PT_A1(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  24  	REG_S x12, PT_A2(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  25  	REG_S x13, PT_A3(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  26  	REG_S x14, PT_A4(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  27  	REG_S x15, PT_A5(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  28  	REG_S x16, PT_A6(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  29  	REG_S x17, PT_A7(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  30  	REG_S x18, PT_S2(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  31  	REG_S x19, PT_S3(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  32  	REG_S x20, PT_S4(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  33  	REG_S x21, PT_S5(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  34  	REG_S x22, PT_S6(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  35  	REG_S x23, PT_S7(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  36  	REG_S x24, PT_S8(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  37  	REG_S x25, PT_S9(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  38  	REG_S x26, PT_S10(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  39  	REG_S x27, PT_S11(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  40  	REG_S x28, PT_T3(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  41  	REG_S x29, PT_T4(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  42  	REG_S x30, PT_T5(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  43  	REG_S x31, PT_T6(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  44  	.endm
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  45  
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  46  	.macro restore_all_base_regs
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  47  	REG_L x3,  PT_GP(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  48  	REG_L x4,  PT_TP(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  49  	REG_L x5,  PT_T0(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  50  	REG_L x6,  PT_T1(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  51  	REG_L x7,  PT_T2(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  52  	REG_L x8,  PT_S0(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  53  	REG_L x9,  PT_S1(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  54  	REG_L x10, PT_A0(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  55  	REG_L x11, PT_A1(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  56  	REG_L x12, PT_A2(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  57  	REG_L x13, PT_A3(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  58  	REG_L x14, PT_A4(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  59  	REG_L x15, PT_A5(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  60  	REG_L x16, PT_A6(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  61  	REG_L x17, PT_A7(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  62  	REG_L x18, PT_S2(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  63  	REG_L x19, PT_S3(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  64  	REG_L x20, PT_S4(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  65  	REG_L x21, PT_S5(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  66  	REG_L x22, PT_S6(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  67  	REG_L x23, PT_S7(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  68  	REG_L x24, PT_S8(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  69  	REG_L x25, PT_S9(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  70  	REG_L x26, PT_S10(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  71  	REG_L x27, PT_S11(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  72  	REG_L x28, PT_T3(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  73  	REG_L x29, PT_T4(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  74  	REG_L x30, PT_T5(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  75  	REG_L x31, PT_T6(sp)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  76  	.endm
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17  77  
+76329c693924d8 arch/riscv/kernel/probes/rethook_trampoline.S Cl�ment L�ger 2023-10-24  78  SYM_CODE_START(arch_rethook_trampoline)
+c22b0bcb1dd024 arch/riscv/kernel/probes/kprobes_trampoline.S Guo Ren       2020-12-17 @79  	addi sp, sp, -(PT_SIZE_ON_STACK)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
