@@ -1,179 +1,154 @@
-Return-Path: <linux-kernel+bounces-195647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596C18D4FBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:20:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB88B8D4FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F01C22CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E86283834
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED0B21A02;
-	Thu, 30 May 2024 16:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC0121A02;
+	Thu, 30 May 2024 16:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i9bcp7z9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="MRB2dxsU"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AD518757E;
-	Thu, 30 May 2024 16:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8136F21345
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717086004; cv=none; b=R/f+P6JoNtrVwUANKNySUqkRlASM0sP1MsafCFtylt+8aiiEWGDefAdymFLIv1ipR6EFQo9cAdreZOrDXF7+HdTmgLbEkfWHrAPjsFjAtBkKNO4FZ3BU+X+2PI4wMeVdDicooeMG3iLchTlhmoNdBlaDYe/6lQ1w/ZCd5tiK29o=
+	t=1717085861; cv=none; b=YfHmTLgwGtzg8TJVh16FMveB++2Je4rNFKSVaEcZN/DnnMwRDa0y9HDGbwvjsx0iv+X/Ooag61ajHD8ReC7CwfkekwpbVrMjIAeiauw1t3C89WVrnS71dg34BYxiTm0LL0Rc9/+Af/sLutuHVkZrH7Tqa5vsFB5LEF59dw1z3V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717086004; c=relaxed/simple;
-	bh=4kn4vjazlOgWAkFWvL+DJ8Sb/gYaYuXSroU8uHXVN+E=;
+	s=arc-20240116; t=1717085861; c=relaxed/simple;
+	bh=puGpVZOnVut9xgpkq2SDv7F7R0DYc9nfwmObP4idcdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcI033o7hcJCCMl/FLc9gLICL4qNoEkaH2WkLvaXK8jvhA1CejFMRb6ARiiWMepuCtgom1d5yHYQQCDPQjnPujhBJDjqDdyk/C3Bw4mHQxOn4mh/8hr8eca+dl/HX34SKcGs5wsfsKg1rxJ/Oiw6L7Asr+cQDE1+y5cZlbqnQEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i9bcp7z9; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717086002; x=1748622002;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4kn4vjazlOgWAkFWvL+DJ8Sb/gYaYuXSroU8uHXVN+E=;
-  b=i9bcp7z9cUQPWsM66F9gpkedj/44ojTM1xxRwu8123LfwpvAac8bIGhV
-   1le5szQFuqXxHy2z1nIthaAqkXEGQFODdBYCHqIBR+heeFYSd39RPd26O
-   p4V9IVT1JOhNsjFw4PFnlpfmvXWJSpDXPgIz1eB2WDBuv6vFiaNn730kX
-   H6HVxfHUseAeoP3BXTnR7ZS+tKSqyPqXBhmMe6xS55A2i3pS1DIcQVGH5
-   9jZu3EZEvvKw+GPDeySDoGdZJPFWkPxA1V62PYaTH+tAWbyJ/YkbEtZ5P
-   iy50kI6PrxANwS3NYYR12TOS8sYwMLSjy57UQSztqIlr6Mw882WVFaENo
-   Q==;
-X-CSE-ConnectionGUID: s7Gi7y3ITwC9dln9imOF0g==
-X-CSE-MsgGUID: cYsad6qXQmOOMdIx3sxmCA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24139715"
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="24139715"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 09:19:45 -0700
-X-CSE-ConnectionGUID: aEyrTQvAS7ivZk9nl5t0+g==
-X-CSE-MsgGUID: Ydc/93sIThmnu9UFkE6+XA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="35946498"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 30 May 2024 09:19:40 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCiUl-000Fgf-2G;
-	Thu, 30 May 2024 16:19:20 +0000
-Date: Fri, 31 May 2024 00:15:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>, Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: oe-kbuild-all@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: mediatek: Add mt8173-mfgtop driver
-Message-ID: <202405310018.2eeqgDyV-lkp@intel.com>
-References: <20240530083513.4135052-3-wenst@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UehLh5Le+Tv516pgtJ1xo9UsrKm1NGupN91TUbiVy+zxjECSW88Q74vi8LB2f1oWnk8+xzuQz9fgjbkiCDaYeu8Y+GNEzteYgenIo9pndOWOn0oCmCAShB3k2yLRO1VIv8pf1GoKmWE5agOA4gwbjwmMTaMlqMVQCIeaAAtiLAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=MRB2dxsU; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=I+VnTm4AmfXXiuL7ZilP6BXPkFwuXclGizPn9CLK9c8=; b=MRB2dxsU14DJGHKq9tcDTr5kA7
+	l7s0HzxwtBEM/uDTJATPKIAjW+pKPZkWYJswy1Zcre8u6C4gEHoauTxTga9zfkjmxQdVmUogGc0Ya
+	ith839c3iIiyj7t4ZelQ68LQPT4QzLpWCoIYhRveLTCZAcc6SN9GvZge/PxKk7eBPP1o7OWp7K2uG
+	sFwedRbSWbh1BlK6/toEJvTcSe3e4pO74djIhMvn0MXxXYZmO/bgRrChWMaGXeBn0aoBm6woXW8r6
+	cZ9AKLQw1tYA0iykq4jIkbs6jzUlwNGvhPsiSUAw/FPG+CRPUnAxy8CtcmDBFIrTBJM5bMfiZuOe5
+	HHMe4gWg==;
+Received: from [2001:9e8:9df:3501:d236:c226:c7b1:7d83] (port=59208 helo=bergen.fritz.box)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sCiT3-00AmQo-EL;
+	Thu, 30 May 2024 18:17:29 +0200
+Date: Thu, 30 May 2024 18:17:24 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Adrian Huang <adrianhuang0701@gmail.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org, Adrian Huang <ahuang12@lenovo.com>
+Subject: Re: [PATCH 1/1] kbuild: Fix 'import module' error
+Message-ID: <ZlimlGhgULcpCQlO@bergen.fritz.box>
+References: <20240529154621.21354-1-ahuang12@lenovo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DrFMLf5VWQ4FI3T/"
 Content-Disposition: inline
-In-Reply-To: <20240530083513.4135052-3-wenst@chromium.org>
-
-Hi Chen-Yu,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/dt-bindings-clock-mediatek-Add-mt8173-mfgtop/20240530-163739
-base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-patch link:    https://lore.kernel.org/r/20240530083513.4135052-3-wenst%40chromium.org
-patch subject: [PATCH 2/6] clk: mediatek: Add mt8173-mfgtop driver
-config: arc-randconfig-001-20240530 (https://download.01.org/0day-ci/archive/20240531/202405310018.2eeqgDyV-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405310018.2eeqgDyV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405310018.2eeqgDyV-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/pmdomain/core.c: In function 'genpd_queue_power_off_work':
-   drivers/pmdomain/core.c:701:20: error: 'pm_wq' undeclared (first use in this function)
-     701 |         queue_work(pm_wq, &genpd->power_off_work);
-         |                    ^~~~~
-   drivers/pmdomain/core.c:701:20: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/pmdomain/core.c: In function 'genpd_dev_pm_qos_notifier':
-   drivers/pmdomain/core.c:900:39: error: 'struct dev_pm_info' has no member named 'ignore_children'
-     900 |                 if (!dev || dev->power.ignore_children)
-         |                                       ^
-   drivers/pmdomain/core.c: In function 'rtpm_status_str':
->> drivers/pmdomain/core.c:3111:23: error: 'struct dev_pm_info' has no member named 'runtime_error'
-    3111 |         if (dev->power.runtime_error)
-         |                       ^
->> drivers/pmdomain/core.c:3113:28: error: 'struct dev_pm_info' has no member named 'disable_depth'
-    3113 |         else if (dev->power.disable_depth)
-         |                            ^
->> drivers/pmdomain/core.c:3115:28: error: 'struct dev_pm_info' has no member named 'runtime_status'
-    3115 |         else if (dev->power.runtime_status < ARRAY_SIZE(status_lookup))
-         |                            ^
-   drivers/pmdomain/core.c:3116:45: error: 'struct dev_pm_info' has no member named 'runtime_status'
-    3116 |                 p = status_lookup[dev->power.runtime_status];
-         |                                             ^
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for PM_GENERIC_DOMAINS
-   Depends on [n]: PM [=n]
-   Selected by [m]:
-   - COMMON_CLK_MT8173_MFGTOP [=m] && COMMON_CLK [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && COMMON_CLK_MT8173 [=m]
+In-Reply-To: <20240529154621.21354-1-ahuang12@lenovo.com>
+X-Operating-System: Debian GNU/Linux 12.5
+Jabber-ID: nicolas@jabber.no
 
 
-vim +3111 drivers/pmdomain/core.c
+--DrFMLf5VWQ4FI3T/
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3095  
-8b0510b52478a4e drivers/base/power/domain.c Jon Hunter        2016-08-11  3096  #ifdef CONFIG_DEBUG_FS
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3097  /*
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3098   * TODO: This function is a slightly modified version of rtpm_status_show
-d30d819dc831078 drivers/base/power/domain.c Rafael J. Wysocki 2014-11-27  3099   * from sysfs.c, so generalize it.
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3100   */
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3101  static void rtpm_status_str(struct seq_file *s, struct device *dev)
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3102  {
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3103  	static const char * const status_lookup[] = {
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3104  		[RPM_ACTIVE] = "active",
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3105  		[RPM_RESUMING] = "resuming",
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3106  		[RPM_SUSPENDED] = "suspended",
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3107  		[RPM_SUSPENDING] = "suspending"
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3108  	};
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3109  	const char *p = "";
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3110  
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15 @3111  	if (dev->power.runtime_error)
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3112  		p = "error";
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15 @3113  	else if (dev->power.disable_depth)
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3114  		p = "unsupported";
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15 @3115  	else if (dev->power.runtime_status < ARRAY_SIZE(status_lookup))
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3116  		p = status_lookup[dev->power.runtime_status];
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3117  	else
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3118  		WARN_ON(1);
-2bd5306a8764d94 drivers/base/power/domain.c Maciej Matraszek  2014-09-15  3119  
-45fbc464b047b3f drivers/base/power/domain.c Dmitry Osipenko   2021-01-21  3120  	seq_printf(s, "%-25s  ", p);
-45fbc464b047b3f drivers/base/power/domain.c Dmitry Osipenko   2021-01-21  3121  }
-45fbc464b047b3f drivers/base/power/domain.c Dmitry Osipenko   2021-01-21  3122  
+On Wed 29 May 2024 23:46:21 GMT, Adrian Huang wrote:
+> From: Adrian Huang <ahuang12@lenovo.com>
+>=20
+> Commit b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src)
+> for source directory") only changes 'symlinks'. However, 'cmd_symlink'
+> is not changed accordingly. This leads to the following error:
+>=20
+> Traceback (most recent call last):
+>   File "/your_kernel_obj/linux/vmlinux-gdb.py",
+>  line 29, in <module>
+>     import linux.utils
+> ModuleNotFoundError: No module named 'linux.utils'
+>=20
+> Fix the issue by using $(src) instead of $(srctree)/$(src).
+>=20
+> Fixes: b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src) for=
+ source directory")
+> Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+> ---
+>  scripts/gdb/linux/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/scripts/gdb/linux/Makefile b/scripts/gdb/linux/Makefile
+> index d77ad9079d0f..fcd32fcf3ae0 100644
+> --- a/scripts/gdb/linux/Makefile
+> +++ b/scripts/gdb/linux/Makefile
+> @@ -5,7 +5,7 @@ ifdef building_out_of_srctree
+>  symlinks :=3D $(patsubst $(src)/%,%,$(wildcard $(src)/*.py))
+> =20
+>  quiet_cmd_symlink =3D SYMLINK $@
+> -      cmd_symlink =3D ln -fsn $(patsubst $(obj)/%,$(abspath $(srctree))/=
+$(src)/%,$@) $@
+> +      cmd_symlink =3D ln -fsn $(patsubst $(obj)/%,$(abspath $(src))/%,$@=
+) $@
+> =20
+>  always-y +=3D $(symlinks)
+>  $(addprefix $(obj)/, $(symlinks)): FORCE
+> --=20
+> 2.25.1
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Hi Adrian,
+
+this is already fixed in kbuild/for-next.  Unfortunately the patch is=20
+not available at lore.kernel.org (did not not pass any usual mailing=20
+list?), but you can find the pre-applied patch in [1].
+
+Kind regards,
+Nicolas
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild=
+=2Egit/commit/?h=3Dfor-next&id=3D659bbf7e1b08267b8e1dd900b316edcb6f6d9e2e
+
+--DrFMLf5VWQ4FI3T/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmZYpo8ACgkQB1IKcBYm
+EmlAAg/9GS6DEQmsHsHymikvcG8dlQZWOpOVucbl6wVol/jWyoxkvR29i2U9FH1X
+Exb/yUbnzaUjeWFHo4wW6BJQ8N8MrPydh4C3JOcF910Gt+yXeHIWpfzhnHKs9RHx
+u+f7XQ0tVTFjtGWl+qozWGtAgph+7Jl50ApJamNkXkezQDvsx4V0PHUXottQLYts
+Tx3hcDOOkcku5k0yNcQ2qwTauBgsvOwbfSLNW92Dj2Z8wvrNzOwLImD/5quDMoMW
+i50NSIa18mwKWTVUUt09AQWKdUAEewzsyXdRIzgD9FylStGQZFHDOrYBqbXD8lIk
+HAGsujlnlc5ayZq1YphclMH4X/KgnE0405glanS41Gl2UWdvH8xo0DIp/8EFKzgi
+AU7vPzwKF+m5oeUcY2OCeTwCE05AJJOCDkuHz74SPph40f5atXEMGQUkN8LcsqCv
+pTgTI+jdojgrh2PCl1a1jKZXR1OPn/wVpajMYQAYibX2bQPijMz2HhcnePohc6D7
+5D0bd/dE4XYXyHWxdRpC/ncR9TMFhFADdXWdT2messLYFYP/BDFO4AYJlY4qzxiv
+0jGfVwHu2o9B7RydH4JdoXpnkEfqARfGnNC5Wogx7E426ZcIRVvtrl3tB0C48iDv
+hx5tv0eavrMvWz0CI/8Jk0Zxtcme8ARjG5wDEqfLCrM98cXoK6s=
+=jWpY
+-----END PGP SIGNATURE-----
+
+--DrFMLf5VWQ4FI3T/--
 
