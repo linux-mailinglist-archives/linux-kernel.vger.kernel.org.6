@@ -1,344 +1,202 @@
-Return-Path: <linux-kernel+bounces-195145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FC28D4828
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4D88D482C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD201F21B7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B491F21A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 09:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EF5183986;
-	Thu, 30 May 2024 09:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9D818397D;
+	Thu, 30 May 2024 09:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="dvddpCgC"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DRx3fq5G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC824183974
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56085183973
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717060278; cv=none; b=L9J0YEJv+Re/eZ+w4fNC1q4IZQz2iYikrf6XCetprV/j39zMaPg4QPSLNXDvfL9lHSIayoRFbejxc07j3EUc62DjM4R3y0xdyvsL6ZZcfmmpmUs20M2dzNu2A3yi8yr2UA61YTvjxpR4mL/k3FvNVPwIkURCHchiib8icTZMsoU=
+	t=1717060390; cv=none; b=OPrZjlUY8ELnU+jv1eueOe+IgwYaR5kU/FDxxkuMUC+lZIJy5xzVIlJKKw4r/BcaxJQlx67WyXf27oYP1w4OZowuCtHwjCUz8OPBFkTfzgvnZeeMnQLTjCiJImo5yWFCgJqVvU2HTnlHAmjiPyoPanRRkroxo8FEjvRQZemdsn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717060278; c=relaxed/simple;
-	bh=OQUZqyiqRqw6MVyZNj7LqQLdWb6o8zx6lDarPSRDexw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F0cRugZ6vUV+dFhC+EnAtBIW04NBBzqJ+N49TPEKcNCVLQYvv9rMjYAHPYxsiAs2kqYhO3WaaYOYOVuR4uvbCAnA2igFSeSjpYJsjTtnSm0mq7nO+BNYZK74cA4B4BFcH2nPaHlK2fLpO2m63HEMS0sZaHdOFFKskttbuci/7zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=dvddpCgC; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e6f33150bcso6382751fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1717060275; x=1717665075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/DqQQ9Wbu+YPZbJaO7Fnc1iLlsp7PsxeQUPFS9+jrsA=;
-        b=dvddpCgCkGmLQubqCHIHepkdkUwJ/H3w1SnMr6+1lY9nxMY6PglE/3/A07JUOmH7oF
-         lPXfincAzX9SYJqDYVyacwaS4nijQBbs2uzKjm1j946caYC6rxrK0OMbmT3nBgYXvqni
-         Bp0M4KizzMv+pa8hTU8x9ih4WnkkT2GKEpEFQ+c0xhK+KinH+cwThGRmWXfNtmdH9NGr
-         sTfy9/ul835Cy/yTf99xGH8CXgE5+DOA8pilDkT5bdRE1qn2P9aMouV2+0ua4r88lW2m
-         E/VUosSOBQi3zGJDVng7Tmo22paiacHkOx2zdSoCFyG0PdiRNku7zPtDqLpEWLqsdQYh
-         NhiA==
+	s=arc-20240116; t=1717060390; c=relaxed/simple;
+	bh=xCpzaDdKWW9AW8tDLtRBP9eTGLx1aULWHWwVDHvvqeM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=keE/MAPRtVWx/Tq5Fm/TtWQD7nHmonOycAxM3BjIvMl1h1zY5bZWcWsJl42eWv517vout8jyEESpHx6qzhu+n5u9HV5sqKYqCS6EPmpp6gFJ+HOs3gdnWy/QKQNdXVj41btAvTlnCBxiDKKhV5UICAjX47nhrTwJrtwUEewtFlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DRx3fq5G; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717060387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fa4RT2lgTkaA5/fy0D+M4ZVApJB7iK4FR//N3+opHgw=;
+	b=DRx3fq5GWUPFS/Icyak+9Xc/CmEwAcc6fY/SLPK9xAhIPFkUsD2G2ksfdsBRKPkqBsXx+p
+	z6yt7AW0ZGeACsqvWvJ/5HBimEOKwHIJ/Q4uIFGLMo8aSncGTQGxpwN6eXmG8hCJh38b7a
+	lv66uDcTyuTdgP7pRCOWlYBNq2PUYTw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-195--WlxsgArM1yOeEiOPtqXEg-1; Thu, 30 May 2024 05:13:04 -0400
+X-MC-Unique: -WlxsgArM1yOeEiOPtqXEg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-421110ba697so1059165e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:13:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717060275; x=1717665075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/DqQQ9Wbu+YPZbJaO7Fnc1iLlsp7PsxeQUPFS9+jrsA=;
-        b=tG1Dk7InrfJXsnofP0ewmSE2TtrqJ0/9iiGnKY2hb29crtRtEJoQSbc+jZgfqO8lgZ
-         sk6PSPUksOONiwWk707vOFS7ey6ehlK5B2OpGtblUPfVL8sjwPVfuP532heUNk10Soz7
-         yvGi+hAy74u0PwkswoiogWi+uAv6lW9segZnlww5jIKscwHE2W3mppWDsztMK0Bcl51E
-         klc9jYLpP7Bbp5eg5U54hY/z1GQmycRCEmaEZLt5vQQ1I8XHjuiur4OaG6ofGvB2ZGHE
-         bOOV6RBi5n814wBTcIbGlcoN6dYSQgp+8/bR9XXVrftJxKiQBtbNgyxjk3/Jz88IFVEc
-         0nMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/St4oYewFXrcoKW1XFVd1UzpQmX7qLP0Mv3ST93PB6g0pRG8KEOK/c2HiH246GqMku1qf6Z3jCTlHepfhawRIX0zsPzl/0IeDHogR
-X-Gm-Message-State: AOJu0YzUZ09myXNUrC30mf6ZQXuVcfBM5IvkXDSSHOHuHVBwznCxD99Y
-	rlsvpcVaAsHTjrCgUISM8e6aorgNM0UucaDZYVCeYMnQ05FWh+jM39E239DvVFCYKSIIPUAp6+t
-	pDiGyXzHKeCy8kvEdEAvJTDqNJ359FutJ8cq3Hg==
-X-Google-Smtp-Source: AGHT+IE3UrbczeR98FAFrBGOG1YYfrpdBbgnEYLqXDsuG5eVVHriTJ4IqJsscdAXgMQEWruV/b0knhb+a4kC+NV4SXg=
-X-Received: by 2002:a05:651c:90:b0:2ea:7726:4a77 with SMTP id
- 38308e7fff4ca-2ea8482896fmr8496551fa.35.1717060274720; Thu, 30 May 2024
- 02:11:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717060383; x=1717665183;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fa4RT2lgTkaA5/fy0D+M4ZVApJB7iK4FR//N3+opHgw=;
+        b=OpbIkX7JUFjHwaMSS/B5ayO1Gj4BupYcMFRto0cYM/2iAh//YAhXUJEpHHx5TDRulJ
+         YjG4Tzce9JLkCO/ZeMRblgVv+VS1xZVvSUBrSg1ZGL4riDbQYTJrdXmgC+EfoMBtOJ/2
+         EXDbFg9gX7JLIP9gHXGcM+fkGpYGOqZdvepqASDNIhoDvfk6TJ/NLPer0mCsNpMDa2PD
+         mBaF+dA5OKMkJRlMwIRvjEIgXPvtsCVpJqj6hsomvA0I8kh01fxw7HMO0FF/gGPVVgYj
+         1W5CPB7gAr6DBIM7+PrZhQKL1lrsQi2CziYoH6QclHO0HQQ/8hgaRdH/KTUTXdMZjFwF
+         EXGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoXLbY+mUu/Api+1Tn30TLvDyrx20w3TPFIt4Zi8C7H2JD6kPglaSkbJeKlCOD2sdo3I7ApklnrowBCPFMc9zXCWqo1VnBUrZovYj9
+X-Gm-Message-State: AOJu0Yz6CT1lKN7SolQRcvXdzJaNBM8CODebGh7FuXKuChnhnXOqUZDl
+	VUC1l+ySv/yduyACyYN0/PyZe9b0m8YkTmGzntDxYK1TdoPz2Ebas3tHMyOapruVX+CoSEBxF9l
+	u9oOrXltHAKvsTxbJd90fYnlmwBa5vavQbLxUti9yppQNkaU5crDhgYv3NladSw==
+X-Received: by 2002:a05:600c:1d16:b0:41f:cfe6:3646 with SMTP id 5b1f17b1804b1-421279376c9mr12905325e9.4.1717060383030;
+        Thu, 30 May 2024 02:13:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfYVzLKlj78bINf6vRV8yJ9G7297bx2gQYidRL3metYHgNu3hI4g/8Mu8cXbkVwHZEGzKB8g==
+X-Received: by 2002:a05:600c:1d16:b0:41f:cfe6:3646 with SMTP id 5b1f17b1804b1-421279376c9mr12905025e9.4.1717060382620;
+        Thu, 30 May 2024 02:13:02 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10:29ae:cdc:4db4:a22a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42123458a5bsm23676725e9.1.2024.05.30.02.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 02:13:02 -0700 (PDT)
+Message-ID: <4a467adcdb3ca8e272bd3ae1be54272610aabc9b.camel@redhat.com>
+Subject: Re: [PATCH net] net: dsa: microchip: fix KSZ9477 set_ageing_time
+ function
+From: Paolo Abeni <pabeni@redhat.com>
+To: Tristram.Ha@microchip.com, Arun Ramadoss <arun.ramadoss@microchip.com>, 
+ Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli
+ <f.fainelli@gmail.com>,  Vladimir Oltean <olteanv@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,
+ UNGLinuxDriver@microchip.com, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Thu, 30 May 2024 11:13:00 +0200
+In-Reply-To: <1716932192-3555-1-git-send-email-Tristram.Ha@microchip.com>
+References: <1716932192-3555-1-git-send-email-Tristram.Ha@microchip.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
- <20240524103307.2684-2-yongxuan.wang@sifive.com> <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
- <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr> <20240530-3e5538b8e4dea932e2d3edc4@orel>
- <3b76c46f-c502-4245-ae58-be3bd3f8a41f@ghiti.fr>
-In-Reply-To: <3b76c46f-c502-4245-ae58-be3bd3f8a41f@ghiti.fr>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 30 May 2024 14:41:02 +0530
-Message-ID: <CAK9=C2XzAjnHxSt7Voyz5EiM2nDFXqjkAYWyaq-prKpCsHxcPw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 1/5] RISC-V: Detect and Enable Svadu Extension Support
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Andrew Jones <ajones@ventanamicro.com>, Yong-Xuan Wang <yongxuan.wang@sifive.com>, 
-	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	cleger@rivosinc.com, Jinyu Tang <tjytimi@163.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Samuel Ortiz <sameo@rivosinc.com>, 
-	Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Leonardo Bras <leobras@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 2:31=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
-te:
->
-> Hi Andrew,
->
-> On 30/05/2024 10:47, Andrew Jones wrote:
-> > On Thu, May 30, 2024 at 10:19:12AM GMT, Alexandre Ghiti wrote:
-> >> Hi Yong-Xuan,
-> >>
-> >> On 27/05/2024 18:25, Andrew Jones wrote:
-> >>> On Fri, May 24, 2024 at 06:33:01PM GMT, Yong-Xuan Wang wrote:
-> >>>> Svadu is a RISC-V extension for hardware updating of PTE A/D bits.
-> >>>>
-> >>>> In this patch we detect Svadu extension support from DTB and enable =
-it
-> >>>> with SBI FWFT extension. Also we add arch_has_hw_pte_young() to enab=
-le
-> >>>> optimization in MGLRU and __wp_page_copy_user() if Svadu extension i=
-s
-> >>>> available.
-> >>
-> >> So we talked about this yesterday during the linux-riscv patchwork mee=
-ting.
-> >> We came to the conclusion that we should not wait for the SBI FWFT ext=
-ension
-> >> to enable Svadu but instead, it should be enabled by default by openSB=
-I if
-> >> the extension is present in the device tree. This is because we did no=
-t find
-> >> any backward compatibility issues, meaning that enabling Svadu should =
-not
-> >> break any S-mode software.
-> > Unfortunately I joined yesterday's patchwork call late and missed this
-> > discussion. I'm still not sure how we avoid concerns with S-mode softwa=
-re
-> > expecting exceptions by purposely not setting A/D bits, but then not
-> > getting those exceptions.
->
->
-> Most other architectures implement hardware A/D updates, so I don't see
-> what's specific in riscv. In addition, if an OS really needs the
-> exceptions, it can always play with the page table permissions to
-> achieve such behaviour.
->
->
-> >
-> >> This is what you did in your previous versions of
-> >> this patchset so the changes should be easy. This behaviour must be ad=
-ded to
-> >> the dtbinding description of the Svadu extension.
-> >>
-> >> Another thing that we discussed yesterday. There exist 2 schemes to ma=
-nage
-> >> the A/D bits updates, Svade and Svadu. If a platform supports both
-> >> extensions and both are present in the device tree, it is M-mode firmw=
-are's
-> >> responsibility to provide a "sane" device tree to the S-mode software,
-> >> meaning the device tree can not contain both extensions. And because o=
-n such
-> >> platforms, Svadu is more performant than Svade, Svadu should be enable=
-d by
-> >> the M-mode firmware and only Svadu should be present in the device tre=
-e.
-> > I'm not sure firmware will be able to choose svadu when it's available.
-> > For example, platforms which want to conform to the upcoming "Server
-> > Platform" specification must also conform to the RVA23 profile, which
-> > mandates Svade and lists Svadu as an optional extension. This implies t=
-o
-> > me that S-mode should be boot with both svade and svadu in the DT and w=
-ith
-> > svade being the active one. Then, S-mode can choose to request switchin=
-g
-> > to svadu with FWFT.
->
->
-> The problem is that FWFT is not there and won't be there for ~1y
-> (according to Anup). So in the meantime, we prevent all uarchs that
-> support Svadu to take advantage of this.
+On Tue, 2024-05-28 at 14:36 -0700, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
+>=20
+> The aging count is not a simple 11-bit value but comprises a 3-bit
+> multiplier and an 8-bit second count.  The code tries to find a set of
+> values with result close to the specifying value.
+>=20
+> Note LAN937X has similar operation but provides an option to use
+> millisecond instead of second so there will be a separate fix in the
+> future.
+>=20
+> Fixes: 2c119d9982b1 ("net: dsa: microchip: add the support for set_ageing=
+_time")
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> ---
+>  drivers/net/dsa/microchip/ksz9477.c     | 64 +++++++++++++++++++++----
+>  drivers/net/dsa/microchip/ksz9477_reg.h |  1 -
+>  2 files changed, 54 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microc=
+hip/ksz9477.c
+> index f8ad7833f5d9..1af11aee3119 100644
+> --- a/drivers/net/dsa/microchip/ksz9477.c
+> +++ b/drivers/net/dsa/microchip/ksz9477.c
+> @@ -1099,26 +1099,70 @@ void ksz9477_get_caps(struct ksz_device *dev, int=
+ port,
+>  int ksz9477_set_ageing_time(struct ksz_device *dev, unsigned int msecs)
+>  {
+>  	u32 secs =3D msecs / 1000;
+> +	u8 first, last, mult, i;
+> +	int min, ret;
+> +	int diff[8];
+>  	u8 value;
+>  	u8 data;
+> -	int ret;
+> =20
+> -	value =3D FIELD_GET(SW_AGE_PERIOD_7_0_M, secs);
+> +	/* The aging timer comprises a 3-bit multiplier and an 8-bit second
+> +	 * value.  Either of them cannot be zero.  The maximum timer is then
+> +	 * 7 * 255 =3D 1785.
+> +	 */
+> +	if (!secs)
+> +		secs =3D 1;
+> =20
+> -	ret =3D ksz_write8(dev, REG_SW_LUE_CTRL_3, value);
+> +	ret =3D ksz_read8(dev, REG_SW_LUE_CTRL_0, &value);
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> -	data =3D FIELD_GET(SW_AGE_PERIOD_10_8_M, secs);
+> +	/* Check whether there is need to update the multiplier. */
+> +	mult =3D FIELD_GET(SW_AGE_CNT_M, value);
+> +	if (mult > 0) {
+> +		/* Try to use the same multiplier already in the register. */
+> +		min =3D secs / mult;
+> +		if (min <=3D 0xff && min * mult =3D=3D secs)
+> +			return ksz_write8(dev, REG_SW_LUE_CTRL_3, min);
+> +	}
+> =20
+> -	ret =3D ksz_read8(dev, REG_SW_LUE_CTRL_0, &value);
+> -	if (ret < 0)
+> -		return ret;
+> +	/* Return error if too large. */
+> +	if (secs > 7 * 0xff)
+> +		return -EINVAL;
+> +
+> +	/* Find out which combination of multiplier * value results in a timer
+> +	 * value close to the specified timer value.
+> +	 */
+> +	first =3D (secs + 0xfe) / 0xff;
+> +	for (i =3D first; i <=3D 7; i++) {
+> +		min =3D secs / i;
+> +		diff[i] =3D secs - i * min;
+> +		if (!diff[i]) {
+> +			i++;
+> +			break;
+> +		}
+> +	}
+> +
+> +	last =3D i;
+> +	min =3D 0xff;
+> +	for (i =3D last - 1; i >=3D first; i--) {
+> +		if (diff[i] < min) {
+> +			data =3D i;
+> +			min =3D diff[i];
+> +		}
+> +		if (!min)
+> +			break;
+> +	}
 
-SBI v3.0 is expected to freeze by the end of this year so I don't
-think we will have to wait for ~1yr.
+Is the additional accuracy worthy the added complexity WRT:
 
-Plus nothing stops a company to apply patches themselves to
-test on their implementations. Quite a few companies have internal
-forks of Linux where they track upstream patches until they are
-merged.
+	mult =3D DIV_ROUND_UP(secs, 0xff);
 
-Regards,
-Anup
+?
 
->
->
-> >
-> > Thanks,
-> > drew
-> >
-> >> I hope that clearly explains what we discussed yesterday, let me know =
-if you
-> >> (or anyone else) need more explanations. If no one is opposed to this
-> >> solution, do you think you can implement this behaviour? If not, I can=
- deal
-> >> with it, just let me know.
-> >>
-> >> Thanks
-> >>
-> >>
-> >>>> Co-developed-by: Jinyu Tang <tjytimi@163.com>
-> >>>> Signed-off-by: Jinyu Tang <tjytimi@163.com>
-> >>>> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> >>>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >>>> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> >>> I think this patch changed too much to keep r-b's. We didn't have the
-> >>> FWFT part before.
-> >>>
-> >>>> ---
-> >>>>    arch/riscv/Kconfig               |  1 +
-> >>>>    arch/riscv/include/asm/csr.h     |  1 +
-> >>>>    arch/riscv/include/asm/hwcap.h   |  1 +
-> >>>>    arch/riscv/include/asm/pgtable.h |  8 +++++++-
-> >>>>    arch/riscv/kernel/cpufeature.c   | 11 +++++++++++
-> >>>>    5 files changed, 21 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> >>>> index be09c8836d56..30fa558ee284 100644
-> >>>> --- a/arch/riscv/Kconfig
-> >>>> +++ b/arch/riscv/Kconfig
-> >>>> @@ -34,6 +34,7 @@ config RISCV
-> >>>>            select ARCH_HAS_PMEM_API
-> >>>>            select ARCH_HAS_PREPARE_SYNC_CORE_CMD
-> >>>>            select ARCH_HAS_PTE_SPECIAL
-> >>>> +  select ARCH_HAS_HW_PTE_YOUNG
-> >>>>            select ARCH_HAS_SET_DIRECT_MAP if MMU
-> >>>>            select ARCH_HAS_SET_MEMORY if MMU
-> >>>>            select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
-> >>>> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/c=
-sr.h
-> >>>> index 2468c55933cd..2ac270ad4acd 100644
-> >>>> --- a/arch/riscv/include/asm/csr.h
-> >>>> +++ b/arch/riscv/include/asm/csr.h
-> >>>> @@ -194,6 +194,7 @@
-> >>>>    /* xENVCFG flags */
-> >>>>    #define ENVCFG_STCE                     (_AC(1, ULL) << 63)
-> >>>>    #define ENVCFG_PBMTE                    (_AC(1, ULL) << 62)
-> >>>> +#define ENVCFG_ADUE                       (_AC(1, ULL) << 61)
-> >>>>    #define ENVCFG_CBZE                     (_AC(1, UL) << 7)
-> >>>>    #define ENVCFG_CBCFE                    (_AC(1, UL) << 6)
-> >>>>    #define ENVCFG_CBIE_SHIFT               4
-> >>>> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm=
-/hwcap.h
-> >>>> index e17d0078a651..8d539e3f4e11 100644
-> >>>> --- a/arch/riscv/include/asm/hwcap.h
-> >>>> +++ b/arch/riscv/include/asm/hwcap.h
-> >>>> @@ -81,6 +81,7 @@
-> >>>>    #define RISCV_ISA_EXT_ZTSO              72
-> >>>>    #define RISCV_ISA_EXT_ZACAS             73
-> >>>>    #define RISCV_ISA_EXT_XANDESPMU         74
-> >>>> +#define RISCV_ISA_EXT_SVADU               75
-> >>>>    #define RISCV_ISA_EXT_XLINUXENVCFG      127
-> >>>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/a=
-sm/pgtable.h
-> >>>> index 9f8ea0e33eb1..1f1b326ccf63 100644
-> >>>> --- a/arch/riscv/include/asm/pgtable.h
-> >>>> +++ b/arch/riscv/include/asm/pgtable.h
-> >>>> @@ -117,6 +117,7 @@
-> >>>>    #include <asm/tlbflush.h>
-> >>>>    #include <linux/mm_types.h>
-> >>>>    #include <asm/compat.h>
-> >>>> +#include <asm/cpufeature.h>
-> >>>>    #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _P=
-AGE_PFN_SHIFT)
-> >>>> @@ -285,7 +286,6 @@ static inline pte_t pud_pte(pud_t pud)
-> >>>>    }
-> >>>>    #ifdef CONFIG_RISCV_ISA_SVNAPOT
-> >>>> -#include <asm/cpufeature.h>
-> >>>>    static __always_inline bool has_svnapot(void)
-> >>>>    {
-> >>>> @@ -621,6 +621,12 @@ static inline pgprot_t pgprot_writecombine(pgpr=
-ot_t _prot)
-> >>>>            return __pgprot(prot);
-> >>>>    }
-> >>>> +#define arch_has_hw_pte_young arch_has_hw_pte_young
-> >>>> +static inline bool arch_has_hw_pte_young(void)
-> >>>> +{
-> >>>> +  return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
-> >>>> +}
-> >>>> +
-> >>>>    /*
-> >>>>     * THP functions
-> >>>>     */
-> >>>> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpuf=
-eature.c
-> >>>> index 3ed2359eae35..b023908c5932 100644
-> >>>> --- a/arch/riscv/kernel/cpufeature.c
-> >>>> +++ b/arch/riscv/kernel/cpufeature.c
-> >>>> @@ -93,6 +93,16 @@ static bool riscv_isa_extension_check(int id)
-> >>>>                            return false;
-> >>>>                    }
-> >>>>                    return true;
-> >>>> +  case RISCV_ISA_EXT_SVADU:
-> >>>> +          if (sbi_probe_extension(SBI_EXT_FWFT) > 0) {
-> >>> I think we've decided the appropriate way to prove for SBI extensions=
- is
-> >>> to first ensure the SBI version and then do the probe, like we do for=
- STA
-> >>> in has_pv_steal_clock()
-> >>>
-> >>>> +                  struct sbiret ret;
-> >>>> +
-> >>>> +                  ret =3D sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,=
- SBI_FWFT_PTE_AD_HW_UPDATING,
-> >>>> +                                  1, 0, 0, 0, 0);
-> >>>> +
-> >>>> +                  return ret.error =3D=3D SBI_SUCCESS;
-> >>>> +          }
-> >>>> +          return false;
-> >>>>            case RISCV_ISA_EXT_INVALID:
-> >>>>                    return false;
-> >>>>            }
-> >>>> @@ -301,6 +311,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =
-=3D {
-> >>>>            __RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
-> >>>>            __RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
-> >>>>            __RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
-> >>>> +  __RISCV_ISA_EXT_SUPERSET(svadu, RISCV_ISA_EXT_SVADU, riscv_xlinux=
-envcfg_exts),
-> >>> We do we need XLINUXENVCFG?
-> >>>
-> >>> Thanks,
-> >>> drew
-> >>>
-> >>>>            __RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
-> >>>>            __RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
-> >>>>            __RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
-> >>>> --
-> >>>> 2.17.1
-> >>>>
-> >>> _______________________________________________
-> >>> linux-riscv mailing list
-> >>> linux-riscv@lists.infradead.org
-> >>> http://lists.infradead.org/mailman/listinfo/linux-riscv
->
-> --
-> kvm-riscv mailing list
-> kvm-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kvm-riscv
+Paolo
+
 
