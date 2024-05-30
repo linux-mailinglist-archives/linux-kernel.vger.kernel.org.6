@@ -1,118 +1,218 @@
-Return-Path: <linux-kernel+bounces-195391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62288D4C18
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:54:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060FE8D4C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850061F24FE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:54:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B14CB23375
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBC917C9F7;
-	Thu, 30 May 2024 12:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GkDUW/Ri"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E9917C9E5;
-	Thu, 30 May 2024 12:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0DD17CA0B;
+	Thu, 30 May 2024 12:54:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA5D17CA06;
+	Thu, 30 May 2024 12:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717073643; cv=none; b=cTvy9mjrK3I8kXq1FI5QhrVvYwptDbI4Gimi6VtmA5t1yqR95B+ngpJnujVSVvTYMd57tJDtbvZ94vGdcbKLMZnN0UFEnbvROvcyXpHtwiz0xBXp9Rz54EFkWQGjPMzamshoubTxzUkOJ5vLldy/KqZBNVNBXW4XyxbPffoZpdc=
+	t=1717073685; cv=none; b=QLOhCR4ML4o+7IdfqvZVGpHZrMY4ntSxqhLeQ9kzuwkk8RZzghO3FZiat9n41agxbMgfRx4bO65qD6d+A+ZjXH4V8S/5+IRwvD+qeYshfzN6vUQloMkmVhby+AQy9pYYPJs5K0FnCx8ciyHc1zxGJ+8lnTW1bsrI9X5XoPNCVq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717073643; c=relaxed/simple;
-	bh=F3lUDpXkkg1u1Y2GeIDaUK3xQK3ttNcJBGHRBMhMWw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sR4r3cZWZGQN+4nfBtSeHkLiih6Wel38vneT2GtzQVqZS1tt+xRAhuE/JveJk3vP6wDHDtsLedHgk+wo8+Esa7np7WwZnjqeu1iojgLKGyXhT7NfcB1Q4+AC61BD352fubfkY/+PatYdaa/jQirr8izZo4DAY8T4sQLVt2dkwWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GkDUW/Ri; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C7B7540006;
-	Thu, 30 May 2024 12:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717073633;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+ttqbsSC7Mf0krLnfeQ88z6eFjeEfepuvZI0uIRmts=;
-	b=GkDUW/RiMVgDGnGgeGDIBqIjxy1uL7fgZXm0U0PQH4UJpW0XPX2hjMuFGP72O6Gq7gELr7
-	uZFQ4E+kBFNGaO73dpNyfsRJjCEL+f5cyXqf55ht+zHvWlYrYVu66JpTjF1BWaZaFiWCBn
-	Nc1goeE88WvTV93c69VmmxsEZPNf0CHc5MiKEYO2uzbNtcmXEVknfpaoWeQSVXyChO9P0f
-	Fi/yuJbpxZpv6T1h+JUF/YMf1XkdEWfGfGJnZbLRQJ4//NS4y1lm1HjHLv6yBRWt1afUr1
-	BYdYq65E/E6gSooj3mU39R+Ws/tdYoXC+ByJdSNEgVJeNPl+CkGfkeg8ltkdig==
-Date: Thu, 30 May 2024 14:53:50 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Sai Krishna Gajula <saikrishnag@marvell.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Radu
- Pirea <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh
- <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- "UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>, Simon Horman
- <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>
-Subject: Re:  [PATCH net-next v13 12/14] net: ptp: Move ptp_clock_index() to
- builtin symbol
-Message-ID: <20240530145350.6341746f@kmaincent-XPS-13-7390>
-In-Reply-To: <BY3PR18MB47074528CBB38F55A3F58A19A0F32@BY3PR18MB4707.namprd18.prod.outlook.com>
-References: <20240529-feature_ptp_netnext-v13-0-6eda4d40fa4f@bootlin.com>
-	<20240529-feature_ptp_netnext-v13-12-6eda4d40fa4f@bootlin.com>
-	<BY3PR18MB47074528CBB38F55A3F58A19A0F32@BY3PR18MB4707.namprd18.prod.outlook.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717073685; c=relaxed/simple;
+	bh=bIrMEs5NYdtb9T9UOCr6ZAsNT8glRmdAXyGs2MUvXok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yn7zUG00PG7OtiHv0D2vKhWJXKp7Ave/KHcX0agnET7SXG46fOe6iEmOJntD8W31JcMZy6+W+nCocagrB+8Ucf/cSvH21fasfJOnVuHJyVZMYbWB2TItZGWNUWdLQFYGhnSURi54ZFxpFpAQbAzKjn2klh/a/88bIBrJ//nwnPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BD35339;
+	Thu, 30 May 2024 05:55:06 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 628EF3F792;
+	Thu, 30 May 2024 05:54:40 -0700 (PDT)
+Message-ID: <193884e6-0911-4a5f-9676-74e1630f9a28@arm.com>
+Date: Thu, 30 May 2024 13:54:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/4] tools/perf: Allow inherit + PERF_SAMPLE_READ when
+ opening events
+To: Namhyung Kim <namhyung@kernel.org>, Ben Gainey <Ben.Gainey@arm.com>
+Cc: "alexander.shishkin@linux.intel.com"
+ <alexander.shishkin@linux.intel.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "acme@kernel.org" <acme@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+ "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+ "irogers@google.com" <irogers@google.com>,
+ "jolsa@kernel.org" <jolsa@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+ Mark Rutland <Mark.Rutland@arm.com>
+References: <20240521133029.83654-1-ben.gainey@arm.com>
+ <20240521133029.83654-5-ben.gainey@arm.com>
+ <CAM9d7chssov_fW3ZbpYqGRyhS=xuHLyJ7=rkxTNnJ6fkgEdGJQ@mail.gmail.com>
+ <a12573d18f7c8bf73c24c572e43965e3f250acea.camel@arm.com>
+ <e114bf8d2e7b6c0874fffdf8867c954a08772da3.camel@arm.com>
+ <CAM9d7cjmH=nkEt-z_XpZ1J0oL-EY2d52oz70-KpN+uzM5SEk6A@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <CAM9d7cjmH=nkEt-z_XpZ1J0oL-EY2d52oz70-KpN+uzM5SEk6A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Sai,
 
-On Thu, 30 May 2024 11:23:10 +0000
-Sai Krishna Gajula <saikrishnag@marvell.com> wrote:
 
-> > Move ptp_clock_index() to builtin symbols to prepare for supporting get=
- and
-> > set hardware timestamps from ethtool, which is builtin.
-> >=20
-> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+On 29/05/2024 20:18, Namhyung Kim wrote:
+> Hello,
+> 
+> On Wed, May 29, 2024 at 10:48 AM Ben Gainey <Ben.Gainey@arm.com> wrote:
+>>
+>> On Mon, 2024-05-27 at 18:47 +0100, Ben Gainey wrote:
+>>> On Thu, 2024-05-23 at 18:41 -0700, Namhyung Kim wrote:
+>>>> On Tue, May 21, 2024 at 6:30 AM Ben Gainey <ben.gainey@arm.com>
+>>>> wrote:
+>>>>>
+>>>>> The tool will now default to this new mode if the user specifies
+>>>>> a
+>>>>> sampling group when not in system-wide mode, and when --no-
+>>>>> inherit
+>>>>> is not specified.
+>>>>>
+>>>>> This change updates evsel to allow the combination of inherit
+>>>>> and PERF_SAMPLE_READ.
+>>>>>
+>>>>> A fallback is implemented for kernel versions where this feature
+>>>>> is
+>>>>> not
+>>>>> supported.
+>>>>
+>>>> But I'm afraid the test would fail on old kernels.  Maybe we need
+>>>> to
+>>>> put it in the selftests.
+>>>>
+>>>
+>>> Sorry, not clear what you mean?
+>>>
+>>> Is the issue that the fallback on older kernels fails, or that the
+>>> "perf test" tests fail?
+>>>
+>>> Thanks
+>>> Ben
+>>
+>> Just to follow up, I've rechecked the fallback on an unmodified 6.9.1
+>> kernel with the following:
+>>
+>>     perf record -vv -e '{cycles,instructions}:S' ls
+>>
+>> With an unpatched version of perf running on an unpatched kernel, the
+>> cycles event is opened as:
+>>
+>>     ------------------------------------------------------------
+>>     perf_event_attr:
+>>       type                             0 (PERF_TYPE_HARDWARE)
+>>       size                             136
+>>       config                           0 (PERF_COUNT_HW_CPU_CYCLES)
+>>       { sample_period, sample_freq }   4000
+>>       sample_type                      IP|TID|TIME|READ|ID|PERIOD
+>>       read_format                      ID|GROUP|LOST
+>>       disabled                         1
+>>       exclude_kernel                   1
+>>       exclude_hv                       1
+>>       mmap                             1
+>>       comm                             1
+>>       freq                             1
+>>       enable_on_exec                   1
+>>       task                             1
+>>       sample_id_all                    1
+>>       exclude_guest                    1
+>>       mmap2                            1
+>>       comm_exec                        1
+>>       ksymbol                          1
+>>       bpf_event                        1
+>>     ------------------------------------------------------------
+>>
+>> whereas with these patches applied to perf, on an unpatched kernel, the
+>> output is as follows
+>>
+>>     ------------------------------------------------------------
+>>     perf_event_attr:
+>>       type                             0 (PERF_TYPE_HARDWARE)
+>>       size                             136
+>>       config                           0 (PERF_COUNT_HW_CPU_CYCLES)
+>>       { sample_period, sample_freq }   4000
+>>       sample_type                      IP|TID|TIME|READ|ID|PERIOD
+>>       read_format                      ID|GROUP|LOST
+>>       disabled                         1
+>>       inherit                          1
+>>       exclude_kernel                   1
+>>       exclude_hv                       1
+>>       mmap                             1
+>>       comm                             1
+>>       freq                             1
+>>       enable_on_exec                   1
+>>       task                             1
+>>       sample_id_all                    1
+>>       exclude_guest                    1
+>>       mmap2                            1
+>>       comm_exec                        1
+>>       ksymbol                          1
+>>       bpf_event                        1
+>>     ------------------------------------------------------------
+>>     sys_perf_event_open: pid 3442954  cpu 0  group_fd -1  flags 0x8
+>>     sys_perf_event_open failed, error -22
+>>     Using PERF_SAMPLE_READ / :S modifier is not compatible with
+>> inherit, falling back to no-inherit.
+>>     ------------------------------------------------------------
+>>     perf_event_attr:
+>>       type                             0 (PERF_TYPE_HARDWARE)
+>>       size                             136
+>>       config                           0 (PERF_COUNT_HW_CPU_CYCLES)
+>>       { sample_period, sample_freq }   4000
+>>       sample_type                      IP|TID|TIME|READ|ID|PERIOD
+>>       read_format                      ID|GROUP|LOST
+>>       disabled                         1
+>>       exclude_kernel                   1
+>>       exclude_hv                       1
+>>       mmap                             1
+>>       comm                             1
+>>       freq                             1
+>>       enable_on_exec                   1
+>>       task                             1
+>>       sample_id_all                    1
+>>       exclude_guest                    1
+>>       mmap2                            1
+>>       comm_exec                        1
+>>       ksymbol                          1
+>>       bpf_event                        1
+>>     ------------------------------------------------------------
+>>
+>> The command falls back to the same configuration as was previously
+>> used. The same is true for the instructions event.
+>>
+>> `perf test` fails on an unpatched kernel in "15: Setup struct
+>> perf_event_attr" for the test "test-record-group-sampling1" but that is
+>> surely expected for unpatched kernels?
+>>
+>> Is there some very-old kernel version where this would be expected to
+>> succeed by accident?
+> 
+> I don't think so but I don't want the test to fail depending on the
+> kernel version.  Maybe we can check the allowed combination
+> first and skip the test if perf_event_open() fails.  And then it can
+> verify if the kernel rejects the unsupported combinations.  Not
+> sure if it's easy to do that in the current attr test framework.
+> 
+> Thanks,
+> Namhyung
 
-> >  }
-> > +
-> > +int ptp_clock_index(struct ptp_clock *ptp) {
-> > +	return ptp->index;
-> > +}
-> > +EXPORT_SYMBOL(ptp_clock_index);
-> >  =20
-> Please check the "build_clang - FAILED", "build_32bit - FAILED" build err=
-ors.
+I added the kernel version feature to the attr tests. Seems like you can
+add two tests, one for before and one for after.
 
-Could you be more explicit? Which config are you using?
-What is the build error?
-
-I don't really see how this patch can bring a 32bit or clang build error.=20
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Search "kernel_until" in tests/attr
 
