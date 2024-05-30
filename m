@@ -1,138 +1,199 @@
-Return-Path: <linux-kernel+bounces-194991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CB58D45A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:53:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 681E88D45AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 08:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF6B1F22B3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79BA1F2226C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 06:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CD63DAC01;
-	Thu, 30 May 2024 06:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3313DABF3;
+	Thu, 30 May 2024 06:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1w9TYqL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=heusipp.de header.i=osmanx@heusipp.de header.b="pts2MKZz"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0CA3207;
-	Thu, 30 May 2024 06:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7A3207;
+	Thu, 30 May 2024 06:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717052012; cv=none; b=F0UMp9WQBysl75EdcaAM0SCKY/nIUMCs9qfOZ83ppafl/7xU9MY+EV6+q0k9Af/+s/RG+lJdaCkWEcBJzTR5oC47H3gsSpWF43fkG7QjiCVIaFcwyjlzM1wEt2YbpoyfPy3FBCZgBG1eRovoBWVBtnI1en6yfoTLemcPA0c40fY=
+	t=1717052309; cv=none; b=JbxVhRa3NE8R05skAAuIX8yvo2CQGNzy3cQUFjmvm1opxlxdcmt2YzwbgeRRCB5GcZL9x/XkEsUAYkUOTaj5cY9y81+DQvljsCFvxfRkUEQ6tPAfTypuunFdglLk+4QdIlQJK6sfMPXZ0uKMOEqred7BdkkyRZ1fL/v1Wpi/IB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717052012; c=relaxed/simple;
-	bh=YivRkEe7rYoBFKl0+BZR93LLEk9IpGONpZAKzglbHXs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=Cf34nNYBDLjNA3BnutkTTYtH+2epcV4pgB0+TeNVbpR3nm4pmsmLYWILTsmRkBzcK31pWC79rsgxWnFjHFnwYs6paeTtx5wQIQAHLwStXMhfTMnOLSxuOQOf0FiUKUCVbkwgLErLEbAfC33SjK//3P655td74D+FNUFgjLNVIs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1w9TYqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11ACBC32782;
-	Thu, 30 May 2024 06:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717052012;
-	bh=YivRkEe7rYoBFKl0+BZR93LLEk9IpGONpZAKzglbHXs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=h1w9TYqLc+EMav3BOhfGxWUcC9ah2ZK/gIrpZw7dlayxFXTfzLiAs7mB7mojy82Wy
-	 +JjpG8pjv/s9Qjfo9WkxaiDLVkg6lFKdSc1exbqRKXtLB9TEeUPsQR4WIzkAMKXbK4
-	 hW2+I7t9G2SeXmL9aIAo46aiZpLeuhx/GlkIPfnCkgN924TRZSdAiK3JL9L/8Hhipt
-	 JyYGtcSm0YEUgMEbmePfHq/IigYiEwH7O5y2Lb9RX4uBrFahCrkjb24Vzv6cKgYZtC
-	 oFgA3k+KYvHpxTLQ0hbpimm43aoByP+sxqOFX28mqwn90h9dssQ0MR/mtjY+3v7J+J
-	 W3c3rbzZ5ck4Q==
-From: Kalle Valo <kvalo@kernel.org>
-To: Dave Jiang <dave.jiang@intel.com>, Dan Williams
- <dan.j.williams@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-wireless@vger.kernel.org,  ath11k@lists.infradead.org,
-  regressions@lists.linux.dev,  Jeff Johnson <quic_jjohnson@quicinc.com>,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org
-Subject: Re: [regression] BUG: KASAN: use-after-free in
- lockdep_register_key+0x755/0x8f0
-References: <87v82y6wvi.fsf@kernel.org> <87wmncwqxf.fsf@kernel.org>
-Date: Thu, 30 May 2024 09:53:28 +0300
-In-Reply-To: <87wmncwqxf.fsf@kernel.org> (Kalle Valo's message of "Wed, 29 May
-	2024 18:58:36 +0300")
-Message-ID: <87sexzx02f.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717052309; c=relaxed/simple;
+	bh=Q24j6yIH7s08CTSE4qObX2dFfjNPZkJG7EUnZrGtF0U=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=hU+iq/QN3Yj/ugpStFGlVDPVwpYQoLmEo/tLJrB5g2Rnl24Z9/PNfDCstiNHWIwKAUeduVXQ8QbURZQZM9c8LJa5gBky85KhiMJLEeVZxbw7kcNsxNxrAVEmaYoz9PIKPNRCBr9nyGYfF3oooQzA2bLr5o90wvxT82RxXbk/rUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusipp.de; spf=pass smtp.mailfrom=heusipp.de; dkim=pass (2048-bit key) header.d=heusipp.de header.i=osmanx@heusipp.de header.b=pts2MKZz; arc=none smtp.client-ip=212.227.126.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusipp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusipp.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusipp.de;
+	s=s1-ionos; t=1717052242; x=1717657042; i=osmanx@heusipp.de;
+	bh=Fo4BgflZWecJohsoS79xT7lDDfQyodBVtxTcq1PAzfA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pts2MKZz7kgcjx/+PpTkwVyEyaENacX88nmTaPrTl0svtDcftQIy3U46LZLGcW1i
+	 4KGv2H79iKqVxO9sfEOfsoAd6ZXOv7OdJT9y59slx05lfPWoONy1M+JCUd3gzV2F3
+	 EO1L+G4fdq/hFZjCPNreZbx32jnADVGsboGua96exMPfkWJatRToVOLTQQR/vdiec
+	 ri3iK9RdNSvRJ/qb0u6YGDhOL2rROOx7LKGXne4xTbJQAkiC7blU8lUr9cdaYHK6Y
+	 aUfxz2BxP/Wl/EfEFdrkyfHklhP7iKD7n6j33QZr5amhDd6weAj2Hj352h8Hunn1a
+	 2isTqJjQRJuya5E5MQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.178.90] ([91.62.108.110]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N8VkX-1sZ2MV0MRF-014XdX; Thu, 30 May 2024 08:57:22 +0200
+Message-ID: <ebb0791c-60a5-4fe3-bc85-4921ad026605@heusipp.de>
+Date: Thu, 30 May 2024 08:55:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org
+Cc: regressions@lists.linux.dev, x86@kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Adam Dunlap <acdunlap@google.com>, 1071378@bugs.debian.org
+From: =?UTF-8?Q?J=C3=B6rn_Heusipp?= <osmanx@heusipp.de>
+Subject: [REGRESSION] commit fbf6449f84bf5e4ad09f2c09ee70ed7d629b5ff6 (Linux
+ 6.7+) crashes during boot
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HffBv4SMVjsPC+qpltN+HG0UCXLrEFrT9hOmGHmZckVal2wYApV
+ pk1CkSDYgc0pEZayWbhZtJHFANw3ey+7NozjuMzWScgZYOWVmSPXdFhnEE+p8SOTtB7HIkS
+ Puqg4Vmap1LuSa/zKxkFFCy3egvI1N7a35fLLb+9WbG9MXEZRs+jsmw5kWfaYw9CZpAl9OR
+ j2x8kVoNazCCoIV2J5bvQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Dfsbd70IDLU=;bJEONB2t5aj0mJ3rRr+FJ/BPcrI
+ +xO+kz2X4aYkMFJFH1cI7jzpUVi3b47moV6reiWuta4e3UW8Cw0eyVDRjVUWmxCTT9N5fRTPD
+ VYup0w7HcKrTS9biM4JtRNegD9ZlqW5h7CYTx286YzOAVBqGwLQCQlLf9iXbe3tgpNl5vNfVK
+ A1l3eF8xiKy1S9A2EzvULZpEaZtW6sv+e3h8UfKzCYlUVt3ycdpmgRUJ95aY9ai6TXgfbMyFW
+ AQT2wdvuGitXK/XjYWsz6ALAj4DwB/i7+31tzvsBHG8A+mweGPCLSQ/k0LPz7OMKzrARFDZBB
+ j/GOSP04jOwjDGsfIeKMRVzQJqjGfqV9Ui5fQNlqTNXgdQGeA+ZnzB/y35Vt+xh50K1gessPU
+ AaVYiufpWmXzOHzT6C/BjIPzeJDszYM/2VtwFZ5umvs+MUaGUcWQ/LtEtmWzzLcvnMuKW9EaZ
+ cgHzf37oMq01MFEuKSpI2H0BF9tu87UMx0LHUwc9lpfDDeXzd2wj7dPwNtnNGmX6BvB5Tc0fA
+ KB+U0eLaBuLn4Fm3rZLLGiNrcZIGBBYsj3P3k15sFg9XhDtp6jP/w8QwrG+EpQtEDnS1OwESD
+ KvKa8q2se5LA2jdkN8OFv6HXMro7NjLmTi+F+IMmBDNrbKirdcq4CNPGnhGMdyugC/SzXsdlw
+ D0YFKmvpxjoqAluO2fgV/HtSRMgm/Ffycw8cDuQis2Z/Bty+WyWHb8rvfOO50xu3bkhRmyr07
+ 0OU9Mfdx2cemZbgatzbk1BZCwvdnEfPGjOA98pfYDvglxW1AB8cR+g=
 
-Kalle Valo <kvalo@kernel.org> writes:
 
-> Kalle Valo <kvalo@kernel.org> writes:
->
->> Yesterday I run our ath11k regression tests with v6.10-rc1 and our
->> simple ath11k module reload stress started failing reliably with various
->> KASAN errors. The test removes and inserts ath11k and other wireless
->> modules in a loop. Usually I run it at least 100 times, some times even
->> more, and no issues until yesterday.
->>
->> I have verified that the last wireless-next pull request (tag
->> wireless-next-2024-05-08) works without issues and v6.10-rc1 fails
->> always, usually within 50 module reload loops. From this I'm _guessing_
->> that we have a regression outside wireless, most probably introduced
->> between v6.9 and v6.10-rc1. But of course I cannot be sure of anything
->> yet.
->>
->> I see different KASAN warnings and lockdep seems to be always visible in
->> the stack traces. I think I can reproduce the issue within 15 minutes or
->> so. Before I start bisecting has anyone else seen anything similar? Or
->> any suggestions how to debug this further?
->>
->> I have included some crash logs below, they are retrieved using
->> netconsole. Here's a summary of the errors:
->>
->> [ 159.970765] KASAN: maybe wild-memory-access in range
->> [0xbbbbbbbbbbbbbbb8-0xbbbbbbbbbbbbbbbf]
->> [  700.017632] BUG: KASAN: use-after-free in lockdep_register_key+0x755/0x8f0
->> [  224.695821] BUG: KASAN: slab-out-of-bounds in lockdep_register_key+0x755/0x8f0
->> [  259.666542] BUG: KASAN: slab-use-after-free in lockdep_register_key+0x755/0x8f0
->
-> I did a bisect and got this:
->
-> cf29111d3e4a9ebe1cbe2b431274718506d69f10 is the first bad commit
-> commit cf29111d3e4a9ebe1cbe2b431274718506d69f10
-> Merge: ed11a28cb709 e6f7d27df5d2
-> Author: Bjorn Helgaas <bhelgaas@google.com>
-> Date:   Thu May 16 18:14:11 2024 -0500
->
->     Merge branch 'pci/of'
->     
->     - Check for kcalloc() failure and handle it gracefully (Duoming Zhou)
->     
->     * pci/of:
->       PCI: of_property: Return error for int_map allocation failure
->
->  drivers/pci/of_property.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> But that doesn't make any sense to me, I don't even have
-> CONFIG_PCI_DYNAMIC_OF_NODES enabled in my .config. I guess I did a
-> mistake during bisect, I'm now testing the parents (e6f7d27df5d2 and
-> ed11a28cb709) and trying to pinpoint where I did it wrong.
+Hello x86 maintainers!
 
-I found my mistake and was able to finish the bisect. This seems to be
-the commit causing my problems:
 
-# first bad commit: [7e89efc6e9e402839643cb297bab14055c547f07] PCI: Lock upstream bridge for pci_reset_function()
+commit fbf6449f84bf5e4ad09f2c09ee70ed7d629b5ff6 ("x86/sev-es: Set
+x86_virt_bits to the correct value straight away, instead of a two-phase
+approach") crashes during boot for me on this 32bit x86 system.
 
-I verified by reverting that commit on top of v6.10-rc1 and I have not
-seen any crashes so far, normally I would have seen it by now. But I
-will continue testing the revert just to be sure.
+Updating a Debian testing system resulted in a hang during boot before
+printing anything, with any 6.7 or later kernel. With 'earlyprintk=3Dvga',
+I managed to capture the crash on video and stitched it together as an
+image [1].
+Trimmed transcription (might contain typos) of the crash from Debian
+kernel 6.7.12-1:
+=3D=3D=3D
+BUG: kernel NULL pointer dereference, address: 00000010
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0002) - not-present page
+Oops: 0002 [#1] PREEMPT SMP NOPTI
+[...]
+EIP: __ring_buffer_alloc+0x32/0x194
+[...]
+show_regs
+__die
+page_fault_oops
+kernelmode_fixup_or_oops.constprop
+__bad_area_nosemaphore.constprop
+bad_area_nosemaphore
+do_user_addr_fault
+prb_read_valid
+exc_page_fault
+pvclock_clocksource_read_nowd
+handle_exception
+pvclock_clocksource_read_nowd
+__ring_buffer_alloc
+pvclock_clocksource_read_nowd
+__ring_buffer_alloc
+early_trace_init
+start_kernel
+i386_start_kernel
+startup_32_smp
+[...]
+=3D=3D=3D
+I could transcribe all of it or capture it again from latest git and
+decode the symbols, if truely really needed, but I figured the type of
+crash and the trace itself could maybe be sufficient. It looks identical
+to me for all later crashing kernel versions.
 
-Adding people and lists involved with that commit. Here is my original
-report:
+I bisected this down to commit fbf6449f84bf5e4ad09f2c09ee70ed7d629b5ff6.
 
-https://lore.kernel.org/all/87v82y6wvi.fsf@kernel.org/
+The kernel config [2] I used is 'make olddefconfig' based on Debian's
+config-6.8.11-686-pae [3].
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+I also tested 6.9.2 and 6.10-rc1, both also still crash in the same way.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+cpuinfo:
+=3D=3D=3D
+manx@caesar:~$ cat /proc/cpuinfo
+processor       : 0
+vendor_id       : AuthenticAMD
+cpu family      : 6
+model           : 8
+model name      : AMD Duron(tm)
+stepping        : 1
+cpu MHz         : 1798.331
+cache size      : 64 KB
+physical id     : 0
+siblings        : 1
+core id         : 0
+cpu cores       : 1
+apicid          : 0
+initial apicid  : 0
+fdiv_bug        : no
+f00f_bug        : no
+coma_bug        : no
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 1
+wp              : yes
+flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge
+mca cmov pat pse36 mmx fxsr sse syscall mmxext 3dnowext 3dnow cpuid
+3dnowprefetch vmmcall
+bugs            : fxsave_leak sysret_ss_attrs spectre_v1 spectre_v2
+spec_store_bypass
+bogomips        : 3596.66
+clflush size    : 32
+cache_alignment : 32
+address sizes   : 34 bits physical, 32 bits virtual
+power management: ts
+=3D=3D=3D
+
+dmesg from a successful boot (Debian kernel 6.6.15-2) is here [4].
+
+This particular system has been running all Debian testing kernels since
+at least the 2.6.32 days and is currently running 6.6.15-2 completely
+fine, thus this is an obvious regression.
+
+The original Debian bug is #1071378 [5].
+
+
+#regzbot introduced: fbf6449f84bf5e4ad09f2c09ee70ed7d629b5ff6
+
+[1] https://manx.datengang.de/temp/linux-6.7-crash/6.7.12-1-crash.png
+[2] https://manx.datengang.de/temp/linux-6.7-crash/config
+[3] https://manx.datengang.de/temp/linux-6.7-crash/config-6.8.11-686-pae
+[4] https://manx.datengang.de/temp/linux-6.7-crash/dmesg-6.6.15-2.txt
+[5] https://bugs.debian.org/1071378
+
+
+Best regards,
+J=C3=B6rn
 
