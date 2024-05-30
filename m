@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-195893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73B78D53FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:43:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE608D53FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DFE61C23448
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:43:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24A75B25036
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F7384FA5;
-	Thu, 30 May 2024 20:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8137A705;
+	Thu, 30 May 2024 20:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JkHVRxM8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acrC+i0L"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D082925634;
-	Thu, 30 May 2024 20:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76E425634;
+	Thu, 30 May 2024 20:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717101798; cv=none; b=WlEsPRWMUKNgLlga7qbBTuhwQYIzLb0ryBqq4CxO/fyFtgHnqTKf2bpMWgi6JABWqZMOLIo5tDUuXsY47kHr2OL6bjZnYm/b88U68KsaGhj0CaIHiTOrvAJiFLpAa6PRb49aUG7s9mMyYpHPksxTVX3P/8c+li3CEna7UNnvhb0=
+	t=1717101853; cv=none; b=ixHPwWhRmW/jHdq0hLg3wBzLJ8rXQBUmc912HPTR0N5rcOBDnEY/FiFScZNpH6qKBR3exyHZOnftcR+omKfQY/TIHM5/2SqHEksGQoohxwqCObuaKlKskN9nIjQ8r+UNoxXeItZYxMZOxe63UdHZzvMDIb5uOcglwS/x7QhjVX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717101798; c=relaxed/simple;
-	bh=b6+9QcaqPR6eKd7vhRCL3IX8thga/VHY8xqdaoMG6a8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=IauSOvwdVNCYoaSt/B8fG+pbuWZx7gt8m2c77d0jm6PxR3/mvsxr/g0mdXYecI54dXGAwZfo+APgUNYKL7oMV/HCGAa3+nDuJCajHeln8VFumACUqUjN77BetRiKmDqc+kj8WrYgFT6KUB28xC7ymqsoSVMoVbuSvD6Ypy47eU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JkHVRxM8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UJPcrp015856;
-	Thu, 30 May 2024 20:42:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=jA5uTw0t5SGe/0e2eS5aqq
-	8ToPbks7henFGLd7/wDGE=; b=JkHVRxM8fyYtzNCZUKgw1g4gDCicSOAbzodrRF
-	XYG5GNPsuywp8Q6gn64Ma4EBGfSQueKpStmLKMDFcnRUBKPdvLWz1e7N5RNqVjZn
-	gaX2XDc9WP+MX2KtVIYObtWcnFHTb7dN6osBbhyBDWqHALT7Hr8DoxSs9v4sqrKq
-	R6D/Qleo8h2h6PnhNaT9eTiYMolqRUFIyXYZS93YpO1QkLieKv286mtO3P3Vo0yr
-	Y6n171px//wsQV8UQbZwSDxMeN1Sl0k2WfOQ7c76cG8De/CFCZuQBG8Ke5hY5TA5
-	dMTjn6IJnZPwYyWze9QEDLQ8IvnulYnp6UG8u90lhKuGsgZA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pw6dy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 20:42:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UKgrvH012330
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 20:42:53 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 13:42:51 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 30 May 2024 13:42:51 -0700
-Subject: [PATCH] perf/x86/intel: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717101853; c=relaxed/simple;
+	bh=iIv8OvYeES0t/JaFGpjVn8VOyxh5v0yLgFssAm2zZJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQVU5J9aWil4rOY8z3iWKoVJG2WxOd8C7Mo+IV3XVfmpOQ5+HKYgp6TVBxb58eNvXJqt/G3MjVTW4z+iN1kYo2lvY/fh0aEd3KNjQjpoGI9+42a4ZWxxC0+u0n5/F+Av+XQHM049LipnwWWCNZvkmtNrBaMueMmx5V9BTt0+yi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acrC+i0L; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70244776719so78480b3a.2;
+        Thu, 30 May 2024 13:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717101851; x=1717706651; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X1/q38ajc2cigpnUWtYXKrDTQJnogN5TA72dnoPxc4w=;
+        b=acrC+i0LNWQDNPbx0azRUCU+nBcaIhx600qu3eeDKu/vDz1LHQ6AOYY+10wQa3MT4c
+         Df8ox8BaXdBo6V6ESpxn5kylG+4X/2aphd9EcYh+zUGK5aiCj2VNQYWQXzMC9GomhoMb
+         /V2EzG/MPYB6Jm9IivqBQYvOsjkZYx/tPeM85rWGH11/oP2m+LU28x/6loff843LA6GS
+         jpYmbSWFi32vnwlUWro9C07vVaW3mR4MKVD/rbwxjDfkG0wOb9q+H5cLeHoEFsroX0aY
+         sKnE51AfWLqQ2dBRdmrnmJV2F7vcgDBrG4nMgaDhTMPQpC+CdP27GlZqF/YnyNS7zP4C
+         E4cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717101851; x=1717706651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X1/q38ajc2cigpnUWtYXKrDTQJnogN5TA72dnoPxc4w=;
+        b=eFIhh13ugVMNEzWYyQPmRnY9v8PEx5VgwJXEGP1SUWHqLj2E3q5hj9nJfOrpCy66zd
+         Ch245klIzgEhuutbadUHbMkSeIrza1UbLP0l5q2UAg+4jOyyBYfMR3wdLw/+apTkPr0K
+         gp+vYZy0HsyQ8owZnZkzQII+mwfnX5ZHe7YALcK5NHqoAbA+OU2v/zzi+JLuSRnrYJRx
+         /ChagylEmoGcP/Eb5n7l5SlFm5vBA16s5wLJE691PlQs19W0gpM7kaiF/c0v9xGp/sZ2
+         dVi0Mnv+GAGyHymlpvh+ozr0XLCjMQtNYF/dcdOE3S+v8bDcePA3ODi7C7AZS5RBxl7k
+         VNHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpY9LlgnhoYLSt0V9uOIV+FV9OPRN5yhNXZH6lKlDy062oKN5UpN2WNYezAreq0tGGog24X/CVs0zJPlyNCkAEKwltYhckkY1H5BcM91LOsxBMkj/8mQRMaq390RoI3+sBRGQOzqxRtiw=
+X-Gm-Message-State: AOJu0Ywfe3Cw+IE79XQRZHXIELXE2xzJBxYSOf7yOYoQ3I7IQ1wpIeyU
+	nPdzAh0wH0Ny8xJhJzDtwxYicD5PKfrOPnMiR9vIJLOQpwM1yGJA
+X-Google-Smtp-Source: AGHT+IHj8j/zqaOBcjIT/XxOQNe1B+xo2dkm5mX/TzMHOSAr352c3GTLXoqD+H9hb7VWqXR5OoAM0g==
+X-Received: by 2002:a05:6a20:3206:b0:1af:dae8:5eac with SMTP id adf61e73a8af0-1b26f23d501mr82943637.46.1717101850942;
+        Thu, 30 May 2024 13:44:10 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:509f:4b2e:3586:eb1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702423cb359sm146595b3a.5.2024.05.30.13.44.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 13:44:10 -0700 (PDT)
+Date: Thu, 30 May 2024 13:44:07 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: "Limonciello, Mario" <mario.limonciello@amd.com>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org,
+	Chris Bainbridge <chris.bainbridge@gmail.com>, hughsient@gmail.com,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during
+ initialization
+Message-ID: <ZljlF1fE5ypKWoGk@google.com>
+References: <20240528210319.1242-1-mario.limonciello@amd.com>
+ <Zlc4V1goFvU2antl@intel.com>
+ <197d195f-9206-41dd-8ff1-f4bb4988fb9b@amd.com>
+ <ZldMKZ1MzSDXOheJ@intel.com>
+ <g34f3sdk22grheq2vaaonkl543dtk7nb5sffqgmkl5ywtj5skk@p5ht5ug33q4z>
+ <873b7a7b-139d-498e-89da-098cb3d7599d@amd.com>
+ <CAA8EJpqODpGX-RthQ8qu3oU80qXp8a-N1Chz-dcQXjKYoDfEgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240530-md-arch-x86-events-intel-v1-1-8252194ed20a@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMrkWGYC/x3MQQqDMBBA0avIrDuQxFZCr1K6iHFsBjQtM1EC4
- t2bdvkW/x+gJEwK9+4AoZ2V37nBXjqIKeQXIU/N4Iy7mltvcJ0wSExY/YC0Uy6KnAstOA/eRW9
- N76yFln+EZq7/9ePZPAYlHCXkmH7DhfNWcQ1aSOA8v5d7FQKJAAAA
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim
-	<namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        "Dave
- Hansen" <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-        "H. Peter Anvin"
-	<hpa@zytor.com>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PoUOubvu90PmO8mGUpyGGHTz7Prt8fhJ
-X-Proofpoint-ORIG-GUID: PoUOubvu90PmO8mGUpyGGHTz7Prt8fhJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 spamscore=0 adultscore=0 clxscore=1015 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405300154
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpqODpGX-RthQ8qu3oU80qXp8a-N1Chz-dcQXjKYoDfEgw@mail.gmail.com>
 
-Fix the 'make W=1 C=1' warnings:
+On Thu, May 30, 2024 at 11:07:53AM +0300, Dmitry Baryshkov wrote:
+> On Thu, 30 May 2024 at 07:41, Limonciello, Mario
+> <mario.limonciello@amd.com> wrote:
+> >
+> >
+> > >> Also a direct acpi_lid_open() call seems a bit iffy. But I guess if
+> > >> someone needs this to work on non-ACPI system they get to figure out
+> > >> how to abstract it better. acpi_lid_open() does seem to return != 0
+> > >> when ACPI is not supported, so at least it would err on the side
+> > >> of enabling everything.
+> > >
+> > > Thanks. I was going to comment, but you got it first. I think a proper
+> > > implementation should check for SW_LID input device instead of simply
+> > > using acpi_lid_open(). This will handle the issue for other,
+> > > non-ACPI-based laptops.
+> > >
+> >
+> > Can you suggest how this would actually work?  AFAICT the only way to
+> > discover if input devices support SW_LID would be to iterate all the
+> > input devices in the kernel and look for whether ->swbit has SW_LID set.
+> >
+> > This then turns into a dependency problem of whether any myriad of
+> > drivers have started to report SW_LID.  It's also a state machine
+> > problem because other drivers can be unloaded at will.
+> >
+> > And then what do you if more than one sets SW_LID?
+> 
+> It might be easier to handle this in the input subsystem. For example
+> by using a refcount-like variable which handles all the LIDs and
+> counts if all of them are closed. Or if any of the LIDs is closed.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/events/intel/intel-uncore.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/events/intel/intel-cstate.o
+Yes, install an input handler matching on EV_SW/SW_LID so you will get
+notified when input devices capable of reporting SW_LID appear and
+disappear and also when SW_LID event is being generated, and handle as
+you wish. Something like
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/x86/events/intel/cstate.c | 1 +
- arch/x86/events/intel/uncore.c | 1 +
- 2 files changed, 2 insertions(+)
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/40e9f6a991856ee7d504ac1ccd587e435775cfc4%5E%21/#F0
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index e64eaa8dda5a..9d6e8f13d13a 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -114,6 +114,7 @@
- #include "../perf_event.h"
- #include "../probe.h"
- 
-+MODULE_DESCRIPTION("Support for Intel cstate performance events");
- MODULE_LICENSE("GPL");
- 
- #define DEFINE_CSTATE_FORMAT_ATTR(_var, _name, _format)		\
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 419c517b8594..c68f5b39952b 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -34,6 +34,7 @@ static struct event_constraint uncore_constraint_fixed =
- struct event_constraint uncore_constraint_empty =
- 	EVENT_CONSTRAINT(0, 0, 0);
- 
-+MODULE_DESCRIPTION("Support for Intel uncore performance events");
- MODULE_LICENSE("GPL");
- 
- int uncore_pcibus_to_dieid(struct pci_bus *bus)
+In practice I think it is pretty safe to assume only 1 lid for a
+laptop/device.
 
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-md-arch-x86-events-intel-f682c8103211
+Thanks.
 
+-- 
+Dmitry
 
