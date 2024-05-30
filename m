@@ -1,256 +1,193 @@
-Return-Path: <linux-kernel+bounces-195503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415A68D4DB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AAD8D4DB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E150B2868B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C7D286C64
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A8717C206;
-	Thu, 30 May 2024 14:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x4UrbRbz"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F8217D8AA;
+	Thu, 30 May 2024 14:16:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E164117623B;
-	Thu, 30 May 2024 14:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1471317623B;
+	Thu, 30 May 2024 14:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078583; cv=none; b=Qif2C+r32W3DnOPKb7EUjbnDqbY3yrTz8zdSIZc8Kh2Lraj9vGaT8+GfWuqVCYAxoIuDIleeQixlC4UXMPgFE3scGXyA6dPexvj5dcbJZoZqMdkbVlODvqgxbRfdVp3PmiyT/dgtknJwAqC/x3r91Py41L/d+furfqha3EBiN7w=
+	t=1717078588; cv=none; b=uFgwtoZWrf5mb7xCiGC0nyP5XfFo1XtCuPJaVYalzqye3p8fUcGreojjETLEvNg398fBBvcKgYWd7DRkT7CVEEKSmePymN4Bp4Df9MJG0tFM+hxBHw8y1ikaQJs7X5pKsVOZmzXdGJhF2Eb2W09BKcGVtGVfjvCHKa41uvNjazA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078583; c=relaxed/simple;
-	bh=XHEzmTU6TsMl2HL0lh7xh7EcI1/rI7nfT7EpcRQgBqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tpWagJitcWJEP+yjd2NEThWzb/lDC/ayvtRl5tRw31d5VsKU1BI7mJ48akBMKUNxUAQ1iMiEORx717psiCQPi23J3phSqJ7W2vhksgTEldOozdi6Z4LUuWmP1O1p+wWprquXsF5KuKrKa/v1JLMY+QpZ28nsXCXLTWhlmQUiVcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x4UrbRbz; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UEGF5V048621;
-	Thu, 30 May 2024 09:16:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717078575;
-	bh=LGzBrnsj8DdUIyYlEUEk6HInlbCKMlcPqN6HFAbEEFM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=x4UrbRbz+g461/P3arZtghw29F1sZpygj5nGhy6YNW5nX6e/PRQtCSb5E1Vh7a0qe
-	 G69TomoUm1RoCWwMnuqV35lOuxgHJbZd/0N2YI0JR33nkpcIN3Au430XoYO+4GrGnL
-	 0JglcsXNzGDsv9vD/g9EAkzpI0NYbw4RrJ8A5dRs=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UEGFQJ038600
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 30 May 2024 09:16:15 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
- May 2024 09:16:15 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 30 May 2024 09:16:15 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UEGFw0034727;
-	Thu, 30 May 2024 09:16:15 -0500
-Message-ID: <b5582d8a-b7bf-49e2-a8a3-879275a881b2@ti.com>
-Date: Thu, 30 May 2024 09:16:14 -0500
+	s=arc-20240116; t=1717078588; c=relaxed/simple;
+	bh=XL8MGduAVbwn1gpxi4V0hN5u03u0LCLTzNM+RF9zS3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgBVfpwzMDh4rZz81MYFXj5+B0xVsPXD8KbAsg/VEsIp1NUSRzY0zc8eUeJTeyoaCqCsZG2TSQdVhetcMVX/STbkI5z7D8HmFmRR7djjfOhKFPFgySYBvyrPpzerPAKSU0xOtwrk0CSaKu4BTw6j3VTJEYh8byERYZtTUimiy5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EBFDC2BBFC;
+	Thu, 30 May 2024 14:16:22 +0000 (UTC)
+Date: Thu, 30 May 2024 19:46:18 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Cc: jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+	andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+	mani@kernel.org, quic_msarkar@quicinc.com,
+	quic_kraravin@quicinc.com,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] PCI: qcom: Refactor common code
+Message-ID: <20240530141618.GB2770@thinkpad>
+References: <20240501163610.8900-1-quic_schintav@quicinc.com>
+ <20240501163610.8900-2-quic_schintav@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] remoteproc: k3-r5: Acquire mailbox handle during
- probe
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240530090737.655054-1-b-padhi@ti.com>
- <20240530090737.655054-3-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240530090737.655054-3-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240501163610.8900-2-quic_schintav@quicinc.com>
 
-On 5/30/24 4:07 AM, Beleswar Padhi wrote:
-> Acquire the mailbox handle during device probe and do not release handle
-> in stop/detach routine or error paths. This removes the redundant
-> requests for mbox handle later during rproc start/attach. This also
-> allows to defer remoteproc driver's probe if mailbox is not probed yet.
+On Wed, May 01, 2024 at 09:35:32AM -0700, Shashank Babu Chinta Venkata wrote:
+> Refactor common code from RC(Root Complex) and EP(End Point)
+> drivers and move them to a common driver. This acts as placeholder
+> for common source code for both drivers, thus avoiding duplication.
 > 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
 > ---
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 66 ++++++++----------------
->   1 file changed, 21 insertions(+), 45 deletions(-)
+>  drivers/pci/controller/dwc/Kconfig            |  5 ++
+>  drivers/pci/controller/dwc/Makefile           |  1 +
+>  drivers/pci/controller/dwc/pcie-qcom-common.c | 76 +++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-qcom-common.h | 12 +++
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c     | 39 +---------
+>  drivers/pci/controller/dwc/pcie-qcom.c        | 69 +++--------------
+>  6 files changed, 108 insertions(+), 94 deletions(-)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-qcom-common.c
+>  create mode 100644 drivers/pci/controller/dwc/pcie-qcom-common.h
 > 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 26362a509ae3..157e8fd57665 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -391,6 +391,7 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
->   	struct mbox_client *client = &kproc->client;
->   	struct device *dev = kproc->dev;
->   	int ret;
-> +	long err;
->   
->   	client->dev = dev;
->   	client->tx_done = NULL;
-> @@ -400,10 +401,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
->   
->   	kproc->mbox = mbox_request_channel(client, 0);
->   	if (IS_ERR(kproc->mbox)) {
-> -		ret = -EBUSY;
-> -		dev_err(dev, "mbox_request_channel failed: %ld\n",
-> -			PTR_ERR(kproc->mbox));
-> -		return ret;
-> +		err = PTR_ERR(kproc->mbox);
-> +		dev_err(dev, "mbox_request_channel failed: %ld\n", err);
-> +		return (err == -EPROBE_DEFER) ? -EPROBE_DEFER : -EBUSY;
-
-Why turn all other errors into EBUSY? If you just return the error as-is you
-can simply make these 3 lines just:
-
-return dev_err_probe(dev, PTR_ERR(kproc->mbox), "mbox_request_channel failed\n");
-
->   	}
->   
->   	/*
-> @@ -552,10 +552,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->   	u32 boot_addr;
->   	int ret;
->   
-> -	ret = k3_r5_rproc_request_mbox(rproc);
-> -	if (ret)
-> -		return ret;
-> -
->   	boot_addr = rproc->bootaddr;
->   	/* TODO: add boot_addr sanity checking */
->   	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-> @@ -564,7 +560,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->   	core = kproc->core;
->   	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->   	if (ret)
-> -		goto put_mbox;
-> +		goto out;
-
-The label "out" doesn't do anything, just directly `return ret;` here and
-in the other cases below.
-
->   
->   	/* unhalt/run all applicable cores */
->   	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
-> @@ -581,12 +577,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->   			dev_err(dev, "%s: can not start core 1 before core 0\n",
->   				__func__);
->   			ret = -EPERM;
-> -			goto put_mbox;
-> +			goto out;
->   		}
->   
->   		ret = k3_r5_core_run(core);
->   		if (ret)
-> -			goto put_mbox;
-> +			goto out;
->   	}
->   
->   	return 0;
-> @@ -596,8 +592,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->   		if (k3_r5_core_halt(core))
->   			dev_warn(core->dev, "core halt back failed\n");
->   	}
-> -put_mbox:
-> -	mbox_free_channel(kproc->mbox);
-> +out:
->   	return ret;
->   }
->   
-> @@ -658,8 +653,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->   			goto out;
->   	}
->   
-> -	mbox_free_channel(kproc->mbox);
-> -
->   	return 0;
->   
->   unroll_core_halt:
-> @@ -674,42 +667,21 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->   /*
->    * Attach to a running R5F remote processor (IPC-only mode)
->    *
-> - * The R5F attach callback only needs to request the mailbox, the remote
-> - * processor is already booted, so there is no need to issue any TI-SCI
-> - * commands to boot the R5F cores in IPC-only mode. This callback is invoked
-> - * only in IPC-only mode.
-> + * The R5F attach callback is a NOP. The remote processor is already booted, and
-> + * all required resources have been acquired during probe routine, so there is
-> + * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
-> + * This callback is invoked only in IPC-only mode and exists for sanity sake.
->    */
-> -static int k3_r5_rproc_attach(struct rproc *rproc)
-> -{
-> -	struct k3_r5_rproc *kproc = rproc->priv;
-> -	struct device *dev = kproc->dev;
-> -	int ret;
-> -
-> -	ret = k3_r5_rproc_request_mbox(rproc);
-> -	if (ret)
-> -		return ret;
-> -
-> -	dev_info(dev, "R5F core initialized in IPC-only mode\n");
-> -	return 0;
-> -}
-> +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
->   
->   /*
->    * Detach from a running R5F remote processor (IPC-only mode)
->    *
-> - * The R5F detach callback performs the opposite operation to attach callback
-> - * and only needs to release the mailbox, the R5F cores are not stopped and
-> - * will be left in booted state in IPC-only mode. This callback is invoked
-> - * only in IPC-only mode.
-> + * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
-> + * left in booted state in IPC-only mode. This callback is invoked only in
-> + * IPC-only mode and exists for sanity sake.
->    */
-> -static int k3_r5_rproc_detach(struct rproc *rproc)
-> -{
-> -	struct k3_r5_rproc *kproc = rproc->priv;
-> -	struct device *dev = kproc->dev;
-> -
-> -	mbox_free_channel(kproc->mbox);
-> -	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
-> -	return 0;
-> -}
-> +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
-
-Do we still need to disable the mbox channel somehow here to prevent
-receiving more messages from the detached core?
-
->   
->   /*
->    * This function implements the .get_loaded_rsc_table() callback and is used
-> @@ -1277,6 +1249,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   		kproc->rproc = rproc;
->   		core->rproc = rproc;
->   
-> +		ret = k3_r5_rproc_request_mbox(rproc);
-
-Now that we get the channel here in init you'll want to add a matching
-mbox_free_channel() call to k3_r5_cluster_rproc_exit().
-
-Andrew
-
-> +		if (ret)
-> +			return ret;
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 8afacc90c63b..1599550cd628 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -265,12 +265,16 @@ config PCIE_DW_PLAT_EP
+>  	  order to enable device-specific features PCI_DW_PLAT_EP must be
+>  	  selected.
+>  
+> +config PCIE_QCOM_COMMON
+> +	bool
 > +
->   		ret = k3_r5_rproc_configure_mode(kproc);
->   		if (ret < 0)
->   			goto err_config;
+>  config PCIE_QCOM
+>  	bool "Qualcomm PCIe controller (host mode)"
+>  	depends on OF && (ARCH_QCOM || COMPILE_TEST)
+>  	depends on PCI_MSI
+>  	select PCIE_DW_HOST
+>  	select CRC8
+> +	select PCIE_QCOM_COMMON
+>  	help
+>  	  Say Y here to enable PCIe controller support on Qualcomm SoCs. The
+>  	  PCIe controller uses the DesignWare core plus Qualcomm-specific
+> @@ -281,6 +285,7 @@ config PCIE_QCOM_EP
+>  	depends on OF && (ARCH_QCOM || COMPILE_TEST)
+>  	depends on PCI_ENDPOINT
+>  	select PCIE_DW_EP
+> +	select PCIE_QCOM_COMMON
+>  	help
+>  	  Say Y here to enable support for the PCIe controllers on Qualcomm SoCs
+>  	  to work in endpoint mode. The PCIe controller uses the DesignWare core
+> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> index bac103faa523..3f557dd60c38 100644
+> --- a/drivers/pci/controller/dwc/Makefile
+> +++ b/drivers/pci/controller/dwc/Makefile
+> @@ -14,6 +14,7 @@ obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
+>  obj-$(CONFIG_PCI_LAYERSCAPE_EP) += pci-layerscape-ep.o
+>  obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
+>  obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o
+> +obj-$(CONFIG_PCIE_QCOM_COMMON) += pcie-qcom-common.o
+>  obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
+>  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
+>  obj-$(CONFIG_PCIE_ROCKCHIP_DW_HOST) += pcie-dw-rockchip.o
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> new file mode 100644
+> index 000000000000..228d9eec0222
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> @@ -0,0 +1,76 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2014-2015, 2020 The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2015, 2021 Linaro Limited.
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + *
+> + */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/interconnect.h>
+> +
+> +#include "../../pci.h"
+> +#include "pcie-designware.h"
+> +#include "pcie-qcom-common.h"
+> +
+> +#define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
+> +		Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
+> +
+> +struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
+> +{
+> +	struct icc_path *icc_mem_p;
+> +
+> +	icc_mem_p = devm_of_icc_get(pci->dev, path);
+
+Just 'icc_path' since we will be voting for 'cpu-pcie' path as well.
+
+Also just return directly since there are error checks performed by the callers.
+
+> +	if (IS_ERR_OR_NULL(icc_mem_p))
+> +		return PTR_ERR(icc_mem_p);
+> +	return icc_mem_p;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_get_resource);
+> +
+> +int qcom_pcie_common_icc_init(struct dw_pcie *pci, struct icc_path *icc_mem)
+
+You need to take the bandwidth as an argument since the bandwidth varies between
+'cpu-pcie' and 'pcie-mem'.
+
+> +{
+> +	int ret;
+> +
+> +	/*
+> +	 * Some Qualcomm platforms require interconnect bandwidth constraints
+> +	 * to be set before enabling interconnect clocks.
+> +	 *
+> +	 * Set an initial peak bandwidth corresponding to single-lane Gen 1
+> +	 * for the pcie-mem path.
+> +	 */
+> +	ret = icc_set_bw(icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
+> +	if (ret) {
+> +		dev_err(pci->dev, "Failed to set interconnect bandwidth: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_init);
+> +
+> +void qcom_pcie_common_icc_update(struct dw_pcie *pci, struct icc_path *icc_mem)
+
+s/icc_mem/icc_path
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
