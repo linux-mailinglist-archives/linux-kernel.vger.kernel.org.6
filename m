@@ -1,322 +1,147 @@
-Return-Path: <linux-kernel+bounces-195672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BC58D5019
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:48:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC728D5016
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FD42B22E74
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:48:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D061F247A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44F23B784;
-	Thu, 30 May 2024 16:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BB436AF8;
+	Thu, 30 May 2024 16:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Bdmuszkh"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPMvi93u"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57233D579;
-	Thu, 30 May 2024 16:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087710; cv=fail; b=HKPj4UMiPjt1Vjkb8s2fAMuWEZB0MDPiZeolV3VbsQGwWPiPxowGfEHyf6A1mAK0CKQjRGyAXdr9NPnmUaivn8sbPbB+xHtrXn/KH3husryjhQAIZZj7pQhHwqQHisx8K7Gw8UeIMeHyDnj6LDWUUB/dN8mDCn4Qrp+q2wU1giU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087710; c=relaxed/simple;
-	bh=W/Q2vbro6sgx7jwWsUn6+RTfBo2Nbf7eM25AEXiF64E=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f0ncfQJuhx9CBaYslh8DDtONrvu4yS3X9rvr7EKKwL52Z1unzjMLzMhTr47xvL5NwFeJYjiTAyaLAtwiVBZwDZdVrt4zAEX+KxS7+jqTzj/fgagIoiIJZ8qyb5q8CuYOWKndJ32N386FMdfm+bh7UiubrfVNMTgwCz1wZ2eGyyA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Bdmuszkh; arc=fail smtp.client-ip=40.107.243.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k9JS5o5JjwBw9Kx129/I/uKu9CxFecgE8RPHHwh9uqZbOGiGI0nUabbVtY62sqKWIEShM7Df6DESZ6ON5uaSEY/eNkS0t0lfcBYtULQApD11iN4XvUE/7wZ4oGcKiwOMLWhDOyl21ox6omwUK7/zmg/O1QDDxOkdSIj9D2HM2m33h/mQLgPQRRWWzwhw003O96gVjwmEjEX01U1t5Y41fsqetHXEeUCmcSXzqyDez7GK9vmk3XXKaD30iLNOVRm2w9b5++avYLkw4VLu0jDvh296AHo0gvmLf+judlys6IObNOo3LrIgo+WDpERNp6Nh87fChIacNx8KyfdbgUhj5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7+/lQipfX4pHlbkV2C/fDtvUeEUskzQiSHgI1DJVy9s=;
- b=G/eG+rbpxnLb2u+N0gVpNmsqREKyMLLXmulefZc4k9bwRPRcYgIoq+m4tJ1W4KtBKZ6UjgvG3uchbuHVv1XHTXZUu7oy7cTD3oslYyBBrlx9rs6Fc6VCsQXIjhRfcVKduGOuu9FFv0bZcGXPPIFRK7mF7IEx/uQfN92UwKbX2dlgh/hfTQrfoa0QsPMWMxk5OCaFHubofFgwiTPBR2tPNtKRHca/fzncPRc0S4L8LspnUNMlY1sJ9e3S+tNulCd7N0ORJ3WA8/k3pOo/s/o3V8T48ZUzLV23zbZGSIhR4oR7eH9MFvgCcsbUrkec5zDXYOw1H0cnK7OyH39hYhSQzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7+/lQipfX4pHlbkV2C/fDtvUeEUskzQiSHgI1DJVy9s=;
- b=Bdmuszkhy0s7WYKA60BjcrWQ/7H2f9aTkWB+X6a6V7VkGnBESOe4uMVS9ZnKQL0vsPqmOmE8+hzSQP6nLeTLO3OvwumNMvStLPWNt3GQnWyUcD4whNKCQMt8cniNvZBP6gkfZ8Dd2WcvdEeHnkTYRdVbCD8oyFBAqLB27dD9GKMSHISX5bBIRix0vFi8JuxczyQNEqVRRmiqDL10NhrNGpCwb5o8hK05EOviWawKeAxzBDcvuizvrDYINoC9MXuW0twN1Pm/oWqgsuDtYOdPIXW9/ODOsz+kJDp5H8P/mE+I9dC86BTASOhWSEodTyz3fx+M5cZmf2eZJHgCgwzjFg==
-Received: from CH0PR04CA0040.namprd04.prod.outlook.com (2603:10b6:610:77::15)
- by IA1PR12MB8585.namprd12.prod.outlook.com (2603:10b6:208:451::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Thu, 30 May
- 2024 16:48:24 +0000
-Received: from CH3PEPF00000017.namprd21.prod.outlook.com
- (2603:10b6:610:77:cafe::e7) by CH0PR04CA0040.outlook.office365.com
- (2603:10b6:610:77::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21 via Frontend
- Transport; Thu, 30 May 2024 16:48:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH3PEPF00000017.mail.protection.outlook.com (10.167.244.122) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7656.0 via Frontend Transport; Thu, 30 May 2024 16:48:23 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 30 May
- 2024 09:48:09 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 30 May
- 2024 09:48:08 -0700
-Received: from localhost (10.127.8.9) by mail.nvidia.com (10.129.68.10) with
- Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Thu, 30 May 2024
- 09:48:00 -0700
-Date: Thu, 30 May 2024 19:47:41 +0300
-From: Zhi Wang <zhiw@nvidia.com>
-To: Michael Roth <michael.roth@amd.com>
-CC: Binbin Wu <binbin.wu@linux.intel.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <linux-coco@lists.linux.dev>,
-	<linux-mm@kvack.org>, <linux-crypto@vger.kernel.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <hpa@zytor.com>,
-	<ardb@kernel.org>, <seanjc@google.com>, <vkuznets@redhat.com>,
-	<jmattson@google.com>, <luto@kernel.org>, <dave.hansen@linux.intel.com>,
-	<slp@redhat.com>, <pgonda@google.com>, <peterz@infradead.org>,
-	<srinivas.pandruvada@linux.intel.com>, <rientjes@google.com>,
-	<dovmurik@linux.ibm.com>, <tobin@ibm.com>, <bp@alien8.de>, <vbabka@suse.cz>,
-	<kirill@shutemov.name>, <ak@linux.intel.com>, <tony.luck@intel.com>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <alpergun@google.com>,
-	<jarkko@kernel.org>, <ashish.kalra@amd.com>, <nikunj.dadhania@amd.com>,
-	<pankaj.gupta@amd.com>, <liam.merwick@oracle.com>, Brijesh Singh
-	<brijesh.singh@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCH v15 09/20] KVM: SEV: Add support to handle MSR based
- Page State Change VMGEXIT
-Message-ID: <20240530194606.00003f3a.zhiw@nvidia.com>
-In-Reply-To: <rczrxq3lhqguarwh4cwxwa35j5riiagbilcw32oaxd7aqpyaq7@6bqrqn6ontba>
-References: <20240501085210.2213060-1-michael.roth@amd.com>
-	<20240501085210.2213060-10-michael.roth@amd.com>
-	<84e8460d-f8e7-46d7-a274-90ea7aec2203@linux.intel.com>
-	<CABgObfaXmMUYHEuK+D+2E9pybKMJqGZsKB033X1aOSQHSEqqVA@mail.gmail.com>
-	<7d6a4320-89f5-48ce-95ff-54b00e7e9597@linux.intel.com>
-	<rczrxq3lhqguarwh4cwxwa35j5riiagbilcw32oaxd7aqpyaq7@6bqrqn6ontba>
-Organization: NVIDIA
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5077A18755F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717087694; cv=none; b=Vp88h1XNU61IRrv+POmJXJ7Nn0LPf90kveyBe5Y4jblVacDM2Y+UaeB+y4svGkINccx2mp1OgZRskPLAwt4s0bkkn3QuT47wGJ9+HRDGR9/RzcfnBZ/yRtmGKfQI36IXNHLFD2gQEmlO13Up6CxaSKbB5HAi/TkhEy2j2TTMVIg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717087694; c=relaxed/simple;
+	bh=+iibMyBe6CkUG/bW0sWYlzZX47cbTNxCC4APHJZN4KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjljJgpO0qGr8vI38XBTCrHduA8UnDz3i2ZWeWWKEa9YTjaFbyD3L1HJtMvCIsxnMFgM/vmj+dVr1O2dtj9mKn9XBZ7tPVPdecI4BdgRCPslNAsTdydqBzNROiwFi3q6pRBvodfLkvlEFFIYXQ1toGbKnFaBYlCnr7EcVLeEnf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPMvi93u; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-656d8b346d2so852485a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717087692; x=1717692492; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=44kjXC5ZdbVBGNfJAzWqyaTd7dhWd5azryjkTcby7nY=;
+        b=kPMvi93uukPjZ+MezFr3+G8ipQ5t1itS/fVt1y1diguN6dq+k76uxQ56n5GBad8kxt
+         9/apDcIHvx/4X7QXkac7PgMSr73dGfFadiVwrSrhXzCh45J5hnQSSBr+oN4SAoVSk8hU
+         W/RgLAGbKYKlx29xdiRooN7J+1SNXVKtkXhzKZtgp5xGcB3YRJYJyjotW7eu/Tk3IU/x
+         OU7PHYd1B0ocgcVqIjNYFSoBf6N7FhEtKP0qIHH5QvLyStV7zJoz4GcrUNOFu2ldHcNW
+         hqvAlQqTLBvfiW7bXrpym2WohP5mq5RYt6nTr4RJ2tbxGPCKDPnT5KJ1+MHlRsRQHHVS
+         mJwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717087692; x=1717692492;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=44kjXC5ZdbVBGNfJAzWqyaTd7dhWd5azryjkTcby7nY=;
+        b=gCPeMs1Ri6dw6qkKoFviioxRfqxZ9FA8jHJbvPbj2AJOK0ED84SZFcQ42yllaSTiSE
+         KsegU5RbjOUyCXWwUJQImkYSHwY+/LsAGh7ZD6wREorzcAGgxXevPeDw6K9FoT9ICSct
+         AUry0VJ3bHlHuZ1QqXGFsPxsGgnPjt/Gl7NDrreG4p5l6UElqpqUrTN7Cjy4GtYGBCEu
+         LTniG3qY+asWn2imfvwiCdEQe3CcGTVH6ynY5N6uIHdW725CrI/duhzj0n2nsYYekzS2
+         qED+bLziEJ9ZfmxDN4qcu0D76i3lGbJWwAJaHG5I530PzPZrmeKbg5MkR9H4bOOodRcp
+         v8oA==
+X-Gm-Message-State: AOJu0Yzyl77KdXVS1TIbQKzACyk4PxmeXlQjZlm/FudnLeWp3yap6z+Q
+	cA3sfH4KycT2iTaRo1gh61fbHadP9Y/kajQVvAJHKjmJUMbB9MaepZd2WA==
+X-Google-Smtp-Source: AGHT+IHIby0s6tirUbLWLYDO5H4P5p5ypbNhdZYQIBQtdi/dLFyr5oREZHgrftNscdiFXS3h2uA93g==
+X-Received: by 2002:a17:903:24c:b0:1f3:2a25:9361 with SMTP id d9443c01a7336-1f61a4daf21mr28561355ad.64.1717087692453;
+        Thu, 30 May 2024 09:48:12 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63232dd6bsm97555ad.54.2024.05.30.09.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 09:48:11 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 30 May 2024 09:48:09 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.10-rc1
+Message-ID: <475891b5-6bf7-4ecf-a647-9b9b554ed07c@roeck-us.net>
+References: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000017:EE_|IA1PR12MB8585:EE_
-X-MS-Office365-Filtering-Correlation-Id: c12050d6-8097-4c92-eb3d-08dc80c85228
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|82310400017|7416005|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aG9SWGFRVDBTUnJJSStWQjlHSGlQRk5ISFdTS2J6TjNGbHcrY1lDRzkxcUEw?=
- =?utf-8?B?VFVFeVk0V3N0N04vRXZsdGdINDhyaVVnUis3eDZaUmc0SUVjMXBveFFkWnlF?=
- =?utf-8?B?dDllcGJZSEpXVkNEcGtrV2psSGVnc0xGcHBQQXE4ODZueTFwczlGaDh2Nlcz?=
- =?utf-8?B?aFBMQ0ZOK09sREY5M29ja3lmdk9WTmxLR0NpSTAxeWdtcWJnUUhURXkxZUh1?=
- =?utf-8?B?QkI1V2FBVzdQN2ZRbVVxSHE0ZjJvcnBGdnFmd0hoWVhTdG4zbmZ0NkVhL0tF?=
- =?utf-8?B?d3oxZlNQZDZoUE1rVWZwZVJKV2QzaEJZUkI3a3BneW5MWC9IZzhzcXlFUk41?=
- =?utf-8?B?N1JESnZMQjRxU3ZjQkliSFZ6b2dMOS9MUjNaeGxWcTZKZVpyZm9FYWRDY2hT?=
- =?utf-8?B?SS8zQk5sVGZ4N0x5Q1d3RVlGWXFSMHZDYWFGT2xCQ2xRRjFBNHJyMm53cXVK?=
- =?utf-8?B?YXJpcERIZExwVGNGVWtJbXljZllYdFd6TDV6QjY3UjJSY1FCUlY5YnlkOVN2?=
- =?utf-8?B?RzJXcjdETXcwcDh5UzRmczV3ejFqZ2FEcHFMd1VEa2ZmNkdNNm9ITkJYWm41?=
- =?utf-8?B?TXVtRDd3YUtnMTVPY1RCYmhha3ovUXdJSUNPUy9MNGlLdlRsY2R5T3FIbnNk?=
- =?utf-8?B?ZTJmR1FmZ2dGV2w5NEdJRGRJT1hrU2poWXdMeEhGWmlML0xIRG5xa0xCSjVk?=
- =?utf-8?B?NnpxV2l2V1AxWlE1K0JyaFU4VThHemNaUGxsL3F2OFppNmVpaWdodjdLN3RR?=
- =?utf-8?B?Y2d5dTR0ajFoOTUzV0tLNlFzRVVYdERVL0xHeFptOS85aUM5MnBmWkg1Mit5?=
- =?utf-8?B?VjlwYkl3bnVhbU1sdVhYdUtWZ01ZZk4vOUlrU3czL3JyUUhsY3NveFpRU1E0?=
- =?utf-8?B?RVkrU3o1R3pWZG1Tdm0wWXQ3RkZRUXI4SGNuUkg2a25UcVBYZmc1aFltTTg2?=
- =?utf-8?B?eUZYaURrZlo2bHNGSXdKaENNeWVEaGc2Uis2OGFCZ1JlNTVSbWpBM2RIU2hR?=
- =?utf-8?B?ZmRiVko2V0tLNUIrQkFQS3NjbzZxZlp5VTYzcTBkLzJJSGVHTlROS1d1eDA2?=
- =?utf-8?B?SnR4RUM1TndLdWg5Qyswa3JRdXlIaXRwbVRhTWFSZ0ZNTzVNMm9jbTBtS2tQ?=
- =?utf-8?B?b1FoYUtoSWpsbWQ1MGpvdGlQOWVwclVwL1lmUWdOV3VJMFF6aUpSVUJ4TDF1?=
- =?utf-8?B?VDlYVVFLajhtMktNYW9wcU0rVy9ydW13L1Y0eitrQjc4bW9Ja091dzFrdnQ3?=
- =?utf-8?B?YkZVZUpnN0p5OGsxSHhkaElsOWIxalFDZzZkT0FQa1I1SUZ5czV2Q0VJSFJn?=
- =?utf-8?B?U1BLcEdKdzlqUGw2OUh6WlFIUUgyZXhCSVozSkNsWU56TFk5NnJXd01JMkFL?=
- =?utf-8?B?R0hrOThtcWo0QkR0dUFGWURKb1NaSEVNaXVja0RscC9mNVFyRHlLOXdPZ2tV?=
- =?utf-8?B?R3p0aWMrbDhLWDQ5SDVCd0lNR3YvUzZPTEZMZm1pYjZtcm1IZTR1ZldUQ3Zx?=
- =?utf-8?B?bmR1dkV4UTFXeHNvZHhUejRZZE0yQ2puWnBYam45REZIU29PUzNoZGdRVUVx?=
- =?utf-8?B?eVFqZDIwcW9qZ3RpdkhTMmVieEJnQ0FNSlI4eFl1RVlWRTNwMERuMU1LZk1G?=
- =?utf-8?B?NG5WZE9ZQk9yYnUwcE50cWNQUWE5UHkxUXh6ZUx4SjRxYmVoYkRFc2cvZXlk?=
- =?utf-8?B?c2hxSHdUL0pVOWcvZitEOWwvMEROQi9DdGhnRUthdnBmWXVxVldrTmthRmI0?=
- =?utf-8?B?RjY5eW04alM1VGxHTlo3aG1MZ281UDUxQjFtSjJZSUJ5dEQrSVl2R1NIaWty?=
- =?utf-8?B?TS9TdDd0ZWQ1bjZoVVZFM2MrSXVtV3cvTjJZYnhYNlV4bzZCUTRNc3YzZE1o?=
- =?utf-8?Q?PPPor7U3Ksiv3?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(82310400017)(7416005)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 16:48:23.8589
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c12050d6-8097-4c92-eb3d-08dc80c85228
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000017.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8585
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
 
-On Tue, 21 May 2024 16:49:52 -0500
-Michael Roth <michael.roth@amd.com> wrote:
+On Sun, May 26, 2024 at 03:31:45PM -0700, Linus Torvalds wrote:
+> Ok, the merge window is over, and 6.10-rc1 is tagged and pushed out.
+> 
+> This seems to be a regular-sized release, maybe even slightly on the
+> smaller side. All the stats look fairly normal, but "normal" obviously
+> means "much too big to post the shortlog", so below is - as always -
+> just my "merge log" that gives an overview of who I've merged from
+> with just the barest of descriptions.
+> 
+> We don't have any new filesystems, and the xfs online repair work
+> means that the bcachefs fixes aren't even the biggest filesystem
+> change any more. But all of that is dwarfed by all the usual driver
+> updates (and, as is tradition, GPU drivers are in a massive lead, with
+> networking a distant second and everything else is relatively small).
+> 
+> But we do have all the usual architecture updates, core cleanups and
+> fixes, tooling and documentation updates.
+> 
+> Please - let the testing commence,
+> 
 
-> On Tue, May 21, 2024 at 08:49:59AM +0800, Binbin Wu wrote:
-> >=20
-> >=20
-> > On 5/17/2024 1:23 AM, Paolo Bonzini wrote:
-> > > On Thu, May 16, 2024 at 10:29=E2=80=AFAM Binbin Wu
-> > > <binbin.wu@linux.intel.com> wrote:
-> > > >=20
-> > > >=20
-> > > > On 5/1/2024 4:51 PM, Michael Roth wrote:
-> > > > > SEV-SNP VMs can ask the hypervisor to change the page state
-> > > > > in the RMP table to be private or shared using the Page State
-> > > > > Change MSR protocol as defined in the GHCB specification.
-> > > > >=20
-> > > > > When using gmem, private/shared memory is allocated through
-> > > > > separate pools, and KVM relies on userspace issuing a
-> > > > > KVM_SET_MEMORY_ATTRIBUTES KVM ioctl to tell the KVM MMU
-> > > > > whether or not a particular GFN should be backed by private
-> > > > > memory or not.
-> > > > >=20
-> > > > > Forward these page state change requests to userspace so that
-> > > > > it can issue the expected KVM ioctls. The KVM MMU will handle
-> > > > > updating the RMP entries when it is ready to map a private
-> > > > > page into a guest.
-> > > > >=20
-> > > > > Use the existing KVM_HC_MAP_GPA_RANGE hypercall format to
-> > > > > deliver these requests to userspace via KVM_EXIT_HYPERCALL.
-> > > > >=20
-> > > > > Signed-off-by: Michael Roth <michael.roth@amd.com>
-> > > > > Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
-> > > > > Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> > > > > Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> > > > > ---
-> > > > >    arch/x86/include/asm/sev-common.h |  6 ++++
-> > > > >    arch/x86/kvm/svm/sev.c            | 48
-> > > > > +++++++++++++++++++++++++++++++ 2 files changed, 54
-> > > > > insertions(+)
-> > > > >=20
-> > > > > diff --git a/arch/x86/include/asm/sev-common.h
-> > > > > b/arch/x86/include/asm/sev-common.h index
-> > > > > 1006bfffe07a..6d68db812de1 100644 ---
-> > > > > a/arch/x86/include/asm/sev-common.h +++
-> > > > > b/arch/x86/include/asm/sev-common.h @@ -101,11 +101,17 @@
-> > > > > enum psc_op { /* GHCBData[11:0] */
-> > > > > \ GHCB_MSR_PSC_REQ)
-> > > > >=20
-> > > > > +#define GHCB_MSR_PSC_REQ_TO_GFN(msr) (((msr) &
-> > > > > GENMASK_ULL(51, 12)) >> 12) +#define
-> > > > > GHCB_MSR_PSC_REQ_TO_OP(msr) (((msr) & GENMASK_ULL(55, 52)) >>
-> > > > > 52) + #define GHCB_MSR_PSC_RESP           0x015
-> > > > >    #define GHCB_MSR_PSC_RESP_VAL(val)                  \
-> > > > >        /* GHCBData[63:32] */                           \
-> > > > >        (((u64)(val) & GENMASK_ULL(63, 32)) >> 32)
-> > > > >=20
-> > > > > +/* Set highest bit as a generic error response */
-> > > > > +#define GHCB_MSR_PSC_RESP_ERROR (BIT_ULL(63) |
-> > > > > GHCB_MSR_PSC_RESP) +
-> > > > >    /* GHCB Hypervisor Feature Request/Response */
-> > > > >    #define GHCB_MSR_HV_FT_REQ          0x080
-> > > > >    #define GHCB_MSR_HV_FT_RESP         0x081
-> > > > > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > > > > index e1ac5af4cb74..720775c9d0b8 100644
-> > > > > --- a/arch/x86/kvm/svm/sev.c
-> > > > > +++ b/arch/x86/kvm/svm/sev.c
-> > > > > @@ -3461,6 +3461,48 @@ static void set_ghcb_msr(struct
-> > > > > vcpu_svm *svm, u64 value) svm->vmcb->control.ghcb_gpa =3D value;
-> > > > >    }
-> > > > >=20
-> > > > > +static int snp_complete_psc_msr(struct kvm_vcpu *vcpu)
-> > > > > +{
-> > > > > +     struct vcpu_svm *svm =3D to_svm(vcpu);
-> > > > > +
-> > > > > +     if (vcpu->run->hypercall.ret)
-> > > > Do we have definition of ret? I didn't find clear documentation
-> > > > about it. According to the code, 0 means succssful. Is there
-> > > > any other error codes need to or can be interpreted?
-> > > They are defined in include/uapi/linux/kvm_para.h
-> > >=20
-> > > #define KVM_ENOSYS        1000
-> > > #define KVM_EFAULT        EFAULT /* 14 */
-> > > #define KVM_EINVAL        EINVAL /* 22 */
-> > > #define KVM_E2BIG        E2BIG /* 7 */
-> > > #define KVM_EPERM        EPERM /* 1*/
-> > > #define KVM_EOPNOTSUPP        95
-> > >=20
-> > > Linux however does not expect the hypercall to fail for
-> > > SEV/SEV-ES; and it will terminate the guest if the PSC operation
-> > > fails for SEV-SNP.  So it's best for userspace if the hypercall
-> > > always succeeds. :)
-> > Thanks for the info.
-> >=20
-> > For TDX, it wants to restrict the size of memory range for
-> > conversion in one hypercall to avoid a too long latency.
-> > Previously, in TDX QEMU patchset v5, the limitation is in userspace
-> > and=C2=A0 if the size is too big, the status_code will set to
-> > TDG_VP_VMCALL_RETRY and the failed GPA for guest to retry is
-> > updated.
-> > https://lore.kernel.org/all/20240229063726.610065-51-xiaoyao.li@intel.c=
-om/
-> >=20
-> > When TDX converts TDVMCALL_MAP_GPA to KVM_HC_MAP_GPA_RANGE, do you
-> > think which is more reasonable to set the restriction? In KVM (TDX
-> > specific code) or userspace?
-> > If userspace is preferred, then the interface needs to=C2=A0 be extended
-> > to support it.
->=20
-> With SNP we might get a batch of requests in a single GHCB request,
-> and potentially each of those requests need to get set out to
-> userspace as a single KVM_HC_MAP_GPA_RANGE. The subsequent patch here
-> handles that in a loop by issuing a new KVM_HC_MAP_GPA_RANGE via the
-> completion handler. So we also sort of need to split large requests
-> into multiple userspace requests in some cases.
->=20
-> It seems like TDX should be able to do something similar by limiting
-> the size of each KVM_HC_MAP_GPA_RANGE to TDX_MAP_GPA_MAX_LEN, and then
-> returning TDG_VP_VMCALL_RETRY to guest if the original size was
-> greater than TDX_MAP_GPA_MAX_LEN. But at that point you're
-> effectively done with the entire request and can return to guest, so
-> it actually seems a little more straightforward than the SNP case
-> above. E.g. TDX has a 1:1 mapping between TDG_VP_VMCALL_MAP_GPA and
-> KVM_HC_MAP_GPA_RANGE events. (And even similar names :))
->=20
-> So doesn't seem like there's a good reason to expose any of these
-> throttling details to userspace, in which case existing
-> KVM_HC_MAP_GPA_RANGE interface seems like it should be sufficient.
->=20
+From [1]:
 
-Is there any rough data about the latency of private-shared and
-shared-private page conversion?
+Build results:
+	total: 158 pass: 149 fail: 9
+Failed builds:
+	arm:allmodconfig
+	csky:allmodconfig
+	i386:allyesconfig
+	i386:allmodconfig
+	mips:allmodconfig
+	openrisc:allmodconfig
+	parisc:allmodconfig
+	powerpc:ppc32_allmodconfig
+	xtensa:allmodconfig
+Qemu test results:
+	total: 470 pass: 466 fail: 4
+Failed tests:
+	m68k:mcf5208evb:m5208:m5208evb_defconfig:initrd
+	riscv:sifive_u:defconfig:net=default:initrd
+	riscv:sifive_u:defconfig:sd:net=default:rootfs
+	riscv:sifive_u:defconfig:mtd32:net=default:rootfs
+Unit test results:
+	pass: 228437 fail: 0
 
-Thanks,
-Zhi.=20
-> -Mike
->=20
-> >=20
-> >=20
-> > >=20
-> > > > For TDX, it may also want to use KVM_HC_MAP_GPA_RANGE hypercall
-> > > >  to userspace via KVM_EXIT_HYPERCALL.
-> > > Yes, definitely.
-> > >=20
-> > > Paolo
-> > >=20
-> >=20
->=20
+The problems seen in those tests are all fixed with the following patches.
 
+9ea60fe541a0 powerpc: Limit ARCH_HAS_KERNEL_FPU_SUPPORT to PPC64
+005cc05a58df clk: sifive: Do not register clkdevs for PRCI clocks
+71a1fd19a06c sysfs: Unbreak the build around sysfs_bin_attr_simple_read()
+d304cefdad3a drm/nouveau/nvif: Avoid build error due to potential integer overflows
+2afea78e811e scsi: mpi3mr: Use proper format specifier in mpi3mr_sas_port_add()
+
+For anyone in details, those patches are available in the 'fixes' branch
+of [2].
+
+Guenter
+
+---
+[1] https://kerneltests.org/builders
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
 
