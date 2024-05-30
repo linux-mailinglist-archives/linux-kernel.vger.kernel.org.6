@@ -1,132 +1,95 @@
-Return-Path: <linux-kernel+bounces-194860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EACF8D4331
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:53:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A301F8D4332
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C732B284EE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36501C22EE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B0018054;
-	Thu, 30 May 2024 01:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="CR4n58z9"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FB71798F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AE9179BD;
+	Thu, 30 May 2024 01:54:08 +0000 (UTC)
+Received: from smtp.cecloud.com (unknown [1.203.97.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC281757E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717033995; cv=none; b=DLZbhiuK6EPF3JDUTD5QT0qZdrTZ2CIwsDGKRvDtLs/1FX88G3fjSGA14Nn7gfoOewRfhpyRguS/2LKu2wkzjH1Ali6EtaywegmT7OBz/BCAxvAaqK9y3zqfUwgwolI063rXso6ywG7BqVpp5fEJB1ambfH78vX+TgmhJn3ANMU=
+	t=1717034048; cv=none; b=fLakPnPXWZu7DkvjYeTYA0QkMRQL9INPyrdSnAOQpIJS7G1b3V02l7GgETHvC0utvCZvixTSG1Z7xndm0V/e0KmjN/bUJEhOuB1emPuz/vLBAxozK+igT+vlIV18LAEdyUjyK+oKDbxjtJqGei4v3UvdT34WJmvumW9UC4RDh0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717033995; c=relaxed/simple;
-	bh=9BOfbVH8YA2QTNgwedZWI9JmpJBM9n4R4yer8Ay9b1k=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ncQXq1rgWWF9vz93aR+LCct5RDEzHWuUyS72MzhxpILiZmp/d0BtRjd/mZnImK/+e2UhTs4Ol1DfE+y5CEXWXUtEWfASI2i5NlsV3GBCYGqBEeeGZbXwxO8jUudY/eg9Tp3+GPTK5LcAihtq4p5u1E5dV+8DEQ/f58U9J813zM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=CR4n58z9; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35b6467754cso260893f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:53:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717033992; x=1717638792; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9BOfbVH8YA2QTNgwedZWI9JmpJBM9n4R4yer8Ay9b1k=;
-        b=CR4n58z9nNcoh/v/nEYdkjCOjHcVvnFezAmpaQ5ILSa1/OWAiCnq1mrx5dYVfLpgYt
-         6SzlVrfBmmnSSxlC48EL08MqfA13eSuV9COK58Ej9Nk+ulLi0AgLlBRCOwuXqI6/pQAK
-         yN4XF1+9urH48Te+oKerprAJhYwt8XwLzgBkDk7TD7kv3m5q691NxTOSjkJRk7kSyH9Q
-         VG84ROawH7FtDdHI2GKPClwerTXTZv/bWcN32sY6/QPmpsKW9vb04AjzzVzXEmsOzGyv
-         F0cz0HwLlfTNfwySVNyzbXABiP7Wbk+mRVXUYZ8loEyaSGsCX7UYrgtMxtjHiPteTHox
-         V/eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717033992; x=1717638792;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9BOfbVH8YA2QTNgwedZWI9JmpJBM9n4R4yer8Ay9b1k=;
-        b=Xs+VVuVEZfhjIyJUqnukY8jpskHxgTd7SI+6Lka/X9XvuCgvKRPC54TQLn0EXNNjLQ
-         zPigkHRyX6YJmB7SL0KoIFkMCpiK/5zDpJ+F3f4e8smPpnHFR/2EvGRjh00Mm4EiOZFI
-         qAIZRXry0Wre7cmH7RupT5xfwb4/EDpmSJvKPZbPYYGMaWZO/KnLCucI04E+dzDO59bz
-         c/3jSWOedJRLilnGQxATYM+Kq/ILteE0OLxXdmHLVhd9cdCARMqpmnsS+yvVwJTJhd6Q
-         rfLL+V9zMohkSZ+6GPT/sND5tptheQTrvLj+RMFFhb7Qe5PwvQqJqqDex6bTg5zc/CBy
-         IBBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPc0iPhTgA4jrGUyg1xjeBYOKM/Y/ZIsYG+oO+2ebi/Lek4OucTjaR92L5mTQICSTjPGC9pPkKfQ0rO+jJlnKGFOmEUZx/80wBeZVj
-X-Gm-Message-State: AOJu0YwZ5ucVimC0AHLyFL7NyFzlOUsbdX3+ayMzuw117NJ71C0qawss
-	tP5Gp+7YAVORiq1C/GWvbQ3ozZw7RvpJ7Tmgq3kWV/7sKVK+74xpRj9zB1J1Fd8=
-X-Google-Smtp-Source: AGHT+IFoU4QteZZNYP/I6fo4kLvwP2gOPoNDRwhPgjxxb+EGXffmiDaGtONVEP08x0ijp1efXdcInw==
-X-Received: by 2002:a05:600c:4ed3:b0:420:e4b:d9df with SMTP id 5b1f17b1804b1-42127819e09mr10547205e9.13.1717033992346;
-        Wed, 29 May 2024 18:53:12 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:1083:f101:dcff:2f3d:64d3:d269])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5786450bb13sm7415110a12.72.2024.05.29.18.53.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2024 18:53:12 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1717034048; c=relaxed/simple;
+	bh=sp/lBwrrnQAApOv3URh1IYYxF8YLzzMS+3rclMm+tYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l9VO5E06w7eY6F4XTypkO1g+JRQzpw5nk2bqQlk3HfBoUObbGR1ugfXbFx0izihnSJ3E5boUz7mKCkagvm1Bs1/98ZYC9w4tBQIKpMrKdPtey8aZtA7dMnbZ9f3uaUFYbVg9QbF6eNrbE/0OsGPX5oRx5ufCuzGaLT2DXLr1iHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id A5F88900126;
+	Thu, 30 May 2024 09:53:55 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-ANTISPAM-LEVEL:2
+X-ABS-CHECKED:0
+Received: from localhost.localdomain (unknown [111.48.58.12])
+	by smtp.cecloud.com (postfix) whith ESMTP id P894637T281472753660272S1717034033041744_;
+	Thu, 30 May 2024 09:53:54 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:liuwei09@cestc.cn
+X-SENDER:liuwei09@cestc.cn
+X-LOGIN-NAME:liuwei09@cestc.cn
+X-FST-TO:catalin.marinas@arm.com
+X-RCPT-COUNT:7
+X-LOCAL-RCPT-COUNT:2
+X-MUTI-DOMAIN-COUNT:1
+X-SENDER-IP:111.48.58.12
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<f09eada4100944e523f3c1585620a054>
+X-System-Flag:0
+From: Liu Wei <liuwei09@cestc.cn>
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: prarit@redhat.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, liuwei09.cestc.cn@cecloud.com,
+	Liu Wei <liuwei09@cestc.cn>
+Subject: [PATCH] ACPI: Do not enable ACPI SPCR console by default on arm64
+Date: Thu, 30 May 2024 09:53:32 +0800
+Message-ID: <20240530015332.7305-1-liuwei09@cestc.cn>
+X-Mailer: git-send-email 2.42.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH net-next] net: smc91x: Refactor SMC_* macros
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <20240529171740.0643a5a1@kernel.org>
-Date: Thu, 30 May 2024 03:53:00 +0200
-Cc: Nicolas Pitre <nico@fluxnic.net>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Breno Leitao <leitao@debian.org>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Andrew Lunn <andrew@lunn.ch>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Arnd Bergmann <arnd@arndb.de>,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A004D09E-E9CC-4DD4-ADE7-791D63D962D3@toblux.com>
-References: <20240528104421.399885-3-thorsten.blum@toblux.com>
- <20240529171740.0643a5a1@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On 30. May 2024, at 02:17, Jakub Kicinski <kuba@kernel.org> wrote:
-> On Tue, 28 May 2024 12:44:23 +0200 Thorsten Blum wrote:
->> Use the macro parameter lp directly instead of relying on ioaddr =
-being
->> defined in the surrounding scope.
->=20
-> Have you tested this, or just compile tested (please mention what
-> testing has been done in the commit message in the future)?
+Consistency with x86 and loongarch, don't enable ACPI SPCR console
+by default on arm64
 
-Just compile tested.
+Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+---
+ arch/arm64/kernel/acpi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> What's the motivation - cleanup or this helps remove some warnings?
-> (again, please mention in the commit message)
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index dba8fcec7f33..1deda3e5a0d2 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -227,7 +227,8 @@ void __init acpi_boot_table_init(void)
+ 		if (earlycon_acpi_spcr_enable)
+ 			early_init_dt_scan_chosen_stdout();
+ 	} else {
+-		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
++		/* Do not enable ACPI SPCR console by default */
++		acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
+ 		if (IS_ENABLED(CONFIG_ACPI_BGRT))
+ 			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
+ 	}
+-- 
+2.42.1
 
-It's a cleanup suggested by Andrew Lunn [1][2]. His suggestion might=20
-have been for SMC_PUSH_DATA() and SMC_PULL_DATA() only; or to add=20
-another macro param for ioaddr if lp->base and ioaddr are different (as=20=
 
-in smc_probe()).
 
-> AFAICT this will break smc_probe().
-
-Yes, it does break smc_probe(). I'll fix it and submit a v2.
-
-Thanks,
-Thorsten
-
-[1] =
-https://lore.kernel.org/linux-kernel/0efd687d-3df5-49dd-b01c-d5bd977ae12e@=
-lunn.ch/
-[2] =
-https://lore.kernel.org/linux-kernel/f192113c-9aee-47be-85f6-cd19fcb81a5e@=
-lunn.ch/=
 
