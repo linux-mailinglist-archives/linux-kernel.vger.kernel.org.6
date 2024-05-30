@@ -1,355 +1,265 @@
-Return-Path: <linux-kernel+bounces-195645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDD08D4FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:14:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E748D4FAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A3D2833A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:14:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F267B27C60
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE89F22EF0;
-	Thu, 30 May 2024 16:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7445521A04;
+	Thu, 30 May 2024 16:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DDPZPcRE"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQxPo+ZB"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5FB2C6AE
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD0F210F8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717085679; cv=none; b=nfRMame2ZhziDUwHmGK5iO3Jj6ipIclae7Ro1nCMZ3MxM3E2zSYPHHaHIIypph588Fq/wOOaXoD61jwA8qYf8EPOQueqthkztvX88uKb0IZTj27hh0Akr3Z45LMWiqKUnHMfzJKPfrW38au+cQdwHguApSLXALYlsjqUMSdN0SY=
+	t=1717085671; cv=none; b=FmdITNx/3nPJx8vz13RND3UDCDW8HHGfuBNWukcvEtL4+CFX6VDDP3/qV/Zv5FzS+L5UYcpQyRKHnQjwMNbl8k/7SPTiST6vtha4zdnnGYpQQ/y159kMbhI+GCuyOOkXpHYmG+JtYrGSP0r64PnqwIQOchlG8LpZ69HGVEWpJ9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717085679; c=relaxed/simple;
-	bh=OUowyC/BuT+oRhlybANuYOVPkHlLyq2cSzoK/fwEVhM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u+H/MSK7/Xv/jwrK0FgHKf6noxA5NS6X2mYXeeyKZnwWPOcROJ/NmHHvFa8bPWNM2DM2LVv7IF82goUU0wLGKys8sGvqAKLhHuaEHDv1TEdTHyeZ89yLu45z9SMvlwzEgMBYMH9cG/NpUIF9NIKcP/g12/pRFiru6pSIcU4r5bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DDPZPcRE; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f61bbb1dfcso174915ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:14:37 -0700 (PDT)
+	s=arc-20240116; t=1717085671; c=relaxed/simple;
+	bh=kQw9dYSnjCCynk++bbCtmFjN03+KlGjhcblfThpB8Sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsCGlxvjd2tdVFu7tJeaxwXoksKhJKtINET4uQDRSVhuHz8YVW5dT3M60dJK5u5ySA9NXNQQGKiNMJqmwHQoHiHQoJbJgEQLzw+NXpI5h5Y5CaHwijvB6SIPbvqGuQE8bHhIJHlhu4ghA8JXqymyP0NJLtk+yaDny6SqBQadBjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eQxPo+ZB; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f48bd643a0so7996625ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:14:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717085677; x=1717690477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G9y2UktDm2Wf8VD1pUGGsxJOBNyj+qo8KLue+rmkggE=;
-        b=DDPZPcRE3kIOgalnxE3Ys7+GnADKlyRHO+n1+PToMFK8heH1qZOpsmvvjxtmDc6dfj
-         TmRA6wUiwZbBxVrOcASSluy5UlpOjbMTViTep1LWa36kLAjLLPvp5tXO0Vtmvr2cpouS
-         Hg7B4+yWamJxEoAPhTyOLaePXWbHOAV5WNlPfGEM2BB8bBJhhrhTAdghWv6sSc571Cun
-         017xDT3rLBht69E1C9pL0wRFWRRn/vOywJycHupvO4SPdIJtk/mQ22SeibDgpjOlwVLf
-         0/14i3ceOPz9kwCZvDVhrkqhl0Ap5RqwluIAnvJgiEmKmchqSGxXRqVqRIC4yJ8cnQtl
-         kk7g==
+        d=linaro.org; s=google; t=1717085668; x=1717690468; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d6VUunGuJeLssKVobCfvvPjZ41Apn1YelEhi1TK/TFk=;
+        b=eQxPo+ZBP80y19YRbQ2Xlw49kuqguIkzJUtJHns4QhkcILlGCSV410GCHok9q/fVAc
+         JWjXbpF7cFWaFbSNXrEHseCbR//LwOT5MFS6Ak2z5+bSg03eW9rT8lU4Ouz6Izp1ENsM
+         tli76Z1byLi0B47q2/GrUQfoAMH87EH2T35Wk8F16C8iUgWZCWgnh42pWq66nH+2lwjp
+         dDDuCRTMDy0vY+SWYJgk537c6XykwWi6JaPJhgazMv59Zqt/IGOSJc+wUM4cy7GaG8Cg
+         wmRHyHUa+JW9SbSVH4aAryMFTqZwI1YJ/qzfCg61PzLdSpBKqT5ovxCdP4chXYVr5Ove
+         AksQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717085677; x=1717690477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G9y2UktDm2Wf8VD1pUGGsxJOBNyj+qo8KLue+rmkggE=;
-        b=S8ZWuFM1rhg/1E3+Coq0S2W02HfO9nooj4oBmUxKdeb6J0Qq4QQkczW9R/cNmjvOod
-         EFECt47FMjdjbzZ7cSAgYG3Q1wYdW0zY7dbGcvGR9vnUWpOqZiwioIUXN/pzjQADQnvN
-         61BfhetDmMMv0dHm9yQOaztCjpUVICC/Zv7ve3MqsFzM73hHihcGOLxat2n97xnwjUfC
-         QIftsh8k/vrt8lXje+TQTOUd/IvFAj81ZNNI7KqqoHxKksGyLuU4uhO3UZLJzA0shGky
-         6rAFR7inq7RT3gDKzpFNgA10MDKjj1DOIJjW7shiY+PXlCe0WHpetow9fiREle603T37
-         ifbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMmvfaBSmvStbOnirGaG0eglJiXlPJryEfP6czuuvJ6Pbq8F2Y5Dk8vRQcahMnS4aUjeDplX6Le/94mgUTxLMGBYIMyoIO1qVLbTvD
-X-Gm-Message-State: AOJu0YwqSZVU/87enrHk7hyUUrj0PIic3X9U2HSFVjnQMYQYnPs42cO0
-	Y5rGpsg9HqZ5TVPIZIc7d5vyPJ1enG5P1tAATL4R64x2avsKlIWGlp3MwKbuRUGYccLXC6KJIvq
-	SrNHXGrsQtq7BgCwCCc63RwwoPf5VsCQCJjZx
-X-Google-Smtp-Source: AGHT+IENsByswKhreNE6pmbNMCSnJRJAYsQ0cPqasNX9uk4ZawLfH+q9UEiS1kJaf/p5e40IJ8fSmYYP1XGXPGGzVGQ=
-X-Received: by 2002:a17:902:7289:b0:1ea:963e:2e2d with SMTP id
- d9443c01a7336-1f617382877mr2710595ad.24.1717085676926; Thu, 30 May 2024
- 09:14:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717085668; x=1717690468;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d6VUunGuJeLssKVobCfvvPjZ41Apn1YelEhi1TK/TFk=;
+        b=TjwXnZsu14pQuHc7j79R2/qrz1haHXWDn6Fo1W9YzIwZ3rkvwF/pKnu1ZXM54rMnOj
+         BM4sispXY4qrebPgGLJXDkkuuHJXNgP+6CZLQeqTstBkOX7yRizAt+I6XZipYWoZuaPQ
+         Ihe3R8Tx5EY+MECIsKVqVaQguSZF06DingT77j8IUSiurJKTR6bc0quxRkAoGYTh2Sm3
+         QEAy8ULGPjnPR97F4iSrtsgAuWL7597lVgYSZ85b5zL4tkGxyIbdzmFLjxRMWjgqhznt
+         +3Kjusutxa/zGwNUWaWyyCnba7Gl0E6FNc5Mx/vVCzzEFE2HKasQsBSU9qPR6Gkg15mx
+         LuMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeXEZb4ZrULMWjGO6zn7yuYJpR5TytQMGY3WvuHJKc98l7o7101GgOM2K9q2mPc1RiX8+hhWLQriq1QEXDzFdeNLDsTLEqhq4ouoao
+X-Gm-Message-State: AOJu0YyXaePTAE4rcLT+M0OMrOGqL3PUZ5U9d/fjGSjIZdj2RK1pPKyX
+	88e/B1YBprYkXUQO3wljdV1pQXFnyQAjRZmAsArLcDtrIQ2kSFv49d62nenD1oQ=
+X-Google-Smtp-Source: AGHT+IFqQKvjBFTB7gzCzLwMukiixRwSs187DU/Lq0gmjBTwVPSl82dbo3uyxiA4iHNgIZz5t+5qnQ==
+X-Received: by 2002:a17:902:d509:b0:1f4:a6a5:4271 with SMTP id d9443c01a7336-1f6199365e6mr29505585ad.55.1717085668113;
+        Thu, 30 May 2024 09:14:28 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:ed2:1ab5:d270:6de4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c99e3bdsm120465175ad.211.2024.05.30.09.14.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 09:14:27 -0700 (PDT)
+Date: Thu, 30 May 2024 10:14:25 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
+Message-ID: <Zlil4YSjHxb0FRgf@p14s>
+References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
+ <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
+ <ZlZM/hgSO4EeRVqS@p14s>
+ <d9e1356a-d8bf-40a3-9a78-424ead8089a9@foss.st.com>
+ <ZleReEIgD8O5zATO@p14s>
+ <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <ZlY0F_lmB37g10OK@x1> <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
- <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com> <CAP-5=fV7AGJLCKv0yhcCNSTywBSOiPV8j8aHi5eniXHaRZWA0Q@mail.gmail.com>
- <3d4edff4-0052-4996-b8e8-61764988f4dd@arm.com>
-In-Reply-To: <3d4edff4-0052-4996-b8e8-61764988f4dd@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 30 May 2024 09:14:24 -0700
-Message-ID: <CAP-5=fVi7kGV6PqWpszoUtS9QuKtDweBt7OOVuFCSVD=Z=_q8w@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: James Clark <james.clark@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com>
 
-On Thu, May 30, 2024 at 8:37=E2=80=AFAM James Clark <james.clark@arm.com> w=
-rote:
->
->
->
-> On 29/05/2024 18:33, Ian Rogers wrote:
-> > On Wed, May 29, 2024 at 7:50=E2=80=AFAM James Clark <james.clark@arm.co=
-m> wrote:
+On Thu, May 30, 2024 at 09:42:26AM +0200, Arnaud POULIQUEN wrote:
+> Hello Mathieu,
+> 
+> On 5/29/24 22:35, Mathieu Poirier wrote:
+> > On Wed, May 29, 2024 at 09:13:26AM +0200, Arnaud POULIQUEN wrote:
+> >> Hello Mathieu,
 > >>
-> >> On 28/05/2024 20:51, Ian Rogers wrote:
-> >>> On Tue, May 28, 2024 at 12:44=E2=80=AFPM Arnaldo Carvalho de Melo
-> >>> <acme@kernel.org> wrote:
+> >> On 5/28/24 23:30, Mathieu Poirier wrote:
+> >>> On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
+> >>>> 1) on start:
+> >>>> - Using the TEE loader, the resource table is loaded by an external entity.
+> >>>> In such case the resource table address is not find from the firmware but
+> >>>> provided by the TEE remoteproc framework.
+> >>>> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
+> >>>> - test that rproc->cached_table is not null before performing the memcpy
 > >>>>
-> >>>> On Mon, May 27, 2024 at 10:36:45PM -0700, Ian Rogers wrote:
-> >>>>> On Mon, May 27, 2024 at 3:58=E2=80=AFAM Leo Yan <leo.yan@linux.dev>=
- wrote:
-> >>>>>> On Sat, May 25, 2024 at 02:14:26PM -0700, Linus Torvalds wrote:
-> >>>>>>> On Sat, 25 May 2024 at 09:43, Linus Torvalds <torvalds@linux-foun=
-dation.org> wrote:
+> >>>> 2)on stop
+> >>>> The use of the cached_table seems mandatory:
+> >>>> - during recovery sequence to have a snapshot of the resource table
+> >>>>   resources used,
+> >>>> - on stop to allow  for the deinitialization of resources after the
+> >>>>   the remote processor has been shutdown.
+> >>>> However if the TEE interface is being used, we first need to unmap the
+> >>>> table_ptr before setting it to rproc->cached_table.
+> >>>> The update of rproc->table_ptr to rproc->cached_table is performed in
+> >>>> tee_remoteproc.
 > >>>>
-> >>>>>>>> This makes 'perf record' work for me again.
+> >>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>> ---
+> >>>>  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
+> >>>>  1 file changed, 23 insertions(+), 8 deletions(-)
 > >>>>
-> >>>>>>> Oh, wait, no it doesn't.
-> >>>>
-> >>>>>>> It makes just the plain "perf record" without any arguments work,
-> >>>>>>> which was what I was testing because I was lazy.
-> >>>>
-> >>>>>>> So now
-> >>>>
-> >>>>>>>     $ perf record sleep 1
-> >>>>
-> >>>>>>> works fine. But
-> >>>>
-> >>>>>>>     $ perf record -e cycles:pp sleep 1
-> >>>>
-> >>>>>>> is still completely broken (with or without ":p" and ":pp").
-> >>>>
-> >>>>>> Seems to me that this patch fails to check if a PMU is a core-atta=
-ched
-> >>>>>> PMU that can support common hardware events. Therefore, we should
-> >>>>>> consider adding the following check.
-> >>>>
-> >>>>>> +++ b/tools/perf/util/parse-events.c
-> >>>>>> @@ -1594,6 +1594,9 @@ int parse_events_multi_pmu_add(struct parse_=
-events_state *parse_state,
-> >>>>>>         while ((pmu =3D perf_pmus__scan(pmu)) !=3D NULL) {
-> >>>>>>                 bool auto_merge_stats;
-> >>>>>>
-> >>>>>> +               if (hw_config !=3D PERF_COUNT_HW_MAX && !pmu->is_c=
-ore)
-> >>>>>> +                       continue;
-> >>>>>> +
-> >>>>>>                 if (parse_events__filter_pmu(parse_state, pmu))
-> >>>>>>                         continue;
-> >>>>
-> >>>>>> To be clear, I only compiled this change but I have no chance to t=
-est
-> >>>>>> it. @Ian, could you confirm this?
-> >>>>
-> >>>>> Hi Leo,
-> >>>>
-> >>>>> so the code is working as intended. I believe it also agrees with w=
-hat
-> >>>>> Arnaldo thinks.
-> >>>>
-> >>>>> If you do:
-> >>>>
-> >>>>> $ perf stat -e cycles ...
-> >>>>
-> >>>>> and you have
-> >>>>
-> >>>>> /sys/devices/pmu1/events/cycles
-> >>>>> /sys/devices/pmu2/events/cycles
-> >>>>
-> >>>>> The output of perf stat should contain counts for pmu1 and pmu2. We=
-re
-> >>>>> the event 'data_read' or 'inst_retired.any' we wouldn't be having t=
-he
-> >>>>
-> >>>> Sure, what is being asked is to count events and if those two events=
- in
-> >>>> those two PMUs can count, then do what the user asked.
-> >>>>
-> >>>> For 'perf record' we're asking for sampling, if the event has the na=
-me
-> >>>> specified and can't be sampled, skip it, warn the user and even so
-> >>>> only if verbose mode is asked, something like:
-> >>>>
-> >>>>   root@x1:~# perf record -e cycles -a sleep 1
-> >>>>   [ perf record: Woken up 1 times to write data ]
-> >>>>   [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples=
-) ]
-> >>>>   root@x1:~# perf evlist
-> >>>>   cpu_atom/cycles/
-> >>>>   cpu_core/cycles/
-> >>>>   dummy:u
-> >>>>   root@x1:~#
-> >>>>
-> >>>> Cool, there are two 'cycles' events, one in a PMU named 'cpu_atom',
-> >>>> another in a 'cpu_core' one, both can be sampled, my workload may
-> >>>> run/use resources on then, I'm interested, sample both.
-> >>>>
-> >>>> But if we had some other PMU, to use a name Jiri uses in tests/fake
-> >>>> PMUs, the 'krava' PMU and it has a 'cycles' event, so 'krava/cycles/=
-'
-> >>>> and for some reason it doesn't support sampling, skip it, then the
-> >>>> result should be the same as above.
-> >>>>
-> >>>> If the user finds it strange after looking at sysfs that 'krava/cycl=
-es/'
-> >>>> isn't being sampled, the usual workflow is to ask perf for more
-> >>>> verbosity, using -v (or multiple 'v' letters to get increasing level=
-s of
-> >>>> verbosity), in which case the user would see:
-> >>>>
-> >>>>   root@x1:~# perf record -v -e cycles -a sleep 1
-> >>>>   WARNING: skipping 'krava/cycles/' event, it doesn't support sampli=
-ng.
-> >>>>   [ perf record: Woken up 1 times to write data ]
-> >>>>   [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples=
-) ]
-> >>>>   root@x1:~# perf evlist
-> >>
-> >> This makes sense to me. I like keeping the old apparent behavior unles=
-s
-> >> -v is used and it will feel like the tool "just works".
-> >>
-> >> In the context of the commit summary "perf parse-events: Prefer
-> >> sysfs/JSON hardware events over legacy":
-> >>
-> >> I don't follow why that should be "Prefer, even if it's an event that
-> >> can't be opened, sysfs/JSON...".
-> >>
-> >> Surely it should be "Prefer sysfs/JSON, unless it can't be opened, the=
-n
-> >> use legacy". If all events can be opened, sure go and open them all. I=
-f
-> >> only core events can be opened, do that too. If only uncore events can
-> >> be opened... etc.
-> >
->
-> [...]
->
-> > So great, ignoring the revert, that fixed everything? Well no. The
-> > tool in places was hard coding 'struct perf_event_attr' which is of
-> > course broken were things to be hybrid or BIG.little. So the fix for
-> > that was to not hard code things. We need a set of 'struct
-> > perf_event_attr', ah I know a way to get that let's just use our event
-> > parsing logic. So a 'struct perf_event_attr' hard coding type to
-> > PERF_TYPE_HARDWARE, the config to PERF_COUNT_HW_CPU_CYCLES and also
-> > setting the precision to maximum was changed into parsing the string
-> > "cycles:P". Sounds good, no? Well no. Somebody decided to create an
-> > ARM event called cycles (Intel's name to avoid conflicts is
-> > clockticks) and now that event was getting added to our set. Although
-> > the patch sat for weeks (months?) on linux-next nobody had discovered
-> > a fairly obvious breakage.
-> >
->
-> We did see the test failure on our Ampere test machine 7 days ago, but
-> for some reason only on mainline (I was also on holiday at the same
-> time). I'm checking if that machine is running all the branches and will
-> make sure it does from now on.
->
-> We are running perf-tools-next on other machines and I try to look at
-> all the test failures. Just this one had a bit of an obscure combination
-> of needing the DSU PMU.
-
-Thanks, I'm truly appreciative of greater testing and I appreciate it
-doesn't happen for free. It also has ongoing costs. Thank you!
-
-> One thing we don't have in CI is any Apple M hardware. I can look into
-> it but I wouldn't have high hopes for anything soon.
-
-As mentioned in these threads it is also knowingly broken - what the
-reverted patch was trying to address. Perhaps one could be captured on
-the way to e-waste if the screen,... don't work. We don't need much.
-Apple M is the root cause of much special behavior in the perf tool
-and the testing situation on it is sad. Maybe the Linux Foundation
-could get one?
-
-> [...]
->
-> > It isn't new behavior for perf to scan all PMUs, it always has, the
-> > new behavior is around legacy events. We want multiple PMU scanning
-> > for hybrid, we want all PMU scanning for uncore. The legacy changes
-> > happened because of the Apple M? PMU with me being complained at by
-> > folks at ARM who have now created this mess by their arm_dsu event
-> > name. Shouldn't it be a 1 liner fix to change "DSU_EVENT_ATTR(cycles,
-> > 0x11)," to "DSU_EVENT_ATTR(clockticks, 0x11),":
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/perf/arm_dsu_pmu.c#n177
-> > that's up to ARM but it would make sense to me.
-> >
->
-> Not sure about that one, that would break anyone's scripts or tools that
-> are looking at DSU cycles. And it wouldn't fix the issue in the future
-> if there were other reasons the event doesn't open (like non sampling
-> core events, or someone's brand new uncore PMU that also has a cycles
-> event).
-
-Right, but should the resolution there be to specify which PMU you
-want to resolve the ambiguity. The tool telling you a PMU doesn't
-support sampling is signal. We'd expect the tool to fail if it didn't
-support an event, is it really unreasonable to fail on a mode of an
-event?
-
-I'm further confused by the DSU driver. The names:
-
-DSU_EVENT_ATTR(cycles, 0x11),
-DSU_EVENT_ATTR(bus_access, 0x19),
-DSU_EVENT_ATTR(memory_error, 0x1a),
-DSU_EVENT_ATTR(bus_cycles, 0x1d),
-
-The last 3 seem unambiguous, but cycles, couldn't it be read as also
-possibly meaning bus_cycles? Wouldn't cpu_cycles be in keeping with
-ARM's other names and an objectively better name? Getting that 1 liner
-in v6.10 would resolve a lot of problems. I also think llc or l3 may
-be more "intention revealing" names for the device than dsu, but hey I
-don't want to start a naming war.
-
-> It seems like we're converging one something that works though in the
-> other threads, but I'm still digesting the problems a bit.
-
-I think the major blocker is that some people, although I can only
-name 1 and they've stopped listening, think event names should somehow
-carry special meaning and in that special case it implies use only
-core PMUs. The only known example of a special event is cycles, but if
-you look for equivalent event names in perf's code there are things as
-banal as branches and instructions, and as wild as
-dTLB-speculative-read-misses. I'd really like not to carry around
-notions of special event names but if we merge patches that ignore
-that and then they get reverted, justified through hand written tests
-looking to poke at things like the dsu PMU,  I don't know where we
-are. It has also been threatened that the perf code could be removed
-from the kernel tree, so there's really no fun in poking a bear.
-
-Thanks,
-Ian
-
-> >> Because the user could always use the defaults (no argument) or -e
-> >> cycles and historically Perf correctly picked the one that could be
-> >> opened. Or if they want the DSU one they could specify it. That can al=
-l
-> >> still work _and_ we can support "prefer sysfs/JSON" as long as we don'=
-t
-> >> prefer it when opening the event doesn't work.
-> >
-> > Hopefully this is all explained above.
-> >
-> > Thanks,
-> > Ian
-> >
-> >> Thanks
-> >> James
-> >>
-> >>> Thanks,
-> >>> Ian
+> >>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >>>> index 42bca01f3bde..3a642151c983 100644
+> >>>> --- a/drivers/remoteproc/remoteproc_core.c
+> >>>> +++ b/drivers/remoteproc/remoteproc_core.c
+> >>>> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
+> >>>>  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
+> >>>>  {
+> >>>>  	struct resource_table *loaded_table;
+> >>>> +	struct device *dev = &rproc->dev;
+> >>>>  
+> >>>>  	/*
+> >>>>  	 * The starting device has been given the rproc->cached_table as the
+> >>>> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
+> >>>>  	 * this information to device memory. We also update the table_ptr so
+> >>>>  	 * that any subsequent changes will be applied to the loaded version.
+> >>>>  	 */
+> >>>> -	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >>>> -	if (loaded_table) {
+> >>>> -		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >>>> -		rproc->table_ptr = loaded_table;
+> >>>> +	if (rproc->tee_interface) {
+> >>>> +		loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
+> >>>> +		if (IS_ERR(loaded_table)) {
+> >>>> +			dev_err(dev, "can't get resource table\n");
+> >>>> +			return PTR_ERR(loaded_table);
+> >>>> +		}
+> >>>> +	} else {
+> >>>> +		loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >>>>  	}
+> >>>>  
+> >>>> +	if (loaded_table && rproc->cached_table)
+> >>>> +		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >>>> +
 > >>>
-> >>>> - Arnaldo
+> >>> Why is this not part of the else {} above as it was the case before this patch?
+> >>> And why was an extra check for ->cached_table added?
+> >>
+> >> Here we have to cover 2 use cases if rproc->tee_interface is set.
+> >> 1) The remote processor is in stop state
+> >>      - loaded_table points to the resource table in the remote memory and
+> >>      -  rproc->cached_table is null
+> >>      => no memcopy
+> >> 2) crash recovery
+> >>      - loaded_table points to the resource table in the remote memory
+> >>      - rproc-cached_table point to a copy of the resource table
+> > 
+> > A cached_table exists because it was created in rproc_reset_rsc_table_on_stop().
+> > But as the comment says [1], that part of the code was meant to be used for the
+> > attach()/detach() use case.  Mixing both will become extremely confusing and
+> > impossible to maintain.
+> 
+> i am not sure to understand your point here... the cached_table table was
+> already existing for the "normal" case[2]. Seems to me that the cache table is
+> needed on stop in all scenarios.
+> 
+> [2]
+> https://elixir.bootlin.com/linux/v4.20.17/source/drivers/remoteproc/remoteproc_core.c#L1402
+> 
+> > 
+> > I think the TEE scenario should be as similar as the "normal" one where TEE is
+> > not involved.  To that end, I suggest to create a cached_table in
+> > tee_rproc_parse_fw(), exactly the same way it is done in
+> > rproc_elf_load_rsc_table().  That way the code path in
+> > rproc_set_rsc_table_on_start() become very similar and we have a cached_table to
+> > work with when the remote processor is recovered.  In fact we may not need
+> > rproc_set_rsc_table_on_start() at all but that needs to be asserted.
+> 
+> This is was I proposed in my V4 [3]. Could you please confirm that this aligns
+> with what you have in mind?
+
+Let me think a little - I'll get back to you.
+
+> In such a case, should I keep the updates below in
+> rproc_reset_rsc_table_on_stop(), or should I revert to using rproc->rsc_table to
+> store the pointer to the resource table in tee_remoteproc for the associated
+> memory map/unmap?"
+> 
+> [3]
+> https://patchwork.kernel.org/project/linux-remoteproc/patch/20240308144708.62362-2-arnaud.pouliquen@foss.st.com/
+> 
+> Thanks,
+> Arnaud
+> 
+> > 
+> > [1]. https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/remoteproc/remoteproc_core.c#L1565
+> > 
+> >>      => need to perform the memcpy to reapply settings in the resource table
+> >>
+> >> I can duplicate the memcpy in if{} and else{} but this will be similar code
+> >> as needed in both case.
+> >> Adding rproc->cached_table test if proc->tee_interface=NULL seems also
+> >> reasonable as a memcpy from 0 should not be performed.
+> >>
+> >>
+> >>>
+> >>> This should be a simple change, i.e introduce an if {} else {} block to take
+> >>> care of the two scenarios.  Plus the comment is misplaced now. 
+> >>
+> >> What about split it in 2 patches?
+> >> - one adding the test on rproc->cached_table for the memcpy
+> >> - one adding the if {} else {}?
+> >>
+> >> Thanks,
+> >> Arnaud
+> >>
+> >>
+> >>>
+> >>> More comments tomorrow.
+> >>>
+> >>> Thanks,
+> >>> Mathieu
+> >>>
+> >>>> +	rproc->table_ptr = loaded_table;
+> >>>> +
+> >>>>  	return 0;
+> >>>>  }
+> >>>>  
+> >>>> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> >>>>  	kfree(rproc->clean_table);
+> >>>>  
+> >>>>  out:
+> >>>> -	/*
+> >>>> -	 * Use a copy of the resource table for the remainder of the
+> >>>> -	 * shutdown process.
+> >>>> +	/* If the remoteproc_tee interface is used, then we have first to unmap the resource table
+> >>>> +	 * before updating the proc->table_ptr reference.
+> >>>>  	 */
+> >>>> -	rproc->table_ptr = rproc->cached_table;
+> >>>> +	if (!rproc->tee_interface) {
+> >>>> +		/*
+> >>>> +		 * Use a copy of the resource table for the remainder of the
+> >>>> +		 * shutdown process.
+> >>>> +		 */
+> >>>> +		rproc->table_ptr = rproc->cached_table;
+> >>>> +	}
+> >>>>  	return 0;
+> >>>>  }
+> >>>>  
+> >>>> -- 
+> >>>> 2.25.1
+> >>>>
 
