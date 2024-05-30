@@ -1,296 +1,260 @@
-Return-Path: <linux-kernel+bounces-195629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D0B8D4F84
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:59:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3AB8D4F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB941F24B71
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9DF31C23834
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519E620B04;
-	Thu, 30 May 2024 15:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEE820B12;
+	Thu, 30 May 2024 16:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eJR9OygE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dHGzGBSQ";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="isO+MleC"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EF7224DD
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717084757; cv=none; b=qnkmdhavKg3y7WchNNXlwADrRUFjhX/ww1BMvKZjafKV1lOBoyEOfq/GMCIDyWQniR3VKQ/r0lWiLcqr6WoowHWKxvH+wKnbdPmFDLFNYLC/9wQ4kYDCSTYqGEyIS0Skv97rSFjNGiAggug4BtcKTwM0t8Cow3ciBjZYtDGH550=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717084757; c=relaxed/simple;
-	bh=8oe5ZGKRmc0w4puK0OahLsaaIFzP7EEs/9vQk4KLAUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EEdSJds1VegutoMJf+B+7A08dBZg+vMJ/Txt30/0jzjCeMvqgXvCyviKgQzVqgv9qDJ++/iqobJOwpu4ODuqCTtgNGk0GJBRh52Vq58ZJdp745K8AklIo/NIUUldRXHUaONhpxBBivPgxMjxXF8mYv/u2/7xmOBzpji92l5A2ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eJR9OygE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717084753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZDf89+8SqxfDlWuRy59Dw7AYureYlAUuVk3fKH1rxSE=;
-	b=eJR9OygE/TjZ9hBQaxNfHrCXI4M53n8TMGukMkW6rGbqJmxiXB4YP+yHokM/ZzzOnjBE2q
-	QvHFzWg8p/+C0p1uO3cZxyBysiStiCpi5AY5XPZ8NYc+pCAvg/E9HixrfOJUX1eAhj6s70
-	9ZPXrxw597j6yAGiPEJ5pDdp7JeT5ag=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-XkBagONkNfGhLO6Snpq0tQ-1; Thu, 30 May 2024 11:59:10 -0400
-X-MC-Unique: XkBagONkNfGhLO6Snpq0tQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7EA7D185A780;
-	Thu, 30 May 2024 15:59:09 +0000 (UTC)
-Received: from fedora (unknown [10.22.9.63])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 664B0492BC6;
-	Thu, 30 May 2024 15:59:08 +0000 (UTC)
-Date: Thu, 30 May 2024 11:59:06 -0400
-From: Audra Mitchell <audra@redhat.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	shuah@kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, raquini@redhat.com
-Subject: Re: [PATCH 1/2] Fix userfaultfd_api to return EINVAL as expected
-Message-ID: <ZliiSkTsxjVQGu1n@fedora>
-References: <20240507195510.283744-1-audra@redhat.com>
- <939a16f2-7b66-45a6-a043-4821bd3c71dc@redhat.com>
- <Zjt3Apr8ILFA4oK_@fedora>
- <ZjuIEH8TW2tWcqXQ@x1n>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDAA3D68;
+	Thu, 30 May 2024 16:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717084889; cv=fail; b=IeH92ObU2eSeec6zTu8PQEQt+6jEK+zkxgyTdUWiLnUUcTvtBp4VqTtZgFe9fYP/1gtdF9SPOCnCm7SI0GbOhAgyB8U+Mapfx5fup2IviB6NWaO+BdxUFY0V8L7cab7Jk8tvugrhLNiDm76dS/FQYHuJWuG7+156GMlE/EejqMk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717084889; c=relaxed/simple;
+	bh=mNqU7x212PL8nQWtFx0Sapz9khZb1HBM5p5POUb25Q8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OCjIxTMN2AH2DHm7oyL5etJpkfvDTdVpGC85JnVsANvQ0lFBV7Aht/1zPBzw7QlljJb2FApsT0RO79Tu8eStdG8LfLV+kVDfX0DPmemvnHGnI2T3QIqJUZCdkTSlQeDYUb2w8xdUx6I0De+5DxE1PxHT3HKEFzJmNy7gwQVngl8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dHGzGBSQ; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=isO+MleC; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d8a8ab3a1e9d11ef8c37dd7afa272265-20240531
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=mNqU7x212PL8nQWtFx0Sapz9khZb1HBM5p5POUb25Q8=;
+	b=dHGzGBSQoolrWoLvmGAEkSxJVijkzHAIA4dZIShjv925igDreN6seZ1z9zTzVwmA+Rw/pG42RxnYR/rn824iC8nj5skPs64RfJ5AD3ySt3oaBJY9zgKKwF2LLRMkVzxLt78pnVxcyyAj7UB65YZXp9QFec0VwsWVqbtMpMBf7FI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:aba70e7c-84d1-4f61-a568-5eabf3aa5a8a,IP:0,U
+	RL:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:393d96e,CLOUDID:a84c8484-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:11|42|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
+	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: d8a8ab3a1e9d11ef8c37dd7afa272265-20240531
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <skylake.huang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 365960561; Fri, 31 May 2024 00:01:16 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 31 May 2024 00:01:10 +0800
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 31 May 2024 00:01:10 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iwqjF2xJW8pnOTvQr+quAccBHyNxdVkYFytG6mEu4FF8dWsyrNFt6/ZFRPKFpOEfToC1wX/xfpYIBCWx2ciiAiyPDk619aGiBreQR+zA+eGHolc7S4LbEm4ayRy6oHawLZC2tpmoxw7QXObCdAyOISTE5h8JbzhFC3tkgLKoHrFxCjvnW59JjNViNLgjvtFPY2RZHroHXBi8qMVnXUSHj4QdSX0JOcLDGM3etpW3pGp7mliPJeQTGJOwxfdXsa+fR3kUIwMKtr6fETOjlpLTxio0AAGFcMNOGhez20Lsuep/1OW9D6ONEz4EDe1RMLGnJfayeGEp+NaL/3+kfjXq+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mNqU7x212PL8nQWtFx0Sapz9khZb1HBM5p5POUb25Q8=;
+ b=X1AwroICDL6wb94b0hIwIYmFLeWRx2jZRh5rr2PigD9VSE9CVjVBhPEo/HhEy2k7NlqYFwJapf4olkaXaSkKGkMcnfptSPLX1QNovVYvWmbma0FAGHT0J/A+oowObM/tf0fqkl5tm0dViraYDfUj9yAZDEyUY6CE2nKxbCJxxkIf9EfeHeo/pra3KB5zuE+cAaowt2QvCRi50LopSNQuBNESQtV0RTYGzLgmBhVtbRSUc4OK103/0HnE8fI/Zm9Wp5iqfdaSRf8imQ3dhFtqjE/nQxVwWTY8+Ro7hGHE2tu2N6ZfB+mOWxKHgW9ffnOTA0RUm0h+2y37uj5jJ9rfEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mNqU7x212PL8nQWtFx0Sapz9khZb1HBM5p5POUb25Q8=;
+ b=isO+MleCq7orJDwj1SAC+AkAN3sr9IGU0ysE2pFPUFnDvJyznc7RmxIATljprWyxZ1KLMsGLkyprVePb9rmPCssq7m32SPN5V+jP9+WdyZvqoJNbF0eiLEFnCGD3CHP/svrY0TqVtY3famEw2t4Y9ie+2I96tJbixppRvR07F24=
+Received: from KL1PR03MB6226.apcprd03.prod.outlook.com (2603:1096:820:8c::14)
+ by KL1PR03MB8118.apcprd03.prod.outlook.com (2603:1096:820:102::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.16; Thu, 30 May
+ 2024 16:01:09 +0000
+Received: from KL1PR03MB6226.apcprd03.prod.outlook.com
+ ([fe80::f3:c11:8422:7ce3]) by KL1PR03MB6226.apcprd03.prod.outlook.com
+ ([fe80::f3:c11:8422:7ce3%3]) with mapi id 15.20.7656.007; Thu, 30 May 2024
+ 16:01:08 +0000
+From: =?utf-8?B?U2t5TGFrZSBIdWFuZyAo6buD5ZWf5r6kKQ==?=
+	<SkyLake.Huang@mediatek.com>
+To: "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+CC: "andrew@lunn.ch" <andrew@lunn.ch>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "edumazet@google.com"
+	<edumazet@google.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	=?utf-8?B?U3RldmVuIExpdSAo5YqJ5Lq66LGqKQ==?= <steven.liu@mediatek.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "davem@davemloft.net"
+	<davem@davemloft.net>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH net-next v5 4/5] net: phy: mediatek: Extend 1G TX/RX link
+ pulse time
+Thread-Topic: [PATCH net-next v5 4/5] net: phy: mediatek: Extend 1G TX/RX link
+ pulse time
+Thread-Index: AQHaskSf1DfXvyWrZkOPqw4pAUjQdrGvkmKAgABeO4A=
+Date: Thu, 30 May 2024 16:01:08 +0000
+Message-ID: <a6280b885cf1cffa845310e7e565e1dd7421dc66.camel@mediatek.com>
+References: <20240530034844.11176-1-SkyLake.Huang@mediatek.com>
+	 <20240530034844.11176-5-SkyLake.Huang@mediatek.com>
+	 <ZlhTtSHRVrjWO0KD@shell.armlinux.org.uk>
+In-Reply-To: <ZlhTtSHRVrjWO0KD@shell.armlinux.org.uk>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: KL1PR03MB6226:EE_|KL1PR03MB8118:EE_
+x-ms-office365-filtering-correlation-id: 128fde34-5eb2-4375-e38e-08dc80c1b7f6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|7416005|366007|1800799015|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?WnM4Q0o3dEFKWWIvTVhiOTlZcUgvL2k2bEVJZUVndGE4TEt3QWVhWTBScFZV?=
+ =?utf-8?B?dHBhMWhkbTU5dmE1b0hsb3h3MnRTNDBGMmIwaVYzWHl0UC8rNXl1Szd3YndM?=
+ =?utf-8?B?eXJka1JWOTd4VDRldS9oNVpyTEhxZ3JnSk0wcVVkaVJOZjNYRFNNZFpwRzlK?=
+ =?utf-8?B?Y3BkU0V0eGdTZzQwY3hla2Fic2k0aVA4T0VISkM5RlUwTnJKUUhpeTV6TkFv?=
+ =?utf-8?B?bkpCVUQrRVpZbTBqSFl4Ui81bzc4VGkzSW5jTEZ1dlF2b0ZZOVQ1eWV2dHdw?=
+ =?utf-8?B?aXU0OTJHcFVNdTY1RjRJSlI4TjNkQmIzWnVRaG9OcHJMdnBROXBzaGNmRzEw?=
+ =?utf-8?B?OFVTbDBVbjgzcGNScncwNmx6WHZ2eld1QnZDdC8rSkRJazRvYUR4S2NCTUIx?=
+ =?utf-8?B?OGxZa2o1c29Ydnl0SFBST09HUUt0eDU2ZWJwNGlkVStEMUVidjYzaWlVWWpl?=
+ =?utf-8?B?dG9jc28rSDJqb2RaR1NCdkdvMkMyWFpQN2dqRFE5WlpLWExEWVFnOXF2RkZv?=
+ =?utf-8?B?QlZpNVJBSFVtbFRrN0JwYTZid0tsWFV3VHVpZXRiTHMrdnFUdlZ2cXBkWWM1?=
+ =?utf-8?B?MHZPajBIeHlrS0g1MWZEU294d2xEL1RQMEYxdTRUbGN6ZytLQXNGSU1zYUoy?=
+ =?utf-8?B?QTZqTjFqa0JlYmNvK1NLbXVMS3AzUDRqaTBJSkVqRVFWNDZmMEhRaHNyNDhY?=
+ =?utf-8?B?Qk9CaVpoYjZsdW9IZk05bjkwUUNDbFdXVlRpbUJVckdjOE5aMW41ekM4NldE?=
+ =?utf-8?B?Wm5CNExDMTIrMWJLdXBxRUEyZm93RXZTNU9iZVFDcnl1UFBmZm1kZjdnMUk0?=
+ =?utf-8?B?QWwxcUI4VVU0U1RUUStCNEoxeGZmNWtSdnJNUUwvRG9YSGR5RW9vaTRuMUt3?=
+ =?utf-8?B?c1lsK1J1Yk5JRUZEMUh0eEFmRWR6UTRkU3lYZ2JoTXdYclA2Nm14R1VFWGJw?=
+ =?utf-8?B?Q2NESWZJNEFTY3VMRTZiOXFlTHV5Y3RUZEczQTdWMjkwd2VkSDk2ckNGb1ht?=
+ =?utf-8?B?ejBCNWJzcElCNWpxZlJLUE9SWFJsSk9pUytlRWZYMnlrcnEvM1ZOSzFDYmpG?=
+ =?utf-8?B?U1YxalI0REZtbnhZeDVaTlBiM1hPMUFNeUZraFpqRFNCd0NsNHpMYmhrUE01?=
+ =?utf-8?B?SmRoT1lTWmQ4ai9mNzUvU0lKazBIQUkzWUdoRDc2M3Rya2dQRU9CU0V5dEJ1?=
+ =?utf-8?B?cm5OQ05vTXNrbXBWa3FLYThTYTByZkFXc2s1dytmZ21NeE0zRml4OUxkSlIy?=
+ =?utf-8?B?UEYyZEx1Z1A2Q09LVVY4aUR4OTBBd0tEQUFrejh1K0xhK1VZZkdiQWo5dk0v?=
+ =?utf-8?B?bVVid3diaWdDc0E5L3NSOTVzV0VGZFpXRkoySnd4M3hsWkhEd05uSXpQT2hH?=
+ =?utf-8?B?QWk0bGVpUFdQRS9IZnd5SkVZMmhubEdjMDJLcGxBaGRwMERvL1lid3Y0UUs0?=
+ =?utf-8?B?a0hGMWZaMEVNdVJYV2VIeURtZkp0ZVpxb25vR09WaXB1VU1hOWlNa3MyL2Ri?=
+ =?utf-8?B?ZnZuL2NsdEJnazl3SHc2NnZqTUFCbldKK2xaSzlpVXFNZzdSbFE5cmNIRDRW?=
+ =?utf-8?B?NjRXRjBqREpWMEFqdHBlUS9vb0pxd0sxSkFZTjVMZC8rQWZ1aVJONlRFaUxD?=
+ =?utf-8?B?akJRaUlYS0d3S054NWlOQjJHeDFzNWJqRGV6K2VnVlBMcjAvZ05zN2swZmlO?=
+ =?utf-8?B?SUx4T0ZWazh5Y0pjaFZrblpmNEpWRTRvTGRJMEpURjFqSUFEWjZoYnJRPT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB6226.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Ymx0aE9JQ0tPZ05TdDZNdWVFRjdyWUxjMEsrUWZXd1VNcW42cnQ4MHBHM1N4?=
+ =?utf-8?B?N0IyajBwL2szNFVWM1RmeDRKT25IWXNsUHA4aytjVExEWEpYZndqYlF0eWVo?=
+ =?utf-8?B?R3ZyTUpDWHU5ZFBwMDdGUTA0TTl0bkJmMi9wTzJoNVVZaXdodktJeG10V0s0?=
+ =?utf-8?B?TzJpa001VS94STVkMER0RlIvdSt2U1FyNVplU3M3RXBrUlZlZzNQR2UvWEdr?=
+ =?utf-8?B?dHhaaE4ycGgxczZoR3NTdW53MTV3Sk12ZnRYTnZ3QmgrdWRjZHhpR0V1dDVS?=
+ =?utf-8?B?RjhPZVRPRDNXVUN6Y0JjZ1hnYlA2ZVlMRWN0TytRM2l6MXdHNjZCZ2JIQWc2?=
+ =?utf-8?B?bEZXdFRpeUs4Z0RDZlVPMWFSSThmeUZLVElCVk9VOHA5NGZnaXIxZGlmK3lL?=
+ =?utf-8?B?UmEwMTNoRUsra0xJWVY4V05Seit0eC9FVmZHSjVWM1pLVWhPcjVzNHNSQ0JP?=
+ =?utf-8?B?OGkzOEpkNi8vRHF5TjVqQXBGSkJsZFFzWkZydTJET0J5TEFreUxUc1kwK1Va?=
+ =?utf-8?B?TzU1WjNOWFBWVzZpL0FuSWIwY2dSTFdjT0Y0T0xJQ0ZQSWxoTkpPMk1NOGxM?=
+ =?utf-8?B?dVhzNnM1ZWxMRy9JaytMRnFDZC9XNFdaZVVMT3d2Q1VBY1RtWGg2R0hXNEda?=
+ =?utf-8?B?MkdWb2dZcTFsYmlzdUZSVldoMUxMM05xdmpabmRMVTR1cGlrbVVXdFRZYWw2?=
+ =?utf-8?B?WEU2bnNreDBWSG9FRmVCaHNYNVJCMWZ3ZEVZM1ZZQzJEd1RuY2xnZFJQQ3B0?=
+ =?utf-8?B?a0NyRTU3WW1ZRHRKUHE0ZUVVRWhGUGkxOHBJZktyc3g3a1BpUVlCK000Vy9Q?=
+ =?utf-8?B?MG51V3FjSlNJOUpYNDRFWm9uak9GL0dscjlaZGhpTjFUUXNwNkRZSVJsUGgv?=
+ =?utf-8?B?eFNLMHRJc0xNK3g5VzJUOFNBd1VUajdQZUZzY205OG9NOEcwTjlQWTNZNWN4?=
+ =?utf-8?B?Z3dUZENDWUp2Zlp4U0t6WE1tWHVHYWVEcE5tRkxraGZxQkhWRXJZNXc3clJ6?=
+ =?utf-8?B?R3hqSWsvS0x6Rks2L0Zoek9xUnFtaVpKa1YyNlVYS3FGMkx6ellGem5iTGtw?=
+ =?utf-8?B?blhqSldoTXhGM05XU3dxczhEVkF1N0FxNmtUTlB2NldGM083Yk5mQklTVXZR?=
+ =?utf-8?B?eE9xTnZtZUdoazRnQ2xXZEl5WHVKVjVPa3h0Vko0S0wrNjQ3WjcwTnhZYlNp?=
+ =?utf-8?B?dmJrSm1UVnl5c3BXMzJlRU1xeFI5S2MrYmpDcjhBNXZYOFVKNGgraHcxMHEx?=
+ =?utf-8?B?dVE0cHdHRlVMVkJWMWFxMksvVnJlSlBuNkxxQmdtSU1UVUZ0SWdoVXBEQ2R5?=
+ =?utf-8?B?SjltZ2E5QmdreWFyTTUzN3JzTW9XczYzR0pkUjdSTG5ZMTVoK0REdDk1MW9s?=
+ =?utf-8?B?K3lIbno1UjNwemNobkpXdUU5VU5IMWVIbklneGFWd1pxZGNBVE9SeE5uM1BN?=
+ =?utf-8?B?SVQ4VjR1ZENWRkRZTEhycWdPQXNBZTh3TUZobTBYdnRUM2dTK1MzRjI0UTNX?=
+ =?utf-8?B?WEw0ZzgvT2haUXYvWnNDekVJdWdvTkYxblpha05Yek03ZW55SnhuUzB1Y29F?=
+ =?utf-8?B?SGpzTW9sMHZmMmR1V01welI4ZjhldzFrL1VtNFZ2M1FvS3M5K1F4aGVSNW9x?=
+ =?utf-8?B?TnFoTlFnQjczQjJhdFFQWGN0amdmOENLbHdVTXhKZFp1NDRrQ2RZaDZSVWJ0?=
+ =?utf-8?B?VXZNbkxFV1ZDWjNhWFB5dVROTEFiY3RwNmZuMjRQUXJpUmpkZTBqcXAzYTRl?=
+ =?utf-8?B?c3lNRlhSVS92VVFGOFVrVFdpUjRvQUFHZFNXRGNsM0xxYm8rbTNMbFg0REFs?=
+ =?utf-8?B?V2t5d05mK0x3VDlIbmZXWHY4YjlTSFJwT0hvbmFkeUcxbU5ISHB2U0tCMmtn?=
+ =?utf-8?B?Z29JTWRzYmtvZ3IvckRhYnphQmpKUzYyUFNtVVFGMFFkdTNSZTJqTDdYODVL?=
+ =?utf-8?B?RTF1cDVnN3VSbHR5N0lsZGhONlNlQVNRaDE0UTl0c1VLb1ZLbVJtVDN0dVhL?=
+ =?utf-8?B?MHhiMGEwTUsxU1NXN2lQRHd6TklreUx5VG1EUVI3eEZGdDJuaitjVmpGVVNR?=
+ =?utf-8?B?TVQrWFZyb1VmdW1zZXZVZUdUZWhnRzlTbjdZREpDYWVrUHd1Z1RJTEF0UFdS?=
+ =?utf-8?B?clVaSFd5MmFkNlRZYXpxRGdKZFBQUGE1Tng0ejVZTmh3UzZFcjdiWnFBZWd1?=
+ =?utf-8?B?REE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FCCE0736F500604D944E8D95095FD0D4@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjuIEH8TW2tWcqXQ@x1n>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB6226.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 128fde34-5eb2-4375-e38e-08dc80c1b7f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2024 16:01:08.3133
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zBwI3nmPi0yTwR5oIsZz6pUkeh3QSx5pSphhhSXTToTMy5ZuomQti975pKLTEe9JnRuzDZmS3hycOZENGGBAZI6E5KtAvlg8guE1XNLkLIs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8118
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--23.785100-8.000000
+X-TMASE-MatchedRID: gIwa0kWWszLUL3YCMmnG4qfOxh7hvX71PbKer+BoZT9SHuP4uj8E9MkU
+	hKWc+gwPyGJ1SiZNgOOsXAiB6VK48AbbLE2rYg/9wvqOGBrge3shmbYg1ZcOnr84twmKEd99h7Y
+	HWQOgdau+8mjGjS5MxD+Y4Ojh3fJRt/K29VNwEQWO0rt0LpQGeacJxWZ5/lR8feHPnu31iHA30E
+	eCx5K2K2VdND2VIZc0bj2aLY2YKTXLRU+lYaWxvp1U1lojafr/g3XZcphu4kteNs5tWYvjCVfoZ
+	Tbv2LGTdgpFqmK1AE+Rk6XtYogiatLvsKjhs0ldVnRXm1iHN1bEQdG7H66TyOk/y0w7JiZo
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--23.785100-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	5D3D61B6B1AA27C46040F3D6E4B8738E0C84FC7E9225534D804CF4AABA3826DB2000:8
 
-On Wed, May 08, 2024 at 10:11:28AM -0400, Peter Xu wrote:
-> On Wed, May 08, 2024 at 08:58:42AM -0400, Audra Mitchell wrote:
-> > On Wed, May 08, 2024 at 09:39:10AM +0200, David Hildenbrand wrote:
-> > > On 07.05.24 21:55, Audra Mitchell wrote:
-> > > > Currently if we request a feature that is not set in the Kernel
-> > > > config we fail silently and return the available features. However, the
-> > > > documentation indicates we should return an EINVAL.
-> > > 
-> > > I assume you are referencing
-> > > 
-> > > "EINVAL The API version requested in the api field is not supported by this
-> > > kernel, or  the  features  field passed to the kernel includes feature bits
-> > > that are not supported by the current kernel version."
-> > > 
-> > > and
-> > > 
-> > > "To  enable  userfaultfd features the application should set a bit
-> > > corresponding to each feature it wants to enable in the features field. If
-> > > the kernel supports all the requested features it will enable them.
-> > > Otherwise it will zero out the returned uffdio_api structure and return
-> > > EINVAL.
-> > > "
-> > > 
-> > > in which case I agree.
-> > 
-> > Yep! I'm referencing the man page.
-> > 
-> > > 
-> > > > 
-> > > > We need to fix this issue since we can end up with a Kernel warning
-> > > > should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
-> > > > a kernel with the config not set with this feature.
-> > > 
-> > > Can you mention which exact one? Is it a WARN* or a pr_warn() ?
-> > 
-> > Here is the kernel warning I get:
-> > 
-> > [  200.803094] unrecognized swap entry 0x7c00000000000001
-> > [  200.808270] ------------[ cut here ]------------
-> > [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
-> > [  200.820738] Modules linked in: qrtr bridge stp llc rfkill sunrpc amd_atl intel_rapl_msr intel_rapl_common amd64_edac edac_mce_amd kvm_amd kvm ipmi_ssif acpi_ipmi i2c_piix4 ipmi_si wmi_bmof dcdbas dell_smbios dell_wmi_descriptor ptdma ipmi_devintf rapl ipmi_msghandler acpi_power_meter pcspkr k10temp xfs libcrc32c sd_mod t10_pi mgag200 sg drm_kms_helper crct10dif_pclmul i2c_algo_bit ahci crc32_pclmul drm_shmem_helper libahci crc32c_intel drm i40e libata ghash_clmulni_intel tg3 ccp megaraid_sas sp5100_tco wmi dm_mirror dm_region_hash dm_log dm_mod fuse
-> > [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
-> > [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
-> > [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
-> > [  200.889595] Code: 83 fa 02 0f 86 44 01 00 00 83 f9 17 0f 84 e1 00 00 00 83 f9 1f 0f 84 d0 00 00 00 48 89 c6 48 c7 c7 00 e4 dd bb e8 73 a2 de ff <0f> 0b e9 44 fd ff ff 45 0f b6 44 24 20 41 f6 c0 f4 75 27 4c 89 ee
-> > [  200.908348] RSP: 0018:ffffa18d2e6c37c8 EFLAGS: 00010246
-> > [  200.913584] RAX: 000000000000002a RBX: 00007f26d3600000 RCX: 0000000000000000
-> > [  200.920730] RDX: 0000000000000000 RSI: ffff93503f9a0bc0 RDI: ffff93503f9a0bc0
-> > [  200.927867] RBP: 00007f26d35cc000 R08: 0000000000000000 R09: ffffa18d2e6c3688
-> > [  200.935009] R10: ffffa18d2e6c3680 R11: ffffffffbc9de448 R12: ffffa18d2e6c39e8
-> > [  200.942149] R13: ffff92d1ebc15b50 R14: ffff93114e0cde60 R15: ffffa18d2e6c3928
-> > [  200.949291] FS:  0000000000000000(0000) GS:ffff93503f980000(0000) knlGS:0000000000000000
-> > [  200.957384] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [  200.963140] CR2: 00007f26b1600658 CR3: 00000040905ba000 CR4: 0000000000350ef0
-> > [  200.970283] Call Trace:
-> > [  200.972745]  <TASK>
-> > [  200.974862]  ? __warn+0x7f/0x130
-> > [  200.978108]  ? zap_pte_range+0x43d/0x660
-> > [  200.982044]  ? report_bug+0x18a/0x1a0
-> > [  200.985720]  ? handle_bug+0x3c/0x70
-> > [  200.989219]  ? exc_invalid_op+0x14/0x70
-> > [  200.993068]  ? asm_exc_invalid_op+0x16/0x20
-> > [  200.997265]  ? zap_pte_range+0x43d/0x660
-> > [  201.001199]  ? zap_pte_range+0x43d/0x660
-> > [  201.005134]  zap_pmd_range.isra.0+0xf9/0x230
-> > [  201.009416]  unmap_page_range+0x2d4/0x4a0
-> > [  201.013436]  unmap_vmas+0xa8/0x180
-> > [  201.016854]  exit_mmap+0xea/0x3b0
-> > [  201.020191]  __mmput+0x43/0x120
-> > [  201.023342]  exit_mm+0xb1/0x110
-> > [  201.026496]  do_exit+0x270/0x4f0
-> > [  201.029739]  do_group_exit+0x2c/0x80
-> > [  201.033326]  get_signal+0x886/0x8b0
-> > [  201.036828]  ? srso_return_thunk+0x5/0x5f
-> > [  201.040848]  arch_do_signal_or_restart+0x25/0x100
-> > [  201.045563]  ? srso_return_thunk+0x5/0x5f
-> > [  201.049583]  ? vma_set_page_prot+0x5e/0xc0
-> > [  201.053692]  ? srso_return_thunk+0x5/0x5f
-> > [  201.057713]  ? syscall_exit_work+0xff/0x130
-> > [  201.061908]  syscall_exit_to_user_mode+0x1b3/0x200
-> > [  201.066712]  do_syscall_64+0x87/0x160
-> > [  201.070387]  ? srso_return_thunk+0x5/0x5f
-> > [  201.074405]  ? do_mmap+0x416/0x5f0
-> > [  201.077821]  ? srso_return_thunk+0x5/0x5f
-> > [  201.081840]  ? rseq_get_rseq_cs+0x1d/0x240
-> > [  201.085950]  ? srso_return_thunk+0x5/0x5f
-> > [  201.089970]  ? rseq_ip_fixup+0x6d/0x1d0
-> > [  201.093823]  ? vm_mmap_pgoff+0x117/0x1a0
-> > [  201.097755]  ? srso_return_thunk+0x5/0x5f
-> > [  201.101776]  ? srso_return_thunk+0x5/0x5f
-> > [  201.105795]  ? syscall_exit_to_user_mode+0x78/0x200
-> > [  201.110685]  ? srso_return_thunk+0x5/0x5f
-> > [  201.114706]  ? do_syscall_64+0x87/0x160
-> > [  201.118557]  ? srso_return_thunk+0x5/0x5f
-> > [  201.122575]  ? __count_memcg_events+0x49/0xb0
-> > [  201.126944]  ? srso_return_thunk+0x5/0x5f
-> > [  201.130967]  ? srso_return_thunk+0x5/0x5f
-> > [  201.134986]  ? syscall_exit_work+0xff/0x130
-> > [  201.139184]  ? srso_return_thunk+0x5/0x5f
-> > [  201.143205]  ? syscall_exit_to_user_mode+0x78/0x200
-> > [  201.148093]  ? srso_return_thunk+0x5/0x5f
-> > [  201.152114]  ? do_syscall_64+0x87/0x160
-> > [  201.155960]  ? srso_return_thunk+0x5/0x5f
-> > [  201.159984]  ? sched_clock_cpu+0xb/0x190
-> > [  201.163916]  ? srso_return_thunk+0x5/0x5f
-> > [  201.167939]  ? irqtime_account_irq+0x40/0xc0
-> > [  201.172220]  ? srso_return_thunk+0x5/0x5f
-> > [  201.176243]  ? srso_return_thunk+0x5/0x5f
-> > [  201.180263]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [  201.185326] RIP: 0033:0x7f26dfd0735b
-> > [  201.188939] Code: Unable to access opcode bytes at 0x7f26dfd07331.
-> > [  201.195128] RSP: 002b:00007fffce176868 EFLAGS: 00000206 ORIG_RAX: 000000000000000a
-> > [  201.202700] RAX: fffffffffffffffc RBX: 00007f26dfe60000 RCX: 00007f26dfd0735b
-> > [  201.209841] RDX: 0000000000000003 RSI: 0000000001000000 RDI: 00007f26af401000
-> > [  201.216983] RBP: 00007f26b0400640 R08: 00000000ffffffff R09: 0000000000000000
-> > [  201.224127] R10: ffffffffffffffc0 R11: 0000000000000206 R12: 0000000000000000
-> > [  201.231267] R13: 000000000040d320 R14: 0000000000000000 R15: 0000000000000000
-> > [  201.238413]  </TASK>
-> > [  201.240610] ---[ end trace 0000000000000000 ]---
-> > [  201.245250] unrecognized swap entry 0x7c00000000000001
-> > 
-> > 
-> > 
-> > > 
-> > > Likely we want "Fixes:" here.
-> > 
-> > This could be seen as a continuation of the problem 
-> > 2ff559f31a5d Revert "userfaultfd: don't fail on unrecognized features" 
-> > was trying to solve. However, this patch only checks to make sure we didnt 
-> > ask for a feature outside the possible range of features. We are still missing
-> > a check to confirm the requested features are also configured on. So I guess 
-> > the "Fixes" tag would be for this patch?
-> > 914eedcb9ba0 userfaultfd: don't fail on unrecognized features
-> 
-> Even though 914eedcb9ba0 was problematic but it might be innocent in this
-> regard, as we miss such check even before that commit.
-> 
-> Perhaps the right Fixes should be when there will be flags that will
-> only be supported conditionally, which should be the wp support.  In that
-> case, it could be:
-> 
-> Fixes: e06f1e1dd499 ("userfaultfd: wp: enabled write protection in userfaultfd API")
-> 
-> But it's still complicated though even if we want to backport, as this
-> specific check for userfault was added later... in:
-> 
-> 00b151f21f39 ("mm/userfaultfd: fail uffd-wp registration if not supported")
-> 
-> In summary: I think we can stick with Fixes on e06f1e1dd499, but we don't
-> copy stable.  The major reason we don't copy stable here is not only about
-> complexity of such backport, but also that there can be apps trying to pass
-> in unsupported bits (even if the kernel didn't support it) but keep using
-> MISSING mode only, then we shouldn't fail them easily after a stable
-> upgrade.  Just smells dangerous to backport.
-> 
-> When at it and repost, would you mind consolidate the two feature list
-> check together?  We had the previous check here:
-> 
-> 	if (uffdio_api.api != UFFD_API || (features & ~UFFD_API_FEATURES))
-> 		goto err_out;
-> 
-> If with this patch IIUC this previous check can be removed (still need to
-> check UFFD_API).
-> 
-> Thanks,
-> 
-> > 
-> > Happy to get your input here!
-> > 
-> > Thanks in advance!
-> > 
-> > 
-> > > 
-> > > > 
-> > > > Signed-off-by: Audra Mitchell <audra@redhat.com>
-> > > > ---
-> > > >   fs/userfaultfd.c | 5 +++++
-> > > >   1 file changed, 5 insertions(+)
-> > > > 
-> > > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > > > index 60dcfafdc11a..17210558de79 100644
-> > > > --- a/fs/userfaultfd.c
-> > > > +++ b/fs/userfaultfd.c
-> > > > @@ -2073,6 +2073,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
-> > > >   	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
-> > > >   	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
-> > > >   #endif
-> > > > +
-> > > > +	ret = -EINVAL;
-> > > > +	if (features & ~uffdio_api.features)
-> > > > +		goto err_out;
-> > > > +
-> > > >   	uffdio_api.ioctls = UFFD_API_IOCTLS;
-> > > >   	ret = -EFAULT;
-> > > >   	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
-> > > 
-> > > CCing Peter.
-> > > 
-> > > -- 
-> > > Cheers,
-> > > 
-> > > David / dhildenb
-> > > 
-> > 
-> 
-> -- 
-> Peter Xu
-
-I didn't forget about this, but I did find another test case that is going to
-break with this change. Some other things landed on my plate/schedule so I'll
-be returning to this in a week or two. I'll make sure I take your feedback
-when I submit v2. Thanks again!
-
-> 
-
+T24gVGh1LCAyMDI0LTA1LTMwIGF0IDExOjIzICswMTAwLCBSdXNzZWxsIEtpbmcgKE9yYWNsZSkg
+d3JvdGU6DQo+ICAJIA0KPiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlu
+a3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bnRpbA0KPiB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2Vu
+ZGVyIG9yIHRoZSBjb250ZW50Lg0KPiAgSGksDQo+IA0KPiBBIGZldyBzdWdnZXN0aW9uczoNCj4g
+DQo+IE9uIFRodSwgTWF5IDMwLCAyMDI0IGF0IDExOjQ4OjQzQU0gKzA4MDAsIFNreSBIdWFuZyB3
+cm90ZToNCj4gPiArc3RhdGljIGludCBleHRlbmRfYW5fbmV3X2xwX2NudF9saW1pdChzdHJ1Y3Qg
+cGh5X2RldmljZSAqcGh5ZGV2KQ0KPiA+ICt7DQo+ID4gK2ludCBtbWRfcmVhZF9yZXQ7DQo+ID4g
+K3UzMiByZWdfdmFsOw0KPiA+ICtpbnQgdGltZW91dDsNCj4gPiArDQo+ID4gK3RpbWVvdXQgPSBy
+ZWFkX3BvbGxfdGltZW91dChtbWRfcmVhZF9yZXQgPSBwaHlfcmVhZF9tbWQsIHJlZ192YWwsDQo+
+ID4gKyAgICAobW1kX3JlYWRfcmV0IDwgMCkgfHwgcmVnX3ZhbCAmIE1US19QSFlfRklOQUxfU1BF
+RURfMTAwMCwNCj4gPiArICAgIDEwMDAwLCAxMDAwMDAwLCBmYWxzZSwgcGh5ZGV2LA0KPiA+ICsg
+ICAgTURJT19NTURfVkVORDEsIE1US19QSFlfTElOS19TVEFUVVNfTUlTQyk7DQo+IA0KPiB0aW1l
+b3V0ID0gcGh5X3JlYWRfbW1kX3BvbGxfdGltZW91dChwaHlkZXYsIE1ESU9fTU1EX1ZFTkQxLA0K
+PiAgICAgTVRLX1BIWV9MSU5LX1NUQVRVU19NSVNDLA0KPiAgICAgcmVnX3ZhbCwNCj4gICAgIHJl
+Z192YWwgJiBNVEtfUEhZX0ZJTkFMX1NQRUVEXzEwMDAsDQo+ICAgICAxMDAwMCwgMTAwMDAwMCwg
+ZmFsc2UpOw0KPiANCj4gPiAraWYgKG1tZF9yZWFkX3JldCA8IDApDQo+ID4gK3JldHVybiBtbWRf
+cmVhZF9yZXQ7DQo+IA0KPiBTbywgd2hhdCBpZiB0aGUgcG9sbCB0aW1lcyBvdXQgKHRpbWVvdXQg
+PT0gLUVUSU1FRE9VVCkgPyBJZiB5b3Ugd2FudA0KPiB0bw0KPiBpZ25vcmUgdGhhdCwgdGhlbjoN
+Cj4gDQo+IGlmICh0aW1lb3V0IDwgMCAmJiB0aW1lb3V0ICE9IC1FVElNRURPVVQpDQo+IHJldHVy
+biB0aW1lb3V0Ow0KPiANCkknbSBub3QgZ29pbmcgdG8gaGFuZGxlIHRpbWVvdXQgY2FzZSBoZXJl
+LiBJZiB3ZSBjYW4ndCBkZXRlY3QNCk1US19QSFlfRklOQUxfU1BFRURfMTAwMCBpbiAxIHNlY29u
+ZCwgbGV0IGl0IGdvIGFuZCB3ZSdsbCBkZXRlY3QgaXQNCm5leHQgcm91bmQuDQoNCj4gPiAraW50
+IG10a19ncGh5X2NsMjJfcmVhZF9zdGF0dXMoc3RydWN0IHBoeV9kZXZpY2UgKnBoeWRldikNCj4g
+PiArew0KPiA+ICtpbnQgcmV0Ow0KPiA+ICsNCj4gPiArcmV0ID0gZ2VucGh5X3JlYWRfc3RhdHVz
+KHBoeWRldik7DQo+ID4gK2lmIChyZXQpDQo+ID4gK3JldHVybiByZXQ7DQo+ID4gKw0KPiA+ICtp
+ZiAocGh5ZGV2LT5hdXRvbmVnID09IEFVVE9ORUdfRU5BQkxFICYmICFwaHlkZXYtDQo+ID5hdXRv
+bmVnX2NvbXBsZXRlKSB7DQo+ID4gK3JldCA9IHBoeV9yZWFkKHBoeWRldiwgTUlJX0NUUkwxMDAw
+KTsNCj4gPiAraWYgKChyZXQgJiBBRFZFUlRJU0VfMTAwMEZVTEwpIHx8IChyZXQgJiBBRFZFUlRJ
+U0VfMTAwMEhBTEYpKSB7DQo+IA0KPiBUaGlzIGlzIGVxdWl2YWxlbnQgdG86DQo+IA0KPiBpZiAo
+cmV0ICYgKEFEVkVSVElTRV8xMDAwRlVMTCB8IEFEVkVSVElTRV8xMDAwSEFMRikpIHsNCj4gDQo+
+IHdoaWNoIGlzIGVhc2llciB0byByZWFkLg0KPiANCj4gVGhhbmtzLg0KPiANCj4gLS0gDQo+IFJN
+SydzIFBhdGNoIHN5c3RlbTogaHR0cHM6Ly93d3cuYXJtbGludXgub3JnLnVrL2RldmVsb3Blci9w
+YXRjaGVzLw0KPiBGVFRQIGlzIGhlcmUhIDgwTWJwcyBkb3duIDEwTWJwcyB1cC4gRGVjZW50IGNv
+bm5lY3Rpdml0eSBhdCBsYXN0IQ0KDQpBZ3JlZS4gSSdsbCBtb2RpZnkgdGhpcyBpbiBuZXh0IHZl
+cnNpb24uDQoNClNreQ0K
 
