@@ -1,142 +1,231 @@
-Return-Path: <linux-kernel+bounces-194835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CEC8D42AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:07:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6438D42B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B9028563B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:07:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 798901C2100B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 01:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B398A134DE;
-	Thu, 30 May 2024 01:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1868E1758F;
+	Thu, 30 May 2024 01:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TSVYgwBJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0CxcI6FD"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80748F4E2;
-	Thu, 30 May 2024 01:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C9BFC18
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 01:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717031266; cv=none; b=u/yPymtufU7qjx7GAvh1dOuvFtVLzByfCR4JbxvootHhl/tCdODL/Jqo9L+qrhJYK492qX64UGxLJk1uNknXFjTuTNTThIi6kv7NEOZF/p7pFKeAoyh8ls6I42+rJZvCehbR6mOt+2rDfF10vYsmrXYlI0sTVmfDF/rS0c87vUM=
+	t=1717031327; cv=none; b=NKhmqoETAO9AjNs8cQ+e5GGHU7OkNMkEhGZHImi2BJjmYtvsMhh2OgvrpQf9LBrhMIdgjPZL5mxjCCJ/scV+j74JAnJ4MRWE0gVQbm9nxEgIYJtdLKq69Tkqb9ukKb+j3BnP8MRkqOoOtsT4YPIO0XPkLczLfLaA4iZC7WunGf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717031266; c=relaxed/simple;
-	bh=DJmoYBOGcoVNLMBEvrCcota/ugc5wL4TTlwryI1YZpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWSsgpM99Cx4z6VAbv/0F9YEy++RWe6waFN9IXKbGCk+4lpAnPsaDRSbLWIyRNX86NUrTJpWEPBHYCHxVQ1VSYC+nzGAhd+YQP+ONPA1/fdryZvC1rAzS+NcpO9PyMqJ7PHgInUq19AMGzLdf6fR6Y3lEkjNv+d0irUExx13QU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TSVYgwBJ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717031265; x=1748567265;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DJmoYBOGcoVNLMBEvrCcota/ugc5wL4TTlwryI1YZpw=;
-  b=TSVYgwBJfeyV2mVxCQUv1TRizFDQ6s2ZR2GyIWW0nfMy8EmkEoTatF4o
-   rqYu4GEY9yHq6oNfOcLNZ8ikfME9BUc76IHEn7WIVaoJtRAVWja/kyC6r
-   5Wd3LFG2g9yxWCSVNBKYhXJsGVo5rDDm09KgqftOboK3MA+DqJK7fyTG5
-   Oz94Y1353L5sMA0iiHF4cywZ2+k85BnESki9+mUkORTeU+TOiK2Q6U7Xi
-   3pd8ST7VGcOU1QgzKri/x2Jg5emngTsfxKrzjMXGcvbLJ94OxccBMWFZV
-   3dcIb3ho85vyUp4uY/jPq7eQP8GF2bwQA+ugurBgli3apGSNgxJY2yS3b
-   g==;
-X-CSE-ConnectionGUID: KSHZLvxrSoue6FU+CIxsjA==
-X-CSE-MsgGUID: 5gnSS4LaTEeVnARUqXbd7w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="24894762"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="24894762"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 18:07:41 -0700
-X-CSE-ConnectionGUID: cvEuSgAhSLKkjZZE3aipcw==
-X-CSE-MsgGUID: vg6zkNkiQB+cW9xJ4m4Yyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="73089446"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 29 May 2024 18:07:39 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCUGV-000EOl-34;
-	Thu, 30 May 2024 01:07:35 +0000
-Date: Thu, 30 May 2024 09:06:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andy.shevchenko@gmail.com,
-	lars@metafoo.de, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nuno.a@analog.com,
-	swboyd@chromium.org, u.kleine-koenig@pengutronix.de,
-	yasin.lee.x@gmail.com, yasin.lee.x@outlook.com
-Subject: Re: [PATCH v3 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor
- driver
-Message-ID: <202405300812.jv99FywV-lkp@intel.com>
-References: <SN7PR12MB81019AB7F38806097F2C8A34A4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1717031327; c=relaxed/simple;
+	bh=HUAN0/h1uUnwVHvw5+gjjvN2wmVD3N2hYhH/W+fSmng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tpjUns5GN0k027J71G/CByflM/nxQsukblVZ+9ykzqnj5fh3mXtfpKgw9ECUGnTltx1oqsFwRzTRXuAsFK6YkqODpoZLfhvsI7R9fivG6PTG9YA2AKz23DK84+cCBrDs2kIxjfCMIY0bps6GzgqqhIcxujNVMUPZHbVycziE4Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0CxcI6FD; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43f87dd6866so167871cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2024 18:08:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717031324; x=1717636124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RNCYiTPJ+jmwqf05JMT+AdSr7J72TbIz2CKFhve3Jy0=;
+        b=0CxcI6FDl7jFDQxcpUYxZt5vBPgkc6u9I8kDHvOF1t4nxhy5YdkqiDc92+E1QFjBKt
+         YCnld08mSd/EPuEkf9cN83p9ZGJJdSW1vvAqiO/uDlNSvEm0FQt2Jy2+4B9UXiqUcGEJ
+         OMmxgGvT/L6gqZ+1JZL5PvL6gN2g0y/Kmaeikr1QToKJV8EDaLiGXPfNpYax2gnxj1yJ
+         srEhKv09Q2KyuZNzA3YxHQ/f5WAHQYjlh24DdofT0tWdgnqQb0JPldGS8QQrXG7IqGQJ
+         wUN35PyD3tV/2alPCcwAPx4CXGaiPkWVQyS5BbJM15JNAZk9NnU+TDEmQCLy9iKPRlmS
+         u8dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717031324; x=1717636124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RNCYiTPJ+jmwqf05JMT+AdSr7J72TbIz2CKFhve3Jy0=;
+        b=JCBdlGEdJCGAIZEyfTjk+MaXKxotOBGJix/WkyNGozjbI4zemzIfAErXcey2jSu3SK
+         Cmp6mNFOoRRl0v2DVy9tHDb3udLXDBgR1n+lDMsksx37KoUV4Us/czZOTEy9/af4irsP
+         62IqDw2iTC4+w6Ry37KTeAApqtwGIWpYnzvb9LAmTsTctheYXX6/dfbjPtXEAMnJFCTY
+         VV7fL9dFJnA70xxh5vySEjUW6cbbpIwruuZjstWmJW+tIw4khREWX8Bdf/ar7m5Hz7T7
+         JuD6RoR4RHMhRT6HARr1O0Vmedvyl3gFGdoUbMyVZSR1LMGNSjC140nS7vC5DuI5a+cx
+         C1jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEzRfCIHamHV+1WtmY7YfRz0AKDcai+nJA/5PD9v8BhIiaWphLuZVDba1gx3yvLHqArttnzLGcTwrVnf7+lTinu1IrUoBRYSCbWioh
+X-Gm-Message-State: AOJu0Yzj2l4wajWWGu0hJLmCFkVxJj/iqANZ5WdxE9xBHlvJ16KTgoLh
+	uFb6kBnPdmtUFvvAWv+v1RixJgsAZPwCLU41/mrEmaAHrHeaCBN5BD3FeL4ETTgDHHwoGGm/Lww
+	DeUJNJu1MDjJ5xbMLM8TMp55AQHPJquoopFOt
+X-Google-Smtp-Source: AGHT+IFJBPRQlkDyYJeSsGM/RxiiiLg1VsLLsha8SGwYsobiZXs39Abfff+lsGr1GDYLgVu96Cm8k7GvNnaVZDK3Ruk=
+X-Received: by 2002:a05:622a:5509:b0:43b:6b6:8cad with SMTP id
+ d75a77b69052e-43fe8e0b1dfmr1268341cf.10.1717031323987; Wed, 29 May 2024
+ 18:08:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN7PR12MB81019AB7F38806097F2C8A34A4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
+References: <20240529180510.2295118-1-jthoughton@google.com>
+ <20240529180510.2295118-3-jthoughton@google.com> <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
+ <ZlelW93_T6P-ZuSZ@google.com> <CAOUHufZdEpY6ra73SMHA33DegKxKaUM=Os7A7aDBFND6NkbUmQ@mail.gmail.com>
+ <Zley-u_dOlZ-S-a6@google.com>
+In-Reply-To: <Zley-u_dOlZ-S-a6@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 29 May 2024 18:08:06 -0700
+Message-ID: <CADrL8HXHWg_MkApYQTngzmN21NEGNWC6KzJDw_Lm63JHJkR=5A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
+ in aging
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Ankit Agrawal <ankita@nvidia.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Bibo Mao <maobibo@loongson.cn>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, James Morse <james.morse@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yasin,
+On Wed, May 29, 2024 at 3:58=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Wed, May 29, 2024, Yu Zhao wrote:
+> > On Wed, May 29, 2024 at 3:59=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > >
+> > > On Wed, May 29, 2024, Yu Zhao wrote:
+> > > > On Wed, May 29, 2024 at 12:05=E2=80=AFPM James Houghton <jthoughton=
+@google.com> wrote:
+> > > > >
+> > > > > Secondary MMUs are currently consulted for access/age information=
+ at
+> > > > > eviction time, but before then, we don't get accurate age informa=
+tion.
+> > > > > That is, pages that are mostly accessed through a secondary MMU (=
+like
+> > > > > guest memory, used by KVM) will always just proceed down to the o=
+ldest
+> > > > > generation, and then at eviction time, if KVM reports the page to=
+ be
+> > > > > young, the page will be activated/promoted back to the youngest
+> > > > > generation.
+> > > >
+> > > > Correct, and as I explained offline, this is the only reasonable
+> > > > behavior if we can't locklessly walk secondary MMUs.
+> > > >
+> > > > Just for the record, the (crude) analogy I used was:
+> > > > Imagine a large room with many bills ($1, $5, $10, ...) on the floo=
+r,
+> > > > but you are only allowed to pick up 10 of them (and put them in you=
+r
+> > > > pocket). A smart move would be to survey the room *first and then*
+> > > > pick up the largest ones. But if you are carrying a 500 lbs backpac=
+k,
+> > > > you would just want to pick up whichever that's in front of you rat=
+her
+> > > > than walk the entire room.
+> > > >
+> > > > MGLRU should only scan (or lookaround) secondary MMUs if it can be
+> > > > done lockless. Otherwise, it should just fall back to the existing
+> > > > approach, which existed in previous versions but is removed in this
+> > > > version.
+> > >
+> > > IIUC, by "existing approach" you mean completely ignore secondary MMU=
+s that
+> > > don't implement a lockless walk?
+> >
+> > No, the existing approach only checks secondary MMUs for LRU folios,
+> > i.e., those at the end of the LRU list. It might not find the best
+> > candidates (the coldest ones) on the entire list, but it doesn't pay
+> > as much for the locking. MGLRU can *optionally* scan MMUs (secondary
+> > included) to find the best candidates, but it can only be a win if the
+> > scanning incurs a relatively low overhead, e.g., done locklessly for
+> > the secondary MMU. IOW, this is a balance between the cost of
+> > reclaiming not-so-cold (warm) folios and that of finding the coldest
+> > folios.
+>
+> Gotcha.
+>
+> I tend to agree with Yu, driving the behavior via a Kconfig may generate =
+simpler
+> _code_, but I think it increases the overall system complexity.  E.g. dis=
+tros
+> will likely enable the Kconfig, and in my experience people using KVM wit=
+h a
+> distro kernel usually aren't kernel experts, i.e. likely won't know that =
+there's
+> even a decision to be made, let alone be able to make an informed decisio=
+n.
+>
+> Having an mmu_notifier hook that is conditionally implemented doesn't see=
+m overly
+> complex, e.g. even if there's a runtime aspect at play, it'd be easy enou=
+gh for
+> KVM to nullify its mmu_notifier hook during initialization.  The hardest =
+part is
+> likely going to be figuring out the threshold for how much overhead is to=
+o much.
 
-kernel test robot noticed the following build warnings:
+Hi Yu, Sean,
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on robh/for-next linus/master v6.10-rc1 next-20240529]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Perhaps I "simplified" this bit of the series a little bit too much.
+Being able to opportunistically do aging with KVM (even without
+setting the Kconfig) is valuable.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/iio-proximity-hx9023s-Add-TYHX-HX9023S-sensor-driver/20240529-170307
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/SN7PR12MB81019AB7F38806097F2C8A34A4F22%40SN7PR12MB8101.namprd12.prod.outlook.com
-patch subject: [PATCH v3 2/2] iio:proximity:hx9023s: Add TYHX HX9023S sensor driver
-config: x86_64-randconfig-r113-20240530 (https://download.01.org/0day-ci/archive/20240530/202405300812.jv99FywV-lkp@intel.com/config)
-compiler: gcc-12 (Ubuntu 12.3.0-9ubuntu2) 12.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405300812.jv99FywV-lkp@intel.com/reproduce)
+IIUC, we have the following possibilities:
+- v4: aging with KVM is done if the new Kconfig is set.
+- v3: aging with KVM is always done.
+- v2: aging with KVM is done when the architecture reports that it can
+probably be done locklessly, set at KVM MMU init time.
+- Another possibility?: aging with KVM is only done exactly when it
+can be done locklessly (i.e., mmu_notifier_test/clear_young() called
+such that it will not grab any locks).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405300812.jv99FywV-lkp@intel.com/
+I like the v4 approach because:
+1. We can choose whether or not to do aging with KVM no matter what
+architecture we're using (without requiring userspace be aware to
+disable the feature at runtime with sysfs to avoid regressing
+performance if they don't care about proactive reclaim).
+2. If we check the new feature bit (0x8) in sysfs, we can know for
+sure if aging is meant to be working or not. The selftest changes I
+made won't work properly unless there is a way to be sure that aging
+is working with KVM.
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/proximity/hx9023s.c:1242:44: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 @@     got int @@
-   drivers/iio/proximity/hx9023s.c:1242:44: sparse:     expected restricted __be16
-   drivers/iio/proximity/hx9023s.c:1242:44: sparse:     got int
+For look-around at eviction time:
+- v4: done if the main mm PTE was young and no MMU notifiers are subscribed=
+.
+- v2/v3: done if the main mm PTE was young or (the SPTE was young and
+the MMU notifier was lockless/fast).
 
-vim +1242 drivers/iio/proximity/hx9023s.c
+I made this logic change as part of removing batching.
 
-  1228	
-  1229	static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
-  1230	{
-  1231		struct iio_poll_func *pf = private;
-  1232		struct iio_dev *indio_dev = pf->indio_dev;
-  1233		struct hx9023s_data *data = iio_priv(indio_dev);
-  1234		int bit;
-  1235		int i = 0;
-  1236	
-  1237		guard(mutex)(&data->mutex);
-  1238		hx9023s_sample(data);
-  1239		hx9023s_get_prox_state(data);
-  1240	
-  1241		for_each_set_bit(bit, indio_dev->active_scan_mask, indio_dev->masklength)
-> 1242			data->buffer.channels[i++] = data->diff[indio_dev->channels[bit].channel];
-  1243	
-  1244		iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer, pf->timestamp);
-  1245	
-  1246		iio_trigger_notify_done(indio_dev->trig);
-  1247		return IRQ_HANDLED;
-  1248	}
-  1249	
+I'd really appreciate guidance on what the correct thing to do is.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In my mind, what would work great is: by default, do aging exactly
+when KVM can do it locklessly, and then have a Kconfig to always have
+MGLRU to do aging with KVM if a user really cares about proactive
+reclaim (when the feature bit is set). The selftest can check the
+Kconfig + feature bit to know for sure if aging will be done.
+
+I'm not sure what the exact right thing to do for look-around is.
+
+Thanks for the quick feedback.
 
