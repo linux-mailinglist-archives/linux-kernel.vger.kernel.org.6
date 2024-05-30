@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-195579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F64F8D4ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:13:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F688D4EC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15382871F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477A8286F0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6E5182D0B;
-	Thu, 30 May 2024 15:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DA41C9EA7;
+	Thu, 30 May 2024 15:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AgfWg0T4"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EA7ZgozL"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28F81862A7;
-	Thu, 30 May 2024 15:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D4E183980;
+	Thu, 30 May 2024 15:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717081889; cv=none; b=WfgMoCGyaMcf7oDYuoxeOv3F4cfu7+OSo5xuYPcIbrFrWrFg2YU98OQbwfqjRCgWgXabjLGuWtTkj/9gArcVzXnJoLdDS8cSY9bJJOt+5xIyg6y3h5z4RvEwc3X6V9j6ltZtfJsoFi+Ywaeu73ihEwF/RaKEEIkKeUh2yhRBYHY=
+	t=1717081887; cv=none; b=ICxELE5ndVayJMLc92gqfxXy6RlemN2JjvvS0wy9y8NdswdYsnY3SoUIBJiZstCiuuI9XRmET/dlUp00MeX4k/479Xd5RQg54qy3sy71GbvnovJdnD84mWyxAO+xqIC+BXuA1u4ugsLrGxi4ke8y2giHAYb9Qn2vFmaXmIkzuBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717081889; c=relaxed/simple;
-	bh=KHmkxGTrimggz5XiV2P+I49lCexUOiH4Nb0XpNE5VMs=;
+	s=arc-20240116; t=1717081887; c=relaxed/simple;
+	bh=YN44JYZqoEKQIIQ+HPXBPHzx9SDRMV97fZqyIcUXYdE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pqp/y65JC0yksGr5KZdbckd9BhViB294BBYXLprrV9xEOnhgA1+v0BS81bQlZ9iypkPilzDwpJqtM2jcYKPjpD/Ki9fkJwLoESkJ6/xg1t/08QwB15BVAagtQPPw73cXt+iYL3hs0EOIH/dPvCuMsmmW75/iNoIeLM4o9z9xp0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AgfWg0T4; arc=none smtp.client-ip=198.175.65.10
+	 MIME-Version; b=oorUHBUy1jR+vG3kTTB17MHOo8dasK/b+36yJQrolUg51jPhZWTqbOtiLwWVsa5KTm4HuUjb8XJ+gIWD7/Dzg1un11tgT/sLOpTOOz6qHhU0f8uGan9wuwotdWzqStbHzAg42vSh6sFDuOXOhbKFhQfts7z0qNsulJZI/tdAQR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EA7ZgozL; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717081888; x=1748617888;
+  t=1717081886; x=1748617886;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=KHmkxGTrimggz5XiV2P+I49lCexUOiH4Nb0XpNE5VMs=;
-  b=AgfWg0T4w7Wsz4TmEAbYFE7+y+mquoIsHbML8lWRVTaxzyjUda/x61+F
-   J1BAPthBS1rVZYLTaxP/BAiec5ID5oDggbKKhCpa0Pto9y0TrcnBKPH54
-   HcNOWRRL2AfUcXqnx5wq4Cztw2UQG2Te0S+omgPKGFDDXFM6dtWaAmx+y
-   W1zkdrzwAAOjv4rYzflnV2mQE1yIF7PpMMx0EEkv7l88OD7rxLiU/h3Pm
-   OAZTrTFSwTYK/ttCfupGeWlnytL4roko1fyShQKq51Gi4VrQ9F4sK2VKi
-   TYYa61tgXOZjiQSBIhlnX2DG1RgNoIYAMMEZuwK0Vyivsv8wBfSoogPNe
+  bh=YN44JYZqoEKQIIQ+HPXBPHzx9SDRMV97fZqyIcUXYdE=;
+  b=EA7ZgozLJMcJKCzKyI4/NpdG+wfYwgAz6n/FEXXi3ikB46RJfrFmCul8
+   53P1XDHV/Ymn1NUDLx98EFatBUVA8i9e3hGKuXPn2xcynC8pQHVgiTfY7
+   JPkQWMoGojjGGyG+KT5rS0gUH5PCRpeSk0ZasDJRpzRa41mTNvNYEeTn4
+   kSqJCVqOov+2pq/7nyJ6VM0JRTnPvKAiZuU8s1hhx8VBdp9ZZqZJF9hEs
+   93NlObs/RGeR3uhu8XYgWT4w4bMckrmUgQeKhf1vpfGMGJrHfv3uhlN77
+   Hk+O7a4h/ud4pdfTFLcKuJyWILkI3/6lSe0o2DrpQjtFiWuJZJ8YJ3FTq
    A==;
-X-CSE-ConnectionGUID: vej+lL29TjOOlfY02kNEHg==
-X-CSE-MsgGUID: kwD5rdU9SgCTa2CVpD8Z2A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31067968"
+X-CSE-ConnectionGUID: tDhQ02EAT3uRY4b1VUgk4w==
+X-CSE-MsgGUID: knrqNqEBT+SeyLYKr6ab4w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31067948"
 X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="31067968"
+   d="scan'208";a="31067948"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 08:11:26 -0700
-X-CSE-ConnectionGUID: ZmLvxdsRRH2XteUsnIoQpw==
-X-CSE-MsgGUID: t+vO54S1RdSW0kg0YoLNBg==
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 08:11:25 -0700
+X-CSE-ConnectionGUID: s1k/pvsFTLmW63bqcbIURg==
+X-CSE-MsgGUID: ZULTayxvTv6OSYz0zy9cQA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,201,1712646000"; 
-   d="scan'208";a="73329439"
+   d="scan'208";a="73329437"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa001.jf.intel.com with ESMTP; 30 May 2024 08:11:24 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 68409679; Thu, 30 May 2024 18:11:19 +0300 (EEST)
+	id 7677D700; Thu, 30 May 2024 18:11:19 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mark Brown <broonie@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -69,9 +69,9 @@ To: Mark Brown <broonie@kernel.org>,
 Cc: Daniel Mack <daniel@zonque.org>,
 	Haojian Zhuang <haojian.zhuang@gmail.com>,
 	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v2 07/11] spi: pxa2xx: Remove duplicate check
-Date: Thu, 30 May 2024 18:10:03 +0300
-Message-ID: <20240530151117.1130792-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 08/11] spi: pxa2xx: Remove superflous check for Intel Atom SoCs
+Date: Thu, 30 May 2024 18:10:04 +0300
+Message-ID: <20240530151117.1130792-9-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20240530151117.1130792-1-andriy.shevchenko@linux.intel.com>
 References: <20240530151117.1130792-1-andriy.shevchenko@linux.intel.com>
@@ -83,30 +83,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The mmio_base can't be NULL at this point. It's either checked
-in both pxa_ssp_probe() and pxa2xx_spi_init_ssp() or correctly
-provided by PCI core. Hence, remove duplicate check which is
-a dead code.
+pxa2xx_spi_fw_translate_cs() checks for the ACPI companion device
+presence along with the SSP type. But the SSP type is uniquely
+determines the case. Hence remove the superflous check.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/spi/spi-pxa2xx.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/spi/spi-pxa2xx.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index 30a829b74a22..9724d9455837 100644
+index 9724d9455837..3c03a8cd9ee6 100644
 --- a/drivers/spi/spi-pxa2xx.c
 +++ b/drivers/spi/spi-pxa2xx.c
-@@ -1441,9 +1441,6 @@ static int pxa2xx_spi_probe(struct platform_device *pdev)
- 	if (!ssp)
- 		ssp = &platform_info->ssp;
+@@ -1393,23 +1393,19 @@ static int pxa2xx_spi_fw_translate_cs(struct spi_controller *controller,
+ {
+ 	struct driver_data *drv_data = spi_controller_get_devdata(controller);
  
--	if (!ssp->mmio_base)
--		return dev_err_probe(dev, -ENODEV, "failed to get SSP\n");
+-	if (has_acpi_companion(drv_data->ssp->dev)) {
+-		switch (drv_data->ssp_type) {
+-		/*
+-		 * For Atoms the ACPI DeviceSelection used by the Windows
+-		 * driver starts from 1 instead of 0 so translate it here
+-		 * to match what Linux expects.
+-		 */
+-		case LPSS_BYT_SSP:
+-		case LPSS_BSW_SSP:
+-			return cs - 1;
++	switch (drv_data->ssp_type) {
++	/*
++	 * For some of Intel Atoms the ACPI DeviceSelection used by the Windows
++	 * driver starts from 1 instead of 0 so translate it here to match what
++	 * Linux expects.
++	 */
++	case LPSS_BYT_SSP:
++	case LPSS_BSW_SSP:
++		return cs - 1;
+ 
+-		default:
+-			break;
+-		}
++	default:
++		return cs;
+ 	}
 -
- 	if (platform_info->is_target)
- 		controller = devm_spi_alloc_target(dev, sizeof(*drv_data));
- 	else
+-	return cs;
+ }
+ 
+ static size_t pxa2xx_spi_max_dma_transfer_size(struct spi_device *spi)
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
